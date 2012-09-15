@@ -1,0 +1,161 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% based off original kod by Justin, 98jsh@williams.edu
+
+ResistRing is Ring
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   resistring_icon_rsc = ring3.bgf            
+  
+   resistring_use_rsc = "You put the ring on."
+   resistring_dead_rsc = "The ring crumbles!"
+
+classvars:
+
+   vrIcon = resistring_icon_rsc
+
+   vrUseMessage = resistring_use_rsc
+   vrDeadMessage = resistring_dead_rsc
+
+   % rate at which a charge will deplete from the ring--same as invisibility ring
+   viChargeRate = 60000
+
+   viHits_init_min = 15
+   viHits_init_max = 30
+
+   viBulk = 5
+   viWeight = 10
+   
+   viValue_average = 280
+
+properties:
+
+   piResistanceType = 0
+   piResistanceChange = 50
+
+   ptCharge = $
+
+messages:
+
+   Delete()
+   {
+      if ptCharge <> $
+      {
+         DeleteTimer(ptCharge);
+         ptCharge = $;
+      }
+      
+      propagate;
+   }
+
+   NewUsed(what = $)
+   {
+
+      if vrName = vrRealName
+      {
+         % Only give the message if it's identified.
+         Send(poOwner, @MsgSendUser, #message_rsc=vrUseMessage);
+      }
+      
+      send(self,@AddResistances);
+      
+      if ptCharge <> $
+      {
+         DeleteTimer(ptCharge);
+      }
+      
+      ptCharge = CreateTimer(self,@ChargeTimer,viChargeRate);
+      
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      send(self,@RemoveResistances);
+      
+      if ptCharge <> $ 
+      {
+         DeleteTimer(ptCharge);
+         ptCharge = $;
+      }
+      
+      piHits = piHits - 1;
+      if piHits <= 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=vrDeadMessage);
+         Send(self,@Delete);
+      }
+      
+      propagate;
+   }
+      
+   AddResistances()
+   {
+      local i;
+      
+      for i in send(self,@GetResistanceModifiers)
+      {
+         Send(poOwner,@AddResistance,#what=nth(i,1),#value=nth(i,2));
+      }
+      
+      return;
+   }
+
+   RemoveResistances()
+   {
+      local i;
+      
+      for i in send(self,@GetResistanceModifiers)
+      {
+         Send(poOwner,@RemoveResistance,#what=nth(i,1),#value=nth(i,2));
+      }
+      
+      return;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [[piResistanceType,piResistanceChange]];
+   }
+
+   ChargeTimer()
+   "Called each minute to drain a hit."
+   {
+      ptCharge = $;
+      piHits = piHits - 1;
+
+      if piHits = 0
+      {
+         Send(poOwner, @TryUnuseItem, #what = self);
+         
+         return;
+      }
+      
+      ptCharge = CreateTimer(self, @ChargeTimer, viChargeRate);
+      
+      return;
+   }
+
+   UserLogoff()
+   {
+      Send(poOwner,@TryUnuseItem,#what=self);
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

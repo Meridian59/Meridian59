@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Scepter is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   scepter_name_rsc = "relic of Qor"
+   scepter_icon_rsc = scepter.bgf
+   scepter_desc_rsc = \
+   "This object bears the markings of Qor.  An inscription "
+   "reads \"The true servant shall bring this to the "
+   "barren place and speak my name.\""
+
+classvars:
+
+   vrName = scepter_name_rsc
+   vrIcon = scepter_icon_rsc
+   vrDesc = scepter_desc_rsc
+
+   viBulk = 50
+   viWeight = 75
+   viValue_average = 70
+
+properties:
+
+
+messages:
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,35 @@
+#Amoeba
+# groups
+# 1 sitting
+# 2-4 attacking
+# 5 retreating
+
+-s 1
+18
+
+am000aaa.bmp
+am045aaa.bmp
+am090aaa.bmp
+am180aaa.bmp
+am270aaa.bmp
+am315aaa.bmp
+am000bbb.bmp
+am045bbb.bmp
+am090bbb.bmp
+am180bbb.bmp
+am270bbb.bmp
+am315bbb.bmp
+am000ccc.bmp
+am045ccc.bmp
+am090ccc.bmp
+am180ccc.bmp
+am270ccc.bmp
+am315ccc.bmp
+
+5
+8   1   6   5   4   4   4   3   2
+8   7  12  11  10  10  10   9   8
+8  13  18  17  16  16  16  15  14
+8   7  12  11  10  10  10   9   8
+8   1   6   5   4   4   4   3   2
+

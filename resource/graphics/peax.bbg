@@ -1,0 +1,33 @@
+#  Pink face 1 - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+#^Applied to Hotspot: 11
+#*Groups: 4
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 14
+14
+Pe000aax.bmp   [-15, -10] 
+Pe315aax.bmp   [-5, -14] 
+Pe270aax.bmp   [-4, -9] 
+Pe090aax.bmp   [-11, -11] 
+Pe045aax.bmp   [-17, -10] 
+Pe000abx.bmp   [-15, -10] 
+Pe315abx.bmp   [-5, -14] 
+Pe045abx.bmp   [-17, -10] 
+Pe000acx.bmp   [-15, -10] 
+Pe315acx.bmp   [-5, -14] 
+Pe045acx.bmp   [-17, -10] 
+Pe000adx.bmp   [-15, -10] 
+Pe315adx.bmp   [-5, -14] 
+Pe045adx.bmp   [-17, -10] 
+4
+ 8   1 2 3 0 0 0 4 5 
+ 8   6 7 3 0 0 0 4 8 
+ 8   9 10 3 0 0 0 4 11 
+ 8   12 13 3 0 0 0 4 14 

@@ -1,0 +1,161 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorNoth is CorNothRoom
+
+constants:
+
+   include blakston.khd
+
+   CLOCK_FACE = 1
+
+resources:
+
+   room_CorNoth = CorNoth.roo
+   room_name_CorNoth ="Cor Noth"
+
+   cor_music = city04.mid
+   wind_sound_cornoth = ambcntry.wav
+   wind1_sound_cornoth = rs_wind.wav
+
+classvars:
+
+   viPermanent_flags = ROOM_GUILD_PK_ONLY
+   vrName = room_name_CorNoth
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_LAKE
+
+   viTeleport_row = 20
+   viTeleport_col = 20
+
+   viFlag_row = 14
+   viFlag_col = 31
+
+properties:
+
+   prRoom = room_CorNoth
+   piRoom_num = RID_CORNOTH
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prMusic = cor_music
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 11, 60, RID_COR_INN, 4, 2, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 23, 32, RID_COR_HALL, 3, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 24, 37, RID_COR_HALL, 3, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 25, 37, RID_COR_HALL, 3, 6, ROTATE_NONE ],plExits);
+
+
+      plExits = Cons([ 38, 31, RID_GUILDH1, 20, 13, ROTATE_270 ],plExits);
+      plExits = Cons([ 39, 31, RID_GUILDH1, 20, 13, ROTATE_270 ],plExits);
+
+
+      plExits = Cons([ 37, 58, RID_GUILDH6, 11, 10, ROTATE_225 ],plExits);
+
+      plExits = Cons([ 24, 20, RID_COR_GROCER, 9, 7, ROTATE_180 ],plExits);
+      plExits = Cons([ 24, 19, RID_COR_GROCER, 9, 7, ROTATE_180 ],plExits);
+
+      plExits = Cons([ 1, 39, RID_G4, 54,24, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 40, RID_G4, 54,25, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 30, 69, RID_G5, 6, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 69, RID_G5, 7, 19, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 41,12, RID_COR_TAILOR, 4, 3, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 11, 33, RID_COR_UNIV, 10, 25, ROTATE_NONE ],plExits);
+      plExits = Cons([ 10, 8, RID_COR_WEAPONSMASTER, 7, 6, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 40,22, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 44,9 , ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 27,12, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 27,13, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 28,12, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 28,13, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 21,16, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 11,17, ROOM_LOCKED_DOOR ],plExits);
+
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_G4, 48, 24, ROTATE_NONE ], plEdge_exits); 
+      propagate;
+   }
+
+   Constructed()
+   {
+   %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      plLooping_sounds = [[ wind_sound_cornoth, 1, 1, 200, 100 ]];
+      propagate;
+   }
+
+   RecalcLightAndWeather()
+   {
+      local iHour,iGroup;
+
+      iHour = Send(SYS,@GetHour);
+
+      iGroup = 1 + (iHour mod 12);
+
+      Send(self,@AnimateWall,#wall=CLOCK_FACE,#animation=ANIMATE_NONE,#first_group=iGroup);
+      
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=4,#new_col=43);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_ELM),
+          #new_row=7,#new_col=48);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=5,#new_col=58);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=20,#new_col=57);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=26,#new_col=65);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=36,#new_col=44);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_ELM),
+          #new_row=30,#new_col=53);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=28,#new_col=48);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=21,#new_col=41);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=31,#new_col=42);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=40,#new_col=44);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_ELM),
+          #new_row=21,#new_col=30);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=27,#new_col=28);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=16,#new_col=5);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=38,#new_col=15);
+      propagate;
+   }
+
+   CreatePeriodicSounds()
+   {
+      plPeriodic_sounds = [ wind1_sound_cornoth ];
+      pbPeriodic_sound_random_location = True;
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

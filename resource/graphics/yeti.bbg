@@ -1,0 +1,51 @@
+# Ice Demon/Yeti
+# groups
+# 1 standing
+# 2-3 walking
+# 4-6 attacking
+
+-s 1
+36
+yt000s.bmp
+yt045s.bmp
+yt090s.bmp
+yt180s.bmp
+yt270s.bmp
+yt315s.bmp
+yt000a.bmp
+yt045a.bmp
+yt090a.bmp
+yt180a.bmp
+yt270a.bmp
+yt315a.bmp
+yt000b.bmp
+yt045b.bmp
+yt090b.bmp
+yt180b.bmp
+yt270b.bmp
+yt315b.bmp
+yt000caa.bmp
+yt045caa.bmp
+yt090caa.bmp
+yt180caa.bmp
+yt270caa.bmp
+yt315caa.bmp
+yt000cab.bmp
+yt045cab.bmp
+yt090cab.bmp
+yt180cab.bmp
+yt270cab.bmp
+yt315cab.bmp
+yt000cac.bmp
+yt045cac.bmp
+yt090cac.bmp
+yt180cac.bmp
+yt270cac.bmp
+yt315cac.bmp
+6
+8   1   6   5   4   4   4   3   2
+8   7  12  11  10  10  10   9   8
+8  13  18  17  16  16  16  15  14
+8  19  24  23  22  22  22  21  20
+8  25  30  29  28  28  28  27  26
+8  31  36  35  34  34  34  33  32

@@ -1,0 +1,137 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KaraholsCurse is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KaraholsCurse_name_rsc = "Kara'hol's curse"
+   KaraholsCurse_icon_rsc = ikarahol.bgf
+   KaraholsCurse_desc_rsc = \
+      "Your body is possessed by the spirit of the warrior "
+      "Kara'hol for a brief period, enhancing the ferocity of "
+      "your attacks.  When the spirit departs, your body "
+      "is temporarily paralyzed from shock.  "
+      "Requires the sacrifice of a few entroot berries to cast."
+   
+   KaraholsCurse_on = \
+      "The spirit of Kara'hol descends upon you making your "
+      "blood boil and your muscles twitch with newfound vigor."
+   KaraholsCurse_off = "Your body freezes as total exhaustion grips your limbs."
+   KaraholsCurse_already_enchanted_rsc = "Your blood already boils with Kara'hol's spirit!"
+
+   Karahols_spell_intro = "Qor Lv. 2: Temporarily gives you berserker combat abilities, but with a price to pay later."
+
+   KaraholsCurse_sound = qkcurse.wav
+
+classvars:
+
+   viPersonal_ench = TRUE
+
+   vrName = KaraholsCurse_name_rsc
+   vrIcon = KaraholsCurse_icon_rsc
+   vrDesc = KaraholsCurse_desc_rsc
+
+   viSpell_num = SID_KARAHOLS_CURSE
+   vrSpell_intro = karahols_spell_intro
+
+   viMana = 9
+
+   viSpell_level = 2
+   viSchool = SS_QOR
+
+   vrSucceed_wav = KaraholsCurse_sound
+   viChance_To_Increase = 45
+
+   vrAlreadyEnchanted = KaraholsCurse_already_enchanted_rsc
+   vrEnchantment_On = KaraholsCurse_on
+   vrEnchantment_Off = KaraholsCurse_off
+
+   viFlash = FLASH_GOOD
+
+   % Cannot enchant others because of drawback.
+   vbCanCastOnOthers = FALSE  
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&EntrootBerry,2],plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $,iSpellPower= 0, ltargets = $)
+   {
+      Send(who,@AddAttackModifier,#what=self);
+     
+      propagate;
+   }
+
+   GetStateValue(iSpellpower=$)
+   {
+      return iSpellpower;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = (40+iSpellPower/2) * 1000;
+
+      return iDuration;
+   }
+
+   EndEnchantment(who=$, report=TRUE, state=0)
+   {
+      local oHoldSpell, iDuration;
+
+      Send(who,@RemoveAttackModifier,#what=self);
+
+      % Now, for the side effect.  Hold 'em!
+      oHoldSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      if Send(who,@IsEnchanted,#what=oHoldSpell)
+      {
+         Send(who,@RemoveEnchantment,#what=oHoldSpell,#report=FALSE);
+      }
+      
+      % Hold duration is measured in seconds, not milliseconds.  Lasts 1/6 the time of the bonus.
+      iDuration = (Send(self,@GetDuration,#iSpellPower=state))/6;
+      Send(oHoldSpell,@DoHold,#what=self,#otarget=who,#iDuration=iDuration,#report=TRUE,#bAllowFreeAction=FALSE);
+      
+      propagate;
+   }
+
+   % stuff we handle to be an attack modifier
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {      
+      return hit_roll + 100 + (send(who,@GetEnchantedState,#what=self)*2);
+   }
+   
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      return (damage + 1 + Random(0,send(who,@GetEnchantedState,#what=self)/20));
+   }
+
+   GetPotionClass()
+   {
+      RETURN &KaraholsCursePotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

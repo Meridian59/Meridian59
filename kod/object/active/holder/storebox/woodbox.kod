@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WoodenBox is StorageBox
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   WoodenBox_name_rsc = "wooden box"
+   WoodenBox_icon_rsc = box1.bgf
+
+   WoodenBox_desc_rsc = \
+      "This sturdy wooden box can store a good number of items."
+
+classvars:
+
+   vrName = WoodenBox_name_rsc
+   vrIcon = WoodenBox_icon_rsc
+   vrDesc = WoodenBox_desc_rsc
+
+   viBulk_hold_max = 12000
+   viWeight_hold_max = $
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

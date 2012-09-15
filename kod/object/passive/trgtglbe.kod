@@ -1,0 +1,38 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TargetGlobe is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+TargetGlobe_name = "Globe"
+TargetGlobe_icon = necglobe.bgf
+TargetGlobe_desc = "Looking up at this dark globe, you get the funny feeling that you are being watched."
+
+classvars:
+
+properties:
+
+   vrName = TargetGlobe_name
+   vrIcon = TargetGlobe_icon
+   vrDesc = TargetGlobe_desc
+
+messages:
+
+   GetObjectFlags()
+   {
+      return OF_HANGING; 
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

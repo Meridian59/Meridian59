@@ -1,0 +1,54 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PracticeBow is Bow
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   PracticeBow_name_rsc = "practice bow"
+   PracticeBow_desc_rsc = \
+      "Carved for durability, this bow is generally used by students to practice "
+      "the skills of ranged combat.  Softer woods were used in the construction, "
+      "allowing the practice bow to last much longer than other bows, at the "
+      "expense of power.  This bow should not be used in lethal combat."
+
+classvars:
+
+   vrName = PracticeBow_name_rsc
+   vrDesc = PracticeBow_desc_rsc
+
+   viWeaponDamage = -3
+   viRange = 30
+   viHit_roll_modifier = 200
+   
+   viValue_average = 1750
+   viBulk = 60
+   viWeight = 50
+
+   % This is about twice normal durability.
+   viHits_init_min = 400
+   viHits_init_max = 500
+
+   viSpell_modifier = -10
+
+   % What's the basic color of the wood?
+   viBaseXLAT = XLAT_TO_SKIN1
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

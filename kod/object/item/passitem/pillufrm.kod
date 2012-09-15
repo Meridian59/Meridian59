@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IllusionaryFormPotion is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   illusionaryformpotion_already_enchanted = \
+   "You are already of another form, and the potion has no effect."
+
+   illusionaryformpotion_name_rsc = "brown potion"
+   illusionaryformpotion_icon_rsc = flask.bgf
+   illusionaryformpotion_desc_rsc = "This is a deep, dark, murky, chunky potion."
+
+   illusionaryformpotion_cant_use_on = "You can't serve %s%s."
+   illusionaryformpotion_gulp_sound =  drkptn.wav
+
+classvars:
+   vrName = illusionaryformpotion_name_rsc
+   vrIcon = illusionaryformpotion_icon_rsc
+   vrDesc = illusionaryformpotion_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_POTION
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 60
+
+properties:
+
+   piItem_flags = PT_BLUE_TO_SKIN4
+
+messages:
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+      if IsClass(apply_on,&User)
+      {
+	 return True;
+      }
+      Send(what,@MsgSendUser,#message_rsc=illusionaryformpotion_cant_use_on, 
+	   #parm1=Send(apply_on,@GetIndef),#parm2=Send(apply_on,@GetName));
+      return False;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      local oSpell;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FORM);
+      if oSpell = $
+      {  DEBUG(self,"CAN'T FIND SID_ILLUSIONARY_FORM"); return; }
+
+      if isClass(apply_on,&User) 
+      {
+         send(apply_on,@wavesenduser,#wave_rsc=illusionaryformpotion_gulp_sound);
+      }
+      if Send(apply_on,@IsEnchanted,#what=oSpell)
+      {
+	 Send(apply_on,@MsgSendUser,#message_rsc=illusionaryformpotion_already_enchanted);
+	 Send(self,@Delete);
+	 return;
+      }
+
+
+      Send(oSpell,@PerformIllusionaryForm,#caster=self,#victim=apply_on,#iSpellPower=random(1,80));
+      Send(self,@Delete);
+
+      return;
+   }
+
+   GetSpellAbility()
+   "Callback used by illusionary form spell"
+   {
+      return 30;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

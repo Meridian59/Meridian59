@@ -1,0 +1,79 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sign is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   sign_name_rsc = "sign"
+   sign_icon_rsc = sign.bgf
+   sign_icon_newbie_rsc = razsign1.bgf
+   sign_desc_rsc = "This is an informational sign."
+   sign_insc_rsc = " "
+
+classvars:
+
+properties:
+
+   vrName = sign_name_rsc
+   vrIcon = sign_icon_rsc
+   vrDesc = sign_desc_rsc
+   vrInsc = sign_insc_rsc
+
+messages:
+
+   Constructor(name = $,icon = $,desc = $,insc = $,newbie = FALSE)
+   {
+      if name <> $
+      {  vrName = name; }
+
+	  if icon <> $
+      {  vrIcon = icon; }
+
+      if newbie = TRUE
+	  {  vrIcon = sign_icon_newbie_rsc; }
+
+      if desc <> $
+      {  vrDesc = desc; }
+
+      if insc <> $
+      {  vrInsc = insc; }
+
+      propagate;
+   }
+
+   HasInscription()
+   {
+      if vrInsc <> sign_insc_rsc { return TRUE; }
+	  return FALSE;
+   }
+
+   GetInscription()
+   {
+      return vrInsc;
+   }
+
+   ShowInscription()
+   {
+      AddPacket(4, vrInsc);
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

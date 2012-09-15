@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistEvil is ResistanceEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   resistevil_name_rsc = "holy resolve"
+   resistevil_icon_rsc = iholyres.bgf
+   resistevil_desc_rsc = \
+     "Shal'ille is summoned to fortify the soul against unholy damage.  "
+	  "Requires solagh and fairy wings to cast."
+
+   resistevil_spell_intro = "Shal'ille Level 1: Protects you from damage from unholy sources."
+	  
+   resistevil_success = "You fortify %s%s against evil."
+   resistevil_already_enchanted = "You already have holy resolve."
+
+   resistevil_on = "You feel a warm presence fortifying your defense against evil."
+   resistevil_off = "You feel chilled as the fortifying spirit of Shal'ille departs."
+
+classvars:
+
+   viPersonal_ench = TRUE
+
+   vrName = resistevil_name_rsc
+   vrIcon = resistevil_icon_rsc
+   vrDesc = resistevil_desc_rsc
+
+   vrSpell_intro = resistevil_spell_intro
+
+   viSpell_num = SID_HOLY_RESOLVE
+   viSchool = SS_SHALILLE
+   viSpell_level = 3
+   viMana = 3
+
+   viChance_To_Increase = 35
+   viFlash = FLASH_GOOD_SELF
+
+   viResistanceType = -ATCK_SPELL_UNHOLY
+   vrAlreadyEnchanted = resistevil_already_enchanted
+   vrEnchantment_On = resistevil_on
+   vrEnchantment_Off = resistevil_off
+   vrSuccess = resistevil_success
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Solagh,1],plReagents);
+      plReagents = Cons([&FairyWing,1],plReagents);
+
+      return;
+   }
+
+   GetResistanceStrength(iSpellpower = 0)
+   {
+      %% strength varies from 15 to 65
+      return iSpellPower/2 + 15;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;	   %%% 5 to 15 minutes
+      iDuration = 300 + iSpellPower * 6;
+      iDuration = iDuration * 1000;	  %% translate to milliseconds
+      return random(iDuration/2,iDuration);
+   }
+
+   OfferToNewCharacters()
+   {
+      % It's an island spell with island reagents.  Denied.
+      return FALSE;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

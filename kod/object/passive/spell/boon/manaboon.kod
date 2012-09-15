@@ -1,0 +1,80 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tim Schubert  4-28-97
+% 
+
+
+ManaBoon is Boon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   manaboon_name_rsc = "mana effect"
+   manaboon_icon_rsc = iboonman.bgf
+   manaboon_desc_rsc = "Something is affecting your natural mana levels."
+   manaboon_intro_rsc = "The mana level of the victim is boosted temporarily."
+
+   manaboon_inc = "You feel a higher capacity for magic!"
+   manaboon_dec = "You feel a lesser magical capacity."
+
+classvars:
+   viPersonal_ench = True
+   vrName = manaboon_name_rsc
+   vrIcon = manaboon_icon_rsc
+   vrDesc = manaboon_desc_rsc
+   vrSpell_intro = manaboon_intro_rsc
+
+   viSpell_num = SID_MANA_BOON
+   viMana = 0
+
+properties:
+
+messages:
+
+   DoSpellEffect(who = $, amount = $)
+   {
+   post(who,@ComputeMaxMana);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=manaboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=manaboon_dec); }
+
+   return;
+   }
+
+   UndoSpellEffect(who = $, amount = $)
+   {
+   amount = -amount;
+   post(who,@ComputeMaxMana);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=manaboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=manaboon_dec); }
+   return;
+   }
+   
+   AffectsMaxMana()
+   {
+      return TRUE;
+   }
+
+   GetManaBonus(state=0)
+   {
+      if state < 0
+      {  return -(state mod 100); }
+
+      return (state mod 100);
+   }
+
+end

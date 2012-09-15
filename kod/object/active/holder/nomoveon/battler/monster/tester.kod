@@ -1,0 +1,179 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GraphicTester is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   name_test1 = "test1.bgf"
+   name_test2 = "test2.bgf"
+   name_test3 = "test3.bgf"
+   name_test4 = "test4.bgf"
+   
+   icon_test1 = test1.bgf
+   icon_test2 = test2.bgf
+   icon_test3 = test3.bgf
+   icon_test4 = test4.bgf
+
+   tester_desc = "Graphic tester.  Bonk me to cycle to the next bgf set."
+
+classvars:
+   
+   vrDesc = tester_desc
+
+properties:
+
+   vrName = name_test1
+   vrIcon = icon_test1
+
+   vrName1 = name_test1
+   vrIcon1 = icon_test1
+   vrName2 = name_test2
+   vrIcon2 = icon_test2
+   vrName3 = name_test3
+   vrIcon3 = icon_test3
+   vrName4 = name_test4
+   vrIcon4 = icon_test4
+
+   piDrawfx = 4
+   piAnimation = ANIM_NONE
+   viDifficulty = 5
+   viSpeed = SPEED_SLOW
+
+   piFirst_attack_frame = 2
+   piLast_attack_frame = 6
+   piAttack_anim_speed = 150
+
+   piFirst_move_frame = 2
+   piLast_move_frame = 6
+   piMove_anim_speed = 150
+
+   piFirst_look_frame = 2
+   piLast_look_frame = 6
+   piLook_anim_speed = 150
+
+   piProne_frame = 1
+
+messages:
+
+   SendMoveAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+	      AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      AddPacket(1,ANIMATE_CYCLE,4,piMove_anim_speed);
+      AddPacket(2,piFirst_move_frame,2,piLast_move_frame);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+	      AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,piLook_anim_speed);
+      Addpacket(2,piFirst_look_frame,2,piLast_look_frame);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+	      AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,piAttack_anim_speed);
+         Addpacket(2,piFirst_attack_frame,2,piLast_attack_frame);
+         Addpacket(2,piProne_frame);
+
+         return;
+      }
+
+      % if no body animation
+      
+      AddPacket(1,ANIMATE_NONE,2,piProne_Frame);
+      return;
+   }
+      
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   EffectSendUser(effect = 0)
+   {
+      local bChanged;
+      bChanged = FALSE;
+      if effect = EFFECT_INVERT    %% got bonked.
+      {
+         if vrName = vrName1 AND NOT bChanged
+         {
+            vrName = vrName2;
+            vrIcon = vrIcon2;
+            bChanged = TRUE;
+         }
+
+         if vrName = vrName2 AND NOT bChanged
+         {
+            vrName = vrName3;
+            vrIcon = vrIcon3;
+            bChanged = TRUE;
+         }
+
+         if vrName = vrName3 AND NOT bChanged
+         {
+            vrName = vrName4;
+            vrIcon = vrIcon4;
+            bChanged = TRUE;
+         }
+
+         if NOT bChanged
+         {
+            vrName = vrName1;
+            vrIcon = vrIcon1;
+            bChanged = TRUE;
+         }
+      }
+
+      if bChanged
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

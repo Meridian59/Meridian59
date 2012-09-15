@@ -1,0 +1,80 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcCave2 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_orccave2 = oc02.roo
+   room_name_orccave2 = "An Enigmatic Chamber"
+
+   orccave2_music = orc1.mid
+
+classvars:
+
+   vrName = room_name_orccave2
+
+   viTeleport_row = 19
+   viTeleport_col = 47
+
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_orccave2
+   piRoom_num = RID_ORC_CAVE2
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = orccave2_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Orc, 70], [&OrcWizard, 30] ];
+      plGenerators = [[44,33],[40,40],[34,46],[17,11],[30,15],[11,17],
+	 [19,50],[27,50],[25,44],[25,34],[30,30],[27,21],[009,30],[009,35]];
+      
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_ORC_CAVE1, 1, 27, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST,  RID_ORC_CAVE3, 48, 77, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH,  RID_ORC_PIT_B, 125, 29, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      include oc02.ktm;
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

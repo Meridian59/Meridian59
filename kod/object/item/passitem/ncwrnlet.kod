@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NecromancerWarningLetter is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   NecromancerWarningLetter_name_rsc = "letter"
+   NecromancerWarningLetter_icon_rsc = scr08.bgf
+   NecromancerWarningLetter_desc_rsc = \
+      "This letter is scribbled mostly illegibly in a winding, chaotic script.  You can make out "
+      "the following phrases amongst its ramblings:\n"
+      "\"...There are things older than the ground on which we live.  There are beings ancient beyond your "
+      "wildest...\"\n"
+      "\"...no wisdom or sanctity in these beings.  There is only hunger.  They are here.\"\n"
+      "\"...hungry and all life is their prey.  Be warned.\""
+
+classvars:
+
+   vrName = NecromancerWarningLetter_name_rsc
+   vrIcon = NecromancerWarningLetter_icon_rsc
+   vrDesc = NecromancerWarningLetter_desc_rsc
+
+   viValue_average = 40
+   viWeight = 3
+   viBulk = 10
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

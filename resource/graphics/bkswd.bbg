@@ -1,0 +1,18 @@
+# Black dagger
+# groups
+# 1 display
+# 2 dropped
+# 3 broken
+
+
+-s 11
+3
+dagdis.bmp
+dagdrp.bmp
+dagbro.bmp
+
+3
+1 1
+1 2
+1 3
+

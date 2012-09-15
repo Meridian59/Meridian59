@@ -1,0 +1,218 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Skeleton is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   skeleton_koc_name_rsc = "chaleoc"
+   skeleton_name_rsc = "skeleton"
+   skeleton_icon_rsc = skelbody.bgf
+   skeleton_desc_rsc = \
+      "A few scraps of rotten flesh cling to this collection of "
+      "bones.  The skeleton, although lifeless, is animated by dark magicks."
+
+   skeleton_head = skelhed2.bgf
+
+   skeleton_dead_icon_rsc = skelX.bgf
+   skeleton_dead_name_rsc = "pile of bones"
+
+   skeleton_sound_miss = skl_atkm.wav
+   skeleton_sound_death = skl_dth.wav
+   skeleton_sound_aware = skl_awr.wav
+
+classvars:
+
+   vrKocName = skeleton_koc_name_rsc
+   vrName = skeleton_name_rsc
+   vrIcon = skeleton_icon_rsc
+   vrDesc = skeleton_desc_rsc
+   vrDead_icon = skeleton_dead_icon_rsc
+   vrDead_name = skeleton_dead_name_rsc
+
+   viTreasure_type = TID_TOUGH
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_THRUST
+   viAttributes = 0
+   viLevel = 75
+   viDifficulty = 5
+   viKarma = -50
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT \
+                        | AI_MOVE_FLEE_FRIGHTENERS
+
+   vrSound_miss = skeleton_sound_miss
+   vrSound_aware = skeleton_sound_aware
+   vrSound_death = skeleton_sound_death
+
+   vrHeadIcon = skeleton_head
+
+properties:
+
+   piAnimation = ANIM_NONE
+   
+messages:
+
+   Constructed()
+   {
+      send(self,@SetResistances);
+
+      propagate;
+   }
+
+   SetResistances()
+   {
+      plResistances = [ [ 70, ATCK_WEAP_PIERCE ],
+                        [ 70, ATCK_WEAP_THRUST ],
+                        [ 70, -ATCK_SPELL_UNHOLY ],
+                        [ 70, -ATCK_SPELL_SHOCK ],
+                        [ 70, -ATCK_SPELL_COLD ],
+                        [ -10, -ATCK_SPELL_FIRE ],
+                        [ -20, -ATCK_SPELL_HOLY ],
+                        [ -20, ATCK_WEAP_BLUDGEON ]
+                      ];
+
+      return;
+   }
+
+   % Used for defense messages
+   GetParryAbility(stroke_obj=$)
+   {
+      if stroke_obj <> $ AND NOT Send(stroke_obj,@CanParry)
+      {
+         return 0;
+      }
+      
+      return (viDifficulty*10)/2;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSlash);
+      
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      AddPacket(1,ANIMATE_CYCLE, 4,100, 2,2, 2,7);
+
+      return;
+   }
+
+   SendMoveOverlays()
+   {
+      % 1 overlay: the head.
+      AddPacket(1,1);
+      AddPacket(4,vrHeadIcon, 1,HS_HEAD, 1,ANIMATE_CYCLE, 4,100, 2,2, 2,7);
+      
+      return;
+   }
+
+   SendOverlays()
+   {
+      % 1 overlay: the head.
+      AddPacket(1,1);
+
+      if piAnimation = ANIM_ATTACK
+      {	 
+         AddPacket(4,vrHeadIcon, 1,HS_HEAD, 1,ANIMATE_ONCE, 4,100, 2,8, 2,13,
+                   2,1);
+      }
+      else
+      {
+         AddPacket(4,vrHeadIcon, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);
+      }
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,100, 2,8, 2,13, 2,1);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,1);
+      }
+      
+      return;
+   }
+
+   CreateTreasure(who=$,corpse=$)
+   {
+      local oTreasure, iHits;
+      
+      oTreasure = Create(&LongSword,#corpse=corpse);
+      iHits = Bound(Send(oTreasure,@GetHits)/Random(2,4),1,$);
+      Send(oTreasure,@SetHits,#number=iHits);
+              
+      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,
+                  #new_row=piRow,#new_col=piCol)
+      {
+         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+      }
+      else
+      {
+         Send(oTreasure,@Delete);
+      }
+      
+      propagate;
+   }
+
+   CreateDeadBody(killer=$)
+   {
+      local oBody;
+      
+      oBody = $;
+      if vrDead_icon <> $
+      {
+         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,
+                        #mob=TRUE,#playername=Send(killer,@GetTrueName),
+                        #monstername=vrName,#drawfx=viDead_drawfx,
+                        #PlayerBodyOverlay=vrHeadIcon);
+      }
+      
+      return oBody;
+   }
+
+   IsUndead()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

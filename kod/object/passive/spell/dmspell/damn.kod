@@ -1,0 +1,116 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Damn is DMSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   damn_name_rsc = "damn"
+   damn_icon_rsc = light.bgf
+   damn_desc_rsc = "Sends an unruly player to a small prison."
+
+   damn_msg_DM = "You damn %s%s to hell."
+   damn_msg_target = "You have been damned by %s%s!"
+
+   % This next line is also used by Deliverance (SID_DMRESCUE) to determine when to
+   %  reset the honor string.
+   damn_last_annoyed = " was sent to hell by "
+   damn_dot = "."
+
+classvars:
+
+   vrName = damn_name_rsc
+   vrIcon = damn_icon_rsc
+   vrDesc = damn_desc_rsc
+
+   viSpell_num = SID_DAMN
+
+properties:
+
+   poHell = $
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local i, j, oHell;
+
+      oHell = send(SYS,@FindRoomByNum,#num=RID_OUTOFGRACE);
+
+      for j in lTargets
+      {
+         i = j;
+
+         if isClass(i,&Battler)
+         {
+            send(i,@MsgSendUser,#message_rsc=damn_msg_target,
+                 #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetTrueName));
+            send(who,@MsgSendUser,#message_rsc=damn_msg_DM,
+                 #parm1=Send(i,@GetDef),#parm2=Send(i,@GetTrueName));
+
+            send(SYS,@UtilGoNearSquare,#what=i,#where=oHell,#new_row=4,#new_col=3);
+
+            if isClass(i,&Player)
+            {
+               % (example)  She was sent to hell by GuidePixie.
+
+               ClearTempString();
+               AppendTempString(send(i,@GetHeShe,#cap=TRUE));
+               AppendTempString(damn_last_annoyed);
+               AppendTempString(send(who,@GetTrueName));
+               AppendTempString(damn_dot);
+
+               send(i,@SetHonorString,#string=GetTempString());
+            }
+
+            continue;
+         }
+
+         if isClass(i,&LogoffGhost)
+         {
+            Send(SYS,@UtilGoNearSquare,#what=i,#where=oHell,#new_row=4,#new_col=3);
+
+            i = send(i,@GetGhostedPlayer);
+            send(who,@MsgSendUser,#message_rsc=damn_msg_DM,
+                 #parm1=Send(i,@GetDef),#parm2=Send(i,@GetTrueName));
+            send(i,@SetSaveLocation,#rid=RID_OUTOFGRACE,#row=4,#col=3);
+
+            % (example)  She was sent to hell by GuidePixie.
+
+            ClearTempString();
+            AppendTempString(send(self,@GetHeShe,#cap=TRUE));
+            AppendTempString(damn_last_annoyed);
+            AppendTempString(send(who,@GetTrueName));
+	    AppendTempString(damn_dot);
+
+            send(i,@SetHonorString,#string=GetTempString());
+
+            continue;
+         }
+
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+              #parm1=Send(self,@GetName),#parm2=Send(i,@GetIndef),
+              #parm3=Send(i,@GetName));
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,14 @@
+# War priest of Krlnaan
+# Right leg 
+# groups
+# 1  standing
+-s 3
+6
+wr000rls.bmp   [-10, -10] 
+wr045rls.bmp   [-17, -13] 
+wr090rls.bmp   [-14, -12] 
+wr180rls.bmp   [-13, -7] 
+wr270rls.bmp   [-8, -16] 
+wr315rls.bmp   [-11, -9] 
+1
+ 8      1   6   5   4   4   4   3   2

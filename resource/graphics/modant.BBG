@@ -1,0 +1,14 @@
+# red ant, model (for Raza museum)
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 4
+6
+ANRT000A.bmp   [0, 0] 
+anr315A.bmp    [0, 0] 
+anr270A.bmp    [0, 0] 
+anr180A.bmp    [0, 0] 
+anr090A.bmp    [0, 0] 
+anr045A.bmp    [0, 0] 
+1
+ 8   1 2 3 4 4 4 5 6 

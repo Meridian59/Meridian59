@@ -1,0 +1,145 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FiveCouncilor is Council
+
+constants:
+
+   include blakston.khd
+   NUM_MANA_FOR_SPECIAL = 60
+
+resources:
+
+   fiveCouncilor_name_rsc = "Esseldi"
+   fiveCouncilor_icon_rsc = fivecon.bgf
+   fiveCouncilor_desc_rsc = "A great traveler and explorer, he now hunts "
+      "for the appearances of the mystical mana nodes.  Esseldi attempts to "
+      "wear the stately dress of the court, yet always manages to tatter them "
+      "up on his impromptu explorations.  He enjoys talking about all of his "
+      "findings, whether relevant to anyone else or not."
+
+   fivecon_true_ideal_rsc = \
+      "I'm glad to see that you share my interest in the mystical nodes."
+   fivecon_half_ideal_rsc = \
+      "You must not be a curious sort to have acquired so little mana in "
+      "your travels."
+   fivecon_unwanted_give = \
+      "~k%s%s tells you, \"You keep it.  You never know when you are going to "
+      "need it.~n~k\""
+
+
+classvars:
+
+   vrName = fiveCouncilor_name_rsc
+   vrDesc = fiveCouncilor_desc_rsc
+   vrIcon = fiveCouncilor_icon_rsc
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM \
+                  | MOB_RECEIVE | MOB_TEACHER | MOB_SELLER
+   viOccupation = MOB_ROLE_COUNCILMEMBER
+   viInitialState = 1
+   viGender = GENDER_MALE   
+
+   viHomeroom = RID_B6
+   viMyRow = 6
+   viMyCol = 8
+   viMyANGLE = ANGLE_NORTH_WEST
+
+   vrUnwanted_give = fivecon_unwanted_give
+   
+   viMerchant_markup = MERCHANT_RIPOFF
+
+properties:
+
+   piStateBump = 1
+
+messages:
+
+   Constructor()
+   {
+     plWantedItems = [&FiveToken];
+     
+     propagate;
+   }
+
+   UserEntered(who = $)
+   {
+      if Send(who,@GetAction) = UA_HAPPY
+      {
+         Send(self,@SetMood,#new_mood=piMood + 2);
+      }
+      
+      if Send(who,@GetAction) = UA_SAD
+      {
+         Send(self,@SetMood,#new_mood=piMood - 1);
+      }
+      
+      propagate;
+   }
+
+   AffectMood( why = $, what = $ )
+   {
+      if why = MOODMOD_ACCEPT_ITEM
+      {
+         if IsClass(what,&WaterSkin)
+         {
+            Send(self,@SetMood,#new_mood=piMood + 1);
+            return;
+         }
+      }
+      
+      if why = MOODMOD_DAWN
+      {
+         Send(self,@SetMood,#new_mood=piMood - 1);
+         
+         return;
+      }
+      
+      if why = MOODMOD_DUSK 
+      {
+         Send(self,@SetMood,#new_mood=piMood + 1);
+         
+         return;
+      }
+      
+      return;
+   }
+
+   CheckSpecialDeliverer(who=$)
+   {
+      piStateBump = 1; 
+      if Send(who,@GetMaxMana) >= NUM_MANA_FOR_SPECIAL
+      {
+         piStateBump = 2;
+         
+         return FiveCon_true_ideal_rsc;
+      }
+      else
+      {
+         return FiveCon_half_ideal_rsc;
+      }
+      
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ $,
+                     $,
+                     [ SID_PURGE, SID_CRYSTALIZE_MANA ],
+                     $
+                   ];
+      
+      return;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

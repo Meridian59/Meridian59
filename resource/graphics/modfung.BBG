@@ -1,0 +1,14 @@
+# fungus beast, model (for Raza museum)
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 7
+6
+fun000sa.bmp   [0, 0] 
+fun315sa.bmp   [0, 0] 
+fun270sa.bmp   [0, 0] 
+fun180sa.bmp   [0, 0] 
+fun090sa.bmp   [0, 0] 
+fun045sa.bmp   [0, 0] 
+1
+ 8   1 2 3 4 4 4 5 6 

@@ -1,0 +1,120 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKA5 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKA5 ="Outside the Guard Tower"
+   room_OutdoorsKA5 = KA5.roo
+   OutdoorsKA5_music = avarwar.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKA5
+
+   viTeleport_row = 15
+   viTeleport_col = 46
+   viTerrain_type = TERRAIN_JUNGLE | TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_OutdoorsKA5
+   prMusic = OutdoorsKA5_music
+   piRoom_num = RID_KA5
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   % ENTRY POINT IN RID_KOC_GUARDTOWER_EAST is (3, 40)
+
+   Constructed()
+   {
+      plMonsters = [ [&Avar, 95], [&Dragonfly, 5] ];
+      plGenerators = [ [6,48], [23,41], [9,6] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      %% do not propagate
+      plItem_coords = [ [&RainbowFern,13,51], [&RainbowFern,12,5], [&RainbowFern,25,42],
+                        [&FireSand,46,31], [&FireSand,49,28]
+                      ];
+
+      return;
+   }
+
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KA4, 49, 15, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KB4, 39, 1, ROTATE_NONE, ROW_IS_LESS_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KB5, 16, 1, ROTATE_NONE, ROW_IS_GREATER_THAN,20], plEdge_exits);
+
+      plExits = Cons([ 45, 23, RID_KOC_GUARDTOWER_EAST, 3, 40, ROTATE_NONE ],plExits);
+      plExits = Cons([ 45, 24, RID_KOC_GUARDTOWER_EAST, 3, 40, ROTATE_NONE ],plExits);
+      plExits = Cons([ 46, 23, RID_KOC_GUARDTOWER_EAST, 3, 40, ROTATE_NONE ],plExits);
+      plExits = Cons([ 46, 24, RID_KOC_GUARDTOWER_EAST, 3, 40, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   GetClan()
+   {
+      if random(1,2) = 1
+      {
+         return AVARCLAN_PROMAGIC;
+      }
+      
+      return AVARCLAN_ANTIMAGIC;
+   }
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
+           #new_row=15,#new_col=4,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
+           #new_row=20,#new_col=7,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
+           #new_row=4,#new_col=13,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
+           #new_row=17,#new_col=37,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
+           #new_row=16,#new_col=51,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
+           #new_row=26,#new_col=36,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE3),
+           #new_row=2,#new_col=47,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

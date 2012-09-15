@@ -1,0 +1,41 @@
+# Dark Angel wings
+# 
+# Groups:
+#          1-4 flapping
+#^Applied to Hotspot: 1
+#*Groups: 4
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+24
+angw000a.bmp   [123, 40] 
+angw315a.bmp   [162, 36] 
+angw270a.bmp   [166, 35] 
+angw180a.bmp   [107, 36] 
+angw090a.bmp   [15, 35] 
+angw045a.bmp   [45, 35] 
+angw000b.bmp   [71, 33] 
+angw315b.bmp   [138, 35] 
+angw270b.bmp   [168, 37] 
+angw180b.bmp   [58, 34] 
+angw090b.bmp   [43, 33] 
+angw045b.bmp   [21, 36] 
+angw000c.bmp   [38, 30] 
+angw315c.bmp   [52, 33] 
+angw270c.bmp   [138, 34] 
+angw180c.bmp   [31, 34] 
+angw090c.bmp   [132, 42] 
+angw045c.bmp   [98, 32] 
+angw000d.bmp   [50, 34] 
+angw315d.bmp   [114, 35] 
+angw270d.bmp   [166, 33] 
+angw180d.bmp   [29, 33] 
+angw090d.bmp   [81, 32] 
+angw045d.bmp   [27, 35] 
+4
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 

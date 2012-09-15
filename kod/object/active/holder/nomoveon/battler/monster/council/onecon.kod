@@ -1,0 +1,152 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OneCouncilor is Council
+
+constants:
+
+   include blakston.khd
+   NUM_SPELLS_FOR_SPECIAL = 16
+
+resources:
+
+   oneCouncilor_name_rsc = "Alzahakar"
+   oneCouncilor_icon_rsc = onecon.bgf
+   oneCouncilor_desc_rsc = "Renown as the most powerful wizard in the Kingdom, Alzahakar stands proudly "
+      "before you.  You can feel the conflicting will of four separate gods within him.  As one of the "
+      "oldest friends of King Zarcos V, he has been counseling the princess since birth."
+
+   onecon_true_ideal_rsc = "I have great respect for your knowledge of magic, and having you return my token has affected me greatly."
+   onecon_half_ideal_rsc = "I would be more impressed if you knew more spells, yet you have potential."
+
+   onecon_not_ready = "You are not yet ready to learn the lost arts."
+   onecon_already_has = "You already know of the lost secrets of Riija."
+
+   onecon_unwanted_give = "~k%s%s tells you, \"What possible use could a wizard of my stature have for that?~n~k\""
+
+
+classvars:
+
+   vrName = oneCouncilor_name_rsc
+   vrDesc = oneCouncilor_desc_rsc
+   vrIcon = oneCouncilor_icon_rsc
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER
+   viOccupation = MOB_ROLE_COUNCILMEMBER
+   viInitialState = 201  %leaning to the princess
+   viGender = GENDER_MALE   
+
+   viHomeroom = RID_HERMITHUT
+   viMyRow = 4
+   viMyCol = 8
+   viMyAngle = ANGLE_WEST
+
+   vrUnwanted_give = onecon_unwanted_give
+
+
+properties:
+
+   piStateBump=1
+
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_FACTION_CHANGE )
+      {
+	 if( what = FACTION_DUKE )
+	 {
+	    send( self, @SetMood, #new_mood = piMood - 2 );
+	    return;
+	 }
+	 if( what = FACTION_PRINCESS )
+	 {
+	    send( self, @SetMood, #new_mood = piMood + 2 );
+	    return;
+	 }
+      }
+      return;
+   }
+
+   Constructor()
+   {
+     plWantedItems = [&OneToken];
+     propagate;
+   }
+
+   CheckSpecialDeliverer(who=$)
+   {
+     piStateBump = 1; 
+     if Length(Send(who,@GetSpellList)) >= NUM_SPELLS_FOR_SPECIAL
+     { piStateBump = 2; return OneCon_true_ideal_rsc; }
+     else { return OneCon_half_ideal_rsc; }
+     return;
+   }
+
+   SetForSale()
+   {
+		plFor_Sale = [$,$,[SID_SHADOW_FORM]];
+		return;
+   }
+
+   CanDoTeach(who=$,sid=0)
+   {
+		if sid = SID_SHADOW_FORM
+		{
+			if not send(self,@CanAddSpell,#report = TRUE,#who=who,#num=sid)
+			{ return FALSE; }
+		}
+		propagate;
+   }
+
+	CanAddSpell(who=$,num=0, report = FALSE)
+	{
+		local lSpells, i, bOkay, oSpell;
+			
+		if who = $ or num = 0
+		{ DEBUG("Called canaddspell with bad parameters!"); return FALSE; }
+
+		if num <> SID_SHADOW_FORM   { propagate; }
+		
+		if send(who,@hasspell,#num=SID_SHADOW_FORM)
+		{
+			if report
+			{ post(self,@saytoone,#target=who,#message_rsc=onecon_already_has,
+			   #parm1=send(who,@getlordlady)); }
+			return FALSE;
+		}
+		
+		bOkay = FALSE;
+		lSpells = send(who,@GetSpellList);
+		for i in lSpells
+		{
+			oSpell = send(SYS,@FindSpellByNum,#num=send(who,@decodespellnum,#compound=i)); 
+			if send(oSpell,@GetLevel) > 4
+			{
+				bOkay = TRUE;
+				break;
+			}
+		}
+		if bOkay		%% player has a fifth level spell, can learn shadowform
+		{
+           % if report
+		   %	{ post(self,@saytoone,#target=who,#message_rsc=onecon_ready);  }
+			return TRUE;
+		}
+		%%%% player doesn't have a fifth level spell, denied
+        
+		if report
+		{ post(self,@saytoone,#target=who,#message_rsc=onecon_not_ready); }
+		return FALSE;					
+
+	}
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

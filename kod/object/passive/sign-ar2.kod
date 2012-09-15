@@ -1,0 +1,154 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ArenaSign2 is PassiveObject
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   newarenasign_name_rsc = "Kraanan's Pride"
+   newarenasign_icon1_rsc = artrop01.bgf
+   newarenasign_icon2_rsc = artrop02.bgf
+   newarenasign_icon3_rsc = artrop03.bgf
+   newarenasign_icon4_rsc = artrop04.bgf
+
+   newarenasign_desc_rsc = \
+   "Longest winning streaks (%s):\n %s %s %s %s %s" 
+   newarenasign_dummy_line =  "    %s  (%i %s)\n"
+   newarenasign_line = "    %q  (%i %s)\n"
+   newarenasign_blank_rsc = " "
+   newarenasign_win = "win"
+   newarenasign_wins = "wins"
+
+   newarenasign_dummy_name = "Noimad Trebuhcs"
+
+classvars:
+
+properties:
+
+   vrName = newarenasign_name_rsc
+   vrIcon = newarenasign_icon1_rsc
+   vrDesc = newarenasign_desc_rsc
+
+   piStyle = STYLE_ONE_ON_ONE
+
+messages:
+
+   Constructor(name=$, style = $, icon = $)
+   {
+      if name <> $
+        {  vrName = name; }
+
+      if style <> $
+        {  piStyle = style; }
+
+      if piStyle = STYLE_ONE_ON_ONE
+        {  vrIcon = newarenasign_icon1_rsc;  }
+      if piStyle = STYLE_LAST_MAN_STANDING
+        {  vrIcon = newarenasign_icon2_rsc;  }
+      if piStyle = STYLE_GUILD_VS_GUILD
+        {  vrIcon = newarenasign_icon3_rsc;  }
+      if piStyle = STYLE_LAST_GUILD_STANDING
+        {  vrIcon = newarenasign_icon4_rsc;  }
+
+      propagate;
+   }
+
+   NewOwner(what=$)
+   "Deletes itself if not loaded into the Tos Arena."
+   "The poOwner=$ is necessary to keep it from deleting itself as soon as it's made."
+   {
+     if what = $
+       {
+          return;
+       }
+     else
+       {
+          if isClass(what,&TosArena)
+             {  propagate; }
+          else
+             {
+               send(self,@delete); }
+       }
+     propagate;
+   }
+
+   ShowDesc()
+   "Shows a message w/ the most number of kills ever on it."
+   {
+      local oWatcher, lChamplist, iCount, i, oArena;
+
+      oArena = send(SYS,@findroombynum,#num=RID_TOS_ARENA);
+
+      oWatcher = send(oArena,@getWatcher);
+      if oWatcher = $
+        {
+          DEBUG("Arena sign in Arena without watcher!");
+          return;
+        }
+      lChampList = send(oWatcher,@getchampionsList,#style = piStyle);
+
+      AddPacket(4,newarenasign_desc_rsc);
+      Addpacket(4,send(oWatcher,@getcombatname,#style=piStyle));
+
+      iCount = 0;
+      for i in lChampList
+        {           
+           if first(i) = $
+             {
+                if iCount = 0
+                {                  
+                  addpacket(4,newarenasign_dummy_line);
+                  addpacket(4,newarenasign_blank_rsc);
+                  addpacket(4,newarenasign_blank_rsc);
+                  addpacket(4,newarenasign_blank_rsc);
+                  addpacket(4,newarenasign_blank_rsc);
+
+                  addpacket(4,newarenasign_dummy_name,4,1,4,newarenasign_wins);
+                  return;
+               }
+                else
+                {                  
+                  addpacket(4,newarenasign_blank_rsc);
+                }
+             }
+             else
+              {                
+                addpacket(4,newarenasign_line);
+              }
+            iCount = iCount + 1;
+        }
+
+      for i in lChampList
+        {
+           if first(i) <> $
+             {
+               addpacket(STRING_RESOURCE,send(first(i),@gettruename));
+               addpacket(4,nth(i,2));
+               if nth(i,2) > 1
+                 {  addpacket(4,newarenasign_wins);  }
+               else
+                 {  addpacket(4,newarenasign_win);  }                 
+             }
+        } 
+      return;
+   }
+    
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

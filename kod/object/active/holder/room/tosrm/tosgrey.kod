@@ -1,0 +1,84 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosGrey is TosRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_tosgrey = tosgrey.roo
+   room_name_tosgrey = "Abandoned Building"
+   tosgrey_music = tos.mid
+
+   news_game_name = "Game Discussion"
+   news_game_desc = "A free-for-all about Meridian 59."
+
+classvars:
+
+   vrName = room_name_tosgrey
+
+   viTeleport_Row = 4
+   viTeleport_Col = 4
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_RESIDENCE
+
+properties:
+
+   prRoom = room_tosgrey
+   piRoom_num = RID_TOS_GREY
+   prMusic = tosgrey_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 0
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % exits back to tos
+      plExits = Cons([  4, 7, RID_TOS,  24, 17, ROTATE_NONE ],plExits);
+      plExits = Cons([  5, 7, RID_TOS,  24, 17, ROTATE_NONE ],plExits);
+
+%      plExits = Cons([  9, 28, RID_TOS,  9, 26, ROTATE_NONE ],plExits);
+%      plExits = Cons([ 14, 22, RID_TOS, 14, 24, ROTATE_NONE ],plExits);
+%      plExits = Cons([ 24, 28, RID_TOS, 24, 26, ROTATE_NONE ],plExits);
+%      plExits = Cons([ 24, 21, RID_TOS, 25, 24, ROTATE_NONE ],plExits);
+
+%      plExits = Cons([ 28, 28, RID_TOS, 28, 26, ROTATE_NONE ],plExits);
+%      plExits = Cons([ 28, 22, RID_TOS, 28, 24, ROTATE_NONE ],plExits);
+%      plExits = Cons([ 40, 13, RID_TOS, 42, 13, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      include tosgrey.ktm ;
+
+      oNews = Send(SYS,@FindNewsByNum,#num=NID_GAME);
+      if oNews = $
+      {
+	 oNews = Create(&News,#nid=NID_GAME,
+			#name=news_game_name,#desc=news_game_desc);
+      }
+      Send(self,@NewHold,#what=oNews,#new_row=2,#new_col=2);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,27 @@
+# Lt Brown female face 2 - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000lab.bmp   [-15, -8] 
+Pe045lab.bmp   [-19, -10] 
+Pe090lab.bmp   [-15, -11] 
+Pe270lab.bmp   [-4, -11] 
+Pe315lab.bmp   [-6, -10] 
+Pe000lbb.bmp   [-15, -8] 
+Pe045lbb.bmp   [-19, -10] 
+Pe315lbb.bmp   [-6, -10] 
+Pe000lcb.bmp   [-15, -8] 
+Pe045lcb.bmp   [-19, -10] 
+Pe315lcb.bmp   [-6, -10] 
+Pe000ldb.bmp   [-15, -8] 
+Pe045ldb.bmp   [-19, -10] 
+Pe315ldb.bmp   [-6, -10] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

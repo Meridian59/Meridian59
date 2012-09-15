@@ -1,0 +1,145 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NecropolisPortal is Portal
+
+constants:
+
+   include blakston.khd
+
+   % 30 seconds (in ms)
+   NECROPORTAL_CLOSE_TIME = 30 * 1000
+
+resources:
+
+   NecropolisPortal_icon_rsc = teleport.bgf
+
+   NecropolisPortal_closing = "The portal flickers and begins to draw imperceptibly in on itself."
+   NecropolisPortal_closed = "The portal disappears."
+
+classvars:
+
+   viObject_flags = MOVEON_TELEPORTER
+
+   viMaxDistance = 0
+
+properties:
+
+   vrIcon = NecropolisPortal_icon_rsc
+
+   pbAnimate = TRUE
+
+   ptClosePortal = $
+
+messages:
+
+   Constructor(lLocation=$)
+   {
+      Send(self, @SetTarget, #lTarget = lLocation);
+      propagate;
+   }
+   
+   SetTarget(lTarget = $)
+   {
+      if lTarget = $
+      {
+         debug("Necropolis portal got empty target");
+         return;
+      }
+      piDest_room = Nth(lTarget,1);
+      piDest_row = Nth(lTarget,2);
+      piDest_col = Nth(lTarget,3);
+      piDest_fine_row = Nth(lTarget,4);
+      piDest_fine_col = Nth(lTarget,5);
+
+      return;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      % Don't allow monsters to escape through these portals
+      if (NOT IsClass(what, &Player)) 
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+   SomethingLeft(what=$)
+   {
+      local oPlayer;
+
+      if isClass(what,&Player)
+      {
+         % A player just left, so check if there are any left in the room
+         for oPlayer in send(poOwner,@GetHolderActive)
+         {
+            if IsClass(first(oPlayer),&Player)
+            {
+               propagate;
+            }
+         }
+
+         % No players left, start closing it!
+         for oPlayer in send(poOwner,@GetHolderActive)
+         {
+            if isClass(first(oPlayer),&Player)
+            {
+               Send(first(oPlayer),@MsgSendUser,#message_rsc=NecropolisPortal_closing);
+            }
+         }
+
+         if ptClosePortal <> $
+         {
+            DeleteTimer(ptClosePortal);
+            ptClosePortal = $;
+         }
+
+         ptClosePortal = createTimer(self,@ClosePortal,NECROPORTAL_CLOSE_TIME);
+      }
+
+      propagate;
+   }
+
+   ClosePortal()
+   {
+      local oPlayer;
+
+      ptClosePortal = $;
+
+      for oPlayer in send(poOwner,@GetHolderActive)
+      {
+         if IsClass(first(oPlayer),&Player)
+         {
+            Send(first(oPlayer),@MsgSendUser,#message_rsc=NecropolisPortal_closed);
+         }
+      }
+
+      send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptClosePortal <> $
+      {
+         DeleteTimer(ptClosePortal);
+
+         ptClosePortal = $;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

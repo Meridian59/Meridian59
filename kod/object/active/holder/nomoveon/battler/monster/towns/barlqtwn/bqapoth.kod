@@ -1,0 +1,184 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarloqueApothecary is BarloqueTown
+
+constants:
+
+   include blakston.khd
+
+   ANIM_WAVE = 1
+
+resources:
+
+   barloque_apothecary_name_rsc = "Joguer"
+   barloque_apothecary_icon_rsc = bqapoth.bgf
+   barloque_apothecary_desc_rsc = \
+      "Whistling an inane tune to himself, Joguer takes great care in tending to his fresh garden "
+      "of magical herbs and mushrooms. Many say he is the foremost herbalist in the land."
+
+   BqApo_entry_welcome = "Congratulations! Thou hath found the best shop in the land."
+   BqApo_unwanted_give = "~k%s%s tells you, \"I fear that I have no use for thy offering.  Mayhaps thou should seek to sell it at another establishment.~n~k\""
+
+   BqApo_firesand_sale = "Looking for %s%s?  I happend to have imported some from the island of Ko'catan."
+
+classvars:
+
+   vrName = barloque_apothecary_name_rsc
+   vrIcon = barloque_apothecary_icon_rsc
+   vrDesc = barloque_apothecary_desc_rsc
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_NOMOVE | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_TEACHER | MOB_PERM_QUESTER | MOB_LAWFUL | MOB_COND_SELLER
+   viOccupation = MOB_ROLE_APOTHECARY
+   viMerchant_markup = MERCHANT_DISCOUNT
+   viQuestID = QST_ID_FADE_SPELL
+
+   vrUnwanted_give = BqApo_unwanted_give
+
+properties:
+
+
+messages:
+
+   AffectMood(why = $, what = $)
+   {
+      if why = MOODMOD_ACCEPT_ITEM
+      {
+         send(self,@SetMood,#new_mood=piMood + 1);
+         
+         return;
+      }
+      
+      if why = MOODMOD_FACTION_CHANGE
+      {
+         if what = FACTION_DUKE
+         {
+            send(self,@SetMood,#new_mood=piMood - 3);
+            
+            return;
+         }
+         
+         if what = FACTION_PRINCESS
+         {
+            send(self,@SetMood,#new_mood=piMood + 3);
+            
+            return;
+         }
+      }
+      
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood + 2);
+         
+         return;
+      }
+      
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood - 2);
+         
+         return;
+      }
+      
+      if why = MOODMOD_SELL_ITEM
+      {
+         send(self,@SetMood,#new_mood=piMood + 2);
+         
+         return;
+      }
+
+      return;
+   }
+
+   InitPermQuest()
+   {
+      Post(Send(SYS,@GetLibrary),@CreateQuest,#type=QST_PERM,#quester=self,
+           #reward=[QST_REWARD_ID,viQuestID]);
+           
+      return;
+   }
+
+   Constructor()
+   "We start a permanent quest for learning a spell" 
+   {
+      Send(self,@InitPermQuest);
+      
+      propagate;
+   }
+
+   CanAddSpell(who=$,num=0)
+   "We require that a quest be done before one of the spells can be learned"
+   {
+      if (num = SID_FADE
+          OR num = SID_HEAT)
+         AND NOT send(self,@HasDoneLearnQuest,#who=who)
+      {
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   SetForSale()
+   "Admin supported\n"
+   "Clears and recreates plFor_sale."
+   {
+      local lSale;
+      plFor_sale = [ [ Create(&Herbs,#number=5),
+                       Create(&Mushroom,#number=5),
+                       Create(&Elderberry,#number=5),
+                       Create(&RedMushroom,#number=4),
+                       Create(&Flask) ],
+                     $,
+                     [ SID_HEAT, SID_FADE ],
+                     $];
+      return;
+   }
+
+   InitCondSale()
+   {
+      local oObj;
+
+      oObj=Create(&FireSand,#number=2);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,400,BqApo_firesand_sale]);
+           
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      if send(who,@GetHomeRoom) = RID_TOS_INN
+      {
+         send(self,@SetMood,#new_mood=piMood - 1);
+         
+         % don't greet these guys
+         propagate;
+      }
+      
+      Send(poOwner,@SomeoneSaid,#what=self,#string=BqApo_entry_welcome,#type=SAY_RESOURCE);
+
+      if Send(who,@GetFaction) = FACTION_PRINCESS
+      {
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+      
+      if send(who,@GetHomeRoom) = RID_BAR_INN
+      {
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+      
+      propagate;
+   }
+   
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,154 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttEnchanted is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This weapon attribute merely flags the weapon as having the 'magic'
+%		flag flipped - some monsters are susceptible to magic attacks.
+% 
+%  Form is: 
+%
+%   	[WA_ENCHANTED, timer ]
+%	
+%       timer::the length of time, from 1 to 25 realtime hours,
+%			that the enchantment lasts (depending on spell factors).
+%
+%  Note that if a weapon ends up permanently holy or unholy, then this
+%       attribute is no longer necessary, since the attack values flags
+%       in weapon stores this information.  This information is only
+%       stored here so that eventually, it may be forgotten.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+   
+   waEnchant_gone = "Your %s suddenly seems a little more... ordinary."
+   waEnchanted = "  This weapon has been dedicated to Kraanan's glory."
+   waEnchanted_name = "enchanted %s"
+   enchanted_dm = "enchanted"
+
+classvars:
+
+   viItem_Att_Num = WA_ENCHANTED
+   vrDesc = waEnchanted
+   vrName = waEnchanted_name
+
+   vrDM_trigger = "enchanted"
+
+properties:
+  
+messages:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   AddSelfToRandomItem(oItem = $, who=$)
+   {
+      local iSpellType, iRand;
+      
+      if oItem = $ or who = $  { DEBUG("BAD BAD BAD"); return FALSE; }
+	
+      if send(self,@ReqAddToItem,#oItem=oItem)
+      {
+	 send(self,@AddToItem,#oItem=oItem,
+	    #timer_duration = random(3600000,86400000),#random_gen=TRUE);
+      }
+      return;
+   }
+
+
+   ReqAddToItem(oItem=$)
+   "You currently cannot have two different spelltypes "
+   "on a weapon at the same time."
+   {
+      if send(oItem,@getattackspell) > 0
+      { return FALSE; }
+
+      return TRUE;
+   }
+
+   HasTimer(lData=$)
+   "This must return true for any attribute that has a timer!"
+   "Theoretically, some atts could have or not have a timer, "
+   "depending on certain factors, so lData is the ItemAtt structure,"
+   "which can be examined for length to see if the timer exists."
+   {
+      return TRUE;
+   }
+
+   TimerExpired(oItem=$,lData=$)
+   {
+      SetNth(lData,2,$);   %% timer is gone, now remove reference
+      send(self,@RemoveFromItem,#oItem=oItem, #lData = lData);
+   
+      return;
+   }
+
+   AddEffects(oItem = $, lData = $)
+   {
+      local iSpellType;
+      if oItem = $ or lData = $ { DEBUG("AddEffects failed!"); return FALSE; }
+	
+      if Send(oItem,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
+      { DEBUG("This shouldn't have happened!  Adding effect already here!"); return; }
+
+      Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_MAGIC,#value=True);
+      Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_NONMAGIC,#value=False);
+      return;
+   }
+
+   RemoveEffects(oItem = $,lData = $)
+   {
+      local iSpellType, oPlayer;
+	
+      if oItem = $ or lData = $
+      {
+%	 DEBUG("RemoveEffects failed!");
+	 return FALSE;
+      }
+	
+      if not Send(oItem,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
+      { DEBUG("This shouldn't have happened!  Removing effect not here!"); return; }
+		
+      oPlayer = send(oItem,@getOwner);
+      if oPlayer <> $ and isClass(oPlayer,&user)
+      {
+	 send(oPlayer,@msgsenduser,#message_rsc = waenchant_gone,
+	    #parm1=send(oItem,@getname));
+      }
+      Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_MAGIC,#value=False);
+      Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_NONMAGIC,#value=True);
+
+      return;
+   }
+
+%% moved up to the ItemAtt superclass, where it belongs!!
+%   RemoveFromItem(oItem = $, lData = $)
+%   {
+%      send(self,@RemoveEffects,#oItem=oItem,#lData=lData);
+%      propagate;
+%   }
+
+   InitiallyIdentified()
+   {
+      return TRUE;
+   }   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

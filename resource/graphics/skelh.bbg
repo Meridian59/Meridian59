@@ -1,0 +1,16 @@
+# Skeleton skull
+# groups
+# 1 for all views
+#^Applied to Hotspot: 1
+#*Groups: 1
+#* Unlabeled Group
+-s 4
+6
+sku000.bmp     [-11, -22] 
+sku315.bmp     [-15, -21] 
+sku270.bmp     [-16, -20] 
+sku180.bmp     [-11, -20] 
+sku090.bmp     [-12, -20] 
+sku045.bmp     [-9, -21] 
+1
+ 8   1 2 3 4 4 4 5 6 

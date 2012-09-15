@@ -1,0 +1,10 @@
+# shield for bottom left of screen
+# 1 shield ready (barely there)
+# 2 shield prominent
+-s 1
+2 
+povsmshA.bmp
+povsmshB.bmp
+2 
+1 1 
+1 2 

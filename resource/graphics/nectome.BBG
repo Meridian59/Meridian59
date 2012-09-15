@@ -1,0 +1,19 @@
+# necropolis tome
+# 
+#^Applied to Hotspot: 0
+#*Groups: 4
+#* display, closed
+#* display, open
+#* dropped, closed
+#* dropped, open
+-s 10
+4
+tomedspa.bmp   [0, 0] 
+tomedspb.bmp   [0, 0] 
+tomedrpa.bmp   [0, 0] 
+tomedrpb.bmp   [0, 0] 
+4
+ 1   1 
+ 1   2 
+ 1   3 
+ 1   4 

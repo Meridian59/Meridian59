@@ -1,0 +1,180 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Web is ActiveWallElement
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Web_name_rsc = "web"
+   Web_icon_rsc = webspell.bgf
+   Web_desc_rsc = "The web looks very sticky indeed."
+
+   web_stick0 = "You navigate the webs without getting stuck to them."
+   web_stick1 = "You momentarily find yourself stuck to the webs."
+   web_stick2 = "Your boots almost come off, stuck to the webs."
+   web_stick3 = "Is there something stuck to your boot or are you stuck to IT?"
+   web_stick5 = "You find yourself helplessly stuck to the spider web!"
+
+   web_dissipates = "A piece of the web withers and disappears before your eyes."
+
+   web_stick_snd = frying.wav
+
+   web_stuck = "%s%s appears to be stuck in a patch of sticky spider webbing."
+
+classvars:
+
+   vrName = Web_name_rsc
+   vrIcon = Web_icon_rsc
+   vrdesc = Web_desc_rsc
+
+   viObject_flags = LOOK_NO | MOVEON_NOTIFY
+
+   vrDissipateMessage = web_dissipates
+   vrUnaffectedMessage = web_stick0
+
+   vbPeriodic = FALSE
+
+   % Webs are dangeous, they can affect the caster.
+   vbCanAffectCaster = TRUE
+
+properties:
+
+   piMaxHoldTime = 0
+   plExcludedMonsters = $
+
+messages:
+   
+   Constructor(caster = $, duration = 75, MaxHoldTime = 0)
+   {
+      piMaxHoldTime = MaxHoldTime;
+
+      % A list of monsters not affected by webbing
+      % Includes: Spiders, Bosses, Fliers, Xeos, and Revenants
+      plExcludedMonsters = [ &Spider, &SpiderBaby, &SpiderQueen, &DeathSpider,
+                             &Lich, &LupoggKing, &Yeti, &Ghost,
+                             &DragonFly, &DragonFlyQueen, &EvilFairy, &Fairy,
+                             &DarkAngel, &Kriipa, &XeoAir, &XeoFire,
+                             &Revenant
+                           ];
+     
+      propagate;
+   }
+
+   GetDuration(duration = 0)
+   {
+      local iDuration;
+
+      iDuration = Random(duration-20,duration+20);
+      iDuration = iDuration * 1000;
+      iDuration = bound(iDuration,20000,150000);
+
+      return iDuration;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      local cWhatClass;
+
+      cWhatClass = GetClass(what);
+
+      if FindListElem(plExcludedMonsters,cWhatClass) <> 0
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+   DoEffect(what = $, new_row = $, new_col = $)
+   {
+      local iHoldTime, oSpell, oWatcher, rMessage;
+
+      iHoldTime = 0;
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SUMMON_WEB);
+
+      if Send(what,@IsEnchanted,#what=oSpell)
+         OR (Send(what,@GetRow) = new_row
+             AND Send(what,@GetCol) = new_col)
+      {
+         return;
+      }
+
+      if piMaxHoldTime > 0
+      {
+         iHoldTime = Random(piMaxHoldTime - 2,piMaxHoldTime);
+         iHoldTime = bound(iHoldTime,1,$);
+
+         if IsClass(what,&Monster)
+         {
+            iHoldTime = iHoldTime * 3 / 2;
+         }
+      }
+
+      if iHoldTime > 0
+      {
+         Send(oSpell,@DoHold,#what=poCaster,#oTarget=what,#iDurationSecs=iHoldTime,
+              #report=FALSE);
+      }
+
+      if isClass(what,&User)
+      {
+         if iHoldTime = 0
+         {
+            rMessage = web_stick0;
+         }
+         else
+         {
+            % Duration greater than 0
+            Send(what,@WaveSendUser,#wave_rsc=web_stick_snd);
+
+            if iHoldTime < 2
+            {
+               rMessage = web_stick1;
+            }
+            else
+            {
+
+               if iHoldTime < 3
+               {
+                  rMessage = web_stick2;
+               }
+               else
+               {
+                  if iHoldTime < 4
+                  {
+                     rMessage = web_stick3;
+                  }
+                  else
+                  {
+                     rMessage = web_stick5;
+                  }
+               }
+            }
+         }
+
+         Send(what,@MsgSendUser,#message_rsc=rMessage);
+      }
+      else
+      {
+         % It's a monster
+         Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=web_stuck,#what=self,
+              #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

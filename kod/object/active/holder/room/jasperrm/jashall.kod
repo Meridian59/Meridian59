@@ -1,0 +1,70 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperHall is JasperRoom
+
+constants:
+
+   include blakston.khd
+  
+resources:
+
+   room_jasperhall = jashall.roo
+   room_name_Jasperhall = "Adventurer's Hall of Jasper"
+
+   news_jas_hall = "General News"
+   news_jas_hall_desc = "Find out what's going on around Meridian."
+
+   jashall_music = main.mid
+
+classvars:
+
+   vrName = room_name_jasperhall
+
+   viTeleport_row = 13
+   viTeleport_col = 7
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SAFELOGOFF
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_jasperhall
+   piRoom_num = RID_JAS_HALL
+   prMusic = jashall_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 14, 7, RID_JASPER, 60, 32, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      oNews = Create(&Newslink,#nid=NID_TOS_HALL,
+                     #name=news_jas_hall,#desc=news_jas_hall_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=7,#new_col=7);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

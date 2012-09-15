@@ -1,0 +1,80 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+XeoMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   XeoMask_name_rsc = "xeochicatl mask"
+   XeoMask_icon_male_rsc = res0002m.bgf
+   XeoMask_icon_female_rsc = res0002n.bgf
+   XeoMask_desc_rsc = \
+      "This looks like the head of a feared Xeochicatl.  Spellcasting ability "
+      "(including smite) not included."
+
+classvars:
+
+   vrName = XeoMask_name_rsc
+   vrDesc = XeoMask_desc_rsc
+   vrIcon = XeoMask_icon_male_rsc
+
+   vrMaleIcon = XeoMask_icon_male_rsc
+   vrFemaleIcon = XeoMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+   NewUsed()
+   {
+      local iColor;
+
+      iColor = Random(1,4);
+
+      % Choose randomly
+
+      if iColor = 1
+      {
+         piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_BLUE);
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+      else
+      {
+         if iColor = 2
+         {
+            piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_RED);
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
+         else
+         {
+            if iColor = 3
+            {
+               piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKIN4);   
+               Send(poOwner,@SomethingChanged,#what=self);
+            }
+            else
+            {
+               piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKY);   
+               Send(poOwner,@SomethingChanged,#what=self);
+            }
+         }
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

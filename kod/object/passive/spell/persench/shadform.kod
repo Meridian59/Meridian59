@@ -1,0 +1,151 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShadowForm is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   shadowform_name_rsc = "shadow form"
+   shadowform_icon_rsc = ishadfrm.bgf   
+   shadowform_desc_rsc = \
+     "Transforms the target into a silhouette of their former self, "
+	  "perfect for skulking in darker locales and making them more difficult to hit.  "
+	  "Requires a handful of rainbow fern."
+
+   shadowform_already_enchanted = "You already have shadow form."
+   shadowform_already_affected = "The shadows refuse to hide what you wish."
+
+   shadowform_on = "You melt into your shadow."
+   shadowform_off = "You fade back to your own colors."
+
+   shadowform_wave_rsc = shadI11m.wav
+
+classvars:
+
+   vrName = shadowform_name_rsc
+   vrIcon = shadowform_icon_rsc
+   vrDesc = shadowform_desc_rsc
+
+   viSpell_num = SID_SHADOW_FORM
+   viSpell_level = 1
+   viSchool = SS_RIIJA
+   viMana = 5
+   viSpellExertion = 5
+   viCast_time = 3000
+
+   vrSucceed_wav = shadowform_wave_rsc
+   viChance_To_Increase = 30
+   viFlash = FLASH_GOOD_SELF
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RainbowFern,3],plReagents);      
+
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oTarget, iDrawFX;
+
+      oTarget = first(lTargets);
+
+      if NOT IsClass(oTarget,&Player)
+      {
+         return FALSE;
+      }
+
+      % check for lighting effect already applied
+      iDrawfX = Send(oTarget,@GetPlayerDrawFX);
+
+      if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
+         OR (iDrawFX & DRAWFX_SECONDTRANS) = DRAWFX_SECONDTRANS
+      {
+	      Send(who,@MsgSendUser,#message_rsc=shadowform_already_affected);
+
+	      return FALSE;
+      }
+
+      propagate;
+   }
+
+   GetDuration(who = $,iSpellPower = 0)
+   {
+      local iTime;
+      
+      iTime = 60000 + (iSpellPower * 3000);
+
+      return iTime;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetPlayerDrawFX,#drawfx=DRAWFX_BLACK,#SendSomethingChanged=TRUE);
+      
+      return;  
+   }
+
+   EndEnchantment(who = $, report = TRUE)
+   {
+      Send(who,@ResetPlayerDrawfx);
+      send(who,@RemoveDefenseModifier,#what=self);
+      
+      if report
+      {
+	      Send(who,@MsgSendUser,#message_rsc=shadowform_off);
+      }
+     
+      return;
+   }
+
+   GetStateValue(who = $, iSpellPower = 0,target=$)      
+   {      
+      Send(target,@AddDefenseModifier,#what=self);       
+
+      return iSpellPower;
+   }
+
+   GetPotionClass()
+   {
+      RETURN &ShadowFormPotion;
+   }
+
+   ModifyDefensePower(who = $, what = $,defense_power = $)
+   {
+      local iLight,iShadowbonus;
+
+      iLight = send(send(who,@GetOwner),@GetRoomLight);
+
+      % A player attacker's light determines how well they can see the enchanted, too.
+      if isClass(what,&Player)
+      {
+         iLight =  iLight + send(what,@GetPlayerLightLevel);
+      }
+
+      % Give bonuses if we're in a darker room.
+      iShadowBonus = 30 + (LIGHT_NICE - iLight);
+
+      iShadowBonus = bound(iShadowBonus,10,150); 
+
+      return defense_power + iShadowBonus;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

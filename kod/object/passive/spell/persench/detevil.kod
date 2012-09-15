@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DetectEvil is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DetectEvil_name_rsc = "detect evil"
+   DetectEvil_icon_rsc = iDetEvil.bgf
+   DetectEvil_desc_rsc = \
+      "Allows you to see the vile defilers of her name.  Reveals all evil people and "
+      "monsters that are more foul than you are pure.  "
+      "Requires a fairy wing to cast."
+   
+   DetectEvil_on_rsc = "You feel more attuned to the darkness of the hearts around you."
+   DetectEvil_off_rsc = "Your eyesight returns to its former mundanity."
+   DetectEvil_already_enchanted_rsc = "You can already see the vile."
+   DetectEvil_Success_rsc = "You grant %s%s the ability to sense evil."
+
+   DetectEvil_sound = sdevil.wav
+
+   DetectEvil_spell_intro = "Shal'ille Lv. 1: Allows you to detect evil people and monsters."
+
+classvars:
+
+   vrName = DetectEvil_name_rsc
+   vrIcon = DetectEvil_icon_rsc
+   vrDesc = DetectEvil_desc_rsc
+
+   vrAlreadyEnchanted = DetectEvil_already_enchanted_rsc
+   vrEnchantment_On = DetectEvil_On_rsc
+   vrEnchantment_Off = DetectEvil_Off_rsc
+   vrSuccess = DetectEvil_Success_rsc
+
+   viSpell_num = SID_DETECT_EVIL
+   viSchool = SS_SHALILLE
+   viSpell_level = 1
+   viMana = 10
+   viSpellExertion = 5
+
+   viCast_time = 3000
+   viChance_To_Increase = 15
+
+   vrSpell_intro = DetectEvil_spell_intro
+
+   vrSucceed_wav = DetectEvil_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&FairyWing, 1],plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $,iSpellPower=0)
+   {
+      % Post this so it's after the flag being applied.
+      Post(who,@ToCliRoomContents);
+
+      propagate;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG2_DETECT_EVIL,#flagset=2,#value=TRUE);
+
+      return;
+   }
+
+   GetStateValue(iSpellpower = $)
+   {
+      return $;
+   }
+   
+   GetDuration(iSpellpower = 0)
+   {
+      local iDuration;
+
+      % 4 - 8 minutes max,
+      iDuration = 2400 * (100 + iSpellPower);   
+
+      return Random(iDuration/2,iDuration);
+   }
+   
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {  
+      if send(who,@IsLoggedOn)
+      {
+         % Must post this so it's after the flag being removed.
+         Post(who,@ToCliRoomContents);
+      }
+     
+      propagate;
+   }
+
+   GetPotionClass()
+   {
+      RETURN &DetectEvilPotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

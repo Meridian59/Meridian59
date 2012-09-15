@@ -1,0 +1,48 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SpiderQueenTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_SPIDER_QUEEN
+
+   %% good stuff, appears relatively rarely compared to other
+   %% supermonsters.
+   piDiff_seed = 5
+   piItem_att_chance = 5
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &SpiderEgg, 40 ],
+                     [ &BerserkerRing, 11 ],
+                     [ &FireRing, 10 ],
+                     [ &Emerald,  10 ],
+                     [ &Sapphire, 8 ],
+                     [ &Diamond,  7 ],
+                     [ &BlueDragonScale, 6],
+                     [ &Ruby, 4 ],
+                     [ &DarkAngelFeather, 4]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,27 @@
+# Dk Brown mouth  2
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+-s 14
+14
+Pm000bac.bmp   [-14, -15] 
+Pm045bac.bmp   [-21, -14] 
+Pm090bac.bmp   [-17, -15] 
+Pm270bac.bmp   [-5, -14] 
+Pm315bac.bmp   [-6, -13] 
+Pm000bbc.bmp   [-14, -15] 
+Pm045bbc.bmp   [-21, -14] 
+Pm315bbc.bmp   [-6, -13] 
+Pm000bcc.bmp   [-14, -15] 
+Pm045bcc.bmp   [-21, -14] 
+Pm315bcc.bmp   [-6, -13] 
+Pm000bdc.bmp   [-14, -15] 
+Pm045bdc.bmp   [-21, -14] 
+Pm315bdc.bmp   [-6, -13] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

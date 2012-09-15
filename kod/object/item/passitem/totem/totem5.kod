@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TotemFive is Totem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TotemFive_name_rsc = "The Emperor's Chalice"
+   TotemFive_icon_rsc = qo01.bgf
+   TotemFive_desc_rsc = "Fabricated in the 5th century, this one of a kind heirloom was meant to be delivered as "
+         "a gift to the Emperor of the old land.  Before the couriers could set out, the Nexus snapped, "
+         "destroying any possible route to the empire.  The Chalice was lost for centuries, thought to be "
+         "absconded with by thieves.\n\n"
+         "Being one of a kind, this Chalice can not be carried in one's possession for very long or tucked away "
+         "in a chest."
+
+classvars:
+
+
+   vrName = TotemFive_name_rsc
+   vrIcon = TotemFive_icon_rsc
+   vrDesc = TotemFive_desc_rsc
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 1
+
+   vrposs_article = object_article_cap_this_rsc
+
+   vrTotem_overlay = TotemFive_icon_rsc
+
+   viBulk = 100
+   viWeight = 100
+
+properties:
+   
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

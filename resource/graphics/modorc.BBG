@@ -1,0 +1,14 @@
+# forest orc, model (for Raza museum)
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 9
+6
+orf000fb.bmp   [0, 0] 
+orf315fb.bmp   [0, 0] 
+orf270fb.bmp   [0, 0] 
+orf180fb.bmp   [0, 0] 
+orf090fb.bmp   [0, 0] 
+orf045fb.bmp   [0, 0] 
+1
+ 8   1 2 3 4 4 4 5 6 

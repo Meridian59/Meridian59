@@ -1,0 +1,22 @@
+# Noblewoman - left arm
+# 3 groups
+# 1 standing
+# 2-3 walking
+-s 2
+12
+nl000aba.bmp   [-16, -4] 
+nl090aba.bmp   [-2, -4] 
+nl180aba.bmp   [-4, -5] 
+nl270aba.bmp   [-15, -3] 
+nl000bba.bmp   [-6, -3] 
+nl090bba.bmp   [1, -2] 
+nl180bba.bmp   [-12, -5] 
+nl270bba.bmp   [-11, -3] 
+nl000bbb.bmp   [-6, -3] 
+nl090bbb.bmp   [-9, -6] 
+nl180bbb.bmp   [-8, -5] 
+nl270bbb.bmp   [-2, -3] 
+3
+ 4      1   4   3   2
+ 4      5   8   7   6
+ 4      9  12  11  10

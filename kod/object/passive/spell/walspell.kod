@@ -1,0 +1,123 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WallSpell is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   WallSpell_outlaw = \
+      "\nNOTE: If your safety is ON, this spell will not affect innocents.  "
+      "If your safety is OFF, you can become an outlaw for harming other players."
+   WallSpell_outlaw_murderer = \
+      "\nNOTE: If your safety is ON, this spell will not affect innocents.  "
+      "If your safety is OFF, you can become an outlaw for harming other players "
+      "or a murderer for killing other players."
+
+   WallSpell_failed_rsc = \
+      "There is too much summoning magic focused here to cast that spell." 
+
+classvars:
+
+   viHarmful = TRUE
+
+   % Can wall elements kill?  Affects the warning message we append.
+   viWallCanKill = TRUE
+
+   % How many elements do we expect to summon?
+   viNumElements = 9
+
+   vrSummonLimitMsg = WallSpell_failed_rsc
+
+properties:
+
+
+messages:
+
+   CanPayCosts(who = $)
+   {
+      if NOT Send(self,@CheckForSummoningLimit,#who=who)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   DoubleCheckAfterTrance(who = $, lTargets = $, iSpellPower = 0)
+   {
+      if NOT Send(self,@CheckForSummoningLimit,#who=who)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }      
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   {
+      Send(self,@PlaceWallElements,#who=who,#lTargets=lTargets,
+           #iSpellPower=iSpellPower);
+
+      propagate;
+   }
+
+   PlaceWallElements(who = $, lTargets=$, iSpellPower = 0)
+   "Does the actual work of placing wall elements."
+   {
+      return;
+   }
+
+   CheckForSummoningLimit(who = $)
+   "Checks to see if we'll go over room's summon limit.  Returns TRUE if not."
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+      if ((Send(oRoom,@CountHoldingSummoned) + viNumElements)
+          > Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
+      {
+         Send(who,@MsgSendUser,#message_rsc=vrSummonLimitMsg);
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   GetExtraDesc()
+   {
+      if viHarmful
+         AND Send(SYS,@IsPKAllowed)
+      {
+         if viWallCanKill
+         {
+            % Give a little warning about harming or killing other players.
+            return WallSpell_outlaw_murderer;
+         }
+
+         % Can't kill, just warn about outlaw status;
+         return WallSpell_outlaw;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

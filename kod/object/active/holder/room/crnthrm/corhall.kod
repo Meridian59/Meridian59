@@ -1,0 +1,94 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorHall is CorNothRoom
+
+constants:
+
+   include blakston.khd             
+
+
+resources:
+
+   room_name_corhall = "The Adventurer's Hall of Cor Noth"
+   room_corhall = corhall.roo
+   corhall_music = main.mid
+
+   news_cor_hall = "General News"
+   news_cor_hall_desc = "Find out what's going on around Meridian."
+
+classvars:
+
+   vrName = room_name_corhall
+
+   viTeleport_row = 3
+   viTeleport_col = 3
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SAFELOGOFF
+
+   prRoom = room_corhall
+   piRoom_num = RID_COR_HALL
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = corhall_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 2, 3, RID_CORNOTH, 21, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 3, RID_CORNOTH, 21, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 7, RID_CORNOTH, 24, 39, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 7, RID_CORNOTH, 24, 39, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 8, RID_CORNOTH, 24, 39, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 8, RID_CORNOTH, 24, 39, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      oNews = Create(&Newslink,#nid=NID_TOS_HALL,
+                        #name=news_cor_hall,#desc=news_cor_hall_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=9,#new_col=6,#fine_row=32,#fine_col=48);
+      
+      oNews = Send(SYS,@FindNewsByNum,#num=NID_ADVENTURE);
+      if oNews = $
+      {
+         oNews = Create(&NewsAdventure,#nid=NID_ADVENTURE);       
+      }
+
+      Send(self,@NewHold,#what=oNews,#new_row=8,#new_col=10,
+           #fine_row=58,#fine_col=28,#new_angle=ANGLE_NORTH);
+
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=5,#new_col=11,#fine_row=16,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=3,#new_col=2,#fine_row=56,#fine_col=16);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

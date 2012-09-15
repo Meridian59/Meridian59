@@ -1,0 +1,11 @@
+# Wand of healing
+# groups
+# 1 normal/ground
+# 2 examine
+-s 5
+2
+healwndb.bmp   [0, 0] 
+healwnda.bmp   [0, 0]
+2
+ 1      1   
+ 1      2

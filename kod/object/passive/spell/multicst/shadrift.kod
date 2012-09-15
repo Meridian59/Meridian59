@@ -1,0 +1,194 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DeathsDoor is MultiCastSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+
+   DeathsDoor_name_rsc = "shadow rift"
+   DeathsDoor_icon_rsc = ideadoor.bgf
+   DeathsDoor_desc_rsc = "Summons the darkest of magics to warp the fabic of space.  "
+                         "Forms a magical bond between a prism and the area in which it "
+                         "is cast.  Subsequent castings with the same prism cause a mystical "
+                         "portal to form which will transport all who enter it to the exact spot "
+                         "to which the prism was bound.  "
+                         "Requires the feathers of a dark angel and a prism. "
+   
+   DeathsDoor_sound = qdthdoor.wav
+
+   DeathsDoor_already = "A cloud of magical force begins to coalesce, but then dissipates, "
+      "repelled by the presence of another nearby portal."
+   DeathsDoor_no_lich = "A cloud of magical force begins to coalesce, but then mysteriously dissipates.  "
+      "Perhaps something crucial is missing."
+   DeathsDoor_room_loop = "The prism hisses feebly. It must be taken out of the area "
+                          "to which it is bound."
+   DeathsDoor_target_has_portal = "The prism briefly goes clear. Through it you see that "
+                          "its target area already contains a portal."
+
+   DeathsDoor_succeeded = "A shimmering portal springs into being!"
+   DeathsDoor_succeeded2 = "The prism hums and shudders."
+   deathsDoor_necros_only = "Without an Amulet to summon the power of the Three, you cannot hope to summon a shadow rift."
+
+classvars:
+
+   vrName = DeathsDoor_name_rsc
+   vrIcon = DeathsDoor_icon_rsc
+   vrDesc = DeathsDoor_desc_rsc
+
+   vrSucceed_wav = DeathsDoor_sound
+
+   viMana = 30
+
+   viSpell_num = SID_DEATHS_DOOR
+   viSchool = SS_QOR
+   viSpell_level = 4
+
+   viSpellExertion = 40
+   viCast_time = 20000
+   viChance_To_Increase = 25
+
+   viManaDrain = 1       % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
+
+   viCast_time = 0    % in milliseconds
+
+
+properties:                     
+
+   viMultiCast_Spellpower = 1500 % 5 minutes for 3 @ 20%, 70 secs for 7 @ 99%
+messages:      
+
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&DarkAngelFeather, 4],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
+   {
+      propagate;
+   }
+   
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      propagate;
+   }
+
+   PrismCast(spellpower = 0, lCasters=$, lTargets=$, oPrism=$, lLocation=$) 
+   {
+      local oPortalLocation, oOwner, oCaster, oNecroPortal,lPortalLocation,lTargetLocation,
+        oTargetRoom;
+      
+      if oPrism = $
+      {
+         DEBUG("PrismCast called with no prism.");
+         return;
+      }
+
+      % Ask room if we're allowed to cast here.  For example, portals into 
+      % guild halls are a bad idea.
+      if (NOT send(send(oPrism, @GetOwner), @CanHavePlayerPortal, #who=oCaster))
+      {
+         Send(oCaster,@MsgSendUser,#message_rsc=spell_bad_location, #parm1=vrName);
+         return;
+      }
+
+      if send(oPrism,@GetTeleportLocation)
+      {
+         % Second cast: create a portal to the place where the first cast
+	      % occurred.
+
+	      % Where the portal leads
+         lTargetLocation = send(oPrism,@GetTeleportLocation);  
+         
+	      % Where the portal gets put
+         lPortalLocation = send(self,@GetPortalLocation,#what=oPrism);  
+         
+	      % Fail if target is the current room to prevent portal to itself
+	      oTargetRoom = Send(SYS, @FindRoomByNum, #num = first(lTargetLocation));
+	      if oTargetRoom = send(oPrism, @GetOwner)
+	      {
+            for oCaster in lCasters
+            {
+               Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_room_loop);
+            }
+            return;
+	      }
+         
+	      % Fail if target room already has a portal, to prevent infinite loops
+	      if send(oTargetRoom, @FindHoldingActive, #class=&Portal) 
+	      {
+            for oCaster in lCasters
+            {
+               Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_target_has_portal);
+            }
+	         return;
+	      }
+         
+         oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation);
+	      Send(oNecroPortal, @SetTarget, #lTarget = lTargetLocation);
+         
+         send(Send(SYS, @FindRoomByNum, #num = first(lPortalLocation)),
+         @NewHold,#what=oNecroPortal,
+         #new_row=nth(lPortalLocation,2),#new_col=nth(lPortalLocation,3),
+         #fine_row=nth(lPortalLocation,4),#fine_col=nth(lPortalLocation,5));
+         
+         for oCaster in lCasters
+         {
+            Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_succeeded);
+         }  
+      }
+      else
+      {
+         % First cast: prism records location where portal will lead after
+	      % the second cast.
+         send(oPrism,@LearnLocation,#lLocation=send(self,@GetPortalLocation,#what=oPrism));
+         
+         for oCaster in lCasters
+         {
+            Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_succeeded2);
+         }         
+         
+      }
+      
+      return;
+   }
+
+   GetPortalLocation(what = $)
+   {
+      local oRoom,iRow,iCol,iFineRow,iFineCol,llocation;
+      
+      oRoom = send(what,@GetOwner);
+
+      if oRoom = $ OR NOT isClass(oRoom,&room)
+      { debug("Got non room owner in GetPortalLocation");  return; }
+         
+      irow=send(what,@GetRow);
+      icol=send(what,@GetCol);
+      ifinerow=send(what,@GetFineRow);
+      ifinecol=send(what,@GetFineCol);
+
+
+      lLocation = [ Send(oRoom, @GetRoomNum), iRow,iCol,iFineRow,iFineCol ];
+
+      return lLocation;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

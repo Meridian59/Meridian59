@@ -1,0 +1,104 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lightning is BoltSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   lightning_name_rsc = "lightning bolt"
+   lightning_icon_rsc = lightnin.bgf
+   lightning_look_icon = ilitning.bgf
+   lightning_hit_rsc = "Lightning strikes %s%s!"
+   lightning_desc_rsc = \
+      "Hurls a bolt of lightning at the target.  "
+      "Requires blue mushrooms and orc teeth to cast."
+
+   lightning_sound = fbolt.wav
+
+classvars:
+   vrName = lightning_name_rsc
+   vrIcon = lightning_look_icon
+   vrDesc = lightning_desc_rsc
+   vrProjectile_icon = lightning_icon_rsc
+
+   viSpell_num = SID_LIGHTNING_BOLT
+
+   viAttack_spell = ATCK_SPELL_ALL+ATCK_SPELL_SHOCK
+
+   viMana = 10
+   viSchool = SS_FAREN
+
+   viSpell_level = 5
+
+   vrSucceed_wav = lightning_sound
+
+   viPostCast_time = 2        % in seconds, since it works off gettime()
+
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 100
+   % Color is lightning.
+   viProjectileLightColor = LIGHT_LIGHTNING
+
+properties:
+
+   piDamageMin = 13
+   piDamageMax = 18
+   prSpellHit = lightning_hit_rsc
+
+messages:
+
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&BlueMushroom,2],plReagents);
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      % Do the invert effect
+      Send(who,@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
+      Send(First(lTargets),@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
+
+      propagate;
+   }
+
+   SendEffectData()
+   {
+      % for EFFECT_INVERT, 4 bytes of time to be inverted
+      AddPacket(4,500);
+      
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 12;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 2, 2, 3);   % 40ms between animations
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,213 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Shirt is DefenseModifier
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   shirt_condition_exc = " is in immaculate condition."
+   shirt_condition_good = " is scuffed and slightly worn."
+   shirt_condition_med = " has a few unsightly rips."
+   shirt_condition_poor = " is in tatters, and barely holding together."
+   shirt_condition_broken = " is covered in filth and ripped beyond use."
+   
+   shirt_name_rsc = "shirt"
+ 
+   shirt_desc_rsc = \
+   "This shirt covers the bare essentials, but offers little or no protection to the wearer."
+
+   shirt_wrong_gender = "A shirt designed for a %s wouldn't fit you at all."
+   shirt_woman = "woman"
+   shirt_man = "man"
+
+   shirt_male = bta.bgf
+   shirt_female = btb.bgf
+   shirt_leftarm_male = bla.bgf
+   shirt_rightarm_male = bra.bgf
+   shirt_leftarm_female = blb.bgf
+   shirt_rightarm_female = brb.bgf
+
+   shirt_ground_icon = defshirt.bgf
+
+   shirt_this = "This "
+
+classvars:
+
+   vrPoss_Article = shirt_this
+
+   viUse_type = ITEM_USE_SHIRT
+   viUse_amount = 1  
+
+   vrDesc = shirt_desc_rsc
+
+   viHits_init_min = 450
+   viHits_init_max = 650
+
+   viValue_average = 50
+   viWeight = 10
+   viBulk = 10
+
+   viGround_group = 1
+   viInventory_group = 2   % change to 2 when you have an inventory view
+   viBroken_group = 3
+
+   viGender = GENDER_MALE
+
+   vrName = shirt_name_rsc
+   vrIcon = shirt_ground_icon
+
+   vrIcon_male = shirt_male 
+   vrIcon_female = shirt_female 
+   vrLeftarm_male = shirt_leftarm_male 
+   vrRightarm_male = shirt_rightarm_male 
+   vrLeftarm_female = shirt_leftarm_female 
+   vrRightarm_female = shirt_rightarm_female 
+
+   vbShow_Condition = TRUE
+
+   viDefense_base = 5               % This is the default value for piDefense_bonus
+
+properties:
+
+messages:
+
+   Constructor(translation = $,model = $, color = $)
+   {      
+      if color <> $
+      {
+         translation = send(SYS,@EncodeTwoColorXLAT,
+                            #color1=color,#color2=XLAT_TO_SKIN1);
+      }
+      
+      if model <> $
+      {
+         translation = send(model,@GetPaletteTranslation);    
+      }
+      
+      if translation = $
+      {
+         translation = send(SYS,@EncodeTwoColorXLAT,
+                            #color1=XLAT_TO_BLUE,#color2=XLAT_TO_SKIN1);
+      }
+
+      Send(self,@SetPaletteTranslation,#translation=translation);
+      
+      propagate;
+   }
+
+   Randomize()
+   {
+      local translation;
+
+      translation = send(SYS,@EncodeTwoColorXLAT,
+                         #color1=random(XLAT_TO_ORANGE, XLAT_HIGH_VALUE),#color2=XLAT_TO_SKIN1);
+      Send(self,@SetPaletteTranslation,#translation=translation);
+
+      if poOwner <> $
+      {
+         if isClass(poOwner,&Room)
+         {
+            send(send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
+         }
+
+         if isClass(poOwner,&User)
+         {
+            send(poOwner,@SomethingChanged,#what=self);
+            send(self,@DoPlayerArt);
+         }
+      }
+
+      return;
+   }
+
+   ReqUse()
+   {
+      return (NOT send(send(SYS,@GetWarEvent),@IsActive));
+   }
+
+   ReqUseSomething(what = $)
+   {
+      if send(what,@getitemusetype) & ITEM_USE_SHIRT
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+
+   HasSkinTones()
+   {
+      return TRUE;
+   }
+
+   SetIcon()
+   {
+      %% Player can wear a shirt under armor.  Armor has precedence though.
+      if send(poOwner,@GetArmor) = $     
+      {
+         Send(poOwner,@SetPlayerIcon,#what=self,#new_icon=send(self,@GetShirtIcon,#who=poOwner),
+              #alldone=FALSE, #translation=Send(self,@GetPaletteTranslation));
+      }
+      
+      return;
+   }
+
+   ReqRepair()
+   {
+      return TRUE;
+   }
+
+   NewUsed()
+   {
+      post(self,@RedoArmor,#who=poOwner);
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      post(self,@RedoArmor,#who=poOwner);
+
+      propagate;
+   }
+
+   RedoArmor(who=$)
+   {
+      local oArmor;
+      
+      oArmor = send(who,@GetArmor);
+      if oArmor <> $
+      {
+         send(oArmor,@DoPlayerArt);
+      }
+
+      return; 
+   }
+
+   OverrideArmsForGauntlets()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

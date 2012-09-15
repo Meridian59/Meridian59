@@ -1,0 +1,41 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Rose is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Rose_icon_rsc = rose.bgf
+   rose_name_rsc = "rose"
+   rose_desc_rsc = "This is a simple, yet elegant and delicate, rose."
+
+classvars:
+   
+   vrName = Rose_name_rsc
+   vrDesc = Rose_desc_rsc
+   vrIcon = Rose_icon_rsc
+
+   viValue_average = 20
+   viWeight = 10
+   viBulk = 10
+
+   viGround_group = 2
+
+properties:  
+
+messages:   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,149 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Enfeeble is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   enfeeble_cast_rsc = "You sense an unsavory presence."
+   enfeeble_already_enchanted = "That poor soul is already enfeebled."
+
+   enfeeble_name_rsc = "enfeeble"
+   enfeeble_icon_rsc = ienfeebl.bgf
+   enfeeble_desc_rsc = \
+      "Drains physical strength from the target.  "   
+      "The effect lasts a few minutes.  "
+      "Requires orc teeth to cast."
+
+   enfeeble_sound = qenfeebl.wav
+
+classvars:
+
+   vrName = enfeeble_name_rsc
+   vrIcon = enfeeble_icon_rsc
+   vrDesc = enfeeble_desc_rsc
+
+   viSpell_num = SID_ENFEEBLE
+   viSchool = SS_QOR
+   viSpell_level = 3
+   viMana = 5
+   viSpell_Exertion = 4
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+   viFlash = FLASH_BAD
+
+   vrSucceed_wav = enfeeble_sound
+   viChance_To_Increase = 30
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i, oPalsy;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if not IsClass(target, &Battler) or IsClass(target,&Revenant)
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_no_self_target,
+	           #parm1=vrName);
+         }
+         
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      oPalsy = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
+      if Send(target,@IsEnchanted,#what=oPalsy)
+      {
+         if not bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=enfeeble_already_enchanted);
+         }
+         
+         return FALSE;
+      }
+
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local iMight_change, oTarget, oPalsy;
+
+      oTarget = First(lTargets);
+      oPalsy = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
+	 
+      send(who,@MsgSendUser,#message_rsc=enfeeble_cast_rsc);
+      
+      if IsClass(oTarget,&Player)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=enfeeble_cast_rsc);
+      }
+      
+      Send(oPalsy,@MakeSick,#who=oTarget,#iAmount=(iSpellPower/3+1),
+           #duration=send(self,@GetDuration,#iSpellPower=iSpellPower));
+           
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+      iDuration = (300 + 8*iSpellPower) * 1000;    %%% 3-15 minutes
+      
+      return random(iDuration/2,iDuration);
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

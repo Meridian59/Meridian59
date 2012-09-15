@@ -1,0 +1,132 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HolyTouch is TouchAttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   HolyTouch_name_rsc = "holy touch"
+   HolyTouch_icon_rsc = iholyt.bgf
+   HolyTouch_desc_rsc = \
+      "Pure energy from Shal'ille sears your target.  More effective on evil "
+      "and undead targets.   "
+      "Requires emeralds."
+
+   HolyTouch_already_enchanted_rsc = \
+      "Your hands are already bathed in Shal'ille's love."
+   HolyTouch_On_rsc = "Your hands are bathed in Shal'ille's love."
+   HolyTouch_Off_rsc = "Your hands are no longer bathed in Shal'ille's love."
+
+   HolyTouch_player_was_hit = "%s%s scalds you with the pure force of Shal'ille!"
+   HolyTouch_player_hit_something = \
+      "%s%s%s shrinks away from the pure energy of Shal'ille."
+
+   HolyTouch_player_killed_something = \
+      "%s%s finally succumbs, finding peace through Shal'ille's purifying energy."
+   HolyTouch_player_was_killed = \
+      "The touch of %s%s separates body from soul and sends you to the underworld."
+
+   holytouch_spell_intro = \
+      "Shal'ille Lv. 2: Delivers the judgment of Shal'ille in your touch."
+
+   holytouch_sound = sholytch.wav
+
+classvars:
+
+   vrName = HolyTouch_name_rsc
+   vrIcon = HolyTouch_icon_rsc
+   vrDesc = HolyTouch_desc_rsc
+
+   vrAlreadyEnchanted = HolyTouch_already_enchanted_rsc
+   vrEnchantment_On = HolyTouch_On_rsc
+   vrEnchantment_Off = HolyTouch_Off_rsc
+
+   vrSpell_intro = holytouch_spell_intro
+
+   vrPlayer_was_hit = HolyTouch_player_was_hit
+   vrPlayer_hit_something = holytouch_player_hit_something
+   vrPlayer_killed_something = HolyTouch_player_killed_something
+   vrPlayer_was_killed = HolyTouch_player_was_killed
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SS_SHALILLE
+   viSpell_num = SID_HOLY_TOUCH
+   viSpellExertion = 3
+   viSpell_level = 2
+   viMana = 12
+
+   viHit_Factor = 15
+
+   viMin_Damage = 3
+   viMax_Damage = 6
+
+   viRange = 2
+
+   viSpellType = ATCK_SPELL_HOLY+ATCK_SPELL_ALL
+   viStroke = STROKE_HOLY_TOUCH
+
+   viDifficulty = 1
+
+   vbAutomatic = FALSE
+
+   vrSucceed_wav = holytouch_sound
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Emerald,2],plReagents);
+
+      return;
+   }
+
+   DamageFactors(damage=0, who=$, victim=$)
+   "Damage for attack spells is determined largely by expertise in the spell."
+   {
+      local iDamage, iKarma;
+
+      iDamage = damage;
+
+      % Avoid the condition of checking damage on a nil victim (like when
+      %  just querying average damage).
+      if victim <> $
+      {
+         if Send(victim,@IsUndead)
+         {
+            % Automatically do extra 100% damage to undead.
+            iDamage = 2*iDamage;
+         }
+         else
+         {
+            % Reduce/increase damage by 50% depending on opponent's Karma.
+            % Use the detect option in case we're hitting an event monster.
+            iKarma = Send(victim,@GetKarma,#detect=TRUE);
+            iDamage = iDamage + ((-iKarma)*iDamage/200);
+         }
+      }
+
+      return iDamage;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

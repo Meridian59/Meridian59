@@ -1,0 +1,127 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Guest7 is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_guest7 = "Eric's Stout Spirits"
+   room_guest7 = guest7.roo
+   guest7_music = login.mid
+
+   guest7_signname = "health, mana and vigor"
+   guest7_sign = \
+      "In the upper right-hand corner of your screen, you'll see "
+      "three stats: health, mana, and vigor.  Health is simple--"
+      "you lose it when you take damage (usually in battle).  If your health is "
+      "reduced to zero, you die.  Mana determines how many spells "
+      "you can cast.  Both of these come back with time.\n\n"
+      "Vigor, the third stat, is the most important.  How fast your "
+      "health and your mana return depends largely on your vigor. "
+      "Also, running requires vigor "
+      "so you definitely want to keep your vigor high. "
+      "There are two ways to increase your vigor--by eating food ([USE] it from your inventory) "
+      "and by resting (click on the button in the toolbar).  "
+      "Resting in inns and taverns will heal your vigor "
+      "twice as quickly.  Taverns and stores also frequently sell foodstuffs "
+      "that you can take with you as you explore.\n"
+      "-----------------------\n"
+      "From here, go to the elder's home.  It is the small house "
+      "south and to the west of here."
+             
+classvars:
+
+   vrName = room_name_guest7
+
+   viTeleport_row = 5
+   viTeleport_col = 4
+
+   viDemo_base = RID_GUEST_BASE
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_GUEST_AREA | ROOM_SANCTUARY
+   viTerrain_types = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_guest7
+   piRoom_num = RID_guest7
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+   prMusic = guest7_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 5, 2, viDemo_base + 2, 18, 56, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      send(self,@NewHold,#what=Create(&Hazarbartender),#new_row=8,#new_col=7,
+           #new_angle=ANGLE_SOUTH_WEST);
+      
+      oSign = Create(&Sign,#desc=guest7_sign,#newbie=TRUE,#name=guest7_signname);
+      send(self,@NewHold,#what=oSign,#new_row=4,#new_col=7);
+
+      Send(self,@NewHold,#what=Create(&Stool),#new_row=6,#new_col=4,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Stool),#new_row=7,#new_col=4,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Stool),#new_row=5,#new_col=5,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Stool),#new_row=5,#new_col=6,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Stool),#new_row=4,#new_col=3,
+           #fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Stool),#new_row=4,#new_col=4,
+           #fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TALLURN),
+           #new_row=2,#new_col=2,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);	
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BUCkET),
+           #new_row=8,#new_col=2,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BUCkET),
+           #new_row=7,#new_col=2,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BUCkET),
+           #new_row=6,#new_col=2,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Candle),#new_row=3,#new_col=6,
+           #fine_row=16,#fine_col=32,#angle=ANGLE_EAST);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=2,#new_col=4,#fine_row=16,#fine_col=63); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=8,#new_col=2,#fine_row=54,#fine_col=40); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=8,#new_col=6,#fine_row=55,#fine_col=56); 
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

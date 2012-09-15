@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+AcidRing is ResistRing
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AcidRing_name_rsc = "ring of acid resistance"
+   AcidRing_desc_rsc = \
+      "This ring is odd to the touch.  Magical runes are etched on its inner surface."
+  
+   AcidRing_use_rsc = \
+      "You feel the ring working.  Your skin feels dry and chalky."
+  
+   AcidRing_dead_rsc = \
+      "The ring begins to sizzle then quickly melts off your finger!"
+
+classvars:
+
+   vrRealName = AcidRing_name_rsc
+   vrRealDesc = AcidRing_desc_rsc
+
+   vrUseMessage = AcidRing_use_rsc
+   vrDeadMessage = AcidRing_dead_rsc
+
+properties:
+
+   piResistanceType = -ATCK_SPELL_ACID
+   piResistanceChange = 50
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

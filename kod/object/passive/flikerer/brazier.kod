@@ -1,0 +1,87 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Brazier is Flickerer
+
+constants:
+
+   include blakston.khd
+
+   HS_BRAZIER = 1
+
+resources:
+
+   brazier_name_rsc = "brazier"
+   brazier_icon_rsc = brazier.bgf
+   brazier_desc_rsc = "The flame burns bright, offering welcome light to the surroundings."
+
+classvars:
+
+   vrName = brazier_name_rsc
+   vrIcon = brazier_icon_rsc
+   vrDesc = brazier_desc_rsc
+
+   viObject_flags = LOOK_NO
+
+   % Lighting flags.  Default "on" and wavering flags
+   viLightFlags = LIGHT_FLAG_ON
+
+   % Light color.
+   viLightColor = LIGHT_FIRE
+
+properties:
+
+   viStart_frame = 3
+   viEnd_frame = 6
+
+   % Intensity, from 0-255.
+   piLightIntensity = 40
+
+messages:
+
+   Constructor(has_flame=TRUE)
+   {
+      pbIsLit = has_flame;
+
+      propagate;
+   }
+
+   SetAnimationSpeed()
+   {
+      % Set our animations a bit randomly.
+      piAnim_speed = (random(10,12) * 10);
+      viStart_frame = random(2,3);
+      viEnd_frame = random(6,7);
+
+      return;   
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   SetFlame(has_flame=TRUE)
+   {
+      pbIsLit = has_flame;
+      if pbIsLit
+      {
+         % randomize each time it comes on.
+         send(self,@SetAnimationSpeed);
+      }
+
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

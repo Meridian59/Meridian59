@@ -1,0 +1,115 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HermitHut is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_hermithut = hermhut.roo
+   room_name_hermithut = "The Hermit's Hut"
+
+   hermithut_music = bar2.mid
+   hermhut_book_name = "Legend of the Vale of Sorrows"
+   hermhut_book_text = "   Recently, humans have begun to expand their travels back "
+   	"into the Quilicia Woods, ignoring ancient superstitions of the faerie folk.  "
+   	"According to the legends the woods were the domain of Shal'ille's favored "
+	   "beings, the fey elhai.  When Shal'ille took form with the winds as the goddess "
+   	"of peace, she was so enamored with the wholesome spirit of these faerie folk that "
+	   "she made a home for them.  Channeling a node of power, she created the Vale of "
+   	"Light, a place of unbridled goodness for the fey elhai to play and watch over.  "
+	   "This enchanted valley existed in harmony with nature for many years to come.  "
+   	"One day, one of the faeries became curious of the world beyond the glimmering "
+	   "vale and ventured out past Quilicia.  On its travels it happened across the "
+   	"path of a servant of Qor, who learning of the hidden magical node reported "
+	   "back to his dark goddess.  Qor became obsessed with learning the location of "
+   	"this link to power and demanded the capture of the little fey.\n"
+	   "¶"
+   	"   In a grim ceremony, the servants of Qor tore the spirit from the captured "
+	   "fey elhai and ruthlessly discarded it.  They then focused the essence of Qor "
+   	"into the carcass and revived it in the name of the unholy.  In this new form, "
+	   "Qor scoured the countryside until she came upon a search party sent out by the "
+   	"fey elhai.  Feigning sickness, she was escorted back to the Vale of Light.  "
+	   "Once there, Qor realized the power of Shal'ille was too prevalent for her to "
+   	"overcome.  Another more devious tactic was required.  Over the next few months, "
+	   "Qor spawned dozens of corrupt faeries, which came to be known as the fey dirhai.  "
+   	"Tainted with evil, they turned on their brethren and began an epic war for control "
+	   "of the node.  Qor left satisfied that in time the seed of darkness would flourish "
+   	"and gain her dominion over the Vale.\n"
+	   "¶"
+   	"   Having witnessed the corruption of her favorite people, Shal'ille mournfully "
+	   "turned her eyes from the Vale.  Ashamed for their brothers and the blasphemous war "
+   	"that waged on, the fey elhai have since called that for which they fight \"The Vale "
+	   "of Sorrows.\""
+
+classvars:
+
+   vrName = room_name_hermithut
+
+   viTeleport_row = 5
+   viTeleport_col = 5
+
+   viTerrain_type = TERRAIN_RESIDENCE
+
+properties:
+
+   prRoom = room_hermithut
+   piRoom_num = RID_HERMITHUT
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_5
+
+   prMusic = hermithut_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 8, 6, RID_I7, 16, 38, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oBook;
+
+      oBook = Create(&BookPedestal,#Name=hermhut_book_name,#Text=hermhut_book_text);
+
+      Send(self,@NewHold,#what=oBook,
+           #new_row=7,#new_col=2,#fine_row=32,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
+
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=2,#new_col=6,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Stool),
+           #new_row=3,#fine_row=0,#new_col=1,#fine_row=0,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Firepit),
+           #new_row=1,#fine_row=48,#new_col=2,#fine_col=16);
+
+      % Dynamic Lighting
+
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BWHITE,#iIntensity=5),
+           #new_row=4,#new_col=4,#fine_row=0,#fine_col=57);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BWHITE,#iIntensity=5),
+           #new_row=6,#new_col=6,#fine_row=32,#fine_col=25);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BWHITE,#iIntensity=5),
+           #new_row=6,#new_col=3,#fine_row=28,#fine_col=25);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

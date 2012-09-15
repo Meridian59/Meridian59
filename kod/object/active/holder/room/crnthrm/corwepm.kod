@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorWeaponsMaster is CorNothRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   room_name_weaponsmaster = "The Weapon Master's Abode"
+   room_weaponsmaster = weaponsm.roo
+   weaponsmaster_music = smithy.mid
+
+   weaponsmaster_locked_door = "Rook doesn't allow you to enter his private quarters."
+
+classvars:
+
+   vrName = room_name_weaponsmaster
+
+   viTeleport_row = 5
+   viTeleport_col = 5
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_weaponsmaster
+   piRoom_num = RID_COR_WEAPONSMASTER
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = weaponsmaster_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % The short door
+      plExits = Cons([ 5, 6, RID_COR_WEAPONSMASTER, 5, 8, ROTATE_NONE ],plExits);
+      plExits = Cons([ 5, 7, RID_COR_WEAPONSMASTER, 5, 5, ROTATE_NONE ],plExits);
+
+      % Locked door
+      plExits = Cons([ 1, 7, ROOM_LOCKED_DOOR, weaponsmaster_locked_door ],plExits);
+
+      % TO TOWN
+      plExits = Cons([ 8, 6, RID_CORNOTH, 11, 8, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&CorNothSergeant),
+           #new_row=4,#new_col=3,#fine_row=16,#fine_col=48,
+           #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),#new_row=3,#new_col=6,
+           #fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),#new_row=6,#new_col=10,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Firepit),#new_row=6,#new_col=6,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=5),#new_row=1,#new_col=10,
+           #fine_row=8,#fine_col=56);
+
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=3,#new_col=10,#fine_row=48,#fine_col=48);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,197 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Fire is Stroke
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   fire_name_rsc = "fire"
+   fire_icon_rsc = fibowico.bgf
+   fire_desc_rsc = "Fire is the most basic technique used for shooting a missile weapon.  "
+      "It is not too difficult to learn, but only those with strong aim will be able to master "
+      "this skill."
+
+   fire_only_missile_weapon = "You may only use the 'fire' skill with a missile weapon in hand."
+   fire_need_weapon = "You must have a missile weapon in hand to 'fire' at anyone."
+   fire_wrong_ammo = "You do not have the proper ammunition equipped to use with %s%s."
+
+   fire_new_ammo = "You reach for your %s, and nock one back for a shot."
+   fire_skill_intro = "Weaponcraft Lv. 4: Key to mastering any type of missile weapon."
+   fire_no_ammo = "You have no ammunition for this weapon ready!"
+
+classvars:
+
+   vrName = fire_name_rsc
+   vrIcon = fire_icon_rsc
+   vrDesc = fire_desc_rsc
+
+   vrSkill_intro = fire_skill_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SKS_FENCING
+   viSkill_Num = SKID_FIRE
+   viSkill_level = 4
+   viChance_to_increase = 50
+
+   viSkillExertion = 2
+   vbCheck_exertion = FALSE
+
+   viDamage_factor = 90
+
+properties:
+
+   plPrerequisites = $
+
+   piChanceToIncrease = 100
+
+messages:
+
+   % General combat messages:
+
+   % Overriden from superclass.  Can't parry arrows.
+   CanParry()
+   {
+      return FALSE;
+   }
+
+   % Finds ammo and uses it if not used.
+   FindLikelyAmmo(who=$,report=FALSE)
+   {
+      local oWeapon, oLikelyAmmo, oAmmo, cAmmoType, iAmmoValue, i;
+
+      oWeapon = send(who,@LookupPlayerWeapon);
+      if oWeapon = $
+      {
+         if report { send(who,@MsgSendUser,#message_rsc=fire_need_weapon); }
+         return $;
+      }
+      if not IsClass(oWeapon,&RangedWeapon)
+      {
+         if report { send(who,@MsgSendUser,#message_rsc=fire_only_missile_weapon); }
+         return $;
+      }
+
+      cAmmoType = send(oWeapon,@GetAmmoType);
+
+      oLikelyAmmo = $;
+
+      for i in send(who,@GetPlayerUsing)
+      {
+         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         {
+            oLikelyAmmo = i;
+         }
+      }
+
+      if oLikelyAmmo = $
+      {
+         iAmmoValue = 1000000; % higher than any ammo value
+
+         %% if the player doesn't have any arrows available and equipped,
+         %% auto-equip the cheapest ones.
+
+         for i in send(who,@GetHolderPassive)
+         {
+            if (send(i,@GetItemUseType) = ITEM_USE_QUIVER)
+	            and (send(i,@GetAmmoType) = cAmmoType)
+               and ((send(i,@GetValue)/send(i,@GetNumber)) < iAmmoValue)
+            {
+               oLikelyAmmo = i;
+               iAmmoValue = send(i,@GetValue)/send(i,@GetNumber);
+            }
+         }
+         % Use the ammo!
+         if oLikelyAmmo <> $
+         {
+            send(who,@TryUseItem,#what=oLikelyAmmo);
+         }
+      }
+
+      if report and (oLikelyAmmo = $)
+      {
+         send(who,@MsgSendUser,#message_rsc=fire_no_ammo);
+      }
+
+      return oLikelyAmmo;
+   }
+
+   CanPayCosts(who=$,oTarget=$)
+   {
+      local oAmmo;
+
+      oAmmo = send(self,@FindLikelyAmmo,#who=who,#report=TRUE);
+      if oAmmo <> $
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   GetRequisiteStat(who=$)
+   {
+      return send(who,@getaim);
+   }
+
+   PayCosts(who=$)
+   {
+      local oAmmo;
+
+      oAmmo = send(self,@FindLikelyAmmo,#who=who);
+      if oAmmo = $
+      {
+         send(who,@MsgSendUser,#message_rsc=fire_no_ammo);
+         return;
+      }
+
+      send(who,@MsgSendUser,#message_rsc=fire_new_ammo,
+        #parm1=send(oAmmo,@GetName));
+
+      send(send(who,@GetOwner),@SomethingShot,#who=who,
+        #target=send(who,@GetKillTarget), #projectile=oAmmo);
+
+      send(oAmmo,@SubtractNumber,#number=1);
+
+      propagate;
+   }
+
+   DamageFactors(damage=0, who=$, weapon_used = $)
+   "Different skills/strokes are affected by strength differently."
+   {
+      local iDamage, iAim;
+
+      iDamage = 0;
+      % Get weapon proficiency bonuses.
+      if weapon_used <> $
+      {
+         iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      }
+      
+      % Get Aim damage bonus.
+      iAim = send(who,@GetAim);
+      iDamage = iDamage + ((100+bound(iAim-25,0,40))*damage)/100;
+
+      return iDamage;
+   }
+
+   IsRangedAttack()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,69 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ArenaSign is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   oldarenasign_name_rsc = "sign"
+   oldarenasign_icon_rsc = sign.bgf
+   oldarenasign_desc_rsc = "The sign reads:\n\n%s "
+
+   oldarenasign_arena_msg = "\"Say CHALLENGE to initiate a fight with a champion.  Say CHAMPION if no champion exists.  Champions must ACCEPT any challenges, or lose their title.  Champions may RENEGE their titles, but not while in combat.\""
+
+classvars:
+
+   vrName = oldarenasign_name_rsc
+   vrIcon = oldarenasign_icon_rsc
+   vrDesc = oldarenasign_desc_rsc
+
+properties:
+
+
+messages:
+
+   NewOwner(what=$)
+   "Deletes itself if not loaded into the Tos Arena."
+   "The poOwner=$ is necessary to keep it from deleting itself as soon as it's made."
+   {
+     if what = $
+       {
+          return;
+       }
+     else
+       {
+          if isClass(what,&TosArena)
+             {  propagate; }
+          else
+             {
+               debug("This sign should not be loaded here!");
+               send(self,@delete); }
+       }
+     propagate;
+   }
+
+   ShowDesc()
+   "Shows the instructions on how to kill people in a civilized fashion."
+   {
+      AddPacket(4,oldarenasign_desc_rsc,4,oldarenasign_arena_msg);
+      return;
+   }
+    
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

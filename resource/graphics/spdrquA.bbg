@@ -1,0 +1,24 @@
+# spider queen antennae
+# groups
+# 1-3 animation of antennae
+-s 2
+15
+spqa000A.bmp   [-58, -42] 
+spqa000B.bmp   [-49, -45] 
+spqa000C.bmp   [-74, -40] 
+spqa045A.bmp   [-56, -15] 
+spqa045B.bmp   [-30, -13] 
+spqa045C.bmp   [-29, -23] 
+spqa090A.bmp   [-58, -16] 
+spqa090B.bmp   [-31, -12] 
+spqa090C.bmp   [-27, -24] 
+spqa270A.bmp   [-68, -17] 
+spqa270B.bmp   [-33, -15] 
+spqa270C.bmp   [-35, -27] 
+spqa315A.bmp   [-64, -16] 
+spqa315B.bmp   [-24, -16] 
+spqa315C.bmp   [-29, -26] 
+3
+ 8      1  13  10   0   0   0   7   4
+ 8      2  14  11   0   0   0   8   5
+ 8      3  15  12   0   0   0   9   6

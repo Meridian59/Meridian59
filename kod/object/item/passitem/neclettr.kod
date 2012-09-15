@@ -1,0 +1,41 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NecromancerLetter is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   NecromancerLetter_name_rsc = "sinister parchment"
+   NecromancerLetter_icon_rsc = necscrol.bgf
+   NecromancerLetter_desc_rsc = \
+      "This scroll is covered with sininster-looking spidery script in some unidentifiable "
+      "language, if it's language at all."
+
+classvars:
+
+   vrName = NecromancerLetter_name_rsc
+   vrIcon = NecromancerLetter_icon_rsc
+   vrDesc = NecromancerLetter_desc_rsc
+
+   viValue_average = 40
+   viWeight = 3
+   viBulk = 10
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

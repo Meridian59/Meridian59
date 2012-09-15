@@ -1,0 +1,171 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttGlowing is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Causes weapon to glow, similar to a torch.
+%
+%  Form is: 
+%
+%       [ WA_GLOWING, timer, light_intensity ]
+%   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   weapattglowing_desc = "  It glows softly like a torch."
+   weapattglowing_name = "glowing %s"
+
+   waglowing_gone = "Your %s stops glowing."
+   glowing_dm = "glowing"
+
+classvars:
+
+   viItem_Att_Num = WA_GLOWING
+   vrDesc = weapattglowing_desc
+   vrName = weapattglowing_name
+
+   vrDM_Trigger = glowing_dm
+
+properties:
+
+   % Modify the object's price by 100%
+   piValue_modifier = 100   
+   piValue_power_modifier = -10
+
+messages:
+  
+   %%%  Effect Functions
+
+   DMCreateItemAtt(who=$,string=$,oWeapon=$)
+   {      
+      if who = $ OR string= $ OR oWeapon = $
+      {
+         DEBUG("BAD data sent to DMCreateItemAtt!");
+         return FALSE;
+      }
+
+      if StringContain(string,glowing_dm)
+      {  
+         % If DM created, it's 100 light (more than the spell allows)
+         %  and 35 hours in duration.
+         Send(self,@AddToItem,#oItem=oWeapon,#random_gen=FALSE,
+              #timer_duration=(35*60*60*1000),#state1=100);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   ItemUsed(oItem=$,oPlayer=$)
+   "Starts Glowing when wielded."
+   {
+      local iLightStr;
+
+      Send(oPlayer,@SetFlickerFlag);
+      iLightStr = Nth(Send(oItem,@GetAttributeData,#ItemAtt=WA_GLOWING),3);
+      Send(oPlayer,@GainLight,#amount=iLightStr);
+
+      return;
+   }
+
+   ItemUnused(oItem=$,oPlayer=$)
+   "Stops Glowing when unwielded."
+   {
+      local iLightStr, i;
+
+      iLightStr = Nth(Send(oItem,@GetAttributeData,#ItemAtt=WA_GLOWING),3);
+      Send(oPlayer,@LoseLight,#amount=iLightStr);
+
+      if Send(oPlayer,@FindUsing,#class=&Torch) <> $
+      {
+         % Keep the flicker flag.
+         return;
+      }
+
+      Send(oPlayer,@ClearFlickerFlag);
+
+      return;
+   }
+
+   AddSelfToRandomItem(oItem = $)
+   {
+      local iGlowLevel;
+
+      if oItem = $
+      {
+         return FALSE;
+      }
+
+      iGlowLevel = 50 + random(1,50);
+
+      if Send(self,@ReqAddToItem,#state1=iGlowLevel,#oItem=oItem)
+      {
+         Send(self,@AddToItem,#oItem=oItem,#state1=iGlowLevel,
+              #timer_duration=random(3600000,86400000),#random_gen=TRUE);
+      }
+      
+      return;
+   }
+
+   SetPrimaryState(state1=$)
+   {
+      return state1;
+   }
+
+   %%%  Timer Functions
+
+   HasTimer(lData=$)
+   {
+      return TRUE;
+   }
+
+   TimerExpired(oItem=$,lData=$)
+   {
+      % Timer is gone, now remove reference
+      SetNth(lData,2,$);   
+      Send(self,@RemoveFromItem,#oItem=oItem,#lData=lData);
+   
+      return;
+   }
+
+   RemoveFromItem(oItem=$, lData=$)
+   {
+      local oPlayer, oRoom;
+
+      oPlayer = Send(oItem,@GetOwner);
+      if oPlayer<> $ AND IsClass(oPlayer,&Player)
+      {
+         Send(oPlayer,@MsgSendUser,#message_rsc=waglowing_gone,
+              #parm1=Send(oItem,@GetName));
+         if Send(oPlayer,@LookupPlayerWeapon) = oItem
+         {
+            Send(self,@ItemUnused,#oItem=oItem,#oPlayer=oPlayer);
+            oRoom = Send(oPlayer,@GetOwner);
+            if oRoom <> $
+            {
+               Send(oRoom,@SomethingChanged,#what=oPlayer);
+            }
+         }
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

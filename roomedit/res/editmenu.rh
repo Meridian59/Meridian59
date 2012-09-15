@@ -1,0 +1,180 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         editmenu.rh
+*/
+#ifndef __editmenu_rh
+#define BITMAP_9	9
+#define BITMAP_8	8
+#define BITMAP_7	7
+#define BITMAP_6	6
+#define BITMAP_5	5
+#define __editmenu_rh
+
+//
+// Cursors used in editor
+//
+#define IDC_PASTE	4002
+#define IDC_INSERT	4003
+
+
+#define CM_HELP_CONTENTS        50  // Also defined in mainmenu.rh
+#define CM_HELP_USING_HELP      51  // Also defined in mainmenu.rh
+#define CM_HELP_SEARCH          52  // Also defined in mainmenu.rh
+#define CM_HELP_TUTORIAL		53	// Also defined in mainmenu.rh
+#define CM_HELP_LEVEL_EDITOR    60
+#define CM_HELP_KEYBOARD        61
+#define CM_HELP_MOUSE           62
+
+// Misc menus
+#define MENU_MISC_THINGS    110
+#define MENU_MISC_LINEDEFS  111
+#define MENU_MISC_VERTEXES  112
+#define MENU_MISC_SECTORS   113
+
+// Popup menus
+#define MENU_THINGS     120
+#define MENU_LINEDEFS   121
+#define MENU_SECTORS    122
+#define MENU_VERTEXES   123
+#define MENU_OBJECTS    124
+
+
+//
+// MENU_EDITOR
+//
+#define MENU_EDITOR     101
+#define CM_FILE_SAVE        1000
+#define CM_FILE_SAVEAS      1001
+#define CM_FILE_QUITEDIT    1002
+
+#define CM_EDIT_UNDO		1100
+#define CM_EDIT_REDO		1101
+#define CM_EDIT_OBJECT      1102
+#define CM_EDIT_ADDOBJ      1103
+#define CM_EDIT_COPYOBJ     1104
+#define CM_EDIT_DELETEOBJ   1105
+#define CM_EDIT_PREFERENCES 1106
+
+#define CM_SEARCH_FIND      1201
+#define CM_SEARCH_REPEAT    1202
+#define CM_SEARCH_NEXTOBJ   1203
+#define CM_SEARCH_PREVOBJ   1204
+#define CM_SEARCH_JUMPOBJ   1205
+
+#define CM_MISC_MENU        1250
+#define CM_INSERT_MENU      1251
+#define CM_CHECK_MENU       1252
+#define CM_MISCITEM         1255    // menu item in fake misc menu
+
+#define CM_OBJECTS_RECTANGLE    1300
+#define CM_OBJECTS_POLYGON      1301
+
+#define CM_MODE_THINGS      1400
+#define CM_MODE_LINEDEFS    1401
+#define CM_MODE_VERTEXES    1402
+#define CM_MODE_SECTORS     1403
+#define CM_MODE_NEXT        1404
+#define CM_MODE_PREV        1405
+#define CM_MODE_3DPREVIEW   1406
+
+#define CM_CHECK_NUMBER         1500
+#define CM_CHECK_SECTORS        1501
+#define CM_CHECK_CROSSREF       1502
+#define CM_CHECK_TEXTURES       1503
+#define CM_CHECK_TEXTURES_NAMES 1504
+
+#define CM_WINDOW_AUTOLAYOUT    1550
+#define CM_WINDOW_LAYOUT        1551
+#define CM_WINDOW_ZOOMIN        1552
+#define CM_WINDOW_ZOOMOUT       1553
+#define CM_WINDOW_GRIDNEXT      1554
+#define CM_WINDOW_GRIDPREV      1555
+#define CM_WINDOW_SNAPTOGRID    1556
+#define CM_WINDOW_CENTER_MAP    1557
+#define CM_WINDOW_SHOWGRID      1558
+#define CM_WINDOW_INFOWIN       1559
+#define CM_WINDOW_TOOLBAR       1560
+#define CM_WINDOW_INFOBAR       1561
+#define CM_WINDOW_SLOW_SCROLL	1562
+#define CM_INFOWIN_HORIZ_DOWNLEFT	1570
+#define CM_INFOWIN_HORIZ_DOWNRIGHT	1571
+#define CM_INFOWIN_HORIZ_UPLEFT		1572
+#define CM_INFOWIN_HORIZ_UPRIGHT	1573
+#define CM_INFOWIN_VERT_DOWNLEFT	1574
+#define CM_INFOWIN_VERT_DOWNRIGHT	1575
+#define CM_INFOWIN_VERT_UPLEFT		1576
+#define CM_INFOWIN_VERT_UPRIGHT		1577
+
+
+//
+// MENU_MISC_THINGS
+//
+
+#define CM_MISCT_FINDFREETAG    2000
+#define CM_MISCT_ROTATESCALE    2001
+
+
+//
+// MENU_MISC_LINEDEFS
+//
+
+#define CM_MISCL_FINDFREETAG    2101
+#define CM_MISCL_ROTATESCALE    2102
+#define CM_MISCL_SPLITADD       2103
+#define CM_MISCL_SPLITSECT      2104
+#define CM_MISCL_SWAP           2105
+#define CM_MISCL_FLIP           2106
+#define CM_MISCL_DELETE         2107
+#define CM_MISCL_ALIGNY         2109
+#define CM_MISCL_AX_SD2_UPPER	2116
+#define CM_MISCL_AX_SD2_LOWER	2117
+#define CM_MISCL_AX_SD2_NORMAL	2115
+#define CM_MISCL_AX_SD1_LOWER	2112
+#define CM_MISCL_AX_SD1_UPPER	2111
+#define CM_MISCL_AX_SD1_NORMAL	2110
+#define CM_MISCL_AX_SD1_NOCHECK_OFFSET  2113
+#define CM_MISCL_AX_SD2_NOCHECK_OFFSET  2118
+
+//
+// MENU_MISC_VERTEXES
+//
+
+#define CM_MISCV_FINDFREETAG    2200
+#define CM_MISCV_ROTATESCALE    2201
+#define CM_MISCV_DELETE         2202
+#define CM_MISCV_MERGE          2203
+#define CM_MISCV_ADD            2204
+
+//
+// MENU_MISC_SECTORS
+//
+
+#define CM_MISCS_FINDFREETAG    2300
+#define CM_MISCS_ROTATESCALE    2301
+#define CM_MISCS_MAKEDOOR       2302
+#define CM_MISCS_MAKELIFT       2303
+#define CM_MISCS_DISTRIBFLOOR   2304
+#define CM_MISCS_DISTRIBCEILING 2305
+
+
+#endif

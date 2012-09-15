@@ -1,0 +1,118 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildAbdicate is GuildCommand
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   GuildAbdicate_name_rsc = "abdicate"
+   GuildAbdicate_icon_rsc = light.bgf
+   GuildAbdicate_desc_Rsc = \
+      "This is the only way that a guildmaster may leave a guild.  He must "
+      "choose a successor when abdicating."
+
+   abdicate_non_user = \
+      "%s%s thanks you, but does not feel ready to lead your guild."
+   abdicate_not_member = "%s%q is not a member of %s%q!"
+
+   abdicate_cant_self = "You may not choose yourself to be your own successor!"
+
+   abdicate_to_chosen = \
+      "~B%s has abdicated the leadership position of %s%q, and passed it on "
+      "to you!"
+   abdicate_to_abdicator = "~BYou anoint %q the new leader of %s%q."
+
+   abdicate_necro_nak = \
+      "~BYou have taken a blood oath as Master of the Order.  "
+      "You may not simply abdicate!"
+
+classvars:
+
+   vrName = GuildAbdicate_name_rsc
+   vrIcon = GuildAbdicate_icon_rsc
+   vrDesc = GuildAbdicate_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_ABDICATE
+   viRank_needed = RANK_MASTER
+   viNecro_enabled = FALSE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, otarget = $)
+   "Kicks the target out of the guild!"
+   {
+      local yourGuild, myguild, i, lmembers;
+
+      if IsClass(Send(who,@GetGuild),&NecromancerGuild)
+      {
+          Send(who,@MsgSendUser,#message_rsc=abdicate_necro_nak);
+
+          return FALSE;
+      }
+
+      if NOT isClass(oTarget,&Player)
+      {
+         Send(who,@MsgSendUser,#message_rsc=abdicate_non_user,
+              #parm1=Send(oTarget,@GetCapDef),
+              #parm2=Send(oTarget,@GetTrueName));
+
+         return FALSE;
+      }
+
+      if oTarget = who
+      {
+         Send(who,@MsgSendUser,#message_rsc=abdicate_cant_self);
+
+         return FALSE;
+      }
+
+      yourGuild= Send(oTarget,@GetGuild);
+      myGuild = Send(who,@GetGuild);
+
+      if yourGuild <> myGuild OR yourGuild = $
+      {
+          Send(who,@MsgSendUser,#message_rsc=abdicate_not_member,
+              #parm1=Send(oTarget,@GetDef),#type1=STRING_RESOURCE,
+			     #parm2=Send(oTarget,@GetName),#parm3=Send(myGuild,@GetDef),
+              #parm4=Send(myGuild,@GetName));
+
+          return FALSE;
+      }
+
+      Send(myGUild,@newguildmaster,#who=oTarget,#abdicate=TRUE);
+
+      Send(oTarget,@MsgSendUser,#message_rsc=abdicate_to_chosen,
+           #parm1=Send(who,@GetTrueName),#parm2=Send(myguild,@GetDef),
+           #parm3=Send(myguild,@GetName));
+      Send(who,@MsgSendUser,#message_rsc=abdicate_to_abdicator,
+           #parm1=Send(oTarget,@GetTrueName),#type1=STRING_RESOURCE,
+           #parm2=Send(myguild,@GetDef),#parm3=Send(myguild,@GetName));
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

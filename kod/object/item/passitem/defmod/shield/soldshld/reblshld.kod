@@ -1,0 +1,164 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RebelShield is SoldierShield
+
+% Stats affected: Might and Aim
+% Special bonus: This shield protects you from 2 more points of damage than normal.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RebelShield_name_rsc = "shield of the rebel militia"
+
+   RebelShield_desc_rsc = \
+      "This shield identifies you as a soldier of the rebel militia under Jonas."
+
+   RebelShield_ArmyName = "the rebel militia"
+
+   RebelShield_emblem_over = gshreov.bgf
+   RebelShield_emblem_drop = gshre.bgf
+   RebelShield_emblem_back = gshrebk.bgf
+
+   RebelShield_welcome_mail = "Subject: Welcome fellow freedom fighter.\n"
+      "I am glad to see that you are willing to become more active in our fight for "
+      "the future of these lands against the forces of tyranny.\n\n"
+      "I expect a certain level of discipline from my militia soldiers.  Read these "
+      "rules and follow them without question.\n\n"
+      "SOLDIER SHIELD: Your shield is the sign that you are an 'official' part of the "
+      "rebel miliita.  You must keep this equipped at all times in order to demonstrate "
+      "your status within the rebel army.\n\n"
+      "ENEMY SOLDIERS: Be wary!  You can be attacked without penalty by those bearing "
+      "the colors of our faction enemies.  Only the safety of an inn or hall will protect "
+      "you from attacks.  Attacks against enemies carry no penalties, just as these "
+      "enemies will not be penalized for attacking you.  Attacking a soldier allied "
+      "to our faction is cause enough to be expelled dishonorably from our army.  I will "
+      "teach you various ways to inflict additional damage on these enemies in order to "
+      "defend yourself and to help us reclaim our place in governing this land.  You "
+      "should know that any deaths at the hands of an enemy will not be lessened.\n\n"
+      "RANKS: Your position within our forces is determined by your actions.  Defeating "
+      "enemy soldiers in combat will increase your rank.  Being killed or remaining idle "
+      "in our fight will decrease in rank.  Also, fleeing from combat by leaving this "
+      "world in unsafe areas will meet with my displeasure.  Simple enough?\n\n"
+      "ABILITIES: You will receive additional training as a soldier.  I will increase "
+      "your natural might and aim through rigorous excercise.  I will also teach you to "
+      "avoid damage from enemy blows.  I will, of course, spend more time with higher "
+      "ranking soldiers boosting their powers than with lower ranking ones.\n\n"
+      "THE COUNCILORS: Your shield will interfere with your ability to recover tokens.  "
+      "I want you to find a fellow rebel to take the token to the proper councilor should "
+      "you find one.  Also know that only proper soldiers bearing shields can claim "
+      "territory.  The flags in Pietro's may now only be carried and used by soldiers.\n\n"
+      "LOYALTY: A soldier like yourself is expected to find your own equipment.  However, "
+      "I do not expect you to continue to supply the guards protecting our flagpoles "
+      "while you maintain your status as a soldier.\n\n"
+      "Your brother in arms,\n\n"
+      "Jonas D'Accor"
+
+classvars:
+
+   vrName = RebelShield_name_rsc
+   vrDesc = RebelShield_desc_rsc
+
+   prShield_emblem_held = RebelShield_emblem_over
+   prShield_emblem_drop = RebelShield_emblem_drop
+   prShield_emblem_back = RebelShield_emblem_back
+
+   viDamage_base = 2                % This is the default value for piDamage_reduce
+
+   viFaction = FACTION_REBEL
+   viColor = XLAT_TO_RED
+
+   % Stuff for rank
+   vrArmyName = RebelShield_ArmyName
+
+   vrWelcomeMessage = RebelShield_welcome_mail
+
+properties:
+
+   piMightChange = 0
+   piAimChange = 0
+
+messages:
+
+   RemoveStats()
+   {
+      if poOwner <> $
+         AND IsClass(poOwner,&Player)
+      {
+         % Reset owner's stats
+         send(poOwner,@AddMight,#points=-piMightChange);
+         send(poOwner,@AddAim,#points=-piAimChange);
+         piMightChange = 0;
+         piAimChange = 0;
+      }
+
+      return;
+   }
+
+   UpdateRankPowers()
+   "Updates any rank powers.  Affects stats."
+   {
+      local iStatAdjustment, iNewAdjustment;
+
+      if poOwner = $
+         OR NOT IsClass(poOwner,&Player)
+      {
+         return;
+      }
+
+      if piFactionRank <= 2
+      {
+         iStatAdjustment = 0;
+      }
+      else
+      {
+         if piFactionRank <= 6
+         {
+            iStatAdjustment = 3;
+         }
+         else
+         {
+            iStatAdjustment = 5;
+         }
+      }
+
+      % In the following:
+      %  iNewAdjustment is how much the stat changed this time around.
+      %  pi(stat)Change is the cumulative change to that stat.
+      if iStatAdjustment <> piMightChange
+      {
+         iNewAdjustment = send(poOwner,@AddMight,#points=(iStatAdjustment-piMightChange));
+         piMightChange = piMightChange + iNewAdjustment;
+      }
+
+      if iStatAdjustment <> piAimChange
+      {
+         iNewAdjustment = send(poOwner,@AddAim,#points=(iStatAdjustment-piAimChange));
+         piAimChange = piAimChange + iNewAdjustment;
+      }
+
+      return;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Sets piDamage_reduce for damage reduction in the superclass."
+   {
+      % This ranges from 2-4.  At low end, we absorb 0-2 damage.  At high end, 1-4.
+      piDamage_reduce = viDamage_base + ((piFactionRank/3) - 1);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

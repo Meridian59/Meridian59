@@ -1,0 +1,111 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Jasper is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_JasperEast = "East Jasper"
+   room_JasperEast = jas-east.roo
+
+   jasper_Arsenal_rsc = "Tightly locked, the City Arsenal defies intruders."
+   jasper_granary_rsc = "You don't have access to the granary."
+   jasper_shack_rsc = \
+      "This old prospector's shack is probably unsafe to enter."
+
+classvars:
+
+   vrName = room_name_JasperEast
+   viPermanent_flags = ROOM_GUILD_PK_ONLY 
+
+   viTeleport_row = 40
+   viTeleport_col = 54
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_JasperEast
+   piRoom_num = RID_JASPER
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %%Gates to West Jasper
+      %%Large Gate
+      plExits = Cons([ 36, 34, RID_JASWEST, 43, 37, ROTATE_NONE ],plExits);
+      plExits = Cons([ 37, 34, RID_JASWEST, 44, 37, ROTATE_NONE ],plExits);
+      plExits = Cons([ 38, 34, RID_JASWEST, 45, 37, ROTATE_NONE ],plExits);
+      %%Small Gate
+      plExits = Cons([ 44, 32, RID_JASWEST, 51, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 45, 32, RID_JASWEST, 52, 35, ROTATE_NONE ],plExits);
+      %%Hidden Gate
+      plExits = Cons([ 52, 26, RID_JASWEST, 60, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 52, 27, RID_JASWEST, 60, 32, ROTATE_NONE ],plExits);
+
+
+      plExits = Cons([ 41, 57, RID_JAS_SMITHY, 6, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 42, 58, RID_JAS_SMITHY, 6, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 49, 39, RID_JAS_STORE, 19, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 59, 31, RID_JAS_HALL, 13, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 59, 32, RID_JAS_HALL, 13, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 59, 33, RID_JAS_HALL, 13, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 61, RID_GUILDH10, 19, 11, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 62, RID_GUILDH10, 19, 11, ROTATE_NONE ],plExits);
+
+
+
+      % Abandoned buildings
+      plExits = Cons([ 39, 49, ROOM_LOCKED_DOOR, jasper_shack_rsc ],plExits);
+      plExits = Cons([ 48, 34, ROOM_LOCKED_DOOR, jasper_Arsenal_rsc ],plExits);
+      plExits = Cons([ 54, 39, ROOM_LOCKED_DOOR, jasper_granary_rsc ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_F8, 14, 7, ROTATE_315 ], plEdge_exits);  
+      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_GUILDH4, 50, 27, ROTATE_180 ], plEdge_exits); 
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL2),
+           #new_row=47,#new_col=39,#fine_row=32,#fine_col=32,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL),
+           #new_row=46,#new_col=39,#fine_row=32,#fine_col=32,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BAG_OF_BEANS),
+           #new_row=45,#new_col=39,#fine_row=32,#fine_col=32,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&SmokeColumn),
+           #new_row=45,#new_col=44,#fine_row=48,#fine_col=32,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_JASPERLAMP),
+           #new_row=40,#new_col=58,#fine_row=24,#fine_col=24,
+           #new_angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,248 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EvilEnt is Monster
+
+constants:
+
+   include blakston.khd
+
+   SPELL_RANGE_SQUARED = 666
+   PALSY_CHANCE = 10
+
+resources:
+
+   EvilEnt_koc_name_rsc = "teotezmecya"
+   EvilEnt_name_rsc = "diseased tree"
+   EvilEnt_icon_rsc = res0003a.bgf
+   EvilEnt_desc_rsc = \
+      "Feeding upon the dredges of the tainted soil in the land, this "
+      "living tree exudes evil, its sap blackened with hate."
+      
+   EvilEnt_leaves_sparse_rsc = res0003c.bgf
+
+   EvilEnt_dead_icon_rsc = res0003d.bgf
+   EvilEnt_dead_leaves_sparse_rsc = res0003f.bgf
+   EvilEnt_dead_name_rsc = "dead remains of diseased tree"
+
+   EvilEnt_sound_hit = tr_atkh.wav
+   EvilEnt_sound_miss = tr_atkm.wav
+   EvilEnt_sound_death = tr_dth.wav
+   EvilEnt_sound_aware = tr_awr.wav
+
+classvars:
+
+   vrKocName = EvilEnt_koc_name_rsc
+   vrName = EvilEnt_name_rsc
+   vrIcon = EvilEnt_icon_rsc
+   vrDesc = EvilEnt_desc_rsc
+   vrDead_icon = EvilEnt_dead_icon_rsc
+   vrDead_name = EvilEnt_dead_name_rsc
+
+   viTreasure_type = TID_ENT
+   viAttack_types = ATCK_WEAP_WHIP
+   viSpeed = SPEED_NONE
+   viAttributes = MOB_NOMOVE 
+   viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
+   viLevel = 50
+   viDifficulty = 4
+   viKarma = -40
+
+   vrSound_hit = EvilEnt_sound_hit
+   vrSound_miss = EvilEnt_sound_miss
+   vrSound_aware = EvilEnt_sound_aware
+   vrSound_death = EvilEnt_sound_death
+
+   vrLeaves = EvilEnt_leaves_sparse_rsc
+   vrDead_leaves = EvilEnt_dead_leaves_sparse_rsc
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piSpell_chance = 10
+
+messages:
+
+   Constructor(iTrunkColor=$, iLeavesColor=$)
+   {
+      local iTrunk, iLeaves, lTrunk, lLeaves;
+
+      % Pick random colors.
+      iTrunk = iTrunkColor;
+      if iTrunk = $
+      {
+         lTrunk = [ XLAT_TO_SKIN4, XLAT_TO_SKIN4 ];
+         iTrunk = Nth(lTrunk,Random(1,Length(lTrunk)));
+      }
+
+      iLeaves = iLeavesColor;
+      if iLeaves = $
+      {
+         lLeaves = [ XLAT_TO_ORANGE, XLAT_TO_SKIN4, XLAT_TO_YELLOW];
+         iLeaves = Nth(lLeaves,Random(1,Length(lLeaves)));
+      }
+
+      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=iTrunk,
+                                 #color2=iLeaves);
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      plResistances = [ [ 50, -ATCK_SPELL_COLD ],
+                        [ 50, ATCK_WEAP_BLUDGEON ],
+                        [-10, ATCK_WEAP_SLASH ],
+                        [-10, -ATCK_SPELL_FIRE ] ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,2);
+
+      return;
+   }
+
+   SendMoveOverlays()
+   {
+      AddPacket(1,1);
+
+      AddPacket(4,vrLeaves, 1,HS_HEAD);
+
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,2);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,2, 2,4, 2,1);
+         
+         return;
+      }
+
+      % if no body animation
+      AddPacket(1,ANIMATE_NONE,2,1);
+      
+      return;
+   }
+
+   SendOverlays()
+   {
+      % Send overlay bitmap info to user.  
+      AddPacket(1,1);
+
+      AddPacket(4,vrLeaves, 1,HS_HEAD);
+
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,2, 2,4, 2,1);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }
+
+   AssessDamage(aSpell=0)
+   {
+      % Living trees get more dangerous if you burn 'em.
+
+      if (aSpell & ATCK_SPELL_FIRE) AND piSpell_chance > 2
+      {
+         piSpell_chance = piSpell_chance - 1;
+      }
+
+      propagate;
+   }
+
+   MonsterCastSpell()
+   {
+      local oSpell, iBase;
+      
+      iBase = Send(self,@AdjustedChanceBase,#base=piSpell_chance);
+
+      if Random(1,iBase) = 1
+         AND Send(self,@SquaredDistanceTo,#what=poTarget) < SPELL_RANGE_SQUARED
+         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
+      {
+         piAnimation = ANIM_ATTACK;
+         Send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING);
+         Send(oSpell,@CastSpell,#who=self,#lTargets=List(poTarget));
+
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   HitSideEffect(what = $)
+   {
+      local oSpell;
+      
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
+      if NOT Send(what,@IsEnchanted,#what=oSpell) 
+         AND Random(1,PALSY_CHANCE) = 1
+      {
+         Send(oSpell,@MakeSick,#who=what);
+      }
+
+      return;
+   }
+
+   CreateDeadBody(killer=$)
+   {
+      return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
+                    #playername=Send(killer,@GetTrueName),#mob=TRUE,
+                    #BodyTranslation=piColor_Translation,
+                    #LegsTranslation=piColor_Translation,                    
+                    #monstername=EvilEnt_dead_name_rsc,
+                    #PlayerBodyOverlay=vrDead_leaves);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,153 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LabeledPotion is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   LabeledPotion_name0_rsc = "liquid digestive"
+   LabeledPotion_name1_rsc = "potion of corn removal"
+   LabeledPotion_name2_rsc = "vial of plant fertilizer"
+   LabeledPotion_name3_rsc = "bottle of eye makeup"
+   LabeledPotion_name4_rsc = "bottle of insect repellant"
+   LabeledPotion_name5_rsc = "nerve-calming elixir"
+   LabeledPotion_name6_rsc = "potion of ambidexerity"
+   LabeledPotion_name7_rsc = "bottle of cleaning solution"
+   LabeledPotion_name8_rsc = "skin softening lotion"
+   LabeledPotion_name9_rsc = "vial of perfume"
+   LabeledPotion_name10_rsc = "bottle of eye drops"
+   LabeledPotion_name11_rsc = "bottle of artificial flavoring"
+   LabeledPotion_name12_rsc = "bottle of natural flavoring"
+   LabeledPotion_name13_rsc = "vial of weed killer"
+   LabeledPotion_name14_rsc = "potion of hair regrowth"
+   LabeledPotion_name15_rsc = "vial of onion extract"
+   LabeledPotion_name16_rsc = "lubricating oil"
+   LabeledPotion_name17_rsc = "bottle of hair dye"
+
+   LabeledPotion_icon_rsc = potion01.bgf
+   LabeledPotion_desc_rsc = \
+      "This is an odd potion with a hand-written label attached to it.  You are not sure if "
+      "you can trust the label on the bottle or not...."
+
+classvars:
+
+   vrIcon = LabeledPotion_icon_rsc
+   vrDesc = LabeledPotion_desc_rsc
+
+   viBulk = 20
+   viWeight = 17
+   viValue_average = 10
+
+properties:
+
+   vrName = LabeledPotion_name0_rsc
+
+messages:
+
+   Constructor()
+   {
+      local iRandomNumber;
+
+      iRandomNumber = random(0,17);
+
+      % 0 keeps the "default" name
+      if iRandomNumber = 1
+      {
+         vrName = LabeledPotion_name1_rsc;
+      } else {
+         if iRandomNumber = 2
+         {
+            vrName = LabeledPotion_name2_rsc;
+         } else {
+            if iRandomNumber = 3
+            {
+               vrName = LabeledPotion_name3_rsc;
+            } else {
+               if iRandomNumber = 4
+               {
+                  vrName = LabeledPotion_name4_rsc;
+               } else {
+                  if iRandomNumber = 5
+                  {
+                     vrName = LabeledPotion_name5_rsc;
+                  } else {
+                     if iRandomNumber = 6
+                     {
+                        vrName = LabeledPotion_name6_rsc;
+                     } else {
+                        if iRandomNumber = 7
+                        {
+                           vrName = LabeledPotion_name7_rsc;
+                        } else {
+                           if iRandomNumber = 8
+                           {
+                              vrName = LabeledPotion_name8_rsc;
+                           } else {
+                              if iRandomNumber = 9
+                              {
+                                 vrName = LabeledPotion_name9_rsc;
+                              } else {    
+                                 if iRandomNumber = 10
+                                 {
+                                    vrName = LabeledPotion_name10_rsc;
+                                 } else {
+                                    if iRandomNumber = 11
+                                    {
+                                       vrName = LabeledPotion_name11_rsc;
+                                    } else {
+                                       if iRandomNumber = 12
+                                       {
+                                          vrName = LabeledPotion_name12_rsc;
+                                       } else {
+                                          if iRandomNumber = 13
+                                          {
+                                             vrName = LabeledPotion_name13_rsc;
+                                          } else {
+                                             if iRandomNumber = 14
+                                             {
+                                                vrName = LabeledPotion_name14_rsc;
+                                             } else {
+                                                if iRandomNumber = 15
+                                                {
+                                                   vrName = LabeledPotion_name15_rsc;
+                                                } else {
+                                                   if iRandomNumber = 16
+                                                   {
+                                                      vrName = LabeledPotion_name16_rsc;
+                                                   } else {
+                                                      vrName = LabeledPotion_name17_rsc;
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   
+      return;
+   }
+
+         
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

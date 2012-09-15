@@ -1,0 +1,71 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ExplosiveFrost is AttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ExplosiveFrost_name_rsc = "explosive frost"
+
+   ExplosiveFrost_icon_rsc = iexfrost.bgf
+
+   ExplosiveFrost_desc_rsc = \
+      "Creates a small exploision of frost which damages a target at short range.  "
+      "Requires red mushrooms and elderberries to cast."
+
+   ExplosiveFrost_sound = ficefing.wav
+
+classvars:
+
+   vrName = ExplosiveFrost_name_rsc
+   vrIcon = ExplosiveFrost_icon_rsc
+   vrDesc = ExplosiveFrost_desc_rsc
+   
+   viSpell_num = SID_EXPLOSIVE_FROST
+
+   viAttack_spell = ATCK_SPELL_ALL + ATCK_SPELL_COLD
+
+   viSchool = SS_FAREN
+   viSpell_level = 4
+   viMana = 8
+
+   vrSucceed_wav = ExplosiveFrost_sound
+
+   % In seconds, since it works off GetTime().
+   viPostCast_time = 2
+
+   viChance_To_Increase = 5
+
+properties:
+
+   piDamageMin = 13
+   piDamageMax = 25
+   piRange = 4
+   
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = cons([&RedMushroom,2],plReagents);
+      plReagents = Cons([&Elderberry,1],plReagents);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,17 @@
+# Mollusk Rock
+#
+# Groups:
+#              1 Normal
+#
+-s 3
+6
+mol000sx.bmp   [0, -16] 
+mol315sx.bmp   [0, -12] 
+mol270sx.bmp   [0, -13] 
+mol180sx.bmp   [0, -19] 
+mol090sx.bmp   [0, -17] 
+mol045sx.bmp   [0, -14] 
+
+ 1
+ 8   1 2 3 4 4 4 5 6 
+

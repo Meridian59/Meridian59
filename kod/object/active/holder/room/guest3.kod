@@ -1,0 +1,120 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Guest3 is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_guest3 = "The Blacksmith of Hazar"
+   room_guest3 = guest3.roo
+   guest3_music = smithy.mid
+
+   fire_sound_guest3 = fireplac.wav
+
+   guest3_signname = "buying items"   
+   guest3_sign = \
+      "You've come into this world virtually empty handed.  Fortunately, "
+      "you also started with a bit of cash, so that you might "
+      "buy some of the items you need to get started.  Go up to the blacksmith, "
+      "press return to enter the chat window, type BUY and press return again. "
+      "A list of items that the blacksmith has for sale will appear.  Choose the "
+      "items you want, and then press [OK].  First buy a weapon, and then "
+      "some armor.  If you have enough money "
+      "to pay for them all, they will appear in your inventory.\n\n"
+      "However, you're still unarmed.  Right-click on the weapon that you "
+      "purchased, and then press the [USE] button.  A yellow glow will "
+      "appear around it, meaning that you're wielding it.  Repeat this for "
+      "the armor. To remove an object from use, simply "
+      "right-click the object and press the [UNUSE] button.\n"
+      "You may also just double-click on an item in your inventory to use or unuse it."
+      "-------------\n" 
+      "When you're done here you should go to the tavern, the large brown "
+      "building at the east end of town."
+
+classvars:
+
+   vrName = room_name_guest3
+
+   viTeleport_row = 6
+   viTeleport_col = 8
+   viTeleport_angle = ANGLE_NORTH_WEST
+
+   viDemo_base = RID_GUEST_BASE
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_GUEST_AREA
+
+   prRoom = room_guest3
+   piRoom_num = RID_guest3
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+   prMusic = guest3_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 7, 8, viDemo_base + 2, 17, 21, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 9, viDemo_base + 2, 17, 21, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      Send(self,@NewHold,#what=Create(&HazarBlacksmith),
+            #new_row=4,#new_col=5,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+
+      oSign = Create(&sign,#desc=guest3_sign,#name=guest3_signname,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=4,#new_col=7,#fine_row=32,#fine_col=32);
+
+      % Lighting
+      %  Forge
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BORANGE,#iIntensity=30),
+           #new_row=2,#new_col=6,#fine_row=40,#fine_col=32); 
+
+      %  Torches
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=4,#new_col=8,#fine_row=3,#fine_col=21); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=7,#new_col=4,#fine_row=50,#fine_col=18); 
+ 
+      propagate;
+   }
+
+   Constructed()
+   {
+      plLooping_sounds = [[ fire_sound_guest3, 2, 4 ]];
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,209 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dice is PassiveObject
+
+constants:
+
+   include blakston.khd
+   DICE_RANGE = 3
+
+   ROLL_DELAY = 1000
+
+resources:
+
+   dice_name = "pair of dice"
+   dice_desc = "Two six sided dice which can be used in numerous games of chance.  Eyeing the dice, you begin to wonder if you are feeling lucky tonight."
+   dice_icon = dice.bgf
+   
+   die_name = "die"
+   die_desc = "A single six sided die sits here, waiting for you to take your chances."
+   die_icon = die.bgf
+
+   dice_not_in_range = "You are not close enough to the dice to roll them!"
+
+   dice_one = "a one"
+   dice_two = "a two"
+   dice_three = "a three"
+   dice_four = "a four"
+   dice_five = "a five"
+   dice_six = "a six"
+
+   dieroll_rsc = "%s%s rolls %s%s and gets %s!"
+   diceroll_rsc = "%s%s rolls %s%s and gets %s and %s! "
+
+   dice_wav = dice.wav
+
+classvars:
+      
+   viObject_flags = ACTIVATE_YES 
+
+properties:
+
+   vbPair = FALSE
+   vrName = dice_name
+   vrDesc = dice_desc   
+   vrIcon = dice_icon
+
+   ptRoll = $     %% This is simply used to keep the spam level tolerable.  3 seconds after each roll.
+
+messages:
+
+   Constructor(pair=FALSE)
+   {
+      vbPair = pair;
+      if not vbPair
+      {
+         vrName = die_name;
+	 vrDesc = die_desc;
+	 vrIcon = die_icon;
+      }
+	
+      propagate;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if poOwner = $
+	  { DEBUG("TryActivate called with nil owner!"); return TRUE; }
+
+      if ptRoll <> $  { return TRUE; }
+
+      if isClass(who,&User) and poOwner = send(who,@getowner)
+      {
+	 if abs(send(who,@getrow)-send(self,@getrow)) < dice_RANGE
+	    and abs(send(who,@getcol)-send(self,@getcol)) < dice_RANGE
+	 {
+	    send(self,@Roll,#who=who);
+	 }
+	 else
+         {
+            send(who,@msgsenduser,#message_rsc=dice_not_in_range);          
+         }
+      }
+      return TRUE;
+   }
+
+   RollTimer()
+   {
+      ptRoll=$;
+      return;
+   }
+
+   Roll(who=$)
+   {
+      local aRoll, bRoll, total, rDie1, rDie2;
+      if who = $ { debug("Roll called without a who!"); return; }
+      
+      aRoll = random(1,6);
+      bRoll = random(1,6);
+
+      if aRoll = 1  { rDie1 = dice_one; }
+      if aRoll = 2  { rDie1 = dice_two; }
+      if aRoll = 3  { rDie1 = dice_three; }
+      if aRoll = 4  { rDie1 = dice_four; }
+      if aRoll = 5  { rDie1 = dice_five; }
+      if aRoll = 6  { rDie1 = dice_six; }
+
+      if bRoll = 1  { rDie2 = dice_one; }
+      if bRoll = 2  { rDie2 = dice_two; }
+      if bRoll = 3  { rDie2 = dice_three; }
+      if bRoll = 4  { rDie2 = dice_four; }
+      if bRoll = 5  { rDie2 = dice_five; }
+      if bRoll = 6  { rDie2 = dice_six; }
+
+      if not vbPair
+      {
+      send(self,@RoomMessage,#range=6,#message_rsc=dieroll_rsc,
+	 #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
+	 #parm3=send(self,@Getdef),#parm4=send(self,@getName),#parm5=rDie1);
+      }
+
+      if vbPair
+      {
+      send(self,@RoomMessage,#range=6,#message_rsc=diceroll_rsc,
+	 #parm1=send(who,@getcapdef),#parm2=send(who,@getname),
+	 #parm3=send(self,@Getdef),#parm4=send(self,@getName),#parm5=rDie1,#parm6=rDie2);
+      }
+      Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=dice_wav);
+      ptRoll = CreateTimer(self,@RollTimer,ROLL_DELAY);
+      return;
+   }
+
+   RoomMessage(range = $, except = $, except_rsc = $, message_rsc = $,
+               parm1 = $, parm2 = $, parm3 = $, parm4 = $,
+               parm5 = $, parm6 = $, parm7 = $, parm8 = $)
+   {
+      local oRoom, oSource, i, range_squared;
+
+      if range <> $
+      {  range_squared = range * range;  }
+
+      oSource = self;
+      oRoom = poOwner;
+      if oRoom = $
+      {	 return FALSE;  }
+      if oRoom = $ or not isClass(oRoom, &Room)
+      {  return FALSE;  }
+
+      for i in send(oRoom,@GetHolderActive)
+      {
+	 if not isClass(first(i),&Player)
+	 {
+	    continue;
+	 }
+
+	 if range <> $
+	 {
+	    if send(first(i),@SquaredDistanceTo,#what=oSource) >= range_squared
+	    {  continue;  }
+	 }
+
+	 if first(i) = except
+	 {
+	    if except_rsc = $
+	    {
+	       continue;
+	    }
+
+	    % message comes from except_rsc, with parm1 missing.
+	    send(first(i),@MsgSendUser,#message_rsc=except_rsc,
+	       #parm1=parm2,#parm2=parm3,#parm3=parm4,#parm4=parm5,
+	       #parm5=parm6,#parm6=parm7,#parm7=parm8);
+	 }
+	 else
+	 {
+	    send(first(i),@MsgSendUser,#message_rsc=message_rsc,
+	       #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
+	       #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+	 }
+      }
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   Delete()
+   {
+      if ptRoll <> $
+      {
+	 deletetimer(ptRoll);
+	 ptRoll = $;
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

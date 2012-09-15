@@ -1,0 +1,29 @@
+# zombie standing and walking
+# groups
+# 1 standing
+# 2-3 walking/attacking
+
+-s 3
+18
+zom000s.bmp    [0, 0] 
+zom045s.bmp    [0, 0] 
+zom090s.bmp    [0, 0] 
+zom180s.bmp    [0, 0] 
+zom270s.bmp    [0, 0] 
+zom315s.bmp    [0, 0] 
+zom000a.bmp    [0, 0] 
+zom045a.bmp    [0, 0] 
+zom090a.bmp    [0, 0] 
+zom180a.bmp    [0, 0] 
+zom270a.bmp    [0, 0] 
+zom315a.bmp    [0, 0] 
+zom000b.bmp    [0, 0] 
+zom045b.bmp    [0, 0] 
+zom090b.bmp    [0, 0] 
+zom180b.bmp    [0, 0] 
+zom270b.bmp    [0, 0] 
+zom315b.bmp    [0, 0] 
+3
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14

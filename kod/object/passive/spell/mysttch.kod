@@ -1,0 +1,170 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MysticTouch is Spell
+
+constants:
+
+   include blakston.khd
+
+   % Max target can reach after getting benefit.
+   MAX_TOTAL_AMOUNT = 75
+
+   % Minimum amount of mana that caster should have (above casting cost) to
+   %  transfer to a target
+   MINIMUM_MANA = 5
+
+resources:
+
+   MysticTouch_name_rsc = "mystic touch"
+   MysticTouch_icon_rsc = imysticc.bgf
+   MysticTouch_desc_rsc = \
+      "Draws upon the magic of Faren to transfer magical energy from caster to "
+      "target.  "
+      "Requires mushrooms to cast."
+   
+   MysticTouch_cast_rsc = \
+      "You feel the magical energies of another filling your body."
+   MysticTouch_caster_msg_rsc = "You give part of your magical energy to %s%s."
+
+   MysticTouch_unnecessary_rsc = \
+      "%s%s cannot handle additional magical energy from this spell."
+   MysticTouch_nomana_rsc = \
+      "You do not have enough magical energy to transfer to another!"
+   MysticTouch_notonself_rsc = "You cannot cast mystic touch on yourself."
+
+   MysticTouch_spell_intro = \
+      "Faren Lv. 1: Gives part of caster's mana to another person."
+
+   MysticTouch_sound = fmystic.wav
+
+classvars:
+
+   vrName = MysticTouch_name_rsc
+   vrIcon = MysticTouch_icon_rsc
+   vrDesc = MysticTouch_desc_rsc
+   vrSucceed_wav = MysticTouch_sound
+
+   vrSpell_intro = MysticTouch_spell_intro
+
+   viSpell_num = SID_MYSTIC_TOUCH
+   viSchool = SS_FAREN
+   viSpell_level = 1
+   viMana = 3
+   viSpellExertion = 2
+   viChance_To_Increase = 20
+  
+   viFlash = FLASH_GOOD
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Mushroom,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if NOT IsClass(target, &User)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),
+              #parm3=Send(target,@GetName));
+
+         return FALSE;
+      }
+
+      if target = who
+      {
+         Send(who,@MsgSendUser,#message_rsc=MysticTouch_notonself_rsc);
+
+         return FALSE;
+      }
+
+      % No giving if less than mana cost
+      if Send(who,@GetMana) <= (viMana + MINIMUM_MANA)
+      {
+         Send(who,@MsgSendUser,#message_rsc=MysticTouch_nomana_rsc);
+
+         return FALSE;
+      }
+
+      % Max mana of 1.5 times target's max mana or 75
+      if Send(target,@GetMana) >= ((Send(target,@GetMaxMana) * 3) / 2)
+         OR Send(target,@GetMana) >= MAX_TOTAL_AMOUNT 
+      {
+         Send(who,@MsgSendUser,#message_rsc=MysticTouch_unnecessary_rsc,
+	           #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower=0)
+   {
+      local iPercent, oTarget, iSpAmount;
+
+      oTarget = First(lTargets);
+      
+      iPercent = bound(iSpellPower/2,10,55);
+      
+      iSpAmount = bound(((Send(who,@GetMana) * iPercent) / 100),1,$);
+
+      if iSpAmount > (Send(who,@GetMana) - viMana)
+      {
+         iSpAmount = Send(who,@GetMana) - viMana;
+      }
+
+      if (iSpAmount + Send(oTarget,@GetMana)) > ((Send(oTarget,@GetMaxMana) * 3) / 2)
+      {
+         iSpAmount = ((Send(oTarget,@GetMaxMana) * 3) / 2) - Send(oTarget,@GetMana);
+      }
+
+      if (iSpAmount + Send(oTarget,@GetMana)) > MAX_TOTAL_AMOUNT
+      {
+         iSpAmount = MAX_TOTAL_AMOUNT - Send(oTarget,@GetMana);
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=MysticTouch_caster_msg_rsc,
+           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));  
+      Send(who,@LoseMana,#amount=iSpAmount);
+
+      Send(oTarget,@MsgSendUser,#message_rsc=MysticTouch_cast_rsc);
+      Send(oTarget,@GainMana,#amount=iSpAmount);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

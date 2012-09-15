@@ -1,0 +1,165 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanApothecary is KocatanTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanApoth_name_rsc = "Zala ix'Mecya"
+   kocatanapoth_icon_rsc = kcapoth.bgf
+   kocatanapoth_desc_rsc = "Zala is a slow moving woman who obviously enjoys "
+      "the earthly pleasures.  She talks in a soft, husky voice between long "
+      "drags on her clay pipe."
+
+   kocatanapoth_entry_welcome = "Peace, love and tranquility to you, friend."
+
+   apoth_potion_riija = "Yes, I do have a potion of forgetfulness.  Quaff it with caution, for it's effects are potent."
+   kocatanapoth_herbs_sale = "Why, yes, I could share %s%s from my personal stash with you.  Fresh from the mainland."
+   kocatanapoth_elderberry_sale = "Why do you want %s%s?  They don't seem very potent."
+   kocatanapoth_bluemushroom_sale = "Did you know that %s%s work wonders if taken after a hard night of fun?  Buy a few and see."
+   kocatanapoth_redmushroom_sale = "Ah, you want %s%s?  I see you know how to enjoy yourself."
+
+classvars:
+
+   vrName = KocatanApoth_name_rsc
+   vrIcon = KocatanApoth_icon_rsc
+   vrDesc = KocatanApoth_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_BUYER | MOB_COND_SELLER
+   viOccupation = MOB_ROLE_APOTHECARY
+   viGender = GENDER_FEMALE
+
+properties:
+
+
+messages:
+
+   ObjectDesired(what=$)
+   {
+      if send(self,@IsObjectReagent,#what=what)
+         AND NOT send(self,@IsObjectGem,#what=what)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood+1);
+
+         return;
+      }
+      
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood-3);
+
+         return;
+      }
+
+      if why = MOODMOD_SELL_ITEM
+      {
+         send(self,@SetMood,#new_mood=piMood+1);
+
+         return;
+      }
+
+      if why = MOODMOD_ACCEPT_ITEM
+      {
+         if IsClass(what, &Herbs)
+         {
+            send(self,@SetMood,#new_mood=piMood+5);
+         }
+         else
+         {
+            send(self,@SetMood,#new_mood=piMood+1);
+         }
+
+         return;
+      }
+
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ [ Create(&RainbowFern,#number=4),
+                       Create(&UncutSeraphym,#number=1),
+                       Create(&FireSand,#number=4),
+                       Create(&DragonflyEye,#number=2),
+                       Create(&Solagh,#number=4),
+                       Create(&WebMoss,#number=4) ],
+                      $, $, $ ];
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      Send(poOwner,@SomeoneSaid,#what=self,#string=KocatanApoth_entry_welcome,
+           #type=SAY_RESOURCE);
+             
+      if Send(who,@GetAction) = UA_HAPPY
+      {
+         send(self,@SetMood,#new_mood=piMood+3);
+      }
+      
+      if Send(who,@GetAction) = UA_SAD
+      {
+         send(self,@SetMood,#new_mood=piMood-3);
+      }
+      
+      propagate;
+   }
+   
+ 
+   InitCondSale()
+   {
+      local oObj, oObj2, oObj3, oObj4, oObj5;
+      
+      oObj = Create(&ForgetPotionRiija);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,10000,apoth_potion_riija]);
+
+      oObj2 = Create(&Herbs, #number=4);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj2,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj2,400,kocatanapoth_herbs_sale]);
+           
+      oObj3 = Create(&Elderberry, #number=3);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj3,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj3,500,kocatanapoth_elderberry_sale]);
+
+      oObj4 = Create(&BlueMushroom, #number=2);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj4,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj4,600,kocatanapoth_bluemushroom_sale]);
+
+      oObj5 = Create(&RedMushroom, #number=2);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj5,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj5,1000,kocatanapoth_redmushroom_sale]);
+
+      return;
+   }
+
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

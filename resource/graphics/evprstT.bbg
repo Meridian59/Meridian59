@@ -1,0 +1,41 @@
+# Evil Priestess of Qor
+# Arms and torso
+# groups
+# 1 standing
+# 2 gesturing
+# 3-4 walking, no overlays here though!
+# Hotspots
+# 1 Head
+# 41 Legs
+-s 3
+24
+prsba000.bmp   [0, -84] :2      1 [36, 2]  41 [34, 93]
+prsba045.bmp   [0, -84] :2      1 [30, 2]  41 [30, 88]
+prsba090.bmp   [0, -84] :2      1 [15, 1]  41 [18, 85]
+prsba180.bmp   [0, -84] :2      1 [31, 2]  41 [31, 88]
+prsba270.bmp   [0, -84] :2      1 [31, 2]  41 [26, 86]
+prsba315.bmp   [0, -84] :2      1 [36, 2]  41 [35, 87]
+prsbb000.bmp   [0, -84] :2      1 [30, 2]  41 [26, 91]
+prsbb045.bmp   [0, -84] :2      1 [26, 1]  41 [27, 88]
+prsbb090.bmp   [0, -84] :2      1 [17, 1]  41 [18, 85]
+prsbb180.bmp   [0, -84] :2      1 [28, 2]  41 [27, 87]
+prsbb270.bmp   [0, -84] :2      1 [67, 2]  41 [64, 85]
+prsbb315.bmp   [0, -84] :2      1 [67, 2]  41 [64, 86]
+prsbe000.bmp   
+prsbe045.bmp  
+prsbe090.bmp 
+prsbe180.bmp 
+prsbe270.bmp 
+prsbe315.bmp 
+prsbf000.bmp
+prsbf045.bmp 
+prsbf090.bmp 
+prsbf180.bmp 
+prsbf270.bmp 
+prsbf315.bmp 
+4
+ 8    1  6   5   4   4   4   3   2 
+ 8    7 12   11  10  10  10  9   8
+ 8   13 18   17  16  16  16  15  14 
+ 8   19 24   23  22  22  22  21  20
+ 

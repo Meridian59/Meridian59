@@ -1,0 +1,99 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DispelIllusion is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   dispelillusion_name_rsc = "dispel illusion"
+   dispelillusion_icon_rsc = idispill.bgf
+   dispelillusion_desc_rsc = \
+      "Attempts to dispel any illusions in your vicinity.  This powerful "
+      "spell is the bane of the Riija school of magic, but at a significant "
+      "cost in reagents.  "
+      "Requires dragonfly eyes, uncut seraphym, and solagh to cast."
+
+   dispelillusion_castermsg_rsc = \
+      "You cross your eyes momentarily to make the illusions in the area fade "
+      "away."
+
+   dispelillusion_sound = kdispill.wav
+
+classvars:
+   vrName = dispelillusion_name_rsc
+   vrIcon = dispelillusion_icon_rsc
+   vrDesc = dispelillusion_desc_rsc
+  
+   vrSucceed_wav = dispelillusion_sound
+
+   viSpell_num = SID_DISPEL_ILLUSION
+   viSchool = SS_KRAANAN
+   viSpell_level = 4
+   viMana = 20
+   viSpellExertion = 15
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&DragonflyEye,1],plReagents);
+      plReagents = Cons([&UncutSeraphym,1],plReagents);
+      plReagents = Cons([&Solagh,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, iSpellPower = 0)
+   {
+      local oRoom, iChance, bAll;
+
+      oRoom = Send(who,@GetOwner);
+
+      % A percent chance based on spellpower
+      if IsClass(who,&Admin)
+         AND Send(who,@PlayerIsImmortal)
+      {
+         iChance = 100;
+      }
+      else
+      {
+         iChance = Bound(iSpellPower,10,99);
+      }
+
+      % Only attempt to dispell all illusions if the player is unangeled.
+      bAll = Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE);
+
+      if bAll
+      {
+         Send(oRoom,@DispelIllusionEnchantments,#iChance=iChance);
+      }
+
+      Send(oRoom,@DispelIllusions,#what=self,#iChance=iChance,#bAll=bAll);
+
+      Send(who,@MsgSendUser,#message_rsc=dispelillusion_castermsg_rsc);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

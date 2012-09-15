@@ -1,0 +1,19 @@
+# First person view
+# Hand - attacking
+# groups
+# 1-3 fist attack
+# 4-6 3-part animation of spell casting
+6
+punchA.bmp     [0, 0] 
+punchB.bmp     [0, 0] 
+punchC.bmp     [0, 0] 
+msplAhnd.bmp   [0, 0] :1    -21 [33, 60]
+msplBhnd.bmp   [0, 0] :1    -21 [33, 63]
+msplChnd.bmp   [0, 0] :1    -21 [33, 56]
+6
+ 1      1
+ 1      2
+ 1      3
+ 1      4
+ 1      5
+ 1      6

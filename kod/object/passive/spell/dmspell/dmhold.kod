@@ -1,0 +1,198 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DMHold is DMSpell
+
+constants:
+
+   include blakston.khd   
+
+   TEN_MINUTES = 600000
+
+resources:
+
+   DMHold_name_rsc = "superior hold"
+   DMHold_icon_rsc = ihold.bgf
+   DMHold_desc_rsc = \
+      "Holds the victim for 10 minutes or until you cast "
+      "superior hold on them again, releasing them."
+   
+   DMHold_already_enchanted = "%s%s is freed from your grip."
+   
+   DMHold_caster = "%s%s is now held in place by a magical force."
+
+   DMHold_on = \
+      "A magical tingling pulses through your body.  You are unable to move."
+
+   DMHold_off = \
+      "The superior hold lifts and you are able to move once more."
+
+classvars:
+
+   vrName = DMHold_name_rsc
+   vrIcon = DMHold_icon_rsc
+   vrDesc = DMHold_desc_rsc
+
+   viSpell_num = SID_DMHOLD
+   viSchool = SS_DM_COMMAND
+   
+   viFlash = FLASH_BAD
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      if NOT isClass(who,&DM)
+      {
+         send(who,@RemoveSpell,#num=viSpell_num);
+         debug("Player",send(who,@GetName),"had",send(self,@GetName),"--removed");
+
+         return FALSE;
+      }
+
+      target = First(lTargets);
+
+      if target = who
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+
+         return FALSE;
+      }
+
+      % DM's can't cast on monsters, but admins can.
+      %  This may seem counterintuitive, but the rationale is that
+      %  superior hold is the best way to see if a player has pkk.
+      %  However, we don't want dms to help players kill the lich, etc.
+      if (getClass(who) = &DM) AND isClass(target,&Monster)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+   CastSpell(who = $, lTargets = $, iSpellpower = 0)
+   {
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      % keep tabs on guides/bards, but not admins.
+      if GetClass(who) = &DM
+      {
+         debug(send(who,@GetTrueName)," cast superior hold on ",send(oTarget,@GetTrueName));
+      }
+
+      if NOT Send(otarget,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=DMHold_caster,
+              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+         Send(oTarget,@StartEnchantment,#what=self,#time=TEN_MINUTES);
+
+         if IsClass(oTarget,&Player)
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=DMHold_on);	 
+            Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+         }
+         else  
+         {
+            % Class is &Monster
+            Send(oTarget,@ResetBehaviorFlags);
+            Send(oTarget,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
+         }      
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=DMHold_already_enchanted,
+              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+         Send(oTarget,@RemoveEnchantment,#what=self);
+      }
+
+      propagate;
+   }
+
+   EndEnchantment(who = $, report = TRUE)
+   {
+      if IsClass(who,&Player)
+      {
+         Send(who, @EffectSendUser, #what=self, #effect=EFFECT_PARALYZE_OFF);
+
+         if report
+         {
+            Send(who,@MsgSendUser,#message_rsc=DMHold_off);
+         }
+      }
+      else  
+      {
+         % class is &Monster
+         % Post this, has to be done AFTER the enchantment is gone from the monster's ench list
+         Post(who,@ResetBehaviorFlags);   
+      }
+     
+      return;
+   }
+
+   SendEffectData()
+   {
+      return;
+   }
+
+   RestartEnchantmentEffect(who=$,state=$)
+   {
+      Send(who,@MsgSendUser,#message_rsc=DMHold_on);
+      Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+
+      return;
+   } 
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
+
+      return;      
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

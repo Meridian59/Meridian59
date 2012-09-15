@@ -1,0 +1,114 @@
+# skeleton head 2 - default
+# Groups:
+# 1 standing
+# 2-7 walking
+# 8-13 fighting
+#^Applied to Hotspot: 1
+#*Groups: 13
+#* standing
+#* walk A
+#* walk B
+#* walk C
+#* walk D
+#* walk E
+#* walk F
+#* fight A
+#* fight B
+#* fight C
+#* fight D
+#* fight E
+#* fight F
+-s 3
+78
+sh2000s.bmp    [129, 56] 
+sh2315s.bmp    [119, 55] 
+sh2270s.bmp    [124, 55] 
+sh2180s.bmp    [157, 55] 
+sh2090s.bmp    [162, 56] 
+sh2045s.bmp    [147, 56] 
+sh2000wa.bmp   [141, 52] 
+sh2315wa.bmp   [122, 51] 
+sh2270wa.bmp   [116, 52] 
+sh2180wa.bmp   [147, 51] 
+sh2090wa.bmp   [166, 52] 
+sh2045wa.bmp   [162, 51] 
+sh2000wb.bmp   [148, 51] 
+sh2315wb.bmp   [125, 51] 
+sh2270wb.bmp   [115, 51] 
+sh2180wb.bmp   [142, 51] 
+sh2090wb.bmp   [166, 51] 
+sh2045wb.bmp   [164, 51] 
+sh2000wc.bmp   [152, 56] 
+sh2315wc.bmp   [129, 56] 
+sh2270wc.bmp   [115, 59] 
+sh2180wc.bmp   [138, 56] 
+sh2090wc.bmp   [166, 58] 
+sh2045wc.bmp   [165, 56] 
+sh2000wd.bmp   [152, 56] 
+sh2315wd.bmp   [128, 53] 
+sh2270wd.bmp   [115, 52] 
+sh2180wd.bmp   [138, 54] 
+sh2090wd.bmp   [166, 52] 
+sh2045wd.bmp   [165, 53] 
+sh2000we.bmp   [149, 51] 
+sh2315we.bmp   [122, 56] 
+sh2270we.bmp   [115, 51] 
+sh2180we.bmp   [141, 51] 
+sh2090we.bmp   [166, 51] 
+sh2045we.bmp   [165, 51] 
+sh2000wf.bmp   [141, 58] 
+sh2315wf.bmp   [127, 51] 
+sh2270wf.bmp   [117, 57] 
+sh2180wf.bmp   [148, 57] 
+sh2090wf.bmp   [166, 57] 
+sh2045wf.bmp   [161, 56] 
+sh2000aa.bmp   [134, 58] 
+sh2315aa.bmp   [117, 58] 
+sh2270aa.bmp   [117, 58] 
+sh2180aa.bmp   [155, 57] 
+sh2090aa.bmp   [166, 58] 
+sh2045aa.bmp   [155, 58] 
+sh2000ab.bmp   [140, 62] 
+sh2315ab.bmp   [117, 62] 
+sh2270ab.bmp   [111, 61] 
+sh2180ab.bmp   [150, 61] 
+sh2090ab.bmp   [169, 61] 
+sh2045ab.bmp   [163, 62] 
+sh2000ac.bmp   [142, 66] 
+sh2315ac.bmp   [117, 66] 
+sh2270ac.bmp   [109, 65] 
+sh2180ac.bmp   [147, 65] 
+sh2090ac.bmp   [170, 65] 
+sh2045ac.bmp   [165, 66] 
+sh2000ad.bmp   [140, 63] 
+sh2315ad.bmp   [116, 62] 
+sh2270ad.bmp   [110, 62] 
+sh2180ad.bmp   [149, 62] 
+sh2090ad.bmp   [169, 62] 
+sh2045ad.bmp   [163, 62] 
+sh2000ae.bmp   [138, 62] 
+sh2315ae.bmp   [116, 61] 
+sh2270ae.bmp   [112, 61] 
+sh2180ae.bmp   [151, 61] 
+sh2090ae.bmp   [168, 61] 
+sh2045ae.bmp   [161, 62] 
+sh2000af.bmp   [134, 60] 
+sh2315af.bmp   [115, 60] 
+sh2270af.bmp   [115, 60] 
+sh2180af.bmp   [155, 60] 
+sh2090af.bmp   [166, 60] 
+sh2045af.bmp   [157, 60] 
+13
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 

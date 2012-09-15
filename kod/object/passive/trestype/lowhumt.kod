@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LowHumanTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_LOW_HUMAN
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &Herbs, 17 ],
+                     [ &Mushroom, 13 ],
+                     [ &Mace, 12],
+                     [ &Money, 10],
+                     [ &Mug, 10 ],
+                     [ &Elderberry, 9],
+                     [ &Apple, 8 ],
+                     [ &Shortsword, 7],
+                     [ &MetalShield, 5 ],
+                     [ &LeatherArmor, 5],
+                     [ &Emerald, 4]
+					  ];
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,138 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Trance is PassiveObject 
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   trance_begin = "You focus your whole will on casting %s."
+   trance_break = "Your concentration is broken and the %s spell fizzles."
+   trance_break_sound = spelfail.wav
+
+classvars:
+
+properties:
+
+messages:
+
+   GetSpellNum()
+   {
+      return SID_TRANCE;
+   }
+
+   BeginCastingTrance( what = $, who = $, lTargets = $, time = 0 )
+   {
+      local oWarpTime;
+
+      oWarpTime = Send(SYS,@FindSpellByNum,#num=SID_WARPTIME);
+      if Send(Send(who,@GetOwner),@IsEnchanted,#what=oWarpTime)
+      {
+         time = Send(oWarpTime,@GetStretchedTime,#oldtime=time,
+                     #oRoom=Send(who,@GetOwner));
+      }
+      
+      Send(who,@StartEnchantment,#what=self,#time=time,#addicon=FALSE,
+           #state=[what,who,lTargets,TRUE]);
+
+      return;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetTranceFlag);
+
+      return;
+   }
+
+   EndEnchantment(who = $, state = $ )
+   "Called when:"
+   " 1) Casting time expires, time to call CastSpell"
+   " 2) Spell expires"
+   {
+      local oSpell, oCaster, lTargets, iSpellPower;
+      
+      oSpell = Nth(state,1);
+      oCaster = Nth(state,2);
+      lTargets = Nth(state,3);
+      Send(oCaster,@ClearTranceFlag);
+
+      % Double-check to get valid targets.  Don't report 'cause we've already 
+      %  spammed them during the first check.
+      lTargets = Send(oSpell,@GetGoodTargets,#who=oCaster,#lTargets=lTargets,
+                      #report=FALSE);
+
+      iSpellPower = Send(oSpell,@GetSpellPower,#who=oCaster);
+      if Send(oSpell,@DoubleCheckAfterTrance,#who=oCaster,#lTargets=lTargets,
+              #iSpellPower=iSpellPower)
+      {
+         if lTargets <> $
+            AND isClass(First(lTargets),&Battler)
+            AND Send(First(lTargets),@TryDeflect,#what=oSpell,#caster=oCaster)
+         {
+            Send(oSpell,@CastSpell,#who=oCaster,#lTargets=[oCaster],
+                 #iSpellPower=iSpellPower/2);
+         }             
+         else
+         {
+            Send(oSpell,@CastSpell,#who=oCaster,#lTargets=lTargets,
+                 #iSpellPower=iSpellPower);
+         }
+      }
+      
+      return;
+   }
+
+   BreakTrance(state = $, event = 1)
+   {
+      local oSpell, oCaster;
+      
+      oSpell = First(state);
+      oCaster = Nth(state,2);
+      Send(oCaster,@ClearTranceFlag);
+      
+      if event <> EVENT_STEER
+      {
+         Send(oSpell,@TranceBroken,#oCaster=oCaster,#state=state);
+      }
+      
+      Send(oCaster,@RemoveEnchantment,#what=self);
+      
+      return;
+   }
+
+   RemoveEnchantmentEffects( who = $, state = $ )
+   "This is normally translated to EndEnchantment in spell.kod"
+   "For trance, it is just swallowed."
+   {
+      return;
+   }
+
+   ShowEnchantmentIcon() 
+   {
+      return False;
+   }
+
+   IsPersonalEnchantment()
+   {
+      return FALSE;
+   }
+
+   AffectsMaxMana()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,13 @@
+# Ghost eyes
+# no views behind
+# hotspot
+# 11 eyes
+-s 4
+5
+ghey000.bmp    [-7, -2] 
+ghey045.bmp    [-7, -2] 
+ghey090.bmp    [-7, -3] 
+ghey270.bmp    [0, -3] 
+ghey315.bmp    [-4, -1] 
+1
+ 8      1   5   4   0   0   0   3   2

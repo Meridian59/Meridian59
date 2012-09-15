@@ -1,0 +1,456 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKA0 is KCForest
+
+constants:
+
+   include blakston.khd
+
+   NUM_VENTS = 5
+
+   % How long is the shrine around?  10 minutes, in milliseconds.
+   PUZZLE_RESTART_TIME = 10*60*1000
+
+   % A small delay efore the next item is shown, in milliseconds.
+   NEXT_ITEM_DELAY = 5000
+
+resources:
+
+   room_name_OutdoorsKA0 ="A dark, humid cavern"
+   room_OutdoorsKA0 = KA0.roo
+   OutdoorsKA0_music = drgnfly.mid
+
+   new_item_appears_rsc = "The air shimmers and a ghostly image appears."
+   Drop_correct_item_rsc = \
+      "The air crackles with energy and the %s disappears."
+   Drop_incorrect_item_rsc = "You drop the %s and nothing happens."
+   Shrine_appears = \
+      "A rush of power courses through the room and as a mysterious shrine "
+      "materializes before you."
+
+classvars:
+
+   viAvar_clan = AVARCLAN_ANTIMAGIC
+   vrName = room_name_OutdoorsKA0
+
+   viTeleport_row = 5
+   viTeleport_col = 10
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_OutdoorsKA0
+   prMusic = OutdoorsKA0_music
+   piRoom_num = RID_KA0
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = 3
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piMonster_count_max = 0
+
+   plVentItems1 = $
+   plVentItems2 = $
+   plHardVentItems = $
+
+   piItemNumber  = $
+   poItemNeeded = $
+   poGhostitem = $
+   poShrine = $
+
+   % Time the user has to get each item in one hour units.  Admin adjustable.
+   piResetHours = 24  
+
+   % Number of items users must bring.  the last is the hard item.
+   %  piSteps + 1 is the shrine.
+   piSteps = 5 
+
+   ptInitPuzzleTimer = $
+   ptSetNextItemTimer = $
+
+   pbGenerateMonsters = FALSE
+
+messages:
+
+   Constructed()
+   {
+      plVentItems1 = [ &Mace,
+                       &RoomKeyCopy,
+                       &Rose,
+                       &ForgetPotion,
+                       &JewelofFroz,
+                       &Gauntlet,
+                       &Helm,
+                       &IvyCirclet,
+                       &OrcShield,
+                       &ChickenSoup,
+                       &BallotItem,
+                       &Lute,
+                       &Chess,
+                       &Yrxlsap,
+                       &WebMoss,
+                       &Sapphire,
+                       &Ruby,
+                       &RainbowFern,
+                       &OrcTooth,
+                       &Mushroom,
+                       &RedMushroom,
+                       &PurpleMushroom,
+                       &BlueMushroom,
+                       &KriipaClaw,
+                       &Herbs,
+                       &FireSand,
+                       &FairyWing,
+                       &Emerald,
+                       &ElderBerry,
+                       &Diamond,
+                       &DragonflyEye
+                     ];
+
+    plVentItems2 = [ &EntrootBerry,
+                     &DarkAngelFeather,
+                     &BlueDragonScale,
+                     &Spideye,
+                     &Snack,
+                     &Pork,
+                     &Mug,
+                     &Meatpie,
+                     &KocatanMug,
+                     &InkyCap,
+                     &Grapes,
+                     &WineGoblet,
+                     &Cheese,
+                     &RingofLethargy,
+                     &ShortSword,
+                     &Scimitar,
+                     &NeruditeSword,
+                     &MysticSword,
+                     &LongSword,
+                     &Hammer,
+                     &GoldSword,
+                     &Axe,
+                     &Longbow,
+                     &PlateArmor,
+                     &ScaleArmor,
+                     &Robe,
+                     &NeruditeArmor,
+                     &LeatherArmor,
+                     &DiscipleRobe,
+                     &Chalice
+                   ];
+
+      plHardVentItems = [ &SpiderEgg,
+                          &OrcPitBossHead,
+                          &OneToken,
+                          &TwoToken,
+                          &ThreeToken,
+                          &FourToken,
+                          &FiveToken,
+                          &DukeFlag,
+                          &PrincessFlag,
+                          &RebelFlag,
+                          &OrcPitBossHead,
+                          &FineLute
+                        ];
+                     
+      Post(self,@InitPuzzle);
+      poShrine = Create(&Shrine,#shrine_num=SHRINE_ISLAND);
+      
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KA1, 13, 24, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=12),
+           #new_row=7,#new_col=6,#fine_row=16,#fine_col=32,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
+           #new_row=2,#new_col=11,#fine_row=0,#fine_col=48,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=12),
+           #new_row=3,#new_col=14,#fine_row=16,#fine_col=16,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
+           #new_row=8,#new_col=10,#fine_row=32,#fine_col=0,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
+           #new_row=8,#new_col=13,#fine_row=16,#fine_col=48,
+           #new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=0),
+           #new_row=2,#new_col=7,#fine_row=48,#fine_col=0,
+           #new_angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+   InitPuzzleTimer()
+   {
+      ptInitPuzzleTimer = $;
+      Send(self,@InitPuzzle);
+
+      return;
+   }
+
+   InitPuzzle()
+   {
+      piItemNumber = 0;
+      Send(self,@DeleteObjects);
+      Send(self,@DeleteTimers);
+      Send(self,@GotItem);
+
+      return;
+   }
+
+   GetItemNeededClass()
+   {
+      local cItemNeeded, iItem, iRand;
+
+      iRand = random(1,2);
+
+      if iRand = 1
+      {
+         cItemNeeded = Nth(plVentItems1,random(1,length(plVentItems1)));
+      }
+      else
+      {
+         cItemNeeded = Nth(plVentItems2,random(1,length(plVentItems2)));         
+      }
+
+      return cItemNeeded;
+   }
+
+   GetHardItemNeededClass()
+   {
+      % List of really pain in the ass items.
+      local cItemNeeded;
+
+      cItemNeeded = Nth(plHardVentItems,random(1,length(plHardVentItems)));
+
+      return cItemNeeded;
+   }
+
+   NewHold(what=$)
+   {
+      if IsClass(what,&Item)
+      {
+         % Have to post this to handle numberitems.
+         Post(self,@CheckItemPos,#what=what);  
+      }
+
+      propagate;
+   }
+
+   CheckItemPos(what=$)
+   {
+      local iRow,iCol;
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      if piItemNumber > piSteps
+      {
+         % Shrine in Place
+         Send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=2);
+      }
+      else
+      {      
+
+         if ((iRow > 3) AND (iRow < 6))
+            AND ((iCol > 1) AND (iCol < 4))
+         {
+            if IsClass(what,GetClass(poItemNeeded))
+            {
+               Send(self,@Gotitem);
+               Send(what,@Delete);
+               Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
+                    #string=Drop_correct_item_rsc,#parm1=send(what,@GetName));
+            }
+            else
+            {
+               Send(what,@Delete);
+               Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
+                    #string=Drop_incorrect_item_rsc,
+                    #parm1=send(what,@GetName));
+            }
+         }
+      }
+
+      return;
+   }
+
+   GotItem()
+   {
+
+      piItemNumber = piItemNumber + 1;
+      if poGhostItem <> $
+      {
+         post(poGhostitem,@Delete);
+      }
+
+      if ptInitPuzzleTimer = $
+      {         
+         ptInitPuzzleTimer = CreateTimer(self,@InitPuzzleTimer,
+                                         (piResetHours*HOUR*1000));
+      }
+      else
+      {
+         DeleteTimer(ptInitPuzzleTimer);
+         ptInitPuzzleTimer = CreateTimer(self,@InitPuzzleTimer,
+                                         (piResetHours*HOUR*1000));
+      }
+
+      if piItemNumber = piSteps + 1
+      {
+         ptSetNextItemTimer = CreateTimer(self,@PlaceShrineTimer,
+                                          NEXT_ITEM_DELAY);
+
+         return;
+      }
+
+      ptSetNextItemTimer = CreateTimer(self,@SetNextItemTimer,
+                                       NEXT_ITEM_DELAY);
+
+      return;
+   }
+
+   SetNextItemTimer()
+   {
+      Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
+           #string=new_item_appears_rsc);
+      ptSetNextItemTimer = $;
+      Send(self,@SetNextItem);
+
+      return;
+   }
+
+   SetNextItem()
+   {
+      if poItemNeeded <> $
+      {
+         Send(poItemNeeded,@delete);
+         poItemNeeded = $;
+      }
+
+      if piItemNumber = piSteps
+      {   
+         poItemNeeded = Create(Send(self,@GetHardItemNeededClass));
+      }
+      else
+      {
+         poItemNeeded = Create(Send(self,@GetItemNeededClass));
+      }
+
+      Send(self,@PlaceNextItem);
+
+      return;
+   }
+
+   PlaceNextItem()
+   {
+      poGhostItem = Create(&GhostItem,#obj=poItemNeeded);
+      Send(self,@NewHold,#what=poGhostitem,#new_row=4,#new_col=2,
+           #fine_row=60,#fine_col=63);
+
+      return;
+   }
+
+   PlaceShrineTimer()
+   {
+      ptSetNextItemTimer = $;
+      Send(self,@PlaceShrine);
+
+      return;
+   }
+
+   PlaceShrine()
+   {
+      Send(self,@NewHold,#what=poShrine,#new_row=4,
+           #new_col=2,#fine_row=60,#fine_col=63);
+
+      if ptInitPuzzleTimer = $
+      {         
+         ptInitPuzzleTimer = CreateTimer(self,@InitPuzzleTimer,
+                                         PUZZLE_RESTART_TIME);
+      }
+      else
+      {
+         DeleteTimer(ptInitPuzzleTimer);
+         ptInitPuzzleTimer = CreateTimer(self,@InitPuzzleTimer,
+                                         PUZZLE_RESTART_TIME);  
+      }
+
+      Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,
+           #string=Shrine_appears);
+
+      return;
+   }
+
+   DeleteObjects()
+   {
+      if poItemNeeded <> $
+      {
+         Send(poItemNeeded,@Delete);
+         poItemNeeded = $;
+      }
+
+      if poGhostItem <> $
+      {
+         Send(poGhostItem,@Delete);
+         poGhostItem = $;
+      }
+
+      return;
+   }
+
+   DeleteTimers()
+   {
+      if ptInitPuzzleTimer <> $
+      {
+         DeleteTimer(ptInitPuzzleTimer);
+         ptInitPuzzleTimer = $;
+      }
+
+      if ptSetNextItemTimer <> $
+      {
+         DeleteTimer(ptSetNextItemTimer);
+         ptSetNextItemTimer = $;
+      }
+
+      return;
+   }
+
+   Delete()
+   {
+      Send(self,@DeleteObjects);
+      Send(self,@DeleteTimers);
+
+      % Delete our shrine.
+      if poShrine <> $
+      {
+         Send(poShrine,@Delete);
+         poShrine = $;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

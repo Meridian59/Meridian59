@@ -1,0 +1,1163 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarionCrypt3a is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   % Constants for CountTrap
+   COUNTTRAP_USER     = 1
+   COUNTTRAP_THRASHER = 2
+
+   % Constants for treasure
+   % Objects as treasure, format: [ chance, TREASURE_OBJECT, class, number ]
+   TREASURE_OBJECT = 1
+   % Magic weapon as treasure, format:
+   %  [ chance, TREASURE_WEAPON, class, ItemAtt constant ]
+   TREASURE_WEAPON = 2
+
+   % Door speeds for traps.
+   DOOR_OPEN_SPEED  = 20
+   DOOR_CLOSE_SPEED = 150
+
+   % Trap one's door sector.
+   SECTOR_DOOR_TRAP1 = 1
+
+   % Trap two's door sectors, and impassable/passable line.
+   SECTOR_DOOR_TRAP2A = 2
+   SECTOR_DOOR_TRAP2B = 3
+   SECTOR_DOOR_TRAB2C = 4
+
+   % Trap three's door sector.
+   SECTOR_DOOR_TRAP3 = 5
+
+   % How long before the traps reset?
+   SECTOR_TIMER_TRAP1 = 15000   % 15 seconds
+   SECTOR_TIMER_TRAP2 = 30000
+   SECTOR_TIMER_TRAP3 = 45000
+
+   % Definitions of Trap 1.
+   TRAP1_MIN_ROW = 23
+   TRAP1_MAX_ROW = 25
+   TRAP1_MIN_COL = 17
+   TRAP1_MAX_COL = 26
+
+   % Definitions of the many parts of Trap 2.
+   TRAP2A_MIN_ROW = 6
+   TRAP2A_MAX_ROW = 7
+   TRAP2A_MIN_COL = 3
+   TRAP2A_MAX_COL = 4
+   TRAP2B_MIN_ROW = 8
+   TRAP2B_MAX_ROW = 10
+   TRAP2B_MIN_COL = 3
+   TRAP2B_MAX_COL = 9
+   TRAP2C_MIN_ROW = 11
+   TRAP2C_MAX_ROW = 14
+   TRAP2C_MIN_COL = 8
+   TRAP2C_MAX_COL = 9
+
+   % Definitions of Trap 3.
+   TRAP3A_MIN_ROW = 29
+   TRAP3A_MAX_ROW = 29
+   TRAP3A_MIN_COL = 31
+   TRAP3A_MAX_COL = 32
+   TRAP3B_MIN_ROW = 30 
+   TRAP3B_MAX_ROW = 34
+   TRAP3B_MIN_COL = 28
+   TRAP3B_MAX_COL = 34
+
+   % The many blink area definitions.
+   BLINK1_MIN_ROW = 26
+   BLINK1_MAX_ROW = 35
+   BLINK1_MIN_COL = 13
+   BLINK1_MAX_COL = 22
+
+   BLINK2A_MIN_ROW = 11
+   BLINK2A_MAX_ROW = 18
+   BLINK2A_MIN_COL = 4
+   BLINK2A_MAX_COL = 5
+
+   BLINK2B_MIN_ROW = 16
+   BLINK2B_MAX_ROW = 18
+   BLINK2B_MIN_COL = 18
+   BLINK2B_MAX_COL = 21
+
+   BLINK2C_MIN_ROW = 19
+   BLINK2C_MAX_ROW = 22
+   BLINK2C_MIN_COL = 4
+   BLINK2C_MAX_COL = 26
+
+   BLINK2D_MIN_ROW = 23
+   BLINK2D_MAX_ROW = 25
+   BLINK2D_MIN_COL = 9
+   BLINK2D_MAX_COL = 9
+
+   BLINK3A_MIN_ROW = 15
+   BLINK3A_MAX_ROW = 18
+   BLINK3A_MIN_COL = 7
+   BLINK3A_MAX_COL = 14
+
+   BLINK3B_MIN_ROW = 11
+   BLINK3B_MAX_ROW = 14
+   BLINK3B_MIN_COL = 13
+   BLINK3B_MAX_COL = 25
+
+   BLINK3C_MIN_ROW = 15
+   BLINK3C_MAX_ROW = 16
+   BLINK3C_MIN_COL = 24
+   BLINK3C_MAX_COL = 26
+
+   BLINK3D_MIN_ROW = 16
+   BLINK3D_MAX_ROW = 27
+   BLINK3D_MIN_COL = 27
+   BLINK3D_MAX_COL = 34
+
+   BLINK3E_MIN_ROW = 28
+   BLINK3E_MAX_ROW = 29
+   BLINK3E_MIN_COL = 33
+   BLINK3E_MAX_COL = 34
+
+   BLINK4_MIN_ROW = 30
+   BLINK4_MAX_ROW = 33
+   BLINK4_MIN_COL = 23
+   BLINK4_MAX_COL = 27
+
+   BLINK5_MIN_ROW = 30
+   BLINK5_MAX_ROW = 33
+   BLINK5_MIN_COL = 8
+   BLINK5_MAX_COL = 12
+
+resources:
+
+   room_name_mar_crypt3a = "Affirmation of the Forsaken"
+   room_mar_crypt3a = RES00001.roo
+   music_mar_crypt3a = song10.mid
+   marcrypt3a_gate_open = doorrsup.wav
+   marcrypt3a_gate_close = arr_metl.wav
+
+   marcrypt3a_cant_pass = "Your efforts prove fruitless, it holds firm."
+   marcrypt3a_no_earthquake = \
+      "This place looks far to unstable to risk an earthquake.  "
+      "You wisely decide to halt your casting."
+   marcrypt3a_illegal_door = "Bad player, no cookie!"
+   
+classvars:
+
+   vrName = room_name_mar_crypt3a
+   
+   viTeleport_row = 18
+   viTeleport_col = 21
+
+   viTrap1_row = 24
+   viTrap1_col = 22
+
+   viTrap2_row = 9
+   viTrap2_col = 5
+
+   viTrap3_row = 31
+   viTrap3_col = 32
+
+   viBlink1_row = 31
+   viBlink1_col = 17
+
+   viBlink2a_row = 18
+   viBlink2a_col = 5
+
+   viBlink2b_row = 18
+   viBlink2b_col = 21
+
+   viBlink2c_row = 22
+   viBlink2c_col = 26
+
+   viBlink2d_row = 25
+   viBlink2d_col = 9
+
+   viBlink3a_row = 16
+   viBlink3a_col = 8
+
+   viBlink3b_row = 12
+   viBlink3b_col = 17
+
+   viBlink3c_row = 12
+   viBlink3c_col = 17
+
+   viBlink3d_row = 25
+   viBlink3d_col = 29
+
+   viBlink3e_row = 29
+   viBlink3e_col = 33
+
+   viBlink4_row = 31
+   viBlink4_col = 26
+
+   viBlink5_row = 31
+   viBlink5_col = 9
+
+   viTerrain_type = TERRAIN_NECROPOLIS | TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_mar_crypt3a
+   piRoom_num = RID_MAR_CRYPT3A
+   prMusic = music_mar_crypt3a
+
+   piBaseLight = LIGHT_VERY_DARK
+   piOutside_factor = OUTDOORS_NONE
+
+   piMonster_count_max = 15
+
+   poChest = $
+
+   ptTrap1 = $
+   ptTrap2 = $
+   ptTrap3 = $
+
+   plTreasuresList = $
+
+messages:
+
+   Constructed()
+   {
+      plMonsters =   [ [&Thrasher, 100] ];
+
+      plGenerators = [ [17, 5], [17, 19], [21, 16],
+                       [24, 9], [13, 17], [24, 28], 
+                       [27, 31]
+                     ];
+
+      % Set the treasure for the final chest.
+      Send(self,@ResetTreasureList);
+ 
+      % Create the beginning thrashers.
+      Send(self,@CreateThrashers);   
+
+      % Set a wall in trap 3 as impassable (prevents a safe spot).
+      Send(self,@AnimateWall,#wall=SECTOR_DOOR_TRAB2C,#animation=ANIMATE_NONE,
+           #first_group=1,#passable=FALSE); 
+
+      if poChest = $
+      {
+         poChest = Create(&WoodenBox,#bLocked=TRUE);
+         Send(self,@NewHold,#what=poChest,#new_row=33,#new_col=25);
+      }
+
+      propagate;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                    %
+% Begin code for determining whether to open traps.  %
+%                                                    %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   SomethingKilled(what=$,victim=$)
+   {
+      if IsClass(victim,&Thrasher)
+      {
+         if IsClass(what,&User) AND Send(self,@InTrapAreaOne,#what=what)
+            AND Send(self,@CountTrap,#trap=1,#what=COUNTTRAP_THRASHER) = 1
+         {
+            if ptTrap1 <> $
+            {
+               propagate;
+            }
+
+            else
+            {
+               Send(self,@SomethingWaveRoom,#wave_rsc=MarCrypt3A_gate_open);
+               Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP1,
+                    #animation=ANIMATE_FLOOR_LIFT,
+                    #height=1824,#speed=DOOR_OPEN_SPEED);
+               ptTrap1 = CreateTimer(self,@StartTrapOneTimer,
+                                     SECTOR_TIMER_TRAP1);
+            }
+
+            propagate;
+         }
+
+         if IsClass(what,&User) AND Send(self,@InTrapAreaTwo,#what=what)
+         {
+            if Send(self,@CountTrap,#trap=2,#what=COUNTTRAP_THRASHER) = 1
+            {
+               if ptTrap2 <> $
+               {
+                  propagate;
+               }
+
+               else
+               {
+                  Send(self,@SomethingWaveRoom,#wave_rsc=MarCrypt3A_gate_open); 
+                  Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP2A,
+                       #animation=ANIMATE_CEILING_LIFT,
+                       #height=1958,#speed=DOOR_OPEN_SPEED);
+                  Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP2B,
+                       #animation=ANIMATE_CEILING_LIFT,
+                       #height=1864,#speed=DOOR_OPEN_SPEED);
+                  Send(self,@AnimateWall,#wall=SECTOR_DOOR_TRAB2C,
+                       #animation=ANIMATE_NONE,
+                       #first_group=0,#passable=TRUE);
+                  ptTrap2 = CreateTimer(self,@StartTrapTwoTimer,
+                                        SECTOR_TIMER_TRAP2);
+               }
+            }
+
+            propagate;
+         }
+
+         if IsClass(what,&User) AND Send(self,@InTrapAreaThree,#what=what)
+         {
+            if Send(self,@CountTrap,#trap=3,#what=COUNTTRAP_THRASHER) = 1
+            {
+               if ptTrap3 <> $
+               {
+                  propagate;
+               }
+
+               else
+               {
+                  Send(self,@SomethingWaveRoom,#wave_rsc=MarCrypt3A_gate_open); 
+                  Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP3,
+                       #animation=ANIMATE_CEILING_LIFT,
+                       #height=2022,#speed=DOOR_OPEN_SPEED);
+                  ptTrap3 = CreateTimer(self,@StartTrapThreeTimer,
+                                        SECTOR_TIMER_TRAP3);
+                  Send(self,@DoEndTreasure);
+                  Send(poChest,@LockChest,#bLocked=FALSE);
+               }
+            }
+         }
+      }   
+   
+      propagate;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                        %
+% Are we within the trap or blink area?  %
+%                                        %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   InTrapAreaOne(what=$)
+   "This returns TRUE if the player is in the first trap area, and FALSE if "
+   "the player is elsewhere in the map."
+   {
+      local iRow, iCol;
+
+      if Send(what,@GetOwner) <> self
+      {
+         return FALSE;
+      }
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      if iRow >= TRAP1_MIN_ROW AND iRow <= TRAP1_MAX_ROW
+         AND iCol <= TRAP1_MAX_COL AND iCol >= TRAP1_MIN_COL
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   InTrapAreaTwo(what=$)
+   "This returns TRUE if the player is in the second trap area, and FALSE if "
+   "the player is elsewhere in the map."
+   {
+      local iRow, iCol;
+
+      if Send(what,@GetOwner) <> self
+      {
+         return FALSE;
+      }
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      if iRow >= TRAP2A_MIN_ROW AND iRow <= TRAP2A_MAX_ROW
+         AND iCol <= TRAP2A_MAX_COL AND iCol >= TRAP2A_MIN_COL
+      {
+         return TRUE;
+      }
+
+      if iRow >= TRAP2B_MIN_ROW AND iRow <= TRAP2B_MAX_ROW
+         AND iCol <= TRAP2B_MAX_COL AND iCol >= TRAP2B_MIN_COL
+      {
+         return TRUE;
+      }
+
+      if iRow >= TRAP2C_MIN_ROW AND iRow <= TRAP2C_MAX_ROW
+         AND iCol <= TRAP2C_MAX_COL AND iCol >= TRAP2C_MIN_COL
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   InTrapAreaThree(what=$)
+   "This returns TRUE if the player is in the third trap area, and FALSE if "
+   "the player is elsewhere in the map."
+   {
+      local iRow, iCol;
+
+      if Send(what,@GetOwner) <> self
+      {
+         return FALSE;
+      }
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      if iRow >= TRAP3A_MIN_ROW AND iRow <= TRAP3A_MAX_ROW
+         AND iCol <= TRAP3A_MAX_COL AND iCol >= TRAP3A_MIN_COL
+      {
+         return TRUE;
+      }
+
+      if iRow >= TRAP3B_MIN_ROW AND iRow <= TRAP3B_MAX_ROW
+         AND iCol <= TRAP3B_MAX_COL AND iCol >= TRAP3B_MIN_COL
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   InBlinkAreaFour(what=$)
+   "This returns TRUE if the player is in the fourth blink area, and FALSE if "
+   "the player is elsewhere in the map."
+   {
+      local iRow, iCol;
+
+      if Send(what,@GetOwner) <> self
+      {
+         return FALSE;
+      }
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      if iRow >= BLINK4_MIN_ROW AND iRow <= BLINK4_MAX_ROW
+         AND iCol <= BLINK4_MAX_COL AND iCol >= BLINK4_MIN_COL
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+%%%%%%%%%%%%%%%%%
+%               %
+% Trap timers.  %
+%               %
+%%%%%%%%%%%%%%%%%
+
+   StartTrapOneTimer() 
+   {
+   
+      ptTrap1 = $;
+
+      if Send(self,@CountTrap,#trap=1,#what=COUNTTRAP_USER) = 0
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=MarCrypt3A_gate_close); 
+         Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP1,
+              #animation=ANIMATE_FLOOR_LIFT,
+              #height=1864,#speed=DOOR_CLOSE_SPEED); 
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=23,#new_col=19,#fine_row=48,#fine_col=32,
+              #new_angle=ANGLE_SOUTH);
+
+         return;
+      }
+      
+      ptTrap1 = CreateTimer(self,@StartTrapOneTimer,SECTOR_TIMER_TRAP1);
+      
+      return;
+   }
+
+   StartTrapTwoTimer() 
+   {
+   
+      ptTrap2 = $;
+
+      if Send(self,@CountTrap,#trap=2,#what=COUNTTRAP_USER) = 0
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=MarCrypt3A_gate_close); 
+         Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP2A,
+              #animation=ANIMATE_CEILING_LIFT,
+              #height=1910,#speed=DOOR_CLOSE_SPEED); 
+         Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP2B,
+              #animation=ANIMATE_CEILING_LIFT,
+              #height=1816,#speed=DOOR_CLOSE_SPEED);
+         Send(self,@AnimateWall,#wall=SECTOR_DOOR_TRAB2C,
+              #animation=ANIMATE_NONE,
+              #first_group=1,#passable=FALSE); 
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=10,#new_col=3,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_EAST);
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=10,#new_col=7,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_WEST);
+
+         return;
+      }
+      
+      ptTrap2 = CreateTimer(self,@StartTrapTwoTimer,SECTOR_TIMER_TRAP2);
+
+      return;
+   }
+
+   StartTrapThreeTimer() 
+   {
+   
+      ptTrap3 = $;
+
+      if Send(self,@CountTrap,#trap=3,#what=COUNTTRAP_USER) = 0
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=MarCrypt3A_gate_close); 
+         Send(self,@SetSector,#sector=SECTOR_DOOR_TRAP3,
+              #animation=ANIMATE_CEILING_LIFT,
+              #height=1960,#speed=DOOR_CLOSE_SPEED); 
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=32,#new_col=29,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_EAST);
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=30,#new_col=34,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_WEST);
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=33,#new_col=34,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_WEST);
+         Send(poChest,@LockChest,#bLocked=TRUE);
+
+         return;
+      }
+
+      ptTrap3 = CreateTimer(self,@StartTrapThreeTimer,SECTOR_TIMER_TRAP3);
+
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            
+% How many thrashers or users do we have in the trap?  
+%                            
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   CountTrap(trap=$,what=$)
+   {
+      local i, each_obj, lTrapList, lFinalTrapList;
+
+      lTrapList = $;
+      lFinalTrapList = $;
+
+      for i in Send(self,@GetHolderActive)
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+ 
+         if what = COUNTTRAP_THRASHER
+         {   
+            if IsClass(each_obj,&Thrasher)
+            {
+               lTrapList = cons(each_obj,lTrapList);
+
+               for i in lTrapList
+               {
+                  if trap = 1
+                  {
+                     if Send(self,@InTrapAreaOne,#what=i)
+                        AND FindListElem(lTrapList,i) = 1
+                     {
+                        lFinalTrapList = cons(i,lFinalTrapList);
+                     }
+                  }
+
+                  if trap = 2
+                  {
+                     if Send(self,@InTrapAreaTwo,#what=i)
+                        AND FindListElem(lTrapList,i) = 1 
+                     {
+                        lFinalTrapList = cons(i,lFinalTrapList);
+                     }
+                  }
+                  
+                  if trap = 3
+                  {
+                     if Send(self,@InTrapAreaThree,#what=i)
+                        AND FindListElem(lTrapList,i) = 1 
+                     {
+                        lFinalTrapList = cons(i,lFinalTrapList);
+                     }
+                  }
+               }
+            }
+         }
+   
+         if what = COUNTTRAP_USER
+         { 
+            if IsClass(each_obj,&User)
+               OR IsClass(each_obj,&LogOffGhost)
+                  AND trap = 3
+            {
+               lTrapList = cons(each_obj,lTrapList);
+
+               for i in lTrapList
+               {
+                  if trap = 1
+                  {
+                     if Send(self,@InTrapAreaOne,#what=i)
+                        AND FindListElem(lTrapList,i) = 1 
+                     {
+                        lFinalTrapList = cons(i,lFinalTrapList);
+                     }
+                  }
+
+                  if trap = 2
+                  {
+                     if Send(self,@InTrapAreaTwo,#what=i)
+                        AND FindListElem(lTrapList,i) = 1 
+                     {
+                        lFinalTrapList = cons(i,lFinalTrapList);
+                     }
+                  }
+                  
+                  if trap = 3
+                  {
+                     if Send(self,@InTrapAreaThree,#what=i)
+                        AND FindListElem(lTrapList,i) = 1
+                            OR Send(self,@InBlinkAreaFour,#what=i)
+                               AND FindListElem(lTrapList,i) = 1
+                           
+                     {
+                        lFinalTrapList = cons(i,lFinalTrapList);
+                     }
+                  }
+               }
+            }
+         }
+      }
+       
+      return length(lFinalTrapList);
+   }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                            %
+% End trap code.             %
+% Begin special blink code.  %
+%                            %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   Teleport(what=$)
+   "Admin supported."
+   "For traps - if you're in the trap, use secondary blink coordinates."
+   {
+      local iRow, iCol;
+
+      if Send(what,@GetOwner) <> self
+      {
+         propagate;
+      }
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      if Send(self,@InTrapAreaOne,#what=what)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viTrap1_row,#new_col=viTrap1_col);
+         
+         return;
+       }
+ 
+       if Send(self,@InTrapAreaTwo,#what=what)
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viTrap2_row,#new_col=viTrap2_col);
+
+          return;
+       }
+
+       if Send(self,@InTrapAreaThree,#what=what)
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viTrap3_row,#new_col=viTrap3_col);
+
+          return;
+       }
+
+
+       if iRow >= BLINK1_MIN_ROW AND iRow <= BLINK1_MAX_ROW
+          AND iCol <= BLINK1_MAX_COL AND iCol >= BLINK1_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink1_row,#new_col=viBlink1_col);
+
+          return;
+       }
+
+       if iRow >= BLINK2A_MIN_ROW AND iRow <= BLINK2A_MAX_ROW
+          AND iCol <= BLINK2A_MAX_COL AND iCol >= BLINK2A_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink2a_row,#new_col=viBlink2a_col);
+
+          return;
+       }
+
+       if iRow >= BLINK2B_MIN_ROW AND iRow <= BLINK2B_MAX_ROW
+          AND iCol <= BLINK2B_MAX_COL AND iCol >= BLINK2B_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink2b_row,#new_col=viBlink2b_col);
+
+          return;
+       }
+
+       if iRow >= BLINK2C_MIN_ROW AND iRow <= BLINK2C_MAX_ROW
+          AND iCol <= BLINK2C_MAX_COL AND iCol >= BLINK2C_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink2c_row,#new_col=viBlink2c_col);
+
+          return;
+       }
+
+       if iRow >= BLINK2D_MIN_ROW AND iRow <= BLINK2D_MAX_ROW
+          AND iCol <= BLINK2D_MAX_COL AND iCol >= BLINK2D_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink2d_row,#new_col=viBlink2d_col);
+
+          return;
+       }
+
+       if iRow >= BLINK3A_MIN_ROW AND iRow <= BLINK3A_MAX_ROW
+          AND iCol <= BLINK3A_MAX_COL AND iCol >= BLINK3A_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink3a_row,#new_col=viBlink3a_col);
+
+          return;
+       }
+
+       if iRow >= BLINK3B_MIN_ROW AND iRow <= BLINK3B_MAX_ROW
+          AND iCol <= BLINK3B_MAX_COL AND iCol >= BLINK3B_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink3b_row,#new_col=viBlink3b_col);
+
+          return;
+       }
+
+       if iRow >= BLINK3C_MIN_ROW AND iRow <= BLINK3C_MAX_ROW
+          AND iCol <= BLINK3C_MAX_COL AND iCol >= BLINK3C_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink3c_row,#new_col=viBlink3c_col);
+
+          return;
+       }
+
+       if iRow >= BLINK3D_MIN_ROW AND iRow <= BLINK3D_MAX_ROW
+          AND iCol <= BLINK3D_MAX_COL AND iCol >= BLINK3D_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink3d_row,#new_col=viBlink3d_col);
+
+          return;
+       }
+
+       if iRow >= BLINK3E_MIN_ROW AND iRow <= BLINK3E_MAX_ROW
+          AND iCol <= BLINK3E_MAX_COL AND iCol >= BLINK3E_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink3e_row,#new_col=viBlink3e_col);
+
+          return;
+       }
+
+       if iRow >= BLINK4_MIN_ROW AND iRow <= BLINK4_MAX_ROW
+          AND iCol <= BLINK4_MAX_COL AND iCol >= BLINK4_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink4_row,#new_col=viBlink4_col);
+
+          return;
+       }
+
+       if iRow >= BLINK5_MIN_ROW AND iRow <= BLINK5_MAX_ROW
+          AND iCol <= BLINK5_MAX_COL AND iCol >= BLINK5_MIN_COL
+       {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+               #new_row=viBlink5_row,#new_col=viBlink5_col);
+
+          return;     
+       }
+
+       propagate;
+   }
+
+
+%%%%%%%%%%%%%%%%%%%
+%                 %
+% End blink code. %
+%                 %
+%%%%%%%%%%%%%%%%%%%
+
+   CreateThrashers()
+   {
+      % Starting Thrashers
+      % Trap 1
+      if Send(self,@CountTrap,#trap=1,#what=COUNTTRAP_THRASHER) = 0
+      {
+         send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=23,#new_col=19,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_SOUTH);
+      }
+      
+      % Trap 2
+      if Send(self,@CountTrap,#trap=2,#what=COUNTTRAP_THRASHER) = 0
+      {
+         send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=10,#new_col=3,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_EAST);
+         send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=10,#new_col=7,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_WEST);
+      }
+
+      % Trap 3
+      if Send(self,@CountTrap,#trap=3,#what=COUNTTRAP_THRASHER) = 0
+              AND Send(self,@CountTrap,#trap=3,#what=COUNTTRAP_USER) = 0
+      {
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=32,#new_col=29,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_EAST);
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=30,#new_col=34,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_WEST);
+         Send(self,@NewHold,#what=Create(&Thrasher,#bAwake=FALSE),
+              #new_row=33,#new_col=34,#fine_row=32,#fine_col=32,
+              #new_angle=ANGLE_WEST);
+      }
+      
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % Marion Crypt2
+      plExits = Cons([ 30, 17, RID_MAR_CRYPT2, 37, 27,
+                       ROTATE_NONE, DISTANCE_NORMAL ],plExits);
+      plExits = Cons([ 30, 18, RID_MAR_CRYPT2, 37, 27,
+                       ROTATE_NONE, DISTANCE_NORMAL ],plExits);
+      %Gates
+      plExits = Cons([ 22, 26, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 23, 26, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 14, 8, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 14, 9, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 15, 8, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 15, 9, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 31, 27, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 31, 28, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 32, 27, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+      plExits = Cons([ 32, 28, ROOM_LOCKED_DOOR,
+                       marcrypt3a_cant_pass ],plExits);
+
+      propagate;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      if row = 31 AND col = 8
+         OR row = 32 AND col = 8
+      {
+         Send(what,@MsgSendUser,#message_rsc=marcrypt3a_illegal_door);
+         Send(what,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=5000);
+         Send(what,@AdminGoToOOG);
+         debug("ALERT! Player ",Send(what,@GetTrueName),what,
+                " illegally used the door in RID_MAR_CRYPT3a.");
+         debug("Additional: They are now in OOG. =)");
+         
+         return TRUE;
+      }
+      
+      propagate;
+   }
+
+   FirstUserEntered()
+   {
+      Send(self,@CreateThrashers);
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      Send(poChest,@LockChest,#bLocked=TRUE);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      % Dynamic lights for the vents
+
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_DGREEN,
+           #iIntensity=5),#new_row=37,#new_col=14,#fine_row=0,#fine_col=24);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_DGREEN,
+           #iIntensity=5),#new_row=25,#new_col=15,#fine_row=0,#fine_col=8);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_DGREEN,
+           #iIntensity=5),#new_row=9,#new_col=2,#fine_row=24,#fine_col=0);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_DGREEN,
+           #iIntensity=5),#new_row=32,#new_col=35,#fine_row=0,#fine_col=0);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_DGREEN,
+           #iIntensity=50),#new_row=1,#new_col=15,#fine_row=32,#fine_col=8);
+
+      propagate;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE)
+      {  
+         Send(who,@MsgSendUser,#message_rsc=marcrypt3a_no_earthquake);          
+
+         return FALSE; 
+      }
+
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   {
+      local object;
+
+      if isClass(what,&DM) AND StringEqual(string,"blink")
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viBlink1_row,#new_col=viBlink1_col);
+
+         propagate;
+      }
+
+      if isClass(what,&DM) AND StringEqual(string,"trap1")
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viTrap1_row,#new_col=viTrap1_col);
+
+         propagate;
+      }
+
+      if isClass(what,&DM) AND StringEqual(string,"trap2")
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viTrap2_row,#new_col=viTrap2_col);
+
+         propagate;
+      }
+
+      if isClass(what,&DM) AND StringEqual(string,"trap3")
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viTrap3_row,#new_col=viTrap3_col);
+
+         propagate;
+      }
+
+      if isClass(what,&DM) AND StringEqual(string,"blink2")
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viBlink2b_row,#new_col=viBlink2b_col);
+
+         propagate;
+      }
+
+      if isClass(what,&DM) AND StringEqual(string,"blink3")
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viBlink3c_row,#new_col=viBlink3c_col);
+
+         propagate;
+      }
+
+      if isClass(what,&DM) AND StringEqual(string,"blink4")
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viBlink4_row,#new_col=viBlink4_col);
+
+         propagate;
+      }
+
+      if isClass(what,&DM) AND StringEqual(string,"createthrashers")
+      {
+         Send(self,@CreateThrashers);
+
+         propagate;
+      }
+
+      propagate;
+   }
+
+   DoEndTreasure()
+   {
+      local iNumPlayers, iChance, iCumulative, i, oObject, oItemAtt;
+
+      iNumPlayers = Send(self,@CountTrap,#trap=3,#what=COUNTTRAP_USER);
+
+      if iNumPlayers > 5
+      {
+         iNumPlayers = Random(3,5);
+      }
+
+      else
+      {
+         iNumPlayers = Random(1,iNumPlayers);
+      }
+
+      while iNumPlayers > 0
+      {
+         iChance = Random(1,100);
+         iCumulative = 0;
+         i = 1;
+
+         while iCumulative < 100 AND i <= Length(plTreasuresList)
+         {
+            iCumulative = iCumulative + First(Nth(plTreasuresList,i));
+            if iChance <= iCumulative
+            {
+               if Nth(Nth(plTreasuresList,i),2) = TREASURE_OBJECT
+               {
+                  % Create Object.
+                  oObject = Create(Nth(Nth(plTreasuresList,i),3),
+                                   #number=Nth(Nth(plTreasuresList,i),4));
+                  % Put in chest.
+                  Send(poChest,@NewHold,#what=oObject);
+               }
+               else
+               {
+                  if Nth(Nth(plTreasuresList,i),2) = TREASURE_WEAPON
+                  {
+                     % Create weapon.
+                     oObject = Create(Nth(Nth(plTreasuresList,i),3));
+                     % Find Itematt.
+                     oItemAtt = Send(SYS,@FindItemAttByNum,
+                                     #num=Nth(Nth(plTreasuresList,i),4));
+                     % Apply Itematt.
+                     Send(oItemAtt,@AddToItem,#oItem=oObject);
+                     % Put in chest.
+                     Send(poChest,@NewHold,#what=oObject);
+                  }
+               }
+               
+               iCumulative = 100;
+            }
+
+            i = i + 1;
+         }
+
+         iNumPlayers = iNumPlayers - 1;
+      }
+
+      return;
+   }
+
+   ResetTreasureList()
+   {
+      % All chances (first number) should add up to 100.
+      plTreasuresList = [ [ 1, TREASURE_OBJECT, &Rose, 1 ],
+                          [ 3, TREASURE_WEAPON, &Scimitar, WA_BLINDER ],
+                          [ 2, TREASURE_WEAPON, &Scimitar, WA_PURGER ],
+                          [ 3, TREASURE_WEAPON, &Scimitar, WA_PARALYZER ],
+                          [ 3, TREASURE_WEAPON, &LongSword, WA_PARALYZER ],
+                          [ 3, TREASURE_WEAPON, &LongSword, WA_BLINDER ],
+                          [ 5, TREASURE_WEAPON, &Hammer, WA_TWISTER ],
+                          [ 3, TREASURE_WEAPON, &Hammer, WA_VAMPER ],
+                          [ 1, TREASURE_WEAPON, &MysticSword, WA_PURGER ],
+                          [ 2, TREASURE_WEAPON, &MysticSword, WA_BONKER ],
+                          [ 3, TREASURE_WEAPON, &Axe, WA_PUNISHER ],
+                          [ 3, TREASURE_WEAPON, &Axe, WA_TWISTER ],
+                          [ 3, TREASURE_WEAPON, &Axe, WA_PARALYZER ],
+                          [ 6, TREASURE_OBJECT, &PlateArmor, 1 ],
+                          [ 3, TREASURE_OBJECT, &OfferingKraanan, 1 ],
+                          [ 3, TREASURE_OBJECT, &OfferingShalille, 1 ],
+                          [ 3, TREASURE_OBJECT, &OfferingRiija, 1 ],
+                          [ 3, TREASURE_OBJECT, &OfferingQor, 1 ],
+                          [ 2, TREASURE_OBJECT, &OfferingFaren, 1 ],
+                          [ 1, TREASURE_OBJECT, &Prism, 1 ],
+                          [ 3, TREASURE_OBJECT, &TrueLute, 1 ],
+                          [ 5, TREASURE_OBJECT, &PurpleMushroom, 25 ],
+                          [ 7, TREASURE_OBJECT, &InkyCap, 20 ],
+                          [ 5, TREASURE_OBJECT, &BlueDragonScale, 20 ],
+                          [ 5, TREASURE_OBJECT, &DarkAngelFeather, 20 ],
+                          [ 5, TREASURE_OBJECT, &EntrootBerry, 50 ],
+                          [ 5, TREASURE_OBJECT, &Yrxlsap, 20 ],
+                          [ 6, TREASURE_OBJECT, &Ruby, 35 ],
+                          [ 3, TREASURE_OBJECT, &Money, 25000 ]
+                        ];
+
+      return;
+   }
+
+   
+
+   Delete()
+   {
+      if ptTrap1 <> $
+      {
+         DeleteTimer(ptTrap1);
+         ptTrap1 = $;
+      }
+      
+      if ptTrap2 <> $
+      {
+         DeleteTimer(ptTrap2);
+         ptTrap2 = $;
+      }
+
+      if ptTrap3 <> $
+      {
+         DeleteTimer(ptTrap3);
+         ptTrap3 = $;
+      }
+
+      plTreasuresList = $;
+
+      Send(poChest,@Delete);
+      poChest = $;
+
+      propagate;
+   }
+
+   CanHavePlayerPortal(who = $)
+   {
+      % Don't allow portals into this room, bypassing puzzle
+      return false;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

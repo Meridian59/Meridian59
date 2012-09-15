@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsH3 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsH3 = H3.roo
+   room_name_OutdoorsH3 ="Outskirts of Barloque"
+   OutdoorsH3_music = forest.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsH3
+
+   viTeleport_row = 32
+   viTeleport_col = 35
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_ROAD | TERRAIN_RIVER
+
+   viFlag_row = 35
+   viFlag_col = 36
+
+properties:
+
+   prRoom = room_OutdoorsH3
+   prMusic = OutdoorsH3_music
+   piRoom_num = RID_H3
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 100000
+   piGen_percent = 60
+
+   piInit_count_min = 2
+   piInit_count_max = 4
+
+   piMonster_count_max = 6
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Slime, 30], [&GiantRat, 70] ];
+
+      plGenerators = [ [14, 4], [17, 26], [19, 8], [35, 7], [41, 9], 
+                      [31, 22], [29, 38], [38, 24], [36, 37], [42, 42] ];
+      propagate;
+   }
+
+  CreateStandardExits()
+   {
+      plEdge_exits = $;
+      
+      plEdge_Exits = Cons([LEAVE_EAST, RID_I3, 18, 2, ROTATE_NONE, ROW_IS_LESS_THAN,30], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_I3, 25, 2, ROTATE_NONE, ROW_IS_GREATER_THAN,29], plEdge_exits);
+      
+      plEdge_Exits = Cons([LEAVE_WEST, RID_F3, 9, 75, ROTATE_NONE, ROW_IS_LESS_THAN,18], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_F3, 28, 75, ROTATE_NONE, ROW_IS_GREATER_THAN,17], plEdge_exits);      
+
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H4, 2, 26, ROTATE_NONE,COL_IS_LESS_THAN,22], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H4, 2, 35, ROTATE_NONE,COL_IS_GREATER_THAN,21], plEdge_exits);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

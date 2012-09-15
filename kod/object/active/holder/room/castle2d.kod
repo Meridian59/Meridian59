@@ -1,0 +1,300 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Send(self,@CreateOneRoomIfNew,#num=RID_CASTLE2D,#class=&Castle2D);
+
+%RID_CASTLE2D = 852
+
+Castle2d is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_castle2d = castle2d.roo
+   room_name_castle2d = "Royal Library of the Bourgeois Castle"
+
+   mockers_doorlocked = "It seems the door to Mocker's chamber is locked."
+   
+
+   castle2d_music = castle.mid
+   
+   castle2d_book_name = "The Timeline of Meridian"
+   castle2d_book_text = \
+	"                  Meridian Time Line\n"
+	"\n"
+	"\n"
+	"\n"
+	"0	First explorer crosses the Nexus to Meridian 59.\n"
+	"\n"
+	"60	Castle Victoria constructed as an outpost of the Old Empire.\n"
+	"\n"
+	"140	Tos built as colonists move away from the harsh mountains.\n"
+	"\n"
+	"225	Empire discovers a sea route to the Meridian 59 colony.  Begin to send "
+	"immigrants via ships.\n"
+	"\n"
+	"250	City of Barloque founded at the docks.\n"
+	"\n"
+	"270	Jasper mining operation large enough to support a town.\n"
+	"\n"
+	"275	Castle Victoria all but abandoned.\n"
+	"\n"
+	"299	Village of Marion founded by Barloque immigrants.\n"
+	"\n"
+	"315	First Barloque/Tos wars begins.\n"
+	"\n"
+	"330	Barony of Cor Noth founded around university.\n"
+	"\n"
+	"�"
+	"411	Far'Nohl born in the Empire of the Nexus.\n"
+	"\n"
+	"430	Konima born.\n"
+	"\n"
+	"431	Prince Far'Nohl comes from Empire to represent the Meridian 59 colony.\n"
+	"\n"
+	"436	First Jasper rebellion against the crown.  This becomes known as the "
+	"Far'Nohl Insurrection.\n"
+	"\n"
+	"450	Meridian snaps and chaos ensues.  Orcs, Trolls, and other foul creatures "
+	"enter the land.  All sailing ships lost at sea.  Few survivors returning to the "
+	"Empire proclaim Meridian 59 lost.  Six very powerful heroes step forth to try "
+	"to save the land.  Each helps bring it back under control.\n"
+	"\n"
+	"451	A dark ages of sort, government barely stable. Wars between Barloque and "
+	"Tos begin anew.\n"
+	"\n"
+	"459	Konima takes his pilgrimage.\n"
+	"\n"
+	"462	Prince Far'Nohl declares himself King of Meridian 59 and establishes "
+	"Barloque as the capital city.  Work begins on the Bourgeois Castle.\n"
+	"\n"
+	"�"
+	"468 	Far'Nohl's son Zarcos born.\n"
+	"\n"
+	"470	Tensions increase with the encroaching Orcs.\n"
+	"\n"
+	"473	Orc Wars begin.  Tos under siege for many months.\n"
+	"\n"
+	"474	Konima returns from pilgrimage and leads small army into the Warrens to "
+	"end the war.  Warrens are sealed off behind them as per Konima's instructions.\n"   
+	"\n"
+	"486	King Far'Nohl abdicates the throne and returns to Castle Victoria to study "
+	"the lost Nexus.  His son, Zarcos becomes King."
+	"\n"
+	"Age of rebirth.  Temple built to honor the Six.  Future generations will call "
+	"them gods.  Old gods of the Nexus Empire forgotten.\n"
+	"\n"
+	"510	Priest Alexand of Kraanan declares first God Days holiday.  Others follow "
+	"suit.  A time of religious unrest.  King Zarcos declares that there will be only "
+	"one official God Days each year.\n"
+	"\n"
+	"511	Second Jasper rebellion begins, The Kraanan War.\n"
+	"\n"
+	"�"
+	"516	Zarcos II born.\n"
+	"\n"
+	"538	Zarcos passes on and throne is passed to Zarcos II.\n"
+	"\n"
+	"563	Zarcos III born.\n"
+	"\n"
+	"572	Zarcos II falls in battle against Jasper rebellion at the Battle of Denthan "
+	"Crossing.  Council rules the land during this time.\n"
+	"\n"
+	"581 	Zarcos III earns birth rite and becomes King.\n"
+	"\n"
+	"593	Qor followers destroy the Temple of Jala.  The temples unite against Qor "
+	"and send them into hiding.\n"
+	"\n"
+	"594	Zarcos III declares the worship of Qor illegal and bans Qor God Days.\n"
+	"\n"
+	"608 	Zarcos IV born\n"
+	"\n"
+	"628	Zarcos III feels no longer competent to rule and relinquishes the kingdom "
+	"to Zarcos IV.\n"
+	"\n"
+	"648 	Age of Prosperity begins for miners of Jasper.\n"
+	"\n"
+	"�"
+	"650	King Zarcos IV marries Joline.  Huge 200 year celebration.\n"
+	"\n"
+	"660	Under pressure of Queen Joline, King Zarcos IV ends all God Days and "
+	"separates religion from government.  He bans the organized practice of any "
+	"religion within a city.\n"
+	"\n"
+	"662	Council uncovers that Queen Joline is a secret follower of Qor.  They "
+	"demand the gallows for her.  Zarcos IV's good friend S'Quani uses diplomacy to "
+	"have the Queen merely exiled.  S'Quani is granted the title Duke of Tos.\n"
+	"\n"
+	"668	Kalior born.\n"
+	"\n"
+	"672	Zarcos IV is removed from rule by the council due to failing health.  "
+	"Zarcos V is crown King.  Katria born.\n"
+	"\n"
+	"696	Queen Katria dies giving birth to Kateriina.  Duke S'Quani falls down "
+	"staircase and dies.  Kalior becomes Duke of Tos.  Jasper mines fail to produce "
+	"the same quantity of resources, Age of Prosperity comes to an end.\n"
+	"\n"
+	"699	Zarcos V officially puts the council in charge of day to day affairs of state.\n"
+	"\n" 	
+        "715    Princess Kateriina vies for power against Duke Kalior.  Influx of new" 
+	"travelers in the land."
+
+classvars:
+
+   vrName = room_name_castle2d
+   viTerrain_Type = TERRAIN_CASTLE
+
+   viTeleport_row = 7
+   viTeleport_col = 6
+
+properties:
+
+
+   prMusic = castle2d_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_3 
+
+
+   prRoom = room_castle2d
+   piRoom_num = RID_CASTLE2D
+
+%   prBackground = background_mountains
+
+
+messages:
+
+
+   CreateStandardObjects()
+   {
+      local oBook;
+
+      oBook = Create(&BookPedestal,#Name=castle2d_book_name,#Text=castle2d_book_text);
+
+      Send(self,@NewHold,#what=oBook,
+           #new_row=14,#new_col=15,#fine_row=12,#fine_col=48,#new_angle=ANGLE_SOUTH_WEST);
+
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=28,#new_col=10);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=28,#new_col=14);
+
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=18,#new_col=8,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=22,#new_col=8,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=11,#new_col=5,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=11,#new_col=8,#fine_col=0,#fine_row=0);
+
+
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=28,#new_col=20);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=28,#new_col=25);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=28,#new_col=20);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=28,#new_col=28,#fine_col=0);
+
+
+      Send(self,@NewHold,#what=Create(&QuillPen),
+           #new_row=14,#new_col=9);
+
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=16,#new_col=15,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=16,#new_col=12,#new_angle=ANGLE_SOUTH);
+
+   propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+% West entrance to Tower
+      plExits = Cons([ 29, 20, RID_CASTLE2D, 31, 22, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 21, RID_CASTLE2D, 31, 22, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 20, RID_CASTLE2D, 31, 22, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 21, RID_CASTLE2D, 31, 22, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 22, RID_CASTLE2D, 29, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 22, RID_CASTLE2D, 29, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 21, RID_CASTLE2D, 29, 20, ROTATE_NONE ],plExits);
+% East Entrance to Tower
+
+      plExits = Cons([ 30, 24, RID_CASTLE2D, 29, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 24, RID_CASTLE2D, 29, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 25, RID_CASTLE2D, 29, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 25, RID_CASTLE2D, 31, 24, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 26, RID_CASTLE2D, 31, 24, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 25, RID_CASTLE2D, 31, 24, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 26, RID_CASTLE2D, 31, 24, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 1, 3, RID_CASTLE2A, 23, 25, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 4, RID_CASTLE2A, 23, 25, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 3, RID_CASTLE2A, 23, 25, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 12, 11, RID_CASTLE2B, 40, 28, ROTATE_NONE ],plExits);
+      plExits = Cons([ 12, 12, RID_CASTLE2B, 40, 28, ROTATE_NONE ],plExits);
+      plExits = Cons([ 12, 13, RID_CASTLE2B, 40, 28, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 27, 26, RID_CASTLE2C, 34, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 29, RID_CASTLE2C, 34, 27, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 31, 20, RID_MOCKERS_ROOM, 12, 10, ROTATE_NONE ],plExits);
+
+
+      plExits = Cons([ 3, 9, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 4, 9, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 5, 9, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 3, 10, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 4, 10, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 5, 10, ROOM_LOCKED_DOOR ],plExits);
+
+      plExits = Cons([ 27, 21, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 27, 22, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 28, 21, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 28, 22, ROOM_LOCKED_DOOR ],plExits);
+
+      plExits = Cons([ 3, 36, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 3, 36, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 3, 36, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 3, 36, ROOM_LOCKED_DOOR ],plExits);
+
+
+   propagate;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+   local LockedRoom;
+
+   LockedRoom = Send(SYS,@FindRoomByNum,#num=RID_MOCKERS_ROOM);
+   
+   if row = 31 and col = 20
+      {
+      if Send(LockedRoom,@CheckLock) = 1
+         { 
+	 Send(what,@MsgSendUser,#message_rsc = mockers_doorlocked); 
+	 return true;
+	 }
+      }
+   propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcCave4 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_orccave4 = oc04.roo
+   room_name_orccave4 = "Aqueducts of Merb"
+
+   orccave4_music = orc2.mid
+
+classvars:
+
+   vrName = room_name_orccave4
+
+   viTeleport_row = 36
+   viTeleport_col = 50
+
+   viTerrain_type = TERRAIN_CAVES | TERRAIN_RIVER
+
+properties:
+
+   piRoom_num = RID_ORC_CAVE4
+   prRoom = room_orccave4
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = orccave4_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&OrcWizard, 60], [&Shadowbeast, 40] ];
+      plGenerators = [[43,03],[39,16],[41,25],[38,33],[35,48],[45,23],
+	 [47,31],[55,19],[43,45],[41,60],[55,54],[68,48],[51,63],[64,58],
+	 [33,63],[25,76],[24,72],[24,44],[21,66],[13,63],[02,57],[03,25],
+	 [11,06],[20,07],[09,14],[20,20],[10,42],[13,19],[12,36]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST,  RID_ORC_CAVE3, 9, 79, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH,  RID_ORC_CAVE5, 81, 64, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      include oc04.ktm;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

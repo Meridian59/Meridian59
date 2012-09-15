@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NewsAdventure is News
+
+%% Requested by Brendan Cole, this is a book that only bards can post to.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   newsadventure_name = "Tales of Adventure"
+   newsadventure_desc = "Stories from the people of Meridian, collected by Bards"
+   newsadventure_icon = jbook.bgf
+
+classvars:
+   
+properties:
+
+   vrName = newsadventure_name
+   vrDesc = newsadventure_desc
+   vrIcon = newsadventure_icon
+
+messages:
+
+   GetNewsPermission(what = $)
+   {
+      if send(what,@isActor)
+      {
+         return NEWS_PERMISSION_READ_WRITE;
+      }
+
+      return NEWS_PERMISSION_READ;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,170 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ManaBomb is Spell
+
+constants:
+
+   include blakston.khd
+
+   MANABOMB_RANGE = 6           %  max distance to enchantees 
+   MONSTER_EFFECT_TIME = 10000
+
+resources:
+
+   manabomb_name_rsc = "mana bomb"
+   manabomb_icon_rsc = imanabom.bgf
+   manabomb_desc_rsc = \
+      "Initiates a white hot explosion which burns all of the "
+      "caster's mana and consumes half of that amount from all "
+      "others in the room.  "
+      "Requires sapphires to cast."
+
+   manabomb_cast = "%s%s's mana violently detonates!"
+   manabomb_hit_some = \
+      "You feel mana being ripped from your body, burning "
+      "itself out in a magical chain reaction."
+   manabomb_hit_all = "All of your mana burns away in a magical chain reaction!"
+
+   manabomb_sound = kmbomb.wav
+
+classvars:
+
+   vrName = manabomb_name_rsc
+   vrIcon = manabomb_icon_rsc
+   vrDesc = manabomb_desc_rsc
+
+   viSpell_num = SID_MANA_BOMB
+   viMana = 0
+   viSchool = SS_KRAANAN
+   viSpell_level = 4
+
+   viHarmful = TRUE
+   viOutlaw = TRUE
+   viNoNewbieOffense = TRUE
+
+   vrSucceed_wav = manabomb_sound
+   
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Sapphire,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   GetTargets(who=$,lTargets=$)
+   "This returns a list of valid targets in range."
+   {
+      local oRoom, i, each_obj, lFinalTargets, iSpellPower;
+
+      lFinalTargets = $;
+      iSpellPower = send(self,@GetSpellPower,#who=who);
+
+      oRoom = send(who,@GetOwner);
+      lFinalTargets = Send(oRoom,@EnchantAllInRange,#what=self,
+                           #range=(6+iSpellpower/20),#center=who,#monsters=TRUE);
+
+      return lFinalTargets;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      %% we need to do our own check rather than use the one in spell.kod
+      if IsClass(who,&Player) AND send(who,@GetMana) < 12
+      {
+         Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+         Send(who,@MsgSendUser,#message_rsc=spell_insufficient_magic,#parm1=vrName);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellpower = 0)
+   {
+      local oRoom, lEnchanted, iMana, i ;
+      
+      if isClass(who,&User)
+      {
+         iMana = Send(who,@GetMana);
+         Send(who,@LoseMana,#amount=iMana);
+      }
+      else
+      {
+         iMana = iSpellPower/3;
+      }
+      
+      oRoom = Send(who,@GetOwner);
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=manabomb_cast,
+           #what=who,#parm1=send(who,@GetCapDef),#parm2=Send(who,@GetName));
+
+      iMana = iMana / 2 ;
+      iMana = iMana + (iMana * iSpellPower)/100;
+
+      for i in lTargets
+      {
+         if IsClass(i,&Player)
+         {
+            Send(i,@LoseMana,#amount=iMana);
+            send(i,@BadSpellFlashEffect);
+            if Send(i,@GetMana) = 0
+            {
+               Send(i,@MsgSendUser,#message_rsc=manabomb_hit_all);
+            }
+            else
+            {
+               Send(i,@MsgSendUser,#message_rsc=manabomb_hit_some);
+            }
+         }
+         else  
+         {
+            % class is monster
+            Send(i,@StartManaBomb);
+            Send(i,@StartEnchantment,#what=self,#time=MONSTER_EFFECT_TIME);
+         }
+      }
+
+      propagate;
+   }
+
+   % We just needed a list of players in range, so we don't do anything here.
+   StartEnchantment(who = $)
+   "Starts enchantment effect on one player"
+   {
+      return;
+   }
+
+   % Used by monsters only
+   EndEnchantment(who = $)
+   {
+      if not IsClass(who,&Monster)
+      {
+         debug("EndEnchantment called by non-monster");
+      }
+      
+      Send(who,@EndManaBomb);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KraananPriestess is Temples
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   kranpriestess_name_rsc = "Priestess Qerti'nya"
+   kranpriestess_icon_rsc = kranprst.bgf
+   kranpriestess_desc_rsc = \
+      "Qerti'nya is very judgmental of the strength of those who come before her.  Blood and "
+      "hellfire are the tools of this priestess, for only the strong and good meaning deserve to live.  "
+      "She is quick to make accusations or statements.  Although she delivers a powerful sermon, "
+      "she is likely to go out drinking with the men after it is over."
+   Kran_forget_potion_sale = "~B~bI do sell %s%s which is very potent.  You will remember none of those clumsy physical-based combat skills if you quaff it.~n~k"
+   kraananpriestess_teach = "Through rigorous discipline, I can teach you "
+
+classvars:
+   vrTeach_message = Kraananpriestess_teach
+   vrName = kranpriestess_name_rsc
+   vrIcon = kranpriestess_icon_rsc
+   vrDesc = kranpriestess_desc_rsc
+
+   viQuestID = QST_ID_KRAANAN_DISCIPLE
+   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER | MOB_NOMOVE | MOB_PERM_QUESTER
+   viOccupation = MOB_ROLE_PRIESTESS
+
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_ACCEPT_ITEM )
+      {
+         if( IsClass(what,&Food) )
+         {
+            if( IsClass(what,&StoutGoblet) )
+            {
+               send( self, @SetMood, #new_mood = piMood + 4 );
+               return;
+            }
+            
+            if( send( what, @IsAlcohol ) )
+            {
+               send( self, @SetMood, #new_mood = piMood + 2 );
+               return;
+            }
+         }
+      }
+      
+      return;
+   }
+
+   InitCondSale()
+   {
+      local oObj;
+      oObj=Create(&ForgetPotionSkills);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,2500,Kran_forget_potion_sale]);
+           
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [$,$,
+       [ SID_BLESS, SID_ENCHANT_WEAPON, SID_SUPERSTRENGTH,
+         SID_NIGHTVISION, SID_CREATE_WEAPON, SID_CREATE_FOOD, 
+         SID_DISCORDANCE, SID_MANA_BOMB,
+         SID_ANTIMAGIC_AURA, SID_KILLING_FIELDS, SID_RESIST_MAGIC,
+         SID_ARMOR_OF_GORT, SID_EAGLE_EYES, SID_RELAY ],
+       $ ];
+       
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

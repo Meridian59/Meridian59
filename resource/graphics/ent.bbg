@@ -1,0 +1,40 @@
+#Ent
+# monster
+# groups
+# 1-3 walking
+# 4-5 attacking
+
+-s 2 
+24
+ewlka000.bmp
+ewlka090.bmp
+ewlka180.bmp
+ewlka270.bmp
+ewlkb000.bmp
+ewlkb090.bmp
+ewlkb180.bmp
+ewlkb270.bmp
+enta000.bmp
+enta090.bmp
+enta180.bmp
+enta270.bmp
+entb000.bmp
+entb090.bmp
+entb180.bmp
+entb270.bmp
+entc000.bmp
+entc090.bmp
+entc180.bmp
+entc270.bmp
+entd000.bmp
+entd090.bmp
+entd180.bmp
+entd270.bmp
+
+6
+4  1   4   3   2 
+4   5   8  7   6
+4   9  12  11  10
+4  13  16  15  14
+4  17  20  19  18
+4  21  24  23  22

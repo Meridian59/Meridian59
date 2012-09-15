@@ -1,0 +1,108 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanStore is KocatanRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   room_name_kocstore = "The Neglected Arsenal"
+   room_kocstore = kocstore.roo
+   kocstore_music = song12.mid
+
+classvars:
+
+   vrName = room_name_kocstore
+
+   viTeleport_row = 7
+   viTeleport_col = 12
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+   viPermanent_flags = ROOM_NO_COMBAT
+
+properties:
+
+   prRoom = room_kocstore
+   piRoom_num = RID_KOC_STORE
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = kocstore_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% to town -- teleport in to (15,12)
+      plExits = Cons([ 16, 12, RID_KOCATAN, 32, 48, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 6, 25, ROOM_LOCKED_DOOR],plExits);
+      plExits = Cons([ 7, 25, ROOM_LOCKED_DOOR],plExits);
+      plExits = Cons([ 6, 24, ROOM_LOCKED_DOOR],plExits);
+      plExits = Cons([ 7, 24, ROOM_LOCKED_DOOR],plExits);
+
+      plExits = Cons([ 2, 13, RID_KOC_SEWER1, 40, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 13, RID_KOC_SEWER1, 40, 20, ROTATE_NONE ],plExits);
+  
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1,lObjCoords2;
+      lObjCoords1 = [ [10,20,56,08,OO_BROWN_URN],     [11,15,00,56,OO_DECORATIVE_POT],
+                      [10,21,56,16,OO_POT],           [10,19,56,00,OO_POT],
+                      [08,04,56,08,OO_BAG_OF_BEANS],  [09,04,08,08,OO_BAG_OF_BEANS],
+                      [09,04,00,32,OO_BIG_BAG],       [10,04,16,16,OO_APPLE],
+                      [07,25,32,08,OO_CLOTH_BOLT4],   [10,04,32,32,OO_APPLE],
+                      [10,07,24,08,OO_BASKET],        [10,07,40,08,OO_BASKET],
+                      [08,07,56,16,OO_BOX_WITH_SNAKE], [06,06,40,56,OO_POTION],
+                      [11,16,00,00,OO_FIXINS],        [10,18,56,56,OO_POTION],
+                      [10,18,32,24,OO_JUG],           [10,17,32,32,OO_POISON],
+                      [10,17,08,24,OO_STICKS],        [10,17,48,08,OO_APPLE],
+                      [02,21,32,16,OO_GREY_JUG],      [06,22,40,00,OO_BASKET],
+                      [06,25,48,08,OO_3_CLOTH_BOLTS], [07,09,00,56,OO_JUG],
+                      [07,10,16,08,OO_JUG]
+                      %[08,07,56,24,OO_BAG_OF_BEANS],  [10,20,48,48,OO_GARLIC],
+                      %[10,19,48,48,OO_GARLIC],        [10,17,00,32,OO_SPICES],
+                      %[11,19,00,16,OO_DECORATIVE_POT], [11,19,00,16,OO_BROWN_URN],
+                      %[08,07,56,24,OO_BIG_BAG]
+                    ];
+      lObjCoords2 = [ [09,04,40,08,OO_rice],          [10,05,32,00,OO_rice],
+                      [10,21,32,16,OO_rice],          [09,07,56,16,OO_barrel2],
+                      [07,24,00,00,OO_bigiron],       [10,21,32,56,OO_tallurn],
+                      [11,16,00,48,OO_spices],        [10,15,00,48,OO_garlic],
+                      [10,15,32,48,OO_garlic]
+                    ];
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords2);
+
+      send(self,@NewHold,#what=Create(&kocatanShopkeeper),
+           #new_row=6,#new_col=21,#fine_row=16,#fine_col=48,
+           #new_angle=ANGLE_EAST);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=11,#new_col=5,#fine_row=10,#fine_col=45); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
+           #new_row=8,#new_col=24,#fine_row=24,#fine_col=32); 
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

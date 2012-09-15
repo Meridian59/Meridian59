@@ -1,0 +1,317 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SummonWeb is WallSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SummonWeb_name_rsc = "spider web"
+   SummonWeb_icon_rsc = iweb.bgf
+   SummonWeb_overlay = webov.bgf
+   SummonWeb_desc_rsc = \
+      "The spider webs created by this spell may hamper the ability of those "
+      "who stumble upon them to move.  "
+      "Requires web moss to cast."
+                        
+   SummonWeb_cast_rsc = "A sticky field of spider webs appears before you."
+   SummonWeb_failed_rsc = \
+      "There is too much summoning magic focused here to create a web." 
+   SummonWeb_sound = farenwala822m.wav
+
+classvars:
+
+   vrName = SummonWeb_name_rsc
+   vrIcon = SummonWeb_icon_rsc
+   vrDesc = SummonWeb_desc_rsc
+   vrWeb_Overlay = SummonWeb_overlay
+
+   viSpell_num = SID_SPIDER_WEB
+   viSchool = SS_FAREN
+   viSpell_level = 3
+   viMana = 15
+   viSpellExertion = 10
+   viCast_time = 3000
+
+   vrSucceed_wav = SummonWeb_sound
+   viChance_To_Increase = 25
+
+   viHarmful = TRUE
+
+   % Webs can't kill anyone, so don't warn about being a murderer.
+   viWallCanKill = FALSE
+
+   viNumElements = 9
+
+   vrSummonLimitMsg = SummonWeb_failed_rsc
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&WebMoss,1], plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      Send(who,@MsgSendUser,#message_rsc=SummonWeb_cast_rsc);
+
+      propagate;
+   }
+
+   PlaceWallElements(who = $, iSpellPower = 0)
+   {
+      local oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, iMaxHoldTime,
+            iDuration, oElement;
+
+      iAngle = Send(who,@GetAngle);
+      iMaxHoldTime = 3+(iSpellPower/33);
+      iMaxHoldTime = Bound(iMaxHoldtime,$,5);
+
+      iDuration = (iSpellPower * 4) / 3 + 20;
+      iDuration = Bound(iDuration,20,130);
+
+
+      % Facing East
+      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      {
+         iCol = Send(who,@GetCol) + 2;
+         iRow = Send(who,@GetRow);
+      }
+
+      % Facing SouthEast
+      if iAngle >= ANGLE_ESE AND iAngle < ANGLE_SSE
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol) + 2;
+      }
+
+      % Facing South
+      if iAngle >= ANGLE_SSE AND iAngle < ANGLE_SSW
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol);
+      }
+
+      % Facing SouthWest
+      if iAngle >= ANGLE_SSW AND iAngle < ANGLE_WSW
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol) - 2;
+      }
+
+      % Facing West
+      if iAngle >= ANGLE_WSW AND iAngle < ANGLE_WNW
+      {
+         iCol = Send(who,@GetCol) - 2;
+         iRow = Send(who,@GetRow);
+      }
+
+      % Facing NorthWest
+      if iAngle >= ANGLE_WNW AND iAngle < ANGLE_NNW
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) - 2;
+      }
+
+      % Facing North
+      if iAngle >= ANGLE_NNW AND iAngle < ANGLE_NNE
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol);
+      }
+
+      % Facing NorthEast
+      if iAngle >= ANGLE_NNE AND iAngle < ANGLE_ENE
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) + 2;
+      }
+
+      oRoom = Send(who,@GetOwner);
+
+      iFine_Row = Send(who,@GetFineRow);
+      iFine_Col = Send(who,@GetFineCol);
+
+      % Center, then clockwise from 12 o'clock
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Web,#MaxHoldTime=iMaxHoldTime,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      propagate;
+   }
+
+   DoHold(what = $, otarget = $, idurationsecs = $, report=TRUE)
+   "Holds target for durationsecs seconds."
+   {
+      local i;
+            
+      % Can cast spell if the 1 target item is a user
+      if iDurationSecs = $
+      {
+         iDurationSecs = 10;
+      }
+      
+      if otarget = $
+      {
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      if Send(otarget,@IsEnchanted,#what=self)
+      {
+         return FALSE;
+      }      
+
+      Send(oTarget,@StartEnchantment,#what=self,#time=idurationsecs*1000,
+           #report=report,#state=report);
+
+      if IsClass(oTarget,&Player)
+      {
+         Send(oTarget,@SetOverlay,#what=self);
+         Send(oTarget,@SetPlayerFlag,#Flag=PFLAG_NO_MOVE,#value=TRUE);
+      }
+      else  % class is &Monster
+      {
+         Send(oTarget,@ResetBehaviorFlags);
+      }      
+
+      return;
+   }
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
+
+      return;      
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
+
+      return;
+   }
+
+   EndEnchantment(who = $, report = TRUE,state=$)
+   {
+      if IsClass(who,&Player)
+      {
+         Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=FALSE);
+         Send(who,@RemoveOverlay,#what=self);
+      }
+      else
+      {
+         % Class is &Monster
+         Post(who,@ResetBehaviorFlags); 
+      }
+     
+      return;
+   }
+
+   %%% Overlay messages
+
+   GetNumberOverlays(animation = $)
+   {
+      return 1;
+   }
+
+   SendOverlayInformation()
+   {
+      AddPacket(4,Send(self,@GetOverlay));
+      AddPacket(1,Send(self,@GetOverlayHotspot));
+      Send(self,@SendOverlayAnimation);
+
+      return;
+   }
+
+   GetOverlayHotSpot(animation = $)
+   {
+      return HS_LEGS;
+   }
+
+   GetOverlay(animation = $)
+   {
+      return vrweb_overlay;
+   }
+
+   SendOverlayAnimation(iAnimation = $)
+   {
+      if iAnimation = PANM_WEAPON_ATTACK
+      {
+         AddPacket(1,ANIMATE_NONE, 2,2);
+
+         return;
+      }
+      
+      if iAnimation = PANM_BOW_FIRE
+      { 
+         AddPacket(1,ANIMATE_NONE, 2,3);
+
+         return;
+      }
+      
+      AddPacket(1,ANIMATE_NONE, 2,1);
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,69 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsA1 is FeyForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsA1 = A1.roo
+   room_name_OutdoorsA1 ="North Quilicia Wood"
+   OutdoorsA1_music = walk7.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsA1
+
+   viTeleport_row = 32
+   viTeleport_col = 32
+
+properties:
+
+   prRoom = room_OutdoorsA1
+   prMusic = OutdoorsA1_music
+   piRoom_num = RID_A1
+   
+   piGen_time = 150000   
+
+messages:
+
+   Constructed()
+   {      
+      plGenerators = [ [11, 32], [16, 15], [22, 6], [30, 6], [30, 18],
+                      [25, 32], [39, 13], [45, 23], [45, 28], [37, 37],
+                      [36, 42], [20, 42], [25, 42] ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {   
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_C1, 6, 1, ROTATE_NONE], plEdge_exits);
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=43,#new_col=26);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=45,#new_col=24);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=47,#new_col=31);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=21,#new_col=46);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=24,#new_col=42);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=37,#new_col=42);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=37,#new_col=36);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

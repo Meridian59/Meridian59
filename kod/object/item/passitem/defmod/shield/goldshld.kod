@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GoldShield is Shield
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   goldshield_name_rsc = "gold round shield"
+   goldshield_icon_rsc = rshield.bgf
+   goldshield_desc_rsc = \
+      "Finely made, this hefty gold shield offers a fair "
+      "measure of protection.  Delicate engravings, the mark "
+      "of Quintor, adorn its circumference."
+
+   goldshield_window_overlay_rsc = povshldD.bgf
+
+classvars:
+
+   vrName = goldshield_name_rsc
+   vrIcon = goldshield_icon_rsc
+   vrDesc = goldshield_desc_rsc
+
+   viHits_init_min = 250
+   viHits_init_max = 300
+
+   % Being gold, it's worth much more than your average shield, but it's much heavier too
+   viValue_average = 500
+   viWeight = 225  
+   viBulk = 150
+
+   vrShield_window_overlay = goldshield_window_overlay_rsc
+   vrShield_overlay = goldshield_icon_rsc
+
+   viGround_group = 3
+   viInventory_group = 1
+   viBroken_group = 4
+
+   viDefense_base = 10
+   viDamage_base = 1
+
+properties:
+
+messages:
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_SLASH,10],
+               [ATCK_WEAP_BLUDGEON,10]
+             ];
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

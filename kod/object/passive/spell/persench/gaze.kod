@@ -1,0 +1,146 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Paralyze is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+   MAX_CAST_LENGTH = 30000  % 30 sec max, just to be safe.
+
+resources:
+
+   paralyze_name_rsc = "gaze of the basilisk"
+   paralyze_icon_rsc = iparalyz.bgf
+   paralyze_desc_rsc = \
+      "Grants the caster the ability to paralyze any who meet his gaze.  "
+      "Requires yrxl sap and purple mushrooms to cast."
+
+   paralyze_on_rsc = "Your eyes seem to swell and pulse with magical energy."
+   paralyze_off_rsc = "Your eyes return to normal."
+   paralyze_already_enchanted_rsc = "Your already have the gaze of the basilisk."
+   paralyze_caster = "%s%s meets your gaze and freezes in place."
+   paralyze_target_on = "As you meet %s%s's terrible gaze you feel your limbs stiffen and freeze."
+
+   paralyze_no_soul = "You can't detect a soul in %s%s to turn to stone!"
+
+   paralyze_sound= qparalyz.wav
+
+classvars:
+
+   viSpell_num = SID_GAZE_OF_THE_BASILISK
+   viSchool = SS_QOR
+   viMana = 15          
+   viCast_Time = 5000   
+   viSpell_Exetion = 15
+   viSpell_level = 6
+
+   viChance_To_Increase = 10
+
+   vrName = paralyze_name_rsc
+   vrIcon = paralyze_icon_rsc
+   vrDesc = paralyze_desc_rsc
+
+   vrAlreadyEnchanted = paralyze_already_enchanted_rsc
+   vrEnchantment_On = paralyze_On_rsc
+   vrEnchantment_Off = paralyze_Off_rsc
+
+   vrSucceed_wav = paralyze_sound
+   
+   viFlash = FLASH_BAD
+
+   vbCanCastonOthers = FALSE
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Yrxlsap,1],plReagents);
+      plReagents = Cons([&PurpleMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;
+
+      % Duration in seconds, from 1-33.
+      iDuration = bound(iSpellPower/3,1,33);
+      
+      return iSpellpower * 1000;
+   }
+
+   GetStateValue(who = $, iSpellPower = 0)      
+   {      
+      Send(who,@AddDefenseModifier,#what=self);      
+
+      return iSpellPower;
+   }
+
+   ModifyDefensePower(who = $, what = $,defense_power = $)
+   {
+      local iSpellpower, oSpell, iDuration, oWeapon;
+   
+      oSpell = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      iSpellpower = send(who,@GetEnchantedState,#what=self);
+      iDuration = iSpellpower * random(20,25);
+      iDuration = bound(iDuration,500,2500);
+
+      % TODO: Make chance to paralyze based on if caster is facing opponent?
+
+      if IsClass(what,&Revenant)
+      {
+         Send(who,@MsgSendUser,#message_rsc=paralyze_no_soul, 
+              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+      }
+      else
+      {
+         if IsClass(what,&Player)
+         {
+            oWeapon = send(what,@GetWeapon);
+
+            % Ranged weapons don't always trigger the effect.
+            if IsClass(oWeapon,&RangedWeapon)
+               AND random(1,100) < 50
+            {
+               % No effect.
+               return defense_power;
+            }
+
+            Send(what,@MsgSendUser,#message_rsc=paralyze_target_on,
+                 #parm1=send(who,@GetDef),#parm2=send(who,@GetName));
+         }
+
+         Send(who,@MsgSendUser,#message_rsc=paralyze_caster,
+              #parm1=send(what,@GetCapDef),#parm2=send(what,@GetName));
+
+         Send(oSpell,@DoHold,#what=who,#oTarget=what,#iDuration=iDuration,
+              #iSpellpower=iSpellpower);
+      }
+
+      return defense_power;
+   }
+
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+      Send(who,@RemoveDefenseModifier,#what=self);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

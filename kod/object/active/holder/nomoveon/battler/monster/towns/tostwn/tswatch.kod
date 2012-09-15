@@ -1,0 +1,2476 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosWatcher is TosTown
+
+constants:
+
+   include blakston.khd
+
+   ACCEPT_DELAY = 15000
+   ADVERT_DELAY_MIN = 60000
+   ADVERT_DELAY_MAX = 120000
+   COMMENCE_DELAY_MIN = 8000
+   COMMENCE_DELAY_MAX = 15000
+   FIGHT_DELAY_ONE_ON_ONE = 240000
+   FIGHT_DELAY_LAST_MAN_STANDING = 480000
+
+   LAST_MINUTE = 60000
+
+resources:
+
+   TosWatcher_name_rsc = "Watcher"
+   TosWatcher_icon_rsc = tswatch.bgf
+   TosWatcher_desc_rsc = \
+      "The son of Priestess Qerti'nya and General Cylill, young Cort has been "
+      "appointed the Watcher of the Glorious Arena of Kraanan.  A calm smile "
+      "graces his face as he oversees the mock combats held in the name of "
+      "Kraanan the Fist."
+
+   TosWatcher_ad_need_champion1 = \
+      "Have we no warrior who would be our champion?"
+   TosWatcher_ad_need_champion2 = \
+      "Is there no one who dares to wear the mantle of Kraanan?"
+   TosWatcher_ad_need_champion3 = \
+      "Prove yourself before the critical eyes of Kraanan!"
+   TosWatcher_ad_need_champion4 = \
+      "Read my banners for instructions on how to start a match."
+   TosWatcher_ad_need_challenger = "Would no warrior dare to challenge %s%s?"
+   TosWatcher_ad_good_fight1 = \
+      "A vengeful bloodmatch always makes my toes curl!"
+   TosWatcher_ad_good_fight2 = "Hip-hip-Huzzah!"
+   TosWatcher_ad_good_fight3 = "Let's see some blood!"
+
+   TosWatcher_no_need = "We have no need of new combatants at this time."     
+   TosWatcher_need_champion = \
+      "We do not yet have a Champion!  Would you be that brave soul?"     
+   TosWatcher_dont_need_challenger = \
+      "We have no need of challengers at this time."
+   TosWatcher_fight_in_progress = \
+      "A match is currently in progress.  Try again after this battle is over."
+
+   TosWatcher_already_combatant = "But you are already a combatant!"
+   TosWatcher_already_champion = "But, you are already our champion!"
+   TosWatcher_already_have_champion = \
+      "We already have a champion:  %s%s.  Would you dare to challenge %s?"
+
+   TosWatcher_challenge_offered = \
+      "%s%s has challenged you.  Will you trade blows with %s?"
+   TosWatcher_must_accept = \
+      "You only have %i seconds left to accept %s%s's challenge."
+
+   TosWatcher_cant_renege = "You cannot renege unless you are a combatant!"
+   TosWatcher_commence = "Fight!!!!"
+   TosWatcher_last_minute = "There is only one minute left in this match."
+   TosWatcher_draw = "This match is a draw.  No one wins."
+
+   TosWatcher_victor = "~BWe have a victor!~B"
+   TosWatcher_new_champion = "~BAll hail %s%s, the new Champion of Kraanan!~B"
+   TosWatcher_killed_champion = "%s%s has slain the Champion of Kraanan, %s%s!"
+   TosWatcher_retain_title = \
+      "%s%s, Champion of Kraanan, has valiantly defended %s title!"
+   TosWatcher_champion_killed = "The Champion has slain %s%s!"
+   TosWatcher_someone_killed = "%s%s has slain %s%s!"
+
+   TosWatcher_champ_reneges = \
+      "%s%s, Champion of Kraanan, has surrendered %s title."
+   TosWatcher_ready_to_fight = "%s%s vs %s%s.  Prepare to fight on my mark."
+   TosWatcher_combatant_reneges = "%s%s has chosen to fight no longer."
+
+   TosWatcher_cant_leave = \
+      "Combatants can't just leave in the middle of a match!"
+   TosWatcher_pitifully_fled = \
+      "%s%s has pitifully fled from the field of battle."
+   TosWatcher_wont_fight = \
+      "Apparently, %s%s won't be fighting for us today after all."
+   TosWatcher_only_combatants = "Only combatants may trade blows here!"
+   TosWatcher_no_fighting_yet = "Stay your hand; the battle has yet to begin!"
+   TosWatcher_only_combatants_cast = "Only combatants may cast spells here!"
+   TosWatcher_only_target_combatants = \
+      "You may only target other combatants with your mystical attacks!"
+
+   TosWatcher_spell_banned = \
+      "The %s spell has been banned from the Arena of Kraanan; it is the "
+      "tactic of a coward."
+
+   TosWatcher_must_choose_style = \
+      "A style of combat must be chosen before we may choose combatants."
+   TosWatcher_cant_switch = \
+      "You cannot change combat styles until all current combatants have been "
+      "defeated or reneged."
+   TosWatcher_new_combat_style = \
+      "The name of the game is: %s.  Now, would any warrior be our champion?"
+
+   TosWatcher_style_one_on_one = "traditional"
+   TosWatcher_style_last_man_standing = "last man standing"
+   TosWatcher_style_guild_vs_guild = "guild vs guild"
+   TosWatcher_style_battle_royale = "battle royale"
+
+   TosWatcher_new_combatant = "%s%s will also be a combatant in this match!"
+   TosWatcher_more_combatants = \
+      "Additional combatants only have %i seconds to join into this match."
+   TosWatcher_ready_last_man = \
+      "The game is last man standing.  Combat will begin on my mark."
+   TosWatcher_ready_guild_vs_guild = "%s%q vs %s%q:  combat begins on my mark."
+   TosWatcher_ready_battle_royale = \
+      "Battle Royale:  Kill anyone in any guild but yours.  Combat begins on "
+      "my mark."
+
+   TosWatcher_welcome = \
+      "~kThe Watcher tells you, \"Welcome to the Arena of Kraanan.  Read the "
+      "banners for help.\""
+   TosWatcher_worship_admin = \
+      "All hail the mighty %s, and pray that %s chooses not to smite us for "
+      "our impudence!"
+   TosWatcher_worship_dm = "Bow down before %s %s of Meridian!"
+   TosWatcher_welcome_champion = "All hail %s%s, a Champion of Kraanan!"
+   TosWatcher_welcome_champion_guild = \
+      "All hail %s%s, member of %s%q, favored guild of Kraanan!"
+
+   TosWatcher_new_champion_guild = \
+      "%s%s has registered %s%q as the new Champions of Kraanan!"
+   TosWatcher_new_guild_combatant = \
+      "%s%s has registered %s%q as challengers in the upcoming fray."
+   TosWatcher_need_guild = \
+      "You cannot engage in guild vs. guild combat unless you join a guild!"
+   TosWatcher_only_two = \
+      "Only two guilds may face each other in guild v guild combat."
+   TosWatcher_not_more_members_yet = \
+      "Other members of %s%q may not enter the fray until a second guild has "
+      "committed to combat."
+   TosWatcher_new_champion_guild_win = "%s%q are the new Champions of Kraanan!"
+   TosWatcher_defended_guild_title = "%s%q remain the Champions of Kraanan!"
+
+   TosWatcher_invalid_fight = \
+      "This fight was invalid for certain reasons, and therefore it has been "
+      "cancelled."
+
+   TosWatcher_cant_start_end = \
+      "You can't end a tournament while any combatants exist!"
+
+   TosWatcher_tournament_win = "%s%s has claimed victory in this bout!"
+   TosWatcher_tournament_win_guild = "%s%q has claimed victory in this bout!"
+   TosWatcher_tournament_style = \
+      "%s%s has decreed that the style of combat will be %s."
+   TosWatcher_tournament_combatant = "%s%s will be a combatant in this bout."
+   TosWatcher_tournament_cancelled = \
+      "With a wave of %s hand, %s%s dismisses the current proceedings and "
+      "starts anew."
+
+   TosWatcher_only_grand_marshal = \
+      "~kThe Watcher tells you, \"Only the Tourney Judge can give commands "
+      "during a tournament.  If you wish to be included in the proceedings, "
+      "you must let the Tourney Judge know.\""
+   TosWatcher_not_during_fight = \
+      "~kThe Watcher tells you, \"You cannot offer me commands while a fight "
+      "is still going on.\""
+
+   TosWatcher_speed_up = "Let's see if we can't speed this up a little bit."
+   TosWatcher_quit_guild = \
+      "Due to a change in guild status, %s%s has forfeited %s role in the "
+      "upcoming battle."
+   TosWatcher_no_guild_tourny = \
+      "%s%s may not participate in a guild scenario because %s is a member "
+      "of no guild."
+   TosWatcher_wrong_guild_tourny = \
+      "%s%s is not a member of either guild registered for this match."
+   Toswatcher_already_tourny_combatant = \
+      "%s%s is already a combatant in this match!"
+   TosWatcher_tournament_over_guild_limit = \
+      "%s%s was not added to the proceedings, because %s%q already have too "
+      "many members on the floor.  A guild may only have %i members in a "
+      "fight of this style at a time."
+   TosWatcher_over_guild_limit = \
+      "You may not join your comrades on the floor because there are already "
+      "%i set to fight in this match.  Read the banners for more details."
+   TosWatcher_not_more = \
+      "There may not be more than 25 combatants in a single fight."
+   TosWatcher_tourny_invalid = \
+      "This fight is not yet valid.  You may want to cancel the fight by "
+      "saying 'Clear all', or add combatants to ensure a valid fight."
+   TosWatcher_killed_by_spell = "%s%s was just killed by the %s spell!"
+
+   TosWatcher_arena_help = \
+      "Proceed all subcommands with the DM command.  'Start Tournament' "
+      "begins the tournament. 'End tournament' ends the tournament.  'Fight' "
+      "starts a bout (although traditional bouts start on their own).  "
+      "'Clear All' resets the tournament and starts anew.  DM followed by a "
+      "person's name will attempt to make him a combatant in the next round."
+      "The name of the combat style chooses the style the players will have "
+      "to use.  'Booth' teleports you to the watcher's booth."
+
+   TosWatcher_no_assgame = \
+      "I'll have none of these shenanigans during an officially sanctioned "
+      "tournament!"
+   TosWatcher_unwanted_give = "~k%s%s ignores your bribe.~n~k"
+   TosWatcher_spell_cast = "~B~r%s ~kcast ~b%s ~kon ~g%s."
+   TosWatcher_nothing_string = "nothing"
+
+   TosWatcher_arena_help_command = "arena help"
+   TosWatcher_start_tournament_command = "start tournament"
+   TosWatcher_end_tournament_command  = "end tournament"
+   TosWatcher_champion_command  = "champion"
+   TosWatcher_challenge_command  = "challenge"
+   TosWatcher_accept_command  = "accept"
+   TosWatcher_renege_command  = "renege"
+   TosWatcher_traditional_command  = "traditional"
+   TosWatcher_last_man_standing_command  = "last man standing"
+   TosWatcher_guild_vs_guild_command  = "guild vs guild"
+   TosWatcher_battle_royale_command  = "battle royale"
+   TosWatcher_fight_command  = "fight"
+   TosWatcher_clear_all_command  = "clear all"
+
+   TosWatcher_battle_midi_rsc = pk_sb16.mid
+
+classvars:
+
+   vrName = TosWatcher_name_rsc
+   vrIcon = TosWatcher_icon_rsc
+   vrDesc = TosWatcher_desc_rsc
+
+   viDefinite = ARTICLE_THE
+   viIndefinite = ARTICLE_THE
+
+   vrUnwanted_give = TosWatcher_unwanted_give
+
+   viAttributes = MOB_NOMOVE | MOB_FULL_TALK | MOB_LISTEN | MOB_NOFIGHT \
+                  | MOB_NOQUEST
+   viOccupation = MOB_ROLE_WATCHER
+
+properties:
+
+   piCombat_style = STYLE_NO_FIGHT
+
+   % Every now and then, the Watcher sends off a blurb, asking people to fight
+   %  for him.
+   ptAdvert = $
+
+   % In PvP combat, champ has a chance to accept a proffered challenge.
+   ptAccept = $
+
+   % 10 second head start before a fight.
+   ptCommence = $
+
+   % The actual length of the fight.
+   ptFight = $
+
+   % This is a list of player objects.
+   plCombatants = $
+
+   % This is a list of two-element lists.
+   plKill_list = $
+
+   % poChampion points to whoever won last time out.  poChampion is always a
+   %  player object.
+   poChampion = $
+
+   % poChampion_guild points to the guild object of the current champion.
+   poChampion_Guild = $
+
+   % Has the player been told he only has 15 more seconds to accept a challenge?
+   pbAccept = FALSE
+
+   % Has the Watcher given the one minute warning?
+   pbLastMinute = FALSE
+
+   % List of best ever players.
+   plChampions = $
+
+   % How many victories the current champ has.
+   piKill_counter = 0
+
+   % If an actor has activated the tournament status, this is set to true and
+   %  only an actor can activate or deactivate the commands.
+   pbTournament = FALSE
+
+   % If an actor is not here for 5 turns in a row, reset the game.
+   piMissing_Actor = 0
+
+   % If max_lock is equal to true, there are additional limitations on the
+   %  number of people who can fight (to keep load down).
+   pbMax_Lock = TRUE
+
+   % Stores values for the players' HP, mana, and vigor upon entring the
+   %  battle area, which are restored upon leaving the area.
+   plUserStats = $
+
+   % The actor running a tournament.
+   poMarshal = $              
+
+
+messages:
+
+   Constructor()
+   {
+      % This is a list of two element lists.  The first element is the type
+      %  of combat.  The second element is a list of the top players, and
+      %  how many kills they have.
+
+      plChampions = [ [STYLE_ONE_ON_ONE,
+                       [[$,0],[$,0],[$,0],[$,0],[$,0]]],
+                      [STYLE_LAST_MAN_STANDING,
+                       [[$,0],[$,0],[$,0],[$,0],[$,0]]],
+                      [STYLE_GUILD_VS_GUILD,
+                       [[$,0],[$,0],[$,0],[$,0],[$,0]]],
+                      [STYLE_LAST_GUILD_STANDING,
+                       [[$,0],[$,0],[$,0],[$,0],[$,0]]]
+                    ];
+
+      propagate;
+   }
+
+   NewOwner(what=$)
+   "If the watcher is ever loaded someplace other than the arena of Tos, "
+   "delete self."
+   {
+      local iDelay;
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SetRoomFlagToDefault,#flag=ROOM_SAFE_DEATH);
+      }
+
+      Send(what,@SetRoomFlag,#flag=ROOM_SAFE_DEATH,#value=TRUE);
+      if ptAdvert = $
+      {
+         iDelay = Random(ADVERT_DELAY_MIN,ADVERT_DELAY_MAX);
+         ptAdvert = CreateTimer(self,@AdvertTimer,iDelay);
+      }
+
+      propagate;
+   }
+
+   %%% Advertising
+
+   % These messages are spat out at users every now and then, just
+   %  for atmosphere, and to tell players what game is going on, etc.
+
+   AdvertTimer()
+   {
+      local rand, lPhrases, iDelay;
+
+      ptAdvert = $;
+
+      if pbTournament
+      {
+         if Send(self,@GetActor) = $
+         {
+            piMissing_actor = piMissing_actor + 1;
+            if piMissing_actor >= 8
+            {
+               Send(self,@ClearCombatants);
+               pbTournament = FALSE;
+               Send(poOwner,@EndTournament,#Marshal=$);
+               if Send(poOwner,@GetRoomNum) = RID_TOS_ARENA
+               {
+                  Send(poOwner,@UnlockArena);
+               }
+            }
+         }
+         else
+         {
+            piMissing_actor = 0;
+         }
+
+         iDelay = Random(ADVERT_DELAY_MIN,ADVERT_DELAY_MAX);
+         ptAdvert = CreateTimer(self,@AdvertTimer,iDelay);
+
+         return;
+      }
+
+      if plCombatants = $
+      {
+         lPhrases = [ TosWatcher_ad_need_champion1,
+                      TosWatcher_ad_need_champion2,
+                      TosWatcher_ad_need_champion3,
+                      TosWatcher_ad_need_champion4
+                    ];
+         rand = Random(1,Length(lPhrases));
+
+         Send(self,@Say,#message_rsc=Nth(lPhrases,rand));
+      }
+      else
+      {
+         if NOT Send(self,@ValidateFight)
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_ad_need_challenger,
+                 #parm1=Send(First(plCombatants),@GetDef),
+                 #parm2=Send(First(plCombatants),@GetName));
+         }
+         else
+         {
+            lPhrases = [ TosWatcher_ad_good_fight1,
+                         TosWatcher_ad_good_fight2,
+                         TosWatcher_ad_good_fight3
+                       ];
+            rand = Random(1,Length(lPhrases));
+
+            Send(self,@Say,#message_rsc=Nth(lPhrases,rand));
+         }
+      }
+
+      iDelay = Random(ADVERT_DELAY_MIN,ADVERT_DELAY_MAX);
+      ptAdvert = CreateTimer(self,@AdvertTimer,iDelay);
+
+      return;
+   }
+
+   %%% Per fight code
+
+   % Made a conscious decision to move as much of the actual arena code here,
+   %  so that these procedures would be the only ones that need to change,
+   %  if we ever add a new arena type.
+
+   SetChampion(who=$)
+   {
+      if poChampion <> who
+         AND (piCombat_style = STYLE_ONE_ON_ONE
+              OR piCombat_style = STYLE_LAST_MAN_STANDING)
+      {
+         poChampion = who;
+         poChampion_guild = Send(who,@GetGuild);
+         piKill_counter = 0;
+
+         return;
+      }
+
+      if Send(who,@GetGuild) <> poChampion_guild
+      {
+         poChampion = who;
+         poChampion_guild = Send(who,@GetGuild);
+         piKill_counter = 0;
+
+         return;
+      }
+
+      return;
+   }
+
+   ResetChampion()
+   {
+      local i;
+      poChampion = $;
+ 
+      if piCombat_Style = STYLE_GUILD_VS_GUILD
+         OR piCOmbat_style = STYLE_LAST_GUILD_STANDING
+      {
+         for i in plCombatants
+         {
+            if Send(i,@GetGuild) = poChampion_guild
+            {
+               % This combatant is the 'acting' champion
+               poChampion = i;
+
+               return;
+            }
+         }
+      }
+
+      piKill_counter = 0;
+      poChampion_guild = $;
+
+      return;
+   }
+
+   ValidateFight()
+   {
+      local oGuild, i;
+
+      if piCombat_Style = STYLE_ONE_ON_ONE
+         OR piCombat_Style = STYLE_LAST_MAN_STANDING
+      {
+         if Length(plCombatants) > 1
+         {
+            return TRUE;
+         }
+      }
+
+      if piCombat_Style = STYLE_GUILD_VS_GUILD
+         OR piCombat_Style = STYLE_LAST_GUILD_STANDING
+      {
+         oGuild = $;
+         for i in plCombatants
+         {
+            if oGuild = $
+            {
+               oGuild = Send(i,@GetGuild);
+            }
+            else
+            {
+               if oGuild <> Send(i,@GetGuild)
+               {
+                  % There are at least two guilds.
+                  return TRUE;
+               }
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
+   AcceptingChampions()
+   {
+      return (Length(plCombatants) < 1);
+   }
+
+   AcceptingChallengers()
+   {
+      if Length(plCombatants) < 2 OR piCombat_Style <> STYLE_ONE_ON_ONE
+      {
+         return TRUE;
+      }
+
+       return FALSE;
+   }
+
+   NewCombatant(who=$)
+   {
+      Send(self,@teleport,#what=who,#goinplay=TRUE);
+      if plCombatants = $
+      {
+         Send(self,@SetChampion,#who=who);
+      }
+
+      plCombatants = cons(who,plCombatants);
+
+      return; 
+   }
+
+   FightInSession()
+   {
+      return (ptFight <> $);
+   }
+
+   Challenge(who=$)
+   {
+      local i, bFound;
+
+      if who = poChampion
+      {
+         Send(self,@SayToOne,#target=who,
+              #message_rsc=TosWatcher_Already_champion);
+
+         return;
+      }
+
+      if Send(self,@IsCombatant,#who=who)
+      {
+         Send(self,@SayToOne,#target=who,
+              #message_rsc=TosWatcher_Already_combatant);
+
+         return;
+      }
+
+      if (piCombat_style = STYLE_LAST_GUILD_STANDING
+          OR piCombat_style = STYLE_GUILD_VS_GUILD)
+          AND NOT Send(self,@ChallengeGuildCheck,#Who=who)
+      {
+         return FALSE;
+      }
+
+      if NOT Send(self,@MaxCombatantCheck,#who=who)
+      {
+         return FALSE;
+      }
+
+      if piCombat_style = STYLE_ONE_ON_ONE
+      {
+         if pbTournament
+         {
+             Send(self,@Say,#message_rsc=TosWatcher_tournament_combatant,
+                  #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+             Send(self,@NewCombatant,#who=who);
+             Send(self,@ReadyFight); 
+
+             return;
+         }
+
+         Send(self,@Say,#message_rsc=TosWatcher_challenge_offered,
+              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+              #parm3=Send(who,@GetHimHer));
+
+         pbAccept = FALSE;
+         ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY); 
+      }
+      else
+      {
+         if piCombat_style = STYLE_GUILD_VS_GUILD
+            or piCombat_style = STYLE_LAST_GUILD_STANDING              
+         {
+            bFound = FALSE;
+            for i in plCombatants
+            {
+               if Send(i,@GetGuild) = Send(who,@GetGuild) AND NOT bFound
+               {
+                  Send(self,@Say,#message_rsc=TosWatcher_new_combatant,
+                       #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+                  bFound = TRUE;
+
+                  break;
+               }
+            }
+
+            if NOT bFound
+            {
+               Send(self,@Say,#message_rsc = TosWatcher_new_guild_combatant,
+                    #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+                    #parm3=Send(Send(who,@GetGuild),@GetDef),
+                    #parm4=Send(Send(who,@GetGuild),@GetName));
+            }
+         }
+         else
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_new_combatant,
+                 #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+         }
+
+         if ptAccept = $ AND NOT pbTournament
+         {
+            pbAccept = FALSE;
+            Send(self,@Say,#message_rsc=TosWatcher_more_combatants,#parm1=30);
+            ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
+         }
+      }
+
+      Send(self,@NewCombatant,#who=who);
+
+      return;
+   }
+
+   ChallengeGuildCheck(who=$)
+   {
+      local aGuild, bGuild, oGuild, i;
+
+      oGuild = Send(who,@GetGuild);
+      if oGuild = $
+      {
+         if pbTournament
+         {
+            Send(self,@TellActors,#message_rsc=TosWatcher_no_guild_tourny,
+                 #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+                 #parm3=Send(who,@GetHeShe));
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=who,
+                 #message_rsc=TosWatcher_need_guild);
+         }
+
+         return FALSE;
+      }
+
+      if piCombat_Style = STYLE_GUILD_VS_GUILD
+      {
+         aGuild = $;
+         bGuild = $;
+
+         for i in plCombatants
+         {
+            if aGuild = $
+            {
+               aGuild = Send(i,@GetGuild);
+            }
+            else
+            {
+
+               if bGuild = $ AND aGuild <> Send(i,@GetGuild)
+               {
+                  bGuild = Send(i,@GetGuild);
+               }
+            }
+         }         
+
+         if oGuild <> aGuild
+            AND oGuild <> bGuild
+            AND aGuild <> $
+            AND bGuild <> $
+         {
+            if pbTournament
+            {
+               Send(self,@TellActors,
+                    #message_rsc=Toswatcher_wrong_guild_tourny,
+                    #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+            }
+            else
+            {
+               Send(self,@SayToOne,#target=who,
+                    #message_rsc=TosWatcher_only_two);
+            }
+
+            return FALSE;
+         }
+      }
+
+      if (ptAccept = $ AND NOT pbTournament)
+         AND oGuild = Send(First(plCombatants),@GetGuild)
+      {
+         if pbTournament
+         {
+            Send(self,@TellActors,#message_rsc=TosWatcher_not_more_members_yet,
+                 #parm1=Send(oGuild,@GetDef),#parm2=Send(oGuild,@GetName));
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=who,
+                 #message_rsc=TosWatcher_not_more_members_yet,
+                 #parm1=Send(oGuild,@GetDef),#parm2=Send(oGuild,@GetName));
+         }
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   MaxCombatantCheck(who=$)
+   {
+      local iGuild_max, iGuild_num, i, oGuild;
+
+      if NOT pbMax_lock
+      {
+         % Ignore this whole procedure if the Admin wants to damn the
+         %  torpedoes.
+         return TRUE;     
+      }
+
+      if Length(plCombatants) >= 25
+      {
+         if pbTournament
+         {
+            Send(self,@TellActors,#message_rsc=TosWatcher_Not_more);
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=who,#message_rsc=TosWatcher_Not_more);
+         }
+
+         return FALSE;
+      }
+
+      iGuild_max = 0;
+      if piCombat_Style = STYLE_GUILD_VS_GUILD
+      {
+         iGuild_max = 10;
+      }
+
+      if piCOmbat_style = STYLE_LAST_GUILD_STANDING
+      {
+         iGuild_max = 5;
+      }
+
+      iGuild_num = iGuild_max;
+      if iGuild_max > 0
+      {
+         oGuild = Send(who,@GetGuild);
+
+         for i in plCombatants
+         {
+            if Send(i,@GetGuild) = oGuild AND oGuild <> $
+            {
+               iGuild_num = iGuild_num - 1;
+            }
+         }
+
+         if iGuild_num <=0
+         {
+
+            if pbTournament
+            {
+               Send(self,@TellActors,
+                    #message_rsc=TosWatcher_tournament_over_guild_limit,
+                    #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+                    #parm3=Send(oGuild,@GetDef),#parm4=Send(oGuild,@GetName),
+                    #parm5=iGuild_max);
+            }
+            else
+            {
+               Send(self,@SayToOne,#target=who,
+                    #message_rsc=TosWatcher_over_guild_limit,
+                    #parm1=iGuild_max);
+            }
+
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   Accept(who=$)
+   {
+       if who = poChampion AND ptAccept <> $
+       {
+          DeleteTimer(ptAccept);
+          ptAccept = $;
+       }
+
+       Send(self,@ReadyFight,#who=who);
+
+       return;
+   }
+
+   ReadyFight()
+   {
+      local i, each_obj, oGuild, iDelay;
+
+      if NOT Send(self,@ValidateFight)
+      {
+         if pbTournament
+         {
+            Send(self,@TellActors,#message_rsc=TosWatcher_tourny_invalid);
+
+            return FALSE;
+         }
+
+         Debug("INVALID FIGHT!  Something went wrong!");
+         Send(self,@Say,#message_rsc=TosWatcher_invalid_fight);
+         Send(self,@ClearCombatants);
+
+         return FALSE;
+      }
+
+      if piCombat_style = STYLE_ONE_ON_ONE
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_ready_to_fight,
+              #parm1=Send(First(plCombatants),@GetCapDef),
+              #parm2=Send(First(plCombatants),@GetName),
+              #parm3=Send(Nth(plCombatants,2),@GetDef),
+              #parm4=Send(Nth(plCombatants,2),@GetName));
+      }
+
+      if piCombat_style = STYLE_LAST_MAN_STANDING
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_ready_last_man);
+      }
+
+      if piCombat_style = STYLE_GUILD_VS_GUILD
+      {
+         oGuild = $;
+         for i in plCombatants
+         {
+
+            if Send(i,@GetGuild) <> poChampion_guild
+            {
+               oGuild = Send(i,@GetGuild);
+
+               break;
+            }
+         }
+
+         Send(self,@Say,#message_rsc=TosWatcher_ready_guild_vs_guild,
+              #parm1=Send(poChampion_guild,@GetCapDef),
+              #parm2=Send(poChampion_guild,@GetName),
+              #parm3=Send(oGuild,@GetDef),#parm4=Send(oGuild,@GetName));
+      }
+
+      if piCombat_style = STYLE_LAST_GUILD_STANDING
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_ready_battle_royale);
+      }
+
+      iDelay = Random(COMMENCE_DELAY_MIN,COMMENCE_DELAY_MAX);
+      ptCommence = CreateTimer(self,@CommenceTimer,iDelay);
+
+      for i in Send(poOwner,@GetHolderActive)
+      {
+         each_obj = Send(poOwner,@HolderExtractObject,#data=i);
+         if Send(self,@IsCombatant,#who=each_obj)
+         {
+            Send(self,@Teleport,#what=each_obj,#goinplay=TRUE);
+         }
+
+         Send(each_obj,@MidiSendUser,#midi_rsc=TosWatcher_battle_midi_rsc);
+      }
+     
+      Send(poOwner,@BeginFight,#lCombatants=plCombatants);
+
+      return;
+   }
+
+   Commence()
+   "Called by CommenceTimer."
+   {
+      local iDelay;
+
+      Send(self,@Say,#message_rsc=TosWatcher_commence);
+      Send(poOwner,@CommenceFight);
+      pbLastMinute = FALSE;
+
+      iDelay = FIGHT_DELAY_LAST_MAN_STANDING;
+
+      if piCombat_style = STYLE_ONE_ON_ONE
+      {
+         iDelay = FIGHT_DELAY_ONE_ON_ONE;
+      }
+
+      ptFight = CreateTimer(self,@FightTimer,iDelay);
+
+      return;
+   }
+
+   FightIsDraw()
+   "Called by FightTimer."
+   {
+      Send(self,@Say,#message_rsc=TosWatcher_draw);
+      Send(self,@ClearCombatants);
+
+      return;
+   }
+
+   CombatantReneges(who=$)
+   {
+      local i;
+
+      for i in plCombatants
+      {
+         if i = who
+         {
+            plCombatants = DelListElem(plCombatants,i);
+         }
+      }
+
+      Send(self,@Teleport,#what=who,#outofplay=TRUE);
+
+      if who = poChampion
+      {
+         Send(self,@ResetChampion);
+      }
+
+      if ptAccept <> $ AND NOT Send(self,@ValidateFight)
+      {
+         DeleteTimer(ptAccept);
+         ptAccept = $;
+
+         if Send(poOwner,@GetRoomNum) = RID_TOS_ARENA
+         {
+            Send(poOwner,@CheckBehindBars);
+         }
+
+         Send(self,@Say,#message_rsc=TosWatcher_invalid_fight);
+      }
+
+      if ptCommence <> $ and not Send(self,@validatefight)
+      {
+         DeleteTimer(ptCommence);
+         ptCommence = $;
+         Send(self,@Say,#message_rsc=TosWatcher_invalid_fight);
+
+         if pbTournament
+         {
+            Post(self,@ClearCombatants);
+         }
+         else
+         {
+            Send(poOwner,@EndFight);
+         }
+      }
+
+      Send(self,@CheckForWinner);
+      
+      % Scenario:  champion quits during signup for last man standing.
+      if poChampion = $ AND Length(plCombatants) >= 2
+      {
+         if piCombat_Style = STYLE_LAST_MAN_STANDING
+         {   
+            % Choose another champion - First player in line will do.
+            poChampion = First(plCombatants);
+         }
+      }
+     
+      return;
+   }
+
+   SomethingKilled(what=$,victim=$)
+   {
+      % We handle all death messages here, but not 'win fight' messages.
+      % Those are handled after the renege messages.
+
+      if IsClass(what,&Spell) AND Send(self,@isCombatant,#who=victim)
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_killed_by_spell,
+              #parm1=Send(victim,@GetCapDef),#parm2=Send(victim,@GetName),
+              #parm3=Send(what,@GetName));
+      }
+      else
+      {
+
+         if victim = poChampion
+         {
+                Send(self,@Say,#message_rsc=TosWatcher_killed_champion,
+                     #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
+                     #parm3=Send(victim,@GetDef),#parm4=Send(victim,@GetName));
+         }
+         else
+         {
+
+            if what = poChampion
+            {
+                Send(self,@Say,#message_rsc=TosWatcher_champion_killed,
+                     #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+            }
+            else
+            {
+                Send(self,@Say,#message_rsc=TosWatcher_someone_killed,
+                     #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
+                     #parm3=Send(victim,@GetDef),#parm4=Send(victim,@GetName));
+            }
+         }
+      }
+
+      Send(self,@CombatantReneges,#who=victim);
+
+      propagate;
+   }
+
+   CheckForWinner()
+   "Checks to see if there is only one combatant left.  If so, then "
+   "declare him the winner."
+   {
+      local oldChamp, i, j;
+
+      if plCombatants = $
+      {
+         return;
+      }
+
+      if piCombat_style = STYLE_GUILD_VS_GUILD
+         OR piCombat_style = STYLE_LAST_GUILD_STANDING
+      {
+         Send(self,@CheckForWinnerGuild);
+
+         return;
+      }
+
+      if Length(plCombatants) <> 1
+      {
+         return;
+      }
+      else
+      {
+         oldChamp = poChampion;
+         poChampion = First(plCombatants);
+
+         % A fight was on!  This guy won!
+         if ptFight <> $
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_victor);
+            DeleteTimer(ptFight);
+            ptFight = $;
+
+            % Add to wincounter.
+            Send(self,@RewardWinner);
+
+            if pbTournament
+            {
+               Send(self,@Say,#message_rsc=TosWatcher_tournament_win,
+                    #parm1=Send(poChampion,@GetCapDef),
+                    #parm2=Send(poChampion,@GetName));
+               Send(self,@ClearCombatants);
+
+               return;
+            }
+            else
+            {
+               if Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
+               {
+                  for i in Send(poOwner,@GetHolderActive)
+                  {
+                     j = Send(poOwner,@HolderExtractObject,#data=i);
+                     if IsClass(j,&Monster)
+                        AND NOT (Send(j,@GetBehavior) & AI_NPC)
+                     {
+                        Send(j,@Delete);
+                     }
+                  }
+               }
+            }
+
+            if oldChamp <> poChampion
+            {
+               Send(self,@Say,#message_rsc=TosWatcher_new_champion,
+                    #parm1=Send(poChampion,@GetDef),
+                    #parm2=Send(poChampion,@GetName));
+            }
+            else
+            {
+               Send(self,@Say,#message_rsc=TosWatcher_retain_title,
+                    #parm1=Send(poChampion,@GetCapDef),
+                    #parm2=Send(poChampion,@GetName),
+                    #parm3=Send(poChampion,@GetHisHer));
+            }
+
+            return;
+         }   
+
+         if oldChamp <> poChampion
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_new_champion,
+                 #parm1=Send(poChampion,@GetDef),
+                 #parm2=Send(poChampion,@GetName));
+         }
+         else
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_retain_title,
+                 #parm1=Send(poChampion,@GetCapDef),
+                 #parm2=Send(poChampion,@GetName),
+                 #parm3=Send(poChampion,@GetHisHer));
+         }
+      }
+
+      return;
+   }
+
+   CheckForWinnerGuild()
+   {
+      local oGuild, oldChamp, oldGuild, i;
+
+      oGuild = $;
+      for i in plCombatants
+      {
+         % If there are more than two guilds then don't cancel.         
+         if oGuild = $
+         {
+            oGuild = Send(i,@GetGuild);
+         }
+
+         if oGuild <> $ AND oGuild <> Send(i,@GetGuild)
+         {
+            return;
+         }
+      }
+
+      oldChamp = poChampion;
+      oldGuild = poChampion_guild;
+         
+      Send(self,@setchampion,#who=First(plCombatants));
+
+      % A fight was on!  This guy won!
+      if ptFight <> $
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_victor);
+         DeleteTimer(ptFight);
+         ptFight = $;
+
+         % Add to wincounter.
+         Send(self,@RewardWinner);
+         if pbTournament
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_tournament_win_guild,
+                 #parm1=Send(poChampion_guild,@GetCapDef),
+                 #parm2=Send(poChampion_guild,@GetName));
+            Send(self,@ClearCombatants);
+
+            return;
+         }
+
+         if oldGuild <> poChampion_guild
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_new_champion_guild_win,
+                 #parm1=Send(poChampion_guild,@GetCapDef),
+                 #parm2=Send(poChampion_guild,@GetName));
+         }
+         else
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_defended_guild_title,
+                 #parm1=Send(poChampion_guild,@GetCapDef),
+                 #parm2=Send(poChampion_guild,@GetName));
+         }
+
+         return;
+      }   
+
+      if oldChamp <> poChampion
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_new_champion_guild_win,
+              #parm1=Send(poChampion_guild,@GetCapDef),
+              #parm2=Send(poChampion_guild,@GetName));
+      }
+      else
+      {
+         Send(self,@Say,#message_rsc = TosWatcher_defended_guild_title,
+              #parm1=Send(poChampion_guild,@GetDef),
+              #parm2=Send(poChampion_guild,@GetName));
+      }
+
+      return;
+   }
+
+   RewardWinner()
+   {
+      local index, i;
+
+      % Tell self to update standings.
+      Send(self,@AddChampionToChampList);
+
+      % Tell room to lower maze or get rid of pests, whatever.
+      Send(poOwner,@EndFight,#lCombatants=plCombatants);
+
+      % Assume that everyone left in plCombatant is a winner.
+      for i in plCombatants
+      {
+         index = (Send(i,@GetMaxHealth)+15) - Send(i,@GetHealth);
+         Send(i,@GainHealth,#amount=bound(index,0,15));
+         index = (Send(i,@GetMaxMana)+25) - Send(i,@GetMana);
+         Send(i,@GainMana,#amount=bound(index,0,25));
+
+         % Teleport any and all combatants out of the ring.
+         if ptFight <> $
+         {
+            DeleteTimer(ptFight);
+            ptFight = $;
+         }
+      }
+
+      return;
+   }
+
+   %%% Timer Triggers
+
+   AcceptTimer()
+   "Runs through twice.  The First time, it says 'accept or lose your"
+   "crown.  The second time, it reneges the champ."
+   {
+      ptAccept = $;
+      if piCombat_style = STYLE_ONE_ON_ONE
+      {
+          Send(self,@AcceptTimerOneOnOne);
+
+          return;
+      }
+
+      if NOT pbAccept
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_more_combatants,
+              #parm1=(ACCEPT_DELAY/1000));
+         ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
+         pbAccept = TRUE;
+      }
+      else
+      {
+         Send(self,@ReadyFight);
+      }
+
+      return;
+   }
+
+   AcceptTimerOneOnOne()
+   {
+      if NOT pbAccept
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_must_accept,
+              #parm1=(ACCEPT_DELAY/1000),
+              #parm2=Send(First(plCombatants),@GetDef),
+              #parm3=Send(First(plCombatants),@GetName));
+         ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
+         pbAccept = TRUE;
+      }
+      else
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_Champ_reneges,
+              #parm1=Send(poChampion,@GetCapDef),
+              #parm2=Send(poChampion,@GetName),
+              #parm3=Send(poChampion,@GetHisHer));
+         Send(self,@CombatantReneges,#who=poChampion);
+      }
+      return;
+   }
+
+   CommenceTimer()
+   "Starts the fight."
+   {
+      ptCommence = $;
+      Send(self,@Commence);
+
+      return;
+   }
+
+   FightTimer()
+   {
+     local i;
+
+     ptFight = $;
+     if NOT pbLastMinute
+     {
+        pbLastMinute = TRUE;
+        Send(self,@Say,#message_rsc=TosWatcher_last_minute);
+        ptFight = CreateTimer(self,@FightTimer,LAST_MINUTE);
+     }
+     else
+     {
+         if NOT pbTournament
+         {
+            Send(self,@FightIsDraw);
+         }
+         else
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_speed_up);
+            for i in plCombatants
+            {
+               Send(poOwner,@SomethingShot,#who=self,#target=i,
+                    #projectile=Send(SYS,@FindSpellByNum,#num=SID_FIREBALL));
+               Send(i,@AssessDamage,#damage=Send(i,@GetHealth)/3,#what=self,
+                    #report=FALSE,#report_resistance=FALSE,#absolute=TRUE);
+            }
+
+            ptFight = CreateTimer(self,@FightTimer,LAST_MINUTE/3);            
+         }
+      }
+
+      return;
+   }
+
+   %%% Speech Triggers
+
+   % Barring a better interface coming along, speech triggers
+   %  will continue to be used to activate a battle, to choose
+   %  the type of battle, and to renege a battle, among other
+   %  things.
+
+   SomeoneSaid(what=$, type = $, string = $)
+   "Checks for keywords which activate commands."
+   {
+      local i, oActor;
+
+      if IsClass(what,&Player)
+         AND type = SAY_DM
+         AND (StringEqual(string,TosWatcher_arena_help_command)
+              OR StringEqual(string,"arena help"))
+         AND Send(what,@IsActor) 
+      {
+         Send(what,@MsgSendUser,#message_rsc=TosWatcher_arena_help);
+
+         propagate;
+      }
+
+      if IsClass(what,&Player)
+         AND type = SAY_DM
+         AND (StringEqual(string,TosWatcher_start_tournament_command)
+              OR StringEqual(string,"start tournament"))
+         AND (NOT pbTournament)
+         AND Send(what,@IsActor) 
+      {
+         Send(self,@ClearCombatants);
+         pbTournament = TRUE;
+         Send(poOwner,@StartTournament,#marshal=what);
+         poMarshal = what;
+
+         propagate;
+      }
+      
+      if (NOT Send(self,@FightInSession)) 
+         AND ptCommence = $
+         AND IsClass(what,&Player)
+      {
+         if NOT pbTournament
+         {
+            if StringEqual(string,TosWatcher_champion_command)
+               OR StringEqual(string,"champion")
+            {
+               Post(self,@TrigChampion,#what=what);
+
+               return FALSE;
+            }
+
+            if StringEqual(string,TosWatcher_challenge_command)
+               OR StringEqual(string,"challenge")
+            {
+               Post(self,@TrigChallenge,#what=what);
+
+               return FALSE;
+            }
+
+            if StringEqual(string,TosWatcher_accept_command)
+               OR StringEqual(string,"accept")
+            {
+               Post(self,@TrigAccept,#what=what);
+
+               return FALSE;
+            }
+
+            if StringEqual(string,TosWatcher_renege_command)
+               OR StringEqual(string,"renege")
+            {
+               Post(self,@TrigRenege,#what=what);
+
+               return FALSE;
+            }
+         }
+         else
+         {
+            if IsClass(what,&Player) AND NOT Send(what,@IsActor)
+            {
+               if StringEqual(string,TosWatcher_renege_command)
+                  OR StringEqual(string,TosWatcher_accept_command)
+                  OR StringEqual(string,TosWatcher_champion_command)
+                  OR StringEqual(string,TosWatcher_challenge_command)
+                  OR StringEqual(string,TosWatcher_traditional_command)
+                  OR StringEqual(string,TosWatcher_last_man_standing_command)
+                  OR StringEqual(string,TosWatcher_guild_vs_guild_command)
+                  OR StringEqual(string,TosWatcher_battle_royale_command)
+               {
+                  oActor = Send(self,@GetActor);
+                  if oActor <> $
+                  {
+                     Send(what,@MsgSendUser,
+                          #message_rsc=TosWatcher_only_grand_marshal);
+                  }
+
+                  return FALSE;
+               }
+            }
+         }
+
+         if StringEqual(string,TosWatcher_traditional_command)
+            OR StringEqual(string,"traditional")
+         {
+            if (NOT pbTournament) OR (Send(what,@IsActor) AND type = SAY_DM)
+            {
+               Post(self,@ChooseCombat,#style=STYLE_ONE_ON_ONE,#actor=what);
+            }
+
+            return FALSE;
+         }
+         
+         if StringEqual(string,TosWatcher_last_man_standing_command)
+            OR StringEqual(string,"last man standing")
+         {
+            if (NOT pbTournament) OR (Send(what,@IsActor) AND type = SAY_DM)
+            {
+               Post(self,@ChooseCombat,#style=STYLE_LAST_MAN_STANDING,
+                    #actor=what);
+            }
+
+            return FALSE;
+         }
+         
+         if StringEqual(string,TosWatcher_guild_vs_guild_command)
+            OR StringEqual(string,"guild vs guild")
+         {
+            if (NOT pbTournament) OR (Send(what,@IsActor) AND type = SAY_DM)
+            {
+               Post(self,@ChooseCombat,#style=STYLE_GUILD_VS_GUILD,
+                    #actor=what);
+            }
+
+            return FALSE;
+         }
+         
+         if StringEqual(string,TosWatcher_battle_royale_command)
+            OR StringEqual(string,"battle royale")
+         {
+            if (NOT pbTournament) OR (Send(what,@IsActor) AND type = SAY_DM)
+            {
+               Post(self,@ChooseCombat,#style=STYLE_LAST_GUILD_STANDING,
+                    #actor=what);
+            }
+
+            return FALSE;
+         }
+
+         if type = SAY_DM
+            AND pbTournament
+            AND Send(what,@IsActor)
+         {
+            if StringEqual(string,TosWatcher_end_tournament_command)
+               OR StringEqual(string,"end tournament")
+            {
+               if plCombatants <> $
+               {
+                  Send(what,@MsgSendUser,
+                       #message_rsc=TosWatcher_cant_start_end);
+               }
+
+               pbTournament = FALSE;
+               Send(poOwner,@endTournament,#Marshal=what);
+               poMarshal = $;
+
+               propagate;
+            }
+            
+            if StringEqual(string,TosWatcher_clear_all_command)
+               OR stringEqual(string,"Clear all")
+            {
+               Send(poOwner,@someonesaid,
+                    #string=TosWatcher_tournament_cancelled,
+                    #parm1=Send(what,@GetHisHer),#parm2=Send(what,@GetDef),
+                    #parm3=Send(what,@GetName),#type=SAY_MESSAGE,#what=self);
+                    
+                Send(self,@ClearCombatants);
+
+                return FALSE;
+            }
+            
+            if StringEqual(string,TosWatcher_fight_command)
+               OR stringEqual(string,"fight")
+            {
+               if ptCommence = $ AND ptFight = $
+               {
+                  Send(self,@ReadyFight);
+               }
+
+               return FALSE;
+            }
+
+            for i in Send(poOwner,@GetHolderActive)
+            {
+               if IsClass(First(i),&Player)
+                  AND StringEqual(string,Send(First(i),@GetName))
+               {
+
+                  if plCombatants = $
+                  {
+                     Send(self,@TrigChampion,#what=First(i));
+
+                     return FALSE;
+                  }
+                  else
+                  {
+                     if Send(self,@isCombatant,#who=First(i))
+                     {
+                        Send(what,@MsgSendUser,
+                             #message_rsc=Toswatcher_already_tourny_combatant,
+                             #parm1=Send(First(i),@GetCapDef),
+                             #parm2=Send(First(i),@GetName));
+
+                        return;
+                     }
+
+                     Send(self,@TrigChallenge,#what=First(i));
+
+                     return FALSE;
+                  }
+               }
+            }
+         }
+      }
+      
+      if Send(self,@FightInSession)
+      {
+         if StringEqual(string,TosWatcher_champion_command)
+            OR StringEqual(string,TosWatcher_challenge_command)
+            OR StringEqual(string,TosWatcher_traditional_command)
+            OR StringEqual(string,TosWatcher_last_man_standing_command)
+            OR StringEqual(string,TosWatcher_guild_vs_guild_command)
+            OR StringEqual(string,TosWatcher_battle_royale_command)
+         {
+            if NOT pbTournament
+               OR (IsClass(what,&Player) AND Send(what,@IsActor))
+            {
+               Send(what,@MsgSendUser,
+                    #message_rsc=TosWatcher_not_during_fight);
+
+               return FALSE;
+            }
+
+            oActor = Send(self,@GetActor);
+            if oActor <> $
+            {
+               Send(what,@MsgSendUser,
+                    #message_rsc=TosWatcher_only_grand_marshal,
+                    #parm1 = Send(oActor,@GetName));
+            }
+
+            return FALSE;
+         }
+
+         if IsClass(what,&Player)
+            AND type = SAY_DM
+            AND (stringEqual(string,TosWatcher_clear_all_command)
+                OR stringEqual(string,"Clear all"))
+            AND pbTournament 
+            AND Send(what,@IsActor)
+         {
+            Send(poOwner,@someonesaid,#string=TosWatcher_tournament_cancelled,
+                 #parm1=Send(what,@GetHisHer),#parm2=Send(what,@GetDef),
+                 #parm3=Send(what,@GetName),#type=SAY_MESSAGE,#what=self);
+            Send(self,@clearcombatants);
+
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   TrigChampion(what = $)
+   "Someone in the room said 'champion'.  Net effect, if there is no "
+   "champion, then make the talker the new champion."
+   {
+      if piCombat_style = STYLE_NO_FIGHT
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_must_choose_style);
+
+         return;     
+      }
+
+      if NOT Send(self,@AcceptingChampions)
+      {
+         if Send(self,@AcceptingChallengers)
+         {
+            if poChampion = what
+            {
+               Send(self,@SayToOne,#target=what,
+                    #message_rsc=TosWatcher_Already_champion);
+            }
+            else
+            {
+               Send(self,@SayToOne,#target=what,
+                    #message_rsc=Toswatcher_already_have_champion,
+                    #parm1=Send(poChampion,@GetDef),
+                    #parm2=Send(poChampion,@GetName),
+                    #parm3=Send(poChampion,@GetHimHer));
+            }
+         }
+         else
+         {
+            Send(self,@SayToOne,#target=what,#message_rsc=TosWatcher_no_need);
+         }
+      }
+      else   
+      {
+         % Accept the champion here
+         if piCombat_Style = STYLE_GUILD_VS_GUILD
+            OR piCombat_style = STYLE_LAST_GUILD_STANDING
+         {
+            if Send(what,@GetGuild) = $
+            {
+               if pbTournament
+               {
+                  Send(self,@TellActors,
+                       #message_rsc=TosWatcher_no_guild_tourny,
+                       #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
+                       #parm3=Send(what,@GetHeShe));
+               }
+               else
+               {
+                  Send(self,@Saytoone,#target=what,
+                       #message_rsc=TosWatcher_need_guild);
+               }
+            }
+            else
+            {
+               Send(self,@NewCombatant,#who=what);
+               Send(self,@Say,#message_rsc=Toswatcher_new_champion_guild,
+                    #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                    #parm3=Send(poChampion_guild,@GetDef),
+                    #parm4=Send(poChampion_guild,@GetName));
+            }
+         }
+         else
+         {
+            Send(self,@NewCombatant,#who=what);
+            if pbTournament
+            {
+               Send(self,@Say,#message_rsc=Toswatcher_tournament_combatant,
+                    #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+            }
+            else
+            {
+               Send(self,@Say,#message_rsc=Toswatcher_new_champion,
+                    #parm1=Send(poChampion,@GetDef),
+                    #parm2=Send(poChampion,@GetName));
+            }
+         }
+      }
+
+      return;  
+   }
+
+   TrigChallenge(what=$)
+   "Catches when someone says the word 'challenge'.  What happens depends on "
+   "the match, but in general, this will fail if there is no champion, and "
+   "will succeed only if there is a challenger spot open."
+   {
+      if piCombat_style = STYLE_NO_FIGHT
+      {
+         Send(self,@SaytoOne,#target=what,
+              #message_rsc=TosWatcher_must_choose_style);
+
+         return;     
+      }
+
+      if Send(self,@FightInSession)
+      {
+         Send(self,@SayToOne,#target=what,
+              #message_rsc=TosWatcher_fight_in_progress);
+
+         return;
+      } 
+
+      if Send(self,@AcceptingChampions)
+      {
+         Send(self,@SayToOne,#target=what,
+              #message_rsc=TosWatcher_need_champion);
+
+         return;
+      }
+
+      if NOT Send(self,@AcceptingChallengers)
+      {
+         Send(self,@SayToOne,#target=what,
+              #message_rsc=TosWatcher_dont_need_challenger);
+
+         return;
+      }
+
+      Send(self,@Challenge,#who=what);
+
+      return;
+   }
+
+   TrigAccept(what=$)
+   {
+      if piCombat_style <> STYLE_ONE_ON_ONE
+      {
+         % You can only accept fights in traditional 2 man fights.
+         return FALSE;    
+      }
+
+      if what <> poChampion
+      {
+         % Only the champion can accept a fight from a challenger
+         return FALSE;   
+      } 
+
+      if Send(self,@FightInSession)
+      {
+         return FALSE;
+      }
+
+      if (ptAccept <> $)
+      { 
+         Send(self,@Accept,#who=what);
+      }
+
+      return;
+   }
+
+   TrigRenege(what=$)
+   "Call this when someone says 'renege'.  This now works for anyone,"
+   "and does not need to be said twice."
+   {
+      if Send(self,@IsCombatant,#who=what)
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_combatant_reneges,
+              #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+         Send(self,@CombatantReneges,#who=what);
+      }
+      else
+      {
+         Send(self,@SayToOne,#target=what,#message_rsc=TosWatcher_cant_renege);
+      }
+
+      return;
+   }
+
+   ChooseCombat(style = STYLE_NO_FIGHT,actor=$)
+   {
+      if piCombat_style <> STYLE_NO_FIGHT
+         AND plCombatants <> $
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_cant_switch);
+
+         return;
+      }
+
+      piCombat_style = style;
+      if piCombat_style <> STYLE_NO_FIGHT
+      {
+         if pbTournament
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_tournament_style,
+                 #parm1=Send(actor,@GetCapDef),#parm2=Send(actor,@GetName),
+                 #parm3=Send(self,@GetCombatName));
+         }
+         else
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_new_combat_style,
+                 #parm1=Send(self,@GetCombatName));
+         }
+      }
+
+      return;
+   }
+
+   %%%  Maintenance functions
+
+   Delete()
+   {
+      if ptAdvert <> $
+      {
+         DeleteTimer(ptAdvert);
+         ptAdvert = $;
+      }
+
+      if ptCommence <> $
+      {
+         DeleteTimer(ptCommence);
+         ptCommence = $;
+      }
+
+      if ptAccept <> $
+      {
+         DeleteTimer(ptAccept);
+         ptAccept = $;
+      }
+
+      if ptFight <> $
+      {
+         DeleteTimer(ptFight);
+         ptFight = $;
+      }
+
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      % Don't delete it on random passthroughs.      
+      return FALSE;    
+   }
+
+   IsCombatant(who=$)
+   {
+      local i, count;
+
+      count = 1;
+      for i in plCombatants
+      {
+         if i = who
+         {
+            return count;
+         }
+
+         count = count + 1;
+      }
+
+      return FALSE;
+   }
+
+   ReqSomethingLeft(what=$)
+   {
+      if Send(self,@isCombatant,#who=what) AND (ptFight <> $ OR ptAccept <> $)
+      {
+         Send(self,@SayToOne,#target=what,#message_rsc=TosWatcher_cant_leave);
+
+         return FALSE;
+      }
+
+      return TRUE; 
+   }
+
+   Teleport(what=$, goinplay=FALSE, outofplay=FALSE)
+   {
+      local i, bInList, iAmount;
+
+      if goinplay OR Send(self,@IsCombatant,#who=what)   
+      {
+         % teleport to the playing field
+         bInList = FALSE;
+         for i in plUserStats
+         {
+            if First(i) = what
+            {
+               bInList = TRUE;
+            }   
+         }
+
+         if NOT bInList
+         {
+            plUserStats = Cons([ what,Send(what,@GetHealth),
+                                 Send(what,@GetMana),Send(what,@GetVigor)
+                               ],plUserStats);     
+         }
+
+         if Send(what,@GetHealth) < Send(what,@GetMaxHealth)
+         {
+            Send(what,@GainHealthNormal,#amount=200);
+         }
+
+         if Send(what,@GetMana) < Send(what,@GetMaxMana)
+         {
+            iAmount = Send(what,@GetMaxMana) - Send(what,@GetMana);
+            Send(what,@GainMana,#amount=iAmount);
+         }
+
+         Send(what,@AddExertion,#settothreshold=TRUE);
+      }
+      else
+      {
+         % Teleport out of play
+         for i in plUserStats
+         {
+            if First(i) = what
+            {
+               Send(what,@LoseHealth,#amount=Send(what,@GetHealth)-Nth(i,2));
+               Send(what,@GainMana,#amount=Nth(i,3)-Send(what,@GetMana));
+               iAmount = -10000*(Nth(i,2)-Send(what,@GetVigor));
+               Send(what,@AddExertion,#amount=iAmount);
+               plUserStats = DelListElem(plUserStats,i);
+            }
+         }     
+      }
+
+      Send(poOwner,@Teleport,#what=what,#goinplay=goinplay,
+           #outofplay=outofplay);
+
+      return;
+    }
+
+   ClearCombatants()
+   {
+      local i, j;
+
+      for i in plCombatants
+      {
+         Send(self,@Teleport,#what=i,#outofplay=TRUE);
+      }
+
+      plCombatants = $;
+      Send(self,@ResetChampion);
+      Send(poOwner,@EndFight,#lCombatants=plCombatants);
+      pbAccept = FALSE;
+
+      if pbTournament
+         OR Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         for i in Send(poOwner,@getholderactive)
+         {
+            j = First(i);
+
+            if IsClass(j,&Monster)
+               AND (NOT (Send(j,@GetBehavior) & AI_NPC))
+            {
+               Send(j,@Delete);
+            }
+
+            % Yuckily, this is the easiest way to deal with this.
+            %  Get rid of all wall element spells.
+            if IsClass(j,&ActiveWallElement)
+               OR IsClass(j,&PassiveWallOfFire)
+               OR IsClass(j,&PassiveWallOfLightning)
+               OR IsClass(j,&SporeCloud)
+               OR IsClass(j,&FogCloud)
+               OR IsClass(j,&Brambles)
+            {
+               Send(j,@Delete);
+            }
+         }
+      }
+
+      if ptFight <> $
+      {
+         DeleteTimer(ptFight);
+         ptFight = $;
+      }
+
+      if ptAccept <> $
+      {
+         DeleteTimer(ptAccept);
+         ptAccept = $;
+      }
+
+      if ptCommence <> $
+      {
+         DeleteTimer(ptCommence);
+         ptCommence = $;
+      }
+
+      return;
+   }
+
+   SomethingLeft(what=$)
+   {
+      if Send(self,@IsCombatant,#who=what)
+      {
+         if ptFight <> $
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_pitifully_fled,
+                 #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+         }
+         else
+         {
+            Send(self,@Say,#message_rsc=TosWatcher_wont_fight,
+                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));               
+         }
+
+         Send(self,@CombatantReneges,#who=what);
+
+         if pbTournament AND NOT Send(self,@ValidateFight)
+         {
+            Send(self,@ClearCombatants);
+
+            propagate;
+         }
+
+         propagate;
+      }
+
+      propagate;
+   }
+
+   ReqSomethingAttack(what=$,victim=$)
+   {
+      % Targetless spells
+      if victim = $
+      {
+         if NOT Send(self,@IsCombatant,#who=what)         
+         {
+            if IsClass(what,&Player)
+            {
+               Send(self,@SayToOne,#target=what,
+                    #message_rsc=toswatcher_only_combatants);
+            }
+
+            return FALSE;
+         }
+
+         if ptFight = $
+         {
+
+            if IsClass(what,&Player)
+            {
+               Send(self,@SayToOne,#target=what,
+                    #message_rsc=toswatcher_no_fighting_yet);
+            }
+
+            return FALSE;
+         }
+
+         return TRUE;
+      }
+
+      % Monsters attacking players
+      if IsClass(what,&Monster)
+         AND Send(self,@IsCombatant,#who=victim)
+         AND Send(self,@FightInSession)
+      {
+         propagate;
+      }
+
+      % Spells with targets = all the rest of them     
+      if (NOT Send(self,@isCombatant,#who=what)
+         OR NOT Send(self,@isCombatant,#who=victim))
+         AND IsClass(victim,&Player)
+      {
+         if IsClass(what,&Player)
+         {
+            Send(self,@SayToOne,#target=what,
+                 #message_rsc=toswatcher_only_combatants);
+         }
+
+         return FALSE;
+      }
+
+      if ptFight = $
+      {
+         if IsClass(what,&Player)
+         {
+            Send(self,@SayToOne,#target=what,
+                 #message_rsc=toswatcher_no_fighting_yet);
+         }
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   ReqSpellCast(who=$,oSpell = $, lItems = $)
+   {
+      local i, spellNum, rTarget;
+
+      % Spells cast by immortal DMs are not blocked by the watcher
+      if IsClass(who,&DM) AND Send(who,@PlayerIsImmortal)
+      {
+         propagate;
+      }
+
+      % Only combatants may cast spells on each other.
+
+      % If the caster is not a combatant, don't let him cast.
+      if (not Send(self,@isCombatant,#who=who) AND IsClass(who,&Player))      
+      {
+         Send(self,@SayToOne,#target=who,
+              #message_rsc=TosWatcher_only_combatants_cast);
+
+         return FALSE;
+      }
+   
+      % If the caster's target is not a combatant, don't let him cast.
+      for i in lItems
+      {
+         if NOT Send(self,@isCombatant,#who=i) AND IsClass(i,&Player)
+         {
+            Send(self,@SayToOne,#target=who,
+                 #message_rsc=TosWatcher_only_target_combatants);
+
+            return FALSE;
+         }
+      }
+
+      % Can't cast spells unless a fight is in session
+      if ptFight = $
+      {
+         if IsClass(who,&Player)
+         {
+            Send(self,@SayToOne,#target=who,
+                 #message_rsc=toswatcher_no_fighting_yet);
+         }
+
+         return FALSE;
+      }
+
+      % Certain spells are banned outright      
+      if Send(oSpell,@SpellBannedInArena)
+      {
+         Send(self,@SayToOne,#target=who,#message_rsc=toswatcher_spell_banned,
+              #parm1=Send(oSpell,@GetName));
+
+         return FALSE;
+      }
+
+      if poMarshal <> $
+      {
+         if (lItems = $)
+         {
+            rTarget = TosWatcher_nothing_string;
+         }
+         else
+         {
+            rTarget = Send(First(lItems),@GetTrueName);
+         }
+
+         Send(self,@SayToOne,#target=poMarshal,
+              #message_rsc=TosWatcher_spell_cast,#parm1=Send(who,@GetTrueName),
+              #parm2=Send(oSpell,@GetName),#parm3=rTarget);
+      }
+
+      propagate;
+   }
+
+   GetCombatName(style = $)
+   {
+      local iStyle;
+
+      iStyle = style;
+      if iStyle = $
+      {
+         % If no style is passed in, used the currently defined combat style.
+         iStyle = piCombat_style;
+      }
+
+      if iStyle = STYLE_ONE_ON_ONE
+      {
+         return TosWatcher_style_one_on_one;
+      }
+
+      if iStyle = STYLE_LAST_MAN_STANDING
+      {
+         return TosWatcher_style_last_man_standing;
+      }
+         
+      if iStyle = STYLE_GUILD_VS_GUILD
+      {
+         return TosWatcher_style_guild_vs_guild;
+      }
+
+      if iStyle = STYLE_LAST_GUILD_STANDING
+      {
+         return TosWatcher_style_battle_royale;
+      }
+
+      return;
+   }
+
+   SomethingEntered(what=$)
+   {
+      local lSublist, lTemp, i;
+
+      if IsClass(what,&Admin)
+         AND NOT Send(what,@IsDMStealthed)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+      {
+         Post(self,@Say,#message_rsc=TosWatcher_worship_admin,
+              #parm1=Send(what,@GetTrueName),#parm2=Send(what,@GetHeShe));
+         if NOT pbTournament
+         {
+            Post(poOwner,@SpecialGreeting);
+         }
+
+         propagate;
+      }
+
+      if IsClass(what,&DM)
+         AND NOT Send(what,@IsDMStealthed)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+         AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+      {
+         Post(self,@Say,#message_rsc=TosWatcher_worship_dm,
+              #parm1=Send(what,@GetLordLady),#parm2=Send(what,@GetName));
+         if NOT pbTournament
+         {
+            Post(poOwner,@SpecialGreeting);
+         }
+
+         propagate;
+      }     
+
+      if IsClass(what,&Player)
+      {   
+         for lSublist in plChampions
+         {
+            lTemp = Nth(lSublist,2);
+            for i in lTemp
+            {
+               if First(i) = what
+               {
+                  Send(self,@Say,#message_rsc=TosWatcher_welcome_champion,
+                       #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+                  if NOT pbTournament
+                  {
+                     Post(poOwner,@SpecialGreeting);
+                  }
+
+                  propagate;
+               }
+
+               if Send(what,@GetGuild) <> $ AND Send(what,@GetGuild) = First(i)
+               {
+                  Send(self,@Say,
+                       #message_rsc=TosWatcher_welcome_champion_guild,
+                       #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+                       #parm3=Send(First(i),@GetDef),
+                       #parm4=Send(First(i),@GetName));
+                  Post(poOwner,@SpecialGreeting);
+
+                  propagate;
+               }
+            }
+         }
+
+         Send(what,@MsgSendUser,#message_rsc=TosWatcher_welcome);
+      }
+
+      propagate;
+   }
+
+   GetCombatantList()
+   {
+      return plCombatants;
+   }
+
+   %%%  Champions List
+
+   % Keeps the standings on the signs, and keeps them updated
+   %  Of special note, the signs must delete your standings if
+   %  your character or guild is deleted or restarted.
+
+   AddChampiontoChampList()
+   "This is called whenever a winner of a fight is declared.  Note that it "
+   "is not called when a match is a draw, or when the last challenger leaves "
+   "by logging off."
+   {
+      local i, oChamp, lChampList, bFound;
+
+      bFound = FALSE;
+      piKill_counter = piKill_counter + 1;
+
+      if piCombat_style = STYLE_ONE_ON_ONE
+         OR piCombat_style = STYLE_LAST_MAN_STANDING
+      {
+         oChamp = poChampion;
+      }
+      else
+      {
+         oChamp = poChampion_guild;
+      }
+
+      if oChamp = $
+      {
+         return;
+      }
+
+      lChampList = Send(self,@GetChampionsList,#style=piCombat_style);
+
+      % If player is already in the champ list, then check their victories.
+      % If their old record is smaller, replace it.
+      for i in lChampList
+      {
+         if First(i) = oChamp
+         {
+            bFound = TRUE;
+            if Nth(i,2) < piKill_counter
+            {
+               SetNth(i,1,oChamp);
+               SetNth(i,2,piKill_counter);
+            }
+            else
+            {
+               return;
+            }
+         }
+      }
+
+      % If the guy wasn't in the list, see if the current counter is lower
+      %  than anyone on the list.  If so, then replace that guy.  
+
+      if NOT bFound
+      {
+         for i in lChamplist
+         {
+            if Nth(i,2) < piKill_counter
+            {
+                SetNth(i,1,oChamp);
+                SetNth(i,2,piKill_counter);
+
+                break;
+            }             
+         }
+      }
+
+      Send(self,@SortChampionList,#lChamplist=lChamplist);
+
+      return;
+   }
+
+   RemoveFromChampionLists(oldChamp = $)
+   {
+      local lSublist, lTemp, i;
+
+      for lSublist in plChampions
+      {
+         lTemp = Nth(lSublist,2);
+         for i in lTemp
+         {
+            if First(i) = oldChamp
+            {
+               SetNth(i,1,$);
+               SetNth(i,2,0);
+            }
+         }
+
+         Send(self,@SortChampionList,#lChamplist=lTemp);
+      }
+
+      return;
+   }
+
+   SortChampionList(lChamplist=$)
+   "Used by both Addchampiontochamplist and removechampionfromchamplist "
+   "after a change to be sure that the champions are in a proper order."
+   {
+      local bCheckAgain, iCount, i, lTemp, oSwap, iSwap;
+
+      bCheckAgain = TRUE;
+      while bCheckAgain
+      {
+         bCheckAgain = FALSE;
+         iCount = 0;
+         for i in lChamplist
+         {
+            iCount = iCount + 1;
+            if iCount < 5
+            {
+               lTemp = Nth(lChamplist,iCount+1);
+               if Nth(i,2) < Nth(lTemp,2)
+               {
+                  oSwap = Nth(lTemp,1);
+                  iSwap = Nth(lTemp,2);
+                  SetNth(lTemp,1,First(i));
+                  SetNth(lTemp,2,Nth(i,2));
+                  SetNth(i,1,oSwap);
+                  SetNth(i,2,iSwap);
+                  bCheckAgain = TRUE;
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   GetChampionsList(style=STYLE_ONE_ON_ONE)
+   {
+      local i;
+
+      if style = -1
+      {
+         return plChampions;
+      }
+
+      for i in plChampions
+      {
+         if First(i) = STYLE
+         {
+            return Nth(i,2);
+         }
+      }
+
+      Debug("GetChampionsList requested a combat style that doesn't exist!");
+
+      return $;
+   }
+
+   GetActor()
+   {
+      return poMarshal;
+   }
+
+   PlayerQuitGuild(who=$)
+   {
+      if (piCombat_Style = STYLE_GUILD_VS_GUILD
+         OR piCombat_style = STYLE_LAST_GUILD_STANDING)
+         AND Send(self,@IsCombatant,#who=who)
+      {
+         Send(self,@Say,#message_rsc=TosWatcher_quit_guild,
+              #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName),
+              #parm3=Send(who,@GetHisHer));
+         Send(self,@CombatantReneges,#who=who);
+      }
+
+      return;
+   }
+
+   TellActors(message_rsc=$, parm1=$, parm2=$, parm3=$, parm4=$, parm5=$,
+              parm6=$, parm7=$, parm8=$)
+   {
+      local i;
+
+      for i in Send(poOwner,@GetHolderActive)
+      {
+         if IsClass(First(i),&DM) AND Send(First(i),@IsActor)
+         {
+            Send(First(i),@MsgSendUser,#Message_rsc=message_rsc,
+                 #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
+                 #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+         }
+      }
+
+      return;
+   }
+   
+   ReqAssassinGameAttack(what=$)
+   {
+      if pbTournament
+      {
+         Send(self,@SayToOne,#target=what,#message_rsc=toswatcher_no_assgame);
+
+         return FALSE;
+      }
+      
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

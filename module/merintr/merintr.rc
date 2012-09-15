@@ -1,0 +1,1129 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "merintrc.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#include "commctrl.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+181 DIALOG  0, 0, 242, 86
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Neuerschaffung eines Charakters"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Überprüfung",-1,7,28,228,33
+    LTEXT           "Harakiri zerstört Deinen Charakter und legt einen neuen an.  Es ist alleine Deine Verantwortung, jetzt ein neues Spiel zu beginnen.",-1,7,4,235,18
+    LTEXT           "Zur Bestätigung gibst Du jetzt bitte Dein gültiges Passwort ein:",-1,14,40,106,19
+    EDITTEXT        1260,131,42,97,12,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Harakiri",1,7,65,107,14
+    PUSHBUTTON      "Abbrechen",2,120,65,115,14
+END
+
+180 DIALOGEX 0, 0, 219, 223
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Kurzbefehle"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Um einen Kurzbefehl zu definieren muß die Abkürzung bei Wort eingetragen werden und danach der Befehl ausgeschrieben werden. BEISPIEL: Wort: lacht   Kurzbefehl: ego lacht.""",-1,4,4,215,27
+    GROUPBOX        "",-1,4,29,211,170
+    LTEXT           "Wort:",-1,10,38,18,8
+    EDITTEXT        1260,49,36,50,12,ES_AUTOHSCROLL
+    EDITTEXT        1261,49,49,159,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Definieren",1001,103,37,50,11
+    PUSHBUTTON      "&Entfernen",1002,157,37,50,11
+    LTEXT           "Befehl:",-1,10,51,23,8
+    CONTROL         "",1263,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTASCENDING | LVS_NOLABELWRAP | LVS_NOSORTHEADER | WS_TABSTOP,10,64,199,128,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Bestätigen",1,24,205,50,14
+    PUSHBUTTON      "Abbrechen",2,82,205,50,14
+    PUSHBUTTON      "Funktionstasten ...",1264,139,205,76,14
+END
+
+161 DIALOG  0, 0, 257, 74
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Gildenhalle",-1,4,4,249,48
+    LTEXT           "Deine Gilde hat keine Gildenhalle.",1241,10,17,156,8
+    LTEXT           "Gildenpasswort:",1242,10,34,51,8
+    EDITTEXT        1239,65,32,101,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Gildenhalle aufgeben!",1235,171,32,76,14
+    PUSHBUTTON      "Ja, hiermit bestätige ich die Auflösung meiner Gilde!",1224,4,56,248,14
+END
+
+160 DIALOG  0, 0, 282, 178
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Verbündete Gilden:",-1,4,26,62,8
+    LISTBOX         1225,4,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      ">>",1228,84,46,13,12
+    PUSHBUTTON      "<<",1230,84,72,13,12
+    LTEXT           "Neutrale Gilden:",-1,102,26,52,8
+    LISTBOX         1226,102,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      ">>",1229,182,47,13,12
+    PUSHBUTTON      "<<",1231,182,72,13,12
+    LTEXT           "Verfeindete Gilden:",-1,200,26,61,8
+    LISTBOX         1227,203,36,75,118,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",1232,4,161,274,8
+    LTEXT           "Benutze die << und >> Tasten um Allianzen zu schließen oder Feinde zu erklären.",1236,11,4,257,8
+END
+
+159 DIALOGEX 0, 0, 308, 122
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Gildenmitglieder (rote Namen sind im Spiel):",-1,4,4,158,8
+    LISTBOX         1201,4,15,88,89,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Rang:",-1,98,17,20,8
+    COMBOBOX        1213,123,15,132,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Mitglied &rauswerfen",1212,123,30,132,12
+    PUSHBUTTON      "Den Rang &abtreten an:",1205,98,91,96,12
+    LTEXT           "",1209,199,92,105,10,SS_SUNKEN
+    PUSHBUTTON      "Neues Mitglied &unterstützen:",1203,98,73,96,14
+    LTEXT           "",1211,199,75,105,10,SS_SUNKEN
+    LTEXT           "Unterstütztes Mitglied:",-1,98,59,71,8
+    LTEXT           "cha",1214,199,58,105,10,SS_SUNKEN
+    PUSHBUTTON      "Die Gilde &verlassen",1208,4,106,87,12
+    LTEXT           "",1223,124,17,93,8,SS_SUNKEN
+    CONTROL         "",1001,"Button",BS_OWNERDRAW,264,4,40,40
+END
+
+157 DIALOG  0, 0, 183, 92
+STYLE DS_SETFONT | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+143 DIALOG  0, 0, 280, 122
+STYLE DS_SETFONT | DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Gildenschild:",-1,3,0,120,116
+    CONTROL         "",1001,"Button",BS_OWNERDRAW,7,10,108,102
+    LTEXT           "Wähle eine Farb- && Musterkombination:",-1,137,14,128,8
+    LTEXT           "Farbe 1:",-1,148,29,27,8
+    PUSHBUTTON      "<",1019,181,27,17,11,WS_GROUP
+    PUSHBUTTON      ">",1022,199,27,17,11
+    LTEXT           "Farbe 2:",-1,148,44,27,8
+    PUSHBUTTON      "<",1018,181,42,17,11,WS_GROUP
+    PUSHBUTTON      ">",1024,199,42,17,11
+    LTEXT           "Muster:",-1,147,59,24,8
+    PUSHBUTTON      "<",1016,181,57,17,11,WS_GROUP
+    PUSHBUTTON      ">",1017,199,57,17,11
+    LTEXT           "Das Design wurde bereits von der Gilde %s gewählt.",1266,137,77,124,20,SS_SUNKEN
+    PUSHBUTTON      "Anspruch auf das Design erheben.",1265,137,102,129,13,WS_GROUP
+    LTEXT           "Das Design ist nicht verfügbar.",1208,137,68,129,8,NOT WS_VISIBLE
+END
+
+140 DIALOGEX 0, 0, 286, 373
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Gruppen anlegen und verwalten"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Gruppen:",-1,8,7,30,8
+    COMBOBOX        1243,8,17,97,65,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Gruppe löschen",1244,114,16,58,14,WS_DISABLED
+    LTEXT           "Neue Gruppe:",1252,180,6,46,8
+    EDITTEXT        1251,180,16,58,14,ES_AUTOHSCROLL
+    LTEXT           "Eine Nachricht an die ausgewählte Gruppe versenden:",-1,8,39,174,8
+    EDITTEXT        1255,8,49,270,14,ES_AUTOHSCROLL
+    LTEXT           "Gruppenmitglieder:",-1,8,73,60,8
+    LTEXT           "(rote Namen sind im Spiel)",-1,8,81,82,8
+    LISTBOX         1245,8,91,97,255,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "<< Aufnehmen",1247,114,91,58,14,WS_DISABLED
+    LTEXT           "Namen eingeben:",1253,114,111,57,8,WS_DISABLED
+    EDITTEXT        1250,114,122,58,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "Entfernen",1249,114,149,58,14,WS_DISABLED
+    LTEXT           "Anwesende Spieler:",-1,180,80,64,8
+    LISTBOX         1246,180,91,97,255,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",1256,8,354,174,8
+    PUSHBUTTON      "Bestätigen",1254,227,354,50,14
+END
+
+107 DIALOGEX 0, 0, 225, 220
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Eine Gildenhalle mieten"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    DEFPUSHBUTTON   "Bestätigen",1,102,194,50,14
+    PUSHBUTTON      "Abbrechen",2,168,194,50,14
+    CONTROL         "",1201,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,16,211,118,WS_EX_CLIENTEDGE
+    LTEXT           "Wähle eine Gildenhalle aus:",-1,6,4,89,8
+    LTEXT           "Gildenpasswort:",-1,6,173,51,8
+    EDITTEXT        1239,60,171,94,12,ES_AUTOHSCROLL
+    LTEXT           "Das Passwort schützt Teile der Gildenhalle vor unbefugtem Zugriff.",-1,6,158,210,8
+    LTEXT           "Ausgewählte Gildenhalle:",-1,6,140,80,8
+    LTEXT           "",1215,89,139,129,11,SS_SUNKEN
+END
+
+106 DIALOG  0, 0, 165, 122
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         1202,60,32,98,86,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Wähle die Person, der Du die Einladung überreichen willst:",-1,4,33,51,58
+    PUSHBUTTON      "Einladen",1001,4,106,45,12
+    LTEXT           "Du kannst nur Spieler zum Beitritt auffordern, die sich im gleichen Raum befinden. Außerdem darf nur eine Einladung ausstehen.",-1,4,4,157,24
+END
+
+105 DIALOG  0, 0, 269, 180
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Neue Gilde gründen"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Name der Gilde:",-1,9,12,53,8
+    EDITTEXT        1215,66,10,95,14,ES_AUTOHSCROLL
+    GROUPBOX        "Rangfolge in der Gilde:",-1,10,30,247,114
+    LTEXT           "Männer:",-1,21,45,27,8
+    EDITTEXT        1220,21,57,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1219,21,73,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1218,21,89,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1217,21,105,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1216,21,121,83,14,ES_AUTOHSCROLL
+    LTEXT           "höchster",-1,119,59,28,8
+    LTEXT           "niedrigster",-1,118,124,33,8
+    LTEXT           "Frauen:",-1,163,45,25,8
+    EDITTEXT        1226,163,57,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1225,163,73,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1224,163,89,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1223,163,105,83,14,ES_AUTOHSCROLL
+    EDITTEXT        1222,163,121,83,14,ES_AUTOHSCROLL
+    CONTROL         "eine geheime Gilde gründen. (Die Gildenangehörigkeit ist nicht sichtbar)",1221,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,147,240,8
+    LTEXT           "Gründungskosten:",-1,10,163,59,8
+    LTEXT           "",1237,74,163,41,10,SS_SUNKEN
+    DEFPUSHBUTTON   "Bestätigen",1,156,162,50,14
+    PUSHBUTTON      "Abbrechen",2,215,162,50,14
+END
+
+103 DIALOG  0, 0, 184, 93
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+102 DIALOG  0, 0, 217, 226
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Funktionstasten"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Befehl:",IDC_STATIC,4,4,21,8
+    LTEXT           "Tastatureingabe:",IDC_STATIC,30,4,55,8
+    RTEXT           "Automatisches Return:",IDC_STATIC,134,4,77,8
+    GROUPBOX        "",3,4,10,208,190
+    RTEXT           "F1",4,13,20,9,8
+    EDITTEXT        1000,30,19,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1199,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,21,13,9
+    RTEXT           "F2",5,13,35,9,8
+    EDITTEXT        1001,29,34,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1200,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,35,13,9
+    RTEXT           "F3",6,13,50,9,8
+    EDITTEXT        1002,29,48,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1201,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,50,13,9
+    RTEXT           "F4",7,13,65,9,8
+    EDITTEXT        1003,29,63,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1202,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,64,13,9
+    RTEXT           "F5",8,13,80,9,8
+    EDITTEXT        1004,29,78,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1203,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,80,13,9
+    RTEXT           "F6",9,13,95,9,8
+    EDITTEXT        1005,29,92,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1204,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,94,13,9
+    RTEXT           "F7",10,13,110,9,8
+    EDITTEXT        1006,29,107,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1205,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,109,13,9
+    RTEXT           "F8",11,13,125,9,8
+    EDITTEXT        1007,29,122,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1206,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,125,13,9
+    RTEXT           "F9",12,13,140,9,8
+    EDITTEXT        1008,29,137,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1207,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,139,13,9
+    RTEXT           "F10",13,9,155,13,8
+    EDITTEXT        1009,29,153,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1208,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,155,13,9
+    RTEXT           "F11",14,9,170,13,8
+    EDITTEXT        1010,29,168,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1209,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,170,13,9
+    RTEXT           "F12",15,9,185,13,8
+    EDITTEXT        1011,29,184,159,12,ES_AUTOHSCROLL
+    CONTROL         "",1210,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,185,13,9
+    DEFPUSHBUTTON   "Bestätigen",IDOK,19,208,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,77,208,50,14
+    PUSHBUTTON      "Kurzbefehle....",1264,136,208,76,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    140, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 214
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    1                       "Zaubern"
+    2                       "&Zaubersprüche"
+    3                       "Gegenstände wegwerfen"
+    4                       "Gegenstände nehmen"
+    5                       "Sagen"
+    6                       "Zaubern"
+    7                       "Kartenmodus"
+    8                       "Hilfe"
+    9                       "Rasten/Aufstehen"
+    10                      "Aufstehen"
+    11                      "Lebenskraft"
+    12                      "Zauberkraft"
+    13                      "Ausdauer"
+    14                      "Lächeln"
+    15                      "Grimmig"
+END
+
+STRINGTABLE 
+BEGIN
+    16                      "Niemand mit diesem Namen ist im Spiel."
+    17                      "Dieser Name tritt häufiger auf."
+    18                      "Der Name dieser Gruppe tritt häufiger auf."
+    19                      "Du kannst keine zusätzlichen Gruppen mehr anlegen."
+    20                      "Die %.*s-Gruppe ist voll."
+    21                      "Niemand von dieser Gruppe ist im Spiel."
+    22                      "Es gibt keine Gruppe mit diesem Namen."
+    23                      "Es gibt bereits eine Gruppe mit diesem Namen."
+    24                      "Der Name dieses Zauberspruchs tritt häufiger auf."
+    25                      "Es gibt keinen Zauber mit diesem Namen."
+    26                      "Bist Du Dir auch wirklich sicher, diesen Charakter zu löschen? \nDiese Entscheidung ist unwiderruflich."
+    27                      "Du mußt angeben wieviel Du abheben möchtest."
+    28                      "Du mußt angeben wieviel Du einzahlen möchtest."
+    29                      "Diese Gruppe ist voll."
+    30                      "Der Spieler konnte nicht in die Gruppe aufgenommen werden."
+    31                      "Es konnte keine neue Gruppe angelegt werden."
+END
+
+STRINGTABLE 
+BEGIN
+    32                      "%d wurde in die Gruppe aufgenommen."
+    33                      "Mitglieder der %.*s-Gruppe (~rrot~n = im Spiel):"
+    34                      "Du hast keine Gruppen angelegt."
+    35                      "Du hast folgende Gruppen angelegt:"
+    36                      "Gruppe wurde gelöscht."
+    37                      "%d Name wurde aus der Gruppe entfernt."
+    38                      "Die Gruppe wurde erstellt."
+    39                      "Du rastest."
+    40                      "Du hörst auf Dich auszuruhen."
+    41                      "Du ruhst Dich bereits aus."
+    42                      "Du ruhst Dich gar nicht aus."
+    43                      "Du kannst keine Zauber sprechen, solange Du rastest."
+    44                      "Du kannst Deine Arme nicht bewegen um den Zauber zu sprechen!"
+    45                      "Gebe ""suicide"" ein, um einen neuen Charakter zu erschaffen."
+    46                      "Du mußt einen Gildennamen festlegen."
+    47                      "Meridian 59 --- %s"
+END
+
+STRINGTABLE 
+BEGIN
+    48                      "Willst Du die Gilde wirklich verlassen?"
+    49                      "Willst Du wirklich Deinen Posten als Gildenmeister aufgeben?"
+    50                      "Neuling"
+    51                      "Mitglied"
+    52                      "Lord"
+    53                      "Held"
+    54                      "Gildenmeister"
+    55                      "Neuling"
+    56                      "Mitglied"
+    57                      "Lady"
+    58                      "Heldin"
+    59                      "Gildenmeisterin"
+    60                      "Die Gilde %s sieht Dich weder als Feind noch als Freund."
+    61                      "Willst Du die Gilde wirklich auflösen?"
+    62                      "Die Gilde %s sieht Dich als Verbündeten an."
+    63                      "Die Gilde %s sieht Dich als Feind an."
+END
+
+STRINGTABLE 
+BEGIN
+    64                      "Willst Du wirklich Deine Gildenhalle aufgeben?"
+    65                      "Gildeneinstellungen"
+    66                      "Einladen"
+    67                      "Mitgliedschaft"
+    68                      "Bündnisse"
+    69                      "Gildenmeister"
+    70                      "Niemand"
+    71                      "Fertig"
+    72                      "Kosten"
+    73                      "Tägliche Miete"
+    74                      "Name der Gilde"
+    75                      "Du mußt ein Gildenpasswort festlegen."
+    76                      "Schild"
+    77                      "Eigenschaften"
+    78                      "Zaubersprüche"
+    79                      "Fertigkeiten"
+END
+
+STRINGTABLE 
+BEGIN
+    80                      "&Aktionen"
+    81                      "Schule von Sha-Lill"
+    82                      "Schule von Kraanan"
+    83                      "Schule von Qor"
+    84                      "Schule von Riija"
+    85                      "Schule von Faren"
+    86                      "Gottliche Zauber"
+    87                      "Inventar"
+    88                      "Was bitte? Benutz die Hilfe ""help""."
+    89                      "&Wer spielt"
+    90                      "Eine ungültige Anweisung wurde für den Kurzbefehl festgelegt."
+    91                      "Diesen Befehl gibt es häufiger."
+    92                      "Der Kurzbefehl wurde definiert."
+    93                      "Der Kurzbefehl wurde gelöscht."
+    94                      "Wort"
+    95                      "Befehl"
+END
+
+STRINGTABLE 
+BEGIN
+    191                     "Du kannst das ausgewählte Ziel nicht sehen."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_GROUP          "&Gruppen"
+    IDS_MENU_ALIAS          "&F-Tasten"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CMDALIAS       "&Kurzbefehle"
+    IDS_MENU_GUILD          "Gi&lde"
+    IDS_MENU_WAVE           "&Winken"
+    IDS_MENU_POINT          "&Deuten"
+    IDS_MENU_DANCE          "&Tanzen"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_HAPPY          "Glü&cklich"
+    IDS_MENU_SAD            "T&raurig"
+    IDS_MENU_NEUTRAL        "&Neutral"
+    IDS_MENU_WRY            "Gri&mmig"
+END
+
+#endif    // German (Neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ALIAS DIALOGEX 0, 0, 217, 226
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Hotkey Aliases"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Key:",IDC_STATIC,12,4,13,8
+    LTEXT           "Command:",IDC_STATIC,30,4,38,8
+    RTEXT           "Automatic Enter:",IDC_STATIC,140,4,72,8
+    GROUPBOX        "",IDC_STATIC,4,10,208,190
+    RTEXT           "F1",IDC_STATIC,13,20,9,8
+    EDITTEXT        IDC_ALIASF1,29,19,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,21,13,9
+    RTEXT           "F2",IDC_STATIC,13,35,9,8
+    EDITTEXT        IDC_ALIASF2,29,34,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,35,13,9
+    RTEXT           "F3",IDC_STATIC,13,50,9,8
+    EDITTEXT        IDC_ALIASF3,29,48,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,50,13,9
+    RTEXT           "F4",IDC_STATIC,13,65,9,8
+    EDITTEXT        IDC_ALIASF4,29,63,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,64,13,9
+    RTEXT           "F5",IDC_STATIC,13,80,9,8
+    EDITTEXT        IDC_ALIASF5,29,78,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,80,13,9
+    RTEXT           "F6",IDC_STATIC,13,95,9,8
+    EDITTEXT        IDC_ALIASF6,29,92,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,94,13,9
+    RTEXT           "F7",IDC_STATIC,13,110,9,8
+    EDITTEXT        IDC_ALIASF7,29,107,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,109,13,9
+    RTEXT           "F8",IDC_STATIC,13,125,9,8
+    EDITTEXT        IDC_ALIASF8,29,122,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,125,13,9
+    RTEXT           "F9",IDC_STATIC,13,140,9,8
+    EDITTEXT        IDC_ALIASF9,29,137,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F9,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,139,13,9
+    RTEXT           "F10",IDC_STATIC,9,155,13,8
+    EDITTEXT        IDC_ALIASF10,29,153,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F10,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,155,13,9
+    RTEXT           "F11",IDC_STATIC,9,170,13,8
+    EDITTEXT        IDC_ALIASF11,29,168,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F11,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,170,13,9
+    RTEXT           "F12",IDC_STATIC,9,185,13,8
+    EDITTEXT        IDC_ALIASF12,29,184,159,12,ES_AUTOHSCROLL
+    CONTROL         "",IDC_CHECK_F12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,194,185,13,9
+    DEFPUSHBUTTON   "OK",IDOK,19,208,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,77,208,50,14
+    PUSHBUTTON      "Command &Aliases...",IDC_TUNNEL,136,208,76,14
+END
+
+IDD_STATS DIALOG  0, 0, 184, 93
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_INVENTORY DIALOG  0, 0, 183, 92
+STYLE DS_SETFONT | WS_CHILD | WS_CLIPCHILDREN
+FONT 8, "MS Sans Serif"
+BEGIN
+END
+
+IDD_GUILDCREATE DIALOG  0, 0, 269, 207
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create New Guild"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Guild Name:",IDC_STATIC,9,12,42,8
+    EDITTEXT        IDC_GUILDNAME,59,10,95,14,ES_AUTOHSCROLL
+    LTEXT           "Tip:  Don't include the word ""The"" at the beginning of your guild name.",IDC_STATIC,9,28,238,8
+    LTEXT           "This will be done automatically.  (Example:  ""Slashers"" becomes ""The Slashers"".)",IDC_STATIC,10,37,255,8
+    GROUPBOX        "Rank Names",IDC_STATIC,10,52,247,114
+    LTEXT           "Men",IDC_STATIC,21,67,15,8
+    EDITTEXT        IDC_MRANK5,21,79,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK4,21,95,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK3,21,111,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK2,21,127,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MRANK1,21,143,83,14,ES_AUTOHSCROLL
+    LTEXT           "Highest",IDC_STATIC,121,81,25,8
+    LTEXT           "Lowest",IDC_STATIC,122,145,24,8
+    LTEXT           "Women",IDC_STATIC,163,67,26,8
+    EDITTEXT        IDC_FRANK5,163,79,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK4,163,95,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK3,163,111,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK2,163,127,83,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_FRANK1,163,143,83,14,ES_AUTOHSCROLL
+    CONTROL         "Make guild secret (guild members will not be identifiable by other guilds)",IDC_SECRET,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,169,246,10
+    LTEXT           "Cost of creating guild:",IDC_STATIC,10,191,69,8
+    LTEXT           "",IDC_GUILD_COST,84,191,32,10,SS_SUNKEN
+    DEFPUSHBUTTON   "OK",IDOK,156,189,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,215,189,50,14
+END
+
+IDD_GUILDHALLS DIALOGEX 0, 0, 225, 220
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rent Guild Hall"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,102,194,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,168,194,50,14
+    CONTROL         "List1",IDC_GUILDLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,16,211,118,WS_EX_CLIENTEDGE
+    LTEXT           "Select a hall to house your guild:",IDC_STATIC,6,4,103,8
+    LTEXT           "Guild Password:",IDC_STATIC,6,173,51,8
+    EDITTEXT        IDC_GUILD_PASSWORD,60,171,94,12,ES_AUTOHSCROLL
+    LTEXT           "The guild password protects certain areas of your guild hall.",IDC_STATIC,6,158,187,8
+    LTEXT           "Selected guild hall:",IDC_STATIC,6,140,60,8
+    LTEXT           "",IDC_GUILDNAME,74,139,144,11,SS_SUNKEN
+END
+
+IDD_GUILDINVITE DIALOG  0, 0, 280, 122
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LISTBOX         IDC_INROOMLIST,60,32,134,86,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Choose person to invite:",IDC_STATIC,4,34,52,18
+    PUSHBUTTON      "Invite",IDC_INVITE,231,32,45,12
+    LTEXT           "You can only invite people in the same room as you, and you may only",IDC_STATIC,4,4,221,8
+    LTEXT           "have one invitation outstanding at a time.",IDC_STATIC,4,14,130,8
+END
+
+IDD_GUILDMEMBERS DIALOG  0, 0, 280, 122
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Guild Members (names in red are logged on):",-1,4,4,158,8
+    LISTBOX         IDC_GUILDLIST,4,15,88,89,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Rank:",-1,98,17,20,8
+    COMBOBOX        IDC_RANK,123,15,93,53,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "E&xile",IDC_EXILE,123,30,55,12
+    PUSHBUTTON      "&Abdicate to:",IDC_ABDICATE,98,91,54,12
+    LTEXT           "",IDC_ABDICATENAME,171,92,105,10,SS_SUNKEN
+    PUSHBUTTON      "Shift &support to:",IDC_VOTE,98,73,54,12
+    LTEXT           "",IDC_VOTENAME,171,75,105,10,SS_SUNKEN
+    LTEXT           "Currently supporting:",-1,98,59,71,8
+    LTEXT           "cha",IDC_CURRENTVOTE,171,58,105,10,SS_SUNKEN
+    PUSHBUTTON      "&Leave guild",IDC_RENOUNCE,4,106,49,12
+    LTEXT           "",IDC_RANKDISPLAY,124,17,93,8,SS_SUNKEN
+    CONTROL         "",IDC_SHIELD,"Button",BS_OWNERDRAW,236,4,40,40
+END
+
+IDD_GUILDALLIES DIALOG  0, 0, 280, 122
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Allied guilds",-1,4,26,38,8
+    LISTBOX         IDC_ALLYGUILDS,4,36,75,58,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      ">>",IDC_UNALLY,84,46,13,12
+    PUSHBUTTON      "<<",IDC_ALLY,84,72,13,12
+    LTEXT           "Unaligned guilds",-1,102,26,53,8
+    LISTBOX         IDC_GUILDS,102,36,75,58,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      ">>",IDC_ENEMY,182,47,13,12
+    PUSHBUTTON      "<<",IDC_UNENEMY,182,72,13,12
+    LTEXT           "Enemy guilds",-1,200,26,42,8
+    LISTBOX         IDC_ENEMYGUILDS,201,36,75,58,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_GUILDSTATUS,4,100,272,8
+    LTEXT           "Use the << and >> buttons to forge and break alliances.",IDC_ALLYLABEL,51,4,176,8
+END
+
+IDD_GUILDMASTER DIALOG  0, 0, 280, 122
+STYLE DS_SETFONT | DS_3DLOOK | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Guild Hall",IDC_STATIC,4,4,272,48
+    LTEXT           "Your guild does not have a guild hall.",IDC_NOHALL,10,15,156,8
+    LTEXT           "Guild Password:",IDC_LABEL,10,31,51,8
+    EDITTEXT        IDC_GUILD_PASSWORD,65,29,101,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Abandon Guild Hall",IDC_ABANDON,185,23,72,14
+    PUSHBUTTON      "&Disband Guild",IDC_DISBAND,92,78,95,14
+END
+
+IDD_GROUP DIALOGEX 0, 0, 286, 373
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Group Configuration"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    LTEXT           "Groups:",IDC_STATIC,8,7,26,8
+    COMBOBOX        IDC_GROUPS,8,17,97,65,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Delete group",IDC_DELGROUP,114,16,58,14,WS_DISABLED
+    LTEXT           "New group:",IDC_NEWGROUPTEXT,180,6,38,8
+    EDITTEXT        IDC_NEWGROUP,180,16,58,14,ES_AUTOHSCROLL
+    LTEXT           "Message to currently selected group:",IDC_STATIC,8,39,117,8
+    EDITTEXT        IDC_GROUPTELL,8,49,269,14,ES_AUTOHSCROLL
+    LTEXT           "Group members:",IDC_STATIC,8,73,52,8
+    LTEXT           "(names in red are logged on)",IDC_STATIC,8,81,90,8
+    LISTBOX         IDC_GROUPMEMBERS,8,91,97,255,LBS_SORT | LBS_OWNERDRAWFIXED | LBS_HASSTRINGS | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "<< Add to group",IDC_ADDMEMBER,114,91,58,14,WS_DISABLED
+    LTEXT           "Add name:",IDC_ADDNAMETEXT,114,111,35,8,WS_DISABLED
+    EDITTEXT        IDC_ADDNAME,114,122,58,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "Remove member",IDC_DELMEMBER,114,149,58,14,WS_DISABLED
+    LTEXT           "People logged on:",IDC_STATIC,180,80,58,8
+    LISTBOX         IDC_LOGGEDON,180,91,97,255,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "",IDC_GROUPSTATUS,8,353,174,8
+    PUSHBUTTON      "Done",IDC_GROUP_DONE,229,352,50,14
+END
+
+IDD_CMDALIAS DIALOGEX 0, 0, 219, 223
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Command Aliases"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "To define a command alias, enter a unique word and your full command below.  To use it, type your unique word as a command in the game.  For example, ""laugh"" could mean ""emote laughs.""",IDC_STATIC,4,4,211,26
+    GROUPBOX        "",IDC_STATIC,4,29,211,170
+    LTEXT           "Word:",IDC_STATIC,10,38,20,8
+    EDITTEXT        IDC_VERB,49,36,50,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EXPANSION,49,49,159,12,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Define",IDC_DEFINE,103,37,50,11
+    PUSHBUTTON      "&Remove",IDC_REMOVE,157,37,50,11
+    LTEXT           "Command:",IDC_STATIC,10,51,34,8
+    CONTROL         "List2",IDC_COMMAND_LIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SORTASCENDING | LVS_NOLABELWRAP | LVS_NOSORTHEADER | WS_TABSTOP,10,64,199,128,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "OK",IDOK,24,205,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,82,205,50,14
+    PUSHBUTTON      "Hotkey &Aliases...",IDC_TUNNEL,139,205,76,14
+END
+
+IDD_GUILDSHIELD DIALOG  0, 0, 280, 122
+STYLE DS_SETFONT | DS_3DLOOK | DS_CONTROL | WS_CHILD
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Guild Shield",-1,3,0,120,116
+    CONTROL         "",IDC_SHIELD,"Button",BS_OWNERDRAW,7,10,108,102
+    LTEXT           "Select a color and pattern combination:",-1,137,14,129,8
+    LTEXT           "Color 1:",-1,148,29,25,8
+    PUSHBUTTON      "<",IDC_COLOR1_PREV,181,27,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_COLOR1_NEXT,199,27,17,11
+    LTEXT           "Color 2:",-1,148,44,25,8
+    PUSHBUTTON      "<",IDC_COLOR2_PREV,181,42,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_COLOR2_NEXT,199,42,17,11
+    LTEXT           "Pattern:",-1,147,59,26,8
+    PUSHBUTTON      "<",IDC_PATTERN_PREV,181,57,17,11,WS_GROUP
+    PUSHBUTTON      ">",IDC_PATTERN_NEXT,199,57,17,11
+    LTEXT           "Design has been claimed by %s.",IDC_STATIC_GUILD,137,77,129,19,SS_SUNKEN
+    PUSHBUTTON      "Claim for my Guild",IDC_ACCEPT,137,102,129,13,WS_GROUP
+    LTEXT           "Design is not available.",IDC_RENOUNCE,137,68,129,8,NOT WS_VISIBLE
+END
+
+IDD_SUICIDE DIALOG  0, 0, 242, 95
+STYLE DS_SETFONT | DS_MODALFRAME | DS_3DLOOK | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Meridian Character Suicide"
+FONT 8, "MS Sans Serif"
+BEGIN
+    GROUPBOX        "Verification",IDC_STATIC,7,38,228,43
+    LTEXT           "Performing a suicide will destroy your character, and will create a new character for you to start over.  You are responsible for your own choice to begin the game again.",IDC_STATIC,7,7,228,27
+    LTEXT           "To verify that you wish to do this, enter your current account password here.",IDC_STATIC,14,50,114,26
+    EDITTEXT        IDC_SUICIDE_PASSWORD,131,52,97,12,ES_PASSWORD | ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "Suicide",IDOK,131,74,46,14
+    PUSHBUTTON      "Cancel",IDCANCEL,184,74,46,14
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "merintrc.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#include ""commctrl.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_CAST                BITMAP                  "bitmap\\cast.bmp"
+IDB_DROP                BITMAP                  "bitmap\\drop.bmp"
+IDB_GET                 BITMAP                  "bitmap\\get.bmp"
+IDB_MAP                 BITMAP                  "bitmap\\map.bmp"
+IDB_HELP                BITMAP                  "bitmap\\help.bmp"
+IDB_REST                BITMAP                  "bitmap\\rest.bmp"
+IDB_STAND               BITMAP                  "bitmap\\stand.bmp"
+IDB_INVCURSOR           BITMAP                  "bitmap\\icursor.bmp"
+IDB_INVINUSE            BITMAP                  "bitmap\\inuse.bmp"
+IDB_SMILE               BITMAP                  "bitmap\\smile.bmp"
+IDB_FROWN               BITMAP                  "bitmap\\frown.bmp"
+IDB_ULLEFT              BITMAP                  "bitmap\\viewtreat_ul_left.bmp"
+IDB_ULTOP               BITMAP                  "bitmap\\viewtreat_ul_top.bmp"
+IDB_URRIGHT             BITMAP                  "bitmap\\viewtreat_ur_right.bmp"
+IDB_URTOP               BITMAP                  "bitmap\\viewtreat_ur_top.bmp"
+IDB_LRBOTTOM            BITMAP                  "bitmap\\viewtreat_lr_bottom.bmp"
+IDB_LRRIGHT             BITMAP                  "bitmap\\viewtreat_lr_right.bmp"
+IDB_LLLEFT              BITMAP                  "bitmap\\viewtreat_ll_left.bmp"
+IDB_LLBOTTOM            BITMAP                  "bitmap\\viewtreat_ll_bottom.bmp"
+IDB_TOP                 BITMAP                  "bitmap\\top.bmp"
+IDB_BOTTOM              BITMAP                  "bitmap\\bottom.bmp"
+IDB_LEFT                BITMAP                  "bitmap\\left.bmp"
+IDB_RIGHT               BITMAP                  "bitmap\\right.bmp"
+IDB_IULLEFT             BITMAP                  "bitmap\\iulleft.bmp"
+IDB_IULTOP              BITMAP                  "bitmap\\iultop.bmp"
+IDB_IURRIGHT            BITMAP                  "bitmap\\iurright.bmp"
+IDB_IURTOP              BITMAP                  "bitmap\\iurtop.bmp"
+IDB_ILRBOTTOM           BITMAP                  "bitmap\\ilrbottom.bmp"
+IDB_ILRRIGHT            BITMAP                  "bitmap\\ilrright.bmp"
+IDB_ILLLEFT             BITMAP                  "bitmap\\illleft.bmp"
+IDB_ILLBOTTOM           BITMAP                  "bitmap\\illbottom.bmp"
+IDB_ITOP                BITMAP                  "bitmap\\itop.bmp"
+IDB_IBOTTOM             BITMAP                  "bitmap\\ibottom.bmp"
+IDB_ILEFT               BITMAP                  "bitmap\\ileft.bmp"
+IDB_IRIGHT              BITMAP                  "bitmap\\iright.bmp"
+IDB_SBUTTON1            BITMAP                  "bitmap\\stats.bmp"
+IDB_SBUTTON2            BITMAP                  "bitmap\\spells.bmp"
+IDB_SBUTTON3            BITMAP                  "bitmap\\skills.bmp"
+IDB_SBUTTON4            BITMAP                  "bitmap\\inventory.bmp"
+IDB_SBUTTON1_LEFT       BITMAP                  "bitmap\\statbtn_left_stats.bmp"
+IDB_SBUTTON2_LEFT       BITMAP                  "bitmap\\statbtn_left_spell.bmp"
+IDB_SBUTTON3_LEFT       BITMAP                  "bitmap\\statbtn_left_skills.bmp"
+IDB_SBUTTON4_LEFT       BITMAP                  "bitmap\\statbtn_left_invent.bmp"
+IDB_SBUTTON1_MID        BITMAP                  "bitmap\\statbtn_mid.bmp"
+IDB_SBUTTON2_MID        BITMAP                  "bitmap\\statbtn_mid.bmp"
+IDB_SBUTTON3_MID        BITMAP                  "bitmap\\statbtn_mid.bmp"
+IDB_SBUTTON4_MID        BITMAP                  "bitmap\\statbtn_mid.bmp"
+IDB_SBUTTON1_RIGHT      BITMAP                  "bitmap\\statbtn_right.bmp"
+IDB_SBUTTON2_RIGHT      BITMAP                  "bitmap\\statbtn_right.bmp"
+IDB_SBUTTON3_RIGHT      BITMAP                  "bitmap\\statbtn_right.bmp"
+IDB_SBUTTON4_RIGHT      BITMAP                  "bitmap\\statbtn_right.bmp"
+IDB_INVBKGND            BITMAP                  "bitmap\\invbkgnd.bmp"
+IDB_STATSBKGND          BITMAP                  "bitmap\\statbgnd.bmp"
+IDB_BARLEFT             BITMAP                  "bitmap\\barleft.bmp"
+IDB_BARRIGHT            BITMAP                  "bitmap\\barright.bmp"
+IDB_BARTOP              BITMAP                  "bitmap\\bartop.bmp"
+IDB_BARBOTTOM           BITMAP                  "bitmap\\barbottom.bmp"
+IDB_SULLEFT             BITMAP                  "bitmap\\statstreat_lrepeat.bmp"
+IDB_SULTOP              BITMAP                  "bitmap\\statstreat_ul.bmp"
+IDB_SURRIGHT            BITMAP                  "bitmap\\statstreat_rrepeat.bmp"
+IDB_SURTOP              BITMAP                  "bitmap\\statstreat_ur.bmp"
+IDB_SLRBOTTOM           BITMAP                  "bitmap\\statstreat_lr.bmp"
+IDB_SLRRIGHT            BITMAP                  "bitmap\\statstreat_rrepeat.bmp"
+IDB_SLLLEFT             BITMAP                  "bitmap\\statstreat_lrepeat.bmp"
+IDB_SLLBOTTOM           BITMAP                  "bitmap\\statstreat_ll.bmp"
+IDB_STOP                BITMAP                  "bitmap\\statstreat_urepeat.bmp"
+IDB_SBOTTOM             BITMAP                  "bitmap\\statstreat_brepeat.bmp"
+IDB_SLEFT               BITMAP                  "bitmap\\statstreat_lrepeat.bmp"
+IDB_SRIGHT              BITMAP                  "bitmap\\statstreat_rrepeat.bmp"
+IDB_EULTOP              BITMAP                  "bitmap\\edgetreat_ultop.bmp"
+IDB_EULLEFT             BITMAP                  "bitmap\\edgetreat_ulleft.bmp"
+IDB_EURTOP              BITMAP                  "bitmap\\edgetreat_urtop.bmp"
+IDB_EURRIGHT            BITMAP                  "bitmap\\edgetreat_urright.bmp"
+IDB_ELLBOTTOM           BITMAP                  "bitmap\\edgetreat_llbottom.bmp"
+IDB_ELLLEFT             BITMAP                  "bitmap\\edgetreat_llleft.bmp"
+IDB_ELRBOTTOM           BITMAP                  "bitmap\\edgetreat_lrbottom.bmp"
+IDB_ELRRIGHT            BITMAP                  "bitmap\\edgetreat_lrright.bmp"
+IDB_MULTOP              BITMAP                  "bitmap\\maptreat_urepeat.bmp"
+IDB_MULLEFT             BITMAP                  "bitmap\\maptreat_ul.bmp"
+IDB_MURTOP              BITMAP                  "bitmap\\maptreat_urepeat.bmp"
+IDB_MURRIGHT            BITMAP                  "bitmap\\maptreat_ur.bmp"
+IDB_MLLBOTTOM           BITMAP                  "bitmap\\maptreat_brepeat.bmp"
+IDB_MLLLEFT             BITMAP                  "bitmap\\maptreat_ll.bmp"
+IDB_MLRBOTTOM           BITMAP                  "bitmap\\maptreat_brepeat.bmp"
+IDB_MLRRIGHT            BITMAP                  "bitmap\\maptreat_lr.bmp"
+IDB_MUREPEAT            BITMAP                  "bitmap\\maptreat_urepeat.bmp"
+IDB_MLREPEAT            BITMAP                  "bitmap\\maptreat_lrepeat.bmp"
+IDB_MRREPEAT            BITMAP                  "bitmap\\maptreat_rrepeat.bmp"
+IDB_MBREPEAT            BITMAP                  "bitmap\\maptreat_brepeat.bmp"
+IDB_BULTOP              BITMAP                  "bitmap\\edittreat_urepeat.bmp"
+IDB_BULLEFT             BITMAP                  "bitmap\\edittreat_ulleft.bmp"
+IDB_BURTOP              BITMAP                  "bitmap\\edittreat_urepeat.bmp"
+IDB_BURRIGHT            BITMAP                  "bitmap\\edittreat_urright.bmp"
+IDB_BLLBOTTOM           BITMAP                  "bitmap\\edittreat_brepeat.bmp"
+IDB_BLLLEFT             BITMAP                  "bitmap\\edittreat_llleft.bmp"
+IDB_BLRBOTTOM           BITMAP                  "bitmap\\edittreat_brepeat.bmp"
+IDB_BLRRIGHT            BITMAP                  "bitmap\\edittreat_lrright.bmp"
+IDB_BUREPEAT            BITMAP                  "bitmap\\edittreat_urepeat.bmp"
+IDB_BLREPEAT            BITMAP                  "bitmap\\edittreat_lrepeat.bmp"
+IDB_BRREPEAT            BITMAP                  "bitmap\\edittreat_rrepeat.bmp"
+IDB_BBREPEAT            BITMAP                  "bitmap\\edittreat_brepeat.bmp"
+IDB_ELREPEAT            BITMAP                  "bitmap\\edgetreat_lrepeat.BMP"
+IDB_ERREPEAT            BITMAP                  "bitmap\\edgetreat_rrepeat.BMP"
+IDB_EUREPEAT            BITMAP                  "bitmap\\edgetreat_urepeat.BMP"
+IDB_EBREPEAT            BITMAP                  "bitmap\\edgetreat_brepeat.BMP"
+IDB_SELFTRGT            BITMAP                  "bitmap\\selftrgt.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ALIAS, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 212
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 222
+    END
+
+    IDD_STATS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 177
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 86
+    END
+
+    IDD_INVENTORY, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 176
+        TOPMARGIN, 6
+        BOTTOMMARGIN, 85
+    END
+
+    IDD_GUILDCREATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 265
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 203
+    END
+
+    IDD_GUILDHALLS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 218
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 213
+    END
+
+    IDD_GUILDINVITE, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GUILDMEMBERS, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GUILDALLIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GUILDMASTER, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 276
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 118
+    END
+
+    IDD_GROUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 279
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 366
+    END
+
+    IDD_CMDALIAS, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 215
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 219
+    END
+
+    IDD_SUICIDE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 235
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_CAST                "Cast spell"
+    IDS_SPELLS              "&Spells"
+    IDS_TBDROP              "Drop items"
+    IDS_TBGET               "Get items"
+    IDS_TBSAY               "Say"
+    IDS_TBCAST              "Cast a spell"
+    IDS_TBMAP               "Toggle map"
+    IDS_TBHELP              "Help"
+    IDS_TBREST              "Rest/Stand"
+    IDS_TBSTAND             "Stand"
+    IDS_HEALTH              "Health"
+    IDS_MANA                "Mana"
+    IDS_VIGOR               "Vigor"
+    IDS_TBSMILE             "Smile"
+    IDS_TBFROWN             "Frown"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_NOTELLNAME          "No one with that name is logged on."
+    IDS_DUPLICATETELLNAME   "That name is ambiguous."
+    IDS_DUPLICATEGROUPNAME  "That group name is ambiguous."
+    IDS_TOOMANYGROUPS       "You can't make more groups; delete some first."
+    IDS_GROUPFULL           "The %.*s group is full."
+    IDS_GROUPNOTON          "No one from that group is currently logged in."
+    IDS_BADGROUPNAME        "There is no group matching that name."
+    IDS_ALREADYGROUP        "There is already a group with that name."
+    IDS_DUPLICATESPELLNAME  "That spell name is ambiguous."
+    IDS_NOSPELLNAME         "There is no spell with that name."
+    IDS_SUICIDE             "Are you sure you want to destroy this character?\nThis is IRREVERSIBLE."
+    IDS_NOWITHDRAWAMOUNT    "You must specify how much you want to withdraw."
+    IDS_NODEPOSITAMOUNT     "You must specify how much you want to deposit."
+    IDS_GROUPFULLDLG        "The group is full."
+    IDS_CANTADDNAMEDLG      "Couldn't add player to group."
+    IDS_GROUPFAILEDDLG      "Couldn't create new group."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_TARGETNOTVISIBLEFORCAST "You can't see your selected target."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_GROUPADDED          "Added %d names to group."
+    IDS_GROUPMEMBERS        "Members of the %.*s group (~rred~n = logged on):"
+    IDS_NOGROUPS            "You have no groups defined."
+    IDS_GROUPLIST           "You have these groups defined:"
+    IDS_GROUPDELETED        "Group deleted."
+    IDS_NAMESDELETED        "Removed %d names from group."
+    IDS_GROUPCREATED        "Group created."
+    IDS_REST                "You rest."
+    IDS_STAND               "You stop resting."
+    IDS_RESTING             "You're already resting."
+    IDS_STANDING            "You're not resting."
+    IDS_SPELLRESTING        "You can't cast spells while you're resting."
+    IDS_SPELLPARALYZED      "You can't lift your hands to cast the spell!"
+    IDS_SUICID              "Type the entire word ""suicide"" to restart your character."
+    IDS_GUILDBLANK          "You must specify a guild name."
+    IDS_WINDOWTITLE         "Meridian 59 --- %s"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_RENOUNCE            "Are you sure you want to leave the guild?"
+    IDS_ABDICATE            "Are you sure you want to abdicate as guildmaster?"
+    IDS_MRANK1              "Initiate"
+    IDS_MRANK2              "Member"
+    IDS_MRANK3              "Lord"
+    IDS_MRANK4              "Hero"
+    IDS_MRANK5              "Guildmaster"
+    IDS_FRANK1              "Initiate"
+    IDS_FRANK2              "Member"
+    IDS_FRANK3              "Lady"
+    IDS_FRANK4              "Heroine"
+    IDS_FRANK5              "Guildmistress"
+    IDS_GUILDUNALIGNED      "The %s do not consider you an ally or an enemy."
+    IDS_DISBAND             "Are you sure you want to disband the guild?"
+    IDS_GUILDALLY           "The %s consider you an ally."
+    IDS_GUILDENEMY          "The %s consider you an enemy."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ABANDON             "Are you sure you want to abandon your guild hall?"
+    IDS_GUILDCONFIGTITLE    "Guild configuration"
+    IDS_INVITE              "Invite"
+    IDS_GUILDMEMBERS        "Membership"
+    IDS_GUILDALLIES         "Alliances"
+    IDS_GUILDMASTER         "Guildmaster"
+    IDS_NOBODY              "nobody"
+    IDS_DONE                "Done"
+    IDS_GHEADER1            "Cost"
+    IDS_GHEADER2            "Daily rent"
+    IDS_GHEADER3            "Guild hall name"
+    IDS_PASSWORDBLANK       "You must specify a guild password."
+    IDS_GUILDSHIELD         "Shield"
+    IDS_TT_STATS            "Stats"
+    IDS_TT_SPELLS           "Spells"
+    IDS_TT_SKILLS           "Skills"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_ACTIONS             "&Actions"
+    IDS_SGROUP1             "School of Shal'ille"
+    IDS_SGROUP2             "School of Kraanan"
+    IDS_SGROUP3             "School of Qor"
+    IDS_SGROUP5             "School of Riija"
+    IDS_SGROUP4             "School of Faren"
+    IDS_SGROUP6             "DM spells"
+    IDS_TT_INVENTORY        "Inventory"
+    IDS_HEL                 "Type the entire word ""help"" to open help."
+    IDS_MENU_WHO            "&Who is logged on"
+    IDS_INVALIDALIAS        "Invalid command stored in alias. (Press F1 or '?' for help.)"
+    IDS_AMBIGUOUSALIAS      "That command is ambiguous."
+    IDS_CMDALIASDEFINED     "Command Alias defined."
+    IDS_CMDALIASREMOVED     "Command Alias removed."
+    IDS_AHEADER0            "Word"
+    IDS_AHEADER1            "Command"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_GROUP          "Modify g&roups"
+    IDS_MENU_ALIAS          "Hot&key aliases"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_CMDALIAS       "Command &aliases"
+    IDS_MENU_GUILD          "&Guild configuration"
+    IDS_MENU_WAVE           "Wa&ve"
+    IDS_MENU_POINT          "&Point"
+    IDS_MENU_DANCE          "&Dance"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_HAPPY          "&Happy"
+    IDS_MENU_SAD            "&Sad"
+    IDS_MENU_NEUTRAL        "&Neutral"
+    IDS_MENU_WRY            "W&ry"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

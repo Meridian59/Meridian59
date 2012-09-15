@@ -1,0 +1,166 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Brittle is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   brittle_name_rsc = "brittle"
+   brittle_icon_rsc = ibrittle.bgf
+   brittle_desc_rsc = \
+      "Ages the target's weapon by many years, making it "
+      "frail and prone to breaking.  "
+      "Requires magic mushrooms and purple mushrooms to cast."
+
+   brittle_nothing = "For all of your mystic concentration, nothing seems to happen."
+
+   brittle_sound = fbrit.wav
+
+   brittle_no_weapon = "%s%s isn't wielding anything that you can damage."
+   brittle_hunter_sword = "%s%s's Sword of the Hunt repells your spell."
+   brittle_cast_rsc = "%s%s's eyes focus intensely on your weapon.  Your %s takes on a duller cast."
+   brittle_succeed = "You focus your eyes intensely on %s%s's %s, and it dulls."
+
+classvars:
+
+   vrName = brittle_name_rsc
+   vrIcon = brittle_icon_rsc
+   vrDesc = brittle_desc_rsc
+
+   viSpell_num = SID_BRITTLE
+   viSchool = SS_FAREN
+   viSpell_level = 4
+   viMana = 8
+   viSpellExertion = 4
+
+   viHarmful = TRUE
+   viOutlaw = TRUE
+   viNoNewbieOffense = TRUE
+   vbCastable_in_HappyLand = FALSE
+
+   vrSucceed_wav = brittle_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Mushroom,3],plReagents);
+      plReagents = Cons([&PurpleMushroom,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i, oWeapon;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if not IsClass(target, &User)
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_no_self_target,
+	           #parm1=vrName);
+         }
+         return FALSE;
+      }
+      oWeapon = Send(Target,@LookupPlayerWeapon);
+      if oWeapon = $ or not send(oWeapon,@CanWeaken)
+      {
+         if not bItemCast
+         {
+            send(who,@msgsenduser,#message_rsc=brittle_nothing);
+         }
+         return FALSE;
+      }
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oWeapon, oTarget, iHits;
+
+      oTarget = First(lTargets);
+      oWeapon = Send(oTarget,@LookupPlayerWeapon);
+
+      %% if target has no wielded weapon, the spell is wasted.
+      if oWeapon = $
+      { 
+	      Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+	      Send(who,@MsgSendUser,#message_rsc=brittle_no_weapon,
+            #parm1=Send(oTarget,@GetCapDef),
+	         #parm2=Send(oTarget,@GetName));
+	      propagate; 
+      }
+
+      if isClass(oWeapon,&HunterSword) 
+      {
+         Send(who,@MsgSendUser,#message_rsc=brittle_hunter_sword,
+            #parm1=Send(oTarget,@GetCapDef),
+            #parm2=Send(oTarget,@GetName));
+	      propagate;
+      }
+
+      iHits   = Send(oWeapon,@GetHits);
+
+      %% Brittle currently does random(1,iSpellPower/2) - 10 points of damage.
+
+      iHits   = iHits - (random(1,iSpellPower/2)) - 10;
+      if iHits < 1   {  iHits = 1 ;  }
+      Send(oWeapon,@SetHits,#number=iHits);
+      Send(oTarget, @MsgSendUser, #message_rsc=brittle_cast_rsc,
+	   #parm1=Send(who,@GetCapDef),
+	   #parm2=Send(who,@GetName),
+	   #parm3=Send(oWeapon,@GetName));
+
+      Send(who,@MsgSendUser,#message_rsc=brittle_succeed,
+	   #parm1=Send(oTarget,@GetDef),
+	   #parm2=Send(oTarget,@GetName),
+	   #parm3=Send(oWeapon,@GetName));
+      propagate;
+   }
+
+   SpellBannedInArena()
+   {
+      return TRUE;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

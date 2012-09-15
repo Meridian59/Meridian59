@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Factions is Monster
+
+constants:
+
+   include blakston.khd
+
+classvars:
+   
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+
+   viSpeed = SPEED_SLOW
+   viQuestID = 0
+   viFaction = FACTION_NEUTRAL
+   viHomeroom = RID_FOREST1
+   viMyRow = 15
+   viMyCol = 15
+   viMyAngle = ANGLE_NORTH
+   viMyFR = 32
+   viMyFC = 32
+
+messages:
+
+   InitPermQuest()
+   {
+      if viQuestID<> 0
+      {
+         Post(Send(SYS,@GetLibrary),@CreateQuest,#type=QST_PERM,#quester=self,
+              #reward= [QST_REWARD_SERVICE,viQuestID]);
+      }
+      
+      return;
+   }
+
+   Constructor()
+   {
+      Send(self,@InitPermQuest);
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      Send(Send(SYS,@GetParliament),@LiegeDeleted,#what=self);
+      
+      propagate;
+   }
+
+   GetFaction()
+   {
+      return viFaction;
+   }
+
+   GotoHomeroom()
+   {
+      local room;
+      
+      room = Send(SYS,@FindRoomByNum,#num=viHomeroom);
+      Send(room,@teleport,#what=self);
+      Send(room,@SomethingMoved,#what=self,#new_row=viMyRow,
+           #new_col=viMyCol,#fine_row=viMyFR,#fine_col=viMyFC);
+      Send(room,@SomethingTurned,#what=self,#new_angle=viMyAngle);
+      
+      return;
+   }
+
+   NewHoldObject(what = $)
+   {
+      % Don't want them holding anything, so just delete it.
+      send(what,@Delete);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

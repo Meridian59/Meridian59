@@ -1,0 +1,141 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsH9 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+   QOR_DOOR = 1
+
+resources:
+
+   room_OutdoorsH9 = H9.roo
+   room_name_OutdoorsH9 ="Under the shadow of the Sentinel"
+   OutdoorsH9_music = walk4.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsH9
+
+   viTeleport_row = 34
+   viTeleport_col = 26
+   
+   viTerrain_type = TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_OutdoorsH9
+   prMusic = OutdoorsH9_music
+   piRoom_num = RID_H9
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 80000
+   piGen_percent = 80
+
+   piGen_object_time = 600000
+
+   piInit_count_min = 8
+   piInit_count_max = 12
+
+   piMonster_count_max = 15
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Orc, 40], [&DeathSpider, 60] ];
+	
+      plGenerators = [ [4, 7], [11, 22], [15, 28], [19, 41], [32, 37],
+		      [24, 30], [21, 21], [20, 14], [9, 13], [15, 9],
+		      [30, 13], [30, 19], [36, 18], [40, 28], [46, 13] ];
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      plObject_gen = Cons([ &BlueMushroom, GEN_INF, 3, 45, 24 ],plObject_gen);
+      plObject_gen = Cons([ &RedMushroom, GEN_INF, 2, 20, 12 ],plObject_gen);
+      plObject_gen = Cons([ &RedMushroom, GEN_INF, 2, 8, 13 ],plObject_gen);
+      plObject_gen = Cons([ &RedMushroom, GEN_INF, 2, 7, 5 ],plObject_gen);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {    
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_I9, 67, 3, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_G9, 39, 71, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   OpenQorTemple()
+   {
+      send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+                #height = 290, #speed = 8);
+      plYell_zone = cons (RID_TEMPLE_QOR, plYell_Zone);
+      return;
+   }
+
+   CloseQorTemple()
+   {
+      local i;
+
+      send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+                #height = 350, #speed = 8);
+      for i in plYell_zone
+      {
+	 if i = RID_TEMPLE_QOR
+	 {
+	    plYell_Zone=dellistelem(plYell_zone,i);
+	 }
+      }
+      return;
+   }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+     if new_row=26 and new_col= 12
+        {
+          send(send(SYS,@findroombynum,#num=RID_TEMPLE_QOR),@TempleEntrance,
+                #who=what);
+          return;
+         }
+     propagate;
+   }
+
+   ExitFromQor(who=$)
+   {
+      send(SYS,@UtilGoNearSquare,#what=who,
+        #where=self,#new_row= 22,#new_col =13,#new_angle=ANGLE_NORTH);
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_H9),
+           #new_row=45,#new_col=32,#new_angle=ANGLE_WEST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

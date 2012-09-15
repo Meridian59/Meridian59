@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pillow is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Pillow_icon_rsc = roompilo.bgf
+   Pillow_name_rsc = "goosefeather pillow"
+   Pillow_desc_rsc = "This soft, enveloping pillow looks mighty inviting."
+   
+classvars:
+
+   vrName = Pillow_name_rsc
+   vrIcon = Pillow_icon_rsc
+   vrDesc = Pillow_desc_rsc
+
+properties:
+
+   piColor = 0
+
+messages:
+
+   GetObjectFlags()
+   {
+      return LOOK_NO;
+   }
+
+   SendAnimation()
+   {
+      if piColor <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor);
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

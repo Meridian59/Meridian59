@@ -1,0 +1,102 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Identify is Spell 
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   identify_name_rsc = "identify"
+   identify_icon_rsc = iidentif.bgf
+   identify_desc_rsc = \
+     "Reveals any special properties of an item to the caster.  "
+     "Requires orc teeth to cast."
+
+   identify_cant = "You can't seem to gain a proper focus on %s%s."
+   identify_working = "You concentrate on %s%s and see..."
+
+   identify_sound = sident.wav
+
+classvars:
+
+   vrName = identify_name_rsc
+   vrIcon = identify_icon_rsc
+   vrDesc = identify_desc_rsc
+
+   viSpell_num = SID_IDENTIFY
+   viSchool = SS_SHALILLE
+   viSpell_level = 3
+   viMana = 10
+   viSpellExertion = 15
+   viCast_time = 15000
+   vrSucceed_wav = identify_sound
+   viChance_To_Increase = 15
+
+properties:
+  
+messages:
+
+   ResetReagents()
+   {
+      plReagents = Cons([&OrcTooth,1],plReagents);
+      
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      % Tell client how many targets this spell needs
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      % Check that target is a weapon or armor
+      if NOT (IsClass(oTarget,&Item) AND send(oTarget,@CanIdentify))
+      {
+         if NOT bItemCast
+         {
+            send(who,@MsgSendUser,#message_rsc=identify_cant,
+                 #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   IsTargetInRange(who = $,target = $)
+   {
+      return (who = Send(target, @GetOwner)) OR (send(who,@GetOwner) = send(target,@GetOwner));  
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local oTarget;
+      
+      oTarget = First(lTargets);
+      Send(who,@MsgSendUser,#message_rsc=identify_working, 
+           #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+      Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,69 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ViewPointGlobe is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+ViewPointGlobe_name = "Globe of Seeing"
+ViewPointGlobe_icon = necglobe.bgf
+ViewPointGlobe_desc = "Gazing into this globe will allow you to see out of the globe to which it is magically "
+      "linked.  While your viewpoint is thus magically transferred, you will be unable to cast spells or "
+      "attack.  When you wish to stop gazing into the globe, simply press the Esc key "
+      "and your viewpoint will return to normal."
+
+ViewPointGlobe_not_in_range = "You are not close enough to the globe to see into it."
+ViewPointGlobe_used = "You gaze deep into the globe, and find that you can see through "
+   "into a different location!\n"
+   "[Press Esc when you are ready to return to your normal viewpoint.]"
+
+classvars:
+
+properties:
+
+   vrName = ViewPointGlobe_name
+   vrIcon = ViewPointGlobe_icon
+   vrDesc = ViewPointGlobe_desc
+
+   viObject_flags = ACTIVATE_YES
+   poTargetGlobe = $
+   piRange = 1
+
+messages:
+
+   constructor(target=$)
+   {
+      if (target = $) {DEBUG("no target globe!"); post(self,@Delete); return;}
+      poTargetGlobe = target;
+      propagate;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if abs(send(who,@getrow)-send(self,@getrow)) > piRange
+            and abs(send(who,@getcol)-send(self,@getcol)) > piRange
+      {
+         Send(who,@MsgSendUser,#message_rsc=ViewPointGlobe_not_in_range);          
+         return True;
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=ViewPointGlobe_used);
+      send(who,@SetPlayerView,#what=poTargetGlobe,
+            #iFlags=(REMOTE_VIEW_TURN | REMOTE_VIEW_TILT | REMOTE_VIEW_CONTROL | REMOTE_VIEW_TOP));
+      
+      return True;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

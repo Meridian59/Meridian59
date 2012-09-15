@@ -1,0 +1,65 @@
+# insignia for robe-  shalille
+# Groups:
+# 1 standing
+# 2-4 fighting
+# 5 bow-shooting
+# Hotspots:
+# 1 head
+# 21 right arm
+# 31 left arm
+# 41 legs
+#^Applied to Hotspot: 51
+#*Groups: 21
+#* Unlabeled Group
+#* attack A
+#* attack A
+#* attack B
+#* Unlabeled Group
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+-s 4
+8
+180caaSm.bmp   [172, 93] 
+270ccaSm.bmp   [190, 109] 
+180ccaSm.bmp   [165, 108] 
+180ccbSm.bmp   [177, 106] 
+090ccbSm.bmp   [166, 105] 
+315ckaSm.bmp   [198, 98] 
+270ckaSm.bmp   [186, 99] 
+180ckaSm.bmp   [173, 99] 
+21
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 6 7 8 8 8 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 0 1 1 1 0 0 

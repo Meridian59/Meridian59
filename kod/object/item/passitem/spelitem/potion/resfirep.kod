@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistFirePotion is Potion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ResistFirePotion_name_rsc = "succulent salve"
+   %ResistFirePotion_icon_rsc = potion01.bgf
+   ResistFirePotion_desc_rsc = "This is a glass vial of colored liquid.  "
+                        "It smells crisp, clean and refreshing."
+   ResistFirePotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+                        "A slight whiff of it is enough to turn your stomach."
+
+
+classvars:
+
+   vrLabelName = ResistFirePotion_name_rsc
+   vrBadDesc = ResistFirePotion_bad_desc_rsc
+   vrDesc = ResistFirePotion_desc_rsc
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 60
+
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+   viSpellEffect = SID_RESISTFIRE
+   viPoisonPercent = 20
+   viGoBadDamage = 5
+   viColor = XLAT_TO_SKY
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

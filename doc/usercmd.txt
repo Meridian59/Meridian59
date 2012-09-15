@@ -1,0 +1,247 @@
+User commands
+=============
+
+This protocol is part of the main game mode protocol.  It is sent as
+part of a BP_USERCOMMAND message.
+
+Message format:
+
+BP_USERCOMMAND <rest-of-message>
+
+Messages from client to server
+==========================================================
+
+----------------------------------------------------------
+Rest
+<UC_REST>
+----------------------------------------------------------
+Stand (un-rest)
+<UC_STAND>
+----------------------------------------------------------
+Suicide (destroy character)
+<UC_SUICIDE>
+----------------------------------------------------------
+Toggle user safety flag (disallows player attacking)
+<UC_SAFETY> <state>
+<state> =
+1 byte		1 = safety on, 0 = safety off
+----------------------------------------------------------
+Get guild information
+<UC_REQ_GUILDINFO>
+----------------------------------------------------------
+Invite new guild member
+<UC_INVITE> <object>
+----------------------------------------------------------
+Renounce guild ties
+<UC_RENOUNCE>
+----------------------------------------------------------
+Abdicate guildmaster position to another player
+<UC_ABDICATE> <object>
+----------------------------------------------------------
+Vote for guild member
+<UC_VOTE> <object>
+----------------------------------------------------------
+Set guild member's rank
+<UC_SET_RANK> <object> <rank>
+<rank> = 1 byte
+----------------------------------------------------------
+Create guild
+<UC_GUILD_CREATE> <guild_name> <rank_names> <secret>
+<secret> = 
+1 byte		1 if guild is secret, 0 otherwise
+----------------------------------------------------------
+Disband guild
+<UC_DISBAND>
+----------------------------------------------------------
+Declare guild as ally
+<UC_MAKE_ALLIANCE> <object>
+----------------------------------------------------------
+End alliance with guild
+<UC_END_ALLIANCE> <object>
+----------------------------------------------------------
+Declare guild as enemy
+<UC_MAKE_ENEMY> <object>
+----------------------------------------------------------
+End hostilities with guild
+<UC_END_ENEMY> <object>
+----------------------------------------------------------
+Ask for list of all guilds
+<UC_REQ_GUILD_LIST>
+----------------------------------------------------------
+Try to rent guild hall
+<UC_GUILD_RENT> <object> <password>
+<password> =
+<string>	Password for guild hall
+----------------------------------------------------------
+Abandon guild hall
+<UC_ABANDON_GUILD_HALL>
+----------------------------------------------------------
+Change guild hall password
+<UC_GUILD_PASSWORD> <password>
+----------------------------------------------------------
+Set URL associated with object
+<UC_CHANGE_URL> <object> <string>
+----------------------------------------------------------
+Check bank account balance
+<UC_BALANCE>
+----------------------------------------------------------
+Deposit to bank account
+<UC_DEPOSIT> <amount>
+<amount> =
+4 bytes		number of shillings to deposit
+----------------------------------------------------------
+Withdraw from bank account
+<UC_WITHDRAW>
+<amount> =
+4 bytes		number of shillings to deposit
+----------------------------------------------------------
+Appeal to DMs
+<UC_APPEAL> <string>
+----------------------------------------------------------
+Return character to safety
+<UC_REQ_RESCUE>
+----------------------------------------------------------
+State of minigame (chess, etc.)
+<UC_MINIGAME_STATE> <object> <state>
+<object> =	minigame object
+<state> =	encoded state of game
+<string>
+----------------------------------------------------------
+Reset players of minigame
+<UC_MINIGAME_RESET_PLAYERS> <object>
+<object> =	minigame object
+----------------------------------------------------------
+
+
+
+Messages from server to client
+==========================================================
+
+----------------------------------------------------------
+Guild information
+<UC_GUILDINFO> <guild_name> <password> <commands> <guild_id> <rank_names> <current_vote> <userlist>
+<guild_name> =
+<string>	name of guild
+
+<password> =
+1 bytes		0 if guild has no password, 1 if it does.  If 1:
+<string>	guild password
+
+<commands> = 
+4 bytes		bitvector of allowed guild commands
+
+<guild_id> =
+<object>	object id of guild which player belongs to
+
+<rank_names> =
+<string>        male rank 1 name
+<string>        female rank 1 name
+<string>        male rank 2 name
+<string>        female rank 2 name
+<string>        male rank 3 name
+<string>        female rank 3 name
+<string>        male rank 4 name
+<string>        female rank 4 name
+<string>        male rank 5 name
+<string>        female rank 5 name
+
+<current_vote> =
+<object>	guild member player is currently supporting
+
+<userlist> =
+2 bytes		# of users in guild
+<guild_user>*	
+
+guild_user =
+<object>	member's object id
+<string> 	member's name
+1 byte		member's rank (0 = lowest)
+1 byte          member's gender (1 = male, 2 = female)
+----------------------------------------------------------
+Ask user to create guild
+<UC_GUILD_ASK> <cost1> <cost2>
+
+<cost1> =
+4 bytes		cost of buying non-secret guild
+
+<cost2> =
+4 bytes		cost of buying secret guild
+----------------------------------------------------------
+Information on all guilds in the system
+<UC_GUILD_LIST> <guilds> <allied_guilds> <enemy_guilds> <allies> <enemies>
+
+<guilds> =
+<guild_list>	list of all guilds
+
+<allied guilds> =
+<guild_id_list>	list of guilds that are allies of player's guild
+
+<enemy guilds> =
+<guild_id_list>	list of guilds that are enemies of player's guild
+
+<guild_list> =
+2 bytes		# of guilds
+<guild_info>*
+
+<guild_info> =
+<object>	object id of guild
+<string> 	name of guild
+
+<allies> =      guilds that consider you an ally
+<guild_id_list>
+
+<enemies> =     guilds that consider you an enemy
+<guild_id_list>
+
+<guild_id_list> =
+2 bytes		# of guilds
+<object>*
+----------------------------------------------------------
+List of guild halls available to buy
+<UC_GUILD_HALLS> <guild_hall_list>
+<guild_hall_list> =
+2 bytes		# of guild halls
+<guild_hall>*
+
+<guild_hall> =
+<object id>	id of guild hall
+<resource>	guild hall name
+4 bytes		cost of buying guild
+4 bytes		daily rent of guild
+----------------------------------------------------------
+Display player's description
+<UC_LOOK_PLAYER> <object_desc> <flags> <resource> <printf-param>* <resource> <printf-param>* 
+	<web_string> <age>
+Second resource and printf-param are for player's guild information
+<web_string> =
+<string>	Web page address of player
+<age> =
+4 bytes		player's age
+----------------------------------------------------------
+Leave the game (asks client to send a BP_QUIT)
+<UC_SEND_QUIT>
+----------------------------------------------------------
+Names of spell schools
+<UC_SPELL_SCHOOLS> <num_schools> <school>*
+<num_schools> = 
+1 byte		# of spell schools
+
+<school> =
+<resource>	name of spell school
+----------------------------------------------------------
+Minigame just started (used to send object # to client)
+<UC_MINIGAME_START> <object> <player #>
+<object> =	minigame object
+<player #> =
+1 byte		player number
+----------------------------------------------------------
+Move occurred in minigame (chess, etc.)
+<UC_MINIGAME_MOVE> <object1> <object2> <state>
+<object1> =	minigame object
+<object2> =	player who made move
+<state> =	encoded state of game
+<string>
+----------------------------------------------------------
+Player name in minigame (chess, etc.)
+<UC_MINIGAME_PLAYER> <player #> <string>
+----------------------------------------------------------

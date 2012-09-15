@@ -1,0 +1,106 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildRenounce is GuildCommand
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   guildrenounce_name_rsc = "renounce guild"
+   guildrenounce_icon_rsc = light.bgf
+   guildrenounce_desc_text_rsc = "Use this command to quit your guild.  You never liked them anyway.  Guildmasters must transfer their title before using this command."
+
+   renounce_no_gms = "Guildmasters may not renounce their ties before abdicating their titles."
+   renounce_ties_renouncer = "~BYou renounce your ties to %s%q."
+   renounce_ties_others = "~B%s%s renounces all ties to %s%q!"
+
+   guildrenounce_necro_nak = "~BYou have sworn a blood oath to The Order of the Necromancers.  "
+      "Death is your only way out."
+
+
+classvars:
+
+   vrName = guildrenounce_name_rsc
+   vrIcon = guildrenounce_icon_rsc
+   vrDesc = guildrenounce_desc_text_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_RENOUNCE
+   viRank_needed = RANK_APPRENTICE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   ResetCommand(who=$, rank = 0)
+   "Guildmasters DO NOT have access to this command.  All other members do."
+   {
+      if rank = RANK_MASTER
+        {
+           send(who,@removeguildcommand,#command_num=viGuildCommand_num);
+        }
+      else
+        {
+           send(who,@addguildcommand,#command_num=viGuildCOmmand_num);
+        }
+      return;
+   }
+
+   DoCommand(who=$)
+   "Kick self out of guild."
+   {
+      local oGuild, lMembers, i;
+
+     
+      oGuild = send(who, @getguild);
+
+      if oGuild = $
+        {
+           debug("this guy belongs to no guild!");
+           return FALSE;
+        }
+      if send(oGuild,@getguildmaster) = who
+        {
+           send(who,@msgsenduser,#message_rsc=renounce_no_GMS);
+        }
+      if isClass(oGuild,&NecromancerGuild) {
+         Send(who,@MsgSendUser,#message_rsc=guildrenounce_necro_nak);
+         return FALSE;
+      }
+
+      send(oGuild,@removefromguild,#who=who); 
+      send(who,@msgsenduser,#message_rsc=renounce_ties_renouncer,
+           #parm1=send(oGuild,@getdef),#parm3=send(oGuild,@getName));
+
+      lMembers = send(oGuild,@getmemberlist);
+
+      for i in lMembers
+         {
+             post(first(i),@msgsenduser,#message_rsc=renounce_ties_others,
+                #parm1=send(who,@getdef),
+				#parm2=send(who,@getname),#parm3=send(oguild,@getdef),
+                #parm4=send(oguild,@getname));
+         }
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

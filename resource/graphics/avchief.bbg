@@ -1,0 +1,140 @@
+# Avar chieftain
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-11 Attack with claw
+#        12-16 Attack with bow
+#^Applied to Hotspot: 0
+#*Groups: 16
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+96
+avc000sa.bmp   [0, -4] 
+avc315sa.bmp   [0, -9] 
+avc270sa.bmp   [0, -8] 
+avc180sa.bmp   [0, -3] 
+avc090sa.bmp   [0, -4] 
+avc045sa.bmp   [0, -1] 
+avc000wa.bmp   [0, -1] 
+avc315wa.bmp   [0, -5] 
+avc270wa.bmp   [0, -3] 
+avc180wa.bmp   [0, -6] 
+avc090wa.bmp   [0, -2] 
+avc045wa.bmp   [0, -1] 
+avc000wb.bmp   [0, -1] 
+avc315wb.bmp   [0, 0] 
+avc270wb.bmp   [0, -5] 
+avc180wb.bmp   [0, -7] 
+avc090wb.bmp   [0, -3] 
+avc045wb.bmp   [0, -5] 
+avc000wc.bmp   [0, 2] 
+avc315wc.bmp   [0, 1] 
+avc270wc.bmp   [0, -4] 
+avc180wc.bmp   [0, -3] 
+avc090wc.bmp   [0, -3] 
+avc045wc.bmp   [0, -4] 
+avc000wd.bmp   [0, -3] 
+avc315wd.bmp   [0, -5] 
+avc270wd.bmp   [0, -2] 
+avc180wd.bmp   [0, -5] 
+avc090wd.bmp   [0, -10] 
+avc045wd.bmp   [0, -3] 
+avc000we.bmp   [0, 1] 
+avc315we.bmp   [0, -4] 
+avc270we.bmp   [0, -6] 
+avc180we.bmp   [0, -2] 
+avc090we.bmp   [0, -1] 
+avc045we.bmp   [0, 2] 
+avc000fa.bmp   [0, -9] 
+avc315fa.bmp   [0, -9] 
+avc270fa.bmp   [0, -8] 
+avc180fa.bmp   [0, -12] 
+avc090fa.bmp   [0, -5] 
+avc045fa.bmp   [0, -5] 
+avc000fb.bmp   [0, -7] 
+avc315fb.bmp   [0, -9] 
+avc270fb.bmp   [0, -7] 
+avc180fb.bmp   [0, -11] 
+avc090fb.bmp   [0, -5] 
+avc045fb.bmp   [0, -5] 
+avc000fc.bmp   [0, -7] 
+avc315fc.bmp   [0, -7] 
+avc270fc.bmp   [0, -7] 
+avc180fc.bmp   [0, -11] 
+avc090fc.bmp   [0, -5] 
+avc045fc.bmp   [0, -5] 
+avc000fd.bmp   [0, -7] 
+avc315fd.bmp   [0, -7] 
+avc270fd.bmp   [0, -7] 
+avc180fd.bmp   [0, -11] 
+avc090fd.bmp   [0, -5] 
+avc045fd.bmp   [0, -3] 
+avc000fe.bmp   [0, -7] 
+avc315fe.bmp   [0, -9] 
+avc270fe.bmp   [0, -7] 
+avc180fe.bmp   [0, -11] 
+avc090fe.bmp   [0, -5] 
+avc045fe.bmp   [0, -5] 
+avc000ra.bmp   [0, -9] 
+avc315ra.bmp   [0, -9] 
+avc270ra.bmp   [0, -7] 
+avc180ra.bmp   [0, -11] 
+avc090ra.bmp   [0, -5] 
+avc045ra.bmp   [0, -5] 
+avc000rb.bmp   [0, -8] 
+avc315rb.bmp   [0, -9] 
+avc270rb.bmp   [0, -8] 
+avc180rb.bmp   [0, -12] 
+avc090rb.bmp   [0, -5] 
+avc045rb.bmp   [0, -5] 
+avc000rc.bmp   [0, -7] 
+avc315rc.bmp   [0, -9] 
+avc270rc.bmp   [0, -7] 
+avc180rc.bmp   [0, -11] 
+avc090rc.bmp   [0, -5] 
+avc045rc.bmp   [0, -5] 
+avc000rd.bmp   [0, -8] 
+avc315rd.bmp   [0, -9] 
+avc270rd.bmp   [0, -8] 
+avc180rd.bmp   [0, -12] 
+avc090rd.bmp   [0, -5] 
+avc045rd.bmp   [0, -5] 
+avc000re.bmp   [0, -6] 
+avc315re.bmp   [0, -9] 
+avc270re.bmp   [0, -7] 
+avc180re.bmp   [0, -11] 
+avc090re.bmp   [0, -5] 
+avc045re.bmp   [0, -5] 
+16
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 
+ 8   79 80 81 82 82 82 83 84 
+ 8   85 86 87 88 88 88 89 90 
+ 8   91 92 93 94 94 94 95 96 

@@ -1,0 +1,168 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarlBar1 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_barlbar1 = barlbar1.roo
+   room_name_barlbar1 = "The Bhrama & Falcon"
+
+   barlbar1_music = bar2.mid
+
+   bar_leave_w1 = "~kMeidei yells at you, \"Thou dost not have my permission to use those stairs!\""
+   bar_leave_w2 = "~kMeidei tells you, \"Pray thee, good fellow, do not ascend those stairs.\""
+   bar_leave_w3 = "~kMeidei lectures you on how it is impolite to enter his private rooms without first getting permission."
+   
+
+classvars:
+
+   vrName = room_name_barlbar1
+
+   
+   viTeleport_row = 4
+   viTeleport_col = 7
+
+   vipermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_HOMETOWN | ROOM_SAFELOGOFF
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_barlbar1
+   piRoom_num = RID_BAR_BAR
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+
+   prMusic = barlbar1_music
+
+messages:
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      % some mugs
+
+      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1, 14, 10,  5, 0 ],plObject_gen);
+      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1, 10, 8, 32, 54 ],plObject_gen);
+      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  6, 8, 20, 52 ],plObject_gen);
+      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  5, 10, 48, 48 ],plObject_gen);      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1,  8, 14, 32, 34 ],plObject_gen);
+      plObject_gen = Cons([ &WineGoblet, GEN_ONE, 1, 13, 14, 0, 32 ],plObject_gen);
+
+      propagate;
+   }
+
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {      
+      local irandnum;
+      if (dir = LEAVE_WEST)
+      {
+	 if (IsClass(what,&Player))
+         {
+	    irandnum = random(0,2);
+	    if irandnum = 0            
+	       {send(what,@MsgSendUser,#message_rsc = bar_leave_w2);}
+	    if irandnum = 1  
+	       {send(what,@MsgSendUser,#message_rsc = bar_leave_w3);}
+	    if irandnum = 2            
+	       {send(what,@MsgSendUser,#message_rsc = bar_leave_w1);}
+	 }
+      }
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 22, 11, RID_BAR_NORTH, 29, 60, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&BarloqueBartender),
+           #new_row=10,#new_col=13,#new_angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=3,#new_col=3,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=3,#new_col=6,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=3,#new_col=17,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=3,#new_col=20,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=6,#new_col=3,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=6,#new_col=20,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=9,#new_col=18,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=9,#new_col=5,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=12,#new_col=20,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=15,#new_col=5,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=15,#new_col=18,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=21,#new_col=3,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=21,#new_col=6,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=21,#new_col=17,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=21,#new_col=20,#fine_col=0,#fine_row=0);
+
+
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=5,#new_col=10,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=5,#new_col=13,#fine_col=0,#fine_row=0);
+
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=7,#new_col=15);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=9,#new_col=15);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=11,#new_col=15);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=13,#new_col=15);
+
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=7,#new_col=7);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=9,#new_col=7);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=11,#new_col=7);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=13,#new_col=7);
+
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=15,#new_col=10,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=15,#new_col=13,#fine_col=0,#fine_row=0);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsE6 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsE6 = E6.roo
+   room_name_OutdoorsE6 ="Deep Forest of Farol"
+   OutdoorsE6_music = walk5.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsE6
+
+   viTeleport_row = 7
+   viTeleport_col = 59
+
+   viTerrain_type = TERRAIN_FOREST
+
+   viFlag_row = 23
+   viFlag_col = 53
+
+properties:
+
+   prRoom = room_OutdoorsE6
+   prMusic = OutdoorsE6_music
+   piRoom_num = RID_E6
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 45000
+   piGen_percent = 80
+
+   piInit_count_min = 5
+   piInit_count_max = 10
+
+   piMonster_count_max = 16
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Spider, 55], [&Centipede, 30], [&Ent, 15] ];
+
+      plGenerators = [ [7, 59], [10, 46], [21, 48], [29, 52], [34, 59],
+		      [13, 34], [18, 39], [36, 41], [39, 42], [47, 42],
+		      [15, 29], [20, 27], [21, 20], [18, 8], [21, 7],
+		      [31, 27], [32, 6], [39, 22], [47, 28], [44, 36] ];
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 6, 38, 5 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 4, 10, 60 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 4, 31, 20 ],plObject_gen);
+      plObject_gen = Cons([ &ElderBerry, GEN_INF, 3, 51, 43 ],plObject_gen);
+      plObject_gen = Cons([ &ElderBerry, GEN_INF, 3, 37, 61 ],plObject_gen);
+      plObject_gen = Cons([ &BlueMushroom, GEN_INF, 2, 46, 37 ],plObject_gen);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_D5, 47, 71, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_E7, 2, 21, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_E5, 8, 2, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

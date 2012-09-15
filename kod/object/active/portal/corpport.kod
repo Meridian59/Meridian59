@@ -1,0 +1,108 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorpsePortal is Portal
+
+constants:
+
+   include blakston.khd
+
+   CORPSEPORTAL_RANGE = 3
+
+resources:
+
+   corpseportal_name_rsc = "rip in space"
+   corpseportal_icon_rsc = teleport.bgf
+   corpseportal_desc_rsc = \
+      "This rip in space leads back to someone's body.  The rip will only "
+      "work for the former inhabitant of that body."
+
+classvars:
+
+   vrName = corpseportal_name_rsc
+
+   viObject_flags = MOVEON_TELEPORTER | DRAWFX_TRANSLUCENT_75
+
+   viAnimationSpeed = 400
+
+properties:
+
+   vrDesc = corpseportal_desc_rsc
+   vrIcon = corpseportal_icon_rsc
+
+   ptExpire = $
+   poCorpse = $
+
+messages:
+
+   Constructor(Corpse = $, SpellPower = 20)
+   {
+      local duration;
+
+      if Corpse = $
+      {
+         Post(Self,@Delete);
+      }
+      else
+      {
+         poCorpse = Corpse;
+      }
+
+      duration = (10 + (SpellPower / 2)) * 1000;
+      
+      ptExpire = CreateTimer(self,@Expire,duration);
+  
+      propagate;
+   }
+
+   Expire()
+   {
+      ptExpire = $;
+
+      Send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptExpire <> $
+      {
+         DeleteTimer(ptExpire);
+         ptExpire = $;
+      }
+
+      propagate;
+   }
+
+   TeleportSomething(what = $)
+   {
+      if (send(what,@GetName) = send(poCorpse,@GetCorpseName))
+      {
+         send(poOwner,@ZapToCorpse,#who=what);
+         send(self,@Delete);
+      }
+
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      if what <> send(SYS,@FindRoomByNum,#num=RID_UNDERWORLD)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

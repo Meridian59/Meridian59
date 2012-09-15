@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Castle1B is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_castle1b = "Upstairs in Castle Victoria"
+   room_castle1b = castle1b.roo
+   castle1b_music = castle.mid
+
+classvars:
+
+   vrName = room_name_castle1b
+
+   viTeleport_row = 8
+   viTeleport_col = 13
+
+   viTerrain_type = TERRAIN_CASTLE
+
+   viPermanent_Flags = ROOM_GUILD_PK_ONLY
+
+properties:
+
+   prMusic = castle1b_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_3 
+
+
+   prRoom = room_castle1b
+   piRoom_num = RID_CASTLE1B
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Zombie,40], [&BatteredSkeleton, 60] ];
+
+      plGenerators = [ [6, 8], [6, 16], [6, 22],
+                       [6, 29], [6, 36], [6, 42],
+                       [10, 31], [10, 38], [10, 42],
+                       [10, 20], [10, 14], [10, 8] ];
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_VICTORIA),
+           #new_row=13,#new_col=46,#fine_row=0,#fine_col=0,
+           #new_angle=ANGLE_WEST);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 8, 24, RID_CASTLE1, 1, 18, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 24, RID_CASTLE1, 1, 18, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 27, RID_CASTLE1, 1, 18, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 27, RID_CASTLE1, 1, 18, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorGrocer is CorNothRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   room_corgroc = corgroc.roo
+   room_name_corgroc = "Solomon's Edibles"
+
+   corgroc_music = smithy.mid
+
+classvars:
+
+   vrName = room_name_corgroc
+
+   viTeleport_row = 5
+   viTeleport_col = 5
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+   prRoom = room_corgroc
+   piRoom_num = RID_COR_GROCER
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = corgroc_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 10, 7, RID_CORNOTH, 23, 20, ROTATE_180 ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&CornothGrocer),
+           #new_row=3,#new_col=5,#new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=9);
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

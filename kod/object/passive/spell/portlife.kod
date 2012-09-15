@@ -1,0 +1,133 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PortalOfLife is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   portaloflife_cast_rsc = "You feel more confident that %s%s will find %s way back."
+   portaloflife_name_rsc = "portal of life"
+   portaloflife_icon_rsc = irasdead.bgf
+   portaloflife_desc_rsc = \
+      "Creates a portal for your fallen comrades to enter and return from the "
+      "underworld back to their physical body.  If formed in time the portal can lessen the shock of death.  "
+      "Requires emeralds and polished seraphym to cast."
+
+   portaloflife_spell_intro = \
+      "Shal'ille Level 6: Creates a portal for your fallen comrades to enter "
+      "and return from the underworld back to their physical body." 
+
+   portaloflife_sound = sraised.wav
+
+classvars:
+
+   vrName = portaloflife_name_rsc
+   vrIcon = portaloflife_icon_rsc
+   vrDesc = portaloflife_desc_rsc
+
+   vrSpell_intro = portaloflife_spell_intro
+
+   viSpell_num = SID_PORTAL_OF_LIFE
+   viSchool = SS_SHALILLE
+   viSpell_level = 6
+   viMana = 30
+   viCast_time = 10000
+   viChance_To_Increase = 25
+
+   vrSucceed_wav = portaloflife_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Emerald,2],plReagents);
+      plReagents = Cons([&PolishedSeraphym,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local target;
+      target = first(ltargets);
+      if not IsClass(target, &DeadBody)
+         or (send(target,@GetDearlyDeparted) = $)
+         or Send(target,@GetResurrected)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=Send(self,@GetName),#parm2=Send(target,@GetDef),
+              #parm3=Send(target,@GetName));
+              
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oPortal, oRoom, oDearlyDeparted, iDeathCost, oCorpse;
+
+      oCorpse = first(lTargets);
+      oPortal = Create(&CorpsePortal,#Corpse=oCorpse,#SpellPower=iSpellPower);
+      oRoom = send(SYS,@Findroombynum,#num=RID_UNDERWORLD);
+      Send(oRoom,@NewHold,#what=oPortal,#New_Row=16,#New_Col=16);
+
+      Send(oCorpse,@SetResurrected);
+      oDearlyDeparted = send(oCorpse,@GetDearlyDeparted);
+      iDeathCost = send(self,@GetDeathCost,#DearlyDeparted=oDearlyDeparted,
+                        #TimeOfDeath=Send(oCorpse,@GetTimeOfDeath),#iSpellpower=iSpellpower);
+      send(oDearlyDeparted,@SetDeathCost,#DeathCost=iDeathCost);
+
+      propagate;
+   }
+
+   GetDeathCost(DearlyDeparted = $,TimeOfDeath=$, iSpellpower = $)
+   {
+      local iDeathCost,iTimePenalty;
+
+      iDeathCost = send(DearlyDeparted,@GetDeathCost); %%Gets their starting death cost.
+
+      iTimePenalty = GetTime();
+
+      %% If the corpse is still around then this must be between 0 and 600
+      iTimePenalty = iTimePenalty - TimeofDeath;  
+
+      if iTimePenalty < 60
+      {
+         iTimePenalty = -(60 - iTimePenalty); %1 - 59 spellpower bonus.
+      }
+      else
+      {
+         iTimePenalty = iTimePenalty/10 - 6;  %0 - 54 spellpower penalty.
+      }
+
+      iDeathCost = iDeathCost - (iSpellpower - iTimePenalty);
+      iDeathCost = bound(iDeathCost,5,80);
+
+      return iDeathCost;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

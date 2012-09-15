@@ -1,0 +1,108 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CASTLE1 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_castle1 = castle1.roo
+   room_name_castle1 = "Castle Victoria"
+
+   castle1_music = castle2.mid
+
+classvars:
+
+   vrName = room_name_castle1
+
+   viTeleport_row = 13
+   viTeleport_col = 18
+
+   viTerrain_type = TERRAIN_CASTLE
+
+   viPermanent_Flags = ROOM_GUILD_PK_ONLY
+
+properties:
+
+   prMusic = castle1_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_3 
+
+   prRoom = room_castle1
+   piRoom_num = RID_CASTLE1
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Skeleton, 40], [&Zombie,20] ];
+
+      plGenerators = [ [13, 3], [14, 7], [12, 12],
+                       [13, 8], [14, 24], [12, 27] ,
+                       [13, 30], [12, 37], [19, 40] ,
+                       [15, 44] , [ 6,3 ], [ 7,32 ] ] ;
+
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      plObject_gen = Cons([&PurpleMushroom, GEN_INF, 4,  4, 30  ], plObject_gen);
+      plObject_gen = Cons([&PurpleMushroom, GEN_INF, 4, 7, 33 ], plObject_gen);
+
+      propagate;
+   }
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 6, 17, RID_THRONE1, 22, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 18, RID_THRONE1, 22, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 19, RID_THRONE1, 22, 6, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 1, 17, RID_CASTLE1B, 8, 23, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 17, RID_CASTLE1B, 8, 23, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 19, RID_CASTLE1B, 8, 28, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 19, RID_CASTLE1B, 8, 28, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 16, 16, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+      plExits = Cons([ 16, 17, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+      plExits = Cons([ 16, 18, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+      plExits = Cons([ 16, 19, RID_CASTLE1C, 4, 43, ROTATE_90 ],plExits);
+
+      plExits = Cons([ 9, 4, RID_CASTLE1,  7, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 4, RID_CASTLE1, 10, 4, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 9, 10, RID_CASTLE1, 7, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 10, RID_CASTLE1, 10, 10, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 9, 26, RID_CASTLE1, 7, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 26, RID_CASTLE1, 10, 26, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 9, 32, RID_CASTLE1, 7, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 32, RID_CASTLE1, 10, 32, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 4, 33, RID_DUNGEON, 24, 2, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

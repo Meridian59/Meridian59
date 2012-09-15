@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Moon is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   moon_icon_rsc = moon.bgf
+   moon_name_rsc = "moon"
+   moon_desc_rsc = \
+      "The moon looms in the sky, a majestic sphere of grey rock. "
+	  "Some fables say that the moon was once a lot larger, but they're "
+	  "probably just as true as the fables of frogmen and blue dragons."
+
+classvars:
+
+   vrName = moon_name_rsc
+   vrIcon = moon_icon_rsc
+   vrDesc = moon_desc_rsc
+
+properties:
+
+   piAngle = 0
+   piHeight = 0
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@NewGameHour);
+      propagate;
+   }
+
+   NewGameHour()
+   {
+      local i,iHour,iDay;
+
+      iHour = Send(SYS,@GetHour);
+      iDay = Send(SYS,@GetDay);
+
+      % east = 0, west = 2048
+      piAngle = ((iHour+5) mod 24)*130 + 200*(iDay mod 20);
+      if iHour > 12
+      {
+	 iHour = iHour - 24;
+      }
+      piHeight = 400 - Abs(300-iDay) - 6*(iHour - 1)*(iHour - 1);
+      if piHeight < -200
+      {
+	 piHeight = -200;
+      }
+      for i in Send(SYS,@GetUsersLoggedOn)
+      {
+	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
+      }
+
+      return;
+   }
+
+   AddBackgroundObject(who = $)
+   "Called by user upon logon"
+   {
+      Send(who,@ToCliAddBackgroundOverlay,#what=self);
+      return;
+   }
+
+      
+   GetBackgroundOverlayAngle()
+   {
+      return piAngle;
+   }
+   
+   GetBackgroundOverlayHeight()
+   {
+      return piHeight;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

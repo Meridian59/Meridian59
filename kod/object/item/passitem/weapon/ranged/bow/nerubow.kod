@@ -1,0 +1,88 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NeruditeBow is Bow
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   NeruditeBow_name_rsc = "nerudite bow"
+   NeruditeBow_desc_rsc = \
+      "They DO exist!  This bow was forged from the notoriously brittle nerudite "
+      "instead of carved from wood.  The bow doesn't look very flexible."
+
+   NeruditeBow_shatters = "The nerudite bow shatters into a flurry of splinters!"
+
+classvars:
+
+   % This is more of a joke item than anything.  It's pretty crappy, but it's worth
+   %  a bit of money.  An occasional reward from Moxal.
+
+   vrName = NeruditeBow_name_rsc
+   vrDesc = NeruditeBow_desc_rsc
+
+   vrWeaponBroke = NeruditeBow_shatters
+
+   viWeaponDamage = 2
+   viRange = 20
+   viHit_roll_modifier = 0
+   
+   viValue_average = 3500
+   viBulk = 100
+   viWeight = 100
+
+   % This is about 50% normal durability.
+   viHits_init_min = 100
+   viHits_init_max = 150
+
+   viSpell_modifier = 0
+
+   % What's the basic color of the bow?
+   viBaseXLAT = XLAT_TO_GREEN
+
+properties:
+
+messages:
+
+   DoShatter()
+   {
+      send(self,@WeaponBroke);
+
+      propagate;
+   }
+
+   ShatterToShards()
+   {
+      if poOwner <> $ AND isClass(poOwner,&User)
+      {
+         if send(poOwner,@AssessDamage,#what=self,#damage=random(10,25),
+                 #report=FALSE,#atype=ATCK_WEAP_NERUDITE) = $
+         {
+            Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
+            Send(poOwner,@Killed,#what=self);
+         }
+      }
+
+      return;
+   }
+
+   WeaponBroke()
+   {
+      send(self,@ShatterToShards);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

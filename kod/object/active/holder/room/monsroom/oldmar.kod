@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OldMarion is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OldMarion = "Historic Marion"
+   room_OldMarion = omar.roo
+   OldMarion_music = city02.mid
+
+classvars:
+
+   vrName = room_name_OldMarion
+
+   viTeleport_row = 56
+   viTeleport_col = 39
+
+   viTerrain_type = TERRAIN_CITY
+
+properties:
+
+   prRoom = room_OldMarion
+   piRoom_num = RID_OLD_MARION
+
+   prMusic = OldMarion_music
+
+   piBaseLight = LIGHT_NICE
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = $;
+
+      plGenerators = $;
+
+      propagate;
+   }
+
+   GetRegion()
+   {
+      return RID_HISTORIC;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

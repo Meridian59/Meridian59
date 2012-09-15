@@ -1,0 +1,85 @@
+; profane.txt : Base version of profanity filter data.
+; To convert to profane.dat, just rename it, then run Meridian once to encrypt.
+; This plainly human-readable form with comments is not sent to customers.
+;
+;;;;;;;;;;
+;
+; To add a profane term, say 'heck', add a line below:
+;    +heck
+;
+; To remove a profane term, say 'darn', add a line below:
+;    -darn
+;
+; Only letters are valid in profane terms.  A huge number of non-letter varieties
+; and tactics are also found and filtered automatically for any listed term, so
+; don't worry about spaces or punctuation in the terms listed here.
+;
+; All terms are found even if they are part of larger words, so take care not to add
+; default terms that aren't truly vile.  For example, 'ass' would not be a good term,
+; because (1) it's not that bad alone (it just means donkey), and (2) 'ass' appears
+; in normal words like 'assimilate' and 'compass'.
+;
+; (If we didn't make the filter find portions of words, we wouldn't find 'heckhead'
+; if 'heck' were a listed profane term.  That would be too easy to circumvent.)
+;
+;;;;;;;;;;
+;;
+;; IF YOU ARE EASILY DISTURBED BY PROFANITY, DO NOT READ BEYOND THIS POINT!
+;;
+;; IF YOU ARE EASILY DISTURBED BY PROFANITY, DO NOT READ BEYOND THIS POINT!
+;;
+;; IF YOU ARE EASILY DISTURBED BY PROFANITY, DO NOT READ BEYOND THIS POINT!
+;;
+;;;;;;;;;;
+;
+;
+;
+;
+;
+;
+;
+;
+;
+
+; The favorites.
+
++fuck
++shit
++cunt
++asshole
++bitch
+
+; Some other fine beauties.
+
++dildo
++penis
++vagina
++pussy
++whore
++slut
++jerkoff
++jackoff
++faggot
+
+; Some less obvious ones.
+
++phuck
++phuk
++fuk
++kcuf
++cocksuck
++asswip
++goddam
+
+; Terms that should not be added as The 3DO Company Official Default terms.
+; See reasoning above.
+
+-ass
+-dick
+-jerk
+-cock
+-crap
+
+; Some Easter Eggs.
+
++ultimaonline

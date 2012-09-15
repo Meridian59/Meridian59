@@ -1,0 +1,139 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CurseWeapon is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   curseweapon_cast_rsc = "%s%s gains an eerie, red glow."
+   
+   curseweapon_fails = "%s%s is strangely unaffected by the spell."
+   
+   
+   curseweapon_name_rsc = "curse weapon"
+   curseweapon_icon_rsc = iunholyw.bgf
+   curseweapon_desc_rsc = \
+      "Makes the target weapon nearly ineffective for a time, "
+      "and curses the user to wield it until he or she gains "
+      "divine aid.  "
+      "Requires the blood of a magic-casting beast and teeth of a fierce fighting monster."
+
+   curseweapon_sound = qcurweap.wav
+   
+classvars:
+
+   vrName = curseweapon_name_rsc
+   vrIcon = curseweapon_icon_rsc
+   vrDesc = curseweapon_desc_rsc
+
+   viSpell_num = SID_CURSE_WEAPON
+   viSchool = SS_QOR
+
+   viSpell_level =4
+   viMana = 25
+   viSpellExertion = 40
+   viCast_time = 20000
+   vrSucceed_wav = CurseWeapon_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;      
+      plReagents = Cons([&ShamanBlood,2],plReagents);
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oWeapon, oTarget;
+   
+      oTarget = First(lTargets);
+
+      % Check that target is enchantable
+      if NOT isClass(oTarget,&weapon) OR NOT send(oTarget,@CanEnchant,#oSpell=self)
+      {
+         Send(who, @MsgSendUser,#message_rsc=curseweapon_fails,
+              #parm1=send(oTarget,@getcapdef),#parm2=send(oTarget,@getname));
+            
+         return FALSE;
+      }
+
+      propagate;   % Check other things higher up
+   }
+   
+   IsTargetInRange(who = $,target = $)
+   {
+      if who = Send(target, @GetOwner)
+         OR send(who,@getOwner) = send(target,@getowner)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oItem, oItemAtt;
+
+      oItem = first(lTargets);
+
+      if send(oItem,@HasAttribute,#ItemAtt = WA_CURSED)
+      {
+         Send(who, @MsgSendUser, #message_rsc=spell_resists,
+               #parm1=send(oItem,@getCapdef),#parm2=send(oItem,@getname));
+               
+         return;
+      }
+      
+      if NOT Send(oItem,@CanEnchant,#oSpell = self)
+      {
+         Send(who, @MsgSendUser, #message_rsc=spell_resists,
+              #parm1=send(oItem,@getCapdef),#parm2=send(oItem,@getname));
+              
+         return;
+      }
+      
+      oItemAtt = send(SYS,@finditemattbynum,#num=WA_CURSED);
+
+      send(oItemAtt,@AddToItem,#oItem=oItem,#iPower=random(iSpellPower/20,iSpellPower/10),
+           #timer_duration = send(self,@GetDuration,#iSpellPower=iSpellPower));
+      Send(who, @MsgSendUser, #message_rsc=curseweapon_cast_rsc,
+           #parm1=Send(oItem,@GetCapdef),#parm2=send(oItem,@getName));
+
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+      %% duration = 1 to 25 hours, plus a smattering of minutes.
+      iDuration = bound((iSpellPower+1)/4,1,25)*3600000;
+      iDuration = iDuration + random(1,3600000);    
+      return iDuration;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

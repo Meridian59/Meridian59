@@ -1,0 +1,27 @@
+#  Lt. brown male - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000bab.bmp   [-15, -10] 
+Pe045bab.bmp   [-17, -10] 
+Pe090bab.bmp   [-11, -11] 
+Pe270bab.bmp   [-4, -9] 
+Pe315bab.bmp   [-5, -14] 
+Pe000bbb.bmp   [-15, -10] 
+Pe045bbb.bmp   [-17, -10] 
+Pe315bbb.bmp   [-5, -14] 
+Pe000bcb.bmp   [-15, -10] 
+Pe045bcb.bmp   [-17, -10] 
+Pe315bcb.bmp   [-5, -14] 
+Pe000bdb.bmp   [-15, -10] 
+Pe045bdb.bmp   [-17, -10] 
+Pe315bdb.bmp   [-5, -14] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

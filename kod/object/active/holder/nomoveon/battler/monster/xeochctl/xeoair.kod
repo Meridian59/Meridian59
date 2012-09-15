@@ -1,0 +1,102 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+XeoAir is Xeochicatl
+
+constants:
+
+   include blakston.khd
+
+   ANIM_CAST = 2     %% cast spell animation.             
+
+resources:
+
+   XeoAir_name_rsc = "ve'xeochicatl"
+   XeoAir_koc_name_rsc = "ve'xeo'chicatl"
+   XeoAir_icon_rsc = Xeo.bgf
+   XeoAir_desc_rsc = \
+      "Before you is a ve'xeochicatl, a fearsome monster given life by the chaotic "
+      "magic of the Meridian.  The ve'xeochicatl is the embodiment of destruction, "
+      "a violent monster that seems uncontrollable.  These monsters feed off of "
+      "the magic of the lands which makes them very powerful.  Rumors abound "
+      "about the origin of these monsters, but you have little time to contemplate "
+      "these rumors in the presence of such destructive power!"
+
+   XeoAir_sound_aware = xeo4awr.wav
+
+ classvars:
+
+   vrName = XeoAir_name_rsc
+   vrKocName = XeoAir_koc_name_rsc
+   
+   viAttack_types = ATCK_WEAP_MAGIC
+   viLevel = 150
+   viDifficulty = 7
+   viSpeed = SPEED_VERY_FAST
+   vrSound_aware = XeoAir_sound_aware
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piMana = 30
+
+   % What do we drop on death?
+   pcTreasureItem = &SkyHeartStone
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [-20, ATCK_WEAP_NERUDITE ],
+                        [-10, ATCK_WEAP_MAGIC ],
+                        [110, -ATCK_SPELL_SHOCK ],
+                        [100, -ATCK_SPELL_QUAKE ]
+                      ];
+                        
+      piColor_Translation = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKY);
+
+      propagate;
+   }
+
+   ChooseSpell()
+   {
+      local iRandom;
+
+      iRandom = random(1,100);
+
+      if iRandom < 60
+      {
+         return [SID_LIGHTNING, 3];
+      }
+      else
+      {
+         if iRandom < 70
+         {
+            return [SID_WINDS, 5];
+         }
+         else
+         {
+            if (iRandom < 80) and (Send(self,@CanCastWallSpell))
+            {
+               return [SID_LIGHTNINGWALL, 10];
+            }
+            else
+            {
+               return [SID_FLASH, 1];
+            }
+         }
+      }
+
+      return $;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

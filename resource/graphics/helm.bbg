@@ -1,0 +1,21 @@
+# Helm - worn
+# groups
+# 1 worn
+# 2 inventory
+#^Applied to Hotspot: 13
+-s 14
+9
+helmB000.bmp   [-21, -12] 
+helmB315.bmp   [-24, -10] 
+helmB270.bmp   [-25, -11] 
+helmB180.bmp   [-21, -11] 
+helmB090.bmp   [-26, -14] 
+helmB045.bmp   [-24, -13] 
+helmBdsp.bmp   [0, 0] 
+helmBdrp.bmp   [0, 0] 
+helmBbro.bmp   [0, 0]
+4
+ 8   1 2 3 4 4 4 5 6 
+ 1   7 
+ 1   8 
+ 1   9

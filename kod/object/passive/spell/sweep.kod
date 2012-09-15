@@ -1,0 +1,259 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sweep is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Sweep_name_rsc = "sweep"
+   Sweep_icon_rsc = isweep.bgf
+   Sweep_desc_rsc = \
+      "The wild winds of Faren sweep through the area gathering loose items for you.  "
+      "Requires mushrooms to cast."
+
+   Sweep_room_cast = "%s%s magically sweeps some of the items in the area into %s hands."
+
+   Sweep_Something = "You straighten things up a bit."
+   Sweep_Nothing = "The ground doesn't seem any cleaner."
+  
+   Sweep_Pissed_rant = "~kRan er\'Hoth screams, \"~r%s%s, you groveling gutter slug, I was USING that.~k\""
+   Sweep_Grateful_rant = "~kRan er\'Hoth grovels and moans, \"Oh, thank you o' mighty %s%s, thank you, thank you.  I was so afraid, so scared until you swept it away.\""
+   Sweep_Freaked_rant = "~kRan er\'Hoth screams, \"ACK! ERK! URK! ORK! Where did it go?  What did you do to it, %s%s? Please don't do it to ME!\""
+
+   Sweep_no_reward = "Hey, that was nice of you . . . cleaning up my shop for free."
+
+   Sweep_spell_intro_rsc = "Faren Lv. 1: Summons the winds of Faren to remove all loose items from the area."
+   Sweep_sound = faren.wav
+   
+classvars:
+
+   vrName = Sweep_name_rsc
+   vrIcon = Sweep_icon_rsc
+   vrDesc = Sweep_desc_rsc
+   vrSucceed_wav = Sweep_sound
+
+   vrSpell_intro = Sweep_spell_intro_rsc
+
+   viSpell_num = SID_SWEEP
+   viSchool = SS_FAREN
+   viSpell_level = 1
+   viMana = 8
+   viSpellExertion = 8
+   viCast_time = 10000
+
+   viChance_To_Increase = 20
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Mushroom,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      propagate;
+   }
+
+   CastSpell(who = $, iSpellPower = 0)
+   {
+      local i, j, oRoom, lPassiveItems, lActiveItems, oEachObj, iLenBefore, iLenAfter,
+            iNumDel, iLenLoop, oObj, lPassive, lGoodItems;
+
+      oRoom = Send(who,@GetOwner);
+      lPassiveItems = Send(oRoom,@GetplPassive);
+      iLenBefore = Length(lPassiveItems);
+      
+      if iSpellPower = $
+      {
+         iSpellPower = 99;
+         debug("Spell passed iSpellpower = $.  BOO HISS");
+      }
+      
+      iNumDel = Send(self,@GetNumDeleted,#iSpellPower=iSpellPower);
+
+      lGoodItems = $;
+
+      for lPassive in lPassiveItems
+      {
+         oObj = Send(oRoom,@HolderExtractObject,#data=lPassive);
+
+         % Cull everything that isn't "get-able" out of the list.
+         if IsClass(oObj,&Item)
+            AND send(who,@ReqNewHold,#what=oObj)
+            AND NOT IsClass(oObj,&Totem)
+         {
+            lGoodItems = cons(oObj,lGoodItems);
+         }                 
+      }
+
+      i = iNumDel;
+      
+      if send(who,@PlayerIsImmortal)
+      {
+         i = Length(lGoodItems);
+      }
+
+      while i > 0
+      {
+         i = i - 1;
+
+         iLenLoop = Length(lGoodItems);
+
+         if iLenLoop <= 0
+         {
+            i = 0;
+            
+            break;
+         }
+
+         oEachObj = nth(lGoodItems,Random(1,iLenLoop));
+
+         if oEachObj <> $
+            AND NOT send(oEachObj,@HasAttribute,#ItemAtt=IA_CORPSEPOINTER)
+         {
+            Send(self,@GetItem,#what=oEachObj,#who=who);
+            
+            % Remove the gotten item from our list, it may still be in the room, but if so we can't hold it so we don't want it in the list anymore.
+            lGoodItems = DelListElem(lGoodItems,oEachObj);
+         }
+      }
+
+      iLenAfter = Length(Send(oRoom,@GetplPassive));
+
+      if iLenAfter >= iLenBefore
+      {
+         Send(who,@MsgSendUser,#message_rsc=Sweep_Nothing);
+         
+         propagate;
+      }
+
+      % A funny little diversion.
+      if IsClass(oRoom,&Marion)
+      {
+         % Proximity check.  Have Ran'er'hoth give a snit if we're within
+         %  10 units of him in Marion.
+         oObj = send(oRoom,@FindHoldingActive,#class=&MarionElder);
+
+         if oObj <> $
+            AND send(who,@SquaredDistanceTo,#what=oObj) < 100
+         {
+            Send(self,@RanSnit,#who=who);
+         }
+      }
+
+      lActiveItems = Send(oRoom,@GetplActive);
+
+      for j in lActiveItems
+      {
+         oEachObj = Send(oRoom,@HolderExtractObject,#data=j); 
+         if isClass(oEachObj,&Monster)
+         {
+            if NOT send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+               AND Send(oEachObj,@GetBehavior) & AI_NPC
+               AND NOT IsClass(oEachObj,&Wanderer)
+            {
+               Send(oEachObj,@RewardSweep,#who = who);
+            }
+         }
+         else
+         {
+            % It's a player, send a message of spell being cast.
+            if oEachObj = who
+            {
+               Send(oEachObj,@MsgSendUser,#message_rsc=Sweep_Something);
+            }
+            else
+            { 
+               send(oEachObj,@MsgSendUser,#message_rsc=Sweep_room_cast,
+                    #parm1=send(who,@GetCapDef),#parm2=send(who,@GetName),
+                    #parm3=send(who,@GetHisHer));
+            }
+         }
+      }
+      
+      propagate;
+   }
+
+   GetItem(what=$,who=$)
+   {
+      if what = $
+      {
+         Debug("GotItem got no what");
+         return;
+      }
+      if who = $
+      {
+         Debug("GotItem got no who");
+         return;
+      }
+
+      % Double check, just in case.
+      if send(who,@ReqNewHold,#what=what)
+      {
+         send(who,@NewHold,#what=what);
+      }
+
+      return;
+   }
+
+   GetNumDeleted(ispellpower = 0)
+   {
+      local iNumDel;
+
+      iNumDel = bound(iSpellPower/6,2,15);
+
+      return iNumDel;
+   }
+
+   RanSnit(who = $)
+   {
+      local iRandom, rRant, oRoom;
+
+      oRoom = Send(who,@GetOwner);
+      iRandom = Random(1,3);
+      if iRandom = 1
+      {
+         rRant = Sweep_Pissed_rant;
+      }
+
+      if iRandom = 2
+      {
+        rRant = Sweep_Grateful_rant;
+      }
+
+      if iRandom = 3
+      {
+         rRant = Sweep_Freaked_rant;
+      }
+
+      Post(oRoom,@SomeoneSaid,#what=who,#string=rRant,#type=SAY_MESSAGE,
+           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

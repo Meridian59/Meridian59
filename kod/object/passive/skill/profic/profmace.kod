@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MaceProficiency is Proficiency
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Maceproficiency_name_rsc = "mace fighting"
+   Maceproficiency_icon_rsc = maceico.bgf
+   Maceproficiency_desc_rsc = "Allows one to become more proficient at Meridian's most common weapon."
+
+   Maceprof_skill_intro = "Weaponcraft Lv. 1: Skills in the land's most common, but least powerful, weapon."
+
+classvars:
+
+   vrName = Maceproficiency_name_rsc
+   vrIcon = Maceproficiency_icon_rsc
+   vrDesc = Maceproficiency_desc_rsc
+
+   vrSkill_intro = Maceprof_skill_intro
+   viSchool = SKS_FENCING
+   viSkill_num = SKID_PROFICIENCY_MACE
+   viSkill_Level = 1
+   viChance_to_increase = 40
+
+properties:
+
+   plPrerequisites = $
+
+messages:
+
+   GetRequisiteStat(who=$)
+   {
+     return send(who,@getmight);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

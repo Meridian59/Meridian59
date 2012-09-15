@@ -1,0 +1,257 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cave3 is Room
+
+constants:
+
+   SECTOR_DOOR = 12
+
+   SECTOR_TEMPLE1 = 6
+   SECTOR_TEMPLE2 = 7
+   SECTOR_TEMPLE3 = 8
+   SECTOR_TEMPLE4 = 9
+   SECTOR_TEMPLE5 = 10
+   SECTOR_TEMPLE6 = 11
+
+   SECTOR_STAIR1 = 1
+   SECTOR_STAIR2 = 2
+   SECTOR_STAIR3 = 3
+   SECTOR_STAIR4 = 4
+   SECTOR_STAIR5 = 5
+
+   include blakston.khd
+
+resources:
+
+   room_name_cave3 = "The Underground Lake"
+   room_cave3 = cave3.roo
+   cave3_music = ksong.mid
+
+   cave3_key_disappears = "Your key disappears into thin air!"
+   cave3_locked_door = "The door appears to be firmly locked."
+
+   cave3_sound_rsc = wtemple1.wav
+   waterfall_soundCave3 = wfall2.wav
+
+classvars:
+
+   vrName = room_name_cave3
+
+   viTeleport_row = 74
+   viTeleport_col = 34
+
+   viTerrain_Type = TERRAIN_LAKE | TERRAIN_WATERFALL | TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_cave3
+   piRoom_num = RID_cave3
+
+   prMusic = cave3_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = 1
+   pbDoorOpen = FALSE
+
+   % A dynamic light that appears when the Froz jewel appears.
+   poLight = $
+
+messages:
+
+   Constructed()
+   {
+      plLooping_sounds = [[ waterfall_soundCave3, 50, 67, 60, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 75, 34, RID_CAVE2, 19, 30, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   NewHold(what=$,new_row=$ )
+   {
+      if isClass(what,&User) AND new_row < 69
+      {
+         send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=74,#new_col=34);
+      }
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$,row=$,col=$)
+   {
+      local i, lPassive, each_obj;
+      
+      if isClass(what,&User) AND NOT pbDoorOpen
+      {
+         if row = 68 AND (col=37 OR col=38)
+         {
+            lPassive = send(what,@GetHolderPassive);
+            for i in lPassive
+            {
+               each_obj = send(what,@HolderExtractObject,#data=i);
+               if isClass(each_obj,&Key)
+               {
+                  send(each_obj,@Delete);
+                  send(what,@MsgSendUser,#message_rsc=cave3_key_disappears);
+                  send(self,@SomethingWaveRoom,#wave_rsc=cave3_sound_rsc);
+                  pbDoorOpen = TRUE;
+                  send(self,@CreateJewel);
+                  send(self,@RaiseTemple);
+
+                  return TRUE ;
+               }
+            }
+
+            send(what,@MsgSendUser,#message_rsc=cave3_locked_door);
+
+            return TRUE;
+         }
+      }
+
+      propagate;
+   }
+
+   CreateJewel()
+   {
+      local lPassive, i, each_obj;
+      
+      lPassive = send(self,@GetHolderPassive);
+
+      for i in lPassive
+      { 
+         each_obj = send(self,@HolderExtractObject,#data=i);
+         if isClass(each_obj,&JewelOfFroz)
+         {
+            return;
+         }
+      }
+
+      send(self,@Newhold,#what=Create(&JewelOfFroz),
+           #new_row=37,#new_col=38,#fine_row=16,#fine_col=0);
+
+      % Create a light on the jewel, too.
+      poLight = Create(&DynamicLight,#iColor=LIGHT_RED,#iIntensity=30);
+      send(self,@NewHold,#what=poLight,#new_row=37,#new_col=38,#fine_row=16,#fine_col=0);
+
+      return;
+   }
+
+   RaiseTemple()
+   {
+      % Door
+      send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=260,#speed=150);
+
+      % Temple
+      send(self,@SetSector,#sector=SECTOR_TEMPLE1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=300,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=308,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=444,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=372,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=332,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE6,#animation=ANIMATE_FLOOR_LIFT,
+           #height=324,#speed=10);
+
+      % Stairs
+      send(self,@SetSector,#sector=SECTOR_STAIR1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=244,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=260,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=276,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=292,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=300,#speed=20);
+
+      return;
+   }
+   
+   LowerTemple()
+   {
+      % Door
+      send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=336,#speed=150);
+      
+      % Temple
+      send(self,@SetSector,#sector=SECTOR_TEMPLE1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      send(self,@SetSector,#sector=SECTOR_TEMPLE6,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=10);
+      
+      % Stairs
+      send(self,@SetSector,#sector=SECTOR_STAIR1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      send(self,@SetSector,#sector=SECTOR_STAIR5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=20);
+      
+      return;
+   }
+   
+   LastUserLeft()
+   {
+      pbDoorOpen = FALSE;
+      send(self,@LowerTemple);
+      send(self,@DeleteLight);
+
+      propagate;
+   }
+
+   LeaveHold(what = $)
+   {
+      % If the Froz jewel is picked up, delete it's light.
+      if IsClass(what,&JewelOfFroz)
+      {
+         send(self,@DeleteLight);
+      }
+
+      propagate;
+   }
+
+   DeleteLight()
+   "Deletes any dynamic lights in the area."
+   {
+      if poLight <> $
+      {
+         send(poLight,@Delete);
+         poLight = $;
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

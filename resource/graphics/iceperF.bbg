@@ -1,0 +1,36 @@
+# Ice person Legs
+# groups
+# 1 standing
+# 2-3 walking
+# 4 fighting
+-s 1 
+24
+icef000a.bmp   [-18, -6] 
+icef045a.bmp   [-16, -3] 
+icef090a.bmp   [-4, -4] 
+icef180a.bmp   [-21, -3] 
+icef270a.bmp   [-10, 1] 
+icef315a.bmp   [-14, -2] 
+icef000b.bmp   [-14, -3] 
+icef045b.bmp   [-9, -4] 
+icef090b.bmp   [-18, 0] 
+icef180b.bmp   [-15, -2] 
+icef270b.bmp   [-15, 1] 
+icef315b.bmp   [-6, -2] 
+icef000c.bmp   [-13, -6] 
+icef045c.bmp   [-15, -3] 
+icef090c.bmp   [-16, 0] 
+icef180c.bmp   [-13, -2] 
+icef270c.bmp   [-20, 0] 
+icef315c.bmp   [-14, -1] 
+icef000d.bmp   [-20, -4] 
+icef045d.bmp   [-19, -3] 
+icef090d.bmp   [-17, -2] 
+icef180d.bmp   [-23, -1] 
+icef270d.bmp   [-16, -3] 
+icef315d.bmp   [-16, -2] 
+4
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14
+ 8     19  24  23  22  22  22  21  20

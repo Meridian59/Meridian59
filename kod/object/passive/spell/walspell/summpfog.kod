@@ -1,0 +1,203 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SummonPoisonFog is WallSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SummonPoisonFog_name_rsc = "poison fog"
+   SummonPoisonFog_icon_rsc = ipoiscld.bgf
+   SummonPoisonFog_desc_rsc = \
+      "Creates a pungent cloud of poisonous fog.  "
+      "Requires entroot berries to cast."
+                              
+   SummonPoisonFog_cast_rsc = \
+      "A thick, pungent fog rises from the ground before you."
+   SummonPoisonFog_failed_rsc = \
+      "There is too much summoning magic focused here to create fog." 
+
+   SummonPoisonFog_sound = qor.wav
+
+classvars:
+
+   vrName = SummonPoisonFog_name_rsc
+   vrIcon = SummonPoisonFog_icon_rsc
+   vrDesc = SummonPoisonFog_desc_rsc
+
+   viSpell_num = SID_POISON_FOG
+   viSchool = SS_QOR
+   viSpell_level = 3
+   viMana = 20
+   viSpellExertion = 15
+
+   viCast_time = 2000
+   vrSucceed_wav = SummonPoisonFog_sound
+   viChance_To_Increase = 20
+
+   vbCastable_in_HappyLand = FALSE
+
+   viHarmful = TRUE
+
+   % Poison fog can't kill anyone, so don't warn about being a murderer.
+   viWallCanKill = FALSE
+
+   viNumElements = 9
+
+   vrSummonLimitMsg = SummonPoisonFog_failed_rsc
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&EntrootBerry,2], plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      Send(who,@MsgSendUser,#message_rsc=SummonPoisonFog_cast_rsc);
+
+      propagate;
+   }
+
+   PlaceWallElements(who = $, iSpellPower = 0)
+   {
+      local oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, iOdds, iDuration,
+            oElement;
+
+      iAngle = Send(who,@GetAngle);
+      iOdds = 50+(iSpellPower/2);
+      iOdds = Bound(iOdds,50,90);
+
+      iDuration = (iSpellPower * 4) / 3 + 20;
+      iDuration = Bound(iDuration,20,130);
+
+      % Facing East
+      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      {
+         iCol = Send(who,@GetCol) + 2;
+         iRow = Send(who,@GetRow);
+      }
+
+      % Facing SouthEast
+      if iAngle >= ANGLE_ESE AND iAngle < ANGLE_SSE
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol) + 2;
+      }
+
+      % Facing South
+      if iAngle >= ANGLE_SSE AND iAngle < ANGLE_SSW
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol);
+      }
+
+      % Facing SouthWest
+      if iAngle >= ANGLE_SSW AND iAngle < ANGLE_WSW
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol) - 2;
+      }
+
+      % Facing West
+      if iAngle >= ANGLE_WSW AND iAngle < ANGLE_WNW
+      {
+         iCol = Send(who,@GetCol) - 2;
+         iRow = Send(who,@GetRow);
+      }
+
+      % Facing NorthWest
+      if iAngle >= ANGLE_WNW AND iAngle < ANGLE_NNW
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) - 2;
+      }
+
+      % Facing North
+      if iAngle >= ANGLE_NNW AND iAngle < ANGLE_NNE
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol);
+      }
+
+      % Facing NorthEast
+      if iAngle >= ANGLE_NNE AND iAngle < ANGLE_ENE
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) + 2;
+      }
+
+      oRoom = Send(who,@GetOwner);
+
+      iFine_Row = Send(who,@GetFineRow);
+      iFine_Col = Send(who,@GetFineCol);
+
+      % Center, then clockwise from 12 o'clock
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&PoisonFogCloud,#Odds=iOdds,#Caster=who,
+                         #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

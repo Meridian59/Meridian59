@@ -1,0 +1,155 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DynamicLight is Flickerer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DynamicLight_icon = blank.bgf
+   DynamicLight_visible_icon = totem.bgf
+
+classvars:
+
+properties:
+
+   vrIcon = DynamicLight_icon
+
+   % What flags?  Default is the "yes, I'm a light" flag.
+   viLightFlags = LIGHT_FLAG_ON
+
+   % What intensity? from 0-255
+   piLightIntensity = 255
+
+   % What color?  Default is pure white.
+   viLightColor = LIGHT_BWHITE
+
+messages:
+
+   Constructor(iFlags = LIGHT_FLAG_ON, iIntensity = 255, iColor = LIGHT_BWHITE, bVisible=FALSE)
+   {
+      if bVisible
+      {
+         vrIcon = DynamicLight_visible_icon;
+      }
+
+      post(self,@SetLight,#iFlags=iFlags,#iIntensity=iIntensity,#iColor=iColor);
+
+      propagate;
+   }
+
+   SetAnimationSpeed()
+   {
+      % Does not animate
+      piAnim_speed = 0;
+
+      return;   
+   }
+
+   SetLight(iFlags = $, iIntensity = $, iColor = $, iRed = 0, iBlue = 0, iGreen = 0, bNegative = FALSE)
+   {
+      if iFlags <> $
+      {
+         % Make sure we always have the light flag on.
+         viLightFlags = iFlags | LIGHT_FLAG_ON;
+      }
+
+      if iIntensity <> $
+      {
+         piLightIntensity = iIntensity;
+      }
+
+      if iColor <> $
+      {
+         viLightColor = iColor;
+      }
+      else
+      {
+         % Allow us to just change intensity and not affect color.
+         if iIntensity = $
+            OR iRed <> 0
+            OR iGreen <> 0
+            OR iBlue <> 0
+         {
+            viLightColor = send(SYS,@GetRGB,#iRed=iRed,#iBlue=iBlue,#iGreen=iGreen,
+                                #bNegative=bNegative);
+         }
+      }
+
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   SetSwitch(switch = ON)
+   {
+      if switch = ON
+      {
+         pbIsLit = TRUE;
+      }
+      else
+      {
+         pbIsLit = FALSE;
+      }
+
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }   
+
+   SetVisible(value = $)
+   {
+      % Nil means toggle
+
+      if (value = $ AND vrIcon = DynamicLight_icon)
+         OR (value <> $ AND value)
+      {
+         vrIcon = DynamicLight_visible_icon;
+      }
+      else
+      {
+         if (value = $ AND vrIcon <> DynamicLight_icon)
+            OR (value <> $ AND NOT value)
+         {
+            vrIcon = DynamicLight_icon;
+         }
+      }
+
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      % Show up with a name and map location if we're "visible"
+      if vrIcon <> DynamicLight_icon
+      {
+         return (viObject_flags | BATTLER_YES | USER_YES);
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

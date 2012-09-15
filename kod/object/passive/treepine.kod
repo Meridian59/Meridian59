@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Treepine is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   treepine_name_rsc = "tree"
+   treepine_desc_rsc = "You smell the fresh scent of pine as you stand near this tree."
+   treepine_icon_rsc = treepine.bgf
+
+
+classvars:
+
+   vrName = treepine_name_rsc
+   vrIcon = treepine_icon_rsc
+   vrDesc = treepine_desc_rsc
+
+properties:
+
+messages:
+
+   GetObjectFlags()
+   {
+      return LOOK_NO;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

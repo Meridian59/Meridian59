@@ -1,0 +1,205 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanGuardtowerEast is KocatanRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_koctower = koctower.roo
+   room_name_koctower = "The East Tower"
+   koctower_music = song12.mid
+
+   koctowereast_guarddoor1 = "~kThe soldier says, \"You there, get away from that door.\""
+   koctowereast_barracks = "The barracks are off limits to non-military personnel."
+   koctowereast_citadelgate = "A locked gate prevents you from entering The Citadel."
+   koctowereast_dungeons = "The door to the central dungeons is locked.  You may not enter."
+   koctowereast_wall = "You are not authorized to go into the wall."
+   koctowereast_guarddoor2 = "~kThe soldier says, \"Hey, stay out of there.\""
+   koctowereast_lockedgate = "The gate is securely locked."
+
+
+classvars:
+
+   vrName = room_name_koctower
+
+   viTeleport_row = 11
+   viTeleport_col = 32
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_CASTLE
+   viPermanent_flags = ROOM_NO_COMBAT
+
+properties:
+
+   prRoom = room_koctower
+   piRoom_num = RID_KOC_GUARDTOWER_EAST
+   prMusic = koctower_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   poGoodGuard = $
+   poEvilGuard = $
+
+messages:
+
+   Constructor()
+   {
+      poGoodGuard = Create(&KocatanCaptainGood);
+      poEvilGuard = Create(&KocatanCaptainEvil);
+      propagate;
+   }
+
+   Delete()
+   {
+      if poGoodGuard<>$
+      {  send(poGoodGuard,@delete);  }
+      
+      if poEvilGuard <> $
+      {  send(poEvilGuard,@delete);  }
+
+      propagate;
+   }
+
+   RecalcLightAndWeather()
+   {
+      local iHour;
+
+      iHour = Send(SYS,@GetHour);
+
+      if iHour = 8 or iHour = 20
+	 { send(Self,@changeguards); }
+      propagate;
+   }
+   
+   ChangeGuards()
+   {
+   local i, each_obj;
+   for i in plActive
+      {
+      each_obj = Send(self,@HolderExtractObject,#data=i);
+      if isclass(each_obj,&KocatanCaptainEvil)
+	 {
+	 send(poEvilGuard,@newowner,#what=$);
+         Send(self,@NewHold,#what=poGoodGuard,
+   	    #new_row=12,#new_col=36,#fine_row=16,#fine_col=40);
+	 return;
+	 }
+      if isclass(each_obj,&KocatanCaptainGood)
+	 {
+	 send(poGoodGuard,@newowner,#what=$);
+         Send(self,@NewHold,#what=poEvilGuard,
+   	    #new_row=10,#new_col=36,#fine_row=24,#fine_col=40);
+	 }
+      }
+      return;
+   }
+
+   
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 20, 23, ROOM_LOCKED_DOOR, koctowereast_guarddoor1],plExits);
+      plExits = Cons([ 20, 24, ROOM_LOCKED_DOOR, koctowereast_guarddoor1],plExits);
+      plExits = Cons([ 20, 25, ROOM_LOCKED_DOOR, koctowereast_guarddoor1],plExits);
+      plExits = Cons([ 29, 21, ROOM_LOCKED_DOOR, koctowereast_barracks],plExits);
+      plExits = Cons([ 31, 26, ROOM_LOCKED_DOOR, koctowereast_citadelgate],plExits);
+      plExits = Cons([ 31, 27, ROOM_LOCKED_DOOR, koctowereast_citadelgate],plExits);
+      plExits = Cons([ 31, 28, ROOM_LOCKED_DOOR, koctowereast_dungeons],plExits);
+      plExits = Cons([ 31, 29, ROOM_LOCKED_DOOR, koctowereast_dungeons],plExits);
+      plExits = Cons([ 12, 26, ROOM_LOCKED_DOOR, koctowereast_wall],plExits);
+      plExits = Cons([ 11, 26, ROOM_LOCKED_DOOR, koctowereast_wall],plExits);
+      plExits = Cons([ 16, 36, ROOM_LOCKED_DOOR, koctowereast_guarddoor2],plExits);
+      plExits = Cons([ 17, 36, ROOM_LOCKED_DOOR, koctowereast_guarddoor2],plExits);
+      plExits = Cons([ 15, 33, ROOM_LOCKED_DOOR, koctowereast_lockedgate],plExits);
+      plExits = Cons([ 16, 33, ROOM_LOCKED_DOOR, koctowereast_lockedgate],plExits);
+      plExits = Cons([ 17, 33, ROOM_LOCKED_DOOR, koctowereast_lockedgate],plExits);
+
+
+      %% to north town and KA5
+      plExits = Cons([ 2, 41, RID_KA5, 44, 24, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 40, RID_KA5, 44, 24, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 41, RID_KA5, 44, 24, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 37, 3, RID_KOC_NORTH, 4, 45, ROTATE_NONE ],plExits);
+      plExits = Cons([ 38, 4, RID_KOC_NORTH, 4, 45, ROTATE_NONE ],plExits);
+      plExits = Cons([ 37, 4, RID_KOC_NORTH, 4, 45, ROTATE_NONE ],plExits);
+      plExits = Cons([ 36, 3, RID_KOC_NORTH, 4, 45, ROTATE_NONE ],plExits);
+      plExits = Cons([ 38, 5, RID_KOC_NORTH, 4, 45, ROTATE_NONE ],plExits);
+      propagate;
+   }
+
+   SomethingTryGo(what=$,row=$,col=$)
+   {
+      local i;
+      if ((row = 2) and ((col = 41) or (col = 40)))
+      or ((row = 3) and (col = 41))
+      {
+	 for i in plActive
+	 {
+	    
+	    if (isClass(first(i),&KocatanCaptainGood)
+	    or isClass(first(i),&KocatanCaptainEvil))
+	    {
+	       if send(first(i),@CanPass,#what=what)
+	       { propagate; }   %% someone bribed the evil guard.
+	       return true;
+	    }
+	 }
+      }
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      local iHour,lObjCoords1;
+      lObjCoords1 = [
+               [29,29,56,40,OO_BAG_OF_BEANS],[28,28,56,56,OO_BAG_OF_BEANS],[30,29,24,40,OO_BIG_BAG],
+               [36,26,48,08,OO_JUG],[18,16,16,32,OO_GREY_JUG],[10,26,48,08,OO_GREY_JUG],
+               [31,29,00,24,OO_barrel],[29,29,56,16,OO_barrel2],[27,28,48,24,OO_rice],
+               %[21,23,24,08,OO_lamp1],[21,26,24,00,OO_lamp1],
+               [20,28,24,32,OO_tallurn],[06,32,24,40,OO_tallurn],
+               [15,33,16,32,OO_bigurn],[16,35,24,16,OO_bigiron]
+               ];
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+
+      send(self,@NewHold,#what=Create(&KocatanLamp),#new_row=21,#new_col=23,#fine_row=24,#fine_col=08);
+      send(self,@NewHold,#what=Create(&KocatanLamp),#new_row=21,#new_col=26,#fine_row=24,#fine_col=00);
+
+   iHour = Send(SYS,@GetHour);
+
+   if iHour > 7 and iHour < 20
+      { 
+      Send(self,@NewHold,#what=poGoodGuard,
+	 #new_row=12,#new_col=36,#fine_row=16,#fine_col=40);
+      }
+   else
+      {
+         Send(self,@NewHold,#what=poEvilGuard,
+	    #new_row=10,#new_col=36,#fine_row=24,#fine_col=40);
+      }
+   Send(self,@NewHold,#what=Create(&KocatanSentry),
+      #new_row=21,#new_col=19,#fine_row=8,#fine_col=8);
+   Send(self,@NewHold,#what=Create(&KocatanSentry),
+      #new_row=14,#new_col=34,#fine_row=24,#fine_col=32);
+   Send(self,@NewHold,#what=Create(&KocatanSentry),
+      #new_row=10,#new_col=37,#fine_row=24,#fine_col=40);
+   Send(self,@NewHold,#what=Create(&KocatanSentry),
+      #new_row=20,#new_col=35,#fine_row=24,#fine_col=16);
+
+   propagate;   
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,199 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EvilFairy is Monster
+
+constants:
+
+	include blakston.khd
+
+resources:
+   
+   dark_fairy_koc_name_rsc = "teotimixlal"
+   dark_fairy_name_rsc = "fey dirhai"
+	
+   dark_fairy_icon_rsc = faerie-e.bgf
+   dark_fairy_desc_rsc = \
+	   "Dark, mischievious and ultimately malicious, these imps have but "
+	   "one goal - to bring the Quilicia wood into permanent darkness, so "
+	   "they can claim the Vale of Sorrows as their own.  They hate their "
+	   "kinsmen, the fey elhai, with a fervent passion."
+
+   darkfairy_fireball = feyball.bgf
+
+   darkfairy_dead_icon_rsc = faerieXE.bgf
+   darkfairy_dead_name_rsc = "dead fey"
+	
+   darkfairy_sound_hit = evl_atkh.wav
+   darkfairy_sound_miss = evl_atkm.wav
+   darkfairy_sound_death = evl_die.wav
+   darkfairy_sound_aware = evl_awr.wav
+
+classvars:
+   
+   vrDesc = dark_fairy_desc_rsc
+   vrName = dark_fairy_koc_name_rsc
+   vrName = dark_fairy_name_rsc
+   vrIcon = dark_fairy_icon_rsc
+
+   vrDead_icon = darkfairy_dead_icon_rsc
+   vrDead_name = darkfairy_dead_name_rsc
+
+   viTreasure_type = TID_FAIRY
+
+   viSpeed = SPEED_VERY_FAST
+   viAttack_types = 0
+   viAttack_spells = ATCK_SPELL_SHOCK
+    
+   viLevel = 60
+   viDifficulty = 5
+   viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
+   viWimpy = 10
+
+   vrSound_hit = darkfairy_sound_hit
+   vrSound_miss = darkfairy_sound_miss
+   vrSound_aware = darkfairy_sound_aware
+   vrSound_death = darkfairy_sound_death
+   
+properties:
+
+   piDrawfx = BOUNCE_YES
+   viKarma = -50
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructor()
+   {	  
+      plResistances = [ [ -30, -ATCK_SPELL_HOLY ],
+                        [ 30, -ATCK_SPELL_ALL ],
+                        [ 30, ATCK_WEAP_MAGIC ],
+                        [ 30, -ATCK_SPELL_UNHOLY ]
+                      ];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      % add in any attack animation calls
+      Send(self,@DoSlash);
+      Send(poOwner,@SomethingShot,#who=self,#target=what,#projectile=self,
+           #flags=PROJ_FLAG_LIGHT_SOURCE);
+
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,100,2,5,2,8,2,1);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,2);
+	             
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }   
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,50,2,1,2,4);
+
+      return;
+   }      
+
+   GetProjectileIcon()
+   {
+      return darkfairy_fireball;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % General lighting information.
+      return LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      % Fairly small light radius for projectile.  Out of 255 levels.
+      return 50;
+   }
+
+   GetProjectileLightColor()
+   {
+      % Color is orange.
+      return LIGHT_ORANGE;
+   }
+
+   AssessDamage(what=$)
+   {
+      if isClass(what,&Fairy)
+      {
+         return 1;
+      }
+
+      propagate;
+   }   
+
+   GetObjectFlags()
+   {
+      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
+   }
+
+   SendLightingInformation()
+   {
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      % Intensity (out of 255)
+      AddPacket(1,30);
+      % Color
+      AddPacket(2,LIGHT_BLUE);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

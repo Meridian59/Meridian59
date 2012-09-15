@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DragonflyCage is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+   STATE_EMPTY = 0
+   STATE_EGG = 1
+   STATE_DFLY = 2
+   STATE_PREEN = 3
+
+   FRAME_EMPTY = 5
+   FRAME_EGG = 1
+   FRAME_DFLY = 2
+   FRAME_PREEN1 = 3
+   FRAME_PREEN2 = 4
+
+resources:
+
+   DragonflyCage_name_rsc = "wire cage"
+   DragonflyCage_icon_rsc = roomcage.bgf
+   DragonflyCage_desc_rsc = "This is a delicately crafted wire cage, suitable for "
+      "housing a small avian creature."
+
+classvars:
+
+   vrName = DragonflyCage_name_rsc
+   vrIcon = DragonflyCage_icon_rsc
+   vrDesc = DragonflyCage_desc_rsc
+
+properties:
+
+   piState = STATE_EMPTY
+
+messages:
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   GetObjectFlags()
+   {
+      return OF_HANGING;
+   }
+
+   SendAnimation()
+   {
+      if piState = STATE_EMPTY
+      {
+         AddPacket(1, ANIMATE_NONE, 2, FRAME_EMPTY);
+      }
+      if piState = STATE_EGG
+      {
+         AddPacket(1, ANIMATE_NONE, 2, FRAME_EGG);
+      }
+      if piState = STATE_DFLY
+      {
+         AddPacket(1, ANIMATE_NONE, 2, FRAME_DFLY);
+      }
+      if piState = STATE_PREEN
+      {
+         AddPacket(1,ANIMATE_CYCLE,4,random(150,250),2,FRAME_PREEN1,2,FRAME_PREEN2);
+      }
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      % Send animation info to user for when the user looks at the object
+
+      Send(self,@SendAnimation);
+
+      return;
+   }
+
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

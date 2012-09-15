@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcTorch is Flickerer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   orctorch_name = "orc torch"
+   orctorch_desc = "This offers an ominous, eerie glow."
+   orctorch_icon = orcfire.bgf
+
+classvars:
+
+   vrName = orctorch_name
+   vrDesc = orctorch_desc
+   vrIcon = orctorch_icon
+
+   viStart_frame = 1
+   viEnd_frame = 8
+
+   % Lighting flags.  Default "on" and wavering flags
+   viLightFlags = LIGHT_FLAG_ON
+
+   % Light color.
+   viLightColor = LIGHT_GREEN
+
+properties:
+
+   % Intensity, from 0-255.
+   piLightIntensity = 120
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

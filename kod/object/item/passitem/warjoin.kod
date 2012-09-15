@@ -1,0 +1,164 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WarJoinPendant is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   WarJoinPendant_icon_rsc = factpend.bgf
+   WarJoinPendant_name_rsc = "war pendant"
+   WarJoinPendant_desc_before_rsc = \
+      "This will allow you to join the war on the side of:\n"
+   WarJoinPendant_desc_after_rsc = \
+      "This pendant shows your allegiance to:\n"
+	
+classvars:
+   
+   vrName = WarJoinPendant_name_rsc
+   vrIcon = WarJoinPendant_icon_rsc
+
+   viUse_type = ITEM_USE_NECK
+   viItem_type = ITEMTYPE_NECKLACE
+
+   viUse_Amount = 0
+
+   viWeight = 0
+   viBulk = 0
+
+properties:
+
+   % Which side of the war does this allow you to join?
+   piSide = $
+   vrDesc = WarJoinPendant_desc_before_rsc
+
+   pbUsed = FALSE
+
+messages:
+
+   Constructor(side=$)
+   {
+      if side <> $
+      {
+         piSide = side;
+
+         piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=send(send(SYS,@GetWarEvent),@GetSideColor,#side=piSide),#color2=XLAT_TO_SKIN1);
+      }
+      
+      propagate;
+   }
+
+   ReqUse()
+   {
+      return send(send(SYS,@GetWarEvent),@AddPlayerToSide,#who=poOwner,#side=piSide);
+   }
+
+   ReqUnuse()
+   {
+      return FALSE;
+   }
+
+   NewUsed()
+   {
+      local iSequence, oRobe, oJoinItem;
+      
+      pbUsed = TRUE;
+      vrDesc = WarJoinPendant_desc_after_rsc;
+
+      % Fix possible disciple robe problems
+      oRobe = send(poOwner,@FindUsing,#class=&Robe);
+
+      % Are they using a robe?
+      if oRobe <> $
+      {
+         % Fix art/color problems.
+         send(oRobe,@ResetColors);
+         send(oRobe,@DoPlayerArt);
+      }
+         
+      % Delete all other WarJoin pendants
+      iSequence = 1;
+      oJoinItem = Send(poOwner,@FindHolding,#class=&WarJoinPendant);
+
+      while oJoinItem <> $
+      {
+         % Delete the item if it's not this one!
+         if oJoinItem <> self
+         {
+            post(oJoinItem,@Delete);
+         }
+
+         % Find the next in line
+         iSequence = iSequence + 1;
+         oJoinItem = send(poOwner,@FindHolding,#class=&WarJoinPendant,#sequence=iSequence);
+      }
+            
+      return;
+   }
+
+   AppendDesc()
+   {
+      AppendTempString(send(send(SYS,@GetWarEvent),@GetSideName,#side=piSide));
+      
+      return;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+
+   ReqDMDelete()
+   "Only delete if not used."
+   {
+      return (NOT pbUsed);
+   }
+
+   ReqNewOwner(what=$)
+   {
+      if what <> $
+      {
+         % Can't drop it.
+         if poOwner <> $
+            AND isClass(poOwner,&User)
+         {
+            return FALSE;
+         }
+      }
+      else
+      {
+         % no dropping into oblivion
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,176 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Melancholy is Jala
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Melancholy_name_rsc = "melancholy"
+   Melancholy_icon_rsc = imlnchly.bgf
+   Melancholy_desc_rsc = \
+      "This is a sad song, invoking feelings of loss and sorrow.  It causes "
+      "most people hearing it to experience overwhemling sadness, often "
+      "leading to foul moods.  This music is appropriate for funerals and "
+      "fighting against the forces of good.  "
+      "It requires 1 sapphire to cast."
+
+   Melancholy_on = "%s%s's melancholy song makes your heart feel heavy."
+
+   Melancholy_song = ksong.mid
+ 
+classvars:
+
+   vrName = Melancholy_name_rsc
+   vrIcon = Melancholy_icon_rsc
+   vrDesc = Melancholy_desc_rsc
+
+   viSpell_num = SID_MELANCHOLY
+   viSchool = SS_JALA
+   viSpell_level = 1
+
+   viMana = 2
+   viManaDrain = 2
+   viDrainTime = 5000
+
+   viSpellExertion = 2      
+   viChance_To_Increase = 25
+
+   viHarmful = FALSE
+
+properties:
+
+   prMusic = Melancholy_song
+   pbUserEffects = TRUE
+      
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Sapphire,1],plReagents);
+
+      return;
+   }
+
+   StartEnchantment(who = $)
+   "Starts enchantment effect on one player"
+   {
+      local lState, oCaster, iSpellpower;
+
+      lState = Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self);
+
+      % The caster is the second element of state.
+      oCaster = Nth(lState,2);
+
+      % Our spellpower is in the third element of state.
+      iSpellpower = Nth(lState,3);
+
+      if random(1,100) < iSpellPower
+      {
+         Send(who,@SetAction,#action=UA_SAD);
+         Send(who,@MsgSendUser,#message_rsc=Melancholy_on,
+              #parm1=Send(oCaster,@GetCapDef),
+              #parm2=Send(oCaster,@GetName));
+         Send(who,@AddAttackModifier,#what=self);       
+      }
+      else
+      {
+         % No smiling during the sad song.
+         if Send(who,@GetAction) = UA_HAPPY
+         {
+            Send(who,@SetAction,#action=UA_NORMAL);
+         }
+      }
+
+      propagate;
+   }
+
+   StartEnchantmentNewOccupant(who = $, state = $)
+   "Called on new occupants of the enchanted room."
+   {
+      Send(self,@StartEnchantment,#who=who,#state=state);
+
+      return;
+   }
+
+   EndRoomEnchantment(who = $, state = $)
+   "Called when user leaves the room."
+   {
+      Send(self,@RemoveEnchantment,#who=who);
+
+      propagate;
+   }
+
+   RemoveEnchantment(who=$)
+   "Called instead of EndEnchantment when trance is broken"
+   {
+      if IsClass(who,&Player)
+      {
+         % We try to remove ourselves from everyone, even though it's possible
+         %  that not everyone was enchanted.
+         Send(who,@RemoveAttackModifier,#what=self);
+      }
+
+      propagate;
+   }
+
+   StartPeriodicEnchantment(where=$, state=$)
+   {
+      local lActive, i, oObject;
+
+      lActive = Send(where,@GetHolderActive);
+      for i in lActive
+      {
+         oObject = Send(where,@HolderExtractObject,#data=i);
+
+         % Affect NPCs in room.
+         if IsClass(oObject,&Monster)
+            AND (Send(oObject,@GetBehavior) & AI_NPC)
+         {
+            Send(oObject,@ChangeMood,#amount=-1);
+         }
+      }
+      
+      propagate;
+   }
+
+   % Stuff we handle to be an attack modifier.
+
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {
+      % Only affect the good ones...
+      if Send(what,@GetKarma,#detect=TRUE) > 0
+      {
+         % Give a small bonus
+         return hit_roll + 100;
+      }
+
+      return hit_roll;
+   }
+   
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      % Only affect the good ones...
+      if Send(what,@GetKarma,#detect=TRUE) > 0
+      {
+         % Roughly equal to Killing Fields
+         return damage + Random(1,5);
+      }
+
+      return damage;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

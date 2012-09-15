@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildAbandon is GuildCommand
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   guildabandon_name_rsc = "abandon guild hall"
+   guildabandon_icon_rsc = light.bgf
+   guildabandon_desc_text_rsc = "Use this command to quit your guild.  You never liked them anyway.  Guildmasters must transfer their title before using this command."
+
+   guildabandon_necro_nak = "~BYou have sworn a blood oath to your dark Queen.  You may not simply abandon "
+      "her fortress."
+   guildabandon_not_while_under_attack = "You can't abandon your guild hall while it is under attack.  Go and defend it!"
+
+classvars:
+
+   vrName = guildabandon_name_rsc
+   vrIcon = guildabandon_icon_rsc
+   vrDesc = guildabandon_desc_text_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_ABANDON_HALL
+   viRank_needed = RANK_LIEUTENANT
+
+   viNecro_enabled = FALSE
+
+properties:
+
+messages:
+
+   ResetCommand(who=$, rank = 0)
+   {
+      local oGuild;
+      
+      oGuild = send(who,@getguild);
+      if send(oGuild,@getguildhall) = $
+      {
+         send(who,@removeguildcommand,#command_num=viGuildCommand_num);
+         return;
+      }
+      propagate;
+   }
+
+   DoCommand(who=$)
+   "Give up guild hall."
+   {
+      local oGuild, oHall, lMembers, i;
+     
+      oGuild = Send(who, @getguild);
+
+      if oGuild = $
+      {
+         Debug("someone who belongs to no guild is using the Abandon command!");
+         return FALSE;
+      }
+      
+      % Can't abandon the necromancer's guild hall.
+      if IsClass(oGuild,&NecromancerGuild) 
+      {
+         Send(who,@MsgSendUser,#message_rsc=guildabandon_necro_nak);
+         return FALSE;
+      }
+
+      % If the guild hall is under attack, you can't abandon it
+      % (players were abusing this to avoid being conquered).
+      oHall = Send(oGuild, @GetGuildHall);
+      if oHall <> $
+      {
+         if Send(oHall, @AreDefensesDown)
+         {
+            Send(who,@MsgSendUser,#message_rsc=guildabandon_not_while_under_attack);
+            return FALSE;
+         }
+      }
+
+      Send(oGuild,@AbandonGuildHall,#who=who);
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

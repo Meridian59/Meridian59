@@ -1,0 +1,148 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Spider is Monster
+
+constants:
+
+   include blakston.khd
+   POISON_CHANCE = 30
+   POISON_DURATION = 180000   %%% in milliseconds
+   POISON_LOSSRATE = 2500    %%% in health points * 10^-4 / second
+
+resources:
+
+   spider_koc_name_rsc = "teotkauilkinich"
+   spider_name_rsc = "spider"
+   spider_icon_rsc = spider.bgf
+   spider_desc_rsc = \
+   "This strangely delicate creature moves with stealth and strikes with deadly precision."
+
+   spider_dead_icon_rsc = spiderX.bgf
+   spider_dead_name_rsc = "dead spider"
+
+   spider_sound_hit = spd_atkh.wav
+   spider_sound_miss = spd_atkm.wav
+   spider_sound_death = spd_dth.wav
+   spider_sound_aware = spd_awr.wav
+
+classvars:
+   vrKocName = spider_koc_name_rsc
+   vrName = spider_name_rsc
+   vrIcon = spider_icon_rsc
+   vrDesc = spider_desc_rsc
+   vrDead_icon = spider_dead_icon_rsc
+   vrDead_name = spider_dead_name_rsc
+
+   viTreasure_type = TID_MEDIUM_TOUGH
+   viSpeed = SPEED_AVERAGE
+   viAttack_type =  ATCK_WEAP_BITE
+   viAttributes = MOB_SPASM
+   viLevel = 50
+   viDifficulty = 4
+   viKarma = -30
+   viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE
+   viWimpy = 30
+   
+   vrSound_hit = spider_sound_hit
+   vrSound_miss = spider_sound_miss
+   vrSound_aware = spider_sound_aware
+   vrSound_death = spider_sound_death
+   
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 50, -ATCK_SPELL_ALL ],
+                        [ 50, ATCK_WEAP_MAGIC ],
+                        [-15, ATCK_WEAP_NONMAGIC ] ];
+      propagate;
+   }
+
+   DoSpasm()
+   {
+      Send(self,@DoLegSpasm);
+
+      propagate;
+   }
+	 
+   MonsterAttack()
+   {
+      Send(self,@DoLegSpasm);
+      return;
+   }
+
+   DoLegSpasm()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,150,2,1,2,3);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,200,2,1,2,1);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+	 AddPacket(1,ANIMATE_ONCE,4,200,2,1,2,3,2,1);
+	 return;
+      }
+
+      propagate;
+   }
+
+   HitSideEffect( what = $ )
+   {
+      local oSpell;
+      if Random(1,POISON_CHANCE) = 1
+      {
+	 oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+	 Send(oSpell,@MakePoisoned,#who=what,
+	      #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+      }
+      return;
+   }
+
+   IsAlly(target = $)
+   {
+      if target = $ { return FALSE; }
+
+      if isClass(target,&spider) { return TRUE; }
+
+      if isClass(target,&spiderbaby) { return TRUE; }
+
+      if isClass(target,&spiderqueen) { return TRUE; }
+
+      %% charm checks up higher.
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

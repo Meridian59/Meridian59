@@ -1,0 +1,536 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IllusionaryForm is Spell
+
+constants:
+
+   include blakston.khd
+
+   % multiplied by the ability of the spellcaster
+   ILLUSIONARYFORM_TIME = 1500  
+
+resources:
+
+   illusionaryform_name_rsc = "illusionary form"
+   illusionaryform_icon_rsc = iillufrm.bgf
+   illusionaryform_desc_rsc = \
+      "The touch of Riija shifts your appearance to another at random.  "
+      "Requires web moss and rainbow fern to cast."
+
+   illusionaryform_already_affected = "Your form is already modified."
+
+   illusionaryform_on = "You take the shape of %s%s."
+   illusionaryform_off = \
+      "Your illusionary form wears off; you appear to be yourself."
+
+classvars:
+
+   vrName = illusionaryform_name_rsc
+   vrIcon = illusionaryform_icon_rsc
+   vrDesc = illusionaryform_desc_rsc
+
+   viSpell_num = SID_ILLUSIONARY_FORM
+   viSpell_level = 3
+   viSchool = SS_RIIJA
+   viMana = 15
+   viSpellExertion = 20
+   viCast_time = 6000
+   viChance_to_increase = 40
+
+   viFlash = FLASH_GOOD_SELF
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {      
+      plReagents = $;
+      plReagents = Cons([&WebMoss,2],plReagents);
+      plReagents = Cons([&RainbowFern,3],plReagents);
+      
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      % check for enchantment already applied
+
+      if Send(who,@IsEnchanted,#what=self)
+         OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      {
+         Send(who,@MsgSendUser,#message_rsc=illusionaryform_already_affected);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, iSpellPower = 0)
+   {
+      Send(self,@PerformIllusionaryForm,#caster=who,#victim=who,
+           #iSpellpower=iSpellpower);
+      Send(who,@ResetPlayerFlagList);
+
+      propagate;
+   }
+
+   PerformIllusionaryForm(caster = $,victim = $,iIllusion_type = $, iSpellpower = 0)
+   "A secondary function so that a potion can cast this easily"
+   {
+      local oIllusion,iTime;
+      
+      if iSpellPower = $
+      { DEBUG("Something funky is up here."); return; }
+
+      if iIllusion_type = $
+      {
+         iIllusion_type = Send(self,@CalculateIllusionType,
+                               #iSpellpower=iSpellPower);
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+      Send(victim,@MsgSendUser,#message_rsc=illusionaryform_on,
+           #parm1=Send(oIllusion,@GetIndef),#parm2=Send(oIllusion,@GetName));
+
+      iTime = 1000*(90 + 2*iSpellPower); 
+      iTime = random(iTime/2,iTime);
+
+      Send(victim,@StartEnchantment,#what=self,#time=iTime,
+           #state=iIllusion_type);
+      Send(victim,@SetPlayerIllusion,#what=self);
+      
+      return;
+   }
+
+   
+   SetSpellPlayerFlag(who=$)
+   {
+      local iIllusion_type,oIllusion,iFX;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return;
+      }
+         
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+      iFX = Send(oIllusion,@GetDrawFX);
+
+      if oIllusion <> $ AND iFX <> 0
+      {
+         Send(who,@SetPlayerDrawFX,#drawfx=iFX);
+      }
+
+      return;
+   }
+
+
+   SomethingSaidDuringTrance(who=$,string=$)
+   {
+      local iForm, iCount, i, iSpellPower, bDM;
+            
+      iSpellPower = Send(self,@GetSpellPower,#who=who);
+      iForm = -1;
+      iCount = 1;
+
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         bDM = IsClass(who,&DM);
+
+         if (StringEqual(string,Send(i,@GetName)) AND bDM)
+            OR StringEqual(string,Send(i,@GetKocName))
+         {
+            % Be sure the player deserves to be able to 
+            %  'steer' to this monster.
+            if (Send(i,@GetLevel) >= (iSpellPower - random(0,10))
+               AND iSpellPower < 99)
+               AND NOT bDM
+            {
+               return;
+            }
+            
+            % Be sure the player CAN morph to it.  No frogmen,
+            %  ice creatures, or yetis (size).
+            if not Send(i,@CanMorphTo)
+            {
+               return;
+            }
+            
+            iForm = iCount;
+
+            break;
+         }
+
+         iCount = iCount + 1;
+      }
+
+      if iForm <> -1
+      {
+         % don't print fizzle message.
+         Send(who,@BreakTrance,#event=EVENT_STEER);  
+         Send(self,@PerformIllusionaryForm,#caster=who,#victim=who,
+              #iIllusion_type=iForm,#iSpellpower=iSpellpower);
+      }
+
+      return;
+   }
+
+
+   CalculateIllusionType(iSpellPower = 0)
+   "Returns an illusion id based on <percent>--higher <percent> gives you a "
+   "better chance of being a cooler monster."
+   {
+      local i, iLevel, iMax, iIndex, iCount, iAmount;
+            
+      iMax = 0;      
+      iSpellPower = (iSpellpower * 130)/100;
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         iLevel = Send(i,@getLevel);
+         if Send(i,@CanMorphTo)
+         {                        
+            iAmount = (iSpellPower - iLevel);
+            if iAmount < 0
+            {
+               iAmount = abs(iAmount*2);
+            }
+
+            iAmount = iSpellPower - iAmount;
+
+            if iAmount < -99
+            {
+               iAmount = 0;
+            }
+            else
+            {
+               iAmount = bound(iAmount,1,100);
+            }
+
+            iMax = iMax + iAmount;           
+         }
+      }
+
+      iIndex = random(0,iMax); iCount = 1;      
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         iLevel = Send(i,@getLevel);
+         if Send(i,@CanMorphTo)
+         {          
+            iAmount = (iSpellPower - iLevel);
+            if iAmount < 0
+            {
+               iAmount = abs(iAmount*2);
+            }
+
+            iAmount = iSpellPower - iAmount;
+
+            if iAmount < -99
+            {
+               iAmount = 0;
+            }
+            else
+            {
+               iAmount = bound(iAmount,1,100);
+            }
+
+            iIndex = iIndex - iAmount;
+            if iIndex <= 0
+            {
+               return iCount;
+            }
+         }
+
+         iCount = iCount + 1;
+      }
+
+      debug("Shouldn't get here!");
+      return $;
+   }      
+
+   EndEnchantment(who = $, report = TRUE)
+   {
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=illusionaryform_off);
+      }
+
+      Send(who,@ResetPlayerIllusion);
+
+      return;
+   }
+
+   % Called by player, for illusion callback.
+
+   IllusionGetIcon(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return object_icon_rsc;
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+
+      return Send(oIllusion,@GetIcon);
+   }
+
+   IllusionSendAnimation(who = $, animation = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+
+      if iIllusion_type = $
+      {
+         AddPacket(1,ANIMATE_NONE, 2,1);
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+      if animation = PANM_WEAPON_ATTACK
+         OR animation = PANM_FIST_ATTACK
+         OR PANM_MONSTER_ATTACK
+      {
+         Send(oIllusion,@SetAnimation,#animation=ANIM_ATTACK);
+      }
+      else
+      {
+         Send(oIllusion,@SetAnimation,#animation=ANIM_NONE);
+      }
+
+      Send(oIllusion,@SendAnimation);
+
+      return;
+   }
+
+   IllusionSendMoveAnimation(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         AddPacket(1,ANIMATE_NONE, 2,1);
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+      Send(oIllusion,@SendMoveAnimation);
+
+      return;
+   }
+
+   IllusionSendOverlays(who = $,animation = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         AddPacket(1,0);
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+      if animation = PANM_WEAPON_ATTACK
+         OR animation = PANM_FIST_ATTACK
+         OR PANM_MONSTER_ATTACK
+      {
+         Send(oIllusion,@SetAnimation,#animation=ANIM_ATTACK);
+      }
+      else
+      {
+         Send(oIllusion,@SetAnimation,#animation=ANIM_NONE);
+      }
+
+      Send(oIllusion,@SendOverlays);
+
+      return;
+   }
+
+   IllusionSendMoveOverlays(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         AddPacket(1,0);
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+      Send(oIllusion,@SendMoveOverlays);
+
+      return;
+   }
+
+   IllusionGetTemplate(who=$)
+   {      
+      local iIllusion;
+      iIllusion = Send(who,@GetEnchantedState,#what=self); 
+      if iIllusion = $
+      {
+         return $;
+      }
+
+      return Nth(Send(SYS,@GetMonsterTemplates),iIllusion);      
+   }
+
+   IllusionGetCapDef(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return object_article_none_rsc;
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+
+      if oIllusion = $
+      {
+         return object_article_none_rsc;
+      }
+
+      return Send(oIllusion,@GetCapDef);
+   }
+
+   IllusionGetDef(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return object_article_none_rsc;
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+
+      if oIllusion = $
+      {
+         return object_article_none_rsc;
+      }
+
+      return Send(oIllusion,@GetDef);
+   }
+
+   IllusionGetInDef(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return object_article_none_rsc;
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+
+      if oIllusion = $
+      {
+         return object_article_none_rsc;
+      }
+
+      return Send(oIllusion,@GetInDef);
+   }
+
+   IllusionGetCapInDef(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return object_article_none_rsc;
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+
+      if oIllusion = $
+      {
+         return object_article_none_rsc;
+      }
+
+      return Send(oIllusion,@GetCapInDef);
+   }
+
+   IllusionGetHisHer(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return object_article_none_rsc;
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+
+      if oIllusion = $
+      {
+         return object_article_none_rsc;
+      }
+
+      return Send(oIllusion,@GetHisHer);
+   }
+
+
+   IllusionGetName(who = $)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         return Send(who,@GetTrueName);
+      }
+
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+
+      if oIllusion = $
+      {
+         return Send(who,@GetTrueName);
+      }
+
+      return Send(oIllusion,@Getname);
+   }
+
+   IllusionGetLightingInformation(who=$)
+   {
+      local iIllusion_type,oIllusion;
+
+      iIllusion_type = Send(who,@GetEnchantedState,#what=self);
+      if iIllusion_type = $
+      {
+         % If no illusion, then Send no lighting information.
+         return FALSE;
+      }
+      
+      oIllusion = Nth(Send(SYS,@GetMonsterTemplates),iIllusion_type);
+      if oIllusion = $
+      {
+         % If no illusion, then send no lighting information.
+         return FALSE;
+      }
+
+      % Adds the appropriate information packets.
+      Send(oIllusion,@SendLightingInformation);
+
+      % Return TRUE since we returned lighting information.
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

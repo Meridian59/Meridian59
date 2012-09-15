@@ -1,0 +1,19 @@
+# Book of Jala, for Justicar's court
+#^Applied to Hotspot: 0
+#*Groups: 2
+#* book of Jala
+#* display
+-s 5
+9
+jbk000.BMP     [0, 0] 
+jbk315.BMP     [0, 0] 
+jbk270.BMP     [0, 0] 
+jbk225.BMP     [0, 0] 
+jbk180.BMP     [0, 0] 
+jbk135.BMP     [0, 0] 
+jbk090.BMP     [0, 0] 
+jbk045.BMP     [0, 0] 
+bk1dspb.bmp    [999, 999] 
+2
+ 8   1 2 3 4 5 6 7 8 
+ 1   9 

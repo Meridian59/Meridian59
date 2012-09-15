@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildEndAlliance is GuildCommand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   guildendalliance_name_rsc = "end alliance"
+   guildendalliance_icon_rsc = light.bgf
+   guildendalliance_desc_Rsc = "Use this to shatter the alliance that your guild has with another guild.  Must target a member of the offending guild."
+
+   endalliance_non_user = "%s%s didn't want to be your friend anyway."
+   endalliance_not_member = "%s%s is not a member of an allied guild!"
+   endalliance_your_guild = "%s is a member of your guild!"
+
+   endalliance_cant_self = "Aw, come on.  You want to be your own friend."
+
+classvars:
+
+   vrName = guildendalliance_name_rsc
+   vrIcon = guildendalliance_icon_rsc
+   vrDesc = guildendalliance_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_END_ALLIANCE
+   viRank_needed = RANK_LIEUTENANT
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, otarget = $)
+   "Kicks the target out of the guild!"
+   {
+      local yourGuild,myguild,i,lmembers;
+
+      if not isClass(oTarget,&guild)
+        {
+          send(who,@msgsenduser,#message_rsc=endalliance_non_user,
+            #parm1 = send(oTarget,@getcapdef), #parm2 = send(oTarget,@getname));
+          return FALSE;
+        }
+
+      yourGuild= oTarget;
+      myGuild = send(who, @getguild);
+
+      if yourguild = myguild
+        {
+          send(who,@msgsenduser,#message_rsc=endalliance_your_guild,
+              #parm1=send(oTarget,@gettruename));
+          return FALSE;
+        }
+       
+      if yourguild = $ or not send(myguild,@isally,#otherguild = yourguild)
+        {
+          send(who,@msgsenduser,#message_rsc=endalliance_not_member,
+              #parm1=send(oTarget,@getdef),
+			  #parm2=send(oTarget,@getname));
+          return FALSE;
+        }
+
+      send(myGuild,@endally,#otherguild = yourguild);
+
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

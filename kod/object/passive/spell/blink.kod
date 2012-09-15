@@ -1,0 +1,106 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Blink is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   blink_name_rsc = "blink"
+   blink_icon_rsc = iblink.bgf
+   blink_desc_rsc = \
+     "Teleports you to a central location in the room.  "
+	 "Requires nothing but a will to move."
+
+   blink_spell_intro = "Riija Level 1: The Trickster's most basic spell teleports you to the local place of power."
+
+classvars:
+
+   vrName = blink_name_rsc
+   vrIcon = blink_icon_rsc
+   vrDesc = blink_desc_rsc
+
+   viCast_time = 10000
+
+   vrSpell_intro = blink_spell_intro
+
+   viSpell_num = SID_BLINK
+   viSpell_level = 1
+   viSchool = SS_RIIJA
+   viMana = 15
+   viSpellExertion = 20
+   viChance_To_Increase = 15
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local owner, oRoom;
+
+      owner = Send(who,@GetOwner);
+
+      if send(owner,@GetRoomNum) = RID_KOC_HALL_OF_HEROES
+      {
+         oRoom = send(SYS,@FindRoomByNum,#num=RID_TOS_FORGET);
+         if oRoom <> $
+         {
+            post(oRoom,@Teleport,#what=who);
+
+            propagate;
+         }
+      }
+
+      if send(owner,@GetRoomNum) = RID_BAZMANS_ROOM
+      {
+         oRoom = send(SYS,@FindRoomByNum,#num=RID_FORGOTTEN_TOO);
+         if oRoom <> $
+         {
+            post(oRoom,@teleport,#what=who);
+
+            propagate;
+         }
+      }
+
+      send(owner,@Teleport,#what=who);  
+
+      propagate;
+   }
+
+   SuccessChance(who=$)
+   "Since Blink is a bug fix, always have it succeed."
+   {
+      return TRUE;
+   }
+
+   CanForget()
+   "Blink will not be killed by a forget potion."
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

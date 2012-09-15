@@ -1,0 +1,198 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Portal is ActiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   portal_name_rsc = "portal"
+   portal_icon_rsc = portal.bgf
+   portal_desc_rsc = "The portal flickers coldly, eerily inviting you to some unknown locale."
+
+   portal_dead = "This archway stands cold and inanimate."
+
+classvars:
+
+   vrName = portal_name_rsc
+
+   viObject_flags = MOVEON_TELEPORTER
+
+   viAnimationSpeed = 100
+   viMaxDistance = 3
+   vrDead = portal_dead
+
+properties:
+
+   vrIcon = portal_icon_rsc
+   vrDesc = Portal_desc_rsc
+
+   pbAnimate = TRUE
+
+   piDest_room = RID_DEFAULT
+   piDest_angle = ANGLE_NORTH
+   piDest_row = $
+   piDest_col = $
+   piDest_fine_row = FINENESS_HALF
+   piDest_fine_col = FINENESS_HALF
+
+messages:
+
+   Constructor(dest_room_num = RID_DEFAULT, dest_row = 1, dest_col = 1,
+               dest_angle = $, dest_fine_row = FINENESS_HALF,
+               dest_fine_col = FINENESS_HALF, desc = $, icon=$)
+   {
+      piDest_room = dest_room_num;
+      piDest_row = dest_row;
+      piDest_col = dest_col;
+      piDest_fine_row = dest_fine_row;
+      piDest_fine_col = dest_fine_col;
+      piDest_angle = dest_angle;
+
+      if desc <> $
+      {
+         vrdesc = desc;
+      }
+
+      if icon <> $
+      {
+         vrIcon = icon;
+      }
+
+      propagate;
+   }
+
+   ShowDesc()
+   {
+      if pbAnimate
+      {
+         propagate;
+      }
+      else
+      {
+         AddPacket(4,vrDead);
+      }
+
+      return;
+   }
+
+   SetAnimation(what = $)
+   {
+      pbAnimate = what;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      return;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      local iRow,iCol;
+      
+      iRow = Send(self,@GetRow);
+      iCol = Send(self,@GetCol);
+
+      if new_row = iRow AND new_col = iCol
+      {
+         if NOT pbAnimate
+         {
+            return;
+         }
+
+         if what = self
+         {
+            return;
+         }
+
+         % Something moved on top of us.
+         Send(self,@TeleportSomething,#what=what);
+      }
+
+      return;
+   }
+
+   TeleportSomething(what=$)
+   "Called when something walks on top of us."
+   {
+      if NOT Send(SYS,@UtilGoNearSquare,#what=what,
+                  #where=Send(SYS,@FindRoomByNum,#num=piDest_room),
+                  #new_row=piDest_row,#new_col=piDest_col,
+                  #fine_row=piDest_fine_row,#fine_col=piDest_fine_col,
+                  #new_angle=piDest_angle, #max_distance=viMaxDistance,
+                  #do_Move=FALSE)
+      {
+         debug("Portal",self,"unable to move",what);
+      }
+      else
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=piDest_room),
+              #new_row=piDest_row,#new_col=piDest_col,
+              #fine_row=piDest_fine_row,#fine_col=piDest_fine_col,
+              #new_angle=piDest_angle, #max_distance=viMaxDistance);
+      }
+
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return IsClass(what,&Room);
+   }
+
+   SendAnimation()
+   {
+      if NOT pbAnimate
+      {
+         propagate;
+      }
+
+      AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed, 2,1, 2,1);
+
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      if NOT pbAnimate
+      {
+         return MOVEON_NO;
+      }
+
+      propagate;
+   }
+
+   SendLightingInformation()
+   {
+      local iIntensity;
+
+      AddPacket(2,LIGHT_FLAG_ON);
+      % Intensity (out of 255)
+      % More intense if we're actually active.
+      if pbAnimate
+      {
+         AddPacket(1,10);
+      }
+      else
+      {
+         AddPacket(1,5);
+      }
+
+      % Color
+      AddPacket(2,LIGHT_PURPLE);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

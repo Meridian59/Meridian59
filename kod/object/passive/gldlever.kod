@@ -1,0 +1,181 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildLever is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+   LEVER_RANGE = 1
+
+   SHIELD_OFF = 1
+   SHIELD_ON  = 2
+
+resources:
+
+   guildlever_name_rsc = "mystical shield deactivator"
+   guildlever_icon_rsc = guildlvr.bgf
+   guildlever_desc_rsc = \
+      "Flipping this lever raises and lowers the defenses of a guild hall.  "
+      "If this switch is flipped, and not flipped back in 10 minutes, the "
+      "guild hall is declared conquered.  NOTE: Flipping the switch is "
+      "considered an outlaw action, and must be done with your safety OFF."
+      "\n\n%s"
+
+   guildlever_not_in_range = \
+      "You are not close enough to the deactivator to use it."
+
+   guildlever_changed = "You switch the lever."
+
+   lever_unowned_desc = \
+      "However, since the guild hall is currently unoccupied, this object "
+      "currently does nothing."
+   lever_defenses_up_desc = \
+      "Protective energy crackles around the mystic eye, offering warm protection."
+   lever_defenses_down_desc = \
+      "The eye stands cold and inert - the hall's defenses are down!"
+
+   guildlever_not_qualified = \
+      "You attempt to flip the switch, but it resists all your attempts to do so."
+   guildlever_happyland = "You cannot conquer guild halls in this world."
+
+classvars:
+
+   vrName = guildlever_name_rsc
+   vrIcon = guildlever_icon_rsc
+   vrDesc = guildlever_desc_rsc
+
+   viObject_flags = ACTIVATE_YES
+
+properties:
+
+   piState = SHIELD_OFF
+
+messages:
+
+   Constructor(status=SHIELD_OFF)
+   {
+      piState = status;  
+
+      propagate;
+   }
+
+   ShowDesc()
+   {
+      AddPacket(4,vrDesc);
+
+      
+      if send(poOwner,@GetStatus) = 0 OR send(poOwner,@GetStatus) = 2
+      {
+         AddPacket(4,lever_unowned_desc);
+
+         return;
+      }
+
+      if piState = SHIELD_OFF
+      {
+         AddPacket(4,lever_defenses_down_desc);
+
+         return;
+      }
+
+      AddPacket(4,lever_defenses_up_desc);
+
+      return;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if poOwner = $
+      {
+         return FALSE;
+      }
+      
+      if (abs((send(who,@GetRow)-send(self,@GetRow))) > LEVER_RANGE
+         OR abs((send(who,@GetCol)-send(self,@GetCol))) > LEVER_RANGE)
+         OR send(poOwner,@InFoyer,#who=who)
+      {
+         % Lever is out of range
+
+         Send(who,@MsgSendUser,#message_rsc=guildlever_not_in_range);          
+
+         return TRUE;
+      }
+
+      if NOT send(SYS,@IsPKAllowed)
+      {
+         Send(who,@MsgSendUser,#message_rsc=guildlever_happyland);
+
+         return TRUE;      
+      }
+
+      if Send(poOwner,@ReqLegalEntry,#who=who)
+      {
+         Send(poOwner,@GuildLeverFlipped,#who=who);
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=guildlever_not_qualified);  	 
+      }
+      
+      return TRUE;
+   }
+
+   ChangeGraphic(new_state = SHIELD_OFF)
+   {
+      piState = new_state;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   SendAnimation()
+   {
+      if piState = SHIELD_ON
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,3);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,4);
+
+      return;
+   }
+
+   SendLightingInformation()
+   {
+      % Give it a light source.
+      AddPacket(2,LIGHT_FLAG_ON);
+
+      if piState = SHIELD_ON
+      {
+         AddPacket(1,1);
+         AddPacket(2,LIGHT_GREEN);
+      }
+      else
+      {
+         AddPacket(1,5);
+         AddPacket(2,LIGHT_WHITE);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

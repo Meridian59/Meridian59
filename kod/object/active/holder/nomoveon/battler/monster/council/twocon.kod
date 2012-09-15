@@ -1,0 +1,126 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TwoCouncilor is Council
+
+constants:
+
+   include blakston.khd
+   NUM_COINS_FOR_SPECIAL = 10000
+
+resources:
+
+   twoCouncilor_name_rsc = "Bei Naq"
+   twoCouncilor_icon_rsc = twocon.bgf
+   twoCouncilor_desc_rsc = "A small vulture like man stuffed in extravagant robes of gold and jewels, "
+      "he lives in constant fear of others wanting his treasures.  Through his studies, he located numerous "
+      "jewel mines and remains the richest in the land, although his purse is seldom opened."
+
+   twocon_true_ideal_rsc = "Your fortune is sizable. I am always doubly impressed by those who carry such capital."
+   twocon_half_ideal_rsc = "For future reference, I do prefer to do business with those who carry more wealth about them."
+
+classvars:
+
+   vrName = twoCouncilor_name_rsc
+   vrDesc = twoCouncilor_desc_rsc
+   vrIcon = twoCouncilor_icon_rsc
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE 
+   viOccupation = MOB_ROLE_COUNCILMEMBER
+   viInitialState = 101  %leaning to the duke
+   viGender = GENDER_MALE   
+
+   viHomeroom = RID_G6
+   viMyRow = 48
+   viMyCol = 6
+   viMyAngle = ANGLE_EAST
+
+properties:
+
+   piStateBump=1
+
+messages:
+
+   UserEntered( who = $ )
+   {
+      local iFlags;
+      iFlags = send( who, @GetObjectFlags );
+      if iFlags & PLAYER_PK
+      {
+	 send( self, @SetMood, #new_mood = piMood - 4 );
+      }
+      if iFlags & PLAYER_OUTLAW
+      {
+	 send( self, @SetMood, #new_mood = piMood - 2 );
+      }
+  
+      propagate;
+   }
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_ACCEPT_ITEM )
+      {
+	 if( IsClass( what, &money ) OR IsClass( what, &Diamond ) )
+	 {
+   	    send( self, @SetMood, #new_mood = piMood + 3 );
+	    return;
+	 }
+	 if( IsClass( what, &SpiderEgg ) )
+	 {
+   	    send( self, @SetMood, #new_mood = piMood + 5 );
+	    return;
+	 }
+      }
+      if( why = MOODMOD_FACTION_CHANGE )
+      {
+	 if( what = FACTION_DUKE )
+	 {
+	    send( self, @SetMood, #new_mood = piMood + 1 );
+	    return;
+	 }
+	 if( what = FACTION_PRINCESS )
+	 {
+	    send( self, @SetMood, #new_mood = piMood - 1 );
+	    return;
+	 }
+      }
+      if( why = MOODMOD_DAWN )
+      {
+	 send( self, @SetMood, #new_mood = piMood + 3 );
+	 return;
+      }
+      if( why = MOODMOD_DUSK )
+      {
+	 send( self, @SetMood, #new_mood = piMood - 3 );
+	 return;
+      }
+      return;
+   }
+
+   Constructor()
+   {
+     plWantedItems = [&TwoToken];
+     propagate;
+   }
+
+   CheckSpecialDeliverer(who=$)
+   {
+     local imoney;
+     piStateBump = 1; 
+     imoney = Send(who,@GetMoneyObject);
+     if imoney<>$ and (Send(imoney,@GetValue) >= NUM_COINS_FOR_SPECIAL)
+     {  piStateBump = 2; return TwoCon_true_ideal_rsc; }
+     else { return TwoCon_half_ideal_rsc; }
+     return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

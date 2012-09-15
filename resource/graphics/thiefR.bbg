@@ -1,0 +1,46 @@
+# Thief Skill Master NPC
+# Right arm
+# groups
+# 1 standing
+# 2 -3 walking
+# 4-5 knife tossing
+# Hotspots
+# 22 Dagger
+-s 3
+30
+t000ras.bmp    [-12, -4] 
+t045ras.bmp    [-8, -7] 
+t090ras.bmp    [-6, -6] 
+t180ras.bmp    [-7, -6] 
+t270ras.bmp    [-16, -5] 
+t315ras.bmp    [-14, -6] 
+t000raa.bmp    [-20, -5] 
+t045raa.bmp    [-43, -8] 
+t090raa.bmp    [-47, -7] 
+t180raa.bmp    [-7, -7] 
+t270raa.bmp    [-5, -7] 
+t315raa.bmp    [-2, -5] 
+t000rab.bmp    [-11, -5] 
+t045rab.bmp    [-6, -8] 
+t090rab.bmp    [-7, -7] 
+t180rab.bmp    [-7, -5] 
+t270rab.bmp    [-25, -6] 
+t315rab.bmp    [-18, -8] 
+t000raka.bmp   [-10, -5] :1     22 [7, 43]
+t045raka.bmp   [-8, -6] :1     22 [43, 44]
+t090raka.bmp   [-6, -5] :1     22 [54, 41]
+t180raka.bmp   [-6, -5] :1    -22 [8, 34]
+t270raka.bmp   [-50, -6] :1     22 [5, 37]
+t315raka.bmp   [-42, -7] :1     22 [8, 41]
+t000rakb.bmp   [-15, -5] :1     22 [9, 30]
+t045rakb.bmp   [-7, -8] :1     22 [40, 28]
+t090rakb.bmp   [-8, -6] :1     22 [52, 26]
+t180rakb.bmp   [-7, -7] :1    -22 [13, 24]
+t270rakb.bmp   [-51, -6] :1     22 [6, 25]
+t315rakb.bmp   [-46, -7] :1     22 [8, 27]
+5
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14
+ 8     19  24  23  22  22  22  21  20
+ 8     25  30  29  28  28  28  27  26

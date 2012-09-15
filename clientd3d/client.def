@@ -1,0 +1,213 @@
+;
+; Definition file for client:  These files are exported to modules
+;
+
+EXPORTS
+
+; Utility functions
+	SafeMalloc
+	ZeroSafeMalloc
+	SafeRealloc
+	SafeFree
+	PerformAction
+	AreYouSure
+	ClientError
+	LookupRsc
+	LookupNameRsc
+	LookupRscNoError
+	dprintf
+	MouseToRoom
+	ParseCommand
+	FilterSayMessage
+	GameMessage
+	GameMessagePrintf
+	SetDescParams
+	Logoff
+	ResetUserData
+	WebLaunchBrowser
+	InitMenuPopupHandler
+	GetHBitmapFromResource
+
+; Keyboard handling
+	KeyAddTable
+	KeyRemoveTable
+	TranslateKey
+	KeySetLastNorepeatTime
+
+; Graph custom controls
+	GraphCtlGetClassName
+	GraphCtlWndProc
+
+; Game functions
+	GetObjects3D
+	GameGetState
+	GameSetState
+	RedrawAll
+	DisplayLookList
+	SetSelectCallback
+	UserDidSomething
+	GetObjectByPosition
+	SelectedObject
+	StartApply
+	DisplayDescription
+	MapShowAllWalls
+
+; Send messages to other modules
+	ModuleEvent
+
+; Miscellaneous Windows routines
+	GetFont
+	GetColor
+	GetBrush
+	CenterWindow
+	GetFontHeight	
+	EditBoxScroll
+	WindowBeginUpdate
+	WindowEndUpdate
+	DialogCtlColor
+	MakeDirectory
+	GetString
+	AreaToRect
+	RectToArea
+	UnionArea
+	IsInArea
+	ResizeDialogItem
+	ResizeDialog
+	MenuFindItemByName
+	SetMainCursor
+	GameWindowSetCursor
+	GetBitmapResource
+	GetBitmapResourceInfo
+	GetClosestPaletteIndex
+
+; Interface to INI file
+	GetConfigInt
+	WriteConfigInt
+
+; Messages to and from server
+	ToServer
+	LookupMessage
+	Extract
+	ExtractCoordinates
+	ExtractObject
+	ExtractObjectNoLight
+	ExtractNewObject
+	ExtractNewObjectNoLighting
+	ExtractNewRoomObject
+	ExtractObjectList
+	ExtractString
+	ExtractAnimation
+	ExtractOverlays
+	ExtractOverlay
+	CheckServerMessage
+
+; Owner drawn list boxes
+	ItemListGetId
+	OwnerListAddItem
+	OwnerListSetContents
+	OwnerListChangeItem
+	OwnerListFindObject
+	OwnerListFindItem
+	OwnerListCompareItem
+	OwnerListMeasureItem
+	OwnerListDrawItem
+	OwnerListDrawItemNoSelect
+
+; Drawing objects and interface pieces
+	DrawObject
+	DrawObjectIcon
+	DrawStretchedObjectDefault
+	DrawStretchedOverlays
+	DrawStretchedOverlayRange
+	DrawStretchedObjectGroup
+	OffscreenWindowBackground
+	OffscreenBitBlt
+	OffscreenStretchBlt
+	OffscreenCopy
+	OffscreenWindowColor
+	DrawBorder
+	DrawWindowBackgroundColor
+	DrawWindowBackgroundBorder
+
+; Linked lists
+	list_create
+	list_add_item
+	list_add_first
+	list_append
+	list_delete_item
+	list_delete_first
+	list_delete_last
+	list_first_item
+	list_last_item
+	list_nth_item
+	list_find_item
+	list_delete
+	list_destroy
+	list_length
+	list_move_to_front
+	list_add_sorted_item
+
+; ID lists
+	IDListAdd
+	IDListRemove
+	IDListMember
+	IDListDelete
+
+; Interface components
+	ToolbarAddButton
+	ToolbarSetButtonState
+	TooltipAddRectangle
+	TooltipAddWindow
+	TooltipForwardMessage
+	CopyCurrentView
+	CopyCurrentAreaMiniMap
+	TextInputSetFocus
+	GetTextInputHeight
+	GetAmount
+	ToolbarGetUnionRect
+	Lagbox_GetRect
+	EditBoxGetArea
+	UserMouselookIsEnabled
+
+; Edit box text
+	EditBoxStartAdd
+	EditBoxEndAdd
+	EditBoxAddText
+	DisplayServerMessage
+	DisplayMessage
+
+; Manipulating objects
+	CompareIdObject
+	ObjectGetBlank
+	ObjectCopy
+	ObjectDestroy
+	ObjectDestroyAndFree
+	ObjectListDestroy
+	RoomObjectDestroy
+	RoomObjectListDestroy
+	GetRoomObjectById
+	FindVisibleObjectById
+	GetPlayerInfo
+
+; Bitmaps
+	DibOpenFile
+	BitmapsFree
+	CreateMemBitmap
+
+; Animation
+	AnimateObject
+
+; Sound and music
+	PlayMusicFile
+	PlayMusicRsc
+	PlayMidiRsc
+	PlayWaveFile
+	PlayWaveRsc
+	SoundAbort
+	MusicAbort
+
+; Non-game mode functions
+	OfflineConnect
+
+; ajw
+	GetUserTargetID

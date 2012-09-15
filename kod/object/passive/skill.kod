@@ -1,0 +1,501 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Skill is PassiveObject 
+
+constants:
+
+   include blakston.khd
+
+   % The number to divide by when we are over our softcap of 2 * Requisite Stat.
+   SOFTCAP_PENALTY = 5
+
+resources:
+
+   skill_name_rsc = "skill"
+   skill_icon_rsc = light.bgf
+   skill_desc_text_rsc = "This is a skill."
+   skill_intro_rsc = "One of several agile skills."
+
+   skill_bad_target = "You can't cast %s on %s%s!"
+   skill_out_of_range = "%s%s is out of range."
+
+   skill_too_tired = "You are too tired to use your %s skill!"
+   skill_failed_by_chance = "Your %s attempt was unsuccessful."
+   
+   skill_sound_fail = spelfail.wav
+
+   skill_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s"
+   skill_school_fencing = "Weaponcraft"
+   skill_school_brawling = "Brawling"
+   skill_school_thievery = "Thievery"
+
+classvars:
+
+   vrName = skill_name_rsc
+   vrIcon = skill_icon_rsc
+   vrDesc = skill_desc_text_rsc
+   vrSkill_intro = skill_intro_rsc
+
+   vrFailed = skill_failed_by_chance
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSkill_num = $
+   viSchool = $
+
+   viSkill_level = 1
+
+   % Initial chance to increase, modified by Intellect.   
+   viChance_to_Increase = 25    
+
+   viskillExertion = 2
+   vbCheck_Exertion = TRUE
+
+   % Shows up on pull-down menus, if FALSE some skills, like Parry and Dodge,
+   %  are solely passive, and are TRUE
+   vbAutomatic = FALSE
+
+   % Default animation speed for icon if set to 0, then no animation.
+   viAnimationSpeed = 0
+
+   viAnimation_start = 1
+   viAnimation_end = 1
+   viIcon_animation_start = 2
+   viIcon_animation_end = 2
+
+properties:
+
+   plPrerequisites = $
+
+messages:
+
+   Delete()
+   {
+      Send(SYS,@Deleteskill,#what=self);
+
+      propagate;
+   }
+
+   GetSchoolStr()
+   {
+      local oSchool;
+
+      oSchool = skill_school_fencing;
+
+      if viSchool = SKS_BRAWLING
+      {
+         oSchool = skill_school_brawling;
+      }
+
+      if viSchool = SKS_THIEVERY
+      {
+         oSchool = skill_school_thievery;
+      }
+
+      return oSchool;
+   }
+
+   ShowDesc()
+   {
+      local rSchool;
+
+      rSchool = skill_school_fencing;
+
+      if viSchool = SKS_BRAWLING
+      {
+         rSchool = skill_school_brawling;
+      }
+
+      if viSchool = SKS_THIEVERY
+      {
+         rSchool = skill_school_thievery;
+      }
+
+      AddPacket(4,skill_desc_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
+
+      return;
+   }
+
+   GetValue()
+   {
+      local i,j;
+
+      i = 1;
+      j = 2;
+
+      while i < viSkill_level
+      {
+         j = j * 2;
+         i = i + 1;
+      }
+
+      return 250 * j;
+   }
+
+   GetSchool()
+   {
+      return viSchool;
+   }
+   
+   KarmaCheck()
+   {
+      return TRUE;
+   }
+
+   GetDivision()
+   {
+      return LEARN_DIVISION_COMBAT;
+   }
+
+   GetDivisionReq(who=$)
+   {
+      return Send(who,@GetAgility);
+   }
+   
+   GetSkillNum()
+   {
+      return viSkill_Num;
+   }
+
+   GetAbility(who=$)
+   {
+      return Send(who,@GetSkillAbility,#skill_num=viSkill_num);
+   }
+
+   GetPrerequisites()
+   {
+      return plPrerequisites;
+   }
+
+   InitialAbility(who=$)
+   "This is the ability level that the target player starts at."
+   {
+      local iRequisiteStat;
+
+      iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
+
+      return bound(random(iRequisiteStat/2,iRequisiteStat)/2,1,25);
+   }
+
+   CanPayCosts(who=$,oTarget=$)
+   "If a skill requires a special cost or requirement of some sort, that"
+   "cost goes here.  Example: picking locks may require thieves tools."
+   {
+      local oOwner, i;
+
+      if Send(who,@HasForgetEnchantment,#what=self)
+      {
+         return FALSE;
+      }
+
+      if not Send(who,@HasVigor,#amount=viSkillExertion) and vbCheck_Exertion = TRUE
+      {
+         Send(who,@MsgSendUser,#message_rsc=skill_too_tired,#parm1=vrName);
+
+         return FALSE;
+      }
+
+      oOwner = Send(who,@GetOwner);
+
+      if oTarget <> $ AND oOwner <> Send(oTarget,@GetOwner)
+      {
+         Send(who,@MsgSendUser,#message_rsc=skill_out_of_range, 
+              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      % Used skill flips atrophy flag
+      Send(who,@FlipSkillAtrophyFlag,#SKID=viSkill_num);
+
+      return TRUE;
+   }
+
+   SuccessChance(who=$,modifier=0)
+   "For strokes, this is always true, because stroke success is figured in"
+   "other procedures of player kod."
+   "Modifier indicates the plusses (or minuses, if negative) to apply to the chance"
+   {
+      local iRequisiteStat,iAbility,num;
+
+      iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
+      iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
+      num = ((100-iRequisiteStat)*iAbility/100) + iRequisiteStat;
+      num = num + modifier;
+
+      if random(1,100) > num
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   SkillFailed(who=$)
+   "A potent skill could have disastrous side effects if failed."
+   {
+      Send(who,@AddExertion,#amount=(1000*viSkillExertion)/2);
+      Send(who,@MsgSendUser,#message_rsc=vrfailed,#parm1=vrName);
+
+      return;
+   }
+
+   PayCosts(who=$,modifier=0)
+   "Some skills may require certain stats to be depleted."
+   "return TRUE if they were successfully depleted."
+   {
+      if NOT Send(self,@SuccessChance,#who=who,#modifier=modifier)
+      {
+         Send(self,@SkillFailed,#who=who);
+
+         return FALSE;
+      }
+
+      Send(who,@AddExertion,#amount=1000*viSkillExertion);
+
+      return TRUE;
+   }
+
+   DoAnimation(who=$)
+   "This is put in so eventually, Chris can put in individual animations for"
+   "each skill."
+   {
+      return;
+   }
+
+   DoSkill(who = $, oTarget = $)
+   "Note: Strokes do not end up calling this routine!"
+   "Anything that must be done by all strokes must be put elsewhere!"
+   {
+      % Do animation.
+      Send(self,@DoAnimation,#who=who);
+
+      % Check for advancement conditions.
+      Send(self,@ImproveAbility,#who=who,#target=oTarget);  
+
+      return TRUE;
+   }
+
+   GetRequisiteStat(who=$)
+   "Varies from skill to skill and spell to spell."
+   {
+      return Send(who,@GetAgility);
+   }
+
+   ImproveAbility(who=$,target=$,bonus=0)
+   "Made a seperate area by Damion, 3/24."
+   "Put initial random check first to reduce server load."
+   "ImproveAbility depends on four factors:  a player's intellect, the"
+   "player's primerequisite stat for this spell, the level of the spell"
+   "and the level the player has already acquired."
+   {
+      local difficulty, iability, intellect, requisitestat, increase_chance,
+            iRandom, iInitialChance, oOwner;
+
+      % Monsters can cast spells, can't improve in them   
+      if NOT IsClass(who,&Player)
+      {
+         return FALSE;
+      }     
+
+      % players can't advance on anything they can choose to
+      %  generate: revenants and illusions
+      if target <> $ AND NOT Send(target,@CanPlayerAdvanceOnMe)
+      {
+         return FALSE;
+      }
+
+      if NOT Send(who,@HasSkill,#num=viskill_num)
+      {
+         return FALSE;
+      }
+
+      if NOT Send(who,@CheckAdvancementPoints)
+      {
+         Return FALSE;
+      }
+
+      % Can advance in real death arenas
+      if Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+         AND NOT Send(Send(who,@GetOwner),@ArenaRealDeath)
+      {
+         return FALSE;
+      }
+
+      iInitialChance = Send(self,@GetInitialChance,#who=who);
+      iRandom = random(1,100);
+      
+      if iRandom > iInitialChance
+      {
+         return FALSE;
+      }
+
+      iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
+      if iAbility >= 99 OR iAbility < 1
+      {
+         return FALSE;
+      }
+ 
+      increase_chance = Send(self,@GetSecondaryChance,#who=who,#target=target,#bonus=bonus);
+
+      oOwner = Send(who,@GetOwner);
+      if oOwner <> $
+      {
+         increase_chance = Send(oOwner,@ModifyChanceToImprove,#who=who,
+                                #oSpellSkill=self,#chance=increase_chance);
+      }
+
+      % For times when it's simply impossible to improve.
+      if increase_chance = CANNOT_IMPROVE
+      {
+         return FALSE;
+      }
+
+      RequisiteStat = Send(self,@GetRequisiteStat,#who=who);
+      increase_chance = bound(increase_chance,(1+requisitestat/10),99);
+      
+      iRandom = random(0,100);      
+      if iRandom < increase_chance
+      {         
+         Send(who,@ChangeSkillAbility,#skill_num=viskill_Num,#amount=1,#report=TRUE);
+         
+         return TRUE;       
+      }
+      
+      return FALSE;
+   }
+
+   GetInitialChance(who=$)
+   {
+      local iBonus, iFaction, iFinal;
+
+      % Give up to a 50% bonus to the initial chance to learn for high intellect.
+      iBonus = (viChance_to_increase * Send(who,@GetIntellect)) / 100;
+
+      iBonus = iBonus + Send(Send(SYS,@GetParliament),@GetFactionLearnBonus,
+                             #who=who,#theskill=self);
+
+      iFinal = (viChance_to_increase + iBonus);
+
+      % The personal universal modifier.
+      iFinal = iFinal + ((iFinal * Send(who,@CheckPlayerFlag,#flagset=3)) / 100);
+
+      return iFinal;
+   }
+
+   GetSecondaryChance(who=$,target=$,bonus=0)
+   {
+      local difficulty, iAbility, iRequisiteStat, increase_chance, factor, final;
+      
+      iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
+
+      % 110% base chance at 1st level for 50 requisite stat
+      increase_chance = 60 + iRequisiteStat;      
+      increase_chance = increase_chance - (Send(self,@GetLevel) * 10);
+      
+      % This is the penalty for generalization
+      increase_chance = increase_chance - Send(who,@GetTotalLearnPoints,#except=SKS_FENCING);
+
+      difficulty = 60;
+      if target <> $ AND IsClass(target,&Monster)
+      {
+         difficulty = bound(Send(target,@GetLevel),1,150);
+      }
+
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSkill_num);
+
+      % This decreases the imp chance as we go up in level.  It also gives
+      %  a better chance to imp on harder monsters.  Adding 10 to compensate
+      %  for losing the "knowing more in the school" bonus.
+      factor = ((2*difficulty) - (iAbility) + 10);
+      factor = bound(factor,50,100);
+
+      final = (increase_chance * factor)/100;
+      final = bound(final,5,$);
+
+      % Are we above the spells requisite stat?  Apply the "soft cap".
+      if iability > ((2*iRequisiteStat)-1)
+      {
+         final = final / SOFTCAP_PENALTY;
+      }
+
+      final = bound(final,1,$);
+
+      % The global modifier from system.
+      final = (final * Send(Send(SYS, @GetSettings), @GetAdvancementRate)) / 100;
+
+      % The individual universal modifier.
+      final = final + ((final * Send(who,@CheckPlayerFlag,#flagset=3)) / 100);
+
+      return final;
+   }
+
+   GetLevel()
+   {
+      return viSkill_level;
+   }
+
+   GetIntro()
+   {
+      return vrSkill_intro;
+   }
+
+   SendAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed, 2,viAnimation_start,
+                   2,viAnimation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viAnimation_start);
+      }
+
+      return;
+   }
+
+   SendLookAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed, 2,viIcon_Animation_start,
+                   2,viIcon_Animation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viIcon_Animation_start);
+      }
+
+      return;
+   }
+
+   IsRangedAttack()
+   {
+      return FALSE;
+   }
+
+   GiveAdvice()
+   {
+      return TRUE;
+   }
+   
+   IsAccessible()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

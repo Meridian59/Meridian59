@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SplashOfAcid is AttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SplashOfAcid_name_rsc = "splash of acid"
+
+   SplashOfAcid_icon_rsc = isplacid.bgf
+
+   SplashOfAcid_desc_rsc = \
+      "Splashes Qor's unholy corrosive acid on a target at short range.  "
+      "Requires entroot berries to cast."
+
+   SplashOfAcid_sound = qacid.wav
+
+classvars:
+
+   vrName = SplashOfAcid_name_rsc
+   vrIcon = SplashOfAcid_icon_rsc
+   vrDesc = SplashOfAcid_desc_rsc
+   
+   viSpell_num = SID_SPLASH_OF_ACID
+
+   viAttack_spell = ATCK_SPELL_ALL + ATCK_SPELL_ACID
+
+   viSchool = SS_QOR
+   viSpell_level = 4
+   viMana = 10
+
+   vrSucceed_wav = SplashOfAcid_sound
+
+   % In seconds, since it works off GetTime().
+   viPostCast_time = 2
+
+   viChance_To_Increase = 5
+
+properties:
+
+   piDamageMin = 16
+   piDamageMax = 25
+   piRange = 3
+   
+   % No bonus from Mana Focus
+   piManaFocusBonus = 0
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = cons([&EntrootBerry,2],plReagents);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

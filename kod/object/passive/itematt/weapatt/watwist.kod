@@ -1,0 +1,77 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttTwister is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This weapon sometimes twists the opponent randomly.
+%
+%  Form is: 
+%
+%       [ WA_TWISTER ]
+%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   weapatt_twister_desc = "  A swirling green 'GMT' is stamped into the pommel."
+   twister_dm = "twister"
+
+   weapatt_twister_victim_effect = "~gYou feel disoriented, losing your bearings."
+
+classvars:
+
+   vrDesc = weapatt_twister_desc
+   vrDesc2 = $
+
+   viItem_Att_Num = WA_TWISTER
+
+   viDifficulty = 9
+   vrDM_trigger = twister_dm
+
+properties:
+  
+   piValue_modifier = 150
+   piValue_power_modifier = 10
+   piEffect_Percent = 8
+
+messages:
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   "Wielder has a 1% chance of twisting target with any hit."
+   {
+      local oRoom;
+
+      if random(1,100) <= piEffect_percent
+      {
+         oRoom = send(target,@GetOwner);
+	 if oRoom <> $
+	 {
+	    send(oRoom,@SomethingTurned,#what=target,#new_angle=random(0,MAX_ANGLE-1));
+	    send(target,@MsgSendUser,#message_rsc=weapatt_twister_victim_effect);
+	 }
+      }
+
+      return damage;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,224 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TempleQor is Room
+
+constants:
+
+   include blakston.khd
+
+   EXIT_DELAY = 600000
+   RESET_TIME = 5000   % five seconds
+
+	SECTOR_DOOR = 4
+resources:
+
+   room_QorTemple = tempqor.roo
+   room_name_QorTemple = "The Temple of Qor"
+   tempqor_music = temple.mid
+
+	templeqor_sound = down2.wav
+
+classvars:
+
+   vrName = room_name_QorTemple
+
+   viTeleport_row = 26
+   viTeleport_col = 15
+
+   viTerrain_type = TERRAIN_TEMPLE | TERRAIN_CAVES | TERRAIN_LAVA
+
+properties:
+
+   prRoom = room_QorTemple
+   piRoom_num = RID_TEMPLE_QOR
+   prMusic = tempqor_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   piCurrentExit = RID_I8
+   plExitPossibilities = $
+   ptExitTime = $
+   ptDoor = $
+
+messages:
+
+   Constructor()
+   {
+      send(self,@BuildExitsList);
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptExitTime <> $
+      {
+         deletetimer(ptExitTime);
+         ptExitTime=$;
+      }
+      
+      if ptDoor <> $
+      {
+         deletetimer(ptDoor);
+         ptDoor = $;
+      }
+      
+      propagate;
+   }
+
+   BuildExitsList()
+   {
+      plExitPossibilities = [ RID_I8, RID_H9 ];
+      ptExitTime=CreateTimer(self,@exitstimer,EXIT_DELAY);
+      
+      return;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_SOUTH)
+      {
+         Send(send(SYS,@findroombynum,#num=piCurrentExit),@exitfromqor,#who=what);
+         
+         return;
+      }
+      
+      propagate;
+   }
+
+   ExitsTimer()
+   {
+      local max, rand, oChosenExit, i;
+      
+      if ptExitTime <> $
+      {
+         ptExitTime=$;
+      }
+      
+      max = length(plExitPossibilities);
+      oChosenExit = piCurrentExit;
+      
+      while oChosenExit = piCurrentExit
+      {
+         rand = random(1,max);
+         oChosenExit = nth(plExitPossibilities, rand);
+      }
+      
+      piCurrentExit = oChosenExit;
+      
+      for i in plExitPossibilities
+      {
+         if i = piCurrentExit
+         {
+            send(send(SYS,@FindRoomByNum,#num=i),@OpenQorTemple);
+         }
+         else
+         {
+            send(send(SYS,@FindRoomByNum,#num=i),@CloseQorTemple);
+         }
+      }
+
+      plYell_Zone = [ piCurrentExit ];
+      ptExitTime=CreateTimer(self,@ExitsTimer,EXIT_DELAY);
+ 
+     return;
+   }
+
+   CreateStandardObjects()
+   {
+      % teacher
+
+      Send(self,@NewHold,#what=Create(&QorPriestess),
+           #new_row=16,#new_col=15,#fine_row=32,#fine_col=0,
+                #new_angle=ANGLE_SOUTH);
+
+      % and some braziers
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=15,#new_col=7);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=15,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=15,#new_col=11);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=15,#new_col=18);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=15,#new_col=20);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=15,#new_col=22);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=16,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=16,#new_col=23);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=21,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=21,#new_col=23);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=23,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=23,#new_col=23);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=25,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=25,#new_col=23);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=27,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=27,#new_col=23);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=31,#new_col=13);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=31,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=33,#new_col=13);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=33,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=35,#new_col=13);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=35,#new_col=16);
+
+      propagate;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      
+      if (((row = 3) OR (row = 4))
+          AND ((col = 17) OR (col = 18)))
+         AND ptDoor = $
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=templeqor_sound); 
+         send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=270,#speed=16);
+    
+         ptDoor = CreateTimer(self,@DoorTimer,RESET_TIME);
+         
+         return TRUE;
+      }
+      
+      propagate;
+   }
+
+   DoorTimer()
+   {
+      ptDoor = $;
+      Send(self,@SomethingWaveRoom,#wave_rsc=templeqor_sound); 
+      send(self,@setsector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=192,#speed=16);
+           
+      return;
+   }   
+
+   TempleEntrance(who=$)
+   {
+      send(SYS,@UtilGoNearSquare,#what=who,
+           #where=self,#new_row=33,#new_col=14,#new_angle=ANGLE_NORTH);
+           
+      return;  
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      if IsClass(oSpellSkill,&Spell)
+         AND send(oSpellSkill,@GetSchool) = SS_QOR
+      {
+         % Give a 10% bonus.
+         return ((chance * 11)/10);
+      }
+
+      return chance;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

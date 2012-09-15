@@ -1,0 +1,103 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MadScientistHut is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+   room_name_MadScientistHut ="Hut of the Mad Scientist"
+   room_MadScientistHut = KC5a.roo
+   MadScientistHut_music = madsci.mid
+
+   fire_sound_madscientist = fireplac.wav
+
+classvars:
+
+   vrName = room_name_MadScientistHut
+
+   viTeleport_row = 4
+   viTeleport_col = 4
+   viTerrain_type = TERRAIN_RESIDENCE
+
+properties:
+
+   prRoom = room_MadScientistHut
+   prMusic = MadScientistHut_music
+   piRoom_num = RID_MAD_SCIENTIST_HUT
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 0
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+messages:
+
+   Constructed()
+   {
+      %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      plLooping_sounds = [[ fire_sound_madscientist, 3, 7, 10, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 4, 2, RID_KC5, 31, 22, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 7, RID_KC5, 35, 31, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 8, RID_KC5, 35, 31, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 8, RID_KC5, 35, 31, ROTATE_NONE ],plExits);
+      
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&KocatanMadScientist),
+           #new_row=4,#new_col=7,#fine_row=32,#fine_col=32);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=3,#new_col=7,#fine_row=24,#fine_col=48);
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      local i,iFlys,oObj;
+
+      iFlys = 0;
+
+      for i in plActive
+      {
+         oObj = send(self,@HolderExtractObject,#Data=i);
+         if isClass(oObj,&DragonFlyQueen)
+         {
+            iFlys = iFlys + 1;
+         }
+
+         if iFlys > 4
+         {
+            send(oObj,@Delete);
+         }
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

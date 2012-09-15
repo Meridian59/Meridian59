@@ -1,0 +1,137 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttShroud is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item may not be the target of most spells, including
+%	swap, shatter, brittle, enchant.  Can be mended, since that's
+%  annoying to not be able to mend.
+% 
+%  Form is: 
+%
+%   	[IA_SHROUD, tTimer]
+%	
+%	Where tTimer = the time left before this enchantment departs.
+%		If tTimer does not exist, the weapon is permanently enchanted.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+ 
+   itematt_shroud_desc = " A cloak of magic surrounds it."
+   iashroud_gone = "The mystical cloak slips away from your %s."
+   iashroud_name = "shrouded %s"
+
+   shroud_dm = shrouded
+classvars:
+
+   viDifficulty = 3
+
+   viItem_Att_Num = IA_SHROUD
+   vrDesc = itematt_shroud_desc
+   vrName = iaShroud_name
+   vrDM_trigger = shroud_dm
+
+properties:
+  
+messages:
+
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%
+	%%  Effect Routines
+	%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	ItemCanMend()
+	{
+		return TRUE;
+	}
+
+	ItemCanWeaken()
+	{
+		return FALSE;
+	}
+
+	ItemCanEnchant()
+	{
+		return FALSE;
+	}
+
+	ItemCanSwap()
+	{
+		return FALSE;
+	}
+
+	ItemCanShatter()
+	{
+		return FALSE;
+	}
+
+	ItemCanIdentify()
+	{
+		return FALSE;
+	}
+  
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%
+	%%	Maintenance Routines
+	%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	HasTimer(lData=$)
+	"This must return true for any attribute that has a timer!"
+	"Theoretically, some atts could have or not have a timer, "
+	"depending on certain factors, so lData is the ItemAtt structure,"
+	"which can be examined for length to see if the timer exists."
+	{
+		return TRUE;
+	}
+
+	TimerExpired(oItem=$,lData=$)
+	{
+		local oPlayer;
+
+		SetNth(lData,2,$);   %% timer is gone, now remove reference
+		
+		oPlayer = send(oItem,@getOwner);
+		if oPlayer <> $ AND isClass(oPlayer,&user)
+		{
+			send(oPlayer,@msgsenduser,#message_rsc = iashroud_gone,
+				#parm1=send(oItem,@getname));
+		}
+		
+		send(self,@RemoveFromItem,#oItem=oItem, #lData = lData);
+
+		return;
+	}
+
+   AddSelfToRandomItem(oItem = $)
+   {
+      local iSpellType, iRand;
+
+      if oItem = $ { DEBUG("BAD BAD BAD"); return FALSE; }
+
+      if send(self,@ReqAddToItem,#oItem=oItem)
+      {
+         send(self,@AddToItem,#oItem=oItem, 
+              #timer_duration = random(3600000,86400000));
+      }
+      
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

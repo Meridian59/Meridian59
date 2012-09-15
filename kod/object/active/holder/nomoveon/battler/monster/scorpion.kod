@@ -1,0 +1,112 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Scorpion is Monster
+
+constants:
+
+   include blakston.khd
+   PALSY_CHANCE = 5
+
+resources:
+
+   scorpion_koc_name_rsc = "kinkauikinich"
+   scorpion_name_rsc = "giant scorpion"
+   scorpion_icon_rsc = scorp.bgf
+   scorpion_desc_rsc = \
+   "The scorpion's deadly stinger rises high in the air "
+   "and its hard plated body protects it from all but the "
+   "strongest attacks."
+
+   scorpion_dead_icon_rsc = scorpX.bgf
+   scorpion_dead_name_rsc = "dead scorpion"
+
+   scorpion_sound_hit = scp_atkh.wav
+   scorpion_sound_miss = scp_atkm.wav
+   scorpion_sound_death = scp_dth.wav
+   scorpion_sound_aware = scp_awr.wav
+
+classvars:
+   vrKocName = scorpion_koc_name_rsc
+   vrName = scorpion_name_rsc
+   vrIcon = scorpion_icon_rsc
+   vrDesc = scorpion_desc_rsc
+   vrDead_icon = scorpion_dead_icon_rsc
+   vrDead_name = scorpion_dead_name_rsc
+
+   viTreasure_type = TID_MEDIUM_TOUGH
+   viSpeed = SPEED_FAST
+   viAttack_types = ATCK_WEAP_STING
+
+   viLevel = 55
+   viDifficulty = 8
+   viKarma = 20
+   viWimpy = 40
+
+   vrSound_hit = scorpion_sound_hit
+   vrSound_miss = scorpion_sound_miss
+   vrSound_aware = scorpion_sound_aware
+   vrSound_death = scorpion_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 60, -ATCK_SPELL_ACID ],
+                        [ 60, ATCK_WEAP_SLASH ],
+			[ -10, ATCK_WEAP_BLUDGEON ] ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,3);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+	 AddPacket(1,ANIMATE_ONCE,4,200,2,4,2,6,2,1);
+	 return;
+      }
+
+      propagate;
+   }
+
+   HitSideEffect( what = $ )
+   {
+      local oSpell;
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
+      if not Send(what,@IsEnchanted,#what=oSpell) 
+      and Random(1,PALSY_CHANCE) = 1
+      {
+	 Send(oSpell,@MakeSick,#who=what);
+      }
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

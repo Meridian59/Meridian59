@@ -1,0 +1,786 @@
+<html>
+
+<head>
+
+<title>3D Game Design - Texture Mapping</title>
+
+</head>
+
+<body background=ribbon2.gif bgcolor="#ffffff">
+
+
+
+
+<table cellspacing=0 cellpadding=0>
+
+<tr><td width = 95>
+
+
+
+<td width = 550>
+
+
+
+<table>
+
+<tr><td>
+
+<p><img src="3dlogo1.gif" border=0  height=90 width =200 ></td>
+
+<td>
+
+<h1>3D Game Design</h1>
+
+<h2>Perspective Correct Texture Mapping</h2></td>
+
+</tr>
+
+</table>
+
+
+
+<hr noshade>
+
+
+The original version of this document was found at <a href="http://www.rhumba.net/milo/3dgames/tmap.htm">http://www.rhumba.net/milo/3dgames/tmap.htm</a>
+
+<h3>Sample Implementation</h3>
+
+
+
+All of the ideas discussed on this page are being used in the
+
+Alpha engine.  To see an example of these ideas in a working
+
+application, try <a href=poly2.hpp>Poly2.hpp</a> and <a href =
+
+poly2.cpp>Poly2.cpp</a>.
+
+
+
+<h3>Texture Mapping Fundamentals</h3>
+
+
+
+Texture mapping is the process of copying data (<em>texels</em>)
+
+from a source image (<em>texture</em>) to a destination image
+
+in such a way that it appears as if the source image is "painted
+
+on" a surface in the destination image.  The basic algorithm is
+
+to iterate over the pixels in the destination image, and for each
+
+pixel, calculate which texel in the texture bitmap should be
+
+used to color the pixel:<p>
+
+
+
+<blockquote><pre>
+
+BYTE* screen;
+
+BYTE* texture;
+
+
+
+for (int y = 0; y < ymax; y++) {
+
+   for (int x = 0; x < xmax; x++) {
+
+      int u = TextureMap_U(x,y);
+
+      int v = TextureMap_V(x,y);
+
+
+
+      screen[y][x] = texture[v][u];
+
+   }
+
+}
+
+</pre></blockquote>
+
+
+
+The details of the functions <code>TextureMap_U</code> and
+
+<code>TextureMap_V</code> determine what sort of texture mapping
+
+is being performed.<p>
+
+
+
+<h3>Perspective Correct Texture Mapping</h3>
+
+
+
+For first person perspective 3D gaming, we are mainly concerned
+
+with "perfect" or "perspective correct" texture mapping and
+
+approximations thereof. <p>
+
+
+
+The basic idea of perspective correct texture mapping is to compute
+
+the 3D to 2D projection of the texture image onto the destination
+
+image.  In order to do this, we must first define the texture in
+
+3-space coordinates, and then apply the appropriate vector transforms.<p>
+
+
+
+The first part is easy.  Let us assume that the source texture is
+
+rectangular (for performance reasons, we will later assume that it
+
+has dimensions that are powers of 2).  Let us also assume that the
+
+destination polygon (in 3-space) is also rectangular (this assumption
+
+does not always hold, but it is easy to work around).  The first step
+
+is to compute three vectors which define the placement of the texture
+
+in 3-space: <b>P</b>, <b>M</b>, and <b>N</b>.<p>
+
+
+
+<img src=3dtmap1.gif><br>
+
+Figure 1: Texture Vectors P, M, and N.<p>
+
+
+
+As shown in Figure 1, if the upper left hand vertex of the texture
+
+polygon is <b>V0</b>, and the remaining vertices are numbered
+
+sequentially in clockwise facing order, then the texture vectors
+
+can be calculated as follows:<p>
+
+
+
+<blockquote><pre>
+
+P = V0
+
+M = V1 - V0    // vector subtraction
+
+N = V3 - V0
+
+</pre></blockquote>
+
+
+
+Note that these numbers must be scaled appropriately.  If your
+
+world coordinates are transformed into screen coordinates like
+
+this:<p>
+
+
+
+<blockquote><pre>
+
+i =  hscale * x / z
+
+j = -vscale * y / z
+
+</pre></blockquote>
+
+
+
+Then you need to multiply the <code>x</code> components of
+
+<strong>P</strong>, <strong>M</strong>, and <strong>N</strong>
+
+by <code>hscale</code> and the <code>y</code> components by
+
+<code>-vscale</code>.<p>
+
+
+
+For each polygon, we then compute the following "magic" vectors:<p>
+
+
+
+<blockquote><pre>
+
+// "x" is vector cross product,
+
+// "*" is vector-scalar multiplication
+
+
+
+A = (P x N) * twidth
+
+B = (M x P) * theight
+
+C = (N x M)
+
+</pre></blockquote>
+
+
+
+To complete the mapping, for each pixel compute the following:<p>
+
+
+
+<blockquote><pre>
+
+S = Vector(i, j, 1)
+
+
+
+a = S * A      // dot product
+
+b = S * B
+
+c = S * C
+
+
+
+u = texturewidth  * a / c
+
+v = textureheight * b / c
+
+
+
+screen[j][i] = texture[v][u]
+
+</pre></blockquote>
+
+
+
+This gives rise to the following (horizontal) rendering loop:<p>
+
+
+
+<blockquote><pre>
+
+<b><i>// Once for the entire polygon, compute A, B, and C</i></b>
+
+VECTOR3 A, B, C;
+
+
+
+CrossProduct(poly.P, poly.N, A);  A = A * twidth;
+
+CrossProduct(poly.M, poly.P, B);  B = B * theight;
+
+CrossProduct(poly.N, poly.M, C);
+
+
+
+<b><i>// For each row of the polygon...</i></b>
+
+
+
+for (int j = poly.top; j < poly.bottom; j++) {
+
+
+
+   <b><i>// Find the screen location and horizontal boundaries</i></b>
+
+
+
+   BYTE* srow = screen + screen_pitch * j;
+
+   
+
+   int start = poly.row_at(j).left;
+
+   int end   = poly.row_at(j).right;
+
+   
+
+   double a, b, c;
+
+   int    u, v;
+
+
+
+   <b><i>// For each pixel in the row...</i></b>
+
+
+
+   for (int i = start; i < end; i++) {
+
+
+
+      <b><i>// Compute dot products and divisions</i></b>
+
+
+
+      VECTOR3 S = VECTOR3(i,j,1);
+
+      
+
+      a = DotProduct(S, A);
+
+      b = DotProduct(S, B);
+
+      c = DotProduct(S, C);
+
+         
+
+      u = twidth  * a/c;
+
+      v = theight * b/c;
+
+      
+
+      <b><i>// Perform the texture lookup and screen write</i></b>
+
+
+
+      srow[i] = texture[v][u];
+
+   }
+
+}
+
+</pre></blockquote>
+
+
+
+This code will perform perspective correct texture mapping on
+
+any set of (convex) polygons, seen from any position and any
+
+angle: it is the basis for a true 3D 6 degree of freedom
+
+renderer.  But it isn't very fast.<p>
+
+
+
+<blockquote>
+
+<em>NOTE</em>
+
+You may see people on the net espouse using triangular
+
+polygons for texture mapping "because the polygon gradients
+
+are constant across the entire triangle, and you only need one
+
+divide per triangle."  This is called "linear texture mapping,"
+
+and <em>it will not work as a substitute for perspective
+
+texture mapping</em>.<p>
+
+</blockquote>
+
+
+
+
+
+<h3>Picking Up Speed</h3>
+
+
+
+The above code is not very efficient.  There are nine multiplies,
+
+six adds, and two divides per pixel.  At 640x480 resolution those
+
+operations will have to be repeated over 300,000 times per frame!<p>
+
+
+
+Let's try to speed things up a bit.  We'll start by pulling
+
+everything out of the loop that doesn't need to be there.  Most
+
+of the variables do not change each time through the loop, so they
+
+can be computed once and reused.  Also, we're dividing by <code>c</code>
+
+<em>twice</em>; no need for that:<p>
+
+
+
+<blockquote><pre>
+
+for (int j = poly.top; j < poly.bottom; j++) {
+
+   BYTE* srow = screen + screen_pitch * j;
+
+   
+
+   int start = poly.row_at(j).left;
+
+   int end   = poly.row_at(j).right;
+
+
+
+   double a = start*A.x + j*A.y + A.z;
+
+   double b = start*A.x + j*B.y + B.z;
+
+   double c = start*A.x + j*C.y + C.z;
+
+      
+
+   for (int i = start; i < end; i++) {
+
+      double cinv = 1/c;
+
+      int u = tw * a * cinv;
+
+      int v = tw * b * cinv;
+
+      
+
+      srow[i] = texture[v][u];
+
+      
+
+      a += A.x;
+
+      b += B.x;
+
+      c += C.x;
+
+   }
+
+}
+
+</pre></blockquote>
+
+
+
+This code is a bit better, but still requires at least one
+
+floating point divide <em>per pixel</em>.
+
+This is simply still too slow for real time rendering.
+
+Even if we ignore every other instruction in the entire
+
+program
+
+307,200 divides at 39 clocks per divide means the best we
+
+can hope for is 11 frames per second on a Pentium 133.<p>
+
+
+
+The rest of this page (and about half the trick to 3D rendering
+
+engines) is devoted to making the above code go faster by eliminating
+
+or reducing the impact of those divides.<p>
+
+
+
+<h3>"Floor" Mapping</h3>
+
+There is one important case where those costly divides per pixel
+
+can be eliminated from the inner loop: when the
+
+<code>c</code> term does not vary
+
+over the course of the span.  From the code above, this is
+
+obviously true whenever <code>C.x</code> is zero.<p>
+
+
+
+This situation
+
+is called "spans of constant z", because every pixel on the span
+
+is at the same z distance from the viewer.  This is always true
+
+for flat "floor" and "ceiling" polygons, as long as the viewer
+
+doesn't tilt his head to one side or the other.<p>
+
+
+
+Spans of constant z also occur for all vertical "wall" polygons, as
+
+long as the viewer doesn't look up or down, <em>and the spans are
+
+drawn vertically instead of horizontally</em>.<p>
+
+
+
+Note that no head tipping or tilting, and all vertical walls and all
+
+horizontal floors are <em>precisely</em> the restrictions that are
+
+placed on the Doom universe.  In Doom, all spans are of constant z,
+
+and so only one divide is necessary per span.  Which is why Doom
+
+runs so much faster than Quake.<p>
+
+
+
+<blockquote>
+
+<em>NOTE</em>
+
+Duke Nukem 3D and Dark Forces also employ almost the same restrictions.
+
+In both these games, walls are always vertical, the player can not tip
+
+his head to the left or right, and the view angle can not be adjusted
+
+up or down.  Both of these games use a modified head tilt which actually
+
+performs a 2D translation instead of a 3D rotation.
+
+</blockquote>
+
+
+
+<h3>Bilinear Interpolation</h3>
+
+
+
+Another, more general way to reduce the impact of per pixel divides
+
+is called "bilinear interpolation."  This technique breaks each
+
+horizontal span into 8 or 16 pixel sub-spans, computes accurate
+
+texture coordinates at the beginning and end of each sub-span,
+
+and uses linear interpolation in between.
+
+
+
+<blockquote><pre>
+
+for (int j = poly.top; j < poly.bottom; j++) {
+
+   BYTE* srow = screen + screen_pitch * j;
+
+   
+
+   int start = poly.row_at(j).left;
+
+   int end   = poly.row_at(j).right;
+
+
+
+   double a = start*A.x + j*A.y + A.z;
+
+   double b = start*A.x + j*B.y + B.z;
+
+   double c = start*A.x + j*C.y + C.z;
+
+<em><strong>   
+
+   // compute u and v at the start and
+
+   // end of a sub-span:
+
+</em></strong>   
+
+   double u0 = tw * a/c;
+
+   double v0 = tw * b/c;
+
+
+
+   a += A.x * 16.0;
+
+   b += B.x * 16.0;
+
+   c += C.x * 16.0;
+
+
+
+   int count = end-start;
+
+   while (count) {
+
+      double u1 = tw * a/c;
+
+      double v1 = tw * b/c;
+
+<em><strong>   
+
+      // compute linear increment for u and v:
+
+</em></strong>   
+
+      double du = (u1 - u0)/16;
+
+      double dv = (v1 - v0)/16;
+
+
+
+      int run = (count>16) ? 16 : count;
+
+<em><strong>   
+
+      // perform bilinear interpolation
+
+      // across sub-span:
+
+</em></strong>   
+
+      for (int i = 0; i < run; i++) {
+
+         int u = (int) u0;
+
+         int v = (int) v0;
+
+
+
+         srow[i] = texture[v][u];
+
+
+
+         u0 += du;
+
+         v0 += dv;
+
+      }
+
+<em><strong>   
+
+      // update polygon gradients for
+
+      // next sub-span:
+
+</em></strong>   
+
+      u0 = u1;
+
+      v0 = v1;
+
+
+
+      a += A.x * 16.0;
+
+      b += B.x * 16.0;
+
+      c += C.x * 16.0;
+
+   }
+
+}
+
+</pre></blockquote>
+
+
+
+In effect, bilinear interpolation treats <em>every</em> polygon as
+
+a floor, sixteen pixels at a time.  For the most part, bilinear
+
+interpolation produces a result that is indistinguishable from
+
+true "perfect" mapping.  The only visible distortion occurs when
+
+mapping large polygons seen at sharp angles to the viewer (sometimes
+
+called the "rubber sheet" effect).  The distortion is caused by
+
+approximating a hyperbolic curve with a series of straight line
+
+segments, and it makes the surface look "pinched" at regular
+
+intervals.<p>
+
+
+
+<img src=bidist.gif><p>
+
+Figure 2: Distortion with Bilinear Interpolation.<p>
+
+
+
+This distortion can be reduced
+
+or eliminated by checking the viewing angle and using shorter spans
+
+only on the distorted polygons.  Alternatively, the span length can
+
+be reduced for all polygons (definitely slowing down the renderer)
+
+whenever the viewer is stationary.  One final alternative is to
+
+design the game so that the viewer will rarely see polygons at sharp
+
+angles.
+
+
+
+<h3>Advanced Optimization</h3>
+
+
+
+What we have looked at so far is the basic algorithm and a bit
+
+of the math behind texture mapped rendering.
+
+Really getting a perspective correct texture mapper to run at a
+
+decent frame rate requires tuning the performance of many aspects
+
+of the above code.  More than just coding up a tight inner loop
+
+in assembly language, optimizing a renderer means studying the
+
+performance of the entire algorithm and making sure that no part
+
+of it slows down the entire works.<p>
+
+
+
+That's what we're going to look at <a href=tmapopt.htm>next</a>.<p>
+
+
+
+<h3>Acknowledgements</h3>
+
+
+
+Thanks and credit to Sean Barrett and Mark Feldman for publishing most
+
+of this info first.  Sean worked on the original PC Game Programmer's
+
+Encyclopedia, and was a programmer on Origin's <em>System Shock</em>.
+
+Mark is the current maintainer of the PC Game Programmer's
+
+Encyclopedia, which should be released real soon now, right Mark?<p>
+
+
+
+<hr noshade>
+
+<i><a href=../index.html>back to milo's home page</a>  |
+
+   <a href=mailto:milod@netcom.com>e-mail milod@netcom.com</a></i><br>
+
+<author>This page is designed and implemented by John DiCamillo<br>
+
+<em>Copyright &copy 1995-1997 John DiCamillo. All rights reserved.</em>
+
+</author>
+
+<p><font size=-1>Hosted by Rhumba Networks - http://www.rhumba.net</font></td>
+
+</table>
+
+</body>
+
+</html>
+

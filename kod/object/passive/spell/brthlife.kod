@@ -1,0 +1,158 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BreathOfLife is Spell
+
+constants:
+
+   include blakston.khd
+
+   MAX_TOTAL_AMOUNT = 130      % Max target can reach after getting benefit.
+
+resources:
+
+   breathoflife_cast_rsc = "You feel the life force of another filling your body."
+   breathoflife_caster_msg_rsc = "You give part of your life force to %s%s."
+
+   breathoflife_name_rsc = "breath of life"
+   breathoflife_icon_rsc = ibreath.bgf
+   breathoflife_desc_rsc = \
+      "The great power of Shal'ille takes part of the caster's life force "
+      "and gives it to another person.  "
+      "Requires herbs to cast."
+
+   breathoflife_unnecessary_rsc = "%s%s cannot handle additional life force from this spell."
+   breathoflife_toohurt_rsc = "You do not have enough health to transfer to another!"
+   breathoflife_notonself_rsc = "You cannot cast Breath of Life on yourself."
+
+   breathoflife_spell_intro = "Shal'ille Lv. 1: Gives part of caster's health to another person."
+
+   breathoflife_sound = sbrthlf.wav
+
+classvars:
+
+   vrName = breathoflife_name_rsc
+   vrIcon = breathoflife_icon_rsc
+   vrDesc = breathoflife_desc_rsc
+   vrSucceed_wav = breathoflife_sound
+
+   vrSpell_intro = breathoflife_spell_intro
+
+   viSpell_num = SID_BREATH_OF_LIFE
+   viSchool = SS_SHALILLE
+   viSpell_level = 1
+   viMana = 3
+   viSpellExertion = 2
+   viChance_To_Increase = 20
+  
+   viFlash = FLASH_GOOD
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Herbs,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if not IsClass(target, &User)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+
+         return FALSE;
+      }
+
+      if target = who
+      {
+         Send(who, @MsgSendUser, #message_rsc=breathoflife_notonself_rsc);
+
+         return FALSE;
+      }
+
+      % no giving if less than 10 hps
+      if Send(who,@GetHealth) <= 10
+      {
+         Send(who,@MsgSendUser,#message_rsc=breathoflife_toohurt_rsc);
+
+         return FALSE;
+      }
+
+      % max hps of 1.5 times target's hps or 150.
+      % Don't cast if we're at/over max and have Mark of Dishonor active.
+      if Send(target,@GetHealth) >= ((Send(target,@GetMaxHealth) * 3) / 2)
+         OR Send(target,@GetHealth) >= MAX_TOTAL_AMOUNT
+         OR ((Send(target,@GetHealth) >= Send(target,@GetMaxHealth))
+             AND send(target,@IsEnchanted,#byClass=&MarkOfDishonor))
+      {
+         Send(who,@MsgSendUser,#message_rsc=breathoflife_unnecessary_rsc,
+	           #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower=0)
+   {
+      local iPercent, iKarmaSum, oTarget, iHpAmount, iTransfer;
+
+      oTarget = First(lTargets);
+      
+      % Amount of life transferred depends on the Karma of our target.
+      iPercent = bound(send(oTarget,@GetKarma),10,80);
+      iHpAmount = (Send(who,@GetHealth) * iPercent) / 100;
+
+      % Don't drain caster below 10 hps,
+      iHpAmount = bound(iHpAmount,$,(Send(who,@GetHealth)-10));
+
+      % Alter amount transferred to 75 + spell power/2% of sacrifice.
+      iTransfer = (iHpAmount * (75 + iSpellPower/2)) / 100;
+
+      % Don't let target get more than 150% over max, don't let target get over 150
+      iTransfer = bound(iTransfer,$,((Send(oTarget,@GetMaxHealth)*3)/2)-Send(oTarget,@GetHealth));
+      iTransfer = bound(iTransfer,$,(MAX_TOTAL_AMOUNT-Send(oTarget,@GetHealth)));
+
+      Send(who,@MsgSendUser,#message_rsc=breathoflife_caster_msg_rsc,
+           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));  
+      Send(who,@LoseHealth,#amount=iHpAmount);
+
+      Send(oTarget,@MsgSendUser,#message_rsc=breathoflife_cast_rsc);
+      Send(oTarget,@GainHealth,#amount=iTransfer);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

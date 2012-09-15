@@ -1,0 +1,148 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Wanderer is Towns
+
+constants:
+
+   include blakston.khd
+
+   TELEPORT_INITIAL = 20 * 1000
+   TELEPORT_MIN = 1800000
+   TELEPORT_MAX = 5400000
+
+resources:
+
+classvars:
+
+properties:
+
+   ptTeleport = $
+   
+   % list of lists
+   % each list element is a list of format [RID, ROW, COLUMN]
+   % ex. [ [ RID_TOS, 20, 20], [RID_KACATAN, 30, 30], ... ]
+   % or [RID, ROW, COLUMN, FINEROW, FINECOL]
+   % ex. [ [ RID_TOS, 20, 20], [RID_KACATAN, 30, 30, 16, 48], ... ]
+   
+   plDestinations = $
+   
+   piTeleport_Counter = 0
+
+   piCurrent_Dest = 0
+
+   pbWandering = TRUE
+
+messages:
+
+   Constructor()
+   {
+      send(self, @CreateDestinationList);
+      ptTeleport = CreateTimer(self,@TeleportTimerTrigger,TELEPORT_INITIAL );
+      propagate;
+   }
+
+   TeleportTimerTrigger()
+   {
+      local lActive, i;
+
+      ptTeleport = CreateTimer(self,@TeleportTimerTrigger,random(TELEPORT_MIN, TELEPORT_MAX) );
+
+      if not pbWandering { return; }
+
+      if (piTeleport_Counter > 4) {
+         %debug("Counter = ", piTeleport_Counter, ", teleporting regardless...");
+         send(self, @NextDest);
+         return;
+      }
+
+      lActive = send(poOwner, @GetHolderActive);
+
+      for i in lActive {
+         if isClass(first (i), &User) {
+            piTeleport_Counter = piTeleport_Counter + 1;
+            %debug("Teleport failed, counter = ", piTeleport_Counter);
+            return;
+         }
+      }
+
+      send(self, @NextDest);
+      return;
+   }
+
+   NextDest()
+   {
+      local iNext_Dest, oRoom;
+      %debug("Finding new destination...");
+      piTeleport_Counter = 0;
+      iNext_Dest = piCurrent_Dest;
+
+      if length(plDestinations) > 1 {
+         while (iNext_Dest = piCurrent_Dest) {
+            iNext_Dest = random (1, length(plDestinations));
+         }
+      }
+      else { 
+         %debug("Only one destination to choose from, bailing...");
+         return;
+      }
+
+      piCurrent_Dest = iNext_Dest;
+
+      oRoom = send( SYS, @FindRoomByNum, #num = first( nth( plDestinations, piCurrent_Dest ) ) );
+      if oRoom <> $ 
+      {
+	 if Length(nth(plDestinations, piCurrent_Dest)) = 3  % No Fines
+	 {
+	    send(oRoom, @NewHold, #what=self,
+	       #new_Row=nth(nth(plDestinations, piCurrent_Dest), 2),
+	       #new_Col=nth(nth(plDestinations, piCurrent_Dest), 3) );
+	 }
+	 else   % Has fine coordinates
+	 {
+	    send(oRoom, @NewHold, #what=self,
+	       #new_Row=nth(nth(plDestinations, piCurrent_Dest), 2),
+	       #new_Col=nth(nth(plDestinations, piCurrent_Dest), 3),
+	       #fine_row=nth(nth(plDestinations, piCurrent_Dest), 4),
+	       #fine_col=nth(nth(plDestinations, piCurrent_Dest), 5) );
+	 }
+
+	 Send( oRoom, @WandererEntered, #mob = self );
+      }
+      return;
+   }
+
+   CreateDestinationList()
+   {
+      debug("Wanderer NPC created without destination list, deleted.");
+      post(self, @Delete);
+      return;
+   }
+
+   SetWandering(value=TRUE)
+   {
+      pbWandering = value;
+      return;
+   }
+
+   Delete()
+   {
+      plDestinations = $;
+      if ptTeleport <> $
+      {
+         deletetimer(ptTeleport);
+         ptTeleport = $;
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

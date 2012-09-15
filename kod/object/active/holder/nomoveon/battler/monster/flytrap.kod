@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+flytrap is Monster
+
+constants:
+
+   include blakston.khd
+
+   % any attack or spasm animation?
+
+resources:
+
+   flytrap_name_rsc = "Man-eating Plant"
+   flytrap_icon_rsc = ent.bgf
+   flytrap_desc_rsc = "A ferocious plant that likes the taste of human flesh."
+
+   flytrap_dead_icon_rsc = shrub.bgf
+   flytrap_dead_name_rsc = "hedged man-eating plant"
+
+   % any weapon movement resources?
+
+classvars:
+   vrName = flytrap_name_rsc
+   vrIcon = flytrap_icon_rsc
+   vrDesc = flytrap_desc_rsc
+   vrDead_icon = flytrap_dead_icon_rsc
+   vrDead_name = flytrap_dead_name_rsc
+
+   %select a treasure type
+   viTreasure_type = TID_LOW_HUMAN
+
+   viSpeed = SPEED_VERY_SLOW
+   viAttack_types = 0
+   viAttack_spells = 0
+   viAttributes = 0
+   viLevel = 60
+   viDifficulty = 5
+   viKarma = -25
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 60, -ATCK_SPELL_SHOCK ],
+                        [ 60, -ATCK_SPELL_ACID],
+                        [-30, ATCK_WEAP_ALL ] ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      % add in any attack animation calls
+      return;
+   }
+
+% Add in all the animations for moving, or looking, etc.
+
+   SendLookAnimation()
+   {
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      return;
+   }
+
+   SendAnimation()
+   {
+      propagate;
+   }
+
+   SendOverlays()
+   {
+      propagate;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

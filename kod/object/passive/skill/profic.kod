@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Proficiency is Skill
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   proficiency_name_rsc = "Weapon proficiency"
+   proficiency_icon_rsc = light.bgf
+   proficiency_desc_rsc = "This is a weapon proficiency"
+
+classvars:
+
+   vrName = proficiency_name_rsc
+   vrIcon = proficiency_icon_rsc
+   vrDesc = proficiency_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SKS_FENCING
+   viSkill_num = 0
+
+   vbAutomatic = TRUE    % does not show up in pull-down menu
+
+properties:
+
+   % Format of reagents:  Each element of plReagents is a list, describing a single reagent.
+   % First elem of this list is class of reagent; second is # of reagent required for skill.
+   plPrerequisites = $
+   piSchool = 0
+
+   piChanceToIncrease = 100
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

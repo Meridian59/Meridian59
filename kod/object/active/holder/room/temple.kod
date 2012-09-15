@@ -1,0 +1,137 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Temple is Room
+
+constants:
+
+   SECTOR_DOOR = 1
+   SECTOR_PILLAR = 2
+
+   include blakston.khd
+
+resources:
+
+   room_temple = temple.roo
+   room_name_temple = "The Temple of Shal'ille"
+
+   temple_open = "Open"
+   temple_close = "Close"
+
+   temple_music = temple.mid
+
+classvars:
+
+   vrName = room_name_temple
+
+   viTeleport_row = 18
+   viTeleport_col = 7
+
+   viTerrain_type = TERRAIN_TEMPLE | TERRAIN_FOREST
+
+properties:
+
+   prRoom = room_temple
+   piRoom_num = RID_TEMPLE
+
+   prMusic = temple_music
+
+   pbTemple_made_scepter = FALSE
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+messages:
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_C4, 20, 15, ANGLE_EAST ], plEdge_exits);
+      
+      return;
+   }
+   
+   NewHold(what=$,new_row=20,new_col=20)
+   {
+      if isClass(what,&User) and pbTemple_Made_Scepter = FALSE
+      {
+         if new_row=24 and new_col=8
+         {
+            pbTemple_Made_Scepter = TRUE;
+            send(self,@NewHold,#what=Create(&Scepter),#new_row=23,#new_col=8);
+         }
+      }
+      
+      propagate;
+   }
+   
+   LeaveHold(what=$)
+   {
+      if isClass(what,&Scepter)
+      {
+         if send(what,@GetRow) = 23 and send(what,@GetCol) = 8
+         {
+            send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height=188,#speed=20);
+            send(self,@SetSector,#sector=SECTOR_PILLAR,#animation=ANIMATE_FLOOR_LIFT,
+                 #height=72,#speed=10);
+         }
+      }
+      
+      propagate;
+   }
+   
+   LastUserLeft()
+   {
+      local i, each_obj;
+      
+      for i in plPassive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+         
+         if isClass(each_obj,&Scepter)
+         {
+            send(each_obj,@delete);
+         }
+      }
+      
+      send(self,@setsector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=64,#speed=20);
+      send(self,@setsector,#sector=SECTOR_PILLAR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=96,#speed=10);
+      pbTemple_made_scepter = FALSE;
+      
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&ShalillePriestess),
+           #new_row=17,#new_col=2,#fine_row=24,#fine_col=24,#new_angle=ANGLE_EAST);
+           
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      if IsClass(oSpellSkill,&Spell)
+         AND send(oSpellSkill,@GetSchool) = SS_SHALILLE
+      {
+         % Give a 10% bonus.
+         return ((chance * 11)/10);
+      }
+
+      return chance;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

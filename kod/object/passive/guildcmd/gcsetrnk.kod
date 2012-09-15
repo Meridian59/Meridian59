@@ -1,0 +1,106 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildSetRank is GuildCommand
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   guildsetrank_name_rsc = "set rank"
+   guildsetrank_icon_rsc = light.bgf
+
+   guildsetrank_lieutenant = "Replaces 'promote' and 'demote' in new, neat-o interface."
+
+   setrank_not_member = "%s%s is not a member of %s%q!"
+   setrank_cant_setrank_self = "You may not promote or demote yourself!"
+   setrank_non_user = "%s%s doesn't seem to be concerned about your decision."
+   setrank_too_high = "You may not change the rank of someone of equal or higher rank than yourself!"
+   setrank_promotion_too_high = "You may not promote someone to a rank equal or higher than your own!"
+
+classvars:
+
+   vrName = guildsetrank_name_rsc
+   vrIcon = guildsetrank_icon_rsc
+   vrDesc = guildsetrank_lieutenant
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_SET_RANK
+   viRank_needed = RANK_LIEUTENANT
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, otarget = $, data = $)
+   "Change the rank of the target player to a new rank!"  
+   {
+      local oGuild, oldrank, newrank, promoterrank;
+
+      if not isClass(oTarget,&player)
+        {
+          send(who,@msgsenduser,#message_rsc=setrank_non_user,
+            #parm1 = send(oTarget,@getcapdef), #parm2 = send(oTarget,@getname));
+          return false;
+        }
+
+      oGuild = send(who,@getguild);
+
+      if oGuild <> send(oTarget,@getguild)
+        {
+          send(who,@msgsenduser,#message_rsc=setrank_not_member,
+              #parm1=send(oTarget,@getdef),
+			  #parm2=send(oTarget,@getname),#parm3=send(oGuild,@getdef),
+              #parm4=send(oGuild,@getname));
+          return FALSE;
+        }
+
+      if oTarget=who
+        {
+          send(who,@msgsenduser,#message_rsc=setrank_cant_setrank_self);
+          return FALSE;
+        }
+
+      newrank = data;
+      oldrank = send(oGuild,@getrank,#who=oTarget);
+      promoterrank = send(oGuild,@getrank,#who=who);
+
+      if oldrank >= promoterrank
+         {
+           send(who,@msgsenduser,#message_rsc=setrank_too_high);
+           return FALSE;
+         }
+
+      if newrank >= promoterrank
+         {
+            send(who,@msgsenduser,#message_rsc=setrank_promotion_too_high);
+            return FALSE;
+         }
+
+      if send(oGuild,@checkchangerank,#who=oTarget,#promoter=who,#newrank = newrank)
+        {
+          send(oGuild,@changerank,#who=oTarget,#promoter=who, #newrank = newrank);
+        }
+
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

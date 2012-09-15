@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasBank is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_jasbank = "The Royal Bank of Jasper"
+   room_jasbank = jasbank.roo
+   jasbank_music = bank.mid
+
+   jasbank_sign = \
+      "Use the deposit, withdraw (amount), and balance commands to access "
+      "your bank account."
+
+classvars:
+
+   vrName = room_name_jasbank
+
+   viTeleport_row = 7
+   viTeleport_col = 7
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_jasbank
+   piRoom_num = RID_JAS_BANK
+
+   prMusic = jasbank_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = jasbank_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 6, 9, RID_JASWEST, 53, 21, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 9, RID_JASWEST, 53, 21, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&JasperBanker,#bid=BID_TOS),
+           #new_row=8,#new_col=5,#fine_row=44, #fine_col=36,#new_angle=ANGLE_SOUTH_EAST);
+
+      Send(self,@NewHold,#what=Create(&Sign,#desc=jasbank_sign),
+           #new_row=5,#new_col=8,#fine_row=24,#fine_col=16);
+
+      Send(self,@NewHold,#what=Create(&Firepit),#new_row=9,#new_col=4,
+           #fine_row=44,#fine_col=20);
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=5,#new_col=2,
+           #fine_row=40,#fine_col=20);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=5,#new_col=9,
+           #fine_row=56,#fine_col=24);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=7,#new_col=9,
+           #fine_row=40,#fine_col=24);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

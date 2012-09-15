@@ -1,0 +1,84 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Instrument is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+
+classvars:
+
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 2
+
+   viInstrument_strength = 25
+   vrInstrument_overlay = $
+   
+properties:
+
+messages:
+   
+   GetInstrumentLevel()
+   {
+      return viInstrument_strength;
+   }
+
+   NewUsed()
+   {
+      % do third person overlay if we have one
+      if vrInstrument_overlay <> $
+      {
+         Send(poOwner,@SetOverlay,#what=self);
+      }
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      Send(poOwner,@RemoveOverlay,#what=self);
+
+      propagate;
+   }
+
+   % these 3 called by player, for normal 3rd-person overlays on user.
+   % shield subclasses--do NOT set an overlay unless you either
+   % set vrShield_overlay correctly or override all these message handlers
+
+   GetOverlay()
+   {
+      return vrInstrument_overlay;
+   }
+   
+   GetOverlayHotspot()
+   {
+      return HS_LEFT_WEAPON;
+   }
+
+   SendOverlayAnimation()
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+      
+      AddPacket(1,ANIMATE_NONE,2,1); 
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

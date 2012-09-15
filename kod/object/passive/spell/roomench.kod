@@ -1,0 +1,62 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RoomEnchantment is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RoomEnchantment_name_rsc = "room enchantment"
+   RoomEnchantment_icon_rsc = iheat.bgf
+   RoomEnchantment_desc_rsc = \
+      "An enchantment which is attached to a room."
+
+classvars:
+
+   vrName = RoomEnchantment_name_rsc
+   vrIcon = RoomEnchantment_icon_rsc
+   vrDesc = RoomEnchantment_desc_rsc
+
+properties:
+
+messages:
+	 
+   DoubleCheckAfterTrance(who = $, lTargets = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+    
+      if (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT) 
+           OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MAGIC)) 
+         AND (viOutlaw OR viHarmful)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
+
+         return FALSE;
+      }
+      
+      if send(oRoom,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_already_in_effect,
+              #parm1=vrName);
+
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OneToken is Token
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   OneToken_name_rsc = "runed coffer token"
+   OneToken_desc_rsc = \
+      "Covered in mysterious runes said to explain the workings of spells, the "
+      "token is unreadable by all except the Councilor who studies it."
+   OneToken_icon_rsc = eyebox.bgf
+
+   % Overlays not implemented yet.
+   %OneToken_overlay_rsc = tokheye.bgf
+
+classvars:
+
+   vrName = OneToken_name_rsc
+   vrDesc = OneToken_desc_rsc
+   vrIcon = OneToken_icon_rsc
+
+   viInitialTimeval = 20000000
+
+   %vrTokenOverlay = OneToken_overlay_rsc
+
+properties:
+
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

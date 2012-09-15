@@ -1,0 +1,11 @@
+# silver room key copy
+# display
+# dropped
+#^Applied to Hotspot: 0
+-s 5
+2
+keydis.bmp   [0, 0] 
+keydrp.bmp   [0, 0] 
+2
+ 1   1 
+ 1   2 

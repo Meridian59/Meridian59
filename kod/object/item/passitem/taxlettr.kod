@@ -1,0 +1,39 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TaxLetter is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TaxLetter_name_rsc = "notice of delinquent taxes"
+   TaxLetter_icon_rsc = scr04.bgf
+   TaxLetter_desc_rsc = \
+      "You are very glad that this curt, crisply penned letter is not addressed to you."
+
+classvars:
+
+   vrName = TaxLetter_name_rsc
+   vrIcon = TaxLetter_icon_rsc
+   vrDesc = TaxLetter_desc_rsc
+
+   viValue_average = 40
+   viWeight = 3
+   viBulk = 10
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

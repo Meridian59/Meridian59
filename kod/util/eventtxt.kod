@@ -1,0 +1,55 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EventText is UtilityFunctions
+
+% This is a generic object to hold string resources for events.
+
+constants:
+
+resources:
+
+   EventText_1 = "Burnt-out amulet of the three"
+   EventText_2 = "This is a fused hunk of metal that looks like it used to be an amulet of the three.  It appears worthless now."
+   EventText_3 = "3"
+   EventText_4 = "4"
+   EventText_5 = "5"
+   EventText_6 = "6"
+   EventText_7 = "7"
+   EventText_8 = "8"
+   EventText_9 = "9"
+   EventText_10 = "10"
+   EventText_11 = "11"
+   EventText_12 = "12"
+   EventText_13 = "13"
+   EventText_14 = "14"
+   EventText_15 = "15"
+   EventText_16 = "16"
+   EventText_17 = "17"
+   EventText_18 = "18"
+   EventText_19 = "19"
+   EventText_20 = "20"
+   EventText_21 = "21"
+   EventText_22 = "22"
+   EventText_23 = "23"
+   EventText_24 = "24"
+   EventText_25 = "25"
+
+classvars:
+
+properties:
+
+messages:
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

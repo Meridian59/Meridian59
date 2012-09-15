@@ -1,0 +1,21 @@
+# necropolis lever
+# 
+#^Applied to Hotspot: 0
+#*Groups: 2
+#* Unlabeled Group
+#* Unlabeled Group
+-s 4
+10
+lever000.bmp   [0, -100] 
+lever315.bmp   [0, -100] 
+lever270.bmp   [0, -100] 
+lever090.bmp   [0, -100] 
+lever045.bmp   [0, -100] 
+lever000.bmp   [0, -85] 
+lever315.bmp   [0, -85] 
+lever270.bmp   [0, -85] 
+lever090.bmp   [0, -85] 
+lever045.bmp   [0, -85] 
+2
+ 8   1 2 3 0 0 0 4 5 
+ 8   6 7 8 0 0 0 9 10 

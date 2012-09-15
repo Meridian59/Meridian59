@@ -1,0 +1,126 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ArmorOfGort is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ArmorOfGort_name_rsc = "armor of Gort"
+   ArmorOfGort_icon_rsc = igort.bgf
+   ArmorOfGort_desc_rsc = \
+      "Surrounds the caster with a powerful field which deflects "
+      "damage from extreme blows.  "
+      "Requires blue dragon scale to cast."
+   
+   ArmorOfGort_already_enchanted_rsc = "You already have the Armor of Gort."
+
+   ArmorOfGort_on_rsc = "Your skin feels taut as the Armor of Gort forms around you."
+   ArmorOfGort_off_rsc = "Your Armor of Gort dissipates."
+   ArmorOfGort_success_rsc = "%s%s's skin tightens as the Armor of Gort forms."
+
+   ArmorOfGort_spell_intro = "Kraanan Level 5: Magical armor that protects the caster."
+
+classvars:
+
+   vrName = ArmorOfGort_name_rsc
+   vrIcon = ArmorOfGort_icon_rsc
+   vrDesc = ArmorOfGort_desc_rsc
+
+   vrAlreadyEnchanted = ArmorOfGort_already_enchanted_rsc
+   vrEnchantment_On = ArmorOfGort_On_rsc
+   vrEnchantment_Off = ArmorOfGort_Off_rsc
+   vrSuccess = ArmorOfGort_Success_rsc
+
+   viSpell_num = SID_ARMOR_OF_GORT
+
+   vrSpell_intro = ArmorOfGort_spell_intro
+
+   viMana = 10
+
+   viSpell_level = 5
+   viSchool = SS_KRAANAN
+
+   viChance_To_Increase = 20
+   viFlash = FLASH_GOOD_SELF
+
+properties:    
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&BlueDragonScale,2],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration; 
+
+      iDuration = iSpellPower/8 + 1;
+      % Convert to minutes
+      iDuration = iDuration * 60 * 1000;
+      
+      return iDuration;
+   }
+
+   GetStateValue(who = $, iSpellPower = 0, Target = $)      
+   {
+      Send(Target,@AddDefenseModifier,#what=self);
+       
+      return iSpellPower;
+   }
+
+   ModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
+   {
+      local iSpellPower, iAbsorbed, iMax;
+
+      iSpellPower = Send(who,@GetEnchantedState,#what=self);
+      iMax = 15;
+      iAbsorbed = random(0,iSpellPower/25);
+      iAbsorbed = bound(iAbsorbed,1,4);
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Only 1/2 of the damage reduction if we're doing both weapon
+            %  and spell damage types.
+            iAbsorbed = iAbsorbed / 2;
+            iMax = 20;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iAbsorbed = 0;
+            iMax = 25;
+         }
+      }
+
+      return bound(damage-iAbsorbed,1,iMax);
+   }
+
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+      Send(who,@RemoveDefenseModifier,#what=self);
+
+      propagate;
+   }
+      
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

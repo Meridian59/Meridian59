@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Knightshield is Shield
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   knightshield_name_rsc = "knight's shield"
+   knightshield_icon_rsc = mtlshld.bgf
+   knightshield_desc_rsc = \
+      "Nearly three feet from top to bottom, this glimmering "
+      "shield of polished steel is of the highest quality.  "
+      "You see the mark of Fehr'loi Qan inscribed on the "
+      "wooden handle."
+
+   knightshield_window_overlay_rsc = povshldE.bgf
+
+classvars:
+
+   vrName = knightshield_name_rsc
+   vrIcon = knightshield_icon_rsc
+   vrDesc = knightshield_desc_rsc
+
+   viHits_init_min = 250
+   viHits_init_max = 300
+
+   viValue_average = 800
+   viWeight = 175
+   viBulk = 200
+
+
+   vrShield_window_overlay = knightshield_window_overlay_rsc
+   vrShield_overlay = knightshield_icon_rsc
+
+   viGround_group = 3
+   viInventory_group = 1
+
+   viDefense_base = 15
+   viDamage_base = 2
+
+properties:
+
+messages:
+
+   GetResistanceModifiers()
+   {
+      return [ [-ATCK_SPELL_ALL,-20],
+               [ATCK_WEAP_PIERCE,10]
+             ];
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

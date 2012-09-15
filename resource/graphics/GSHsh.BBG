@@ -1,0 +1,12 @@
+# guild shield insignia - shalille
+#^Applied to Hotspot: 1
+#*Groups: 2
+#* display Group
+#* dropped Group
+-s 5
+2
+gshsh000.bmp   [138, 56] 
+gshshdrp.bmp   [50, 24] 
+2
+ 1   1 
+ 1   2 

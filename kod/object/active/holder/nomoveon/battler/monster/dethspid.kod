@@ -1,0 +1,154 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DeathSpider is Monster
+
+constants:
+
+   include blakston.khd
+   POISON_CHANCE = 10
+   POISON_DURATION = 180000   %%% in milliseconds
+   POISON_LOSSRATE = 5000    %%% in health points * 10^-4 / second
+
+resources:
+
+   DeathSpider_koc_name_rsc = "na'arkinich"
+   DeathSpider_name_rsc = "black spider"
+   DeathSpider_icon_rsc = spidmagc.bgf
+   DeathSpider_desc_rsc = \
+   "Once thought to be a creature made up to frighten children, the black spider "
+   "is said to be a product of evil sorcery, an unwholesome melding of human and "
+   "insect.  Its origin, however, is different depending on the story.  In some, "
+   "it is the fate of some poor soul who crossed a dark mage.  In others, the "
+   "dark spider is an evil mage transformed in return for longevity.  "
+   "All the old tales, however, warn travellers to beware of this malignant "
+   "creature's extraordinarily poisonous bite."
+
+   DeathSpider_dead_icon_rsc = spidmagX.bgf
+   DeathSpider_dead_name_rsc = "dead spider"
+
+   DeathSpider_sound_hit = spd_atkh.wav
+   DeathSpider_sound_miss = spd_atkm.wav
+   DeathSpider_sound_death = spd_dth.wav
+   DeathSpider_sound_aware = spd_awr.wav
+
+classvars:
+   vrKocName = DeathSpider_koc_name_rsc
+   vrName = DeathSpider_name_rsc
+   vrIcon = DeathSpider_icon_rsc
+   vrDesc = DeathSpider_desc_rsc
+   vrDead_icon = DeathSpider_dead_icon_rsc
+   vrDead_name = DeathSpider_dead_name_rsc
+
+   viTreasure_type = TID_BLACK_SPIDER
+   viSpeed = SPEED_AVERAGE
+   viAttack_type =  ATCK_WEAP_BITE
+   viAttributes = MOB_SPASM
+   viLevel = 75
+   viDifficulty = 5
+   viKarma = -30
+   viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE
+   viWimpy = 30
+   
+   vrSound_hit = DeathSpider_sound_hit
+   vrSound_miss = DeathSpider_sound_miss
+   vrSound_aware = DeathSpider_sound_aware
+   vrSound_death = DeathSpider_sound_death
+   
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 75, -ATCK_SPELL_ALL ],
+                        [ 75, ATCK_WEAP_MAGIC ],
+                        [-15, ATCK_WEAP_NONMAGIC ] ];
+      propagate;
+   }
+
+   DoSpasm()
+   {
+      Send(self,@DoLegSpasm);
+
+      propagate;
+   }
+	 
+   MonsterAttack()
+   {
+      Send(self,@DoLegSpasm);
+      return;
+   }
+
+   DoLegSpasm()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,150,2,2,2,7);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,200,2,1,2,1);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+	 AddPacket(1,ANIMATE_ONCE,4,200,2,8,2,12,2,1);
+	 return;
+      }
+
+      propagate;
+   }
+
+   HitSideEffect( what = $ )
+   {
+      local oSpell;
+      if Random(1,POISON_CHANCE) = 1
+      {
+	 oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+	 Send(oSpell,@MakePoisoned,#who=what,
+	      #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+      }
+      return;
+   }
+
+   IsAlly(target = $)
+   {
+      if target = $
+	  { return FALSE; }
+
+%      if isClass(target,&spider)          
+%      or isClass(target,&spiderbaby)
+%      or isClass(target,&spiderqueen)
+%      { return TRUE; }
+
+      %% charm checks up higher.
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

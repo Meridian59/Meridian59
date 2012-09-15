@@ -1,0 +1,65 @@
+# insignia for robe-  qor
+# Groups:
+# 1 standing
+# 2-4 fighting
+# 5 bow-shooting
+# Hotspots:
+# 1 head
+# 21 right arm
+# 31 left arm
+# 41 legs
+#^Applied to Hotspot: 51
+#*Groups: 21
+#* Unlabeled Group
+#* attack A
+#* attack A
+#* attack B
+#* Unlabeled Group
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+-s 4
+8
+180caaQf.bmp   [179, 99] 
+270ccaQf.bmp   [194, 113] 
+180ccaQf.bmp   [163, 114] 
+180ccbQf.bmp   [180, 113] 
+090ccbQf.bmp   [165, 111] 
+315ckaQf.bmp   [198, 103] 
+270ckaQf.bmp   [189, 105] 
+180ckaQf.bmp   [176, 105] 
+21
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 6 7 8 8 8 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 0 1 1 1 0 0 

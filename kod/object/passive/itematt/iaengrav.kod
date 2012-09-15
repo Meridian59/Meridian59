@@ -1,0 +1,128 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttEngraved is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item has a string engraved onto it with the engrave skill.
+% 
+%  Form is: 
+%
+%   	[IA_ENGRAVED, sMessage_string]
+%	
+%  sMessage_string::the message that is engraved on the item.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+    ItemAtt_Engraved_desc_1 = "  The words '"
+    ItemAtt_Engraved_desc_2 = "' are delicately engraved on the edge."
+
+classvars:
+
+   viItem_Att_Num = IA_ENGRAVED   
+
+   viDifficulty = 2
+
+properties:
+  
+  plDiscarded_Strings = $
+
+messages:
+
+   AppendDesc(oItem =$)
+   {
+      local lData, oRoom;
+      
+      lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+      AppendTempString(ItemAtt_Engraved_desc_1);
+      AppendTempString(nth(lData,3));	
+      AppendTempString(ItemAtt_Engraved_desc_2);
+        
+      return;
+   }
+
+   SetPrimaryState(state1=$)
+   "State1 contains the string to add."
+   {
+      local sString;
+
+      if state1 = $ { DEBUG("SetPrimaryState called with nil state!"); return FALSE; }
+
+      %% state1 is a temporary string.  Create a new perm string, or recycle
+      %% an existing one.
+
+      if plDiscarded_Strings = $
+      {
+         sString = CreateString();
+         SetString(sString,state1);
+      }
+      else
+      {
+         sString = First(plDiscarded_Strings);
+         plDiscarded_Strings = DelListElem(plDiscarded_Strings,sString);
+         SetString(sString,state1);
+      }
+      
+      return sString;
+   }
+
+   RemoveFromItem(oItem=$)
+   {
+      local lData, sString, i, bFound;
+		
+      lData = send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_Num);
+      sString = nth(lData,3);
+
+      if sString <> $
+      {
+         plDiscarded_Strings = cons(sString,plDiscarded_Strings);
+      }
+      
+      propagate;
+   }
+   
+   CanBeSpoofed()
+   {
+      return FALSE;
+   }
+
+   GetNamePriority()
+   {
+      return -1;
+   }
+
+   InitiallyIdentified(random_gen=FALSE)
+   {            
+      return TRUE;
+   }   
+
+   AddToTreasureTable()
+   {
+      %% do nothing
+      return FALSE;
+   }
+
+   SetItemsToAttribute()
+   {
+      % plItems_to_attribute should never be used by this itematt
+      plItems_to_Attribute = $;
+      
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

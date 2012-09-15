@@ -1,0 +1,26 @@
+# Fungus Beast head
+# groups
+# 1-3 attacking (no 180)
+# 4 repeat attacking (no 180)
+-s 2
+15
+fngh000a.bmp   [-19, -11] 
+fngh045a.bmp   [-21, -7] 
+fngh090a.bmp   [-5, -18] 
+fngh270a.bmp   [-11, -9] 
+fngh315a.bmp   [-18, -8] 
+fngh000b.bmp   [-19, -12] 
+fngh045b.bmp   [-22, -6] 
+fngh090b.bmp   [-5, -16] 
+fngh270b.bmp   [-12, -9] 
+fngh315b.bmp   [-19, -7] 
+fngh000c.bmp   [-21, -13] 
+fngh045c.bmp   [-21, -10] 
+fngh090c.bmp   [-6, -19] 
+fngh270c.bmp   [-15, -9] 
+fngh315c.bmp   [-23, -10] 
+4
+ 8      1   5   4  0   0   0   3   2
+ 8      6  10   9  0   0   0   8   7 
+ 8     11  15  14  0   0   0  13  12
+ 8      6  10   9  0   0   0   8   7 

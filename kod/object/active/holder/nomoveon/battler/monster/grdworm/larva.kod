@@ -1,0 +1,131 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GroundWormLarva is GroundWorm
+
+constants:
+
+   include blakston.khd
+   
+   FRAME_UNDERGROUND = 1
+   FRAME_POPUP_START = 2
+   FRAME_POPUP_END = 4
+   FRAME_SURFACED = 5
+   FRAME_ATTACK_START = 6
+   FRAME_ATTACK_END = 9
+   FRAME_POPDOWN_START = 10
+   FRAME_POPDOWN_END = 12
+
+   ANIMATION_SPEED = 100
+
+resources:
+
+   GroundWormLarva_koc_name_rsc = "imixslithic"
+   GroundWormLarva_name_rsc = "groundworm larva"
+   GroundWormLarva_icon_rsc = worms.bgf
+   GroundWormLarva_desc_rsc = \
+      "A younger form of its mature relatives, the larva is a bit weaker than "
+      "other groundworms. It is known for its habit of lurking underground "
+      "out of sight then suddenly springing forth to attack its victim."
+
+   GroundWormLarva_dead_icon_rsc = wormsX.bgf
+   GroundWormLarva_dead_name_rsc = "slain groundworm larva"
+   GroundWormLarva_sound_aware = gwrm3awr.wav
+
+classvars:
+
+   vrKocName = GroundWormLarva_koc_name_rsc
+   vrName = GroundWormLarva_name_rsc
+   vrIcon = GroundWormLarva_icon_rsc
+   vrDesc = GroundWormLarva_desc_rsc
+   vrDead_icon = GroundWormLarva_dead_icon_rsc
+   vrDead_name = GroundWormLarva_dead_name_rsc
+   vrSound_aware = GroundWormLarva_sound_aware
+
+   viTreasure_type = TID_WORM_LARVA
+   viSpeed = SPEED_SLOW
+   viAttack_types = ATCK_WEAP_ACID
+   viLevel = 35
+   viDifficulty = 3
+   viKarma = -10
+   viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
+
+   viTrailLength = 2
+   vbTrailLarge = FALSE
+
+properties:
+   
+messages:
+
+   % These are exact duplicates of the code in the groundworm superclass, but the
+   %     constants are defined differently for the larva - different frames.
+
+   SendAttackAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_SURFACED);
+      return;
+   }
+
+   SendPopupAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPUP_START,2,FRAME_POPUP_END,2,FRAME_SURFACED);
+      return;
+   }
+
+   SendPopdownAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPDOWN_START,2,FRAME_POPDOWN_END,2,FRAME_UNDERGROUND);
+      return;
+   }
+
+   SendPopupAttackAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE,4,ANIMATION_SPEED,2,FRAME_POPUP_START,2,FRAME_ATTACK_END,2,FRAME_SURFACED);
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      if pbSurfaced
+      {
+         AddPacket(1,ANIMATE_NONE,2,FRAME_SURFACED);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,FRAME_POPUP_START);
+      }
+      return;
+   }
+
+   CanMonsterFight(who=$, oStroke = $, use_weapon = $)
+   {
+
+      if (oStroke <> $) AND IsClass(oStroke,&DMSpell)
+      {
+         return TRUE;
+      }
+      
+      if not pbSurfaced
+      {
+         if use_weapon = $
+            OR NOT (IsClass(use_weapon,&Hammer)
+                    OR IsClass(use_weapon,&SpiritualHammer)
+                    OR IsClass(use_weapon,&Mace))
+         { 
+            return FALSE; 
+         }
+      }
+      
+      return TRUE;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

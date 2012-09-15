@@ -1,0 +1,136 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKC4 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKC4 ="Origin of the Kriipa"
+   room_OutdoorsKC4 = KC4.roo
+   OutdoorsKC4_music = orcbeg.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKC4
+
+   viTeleport_row = 49
+   viTeleport_col = 4
+   viTerrain_type = TERRAIN_JUNGLE
+
+properties:
+
+   prRoom = room_OutdoorsKC4
+   prMusic = OutdoorsKC4_music
+   piRoom_num = RID_KC4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 13
+
+   piMonster_count_max = 13
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [[ &DragonFly,30], [&Avar, 70] ];
+      plGenerators = [ [35,12], [47,7], [51,24], [26,38], [18,23], [24,9] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&RainbowFern,50,4], [&RainbowFern,24,6], [&RainbowFern,35,38] ];
+
+      % Do not propagate
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KC3, 69, 38, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KC5, 1, 23, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=19,#new_col=5,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=54,#new_col=2,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=49,#new_col=16,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=21,#new_col=41,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=39,#new_col=41,#fine_row=0,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=30,#new_col=41,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=38,#new_col=9,#fine_row=0,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=27,#new_col=12,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=46,#new_col=25,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=28,#new_col=28,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=22,#new_col=31,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=50,#new_col=30,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=59,#new_col=19,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=68,#new_col=26,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+  
+   GetClan()
+   {
+      if random(1,2) = 1
+      {
+         return AVARCLAN_PROMAGIC;
+      }
+      
+      return AVARCLAN_ANTIMAGIC;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      % Penalize skills because there's an obvious chokepoint here.
+      if oSpellSkill <> $
+         AND IsClass(oSpellSkill,&Skill)
+      {
+         return (chance / 10);
+      }
+      
+      return chance;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,103 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FoodDispenser is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FoodDispenser_no_can_hold = "You can't hold anything more!"
+   FoodDispenser_none_left = "There is nary %s%s left!"
+
+classvars:
+
+   viObject_flags = ACTIVATE_YES | LOOK_NO
+
+properties:
+
+   vrName = $
+   vrDesc = $
+   vrIcon = $
+   piAmount_left = -1
+   poTemplate = $
+
+messages:
+
+   Constructor(classtype=$,amount=-1)
+   {
+      if classtype = $ 
+         {
+            DEBUG("Dispenser created without a classtype declared!");
+            post(self,@delete);
+            propagate;
+         }
+
+      poTemplate=create(Classtype);
+      vrName = send(poTemplate,@getDispenserName);
+      vrDesc = send(poTemplate,@getDispenserDesc);
+      vrIcon = send(poTemplate,@getDispensericon);
+
+      piAmount_left = amount;            
+      propagate;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      local oItem;
+
+      if isClass(who,&User) and poOwner = send(who,@getowner)
+      {
+        oItem = create(GetClass(poTemplate));
+        if piAmount_left = 0
+          {
+             send(who,@msgsenduser,#message_rsc=FoodDispenser_none_left,
+                #parm1=send(oItem,@getindef),#parm2=send(oItem,@getname));
+             return TRUE;
+          }
+
+        if send(who,@reqnewhold,#what=oItem) 
+          {
+             send(oItem,@newholdmessage,#who=who,#disp=self);
+             send(who,@newhold,#what=oItem);
+             if piAmount_left > 0
+               {
+                  piAmount_left = piAmount_left - 1;
+               }
+          }
+        else
+          {
+             send(who,@msgsenduser,#message_rsc=FoodDispenser_no_can_hold);
+             return TRUE;
+          }
+      }
+      return TRUE;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   Delete()
+   {
+      if poTemplate <> $
+        {
+           send(poTemplate,@delete);
+        }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

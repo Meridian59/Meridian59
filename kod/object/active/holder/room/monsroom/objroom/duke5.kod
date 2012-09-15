@@ -1,0 +1,482 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Duke5 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+   PARTY_OFF = 0
+   PARTY_ON = 1
+   PARTY_RANDOM = 2
+
+resources:
+
+   room_name_duke5 = "The Duke's Grand Ballroom"
+   room_duke5 = duke5.roo
+
+   duke5_music = bar.mid
+
+   duke5_party_on_command = "party on"
+   duke5_party_off_command = "party off"
+   duke5_party_random_command = "party random"
+
+   DJ1 = main.mid
+   DJ2 = tos.mid
+   DJ3 = area01.mid
+   DJ4 = badfor.mid
+   DJ5 = bank.mid
+   DJ6 = Bar.mid
+   DJ7 = bar2.mid
+   DJ8 = city02.mid
+   DJ9 = city03.mid
+   DJ10 = city04.mid
+   DJ11 = corloth.mid
+   DJ12 = goodfor.mid
+   DJ13 = Ksong.mid
+   DJ14 = LogIn.MID
+   DJ15 = marion.mid
+   DJ16 = neutfor.mid
+   DJ17 = smithy.mid
+   DJ18 = Song.mid
+   DJ19 = song02.mid
+   DJ20 = test01.mid
+   DJ21 = walk5.mid
+   DJ22 = TownTrl.MID
+
+   DJ23 = castle.mid
+   DJ24 = dance1.mid
+   DJ25 = Fight.mid
+   DJ26 = forest.mid
+   DJ27 = or01fm.mid
+   DJ28 = pk_fm.mid
+   DJ29 = Walk1.mid
+   DJ30 = Walk7.mid
+   DJ31 = walk4.mid
+
+   DJ32 = ltlgirl.mid
+   DJ33 = castle2.mid
+   DJ34 = cave.mid
+   DJ35 = undrwrld.mid
+   DJ36 = quorwar.mid
+
+   DJ37 = avarwar.mid
+   DJ38 = boneprst.mid
+   DJ39 = bridge.mid
+   DJ40 = drgnfly.mid
+   DJ41 = extra01.mid
+   DJ42 = madsci.mid
+
+   DJ43 = orcbeg.mid
+   DJ44 = orcpit.mid
+   DJ45 = orc1.mid
+   DJ46 = orc2.mid
+
+   DJ47 = nec01.mid
+   DJ48 = nec02.mid
+   DJ49 = nec03.mid
+
+   DJ50 = KILLED.MID
+
+   DJ51 = jala1.mid
+   DJ52 = jala2.mid
+   DJ53 = jala3.mid
+   DJ54 = jala4.mid
+   DJ55 = jala5.mid
+
+   DJ56 = temple.mid
+
+   DJ57 = walk2.mid
+   DJ58 = song00.mid
+   DJ59 = song01.mid
+   DJ60 = song03.mid
+   DJ61 = song04.mid
+   DJ62 = song05.mid
+   DJ63 = song06.mid
+   DJ64 = song07.mid
+   DJ65 = song08.mid
+   DJ66 = song10.mid
+   DJ67 = song11.mid
+   DJ68 = song12.mid
+
+classvars:
+
+   vrName = room_name_duke5
+
+   viTeleport_row = 10
+   viTeleport_col = 16
+
+   viTerrain_type = TERRAIN_CASTLE
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY
+
+   prRoom = room_duke5
+   piRoom_num = RID_DUKE5
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+   prMusic = duke5_music
+   prDJMusic = duke5_music
+
+   plLights = $
+
+   % The timer, and the timer duration, for when the lights change.
+   ptPartyLights = $
+   piLightsTime = 1500
+
+   piPartySetting = PARTY_OFF
+
+messages:
+
+   Delete()
+   {
+      if ptPartyLights <> $
+      {
+         DeleteTimer(ptPartyLights);
+         ptPartyLights = $;
+      }
+
+      % Clear out the party lights list.  Lights will be deleted with room contents.
+      plLights = $;
+
+      propagate;
+   }
+
+   SomeoneSaid(what=$,string=$, type=$)
+   {
+      local i, rMusic, each_obj;
+
+      if (NOT IsClass(what,&DM))
+         OR (NOT send(what,@isActor))
+         OR (type <> SAY_DM)
+      {
+         propagate;
+      }
+      
+      rMusic = $;
+
+      % Commands to change the party lights!
+      if StringEqual(string,duke5_party_off_command)
+      {
+         send(self,@SetPartyLights,#value=PARTY_OFF);
+      }
+
+      if StringEqual(string,duke5_party_on_command)
+      {
+         send(self,@SetPartyLights,#value=PARTY_ON);
+      }
+
+      if StringEqual(string,duke5_party_random_command)
+      {
+         send(self,@SetPartyLights,#value=PARTY_RANDOM);
+      }
+
+      % Commands to change the music
+      if StringEqual(string,"song1") { rMusic = DJ1; }
+      if StringEqual(string,"song2") { rMusic = DJ2; }
+      if StringEqual(string,"song3") { rMusic = DJ3; }
+      if StringEqual(string,"song4") { rMusic = DJ4; }
+      if StringEqual(string,"song5") { rMusic = DJ5; }
+      if StringEqual(string,"song6") { rMusic = DJ6; }
+      if StringEqual(string,"song7") { rMusic = DJ7; }
+      if StringEqual(string,"song8") { rMusic = DJ8; }
+      if StringEqual(string,"song9") { rMusic = DJ9; }
+      if StringEqual(string,"song10") { rMusic = DJ10; }
+      if StringEqual(string,"song11") { rMusic = DJ11; }
+      if StringEqual(string,"song12") { rMusic = DJ12; }
+      if StringEqual(string,"song13") { rMusic = DJ13; }
+      if StringEqual(string,"song14") { rMusic = DJ14; }
+      if StringEqual(string,"song15") { rMusic = DJ15; }
+      if StringEqual(string,"song16") { rMusic = DJ16; }
+      if StringEqual(string,"song17") { rMusic = DJ17; }
+      if StringEqual(string,"song18") { rMusic = DJ18; }
+      if StringEqual(string,"song19") { rMusic = DJ29; }
+      if StringEqual(string,"song20") { rMusic = DJ20; }
+      if StringEqual(string,"song21") { rMusic = DJ21; }
+      if StringEqual(string,"song22") { rMusic = DJ22; }
+      if StringEqual(string,"song23") { rMusic = DJ23; }
+      if StringEqual(string,"song24") { rMusic = DJ24; }
+      if StringEqual(string,"song25") { rMusic = DJ25; }
+      if StringEqual(string,"song26") { rMusic = DJ26; }
+      if StringEqual(string,"song27") { rMusic = DJ27; }
+      if StringEqual(string,"song28") { rMusic = DJ28; }
+      if StringEqual(string,"song29") { rMusic = DJ29; }
+      if StringEqual(string,"song30") { rMusic = DJ30; }
+      if StringEqual(string,"song31") { rMusic = DJ31; }
+      if StringEqual(string,"song32") { rMusic = DJ32; }
+      if StringEqual(string,"song33") { rMusic = DJ33; }
+      if StringEqual(string,"song34") { rMusic = DJ34; }
+      if StringEqual(string,"song35") { rMusic = DJ35; }
+      if StringEqual(string,"song36") { rMusic = DJ36; }
+      if StringEqual(string,"song37") { rMusic = DJ37; }
+      if StringEqual(string,"song38") { rMusic = DJ38; }
+      if StringEqual(string,"song39") { rMusic = DJ39; }
+      if StringEqual(string,"song40") { rMusic = DJ40; }
+      if StringEqual(string,"song41") { rMusic = DJ41; }
+      if StringEqual(string,"song42") { rMusic = DJ42; }
+      if StringEqual(string,"song43") { rMusic = DJ43; }
+      if StringEqual(string,"song44") { rMusic = DJ44; }
+      if StringEqual(string,"song45") { rMusic = DJ45; }
+      if StringEqual(string,"song46") { rMusic = DJ46; }
+      if StringEqual(string,"song47") { rMusic = DJ47; }
+      if StringEqual(string,"song48") { rMusic = DJ48; }
+      if StringEqual(string,"song49") { rMusic = DJ49; }
+      if StringEqual(string,"song50") { rMusic = DJ50; }
+      if StringEqual(string,"song51") { rMusic = DJ51; }
+      if StringEqual(string,"song52") { rMusic = DJ52; }
+      if StringEqual(string,"song53") { rMusic = DJ53; }
+      if StringEqual(string,"song54") { rMusic = DJ54; }
+      if StringEqual(string,"song55") { rMusic = DJ55; }
+      if StringEqual(string,"song56") { rMusic = DJ56; }
+      if StringEqual(string,"song57") { rMusic = DJ57; }
+      if StringEqual(string,"song58") { rMusic = DJ58; }
+      if StringEqual(string,"song59") { rMusic = DJ59; }
+      if StringEqual(string,"song60") { rMusic = DJ60; }
+      if StringEqual(string,"song61") { rMusic = DJ61; }
+      if StringEqual(string,"song62") { rMusic = DJ62; }
+      if StringEqual(string,"song63") { rMusic = DJ63; }
+      if StringEqual(string,"song64") { rMusic = DJ64; }
+      if StringEqual(string,"song65") { rMusic = DJ65; }
+      if StringEqual(string,"song66") { rMusic = DJ66; }
+      if StringEqual(string,"song67") { rMusic = DJ67; }
+      if StringEqual(string,"song68") { rMusic = DJ68; }
+
+      if rMusic <> $ AND prMusic <> rMusic
+      {
+         prMusic = rMusic;
+         for i in plActive
+         {
+   	      each_obj = First(i);
+            if IsClass(each_obj,&User)
+            {
+               Send(each_obj,@SendRoomMusic,#music_rsc=prMusic);
+            }
+         }
+         
+         return;
+      }
+      
+      propagate;
+   }
+   
+   FirstUserEntered()
+   {
+      prMusic = duke5_music;
+   
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      % Turn off the lights as the last person leaves.
+      send(self,@SetPartyLights,#value=PARTY_OFF);
+
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO FEAST HALL (RID_DUKE4)
+      plExits = Cons([ 27, 14, RID_DUKE4, 3, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 15, RID_DUKE4, 3, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 16, RID_DUKE4, 3, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29,  9, RID_DUKE4, 6, 11, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 10, RID_DUKE4, 6, 11, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 20, RID_DUKE4, 6, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 21, RID_DUKE4, 6, 20, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 18, 19, RID_DUKE5, 18, 22, ROTATE_NONE ],plExits);
+      plExits = Cons([ 18, 22, RID_DUKE5, 18, 18, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   NewHold(what=$)
+   {
+      if isClass(what,&Player)
+      {
+         Send(what,@SendRoomMusic,#music_rsc=prMusic);
+
+         if send(send(SYS,@FindRoomByNum,#num=RID_DUKE4),@IsLocked)
+	         AND NOT IsClass(what,&DM)
+         {
+            Post(self,@HustleUsersOutOfRoom,#new_rid=RID_DUKE2,#new_row=9,#new_col=15);
+         }
+      }
+      
+      propagate;  
+   }
+
+   CreateStandardObjects()
+   {
+      local oLight;
+
+      Send(self,@NewHold,#what=Create(&Basicinnkeeper),#new_row=25,#new_col=24,
+           #fine_row=0,#fine_col=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=19,#new_col=2,
+           #fine_row=16,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=10,#new_col=2,
+           #fine_row=48,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=2,#new_col=15,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=10,#new_col=25,
+           #fine_row=48,#fine_col=32,#new_angle=ANGLE_WEST);
+
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=23,#new_col=15,
+           #fine_row=0,#fine_col=32);
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=19,#new_col=1,
+           #fine_row=16,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=10,#new_col=1,
+           #fine_row=48,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=1,#new_col=15,
+           #fine_row=0,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=10,#new_col=27,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=26,#new_col=24,
+           #fine_row=16,#fine_col=16);
+
+      % Party Lights! WOOO!
+      % 5 different lights, Intensity at highest, (255)
+
+      oLight = Create(&DynamicLight,#iColor=LIGHT_BBLUE,#iIntensity=255);
+      Send(oLight,@SetSwitch,#switch=OFF);
+      plLights = cons(oLight,plLights);
+      Send(self,@NewHold,#what=oLight,#new_row=5,#new_col=21,
+           #fine_row=48,#fine_col=16);
+
+      oLight = Create(&DynamicLight,#iColor=LIGHT_BRED,#iIntensity=255);
+      Send(oLight,@SetSwitch,#switch=OFF);
+      plLights = cons(oLight,plLights);
+      Send(self,@NewHold,#what=oLight,#new_row=14,#new_col=21,
+           #fine_row=16,#fine_col=16);
+
+      oLight = Create(&DynamicLight,#iColor=LIGHT_BGREEN,#iIntensity=255);
+      Send(oLight,@SetSwitch,#switch=OFF);
+      plLights = cons(oLight,plLights);
+      Send(self,@NewHold,#what=oLight,#new_row=14,#new_col=8,
+           #fine_row=16,#fine_col=48);
+
+      oLight = Create(&DynamicLight,#iColor=LIGHT_BORANGE,#iIntensity=255);
+      Send(oLight,@SetSwitch,#switch=OFF);
+      plLights = cons(oLight,plLights);
+      Send(self,@NewHold,#what=oLight,#new_row=5,#new_col=8,
+           #fine_row=48,#fine_col=48);
+
+      oLight = Create(&DynamicLight,#iColor=LIGHT_BPURPLE,#iIntensity=255);
+      Send(oLight,@SetSwitch,#switch=OFF);
+      plLights = cons(oLight,plLights);
+      Send(self,@NewHold,#what=oLight,#new_row=22,#new_col=7,
+           #fine_row=0,#fine_col=16);
+
+      propagate;
+   }
+
+   SetPartyLights(value=$)
+   {
+      local oLight, lColors, iIndex;
+      
+      if value <> $
+      {
+         piPartySetting = value;
+      }
+
+      if ptPartyLights <> $
+      {
+         DeleteTimer(ptPartyLights);
+         ptPartyLights = $;
+      }
+
+      % Did we get turned off?
+      if piPartySetting = PARTY_OFF
+      {
+         % Make sure each light is off.
+         for oLight in plLights
+         {
+            Send(oLight,@SetSwitch,#switch=OFF);
+         }
+      }
+      else
+      {
+         lColors = [ LIGHT_BPURPLE, LIGHT_BORANGE, LIGHT_BGREEN, LIGHT_BRED, LIGHT_BBLUE ];
+
+         % Are we on?
+         if piPartySetting = PARTY_ON
+         {
+            % Make sure each light is on and set to the original color
+            iIndex = 1;
+
+            for oLight in plLights
+            {
+               Send(oLight,@SetLight,#iColor=Nth(lColors,iIndex));
+               Send(oLight,@SetSwitch,#switch=ON);
+               iIndex = iIndex + 1;
+            }
+         }
+
+         % Are we in Random EXTREME PARTY MODE(tm)?
+         if piPartySetting = PARTY_RANDOM
+         {
+            % Make the lights flash and change color
+
+            % Add in an "off" option to the colors list.
+            lColors = Cons(-1,lColors);
+
+            for oLight in plLights
+            {
+               iIndex = Nth(lColors,random(1,length(lColors)));
+               lColors = DelListElem(lColors,iIndex);
+
+               if iIndex = -1
+               {
+                  % Switch the light off
+                  Send(oLight,@SetSwitch,#switch=OFF);
+               }
+               else
+               {
+                  % Switch the light on with a random color
+                  Send(oLight,@SetLight,#iColor=iIndex);
+                  Send(oLight,@SetSwitch,#switch=ON);
+               }
+            }
+
+            % Create a timer to switch them again.
+            ptPartyLights = CreateTimer(self,@PartyLightsTimer,piLightsTime);
+         }
+      }
+
+      return;
+   }
+
+   PartyLightsTimer()
+   {
+      ptPartyLights = $;
+
+      Send(self,@SetPartyLights);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

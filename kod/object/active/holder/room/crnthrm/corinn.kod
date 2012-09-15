@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorInn is CorNothRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_corinn = "Cibilo Creek Inn"
+   room_corinn = corinn.roo
+   corinn_music = bar2.mid
+
+   cornews_god_name = "Designers' News"
+   cornews_god_desc = "Check here for information from the game administrators."
+
+classvars:
+
+   vrName = room_name_corinn
+
+   viTeleport_row = 5
+   viTeleport_col = 5
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_HOMETOWN | ROOM_SAFELOGOFF
+
+properties:
+
+   prRoom = room_corinn
+   piRoom_num = RID_COR_INN
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = corinn_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 3, 1, RID_CORNOTH, 11, 59, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 10, 7, ROOM_LOCKED_DOOR],plExits);
+      plExits = Cons([ 10, 4, ROOM_LOCKED_DOOR],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      Send(self,@NewHold,#what=Create(&CorNothInnKeeper),
+           #new_row=3,#new_col=11,#new_angle=ANGLE_WEST);
+
+      % Create news globe.
+      oNews = Create(&NewsLink,#nid=NID_ANNOUNCEMENTS,
+                     #name=cornews_god_name,#desc=cornews_god_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=7,#new_col=9,#fine_row=40,#fine_col=40);
+
+      % And some braziers.
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=7,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=7,#new_col=10);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=4,#new_col=12);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

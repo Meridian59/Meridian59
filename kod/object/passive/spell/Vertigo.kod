@@ -1,0 +1,191 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Vertigo is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Vertigo_name_rsc = "vertigo"
+   Vertigo_icon_rsc = ivertigo.bgf
+   Vertigo_desc_rsc = \
+      "This spell causes the victim to become so ill that they can hardly stand, much less fight. "
+      "Requires dragonfly eyes and solagh."
+   
+   Vertigo_caster = "%s%s looks strangely dazed... and confused."
+   Vertigo_already_enchanted = "%s%s already appears to be freaking."
+
+   Vertigo_on = "Your stomach leaps into your throat and feel as though"
+      " someone hit you on the head with a very large hammer."
+   Vertigo_off = "You recover from that terrible feeling."
+
+   Vertigo_sound = rvertigo.wav
+
+classvars:
+
+   vrName = Vertigo_name_rsc
+   vrIcon = Vertigo_icon_rsc
+   vrDesc = Vertigo_desc_rsc
+
+   viSpell_num = SID_VERTIGO
+   viSchool = SS_RIIJA
+   viSpell_level = 3
+   viMana = 10
+   viSpellExertion = 10
+   viCast_time = 2000
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+   viChance_to_increase = 15
+
+   vrSucceed_wav = Vertigo_sound
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&DragonflyEye,2],plReagents);
+      plReagents = Cons([&Solagh,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+
+      if NOT IsClass(target,&Battler) OR IsClass(target,&Revenant)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+
+         return FALSE;
+      }
+
+      if target = who
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      if (IsClass(target,&Player)
+          AND Send(target,@IsEnchanted,#what=self))
+         OR (IsClass(target,&Monster)
+             AND send(target,@IsEnchanted,#what=send(SYS,@FindSpellBynum,#num=SID_PALSY)))
+      {
+         Send(who,@MsgSendUser,#message_rsc=Vertigo_already_enchanted,
+              #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+    
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget,iAmount,iDuration,iAgil,iStr,iAim,oPalsy;
+
+      oTarget = First(lTargets);
+      iDuration = send(self,@GetDuration,#iSpellPower=iSpellPower);
+      iAmount = send(self,@GetAmount,#iSpellPower=iSpellPower);
+      oPalsy = send(SYS,@FindSpellBynum,#num=SID_PALSY);
+      
+      Send(who,@MsgSendUser,#message_rsc=Vertigo_caster,
+           #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+      % spell effects
+      if IsClass(oTarget,&Player)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=Vertigo_on);
+         Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=iDuration);
+         iAgil = send(oTarget,@AddAgility,#points=-iAmount);
+         iStr = send(oTarget,@AddMight,#points=-iAmount);
+         iAim = send(oTarget,@AddAim,#points=-iAmount);
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,#state=[-iAgil,-iStr,-iAim]);
+      }
+      else
+      {
+         Send(oPalsy,@MakeSick,#who=oTarget,#iAmount=(iSpellPower/3+1),
+              #iDuration=send(self,@GetDuration,#iSpellPower=iSpellPower));
+      }
+    
+      propagate;
+   }
+
+   GetAmount(iSpellPower=0)
+   {
+      local iAmount;
+
+      iAmount = 15+(ispellpower/10);
+      return iAmount;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = (10 + iSpellPower/2)*1000;
+
+      return random(iDuration/2,iDuration);
+   }
+   
+   EndEnchantment(who = $, state=$, report = TRUE)
+   {
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=Vertigo_off);
+      }
+
+      send(who,@AddAgility,#points=nth(state,1));
+      send(who,@AddMight,#points=nth(state,2));
+      send(who,@AddAim,#points=nth(state,3));
+     
+      return;
+   }
+
+   SendEffectData()
+   {
+      return;
+   }
+
+   RestartEnchantmentEffect(who=$,state=$)
+   {
+      Send(who,@MsgSendUser,#message_rsc=Vertigo_on);
+      Send(who,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=20000);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

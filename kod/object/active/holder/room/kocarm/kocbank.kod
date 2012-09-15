@@ -1,0 +1,114 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanBank is KocatanRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   room_name_kocbank = "The Hungry Vaults"
+   room_kocbank = kocbank.roo
+   kocbank_music = song12.mid
+
+   kocbank_locked1 = \
+      "~kThe sentry barks, \"Just where do you think you are going?\""
+   kocbank_locked2 = \
+      "~kHuital ko'Nosak says, \"Our customers are not permitted into the "
+      "vaults.  Security, you understand.\""
+
+classvars:
+
+   vrName = room_name_kocbank
+
+   viTeleport_row = 20
+   viTeleport_col = 8
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+   viPermanent_flags = ROOM_NO_COMBAT 
+
+properties:
+
+   prRoom = room_kocbank
+   piRoom_num = RID_KOC_BANK
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = kocbank_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 20, 6,  RID_KOCATAN, 24, 44, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 10, 4, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+      plExits = Cons([ 10, 13, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+      plExits = Cons([ 9, 4, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+      plExits = Cons([ 9, 13, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+      plExits = Cons([ 7, 9, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+      plExits = Cons([ 7, 8, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+      plExits = Cons([ 6, 9, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+      plExits = Cons([ 6, 8, ROOM_LOCKED_DOOR, kocbank_locked1],plExits);
+
+      plExits = Cons([ 17, 6, ROOM_LOCKED_DOOR, kocbank_locked2],plExits);
+      plExits = Cons([ 17, 11, ROOM_LOCKED_DOOR, kocbank_locked2],plExits);
+      plExits = Cons([ 23, 8, ROOM_LOCKED_DOOR, kocbank_locked2],plExits);
+      plExits = Cons([ 23, 9, ROOM_LOCKED_DOOR, kocbank_locked2],plExits);
+      plExits = Cons([ 24, 8, ROOM_LOCKED_DOOR, kocbank_locked2],plExits);
+      plExits = Cons([ 24, 9, ROOM_LOCKED_DOOR, kocbank_locked2],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1, oLight;
+
+      lObjCoords1 = [ [04,08,08,48,OO_BIG_BAG],[04,07,40,40,OO_BAG_OF_BEANS],
+                      [24,11,08,32,OO_GREY_JUG],[21,11,24,40,OO_GOLD_BOTTLE],
+                      [21,11,16,40,OO_BLUE_BOTTLE],[18,10,48,48,OO_POT],
+                      [24,10,40,32,OO_bigurn]
+                    ];
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+
+      Send(self,@NewHold,#what=Create(&KocatanVaultman),
+           #new_row=21,#new_col=10,#fine_row=0,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&KocatanBanker),
+           #new_row=19,#new_col=10,#fine_row=24,#fine_col=40);
+
+      Send(self,@NewHold,#what=Create(&KocatanSentry),
+           #new_row=8,#new_col=11,#fine_row=56,#fine_col=08);
+
+      % Lighting
+      oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
+      Send(self,@NewHold,#what=oLight,#new_row=9,#new_col=4,
+           #fine_row=40,#fine_col=8);
+      oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
+      Send(self,@NewHold,#what=oLight,#new_row=9,#new_col=13,
+           #fine_row=40,#fine_col=32);
+      oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
+      Send(self,@NewHold,#what=oLight,#new_row=13,#new_col=7,
+           #fine_row=24,#fine_col=48);
+      oLight = Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25);
+      Send(self,@NewHold,#what=oLight,#new_row=13,#new_col=9,
+           #fine_row=24,#fine_col=48);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

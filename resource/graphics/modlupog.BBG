@@ -1,0 +1,14 @@
+# lupogg, model (for Raza museum)
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 9
+6
+lup000cb.bmp   [0, 0] 
+lup315cb.bmp   [0, 0] 
+lup270cb.bmp   [0, 0] 
+lup180cb.bmp   [0, 0] 
+lup090cb.bmp   [0, 0] 
+lup045cb.bmp   [0, 0] 
+1
+ 8   1 2 3 4 4 4 5 6 

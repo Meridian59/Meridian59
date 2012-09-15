@@ -1,0 +1,82 @@
+# evil lich
+# Groups:
+# 1 standing
+# 2-5 walking
+# 6-9 fighting
+#^Applied to Hotspot: 0
+#*Groups: 9
+#* standing
+#* walk A
+#* walk B
+#* walk C
+#* walk D
+#* fight A
+#* fight B
+#* fight C
+#* fight D
+-s 3
+54
+li000baa.bmp    [0, 0] 
+li315baa.bmp    [0, 0] 
+li270baa.bmp    [0, 0] 
+li180baa.bmp    [0, 0] 
+li090baa.bmp    [0, 0] 
+li045baa.bmp    [0, 0] 
+li000bwa.bmp    [0, 0] 
+li315bwa.bmp    [0, 0] 
+li270bwa.bmp    [0, 0] 
+li180bwa.bmp    [0, 0] 
+li090bwa.bmp    [0, 0] 
+li045bwa.bmp    [0, 0] 
+li000bwb.bmp    [0, 0] 
+li315bwb.bmp    [0, 0] 
+li270bwb.bmp    [0, 0] 
+li180bwb.bmp    [0, 0] 
+li090bwb.bmp    [0, 0] 
+li045bwb.bmp    [0, 0] 
+li000bwc.bmp    [0, 0] 
+li315bwc.bmp    [0, 0] 
+li270bwc.bmp    [0, 0] 
+li180bwc.bmp    [0, 0] 
+li090bwc.bmp    [0, 0] 
+li045bwc.bmp    [0, 0] 
+li000bwd.bmp    [0, 0] 
+li315bwd.bmp    [0, 0] 
+li270bwd.bmp    [0, 0] 
+li180bwd.bmp    [0, 0] 
+li090bwd.bmp    [0, 0] 
+li045bwd.bmp    [0, 0] 
+li000bla.bmp    [0, 0] 
+li315bla.bmp    [0, 0] 
+li270bla.bmp    [0, 0] 
+li180bla.bmp    [0, 0] 
+li090bla.bmp    [0, 0] 
+li045bla.bmp    [0, 0] 
+li000blb.bmp    [0, 0] 
+li315blb.bmp    [0, 0] 
+li270blb.bmp    [0, 0] 
+li180blb.bmp    [0, 0] 
+li090blb.bmp    [0, 0] 
+li045blb.bmp    [0, 0] 
+li000blc.bmp    [0, 0] 
+li315blc.bmp    [0, 0] 
+li270blc.bmp    [0, 0] 
+li180blc.bmp    [0, 0] 
+li090blc.bmp    [0, 0] 
+li045blc.bmp    [0, 0] 
+li000bld.bmp    [0, 0] 
+li315bld.bmp    [0, 0] 
+li270bld.bmp    [0, 0] 
+li180bld.bmp    [0, 0] 
+li090bld.bmp    [0, 0] 
+li045bld.bmp    [0, 0] 
+9
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54

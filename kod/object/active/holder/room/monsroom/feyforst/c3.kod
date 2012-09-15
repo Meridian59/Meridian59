@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsC3 is FeyForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsC3 = C3.roo
+   room_name_OutdoorsC3 ="Quilicia Wood"
+   OutdoorsC3_music = walk7.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsC3
+
+   viEquilibrium = 60		    %% This is where this section of the faerie forest
+	 			    %% will 'aim' for on the karmic scale.
+
+   viTeleport_row = 24
+   viTeleport_col = 33
+
+properties:
+
+   prRoom = room_OutdoorsC3
+   prMusic = OutdoorsC3_music
+   piRoom_num = RID_C3
+  
+   piGen_time = 150000  
+
+messages:
+
+   Constructed()
+   {
+      plGenerators = [ [3, 32], [9, 18], [24, 33], [21, 30], [27, 47],
+                      [10, 47], [27, 46], [11, 47], [30, 10], [14, 12],
+                      [30, 27], [19, 21], [16, 39], [34, 30], [21, 54] ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_C4, 1, 27, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_B2, 49, 40, ROTATE_NONE,COL_IS_LESS_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_D2, 49, 7, ROTATE_NONE,COL_IS_GREATER_THAN,19], plEdge_exits);
+   
+      propagate;
+   }
+
+   CreateYellZoneList()
+   {    
+      plYell_zone = [RID_A1, RID_B1, RID_B2, RID_C1, RID_C2, RID_C3,RID_D2, RID_D1, RID_C4];
+      return;
+   }
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=9,#new_col=50);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=9,#new_col=45);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=25,#new_col=45);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=28,#new_col=48);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

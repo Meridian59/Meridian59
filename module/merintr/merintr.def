@@ -1,0 +1,25 @@
+;
+; DEF file for merintr DLL
+; 
+
+EXPORTS
+	GetModuleInfo		@1  NONAME
+	EventServerMessage      @2  NONAME
+	EventUserAction         @4  NONAME
+	EventMouseClick         @5  NONAME
+	EventFontChanged        @6  NONAME
+	EventColorChanged       @7  NONAME
+	EventMenuItem           @8  NONAME
+	EventStateChanged       @11 NONAME
+	EventAnimate            @13 NONAME
+	ModuleExit              @16 NONAME
+	EventTextCommand        @17 NONAME
+	EventResize             @18 NONAME
+	EventUserChanged        @19 NONAME
+	EventRedraw             @20 NONAME
+	EventDrawItem           @21 NONAME
+	EventResetData          @22 NONAME
+	EventInventory          @23 NONAME
+	EventSetCursor          @24 NONAME
+	EventNewRoom            @25 NONAME
+	EventConfigChanged      @27 NONAME

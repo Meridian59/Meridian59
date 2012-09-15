@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TableLamp is Flickerer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   tablamp_name = "black stone lamp"
+   tablamp_desc = "This lamp offers a subdued, flickering glow."
+   tablamp_icon = tablamp.bgf
+
+classvars:
+
+   vrName = tablamp_name
+   vrDesc = tablamp_desc
+   vrIcon = tablamp_icon
+
+   % Lighting flags.  Default "on" and wavering flags
+   viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING
+
+   % Light color.
+   viLightColor = LIGHT_FIRE
+
+properties:
+
+   % Intensity, from 0-255.
+   piLightIntensity = 30
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

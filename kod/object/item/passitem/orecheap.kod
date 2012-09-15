@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CheapOreChunk is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   CheapOreChunk_icon_rsc = Ore.bgf
+   CheapOreChunk_name_rsc = "chunk of ore"
+   CheapOreChunk_desc_rsc = "This is a huge, unwieldy hunk of rock, with a few thin veins "
+      "of metal barely visible.  You wonder at the massive amount of labor that would be necessary to extract "
+      "enough metal from it in order to fashion something useful."
+
+classvars:
+   
+   vrName = CheapOreChunk_name_rsc
+   vrDesc = CheapOreChunk_desc_rsc
+   vrIcon = CheapOreChunk_icon_rsc
+
+   viValue_average = 300
+   viWeight = 500
+   viBulk = 500
+
+
+properties:  
+
+messages:   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

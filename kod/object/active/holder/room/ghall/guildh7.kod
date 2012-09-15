@@ -1,0 +1,397 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall7 is GuildHall
+
+constants:
+
+   STEP1 = 1
+   STEP2 = 2
+   STEP3 = 3
+   STEP4 = 4
+   STEP5 = 5
+   STEP6 = 6
+   
+   SWDOOR = 7
+   NWDOOR = 8 
+   NEDOOR = 9
+
+   GH7_FOYER_SW = 1
+   GH7_FOYER_NW = 2
+   GH7_FOYER_NE = 3
+
+   RESET_TIME = 10000
+   SECRET_DELAY = 10000
+       
+   STATUS_OKAY = 3
+
+   include blakston.khd
+
+resources:
+
+   room_name_guildh7 = "The Old Dwarven Hall"
+   room_guildh7 = guildh7.roo
+
+classvars:
+
+   vrName = room_name_guildh7
+
+   viTeleport_row = 5
+   viTeleport_col = 11
+
+   viNews_row = 14
+   viNews_col = 17
+   viNews_finerow = 12
+   viNews_finecol = 60
+
+   viLever_row = 11
+   viLever_col = 22
+   viLever_fine_row = 4
+   viLever_fine_col = 32
+
+   viInner_teleport_row = 14
+   viInner_teleport_col = 29
+
+   viQuality = 6
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_GUILDHALL
+   viSeconds_til_close = 15
+
+properties:
+
+   prRoom = room_guildh7
+   piRoom_num = RID_GUILDH7
+
+   piBaseLight = LIGHT_NICE
+   ptSecretDoor = $
+   ptEastDoor = $
+   ptWestDoor = $
+   ptSouthDoor = $
+ 
+messages:
+
+   Constructor()
+   "These mark the exterior door of the guild, which is only openable by "
+   "a guild member or an allied guild member."
+   {
+      plGuild_doors = [ [18,8], [6,11], [5,23] ];
+
+      propagate;
+   }
+
+   InFoyer(who=$)
+   "Due to the multiple foyers in this guild hall, we return which foyer 'who' "
+   "is currently in.  Returns FALSE if not in foyer, a positive integer otherwise."
+   {
+      local iRow, iCol;
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      if (iRow > 15) AND (iRow < 22) AND (iCol < 9)
+      {
+         return GH7_FOYER_SW;
+      }          
+
+      if (iRow < 7) AND (iCol < 15) AND (iCol > 5)
+      {
+         return GH7_FOYER_NW;
+      }
+
+      if (iRow < 6) AND (iCol < 26) AND (iCol > 18)
+      {
+         return GH7_FOYER_NE;
+      }
+
+      return FALSE;
+   }
+
+   ValidEntry(what=$)
+   {
+      if Send(self,@InFoyer,#who=what)
+      {
+         % Since we have multiple foyers, let people enter the appropriate foyer
+         return;
+      }
+
+      % Superclass teleports people to the One True Foyer(tm) if they enter
+      %  (or log on) inside when they're not normally allowed to enter.
+      propagate;
+   }
+
+   SomethingTryGo(what=$, row=$, col=$)
+   "Opens the guild outer doors, but only if you're a guildmember!"
+   {
+      local i, count;
+
+      count = 0;
+      for i in plGuild_doors
+      {
+         if row = first(i) AND col = nth(i,2)
+         {
+            % check to see if the doors should open
+            if piStatus = STATUS_OKAY
+               AND NOT Send(self,@CanEnter,#who=what)
+            {
+               % Send a message saying 'only members and their allies may enter.' 
+               Send(what,@MsgSendUser,#message_rsc=guildhall_cant_open,#parm1=vrName);
+
+               return TRUE;
+            }
+            else
+            {
+               Send(self,@OpenEntranceDoor,#doornum=count);
+
+               return TRUE;
+            }
+         }
+
+         count = count + 1;
+      }                                                                        
+
+      if Send(self,@ReqLegalEntry,#who = what)
+      {
+         if row = 18 AND col = 9     
+         {
+            Send(self,@OpenEntranceDoor,#doornum=0);
+
+            return TRUE;
+         }
+
+         if row = 7 AND col = 11     
+         {
+            Send(self,@OpenEntranceDoor,#doornum=1);
+
+            return TRUE;
+         }
+
+         if row = 6 AND col = 23
+         {
+            Send(self,@OpenEntranceDoor,#doornum=2);
+
+            return TRUE;
+         }
+      }
+     
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 2, 10, RID_C5, 49, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 19, 4, RID_C7, 5, 14, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 22, RID_C6, 3, 18, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   OpenEntranceDoor(doornum = $)
+   {
+      if (doornum = 0) and ptSouthDoor = $
+      {
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=SWDOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=132,#speed=16);
+         ptSouthDoor = CreateTimer(self,@CloseSouthDoor,RESET_TIME);
+      }
+
+      if (doornum = 1) and ptWestDoor = $
+      {
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=NWDOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=228,#speed=16);
+         ptWestDoor = CreateTimer(self,@CloseWestDoor,RESET_TIME);
+      }
+
+      if (doornum = 2)
+      {
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=NEDOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=252,#speed=16);
+         ptEastDoor = CreateTimer(self,@CloseEastDoor,RESET_TIME);
+      }
+
+      Send(self,@OpenEntranceDoorSound);
+
+      return;
+   }
+
+   CloseSouthDoor()
+   {
+      ptSouthDOor = $;
+      Send(self,@SetSector,#sector=SWDOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=32,#speed=16);
+      Send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+
+   CloseWestDoor()
+   {
+      ptWestDoor = $;
+      Send(self,@SetSector,#sector=NWDOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=136,#speed=16);
+      Send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+
+   CloseEastDoor()
+   {
+      ptEastDoor = $;
+      Send(self,@SetSector,#sector=NEDOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=152,#speed=16);
+      Send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+
+   OpenSecretDoor()
+   {
+      if ptSecretDoor = $
+      {
+         Send(self,@SetSector,#sector=STEP1,#animation=ANIMATE_FLOOR_LIFT,
+              #height=58,#speed=16);
+         Send(self,@SetSector,#sector=STEP2,#animation=ANIMATE_FLOOR_LIFT,
+              #height=72,#speed=16);
+         Send(self,@SetSector,#sector=STEP3,#animation=ANIMATE_FLOOR_LIFT,
+              #height=86,#speed=16);
+         Send(self,@SetSector,#sector=STEP4,#animation=ANIMATE_FLOOR_LIFT,
+              #height=90,#speed=16);
+         Send(self,@SetSector,#sector=STEP5,#animation=ANIMATE_FLOOR_LIFT,
+              #height=104,#speed=16);
+         Send(self,@SetSector,#sector=STEP6,#animation=ANIMATE_FLOOR_LIFT,
+              #height=128,#speed=16);
+         Send(self,@OpenSecretDoorSound);
+         ptSecretDoor = CreateTimer(self,@CloseSecretDoor,SECRET_DELAY);
+      }
+
+      return;
+   }
+
+   CloseSecretDoor() 
+   {
+      ptSecretDoor = $;
+      Send(self,@SetSector,#sector=STEP1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=154,#speed=16);
+      Send(self,@SetSector,#sector=STEP2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=148,#speed=16);
+      Send(self,@SetSector,#sector=STEP3,#animation=ANIMATE_FLOOR_LIFT,
+           #height=144,#speed=16);
+      Send(self,@SetSector,#sector=STEP4,#animation=ANIMATE_FLOOR_LIFT,
+           #height=140,#speed=16);
+      Send(self,@SetSector,#sector=STEP5,#animation=ANIMATE_FLOOR_LIFT,
+           #height=136,#speed=16);
+      Send(self,@SetSector,#sector=STEP6,#animation=ANIMATE_FLOOR_LIFT,
+           #height=132,#speed=16);
+      Send(self,@CloseSecretDoorSound);
+
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=10,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=12,#new_col=19);
+
+      % South Hall Braziers
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=21,#new_col=7,#fine_row=0,#fine_col=24);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=20,#new_col=4,#fine_row=40,#fine_col=16);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=16,#new_col=11,#fine_row=44,#fine_col=56);
+
+      % NWest Entrance Brazier
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=5,#new_col=8,#fine_row=12,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=2,#new_col=9,#fine_row=0,#fine_col=4);
+
+      % Central North Brazier
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=7,#new_col=19,#fine_row=54,#fine_col=0);
+
+      % NEast Entrance Brazier
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=1,#new_col=20,#fine_row=44,#fine_col=60);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=4,#new_col=20,#fine_row=60,#fine_col=48);
+
+      % Assembly Room Fires
+      Send(self,@NewHold,#what=Create(&firepit),
+           #new_row=12,#new_col=27,#fine_row=0,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&firepit),
+           #new_row=17,#new_col=27,#fine_row=32,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=13,#new_col=33,#fine_row=32,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=16,#new_col=33,#fine_row=0,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&WoodenBox),
+           #new_row=13,#new_col=37,#fine_row=48,#fine_col=0,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&WoodenBox),
+           #new_row=14,#new_col=37,#fine_row=48,#fine_col=48,#new_angle=ANGLE_WEST);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSecretDoor <> $
+      {
+         DeleteTimer(ptSecretDoor);
+         ptSecretDoor = $;
+      }
+
+      if ptEastDoor <> $
+      {
+         DeleteTimer(ptEastDoor);
+         ptEastDoor = $;
+      }
+
+      if ptSouthDoor <> $
+      {
+         DeleteTimer(ptSouthDoor);
+         ptSouthDoor = $;
+      }
+
+      if ptWestDoor <> $
+      {
+         DeleteTimer(ptWestDoor);
+         ptWestDoor = $;
+      }
+
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+
+      lHotPlates = [ [7,11,1], [6,23,1], [18,9,1], [8,12,2], [7,22,2], [18,10,2] ];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         Send(self,@NewHold,#what=oPlate,#new_row=nth(i,1),#new_col=nth(i,2));
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Badland1 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   badland1_name = "The Badlands"
+   room_badland1 = badland1.roo
+   Badland1_music = walk5.mid
+
+classvars:
+
+   vrName = badland1_name
+
+   viTeleport_row = 25
+   viTeleport_col = 17
+
+   viTerrain_type = TERRAIN_BADLANDS | TERRAIN_TEMPLE
+
+properties:
+
+   prRoom = room_badland1
+   prMusic = Badland1_music
+   piRoom_num = RID_BADLAND1
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Ant, 60], [&Groundworm, 40] ];
+
+      plGenerators = [ [22, 24], [61, 20], [47, 68], [15, 37], [12,61],
+                       [31, 52], [64, 46], [33, 34], [35, 18] ];
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&FarenPriestess),
+           #new_row=44,#new_col=59,#new_angle=ANGLE_WEST);
+
+      Send(self,@NewHold,#what=Create(&Firepit),#new_row=44,#new_col=58);
+
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_BADLANDS),
+           #new_row=63,#new_col=46,#new_angle=ANGLE_WEST);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_BADLAND2, 27, 20, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_K5, 17, 1, ROTATE_NONE], plEdge_exits);
+
+      return;
+   }         
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

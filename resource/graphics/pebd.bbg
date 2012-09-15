@@ -1,0 +1,27 @@
+#  Pink male - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000bad.bmp   [-15, -10] 
+Pe045bad.bmp   [-17, -10] 
+Pe090bad.bmp   [-11, -11] 
+Pe270bad.bmp   [-4, -9] 
+Pe315bad.bmp   [-5, -14] 
+Pe000bbd.bmp   [-15, -10] 
+Pe045bbd.bmp   [-17, -10] 
+Pe315bbd.bmp   [-5, -14] 
+Pe000bcd.bmp   [-15, -10] 
+Pe045bcd.bmp   [-17, -10] 
+Pe315bcd.bmp   [-5, -14] 
+Pe000bdd.bmp   [-15, -10] 
+Pe045bdd.bmp   [-17, -10] 
+Pe315bdd.bmp   [-5, -14] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

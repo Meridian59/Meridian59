@@ -1,0 +1,168 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanSouth is KocatanRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_kocatansouth = "Ko'catan, the Island Settlement"
+   room_kocatansouth = settle2.roo
+   kocatansouth_music = song08.mid
+
+   kocatansouth_northdoors = "This door to the inner wall is firmly bolted shut."
+   kocatansouth_private = "You are not permitted inside the private residence."
+   kocatansouth_whooping = \
+      "You hear loud whooping noises eminating from inside, and decide it's best "
+      "not to enter."
+
+   kocatansouth_drown = \
+      "You decide that drowning is probably not in your personal best interests."
+
+   kocatansouth_guild_locked = \
+      "As you touch the door, you hear the bolt mechanism slide home, locking itself.  "
+      "Apparently, this door is magically safeguarded against guild non-members such as "
+      "yourself."
+   kocatansouth_guild_sound_locked = doorlck.wav
+
+classvars:
+
+   vrName = room_name_kocatansouth
+   viPermanent_flags = ROOM_GUILD_PK_ONLY
+
+   viTeleport_row = 12
+   viTeleport_col = 26
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_BEACH
+
+properties:
+
+   prRoom = room_kocatansouth
+   piRoom_num = RID_KOC_SOUTH
+   prMusic = kocatansouth_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = 70
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 6, 48, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 49, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 44, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 45, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 40, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 41, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 42, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 37, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 38, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 3, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 4, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 5, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 7, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 8, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 10, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 11, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 12, ROOM_LOCKED_DOOR, kocatansouth_private],plExits);
+      plExits = Cons([ 6, 14, ROOM_LOCKED_DOOR, kocatansouth_whooping],plExits);
+      plExits = Cons([ 6, 15, ROOM_LOCKED_DOOR, kocatansouth_whooping],plExits);
+
+      % locked doors to north town
+      plExits = Cons([ 2, 13, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+      plExits = Cons([ 2, 14, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+      plExits = Cons([ 3, 13, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+      plExits = Cons([ 3, 14, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+      plExits = Cons([ 2, 38, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+      plExits = Cons([ 3, 38, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+      plExits = Cons([ 2, 39, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+      plExits = Cons([ 3, 39, ROOM_LOCKED_DOOR, kocatansouth_northdoors],plExits);
+
+      %% to north town -- teleport in to (4,14)
+      %plExits = Cons([ 2, 13, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 2, 14, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 3, 13, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 3, 14, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+
+      %% to north town -- teleport in to (4,26)
+      plExits = Cons([ 3, 25, RID_KOC_NORTH, 50, 30, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 26, RID_KOC_NORTH, 50, 30, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 27, RID_KOC_NORTH, 50, 30, ROTATE_NONE ],plExits);
+
+      %% to north town -- teleport in to (4,38)
+      %plExits = Cons([ 2, 38, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 3, 38, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 2, 39, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 3, 39, RID_KOC_NORTH, 32, 48, ROTATE_NONE ],plExits);
+
+      %% to kocatan smithy -- teleport in to (31,20)
+      plExits = Cons([ 30, 18, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 19, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 18, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 19, RID_KOC_SMITHY, 6, 9, ROTATE_NONE ],plExits);
+
+      %% to kocatan tailor -- teleport in at (30,35)
+      plExits = Cons([ 30, 36, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 37, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 36, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 37, RID_KOC_TAILOR, 18, 4, ROTATE_NONE ],plExits);
+
+      %% to guild hall 13 (merchant hall) - teleport in (43,37) -- main entrance
+      plExits = Cons([ 42, 38, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 43, 38, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 42, 39, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 43, 39, RID_GUILDH13, 9, 2, ROTATE_NONE ],plExits);
+
+      %% to guild hall 13 (merchant hall) - teleport in (47,43) -- from secure porch
+      % note that these doors can only be passed through by guild members
+      %     (code below in SomethingTryGo will preempt these doors for non-members)
+      plExits = Cons([ 46, 43, RID_GUILDH13, 12, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 46, 44, RID_GUILDH13, 12, 7, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$, row=$, col=$)
+   "Porch doors only passable to guild members"
+   {
+      if (row = 46) AND (col = 43 OR col = 44)
+         AND NOT send(send(SYS,@FindRoomByNum,#num=RID_GUILDH13),@CanEnter,#who=what)
+      {
+         send(what,@MsgSendUser,#message_rsc=kocatansouth_guild_locked);
+         Send(what,@WaveSendUser,#wave_rsc=kocatansouth_guild_sound_locked);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_SOUTH) and (IsClass(what,&Player))
+      {
+         send(what,@MsgSendUser,#message_rsc=kocatansouth_drown);
+
+         return;
+      }              
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,351 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+% TO ADD A NEW PIECE OF JUNK
+% 1) Increment the NUM_JUNK_TYPES
+% 2) Add values of value, weight, bulk, name, desc, and icon.
+% 3) Add the random chance to constructed()
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Junk is PassiveItem
+
+constants:
+
+   include blakston.khd
+   NUM_JUNK_TYPES = 13
+
+    junk_value1 = 20
+   junk_weight1 = 10
+     junk_bulk1 = 10
+    junk_group1 = 1
+
+    junk_value2 = 30
+   junk_weight2 = 40
+     junk_bulk2 = 40
+    junk_group2 = 1
+
+    junk_value3 = 5
+   junk_weight3 = 40
+     junk_bulk3 = 40
+    junk_group3 = 1
+
+    junk_value4 = 8
+   junk_weight4 = 25
+     junk_bulk4 = 25
+    junk_group4 = 1
+
+    junk_value5 = 8
+   junk_weight5 = 25
+     junk_bulk5 = 25
+    junk_group5 = 3
+
+    junk_value6 = 8
+   junk_weight6 = 25
+     junk_bulk6 = 25
+    junk_group6 = 3
+
+    junk_value7 = 8
+   junk_weight7 = 25
+     junk_bulk7 = 25
+    junk_group7 = 3
+
+    junk_value8 = 8
+   junk_weight8 = 25
+     junk_bulk8 = 25
+    junk_group8 = 1
+
+    junk_value9 = 8
+   junk_weight9 = 25
+     junk_bulk9 = 25
+    junk_group9 = 1
+
+    junk_value10 = 8
+   junk_weight10 = 25
+     junk_bulk10 = 25
+    junk_group10 = 3
+
+    junk_value11 = 8
+   junk_weight11 = 25
+     junk_bulk11 = 25
+    junk_group11 = 1
+
+    junk_value12 = 8
+   junk_weight12 = 25
+     junk_bulk12 = 25
+    junk_group12 = 1
+
+    junk_value13 = 8
+   junk_weight13 = 25
+     junk_bulk13 = 25
+    junk_group13 = 2
+
+resources:
+
+   junk_icon_rsc1 = mace.bgf
+   junk_name_rsc1 = "broken mace"
+   junk_desc_rsc1 = "This mace looks to be functionally useless."
+
+   junk_icon_rsc2 = book1.bgf
+   junk_name_rsc2 = "undecipherable book"
+   junk_desc_rsc2 = "This book makes no sense, but it has lots of racy pictures."
+
+   junk_icon_rsc3 = chalice.bgf
+   junk_name_rsc3 = "fake chalice"
+   junk_desc_rsc3 = "This is a poor imitation of the infamous Chalice of the Rain."
+
+   junk_icon_rsc4 = shcharm.bgf
+   junk_name_rsc4 = "glass pendant"
+   junk_desc_rsc4 = "Any lady would be insulted if her man gave her this baudy trinket!"
+
+   junk_icon_rsc5 = ornhelma.bgf
+   junk_name_rsc5 = "surplus legion helmet"
+   junk_desc_rsc5 = "Sold off by the A'ach Kici'ca after many years of hard use, this "
+                    "surplus helmet has seen better days.  You can see why the Ko'catani "
+                    "Legions no longer wanted it around."
+
+   junk_icon_rsc6 = leathamr.bgf
+   junk_name_rsc6 = "tanned kriipa leather"
+   junk_desc_rsc6 = "This leather has been skinned from a fierce Kriipa, and is "
+                    "exceptionally well tanned.  You've got quite a handy little "
+                    "pile of leather scraps here, you might just have enough to "
+                    "make a dish towel.  If you could find a tailor willing "
+                    "to sew all the little pieces together."
+
+   junk_icon_rsc7 = plateamr.bgf
+   junk_name_rsc7 = "scrap metal"
+   junk_desc_rsc7 = "This is a pile of scrap metal.  It's kind of rusty."
+
+   junk_icon_rsc8 = bonepile.bgf
+   junk_name_rsc8 = "bones of Konima's original war party"
+   junk_desc_rsc8 = "These human bones look pretty old, but you're not "
+                    "sure they're that old.  You get the feeling that somebody got taken here."
+
+   junk_icon_rsc9 = ring4.bgf
+   junk_name_rsc9 = "ketchikan hoop"
+   junk_desc_rsc9 = "You will find this ornate hoop in most Ko'catani kitchens.  Having "
+                    "this common trinket around the house is apparently good luck, or something."
+
+   junk_icon_rsc10 = robe.bgf
+   junk_name_rsc10 = "pamyan drapery"
+   junk_desc_rsc10 = "This piece of cloth is a traditional gift for a young bride "
+                    "and groom in Ko'catan.  It is meant to metaphorically "
+	            "represent a shield from poverty and illness."
+
+   junk_icon_rsc11 = antmask.bgf
+   junk_name_rsc11 = "toy ant mask"
+   junk_desc_rsc11 = "During the Ko'catani holiday days of Tom'tillium, these "
+                    "masks are worn by children as they cavort around throwing "
+                    "water on their aunts and uncles and stomping on umacha beans.  "
+                    "This mask is too small for an adult, however."
+
+   junk_icon_rsc12 = rustyarm.bgf
+   junk_name_rsc12 = "rusty armor"
+   junk_desc_rsc12 = "This armor is rusty and old, certainly no longer up for "
+                    "battle.  Might make a nice souvenir, though."
+
+   junk_icon_rsc13 = arrowner.bgf
+   junk_name_rsc13 = "water finding arrow"
+   junk_desc_rsc13 = "Ko'catani legend holds that a powerful Wakilamacheopitik "
+                    "Mage, or water finder, could use one of these devices to "
+                    "find fresh water almost anywhere, but that's a lost art now."
+
+classvars:
+   
+
+properties:  
+
+   vrName = junk_name_rsc1
+   vrDesc = junk_desc_rsc1
+   vrIcon = junk_icon_rsc1
+   viValue_average = junk_value1
+   viWeight = junk_weight1
+   viBulk = junk_bulk1
+
+   viGround_group = 2
+
+messages:   
+
+   Constructor(junknum=$)
+   {
+      local iRandom;
+
+      if junknum = $
+      { iRandom = Random(1,NUM_JUNK_TYPES); }
+      else
+      { iRandom = junknum;}
+
+      if iRandom = 1
+      {
+         vrName =       junk_name_rsc1;
+         vrDesc =       junk_desc_rsc1;
+         vrIcon =       junk_icon_rsc1;
+         viValue_average = junk_value1;
+         viWeight =       junk_weight1;
+         viBulk =           junk_bulk1;
+         viGround_group =  junk_group1;
+      }
+
+      if iRandom = 2
+      {
+         vrName =       junk_name_rsc2;
+         vrDesc =       junk_desc_rsc2;
+         vrIcon =       junk_icon_rsc2;
+         viValue_average = junk_value2;
+         viWeight =       junk_weight2;
+         viBulk =           junk_bulk2;
+         viGround_group =  junk_group2;
+      }
+
+      if iRandom = 3
+      {
+         vrName =       junk_name_rsc3;
+         vrDesc =       junk_desc_rsc3;
+         vrIcon =       junk_icon_rsc3;
+         viValue_average = junk_value3;
+         viWeight =       junk_weight3;
+         viBulk =           junk_bulk3;
+         viGround_group =  junk_group3;
+      }
+
+      if iRandom = 4
+      {
+         vrName =       junk_name_rsc4;
+         vrDesc =       junk_desc_rsc4;
+         vrIcon =       junk_icon_rsc4;
+         viValue_average = junk_value4;
+         viWeight =       junk_weight4;
+         viBulk =           junk_bulk4;
+         viGround_group =  junk_group4;
+      }
+
+      if iRandom = 5
+      {
+         vrName =       junk_name_rsc5;
+         vrDesc =       junk_desc_rsc5;
+         vrIcon =       junk_icon_rsc5;
+         viValue_average = junk_value5;
+         viWeight =       junk_weight5;
+         viBulk =           junk_bulk5;
+         viGround_group =  junk_group5;
+      }
+
+      if iRandom = 6
+      {
+         vrName =       junk_name_rsc6;
+         vrDesc =       junk_desc_rsc6;
+         vrIcon =       junk_icon_rsc6;
+         viValue_average = junk_value6;
+         viWeight =       junk_weight6;
+         viBulk =           junk_bulk6;
+         viGround_group =  junk_group6;
+      }
+      if iRandom = 7
+      {
+         vrName =       junk_name_rsc7;
+         vrDesc =       junk_desc_rsc7;
+         vrIcon =       junk_icon_rsc7;
+         viValue_average = junk_value7;
+         viWeight =       junk_weight7;
+         viBulk =           junk_bulk7;
+         viGround_group =  junk_group7;
+      }
+      if iRandom = 8
+      {
+         vrName =       junk_name_rsc8;
+         vrDesc =       junk_desc_rsc8;
+         vrIcon =       junk_icon_rsc8;
+         viValue_average = junk_value8;
+         viWeight =       junk_weight8;
+         viBulk =           junk_bulk8;
+         viGround_group =  junk_group8;
+      }
+      if iRandom = 9
+      {
+         vrName =       junk_name_rsc9;
+         vrDesc =       junk_desc_rsc9;
+         vrIcon =       junk_icon_rsc9;
+         viValue_average = junk_value9;
+         viWeight =       junk_weight9;
+         viBulk =           junk_bulk9;
+         viGround_group =  junk_group9;
+      }
+      if iRandom = 10
+      {
+         vrName =       junk_name_rsc10;
+         vrDesc =       junk_desc_rsc10;
+         vrIcon =       junk_icon_rsc10;
+         viValue_average = junk_value10;
+         viWeight =       junk_weight10;
+         viBulk =           junk_bulk10;
+         viGround_group =  junk_group10;
+      }
+      if iRandom = 11
+      {
+         vrName =       junk_name_rsc11;
+         vrDesc =       junk_desc_rsc11;
+         vrIcon =       junk_icon_rsc11;
+         viValue_average = junk_value11;
+         viWeight =       junk_weight11;
+         viBulk =           junk_bulk11;
+         viGround_group =  junk_group11;
+      }
+      if iRandom = 12
+      {
+         vrName =       junk_name_rsc12;
+         vrDesc =       junk_desc_rsc12;
+         vrIcon =       junk_icon_rsc12;
+         viValue_average = junk_value12;
+         viWeight =       junk_weight12;
+         viBulk =           junk_bulk12;
+         viGround_group =  junk_group12;
+      }
+      if iRandom = 13
+      {
+         vrName =       junk_name_rsc13;
+         vrDesc =       junk_desc_rsc13;
+         vrIcon =       junk_icon_rsc13;
+         viValue_average = junk_value13;
+         viWeight =       junk_weight13;
+         viBulk =           junk_bulk13;
+         viGround_group =  junk_group13;
+      }
+
+      propagate;
+
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,viGround_group);  
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      send(self,@SendAnimation);
+
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      send(self,@SendAnimation);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

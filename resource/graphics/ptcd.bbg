@@ -1,0 +1,12 @@
+# Male hair 3 - mohawk
+# 1 group
+-s 14
+6
+pt000cad.bmp   [-9, -8] 
+pt045cad.bmp   [-22, -6] 
+pt090cad.bmp   [-28, -5] 
+pt180cad.bmp   [-9, -5] 
+pt270cad.bmp   [-21, -5] 
+pt315cad.bmp   [-21, -6] 
+1
+ 8      1   6   5   4   4   4   3   2

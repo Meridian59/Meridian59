@@ -1,0 +1,106 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Damion Schubert, November 1996
+
+RiijaCharm is Necklace
+
+constants:
+
+   include blakston.khd
+
+   AGILITY_CHANGE = 5
+   INTELLECT_CHANGE = 2
+
+resources:
+
+   RiijaCharm_name_rsc = "feathered choker"
+   RiijaCharm_icon_rsc = rjcharm.bgf
+   RiijaCharm_desc_rsc = \
+   "Unorthodox and ornate, this choker is wondrous to look at, but it doesn't "
+   "look like much fun to wear."
+
+   RiijaCharm_whisper = "A voice whispers, \"~I...the key to making mischief is being smart enough to avoid the consequences...\""
+
+classvars:
+
+   vrName = RiijaCharm_name_rsc
+   vrIcon = RiijaCharm_icon_rsc
+   vrDesc = RiijaCharm_desc_rsc
+
+   viValue_average = 500
+
+   viBulk = 20
+   viWeight = 25
+   viMax_Disp_hits = 5
+
+   viGround_group = 2
+
+properties:
+   
+   pbIn_use = False
+
+   piIntellect_change = INTELLECT_CHANGE
+   piAgility_change = AGILITY_CHANGE
+
+   piDisp_hits = 0
+
+messages:
+
+   Constructor()
+   {
+      piDisp_hits = viMax_disp_hits;
+      propagate;
+   }
+
+   NewOwner()
+   {
+      piDisp_hits = viMax_disp_hits;
+      propagate;
+   }
+
+   NewUsed(what = $)
+   "When the charm is put on, the wearer gets a moderate bonus to both Intellect and Agility."
+   {
+      piAgility_change = send(what,@addAgility,#points=AGILITY_CHANGE);
+      piIntellect_change = send(what,@addIntellect,#points = INTELLECT_CHANGE);
+
+      if random(1,5) = 3   %% 20% chance
+        {
+          send(what,@msgsenduser,#message_rsc=RiijaCharm_whisper);
+        }
+      propagate;
+   }
+
+   NewUnused(what = $)
+   "When something that can break the curse unuses the item"
+   {
+      send(what,@addAgility,#points=-piAgility_change);
+      send(what,@addIntellect,#points = -piIntellect_change);
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      if piDisp_Hits = 0
+        {
+           send(self,@delete);
+           return;
+        }
+      piDisp_hits = piDisp_hits - 1;
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

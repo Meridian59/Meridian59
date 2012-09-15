@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WimpyTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_WIMPY
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &Herbs, 30 ],
+                     [ &Elderberry, 20 ],
+                     [ &Mushroom, 20],
+                     [ &Snack, 20],
+                     [ &RedMushroom, 5],
+                     [ &BlueMushroom, 5]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

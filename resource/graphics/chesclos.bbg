@@ -1,0 +1,7 @@
+# chess board (closed)
+# need to see how to combine this with chesopen.bbg in one file
+-s 6
+1
+chesclos.bmp
+1
+1 1

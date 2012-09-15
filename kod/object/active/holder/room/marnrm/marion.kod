@@ -1,0 +1,233 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Marion is MarionRoom
+
+constants:
+
+   include blakston.khd
+
+   % a special tree
+
+   TREE_ROW = 45
+   TREE_COL = 7
+
+resources:
+
+   room_name_marion = "Marion"
+   room_marion = marion.roo
+
+   mar_music = city02.mid
+
+   wind_sound_marion = rs_wind.wav
+
+   mimosa_rose_offering = \
+      "You pause to reflect on the fallen, and feel your spirit refreshed despite the sorrow."
+
+   mimosa_rose_offering_spam = \
+      "You pause to ponder the meaning of life."
+
+   mimosa_other_offering = \
+      "Your offering to the fallen falls softly on a bed of dried flower petals."
+
+   mimosa_name = "the mimosa tree"
+   mimosa_icon = treebot.bgf
+   mimosa_desc = \
+      "This tree stands as a memorial of a fallen friend. "
+      "A small metal plaque is affixed near the ground; a few dried rose petals rest nearby."
+   mimosa_insc = \
+      "The young girls\n"
+      "Cut their hair at your passing.\n"
+      "No bread was baked that day,\n"
+      "And the wine tasted sour.\n"
+      "\n"
+      "We sloughed our way up the hill\n"
+      "In the driving rain\n"
+      "To send you on your way.\n"
+      "A bit further along into eternity\n"
+      "Than your rain-soaked comrades.\n"
+      "\n"
+      "Diana kept your sword;\n"
+      "Aspasia, your muddy cloak of fine red wool.\n"
+      "I kept your memory--and the dark tunic\n"
+      "We used to wipe your face.\n"
+      "More than that, I would not have done."
+
+   marion_gate_warning = "This gate was put in place to keep citizens safe from the dangers of the crypt."
+
+classvars:
+
+   vrName = room_name_marion
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_LAMPS
+
+   viTeleport_row = 56
+   viTeleport_col = 39
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_FIELDS | TERRAIN_FOREST
+
+   viFlag_row = 36
+   viFlag_col = 60
+
+properties:
+
+   piBaseLight = LIGHT_NICE
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_marion
+   piRoom_num = RID_MARION
+
+   prMusic = mar_music
+
+messages:
+
+   CreateYellZoneList()
+   {
+      plYell_Zone = [ RID_C4, RID_C5 ];
+      propagate;
+   }
+
+   NewHold(what = $, new_row = 1, new_col = 1)
+   {
+      local who;
+
+      if what = $
+      {
+         propagate;
+      }
+
+      who = send(what,@GetOwner);
+      if who = $
+      {
+         propagate;
+      }
+
+      if (new_row >= (TREE_ROW - 1)) AND (new_row <= (TREE_ROW + 1))
+         AND (new_col >= (TREE_COL - 1)) AND (new_col <= (TREE_COL + 1))
+      {
+         send(self,@OfferingDroppedOnTree,#what=what,#who=who);
+      }
+
+      propagate;
+   }
+
+   OfferingDroppedOnTree(what = $, who = $)
+   {
+      local oBoon;
+
+      if what = $ OR NOT isClass(what,&Item) { return; }
+      if who = $ OR NOT isClass(who,&Player) { return; }
+
+      if isClass(what, &Rose)
+      {
+         oBoon = send(SYS,@FindSpellByNum,#num=SID_MYSTICISM_BOON);
+
+         if not send(who,@IsEnchanted,#what=oBoon)
+         {
+            send(who,@MsgSendUser,#message_rsc=mimosa_rose_offering);            
+            send(oBoon,@AddBoon,#target=who,#days=1,#amount=5);
+         }
+         else
+         {
+            send(who,@MsgSendUser,#message_rsc=mimosa_rose_offering_spam);
+         }
+
+         return;
+      }
+
+      send(who,@MsgSendUser,#message_rsc=mimosa_other_offering);
+
+      return;
+   }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+      if (new_row < 32) and (new_col > 66)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_C4),
+              #new_row=34,#new_col=5,#new_angle=ANGLE_NORTH_EAST);
+         return;
+      }
+
+      if (new_row > 83) and (new_col > 48)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_C5),
+              #new_row=3,#new_col=23,#new_angle=ANGLE_SOUTH_WEST);
+              
+         return;
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&MarionElder),
+           #new_row=80,#new_col=37,#new_angle=ANGLE_NORTH);
+
+      Send(self,@NewHold,#what=Create(&Sign,#name=mimosa_name,#icon=mimosa_icon,#desc=mimosa_desc,#insc=mimosa_insc),
+           #new_row=TREE_ROW,#new_col=TREE_COL);
+
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=5,#new_col=17);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=5,#new_col=24);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=2,#new_col=21,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=78,#new_col=10,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=80,#new_col=10,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=82,#new_col=10,#fine_row=32,#fine_col=32);
+
+      % Lighting - Under the Mimosa tree
+
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BWHITE,#iIntensity=5),
+           #new_row=45,#new_col=7,#fine_row=32,#fine_col=32);
+
+      propagate;
+   }
+
+
+   CreateStandardExits()
+   {
+      plExits = $; 
+
+      plExits = Cons([ 32, 16, RID_MAR_HEALER_SHOP, 4, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 56, 54, RID_MAR_INN, 4, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 62, 58, RID_MAR_INN, 12, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 50, 21, RID_MAR_HALL, 6, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 43, RID_MAR_SMITHY, 11, 4, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 70, 13, ROOM_LOCKED_DOOR, marion_gate_warning ],plExits);
+      plExits = Cons([ 70, 14, ROOM_LOCKED_DOOR, marion_gate_warning ],plExits);
+      plExits = Cons([ 71, 13, ROOM_LOCKED_DOOR, marion_gate_warning ],plExits);
+      plExits = Cons([ 71, 14, ROOM_LOCKED_DOOR, marion_gate_warning ],plExits);
+
+      plExits = Cons([ 80, 15, RID_MAR_CRYPT1, 11, 17, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreatePeriodicSounds()
+   {
+      % Add the wind sound to the possible periodic sounds.
+      plPeriodic_sounds = [ wind_sound_marion ];
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

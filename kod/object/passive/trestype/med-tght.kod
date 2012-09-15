@@ -1,0 +1,52 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MediumToughTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_MEDIUM_TOUGH
+   
+   %% monsters (like spiders) generate reasonably good stuff, but rarely
+   piDiff_seed = 4
+   piItem_att_chance = 1
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &RedMushroom, 30 ],
+                     [ &Snack, 16],
+                     [ &PurpleMushroom, 15],
+                     [ &Emerald, 10 ],
+                     [ &Sapphire, 10 ],
+                     [ &BlueMushroom, 8 ],
+                     [ &Diamond, 2 ],
+                     [ &Ruby, 2 ],
+                     [ &LeatherArmor, 2 ],
+                     [ &LongSword, 1 ],
+                     [ &Hammer, 1 ],
+                     [ &Axe, 1 ],
+                     [ &ChainArmor,1 ],
+                     [ &LightScroll, 1 ]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

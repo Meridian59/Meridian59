@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarionHealer is MarionTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MarionHealer_name_rsc = "Lady Aftyn"
+   MarionHealer_icon_rsc = mrhealer.bgf
+   MarionHealer_desc_rsc = "In the presence of Lady Aftyn there is no mistaking that she is of royalty, "
+      "and not from these parts.  She exudes a sense of peaceful determination; of confidence, serenity, and "
+      "purpose."
+
+   Mrhealer_entry_welcome = "Pardon me for saying so, but you look like you could use a rest, %s%s.  I don't have any rooms for rent right now, but you are welcome to rest here."
+
+classvars:
+
+   vrName = MarionHealer_name_rsc
+   vrIcon = MarionHealer_icon_rsc
+   vrDesc = MarionHealer_desc_rsc
+   viMerchant_Markup = MERCHANT_DISCOUNT
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_SELLER | MOB_RECEIVE | MOB_TEACHER
+   viOccupation = MOB_ROLE_HEALER
+   viGender = GENDER_FEMALE
+
+properties:
+   
+messages:
+
+   SetForSale()
+   {
+      plFor_sale=[[  Create(&PurifyPotion,#labelled=TRUE),
+                     Create(&RemoveCursePotion,#labelled=TRUE),
+                     Create(&CurePoisonPotion,#labelled=TRUE),
+                     Create(&CureDiseasePotion,#labelled=TRUE),
+                     Create(&Flask)],
+		               $,
+		            [  SID_DISTILL ] ];
+
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      Post(poOwner,@SomeoneSaid,#what=self,#string=MrHealer_entry_welcome,
+          #type = SAY_RESOURCE,
+          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+	 
+      propagate;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

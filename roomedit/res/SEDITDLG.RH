@@ -1,0 +1,128 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         seditdlg.rh
+*/
+#ifndef __seditdlg_rh
+#define __seditdlg_rh
+
+#define IDD_SECTOR_EDIT	32
+
+
+#define IDC_LIGHT_EDIT	101
+
+#define IDC_FLOORCEIL_GROUP	104
+#define IDC_FLOOR_ANGLE	125
+
+/* These def. are common to "seditdlg.rh" and "prefdlg.rh" */
+#define IDC_FTEXTURE_LIST	200
+#define IDC_SCROLLNONE	122
+#define IDC_PUSHBUTTON1	106
+#define IDC_ID	700
+#define IDC_SPEED	701
+#define IDC_GROUPBOX3	107
+#define IDC_DEPTH	110
+#define IDC_SCROLL	111
+#define IDC_SLOPES	112
+#define IDC_NOAMBIENT	105
+#define IDC_TEXTURE_XOFFSET	102
+#define IDC_TEXTURE_YOFFSET	103
+#define IDC_PREF_DEBUG	107
+#define IDC_PREF_QUIET	108
+#define IDC_PREF_QUIETER	109
+#define IDC_PREF_EXPERT	110
+#define IDC_PREF_INFOBAR	111
+#define IDC_PREF_ADDSELBOX	115
+#define IDC_PREF_SELECT0	116
+#define IDC_PREF_3DCONTROLS	122
+#define IDC_PREF_DRAWLENGTH	123
+#define IDC_PREF_MAXUNDO	126
+#define IDC_PREF_EDITCOORDS	106
+#define IDC_PREF_SERVERCOORDS	121
+#define IDC_PREF_AUTOSCROLL	127
+#define IDC_GROUPBOX1	124
+#define IDC_GROUPBOX2	125
+
+#define IDC_FLOOR_TEXT		201
+#define IDC_FLOOR_FRAME		202
+#define IDC_FLOOR_CLEAR		203
+#define IDC_FLOOR_HEIGHT	204
+#define IDC_TO_FLOOR		205
+
+#define IDC_CEILING_TEXT  	206
+#define IDC_CEILING_FRAME	207
+#define IDC_CEILING_HEIGHT	208
+#define IDC_CEILING_CLEAR	209
+#define IDC_TO_CEILING		210
+#define IDC_GROUPBOX4	108
+
+#define IDC_DEPTHVERYDEEP	211
+#define IDC_DEPTHDEEP	        212
+#define IDC_DEPTHSHALLOW	213
+#define IDC_DEPTHNONE	        214
+
+#define IDC_SCROLLN	215
+#define IDC_SCROLLNE	216
+#define IDC_SCROLLE	217
+#define IDC_SCROLLW	218
+#define IDC_SCROLLNW	219
+#define IDC_GROUPBOX5	107
+#define IDC_RADIOBUTTON12	156
+#define IDC_RADIOBUTTON11	155
+#define IDC_RADIOBUTTON10	154
+#define IDC_RADIOBUTTON9	153
+#define IDC_GROUPBOX6	152
+#define IDC_RADIOBUTTON8	151
+#define IDC_RADIOBUTTON7	150
+#define IDC_RADIOBUTTON6	147
+#define IDC_RADIOBUTTON5	142
+#define IDC_RADIOBUTTON4	141
+#define IDC_RADIOBUTTON3	132
+#define IDC_RADIOBUTTON2	131
+#define IDC_RADIOBUTTON1	130
+#define IDC_SCROLLCEILING	220
+#define IDC_SCROLLSLOW	221
+#define IDC_SCROLLMEDIUM	222
+#define IDC_SCROLLFAST	223
+#define IDC_GROUPBOX7	110
+#define IDC_CEILINGH2	121
+#define IDC_CEILINGH1	120
+#define IDC_CEILINGV3	123
+#define IDC_CEILINGH3	124
+#define IDC_CEILING_ANGLE	126
+#define IDC_CEILINGV2	119
+#define IDC_CEILINGV1	118
+#define IDC_FLOORH3	116
+#define IDC_FLOORH2	114
+#define IDC_FLOORH1	113
+#define IDC_FLOORV3	115
+#define IDC_FLOORV2	112
+#define IDC_FLOORV1	111
+#define IDC_GROUPBOX8	117
+#define IDC_FLICKER	109
+#define IDC_SCROLLFLOOR	224
+#define IDC_SCROLLSE	225
+#define IDC_SCROLLS	226
+#define IDC_SCROLLSW	227
+#define IDC_FLOORSTYLE		998
+#define IDC_CEILINGSTYLE	999
+#endif

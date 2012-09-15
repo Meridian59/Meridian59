@@ -1,0 +1,167 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FeyTree is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   feytree_name_rsc = "tree"
+   feytree_icon_rsc = feytree.bgf
+   feytree_desc_rsc = "These trees offer cool shade and interesting scenery."
+
+classvars:
+   vrName = feytree_name_rsc
+   vrIcon = feytree_icon_rsc
+   vrDesc = feytree_desc_rsc
+
+properties:
+
+   piKarma_state = KVERY_GOOD
+
+messages:
+
+   SetKarma(karma = $)
+   {
+      if karma = piKarma_state
+      {
+         return;
+      }
+
+      piKarma_state = karma;
+      if Random(1,10) = 1
+      {
+         if karma = KVERY_EVIL
+         {
+            piKarma_state = KEVIL;
+         }
+
+         if karma = KEVIL
+         {
+            piKarma_state = KVERY_EVIL;
+         }
+
+         if karma = KNEUTRAL
+         {
+            if Random(1,2) = 1
+            {
+               piKarma_state = KEVIL;
+            }
+            else
+            {
+               piKarma_state = KGOOD;
+            }
+         }
+
+         if karma = KGOOD
+         {
+            piKarma_state = KVERY_GOOD;
+         }
+
+         if karma = KVERY_GOOD
+         {
+            piKarma_state = KGOOD;
+         }
+      }
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+   
+   SendAnimation()
+   {
+      if piKarma_state = KVERY_GOOD
+      {
+         AddPacket(1,ANIMATE_CYCLE,4,667,2,7,2,9);
+
+         return;
+      }
+
+      if piKarma_state = KGOOD
+      {
+         AddPacket(1,ANIMATE_CYCLE,4,667,2,4,2,6);
+
+         return;
+      }
+
+      if piKarma_state = KNEUTRAL
+      {
+         AddPacket(1,ANIMATE_NONE,2,3);
+
+         return;
+      }
+
+      if piKarma_state = KEVIL
+      {
+         AddPacket(1,ANIMATE_NONE,2,2);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      if piKarma_state = KVERY_GOOD
+         OR piKarma_state = KGOOD
+      {
+         return LOOK_NO | FLICKERING_YES;
+      }
+
+      return LOOK_NO;
+   }
+
+   SendLightingInformation()
+   {
+      local iIntensity;
+      
+      if piKarma_state = KVERY_GOOD
+         OR piKarma_state = KGOOD
+      {
+         % Add lighting information if we're at one of the top two levels.
+         AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+         % intensity out of 255
+         if piKarma_state = KVERY_GOOD
+         {
+            % The tree is KVERY_GOOD, make it bright!
+            iIntensity = 80;
+         }
+         else
+         {
+            % Only KGOOD, make it dimmer.
+            iIntensity = 30;
+         }
+
+         AddPacket(1,iIntensity);
+         % White color
+         AddPacket(2,LIGHT_WHITE);
+      }
+      else
+      {
+         % No lighting
+         AddPacket(2,0);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

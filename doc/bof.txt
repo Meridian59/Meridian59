@@ -1,0 +1,102 @@
+bof (Blakod object format)
+
+--------------------------------------------------------------------------------
+every offset is from the beginning of the file
+
+4 bytes         magic number = 42 4F 46 FF
+4 bytes:	version of bof (= 5)
+
+4 bytes:        offset of source filename
+4 bytes:      	offset of beginning of string table
+4 bytes:      	offset of beginning of debugging info (0 if none)
+
+(class table)
+4 bytes:	number of classes
+8*x bytes:
+	4 bytes:	class id
+	4 bytes:	offset in file of class
+
+(classes)
+x bytes:	class data
+
+(string table)
+(debugging info)
+(source filename)  null-terminated string giving kod filename
+
+end of file
+--------------------------------------------------------------------------------
+each class is of the following form:
+
+4 bytes:	superclass id
+4 bytes:	offset of beginning of property section
+4 bytes:	offset of beginning of message section
+
+classvar section:
+
+4 bytes:	number of classvars for this class + all parents 
+		(not including self)
+4 bytes:	number of classvar default values
+8*x bytes:	
+	4 bytes:	classvar num
+	4 bytes:	classvar default value
+
+property section:
+
+4 bytes:	number of properties for this class + all parents 
+		(not including self)
+4 bytes:	number of property default values
+8*x bytes:	
+	4 bytes:	property num
+	4 bytes:	property default value
+
+message section:
+
+(dispatch table)
+4 bytes:	number of message handlers
+8*x bytes:	
+	4 bytes:	message id 	
+	4 bytes:	offset in file of handler
+	4 bytes:        index of handler's comment string in string table (-1 if none)
+
+(handlers)
+x bytes:	message handler data
+--------------------------------------------------------------------------------
+each message handler is of the following form:
+
+1 byte:		number of local variables
+1 byte:		number of parameters
+8*x bytes:	id of parameter, default value of each parameter
+	        These parameters must be sorted in increasing id number order.
+
+x bytes:	bkod data
+
+The default values of parameters are constant values, used in the bkod as
+well as here.  Constants are 32 bit values defined as follows:
+
+	First 4 bits	Type		data bits
+	0000		NIL		all 0
+	0001		integer		integer value
+	0010		object		object id
+	0011		list 		list id
+	0100		string		string id
+	1100            debugging str   string index (index into table in bof file)
+
+The other 28 bits are data bits.
+
+--------------------------------------------------------------------------------
+(string table)
+
+4 bytes:   	number of strings
+
+4*x bytes:	offset of beginning of each string
+
+(string)
+x bytes:	string characters, null terminated
+--------------------------------------------------------------------------------
+(debugging info)
+
+4 bytes         number of <line_entry>s
+
+<line_entry>* =
+	4 bytes		offset in file
+	4 bytes		corresponding source file line number

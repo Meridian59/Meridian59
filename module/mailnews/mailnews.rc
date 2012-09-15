@@ -1,0 +1,410 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "mailnwrc.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#include "commctrl.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Neutral) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+145 DIALOG  0, 0, 282, 255
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Artikel veröffentlichen"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Artikel in einer Newsgroup",-1,10,11,86,8
+    LTEXT           "(hier gruppieren)",1121,99,11,105,8
+    LTEXT           "Betreff",-1,10,28,28,8
+    EDITTEXT        1117,43,26,228,13,ES_AUTOHSCROLL
+    EDITTEXT        1118,4,55,274,178,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Versenden",1,186,237,43,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",2,232,237,46,14,WS_GROUP
+END
+
+144 DIALOGEX 0, 0, 305, 322
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Nachrichtenkugel: "
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "",1001,4,4,297,8
+    CONTROL         "",1115,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "Antworten",1116,5,143,42,12
+    PUSHBUTTON      "A&utor antworten",1125,51,143,58,12,WS_DISABLED
+    PUSHBUTTON      "&Nachricht verfassen",12,113,143,68,12
+    PUSHBUTTON      "A&ktualisieren",1017,185,143,46,12
+    PUSHBUTTON      "Schließen",1,236,143,41,12
+    EDITTEXT        1118,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+1013 DIALOGEX 0, 0, 283, 338
+STYLE DS_SETFONT | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Nachrichten Lesen"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "",1115,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,4,275,131
+    PUSHBUTTON      "&Brief schreiben",1000,4,141,53,12,WS_GROUP
+    PUSHBUTTON      "&Antworten",1116,59,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Antwort an &Alle",1124,97,141,55,12,NOT WS_TABSTOP
+    PUSHBUTTON      "A&ktualisieren",1017,156,141,45,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Löschen",1018,204,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Schließen",2,243,141,35,12,NOT WS_TABSTOP
+    LTEXT           "",1019,4,157,274,9
+    EDITTEXT        1013,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
+END
+
+111 DIALOG  0, 0, 282, 263
+STYLE DS_SETFONT | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Nachricht versenden"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "An:",-1,26,6,12,8
+    EDITTEXT        1014,43,4,235,32,ES_MULTILINE | ES_AUTOVSCROLL
+    LTEXT           "Betreff:",-1,14,48,23,8
+    EDITTEXT        1117,43,45,235,14,ES_AUTOHSCROLL
+    EDITTEXT        1013,4,77,274,158,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Versenden",1080,154,245,50,14,WS_GROUP
+    PUSHBUTTON      "Abbrechen",2,228,245,50,14,WS_GROUP
+    LTEXT           "",1004,9,63,249,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    1                       "Die Empfänger werden überprüft ..."
+    2                       "Betreff: "
+    3                       "Datum: "
+    4                       "Von: "
+    5                       "An: "
+    6                       "Aw: "
+    7                       "Suche nach einer neuen Nachricht..."
+    8                       "Du hast eine neue Nachricht."
+    9                       "Du kannst nur eine Nachricht gleichzeitig bearbeiten."
+    10                      "Du hast keine neue Nachrichten"
+    11                      "#"
+    12                      "Von"
+    13                      "Betreff"
+    14                      "Datum"
+    15                      "Nachricht versendet."
+END
+
+STRINGTABLE 
+BEGIN
+    16                      "Du mußt zumindest einen Empfänger festlegen."
+    17                      "Die Nachricht %s kann nicht gelöscht werden."
+    18                      "Die Nachrichten können nicht empfangen werden."
+    19                      "Die Nachricht kann nicht gespeichert werden. Vielleicht ist nicht mehr genügend Festplattenspeicher frei?"
+    20                      "Der Empfängername %s ist ungültig.\nÜberprüfe die Schreibweise und versuche es noch einmal."
+    21                      "Diese Nachricht kann nicht an soviele Empfänger versandt werden.\nWillst Du Sie and die ersten %d Empfänger versenden?"
+    22                      "Du kannst auf diese Nachricht nicht antworten."
+END
+
+STRINGTABLE 
+BEGIN
+    32                      "Jan"
+    33                      "Feb"
+    34                      "Mär"
+    35                      "Apr"
+    36                      "Mai"
+    37                      "Jun"
+    38                      "Jul"
+    39                      "Aug"
+    40                      "Sep"
+    41                      "Okt"
+    42                      "Nov"
+    43                      "Dez"
+    44                      "Mon"
+    45                      "Die"
+    46                      "Mi"
+    47                      "Don"
+END
+
+STRINGTABLE 
+BEGIN
+    48                      "Fre"
+    49                      "Sam"
+    50                      "Son"
+    51                      "Betreff"
+    52                      "Autor"
+    53                      "Datum"
+    IDS_SUBJECT_ENGLISH     "Subject: "
+    IDS_SUBJECT_GERMAN      "Betreff: "
+END
+
+#endif    // German (Neutral) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAILREAD DIALOGEX 0, 0, 283, 338
+STYLE DS_SETFONT | DS_3DLOOK | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Read Mail"
+CLASS "Mail"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
+BEGIN
+    CONTROL         "List1",IDC_MAILLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,4,275,131
+    PUSHBUTTON      "&Write",IDC_SEND,4,141,35,12,WS_GROUP
+    PUSHBUTTON      "&Reply",IDC_REPLY,42,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Reply &All",IDC_REPLYALL,80,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "Re&scan",IDC_RESCAN,118,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "&Delete",IDC_DELETEMSG,156,141,35,12,NOT WS_TABSTOP
+    PUSHBUTTON      "&Close",IDCANCEL,194,141,35,12,NOT WS_TABSTOP
+    LTEXT           "",IDC_MAILINFO,4,157,275,9
+    EDITTEXT        IDC_MAILEDIT,4,171,275,163,ES_MULTILINE | ES_READONLY | WS_VSCROLL
+END
+
+IDD_MAILSEND DIALOG  0, 0, 282, 263
+STYLE DS_SETFONT | DS_3DLOOK | WS_MAXIMIZEBOX | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Send Mail"
+CLASS "Mail"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "&To:",IDC_STATIC,26,6,12,8
+    EDITTEXT        IDC_RECIPIENTS,43,4,235,32,ES_MULTILINE | ES_AUTOVSCROLL
+    LTEXT           "Su&bject:",IDC_STATIC,10,48,28,8
+    EDITTEXT        IDC_SUBJECT,43,45,235,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_MAILEDIT,4,77,274,158,ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Send",IDC_OK,154,245,50,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,228,245,50,14,WS_GROUP
+    LTEXT           "",IDC_SENDMAILMSG,9,63,249,10
+END
+
+IDD_NEWSPOST DIALOG  0, 0, 282, 255
+STYLE DS_SETFONT | DS_3DLOOK | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Post Article"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Article in newsgroup",IDC_STATIC,10,11,64,8
+    LTEXT           "(group here)",IDC_GROUPNAME,76,11,105,8
+    LTEXT           "Subject:",IDC_STATIC,10,28,28,8
+    EDITTEXT        IDC_SUBJECT,43,26,228,13,ES_AUTOHSCROLL
+    EDITTEXT        IDC_NEWSEDIT,4,55,274,178,ES_MULTILINE | ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "&Post",IDOK,189,237,39,14,WS_GROUP
+    PUSHBUTTON      "Cancel",IDCANCEL,239,237,39,14,WS_GROUP
+END
+
+IDD_NEWSREAD DIALOGEX 0, 0, 305, 322
+STYLE DS_SETFONT | DS_3DLOOK | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+CAPTION "Newsgroup: "
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    LTEXT           "",IDC_NEWSDESC,4,4,297,8
+    CONTROL         "List1",IDC_NEWSLIST,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_SHOWSELALWAYS | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,4,15,297,125,WS_EX_CLIENTEDGE
+    PUSHBUTTON      "&Reply",IDC_REPLY,5,143,42,12
+    PUSHBUTTON      "&Mail author",IDC_REPLYMAIL,51,143,42,12,WS_DISABLED
+    PUSHBUTTON      "&Post",IDC_NEWSPOST,97,143,41,12
+    PUSHBUTTON      "Re&scan",IDC_RESCAN,142,143,41,12
+    PUSHBUTTON      "&Close",IDOK,187,143,41,12
+    EDITTEXT        IDC_NEWSEDIT,4,161,297,157,ES_MULTILINE | ES_AUTOVSCROLL | ES_READONLY | WS_VSCROLL
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "mailnwrc.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#include ""commctrl.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_LETTER              ICON                    "bitmap\\letter.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_MAILBOX             BITMAP                  "bitmap\\mailbox.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_MAILREAD, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 279
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 334
+    END
+
+    IDD_MAILSEND, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 278
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 259
+    END
+
+    IDD_NEWSPOST, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 278
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 251
+    END
+
+    IDD_NEWSREAD, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 301
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 318
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_NORECIPIENTS        "You must specify at least one recipient"
+    IDS_CANTDELETEMAIL      "Can't delete mail message %s."
+    IDS_CANTLOADMSG         "Can't load mail message."
+    IDS_SAVEFAILED          "Unable to save mail message.  You may be out of disk space.  Try again?"
+    IDS_BADNAME             "Bad recipient name %s.\nCheck the spelling and try again."
+    IDS_TOOMANYRECIPIENTS   "This message has more than the allowed number of recipients.\nDo you want to send it to only the first %d recipients?"
+    IDS_CANTREPLY           "You cannot reply to this message."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CHECKNAMES          "Checking recipient names..."
+    IDS_SUBJECT             "Subject: "
+    IDS_DATE                "Date: "
+    IDS_FROM                "From: "
+    IDS_TO                  "To: "
+    IDS_RE                  "Re: "
+    IDS_GETTINGMSGS         "Looking for new messages..."
+    IDS_NONEWMAIL           "You have no new mail."
+    IDS_MAILONEDIALOG       "You can only edit one message at a time."
+    IDS_READMAIL            "Read mail"
+    IDS_MHEADER1            "#"
+    IDS_MHEADER2            "From"
+    IDS_MHEADER3            "Subject"
+    IDS_MHEADER4            "Date"
+    IDS_MESSAGESENT         "Message sent."
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_JANUARY             "Jan"
+    IDS_FEBRUARY            "Feb"
+    IDS_MARCH               "Mar"
+    IDS_APRIL               "Apr"
+    IDS_MAY                 "May"
+    IDS_JUNE                "Jun"
+    IDS_JULY                "Jul"
+    IDS_AUGUST              "Aug"
+    IDS_SEPTEMBER           "Sep"
+    IDS_OCTOBER             "Oct"
+    IDS_NOVEMBER            "Nov"
+    IDS_DECEMBER            "Dec"
+    IDS_MONDAY              "Mon"
+    IDS_TUESDAY             "Tue"
+    IDS_WEDNESDAY           "Wed"
+    IDS_THURSDAY            "Thu"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_FRIDAY              "Fri"
+    IDS_SATURDAY            "Sat"
+    IDS_SUNDAY              "Sun"
+    IDS_NHEADER1            "Subject"
+    IDS_NHEADER2            "Author"
+    IDS_NHEADER3            "Date"
+    IDS_SUBJECT_ENGLISH     "Subject: "
+    IDS_SUBJECT_GERMAN      "Betreff: "
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,4469 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Library is UtilityFunctions
+
+% Notes from the dawn of time:
+% Here are some things I have had NPC's hint at, things we can add in the
+% future:
+%        -30 years ago, we traded with people north of the Great Ocean, but we
+%         can no longer sail ships, so we don't know what's happened to them.
+%        -Two generations ago, there were no monsters in Meridian other than
+%         your usual spider.  No one knows where they come from or why.  Only 
+%         that they're getting worse.
+%        -Far'Nohl (the ghost) also died at about this time.  
+%        -Hints of the volcano and swamp we'll be adding.
+%        -The Treefolk south of Marion were once gentle, but now are 
+%         aggressively expanding their territory.  No one knows why.
+%        -A carving dug up in Marion, with a fire killing the digger in his 
+%         home soon after.
+%        -Jasper, the border town, is fighting a losing battle with monsters.
+%        -Cor Noth is developing a pollution problem
+
+constants:
+   
+   include blakston.khd
+
+resources:
+
+   % for the extended speech and random libs -AJM
+   quote_substring = "%q"
+   quote_uninitialized = "I'm tryin' to think, but nothin' happens!"
+   test_quote = "I can say what I want now, y'know."
+   append_string = "@*$#!.........."
+   append_substring1 = "@*$#!"
+   append_substring2 = ".........."
+   substring_name = "%NAME"
+   substring_sirmadam = "%SIRMADAM"
+   substring_ladlassie = "%LADLASSIE"
+   substring_lordlady = "%LORDLADY"
+   substring_daynight = "%DAYNIGHT"
+   plugin_night = "night"
+   plugin_day = "day"
+   plugin_lad = "lad"
+   plugin_lassie = "lassie"
+   plugin_sir = "sir"
+   plugin_madam = "madam"
+
+   faction_visit_completed = "You learn that your liege's errand was completed, and your attempts to assist have demonstrated your continuing devotion."
+   faction_visit_novice = "I am sorry, but you are not yet experienced enough to be worthy of faction membership.  Please come back later."
+   factionite_visit_start = "Welcome back to court, my follower.  If you see to it that I get my message, your service obligation will be complete for a time."
+   neutral_visit_start = "Greetings.  If you wish to join my faction, you must demonstrate your devotion."
+   faction_too_strong = "I am sorry, but my current followers provide all the support I need.  Perhaps if you come back later, I will have need of you."
+   faction_visit_wrong = "It is well known that you are a vassal of my primary opposition.  Until you change who you follow, I will not have you doing any of my errands. %s"
+   faction_visit_wrong_accept = "Yet, I will accept you into my faction if you bring me a token of the Meridian Council."
+   faction_visit_wrong_decline = "Currently, my followers provide all the support I need. Yet, if you return later, perhaps I will have need of you."
+   faction_visit_too_soon = "You need not prove your dedication again so soon.  Let others prove themselves for a while."
+
+   LM_town_tokendeath = "I have heard that when you carry a Token of the Meridian Council, death itself has no penalty."
+   LM_town_tokenmove = "No one has ever figured out why the Meridian Council Tokens occasionally teleport away from their Councilors."
+   LM_town_tokenblink = "Once, I saw a Councilor set their token down in water, and a short while later, it blinked itself back to shore!"
+   LM_advice_string1 = "%s"
+   LM_advice_string2 = "%s %s"
+   LM_advice_string3 = "%s %s %s"
+   LM_monster_has_high_karma = "%s%s is a peaceful, good-natured creature."
+   LM_monster_has_good_karma = "%s%s is good at heart, but not extremely so."
+   LM_monster_has_neutral_karma = "%s%s is an innocuous creature, doing neither great good nor great evil."
+   LM_monster_has_bad_karma = "%s%s is an evil creature, not as evil as some, but certainly not neutral."
+   LM_monster_has_low_karma = "%s%s is a truly despicable beast, no doubt a servant of Qor."
+
+   LM_monster_for_groups = "Probably best to tackle with friends beside you."
+   LM_monster_too_easy = "%s%s would hardly be a challenge for one such as you.  It wouldn't be worth your time to hunt such an unworthy opponent."
+   LM_monster_too_hard = "%s%s is tougher than you imagine, but will surely help you hone your skills... should you survive."
+   LM_monster_really_hard = "%s%s is a fearsome foe.  Attacking would be tantamount to suicide."
+   LM_monster_about_right = "%s%s would be a fair fight for you.  You might even pick up a new trick or two."
+
+   LM_haz_factions = "The Duke and the Princess are always squabbling over who is the rightful something-or-other.  Fortunately, we're far divorced from that here."
+   LM_haz_towns = "The five towns are far away from here."
+   LM_haz_help = "I'll be what help I can be, but you should really read the signs."
+   LM_haz_quest = "Ummm, I wouldn't know anything about that.  You should really ask the elder about such things."
+   LM_haz_quest_elder = "Yes, yes!  I need adventurers to clear out the mausoleum on the north side of town!"
+   LM_haz_mausoleum = "Formerly a deeply sacred place for the townsfolk, it has since been defiled by the footsteps of the dead!"
+   LM_haz_mummy = "Noble ancestors or restless wanderers?  Either way, the mummies are abominations and must be destroyed!"
+   LM_haz_quest_entroot = "Hmmm... I've heard that Eric is always looking for entroot berries.  Don't know why, though."
+   LM_haz_entroot_none = "Entroot berries?  I didn't think they grew around these parts."
+   LM_Haz_entroot_response = "The mummies use the magic of the entroot to keep the magic that animates them sustained.  Perhaps one of them carries entroot."
+   LM_haz_smith_buy = "If you happen to come across a stray weapon or armor, I could probably scrounge enough to take it off your hands."
+   LM_haz_smith_sell = "I've got a few weapons behind the counter I can show you.  Type BUY."
+   LM_haz_elder_buy = "I have no need of worldly goods."
+   LM_haz_elder_sell = "Do I look like a common peddler?  Nay!"
+   LM_haz_apoth_buy = "I'm running low on just about everything.  Should you find reagents, I'll happily take them off your hands."
+   LM_haz_apoth_sell = "My cupboards are nearly bare.  All I have at this time are red mushrooms."
+   LM_haz_innk_buy = "I'm not in the market for anything that comes to mind."
+   LM_haz_innk_sell = "I have no vacant rooms to rent."
+   LM_haz_bar_buy = "I think my dealer would get mad if I was caught trading with ye!"
+   LM_haz_bar_sell = "I've got ample foodstuffs to keep an adventurer hale and hearty!"
+   LM_haz_meridian = "That's where we are, of course!  Naturally, this is merely the outskirts.  You want to enter the heart of things, if you're a true adventurer!"
+   LM_haz_ravi = "The apothecary is always looking for reagents to keep his stock from running dry."
+   LM_haz_rodric = "I've heard that the old man has a quest for you."
+   LM_haz_marcus = "A good man!  A good man!  His inns are an excellent place to recuperate, should you find yourself wounded."
+   LM_haz_tomas = "An armed warrior is always better than a naked one.  Spend what you have on weaponry at Tomas' shop - you'll earn more."
+   LM_haz_eric = "The finest barman this side of Barloque!  I've heard he seeks something..."
+
+   LM_no_mana_nodes = "You have not yet bonded with any mana nodes."
+   LM_mana_nodes = "Your aura is connected with these mana nodes: %q."
+   
+
+   QM_missed_middle = "What's that?  That doesn't make any sense to me.  Are you sure you went to see %s%s and get the ~Iactual~n message for me?"
+   QM_never_sent = "Perhaps you are trying to deceive me?  I don't believe you ever asked to do a favor for me."  
+   QM_no_record = "Hmmm.  Are you sure you were asked to fetch this message?  Maybe you should go back and make sure."
+   QM_old_phrase = "Many thanks, but I was already given that message by another."
+   QM_mob_phrase = "I heard %s%s had a message for me.  I'll reward the first person who brings it to me."
+   QM_mob_object = "Sorry, I don't need anything now.  However, you know that I am prepared to reward you well when the time is right."
+   QM_hint_msg = "Who sent you? I'll see if I have a message for them."
+
+   QM_mob_int_phrase = "Go and bring me a message from %s%s, or if you aren't up to it now, please send someone else here to assist me."
+   QM_hint_int_phrase = "On a mission from the royal court I see.  Please tell %s%s, ~B%s %s %s~n."
+
+   QM_hint_phrase = "I'd be grateful if you told %s%s, ~B%s %s %s~n."
+   QM_hint_object = "I heard %s%s was looking for %s%s."
+   QM_already_done = "You have already earned my favor; you don't need to keep trying.  When you are ready, I shall gladly teach you."
+   QM_ID_congrats = "Your favor is duly noted.  When you are ready, return to me and I shall gladly teach you."
+   QM_item_congrats = "I am indebted to you.  Please allow me to give you something in return."
+   QM_money_congrats = "Thank you.  I can only reward your hard work with money, but surely you can use it for something you've been wanting."
+   QM_item_too_heavy = "Since you can't carry anything, I'll just set %s%s at your feet."
+
+   QM_join_congrats = "Thank you for signing on.  I expect great things from you.  Please accept a small monetary gift to help you in your travels."
+   QM_visit_congrats = "Your dedication is again shown, and here are some coins for your troubles.  You need not return to court for quite some time.  But, if you can ever return a token of the Meridian Council to its rightful owner, perhaps he will smile upon our causes."
+
+%responses
+
+%Tos responses
+   
+%Barloque responses
+
+%Marion responses
+
+%Cor Noth responses
+
+%Jasper responses
+
+% priestesses
+
+  LM_shal_prst_faction_resign = "You can resign from a faction by bringing me a Council Token as proof of your desire, or just wait for your liege to grow dissatisfied with your devotion and strike you from their rosters."
+
+  LM_onecon_banker_buy = "I know secrets, yes, but I'll only share them with a master of the arts."
+ 
+
+%triggers
+   LT_hi = "hi"
+   LT_hiya = "hiya"
+   LT_hello = "hello"
+   LT_howdy = "howdy"
+   LT_bye = "bye"
+   LT_goodbye = "goodbye"
+%   LT_farewell = "farewell"
+   LT_help = "help"
+   
+   LT_ohm = "ohm"
+   LT_quest = "quest"
+   LT_mausoleum = "mausoleum"
+   LT_mummy = "mummy"
+   LT_mummies = "mummies"
+   LT_entroot = "entroot"
+   
+   LT_errand = "errand"
+   LT_favor = "favor"
+   LT_teach = "teach"
+   LT_token = "token"
+   LT_council = "council"
+   LT_message = "message"
+   LT_duke = "duke"
+   LT_akardius = "Akardius"
+   LT_princess = "princess"
+   LT_kateriina = "Kateriina"
+   LT_jonas = "Jonas"
+   LT_court = "court"
+   LT_learn = "learn"
+   LT_members = "members"
+
+   LT_aubergine = "aubergine"
+   LT_baobab = "baobab"
+   LT_couloir = "couloir"
+   LT_dornick = "dornick"
+   LT_ergot = "ergot"
+   LT_francolin = "francolin"
+   LT_heddle = "heddle"
+   LT_infusorian = "infusorian"
+   LT_jejune = "jejune"
+   LT_kedge = "kedge"
+   LT_lumbago = "lumbago"
+   LT_megalith = "megalith"
+   LT_nunatak = "nunatak"
+   LT_operculum = "operculum"
+   LT_pettifogger = "pettifogger"
+   LT_quisling = "quisling"
+   LT_rigatoni = "rigatoni"
+   LT_solarium = "solarium"
+   LT_tiara = "tiara"
+   LT_ullage = "ullage"
+   LT_valance = "valance"
+   LT_whirlwind = "whirlwind"
+   LT_xylem = "xylem"
+   LT_yamen = "yamen"
+   LT_zeitgeist = "zeitgeist"
+   LT_nodes = "nodes"
+
+%Temples
+   LT_patience = "patience"
+   LT_devotion = "devotion"
+   LT_path = "path"
+   LT_paths = "paths"
+   LT_disciple = "disciple"
+
+%Priestesses
+   LT_resign = "resign"
+   LT_service = "service"
+   LT_onecon = "Alzahakar"
+   LT_twocon = "Bei Naq"
+   LT_threecon = "Cylill"
+   LT_fourcon = "Drechx"
+   LT_fivecon = "Esseldi"
+   LT_vile = "vile"
+   LT_good = "good"
+   LT_jala = "Jala"
+   LT_faren = "Faren"
+   LT_pray = "pray"
+   LT_prayer = "prayer"
+
+%Wanderers
+   LT_war = "war"
+   LT_rebel = "rebel"
+   LT_rebellion = "rebellion"
+   LT_freebird = "free bird"   
+
+%Kocatan people
+   LT_customs = "customs"
+   LT_cheat = "cheat"
+   LT_liar = "liar"
+   LT_scam = "scam"
+   LT_balo = "Balo na’te Din"
+   LT_arm = "arm"
+   LT_konima = "konima"
+   LT_avar = "avar"
+   LT_zala = "zala"
+   LT_smoke = "smoke"
+   LT_bud = "bud"
+   LT_army = "army"
+   LT_wulfgang = "Wulfgang"
+   LT_precious = "precious"
+   LT_business = "business"
+   LT_kazot = "kazot"
+   LT_zoszin = "zoszin"
+
+%Tos people
+   LT_aid = "aid"
+   LT_tos = "tos"
+   LT_town = "town"
+   LT_here = "here"   
+   LT_grandfather = "grandfather"
+   LT_history = "history"
+   LT_peaceful = "peaceful"
+   LT_ghost = "ghost"
+   LT_ghosts = "ghosts"
+   LT_evils = "evils"
+   LT_evil = "evil"
+   LT_reagents = "reagents"
+   LT_herbs = "herbs"
+   LT_bank = "bank"
+   LT_money = "money"
+   LT_gold = "gold"
+   LT_interest = "interest"
+   LT_barloque = "barloque"
+   LT_yevitan = "yevitan"
+   LT_inn = "inn"
+   LT_talk = "talk"
+   LT_rumors = "rumors"
+   LT_rumor = "rumor"
+   LT_stranger = "stranger"
+   LT_stories = "stories"
+   LT_old = "old"
+   LT_ocean = "ocean"
+   LT_shore = "shore"
+   LT_jasper = "jasper"
+   LT_woman = "woman"
+   LT_ruins = "ruins"
+   LT_armor = "armor"
+   LT_weapon = "weapon"
+   LT_forge = "forge"
+   LT_blacksmith = "blacksmith"
+   LT_fehr = "fehr'loi"
+   LT_paddock = "Paddock"
+   LT_shutup = "shut up"
+   LT_shillings = "shillings"      
+
+%% newbie area triggers   
+   LT_Meridian = "meridian"
+   LT_ravi = "Ravi"
+   LT_eric = "Eric"
+   LT_Marcus = "Marcus"
+   LT_Tomas = "Tomas"
+   LT_Rodric = "Rodric"
+
+%Barloque people
+   LT_apothecary = "apothecary"
+   LT_dwindles = "dwindles"
+   LT_dwindle = "dwindle"
+   LT_population = "population"
+   LT_people = "people"
+   LT_twice = "twice"
+   LT_docks = "docks"
+   LT_abandoned = "abandoned"
+   LT_rich = "rich"
+   LT_save = "save"
+   LT_die = "die"
+   LT_crook = "crook"
+   LT_scoundrel = "scoundrel"
+   LT_drink = "drink"
+   LT_ale = "ale"
+   LT_wreckage = "wreckage"
+   LT_explorer = "explorer"
+   LT_volcano = "volcano"
+   LT_adventurer = "adventurer"
+   LT_coast = "coast"
+   LT_sea = "sea"
+   LT_complaint = "complaint"
+   LT_sailor = "sailor"
+   LT_sail = "sail"
+   LT_sailing = "sailing"
+   LT_sailin = "sailin'"
+   LT_ships = "ships"
+   LT_time = "time"
+   LT_tides = "tides"
+   LT_dangerous = "dangerous"
+   LT_hulls = "hulls"
+   LT_strain = "strain"
+   LT_story = "story"
+   LT_others = "others"
+   LT_cor = "cor"
+   LT_marion = "marion"
+   LT_rabble = "rabble"
+   LT_wealthy = "wealthy"
+   LT_skivlat = "skivlat"
+   LT_jewel = "jewel"
+   LT_broker = "broker"
+   LT_madelia = "Madelia"
+   LT_kraanan = "kraanan"
+   LT_hazar = "Hazar"
+   LT_kocatan = "Kocatan"
+   LT_kocatan2 = "Ko'catan"
+   LT_shal1 = "Shal'ille"
+   LT_shal2 = "Shalille"
+   LT_riija = "Riija"
+   LT_guild = "guild"
+   LT_pritchett = "Pritchett"
+   LT_frular = "Frular"
+   LT_frisconar = "Frisconar"
+
+%Marion people
+   LT_years = "years"
+   LT_age = "age"
+   LT_changes = "changes"
+   LT_monsters = "monsters"
+   LT_tricks = "tricks"
+   LT_true = "true"
+   LT_orc = "orc"
+   LT_undead = "undead"
+   LT_new = "new"
+   LT_creatures = "creatures"
+   LT_now = "now"
+   LT_yet = "yet"
+   LT_treefolk = "treefolk"
+   LT_smith = "smith"
+   LT_obvious = "obvious"
+   LT_gossip = "gossip"
+   LT_ran = "Ran"
+   LT_wisdom = "wisdom"
+   LT_news = "news"
+   LT_strange = "strange"
+   LT_quiet = "quiet"
+   LT_fire = "fire"
+   LT_corinna = "Corinna"
+   LT_eldwin = "Eldwin"
+   LT_zig = "zig"
+   LT_hot = "hot"
+   LT_ranerhoth = "Ran er'Hoth"
+   LT_alarm = "alarm"
+   LT_father = "father"
+   LT_apple = "apple"
+   LT_crazy = "crazy"
+   LT_mad = "mad"
+   LT_lunatic = "lunatic"
+   LT_dream = "dream"
+
+%Cor Noth people
+   LT_meet = "meet"
+   LT_gather = "gather"
+   LT_towns = "towns"
+   LT_trade = "trade"
+   LT_problems = "problems"
+   LT_profit = "profit"
+   LT_nohl = "Far'Nohl"
+   LT_death = "death"
+   LT_swamp = "swamp"
+   LT_pollution = "pollution"
+   LT_uses = "uses"
+   LT_sludge = "sludge"
+   LT_nobility = "nobility"
+   LT_ant = "ant"
+   LT_centipede = "centipede"
+   LT_babysp = "baby spider"
+   LT_baby = "baby"
+   LT_giantrat = "giant rat"
+   LT_giant = "giant"         % obsolete
+   LT_rat = "rat"             % obsolete
+   LT_fairy = "fairy"
+   LT_slime = "slime"
+   LT_tree = "tree"
+   LT_living = "living"
+   LT_spider = "spider"
+   LT_queen = "queen"
+   LT_queensp = "queen spider"
+   LT_yeti = "yeti"
+   LT_shadow_mummy = "shadow mummy"
+   LT_troll = "troll"   
+   LT_zombie = "zombie"
+   LT_fungusbeast = "fungus beast"
+   LT_fungus = "fungus"
+   LT_mutant = "mutant"
+   LT_skeleton = "skeleton"
+   LT_scorpion = "scorpion"
+   LT_elhai = "elhai"
+   LT_dirhai = "dirhai"
+   LT_lupogg = "lupogg"
+   LT_punch = "punch"
+   LT_slash = "slash"
+   LT_dodge = "dodge"
+   LT_parry = "parry"
+   LT_brawling = "brawling"
+   LT_fencing = "fencing"
+   LT_macefgt = "mace fighting"
+   LT_axewield = "axe wielding"
+   LT_hammwield = "hammer wielding"
+   LT_scimwield = "scimitar wielding"
+   LT_weaponcraft = "weaponcraft"
+   LT_levone = "level one"
+   LT_levtwo = "level two"
+   LT_levthree = "level three"
+   LT_levfour = "level four"
+   LT_levfive = "level five"
+   LT_herbutte = "Herbutte"
+   LT_sir = "sir"
+
+%Jasper people
+   LT_fighting = "fighting"
+   LT_mountains = "mountains"
+   LT_place = "place"
+   LT_qor = "qor"
+   LT_trolls = "trolls"
+   LT_ports = "ports"
+   LT_closed = "closed"
+   LT_bar = "bar"
+   LT_ship = "ship"
+   LT_defense = "defense"
+   LT_garrison = "garrison"
+   LT_knowledge = "knowledge"
+   LT_shadows = "shadows"
+   LT_flask = "flask"
+   LT_froz = "froz"
+   LT_berserk = "berserker"
+   LT_closer = "closer"
+   LT_crisis = "crisis"
+   LT_attacked = "attacked"
+   LT_attack = "attack"
+   LT_soldiers = "soldiers"
+   LT_hard = "hard"
+   LT_times = "times"
+   LT_merchant = "merchant"
+   LT_supplies = "supplies"
+   LT_sell = "sell"
+   LT_buy = "buy"
+   LT_soon = "soon"
+   LT_shortage = "shortage"
+   LT_again = "again"
+   LT_strike = "strike"
+   LT_quintor = "Quintor"
+   LT_drunk = "drunk"
+   LT_widow = "widow"
+   LT_afiera = "Afiera D'xor"
+   LT_secret = "secret"
+   LT_broom = "broom"
+   LT_kill = "kill"
+   LT_assassin = "assassin"
+   LT_murder = "murder"
+   LT_whiskey = "whiskey"
+   LT_pietro = "Pietro"
+   LT_zhieu = "Zhieu B'hob"
+   LT_qesino = "Qesino"
+   LT_king = "king"
+   LT_yes = "yes"
+   LT_wryn = "Wryn's Keep"
+   LT_wool = "wool"
+   LT_tova = "Tova"
+
+   % Former spell names, now used for mood reactions
+   LT_mend = "mend"
+   LT_mending = "mending"
+   LT_blind = "blind"
+   LT_dement = "dement"
+   LT_lightnin = "lightning"
+
+%%%%%%%%%%
+
+   %%% Fortunes (suitable to find in cookies)
+
+   % By Greenwich/Ed Halley
+   FC_1 = "Qor don't care, baby."
+   FC_2 = "Thy soul is in the thoughts of Shal'ille."
+   FC_3 = "You'd bow before Kraanan the Fist."
+   FC_4 = "The tumult of Faren's energy is not to be scorned."
+   FC_5 = "Deceiving Riija is a goal unto itself."
+
+   % By Klaatu/Chris Sellers
+   FC_10 = "You have a great longing to see the Temple of Kraanan."
+   FC_11 = "Long wished-for powers will soon be within your reach."
+   FC_12 = "Your faction is gaining in power."
+   FC_13 = \
+      "Some people are born great; others make themselves great; "
+      "and still others have greatness thrust upon them.  "
+      "Which one are you?"
+   FC_14 = "Discretion is the better part of valor."
+   FC_15 = "Never look a gift-orc in the mouth."
+   FC_16 = "Beware servants of Qor bearing gifts."
+   FC_17 = "Stand by your friends in battle and reap great rewards."
+   FC_18 = "A student of Faren will bring you good news."
+   FC_19 = "Red-stained skies mean chaos on the rise."
+   FC_20 = "Stop searching forever; happiness is right next to you."
+   FC_21 = \
+      "What is this life, coursing in our veins like fire?  "
+      "Life is like hot iron, ready to pour; "
+      "choose the mold, and life will burn it."
+   FC_22 = "Take care of your sword and your sword will take care of you."
+   FC_23 = "Great wealth is within your grasp if you seize the opportunity."
+   FC_24 = "Kraanan helps those who help themselves."
+   FC_25 = "A fool and his shillings are soon parted."
+   FC_26 = \
+      "Many people stumble upon the truth from time to time, "
+      "but most pick themselves up and go on as if nothing had happened."
+   FC_27 = "Someone is waiting for you in Ukgoth."
+   FC_28 = "Luck will be with you in your next tournament battle."
+   FC_29 = "You will play an instrumental role in your guild today."
+   FC_30 = "Glory will be yours in the arena."
+   FC_31 = "You could've been a contender."
+   FC_32 = "Most evil people are simply misunderstood, don't you think?"
+   FC_33 = "Life is fleeting, but a good name endures forever."
+   FC_34 = "You were meant for great things."
+   FC_35 = "Trustworthy friends are an adventurer's greatest asset."
+   FC_36 = "Meidei has a special errand for you."
+   FC_37 = "Consult with a friend before undertaking your plan."
+   FC_38 = "You are almost there."
+   FC_39 = "The time to act is now."
+   FC_40 = "Dead people tell no tales."
+   FC_41 = "Don't believe everything you read in these cookies."
+
+   %% By Greenwich/Ed Halley
+   FC_110 = "The number fourteen will serve invaluable today."
+   FC_111 = "Your love will be more important than your wisdom today."
+   FC_112 = "You will play a key role in some intrigue soon."
+   FC_113 = "Familiarity breeds contempt. But without familiarity, you can't breed much of anything."
+   FC_114 = "Your health is fleeting. If your feet are not also, your health will outrun you."
+   FC_115 = "Pay close attention to your vigor today; it will be important."
+   FC_116 = "Not every mushroom has value. Not every person you call 'friend,' either."
+   FC_117 = "You shall fall into something profitable before the moon and sun align."
+   FC_118 = "A newsball is a wicked way to spread a rumor."
+   FC_119 = "Wait not for friends to save your own skin; but be ready to save theirs."
+   FC_120 = "Seeking the power you know you already posess is foolhardy. Use it."
+   FC_121 = "Forge an alliance before it is too late."
+   FC_122 = "Pay attention to those who gather yet do not speak openly."
+   FC_123 = "There are three who will conspire against you today."
+   FC_124 = "A great weight shall soon be lifted from your shoulders."
+   FC_125 = "You must be prudent in your expenditures, both financial and physical."
+   FC_126 = "You must act now to avert imminent disaster."
+   FC_127 = "An ancient place with a forgotten name shall be your bane."
+   FC_128 = "You will play a key part in the discussions of the council."
+   FC_129 = "You will have an effect on Shal'ille's influence over the woodlands."
+   FC_130 = "Kraanan's Fist is as hard as stone. Your resolve to succeed nearly matches."
+   FC_131 = "The Princess's followers are gaining in power. It is up to you."
+   FC_132 = "The Duke's henchmen grows in power. You hold the key to his destiny."
+   FC_133 = "The sky shall rain with the blood of chaos."
+   FC_134 = "Take pride in your accomplishments."
+   FC_135 = "You may once be as renowned as Konima."
+   FC_136 = "Jasper's legends mean much to your destiny."
+   FC_137 = "You will meet with Cylill in the near future."
+   FC_138 = "The Underworld is empty."
+   FC_139 = "Your goals are within reach. Move quickly."
+   FC_140 = "You have few enemies, but justice shall be done."
+   FC_141 = "A friend in Barloque has a story to tell."
+   FC_142 = "Before you rest today, you will find good fortune."
+   FC_143 = "The stars shall conjunct with an evil omen for Meridian."
+   FC_144 = "Your own friends shall challenge your strength soon."
+   FC_145 = "Immortals are just Immortals, but Greenwich is more like a meal."
+   FC_146 = "Immortals will not die by any natural means, but that shouldn't stop you."
+   FC_147 = "The ends of the world are not absolute limits."
+   FC_148 = "The first to discover new lands is not always the first to profit."
+   FC_149 = "Find the source of the orcs: you shall be key in their demise."
+   FC_150 = "The lore of Riija is lost forever, some say. That should not stop you."
+   FC_151 = "Seek the red Jewel of Froz, for its magic is the crux of the most powerful spells."
+   FC_152 = "The council speaks of you."
+
+
+   %% By Zavant/Kevin O'Hara
+   FC_153 = "You will find a new companion in Jasper."
+   FC_154 = "An evil force will enter the world."
+   FC_155 = "A dark deed is in store for the Royal Court."
+   FC_156 = "A tragedy will befall you near water."
+   FC_157 = "You will find great fortune in a dark place."
+   FC_158 = "Gold will now come your way."
+   FC_159 = "You never hesitate to fight dangerous opponents."
+   FC_160 = "A good time to finish up old quests."
+   FC_161 = "You are generous in matters of food."
+   FC_162 = "The spirit of King Zarcos II watches over you."
+   FC_163 = "A good time to be guild master."
+   FC_164 = "Guildhalls are meant to be conquered. Take arms."
+   FC_165 = "The University returns to power.  Learn all you can."
+   FC_166 = "Recognition for your deeds will come soon."
+   FC_167 = "Rethink your problem, a new solution is needed."
+   FC_168 = "A good game of chess is in order."
+   FC_169 = "A visit to the old castle could prove fruitful, if you survive."
+
+   %% By Users in Fortune Cookie Contest
+   FC_170 = "The gods will smile down upon you and your guild."
+   FC_171 = "Bite me! I'm a cookie!"
+   FC_172 = "Shal'ille cares, baby!" 
+   FC_173 =   "This cookie will have a key role in your vigor today!" 
+   FC_174 = "When Faren smiles, heat is cast." 
+   FC_175 = "The graveyard is full." 
+   FC_176 = "When you see the underworld...  It will probably not be empty!" 
+   FC_177 = "If you love them, set them free." 
+   FC_178 = "Ye shall cast out the evils of the land with the might of the Fist." 
+   FC_179 = "Your skill shall uphold the law against the lawless who prey upon the innocent." 
+   FC_180 = "Qor may master evil, but you will master good." 
+   FC_181 = "What you are seeking, might be right under your nose." 
+   FC_182 = "Kraanan the Mighty will shield you from vicious attacks of Qor today." 
+   FC_183 = "Those who study magic must be wary that magic does not begin to study them." 
+   FC_184 = "The very strong become weak, as the world watches in amusement." 
+   FC_185 = "The true path to enlightenment comes from within." 
+   FC_186 = "If all else fails... Run!" 
+   FC_187 = "Afiera D'xor say man with knight shield soon to crunch gravel in underworld." 
+   FC_188 = "You should cut down on fortune cookies!" 
+   FC_189 = "Always remember to never look up in a rainstorm. You don't know who really is mad anyway." 
+   FC_190 = "Always show respect to your elders; they hit pretty hard." 
+   FC_191 = "Always remember to never look a gift horse in the mouth, they bite." 
+   FC_192 = "In the end, the blade if given the time will strike down the most practiced magician." 
+   FC_193 = "Heed who thou wouldst let enter thy guild, for the temptation of a hall and its treasures is the prize all seek." 
+   FC_194 = "If you aim to be a hunter of man, then you must learn to hone your skills in the solitude to desolate lands." 
+   FC_195 = "The princess is good and just but her teachings will bring a warrior no victories in the field of combat." 
+   FC_196 = "You have more friends than you know, and more enemies than you can imagine." 
+   FC_197 = "The gentle healing touch of a stranger shall save your soul from the raging hellfire of the underworld." 
+   FC_198 = "You will soon feel the icy touch of death, and the warmth of the hellfire in the underworld." 
+   FC_199 = "The Vale of Sorrow takes many men to get the node and back again." 
+   FC_200 = "Riija was here." 
+   FC_201 = "Help! I am being held captive in a Meridian fortune cookie factory!" 
+   FC_202 = "Forgive your enemies, but never forget their names." 
+   FC_203 = "It does not matter if you win or lose, it's if you survive." 
+   FC_204 = "Don't forget Shal'ille's umbrella at the great ocean." 
+   FC_205 = "The force of Shal'ille's light will be with you today."
+
+   %% By Regifan Du Bukise/Kevin O'Hara 
+   FC_206 = "Your determination will bring you much success." 
+   FC_207 = "The secret to good friends is no secret to you." 
+   FC_208 = "You have the rare ability to decide quickly and wisely." 
+   FC_209 = "Bide your time, for success is near." 
+   FC_210 = "He who expects no gratitude shall never be disappointed." 
+   FC_211 = "You are capable of greater things than you realize." 
+   FC_212 = "Love truth but pardon error." 
+   FC_213 = "Be on the alert for new opportunities." 
+   FC_214 = "All will go well with your new quest." 
+   FC_215 = "Your happiness is intertwined with your outlook on life." 
+   FC_216 = "You have the rare ability to recognize ability in others." 
+   FC_217 = "The moon is in proper phase for casting illusions." 
+   FC_218 = "You will soon journey to a distant island." 
+   FC_219 = "You will play a crucial role in the next Justicar election." 
+   FC_220 = "Bring lots of money to the gaming table, you will need it." 
+   FC_221 = "You will soon win the favor of a Bard." 
+   FC_222 = "Be kind to the guides and they will be kind in turn." 
+   FC_223 = "He who meets new friends shall never find boredom." 
+   FC_224 = "Jala is not dead." 
+   FC_225 = "Kraanan favors armies over individuals." 
+
+   %% By Psychochild/Brian Green
+   FC_226 = "Even things thought to be dead can be brought back to only near death."
+   FC_227 = "Welcome back home."
+   FC_228 = "Beware the fearsome, mana stealing Xeochicatl this day."
+   FC_229 = "Show respect to those that form the world, and you will see respect in return."
+   FC_230 = "If someone takes the time to listen to you it does not mean they are deaf."
+   FC_231 = "Have you told that certain someone how you really feel?"
+   FC_232 = "Your happiness is influenced by both the friends and the enemies you make in your life."
+   FC_233 = "Beware the next ring you pick up.  It may not be what you expect."
+   FC_234 = "Serenity can only be achieved by doing what makes you happy."
+   FC_235 = "Learn from the children.  It is important to set aside time for play as well as for work."
+
+   LM_haz_rand1 = "If you've never been to Meridian before, you might find it helpful to read the signs."
+   LM_haz_rand2 = "In Meridian proper, there are more than one hundred and fifty spells in six spell schools!  But the magical arts are largely lost here."
+   LM_haz_rand3 = "The crypt is full of mummies!  How so holy a place became so defiled is a question for the ages."
+%   LM_haz_rand4 = "What's 10 bucks a month?  That's less than the cost of a movie, popcorn and drink!"
+   LM_haz_rand5 = "What you see is but a fragment of Meridian 59.  Perhaps you'd care to see the rest of the land?"
+   LM_haz_rand6 = "I've heard that the struggle between the Princess and the Duke continues.  I have also heard of another rebellion starting in Jasper.  Fortunately, we are largely unaffected here on the frontier."
+   LM_haz_rand7 = "For all that I can tell you, the best advice I can offer is to seek friends and allies."
+   LM_haz_rand8 = "Some adventurers are bloodthirsty killers!  Fortunately, the magiks of Shal'ille protect our fair town from such unsavoriness." 
+   LM_haz_rand9 = "Sometimes I wish I were adventuring out in the heartland!  But my place is here."
+   LM_haz_rand10 = "Shal'ille loves the young and foolish.  Your guardian angel will protect you for quite some time."
+   LM_haz_rand11 = "Death is unfortunate.  Avoid it."
+   LM_haz_rand12 = "Rumour has it that Barloque has become a nest of assassins!  Fortunately, we are far divorced from that here."
+   LM_haz_rand13 = "In faraway Tos, there is supposedly a great arena where mighty warriors prove who is the greatest champion!"
+   LM_haz_rand14 = "Even now, the fey elhai and the fey dirhai wage war for the Vale of Sorrows."
+   LM_haz_rand15 = "A mighty warrior can spurn magic by advancing his skills.  Unfortunately, there are no notable teachers here."
+   LM_haz_rand16 = "Should you kill something, be sure to get the stuff that's been dropped.  Often, you can sell it for a few shillings."
+   LM_haz_rand17 = "Be sure that you use your map to help you navigate around.  Type MAP to see it."
+   
+   LM_haz_rand_apoth1 = "Ravi, the alchemist, is always looking for herbs and mushrooms.  Should you find some, he'll offer a good price."
+   LM_haz_rand_bar1 = "If you're weary or wounded, Eric's Tavern is a good place to stop and rest."
+   LM_haz_rand_inn1 = "Be sure to read all of the signs.  If you've wandered off the path, the sign at the inn on the north side of town is the first."
+   LM_haz_rand_elder1 = "Eventually, be sure to seek out the elder.  He has been seeking warriors to help fend off the mummies!"
+   LM_haz_rand_smith1 = "The blacksmith in the northwest part of town has excellent weapons for training adventurers."
+
+   lib_signet_lost = "You pat your pockets and check your pack, but you suddenly realize the signet ring you were carrying is gone!"
+
+classvars:
+
+
+properties:
+
+   plFortunes = $
+   plCommonFortunes = $
+
+   piSignetChance = 3
+   piSignetLock = False
+   piMaxSignetNewbies = 20
+   piMaxSignets = 20
+   plSignetNewbies = $
+   plSignetRings = $
+
+   prMonster_advice = $
+   prKarma_advice = $
+   prGroup_advice = $
+   piGenTimerLength =  300000  %every 5 minutes chance of new quest.
+
+   piNextQuestID = QST_START_NUM
+
+   % for the speech triggers and random actions
+   plRandomLib = $
+   plSpeechLib = $
+   plMobLib = $
+
+   % list of npcs by profession
+   plOccupations = $
+
+   % a list of all NPCs.
+   plNPCs = $
+
+   % for the (old) quest engine
+   plQuests = $         %large database of all the current quests (DISABLED -- AJM)
+   plQuestUsers = $     %large database of everyones quest status.(DISABLED -- AJM)
+
+   plQuesterList = $
+   plOnQuestList = $
+   plHinterList = $    
+   plQuestDictionary = $
+   plQuestOfferClasses = $
+   plQuestOfferObjects = $
+   plQuestRewards = $
+   plOldQuestPhrases = $
+   plOldQuestClasses = $
+
+   ptQuestGenTimer = $   %   (DISABLED -- AJM)
+   
+   % for the extended speech and random libs   -AJM
+   piLastSpeechKey = 0
+   pcLastSpeechClass = $
+   piLastSpeechTriggerNum = 0
+   piLastRandomKey = 0
+   pcLastRandomClass = $
+   plScratchString = $
+   
+messages:
+
+   Constructor()
+   {
+      Send(self,@Recreate,#initial=True);
+      return;
+   }
+
+   ReInitialize()
+   "This routine strips the library and yet keeps the quester and hinter"
+   "lists. This means that you dont have to recreate the mobs to fix any"
+   "nasty bugs that happened. It also finds any mobs who are condsellers"
+   "and resets them so their triggers stay in the mob lib. It also puts"
+   "the quests of permquesters back into the scheme of things. It does"
+   "keep the old phrase and class lists so that possibly there will be"
+   "some continuity kept for the players who are just a bit slow."
+   {
+      local lQuesters,LPermQs,lSellers,i,j,repeat;
+      
+      lSellers = $;
+      lQuesters = $;
+      lPermQs = $;
+      plScratchString = [ CreateString() ];               % -AJM
+      SetString( First( plScratchString ), append_string );
+
+      %Figure out who our condsellers are...
+      for i in plMobLib
+      {
+         repeat = FALSE;
+         for j in lSellers
+         {
+            if i = j
+            {
+               repeat = TRUE;
+            }
+         }
+         
+         if NOT repeat AND Send(i,@MobIsCondSeller)
+         {
+            lSellers = Cons(i,lSellers);
+         }
+      }
+
+      %Reset the quester list to be just the raw ones.
+      For i in plOnQuestList { plQuesterList=Cons(i,plQuesterList); }
+      plOnQuestList = $;
+      plMobLib = $;
+      plQuests = $;  %(DISABLED -- AJM)
+      piNextQuestID= QST_START_NUM;
+
+      %Get our perma questers...
+      For i in plQuesterList
+      {
+        if Send(i,@MobIsPermQuester) {lPermQs=Cons(i,lPermQs);}
+      }
+
+      for i in plQuestOfferObjects
+      {
+         plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
+         Send(i,@Delete);
+      }
+      plQuestOfferObjects = $;
+
+      %Reset all the lists of things in case something changed...
+      Send(self,@CreateRandomLibrary);
+      Send(self,@CreateSpeechLibrary);
+      Send(self,@CreateFortuneLibrary);
+      Send(self,@CreateQuestDictionary);
+      Send(self,@CreateQuestOfferClasses);
+      Send(self,@CreateQuestRewards);
+
+      %Add in the cond sellers to the mob lib, and permquesters too.
+      For i in lSellers { Send(i,@InitCondSale); }
+      For i in lPermQs { Send(i,@InitPermQuest); }
+
+      return;
+   }
+
+   Recreate(initial=False)
+   "Basically this does everything to recreate the library except clear"
+   "the plQuestUser list that keeps track of which players have done"
+   "which permaquests. If the permaquest id's change, this will be messed"
+   "up then..."
+   {
+      local i;
+
+      if not initial
+      {
+         %We need to clear stuff out
+         plOccupations = $;
+         plNPCs = $;
+         plMobLib = $;
+         plSpeechLib = $;
+         plQuests = $;   % (DISABLED -- AJM)
+         plHinterList = $;
+         plQuesterList = $;
+         plOnQuestList = $;
+         plOldQuestPhrases = $;
+         plOldQuestClasses = $;
+         
+         for i in plQuestOfferObjects
+         {
+            plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
+            Send(i,@Delete);
+         }
+         
+         plQuestOfferObjects = $;
+         piNextQuestID = QST_START_NUM;
+         ptQuestGenTimer=$;
+      }
+      
+      plScratchString = [ CreateString() ];      % -AJM used for NPC dialogue
+      SetString( First( plScratchString ), append_string );
+
+      Send(self,@CreateRandomLibrary);
+      Send(self,@CreateSpeechLibrary);
+      Send(self,@CreateFortuneLibrary);
+      Send(self,@CreateQuestDictionary);
+      Send(self,@CreateQuestOfferClasses);
+      Send(self,@CreateQuestRewards);
+
+      return;
+   }
+
+   Delete()
+   "Dereferences the three main library lists (yeah garbage collection)"
+   "Since the moblib should be used mainly for random quests, this will"
+   "cause some mucky problems, unless we clear the quests as well."
+   "basically, you shouldnt be deleting this object"
+   {
+      local i;
+      
+      plOccupations = $;
+      plNPCs = $;
+      plRandomLib = $;
+      plQuestUsers = $;   %  (DISABLED -- AJM)
+      plSpeechLib = $;
+      plMobLib = $;
+      plQuests = $;  %  (DISABLED -- AJM)
+      plHinterList = $;
+      plQuesterList = $;
+      plOnQuestList = $;
+      plQuestDictionary = $;
+      plQuestOfferClasses = $;
+      plQuestRewards = $;
+      plFortunes = $;
+      plCommonFortunes = $;
+
+      for i in plQuestOfferObjects
+      {
+         plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
+         Send(i,@Delete);
+      }
+      plQuestOfferObjects = $;
+      DeleteTimer(ptQuestGenTimer);
+      ptQuestGenTimer=$;
+      
+      return;
+   }
+
+   % These are functions for tracking the list of NPCs.
+
+   AddNPC(who = $)
+   {
+      if plNPCs = $ OR FindListElem(plNPCs,who) = 0
+      {
+         plNPCs = cons(who,plNPCs);
+      }
+      
+      return;
+   }
+
+   RemoveNPC(who = $)
+   {
+      if plNPCs <> $ AND FindListElem(plNPCs,who) <> 0
+      {
+         plNPCs = DelListElem(plNPCs,who);
+      }
+      
+      return;
+   }
+
+   GetNPCs()
+   {
+      return plNPCs;
+   }
+
+   %% AddToOccupationList()
+   %  OccupationList is a list of 2-element lists
+   %  first elem is NPC occupation, eg MOB_ROLE_BANKER
+   %  next elem is list of NPCs with that job
+   %  This method called by monster constructor
+   %  NPCs with no occupation are not added to list
+   %%
+   AddToOccupationList( who = $ )
+   {
+      local iOccupation, lOccBranch, oNPC;
+      
+      if who = $ 
+      {
+         return;
+      }
+      
+      iOccupation = send(who,@GetOccupation);
+      
+      if iOccupation = 0 
+      {
+         return;
+      }
+      
+      if plOccupations = $ 
+      {
+         plOccupations = [ [ iOccupation, [ who ] ] ];
+         return;
+      }
+      
+      for lOccBranch in plOccupations
+      {
+         if first(lOccBranch) = iOccupation
+         {
+            % make sure npc isn't already in list (shouldn't be)
+            for oNPC in Nth(lOccBranch,2)
+            {
+               if oNPC = who 
+               {
+                  return;
+               }
+            }
+
+            % add him
+            SetNth(lOccBranch,2,cons(who,Nth(lOccBranch,2)));
+            
+            return;
+         }
+      }
+      
+      % new occupation
+      plOccupations = cons( [ iOccupation, [ who ] ], plOccupations );
+      return;
+   }
+   
+   %% DeleteFromOccupationList()
+   %   OccupationList is a list of 2-element lists
+   %   first elem is NPC occupation, eg MOB_ROLE_BANKER
+   %   next elem is list of NPCs with that job
+   %   This method called by monster Delete
+   %%
+   DeleteFromOccupationList( who = $ )
+   {
+      local iOccupation, lOccBranch, oNPC;
+      
+      if who = $
+      {
+         return;
+      }
+      
+      iOccupation = send(who,@GetOccupation);
+      
+      if iOccupation = 0
+      {
+         return;
+      }
+      
+      if plOccupations = $
+      {
+         return;
+      }
+      
+      for lOccBranch in plOccupations
+      {
+         if first(lOccBranch) = iOccupation
+         {
+            for oNPC in Nth(lOccBranch,2)
+            {
+               if oNPC = who
+               {
+                  % remove him
+                  SetNth(lOccBranch,2,DelListElem(Nth(lOccBranch,2),who));
+                  if Length(Nth(lOccBranch,2)) < 1
+                  {
+                     % no more with this occupation
+                     plOccupations = DelListElem(plOccupations,lOccBranch);
+                  }
+                  
+                  return;
+               }
+            }
+            
+            % not in his occupation branch
+            return;
+         }
+      }
+      
+      % occupation not in list
+      return;
+   }
+
+   %% GetOccupationList()
+   %   OccupationList is a list of 2-element lists
+   %   first elem is NPC occupation, eg MOB_ROLE_BANKER
+   %   next elem is list of NPCs with that job
+   %   This method returns a list of NPCs whose job matches
+   %    If cNPC_class filter is defined, return only NPCs who match
+   %    If iJob is 0, searches all jobs
+   %   onIsland filters by continent (true means island-only, false means mainland-only, $ means either)
+   %%
+   GetOccupationList( iJob = 0, cNPC_class = $, onIsland = $ )
+   {
+      local lOccBranch, j, lMatches;
+
+      lMatches = $;
+      
+      % no iJob or cNPC_class specified
+      if iJob = 0 
+      {
+         if cNPC_class = $ 
+         {
+            return $;
+         }
+      }
+
+      % single job type specified, with filter
+      for lOccBranch in plOccupations
+      {
+         if ( iJob = 0 ) or ( iJob = first(lOccBranch) )
+         {
+            for j in Nth( lOccBranch, 2 )
+            {
+               if ( cNPC_class = $ ) or ( IsClass(j, cNPC_class) )
+               {
+                  if ( onIsland = $ ) or
+                           ( onIsland = (isclass(j,&KocatanTown) or isClass(j,&RiijaMonk)) )
+                  {
+                     lMatches = cons( j, lMatches );
+                  }
+               }
+            }
+         }
+      }
+      return lMatches;
+   }
+
+   CreateRandomLibrary()
+   "Basically, any library entry desired is just added in "
+   "at an appropriate place. The library is a list of two-element nodes. "
+   "Each node is a classname and a list of entries. Each entry consists "
+   "of three elements: Percentage, Restriction Vector, List of the Action "
+   "type and its parameters. The percentage is from 0 to 100, and for the "
+   "action to be triggered, the incoming percentage must be greater or "
+   "equal to the library percentage (so 0 is never, 100 is always, etc)"
+   { 
+     plRandomLib = $;
+
+%     plRandomLib = Cons(
+%     [&towns,[
+%       [25,LIBRES_NOT_NEWBIE,[ LIBACT_RUMOR_COURT_STATE ,0]],
+%     ]],plRandomLib);
+
+   plRandomLib = Cons(
+      [&CorNothTown,[
+       [40,LIBRES_NOT_NEWBIE,[ LIBACT_RUMOR_TOKEN_LOC ]] 
+      ]],plRandomLib);
+
+   plRandomLib = Cons(
+      [&HazarTown,[
+    [48,0,[ LIBACT_SAY, LM_haz_rand17 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand16 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand15 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand14 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand13 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand12 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand11 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand10 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand9 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand8 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand7 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand6 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand5 ]],
+%    [48,0,[ LIBACT_SAY, LM_haz_rand4 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand3 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand2 ]],
+    [48,0,[ LIBACT_SAY, LM_haz_rand1 ]]
+      ]],plRandomLib);
+
+    plRandomLib = Cons(
+    [&HazarBartender,[
+       [48,0,[ LIBACT_SAY, LM_haz_rand_apoth1 ]],
+         [48,0,[ LIBACT_SAY, LM_haz_rand_inn1 ]],
+       [48,0,[ LIBACT_SAY, LM_haz_rand_smith1 ]],       
+       [48,0,[ LIBACT_SAY, LM_haz_rand_elder1 ]]
+   ]],plRandomLib);
+   
+   plRandomLib = Cons(
+    [&HazarInnkeeper,[
+       [48,0,[ LIBACT_SAY, LM_haz_rand_apoth1 ]],
+         [48,0,[ LIBACT_SAY, LM_haz_rand_bar1 ]],
+       [48,0,[ LIBACT_SAY, LM_haz_rand_smith1 ]],       
+       [48,0,[ LIBACT_SAY, LM_haz_rand_elder1 ]]
+   ]],plRandomLib);
+   
+   plRandomLib = Cons(
+    [&HazarBlacksmith,[
+       [48,0,[ LIBACT_SAY, LM_haz_rand_apoth1 ]],
+         [48,0,[ LIBACT_SAY, LM_haz_rand_inn1 ]],
+       [48,0,[ LIBACT_SAY, LM_haz_rand_bar1 ]],       
+       [48,0,[ LIBACT_SAY, LM_haz_rand_elder1 ]]
+   ]],plRandomLib);
+   
+   plRandomLib = Cons(
+    [&HazarElder,[
+       [48,0,[ LIBACT_SAY, LM_haz_rand_apoth1 ]],
+         [48,0,[ LIBACT_SAY, LM_haz_rand_inn1 ]],
+       [48,0,[ LIBACT_SAY, LM_haz_rand_smith1 ]],       
+       [48,0,[ LIBACT_SAY, LM_haz_rand_bar1 ]]
+   ]],plRandomLib);
+   
+   plRandomLib = Cons(
+    [&HazarApothecary,[
+       [48,0,[ LIBACT_SAY, LM_haz_rand_bar1 ]],
+         [48,0,[ LIBACT_SAY, LM_haz_rand_inn1 ]],
+       [48,0,[ LIBACT_SAY, LM_haz_rand_smith1 ]],       
+       [48,0,[ LIBACT_SAY, LM_haz_rand_elder1 ]]
+   ]],plRandomLib);
+
+   return; }
+
+   CreateSpeechLibrary()
+   "Basically, any library entry desired is just added in"
+   "at an appropriate place. The library is a list of two-element nodes."
+   "Each node is a classname and a list of entries. Each entry consists"
+   "of three elements: List of Triggers, Restriction Vector, List of the"
+   "Action Type and its parameters."
+   {
+      local lDontInclude, oMonster, lMonsters, lTempList, lAddList;
+     plSpeechLib = $;
+%     plSpeechLib = Cons(
+%     [&monster,[
+%       [[LT_hi,LT_hello,LT_howdy],0, [LIBACT_SAY_TARG, LM_mons_hey1]],
+%       [[LT_hi,LT_hello,LT_howdy],0, [LIBACT_SAY, LM_mons_hey2 ]],
+%       [[LT_hi,LT_hello,LT_howdy],0, [LIBACT_SAY, LM_mons_hey3 ]],
+%       [[LT_hi,LT_hello,LT_howdy],0, [LIBACT_SAY, LM_mons_hey4 ]],
+%       [[LT_bye,LT_farewell],0, [LIBACT_SAY, LM_mons_bye1 ]],
+%       [[LT_bye,LT_farewell],0, [LIBACT_SAY, LM_mons_bye2 ]],
+%       [[LT_bye,LT_farewell],0, [LIBACT_SAY, LM_mons_bye3 ]],
+%       [[LT_bye,LT_farewell],0, [LIBACT_SAY, LM_mons_bye4 ]]
+%     ]],plSpeechLib);
+
+     plSpeechLib = Cons(
+    [&hazartown,[
+      [[LT_akardius,LT_duke,LT_princess,LT_kateriina],0,[LIBACT_SAY,LM_haz_factions]],
+      [[LT_cor,LT_jasper,LT_marion,LT_barloque,LT_tos],0,[LIBACT_SAY,LM_haz_towns]],
+        [[LT_help],0,[LIBACT_SAY,LM_haz_help]],
+       [[LT_meridian],0,[LIBACT_SAY,LM_haz_meridian]]
+     ]],plSpeechLib);
+
+     plSpeechLib = Cons(
+    [&hazarInnkeeper,[
+        [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]],
+      [[LT_buy],0,[LIBACT_SAY,LM_haz_innk_buy]],
+      [[LT_sell],0,[LIBACT_SAY,LM_haz_innk_sell]],
+      [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]]
+     ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarBartender,[
+      [[LT_buy],0,[LIBACT_SAY,LM_haz_bar_buy]],
+      [[LT_sell],0,[LIBACT_SAY,LM_haz_bar_sell]],
+       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]],
+      [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]]
+     ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarElder,[
+       [[LT_buy],0,[LIBACT_SAY,LM_haz_elder_buy]],
+      [[LT_sell],0,[LIBACT_SAY,LM_haz_elder_sell]],
+       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]],
+      [[LT_quest],0,[LIBACT_SAY,LM_haz_quest_elder]],
+      [[LT_mausoleum],0,[LIBACT_SAY,LM_haz_mausoleum]],
+      [[LT_mummy,LT_mummies],0,[LIBACT_SAY,LM_haz_mummy]],
+        [[LT_eric],0,[LIBACT_SAY,LM_haz_eric]],      
+       [[LT_ravi],0,[LIBACT_SAY,LM_haz_ravi]],
+       [[LT_marcus],0,[LIBACT_SAY,LM_haz_marcus]],      
+       [[LT_tomas],0,[LIBACT_SAY,LM_haz_tomas]]      
+    ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarApothecary,[
+       [[LT_buy],0,[LIBACT_SAY,LM_haz_apoth_buy]],
+      [[LT_sell],0,[LIBACT_SAY,LM_haz_apoth_sell]],
+       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_response]],
+      [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]],
+      [[LT_rodric],0,[LIBACT_SAY,LM_haz_rodric]]
+     ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarBlacksmith,[
+       [[LT_quest],0,[LIBACT_SAY,LM_haz_quest_entroot]],
+      [[LT_buy],0,[LIBACT_SAY,LM_haz_smith_buy]],
+      [[LT_sell],0,[LIBACT_SAY,LM_haz_smith_sell]],
+       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]],      
+      [[LT_rodric],0,[LIBACT_SAY,LM_haz_rodric]]   
+     ]],plSpeechLib);
+
+
+     plSpeechLib = Cons(
+     [&towns,[
+%       [[LT_akardius,LT_duke],LIBRES_NOT_NEWBIE, [ LIBACT_SAY, LM_duke_response]],
+%       [[LT_kateriina,LT_princess],LIBRES_NOT_NEWBIE, [ LIBACT_SAY, LM_princess_response]],
+%       [[LT_token],LIBRES_NOT_NEWBIE, [ LIBACT_SAY, LM_token_response]],
+%       [[LT_council],LIBRES_NOT_NEWBIE, [ LIBACT_SAY, LM_council_response]],
+%       [[LT_court],LIBRES_NOT_NEWBIE, [ LIBACT_RUMOR_COURT_STATE ,0]]
+     ]],plSpeechLib);
+
+     plSpeechLib = Cons(
+     [&factions,[
+       [[LT_onecon],0,[LIBACT_COUNCILOR_REPORT,1]],
+       [[LT_twocon],0,[LIBACT_COUNCILOR_REPORT,2]],
+       [[LT_threecon],0,[LIBACT_COUNCILOR_REPORT,3]],
+       [[LT_fourcon],0,[LIBACT_COUNCILOR_REPORT,4]],
+       [[LT_fivecon],0,[LIBACT_COUNCILOR_REPORT,5]],
+       [[LT_members],0,[LIBACT_NUMBER_REPORT]],
+       [[LT_token],0,[LIBACT_RUMOR_TOKEN_LOC]]
+     ]],plSpeechLib);
+
+   % DirectX
+      plSpeechLib = Cons(
+     [&FourCouncilor, [
+      [[LT_ohm], 0, [LIBACT_MOOD, 1], 1]
+     ]],plSpeechLib);
+
+   % Esseldi
+      plSpeechLib = Cons(
+     [&FiveCouncilor, [
+      [[LT_quest], 0, [LIBACT_MOOD, 1], 1]
+     ]],plSpeechLib);
+
+      plSpeechLib = Cons(
+     [&FiveCouncilor, [
+      [[LT_nodes], 0, [LIBACT_MANA_NODE_LIST, 1], 1]
+     ]],plSpeechLib);
+
+%Wanderers
+
+   % Jonas
+     plSpeechLib = Cons( 
+     [&RebelLiege,[
+       [[LT_rebel], 0, [LIBACT_MOOD, 2], 1],
+       [[LT_rebellion], 0, [LIBACT_MOOD, 1], 2],
+       [[LT_duke], 0, [LIBACT_MOOD, -3], 3],
+       [[LT_princess], 0, [LIBACT_MOOD, -3], 4],
+       [[LT_orc], 0, [LIBACT_MOOD, 2], 5]
+     ]], plSpeechLib);
+
+   % Parrin
+     plSpeechLib = Cons( 
+     [&Minstrel,[
+       [[LT_help], 0, [LIBACT_MOOD, 1], 1],
+       [[LT_duke], 0, [LIBACT_MOOD, -3], 2],
+       [[LT_princess], 0, [LIBACT_MOOD, -3], 3],
+       [[LT_freebird], 0, [LIBACT_MOOD, 4], 4]
+     ]], plSpeechLib);
+
+%Tos people
+
+   % Skivlat
+     plSpeechLib = Cons(
+     [&TosBanker,[
+       [[LT_shillings], 0, [LIBACT_MOOD, 1], 1]
+     ]], plSpeechLib);
+
+   % Frisconar
+     plSpeechLib = Cons(
+     [&tosapothecary,[
+       [[LT_madelia], 0, [LIBACT_MOOD, 1], 1],
+       [[LT_paddock], 0, [LIBACT_MOOD, -1], 2]
+     ]], plSpeechLib);
+
+   % Paddock
+     plSpeechlib = Cons(
+     [&tosinnkeeper,[
+       [[LT_akardius],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_DUKE]],
+       [[LT_kateriina],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_PRINCESS]],
+       [[LT_jonas],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_REBEL]],
+       [[LT_shutup], 0, [LIBACT_MOOD, -3], 1],
+       [[LT_mend], 0, [LIBACT_MOOD, -1], 2],
+       [[LT_mending], 0, [LIBACT_MOOD, -1], 3]
+     ]], plSpeechLib);
+
+%Kocatan people
+
+   % Kochtal
+     plSpeechLib = Cons( 
+     [&KocatanWeaponsMaster,[
+       [[LT_customs], 0, [LIBACT_MOOD, 5], 1],
+       [[LT_blind], 0, [LIBACT_MOOD, -5], 2]
+     ]], plSpeechLib);
+
+   % Tepal
+     plSpeechLib = Cons( 
+     [&KocatanTailor,[
+       [[LT_konima], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_kocatan], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_kocatan2], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_wulfgang], 0, [LIBACT_MOOD, 2], 4],
+       [[LT_precious], 0, [LIBACT_MOOD, 2], 5],
+       [[LT_avar], 0, [LIBACT_MOOD, 1], 6]
+     ]], plSpeechLib);
+
+   % Pacal
+     plSpeechLib = Cons( 
+     [&kocatanShopkeeper,[
+       [[LT_sell], 0, [LIBACT_MOOD, 2], 1],
+       [[LT_business], 0, [LIBACT_MOOD, 3], 2],
+       [[LT_howdy], 0, [LIBACT_MOOD, 1], 3],
+       [[LT_hello], 0, [LIBACT_MOOD, 1], 4],
+       [[LT_hi], 0, [LIBACT_MOOD, 1], 5],
+       [[LT_hiya], 0, [LIBACT_MOOD, 1], 6]
+     ]], plSpeechLib);
+
+   % Ixla
+     plSpeechLib = Cons( 
+     [&KocatanBlacksmith,[
+       [[LT_kazot], 0, [LIBACT_MOOD, -3], 1],
+       [[LT_zoszin], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_konima], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_hello], 0, [LIBACT_MOOD, 3], 4],
+       [[LT_hi], 0, [LIBACT_MOOD, 3], 5],
+       [[LT_hiya], 0, [LIBACT_MOOD, 3], 6],
+       [[LT_howdy], 0, [LIBACT_MOOD, 3], 7]
+     ]], plSpeechLib);
+
+   % Zala
+     plSpeechLib = Cons( 
+     [&KocatanApothecary,[
+       [[LT_smoke], 0, [LIBACT_MOOD, -1], 1],
+       [[LT_bud], 0, [LIBACT_MOOD, -3], 2],
+       [[LT_army], 0, [LIBACT_MOOD, -5], 3]
+     ]], plSpeechLib);
+
+   % Wulfgang
+     plSpeechLib = Cons( 
+     [&kocatanTradeMaster,[
+       [[LT_marion], 0, [LIBACT_MOOD, -3], 1],
+       [[LT_tos], 0, [LIBACT_MOOD, -3], 2],
+       [[LT_duke], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_princess], 0, [LIBACT_MOOD, -2], 4]
+     ]], plSpeechLib);
+
+   % Oxal
+     plSpeechLib = Cons( 
+     [&KocatanBartender,[
+       [[LT_arm], 0, [LIBACT_MOOD, -10], 1],
+       [[LT_konima], 0, [LIBACT_MOOD, 2], 2],
+       [[LT_balo], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_avar], 0, [LIBACT_MOOD, -6], 4],
+       [[LT_zala], 0, [LIBACT_MOOD, -2], 5]
+     ]], plSpeechLib);
+
+   % Moxal
+     plSpeechLib = Cons( 
+     [&KocatanInnkeeper,[
+       [[LT_cheat], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_liar], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_scam], 0, [LIBACT_MOOD, -2], 3]
+     ]], plSpeechLib);
+
+%Barloque people
+
+   % Herbutte
+     plSpeechLib = Cons( 
+     [&BarloqueMerchant,[
+       [[LT_duke], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_tos], 0, [LIBACT_MOOD, -1], 2],
+       [[LT_cor], 0, [LIBACT_MOOD, -1], 3],
+       [[LT_hazar], 0, [LIBACT_MOOD, -1], 4],
+       [[LT_jasper], 0, [LIBACT_MOOD, -1], 5],
+       [[LT_kocatan], 0, [LIBACT_MOOD, -1], 6],
+       [[LT_kocatan2], 0, [LIBACT_MOOD, -1], 7],
+       [[LT_marion], 0, [LIBACT_MOOD, -1], 8]
+     ]], plSpeechLib);
+
+   % Meidei
+     plSpeechLib = Cons( 
+     [&BarloqueBartender,[
+       [[LT_shal1], 0, [LIBACT_MOOD, 2], 1],
+       [[LT_shal2], 0, [LIBACT_MOOD, 2], 2],
+       [[LT_riija], 0, [LIBACT_MOOD, -1], 3],
+       [[LT_qor], 0, [LIBACT_MOOD, -3], 4]
+     ]], plSpeechLib);
+
+   % Fehr'loi Qan
+     plSpeechLib = Cons( 
+     [&BarloqueBlacksmith,[
+       [[LT_kraanan], 0, [LIBACT_MOOD, 1], 1],
+       [[LT_tos], 0, [LIBACT_MOOD, -1], 2]
+     ]], plSpeechLib);
+
+     plSpeechLib = Cons(
+     [&barloqueapothecary,[
+     ]],plSpeechLib);
+
+   % Frular
+     plSpeechLib = Cons(
+     [&GuildCreator,[
+       [[LT_princess], 0, [LIBACT_MOOD, -1], 1],
+       [[LT_madelia], 0, [LIBACT_MOOD, 1], 2]
+     ]],plSpeechLib);
+
+   % Pritchett
+     plSpeechLib = Cons( 
+     [&BarloqueInnkeeper,[
+       [[LT_sailor], 0, [LIBACT_MOOD, 3], 1],
+       [[LT_madelia], 0, [LIBACT_MOOD, 2], 2]
+     ]], plSpeechLib);
+
+   % Obert
+     plSpeechLib = Cons( 
+     [&barloqueVaultman,[
+       [[LT_guild], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_hello], 0, [LIBACT_MOOD, 1], 2],
+       [[LT_hi], 0, [LIBACT_MOOD, 1], 3],
+       [[LT_hiya], 0, [LIBACT_MOOD, 1], 4],
+       [[LT_howdy], 0, [LIBACT_MOOD, 1], 5]
+     ]], plSpeechLib);
+
+   % Madelia
+     plSpeechLib = Cons( 
+     [&Barloquetailor,[
+       [[LT_frisconar], 0, [LIBACT_MOOD, -3], 1],
+       [[LT_frular], 0, [LIBACT_MOOD, 3], 2],
+       [[LT_pritchett], 0, [LIBACT_MOOD, 1], 3],
+       [[LT_princess], 0, [LIBACT_MOOD, 1], 4]
+     ]], plSpeechLib);
+
+%Marion people
+
+   % Tova
+     plSpeechLib = Cons(
+     [&MarionBartender, [
+       [[LT_paddock], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_duke], 0, [LIBACT_MOOD, -1], 2],
+       [[LT_tos], 0, [LIBACT_MOOD, -1], 3],
+       [[LT_zig], 0, [LIBACT_MOOD, -1], 4]
+     ]], plSpeechLib);
+
+   % Ran er'Hoth
+     plSpeechLib = Cons(
+     [&marionelder, [
+       [[LT_akardius],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_DUKE]],
+       [[LT_kateriina],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_PRINCESS]],
+       [[LT_jonas],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_REBEL]],
+       [[LT_alarm], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_father], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_apple], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_old], 0, [LIBACT_MOOD, -2], 4],
+       [[LT_quest], 0, [LIBACT_MOOD, -4], 5],
+       [[LT_errand], 0, [LIBACT_MOOD, -4], 6],
+       [[LT_favor], 0, [LIBACT_MOOD, -4], 7],
+       [[LT_crazy], 0, [LIBACT_MOOD, -5], 8],
+       [[LT_mad], 0, [LIBACT_MOOD, -5], 9],
+       [[LT_lunatic], 0, [LIBACT_MOOD, -5], 10],
+       [[LT_dream], 0, [LIBACT_MOOD, -2], 11]
+    ]], plSpeechLib);
+
+   % Colhorr
+     plSpeechLib = Cons(
+     [&marionblacksmith, [
+       [[LT_ranerhoth], 0, [LIBACT_MOOD, -3], 1],
+       [[LT_hot], 0, [LIBACT_MOOD, -5], 2]
+     ]],plSpeechLib);
+
+%Cor Noth people
+
+   % D'Franco
+     plSpeechLib = Cons(
+     [&cornothinnkeeper, [
+       [[LT_akardius],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_DUKE]],
+       [[LT_kateriina],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_PRINCESS]],
+       [[LT_jonas],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_REBEL]],
+       [[LT_princess], 0, [LIBACT_MOOD, -2], 1]
+     ]], plSpeechLib);
+
+%     plSpeechLib = Cons(
+%     [&cornothsergeant, [
+%%% now created dynamically on recreateall
+%       [[LT_punch], 0, [LIBACT_LEARN, SKID_PUNCH, True]],
+%       [[LT_slash], 0, [LIBACT_LEARN, SKID_SLASH, True]],
+%       [[LT_dodge], 0, [LIBACT_LEARN, SKID_DODGE, True]],
+%       [[LT_parry], 0, [LIBACT_LEARN, SKID_PARRY, True]],
+%       [[LT_brawling], 0, [LIBACT_LEARN, SKID_BRAWLING, True]],
+%       [[LT_macefgt], 0, [LIBACT_LEARN, SKID_PROFICIENCY_MACE, True]],
+%       [[LT_axewield], 0, [LIBACT_LEARN, SKID_PROFICIENCY_AXE, True]],
+%       [[LT_hammwield], 0, [LIBACT_LEARN, SKID_PROFICIENCY_HAMMER, True]],
+%       [[LT_fencing], 0, [LIBACT_LEARN, SKID_PROFICIENCY_SWORD, True]],
+%       [[LT_sir], 0, [LIBACT_MOOD, 5], 1],
+%       [[LT_princess], 0, [LIBACT_MOOD, -5], 2]
+%     ]], plSpeechLib);
+
+
+      lDontInclude = [ &Cow, &Guard, &Frogman, &Mummy, &BlackMummy, &Avar,
+                       &AvarShaman, &AvarChieftain, &DragonFly, &DragonFlyQueen,
+                       &Kriipa, &Lich, &RebelTroop, &DukeTroop, &PrincessTroop,
+                       &NecromancerTroop, &LupoggKing, &StoneTroll
+                     ];
+      lMonsters = [ [[LT_sir], 0, [LIBACT_MOOD, 5], 1],
+                    [[LT_princess], 0, [LIBACT_MOOD, -5], 2] ];
+                    
+      for oMonster in Send(SYS,@GetMonsterTemplates)
+      {
+         if NOT FindListElem(lDontInclude,GetClass(oMonster))
+         {
+            lTempList = cons(GetClass(oMonster),[]);
+            lTempList = cons(LIBACT_MONSTER_ADVICE,lTempList);
+            lAddList = cons(lTempList,[]);
+            lAddList = cons(0,lAddList);
+            lTempList = cons(send(oMonster,@GetName),[]);
+            lAddList = cons(lTempList,lAddList);
+            lMonsters = cons(lAddList,lMonsters);
+         }
+      }
+
+      lAddList = cons(lMonsters,[]);
+      lAddList = cons(&cornothsergeant,lAddList);
+
+      plSpeechLib = Cons(
+         lAddList,
+         plSpeechLib);
+         
+   % Solomon
+     plSpeechLib = Cons(
+     [&CornothGrocer, [
+       [[LT_herbutte], 0, [LIBACT_MOOD, 1], 1]
+     ]],plSpeechLib);
+
+%Jasper people
+
+   % Yevitan
+     plSpeechLib = Cons(
+     [&jasperbanker,[
+       [[LT_akardius],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_DUKE]],
+       [[LT_kateriina],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_PRINCESS]],
+       [[LT_jonas],0, [ LIBACT_RUMOR_COURT_STATE ,FACTION_REBEL]],
+       [[LT_tos], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_duke], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_king], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_whiskey], 0, [LIBACT_MOOD, -10], 4]
+     ]],plSpeechLib);
+   
+     plSpeechLib = Cons(
+     [&OneCouncilor, [
+     ]],plSpeechLib);
+
+   % Qesino
+     plSpeechLib = Cons(
+     [&JasperInnKeeper, [
+       [[LT_quintor], 0, [LIBACT_MOOD, -3], 1],
+       [[LT_kill], 0, [LIBACT_MOOD, -10], 2],
+       [[LT_assassin], 0, [LIBACT_MOOD, -10], 3],
+       [[LT_murder], 0, [LIBACT_MOOD, -10], 4]
+     ]],plSpeechLib);
+
+   % Afiera D'xor
+     plSpeechLib = Cons(
+     [&jasperelder, [
+       [[LT_treefolk], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_ant], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_yeti], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_spider], 0, [LIBACT_MOOD, -3], 4],
+       [[LT_giantrat], 0, [LIBACT_MOOD, -3], 5],
+       [[LT_troll], 0, [LIBACT_MOOD, -2], 6],
+       [[LT_centipede], 0, [LIBACT_MOOD, -2], 7],
+       [[LT_orc], 0, [LIBACT_MOOD, -2], 8],
+       [[LT_dement], 0, [LIBACT_MOOD, -2], 9],
+       [[LT_lightnin], 0, [LIBACT_MOOD, -2], 10],
+       [[LT_council], 0, [LIBACT_MOOD, -2], 11],
+       [[LT_princess], 0, [LIBACT_MOOD, -2], 12],
+       [[LT_duke], 0, [LIBACT_MOOD, -2], 13],
+       [[LT_tos], 0, [LIBACT_MOOD, -2], 14],
+       [[LT_jasper], 0, [LIBACT_MOOD, -2], 15],
+       [[LT_marion], 0, [LIBACT_MOOD, -2], 16],
+       [[LT_cor], 0, [LIBACT_MOOD, -2], 17],
+       [[LT_barloque], 0, [LIBACT_MOOD, -2], 18],
+       [[LT_hello], 0, [LIBACT_MOOD, -2], 19],
+       [[LT_hi], 0, [LIBACT_MOOD, -2], 20],
+       [[LT_hiya], 0, [LIBACT_MOOD, -2], 21],
+       [[LT_howdy], 0, [LIBACT_MOOD, -2], 22],
+       [[LT_bye], 0, [LIBACT_MOOD, -2], 23],
+       [[LT_goodbye], 0, [LIBACT_MOOD, -2], 24],
+       [[LT_faren], 0, [LIBACT_MOOD, -3], 25],
+       [[LT_jala], 0, [LIBACT_MOOD, -1], 26]
+     ]], plSpeechLib);
+
+   % Zhieu B'hob
+     plSpeechLib = Cons(
+     [&JasperMerchant, [
+       [[LT_princess], 0, [LIBACT_MOOD, 2], 1],
+       [[LT_yes], 0, [LIBACT_MOOD, 5], 2],
+       [[LT_afiera], 0, [LIBACT_MOOD, 2], 3],
+       [[LT_qesino], 0, [LIBACT_MOOD, 1], 4],
+       [[LT_quintor], 0, [LIBACT_MOOD, 1], 5],
+       [[LT_wryn], 0, [LIBACT_MOOD, 2], 6],
+       [[LT_council], 0, [LIBACT_MOOD, 2], 7],
+       [[LT_princess], 0, [LIBACT_MOOD, 2], 8],
+       [[LT_pietro], 0, [LIBACT_MOOD, 1], 9],
+       [[LT_duke], 0, [LIBACT_MOOD, 1], 10],
+       [[LT_yevitan], 0, [LIBACT_MOOD, 1], 11],
+       [[LT_marion], 0, [LIBACT_MOOD, 1], 12],
+       [[LT_wool], 0, [LIBACT_MOOD, 2], 13],
+       [[LT_tos], 0, [LIBACT_MOOD, 1], 14],
+       [[LT_jasper], 0, [LIBACT_MOOD, 1], 15],
+       [[LT_cor], 0, [LIBACT_MOOD, 1], 16],
+       [[LT_zig], 0, [LIBACT_MOOD, 1], 17],
+       [[LT_barloque], 0, [LIBACT_MOOD, 1], 18],
+       [[LT_tova], 0, [LIBACT_MOOD, 1], 19],
+       [[LT_whiskey], 0, [LIBACT_MOOD, 1], 20],
+       [[LT_hello], 0, [LIBACT_MOOD, 1], 21],
+       [[LT_hi], 0, [LIBACT_MOOD, 1], 22],
+       [[LT_hiya], 0, [LIBACT_MOOD, 1], 23],
+       [[LT_howdy], 0, [LIBACT_MOOD, 1], 24],
+       [[LT_bye], 0, [LIBACT_MOOD, 1], 25],
+       [[LT_goodbye], 0, [LIBACT_MOOD, 1], 26]
+     ]], plSpeechLib);
+
+   % Quintor
+     plSpeechLib = Cons(
+     [&jasperblacksmith, [
+       [[LT_whiskey], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_widow], 0, [LIBACT_MOOD, -5], 2],
+       [[LT_pietro], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_yevitan], 0, [LIBACT_MOOD, -2], 4],
+       [[LT_zhieu], 0, [LIBACT_MOOD, -1], 5],
+       [[LT_afiera], 0, [LIBACT_MOOD, -1], 6],
+       [[LT_princess], 0, [LIBACT_MOOD, -3], 7],
+       [[LT_duke], 0, [LIBACT_MOOD, -3], 8],
+       [[LT_council], 0, [LIBACT_MOOD, -3], 9],
+       [[LT_qesino], 0, [LIBACT_MOOD, -3], 10]
+     ]], plSpeechLib);
+
+   % Pietro
+     plSpeechLib = Cons(
+     [&jasperbartender, [
+       [[LT_hello], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_hi], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_hiya], 0, [LIBACT_MOOD, -2], 3],
+       [[LT_howdy], 0, [LIBACT_MOOD, -2], 4],
+       [[LT_bye], 0, [LIBACT_MOOD, -2], 5],
+       [[LT_goodbye], 0, [LIBACT_MOOD, -2], 6],
+       [[LT_quintor], 0, [LIBACT_MOOD, -2], 7],
+       [[LT_drunk], 0, [LIBACT_MOOD, -5], 8],
+       [[LT_widow], 0, [LIBACT_MOOD, -2], 9],
+       [[LT_yevitan], 0, [LIBACT_MOOD, -2], 10],
+       [[LT_afiera], 0, [LIBACT_MOOD, -2], 11],
+       [[LT_barloque], 0, [LIBACT_MOOD, -2], 12],
+       [[LT_cor], 0, [LIBACT_MOOD, -2], 13],
+       [[LT_jasper], 0, [LIBACT_MOOD, -2], 14],
+       [[LT_marion], 0, [LIBACT_MOOD, -2], 15],
+       [[LT_tos], 0, [LIBACT_MOOD, -2], 16],
+       [[LT_duke], 0, [LIBACT_MOOD, -2], 17],
+       [[LT_princess], 0, [LIBACT_MOOD, -2], 18],
+       [[LT_council], 0, [LIBACT_MOOD, -2], 19],
+       [[LT_secret], 0, [LIBACT_MOOD, -2], 20],
+       [[LT_broom], 0, [LIBACT_MOOD, -2], 21]
+     ]], plSpeechLib);
+
+ %Priestesses
+
+     plSpeechLib = Cons(
+     [&kraananpriestess, [
+       [[LT_threecon], 0, [LIBACT_MOOD, -2], 1]
+     ]], plSpeechLib);
+
+     plSpeechLib = Cons(
+     [&farenpriestess, [
+       [[LT_qor], 0, [LIBACT_MOOD, -5], 1],
+       [[LT_riija], 0, [LIBACT_MOOD, -1], 2],
+       [[LT_jala], 0, [LIBACT_MOOD, 2], 3],
+       [[LT_faren], 0, [LIBACT_MOOD, 1], 4]
+     ]], plSpeechLib);
+
+     plSpeechLib = Cons(
+     [&qorpriestess, [
+       [[LT_shal1], 0, [LIBACT_MOOD, -2], 1],
+       [[LT_shal2], 0, [LIBACT_MOOD, -2], 2],
+       [[LT_vile], 0, [LIBACT_MOOD, 1], 3],
+       [[LT_good], 0, [LIBACT_MOOD, -1], 4]
+     ]], plSpeechLib);
+
+     plSpeechLib = Cons(
+     [&shalillepriestess, [
+       [[LT_resign], 0, [LIBACT_SAY, LM_shal_prst_faction_resign]],
+       [[LT_qor], 0, [LIBACT_MOOD, -1], 1],
+       [[LT_shal1], 0, [LIBACT_MOOD, 1], 2],
+       [[LT_shal2], 0, [LIBACT_MOOD, 1], 3],
+       [[LT_pray], 0, [LIBACT_MOOD, 1], 4],
+       [[LT_prayer], 0, [LIBACT_MOOD, 1], 5]
+     ]], plSpeechLib);
+
+     plSpeechLib = Cons(
+    [&hazartown,[
+      [[LT_akardius,LT_duke,LT_princess,LT_kateriina],0,[LIBACT_SAY,LM_haz_factions]],
+      [[LT_cor,LT_jasper,LT_marion,LT_barloque,LT_tos],0,[LIBACT_SAY,LM_haz_towns]],
+        [[LT_help],0,[LIBACT_SAY,LM_haz_help]]
+     ]],plSpeechLib);
+
+     plSpeechLib = Cons(
+    [&hazarInnkeeper,[
+        [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]]
+     ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarBartender,[
+      [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]]
+     ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarElder,[
+      [[LT_quest],0,[LIBACT_SAY,LM_haz_quest_elder]],
+      [[LT_mausoleum],0,[LIBACT_SAY,LM_haz_mausoleum]],
+      [[LT_mummy],0,[LIBACT_SAY,LM_haz_mummy]]
+     ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarApothecary,[
+      [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]]
+     ]],plSpeechLib);
+     plSpeechLib = Cons(
+    [&hazarBlacksmith,[
+      [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]]
+     ]],plSpeechLib);
+
+
+     return; }
+
+      AppendSpeechLibrary(lDialogue=$)
+      {
+    %% assume all is right with the world, and tack it in
+    if lDialogue <> $
+    {
+       pLSpeechLib = Cons(lDialogue,plSpeechLib);
+    }
+    return;
+     }
+
+   CreateFortuneLibrary()
+   {
+      plFortunes = $;
+      plCommonFortunes = $;
+
+
+      %% Add the most commonly recurring ones here.
+     %% All the fortunes which are added here will appear
+     %% quite a bit more often than any other fortune added below.
+     %%
+     plCommonFortunes = [
+      FC_1, FC_2, FC_3, FC_4, FC_5
+     ];
+
+
+      %% Add the rest of the fortunes here.
+     %%
+      plFortunes = $;
+      plFortunes = Cons(FC_10, plFortunes);
+      plFortunes = Cons(FC_11, plFortunes);
+      plFortunes = Cons(FC_12, plFortunes);
+      plFortunes = Cons(FC_13, plFortunes);
+      plFortunes = Cons(FC_14, plFortunes);
+      plFortunes = Cons(FC_15, plFortunes);
+      plFortunes = Cons(FC_16, plFortunes);
+      plFortunes = Cons(FC_17, plFortunes);
+      plFortunes = Cons(FC_18, plFortunes);
+      plFortunes = Cons(FC_19, plFortunes);
+      plFortunes = Cons(FC_20, plFortunes);
+      plFortunes = Cons(FC_21, plFortunes);
+      plFortunes = Cons(FC_22, plFortunes);
+      plFortunes = Cons(FC_23, plFortunes);
+      plFortunes = Cons(FC_24, plFortunes);
+      plFortunes = Cons(FC_25, plFortunes);
+      plFortunes = Cons(FC_26, plFortunes);
+      plFortunes = Cons(FC_27, plFortunes);
+      plFortunes = Cons(FC_28, plFortunes);
+      plFortunes = Cons(FC_29, plFortunes);
+      plFortunes = Cons(FC_30, plFortunes);
+      plFortunes = Cons(FC_31, plFortunes);
+      plFortunes = Cons(FC_32, plFortunes);
+      plFortunes = Cons(FC_33, plFortunes);
+      plFortunes = Cons(FC_34, plFortunes);
+      plFortunes = Cons(FC_35, plFortunes);
+      plFortunes = Cons(FC_36, plFortunes);
+      plFortunes = Cons(FC_37, plFortunes);
+      plFortunes = Cons(FC_38, plFortunes);
+      plFortunes = Cons(FC_39, plFortunes);
+      plFortunes = Cons(FC_40, plFortunes);
+      plFortunes = Cons(FC_41, plFortunes);
+      plFortunes = Cons(FC_110, plFortunes);
+      plFortunes = Cons(FC_111, plFortunes);
+      plFortunes = Cons(FC_112, plFortunes);
+      plFortunes = Cons(FC_113, plFortunes);
+      plFortunes = Cons(FC_114, plFortunes);
+      plFortunes = Cons(FC_115, plFortunes);
+      plFortunes = Cons(FC_116, plFortunes);
+      plFortunes = Cons(FC_117, plFortunes);
+      plFortunes = Cons(FC_118, plFortunes);
+      plFortunes = Cons(FC_119, plFortunes);
+      plFortunes = Cons(FC_120, plFortunes);
+      plFortunes = Cons(FC_121, plFortunes);
+      plFortunes = Cons(FC_122, plFortunes);
+      plFortunes = Cons(FC_123, plFortunes);
+      plFortunes = Cons(FC_124, plFortunes);
+      plFortunes = Cons(FC_125, plFortunes);
+      plFortunes = Cons(FC_126, plFortunes);
+      plFortunes = Cons(FC_127, plFortunes);
+      plFortunes = Cons(FC_128, plFortunes);
+      plFortunes = Cons(FC_129, plFortunes);
+      plFortunes = Cons(FC_130, plFortunes);
+      plFortunes = Cons(FC_131, plFortunes);
+      plFortunes = Cons(FC_132, plFortunes);
+      plFortunes = Cons(FC_133, plFortunes);
+      plFortunes = Cons(FC_134, plFortunes);
+      plFortunes = Cons(FC_135, plFortunes);
+      plFortunes = Cons(FC_136, plFortunes);
+      plFortunes = Cons(FC_137, plFortunes);
+      plFortunes = Cons(FC_138, plFortunes);
+      plFortunes = Cons(FC_139, plFortunes);
+      plFortunes = Cons(FC_140, plFortunes);
+      plFortunes = Cons(FC_141, plFortunes);
+      plFortunes = Cons(FC_142, plFortunes);
+      plFortunes = Cons(FC_143, plFortunes);
+      plFortunes = Cons(FC_144, plFortunes);
+      plFortunes = Cons(FC_145, plFortunes);
+      plFortunes = Cons(FC_146, plFortunes);
+      plFortunes = Cons(FC_147, plFortunes);
+      plFortunes = Cons(FC_148, plFortunes);
+      plFortunes = Cons(FC_149, plFortunes);
+      plFortunes = Cons(FC_150, plFortunes);
+      plFortunes = Cons(FC_151, plFortunes);
+      plFortunes = Cons(FC_152, plFortunes);
+      plFortunes = Cons(FC_153, plFortunes);
+      plFortunes = Cons(FC_154, plFortunes);
+      plFortunes = Cons(FC_155, plFortunes);
+      plFortunes = Cons(FC_156, plFortunes);
+      plFortunes = Cons(FC_157, plFortunes);
+      plFortunes = Cons(FC_158, plFortunes);
+      plFortunes = Cons(FC_159, plFortunes);
+      plFortunes = Cons(FC_160, plFortunes);
+      plFortunes = Cons(FC_161, plFortunes);
+      plFortunes = Cons(FC_162, plFortunes);
+      plFortunes = Cons(FC_163, plFortunes);
+      plFortunes = Cons(FC_164, plFortunes);
+      plFortunes = Cons(FC_165, plFortunes);
+      plFortunes = Cons(FC_166, plFortunes);
+      plFortunes = Cons(FC_167, plFortunes);
+      plFortunes = Cons(FC_168, plFortunes);
+      plFortunes = Cons(FC_169, plFortunes);
+      plFortunes = Cons(FC_170, plFortunes);
+      plFortunes = Cons(FC_171, plFortunes);
+      plFortunes = Cons(FC_172, plFortunes);
+      plFortunes = Cons(FC_173, plFortunes);
+      plFortunes = Cons(FC_174, plFortunes);
+      plFortunes = Cons(FC_175, plFortunes);
+      plFortunes = Cons(FC_176, plFortunes);
+      plFortunes = Cons(FC_177, plFortunes);
+      plFortunes = Cons(FC_178, plFortunes);
+      plFortunes = Cons(FC_179, plFortunes);
+      plFortunes = Cons(FC_180, plFortunes);
+      plFortunes = Cons(FC_181, plFortunes);
+      plFortunes = Cons(FC_182, plFortunes);
+      plFortunes = Cons(FC_183, plFortunes);
+      plFortunes = Cons(FC_184, plFortunes);
+      plFortunes = Cons(FC_185, plFortunes);
+      plFortunes = Cons(FC_186, plFortunes);
+      plFortunes = Cons(FC_187, plFortunes);
+      plFortunes = Cons(FC_188, plFortunes);
+      plFortunes = Cons(FC_189, plFortunes);
+      plFortunes = Cons(FC_190, plFortunes);
+      plFortunes = Cons(FC_191, plFortunes);
+      plFortunes = Cons(FC_192, plFortunes);
+      plFortunes = Cons(FC_193, plFortunes);
+      plFortunes = Cons(FC_194, plFortunes);
+      plFortunes = Cons(FC_195, plFortunes);
+      plFortunes = Cons(FC_196, plFortunes);
+      plFortunes = Cons(FC_197, plFortunes);
+      plFortunes = Cons(FC_198, plFortunes);
+      plFortunes = Cons(FC_199, plFortunes);
+      plFortunes = Cons(FC_200, plFortunes);
+      plFortunes = Cons(FC_201, plFortunes);
+      plFortunes = Cons(FC_202, plFortunes);
+      plFortunes = Cons(FC_203, plFortunes);
+      plFortunes = Cons(FC_204, plFortunes);
+      plFortunes = Cons(FC_205, plFortunes);
+      plFortunes = Cons(FC_206, plFortunes);
+      plFortunes = Cons(FC_207, plFortunes);
+      plFortunes = Cons(FC_208, plFortunes);
+      plFortunes = Cons(FC_209, plFortunes);
+      plFortunes = Cons(FC_210, plFortunes);
+      plFortunes = Cons(FC_211, plFortunes);
+      plFortunes = Cons(FC_212, plFortunes);
+      plFortunes = Cons(FC_213, plFortunes);
+      plFortunes = Cons(FC_214, plFortunes);
+      plFortunes = Cons(FC_215, plFortunes);
+      plFortunes = Cons(FC_216, plFortunes);
+      plFortunes = Cons(FC_217, plFortunes);
+      plFortunes = Cons(FC_218, plFortunes);
+      plFortunes = Cons(FC_219, plFortunes);
+      plFortunes = Cons(FC_220, plFortunes);
+      plFortunes = Cons(FC_221, plFortunes);
+      plFortunes = Cons(FC_222, plFortunes);
+      plFortunes = Cons(FC_223, plFortunes);
+      plFortunes = Cons(FC_224, plFortunes);
+      plFortunes = Cons(FC_225, plFortunes);
+      plFortunes = Cons(FC_226, plFortunes);
+      plFortunes = Cons(FC_227, plFortunes);
+      plFortunes = Cons(FC_228, plFortunes);
+      plFortunes = Cons(FC_229, plFortunes);
+      plFortunes = Cons(FC_230, plFortunes);
+      plFortunes = Cons(FC_231, plFortunes);
+      plFortunes = Cons(FC_232, plFortunes);
+      plFortunes = Cons(FC_233, plFortunes);
+      plFortunes = Cons(FC_234, plFortunes);
+      plFortunes = Cons(FC_235, plFortunes);
+
+      return;
+   }
+
+   PickFortune()
+   {
+      local a, b;
+     a = Length(plCommonFortunes);
+     b = Length(plFortunes);
+      if (Random(1, b + a + a + a + a + a) < b)   % 5x more likely to get common one
+     {
+         return Nth(plFortunes, Random(1, b));
+     }
+      return Nth(plCommonFortunes, Random(1, a));
+   }
+
+   AddToMobLib(mob = $, percent = 0, triggers = $, action = $, id = 0)
+   "Add a new trigger/event to the mob library. If the mob already has"
+   "entries, we simply add them to that list, otherwise we create a new"
+   "section on the library."
+   {
+      local i;
+ 
+      for i in plMobLib
+      {
+         if First(i) = mob
+         {
+            SetNth(i,2,Cons([percent,triggers,action,id],Nth(i,2)));
+            return;
+         }
+      }
+      plMobLib=Cons([mob,[[percent,triggers,action,id]]],plMobLib);
+      return;
+   }
+
+   DeleteFromMobLib(mob = $, id = -1)
+   "Delete triggers/events from the mob library. Any which match the id"
+   "value are deleted, or all are deleted if the id is -1 (Default)."
+   "If all are deleted, then the reference to the mob is deleted as well."
+   {
+      local i,j,k,lTmp,iCount;
+ 
+      iCount=0;
+      for i in plMobLib
+      {
+         iCount=iCount+1;
+         if First(i) = mob
+         {
+            % Found entries for the mob, delete the relevant ones.
+            lTmp=Nth(i,2);
+            for j in lTmp
+            {
+               % we are marching through the mobs events, hoping for id matches
+               if Nth(j,4) = id OR id = -1
+               {
+                  lTmp=DelListElem(lTmp,j);
+               }
+            }
+
+            % finished deleting this id from the list, see if any entries left
+            if lTmp = $
+            {
+               plMobLib=DelListElem(plMobLib,i);
+            }
+            else
+            {
+            SetNth(plMobLib,iCount,[mob,lTmp]);
+            iCount = iCount - 1;
+            }
+            return;
+         }
+      }
+      return;
+   }
+
+   PersonalityClash(mob = $, libvec = 0)
+   "Determine if the mob has a conflicting personality to a library entry"
+   {
+      if mob = $ OR libvec=0 {return False;}
+
+      if ((libvec & LIBRES_FEMALE_ONLY) <> 0) AND
+         (Send(mob,@GetGender) = GENDER_MALE)
+      {
+         return True;
+      }
+      if ((libvec & LIBRES_MALE_ONLY) <> 0) AND
+         (Send(mob,@GetGender) = GENDER_FEMALE)
+      {
+         return True;
+      }
+      if ((libvec & LIBRES_NOT_ROOK) <> 0) AND
+         (IsClass(mob,&CorNothSergeant))
+      {
+    return True;
+      }
+      if ((libvec & LIBRES_NOT_NEWBIE) <> 0) AND (IsClass(mob,&HazarTown))
+    {  return True;  }
+
+      if( ( libvec & LIBRES_MOOD_MASK ) <> 0 )
+      {
+    if( (( libvec & LIBRES_MOOD_MASK ) & send( mob, @GetMoodFlags )) = 0 )
+    {
+       return TRUE;
+    }
+      }
+      return False;
+   }
+
+   SearchMobLib(mob = $, string = $, percent = 100, count=0, action_list=$)
+   "Given the mob and either a string or a percentage, return an action."
+   "When two or more actions apply, a random one is chosen. The local mob lib"
+   "triggers only match if EVERY speech keyword is stated."
+   % Now returns a list [lAction, cMobClass, iKey] for spamlist to use
+   % MobLib items without keys (currently all of them) will not be filtered by spamlist
+   {
+      local i,j,k,lActionList,iCount,bFound,iKey, ktriggered, bKtContainK, bKContainKt;
+      lActionList = action_list;
+      ktriggered = $;
+      iCount = count;
+      %bFound = FALSE;
+      for i in plMobLib
+      {
+         if (First(i) = mob)
+         {
+            for j in Nth(i,2)
+            {
+               if (string <> $) 
+               {
+                  for k in Nth(j,2)
+                  {
+                     % We have a speech trigger, check for keyword matches
+                     if (StringContain(string,k))
+                     {
+                        if first(Nth(j,3)) = LIBACT_QST_OBJI_LIST
+                        {
+                           return nth(j,3);
+                        }
+                        if ktriggered <> $ {
+                           bKtContainK = StringContain(ktriggered,k);
+                           bKContainKt = StringContain(k,ktriggered);
+                        }
+                        else {
+                           bKtContainK = false;
+                           bKContainKt = true;
+                        }
+                        if bKContainKt {           % old trigger is a subset of the new one, so the new one takes precedence (ex. "mutant ant" always supercedes "ant")
+                           iKey = 0;
+                           if( length(j) > 3 )
+                              { iKey = Nth(j,4); }
+                           lActionList = [Nth(j,3), GetClass(First(i)), iKey];
+                           ktriggered = k;
+                           iCount = 0;             % reset the counter, since we've superceded the whole set of options we were picking randomly amongst
+                           break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
+                        }
+                        else {
+                           if ((bKtContainK and bKContainKt) or               % (triggers are equal) or 
+                                    not (bKtContainK or bKContainKt)) {       % (triggers are unrelated),
+                              if Random(0,iCount) = 0 % and bFound = FALSE    % so pick one randomly
+                              {
+                                 iKey = 0;
+                                 if( length(j) > 3 )
+                                    { iKey = Nth(j,4); }
+                                 lActionList = [Nth(j,3), GetClass(First(i)), iKey];
+                                 ktriggered = k;
+                              }
+                              iCount = iCount + 1;    % keep track of how many equally viable triggers we've gone through (whether we picked them or not)
+                              break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
+                           }
+                        }
+                     }
+                  }
+               }
+               else
+               {
+                  if (Nth(j,1)>=percent)
+                  {
+                     if Random(0,iCount) = 0
+                     {
+                        iKey = 0;
+                        if( length(j) > 3 )
+                        {
+                           iKey = Nth(j,4);
+                        }
+                        lActionList = [Nth(j,3), GetClass(First(i)), iKey];
+                     } 
+                     iCount = iCount + 1;
+                     continue;
+                  }
+               }
+            }
+         }
+      }
+      return lActionList;
+   }
+
+   % spew everything
+   DebugSpeechLib(mob = $)
+   {
+      local i,j,lAct;
+      for i in plSpeechLib
+      {
+         if IsClass(mob,First(i))
+    {
+       for j in Nth(i,2)
+            {
+          lAct = nth(j,3);
+          if( first(lAct) = LIBACT_QUOTE )
+          {
+        Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_MESSAGE,
+             #string = quote_substring,
+             #parm1=Nth(lAct,2) );
+          }
+          if( first(lAct) = LIBACT_MOOD )
+          {
+%        Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_MESSAGE,
+%             #string = quote_substring,
+%             #parm1=Nth(lAct,2) );
+%        debug("mood trigger",mob);
+          }
+
+       }
+    }
+      }
+      return;
+   } 
+   
+
+   SearchSpeechLib(mob = $, string = $)
+   "Given the mob and the string, return an action. Any of the superclasses"
+   "of the mob can provide the action, and when two or more actions apply,"
+   "a random one is chosen."
+   % Now returns a list [lAction, cMobClass, iKey] for spamlist to use
+   % SpeechLib items without keys will not be filtered by spamlist
+   % Note: mood mods are handled specially
+   %% They are always processed immediately and added to spam list,
+   %% then search continues for a "real" action
+   {
+      local i,j,k,iCount,lActionList, iKey, bFound, ktriggered, bKtContainK, bKContainKt;
+      lActionList = $;
+      ktriggered = $;      % saves the current speech trigger corresponding to lActionList
+      iCount = 0;
+%      debug( "SL: looking for class",GetClass(mob) );
+      for i in plSpeechLib
+      {
+         if IsClass(mob,First(i)) 
+         {
+%           debug( "SL: found class",First(i) );
+            if (Send(mob,@GetAttributes) & MOB_LOCAL_ONLY) <> 0 AND (First(i) <> GetClass(mob)) 
+               { continue; }
+            for j in Nth(i,2)
+            {
+               if not Send(self,@PersonalityClash,#mob=mob,#libvec=Nth(j,2))
+               {
+%                 debug("SL:checking",string); 
+                  for k in Nth(j,1)
+                  {
+                     % We have a suitable action for the class, check triggers
+                     if (StringContain(string,k))
+                     {
+%                       debug("SL: passed stringcontain",k);
+                        % Spam filter:
+                        % Check action key against list of keys triggered since last randomtimer firing
+                        % Only check items with keys (4th in list)
+                        % Don't repeat it if it's on the list
+                        if( Length(j) > 3 )
+                        {
+                           if send( mob, @OnSpamList, #mob_class = First(i), #key_num = Nth(j,4) )
+                              { continue; }
+                        }
+%                       debug("SL: passed spamlist",k);
+
+         if( First(Nth(j,3)) = LIBACT_MOOD )
+         {
+            % it's a mood change action, so process it immediately
+            Post( self, @ParseAction, #action=Nth(j,3), #mob=mob );
+
+            % now add it to the spam list
+            Send( mob, @AddToSpamList, #mob_class=First(i), #key_num=Nth(j,4) );
+
+            % keep searching for a "real" action       
+            continue;
+         }
+
+                        if ktriggered <> $ {
+                           bKtContainK = StringContain(ktriggered,k);
+                           bKContainKt = StringContain(k,ktriggered);
+                        }
+                        else {
+                           bKtContainK = false;
+                           bKContainKt = true;
+                        }
+                        if bKContainKt {           % old trigger is a subset of the new one, so the new one takes precedence (ex. "mutant ant" always supercedes "ant")
+                           iKey = 0;
+                           if( length(j) > 3 )
+                              { iKey = Nth(j,4); }
+                           lActionList = [Nth(j,3), First(i), iKey];
+                           ktriggered = k;
+                           iCount = 0;             % reset the counter, since we've superceded the whole set of options we were picking randomly amongst
+                           break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
+                        }
+                        else {
+                           if ((bKtContainK and bKContainKt) or            % (triggers are equal) or 
+                                    not (bKtContainK or bKContainKt)) {    % (triggers are unrelated),
+                              if (Random(0,iCount) = 0) {                  % so pick one randomly
+                                 iKey = 0;
+                                 if( length(j) > 3 )
+                                    { iKey = Nth(j,4); }
+                                 lActionList = [Nth(j,3), First(i), iKey];
+                                 ktriggered = k;
+                              }
+                              iCount = iCount + 1;    % keep track of how many equally viable triggers we've gone through (whether we picked them or not)
+                              break;                  % don't need to search additional triggers for the same response, nor do we want them all to be counted
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+      return Send(self,@SearchMobLib,#mob=mob, #percent=0, #string=string, 
+                 #count=iCount, #action_list=lActionList);
+   }
+
+   % extended speech and random lib stuff   -AJM
+
+   % spew everything
+   DebugRandomLib(mob = $)
+   {
+      local i,j,lAct;
+      for i in plRandomLib
+      {
+         if IsClass(mob,First(i))
+    {
+       for j in Nth(i,2)
+            {
+          lAct = nth(j,3);
+          if( first(lAct) = LIBACT_QUOTE )
+          {
+        Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_MESSAGE,
+             #string = quote_substring,
+             #parm1=Nth(lAct,2) );
+          }
+       }
+    }
+      }
+      return;
+   } 
+
+   SetRandomLibQuote( npc_class = $, keynum = 0, percent = 50, mood = $, quote = $, append = FALSE )
+   {
+      % if key is found, replaces string (or appends if append = TRUE)
+      % otherwise creates new key
+      % returns key used, or FALSE on error
+      % if percent non-nil, replaces percent
+      % if quote = nil, does not change quote
+      % new class added if npc_class not found -- be careful! no way to error check this? xxxAJM;
+      % mood only set on initial create
+
+      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch, sScratch;
+
+      if( keynum = -1 )
+      {
+    keynum = piLastRandomKey;
+    npc_class = pcLastRandomClass;
+      }
+      if( npc_class = $ )
+      {
+    pcLastRandomClass = $;
+    piLastRandomKey = 0;
+    return FALSE;
+      }
+      if( percent < 5 )
+      {
+         percent = 5;
+      }
+      if( percent > 100 )
+      {
+         percent = 100;
+      }
+      if( mood = $ )
+      {
+    mood = 0;
+      }
+      if( mood < 1 )
+      {
+         mood = 0;
+      }
+            
+      iHighKey = 0;
+      for lClassBranch in plRandomLib
+      {
+    if( npc_class = First( lClassBranch ) )
+    {
+       for lSpeechBranch in Nth( lClassBranch, 2 )
+       {
+          if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
+          {
+        % quote action
+        iCurrKey = Nth( lSpeechBranch, 4 );
+        if( iCurrKey = keynum )
+        {
+           % found it - replace if non-nil
+           if( quote <> $ )
+           {
+         if( append )
+         {
+%            debug( "appending string" );
+
+            setString(First(plScratchString), quote);
+
+            clearTempString();
+            appendTempString(Nth(Nth(lSpeechbranch, 3), 2));
+            appendTempString(First(plScratchString));
+            setString(Nth(Nth(lSpeechbranch, 3), 2), getTempString());
+
+%            SetString( First( plScratchString ), append_string );
+%            StringSubstitute( First( plScratchString ), append_substring1, Nth( Nth( lSpeechbranch, 3 ), 2 ) );
+%            StringSubstitute( First( plScratchString ), append_substring2, quote );
+%            SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), First( plScratchString ) );
+
+         }
+         else
+         {
+%            debug( "replacing string" ); 
+            SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), quote );
+         }
+           }
+           % replace percent if non-nil
+           if( percent <> $ )
+           {
+         SetNth( lSpeechBranch, 1, percent );
+           }
+           pcLastRandomClass = npc_class;
+           piLastRandomKey = keynum;
+           return keynum;
+        }
+        if( iCurrKey > iHighKey )
+        {
+           iHighKey = iCurrKey;
+        }
+          }
+       }
+
+       % key not found - create new key
+%       debug( "creating new string" );
+
+       iHighKey = iHighkey + 1;
+       lNewSpeechBranch = [ percent, mood, [ LIBACT_QUOTE, CreateString() ], iHighKey ];
+       SetString( Nth( Nth( lNewSpeechBranch, 3 ), 2 ), quote );
+       SetNth( lClassBranch, 2, cons( lNewSpeechBranch, Nth( lClassBranch, 2 ) ) );
+
+       pcLastRandomClass = npc_class;
+       piLastRandomKey = iHighKey;
+       return iHighKey;
+    }
+      }
+
+      % class not found, create new branch
+      if( TRUE ) % want a way to validate a class name here
+      {
+%    debug( "RandomLib: creating new class ",npc_class );
+    iHighKey = 1;
+    lNewSpeechBranch = [ percent, mood, [ LIBACT_QUOTE, CreateString() ], iHighKey ];
+    SetString( Nth( Nth( lNewSpeechBranch, 3 ), 2 ), quote );
+    lClassBranch = [ npc_class, [ lNewSpeechBranch ] ];
+    plRandomLib = cons( lClassBranch, plRandomLib );
+
+    pcLastRandomClass = npc_class;
+    piLastRandomKey = iHighKey;
+    return iHighKey;
+      }
+
+      debug( "RandomLib: Invalid class, ignored." );
+      pcLastRandomClass = $;
+      piLastRandomKey = 0;
+      return FALSE;
+   }
+
+   AppendLastRandomLibQuote( quote = $ )
+   {
+      % appends quote to last quote added (to bypass length restriction on admin textfile read)
+
+      if( quote = $ )
+      {
+    return 0;
+      }
+      if( piLastRandomKey = 0 )
+      {
+    return 0;
+      }
+      if( pcLastRandomClass = $ )
+      {
+    return 0;
+      }
+      return send( self, @SetRandomLibQuote, #keynum = -1, #quote = quote, #append = TRUE );
+   }
+
+   SetSpeechLibTrigger( npc_class = $, keynum = 0, triggernum = 0, trigger = $, mood = $, mood_change = $ )
+   {
+      % if key and triggernum both found, replaces trigger
+      % if key is found, but not triggernum, creates new trigger
+      % if key is -1, uses last key set (for adding multiple triggers)
+      % otherwise creates new key
+      % returns key used
+      % new class added if npc_class not found -- be careful! no way to error check this? xxxAJM;
+      % mood only set on initial create
+      % if mood_change is sent, creates a mood_change trigger isntead of a quote trigger
+
+      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch, iNumTriggers, lNewAction;
+      if( keynum = -1 )
+      {
+    keynum = piLastSpeechKey;
+    npc_class = pcLastSpeechClass;
+      }
+      if( npc_class = $ )
+      {
+    pcLastSpeechClass = $;
+    piLastSpeechKey = 0;
+
+    return 0;
+      }
+      if( trigger = $ )
+      {
+    pcLastSpeechClass = $;
+    piLastSpeechKey = 0;
+    return 0;
+      }
+      if( mood = $ )
+      {
+    mood = 0;
+      }
+      if( mood < 1 )
+      {
+    mood = 0;
+      }
+
+      iHighKey = 0;
+      for lClassBranch in plSpeechLib
+      {
+    if( npc_class = First( lClassBranch ) )
+    {
+       for lSpeechBranch in Nth( lClassBranch, 2 )
+       {
+          if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
+          {
+        % look through keys for a match
+        iCurrKey = Nth( lSpeechBranch, 4 );
+        if( iCurrKey = keynum )
+        {
+           % found key - now look for triggernum
+%           debug( "found key" );
+           iNumTriggers = Length( First( lSpeechBranch) );
+           if( triggernum > iNumTriggers )
+           {
+         % add new trigger
+%         debug( "adding trigger" );
+         SetNth( lSpeechBranch, 1, cons( CreateString(), First( lSpeechBranch ) ) );
+         SetString( First( First( lSpeechBranch ) ), trigger );
+           }
+           else
+           {
+         % replace trigger, counting from end of list
+%         debug( "replacing trigger" );
+         SetString( Nth( First( lSpeechBranch ), iNumTriggers - triggernum + 1), trigger );
+           }
+           piLastSpeechKey = keynum;
+           pcLastSpeechClass = npc_class;
+           return keynum;
+        }
+        if( iCurrKey > iHighKey )
+        {
+           iHighKey = iCurrKey;
+        }
+          }
+       }
+
+       % key not found - create new key
+
+       iHighKey = iHighkey + 1;
+       if( mood_change = $ )
+       {
+          lNewAction = [ LIBACT_QUOTE, CreateString() ];
+          SetString( Nth( lNewAction, 2 ), quote_uninitialized );
+%          debug( "creating new string" );
+       }
+       else
+       {
+          lNewAction = [ LIBACT_MOOD, mood_change ];
+%             debug( "creating mood trigger" );
+       }
+       lNewSpeechBranch = [ [ CreateString() ], mood, lNewAction, iHighKey ];
+       SetString( First( First( lNewSpeechBranch) ), trigger );
+       SetNth( lClassBranch, 2, cons( lNewSpeechBranch, Nth( lClassBranch, 2 ) ) );
+       piLastSpeechKey = iHighKey;
+       pcLastSpeechClass = npc_class;
+       return iHighKey;
+    }
+      }
+
+      % class not found, create new branch
+      if( TRUE ) % want a way to validate a class name here
+      {
+    iHighKey = 1;
+    if( mood_change = $ )
+    {
+       lNewAction = [ LIBACT_QUOTE, CreateString() ];
+       SetString( Nth( lNewAction, 2 ), quote_uninitialized );
+%       debug( "creating new string in new class ", npc_class );
+    }
+    else
+    {
+       lNewAction = [ LIBACT_MOOD, mood_change ];
+%       debug( "creating mood trigger in new class ", npc_class );
+    }
+    lNewSpeechBranch = [ [ CreateString() ], mood, lNewAction, iHighKey ];
+    SetString( First( First( lNewSpeechBranch) ), trigger );
+    lClassBranch = [ npc_class, [ lNewSpeechBranch ] ];
+    plSpeechLib = cons( lClassBranch, plSpeechLib );
+
+    piLastSpeechKey = iHighKey;
+    pcLastSpeechClass = npc_class;
+    return iHighKey;
+      }
+
+      debug( "SpeechLib: Invalid class, ignored." );
+      piLastSpeechKey = iHighKey;
+      pcLastSpeechClass = npc_class;
+      return FALSE;
+   }
+
+   SetSpeechLibQuote( npc_class = $, keynum = 0, quote = $, append = FALSE )
+   {
+   % if key is found, replaces quote (or appends if append = TRUE)
+   % returns key used
+   % adding new key not allowed (must set trigger first), returns -1 if key not found
+   % uses piLastSpeechKey if keynum = -1 (use to set quote for last trigger added)
+   % adding new class not allowed, returns 0 if class not found;
+
+      local lClassBranch, lSpeechBranch, iCurrKey, iHighKey, lNewSpeechBranch;
+      if( keynum = -1 )
+      {
+    keynum = piLastSpeechKey;
+    npc_class = pcLastSpeechClass;
+      }
+      if( npc_class = $ )
+      {
+    pcLastSpeechClass = $;
+    piLastSpeechKey = 0;
+    return 0;
+      }
+      iHighKey = 0;
+      for lClassBranch in plSpeechLib
+      {
+    if( npc_class = First( lClassBranch ) )
+    {
+       for lSpeechBranch in Nth( lClassBranch, 2 )
+       {
+          if( First( Nth( lSpeechBranch, 3 ) ) = LIBACT_QUOTE )
+          {
+        % quote action
+        iCurrKey = Nth( lSpeechBranch, 4 );
+        if( iCurrKey = keynum )
+        {
+           if( append )
+           {
+%         debug( "appending string" );
+
+         setString(First(plScratchString), quote);
+
+         clearTempString();
+         appendTempString(Nth(Nth(lSpeechbranch, 3), 2));
+         appendTempString(First(plScratchString));
+         setString(Nth(Nth(lSpeechbranch, 3), 2), getTempString());
+
+%         SetString( First( plScratchString ), append_string );
+%         StringSubstitute( First( plScratchString ), append_substring1, Nth( Nth( lSpeechbranch, 3 ), 2 ) );
+%         StringSubstitute( First( plScratchString ), append_substring2, quote );
+%         SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), First( plScratchString ) );
+           }
+           else
+           {
+%         debug( "replacing string" ); 
+         SetString( Nth( Nth( lSpeechbranch, 3 ), 2 ), quote );
+           }
+           pcLastSpeechClass = npc_class;
+           piLastSpeechKey = keynum;
+           return keynum;
+        }
+        if( iCurrKey > iHighKey )
+        {
+           iHighKey = iCurrKey;
+        }
+          }
+       }
+
+       % key not found
+       debug( "key not found" );
+       pcLastSpeechClass = $;
+       piLastSpeechKey = 0;
+       return -1;
+    }
+      }
+      pcLastSpeechClass = $;
+      piLastSpeechKey = 0;
+      return 0;
+   }
+
+   AppendLastSpeechLibQuote( quote = $ )
+   {
+      % appends quote to last quote added (to bypass length restriction on admin textfile read)
+
+      if( quote = $ )
+      {
+    return 0;
+      }
+      if( piLastSpeechKey = 0 )
+      {
+    return 0;
+      }
+      if( pcLastSpeechClass = $ )
+      {
+    return 0;
+      }
+      return send( self, @SetSpeechLibQuote, #keynum = -1, #quote = quote, #append = TRUE );
+   }
+
+   SearchRandomLib(mob = $, percent = 100)
+   "Given the mob and percentage, return an action"
+   {
+      local i,j,iCount,lAction,lActionList;
+      lAction = $;
+      iCount = 0;
+      for i in plRandomLib
+      {
+         if IsClass(mob,First(i))
+         {
+            if (Send(mob,@GetAttributes) & MOB_LOCAL_ONLY) <> 0 AND
+               (First(i) <> GetClass(mob)) 
+            { continue; }
+            for j in Nth(i,2)
+            {
+               if (First(j)>=percent) AND (not Send(self,@PersonalityClash,
+                                           #mob=mob, #libvec=Nth(j,2)))
+               {
+                  % We have a legal action, so choose it perhaps.... 
+                  if Random(0,iCount) = 0 { lAction = Nth(j,3); } 
+                  iCount = iCount + 1;
+               }
+            }
+         }
+      }
+      lActionList = Send(self,@SearchMobLib,#mob=mob, #percent=percent,
+                 #count=iCount, #action_list=[lAction,$,0]);
+      if( lActionList = $ )
+      {
+    return $;
+      }
+      return First(lActionList);
+   }
+
+   % plug words into NPC dialogue, e.g. %NAME <- [player's name]
+   SpeechPlugIn( unplugged = $, who = $ )
+   {
+      local iHour;
+      SetString( first(plScratchString), unplugged );
+
+      if( unplugged = $ )
+      {
+    return;
+      }
+
+      iHour = send( SYS, @GetHour );
+      while StringContain( first(plScratchString), substring_daynight )
+      {
+    if( ( iHour < 6 ) OR ( iHour > 17 ) )
+    {
+       if StringSubstitute( first(plScratchString), substring_daynight, plugin_night ) <> 1 {break;}
+    }
+    else
+    {
+       if StringSubstitute( first(plScratchString), substring_daynight, plugin_day ) <> 1 {break;}
+    }
+      }
+      if( IsClass( who, &user ) )
+      {
+    while StringContain( first(plScratchString), substring_name )
+    {
+       if StringSubstitute( first(plScratchString), substring_name, send( who, @GetName ) ) <> 1 {break;}
+    }
+    if( send( who, @GetGender ) = GENDER_MALE )
+    {
+       while StringContain( first(plScratchString), substring_sirmadam )
+       {
+          if StringSubstitute( first(plScratchString), substring_sirmadam, plugin_sir ) <> 1 {break;}
+       }
+       while StringContain( first(plScratchString), substring_lordlady )
+       {
+          if StringSubstitute( first(plScratchString), substring_lordlady, object_lord ) <> 1 {break;}
+       }
+       while StringContain( first(plScratchString), substring_ladlassie )
+       {
+          if StringSubstitute( first(plScratchString), substring_ladlassie, plugin_lad ) <> 1 {break;}
+       }
+    }
+    else
+    {
+       while StringContain( first(plScratchString), substring_sirmadam )
+       {
+          if StringSubstitute( first(plScratchString), substring_sirmadam, plugin_madam ) <> 1 {break;}
+       }
+       while StringContain( first(plScratchString), substring_lordlady )
+       {
+          if StringSubstitute( first(plScratchString), substring_lordlady, object_lady ) <> 1 {break;}
+       }
+       while StringContain( first(plScratchString), substring_ladlassie )
+       {
+          if StringSubstitute( first(plScratchString), substring_ladlassie, plugin_lassie ) <> 1 {break;}
+       }
+    }
+      }
+      return first(plScratchString);
+   }
+
+   ParseAction(action = $,mob = $, obj = $, target = $)
+   "Basically a switch statement, where we handle our various action types"
+   {
+      local iFlag,oParl;
+      if action = $
+        { Debug("Null action in ParseAction: mob:",mob); return; }
+
+      iFlag = Nth(action,1);
+
+      if iFlag = LIBACT_QUOTE
+      % We have been asked to say a quote (string)   -AJM
+      {
+         Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_MESSAGE,
+              #string = quote_substring,
+         #parm1=Send( self, @SpeechPlugIn, #unplugged=Nth(action,2), #who=target ) );
+         return;
+      }
+
+      if iFlag = LIBACT_MOOD
+      % We have been induced to change mood   -AJM
+      {
+%    debug( "Mood change of",Nth(action,2) );
+%    debug( "  for ",send( mob, @GetName ) );
+
+         Post( mob, @SetMood, #new_mood = send( mob, @GetMood ) + Nth( action, 2 ) );
+         return;
+      }
+
+     if iFlag = LIBACT_CONDITIONAL
+      {
+         Send(mob,@AddToConditionalList,#obj=Nth(action,2),
+              #value=Nth(action,3));
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,4),
+              #parm1=Send(Nth(action,2),@GetIndef),
+              #parm2=Send(Nth(action,2),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_LEARN
+      {
+         Send(mob,@CanDoTeach,#who=target,
+                 #sid=Nth(action,2),#bskill=Nth(action,3));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY
+      % We have been asked to say something with no arguments
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJI
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetIndef),
+              #parm2=Send(Nth(action,3),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_TARG
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(target,@GetDef),
+              #parm2=Send(target,@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJD
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetDef),
+              #parm2=Send(Nth(action,3),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJD_OBJD
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetDef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Send(Nth(action,4),@GetDef),
+              #parm4=Send(Nth(action,4),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJD_OBJI
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetDef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Send(Nth(action,4),@GetIndef),
+              #parm4=Send(Nth(action,4),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJI_OBJD
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetIndef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Send(Nth(action,4),@GetDef),
+              #parm4=Send(Nth(action,4),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJI_OBJI
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetIndef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Send(Nth(action,4),@GetIndef),
+              #parm4=Send(Nth(action,4),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJD_RSC
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetDef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Nth(action,4));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJI_LIST
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetIndef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Nth(Nth(action,4),1),
+              #parm4=Nth(Nth(action,4),2),
+              #parm5=Nth(Nth(action,4),3));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_OBJI_RSC
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetIndef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Nth(action,4));
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_RSC
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Nth(action,3));
+         return;
+      }
+
+      if iFlag = LIBACT_RUMOR_COURT_STATE
+      {
+         oParl= Send(SYS,@GetParliament);
+         if oParl<>$
+           {Send(oParl,@CourtStateRumor,#mob=mob,#faction=Nth(action,2));}
+         return;
+      }
+
+      if iFlag = LIBACT_NUMBER_REPORT
+      {
+         oParl= Send(SYS,@GetParliament);
+         if oParl<>$
+           {Send(oParl,@CourtNumberRumor,#mob=mob);}
+         return;
+      }
+
+      if iFlag = LIBACT_RUMOR_TOKEN_LOC
+      {
+         oParl= Send(SYS,@GetTokenGame);
+         if oParl<>$
+           {Send(oParl,@TokenLocRumor,#mob=mob,#who=target);}
+         return;
+      }
+
+      if iFlag = LIBACT_SAY_RSC_RSC
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Nth(action,3),
+              #parm2=Nth(action,4));
+         return;
+      }
+
+      if iFlag = LIBACT_QST_SAY_OBJD
+      % We have been sent to get a message.. So lets flag the player
+      {
+         if isClass(mob,&Factions) 
+         {
+            if (not Send(target,@PlayerIsIntriguing))
+            {
+               Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                   #type=SAY_RESOURCE,#string=faction_visit_novice);
+               return;
+            }
+            if (Send(target,@GetFaction)=Send(mob,@GetFaction)) AND
+               (Send(target,@GetFactionService)<FACTION_MIN_REVISIT_TIME)
+            {
+               Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                   #type=SAY_RESOURCE,#string=faction_visit_too_soon);
+               return;
+            }
+            if ( (Send(target,@GetFaction)<>FACTION_NEUTRAL) AND
+                 (Send(mob,@GetFaction)<>Send(target,@GetFaction)))
+            {
+               if (Send(Send(SYS,@GetParliament),@GetPower,
+                  #faction=Send(mob,@GetFaction))=FACTION_STRONGLY_IN)
+                  {
+                     Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                        #type=SAY_RESOURCE,#string=faction_visit_wrong,
+                        #parm1=faction_visit_wrong_decline);
+                  }
+               else
+                  {
+                     Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                        #type=SAY_RESOURCE,#string=faction_visit_wrong,
+                        #parm1=faction_visit_wrong_accept);
+                  }
+               return;
+            }
+            if (Send(Send(SYS,@GetParliament),@GetPower,
+                    #faction=Send(mob,@GetFaction))=FACTION_STRONGLY_IN) AND
+                 (Send(mob,@GetFaction)<>Send(target,@GetFaction))
+            {
+               Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                   #type=SAY_RESOURCE,#string=faction_too_strong);
+               return;
+            }
+            if ( (Send(target,@GetFaction)<>FACTION_NEUTRAL) AND
+                 (Send(mob,@GetFaction)=Send(target,@GetFaction)))
+            {
+               Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                   #type=SAY_RESOURCE,#string=factionite_visit_start);
+            }
+            if Send(target,@GetFaction)=FACTION_NEUTRAL
+            {
+               Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                   #type=SAY_RESOURCE,#string=neutral_visit_start);
+            }
+         }
+         
+         Send(self,@RecordCompletedQuest,#who=target,
+                   #questid=Send(self,@GetQuestID,#who=mob),
+                   #type=QST_TEMP_PHRASE);
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@Getdef),
+              #parm2=Send(Nth(action,3),@GetName));
+         return;
+      }
+
+      if iFlag = LIBACT_QST_OBJI_LIST
+      % Lets make sure the player is flagged, before we tell them the message.
+      {
+         if Send(self,@HasDoneQuestID,#who=target,
+                 #questID=Send(self,@GetQuestID,#who=Nth(action,3)))
+         {
+            Send(self,@RecordCompletedQuest,#who=target,
+                #questID=(-1*Send(self,@GetQuestID,#who=Nth(action,3))),
+                #type=QST_TEMP_PHRASE);
+            Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = Nth(action,2),
+              #parm1=Send(Nth(action,3),@GetIndef),
+              #parm2=Send(Nth(action,3),@GetName),
+              #parm3=Nth(Nth(action,4),1),
+              #parm4=Nth(Nth(action,4),2),
+              #parm5=Nth(Nth(action,4),3));
+         }
+         else
+         {
+            Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+              #string = QM_no_record, #parm1=Send(Nth(action,3),@GetIndef),
+              #parm2=Send(Nth(action,3),@GetName));
+         }
+         return;
+      }
+
+      if iFlag = LIBACT_COUNCILOR_REPORT
+      {
+         oParl= Send(SYS,@GetTokenGame);
+         if oParl<>$
+          { Send(oParl,@CouncilorReport,#mob=mob,
+               #who=target,#num=Nth(action,2));
+          }
+         return;
+      }
+      
+      if iFlag = LIBACT_MONSTER_ADVICE
+      {
+         %this is a special routine, basically someone asked us about a
+         %monster and we want to reply intelligently giving info about
+         %how hard the monster is for the target, what its karma is like,
+         %and perhaps even a hint on weakness or strength of the monster.
+         %To do this, we either need to have access to a monster of the
+         %type, or the info is hardcoded somehow... So, lets assume that
+         %the information being passed to us includes the monster class.
+
+         Send(self,@MonsterAdvice,#mob=mob,#person=target,#action=action);
+         return;
+      }
+
+      if iFlag = LIBACT_MANA_NODE_LIST
+      {
+         Send(self, @PlayerManaNodeList, #mob = mob, #person = target);
+         return;
+      }
+
+      Debug ("Parse Action ended without matching an action: ",Nth(action,1));
+      return;
+   }
+
+   MonsterAdvice(mob=$,person=$,action=$)
+   {
+      local iRnd,oObj,iMval,iPval;
+
+      if not isClass(person,&User) {return;}
+      oObj=Create(Nth(action,2));
+      iRnd=Random(1,10);
+      iMval=Send(oObj,@Getlevel);
+      iPval=Send(person,@GetBaseMaxHealth);
+
+      if iPval+30<iMval { prMonster_advice=LM_monster_really_hard; }
+      else
+      {
+         if iPval+15<iMval { prMonster_advice=LM_monster_too_hard; }
+         else
+         { if iPval-5>iMval { prMonster_advice=LM_monster_too_easy; }
+            else { prMonster_advice=LM_monster_about_right; }
+         }
+      }
+
+      prGroup_advice=$;
+      prKarma_advice=$;
+      if iMval>(2*iPval)
+      {
+         prGroup_advice=LM_monster_for_groups;
+      }
+
+      if iRnd<5
+      {
+         %say something about its karma
+         iPval=Send(oObj,@GetKarma);
+         if iPval>=45 { prKarma_advice=LM_monster_has_high_karma; }
+         else 
+         {
+          if iPval>=15 { prKarma_advice=LM_monster_has_good_karma; }
+          else
+          {
+           if iPval>(-15){ prKarma_advice=LM_monster_has_neutral_karma; }
+           else 
+           {
+            if iPval>(-45) { prKarma_advice=LM_monster_has_bad_karma; }
+            else { prKarma_advice=LM_monster_has_low_karma; }
+           }
+          }
+         }
+      }
+
+      if prGroup_advice=$ AND prKarma_advice=$
+      {
+         Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+          #string=LM_advice_string1,#parm1=prMonster_advice,
+          #parm2=Send(oObj,@GetCapDef),#parm3=Send(oObj,@GetName));
+      }
+      else
+      {  if prGroup_advice=$
+         {
+            Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
+             #string=LM_advice_string2,#parm1=prMonster_advice,
+             #parm2=prKarma_advice,
+             #parm3=Send(oObj,@GetCapDef),#parm4=Send(oObj,@GetName),
+             #parm5=Send(oObj,@GetCapDef),#parm6=Send(oObj,@GetName));
+         }
+         else
+         {  if prKarma_advice=$
+            {
+               Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                #type=SAY_RESOURCE, #string=LM_advice_string2,
+                #parm1=prMonster_advice,#parm2=prGroup_advice,
+                #parm3=Send(oObj,@GetCapDef),#parm4=Send(oObj,@GetName));
+            }
+            else 
+            {
+               Send(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+                #type=SAY_RESOURCE, #string=LM_advice_string3,
+                #parm1=prMonster_advice,#parm2=prGroup_advice,
+                #parm3=prKarma_advice,
+                #parm4=Send(oObj,@GetCapDef),#parm5=Send(oObj,@GetName),
+                #parm6=Send(oObj,@GetCapDef),#parm7=Send(oObj,@GetName));
+            }
+         }
+      }
+   
+      Send(oObj,@Delete);
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% QUEST ENGINE ROUTINES
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% MAINTAIN/CREATE QUEST ENGINE LISTS
+
+   CreateQuestDictionary()
+   {
+      plQuestDictionary = $;
+      plQuestDictionary = [
+      LT_aubergine, LT_baobab, LT_couloir, LT_dornick, LT_ergot, LT_francolin,
+      LT_heddle, LT_infusorian, LT_jejune, LT_kedge, LT_lumbago, LT_megalith,
+      LT_nunatak, LT_operculum, LT_pettifogger, LT_quisling, LT_rigatoni,
+      LT_solarium, LT_tiara, LT_ullage, LT_valance, LT_whirlwind, LT_xylem,
+      LT_yamen, LT_zeitgeist ];
+
+      return;
+   }
+
+   CreateQuestOfferClasses()
+   {
+      plQuestOfferClasses = $;
+      plQuestOfferClasses = [
+        &OrcTooth, &Diamond, &Ruby, &DarkAngelFeather, &Scimitar,
+        &BlueMushroom, &Chalice, &BlueDragonScale, &Scepter, 
+        &ShadowAmulet,&RingofLethargy, &StaffOfJolting, &EntrootBerry ];
+      return;
+   }
+
+   GetQuestRewardList()
+   {
+      return plQuestRewards;
+   }
+
+   CreateQuestRewards()
+   {
+      plQuestRewards = $;
+      plQuestRewards = [
+        &InkyCap, &FireWand, &HealWand, &VampireWand, &Key,
+        &BerserkerRing, &FireRing, &RingInvisibility, &Circlet,
+        &MysticSword, &PlateArmor, &KnightShield, &DarkAngelFeather,
+        &BlueDragonScale, &Gauntlet, &StaffOfJolting, &EntrootBerry ];
+      return;
+   }
+
+   AddtoQuesterList(who = $)
+   {
+      plQuesterList = Cons(who,plQuesterList);
+      return;
+   }
+
+   MoveQuesterOn(who = $)
+   {
+      local i;
+      for i in plQuesterList
+      {
+         if i = who
+         {
+            plOnQuestList = Cons(i,plOnQuestList);
+            plQuesterList=DelListElem(plQuesterList,i);
+         }
+      }
+      return;
+   }
+
+   MoveQuesterOff(who = $)
+   {
+      local i;
+      for i in plOnQuestList
+      {
+         if i = who
+         {
+            plQuesterList = Cons(i,plQuesterList);
+            plOnQuestList=DelListElem(plOnQuestList,i);
+         }
+      }
+      return;
+   }
+
+   DeleteExtraQuests()
+   "This walks the list of quests, and deletes any that dont mesh."
+   "I.E. if the quester doesnt have the id as its questid, the quest is junked."
+   {
+      local i; 
+      for i in plQuests
+      {
+      if Send(Self,@GetQuestID,#who=Nth(i,2))<>First(i)
+      {
+         Send(self,@DeleteQuest,#id=First(i),#clean=True);
+      }
+      }
+      return;
+   }
+
+
+   DeleteFromQuesterList(who = $)
+   {
+      local i;
+      for i in plOnQuestList
+      {
+          if i = who 
+          {
+             Send(self,@DeleteQuest,#id=Send(self,@GetQuestID,#who=who));
+             break;
+          }
+      }
+      for i in plQuesterList
+      {
+          if i = who
+          {
+             plQuesterList=DelListElem(plQuesterList,i);
+             break;
+          }
+          
+      }
+      return;
+   }
+
+   AddToHinterList(who = $)
+   {
+      plHinterList = Cons(who,plHinterList);
+      return;
+   }
+
+   DeleteFromHinterList(who = $)
+   {
+      local i;
+      for i in plHinterList
+      {
+         if i = who
+         {
+            %We may have lost an active hinter.. so replace it..
+            for i in plQuests
+            {
+               if who = Nth(i,3)
+               {
+                  if Length(plHinterList) < 2 
+                  {
+                     %Debug("Quest ran out of hinter mobs. so Deleted");
+                     Send(self,@DeleteQuest,#id=Nth(i,1)); 
+                  }
+                  else 
+                  {
+                     SetNth(i,3,Send(self,@SelectHinter));
+                     while Nth(i,3) = Nth(i,2)
+                     {
+                        SetNth(i,3,Send(self,@SelectHinter));
+                     }
+
+                     Send(Self,@RemoveQuestTriggers,#id=Nth(i,1));
+                     Send(Self,@DispenseTriggers,#id=Nth(i,1),
+                       #quester=Nth(i,2),#hinter=Nth(i,3),
+                       #type=Nth(i,4),#goal=Nth(i,5));
+                  }
+               }
+            }
+            plHinterList=DelListElem(plHinterList,who);
+            return;
+         }
+      }
+      return;
+   }
+
+% QUEST COMPLETED DATABASE
+
+   StripTempQuests(id = 0)
+   {
+      %We want to eliminate all trace of the given quest from the temp ranks.
+      local i,j,oWho,lTemp,lPerm,iCount;
+
+      if id = 0 { return; }
+      iCount=0;
+
+      for i in plQuestUsers
+      {
+         iCount= iCount+1;
+         oWho=Nth(i,1);
+         lPerm=Nth(i,2);
+         lTemp=Nth(i,3);
+         for j in lTemp
+         {
+            if j=id
+            { 
+               lTemp=DelListElem(lTemp,j);
+            }
+         }
+         if lPerm=$ AND lTemp=$
+            { iCount=iCount - 1; plQuestUsers=DelListElem(plQuestUsers,i);}
+%         else { SetNth(plQuestUsers,iCount,[oWho,lPerm,lTemp]);}  (DISABLED -- AJM)
+      }
+      return;
+   }
+
+   DeleteCompletedQuest(who = $, id = 0)
+   {
+      local i,j,lPerm,lTemp,iCount;
+
+      if id = 0 OR who = $ {return;}
+      iCount=0;
+      for i in plQuestUsers
+      {
+         iCount= iCount+1;
+         if First(i) = who
+         {
+            lPerm=Nth(i,2);
+            lTemp=Nth(i,3);
+            for j in lPerm {if j=id OR id=(-1) {lPerm=DelListElem(lPerm,j);}}
+            for j in lTemp {if j=id OR id=(-1) {lTemp=DelListElem(lTemp,j);}}
+            if lPerm=$ AND lTemp=$ {plQuestUsers=DelListElem(plQuestUsers,i);}
+%            else { SetNth(plQuestUsers,iCount,[who,lPerm,lTemp]);} % (DISABLED -- AJM)
+            return;
+         }
+      }
+      return;
+   }
+
+%  (DISABLED -- AJM)
+   RecordCompletedQuest(who = $, questID = 0, type = 0)
+   "Give the user credit for completing a quest in the quest database"
+   {
+%      local i,j,lTemp;
+%     if (who=$) OR (not IsClass(who,&User)) OR (questID=0) or (type=0)
+%         { return; }
+%      for i in plQuestUsers
+%      {
+%         if First(i) = who
+%         {
+%            if (type = QST_PERM_OBJECT) OR (type = QST_PERM_PHRASE)
+%            {
+%               lTemp = Nth(i,2);
+%               for j in lTemp { if j = questID { return; } }
+%               lTemp = Cons(questID,lTemp);
+%               SetNth(i,2,lTemp);
+%               return;
+%            }
+%            else
+%            {
+%               lTemp = Nth(i,3);
+%               for j in lTemp { if j = questID { return; } }
+%               lTemp = Cons(questID,lTemp);
+%               SetNth(i,3,lTemp);
+%               return;
+%            }
+%         }
+%      }
+%      if (type = QST_PERM_OBJECT) OR (type = QST_PERM_PHRASE)
+%      { lTemp = [ who, [questID], $ ]; }
+%      else { lTemp = [ who, $, [questID] ]; }
+%
+%      plQuestUsers = Cons(lTemp,plQuestUsers);
+%       
+      return;
+   }
+
+   HasDoneQuestID(who = $, questID = 0)
+   "Check to see if the user has completed a quest of the given id"
+   {
+      local i,j;
+      if questID = 0  OR who = $ OR (not IsClass(who,&User)) { return False;}
+      for i in plQuestUsers
+      {
+         if First(i) = who
+         {
+            for j in Nth(i,2) { if j = questID { return True; } }
+            for j in Nth(i,3) { if j = questID { return True; } }
+            return False;
+         }
+      }
+      return False;
+   }
+
+% HANDLE QUEST OPERATIONS
+
+   CreateQuest(type=0, quester=$, reward=$)
+   "if there are no arguments, its a temp quest. "
+   {
+      local i,itemp,iType, oGoal, oQuester, oHinter, lReward, iId;
+
+      iType = type;
+      if iType = QST_PERM_OBJECT OR iType = QST_PERM_PHRASE
+      % this is a recycling quest... so clean up and then restart
+      {
+    iId=Send(self,@GetQuestID,#who=quester);
+    oQuester=quester;
+    lReward=reward;
+    if send(oQuester,@MobIsBuyer) or isClass(oQuester,&Factions)
+        {iType=QST_PERM_PHRASE;}
+    else {iType = Random(QST_PERM_OBJECT,QST_PERM_PHRASE);}
+       
+    % id = 0 means that its the first call of the quest
+    if iId = 0
+    {
+       iId = Send(Self,@GetNextQuestID); 
+       Send(self,@MoveQuesterOn,#who=oQuester);
+    }
+    else
+    {
+       % If we are recycling a faction quest, lets burn a new id and
+       % strip the old ones away... We also need to make sure that this
+       % quest gets cleaned up properly.
+       if isclass(oQuester,&Factions)
+       {
+         Send(self,@StripTempQuests,#id=iId);
+         Send(self,@StripTempQuests,#id=-iId);
+         Send(Self,@RemoveQuestTriggers,#id=iId);
+         for i in plQuests
+         {
+         if iId = Nth(i,1)
+       {
+       plQuests=DelListElem(plQuests,i);
+       }
+         }
+         iId = Send(Self,@GetNextQuestID);
+       }
+    }
+      }
+      else 
+      % its a one-shot temporary quest we want to build....
+      {
+    oQuester = Send(self,@SelectQuester); 
+    if oQuester=$ {return;}
+
+    Send(self,@MoveQuesterOn,#who=oQuester);
+    lReward = Send(self,@SelectQuestReward);
+    iId = Send(self,@GetNextQuestID);
+    if send(oQuester,@MobIsBuyer) {iType=QST_TEMP_PHRASE;}
+    else {iType = Random(QST_TEMP_OBJECT,QST_TEMP_PHRASE);}
+      }
+
+      oHinter = Send(self,@SelectHinter);
+      if Length(plHinterList) > 1
+    {
+    while oHinter = oQuester 
+       { oHinter = Send(self,@SelectHinter);}
+    }
+
+      oGoal = Send(self,@SelectQuestGoal,#type = iType);
+      Send(self,@InstallQuest,#quester=oQuester,#hinter=oHinter,#type=iType,
+      #goal=oGoal,#reward=lReward,#id=iId);
+      Send(self,@DispenseTriggers,#type=iType,#goal=oGoal,#id=iId,
+      #quester=oQuester,#hinter=oHinter);
+
+      return;
+   }
+
+   IsQuestStringMatch(string=$,id=0,goal=$,who=$,mob=$)
+   {
+      local i,j,lGoal,bTest,bOld,oQuester,lReward,hinter;
+
+      if goal=$ { lGoal = Send(self,@GetQuestGoal,#id=id); bOld=False; }
+      else {lGoal = goal; bOld=True;}
+    
+      for i in lGoal { if not StringContain(string,i) {return False;} }
+
+      %The player said all the keywords, make sure they werent guessing all
+      
+      for i in plQuestDictionary
+      {
+         bTest=False;
+         if StringContain(string,i)
+         % this better be in the goal, otherwise they cheated :)
+         {
+            for j in lGoal
+            {
+               if i = j {bTest=True;break;} 
+            }
+            if not bTest { return False; }
+         } 
+      }
+    %is the mob a one-time permquester?
+      if id=0 { Send(self,@GetQuestID,#who=mob); }
+      if id <> 0
+      {
+         lReward=Send(self,@GetQuestReward,#id=id);
+         if First(lReward) = QST_REWARD_ID AND
+            Send(self,@HasDoneQuestID,#who=who,#questID=Nth(lReward,2))
+         {
+            Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+              #what=oQuester,#type=SAY_RESOURCE,#string = QM_already_done);
+            return False;
+         }
+      }
+
+      if bOld
+      {
+         Post(Send(mob,@GetOwner),@SomeoneSaid,#what=mob,
+             #type=SAY_RESOURCE,#string=QM_old_phrase);
+         return False;
+      }
+
+      if not Send(self,@HasDoneQuestID,#who=who,#questID=id)
+      {
+         Post(Send(who,@GetOwner),@SomeoneSaid,#what=mob,
+             #type=SAY_RESOURCE,#string=QM_never_sent);
+         return False;
+      }
+
+      if not Send(self,@HasDoneQuestID,#who=who,#questID=-id)
+      {
+         hinter=Send(self,@GetHinter,#id=id);
+         Post(Send(who,@GetOwner),@SomeoneSaid,#what=mob,
+             #type=SAY_RESOURCE,#string=QM_missed_middle,
+             #parm1=Send(hinter,@GetDef),#parm2=Send(hinter,@GetName));
+         return False;
+      }
+
+      Send(self,@DeleteCompletedQuest,#who=who,#id=id);
+      Send(self,@DeleteCompletedQuest,#who=who,#id=-id);
+      return True;
+   }
+
+   FinishedQuest(who=$,id=0) 
+   {
+      local i,j,iType,lReward,oTmp,oQuester,oGoal,iServ;
+
+      %if already completed, just return with error message. 
+
+      oQuester=Send(self,@GetQuester,#id=id);
+      oGoal = Send(self,@GetQuestGoal,#id=id);
+      iType = Send(self,@GetQuestType,#id=id);
+      lReward = Send(self,@GetQuestReward,#id=id);
+
+      if First(lReward) = QST_REWARD_SERVICE
+      {
+    if (not Send(who,@PlayerIsIntriguing))
+    {
+       Post(Send(oQuester,@GetOwner),@SomeoneSaid,#what=oQuester,
+          #type=SAY_RESOURCE,#string=faction_visit_novice);
+       return;
+    }
+    if Send(who,@GetFaction)<>FACTION_NEUTRAL and
+       Send(who,@GetFaction)<>Send(oQuester,@GetFaction)
+    {
+       if (Send(Send(SYS,@GetParliament),@GetPower,
+           #faction=Send(oQuester,@GetFaction))=FACTION_STRONGLY_IN)
+            {
+         Post(Send(oQuester,@GetOwner),@SomeoneSaid,#what=oQuester,
+           #type=SAY_RESOURCE,#string=faction_visit_wrong,
+                #parm1=faction_visit_wrong_decline);
+            }
+            else
+            {
+         Post(Send(oQuester,@GetOwner),@SomeoneSaid,#what=oQuester,
+           #type=SAY_RESOURCE,#string=faction_visit_wrong,
+                #parm1=faction_visit_wrong_accept);
+            }
+       return;
+    }
+    %Give em 2500 coins - 100 for each hour its been since they visited.
+    if Send(who,@GetFaction)=Send(oQuester,@GetFaction)
+      { iServ = 100*Send(who,@GetFactionService)/3600; }
+    else
+      {iServ = 0;}
+    oTmp = Send(who,@GetMoneyObject);
+    if oTmp = $
+    {
+       oTmp = Create(&Money,#number=bound(SERVICE_GOLD_REWARD-iServ,1,$));
+       Send(who,@NewHold,#what=oTmp);
+    }
+    else
+    {
+       send(oTmp,@AddNumber,#number=bound(SERVICE_GOLD_REWARD-iServ,1,$));
+    }
+
+   for i in Send(Send(SYS,@GetParliament),@GetFactionList)
+   {
+      if First(i)=Send(oQuester,@GetFaction)
+      {
+         for j in Nth(i,2)
+         {
+       if j=who {continue;}
+       if Send(self,@HasDoneQuestID,#who=j,#questid=(-id))
+       {
+          Send(j,@MsgSendUser,#message_rsc=Faction_visit_completed);
+          Send(j,@UpdateFactionService,#middle=True);
+          continue;
+       }
+       if Send(self,@HasDoneQuestID,#who=j,#questid=(id))
+       {
+          Send(j,@MsgSendUser,#message_rsc=Faction_visit_completed);
+          Send(j,@UpdateFactionService,#front=True);
+       }
+         }
+         
+         break;
+      }
+   }
+   
+   if Send(who,@GetFaction)=FACTION_NEUTRAL 
+   {
+     Send(who,@JoinFaction,#new_Faction=Send(oQuester,@GetFaction));
+     Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+      #what=oQuester,#type=SAY_RESOURCE,#string = QM_join_congrats);
+   }
+   else
+   {
+     Send(who,@UpdateFactionService,#full=True);
+     Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+      #what=oQuester,#type=SAY_RESOURCE,#string = QM_visit_congrats);
+   }
+      }
+      
+      if First(lReward) = QST_REWARD_ID
+      {
+    if Send(self,@HasDoneQuestID,#who=who,#questID=Nth(lReward,2))
+    {
+       Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+         #what=oQuester,#type=SAY_RESOURCE,#string = QM_already_done);
+       return False;
+    }
+    Send(self,@RecordCompletedQuest,#who=who,
+        #questID=Nth(lReward,2), #type=iType);
+    Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+       #what=oQuester,#type=SAY_RESOURCE,#string = QM_ID_congrats);
+      }
+      
+      if First(lReward) = QST_REWARD_ITEMLIST
+      {
+    Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+          #what=oQuester,#type=SAY_RESOURCE,#string=QM_item_congrats);
+    for i in Nth(lReward,2)
+    {
+       oTmp = Create(i);
+       if Send(who,@ReqNewHold,#what=oTmp)
+       {
+          Send(who,@NewHold,#what=oTmp);
+       }
+       else
+       {
+          Send(Send(who,@GetOwner),@NewHold,#what=oTmp,
+          #new_row=Send(who,@GetRow),#new_col=Send(who,@GetCol));
+          Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+        #what=oQuester,#type=SAY_RESOURCE,#string=QM_item_too_heavy,
+        #parm1=Send(oTmp,@GetDef),#parm2=Send(oTmp,@GetName));
+       }
+    }
+      }
+
+      if First(lReward) = QST_REWARD_MONEY
+      {
+    oTmp = Send(who,@GetMoneyObject);
+    if oTmp = $
+    {
+       oTmp = Create(&Money,#number=Nth(lReward,2));
+       Send(who,@NewHold,#what=oTmp);
+    }
+    else
+    {
+       send(oTmp,@AddNumber,#number=Nth(lReward,2));
+    }
+    Post(Send(oQuester,@GetOwner),@SomeoneSaid,
+       #what=oQuester,#type=SAY_RESOURCE,#string = QM_money_congrats);
+      }
+
+      if iType = QST_PERM_OBJECT OR iType = QST_TEMP_OBJECT
+      {
+    Send(self,@KeepOldQuestClass,#mob=oQuester,#class=GetClass(oGoal));
+    %take the goal object out of the game
+    for i in plQuestOfferObjects
+    {
+       if i = oGoal
+       {
+          plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
+          Send(oGoal,@Delete);
+       }
+    }
+      }
+      else
+      {
+    Send(self,@KeepOldQuestPhrase,#mob=oQuester,#phrase=oGoal);
+      }
+      %delete or recreate
+      if (iType = QST_PERM_OBJECT) OR (iType = QST_PERM_PHRASE)
+      {
+    Send(Self,@RemoveQuestTriggers,#id=id);
+    Send(self,@CreateQuest,#type=iType,
+         #quester=Send(self,@GetQuester,#id=id),
+         #reward=Send(self,@GetQuestReward,#id=id));
+    % It should be the case here that any players who have temporary
+    % quests based on this quest get that removed.
+    Send(Self,@StripTempQuests,#id=id);
+      }
+      else
+      {
+    Send(Self,@DeleteQuest,#id=id);
+      }
+
+      return True;
+   }
+
+   DeleteQuest(id = 0,clean=False)
+   "Take the quest out of the Quests Database, and out of any associated mobs"
+   {
+      local i,iType,oGoal;
+
+      if id = 0 { return; }
+
+      % It should be the case here that any players who have temporary
+      % quests based on this quest get that removed.
+      Send(Self,@StripTempQuests,#id=id);
+      Send(Self,@StripTempQuests,#id=-id);
+
+      iType = Send(self,@GetQuestType,#id=id);
+      if iType = QST_PERM_OBJECT OR iType = QST_TEMP_OBJECT
+      {   
+    oGoal = Send(self,@GetQuestGoal,#id=id);
+    for i in plQuestOfferObjects
+    {
+       if i = oGoal
+       {
+          plQuestOfferObjects = DelListElem(plQuestOfferObjects,i);
+          Send(oGoal,@Delete);
+       }
+    }
+      }
+
+      Send(Self,@RemoveQuestTriggers,#id=id);
+
+      if clean=False
+      { Send(Self,@MoveQuesterOff,#who=Send(Self,@GetQuester,#id=id));}
+
+      for i in plQuests
+      {
+    if id = Nth(i,1)
+    {
+       plQuests=DelListElem(plQuests,i);
+    }
+      }
+      
+      return;
+   }
+
+%   (DISABLED -- AJM)
+   InstallQuest(quester=$,hinter=$,type=0,goal=$,reward=$,id=0)
+   {
+%      local i,lQuest;
+%     if quester=$ OR hinter=$ or type=0 OR goal=$ OR id=0 OR reward=$
+%      {
+%         Debug("Error in installation of quest... not all values filled");
+%         return;
+%      }
+%      %if the quest already exists, delete it.
+%      for i in plQuests
+%      {
+%         if id = Nth(i,1)
+%         {
+%            plQuests=DelListElem(plQuests,i);
+%         }
+%      }
+%      
+%      lQuest=[id,quester,hinter,type,goal,reward];
+%      plQuests=Cons(lQuest,plQuests);
+      return;
+   }
+
+%   (DISABLED -- AJM)
+   QuestGenerationTimer()
+   "We only add a quest if there arent that many in existance. Unless the"
+   "random number dictates that we should."
+   {
+%      local iRnd,iQuester;
+
+      ptQuestGenTimer=$;
+%      ptQuestGenTimer=CreateTimer(self,@QuestGenerationTimer,piGenTimerLength);
+%      
+%      if plQuesterList <> $ AND
+%         Random(1,100) > Bound(100*Length(plOnQuestList) /
+%                        (Length(plOnQuestList)+Length(plQuesterList)),5,95)
+%      {
+%         Send(self,@CreateQuest);
+%      }
+      return;
+   }
+
+   RemoveQuestTriggers(id=$)
+   {
+      local i,j,iType;
+
+      for i in [Send(self,@GetQuester,#id=id),Send(self,@GetHinter,#id=id)]
+      {
+         Send(self,@DeleteFromMobLib,#mob=i,#id=id);
+      }
+      iType = Send(Self,@GetQuestType,#id=id);
+
+      if iType = QST_PERM_OBJECT OR iType = QST_TEMP_OBJECT
+      {
+         Send(Send(self,@GetQuester,#id=id),@CutWantedItem,
+                 #class=GetClass(Send(Self,@GetQuestGoal,#id=id)));
+      }
+      return;
+   }
+
+%  (DISABLED -- AJM )
+   DispenseTriggers(type=0,id=0,goal=$,quester=$,hinter=$)
+   {
+%      if isclass(quester,&factions)
+%      {
+%         Send(self,@AddToMobLib,#mob=quester, #triggers=[LT_errand,LT_favor],
+%            #action=[LIBACT_QST_SAY_OBJD,QM_mob_int_phrase,hinter],#id = id);
+%         Send(self,@AddToMobLib,#mob=hinter, #triggers=[LT_message],
+%            #action=[LIBACT_SAY,QM_hint_msg],#id=id);
+%         Send(self,@AddToMobLib,#mob=hinter, #triggers=[Send(quester,@GetName)],
+%            #action=[LIBACT_QST_OBJI_LIST,QM_hint_int_phrase,quester,goal],#id=id);
+%         return;
+%      }
+
+%      if type = QST_PERM_OBJECT OR type = QST_TEMP_OBJECT
+%      {
+%         Send(quester,@SetWantedItem,#class=GetClass(goal));
+%         Send(self,@AddToMobLib,#mob=quester, #triggers=[LT_errand,LT_favor],
+%            #action=[LIBACT_SAY,QM_mob_object],#id=id);
+%         Send(self,@AddToMobLib,#mob=hinter, #triggers=[LT_errand,LT_favor],
+%            #action=[LIBACT_SAY_OBJI_OBJI,QM_hint_object,quester,goal],#id=id);
+%         Send(self,@AddToMobLib,#mob=hinter, #percent=QST_RNDM_PERCENT,
+%            #action=[LIBACT_SAY_OBJI_OBJI,QM_hint_object,quester,goal],#id=id);
+%      }
+%      else  %Its a phrase type quest
+%      {
+%         Send(self,@AddToMobLib,#mob=quester, #triggers=[LT_errand,LT_favor],
+%            #action=[LIBACT_QST_SAY_OBJD,QM_mob_phrase,hinter],#id = id);
+%         Send(self,@AddToMobLib,#mob=hinter, #triggers=[LT_message],
+%            #action=[LIBACT_SAY,QM_hint_msg],#id=id);
+%         Send(self,@AddToMobLib,#mob=hinter, #triggers=[Send(quester,@GetName)],
+%            #action=[LIBACT_QST_OBJI_LIST,QM_hint_phrase,quester,goal],#id=id);
+%      }
+      return;
+   }
+
+   SelectQuestGoal(type=$)
+   {
+      local bAlready,iCount,i,j,cGoal,Goal,tmp,tmp2,tmp3;
+      Goal=$;
+      iCount=0;
+      bAlready=False;
+      if type = QST_PERM_OBJECT OR type = QST_TEMP_OBJECT
+      {
+    for i in plQuestOfferClasses
+    {
+       if Random(0,iCount) = 0 { cGoal = i;} 
+       iCount = iCount + 1;
+    }
+
+         % if cgoal is already on the quest list, then lets do a reroll.
+         for i in plQuestOfferObjects
+         {
+            if IsClass(i,cgoal)
+            {
+               bAlready=True;
+               iCount=0;
+            }
+         }
+
+         if bAlready=True
+         {
+      for i in plQuestOfferClasses
+      {
+         if Random(0,iCount) = 0 { cGoal = i;} 
+         iCount = iCount + 1;
+      }
+         }
+
+    Goal = Create(cGoal);
+    plQuestOfferObjects = Cons(Goal,plQuestOfferObjects);
+      }
+      else
+      {
+    iCount=0;
+    for i in plQuestDictionary
+    {
+       if Random(0,iCount) = 0 { tmp = i;}
+       iCount = iCount + 1;
+    }
+    Goal = Cons(tmp,Goal);
+
+    iCount=0;
+    for i in plQuestDictionary
+    {
+       if tmp <> i
+       {
+          if Random(0,iCount) = 0 { tmp2 = i;}
+          iCount = iCount + 1;
+       }
+    }
+    Goal = Cons(tmp2,Goal);
+
+    iCount=0;
+    for i in plQuestDictionary
+    {
+       if tmp <> i AND tmp2 <> i
+       {
+          if Random(0,iCount) = 0 { tmp3 = i;}
+          iCount = iCount + 1;
+       }
+    }
+    Goal = Cons(tmp3,Goal);
+      }
+
+      return Goal;
+   }
+
+
+   SelectQuestReward()
+   {
+      local iInt,lReward,lTemp,iCount;
+
+      if Random(1,2) = 1
+      {
+         lReward=[QST_REWARD_MONEY,Random(QST_LOW_MONEY,QST_HIGH_MONEY)];
+      }
+      else
+      {
+         lTemp=$;
+         iCount=0;
+         while 1 = 1
+         {
+            iCount= iCount+1;
+            lTemp = Cons(Nth(plQuestRewards,Random(1,Length(plQuestRewards))),
+                         lTemp);
+            if Random(0,QST_MAX_ITEMS) <= iCount {break;}
+         }
+         lReward=[QST_REWARD_ITEMLIST,lTemp];
+      }
+      return lReward;
+   }
+
+   SelectQuester()
+   {
+      local iCount,i,oMob;
+      oMob=$;
+      iCount=0;
+      for i in plQuesterList
+      {
+         if Random(0,iCount) = 0 { oMob = i;} 
+         iCount = iCount + 1;
+      }
+      return oMob;
+   }
+
+   SelectHinter()
+   {
+      local iCount,i,oMob;
+      oMob=$;
+      iCount=0;
+      for i in plHinterList
+      {
+         if Random(0,iCount) = 0 { oMob = i;} 
+         iCount = iCount + 1;
+      }
+      return oMob;
+   }
+
+% ACCESS THE EXISTING QUEST DATABASE
+%
+% Quest = [ id, quester, hinter, type, goal, [ reward ], 
+
+
+   GetQuestID(who = $)
+   {
+      local i;
+      for i in plQuests
+      {
+         if who = Nth(i,2) { return Nth(i,1); }
+      }
+      return 0;
+   } 
+
+   GetQuester(id = $)
+   {
+      local i;
+      for i in plQuests
+      {
+         if First(i) = id { return Nth(i,2); }
+      }
+      return $;
+   }
+
+   GetHinter(id = $)
+   {
+      local i;
+      for i in plQuests
+      {
+         if First(i) = id { return Nth(i,3); }
+      }
+      return $;
+   }
+
+   GetQuestType(id = $)
+   {
+      local i;
+      for i in plQuests
+      {
+         if First(i) = id { return Nth(i,4); }
+      }
+      return 0;
+   }
+
+   GetQuestGoal(id = $)
+   {
+      local i;
+      for i in plQuests
+      {
+         if First(i) = id { return Nth(i,5); }
+      }
+      return $;
+   }
+
+   GetQuestReward(id = $)
+   {
+      local i;
+      for i in plQuests
+      {
+         if First(i) = id { return Nth(i,6); }
+      }
+      return $;
+   }
+
+   GetNextQuestID()
+   {
+      piNextQuestID= piNextQuestID + 1;
+      return piNextQuestID;
+   }   
+
+   GetOldPhrases(mob=$)
+   {
+      local i;
+      for i in plOldQuestPhrases
+      {
+         if First(i) = mob { return Nth(i,2); }
+      }
+      return $;
+   }
+
+   GetOldClasses(mob=$)
+   {
+      local i;
+      for i in plOldQuestClasses
+      {
+         if First(i) = mob { return Nth(i,2); }
+      }
+      return $;
+   }
+
+   KeepOldQuestClass(mob=$,class=$)
+   {
+      local i,lElem;
+ 
+      for i in plOldQuestClasses
+      {
+         if First(i) = mob
+         {
+            SetNth(i,2,Cons(class,Nth(i,2)));
+            if Length(Nth(i,2)) > 4
+            {
+               lElem=Nth(i,2);
+               lElem=DelListElem(lElem,Nth(lElem,5));
+               SetNth(i,2,lElem);
+            }
+            return;
+         }
+      }
+      plOldQuestClasses=Cons([mob,[class]],plOldQuestClasses);
+      return;
+   }
+
+   KeepOldQuestPhrase(mob=$,phrase=$)
+   {
+      local i,lElem;
+ 
+      for i in plOldQuestPhrases
+      {
+         if First(i) = mob
+         {
+            SetNth(i,2,Cons(phrase,Nth(i,2)));
+            if Length(Nth(i,2)) > 4
+            {
+               lElem=Nth(i,2);
+               lElem=DelListElem(lElem,Nth(lElem,5));
+               SetNth(i,2,lElem);
+            }
+            return;
+         }
+      }
+      plOldQuestPhrases=Cons([mob,[phrase]],plOldQuestPhrases);
+      return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+   %
+   % SIGNETS Added 11/04/96 by jrmurphy
+   %
+   %%%%%%%%%%%%%%
+
+   IsNewbieSignetEligible(who=$)
+   {
+     local i;
+     if who=$ {return False;}
+
+     for i in plSignetNewbies
+     {
+       if i=who { return False;}
+     } 
+     return True;
+   }
+
+   CreateSignetRing(who=$)
+   {
+      %This routine needs to put the who onto the newbie list, and find a
+      %suitible mob to be the owner, and then call the create routine.
+      local mob,i,iCnt;
+
+     
+      if piSignetLock=True { return $;}
+
+      if who<>$
+      {
+        plSignetNewbies=Cons(who,plSignetNewbies);
+        while Length(plSignetNewbies)>Send(self,@GetMaxSignetNewbies)
+        {
+          plSignetNewbies=DelListElem(plSignetNewbies,
+                                  Nth(plSignetNewbies,Length(plSignetNewbies)));
+        }
+      }
+
+      if plHinterlist=$ {return $;}
+
+      iCnt = 0;
+     mob = $;
+      For i in plHinterList
+      {
+        if ((Send(i,@GetAttributes) & MOB_RECEIVE) <> 0) and
+               ((Send(i,@GetAttributes) & MOB_NOQUEST) = 0) and
+               (isClass(i,&BarloqueTown) or
+                isClass(i,&CorNothTown) or
+                isClass(i,&JasperTown) or
+                isClass(i,&MarionTown) or
+                isClass(i,&TosTown) or 
+                isClass(i,&Wanderer))
+        {
+          if Random(0,iCnt)=0 { mob=i; }
+          iCnt=iCnt+1;
+        }
+      }
+      if mob = $ {return $;}
+      return Create(&SignetRing,#mob=mob);
+   }
+
+   RegisterSignet(newring=$)
+   {
+      local oldring, oRingOwner;
+      %This routine adds the signet ring to the front of the rings list.
+      %If the number of rings on the list exceeds the max number, then a
+      %ring is deleted from the end of the list.
+
+      if newring=$ {return;}
+      plSignetRings=Cons(newring,plSignetRings);
+      while Length(plSignetRings)>Send(self,@GetMaxSignets)
+      {
+        oldring=Nth(plSignetRings,Length(plSignetRings));
+        plSignetRings=DelListElem(plSignetRings,oldring);
+      
+      oRingOwner=send(oldRing,@getowner);
+      if oRingOwner <> $
+        { send(oRingOwner,@msgsenduser,#message_rsc=lib_signet_lost); }
+        
+      Send(oldring,@delete);
+      }
+      return;
+   }
+
+   SignetDelivered(who=$)
+   {
+     if who=$ {return;}
+     plSignetNewbies=Cons(who,plSignetNewbies);
+     while Length(plSignetNewbies)>Send(self,@GetMaxSignetNewbies)
+     {
+       plSignetNewbies=DelListElem(plSignetNewbies,
+                               Nth(plSignetNewbies,Length(plSignetNewbies)));
+     }
+     return;
+   }
+
+   UnregisterSignet(newring=$)
+   {
+     local i;
+
+     if newring=$ {return;}
+    for i in plSignetRings            %% safety measure, only delete the ring if it's in the list
+    {
+       if i = newring
+      {  plSignetRings=DelListElem(plSignetRings,newring); }
+    }
+     return;
+   }
+
+   SetSignetLock(value=False)
+   {
+     piSignetLock=value;
+     return;
+   }
+
+   ClearSignets()
+   {
+     local i;
+     for i in plSignetRings
+     {
+       Send(i,@Delete);
+     }
+     plSignetRings=$;
+     plSignetNewbies=$;
+     return;
+   }
+
+   GetMaxSignetNewbies()
+   {
+      return piMaxSignetNewbies;
+   }
+
+   GetMaxSignets()
+   {
+      return piMaxSignets;
+   }
+
+   GetSignetChance()
+   {
+     return piSignetChance;
+   }
+  
+   GetSignetRings()
+   {
+      return plSignetRings;
+   }
+
+
+  % Signet Info:
+  % Variables: MaxSignets = number of signets in game at once
+  %            MaxSignetNewbies = number of newbies blocked from using signets
+  %            SignetChance = percentage of newbie kills spawning signets 
+  %            SignetLock = True/False allow generation of signets or not
+  %    ****All of these respond to GetXXXX or SetXXXX,#value=yyyy
+  % Lists:     SignetRings = all the signets in the game.
+  %            SignetNewbies = newbies who have created or delivered signets.
+  %
+  % Newbies are those who are not pk enabled.
+  % On newbie kill, if the newbie is not on plSignetNewbies, then signet is
+  % generated based on SignetChance. The newbie is added to plSignetNewbies.
+  % The signet is added to plSignetRings. both These lists are pruned to be
+  % less than their Max values. Pruned newbies are free to earn signets again.
+  % Pruned rings are deleted (basically a delivery timeout...) Initially the
+  % rings and newbies are set at 20... These may need to be tweaked so that
+  % there is 30min or so to deliver signets when play is crowded with newbies.
+  %
+  % Upon creation, a mob is selected to be the receiver of the signet. The
+  % signetring class is added to their plWantedItems List, and the mob is
+  % stored as the poRingOwner in the signet itself. When offered to the mob,
+  % the CheckWhyWanted routine is chosen, and it determines that the signet
+  % offered is the one desired, and then gives a bonus money amount. If its
+  % not the proper ring, its returned to the player. If it is the right ring
+  % the newbie is again added to the plSignetNewbies list. The SignetRing
+  % class is removed from the mob's plWantedItem list. It is also unregisterd
+  % from the library (removed from the plSignetRings list).
+  %
+  % If needed, the ClearSignets routine in the library can be called to do
+  % a restart of all signets. Also, the SetSignetLock routine can be called
+  % to prevent the generation of any future signets. 
+  % 
+  % If a signet is dropped, or left on the ground, it will eventually blink
+  % (like the tokens) to the center of the room. This is to keep them out
+  % of the water. Also, if a non-newbie returns the token, then they dont
+  % get any money and their name is added to the plSignetNewbies list (in
+  % effect bumping a real newbie off the list).
+  %
+  % When a signet is deleted, it sends a message to a logged on user
+  % that is holding it, which indicates that the player lost the ring.
+  % This might happen if the player takes too long to deliver it.
+  % If the player logs off with the ring, it will likely be gone when they
+  % log back on the next day. Currently there is no message for this.
+  % it may be seen as a bug. Any suggestions on dealing with this are
+  % appreciated.
+
+
+   PlayerManaNodeList(mob = $, person = $)
+   "Tell the player the list of mana nodes they have bonded with."
+   {
+      local iNodeList, index, oNode, count;
+
+      if mob = $ or person = $ or NOT IsClass(person, &User)
+      {
+         return;
+      }
+
+      iNodeList = Send(person, @GetNodeList);
+
+      if iNodeList = 0
+      {
+         Send(Send(mob, @GetOwner), @SomeoneSaid, #what=mob, #type=SAY_RESOURCE, 
+              #string = LM_no_mana_nodes);
+         return;
+      }
+
+      index = 1;
+      count = 0;
+      ClearTempString();
+      while index <= NODE_MAX_VALUE
+      {
+         if iNodelist & index
+         {
+            oNode = Send(SYS, @FindNodeByNum, #num = index);
+            if oNode <> $
+            {
+               if count <> 0
+               {
+                  AppendTempString(", ");
+               }
+
+               AppendTempString(Send(oNode, @GetLocationName));
+               count = count + 1;
+            }
+         }
+         index = 2 * index;
+      }
+      
+      Send(Send(mob, @GetOwner), @SomeoneSaid, #what=mob, #type=SAY_RESOURCE,
+           #string = LM_mana_nodes,
+           #parm1 = GetTempString());
+      return;      
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

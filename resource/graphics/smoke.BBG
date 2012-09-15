@@ -1,0 +1,22 @@
+# pillar of smoke
+# 
+#^Applied to Hotspot: 0
+#*Groups: 5
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+5
+smokeA.bmp   [0, 0] 
+smokeB.bmp   [0, 0] 
+smokeC.bmp   [0, 0] 
+smokeD.bmp   [0, 0] 
+smokeE.bmp   [0, 0] 
+5
+ 1   1 
+ 1   2 
+ 1   3 
+ 1   4 
+ 1   5 

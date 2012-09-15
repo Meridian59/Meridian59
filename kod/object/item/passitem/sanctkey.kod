@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SanctuaryKey is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SanctuaryKey_name_rsc = "Iron Key"
+   SanctuaryKey_icon_rsc = fishkey.bgf
+   SanctuaryKey_desc_rsc = "This is an intricately wrought iron key."
+
+classvars:
+
+   vrName = SanctuaryKey_name_rsc
+   vrIcon = SanctuaryKey_icon_rsc
+   vrDesc = SanctuaryKey_desc_rsc
+
+   viBulk = 10
+   viWeight = 12
+   viValue_average = 300
+
+properties:
+
+
+messages:
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

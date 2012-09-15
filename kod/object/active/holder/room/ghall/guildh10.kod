@@ -1,0 +1,389 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall10 is GuildHall
+
+constants:
+
+   include blakston.khd
+
+   DOOR_DELAY = 7000
+   SECRET_DELAY = 15000
+
+   ENTRANCE_DOOR = 1
+   BAR_DOOR = 2
+   NEWS_DOOR = 3
+   EAST_DOOR = 4
+   WEST_DOOR = 5
+   NORTH_DOOR = 6
+
+   SECRET_DOOR = 7
+   SECRET_WALL = 9
+
+   MAZE_FLOOR = 10
+
+resources:
+
+   room_name_guildhall10 ="Jaarba's Abode"
+   room_guildhall10 = guildh10.roo
+
+   guildhall10_sound = down2.wav
+
+classvars:
+
+   vrName = room_name_guildhall10
+
+   viQuality = 5
+
+   viNews_row = 12
+   viNews_col = 4
+   viNews_finerow = 32
+   viNews_finecol = 24
+
+   viFoyer_north = 25          %%%% Foyer needs to be reset
+   viFoyer_south = 33
+   viFoyer_east = 23
+   viFoyer_west = 13
+
+   viLever_row = 2
+   viLever_col = 14
+   viLever_fine_row = 0
+   viLever_fine_col = 16
+
+   viTeleport_row = 19
+   viTeleport_col = 11
+
+   viInner_teleport_row = 6
+   viInner_teleport_col = 16
+   viSeconds_til_close = 8
+
+properties:
+
+   prRoom = room_guildhall10
+   piRoom_num = RID_GUILDH10
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 0
+
+   ptNorthDoor = $
+   ptEastDoor = $
+   ptWestDoor = $
+   ptEntranceDoor = $
+   ptSecretDoor = $
+   ptNewsDoor = $
+   ptBarDoor = $
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [[17,11]];
+      propagate;
+   }
+
+    CreateStandardObjects()
+    {
+       Send(self,@NewHold,#what=Create(&Chest),
+           #new_row=15,#new_col=4,#fine_row=32,#fine_col=0,
+           #new_angle=ANGLE_EAST);
+
+       Send(self,@NewHold,#what=Create(&Table),
+           #new_row=12,#new_col=15,#fine_row=0,#fine_col=32);
+       Send(self,@NewHold,#what=Create(&Table),
+           #new_row=12,#new_col=17,#fine_row=0,#fine_col=0);
+       Send(self,@NewHold,#what=Create(&Table),
+           #new_row=13,#new_col=17,#fine_row=32,#fine_col=0);
+
+       propagate;
+     }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 20, 11, RID_JASPER, 30, 61, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+
+     InFoyer(who=$)
+     {
+       local iRow, iCol;
+
+       iRow = send(who,@getrow);
+       iCol = send(who,@getcol);
+
+       if iRow > 16 or iCol < 4 or iCol > 18
+         {
+            return TRUE;
+         }
+       if iRow = 3 or iRow = 4
+         {
+            if iCol < 8 or iCol > 14
+              {
+                 return TRUE;
+              }
+            if iCol = 8 and send(who,@getfinecol) < 48
+              {
+                  return TRUE;
+              }
+            if iCol = 14 and send(who,@getfinecol) > 16
+              {
+                  return TRUE;
+              }
+         }
+       return FALSE;
+     }
+
+     OpenSecretDoor()
+     {
+       if ptSecretDoor = $
+         {
+           Send(self,@SomethingWaveRoom,#wave_rsc=guildhall10_sound);
+           send(self,@setsector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                          #height = 80,#speed=50);
+           send(self,@setsector,#sector=SECRET_WALL,#animation=ANIMATE_CEILING_LIFT,
+                          #height = 80,#speed=50);
+           send(self,@OpenSecretDoorSound);
+           ptSecretDoor = createtimer(self,@closesecretdoor,SECRET_DELAY);
+         }
+       return;
+      }
+
+      CloseSecretDoor()
+      {
+         ptSecretDoor = $;
+         send(self,@setsector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                  #height = 0,#speed=50);
+         send(self,@setsector,#sector=SECRET_WALL,#animation=ANIMATE_CEILING_LIFT,
+                  #height = 32,#speed=50);
+         send(self,@CloseSecretDoorSound);
+         return;
+      }
+
+      SomethingTryGo(row=$, col=$, what=$)
+      {
+         if (row = 7 or row = 8) and (col = 11) and ptNorthDoor = $
+           {
+              send(self,@setsector,#sector=NORTH_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height = 72,#speed=50);
+              ptNorthDoor = createtimer(self,@CloseNorthDoor,DOOR_DELAY);
+              return TRUE;
+           }
+
+         if (row = 9 or row = 10) and (col = 13 or col = 14 or col = 15) and ptEastDoor = $
+           {
+              send(self,@setsector,#sector=EAST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height = 72,#speed=50);
+              ptEastDoor = createtimer(self,@CloseEastDoor,DOOR_DELAY);
+              return TRUE;
+           }
+
+         if (row = 9) and (col = 7 or col = 8 or col = 9) and ptWestDoor = $
+           {
+              send(self,@setsector,#sector=WEST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height = 72,#speed=50);
+              ptWestDoor = createtimer(self,@CloseWestDoor,DOOR_DELAY);
+              return TRUE;
+           }
+         if row = 16 and col = 11
+         {
+	    if send(self,@ReqLegalEntry,#who = what)
+	    {
+	       send(self,@openentrancedoor);
+	       return TRUE;
+	    }
+         }
+         if (row = 12 or row = 13) and (col = 13 or col = 14 or col = 15) and ptBarDoor = $
+           {
+              send(self,@setsector,#sector=BAR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height = 72,#speed=50);
+              ptBarDoor = createtimer(self,@CloseBarDoor,DOOR_DELAY);
+              return TRUE;
+           }
+         if (row = 12 or row = 13) and (col = 7 or col = 8 or col = 9) and ptNewsDoor = $
+           {
+              send(self,@setsector,#sector=NEWS_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height = 72,#speed=50);
+              ptNewsDoor = createtimer(self,@CloseNewsDoor,DOOR_DELAY);
+              return TRUE;
+           }
+         propagate;
+      }
+
+      OpenEntranceDoor()
+      {
+       if ptEntranceDoor = $
+         {
+           send(self,@TimeStampDoor);
+	   send(self,@setsector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height = 72,#speed=50);
+           send(self,@OpenEntranceDoorSound);
+           ptEntranceDoor = createtimer(self,@CloseEntranceDoor,DOOR_DELAY);
+         }
+        return;
+      }
+
+      CloseEntranceDoor()
+      {
+         ptEntranceDoor = $;
+         send(self,@setsector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
+             #height = 0,#speed=50);
+         send(self,@CloseEntranceDoorSound);
+         return;
+      }
+
+      CloseNorthDoor()
+      {
+         send(self,@setsector,#sector=NORTH_DOOR,#animation=ANIMATE_CEILING_LIFT,
+             #height = 0,#speed=50);
+         ptNorthDoor = $;
+         return;
+      }
+
+      CloseEastDoor()
+      {
+         send(self,@setsector,#sector=EAST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+             #height = 0,#speed=50);
+         ptEastDoor = $;
+         return;
+      }
+
+      CloseWestDoor()
+      {
+         send(self,@setsector,#sector=WEST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+             #height = 0,#speed=50);
+         ptWestDoor = $;
+         return;
+      }
+
+      CloseBarDoor()
+      {
+         send(self,@setsector,#sector=BAR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+             #height = 0,#speed=50);
+         ptBarDoor = $;
+         return;
+      }
+
+      CloseNewsDoor()
+      {
+         send(self,@setsector,#sector=NEWS_DOOR,#animation=ANIMATE_CEILING_LIFT,
+             #height = 0,#speed=50);
+         ptNewsDoor = $;
+         return;
+      }
+
+   RaiseMaze()
+   {
+     Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+     send(self,@setsector,#sector=MAZE_FLOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height = 48,#speed=16);
+
+     return;
+   }
+
+   LowerMaze()
+   {
+     Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+     send(self,@setsector,#sector=MAZE_FLOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height = 0,#speed=16);
+
+     return;
+   }
+
+   DefensesDown()
+   {
+     send(self,@LowerMaze);
+     propagate;
+   }
+
+   DefensesUp()
+   {
+     send(self,@RaiseMaze);
+     propagate;
+   }
+
+   ClaimGuildHall()
+   {
+      send(self,@RaiseMaze);
+      propagate;
+   }
+
+   ResetGuildHall()
+   {
+      send(self,@RaiseMaze);
+      propagate;
+   }
+
+   ConquerTimer()
+   {
+      send(self,@RaiseMaze);
+      propagate;
+   }
+
+      Delete()
+      "Be sure all door timers are deleted."
+      {
+         if ptNorthDoor <> $
+           {
+              deletetimer(ptNorthDoor);
+              ptNorthDoor = $;
+           }
+         if ptEastDoor <> $
+           {
+              deletetimer(ptEastDoor);
+              ptEastDoor = $;
+           }
+         if ptWestDoor <> $
+           {
+              deletetimer(ptWestDoor);
+              ptWestDoor = $;
+           }
+         if ptEntranceDoor <> $
+           {
+              deletetimer(ptEntranceDoor);
+              ptEntranceDoor = $;
+           }
+         if ptSecretDoor <> $
+           {
+              deletetimer(ptSecretDoor);
+              ptSecretDoor = $;
+           }
+         if ptBarDoor <> $
+           {
+              deletetimer(ptBarDoor);
+              ptBarDoor = $;
+           }
+         if ptNewsDoor <> $
+           {
+              deletetimer(ptNewsDoor);
+              ptNewsDoor = $;
+           }
+         propagate;
+      }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+      lHotPlates = [[ 16, 11, 1 ],[16,10,2],[15,10,2],[ 15, 11, 2 ],[15,12,2],[16,12,2]];
+
+      for i in lHotPlates
+      {
+	  oPlate = Create(&Hotplate,#hpid=nth(i,3));
+	  send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+      }
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

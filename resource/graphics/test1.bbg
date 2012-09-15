@@ -1,0 +1,22 @@
+# Test BBG - Avar Shrink 1
+#
+# Groups:
+#     1   Standing
+#     2-6   Walking
+
+-s 1 
+5
+test060a.bmp
+test060b.bmp
+test060c.bmp
+test060d.bmp
+test060e.bmp
+
+6
+1 1
+1 1
+1 2
+1 3
+1 4
+1 5
+

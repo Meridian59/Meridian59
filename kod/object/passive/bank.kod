@@ -1,0 +1,178 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Bank is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+classvars:
+
+
+properties:
+
+   piBank			% bank ID (BID)
+
+   % each element of this list is a list, containing
+   % user object id, amount.
+   plAccounts = $
+
+messages:
+
+   constructor(bid = $)
+   {
+      if bid = $
+      {
+         debug("Bank created with no bid",self);
+         propagate;
+      }
+      
+      piBank = bid;
+
+      propagate;      
+   }
+
+   Delete()
+   "Deletes this bank and removes from system's list of banks."
+   {
+      Send(SYS,@DeleteBank,#what=self);
+
+      propagate;
+   }
+
+   GetBankNum()
+   {
+      return piBank;
+   }
+
+   DepositAccount(what = $,amount = $)
+   {
+      local i;
+
+      % if already have account, add to it.
+      for i in plAccounts
+      {
+         if First(i) = what
+         {
+            SetNth(i,2,Nth(i,2) + amount);
+            return;
+         }
+      }
+
+      % otherwise create account
+      plAccounts = Cons([what, amount],plAccounts);
+
+      return;
+   }
+
+   WithdrawAccount(what = $,amount = $)
+   "If <amount> = $, then withdraw all.  Returns amount withdrawn"
+   {
+      local i,iCurrent;
+
+      % if already have account, subtract from it.
+      for i in plAccounts
+      {
+         if First(i) = what
+         {
+            iCurrent = Nth(i,2);
+            if amount = $ or (amount >= iCurrent)
+            {
+               % withdraw all
+               plAccounts = DelListElem(plAccounts,i);
+               return iCurrent;
+            }
+             
+            SetNth(i,2,iCurrent - amount);
+            return amount;
+         }
+      }
+
+      return 0;
+   }
+
+   GetAccount(what = $)
+   "Return the amount deposited by <what>"
+   {
+      local i;
+
+      for i in plAccounts
+      {
+         if First(i) = what
+         {
+            return Nth(i,2);
+         }
+      }
+
+      return 0;
+   }
+
+   FixMoney(amount = $)
+   {
+      local i,new_num;
+
+      for i in plAccounts
+      {
+         new_num = Nth(i,2);
+         new_num = Bound(new_num,0,amount);
+         SetNth(i,2,new_num);
+      }
+
+      return;
+   }
+
+   FindTopAccounts(number = 5)
+   {
+      local lTops, account;
+
+      number = bound(number,1,length(plAccounts));
+
+      lTops = $;
+      while length(lTops) < number
+      {
+         account = send(self,@FindTopAccountHelper,#except=lTops);
+         lTops = cons(account, lTops);
+      }      
+
+      return lTops;
+   }
+
+   FindTopAccountHelper(except = $)
+   {
+      local i, best, max;
+
+      max = -1;
+      best = $;
+
+      % Find the highest account that isn't listed in except.
+
+      for i in plAccounts
+      {
+         if Nth(i,2) >= max
+         {
+            if FindListElem(except, first(i)) = 0
+            {
+               best = i;
+               max = Nth(i,2);
+            }
+         }
+      }
+
+      if best = $
+      {
+         return $;
+      }
+
+      return first(best);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

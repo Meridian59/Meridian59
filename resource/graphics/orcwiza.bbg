@@ -1,0 +1,165 @@
+# Orc wizard
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-11 Attack
+#        12-16 Cast spell with arms
+#        17-19 Cast spell with staff
+#^Applied to Hotspot: 0
+#*Groups: 19
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+114
+orw000sa.bmp   [0, -2] 
+orw315sa.bmp   [0, -1] 
+orw270sa.bmp   [0, -8] 
+orw180sa.bmp   [0, -8] 
+orw090sa.bmp   [0, -2] 
+orw045sa.bmp   [0, -9] 
+orw000wa.bmp   [0, -2] 
+orw315wa.bmp   [0, -5] 
+orw270wa.bmp   [0, -13] 
+orw180wa.bmp   [0, -6] 
+orw090wa.bmp   [0, -9] 
+orw045wa.bmp   [0, -13] 
+orw000wb.bmp   [0, -1] 
+orw315wb.bmp   [0, -1] 
+orw270wb.bmp   [0, -8] 
+orw180wb.bmp   [0, -18] 
+orw090wb.bmp   [0, -10] 
+orw045wb.bmp   [0, -11] 
+orw000wc.bmp   [0, -9] 
+orw315wc.bmp   [0, -11] 
+orw270wc.bmp   [0, -9] 
+orw180wc.bmp   [0, -14] 
+orw090wc.bmp   [0, -16] 
+orw045wc.bmp   [0, -7] 
+orw000wd.bmp   [0, 1] 
+orw315wd.bmp   [0, -8] 
+orw270wd.bmp   [0, -20] 
+orw180wd.bmp   [0, -24] 
+orw090wd.bmp   [0, -8] 
+orw045wd.bmp   [0, 1] 
+orw000we.bmp   [0, -7] 
+orw315we.bmp   [0, -7] 
+orw270we.bmp   [0, -16] 
+orw180we.bmp   [0, -17] 
+orw090we.bmp   [0, -9] 
+orw045we.bmp   [0, -6] 
+orw000fa.bmp   [0, -3] 
+orw315fa.bmp   [0, -1] 
+orw270fa.bmp   [0, -8] 
+orw180fa.bmp   [0, -6] 
+orw090fa.bmp   [0, -2] 
+orw045fa.bmp   [0, -9] 
+orw000fb.bmp   [0, -2] 
+orw315fb.bmp   [0, -1] 
+orw270fb.bmp   [0, -8] 
+orw180fb.bmp   [0, -8] 
+orw090fb.bmp   [0, -3] 
+orw045fb.bmp   [0, -9] 
+orw000fc.bmp   [0, -2] 
+orw315fc.bmp   [0, -1] 
+orw270fc.bmp   [0, -7] 
+orw180fc.bmp   [0, -9] 
+orw090fc.bmp   [0, -2] 
+orw045fc.bmp   [0, -9] 
+orw000fd.bmp   [0, -2] 
+orw315fd.bmp   [0, -1] 
+orw270fd.bmp   [0, -7] 
+orw180fd.bmp   [0, -7] 
+orw090fd.bmp   [0, -2] 
+orw045fd.bmp   [0, -9] 
+orw000fe.bmp   [0, -2] 
+orw315fe.bmp   [0, -1] 
+orw270fe.bmp   [0, -8] 
+orw180fe.bmp   [0, -8] 
+orw090fe.bmp   [0, -4] 
+orw045fe.bmp   [0, -9] 
+orw000ra.bmp   [0, -3] 
+orw315ra.bmp   [0, -1] 
+orw270ra.bmp   [0, -8] 
+orw180ra.bmp   [0, -8] 
+orw090ra.bmp   [0, -2] 
+orw045ra.bmp   [0, -9] 
+orw000rb.bmp   [0, -2] 
+orw315rb.bmp   [0, -1] 
+orw270rb.bmp   [0, -7] 
+orw180rb.bmp   [0, -8] 
+orw090rb.bmp   [0, -3] 
+orw045rb.bmp   [0, -9] 
+orw000rc.bmp   [0, -3] 
+orw315rc.bmp   [0, -1] 
+orw270rc.bmp   [0, -8] 
+orw180rc.bmp   [0, -7] 
+orw090rc.bmp   [0, -3] 
+orw045rc.bmp   [0, -9] 
+orw000rd.bmp   [0, -3] 
+orw315rd.bmp   [0, -1] 
+orw270rd.bmp   [0, -8] 
+orw180rd.bmp   [0, -7] 
+orw090rd.bmp   [0, -3] 
+orw045rd.bmp   [0, -8] 
+orw000re.bmp   [0, -2] 
+orw315re.bmp   [0, -1] 
+orw270re.bmp   [0, -7] 
+orw180re.bmp   [0, -8] 
+orw090re.bmp   [0, -2] 
+orw045re.bmp   [0, -9] 
+orw000la.bmp   [0, -3] 
+orw315la.bmp   [0, -1] 
+orw270la.bmp   [0, -8] 
+orw180la.bmp   [0, -6] 
+orw090la.bmp   [0, -2] 
+orw045la.bmp   [0, -9] 
+orw000lb.bmp   [0, 0] 
+orw315lb.bmp   [0, -1] 
+orw270lb.bmp   [0, -8] 
+orw180lb.bmp   [0, -11] 
+orw090lb.bmp   [0, -3] 
+orw045lb.bmp   [0, -2] 
+orw000lc.bmp   [0, -2] 
+orw315lc.bmp   [0, -1] 
+orw270lc.bmp   [0, -8] 
+orw180lc.bmp   [0, -7] 
+orw090lc.bmp   [0, -2] 
+orw045lc.bmp   [0, -9] 
+19
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 
+ 8   79 80 81 82 82 82 83 84 
+ 8   85 86 87 88 88 88 89 90 
+ 8   91 92 93 94 94 94 95 96 
+ 8   97 98 99 100 100 100 101 102 
+ 8   103 104 105 106 106 106 107 108 
+ 8   109 110 111 112 112 112 113 114 

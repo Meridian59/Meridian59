@@ -1,0 +1,257 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Purify is Spell
+
+constants:
+
+   include blakston.khd
+
+   % At least how many enchantments should there be on a person to check for auto-remove?
+   MIN_ENCHANTMENTS_FOR_AUTOREMOVE = 2
+
+   % What's the minimum chance to remove spells we want before checking for auto-remove?
+   MIN_CHANCE_FOR_AUTOREMOVE = 60
+
+resources:
+
+   purify_name_rsc = "purify"
+   purify_icon_rsc = ipurify.bgf
+   purify_desc_rsc = \
+      "Removes harmful personal enchantments on the target. "
+      "Requires emeralds and elderberries to cast."
+   
+   purify_on = "A bright, holy light is trying to cleanse your soul of impure effects."
+   purify_not_enchanted = "%s%s is not affected by any negative magical energies."
+   purify_spell_intro = "Shal'ille Lv. 4: Removes harmful personal enchantments on the target."
+   purify_spell_self_cast_rsc = "You may only cast %s on yourself."
+
+classvars:
+
+   vrName = purify_name_rsc
+   vrIcon = purify_icon_rsc
+   vrDesc = purify_desc_rsc
+
+   vrSpell_intro = purify_spell_intro
+
+   viSpell_num = SID_PURIFY
+   viSchool = SS_SHALILLE
+   viSpell_level = 4
+   viMana = 10
+   viChance_To_Increase = 10
+   
+   viFlash = FLASH_GOOD   
+
+properties:
+
+   pbCan_cast_on_others = FALSE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Emerald,2],plReagents);
+      plReagents = Cons([&Elderberry,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      if pbCan_cast_on_others
+      {
+         return 1;
+      }
+
+      % Can only cast on self, no need to target
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i, lEnchantment, bHasEnchantment, oSpell;
+
+      % If it's only self cast, spoof self as target for following code
+      if NOT pbCan_Cast_on_others
+      {
+         lTargets = Cons(who, lTargets);
+      }
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }  
+
+      target = First(lTargets);
+
+      if not IsClass(target, &User)
+      {
+         if not bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+                 #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      % The target must have an enchantment
+      lEnchantment = send(target,@GetEnchantmentList);
+      bHasEnchantment = IsClass(who,&DM);
+
+      if lEnchantment <> $
+      {
+         for i in lEnchantment
+         {
+            oSpell = Nth(i,2);
+            if Send(oSpell,@IsPersonalEnchantment)
+               AND send(oSpell,@CanBeRemovedByPlayer)
+               AND send(oSpell,@IsHarmful)
+            {
+               bHasEnchantment = TRUE;
+               
+               break;
+            }
+         }
+      }
+
+      if NOT bHasEnchantment
+      {
+         Send(who,@MsgSendUser,#message_rsc=purify_not_enchanted, 
+              #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
+              
+         return FALSE;
+      }
+
+      % Can only cast purify on yourself, to curb massive mule abuse.
+      if NOT pbCan_cast_on_others AND target <> who
+      {
+         Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+         Send(who,@MsgSendUser,#message_rsc=purify_spell_self_cast_rsc,#parm1=vrName);
+      	return FALSE;
+      }
+
+      propagate;   
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget, lInfo, oSpell, lList, lEnchantmentList;
+
+      % If it's only self cast, spoof self as target for following code
+      if NOT pbCan_Cast_on_others
+      {
+         lTargets = Cons(who, lTargets);
+      }
+      
+      oTarget = First(lTargets);
+      if oTarget <> who
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
+              #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
+              #parm3=Send(oTarget,@GetName));
+      }
+      
+      Send(oTarget,@MsgSendUser,#message_rsc=purify_on);
+
+      % keep tabs on guides/bards, but not admins.
+      if IsClass(who, &DM)
+      {
+         if GetClass(who) = &DM
+            AND who <> oTarget
+         {
+            debug(send(who,@GetTrueName)," cast purify on ",send(oTarget,@GetName));
+         }
+
+         if send(who,@PlayerIsImmortal)
+         {
+            % If they're immortal, let them clear everything.
+            iSpellPower = $;
+         }
+      }
+
+      send(self,@DoPurify,#who=oTarget,#iChance=iSpellPower);
+
+      propagate;
+   }
+
+   DoPurify(who=$, iChance=$)
+   "Remove negative enchantments on who with a given chance to remove each one."
+   {
+      local iNumEnchantments, lEnchantments, iModifiedChance, oEnchantment, oSpell,
+            lList, bRemovedSomething;
+
+      if who = $
+      {
+         return FALSE;
+      }
+
+      % Chance of $ means that we want to remove it all.
+      if iChance = $
+      {
+         Send(who,@RemoveAllPersonalEnchantments);
+         
+         return TRUE;
+      }
+
+      bRemovedSomething = FALSE;
+      lEnchantments = $;
+      lList = send(who,@GetEnchantmentList);
+
+      for oEnchantment in lList
+      {
+         oSpell = Nth(oEnchantment,2);
+
+         if Send(oSpell,@IsPersonalEnchantment)
+            AND send(oSpell,@CanBeRemovedByPlayer)
+            AND send(oSpell,@IsHarmful)
+         {
+            lEnchantments = cons(oSpell,lEnchantments);
+         }
+      }
+      
+      iNumEnchantments = length(lEnchantments);
+
+      % Anti-clumpy code: If there is at least two enchantments in the room and the chance to
+      %  dispell is greater than 60%, then auto-remove one enchantment.
+      if iNumEnchantments >= MIN_ENCHANTMENTS_FOR_AUTOREMOVE
+         AND iChance >= MIN_CHANCE_FOR_AUTOREMOVE
+      {
+         oEnchantment = Nth(lEnchantments,random(1,iNumEnchantments));
+         Send(who,@RemoveEnchantment,#what=oEnchantment);
+         lEnchantments = DelListElem(lEnchantments,oEnchantment);
+         iNumEnchantments = iNumEnchantments - 1;
+         bRemovedSomething = TRUE;
+      }
+
+      for oEnchantment in lEnchantments
+      {
+         iModifiedChance = iChance;
+
+         if iChance = $ OR iModifiedChance > random(1,100)
+         {
+            Send(who,@RemoveEnchantment,#what=oEnchantment);
+            bRemovedSomething = TRUE;
+         }
+      }
+      
+      return bRemovedSomething;
+   }
+   
+   GetPotionClass()
+   {
+      return &PurifyPotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

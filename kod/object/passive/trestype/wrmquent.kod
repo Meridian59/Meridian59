@@ -1,0 +1,54 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WormQueenTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_WORM_QUEEN
+
+messages:
+   
+   constructed()
+   {
+      % metal armor/weapons that could be eaten and underground stones.
+      plTreasure = [ [ &BlueMushroom, 13],
+                     [ &Diamond, 10],
+                     [ &Emerald, 10],
+                     [ &Hammer, 10],
+                     [ &ChainArmor, 5],
+                     [ &Sapphire, 5],
+                     [ &Ruby, 5],
+                     [ &InkyCap, 5],
+                     [ &Money, 5],
+                     [ &Axe, 4],
+                     [ &SimpleHelm, 4],
+                     [ &Longsword, 4],
+                     [ &GoldShield, 4],
+                     [ &MetalShield, 4],
+                     [ &Gauntlet, 3],
+                     [ &PurpleMushroom, 3],
+                     [ &ScaleArmor, 2],
+                     [ &UncutSeraphym, 2],
+                     [ &BerserkerRing, 1],
+                     [ &PlateArmor, 1] ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

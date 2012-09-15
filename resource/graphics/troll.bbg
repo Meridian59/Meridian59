@@ -1,0 +1,56 @@
+# Troll 
+# groups 
+# 1 standing 1 frame 
+# 2-3 walking 
+# 4-6 fighting frames
+# 7 fighting frame repeat
+
+-s 2
+36
+
+tr000AAA.bmp 
+tr045AAA.bmp
+tr090AAA.bmp
+tr180AAA.bmp
+tr270AAA.bmp
+tr315AAA.bmp
+tr000BAA.bmp
+tr045BAA.bmp
+tr090BAA.bmp
+tr180BAA.bmp
+tr270BAA.bmp
+tr315BAA.bmp
+tr000BAB.bmp
+tr045BAB.bmp
+tr090BAB.bmp
+tr180BAB.bmp
+tr270BAB.bmp
+tr315BAB.bmp
+tr000CAA.bmp
+tr045CAA.bmp
+tr090CAA.bmp
+tr180CAA.bmp
+tr270CAA.bmp
+tr315CAA.bmp
+tr000CAB.bmp
+tr045CAB.bmp
+tr090CAB.bmp
+tr180CAB.bmp
+tr270CAB.bmp
+tr315CAB.bmp
+tr000CAC.bmp
+tr045CAC.bmp
+tr090CAC.bmp
+tr180CAC.bmp
+tr270CAC.bmp
+tr315CAC.bmp
+
+7
+8   1   6   5   4   4   4   3   2
+8   7  12  11  10  10  10   9   8
+8  13  18  17  16  16  16  15  14
+8  19  24  23  22  22  22  21  20
+8  25  30  29  28  28  28  27  26
+8  31  36  35  34  34  34  33  32
+8  25  30  29  28  28  28  27  26
+

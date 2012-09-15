@@ -1,0 +1,63 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RepairSlot is Holder
+
+constants:
+
+   include blakston.khd
+   
+resources:
+
+   repairslot_name_rsc = "repair slot"
+
+classvars:
+
+   vrName = repairslot_name_rsc
+
+properties:
+
+
+   poGive_to
+
+messages:
+
+   constructor(give_to = $)
+   {
+      if give_to = $
+      {
+	 Debug("RepairSlot",self,"needs someone to give stuff too");
+      }
+      poGive_to = give_to;
+      propagate;
+   }
+
+   ReqNewHold(what = $)
+   {
+      if IsClass(what,&NumberItem)
+      {
+	 return False;
+      }
+      propagate;
+   }
+
+   NewHold(what = $)
+   {
+      local oUser;
+      
+      oUser = Send(what,@GetOwner);
+      Send(what,@NewOwner,#what=self);
+      Send(poGive_to,@Repair,#what=what,#who=oUser);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

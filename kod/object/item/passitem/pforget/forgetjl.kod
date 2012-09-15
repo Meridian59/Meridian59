@@ -1,0 +1,31 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ForgetPotionJala is ForgetPotion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   forgetpotionJala_desc_rsc = "Drinking this potion will strip all memory of the goddess of the bards from your mind.  Warning: may have very serious side effects."
+
+classvars:
+
+   viForget_school = SS_JALA
+   vrDesc = forgetpotionjala_desc_rsc
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

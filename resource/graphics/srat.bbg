@@ -1,0 +1,99 @@
+# Snow Rat
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-11 Attack
+#^Applied to Hotspot: 0
+#*Groups: 11
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+66
+srt000sa.bmp   [0, -12] 
+srt315sa.bmp   [0, -10] 
+srt270sa.bmp   [0, -11] 
+srt180sa.bmp   [0, 6] 
+srt090sa.bmp   [0, -14] 
+srt045sa.bmp   [0, -10] 
+srt000wa.bmp   [0, -15] 
+srt315wa.bmp   [0, -15] 
+srt270wa.bmp   [0, -17] 
+srt180wa.bmp   [0, -14] 
+srt090wa.bmp   [0, -13] 
+srt045wa.bmp   [0, -14] 
+srt000wb.bmp   [0, -15] 
+srt315wb.bmp   [0, -17] 
+srt270wb.bmp   [0, -18] 
+srt180wb.bmp   [0, -17] 
+srt090wb.bmp   [0, -14] 
+srt045wb.bmp   [0, -14] 
+srt000wc.bmp   [0, -14] 
+srt315wc.bmp   [0, -15] 
+srt270wc.bmp   [0, -17] 
+srt180wc.bmp   [0, -16] 
+srt090wc.bmp   [0, -13] 
+srt045wc.bmp   [0, -12] 
+srt000wd.bmp   [0, -15] 
+srt315wd.bmp   [0, -16] 
+srt270wd.bmp   [0, -18] 
+srt180wd.bmp   [0, -16] 
+srt090wd.bmp   [0, -14] 
+srt045wd.bmp   [0, -14] 
+srt000we.bmp   [0, -17] 
+srt315we.bmp   [0, -18] 
+srt270we.bmp   [0, -18] 
+srt180we.bmp   [0, -15] 
+srt090we.bmp   [0, -15] 
+srt045we.bmp   [0, -16] 
+srt000aa.bmp   [0, -12] 
+srt315aa.bmp   [0, -13] 
+srt270aa.bmp   [0, -12] 
+srt180aa.bmp   [0, -21] 
+srt090aa.bmp   [0, -13] 
+srt045aa.bmp   [0, -8] 
+srt000ab.bmp   [0, -11] 
+srt315ab.bmp   [0, -13] 
+srt270ab.bmp   [0, -11] 
+srt180ab.bmp   [0, -20] 
+srt090ab.bmp   [0, -13] 
+srt045ab.bmp   [0, -9] 
+srt000ac.bmp   [0, -12] 
+srt315ac.bmp   [0, -13] 
+srt270ac.bmp   [0, -11] 
+srt180ac.bmp   [0, -21] 
+srt090ac.bmp   [0, -13] 
+srt045ac.bmp   [0, -8] 
+srt000ad.bmp   [0, -12] 
+srt315ad.bmp   [0, -13] 
+srt270ad.bmp   [0, -11] 
+srt180ad.bmp   [0, -2] 
+srt090ad.bmp   [0, -13] 
+srt045ad.bmp   [0, -9] 
+srt000ae.bmp   [0, -11] 
+srt315ae.bmp   [0, -12] 
+srt270ae.bmp   [0, -11] 
+srt180ae.bmp   [0, 1] 
+srt090ae.bmp   [0, -13] 
+srt045ae.bmp   [0, -9] 
+11
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 

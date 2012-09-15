@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Key is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   key_name_rsc = "key"
+   key_icon_rsc = fekey.bgf
+   key_desc_rsc = "This intricately formed key bears the inscription of a wizard."
+
+classvars:
+
+   vrName = key_name_rsc
+   vrIcon = key_icon_rsc
+   vrDesc = key_desc_rsc
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 80
+
+properties:
+
+
+messages:
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

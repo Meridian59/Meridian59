@@ -1,0 +1,52 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ZombieTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_ZOMBIE
+
+   %% zombies rarely generate anything good.
+   piDiff_seed = 2
+   piItem_Att_chance = 2
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &RedMushroom, 26],
+                     [ &Waterskin, 14],
+                     [ &Flask, 10 ],
+                     [ &Arsenic, 8 ],
+                     [ &Money, 8],
+                     [ &PurpleMushroom, 6],
+                     [ &Sapphire, 6],
+                     [ &Bread, 6 ],
+                     [ &Emerald, 6], 
+                     [ &ShadowAmulet, 5],
+                     [ &BlueMushroom, 1 ],
+                     [ &GoldShield, 1 ],
+                     [ &ChainArmor, 1 ],
+                     [ &Axe, 1],
+                     [ &Hammer, 1]
+                   ];
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

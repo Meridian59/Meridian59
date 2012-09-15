@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Castle2E is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_castle2E = castle2E.roo
+   room_name_castle2E = "Madelia's Fine Peacockeries"
+
+   castle2E_music = smithy.mid
+
+classvars:
+
+   vrName = room_name_Castle2E
+
+   viTeleport_row = 9
+   viTeleport_col = 14
+
+   viTerrain_type = TERRAIN_CASTLE | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_castle2E
+   piRoom_num = RID_CASTLE2E
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+   prMusic = castle2E_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 2, 15, RID_CASTLE2A, 26, 15, ROTATE_NONE ],plExits);      
+      plExits = Cons([ 3, 15, RID_CASTLE2A, 26, 15, ROTATE_NONE ],plExits);      
+      plExits = Cons([ 10, 9, ROOM_LOCKED_DOOR ], plExits); 
+      plExits = Cons([ 10, 10, ROOM_LOCKED_DOOR ], plExits); 
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&BarloqueTailor),
+	 #new_row=6,#new_col=8,#fine_col=32,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Stool),
+         #new_row=8,#new_col=3,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Stool),
+         #new_row=7,#new_col=4,#fine_row=0,#fine_col=0);
+ 
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

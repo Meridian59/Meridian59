@@ -1,0 +1,447 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+UtilityFunctions
+
+constants:
+   
+   include blakston.khd
+   include protocol.khd
+   
+messages:
+
+   UtilGoNearSquare(what = $,where = $,new_row = $,new_col = $,do_move = TRUE,
+                    max_distance = 50000,new_angle = $,
+                    fine_row = FINENESS/2,fine_col = FINENESS/2)
+   "Move any object anywhere in any room.\n"
+   "<where> must be a room.  "
+   "Places <what> up to <max_distance> squares away from <new_row>,<new_col>."
+   "If <new_angle> = $ and moving in a room, old angle is preserved."
+   {
+      local distance,i,j,row,col,calc_max_dist,room_rows,room_cols;
+
+      if what = $ OR where = $ OR new_row = $ OR new_col = $
+      {
+         debug("Got $ what,where,new_row,or new_col",what,where,new_row,new_col);
+
+         return FALSE;
+      }
+
+      if NOT IsClass(where,&Room)
+      {
+         debug("Got non-room destination",where);
+
+         return FALSE;
+      }
+
+      % calculate max distance that's still in room (could be tighter)
+      calc_max_dist = max_distance;
+      room_rows = Send(where,@GetRoomRows);
+      room_cols = Send(where,@GetRoomCols);
+
+      if calc_max_dist > room_rows
+      {
+         calc_max_dist = room_rows;
+      }
+
+      if calc_max_dist > room_cols
+      {
+         calc_max_dist = room_cols;
+      }
+
+      distance = 0;
+      while distance <= max_distance
+      {
+         i = 0;
+         while i <= (2*distance)
+         {
+            if i = 0 OR i = (2*distance)
+            {
+               % First or last row, check all the way across
+               j = 0;
+               while j <= (2*distance)
+               {
+                  row = new_row - distance + i;
+                  col = new_col - distance + j;
+                  if row >= 1 AND row <= room_rows
+                     AND col >= 1 AND col <= room_cols
+                     AND Send(self,@UtilGoToSquare,#what=what,#where=where,
+                              #new_row=row,#new_col=col,#new_angle=new_angle,
+                              #fine_row=fine_row,#fine_col=fine_col,
+                              #do_move=do_move)
+                  {
+                     return TRUE;
+                  }
+             
+                  j = j + 1;
+               }
+            }
+            else
+            {
+               % middle row, check left and right side
+
+               row = new_row - distance + i;
+               if (row >= 1 and row <= room_rows)
+               {
+                  col = new_col - distance;
+                  if (col >= 1 and col <= room_cols)
+                     AND Send(self,@UtilGoToSquare,#what=what,#where=where,
+                              #new_row=row,#new_col=col)
+                  {
+                     return TRUE;
+                  }
+
+                  col = new_col + distance;
+                  if col >= 1 AND col <= room_cols
+                     AND Send(self,@UtilGoToSquare,#what=what,#where=where,
+                              #new_row=row,#new_col=col)
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+
+            i = i + 1;
+         }
+
+         distance = distance + 1;
+      }
+
+      return FALSE;
+   }
+
+   UtilGoToSquare(what = $,where = $,new_row = $,new_col = $,new_angle = $,
+             fine_row = FINENESS/2,fine_col = FINENESS/2,do_move = TRUE)
+   "Called only by UtilGoNearSquare.\n"
+   "<new_row> and <new_col> MUST be inside coords of <where>,"
+   "otherwise the room move could go to adjacent rooms!! blah."
+   "If <new_angle> = $, then no angle is passed to rooms (will leave old one if in room)."
+   {
+      if Send(what,@GetOwner) = where
+      {
+         if IsClass(what,&User)
+            OR Send(where,@ReqSomethingMoved,#what=what,#new_row=new_row,
+                    #new_col=new_col)
+         {
+            if do_move
+            {
+               Send(where,@SomethingMoved,#what=what,#new_row=new_row,#new_col=new_col,
+                    #fine_row=fine_row,#fine_col=fine_col);
+               if new_angle <> $
+               {
+                  Send(where,@SomethingTurned,#what=what,#new_angle=new_angle);
+               }
+            }
+
+            return TRUE;
+         }
+      }
+      else
+      {
+         if Send(where,@ReqNewHold,#what=what,#new_row=new_row,#new_col=new_col)
+            AND (IsClass(what,&User)
+                 OR Send(where,@ReqSomethingMoved,#what=what,#new_row=new_row,
+                         #new_col=new_col,#entering_room=TRUE))             
+         {
+            if do_move
+            {
+               if new_angle <> $
+               {
+                  Send(where,@NewHold,#what=what,#new_row=new_row,#new_col=new_col,
+                       #new_angle=new_angle,#fine_row=fine_row,#fine_col=fine_col);
+               }
+               else
+               {
+                  % move with no angle data, so room uses default
+                  Send(where,@NewHold,#what=what,#new_row=new_row,#new_col=new_col,
+                       #fine_row=fine_row,#fine_col=fine_col);
+               }
+            }
+
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   UtilGetRoom(what = $)
+   "Finds the room that <what> resides in, even if not direct parent.\n"
+   {
+      if what = $
+      {
+         return $;
+      }
+
+      return Send(self,@UtilGetRoomRecurse,#what=Send(what,@GetOwner));
+   }
+
+   UtilGetRoomRecurse(what = $)
+   "This function recursively checks <what> to find the room it resides in."
+   "Need a separate function, if the original <what> is a room, which should "
+   "not return itself."
+   {
+      if what = $
+      {
+         return $;
+      }
+
+      if IsClass(what,&Room)
+      {
+         return what;
+      }
+      
+      return Send(self,@UtilGetRoomRecurse,#what=Send(what,@GetOwner));
+   }
+
+   UtilGetAngleTowards(row = 0,col = 0)
+   "Calculates the angle number (0..MAX_ANGLE) in direction of "
+   "<row> and <col> from origin."
+   {
+      if col >= 0
+      {
+         if row >= 0
+         {
+            if col >= (2*row)
+            {
+               return ANGLE_EAST;
+            }
+
+            if row >= (2*col)
+            {
+               return ANGLE_SOUTH;
+            }
+
+            return ANGLE_SOUTH_EAST;
+         }
+
+         % so row < 0
+         if col >= (-2*row)
+         {
+            return ANGLE_EAST;
+         }
+
+         if -row >= (2*col)
+         {
+            return ANGLE_NORTH;
+         }
+
+         return ANGLE_NORTH_EAST;
+      }
+
+      % so col < 0
+      if row >= 0
+      {
+         if -col > (2*row)
+         {
+            return ANGLE_WEST;
+         }
+
+         if row >= (-2*col)
+         {
+            return ANGLE_SOUTH;
+         }
+
+         return ANGLE_SOUTH_WEST;
+      }
+
+      % so col < 0 and row < 0
+      if -col >= (-2*row)
+      {
+         return ANGLE_WEST;
+      }
+
+      if -row > (-2*col)
+      {
+         return ANGLE_NORTH;
+      }
+
+      return ANGLE_NORTH_WEST;
+   }
+
+   IsTwoColorXLAT(Xlat = 0)
+   {
+      if (Xlat >= XLAT_BASE_VALUE) AND (Xlat < XLAT_BASE_VALUE + 121)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   EncodeTwoColorXLAT(color1 = 0, color2 = 0)
+   "This is used by guild shields and player art to color translate a red/blue bgf "
+   "into the correct colors."
+   {
+      local iCompound;
+
+      if color1 >  XLAT_TO_SKY
+      {
+         if color2 < XLAT_TO_SKIN1
+            OR color2 > XLAT_TO_SKIN4
+         {
+            Debug("This color1 can only be paired with skin color2 colors. color1 =",
+                  color1, " color2 = ", color2);
+
+            return XLAT_BASE_VALUE;
+         }
+
+         if color1 = XLAT_TO_DGREEN
+         {
+            iCompound = 121 + color2;
+
+            return iCompound;
+         }
+
+         if color1 = XLAT_TO_BLACK
+         {
+            iCompound = 124 + color2;  return iCompound;
+         }
+
+      }    
+
+      iCompound = XLAT_BASE_VALUE + (11 * color1) + (color2);      
+
+      return iCompound;
+   }
+
+   DecodePrimaryColor(Xlat = 0)
+   {
+      if Xlat > 120 AND Xlat < 125
+      {
+         return XLAT_TO_DGREEN;
+      }
+      
+      if Xlat > 124 AND Xlat < 128
+      {
+         return XLAT_TO_BLACK;
+      }
+      
+      Xlat = Xlat - XLAT_BASE_VALUE;
+      Xlat = Xlat / 11;
+
+      return XLat;
+   }
+
+   DecodeSecondaryColor(Xlat = 0)
+   {
+      if Xlat > 120 AND Xlat < 128
+      {
+         Xlat = xlat - 121;
+         xlat = xlat mod 3;
+         if xlat = 0
+         {
+            return XLAT_TO_SKIN4;
+         }
+         else
+         {
+            return xlat;
+         }
+      }
+
+      Xlat = Xlat - XLAT_BASE_VALUE;
+      Xlat = Xlat mod 11;
+
+      return XLat;
+   }
+
+   ListCopy(source = $)
+   {
+      local lCopy, i, iElem;
+
+      lCopy = $;
+      if source <> $
+      {
+         i = length(source);
+         while i > 0
+         {
+            iElem = nth(source, i);
+            if IsList(iElem)
+            {
+               lCopy = Cons(Send(self,@ListCopy,#source=iElem),lCopy);
+            }
+            else
+            {
+               lCopy = Cons(iElem,lCopy);
+            }
+
+            i = i - 1;
+         }
+      }
+
+      return lCopy;
+   }
+
+   SortUsersByPlayTime()
+   {
+      local i, lUsers, lFinal, iHigh, iIndex;
+
+      lUsers = Send(self,@ListCopy,#source=Send(SYS,@GetUsers));
+      
+      lFinal = $;
+
+      % First, let's delete any deadweight from the list.
+      % People who never logged on get nothing.
+      for i in lUsers
+      {
+         if Send(i,@GetTimeLoggedIn) < 1 
+         {  
+            debug(Send(i,@Getname),"is dead weight! No goodies!"); 
+            lUsers = DelListElem(lUsers,i); 
+         }
+      }
+
+      % Okay, insertion sort.  Let's go through the list until there 
+      % ain't no more list.
+
+      while lUsers <> $
+      {
+         iHigh = 0;
+         iIndex = $;
+
+         for i in lUsers
+         {              
+            if Send(i,@GetTimeLoggedIn) > iHigh
+            {
+               iIndex = i;
+               iHigh = Send(i,@GetTimeLoggedIn);
+            }
+         }
+         
+         if iIndex = $ OR iHigh = 0
+         {
+            debug("SORT WENT WAY BAD!");
+
+            return $;
+         }
+
+         lFinal = Cons(iIndex,lFinal);
+         lUsers = DelListElem(lUsers,iIndex);
+      }
+
+      return lFinal;
+   }
+
+   IntToString(num=0)
+   {
+      local retVal;
+
+      ClearTempString();
+      AppendTempString(num);
+      retVal = CreateString();
+      SetString(retVal,GetTempString());
+
+      return retVal;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

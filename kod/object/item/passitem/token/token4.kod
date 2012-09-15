@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FourToken is Token
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FourToken_name_rsc = "demon skull token"
+   FourToken_desc_rsc = \
+      "The fabled demon beast was known for its endurance and fortitude.  This "
+      "ancient token is rumored to speak its secrets to the Councilor who cares "
+      "for it.  Returning it would likely raise your status in the Royal Court."
+   FourToken_icon_rsc = tskull.bgf
+
+   % Overlays not implemented yet.
+   %FourToken_overlay_rsc = tokhskul.bgf
+
+classvars:
+
+   vrName = FourToken_name_rsc
+   vrDesc = FourToken_desc_rsc
+   vrIcon = FourToken_icon_rsc
+
+   viInitialTimeval = 50000000 
+
+   %vrTokenOverlay = FourToken_overlay_rsc
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

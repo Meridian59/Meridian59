@@ -1,0 +1,18 @@
+# guild shield E
+#^Applied to Hotspot: 32
+-s 5
+9
+gshE000.bmp    [89, 13] :1      1 [-112, -17]
+gshE045.BMP    [195, 78] 
+gshE000.bmp    [167, 82] 
+gshE315.bmp    [144, 84] 
+gshE225.BMP    [150, 80] 
+gshE135.BMP    [193, 81] 
+gshE090.bmp    [215, 84] 
+gshEdrp.bmp    [7, 0] :1      1 [-8, -20]
+gshEbro.bmp    [7, 0] :1      1 [-8, -20]
+4
+ 1   1 
+ 8   2 3 4 5 5 5 6 7 
+ 1   8 
+ 1   9

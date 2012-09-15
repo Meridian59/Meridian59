@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Send(self,@CreateOneRoomIfNew,#num=RID_CASTLE2C,#class=&Castle2c);
+
+
+%RID_CASTLE2C = 852
+
+Castle2c is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_castle2c = castle2c.roo
+   room_name_castle2c = "The Assembly Chamber"
+
+
+   castle2c_music = castle.mid
+
+classvars:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   vrName = room_name_castle2c
+   viTerrain_Type = TERRAIN_CASTLE
+
+   viTeleport_row = 8
+   viTeleport_col = 13
+
+properties:
+
+   prMusic = castle2c_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_3 
+
+
+   prRoom = room_castle2c
+   piRoom_num = RID_CASTLE2C
+
+%   prBackground = background_mountains
+
+
+messages:
+
+
+   CreateStandardObjects()
+   {
+      % throne
+
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=34,#new_col=21,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=34,#new_col=26,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=2,#new_col=25,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),
+           #new_row=2,#new_col=21);
+
+      Send(self,@NewHold,#what=Create(&Throne),
+           #new_row=33,#new_col=22,#fine_col=48,#new_angle=ANGLE_NORTH);
+
+      Send(self,@NewHold,#what=Create(&Throne),
+           #new_row=33,#new_col=23,#fine_col=48,#new_angle=ANGLE_NORTH);
+
+   propagate;
+   }
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 1, 22, RID_CASTLE2B, 39, 48, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 23, RID_CASTLE2B, 39, 48, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 24, RID_CASTLE2B, 39, 48, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 35, 19, RID_CASTLE2D, 28, 26, ROTATE_NONE ],plExits);
+      plExits = Cons([ 35, 27, RID_CASTLE2D, 28, 29, ROTATE_NONE ],plExits);
+
+   propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

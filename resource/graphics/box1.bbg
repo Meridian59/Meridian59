@@ -1,0 +1,23 @@
+# Plain wooden box
+# groups
+# 1 closed
+# 2 opened
+
+-s 3
+12
+wb000a.bmp
+wb045a.bmp
+wb090a.bmp
+wb180a.bmp
+wb270a.bmp
+wb315a.bmp
+wb000b.bmp
+wb045b.bmp
+wb090b.bmp
+wb180b.bmp
+wb270b.bmp
+wb315b.bmp
+
+2
+8   1   6   5  4  4  4  3  2
+8   7  12  11 10 10 10  9  8

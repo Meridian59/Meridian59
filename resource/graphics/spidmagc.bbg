@@ -1,0 +1,106 @@
+# magic spider (spider with face)
+# groups
+# 1 standing
+# 2-7 walking
+# 8-12 attacking
+#^Applied to Hotspot: 0
+#*Groups: 12
+#* standing
+#* walking A
+#* walking B
+#* walking C
+#* walking D
+#* walking E
+#* walking F
+#* fighting A
+#* fighting B
+#* fighting C
+#* fighting D
+#* fighting E
+-s 3
+72
+spi000aa.bmp   [0, -2] 
+spi315aa.bmp   [0, -1] 
+spi270aa.bmp   [0, -1] 
+spi180aa.bmp   [0, 3] 
+spi090aa.bmp   [0, -2] 
+spi045aa.bmp   [0, -1] 
+spi000wa.bmp   [0, -2] 
+spi315wa.bmp   [0, -2] 
+spi270wa.bmp   [0, -2] 
+spi180wa.bmp   [0, 0] 
+spi090wa.bmp   [0, -5] 
+spi045wa.bmp   [0, -2] 
+spi000wb.bmp   [0, 0] 
+spi315wb.bmp   [0, -2] 
+spi270wb.bmp   [0, -4] 
+spi180wb.bmp   [0, 1] 
+spi090wb.bmp   [0, -2] 
+spi045wb.bmp   [0, 0] 
+spi000wc.bmp   [0, 0] 
+spi315wc.bmp   [0, -2] 
+spi270wc.bmp   [0, -5] 
+spi180wc.bmp   [0, -1] 
+spi090wc.bmp   [0, 0] 
+spi045wc.bmp   [0, 2] 
+spi000wd.bmp   [0, -2] 
+spi315wd.bmp   [0, -3] 
+spi270wd.bmp   [0, -6] 
+spi180wd.bmp   [0, 2] 
+spi090wd.bmp   [0, -1] 
+spi045wd.bmp   [0, 0] 
+spi000we.bmp   [0, 0] 
+spi315we.bmp   [0, 0] 
+spi270we.bmp   [0, -4] 
+spi180we.bmp   [0, 4] 
+spi090we.bmp   [0, 0] 
+spi045we.bmp   [0, 2] 
+spi000wf.bmp   [0, 0] 
+spi315wf.bmp   [0, 0] 
+spi270wf.bmp   [0, -1] 
+spi180wf.bmp   [0, 1] 
+spi090wf.bmp   [0, -4] 
+spi045wf.bmp   [0, 0] 
+spi000ka.bmp   [0, 0] 
+spi315ka.bmp   [0, 0] 
+spi270ka.bmp   [0, -1] 
+spi180ka.bmp   [0, 4] 
+spi090ka.bmp   [0, 0] 
+spi045ka.bmp   [0, 0] 
+spi000kb.bmp   [0, 0] 
+spi315kb.bmp   [0, 0] 
+spi270kb.bmp   [0, -1] 
+spi180kb.bmp   [0, 4] 
+spi090kb.bmp   [0, 0] 
+spi045kb.bmp   [0, 0] 
+spi000kc.bmp   [0, -2] 
+spi315kc.bmp   [0, -2] 
+spi270kc.bmp   [0, 0] 
+spi180kc.bmp   [0, 2] 
+spi090kc.bmp   [0, -2] 
+spi045kc.bmp   [0, -2] 
+spi000kd.bmp   [0, 0] 
+spi315kd.bmp   [0, 0] 
+spi270kd.bmp   [0, 0] 
+spi180kd.bmp   [0, 6] 
+spi090kd.bmp   [0, 0] 
+spi045kd.bmp   [0, 0] 
+spi000ke.bmp   [0, 0] 
+spi315ke.bmp   [0, 0] 
+spi270ke.bmp   [0, -1] 
+spi180ke.bmp   [0, 2] 
+spi090ke.bmp   [0, 0] 
+spi045ke.bmp   [0, 0] 
+12
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 

@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Duke3 is Room
+
+constants:
+
+   include blakston.khd
+
+   TO_ROW = 19
+   TO_COL = 18
+
+resources:
+
+   room_Duke3 = Duke3.roo
+   room_name_Duke3_old = "The Chambers of Duke Kalior"
+   room_name_Duke3 = "The Chambers of Duke Akardius"
+
+   Duke3_music = area01.mid
+
+   duke3_West_Door = "The Duke shouts angrily at you as you attempt to open the door.  You wisely put your efforts to a halt."
+   duke3_East_Door = "The Duke would have your head if you entered his quarters.  You decide you'd rather keep it and leave the door alone."
+
+
+classvars:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   viTeleport_row = 19
+   viTeleport_col = 18
+
+   viTerrain_Type = TERRAIN_CASTLE
+
+properties:
+
+   vrName = room_name_Duke3
+   prRoom = room_Duke3
+   piRoom_num = RID_DUKE3
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+
+   prMusic = Duke3_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+
+      plExits = Cons([ 21, 19, RID_DUKE2, 3, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 21, 20, RID_DUKE2, 3, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 21, 21, RID_DUKE2, 3, 15, ROTATE_NONE ],plExits);
+
+
+
+      propagate;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+   if row = 16 or row = 17
+      {
+      if col = 15 or col = 16
+         {
+         send(what,@MsgSendUser,#message_rsc = duke3_West_Door);
+         return True;
+         }
+      if col = 25 or col = 24
+         {
+         send(what,@MsgSendUser,#message_rsc = duke3_East_Door);
+         return True;
+         }
+      }
+
+   propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=9,#new_col=18,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=9,#new_col=22,
+           #fine_row=48,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=21,#new_col=22,
+           #fine_row=48,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=21,#new_col=18,
+           #fine_row=48,#fine_col=48);
+
+      Send(self,@NewHold,#what=Create(&Throne),
+           #new_row=10,#new_col=20,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

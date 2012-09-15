@@ -1,0 +1,213 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DarkWizard is Wanderer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DarkWizard_name_rsc = "Maleval"
+   DarkWizard_icon_rsc = wndarkwi.bgf
+   DarkWizard_desc_rsc =  \
+     "You can feel that you are in the presence of a powerful warlock. Invasive "
+     "magic weighs heavily in the air surrounding this wandering sorcerer. His "
+     "knowledge of the intricacies of spell learning is unsurpassed, though his "
+     "public dislike for the temples has made him an outcast of the Royal Court."
+
+   DarkWizard_already_have_spell = "You already have knowledge of the %s spell. You waste my time, fool."
+   DarkWizard_not_ready = "You insult me with your feeble requests for powers beyond your worth.  "
+      "Go practice your puny parlor tricks elsewhere, and do not trouble me until you are ready."
+   DarkWizard_teach_quest_needed = "I do not teach my craft to just any parlor magician "
+      "who stumbles by.  When you are ready, I will let you know.  Begone."
+
+classvars:
+
+   vrName = DarkWizard_name_rsc
+   vrIcon = DarkWizard_icon_rsc
+   vrDesc = DarkWizard_desc_rsc
+
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER
+   viOccupation = MOB_ROLE_WIZARD
+   
+   vrTeach_quest_needed = DarkWizard_teach_quest_needed
+
+properties:
+   viQuestID = QST_ID_SPOREBURST_LEARN
+   
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if why = MOODMOD_WANDERER_ENTERED
+         AND what = self
+      {
+         % become "happy" when entering Duke3
+         if IsClass(poOwner, &Duke3)
+         {
+            send(self,@SetMood,#new_mood=100);
+            
+            return;
+         }
+         
+         % become "sad" when entering TempleQor
+         if IsClass(poOwner, &TempleQor)
+         {
+            send(self,@SetMood,#new_mood=-100);
+            
+            return;
+         }
+
+         % become apathetic when wandering anywhere else
+         send(self,@SetMood,#new_mood = 0);
+      }
+      
+      return;
+   }
+
+   % Since Maleval uses mood for locations, don't allow other things to change it.
+   ChangeMood(change = 0)
+   {
+      return;
+   }
+
+   CreateDestinationList()
+   {
+      plDestinations = [ [RID_TEMPLE_QOR, 22, 14] , [RID_DUKE3, 13, 20],
+                         [RID_TOS_APOTH, 2, 6, 32, 32],[RID_MARION, 78, 38],
+                         [RID_DUKE1, 19, 16] ];
+      return;
+   }
+   
+   SetForSale()
+   {
+      plFor_Sale = [$,$,[SID_SPORE_BURST, SID_CURSE_WEAPON,
+	                SID_DEATHLINK, SID_GAZE_OF_THE_BASILISK, SID_ANIMATE,
+	                SID_SHOCKING_FURY, SID_BLAST_OF_FIRE,
+	                SID_EXPLOSIVE_FROST, SID_SPLASH_OF_ACID, SID_VAMPIRIC_DRAIN,
+			SID_DEATHS_DOOR ]];
+      return;
+   }
+   
+   CanDoTeach(who=$,sid=0)
+   {
+      if sid = SID_SPORE_BURST
+         OR sid = SID_CURSE_WEAPON
+      {
+         if not send(self,@SpecialTeachChecks,#report = TRUE,#who=who,#num=sid)
+         {
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+   
+   CanAddSpell(who=$,num=0,report=FALSE)
+   {
+      if NOT send(self,@SpecialTeachChecks,#report=report,#who=who,#num=num)
+      {
+         return FALSE;
+      }
+      
+      propagate;
+   }
+   
+   SpecialTeachChecks(who=$,num=0,report=FALSE)
+   {
+      local i, oSpell, iSchoolRequired, bFound;
+			
+      if who = $ OR num = 0
+      {
+         DEBUG("Called SpecialTeachChecks with bad parameters!");
+         
+         return FALSE;
+      }
+
+      oSpell = send(SYS,@FindSpellByNum,#num=num);
+
+      if not send(oSpell,@IsAccessible)
+      {
+         return FALSE;
+      }
+      
+      if send(who,@HasSpell,#num=num)
+      {
+         if report
+         { 
+            post(self,@SayToOne,#target=who,#message_rsc=DarkWizard_already_have_spell,
+                 #parm1=send(oSpell,@GetName)); 
+         }
+         
+         return FALSE;
+      }
+
+      if (num = SID_SPORE_BURST
+          OR num = SID_CURSE_WEAPON)
+         AND NOT send(self,@HasDoneLearnQuest,#who=who)
+      {
+         if report
+         { 
+            post(self,@SayToOne,#target=who,#message_rsc=DarkWizard_teach_quest_needed); 
+         }
+         
+         return FALSE;
+      }
+
+      bFound = FALSE;
+      iSchoolRequired=0;
+      
+      if num = SID_SPORE_BURST
+      {
+         iSchoolRequired = SS_QOR;
+      }
+      
+      if num = SID_CURSE_WEAPON
+      {
+         iSchoolRequired = SS_KRAANAN;
+      }
+      
+      if iSchoolRequired = 0
+      {
+         return TRUE;
+      }
+
+      % Special checks for high level spells: need a high level spell in 
+      % a particular school.
+      for i in send(who,@GetSpellList) 
+      {
+         oSpell = send(SYS,@FindSpellByNum,#num=send(who,@DecodeSpellNum,#compound=i));
+ 	 if send(oSpell,@GetLevel) > 4 and send(oSpell,@GetSchool) = iSchoolRequired 
+         {
+            bFound = TRUE;
+            
+            break;
+         }
+      }
+      
+      if bFound = FALSE
+      {   
+         %% player doesn't have a fifth level spell in the required school, denied
+         if report
+         {
+            post(self,@SayToOne,#target=who,#message_rsc=DarkWizard_not_ready);
+         }
+         
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

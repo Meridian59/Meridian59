@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Candle is Flickerer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   candle_name = "candle"
+   candle_desc = "A beeswax candle burns brightly."
+   candle_icon = candle.bgf
+
+classvars:
+
+   vrName = candle_name
+   vrDesc = candle_desc
+   vrIcon = candle_icon
+
+   % Lighting flags.  Default "on" and wavering flags
+   viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING
+
+   % Light color.
+   viLightColor = LIGHT_FIRE
+
+properties:
+
+   % Intensity, from 0-255.
+   piLightIntensity = 5
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

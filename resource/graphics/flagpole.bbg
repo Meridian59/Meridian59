@@ -1,0 +1,10 @@
+# Flag - Flagpole
+# groups
+# 1 Pole
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+1
+flagpole.bmp   [0, 0] :5      1 [101, 11]   2 [101, 23]   3 [101, 35]   4 [101, 47]   5 [101, 59]
+1
+ 1   1 

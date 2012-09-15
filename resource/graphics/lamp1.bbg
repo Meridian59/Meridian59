@@ -1,0 +1,10 @@
+# blue table lamp
+-s 4
+3
+lamp1a.bmp     [0, 0]
+lamp1b.bmp     [0, 0]
+lamp1c.bmp     [0, 0]
+3
+1 1
+1 2
+1 3

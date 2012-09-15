@@ -1,0 +1,744 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LogoffGhost is ActiveObject
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   LogoffGhost_name_rsc = "logoff ghost"
+   LogoffGhost_desc_rsc = \
+      "This is the ghosted body of %q, whose consciousness has travelled to "
+      "another plane of existence."
+
+   LogoffGhost_default_icon = ptb.bgf
+   LogoffGhost_default_larm = plb.bgf
+   LogoffGhost_default_rarm = prb.bgf
+   LogoffGhost_default_legs = pfb.bgf
+
+   LogoffGhost_default_sword = swordov.bgf
+   LogoffGhost_default_shield = rshield.bgf
+
+   LogoffGhost_penalty_mail_Sender = "Your guardian angel"
+
+   LogoffGhost_penalty_mail = "Subject: Penalties for logging off in an unsafe area\n"
+      "You have suffered some penalties for logging off in an unsafe area:\n"
+      "You lost %q items, %q spell points, and %q skill points."
+      "\n\n"
+      "In the future, it would be wise to log off in a safe area such as an "
+      "inn, an adventurer's hall, or the interior of your guild's hall."
+      "\n\n"
+      "Abandoning your body in an unsafe area weakens it, which may cause you "
+      "to suffer some of the effects of death: you could lose proficiency in "
+      "spells and skills, as well as loosening your grip on items in your "
+      "possession.  You have a 10 minute grace period after logoff before "
+      "penalties are incurred, so if you lose your connection involuntarily, "
+      "simply reconnect within 10 minutes and your character will be fine.  "
+      "Every time you log off unsafely in a short period of time, your body "
+      "becomes progressively weaker and as such will suffer more from being "
+      "abandoned.  The first time you logoff unsafely, you will suffer little "
+      "or no penalties, but once you have performed enough unsafe logoffs, "
+      "the damage to your body will be comparable to the losses incurred when "
+      "your character dies.  This penalty escalation recedes over time, so if "
+      "you don't log off unsafely too frequently, your character should "
+      "suffer only mild if any penalties."
+      "\n\n"
+      "I recommend you do not use this as a tactic to avoid danger, since "
+      "it could work against you should your connection to the Meridian "
+      "become too unstable soon after."
+      "\n\n"
+      "  -- Your guardian angel"
+
+   LogoffGhost_newbie_mail = "Subject: Logging off in an unsafe area\n"
+      "You last logged off in an unsafe area, where the lines of connection "
+      "to the Meridian are weak.  I have managed to protect you from the harm "
+      "that usually would result from passing back through the Meridian in "
+      "such a place, but in the future it would be wise to log off in a safe "
+      "area such as an inn or an adventurer's hall (or your guild's hall, "
+      "when you have progressed enough to join a guild)."
+      "\n\n"
+      "Abandoning your body in an unsafe area weakens it, which may cause "
+      "you to experience some effects of death: you could lose proficiency "
+      "in spells and skills, as well as lose your grip on items in your "
+      "possession.  You have a 10 minute grace period after logoff before "
+      "penalties are incurred, so if you lose your connection involuntarily, "
+      "simply reconnect within 10 minutes and your character will be fine."
+      "\n\n"
+      "  -- Your guardian angel"
+
+   LogoffGhost_someone = "Someone"
+
+classvars:
+
+
+properties:
+
+   piDrawFX = DRAWFX_DITHERINVIS
+
+   vrDesc = LogoffGhost_desc_rsc
+   vrName = LogoffGhost_name_rsc
+   vrIcon = LogoffGhost_default_icon
+
+   % Who the LogoffGhost is of.
+   poGhostedPlayer = $
+   piExpression = 1
+   prToupee = charinfo_hair_cb_icon
+   prEyes = charinfo_eyes_kx_icon
+   prMouth = charinfo_mouth_lx_icon
+   prNose = charinfo_nose_mx_icon
+   prHead = charinfo_head_kx_icon
+   prRight_arm = LogoffGhost_default_rarm
+   prLeft_arm = LogoffGhost_default_larm
+   prLegs = LogoffGhost_default_legs
+
+   prWeapon = LogoffGhost_default_sword
+   prShield = LogoffGhost_default_shield
+   prBowTop = $
+
+   piIcon_frame = 1
+   piLegs_frame = 1
+   piLeft_frame = 1
+   piRight_frame = 1
+   piShield_frame = 1
+   piWeapon_frame = 1
+
+   piIcon_translation = 0
+   piLegs_translation = 0
+   piArms_translation = 0
+   piWeapon_translation = 0
+   piShield_translation = 0
+   piSkin_translation = 3
+   piHair_translation = PT_GRAY_TO_BGREEN
+
+   piOverlays = 8
+
+   ptPenaltyTimer = $
+   prItemsLost = $
+   prSpellPointsLost = $
+   prSkillPointsLost = $
+
+messages:
+
+   Constructor(GhostedPlayer = $, iPenaltyTime = $)
+   {
+      local i;
+
+      if GhostedPlayer <> $
+      {
+         Send(self,@SetLogoffGhost,#GhostedPlayer=GhostedPlayer);
+         if poGhostedPlayer <> $
+         {
+            Send(Send(poGhostedPlayer,@GetOwner),@NewHold,#what=self,
+                 #new_row=Send(poGhostedPlayer,@GetRow),
+                 #new_col=Send(poGhostedPlayer,@GetCol),
+                 #fine_row=(Send(poGhostedPlayer,@GetFineRow)+2),
+                 #fine_col=(Send(poGhostedPlayer,@GetFineCol)+2),
+                 #new_angle=Send(poGhostedPlayer,@GetAngle));
+            ptPenaltyTimer = CreateTimer(self,@PenaltyTrigger,
+                                         (iPenaltyTime*1000));
+         }
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      poGhostedPlayer = $;
+
+      if ptPenaltyTimer <> $
+      {
+         DeleteTimer(ptPenaltyTimer);
+         ptPenaltyTimer = $;
+      }
+
+      propagate;
+   }
+
+   ShowDesc()
+   {
+      if poGhostedPlayer <> $
+      {
+         Addpacket(4,vrDesc);
+         AddPacket(STRING_RESOURCE,Send(poGhostedPlayer,@GetTrueName));
+      }
+      else
+      {
+         Addpacket(4,vrDesc);
+         AddPacket(STRING_RESOURCE,LogoffGhost_someone);
+         Post(self,@Delete);
+      }
+
+      return;
+   }
+
+   PenaltyTrigger()
+   {
+      ptPenaltyTimer = $;
+
+      % if player is logged on, some special case didn't get caught!
+      if Send(poGhostedPlayer,@IsLoggedOn)
+      {
+         % delete the ghost, bail with no penalties
+         Send(self,@Delete);
+
+         return;
+      }
+
+      if Send(SYS,@GetLogoffPenaltyEnable)
+      {
+         if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(self,@InflictPenalties);
+         }
+         else
+         {
+            Send(poGhostedPlayer,@ReceiveNestedMail,
+                 #from=LogoffGhost_penalty_mail_Sender,
+                 #dest_list=[poGhostedPlayer],
+                 #nest_list=[4,LogoffGhost_newbie_mail]);
+         }
+      }
+
+      % Send this person to the room's blink coordinates.  This helps get 
+      %  people out of continuous crash situations and mounting penalties.
+      Send(poGhostedPlayer,@AdminGoToBlink);
+
+      Send(self,@Delete);
+
+      return;
+   }
+
+   InflictPenalties()
+   {
+      local i, bLooped, penaltyCounter, LossCounter, BaseLossAmount, 
+            LossAmount, iNumItemsInventory, numItemsLost, iLoops, iStamina,
+            iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
+            lSkills, iSkillAbility, numSkillPointsLost, iEquivDeath,
+            oSoldierShield;
+
+      % Sanity check: Are they logged on?
+      If Send(poGhostedPlayer,@IsLoggedOn)
+      {
+         % No logoff penalty if you are logged on.
+         return;
+      }
+
+      numItemsLost = 0;
+      numSpellPointsLost = 0;
+      numSkillPointsLost = 0;
+      iStamina = Send(poGhostedPlayer,@GetStamina);
+      penaltyCounter = (Send(poGhostedPlayer,@GetLogoffPenaltyCount)
+                       + Send(poGhostedPlayer,@GetDecayedUnjustifiedKills));
+      iEquivDeath = (Send(SYS,@GetLogoffPenaltyEquivDeath));
+      Send(poGhostedPlayer,@IncrementLogoffPenaltyCount);
+
+      % Do bad things here - see player.kod::killed()
+
+      % drop items
+      numItemsLost = Send(poGhostedPlayer,@GetNumItemsInInventory);
+      LossCounter = Send(poGhostedPlayer,@GetNumItemsInInventory)
+                    * penaltyCounter / iEquivDeath;
+
+      if penaltyCounter < iEquivDeath
+         AND Random(1,iEquivDeath-1) < penaltyCounter
+      {
+         LossCounter = LossCounter + 1;
+      }
+
+      iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+      if LossCounter >= iNumItemsInventory
+      {
+         % just drop everything
+         i = 1;
+         while i <= iNumItemsInventory
+         {
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            {
+               % Don't need to increment unless the item stayed in the
+               %  inventory.
+               i = i + 1;
+            }
+         }
+      }
+      else
+      {
+         while LossCounter > 0 AND iNumItemsInventory > 0
+         {
+            % try to drop a Random item
+            iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+            i = Random(1,iNumItemsInventory);
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            {
+               % If the Random drop fails, scan through and drop the first one
+               %  we can.
+               i = 1;
+               while i <= iNumItemsInventory
+                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,
+                                  #targetGhost=self)
+               {
+                  i = i + 1;
+               }
+
+               % If we got all the way through the inventory without dropping
+               %  anything, bail.
+               if i > Send(poGhostedPlayer,@GetNumItemsInInventory)
+               {
+                  LossCounter = 1;
+               }
+            }
+
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Correct the number of items lost by subtracting out the items left in
+      %  inventory.  (Is this right?)
+      iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+      numItemsLost = numItemsLost - iNumItemsInventory;
+
+      % Lose maxhealth
+      Send(poGhostedPlayer,@GainBaseMaxHealth,
+           #amount=-(penaltyCounter/iEquivDeath));
+      if Random(1,iEquivDeath-1) < penaltyCounter mod iEquivDeath
+      {
+         Send(poGhostedPlayer,@GainBaseMaxHealth,#amount=-1);
+      }
+
+      % Lose spell ability
+      lSpells = Send(poGhostedPlayer,@GetSpellList);
+      if lSpells <> $
+      {
+         LossCounter = (Length(lSpells) * penaltyCounter) / iEquivDeath;
+         if Random(1,(iEquivDeath - 1)) < (penaltyCounter mod iEquivDeath)
+         {
+            LossCounter = (LossCounter + 1);
+         }
+
+         if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         {
+            BaseLossAmount = -2;
+         }
+         else
+         {
+            BaseLossAmount = -1;
+         }
+
+         % Loop through once to reduce LossCounter below Length(lSpells), and
+         %  keep iterations down for large penalties
+         if (LossCounter > Length(lSpells))
+         {
+            i = 0;
+            % iLoops = number of complete loops we're collapsing to one
+            iLoops = LossCounter / Length(lSpells);
+            while i < Length(lSpells)
+            {
+               i = i + 1;
+               iSpellAbility = Send(poGhostedPlayer,@DecodeSpellAbility,
+                                    #compound=Nth(lSpells,i));
+               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+               iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
+                                  #compound=Nth(lSpells,i));
+               Send(poGhostedPlayer,@ChangeSpellAbility,
+                    #spell_num=iAbilityNum,#amount=LossAmount);
+               numSpellPointsLost = (numSpellPointsLost - LossAmount);
+            }
+         }
+
+         iLoops = 0;
+         LossCounter = LossCounter - (numSpellPointsLost/BaseLossAmount);
+         while (LossCounter > 0) and (iLoops < 200)
+         {
+            iLoops = iLoops + 1;
+            % This tells us if we've looped back to one yet.
+            bLooped = FALSE;
+            % Try to lower a Random spell.
+            i = Random(1,Length(lSpells));
+
+            iStart = i;
+            % If the Random lower fails, scan through and lower the first one
+            %  we can.
+            while (i <> iStart OR NOT bLooped)
+                  AND (Send(poGhostedPlayer,@DecodeSpellAbility,
+                            #compound=Nth(lSpells,i)) < 6)
+            {
+               i = i + 1;
+               if i > Length(lSpells) AND NOT bLooped
+               {
+                  % We get one free reset (since we started in the middle
+                  %  somewhere)
+                  i = 1;
+                  bLooped = TRUE;
+               }
+            }
+
+            % If we got all the way through the spell list without lowering
+            %  anything, bail.
+            if i = iStart AND bLooped
+            {
+               LossCounter = 0;
+
+               break;
+            }
+
+            iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
+                               #compound=Nth(lSpells,i));
+            Send(poGhostedPlayer,@ChangeSpellAbility,
+                 #spell_num=iAbilityNum,#amount=BaseLossAmount);
+            numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Lose skill ability.
+      lSkills = Send(poGhostedPlayer,@GetSkillList);
+      if (lSkills <> $)
+      {
+         LossCounter = Length(lSkills) * penaltyCounter / iEquivDeath;
+         if Random(1,iEquivDeath-1) < penaltyCounter mod iEquivDeath
+         {
+            LossCounter = LossCounter + 1;
+         }
+
+         % Loop through once to reduce LossCounter below Length(lSkills),
+         %  and keep iterations down for large penalties
+         if LossCounter > Length(lSkills)
+         {
+            i = 0;
+            % Number of complete loops we're collapsing to one.
+            iLoops = LossCounter/Length(lSkills);
+            while i < Length(lSkills)
+            {
+               i = i + 1;
+               iSkillAbility = Send(poGhostedPlayer,@DecodeSkillAbility,
+                                    #compound=Nth(lSkills,i));
+               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+               iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
+                                  #compound=Nth(lSkills,i));
+               Send(poGhostedPlayer,@ChangeSkillAbility,
+                    #skill_num=iAbilityNum,#amount=LossAmount);
+               numSkillPointsLost = numSkillPointsLost - LossAmount;
+            }
+         }
+
+         iLoops = 0;
+         LossCounter = LossCounter - (numSkillPointsLost/BaseLossAmount);
+         while LossCounter > 0 AND iLoops < 100
+         {
+            iLoops = iLoops + 1;
+            % This tells us if we've looped back to one yet.
+            bLooped = FALSE;
+            % Try to lower a Random skill.
+            i = Random(1,Length(lSkills));
+            iStart = i;
+
+            % If the random lower fails, scan through and lower the first one
+            %  we can.
+            while (i <> iStart OR NOT bLooped)
+                  AND (Send(poGhostedPlayer,@DecodeSkillAbility,
+                            #compound=Nth(lSkills,i)) < 6)
+            {
+               i = i + 1;
+               if i > Length(lSkills) AND NOT bLooped
+               {
+                  % We get one free reset since we started in the middle
+                  %  somewhere
+                  i = 1;
+                  bLooped = TRUE;
+               }
+            }
+            % If we got all the way through the skill list without lowering
+            %  anything, bail.
+            if i = iStart AND bLooped
+            {
+               LossCounter = 0;
+
+               break;
+            }
+
+            iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
+                               #compound=Nth(lSkills,i));
+            Send(poGhostedPlayer,@ChangeSkillAbility,
+                 #skill_num=iAbilityNum,#amount=BaseLossAmount);
+            numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Send mail notifying user of penalties incurred
+      prItemsLost = Send(SYS,@IntToString,#num=numItemsLost);
+      prSpellPointsLost = Send(SYS,@IntToString,#num=numSpellPointsLost);
+      prSkillPointsLost = Send(SYS,@IntToString,#num=numSkillPointsLost);
+
+      Send(poGhostedPlayer,@ReceiveNestedMail,
+           #from=LogoffGhost_penalty_mail_Sender,
+           #dest_list=[poGhostedPlayer],
+           #nest_list=[4,LogoffGhost_penalty_mail, 4,prItemsLost,
+                       4,prSpellPointsLost, 4,prSkillPointsLost]);
+
+      % Let the faction shield know of this person's naughtiness if we took a
+      %  penalty.
+      oSoldierShield = Send(poGhostedPlayer,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+         AND penaltyCounter > 0
+      {
+         % Treat it like a death.
+         Send(oSoldierShield,@OwnerDied,#logoff=TRUE);
+      }
+
+      % Reset the time to avoid any funny business like potential double
+      %  penalties.
+      Send(poGhostedPlayer,@ResetLogoffPenaltyTime);
+
+      return;
+   }
+
+   SomethingEntered(what=$)
+   {
+      % If user logs back on while ghosted, delete ghost without penalties
+      %  note that we assume here that a player cannot logon into a different room than
+      %  they logged off in; this assumption fails in the following cases:
+      %  - player death while logged off
+      %  - AdminGoToSafety while logged off
+
+      if what = poGhostedPlayer
+      {
+         Send(self,@Delete);
+      }
+
+      propagate;
+   }
+
+   ResetFrames()
+   {
+      piIcon_frame = 1;
+      piLeft_frame = 1;
+      piRight_frame = 1;
+      piLegs_frame = 1;
+      piOverlays = 8;
+
+      if prShield <> $
+      {
+         piShield_frame = 2;
+         piLeft_frame = 7;
+         piOverlays = piOverlays + 1;
+      }
+
+      if prWeapon <> $
+      {
+         piWeapon_frame = 4;
+         if prBowTop <> $
+         {
+            piWeapon_frame = 2;
+            piLeft_frame = 7;
+         }
+         else
+         {
+            piRight_frame = 17;
+         }
+
+         piOverlays = piOverlays + 1;
+      }
+
+      return;
+   }
+
+   ResetPose()
+   {
+      Send(self,@ResetFrames);
+
+      piIcon_translation = Send(poGhostedPlayer,@GetBodyTranslation);
+      piLegs_translation = Send(poGhostedPlayer,@GetLegsTranslation);
+      piArms_translation = Send(poGhostedPlayer,@GetArmsTranslation);
+      piHair_translation = Send(poGhostedPlayer,@getHairColor);
+      piSkin_Translation = Send(poGhostedPlayer,@GetSkinColor);
+      piExpression = Send(poGhostedPlayer,@GetExpression);
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   SetLogoffGhost(GhostedPlayer = $)
+   {
+      local oWeapon;
+
+      if GhostedPlayer = $
+         OR NOT IsClass(GhostedPlayer,&User)
+      {
+         debug("Bad GhostedPlayer!");
+         return;
+      }
+
+      poGhostedPlayer = GhostedPlayer;
+
+      vrIcon = Send(poGhostedPlayer,@GetIcon,#trueicon=TRUE);
+
+      prHead = Send(poGhostedPlayer,@GetHeadRsc);
+      prEyes = Send(poGhostedPlayer,@GetEyesRsc);
+      prMouth = Send(poGhostedPlayer,@GetMouthRsc);
+      prNose = Send(poGhostedPlayer,@GetNoseRsc);
+      prToupee = Send(poGhostedPlayer,@GetHairRsc);
+
+      prLeft_arm = Send(poGhostedPlayer,@GetLeftArmRsc);
+
+      prRight_arm = Send(poGhostedPlayer,@GetRightArmRsc);
+      prLegs = Send(poGhostedPlayer,@GetLegsRsc);
+      prShield = Send(poGhostedPlayer,@GetShieldRsc);
+      piShield_translation = Send(poGhostedPlayer,@GetShieldTranslation);
+      oWeapon = Send(poGhostedPlayer,@LookUpPlayerWeapon);
+
+      piWeapon_translation = 0;
+      prBowTop = $;
+
+      if oWeapon <> $
+      {
+         piWeapon_translation = Send(oWeapon,@GetPaletteTranslation);
+
+         if isClass(oWeapon,&RangedWeapon)
+         {
+            prBowTop = Send(oWeapon,@GetSecondOverlay);
+         }
+      }
+
+      if oWeapon <> $
+      {
+         prWeapon = Send(oWeapon,@GetOverlay);
+      }
+      else
+      {
+         prWeapon = $;
+      }
+
+      Send(self,@ResetPose);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if (piIcon_translation) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piIcon_translation);
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,piIcon_frame);
+
+      return;
+   }
+
+   SendOverlays()
+   {
+      local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat,
+            iArms_xlat;
+
+      % Send overlay bitmap info to user.
+
+      % Player has 8 standard overlays: right arm, left arm, legs, head, eyes, 
+      %  mouth, nose, hair
+
+      % Number of overlays
+      AddPacket(1,piOverlays);
+
+      % Left hand
+      AddPacket(4,prLeft_arm, 1,HS_LEFT_HAND);
+      if piArms_translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piArms_translation);
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,piLeft_frame);
+
+      % Right hand
+      AddPacket(4,prRight_arm, 1,HS_RIGHT_HAND);
+      if piArms_translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piArms_translation);
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,piRight_frame);
+
+      % Legs
+      AddPacket(4,prLegs, 1,HS_LEGS);
+      if piLegs_translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piLegs_translation);
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,piLegs_frame);
+
+      % Face
+      iSkin_xlat = piSkin_translation;
+      AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
+                1,ANIMATE_NONE, 2,1);
+      AddPacket(4,prMouth, 1,HS_MOUTH, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
+                1,ANIMATE_NONE, 2,piExpression);
+      AddPacket(4,prEyes, 1,HS_EYES, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
+                1,ANIMATE_NONE, 2,piExpression);
+      AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
+                1,ANIMATE_NONE, 2,1);
+      AddPacket(4,prToupee, 1,HS_TOUPEE, 1,ANIMATE_TRANSLATION,
+                1,piHair_translation, 1,ANIMATE_NONE, 2,1);
+
+      if prShield <> $
+      {
+         AddPacket(4,prShield,1,HS_LEFT_WEAPON);
+         if piShield_translation <> 0
+         {
+            AddPacket(1,ANIMATE_TRANSLATION, 1,piShield_translation);
+         }
+
+         AddPacket(1,ANIMATE_NONE, 2,piShield_frame);
+      }
+
+      if prWeapon <> $
+      {
+         AddPacket(4,prWeapon);
+
+         if prBowTop <> $
+         {
+            AddPacket(1,HS_BOTTOM_BOW);
+         }
+         else
+         {
+            AddPacket(1,HS_RIGHT_WEAPON);
+         }
+
+         if piWeapon_translation <> 0
+         {
+            AddPacket(1,ANIMATE_TRANSLATION, 1,piWeapon_translation);
+         }
+
+         AddPacket(1,ANIMATE_NONE, 2,piWeapon_frame);
+      }
+
+      return;
+   }
+
+   GetGhostedPlayer()
+   {
+      return poGhostedPlayer;
+   }
+
+   GetObjectFlags()
+   {
+      return piDrawFX;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

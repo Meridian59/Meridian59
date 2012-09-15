@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Chandelier is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   chandelier_name_rsc = "Chandelier"
+   chandelier_icon_rsc = chandelr.bgf
+   chandelier_desc_rsc = "This decorative chandelier does not look as though it could hold the weight of a swinging swashbuckler."
+
+classvars:
+
+   vrName = chandelier_name_rsc
+   vrIcon = chandelier_icon_rsc
+   vrDesc = chandelier_desc_rsc
+
+properties:
+
+
+messages:
+
+   GetObjectFlags()
+   {
+      return LOOK_NO | OF_HANGING;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,184 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ObjectRoom is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+
+properties:
+
+   ptGen_object
+
+   % list of number items to be created randomly.  Each item in list is
+   % list of class, GEN_INF or GEN_ONE, number (meaningless if not numberitem),
+   % row, col.    Optional extra 2 elements, fine row and fine col
+
+   % Set this in CreateObjectGeneration
+
+   % An object must be passive if GEN_ONE
+   plObject_gen = $
+
+   piGen_object_time = 1350000 % defaults to every five minutes
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@CreateObjectGeneration);
+
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   "Set plObject_gen to the list of object stuff to be made by this room."
+   {
+      return;
+   }
+
+   Delete()
+   {
+      if ptGen_object <> $
+      {
+	 DeleteTimer(ptGen_object);
+	 ptGen_object = $;
+      }
+      propagate;
+   }
+
+   ObjectGenTimer()
+   "Modified 5/15 by Damion.  The timer no longer is deleted by lastuserleft."
+   "This is to prevent users from creating objects by leaving and reentering."
+   {
+      ptGen_object = $;
+
+      if send(self,@isuserinroom)
+        {
+           send(self,@objectGenerator);
+        }
+
+      return;
+   }
+
+  ObjectGenerator()
+  "Added 5/15 by Damion.  This is called without any checks for modified "
+  "firstuserentered routine."
+    {
+       Send(self,@TryCreateObject);
+       ptGen_object = CreateTimer(self,@ObjectGenTimer,piGen_object_time);
+       return;
+    }
+
+   TestGenPoints(bApple = TRUE)
+   {
+      local lObjectInfo, oObject, row, col, finerow, finecol;
+            
+      for lObjectInfo in plObject_gen
+      {	 
+	 %% create apples so we know that it's not naturally created or dropped
+	 if bApple   { oObject = create(&Apple); }
+	 else	     { oObject = create(first(lObjectInfo)); }
+
+	 %% Go ahead and gen 'em
+	 row = nth(lObjectInfo,4);
+	 col = nth(lObjectInfo,5);
+
+	 finerow = FINENESS_HALF;
+	 finecol = FINENESS_HALF;
+	 
+	 if Length(lObjectinfo) >= 7
+	 {
+	    finerow = Nth(lObjectinfo,6);
+	    finecol = Nth(lObjectinfo,7);	    
+	 }		  	 
+	 Send(self,@newhold,#what=oObject,
+	    #new_row = row, #new_col = col, #fine_row = finerow, #fine_col = finecol);
+      }
+      return;
+   }
+
+   TryCreateObject()
+   "Creates an object from our list, if possible, and places in the room."
+   {
+      local i,lObject_info,oNew_creation,iNumber,iRow,iCol,iFine_row,iFine_col;
+
+      if plObject_gen = $
+      {
+	 return;
+      }
+
+      lObject_info = Nth(plObject_gen,Random(1,Length(plObject_gen)));
+
+      iNumber = Nth(lObject_info,3);
+      iRow = Nth(lObject_info,4);
+      iCol = Nth(lObject_info,5);
+      
+      if Nth(lObject_info,2) = GEN_ONE
+      {
+	 % check to make sure no other object with same class in this square
+	 for i in plPassive
+	 {
+	    % get row and col from the list 
+	    if Nth(i,3) = iRow and Nth(i,4) = iCol and 
+	       GetClass(First(i)) = First(lObject_info)
+	    {
+	       %debug("Try to create object already there",First(lObject_info),iRow,iCol);
+	       return;
+	    }
+	 }
+      }
+      
+      iFine_row = FINENESS_HALF;
+      iFine_col = FINENESS_HALF;
+      if Length(lObject_info) >= 7
+      {
+	 iFine_row = Nth(lObject_info,6);
+	 iFine_col = Nth(lObject_info,7);
+
+	 %debug("Object gen make at fineness",iFine_row,iFine_col);
+      }		   
+
+      oNew_creation = Create(First(lObject_info),#number=iNumber);
+      
+      if Send(self,@ReqNewHold,#what=oNew_creation,#new_row=iRow,#new_col=iCol) and 
+         Send(self,@ReqSomethingMoved,#what=oNew_creation,#new_row=iRow,#new_col=iCol)
+      {
+	 Send(self,@NewHold,#what=oNew_creation,#new_row=iRow,#new_col=iCol,
+	      #fine_row=iFine_row,#fine_col=iFine_col);
+      }
+      else
+      {
+	 Send(oNew_creation,@Delete);
+      }
+
+      return;
+   }
+
+   FirstUserEntered(what = $)
+   {
+      if ptGen_object <> $
+      { 
+	 %debug("Timer exists.  Someone tried to leave and then reenter."); 
+      }
+      else
+      {
+         Send(self,@ObjectGenerator);
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

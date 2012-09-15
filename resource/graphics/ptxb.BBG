@@ -1,0 +1,15 @@
+# Female hair - bun and braid
+# 1 group
+#^Applied to Hotspot: 13
+#*Groups: 1
+#* Unlabeled Group
+-s 14
+6
+Pt000xba.bmp   [-23, -10] 
+Pt315xba.bmp   [-23, -9] 
+Pt270xba.bmp   [-22, -11] 
+Pt180xba.bmp   [-21, -10] 
+Pt090xba.bmp   [-31, -13] 
+Pt045xba.bmp   [-26, -10] 
+1
+ 8   1 2 3 4 4 4 5 6 

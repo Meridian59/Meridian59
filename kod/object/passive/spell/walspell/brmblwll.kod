@@ -1,0 +1,265 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BrambleWall is WallSpell 
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BrambleWall_name_rsc = "bramble wall"
+   BrambleWall_icon_rsc = iwalltho.bgf
+   BrambleWall_desc_rsc = \
+      "Creates a thicket of thorny, twisted bramble.  Such a wall would be "
+      "painful to pass, though it might not harm one who remained "
+      "motionless.  "
+      "Requires elderberries and yrxl sap to cast."
+
+   BrambleWall_cast_rsc = "A wall of brambles appears before you!"
+   BrambleWall_failed_rsc = \
+      "There is too much summoning magic focused here to create a wall of "
+      "brambles."
+
+   BrambleWall_sound = faren.wav
+
+classvars:
+
+   vrName = BrambleWall_name_rsc
+   vrIcon = BrambleWall_icon_rsc
+   vrDesc = BrambleWall_desc_rsc
+
+   viSpell_num = SID_BRAMBLE_WALL
+   viSchool = SS_FAREN
+   viSpell_level = 2
+   viMana = 10
+
+   viChance_To_Increase = 25
+   viSpellExertion = 10
+   viCast_time = 4000
+   vrSucceed_wav = BrambleWall_sound
+
+   viHarmful = TRUE
+
+   viNumElements = 5
+
+   vrSummonLimitMsg = BrambleWall_failed_rsc
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Elderberry,3],plReagents);
+      plReagents = Cons([&Yrxlsap,1], plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      Send(who,@MsgSendUser,#message_rsc=BrambleWall_cast_rsc);
+
+      propagate;
+   }
+
+   PlaceWallElements(who = $, iSpellPower = 0)
+   {
+      local  oRoom, iRow, iCol, iFine_Row, iFine_Col, iXStep, iYStep, iAngle,
+         iMaxDamage, iDuration, iHalfrow, iHalfCol, iHalfFine_Row,
+         iHalfFine_Col, iBrambleHits, oElement;
+
+      iAngle = Send(who,@GetAngle);
+      iMaxDamage = iSpellPower / 15;
+      iMaxDamage = bound(iMaxDamage,$,5);
+      iDuration = (iSpellPower * 3) + 45;
+      iDuration = bound(iDuration,45,270);
+      iBrambleHits = bound(iSpellPower/2,10,50);
+
+      % Facing East
+      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) + 1;
+         iXStep = 0;
+         iyStep = 1;
+      }
+
+      % Facing SouthEast
+      if iAngle >= ANGLE_ESE AND iAngle < ANGLE_SSE
+      {
+         iRow = Send(who,@GetRow) - 1;
+         iCol = Send(who,@GetCol) + 3;
+         iXStep = -1;
+         iyStep = 1;
+      }
+
+      % Facing South
+      if iAngle >= ANGLE_SSE AND iAngle < ANGLE_SSW
+      {
+         iRow = Send(who,@GetRow) + 1;
+         iCol = Send(who,@GetCol) - 2;
+         iXStep = 1;
+         iyStep = 0;
+      }
+
+      % Facing SouthWest
+      if iAngle >= ANGLE_SSW AND iAngle < ANGLE_WSW
+      {
+         iRow = Send(who,@GetRow) + 3;
+         iCol = Send(who,@GetCol) + 1;
+         iXStep = -1;
+         iyStep = -1;
+      }
+
+      % Facing West
+      if iAngle >= ANGLE_WSW AND iAngle < ANGLE_WNW
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) - 1;
+         iXStep = 0;
+         iYStep = 1;
+      }
+
+      % Facing NorthWest
+      if iAngle >= ANGLE_WNW AND iAngle < ANGLE_NNW
+      {
+         iRow = Send(who,@GetRow) + 1;
+         iCol = Send(who,@GetCol) - 3;
+         iXStep = 1;
+         iyStep = -1;
+      }
+
+      % Facing North
+      if iAngle >= ANGLE_NNW AND iAngle < ANGLE_NNE
+      {
+         iRow = Send(who,@GetRow) - 1;
+         iCol = Send(who,@GetCol) - 2;
+         iXStep = 1;
+         iyStep = 0;
+      }
+
+      % Facing NorthEast
+      if iAngle >= ANGLE_NNE AND iAngle < ANGLE_ENE
+      {
+         iRow = Send(who,@GetRow) - 3;
+         iCol = Send(who,@GetCol) - 1;
+         iXStep = 1;
+         iyStep = 1;
+      }
+
+      oRoom = Send(who,@GetOwner);
+
+      iFine_Row = Send(who,@GetFineRow);
+      iFine_Col = Send(who,@GetFineCol);
+
+
+      iHalfRow = 0;
+      iHalfCol = 0;
+      iHalfFine_Row = iFine_Row;
+      iHalfFine_Col = iFine_Col;
+
+      if iYStep < 0 
+      {
+         if iHalfFine_Row > 31
+         {
+            iHalfFine_Row = iHalfFine_Row - 32;
+         }
+         else
+         {
+            iHalfRow = -1;
+            iHalfFine_Row = 32 + iHalfFine_Row;
+         }
+      }
+
+      if iYStep > 0 
+      {
+         if iHalfFine_Row < 33
+         {
+            iHalfFine_Row = iHalfFine_Row + 32;
+         }
+         else
+         {
+            iHalfRow = 1;
+            iHalfFine_Row = iHalfFine_Row - 32;
+         }
+      }
+
+      if iXStep < 0 
+      {
+         if iHalfFine_Col > 31
+         {
+            iHalfFine_Col = iHalfFine_Col - 32;
+         }
+         else
+         {
+            iHalfCol = -1;
+            iHalfFine_Col = 32 + iHalfFine_Col;
+         }
+      }
+
+      if iXStep > 0 
+      {
+         if iHalfFine_Col < 33
+         {
+            iHalfFine_Col = iHalfFine_Col + 32;
+         }
+         else
+         {
+            iHalfCol = 1;
+            iHalfFine_Col = iHalfFine_Col - 32;
+         }
+      }
+
+      oElement = Create(&Brambles,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration,#HitPoints=iBrambleHits);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Brambles,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration,#HitPoints=iBrambleHits);
+      Send(oRoom,@NewHold,#what=oElement,
+           #new_row=iRow+iYStep,#new_col=iCol+iXStep,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Brambles,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration,#HitPoints=iBrambleHits);
+      Send(oRoom,@NewHold,#what=oElement,
+           #new_row=iRow+2*iYStep,#new_col=iCol+2*iXStep,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Brambles,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration,#HitPoints=iBrambleHits);
+      Send(oRoom,@NewHold,#what=oElement,
+           #new_row=iRow+3*iYStep,#new_col=iCol+3*iXStep,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&Brambles,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration,#HitPoints=iBrambleHits);
+      Send(oRoom,@NewHold,#what=oElement,
+           #new_row=iRow+4*iYStep,#new_col=iCol+4*iXStep,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      propagate;
+   }
+
+   OfferToNewCharacters()
+   {
+      % Wall spells are difficult to use.
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

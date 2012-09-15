@@ -1,0 +1,148 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Fade is Spell
+
+constants:
+
+   include blakston.khd
+
+   FADE_TIME = 300000       % 5 minutes
+
+resources:
+
+   fade_name_rsc = "fade"
+   fade_icon_rsc = ifade.bgf
+   fade_desc_rsc = \
+      "Temporarily dissolves your physical form leaving "
+      "you invisible.  The spell lasts as long as your trance "
+      "is maintained.  "
+      "Requires dark angel feather."
+   
+   fade_already_enchanted = "You are already invisible."
+
+   fade_on = "Your physical form fades from existence leaving only a shimmering apparition."
+   fade_off = "Your physical form is visible once more."
+   fade_broke_trance = "You lose your concentration and become visible once more."
+
+   fade_sound = qfade.wav
+
+classvars:
+
+   viPersonal_ench = True
+
+   vrName = fade_name_rsc
+   vrIcon = fade_icon_rsc
+   vrDesc = fade_desc_rsc
+
+   viSpell_num = SID_FADE
+   viSchool = SS_QOR
+   viSpell_level = 2
+   viMana = 12
+   viChance_To_Increase = 15
+
+   vrSucceed_wav = fade_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&DarkAngelFeather,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who=$,lTargets=$)
+   {
+      % check for enchantment already applied
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+      {
+         Send(who,@MsgSendUser,#message_rsc=fade_already_enchanted);
+         
+         return FALSE;
+      }
+      
+      propagate;
+   }
+	 
+
+   CastSpell(who = $, iSpellPower = 0)
+   {
+      Send(who,@MsgSendUser,#message_rsc=fade_on);
+      Send(who,@StartEnchantment,#what=self,
+           #time=send(self,@GetDuration,#iSpellPower=iSpellPower));      
+      send(who,@ResetPlayerFlagList);
+      
+      propagate;
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {
+      Send(who,@SetTranceFlag);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=TRUE);
+      
+      return;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;
+
+      % roughly 2-10 minutes, based on spell level
+      iDuration = 120 + (iSpellPower * 5);
+      iDuration = iDuration * 1000;
+
+      return iDuration;
+   }
+
+   EndEnchantment(who = $, report=TRUE)
+   {
+      Send(who,@ClearTranceFlag);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=fade_off);
+      }
+        
+      return;
+   }
+
+   BreakTrance( who = $, state = $ )
+   {
+      %% clean up trance
+      Send(who,@ClearTranceFlag);
+      Send(who,@RemoveEnchantment,#what=self);
+      Send(who,@MsgSendUser,#message_rsc=fade_broke_trance);
+      
+      return;
+   }
+
+   OfferToNewCharacters()
+   {
+      % It's a PKing only spell.  Denied.
+      return FALSE;
+   }
+   
+   IsIllusion()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

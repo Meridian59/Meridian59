@@ -1,0 +1,131 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcCave6 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+   DOORSECTOR = 1
+   DOOROPEN = 1150
+   DOORCLOSED = 1060
+
+resources:
+
+   room_orccave6 = oc06.roo
+   room_name_orccave6 = "Konima's Ascension"
+
+   orccave6_music = orc2.mid
+
+   OrcCave6_door_up = doorrsup.wav
+   OrcCave6_door_down = doordown.wav
+
+classvars:
+
+   vrName = room_name_orccave6
+
+   viTeleport_row = 35
+   viTeleport_col = 72
+
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   piRoom_num = RID_ORC_CAVE6
+   prRoom = room_orccave6
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   ptDoor = $
+
+   prMusic = orccave6_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&CaveOrc, 70], [&OrcWizard, 30] ];
+      plGenerators = [[45,11],[39,08],[38,15],[34,05],[26,12],[13,17],[14,30],[23,47],
+	 [47,43],[38,63],[43,55],[55,41],[61,44],[64,33],[49,39],[29,47],
+	 [69,35],[63,25],[53,20],[37,24],[35,37],[28,32],[58,18]];
+
+      propagate;
+   }
+
+   SomethingTryGo(What=$,Row=$,Col=$)
+   {
+      if (Row = 5 and (Col = 61 or Col = 62 or Col = 63)) or
+	 (Row = 6 and (Col = 61 or Col = 62 or Col = 63)) or
+	 (Row = 7 and (Col = 61 or Col = 62 or Col = 63))
+      {
+	 send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+	    #height = DOOROPEN,#speed=50);
+	 Send(self,@SomethingWaveRoom,#wave_rsc=OrcCave6_door_up);
+	 ptDoor = createtimer(self,@CloseDoor,10000);
+	 return TRUE;
+      }
+      propagate;
+   }
+
+   CloseDoor()
+   {
+      ptDoor = $;
+      send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+           #height = DOORCLOSED,#speed=50);
+      Send(self,@SomethingWaveRoom,#wave_rsc=OrcCave6_door_down);
+      return;
+   }
+
+
+   Delete()
+   {
+      if (ptDoor <> $)
+      {
+         DeleteTimer(ptDoor);
+         ptDoor = $;
+      }
+      propagate;
+   }
+
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plExits = $;
+      plEdge_Exits = Cons([LEAVE_WEST,  RID_ORC_CAVE5, 47, 72, ROTATE_NONE], plEdge_exits);
+      plExits = Cons([ 5, 57, RID_KOC_NORTH, 41, 52, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 57, RID_KOC_NORTH, 41, 52, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 57, RID_KOC_NORTH, 41, 52, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      include oc06.ktm;
+      Send(self,@NewHold,#what=Create(&Kocatanbrazier),#new_row=4,#new_col=58,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Kocatanbrazier),#new_row=9,#new_col=58,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&KocatanSentry),#new_row=4,#new_col=61,#fine_row=32,#fine_col=0);
+   
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

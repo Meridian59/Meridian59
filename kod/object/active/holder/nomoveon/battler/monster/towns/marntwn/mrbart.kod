@@ -1,0 +1,192 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarionBartender is MarionTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MarionBartender_name_rsc = "Tova"
+   MarionBartender_icon_rsc = mrbart.bgf
+   MarionBartender_desc_rsc = "There is no overlooking Tova, a bellowing and uproarious man who takes life exactly "
+      "as it comes through the front door of the Limping Toad.  He is the proprietor here, "
+      "serving drinks and entertaining from his self-styled rostrum noted for its powerful stout."
+
+   Tova_entrootberry_sale = "Hmmm.  Why, yes, I do believe I have some entroot... since it's from my own private stash, I will have to charge extra...."
+
+   Tova_cheers1 = "Thank you, m'%s. . . bottoms up!"
+   Tova_cheers2 = "Thank you, I will, m'%s. Just one, for my chest. . ."
+   Tova_cheers3 = "To your health, %s!"
+   Tova_cheers4 =  "Aye, cheers!"
+
+   tova_unwanted_keep = "~k%s%s tells you, \"Well, how nice of you.  A gift.~n~k\""
+   tova_unwanted_pay = "~k%s%s tells you, \"What an interesting item!~n~k\""
+   tova_unwanted_give = "~k%s%s tells you, \"Ha, ha, you've got to be kidding me, stranger! This is a tavern, not a gypsy’s tent!~n~k\""
+
+
+classvars:
+
+   vrName = MarionBartender_name_rsc
+   vrIcon = MarionBartender_icon_rsc
+   vrDesc = MarionBartender_desc_rsc
+   viMerchant_markup = MERCHANT_RIPOFF
+   viAttributes = MOB_NOFIGHT | MOB_RECEIVE | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_SELLER | MOB_COND_SELLER | MOB_FULL_TALK
+   viOccupation = MOB_ROLE_BARTENDER
+
+   vrUnwanted_keep = tova_unwanted_keep
+   vrUnwanted_pay = tova_unwanted_pay
+   vrUnwanted_give = tova_unwanted_give
+ 
+
+properties:
+
+messages:
+
+   UserEntered(who = $)
+   {
+      local iFlags;
+      
+      iFlags = send(who,@GetObjectFlags);
+      
+      if iFlags & PLAYER_PK
+      {
+         send(self,@SetMood,#new_mood=piMood - 3);
+         
+         propagate;
+      }
+      
+      if send( who, @GetHomeRoom ) = RID_MAR_INN
+      {
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+      
+      propagate;
+   }
+
+   GotUnwantedItem(obj=$,who=$)
+   {
+      local i, TargetObj;
+
+      %% First off, if it's not alcohol, who cares?
+      if NOT isClass(obj,&Food) OR NOT send(obj,@IsAlcohol)
+      {
+         propagate;
+      }
+      
+      %% We have to be sure we delete the mug here.   Remember, 
+      %% obj is a mirror of the real object.  We have to check to 
+      %% be sure the player has the object, and if not, we have
+      %% to remove this amount from the player's inventory.  
+      %% Number items suck.
+
+      TargetObj = $;
+      for i in send(who,@GetHolderPassive)
+      {
+         if getClass(i) = getClass(obj)
+         {
+            TargetObj = i;
+            
+            break;
+         }
+      }
+      
+      if TargetObj = $
+      {
+         debug("Player offered an item he didn't have!");
+         
+         propagate;
+      }
+
+      if send(TargetObj,@GetNumber) < send(obj,@GetNumber)
+      {
+         debug("Player offered more of an item than he possessed!");
+         
+         propagate;
+      }
+
+      send(TargetObj,@SubtractNumber,#number=send(obj,@GetNumber));
+      send(obj,@Delete);
+      i = random(1,4);
+
+      if i=1
+      {
+         send(self,@Say,#message_rsc=tova_cheers1,#parm1=send(who,@GetLordLady));
+      }
+      
+      if i= 2
+      {
+         send(self,@Say,#message_rsc=tova_cheers2,#parm1=send(who,@GetLordLady));
+      }
+      
+      if i= 3
+      {
+         send(self,@Say,#message_rsc=tova_cheers3,#parm1=send(who,@GetTrueName));
+      }
+      
+      if i= 4
+      {
+         send(self,@Say,#message_rsc=tova_cheers4);
+      }
+      
+      return;
+   }
+   
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_ACCEPT_ITEM
+         AND isClass(what,&Food) 
+         AND send(what,@IsAlcohol)
+      {          
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+      
+      if why = MOODMOD_SELL_ITEM
+      {          
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+      
+      propagate;
+   }
+
+   SetMood(new_mood = $)
+   {
+      send(poOwner,@SetInnkeeperMood,#iMood=new_mood);
+      
+      propagate;
+   }
+
+   SetForSale()
+   {
+      plFor_sale=[ [ Create(&Mug,#number=4),
+                     Create(&Bread),
+                     Create(&Meatpie) ],
+                   $,$,$];
+      
+      return;
+   }
+
+   InitCondSale()
+   {
+      local oObj;
+      
+      oObj=Create(&EntrootBerry,#number=4);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,200,Tova_entrootberry_sale]);
+           
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

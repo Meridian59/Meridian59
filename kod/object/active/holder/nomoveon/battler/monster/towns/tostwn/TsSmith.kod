@@ -1,0 +1,106 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosBlacksmith is TosTown
+
+%% TosBlacksmith is no longer used.  WIll delete itself if created.
+
+constants:
+
+   include blakston.khd
+
+   ANIM_WAVE = 1
+
+resources:
+
+   TosBlacksmith_name_rsc = "Fehr'loi Qan"
+   TosBlacksmith_icon_rsc = bsmith.bgf
+   TosBlacksmith_desc_rsc = "One of the finest blacksmiths in the land, Fehr'loi Qan is known far and wide for his superlative work."
+
+   entry_welcome = "Hello %s%s, and welcome."
+   TsSm_mace_sale = "All these beautiful weapons, and you want %s%s.  Sheesh!  Well, I suppose I've no choice but to sell you one."
+
+classvars:
+
+   vrName = TosBlacksmith_name_rsc
+   vrIcon = TosBlacksmith_icon_rsc
+   vrDesc = TosBlacksmith_desc_rsc
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_TEACHER | MOB_COND_SELLER | MOB_LAWFUL
+   viOccupation = MOB_ROLE_BLACKSMITH
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+
+properties:
+   
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_ACCEPT_ITEM )
+      {
+	 if( IsClass( what, &wand ) )
+	 {
+   	    send( self, @SetMood, #new_mood = piMood + 5 );
+	 }
+      }
+      return;
+   }
+
+   Constructor()
+   {
+      debug("Someome tried to make a defunct class!");
+      post(self,@Delete);
+      return;
+   }
+
+   ObjectDesired(what=$)
+   {
+      if Send(what,@CanBeGiventoNPC) AND
+         (Send(Self,@IsObjectWearable,#what=what) OR
+         Send(Self,@IsObjectMisc,#what=what) OR
+         Send(Self,@IsObjectWeapon,#what=what)) {return True;}
+      return False;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ [Create(&ChainArmor),
+                     Create(&Axe),
+                     Create(&Hammer),
+                     Create(&MetalShield)],
+                     $,
+                     [SID_MAGICSHIELD], $ ];
+      return;
+   }
+
+   InitCondSale()
+   {
+      local oObj;
+      oObj=Create(&Mace);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,100,TsSm_mace_sale]);
+      return;
+   }
+
+
+   UserEntered(who = $)
+   {
+      Post(poOwner,@SomeoneSaid,#what = self, #string=entry_welcome,
+         #type = SAY_RESOURCE, 
+         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+      return;
+   }
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

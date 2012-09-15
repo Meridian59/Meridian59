@@ -1,0 +1,41 @@
+# axe - Third Person overlays
+# groups
+# 1-3 attacking 
+# 4 held sword
+#^Applied to Hotspot: 22
+#*Groups: 4
+#* A
+#* B
+#* C
+#* S
+-s 4
+24
+axe000Aa.bmp   [172, 32] 
+axe315aa.bmp   [163, 31] 
+axe270aa.bmp   [169, 29] 
+axe180aa.bmp   [189, 30] 
+axe090aa.bmp   [148, 30] 
+axe045aa.bmp   [159, 31] 
+axe000ab.bmp   [171, 71] 
+axe315ab.bmp   [195, 75] 
+axe270ab.bmp   [214, 73] 
+axe180ab.bmp   [188, 73] 
+axe090ab.bmp   [122, 74] 
+axe045ab.bmp   [141, 74] 
+axe000ac.bmp   [179, 134] 
+axe315ac.bmp   [80, 131] 
+axe270ac.bmp   [57, 123] 
+axe180ac.bmp   [192, 117] 
+axe090ac.bmp   [260, 124] 
+axe045ac.bmp   [234, 129] 
+axe000sa.bmp   [142, 156] 
+axe315sa.bmp   [123, 153] 
+axe270sa.bmp   [137, 154] 
+axe180sa.bmp   [222, 158] 
+axe090sa.bmp   [180, 159] 
+axe045sa.bmp   [160, 158] 
+4
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 

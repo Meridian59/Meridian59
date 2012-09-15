@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKA4 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKA4 ="Into the Jungle"
+   room_OutdoorsKA4 = KA4.roo
+   OutdoorsKA4_music = avarwar.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKA4
+
+   viTeleport_row = 22
+   viTeleport_col = 4
+   viTerrain_type = TERRAIN_JUNGLE
+
+   viAvar_clan = AVARCLAN_ANTIMAGIC
+
+properties:
+
+   prRoom = room_OutdoorsKA4
+   prMusic = OutdoorsKA4_music
+   piRoom_num = RID_KA4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Avar, 10], [&Dragonfly, 90] ];
+      plGenerators = [ [4,45], [7,12], [13,7], [21,15], [39,41], [43,22] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&RainbowFern,23,5], [&RainbowFern,11,3], [&RainbowFern,7,47] ];
+
+      % Do not propagate
+      return;
+   }
+
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KA3, 73, 49, ROTATE_NONE, NO_OTHER_CONDITIONS], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KA5, 1, 24, ROTATE_NONE, NO_OTHER_CONDITIONS], plEdge_exits);      
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

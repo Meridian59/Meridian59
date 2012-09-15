@@ -1,0 +1,212 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BasicInnKeeper is TosTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   basicinnkeeper_name_rsc = "Rycksher"
+   basicinnkeeper_icon_rsc = basicinn.bgf
+   basicinnkeeper_desc_rsc = \
+      "The younger, prissy, and less competent brother of Paddock casually "
+      "lounges behind the bar.  While sipping from goblet (pinky outstretched), "
+      "he slowly bobs his head to the music."
+
+   basicIK_entry_welcome = "I shall be right with you."
+
+   basicinnkeeper_fee_rsc = "You haven't enough to cover the expenses of wrapping tissue."
+   basicinnkeeper_type_rsc = "I shan't be wrapping anything of the sort."
+   basicinnkeeper_wrap_rsc = \
+      "~kRycksher uses some dead slime goo and sheets of colored tissue to wrap a gift-box. "
+      "With practiced hands, he turns a small piece of shiny ribbon into a perfect bow. "
+      "He hands it back after delicately writing something on a tag."
+
+classvars:
+
+   vrName = basicinnkeeper_name_rsc
+   vrIcon = basicinnkeeper_icon_rsc
+   vrDesc = basicinnkeeper_desc_rsc  
+   viOccupation = MOB_ROLE_INNKEEPER
+
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_SELLER | MOB_NOQUEST | MOB_RECEIVE
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+properties:
+
+   pbGiftGiving = TRUE
+   pbGiftInGift = FALSE
+
+   pcCostToWrap = &Ruby
+   piNumberToWrap = 1
+
+messages:
+
+   ExplainFee(who=$)
+   {
+      send(self,@SayToOne,#target=who,#message_rsc=basicinnkeeper_fee_rsc);
+
+      return;
+   }
+
+   ExplainType(who=$)
+   {
+      send(self,@SayToOne,#target=who,#message_rsc=basicinnkeeper_type_rsc);
+
+      return;
+   }
+
+   GotUnwantedItem(obj=$,who=$)
+   {
+      local i, TargetObj, CostObj;
+
+      % Ryksher gift-wraps items for you for a fee.
+
+      % If it's not an item, it can't be wrapped.
+      % If it's gonna be a server problem, we disallow it.
+
+      if NOT pbGiftGiving
+      {
+         propagate;
+      }
+
+      % Gotta be an item.
+      % Can't be something we wanna keep out of vaults.
+      % Can't be money.
+      % Can't be a gift, unless we're allowing it for some wierd reason....
+      if (NOT isClass(obj,&Item))
+         OR (NOT Send(obj,@CanBeStoredInVault))
+         OR isClass(obj,&Money)
+         OR (IsClass(obj,&Gift) AND NOT pbGiftInGift)
+      {
+         send(self,@ExplainType,#who=who);
+
+         return;
+      }
+
+      % If there is a fee, keep track of it.
+
+      CostObj = $;
+      if pcCostToWrap <> $ and piNumberToWrap <> $ and piNumberToWrap <> 0
+      {
+         for i in send(who,@GetHolderPassive)
+         {
+            if getClass(i) <> pcCostToWrap
+            {
+               continue;
+            }
+
+            CostObj = i;
+            if isClass(CostObj,&NumberItem)
+            {
+               if send(CostObj,@GetNumber) < piNumberToWrap
+               {
+                  send(self,@ExplainFee,#who=who);
+
+                  return;
+               }
+
+               break;
+            }
+         }
+
+         if CostObj = $
+         {
+            send(self,@ExplainFee,#who=who);
+
+            return;
+         }
+
+         % Don't actually take the fee until we're sure he can wrap.
+
+      }
+
+      % If they offer us four of ten number items,
+      % then obj has four, and we need to subtract that from
+      % the original ten in their inventory.
+
+      if isClass(obj,&NumberItem)
+      {
+         TargetObj = $;
+         for i in send(who,@GetHolderPassive)
+         {
+            if getClass(i) = getClass(obj)
+            {
+               TargetObj = i;
+               break;
+            }
+         }
+
+         if TargetObj = $
+         {
+            debug("Player offered an item he didn't have!");
+
+            propagate;
+         }
+
+         if send(TargetObj,@GetNumber) < send(obj,@GetNumber)
+         {
+            debug("Player offered more of an item than he possessed!");
+
+            propagate;
+         }
+
+         send(TargetObj,@SubtractNumber,#number = send(obj,@GetNumber));
+      }
+
+      % Ready to wrap obj.  Note we ignore inventory limits here.
+
+      if obj <> $
+      {
+         i = create(&Gift,#contents=obj,#giver=who);
+         send(who,@NewHold,#what=i);
+         send(who,@MsgSendUser,#message_rsc=basicinnkeeper_wrap_rsc);
+         send(who,@RecalcBulkAndWeight);
+      }
+
+      % Collect the fee.
+
+      if CostObj <> $
+      {
+         if isClass(CostObj,&NumberItem)
+         {
+            send(CostObj,@SubtractNumber,#number=piNumberToWrap);
+         }
+         else
+         {
+            send(CostObj,@Delete);
+         }
+      }
+
+      return;
+   }
+   
+   AffectMood( why = $, what = $ )
+   {
+      if why = MOODMOD_FACTION_CHANGE
+      {
+         if what = FACTION_DUKE
+         {
+            send( self, @SetMood, #new_mood = piMood + 50 );
+         }
+
+         if what = FACTION_REBEL 
+         {
+            send( self, @SetMood, #new_mood = piMood - 50 );
+         }
+      }
+
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [[Create(&WineGoblet),Create(&Mug)],$,$,$];
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

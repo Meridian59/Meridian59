@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MummyMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MummyMask_name_rsc = "mummy mask"
+   MummyMask_icon_male_rsc = res0002k.bgf
+   MummyMask_icon_female_rsc = res0002l.bgf
+   MummyMask_desc_rsc = \
+      "This is either a mummy mask, or bandages for recovering from "
+      "fireball burns."
+
+classvars:
+
+   vrName = MummyMask_name_rsc
+   vrDesc = MummyMask_desc_rsc
+   vrIcon = MummyMask_icon_male_rsc
+
+   vrMaleIcon = MummyMask_icon_male_rsc
+   vrFemaleIcon = MummyMask_icon_female_rsc
+
+properties:
+
+   % Places to save the users nose and mouth resources.
+   prSaveNose = $
+   prSaveMouth = $
+
+messages:
+
+   NewUsed()
+   {
+      % Save the face!
+      prSaveNose = Send(poOwner,@GetNoseRsc);
+      prSaveMouth = Send(poOwner,@GetMouthRsc);   
+
+      % Take off mouth and nose, so mask fits all styles.
+      Send(poOwner,@SetNose,#nose=admin_icon_blank);
+      Send(poOwner,@SetMouth,#mouth=admin_icon_blank);  
+
+      Send(poOwner,@RemoveHair,#what=self);
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      % Pop the face back on.
+      Send(poOwner,@SetNose,#nose=prSaveNose);
+      Send(poOwner,@SetMouth,#mouth=prSaveMouth);
+      
+      Send(poOwner,@ResetHair,#what=self);
+
+      % Reset the resources to $.
+      prSaveNose = $;
+      prSaveMouth = $;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

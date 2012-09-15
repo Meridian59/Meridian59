@@ -1,0 +1,140 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttRenamed is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item has a string engraved onto it with the engrave skill.
+% 
+%  Form is: 
+%
+%   	[IA_RENAMED, sNew_name]
+%	
+%  sNew_name::the name of the item.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:    
+
+classvars:
+
+   viItem_Att_Num = IA_RENAMED
+   
+   viDifficulty = 2
+
+properties:
+  
+  plDiscarded_Strings = $
+
+messages:
+
+   AddToTreasureTable()
+   {
+      %% do nothing
+      return FALSE;
+   }
+
+   SetItemsToAttribute()
+   {
+      %% plItems_to_attribute should never be used by this itematt
+      plItems_to_Attribute = $;
+      return;
+   }
+
+   InitiallyIdentified()
+   {
+      return TRUE;
+   }   
+
+
+   GetAttributeDesc(oItem =$)
+   {              
+      return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%
+   %%  Use this function to add the name to the item.
+   %%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   SetPrimaryState(state1=$)
+   "State1 contains the attack spell type being added to the weapon."
+   {
+      local sString;
+		
+      if state1 = $ { DEBUG("SetPrimaryState called with nil state!"); return FALSE; }
+
+      %% state1 is a temporary string.  Create a new perm string, or recycle
+      %% an existing one.
+
+      if plDiscarded_Strings = $
+      {
+	 Debug("Making New String");
+	 sString = CreateString();
+	 SetString(sString,state1);
+      }
+      else
+      {
+	 Debug("Recycling an existing string");
+	 sString = First(plDiscarded_Strings);
+	 plDiscarded_Strings = DelListElem(plDiscarded_Strings,sString);
+	 SetString(sString,state1);
+      }
+      return sString;
+   }
+
+   RemoveFromItem(oItem=$)
+   {
+      local lData, sString, i, bFound;
+		
+      lData = send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_Num);
+      sString = nth(lData,2);
+
+      plDiscarded_Strings = cons(sString,plDiscarded_Strings);
+      propagate;
+   }
+   
+   CanBeSpoofed()
+   {
+      return FALSE;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Name Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   ItemBuildDescName(oItem=$)
+   {  
+      local lData, sName;
+      
+      lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+      
+      sName = nth(lData,2);	 %% a string with the faked name
+            
+      addpacket(4,sName);
+      return;
+   }
+
+    GetNamePriority()
+   {
+      return 12;
+   }		
+	     
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

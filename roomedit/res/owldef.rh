@@ -1,0 +1,120 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         owldef.rh
+*/
+#ifndef __owldef_rh
+#define __owldef_rh
+
+//
+// IDHELP BorButton for BWCC dialogs.
+//
+
+
+
+#define IDI_SDIAPPLICATION      1001            // Application icon
+
+//
+// OWL defined strings
+//
+
+// Statusbar
+#define IDS_MODES               32530
+
+// EditFile
+#define IDS_UNTITLED            32550
+#define IDS_UNABLEREAD          32551
+#define IDS_UNABLEWRITE         32552
+#define IDS_FILECHANGED         32553
+#define IDS_FILEFILTER          32554
+
+// EditSearch
+#define IDS_CANNOTFIND          32540
+
+
+//
+// General & application exception messages (include\owl\except.rh)
+//
+#define IDS_UNKNOWNEXCEPTION    32767
+#define IDS_OWLEXCEPTION        32766
+#define IDS_OKTORESUME          32765
+#define IDS_UNHANDLEDXMSG       32764
+#define IDS_UNKNOWNERROR        32763
+#define IDS_NOAPP               32762
+#define IDS_OUTOFMEMORY         32761
+#define IDS_INVALIDMODULE       32760
+#define IDS_INVALIDMAINWINDOW   32759
+
+//
+// Owl 1 compatibility messages
+//
+#define IDS_INVALIDWINDOW       32756
+#define IDS_INVALIDCHILDWINDOW  32755
+#define IDS_INVALIDCLIENTWINDOW 32754
+
+//
+// TXWindow messages
+//
+#define IDS_CLASSREGISTERFAIL   32749
+#define IDS_CHILDREGISTERFAIL   32748
+#define IDS_WINDOWCREATEFAIL    32747
+#define IDS_WINDOWEXECUTEFAIL   32746
+#define IDS_CHILDCREATEFAIL     32745
+
+#define IDS_MENUFAILURE         32744
+#define IDS_VALIDATORSYNTAX     32743
+#define IDS_PRINTERERROR        32742
+
+#define IDS_LAYOUTINCOMPLETE    32741
+#define IDS_LAYOUTBADRELWIN     32740
+
+//
+// TXGdi messages
+//
+#define IDS_GDIFAILURE          32739
+#define IDS_GDIALLOCFAIL        32738
+#define IDS_GDICREATEFAIL       32737
+#define IDS_GDIRESLOADFAIL      32736
+#define IDS_GDIFILEREADFAIL     32735
+#define IDS_GDIDELETEFAIL       32734
+#define IDS_GDIDESTROYFAIL      32733
+#define IDS_INVALIDDIBHANDLE    32732
+
+
+// TInputDialog DIALOG resource (include\owl\inputdia.rh)
+#define IDD_INPUTDIALOG         32514
+#define ID_PROMPT               4091
+#define ID_INPUT                4090
+
+
+// TSlider bitmaps (horizontal and vertical) (include\owl\slider.rh)
+#define IDB_HSLIDERTHUMB        32000
+#define IDB_VSLIDERTHUMB        32001
+
+
+// Validation messages (include\owl\validate.rh)
+#define IDS_VALPXPCONFORM       32520
+#define IDS_VALINVALIDCHAR      32521
+#define IDS_VALNOTINRANGE       32522
+#define IDS_VALNOTINLIST        32523
+
+#endif

@@ -1,0 +1,31 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MummyNoTreasure is Mummy
+
+% This is identical to a mummy, except that it doesn't give treasure.  We
+% need to be able to tell it apart from a normal mummy in the guest area.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+
+classvars:
+   viTreasure_type = TID_NONE
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

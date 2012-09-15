@@ -1,0 +1,61 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RebelTroop is FactionTroop
+
+constants:
+
+include blakston.khd
+
+resources:
+
+   RebelTroop_name_rsc = "rebel soldier"
+
+   RebelTroop_desc_rsc = \
+   "This soldier proudly bears the colors of the Jasper militia."
+
+   RebelTroop_dead_name_rsc = "dead rebel soldier"
+
+   RebelTroop_sound_aware = trps1awr.wav
+
+classvars:
+
+   vrName = RebelTroop_name_rsc
+   vrDesc = RebelTroop_desc_rsc
+   vrDead_name = RebelTroop_dead_name_rsc
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
+
+   viChanceFemale = 50  % percentage chance to be female
+
+   viColorTranslate1 = XLAT_TO_RED     % Shirt
+   viColorTranslate2 = XLAT_TO_BLACK   % Pants
+   vcShieldClass = &RebelShield
+
+   viFaction = FACTION_REBEL
+
+properties:
+
+   piBaseLevel = 50
+   piBaseDifficulty = 2
+
+   %Here so they can be set
+   viLevel = 50         % piBaseLevel
+   viDifficulty = 2     % piBaseDifficulty
+
+   vrSound_aware = RebelTroop_sound_aware
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

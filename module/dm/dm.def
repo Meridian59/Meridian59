@@ -1,0 +1,10 @@
+;
+; DEF file for DM DLL
+; 
+
+EXPORTS
+	GetModuleInfo		@1  NONAME
+	EventServerMessage      @2  NONAME
+	EventUserAction         @4  NONAME
+	ModuleExit              @16 NONAME
+	EventTextCommand        @17 NONAME

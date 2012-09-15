@@ -1,0 +1,123 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% The Charm of Qor is a necklace that gives minor bonuses to both aim 
+% and strength.  It is the first of the lucky charms.
+%
+% Also of note, it takes a Charm of Qor 5 times as long to decay as other
+% items do.  This will probably eventually be generalized to all heirloom items.
+%
+% Damion Schubert, November 1996
+
+QorCharm is Necklace
+
+constants:
+
+   include blakston.khd
+
+   AIM_CHANGE = 5
+   MIGHT_CHANGE = 2
+
+resources:
+
+   qorcharm_name_rsc = "monocle"
+   qorcharm_icon_rsc = qrcharm.bgf
+   qorcharm_desc_rsc = \
+   "In your hand rests a copper-edged lens.  The glass feels surreally cool in your hand."
+
+   qorcharm_whisper = "A voice whispers, \"~I...the vile's aim must be true, for assassins rarely get second chances...\""
+
+classvars:
+
+   vrName = qorcharm_name_rsc
+   vrIcon = qorcharm_icon_rsc
+   vrDesc = qorcharm_desc_rsc
+
+   viValue_average = 500
+
+   viBulk = 20
+   viWeight = 25
+   viMax_Disp_hits = 5
+
+   viGround_group = 2
+
+properties:
+   
+   pbIn_use = False
+
+   piMight_change = MIGHT_CHANGE
+   piAim_change = AIM_CHANGE
+
+   piDisp_hits = 0
+
+messages:
+
+   Constructor()
+   {
+      piDisp_hits = viMax_disp_hits;
+      propagate;
+   }
+
+   NewOwner()
+   {
+      piDisp_hits = viMax_disp_hits;
+      propagate;
+   }
+
+   NewUsed(what = $)
+   "When the charm is put on, the wearer gets a moderate bonus to both might and aim."
+   {
+      piAim_change = send(what,@addaim,#points=AIM_CHANGE);
+      piMight_change = send(what,@addmight,#points = MIGHT_CHANGE);
+
+      if random(1,5) = 3   %% 20% chance
+        {
+          send(what,@msgsenduser,#message_rsc=QorCharm_whisper);
+        }
+      propagate;
+   }
+
+   NewUnused(what = $)
+   "When something that can break the curse unuses the item"
+   {
+      send(what,@addaim,#points=-piAim_change);
+      send(what,@addmight,#points = -piMight_change);
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      if piDisp_Hits = 0
+        {           
+           send(self,@delete);
+           return;
+        }
+      piDisp_hits = piDisp_hits - 1;
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,3);
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

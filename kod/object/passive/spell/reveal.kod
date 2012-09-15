@@ -1,0 +1,140 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Reveal is Spell 
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   reveal_name_rsc = "reveal"
+   reveal_icon_rsc = ireveal.bgf
+   reveal_desc_rsc = \
+      "Strips away all hidden properties of an item, allowing "
+      "anyone to see its special abilities.  "
+      "Requires a number of perfect orc teeth to cast."
+
+   reveal_cant = "You can't seem to focus on %s%s."
+   reveal_working = "You concentrate on %s%s, and gradually its secrets become plain for all to see!"
+   reveal_strip_misdir = "Your magics strip the illusions from %s%s!"
+   reveal_sound = sreveal.wav
+
+classvars:
+
+   vrName = reveal_name_rsc
+   vrIcon = reveal_icon_rsc
+   vrDesc = reveal_desc_rsc
+
+   viSpell_num = SID_REVEAL
+   viSchool = SS_SHALILLE
+   viSpell_level = 5
+   viMana = 30
+   viSpellExertion = 20
+   viChance_to_increase = 30
+   viCast_time = 30000
+
+   vrSucceed_wav = reveal_sound
+
+properties:
+  
+  piAdvance = 0
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = Cons([&OrcTooth,3],plReagents);
+      
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      % Tell client how many targets this spell needs
+      return 1;
+   }
+
+   GetTranceTime(iSpellpower=0,who=$)
+   {
+      if who <> $ and isClass(who,&DM)
+      {
+         return 10;
+      }
+      
+      propagate;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      % Check that target is a weapon or armor
+      if (not isClass(oTarget,&item)) or not send(oTarget,@CanIdentify)
+      {
+         send(who,@msgsenduser,#message_rsc=reveal_cant,
+              #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+                
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   IsTargetInRange(who = $,target = $)
+   {
+      return (who = Send(target, @GetOwner)) OR (send(who,@GetOwner) = send(target,@GetOwner));  
+   }
+
+   ImproveAbility()
+   {
+      if not piAdvance 
+      {
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget, lData, iPower, oItemAtt;
+      
+      oTarget = First( lTargets );
+      Send(who, @MsgSendUser, #message_rsc=reveal_working, 
+           #parm1 = send(oTarget,@getdef),#parm2=send(oTarget,@getname));
+      
+      %% if piAdvance = FALSE, no hope of advancement.
+      %% This way, you can't advance if you cast spell
+      %% on something with no hope of revealing anything.
+      piAdvance = send(oTarget,@RevealHiddenAttributes);
+      Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
+
+      lData= send(oTarget,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);
+      if (lData <> $)      
+      {
+         oItemAtt = send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+         iPower = send(oItemAtt,@TranslatePowerFromCompound,#iCompound=first(lData));
+         if (iPower*2) < iSpellpower
+         {       
+            send(oTarget,@RemoveAttribute,#ItemAtt=IA_MISDIRECTION);
+            Send(who,@MsgSendUser,#message_rsc=reveal_strip_misdir, 
+                 #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+         }
+      }
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

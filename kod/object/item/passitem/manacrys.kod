@@ -1,0 +1,161 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ManaCrystal is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+   % This is similar to what is allowed by Nodeburst
+   MAX_MANA_ALLOWED = 250
+
+resources:
+
+   ManaCrystal_name_rsc = "mana crystal"
+   ManaCrystal_icon_rsc = manacrys.bgf
+   ManaCrystal_desc_rsc = \
+      "A crystalized form of raw mana, the energy for spells.  Use this to "
+      "regain the mana stored in this crystal.  Since it is attuned to you, "
+      "you cannot drop it or give it to anyone else."
+
+classvars:
+
+   vrName = ManaCrystal_name_rsc
+   vrIcon = ManaCrystal_icon_rsc
+   vrDesc = ManaCrystal_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+
+   viBulk = 5
+   viWeight = 5
+
+properties:
+
+   % How much mana is stored in the crystal?
+   piStoredMana = 0
+
+   % Current color translation to show how much mana is in the crystal.
+   %  Index into plTranslations.
+   piColorTranslation = 1
+
+   % A list of translations of increasing amount of mana stored.
+   plTranslations = $
+
+   % This can only be used by the caster.
+   poCaster = $
+
+messages:
+
+   Constructor(oCaster = $)
+   {
+      plTranslations = [ XLAT_TO_SKY, XLAT_TO_RED, XLAT_TO_ORANGE, 
+                         XLAT_TO_YELLOW, XLAT_TO_GREEN,
+                         XLAT_TO_BLUE, XLAT_TO_PURPLE
+                       ];
+      piItem_flags = Send(SYS,@EncodeTwoColorXLAT,
+                          #color1=Nth(plTranslations,piColorTranslation));
+
+      poCaster = oCaster;
+
+      propagate;
+   }
+
+   IncreaseMana(amount = $)
+   {
+      local iMana, iTranslation;
+
+      piStoredMana = piStoredMana + amount;
+
+      % Bind amount stored to either 130% of owner's max mana or 250, whichever
+      %  is less.
+      iMana = (130 * Send(poOwner,@GetMaxMana)) / 100;
+      piStoredMana = Bound(piStoredMana,1,iMana);
+      piStoredMana = Bound(piStoredMana,1,MAX_MANA_ALLOWED);
+
+      % See which color translation we should be, one level every 30 mana.
+      iTranslation = Bound((piStoredMana / 30) + 1,1,Length(plTranslations));
+
+      if piColorTranslation <> iTranslation
+      {
+         piColorTranslation = iTranslation;
+         iTranslation = Nth(plTranslations,piColorTranslation);
+         piItem_flags = Send(SYS,@EncodeTwoColorXLAT,#color1=iTranslation);
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   ReqNewApply()
+   {
+      % Just in case it gets dropped somehow...
+      if poOwner <> poCaster
+      {
+         Post(self,@Delete);
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   NewApplied()
+   {
+      local iMana;
+
+      % Bound total mana to a maximum.
+      iMana = Send(poOwner,@GetMana);
+      piStoredMana = Bound(piStoredMana,$,MAX_MANA_ALLOWED-iMana);
+
+      Send(poOwner,@GainMana,#amount=piStoredMana);
+      Post(self,@Delete);
+
+      return;
+   }
+
+   %%% Making the crystal undroppable
+
+   ReqNewOwner(what=$)
+   {
+      % Only give this to the caster or a DM.
+      if what <> $
+         AND what <> poCaster
+         AND NOT IsClass(what,&DM)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

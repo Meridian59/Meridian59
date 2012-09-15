@@ -1,0 +1,304 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Torch is Shield
+
+constants:
+
+   include blakston.khd
+
+   HS_FLAME = 1
+
+   % use a torch charge every x milliseconds
+   TORCH_CHARGE_RATE = 60000
+
+   TORCH_LIGHT = 40
+
+resources:
+
+   torch_name_rsc = "torch"
+   torch_icon_rsc = torch.bgf
+   torch_desc_rsc = \
+      "A shaft of crudely hewn rough timber is topped by oily rags.  "
+      "When used it will provide limited illumination."
+  
+   torch_flame_rsc = torchflm.bgf
+   torch_overlay_rsc = torchov.bgf
+
+   torch_dead_rsc = "This torch is blackened and burned beyond use."
+
+classvars:
+
+   vrName = torch_name_rsc
+   vrIcon = torch_icon_rsc
+   vrDesc = torch_desc_rsc
+
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 1
+
+   viHits_init_min = 50
+   viHits_init_max = 50
+
+   viBulk = 10
+   viWeight = 10
+
+   viValue_average = 30
+
+   viGround_group = 14
+   viBroken_group = 14
+   viInventory_group = 7
+
+properties:
+
+   pbIn_use = FALSE
+   ptBurn = $
+
+   vrShield_window_overlay = $
+   vrShield_overlay = torch_overlay_rsc
+
+messages:
+
+   NewUsed(what = $)
+   {
+      if ptBurn <> $
+      {
+         DEBUG("Torch",self,"got used when already has timer");
+         DeleteTimer(ptBurn);
+      }
+
+      ptBurn = CreateTimer(self,@BurnTimer,TORCH_CHARGE_RATE);
+
+      Send(poOwner,@SetFlickerFlag);
+      if NOT pbIn_use
+      {
+         Send(poOwner,@GainLight,#amount=TORCH_LIGHT);
+      }
+
+      pbIn_use = TRUE;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      local oUsing,i;
+
+      if ptBurn = $
+      {
+         DEBUG("Torch",self,"got unused when has no timer");
+      }
+      else
+      {
+         DeleteTimer(ptBurn);
+         ptBurn = $;
+      }
+
+      Send(poOwner,@ClearFlickerFlag);
+      if pbIn_use
+      {
+         Send(poOwner,@LoseLight,#amount=TORCH_LIGHT);
+      }
+
+      pbIn_use = FALSE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      
+      if piHits > 0     % avoid the case where we got here by being deleted in BurnTimer(), in which case piHits=0.
+      {
+         piHits = piHits - 1;
+         if piHits = 0
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=torch_dead_rsc);
+            post(self,@Delete);
+         }
+      }
+      
+      oUsing = Send(poOwner,@GetPlayerUsing);
+      for i in oUsing
+      {
+         if IsClass(i,&weapon) AND Send(i,@HasAttribute,#ItemAtt=WA_GLOWING)
+         {
+            Send(poOwner,@SetFlickerFlag);
+
+            propagate;
+         }
+      }
+
+      propagate;
+   }
+
+   BurnTimer()
+   "Called every minute to drain a hit, using up the torch."
+   {
+      ptBurn = $;
+
+      piHits = piHits - 1;
+      if piHits = 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=torch_dead_rsc);
+         send(self,@NewUnused,#what=poOwner);
+         post(self,@Delete);
+
+         return;
+      }
+
+      ptBurn = CreateTimer(self,@BurnTimer,TORCH_CHARGE_RATE);
+
+      return;
+   }
+
+   UserLogoff()
+   {
+      Send(poOwner,@TryUnuseItem,#what=self);
+
+      propagate;
+   }
+
+   % Torches don't allow you to use block.
+   GetBlockAbility(who = $)
+   {
+      return 0;
+   }
+
+   GetOverlayHotspot()
+   {
+      return HS_LEFT_WEAPON;
+   }
+
+   SendOverlayInformation(iAnimation = $)
+   {
+      AddPacket(4,vrShield_Overlay);
+      AddPacket(1,HS_LEFT_WEAPON);
+      Send(self,@SendHeldAnimation,#iAnimation=iAnimation);       
+
+      return;
+   }
+
+   SendHeldAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,60,2,1,2,6);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piHits > 0
+      {
+         if pbIn_Use
+         {
+            AddPacket(1,ANIMATE_CYCLE,4,60,2,1,2,6);
+         }
+         else
+         {
+            AddPacket(1,ANIMATE_NONE,2,viGround_group);
+         }
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,viBroken_group);
+      }
+
+      return;
+   }
+
+   SendOverlays()
+   {
+      AddPacket(1,0);   
+
+      return;   
+   }
+
+   SendLookAnimation()
+   {
+      if piHits > 0
+      {
+         if pbIn_Use
+         {
+            AddPacket(1,ANIMATE_CYCLE,4,60,2,1,2,6);
+         }
+         else
+         {
+            AddPacket(1,ANIMATE_NONE,2,viInventory_group);
+         }
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,viBroken_group);
+      }
+
+      return;
+   }
+
+   SendLookOverlays()
+   {
+      AddPacket(1,0);   
+
+      return;   
+   }
+
+   SendInventoryAnimation()
+   {
+      Send(self,@SendLookAnimation);
+
+      return;
+   }
+
+   SendInventoryOverlays()
+   {
+      Send(self,@SendLookOverlays);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptBurn <> $
+      {
+         DeleteTimer(ptBurn);
+         ptBurn = $;
+      }
+
+      propagate;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetFlickerFlag);
+
+      return;  
+   }
+
+   % Gives a bonus to Faren spells since it's firey!
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if oSpell <> $ AND send(oSpell,@GetSchool) = SS_FAREN
+      {
+         return 10;
+      }
+
+      return 0;
+   }
+
+   GetLightEffect()
+   {
+      return TORCH_LIGHT;
+   }
+
+   ReqRepair()
+   {
+      % To prevent cheesy working of Mend by using/unusing torch repeatedly.
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,164 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RingOfFlames is WallSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RingOfFlames_name_rsc = "ring of flames"
+   RingOfFlames_icon_rsc = iringfir.bgf
+   RingOfFlames_desc_rsc = \
+      "Creates a ring of flames around the caster.  "
+      "Requires red mushrooms and firesand to cast."
+
+   RingOfFlames_cast_rsc = "A blazing hot ring of flames appears around you."
+   RingOfFlames_failed_rsc = \
+      "There is too much summoning magic focused here to create a ring of "
+      "flames." 
+
+   RingOfFlames_sound = frngfir.wav
+
+classvars:
+
+   vrName = RingOfFlames_name_rsc
+   vrIcon = RingOfFlames_icon_rsc
+   vrDesc = RingOfFlames_desc_rsc
+
+   viSpell_num = SID_RING_OF_FLAMES
+   viSchool = SS_FAREN
+   viSpell_level = 5
+   viMana = 15
+   viSpellExertion = 10
+
+   vrSucceed_wav = RingOfFlames_sound
+
+   viHarmful = TRUE
+
+   % We technically have 12 elements, but that would never let us cast this while
+   %  another wall spell is active.  A little cheat here, only count 9 elements.
+   viNumElements = 9
+
+   vrSummonLimitMsg = RingOfFlames_failed_rsc
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RedMushroom,3],plReagents);
+      plReagents = Cons([&Firesand,3], plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      Send(who,@MsgSendUser,#message_rsc=RingOfFlames_cast_rsc);
+
+      propagate;
+   }
+
+   PlaceWallElements(who = $, iSpellPower = 0)
+   {
+      local oRoom, iRow, iCol, iFine_Row, iFine_Col, iXStep, iYStep,
+            iAngle, iMaxDamage, iDuration, iHalfrow, iHalfCol, iHalfFine_Row,
+            iHalfFine_Col, oElement;
+
+      iAngle = Send(who,@GetAngle);
+      iMaxDamage = iSpellPower / 5;
+      iMaxDamage = bound(iMaxDamage,1,20);
+      iDuration = (iSpellPower * 2) + 30;
+      iDuration = bound(iDuration,30,180);
+
+      oRoom = Send(who,@GetOwner);
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      % Create fire in eight cardinal directions
+      oElement = Create(&WallofFire,#Caster=who,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=(iRow+1),#new_col=(iCol+1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=(iRow+1),#new_col=iCol,
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=(iRow+1),#new_col=(iCol-1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=(iCol+1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=(iCol-1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=(iRow-1),#new_col=(iCol+1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=(iRow-1),#new_col=iCol,
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+      oElement = Create(&WallofFire,#MaxDamage=iMaxDamage,#Caster=who,
+                        #Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=(iRow-1),#new_col=(iCol-1),
+           #fine_row=FINENESS_HALF,#fine_col=FINENESS_HALF);
+
+
+      % Create four "filler" elements in corners.
+      oElement = Create(&PassiveWallofFire,#Caster=who,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=0,#fine_col=0);
+
+      oElement = Create(&PassiveWallofFire,#Caster=who,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=0,#fine_col=FINENESS);
+
+      oElement = Create(&PassiveWallofFire,#Caster=who,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=FINENESS,#fine_col=0);
+
+      oElement = Create(&PassiveWallofFire,#Caster=who,#MaxDamage=iMaxDamage,
+                        #Duration=iDuration,#Illusionary=FALSE);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=FINENESS,#fine_col=FINENESS);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

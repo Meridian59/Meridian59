@@ -1,0 +1,196 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SummonFog is WallSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SummonFog_name_rsc = "fog"
+   SummonFog_icon_rsc = ifog.bgf
+   SummonFog_desc_rsc = \
+      "Creates a cloud of fog that is often mistaken for poisonous fog.  "
+      "Requires elderberries to cast."
+
+   SummonFog_cast_rsc = \
+      "A thick fog rises from the ground before you."
+   SummonFog_failed_rsc = \
+      "There is too much summoning magic focused here to create fog." 
+   SummonFog_sound = ffog.wav
+
+   SummonFog_spell_intro_rsc = \
+      "Faren Lv. 1: Summons a wall of billowing fog to confuse your foes."
+
+classvars:
+
+   vrName = SummonFog_name_rsc
+   vrIcon = SummonFog_icon_rsc
+   vrDesc = SummonFog_desc_rsc
+   vrSucceed_wav = SummonFog_sound
+
+   vrSpell_intro = SummonFog_spell_intro_rsc
+
+   viSpell_num = SID_FOG
+   viSchool = SS_FAREN
+   viSpell_level = 1
+   viMana = 6
+
+   viSpellExertion = 4
+   viCast_time = 2000
+   vrSucceed_wav = SummonFog_sound
+   viChance_To_Increase = 20
+   vbCastable_in_HappyLand = TRUE
+
+   viHarmful = FALSE
+   viOutlaw = FALSE
+
+   viNumElements = 9
+
+   vrSummonLimitMsg = SummonFog_failed_rsc
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Elderberry,1], plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   {
+      Send(who,@MsgSendUser,#message_rsc=SummonFog_cast_rsc);
+
+      propagate;
+   }
+
+   PlaceWallElements(who = $, iSpellPower = 0)
+   {
+      local oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, iOdds, iDuration,
+            oElement;
+
+      iAngle = Send(who,@GetAngle);
+      iOdds = 50+(iSpellPower/2);
+      iOdds = Bound(iOdds,50,90);
+
+      iDuration = iSpellPower + 20;
+      iDuration = Bound(iDuration,15,95);
+
+      % Facing East
+      if iAngle > ANGLE_ENE OR iAngle < ANGLE_ESE
+      {
+         iCol = Send(who,@GetCol) + 2;
+         iRow = Send(who,@GetRow);
+      }
+
+      % Facing SouthEast
+      if iAngle >= ANGLE_ESE AND iAngle < ANGLE_SSE
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol) + 2;
+      }
+
+      % Facing South
+      if iAngle >= ANGLE_SSE AND iAngle < ANGLE_SSW
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol);
+      }
+
+      % Facing SouthWest
+      if iAngle >= ANGLE_SSW AND iAngle < ANGLE_WSW
+      {
+         iRow = Send(who,@GetRow) + 2;
+         iCol = Send(who,@GetCol) - 2;
+      }
+
+      % Facing West
+      if iAngle >= ANGLE_WSW AND iAngle < ANGLE_WNW
+      {
+         iCol = Send(who,@GetCol) - 2;
+         iRow = Send(who,@GetRow);
+      }
+
+      % Facing NorthWest
+      if iAngle >= ANGLE_WNW AND iAngle < ANGLE_NNW
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) - 2;
+      }
+
+      % Facing North
+      if iAngle >= ANGLE_NNW AND iAngle < ANGLE_NNE
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol);
+      }
+
+      % Facing NorthEast
+      if iAngle >= ANGLE_NNE AND iAngle < ANGLE_ENE
+      {
+         iRow = Send(who,@GetRow) - 2;
+         iCol = Send(who,@GetCol) + 2;
+      }
+
+      oRoom = Send(who,@GetOwner);
+
+      iFine_Row = Send(who,@GetFineRow);
+      iFine_Col = Send(who,@GetFineCol);
+
+      % Center, then clockwise from 12 o'clock
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol+1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow+1,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      oElement = Create(&FogCloud,#Odds=iOdds,#Caster=who,#Duration=iDuration);
+      Send(oRoom,@NewHold,#what=oElement,#new_row=iRow-1,#new_col=iCol-1,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

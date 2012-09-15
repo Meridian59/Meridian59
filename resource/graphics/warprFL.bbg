@@ -1,0 +1,14 @@
+# War priest of Kranaan
+# Left leg 
+# groups
+# 1 standing
+-s 3
+6
+wr000lls.bmp   [-9, -9] 
+wr045lls.bmp   [-14, -12] 
+wr090lls.bmp   [-8, -14] 
+wr180lls.bmp   [-15, -13] 
+wr270lls.bmp   [-20, -14] 
+wr315lls.bmp   [-13, -3] 
+1
+ 8      1   6   5   4   4   4   3   2

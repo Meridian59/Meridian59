@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Kocatansentry is KocatanTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Kocatansentry_name_rsc = "sentry"
+   kocatansentry_icon_rsc = kcsentry.bgf
+   kocatansentry_desc_rsc =  \
+     "Trained to defend the walls of Ko'catan this soldier is ready to prove his mettle."
+
+classvars:
+
+   vrName = Kocatansentry_name_rsc
+   vrIcon = Kocatansentry_icon_rsc
+   vrDesc = Kocatansentry_desc_rsc
+
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_NOQUEST
+   viOccupation = MOB_ROLE_GUARD
+
+   viDefinite = ARTICLE_THE
+   viIndefinite = ARTICLE_A
+
+properties:
+   
+messages:
+   
+   TryAddToQuestEngine()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

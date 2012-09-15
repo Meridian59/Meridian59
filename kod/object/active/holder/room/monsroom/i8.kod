@@ -1,0 +1,118 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsI8 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   QOR_DOOR = 1
+
+resources:
+
+   room_OutdoorsI8 = I8.roo
+   room_name_OutdoorsI8 ="The Cragged Mountains"
+   OutdoorsI8_music = walk4.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsI8
+
+   viTeleport_row = 7
+   viTeleport_col = 6
+
+   viTerrain_type = TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_OutdoorsI8
+   prMusic = OutdoorsI8_music
+   piRoom_num = RID_I8
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 80000
+   piGen_percent = 80
+
+   piInit_count_min = 8
+   piInit_count_max = 11
+
+   piMonster_count_max = 14
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Troll, 60], [&DeathSpider, 40] ];
+      plGenerators = [ [3, 3], [7, 7], [19, 12], [22, 19], [20, 27],
+                      [16, 35], [26, 34], [30, 39], [30, 14], [36, 20],
+                      [38, 29], [48, 25], [54, 27], [50, 35] ];
+      propagate;
+   }
+
+    CreateStandardExits()
+    {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_I7, 48, 32, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_I9, 4, 63, ROTATE_NONE], plEdge_exits);
+     
+      propagate;
+   }
+
+   OpenQorTemple()
+   {
+   
+      send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                #height = 348, #speed = 8);
+      plYell_zone = cons (RID_TEMPLE_QOR, plYell_Zone);
+      return;
+   }
+
+   CloseQorTemple()
+   {
+      local i;
+
+      send(self,@setsector,#sector=QOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                #height = 284, #speed = 8);
+      for i in plYell_zone
+      {
+	 if i = RID_TEMPLE_QOR
+	 {
+	    plYell_Zone=dellistelem(plYell_zone,i);
+	 }
+      }
+
+      return;
+   }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+      if new_row=38 and new_col= 26
+      {
+	 send(send(SYS,@findroombynum,#num=RID_TEMPLE_QOR),@TempleEntrance,
+	    #who=what);
+	 return;
+      }
+      propagate;
+   }
+
+   ExitFromQor(who=$)
+   {
+      send(SYS,@UtilGoNearSquare,#what=who,
+        #where=self,#new_row= 32,#new_col = 25,#new_angle=ANGLE_NORTH_WEST);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

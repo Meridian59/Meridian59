@@ -1,0 +1,181 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FungusBeast is Monster
+
+% The fungusbeast is composed of a couple pieces.  The head is attached to hot spot 1,
+% the mouth is attached to hotspot 12.  These are only seen in a couple views.
+% The abdomen is attached to hotspot 210, which is underneath.
+
+constants:
+
+   include blakston.khd
+
+   ANIM_SLEEP = 2
+
+resources:
+
+   fungusbeast_koc_name_rsc = "puucmecmoch"
+   fungusbeast_name_rsc = "fungus beast"
+   fungusbeast_icon_rsc = fungbst.bgf
+   fungusbeast_desc_rsc = \
+      "This strange creature, made up of tender, pulpy flesh, "
+      "moves slowly and deliberately.  Giant spores cling to "
+      "its back."
+
+   % fungusbeast_head_icon_rsc = fungh.bgf
+
+   fungusbeast_spore = spore.bgf
+
+   fungusbeast_dead_icon_rsc = fungX.bgf
+   fungusbeast_dead_name_rsc = "dead fungus beast"
+
+   fungusbeast_sound_hit = fng_atkh.wav
+   fungusbeast_sound_miss = fng_atkm.wav
+   fungusbeast_sound_death = fng_dth.wav
+   fungusbeast_sound_aware = fng_awr.wav
+
+classvars:
+
+   vrKocName = fungusbeast_koc_name_rsc
+   vrName = fungusbeast_name_rsc
+   vrIcon = fungusbeast_icon_rsc
+   vrDesc = fungusbeast_desc_rsc
+   vrDead_icon = fungusbeast_dead_icon_rsc
+   vrDead_name = fungusbeast_dead_name_rsc
+
+   viTreasure_type = TID_MEDIUM
+   viSpeed = SPEED_VERY_SLOW
+   viAttributes = MOB_SPASM
+   viLevel = 50
+   viDifficulty = 1
+   viKarma = 10
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
+
+   vrSound_hit = fungusbeast_sound_hit
+   vrSound_miss = fungusbeast_sound_miss
+   vrSound_aware = fungusbeast_sound_aware
+   vrSound_death = fungusbeast_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 60, -ATCK_SPELL_COLD ],
+                        [ 60, ATCK_WEAP_PIERCE ],
+                        [ 60, ATCK_WEAP_THRUST ]
+                      ];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoAttack);
+
+      Send(poOwner,@SomethingShot,#who=self,#target=what,#projectile=self);
+
+      return;
+   }
+
+   DoSpasm()
+   {
+      local roll;
+
+      if piAnimation = ANIM_NONE
+      {
+         piAnimation = ANIM_SLEEP;
+      }
+
+      if piAnimation = ANIM_SLEEP
+      {
+         piAnimation = ANIM_NONE;
+      }
+
+      Send(poOwner,@SomethingChanged,#what=self);
+      
+      return;
+   }
+
+   DoAttack()
+   {
+      local iAnim;
+
+      iAnim = piAnimation;
+      
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = iAnim;
+            
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,75,2,2,2,7);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_SLEEP
+      {
+         AddPacket(1,ANIMATE_NONE,2,13);
+
+         return;
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,150,2,8,2,12,2,1);
+
+         return;
+      }
+
+      % No body animation
+      
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   % stuff for spore sending
+
+   GetProjectileIcon()
+   {
+      return fungusbeast_spore;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 3;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,1);
+
+      return;
+   }      
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

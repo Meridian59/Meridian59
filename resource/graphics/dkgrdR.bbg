@@ -1,0 +1,11 @@
+# Nobleman - right arm
+# groups
+# 1 standing
+-s 4
+4
+dr000aaa.bmp   [-14, -10] 
+dr090aaa.bmp   [-18, -8] 
+dr180aaa.bmp   [-28, -8] 
+dr270aaa.bmp   [-6, -2] 
+1
+ 4      1   4   3   2

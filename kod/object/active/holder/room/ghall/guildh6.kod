@@ -1,0 +1,192 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall6 is GuildHall
+
+constants:
+
+   GH6ENTRANCE = 2
+   GH6SECRET = 1
+   
+   LIFT_DELAY = 10000
+       
+   include blakston.khd
+
+resources:
+
+   room_name_guildh6 = "The Ivory Chapel"
+   room_guildh6 = guildh6.roo
+
+classvars:
+
+   vrName = room_name_guildh6
+
+   viTeleport_row = 11
+   viTeleport_col = 10
+
+   viNews_row = 15
+   viNews_col = 18
+   viNews_finerow = 16
+   viNews_finecol = 16
+
+   viFoyer_north = 9
+   viFoyer_south = 15
+   viFoyer_west = 3
+   viFoyer_east = 12
+
+   viLever_row = 4
+   viLever_col = 18
+   viLever_fine_row = 0
+   viLever_fine_col = 0
+
+   viInner_teleport_row = 4
+   viInner_teleport_col = 4
+
+   viQuality = 4
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_GUILDHALL
+   viSeconds_til_close = 14
+
+properties:
+
+   prRoom = room_guildh6
+   piRoom_num = RID_GUILDH6
+
+   piBaseLight = LIGHT_NICE
+
+   ptSecret = $
+   ptEntrance = $
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [ [11,12] ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+								
+      plExits = Cons([ 12, 10, RID_CORNOTH, 36, 57, ROTATE_135 ],plExits);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSecret <> $
+      {
+         DeleteTimer(ptSecret);
+         ptSecret=$;
+      }
+
+      if ptEntrance <> $
+      {
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
+      }
+
+      propagate;
+   }
+
+
+   SomethingTryGo(what=$, row=$, col = $)
+   {
+      if row = 11 AND col = 13
+      {
+       	if send(self,@ReqLegalEntry,#who=what)
+	      {
+            send(self,@openEntrancedoor);
+
+            return TRUE;
+	      }
+      }
+
+      propagate;
+   }
+
+   OpenEntranceDoor()
+   {
+      if ptEntrance = $
+      {
+         send(self,@TimeStampDoor);
+         send(self,@SetSector,#sector=GH6ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
+              #height=128,#speed=16);
+         send(self,@OpenEntranceDoorSound);
+         ptEntrance = createtimer(self,@closeentrancedoor,LIFT_DELAY);
+      }
+
+      return;
+   }
+
+   CloseEntranceDoor()
+   {
+      ptEntrance = $;
+      send(self,@SetSector,#sector=GH6ENTRANCE,#animation=ANIMATE_FLOOR_LIFT,
+           #height=208,#speed=16);
+      send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+
+   OpenSecretDoor()
+   {
+      if ptSecret = $
+      {
+         send(self,@SetSector,#sector=GH6SECRET,#animation=ANIMATE_CEILING_LIFT,
+              #height=204,#speed=16);
+         send(self,@OpenSecretDoorSound);
+         ptSecret = createtimer(self,@CloseSecretDoor,LIFT_DELAY);
+      }
+
+      return; 
+   }
+
+   CloseSecretDoor()
+   {
+      ptSecret = $;
+      send(self,@SetSector,#sector=GH6SECRET,#animation=ANIMATE_CEILING_LIFT,
+           #height=160,#speed=16);
+      send(self,@CloseSecretDoorSound);
+
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&WoodenBox),
+           #new_row=6,#new_col=2,#fine_row=20,#fine_col=56,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=4,#new_col=5);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=12,#new_col=5);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=12,#new_col=11);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=4,#new_col=10);
+
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+      lHotPlates = [[ 11, 13, 1 ],[10,13,2],[10,14,2],[ 11, 14, 2 ],[12,13,2],[12,14,2]];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

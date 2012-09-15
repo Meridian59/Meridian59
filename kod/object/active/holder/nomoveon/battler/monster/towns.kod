@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Towns is Monster
+
+constants:
+
+   include blakston.khd
+
+classvars:
+   
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+   % Set default gender to male, monster's default is now neuter instead of male, so most of the
+   %  subclasses with undefined gender under here will assume male.
+   viGender = GENDER_MALE   
+
+   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+
+   viSpeed = SPEED_AVERAGE
+
+properties:
+   
+   % Palette translations; used only for NPCs that use player face parts
+   piFace_translation = PT_GRAY_TO_SKIN1
+   piHair_translation = PT_HAIR_DKBROWN
+
+messages:
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+
+   NewHoldObject(what = $)
+   {
+      % Don't want them holding anything, so just delete it.
+      send(what,@Delete);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

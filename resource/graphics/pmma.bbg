@@ -1,0 +1,27 @@
+# Asian female mouth 3
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+-s 14
+14
+Pm000maa.bmp   [-15, -12] 
+Pm045maa.bmp   [-21, -14] 
+Pm090maa.bmp   [-19, -13] 
+Pm270maa.bmp   [-3, -14] 
+Pm315maa.bmp   [-7, -16] 
+Pm000mba.bmp   [-15, -12] 
+Pm045mba.bmp   [-21, -14] 
+Pm315mba.bmp   [-7, -16] 
+Pm000mca.bmp   [-15, -12] 
+Pm045mca.bmp   [-21, -14] 
+Pm315mca.bmp   [-7, -16] 
+Pm000mda.bmp   [-15, -12] 
+Pm045mda.bmp   [-21, -14] 
+Pm315mda.bmp   [-7, -16] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

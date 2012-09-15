@@ -1,0 +1,95 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Forest1 is ObjectRoom
+   
+constants:
+   
+   include blakston.khd
+      
+resources:
+   
+   room_name_forest1 = "The Forests of Meridian"
+   room_forest1 = forest1.roo
+   forest1_music = walk1.mid
+   
+classvars:
+
+   vrName = room_name_forest1
+
+   viTeleport_row = 10
+   viTeleport_col = 10
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_RIVER
+
+properties:
+   
+   prRoom = room_forest1
+   piRoom_num = RID_FOREST1
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+
+   prMusic = forest1_music
+
+   piGen_object_time = 300000
+
+messages:
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      % Some trees--it is a forest, after all.
+
+      % pines
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=12,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=7,#new_col=25);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=9,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=11,#new_col=10);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=15,#new_col=13);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=14,#new_col=27);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=21,#new_col=26);
+
+      % elms
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=3,#new_col=21);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=5,#new_col=15);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=17,#new_col=5);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=22,#new_col=15);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+           #new_row=26,#new_col=7);
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lute is Instrument
+
+% This is the superclass for all lute-type instruments.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   lute_name_rsc = "lute"
+   lute_icon_rsc = music.bgf
+   lute_overlay_rsc = luteov.bgf
+   lute_desc_rsc = "The simple lute is the instrument of choice among the meridian bards.  "
+		  "Its rosewood construction offers a rich tone in the hands of an expert."
+
+classvars:
+
+   viInstrument_strength = 20
+   vrName = lute_name_rsc
+   vrDesc = lute_desc_rsc
+
+   vrIcon = lute_icon_rsc
+   vrInstrument_overlay = lute_overlay_rsc
+
+   viValue_average = 800
+   viWeight = 75
+   viBulk = 150
+
+properties:
+
+messages:
+
+   NewUsed()
+   {
+      local oSoldierShield;
+      
+      % Check for shield
+      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
+
+      % Sling it on the back if it's there.
+      if oSoldierShield <> $
+      {
+         send(oSoldierShield,@SlingOnBack);
+      }
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      local oSoldierShield;
+      
+      % Take shield off back.
+      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
+
+      if oSoldierShield <> $
+      {
+         send(oSoldierShield,@RemoveFromBack);
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

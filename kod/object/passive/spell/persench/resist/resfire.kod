@@ -1,0 +1,91 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistFire is ResistanceEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   resistfire_name_rsc = "withstand fire"
+   resistfire_icon_rsc = iresfire.bgf
+   resistfire_desc_rsc = \
+      "Infuses your body with cool magical energy which "
+      "reduces damage from fire attacks for several minutes.  "
+      "Requires mushrooms and red mushrooms."
+   
+   resistfire_already_enchanted = "You are already resisting fire."
+   resistfire_success = "You bathe %s%s in magical protection from fire."
+   resistfire_on = "Cool magical energy pulses through your body."
+   resistfire_off = "Your body warms noticeably as the withstand fire enchantment wears off."
+
+   resistfire_spell_intro = "Faren Lv. 2: Decreases the amount of damage you take from fire based attacks."
+
+classvars:
+
+   vrName = resistfire_name_rsc
+   vrIcon = resistfire_icon_rsc
+   vrDesc = resistfire_desc_rsc
+
+   vrSpell_intro = resistfire_spell_intro
+
+   viSpell_num = SID_RESIST_FIRE
+   viSchool = SS_FAREN
+   viSpell_level = 2
+   viMana = 4
+
+   viPersonal_ench = True
+   viChance_To_Increase = 30
+
+   viFlash = FLASH_GOOD_SELF
+
+   viResistanceType = -ATCK_SPELL_FIRE
+   vrAlreadyEnchanted = resistfire_already_enchanted
+   vrEnchantment_On = resistfire_on
+   vrEnchantment_Off = resistfire_off
+   vrSuccess = resistfire_success
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Mushroom,3],plReagents);
+      plReagents = Cons([&RedMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetResistanceStrength(iSpellpower = 0)
+   {
+      %% strength varies from 15 to 65
+      return iSpellPower/2 + 25;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;	   %%% 3 to 13 minutes
+      iDuration = 180 + iSpellPower * 6;
+      iDuration = iDuration * 1000;	  %% translate to milliseconds
+      return random(iDuration/2,iDuration);
+   }
+
+   GetPotionClass()
+   {
+      RETURN &ResistFirePotion;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

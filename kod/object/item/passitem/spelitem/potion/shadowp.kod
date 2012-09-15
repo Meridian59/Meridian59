@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShadowFormPotion is Potion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ShadowFormPotion_name_rsc = "shadow form potion"
+   %ShadowFormPotion_icon_rsc = potion01.bgf
+   ShadowFormPotion_desc_rsc = "This is a glass vial of colored liquid.  "
+                        "It smells like a cross between licorice and musk."
+   ShadowFormPotion_bad_desc_rsc = "This is a glass vial of dark, cloudy liquid.  "
+                        "A slight whiff of it is enough to turn your stomach."
+
+classvars:
+
+   vrLabelName = ShadowFormPotion_name_rsc
+   vrBadDesc = ShadowFormPotion_bad_desc_rsc
+   vrDesc = ShadowFormPotion_desc_rsc
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 60
+   viSpellEffect = SID_SHADOW_FORM
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+   viSpellEffect = SID_SHADOW_FORM
+
+
+   viPoisonPercent = 20
+   viGoBadDamage = 5
+   viColor = XLAT_TO_SKIN4
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

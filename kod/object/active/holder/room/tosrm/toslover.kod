@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosForgottenLovers is TosRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_TosForgottenLovers = "Forgotten Lover's Tryst"
+   room_TosForgottenLovers = tosforgt.roo
+   TosForgottenLovers_music = goodfor.mid
+
+classvars:
+
+   vrName = room_name_TosForgottenLovers
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_RESIDENCE
+
+properties:
+
+   prRoom = room_TosForgottenLovers
+   piRoom_num = RID_TOS_FORGOTTEN
+   prMusic = TosForgottenLovers_music
+
+   viTeleport_Row = 3
+   viTeleport_Col = 3
+
+   piBaseLight = LIGHT_NICE
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % exits back to tos
+
+      plExits = Cons([  2,  2, RID_TOS, 60, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([  2,  3, RID_TOS, 60, 7, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=6,#new_col=2,
+           #fine_row=47,#fine_col=38,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BIGURN2),
+           #new_row=8,#new_col=5,#fine_row=16,#fine_col=24,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_JUG),
+           #new_row=2,#new_col=7,#fine_row=24,#fine_col=40,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

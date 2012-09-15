@@ -1,0 +1,103 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Candelabra is Flickerer
+
+constants:
+
+   include blakston.khd
+
+   USE_RANGE = 3
+
+resources:
+
+   candelabra_name_rsc = "candelabra"
+   candelabra_icon_rsc = candelab.bgf
+   candelabra_desc_on = \
+      "An ornate brass five-candle stand.  The candles are flickering softly."
+   candelabra_desc_off = \
+      "An ornate brass five-candle stand.  The candles are unlit."
+
+   candelabra_not_in_range = "You are not close enough to the candelabra to use it."
+
+classvars:
+
+   vrName = candelabra_name_rsc
+   vrIcon = candelabra_icon_rsc
+   vrDesc = candelabra_desc_on
+
+   viObject_flags = ACTIVATE_YES
+
+   viOff_frame = 1
+   viStart_frame = 2
+   viEnd_frame = 4
+
+   % Lighting flags.  Default "on" and wavering flags
+   viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING
+
+   % Light color.
+   viLightColor = LIGHT_FIRE
+
+properties:
+
+   piAnim_speed  = 75
+
+   % Intensity, from 0-255.
+   piLightIntensity = 30
+
+messages:
+
+   SetAnimationSpeed()
+   {
+      return;
+   }
+
+   ShowDesc()
+   {
+      if pbIsLit
+      {
+         AddPacket(4,candelabra_desc_on);
+      }
+      else
+      {
+         AddPacket(4,candelabra_desc_off);
+      }
+
+      propagate;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if abs(send(who,@GetRow)-send(self,@GetRow)) > USE_RANGE
+         OR abs(send(who,@GetCol)-send(self,@GetCol)) > USE_RANGE
+      {
+         Send(who,@MsgSendUser,#message_rsc=candelabra_not_in_range);
+
+         return TRUE;
+      }                                                                     
+
+      % Change the flame state.
+      send(self,@SetFlame,#has_flame=(NOT pbIsLit));
+
+      return TRUE;
+   }
+
+   SetFlame(has_flame = TRUE)
+   {
+      pbIsLit = has_flame;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

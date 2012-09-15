@@ -1,0 +1,15 @@
+# candelabra
+# first group is usual animation
+# two extra frames not yet used in groups are for unlit and burnedout.
+#candlesU.bmp [0, 0]
+#candlesX.bmp [0, 0]
+#
+-s 8
+3
+candlesA.bmp [0, 0] 
+candlesB.bmp [0, 0] 
+candlesC.bmp [0, 0]
+3
+ 1 1 
+ 1 2 
+ 1 3 

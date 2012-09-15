@@ -1,0 +1,365 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Stroke is Skill
+
+constants:
+
+   include blakston.khd
+
+   HITVALUE_MAX = 100
+
+resources:
+   stroke_name_rsc = "Weapon stroke"
+   stroke_icon_rsc = light.bgf
+   stroke_desc_rsc = "This is a weapon stroke."
+
+   stroke_need_weapon_rsc = "You need a weapon to perform this stroke!"
+
+   stroke_miss_attacker = "%sYour %s misses %s%s."
+   stroke_miss_defender = "%s%s misses you."
+   stroke_miss_sound = swordmis.wav
+
+   stroke_hit_attacker = "%sYour %s hits %s%s."
+   stroke_hit_defender = "%s%s hits you."
+
+   stroke_hit_sound = patk.wav
+
+   stroke_swish1 = swswish1.wav
+   stroke_swish2 = swswish2.wav
+   stroke_swish3 = swswish3.wav
+
+classvars:
+
+   vrName = stroke_name_rsc
+   vrIcon = stroke_icon_rsc
+   vrDesc = stroke_desc_rsc
+
+   vrPlayer_Hit_something = stroke_hit_attacker
+   vrPlayer_was_hit = stroke_hit_defender
+   vrPlayer_killed_something = $
+   vrPlayer_was_killed = $
+
+   vrMissed_Message_attacker = stroke_miss_attacker
+   vrMissed_Message_defender = stroke_miss_defender
+   vrMiss_Sound = stroke_miss_sound
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SKS_FENCING
+   viSkill_num = SKID_DEFAULT
+   viSkill_Exertion = 2
+
+   viHit_Factor = 100
+   viDamage_Factor = 100
+   viRange_Factor = 0
+
+   vbAutomatic = FALSE
+
+   viMaxProficiencyDamage = 5     % What's the max damage the proficiency can add for this stroke?
+
+properties:
+
+   plPrerequisites = $
+
+messages:  
+
+   % General combat messages:
+
+   % Can player dodge this type of attack?
+   CanDodge()
+   {
+      return TRUE;
+   }
+
+   % Can player block this type of attack?
+   CanBlock()
+   {
+      return TRUE;
+   }
+
+   %Can player parry this type of attack?
+   CanParry()
+   {
+      return TRUE;
+   }
+
+   % The unsorted messages:
+
+   ImproveStroke(who=$,use_weapon=$,target=$)
+   {
+     local prof, target_level;
+
+     target_level = send(target,@GetLevel);
+     prof=send(use_weapon,@GetProfNumber);
+
+     if random(1,100) > 60 or not send(who,@HasSkill,#num=prof)
+     {
+        if send(who,@GetSkillAbility,#skill_num=viSkill_num) < target_level
+          {
+             % checking for stroke advancement
+             send(self,@ImproveAbility,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
+          }
+     }
+     else
+     {
+        if send(use_weapon,@getprof,#who=who) < target_level
+          {
+             % checking for weapon proficiency advancement
+             send(use_weapon,@ImproveProficiency,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
+          }
+     }
+     
+     return;
+   }
+
+   SuccessChance()
+   "Always returns TRUE for combat strokes.  COmbat strokes are figured"
+   "differently than other skills - are figured in player.kod."
+   {
+      return TRUE;
+   }
+
+   CanPayCosts(who=$,oTarget=$)
+   "If a skill requires a special cost or requirement of some sort, that"
+   "cost goes here.  Example:  picklocking may require thieves tools."
+   {
+      local oOwner, i;
+
+      if not send(who,@HasVigor,#amount=viSkillExertion) and vbCheck_Exertion = TRUE
+      {
+         send(who,@MsgSendUser, #message_rsc=skill_too_tired,#parm1=vrName);
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   GetAttackType(weapon_used=$)
+   {
+     return send(weapon_used,@getAttackType);
+   }
+
+   GetAttackSpell(weapon_used=$)
+   {
+     return send(weapon_used,@getAttackSpell);
+   }
+
+   GetExertion()
+   "Sword strokes vary in their vigor cost."
+   {
+      % Return amount of vigor (hundreths) to cast skill
+      return viSkill_Exertion;
+   }
+
+   CheckSpecial(who=$,victim=$)
+   "Checks to see if there are any special circumstances which prevents"
+   "the target player from performing this skill."
+   {
+      return TRUE;
+   }
+
+   CheckWeaponAndDoAnimation(who=$,weapon_used=$,victim=$)
+   "Can the user's weapon be used with this weapon stroke?  \n"
+   "Default is TRUE unless the player is unarmed."
+   "Animation was also put here, for backwards compatibility."
+   {
+      if weapon_used = $
+      {
+         send(who,@msgsenduser,#message_rsc=stroke_need_weapon_rsc);
+          
+         return FALSE;
+      }
+
+      % while you're here, be sure weapon is undamaged.
+      return send(weapon_used,@ReqWeaponAttack,#what=victim);
+   }
+
+   ToHitImprovers(raw_hitroll=0)
+   "A weapon stroke may have IMPROVERS, which may boost the performance of  \n"
+   "the stroke.  Example, if a player has renweed, that may boost his thrust"
+   "Default, return the hitroll raw."
+   {
+      return Raw_hitroll; 
+   }
+
+   GetRange(weapon_used = $)
+   "Each weapon stroke checks the weapon for it's natural range, and then"
+   "affects it depending on the stroke.  Default:  viRangeFactor = 0, meaning"
+   "the weapon's raw range is used."
+   {
+      return send(weapon_used,@getrange) + viRange_Factor;
+   }
+
+   FindDamage(weapon_used=$, who=$, victim=$)
+   "We put this here so that we can vary a stroke's damage per weapon."
+   {
+      local skill_ability, damage;
+      
+      % base weapon damage
+      damage = send(weapon_used,@GetDamage,#who=who,#target=victim);
+      
+      % put in the individual skills factor
+      damage = (damage*viDamage_factor)/100;
+      
+      damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=weapon_used);
+
+      return bound(damage,1,$);
+   }
+
+   SendMissMessageToAttacker(who=$,victim=$,weapon_used = $,color_rsc = $,bText = TRUE)
+   {
+      local iRoll;
+
+      %% Text messages
+      if bText
+      {
+         send(who,@msgsenduser,#message_rsc=vrMissed_Message_Attacker,#parm1=color_rsc,
+              #parm2=vrName,#parm3=send(victim,@getdef),#parm4=send(victim,@getname));
+      }
+
+      %% 'miss' sound
+      if IsClass(victim,&Monster) or weapon_used = $
+      {
+         iRoll = Random(1,3);
+         
+         if iRoll = 1
+         {
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=stroke_swish1);
+         }
+         
+         if iRoll = 2
+         {
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=stroke_swish2);
+         }
+         
+         if iRoll = 3
+         {
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=stroke_swish3);
+         }
+      }
+      else
+      {
+         iRoll = Random(1,12);
+
+         if iRoll = 1
+         {
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=stroke_swish1);
+         }
+         
+         if iRoll = 2
+         {
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=stroke_swish2);
+         }
+         
+         if iRoll = 3
+         {
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=stroke_swish3);
+         }
+         
+         if iRoll >= 4
+         {   
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,
+                 #wave_rsc=Send(victim,@GetSomethingMissedYouSound,#what=who,
+                 #weapon_used=weapon_used)); 
+         }
+      }
+      
+      return;
+   }
+
+   SendMissMessageToDefender(who=$,attacker=$)
+   {
+      send(who,@MsgSendUser,#message_rsc=vrMissed_Message_Defender,
+           #parm1=send(attacker,@getcapdef),#parm2=send(attacker,@getname));
+           
+      return;
+   }
+
+   PlayerHitSomethingMsg(who=$,victim=$,damage=$,color_rsc=$)
+   {
+      send(who,@msgsenduser,#message_rsc=vrPlayer_hit_something,#parm1=color_rsc,#parm2=vrName,
+           #parm3=send(victim,@getdef),#parm4=send(victim,@getname));
+           
+      return;
+   }
+
+   PlayerWasHitMsg(who=$,attacker=$,damage=$,color_rsc=$)
+   {
+       send(who,@msgsenduser,#message_rsc=vrPlayer_was_hit,#parm1=color_rsc,
+            #parm2=send(attacker,@getcapdef),#parm3=send(attacker,@getname));
+            
+       return;
+   }
+
+   PlayerKilledSomethingMsg(who=$,victim=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will offer the default 'You killed the whatever' message."
+   {
+      if vrPlayer_killed_Something = $
+      {
+         return FALSE;
+      }
+       
+      send(who,@msgsenduser,#message_rsc=vrPlayer_killed_something,
+            #parm1=send(victim,@getCapdef),#parm2=send(victim,@getname));
+            
+      return TRUE;
+   }
+
+   PlayerWasKilledMsg(who=$,attacker=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will just choose a default - as it does for most strokes."
+   {
+      if vrPlayer_was_hit = $
+      {
+         return FALSE;
+      }
+      
+      send(who,@MsgSendUser,#message_rsc=vrPlayer_was_killed,
+           #parm1=send(attacker,@GetDef),#parm2=send(attacker,@GetName));
+           
+      return TRUE;
+   }
+
+   DamageFactors(damage=0, who=$, weapon_used = $)
+   "Different skills/strokes are affected by strength differently."
+   {
+      local iDamage, might;
+
+      iDamage = 0;
+      % KLUDGEISH: this information should probably be in player.
+      % Get weapon proficiency bonuses.
+      if weapon_used <> $
+      {
+         iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      }
+      else
+      {
+         iDamage = iDamage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING))*viMaxProficiencyDamage/100;
+      }
+      
+      % Get might damage bonus.
+      might = send(who,@GetMight);
+      iDamage = iDamage + ((100+bound(might-25,0,40))*damage)/100;
+
+      return iDamage;
+   }
+
+   GetHitSound()
+   {
+      return stroke_hit_sound;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

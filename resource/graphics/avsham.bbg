@@ -1,0 +1,140 @@
+# Avar shaman
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-11 cast spell, one-handed
+#        12-16 cast spell, two-handed
+#^Applied to Hotspot: 0
+#*Groups: 16
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+96
+avs000sa.bmp   [0, 6] 
+avs315sa.bmp   [0, 0] 
+avs270sa.bmp   [0, -1] 
+avs180sa.bmp   [0, -3] 
+avs090sa.bmp   [0, 0] 
+avs045sa.bmp   [0, 8] 
+avs000wa.bmp   [0, 6] 
+avs315wa.bmp   [0, 6] 
+avs270wa.bmp   [0, 5] 
+avs180wa.bmp   [0, 1] 
+avs090wa.bmp   [0, 7] 
+avs045wa.bmp   [0, 10] 
+avs000wb.bmp   [0, 5] 
+avs315wb.bmp   [0, 0] 
+avs270wb.bmp   [0, -2] 
+avs180wb.bmp   [0, 1] 
+avs090wb.bmp   [0, 0] 
+avs045wb.bmp   [0, 7] 
+avs000wc.bmp   [0, 6] 
+avs315wc.bmp   [0, 3] 
+avs270wc.bmp   [0, 4] 
+avs180wc.bmp   [0, 0] 
+avs090wc.bmp   [0, 2] 
+avs045wc.bmp   [0, 6] 
+avs000wd.bmp   [0, 0] 
+avs315wd.bmp   [0, 1] 
+avs270wd.bmp   [0, -2] 
+avs180wd.bmp   [0, 0] 
+avs090wd.bmp   [0, -1] 
+avs045wd.bmp   [0, -3] 
+avs000we.bmp   [0, 6] 
+avs315we.bmp   [0, 5] 
+avs270we.bmp   [0, 1] 
+avs180we.bmp   [0, 2] 
+avs090we.bmp   [0, 5] 
+avs045we.bmp   [0, 1] 
+avs000fa.bmp   [0, 3] 
+avs315fa.bmp   [0, -1] 
+avs270fa.bmp   [0, -1] 
+avs180fa.bmp   [0, 0] 
+avs090fa.bmp   [0, 0] 
+avs045fa.bmp   [0, 5] 
+avs000fb.bmp   [0, 4] 
+avs315fb.bmp   [0, -1] 
+avs270fb.bmp   [0, -1] 
+avs180fb.bmp   [0, -1] 
+avs090fb.bmp   [0, 0] 
+avs045fb.bmp   [0, 5] 
+avs000fc.bmp   [0, 4] 
+avs315fc.bmp   [0, -1] 
+avs270fc.bmp   [0, -1] 
+avs180fc.bmp   [0, -1] 
+avs090fc.bmp   [0, 0] 
+avs045fc.bmp   [0, 5] 
+avs000fd.bmp   [0, 3] 
+avs315fd.bmp   [0, -1] 
+avs270fd.bmp   [0, -1] 
+avs180fd.bmp   [0, -3] 
+avs090fd.bmp   [0, 0] 
+avs045fd.bmp   [0, 5] 
+avs000fe.bmp   [0, 4] 
+avs315fe.bmp   [0, -1] 
+avs270fe.bmp   [0, -1] 
+avs180fe.bmp   [0, -3] 
+avs090fe.bmp   [0, 0] 
+avs045fe.bmp   [0, 5] 
+avs000ra.bmp   [0, 2] 
+avs315ra.bmp   [0, -2] 
+avs270ra.bmp   [0, -2] 
+avs180ra.bmp   [0, -1] 
+avs090ra.bmp   [0, -1] 
+avs045ra.bmp   [0, 5] 
+avs000rb.bmp   [0, 3] 
+avs315rb.bmp   [0, -3] 
+avs270rb.bmp   [0, -3] 
+avs180rb.bmp   [0, -1] 
+avs090rb.bmp   [0, -1] 
+avs045rb.bmp   [0, 5] 
+avs000rc.bmp   [0, 3] 
+avs315rc.bmp   [0, -3] 
+avs270rc.bmp   [0, -2] 
+avs180rc.bmp   [0, -2] 
+avs090rc.bmp   [0, -1] 
+avs045rc.bmp   [0, 5] 
+avs000rd.bmp   [0, 3] 
+avs315rd.bmp   [0, -3] 
+avs270rd.bmp   [0, -2] 
+avs180rd.bmp   [0, -3] 
+avs090rd.bmp   [0, -1] 
+avs045rd.bmp   [0, 5] 
+avs000re.bmp   [0, 3] 
+avs315re.bmp   [0, -2] 
+avs270re.bmp   [0, -2] 
+avs180re.bmp   [0, -5] 
+avs090re.bmp   [0, -1] 
+avs045re.bmp   [0, 5] 
+16
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 
+ 8   79 80 81 82 82 82 83 84 
+ 8   85 86 87 88 88 88 89 90 
+ 8   91 92 93 94 94 94 95 96 

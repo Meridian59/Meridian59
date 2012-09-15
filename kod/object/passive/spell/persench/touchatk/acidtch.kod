@@ -1,0 +1,97 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AcidTouch is TouchAttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AcidTouch_name_rsc = "acid touch"
+   AcidTouch_icon_rsc = iacidtou.bgf
+   AcidTouch_desc_rsc = \
+      "Burns the target with the force of a powerful acid, "
+      "penetrating armor, clothing, and flesh.  "
+      "Requires entroot berries."
+
+   AcidTouch_On_rsc = "The corrosive spittle of Qor's love oozes from the pores of your hand."
+   AcidTouch_Off_rsc = "Your hands no longer drip with acidic ooze."
+   AcidTouch_Already_Enchanted_rsc = "Your hands are already dripping with acidic ooze."
+
+   AcidTouch_player_was_hit = "%s%s burns through your flesh with an acid touch."
+   AcidTouch_player_hit_something = "%sYou watch %s%s scream in agony at your touch."
+
+   AcidTouch_player_killed_something = "%s%s screams and melts into an unobtrusive puddle."
+   AcidTouch_player_was_killed = "At the touch of %s%s, you let out a final scream and die."
+
+   acidtouch_spell_intro = "Qor Lv. 2: Covers caster's hands a powerful acid which penetrates armor, clothing, and flesh."
+
+   acidtouch_sound = qacid.wav
+  
+classvars:
+
+   vrName = AcidTouch_name_rsc
+   vrIcon = AcidTouch_icon_rsc
+   vrDesc = AcidTouch_desc_rsc
+
+   vrAlreadyEnchanted = AcidTouch_already_enchanted_rsc
+   vrEnchantment_On = AcidTouch_On_rsc
+   vrEnchantment_Off = AcidTouch_Off_rsc
+
+   vrPlayer_was_hit = AcidTouch_player_was_hit
+   vrPlayer_hit_something = AcidTouch_player_hit_something
+
+   vrPlayer_was_killed = AcidTouch_player_was_killed
+   vrPlayer_killed_something = AcidTouch_player_killed_something
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+   vrSpell_intro = acidtouch_spell_intro
+
+   viSchool = SS_QOR
+   viSpell_num = SID_ACID_TOUCH
+   viSpellExertion = 3
+   viSpell_level = 2
+   viMana = 10
+
+   viHit_Factor = 10       %% typically, spells have hit probs
+                           %% that are high, provided you're good at the skill
+
+
+   viMin_Damage = 4        %% touch spells typically do good damage    
+   viMax_Damage = 8       %% but are unaffected by weapon or strength bonuses
+
+   viRange = 2             %% touch spell range can vary, but are typically good     
+
+   viSpellType = ATCK_SPELL_ACID + ATCK_SPELL_ALL
+   viStroke = STROKE_ACID_TOUCH
+
+   vbAutomatic = FALSE
+
+   vrSucceed_wav = acidtouch_sound
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+  ResetReagents()
+  {
+     plReagents = $;
+     plReagents = cons([&EntrootBerry,1],plReagents);
+     return;
+  }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

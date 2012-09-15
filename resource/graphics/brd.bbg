@@ -1,0 +1,182 @@
+# female right arms, robed
+# groups
+# 1 standing
+# 2-3 walking
+# 4-6 fighting
+# 7-10 waving
+# 11 casting spell
+# 12 pointing
+# 13-14 punching
+# 15-16 shooting bow
+# 17 carrying weapon
+# hotspots
+# 22 right hand weapon place
+#^Applied to Hotspot: 21
+#*Groups: 33
+#* standing
+#* walking A
+#* walking B
+#* fighting A
+#* fighting B
+#* fighting C
+#* waving A
+#* waving B
+#* waving C
+#* waving B
+#* spell-casting
+#* pointing
+#* punch A
+#* punch B
+#* bow-shooting A
+#* bow-shooting B
+#* holding weapon
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+-s 4
+96
+br000dAA.bmp   [153, 92] 
+br315dAA.bmp   [154, 89] 
+br270dAA.bmp   [174, 89] 
+br180dAA.bmp   [198, 90] 
+br090dAA.bmp   [176, 90] 
+br045dAA.bmp   [157, 90] 
+br000dBA.bmp   [156, 91] 
+br315dBA.bmp   [170, 93] 
+br270dBA.bmp   [184, 92] 
+br180dBA.bmp   [198, 93] 
+br090dBA.bmp   [162, 92] 
+br045dBA.bmp   [147, 90] 
+br000dBB.bmp   [152, 92] 
+br315dBB.bmp   [142, 90] 
+br270dBB.bmp   [156, 91] 
+br180dBB.bmp   [198, 93] 
+br090dBB.bmp   [176, 92] 
+br045dBB.bmp   [163, 92] 
+br000dCA.bmp   [152, 68] :1    -22 [-150, -63]
+br315dCA.bmp   [151, 69] :1    -22 [-143, -62]
+br270dCA.bmp   [160, 68] :1     22 [-150, -64]
+br180dCA.bmp   [196, 68] :1     22 [-199, -62]
+br090dCA.bmp   [167, 68] :1    -22 [-177, -63]
+br045dCA.bmp   [161, 69] :1    -22 [-165, -66]
+br000dCB.bmp   [161, 69] :1    -22 [-146, -62]
+br315dCB.bmp   [167, 69] :1    -22 [-162, -64]
+br270dCB.bmp   [182, 69] :1    -22 [-177, -64]
+br180dCB.bmp   [187, 69] :1     22 [-186, -66]
+br090dCB.bmp   [153, 71] :1    -22 [-158, -65]
+br045dCB.bmp   [154, 70] :1    -22 [-155, -65]
+br000dCC.bmp   [172, 106] :1     22 [-169, -116]
+br315dCC.bmp   [143, 109] :1     22 [-132, -118]
+br270dCC.bmp   [135, 108] :1    -22 [-120, -115]
+br180dCC.bmp   [187, 108] :1    -22 [-183, -110]
+br090dCC.bmp   [187, 109] :1     22 [-202, -117]
+br045dCC.bmp   [174, 110] :1     22 [-185, -118]
+br000dDA.bmp   [144, 55] 
+br315dDA.bmp   [138, 51] 
+br270dDA.bmp   [156, 52] 
+br180dDA.bmp   [206, 51] 
+br090dDA.bmp   [177, 48] 
+br045dDA.bmp   [163, 48] 
+br000dDB.bmp   [139, 54] 
+br315dDB.bmp   [130, 50] 
+br270dDB.bmp   [151, 52] 
+br180dDB.bmp   [205, 52] 
+br090dDB.bmp   [177, 47] 
+br045dDB.bmp   [163, 47] 
+br000dDC.bmp   [131, 64] 
+br315dDC.bmp   [125, 61] 
+br270dDC.bmp   [147, 63] 
+br180dDC.bmp   [205, 61] 
+br090dDC.bmp   [177, 57] 
+br045dDC.bmp   [163, 57] 
+br000dGA.bmp   [157, 91] 
+br315dGA.bmp   [133, 89] 
+br270dGA.bmp   [134, 88] 
+br180dGA.bmp   [201, 88] 
+br090dGA.bmp   [177, 90] 
+br045dGA.bmp   [166, 90] 
+br000dIA.bmp   [155, 92] 
+br315dIA.bmp   [126, 90] 
+br270dIA.bmp   [126, 91] 
+br180dIA.bmp   [199, 91] 
+br090dIA.bmp   [177, 91] 
+br045dIA.bmp   [166, 91] 
+br000dja.bmp   [155, 99] 
+br315dja.bmp   [166, 99] 
+br270dja.bmp   [183, 100] 
+br180dja.bmp   [194, 101] 
+br090dja.bmp   [155, 101] 
+br045dja.bmp   [146, 100] 
+br000djb.bmp   [170, 109] 
+br315djb.bmp   [138, 106] 
+br270djb.bmp   [120, 108] 
+br180djb.bmp   [187, 107] 
+br090djb.bmp   [185, 108] 
+br045djb.bmp   [174, 109] 
+br000dka.bmp   [142, 93] :1     22 [-142, -93]
+br315dka.bmp   [150, 92] :1     22 [-150, -92]
+br270dka.bmp   [166, 93] :1     22 [-168, -92]
+br180dka.bmp   [200, 94] :1     22 [-200, -94]
+br090dka.bmp   [160, 95] :1     22 [-160, -95]
+br045dka.bmp   [144, 94] :1     22 [-144, -94]
+br000dkb.bmp   [134, 88] :1     22 [-134, -88]
+br315dkb.bmp   [149, 86] :1     22 [-149, -86]
+br270dkb.bmp   [183, 86] :1     22 [-183, -86]
+br180dkb.bmp   [200, 87] :1     22 [-200, -87]
+br090dkb.bmp   [157, 89] :1     22 [-157, -89]
+br045dkb.bmp   [139, 89] :1     22 [-139, -89]
+br000dla.bmp   [154, 92] :1     22 [-151, -90]
+br315dla.bmp   [168, 89] :1     22 [-168, -89]
+br270dla.bmp   [184, 89] :1     22 [-184, -89]
+br180dla.bmp   [200, 90] :1    -22 [-200, -90]
+br090dla.bmp   [169, 90] :1    -22 [-169, -90]
+br045dla.bmp   [152, 90] :1     22 [-152, -90]
+34
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   43 44 45 46 46 46 47 48 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 
+ 8   79 80 81 82 82 82 83 84 
+ 8   85 86 87 88 88 88 89 90 
+ 8   91 92 93 94 94 94 95 96 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48  
+ 8   49 50 51 52 52 52 53 54  
+ 8   43 44 45 46 46 46 47 48  
+ 8   13 14 15 16 16 16 17 18 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   55 56 57 58 58 58 59 60 
+ 8   67 68 69 70 70 70 71 72 
+ 8   31 32 33 34 34 34 35 36 
+ 8   67 68 69 70 70 70 71 72 
+ 8   31 32 33 34 34 34 35 36 
+ 8   67 68 69 70 70 70 71 72 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   19 20 21 22 22 22 23 24 
+ 8   13 14 15 16 16 16 17 18 
+

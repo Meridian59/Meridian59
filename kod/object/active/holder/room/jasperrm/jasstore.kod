@@ -1,0 +1,101 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperStore is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_jasperStore = jasstore.roo
+   room_name_JasperStore = "General Store of Jasper"
+
+   jasstore_music = bank.mid
+
+classvars:
+
+   vrName = room_name_jasperstore
+
+   viTeleport_row = 19
+   viTeleport_col = 5
+
+   viPermanent_flags = ROOM_NO_COMBAT
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_jasperstore
+   piRoom_num = RID_JAS_STORE
+
+   prMusic = jasstore_music
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+messages:
+
+CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&JasperMerchant),
+           #new_row=18,#new_col=8,#new_angle=ANGLE_WEST);
+
+%      % and some braziers
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=3,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=3,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=3,#new_col=12);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=3,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=11,#new_col=12);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=11,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=12,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=12,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=23,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=23,#new_col=9);
+
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=5,#new_col=4);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=5,#new_col=7);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=5,#new_col=15);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=9,#new_col=15);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 19, 1, RID_JASPER, 49, 38, ROTATE_NONE ],plExits);
+      plExits = Cons([ 19, 2, RID_JASPER, 49, 38, ROTATE_NONE ],plExits);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

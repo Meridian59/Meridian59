@@ -1,0 +1,27 @@
+# Lt. Brown female mouth 3
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+-s 14
+14
+Pm000mab.bmp   [-15, -12] 
+Pm045mab.bmp   [-21, -14] 
+Pm090mab.bmp   [-19, -13] 
+Pm270mab.bmp   [-3, -14] 
+Pm315mab.bmp   [-7, -16] 
+Pm000mbb.bmp   [-15, -12] 
+Pm045mbb.bmp   [-21, -14] 
+Pm315mbb.bmp   [-7, -16] 
+Pm000mcb.bmp   [-15, -12] 
+Pm045mcb.bmp   [-21, -14] 
+Pm315mcb.bmp   [-7, -16] 
+Pm000mdb.bmp   [-15, -12] 
+Pm045mdb.bmp   [-21, -14] 
+Pm315mdb.bmp   [-7, -16] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

@@ -1,0 +1,27 @@
+#  Pink face 1 - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000aad.bmp   [-15, -10] 
+Pe045aad.bmp   [-17, -10] 
+Pe090aad.bmp   [-11, -11] 
+Pe270aad.bmp   [-4, -9] 
+Pe315aad.bmp   [-5, -14] 
+Pe000abd.bmp   [-15, -10] 
+Pe045abd.bmp   [-17, -10] 
+Pe315abd.bmp   [-5, -14] 
+Pe000acd.bmp   [-15, -10] 
+Pe045acd.bmp   [-17, -10] 
+Pe315acd.bmp   [-5, -14] 
+Pe000add.bmp   [-15, -10] 
+Pe045add.bmp   [-17, -10] 
+Pe315add.bmp   [-5, -14] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

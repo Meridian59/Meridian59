@@ -1,0 +1,23 @@
+# Nobleman - left arm
+# groups
+# 1 standing
+# 2-3 walking
+-s 4
+12
+nl000aaa.bmp   [-34, -10] 
+nl090aaa.bmp   [-24, -8] 
+nl180aaa.bmp   [-12, -10] 
+nl270aaa.bmp   [-6, -6] 
+nl000baa.bmp   [-12, -12] 
+nl090baa.bmp   [-10, -10] 
+nl180baa.bmp   [-26, -10] 
+nl270baa.bmp   [-30, -4] 
+nl000bab.bmp   [-16, -10] 
+nl090bab.bmp   [-20, -10] 
+nl180bab.bmp   [-14, -10] 
+nl270bab.bmp   [-6, -8] 
+4
+ 4      1   4  3   2
+ 4      5   8  7   6
+ 4      9  12  11  10
+ 4      5   8  7   6

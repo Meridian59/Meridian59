@@ -1,0 +1,152 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ammo is NumberItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ammo_name_rsc = "ammunition"
+   % Generic default image.  Something strange so it is visually obvious if
+   %  we didn't set something.
+   ammo_icon_rsc = fireball.bgf
+   ammo_desc_rsc = "This is a bit of ammunition for something or other.."
+
+classvars:
+
+   vrName = ammo_name_rsc
+   vrIcon = ammo_icon_rsc
+   vrDesc = ammo_desc_rsc
+
+   viUse_type = ITEM_USE_QUIVER
+   viUse_amount = 1
+
+   viItem_type = ITEMTYPE_AMMO
+   viAmmo_type = AMMO_ARROW     
+
+   viGround_group = 2
+   viInventory_group = 1   
+
+properties:
+
+   piNumber = 20
+   piAttack_type = ATCK_WEAP_PIERCE
+   piAttack_spell = 0
+
+messages:
+
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what, &Ammo)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+             return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+
+   GetProjectileIcon()
+   {
+      return vrIcon;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+
+   SendProjectileAnimation()
+   {
+      Send(self,@SendAnimation);
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
+   }
+
+   GetDamage()
+   {
+      return Random(1,5);
+   }
+
+   GetAmmoType()
+   {
+      return viAmmo_type;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Magic Arrow Stuff          %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   GetAttackSpell()
+   {
+      return piAttack_spell;
+   }
+
+   GetAttackType()
+   {
+      return piAttack_type;
+   }
+
+   SetTypeFlag(flag = 0, value = FALSE)
+   {
+      if value = True
+      {
+         piAttack_type = piAttack_type | flag;
+      }
+      else
+      {
+         piAttack_type = piAttack_type & ~flag;
+      }
+      
+      return;
+   }
+
+   CheckTypeFlag(flag = 0)
+   {
+      return  (piAttack_type & flag);
+   }
+
+   SetSpellFlag(flag = 0, value = FALSE)
+   {
+      if value = True
+      {
+         piAttack_spell = piAttack_spell | flag;
+      }
+      else
+      {
+         piAttack_spell = piAttack_spell & ~flag;
+      }
+      
+      return;
+   }
+
+   CheckSpellFlag(flag = 0)
+   {
+      return  (piAttack_spell & flag);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

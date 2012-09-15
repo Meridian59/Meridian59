@@ -1,0 +1,27 @@
+#  Asian male - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000baa.bmp   [-15, -10] 
+Pe045baa.bmp   [-17, -10] 
+Pe090baa.bmp   [-11, -11] 
+Pe270baa.bmp   [-4, -9] 
+Pe315baa.bmp   [-5, -14] 
+Pe000bba.bmp   [-15, -10] 
+Pe045bba.bmp   [-17, -10] 
+Pe315bba.bmp   [-5, -14] 
+Pe000bca.bmp   [-15, -10] 
+Pe045bca.bmp   [-17, -10] 
+Pe315bca.bmp   [-5, -14] 
+Pe000bda.bmp   [-15, -10] 
+Pe045bda.bmp   [-17, -10] 
+Pe315bda.bmp   [-5, -14] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

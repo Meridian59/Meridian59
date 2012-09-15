@@ -1,0 +1,161 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NarthylWorm is Monster
+
+constants:
+
+   include blakston.khd
+
+   SEC_PER_FRAME = 150
+   EXERTION_DAMAGE_MIN = 3
+   EXERTION_DAMAGE_MAX = 7
+
+resources:
+
+   NarthylWorm_koc_name_rsc = "tepna'arthyl"
+   NarthylWorm_name_rsc = "narthyl worm"
+   NarthylWorm_icon_rsc = darkbeas.bgf
+   NarthylWorm_desc_rsc = \
+   "In spite of its otherworldy hideousness, the narthyl worm's lithe movements are "
+   "intensely hypnotic.  Every nerve in your body is screaming danger, ringing dully "
+   "through the trance-like state that seems to be descending over your mind."
+
+   NarthylWorm_dead_icon_rsc = dkbx.bgf
+   NarthylWorm_dead_name_rsc = "dead narthyl worm"
+
+   NarthylWorm_sound_miss = wrm_atk.wav
+   NarthylWorm_sound_death = wrm_dth.wav
+   NarthylWorm_sound_aware = wrm_awr.wav
+
+   NarthylWorm_sound_flap1 = wrm_flp1.wav
+   NarthylWorm_sound_flap2 = wrm_flp2.wav
+
+classvars:
+
+   vrKocName = NarthylWorm_koc_name_rsc
+   vrName = NarthylWorm_name_rsc
+   vrIcon = NarthylWorm_icon_rsc
+   vrDesc = NarthylWorm_desc_rsc
+   vrDead_icon = NarthylWorm_dead_icon_rsc
+   vrDead_name = NarthylWorm_dead_name_rsc
+
+   viTreasure_type = TID_NARTHYL_WORM
+   viSpeed = SPEED_SLOW
+   viAttack_types = ATCK_WEAP_PIERCE
+   viAttributes = 0
+   viLevel = 120
+   viDifficulty = 7
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE
+
+   vrSound_miss = NarthylWorm_sound_miss
+   vrSound_aware = NarthylWorm_sound_aware
+   vrSound_death = NarthylWorm_sound_death
+
+
+properties:
+
+   piAnimation = ANIM_NONE
+   ptRestartAnimation = $
+   
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 70, ATCK_WEAP_PIERCE],
+                        [ 70, ATCK_WEAP_THRUST ],
+                        [ 70, -ATCK_SPELL_UNHOLY ],
+                        [ 70, -ATCK_SPELL_SHOCK ],
+                        [ 70, -ATCK_SPELL_FIRE ],
+                        [ -20, -ATCK_SPELL_HOLY]];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSlash);
+      
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      ptRestartAnimation = createTimer(self,@RestartAnimation,SEC_PER_FRAME*5);
+      
+      return;
+   }
+
+   RestartAnimation()
+   {
+      ptRestartAnimation = $;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptRestartAnimation <> $
+      {
+         deleteTimer(ptRestartAnimation);
+         ptRestartAnimation = $;
+      }
+      
+      propagate;
+   }
+
+   SendMoveAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+      
+      AddPacket(1,ANIMATE_CYCLE,4,SEC_PER_FRAME,2,1,2,4);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+      
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,SEC_PER_FRAME,2,5,2,8,2,1);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_CYCLE,4,SEC_PER_FRAME,2,1,2,4); % that's the standing one.
+      }
+      
+      return;
+   }
+
+   HitSideEffect(what = $)
+   {
+      if IsClass(what,&Player)
+      {
+         send(what,@AddExertion,#amount=(random(EXERTION_DAMAGE_MIN,EXERTION_DAMAGE_MAX)*10000));
+      }
+
+      return;
+   }
+   
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,237 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MultiCastSpell is Spell
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+   SPELL_MURMUR_SQUARED = 64
+
+resources:
+
+   multicast_no_prism = "You can't find a prism nearby to focus your energies on."
+
+classvars:
+
+   % This is the total sum of spellpower that has to be focused at the prism
+   %  for the cast to complete.  Prism fires the spell when this spellpower
+   %  is reached.  In general, the formula for this is:
+   %    (Casting time in seconds) * 15
+   %  where 15 = (5 casters * 3 points contributed each)
+   viMultiCast_Spellpower = 1000   
+
+   % Give a little better than usual since its a pain to get many casters.
+   viChance_To_Increase = 30 
+
+   % Mana is amount used upon inititiation
+   viMana = 10
+   % viManaDrain is amount used every viDrainTime milliseconds
+   viManaDrain = 7
+   viDrainTime = 1000
+
+   viCast_time = 2000
+
+   vbCheck_Exertion = TRUE
+   viSpellExertion = 2
+
+   viSpell_Num = $
+   viSchool = $
+   ViSpell_level = 1
+
+   viMana = 1
+
+   viShow_enchantment_icon = ENCHANTMENT_SHOW_ALL
+
+   % Default animation speed for icon.  If set to 0, then no animation.
+   viAnimationSpeed = 0
+
+   viAnimation_start = 1
+   viAnimation_end = 1
+   viIcon_animation_start = 2
+   viIcon_animation_end = 2
+
+   viCast_time = 0
+   viPostCast_time = 1
+
+   vrSucceed_wav = $
+
+   viPersonal_ench = TRUE
+   viNoNewbieOffense = FALSE
+
+   viFlash = FLASH_NONE
+
+properties:
+
+   plReagents = $
+   plPrerequisites = $
+
+   piCast_attempts = 0
+   piCast_successes = 0
+
+   pbAccessible = TRUE
+
+messages:      
+
+   SpellMurmurMessage(caster=$, target=$, hearer=$)
+   {
+      return;
+   }
+
+   IsMultiCaster()
+   {
+      return TRUE;
+   }
+
+   GetTotalSpellPower()
+   {
+      return viMultiCast_Spellpower;
+   }
+
+   GetNumSpellTargets()
+   {
+      % Casters target the prism
+      return 0;
+   }
+
+   BreakTrance(who = $, state = $)
+   {
+      % If caster runs out of mana or loses trance, spell ends.
+      if IsClass(first(state),&prism)
+      {
+         Send(first(state),@CasterBrokeTrance,#who=who);
+         Send(who,@RemoveEnchantment,#what=self,#state=state);
+
+         propagate;
+      }
+
+      return;
+   }
+
+   StartPeriodicEnchantment(who = $, state = $ )
+   "Sends enchantment message to room like CastSpell for most room enchantments, "
+   "but silent, and done as often as necessary"
+    {
+      local iAmount;
+      
+      % If caster runs out of mana or loses trance, spell ends.
+      if Send(who,@GetMana) < viManaDrain * 2
+      {
+         Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
+              #state=state,#addicon=FALSE,#lastcall=TRUE);
+      }
+      else
+      {      
+         Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
+              #state=state,#addicon=FALSE,#lastcall=FALSE);
+      }
+
+      Send(who,@LoseMana,#amount=viManaDrain);
+
+      % Each caster contributes from 1 - 4 spellpoints per second.
+      iAmount = Send(self,@GetSpellPower,#who=who) + 1;
+      iAmount = bound(iAmount/25,1,4);
+      Send(first(state),@ContributeSpellpower,#amount=iAmount,#who=who);
+
+      return;
+   }
+
+   FindPrism(who=$)
+   {
+      local oRoom, i, cPrism, cDist, Dist, each_obj;
+
+      oRoom = Send(who,@GetOwner);
+      cPrism = $;
+      cDist = 100000;
+
+      for i in Send(oRoom,@GetHolderPassive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Prism)
+            AND (Send(each_obj,@GetSpell) = $ OR Send(each_obj,@GetSpell) = self)
+         {
+            Dist = Send(who,@SquareddistanceTo,#what=each_obj);
+            if Dist < cDist
+            {
+               cDist = Dist;
+               cPrism = each_obj;
+            }
+         }
+      }
+
+      return cPrism;
+   }
+
+   CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oPrism;
+
+      oPrism = Send(Self,@FindPrism,#who=who);
+      if oPrism = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=multicast_no_prism);
+        
+         return FALSE;
+      }
+
+      if NOT Send(oPrism,@CanAcceptCasters)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetTranceFlag);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   % This is the entry point, sets players to trance while they
+   % focus on casting on the prism.  The prism calls PrismCast()
+   % below when it has enough energy from the casters.
+   {
+      local oRoom, oPrism;
+
+      oPrism = Send(Self,@FindPrism,#who=who);
+
+      Send(who,@StartEnchantment,#what=self,#state=[oPrism],#time=viDrainTime,
+           #iSpellPower=iSpellPower,#lastcall=FALSE);
+
+      Send(oPrism,@SpellCast,#what=self,#who=who,#lTargets=lTargets);
+      Send(oPrism,@ContributeSpellpower,#who=who,
+           #amount=Send(self,@GetSpellPower,#who=who)/2);
+
+      propagate;
+   }
+
+   PrismCast(spellpower = 0, lCasters=$, lTargets=$)  
+   "This is the effect of the spell once finally cast."
+   {
+      return;
+   }
+
+   EndEnchantment(who=$,state=$)
+   "Called when caster breaks trance or runs out of mana (ends involvement inspell)."
+   {
+      Send(who,@ClearTranceFlag);
+      Send(First(state),@CasterBrokeTrance,#who=who);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

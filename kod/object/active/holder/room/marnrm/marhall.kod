@@ -1,0 +1,189 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarHall is MarionRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_marhall = marhall.roo
+   room_name_marhall = "The Adventurer's Hall of Marion"
+
+   marhall_music = main.mid
+
+   news_mar_hall = "General News"
+   News_mar_hall_desc = "See what people are saying around Meridian."
+
+   MarHall_factionflag_book = "Territory Tactica"
+   MarHall_factionflag_text = \
+        "A treatise on the rules of boundary conflict\n"
+        "-Cylill, Councilor and Veteran to the Duke's army.\n"
+        "\n"
+        "In the old Empire, long before the explorers came to Meridian 59, the ruling "
+        "class of aristocracy used flags to mark the boundaries of their territories.  "
+        "If a lord wished to gain the territory of another without mortal combat, he "
+        "would command a small group of his soldiery to secretly and stealthily replace "
+        "the flag of his opponent with one of his own.  Each feudal lord had soldiers "
+        "that were experts at doing such a task, and the bloodshed in these boundary "
+        "wars was kept to a minimum.  This practice grew outdated and soon was sent "
+        "into disuse as the populace as the society grew towards a more exploratory "
+        "and scholarly nature than a feudal one.\n\n"
+        "¶"
+        "However, the noble factions and the rebels vie for control of the lands once "
+        "again.  The council, in its wisdom, has established rules for the conquest of "
+        "land in the struggles between the factions.\n"
+        "\n"
+        "THE RULES\n"
+        "\n"
+        "These are the rules of the territory conquest, as determined by the council "
+        "of Meridian:\n"
+        "\n"
+        "Only a recognized soldier of the faction may possess the flag and try to "
+        "claim the flagpole, but any faction member may support the claim with their "
+        "presence."
+        "\n"
+        "There will need to be at least a score of the warriors of Meridian in the land, "
+        "and a soldier will need to have at least two of his or her factions' members "
+        "in the area at the time.\n"
+        "¶"
+        "A territory may only be claimed if it is adjacent to a territory that has "
+        "already been claimed.  A territory is considered adjacent if the player can "
+        "walk directly from one territory to the other without passing through other "
+        "territories.  A special exception can be found below.\n"
+        "\n"
+        "Once you stake the claim and place the flag, it will take ten minutes or so "
+        "for the information to reach the faction leaders via scouts and the power "
+        "will shift.  Unclaimed territories may have soldiers defending it, so be "
+        "wary, it is best to eliminate the threat before proceeding with claiming "
+        "the territory.  In some cases, common soldiers may be called to defend the "
+        "flagpole from being taken.\n"
+        "\n"
+        "Should the soldier leave the area or be killed, the claim will be considered "
+        "failed.  If failure occurs, it will be at least eight hours before an "
+        "attempt can be made again."
+        "¶"
+        "CITIES AND FACTIONS\n"
+        "\n"
+        "Because of the civilians living in the cities, they cannot be taken by force.  "
+        "However, claiming the land around a city will claim the city itself.  Please "
+        "note that cities do not hold any special weight, they are simply another "
+        "territory to capture in each faction's quest for the rulership of Meridian.\n"
+        "\n"
+        "Each faction will begin in a city.  If the city is lost to another faction, "
+        "then the faction will relinquish all territory claims.  The starting cities "
+        "are also special in that a faction can always reclaim flags around their "
+        "starting city.  Therefore, a faction can always restart a conquest of the "
+        "territories by starting at their home city."
+        "¶"
+        "The faction of Her Majesty, Princess Kateriina, will start in the town of "
+        "Barloque.  The Royal City may be claimed by any faction claiming the "
+        "territories of The Queen's Way, the Main Gate of Barloque, and the "
+        "Outskirts of Barloque.\n"
+        "\n"
+        "The faction of the Duke Akardius, will start in the City of Tos.  The City "
+        "of Tos may be claimed by any faction claiming the territories of the Main "
+        "Gate of Tos, The Border of the Badlands, and the Outskirts of Tos.\n"
+        "\n"
+        "The faction of Jonas, Rebel leader, will start in the town of Jasper.  The "
+        "town of Jasper may be claimed by any faction claiming the territories of "
+        "the Lake of Jala's Song, the Sweetgrass Prairies, and Deep in the Forest "
+        "of Farol.\n"
+        "¶"
+        "Marion and Cor Noth are strategic positions, and if they are claimed it will "
+        "count as a favor towards the liege that you follow.  I would recommend "
+        "that you do not misinterpret the significance of these places in Meridian.\n"
+        "\n"
+        "The town of Marion is a neutral place, but the taking of these two places "
+        "will allow you to claim this town for your faction: Deep Woods of Ileria, "
+        "and West Merchant's Way through Ilerain Woods.\n"
+        "\n"
+        "The town of Cor Noth is a neutral place as well, but the taking of these "
+        "two places will allow you to claim this town for your faction: The King's "
+        "Way, and the Main Gate of Cor Noth."
+        "¶"
+        "Please choose wisely when participating in this feudal war, for the council "
+        "nor the fair Shal'ille will not shine highly on those that use this age-old "
+        "way of warfare as an excuse to enact wholesale murder.  Do not dishonor your "
+        "ancestors.\n\n"
+        "Courage and Honor,\n"
+        "Cylill, Veteran of the Duke's Army, Councilor."
+
+classvars:
+
+   vrName = room_name_marhall
+
+   viTeleport_row = 5
+   viTeleport_col = 8
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SAFELOGOFF
+
+   prRoom = room_marhall
+   piRoom_num = RID_MAR_HALL
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = marhall_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 6,21, RID_MARION, 50, 22, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7,21, RID_MARION, 50, 22, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oBook, oNews;
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=12,
+           #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=18,
+           #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=13,
+           #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=13,
+           #fine_row=48,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Table),#new_row=11,#new_col=16,
+           #fine_row=16,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=18,
+           #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+
+      oBook = Create(&BookPedestal,#Name=MarHall_factionflag_book,
+                     #text=MarHall_factionflag_text);
+      Send(self,@NewHold,#what=oBook,#new_row=3,#new_col=19,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+
+      oNews = Create(&Newslink,#nid=NID_TOS_HALL,
+              #name=news_mar_hall,#desc=news_mar_hall_desc);
+
+      Send(self,@NewHold,#what=oNews,#new_row=10,#new_col=3,#fine_row=0,#fine_col=32);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

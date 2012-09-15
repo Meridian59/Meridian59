@@ -1,0 +1,131 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Darkness is RoomEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   darkness_name_rsc = "darkness"
+   darkness_icon_rsc = idarknes.bgf
+   darkness_desc_rsc = \
+      "Draws a curtain of darkness over a room, making it more "
+      "amenable to followers of the Vile One.  "
+      "Requires fairy wings and entroot berries to cast."
+   
+   darkness_unnecessary = "This area already has a darkness enchantment."
+
+   darkness_on = "A curtain of darkness is drawn across the room, stirring the servants of Qor."
+   darkness_off = "The curtain of darkness is lifted."
+   darkness_new_entrant = "This place is under a darkness enchantment."
+
+   darkness_spell_intro = "Qor Lv. 1: Draws a curtain of darkness over the room, stirring the servants of Qor."
+
+   darkness_sound = qinvis.wav
+
+classvars:
+
+   vrName = darkness_name_rsc
+   vrIcon = darkness_icon_rsc
+   vrDesc = darkness_desc_rsc
+   vrSucceed_wav = darkness_sound
+   vrSpell_intro = darkness_spell_intro
+
+   viSpell_num = SID_DARKNESS
+   viSchool = SS_QOR
+   viMana = 8
+   viSpell_level = 1
+   
+   viChance_To_Increase = 30
+   
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&FairyWing,1],plReagents);
+      plReagents = Cons([&EntrootBerry,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=darkness_unnecessary);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, iSpellPower = 0)
+   "Initiation point for the spell."
+   {
+      local oRoom, iBaseLight;
+
+      oRoom = Send(who,@GetOwner);
+
+      % global effects of the enchantment
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=darkness_on,#what=self);
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=-(iSpellPower+25),
+           #time=send(self,@GetDuration,#iSpellPower=iSpellPower));
+      
+      Send(oRoom,@AddBaseLight,#amount=-(iSpellPower+25));
+               
+      propagate;
+   }
+
+   StartEnchantmentNewOccupant( who = $ )
+   "Called on new occupants of the enchanted room."
+   {
+      Send(who,@MsgSendUser,#message_rsc=darkness_new_entrant);
+
+      return;
+   }
+
+   EndSpell( where = $, state = $ )
+   "Called when spell expires."
+   {
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=darkness_off,#what=self);
+      Send(where,@AddBaseLight,#amount=(-1)*state);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = 30 + (iSpellPower*2);  %% 30 - 228 seconds
+      iDuration = iDuration * 1000;      %% convert to seconds            
+
+      return random(iDuration/2,iDuration);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

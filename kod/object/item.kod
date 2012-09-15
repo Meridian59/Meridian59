@@ -1,0 +1,1662 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Item is Object
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+   ARMOR_TAKE_DAMAGE_PCT = 75
+   
+resources:
+
+   item_this = "This "
+   item_blank_template = "%q"
+   item_desc_template = "%s%s"
+   resource_blank = ""
+   
+   item_try_use_cursed_rsc = \
+      "As you pick the item up, you feel a will greater than your own "
+      "overwhelm your mind!  Not of your own volition, you try to put it on!"
+
+   item_broken_battle = "Your %s shatters in the heat of battle!"
+   item_broken_battle_plural = "Your %s shatter in the heat of battle!"
+   item_broken_battle_clothing = "Your %s falls into useless tatters!"
+   item_broken_battle_clothing_plural = "Your %s fall into useless tatters!"
+
+   itematt_generic = \
+      " At first glance, it seems quite ordinary, but there is something odd "
+      "about it you can't put your finger on."
+
+   nakedleftarm_male = blg.bgf
+   nakedrightarm_male = brg.bgf
+   nakedleftarm_female = blh.bgf
+   nakedrightarm_female = brh.bgf
+
+   item_condition_exc = " is in immaculate condition."
+   item_condition_exc_mended = \
+      " is in excellent condition, but has been patched before."
+   item_condition_good = " is scuffed and slightly worn."
+   item_condition_med = " has a few unsightly rips."
+   item_condition_poor = " is in tatters, and barely holding together."
+   item_condition_broken = " is covered in filth and ripped beyond use."
+
+classvars:
+   
+   vrItem_broken = item_broken_battle
+
+   vrPoss_article = item_this
+   viUse_type = ITEM_CANT_USE
+   viItem_type = ITEMTYPE_MISC
+
+   viUse_amount = 1
+
+   viHits_init_min = 1
+   viHits_init_max = 1
+
+   viBulk = 10
+   viWeight = 10
+
+   viValue_average = 10
+
+   viGround_group = 1
+   viInventory_group = 1
+   viBroken_group = $    % if set to nil, no group exists
+
+   % How much this item will help or hinder spell usage.
+   viSpell_modifier = 0
+
+   viObject_flags = GETTABLE_YES
+
+   vrIcon_male       = $
+   vrIcon_female     = $
+   vrLeftArm_male    = $
+   vrLeftArm_female  = $
+   vrRightArm_male   = $
+   vrRightArm_female = $
+   vrLegs_male       = $
+   vrLegs_female     = $
+
+   vbShow_condition =  FALSE
+   vrCondition_exc =   item_condition_exc
+   vrCondition_exc_mended = item_condition_exc_mended
+   vrCondition_good =  item_condition_good
+   vrCondition_med =   item_condition_med
+   vrCondition_poor =  item_condition_poor
+   vrCondition_broken = item_condition_broken
+
+properties:
+
+   piHits_init = 0
+   piHits = 0
+      
+   plItem_attributes = $
+
+   piItem_flags = 0
+
+messages:
+
+   Constructor(corpse=$)
+   {
+      local iHits_average, oItemAtt;
+
+      piHits_init = Random(viHits_init_min,viHits_init_max);
+      piHits = piHits_init;
+      if corpse <> $
+      {
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_CORPSEPOINTER);
+         if Send(oItemAtt,@ReqAddToItem,#oItem=self)
+         {
+            Send(oItemAtt,@AddToItem,#oItem=self,#state1=corpse);
+         }            
+      }
+      
+      propagate;
+   }
+
+   SetItemPlayerFlag(who=$)
+   {
+      return;
+   }
+
+   AppendDesc()
+   {
+      % This is special 'status' stuff, like the number of 
+      %  number items you have left, or the condition of your 
+      %  weapon.
+      local rItem_condition, iHit_percent;
+
+      if vbShow_Condition
+         AND piHits_init > 0
+      {
+         rItem_condition = vrCondition_exc;
+      
+         iHit_Percent = (100 * piHits) / piHits_init;
+      
+         if iHit_Percent > 90
+         {
+            % If item is worse than what can be found in the wild, describe it
+            %  as being "patched".
+            if piHits_init >= viHits_init_min
+            {
+               rItem_condition = vrCondition_exc;
+            }
+            else
+            {
+               rItem_condition = vrCondition_exc_mended;
+            }
+         }
+         else
+         { 
+            if iHit_Percent > 65
+            {
+               ritem_condition = vrCondition_good;
+            }
+            else
+            {
+               if iHit_Percent > 30
+               {
+                  ritem_condition = vrCondition_med;
+               }
+               else
+               {
+                  if piHits > 0
+                  {
+                     ritem_condition= vrCondition_poor;
+                  }
+                  else
+                  {
+                     ritem_condition= vrCondition_broken;
+                  }
+               }
+            }
+         }
+      
+         AppendTempString("\n\n");
+         AppendTempString(vrPoss_Article);
+         AppendTempString(Send(self,@GetName));
+         AppendTempString(rItem_condition);
+      }
+
+      return;
+   }
+   
+   DoBaseDesc()
+   {
+      local lData;
+
+      % This is the meat of the description for items.
+      if Send(self,@HasAttribute,#ItemAtt=IA_NEW_DESCRIPTION)
+      {
+         lData = Send(self,@GetAttributeData,#ItemAtt=IA_NEW_DESCRIPTION);
+         AppendTempString(Nth(lData,2));
+      }
+      else
+      {
+         AppendTempString(vrDesc);
+      }
+      
+      return;
+   }
+
+   CreateDesc(bShowall=FALSE)
+   {
+      local bAlreadyBlind, bIdentified, oItemAtt, i, iNum;
+
+      bAlreadyBlind = FALSE;
+      ClearTempString();
+      Send(self,@DoBaseDesc);
+
+      if Send(self,@HasAttribute,#ItemAtt=IA_MISDIRECTION) AND NOT bShowAll
+      {
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+         Send(oItemAtt,@AppendMisdirectedDesc,#oItem=self,
+              #lData=Send(self,@GetAttributeData,#ItemAtt=IA_MISDIRECTION));
+      }
+      else
+      {
+         for i in plItem_Attributes
+         {
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            bIdentified = Send(self,@GetIDStatusFromCompound,
+                               #compound=First(i));
+
+            if NOT (bIdentified OR bShowAll)
+            {
+               if bAlreadyBlind
+               {
+                  continue;
+               }
+               else
+               {
+                  AppendTempString(itematt_generic);
+                  bAlreadyBlind = TRUE;
+               }
+            }
+            else
+            {
+               Send(oItemAtt,@AppendDesc,#oItem=self,#lData=i);
+            }
+         }       
+      }
+
+      % Special things for number items, etc.
+      Send(self,@AppendDesc);  
+      
+      return;
+   }
+   
+   ShowDesc(bShowAll = FALSE)
+   {
+      Send(self,@CreateDesc,#bShowAll=bShowAll);      
+      AddPacket(4,item_blank_template,4,GetTempString());
+
+      return;
+   }
+
+   ReqRepair()
+   {
+      return FALSE;
+   }
+
+   DestroyDisposable()
+   {
+      if Send(self,@HasAttribute,#ItemAtt=IA_BONDED)
+      {
+         return;
+      }
+      
+      Send(self,@Delete);
+      
+      return;
+   }
+
+   GetItemUseType()
+   {
+      if piHits <= 0
+      {
+         return ITEM_BROKEN;
+      }
+      
+      return viUse_type;
+   }
+
+   GetItemUseAmount()
+   {
+      return viUse_amount;
+   }
+
+   GetInitValue()
+   {
+      return viValue_average;
+   }
+
+   GetValue()
+   {
+      local iPercent, iValue, iFinal, i, oItemAtt, iNum;
+
+      % Okay, new way of figuring value, considering 
+      % max_hits, current_max_hits, and hits.
+      % The basic formula follows this curve:
+      %
+      %              Hits
+      %             Y   .8Y   .6Y   .4Y   .2Y
+      % Max_hits  -----------------------------            
+      %    Y        X   .80X  .60X  .40X  .20X
+      %   .8Y           .64X  .48X  .32X  .16X
+      %   .6Y                 .36X  .24X  .12X
+      %   .4Y                       .16X  .08X
+      %   .2Y                             .04X
+      %
+      %    Y = viHits_init_max (max_hits before casting 'mend')
+      %    X = viAverage_value
+      %
+      % Translated:  An item whose piInit_hits is 80% of viHits_init_max
+      %              and whose piHits is equal to that amount has a value equal
+      %              to 64% of its standard value.
+
+      iPercent = (100*piHits_init*piHits)/(viHits_init_max*viHits_init_max);
+      iValue = Send(self,@GetInitValue);
+      
+      iFinal = (iValue * iPercent)/100;
+      iFinal = bound(iFinal,10,iValue);      
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         iFinal = Send(oItemAtt,@AdjustPrice,#value=iFinal,
+                       #iCompound=First(i));
+      }
+      
+      return iFinal;
+   }
+
+   GetMaxHits()
+   {
+      return piHits_init;
+   }
+
+   GetHits()
+   {
+      return piHits;
+   }
+
+   SetMaxHits(number = $)
+   {
+      if number = $
+      {  
+         return;
+      }
+
+      piHits_init = number;
+
+      return;   
+   }
+
+   SetHits(number = $)
+   {
+      if number = $
+      {
+         return;
+      }
+
+      piHits = number;
+
+      return;
+   }
+
+   NewOwner(what = $)
+   {
+      local lData;
+
+      % If the person who is supposed to pick up an item picks up 
+      %  the item, then remove the corpsepointer.
+          
+      if poOwner <> $ AND Send(self,@HasAttribute,#ItemAtt=IA_CORPSEPOINTER)
+      {  
+         Send(self,@RemoveAttribute,#ItemAtt=IA_CORPSEPOINTER);
+      }      
+
+      if poOwner <> $ AND Send(self,@HasAttribute,#ItemAtt=IA_BONDED)
+      {
+         lData = Send(self,@GetAttributeData,#ItemAtt=IA_BONDED);
+         Send(Send(SYS,@FindSpellByNum,#num=SID_BOND),@BondedItemReport,
+              #BondedItem=self,#BondedPlayer=Nth(lData,3),
+              #BondedItemOwner=what);
+      }      
+
+      if what <> $ 
+         AND (IsClass(what,&User)) 
+         AND (Send(self,@IsCursed)) 
+         AND (NOT Send(what,@PlayerIsImmortal))
+      {
+         Send(what,@MsgSendUser,#message_rsc=item_try_use_cursed_rsc);
+         Post(what,@TryUseItem,#what=self);
+      }
+
+      propagate;
+   }
+
+   ReqUseSomething(what = $)
+   {
+      return TRUE;
+   }
+
+   NewUsed()
+   {      
+      Send(self,@DoPlayerArt);
+      
+      return;
+   }
+
+   UserLogoff()
+   "Called when we're used by someone, and they logoff."
+   {
+      return;
+   }
+
+   UserLogon()
+   "Called when we're used by someone, and they logon."
+   {
+      return;
+   }
+
+   ReqUse()
+   "Called when the player tries to use the item"
+   {
+      local i, oItemAtt, iNum;
+          
+      %% check to be sure nothing in ItemAtts disallows this
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if NOT Send(oItemAtt,@ItemReqUse,#oItem=self,#oPlayer=poOwner)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   ReqUnuse()
+   "Called when the player tries to unuse the item"
+   {
+      local i, oItemAtt, iNum;
+          
+      % Check to be sure nothing in ItemAtts disallows this
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if NOT Send(oItemAtt,@ItemReqUnuse,#oItem=self,#oPlayer=poOwner)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   NewUnused()
+   {
+      Send(self,@UndoPlayerArt);
+
+      return;
+   }
+
+   ReqNewOwner(what=$)
+   {      
+      return ((poOwner = $) OR Send(poOwner,@ReqLeaveHold,#what=self));
+   }
+
+   ReqLeaveOwner()
+   {
+      local i, oItemAtt, iNum;
+
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if NOT Send(oItemAtt,@ItemReqLeaveOwner,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+
+   ReqNewOwnerAttributes(who=$,type = 0)
+   "This checks to see if there is anything that prevents a player from "
+   "picking up an item due to that item's attributes alone.  Note: these "
+   "attributes are responsible for providing error code."
+   {
+      local i, oItemAtt, iNum;
+
+      % Type 0 is get
+      % Type 1 is offer
+
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if NOT Send(oItemAtt,@CanGetAffectedItem,#who=who,#lData=i,
+                     #oItem=self,#type=type)
+         {
+            return FALSE;
+         }         
+      }
+      
+      return TRUE;
+   }
+   
+   SendAnimation()
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piItem_flags&ITEM_PALETTE_MASK);
+      }
+
+      if piHits > 0 OR viBroken_group = $
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viGround_group);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viBroken_group);
+      }
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piItem_flags&ITEM_PALETTE_MASK);
+      }
+
+      if piHits > 0 OR viBroken_group = $
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viInventory_group);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viBroken_group);
+      }
+      
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piItem_flags&ITEM_PALETTE_MASK);
+      }
+      
+      if piHits > 0 OR viBroken_group = $
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viInventory_group);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viBroken_group);
+      }
+      
+      return;
+   }
+
+   SendInventoryOverlays()
+   {
+      AddPacket(1, 0);
+      
+      return;
+   }
+
+   SendOverlayInformation()
+   {
+      AddPacket(4,Send(self,@GetOverlay));
+      AddPacket(1,Send(self,@GetOverlayHotspot));
+      Send(self,@SendOverlayAnimation);
+      
+      return;
+   }
+
+   GetNumberOverlays()
+   {
+      % Most overlay items only offer one overlay.
+      %  Some items like weapons and bows may offer two.
+      return 1;
+   }
+
+   IsCursed()
+   "This returns TRUE if a RemoveCurse spell should unuse the item."
+   "Since an ItemAtt can curse an item, go through those to check."
+   {
+      local i, oItemAtt, iNum;
+                
+      % Check to be sure nothing in ItemAtts disallows this
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if Send(oItemAtt,@ItemIsCursed,#oItem=self)
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   ModifyDefensePower(defense_power = 0)
+   "Gives the defensive bonus"
+   {
+      return defense_power;            
+   }
+
+   DefendingHit(who = $,what = $)
+   {
+      % Set to 75% currently
+      if random(1,100) < ARMOR_TAKE_DAMAGE_PCT   
+      {
+         piHits = piHits - 1;
+      }
+      
+      if piHits <= 0
+      {
+         Send(self,@ItemBrokenInBattle);
+      }
+      
+      return;
+   }
+
+   ItemBrokenInBattle()
+   {
+      local i, oItemAtt, iNum;
+
+      % Remove itematts from us, since we're not gonna use 'em anymore.
+      % This also lets cursed items finally remove themselves from us.
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         Send(oItemAtt,@RemoveFromItem,#oItem=self);
+      }
+   
+      Send(poOwner,@SomethingChanged,#what=self);        
+      Send(poOwner,@MsgSendUser,#message_rsc=vrItem_broken,
+           #parm1=Send(self,@GetName));
+      Send(poOwner,@TryUnuseItem,#what=self);
+      
+      return;
+   }
+
+   AdjustsMaxHealth()
+   {
+      return FALSE;
+   }
+
+   AdjustsMaxMana()
+   {
+      return FALSE;
+   }
+
+   IsItemType(type = ITEMTYPE_MISC)
+   {
+      % Check for misc items (type 0)
+      if type = viItem_type            
+      {
+         return TRUE;
+      }               
+
+      return (viItem_type & type);
+   }
+
+   DoShatter()
+   "Shatters the item.  Include any special functions here."
+   {
+      Send(self,@Delete);
+
+      return;
+   }
+   
+   Delete()
+   {
+      Send(self,@ClearAllItemAttributes);
+      
+      propagate;
+   }
+
+   ObjectCorpseFading(corpse=$)
+   {
+      local lData;
+          
+      if NOT Send(self,@HasAttribute,#ItemAtt=IA_CORPSEPOINTER)
+      {
+         return;
+      }
+          
+      lData = Send(self,@GetAttributeData,#ItemAtt=IA_CORPSEPOINTER);
+
+      if lData = $
+      {
+         return;
+      }
+
+      if Nth(lData,3) = corpse
+      {
+         Send(self,@RemoveAttribute,#ItemAtt=IA_CORPSEPOINTER);
+      }
+      
+      return;
+   }
+
+   GetPaletteTranslation()
+   {
+      return piItem_flags & ITEM_PALETTE_MASK;
+   }
+
+   SetPaletteTranslation(translation = $)
+   {
+      piItem_flags = (piItem_flags & ~ITEM_PALETTE_MASK) | translation;
+      
+      return;
+   }
+
+   CanIdentify()
+   {
+      local i, oItemAtt, iNum;
+
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            
+         if oItemAtt = $
+         {
+            Debug("Illegal ItemAtt in list!");
+
+            continue;
+         }
+         
+         if NOT Send(oItemAtt,@ItemCanIdentify,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+   
+   CanShatter()
+   "Called by the shatter spell.  If this is false, the spell fails."
+   { 
+      local i, oItemAtt, iNum;
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+                         
+         if oItemAtt = $
+         {
+            Debug("Illegal ItemAtt in list!");
+
+            continue;
+         }
+         
+         if NOT Send(oItemAtt,@ItemCanShatter,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;  
+   }
+
+   CanSwap()
+   "Called by the swap spell.  If this is false, the spell fails."
+   {  
+      local i, oItemAtt, iNum;
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+                         
+         if oItemAtt = $
+         {
+            Debug("Illegal ItemAtt in list!"); continue;
+         }
+         
+         if NOT Send(oItemAtt,@ItemCanSwap,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE; 
+   }
+
+   CanWeaken()
+   "Called by the Brittle spell, among other thing."
+   {  
+      local i, oItemAtt, iNum;
+
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            
+         if oItemAtt = $
+         {
+            Debug("Illegal ItemAtt in list!");
+            
+            continue;
+         }
+         
+         if NOT Send(oItemAtt,@ItemCanWeaken,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE; 
+   }
+
+   CanMend()
+   "Called by the Mend spell.  If this returns false, the spell fails."
+   "Most things are not mendable."
+   {  
+      return FALSE; 
+   }
+
+   CanEnchant(oSpell = $)
+   "Can a particular spell enchantment target this item.  Note that for "
+   "artifice and shroud, this is true, but for curse and the three "
+   "enchantments, this is false."
+   {
+      local i, oItemAtt, iSpell, iNum;
+
+      iSpell = Send(oSpell,@GetSpellNum);
+      if iSpell = SID_HOLY_WEAPON
+         OR iSpell = SID_UNHOLY_WEAPON 
+         OR iSpell = SID_ENCHANT_WEAPON
+         OR iSpell = SID_CURSE_WEAPON
+      {
+         return FALSE;
+      }
+      
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+                         
+         if oItemAtt = $
+         {
+            Debug("Illegal ItemAtt in list!");
+            
+            continue;
+         }
+         
+         if NOT Send(oItemAtt,@ItemCanEnchant,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+   
+   DropOnDeath()
+   "Most items are dropped on death.  But, assassin's blades and a few other "
+   "things are not."
+   {
+      local i, oItemAtt, iNum;
+      
+      % Check ItemAtts to be sure nothing funky is there
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if NOT Send(oItemAtt,@ItemDropOnDeath)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   CanBeGivenToNPC()
+   "For most things this is TRUE.  However, objects like black daggers cannot "
+   "be given to NPCs for any reason."
+   {
+      local i;
+      
+      for i in plItem_Attributes
+      {
+         % KLUDGE: We specifically prevent made items from being given to NPCs.
+         %  Should be more general.
+         if Send(self,@GetNumFromCompound,#compound=First(i)) = IA_MADE
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }   
+
+   CanBeStoredInVault()
+   "Black daggers and tokens, especially, cannot be stored in vaults."
+   {
+      return TRUE;
+   }
+
+   ReqDMDelete()
+   "Will this item be deleted by a DM Clear Inventory command?"
+   {
+      return TRUE;
+   }
+
+   % An item can format a text effect for players in the room to see,
+   %  whether held by a player or not.  If range is specified,
+   %  only players within that range will see the effect.
+   % Also, one player can be specified (in except) to treat that player
+   %  separately.
+   RoomMessage(range = $, except = $, except_rsc = $, message_rsc = $,
+               parm1 = $, parm2 = $, parm3 = $, parm4 = $,
+               parm5 = $, parm6 = $, parm7 = $, parm8 = $)
+   {
+      local oRoom, oSource, i, range_squared, oPlayer;
+
+      if range <> $
+      {
+         range_squared = range * range;
+      }
+
+      oSource = self;
+      oRoom = poOwner;
+      if oRoom = $
+      {
+         return FALSE;
+      }
+      
+      if isClass(oRoom,&Player)
+      {
+         oSource = poOwner;
+         oRoom = Send(oRoom, @GetOwner);
+      }
+      
+      if oRoom = $ OR NOT isClass(oRoom,&Room)
+      {
+         return FALSE;
+      }
+
+      for i in Send(oRoom,@GetHolderActive)
+      {
+         oPlayer = Send(oRoom,@HolderExtractObject,#data=i);
+         if NOT IsClass(oPlayer,&Player)
+         {
+            continue;
+         }
+
+         if range <> $
+            AND Send(oPlayer,@SquaredDistanceTo,#what=oSource) >= range_squared
+         {
+            continue;
+         }
+
+         if oPlayer = except
+         {
+            if except_rsc = $
+            {
+               continue;
+            }
+
+            % message comes from except_rsc, with parm1 missing.
+            Send(oPlayer,@MsgSendUser,#message_rsc=except_rsc,
+                 #parm1=parm3,#parm2=parm4,#parm3=parm5,#parm4=parm6,
+                 #parm5=parm7,#parm6=parm8);
+         }
+         else
+         {
+            Send(oPlayer,@MsgSendUser,#message_rsc=message_rsc,
+                 #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
+                 #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+         }
+      }
+
+      return;
+   }
+
+   %  Item Attributes, added 4 March 97 by Damion Schubert
+   % 
+   %  ItemAtts are any special attributes that an item might have.  
+   %  Examples include training weapons, poisoned weapons and 
+   %  enchanted weapons.  These have been generalized so the same 
+   %  ItemAtt may be applied to any item.
+   %
+   %  The ItemAtt Struct (plItem_attributes) is as follows
+   %
+   %    plItem_attributes = \
+   %       [ [WA_const_name, timer, primary_state, secondary_state],
+   %         [WA_const_name2, timer, primary_state, secondary_state],
+   %         etc.
+   %       ]
+   %
+   %  WA_const_name : a unique constant name as found in blakston.khd
+   %  timer : a timer, most often counting down to the enchantment's
+   %    extinction.  However, since Item enchantments may last for days, 
+   %    the timer may just count down hours, with an additional (usually 
+   %    secondary) state value counting days.  If this timer doesn't exist,
+   %    the ItemAtt is permanent.
+   %  states : any value that the ItemAtt needs to know.  For example, the
+   %    strength of attributes such as the strength of poison or the damage
+   %    bonus might be stored. Individual ItemAtt code should be examined to
+   %    see what this is.
+   %
+   %  Note, there are thousands of items in a live server.  As a
+   %    result, I've taken actions to ensure that as few list nodes are used as
+   %    possible for each ItemAtt, so rather than store blank fields which are 
+   %    never used, I make it easy for the individual ItemAtts to decide to 
+   %    store what information they deem necessary. 
+   %    I check to see if those fields exist when using them, allowing me to
+   %    collapse the ItemAtt struct as much as possible.  For example, a 
+   %    training attribute struct only has one argument, the ItemAtt ID:
+   %
+   %    plItem_Attributes = [[WA_TRAINING]];
+   %
+   %  By comparison, you may have a fiery sword, which is only fiery
+   %    for a short time (as determined by a timer).  That list looks
+   %    like:
+   %
+   %    plItem_Attributes = [[WA_ATCKTYPE, DurationTimer, ATCK_FIRE]];
+   %
+   %  This 'telescoping' saves memory.
+
+   %%% Item Attribute Functions
+   
+   HasAttribute(ItemAtt = $)
+   {
+      local i;
+
+      for i in plItem_attributes
+      { 
+         if Send(self,@GetNumFromCompound,#compound=First(i)) = ItemAtt  
+         {
+            return TRUE;
+         }  
+      }
+      
+      return FALSE;
+   }
+
+   HasAnyAttribute()
+   {
+      if plItem_attributes = $
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   GetAttributeData(ItemAtt = $, index = 1)
+   {
+      local i, n;
+
+      n = 0;
+      for i in plItem_attributes
+      { 
+         if Send(self,@GetNumFromCompound,#compound=First(i)) = ItemAtt
+         {
+            n = n + 1;
+            if n = index
+            {
+               return i;
+            }
+         }  
+      }
+      
+      return $;
+   }   
+
+   GetNumFromCompound(compound = $)
+   {
+      if compound = $
+      {
+         return $;
+      }
+
+      return compound / 100;
+   }
+
+   GetIDStatusFromCompound(compound = $)
+   {
+      if compound = $
+      {
+         return $;
+      }
+
+      % If compound is odd, it is IDed. If even, it is not.
+
+      if (compound mod 2) = 1
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   RevealHiddenAttributes()
+   {
+      local i, bDone;
+
+      bDone = FALSE;
+      for i in plItem_Attributes
+      {
+         if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
+         {
+            setNth(i,1,(First(i)+1));
+            bDone = TRUE;
+         }
+      }
+      
+      return bDone;
+   }
+
+   AddAttributeSpecifics(litemAtt=$)
+   "Don't call this directly!  Call this from itematt.kod!"
+   {
+      if lItemAtt = $ 
+      {
+         Debug("lItemAtt = $!  Most likely, lItemAtt called directly instead "
+               "of from itematt.kod");
+      }
+
+      plItem_attributes = Cons(lItemAtt,plItem_attributes);
+
+      return;
+   }
+
+   RemoveAttribute(ItemAtt=$)
+   "All this does is calls the itematt.kod version of the same thing. "
+   "This function is largely unnecessary, and is here only for convenience."
+   {
+      local oItemAtt;
+      
+      if ItemAtt = $
+      {
+         return;
+      }
+ 
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=ItemAtt);
+      
+      if oItemAtt = $
+      {
+         Debug("Illegal data sent to RemoveAttribute");
+
+         return;
+      }
+
+      Send(oitemAtt,@RemoveFromItem,#oItem=self);
+      
+      return;
+   }
+
+   RemoveAttributeSpecifics(oItemAtt=$, ItemAtt = 0, index = 1)
+   "Don't call this directly!  Call this from itematt.kod!"
+   {
+      local lData;
+
+      if oItemAtt = $ OR ItemAtt = 0
+      {
+         Debug("Illegal data sent to RemoveAttributeSpecific");
+         
+         return;
+      }
+
+      lData = Send(self,@GetAttributeData,#ItemAtt=ItemAtt,#index=index);
+      if lData = $
+      {
+         Debug("Can't remove a node that isn't there!"); return;
+      }
+
+      % First kill the timer if it has one
+      if Send(oItemAtt,@HasTimer,#lData=lData)
+      {
+            if Nth(lData,2) <> $
+      	    {
+	             DeleteTimer(Nth(lData,2));
+		     SetNth(lData,2,$);
+	    }
+      }
+      % now free the nodes
+      plItem_Attributes = DelListElem(plItem_Attributes,lData);
+      
+      return;
+   }
+
+   AttributeTimer(timer=$)
+   {
+      local i, oItemAtt, iNum;
+
+      if timer = $
+      {
+         Debug("Timer = $!");
+         return;
+      }
+
+      for i in plItem_Attributes
+      {
+         if Length(i) >= 2 AND Nth(i,2) = timer
+         {  
+            % This is the timer that just expired.
+	    SetNth(i,2,$); % clear it in the data structure first
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+            Send(oItemAtt,@TimerExpired,#oItem=self,#lData=i);
+            
+            return;      
+         }
+      }
+      
+      Debug("AttributeTimer didn't find enchantment to get rid of!");
+      
+      return;
+   }
+
+   ClearAllItemAttributes()
+   "Most likely called if the Item is deleted."   
+   {
+      local i, oItemAtt, iNum;
+
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         if oItemAtt = $
+         {
+            Debug("Illegal ItemAtt in list!");
+            
+            continue;
+         }
+         
+         Send(oItemAtt,@RemoveFromItem,#oItem=self);
+      }
+          
+      % All items should have cleared fine.  If not, something went wrong.
+      if plItem_Attributes <> $
+      {
+         Debug("Clearing all Item Attributes failed!");
+         plItem_Attributes = $;
+      }
+          
+      return;
+   }
+
+   BuildDescName()
+   {
+      local i, iHigh_index, oHigh_obj, oItemAtt, iPriority, iNum;
+      
+      if plItem_Attributes = $
+      {
+         propagate;
+      }
+      
+      iHigh_index = 0;  oHigh_obj = $;
+      for i in plItem_Attributes
+      {
+         if NOT Send(self,@GetIDStatusFromCompound,#compound=First(i))
+         {
+            % If not identified, keep on marching.
+            continue;
+         }   
+
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         
+         iPriority = Send(oItemAtt,@GetNamePriority);
+         if iPriority > iHigh_index
+         
+         {
+            iHigh_index = iPriority;
+            oHigh_obj = oItemAtt;
+         }
+      }
+
+      if oHigh_obj = $
+      {
+         propagate;
+      }
+
+      Send(oHigh_obj,@ItemBuildDescName,#oItem=self);      
+
+      return;
+   }
+   
+   SetTimer(timer_duration=$)
+   {
+      local tTimer;
+      
+      if timer_duration = $
+      {
+         return $;
+      }
+
+      tTimer = CreateTimer(self,@AttributeTimer,timer_duration);
+      
+      return tTimer;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      % Doing it this way, we can have different items give different bonuses
+      %  in different situations, while still giving itematt bonuses.
+      return viSpell_modifier;
+   }
+
+   GetSpellModifier(oSpell=$)
+   {
+      local oItemAtt, iModifier, i, iNum;
+
+      iModifier = Send(self,@GetBaseSpellModifier,#oSpell=oSpell);
+      for i in plItem_Attributes
+      {
+         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+         iModifier = iModifier + Send(oItemAtt,@ItemGetSpellModifier,
+                                      #oSpell=oSpell,#oCaster=poOwner);
+      }
+      
+      return iModifier;
+   }
+   
+   GetHeatDamage()
+   "Only things worn at the armor position will be asked this, but "
+   "just in case, default is 0."
+   {
+      return 0;
+   }
+
+   GetShirtIcon(who=$)
+   {
+      if Send(who,@GetGender) = GENDER_MALE
+      {
+         return vrIcon_male;
+      }
+      
+      return vrIcon_female;
+   }
+
+   GetLeftArm(who=$)
+   {
+      local i;
+
+      if Send(self,@OverrideArmsForGauntlets)
+      {
+         for i in Send(who,@GetPlayerUsing)
+         {
+            if Send(i,@OverRideArms)
+            {
+               return Send(i,@GetOverrideLeftArm,#who=who);
+            }
+         }
+      }
+      
+      if Send(who,@GetGender) = GENDER_MALE
+      {
+         return vrLeftarm_male;
+      }
+      
+      return vrLeftarm_female;
+   }
+
+   OverrideArmsForGauntlets()
+   {
+      return FALSE;
+   }
+   
+   OverrideArms()
+   {
+      return FALSE;
+   }
+   
+   GetOverrideRightArm()
+   {
+      return $;
+   }
+   
+   GetOverrideLeftArm()
+   {
+      return $;
+   }
+
+   GetRightArm(who=$)
+   {
+      local i;
+
+      if Send(self,@OverrideArmsForGauntlets)
+      {
+         for i in Send(who,@GetPlayerUsing)
+         {
+            if Send(i,@OverRideArms)
+            {
+               return Send(i,@GetOverrideRightArm,#who=who);
+            }
+         }
+      }
+
+      if Send(who,@GetGender) = GENDER_MALE
+      {
+         return vrRightarm_male;
+      }
+      
+      return vrRightarm_female;
+   }   
+
+   GetNakedLeftArm(who=$)
+   {
+      local i;
+
+      for i in Send(who,@GetPlayerUsing)
+      {
+         if Send(i,@OverRideArms)
+         {
+            return Send(i,@GetOverrideLeftArm,#who=who);
+         }
+      }
+
+      if Send(who,@GetGender) = GENDER_MALE
+      {
+         return nakedleftarm_male;
+      }
+
+      return nakedleftarm_female;
+   }
+
+   GetNakedRightArm(who=$)
+   {
+      local i;
+
+      for i in Send(who,@GetPlayerUsing)
+      {
+         if Send(i,@OverRideArms)
+         {
+            return Send(i,@GetOverrideRightArm,#who=who);
+         }
+      }
+
+      if Send(who,@GetGender) = GENDER_MALE
+      {
+         return NakedRightarm_male;
+      }
+
+      return NakedRightarm_female;
+   }   
+
+   GetLegs(who=$)
+   {
+      if Send(who,@GetGender) = GENDER_MALE
+      {
+         return vrLegs_male;
+      }
+      
+      return vrLegs_female;
+   }   
+
+   HasSkinTones()
+   {
+      return FALSE;
+   }
+
+   ShowShirt()
+   {
+      return FALSE;
+   }
+
+   ResetSkinColor()
+   {
+      local iSkin_color, iColor, iXlat;
+      
+      if not Send(self,@HasSkinTones)
+      {
+         return;
+      }
+
+      iSkin_Color = Send(SYS,@DecodeSecondaryColor,
+                         #xlat=Send(self,@GetPaletteTranslation));
+      if iSkin_Color <> Send(poOwner,@GetSkinColor)
+      {
+         iSkin_Color = Send(poOwner,@GetSkinColor);
+         iSkin_color = Send(poOwner,@ConvertSkinColorToXLAT,
+                            #skin_color=iSkin_color);
+         iColor = Send(SYS,@DecodePrimaryColor,
+                       #xlat=Send(self,@GetPaletteTranslation));
+      
+         iXlat = Send(SYS,@EncodeTwoColorXLAT,#color1=iColor,
+                      #Color2=iSkin_color);
+         Send(self,@SetPaletteTranslation,#translation=iXlat);
+      }
+
+      return;
+   }
+
+   ResetXLATsToShirt()
+   {
+      local iSkin_color, iColor, iXlat, iShirt_XLAT;
+      
+      if not Send(self,@ShowShirt)  { return; }
+      iShirt_XLAT = Send(poOwner,@GetCurrentShirtColor);
+
+      if (iShirt_XLAT <> Send(self,@GetPaletteTranslation))
+      {
+         Send(self,@SetPaletteTranslation,#translation=iShirt_Xlat);
+      }
+      
+      return;
+   }
+
+   UndoPlayerArt()
+   {
+      local oRoom;
+
+      if vrIcon_male <> $
+      {
+         Send(poOwner,@ResetPlayerIcon,#alldone=FALSE);
+      }
+
+      if vrLeftArm_male <> $
+      {
+         Send(poOwner,@ResetPlayerArms,#alldone=FALSE);
+      }
+
+      if  vrLegs_male <> $
+      {
+         Send(poOwner,@ResetPlayerLegs,#alldone=FALSE);
+      }
+   
+      oRoom = Send(poOwner,@GetOwner);
+      if oRoom <> $
+      {         
+         Send(oRoom,@SomethingChanged,#what=poOwner);
+      }
+      
+      return;
+   }
+
+   DoPlayerArt()
+   {
+      local oRoom;
+
+      % make the player's hands match his sleeves.            
+      Send(self,@ResetSkinColor);   
+
+      if Send(self,@ShowShirt)
+      {
+         Send(self,@ResetXLATsToShirt);
+      }
+
+      if vrLeftArm_male <> $
+      {
+         Send(self,@SetArms,#alldone=FALSE);
+      }
+
+      if vrIcon_male <> $
+      {
+         Send(self,@SetIcon,#alldone=FALSE);
+      }
+
+      if  vrLegs_male <> $
+      {
+         Send(self,@SetLegs,#alldone=FALSE);
+      }
+      
+      oRoom = Send(poOwner,@GetOwner);
+      if oRoom <> $
+      {         
+         Send(oRoom,@SomethingChanged,#what=poOwner);
+      }
+      
+      return;
+   }
+   
+   ItemChangesArms()
+   {
+      if vrLeftArm_male <> $
+      {
+         return TRUE;
+      }
+       
+      return FALSE;
+   }
+
+   SetNakedArms()
+   {
+      local iSkin_xlat;
+      
+      iSkin_Xlat = Send(poOwner,@GetSkinColor);      
+      iSkin_Xlat = Send(poOwner,@ConvertSkinColorToXLAT,
+                        #skin_color=iSkin_Xlat);
+      iSkin_Xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=iSkin_XLAT,
+                        #color2=iSkin_XLAT);      
+      Send(poOwner,@SetPlayerArms,#what=self,
+           #new_left_arm=Send(self,@GetNakedLeftArm,#who=poOwner),
+           #new_right_arm=Send(self,@GetNakedRightArm,#who=poOwner),
+           #translation=iSkin_Xlat,#alldone=FALSE);
+           
+      return;
+   }
+
+   SetArms()
+   {
+      Send(poOwner,@SetPlayerArms,#what=self,
+           #new_left_arm=Send(self,@GetLeftArm,#who=poOwner),
+           #new_right_arm=Send(self,@GetRightArm,#who=poOwner),
+           #translation=Send(self,@GetPaletteTranslation),#alldone=FALSE);
+           
+      return;
+   }
+
+   SetIcon()
+   {
+      Send(poOwner,@SetPlayerIcon,#what=self,
+           #new_icon=Send(self,@GetShirtIcon,#who=poOwner),
+           #translation=Send(self,@GetPaletteTranslation),#alldone=FALSE);
+           
+      return;
+   }
+
+   SetLegs()
+   {
+      Send(poOwner,@SetPlayerLegs,#what=self,
+           #new_legs=Send(self,@GetLegs,#who=poOwner),
+           #translation=Send(self,@GetPaletteTranslation),#alldone=FALSE);
+           
+      return;
+   }
+
+   IsPlural()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

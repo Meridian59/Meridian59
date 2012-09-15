@@ -1,0 +1,371 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BossRoom is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viBossResetTime = 30 * 60 * 1000
+
+properties:
+
+   % template is list of lists, format:
+   %     [&classname, row, col]
+   plBossTemplate = $
+   plHenchmenTemplate = $
+   plBossTreasureTemplate = $
+
+   % lists of references to current instances of above templates.
+   plBoss = $
+   plHenchmen = $
+   plBossTreasure = $
+
+   ptResetBossTimer = $
+
+   piWaitingToStartBossResetTimer = FALSE
+   piReadyToResetBoss = FALSE
+
+messages:
+
+%%%%%%%%%%%%%%%%%%%
+% Boss setup code %
+%%%%%%%%%%%%%%%%%%%
+%
+
+   Constructor()
+   {
+      send(self, @SetupBossTemplates);
+      if (plBossTemplate <> $) {
+         post(self, @ResetBoss);
+      }
+      
+      propagate;
+   }
+
+   SetupBossTemplates()
+   {
+      % MUST override this in subclasses
+      debug ("MUST override SetupBossTemplates() in subclass of BossRoom!!");
+      post(self, @Delete);
+      return;
+   }
+
+%
+%%%%%%%%%%%%%%%%%%%
+% Boss setup code %
+%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Boss death trigger code %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+   SomethingKilled(killer = $,victim = $)
+   {
+      if plBoss <> $ {
+         % if victim is a boss,
+         if FindListElem(plBoss, victim)
+         {
+            plBoss = DelListElem(plBoss, victim);
+
+            % if all bosses are dead,
+            if plBoss = $ {
+               % trigger special behavior
+               send(self, @BossKilledTrigger);
+               % start to wait to reset
+               piWaitingToStartBossResetTimer = TRUE;
+               piReadyToResetBoss = FALSE;
+            }
+         }
+      }      
+      propagate;
+   }
+
+   BossKilledTrigger()
+   {
+      % can override this in subclasses to do special reward stuff here,
+      % but MUST propagate.
+
+      % make boss treasure gettable  (by forgetting it was boss treasure to begin with)
+      while plBossTreasure <> $ {
+         plBossTreasure = rest(plBossTreasure);             % Delete our reference to each object, but not the object itself.
+      }
+
+      return;
+   }
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Boss death trigger code %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Boss resetting code %
+%%%%%%%%%%%%%%%%%%%%%%%
+%
+   LastUserLeft()
+   {
+      local oBoss;
+      if (piWaitingToStartBossResetTimer) {
+         piWaitingToStartBossResetTimer = FALSE;
+         ptResetBossTimer = CreateTimer(self,@ResetBossTrigger, viBossResetTime);
+      }
+
+      % heal the bosses to max!
+      for oBoss in plBoss
+      {
+         send(oBoss,@SetMaxHitPoints,#amount=send(oBoss,@ReturnMaxHitPoints));
+      }
+      for oBoss in plHenchmen
+      {
+         send(oBoss,@SetMaxHitPoints,#amount=send(oBoss,@ReturnMaxHitPoints));
+      }
+
+      propagate;
+   }
+
+   FirstUserEntered()
+   {
+      if piReadyToResetBoss {
+         piReadyToResetBoss = FALSE;
+         send(self, @ResetBoss);
+      }
+      
+      propagate;
+   }
+
+   ResetBossTrigger()
+   {
+      ptResetBossTimer = $;
+      piReadyToResetBoss = TRUE;
+      return;
+   }
+
+   ResetBoss()
+   {
+      local i, oTempMonster, oTempTreasure;
+      % these are unecessary, but just to be safe...
+      piWaitingToStartBossResetTimer = FALSE;
+      piReadyToResetBoss = FALSE;
+      
+      % first, delete Boss and Henchmen
+      while plBoss <> $ {
+         post(first(plBoss), @Delete);                      % Delete the first object
+         plBoss = rest(plBoss);                             % Delete our reference to it
+      }
+      while plHenchmen <> $ {
+         post(first(plHenchmen), @Delete);                  % Delete the first object
+         plHenchmen = rest(plHenchmen);                     % Delete our reference to it
+      }
+      % just in case there's boss treasure still hangin' around, delete it too.
+      while plBossTreasure <> $ {
+         post(first(plBossTreasure), @Delete);              % Delete the first object
+         plBossTreasure = rest(plBossTreasure);             % Delete our reference to it
+      }
+
+      % next, create Boss/Henchmen at start locations
+
+      if plBossTemplate = $ {
+         debug("plBossTemplate is empty!");
+         return;
+      }
+
+      for i in plBossTemplate {
+         oTempMonster = create(first(i));
+         % for now, assume no problems with ReqSomethingEntered failing
+         %        (another monster blocking creation site)
+         Send(self,@NewHold,#what=oTempMonster,#new_row=nth(i,2),#new_col=nth(i,3),
+                  #fine_row=FINENESS/2,#fine_col=FINENESS/2);
+         plBoss = cons(oTempMonster, plBoss);
+      }
+      if plHenchmenTemplate <> $ {
+         for i in plHenchmenTemplate {
+            oTempMonster = create(first(i));
+            % for now, assume no problems with ReqSomethingEntered failing
+            %        (another monster blocking creation site)
+            Send(self,@NewHold,#what=oTempMonster,#new_row=nth(i,2),#new_col=nth(i,3),
+                     #fine_row=FINENESS/2,#fine_col=FINENESS/2);
+            plHenchmen = cons(oTempMonster, plHenchmen);
+         }
+      }
+
+      % last, make treasure
+      %                    for now, no sweeping first - FIX??
+      if plBossTreasureTemplate <> $ {
+         for i in plBossTreasureTemplate {
+            oTempTreasure = create(first(i));
+            Send(self,@NewHold,#what=oTempTreasure,#new_row=nth(i,2),#new_col=nth(i,3),
+                     #fine_row=nth(i,4),#fine_col=nth(i,5));
+            plBossTreasure = cons(oTempTreasure, plBossTreasure);
+         }
+      }
+
+      return;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Boss resetting code %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Make boss treasure ungettable %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+   ReqLeaveHold(what = $) {
+      local i;
+
+      if plBossTreasure <> $ {
+         for i in plBossTreasure {
+            if what = i {
+               debug("Someone naughty is trying to steal the boss's treasure!");
+               return false;
+            }
+         }
+      }
+
+      propagate;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Make boss treasure ungettable %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom disposal code %
+%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% ensures that bosses, henchmen, and boss treasure won't be deleted automatically.
+%        note that boss treasure becomes normal treasure when the boss is killed.
+%
+%        changes from room.kod marked with %*****
+%
+   DisposeTimer()
+   {
+      local iLen,i,count,delete_index;
+
+      ptDispose = $;
+      ptDispose = CreateTimer(self,@DisposeTimer,piDispose_delay + Random(-5000,5000));
+
+      for i in plPassive {
+         %% if there is a player's corpse anywhere, don't clear it.
+         %% player's corpse has own delete timer.  Monster corpses
+         %% do not trigger this effect.
+
+         if isClass(First(i),&DeadBody) and send(first(i),@wasplayer) {return;}
+      }
+
+      if not pbUser_in_room {
+         %% If no one is here, then try to destroy everything.
+
+         Send(self,@DestroyDisposable);
+         return;
+      }
+      else {
+         %% Someone's in the room.  If there are more than 5 things in the room,
+         %% delete the 20% that are the oldest.  Note:  this may be screwed up
+         %% by permanent, non-deleting objects like trees and braziers.
+
+         iLen = Length(plPassive);
+         if iLen > 5 {
+            delete_index = 4*iLen/5;
+            count = 0;
+            for i in plPassive {
+               count = count + 1;
+	     
+               if (count > delete_index) and (plBossTreasure = $ or FindListElem(plBossTreasure, first(i)) = $) {        %*****
+                  Send(First(i),@DestroyDisposable);
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   DestroyDisposable()
+   {
+      local i;
+
+      for i in plActive
+      {
+         % never dispose of Boss or Henchmen automatically, handle this in reset code
+         if ( (plBoss = $ or FindListElem(plBoss, first(i)) = $) and (plHenchmen = $ or FindListElem(plHenchmen, first(i)) = $) ) {      %*****
+            Send(first(i),@DestroyDisposable);
+         }
+      }
+      for i in plPassive
+      {
+         % never dispose of Boss Treasure automatically, handle this in reset code
+         if (plBossTreasure = $ or FindListElem(plBossTreasure, first(i)) = $) {                                               %*****
+            Send(first(i),@DestroyDisposable);
+         }
+      }
+      return;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Custom disposal code %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%
+% cleanup %
+%%%%%%%%%%%
+%
+   Delete()
+   {
+      plBossTemplate = $;
+      plHenchmenTemplate = $;
+      plBossTreasureTemplate = $;
+      while plBoss <> $ {
+         setnth(plBoss,1,$);
+         plBoss = rest(plBoss);
+      }
+      while plHenchmen <> $ {
+         setnth(plHenchmen,1,$);
+         plHenchmen = rest(plHenchmen);
+      }
+      while plBossTreasure <> $ {
+         setnth(plBossTreasure,1,$);
+         plBossTreasure = rest(plBossTreasure);
+      }
+      
+      if ptResetBossTimer <> $
+      {
+         deletetimer(ptResetBossTimer);
+         ptResetBossTimer = $;
+      }
+
+      propagate;
+   }
+%
+%%%%%%%%%%%
+% cleanup %
+%%%%%%%%%%%
+
+   CanHavePlayerPortal(who = $)
+   {
+      % Don't allow portals here, or boss might get out
+      return false;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

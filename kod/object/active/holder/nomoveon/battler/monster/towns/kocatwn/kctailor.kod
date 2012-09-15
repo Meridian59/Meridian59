@@ -1,0 +1,317 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanTailor is KocatanTown
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanTailor_name_rsc = "Tepal ix'Zonak"
+   kocatanTailor_icon_rsc = kctailor.bgf
+   kocatanTailor_desc_rsc = "Tepal's quick, furtive eyes give away the abundant and nervous "
+      "energy which occupies him. Something about him tells you that he has good reason to "
+      "be nervous. "
+
+   kocatanTailor_entry_welcome = "Oh! -- Sorry, you startled me.  Can I help you with something?"
+   kocatantailor_sanctuary = "sanctuary"
+   kocatantailor_sanctuary_response = "Ahhh... I could offer you sanctuary... for a price, of course."
+   
+   kocatantailor_Stones = "Precious Stones"
+   kocatantailor_stones_response = "There is a real market for precious stones "
+      "right now. Someone willing to take a couple chances could make a good deal of money. I happen to know a little about it."
+   
+   KocatanTailor_new_look = "new look"
+   KocatanTailor_new_look_r = "I think you'll be pleased with my selection."
+   KocatanTailor_kriipa = "kriipa"
+   KocatanTailor_kriipa_r = "The scales of the kriipa are rare, but I have a few here for you."
+   KocatanTailor_mutant_ant = "mutant ant"
+   KocatanTailor_mutant_ant_r = "I do like the bold red color even if it comes from a horrific insect."
+   KocatanTailor_dragonfly = "dragonfly queen"
+   KocatanTailor_dragonfly_r = "They have the most brilliant golden irridescent skins, don't they?"
+   KocatanTailor_yeti = "yeti"
+   KocatanTailor_yeti_r = "You'll have to thank Moxal, he gave me a dead yeti's fur once."
+   KocatanTailor_fey_elhai = "fey elhai"
+   KocatanTailor_fey_elhai_r = "They glitter white and grey, this is the closest pigment I can find."
+   KocatanTailor_fey_dirhai = "fey dirhai"
+   KocatanTailor_fey_dirhai_r = "It's hard to match the glittering blue, this is my best effort."
+   KocatanTailor_avar = "avar warrior"
+   KocatanTailor_avar_r = "The plumes are a wondrous gold, if you catch them in the sunlight."
+   KocatanTailor_shadow = "shadow beast"
+   KocatanTailor_shadow_r = "And just how would you know what color the shadow beast is?"
+
+   KocatanTailor_sapphire_sale = "I have imported %s%s from the mainland.  I do love the bright blue color."
+   KocatanTailor_emerald_sale = "I can sell you %s%s.  They come all the way from the mainland, so it will cost you."
+
+classvars:
+
+   vrName = KocatanTailor_name_rsc
+   vrIcon = KocatanTailor_icon_rsc
+   vrDesc = KocatanTailor_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_COND_SELLER | MOB_BUYER
+   viOccupation = MOB_ROLE_TAILOR
+
+properties:
+   
+messages:
+
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood - 3);
+         return;
+      }
+      
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood + 5);
+         return;
+      }
+      
+      if why = MOODMOD_SELL_ITEM
+      {
+         if IsClass(what, &SanctuaryKey)
+         {
+            send(self,@SetMood,#new_mood=piMood + 2);
+            return;
+         }
+         
+         if IsClass(what, &NeruditeOreChunk) 
+         {
+            send(self,@SetMood,#new_mood=piMood + 3);
+            return;
+         }
+         else
+         {
+            send(self,@SetMood,#new_mood=piMood + 1);
+         }
+         
+         return;
+      }
+      
+      return;
+   }
+
+   InitCondSale()
+   {
+      local oObj, oObj2, oObj3, oObj4;
+      
+      oObj=Create(&SanctuaryKey);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[kocatantailor_sanctuary],
+           #action=[LIBACT_CONDITIONAL,oObj,1000,kocatantailor_sanctuary_response]);
+           
+      oObj2=Create(&NeruditeOreChunk);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[kocatantailor_stones],
+           #action=[LIBACT_CONDITIONAL,oObj2,1200,kocatantailor_stones_response]);
+
+      oObj3=Create(&Sapphire, #number=2);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj3,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj3,1000,KocatanTailor_sapphire_sale]);
+
+      oObj4=Create(&Emerald, #number=2);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj4,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj4,1000,KocatanTailor_emerald_sale]);
+
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      local iFlags;
+      
+      iFlags = send(who, @GetObjectFlags);
+      if iFlags & PLAYER_PK
+      {
+         send(self,@SetMood,#new_mood=piMood + 3 );
+      }
+
+      if iFlags & PLAYER_OUTLAW
+      {
+         send(self,@SetMood,#new_mood=piMood + 2 );
+      }
+      
+      Post(poOwner,@SomeoneSaid,#what = self, #string=KocatanTailor_entry_welcome,
+           #type = SAY_RESOURCE);
+         
+      return;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $)
+   {
+      if type <> SAY_NORMAL
+      {
+         propagate;
+      }
+      
+      if NOT isClass(what,&Player)
+      {
+         propagate;
+      }
+
+
+      if NOT send(send(SYS,@GetWarEvent),@IsActive)
+      {
+         if NOT stringContain(string,"Tepal")
+         {
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_new_look)
+         {
+            send(what,@SetDefaultClothes,#rand=TRUE);
+            send(self,@Say,#message_rsc=KocatanTailor_new_look_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_kriipa)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_GREEN);
+            send(self,@Say,#message_rsc=KocatanTailor_kriipa_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_mutant_ant)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_RED);
+            send(self,@Say,#message_rsc=KocatanTailor_mutant_ant_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_dragonfly)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_ORANGE);
+            send(self,@Say,#message_rsc=KocatanTailor_dragonfly_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_yeti)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_SKY);
+            send(self,@Say,#message_rsc=KocatanTailor_yeti_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_fey_elhai)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_GRAY);
+            send(self,@Say,#message_rsc=KocatanTailor_fey_elhai_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_fey_dirhai)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_BLUE);
+            send(self,@Say,#message_rsc=KocatanTailor_fey_dirhai_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_avar)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_YELLOW);
+            send(self,@Say,#message_rsc=KocatanTailor_avar_r);
+
+            propagate;
+         }
+
+         if stringContain(string,KocatanTailor_shadow)
+         {
+            send(what,@SetDefaultClothes,#shirt_color=XLAT_TO_PURPLE);
+            send(self,@Say,#message_rsc=KocatanTailor_shadow_r);
+
+            propagate;
+         }
+      }
+
+      propagate;
+   }
+
+   ObjectDesired(what=$)
+   {
+      if IsClass(what,&NumberItem) and
+         Send(what,@GetNumber) > 100
+      {
+         return FALSE;
+      }
+
+      if Send(self,@IsObjectGem,#what=what) or
+         Send(self,@IsObjectSundry,#what=what)
+      {
+	      return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   SetForSale()
+   {
+      plFor_sale=[[
+                   Create(&PantsC,#translation=PT_GRAY_TO_LGREEN),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LBGREEN),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LSKY),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LBLUE),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LPURPLE),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LGOLD),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LBBLUE),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LRED),
+                   Create(&PantsC,#translation=PT_GRAY_TO_LORANGE),
+                      
+                   Create(&ShortSkirt,#color=XLAT_TO_ORANGE),
+                   Create(&ShortSkirt,#color=XLAT_TO_RED),
+                   Create(&ShortSkirt,#color=XLAT_TO_SKY),                   
+                   Create(&ShortSkirt,#color=XLAT_TO_GREEN),
+                   Create(&ShortSkirt,#color=XLAT_TO_BLACK),
+                   Create(&ShortSkirt,#color=XLAT_TO_YELLOW),
+                   Create(&ShortSkirt,#color=XLAT_TO_PURPLE),
+
+                   Create(&LightRobe,#color=XLAT_TO_ORANGE),
+                   Create(&LightRobe,#color=XLAT_TO_RED),
+                   Create(&LightRobe,#color=XLAT_TO_SKY),                   
+                   Create(&LightRobe,#color=XLAT_TO_GREEN),
+                   Create(&LightRobe,#color=XLAT_TO_BLACK),
+                   Create(&LightRobe,#color=XLAT_TO_YELLOW),
+                   Create(&LightRobe,#color=XLAT_TO_PURPLE),
+
+                   Create(&Tanktop,#color=XLAT_TO_ORANGE),
+                   Create(&Tanktop,#color=XLAT_TO_RED),                   
+                   Create(&Tanktop,#color=XLAT_TO_SKY),
+                   Create(&Tanktop,#color=XLAT_TO_GREEN),
+                   Create(&Tanktop,#color=XLAT_TO_BLACK),
+                   Create(&Tanktop,#color=XLAT_TO_YELLOW),
+                   Create(&Tanktop,#color=XLAT_TO_PURPLE)
+
+                   ],$,$,$];
+      return;
+   }
+
+   AddToConditionalList(obj=$,value=0)
+   {
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

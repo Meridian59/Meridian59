@@ -1,0 +1,23 @@
+// GelMaker.rc2 : resources Microsoft Visual C++ does not edit directly
+//
+//////////
+//
+// Copyright (C) The 3DO Company
+//
+// This unpublished source code contains trade secrets and
+// copyrighted materials which are the property of The 3DO Company.
+// Unauthorized use, copying or distribution is a violation of
+// U.S. and international laws and is strictly prohibited.
+//
+//////////
+//
+
+#ifdef APSTUDIO_INVOKED
+	#error this file is not editable by Microsoft Visual C++
+#endif //APSTUDIO_INVOKED
+
+/////////////////////////////////////////////////////////////////////////////
+
+// Add manually edited resources here...
+
+/////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,39 @@
+# innkeeper right arms
+# groups
+# 1 standing
+# 2-4 waving
+# 5-7 repeat waving
+-s 4
+24
+ir000aaa.bmp   [-17, -5] 
+ir045aaa.bmp   [-12, -4] 
+ir090aaa.bmp   [-11, -10] 
+ir180aaa.bmp   [-13, -11] 
+ir270aaa.bmp   [-37, 1] 
+ir315aaa.bmp   [-38, -9] 
+ir000daa.bmp   [-61, -5] 
+ir045daa.bmp   [-27, -6] 
+ir090daa.bmp   [-12, -7] 
+ir180daa.bmp   [-14, -11] 
+ir270daa.bmp   [-45, -6] 
+ir315daa.bmp   [-73, -6] 
+ir000dab.bmp   [-62, -38] 
+ir045dab.bmp   [-65, -42] 
+ir090dab.bmp   [-18, -46] 
+ir180dab.bmp   [-11, -42] 
+ir270dab.bmp   [-12, -36] 
+ir315dab.bmp   [-44, -38] 
+ir000dac.bmp   [-52, -44] 
+ir045dac.bmp   [-43, -48] 
+ir090dac.bmp   [-13, -55] 
+ir180dac.bmp   [-9, -49] 
+ir270dac.bmp   [-11, -42] 
+ir315dac.bmp   [-36, -46] 
+7
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14
+ 8     19  24  23  22  22  22  21  20
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14
+ 8     19  24  23  22  22  22  21  20

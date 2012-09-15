@@ -1,0 +1,129 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%
+%  Monsters must support GetHauntee to use this brain.
+%
+
+RevenantBrain is Brain
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viBrain_num = BRAIN_REVENANT
+
+properties:
+
+messages:
+
+   % MobConstructor( mob = $ )
+   % MobDelete( mob = $, state = $ )
+
+   %%% We wait before we're placed instead of after,
+   %%% the latter being the norm.  This is called only
+   %%% once, from Revenant:Place
+   NewOwner( mob = $, state = 0, what = $ )
+   {
+      local oTarget;
+      if what = $
+      { debug("Unreachable. Null new owner.");
+	Send(mob,@EnterStateLimbo); 
+        return; }
+      oTarget = Send(mob,@GetHauntee);
+      Send(mob,@EnterStateChase,#target=oTarget,#actnow=True);
+      return;
+   }
+
+   FirstUserEntered( mob=$, state=$, what=$, new_row=$, new_col=$ )
+   {
+      debug("Unreachable. Got FirstUserEntered message.");
+      return;
+   }
+
+   LastUserLeft( mob=$, state=$ )
+   {
+      %%% Target's leaving is handled in response to SomethingLeft
+      return;
+   }
+
+   %%% Supporting this message allows the mob to attack immediately
+   %%% should the target walk into range.
+   SomethingMoved( mob=$, state=$, what=$, new_row=$, new_col=$ )
+   {
+      if what <> Send(mob,@GetHauntee)
+      { return; }
+      propagate;
+   }
+
+   %%% We only respond to our target.
+   %%% Supporting this lets us attack immediately if we get attacked
+   %%% while in CHASE.
+   SomethingAttacked( mob=$, state=$, what=$, victim=$, use_weapon=$ )
+   {
+      if what <> Send(mob,@GetHauntee)
+      { return; }
+      propagate;
+   }
+
+   SomethingEntered( mob=$, state=$, what=$, where=$ )
+   {
+      return;
+   }
+
+   %%% Revenant kod deletes mob when target leaves
+   SomethingLeft( mob=$, state=$, what=$ )
+   {
+      return;
+   }
+
+   %%% Revenant kod deletes mob when target dies
+   SomethingKilled( mob=$, state=$, what=$, victim=$, use_weapon=$ )
+   {
+      return;
+   }
+
+   % PostAttackTimer( mob = $ )
+
+   % PreChaseTimer( mob = $ )
+
+   %%% Stay on target, whether there is another closer or not
+   PostChaseTimer( mob = $ )
+   {
+      Send(mob,@EnterStateChase,#target=Send(mob,@GetHauntee),#actnow=False);
+      return;
+   }
+
+   %%% Revenants are never in the move state
+   PostMoveTimer( mob = $ )
+   { 
+      debug("Unreachable. Got PostMoveTimer message.");
+      Send(mob,@EnterStateLimbo);
+      return;
+   }
+
+   %%% Revenants are never in the wait state
+   PostWaitTimer( mob = $ )
+   {
+      debug("Unreachable. Got PostWaitTimer message.");
+      Send(mob,@EnterStateLimbo);
+      return; 
+   }
+
+   %%%
+   %%% Utility Routines
+   %%%
+
+end
+
+   

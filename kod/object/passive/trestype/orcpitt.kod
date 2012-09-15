@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcPitBossTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_ORC_CHIEF
+   piItem_att_chance = 6
+   piDiff_seed = 6
+
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &OrcTooth, 40 ],
+                     [ &Scimitar, 12 ],
+                     [ &Arrow, 12 ],
+                     [ &NeruditeArmor, 9],
+                     [ &NeruditeSword, 9],
+                     [ &OreChunk, 4],
+		              [ &UncutSeraphym, 3],
+                     [ &Flask, 2],
+                     [ &OrcShield, 2],
+                     [ &PlateArmor, 2],
+                     [ &Money, 2],
+                     [ &HoldWand, 1 ],
+                     [ &BlindWand, 1 ],
+                     [ &HeatScroll, 1]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

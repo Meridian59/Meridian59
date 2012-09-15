@@ -1,0 +1,236 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Guest8 is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_guest8 = "The Grand Museum of Hazar"
+   room_guest8 = guest8.roo
+   guest8_music = login.mid
+
+   guest8_signname_1 = "Welcome"
+   guest8_sign_1 = \
+      "The Grand Museum is home to a myriad of exhibits on Meridian proper, "
+      "including a number of miniature replicas of items and monsters found in Meridian, "
+      "as well as tapestries depicting various locales in the world."
+
+   guest8_signname_2 = "The Arena of Tos"
+   guest8_sign_2 = \
+      "A proving-ground where mighty warriors clash beneath the watchful eyes of "
+      "Kraanan.  Combatants can fight here for the pure honor of victory in combat, "
+      "as Kraanan delivers any true warrior from death at the last possible moment."
+
+   guest8_signname_3 = "Tos"
+   guest8_sign_3 = \
+      "Debatably the liveliest city in Meridian (the residents of Barloque would most "
+      "likely beg to differ), Tos is home to the Arena as well as one of the friendliest "
+      "bars in Meridian, Familiars."
+
+   guest8_signname_4 = "The Vale of Sorrow"
+   guest8_sign_4 = \
+      "Legend has it that this secluded vale tucked away in the forests of Meridian is "
+      "home to the Fey Elhai and the Fey Dirhai, two races of fairies eternally locked "
+      "in a struggle to claim the Vale as their own.  A few brave adventurers even tell "
+      "stories of how they were able, for a time, to sway the balance of the conflict "
+      "to the side they favored."
+
+   guest8_signname_5 = "The Great Pyramid of Ko'catan"
+   guest8_sign_5 = \
+      "The first structure to be built as part of the island settlement of Ko'catan, "
+      "this grand monument is purported to be the burial place of the great hero Konima, "
+      "whose sacrifice saved Meridian from the orc hordes during the Orc Wars.  Now, it "
+      "is home to the Hall of Heroes, a gallery of magical statues which form themselves "
+      "into the likenesses of the greatest current heroes in the land."
+
+   guest8_signname_6 = "The Trading Post on Konima's Island"
+   guest8_sign_6 = \
+      "A bastion of civilization out in the the wilds of Konima's Island, this trading "
+      "post is a central hub of trade between the Island and the mainland.  No one "
+      "knows exactly where its proprietor, Wulfgang zax'Ak, obtains some of his more "
+      "rare goods, nor why he chose to place his trading post so far out from the safe "
+      "enclosing walls of Ko'catan.  Perhaps the latter is due to Ko'catan's strict "
+      "trade laws, which among other things strictly forbid trade with the Avar, a "
+      "strange race of bird-people indiginous to the island.  An artist's representation "
+      "of an avar is pictured in the foreground, though it should be noted that noone "
+      "has actually ever seen an avar approach the trading post."
+
+   guest8_signname_7 = "Some of Ko'catan's Intricate Murals"
+   guest8_sign_7 = \
+      "Though the Ko'catani are sometimes a brutal and warlike race, they also have "
+      "a rich and thriving artistic tradition.  The murals pictured here are typical of "
+      "the stylized and traditional aesthetic of Ko'catani art, which always depicts "
+      "the same subjects of Ko'catani history and myth.  In fact, new generations of "
+      "artists are constantly refining the exact same scenes as their predecessors, "
+      "painting over older murals with the same characters in the same poses, honing "
+      "the gestures and facial expressions with greater and greater detail with every "
+      "iteration, until the pictures breath with the soul of the Ko'catani way of life.  "
+      "Historians estimate that the murals pictured here are more than two feet thick."
+
+classvars:
+
+   vrName = room_name_guest8
+
+   viTeleport_row = 9
+   viTeleport_col = 11
+
+   viDemo_base = RID_GUEST_BASE
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_GUEST_AREA
+   viTerrain_types = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_guest8
+   piRoom_num = RID_guest8
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+   prMusic = guest8_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 13, 10, viDemo_base + 2, 9, 54, ROTATE_NONE ],plExits);
+      plExits = Cons([ 13, 11, viDemo_base + 2, 9, 54, ROTATE_NONE ],plExits);
+      plExits = Cons([ 13, 12, viDemo_base + 2, 9, 54, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+      % if we put a new npc in here, put it at [4,11].
+
+      oSign = Create(&Sign,#name=guest8_signname_1,#desc=guest8_sign_1,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=08,#new_col=11,#fine_row=32,#fine_col=32,
+           #new_angle=ANGLE_SOUTH);
+      oSign = Create(&Sign,#name=guest8_signname_2,#desc=guest8_sign_2,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=08,#new_col=02,#fine_row=32,#fine_col=48,
+           #new_angle=ANGLE_SOUTH);
+      oSign = Create(&Sign,#name=guest8_signname_3,#desc=guest8_sign_3,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=14,#new_col=02,#fine_row=32,#fine_col=48,
+           #new_angle=ANGLE_SOUTH);
+      oSign = Create(&Sign,#name=guest8_signname_4,#desc=guest8_sign_4,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=08,#new_col=06,#fine_row=16,#fine_col=16,
+           #new_angle=ANGLE_SOUTH);
+      oSign = Create(&Sign,#name=guest8_signname_5,#desc=guest8_sign_5,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=11,#new_col=17,#fine_row=16,#fine_col=00,
+           #new_angle=ANGLE_SOUTH);
+      oSign = Create(&Sign,#name=guest8_signname_6,#desc=guest8_sign_6,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=08,#new_col=20,#fine_row=32,#fine_col=00,
+           #new_angle=ANGLE_SOUTH);
+      oSign = Create(&Sign,#name=guest8_signname_7,#desc=guest8_sign_7,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=14,#new_col=20,#fine_row=16,#fine_col=00,
+           #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_WAND),
+           #new_row=9,#new_col=4,#fine_col=32,#fine_row=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_THRONE),
+           #new_row=10,#new_col=3,#fine_col=40,#fine_row=16,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_SPIDER),
+           #new_row=9,#new_col=19,#fine_col=24,#fine_row=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_FEY),
+           #new_row=3,#new_col=20,#fine_col=32,#fine_row=56,#new_angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_LUPOGG),
+           #new_row=2,#new_col=17,#fine_col=32,#fine_row=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_LUTE),
+           #new_row=2,#new_col=7,#fine_col=0,#fine_row=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_PLATEARMOR),
+           #new_row=13,#new_col=15,#fine_col=16,#fine_row=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_SIGNETRING),
+           #new_row=4,#new_col=2,#fine_col=32,#fine_row=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_SCIMITAR),
+           #new_row=10,#new_col=19,#fine_col=24,#fine_row=16,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&ModelNode),#new_row=13,#new_col=7,#fine_col=48,
+           #fine_row=32,#new_angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_FUNGUSBEAST),
+           #new_row=2,#new_col=16,#fine_col=0,#fine_row=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_AVAR),
+           #new_row=2,#new_col=19,#fine_col=0,#fine_row=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_ORC),
+           #new_row=2,#new_col=20,#fine_col=32,#fine_row=48,#new_angle=ANGLE_SOUTH_WEST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_CENTIPEDE),
+           #new_row=9,#new_col=20,#fine_col=16,#fine_row=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_ANT),
+           #new_row=9,#new_col=18,#fine_col=32,#fine_row=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_HAMMER),
+           #new_row=10,#new_col=18,#fine_col=32,#fine_row=16,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_SHORTSWORD),
+           #new_row=10,#new_col=20,#fine_col=16,#fine_row=16,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_HELM),
+           #new_row=12,#new_col=15,#fine_col=16,#fine_row=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_GAUNTLETS),
+           #new_row=14,#new_col=15,#fine_col=16,#fine_row=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_INKYCAP),
+           #new_row=2,#new_col=5,#fine_col=32,#fine_row=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_TOKEN),
+           #new_row=2,#new_col=4,#fine_col=0,#fine_row=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_PRISM),
+           #new_row=2,#new_col=2,#fine_col=32,#fine_row=48,#new_angle=ANGLE_SOUTH_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_POTION),
+           #new_row=9,#new_col=3,#fine_col=40,#fine_row=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_SCROLL),
+           #new_row=9,#new_col=2,#fine_col=48,#fine_row=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_SHRINE),
+           #new_row=10,#new_col=4,#fine_col=32,#fine_row=16,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_ALTAR),
+           #new_row=10,#new_col=2,#fine_col=48,#fine_row=16,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_CHALICE),
+           #new_row=14,#new_col=7,#fine_col=48,#fine_row=32,#new_angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_MUSEUM_NEWS),
+           #new_row=12,#new_col=7,#fine_col=48,#fine_row=32,#new_angle=ANGLE_WEST);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=6,#new_col=8,#fine_row=47,#fine_col=47); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=12,#new_col=9,#fine_row=56,#fine_col=49); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=12,#new_col=13,#fine_row=53,#fine_col=16); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=6,#new_col=14,#fine_row=46,#fine_col=13); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=6,#new_col=7,#fine_row=48,#fine_col=46); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=11,#new_col=4,#fine_row=7,#fine_col=46); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=8,#new_col=4,#fine_row=22,#fine_col=46); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=4,#new_col=6,#fine_row=48,#fine_col=16); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=6,#new_col=15,#fine_row=48,#fine_col=16); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=4,#new_col=16,#fine_row=48,#fine_col=39); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=8,#new_col=18,#fine_row=24,#fine_col=16); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=11,#new_col=18,#fine_row=8,#fine_col=15); 
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

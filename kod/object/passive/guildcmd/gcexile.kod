@@ -1,0 +1,128 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildExile is GuildCommand
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   guildexile_name_rsc = "exile"
+   guildexile_icon_rsc = light.bgf
+   guildexile_desc_Rsc = "Use this to kick someone out of your guild.  Will not affect those of other guilds, or those of higher rank than you."
+
+   exile_non_user = "%s%s doesn't seem at all hurt by your cold-hearted rejection."
+   exile_not_member = "%s%s is not a member of %s%q!"
+
+   exile_cant_self = "You may not exile yourself - use the renounce command instead."
+   exile_cant_self_gm = "A %s must first abdicate his position before he leaves the guild."
+   exile_cant_too_high = "You may not exile someone unless they are of a lower rank than yourself."
+
+   exile_to_exiled = "~B%s has expelled you from the ranks of %s%q!"
+   exile_to_others = "~B%s has exiled %q from the ranks of %s%q!"
+
+   guildexile_necro_nak = "~BEvery member of The Order is bound by a blood oath.  The only way "
+      "out is death."
+
+classvars:
+
+   vrName = guildexile_name_rsc
+   vrIcon = guildexile_icon_rsc
+   vrDesc = guildexile_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_EXILE
+   viRank_needed = RANK_LIEUTENANT
+
+   viNecro_enabled = FALSE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, otarget = $)
+   "Kicks the target out of the guild!"
+   {
+      local yourGuild,myguild,i,lmembers;
+
+      if not isClass(oTarget,&player)
+        {
+          send(who,@msgsenduser,#message_rsc=exile_non_user,
+            #parm1 = send(oTarget,@getcapdef), #parm2 = send(oTarget,@getname));
+          return FALSE;
+        }
+
+      yourGuild= send(oTarget,@getguild);
+      myGuild = send(who, @getguild);
+
+      if yourGuild <> myGuild or yourGuild = $
+        {
+          send(who,@msgsenduser,#message_rsc=exile_not_member,
+              #parm1=send(oTarget,@getdef),
+			  #parm2=send(oTarget,@getname),
+			  #parm3=send(myGuild,@getdef),
+              #parm4=send(myGuild,@getname));
+          return FALSE;
+        }
+
+      if oTarget=who
+        {
+          if send(myGuild,@getrank,#who=who) = RANK_MASTER
+            { 
+              send(who,@msgsenduser,#message_rsc=exile_cant_self_GM,
+                 #parm1 = send(myGuild,@getrankname,#rank=RANK_MASTER,#sex=send(who,@getgender)));
+            }
+          else
+            {
+              send(who,@msgsenduser,#message_rsc=exile_cant_self);
+            }
+          return FALSE;
+        }
+
+      if send(myGuild,@getrank,#who=who) <= send(myGuild,@getrank,#who=oTarget)
+        {
+           send(who,@msgsenduser,#message_rsc=exile_cant_too_high);
+           return FALSE;
+        }
+
+      if isClass(myGuild,&NecromancerGuild) {
+         Send(who,@MsgSendUser,#message_rsc=guildexile_necro_nak );
+         return FALSE;
+      }
+
+      send(myGuild,@removefromguild,#who=oTarget);
+
+      send(oTarget,@msgsenduser,#message_rsc=exile_to_exiled,
+         #parm1=send(who,@gettruename),
+		 #parm2=send(myguild,@getdef),
+         #parm3=send(myguild,@gettruename));
+
+      for i in send(myGuild,@getmemberlist)
+        {
+          send(first(i),@msgsenduser,#message_rsc=exile_to_others,
+            #parm1=send(who,@gettruename),#type2=STRING_RESOURCE,#parm3=send(myguild,@getdef),
+            #parm4=send(myguild,@getname),#parm2=send(oTarget,@gettruename));
+        }
+
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

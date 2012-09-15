@@ -1,0 +1,174 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Fountain is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   fountain_name_rsc = "fountain"
+   fountain_icon_rsc = fountain.bgf
+   fountain_desc_tos_rsc = "This masterpiece is made of carefully shaped marble. Artfully placed jets spray water into the air and cool any who stand near it.  This fountain was reputedly made by the tinkerer Froz himself, and has become a common meeting place in the world of Meridian."
+   fountain_desc_rsc = "While ornate and beautiful, it is clear upon closer inspection that this fountain is merely an imitation of Froz' masterpiece in the city square of Tos."
+
+   fountain_water_rsc = fountwat.bgf
+   fountain_sound_rsc = fountain.wav
+
+classvars:
+
+   vrName = fountain_name_rsc
+   vrIcon = fountain_icon_rsc
+   
+properties:
+
+   vrDesc = fountain_desc_rsc
+
+   piSoundRadius = 40
+   piSoundIntensity = 100
+   pbIsLit = FALSE
+
+messages:
+
+   Constructor(iSoundRadius = 40, iSoundIntensity = 100, bIsLit = FALSE )
+   {
+      Send(self,@SetSwitchOnTime);
+      piSoundRadius = iSoundRadius;
+      piSoundIntensity = iSoundIntensity;
+      pbIsLit = bIsLit;
+
+      propagate;
+   }
+   
+   Delete()
+   {
+      if poOwner <> $ AND IsClass(poOwner,&Room)
+      {
+         % Remove ourselves as part of the sound list.
+         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+      }
+
+      propagate;
+   }
+
+   NewOwner(what=$)
+   {
+      local lPosition, lSoundData;
+
+      % Check the old (current) owner.  It shouldn't happen, but let's be sane about it.
+      if poOwner <> $ AND IsClass(poOwner,&Room)
+      {
+         % Remove ourselves as part of the sound list.
+         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+      }
+
+      if what <> $ AND IsClass(what,&Room)
+      {
+   		if send(what,@GetRoomNum) = RID_TOS
+   		{
+   			vrDesc = fountain_desc_tos_rsc;
+   		}
+
+         if piSoundRadius
+         {
+            % Sound data is [wave_file, row, col, cutoff radius, maximum volume, object]
+            lPosition = send(what,@GetRoomPos,#what=self);
+            lSoundData = [fountain_sound_rsc, First(lPosition), Nth(lPosition,2),
+                          piSoundRadius, piSoundIntensity, self];
+            send(what,@AddLoopingSound,#lSoundData=lSoundData);
+         }
+      }
+
+		propagate;
+   }
+
+   SendOverlays()
+   {
+      % Attach water to hotspot 1.
+      AddPacket(1,1, 4,fountain_water_rsc, 1,1); 
+      % Cycle through all the water bmps continuously, 100 ms per frame.
+      AddPacket(1,ANIMATE_CYCLE, 4,100, 2,1, 2,1);
+
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      return MOVEON_NO;
+   }
+
+   AmbientLightChanged()
+   {
+      local iPrev_switch;
+
+      iPrev_switch = pbIsLit;
+      Send(self,@SetSwitchOnTime);
+
+      if iPrev_switch <> pbIsLit
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   SetSwitchOnTime()
+   {
+      local iHour;
+
+      iHour = Send(SYS,@GetHour);
+
+      if (iHour >= 7) AND (iHour <= 20)
+      {
+         Send(self,@SetSwitch,#switch=OFF);
+      }
+      else
+      {
+         Send(self,@SetSwitch,#switch=ON);
+      }
+
+      return;
+   }
+
+   SetSwitch(switch = ON)
+   {
+      if switch = ON
+      {
+         pbIsLit = TRUE;
+      }
+      else
+      {
+         pbIsLit = FALSE;
+      }
+
+      return;
+   }
+
+   SendLightingInformation()
+   {
+      if send(poOwner,@GetRoomNum) = RID_TOS
+         AND pbIsLit
+      {   
+         AddPacket(2,LIGHT_FLAG_ON);
+         AddPacket(1,5);
+         AddPacket(2,LIGHT_FOUNTAIN);
+
+         return;
+      }
+   
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

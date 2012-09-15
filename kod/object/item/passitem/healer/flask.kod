@@ -1,0 +1,77 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Flask is Healer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   flask_name_rsc = "flask"
+   flask_icon_rsc = flask.bgf
+   flask_desc_rsc = \
+      "This flask, formed from clear glass and topped by a cork, contains a "
+      "thick blue fluid.  It looks cool and refreshing."
+
+   Flask_gulp_sound = drkptn.wav
+
+classvars:
+
+   vrName = flask_name_rsc
+   vrIcon = flask_icon_rsc
+   vrDesc = flask_desc_rsc
+
+   viBulk = 25
+   viWeight = 20
+   viValue_average = 60
+
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+
+   viFilling = 15
+
+properties:   
+
+   piHeal_min = 5
+   piHeal_max = 10
+
+messages:
+
+   ReqNewApply(apply_on=$)
+   {
+      if NOT Send(apply_on,@ReqEatSomething,#filling=viFilling)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   NewApplied(apply_on=$)
+   {
+      if isClass(apply_on,&User) 
+      {
+         send(apply_on,@wavesenduser,#wave_rsc=Flask_gulp_sound);
+      }
+
+      Send(apply_on,@EatSomething,#nutrition=0,#filling=viFilling);
+
+      propagate;
+   }
+
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

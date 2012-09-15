@@ -1,0 +1,145 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RedAnt is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   redant_koc_name_rsc = "kawilkinich"
+   redant_name_rsc = "mutant ant"
+   redant_icon_rsc = antr.bgf
+   redant_desc_rsc = \
+      "The exoskeleton of the mutant ant is thick and hard and "
+      "its mandibles sharp and deadly.  It is stronger and more "
+      "vicious than its dark skinned cousin."
+
+   redant_dead_icon_rsc = antrX.bgf
+   redant_dead_name_rsc = "dead mutant ant"
+
+   redant_sound_hit = ant_atkh.wav
+   redant_sound_miss = ant_atkm.wav
+   redant_sound_death = ant_dth.wav
+   redant_sound_aware = ant_awr.wav
+
+classvars:
+
+   vrKocName = redant_koc_name_rsc
+   vrName = redant_name_rsc
+   vrIcon = redant_icon_rsc
+   vrDesc = redant_desc_rsc
+   vrDead_icon = redant_dead_icon_rsc
+   vrDead_name = redant_dead_name_rsc
+
+   viTreasure_type = TID_TOUGH
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_BITE
+   viAttributes = MOB_SPASM
+   viLevel = 65
+   viDifficulty = 8
+   viKarma = -40
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
+
+   vrSound_hit = redant_sound_hit
+   vrSound_miss = redant_sound_miss
+   vrSound_aware = redant_sound_aware
+   vrSound_death = redant_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 65, -ATCK_SPELL_FIRE ],
+                        [ 65, ATCK_WEAP_BLUDGEON ],
+                        [ -10, ATCK_WEAP_NERUDITE ],
+                        [ -10, ATCK_WEAP_MAGIC] ];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   DoSpasm()
+   {
+      local roll;
+
+      roll = Random(1,10);
+
+      if roll = 1
+      {
+         Send(self,@DoLegSpasm);
+
+         propagate;
+      }
+
+      if roll <= 5
+      {
+         Send(poOwner,@SomethingTurned,#what=self,#new_angle=Random(0,MAX_ANGLE-1));
+      }
+
+      propagate;
+   }
+    
+   DoLegSpasm()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,125,2,1,2,3);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,150,2,1,2,3);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,150,2,1,2,6,2,1);
+
+         return;
+      }
+
+      % if no body animation
+      
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

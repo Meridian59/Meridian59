@@ -1,0 +1,14 @@
+#^Applied to Hotspot: 1
+#*Groups: 3
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 8
+3
+streamA.bmp    [-177, -42] 
+streamB.bmp    [-177, -42] 
+streamC.bmp    [-177, -42] 
+3
+ 1   1 
+ 1   2 
+ 1   3 

@@ -1,0 +1,143 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MartyrsBattleground is RoomEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   martyrsbg_name_rsc = "martyr's battleground"
+   martyrsbg_icon_rsc = imartyrs.bgf
+
+   martyrsbg_desc_rsc = \
+      "Calls the attention of the gods to the area, increasing "
+      "the likelihood they will give those who die here a chance "
+      "at vengeance with a revenant.  "
+      "Requires elderberry and mushroom to cast."
+   
+   martyrsbg_unnecessary = "You already feel the presence of the gods here."
+
+   martyrsbg_on = \
+      "You suddenly feel as though you are being watched, and judged by intangible beings."
+
+   martyrsbg_off = \
+      "The area feels less ordained.  It seems the gods have lost interest in the frays "
+      "in the area."
+
+   martyrsbg_new_entrant = \
+      "You imagine you can feel the presence of the gods watching you."
+
+   martrysbg_sound = smatbat.wav
+
+classvars:
+
+   vrName = martyrsbg_name_rsc
+   vrIcon = martyrsbg_icon_rsc
+   vrDesc = martyrsbg_desc_rsc
+
+   viSpell_num = SID_MARTYRS_BATTLEGROUND
+   viSchool = SS_KRAANAN
+   viMana = 10
+   viSpell_level = 3
+   
+   viChance_To_Increase = 15
+   vrSucceed_wav = martrysbg_sound
+
+   vbCastable_in_HappyLand = FALSE
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&ElderBerry,1],plReagents);
+      plReagents = Cons([&Mushroom,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+      % check if room already has martyrsbg
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=martyrsbg_unnecessary);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+   CastSpell(who = $, iSpellPower = 0)
+   "Initiation point for the spell."
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=martyrsbg_unnecessary);
+
+         return;
+      }
+
+      % global effects of the enchantment
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=martyrsbg_on,#what=self);
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellPower+50,
+           #time=send(self,@GetDuration,#iSpellPower=iSpellPower));
+      
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = 45 + (iSpellPower*3);  %% 30 - 228 seconds
+      iDuration = iDuration * 1000;      %% convert to seconds            
+
+      return random(iDuration/2,iDuration);
+   }
+
+   StartEnchantmentNewOccupant( who = $ )
+   "Called on new occupants of the enchanted room."
+   {
+      Send(who,@MsgSendUser,#message_rsc=martyrsbg_new_entrant);
+
+      return;
+   }
+
+   EndSpell( where = $, state = $ )
+   "Called when spell expires."
+   {
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=martyrsbg_off,#what=self);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

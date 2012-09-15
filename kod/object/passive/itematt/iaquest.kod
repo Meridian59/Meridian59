@@ -1,0 +1,233 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttQuestCargo is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item is the object of a quest.
+% 
+%  Form is: 
+%
+%      [IA_QUEST_CARGO, oQuestNode]
+%   
+%  oQuestNode::the questnode of which this item is an object.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   ItemAttQuestCargo_desc_rsc = \
+      "\n\nThis was given by %sourceNPC to %player, to be delivered to %destNPC."
+   ItemAttQuestCargo_sub_sourceNPC = "%sourceNPC"
+   ItemAttQuestCargo_sub_player = "%player"
+   ItemAttQuestCargo_sub_destNPC = "%destNPC"
+   ItemAttQuestCargo_desc = ""
+
+classvars:
+
+   viItem_Att_Num = IA_QUEST_CARGO
+   vrDesc = ItemAttQuestCargo_desc
+
+properties:
+
+messages:
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   InitiallyIdentified(random_gen=FALSE)
+   {            
+      return TRUE;
+   }   
+
+   ItemCanIdentify()
+   {
+      return FALSE;
+   }   
+
+   % Make sure you can't affect the item negatively.
+
+   ItemCanWeaken()
+   {
+      return FALSE;
+   }
+
+   ItemCanEnchant()
+   {
+      return FALSE;
+   }
+
+   ItemCanSwap()
+   {
+      return FALSE;
+   }
+
+   ItemCanShatter()
+   {
+      return FALSE;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Infrastructure
+%%  (Adding and removing a ItemAtt from an item.)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AddToItem(oItem=$,oQuestnode=$,oPlayer=$,identified=false)   
+   {
+      local lData, iValue;
+     
+      lData = $;
+
+      lData = cons(oQuestnode,lData);
+      
+      iValue = Send(self,@SetCompound,#oItem=oItem,#iPower=0);
+      lData = cons(iValue,lData);
+     
+      if identified
+      {
+         Send(self,@AddEffects,#oItem=oItem,#lData=lData,#oPlayer=oPlayer);
+      }
+      
+      Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+
+      return;       
+   }
+
+   RemoveFromItem(oItem=$,oQuestNode=$)
+   "This must be called.  In fact, this is what all attribute "
+   "removing things should call."
+   {
+      local i,lData;
+
+      % If oQuestNode = $, this means not called from quest, 
+      %  so notify relevant quests of attribute removal...
+      if oQuestNode = $
+      {
+         % Since we can have more than one, we should change this to a while loop
+         if Send(oItem,@HasAttribute,#ItemAtt=viItem_Att_num)
+         {
+            % Tell each quest to bail.
+            % Each quest will then call this message again to actually delete stuff.
+            oQuestNode = Nth(Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num),2);
+            Send(oQuestNode,@DeadlineExpired);
+         }
+
+         return TRUE;
+      }
+
+      % Quest is notifying item to remove its link to that quest only...
+      i = 0;
+      lData = $;
+      while TRUE
+      {
+         i = i + 1;
+         lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num,#index=i);
+
+         if lData = $ OR Nth(lData,2) = oQuestNode
+         {
+            break;
+         }
+      }
+
+      if (lData <> $) 
+      {
+         Send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,
+              #ItemAtt=viItem_Att_num,#index=i);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   AddEffects(oItem = $, lData = $, oPlayer = $)
+   "AddEffects, in general, does anything that is triggered upon creation, "
+   "including changing the stats of the Item's wielder/wearer, or changing "
+   "some part of the item's stats.\n"   
+   "This should be tailored for each Attribute."
+   {
+      local sAppendedDesc;
+      if NOT Send(oItem,@HasAttribute,#ItemAtt = viItem_Att_num)
+      {
+         % add IA_APPEND_DESCRIPTION attribute
+         sAppendedDesc = CreateString();
+         ClearTempString();
+         AppendTempString(ItemAttQuestCargo_desc_rsc);
+         SetString(sAppendedDesc,GetTempString());
+         StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_sourceNPC,
+                          Send(Send(nth(lData,2),@GetSourceNPC),@GetName));
+         StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_player,
+                          Send(oPlayer,@GetName));
+         StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_destNPC,
+                          Send(Send(nth(lData,2),@GetDestNPC),@GetName));
+
+         % add attribute with sAppendedDesc
+         Send(Send(SYS,@FindItemAttByNum,#num=IA_APPEND_DESCRIPTION),
+              @AddToItem,#oItem=oItem,#state1=sAppendedDesc);
+      }
+
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Maintenance Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AppendDesc(oItem=$)
+   {
+      % Don't propagate.
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%   Treasure Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AddToTreasureTable()
+   {
+      return;
+   }
+
+   CanBeSpoofed()
+   {
+      return FALSE;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Name Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   ItemBuildDescName(oItem=$)
+   {
+      Addpacket(4,Send(oItem,@GetName));
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

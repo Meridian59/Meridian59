@@ -1,0 +1,31 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ForgetPotionKraanan is ForgetPotion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   forgetpotionkraanan_desc_rsc = "Swallowing this cool liquid will wipe all memory of the spells of Kraanan the Fist from your mind.\n\nMay have very serious side effects."
+
+classvars:
+
+   viForget_school = SS_KRAANAN
+   vrDesc = Forgetpotionkraanan_desc_rsc 
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

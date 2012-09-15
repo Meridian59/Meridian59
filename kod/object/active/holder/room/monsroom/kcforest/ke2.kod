@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKE2 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKE2 ="Headquarters of the Noble Avars"
+   room_OutdoorsKE2 = KE2.roo
+   OutdoorsKE2_music = avarwar.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKE2
+
+   viTeleport_row = 25
+   viTeleport_col = 57
+   viTerrain_type = TERRAIN_JUNGLE
+
+properties:
+
+   prRoom = room_OutdoorsKE2
+   prMusic = OutdoorsKE2_music
+   piRoom_num = RID_KE2
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Avar, 60], [&AvarShaman, 25], [&AvarChieftain,15] ];
+      plGenerators = [ [13,8], [21,34], [26,55], [48,13], [56,43],
+                       [47,34], [47,38], [35,17]
+                     ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&RainbowFern,44,35], [&rainbowfern,23,57], [&rainbowfern,52,13]];
+
+      % Do not propagate
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KE1, 68, 47, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KD2, 20, 69, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

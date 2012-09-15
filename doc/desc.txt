@@ -1,0 +1,52 @@
+Blackstone is a multi-player client/server gaming system.  The client
+software runs on IBM PCs under Windows, and the server runs under
+Windows NT.  A Mactintosh client is also partially completed.
+
+The client presents a first-person view of the world with smoothly
+scrolling motion and rotation.  Walls and objects are currently
+limited to a square grid, and objects are two-dimensional and
+currently lack animation.  There is support for sound effects and
+background music.
+
+We imagine that the setting will be a medieval fantasy world, although
+our gaming system is quite general.  Objects and monsters can have
+completely arbitrary behavior, while players choose from a fairly
+small set of basic commands, such as movement, combat, spells, acting
+on objects, and communicating with other players.  
+
+The focus of the game will be on role playing rather than simply
+fighting.  Players will gather objects and gain experience as they
+learn more about the world and become more powerful.  We hope to allow
+players to change their world as much as possible, creating their own
+rooms and objects, and forming professional and social organizations
+via built-in mechanisms.  Player interaction will be one of the main
+attractions; parts of the game might require cooperation or
+competition in order to make progress.
+
+One of the main features of Blackstone is the ability to change the
+world dynamically.  New rooms, monsters, and items can be added at any
+time, and players will automatically download the appropriate data.
+This will allow the system administrators to continually add new
+gaming areas to keep players' interest high.
+
+The client and server for Blackstone currently consist of about 60,000
+lines of C code.  Utilities and other code make up another 15,000
+lines.  We have a testing world of about 10 connected rooms,
+containing a sample combat area, and testing versions of essential
+features such stores and newsgroups.  All of the main game features
+are completed, except animation and improved audio.  Several important
+support features are missing, such as multiple serial port support,
+resource encryption, help files, installation, and an improved user
+interface.
+
+Hardware requirements for the client are limited by the speed of the
+rendering engine.  Players' speed is limited in order to reduce
+communication requirements, so high frame rates are not essential.  We
+hope to be able to run at a reasonable speed and resolution with a 486
+machine and a fast graphics subsystem.  At least 4 megabytes of RAM
+will be needed, and a sound card is highly recommended.
+
+The server machine will require a good deal of memory (maybe 32M or
+more) and a fast disk.  We predict that the server will be able to
+handle at least 100 simultaneous users, but this is extrapolated from
+rather unreliable data.

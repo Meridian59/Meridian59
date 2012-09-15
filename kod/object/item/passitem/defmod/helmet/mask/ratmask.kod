@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RatMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RatMask_name_rsc = "rat mask"
+   RatMask_icon_male_rsc = mmrat.bgf
+   RatMask_icon_female_rsc = mfrat.bgf
+   RatMask_desc_rsc = \
+      "A silly mask that looks like a rat's head."
+
+classvars:
+
+   vrName = RatMask_name_rsc
+   vrDesc = RatMask_desc_rsc
+   vrIcon = RatMask_icon_male_rsc
+
+   vrMaleIcon = RatMask_icon_male_rsc
+   vrFemaleIcon = RatMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

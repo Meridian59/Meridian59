@@ -1,0 +1,97 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsI3 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsI3 = I3.roo
+   room_name_OutdoorsI3 ="Main gate of Barloque-- Royal City of Meridian"
+   OutdoorsI3_music = walk1.mid
+   outdoorsi3_msg1 = "Today does not seem like a particularly good day to drown."
+
+classvars:
+
+   vrName = room_name_OutdoorsI3
+
+   viTeleport_row = 13
+   viTeleport_col = 12
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_ROAD | TERRAIN_RIVER | TERRAIN_BEACH
+
+   viFlag_row = 13
+   viFlag_col = 15
+
+properties:
+
+   prRoom = room_OutdoorsI3
+   prMusic = OutdoorsI3_music
+   piRoom_num = RID_I3
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 45000
+   piGen_percent = 40
+
+   piInit_count_min = 0
+   piInit_count_max = 2
+
+   piMonster_count_max = 7
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 6, 11, RID_BAR_SOUTH, 46,30, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 12, RID_BAR_SOUTH, 46,31, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_J3, 7, 2, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_BADLAND2, 1, 22, ROTATE_NONE], plEdge_exits);
+
+      plEdge_Exits = Cons([LEAVE_WEST, RID_H3, 25, 47, ROTATE_NONE,ROW_IS_LESS_THAN,22], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_H3, 32, 47, ROTATE_NONE,ROW_IS_GREATER_THAN,21], plEdge_exits);
+     
+      propagate;
+   }
+
+   Constructed()
+   {
+      plMonsters = [ [&Centipede, 40], [&SpiderBaby, 60] ];
+
+      plGenerators = [ [5, 33], [5, 41], [11, 52], [13, 32],
+                      [14, 23], [11, 6], [21, 5], [25, 14], [23, 36] ];
+      propagate;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_NORTH) and (IsClass(what,&Player))
+      {
+	 send(what,@MsgSendUser,#message_rsc = outdoorsi3_msg1);
+	 return;
+      }              
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

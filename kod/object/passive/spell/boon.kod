@@ -1,0 +1,247 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Boon is Spell
+
+% Boons are long term enchantments that last over a period of real time days.
+% They work via enchantment timers that are restared every hour for the
+% duration of the boon.  Boons can also work as banes.  
+
+constants:
+
+   include blakston.khd
+
+   BOON_HOUR = 3600000
+   BOON_DEFAULT_LENGTH = 1    % in realtime weeks
+   BOON_DEFAULT_AMOUNT = 5
+   HOURS_LOGGED_ON_PER_DAY = 2
+
+resources:
+
+   boon_caster_msg = "You cast %s on %s%s."
+
+classvars:
+
+   viMana = 0
+   viSpell_level = 50
+   viSpellExertion = 0
+   viSchool = SS_DM_COMMAND
+
+   viPersonal_ench = False
+
+   viFlash = FLASH_GOOD
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   "Reagents for DM and NPC spells = nil"
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   CanPayCosts(who=$, lTargets = $)
+   "Checks to be sure that only NPCs and DMs use this command."
+   {
+      local oTarget;
+
+      if NOT (IsClass(who,&DM) OR IsClass(who,&Monster))
+      {
+         debug("Mortal has Boon Spells!");
+
+         return FALSE;
+      }
+
+      oTarget = First(lTargets);
+      if NOT IsClass(otarget, &User)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(otarget,@GetDef),#parm3=Send(otarget,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local iAmount, iNumEnchantHours, iState, oRoom;
+
+      iNumEnchantHours = send(self,@DecodeDuration,#Compound=iSpellPower);
+      iAmount = send(self,@DecodeAmount,#Compound=iSpellPower);
+
+      if who <> $
+      {
+         if isclass(who,&DM) = 1
+         {
+             iNumEnchantHours = HOURS_LOGGED_ON_PER_DAY * BOON_DEFAULT_LENGTH * 7;
+             iAmount = BOON_DEFAULT_AMOUNT;
+         }
+      }
+
+      iState = (iNumEnchantHours * 100) + abs(iAmount);
+      if iAmount < 0
+      {
+         iState = -iState;
+      }
+
+      send(self,@DoSpellEffect,#who=first(lTargets),#amount=iAmount);      
+
+      send(first(lTargets),@StartEnchantment,#what=self,
+               #time=BOON_HOUR,#state=iState);
+      if who <> $
+      {
+          if IsClass(who,&DM)
+          {
+             Send(who,@MsgSendUser,#message_rsc=boon_caster_msg,
+                  #parm1=Send(self,@GetName),
+                  #parm2=Send(First(lTargets),@GetDef),
+                  #parm3=Send(First(lTargets),@GetName));
+          }
+      }
+
+      oRoom = Send(first(lTargets),@GetOwner);
+
+      Send(self,@PlaySpellSound,#room_obj=oRoom,#what=first(lTargets));
+
+      return;
+   }
+
+   ShowDesc()
+   "Adds a warning line to the look description."
+   {
+      AddPacket(4,vrDesc);
+
+      return;
+   }
+
+   IsPersonalEnchantment()
+   {
+      return FALSE;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+      
+   DoSpellEffect(who = $, amount = $)
+   {
+      return;
+   }
+
+   UndoSpellEffect(who = $, amount = $)
+   {
+      return;
+   }
+
+   DecodeDuration(Compound = $)
+   {
+      local Duration;
+
+      Duration = Compound mod 10;
+      Duration = Duration * HOURS_LOGGED_ON_PER_DAY;
+      Duration = abs(Duration);  % We accept negative effects, but not durations
+
+      return Duration;
+   }
+
+   DecodeAmount(Compound = $)
+   {
+      local Amount;
+
+      Amount = Compound / 10;
+
+      return Amount;
+   }
+
+   AddBoon(target = $, days = $, amount = $)
+   {
+      local iSpellPower;
+
+      iSpellPower = days;
+      iSpellPower = iSpellPower + abs(amount * 10);
+      if amount < 0
+      {
+         iSpellPower = -iSpellPower;
+      }
+
+      send(self,@CastSpell,#lTargets=[target],#iSpellPower=iSpellPower);
+
+      return;
+   }
+
+   RemoveEnchantmentEffects( who = $, state = $, report = TRUE )
+   {
+      local istate;
+
+      if state < 0
+      {
+         istate = -(state mod 100);
+      }
+      else
+      {
+         istate = state mod 100;
+      }
+     
+      Send(self,@EndEnchantment,#who=who,#state=istate,#report=report);
+
+      return;
+   }
+
+   SuccessChance()
+   "NPC, DMs spells always succeed."
+   {
+      return TRUE;
+   }
+    
+   CanForget()
+   {
+      return FALSE;
+   }
+
+   EndEnchantment( who = $, state = 0, report = TRUE )
+   {
+      if (state / 100 = 0)
+      {
+         state = state * 1;
+         send(self,@UndoSpellEffect,#who=who,#amount=state);      
+      }
+      else
+      {
+         if state > 0
+         {
+            state = state - 100;
+         }
+         else
+         {
+            state = state + 100;
+         }
+
+         send(who,@StartEnchantment,#what=self,#time=BOON_HOUR,#state=state);
+      }
+      return;
+   }
+
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      % Can't remove boon spells with purify or purge
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

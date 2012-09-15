@@ -1,0 +1,110 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsE2 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsE2 = "The Great Ocean"
+   room_OutdoorsE2 = E2.roo
+   OutdoorsE2_music = walk7.mid
+
+   E2_oceanwalk = "You decide you don't like saltwater enough to go swimming in the Great Ocean."
+
+classvars:
+
+   vrName = room_name_OutdoorsE2
+
+   viTeleport_row = 19
+   viTeleport_col = 32
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_BEACH
+
+   viFlag_row = 36
+   viFlag_col = 51
+
+properties:
+
+   prRoom = room_OutdoorsE2
+   prMusic = OutdoorsE2_music
+   piRoom_num = RID_E2
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 45000
+   piGen_percent = 70
+
+   piInit_count_min = 2
+   piInit_count_max = 5
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&MolluskMonster, 80], [&Frogman, 20] ];
+
+      plGenerators = [ [40, 6], [45, 13], [58, 28], [34, 34], [32, 53],
+                       [53, 50], [40, 67], [14, 66], [15, 46], [4, 68] ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_F2, 21, 3, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_D4, 1, 23, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_NORTH)
+      {
+         if (IsClass(what,&Player))
+         {
+            send(what,@MsgSendUser,#message_rsc = E2_oceanwalk);
+         }
+
+         return;
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=58,#new_col=33);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=58,#new_col=51);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=57,#new_col=54);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=52,#new_col=52);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=40,#new_col=54);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+           #new_row=40,#new_col=71);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,10 @@
+# candle
+-s 4
+3
+candlea.bmp     [0, 0]
+candleb.bmp     [0, 0]
+candlec.bmp     [0, 0]
+3
+1 1
+1 2
+1 3

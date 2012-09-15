@@ -1,0 +1,100 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HazarBartender is HazarTown
+
+% Has a "wipe sequence", which means that every few wipes we just make a long
+% delay.
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   Hazar_Bartender_name_rsc = "Eric d'Jorn"
+   Hazar_Bartender_icon_rsc = tsinnk.bgf
+   Hazar_Bartender_desc_rsc = "A grinning and mischievous man stands quietly grinning behind the bar."
+
+   HzBar_entry_welcome = "Care for a nice stiff drink?  The house special will knock you on your arse!"
+  
+
+   HazarBart_enough = "Entroot berries?  FanTAStic!  Here, let me reward you..."
+   HazarBart_not_enough = "I need those berries, but they're useless to me unless you can get me at LEAST ten.  If you get more, come back and I'll reward you!"
+
+classvars:
+
+   vrName = Hazar_Bartender_name_rsc
+   vrIcon = Hazar_Bartender_icon_rsc
+   vrDesc = Hazar_Bartender_desc_rsc
+   viMerchant_markup = MERCHANT_NORMAL
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_NOQUEST
+   viOccupation = MOB_ROLE_BARTENDER
+
+properties:
+
+
+messages:
+
+   SetForSale()
+   {
+      plFor_sale=[[Create(&Bread,#number=4),
+                   Create(&Apple,#number=2),
+                   Create(&MeatPie,#number=4),
+                   Create(&Mug,#number=1)
+                   ],
+                  $,$];
+      return;
+   }
+
+   Constructed()
+   {
+      plWantedItems = [ &EntrootBerry ];
+      propagate;
+   }
+
+   UserEntered()
+   {
+      Send(poOwner,@SomeoneSaid,#what=self,#string=HzBar_entry_welcome,
+             #type = SAY_RESOURCE);
+             
+      propagate;
+   }
+   
+   GotWantedItem(obj=$,who=$)
+   {
+		local oShield;
+
+		if not isClass(obj,&EntrootBerry)
+		{
+		   propagate;
+		}
+
+		%% Item must have been an entroot berry.  See if there are
+		%% enough, and take it away.
+		if send(obj,@GetNumber) > 9
+		{
+			send(self,@SayToOne,#target=who,#message_rsc=hazarbart_enough);
+			Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);
+			oShield=Create(&KnightShield);
+			send(who,@newhold,#what=oShield);
+			send(obj,@delete);
+			return;			
+		}
+
+		%% There aren't enough.  Tell him to get more.
+		send(self,@SayToOne,#target=who,#message_rsc=hazarbart_not_enough);
+		return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

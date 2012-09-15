@@ -1,0 +1,1419 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall is Room
+
+constants:
+
+   include blakston.khd
+
+   STATUS_UNOWNED = 0
+   STATUS_OKAY = 3
+   STATUS_RAIDED = 1
+   STATUS_CONQUERED = 2
+
+   SHIELD_OFF = 1
+   SHIELD_ON = 2
+
+   % real value, 10 minutes
+   CONQUER_DELAY = 600000
+   % one hour
+   CONQUER_RENT_DELAY = 3600000   
+
+   PURCHASE_MODIFIER = 5000
+   RENT_MODIFIER = 50
+
+resources:
+
+   guildhall_hotplate_firstpass = "Player passed first check."
+   guildhall_hotplate = "Player just hit hotplate #%i."
+   guildhall_entered_legally = "Guild hall just entered legally."
+   guildhall_muffled = "You hear muffled conversation."
+   guildhall_cant_flip = \
+      "Nothing you do seems to make this device do anything."
+
+   guildhall_being_raided = "~B%s, home of %s%q, is being raided by %s%q!"
+   guildhall_player_raided = "~B%s, home of %s%q, is being raided by %s%s!"
+   guildhall_raided = \
+      "~BAs you enter the guild hall, you notice that its magical defenses "
+      "are down!"
+   guildhall_being_raided_ally = "~B%s, home of %s%q, is being raided by %s%q!"
+   guildhall_shield_lower = \
+      "~BThe mana field around you fluctuates as %s%s lowers the guild "
+      "hall's magical defenses!"
+   guildhall_shield_raise = \
+      "~B%s%s reactivates the guild hall's magical defenses."
+   guildhall_shield_lower_raider = \
+      "~BYou have lowered the guild hall's defenses, meaning that anyone can "
+      "enter the guild hall.  If you do not reactivate the shield, the guild "
+      "hall may be declared conquered!"
+
+   guildhall_conquer_safety_check = \
+      "Flipping a guild switch is an outlaw action.  You must have your "
+      "safety OFF in order to continue with this action!"
+   guildhall_conquer_outlaw = \
+      "You have been branded an outlaw for attempting to conquer a guild hall!"
+
+   guildhall_uneasiness = \
+      "~BYou experience a vague feeling of uneasiness, as if your hall may "
+      "not be safe."
+
+   guildhall_default_password = "aardvark"
+
+   guildhall_no_guild = \
+      "You may not rent a guild hall unless you belong to a guild!"
+   guildhall_not_mature = \
+      "Your guild is not yet mature, and may not yet rent a guild hall."
+   guildhall_already_has = \
+      "You may not rent a new guild hall until you abandon your current guild "
+      "hall!"
+   guildhall_already_rented = "Your guild is already renting this guild hall!"
+
+   guildhall_conquered = "~B%s, home of %s%q, has been conquered!"
+   guildhall_conquerer = \
+      "~B%s, home of %s%q, has been conquered by %s%q!\nFor a short time, "
+      "Frular will rent it to you and only you."
+   guildhall_conquerer_unguilded = \
+      "~B%s, home of %s%q, has been conquered by %s%s!"
+
+   guildhall_new_password = "~B%s's password has been changed."
+
+   guildhall_cant_open = \
+      "%s's magic defenses prevent you from opening the outer door."
+   guildhall_new_occupants = "~B%s has been rented to new owners."
+   guildhall_someone_rented = "Someone has already rented this guild hall."
+
+   guildhall_newsball = "news"
+   guildhall_newsdesc = "This is the latest guild news."
+
+   guildhall_sound_down = shielddn.wav
+   guildhall_sound_up = shieldup.wav
+
+   guildhall_music = ltlgirl.mid
+
+   guildhall_entrancedoor_open_sound = doorrsup.wav
+   guildhall_entrancedoor_close_sound = doordown.wav
+   
+classvars:
+
+   viNews_row
+   viNews_col
+   viNews_finerow
+   viNews_finecol
+
+   viFoyer_north
+   viFoyer_south
+   viFoyer_east
+   viFoyer_west
+
+   viLever_row
+   viLever_col
+   viLever_fine_row = 32
+   viLever_fine_col = 32
+
+   % Quality is the overall guildhall quality, ranges from 1 to 10
+   viQuality = 6       
+
+   viPermanent_flags = ROOM_SANCTUARY % | ROOM_SAFELOGOFF
+   viTerrain_type = TERRAIN_GUILDHALL
+
+   vrNewsdesc = guildhall_newsdesc
+
+   viInner_teleport_row = $
+   viInner_teleport_col = $
+
+   % Player can only enter the guild hall if he enters in this amount of time.
+   viSeconds_til_close = 20     
+
+   vrEntrancedoor_open_sound = guildhall_entrancedoor_open_sound
+   vrEntrancedoor_close_sound = guildhall_entrancedoor_close_sound
+   vrSecretdoor_open_sound = guildhall_entrancedoor_open_sound
+   vrSecretdoor_close_sound = guildhall_entrancedoor_close_sound
+
+properties:
+
+   prMusic = guildhall_music
+
+   piConquer_delay = CONQUER_DELAY
+   piConquer_rent_delay = CONQUER_RENT_DELAY
+
+   piOutside_factor = OUTDOORS_NONE
+   piBaselight = LIGHT_NICE
+
+   poGuild_owner = $
+   poConquerer = $
+   poOld_guild = $
+
+   piStatus = STATUS_UNOWNED
+   poShield_lever = $
+
+   pbSecretDoorOpen = FALSE
+
+   % pbBetrayed = TRUE anytime a guild member is the conquerer.
+   pbBetrayed = FALSE
+
+   % If this is true, a single player took over the guild hall (he probably
+   %  had help)
+   pbMercenary_Conquered = FALSE  
+
+   ptWarning = $
+   ptConquer = $
+
+   plGuild_doors = $
+   prNewsball = $
+
+   % plHotplate1 contains a list of people who may be entering the hall
+   %  legally.  We do not put anyone on this list if they are on plHotPlate2
+   plHotPlate1 = $
+
+   % plHotPlate2 is full of illegal entry attempts.  They do not get put on
+   %  this list if they hit 1 already.  This is stored to be sure that
+   %  people don't run across 2 to tag 1, and run off again.
+   plHotPlate2 = $
+
+   % This is a list of people with full hall access: they can flip the switch
+   %  or get stuff out of the chest.
+   plLegal_Entry = $
+
+   piLastDoorOpen = 0
+
+messages:
+
+   Constructor()
+   {
+      local lGuilds, i;
+
+      prNewsBall = vrName;
+
+      % Hall adds itself to a list in system for the UI to use.
+      Send(SYS,@NewGuildHallToList,#hall=self);
+
+      % Must prevent a recreated guild hall from forgetting it's guild owner.
+      lGuilds = Send(SYS,@GetGuilds);
+      for i in lGuilds
+      {
+         if Send(i,@GetGuildhallNum) = piRoom_num
+         {
+            poGuild_owner = i;
+            piStatus = STATUS_OKAY;
+         }
+      }
+
+      propagate;
+   }
+
+   LeaveHold(what=$)
+   {
+      local i;
+
+      for i in plHotPlate1
+      {
+         if i = what  
+         {
+            plHotPlate1 = DelListElem(plHotPlate1,i);
+         }
+      }
+
+      for i in plHotPlate2
+      {
+         if i = what  
+         {
+            plHotPlate2 = DelListElem(plHotPlate2,i);
+         }
+      }
+
+      for i in plLegal_entry
+      {
+         if i = what  
+         {
+            plLegal_entry = DelListElem(plLegal_entry,i);
+         }
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   "Two objects that all guild halls have:  newsball and lever."
+   {
+      local oNews;
+
+      Send(self,@CreateHotPlates);
+      Send(self,@CreateShieldLever);
+
+      oNews = Send(SYS,@FindNewsByNum,#num=piRoom_num);
+
+      if oNews = $
+      {
+         oNews = Create(&News,#nid=piRoom_num,#name=prNewsball,
+                        #desc=vrNewsdesc);
+      }
+
+      Send(self,@NewHold,#what=oNews,#new_row=viNews_row,#new_col=viNews_col,
+           #fine_row=viNews_finerow,#fine_col=viNews_finecol);
+
+      propagate;
+   }
+
+   CreateShieldLever()
+   {
+      if piStatus = STATUS_OKAY
+      {
+         poShield_lever = create(&GuildLever,#status=2);
+      }
+      else
+      {
+         poShield_lever = create(&guildLever);
+      }
+
+      Send(self,@NewHold,#what=poShield_lever,
+           #new_row=viLever_row,#new_col=viLever_col,
+           #fine_row=viLever_fine_row,#fine_col=viLever_fine_col);
+
+      return;
+   }
+
+   NewHold(what=$)
+   "Don't let anyone log in anyplace but the foyer!"
+   {
+      If IsClass(what,&Player)
+      {
+         % Post a message to be sure that it does this after
+         % the guy's stats are correctly set.
+         post(self,@ValidEntry,#what=what);
+
+         if piStatus = STATUS_RAIDED
+         {
+            Send(what,@MsgSendUser,#message_rsc=guildhall_raided);
+         }
+      }
+
+      propagate;
+   }
+
+   ValidEntry(what=$)
+   {
+      % If they can't open the door, make sure they're outside the foyer
+      if NOT Send(self,@CanEnter,#who=what)
+      {
+         Send(self,@Teleport,#what=what,#foyer=TRUE);
+      }
+
+      return;
+   }
+
+   TimeStampDoor()
+   {
+      piLastDoorOpen = GetTime();
+
+      return;
+   }
+
+   EnteredInTimeWindow()
+   {
+      if (GetTime() - piLastDoorOpen) > viSeconds_til_close
+      {
+         return FALSE;
+      }
+      
+      return TRUE;
+   }
+
+   ClaimGuildHall(oGuild = $, rep = $,password = $)
+   {
+      local i, thisGuild;
+
+      if rep = $
+      {
+         Debug("Getting to ClaimGuildHall with no rep declared!");
+
+         return FALSE;      
+      }
+
+      if poGuild_Owner <> $
+      {
+         return FALSE;
+      }
+
+      if oGuild = $
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guildhall_no_guild);
+
+         return FALSE;
+      }
+
+      if NOT Send(oGuild,@IsMature)
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guildhall_not_mature);
+
+         return FALSE;
+      }
+
+      if Send(oGuild,@GetGuildHall) = self
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guildhall_already_rented);
+
+         return FALSE;
+      }
+
+      if Send(oGuild,@GetGuildHall) <> $
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guildhall_already_has);
+
+         return FALSE;
+      }
+
+      piStatus = STATUS_OKAY;
+
+      if ptConquer <> $
+      {
+         DeleteTimer(ptConquer);                
+         ptConquer = $;
+      }
+
+      Send(self,@DefensesUp);
+
+      poGuild_Owner = oGuild;
+
+      pbBetrayed = FALSE;
+      pbMercenary_Conquered = FALSE;
+      poOld_guild = poGuild_owner;
+
+      Send(oGuild,@SetGuildHall,#RID=piRoom_num,#name=vrName,
+           #password=password);
+
+      for i in plPassive
+      {
+         if IsClass(First(i),&News)
+         {
+            Send(First(i),@DeleteAllMessages);
+         }
+      }
+
+      for i in plActive
+      {
+         if IsClass(First(i),&Player)
+         {
+            if Send(First(i),@GetGuild) = $ 
+               OR Send(First(i),@GetGuild) <> oGuild
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=guildhall_new_occupants,
+                    #parm1=vrName);
+               post(self,@Teleport,#what=First(i),#foyer=TRUE);
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
+   ResetGuildHall()
+   "Checks are all done in gcid_abandon."
+   {
+      local i;
+
+      pbMercenary_conquered = FALSE;
+      pbBetrayed = FALSE;
+      poGuild_owner = $;
+      poOld_guild = $;
+      piStatus = STATUS_UNOWNED;
+      poConquerer = $;
+
+      Send(self,@DefensesDown);
+
+      for i in plPassive
+      {
+         if IsClass(First(i),&News)
+         {
+            Send(First(i),@DeleteAllMessages);
+         }
+      }
+
+      if ptConquer <> $
+      {
+         DeleteTimer(ptConquer);
+         ptConquer = $;
+      }
+
+      if ptWarning <> $
+      {
+         DeleteTimer(ptWarning);
+         ptWarning = $;
+      }
+
+      return;
+   }
+
+   GetQuality()
+   "This number is used to determine initial 'down payment' and spread"
+   "out rent cost."
+   {
+      return viQuality;
+   }
+
+   GetPurchaseValue(who=$)
+   "This returns the value that the GuildCreator will sell the guild to."
+   "When the guild has been conquered, he will only sell the guild hall to "
+   "someone in the Conquering guild."
+   {
+      if piStatus = STATUS_UNOWNED
+      {
+         return viQuality * PURCHASE_MODIFIER;
+      }
+
+      if (piStatus = STATUS_CONQUERED AND Send(who,@GetGuild) = poConquerer)
+         AND NOT pbBetrayed
+      {
+         return (viQuality * PURCHASE_MODIFIER)/2;
+      }
+
+      if piStatus <> STATUS_RAIDED AND piStatus <> STATUS_OKAY
+      {
+         if (pbBetrayed AND Send(who,@GetGuild) <> poConquerer)
+         {
+            return viQuality * PURCHASE_MODIFIER;
+         }
+
+         if (pbMercenary_conquered AND Send(who,@GetGuild) <> poOld_Guild)
+         {
+            return viQuality * PURCHASE_MODIFIER;
+         }
+      }
+
+      % return -1 if this player cannot rent this guild hall.
+      return -1;   
+   }
+
+   GetRentValue()
+   "This is an HOURLY rate."
+   {
+      local iValue;
+
+      iValue = viQuality * RENT_MODIFIER;
+
+      % Twice the cost on Sacred Haven.
+      if NOT Send(SYS,@isPKAllowed)
+      {
+         iValue = iValue * 2;
+      }
+
+      return iValue;
+   }
+
+   OpenSecretDoor()
+   "Every guild hall must have this defined!  Or it's password will be "
+   "useless!"
+   {
+      Debug("Guild hall does not have individual secret door code written!!");
+
+      return;
+   }
+
+   AreDefensesDown() 
+   % Return whether the guild defenses are down, i.e. someone is trying to conquer
+   % the hall.
+   {
+      return piStatus = STATUS_RAIDED;
+   }
+
+   GuildLeverFlipped(who=$)
+   {
+      local i, j, allies, members, bFound, conq_rsc, oldstatus;
+
+      oldstatus = piStatus;
+
+      if piStatus = STATUS_CONQUERED OR piStatus = STATUS_UNOWNED
+      {
+         % This guild hall can't be raided right now.
+         Send(who,@MsgSendUser,#message_rsc=guildhall_cant_flip);
+
+         return;
+      }
+
+      if NOT Send(self,@CanRaidGuildhall,#who=who)
+      {
+         % The person isn't worthy, or this server doesn't allow it at all,
+         %  or it happened too recently for the server to allow it yet.
+         Send(who,@MsgSendUser,#message_rsc=guildhall_cant_flip);
+
+         return;
+      }
+
+      % Report the attempt.
+      ClearTempString();
+      AppendTempString("~B~g[~n");
+      AppendTempString("Guild switch in ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" flipped by ");
+      AppendTempString(Send(who,@GetTrueName));
+
+      if piStatus = STATUS_OKAY
+      {
+         AppendTempString(" to lower defenses");
+         Debug("Guild defenses in",Send(self,@GetName),"lowered by",
+               Send(who,@GetTrueName),who);
+      }
+
+      if piStatus = STATUS_CONQUERED
+      {
+         AppendTempString(" to raise defenses");
+      }
+
+      AppendTempString("~B~g]");
+      i = Send(SYS,@GetInvestigator);
+
+      if i <> $ and Send(i,@IsLoggedOn)
+      {
+         Send(i,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+              #parm1=getTempString(),#type1=0);
+      }
+
+      Send(SYS,@MailSrGuardian,#from=self,#subject=Send(who,@GetTrueName),
+           #body=getTempString());
+      ClearTempString();
+
+      % Raiding or saving the guildhall.
+      % REVIEW: break this up into separate handlers.
+
+      if piStatus = STATUS_OKAY      
+      {
+         % Someone is raiding the guildhall!
+
+         % If the guild is too young then that guild may not conquer another
+         %  guild.
+         poConquerer = Send(who,@GetGuild);
+
+         if poConquerer = $
+         {
+            poConquerer = who;
+            pbMercenary_conquered = TRUE;
+         }
+         else
+         {
+            if poConquerer = poGuild_owner
+            {
+               pbBetrayed = TRUE;
+            }
+         }
+
+         % Check for safety for non-betrayers.
+         if (NOT pbBetrayed)
+            AND Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
+         {
+            % If safety is on, let them know they need to take it off.
+            Send(who,@MsgSendUser,#message=guildhall_conquer_safety_check);
+
+            return;
+         }
+
+         piStatus = STATUS_RAIDED;
+
+         if ptConquer <> $
+         {
+            DeleteTimer(ptConquer);                
+            ptConquer = $;
+         }
+
+         ptConquer = CreateTimer(self,@ConquerTimer,piConquer_delay);
+
+         Send(self,@DefensesDown);
+
+         for i in plActive
+         {
+            if IsClass(First(i),&Player)
+            {
+               if First(i) = who
+               {
+                  Send(First(i),@MsgSendUser,
+                       #message_rsc=guildhall_shield_lower_raider);                    
+               }
+               else
+               {
+                  Send(First(i),@MsgSendUser,
+                       #message_rsc=guildhall_shield_lower,
+                       #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
+               }
+            }
+         }
+
+         if IsClass(poConquerer,&Player)
+            OR Send(poGuild_owner,@IsEnemy,#otherguild=poConquerer)
+         {
+            if IsClass(poConquerer,&Player)
+            {
+               conq_rsc = guildhall_player_raided;
+            }
+            else
+            {
+               conq_rsc = guildHall_being_raided;
+            }
+
+            members = Send(poGuild_owner,@GetMemberList);
+            for i in members
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=conq_rsc,
+                    #parm1=vrName,
+                    #parm2=Send(poGuild_owner,@GetDef),
+                    #parm3=Send(poGuild_owner,@GetName),
+                    #parm4=Send(poConquerer,@GetDef),
+                    #parm5=Send(poConquerer,@GetName));
+            }
+
+            allies = Send(poGuild_owner,@GetAllyList);
+            for j in allies
+            {
+               members = Send(j,@GetMemberList);
+               for i in members
+               {
+                  Send(First(i),@MsgSendUser,#message_rsc=conq_rsc,
+                       #parm1=vrName,
+                       #parm2=Send(poGuild_owner,@GetDef),
+                       #parm3=Send(poGuild_owner,@GetName),
+                       #parm4=Send(poConquerer,@GetDef),
+                       #parm5=Send(poConquerer,@GetName));
+               }
+            }
+         }
+         else
+         {
+            % Delay the warning for non-enemy conquering guilds.
+            ptWarning = CreateTimer(self,@WarnGuildMembers,
+                                    Random(60000,180000));
+         }
+
+         % They conquered the guild hall....
+         if NOT (pbBetrayed OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         {
+            % Make them an outlaw!
+            Send(who,@MsgSendUser,#message=guildhall_conquer_outlaw);
+            Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
+         }
+
+         return;
+      }
+    
+      if piStatus = STATUS_RAIDED
+      {
+         % Someone is rescuing the guild hall!
+
+         for i in plActive
+         {
+            if IsClass(First(i),&Player)
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=guildhall_shield_raise,
+                    #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
+            }
+         }
+
+         piStatus = STATUS_OKAY;
+         pbBetrayed = FALSE;
+
+         if ptWarning <> $
+         {
+            DeleteTimer(ptWarning);
+            ptWarning = $;
+         }
+
+         if ptConquer <> $
+         {
+            DeleteTimer(ptConquer);
+            ptConquer = $;
+         }
+
+         Send(self,@DefensesUp);
+
+         poConquerer = $;
+         pbMercenary_Conquered = FALSE;
+         pbBetrayed = FALSE;
+
+         return;
+      }
+
+      return;
+   }
+   
+   CanRaidGuildhall(who=$)
+   "Returns TRUE if who can raid the guild hall, FALSE otherwise."
+   {
+      local oRaidingGuild;
+
+      if (NOT Send(Send(SYS, @GetSettings), @GuildHallRaidsEnabled))
+         OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         return FALSE;
+      }
+
+      oRaidingGuild = Send(who,@GetGuild);
+      if oRaidingGuild = $
+         OR NOT Send(oRaidingGuild,@IsMature)
+         OR GetTime() < Send(oRaidingGuild,@GetLastGuildhallRaid) + 
+                        Send(Send(SYS, @GetSettings), @GetGuildhallRaidDelay)
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   ConquerTimer()
+   "If this is hit, then check to see if the guild hall is conquered."
+   {
+      local members, i, oGuild;
+
+      ptConquer = $;
+
+      if piStatus = STATUS_RAIDED and poConquerer <> $
+      {
+         piStatus = STATUS_CONQUERED;
+
+         if IsClass(poConquerer,&Guild)
+         {
+            if poConquerer = poGuild_owner
+            {
+               pbBetrayed = TRUE;
+            }
+            else
+            {
+               Send(poConquerer,@SetLastGuildhallRaid);
+               members = Send(poConquerer,@getmemberlist);
+               for i in members
+               {
+                  Send(First(i),@MsgSendUser,#message_rsc=guildhall_conquerer,
+                       #parm1=vrName,
+                       #parm2=Send(poGuild_owner,@GetDef),
+                       #parm3=Send(poGuild_owner,@GetName),
+                       #parm4=Send(poConquerer,@GetDef),
+                       #parm5=Send(poConquerer,@GetName));
+               }
+            }
+         }
+         else
+         {
+            Send(poConquerer,@MsgSendUser,#message_rsc=guildhall_conquerer,
+                 #parm1=vrName,
+                 #parm2=Send(poGuild_owner,@GetDef),
+                 #parm3=Send(poGuild_owner,@GetName),
+                 #parm4=Send(poConquerer,@GetDef),
+                 #parm5=Send(poConquerer,@GetName));
+         }
+         for i in plActive
+         {
+            if IsClass(First(i),&Player)
+            {
+               oGuild = Send(First(i),@GetGuild);
+               if (oGuild = $ and First(i) <> poCOnquerer)
+                  OR (oGuild <> poConquerer AND oGuild <> poGuild_Owner
+                      AND NOT Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
+               {
+                  Send(First(i),@MsgSendUser,#message_rsc=guildhall_conquered,
+                       #parm1=vrName,#parm2=Send(poGuild_owner,@GetDef),
+                       #parm3=Send(poGuild_owner,@GetName));
+               }
+            }
+         }
+         for i in plPassive
+         {
+            if IsClass(First(i),&news)
+            {
+               Send(First(i),@deleteallmessages);
+            }
+         }
+
+         Send(poGuild_owner,@GuildHallConquered,#name=vrName,
+              #betrayed=pbBetrayed);
+         poGuild_owner = $;
+         ptConquer = CreateTimer(self,@ConquerTimer,piConquer_rent_delay);
+      }
+      else
+      {
+         % The guild hall was conquered, but was unclaimed by the conquerers.
+         % The guild hall is now available for anyone to rent again.
+
+         if piStatus = STATUS_CONQUERED
+         {
+            poGuild_owner = $;
+            poOld_guild = $;
+            ptConquer = $;
+            pbMercenary_conquered = FALSE;
+            pbBetrayed = FALSE;
+            piStatus = STATUS_UNOWNED;
+         }
+         else
+         {
+            Debug("ConquerTimer called when status is neither raided nor "
+                  "conquered!");
+         }
+      }
+
+      return;
+   }
+
+   DefensesUp()
+   "This is used by individual guild halls to perform special actions, such "
+   "as guild hall 6's lowering maze."
+   {
+      if poShield_lever<> $
+      {
+         Send(poShield_lever,@ChangeGraphic,#new_state=SHIELD_ON);
+      }
+   
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall_sound_up);
+
+      return;
+   }
+
+   DefensesDown()
+   "In general, this is used only to undo DefensesUp."
+   {
+      if poShield_lever <> $
+      {
+         Send(poShield_lever,@ChangeGraphic,#new_state=SHIELD_OFF);
+      }
+   
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall_sound_down);
+
+      return;
+   } 
+
+   WarnGuildMembers()
+   {
+      local i, members;
+
+      ptWarning = $;
+
+      members = Send(poGuild_owner,@GetMemberList);
+      for i in members
+      {
+         if Send(First(i),@GetOwner) <> self
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=guildhall_uneasiness);
+         }
+      }
+
+      return;
+   }
+
+   InFoyer(who=$)
+   "This returns TRUE if the player is in the foyer area, and FALSE if the "
+   "player is in the guild hall proper.  Note that the declared silence area "
+   "must now be perfectly rectangular."
+   {
+      local iRow, iCol;
+
+      if Send(who,@GetOwner) <> self
+      {
+         return FALSE;
+      }
+
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+
+      if iRow >= viFoyer_north AND iRow <= viFoyer_South
+         AND iCol <= viFoyer_east AND iCol >= viFoyer_west
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   "If someone is in the foyer while you are in the guild hall proper, do "
+   "not send them any conversation."
+   {
+      local i, each_obj;
+
+      if what = $
+      {
+         propagate;
+      }
+
+      if IsClass(what,&admin) AND stringEqual(string,"shatterlock")
+      {
+          Send(self,@OpenEntranceDoor);
+
+          propagate;
+      }
+
+      if type = SAY_YELL OR NOT IsClass(what,&Player)
+      {
+          propagate;
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+
+         if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         {
+            if Send(self,@InFoyer,#who=what)
+               = Send(self,@InFoyer,#who=each_obj)
+            {
+               Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
+                    #parm1=parm1, #parm2=parm2,#parm3=parm3,#parm4=parm4,
+                    #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+            }
+            else
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=guildhall_muffled);
+            }
+         }
+      }
+
+      if poGuild_owner <> $
+         AND StringEqual(string,Send(poGuild_owner,@GetPassword))
+         AND NOT Send(self,@InFoyer,#who=what)
+         AND NOT pbSecretDoorOpen
+         AND type <> SAY_EMOTE
+      {
+         Send(self,@OpenSecretDoor);
+      }
+
+      return;
+   }
+
+   GetPassword()
+   {
+      return Send(poGuild_owner,@GetPassword);
+   }
+
+   SomethingTryGo(what=$, row=$, col=$)
+   "Opens the guild outer doors, but only if you're a guildmember!"
+   {
+      local i;
+
+      for i in plGuild_doors
+      {
+         if row = First(i) AND col = Nth(i,2)
+         {
+            % check to see if the doors should open
+            if piStatus = STATUS_OKAY
+               AND NOT Send(self,@CanEnter,#who=what)
+            {
+               Send(what,@MsgSendUser,#message_rsc=guildhall_cant_open,
+                    #parm1=vrName);
+
+               return TRUE;
+            }
+            else
+            {
+               Send(self,@OpenEntranceDoor);
+
+               return TRUE;
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   OpenEntranceDoorSound()
+   {
+      Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_open_sound); 
+
+      return;
+   }
+
+   CloseEntranceDoorSound()
+   {
+      Send(self,@SomethingWaveRoom,#wave_rsc=vrEntrancedoor_close_sound); 
+
+      return;
+   }
+
+   OpenSecretDoorSound()
+   {
+      Send(self,@SomethingWaveRoom,#wave_rsc=vrSecretdoor_open_sound); 
+
+      return;
+   }
+
+   CloseSecretDoorSound()
+   {
+      Send(self,@SomethingWaveRoom,#wave_rsc=vrSecretdoor_close_sound); 
+
+      return;
+   }
+
+   CanEnter(who=$)
+   "Only guild members and their allies can enter the guild, but not their "
+   "apprentices.  Also determines who can log off safely and remain inside "
+   "the guild hall."
+   {
+      local oGuild;
+
+      if poGuild_owner = $
+      {
+         return TRUE;
+      }
+
+      oGuild = Send(who,@GetGuild);
+
+      if (oGuild = poGuild_owner
+          OR Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
+         AND Send(oGuild,@GetRank,#who=who) >= RANK_SIR
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   Delete()
+   {
+      Send(SYS,@RemoveGuildHallFromList,#hall=self);
+
+      poGuild_owner = $;
+      poConquerer = $;
+      poOld_guild = $;
+      poShield_lever = $;
+      plGuild_doors = $;
+      plHotPlate1 = $;
+      plHotPlate2 = $;
+      plLegal_Entry = $;
+
+      if ptWarning <> $
+      {
+         DeleteTimer(ptWarning);
+         ptWarning = $;
+      }
+
+      if ptConquer <> $
+      {
+         DeleteTimer(ptConquer);
+         ptConquer = $;
+      }
+
+      propagate;
+   }
+
+   DefunctGuild(what=$)
+   "Must delete all properties associated with a guild, if it should be "
+   "deleted!"
+   {
+      if what = $
+      {
+         Debug(self,"got to defunct guild with no argument!");
+         return;
+      }
+
+      if piStatus = STATUS_UNOWNED
+      {
+         Send(self,@ResetGuildHall);
+
+         return;          
+      }
+
+      if piStatus = STATUS_OKAY
+      {
+         if what = poGuild_owner
+         {
+            Send(self,@ResetGuildHall);
+
+            return;
+         }
+
+         if what = poConquerer
+         {
+            poConquerer = $;
+         }
+
+         if what = poOld_guild
+         {
+            % This should never happen
+            poOld_Guild = poGuild_owner;   
+         }
+
+         return;
+      }     
+
+      if piStatus = STATUS_CONQUERED
+      {
+         if what = poConquerer
+         {
+            Send(self,@ResetGuildHall);
+
+            return;
+         }
+
+         if what = poGuild_owner
+         {
+            Debug("DefunctGuild: poGuildOwner points to defuncted guild, but "
+                  "hall is conquered!");
+            poGuild_owner = $;               
+         }
+
+         if what = poOld_Guild
+         {
+            poOld_guild = $;
+         }
+
+         return;
+      }
+
+      if piStatus = STATUS_RAIDED
+      {
+         if what = poConquerer AND what = poGuild_owner
+         {
+            Send(self,@ResetGuildHall);
+
+            return;
+         }
+
+         if what = poConquerer
+         {
+            piStatus = STATUS_OKAY;
+
+            if ptWarning <> $
+            {
+              DeleteTimer(ptWarning);
+              ptWarning = $;
+            }
+
+            if ptConquer <> $
+            {
+              DeleteTimer(ptConquer);
+              ptConquer = $;
+            }
+
+            Send(self,@DefensesUp);
+
+            poConquerer = $;
+            pbMercenary_Conquered = FALSE;
+            pbBetrayed = FALSE;
+         }
+
+         if what = poGuild_Owner
+         {
+            if ptConquer <> $
+            {
+              DeleteTimer(ptConquer);
+              ptConquer = $;
+            }
+
+            % Conquer it prematurely.
+            Send(self,@ConquerTimer);   
+         }
+
+         if what = poOld_guild
+         {              
+            poOld_guild = poGuild_owner;
+         }
+      }
+
+      return;
+    }
+
+   Teleport(what=$,foyer=FALSE)
+   "Admin supported.\n"
+   "For guild halls - if you're in the guild hall, use secondary blink "
+   "coordinates."
+   {
+      if foyer
+      {
+         propagate;
+      }
+
+      if Send(what,@GetOwner) <> self
+         OR Send(self,@InFoyer,#who=what)
+      {
+         propagate;
+      }
+
+      if viInner_teleport_row <> $ AND viInner_Teleport_col <> $
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=viInner_teleport_row,#new_col=viInner_teleport_col);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   GetStatus()
+   {
+      return piStatus;
+   }
+
+   GetGuildOwner()
+   {
+      return poGuild_owner;
+   }
+
+   CreateYellZoneList()
+   {
+      plYell_zone = $;
+
+      return;
+   }
+
+   SomethingHitHotPlate(what=$, hpid=$)
+   {
+      local i, bFound;
+
+      if what= $ OR hpid = $
+      {
+         Debug("Invalid data passed to SomethingHitHotPlate!");
+
+         return;
+      }
+
+      if IsClass(what,&DM) AND Send(Send(SYS, @GetSettings), @ReportHotPlates)
+      {
+         Send(what,@MsgSendUser,#message_rsc=guildhall_hotplate,#parm1=hpid);
+      }
+
+      for i in plLegal_Entry
+      {
+         if i = what
+         {
+            return;
+         }
+      }
+
+      % Player hit hotplate1.  If they are not on hotplate2 list, 
+      %  add them to our list.
+      if hpid = 1
+      {
+         for i in plHotPlate2
+         {
+            if i = what
+            {
+               return;
+            }
+         }         
+
+         for i in plHotPlate1
+         {
+            if i = what
+            {
+               return;
+            }
+         }         
+
+         if Send(self,@EnteredInTimeWindow)
+         {
+            plHotPlate1 = Cons(what,plHotPlate1);
+         }
+         else
+         {
+            Debug("ALERT! Player",Send(what,@GetTrueName),"entered guild hall",
+                  Send(self,@GetName),"after door closed already!");
+         }
+
+         if IsClass(what,&DM) AND Send(Send(SYS, @GetSettings), @ReportHotPlates)
+         {
+            Send(what,@MsgSendUser,#message_rsc=guildhall_hotplate_firstpass);
+         }
+
+         return;
+      }
+
+      if hpid = 2
+      {
+         for i in plHotPlate2
+         {
+            if i = what
+            {
+               return;
+            }
+         }         
+
+         for i in plHotPlate1
+         {
+            if i = what
+            { 
+               % Theoretically, a legal entry.
+               plLegal_entry = Cons(i,plLegal_entry);
+               if IsClass(what,&DM) AND Send(Send(SYS, @GetSettings), @ReportHotPlates)
+               {
+                  Send(what,@MsgSendUser,
+                       #message_rsc=guildhall_entered_legally);
+               }
+
+               return; 
+            }
+         }
+
+         % Theoretically, an illegal entry.
+         for i in plHotPlate2
+         {
+            if i = what
+            {
+               return;
+            }   
+         }
+
+         plHotPlate2 = Cons(what,plHotPlate2);         
+
+         return;
+      }
+
+      return;
+   }  
+
+   ReqLegalEntry(who=$)
+   {
+      local i;
+
+      if poGuild_Owner = $
+      {
+         return TRUE;
+      }
+
+      if poGuild_owner = Send(who,@GetGuild)
+      {
+         % These players can always log into their own guild
+         return TRUE;
+      }
+
+      for i in plLegal_entry
+      {
+         if i = who
+         {
+            return TRUE;
+         }
+      }
+
+      % Okay, we're pretty sure this is a bastard PKK wuss.
+      Debug("Player",Send(who,@GetTrueName),"broke into guild hall",
+            Send(self,@GetName),"illegally!");
+
+      return FALSE;
+   }
+
+   CreateHotPlates()
+   {
+      return;
+   }   
+ 
+   ReqTakeFromGuildChest(what=$,taker=$)
+   {
+      if Send(self,@ReqLegalEntry,#who=taker)
+      {
+         return TRUE;
+      }
+
+      Debug("Player",Send(taker,@GetTrueName),"stealing items from chest in",
+            Send(self,@GetName),"illegally.");
+
+      return FALSE;
+   }
+
+   CanHavePlayerPortal(who = $)
+   {
+      % Don't allow portals into guild halls
+      return false;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

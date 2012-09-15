@@ -1,0 +1,74 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LeatherArmor is Armor
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   leatherarmor_name_rsc = "leather armor"
+   leatherarmor_icon_rsc = leathamr.bgf
+   leatherarmor_desc_rsc = \
+      "This armor is made from thick, cured troll hides "
+      "roughly stitched together.  Despite a smell reminiscent "
+      "of rotting troll meat, the armor provides some "
+      "protection."
+
+   leatherarmor_male_icon_rsc = btg.bgf
+   leatherarmor_female_icon_rsc = bth.bgf
+
+classvars:
+
+   vrName = leatherarmor_name_rsc
+   vrIcon = leatherarmor_icon_rsc
+   vrDesc = leatherarmor_desc_rsc
+
+   viHits_init_min = 300
+   viHits_init_max = 350
+
+   viValue_average = 400
+   viWeight = 100
+   viBulk = 150
+
+   viSpell_modifier = -10
+
+
+   vrIcon_male = Leatherarmor_male_icon_rsc
+   vrIcon_female = Leatherarmor_female_icon_rsc
+
+   viDefense_base = 50
+   viDamage_base = 0
+
+properties:
+   
+messages:
+
+   ShowShirt()
+   {
+      return TRUE;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_ALL,5]
+             ];
+   }
+
+   GetHeatDamage()
+   {
+      return 1;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

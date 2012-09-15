@@ -1,0 +1,16 @@
+# Axe - FP 
+# groups
+# 1-4 attacking
+# 5 carrying
+5
+axepovA.bmp  [0, 0]
+axepovB.bmp  [0, 0]
+axepovC.bmp  [0, 0]
+axepovD.bmp  [0, 0]
+axepovH.bmp  [0, 0]
+5
+ 1      1
+ 1      2
+ 1      3
+ 1     4 
+ 1      5

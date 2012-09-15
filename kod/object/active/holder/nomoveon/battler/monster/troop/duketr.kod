@@ -1,0 +1,60 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DukeTroop is FactionTroop
+
+constants:
+
+include blakston.khd
+
+resources:
+
+   DukeTroop_name_rsc = "soldier of the Duke's army"
+
+   DukeTroop_desc_rsc = \
+   "This soldier proudly bears the colors of the Duke."
+
+   DukeTroop_dead_name_rsc = "dead soldier"
+   DukeTroop_sound_aware = trps3awr.wav
+
+classvars:
+
+   vrName = DukeTroop_name_rsc
+   vrDesc = DukeTroop_desc_rsc
+   vrDead_name = DukeTroop_dead_name_rsc
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
+
+   viChanceFemale = 50  % percentage chance to be female
+
+   viColorTranslate1 = XLAT_TO_PURPLE     % Shirt
+   viColorTranslate2 = XLAT_TO_BLUE   % Pants
+   vcShieldClass = &DukeShield
+
+   viFaction = FACTION_DUKE
+
+properties:
+
+   piBaseLevel = 50
+   piBaseDifficulty = 2
+
+   %Here so they can be set
+   viLevel = 50         % piBaseLevel
+   viDifficulty = 2     % piBaseDifficulty
+
+   vrSound_aware = DukeTroop_sound_aware
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

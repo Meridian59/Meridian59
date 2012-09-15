@@ -1,0 +1,65 @@
+# male torso, robed
+# Groups:
+# 1 standing
+# 2-4 fighting
+# 5 bow-shooting
+# Hotspots:
+# 1 head
+# 21 right arm
+# 31 left arm
+# 41 legs
+#^Applied to Hotspot: 51
+#*Groups: 21
+#* Unlabeled Group
+#* attack A
+#* attack A
+#* attack B
+#* Unlabeled Group
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+-s 4
+8
+180caaFm.bmp   [172, 91] 
+270ccaFm.bmp   [189, 107] 
+180ccaFm.bmp   [166, 107] 
+180ccbFm.bmp   [178, 107] 
+090ccbFm.bmp   [165, 107] 
+315ckaFm.bmp   [197, 99] 
+270ckaFm.bmp   [184, 97] 
+180ckaFm.bmp   [173, 100] 
+21
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 6 7 8 8 8 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 0 1 1 1 0 0 

@@ -1,0 +1,734 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NecArena is Room
+
+constants:
+
+   include blakston.khd
+
+   % Boundaries of the playing field
+   NORTH_BOUNDARY = 8
+   SOUTH_BOUNDARY = 17
+   WEST_BOUNDARY = 7
+   EAST_BOUNDARY = 19
+
+   % Sector ids for moving platforms and lava pit.
+   NW_PLATFORM = 12
+   NE_PLATFORM = 11
+   E_PLATFORM = 10
+   SE_PLATFORM = 9
+   SW_PLATFORM = 7
+   W_PLATFORM = 6
+   CENTER_PLATFORM = 8
+   LAVA_PIT = 5
+
+   % Sector states
+   UP = 1
+   DOWN = 2
+
+   % How long between lava checks?
+   LAVA_TIMER = 1000
+
+   % What's the delay before we send them to the shrine?
+   SHRINE_DELAY = 3000
+
+   SHRINE_USED = 3 * 60 * 1000
+
+   % Delay after shrine is used before people are teleported back.
+   TELEPORT_DELAY = 5000
+
+resources: 
+
+   name_NecArena = "Goad's Grinder"
+   room_NecArena = necarena.roo
+   NecArena_music = nec02.mid
+
+   NecArena_no_offer = "Goad hisses, \"No helping the sacrifices.\""
+   NecArena_no_attack = "If you want to die, come onto the arena floor."
+   NecArena_no_spell = "If you want to die, come onto the arena floor."
+   NecArena_no_rescue = "Sorry fool, there's no escape!"
+   NecArena_no_target = "Sorry fool."
+   NecArena_between_bouts = "The time to die has not yet come!"
+
+classvars:
+
+   vrName = name_NecArena
+
+   viTeleport_row = 22
+   viTeleport_col = 13
+
+   viPermanent_flags = ROOM_SAFE_DEATH
+
+properties:
+
+   poWatcher = $
+
+   prRoom = room_NecArena
+   piRoom_num = RID_BRAX_ARENA
+
+   prMusic = NecArena_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 5
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   viTerrain_type = TERRAIN_CITY | TERRAIN_LAVA
+
+   pbLocked = FALSE
+
+   ptSafeLimit = $
+
+   % Used to override the advancement and death checks.
+   pbRealDeath = FALSE  
+
+   pbShrineInUse = FALSE
+
+   % Keeps track of people who get to go to the shrine.
+   plGoToShrine = $
+   % Delays sending winners to the shrine - for suspense.
+   ptGoToShrineTimer = $  
+
+   % Keeps track of whether or not a given start possition is occupied.
+   plOccupied = $
+
+   poShrine = $
+
+   ptCheckLavaTimer = $
+   ptShrineUsedTimer = $
+   ptDelayedTeleportTimer = $
+   
+messages:
+
+
+   CanOffer(who = $, target = $)
+   {
+      if who = $ OR target = $
+      {
+         return FALSE;
+      }
+
+      if poWatcher = $
+      {
+         return TRUE;
+      }  
+
+      if NOT Send(poWatcher,@FightInSession)
+      {
+         return TRUE;
+      }
+
+      if Send(poWatcher,@IsCombatant,#who=who) =
+         Send(poWatcher,@IsCombatant,#who=target)
+      {
+         return TRUE;
+      }
+
+      Send(who,@msgSenduser,#message_rsc=NecArena_no_offer);
+
+      return FALSE;
+   }
+
+   CheckWatcher(what=$)
+   {
+      if poWatcher = $
+      {
+         debug("Goad is nil!  Goad should never be nil!  Goad was moved!");
+         poWatcher = what;
+         Send(self,@NewHold,#what=what,#new_row=13,#new_col=20,
+              #fine_row=0,#new_angle=ANGLE_WEST);
+      }
+
+      return;
+   }
+
+   % There are no consequences for killing in the arena.
+   SafePlayerAttack()
+   {
+      return True;
+   }
+
+   NewHold(what = $,new_row = 22, new_col = 11)
+   "will move anyone who enters in the playing field into the stands."
+   "This should only be necessary for people who drop link."
+   {
+      if IsClass(what,&Item)
+      {
+         % Have to post this to handle numberitems and SYS can't handle posts.
+         Post(self,@PostShrineCheckItem,#what=what);  
+      }
+
+      if IsClass(what,&User) AND Send(what,@GetOwner) = $
+      {
+         Post(self,@Teleport,#what=what,#outofplay=TRUE);
+      }
+
+      propagate;
+   }
+
+   PostShrineCheckItem(what=$)
+   {
+      Send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=2);
+      debug("Sent SYS", poshrine,what,2);
+
+      return;
+   }
+   
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_BRAX, 28, 19, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      plOccupied = [ 0,0,0,0,0,0 ];
+      poShrine = create(&Shrine,#shrine_num=SHRINE_BRAX);
+      Send(self,@NewHold,#what=poShrine,#new_row=22,#new_col=13);
+
+      propagate;
+   }
+
+   CreateStandardObjects()   
+   "Creates the watcher"
+   {
+      if poWatcher = $
+      {
+         poWatcher = Create(&Goad);
+         Send(self,@NewHold,#what=poWatcher,#new_row=7,#new_col=13,
+              #fine_row=0,#new_angle=ANGLE_WEST);
+      }
+
+      propagate;
+   }
+
+   InPlay(what=$,row=0,col=0, bNonPlayerOkay = FALSE)  
+   "Returns true if player is on playing field, false if not."
+   "Can check either by row and column or by object."
+   "Returns false if not a player, unless the nonPlayerOkay flag is marked"
+   {
+      local iRow, iCol;
+
+      if what = $ AND row=0
+      {
+         return FALSE;
+      }
+      else
+      {
+         if row <> 0
+         {
+            iRow = row;
+            iCol = Col;
+         }
+         else
+         {
+            if IsClass(what,&Player) OR bNonPlayerOkay
+            {
+               iRow = Send(what,@GetRow);
+               iCol = Send(what,@GetCol);
+            }
+            else
+            {
+               return FALSE;
+            }
+         }
+
+      
+         if iRow < NORTH_BOUNDARY
+            OR iRow > SOUTH_BOUNDARY
+            OR iCol > EAST_BOUNDARY
+            OR iCol < WEST_BOUNDARY
+         {                                                                       
+            return FALSE;
+         }
+         else
+         {   
+            %% special for walls
+            if bNonPlayerOkay
+               AND (iRow = NORTH_BOUNDARY
+                    OR iRow = SOUTH_BOUNDARY
+                    OR iCol = EAST_BOUNDARY
+                    OR iCol = WEST_BOUNDARY)
+            {
+               return FALSE;
+            }
+            else
+            {
+               return TRUE;
+            }
+         }
+      }
+
+      return;
+   }
+
+   isArena()  
+   {
+      % This does not need to change for Goad's Grinder. 
+      return TRUE;
+   }
+
+   Teleport(what=$,goinplay=FALSE,outofplay=FALSE)  
+   {
+      local row, col, angle, rand, i;
+
+      i = 1;
+
+      if goinplay              
+      {
+         % teleport to the playing field
+         rand = random(1,6);
+
+         if length(plOccupied) <> 6
+         {
+            return FALSE;
+         }
+
+         while Nth(plOccupied,rand) AND i < 20
+         {
+            rand = random(1,6);
+            i = i + 1;
+         }
+
+         if i = 20
+         {
+            if FindListElem(plOccupied,0)
+            {
+               rand = FindListElem(plOccupied,0);
+            }
+            else
+            {
+               return FALSE;
+            }
+         }
+
+         if rand = 1
+         {
+            row = 10;
+            col = 9;
+         }
+         if rand = 2
+         {
+            row = 15;
+            col = 9;
+         }
+         if rand = 3
+         {
+            row = 10;
+            col = 13;
+         }
+         if rand = 4
+         {
+            row = 15;
+            col = 13;
+         }
+         if rand = 5
+         {
+            row = 10;
+            col = 17;
+         }
+         if rand = 6
+         {
+            row = 15;
+            col = 17;
+         }
+
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=row,#new_col=col);
+
+         % Mark position as occupied.
+         SetNth(plOccupied,rand,1);  
+
+         if ptCheckLavaTimer = $
+         {
+            ptCheckLavaTimer = CreateTimer(self,@CheckLava,LAVA_TIMER);
+         }         
+
+         return;
+      }
+
+      if outofplay = TRUE
+      {
+         rand = random(1,3);
+
+         if rand = 1
+         {
+            row = 9;
+            col = 6;
+            angle = ANGLE_EAST;
+         }
+         else
+         {
+            if rand = 2
+            {
+               row = 9;
+               col = 20;
+               angle = ANGLE_WEST;
+            }
+            else
+            {
+               row = 7;
+               col = 13;
+               angle = ANGLE_SOUTH;
+            }
+         }
+
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=row,#new_col=col,#new_angle=angle);
+
+         return;
+      }
+
+      if Send(poWatcher,@IsCombatant,#who=what)
+      {
+         % teleport to the playing field
+         rand = random(1,6);
+
+         if rand = 1
+         {
+            row = 10;
+            col = 9;
+         }
+
+         if rand = 2
+         {
+            row = 15;
+            col = 9;
+         }
+
+         if rand = 3
+         {
+            row = 10;
+            col = 13;
+         }
+
+         if rand = 4
+         {
+            row = 15;
+            col = 13;
+         }
+
+         if rand = 5
+         {
+            row = 10;
+            col = 17;
+         }
+
+         if rand = 6
+         {
+            row = 15;
+            col = 17;
+         }
+
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=row,#new_col=col);
+
+         return;
+      }
+
+      rand = random(1,3);
+
+      if rand = 1
+      {
+         row = 9;
+         col = 6;
+         angle = ANGLE_EAST;
+      }
+      else
+      {
+         if rand = 2
+         {
+            row = 9;
+            col = 20;
+            angle = ANGLE_WEST;
+         }
+         else
+         {
+            row = 7;
+            col = 13;
+            angle = ANGLE_SOUTH;
+         }
+      }
+
+      Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+           #new_row=row,#new_col=col,#new_angle=angle);
+
+      return;
+    }
+
+   BeginFight(lCombatants=$)  
+   {
+      plOccupied = [0,0,0,0,0,0];
+
+      return;
+   }
+
+   EndFight(lCombatants = $)
+   {
+      if plGoToShrine <> $
+      {
+         ptGoToShrineTimer = CreateTimer(self,@GoToShrineTimer,SHRINE_DELAY);
+      }
+
+      if ptCheckLavaTimer <> $
+      {
+         DeleteTimer(ptCheckLavaTimer);
+         ptCheckLavaTimer = $;
+      }
+
+      Send(self,@CheckLava,#flag=FALSE);
+
+      return;
+   }
+
+   IsLocked()
+   {
+      return pbLocked;
+   }
+
+   UnlockArena()
+   {
+      pbLocked = FALSE;
+      return;
+   }
+
+   ArenaRealDeath()
+   "This is to support an eventual switch to a real death option in the "
+   "arena, which is not yet implemented."
+   {
+      return pbRealdeath;
+   }
+
+   SomethingKilled(what=$,victim=$)
+   {
+      % You get to goto the shrine if you kill someone with 10 more hps
+      %  than you have.
+      if IsClass(victim,&User)
+      {
+         if (Send(what,@GetBaseMaxHealth) + 10) < Send(victim,@GetBaseMaxHealth)
+         {
+            plGoToShrine = cons(what,plGotoShrine);
+         }
+
+         Send(self,@teleport,#what=victim,#outofplay=TRUE);
+      }
+
+      propagate;
+   }
+
+   GoToShrineTimer()
+   {
+     ptGoToShrineTimer = $;
+
+     Send(self,@GoToShrine); 
+
+     return;
+   }
+
+   GoToShrine()
+   {
+      local i;
+      
+      if plGoToShrine <> $
+      {
+         pbShrineInUse = TRUE;
+         for i in plGoToShrine
+         {
+            if IsClass(Send(i,@GetOwner),&NecArena)
+            {
+               Send(SYS,@utilGoNearSquare,#what=i,#where=self,
+                    #new_row=19,#new_col=13,#fine_row=32,#fine_col=32,
+                    #new_angle = ANGLE_SOUTH);
+
+               % Only want one of these at a time.
+               if ptShrineUsedTimer = $ 
+               {
+                  ptShrineUsedTimer = CreateTimer(self,@ShrineUsedTimer,SHRINE_USED);
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   ShrineUsedTimer()
+   {
+      ptShrineUsedTimer = $;
+      Send(self,@ShrineUsed);
+
+      return;
+   }
+
+   ShrineUsed()
+   % Can be called by the shrine or a timer so check to kill the timer here as well.
+   {
+      local bCalledByShrine,iCntr;    
+
+      bCalledByShrine = FALSE;
+
+      pbShrineInUse = FALSE;
+
+      if ptShrineUsedTimer <> $
+      {
+         % So we know to delay teleportation a moment or two
+         bCalledByShrine = TRUE;  
+         DeleteTimer(ptShrineUsedTimer);
+         ptShrineUsedTimer = $;
+      }
+     
+      if bCalledByShrine
+      {
+         ptDelayedTeleportTimer = CreateTimer(self,@DelayedTeleportTimer,
+                                              TELEPORT_DELAY);
+      }
+      else
+      {
+         for iCntr in plGoToShrine
+         {
+            Send(iCntr,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
+         }
+      }
+
+      plGoToShrine = $;
+
+      return;
+   }  
+
+   DelayedTeleportTimer()
+   {
+      ptDelayedTeleportTimer = $;
+      Send(self,@DelayedTeleport);
+
+      return;
+   }
+
+   DelayedTeleport()
+   {
+      local iCntr;
+      
+      for iCntr in plGoToShrine
+      {
+         Send(self,@Teleport,#what=iCntr,#OutOfPlay=TRUE);
+      }
+
+      return;
+   }
+
+   GetWatcher()
+   {
+      return poWatcher;
+   }
+
+   CheckLava(flag = TRUE)
+   {
+      local i, oVictim, irow, icol, ifine_row, ifine_col, bInStands;
+
+      For i in plActive
+      {
+         if isClass(First(i),&User) AND Send(self,@InPlay,#what = First(i))
+         {
+            oVictim = First(i);
+
+            iRow = Send(oVictim,@GetRow);
+            iCol = Send(oVictim,@GetCol);
+
+            if (iRow > 7 AND iRow < 10)
+               OR ( iCol > 6 AND iCol < 9)
+               OR (iRow > 15 AND iRow < 18)
+               OR (iCol > 17 AND iCol < 20)
+               OR ((iRow > 10 AND iRow < 15)
+                   AND ((iCol > 9 AND iCol <13)
+                        OR (iCol > 13 AND iCol < 17)))
+            {
+               bInStands = FALSE;
+
+               if iRow = 8 AND (iCol = 7 OR iCol = 19)
+               {
+                  iFine_row = Send(oVictim,@GetFineRow);
+                  iFine_col = Send(oVictim,@GetFineCol);
+                    
+                  if iCol = 7
+                  {
+                     if (iFine_row + iFine_col) <= 64
+                     {
+                        bInStands = TRUE;
+                     }
+                  }
+
+                  if iCol = 19
+                  {
+                     if iFine_col >= iFine_row
+                     {
+                        bInStands = TRUE;
+                     }
+                  }
+                     
+               }
+                  
+               if NOT bInStands
+               {
+                  Send(self,@CookVictim,#what=oVictim);
+               }
+            }
+         }
+      }
+
+      if flag
+      {
+         ptCheckLavaTimer = CreateTimer(self,@Checklava,(1*1000));
+      }
+
+      return;
+   }
+
+   CookVictim(what = $)
+   {
+      % Message: You die!!!!
+      Send(what,@killed,#what=self);
+      Send(self,@somethingkilled,#what=self,#victim=what);
+
+      return;
+   }
+   
+   ShrineInUse()
+   {
+      return pbShrineInUse;
+   }
+
+   Delete()
+   {
+      if ptCheckLavaTimer <> $
+      {
+         DeleteTimer(ptCheckLavaTimer);
+      }
+      
+      if ptShrineUsedTimer <> $
+      {
+         DeleteTimer(ptShrineUsedTimer);
+      }
+      
+      if ptDelayedTeleportTimer <> $
+      {
+         DeleteTimer(ptDelayedTeleportTimer);
+      }
+
+      if ptGoToShrineTimer <> $
+      {
+         DeleteTimer(ptGoToShrineTimer);
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

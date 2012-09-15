@@ -1,0 +1,134 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttExpert is WeaponAttribute
+
+%  This weapon is more potent in the hands of an expert than in the
+%    hands of a novice.  It determines 'expert' by the proficiency 
+%    of the weapon
+%
+%  Form is: 
+%       [ WA_EXPERT ]
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   weapattexpert_desc = \
+      "  Colhorr's signature is engraved on the handle of this weapon.  This "
+      "weapon looks to provide "
+   weapattexpert_desc2 = " advantage - in the right hands."
+   weapattexpert_name = "%s of the master"
+   expert_dm = "expert"
+
+classvars:
+
+   vrDesc = weapattexpert_desc
+   vrDesc2 = weapattexpert_desc2
+
+   viItem_Att_Num = WA_EXPERT
+
+   viDifficulty = 9
+   vrName = weapattexpert_name
+   vrDM_trigger = expert_dm
+
+properties:
+
+   % Increase the object's price by 100%
+   piValue_modifier = 200
+   piValue_power_modifier = 10
+
+messages:
+
+   %%%  Initialization Functions
+
+   InitialPower(oItem=$)
+   {
+      if oItem = $
+      {
+         Debug("This shouldn't have happened!");
+
+         return;
+      }
+
+      return Send(self,@InitialWeaponPower,#oItem=oItem);
+   }
+  
+   %%  Effect Functions
+      
+   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   "Wielder gets a damage bonus, equal to (proficiency/4) - 2."
+   {
+      local oWeapon, iProf, iPower;
+          
+      oWeapon = Send(wielder,@LookUpPlayerWeapon);
+      iProf = Send(oWeapon,@GetProf,#who=wielder);
+
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+      iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
+
+      if iPower = 0 
+      { 
+         % If no proficiency, then give a penalty to damage.
+         if iProf = 0
+         {
+            return damage - 1;
+         }
+
+         % Otherwise, no change in damage.
+         return damage;
+      }
+      
+      Damage = damage - iPower;      
+
+      % Results in proficiency percent of 2 * damage bonus
+      iProf = Bound(((iProf*(2*iPower))/100),1,$);
+      damage = damage + iProf;
+                       
+      return damage;
+   }
+
+   ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
+   "Wielder gets a bonus, equal to (proficiency/4) - 2."
+   {
+      local oWeapon, iProf, iPower;
+          
+      oWeapon = Send(wielder,@LookUpPlayerWeapon);
+      iProf = Send(oWeapon,@GetProf,#who=wielder);
+
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+      iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
+
+      if iPower = 0 
+      {
+         % If no proficiency, then give a penalty to-hit.
+         if iProf = 0
+         {
+            return hitroll - 100;
+         }
+
+         % Otherwise, no change in to-hit.
+         return hitroll;      
+      }
+      
+      hitroll = hitroll - iPower;
+
+      % Results in proficiency percent of 2 * to-hit bonus
+      iProf = Bound(((iProf*(2*iPower))/100),10,$);
+      hitroll = hitroll + iProf;
+
+      return hitroll;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

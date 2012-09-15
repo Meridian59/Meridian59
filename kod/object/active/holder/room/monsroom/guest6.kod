@@ -1,0 +1,631 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Guest6 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   SECTOR_DOOR = 3
+   SECTOR_NODE1 = 4
+   SECTOR_NODE2 = 5
+
+   SLAM_TIME = 2000
+   FIGHT_TIME = 10000
+
+   MIN_GEN_ROW = 29
+   MIN_GEN_COL = 3
+   MAX_GEN_ROW = 37
+   MAX_GEN_COL = 8
+
+   MIN_FINAL_ROW = 27
+   MIN_FINAL_COL = 1
+   MAX_FINAL_ROW = 40
+   MAX_FINAL_COL = 9
+
+   MIN_FINAL_ROW2 = 16
+   MIN_FINAL_COL2 = 1
+   MAX_FINAL_ROW2 = 28
+   MAX_FINAL_COL2 = 2
+   
+   HALL_EAST = 3
+   HALL_NORTH = 15
+
+
+   COUNT_PLAYERS = 1
+   COUNT_MONSTERS = 2
+
+resources:
+
+   room_name_guest6 = "Mausoleum"
+   room_guest6 = guest6.roo
+   guest6_music = nec03.mid
+
+   guest6_signname = "spells"
+   guest6_sign = \
+      "There are more than 120 spells in the Meridian universe.  We've given you "
+      "one of the higher level ones to practice: the fireball spell.\n\n"
+      "Below you, there is a pit full of mummies just wandering around.  First, you "
+      "need to be able to see them.  Press the PAGEDOWN key until your view lowers "
+      "and you can see them.  You can also look up by pressing the PAGEUP key, and "
+      "center your view with the HOME key.  Keep in mind that this is also useful "
+      "should you ever find yourself fighting foes shorter than you are.\n\n"
+      "Now that you can see your enemies, let's smite them.  In your SPELLS menu, "
+      "select SCHOOL OF FAREN, and then FIREBALL.  Your cursor will change into "
+      "a target.  Place that target on a mummy, and fire away using your left mouse button.  "
+      "It may take more than one fireball to kill a mummy.\n\n"
+      "Note that how many fireballs you can cast are limited by a number of things. "
+      "You need mana to cast the spell, and also you need reagents (in this case, "
+      "red mushrooms and orc teeth).  Fortunately, the mummies that you kill elsewhere "
+      "provide the reagents you need."
+
+   guest6_signname2 = "fighting"
+   guest6_sign2 = \
+      "Combat is essential in Meridian 59, but it's also "
+      "pretty easy.  If you push your 'E' key by default, you will swing at "
+      "the monster closest to you with whatever weapon you have armed.  If "
+      "you don't have a weapon armed, you should do so now, because "
+      "punching is not an effective way to kill much of anything.\n\n"
+      "While fighting, be sure to keep an eye on your Health bar, marked "
+      "by a cross in the top-right corner of the screen.  If it gets too low, "
+      "don't hesitate to run away!  Then "
+      "rest or eat some food to get your strength up faster. "
+      "Keep in mind that you can neither fight nor "
+      "run while resting, so you want to be sure you find a safe place to "
+      "hide while you heal.\n\n"
+      "Monsters you kill will frequently drop treasure behind which "
+      "can be sold.  Be sure to get whatever they drop, by either using the "
+      "GET command, or dragging and dropping the items from the floor to your "
+      "inventory."
+
+   guest6_signname3 = "targetting"
+   guest6_sign3 = \
+      "Now that you are familiar with fighting and spellcasting, you're ready to "
+      "try out the advanced targetting feature.\n"
+      "Press [ or ] while facing a monster or player to activate the targetting "
+      "system.  You should see your target "
+      "outlined in color (you can set the color in your preferences).  As long as "
+      "a target is outlined, the game will assume that all attacks or spells "
+      "are to be directed at that target.  Note that this is true regardless of "
+      "whether you can hit or even see your target, so be careful about leaving "
+      "inaccessible enemies targetted!\n"
+      "Pressing [ or ] will cycle through your available targets, and pressing Esc "
+      "will clear your current target and return you to the default attack/spell mode.\n\n"
+      "With a little practise, you'll see how useful targetting can be, especially "
+      "when casting spells.  Just set up a hotkey to the spell of your choice, "
+      "highlight a target and fire away!"
+
+   guest6_signname4 = "jumping"
+   guest6_sign4 = \
+      "Jumping in Meridian 59 is especially tricky as there is no jump key or command.  "
+      "Consider it more like falling at an angle.  There will be many places in the world "
+      "that will require you to leap from one area to the next.  To cross these areas, "
+      "like the one ahead, get a running start by holding down the SHIFT key while using "
+      "your arrow keys to guide your avatar.  Just aim where you’re trying to land and "
+      "run from one ledge to the next.  If you don’t make the jump on your first try, "
+      "you can go around and try again."
+   
+   guest6_bones_name = "pile of bones"
+   guest6_bones_icon = bonepile.bgf
+   guest6_bones_desc = \
+      "This pile of bones is no doubt the result of a dead body that has been decomposing "
+      "for dozens of Meridian years."
+
+   guest6_door1_rsc = down2.wav
+   
+classvars:
+
+   vrName = room_name_guest6
+
+   % These are here so we can have different text in the guest area as opposed to the newbie area.
+   vrSignName = guest6_signname
+   vrSignText = guest6_sign
+   
+   viTeleport_row = 11
+   viTeleport_col = 23
+
+   viTerrain_type = TERRAIN_NECROPOLIS | TERRAIN_CAVES
+
+   viDemo_base = RID_GUEST_BASE
+
+   viPermanent_flags = ROOM_GUEST_AREA
+
+   viPit_monsters_max = 5   % Max # of monsters in the pit area
+   viPit_row = 11           % Pit generator location
+   viPit_col = 4
+
+properties:
+
+   prRoom = room_guest6
+   piRoom_num = RID_guest6
+
+   piGenTime = 15000        % Need to regen faster since some monsters thrown out
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_NONE
+
+   prMusic = guest6_music
+
+   piMonster_count_max = 20
+
+   piPit_Monsters = 0        % Number of monsters currently in the pit area
+
+   poLever1 = $
+   poLever2 = $
+
+   piSwitched = 0
+
+   ptDoor = $
+
+   pbColumn_down = FALSE
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Mummy, 50], [&MummyNoTreasure, 50] ];
+
+      plGenerators = [ [viPit_row, viPit_col], [5, 21], [5, 36], [9, 28],
+                       [17, 35], [21, 23], [25, 11], [29, 18], [37, 35], [38, 19]
+                     ];
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptDoor <> $
+      {
+         DeleteTimer(ptDoor);
+         ptDoor = $;
+      }
+      
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 11, 17, viDemo_base + 2, 7, 43, SET_ANGLE_WEST, DISTANCE_NORMAL ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      oSign = Create(&sign,#desc=vrSignText,#newbie=TRUE,#name=vrSignName);
+      send(self,@NewHold,#what=oSign,#new_row=11,#new_col=2,#fine_col=48);
+
+      oSign = Create(&sign,#desc=guest6_sign2,#newbie=TRUE,#name=guest6_signname2);
+      send(self,@NewHold,#what=oSign,#new_row=11,#new_col=14,#fine_row=32,#fine_col=48);
+      
+      oSign = Create(&sign,#desc=guest6_sign3,#newbie=TRUE,#name=guest6_signname3);
+      send(self,@NewHold,#what=oSign,#new_row=11,#new_col=3,#fine_row=32,#fine_col=32);
+
+      oSign = Create(&sign,#desc=guest6_sign4,#newbie=TRUE,#name=guest6_signname4);
+      send(self,@NewHold,#what=oSign,#new_row=29,#new_col=30,#fine_row=0,#fine_col=32);
+      
+      oSign = Create(&Skull);
+      Send(self,@NewHold,#what=oSign,#new_row=11,#new_col=21,#fine_row=32,#fine_col=40);
+
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=3,#new_col=18,#fine_row=0,#fine_col=8);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=5,#new_col=14,#fine_row=32,#fine_col=40);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=19,#new_col=18,#fine_row=0,#fine_col=40);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=22,#new_col=11,#fine_row=24,#fine_col=56);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=23,#new_col=8,#fine_row=40,#fine_col=16);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=25,#new_col=14,#fine_row=0,#fine_col=40);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=32,#new_col=14,#fine_row=0,#fine_col=40);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=30,#new_col=40,#fine_row=0,#fine_col=24);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=27,#new_col=33,#fine_row=40,#fine_col=0);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=19,#new_col=32,#fine_row=40,#fine_col=0);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=17,#new_col=40,#fine_row=0,#fine_col=24);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=13,#new_col=40,#fine_row=0,#fine_col=24);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=9,#new_col=34,#fine_row=0,#fine_col=24);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=4,#new_col=28,#fine_row=40,#fine_col=0);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=2,#new_col=26,#fine_row=0,#fine_col=40);
+      oSign = Create(&sign,#desc=guest6_bones_desc,#name=guest6_bones_name,
+                     #icon=guest6_bones_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=2,#new_col=40,#fine_row=0,#fine_col=24);
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=9,#new_col=18,
+           #fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=18,
+           #fine_row=0,#fine_col=48);
+
+      Send(self,@CreateLevers);
+      Send(self,@SetupColumnDown);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=45),
+           #new_row=11,#new_col=2,#fine_row=32,#fine_col=48);
+
+      propagate;
+   }
+
+   CreateLevers()
+   {
+      if poLever1 = $
+      {
+         poLever1 = Create(&GuestLever);
+         Send(self,@NewHold,#what=poLever1,#new_row=27,#new_col=4);
+      }
+      
+      if poLever2 = $
+      {
+         poLever2 = Create(&GuestLever);
+         Send(self,@NewHold,#what=poLever2,#new_row=27,#new_col=9);
+      }
+
+      return;
+   }
+
+   ReqNewHold(what = $, new_row = $, new_col = $)
+   % Only allow a certain # of monsters in the pit
+   {
+      if IsClass(what, &MummyNoTreasure) and piPit_Monsters >= viPit_Monsters_max
+      {
+         return FALSE;
+      }
+
+      % Allow only wimpy mummies in the pit
+      if not IsClass(what, &MummyNoTreasure) and 
+      new_row = viPit_row and new_col = viPit_col
+      {
+         return FALSE;
+      }
+
+      % Wimpy mummies appear only in the pit
+      if IsClass(what, &MummyNoTreasure) and 
+      (new_row <> viPit_row or new_col <> viPit_col)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   FirstUserEntered()
+   {
+      post(self,@NewHold,#what=Create(&MummyNoTreasure),#new_row=viPit_row,#new_col=viPit_col);
+      post(self,@ResetMonstersInFinal);
+
+      propagate;
+   }
+
+   NewHold(what = $, new_row = $, new_col = $)
+   {
+      if IsClass(what, &MummyNoTreasure)
+      {
+         piPit_Monsters = piPit_Monsters + 1;
+      }
+      
+      propagate;
+   }
+
+   LeaveHold(what = $)
+   {
+      if IsClass(what, &MummyNoTreasure)
+      {
+         piPit_Monsters = piPit_Monsters - 1;
+      }
+
+      if what = poLever1
+      {
+         poLever1 = $;
+         
+         propagate;
+      }
+      
+      if what = poLever2
+      {
+         poLever2 = $;
+         
+         propagate;
+      }
+
+      propagate;
+   }
+
+   SomethingKilled(what = $,victim = $)
+   {
+      if IsClass(victim,&Monster)
+      {
+         % gotta post because here it's not removed from room yet
+         Post(self,@CheckAllDeadMonsters);
+      }
+      
+      propagate;
+   }
+
+   LeverChanged(what = $)
+   {
+      local iSwitched;
+
+      Send(self,@SomethingWaveRoom,#wave_rsc=guest6_door1_rsc,#what=what);
+
+      iSwitched = 0;
+      if Send(poLever1,@IsSwitched)
+      {
+         iSwitched = iSwitched + 1;
+      }
+      
+      if Send(poLever2,@IsSwitched)
+      {
+         iSwitched = iSwitched + 1;
+      }
+
+      if ptDoor <> $
+      {
+         DeleteTimer(ptDoor);
+         ptDoor = $;
+      }
+
+      if iSwitched = 1
+      {
+         Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=128,#speed=16);
+         ptDoor = CreateTimer(self,@SlamTimer,SLAM_TIME);
+      }
+      
+      if iSwitched = 2
+      {
+         Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=172,#speed=16);
+         ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
+      }
+
+      piSwitched = iSwitched;
+
+      return;
+   }
+
+   TestOpenDoor()
+   {
+      Send(poLever1,@SetSwitched,#switched=TRUE);
+      Send(poLever2,@SetSwitched,#switched=TRUE);
+
+      piSwitched = 2;
+
+      Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=172,#speed=16);
+      ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
+
+      return;
+   }
+
+
+   ResetPuzzle()
+   {
+      send(self,@SlamTimer);
+      
+      return;
+   }
+
+
+   SlamTimer()
+   {
+      ptDoor = $;
+
+      if GetTime() > 59871006
+      {
+         piMonster_count_max = piMonster_count_max + 1;
+      }
+
+      Send(self,@SomethingWaveRoom,#wave_rsc=guest6_door1_rsc,#what=poLever1);
+      Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=84,#speed=128);
+
+      Send(poLever1,@SetSwitched,#switched=FALSE);
+      Send(poLever2,@SetSwitched,#switched=FALSE);
+
+      return;
+   }
+
+   FightTimer()
+   {
+      ptDoor = $;
+
+      if Send(self,@CountInFinal,#count=COUNT_PLAYERS) = 0
+      {
+         Send(self,@ResetFinal);
+         return;
+      }
+      
+      ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
+      
+      return;
+   }
+
+   ResetFinal()
+   {
+      if ptDoor <> $
+      {
+         DeleteTimer(ptDoor);
+         ptDoor = $;
+      }
+
+      pbColumn_down = FALSE;
+      Send(self,@SetSector,#sector=SECTOR_NODE1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=500,#speed=0);
+      Send(self,@SetSector,#sector=SECTOR_NODE2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=519,#speed=0);
+
+      Send(poLever1,@SetSwitched,#switched=FALSE);
+      Send(poLever2,@SetSwitched,#switched=FALSE);
+
+      Send(self,@SomethingWaveRoom,#wave_rsc=guest6_door1_rsc,#what=poLever1);
+      Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=84,#speed=0);
+
+      Send(self,@ResetMonstersInFinal);
+
+      return;
+   }
+
+   CheckAllDeadMonsters()
+   {
+      %debug(Send(self,@CountInFinal,#count=COUNT_MONSTERS));
+
+      if pbColumn_down
+      {
+         return;
+      }
+
+      if Send(self,@CountInFinal,#count=COUNT_MONSTERS) = 0
+         AND Send(self,@CountInFinal,#count=COUNT_PLAYERS) <> 0
+      {
+         Send(self,@DoColumnDown);
+         pbColumn_down = TRUE;
+         Send(self,@SetSector,#sector=SECTOR_NODE1,#animation=ANIMATE_FLOOR_LIFT,
+              #height=105,#speed=32);
+         Send(self,@SetSector,#sector=SECTOR_NODE2,#animation=ANIMATE_FLOOR_LIFT,
+              #height=124,#speed=32);
+
+         Send(self,@SomethingWaveRoom,#wave_rsc=guest6_door1_rsc,#what=poLever1);
+         Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=84,#speed=0);
+
+         ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
+      }
+      
+      return;
+   }
+
+   SetupColumnDown()
+   {
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_GUEST),
+           #new_row=35,#new_col=5,#fine_row=0,#fine_col=0);
+           
+      return;
+   }
+
+   DoColumnDown()
+   {
+      return;
+   }
+
+
+   CountInFinal(count = COUNT_PLAYERS)
+   "With count = COUNT_MONSTERS, count monsters in region.\n"
+   "With count = COUNT_PLAYERS, count players in region."
+   {
+      local i,each_obj,iCount,iRow,iCol;
+
+      iCount = 0;
+      for i in plActive
+      {
+         each_obj = First(i);
+         if count = COUNT_MONSTERS
+             AND IsClass(each_obj,&Monster) 
+            OR count = COUNT_PLAYERS
+             AND IsClass(each_obj,&User)
+         {
+            iRow = Send(each_obj,@GetRow);
+            
+            iCol = Send(each_obj,@GetCol);
+            if (iRow >= MIN_FINAL_ROW
+                AND iRow <= MAX_FINAL_ROW
+                AND iCol >= MIN_FINAL_COL
+                AND iCol <= MAX_FINAL_COL)
+               OR (iRow >= MIN_FINAL_ROW2
+                   AND iRow <= MAX_FINAL_ROW2
+                   AND iCol >= MIN_FINAL_COL2
+                   AND iCol <= MAX_FINAL_COL2)
+               OR (iCol < HALL_EAST
+                   AND iRow > HALL_NORTH)
+            {
+               iCount = iCount + 1;
+            }
+         }
+      }
+      
+      return iCount;
+   }
+
+   ResetMonstersInFinal()
+   {
+      local i,each_obj,iCount,iRow,iCol;
+
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&Monster)
+         {
+            iRow = Send(each_obj,@GetRow);
+            iCol = Send(each_obj,@GetCol);
+            if (iRow >= MIN_FINAL_ROW
+                AND iRow <= MAX_FINAL_ROW
+                AND iCol >= MIN_FINAL_COL
+                AND iCol <= MAX_FINAL_COL)
+               OR (iCol < HALL_EAST
+                   AND iRow > HALL_NORTH)
+            {
+               Send(each_obj,@Delete);
+            }
+         }
+      }
+
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
+           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
+           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
+           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
+      Send(self,@NewHold,#what=Create(&Mummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
+           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
+      
+      Send(self,@NewHold,#what=Create(&BlackMummy),#new_row=Random(MIN_GEN_ROW,MAX_GEN_ROW),
+           #new_col=Random(MIN_GEN_COL,MAX_GEN_COL));
+      
+      return;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

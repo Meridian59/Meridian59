@@ -1,0 +1,27 @@
+# Dk. Brown female mouth 3
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+-s 14
+14
+Pm000mac.bmp   [-15, -12] 
+Pm045mac.bmp   [-21, -14] 
+Pm090mac.bmp   [-19, -13] 
+Pm270mac.bmp   [-3, -14] 
+Pm315mac.bmp   [-7, -16] 
+Pm000mbc.bmp   [-15, -12] 
+Pm045mbc.bmp   [-21, -14] 
+Pm315mbc.bmp   [-7, -16] 
+Pm000mcc.bmp   [-15, -12] 
+Pm045mcc.bmp   [-21, -14] 
+Pm315mcc.bmp   [-7, -16] 
+Pm000mdc.bmp   [-15, -12] 
+Pm045mdc.bmp   [-21, -14] 
+Pm315mdc.bmp   [-7, -16] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

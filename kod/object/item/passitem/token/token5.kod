@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FiveToken is Token
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FiveToken_name_rsc = "crystal sphere token"
+   FiveToken_desc_rsc = \
+      "Swirling with mystical patterns, this ancient token is some relative of "
+      "the mana nodes, and in the hands of a Councilor is rumored to glow when "
+      "near one. Returning it would likely raise your status in the Royal Court."
+   FiveToken_icon_rsc = "sphere.bgf"
+
+   % Overlays not implemented yet.
+   %FiveToken_overlay_rsc = tokhsphr.bgf
+
+classvars:
+
+   vrName = FiveToken_name_rsc
+   vrDesc = FiveToken_desc_rsc
+   vrIcon = FiveToken_icon_rsc
+
+   viInitialTimeval = 60000000
+
+   %vrTokenOverlay = FiveToken_overlay_rsc
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

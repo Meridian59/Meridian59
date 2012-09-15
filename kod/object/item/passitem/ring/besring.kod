@@ -1,0 +1,121 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%code by Justin, 98jsh@williams.edu
+ 
+BerserkerRing is Ring
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   berserkerring_name_rsc = "berserker ring"
+   berserkerring_icon_rsc = ring2.bgf            
+   berserkerring_desc_rsc = \
+      "This ring seems to glow a warm red.  It bears a simple "
+      "inscription, \"Lustful blows are strong but not "
+      "always true.\""
+  
+   berserkerring_use_rsc = \
+      "Your blood boils with lust for battle.  You yearn to strike down your "
+      "enemies... you want only to ~B~rKILL~n!"
+  
+   berserkerring_unuse_rsc = \
+      "The battle fury from the berserker ring leaves you."
+
+   berserkerring_break_rsc = \
+      "The berserker ring, having drunk its fill of battle, simply disappears!"
+      
+classvars:
+
+   vrRealName = berserkerring_name_rsc
+   vrIcon = berserkerring_icon_rsc
+   vrRealDesc = berserkerring_desc_rsc
+
+   viHits_init_min = 80
+   viHits_init_max = 120
+
+   viBulk = 5
+   viWeight = 10
+   
+   viValue_average = 200
+
+properties:
+
+
+messages:
+
+   NewUsed(what = $)
+   {
+      if vrName = vrRealName
+      {
+         % Only give the message if it's identified.
+         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_use_rsc);
+      }
+
+      Send(what,@AddAttackModifier,#what=self);
+      
+      
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      if vrName = vrRealName
+      {
+         % Only give the message if it's identified.
+         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_unuse_rsc);
+      }
+
+      Send(what,@RemoveAttackModifier,#what=self);
+      
+      propagate;
+   }
+
+   ModifyHitRoll(who = $, what = $, hit_roll = $)
+   {
+      piHits = piHits - 1;
+      if piHits <= 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
+         Send(poOwner,@TryUnuseItem,#what=self);
+         Send(self,@Delete);
+
+         return hit_roll;
+      }
+      
+      return hit_roll - (Random(15,25) * 10);
+   }
+
+   ModifyDamage(who = $, what = $, damage = $)
+   {
+      local oWeapon;
+
+      oWeapon = send(who,@GetWeapon);
+
+      if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
+      {
+         return damage + random(1,4);
+      }
+
+      return damage;
+   }
+
+   WeaponHitTarget()
+   {
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

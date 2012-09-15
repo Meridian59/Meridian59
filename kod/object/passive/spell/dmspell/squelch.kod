@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Squelch is DMSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   Squelch_name_rsc = "squelch"
+   Squelch_icon_rsc = isilence.bgf
+   Squelch_desc_rsc = "Takes away (or gives back) the ability for a player to broadcast."
+
+   Squelch_msg_DM_on = "You squelch %s%s."
+   Squelch_msg_DM_off = "You unsquelch %s%s."
+   Squelch_msg_target_on = "Your ability to broadcast has been taken away."
+   Squelch_msg_target_off = "Your ability to broadcast has been restored."
+
+classvars:
+
+   vrName = Squelch_name_rsc
+   vrIcon = Squelch_icon_rsc
+   vrDesc = Squelch_desc_rsc
+
+   viSpell_num = SID_SQUELCH
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local oTarget, bSquelched, rMessageDM, rMessageTarget;
+
+      oTarget = first(lTargets);
+
+      if isClass(oTarget,&Player)
+      {
+         bSquelched = send(oTarget,@SquelchPlayer);
+
+         if bSquelched
+         {
+            rMessageTarget = Squelch_msg_target_on;
+            rMessageDM = Squelch_msg_DM_on;
+         }
+         else
+         {
+            rMessageTarget = Squelch_msg_target_off;
+            rMessageDM = Squelch_msg_DM_off;
+         }
+         
+         send(oTarget,@MsgSendUser,#message_rsc=rMessageTarget);
+         send(who,@MsgSendUser,#message_rsc=rMessageDM,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetTrueName));
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+              #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetIndef),
+              #parm3=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,97 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanApoth is KocatanRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+  
+   room_name_kocapoth = "Two Lizards Magic Shop"
+   room_kocapoth = kocapoth.roo
+   kocapoth_music = song12.mid
+
+classvars:
+
+   vrName = room_name_kocapoth
+
+   viTeleport_row = 5
+   viTeleport_col = 5
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+   viPermanent_flags = ROOM_NO_COMBAT
+
+properties:
+
+   prRoom = room_kocapoth
+   piRoom_num = RID_KOC_APOTH
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = kocapoth_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % TO TOWN
+      plExits = Cons([ 8, 2, RID_KOCATAN, 21, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 3, RID_KOCATAN, 21, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 4, RID_KOCATAN, 21, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 3, RID_KOCATAN, 21, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 9, 4, RID_KOCATAN, 21, 7, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 3, 8, RID_KOCATAN, 14, 14, ROTATE_NONE ],plExits);
+      plExits = Cons([ 4, 8, RID_KOCATAN, 14, 14, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 7, 4, ROOM_LOCKED_DOOR],plExits);
+      plExits = Cons([ 8, 4, ROOM_LOCKED_DOOR],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1;
+      lObjCoords1 = [ [02,02,56,08,OO_GARLIC],[03,02,40,00,OO_HERBS],
+                      [03,02,24,00,OO_FLOWER2],[03,02,08,08,OO_GARLIC],
+                      [04,01,08,32,OO_BROWN_URN],[02,04,00,08,OO_BIRD_CAGE],
+                      [05,05,48,48,OO_BASKET],[02,01,56,32,OO_POTION],
+                      [03,01,08,32,OO_POISON],[05,02,08,08,OO_GOLD_BOTTLE],
+                      [05,02,24,16,OO_BLUE_BOTTLE],[05,08,56,00,OO_SPICES],
+                      [05,06,56,48,OO_STICKS],[03,01,40,40,OO_FIXINS],
+                      [04,01,16,40,OO_JAR],[05,01,56,56,OO_BOX_WITH_SNAKE],
+                      [02,05,08,40,OO_bluejug]
+                    ];
+
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+      
+      send(self,@NewHold,#what=Create(&KocatanApothecary),
+            #new_row=4,#new_col=2,#fine_row=32,#fine_col=24,
+            #new_angle=ANGLE_EAST);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
+           #new_row=2,#new_col=5,#fine_row=16,#fine_col=32);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
+           #new_row=4,#new_col=8,#fine_row=48,#fine_col=8);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

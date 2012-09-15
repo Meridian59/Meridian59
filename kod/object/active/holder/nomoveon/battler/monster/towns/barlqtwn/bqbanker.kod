@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarloqueBanker is BarloqueTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BarloqueBanker_name_rsc = "Setag'lib"
+   BarloqueBanker_icon_rsc = banker.bgf
+   BarloqueBanker_desc_rsc = "A small, pecuniarily oriented man."
+
+classvars:
+
+   vrName = BarloqueBanker_name_rsc
+   vrDesc = BarloqueBanker_desc_rsc
+   vrIcon = BarloqueBanker_icon_rsc
+   viAttributes = MOB_NOFIGHT+MOB_BANKER+MOB_NOMOVE+MOB_LISTEN+MOB_RANDOM+MOB_RECEIVE
+   viOccupation = MOB_ROLE_BANKER
+   viBank = BANK_BASIC
+
+properties:
+
+messages:
+
+   Constructor()
+   {
+      plWantedItems=[&Money];
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

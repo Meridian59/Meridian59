@@ -1,0 +1,137 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CaveOrc is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   CaveOrc_Koc_name_rsc = "utom"
+   CaveOrc_name_rsc = "cave orc"
+   CaveOrc_icon_rsc = OrcCave.bgf
+   CaveOrc_desc_rsc = \
+      "This dirty orc grunt wanders through the caves hungrily in search "
+      "of gems and food."
+
+   CaveOrc_dead_icon_rsc = OrcCaveX.bgf
+   CaveOrc_dead_name_rsc = "dead cave orc"
+
+   CaveOrc_sound_hit = orc_atkh.wav
+   CaveOrc_sound_miss = cor_atkm.wav
+   CaveOrc_sound_death = cor_dth.wav
+   CaveOrc_sound_aware = cor_awr.wav
+
+
+classvars:
+
+   vrKocName = CaveOrc_koc_name_rsc
+   vrName = CaveOrc_name_rsc
+   vrIcon = CaveOrc_icon_rsc
+   vrDesc = CaveOrc_desc_rsc
+   vrDead_icon = CaveOrc_dead_icon_rsc
+   vrDead_name = CaveOrc_dead_name_rsc
+
+   viTreasure_type = TID_CAVE_ORC
+
+   viSpeed = SPEED_FAST
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viLevel = 80
+   viDifficulty = 7
+   viKarma = -55
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
+
+   viWimpy = 4
+
+   vrSound_hit = CaveOrc_sound_hit
+   vrSound_miss = CaveOrc_sound_miss
+   vrSound_aware = CaveOrc_sound_aware
+   vrSound_death = CaveOrc_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 40, -ATCK_SPELL_UNHOLY ],
+                        [ 20, ATCK_WEAP_PIERCE ],
+                        [ 25, ATCK_WEAP_SLASH ],
+                        [-20, -ATCK_SPELL_HOLY ] ];
+      propagate;
+   }
+
+   % Used for defense messages
+   GetParryAbility(stroke_obj=$)
+   {
+      if (stroke_obj <> $) and not Send(stroke_obj,@CanParry)
+      {
+         return 0;
+      }
+      return (viDifficulty*10)/4;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSlash);
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,100,2,2,2,6);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      % Make it look like CaveOrc is walking
+      % Cycle through "walking" bitmaps (groups 2-6) at 50 ms per frame
+      AddPacket(1,ANIMATE_CYCLE,4,50,2,2,2,6);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+	 AddPacket(1,ANIMATE_ONCE,4,75,2,7,2,11,2,1);
+	 return;
+      } 
+      %% if no body animation.     
+      propagate;
+   }
+
+   IsFrightenedOf(target=$)
+   {
+      if target <> $ and isClass(target,&GiantRat) { return TRUE; }
+
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,941 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Weapon is PassiveItem
+
+constants:
+
+   include blakston.khd
+   
+   USED = 1
+   UNUSED = 2
+   ATTACKING = 3
+
+   WEAPON_TAKE_DAMAGE_PCT = 75
+
+   % Weapon tuning factors
+   %  Edit these constants to tune weapon power
+
+   % Hit modifiers
+   WEAPON_HITMOD_LOW  = 0
+   WEAPON_HITMOD_MID  = 75
+   WEAPON_HITMOD_HIGH = 125
+
+   % Damage, low to high range of damage.
+   WEAPON_DAMAGE_LOW_MIN  = 3
+   WEAPON_DAMAGE_LOW_MAX  = 8
+
+   WEAPON_DAMAGE_MID_MIN  = 4
+   WEAPON_DAMAGE_MID_MAX  = 8
+
+   WEAPON_DAMAGE_HIGH_MIN = 5
+   WEAPON_DAMAGE_HIGH_MAX = 11
+
+   % Disarm bonus
+   WEAPON_DISARM_LOW  = -5
+   WEAPON_DISARM_MID  = 0
+   WEAPON_DISARM_HIGH = 10
+
+   % Spell modifier, large negatives are bad.
+   WEAPON_SPELL_LOW  = -15
+   WEAPON_SPELL_MID  = -10
+   WEAPON_SPELL_HIGH = 0
+
+   % Range of reach
+   WEAPON_RANGE_LOW  = 2
+   WEAPON_RANGE_MID  = 2
+   WEAPON_RANGE_HIGH = 3
+
+   % Quality mods to number of hits
+   WEAPON_LOW_QUALITY_HITS  = -50
+   WEAPON_HIGH_QUALITY_HITS = 100
+   WEAPON_NERUDITE_HITS = 200
+
+   % Quality mods to hit modifier
+   WEAPON_LOW_QUALITY_HITMOD  = 0
+   WEAPON_HIGH_QUALITY_HITMOD = 50
+   WEAPON_NERUDITE_HITMOD = 25
+
+   % Quality mods to damage
+   WEAPON_LOW_QUALITY_DAMAGE  = -1
+   WEAPON_HIGH_QUALITY_DAMAGE = 1
+   WEAPON_NERUDITE_DAMAGE = 1
+
+   % Quality mods to disarming
+   WEAPON_LOW_QUALITY_DISARM  = -5
+   WEAPON_HIGH_QUALITY_DISARM = 5
+   WEAPON_NERUDITE_DISARM = 0
+
+   % Quality mods to spell modifier
+   WEAPON_LOW_QUALITY_SPELL  = 5
+   WEAPON_HIGH_QUALITY_SPELL = -5
+   WEAPON_NERUDITE_SPELL =  5
+
+   % Quality mod to range
+   WEAPON_LOW_QUALITY_RANGE  = 0
+   WEAPON_HIGH_QUALITY_RANGE = 0
+   WEAPON_NERUDITE_RANGE = 0
+
+resources:
+
+   weapon_already_broken = "%s%s is broken; you can't use it!"
+   weapon_broken = "%s%s shatters into pieces."
+
+   weapon_condition_exc = " is in flawless condition."
+   weapon_condition_exc_mended = " is in excellent condition, but has been repaired before."
+   weapon_condition_good = " is slightly tarnished but in generally good condition."
+   weapon_condition_med = " is notched and stained with blood but is still an effective weapon."
+   weapon_condition_poor = " is well worn and may not last much longer."
+   weapon_condition_broken = " has been shattered by a powerful blow."
+
+   weapon_do_damage = "I just did %i points of damage! (%i)"
+   weapon_to_hit = "I have a %i chance to hit! (%i/%i)"
+
+   % These are used by weapon enchantments to tell where some symbol
+   %  happens to be on the blade.
+   weapon_head = "on the head"
+   weapon_grip = "on the grip"
+
+classvars:
+
+   viUse_type = ITEM_USE_HAND
+   viItem_Type = ITEMTYPE_WEAPON
+   viUse_amount = 1
+
+   vrPoss_article_rsc = object_article_cap_this_rsc
+
+   %if not nil, the weapon will check for ammo in the ITEM_USE_QUIVER slot
+   %added to player.kod and remove one--ammo is a numbered item
+   vcAmmo = $
+
+   vrWeapon_window_overlay = $
+   vrWeapon_window_attack_start = 1
+   vrWeapon_window_attack_end = 4
+   vrWeapon_window_hold = 5
+
+   vrWeapon_overlay = $
+
+   % if it's set to a number, it's always used
+   viBroken_group = $
+   % Message when the weapon breaks.
+   vrWeaponBroke = weapon_broken
+   
+   viWeaponType = WEAPON_TYPE_THRUST
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
+
+   viProficiency_needed = SKID_PROFICIENCY_SWORD
+
+   viHits_init_min = 250
+   viHits_init_max = 300
+
+   vbShow_condition = TRUE
+   vrCondition_exc = weapon_condition_exc 
+   vrCondition_exc_mended = weapon_condition_exc_mended 
+   vrCondition_good = weapon_condition_good 
+   vrCondition_med = weapon_condition_med 
+   vrCondition_poor = weapon_condition_poor 
+   vrCondition_broken = weapon_condition_broken
+
+properties:
+
+   piAttack_type = 0
+   piAttack_spell = 0
+
+   piDamageBonus = 0
+   piHitBonus = 0
+
+   piUsed = UNUSED
+
+messages:
+
+   Constructed()
+   {
+      % Modify the hits depending on the weapon's quality.
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         piHits_init = piHits_init + WEAPON_LOW_QUALITY_HITS;
+         piHits = piHits + WEAPON_LOW_QUALITY_HITS;
+      }
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         piHits_init = piHits_init + WEAPON_HIGH_QUALITY_HITS;
+         piHits = piHits + WEAPON_HIGH_QUALITY_HITS;
+      }
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         piHits_init = piHits_init + WEAPON_NERUDITE_HITS;
+         piHits = piHits + WEAPON_NERUDITE_HITS;
+      }
+
+      propagate;
+   }
+
+   %%% Hard Stats Functions
+   %%% (Range, hit chance, damage, etc)
+
+   % An explanation of how weapons work now:
+   % Weapons can now be described as a combination of two different aspects, type and quality.
+   % The three types of weapons are thrusting (swords), bludgeoning, and slashing (heavy weapons).
+   %  These three types of weapons have attributes as follows:
+
+   % Type      Hit Mod     Damage     Disarm     Spell    Range
+   % ----------------------------------------------------------
+   % Bludgeon   Mid         Mid        Low        High     Low
+   % Thrust     High        Low        High       Mid      High
+   % Slash      Low         High       Mid        Low      Mid
+
+   % These aspects are defined with the appropriate constants in Blakston.khd
+   % In general, High is desirable and Low is not.  So, a thrusting weapons hits
+   % more often than a slashing one does, but it does less damage, etc.
+   %
+   % Weapons can also have quality.  Current, the four types of quality are high, low,
+   % normal and nerudite.  These also have constants defined.  In general, the lower the
+   % quality, the worse it makes the weapon.  The exception is spell bonus; higher quality
+   % weapons actually give less bonus than lower quality weapons
+   %
+   % Nerudite isn't really comparable to the other qualities, but this was the best way to
+   % describe the weapon.
+   %
+   % So, now, all you should really do is define the type of weapons and its relative
+   % quality.  Weapon will handle the rest.
+
+   ModifyHitRoll(hit_roll = 0, target = $)
+   "When someone attacks with this weapon, they send us their attack value "
+   "and we change it based on quality of weapon"
+   {
+      local iBaseHit, oWeapAtt, i, iWeapHit;
+
+      iBaseHit = hit_roll;
+
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iBaseHit = iBaseHit + WEAPON_HITMOD_MID;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iBaseHit = iBaseHit + WEAPON_HITMOD_HIGH;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iBaseHit = iBaseHit + WEAPON_HITMOD_LOW;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iBaseHit = iBaseHit + WEAPON_LOW_QUALITY_HITMOD;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iBaseHit = iBaseHit + WEAPON_HIGH_QUALITY_HITMOD;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iBaseHit = iBaseHit + WEAPON_NERUDITE_HITMOD;
+      }
+
+      for i in plItem_Attributes
+      {
+         oWeapAtt = send(SYS,@FindItemAttByNum, #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if isClass(oWeapAtt,&WeaponAttribute)
+         {
+            iBaseHit = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
+                            #target=target,#lData=i);
+         }
+      }     
+
+      iBaseHit = iBaseHit + piHitBonus;
+
+      % send(send(poOwner,@getOwner),@someonesaid,#what=self,#type=SAY_RESOURCE,
+      %    #string=weapon_to_hit,#parm1=hit_roll,#parm2=iBaseHit,#parm3=iWeapHit);
+
+      return iBaseHit;
+   }
+
+   GetBaseDamage(who=$,target=$)
+   {
+      local iDamage;
+      
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iDamage = random(WEAPON_DAMAGE_MID_MIN, WEAPON_DAMAGE_MID_MAX);
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iDamage = random(WEAPON_DAMAGE_LOW_MIN, WEAPON_DAMAGE_LOW_MAX);
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iDamage = random(WEAPON_DAMAGE_HIGH_MIN, WEAPON_DAMAGE_HIGH_MAX);
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iDamage = iDamage + WEAPON_LOW_QUALITY_DAMAGE;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iDamage = iDamage + WEAPON_HIGH_QUALITY_DAMAGE;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iDamage = iDamage + WEAPON_NERUDITE_DAMAGE;
+      }
+
+      return iDamage;
+   }
+
+   GetDamage(target=$)
+   {
+      local iDamage, i, oWeapAtt;
+
+      % First, get base damage.
+      iDamage = send(self,@GetBaseDamage);
+
+      % Then check weapon attributes
+      %  Weapon Attributes in general should only + or - damage - no multipliers!
+      for i in plItem_Attributes
+      {
+         oWeapAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if isClass(oWeapAtt,&WeaponAttribute)
+         {
+            iDamage = send(oWeapAtt,@ModifyDamage,#damage=iDamage,#wielder=poOwner,
+                           #target=target,#lData=i);
+         }
+      }
+
+      iDamage = iDamage + piDamageBonus;
+
+      % send(send(poOwner,@getOwner),@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+      %      #string=weapon_do_damage,#parm1=iDamage,#parm2=baseDamage);
+
+      return iDamage;
+   }
+
+   GetRange()
+   {
+      local iRange;
+      
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iRange = WEAPON_RANGE_LOW;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iRange = WEAPON_RANGE_HIGH;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iRange = WEAPON_RANGE_MID;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iRange = iRange + WEAPON_LOW_QUALITY_RANGE;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iRange = iRange + WEAPON_HIGH_QUALITY_RANGE;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iRange = iRange + WEAPON_NERUDITE_RANGE;
+      }
+
+      return iRange;
+   }   
+
+   GetDisarmBonus()
+   "Weapon's bonus to disarm attempts, roughly in percent"
+   {
+      local iDisarm;
+      
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iDisarm = WEAPON_DISARM_LOW;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iDisarm = WEAPON_DISARM_HIGH;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iDisarm = WEAPON_DISARM_MID;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iDisarm = iDisarm + WEAPON_LOW_QUALITY_DISARM;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iDisarm = iDisarm + WEAPON_HIGH_QUALITY_DISARM;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iDisarm = iDisarm + WEAPON_NERUDITE_DISARM;
+      }
+
+      return iDisarm;
+   }
+
+   GetBaseSpellModifier()
+   {
+      local iModifier;
+
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iModifier = WEAPON_SPELL_HIGH;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iModifier = WEAPON_SPELL_MID;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iModifier = WEAPON_SPELL_LOW;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iModifier = iModifier + WEAPON_LOW_QUALITY_SPELL;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iModifier = iModifier + WEAPON_HIGH_QUALITY_SPELL;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iModifier = iModifier + WEAPON_NERUDITE_SPELL;
+      }
+
+      return iModifier;
+   }
+
+   %%%  Advancement functions (strokes and proficiencies)  
+
+   GetProf(who=$)
+   {
+      send(who,@FlipSkillAtrophyFlag,#SKID=viProficiency_needed);
+      
+      return send(who,@GetSkillAbility,#skill_num=viProficiency_needed);
+   }
+
+   GetProfNumber()
+   {
+      return viProficiency_needed;
+   }
+
+   GetStroke(who=$)
+   {
+      send(who,@FlipSkillAtrophyFlag,#SKID=Send(self,@GetDefaultStrokeNumber));
+      
+      return send(who,@GetSkillAbility,#skill_num=Send(self,@GetDefaultStrokeNumber));
+   }
+
+   GetDefaultStrokeNumber()
+   {
+      return SKID_SLASH;
+   }
+
+   ImproveProficiency(who=$,target=$,bonus=0)
+   {      
+      send(send(SYS,@findSkillbynum,#num=viProficiency_needed),@ImproveAbility,
+           #who=who,#target=target,#bonus=bonus);
+             
+      return;
+   }
+
+   % Return parry ability, include bonuses.
+   % TODO: Define standard bonuses for various weapon types.
+   GetParryAbility(who=$)
+   {
+      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
+   }
+      
+   % What is the weapon's name for use in the attack messages?
+   GetAttackName()
+   {
+      return vrName;
+   }
+
+   %%%  Infrastructure
+
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what,&Weapon)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+   
+   WeaponHitTarget()
+   {
+      % 75% chance to be damaged, currently.
+      if random(1,100) < WEAPON_TAKE_DAMAGE_PCT   
+      {
+         piHits = piHits - 1;
+      }
+
+      if piHits <= 0
+      {
+         send(self,@WeaponBroke);
+      }
+      
+      return;
+   }
+
+   ReqWeaponAttack(what = $)
+   {
+      if piHits <= 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=weapon_already_broken,
+              #parm1=Send(self,@GetCapDef),#parm2=vrName);
+         Send(poOwner,@TryUnuseItem,#what=self);
+         
+         return FALSE;
+      }
+
+      Send(self,@WeaponAttack,#what=what);
+      
+      return TRUE;
+   }
+
+   ReqUseAmmo(ammotype = $)
+   "At this point, a non-ranged weapon SHOULD never make it this far "
+   "(see ReqWeaponAttack above).  This is just to catch anything that "
+   "slips thru the cracks.  See ranged.kod for what this does."
+   {
+      debug("A non-ranged weapon called @ReqUseAmmo!");
+      
+      return TRUE;
+   }
+
+   WeaponBroke()
+   {
+      local i, oItemAtt;
+
+      % Remove itematts from us, since we're not gonna use 'em anymore.
+      % This also lets cursed items finally remove themselves from us.
+      for i in plItem_Attributes
+      {
+         oItemAtt = send(SYS,@FindItemAttByNum,
+                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         send(oItemAtt,@RemoveFromItem,#oItem=self);
+      }
+
+      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@MsgSendUser,#message_rsc=vrWeaponBroke,
+           #parm1=Send(self,@GetCapDef),#parm2=vrName);
+      Send(poOwner,@TryUnuseItem,#what=self);
+
+      return;
+   }
+
+   WeaponAttack(what = $)
+   "Called by ReqWeaponAttack when the weapon is actually used in an attack."
+   {
+      piUsed = ATTACKING;
+      
+      if vrWeapon_window_overlay <> $
+      {
+         Send(poOwner,@ChangeWindowOverlay,#what=self);
+      }
+      
+      if vrWeapon_overlay <> $
+      {
+         Send(poOwner,@DoAttackSwing);
+      }
+      
+      piUsed = USED;
+
+      return;
+   }
+
+   NewUsed()
+   {
+      local oItemAtt;
+
+      % This alerts Item attributes when item is used.
+      % Currently special checks for "glowing" weapon attribute.
+      if send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      {
+         oItemAtt = send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         send(oItemAtt,@ItemUsed,#oItem=self,#oPlayer=poOwner);
+      }
+
+      piUsed = USED;
+
+      % do first person overlay if we have one
+      if vrWeapon_window_overlay <> $
+      {
+         Send(poOwner,@SetWindowOverlay,#what=self);
+      }
+
+      % do third person overlay if we have one
+      if vrWeapon_overlay <> $
+      {
+         Send(poOwner,@SetOverlay,#what=self);
+      }
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      local oItemAtt;
+
+      % This alerts Item attributes when item is used.
+      % Currently special checks for "glowing" weapon attribute.
+      if send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      {
+         oItemAtt = send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         send(oItemAtt,@ItemUnused,#oItem=self,#oPlayer=poOwner);
+      }
+
+      piUsed = UNUSED;
+
+      if vrWeapon_window_overlay <> $
+      {
+         Send(poOwner,@RemoveWindowOverlay,#what=self);
+      }
+
+      if vrWeapon_overlay <> $
+      {
+         Send(poOwner,@RemoveOverlay,#what=self);
+      }
+
+      propagate;
+   }
+
+
+   %%% Attack Type Functions (Enchanted weapons, Qor weapons, burning blades, etc.)
+   
+
+   GetAttackSpell()
+   {
+      return piAttack_spell;
+   }
+
+   GetAttackType()
+   {
+      return piAttack_type;
+   }
+
+   SetTypeFlag(flag=0, value=FALSE)
+   {
+      if value
+      {
+         piAttack_type = piAttack_type | flag ;
+      }
+      else
+      {
+         piAttack_type = piAttack_type & ~flag ;
+      }
+      
+      return;
+   }
+
+   CheckTypeFlag(flag=0)
+   {
+      return (piAttack_type & flag) ;
+   }
+
+   SetSpellFlag(flag=0, value=FALSE)
+   {
+      if value
+      {
+         piAttack_spell = piAttack_spell | flag ;
+      }
+      else
+      {
+         piAttack_spell = piAttack_spell & ~flag ;
+      }
+      
+      return;
+   }
+
+   CheckSpellFlag(flag = 0)
+   {
+      return (piAttack_spell & flag);
+   }
+
+   %%% Animation Functions
+
+   % these 5 called by player, for window overlays.
+   % weapon subclasses--do NOT set a window overlay unless you either
+   % set vrWeapon_window_overlay correctly or override all these message handlers
+   GetWindowOverlay()
+   {
+      return vrWeapon_window_overlay;
+   }
+
+   GetWindowOverlayID()
+   {
+      return PWO_RIGHT_HAND;
+   }
+
+   GetWindowOverlayHotspot()
+   {
+      if piUsed = UNUSED
+      {
+         % turns off the window overlay
+         return 0;
+      }
+
+      return HS_SE;
+   }
+
+   SendWindowOverlayAnimation()
+   {
+      local iFlags;
+
+      iFlags = piItem_flags & ITEM_PALETTE_MASK;
+      if iFlags <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
+      }
+      
+      if piUsed = ATTACKING
+      { 
+         AddPacket(1,ANIMATE_ONCE, 4,150, 2,vrWeapon_window_attack_start,
+                   2,vrWeapon_window_attack_end, 2,vrWeapon_window_hold);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,vrWeapon_window_hold);
+      }
+      
+      return;      
+   }
+
+   SendWindowOverlayOverlays()
+   {
+      % no overlays
+      AddPacket(1,0); 
+
+      return; 
+   }
+
+   % These 3 called by player, for normal 3rd-person overlays on user.
+   %  weapon subclasses--do NOT set a window overlay unless you either
+   %  set vrWeapon_overlay correctly or override all these message handlers
+
+   GetOverlay(animation = $)
+   {
+      return vrWeapon_overlay;
+   }
+   
+   GetOverlayHotspot(animation = $)
+   {
+      return HS_RIGHT_WEAPON;
+   }
+
+   SendOverlayAnimation(iAnimation = $)
+   {
+      local iFlags;
+
+      iFlags = piItem_flags & ITEM_PALETTE_MASK;
+      if iFlags <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
+      }
+      
+      if iAnimation = PANM_WEAPON_ATTACK 
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,300, 2,1, 2,3, 2,4);
+      }
+      else
+      { 
+         AddPacket(1,ANIMATE_NONE, 2,4);
+      }
+      
+      return;
+   }
+
+   SendOverlayInformation(ianimation = $)
+   {
+      AddPacket(4,Send(self,@GetOverlay));
+      AddPacket(1,Send(self,@GetOverlayHotspot));
+      Send(self,@SendOverlayAnimation,#iAnimation=iAnimation);
+      
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      local iFlags;
+
+      if piHits > 0 OR viBroken_group = $
+      {
+         propagate;
+      }
+
+      iFlags = piItem_flags & ITEM_PALETTE_MASK;
+      if iFlags <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,viBroken_group);
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      local iFlags;
+
+      if piHits > 0 OR viBroken_group = $
+      {
+         propagate;
+      }
+
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+
+      AddPacket(1,ANIMATE_NONE,2,viBroken_group);
+      
+      return;
+   }
+
+   SendAnimation()
+   {
+      local iFlags;
+
+      if piHits > 0 OR viBroken_group = $
+      {
+         propagate;
+      }
+
+      iFlags = piItem_flags & ITEM_PALETTE_MASK;
+      if iFlags <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,viBroken_group);
+
+      return;
+   }
+
+   %%% Permission Functions
+
+   CanMend()
+   "Weapons are mendable, usually."
+   { 
+      local i, oItemAtt;
+      
+      for i in plItem_Attributes
+      {
+         oItemAtt = send(SYS,@FindItemAttByNum,
+                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if oItemAtt = $
+         {
+            DEBUG("Illegal ItemAtt in list!");
+
+            continue;
+         }
+    
+         if NOT send(oItemAtt,@ItemCanMend,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE; 
+   }
+
+   CanEnchant(oSpell = $)
+   "Weapons CAN usually be dedicated to Qor, Kraanan or Shal'ille.  "
+   "Exception:  weapons that are already enchanted may not be, "
+   "but this is taken care of on a spell by spell basis, so that reagents "
+   "are used correctly."
+   {
+      local i, oItemAtt, iSpell;
+
+      if piAttack_spell <> 0      
+         OR send(self,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
+      { 
+         iSpell = send(oSpell,@GetSpellNum);
+         if iSpell = SID_HOLY_WEAPON or iSpell = SID_UNHOLY_WEAPON 
+            OR iSpell = SID_ENCHANT_WEAPON
+         {
+            return FALSE;
+         }
+      }   
+
+      for i in plItem_Attributes
+      {
+         oItemAtt = send(SYS,@FindItemAttByNum,
+                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if oItemAtt = $
+         {
+            DEBUG("Illegal ItemAtt in list!");
+
+            continue;
+         }
+
+         if NOT send(oItemAtt,@ItemCanEnchant,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   ReqRepair()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

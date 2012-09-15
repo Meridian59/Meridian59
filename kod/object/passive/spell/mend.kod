@@ -1,0 +1,152 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Mend is Spell 
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   mend_name_rsc = "mend"
+   mend_icon_rsc = imend.bgf
+   mend_desc_rsc = \
+      "Erases the wear of battle from a piece of equipment, restoring it to "
+      "near new condition.  "
+      "Requires orc teeth and sapphire to cast."
+
+   mend_not_weaponry = "You try to focus on %s%s, but nothing happens!"
+   mend_beyond_hope = "%s%s is beyond salvage."
+   mend_full_healed = "%s%s is already in perfect condition."
+   mend_working = "Pieces of %s%s bind themselves together to form a new whole."
+
+   mend_sound = kmend.wav
+
+classvars:
+
+   vrName = mend_name_rsc
+   vrIcon = mend_icon_rsc
+   vrDesc = mend_desc_rsc
+
+   viSpell_num = SID_MEND
+   viSchool = SS_KRAANAN
+   viSpell_level = 4
+   viMana = 9
+   viChance_To_Increase = 10
+
+   vrSucceed_wav = mend_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % Separate message so it can be changed, then set from admin mode.
+      plReagents = $;
+      plReagents = Cons([&Sapphire,1],plReagents);
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      % Tell client how many targets this spell needs.
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oTarget, iHits, iMaxHits;
+
+      oTarget = First(lTargets);
+
+      % Check that target is an item that can be mended.
+      if NOT (isClass(oTarget,&Item) AND send(oTarget,@CanMend))
+      {
+         Send(who,@MsgSendUser,#message_rsc=mend_not_weaponry,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      % Kludgey, yes, but spell wouldn't recognize ReqRepair in the Torch class.
+      if isClass(oTarget,&Torch)
+      {
+         Send(who,@MsgSendUser,#message_rsc=mend_not_weaponry,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      iHits = Send(oTarget,@GetHits);
+      iMaxHits = Send(oTarget,@GetMaxHits);
+
+      % Is the item broken?
+      if iHits = 0
+      {
+         Send(who,@MsgSendUser,#message_rsc=mend_beyond_hope, 
+              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      % Is the item already at perfect condition?
+      if iHits = iMaxHits AND iHits > 0
+      {
+         Send(who,@MsgSendUser,#message_rsc=mend_full_healed, 
+              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   IsTargetInRange(who = $,target = $)
+   {
+      return who = Send(target, @GetOwner) 
+             OR Send(who,@GetOwner) = Send(target,@GetOwner);  
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget, iAmount, iMultiplier;
+
+      oTarget = First(lTargets);
+      iAmount = Send(oTarget,@GetMaxHits);
+
+      if IsClass(who,&DM) AND Send(who,@PlayerIsImmortal)
+      {
+         % Immortals heal items back up to full.
+         iMultiplier = 100;
+      }
+      else
+      {
+         % Multiplier is a number from 75% to 95%.
+         iMultiplier = 75 + iSpellpower/5;
+         iMultiplier = bound(iMultiplier,75,95);
+      }
+
+      iAmount = (iAmount*iMultiplier)/100;
+
+      Send(oTarget,@SetMaxHits,#number=iAmount);      
+      Send(oTarget,@SetHits,#number=iAmount);
+      Send(who,@MsgSendUser,#message_rsc=mend_working, 
+           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

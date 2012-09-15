@@ -1,0 +1,67 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Money is NumberItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   money_name_one_rsc = "shilling"
+   money_name_many_rsc = "shillings"
+   
+   money_icon_rsc = coin.bgf
+   money_desc_rsc = \
+      "The currency of Meridian.  A profile of an ancient princess "
+      "adorns the front and an apothecary's stone the back."
+
+classvars:
+
+   vrName = money_name_one_rsc
+   vrIcon = money_icon_rsc
+   vrDesc = money_desc_rsc
+
+   vrName_plural = money_name_many_rsc
+
+   viBulk = 0
+   viWeight = 0
+
+   viValue_average = 1
+
+   viItem_type = ITEMTYPE_MONEY
+
+   viGround_group = 2
+   viInventory_group = 1
+
+properties:
+
+messages:
+
+   GetValue()
+   {
+      return piNumber * Send(self,@GetInitValue);
+   }
+
+   FixMoney(amount = $)
+   "Bounds money to the upper limit of 'amount'."
+   {
+      if amount <> $
+      {
+         piNumber = Bound(piNumber,0,amount);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

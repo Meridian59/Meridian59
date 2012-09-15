@@ -1,0 +1,101 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKD1 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKD1 ="Lair of the Bone Priestess"
+   room_OutdoorsKD1 = KD1.roo
+   OutdoorsKD1_music = boneprst.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKD1
+
+   viTeleport_row = 32
+   viTeleport_col = 50
+   viTerrain_type = TERRAIN_JUNGLE | TERRAIN_BEACH | TERRAIN_MOUNTAIN
+   
+   viAvar_clan = AVARCLAN_BONE_FACTION 
+
+properties:
+
+   prRoom = room_OutdoorsKD1
+   prMusic = OutdoorsKD1_music
+   piRoom_num = RID_KD1
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Avar, 90], [&AvarChieftain, 10] ];
+      plGenerators = [ [16,48], [24,50], [33,51], [42,33], [14,29] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&RainbowFern,30,54], [&rainbowfern,43,31], [&rainbowfern,12,47],
+			               [&FireSand,12,21], [&FireSand,10,46]
+			             ];
+
+      % Do not propagate
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WeST, RID_KC1, 27, 71, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&YrxlTree),#new_row=21,#new_col=49,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL1),
+           #new_row=23,#new_col=21,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL4),
+           #new_row=23,#new_col=29,#fine_row=32,#fine_col=32,#angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL5),
+           #new_row=26,#new_col=40,#fine_row=32,#fine_col=32,#angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_ALTAR),
+           #new_row=21,#new_col=41,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&KocatanBonePriestess),
+           #new_row=19,#new_col=40,#fine_row=0,#fine_col=0);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

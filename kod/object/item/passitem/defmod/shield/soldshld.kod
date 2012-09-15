@@ -1,0 +1,835 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SoldierShield is Shield
+
+constants:
+
+   include blakston.khd
+
+   % "Magic" constants used in shield superclasses
+   USED = 1
+   UNUSED = 2
+   DEFENDING = 3
+
+   % Max rank you can get from killing factioned NPCs
+   MAX_RANK_FROM_MONSTERS = 4
+
+   % How many meridian days (approximate) before you lose a rank.
+   DAYS_PER_RANK_LOSS = 100
+
+resources:
+
+   SoldierShield_name_rsc = "soldier's shield"
+
+   SoldierShield_desc_rsc = \
+      "Shields of this style show allegiance to a particular faction"
+
+   SoldierShield_icon_rsc = gshE.bgf
+   SoldierShield_icon_back_rsc = gsheback.bgf
+   SoldierShield_window_overlay_rsc = povgshE.bgf
+
+   SoldierShield_rank_desc1 = "\n\nYour rank within "
+   SoldierShield_rank_desc2 = " is: "
+   SoldierShield_rank_desc3 = "."
+
+   SoldierShield_ArmyName = "the forces of neutrality"
+
+   SoldierShield_rank_name1 = "a lowly peon"
+   SoldierShield_rank_name2 = "an average soldier"
+   SoldierShield_rank_name3 = "a notable fighter"
+   SoldierShield_rank_name4 = "a great warrior"
+   SoldierShield_rank_name5 = "a supreme hero"
+
+   SoldierShield_welcome_mail = "Subject: Welcome.\n"
+      "You are a soldier now."
+
+   SoldierShield_lost_status = "Your liege revokes your status as a soldier!"
+   SoldierShield_lost_status_nonfaction = \
+      "You are not worthy to hold a soldier shield!"
+   SoldierShield_booted_mail = "Subject: Your soldier status is revoked.\n"
+      "I have removed you from my army of soldiers.  I have no use for one so "
+      "cowardly as yourself."
+
+   SoldierShield_sling_on_back = "You sling your shield on your back."
+   SoldierShield_remove_from_back = "You remove your shield from your back."
+
+classvars:
+
+   vrName = SoldierShield_name_rsc
+   vrDesc = SoldierShield_desc_rsc
+   vrIcon = SoldierShield_icon_rsc
+
+   viWeight = 0
+   viBulk = 0
+
+   viDefense_base = 20
+   viDamage_base = 2
+
+   viFaction = FACTION_NEUTRAL
+   viColor = XLAT_TO_GRAY
+
+   prShield_emblem_held = $
+   prShield_emblem_drop = $
+   prShield_emblem_back = $
+
+   viGround_group = 3
+   viInventory_group = 1
+
+   % Don't show damage condition since we don't take damage.
+   vbShow_Condition = FALSE
+
+   vrWelcomeMessage = SoldierShield_welcome_mail
+
+   % Stuff for rank
+   vrArmyName = SoldierShield_ArmyName
+   vrRank1 = SoldierShield_rank_name1
+   vrRank2 = SoldierShield_rank_name2
+   vrRank3 = SoldierShield_rank_name3
+   vrRank4 = SoldierShield_rank_name4
+   vrRank5 = SoldierShield_rank_name5
+
+properties:
+
+   piFactionRank = 4
+
+   % Number of M59 days left until we lose a rank.
+   piDaysUntilRankLoss = 0
+
+   % A count of how many kills scored.
+   piFactionKills = 0
+
+   poLastEnemyToAttack = $
+
+   % These can change if we put the shield on our back.
+   piOverlayHotspot = HS_LEFT_WEAPON
+   vrShield_window_overlay = SoldierShield_window_overlay_rsc
+   viUse_amount = 1
+   vrShield_overlay = SoldierShield_icon_rsc
+
+messages:
+
+   Constructor()
+   {
+      % Doesn't matter what the second color is, this shield only has
+      %  a single translation.
+      Send(self,@SetPaletteTranslation,
+           #translation=Send(SYS,@EncodeTwoColorXLAT,#color1=viColor,
+                             #color2=viColor));
+
+      Send(self,@ResetRankLossCount);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if poOwner <> $ AND IsClass(poOwner,&Player)
+      {
+         if NOT IsClass(poOwner,&DM)
+         {
+            if Send(poOwner,@GetFaction) = viFaction
+            {
+               if Send(poOwner,@IsLoggedOn)
+               {
+                  Post(poOwner,@MsgSendUser,
+                       #message_rsc=SoldierShield_lost_status);
+               }
+               else
+               {
+                  Send(poOwner,@ReceiveNestedMail,
+                       #from=Send(Send(SYS,@GetParliament),
+                                  @GetFactionLiegeName,#faction=viFaction),
+                       #dest_list=[poOwner],
+                       #nest_list=[4,SoldierShield_booted_mail]);
+               }
+            }
+            else
+            {
+               if Send(poOwner,@IsLoggedOn)
+               {
+                  Post(poOwner,@MsgSendUser,
+                       #message_rsc=SoldierShield_lost_status_nonfaction);
+               }
+
+               % No message if you're logged out.  You were the wrong
+               %  faction, anyway!
+            }
+         }
+
+         % Remove the shield from the player
+         % - This removes stats!
+         Send(self,@NewUnused,#what=poOwner,#Recalibrate=TRUE);
+      }
+
+      propagate;
+   }
+
+   %%% Faction rank stuff.
+
+   GetFactionRank()
+   {
+      return piFactionRank;
+   }
+
+   GetFaction()
+   {
+      return viFaction;
+   }
+
+   ModifyFactionRank(amount=0)
+   "Adds 'amount' of rank.  Can be negative.  Binds value to acceptable "
+   "ranges."
+   {
+      % Ranges from 1-10
+      piFactionRank = piFactionRank + amount;
+      piFactionRank = bound(piFactionRank,1,10);
+
+      Send(self,@UpdateRankPowers);
+
+      return piFactionRank;
+   }
+
+   UpdateRankPowers()
+   "Updates any rank powers.  EG, called after gaining a faction rank."
+   {
+      return;
+   }
+
+   RemoveStats()
+   {
+      % Set in each subclass;
+      return;
+   }
+
+   KilledSomething(what=$)
+   "Called when our owner killed something."
+   {
+      local oOwnerOwner, iAdvance;
+
+      % No bonus for killing neutrals or for killing in the Arena.
+      oOwnerOwner = Send(poOwner,@GetOwner);
+      if Send(what,@GetFaction) = FACTION_NEUTRAL
+         OR oOwnerOwner = $
+         OR Send(oOwnerOwner,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         return;
+      }
+
+      if IsClass(what,&Player)
+      {
+         % No bonus if it wasn't an enemy or if for some reason we didn't
+         %  attack any one "recently" (IE, our owner can be helped by mules).
+         if NOT Send(self,@IsEnemyAttack,#what=what)
+            OR Send(poOwner,@CanHelpPlayer)
+         {
+            return;
+         }
+
+         % Killing an enemy player gets us 2 ranks and resets our loss counter.
+         iAdvance = 2;
+         Send(self,@ResetRankLossCount);
+         piFactionKills = piFactionKills + 1;
+      }
+      else
+      {
+         % It's a factioned monster
+         if piFactionRank >= MAX_RANK_FROM_MONSTERS
+            AND Send(SYS,@IsPKAllowed)
+         {
+            return;
+         }
+
+         if Send(what,@GetFaction) <> viFaction
+         {
+            % Killing a factioned mosnter just gives us 1 rank.
+            iAdvance = 1;
+         }
+         else
+         {
+            % One level penalty for killing an NPC ally.
+            iAdvance = -1;
+         }
+      }
+
+      Send(self,@ModifyFactionRank,#amount=iAdvance);
+
+      return;
+   }
+
+   ResetRankLossCount()
+   {
+      piDaysUntilRankLoss = (DAYS_PER_RANK_LOSS * random(80,110)) / 100;
+
+      return;
+   }
+
+   NewDay()
+   "Called every new M59 day."
+   {
+      piDaysUntilRankLoss = piDaysUntilRankLoss - 1;
+
+      if piDaysUntilRankLoss <= 0
+      {
+         Send(self,@ModifyFactionRank,#amount=-1);
+         Send(self,@ResetRankLossCount);
+      }
+
+      return;
+   }
+
+   LostFaction()
+   "Does cleanup when the player loses faction."
+   {
+      Post(self,@Delete);
+
+      return;
+   }
+
+   OwnerDied(what=$,logoff=FALSE)
+   "Called when our owner dies due to 'what', or with 'logoff' to apply a "
+   "penalty reguardless."
+   {
+      local oSoldierShield;
+
+      % logoff is used for logoff ghosts to thump us a good one for being
+      %  cowardly.
+      if logoff
+         OR Send(self,@IsEnemyAttack,#what=what)
+      {
+         % If we're rank 3 or below, then we lose our item for slacking.
+         if piFactionRank <= 3
+         {
+            Post(self,@Delete);
+
+            return;
+         }
+
+         % Otherwise, lose 4 ranks for dying to a faction enemy
+         Send(self,@ModifyFactionRank,#amount=-4);
+
+         % Give the last person to attack us a bonus for forcing owner off if
+         %  logged
+         if logoff
+            AND poLastEnemyToAttack <> $
+         {
+            oSoldierShield = Send(poLastEnemyToAttack,@FindUsing,
+                                  #class=&SoldierShield);
+            Send(oSoldierShield,@KilledSomething,#what=poOwner);
+         }
+      }
+
+      return;
+   }
+
+   IsEnemyAttack(what=$,damage=FALSE)
+   "Returns TRUE if what is an enemy (opposing faction soldier)."
+   {
+      local oSoldierShield;
+
+      if what <> $
+         AND IsClass(what,&Player)
+         AND what <> poOwner
+      {
+         oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield);
+
+         % Gotta have a shield, and it can't be the same faction as us.
+         if oSoldierShield <> $
+         {
+            if Send(oSoldierShield,@GetFaction) <> viFaction
+            {
+               Send(oSoldierShield,@AttackedByEnemy,#who=what);
+
+               return TRUE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
+   AttackedByEnemy(who=$)
+   {
+      poLastEnemyToAttack = who;
+
+      return;
+   }
+
+   %%% Making sure the item is not unused and not dropped
+
+   ReqUse()
+   {
+      if Send(poOwner,@GetFaction) = viFaction
+         OR IsClass(poOwner,&DM)
+      {
+         Post(self,@UpdateRankPowers);
+
+         return TRUE;
+      }
+      else
+      {
+         % Otherwise, the owner shouldn't have the shield.
+         Post(self,@Delete);
+      }
+
+      return FALSE;
+   }
+
+   ReqUnuse()
+   {
+      % You're stuck with it.  Cannot be unused by normal players.
+      return IsClass(poOwner,&DM);
+   }
+
+   NewUnused(what=$, Recalibrate=FALSE)
+   {
+      % Non DMs cannot unuse the item.
+      if NOT (Recalibrate OR IsClass(what,&DM))
+      {
+         return FALSE;
+      }
+
+      % Remove it from our back and remove our stats.
+      Send(self,@RemoveFromBack);
+      Send(self,@RemoveStats);
+
+      propagate;
+   }
+
+   ReqNewOwner(what=$)
+   {
+      if (NOT IsClass(what,&Battler))
+         OR (Send(what,@GetFaction) <> viFaction
+             AND NOT IsClass(what,&DM))
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   NewOwner(what=$)
+   {
+      if what <> $
+         AND IsClass(what,&Player)
+      {
+         if Send(what,@GetFaction) = viFaction
+            OR IsClass(what,&DM)
+         {
+            Send(what,@FreeHands);
+            Post(what,@TryUseItem,#what=self);
+            if NOT IsClass(what,&DM)
+            {
+               Send(what,@ReceiveNestedMail,
+                    #from=Send(Send(SYS,@GetParliament),@GetFactionLiegeName,
+                               #faction=viFaction),
+                    #dest_list=[what],
+                    #nest_list=[4,vrWelcomeMessage]);
+            }
+         }
+         else
+         {
+            % Otherwise, the owner shouldn't have the shield.
+            Post(self,@Delete);
+
+            return;
+         }
+      }
+
+      propagate;
+   }
+
+   ReqLeaveOwner()
+   {
+      return FALSE;
+   }
+
+   %%% For putting the shield on our back
+
+   % This is used for Bows and Lutes, currently.
+
+   SlingOnBack()
+   {
+      if piOverlayHotspot <> HS_SHIELD_BACK
+      {
+         piOverlayHotspot = HS_SHIELD_BACK;
+
+         % Do text message
+         Send(poOwner,@MsgSendUser,#message_rsc=SoldierShield_sling_on_back);
+
+         % Remove the shield window overlay
+         %  NOTE: This doesn't actually remove the overlay, just make it appear
+         %        "nowhere".
+         Send(poOwner,@RemoveWindowOverlay,#what=self);
+
+         % This makes it not take a hand.
+         viUse_amount = 0;
+
+         vrShield_overlay = SoldierShield_icon_back_rsc;
+         Send(poOwner,@SetOverlay,#what=self);
+      }
+
+      return;
+   }
+
+   RemoveFromBack()
+   {
+      if piOverlayHotspot <> HS_LEFT_WEAPON
+      {
+         piOverlayHotspot = HS_LEFT_WEAPON;
+
+         % Do text message
+         Send(poOwner,@MsgSendUser,
+              #message_rsc=SoldierShield_remove_from_back);
+
+         % Restore the shield window overlay
+         vrShield_window_overlay = SoldierShield_window_overlay_rsc;
+         Send(poOwner,@SetWindowOverlay,#what=self);
+
+         % This makes it take a hand slot again.
+         viUse_amount = 1;
+
+         vrShield_overlay = SoldierShield_icon_rsc;
+         Send(poOwner,@SetOverlay,#what=self);
+      }
+
+      return;
+   }
+
+   GetWindowOverlayHotspot()
+   {
+      % turns off the window overlay if unused or on our back
+      if piUsed = UNUSED
+         OR piOverlayHotspot = HS_SHIELD_BACK
+      {
+         return 0;
+      }
+
+      return HS_SW;
+   }
+
+   %%% Misc. Infrastructure
+
+   AppendDesc()
+   "Appends faction rank to description."
+   {
+      AppendTempString(SoldierShield_rank_desc1);
+      AppendTempString(vrArmyName);
+      AppendTempString(SoldierShield_rank_desc2);
+
+      if piFactionRank <= 2
+      {
+         AppendTempString(vrRank1);
+      }
+      else
+      {
+         if piFactionRank <= 4
+         {
+            AppendTempString(vrRank2);
+         }
+         else
+         {
+            if piFactionRank <= 6
+            {
+               AppendTempString(vrRank3);
+            }
+            else
+            {
+               if piFactionRank <= 8
+               {
+                  AppendTempString(vrRank4);
+               }
+               else
+               {
+                  AppendTempString(vrRank5);
+               }
+            }
+         }
+      }
+
+      AppendTempString(SoldierShield_rank_desc3);
+
+      propagate;
+   }
+
+   % Copied from Shield superclass so we don't take damage.
+   DefendingHit()
+   "Called when the item provides defense."
+   {
+      piUsed = DEFENDING;
+      if vrShield_window_overlay <> $
+      {
+         Send(poOwner,@ChangeWindowOverlay,#what=self);
+      }
+
+      if vrShield_overlay <> $
+      {
+         piUsed = USED;
+      }
+
+      % Return here so that the item doesn't take damage.
+      return;
+   }
+
+   GetBlockAbility(who = $)
+   {
+      % No blocking if it's slung on our back.
+      if piOverlayHotspot = HS_SHIELD_BACK
+      {
+         return 0;
+      }
+
+      propagate;
+   }
+
+   % Copied from DefenseModifier superclass, ignores shield's Block
+   %  requirement.
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Affects damage done to owner."
+   {
+      local iDamageReduce;
+
+      iDamageReduce = 0;
+      if piDamage_reduce <> 0
+      {
+         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
+         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+      }
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Lose 1/3 of the damage reduction if we're doing both weapon
+            %  and spell damage types.
+            iDamageReduce = iDamageReduce * 2 / 3;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iDamageReduce = 0;
+         }
+      }
+
+      return damage - iDamageReduce;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return 0;
+   }
+
+   % No mending, since it never gets damaged, really.
+   CanMend()
+   {
+      return FALSE;
+   }
+
+   % No shattering or swapping the item.
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   % Should be handled by ReqNewOwner, but this is just for sanity.
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+
+   %%% Overlay and Animation stuff.
+
+   GetOverlay()
+   {
+      return vrShield_overlay;
+   }
+
+   GetOverlayHotspot()
+   {
+      return piOverlayHotspot;
+   }
+
+   GetNumberOverlays()
+   {
+      if (piOverlayHotspot = HS_LEFT_WEAPON
+          AND prShield_emblem_held <> $)
+         OR (piOverlayHotspot = HS_SHIELD_BACK
+             AND prShield_emblem_back <> $)
+      {
+         return 2;
+      }
+
+      return 1;
+   }
+
+   SendOverlayInformation(iAnimation = $)
+   {
+      AddPacket(4,vrShield_Overlay);
+      AddPacket(1,piOverlayHotspot);
+      Send(self,@SendHeldAnimation,#iAnimation=iAnimation);
+
+      if piOverlayHotspot = HS_LEFT_WEAPON
+      {
+         if prShield_emblem_held <> $
+         {
+            AddPacket(4,prShield_emblem_held);
+            AddPacket(1,piOverlayHotspot);
+            AddPacket(1,ANIMATE_NONE, 2,1);
+         }
+      }
+      else
+      {
+         % Therefore, piOverlayHotspot = HS_SHIELD_BACK
+         if prShield_emblem_back <> $
+         {
+            % Shields slung on the back use a different hotspot for the emblem
+            %  due to overlay priorities.
+            AddPacket(4,prShield_emblem_back);
+            AddPacket(1,piOverlayHotspot);
+            if iAnimation = PANM_BOW_FIRE
+            {
+               % Uses group 2 for animation
+               AddPacket(1,ANIMATE_ONCE, 4,1200, 2,2, 2,2, 2,1);
+            }
+            else
+            {
+               % Default: Group 1
+               AddPacket(1,ANIMATE_NONE, 2,1);
+            }
+         }
+      }
+
+      return;
+   }
+
+   SendHeldAnimation(iAnimation=$)
+   {
+      local XLAT;
+
+      XLAT = Send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+
+      if piOverlayHotspot = HS_LEFT_WEAPON
+      {
+         AddPacket(1,ANIMATE_NONE,2,2);
+      }
+      else
+      {
+         % Therefore, piOverlayHotspot = HS_SHIELD_BACK
+         if iAnimation = PANM_BOW_FIRE
+         {
+            % Uses group 5 for animation
+            AddPacket(1,ANIMATE_ONCE,4,1200,2,5,2,5,2,1);
+         }
+         else
+         {
+            % Default: group 1
+            AddPacket(1,ANIMATE_NONE,2,1);
+         }
+      }
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      local XLAT;
+
+      XLAT = Send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+      AddPacket(1,ANIMATE_NONE,2,viGround_group);
+
+      return;
+   }
+
+   SendWindowOverlayAnimation()
+   {
+      local XLAT;
+
+      XLAT = Send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+
+      if piUsed = DEFENDING
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,1000, 2,2, 2,2, 2,1);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }
+
+   SendOverlays()
+   {
+      if prShield_emblem_drop <> $
+      {
+         AddPacket(1,1);
+         AddPacket(4,prShield_emblem_drop, 1,1, 1,ANIMATE_NONE, 2,2);
+      }
+      else
+      {
+         AddPacket(1,0);
+      }
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      local XLAT;
+
+      XLAT = Send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+
+      AddPacket(1,ANIMATE_NONE, 2,viInventory_group);
+
+      return;
+   }
+
+   SendLookOverlays()
+   {
+      if prShield_emblem_drop <> $
+      {
+         AddPacket(1,1);
+         AddPacket(4,prShield_emblem_drop, 1,1, 1,ANIMATE_NONE, 2,1);
+      }
+      else
+      {
+         AddPacket(1,0);
+      }
+
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      Send(self,@SendLookAnimation);
+
+      return;
+   }
+
+   SendInventoryOverlays()
+   {
+      Send(self,@SendLookOverlays);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

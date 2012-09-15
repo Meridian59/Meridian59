@@ -1,0 +1,195 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+QorBane is RoomEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   QorBane_name_rsc = "Qorbane"
+   QorBane_icon_rsc = iqorbane.bgf
+   QorBane_desc_rsc = \
+      "Permeates an area with the holy essence of Shal'ille, harming any who attempt to call on the evil energy of Qor.  "
+      "Requires yrxl sap and fairy wings to cast."
+   
+   QorBane_unnecessary = "This area is already polarized against Qor."
+
+   QorBane_on = "A magical force enters the area, filling the air with a sweet odor.  Everything around "
+      "you seems to glow almost imperceptibly, radiating holy energy."
+   QorBane_off = "The holy force dissipates."
+   QorBane_new_entrant = "This place is permeated by a holy presence;  you can feel the eyes of Shal'ille "
+      "watching you, warning you against calling upon the magical forces of Qor."
+
+   QorBane_HurtCaster = "As you utter the final syllables of your spell, a wash of holy "
+      "power passes through your body, scalding you with purity."
+   QorBane_kills_you = "As you utter the final syllables of your spell, a wash of holy "
+      "power passes through your body.  The wave of purity is too much for you to stand, "
+      "and you expire."
+
+   QorBane_sound = sqrbane.wav
+
+classvars:
+
+   vrName = QorBane_name_rsc
+   vrIcon = QorBane_icon_rsc
+   vrDesc = QorBane_desc_rsc
+
+   viSpell_num = SID_QORBANE
+   viSchool = SS_SHALILLE
+   viMana = 15
+   viSpell_level = 4
+   viSpellExertion = 5
+   viCast_time = 5000
+   viChance_To_Increase = 40
+   
+   vrSucceed_wav = QorBane_sound
+   viOutlaw = False
+   viHarmful = True
+   vbCastable_in_HappyLand = FALSE
+
+properties:
+
+messages:
+
+   
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Yrxlsap,1],plReagents);
+      plReagents = Cons([&FairyWing,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+      % check if room already has this
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=QorBane_unnecessary);
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+   CastSpell( who = $, iSpellPower = 0 )
+   "Initiation point for the spell."
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+        Send(who,@MsgSendUser,#message_rsc=QorBane_unnecessary);
+        return;
+      }
+
+      % global effects of the enchantment
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=QorBane_on,#what=self);
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellPower,
+            #time=send(self,@GetDuration,#iSpellPower = iSpellPower));
+      
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = 45 + (iSpellPower*3);  %% 30 - 228 seconds
+      iDuration = iDuration * 1000;      %% convert to seconds            
+
+      return random(iDuration/2,iDuration);
+   }
+
+   StartEnchantmentNewOccupant( who = $ )
+   "Called on new occupants of the enchanted room."
+   {
+      Send(who,@MsgSendUser,#message_rsc=QorBane_new_entrant);
+      return;
+   }
+
+   EndSpell( where = $, state = $ )
+   "Called when spell expires."
+   {
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=QorBane_off,#what=self);
+      return;
+   }
+
+   HurtCaster(qorCaster=$, iSpellPower=0, qorSpellLevel=1)
+   {
+      local bDoDamage,oRoom,iDamageAmt;
+
+      bDoDamage = FALSE;
+      
+      if IsClass(qorCaster,&Monster)
+         OR send(qorCaster,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         OR send(send(qorCaster,@GetOwner),@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
+      {
+         bDoDamage = TRUE;
+      }
+      
+      if send(send(qorCaster,@GetOwner),@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         if send(send(qorCaster,@GetOwner),@IsValidTarget,#who=qorCaster)
+         {
+            bDoDamage = TRUE;
+         }
+         else
+         {
+            bDoDamage = FALSE;
+         }
+      }
+      
+      if bDoDamage
+      {
+         if IsClass(qorCaster,&Player)
+         {
+            Send(qorCaster,@MsgSendUser,#message_rsc=QorBane_HurtCaster);
+         }
+
+         %Conceptually: ((iSpellPower/15) * (qorSpellLevel/2) * random(8,12))/10
+         iDamageAmt = (iSpellPower * qorSpellLevel * random(8,12))/300;
+
+         if Send(qorCaster,@AssessDamage,#report=FALSE,#what=self,
+                 #damage=iDamageAmt,#aspell=ATCK_SPELL_HOLY) = $
+         {
+            if IsClass(qorCaster,&Player)
+            {
+               Send(qorCaster,@MsgSendUser,#message_rsc=QorBane_kills_you);
+            }
+            
+            oRoom = Send(qorCaster,@GetOwner);
+            Send(qorCaster,@Killed,#what=self);
+            
+            % currently no one is charged with the death
+            Send(oRoom,@SomethingKilled,#what=self,#victim=qorCaster);
+         }
+      }
+
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,128 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Flickerer is PassiveObject
+
+% This originally was items that cycled through an animation sequence, like
+%  fire, etc.  None of these objects were actually flagged as flickerers.
+% With the introduction of dynamic lighting the new graphics engine, this
+%  now also deals with objects that give off light.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viObject_flags = LOOK_NO
+
+   % Definitions for animations
+   viOff_frame = 1
+   viStart_frame = 1
+   viEnd_frame = 3
+
+   % What flags?  Default is the "yes, I'm a light" flag.
+   viLightFlags = LIGHT_FLAG_ON
+
+   % What color?  Default is a fire color.
+   viLightColor = LIGHT_FIRE
+
+properties:
+
+   piAnim_speed = 100
+
+   % Are we currently lit?  Used for lights that turn on/off.
+   pbIsLit = TRUE
+
+   % What intensity? from 0-255
+   %  Keep this as a property to allow us to set it dynamically.
+   piLightIntensity = 255
+
+messages:
+   
+   Constructor(iIntensity=$)
+   {
+      send(self,@SetAnimationSpeed);
+
+      if iIntensity <> $
+      {
+         piLightIntensity = iIntensity;
+      }
+
+      propagate;
+   }
+
+   SetAnimationSpeed()
+   {
+      piAnim_speed = random(50,100);
+
+      return;   
+   }
+
+   SendAnimation()
+   {
+      if NOT pbIsLit
+      {
+         AddPacket(1,ANIMATE_NONE,2,viOff_frame);
+
+         return;
+      }
+   
+      if piAnim_speed = 0
+      {
+         AddPacket(1,ANIMATE_NONE,2,viStart_frame);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_CYCLE,4,piAnim_speed,2,viStart_frame,2,viEnd_frame);
+      }
+
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      local iFlags;
+
+      iFlags = viObject_flags;
+      
+      if pbIsLit
+      {
+         iFlags = iFlags | FLICKERING_YES;
+      }
+
+      return iFlags;
+   }
+
+   IsFire()
+   "this item makes faren spells in the room stronger."
+   {
+      return TRUE;
+   }   
+
+   SendLightingInformation()
+   {
+      if pbIsLit
+      {
+         AddPacket(2,viLightFlags);
+         AddPacket(1,piLightIntensity);
+         AddPacket(2,viLightColor);
+
+         return;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

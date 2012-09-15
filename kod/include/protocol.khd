@@ -1,0 +1,222 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+   % protocol.khd
+
+   % protocol to/from client constants
+
+   BP_WAIT                  = 21
+   BP_UNWAIT                = 22
+   
+   BP_SYS_MESSAGE           = 31
+   BP_MESSAGE               = 32
+
+   BP_SEND_PLAYER           = 40
+   BP_SEND_STATS            = 41
+   BP_SEND_ROOM_CONTENTS    = 42
+   BP_SEND_OBJECT_CONTENTS  = 43
+   BP_SEND_PLAYERS          = 44
+   BP_USE_CHARACTER         = 46
+   BP_DELETE_CHARACTER      = 47
+   BP_NEW_CHARINFO          = 48
+   BP_SEND_CHARINFO         = 49
+   BP_SEND_SPELLS           = 50
+   BP_SEND_SKILLS           = 51
+   BP_SEND_STAT_GROUPS      = 52
+   BP_SEND_ENCHANTMENTS     = 53
+   BP_REQ_QUIT              = 54
+   BP_SAY_BLOCKED           = 55
+   BP_CHARINFO_OK           = 56
+   BP_CHARINFO_NOT_OK       = 57
+   BP_LOAD_MODULE           = 58
+   BP_UNLOAD_MODULE         = 59
+
+   BP_EFFECT                = 70
+   
+   BP_MAIL                  = 80
+   BP_REQ_GET_MAIL          = 81
+   BP_SEND_MAIL             = 82
+   BP_DELETE_MAIL           = 83
+
+   BP_REQ_ARTICLES          = 85
+   BP_REQ_ARTICLE           = 86
+   BP_POST_ARTICLE          = 87
+
+   BP_REQ_LOOKUP_NAMES      = 88
+
+   BP_ACTION                = 90
+   BP_REQ_MOVE              = 100
+   BP_REQ_TURN              = 101
+   BP_REQ_GO                = 102
+   BP_REQ_ATTACK            = 103
+   BP_REQ_SHOOT             = 104
+   BP_REQ_CAST              = 105
+   BP_REQ_USE               = 106
+   BP_REQ_UNUSE             = 107
+   BP_REQ_APPLY             = 108
+   BP_REQ_ACTIVATE          = 109
+   BP_SAY_TO                = 110
+   BP_SAY_GROUP             = 111
+   BP_REQ_PUT               = 112
+   BP_REQ_GET               = 113
+   BP_REQ_GIVE              = 114
+   BP_REQ_TAKE              = 115
+   BP_REQ_LOOK              = 116
+   BP_REQ_INVENTORY         = 117
+   BP_REQ_DROP              = 118
+   BP_REQ_HIDE              = 119
+   BP_REQ_OFFER             = 120
+   BP_ACCEPT_OFFER          = 121
+   BP_CANCEL_OFFER          = 122
+   BP_REQ_COUNTEROFFER      = 123
+   BP_REQ_BUY               = 124
+   BP_REQ_BUY_ITEMS         = 125
+   BP_CHANGE_DESCRIPTION    = 126
+
+   BP_PLAYER                = 130
+   BP_STAT                  = 131
+   BP_STAT_GROUP            = 132
+   BP_STAT_GROUPS           = 133
+   BP_ROOM_CONTENTS         = 134
+   BP_OBJECT_CONTENTS       = 135
+   BP_PLAYERS               = 136
+   BP_PLAYER_ADD            = 137
+   BP_PLAYER_REMOVE         = 138
+   BP_CHARACTERS            = 139
+   BP_CHARINFO              = 140
+   BP_SPELLS                = 141
+   BP_SPELL_ADD             = 142
+   BP_SPELL_REMOVE          = 143
+   BP_SKILLS                = 144
+   BP_SKILL_ADD             = 145
+   BP_SKILL_REMOVE          = 146
+   BP_ADD_ENCHANTMENT       = 147
+   BP_REMOVE_ENCHANTMENT    = 148
+   BP_QUIT                  = 149
+   BP_BACKGROUND            = 150
+   BP_PLAYER_OVERLAY        = 151
+   BP_ADD_BG_OVERLAY        = 152
+   BP_REMOVE_BG_OVERLAY     = 153
+   BP_CHANGE_BG_OVERLAY     = 154
+   BP_USERCOMMAND           = 155
+
+   BP_PASSWORD_OK           = 160
+   BP_PASSWORD_NOT_OK       = 161
+   BP_ADMIN                 = 162
+
+   BP_PLAY_WAVE             = 170
+   BP_PLAY_MUSIC            = 171
+   BP_PLAY_MIDI             = 172
+
+   BP_LOOK_NEWSGROUP        = 180
+   BP_ARTICLES              = 181
+   BP_ARTICLE               = 182
+
+   BP_LOOKUP_NAMES          = 190
+
+   BP_MOVE                  = 200
+   BP_TURN                  = 201
+   BP_SHOOT                 = 202
+   BP_USE                   = 203
+   BP_UNUSE                 = 204
+   BP_USE_LIST              = 205
+   BP_SAID                  = 206
+   BP_LOOK                  = 207
+   BP_INVENTORY             = 208
+   BP_INVENTORY_ADD         = 209
+   BP_INVENTORY_REMOVE      = 210
+   BP_OFFER                 = 211
+   BP_OFFER_CANCELED        = 212
+   BP_OFFERED               = 213
+   BP_COUNTEROFFER          = 214
+   BP_COUNTEROFFERED        = 215
+   BP_BUY_LIST              = 216
+   BP_CREATE                = 217
+   BP_REMOVE                = 218
+   BP_CHANGE                = 219
+   BP_LIGHT_AMBIENT         = 220
+   BP_LIGHT_PLAYER          = 221
+   BP_LIGHT_SHADING         = 222
+   BP_SECTOR_MOVE           = 223
+   BP_SECTOR_LIGHT          = 224
+   BP_WALL_ANIMATE          = 225
+   BP_SECTOR_ANIMATE        = 226
+   BP_CHANGE_TEXTURE        = 227
+   BP_INVALIDATE_DATA       = 228
+
+   BP_REQ_DEPOSIT           = 230
+   BP_WITHDRAWAL_LIST       = 231
+   BP_REQ_WITHDRAWAL        = 232
+   BP_REQ_WITHDRAWAL_ITEMS  = 233
+   BP_XLAT_OVERRIDE         = 234
+   BP_WALL_SCROLL           = 235
+   BP_SECTOR_SCROLL         = 236
+   BP_SET_VIEW              = 237
+   BP_RESET_VIEW            = 238
+
+   % user command protocol
+   UC_SEND_QUIT = 1
+   UC_LOOK_PLAYER = 2
+   UC_CHANGE_URL = 3
+   UC_SPELL_SCHOOLS = 4
+
+   UC_REST = 5
+   UC_STAND = 6
+   UC_SAFETY = 7
+   UC_SUICIDE = 8
+
+   UC_REQ_GUILDINFO = 10
+   UC_GUILDINFO = 11
+   UC_INVITE = 12
+   UC_EXILE = 13
+   UC_RENOUNCE = 14
+   UC_ABDICATE = 15
+   UC_VOTE = 16
+   UC_SET_RANK = 17
+   UC_GUILD_ASK = 18
+   UC_GUILD_CREATE = 19
+   UC_DISBAND = 20
+   UC_REQ_GUILD_LIST = 21
+   UC_GUILD_LIST = 22
+   UC_MAKE_ALLIANCE = 23
+   UC_END_ALLIANCE = 24
+   UC_MAKE_ENEMY = 25
+   UC_END_ENEMY = 26
+   UC_GUILD_HALLS = 27
+   UC_ABANDON_GUILD_HALL = 28
+   UC_GUILD_RENT = 29
+   UC_GUILD_SET_PASSWORD = 30
+   UC_GUILD_SHIELD = 31
+   UC_GUILD_SHIELDS = 32
+   UC_CLAIM_SHIELD = 33
+
+   UC_DEPOSIT = 35
+   UC_WITHDRAW = 36
+   UC_BALANCE = 37
+
+   UC_APPEAL = 40
+   UC_REQ_RESCUE = 41
+
+   UC_MINIGAME_START        = 45
+   UC_MINIGAME_STATE        = 46
+   UC_MINIGAME_MOVE         = 47
+   UC_MINIGAME_PLAYER       = 48
+   UC_MINIGAME_RESET_PLAYERS= 49
+
+   % enchantment byte
+   ENCHANTMENT_PLAYER = 1
+   ENCHANTMENT_ROOM = 2
+
+   % Standard, pre-defined resources
+   STANDARD_RESOURCE = 4
+   % constant for sending 4 bytes, but different "tag"
+   NUMBER_OBJECT = 5
+   % constant for sending string data of a resource
+   STRING_RESOURCE = 6
+

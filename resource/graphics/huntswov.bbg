@@ -1,0 +1,41 @@
+# sword of the Hunter - Third Person overlays
+# groups
+# 1-3 attacking 
+# 4 held sword
+#^Applied to Hotspot: 22
+#*Groups: 4
+#* A
+#* B
+#* C
+#* S
+-s 4
+24
+hsw000Aa.bmp   [157, 45] 
+hsw315aa.bmp   [138, 44] 
+hsw270aa.bmp   [148, 40] 
+hsw180aa.bmp   [168, 39] 
+hsw090aa.bmp   [156, 42] 
+hsw045aa.bmp   [182, 46] 
+hsw000ab.bmp   [162, 56] 
+hsw315ab.bmp   [177, 53] 
+hsw270ab.bmp   [202, 51] 
+hsw180ab.bmp   [172, 52] 
+hsw090ab.bmp   [141, 50] 
+hsw045ab.bmp   [152, 49] 
+hsw000ac.bmp   [156, 137] 
+hsw315ac.bmp   [62, 139] 
+hsw270ac.bmp   [55, 132] 
+hsw180ac.bmp   [197, 128] 
+hsw090ac.bmp   [239, 134] 
+hsw045ac.bmp   [224, 140] 
+hsw000sa.bmp   [144, 144] 
+hsw315sa.bmp   [118, 143] 
+hsw270sa.bmp   [135, 142] 
+hsw180sa.bmp   [213, 145] 
+hsw090sa.bmp   [155, 148] 
+hsw045sa.bmp   [147, 146] 
+4
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 

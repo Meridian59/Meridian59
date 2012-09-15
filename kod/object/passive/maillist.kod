@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MailingList is PassiveObject
+
+% This is an object that holds a list of people that should receive a mail.
+% For mail, populate the list of people and send the object to the client.
+% This will treat the object like a character object and call 'ReceiveMail'
+% It's a temporary thing, deleting itself after use.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MailingList_name_rsc = "mailing list"
+   MailingList_icon_rsc = light.bgf
+   MailingList_desc_rsc = "A mailing list."
+
+classvars:
+
+   vrName = MovingSector_name_rsc
+   vrIcon = MovingSector_icon_rsc
+   vrDesc = MovingSector_desc_rsc
+
+properties:
+
+   plPeople = $
+
+messages:
+
+   Constructor(thePerson = $)
+   {
+      if thePerson <> $
+      {
+         Send(self,@AddToList,#thePerson=thePerson);
+      }
+
+      propagate;
+   }
+
+
+   AddToList(thePerson = $)
+   "Adds the people to the list.  thePerson can be an object or list of objects."
+   {
+      local aPerson;
+      
+      if thePerson <> $
+      {
+         if NOT IsList(thePerson)
+         {
+            thePerson = [thePerson];
+         }
+
+         for aPerson in thePerson
+         {
+            plPeople = Cons(aPerson,plPeople);
+         }
+      }
+
+      return;
+   }
+
+   ReceiveMail(from = $, dest_list = $, perm_string = $)
+   "Sends mail to people in the list. Structured just like it is when sent to a "
+   "player."
+   {
+      local lPeopleInfo;
+      
+      for lPeopleInfo in plPeople
+      {
+         % First element is the guild object.
+         Send(lPeopleInfo,@ReceiveMail,#from=from,#dest_list=dest_list,
+              #perm_string=perm_string);
+      }
+
+      Post(self,@Delete);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

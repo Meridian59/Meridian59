@@ -1,0 +1,11 @@
+# Innkeeper legs
+-s 2
+6
+if000aaa.bmp   [-25, -12] 
+if045aaa.bmp   [-25, -15] 
+if090aaa.bmp   [-16, -15] 
+if180aaa.bmp   [-30, -8] 
+if270aaa.bmp   [-19, -19] 
+if315aaa.bmp   [-21, -13] 
+1
+ 8      1   6   5   4   4   4   3   2

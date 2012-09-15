@@ -1,0 +1,153 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SpecialGift is PassiveItem
+
+constants:
+
+   include blakston.khd
+   include protocol.khd     
+
+resources:
+
+   SpecialGift_name_rsc = "special gift"
+   SpecialGift_icon_rsc = package.bgf
+   SpecialGift_desc_rsc = \
+      "This is a special gift from the gods, to thank you for your patience and "
+      "your patronage."
+
+   SpecialGift_open = "With unbridled delight, you open the gift to find %s%s inside!"
+
+classvars:
+
+   vrName = SpecialGift_name_rsc
+   vrIcon = SpecialGift_icon_rsc
+   vrDesc = SpecialGift_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viUse_amount = 1
+
+   % This is for the "empty" box.  Normally + 1
+   viBulk = 50
+   viWeight = 50
+
+   viValue_average = 30
+
+properties:
+
+   poContents = $
+
+messages:
+
+   Constructor()
+   {
+      local rand;
+
+      % Give one of the items.
+      % Currently only gives out a mask.
+      rand = random(1,5);
+
+      if rand = 1
+      {
+         poContents = Create(&SkullMask);
+      }
+
+      if rand = 2
+      {
+         poContents = Create(&RatMask);
+      }
+
+      if rand = 3
+      {
+         poContents = Create(&TrollMask);
+      }
+
+      if rand = 4
+      {
+         poContents = Create(&KriipaMask);
+      }
+
+      if rand = 5
+      {
+         poContents = Create(&AntMask);
+      }
+
+      propagate;
+   }
+
+   GetBulk()
+   {
+      if poContents <> $
+      {
+         return send(poContents,@GetBulk)+1;
+      }
+
+      propagate;
+   }
+
+   GetWeight()
+   {
+      if poContents <> $
+      {
+         return send(poContents,@GetWeight)+1;
+      }
+
+      propagate;
+   }
+
+   GetValue()
+   {
+      % can't really tell the value of an item in a box
+      return 10;
+   }
+
+   ReqNewApply()
+   {
+      return TRUE;
+   }
+
+   NewApplied(what = $)
+   {
+      local oldOwner;
+
+      send(poOwner,@MsgSendUser,#message_rsc=SpecialGift_open,
+           #parm1=send(poContents,@GetIndef),#parm2=send(poContents,@GetName));
+
+      oldOwner = poOwner;
+      send(poOwner,@LeaveHold,#what=self);
+      send(self,@NewOwner,#what=$);
+      send(oldOwner,@NewHold,#what=poContents);
+
+      % Note that this RecalcBulkAndWeight is entirely superfluous,
+      %  but we'll leave it here as a safeguard against future wierdness.
+      send(oldOwner,@RecalcBulkAndWeight);
+
+      poContents = $;
+      send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      if poContents <> $
+      {
+         send(poContents,@Delete);
+      }
+
+      poContents = $;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

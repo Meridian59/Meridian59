@@ -1,0 +1,223 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A ranged weapon is a weapon which you equip in your hand, type Ctrl to use, 
+% then a target icon comes up a la apply() with which you choose your victim.
+% Well, at least ideally.  At this point there is no good way to code that,
+% so ranged weapons are like normal weapons with a range of 13 (the max range
+% for weapons).  
+% Ranged weapons do not break as often as melee weapons (not as much wear and
+% tear).
+%
+% code by Justin Houk, 98jsh@williams.edu
+
+RangedWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ranged_desc_rsc = "This is a ranged weapon."
+   ranged_wrong_ammo_rsc = "You have not equipped the proper missile to attack."
+
+   % This is the name for the type of ammo used.  Used in combat messages.
+   ranged_ammo_name = "arrow"
+
+classvars:
+
+   viHits_init_min = 200
+   viHits_init_max = 250
+
+
+   viProficiency_Needed = SKID_PROFICIENCY_BOW
+   viAmmo_type = AMMO_ARROW
+   viHit_roll_modifier = 0
+   viSpell_modifier = -25
+   viUse_Amount = 2
+
+   vrDesc = ranged_desc_rsc
+
+   viWeaponDamage = 0   % Mostly, damage is a factor of ammo, the random factor is 
+                        % in them.  viWeaponDamage is the bow's contribution to that,
+                        % due to things like stiffer bowstrings, harder wood, whatever.
+
+   viRange = 100
+
+properties:
+   
+   piAttack_Type = ATCK_WEAP_PIERCE
+
+messages:
+
+   % General combat messages:
+
+   % Overrides message from superclass.
+   % Ranged weapons provide NO parry bonus.
+   GetParryAbility(who=$)
+   {
+      return 0;
+   }
+
+   % General unsorted messages:
+
+   GetDefaultStrokeNumber()
+   {
+      return SKID_FIRE;
+   }
+
+   GetAmmoType()
+   {
+      return viAmmo_type;
+   }
+
+
+   GetAttackType()
+   {
+      local iAttackType, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iAttackType = 0;
+      ammotype = send(self,@GetAmmoType);
+      for i in send(poOwner,@GetPlayerUsing)
+      {
+         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         {
+            if send(i,@GetAmmoType) = ammotype
+            { 
+               iAttackType = send(i,@GetAttackType);
+               
+               break;
+            }
+         }
+      }
+      
+      iAttackType = iAttackType |  piAttack_Type;
+
+      return iAttackType;
+   }
+
+   GetAttackSpell()
+   {
+      local iAttackType, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iAttackType = 0;
+      ammotype = send(self,@GetAmmoType);
+
+      for i in send(poOwner,@GetPlayerUsing)
+      {
+         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         {
+            if (send(i,@GetAmmoType) = ammotype)
+            { 
+               iAttackType = send(i,@GetAttackSpell);
+               
+               break;
+            }
+         }
+      }
+      
+      iAttackType = iAttackType | piAttack_Spell;
+
+      return iAttackType;
+   }
+
+   ModifyHitRoll(hit_roll = 0, target = $)
+   "When someone attacks with this weapon, they send us their attack value "
+   "and we change it based on quality of weapon"
+   {
+      local iBaseHit, oWeapAtt, i, iWeapHit;
+
+      iBaseHit = hit_roll;
+
+      if viHit_roll_modifier < 0
+      {
+         hit_roll = hit_roll + (-viHit_Roll_modifier);
+      }
+      else
+      {
+         hit_roll = hit_roll + ((viHit_roll_modifier*piHits)/piHits_Init);
+      }
+      
+      iWeapHit = hit_roll;
+
+      for i in plItem_Attributes
+      {
+         oWeapAtt = send(SYS,@FindItemAttByNum,
+                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if isClass(oWeapAtt,&WeaponAttribute)
+         {
+            hit_roll = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
+                            #target=target,#lData=i);
+         }
+      }     
+      
+      return hit_roll;
+   }
+
+   GetDamage(who=$,target=$)
+   {
+      local iDamage, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+      ammotype = send(self,@GetAmmoType);
+      for i in send(poOwner,@GetPlayerUsing)
+      {
+         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         {
+            if (send(i,@GetAmmoType) = ammotype)
+            {
+               iDamage = send(i,@GetDamage,#who=who,#target=target);
+               break;
+            }
+         }
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+
+      return iDamage;
+   }
+
+   GetRange()
+   {
+      return viRange;
+   }   
+
+   % This returns the weapon's attack name.  For ranged weapons, return the ammo name.
+   GetAttackName()
+   {
+      return ranged_ammo_name;      
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+

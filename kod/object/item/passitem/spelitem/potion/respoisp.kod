@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistPoisonPotion is Potion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ResistPoisonPotion_name_rsc = "potion of poison resistance"
+   %ResistPoisonPotion_icon_rsc = potion01.bgf
+   ResistPoisonPotion_desc_rsc = "This is a glass vial of colored liquid.  "
+                        "It smells crisp, clean and refreshing."
+   ResistPoisonPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+                        "A slight whiff of it is enough to turn your stomach."
+
+
+classvars:
+
+   vrLabelName = ResistPoisonPotion_name_rsc
+   vrBadDesc = ResistPoisonPotion_bad_desc_rsc
+   vrDesc = ResistPoisonPotion_desc_rsc
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 60
+
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+   viSpellEffect = SID_RESIST_POISON
+   viPoisonPercent = 20
+   viGoBadDamage = 5
+   viColor = XLAT_TO_BLUE
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

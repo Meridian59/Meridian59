@@ -1,0 +1,127 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanBlacksmith is KocatanTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanBlacksmith_name_rsc = "Ixla cha'Totlak"
+   KocatanBlacksmith_icon_rsc = kcsmith.bgf
+   KocatanBlacksmith_desc_rsc = "This powerful woman has established herself as the "
+   	"preeminent weaponsmith in the warrior society of Ko'catan. She has also established "
+      "herself as a woman with a gift for speaking the most colorful parts of the Ko'catan "
+      "language."
+
+   kcsmith_entry_welcome = "Greetings!"
+   kcSm_mace_sale = "All these beautiful weapons, and you want %s%s.  Well, I suppose I'll sell you one."
+
+classvars:
+
+   vrName = KocatanBlacksmith_name_rsc
+   vrIcon = KocatanBlacksmith_icon_rsc
+   vrDesc = KocatanBlacksmith_desc_rsc
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_TEACHER | MOB_COND_SELLER | MOB_LAWFUL
+   viOccupation = MOB_ROLE_BLACKSMITH
+   viMerchant_markup = MERCHANT_EXPENSIVE
+   viGender = GENDER_FEMALE
+
+properties:
+   
+messages:
+
+   AffectMood(what=$,why=$)
+   {
+      if( why = MOODMOD_DAWN )
+      {
+	 send( self, @SetMood, #new_mood = piMood + 3 );
+	 return;
+      }
+      if( why = MOODMOD_DUSK )
+      {
+	 send( self, @SetMood, #new_mood = piMood - 6 );
+	 return;
+      }
+      if (why = MOODMOD_SELL_ITEM)
+      {
+	 if( IsClass( what, &NeruditeSword ) )
+	 {
+	    send( self, @SetMood, #new_mood = piMood + 3 );
+	 }
+	 else
+	 {
+	    if( Send(self,@IsObjectWeapon,#what=what) )
+	    {
+	       send( self, @SetMood, #new_mood = piMood + 2 );
+	    }
+	 }
+	 return;
+      }
+      return;
+   }
+
+   ObjectDesired(what=$)
+   {
+      if Send(what,@CanBeGivenToNPC) and 
+         (Send(Self,@IsObjectWearable,#what=what) OR
+          Send(Self,@IsObjectWeapon,#what=what))
+      {  
+         return True;  
+      }
+      return False;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ [Create(&ChainArmor),
+                     Create(&Axe),
+                     Create(&Hammer),
+                     Create(&GoldShield),
+		     Create(&NeruditeSword),
+		     Create(&NeruditeArmor)],
+                     $,$, $ ];
+                     
+      return;
+   }
+
+   InitCondSale()
+   {
+      local oObj;
+      oObj=Create(&Mace);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,100,kcSm_mace_sale]);
+      return;
+   }
+
+
+   UserEntered(who = $)
+   {
+      Post(poOwner,@SomeoneSaid,#what = self, #string=kcSmith_entry_welcome,
+         #type = SAY_RESOURCE);
+      if Send(who,@GetAction)=UA_WRY
+      {
+	 send( self, @SetMood, #new_mood = piMood + 3 );
+      }
+      if Send(who,@GetAction)=UA_SAD
+      {
+	 send( self, @SetMood, #new_mood = piMood + 2 );
+      }
+      return;
+   }
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,39 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SmallBox is StorageBox
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SmallBox_name_rsc = "personal chest"
+   SmallBox_icon_rsc = smwbox.bgf
+
+   SmallBox_desc_rsc = "This small wooden chest is just large enough to store a few things."
+
+classvars:
+
+   vrName = SmallBox_name_rsc
+   vrIcon = SmallBox_icon_rsc
+   vrDesc = SmallBox_desc_rsc
+
+   viBulk_hold_max = 3000
+   viWeight_hold_max = $
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

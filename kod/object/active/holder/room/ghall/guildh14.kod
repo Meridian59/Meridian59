@@ -1,0 +1,621 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall14 is GuildHall
+
+constants:
+
+   LIFT_ONE = 83
+   LIFT_ONE_UP = 115 
+   LIFT_ONE_DOWN = 100
+
+   LIFT_TWO = 84
+   LIFT_TWO_UP = 115 
+   LIFT_TWO_DOWN = 100
+
+   COUNTER_DOOR = 58
+   COUNTER_DOOR_OPEN = 190
+   COUNTER_DOOR_CLOSED = 100
+
+   HALL_DOOR = 55
+   HALL_DOOR_OPEN = 230
+   HALL_DOOR_CLOSED = 160
+
+   INNER_DOOR = 53
+   INNER_DOOR_OPEN = 240
+   INNER_DOOR_CLOSED = 160
+
+   MAIN_DOOR  = 59
+   MAIN_DOOR_OPEN = 190
+   MAIN_DOOR_CLOSED = 100
+
+   SECRET_DOOR = 3
+   SECRET_DOOR_OPEN = 250
+   SECRET_DOOR_CLOSED = 160
+   
+   DOOR_DELAY = 5000
+       
+   LEVEL_FOYER = 1
+   LEVEL_ONE =   2
+   LEVEL_TWO =   3
+
+   RENT_MODIFIER = 50
+
+   GUILDH14_ZONE_FOYER     = 0
+   GUILDH14_ZONE_BOOTH     = 1
+   GUILDH14_ZONE_MAIN      = 2
+   GUILDH14_ZONE_BACKROOM  = 3
+
+   include blakston.khd
+
+resources:
+
+   room_name_guildh14 = "The Bookmaker's Guild House"
+   room_guildh14 = guildh14.roo
+
+   guildh14_book_text1 = \
+      "\n"
+      "\n"
+      "   Let me get right to the point if I may.  Running a game house is no walk through the "
+      "King's Way.  I'm writing in this journal to let my next of kin, presumably you, know "
+      "the secrets that my predecessors have passed down to me.  Through the history of this house, "
+      "the Kings of the land have outlawed gambling, outlawed brew, outlawed, well … other aspects of "
+      "our business, just to be followed by a King who revokes all those banns.  Legal or not, you "
+      "have a responsibility to the people of the world to keep this joint going.  It's tradition.  "
+      "Don't make me come back as a ghost from my Jala willing final rest and put the spooks to you.  "
+      "To make it easier, I'll tell you how I ran things in my day.\n"
+      "\n"
+      "¶"
+      "   Here's how the operation works.  Open the doors to the public as much as you can, once "
+      "a day (so long as we got someone to watch the door and someone to back him up if there's "
+      "trouble).  We charge a flat 100 shillings at the door for anyone who wants to get in (Ladies "
+      "get in for 50 shillings).  Most everybody gets in except our enemies.  You want it to feel "
+      "like a public place, but don't take dumb risks by letting ten of your worst relations past "
+      "your door, maybe just one or two.  I put the word to the street when we're open.  Nobody wants "
+      "to stay if they're the only one here."
+      "¶"
+      "   Once they're in the door, encourage them to socialize, gamble, whatever they want.  We "
+      "usually buy drinks in bulk (or raid Blackstone's reserves), and charge 10 shillings a drink.  "
+      "One thing I can't stand is a messy room.  There are ways to get on top of every table, so I "
+      "make sure drinks, chessboards, and other things are not just dropped on the floor.  We've even "
+      "got a secret step up at the south side of the two big tables. Our biggest fear is someone "
+      "getting up here who's not supposed to.  Generally, we station a bouncer at the bottom of the "
+      "stairs, but we also modified the upstairs door so we could hear when someone was opening it."
+      "¶"
+      "   Aside from the brew and festive atmosphere, people come to be entertained.  So hire top "
+      "performers.  We had this one comedian named La Flame who could roast the royalty like never "
+      "been done before.  He was qordamned funny, well, until King Zarcos put the screws to him, "
+      "literally.  But the best crowd pleasers are the games.  We have two tables of dice set up, "
+      "one with two six sided and one with a single die.  All sorts of games can be played with "
+      "simple dice.  Craps, high roller, low roller, we just got creative.  We set the odds, we "
+      "decided whether they play against the house or just each other.  When the dancers aren't "
+      "using it, I like to have a chessboard or two set up on the marble top table, just to add "
+      "some class.  One of our bigger draws was a lottery.  Every one would put in 500 shillings "
+      "and get one number, then we would randomly pick a number and give the winner 3/4s of the pot."
+      "¶"  
+      "   The Bookmaker's House, a name that just stuck with us, has been open for three generations "
+      "previous to me.  We've made some serious shillings and we've also had some serious raids by "
+      "the Royal Guards.  But no matter what, we knew we were THE place to be.  If you're looking for "
+      "a boarded up base to hide your guild, rent the abandoned warehouse by the docks."
+      "¶"
+      "   To allow ourselves freedom in our business practices, my first official act was to give "
+      "extra 'incentive' to the property owner to avoid unnecessary run ins with the Royal Guard.  "
+      "In exchange, an arrangement was made where he gets a cut of the profits.  Later, we "
+      "renegotiated and to this day pay him a very generous rent.  It may seem excessive to you, but "
+      "once you get your doors open to the public, you can't help but make shillings."
+      "¶"
+      "   Now don't let anyone including me tell you how to run your joint.  I'll just tell you "
+      "this, if you keep this placed closed up from the public for too long, you will acquire a "
+      "lot of unnecessary enemies.  The public needs their nightclub.  Why, the guild hall property "
+      "owner has even threatened to resell the guildhall if we didn't keep her open enough.  That's "
+      "not an idle threat either, keep it running or you may lose it.\n\n"
+      "Lon'Gottelli\n\n"
+      "Guild Master 643 MY"
+
+   guildh14_book_name1 = "\"Log of Master Lon'Gottelli\"" 
+
+
+   guildh14_alarm1 = splearn.wav
+   guildh14_music = forest.mid
+
+   guildh14_entrancedoor_open_sound = doorrsup.wav
+   guildh14_entrancedoor_close_sound = doordown.wav
+   guildh14_lift_up_sound = stoneup2.wav
+   guildh14_lift_down_sound = stonedn2.wav
+
+classvars:
+
+   vrName = room_name_guildh14
+
+   viTeleport_row = 2
+   viTeleport_col = 32
+
+   viNews_row = 18
+   viNews_col = 8
+   viNews_finerow = 32
+   viNews_finecol = 32
+
+   viFoyer_north = 2
+   viFoyer_south = 3
+   viFoyer_west = 26
+   viFoyer_east = 39
+
+   viLever_row = 11
+   viLever_col = 16
+   viLever_fine_row = 32
+   viLever_fine_col = 32
+
+   viInner_teleport_row = 11
+   viInner_teleport_col = 27
+
+   viQuality = 5
+   viTerrain_type = TERRAIN_GUILDHALL | TERRAIN_SHOP
+   viSeconds_til_close = 8
+
+   vrEntrancedoor_open_sound = guildh14_entrancedoor_open_sound
+   vrEntrancedoor_close_sound = guildh14_entrancedoor_close_sound
+
+   % not actually used for the secret door here
+   vrSecretdoor_open_sound = guildh14_lift_up_sound
+   vrSecretdoor_close_sound = guildh14_lift_down_sound
+
+properties:
+
+   prRoom = room_guildh14
+   piRoom_num = RID_GUILDH14
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_5
+
+   ptSecret = $
+   ptEntrance = $
+   ptHallDoor = $
+   ptCounterDoor = $
+   ptInnerDoor = $
+   ptLiftOne = $
+   ptLiftTwo = $
+
+   % This hall is a special case - it gets music.
+   prMusic = guildh14_music  
+
+messages:
+
+   GetRentValue()
+   "This is an HOURLY rate."
+   {
+      return viQuality * RENT_MODIFIER * 2;
+   }
+
+   DoAlarmSound(what=$)
+   {
+      send(self,@SomethingWaveRoom,#what=what,#wave_rsc=guildh14_alarm1);
+
+      return;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   "If someone is in the foyer while you are in the guild hall proper, do "
+   "not send them any conversation."
+   {
+      local i, each_obj;
+
+      if type = SAY_YELL OR what = $ OR NOT IsClass(what,&Player)
+      {
+         propagate;
+      }
+
+      if isClass(what,&admin) and stringEqual(string,"shatterlock")
+      {
+         send(self,@OpenEntranceDoor);
+
+         propagate;
+      }
+
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+         if send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         {
+            if (send(self,@inZone,#who=what) = send(self,@inZone,#who=each_obj))
+               OR (send(self,@inZone,#who=what) = GUILDH14_ZONE_BOOTH)
+               OR (send(self,@inZone,#who=each_obj) = GUILDH14_ZONE_BOOTH)
+            {
+               send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
+                    #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
+                    #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+            }
+            else
+            {
+               send(each_obj,@MsgSendUser,#message_rsc=guildhall_muffled);
+            }
+         }
+      }
+
+      if poGuild_owner <> $ AND StringEqual(string,send(poGuild_owner,@GetPassword))
+         AND NOT send(self,@InFoyer,#who=what) AND NOT pbSecretDoorOpen
+         AND type <> SAY_EMOTE
+      {
+         send(self,@OpenSecretDoor);
+      }
+
+      return;
+   }
+
+   Constructor()
+   {
+      plGuild_doors = [ [3,28],[2,25],[3,25] ];
+      
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 2, 33, RID_BAR_NORTH, 20, 16, ROTATE_NONE ],plExits);
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptLiftOne <> $
+      {
+         DeleteTimer(ptLiftOne);
+         ptSecret=$;
+      }
+
+      if ptLiftTwo <> $
+      {
+         DeleteTimer(ptLiftTwo);
+         ptSecret=$;
+      }
+
+      if ptHallDoor <> $
+      {
+         DeleteTimer(ptHallDoor);
+         ptSecret=$;
+      }
+
+      if ptCounterDoor <> $
+      {
+         DeleteTimer(ptCounterDoor);
+         ptSecret=$;
+      }
+
+      if ptInnerDoor <> $
+      {
+         DeleteTimer(ptInnerDoor);
+         ptSecret=$;
+      }
+
+      if ptSecret <> $
+      {
+         DeleteTimer(ptSecret);
+         ptSecret=$;
+      }
+
+      if ptEntrance <> $
+      {
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
+      }
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$, row=$,  col = $)
+   {
+      local oGuild;
+
+      if row = 4 AND col = 28
+      {
+         if send(self,@ReqLegalEntry,#who = what)
+         {
+            send(self,@OpenEntranceDoor);
+         }
+
+         return TRUE;
+      }
+
+      if (row = 18 and col = 10) or (row = 19 and col = 10)
+      {
+         if ptHallDoor = $
+         {
+            send(self,@SetSector,#sector=HALL_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height=HALL_DOOR_OPEN,#speed=50);
+            ptHallDoor=createtimer(self,@closehalldoor,DOOR_DELAY);
+            send(self,@OpenEntranceDoorSound);
+            send(self,@DoAlarmSound,#what=what);
+         }    
+
+         return TRUE;
+      }
+
+      if (row = 2 OR row = 3) AND (col >= 19 AND col <= 21)
+      {
+         if ptCounterDoor = $
+         {
+            send(self,@SetSector,#sector=COUNTER_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height=COUNTER_DOOR_OPEN,#speed=50);
+            send(self,@OpenEntranceDoorSound);
+            ptCounterDoor=createtimer(self,@closecounterdoor,DOOR_DELAY);
+         }    
+
+         return TRUE;
+      }
+
+      if col = 13 AND (row >= 11 AND row <= 13)
+      {
+         if ptInnerDoor = $
+         {
+            send(self,@SetSector,#sector=INNER_DOOR,#animation=ANIMATE_CEILING_LIFT,
+                 #height=INNER_DOOR_OPEN,#speed=50);
+            send(self,@OpenEntranceDoorSound);
+            ptInnerDoor=createtimer(self,@closeinnerdoor,DOOR_DELAY);
+         }    
+
+         return TRUE;
+      }
+
+      if row = 13 AND col = 31
+      {
+         if poGuild_owner <> $ AND NOT send(poGuild_Owner,@IsMember,#who=what)
+         {
+            propagate;
+         }
+    
+         if ptLiftOne = $
+         {
+            send(self,@SetSector,#sector=LIFT_ONE,#animation=ANIMATE_FLOOR_LIFT,
+                 #height=LIFT_ONE_UP,#speed=50);
+            send(self,@OpenSecretDoorSound);
+            ptLiftOne=createtimer(self,@lowerliftone,DOOR_DELAY);
+         }    
+
+         return TRUE;
+      }
+
+      if (row = 17 and col = 24)
+      {
+         if poGuild_owner <> $ AND NOT send(poGuild_Owner,@IsMember,#who=what)
+         {
+            propagate;
+         }
+      
+         if ptLiftTwo = $
+         {
+            send(self,@SetSector,#sector=LIFT_TWO,#animation=ANIMATE_FLOOR_LIFT,
+                 #height=LIFT_TWO_UP,#speed=50);
+            send(self,@OpenSecretDoorSound);
+            ptLiftOne=createtimer(self,@lowerlifttwo,DOOR_DELAY);
+         }    
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   CloseHallDoor()
+   {
+      ptHallDoor = $;
+      send(self,@SetSector,#sector=HALL_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=HALL_DOOR_CLOSED,#speed=50);
+      send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+
+   CloseInnerDoor()
+   {
+      ptInnerDoor = $;
+      send(self,@SetSector,#sector=INNER_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=INNER_DOOR_CLOSED,#speed=50);
+      send(self,@CloseEntranceDoorSound);
+
+      return;   
+   }
+
+   CloseCounterDoor()
+   {
+      ptCounterDoor = $;
+      send(self,@SetSector,#sector=COUNTER_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=COUNTER_DOOR_CLOSED,#speed=50);
+      send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+   
+   LowerLiftOne()
+   {
+      ptLiftOne = $;
+      send(self,@SetSector,#sector=LIFT_ONE,#animation=ANIMATE_FLOOR_LIFT,
+           #height=LIFT_ONE_DOWN,#speed=50);
+      send(self,@CloseSecretDoorSound);
+
+      return;   
+   }
+
+   LowerLiftTwo()
+   {
+      ptLiftOne = $;
+      send(self,@SetSector,#sector=LIFT_TWO,#animation=ANIMATE_FLOOR_LIFT,
+           #height=LIFT_TWO_DOWN,#speed=50);
+      send(self,@CloseSecretDoorSound);
+
+      return;
+   }
+
+   OpenEntranceDoor()
+   {
+      if ptEntrance = $
+      {
+         send(self,@TimeStampDoor);
+         send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=MAIN_DOOR_OPEN,#speed=50);
+         ptEntrance=createtimer(self,@CloseEntranceDoor,DOOR_DELAY);
+         send(self,@OpenEntranceDoorSound);
+      }    
+
+      return;
+   }
+
+   CloseEntranceDoor()
+   {
+       ptEntrance = $;
+       send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=MAIN_DOOR_CLOSED,#speed=50);
+       send(self,@CloseEntranceDoorSound);
+       
+       return;
+   }
+
+   OpenSecretDoor()
+   {
+      if ptSecret = $
+      {
+         send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=SECRET_DOOR_OPEN,#speed=50);
+         send(self,@OpenEntranceDoorSound);
+         ptSecret = createtimer(self,@CloseSecretDoor,DOOR_DELAY);
+      }
+
+      return; 
+   }
+
+   CloseSecretDoor()
+   {
+      ptSecret = $;
+
+      send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=SECRET_DOOR_CLOSED,#speed=50);
+      send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+
+
+   CreateStandardObjects()
+   {
+      local oBook;
+
+      oBook = Create(&BookPedestal,#Name=guildh14_book_name1,#Text=guildh14_book_text1);
+
+      send(self,@NewHold,#what=oBook,
+           #new_row=13,#new_col=16,#new_angle=ANGLE_SOUTH_WEST);
+
+      send(self,@NewHold,#what=Create(&Dice,#pair=FALSE),
+           #new_row=11,#new_col=31,#fine_row=40,#fine_col=16,#new_angle=ANGLE_NORTH);
+      send(self,@NewHold,#what=Create(&Dice,#pair=TRUE),
+           #new_row=15,#new_col=24,#fine_row=8,#fine_col=32,#new_angle=ANGLE_NORTH);
+
+      send(self,@NewHold,#what=Create(&Chest),
+           #new_row=20,#new_col=4,#fine_row=0,#fine_col=32,#new_angle=ANGLE_NORTH);
+      send(self,@NewHold,#what=Create(&Chest),
+           #new_row=18,#new_col=2,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Chest),
+           #new_row=18,#new_col=6,#new_angle=ANGLE_WEST);
+
+      send(self,@NewHold,#what=Create(&Candelabra),
+           #new_row=15,#new_col=9,#fine_row=26);
+
+      send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=11,#new_col=8,#fine_row=16,#fine_col=26);
+      send(self,@NewHold,#what=Create(&Brazier),#new_row=2,#new_col=8);
+
+      send(self,@NewHold,#what=Create(&Table),
+           #new_row=7,#new_col=35,#fine_col=0);
+      send(self,@NewHold,#what=Create(&Table),
+           #new_row=12,#new_col=20);
+      send(self,@NewHold,#what=Create(&Table),
+           #new_row=17,#new_col=30,#fine_col=0);
+
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=9,#new_col=19,#fine_row=32,#fine_col=0);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=9,#new_col=20);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=9,#new_col=22,#fine_row=40,#fine_col=40);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=11,#new_col=37,#fine_row=0,#fine_col=32);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=16,#new_col=37,#fine_row=0,#fine_col=32);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=13,#new_col=25,#fine_row=16,#fine_col=32);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=13,#new_col=23,#fine_row=16,#fine_col=32);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=14,#new_col=22,#fine_row=16,#fine_col=32);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=16,#new_col=22,#fine_row=0,#fine_col=48);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=17,#new_col=23,#fine_row=0,#fine_col=32);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=17,#new_col=25,#fine_row=0,#fine_col=32);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=16,#new_col=26,#fine_row=0,#fine_col=16);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=14,#new_col=26,#fine_row=16,#fine_col=16);
+      send(self,@NewHold,#what=Create(&Stool),
+           #new_row=13,#new_col=9);
+
+      propagate;
+   }
+
+   DefensesDown()
+   {
+      send(self,@SomethingWaveRoom,#what=poShield_Lever,#wave_rsc=guildh14_alarm1);
+
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+
+      lHotPlates = [ [4,28,1], [4,27,2], [4,29,2], [5,28,2], [5,27,2], [5,29,2] ];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+      }
+
+      return;
+   }
+
+   InZone(who=$)
+   {
+      local iRow, iCol;
+
+      if who = $  { DEBUG("InZone passed bad info!"); return $; }
+      if send(who,@GetOwner) <> self {DEBUG("Can't find zone if player isn't in room!"); return $; }
+      if send(self,@InFoyer,#who=who)  { return GUILDH14_ZONE_FOYER; }
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+
+      if (iRow = 2 OR iRow = 3) AND iCol = 25
+      {
+         return GUILDH14_ZONE_BOOTH;
+      }
+
+      if (iRow > 1 AND iRow < 23) AND (iCol > 1 AND iCol < 18)
+      {
+         return GUILDH14_ZONE_BACKROOM;
+      }
+
+      return GUILDH14_ZONE_MAIN;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

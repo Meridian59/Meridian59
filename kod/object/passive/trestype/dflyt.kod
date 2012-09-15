@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DragonflyTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_DRAGONFLY
+   piItem_att_chance = 3
+   piDiff_seed = 3
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &DragonflyEye, 30 ],
+                     [ &WebMoss, 20 ],
+                     [ &Meatpie, 20 ],
+                     [ &RainbowFern, 15 ],
+                     [ &Money, 7 ],
+                     [ &KriipaClaw, 7 ],
+                     [ &Yrxlsap, 1 ]
+		             ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

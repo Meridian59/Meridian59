@@ -1,0 +1,118 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SummonReflection is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   summonreflection_cast_rsc = "A mirror image of yourself appears."
+   summonreflection_name_rsc = "reflection"
+   summonreflection_icon_rsc = ireflect.bgf
+   summonreflection_desc_rsc = "Summons a creature which mirrors your own appearance.  Note that you are responsible for "
+      "any of your reflections actions, and that they are notoriously hard to control.  Requires firesand, rainbow ferns, "
+      "and uncut seraphym to cast."
+
+   summonreflection_failed_rsc = "There is too much summoning magic focused here to summon a reflection."
+
+   summonreflection_sound = rmirrimg.wav
+
+classvars:
+
+   vrName = summonreflection_name_rsc
+   vrIcon = summonreflection_icon_rsc
+   vrDesc = summonreflection_desc_rsc
+
+   viSpell_num = SID_REFLECTION
+   viSchool = SS_RIIJA
+   viSpell_level = 3
+   viMana = 15
+
+   viSpellExertion = 10
+   viCast_time = 1000
+
+   vrSucceed_wav = summonreflection_sound
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Firesand,2], plReagents);
+      plReagents = Cons([&RainbowFern,2],plReagents);
+      plReagents = Cons([&UncutSeraphym,2],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who = $)
+   {
+      local oRoom;
+      
+      oRoom = send(who,@GetOwner);
+
+      if not send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_guardian);
+         
+         return FALSE;
+      }
+
+      if send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
+         OR send(oRoom,@CountHoldingHowMany,#class=&Reflection) > 10
+         OR send(oRoom,@CountHoldingSummoned) > 
+            Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
+      {
+         send(who,@MsgSendUser,#message_rsc=summonreflection_failed_rsc);
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   {
+      local oReflection, oRoom, iRow, iCol, iFine_Row, iFine_Col;
+
+      oReflection = Create(&Reflection,#iSpellpower=iSpellpower,#oMaster=who);
+      oRoom = send(who,@GetOwner);
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      iFine_Row = send(who,@GetFineRow);
+      iFine_Col = send(who,@GetFineCol);
+
+      send(oReflection,@SetOriginal,#who=who);
+
+      send(oRoom,@NewHold,#what=oReflection,#new_row=iRow,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      Send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
+
+      Send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
+
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

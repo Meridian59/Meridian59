@@ -1,0 +1,153 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Nodeburst is Spell
+
+constants:
+
+   include blakston.khd
+
+   MAX_MANA_ALLOWED = 250
+
+resources:
+
+   Nodeburst_name_rsc = "nodeburst"
+   Nodeburst_icon_rsc = icanniba.bgf
+   Nodeburst_desc_rsc = \
+      "You tap all of your mana nodes to the maximum, giving you "
+      "an instant burst of mana and health, but destroying your bonds.  "
+      "May only be cast once per day.  "
+      "Requires fairy wings and entroot berries and is very tiring to cast."
+
+   Nodeburst_fail = "You have no links to any mana nodes which you can burst."
+   Nodeburst_success = \
+      "You open all your mana links to the maximum and mana floods down the "
+      "links."
+   Nodeburst_not_today = "You may only cast Nodeburst once per day."
+   
+   Nodeburst_sound = qor.wav
+
+classvars:
+
+   vrName = Nodeburst_name_rsc
+   vrIcon = Nodeburst_icon_rsc
+   vrDesc = Nodeburst_desc_rsc
+
+   viSpell_num = SID_Nodeburst
+   viSchool = SS_QOR
+   viSpell_level = 5
+   viMana = 1
+   viSpellExertion = 30
+   viChance_to_increase = 100
+
+   viCast_time = 3000
+
+   vrSucceed_wav = Nodeburst_sound
+
+properties:
+
+   plRecentCasters = $
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&FairyWing,3],plReagents);
+      plReagents = Cons([&EntrootBerry,3],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oCaster;
+      
+      if lTargets = $
+      {
+         lTargets = [who];
+      }
+      
+      % Check for availability of mana node links.
+      if Send(who,@GetNodeList) = 0
+      {
+	      Send(who,@MsgSendUser,#message_rsc=Nodeburst_fail);
+
+	      return FALSE;
+      }
+
+      for oCaster in plRecentCasters
+      {
+         if who = oCaster
+         {
+            Send(who,@MsgSendUser,#message_rsc=Nodeburst_not_today);
+
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, iSpellPower = 0)
+   {
+      local iNumNodes, iOrigMana, iNewMana, iGain;
+      
+      % First save original mana.  Removing a node will remove some.
+      iOrigMana = Send(who,@GetMana);
+      iNumNodes = Send(who,@NumManaNodes);
+
+      iGain = iNumNodes * iNumNodes;
+      iGain = iGain + (iGain * iSpellPower)/100;
+
+      Send(who,@MsgSendUser,#message_rsc=Nodeburst_success);
+      Send(who,@StripOneNode);
+
+      iNewMana = Send(who,@GetMana);
+
+      % At least give us our old amount of mana, but don't let us get too much
+      %  mana (currently max is 250).
+      iNewMana = Bound(iGain,(iOrigMana-iNewMana),(MAX_MANA_ALLOWED-iNewMana));
+
+      Send(who,@GainMana,#amount=iNewMana);	              
+      Send(who,@GainHealth,#amount=iGain/2);
+
+      Send(self,@NewCaster,#who=who);
+
+      propagate;
+   }
+
+   NewCaster(who=$)
+   {
+      plRecentcasters = cons(who,plRecentCasters);
+
+      return;
+   }
+
+   NewDay()
+   {
+      plRecentCasters = $;
+
+      return;
+   }   
+
+   GetPotionClass()
+   {
+      return &NodeburstPotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

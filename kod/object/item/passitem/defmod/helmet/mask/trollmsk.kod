@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TrollMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TrollMask_name_rsc = "troll mask"
+   TrollMask_icon_male_rsc = mmtrl.bgf
+   TrollMask_icon_female_rsc = mftrl.bgf
+   TrollMask_desc_rsc = \
+      "A mask featuring the visage of a fierce troll!  Use it to scare your friends."
+
+classvars:
+
+   vrName = TrollMask_name_rsc
+   vrDesc = TrollMask_desc_rsc
+   vrIcon = TrollMask_icon_male_rsc
+
+   vrMaleIcon = TrollMask_icon_male_rsc
+   vrFemaleIcon = TrollMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

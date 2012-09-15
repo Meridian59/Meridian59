@@ -1,0 +1,21 @@
+# War priest of Kranaan
+# Right arm
+# groups
+# 1-2 sharpening knife
+-s 3
+12
+w000raka.bmp   [-19, -6] 
+w045raka.bmp   [-12, -7] 
+w090raka.bmp   [-4, -5] 
+w180raka.bmp   [-40, -10] 
+w270raka.bmp   [-41, -7] 
+w315raka.bmp   [-23, -5] 
+w000rakb.bmp   [-17, -5] 
+w045rakb.bmp   [-9, -7] 
+w090rakb.bmp   [-7, -8] 
+w180rakb.bmp   [-31, -9] 
+w270rakb.bmp   [-55, -6] 
+w315rakb.bmp   [-27, -9] 
+2
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8

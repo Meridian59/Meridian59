@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TreeOak is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   treeoak_name_rsc = "tree"
+   treeoak_desc_rsc = "A fine specimen of Oak."
+   treeoak_icon_rsc = treeoak.bgf
+
+
+classvars:
+
+   vrName = treeoak_name_rsc
+   vrIcon = treeoak_icon_rsc
+   vrDesc = treeoak_desc_rsc
+
+properties:
+
+messages:
+
+   GetObjectFlags()
+   {
+      return LOOK_NO;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

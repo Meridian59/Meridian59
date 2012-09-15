@@ -1,0 +1,87 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IceSwitch is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+   SWITCH_RANGE = 3
+
+   SWITCH_UP = 1
+   SWITCH_DOWN = 2
+
+resources:
+
+   switch_name_rsc = "switch"
+   switch_icon_rsc = switch.bgf
+   switch_desc_rsc = \
+      "This switch controls nothing."
+
+   switch_not_in_range = "The switch is not close enough to switch."
+
+   switch_changed = "You flip the switch."
+
+classvars:
+
+   vrName = switch_name_rsc
+   vrIcon = switch_icon_rsc
+   vrDesc = switch_desc_rsc
+
+   viObject_flags = ACTIVATE_YES
+
+properties:
+
+   piState = SWITCH_UP
+
+messages:
+
+   TryActivate(who=$)
+   "Return FALSE only if you want user.kod to Send its own error message to user."
+   {
+      if abs(Send(who,@GetRow) - Send(self,@GetRow)) > SWITCH_RANGE
+         AND abs(Send(who,@GetCol) - Send(self,@GetCol)) > SWITCH_RANGE
+      {
+         Send(who,@MsgSendUser,#message_rsc=switch_not_in_range);          
+
+         return TRUE;
+      }
+
+      if piState = SWITCH_UP
+      {
+         piState = SWITCH_DOWN;
+      }
+      else
+      {
+         piState = SWITCH_UP;
+      }
+      
+      Send(who,@MsgSendUser,#message_rsc=switch_changed);          
+      Send(poOwner,@SomethingChanged,#what=self);
+      
+      return TRUE;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE, 2,piState);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

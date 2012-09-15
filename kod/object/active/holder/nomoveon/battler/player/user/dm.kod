@@ -1,0 +1,2370 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DM is User
+
+constants:
+
+   include blakston.khd
+
+   % These two constants were stolen from player, should be synchronized.
+   DM_TRANSLATION_BODY_MASK = 0xff00
+   DM_TRANSLATION_BODY_MUL = 0x100
+
+resources:
+
+   dm_module = dm.dll
+
+   dm_login = "Welcome to the game, DM %s."
+
+   dm_teleportto = "A dimensional gate appears next to you, and %s steps through."
+   dm_teleportfrom = "A dimensional gate appears next to you, and %s is pulled through."
+
+   dm_rescuesomeone = "You send %s to a safe place."
+   dm_dimensionalgate = "You open a dimensional gate to %s and step through."
+
+   dm_pk_lock = "Your PK status is now unchanged by natural events."
+   dm_pk_unlock = "Your PK status now acts as if you were a normal player."
+
+   dm_PK_ENABLE = "Currently, your PK status is ON, meaning that you can attack other players at will."
+   dm_PK_DISABLE = "Currently, your PK status is OFF, meaning you can not kill or be killed by other players."
+
+   dm_appeal_on = "You will now hear appeals."
+   dm_appeal_off = "You will no longer hear appeals."
+   dm_guest_appeal_on = "You will now hear guest appeals."
+   dm_guest_appeal_off = "You will no longer hear guest appeals."
+   dm_makesignetwork = "You have created a signet ring (i.e. newbie quest egg)."
+   dm_makesignetfail = "You were unable to create a signet ring at this time."
+
+   % Commands
+   dm_makemonster = "monster"
+   dm_event_sign_command = "event sign"
+   dm_makeitem = "item"
+   dm_createsignet = "item signet ring"
+   dm_createjunk = "item junk"
+   dm_getall = "get"
+   dm_gettotem = "totem"
+   dm_help_command = "help"
+   dm_appeal_off_command = "appeal off"
+   dm_appeal_on_command = "appeal on"
+   dm_guest_appeal_off_command = "guest appeal off"
+   dm_guest_appeal_on_command = "guest appeal on"
+   dm_stealth_on_command = "stealth on"
+   dm_stealth_off_command = "stealth off"
+   dm_rumble_command = "rumble"
+   dm_good_command = "good"
+   dm_neutral_command = "neutral"
+   dm_evil_command = "evil"
+   dm_monster_budget_command = "monster budget"
+   dm_monster_authorize_command = "monster authorize"
+   dm_none = "none"
+   dm_clear_abilities_command = "clear abilities"
+   dm_clear_inventory_command = "clear inventory"
+   dm_get_spells_command = "get spells"
+   dm_get_skills_command = "get skills"
+   dm_get_money_command = "get money"
+   dm_boost_stats_command = "boost stats"
+   dm_PK_enable_command = "PK enable"
+   dm_PK_disable_command = "PK disable"
+   dm_PK_lock_command = "PK lock"
+   dm_PK_unlock_command = "PK unlock"
+   dm_morning_command = "morning"
+   dm_afternoon_command = "afternoon"
+   dm_evening_command = "evening"
+   dm_night_command = "night"
+   dm_restore_time_command = "restore time"
+   dm_call_monster_command = "call monster"
+   dm_npc_chat_command = "npc chat"
+   dm_plain_command = "plain"
+   dm_human_command = "human"
+   dm_disguise_command = "disguise"
+   dm_get_misc_command = "get misc"
+   dm_get_weapons_command = "get weapons"
+   dm_get_armor_command = "get armor"
+   dm_get_food_command = "get food"
+   dm_get_reagents_command = "get reagents"
+   dm_get_gems_command = "get gems"
+   dm_get_ammo_command = "get ammo"
+   dm_get_wands_command = "get wands"
+   dm_get_rings_command = "get rings"
+   dm_get_sundries_command = "get sundries"
+   dm_get_games_command = "get games"
+   dm_get_necklaces_command = "get necklaces"
+   dm_get_potions_command = "get potions"
+   dm_get_scrolls_command = "get scrolls"
+   dm_get_masks_command = "get masks"
+   dm_hidden_command = "hidden"
+   dm_blank_command = "blank"
+
+   dm_stealth_on = "You are now in stealth mode."
+   dm_stealth_off = "You are no longer in stealth mode."
+
+   dm_plain = "You are now plain."
+   dm_blank = "You are now blank."
+
+   dm_no_longer = "This command no longer exists.  Type DM HELP for more info."
+   dm_old_makeMonster = "makemonster"
+   dm_old_makeitem = "makeitem"
+   dm_old_getall = "get all"
+
+   dm_hidden = "You are hidden from mortal eyes."
+   dm_not_hidden = "Your are no longer hidden from mortal eyes."
+
+   dm_no_item = "No item with that name exists in the Meridian universe."
+   dm_no_monster = "No monster with that name exists in the Meridian universe."
+   dm_no_item_group = "There is no item group with that name."
+   dm_q = "Q"
+   
+   dm_void = "%s reaches into the void and pulls forth %s%s!"
+   dm_call = "%s utters arcane syllables into the shadows, stirring the monsters."
+   dm_goodie = "%s calls upon the sky for holy energies."
+   dm_nuttie = "%s casts off the unbalanced influence of the gods."
+   dm_baddie = "%s calls upon the shadows for dark energies."
+
+   dm_guide_help = "You have very limited powers. \n"
+            "DM APPEAL ON/OFF turns on and off appeals.\n"
+            "DM GOOD, DM NEUTRAL, DM EVIL to shift your Karma appropriately.\n"
+            "DM TOTEM to get the totem.\n"
+            "DM RELIC <number/name> to get a special totem.\n"
+            "DM RUMBLE to make the room shake.\n"
+   dm_help = "DM APPEAL ON/OFF, DM STEALTH ON/OFF, "
+             "DM CLEAR ABILITIES, DM CLEAR INVENTORY, DM PK ENABLE, DM PK DISABLE, DM PK LOCK, DM PK UNLOCK, "             
+             "DM GET SPELLS, DM GET SKILLS, DM GET MONEY, DM BOOST STATS, DM GOOD, DM NEUTRAL, DM EVIL, "
+             "DM TOTEM, DM RELIC <number/name>, DM MONSTER <monster name>, DM ITEM <item name>, "
+             "DM GET <reagents/ food/ armor/ gems/ rings/ weapons/ necklaces/ potions/ sundries>"
+   dm_dontinterfere = "~B~gYou should not try to interfere with the game."
+
+   dm_guide = "An official Guide of the land."
+   dm_sr_guide = "An official Senior Guide of the land."
+   dm_bard = "An official Bard of the land."
+   dm_sr_bard = "An official Senior Bard of the land."
+   dm_guardian = "An official Guardian of the land."
+   dm_designer = "One of the Designers of Meridian."
+
+   dm_budget_none_remain = "You have no remaining monster budget with which to create a %s."
+   dm_budget_not_authorized = "You are not authorized to create a %s."
+   dm_budget_no_limits_self = "You have no monster creation limits."
+   dm_budget_no_limits = "%s has no monster creation limits."
+   dm_budget_not_approved_self = "You are not currently approved to create monsters."
+   dm_budget_not_approved = "%s is not currently approved to create monsters."
+   dm_budget_authorized_self = "You are authorized to create the following types of monsters:\n%q\n"
+                               "(Note: Number in parentheses shows how many monsters would use up all your budget.)"
+   dm_budget_authorized = "%s is authorized to create the following types of monsters:\n%q"
+   dm_cant_find = "That Bard cannot be found."
+
+   testitemgenpoints_err = "You can't test the gen points here."
+   activateallgenpoints_err = "You can't test the gen points here."
+   exitpoints_err = "You can't test the exit points here."
+
+   invisible_admin_rsc = res0002o.bgf
+
+   % Spell messages
+   dm_spell_base = "~B[%s cast %s%s%s.]"
+   dm_spell_blank = ""
+   dm_spell_on = " on "
+   dm_spell_a_group = "a group"
+   dm_spell_you = "you"
+
+   dm_server = "server"
+
+classvars:
+
+   viDM = TRUE
+
+properties:
+
+   pbCapableDM = TRUE
+
+   pbImmortal = TRUE
+   pbImmortalSave = TRUE
+
+   pbSay_commands = FALSE
+   pbAppeal = 3
+   pbStealth = TRUE
+   pbActor = FALSE
+   pbHuntable = FALSE
+
+   piDMFlags = 0
+
+   pbMonsterMaker = FALSE
+   pbAdvancement = TRUE
+   piInterference = 0
+
+   prRank = $
+
+   pbMorph = FALSE
+   piMove_start = 1
+   piMove_end = 3
+   piMove_delay = 200
+   piAttack_start = 1
+   piAttack_end = 3
+   piAttack_delay = 200
+
+   piMonsterBudgetTotalLevels = 0
+   plMonsterBudgetTypes = $
+
+   % What's this DM's "standard" icon? Nil means it's human.
+   prStandardIcon = $
+
+messages:
+
+   GetIcon(trueicon=FALSE)
+   {
+      % Trueicon is set to true anytime you want to know what
+      %  a person really looks like.  Good example: statues.
+
+      if trueicon
+         AND prStandardIcon <> $
+      {
+         return prStandardIcon;
+      }
+
+      if poIllusion_set <> $
+      {
+         return Send(poIllusion_set,@IllusionGetIcon,#who=self);
+      }
+
+      propagate;
+   }
+
+   GetName()
+   {
+      % Give a generic resource if the player is hidden.  Clients will not
+      %  have the proper name resource.
+      if Send(self,@IsHidden)
+      {
+         return Send(SYS,@GetHiddenAdminName);
+      }
+
+      propagate;
+   }
+   
+   ResetPlayerFlagList()
+   {
+      local i;
+      
+      Send(self,@ResetPlayerDrawfx,#Sendsomethingchanged=FALSE);
+      piFlags = (piFlags & PFLAG_MASK);
+      piFlags2 = (piFlags2 & PFLAG2_MASK);
+      if Send(self,@IsResting)
+      {
+         Send(self,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+      }
+
+      for i in plEnchantments
+      {
+         Send(nth(i,2),@SetSpellPlayerFlag,#who=self);
+      }
+
+      for i in plUsing
+      {
+         Send(i,@SetItemPlayerFlag,#who=self);
+      }
+
+      if poOwner <> $
+      {      
+         for i in Send(poOwner,@GetEnchantmentList)
+         {
+            Send(nth(i,2),@SetSpellPlayerFlag,#who=self,#state=nth(i,3));
+         }
+      }
+
+      if piDMFlags & DMFLAG_INVISIBLE
+      {
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=TRUE);
+      }
+
+      if piDMFlags & DMFLAG_SHADOW
+      {
+         Send(self,@SetPlayerDrawfx,#drawfx=DRAWFX_BLACK);
+      }
+
+      if piDMFlags & DMFLAG_ANONYMOUS
+      {
+         Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);            
+      }
+      
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+      
+      return;
+   }
+
+   UserLogonHook()
+   {
+      if pbCapableDM
+      {
+         Send(self,@UserLoadModule,#module=dm_module);
+
+         if NOT IsClass(self,&Admin)
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_login,#parm1=Send(self,@GetName));
+         }
+      }
+
+      if Send(self,@IsHidden)
+      {
+         Send(self,@MsgSendUser,#message_rsc = dm_hidden);
+      }
+
+      propagate;
+   }
+
+   UserLogoffHook()
+   {
+      if Send(SYS,@GetInvestigator) = self
+      {
+         Send(SYS,@SetInvestigator,#who=$);
+      }
+
+      propagate;
+   }
+
+   ReqNewHold(what = $)
+   "Modified 5/21 by Damion.  If immortal flagged, the player's weight and "
+   "encumbrance limits are ignored."
+   {
+      if pbImmortal
+      {
+         return Send(what,@ReqNewOwner,#what=self);
+      }
+
+      if NOT pbAdvancement AND FindListElem([&Token],GetClass(what))
+      {
+         Send(self,@DontInterfere);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   GetDefense(what=$)
+   {
+      if pbImmortal
+      {
+         return 1000;
+      }
+      
+      propagate;
+   }
+
+   AssessDamage(what = $,damage = $,stroke_obj=$)
+   {
+      if pbImmortal
+      {
+         if stroke_obj <> $
+         {
+            Send(stroke_obj,@SendMissMessageToDefender,#who=self,#attacker=what);
+         }
+
+         return 0;
+      }
+
+      propagate;
+   }
+
+   Killed(what = $)
+   {
+      if pbImmortal
+      {
+         return;
+      }
+      
+      propagate;
+   }
+
+   SetLabelMail(bValue = TRUE)
+   {
+      if bValue
+      {
+         % Set the flag
+         piDMFlags = piDMFlags | DMFLAG_LABELMAIL;
+      }
+      else
+      {
+         % Clear the flag
+         piDMFlags = piDMFlags & ~DMFLAG_LABELMAIL;
+      }
+
+      return;
+   }
+
+   % Overridden from User, so that we can flag the "from" field with a server tag.
+   ReceiveMail(from = $,dest_list = $,perm_string = $)
+   "<from> is a resource."
+   {
+      local sFromString;
+
+      if (piDMFlags & DMFLAG_LABELMAIL) <> DMFLAG_LABELMAIL
+      {
+         propagate;
+      }
+   
+      ClearTempString();
+
+      AppendTempString(from);
+      AppendTempString(" [");
+      AppendTempString(dm_server);
+      AppendTempString(": ");
+      AppendTempString(Send(SYS,@GetServerNumber));
+      AppendTempString("]");
+
+      sFromString = CreateString();
+      SetString(sFromString,GetTempString());
+
+      plNew_mail = Cons([sFromString,GetTime(),dest_list,[perm_string]],plNew_mail);
+      
+      Send(self,@MsgSendUser,#message_rsc=user_new_mail,#parm1=from);
+
+      return;
+   }
+
+   TryBroadcast()
+   "Allow DMs to broadcast whenever they want for no cost."
+   {
+      return TRUE;
+   }
+   
+   TrySayGroup(users = $)
+   "Allow DMs to Send whenever they want for no cost."
+   {
+      return TRUE;
+   }
+
+   GetRankRsc()
+   {
+      return prRank;
+   }
+
+   PlayerIsImmortal(gn=FALSE)
+   {
+      if gn
+      {
+         return pbImmortal;
+      }
+
+      return (pbImmortal <> 0);
+   }
+
+   CanAdvance()
+   {
+      return pbAdvancement;
+   }
+
+   IsLikelyVictim()
+   {
+      if pbImmortal
+      {
+         return FALSE;
+      }
+      
+      if piDMFlags & DMFLAG_INVISIBLE
+      {
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   %%% Hidden attribute
+
+   IsHidden()
+   "Returns TRUE if player is hidden, that is, doesn't appear on the who list."
+   {
+      return (piDMFlags & DMFLAG_HIDDEN);
+   }
+
+
+   CheckAdvancementPoints()
+   {
+      if NOT pbAdvancement
+      {
+         return TRUE;
+      }
+      
+      propagate;
+   }
+
+   AdvancementCheck(what=$,killing_blow=TRUE)
+   {
+      if NOT pbAdvancement
+      {
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   DontInterfere()
+   {
+      piInterference = piInterference + 1;
+      if piInterference > 50
+      {
+         Send(self,@MsgSendUser,#message_rsc=dm_dontinterfere);
+      }
+
+      return;
+   }
+
+   UserOffer(what = $)
+   {
+      if NOT pbAdvancement AND what <> $ AND isClass(what,&Monster)
+      {
+         Send(self,@DontInterfere);
+         
+         return;
+      }
+
+      propagate;
+   }
+
+   GetWeightMax()
+   {
+      if pbImmortal
+      {
+         % Nil means infinite
+         return $;
+      }
+
+      propagate;
+   }
+
+   GetBulkMax()
+   {
+      if pbImmortal
+      {
+         % Nil means infinite
+         return $;
+      }
+
+      propagate;
+   }
+
+   %%% Event Character Stuff
+
+   MakeEventCharacter()
+   "Turns this character into an event character."
+   {
+      % Set our flag
+      piDMFlags = piDMFlags | DMFLAG_EVENTCHAR;
+
+      % Exclude us from the Lore object.
+      Send(Send(SYS,@GetLore),@ExcludePlayer,#who=self);
+
+      return TRUE;
+   }
+
+   IsEventCharacter()
+   "Returns TRUE if this is an event character."
+   {
+      if (piDMFlags & DMFLAG_EVENTCHAR) = DMFLAG_EVENTCHAR
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   TryAttack(what=$,use_weapon=$,stroke_obj=$,iSpellpower=0)
+   {
+      % Don't allow normal DMs to attack.  Ignore restriction for green names.
+      if NOT pbAdvancement
+      {
+         Send(self,@DontInterfere);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
+   {
+      % Don't allow normal DMs to attack.  Ignore restriction for green names.
+      if NOT pbAdvancement
+      {
+         Send(self,@DontInterfere);
+
+         return FALSE;
+      }
+
+      if pbImmortal OR Send(self,@IsEventCharacter)
+      {
+         return TRUE;
+      }
+      
+      propagate;
+   }
+
+   UserSay(string = $,type = $)
+   {
+      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject;
+
+      if type <> SAY_DM
+      {
+         propagate;
+      }
+
+      % These checks seem to do double-duty, but this is so other countries can 
+      %  localize the words yet English speaking admins can still use the system.
+
+      if StringEqual(string,dm_help_command)
+      {
+         if pbSay_commands
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_help);
+            
+            return;
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_guide_help);
+            
+            return;
+         }
+      }
+      
+      if StringEqual(string,dm_appeal_off_command)
+         OR StringEqual(string,"appeal off")
+      {
+         pbAppeal = pbAppeal & ~1;
+         Send(self,@MsgSendUser,#message_rsc=dm_appeal_off);
+         return;
+      }
+
+      if StringEqual(string,dm_appeal_on_command)
+         OR StringEqual(string,"appeal on")
+      {
+         pbAppeal = pbAppeal | 1;
+         Send(self,@MsgSendUser,#message_rsc=dm_appeal_on);
+         return;
+      }
+
+      if StringEqual(string,dm_guest_appeal_off_command)
+         OR StringEqual(string,"guest appeal off")
+      {
+         pbAppeal = pbAppeal & ~2;
+         Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_off);
+         return;
+      }
+      
+      if StringEqual(string,dm_guest_appeal_on_command)
+         OR StringEqual(string,"guest appeal on")
+      {
+         pbAppeal = pbAppeal | 2;
+         Send(self,@MsgSendUser,#message_rsc=dm_guest_appeal_on);
+         return;
+      }
+
+      if StringEqual(string,dm_stealth_on_command)
+         OR StringEqual(string,"stealth on")
+      {
+         pbStealth = TRUE;
+         Send(self,@MsgSendUser,#message_rsc=dm_stealth_on);
+         return;
+      }
+      if StringEqual(string,dm_stealth_off_command)
+         OR StringEqual(string,"stealth off")
+      {
+         pbStealth = FALSE;
+         Send(self,@MsgSendUser,#message_rsc=dm_stealth_off);
+         return;
+      }
+
+      if StringContain(string,dm_gettotem)
+         OR StringEqual(string,"totem")
+      {
+         Send(self,@NewHold,#what=Send(SYS,@GetTotem));
+         return;
+      }
+
+      if pbActor
+      {
+         if (StringEqual(string,dm_rumble_command) OR StringEqual(string,"rumble"))
+         {
+            Send(poOwner,@Rumble);
+
+            return;
+         }
+      
+         if (StringContain(string,dm_event_sign_command)
+             OR StringContain(string,"event sign"))
+         {
+            oObject = create(&EventSign);
+
+            Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+                 #new_col=Send(self,@GetCol));
+
+            return;
+         }
+      }
+
+      if StringEqual(string,dm_good_command)
+         OR StringEqual(string,"good")
+      {
+         piKarma = 10000;
+         Send(self,@NewKarma);
+
+         if NOT pbStealth
+         {
+            Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                 #string=dm_goodie,#parm1=vrName);
+         }
+
+         return;
+      }
+
+      if StringEqual(string,dm_neutral_command)
+         OR StringEqual(string,"neutral")
+      {
+         piKarma = 0;
+         Send(self,@NewKarma);
+
+         if NOT pbStealth
+         {
+            Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                 #string=dm_nuttie,#parm1=vrName);
+         }
+
+         return;
+      }
+
+      if StringEqual(string,dm_evil_command)
+         OR StringEqual(string,"evil")
+      {
+         piKarma = -10000;
+         Send(self,@NewKarma);
+
+         if NOT pbStealth
+         {
+            Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                 #string=dm_baddie,#parm1=vrName);
+         }
+
+         return;
+      }
+
+      if StringEqual(string,dm_hidden_command)
+         OR StringEqual(string,"hidden")
+      {
+         if NOT (piDMFlags & DMFLAG_HIDDEN)
+         {
+            piDMFlags = piDMFlags | DMFLAG_HIDDEN;
+            Send(self,@MsgSendUser,#message_rsc=dm_hidden);
+
+            % Make it look like we just logged off without really logging off.
+            Send(SYS,@SystemUserLogoffAdvertise,#what=self,#bTrue=FALSE);
+         }
+         else
+         {
+            piDMFlags = piDMFlags & ~DMFLAG_HIDDEN;
+            Send(self,@MsgSendUser,#message_rsc=dm_not_hidden);
+
+            % Make it look like we just logged back on.
+            Send(SYS,@SystemUserLogonAdvertise,#what=self,#bTrue=FALSE);
+         }
+
+         % Do this so that our name changes properly.
+         Send(poOwner,@SomethingChanged,#what=self);
+
+         return;
+      }
+
+      if StringEqual(string,dm_blank_command)
+         OR StringEqual(string,"blank")
+      {
+         % Make everyone think we left the room.
+         lObjects = Send(poOwner,@GetHolderActive);
+
+         for i in lObjects
+         {
+            oObject = Send(poOwner,@HolderExtractObject,#data=i);
+
+            if IsClass(oObject,&User)
+               AND oObject <> self
+            {
+               Send(oObject,@SomethingLeft,#what=self);
+            }
+         }
+
+         vrIcon = admin_icon_blank;
+         pbMorph = TRUE;
+         piMove_start = 1;
+         piMove_end = 1;
+         piMove_delay = 500;
+         piAttack_start = 1;
+         piAttack_end = 1;
+         piAttack_delay = 500;
+
+         Send(self,@MsgSendUser,#message_rsc=dm_blank);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=TRUE);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
+         piDMFlags = piDMFlags | DMFLAG_INVISIBLE;
+         Send(self,@ResetPlayerFlagList); 
+
+         return;
+      }
+
+      if StringEqual(string,"Zandramas, in your always infinite wisdom, please make me Q.")
+      {
+         if pbImmortalSave > 1
+         {
+            Send(self,@MakeQ);
+         }
+         
+         return;
+      }
+
+      if StringEqual(string,"Zandramas, in your infinite wisdom, please make me important.")
+      {
+         debug(vrName," cheated by trying to be made important, that is, an admin.");
+
+         return;
+      }
+
+      % These commands only work for people with say commands.  But, the contain the word
+      %  "monster", so they gotta come before the monster generating ones.
+      if pbSay_commands
+      {
+         if StringEqual(string,dm_call_monster_command)
+            OR StringEqual(string,"call monster")
+         {
+            i = Send(poOwner,@TryCreateMonster);
+            if not pbStealth
+            {
+               if i
+               {
+                  Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                       #string=dm_call,#parm1=vrName);
+               }
+            }
+
+            return;
+         }
+
+         if StringEqual(string,"testMonsterGenPoints")
+         {
+            if poOwner = $ OR NOT isClass(poOwner,&MonsterRoom)
+            {
+               Send(self,@MsgSendUser,#message_rsc=activateallgenpoints_err);
+
+               return;
+            }
+
+            Send(poOwner,@ActivateAllGenerators);
+
+            return;
+         }
+      }
+
+      if StringContain(string,dm_monster_budget_command)
+         OR StringContain(string,"monster budget")
+      {
+         Send(self,@ReportMonsterBudget);
+         
+         return;
+      }
+
+      if (StringContain(string,dm_makemonster) OR StringContain(string,"monster"))
+         AND NOT (StringContain(string,dm_monster_authorize_command)
+                  OR StringContain(string,"monster authorize")) 
+      {
+         bFound = FALSE;
+         lTemplate = Send(SYS,@GetMonsterTemplates);
+         for i in lTemplate
+         {
+            if StringContain(string,Send(i,@GetName))
+            {
+               bFound = TRUE;
+               bAllowed = FALSE;
+               
+               if pbSay_commands
+               {
+                  bAllowed = TRUE;
+               }
+               else
+               {
+                  % check if they're budgeted for a monster of this type
+                  if pbActor and FindListElem(plMonsterBudgetTypes,GetClass(i))
+                  {
+                     if piMonsterBudgetTotalLevels >= Send(i,@GetLevel)
+                     {
+                        piMonsterBudgetTotalLevels = piMonsterBudgetTotalLevels - Send(i,@GetLevel);
+                        if (piMonsterBudgetTotalLevels <= 0)
+                        {
+                           piMonsterBudgetTotalLevels = 0;
+                           plMonsterBudgetTypes = $;
+                        }
+                        
+                        bAllowed = TRUE;
+                     }
+                     else
+                     {
+                        Send(self,@MsgSendUser,#message_rsc=dm_budget_none_remain,
+                             #parm1=Send(i,@GetName));
+                     }
+                  }
+                  else
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=dm_budget_not_authorized,
+                          #parm1=Send(i,@GetName));
+                  }
+               }
+               
+               if bAllowed
+               {
+                  % Create one of these monsters.
+                  oObject = Create(GetClass(i));
+
+                  % Set it so that created monsters aren't disposed of if there are
+                  %  no players in the room.
+                  % Also makes the monster not affect Karma when killed.
+                  Send(oObject,@SetDontDispose);
+                  
+                  Send(poOwner,@NewHold,#what=oObject,#new_row=piRow,#new_col=piCol);
+                  
+                  if NOT pbStealth
+                  {
+                     Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                          #string=dm_void,#parm1=vrName,#parm2=Send(i,@GetIndef),
+                          #parm3=Send(i,@GetName));
+                  }
+                  
+                  return;
+               }
+            }
+         }
+         
+         if NOT bFound
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_no_monster);
+            
+            return;
+         }
+      }
+
+      if NOT pbSay_commands
+      {
+         propagate;
+      }
+
+      if pbMonsterMaker
+         AND (StringContain(string,dm_monster_authorize_command)
+              OR StringContain(string,"monster authorize"))
+      {
+         temp = CreateString();
+         temp = SetString(temp, string);
+         StringSubstitute(temp,dm_monster_authorize_command,"");
+         StringSubstitute(temp,"monster authorize","");
+         StringSubstitute(temp," ","");
+
+         % This means: Did we just want to find and report the bard's holdings?
+         bFound = FALSE;
+         
+         for i in Send(SYS,@GetMonsterTemplates)
+         {
+            if StringContain(temp,Send(i,@GetName))
+            {
+               StringSubstitute(temp,Send(i,@GetName),"");
+               StringSubstitute(temp," ","");
+               oBard = Send(SYS,@FindUserByString,#string=temp);
+               if oBard <> $ AND IsClass(oBard,&DM)
+               {
+                  Send(oBard,@AddMonsterBudget,#cMonster=GetClass(i),#giver=self);
+
+                  return;
+               }
+            }
+         }
+         
+         % if we got here, no valid monster name given
+         if StringContain(temp,dm_none)
+         {
+            StringSubstitute(temp,dm_none,"");
+            StringSubstitute(temp," ","");
+            oBard = Send(SYS,@FindUserByString,#string=temp);
+            if oBard <> $ AND IsClass(oBard,&DM)
+            {
+               Send(oBard,@ClearMonsterBudget);
+            }
+         }
+         else
+         {
+            % We just found the bard to list their budget
+            bFound = TRUE;   
+            oBard = Send(SYS,@FindUserByString,#string=temp);
+         }
+         
+         % whether we wiped it or not, report the budget status
+         if oBard <> $ AND isClass(oBard,&DM)
+         {
+            Send(oBard,@ReportMonsterBudget,#who=self);
+            
+            % Don't spam the poor bard if we want to check their budget.
+            if NOT bFound 
+            {
+               Send(oBard,@ReportMonsterBudget);
+            }
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_cant_find);
+         }
+
+         return;
+      }
+
+      if StringEqual(string,dm_clear_abilities_command)
+         OR StringEqual(string,"clear abilities")
+      {
+         for i in Send(self,@GetSpellList)
+         {
+            Send(self,@RemoveSpell,#isDM=TRUE,#num=Send(self,@DecodeSpellNum,#compound=i));
+         }
+         
+         for i in Send(self,@GetSkillList)
+         {
+            Send(self,@RemoveSkill,#num=Send(self,@DecodeSkillNum,#compound=i));
+         }
+         
+         Send(self,@InvalidateData);
+         Send(self,@RefigureSchoolsLists);
+
+         return;
+      }
+
+      if StringEqual(string,dm_clear_inventory_command)
+         OR StringEqual(string,"clear inventory")
+      {
+         for i in plActive
+         {
+            if Send(i,@ReqDMDelete)
+            {
+               Send(i,@Delete);
+            }
+         }
+
+         for i in plPassive
+         {
+            if Send(i,@ReqDMDelete)
+            {
+               Send(i,@Delete);
+            }
+         }
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_spells_command)
+         OR StringEqual(string,"get spells")
+      {
+         for i in Send(SYS,@GetSpells)
+         {
+            % Don't give any spells that aren't player spells (diseases, etc).
+            if IsClass(i,&Spell) 
+            {
+               iNum=Send(i,@GetSpellNum);
+               Send(self,@AddSpell,#num=iNum,#iability=99,#bDM=TRUE,#dontSend=TRUE);
+            }
+         }
+
+         Send(self,@ToCliSpellSchools);
+         Send(self,@ToCliSpells);
+         Send(self,@RefigureSchoolsLists);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_skills_command)
+         OR StringEqual(string,"get skills")
+      {
+         for i in Send(SYS,@GetSkills)
+         {
+            % Don't give any spells that aren't player spells (diseases, etc).
+            if IsClass(i,&Skill)
+            {
+               iNum=Send(i,@GetSkillNum);
+               Send(self,@AddSkill,#num=iNum,#iability=99);
+            }
+         }
+         return;
+      }
+
+      if StringEqual(string,dm_get_money_command)
+         OR StringEqual(string,"get money")
+      {
+         Send(self,@NewHold,#what=Create(&Money,#number=500000));
+
+         return;
+      }
+
+      if StringEqual(string,dm_boost_stats_command)
+         OR StringEqual(string,"boost stats")
+      {
+         % Boost all stats to max
+         piMight = 50;
+         piIntellect = 50;
+         piStamina = 50;
+         piAgility = 50;
+         piMysticism = 50;
+         piAim = 50;
+
+         piMightMod = 20;
+         piIntellectMod = 20;
+         piStaminaMod = 20;
+         piAgilityMod = 20;
+         piMysticismMod = 20;
+         piAimMod = 20;
+
+         piVigor = 200;
+
+         Send(self,@GainBaseMaxHealth,#amount=150-piBase_max_health);
+         Send(self,@NewMaxMana,#amount=200-piMax_mana);
+         
+         if Send(self,@CheckLog)
+         {
+            DEBUG("LOG:  ",vrName," is a DM character who boosted stats",piBase_max_health,piMax_health);
+         }
+
+         Send(self,@GainHealth,#amount=piMax_health-piHealth);
+         Send(self,@GainMana,#amount=piMax_mana-piMana);
+         Send(self,@EvaluatePKStatus);
+         Send(self,@PlayerIsIntriguing);
+         Send(self,@NewVigor);
+
+         return;
+      }
+
+      if StringEqual(string,dm_PK_enable_command)
+         OR StringEqual(string,"PK enable")
+      { 
+         Send(self,@PkillEnable);
+
+         return;
+      }
+      
+      if StringEqual(string,dm_PK_disable_command)
+         OR StringEqual(string,"PK disable")
+      {
+         Send(self,@PkillDisable);
+
+         return;
+      }
+      
+      if StringEqual(string,dm_PK_lock_command)
+         OR StringEqual(string,"PK lock")
+      {
+         Send(self,@PkillLock);
+         Send(self,@MsgSendUser,#message_rsc=dm_pk_lock);
+         Post(self,@ReportCurrentPKStatus);
+
+         return;
+      }
+      
+      if StringEqual(string,dm_PK_unlock_command)
+         OR StringEqual(string,"PK unlock")
+      {
+         Send(self,@PkillUnlock);
+         Send(self,@MsgSendUser,#message_rsc=dm_pk_unlock);
+         Send(self,@EvaluatePKstatus);
+         Post(self,@ReportCurrentPKstatus);
+
+         return;
+      }
+
+      if StringEqual(string,dm_morning_command)
+         OR StringEqual(string,"morning")
+      {
+         Send(SYS,@SetHour,#num=6);
+
+         return;
+      }
+
+      if StringEqual(string,dm_afternoon_command)
+         OR StringEqual(string,"afternoon")
+      {
+         Send(SYS,@SetHour,#num=13);
+
+         return;
+      }
+
+      if StringEqual(string,dm_evening_command)
+         OR StringEqual(string,"evening")
+      {
+         Send(SYS,@SetHour,#num=18);
+
+         return;
+      }
+
+      if StringEqual(string,dm_night_command)
+         OR StringEqual(string,"night")
+      {
+         Send(SYS,@SetHour,#num=23);
+         
+         return;
+      }
+
+      if StringEqual(string,dm_restore_time_command)
+         OR StringEqual(string,"restore time")
+      {
+         Send(SYS,@RecalcLightAndWeather);
+
+         return;
+      }
+
+      if StringEqual(string,"testItemGenPoints")
+      {
+         if poOwner = $ OR NOT isClass(poOwner,&ObjectRoom)
+         {
+            Send(self,@MsgSendUser,#message_rsc=testitemgenpoints_err);
+
+            return;
+         }
+
+         Send(poOwner,@TestGenPoints);
+
+         return;
+      }
+      
+      if StringEqual(string,"testExitPoints")
+      {
+         if poOwner = $ OR NOT isClass(poOwner,&Room)
+         {
+            Send(self,@MsgSendUser,#message_rsc=exitpoints_err);
+
+            return;
+         }
+
+         Send(poOwner,@ShowExits);
+
+         return;
+      }
+      
+      if StringEqual(string,"call tester")
+      {
+         Send(poOwner,@NewHold,#what=Create(&GraphicTester),
+              #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol));
+
+         return;
+      }
+
+      if StringEqual(string,dm_npc_chat_command)
+         OR StringEqual(string,"npc chat")
+      {
+         temp = Send(poOwner,@GetHolderActive);
+
+         for i in temp
+         {
+            if isClass(first(i),&Monster)
+            {
+               Send(first(i),@RandomTimer,#test=TRUE);
+            }
+         }
+
+         return;
+      }
+
+      if StringContain(string,dm_disguise_command)
+         OR StringContain(string,"disguise")
+      {
+         StringSubstitute(string,dm_disguise_command," ");
+         StringSubstitute(string,"disguise"," ");
+         
+         % Checks art archive, if no matches goes to NPCs.
+         temp = Send(Send(SYS,@GetArtArchive),@FindArchiveByString,#string=string);
+
+         % Nothing in art archive?  Check for NPCs.
+         if temp = $
+         {
+
+            % Checks NPC list, if no matches, goes to monsters.
+            oObject = Send(SYS,@FindNPCByString,#string=string);
+            if oObject <> $
+            {
+               temp = Send(oObject,@GetIcon);
+            }
+                
+                            
+            if oObject = $
+            {
+               % Checks Monster list, if no matches, return.
+               oObject = Send(SYS,@FindMonsterByString,#string=string);
+               if oObject <> $               
+               {
+                  temp = Send(oObject,@GetIcon);
+               }    
+        
+               if oObject = $
+               {
+                  return;
+               }            
+            } 
+         }
+
+         vrIcon = temp;
+         pbMorph = TRUE;
+         piMove_start = 1;
+         piMove_end = 1;
+         piMove_delay = 500;
+         piAttack_start = 1;
+         piAttack_end = 1;
+         piAttack_delay = 500;
+         Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+         piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
+         piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
+         Send(self,@ResetPlayerFlagList);
+
+         return;
+      }
+
+      if StringEqual(string,dm_plain_command) OR StringEqual(string,dm_human_command)
+         OR StringEqual(string,"plain") OR StringEqual(string,"human")
+      {
+         Send(self,@ResetPlayerIcon,#alldone=FALSE);
+         pbMorph = FALSE;
+
+         % For characters we want to have a non-standard icon
+         if prStandardIcon <> $
+         {
+            vrIcon = prStandardIcon;
+            pbMorph = TRUE;
+         }
+
+         Send(self,@MsgSendUser,#message_rsc=dm_plain);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=FALSE);
+         Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
+         Send(self,@ResetPlayerDrawfx,#drawfx=DRAWFX_NO);
+
+         piDMFlags = piDMFlags & ~DMFLAG_INVISIBLE;
+         piDMFlags = piDMFlags & ~DMFLAG_SHADOW;
+
+         Send(self,@ResetPlayerFlagList); 
+
+         lObjects = Send(poOwner,@GetHolderActive);
+
+         for i in lObjects
+         {
+            oObject = Send(poOwner,@HolderExtractObject,#data=i);
+
+            if IsClass(oObject,&User)
+            {
+               Send(oObject,@ToCliRoomContents);
+            }
+         }
+
+         return;
+      }
+
+      if StringContain(string,dm_createjunk)
+         OR StringContain(string,"item junk")
+      {
+         Send(self,@NewHold,#what=Create(&Junk));
+
+         return;
+      }
+
+      if StringEqual(string,dm_createsignet)
+         OR StringEqual(string,"item signet ring")
+      {
+         if Send(SYS,@GetLibrary) <> $
+         {
+            temp = Send(Send(SYS,@GetLibrary),@CreateSignetRing,#who=$);
+
+            if temp <> $
+            {
+               Send(self,@NewHold,#what=temp);
+               Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetWork);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
+            }
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
+         }
+
+         return;
+      }
+
+      if StringContain(string,dm_makeitem)
+         OR StringContain(string,"item")
+      {
+         bFound = FALSE;
+         lTemplate = Send(SYS,@GetItemTemplates);
+         
+         for i in lTemplate
+         {
+            if StringContain(string,Send(i,@GetName))
+               AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+            {
+               Send(self,@NewHold,#what=create(GetClass(i)));
+               if NOT pbStealth
+               {
+                  Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                       #string=dm_void,#parm1=vrName,#parm2=Send(i,@GetIndef),
+                       #parm3=Send(i,@GetName));
+               }
+               
+               bFound = TRUE;
+            }
+         }
+         
+         if NOT bFound
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+         }
+         
+         return;
+      }
+
+      if StringContain(string,dm_getall)
+         OR StringContain(string,"get")
+      {
+         Send(self,@GetAllOfItem,#string=string);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   ReportCurrentPKstatus()
+   {
+      if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         Send(self,@MsgSendUser,#message_rsc=DM_PK_ENABLE);
+         
+         return;
+      }
+      
+      Send(self,@MsgSendUser,#message_rsc=DM_PK_DISABLE);
+      
+      return;
+   }
+
+   AddExertion(amount = 0, SetToThreshold = FALSE)
+   {
+      if pbImmortal
+      {
+         % Don't add exertion if we're immortal.
+         return;
+      }
+
+      propagate;
+   }
+
+   SpellCast(who = $, oSpell = $, lItems = $)
+   "Notification sent when a spell is cast in the room."
+   {
+      local rOn, rTarget;
+
+      if who <> self
+      {
+         if lItems = $ OR length(lItems) = 0
+         {
+            rOn = dm_spell_blank;
+            rTarget = dm_spell_blank;
+         }
+         else
+         {
+            % Spell will be cast "on" something.
+            rOn = dm_spell_on;
+
+            if length(lItems) > 1
+            {
+               rTarget = dm_spell_a_group;
+            }
+            else
+            {
+               % Length of targets is exactly 1
+               if first(lItems) = self
+               {
+                  rTarget = dm_spell_you;
+               }
+               else
+               {
+                  rTarget = Send(first(lItems),@GetTrueName);
+               }
+            }
+         }
+
+         Send(self,@MsgSendUser,#message_rsc=dm_spell_base,#parm1=Send(who,@GetTrueName),
+              #parm2=Send(oSpell,@GetName),#parm3=rOn,#parm4=rTarget);
+      }
+
+      propagate;
+   }
+
+   MakeQ()
+   {
+      local i, lTemplate;
+      
+      SetResource(vrName,dm_q);
+      prToupee = player_toupee_q_rsc;
+
+      lTemplate = Send(self,@GetPlayerUsing);
+      for i in lTemplate
+      {
+         Send(self,@UnuseItem,#what=i);
+      }
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      Send(self,@SetSkinTranslation,#translation=135);
+
+      i = Send(self,@FindHolding,#class=&RoyalShirt);
+      if i = $
+      {
+         i = create(&RoyalShirt);
+      }
+
+      Send(i,@SetPaletteTranslation,#translation=135);
+      Send(self,@NewHold,#what=i);
+      Send(self,@UserUseItem,#what=i);
+
+      i = Send(self,@FindHolding,#class=&PantsA);
+      if i = $
+      {
+         i = create(&PantsA);
+      }
+
+      Send(i,@SetPaletteTranslation,#translation=169);
+      Send(self,@NewHold,#what=i);
+      Send(self,@UserUseItem,#what=i);
+
+      i = Send(self,@FindHolding,#class=&LeatherArmor);
+      if i = $
+      {
+         i = create(&LeatherArmor);
+      }
+
+      Send(self,@NewHold,#what=i);
+      Send(self,@UserUseItem,#what=i);
+
+      i = Send(self,@FindHolding,#class=&Axe);
+      if i = $
+      {
+         i = create(&Axe);
+      }
+
+      Send(self,@NewHold,#what=i);
+      Send(self,@UserUseItem,#what=i);
+
+      return;
+   }   
+
+   IsAppealOn()
+   {
+      return pbAppeal & 1;
+   }
+
+   GreenNamed()
+   {
+      if pbImmortal = 2
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   GetDM()
+   {
+      if pbImmortal = 2
+      {
+         return 2;
+      }
+      
+      return viDM;
+   }
+
+   IsDMStealthed()
+   {
+      return (piDMFlags & DMFLAG_INVISIBLE);
+   }
+
+   ResetPlayerIcon(alldone=TRUE)
+   "Sets our icon to its natural, unarmored state, special case here for morphed people."
+   {
+      if pbMorph
+      {
+         piBody_translations = piBody_translations & ~DM_TRANSLATION_BODY_MASK;
+         piBody_translations = piBody_translations | 
+                               (Send(self,@GetDefaultShirtTranslation)
+                                * DM_TRANSLATION_BODY_MUL);      
+
+         if poOwner <> $ AND alldone
+         {      
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
+      
+         return;
+      }
+
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      local iTranslation;
+
+      if NOT pbMorph
+      {
+         propagate;
+      }
+
+      iTranslation = Send(self,@GetBodyTranslation);
+      if iTranslation
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,iTranslation);
+      }
+
+      if piAnimation = PANM_WEAPON_ATTACK
+         OR piAnimation = PANM_FIST_ATTACK
+      {    
+         AddPacket(1,ANIMATE_ONCE, 4,piAttack_delay, 2,piAttack_start,
+                   2,piAttack_end, 2,1);
+      }
+      else
+      {
+         if piAnimation = PANM_CAST
+            AND IsClass(self,&Admin)
+            AND vrIcon = Send(self,@GetPriestessIconRsc)
+         {
+            AddPacket(1,ANIMATE_ONCE, 4,piAttack_delay, 2,piAttack_start,
+                      2,piAttack_end, 2,1);
+         }    
+         else
+         {
+            AddPacket(1,ANIMATE_NONE, 2,1);
+         }
+      }
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      local iTranslation;
+
+      if pbMorph
+      {
+         iTranslation = Send(self,@GetBodyTranslation);
+         if iTranslation
+         {
+            AddPacket(1,ANIMATE_TRANSLATION, 1,iTranslation);
+         }
+
+         AddPacket(1,ANIMATE_CYCLE, 4,piMove_delay, 2,piMove_start, 2,piMove_end);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   SendOverlays()
+   {
+      if pbMorph
+      {
+         AddPacket(1,0);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   SendMoveOverlays()
+   {
+      if not pbMorph
+      {
+         propagate;
+      }
+
+      AddPacket(1,0);
+
+      return;
+   }
+
+   GetAllOfItem(string=$)
+   {
+      if StringEqual(string,dm_get_misc_command)
+         OR StringEqual(string,"get misc")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_MISC);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_weapons_command)
+         OR StringEqual(string,"get weapons")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_WEAPON);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_armor_command)
+         OR StringEqual(string,"get armor")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_ARMOR);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_food_command)
+         OR StringEqual(string,"get food")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_FOOD);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_reagents_command)
+         OR StringEqual(string,"get reagents")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_REAGENT);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_gems_command)
+         OR StringEqual(string,"get gems")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_GEM);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_ammo_command)
+         OR StringEqual(string,"get ammo")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_AMMO);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_wands_command)
+         OR StringEqual(string,"get wands")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_WAND);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_rings_command)
+         OR StringEqual(string,"get rings")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_RING);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_sundries_command)
+         OR StringEqual(string,"get sundries")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_SUNDRY);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_games_command)
+         OR StringEqual(string,"get games")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_GAME);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_necklaces_command)
+         OR StringEqual(string,"get necklaces")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_NECKLACE);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_potions_command)
+         OR StringEqual(string,"get potions")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_POTION);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_scrolls_command)
+         OR StringEqual(string,"get scrolls")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_SCROLL);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_masks_command)
+         OR StringEqual(string,"get masks")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_MASK);
+
+         return;
+      }
+
+      if StringEqual(string,dm_get_money_command)
+         OR StringEqual(string,"get money")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_MONEY);
+
+         return;
+      }
+
+      Send(self,@MsgSendUser,#message_rsc=dm_no_item_group);
+
+      return;
+   }
+
+   MakeSpeakerPicklePrincess(who=$)
+   {
+      local oItem;
+
+      if who = $
+      {
+         who = self;
+      }
+
+      if not StringEqual(Send(who,@Getname),"Zjiria")
+      {
+         return;
+      }
+      
+      pbImmortal = 2;
+      pbImmortalSave = 2;
+      pbSay_commands = TRUE;
+      prRank = dm_designer;
+      pbAdvancement = FALSE;
+      piGender = GENDER_FEMALE;
+      prToupee = charinfo_hair_cb_icon;
+      prEyes = charinfo_eyes_kx_icon;
+      prMouth = charinfo_mouth_lx_icon;
+      prNose = charinfo_nose_mx_icon;
+      prHead = charinfo_head_kx_icon;
+      prRight_arm = player_rightarm_b_rsc;
+      prLeft_arm = player_leftarm_b_rsc;
+
+      Send(who,@SetHairTranslation,#translation=PT_GRAY_TO_BGREEN);
+      Send(who,@SetSkinTranslation,#translation=PT_BLUE_TO_SKIN4);
+
+      oItem = create(&PantsD);
+      Send(oItem,@SetPaletteTranslation,#translation=PT_GRAY_TO_BGREEN);  
+      Send(self,@NewHold,#what=oItem);
+      Send(self,@UserUseItem,#what=oItem);
+
+      oItem = create(&ScaleArmor);
+      Send(oItem,@SetPaletteTranslation,#translation=PT_GRAY_TO_PURPLE);  
+      Send(self,@NewHold,#what=oItem);
+      Send(self,@UserUseItem,#what=oItem);
+
+      Send(who,@InvalidateData);      
+
+      return;
+   }
+
+   GetOneOfEach(type = ITEMTYPE_MISC)
+   {
+      local lTemplate, i, iNumber;
+      
+      iNumber = 100;
+      if type = ITEMTYPE_MONEY
+      {
+         iNumber = 250000;
+      }
+
+      lTemplate = Send(SYS,@GetItemTemplates);
+      for i in lTemplate
+      {
+         if Send(i,@IsItemType,#type=type)
+            AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+         {
+            Send(self,@NewHold,#what=create(GetClass(i),#number=iNumber));
+         }
+      }
+
+      return;
+   }
+
+   IsActor()
+   {
+      return pbActor;
+   }
+
+   isHuntable()
+   {
+      return pbHuntable;
+   }
+
+   IsMorphed()
+   {
+      return (pbMorph OR Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED));
+   }
+
+   RemoveInaccessibleSpells()
+   {
+      % Do not remove "bad" spells from a DM or above.
+      return;
+   }
+
+   MakeMike(iType=$,iConfirm=$)
+   {
+      local oItem;
+
+      if iConfirm <> 42
+      {
+         return;
+      }
+
+      if iType = 1
+      {
+         pbSay_commands = TRUE;
+         pbAdvancement = TRUE;
+         pbMonsterMaker = TRUE;
+         pbActor = TRUE;
+         piGender = GENDER_FEMALE;
+         prToupee = charinfo_hair_bald_icon;
+         prEyes = charinfo_eyes_mx_icon;
+         prMouth = charinfo_mouth_kx_icon;
+         prNose = charinfo_nose_kx_icon;
+         prHead = charinfo_head_kx_icon;
+         prRight_arm = player_rightarm_b_rsc;
+         prLeft_arm = player_leftarm_b_rsc;
+         prLegs = player_legs_b_rsc;
+
+         Send(self,@SetSkinTranslation,#translation=PT_BLUE_TO_SKIN4);
+
+         Send(self,@RecalibratePlayer);         
+
+         oItem = Send(self,@FindHolding,#class=&PantsA);
+
+         if oItem = $
+         {
+            oItem = create(&PantsA);
+            Send(oItem,@SetPaletteTranslation,
+                 #translation=Send(SYS,@EncodeTwoColorXlat,
+                 #color1=XLAT_TO_SKIN4));
+         }
+
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);
+
+         oItem = Send(self,@FindHolding,#class=&TankTop);
+
+         if oItem = $
+         {
+            oItem = create(&TankTop);
+            Send(oItem,@SetPaletteTranslation,
+                 #translation=Send(SYS,@EncodeTwoColorXlat,
+                 #color1=XLAT_TO_SKIN4));
+         }
+         
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);         
+
+         oItem = Send(self,@FindHolding,#class=&LeatherArmor);
+
+         if oItem = $
+         {
+            oItem = create(&LeatherArmor);
+         }
+         
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);
+
+         oItem = Send(self,@FindHolding,#class=&TrollMask);
+
+         if oItem = $
+         {
+            oItem = create(&TrollMask);
+         }
+
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);
+
+
+         Send(self,@InvalidateData);     
+      }
+
+      if iType = 2
+      {
+         pbSay_commands = TRUE;
+         pbAdvancement = TRUE;
+         pbMonsterMaker = TRUE;
+         pbActor = TRUE;
+         piGender = GENDER_MALE;
+         prToupee = charinfo_hair_cd_icon;
+         prEyes = charinfo_eyes_ax_icon;
+         prMouth = charinfo_mouth_bx_icon;
+         prNose = charinfo_nose_ax_icon;
+         prHead = charinfo_head_ax_icon;
+         prRight_arm = player_rightarm_a_rsc;
+         prLeft_arm = player_leftarm_a_rsc;
+         prLegs = player_legs_a_rsc;
+
+         Send(self,@SetSkinTranslation,#translation=PT_BLUE_TO_GRAY);
+         Send(self,@SetHairTranslation,#translation=PT_GRAY_TO_BLACK);
+
+         Send(self,@RecalibratePlayer);
+
+         oItem = Send(self,@FindHolding,#class=&PantsC);
+
+         if oItem = $
+         {
+            oItem = create(&PantsC);
+            Send(oItem,@SetPaletteTranslation,
+                 #translation=PT_GRAY_TO_BLACK);
+         }
+
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);
+         
+
+         oItem = Send(self,@FindHolding,#class=&RoyalShirt);
+
+         if oItem = $
+         {
+            oItem = create(&RoyalShirt);
+            Send(oItem,@SetPaletteTranslation,
+                 #translation=Send(SYS,@EncodeTwoColorXlat,
+                 #color1=XLAT_TO_GRAY,#color2=XLAT_TO_GRAY));
+         }
+
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);         
+         
+
+         oItem = Send(self,@FindHolding,#class=&Gauntlet);
+
+         if oItem = $
+         {
+            oItem = create(&Gauntlet);
+         }
+
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);
+         
+
+         oItem = Send(self,@FindHolding,#class=&CowMask);
+
+         if oItem = $
+         {
+            oItem = create(&CowMask);
+         }
+
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);
+         
+
+         oItem = Send(self,@FindHolding,#class=&LeatherArmor);
+
+         if oItem = $
+         {
+            oItem = create(&LeatherArmor);
+         }
+
+         Send(self,@NewHold,#what=oItem);
+         Send(self,@UserUseItem,#what=oItem);         
+         
+
+         Send(self,@InvalidateData);     
+      }
+     
+      return;
+   }
+   
+   %%% Functional DM Types
+
+   BecomeGuide()
+   {
+      Send(self,@RemoveAllSpells);
+      Send(self,@RemoveAllSkills);
+
+      prRank = dm_guide;
+
+      pbActor = FALSE;
+      pbImmortal = TRUE;
+      pbSay_commands = FALSE;
+      pbAdvancement = FALSE;
+      Send(self,@PKillEnable);
+      Send(self,@PKillLock);
+
+      Send(self,@AddSpell,#num=SID_DAMN,#iability=99);
+      Send(self,@AddSpell,#num=SID_DELIVERANCE,#iability=99);
+      Send(self,@AddSpell,#num=SID_FORESIGHT,#iability=99);
+      Send(self,@AddSpell,#num=SID_ILLUSIONARY_FORM,#iability=20);
+      Send(self,@AddSpell,#num=SID_INVISIBILITY,#iability=20);
+      Send(self,@AddSpell,#num=SID_NIGHTVISION,#iability=99);
+      Send(self,@AddSpell,#num=SID_PAGE,#iability=99);
+      Send(self,@AddSpell,#num=SID_SHADOW_FORM,#iability=99);
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   BecomeRoverGuide()
+   {
+      Send(self,@BecomeGuide);
+
+      Send(self,@AddSpell,#num=SID_ARMAGEDDON,#iability=15);
+      Send(self,@AddSpell,#num=SID_DMHOLD,#iability=15);
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   BecomeSeniorGuide()
+   {
+      Send(self,@BecomeRoverGuide);
+
+      prRank = dm_sr_guide;
+
+      pbActor = TRUE;
+
+      Send(self,@AddSpell,#num=SID_BONK,#iability=15);
+      Send(self,@AddSpell,#num=SID_ENGRAVE,#iability=50);
+      Send(self,@AddSpell,#num=SID_MORPH,#iability=99);
+      Send(self,@AddSpell,#num=SID_PARDON,#iability=99);
+      Send(self,@AddSpell,#num=SID_SPELLBANE,#iability=100);
+      % Ability level determines level of detail for Scry.
+      Send(self,@AddSpell,#num=SID_SCRY,#iability=51);
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   BecomeGuardian()
+   {
+      Send(self,@BecomeSeniorGuide);
+
+      prRank = dm_guardian;
+
+      pbSay_commands = TRUE;
+
+      Send(self,@AddSpell,#num=SID_INSIGHT,#iability=99);
+      Send(self,@AddSpell,#num=SID_SCRY,#iability=99);
+      Send(self,@AddSpell,#num=SID_ANONYMITY,#iability=99);
+      Send(self,@AddSpell,#num=SID_VILLIFY,#iability=99);
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   BecomeBard()
+   {
+      Send(self,@RemoveAllSpells);
+      Send(self,@RemoveAllSkills);
+
+      pbActor = TRUE;
+      pbImmortal = TRUE;
+      pbSay_commands = FALSE;
+      prRank = dm_bard;
+      pbAdvancement = FALSE;
+      Send(self,@PKillEnable);
+      Send(self,@PKillLock);
+
+      Send(self,@AddSpell,#num=SID_ANONYMITY,#iability=99);
+      Send(self,@AddSpell,#num=SID_DARKNESS,#iability=70);
+      Send(self,@AddSpell,#num=SID_DELIVERANCE,#iability=99);
+      Send(self,@AddSpell,#num=SID_FEIGN_DEATH,#iability=20);
+      Send(self,@AddSpell,#num=SID_SUMMON_FOG,#iability=99);
+      Send(self,@AddSpell,#num=SID_ILLUSIONARY_FORM,#iability=20);
+      Send(self,@AddSpell,#num=SID_INVISIBILITY,#iability=70);
+      Send(self,@AddSpell,#num=SID_LIGHT,#iability=70);
+      Send(self,@AddSpell,#num=SID_MORPH,#iability=50);
+      Send(self,@AddSpell,#num=SID_NIGHTVISION,#iability=99);
+      Send(self,@AddSpell,#num=SID_PAGE,#iability=99);
+      Send(self,@AddSpell,#num=SID_REFLECTION,#iability=20);
+      Send(self,@AddSpell,#num=SID_SHADOW_FORM,#iability=99);
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   BecomeSeniorBard()
+   {
+      Send(self,@BecomeBard);
+
+      prRank = dm_sr_bard;
+
+      Send(self,@AddSpell,#num=SID_ARTIFICE,#iability=99);
+      Send(self,@AddSpell,#num=SID_BOND,#iability=99);
+      Send(self,@AddSpell,#num=SID_BONK,#iability=99);
+      Send(self,@AddSpell,#num=SID_ENGRAVE,#iability=99);
+      Send(self,@AddSpell,#num=SID_FORESIGHT,#iability=99);
+      Send(self,@AddSpell,#num=SID_IDENTIFY,#iability=99);
+      Send(self,@AddSpell,#num=SID_JIG,#iability=99);
+      Send(self,@AddSpell,#num=SID_PURIFY,#iability=99);
+      % Ability level determines level of detail for Scry.
+      Send(self,@AddSpell,#num=SID_SCRY,#iability=15);         
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   ReportMonsterBudget(who = $)
+   {
+      local i,j;
+
+      if who = $
+      {
+         who = self;
+      }
+      
+      if NOT Send(who,@IsLoggedOn)
+      {
+         return;
+      }
+
+      if pbSay_commands
+      {
+         if who = self
+         {
+            Send(who,@MsgSendUser,#message_rsc=dm_budget_no_limits_self);
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=dm_budget_no_limits,
+                 #parm1=Send(self,@GetTrueName));
+         }
+
+         return;
+      }
+
+      if plMonsterBudgetTypes = $
+         OR piMonsterBudgetTotalLevels <= 0
+         OR NOT pbActor
+      {
+         piMonsterBudgetTotalLevels = 0;
+
+         if who = self
+         {
+            Send(who,@MsgSendUser,#message_rsc=dm_budget_not_approved_self);
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=dm_budget_not_approved,
+                 #parm1=Send(self,@GetTrueName));
+         }
+
+         return;
+      }
+      
+      ClearTempString();
+      for i in plMonsterBudgetTypes
+      {
+         for j in Send(SYS,@GetMonsterTemplates)
+         {
+            if GetClass(j) = i
+            {
+               if length(plMonsterBudgetTypes) > 1
+               {
+                  if i = nth(plMonsterBudgetTypes,length(plMonsterBudgetTypes))
+                  {
+                     AppendTempString("and ");
+                  }
+               }
+
+               AppendTempString(Send(j,@GetName));
+               AppendTempString(" (");
+               AppendTempString(piMonsterBudgetTotalLevels/Send(j,@GetLevel));
+               AppendTempString(")");
+
+               if i <> nth(plMonsterBudgetTypes,length(plMonsterBudgetTypes))
+               {
+                  if length(plMonsterBudgetTypes) = 2
+                  {
+                     AppendTempString(" ");
+                  }
+                  if length(plMonsterBudgetTypes) > 2
+                  {
+                     AppendTempString(", ");
+                  }
+               }
+            }
+         }
+      }
+
+      if who = self
+      {
+         Send(who,@MsgSendUser,#message_rsc=dm_budget_authorized_self,
+              #parm1=GetTempString(),#type1=0);
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=dm_budget_authorized,
+              #parm1=Send(self,@GetTrueName),#parm2=GetTempString(),#type2=0);
+      }
+
+      return;
+   }
+
+   AddMonsterBudget(cMonster=$,giver=$)
+   {
+      local i, bInBudget;
+
+      if NOT pbActor
+      {
+         return;
+      }
+
+      bInBudget = FindListElem(plMonsterBudgetTypes,cMonster);
+      if bInBudget = $ OR bInBudget = 0
+      {
+         plMonsterBudgetTypes = cons(cMonster, plMonsterBudgetTypes);
+      }
+
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         if GetClass(i) = cMonster
+         {
+            piMonsterBudgetTotalLevels = piMonsterBudgetTotalLevels + Send(i,@GetLevel);
+
+            break;
+         }
+      }
+
+      if giver <> $
+      {
+         Send(self,@ReportMonsterBudget,#who=giver);
+      }
+
+      Send(self,@ReportMonsterBudget);
+
+      return;
+   }
+
+   ClearMonsterBudget()
+   {
+      piMonsterBudgetTotalLevels = 0;
+      plMonsterBudgetTypes = $;
+      Send(self,@ReportMonsterBudget);
+
+      return;
+   }
+
+   % Used by the WarEvent event.  Don't remove DM+ shirts.
+   RemoveShirt()
+   {
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

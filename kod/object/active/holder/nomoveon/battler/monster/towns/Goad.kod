@@ -1,0 +1,1287 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Goad is TosTown
+
+constants:
+
+   include blakston.khd
+
+   ACCEPT_DELAY = 15000
+   ADVERT_DELAY_MIN = 60000
+   ADVERT_DELAY_MAX = 120000
+   COMMENCE_DELAY_MIN = 8000
+   COMMENCE_DELAY_MAX = 15000
+   FIGHT_DELAY_ONE_ON_ONE = 240000
+   FIGHT_DELAY_LAST_MAN_STANDING = 480000
+
+   LAST_MINUTE = 60000
+
+resources:
+
+   Goad_name_rsc = "The Goad"
+   Goad_icon_rsc = GoadX.bgf
+   Goad_desc_rsc = "As a mortal man Goad betrayed his Queen, sending her to her death.  To his dismay, she was only temporarily inconvenienced and now she has bound him here, to serve for all eternity.  His twisted form writhes in constant agony, relieved only briefly by the wash of ecstasy he feels when he oversees the death of another."
+
+   Goad_ad_need_champion1 = "Come my prettys, be not afriad . . . "
+   Goad_ad_need_champion2 = "I can taste your desire  . . . give in to it, there is so much power to be gained."
+   Goad_ad_need_champion3 = "It is such a small thing to kill another, won't you dance for me?"
+   Goad_ad_need_champion4 = "I must have death!"
+   Goad_ad_need_challenger = "Come . . . won't you dance with %s%s?"
+   Goad_ad_good_fight1 = "YES!! Oh God yes!!!  Die you fools die!!!"
+   Goad_ad_good_fight2 = "I can taste your soul."
+   Goad_ad_good_fight3 = "So sweet . . . your blood is so sweet."
+
+   Goad_no_need = "Be calm little one, your time to die will come."     
+   Goad_need_champion = "By ancient law I must first have a Champion.  Give yourself to me."     
+   Goad_dont_need_challenger = "Later my sweet, later.  Enough blood flows through the viens of these fools, I can wait for yours."
+   Goad_fight_in_progress = "Yes!  As soon as I have feasted upon these fools you may follow them."
+
+   Goad_already_combatant = "So generous . . . but, you are already mine."
+   Goad_already_champion = "So generous . . . but, you are already mine."
+   Goad_already_have_champion = "So you would be champion?  Nothing could be easier, simply challenge and kill %s%s.  Would you dare to challenge %s?"
+
+   Goad_challenge_offered = "%s%s has challenged you.  Will you crush %s's like the bug %s is?"
+   Goad_must_accept = "Hurry fool!! You only have %i seconds left to accept %s%s's challenge."
+
+   Goad_cant_renege = "You cannot renege unless you are a combatant!"
+   Goad_commence = "Fight!!!!  Kill!!!  Die!!!!"
+   Goad_last_minute = "You have one minute  . . . then I take you both."
+
+   Goad_victor = "~BCurse you %s%s!  Today you live, but not forever!~B"
+   Goad_new_champion = "~B%s%s is our new Champion, ripe for the killing.~B"
+   Goad_killed_champion = "%s%s has slain the Champion, %s%s . . . such sweet blood!"
+   Goad_retain_title = "%s%s retains the Championship, won't someone give me %s blood?"
+   Goad_champion_killed = "The Champion has slain %s%s!"
+   Goad_someone_killed = "%s%s has slain %s%s!"
+
+   Goad_champ_reneges = "%s%s, Champion of Kraanan, has surrendered %s title."
+   Goad_ready_to_fight = "%s%s vs %s%s.  Prepare to die  . . ."
+   Goad_combatant_reneges = "%s%s has chosen to fight no longer."
+
+   Goad_cant_leave = "Sorry fool, there's no escape!"
+   Goad_pitifully_fled = "%s%s has pitifully fled.  If they're not back in 10 seconds I think I'll have to kill them, yes?"
+   Goad_only_combatants = "You have to come into my embrace if you want to kill here!"
+   Goad_no_fighting_yet = "Not yet my sweet little blood bag, not yet."
+   Goad_only_combatants_cast = "You have to come into my embrace if you want to cast spells here!"
+   Goad_only_target_combatants = "You have to come into my embrace if you want to fight here!"
+
+   Goad_spell_banned = "So sorry you can't cast %s here.  Why?  Because I say so."
+
+   Goad_must_choose_style = "First things first . . . are we to have a duel or a bloodbath?"     
+   Goad_cant_switch = "You can't change that now, worm."
+   Goad_new_combat_style = "Excellent.  I've been thristing for a good %s.  Now, who'll say the magic word, \"champion\"?"
+
+   Goad_style_one_on_one = "duel"
+   Goad_style_last_man_standing = "bloodbath"
+
+   Goad_new_combatant = "%s%s will also be a combatant in this match!"
+   Goad_more_combatants = "Additional combatants only have %i seconds to join into this match."
+   Goad_ready_last_man = "The game is last man standing.  Combat will begin on my mark."
+
+   Goad_welcome = "~kGoad tells you, \"Welcome to my hell, worm.\""
+   Goad_worship_admin = "Oh how exciting . . . it's %s, %s is sooo important."
+   Goad_worship_dm = "Don't except me to grovel to %s, I could care less about a %s of Meridian!"
+   Goad_welcome_champion = "All hail %s%s, spiller of blood."
+   Goad_welcome_champion_guild = "Bug.  This message should never occur!"
+
+   Goad_invalid_fight = "This fight was invalid for certain reasons, and therefore it has been cancelled."
+
+   Goad_not_during_fight = "~kThe Goad tells you, \"You cannot offer me commands while a fight is still going on.\""
+
+   Goad_speed_up = "Let's see if we can't speed this up a little bit."
+   Goad_not_more = "There may not be more than 6 combatants in a single fight."
+   Goad_killed_by_spell = "%s%s was just killed by the %s spell!"
+
+   Goad_unwanted_give = "~k%s%s ignores your bribe.~n~k"
+
+   Goad_Draw = "`rFight is a draw.  This is a bug.  Please report it and specify combat type and all actions which led to this message."
+   Goad_wont_fight = "`kApparently %s%s is too cowardly to fight.  Cowards should die . . . slowly."
+
+   Goad_battle_midi_rsc = pk_sb16.mid
+
+classvars:
+
+   vrName = Goad_name_rsc
+   vrIcon = Goad_icon_rsc
+   vrDesc = Goad_desc_rsc
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+
+   vrUnwanted_give = Goad_unwanted_give
+
+   viAttributes = MOB_NOMOVE | MOB_FULL_TALK | MOB_LISTEN | MOB_NOFIGHT | MOB_NOQUEST
+   viOccupation = MOB_ROLE_WATCHER
+
+properties:
+
+   piCombat_style = STYLE_NO_FIGHT
+
+   ptAdvert = $               %% every now and then, the Watcher sends off
+                              %% a blurb, asking people to fight for him
+
+   ptAccept = $               %% in player vs. player combat, champ has a
+                              %% chance to accept a proffered challenge.
+
+   ptCommence = $             %% 10 second head start before a fight
+
+   ptFight = $                %% The actual length of the fight.
+
+   plCombatants = $           %% this is a list of player objects.
+   plKill_list = $            %% this is a list of two-element lists.                                                         
+
+   poChampion = $             %% poChampion points to whoever won last time
+                              %% out.  poChampion is always a player object
+   pbAccept = FALSE           %% has the player been told he only has 15 more
+                              %% seconds to accept a challenge?
+   pbLastMinute = FALSE       %% has the Watcher given the one minute warning?
+
+   plUserStats = $         %% stores values for the players' HP, mana,
+               %% and vigor upon entring the battle area,
+               %% which are restored upon leaving the area.
+
+   pbWarned = FALSE      %%Goad warns once before killing slow combatants.
+
+messages:
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %% Advertising                                                     %%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %% These messages are spat out at users every now and then, just   %%
+   %% for atmosphere, and to tell players what game is going on, etc. %%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   NewOwner(what=$)
+   "If Goad is ever loaded someplace other than the arena of brax, "
+   "go back to brax."
+   {
+      %haveta give the room time to be created on a recreateall, so we post.
+      post(self,@PostNewOwner);
+      propagate;
+   }
+
+   PostNewOwner()
+   {
+
+      local oRoom;
+
+      oRoom = send(SYS,@FindRoomByNum,#num=RID_BRAX_ARENA);
+   
+      if poOwner = $ or NOT isClass(poOwner,&necarena)
+      {
+         if send(oRoom,@GetWatcher) <> $
+         {
+            send(self,@delete);
+            debug("Somebody made a second Goad, seek and destroy.");
+         }
+         else
+         {
+            send(oRoom,@checkwatcher);
+         }
+      }
+
+      return;
+   }
+
+   AdvertTimer()
+   {
+      local rand;
+
+      ptAdvert = $;
+
+    
+       if plCombatants = $
+         {
+           rand = random(1,4);
+           if rand = 1
+             {  send(self,@Say,#message_rsc=Goad_ad_need_champion1);  }
+           if rand = 2
+             {  send(self,@Say,#message_rsc=Goad_ad_need_champion2);  }
+           if rand = 3
+             {  send(self,@Say,#message_rsc=Goad_ad_need_champion3);  }
+           if rand = 4
+             {  send(self,@Say,#message_rsc=Goad_ad_need_champion4);  }
+         }
+       else
+         {
+            if not send(self,@ValidateFight)
+            {
+              send(self,@Say,#message_rsc=Goad_ad_need_challenger,
+                 #parm1=send(first(plCombatants),@getdef),#parm2=send(first(plCombatants),@getname));
+            }
+            else
+            {
+               rand = random(1,3);
+               if rand = 1
+                  { send(self,@Say,#message_rsc=Goad_ad_good_fight1); }
+               if rand = 2
+                  { send(self,@Say,#message_rsc=Goad_ad_good_fight2); }
+               if rand = 3
+                  { send(self,@Say,#message_rsc=Goad_ad_good_fight3); }
+            }
+        }
+
+      ptAdvert=CreateTimer(self,@AdvertTimer,Random(ADVERT_DELAY_MIN, ADVERT_DELAY_MAX));
+      return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%  Per fight code                                             %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %                                                              %
+   %   Made a conscious decision to move as much of the actual    %
+   %   arena code here, so that these procedures would be the     %
+   %   only ones that need to change, if we ever add a new arena  %
+   %   type.                                                      %
+   %                                                              %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   SetChampion(who=$)
+   {
+      if poChampion <> who
+      and (piCombat_style = STYLE_ONE_ON_ONE or
+           piCombat_style = STYLE_LAST_MAN_STANDING)
+      {
+         poChampion = who;
+         return;
+      }
+      return;
+   }
+
+   ResetChampion()
+   {
+      poChampion = $;
+      return;
+   }
+
+   ValidateFight()
+   {
+      local oGuild, i;
+
+      if (piCombat_Style = STYLE_ONE_ON_ONE or piCombat_Style = STYLE_LAST_MAN_STANDING)
+      AND (send(poOwner,@ShrineInUse) = FALSE)
+      {
+         if length(plCombatants) > 1
+            { return TRUE; }
+      }
+      
+      return FALSE;
+    }
+
+    AcceptingChampions()
+    {
+       if length(plCombatants) < 1
+       { return TRUE; }
+       return FALSE;
+    }
+
+    AcceptingChallengers() %%How many can brax fit?
+    {
+       if length(plCombatants) < 2 AND piCombat_Style = STYLE_ONE_ON_ONE
+       { return TRUE; }
+       if length(plCombatants) < 6 AND piCombat_Style = STYLE_LAST_MAN_STANDING  
+       { return TRUE; }   
+       return FALSE;
+    }
+
+    NewCombatant(who=$)
+    {
+       send(self,@teleport,#what=who,#goinplay=TRUE);
+       if plCombatants = $
+       {
+          send(self,@SetChampion,#who=who);
+       }
+       plCombatants = cons(who,plCombatants);
+       return; 
+    }
+
+    FightInSession()
+    {
+       if ptFight <> $
+       { return TRUE; }
+       return FALSE;
+    }
+
+    Challenge(who=$)
+    {
+      local i, bFound;
+
+      if who = poChampion
+      {
+         send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_champion);
+         return;
+      }
+      if send(self,@isCombatant,#who=who)
+      {
+         send(self,@sayToOne,#target=who,#message_rsc=Goad_Already_combatant);
+
+         return;
+      }
+      
+      If not send(self,@MaxCombatantCheck,#who=who)
+      { return FALSE; }
+
+      if piCombat_style = STYLE_ONE_ON_ONE
+      {
+         %%KLUDGE - REMOVE THIS
+         %send(self,@say,#message_rsc=Goad_challenge_offered,
+            %#parm1=send(who,@getcapdef),#parm2=send(who,@getname),
+            %#parm3=send(who,@gethimher),#parm4=send(who,@gethimher));
+         send(self,@KludgeMessage,#who=who);
+         %%END KLUDGE         
+
+         pbAccept = FALSE;
+         ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY); 
+      }
+      else
+      {
+         send(self,@say,#message_rsc=Goad_new_combatant,
+                  #parm1=send(who,@getcapdef),#parm2=send(who,@getname));
+
+          if ptAccept = $
+          {
+             pbAccept = FALSE;
+             send(self,@say,#message_rsc=Goad_more_combatants,
+                 #parm1=30);
+              ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
+          }
+      }
+      send(self,@newCombatant,#who=who);
+      return;
+    }
+
+    MaxCombatantCheck(who=$)
+    {
+ 
+       if length(plCombatants) > 6
+       {
+         send(self,@SayToOne,#target=who,#message_rsc=Goad_Not_more);
+         return FALSE;
+       }
+         
+       return TRUE;
+    }
+
+    Accept(who=$)
+    {
+       if (who=poChampion) and ptAccept <> $
+         {
+            DeleteTimer(ptAccept);
+            ptAccept = $;
+         }
+       send(self,@ReadyFight,#who=who);
+       return;
+    }
+
+    ReadyFight()
+    {
+       local i, each_obj;
+
+       if not send(self,@ValidateFight)
+         {
+            DEBUG("INVALID FIGHT!  Something went wrong!");
+            send(self,@say,#message_rsc=Goad_invalid_fight);
+
+            send(self,@ClearCombatants);
+            return FALSE;
+         }
+
+       if piCombat_style = STYLE_ONE_ON_ONE
+         {
+           send(self,@say,#message_rsc=Goad_ready_to_fight,
+             #parm1=send(first(plCombatants),@getcapdef),
+          #parm2=send(first(plCombatants),@getname),
+             #parm3=send(nth(plCombatants,2),@getdef),
+             #parm4=send(nth(plCombatants,2),@getname));
+         }
+       if piCombat_style = STYLE_LAST_MAN_STANDING
+         {
+           send(self,@say,#message_rsc = Goad_ready_last_man);
+         }
+       
+       ptCommence=CreateTimer(self,@commencetimer,
+          Random(COMMENCE_DELAY_MIN,COMMENCE_DELAY_MAX));
+
+       for i in Send(poOwner,@getholderactive)
+         {
+           each_obj = send(poOwner,@holderExtractObject,#data=i);
+           if send(self,@isCombatant,#who=each_obj)
+             {
+               send(self,@teleport,#what=each_obj,#goinplay=TRUE);
+             }
+           send(each_obj,@midiSendUser,#midi_rsc=Goad_battle_midi_rsc);
+         }
+     
+      send(poOwner,@beginFight,#lCombatants = plCombatants);
+      return;
+    }
+
+    Commence()
+    "Called by CommenceTimer."
+    {
+       local delay;
+
+       send(self,@say,#message_rsc=Goad_commence);
+       pbLastMinute = FALSE;
+       pbWarned = FALSE;
+       delay = FIGHT_DELAY_LAST_MAN_STANDING;
+       if piCombat_style = STYLE_ONE_ON_ONE
+         {  delay = FIGHT_DELAY_ONE_ON_ONE;  }
+
+       ptFight = CreateTimer(self,@FightTimer,delay);
+       return;
+    }
+
+    FightIsDraw()
+    "Called by FightTimer."
+    {
+       send(self,@say,#message_rsc=Goad_draw);
+       send(self,@ClearCombatants);
+       return;
+    }
+
+    CombatantReneges(who=$,died=FALSE)
+    {
+      local i;
+      
+      if (died = FALSE) and (send(self,@FightInSession) OR ptCommence <> $)
+      {
+         debug("Someone tried to renege while fight was in session without dieing. Zuts alors I have missed one.");
+         return;
+      }
+
+      for i in plCombatants
+      {
+         if i = who
+         {
+             plCombatants = DelListElem(plCombatants,i);
+         }
+      }
+
+      if (NOT send(poOwner,@ArenaRealDeath)) OR died = FALSE
+      {
+         send(self,@teleport,#what=who,#outofplay = TRUE);
+      }
+      if who = poChampion
+      {
+         send(self,@resetchampion);
+      }
+
+      if ptAccept <> $ and not send(self,@validatefight)
+      {
+         deletetimer(ptAccept);
+         ptAccept = $;
+         send(self,@say,#message_rsc=Goad_invalid_fight);
+      }
+      if ptCommence <> $ and not send(self,@validatefight)
+      {
+         deletetimer(ptCommence);
+         ptCommence = $;
+         send(self,@say,#message_rsc=Goad_invalid_fight);
+         send(poOwner,@endfight); 
+      }
+
+      send(self,@checkforwinner);
+     
+      %% scenario:  champion quits during signup for last man standing.
+      if poChampion = $ and length(plCombatants) >= 2
+      {
+         if piCombat_Style = STYLE_LAST_MAN_STANDING
+         {   
+            %% choose another champion - first player in line will do
+            poChampion = first(plCombatants);
+         }
+      }
+     
+       return;
+    }
+
+    SomethingKilled(what=$,victim=$)
+    {
+
+        %% We handle all death messages here, but not 'win fight' messages.
+        %% Those are handled after the renege messages.
+
+        if isClass(what,&spell) and send(self,@isCombatant,#who=victim)
+          {
+             send(self,@say,#message_rsc=Goad_killed_by_spell,
+                #parm1=send(victim,@getcapdef),
+            #parm2=send(victim,@getname),
+            #parm3=send(what,@getname));
+
+          }
+        else
+          {
+            if victim = poChampion
+              {
+                send(self,@say,#message_rsc=Goad_killed_champion,
+                   #parm1=send(what,@getcapdef),#parm2=send(what,@getname),
+                   #parm3=send(victim,@getdef),#parm4=send(victim,@getname));
+              }
+            else
+              {
+                if what = poChampion
+                  {
+                     send(self,@say,#message_rsc=Goad_champion_killed,
+                       #parm1=send(victim,@getdef),
+                       #parm2=send(victim,@getname));
+                  }
+                else
+                  {
+                    send(self,@say,#message_rsc=Goad_someone_killed,
+                       #parm1=send(what,@getCapdef),#parm2=send(what,@getname),
+                       #parm3=send(victim,@getdef),#parm4=send(victim,@getname));
+                  }
+              }
+        }
+        send(self,@CombatantReneges,#who=victim,#died=TRUE);
+        propagate;
+    }
+
+    CheckForWinner()
+    "Checks to see if there is only one combatant left.  If so, then "
+    "declare him the winner."
+    {
+       local oldChamp, i, j;
+
+       if plCombatants = $  { return; }
+
+       if piCombat_style = STYLE_GUILD_VS_GUILD
+       or piCombat_style = STYLE_LAST_GUILD_STANDING
+         {
+            send(self,@CheckForWinnerGuild);
+            return;
+         }
+
+       if length(plCombatants) <> 1
+          { return; }
+       else
+       {
+          oldChamp = poChampion;
+          poChampion = first(plCombatants);
+
+          if ptFight<>$          %% a fight was on!  This guy won!
+          {
+             send(self,@say,#message_rsc=Goad_victor,#parm1=send(poChampion,@GetCapDef),#parm2=send(poChampion,@GetName));
+             DeleteTimer(ptFight);
+             ptFight = $;
+             %% add to wincounter.
+             send(self,@rewardwinner);
+             if send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
+             {
+                for i in send(poOwner,@getholderactive)
+                {
+                   j = first(i);
+                   if isClass(j,&monster) and
+                   (0 = (send(j,@getBehavior) & AI_NPC)) and
+                   not isClass(j,&towns)
+                   {
+                      send(j,@Delete);
+                   }
+                }
+             }
+
+             if oldChamp <> poChampion
+               {
+                  send(self,@say,#message_rsc=Goad_new_champion,
+                    #parm1=send(poChampion,@getdef),#parm2=send(poChampion,@getname));
+               }
+             else
+               {
+                  send(self,@say,#message_rsc = Goad_retain_title,
+                     #parm1 = send(poChampion,@getcapdef),
+                     #parm2 = send(poChampion,@getName),
+                     #parm3 = send(poChampion,@gethisher));
+               }
+             return;
+          }   
+          if oldChamp <> poChampion
+            {
+              send(self,@say,#message_rsc=Goad_new_champion,
+                  #parm1=send(poChampion,@getdef),#parm2=send(poChampion,@getname));
+            }
+          else
+            {
+              send(self,@say,#message_rsc = Goad_retain_title,
+                   #parm1 = send(poChampion,@getcapdef),
+               #parm2 = send(poChampion,@getName),
+               #parm3 = send(poChampion,@gethisher));
+            }
+       }
+       return;
+    }
+
+    RewardWinner()
+    {
+       local index, i;
+
+       %% Tell room to lower maze or get rid of pests, whatever.
+       Send(poOwner,@endfight,#lCombatants = plCombatants);
+
+       %% Assume that everyone left in plCombatant is a winner.
+
+       for i in plCombatants
+         {
+            index = (send(i,@getmaxhealth)+15) - send(i,@gethealth);
+            send(i,@gainhealth,#amount=bound(index,0,15));
+            index = (send(i,@getmaxmana)+25) - send(i,@getmana);
+            send(i,@gainmana,#amount=bound(index,0,25));
+
+            %% Teleport any and all combatants out of the ring.
+            if ptFight <> $
+              {
+                deletetimer(ptFight);
+                ptFight = $;
+              }
+         }
+       return;
+    }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%  Timer Triggers                                           %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AcceptTimer()
+   "Runs through twice.  The first time, it says 'accept or lose your"
+   "crown.  The second time, it reneges the champ."
+   {
+      ptAccept = $;
+      if piCombat_style = STYLE_ONE_ON_ONE
+         {
+            send(self,@AcceptTimerOneOnOne);
+            return;
+         }
+      if pbAccept = FALSE
+        {
+           send(self,@say,#message_rsc = Goad_more_combatants,
+               #parm1=(ACCEPT_DELAY/1000));
+           ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
+           pbAccept = TRUE;
+        }
+      else
+        {
+           send(self,@readyFight);
+        }
+      return;
+   }
+
+   AcceptTimerOneOnOne()
+   {
+      if pbAccept = FALSE
+        {
+           send(self,@say,#message_rsc = Goad_must_accept,
+               #parm1=(ACCEPT_DELAY/1000),#parm2=send(first(plCombatants),@getdef),
+               #parm3=send(first(plCombatants),@getname));
+           ptAccept = CreateTimer(self,@AcceptTimer,ACCEPT_DELAY);
+           pbAccept = TRUE;
+        }
+      else
+        {
+           send(self,@say,#message_rsc = Goad_Champ_reneges,
+              #parm1=send(poChampion,@getcapdef),
+           #parm2=send(poChampion,@getname),
+           #parm3=send(poChampion,@gethisher));
+           send(self,@CombatantReneges,#who=poChampion);
+        }
+      return;
+   }
+
+   CommenceTimer()
+   "Starts the fight."
+   {
+      ptCommence = $;
+      send(self,@Commence);
+      return;
+   }
+
+   FightTimer()
+   {
+      local i;
+
+      ptFight = $;
+      if pbWarned = TRUE
+      {
+         %%message:  EVERYBODY DIES!!!!!
+         for i in plCombatants
+         {
+             send(SYS,@utilGoNearSquare,#what=i, #where = poOwner,
+		            #new_row = 9, #new_col = 14, #new_angle = ANGLE_EAST);
+		       pbWarned = FALSE;
+         }
+         return;
+      }
+     
+      if pbLastMinute = FALSE AND pbWarned = FALSE
+      {
+         pbLastMinute = TRUE;
+         send(self,@say,#message_rsc = Goad_last_minute);
+         ptFight = CreateTimer(self,@FightTimer,LAST_MINUTE);
+      }
+      else
+      {
+         if pbWarned = FALSE
+         {
+            pbWarned = TRUE;
+            send(self,@say,#message_rsc=Goad_speed_up);
+            for i in plCombatants
+            {
+               send(poOwner,@SomethingShot, #who=self,#target=i,
+                       #projectile = send(SYS,@findspellbynum,#num=SID_FIREBALL));
+               send(i,@assessdamage,#damage=send(i,@gethealth)/2,#what=self,
+                       #report = FALSE, #report_resistance = FALSE,#absolute = TRUE);
+            }
+            ptFight = CreateTimer(self,@FightTimer,LAST_MINUTE/2);            
+         }
+     }
+     return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%  Speech Triggers                                          %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%                                                           %
+   %%  Barring a better interface coming along, speech triggers %
+   %%  will continue to be used to activate a battle, to choose %
+   %%  the type of battle, and to renege a battle, among other  %
+   %%  things.                                                  %
+   %%                                                           %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   SomeoneSaid(what=$, type = $, string = $)
+   "Checks for keywords which activate commands."
+   {
+      local i, oActor;
+
+      if (not send(self,@FightInSession)) and (ptCommence = $) and isClass(what,&player)
+      {
+
+         if StringEqual(string,"champion")
+         {
+            post(self,@trigchampion,#what=what);
+            return FALSE;
+            }
+         if StringEqual(string,"challenge")
+         {
+            post(self,@TrigChallenge,#what=what);
+            return FALSE;
+         }
+         if StringEqual(string,"accept")
+         {
+            post(self,@TrigAccept,#what=what);
+            return FALSE;
+         }
+         if StringEqual(string,"renege")
+         {
+            post(self,@TrigRenege,#what=what);
+            return FALSE;
+         }
+         
+         if StringEqual(string,"duel")
+         {
+            post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what);
+            return FALSE;
+         }
+         %%Rumble style cut due to insuficient test.
+         %if StringEqual(string,"rumble")
+         %{
+            %post(self,@ChooseCombat,#style = STYLE_LAST_MAN_STANDING,#actor=what);
+            %return FALSE;
+         %}
+      }
+      if send(self,@FightInSession)
+      {
+         if StringEqual(string,"champion")
+         or StringEqual(string,"challenge")
+         or StringEqual(string,"duel")
+         or StringEqual(string,"rumble")
+         {
+            send(what,@msgsenduser,#message_rsc=Goad_not_during_fight);
+            return FALSE;
+         }
+      }
+      propagate;
+   }
+
+   TrigChampion(what = $)
+   "Someone in the room said 'champion'.  Net effect, if there is no "
+   "champion, then make the talker the new champion."
+   {
+      if piCombat_style = STYLE_NO_FIGHT
+         {
+           %%Only one style availible: Duel.
+           %send(self,@say,#message_rsc=Goad_must_choose_style);
+           %return;    
+           post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what); 
+         }
+      if not send(self,@AcceptingChampions)
+      {
+         if send(self,@AcceptingChallengers)
+           {
+             if poChampion = what
+               {
+                 send(self,@SayToOne,#target=what,#message_rsc=Goad_Already_champion);
+               }
+             else
+               {
+                 send(self,@SayToOne,#target=what,#message_rsc=Goad_already_have_champion,
+                    #parm1=send(poChampion,@getdef),#parm2=send(poChampion,@getname),#parm3=send(poChampion,@gethimher));
+               }
+           }
+         else
+           {
+             send(self,@SayToOne,#target=what,#message_rsc=Goad_no_need);
+           }
+      }
+      else   %% accept the champion here
+      {
+         send(self,@NewCombatant,#who=what);
+         send(self,@Say,#message_rsc=Goad_new_champion,
+                    #parm1=send(poChampion,@getdef),#parm2=send(poChampion,@getname));
+      }
+      return;  
+   }
+
+   TrigChallenge(what=$)
+   "Catches when someone says the word 'challenge'.  What happens depends on "
+   "the match, but in general, this will fail if there is no champion, and "
+   "will succeed only if there is a challenger spot open."
+   {
+      if piCombat_style = STYLE_NO_FIGHT
+         {
+           post(self,@ChooseCombat,#style = STYLE_ONE_ON_ONE,#actor=what);
+           %send(self,@saytoOne,#target=what,#message_rsc=Goad_must_choose_style);
+           %return;     
+         }
+      if send(self,@FightInSession)
+        {
+           send(self,@SayToOne,#target=what,#message_rsc=Goad_fight_in_progress);
+           return;
+
+        } 
+      if send(self,@AcceptingChampions)
+        {
+           send(self,@SayToOne,#target=what,#message_rsc=Goad_need_champion);
+           return;
+        }
+      if not send(self,@AcceptingChallengers)
+        {
+           send(self,@SayToOne,#target=what,#message_rsc=Goad_dont_need_challenger);
+           return;
+        }
+      send(self,@challenge,#who=what);
+      return;
+   }
+
+   TrigAccept(what=$)
+   {
+      if piCombat_style <> STYLE_ONE_ON_ONE
+      {
+         return FALSE;    %% you can only accept fights in traditional 2 man fights.
+      }
+      if what <> poChampion
+      {
+         return FALSE;   %% Only the champion can accept a fight from a challenger
+      } 
+      if send(self,@FightInSession)
+      {
+           return FALSE;
+      }
+      if (ptAccept <> $)
+      { 
+           send(self,@accept,#who=what);
+      }
+      return;
+   }
+
+   TrigRenege(what=$)
+   "Call this when someone says 'renege'.  This now works for anyone,"
+   "and does not need to be said twice."
+   {
+      if send(self,@IsCombatant,#who=what)
+         {
+           send(self,@say,#message_rsc = Goad_combatant_reneges,
+                  #parm1=send(what,@getcapdef),#parm2=send(what,@getname));
+           send(self,@CombatantReneges,#who=what);  }
+      else
+         { send(self,@SayToOne,#target=what,#message_rsc=Goad_cant_renege); }
+
+      return;
+   }
+
+   ChooseCombat(style = STYLE_NO_FIGHT,actor=$)
+   {
+      if piCombat_style <> STYLE_NO_FIGHT AND plCombatants <> $
+      {
+         send(self,@say,#message_rsc=Goad_cant_switch);
+         return;
+      }
+      piCombat_style = style;
+      if piCombat_style <> STYLE_NO_FIGHT
+      {
+         send(self,@say,#message_rsc=Goad_new_combat_style,
+                   #parm1 = send(self,@getcombatname));
+      }
+      return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%  Maintenance functions                                    %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   Delete()
+   {
+      if ptAdvert <> $
+        {
+           deletetimer(ptAdvert);
+           ptAdvert = $;
+        }
+      if ptCommence <> $
+        {
+           deletetimer(ptCommence);
+           ptCommence = $;
+        }
+      if ptAccept <> $
+        {
+           deletetimer(ptAccept);
+           ptAccept = $;
+        }
+      if ptFight <> $
+        {
+           deletetimer(ptFight);
+           ptFight = $;
+        }
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      return FALSE;    %% don't delete it on random passthroughs.
+   }
+
+   IsCombatant(who=$)
+   {
+      local i, count;
+
+      count = 1;
+      for i in plCombatants
+        {
+           if i = who { return count; }
+           count = count + 1;
+        }
+      return 0;
+   }
+
+   ReqSomethingLeft(what=$)
+   {
+      if send(self,@isCombatant,#who=what) and (ptFight <> $ or ptAccept <> $)
+         {
+            send(self,@saytoone,#target=what,#message_rsc=Goad_cant_leave);
+            return FALSE;
+         }
+      return TRUE; 
+   }
+
+   Teleport(what=$,goinplay=FALSE,outofplay=FALSE)
+   {
+      local i, bInList;
+
+      if goinplay or send(self,@isCombatant,#who=what)   %% teleport to the playing field
+      {
+         bInList = FALSE;
+         for i in plUserStats
+         {
+            if first(i) = what
+            {
+            bInList = TRUE;
+            }   
+         }
+
+         if not bInList
+         {
+            plUserStats = Cons([what,
+                send(what,@gethealth),
+                send(what,@getmana),
+                send(what,@getvigor)],plUserStats);     
+         }
+         if send(what,@gethealth) < send(what,@getmaxhealth)
+         { send(what,@gainhealthnormal,#amount=200); }
+         if send(what,@getmana) < send(what,@getmaxmana)
+         { send(what,@gainmana,#amount=send(what,@getmaxmana)-send(what,@getmana)); }
+         send(what,@addexertion,#settothreshold = TRUE);
+
+      }
+
+      else
+      {
+         for i in plUserStats
+         {
+            if first(i) = what
+            {
+               send(what,@losehealth,#amount=send(what,@gethealth)-nth(i,2)); 
+               send(what,@gainmana,#amount=nth(i,3)-send(what,@getmana)); 
+               send(what,@addexertion,#amount=-10000*(nth(i,2)-send(what,@getvigor)));
+               plUserStats = DelListElem(plUserStats,i);
+
+            }   
+         }     
+      }
+
+      send(poOwner,@teleport,#what=what,#goinplay=goinplay,#outofplay=outofplay);
+
+
+      return;
+    }
+
+
+   ClearCombatants()
+   {
+      local i, j;
+
+      for i in plCombatants
+        {
+           send(self,@teleport,#what=i,#outofplay=TRUE);
+        }
+      plCombatants = $;
+      send(self,@resetchampion);
+      Send(poOwner,@endfight,#lCombatants = plCombatants);
+      pbAccept = FALSE;
+      if send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFE_DEATH)
+         {
+            for i in send(poOwner,@getholderactive)
+              {
+        j = first(i);
+        if isClass(j,&monster) and
+        (0 = (send(j,@getBehavior) & AI_NPC)) and
+        not isClass(j,&towns) 
+        {
+           send(j,@Delete);
+        }
+        %% yuckily, this is the easiest way to deal with this.
+        if isClass(j,&WallOfFire) or isClass(j,&WallOfLightning)
+        or isClass(j,&PassiveWallOfFire) or isClass(j,&PassiveWallOfLightning)
+        or isClass(j,&Web) or isClass(j,&PoisonFogCloud)
+        {
+           send(j,@Delete);
+        }
+              }
+         }
+      if ptFight <> $
+         {
+            deletetimer(ptFight);
+            ptFight = $;
+         }
+      if ptAccept <> $
+         {
+            deletetimer(ptAccept);
+            ptAccept = $;
+         }
+      if ptCommence <> $
+         {
+            deletetimer(ptCommence);
+            ptCommence = $;
+         }
+      return;
+   }
+
+   SomethingLeft(what=$)
+   {
+      if send(self,@isCombatant,#who=what)
+        {
+          if ptFight <> $
+            {
+               send(self,@say,#message_rsc=Goad_pitifully_fled,
+                   #parm1 = send(what,@getcapdef),#parm2 = send(what,@getname));
+            }
+          else
+            {
+               send(self,@say,#message_rsc=Goad_wont_fight,
+                   #parm1 = send(what,@getdef),#parm2 = send(what,@getname));               
+            }
+          send(self,@combatantreneges,#who=what);
+          propagate;
+       }
+     propagate;
+   }
+
+   ReqSomethingAttack(what=$,victim=$)
+   {
+      %% targetless spells: heat, earthquake, umbrella and mana bomb
+      %% return true as long as a fight is on, and 
+      if victim = $
+        {
+         if not send(self,@isCombatant,#who=what)         
+           {
+              if isClass(what,&player)
+                {
+                   send(self,@SayToOne,#target=what,#message_rsc=Goad_only_combatants);
+                }
+              return FALSE;
+           }
+          if ptFight = $
+            {
+              if isClass(what,&player)
+                {
+                  send(self,@SayToOne,#target=what,#message_rsc=Goad_no_fighting_yet);
+                }
+              return FALSE;
+           }
+          return TRUE;
+        }
+
+      %% monsters attacking players
+      if isClass(what,&monster)
+      AND send(self,@isCombatant,#who=victim)
+      AND send(self,@FightInSession)
+      {
+          propagate;
+      }
+
+      %% spells with targets = all the rest of them     
+
+      if (not send(self,@isCombatant,#who=what) OR
+         not send(self,@isCombatant,#who=victim)) AND
+         isClass(victim,&player)
+           {
+              if isClass(what,&player)
+                {
+                   send(self,@SayToOne,#target=what,#message_rsc=Goad_only_combatants);
+                }
+              return FALSE;
+           }
+      if ptFight = $
+           {
+              if isClass(what,&player)
+                {
+                  send(self,@SayToOne,#target=what,#message_rsc=Goad_no_fighting_yet);
+                }
+              return FALSE;
+           }
+      propagate;
+   }
+
+   ReqSpellCast(who=$,oSpell = $, lItems = $)
+   {
+      local i, spellNum;
+
+      % DM spells are never blocked by the watcher
+      if send(oSpell,@GetSchool) = SS_DM_COMMAND
+      {
+         propagate;
+      }
+
+      %%% Only combatants may cast spells on each other.
+      %% if the caster is not a combatant, don't let him cast.
+      if (not send(self,@isCombatant,#who=who) AND isClass(who,&player))      
+      {
+           send(self,@SayToOne,#target=who,#message_rsc=Goad_only_combatants_cast);
+           return FALSE;
+      }
+   
+      %% if the caster's target is not a combatant, don't let him cast.
+      for i in lItems
+      {
+           if not send(self,@isCombatant,#who=i) AND isClass(i,&player)
+      {
+          send(self,@SayToOne,#target=who,#message_rsc=Goad_only_target_combatants);
+          return FALSE;
+       }
+      }
+
+
+      %%% Can't cast spells unless a fight is in session
+      if ptFight = $
+           {
+              if IsClass(who,&player)
+                {
+                   send(self,@SayToOne,#target=who,#message_rsc=Goad_no_fighting_yet);
+                }
+              return FALSE;
+           }
+
+      %%% Certain spells are banned outright      
+      if send(oSpell,@SpellBannedInArena)
+         {
+            send(self,@SayToOne,#target=who,#message_rsc=Goad_spell_banned,
+                        #parm1=send(oSpell,@getname));
+            return FALSE;
+         }
+      propagate;
+   }
+
+   GetCombatName(style = $)
+   {
+     if style = $
+       {
+         if piCombat_style = STYLE_ONE_ON_ONE
+           { return Goad_style_one_on_one; }
+         if piCombat_style = STYLE_LAST_MAN_STANDING
+           { return Goad_style_last_man_standing; }
+         DEBUG("GetCombatName called with invalid fighting style chosen!");
+         return;
+       }
+
+     if style = STYLE_ONE_ON_ONE
+        { return Goad_style_one_on_one; }
+     if style = STYLE_LAST_MAN_STANDING
+        { return Goad_style_last_man_standing; }
+
+     return;
+   }
+
+   SomethingEntered(what=$)
+   {
+
+      if IsClass(what,&admin) and not send(what,@checkplayerflag,#flag=PFLAG_MORPHED)
+         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS)
+      {
+         post(self,@say,#message_rsc=Goad_worship_admin,
+            #parm1=send(what,@gettruename),#parm2=send(what,@getheshe));
+
+         propagate;
+      }
+      if IsClass(what,&DM) and not send(what,@checkplayerflag,#flag=PFLAG_MORPHED)
+         and not send(what,@checkplayerflag,#flag=PFLAG_ANONYMOUS)
+      {
+         post(self,@say,#message_rsc=Goad_worship_dm,
+            #parm1=send(what,@getlordlady),#parm2=send(what,@getname));
+
+         propagate;
+      }     
+      if IsClass(what,&player)
+      {   
+        send(what,@msgsenduser,#message_rsc = Goad_welcome);
+      }
+      propagate;
+   }
+
+   KludgeMessage(who=$)
+   {
+
+      
+      ClearTempString();
+      AppendTempString(send(who,@GetName));
+      AppendTempString(" has challenged you.  Will you crush ");
+      AppendTempString(send(who,@GetHimHer));
+      AppendTempString(" like the bug ");
+      AppendTempString(send(who,@GetHeShe));
+      AppendTempString(" is?");
+      Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+            #string=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
+      return;
+   }
+
+
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

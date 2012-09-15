@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KaraholsCursePotion is Potion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KaraholsCursePotion_name_rsc = "Karahol's accursed elixir"
+   %KaraholsCursePotion_icon_rsc = potion01.bgf
+   KaraholsCursePotion_desc_rsc = "This is a glass vial of colored liquid.  "
+                        "It smells like a cross between licorice and musk."
+   KaraholsCursePotion_bad_desc_rsc = "This is a glass vial of dark, cloudy liquid.  "
+                        "A slight whiff of it is enough to turn your stomach."
+
+
+classvars:
+
+   vrLabelName = KaraholsCursePotion_name_rsc
+   vrBadDesc = KaraholsCursePotion_bad_desc_rsc
+   vrDesc = KaraholsCursePotion_desc_rsc
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 120
+
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+   viSpellEffect = SID_KARAHOLS_CURSE
+
+   viPoisonPercent = 75
+   viGoBadDamage = 20
+   viColor = XLAT_TO_SKIN4
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

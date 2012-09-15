@@ -1,0 +1,122 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarInn is BarloqueRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   barnews_god_name = "Designers' News"
+   barnews_god_desc = "Check here for information from the game administrators."
+
+   room_barinn = barinn.roo
+   room_name_barinn = "Brownestone Inn"
+
+   barinn_music = bar.mid
+
+   barinn_rentableroom_door = "The door won't budge.  Strangely, it doesn't look like it opens at all.  "
+         "There is a small keyhole in the door, however.  Perhaps if you used a key in it, something "
+         "interesting might happen."
+
+classvars:
+
+   vrName = room_name_barinn
+
+   viTeleport_row = 5
+   viTeleport_col = 6
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_HOMETOWN | ROOM_SANCTUARY | ROOM_SAFELOGOFF
+
+   prRoom = room_barinn
+   piRoom_num = RID_BAR_INN
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = barinn_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 17, 12, RID_BAR_NORTH, 18, 26, ROTATE_180 ],plExits);
+      plExits = Cons([ 1,5, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 2,5, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 2,7, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 3,7, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 7,5, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 11,6, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 11,7, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 4,12, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 4,13, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      plExits = Cons([ 4,17, ROOM_LOCKED_DOOR, barinn_rentableroom_door ],plExits);
+      
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      oNews = Create(&NewsLink,#nid=NID_ANNOUNCEMENTS,
+		     #name=barnews_god_name,#desc=barnews_god_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=17,#new_col=20,#fine_row=0,#fine_col=32);
+
+      Send(self,@NewHold,#what=Create(&BarloqueInnkeeper),
+	   #new_row=12,#new_col=15,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH_WEST);
+
+      propagate;
+   }
+
+   EnterRentableRoom(who=$)
+   "Sees if we are in the proper location to enter a rentable room in this inn."
+   {
+      local iRow, iCol;
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      
+      % coords: [4,12],[4,13],[4,17],[2,7],[3,7],[1,5],[2,5],[7,5],[11,6],[11,7]
+      if ( iRow = 4
+           AND (iCol = 12
+                 OR iCol = 13
+                 OR iCol = 17) )
+         OR ( iCol = 5
+              AND (iRow = 1
+                   OR iRow = 2
+                   OR iRow = 7) )
+         OR ( iCol = 7
+              AND (iRow = 2
+                   OR iRow = 3
+                   OR iRow = 11) )
+         OR ( iRow = 11
+              AND iCol = 6 )
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,341 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NumberItem is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   NumberItem_desc_rsc = "\n\nYou are looking at "
+   NumberItem_got_one = "Hungrily, you yank %s%s from %s%s."
+
+   NumberItem_dispenser_name = "magic item creator"
+   NumberItem_dispenser_desc = \
+      "This is a magic item creator.  It creates thingies."
+   NumberItem_dispenser_icon = lever.bgf
+
+classvars:
+
+   vrDisp_name = NumberItem_dispenser_name
+   vrDisp_desc = NumberItem_dispenser_desc
+   vrDisp_icon = NumberItem_dispenser_icon
+
+   % Negative numbers are 1/100th of bulk and weight
+   viBulk = 0
+   viWeight = 0
+
+   vrName_plural = $
+
+   viIndefinite_plural = ARTICLE_SOME
+   viItem_type = ITEMTYPE_REAGENT
+
+properties:
+
+   piNumber = 1
+
+messages:
+
+   % remember, split number items don't have owners.
+
+   Constructor(number = $)
+   {
+      if number <> $
+      {
+         piNumber = number;
+      }
+
+      Send(self,@NewNumber);
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      % It would be nice to set the number to 0 to prevent funny business.
+      % It needs to be posted, since NumberItems are deleted if a player
+      %  drops them, which screws up the weight/bulk calculations.
+
+      propagate;
+   }
+
+   GetNumber()
+   {
+      return piNumber;
+   }
+
+   GetWeight()
+   {
+      if viWeight < 0
+      {
+         return (-viWeight) * piNumber / 100;
+      }
+      
+      return viWeight * piNumber;
+   }
+
+   GetBulk()
+   {
+      if viBulk < 0
+      {
+         return (-viBulk) * piNumber / 100;
+      }
+      
+      return viBulk * piNumber;
+   }
+
+   GetNumberCanHold(what = $, weight = 0, bulk = 0)
+   {
+      local iBulk_can_hold, iWeight_can_hold;
+
+      if viBulk = 0
+      {
+         iBulk_can_hold = INFINITE_COUNT;
+      }
+      else
+      {
+         if viBulk > 0
+         {
+            iBulk_can_hold = bulk / viBulk;
+         }
+         else
+         {
+            iBulk_can_hold = bulk * 100 / (-viBulk);
+         }
+      }
+
+      if viWeight = 0
+      {
+         iWeight_can_hold = INFINITE_COUNT;
+      }
+      else
+      {
+         if viWeight > 0
+         {
+            iWeight_can_hold = weight / viWeight;
+         }
+         else
+         {
+            iWeight_can_hold = weight * 100 / (-viWeight);
+         }
+      }
+
+      if iBulk_can_hold = INFINITE_COUNT
+      {
+         return iWeight_can_hold;
+      }
+      
+      if iWeight_can_hold = INFINITE_COUNT
+      {
+         return iBulk_can_hold;
+      }
+      
+      if iBulk_can_hold < iWeight_can_hold
+      {
+         return iBulk_can_hold;
+      }
+      
+      return iWeight_can_hold;
+   }
+
+   GetName()
+   {
+      if piNumber = 1
+      {
+         propagate;
+      }
+      
+      if vrName_plural <> $
+      {
+         return vrName_plural;
+      }
+      
+      propagate;
+   }
+
+   AppendDesc()
+   {
+      % You are looking at 8 elderberries.
+      AppendTempString(NumberItem_desc_rsc);
+      
+      send(SYS,@AppendCardinalToTempString,#number=piNumber);
+      AppendTempString(" ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(".");
+
+      return;
+   }
+
+   GetValue()
+   {
+      return piNumber * Send(self,@GetInitValue);
+   }
+
+   AddNumber(number = 0)
+   "Admin supported\n"
+   "Increases the number amount of a number object by the parameter <number>,"
+   "which must be positive!"
+   {
+      local iOld_weight,iOld_bulk;
+
+      if number < 0
+      {
+	      return;
+      }
+      
+      iOld_weight = Send(self,@GetWeight);
+      iOld_bulk = Send(self,@GetBulk);
+
+      piNumber = piNumber + number;
+      Send(self,@NewNumber);
+
+      if poOwner <> $
+      {
+         Send(poOwner,@ChangeBulkAndWeight,#what=self,
+              #bulk_change=Send(self,@GetBulk)-iOld_bulk,
+              #weight_change=Send(self,@GetWeight)-iOld_weight);
+      }
+      
+      return;
+   }
+
+   SubtractNumber(number = 0)
+   "Admin supported\n"
+   "Decreases the number amount of a number object by the parameter <number>"
+   "<number> must be positive!"
+   {
+      local iOld_weight,iOld_bulk;
+
+      % this can delete self, so can only do return after calling this
+
+      if (piNumber - number) <= 0
+      {
+	      Send(self,@Delete);
+	      return;
+      }
+
+      iOld_weight = Send(self,@GetWeight);
+      iOld_bulk = Send(self,@GetBulk);
+      
+      piNumber = piNumber - number;
+
+      Send(self,@NewNumber);
+
+      if poOwner <> $
+      {
+         Send(poOwner,@ChangeBulkAndWeight,#what=self,
+              #bulk_change=Send(self,@GetBulk)-iOld_bulk,
+              #weight_change=Send(self,@GetWeight)-iOld_weight);
+      }
+      
+      return;
+   }
+
+   NewNumber()
+   {
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+      
+      return;
+   }
+
+   Split(number = $)
+   {
+      local oSplit;
+
+      if number >= 1 and number <= piNumber
+      {
+         oSplit = Create(GetClass(self),#number=number);
+         Send(self,@SubtractNumber,#number=number);
+
+         return oSplit;
+      }
+
+      return $;
+   }
+
+   Join(what = $)
+   {
+      if GetClass(self) = GetClass(what)
+      {
+         Send(self,@AddNumber,#number=Send(what,@GetNumber));
+         Send(what,@Delete);
+      }
+
+      return;
+   }
+
+   GetCapDef()
+   {
+      % Return resource of capitalized definite article, for number items
+      return Send(self,@LookupCapitalArticle,#article_num=viDefinite);
+   }
+
+   GetCapIndef()
+   {
+      % return resource of capitalized indefinite article, for number items
+      if piNumber <> 1
+      {
+         return Send(self,@LookupCapitalArticle,
+                     #article_num=viIndefinite_plural);
+      }
+      
+      return Send(self,@LookupCapitalArticle,#article_num=viIndefinite);
+   }
+
+   GetIndef()
+   {
+      % return resource of capitalized indefinite article, for number items
+      if piNumber <> 1
+      {
+         return Send(self,@LookupArticle,#article_num=viIndefinite_plural);
+      }
+
+      return Send(self,@LookupArticle,#article_num=viIndefinite);
+   }
+
+   NewHoldMessage(who=$,disp=$)
+   "Called whenever a number item is created from a dispenser."
+   {
+      Send(who,@MsgSendUser,#message_rsc=NumberItem_got_one,
+           #parm1=send(self,@GetIndef),#parm2=send(self,@GetName),
+           #parm3=send(disp,@GetDef),#parm4=send(disp,@GetName));
+
+      return;
+   }
+
+   GetDispenserName()
+   {
+      return vrDisp_name;
+   }
+
+   GetDispenserDesc()
+   {
+      return vrDisp_desc;
+   }
+   
+   GetDispenserIcon()
+   {
+      return vrDisp_icon;
+   }
+
+   IsPlural()
+   {
+      return (piNumber > 1);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

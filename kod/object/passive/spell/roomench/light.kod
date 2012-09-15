@@ -1,0 +1,133 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Light is RoomEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   light_name_rsc = "light"
+   light_icon_rsc = isunlite.bgf
+   light_desc_rsc = \
+      "Magical illumination fills the area where the spell is "
+      "cast.  "
+      "Requires elderberry to cast."
+   
+   light_unnecessary = "This area is already lit."
+
+   light_on = "A magical glow suffuses through the area."
+   light_off = "The light spell wears off."
+   light_new_entrant = "This place is illuminated by a magical glow."  %replace by icon
+   light_spell_intro = "Faren Lv. 1:  Fills an area with magical illumination."
+
+   light_sound = flight.wav
+
+classvars:
+
+   vrName = light_name_rsc
+   vrIcon = light_icon_rsc
+   vrDesc = light_desc_rsc
+   vrSucceed_wav = light_sound
+
+   vrSpell_intro = light_spell_intro
+
+   viSpell_num = SID_LIGHT
+   viSchool = SS_FAREN
+   viMana = 5
+   viSpell_level = 1
+   
+   viChance_To_Increase = 30
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&ElderBerry,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+      % check if room already has light
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+	 Send(who,@MsgSendUser,#message_rsc=light_unnecessary);
+	 return False;
+      }
+
+      propagate;
+   }
+
+
+   CastSpell( who = $, iSpellPower = 0 )
+   "Initiation point for the spell."
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+        Send(who,@MsgSendUser,#message_rsc=light_unnecessary);
+        return;
+      }
+
+      % global effects of the enchantment
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=light_on,#what=self);
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=(iSpellPower+25),
+	        #time=send(self,@GetDuration,#iSpellPower = iSpellPower));
+      Send(oRoom,@AddBaseLight,#amount=(25+iSpellpower));
+           
+      
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = 45 + (iSpellPower*3);  %% 30 - 228 seconds
+      iDuration = iDuration * 1000;      %% convert to seconds            
+
+      return random(iDuration/2,iDuration);
+   }
+
+   StartEnchantmentNewOccupant( who = $ )
+   "Called on new occupants of the enchanted room."
+   {
+      Send(who,@MsgSendUser,#message_rsc=light_new_entrant);
+      return;
+   }
+
+   EndSpell( where = $, state = $ )
+   "Called when spell expires."
+   {
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=light_off,#what=self);
+      Send(where,@AddBaseLight,#amount=(-1)*state);
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

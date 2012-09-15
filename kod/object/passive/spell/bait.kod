@@ -1,0 +1,122 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Bait is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Bait_name_rsc = "bait"
+   Bait_icon_rsc = idistrac.bgf
+   Bait_desc_rsc = \
+      "Makes you mighty appetizing to nearby monsters.  The more powerful you are, "
+      "the more likely you are to get the monster's attention.  "
+      "Requires web moss and firesand to cast."
+   
+   Bait_success = "The scent of something really yummy fills the air.  Your mouth "
+            "involuntarily begins to water, a moment before you realize that "
+            "the appetizing smell is coming from you!"
+
+   Bait_sound = rdistrac.wav
+
+classvars:
+
+   vrName = Bait_name_rsc
+   vrIcon = Bait_icon_rsc
+   vrDesc = Bait_desc_rsc
+
+   viSpell_num = SID_BAIT
+   viSchool = SS_RIIJA
+   viSpell_level = 2
+   viMana = 8
+   viSpellExertion = 2
+
+   viCast_time = 2000
+   viChance_To_Increase = 15
+
+   vrSucceed_wav = Bait_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&WebMoss,1],plReagents);
+      plReagents = Cons([&FireSand,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+	 
+   CastSpell(who = $,iSpellPower=0)
+   {
+      local oMonster,iMonsterFaction,iModifier,iBaseChance;
+      Send(who,@MsgSendUser,#message_rsc=Bait_success);
+      for oMonster in send(send(who,@GetOwner),@GetHolderActive)
+      {
+         if isClass(first(oMonster), &Monster)
+               and not ( send(first(oMonster), @GetBehavior) & AI_NPC )
+         {
+            iBaseChance = 25;
+            if send(first(oMonster), @GetTarget) = $
+            {
+               % easier if monster doesn't have a target
+               iModifier = 2;
+            } else {
+               % harder if monster already has a target
+               iModifier = 4;
+            }
+
+            % Faction Kludge: Should put in a special trait for "player-like" monsters.
+            % Doesn't fall for bait as much, since has "player-like" characteristics.
+            if IsClass(first(oMonster),&FactionTroop)
+            {
+               iBaseChance = 0;
+               iModifier = iModifier + 4;
+            }
+
+            % Avoid faction problems, don't make it work on aligned people.
+            iMonsterFaction = send(first(oMonster),@GetFaction);
+            if not(iMonsterFaction = FACTION_NEUTRAL) and (send(who,@GetFaction) = iMonsterFaction)
+            {
+               iBaseChance = -200;
+            }
+            
+            if random(1,100) < (iBaseChance + (iSpellPower/iModifier))
+            {
+	            %% don't allow in happyland, unless the monster has no master.
+	            if send(SYS,@IsPKAllowed) or send(first(oMonster),@GetMaster) = $
+	            {			
+		            send(first(oMonster), @TargetSwitch, #what=who, #iHatred=100);
+		            send(first(oMonster), @EnterStateChase, #target=who, #actnow=True);
+	            }
+            }
+         }
+      }
+      
+      propagate;
+   }
+
+   GetPotionClass()
+   {
+      RETURN &BaitPotion;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

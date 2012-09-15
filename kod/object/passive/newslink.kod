@@ -1,0 +1,125 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NewsLink is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   newslink_name_rsc = "Newscroll"
+   newslink_icon_rsc = news.bgf
+   newslink_desc_rsc = "You are looking at a public posting device."
+
+classvars:   
+
+properties:
+
+   vrName = newslink_name_rsc
+   vrDesc = newslink_desc_rsc
+   vrIcon = newslink_icon_rsc
+
+   % newsgroup id (nid) 
+   piNews         
+
+messages:
+
+   Constructor(nid = NID_NEW_USERS, name = $, desc = $, icon = $)
+   {
+      if name <> $
+      {
+         vrName = name;
+      }
+
+      if desc <> $
+      {
+         vrDesc = desc;
+      }
+
+      if icon <> $
+      {
+         vrIcon = icon;
+      }
+
+      piNews = nid;
+
+      propagate;      
+   }
+
+   TryLook(what = $)
+   {
+      Send(what,@SendLookNews,#what=self);
+
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   GetNewsNum()
+   {
+      return piNews;
+   }
+
+   GetNewsPermission(what = $)
+   {
+      local oPlayerOwner;
+
+      oPlayerOwner = send(what,@GetOwner);
+      if oPlayerOwner <> poOwner
+      {
+         debug("ALERT!  ",send(what,@GetTrueName),what," in RID ",send(oPlayerOwner,@GetRoomNum)," got permissions for newslink in RID ",send(poOwner,@GetRoomNum));
+
+         return NEWS_PERMISSION_NONE;
+      }
+      
+      return Send(Send(SYS,@FindNewsByNum,#num=piNews),@GetNewsPermission,#what=what);
+   }
+
+   PostNews(what = $,title = $,body = $)
+   {
+      return Send(Send(SYS,@FindNewsByNum,#num=piNews),@PostNews,
+                  #what=what,#title=title,#body=body);
+   }
+
+   GetNumArticles()
+   {
+      return Send(Send(SYS,@FindNewsByNum,#num=piNews),@GetNumArticles);
+   }
+
+   GetArticleList()
+   {
+      return Send(Send(SYS,@FindNewsByNum,#num=piNews),@GetArticleList);
+   }
+
+   GetNewsBody(num = $)
+   {
+      return Send(Send(SYS,@FindNewsByNum,#num=piNews),@GetNewsBody,#num=num);
+   }
+
+   % Give globes a soft glow.
+   SendLightingInformation()
+   {
+      AddPacket(2,LIGHT_FLAG_ON);
+      % Intensity (out of 255)
+      AddPacket(1,5);
+      % Color
+      AddPacket(2,LIGHT_NEWSGLOBE);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

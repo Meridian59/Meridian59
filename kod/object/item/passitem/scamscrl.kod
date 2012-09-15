@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ScamScroll is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ScamScroll_name_rsc = "obfuscatory document"
+   ScamScroll_icon_rsc = scr09.bgf
+   ScamScroll_desc_rsc = \
+      "The words 'MAKE SHILLINGS FAST' are boldly printed across the top of this scroll "
+      "(and, strangely enough, the same words are printed upside-down at the bottom.)  "
+      "The rest of the parchment is covered with layer upon layer of doublespeak the like "
+      "of which you have never seen in your life.  Try as you might to eke some sliver of "
+      "meaning out of the jumble of words, you simply cannot make head or tail of it."
+
+classvars:
+
+   vrName = ScamScroll_name_rsc
+   vrIcon = ScamScroll_icon_rsc
+   vrDesc = ScamScroll_desc_rsc
+
+   viValue_average = 10
+   viWeight = 3
+   viBulk = 10
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

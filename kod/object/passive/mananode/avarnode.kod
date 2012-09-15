@@ -1,0 +1,110 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AvarNode is ManaNode
+
+% AvarNode is kinda like the FeyNode; only people of matching karma can meld
+%  with it.  But, it won't be stripped from people of the opposite alignment.
+
+constants:
+
+   include blakston.khd
+
+   % Must be synchronized with ke4.kod
+   AVARNODE_GOOD = 1
+   AVARNODE_EVIL = 2
+
+   % From superclass
+   NODE_DEAD = 3
+
+resources:
+
+   AvarNode_rejected = "The node rejects your attempt to meld with it."
+
+classvars:
+
+properties:
+
+   piKarma = 0
+
+messages:
+
+   NodeAppear(karma=0)
+   {
+      if karma = 0
+      {
+         return;
+      }
+
+      if karma = AVARNODE_GOOD
+      {
+         piKarma = AVARNODE_GOOD;
+      }
+
+      if karma = AVARNODE_EVIL
+      {
+         piKarma = AVARNODE_EVIL;
+      }
+
+      propagate;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to Send its own error message to "
+   "user."
+   {
+      if (piKarma = AVARNODE_GOOD and (Send(who,@GetKarma) < 0))
+         OR (piKarma = AVARNODE_EVIL and (Send(who,@GetKarma) > 0))
+      {
+         Send(who,@MsgSendUser,#message_rsc=AvarNode_rejected);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      if piKarma = AVARNODE_GOOD
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,150, 2,1, 2,5);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_CYCLE, 4,250, 2,6, 2,7);
+
+      return;
+   }
+
+   SendLightingInformation()
+   {
+      if piState <> NODE_DEAD
+      {
+         % Special case for an evil aligned node.
+         if piKarma = AVARNODE_EVIL
+         {
+            % Flags, intensity, and color.
+            AddPacket(2,LIGHT_FLAG_ON);
+            AddPacket(1,100);
+            AddPacket(2,LIGHT_SPECTRAL);
+
+            return;
+         }
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,62 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GroundWormTrailClump is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   GroundWormTrailClump_name_rsc = "Loose soil"
+   GroundWormTrailClump_icon_rsc = dirtpile.bgf
+   GroundWormTrailClump_small_icon_rsc = dirtplsm.bgf
+   GroundWormTrailClump_desc_rsc = "You are looking at a clump of disturbed soil."
+
+classvars:
+
+   vrName = GroundWormTrailClump_name_rsc
+   vrDesc = GroundWormTrailClump_desc_rsc
+
+properties:
+
+   vrIcon = GroundWormTrailClump_icon_rsc
+
+messages:
+
+   Constructor(TrailLarge=TRUE)
+   {
+      if not TrailLarge
+      {
+         vrIcon = GroundWormTrailClump_small_icon_rsc;
+      }
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      if random(1,15) = 1     % sticks around for about half an hour if orphaned
+      {
+         if not send(poOwner,@PossessesA,#Class=&GroundWorm)
+         {
+            send(self,@delete);
+         }
+      }
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      return LOOK_NO;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,199 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RoomKey is RoomKeyCopy
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RoomKey_name_rsc = "gold room key"
+   RoomKey_icon_rsc = roomkey.bgf
+   RoomKey_desc_rsc = \
+      "This solid gold key bears an inscription which reads:\n"
+
+   RoomKey_vanishes = \
+      "Your gold room key dissolves into a strange gold liquid, then "
+      "evaporates into a green mist and is gone."
+
+   RoomKey_teleport = \
+      "As you slide the key into the lock, a strange white glow envelops "
+      "you, and you find yourself somewhere else."
+
+   RoomKey_no_use = \
+      "There doesn't seem to be anything nearby to use the key on."
+
+classvars:
+
+   vrName = RoomKey_name_rsc
+   vrIcon = RoomKey_icon_rsc
+   vrDesc = RoomKey_desc_rsc
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 80
+
+properties:
+
+   plCopies = $
+
+messages:
+
+   OriginalDeleted()
+   {
+      return;
+   }
+
+   Copy()
+   {
+      local oCopy;
+      
+      oCopy = Create(&RoomKeyCopy,#iRID=piRID);
+      plCopies = cons(oCopy,plCopies);
+      
+      return oCopy;
+   }
+
+   RoomExpired(iRID=$)
+   {
+      if (iRID = $) or (iRID <> piRID)
+      {
+         return;
+      }
+      if (poOwner <> $) and isClass(poOwner,&User)
+      {
+         if Send(poOwner,@IsLoggedOn)
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=RoomKey_vanishes);
+         }
+         else
+         {
+            if Send(poOwner,@GetSaveRoom) = piRID
+            {
+               Send(poOwner,@AdminGoToSafety);
+            }
+         }
+      }
+
+      % Post this so that room can clean itself up first before we try to
+      %  delete it.
+      Post(self,@Delete);  
+      
+      return;
+   }
+
+   Delete()
+   {
+      local i;
+      
+      for i in plCopies
+      {
+         Send(i,@OriginalDeleted);
+      }
+      
+      plCopies = $;
+      
+      i = Send(SYS,@FindRoomByNum,#num=piRID);
+      
+      if i <> $
+      {
+         Send(i,@Delete);
+      }
+      
+      propagate;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   DestroyDisposable()
+   {
+      return;
+   }
+
+   ReqLeaveOwner()
+   {
+      if (poOwner <> $) AND IsClass(poOwner,&User)
+      {
+         Send(self,@NoDropMessage);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   ReqNewOwner(what=$)
+   {
+      if what <> $
+      {
+         if isClass(what,&Room)
+         {
+            Send(self,@NoDropMessage);
+            
+            return FALSE;
+         }
+         
+         % Can't get rid of the key if it has an owner.
+         if poOwner <> $
+            AND isClass(poOwner,&User)
+         {
+            return FALSE;
+         }
+      }
+      else
+      {
+         % No dropping into oblivion.
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   NewOwner(what=$)
+   "If we have a room and aren't going to our owner, head back to our owner."
+   {
+      local oPlayerOwner, oRoom;
+
+      oRoom = Send(SYS,@FindRoomByNum,#num=piRID);
+
+      if oRoom = $
+      {
+         % Delete it if the room isn't found.
+         Post(self,@Delete);
+
+         return;
+      }
+      
+      % This is the person that owns the room that this key goes to.
+      oPlayerOwner = Send(oRoom,@GetRenter);
+
+      if what <> oPlayerOwner
+      {
+         % Post this so that so we don't have any conflicts about where it's
+         %  going.
+         Post(oPlayerOwner,@NewHold,#what=self);
+      }
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

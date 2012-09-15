@@ -1,0 +1,157 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsA5 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   DISCORD_TIME_MIN = 10000
+   DISCORD_TIME_MAX = 25000
+
+resources:
+
+   room_OutdoorsA5 = A5.roo
+   room_name_OutdoorsA5 ="Seafarer's Peak"
+   OutdoorsA5_music = forest.mid
+
+   cliff_msg1a5 = "You MUST be kidding!"
+   room_discord_message = "A strange wind blows in from the sea which clears away the spells affecting this area."
+   
+classvars:
+
+   vrName = room_name_OutdoorsA5
+
+   viTeleport_row = 45
+   viTeleport_col = 32
+
+   viTerrain_type = TERRAIN_MOUNTAIN | TERRAIN_BEACH
+
+properties:
+
+   prRoom = room_OutdoorsA5
+   prMusic = OutdoorsA5_music
+   piRoom_num = RID_A5
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 40000
+   piGen_percent = 80
+
+   piInit_count_min = 5
+   piInit_count_max = 7
+
+   piMonster_count_max = 15
+   ptDiscord = $
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&RedAnt, 60], [&Troll, 40] ];
+
+      plGenerators = [ [38, 39], [41, 29], [44, 7], [42, 20], [28, 40],
+		      [13, 44], [11, 45], [12, 33], [19, 14], [20, 19], 
+		      [21, 2], [30, 17], [20, 7], [14, 7], [2, 7] ];
+		      
+      ptDiscord = CreateTimer(self,@DiscordTimer,
+                      random(DISCORD_TIME_MIN,DISCORD_TIME_MAX));
+
+      propagate;
+   }
+
+   DiscordTimer()
+   {
+      local oPerson;
+
+      if plEnchantments <> $
+      {
+         % Do this the easy way instead of going through the spell.
+         send(self,@RemoveAllEnchantments);
+         send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=room_discord_message,#what=self);
+      }
+      
+      ptDiscord = CreateTimer(self,@DiscordTimer,Random(DISCORD_TIME_MIN,DISCORD_TIME_MAX));
+      
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_A5),
+           #new_row=20,#new_col=17,#fine_row=0,#fine_col=0);
+           
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_A6, 1,20, ROTATE_NONE], plEdge_exits);
+      
+      return;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_NORTH)
+      {
+         if (IsClass(what,&Player))
+         {
+            send(what,@MsgSendUser,#message_rsc = cliff_msg1a5);
+         }
+         
+         return;
+      }
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptDiscord <> $
+      {
+         DeleteTimer(ptDiscord);
+         ptDiscord = $;
+      }
+      
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      local iBonus;
+
+      % Hinder learning room enchants because of the auto-discordance
+      if IsClass(oSpellSkill,&RoomEnchantment)
+      {
+         return (chance / 10);
+      }
+
+      % Help skill learning by 20% because it's out of the way
+      if IsClass(oSpellSkill,&Skill)
+      {
+         iBonus = (chance * 2)/10;
+         iBonus = bound(iBonus,1,10);
+
+         return (chance + iBonus);
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,32 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SwordShardd is SwordShard
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Swordshardd_icon_rsc = quswrdd.bgf
+
+classvars:
+   
+   vrIcon = SwordShardd_icon_rsc
+
+properties:  
+
+messages:   
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

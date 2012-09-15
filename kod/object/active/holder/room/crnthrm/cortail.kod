@@ -1,0 +1,85 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorTailor is CorNothRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   room_cortail = cortail.roo
+   room_name_cortail = "The Spindle and the Spinster"
+
+   cortail_music = city04.mid
+
+classvars:
+
+   vrName = room_name_cortail
+
+   viTeleport_row = 6
+   viTeleport_col = 3
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+   prRoom = room_cortail
+   piRoom_num = RID_COR_TAILOR
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = cortail_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 3, 3, RID_CORNOTH, 40, 12, ROTATE_NONE ],plExits);
+      plExits = Cons([ 11, 7, ROOM_LOCKED_DOOR],plExits);
+      plExits = Cons([ 11, 13, ROOM_LOCKED_DOOR],plExits);
+
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&CorNothTailor),
+           #new_row=4,#new_col=13);
+
+      Send(self,@NewHold,#what=Create(&Candelabra),
+	   #new_row=4,#new_col=1,#fine_row=0,#fine_col=20);
+      Send(self,@NewHold,#what=Create(&Candelabra),
+	   #new_row=9,#new_col=3,#fine_row=28,#fine_col=28);
+      Send(self,@NewHold,#what=Create(&Stool),
+           #new_row=3,#new_col=11,#fine_row=0,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=5,#new_col=13,#fine_row=16);
+
+
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=9);
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

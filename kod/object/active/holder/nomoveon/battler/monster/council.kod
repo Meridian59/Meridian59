@@ -1,0 +1,118 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Council is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Councilor_name_rsc = "Councilor"
+   Councilor_icon_rsc = hermit.bgf
+   Councilor_desc_rsc = ""
+
+   blank_spec_rsc=""
+   con_token_delivered_rsc = "Thank you. You have done me a great service. %s %s"
+   con_duke_delivered_rsc = "I will pay more attention to the matters which concern the Duke."
+   con_princess_delivered_rsc = "I will look with more favor on the Princess Kateriina's ideas."
+   con_rebel_delivered_rsc = "I will look upon rebellion as a sign of good change."
+   con_neutral_delivered_rsc = "I shall endeavor to be as impartial at the court as ye."
+
+classvars:
+   
+   vrName = Councilor_name_rsc
+   vrDesc = Councilor_desc_rsc
+   vrIcon = Councilor_icon_rsc
+   viAttributes = MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE 
+   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+
+   viSpeed = SPEED_SLOW
+   viQuestID = 0
+   viInitialState=1
+   viHomeroom = RID_FOREST1
+   viMyRow = 15
+   viMyCol = 15
+   viMyAngle = ANGLE_NORTH
+
+properties:
+
+   piStateBump=1
+
+messages:
+
+   Delete()
+   {
+      Send(Send(SYS,@GetTokenGame),@CouncilorDeleted,#what=self);
+      propagate;
+   }
+
+   GetInitialState()
+   {
+     return viInitialState;
+   }
+
+   CheckWhyWanted(obj=$,who=$)
+   {
+      local oMoney,spec_rsc,fact_rsc;
+      if isClass(obj,&Token)
+      {
+
+         spec_rsc=Send(self,@CheckSpecialDeliverer,#who=who);
+
+         if Send(who,@GetFaction)=FACTION_DUKE
+         { fact_rsc=Con_duke_delivered_rsc;}
+         if Send(who,@GetFaction)=FACTION_NEUTRAL
+         { fact_rsc=Con_neutral_delivered_rsc;}
+         if Send(who,@GetFaction)=FACTION_PRINCESS
+         { fact_rsc=Con_princess_delivered_rsc;}
+         if Send(who,@GetFaction)=FACTION_REBEL
+         { fact_rsc=Con_rebel_delivered_rsc;}
+         
+         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Con_token_delivered_rsc,
+                 #parm1=fact_rsc,#parm2=spec_rsc);
+         return True;
+      }
+      propagate;
+   }
+
+   CheckSpecialDeliverer()
+   {
+      return blank_spec_rsc;
+   }
+
+   GetStateBump()
+   {
+     return piStateBump;
+   }
+
+   GotoHomeroom()
+   {
+      local room;
+      room=Send(SYS,@FindRoomByNum,#num=viHomeroom);
+      if room=$ {debug("FindRoombyNum num=",viHomeroom,"returned null");return;}
+      Send(room,@teleport,#what=self);
+      Send(room,@SomethingMoved,#what=self,#new_row=viMyRow,#new_col=viMyCol);
+      Send(room,@SomethingTurned,#what=self,#new_angle=viMyAngle);
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

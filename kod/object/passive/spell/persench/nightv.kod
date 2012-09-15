@@ -1,0 +1,98 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NightVision is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   nightvision_name_rsc = "night vision"
+   nightvision_icon_rsc = nitvsico.bgf
+   nightvision_desc_rsc = \
+      "Magically enhances the vision of the target.  "
+	   "Requires elderberry to cast."
+   
+   nightvision_already_enchanted_rsc = "You already have night vision."
+
+   nightvision_on_rsc = "Your eyes burn with magical energy."
+   nightvision_off_rsc = "Your vision returns to normal."
+   nightvision_success_rsc = "%s%s's eyes burn with magical energy."
+
+classvars:
+
+   vrName = nightvision_name_rsc
+   vrIcon = nightvision_icon_rsc
+   vrDesc = nightvision_desc_rsc
+
+   vrAlreadyEnchanted = nightvision_already_enchanted_rsc
+   vrEnchantment_On = nightvision_On_rsc
+   vrEnchantment_Off = nightvision_Off_rsc
+   vrSuccess = nightvision_Success_rsc
+
+   viSpell_num = SID_NIGHT_VISION
+   viSchool = SS_KRAANAN
+   viSpell_level = 3
+   viMana = 6
+
+   viChance_To_Increase = 35
+   
+   viFlash = FLASH_GOOD_SELF
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&ElderBerry,3],plReagents);
+
+      return;
+   }
+
+   GetStateValue(who = $, iSpellPower = 0,target=$)
+   {
+      local iState;
+
+      iState = iSpellPower + 50;
+      Send(target,@GainLight,#amount=iState);
+      
+      return iState;
+   }
+   
+   GetDuration(iSpellpower = 0)
+   {
+      local iDuration;
+      
+      iDuration = 1500 + 25 * iSpellPower;
+      iDuration = iDuration * 1000;
+      
+      return random(iDuration/2,iDuration);
+   }
+
+
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+      Send(who,@LoseLight,#amount=state);
+      
+      propagate;
+   }
+
+   GetPotionClass()
+   {
+      return &NightVisionPotion;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

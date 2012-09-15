@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BallotItem is InscriptionItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ballot_name_rsc = "Royal Ballot"
+   ballot_icon_rsc = scr02.bgf
+   ballot_desc_rsc = \
+      "This is an official document of the Office of the Justicar.\n"
+      "The Royal Justicar is the arbiter in disputes of Law in the Royal Eyes. "
+      "Ye may cast thine vote for a candidate for the Office, if ye be a lawful "
+      "citizen yourself, and thine candidate is also.  Ye may only cast one "
+      "vote each term of the Office.  Only those votes received by the Caramo, "
+      "the Assistant to the Justicar, are to be tallied.\n"
+      "\n"
+      "    =[C]=   Caramo, Assistant to the Royal Justicar"
+
+classvars:
+
+   vrName = ballot_name_rsc
+   vrIcon = ballot_icon_rsc
+   vrDesc = ballot_desc_rsc
+
+   viWeight = 2
+
+properties:
+
+messages:
+
+   ShowDesc()
+   {
+      AddPacket(4, ballot_desc_rsc);
+	  return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

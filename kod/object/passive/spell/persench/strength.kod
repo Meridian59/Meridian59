@@ -1,0 +1,99 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SuperStrength is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   superstrength_on_rsc = "Your blood tingles with the force of Kraanan.  You are ready for battle!"
+   superstrength_off_rsc  = "The superhuman strength of Kraanan departs your body, leaving you a mortal once more."
+   superstrength_already_enchanted_rsc = "You already have superior strength."
+   superstrength_success_rsc = "%s%s reels under the impact of Kraanan's power."
+
+   superstrength_name_rsc = "super strength"
+   superstrength_icon_rsc = istreng.bgf
+   superstrength_desc_rsc = \
+      "Infuses your body with superhuman strength.  "
+      "Requires mushrooms and orc teeth to cast."
+
+   superstrength_spell_intro = "Kraanan Lv. 2: Infuses your body with superhuman strength in preparation for battle."
+
+classvars:
+   viPersonal_ench = True
+   vrName = superstrength_name_rsc
+   vrIcon = superstrength_icon_rsc
+   vrDesc = superstrength_desc_rsc
+
+   vrAlreadyEnchanted = superstrength_already_enchanted_rsc
+   vrEnchantment_On = superstrength_On_rsc
+   vrEnchantment_Off = superstrength_Off_rsc
+   vrSuccess = superstrength_Success_rsc
+
+   vrSpell_intro = superstrength_spell_intro
+   viSpell_num = SID_SUPER_STRENGTH
+   viSchool = SS_KRAANAN
+   viSpell_level = 2
+   viMana = 10
+
+   viChance_To_Increase = 30
+   viFlash = FLASH_GOOD_SELF
+   vbCanCastonOthers = TRUE
+
+properties:  
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Mushroom,2],plReagents);
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+
+   GetStateValue(who = $, iSpellPower = 0, Target = $)
+   {
+      local iMightChange;
+      iMightChange = iSpellPower/5+1;
+
+      send(Target,@AddMight,#points=iMightChange);
+
+      return iMightChange;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;
+      iDuration = 300 + (iSpellpower * 6);
+      iDuration = iDuration * 1000;
+      
+      return random(iDuration/2,iDuration);
+   }
+
+   EndEnchantment( who = $, state = 0, report = TRUE )
+   {
+      send(who,@AddMight,#points=-state);
+     
+      propagate;
+   }
+
+   GetPotionClass()
+   {
+      RETURN &StrengthPotion;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

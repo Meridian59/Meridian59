@@ -1,0 +1,167 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Animate is Spell
+
+constants:
+
+   include blakston.khd
+
+   MAX_ZOMBIE_CONTROL_SECS = 1200  % 20 minutes
+
+resources:
+
+   Animate_name_rsc = "animate"
+   Animate_icon_rsc = ianimate.bgf
+   Animate_desc_rsc = \
+      "Animates the corpse of another human, that they may do your bidding.  "
+      "Requires the blood of a shaman to cast."
+   
+   Animate_bad_target = "You can't cast animate on %s%s!"
+   Animate_failed_rsc = "%s's corpse remains inanimate on the gound."
+   Animate_cast_rsc = "%s's corpse pulls itself up off of the ground."
+
+   Animate_sound = qanimate.wav
+
+classvars:
+
+   vrName = Animate_name_rsc
+   vrIcon = Animate_icon_rsc
+   vrDesc = Animate_desc_rsc
+
+   viSpell_num = SID_ANIMATE
+   viSchool = SS_QOR
+   viSpell_level = 4
+   viMana = 20
+
+   viSpellExertion = 10
+   viCast_time = 20000
+   viChance_To_Increase = 75
+
+   vrSucceed_wav = Animate_sound
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&ShamanBlood,1], plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who = $,lTargets=$)
+   {
+      local oRoom, oTarget;
+
+      oRoom = send(who,@GetOwner);
+      oTarget = First(lTargets);
+
+      if not isclass(oTarget,&DeadBody)
+      {
+         send(who,@MsgSendUser,#message_rsc=Animate_bad_target,#parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@Getname));
+
+         return FALSE;
+      }
+
+      if send(send(first(lTargets),@GetOwner),@SafePlayerAttack)
+      {
+         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
+
+         return FALSE;
+      }
+
+      if (send(oRoom,@CountHoldingHowMany,#class=&monster) > 25)
+         or (send(oRoom,@CountHoldingSummoned) > 
+             Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
+      {
+         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoubleCheckAfterTrance(who = $, lTargets = $)
+   {
+      local oRoom, oTarget;
+
+      oRoom = send(who,@GetOwner);
+      oTarget = first(lTargets);
+      if oRoom <> send(oTarget,@GetOwner)
+      {
+         send(who, @MsgSendUser, #message_rsc=spell_trance_break,#parm1=vrName);
+         send(who, @WaveSendUser, #wave_rsc=spell_trance_break_sound);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   {
+      local oZombie, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget, iLevel, iDurationSecs;
+
+      oRoom = send(who,@GetOwner);
+      oTarget = first(lTargets);
+
+      if oRoom <> send(oTarget,@GetOwner)
+      {
+         send(who,@MsgSendUser,#message_rsc=spell_trance_break,#parm1=vrName);
+         send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
+
+         return;
+      }
+
+      iRow = send(oTarget,@GetRow);
+      iCol = send(oTarget,@GetCol);
+      iFine_Row = send(oTarget,@GetFineRow);
+      iFine_Col = send(oTarget,@GetFineCol);
+      iLevel = iSpellPower / 3 * 2;
+      iLevel = Bound(iLevel,1,50);
+      oZombie = Create(&Zombie,#DropsTreasure=FALSE,#Level=iLevel);
+
+      iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_ZOMBIE_CONTROL_SECS/100 );
+      send(oZombie,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+      send(oZombie,@SetSummoned,#value=TRUE);
+      Post(oZombie,@ResetBehaviorFlags);  
+
+      send(oRoom,@NewHold,#what=oZombie,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      Send(who,@MsgSendUser,#message_rsc=Animate_cast_rsc,#parm1=send(oTarget,@GetCorpseName));
+      
+      post(oTarget,@Delete);
+
+      propagate;
+   }
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
+
+      return;      
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

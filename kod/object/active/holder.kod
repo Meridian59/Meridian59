@@ -1,0 +1,977 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Holder is ActiveObject
+
+constants:
+
+   include blakston.khd
+
+classvars:
+
+   viBulk_hold_max = $
+   viWeight_hold_max = $
+
+
+properties:
+
+   plActive = $
+   plPassive = $
+
+   piBulk_hold = 0			% how much bulk we're holding
+   piWeight_hold = 0			% how much weight we're holding
+
+messages:
+
+   Delete()
+   {
+      % Kill off the inventory, too
+      send(self,@DeleteHolding);
+      
+      propagate;
+   }
+
+   DeleteHolding()
+   {
+      local i, each_obj;
+
+      % As a safety precaution, don't delete users
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj, &User)
+         {
+            Send(each_obj,@AdminGotoSafety);
+         }
+         else
+         {
+            Send(each_obj,@Delete);
+         }
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@Delete);
+      }
+
+      return;
+   }
+
+   PossessesA(class = $)
+   {
+      local i,each_obj;
+      
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if isclass(each_obj,class)
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   FindHolding(class = &Object, sequence = 1)
+   "Finds the 'sequence'th (default first) entry of type 'class' in the passive list."
+   {
+      local i, each_obj, iFound;
+
+      iFound = sequence;
+      
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if isclass(each_obj,class)
+         {
+            if iFound <= 1
+            {
+               return each_obj;
+            }
+            else
+            {
+               iFound = iFound - 1;
+            }
+         }
+      }
+      
+      return $;
+   }
+   
+   FindHoldingActive(class = &Object, sequence = 1)
+   "Finds the 'sequence'th (default first) entry of type 'class' in the active list."
+   {
+      local i, each_obj, iFound;
+      
+      iFound = sequence;
+      
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if isclass(each_obj,class)
+         {
+            if iFound <= 1
+            {
+               return each_obj;
+            }
+            else
+            {
+               iFound = iFound - 1;
+            }
+         }
+      }
+      
+      return $;
+   }
+
+   IsHolding(what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if what = each_obj
+         {
+            return TRUE;
+         }
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if what = each_obj
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   CountHoldingHowMany(class = $)
+   "Does not count quantity in a numbitem (500 apples counts as 1)"
+   {
+      local n,i,each_obj;
+
+      if class = $
+      {
+         return 0;
+      }
+
+      n = 0;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if isClass(each_obj, class)
+         {
+            n = n + 1;
+         }
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if isClass(each_obj, class)
+         {
+            n = n + 1;
+         }
+      }
+
+      return n;
+   }
+
+   CountHoldingSummoned()
+   {
+      local n,i,each_obj;
+
+      n = 0;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if send(each_obj,@IsSummoned)
+         {
+            n = n + 1;
+         }
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if send(each_obj,@IsSummoned)
+         {
+            n = n + 1;
+         }
+      }
+
+      return n;
+   }
+
+   GetBulkMax()
+   {
+      return viBulk_hold_max;
+   }
+   
+   GetWeightMax()
+   {
+      return viWeight_hold_max;
+   }
+
+   GetBulkHold()
+   {
+      return piBulk_hold;
+   }
+
+   GetWeightHold()
+   {
+      return piWeight_hold;
+   }
+
+   ReqNewHold(what = $)
+   {
+      local i,each_obj;
+
+      if NOT Send(what,@ReqNewOwner,#what=self)
+         OR NOT send(self,@CanHoldWeightAndBulk,#weight=send(what,@GetWeight),
+                     #bulk=send(what,@GetBulk))
+      {
+         return FALSE;
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if NOT Send(each_obj,@ReqSomethingEntered,#where=self,#what=what)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   CanHoldWeightAndBulk(weight = 0, bulk = 0)
+   "Returns whether the holder can accept the additional weight and bulk specified."
+   {
+      if Send(self,@GetWeightMax) <> $
+         AND (((piWeight_hold + weight) > send(self,@GetWeightMax))
+				  AND weight <> 0)
+      {
+         return FALSE;
+      }
+
+      if Send(self,@GetBulkMax) <> $
+         AND (((piBulk_hold + bulk) > send(self,@GetBulkMax)
+              AND bulk <> 0))
+      {
+         return FALSE;
+      }
+      
+      return TRUE;
+   }
+
+   GetNumberCanHold(what = $)
+   {
+      local iBulk_can_hold, iWeight_can_hold, iUnit_bulk, iUnit_weight;
+
+      if NOT IsClass(what,&NumberItem)
+         OR send(self,@GetBulkMax) = $
+         OR send(self,@GetWeightMax) = $
+      {
+         return $;
+      }
+      return Send(what,@GetNumberCanHold,
+                  #weight=send(self,@GetWeightMax)-piWeight_hold,
+                  #bulk=send(self,@GetBulkMax)-piBulk_hold);
+   }
+
+   NewHold(what = $)
+   {
+      local i,each_obj;
+
+      if IsClass(what,&NumberItem)
+      {
+         for i in plPassive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            
+            if each_obj <> what
+            {
+               if GetClass(what) = GetClass(each_obj)
+               {
+                  % should only be one of these, so can quit loop if found
+	          
+                  Send(each_obj,@AddNumber,#number=Send(what,@GetNumber));
+                  Send(what,@Delete);
+                  return;
+               }
+            }
+         }
+      }
+      
+      Send(self,@NewHoldObject,#what=what);
+      
+      return;
+   }
+   
+   NewHoldObject(what = $)
+   {
+      piBulk_hold = piBulk_hold + Send(what,@GetBulk);
+      piWeight_hold = piWeight_hold + Send(what,@GetWeight);
+
+      Send(self,@HolderAddNode,#node=what);
+      
+      return;
+   }
+
+   ChangeBulkAndWeight(what = $,bulk_change = $,weight_change = $)
+   "Called by something we contain when it changes bulk or weight.  "
+   "Mostly number items when their number changes."
+   {
+      piBulk_hold = piBulk_hold + bulk_change;
+      piWeight_hold = piWeight_hold + weight_change;
+
+      return;
+   }
+
+   ReqLeaveHold(what = $)
+   {
+      local i,each_obj;
+
+      if not Send(what,@ReqLeaveOwner)
+      {
+         return FALSE;
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if not Send(each_obj,@ReqSomethingLeft,#where=self,#what=what)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   LeaveHold(what = $)
+   {
+      local i,each_obj, iRow, iCol;
+      iRow = 0; iCol = 0;
+
+      piBulk_hold = piBulk_hold - Send(what,@GetBulk);
+      piWeight_hold = piWeight_hold - Send(what,@GetWeight);
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if each_obj = what
+         {  
+            if isClass(self,&room)
+            {
+               iRow=nth(i,3);
+               iCol=nth(i,4);               
+            }
+            
+            plActive = DelListElem(plActive,i);
+            
+            break;
+         }
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if each_obj = what
+         {
+            if isClass(self,&room)
+            {
+               iRow=nth(i,3);
+               iCol=nth(i,4);
+            }
+            
+            plPassive = DelListElem(plPassive,i);
+            
+            break;
+         }
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingLeft,#where=self,#what=what,#iRow=iRow,#iCol=iCol);
+      }
+      
+      return;
+   }
+
+   ReqSomethingEntered(where = $,what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if not Send(each_obj,@ReqSomethingEntered,#where=where,#what=what)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+   
+   SomethingEntered(where = $,what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingEntered,#where=where,#what=what);
+      }
+      
+      return;
+   }
+   
+   ReqSomethingLeft(where = $,what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if not Send(each_obj,@ReqSomethingLeft,#where=where,#what=what)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+   
+   SomethingLeft(where = $,what = $)
+   {      
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingLeft,#where=where,#what=what);
+      }
+      
+      return;
+   }
+
+   NewOwner(what=$,where=$)
+   {
+      local i, each_obj;
+
+      %%% This MUST propagate to set owners properly
+      
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@OwnerChangedOwner,#what=self,#where=$);
+      }
+      
+      propagate;
+   }
+
+   OwnerChangedOwner(what=$,where=$)
+   {
+      local i, each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if NOT Send(each_obj,@OwnerChangedOwner,#what=what,#where=$)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   ReqSomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+
+         if NOT Send(each_obj,@ReqSomethingMoved,#what=what,#new_row=new_row,
+                     #new_col=new_col)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $,fine_row = FINENESS_HALF,
+                  fine_col = FINENESS_HALF,cause = CAUSE_UNKNOWN,speed = 0,
+                  non_monsters_only = FALSE)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if what = each_obj or not non_monsters_only or not IsClass(each_obj,&Monster)
+         {
+            Send(each_obj,@SomethingMoved,#what=what,#new_row=new_row,#new_col=new_col,
+                 #fine_row=fine_row,#fine_col=fine_col,#cause=cause,#speed=speed);
+         }
+      }
+      
+      return;
+   }
+
+   ReqSomethingDeleted(what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if NOT Send(each_obj,@ReqSomethingDeleted,#what=what)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,parm4= $,
+               parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         {
+            Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
+                 #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
+                 #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+         }
+      }
+      
+      return;
+   }
+
+   SayRangeCheck(talker=$,hearer=$)
+   {
+      % shouldn't really happen
+      if talker = $ OR hearer = $
+      {
+         return FALSE;
+      }    
+
+      % if we have user->monster or monster->user and the monster is
+      % not range-unlimited, and they are too far apart, return FALSE.
+      % For any other case, there is no need to clip, so return TRUE.
+
+      if ( (isClass(talker,&User)
+            AND isClass(hearer,&Monster)
+            AND NOT Send(hearer,@IsFullTalk))
+          OR (isClass(hearer,&User)
+              AND isClass(talker,&Monster)
+              AND (NOT Send(talker,@IsFullTalk))) )
+         AND Send(talker,@SquaredDistanceTo,#what=hearer) > SAY_RADIUS
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
+   {
+      local i,each_obj;
+
+      if use_weapon = $
+      {
+         use_weapon = stroke_obj;
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if not Send(each_obj,@ReqSomethingAttack,#what=what,#victim=victim,#use_weapon=use_weapon)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   SomethingAttacked(what = $,victim = $,use_weapon = $,stroke_obj=$)
+   {
+      local i,each_obj;
+
+      if use_weapon = $
+      {
+         use_weapon = stroke_obj;
+      }
+      
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingAttacked,#what=what,#victim=victim,#use_weapon=use_weapon);
+      }
+      
+      return;
+   }
+
+   SomethingKilled(what = $,victim = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingKilled,#what=what,#victim=victim);
+      }
+      
+      return;
+   }
+
+   ReqSomethingUse(what = $,use_item = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if NOT Send(each_obj,@ReqSomethingUse,#what=what,#use_item=use_item)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   SomethingUsed(what = $,use_item = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingUsed,#what=what,#use_item=use_item);
+      }
+      
+      return;
+   }
+
+   ReqSomethingApply(what = $,use_item = $,apply_on = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if NOT Send(each_obj,@ReqSomethingApply,#what=what,#use_item=use_item,#apply_on=apply_on)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   SomethingApplied(what = $,use_item = $,apply_on = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingApplied,#what=what,#use_item=use_item,#apply_on=apply_on);
+      }
+
+      return;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if NOT Send(each_obj,@ReqSpellCast,#who=who, #oSpell=oSpell, #lItems=lItems)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+
+   SpellCast(who = $, oSpell = $, lItems = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SpellCast,#who=who,#oSpell=oSpell,#lItems=lItems);
+      }
+      
+      return;
+   }
+
+   SomethingChanged(what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingChanged,#what=what);
+      }
+      
+      return;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(each_obj,@SomethingTryGo,#what=what,#row=row,#col=col)
+         {
+            return TRUE;
+         }
+      }
+
+      % Ignore passive items for now
+
+      return FALSE;
+
+   }
+
+   SomethingShot(who = $, target = $, projectile = $, flags = 0, lighting = 0)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingShot,#who=who,#target=target, 
+              #projectile=projectile,#flags=flags,#lighting=lighting);
+      }
+      
+      return;
+   }
+
+   SomethingDidAction(what = $, action = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingDidAction,#what=what,#action=action);
+      }
+      
+      return;
+   }
+
+   SomeoneTryUserCommand(who = $,command = $,data = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(each_obj,@SomeoneTryUserCommand,#who=who,#command=command,#data=data)
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   FirstUserEntered(what = $,new_row = $,new_col = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@FirstUserEntered,#what=what,#new_row=new_row,#new_col=new_col);
+      }
+      
+      return;
+   }
+
+   LastUserLeft(what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {     
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@LastUserLeft,#what=what);
+      }
+      
+      return;
+   }
+
+   GetHolderActive()
+   {
+      return plActive;
+   }
+
+   GetHolderPassive()
+   {
+      return plPassive;
+   }
+
+   HolderExtractObject(data = $)
+   {
+      return data;
+   }
+
+   HolderAddNode(node = $)
+   {
+      local i,oThing,each_obj;
+
+      oThing = Send(self,@HolderExtractObject,#data=node);
+
+      if Send(oThing,@GetObjectType) = ACTIVE
+      {
+         plActive = Cons(node,plActive);
+         Send(oThing,@NewOwner,#what=self);
+         for i in Rest(plActive)
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            Send(each_obj,@SomethingEntered,#where=self,#what=oThing);
+         }
+         
+         return;
+      }
+
+      if Send(oThing,@GetObjectType) = PASSIVE
+      {
+         plPassive = Cons(node,plPassive);
+         Send(oThing,@NewOwner,#what=self);
+         for i in plActive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            Send(each_obj,@SomethingEntered,#where=self,#what=oThing);
+         }
+         
+         return;
+      }
+      
+      Debug("Object is neither active nor passive:",oThing);
+      return;
+   }
+
+   CountItems()
+   "Returns the number of items in plPassive and plActive combined"
+   {
+      local i, j, each_obj;
+
+      j = 0;
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Item)
+         {
+            j = j + 1;
+         }
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Item)
+         {
+            j = j + 1;
+         }
+      }
+      
+      return j;
+   }
+
+   GetRandomItem()
+   {
+      local iN_items, oItem, iGet, i, j, each_obj;
+
+      iN_items = Send(self,@CountItems);
+      if iN_items = 0
+      {
+         return $ ;
+      }
+      
+      iGet = Random(1,iN_items);
+      
+      j = 0;
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Item)
+         {  
+            j = j + 1;  
+            if j = iGet
+            {
+               return each_obj;
+            }
+         }
+      }
+      
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Item)
+         {  
+            j = j + 1;  
+            if j = iGet
+            {
+               return each_obj;
+            }
+         }
+      }
+      
+      % Should never be reached
+      debug("Inconsistancy in plActive or plPassive");
+      
+      return;    
+   }
+   
+   ReqTaker()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

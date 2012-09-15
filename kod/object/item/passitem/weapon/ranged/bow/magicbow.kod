@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MagicBow is Bow
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MagicBow_name_rsc = "magic bow"
+   MagicBow_desc_rsc = \
+      "Crafted by the gods, this bow hums with magical power."
+
+classvars:
+
+   vrName = MagicBow_name_rsc
+   vrDesc = MagicBow_desc_rsc
+
+   viValue_average = 3000
+   viBulk = 70
+   viWeight = 70
+
+properties:
+
+   viRange = 50
+
+   % What's the basic color of the wood?
+   viBaseXLAT = XLAT_TO_SKIN4
+
+messages:
+
+   SetColor(iColor=XLAT_TO_SKIN4)
+   {
+      viBaseXLAT = iColor;
+      send(self,@UpdateColor);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

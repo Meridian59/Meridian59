@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShortSkirt is Pants
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ShortSkirt_icon_rsc = Skirt.bgf
+
+   ShortSkirt_male_player_rsc = bfg.bgf
+   ShortSkirt_female_player_rsc = bfh.bgf
+   ShortSkirt_name_rsc = "short skirt"
+   ShortSkirt_desc_rsc = \
+      "This short skirt will show off your lovely legs!  Don't expect much protection, though."
+
+classvars:
+
+   vrIcon = ShortSkirt_icon_rsc   
+   vrName = ShortSkirt_name_rsc
+   vrDesc = ShortSkirt_desc_rsc
+
+   vrLegs_male = ShortSkirt_male_player_rsc
+   vrLegs_female = ShortSkirt_female_player_rsc
+
+   vrPoss_article = item_this
+   vrCondition_exc = item_condition_exc 
+   vrCondition_exc_mended = item_condition_exc_mended
+   vrCondition_good = item_condition_good 
+   vrCondition_med = item_condition_med 
+   vrCondition_poor = item_condition_poor 
+   vrCondition_broken = item_condition_broken 
+   viBroken_group = 3
+
+   vrItem_Broken = item_broken_battle_clothing
+
+properties:
+
+   piItem_flags = PT_GRAY_TO_DBLUE
+   
+messages:
+
+   HasSkinTones()
+   {
+      return TRUE;
+   }
+
+   IsPlural()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,147 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pants is DefenseModifier
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   pants_name_rsc = "pants"   
+   pants_desc_rsc = \
+   "These pants will cover your legs but won't help much in the way of protection."
+
+   pants_condition_exc = " are in immaculate condition."
+   pants_condition_exc_mended = " are in excellent condition, but have been patched before.."
+   pants_condition_good = " are scuffed and slightly worn."
+   pants_condition_med = " have a few unsightly rips."
+   pants_condition_poor = " are in tatters, and barely holding together."
+   pants_condition_broken = " are covered in filth and ripped beyond use."
+
+classvars:
+
+   vbShow_condition = TRUE
+
+   viUse_type = ITEM_USE_LEGS
+   viUse_amount = 1
+   vrPoss_article = object_article_cap_these_rsc
+
+   vrDesc = pants_desc_rsc
+   vrName = pants_name_rsc
+
+   viHits_init_min = 450
+   viHits_init_max = 650
+
+   viValue_average = 50
+   viWeight = 10
+   viBulk = 10
+
+   viGround_group = 1
+   viInventory_group = 2
+
+   vrShow_condition = TRUE
+   vrCondition_exc = pants_condition_exc 
+   vrCondition_exc_mended = pants_condition_exc_mended 
+   vrCondition_good = pants_condition_good 
+   vrCondition_med = pants_condition_med 
+   vrCondition_poor = pants_condition_poor 
+   vrCondition_broken = pants_condition_broken 
+
+   vrItem_broken = defmod_broken_plural_clothes
+
+   viDefense_base = 5
+
+properties:
+
+messages:
+
+   Constructor(translation = $,model = $, color = $)
+   {      
+      if color <> $
+      {
+         translation = send(SYS,@EncodeTwoColorXLAT,
+                            #color1=color,#color2=XLAT_TO_SKIN1);
+      }
+      
+      if model <> $
+      {
+         translation = send(model,@GetPaletteTranslation);    
+      }
+      
+      if translation = $
+      {
+         translation = send(SYS,@EncodeTwoColorXLAT,
+                            #color1=XLAT_TO_BLUE,#color2=XLAT_TO_SKIN1);
+      }
+
+      Send(self,@SetPaletteTranslation,#translation=translation);
+      
+      propagate;
+   }
+
+   Randomize()
+   {
+      local translation;
+
+      translation = send(SYS,@EncodeTwoColorXLAT,
+                         #color1=random(XLAT_TO_RED, XLAT_TO_SKY),#color2=XLAT_TO_SKIN1);
+      Send(self,@SetPaletteTranslation,#translation=translation);
+
+      if poOwner <> $
+      {
+         if isClass(poOwner,&Room)
+         {
+            send(send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
+         }
+
+         if isClass(poOwner,&User)
+         {
+            send(poOwner,@SomethingChanged,#what=self);
+            send(self,@DoPlayerArt);
+         }
+      }
+
+      return;
+   }
+
+   ReqUseSomething(what = $)
+   {
+      if send(what,@getitemusetype) & ITEM_USE_LEGS
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+      
+   ReqRepair()
+   {
+      return TRUE;
+   }
+
+   IsPlural()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

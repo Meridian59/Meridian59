@@ -1,0 +1,106 @@
+# centipede
+# groups
+# 1 standing
+# 2-6 walking
+# 7-12 attacking
+#^Applied to Hotspot: 0
+#*Groups: 12
+#* standing
+#* walk
+#* walk
+#* walk
+#* walk
+#* walk
+#* attack
+#* attack
+#* attack
+#* attack
+#* attack
+#* attack
+-s 3
+72
+cen000sa.bmp   [0, -6] 
+cen315sa.bmp   [0, -4] 
+cen270sa.bmp   [0, -9] 
+cen180sa.bmp   [0, 0] 
+cen090sa.bmp   [0, -16] 
+cen045sa.bmp   [0, -5] 
+cen000wa.bmp   [0, 0] 
+cen315wa.bmp   [0, 1] 
+cen270wa.bmp   [0, -7] 
+cen180wa.bmp   [0, 0] 
+cen090wa.bmp   [0, -11] 
+cen045wa.bmp   [0, -6] 
+cen000wb.bmp   [0, 0] 
+cen315wb.bmp   [0, 0] 
+cen270wb.bmp   [0, -13] 
+cen180wb.bmp   [0, 0] 
+cen090wb.bmp   [0, -10] 
+cen045wb.bmp   [0, -7] 
+cen000wc.bmp   [0, -4] 
+cen315wc.bmp   [0, -6] 
+cen270wc.bmp   [0, -12] 
+cen180wc.bmp   [0, -3] 
+cen090wc.bmp   [0, -9] 
+cen045wc.bmp   [0, 0] 
+cen000wd.bmp   [0, 0] 
+cen315wd.bmp   [0, -6] 
+cen270wd.bmp   [0, -11] 
+cen180wd.bmp   [0, 1] 
+cen090wd.bmp   [0, -8] 
+cen045wd.bmp   [0, 1] 
+cen000we.bmp   [0, -8] 
+cen315we.bmp   [0, -5] 
+cen270we.bmp   [0, -11] 
+cen180we.bmp   [0, -4] 
+cen090we.bmp   [0, -13] 
+cen045we.bmp   [0, -8] 
+cen000ka.bmp   [0, -10] 
+cen315ka.bmp   [0, -14] 
+cen270ka.bmp   [0, -12] 
+cen180ka.bmp   [0, -1] 
+cen090ka.bmp   [0, -22] 
+cen045ka.bmp   [0, -20] 
+cen000kb.bmp   [0, -34] 
+cen315kb.bmp   [0, -24] 
+cen270kb.bmp   [0, -10] 
+cen180kb.bmp   [0, -1] 
+cen090kb.bmp   [0, -23] 
+cen045kb.bmp   [0, -34] 
+cen000kc.bmp   [0, -35] 
+cen315kc.bmp   [0, -25] 
+cen270kc.bmp   [0, -10] 
+cen180kc.bmp   [0, 0] 
+cen090kc.bmp   [0, -25] 
+cen045kc.bmp   [0, -36] 
+cen000kd.bmp   [0, -37] 
+cen315kd.bmp   [0, -26] 
+cen270kd.bmp   [0, -10] 
+cen180kd.bmp   [0, 0] 
+cen090kd.bmp   [0, -26] 
+cen045kd.bmp   [0, -37] 
+cen000ke.bmp   [0, -38] 
+cen315ke.bmp   [0, -26] 
+cen270ke.bmp   [0, -13] 
+cen180ke.bmp   [0, 0] 
+cen090ke.bmp   [0, -24] 
+cen045ke.bmp   [0, -36] 
+cen000kf.bmp   [0, -7] 
+cen315kf.bmp   [0, -14] 
+cen270kf.bmp   [0, -11] 
+cen180kf.bmp   [0, 0] 
+cen090kf.bmp   [0, -23] 
+cen045kf.bmp   [0, -21] 
+12
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 

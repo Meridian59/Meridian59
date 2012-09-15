@@ -1,0 +1,345 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall8 is GuildHall
+
+constants:
+
+   WATERFILL1 = 1
+   DOOR1_1 = 2
+   DOOR1_2 = 3
+   DOOR1_3 = 4
+   DOOR2_1 = 5
+   DOOR2_2 = 6
+   DOOR2_3 = 7
+
+   include blakston.khd
+
+   CLOSED = 1
+   HALF_OPEN = 2
+   OPEN = 3
+
+   ENTRANCE_DOOR_TIME = 2500
+   SECRET_DOOR_TIME = 2500
+
+   DOOR_TIME = 6000
+
+resources:
+
+   room_name_guildh8 = "The Sewer Hideout"
+   room_guildh8 = guildh8.roo
+
+   guildh8_entrancedoor_open_sound = woodup1.wav
+   guildh8_entrancedoor_close_sound = wooddn1.wav
+
+classvars:
+
+   vrName = room_name_guildh8
+
+   viTeleport_row = 24
+   viTeleport_col = 9
+
+   viNews_row = 22
+   viNews_col = 17
+   viNews_finerow = 32
+   viNews_finecol = 32
+
+   viLever_row = 4
+   viLever_col = 21
+   viLever_fine_row = 32
+   viLever_fine_col = 0
+
+   viQuality = 3
+
+   viFoyer_North = 22
+   viFoyer_west = 8
+   viFoyer_south = 31
+   viFoyer_east = 10
+
+   viInner_teleport_row = 3
+   viInner_teleport_col = 14
+
+   viTerrain_type = TERRAIN_SEWERS | TERRAIN_GUILDHALL
+   viSeconds_til_close = 12
+
+   vrEntrancedoor_open_sound = guildh8_entrancedoor_open_sound
+   vrEntrancedoor_close_sound = guildh8_entrancedoor_close_sound
+   vrSecretdoor_open_sound = guildh8_entrancedoor_open_sound
+   vrSecretdoor_close_sound = guildh8_entrancedoor_close_sound
+
+properties:
+
+   prRoom = room_guildh8
+   piRoom_num = RID_GUILDH8
+
+   piBaseLight = LIGHT_NICE
+
+   piEntrance_door_state = CLOSED
+   ptEntrance_door
+ 
+   piSecret_door_state = CLOSED
+   ptSecret_door
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [ [22,8],[22,9] ];
+      Send(self,@ResetDoors);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptEntrance_door <> $
+      {
+         DeleteTimer(ptEntrance_door);
+         ptEntrance_door = $;
+      }
+
+      if ptSecret_door <> $
+      {
+         DeleteTimer(ptSecret_door);
+         ptSecret_door = $;
+      }
+
+      propagate;
+   }
+
+   ResetDoors()
+   {
+      Send(self,@AnimateWall,#wall=DOOR1_1,#animation=ANIMATE_NONE,#first_group=1,
+           #passable=FALSE);
+      Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=2,
+           #passable=TRUE);
+      Send(self,@AnimateWall,#wall=DOOR1_3,#animation=ANIMATE_NONE,#first_group=2,
+           #passable=TRUE);
+      piEntrance_door_state = CLOSED;
+
+      Send(self,@AnimateWall,#wall=DOOR2_1,#animation=ANIMATE_NONE,#first_group=1,
+           #passable=FALSE);
+      Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=2,
+           #passable=TRUE);
+      Send(self,@AnimateWall,#wall=DOOR2_3,#animation=ANIMATE_NONE,#first_group=2,
+           #passable=TRUE);
+      piSecret_door_state = CLOSED;
+
+      return;
+   }
+
+   OpenEntranceDoor()
+   {
+      if ptEntrance_door = $
+      {
+         send(self,@TimeStampDoor);
+         piEntrance_door_state = CLOSED;
+         ptEntrance_door = CreateTimer(self,@EntranceDoorOpenTimer,ENTRANCE_DOOR_TIME/2);
+         send(self,@OpenEntranceDoorSound);
+      }
+
+      return;
+   }
+
+   EntranceDoorOpenTimer()
+   {
+      ptEntrance_door = $;
+      if piEntrance_door_state = CLOSED
+      {
+         Send(self,@AnimateWall,#wall=DOOR1_1,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piEntrance_door_state = HALF_OPEN;
+         ptEntrance_door = CreateTimer(self,@EntranceDoorOpenTimer,ENTRANCE_DOOR_TIME);
+
+         return;
+      }
+
+      if piEntrance_door_state = HALF_OPEN
+      {
+         Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR1_3,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piEntrance_door_state = OPEN;
+         ptEntrance_door = CreateTimer(self,@EntranceDoorCloseTimer,DOOR_TIME);
+
+         return;
+      }
+
+      return;
+   }
+
+   EntranceDoorCloseTimer()
+   {
+      ptEntrance_door = $;
+      if piEntrance_door_state = OPEN
+      {
+         send(self,@CloseEntranceDoorSound);
+         Send(self,@AnimateWall,#wall=DOOR1_3,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piEntrance_door_state = HALF_OPEN;
+         ptEntrance_door = CreateTimer(self,@EntranceDoorCloseTimer,ENTRANCE_DOOR_TIME);
+
+         return;
+      }
+
+      if piEntrance_door_state = HALF_OPEN
+      {
+         Send(self,@AnimateWall,#wall=DOOR1_2,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR1_1,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piEntrance_door_state = CLOSED;
+
+         return;
+      }
+
+      return;
+   }
+
+   OpenSecretDoor()
+   {
+      if ptSecret_door = $
+      {
+         piSecret_door_state = CLOSED;
+         ptSecret_door = CreateTimer(self,@SecretDoorOpenTimer,SECRET_DOOR_TIME/2);
+         send(self,@OpenSecretDoorSound);
+      }
+
+      return;
+   }
+
+   SecretDoorOpenTimer()
+   {
+      ptSecret_door = $;
+      if piSecret_door_state = CLOSED
+      {
+         Send(self,@AnimateWall,#wall=DOOR2_1,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piSecret_door_state = HALF_OPEN;
+         ptSecret_door = CreateTimer(self,@SecretDoorOpenTimer,SECRET_DOOR_TIME);
+
+         return;
+      }
+
+      if piSecret_door_state = HALF_OPEN
+      {
+         Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR2_3,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piSecret_door_state = OPEN;
+         ptSecret_door = CreateTimer(self,@SecretDoorCloseTimer,DOOR_TIME);
+
+         return;
+      }
+
+      return;
+   }
+
+   SecretDoorCloseTimer()
+   {
+      ptSecret_door = $;
+      if piSecret_door_state = OPEN
+      {
+         send(self,@CloseSecretDoorSound);
+         Send(self,@AnimateWall,#wall=DOOR2_3,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piSecret_door_state = HALF_OPEN;
+         ptSecret_door = CreateTimer(self,@SecretDoorCloseTimer,SECRET_DOOR_TIME);
+
+         return;
+      }
+
+      if piSecret_door_state = HALF_OPEN
+      {
+         Send(self,@AnimateWall,#wall=DOOR2_2,#animation=ANIMATE_NONE,#first_group=2,
+              #passable=TRUE);
+         Send(self,@AnimateWall,#wall=DOOR2_1,#animation=ANIMATE_NONE,#first_group=1,
+              #passable=FALSE);
+         piSecret_door_state = Closed;
+
+         return;
+      }
+
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 27, 8, RID_BAR_SEWER, 6, 43, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 9, RID_BAR_SEWER, 6, 43, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$,row=$,col=$)
+   {
+      if row = 21 AND (col = 8 OR col = 9)
+      {
+         if send(self,@ReqLegalEntry,#who=what)
+         {
+           send(self,@OpenEntranceDoor);
+
+           return TRUE;
+         }
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Table),#new_row=8,#new_col=21,
+           #fine_row=32,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Table),#new_row=12,#new_col=10);
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=8,#new_col=18);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=17,#new_col=18);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=21,#new_col=11);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=13,#new_col=18,#fine_row=0,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&Chest),
+           #new_row=13,#new_col=27,#fine_row=48,#fine_col=16,#new_angle=ANGLE_SOUTH);
+
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+      lHotPlates = [ [21,8,1], [21,9,1], [21,7,2], [21,10,2],
+                     [20,8,2], [20,9,2], [20,7,2], [20,10,2]
+                   ];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

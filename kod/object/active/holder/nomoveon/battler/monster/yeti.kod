@@ -1,0 +1,238 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Yeti is Monster
+
+constants:
+
+   include blakston.khd
+   SPELL_CHANCE = 2
+   ATTACK_SPELL_CHANCE = 10
+
+resources:
+
+   yeti_name_rsc = "yeti"
+   yeti_koc_name_rsc = "tezatzmoch"
+   yeti_icon_rsc = yeti.bgf
+   yeti_desc_rsc = \
+      "This magnificent white beast towers above all in his "
+      "presence.  Yetis are extremely dangerous, particularly "
+      "when attacked in the ice caves where they dwell.  Only "
+      "someone well prepared would dare attack a yeti alone."
+
+   yeti_dead_icon_rsc = yetiX.bgf
+   yeti_dead_name_rsc = "dead yeti"
+
+   yeti_sound_hit = yti_atkh.wav
+   yeti_sound_miss = yti_atkm.wav
+   yeti_sound_death = yti_dth.wav
+   yeti_sound_aware = yti_awr.wav
+
+   yeti_cast_spell = "The yeti is offended by the polluting human magic."
+   yeti_cast_sound = bsp_dth.wav
+
+classvars:
+   vrKocName = yeti_koc_name_rsc
+   vrName = yeti_name_rsc
+   vrIcon = yeti_icon_rsc
+   vrDesc = yeti_desc_rsc
+   vrDead_icon = yeti_dead_icon_rsc
+   vrDead_name = yeti_dead_name_rsc
+
+   viTreasure_type = TID_VERY_TOUGH
+   viSpeed = SPEED_SLOW
+   viAttack_types = ATCK_WEAP_CLAW
+   viAttributes = 0
+   viLevel = 170
+   viDifficulty = 9
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_SWITCHALOT
+
+   vrSound_hit = yeti_sound_hit
+   vrSound_miss = yeti_sound_miss
+   vrSound_aware = yeti_sound_aware
+   vrSound_death = yeti_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 90, -ATCK_SPELL_COLD],
+                        [ 90, -ATCK_SPELL_SHOCK],
+                        [ 90, ATCK_WEAP_THRUST],
+                        [ 90, ATCK_WEAP_SLASH],
+                        [ 90, ATCK_WEAP_PIERCE],
+                        [-45, -ATCK_SPELL_FIRE ]
+                      ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSlash);
+      
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      AddPacket(1,ANIMATE_CYCLE, 4,100, 2,2, 2,2);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,100, 2,4, 2,6, 2,1);
+         
+         return;
+      }
+
+      % if no body animation
+      propagate;
+   }
+
+   SomethingMoved(what=$)
+   {
+      if what <> self OR poOwner = $
+      {
+         propagate;
+      }
+
+      % Shake the ground when I take a step.
+      send(poOwner,@Rumble,#duration=250,#disruption=25);
+
+      propagate;
+   }
+
+   MonsterCastSpell()
+   {
+      local oSpell;
+      if Random(1,SPELL_CHANCE) = 1
+         AND Send(poOwner,@IsEnchanted,#what=$)
+      {
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=yeti_cast_sound);
+         Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,
+              #string=yeti_cast_spell,#what=self);
+         Send(self,@DoSlash);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_DISCORDANCE);
+         Send(oSpell,@CastSpell,#who=self,#lTargets=$);
+         
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   MonsterCastAttackSpell()
+   {
+      local oSpell;
+      
+      if Random(1,ATTACK_SPELL_CHANCE) = 1
+         AND Send(poOwner,@IsEnchanted,#what=$)
+      {
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=yeti_cast_sound);
+         Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,
+              #string=yeti_cast_spell,#what=self);
+         Send(self,@DoSlash);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_DISCORDANCE);
+         Send(oSpell,@CastSpell,#who=self,#lTargets=$);
+         
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   AttackTimer(timer = $)
+   "We were bashing on something before, and now its time to hit it again."
+   {
+      local oSpell;
+
+      send(self,@ClearBehavior,#timer=timer);
+
+      %%% sanity checks
+
+      if poOwner = $
+      {
+         debug("Unreachable. Null Owner"); 
+         send(self,@EnterStateLimbo);
+
+         return;
+      }
+
+      if poTarget=$
+      {
+         debug("Unreachable. Null poTarget","monster",self); 
+         send(self,@EnterStateWait);
+
+         return;
+      }
+
+      if not Send(self,@CanReach,#what=poTarget) 
+      {
+         % debug("BAD: Victim no longer in range at AttackTimer:",vrname,self);
+
+         % Not the optimal response, but then we should never be here.
+         send(self,@EnterStateMove);
+         
+         return;
+      }
+
+      oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE);
+      if send(poOwner,@IsEnchanted,#what=oSpell)
+      {
+         send(self,@MonsterCastAttackSpell);
+      }
+      else
+      {
+         % carry out attack
+         send(self,@TryAttack,#what=poTarget);
+      }
+
+      send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      
+      return;
+   }
+
+   CanMorphTo()
+   {
+      % Art is too big.
+      return FALSE;
+   }      
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

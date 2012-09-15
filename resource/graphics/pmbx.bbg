@@ -1,0 +1,33 @@
+# Pink mouth  2
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+#^Applied to Hotspot: 12
+#*Groups: 4
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 14
+14
+Pm000bax.bmp   [-14, -15] 
+Pm315bax.bmp   [-6, -13] 
+Pm270bax.bmp   [-5, -14] 
+Pm090bax.bmp   [-17, -15] 
+Pm045bax.bmp   [-21, -14] 
+Pm000bbx.bmp   [-14, -15] 
+Pm315bbx.bmp   [-6, -13] 
+Pm045bbx.bmp   [-21, -14] 
+Pm000bcx.bmp   [-14, -15] 
+Pm315bcx.bmp   [-6, -13] 
+Pm045bcx.bmp   [-21, -14] 
+Pm000bdx.bmp   [-14, -15] 
+Pm315bdx.bmp   [-6, -13] 
+Pm045bdx.bmp   [-21, -14] 
+4
+ 8   1 2 3 0 0 0 4 5 
+ 8   6 7 3 0 0 0 4 8 
+ 8   9 10 3 0 0 0 4 11 
+ 8   12 13 3 0 0 0 4 14 

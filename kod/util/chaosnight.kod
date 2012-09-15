@@ -1,0 +1,201 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ChaosNight is UtilityFunctions
+
+% Handles a chaos night, or "frenzy".  This is a mode where combat is encouraged
+% and people can kill each other without permanent repurcussions.  Generally the
+% game is saved first, and restored afterward.  This can't be done from Blakod so
+% a frenzy requires manual intervention.
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   chaos_night_rsc = \
+      "### ~B~rTHE REIGN OF BLOOD FRENZY~n:  The fabric of reality shakes as "
+      "an evil presence attempts to penetrate the Meridian.  The servants of "
+      "Qor sing out in cacophonic glee as anarchy sweeps across the land. "
+      "With no Guardian Angels present, anything goes as long as the sky "
+      "boils red.\n"
+      "[Your character has been saved and will be restored after the Frenzy.]"
+   chaos_night_admin_rsc = \
+       "### ~B~bADMINISTRATOR~n: To end the 'Reign of Blood Frenzy,' "
+       "you should make a copy of the LASTSAVE.TXT file (on the server "
+       "machine) now. When the Frenzy is to end, shut down the server and "
+       "restore the LASTSAVE.TXT."
+   end_chaos_night_rsc = \
+       "### ~B~gTHE REIGN OF BLOOD FRENZY~n: The game was not restored "
+       "properly!  The 'Reign of Blood Frenzy' ~Imust~n be ended by restoring "
+       "LASTSAVE.TXT at the server.  Otherwise, character status may be "
+       "corrupted due to the Frenzy."
+
+   chaos_gift = \
+       "### Qor grants you %s%s to smite your enemies!"
+
+   chaos_wav = chaosup.wav
+
+
+classvars:
+
+properties:
+
+   plChaosNightLoot = $
+   ptChaosNightLootTimer = $
+   piChaosNightLootTimerIntervalMs = 3 * 60 * 1000
+
+messages:
+
+   Constructor()
+   {
+      % Chaos night MUST be started after a system save, and afterwards,
+      %  the attending guardian MUST revert back to that old save game!
+      % You have been warned!
+      local i;
+
+      for i in Send(SYS, @GetRooms)
+      {
+         % Make all rooms except for inns kill zones (anyone can die).
+         % Also, change the background graphic.
+         if NOT Send(i,@CheckRoomFlag,#flag=ROOM_HOMETOWN)
+         {
+            Send(i,@StartChaosNight);
+         }
+      }
+
+      % Set up a timer to give everyone some reagents, etc.
+      Send(self, @ChaosNightPeriodicLoot);
+
+      % Tell the users online what's going on.
+      for i in Send(SYS, @GetUsersLoggedOn)
+      {
+         Send(i,@MsgSendUser,#message_rsc=chaos_night_rsc);
+         Send(i,@WaveSendUser,#wave_rsc=chaos_wav);
+
+         if IsClass(i,&Admin)
+         {
+            Send(i,@MsgSendUser,#message_rsc=chaos_night_admin_rsc);
+         }
+      }
+      return;
+   }
+
+   Delete()
+   {
+      local i;
+
+      if ptChaosNightLootTimer <> $ 
+      {
+         DeleteTimer(ptChaosNightLootTimer);
+         ptChaosNightLootTimer = $;
+      }
+
+      % Tell the rooms to change their flags back to normal, and to
+      %  redraw the correct background.
+      for i in Send(SYS, @GetRooms)
+      {
+         if not Send(i,@CheckRoomFlag,#flag=ROOM_HOMETOWN)
+         {
+            Send(i,@EndChaosNight);
+         }
+      }
+
+      % Only Send this message to DMs and up, since this message should
+      %  never be seen.
+      for i in Send(SYS, @GetUsersLoggedOn)
+      {
+         if IsClass(i,&DM)
+         {
+            Send(i,@MsgSendUser,#message_rsc=end_chaos_night_rsc);
+         }
+      }
+
+      return;
+   }
+
+   UserLogon(who = $)
+   {
+      Send(who,@MsgSendUser,#message_rsc=chaos_night_rsc);
+      Send(who,@WaveSendUser,#wave_rsc=chaos_wav);
+      return;
+   }
+
+   ChaosNightLoot(iNumCasts=100)
+   "Distributes a bunch of loot for Frenzies."
+   {
+      local oPlayer, lGiveList, oItem, oGift;
+
+      if Send(Send(SYS, @GetLore), @BetaPotionsEnabled)
+      {
+         return Send(SYS, @GetFailureRsc);
+      }
+
+      % Reset the loot list if it's niled out.
+      if plChaosNightLoot = $
+      {
+         plChaosNightLoot = [ Create(&Inkycap,#number=50),
+                              Create(&Mint,#number=100),
+                              Create(&Scimitar),
+                              Create(&Longsword),
+                              Create(&Longbow),
+                              Create(&BattleBow),
+                              Create(&BerserkerRing),
+                              Create(&BerserkerRing),
+                              Create(&Arrow,#number=150),
+                              Create(&NeruditeArrow,#number=150),
+                              Create(&JewelOfFroz),
+                              Create(&JewelOfFroz),
+                              Create(&Gift)
+                            ];
+      }
+
+      lGivelist = Send(SYS, @GetUsersLoggedOn);
+
+      for oPlayer in lGiveList
+      {
+         for oItem in plChaosNightLoot
+         {
+            if IsClass(oItem,&NumberItem)
+            {
+               oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
+            }
+            else
+            {
+               oGift = Create(GetClass(oItem));
+            }
+
+            Send(oPlayer,@NewHold,#what=oGift);
+
+            if Send(oPlayer,@IsLoggedOn)
+            {
+               Send(oPlayer,@MsgSendUser,#Message_rsc=chaos_gift,
+                    #parm1=Send(oGift,@GetIndef),#parm2=Send(oGift,@GetName));
+            }
+         }
+
+         Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
+      }
+
+      return Send(SYS, @GetSuccessRsc);
+   }
+
+   ChaosNightPeriodicLoot()
+   "Timer function that periodically gives people loot during a chaos night"
+   {
+      Send(self, @ChaosNightLoot);
+      ptChaosNightLootTimer = CreateTimer(self, @ChaosNightPeriodicLoot, 
+         piChaosNightLootTimerIntervalMs);
+      return;
+   }
+
+end

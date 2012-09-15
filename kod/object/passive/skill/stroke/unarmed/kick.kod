@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Kick is Unarmed
+
+constants:
+
+   include blakston.khd
+
+resources:
+   kick_name_rsc = "kick"
+   kick_icon_rsc = light.bgf
+   kick_desc_rsc = "This is a damaging but costly combat move."
+
+   kick_player_was_hit = "%s%s kicks you in the unmentionables."
+   kick_player_hit_something = "%sYou kick %s%s hard in the groin."
+
+   kick_player_killed_something = "%s%s is knocked to the ground by your kick - and doesn't get up."
+   kick_player_was_killed = "%s%s's kick shuffles you off this mortal coil."
+
+classvars:
+
+   vrName = kick_name_rsc
+   vrIcon = kick_icon_rsc
+   vrDesc = kick_desc_rsc
+
+   vrPlayer_was_hit = kick_player_was_hit
+   vrPlayer_hit_something = kick_player_hit_something
+   vrPlayer_was_killed = kick_player_was_killed
+   vrPlayer_killed_something = kick_player_killed_something
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSkill_num = SKID_KICK
+   viSchool = SKS_BRAWLING
+   viSkill_level = 50
+
+   viskillExertion = 2000
+   viHit_Factor = 30
+
+   viDamage_Min = 3         % Damage_min here replaces a weapon    
+   viDamage_Max = 9         % Damage_max replaces the weapon's stats.
+
+   VbAutomatic = FALSE  %  If this is set to TRUE, then the effects of this
+                        %  skill happen automatically, and are not accessible
+                        %  via menu.
+
+   viAttack_Type = ATCK_WEAP_UNARMED+ATCK_WEAP_KICK
+
+properties:
+
+   plPrerequisites = $
+
+   piChanceToIncrease = 100
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

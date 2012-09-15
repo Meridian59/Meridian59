@@ -1,0 +1,143 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsF2 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsF2 = F2.roo
+   room_name_OutdoorsF2 ="The sandy shores of the Great Ocean"
+   waterfall_soundF2 = wfall2.wav
+
+   OutdoorsF2_music = walk7.mid
+
+   F2_oceanwalk = "You're already up to your ankles in saltwater, and you decide that's quite enough."
+   ocean_soundF2 = "ocean.wav"
+   wavecrash1_soundF2 = "wave1.wav"
+   wavecrash2_soundF2 = "wave2.wav"
+   wavecrash3_soundF2 = "wave3.wav"
+   wavecrash4_soundF2 = "wave4.wav"
+   seagull_soundF2 = "gulls.wav"
+
+classvars:
+
+   vrName = room_name_OutdoorsF2
+
+   viTeleport_row = 14
+   viTeleport_col = 48
+
+   viTerrain_type = TERRAIN_BEACH | TERRAIN_FOREST | TERRAIN_WATERFALL
+
+   viFlag_row = 17
+   viFlag_col = 80
+
+properties:
+
+   prRoom = room_OutdoorsF2
+   prMusic = OutdoorsF2_music
+   piRoom_num = RID_F2
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 55000 % temporarily increased from 45000
+   piGen_percent = 80
+
+   piInit_count_min = 4
+   piInit_count_max = 6
+   piMonster_count_max = 6 % temporarily reduced from 10 (default)
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&FungusBeast, 50], [&Slime, 50] ];
+
+      plGenerators = [ [5, 6], [19, 7], [15, 27], [20, 31], [6, 37],
+		       [12, 46], [11, 68], [10, 81], [6, 91], [19, 89] ];
+      plLooping_sounds = [[ waterfall_soundF2, 1, 101 ],[ ocean_soundF2, 1, 59, 200, 100 ]];
+
+      propagate;
+   }
+
+   CreatePeriodicSounds()
+   {
+      plPeriodic_sounds = [ wavecrash1_soundF2, wavecrash2_soundF2, wavecrash3_soundF2,\
+			    wavecrash4_soundF2, seagull_soundF2, seagull_soundF2 ];
+      pbPeriodic_sound_random_location = True;
+
+      propagate;
+   }
+
+ CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_BAR_SEWER, 58, 2, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_E2, 21, 71, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_NORTH)
+      {
+	 if (IsClass(what,&Player))
+	 {
+	    send(what,@MsgSendUser,#message_rsc = F2_oceanwalk);
+	 }
+	 return;
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=21,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=17,#new_col=10);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=19,#new_col=14);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=17,#new_col=28);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=21,#new_col=33);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=21,#new_col=36);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=18,#new_col=47);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=22,#new_col=55);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=16,#new_col=57);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=21,#new_col=62);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=20,#new_col=72);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=19,#new_col=87);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=18,#new_col=92);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+	  #new_row=22,#new_col=93);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

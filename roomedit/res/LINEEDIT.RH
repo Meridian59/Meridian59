@@ -1,0 +1,145 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         lineedit.rh
+*/
+#ifndef __lineedit_rh
+#define __lineedit_rh
+
+#define IDD_LINEDEF_EDIT	30
+
+
+#define IDC_TEXTURE_LIST	101
+#define IDC_SIDEDEF1_GROUP	102
+#define IDC_SD1_TO_NORMAL	103
+#define IDC_SD1_TO_ABOVE	105
+#define IDC_SD2_YPOS	121
+#define IDC_SD2_XPOS	120
+#define IDC_SD2_CLEAR_NORMAL	125
+#define IDC_SD2_CLEAR_BELOW	126
+#define IDC_NOLOOKTHROUGHPOS	301
+#define IDC_NOLOOKTHROUGHNEG	302
+#define IDC_POSID	500
+#define IDC_NEGID	501
+#define IDC_POSSPEED	601
+#define IDC_NEGSPEED	602
+#define IDC_POS_ABOVE	603
+#define IDC_POS_BELOW	604
+#define IDC_POS_NORMAL	605
+#define IDC_NEG_BELOW	606
+#define IDC_NEG_NORMAL	607
+#define IDC_NEG_ABOVE	608
+#define IDC_POS_NOVTILE	609
+#define IDC_NEG_NOVTILE	610
+#define IDC_MAPSTART	140
+#define IDC_NOMAP	139
+#define IDC_FLIPPOS	137
+#define IDC_TRANSNEG	136
+#define IDC_TRANSPOS	135
+#define IDC_PASSNEG	134
+#define IDC_PASSPOS	133
+#define IDC_SD2_BELOW_FRAME	211
+#define IDC_SD2_NORMAL_FRAME	212
+#define IDC_SD2_ABOVE_FRAME	210
+#define IDC_SD1_BELOW_FRAME	201
+#define IDC_SD1_NORMAL_FRAME	202
+#define IDC_SD1_ABOVE_FRAME	200
+#define IDC_SD1_ABOVE	160
+#define IDC_SD1_BELOW	161
+#define IDC_SD1_NORMAL	162
+#define IDC_SD2_ABOVE	163
+#define IDC_SD2_BELOW	164
+#define IDC_SD2_NORMAL	165
+#define IDC_SD2_NEW	110
+#define IDC_SD1_NEW	111
+#define IDC_VERTEX_GROUP	112
+#define IDC_SIDEDEFS_GROUP	122
+#define IDC_SD2_SECTOR	149
+#define IDC_SD1_SECTOR	148
+#define IDC_SD2	146
+#define IDC_SD1	145
+#define IDC_VERTEX2	144
+#define IDC_VERTEX1	143
+#define IDC_SD1_CLEAR_BELOW	114
+#define IDC_SD1_CLEAR_ABOVE	115
+#define IDC_SD1_CLEAR_NORMAL	113
+#define IDC_SD2_CLEAR_ABOVE	127
+#define IDC_FLAGS_GROUP	128
+#define IDC_NOTSHOWN	140
+#define IDC_SHOWN	141
+#define IDC_FLIPNEG	138
+#define IDC_SD1_DATA_GROUP	109
+#define IDC_SD1_ABOVE_CHECK	110
+#define IDC_SD1_NORMAL_CHECK	111
+#define IDC_SD1_BELOW_CHECK	112
+#define IDC_SD1_XOFS_CHECK	113
+#define IDC_SD1_YOFS_CHECK	114
+#define IDC_SD1_SECTOR_CHECK	115
+#define IDC_SD2_YOFS_CHECK	121
+#define IDC_SD2_SECTOR_CHECK	122
+#define IDC_SCROLL1	116
+#define IDC_SCROLL2	123
+#define IDC_SD2_XOFS_CHECK	120
+#define IDC_SD2_BELOW_CHECK	119
+#define IDC_SD2_NORMAL_CHECK	118
+#define IDC_SD2_ABOVE_CHECK	117
+#define IDC_SECRET	138
+#define IDC_BLOCKSOUND	139
+#define IDC_BELOWUNP	137
+#define IDC_ABOVEUNP	136
+#define IDC_TWOSIDED	135
+#define IDC_MONCROSS	134
+#define IDC_IMPASSABLE	133
+#define IDC_SD2_TO_BELOW	118
+#define IDC_SD2_TO_NORMAL	117
+#define IDC_SD2_TO_ABOVE	119
+#define IDC_SD2_GROUP	116
+#define IDC_SD1_XPOS	106
+#define IDC_SD1_YPOS	109
+#define IDC_SD1_TO_BELOW	104
+
+#define IDC_SCROLLN1  700
+#define IDC_SCROLLNE1 701
+#define IDC_SCROLLE1  702
+#define IDC_SCROLLSE1 703
+#define IDC_SCROLLS1  704
+#define IDC_SCROLLSW1 705
+#define IDC_SCROLLW1  706
+#define IDC_SCROLLNW1 707
+#define IDC_SCROLLN2  708
+#define IDC_SCROLLNE2 709
+#define IDC_SCROLLE2  710
+#define IDC_SCROLLSE2 711
+#define IDC_SCROLLS2  712
+#define IDC_SCROLLSW2 713
+#define IDC_SCROLLW2  714
+#define IDC_SCROLLNW2 715
+#define IDC_SCROLLNONE1   716
+#define IDC_SCROLLSLOW1   717
+#define IDC_SCROLLMEDIUM1 718
+#define IDC_SCROLLFAST1   719
+#define IDC_SCROLLNONE2   720
+#define IDC_SCROLLSLOW2   721
+#define IDC_SCROLLMEDIUM2 722
+#define IDC_SCROLLFAST2   723
+
+#endif

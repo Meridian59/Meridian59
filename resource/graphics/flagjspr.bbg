@@ -1,0 +1,18 @@
+# Flag - rebels' colors
+# groups
+# 1 flag animating
+-s 2
+6
+flagc1.bmp
+flagc2.bmp
+flagc3.bmp
+flagc4.bmp
+flagc5.bmp
+flagc6.bmp
+6
+1 1 
+1 2 
+1 3 
+1 4 
+1 5 
+1 6

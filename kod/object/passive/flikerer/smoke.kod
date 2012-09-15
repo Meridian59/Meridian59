@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SmokeColumn is Flickerer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SmokeColumn_name = "smoke column"
+   SmokeColumn_desc = \
+      "This is a column of smoke, reaching like a finger for the sky. "
+      "The acrid hickory scent wafts through the air and fills your lungs."
+   SmokeColumn_icon = smoke.bgf
+
+classvars:
+
+   vrName = SmokeColumn_name
+   vrDesc = SmokeColumn_desc
+   vrIcon = SmokeColumn_icon
+
+   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_25
+
+   viStart_frame = 1
+   viEnd_frame = 5
+
+   % Lighting flags.  Default "on" flag
+   viLightFlags = LIGHT_FLAG_ON
+
+   % Light color.
+   viLightColor = LIGHT_FIRE
+
+properties:
+
+   % Intensity, from 0-255.
+   piLightIntensity = 10
+
+messages:
+
+   SetAnimationSpeed()
+   {
+      piAnim_speed = random(100,140);
+
+      return;   
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

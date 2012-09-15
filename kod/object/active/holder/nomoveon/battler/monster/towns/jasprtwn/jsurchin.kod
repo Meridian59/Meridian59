@@ -1,0 +1,109 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperUrchin is JasperTown
+
+constants:
+
+   include blakston.khd
+
+   ANIM_LEG_SPASM = 1
+
+resources:
+
+   jasper_urchin_name_rsc = "urchin"
+   jasper_urchin_icon_rsc = urchin.bgf
+   jasper_urchin_desc_rsc = \
+   "This is a young, dirty urchin, living on the street, yet causing no trouble."
+
+   jasper_urchin_dead_icon_rsc = urchinX.bgf
+   jasper_urchin_dead_name_rsc = "dead urchin"
+
+classvars:
+
+   viIndefinite = ARTICLE_AN
+
+   vrName = jasper_urchin_name_rsc
+   vrIcon = jasper_urchin_icon_rsc
+   vrDesc = jasper_urchin_desc_rsc
+
+   viAttack_power = 32
+   viDefense_power = 30
+
+   viMax_hit_points = 10
+   viHit_points = 15
+   viAttack_delay = 2000
+
+   viExperience_value = 6
+
+   vrDead_icon = jasper_urchin_dead_icon_rsc
+   vrDead_name = jasper_urchin_dead_name_rsc
+
+   viMin_treasure = 0
+   viMax_treasure = 2
+
+   viTreasure_type = TID_WIMPY
+
+   viMove_delay_min = 10000
+   viMove_delay_max = 12000
+   viChase_delay_min = 1200
+   viChase_delay_max = 2500
+
+   viSpasm_delay = 18000     % spasm every 18 seconds on average
+   viSpasm_vary = 10000       % plus or minus 10 seconds
+
+   viKarma = 10
+   viAttributes = MOB_SPASM
+   viOccupation = MOB_ROLE_URCHIN
+   viSpeed = 10
+
+properties:
+
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   CalculateDamage(what = $,hit_roll = $)
+   {
+      return Random(1,4);
+   }
+
+   DoSpasm()
+   {
+      propagate;
+   }
+	 
+   DoLegSpasm()
+   {
+      piAnimation = ANIM_LEG_SPASM;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,3);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,100,2,2,2,3);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

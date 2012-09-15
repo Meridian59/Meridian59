@@ -1,0 +1,221 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Hunt is MultiCastSpell
+
+constants:
+
+   include blakston.khd
+
+   % Half an hour
+   HUNT_TIME = 1800000
+
+resources:
+
+   Hunt_name_rsc = "hunt"
+   Hunt_icon_rsc = ihunt.bgf
+   Hunt_desc_rsc = \
+      "Allows the casters to use a prism to focus on a player's trail "
+      "and track him or her for a limited time.  The hunted player's name "
+      "must be spoken during the initial trance.  When the enchantment "
+      "is completed, for the duration of the spell the hunters will receive "
+      "periodic notification of the hunted player's whereabouts.  "
+      "Requires all of the claws from one kriipa paw, and the casters' "
+      "mystical energies must be focused through a prism."
+   
+   Hunt_sound = khunt.wav
+
+   hunt_cold_trail = "Your trail for %s%s seems to have gone cold."
+   hunt_no_target = \
+      "You try to find a trail, but since you aren't looking for "
+      "anyone in particular, you find nothing."
+   hunt_target_is_dm = \
+      "~IImmortals leave no trail that can be followed by this spell.  "
+      "Try another target."
+   hunt_is_on = "~BThe hunt is on!"
+
+   hunt_lost_trackers = "You seem to have managed to lose your trackers!"
+   hunt_gain_trackers = "You sense that someone knows where you are..."
+
+classvars:
+
+   vrName = Hunt_name_rsc
+   vrIcon = Hunt_icon_rsc
+   vrDesc = Hunt_desc_rsc
+
+   vrSucceed_wav = Hunt_sound
+
+   viMana = 50
+
+   viSpell_num = SID_HUNT
+   viSchool = SS_KRAANAN
+   viSpell_level = 5
+
+   viSpellExertion = 50
+   viCast_time = 20000
+   viChance_To_Increase = 50
+
+   % Drain is amount used every viDrainTime milliseconds
+   viManaDrain = 1
+   % Drain some mana every viDrainTime milliseconds
+   viDrainTime = 1000    
+
+   % in milliseconds
+   viCast_time = 10000    
+
+properties:                     
+
+   viMultiCast_Spellpower = 5000 
+
+   % Spell is harmful to the player it's cast upon.
+   viHarmful = TRUE
+
+messages:      
+
+   Constructed()  
+   {
+      % Allow the spell on Sacred Haven.
+      if NOT Send(SYS,@IsPKAllowed) 
+      {        
+         viHarmful = FALSE;  
+      }  
+        
+      propagate;  
+   }
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&KriipaClaw,4],plReagents);
+
+      return;
+   }
+  
+   PrismCast(spellpower = 0, lCasters=$, lTargets=$, oPrism = $) 
+   {
+      local i, oTarget;
+
+      oTarget = First(lTargets);
+
+      for i in Send(oPrism,@GetCasters)
+      {
+         if i = oTarget
+         {
+            Send(oTarget,@RemoveEnchantment,#what=self);
+         }
+      }
+
+      Send(oTarget,@MsgSendUser,#message_rsc=hunt_gain_trackers);
+      Send(oTarget,@StartEnchantment,#what=self,
+           #state=lCasters, #time=HUNT_TIME,
+           #iSpellPower=SpellPower,#lastcall=TRUE,#addicon=FALSE);
+
+      for i in lCasters
+      {
+         Send(i,@MsgSendUser,#message_rsc=hunt_is_on);
+      }
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   % This is the entry point, sets players to trance while they
+   % focus on casting on the prism.  The prism calls PrismCast()
+   % below when it has enough energy from the casters.
+   {
+      local oPrism;
+
+      oPrism = Send(self,@FindPrism,#who=who);
+
+      if Send(oPrism,@GetSpell) = $ AND lTargets = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=hunt_no_target);
+         return;
+      }
+
+      propagate;
+   }
+
+   SomethingSaidDuringTrance(who=$,string=$)
+   {
+      local oPrism, oPrey, lTargets;
+
+      oPrey = Send(SYS,@FindUserByString,#string=string);
+
+      if IsClass(oPrey,&DM) AND NOT Send(oPrey,@IsHuntable)
+      {
+         Send(who,@MsgSendUser,#message_rsc=hunt_target_is_dm);
+
+         return;
+      }
+
+      lTargets = $;
+
+      if oPrey <> $
+      {
+         % Use EVENT_STEER so we don't print message
+         Send(who,@breaktrance,#event=EVENT_STEER);  
+         lTargets = cons(oPrey,lTargets);
+         Send(self,@CastSpell,#who=who,#lTargets=lTargets,
+              #ispellpower=Send(self,@GetSpellPower,#who=who));
+      }
+
+      return;
+   }
+
+   EndEnchantment(who = $, report = TRUE,state=$)
+   {
+      local i;
+
+      if IsClass(First(state),&Prism)
+      {
+         propagate;
+      }
+      else
+      {
+         Send(who,@SetPlayerFlag,#flag=PFLAG2_HUNTED,#value=FALSE,#flagset=2);
+         Send(who,@MsgSendUser,#message_rsc=hunt_lost_trackers);
+         for i in state
+         {
+            Send(i,@MsgSendUser,#message_rsc=hunt_cold_trail,
+                 #parm1=Send(who,@GetDef),#parm2=Send(who,@GetUserName));
+         }
+      }
+
+      return;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      local state;
+
+      state = Send(who,@GetEnchantedState,#what=self);
+      if isclass(first(state),&prism)
+      {
+         Send(who,@SetTranceFlag);
+      }
+      else
+      {
+         Send(who,@SetPlayerFlag,#flag=PFLAG2_HUNTED,#value=TRUE,#flagset=2);
+      }
+
+      return;
+   }
+
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      % You cannot remove this spell by spells.
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

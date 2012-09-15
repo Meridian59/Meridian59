@@ -1,0 +1,117 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SporeCloud is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SporeCloud_name_rsc = "thick fog"
+   SporeCloud_icon_rsc = poisoncl.bgf
+   SporeCloud_desc_rsc = "You choke just looking at the thick putrid fog."
+
+classvars:
+
+   vrName = SporeCloud_name_rsc
+   vrIcon = SporeCloud_icon_rsc
+
+   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50
+   vrdesc = SporeCloud_desc_rsc
+
+properties:
+
+   poCaster = $
+   ptExpire = $
+   vbSummoned = FALSE
+   poActive_Elem = $
+
+messages:
+
+   Constructor(Caster=$,Duration=75,Active_elem=$,oRoom=$)
+   {
+      poCaster = Caster;
+      poActive_Elem = Active_elem;
+
+      vbSummoned = isClass(Caster,&User);
+      ptExpire = CreateTimer(self,@Expire,Duration);
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      % At this point, the wall should have already been created.
+      %  therefore, it should be safe to delete it.
+      Post(self,@ArenaCheck);
+
+      propagate;
+   }
+
+   ArenaCheck()
+   {
+      if Send(poOwner,@IsArena)
+         AND NOT Send(poOwner,@InPlay,#what=self,#bNonPlayerOkay=TRUE)
+      { 
+         Post(self,@Delete);
+      }
+
+      return;
+   }
+
+   Expire()
+   {
+      ptExpire = $;
+      Send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptExpire <> $
+      {
+         DeleteTimer(ptExpire);
+         ptExpire = $;
+      }
+
+      propagate;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return IsClass(what,&Room);
+   }
+
+   NewOwner(what = $)
+   {
+      % Arena has lots of funky walls, so ignore line of site stuff.
+      % We catch walls that fall outside of the play area anyway.
+      if IsClass(what,&GuildHall)
+         AND Send(what,@InFoyer,#who=poCaster) <> Send(what,@InFoyer,#who=self)
+      {
+         Post(self,@Delete);
+      }
+
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,random(280,300), 2,1, 2,5);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

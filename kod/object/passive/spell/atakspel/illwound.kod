@@ -1,0 +1,240 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IllusionaryWounds is AttackSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   illusionarywounds_name_rsc = "illusionary wounds"
+   illusionarywounds_icon_rsc = iilluwou.bgf
+   illusionarywounds_desc_rsc = \
+      "Causes the victim to see imagined wounds, but imagination "
+      "always gives in to one's right mind, assuming one lives so long.  "
+      "Requires solagh and firesand."
+
+   illusionarywounds_cast = "Your illusion takes the form of %s."
+
+   illusionarywounds_off = "Hey!  Some of those wounds were illusionary!"
+   illusionarywounds_sound = riija.wav
+
+classvars:
+
+   vrName = illusionarywounds_name_rsc
+   vrIcon = illusionarywounds_icon_rsc
+   vrDesc = illusionarywounds_desc_rsc
+
+   viSpell_num = SID_ILLUSIONARY_WOUNDS
+   viSchool = SS_RIIJA
+   viSpell_level = 3
+   viMana = 10
+
+   viSpellExertion = 3
+
+   vrSucceed_wav = illusionarywounds_sound
+
+   viHarmful = TRUE
+   viOutlaw = TRUE
+   viNoNewbieOffense = TRUE
+
+properties:
+
+   piRange = 4
+
+   piManaFocusBonus = 0
+
+   % This is NOT affected by resistances, even though it has a damage type.
+   pbAbsolute = TRUE
+
+   % This is the spell we are simulating.
+   poRandomSpell = $
+
+   % This is the list of spells we can choose from.
+   plRandomSpells = $
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Solagh,1],plReagents);
+      plReagents = Cons([&FireSand,1],plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE)
+   {
+      local iDamage, iManaFocus, oRoom, oTarget, iDuration;
+
+      % Do this now when the spell is being cast.  If we do it in the Constructor,
+      %   these spells may not be available
+      if plRandomSpells = $
+      {
+         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_BLAST_OF_FIRE),plRandomSpells);
+         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_SHOCKING_FURY),plRandomSpells);
+         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_EXPLOSIVE_FROST),plRandomSpells);
+         plRandomSpells = Cons(Send(SYS,@FindSpellByNum,#num=SID_SPLASH_OF_ACID),plRandomSpells);
+      }
+
+      oTarget = First(lTargets);
+
+      oRoom = Send(who,@GetOwner);
+      Send(oRoom,@SpellCast,#who=who,#oSpell=self,#lItems=lTargets);
+
+      % Only switch damage rarely so we get a clumpy effect
+      if random(1,100) < 50 OR poRandomSpell = $
+      {
+         % Okay, pick our damage type here.  Due to the miracles of single-threading,
+         %  this will allow us to key the right damage type and spell name for
+         %  illusionary wounds.
+         poRandomSpell = Nth(plRandomSpells,random(1,length(plRandomSpells)));
+      }
+
+      Send(oRoom,@SomethingWaveRoom,#what=who,#wave_rsc=Send(poRandomSpell,@GetSpellSound));
+      Send(who,@MsgSendUser,#message_rsc=illusionarywounds_cast,
+           #parm1=Send(poRandomSpell,@GetName));
+      
+      iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower);
+      iDamage = Send(self,@GetHPLoss,#who=who,#victim=first(lTargets),
+                     #iSpellPower=iSpellPower);
+
+      if IsClass(who,&Player)
+      {
+         Send(who,@SetKillTarget,#target=oTarget);
+         Send(who,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+
+         if NOT bItemCast
+         {
+            % Do the sound, and the third person animation.
+            piCast_successes = piCast_successes + 1;
+            % Do this for the window overlay.
+            Send(who,@DoCast);
+         }
+      }
+
+      % After figuring damage, do an AssessDamage.  This will handle the necessary
+      %  attack messages.
+      iDamage = Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#atype=viAttack_type,
+                     #aspell=viAttack_spell,#absolute=pbAbsolute);
+
+      Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self);
+
+      if iDamage = $
+      {
+         Send(who,@KilledSomething,#what=oTarget,#use_weapon=self);
+      }
+      else
+      {
+         Send(oTarget,@StartEnchantment,#what=self,#time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+              #lastcall=TRUE,#state=iDamage,#addicon=FALSE);
+      }
+
+      Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=self);
+
+      Send(self,@DoSideEffect,#who=who,#victim=oTarget,#damage=iDamage);
+
+      if not bItemCast
+      {
+         Send(self,@ImproveAbility,#who=who,#target=oTarget);
+      }
+
+      % DON'T PROPAGATE!  This way, events will be handled in the proper order.
+      return;
+   }
+
+   GetAttackSpell()
+   {
+      if poRandomSpell = $
+      {
+         return $;
+      }
+      
+      return Send(poRandomSpell,@GetAttackSpell);
+   }
+
+   % This is for the attack message infrastructure.
+   GetAttackName()
+   {
+      if poRandomSpell = $
+      {
+         return vrName;
+      }
+      
+      return Send(poRandomSpell,@GetAttackName);
+   }
+
+   % iFactor is the factor to divide damage by.
+   GetHPLoss(who=$,victim=$,iSpellPower=0,iFactor=1)
+   {
+      local iBaseDamage, iHPLoss, iMaxHPs;
+   
+      if IsClass(victim,&Player)
+      {
+         iBaseDamage = 17 + (50 - Send(victim,@GetIntellect))/10;
+         iMaxHPs = Send(victim,@GetMaxHealth);
+      }
+      else
+      {
+         iBaseDamage = 30 - bound(Send(victim,@GetDifficulty)*2,1,20);
+         iMaxHPs = Send(victim,@ReturnMaxHitPoints);
+      }
+
+      iHPLoss = (iBaseDamage * iSpellPower) / 100;
+
+      % Always leaves 1 HP behind, no more than 1/3 damage.
+      iHPLoss = bound(iHPLoss,0,(iMaxHps/3));
+      iHPLoss = bound(iHPLoss,0,Send(victim,@GetHealth)-1);
+
+      if iFactor > 1
+      {
+         iHPLoss = iHPLoss / iFactor;
+      }
+      
+      return iHPLoss;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;
+      
+      iDuration = 20000 + (iSpellPower * 750); 
+      iDuration = bound(iDuration,20000,80000);
+      
+      return iDuration;      
+   }
+
+   EndEnchantment(who = $, state=$, report = TRUE)
+   {
+      post(self,@EndEnchantmentEffects,#who=who,#state=state,#report=report);
+
+      return;
+   }
+
+   EndEnchantmentEffects(who=$, state=$, report = TRUE)
+   {
+      if (Send(who,@GetHealth) > 0)
+      {
+         Send(who,@GainHealthNormal,#amount=state);
+         if IsClass(who,&Player)
+            AND report
+         {
+            Send(who,@MsgSendUser,#message_rsc=illusionarywounds_off);
+         }
+      }
+      
+      return;
+   } 
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

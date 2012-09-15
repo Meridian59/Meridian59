@@ -1,0 +1,14 @@
+# necromancer goathead
+# 
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 5
+5
+goath000.bmp   [0, -190] 
+goath045.bmp   [0, -190] 
+goath090.bmp   [0, -190] 
+goath270.bmp   [0, -190] 
+goath315.bmp   [0, -190] 
+1
+ 8   1 5 4 0 0 0 3 2 

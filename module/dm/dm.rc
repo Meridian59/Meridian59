@@ -1,0 +1,168 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include <windows.h>
+#include <commctrl.h>
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include <windows.h>\r\n"
+    "#include <commctrl.h>\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_GCHANNEL DIALOG DISCARDABLE  0, 0, 283, 162
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "The ""G"" Channel"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDI_GCHANNEL,IDC_STATIC,4,4,18,20
+    LTEXT           "The ""G"" Channel is a secure log file for all Guides and Guardians to report things such as violations of Terms of Service.  You can right-click on a player in the game window for accuracy, or type their name exactly.",
+                    IDC_STATIC,27,4,252,26
+    GROUPBOX        "Report to the ""G"" Channel",IDC_STATIC,4,43,275,85
+    LTEXT           "Player:",IDC_STATIC,12,56,28,8
+    EDITTEXT        IDC_PLAYER_NAME,40,55,94,12,ES_AUTOHSCROLL
+    LTEXT           "Violation Type:",IDC_STATIC,140,57,50,8
+    COMBOBOX        IDC_COMBO1,193,54,77,68,CBS_DROPDOWN | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Comments.  Be very brief.  Send details in email if you need more room.",
+                    IDC_STATIC,12,70,221,8
+    EDITTEXT        IDC_EDIT2,10,80,262,24,ES_MULTILINE
+    LTEXT           "Your name, this server number, and the violator's complete account information will be recorded automatically.",
+                    IDC_STATIC,12,107,258,18
+    DEFPUSHBUTTON   "Submit to Log",IDOK,160,144,62,14
+    PUSHBUTTON      "Close",IDCANCEL,229,144,50,14
+END
+
+IDD_QEDITOR DIALOGEX 0, 0, 320, 197
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Quest Task Editor"
+FONT 8, "MS Sans Serif", 0, 0, 0x1
+BEGIN
+    ICON            IDI_QEDITOR,-1,4,4,21,20
+    LTEXT           "Each ""quest task"" is a single task for a player to complete in order to obtain a reward of some type.  Quest tasks may be strung together to form more complete quests.  Remember to check all components of the quest task.",
+                    -1,27,4,289,26
+    CONTROL         "List1",IDC_TASK_LIST,"SysListView32",LVS_LIST | 
+                    LVS_SINGLESEL | LVS_SORTASCENDING | WS_TABSTOP,4,34,81,
+                    114,WS_EX_CLIENTEDGE
+    CONTROL         "Tab1",IDC_TAB1,"SysTabControl32",0x0,88,34,228,132
+    PUSHBUTTON      "New...",IDC_BUTTON_NEW,4,153,37,13
+    PUSHBUTTON      "Delete",IDC_BUTTON_DELETE,47,153,37,13
+    LTEXT           "Tips:  allow more random choices to make for unpredictable quests.  Use right-click to specify unique items only as necessary.",
+                    -1,4,175,217,18
+    DEFPUSHBUTTON   "OK",IDOK,226,179,42,14
+    PUSHBUTTON      "Cancel",IDCANCEL,272,179,44,14
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_GCHANNEL, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 279
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 158
+    END
+
+    IDD_QEDITOR, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 316
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 193
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_GCHANNEL            ICON    DISCARDABLE     "gchannel.ico"
+IDI_QEDITOR             ICON    DISCARDABLE     "qeditor.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_NOPLAYERNAME        "No one with that name is logged on."
+    IDS_DUPLICATEPLAYERNAME "That player name is ambiguous."
+    IDS_NOBODY              "<nobody>"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

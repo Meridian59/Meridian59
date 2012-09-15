@@ -1,0 +1,636 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShrunkenHead is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+   BABBLE_MINIMUM = 10000
+   BABBLE_MAXIMUM = 100000
+
+resources:
+
+   ShrunkenHead_icon_rsc = shruhead.bgf
+   ShrunkenHead_name_rsc = "shrunken head"
+   ShrunkenHead_desc_rsc = \
+      "There is something both grotesque and fascinating in staring at "
+      "the mummified, distorted face on this reduced skull. What magic "
+      "this object may hold, you haven't a clue. "
+
+   ShrunkenHead_shut_up = "shut up"
+   ShrunkenHead_offended = "Well, I never!"
+   ShrunkenHead_third_part_one = "~kA voice from "
+   ShrunkenHead_third_part_two = " babbles, \""
+   ShrunkenHead_first = "~kYour shrunken head babbles, \""
+   ShrunkenHead_generic = "~kA shrunken head babbles, \""
+   ShrunkenHead_said = " said to me, \'"
+   ShrunkenHead_near = " is near "
+   ShrunkenHead_laugh = ", hee hee hee!"
+   ShrunkenHead_magic_number = "Today's magic numbers are "
+   ShrunkenHead_number_and = " and "
+   ShrunkenHead_random_1 = "Can you scratch my stitches?"
+   ShrunkenHead_random_2 = "Will you be my love slave?"
+   ShrunkenHead_random_3 = "When do we eat?"
+   ShrunkenHead_random_4 = "I'm gonna tell the Princess you said that."
+   ShrunkenHead_random_5 = "Would your mother approve?"
+   ShrunkenHead_random_6 = "You act so suave, but we know better, don't we?"
+   ShrunkenHead_random_Spider_eyes_ask = "I like spider eyes.  Got some?"
+   ShrunkenHead_random_Spider_eyes_eat = "Yummy spider eyes!"
+   ShrunkenHead_random_lonely = "I'm lonely. You know what they say... two shrunken heads are better than one!"
+   ShrunkenHead_random_not_lonely_1 = "Another shrunken head!  Let's be friends!"
+   ShrunkenHead_random_not_lonely_2 = "Sure!  You'll be my bestest friend!"
+   ShrunkenHead_see_players = "I see "
+   ShrunkenHead_and = "and"
+   ShrunkenHead_inventory_has = " has "
+
+classvars:
+   
+   vrName = ShrunkenHead_name_rsc
+   vrDesc = ShrunkenHead_desc_rsc
+   vrIcon = ShrunkenHead_icon_rsc
+
+   viValue_average = 50
+   viWeight = 10
+   viBulk = 10
+
+   viGround_group = 1
+
+properties:  
+
+   psOverheard = $
+   poOverheard = $
+   piSilenced = 0
+   ptBabble = $
+
+messages:   
+
+   Delete()
+   {
+      if ptBabble <> $
+      {
+         deleteTimer(ptBabble);
+         ptBabble = $;
+      }
+      
+      psOverheard = $;
+      poOverheard = $;
+      
+      propagate;
+   }
+
+   DoSilence()
+   {
+      if ptBabble <> $
+      {
+         deleteTimer(ptBabble);
+         ptBabble = $;
+      }
+      
+      piSilenced = getTime();
+      
+      return;
+   }
+
+   SomeoneOverheard(from=$,string=$)
+   {
+      % Keyword to get the thing to shut up.
+
+      if poOwner = $ { return; }
+
+      if stringContain(string,ShrunkenHead_name_rsc)
+         AND stringContain(string,ShrunkenHead_shut_up)
+      {
+         if not isClass(poOwner,&Player) or
+            stringContain(string,send(poOwner,@GetName))
+         {
+            post(self,@DoBabbleString,#string=ShrunkenHead_offended);
+            post(self,@DoSilence);
+            return;
+         }
+      }
+
+      % Small chance that the head will learn what it hears.
+
+      if random(1,100) < 10 OR psOverheard = $
+      {
+         psOverheard = createString();
+         setString(psOverheard,string);
+         poOverheard = from;
+      }
+
+      if psOverheard <> $ AND ptBabble = $
+      {
+         ptBabble = createTimer(self,@Babble,random(BABBLE_MINIMUM,BABBLE_MAXIMUM));
+      }
+
+      return;
+   }
+
+   PickSomeoneNearby()
+   {
+      local oRoom, i, lNearby, lPlayers;
+
+      oRoom = send(SYS,@UtilGetRoomRecurse,#what=self);
+
+      if oRoom = $
+      {
+         return $;
+      }
+
+      lPlayers = $;
+      lNearby = send(oRoom,@GetHolderActive);
+
+      for i in lNearby
+      {
+         if isClass(first(i),&Player)
+            AND NOT send(first(i),@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+            AND NOT send(first(i),@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+         {
+            lPlayers = cons(first(i), lPlayers);
+         }
+      }
+
+      if lPlayers <> $
+      {
+         i = length(lPlayers);
+         i = Nth(lPlayers,random(1,i));
+         
+         return i;
+      }
+
+      return $;
+   }
+
+   DoNameList(things=$,conjunction=$,definite=FALSE)
+   {
+      local i, n, m;
+
+      clearTempString();
+
+      if things = $
+         OR length(things) = 0
+      {
+         return $;
+      }
+
+      n = length(things);
+
+      m = 1;
+      for i in things
+      {
+         % list grammar
+
+         if (m > 1) and (m < n)
+         {
+            appendTempString(", ");
+         }
+         
+         if (m > 1) and (m = n)
+         {
+            appendTempString(" ");
+            appendTempString(conjunction);
+            appendTempString(" ");
+         }
+
+         % actual article/number and name of thing
+
+         if i = $ { return $; }
+
+         if isClass(i,&NumberItem)
+         {
+            send(SYS,@AppendFuzzyCardinalToTempString,#number=send(i,@GetNumber));
+            appendTempString(" ");
+         }
+         else
+         {
+            if definite
+            {
+               appendTempString(send(i,@GetDef));
+            }
+            else
+            {
+               appendTempString(send(i,@GetIndef));
+            }
+         }
+         
+         appendTempString(send(i,@GetName));
+
+         % next item
+
+         m = m + 1;
+      }
+
+      i = createString();
+      setString(i,getTempString());
+
+      return i;
+   }
+
+   DoBabbleString(string=$)
+   {
+      local oRoom, i, lHear, rsc;
+
+      oRoom = send(SYS,@UtilGetRoomRecurse,#what=self);
+      if oRoom = $ { return; }
+
+      if string = getTempString()
+      {
+         string = createString();
+         setString(string,getTempString());
+      }
+
+      rsc = send(SYS,@GetPercentQRsc);
+      lHear = send(oRoom,@GetHolderActive);
+      for i in lHear
+      {
+         if isClass(first(i),&User)
+         {
+            % (example) A voice from Joe babbles, "Hey!"
+            %
+            % Special cases:
+            % (example) A shrunken head babbles, "Hey!"
+            % (example) Your shrunken head babbles, "Hey!"
+
+            clearTempString();
+            AppendTempString(ShrunkenHead_third_part_one);
+            AppendTempString(send(poOwner,@GetIndef));
+            AppendTempString(send(poOwner,@GetName));
+            AppendTempString(ShrunkenHead_third_part_two);
+
+            if first(i) = poOwner
+            {
+               clearTempString();
+               AppendTempString(ShrunkenHead_first);
+            }
+
+            if oRoom = poOwner
+            {
+               clearTempString();
+               AppendTempString(ShrunkenHead_generic);
+            }
+
+            appendTempString(string);
+            appendTempString("~n~k\"");
+
+            send(first(i),@MsgSendUser,#message_rsc=rsc,#parm1=getTempString(),#type1=0);
+         }
+      }
+
+      return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   Babble()
+   {
+      ptBabble = $;
+
+      if isClass(poOwner,&Player)
+         AND (send(poOwner,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
+              OR send(poOwner,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE))
+      {
+         return;
+      }
+
+      if getTime() < (piSilenced + 900)
+      {
+         return;
+      }
+
+      % Good chance the head will continue to babble.
+      send(self,@BabbleRandom);
+
+      if random(1,100) < 90
+      {
+         ptBabble = createTimer(self,@Babble,random(BABBLE_MINIMUM,BABBLE_MAXIMUM));
+      }
+
+      return;
+   }
+
+   BabbleRandom()
+   {
+      local choice;
+
+      choice = random(1,9);
+
+      if choice = 1
+         OR choice = 2
+      {
+         send(self,@BabbleOverheard);
+      }
+
+      if choice = 3
+      {
+         send(self,@BabbleLottery);
+      }
+
+      if choice = 4
+         OR choice = 5
+      {
+         send(self,@BabbleInventoryNearby);
+      }
+
+      if choice = 6
+      {
+         send(self,@BabblePeopleNearby);
+      }
+
+      if choice = 7
+      {
+         send(self,@BabbleFortune);
+      }
+
+      if choice = 8
+      {
+         send(self,@BabbleBizarre);
+      }
+
+      if choice = 9
+      {
+         send(self,@BabbleMurderer);
+      }
+
+      return;
+   }
+
+   BabbleOverheard()
+   {
+      local s;
+
+      if psOverheard = $ { return; }
+
+      if poOverheard = $ or random(1,100) < 50
+      {
+         send(self,@DoBabbleString,#string=psOverheard);
+      }
+      else
+      {
+         s = createString();
+         clearTempString();
+         appendTempString(send(poOverheard,@GetCapIndef));
+         appendTempString(send(poOverheard,@GetName));
+         appendTempString(ShrunkenHead_said);
+         appendTempString(psOverheard);
+         appendTempString("~n~k\'");
+         setString(s,getTempString());
+
+         send(self,@DoBabbleString,#string=s);
+      }
+
+      return;
+   }
+
+   BabbleMurderer()
+   {
+      local s, oKiller, oLocation;
+
+      oKiller = send(SYS,@GetLastMurderer);
+      if oKiller = $ { return; }
+
+      oLocation = send(oKiller,@GetOwner);
+      if oLocation = $
+      {
+         s = send(oKiller,@GetSaveRoom);
+         oLocation = send(SYS,@FindRoomByNum,#num=s);
+      }
+      
+      if oLocation = $
+      {
+         return;
+      }
+
+      s = createString();
+      clearTempString();
+      appendTempString(send(oKiller,@GetCapIndef));
+      appendTempString(send(oKiller,@GetName));
+      appendTempString(ShrunkenHead_near);
+      appendTempString(send(oLocation,@GetName));
+      appendTempString(ShrunkenHead_laugh);
+      setString(s,getTempString());
+
+      send(self,@DoBabbleString,#string=s);
+
+      return;
+   }
+
+   BabbleLottery()
+   {
+      local s;
+
+      s = createString();
+
+      clearTempString();
+      appendTempString(ShrunkenHead_magic_number);
+      send(SYS,@AppendCardinalToTempString,#number=random(1,12));
+      appendTempString(", ");
+      send(SYS,@AppendCardinalToTempString,#number=random(1,12));
+      appendTempString(ShrunkenHead_number_and);
+      send(SYS,@AppendCardinalToTempString,#number=random(1,12));
+      appendTempString(".");
+      setString(s,getTempString());
+
+      send(self,@DoBabbleString,#string=s);
+
+      return;
+   }
+
+   BabbleBizarre()
+   {
+      local choice, oObject, iCount;
+
+      choice = random(1,8);
+
+      if choice = 1
+      {
+         send(self,@DoBabbleString,#string=ShrunkenHead_random_1);
+      }
+      
+      if choice = 2
+      {
+         send(self,@DoBabbleString,#string=ShrunkenHead_random_2);
+      }
+      
+      if choice = 3
+      {
+         send(self,@DoBabbleString,#string=ShrunkenHead_random_3);
+      }
+      
+      if choice = 4
+      {
+         send(self,@DoBabbleString,#string=ShrunkenHead_random_4);
+      }
+      
+      if choice = 5
+      {
+         send(self,@DoBabbleString,#string=ShrunkenHead_random_5);
+      }
+      
+      if choice = 6
+      {
+         send(self,@DoBabbleString,#string=ShrunkenHead_random_6);
+      }
+
+      if choice = 7
+      {
+         % Check for spider eyes.
+         oObject = send(poOwner,@FindHolding,#class=&SpidEye);
+         
+         if oObject = $
+         {
+            send(self,@DoBabbleString,#string=ShrunkenHead_random_Spider_eyes_ask);
+         }
+         else
+         {
+            % Eat a spider eye!
+            send(oObject,@SubtractNumber,#number=1);
+            send(self,@DoBabbleString,#string=ShrunkenHead_random_Spider_eyes_eat);
+         }
+      }
+      
+      if choice = 8
+      {
+         % See how many shrunken heads are around.
+         iCount = send(poOwner,@CountHoldingHowMany,#class=&ShrunkenHead);
+         
+         if iCount <= 1
+         {
+            % Aw, the poor guy is lonely!
+            send(self,@DoBabbleString,#string=ShrunkenHead_random_lonely);
+         }
+         else
+         {
+            % A crowd!  Let's be talkative!
+            send(self,@DoBabbleString,#string=ShrunkenHead_random_not_lonely_1);
+            while iCount > 1
+            {
+               iCount = iCount - 1;
+               send(self,@DoBabbleString,#string=ShrunkenHead_random_not_lonely_2);
+            }
+         }
+      }
+
+      return;
+   }
+
+   BabbleFortune()
+   {
+      local fortune;
+
+      fortune = send(send(SYS,@GetLibrary),@PickFortune);
+      send(self,@DoBabbleString,#string=fortune);
+
+      return;
+   }
+
+   BabblePeopleNearby()
+   {
+      local lNearby, i, j, s;
+
+      % Pick up to five nearby people.
+
+      lNearby = $;
+      j = 0;
+      
+      while j < 5
+      {
+         i = send(self,@PickSomeoneNearby);
+         
+         if FindListElem(lNearby, i) = 0
+         {
+            lNearby = cons(i, lNearby);
+         }
+         
+         j = j + 1;
+      }
+
+      if lNearby = $
+      {
+         return;
+      }
+
+      % (example) I see Joe, Bob and Mike, hee hee hee!
+
+      s = send(self,@DoNameList,#things=lNearby,#conjunction=ShrunkenHead_and);
+
+      if s = $
+      {
+         return;
+      }
+
+      clearTempString();
+      appendTempString(ShrunkenHead_see_players);
+      appendTempString(s);
+      appendTempString(ShrunkenHead_laugh);
+      setString(s,getTempString());
+
+      send(self,@DoBabbleString,#string=s);
+
+      return;
+   }
+
+   BabbleInventoryNearby()
+   {
+      local oPerson, lInventory, lPicks, oItem, iCount, sString, iNumberItems;
+
+      % Pick one nearby person, and up to five things from their inventory.
+
+      oPerson = send(self,@PickSomeoneNearby);
+      if oPerson = $
+      {
+         return;
+      }
+
+      lPicks = $;
+      lInventory = send(oPerson,@GetHolderPassive);
+      iCount = 0;
+      iNumberItems = length(lInventory);
+
+      if iNumberItems > 0
+      {
+         while iCount < 5 
+         {
+            oItem = Nth(lInventory,random(1,iNumberItems));
+
+            if lPicks = $
+               OR FindListElem(lPicks, oItem) = 0
+            {
+               lPicks = cons(oItem, lPicks);
+            }
+
+            iCount = iCount + 1;
+         }
+      }
+
+      % (example) Joe has a few apples, dozens of diamonds and a sword, hee hee hee!
+
+      sString = send(self,@DoNameList,#things=lPicks,#conjunction=ShrunkenHead_and);
+      if sString = $
+      {
+         return;
+      }
+
+      clearTempString();
+      appendTempString(send(oPerson,@GetIndef));
+      appendTempString(send(oPerson,@GetName));
+      appendTempString(ShrunkenHead_inventory_has);
+      appendTempString(sString);
+      appendTempString(ShrunkenHead_laugh);
+      setString(sString,getTempString());
+
+      send(self,@DoBabbleString,#string=sString);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

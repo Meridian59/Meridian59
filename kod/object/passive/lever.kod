@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lever is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   lever_name_rsc = "lever"
+   lever_icon_rsc = lever.bgf
+   default_lever_desc_rsc = \
+   "The mechanism attached to this lever appears to be almost completely rusted through.  "
+   "Whatever purpose it originally served, it's probably useless now."
+
+   lever_not_in_range = "The lever is not close enough to switch."
+   lever_stuck = "The lever appears to be stuck;  try as you might, you can't make it budge."
+
+   lever_changed = "You switch the lever."
+
+classvars:
+
+   vrName = lever_name_rsc
+
+   viObject_flags = ACTIVATE_YES
+
+properties:
+
+   vrDesc = default_lever_desc_rsc
+   vrIcon = lever_icon_rsc
+
+   piState = LEVER_UP
+   pbStuck = false
+   piRange = 3
+   pbBlueNameProtected = TRUE
+
+messages:
+
+   Constructor(description=default_lever_desc_rsc,icon=lever_icon_rsc,range=3,stuck=false,BlueNameProtected=TRUE)
+   {
+      vrIcon = icon;
+      vrDesc = description;
+      piRange = range;
+      pbStuck = stuck;
+      pbBlueNameProtected = BlueNameProtected;
+      propagate;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if (abs(send(who,@getrow)-send(self,@getrow)) > piRange)
+            or (abs(send(who,@getcol)-send(self,@getcol)) > piRange)
+      {
+         Send(who,@MsgSendUser,#message_rsc=lever_not_in_range);          
+         return True;
+      }
+
+      if pbBlueNameProtected and (not isClass(who,&Admin)) and (not send(who,@CanAdvance)) {
+         Send(who,@DontInterfere);
+         return True;
+      }
+      if pbStuck or (not send(who,@CanAdvance)) {
+         Send(who,@MsgSendUser,#message_rsc=lever_stuck);
+         return True;
+      }
+
+      send(self,@SwitchLever);
+      
+      Send(who,@MsgSendUser,#message_rsc=lever_changed);          
+      
+      return True;
+   }
+
+   SwitchLever()
+   {
+      if piState = LEVER_UP {
+         piState = LEVER_DOWN;
+      }
+      else {
+         piState = LEVER_UP;
+      }
+      Send(poOwner,@SomethingChanged,#what=self);
+      return;
+   }
+
+   SetStuck(newstuck=false)
+   {
+      pbStuck = newstuck;
+      return;
+   }
+
+   GetState()
+   {
+      return piState;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,piState);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

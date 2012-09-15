@@ -1,0 +1,618 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarionCrypt1 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   SECTOR_DOOR = 3
+   SECTOR_NECRO1 = 4
+   SECTOR_NECRO2 = 5
+   SECTOR_EXIT1 = 6
+   SECTOR_EXIT2 = 7
+
+   SLAM_TIME = 2000
+   FIGHT_TIME = 10000
+
+   MIN_GEN_ROW = 29
+   MIN_GEN_COL = 4
+   MAX_GEN_ROW = 34
+   MAX_GEN_COL = 9
+
+   MIN_FINAL_ROW = 28
+   MIN_FINAL_COL = 1
+   MAX_FINAL_ROW = 38
+   MAX_FINAL_COL = 10
+
+   HALL_EAST = 3
+   HALL_NORTH = 15
+
+   NECRO_DOOR_CLOSE_DELAY = 30000
+
+   COUNT_PLAYERS = 1
+   COUNT_MONSTERS = 2
+
+resources:
+
+   room_MarionCrypt1 = MarDun01.roo
+   room_name_MarionCrypt1 = "The crypt in Marion"
+
+   MarionCrypt1_music = nec01.mid
+
+   MarionCrypt1_corpse_name = "mummified corpse"
+   MarionCrypt1_corpse_icon = mummyX.bgf
+   MarionCrypt1_corpse_desc = \
+      "The spectral mummies that haunt this crypt were once simple mummified corpses like this one."
+
+   MarionCrypt1_door1_rsc = down2.wav
+
+   MarionCrtyp1_martyr_on = \
+      "The good ancestral spirits of this place call upon the gods to protect the innocent."
+
+   % Let players call upon the "gods" to receive protection
+   MarionCrypt1_gods = "gods"
+
+   MarionCrypt1_venyacyr = "Venya'cyr the Damned"
+
+classvars:
+
+   vrName = room_name_MarionCrypt1
+  
+   viTeleport_row = 11
+   viTeleport_col = 23
+
+   viTerrain_type = TERRAIN_NECROPOLIS | TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_MarionCrypt1
+   piRoom_num = RID_MAR_CRYPT1
+
+   piGenTime = 15000
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_NONE
+
+   prMusic = MarionCrypt1_music
+
+   poLever1 = $
+   poLever2 = $
+
+   piSwitched = 0
+
+   ptDoor = $
+   ptNecroDoor = $
+
+   pbDoorDownActive = TRUE
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&SpectralMummy, 100] ];
+
+      plGenerators = [ [5, 21], [5, 36], [9, 28], [17, 35], [21, 23], [25, 11], [29, 18], [37, 35], [38, 19] ];
+
+      post(self,@DoMartyr);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptDoor <> $
+      {
+         DeleteTimer(ptDoor);
+         ptDoor = $;
+      }
+
+      if ptNecroDoor <> $
+      {
+         DeleteTimer(ptNecroDoor);
+         ptNecroDoor = $;
+      }
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 11, 17, RID_MARION, 80, 15, ROTATE_NONE, DISTANCE_NORMAL ],plExits);
+      plExits = Cons([ 38, 6, RID_MAR_CRYPT2, 3, 26, ROTATE_NONE, DISTANCE_NORMAL ],plExits);
+      plExits = Cons([ 38, 7, RID_MAR_CRYPT2, 3, 27, ROTATE_NONE, DISTANCE_NORMAL ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      oSign = Create(&Skull);
+      Send(self,@NewHold,#what=oSign,#new_row=11,#new_col=21,#fine_row=32,#fine_col=40);
+
+      oSign = Create(&Skull);
+      Send(self,@NewHold,#what=oSign,#new_row=22,#new_col=11,#fine_row=24,#fine_col=56);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=19,#new_col=18,#fine_row=0,#fine_col=40);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=23,#new_col=8,#fine_row=40,#fine_col=16);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=25,#new_col=14,#fine_row=0,#fine_col=40);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=32,#new_col=14,#fine_row=0,#fine_col=40);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=30,#new_col=40,#fine_row=0,#fine_col=24);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=27,#new_col=33,#fine_row=40,#fine_col=0);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=19,#new_col=32,#fine_row=40,#fine_col=0);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=17,#new_col=40,#fine_row=0,#fine_col=24);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=13,#new_col=40,#fine_row=0,#fine_col=24);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=9,#new_col=34,#fine_row=0,#fine_col=24);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=4,#new_col=28,#fine_row=40,#fine_col=0);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=2,#new_col=26,#fine_row=0,#fine_col=40);
+
+      oSign = Create(&Sign,#desc=MarionCrypt1_corpse_desc,#name=MarionCrypt1_corpse_name,#icon=MarionCrypt1_corpse_icon);
+      Send(self,@NewHold,#what=oSign,#new_row=2,#new_col=40,#fine_row=0,#fine_col=24);
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=9,#new_col=18,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=18,#fine_row=0,#fine_col=48);
+
+      Send(self,@CreateLevers);
+
+      propagate;
+   }
+
+   CreateLevers()
+   {
+      if poLever1 = $
+      {
+         poLever1 = Create(&GuestLever);
+         Send(self,@NewHold,#what=poLever1,#new_row=27,#new_col=4);
+      }
+      
+      if poLever2 = $
+      {
+         poLever2 = Create(&GuestLever);
+         Send(self,@NewHold,#what=poLever2,#new_row=27,#new_col=9);
+      }
+
+      return;
+   }
+
+   LeaveHold(what = $)
+   {
+      if what = poLever1
+      {
+         poLever1 = $;
+      }
+      
+      if what = poLever2
+      {
+         poLever2 = $;
+      }
+
+      propagate;
+   }
+
+   DoMartyr()
+   {
+      local oMartyr;
+
+      if NOT send(SYS,@IsPKAllowed)
+      {
+         return;
+      }
+
+      oMartyr = send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
+      
+      if Send(self,@IsEnchanted,#what=oMartyr)
+      {
+         return;
+      }
+
+      % global effects of the enchantment
+      Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=MarionCrtyp1_martyr_on,#what=self);
+      Send(self,@RoomStartEnchantment,#what=oMartyr,#state=150);
+
+      return;
+   }   
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   {
+      local i, each_obj;
+
+      % Let players call upon the "gods" to receive protection
+      % VERY IMPORTANT: Make sure we don't catch our own string!
+      if what <> self
+         AND StringContain(string,MarionCrypt1_gods)
+      {
+         send(self,@DoMartyr);
+      }
+
+      % Set the IsClass check to Player when finished testing.
+      if NOT isClass(what,&DM) OR type = SAY_YELL
+      {
+         propagate;
+      }
+
+      % Password for the Necro door.
+      if StringEqual(string,MarionCrypt1_venyacyr)
+         AND ptNecroDoor = $
+         %AND Check for location?
+      {
+         send(self,@OpenNecroCeiling);
+         send(self,@OpenNecroFloor);
+
+         Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc);
+
+         ptNecroDoor = CreateTimer(self,@NecroDoorTimer,NECRO_DOOR_CLOSE_DELAY);
+      }
+
+      propagate;
+   }
+
+   TryCreateMonster()
+   {
+      % When we try to create a monster, then make sure Martyr's is up.
+      send(self,@DoMartyr);
+
+      propagate;
+   }
+
+   OpenNecroCeiling()
+   {
+      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_CEILING_LIFT,
+           #height=484,#speed=8);
+      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_CEILING_LIFT,
+           #height=494,#speed=8);
+
+      return;
+   }
+
+   OpenNecroFloor()
+   {
+      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=424,#speed=8);
+      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=434,#speed=8);
+           
+      return;
+   }
+
+   NecroDoorTimer()
+   {
+      ptNecroDoor = $;
+      Send(self,@CloseNecroDoor);
+
+      return;
+   }
+
+   CloseNecroDoor()
+   {
+      if ptNecroDoor <> $
+      {
+         DeleteTimer(ptNecroDoor);
+         ptNecroDoor = $;
+      }
+
+      send(self,@CloseNecroCeiling);
+      send(self,@CloseNecroFloor);
+
+      Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc);
+
+      return;
+   }
+
+   CloseNecroCeiling()
+   {
+      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_CEILING_LIFT,
+           #height=458,#speed=16);
+      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_CEILING_LIFT,
+           #height=468,#speed=16);
+
+      return;
+   }
+
+   CloseNecroFloor()
+   {
+      send(self,@SetSector,#sector=SECTOR_NECRO1,#animation=ANIMATE_FLOOR_LIFT,
+           #height=458,#speed=16);
+      send(self,@SetSector,#sector=SECTOR_NECRO2,#animation=ANIMATE_FLOOR_LIFT,
+           #height=468,#speed=16);
+
+      return;
+   }   
+
+   SomethingKilled(what = $,victim = $)
+   {
+      if IsClass(victim,&Monster)
+      {
+         % gotta post because here it's not removed from room yet
+         Post(self,@CheckAllDeadMonsters);
+      }
+      
+      propagate;
+   }
+
+   LeverChanged(what = $)
+   {
+      local iSwitched;
+
+      iSwitched = 0;
+      if Send(poLever1,@IsSwitched)
+      {
+         iSwitched = iSwitched + 1;
+      }
+      
+      if Send(poLever2,@IsSwitched)
+      {
+         iSwitched = iSwitched + 1;
+      }
+
+      if send(self,@CountInFinal,#count=COUNT_MONSTERS) = 0
+      {
+         send(self,@ResetMonstersInFinal);
+      }
+
+      if ptDoor <> $
+      {
+         DeleteTimer(ptDoor);
+         ptDoor = $;
+      }
+
+      if iSwitched = 1
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc,#what=what);
+         Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=128,#speed=16);
+         ptDoor = CreateTimer(self,@SlamTimer,SLAM_TIME);
+      }
+      
+      if iSwitched = 2
+      {
+         send(self,@OpenFinalDoor);
+         % Close the door down.  Gotta fight in the last area to go down.
+         send(self,@CloseDoorDown);
+      }
+
+      piSwitched = iSwitched;
+
+      return;
+   }
+
+   ResetPuzzle()
+   {
+      send(self,@SlamTimer);
+      
+      return;
+   }
+
+   SlamTimer()
+   {
+      ptDoor = $;
+
+      Send(self,@CloseFinalDoor,#speed=128);
+
+      Send(poLever1,@SetSwitched,#switched=FALSE);
+      Send(poLever2,@SetSwitched,#switched=FALSE);
+
+      return;
+   }
+
+   FightTimer()
+   {
+      ptDoor = $;
+
+      if Send(self,@CountInFinal,#count=COUNT_PLAYERS) = 0
+      {
+         Send(self,@ResetFinal);
+
+         return;
+      }
+      
+      ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
+      
+      return;
+   }
+
+   ResetFinal()
+   {
+      if ptDoor <> $
+      {
+         DeleteTimer(ptDoor);
+         ptDoor = $;
+      }
+
+      Send(poLever1,@SetSwitched,#switched=FALSE);
+      Send(poLever2,@SetSwitched,#switched=FALSE);
+
+      send(self,@CloseDoorDown);
+      send(self,@CloseFinalDoor,#speed=32);
+
+      Send(self,@ResetMonstersInFinal);
+
+      return;
+   }
+
+   CheckAllDeadMonsters()
+   {
+      if Send(self,@CountInFinal,#count=COUNT_MONSTERS) = 0
+         AND Send(self,@CountInFinal,#count=COUNT_PLAYERS) <> 0
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc,#what=poLever1);
+         if pbDoorDownActive
+         {
+            send(self,@OpenDoorDown);
+         }
+         else
+         {
+            send(self,@OpenFinalDoor);
+         }
+
+         ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
+      }
+      
+      return;
+   }
+
+   OpenFinalDoor()
+   {
+      Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc,#what=poLever1);
+      Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=172,#speed=16);
+      ptDoor = CreateTimer(self,@FightTimer,FIGHT_TIME);
+
+      return;
+   }
+
+   CloseFinalDoor(speed=16)
+   {
+      Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt1_door1_rsc,#what=poLever1);
+      Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=84,#speed=speed);
+
+      return;
+   }
+
+   CountInFinal(count = COUNT_PLAYERS)
+   "With count = COUNT_MONSTERS, count monsters in region.\n"
+   "With count = COUNT_PLAYERS, count players in region."
+   {
+      local i,each_obj,iCount,iRow,iCol;
+
+      iCount = 0;
+      for i in plActive
+      {
+         each_obj = First(i);
+         if count = COUNT_MONSTERS
+             AND IsClass(each_obj,&Monster) 
+            OR count = COUNT_PLAYERS
+             AND IsClass(each_obj,&User)
+         {
+            iRow = Send(each_obj,@GetRow);
+            
+            iCol = Send(each_obj,@GetCol);
+            if (iRow >= MIN_FINAL_ROW
+                AND iRow <= MAX_FINAL_ROW
+                AND iCol >= MIN_FINAL_COL
+                AND iCol <= MAX_FINAL_COL)
+               OR (iCol < HALL_EAST
+                   AND iRow > HALL_NORTH)
+            {
+               iCount = iCount + 1;
+            }
+         }
+      }
+      
+      return iCount;
+   }
+
+   ResetMonstersInFinal()
+   {
+      local i,each_obj,iCount,iRow,iCol, oStatue;
+
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&Monster)
+         {
+            iRow = Send(each_obj,@GetRow);
+            iCol = Send(each_obj,@GetCol);
+            
+            if (iRow >= MIN_FINAL_ROW
+                AND iRow <= MAX_FINAL_ROW
+                AND iCol >= MIN_FINAL_COL
+                AND iCol <= MAX_FINAL_COL)
+               OR (iCol < HALL_EAST
+                   AND iRow > HALL_NORTH)
+            {
+               Send(each_obj,@Delete);
+            }
+         }
+      }
+
+      oStatue = Create(&LivingStatue);
+      send(self,@NewHold,#what=oStatue,#new_row=32,#new_col=7,#fine_row=0,#fine_col=0);
+      send(self,@SomethingTurned,#what=oStatue,#new_angle=ANGLE_NORTH);
+
+      i = 0;
+      while i < 5
+      {
+         iRow = Random(MIN_GEN_ROW,MAX_GEN_ROW);
+         iCol = Random(MIN_GEN_COL,MAX_GEN_COL);
+         Send(self,@NewHold,#what=Create(&SpectralMummy),#new_row=iRow,#new_col=iCol);
+         i = i + 1;
+      }
+      
+      return;
+   }
+
+   OpenDoorDown()
+   {
+      send(self,@CloseFinalDoor);
+
+      send(self,@SetSector,#sector=SECTOR_EXIT1,#animation=ANIMATE_CEILING_LIFT,
+           #height=273,#speed=4);
+      send(self,@SetSector,#sector=SECTOR_EXIT2,#animation=ANIMATE_CEILING_LIFT,
+           #height=161,#speed=4);
+
+      return;
+   }
+
+   CloseDoorDown()
+   {
+      send(self,@SetSector,#sector=SECTOR_EXIT1,#animation=ANIMATE_CEILING_LIFT,
+           #height=200,#speed=16);
+      send(self,@SetSector,#sector=SECTOR_EXIT2,#animation=ANIMATE_CEILING_LIFT,
+           #height=88,#speed=16);
+
+      return;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      local iBonus;
+
+      % Hinder learning Discordance due to the automatic room enchantment
+      if IsClass(oSpellSkill,&Discordance)
+      {
+         return (chance / 10);
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

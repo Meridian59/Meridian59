@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+FireRing is ResistRing
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FireRing_name_rsc = "ring of fire resistance"
+   FireRing_desc_rsc = \
+      "This ring is cold to the touch.  Magical runes are inscribed on its inner surface."
+  
+   FireRing_use_rsc = \
+      "You feel the ring working.  Even the sun's heat seems diminished."
+  
+   FireRing_dead_rsc = \
+      "The ring begins to hiss and smoke and then evaporates into the air!"
+
+classvars:
+
+   vrRealName = FireRing_name_rsc
+   vrRealDesc = FireRing_desc_rsc
+
+   vrUseMessage = FireRing_use_rsc
+   vrDeadMessage = FireRing_dead_rsc
+
+properties:
+
+   piResistanceType = -ATCK_SPELL_FIRE
+   piResistanceChange = 50
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,122 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cloak is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Cloak_name_rsc = "cloak"
+   Cloak_icon_rsc = icloak.bgf
+   Cloak_desc_rsc = \
+   "Qor shrouds your astral body in shifting shadows, allowing you to elude magical tracking.  "
+   "Requires entroot berries to cast."
+   
+   Cloak_on_rsc = "It feels as though your very spirit has become somehow indistinct."
+   Cloak_off_rsc = "You feel more conspicuous."
+   Cloak_already_enchanted_rsc = "You are already cloaked."
+   Cloak_Succeed_rsc = "You wrap a magical cloak around %s%s."
+
+   Cloak_sound = qcloak.wav
+
+classvars:
+
+   vrName = Cloak_name_rsc
+   vrIcon = Cloak_icon_rsc
+   vrDesc = Cloak_desc_rsc
+
+   vrAlreadyEnchanted = Cloak_already_enchanted_rsc
+   vrEnchantment_On = Cloak_On_rsc
+   vrEnchantment_Off = Cloak_Off_rsc
+   vrSucceed = Cloak_Succeed_rsc
+
+   viSpell_num = SID_CLOAK
+   viSchool = SS_QOR
+   viSpell_level = 1
+   viMana = 5
+
+   viCast_time = 2000
+   viChance_To_Increase = 20
+   vrSucceed_wav = Cloak_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&EntrootBerry,2],plReagents);
+
+      return;
+   }
+
+   GetStateValue(iSpellpower=$)
+   {
+      local iFactor;
+
+      iFactor = bound(iSpellPower/2 + 5,10,50);
+
+      return iFactor;
+   }
+
+   GetWrongRoom()
+   {
+      local lRoomList,oRoom,i;
+
+      lRoomlist = Send(SYS,@GetRooms);
+      oRoom = send(SYS,@Findroombynum,#num=RID_GODROOM);
+      i = 1;
+
+      while (send(oRoom,@SeanceCheck) = FALSE) AND (i < 20)
+      {
+         oRoom = Nth(lRoomlist,Random(1,Length(lRoomlist)));
+         if oRoom = $ OR i = $
+         {
+            oRoom = send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
+            break;
+         }
+         i = i + 1;
+      }
+      
+      if i = 20
+      {
+         oRoom = send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
+      }
+
+      return oRoom;
+
+   }
+
+  
+   GetDuration(iSpellpower = 0)
+   {
+      local iDuration;
+      iDuration = (300 + 33*iSpellPower) * 1000;    %%% 5-20 minutes
+      return random(iDuration/2,iDuration);
+   }
+   
+
+   OfferToNewCharacters()
+   {
+      %% 
+      return FALSE;
+   }
+
+   GetPotionClass()
+   {
+      RETURN &CloakPotion;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

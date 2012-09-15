@@ -1,0 +1,95 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistAcid is ResistanceEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ResistAcid_name_rsc = "resist acid"
+   ResistAcid_icon_rsc = iresacid.bgf
+   ResistAcid_desc_rsc = \
+      "Coats your body in a magical goo which "
+      "absorbs damage from acid attacks for several minutes.  "
+      "Requires herbs and entroot berries."
+
+   ResistAcid_intro = "Shal'ille Lv. 2: Coats your body in a magical goo which "
+      "absorbs damage from acid attacks."
+
+   ResistAcid_already_enchanted = "You are already resistant to acid spells."
+
+   ResistAcid_on = "A chalky goo oozes out your pores and coats your entire body."
+   ResistAcid_off = "The blessed goo bubbles away as the resist acid enchantment wears off."
+   ResistAcid_Success = "A chalky goo oozes out of %s%s's pores and coats their entire body."
+
+   ResistAcid_sound = shalille.wav
+
+classvars:
+
+   vrName = ResistAcid_name_rsc
+   vrIcon = ResistAcid_icon_rsc
+   vrDesc = ResistAcid_desc_rsc
+   vrSucceed_wav = ResistAcid_sound
+   vrSpell_intro = ResistAcid_intro
+
+   viSpell_num = SID_RESIST_ACID
+   viSchool = SS_SHALILLE
+   viSpell_level = 2
+   viMana = 9
+
+   viPersonal_ench = True
+   viChance_To_Increase = 30
+
+   viFlash = FLASH_GOOD_SELF
+
+   viResistanceType = -ATCK_SPELL_ACID
+   vrAlreadyEnchanted = ResistAcid_already_enchanted
+   vrEnchantment_On = ResistAcid_on
+   vrEnchantment_Off = ResistAcid_off
+   vrSuccess = ResistAcid_Success
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Herbs,2],plReagents);
+      plReagents = Cons([&EntrootBerry,1],plReagents);
+
+      return;
+   }
+
+   GetResistanceStrength(iSpellpower = 0)
+   {
+      %% strength varies from 15 to 65
+      return iSpellPower/2 + 15;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;	   %%% 5 to 15 minutes
+      iDuration = 300 + iSpellPower * 6;
+      iDuration = iDuration * 1000;	  %% translate to milliseconds
+      return random(iDuration/2,iDuration);
+   }
+
+   GetPotionClass()
+   {
+      RETURN &ResistAcidPotion;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

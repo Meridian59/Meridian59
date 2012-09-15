@@ -1,0 +1,28 @@
+# Thief Skill Master NPC
+# dagger
+# groups
+# 1-3 tossed
+-s 4
+18
+dag000a.bmp    [-11, -2] 
+dag045a.bmp    [0, -2] 
+dag090a.bmp    [-2, -3] 
+dag180a.bmp    [-10, -17] 
+dag270a.bmp    [-21, -3] 
+dag315a.bmp    [-14, -2] 
+dag000b.bmp    [-10, -25] 
+dag045b.bmp    [-3, -25] 
+dag090b.bmp    [-3, -28] 
+dag180b.bmp    [-11, -26] 
+dag270b.bmp    [-15, -30] 
+dag315b.bmp    [-18, -25] 
+dag000c.bmp    [-9, -35] 
+dag045c.bmp    [-12, -36] 
+dag090c.bmp    [-18, -38] 
+dag180c.bmp    [-17, -30] 
+dag270c.bmp    [-5, -33] 
+dag315c.bmp    [-3, -31] 
+3
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14

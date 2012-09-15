@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Field1 is Room
+
+constants:
+
+   TO_ROW = 42
+   TO_COL = 15
+
+   SECTOR_CAGE1 = 1
+   SECTOR_CAGE2 = 2
+   RESET_TIME = 10000
+
+   include blakston.khd
+
+resources:
+
+   room_name_field1 = "The Fields"
+   room_field1 = field1.roo
+   field1_music = pk_fm.mid
+
+classvars:
+
+   viTeleport_row = 42
+   viTeleport_col = 15
+   viTerrain_type = TERRAIN_FIELDS | TERRAIN_CITY
+   viPermanent_flags = ROOM_SAFELOGOFF
+
+   vrName = room_name_field1
+
+properties:
+
+   prData = room_name_field1
+  
+   prRoom = room_field1
+   piRoom_num = RID_FIELD1
+   prMusic = field1_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+messages:
+
+   GetName()
+   {
+      return prData;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+   GetRegion()
+   {
+      return RID_HISTORIC;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

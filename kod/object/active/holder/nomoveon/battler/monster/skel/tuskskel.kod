@@ -1,0 +1,67 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TuskedSkeleton is Skeleton
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TuskedSkeleton_koc_name_rsc = "ha'chaleoc"
+   TuskedSkeleton_name_rsc = "tusked skeleton"
+   TuskedSkeleton_icon_rsc = skelbody.bgf
+   TuskedSkeleton_desc_rsc = \
+      "A few scraps of rotten flesh cling to this collection of human "
+      "bones topped by a skull with large tusks protruding from its mouth.  "
+      "You shudder to think what dark ritual brought this abomination into being."
+
+   TuskedSkeleton_head = skelhed1.bgf
+   TuskedSkeleton_dead_icon_rsc = skelX.bgf
+   TuskedSkeleton_dead_name_rsc = "pile of bones"
+
+   TuskedSkeleton_sound_miss = skl3_atk.wav
+   TuskedSkeleton_sound_death = skl3_die.wav
+   TuskedSkeleton_sound_aware = skl3_awr.wav
+
+classvars:
+
+   vrKocName = TuskedSkeleton_koc_name_rsc
+   vrName = TuskedSkeleton_name_rsc
+   vrIcon = TuskedSkeleton_icon_rsc
+   vrDesc = TuskedSkeleton_desc_rsc
+   vrDead_icon = TuskedSkeleton_dead_icon_rsc
+   vrDead_name = TuskedSkeleton_dead_name_rsc
+
+   viTreasure_type = TID_SKELETON3
+   viSpeed = SPEED_FAST
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viLevel = 100
+   viDifficulty = 6
+   viKarma = -70
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
+
+   vrSound_miss = TuskedSkeleton_sound_miss
+   vrSound_aware = TuskedSkeleton_sound_aware
+   vrSound_death = TuskedSkeleton_sound_death
+
+   vrHeadIcon = TuskedSkeleton_head
+
+properties:
+
+   piAnimation = ANIM_NONE
+   
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

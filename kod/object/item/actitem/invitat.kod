@@ -1,0 +1,209 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildInvitation is ActiveItem
+
+constants:
+
+   include blakston.khd
+
+   SELF_DELETE_DELAY = 120000    %% 2 minutes     
+
+resources:
+
+   invitation_name_rsc = "invitation"
+   invitation_icon_rsc = scroll.bgf
+
+   invitation_desc_rsc = "If you \"use\" this invitation, you will join %s%q.\n\nThis invitation will delete itself two minutes after being offered."
+   invitation_desc_cant_rsc = "If you \"use\" this invitation, you will join %s%q.  However, you cannot join without first renouncing your ties to %s%q.\n\nThis invitation will delete itself two minutes after being offered."
+   invitation_desc_toolow_rsc = "If you \"use\" this invitation, you will join %s%q. However, you cannot join until you are higher in level.\n\nThis invitation will delete itself two minutes after being offered."
+
+   invitation_cant_ditch = "As you try to discard the invitation, it seems to cling to your hand."
+   invitation_cant_join = "You may not join a new guild until you renounce your old guild ties."
+   invitation_cant_join_toolow = "You may not join a guild until you are more experienced."
+
+   invitation_expires = "Your invitation to %s has expired."
+   invitation_vanishes = "%s%s's invitation vanishes in a puff of smoke!"
+
+classvars:
+
+   vrName = invitation_name_rsc
+   vrIcon = invitation_icon_rsc
+   vrDesc = invitation_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viUse_amount = 1
+
+   viIndefinite = ARTICLE_AN
+
+   viHits_init_min = 50
+   viHits_init_max = 50
+
+   viBulk = 0
+   viWeight = 0
+   viValue_average = 0
+
+   viUse_type = ITEM_SINGLE_USE
+
+properties:
+
+   poInductor = $            %% person who offers guild position
+   poInductee = $            %% person offered a guild position   
+   poGuild = $
+   ptJoin = $
+
+   piHits = 10
+
+messages:
+
+   Constructor(inductor=$,inductee=$)
+   {
+      poInductor = inductor;
+      poInductee = Inductee;
+      poGuild = send(poInductor,@getguild);
+      send(poGuild,@AddInvitation,#invite_obj = self);
+      ptJoin = createtimer(self,@jointimer,SELF_DELETE_DELAY);
+      return;
+   }
+
+   JoinTimer()
+   {
+      ptJoin = $;
+      Send(self,@InvitationVanish);
+      return;
+   }
+
+   InvitationVanish()
+   {
+      send(poInductor,@msgsenduser,#message_rsc=invitation_expires,
+          #parm1=send(poInductee,@getname));
+      send(poInductee,@msgsenduser,#message_rsc=invitation_vanishes,
+          #parm1=send(poInductor,@getcapdef),
+		  #parm2=send(poInductor,@getname));
+      send(self,@delete);
+      return;
+   }
+
+   UserLogoff()
+   {
+      send(poInductor,@msgsenduser,#message_rsc=invitation_expires,
+          #parm1=send(poInductee,@getname));
+      send(self,@delete);
+      return;
+   }
+
+   GetInductor()
+   "A player may not offer more than one invitation at once."
+   {
+      return poInductor;      
+   }
+
+   GetInductee()
+   "A player may not receive more than one invitation from one guild at once."
+   {
+      return poInductee;      
+   }
+
+
+   ShowDesc()
+   "Tells those already in guilds that they cannot join unless they quit current guild."
+   {
+      local oGuild;
+
+      oGuild = send(poInductee,@getguild);
+      if poOwner <> poInductee
+        {DEBUG("Inductee found way to ditch invitation!"); return FALSE; }
+
+      if oGuild=$
+        {
+           if send(poInductee,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE)
+             {
+               AddPacket(4,invitation_desc_rsc,4,send(poGuild,@getdef),4,Send(poGuild,@GetName));
+             }
+           else
+             {
+               AddPacket(4,invitation_desc_toolow_rsc,4,send(poGuild,@getdef),4,Send(poGuild,@GetName));
+             }
+        }
+      else
+        {
+           AddPacket(4,invitation_desc_cant_rsc,4,send(poGuild,@getdef),4,
+             Send(poGuild,@GetName),4,send(oGuild,@getdef),4,send(oGuild,@getname));
+        }
+      return;
+   }
+
+   ReqNewOwner()
+   {
+      send(poOwner,@msgsenduser,#message_rsc=invitation_cant_ditch);
+      return FALSE;
+   }
+
+   SomethingLeft(what=$)
+   "If carrier leaves the room, delete with cutesy messages."
+   {
+      if what = poInductor or what = poInductee
+        {
+          send(self,@invitationVanish);
+        }
+      return;
+   }
+
+   OwnerChangedOwner(what=$,where=$)
+   "If carrier leaves the room, delete with cutesy messages."
+   {
+      if what = poInductor or what = poInductee
+        {
+          send(self,@invitationVanish);
+        }
+      return TRUE;
+   }
+
+
+   ReqNewApply()
+   {
+      return TRUE;
+   }
+
+   NewApplied(what = $)
+   {
+      if not send(poInductee,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE)
+        {
+           send(poInductee,@msgsenduser,#message_rsc=invitation_cant_join_toolow);
+           return FALSE;
+        }
+
+      if send(poInductee,@getguild) = $
+        {
+          send(poGuild,@inductnewmember,#who=poInductee,#inductor=poInductor);
+          send(self, @delete);
+          return;
+        }
+      send(poInductee,@msgsenduser,#message_rsc=invitation_cant_join);
+      return;
+   }
+
+   Delete()
+   {
+      if poGuild <> $
+        {
+          send(poGuild,@RemoveInvitation,#invite_obj=self);
+        }
+      if ptJoin <> $
+      {
+	 deletetimer(ptJoin);
+	 ptJoin = $;
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

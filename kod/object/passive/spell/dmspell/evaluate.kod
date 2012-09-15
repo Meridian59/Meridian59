@@ -1,0 +1,172 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Evaluate is DMSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   Evaluate_name_rsc = "evaluate"
+   Evaluate_icon_rsc = lightnin.bgf
+
+   allinroom_Evaluate_msg1 = "~b%s%s deeply plunges into the soul of %s%s."
+   allinroom_Evaluate_msg2 = "~bYou tingle as %s%s stares deep into the soul of %s%s."
+
+   caster_Evaluate_msg = "~bYou stare deeply at %s%s."
+   Evaluated_Evaluate_msg = "~b%s%s looks deeply into your eyes."
+   Evaluate_desc_rsc = \
+   "This gazes deep into a person's eyes, and judges their odds of gaining another health point."
+
+   Evaluate_message_nochance = "%s has no chance of gaining a hit point, but will in about %i kills."
+   Evaluate_Message = "%s has a %i out of %i chance (%i percent) of gaining a health point with each kill."
+   evaluate_monster = "%s should concentrate on killing monsters at about %s ability level, such as %ss and %ss."
+   Evaluate_combat = "~BCombat stats: ~B%s has an Offense of %i, Defense of %i, and can do around %i points of type %i (physical) and %i (spell) damage."
+
+classvars:
+   vrName = Evaluate_name_rsc
+   vrIcon = Evaluate_icon_rsc
+   vrDesc = Evaluate_desc_rsc
+
+   viSpell_num = SID_EVALUATE
+   viMana = 0
+  
+properties:
+     
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local  i, oRoom, lActive, each_obj;
+
+      oRoom = Send(who,@GetOwner);
+      lActive = Send(oRoom,@GetHolderActive);
+
+      Send(who,@MsgSendUser,#message_rsc=caster_Evaluate_msg,
+         #parm1=Send(First(lTargets),@getdef),
+         #parm2=Send(First(lTargets),@getname));
+
+      if (IsClass(First(lTargets),&Player))
+      {
+         Send(First(lTargets),@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
+         Send(First(lTargets),@MsgSendUser,#message_rsc=Evaluated_Evaluate_msg,
+		    #parm1=Send(who,@getcapindef),
+			#parm2=Send(who,@getname));
+      }
+      Send(self,@ComputeEvaluateInfo,#who=First(lTargets),#dmis=who);
+
+      for i in lActive
+      {
+
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if (IsClass(each_obj,&Player) and (each_obj <> who) and (each_obj <> First(lTargets)))
+            {
+            if (IsClass(First(lTargets),&Battler))
+            {
+               send(each_obj,@MsgSendUser,#message_rsc=allinroom_Evaluate_msg1,
+                    #parm1=Send(who,@getindef),
+                    #parm2=Send(who,@getname),
+                    #parm3=Send(First(lTargets),@getdef),
+                    #parm4=Send(First(lTargets),@getname));
+            } else {
+               send(each_obj,@MsgSendUser,#message_rsc=allinroom_Evaluate_msg2,
+                    #parm1=Send(who,@getindef),
+                    #parm2=Send(who,@getname),
+                    #parm3=Send(First(lTargets),@getdef),
+                    #parm4=Send(First(lTargets),@getname));
+            }
+         }
+      }
+   propagate;
+   }
+
+   ComputeEvaluateInfo(who=$,dmis=$)
+   {
+      local highmark, gainchance, total, monsterA, monsterB, temp, i, maxhealth, level;
+      if dmis=$ or who=$  { debug("Bad data!");  return FALSE; }
+      
+      if IsClass(who,&Player)
+      {
+         highmark = send(who,@GetHighMark);
+         gainchance = send(who,@GetGainChance);
+         maxhealth = send(who,@GetMaxHealth);
+         if gainchance < 0
+         {
+            send(dmis,@msgsenduser,#message_rsc = evaluate_message_nochance,#parm1=send(who,@GetName),
+                 #parm2=(gainchance/2));
+         } else {
+            total = bound(((gainchance*100)/highmark),1,100);
+            send(dmis,@msgsenduser,#message_rsc = evaluate_message,#parm1=send(who,@GetName),
+                 #parm2=gainchance,#parm3=highmark,#parm4=total);
+         }      
+         monsterA=$; monsterB=$;
+         for i in send(SYS,@GetMonsterTemplates)
+         {
+            %% This routine finds two monsters who are closest in level to the player, whilst still
+            %% being of greater level than the player.
+
+            level = send(i,@GetLevel);
+            if level > maxhealth
+            {
+               temp = i;
+               if monsterA=$
+               {
+                  monsterA=temp;
+               } else {
+                  if monsterB=$
+   	            {
+	                  monsterB=temp;
+                  } else {
+                     if send(monsterA,@GetLevel) > send(temp,@GetLevel)
+                     {
+                        monsterA = temp;
+                     } else {  
+                        if send(monsterB,@GetLevel) > send(temp,@GetLevel)
+                        {
+                           monsterB = temp;
+                        }
+                     }
+                  }
+               }   	    
+            }
+         }
+         send(dmis,@msgsenduser,#message_rsc=evaluate_monster,#parm1=send(who,@getname),#parm2=send(who,@gethisher),
+              #parm3=send(MonsterA,@GetName),#parm4=send(MonsterB,@GetName));
+      }
+
+      send(dmis,@msgsenduser,#message_rsc=Evaluate_combat,#parm1=send(who,@getname),#parm2=send(who,@GetOffense),
+           #parm3=send(who,@GetDefense),#parm4=send(who,@GetDamage),#parm5=send(who,@GetDamageType),
+           #parm6=Send(who,@GetSpellType));
+
+
+      return;
+   }      
+
+   SendEffectData()
+   {
+      % for EFFECT_INVERT, 4 bytes of time to be inverted
+      AddPacket(4,10000);
+      
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

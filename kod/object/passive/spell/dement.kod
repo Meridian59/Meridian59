@@ -1,0 +1,151 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dement is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   dement_name_rsc = "dement"
+   dement_icon_rsc = idement.bgf
+   dement_desc_rsc = \
+      "Sends the mind of the target reeling with dark, bewildering "
+      "thoughts, making spell casting more difficult for several minutes.  "
+      "Requires solagh and uncut seraphym to cast."
+
+   dement_sound = rdement.wav
+   dement_cast_rsc = "You sense an unsavory presence."
+   dement_already_enchanted = "That poor soul is already demented."
+
+
+classvars:
+
+   vrName = dement_name_rsc
+   vrIcon = dement_icon_rsc
+   vrDesc = dement_desc_rsc
+
+   viSpell_num = SID_DEMENT
+   viSchool = SS_RIIJA
+   viSpell_level = 4
+   viMana = 6
+   viChance_To_Increase = 30
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   vrSucceed_wav = dement_sound
+
+   viFlash = FLASH_BAD
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Solagh,2],plReagents);
+      plReagents = Cons([&UncutSeraphym,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i,oDementia;
+      
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if NOT IsClass(target,&Battler)
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),
+              #parm3=Send(target,@GetName));
+         }
+
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,
+                 #parm1=vrName);
+         }
+
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      oDementia = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
+      if Send(target,@IsEnchanted,#what=oDementia)
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=dement_already_enchanted);
+         }
+
+         return FALSE;
+      }
+	 
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower=0)
+   {
+      local iMight_change, oTarget, oDementia;
+
+      oTarget = First(lTargets);
+      oDementia = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
+      send(who,@MsgSendUser,#message_rsc=dement_cast_rsc);
+      if IsClass(oTarget,&Player)
+      {
+         send(oTarget,@MsgSendUser,#message_rsc=dement_cast_rsc);
+      }
+      
+      Send(oDementia,@MakeSick,#who=oTarget,#iAmount=(iSpellPower/3+1),
+           #duration=send(self,@GetDuration,#iSpellPower=iSpellPower));
+
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % 5-30 minutes
+      iDuration = (300 + 16*iSpellPower) * 1000;
+
+      return random(iDuration/2,iDuration);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

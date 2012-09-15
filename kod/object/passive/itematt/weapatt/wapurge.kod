@@ -1,0 +1,104 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttPurger is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This weapon has a chance to purge positive enchantments from the 
+%     opponent every time it does damage.
+%
+%  Form is: 
+%
+%       [ WA_PURGER]
+%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   weapattpurger_desc = "  The sign of Psychochild is engraved on the weapon."      
+   purger_fail_use = "You are not yet ready to use %s%s."
+   purger_worked_user = "Your weapon tears at the magic surrounding %s%s."
+   purger_worked_target = "%s%s's weapon tears at the magic surrounding you!"
+   purger_dm = "purger"
+
+classvars:
+
+   vrDesc = weapattpurger_desc
+   vrDesc2 = $
+
+   viItem_Att_Num = WA_PURGER
+
+   viDifficulty = 9
+   vrDM_trigger = purger_dm
+
+   vbAppears_in_Happyland = FALSE
+
+properties:
+  
+   piValue_modifier = 200   %% modify the object's price by 100%
+   piValue_power_modifier = 10
+   piEffect_percent = 15
+
+messages:
+
+   ItemReqUse(oItem=$,oPlayer=$)
+   {
+      % this person needs 50% in the weapon's proficiency to use
+      if send(oItem,@GetProf,#who=oPlayer) < 50      
+      {
+         send(oPlayer,@MsgSendUser,#message_rsc=purger_fail_use,
+              #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
+              
+         return FALSE;      
+      }
+      
+      return TRUE;
+   }
+
+  
+   %%% Effect Functions
+      
+   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   "Wielder has a 1% chance of blinding target with any hit."
+   {
+      local oSpell;
+
+      if random(1,100) < piEffect_percent
+      {
+         oSpell = send(SYS,@FindSpellByNum,#num=SID_PURGE);
+         
+         %% Gotta have something to try to remove....
+         if Send(target,@IsEnchanted)
+         {
+            % Try to purge off random(25,75)% of the enchantments.
+            if send(oSpell,@DoPurge,#who=target,#iChance=random(25,75))
+            {
+               % Only tell our victim if they lost enchantments.
+               send(target,@MsgSendUser,#message_rsc=purger_worked_target,
+                    #parm1=send(wielder,@GetCapDef),#parm2=send(wielder,@GetName));
+            }
+
+            % Tell the wielder every time we fired so they think it's cool.
+            send(wielder,@MsgSendUser,#message_rsc=purger_worked_user,
+                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+         }
+      }
+
+      return damage;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

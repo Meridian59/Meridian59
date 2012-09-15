@@ -1,0 +1,67 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Newb2 is Guest2
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_newb2 = "Raza"
+
+classvars:
+
+   vrName = room_name_newb2
+
+   viDemo_base = RID_NEWB_BASE
+
+properties:
+
+   piRoom_num = RID_NEWB2
+
+messages:
+
+   Constructed()
+   {
+      piRoom_flags = piRoom_flags & ~ROOM_GUEST_AREA;
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      Send(self,@NewHold,#what=Create(&Cow),#new_row=31,#new_col=56);
+      Send(self,@NewHold,#what=Create(&Cow),#new_row=35,#new_col=59);
+      Send(self,@NewHold,#what=Create(&Cow),#new_row=30,#new_col=59);
+
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      % Don't let them get over 25%.
+      if oSpellSkill <> $
+         AND send(oSpellSkill,@GetAbility,#who=who) >= 25
+      {
+         return CANNOT_IMPROVE;
+      }
+      
+      % Give a general bonus to the nice newbies.
+      return (chance * 3)/2;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

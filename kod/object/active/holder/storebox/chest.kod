@@ -1,0 +1,38 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Chest is StorageBox
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   chest_name_rsc = "chest"
+   chest_icon_rsc = box2.bgf
+
+   chest_desc_rsc = "This metal chest is sturdy and well built.  It can hold many items."
+
+classvars:
+   vrName = chest_name_rsc
+   vrIcon = chest_icon_rsc
+   vrDesc = chest_desc_rsc
+
+   viBulk_hold_max = 18000
+   viWeight_hold_max = $
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

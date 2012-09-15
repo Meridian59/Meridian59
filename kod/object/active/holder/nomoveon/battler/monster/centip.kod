@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Centipede is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   centipede_koc_name_rsc = "puuckinich"
+   centipede_name_rsc = "centipede"
+   centipede_icon_rsc = centip.bgf
+   centipede_desc_rsc = \
+   "Bright red plates make up the exoskeleton of this "
+   "giant centipede.  Instinct, not intellect, guides its "
+   "quest for nourishment."
+
+   centipede_dead_icon_rsc = centipX.bgf
+   centipede_dead_name_rsc = "dead centipede"
+
+   centipede_sound_hit = cnt_atkh.wav
+   centipede_sound_miss = cnt_atkm.wav
+   centipede_sound_death = cnt_dth.wav
+   centipede_sound_aware = cnt_awr.wav
+   
+classvars:
+   vrKocName = centipede_koc_name_rsc
+   vrName = centipede_name_rsc
+   vrIcon = centipede_icon_rsc
+   vrDesc = centipede_desc_rsc
+   vrDead_icon = centipede_dead_icon_rsc
+   vrDead_name = centipede_dead_name_rsc
+
+   viTreasure_type = TID_WIMPY_MEDIUM
+
+   viSpeed = SPEED_FAST
+   viAttack_types = ATCK_WEAP_BITE
+
+   viLevel = 30
+   viDifficulty = 5
+   viKarma = 15
+
+   vrSound_hit = centipede_sound_hit
+   vrSound_miss = centipede_sound_miss
+   vrSound_aware = centipede_sound_aware
+   vrSound_death = centipede_sound_death
+
+
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 40, -ATCK_SPELL_FIRE ],
+                        [ 20, ATCK_WEAP_SLASH],
+			[ -20, ATCK_WEAP_MAGIC],
+                        [-20, -ATCK_SPELL_SHOCK] ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,120,2,2,2,6);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,120,2,2,2,6);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+	 AddPacket(1,ANIMATE_ONCE,4,160,2,7,2,12,2,1);
+	 return;
+      }
+
+      % if no body animation
+      
+      propagate;
+   }
+
+   IsAlly(target = $)
+   "Newbie monster has no allies."
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

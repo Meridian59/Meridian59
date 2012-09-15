@@ -1,0 +1,512 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Prism is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   prism_name_rsc = "prism"
+
+   prism_3_icon_rsc = prism3.bgf
+   prism_5_icon_rsc = prism5.bgf
+   prism_7_icon_rsc = prism7.bgf
+
+   prism_desc_rsc = "When held up to the light, this prism refracts a pretty rainbow of colors.  "
+      "If the legends of these magical items hold true, however, "
+      "its true worth lies in its ability to focus the magical energies of multiple "
+      "spellcasters for the casting of certain special spells.  "
+      "According to the mages of antiquity, a prism must be placed upon the ground before a spell "
+      "may be focused through it.  Once casting has begun, as many mages as the prism has sides "
+      "may contribute to the energies stored within, and at least one mage must be casting at all "
+      "times to keep the stored energy from dissipating.  The spell being chanted will fire "
+      "when enough magical power has been stored in the prism and there is exactly one caster "
+      "for each side of the prism.  This prism has "
+   prism_desc2_rsc = " sides."
+   prism_desc2a_rsc = " sides and glows faintly from within."
+   prism_desc2b_rsc = " sides and is glowing from a point at its center."
+   prism_desc2c_rsc = " sides and is glowing fairly brightly."
+   prism_desc2d_rsc = " sides and glows extremely brightly."
+
+   prism_projectile = lightnin.bgf
+
+   prism_new_spell = "%s%s begins to chant an incantation and a prism nearby starts to glow!"
+   prism_new_spell_tocaster = "You begin to chant and a prism nearby starts to glow!"
+   prism_new_caster = "%s%s joins in the chanting of an incantation."
+   prism_new_caster_tocaster = "You join in the chanting of an incantation."
+   prism_lack_casters = "You feel like the prism has the power to cast the spell, but lacks the right symmetry of focal energy."
+   prism_chant_over = "The prism darkens and a blanket of silence seems to settle over you as the chant ceases."
+   prism_desc_location_rsc = "  If you peer closely you can see a miniture landscape inside the prism, it appears to be "
+
+classvars:
+
+   vrName = prism_name_rsc
+   vrDesc = prism_desc_rsc
+
+   vrPrismProjectile = prism_projectile
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 200
+
+properties:
+
+   vrIcon = prism_3_icon_rsc
+
+   poSpell = $
+   piSpellPowerNeeded = 0
+   piSpellPowerSoFar = 0
+   plCasters = $
+   plTargets = $
+   piNumSides = 3
+
+   piGlowing = FALSE
+
+   % Used to store data for shadow rift.  FALSE means there is no location for this prism.
+   % Otherwise, a list of:
+   % [ room ID, row, column, fine row, fine col ]
+   plLocation = FALSE 
+   
+messages:
+
+   Constructor(numSides=0)
+   {
+      send(self,@SetNumSides,#numSides=numSides);
+
+      propagate;
+   }
+
+   AppendDesc()
+   {
+      local lDescs, oRoom;
+
+      % This prism has <n> sides.
+      send(SYS,@AppendCardinalToTempString,#number=piNumSides);
+
+      lDescs = [prism_desc2_rsc, prism_desc2a_rsc, prism_desc2b_rsc, prism_desc2d_rsc];
+
+      % Append the glow description based on the charge level.
+      AppendTempString(Nth(lDescs,(send(self,@GetChargeLevel)+1)));
+
+      if IsList(plLocation) AND plLocation <> $
+      {
+         oRoom = Send(SYS, @FindRoomByNum, #num = First(plLocation));
+         AppendTempString(prism_desc_location_rsc);
+         AppendTempString(send(oRoom,@GetCapDef));
+         AppendTempString(send(oRoom,@GetName));
+         AppendTempString(".");
+      }
+
+      return;
+   }
+
+   SetNumSides(numSides=0)
+   {
+      if numSides = 0
+      {
+         piNumSides = ((random(0,2)*2)+3);
+      }
+      else
+      {
+         piNumSides = numSides;
+      }
+
+      if (piNumSides <> 3) and (piNumSides <> 5) and (piNumSides <> 7)
+      {
+         piNumSides = 3;
+      }
+      
+      if piNumSides = 3
+      {
+         vrIcon = prism_3_icon_rsc;
+      }
+
+      if piNumSides = 5
+      {
+         vrIcon = prism_5_icon_rsc;
+      }
+
+      if piNumSides = 7
+      {
+         vrIcon = prism_7_icon_rsc;
+      }
+
+      return;
+   }
+
+   CanAcceptCasters()
+   {
+      if piNumSides <> 3 AND piNumSides <> 5 AND piNumSides <> 7
+      {
+         send(self,@SetNumSides,#numSides=3);
+      }
+
+      if Length(plCasters) >= piNumSides
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   GetTargets()
+   {
+      return plTargets;
+   }
+
+   GetCasters()
+   {
+      return plCasters;
+   }
+
+   GetSpell()
+   {
+      return poSpell;
+   }
+
+   SpellCast(What = $, Who = $, lTargets = $)
+   {
+      local i, each_obj;
+
+      if NOT IsClass(poOwner,&Room)
+      {
+         return FALSE;
+      }
+
+      if poSpell = $
+      {
+         if NOT send(what,@IsMulticaster)
+         {
+            return FALSE;
+         }
+
+         plTargets = lTargets;
+         poSpell = What;
+         plCasters = $;
+         plCasters = cons(who,plCasters);
+         piSpellPowerNeeded = send(what,@GetTotalSpellPower,#oPrism=self);
+
+         for i in send(poOwner,@GetHolderActive)
+         {
+            each_obj = send(poOwner,@HolderExtractObject,#data=i);
+            if isclass(each_obj,&Player)
+            {
+               if each_obj = who
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=prism_new_spell_tocaster);
+               }
+               else
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=prism_new_spell,
+                       #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+               }
+            }
+         }
+
+         return TRUE;
+      }
+
+      if plCasters <> $ AND FindListElem(plCasters,who) <> 0
+      {
+         DEBUG("Caster already in multicast list is trying to get on again!");
+         return FALSE;
+      }
+
+      for i in send(poOwner,@GetHolderActive)
+      {
+         each_obj = send(poOwner,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Player)
+         {
+            if each_obj = who
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=prism_new_caster_tocaster);
+            }
+            else
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=prism_new_caster,
+                     #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+            }
+         }
+      }
+
+      plCasters = cons(who,plCasters);
+
+      return FALSE;
+   }
+
+   ContributeSpellPower(amount=0,who=$)
+   {
+      local iOldLevel, iNewLevel;
+
+      if poSpell = $ OR poOwner = $
+      {
+         return FALSE;
+      }
+
+      iOldLevel = send(self,@GetChargeLevel);
+
+      piSpellPowerSoFar = piSpellPowerSoFar + amount;
+      iNewLevel = send(self,@GetChargeLevel);
+
+      % Shoot a projectile sometimes.
+      if random(1,5) = 5 AND IsClass(poOwner,&Room)
+      {
+         Send(poOwner,@SomethingShot,#who=who,#target=self,#projectile=self,#flags=PROJ_FLAG_LIGHT_SOURCE);
+      }
+
+      if iNewLevel <> iOldLevel
+      {
+         % Max level, make this thing flicker!
+         if iNewLevel = 3
+         {
+            % Make the prism flicker!
+            piGlowing = TRUE;
+         }
+
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      if piSpellPowerSoFar >= piSpellPowerNeeded
+      {
+         send(self,@CastSpell);
+      }
+
+      return TRUE;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      local i;
+
+      if poSpell <> $
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   NewOwner()
+   {
+      send(Self,@EndCeremony);
+
+      propagate;
+   }
+
+   EndCeremony()
+   {
+      local i;
+
+      for i in plCasters
+      {
+         Send(i,@ClearTranceFlag);
+         Send(i,@RemoveEnchantment,#what=poSpell);
+      }
+
+      if piSpellPowerSoFar > 0
+      {
+         Send(send(SYS,@UtilGetRoomRecurse,#what=self),@SomeoneSaid,#type=SAY_MESSAGE,#string=prism_chant_over,#what=self);
+      }
+
+      piSpellPowerSoFar = 0;
+      piSpellPowerNeeded = 0;
+      piGlowing = FALSE;
+
+      poSpell = $;
+      plCasters = $;
+      plTargets = $;
+
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   CastSpell()
+   {
+      if length(plCasters) >= piNumSides
+      {     
+         send(poSpell,@PrismCast,#SpellPower=piSpellPowerSoFar,
+              #lCasters=plCasters,#lTargets=plTargets,#oPrism=self);
+         send(self,@EndCeremony);
+      }
+      else
+      {
+         if random(1,30) = 1
+         {
+            Send(first(plCasters),@MsgSendUser,#message_rsc=prism_lack_casters);
+         }
+      }
+
+      return;
+   }
+
+   % Old procedure had it set so when the primary (first) caster
+   %  broke trance, it would set the spell off or fizzle or whatever.
+   %  The current version (below) has it do this when the last person
+   %  stops concentrating.  This will let casting circles cycle through
+   %  casters for when we wanna make the incantation take a LONG time.
+
+   % This is called when the trance is broken, either through interruption
+   %  or insufficient mana.
+   CasterBrokeTrance(who=$)
+   {
+      if plCasters <> $ AND FindListElem(plCasters,who) <> 0
+      {
+         plCasters = DelListElem(plCasters,who);
+         if Length(plCasters) = 0
+         {
+            send(self,@EndCeremony);
+         }
+      }
+
+      return;
+   }
+
+   GetChargeLevel()
+   "Simply returns an integer between 0 and 3 inclusive to indicate relative charge level. "
+   {
+      if piSpellPowerNeeded > 0 AND piSpellPowerSoFar > 0
+      {
+         if piSpellPowerSoFar > 0 AND piSpellPowerSoFar < (piSpellPowerNeeded/3)
+         { 
+            return 1;
+         }
+
+         if piSpellPowerSoFar >= (piSpellPowerNeeded/3) AND piSpellPowerSoFar < (piSpellPowerNeeded*2/3)
+         {
+            return 2;
+         }
+
+         if piSpellPowerSoFar >= (piSpellPowerNeeded*2/3)
+         {
+            return 3;
+         }
+      }
+
+      return 0;
+   }
+
+   GetObjectFlags()
+   {
+      local iNewFlags;
+
+      iNewFlags = viObject_flags;
+
+      if piGlowing
+      {
+         iNewFlags = iNewFlags | FLICKERING_YES;
+      }
+
+      return iNewFlags;
+   }
+
+   Delete()
+   {
+      send(Self,@EndCeremony);
+
+      propagate;
+   }
+
+   %%% Projectile stuff.
+
+   GetProjectileIcon()
+   {
+      return vrPrismProjectile;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 12;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 2, 2, 3);
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % Lighting information.
+      return LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      % Fairly small light radius for projectile.  Out of 255 levels.
+      return 25;
+   }
+
+   GetProjectileLightColor()
+   {
+      % Color is a deep, bloody red.
+      return LIGHT_LIGHTNING;
+   }
+
+   %%% Shadow rift Stuff
+
+   GetTeleportLocation()
+   {
+      return plLocation;
+   }
+
+   LearnLocation(lLocation=$)
+   {
+      plLocation = lLocation;
+
+      return;
+   }
+
+   ResetLocationIfIllegal()
+   "Resets the prism's target location if it is no longer legal to teleport there. "
+   "Used to fix up existing prisms when the set of restricted areas changes."
+   {
+      local oRoom;
+
+      if IsList(plLocation) AND plLocation <> $
+      {
+         oRoom = Send(SYS, @FindRoomByNum, #num = First(plLocation));
+         if oRoom <> $ AND Send(oRoom, @CanHavePlayerPortal)
+         {
+            return;
+         }
+
+         % Bad target: reset it
+         plLocation = FALSE;
+      }
+      return;
+   }
+
+   %%% Lighting
+
+   SendLightingInformation()
+   {
+      local iIntensity;
+
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      % Intensity is variable, depending on charge level.  Out of 255 intensity of light
+      iIntensity = bound((send(self,@GetChargeLevel)*20),1,255);
+      AddPacket(1,iIntensity);
+      % Color
+      AddPacket(2,LIGHT_WHITE);
+
+      return;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

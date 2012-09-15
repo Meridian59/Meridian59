@@ -1,0 +1,186 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ForgetPotion is PassiveItem                   % template with subdirectory
+
+constants:
+
+   MESSAGE_DELAY = 3000    %% three seconds
+
+   include blakston.khd
+
+resources:
+
+   forgetpotion_use = "You quaff the potion. Nothing happens at first, then dizziness strikes...."
+   forgetpotion_cant_use_on = "You can't serve a %s%s."
+
+   forgetpotion_cant_drop = "You drop the potion on the ground, and the bottle explodes into a thousand shards."
+
+   forgetpotion_warning = "As you lift the potion to your lips, your eyes catch sight of a warning label, which says, ~I'This potion may have very serious side effects!  Very serious!  We're not fooling around here!'"
+
+   forgetpotion_nothing_happens = "The disorientation passes.  Nothing seems to have happened."
+   forgetpotion_name_rsc = "potion of forgetfulness"
+   forgetpotion_icon_rsc = forgetpo.bgf
+   forgetpotion_desc_rsc = "Drinking this potion will cause you to forget all of your spells in a certain spell school.  "
+      "Be absolutely sure you want this to happen before drinking it!"
+
+   forgetpotion_forget_spell = "The art of casting '%s' slips from your mind!"
+   forgetpotion_forget_wrong = "The accursed potion has stricken all memory of '%s' from you!"
+   forgetpotion_lose_intellect = "You suddenly feel a little... stupider..."
+   forgetpotion_lose_links = "The horrid elixir severs all your links to the mana nodes!"
+   forgetpotion_gulp_sound = drkptn.wav
+
+classvars:
+
+   vrName = forgetpotion_name_rsc
+   vrIcon = forgetpotion_icon_rsc
+   vrDesc = forgetpotion_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_POTION
+
+   viForget_school = 0
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 100
+
+properties:
+
+   poApply_target = $
+   ptQuaff = $
+   piCount = 0
+
+   pbWarned = FALSE
+
+messages:
+
+   NewOwner()
+   {
+      pbWarned = FALSE;
+
+      propagate;
+   }
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+
+      if IsClass(apply_on,&User)
+      {
+         if NOT pbWarned
+         {
+            send(apply_on,@MsgSendUser,#message_rsc=forgetpotion_warning);
+            pbWarned = TRUE;
+
+            return FALSE;
+         }
+         
+         return TRUE;
+      }
+      
+      Send(what,@MsgSendUser,#message_rsc=forgetpotion_cant_use_on, 
+	        #parm1=Send(apply_on,@GetIndef),#parm2=Send(apply_on,@GetName));
+	        
+      return FALSE;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      local sSchoolName;
+      
+      poApply_target = apply_on;
+
+      if isClass(apply_on,&User) 
+      {
+         Send(apply_on,@MsgSendUser,#message_rsc=forgetpotion_use);
+         send(apply_on,@WaveSendUser,#wave_rsc=forgetpotion_gulp_sound);
+      }
+
+      if viForget_school = SKS_FENCING
+      {
+         % This is the "Weaponcraft" string.
+         sSchoolName = skill_school_fencing;
+      }
+      else
+      {
+         % Need any spell, so we'll use blink
+         sSchoolName = send(send(SYS,@FindSpellByNum,#num=SID_BLINK),@GetSchoolStr,#iSchool=viForget_school);
+      }
+
+      debug("Forget Potion of",sSchoolName,"used by",send(apply_on,@GetTrueName),apply_on,".");
+
+      ptQuaff = createtimer(self,@QuaffTimer,MESSAGE_DELAY);
+      
+      return;
+   }
+
+   QuaffTimer()
+   {
+      local i, spells, oSpell, iSpellnum;
+
+      ptQuaff = $;
+      Spells = send(poApply_target,@GetSpellList);
+      piCount = 0;
+      
+      for i in Spells
+      {
+         iSpellNum = send(poApply_target,@DecodeSpellNum,#compound=i);
+         oSpell = send(SYS,@FindSpellByNum,#num=iSpellNum);
+
+         if send(oSpell,@GetSchool) = viForget_School
+            AND send(oSpell,@CanForget)  %% riija potion doesn't wipe blink
+         {
+            send(poApply_target,@RemoveSpell,#num=iSpellNum);
+            send(poApply_target,@MsgSendUser,#message_rsc=forgetpotion_forget_spell,
+                 #parm1=send(oSpell,@GetName));
+            piCount = piCount + 1;
+         }
+      }
+      
+      if piCount = 0
+      {
+         Send(poApply_target,@MsgSendUser,#message_rsc=forgetpotion_nothing_happens);
+      }
+      else
+      {
+         send(self,@DoSideEffects);
+         send(poApply_target,@ToCliStats,#group=3);
+      }
+      
+      Send(self,@Delete);
+      
+      return;
+   }
+
+   DoSideEffects()
+   "No longer any side-effects."
+   {
+      return;
+   }
+
+   Delete()
+   {
+      if ptQuaff <> $
+      {
+         deletetimer(ptQuaff);
+         ptQuaff = $;
+      }
+      
+      propagate;
+   }
+
+   CanSwap()
+   "You can't swap a forget potion to or from someone!"
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

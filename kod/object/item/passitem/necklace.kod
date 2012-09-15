@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Necklace is PassiveItem
+
+constants:
+   
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viUse_type = ITEM_USE_NECK
+   viItem_type = ITEMTYPE_NECKLACE
+
+   viUse_Amount = 1
+
+properties:
+
+messages:
+
+   ReqUseSomething(what = $)
+   {
+      % Check for necklaces or Jala necklace.  The Jala necklace is an "instrument".
+      if IsClass(what,&Necklace)
+         OR IsClass (what,&JalaNecklace)
+      {
+         % Try to remove ourselves, unless we're cursed.
+         % This is to avoid problems with the Amulets of Shadow exploits.
+         if NOT send(self,@IsCursed)
+            AND Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         
+         return FALSE;
+      }
+      
+      propagate;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

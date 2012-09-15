@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsB1 is FeyForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsB1 = B1.roo
+   room_name_OutdoorsB1 ="Elhadrim"
+   OutdoorsB1_music = walk7.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsB1
+
+   viTeleport_row = 10
+   viTeleport_col = 2
+
+   viEquilibrium = 70               %%% This is where this section of the faerie forest
+				    %%% will 'aim' for on the karmic scale.
+properties:
+
+   prRoom = room_OutdoorsB1
+   prMusic = OutdoorsB1_music
+   piRoom_num = RID_B1
+   
+   piGen_time = 180000
+   
+messages:
+   
+   Constructed()
+   {
+      plGenerators = [ [8, 36], [11, 41], [9, 17], [8, 10], [10, 2],
+                      [20, 13], [28, 23], [17, 28], [28, 34], [35, 26],
+                      [37, 10], [28, 46], [42, 33], [43, 43], [10, 23] ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {   
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_C1, 29, 22, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_B2, 1, 44, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=8,#new_col=35);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=9,#new_col=51);
+      Send(self,@NewHold,#what=Create(&FeyTree),#new_row=13,#new_col=39);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

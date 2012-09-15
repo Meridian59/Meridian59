@@ -1,0 +1,314 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ForgottenToo is CorNothRoom
+
+constants:
+
+   include blakston.khd
+   COLOR_BLUE = 1
+   COLOR_GREEN = 2
+
+resources:
+
+   room_ForgottenToo = bizmans.roo
+   room_name_ForgottenToo = "Chamber of the Forgotten Heroes"
+   ForgottenToo_music = extra01.mid
+
+   name_psycho   = "Psychochild"
+   name_aythya   = "Aythya"
+   name_sif      = "Sif"
+   name_jinx     = "Jinx"
+   name_skahn    = "Sher Kahn"
+   name_bael     = "GMBael"
+   name_gkimo    = "GuardianKimo"
+   name_gsol     = "GuardianSol"
+   name_gcorliss = "GuardianCorliss"
+
+   desc_psycho   = "\"...a rocky behemoth, he carried the world on his shoulders for a while....\""
+   desc_aythya   = "\"...shared the weight with Psychochild and duckings kept him sane....\""
+   desc_sif      = "\"...a bright goddess who loved to play, we will sing songs of her valor for ages....\""
+   desc_jinx     = "\"...the one who never stops joking, but is always serious....\""
+   desc_skahn    = "\"...if only words could describe him, he did all he could to make sure the new was good....\""
+   desc_bael     = "\"...the one who leads the ones who Guide...."
+   desc_gkimo    = "\"...does he ever speak?  Yes, and his words are kind....\""
+   desc_gcorliss = "\"...he does it all, even talk to the developers from time to time....\""
+   desc_gsol     = "\"...his brilliance lights up the game for all to enjoy....\""
+
+   aythya_book = "brilliant thoughts"
+   aythya_text = "I'm so clever.  Really, I am."
+
+   psycho_book = "Circling the World..."
+   psycho_text = "So, where to start?  I guess that's always the question, isn't it?\n\n"
+        "I started work on Meridian a little under a year ago.  In less than a week, I'll "
+        "be celebrating my one year anniversary here at 3DO and on Meridian.  I've had my "
+        "ups and my downs, just as the game has during this time.  This room is my "
+        "tribute to the people who made Meridian what it is today, but that didn't get into "
+        "the original room that Zjiria made."
+        "\n\n\n\n\n\n\n\n\n\n"
+		  "¶"
+        "Ah, I'll start with myself.  I am a huge fan of online gaming.  I went to college "
+        "and wasted many nights sitting in front of a green monochrome screen connected "
+        "to the university's Unix network, typing in the text commands into a text game "
+        "that had several people playing at once.  This was a MUD, the greatest game I "
+        "had ever played in my life.  I spent whole, sleep-deprived nights playing the "
+        "game instead of doing homework.  I became a 'wizard', a person able to add "
+        "to the game.  Being a programmer, I quickly learned the coding language and "
+        "began gleefully adding to the game.  I think the only reason I passed some of "
+        "my programming classes is because I had programmed on the MUD.  If you are "
+        "curious about the MUD I worked on, it is called Kerovnia.  I'm sure a bit of "
+        "searching will turn it up.  The administrator is a great guy and very, very "
+        "dedicated to the game.  But, after working and playing on MUDs, I was hooked.  "
+        "How could other games compare?"
+		  "¶"
+		  "Venturing forth I finally graduated, and like most people I left MUDs behind.  "
+		  "I didn't have time for them and my career!  I started work at a bland little "
+		  "software company in Iowa, working on mapping software.  It was a boring 8 to 5 "
+		  "job with little interest for me.  I was learning things, but it wasn't a very "
+		  "exciting job.  After a while, I began to yearn....  I wanted to get back into "
+		  "developing games!  I yearned to create again.  So, I contacted a recruiter and "
+		  "started to look for a job.  My ultimate goal was to get back into commercial "
+		  "online games, but I would have to prove myself in the industry first.  A note "
+		  "to all you aspiring game developers out there: it's a long, tough road.  Only "
+		  "the dedicated or insane (or, both is best) need apply.  My recruiter put my "
+		  "resume in for a coding position at some company called 3DO...."
+		  "¶"
+        "As usual, it was a case of being in the right place at the right time.  They were "
+        "looking for an online game coder, I was looking for a game development job and had "
+        "lots of online game development experience.  So, a few weeks later I was interviewing "
+        "for my dream job.  It was simply amazing.  I would work on one of the oldest "
+        "commercial online graphical games in the industry.  I was very excited!"
+		  "¶"
+        "Getting ready to move, I left my boring Iowa job and travelled to California.  I "
+        "worked with a ragtag group of people on a game that was developed about the time "
+        "I really started getting into online games.  But, it was my dream job.  It's "
+        "never really been an easy job, but, then again, nothing worth having is ever "
+        "easy to get, right?  Things got interested as I got thrust into the Lead "
+        "Programmer position.  Here I was, a lowly Software Engineer I, and I was doing "
+        "most of the technical changes on my own or with an engineer temporarily helping "
+        "with Meridian.  On the bright side, I was able to help direct the course that "
+        "Meridian took in the past several months."
+		  "¶"
+        "Everyone knows right now that I have a lot of mixed feelings.  I'm sure anyone who "
+        "reads this will know the problems the development team has faced.  Not all of my "
+        "ideas and changes were met with universal approval, but I hope that the detractors "
+        "know that I did everything out of love for the game.  I'm sure that there are "
+        "lots of fingers that could be pointed, but that's not really the point of this "
+        "little note.  I'd much rather highlight the good things that have happened, and "
+        "hope it will color the future in a bit brighter hues.  In the following pages, "
+        "I'd like to thank some different people.  I'd also admonish you to read through "
+        "the credits sometime.  It's in the 'About Meridian 59' menu item under 'Help' "
+        "above.  Click on the scrolling credits to see previous development teams.  "
+        "You should realize how many people put a lot of effort and care into the game."
+		  "¶"
+		  "Aythya\n\n"
+		  "Without a doubt, the most creative person I have met.  Aythya started from the "
+		  "bottom of the food chain to become the one co-worker I respect the most.  He "
+		  "is an intelligent person with whom I could discuss online game issues and "
+		  "seriously talk about how to improve Meridian.  I don't think I would rather "
+		  "work with anyone else."
+		  "¶"
+		  "Aphasia\n\n"
+		  "In my early career, Aphasia was another creative soul.  He helped me learn how to work "
+		  "on Meridian when I was just learning about the whole world.  His guidance helped me to "
+		  "learn more about fixing this world.  I wish him luck in his endeavors."
+		  "¶"
+		  "Jinx\n\n"
+		  "Note that he's my 'boss', but he is also my friend.  He's always been there to "
+		  "get things done on the management end of things.  He's also an avid role-player "
+		  "who likes to assume various online personas.  His zest for the game is probably "
+		  "what kept it going for as long as it has. ;)"
+		  "¶"
+		  "Sher Kahn\n\n"
+		  "The poor man has had enough abuse.  He's done so much for the game, even though "
+		  "most people don't know who he is.  He's the lead tester, and has worked to keep "
+		  "every Beta test running smoothly for as long as I've been here.  He does so much "
+		  "work: he answers Beta Emails, he sets up Beta accounts, he records bugs into the "
+		  "bug database, he organizes our internal testers.  I can hardly believe one man "
+		  "could do so much.  He's one of the biggest unsung heroes of the game."
+		  "¶"
+		  "The Guardians\n\n"
+		  "Everyone read what  Zjiria said in the original hall.  Still, people always "
+		  "complain they cheat, but they have a very hard job.  They must make decisions, "
+		  "and often hurt someone or another.  You might not have been bad, but you got "
+		  "punished anyway, or you might know that dastardly cheater got away without any "
+		  "punishment.  Well, it's like when your parents used to catch you and your sibling "
+		  "in a bad act.  You'd blame each other, and your parents had to make a decision.  "
+		  "Well, sometimes they made mistakes, just as the Guardians do.\n\n"
+		  "I'd like to give special mention to two statues that are in the original hall.  "
+		  "GuardianDetson did a good job of leading the Guardians.  His departure to the "
+		  "'other side' of customer support for our CD products is sad but understandable.  "
+		  "GuardianKana has filled his place wonderfully, leading the Guardians in recent "
+		  "times.  They are both wonderful people."
+		  "¶"
+		  "Previous Developers\n\n"
+		  "Really, the biggest thrill of my career has then the opportunities to talk to some "
+		  "of the previous developers.  I've talked to most of them at one time or another.  "
+		  "Although I whine about the legacy code, the broken tools, the horrible designs, "
+		  "I know that I wouldn't be working on Meridian if not for the work they put into the "
+		  "game.  Go visit the original Hall of Heroes again, and remember the contributions "
+		  "the all made to the game.  We all owe them for paving the way to this game, and "
+		  "all the other games that Meridian has influenced directly and indirectly."
+		  "¶"
+		  "Bards and Guides\n\n"
+		  "Not unlike the Guardians, they don't get nearly as much respect as they should.  I am "
+		  "a programmer and happen to be lucky enough to live in a time where my skills are "
+		  "hard to find.  I get paid rather well to fix and expand the game.  However, these "
+		  "people get the equivalent of $30 per month under the current prices to be a very "
+		  "visible part of the game.  Of course, they are only human, so they make mistakes, "
+		  "too, but their mistakes are in front of the whole server.  They are also the "
+		  "first people to take abuse when someone is upset.  But, without them, the game "
+		  "would not have grown from it's earlier days.  The Bards help keep the game from "
+		  "being a stale game of killing monsters, and the Guides keep the really rude and "
+		  "dangerous people from ruining the game for everyone.  Give these people a bit "
+		  "of respect for what they do."
+		  "¶"
+		  "The Beta Testers\n\n"
+		  "As always, I have to thank the Beta testers.  This includes both the internal "
+		  "and external testers.  Many have become my friends.  They are the people that put "
+		  "up with our buggy, unstable changes and help us to make them right.  They sacrifice "
+		  "their time (and sanity) to help us improve the game.  And, while one might go on "
+		  "a rant and whine about something, or another might bug me, again, for a spirit helmet"
+		  "and a scry, they have helped us fix the game.\n\n"
+		  "I'd especially like to thank Christopher Opdahl, aka Cruadorn, who didn't quite make "
+		  "it into the credits as an internal tester for Dark Auspices.  He did an excellent job "
+		  "in testing, and I want to correct this oversight. ;)"
+		  "¶"
+		  "The Players\n\n"
+		  "I would like to thank most of the players that play Meridian.  I try to be social, and I "
+		  "try to log onto the commercial servers, but I often get busy coding.  But, to the people "
+		  "who have talked to me on the commercial servers, and have treated me like a person "
+		  "instead of a free vending machine for trinkets, I have to say Thanks.  Some of them "
+		  "have gone on to other games, and some of you may not have ever seen my green name on "
+		  "the who list, but I still enjoy interacting with players.  It's what makes online games "
+		  "so much better, in my humble opinion, than traditional single-player games."
+		  "¶"
+		  "I hope I haven't bored you to tears by this point.  As I've said many times, online "
+		  "games are a thing of passion.  I always put my whole heart into the game, no matter "
+		  "what I thought my fate was.  I will always be developing online games.  If you happen "
+		  "to see me on sometime, feel free to say hi.  Just realize that I am often busy, but I "
+		  "still enjoy talking to people.\n\n"
+		  "A toast to Meridian 59!  May it never be forgotten."
+		  "\n\n"
+		  "Psychochild\n"
+		  "May 14th, 1999"
+
+
+classvars:
+
+   vrName = room_name_ForgottenToo
+
+   viTeleport_row = 26
+   viTeleport_col = 7
+   viTeleport_Angle = ANGLE_NORTH
+
+   viTerrain_type = TERRAIN_MYSTICAL | TERRAIN_CASTLE
+
+properties:
+
+   prRoom = room_ForgottenToo
+   piRoom_num = RID_FORGOTTEN_TOO
+   prMusic = ForgottenToo_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 0
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 26, 7, RID_CASTLE2A, 26, 15, ROTATE_180, DISTANCE_NORMAL ],plExits);
+      
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oBook;
+
+      oBook = Create(&BookPedestal,#Name=psycho_book,#Text=psycho_text);
+      Send(self,@NewHold,#what=oBook,#new_row=4,#new_col=12,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+
+      % oBook = Create(&BookPedestal,#Name=aythya_book,#Text=aythya_text);
+      % Send(self,@NewHold,#what=oBook,#new_row=4,#new_col=11,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      propagate;
+   }
+
+   FirstUserEntered()
+   {
+      send(self,@CreateStatues);
+      propagate;
+   }
+
+   CreateStatues()
+   {
+      %% create the statues the first time someone enters.
+      local oStatue, i;
+
+      %% delete any existing statues
+      for i in plPassive
+      {
+         if isClass(first(i),&statue)
+         {  send(first(i),@delete);  }
+      }
+
+      oStatue = Create(&Statue,#special=COLOR_GREEN,#specialname=name_psycho,
+	                    #specialgender=GENDER_MALE,#desc=desc_psycho);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH,
+           #new_row=5,#new_col=13,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_GREEN,#specialname=name_aythya,
+	                    #specialgender=GENDER_MALE,#desc=desc_aythya);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH,
+           #new_row=5,#new_col=10,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_BLUE,#specialname=name_jinx,
+	                    #specialgender=GENDER_FEMALE,#desc=desc_jinx);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH,
+           #new_row=12,#new_col=11,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_BLUE,#specialname=name_skahn,
+	                    #specialgender=GENDER_MALE,#desc=desc_skahn);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH_EAST,
+           #new_row=14,#new_col=9,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_GREEN,#specialname=name_sif,
+	                    #specialgender=GENDER_FEMALE,#desc=desc_sif);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_SOUTH_WEST,
+           #new_row=14,#new_col=13,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_BLUE,#specialname=name_gkimo,
+	                    #specialgender=GENDER_MALE,#desc=desc_gkimo);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_EAST,
+           #new_row=17,#new_col=8,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_BLUE,#specialname=name_bael,
+	                    #specialgender=GENDER_FEMALE,#desc=desc_bael);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_WEST,
+           #new_row=17,#new_col=14,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_BLUE,#specialname=name_gsol,
+	                    #specialgender=GENDER_MALE,#desc=desc_gsol);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_NORTH_EAST,
+           #new_row=19,#new_col=10,#fine_row=32,#fine_col=32);
+
+      oStatue = Create(&Statue,#special=COLOR_BLUE,#specialname=name_gcorliss,
+	                    #specialgender=GENDER_MALE,#desc=desc_gcorliss);
+      Send(self,@NewHold,#what=oStatue,#new_angle=ANGLE_NORTH_WEST,
+           #new_row=19,#new_col=13,#fine_row=32,#fine_col=32);
+           
+      return;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

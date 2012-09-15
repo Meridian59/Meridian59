@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Smite is BoltSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   smite_name_rsc = "smite"
+   smite_icon_rsc = iseduce.bgf
+   smite_desc_rsc = \
+      "This is a god command used to strike down unruly, pathetic mortals.\n\n"
+      "This is a DM only command."
+
+   smite_hit_rsc = "%s%s gets a big wet smooch and is completely smitten!"
+
+classvars:
+   vrName = smite_name_rsc
+   vrIcon = smite_icon_rsc
+   vrProjectile_Icon = smite_icon_rsc
+   vrDesc = smite_desc_rsc
+
+   viSpell_num = SID_SMITE
+
+   viAttack_spell = ATCK_SPELL_ALL
+
+   viMana = 0
+   viSpell_level = 50
+   viSpellExertion = 0
+
+   viSchool = SS_DM_COMMAND
+
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Intensity, out of 255.
+   viProjectileLightIntensity = 50
+   % Default color is bright red.
+   viProjectileLightColor = LIGHT_BRED
+
+properties:
+
+   piDamageMin = 500000
+   piDamageMax = 500000
+   prSpellHit = smite_hit_rsc
+   pbAbsolute = TRUE
+
+   % No reagents.
+   plReagents = $
+
+messages:
+
+   CanPayCosts(who=$, lTargets = $)
+   "Checks to be sure that only DMs use this command."
+   {
+      if NOT isClass(who,&DM)
+      {
+         send(who,@RemoveSpell,#num=viSpell_num);
+         debug("Player",send(who,@GetName),"had",send(self,@GetName),"--removed");
+
+         return FALSE;
+      }
+
+      if NOT (send(who,@GreenNamed)
+              OR send(SYS,@GetChaosNight)
+              OR isClass(first(lTargets),&Monster)
+              OR isClass(first(lTargets),&DM))
+      {
+         send(who,@DontInterfere);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SuccessChance(who=$)
+   "DMs are always successful with their spells."
+   {
+      return TRUE;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 13;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE, 2,2);
+
+      return;
+   }
+
+   CanForget()
+   "DM spells can't be forgotten."
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

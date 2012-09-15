@@ -1,0 +1,295 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Settings is UtilityFunctions
+
+% This class keeps global game settings.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+properties:
+
+   %
+   % Economy controls
+   %
+
+   % piMoneyFactor: How much money should be given out?  Raise this number to
+   %  increase the amount of money given out.
+   piMoneyFactor = 100
+
+   % Increase this to increase the number of items dropped from monster deaths.
+   piItemFactor = 100
+
+   % Modifier to the chance for items to be generated.
+   piMagicItemModifier = 100
+
+   % Changed the wait for monsters to spawn.  A decrease means things
+   %  spawn faster (less time waiting between spawns).
+   piSpawnRate = 100
+
+   %
+   % Player advancement
+   %
+
+   % If true, you can't take any objects out of the newbie area.
+   pbCleanNewbieInventoryOnEnteringRealWorld = FALSE
+
+   piKillKarmaSwingNeutral = 2
+   piKillKarmaSwingMonster = 6
+   piKillKarmaSwingPlayer = 10
+
+   pbAtrophyOn = FALSE
+
+   % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
+   %  this will lower the odds of a dead player losing health and skill/spell
+   %  percents.
+   piDefaultDeathCost = 100
+
+   % piAdvancementRate: Determines how fast or slow advancement goes for all
+   %  spells and skills.  This is a percent of normal, and only affects the
+   %  secondary chance.
+   piAdvancementRate = 100
+
+   % How far up the food chain can basic players learn?  See player for more
+   %  specific information on what this number means.
+   piMaxLearnPoints = 16
+
+
+   %
+   % Spell settings
+   %
+
+   % If true, you can recast a personal enchantment on yourself if you already have it.
+   % This makes it easier to advance spells.
+   pbCanRecastSelfEnchantment = TRUE
+
+   % If true, while wearing a Jala necklace, you can cast spells even while
+   % in a trance for a Jala song.
+   pbCanRecastJalaWithNecklace = TRUE
+
+   % Can't cast a teleport spell until this long after attacking someone.  Prevents
+   % hit-and-run.  If 0, there's no restriction on when the spell can be cast.
+   piTeleportAttackDelaySec = 10 * 60
+
+   % Rescue always takes at least this long to cast
+   piRescueBaseDelaySec = 15
+
+   %
+   % Guild hall settings
+   %
+
+   % Are guild halls raidable?
+   pbGuildHallRaids = TRUE
+
+   % Wait one hour between raids by same guild.
+   piGuildHallRaidDelay = 3600 
+
+   % If true, "hot plate" objects (in guild halls) notify players when they're stepped on.
+   % This is used for debugging room creation.  It should normally be off.
+   pbShowHotPlates = FALSE
+
+   % If true, tell DMs when a player crosses a "hot plate" object (in a guild hall).
+   % Used for debugging the placement of hot plates.
+   pbReportHotPlates = FALSE
+
+   %
+   % Miscellaneous
+   %
+
+   % Line of Sight (LOS) check.  What are we using?
+   piLOS = LOS_OLD
+
+   % How many summoned objects can be in a room
+   piPlayerSummonedObjectLimit = 18
+
+   % Minimum number of HP you have to have to vote for or become
+   % Justicar
+   piMinHPForJusticar = 100
+
+
+messages:
+
+   Constructor(server_num = $)
+   "Apply the appropriate settings for a given server number"
+   {
+      % Apparently at some point someone decided this was a better value
+      piKillKarmaSwingNeutral = 3;
+
+      % Settings retrieved from running servers on 12/29/2010
+      if server_num <> $
+      {
+         if server_num = 101
+         {
+            piDefaultDeathCost   = 90;
+            piAdvancementRate    = 125;
+            piMoneyFactor        = 120;
+            piItemFactor         = 125;
+            piMagicItemModifier  = 80;
+            piSpawnRate          = 80;
+         } 
+
+         if server_num = 102
+         {
+            piDefaultDeathCost   = 60;
+            piAdvancementRate    = 190;
+            piMoneyFactor        = 100;
+            piItemFactor         = 175;
+            piMagicItemModifier  = 100;
+            piSpawnRate          = 85;
+         } 
+      }
+      return;
+   }
+
+   %
+   % Economy controls
+   %
+
+   GetMoneyFactor()
+   {
+      return piMoneyFactor;
+   }
+
+   GetItemFactor()
+   {
+      return piItemFactor;
+   }
+
+   GetMagicItemModifier()
+   {
+      return piMagicItemModifier;
+   }
+
+   GetSpawnRate()
+   {
+      return piSpawnRate;
+   }
+   
+   %
+   % Player advancement
+   %
+
+   CleanNewbieInventoryOnEnteringRealWorld()
+   {
+      return pbCleanNewbieInventoryOnEnteringRealWorld;
+   }
+
+   GetDefaultDeathCost()
+   {
+      return piDefaultDeathCost;
+   }
+
+   GetAdvancementRate()
+   {
+      return piAdvancementRate;
+   }
+
+   GetKillKarmaSwingNeutral()
+   {
+      return piKillKarmaSwingNeutral;
+   }
+
+   GetKillKarmaSwingMonster()
+   {
+      return piKillKarmaSwingMonster;
+   }
+
+   GetKillKarmaSwingPlayer()
+   {
+      return piKillKarmaSwingPlayer;
+   }
+
+   IsAtrophyOn()
+   {
+      return pbAtrophyOn;
+   }
+
+   GetMaxLearnPoints()
+   {
+      return piMaxLearnPoints;
+   }
+
+   %
+   % Spells
+   %
+
+   CanRecastSelfEnchantment() 
+   {
+      return pbCanRecastSelfEnchantment;
+   }
+
+   CanRecastJalaWithNecklace()
+   {
+      return pbCanRecastJalaWithNecklace;
+   }
+
+   TeleportAttackDelaySec()
+   {
+      return piTeleportAttackDelaySec;
+   }
+
+   RescueBaseDelaySec()
+   {
+      return piRescueBaseDelaySec;
+   }
+
+   %
+   % Guild hall settings
+   %
+
+   GuildHallRaidsEnabled()
+   {
+      return pbGuildHallRaids;
+   }
+
+   GetGuildhallRaidDelay()
+   {
+      return piGuildHallRaidDelay;
+   }
+
+   ShowHotPlates()
+   {
+      return pbShowHotPlates;
+   }
+
+   ReportHotPlates()
+   {
+      return pbReportHotPlates;
+   }
+
+
+   %
+   % Miscellaneous
+   %
+
+   GetLOS()
+   {
+      return piLOS;
+   }
+
+   GetPlayerSummonedObjectLimit()
+   {
+      return piPlayerSummonedObjectLimit;
+   }
+
+   GetMinHPForJusticar()
+   {
+      return piMinHPForJusticar;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

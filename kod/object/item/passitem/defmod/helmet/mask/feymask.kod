@@ -1,0 +1,85 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FeyMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FeyMask_name_rsc = "fey mask"
+   FeyMask_good_icon_male_rsc = res0002g.bgf
+   FeyMask_evil_icon_male_rsc = res0002h.bgf
+   FeyMask_good_icon_female_rsc = res0002i.bgf
+   FeyMask_evil_icon_female_rsc = res0002j.bgf
+   FeyMask_desc_rsc = \
+      "This is a fey mask.  It seems to shift based on your karmic standing."
+
+classvars:
+
+   vrName = FeyMask_name_rsc
+   vrDesc = FeyMask_desc_rsc
+
+properties:
+
+   vrIcon = FeyMask_good_icon_male_rsc
+   vrMaleGoodIcon = FeyMask_good_icon_male_rsc
+   vrMaleEvilIcon = FeyMask_evil_icon_male_rsc
+   vrFemaleGoodIcon = FeyMask_good_icon_female_rsc
+   vrFemaleEvilIcon = FeyMask_evil_icon_female_rsc
+
+messages:
+
+   GetOverlay(animation = $)
+   {
+      if Send(poOwner,@GetGender) = GENDER_FEMALE
+      {
+         if Send(poOwner,@GetKarma) < 0
+         {
+            return vrFemaleEvilIcon;
+         }
+
+         return vrFemaleGoodIcon;
+      }
+    
+      if Send(poOwner,@GetKarma) < 0
+      {
+         return vrMaleEvilIcon; 
+      }
+
+      return vrMaleGoodIcon;
+   }
+
+   NewUsed()
+   {
+      if Send(poOwner,@GetKarma) < 0
+      {
+         vrIcon = FeyMask_evil_icon_male_rsc;
+         Send(poOwner,@SomethingChanged,#what=self);
+
+         propagate;
+      }
+
+      else
+      {
+         vrIcon = FeyMask_good_icon_male_rsc;
+         Send(poOwner,@SomethingChanged,#what=self);
+
+         propagate;
+      }
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

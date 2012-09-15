@@ -1,0 +1,31 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ForgetPotionRiija is ForgetPotion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   forgetpotionRiija_desc_rsc = "Quaffing this potion will allow your mind to elude the teachings of the trickster god.  Warning, may have very very serious side effects."
+
+classvars:
+
+   viForget_school = SS_RIIJA
+   vrDesc = forgetpotionriija_desc_rsc
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

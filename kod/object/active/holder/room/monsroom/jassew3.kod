@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasSewer3 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   TO_ROW = 4
+   TO_COL = 11
+
+resources:
+
+   room_name_jassew3 = "The Sewers of Jasper"
+   room_jassew3 = jassew3.roo
+   jassew3_music = cave.mid
+
+   waterfall_soundjsew3 = wfall2.wav
+
+classvars:
+
+   vrName = room_name_jassew3
+
+   viTeleport_row = 58
+   viTeleport_col = 11
+   
+   viTerrain_type = TERRAIN_SEWERS | TERRAIN_WATERFALL
+
+properties:
+
+   prRoom = room_jassew3
+   piRoom_num = RID_JAS_SEWER3
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   prMusic = jassew3_music
+
+   piGen_time = 35000
+   piGen_percent = 80
+
+   piInit_count_min = 5
+   piInit_count_max = 7
+
+   piMonster_count_max = 25
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&GiantRat, 15], [&Lupogg, 85] ];
+      plGenerators = [ [45,  8], [61,  4], [45, 20], [52, 11], [45, 32],
+                       [55, 24], [45, 40], [36,  7], [30,  3], [15,  7],
+                       [20, 32], [11, 30], [ 7, 34], [10, 43], [23, 43],
+                       [30, 40], [28, 36], [33, 28], [ 9, 20], [19, 20],
+                       [ 8,  5], [29, 20]
+                     ];
+
+      plLooping_sounds = [ [ waterfall_soundjsew3, 22,11, 10, 100  ] ];
+
+
+      propagate;
+   }
+
+   AddBaseLight(amount=$)
+   {
+      if amount <> $
+      {
+         piBaseLight = piBaseLight + (amount/4);
+         Send(self,@AmbientLightChanged);
+      }
+
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_JAS_SEWER2, 28, 51, ROTATE_NONE,ROW_IS_LESS_THAN,48], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_JAS_SEWER2, 38, 51, ROTATE_NONE,ROW_IS_GREATER_THAN,47], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_SEWER_KING, 50, 3, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,108 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShrunkenHeadMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ShrunkenHeadMask_name_rsc = "shrunken head mask"
+   ShrunkenHeadMask_icon_male_rsc = res0002a.bgf
+   ShrunkenHeadMask_icon_female_rsc = res0002b.bgf
+   ShrunkenHeadMask_desc_rsc = \
+      "Are you sure this will fit?"
+
+   ShrunkenHeadMask_wear_rsc = "~IThe mask feels very tight on your face."
+
+classvars:
+
+   vrName = ShrunkenHeadMask_name_rsc
+   vrDesc = ShrunkenHeadMask_desc_rsc
+   vrIcon = ShrunkenHeadMask_icon_male_rsc
+
+   vrMaleIcon = ShrunkenHeadMask_icon_male_rsc
+   vrFemaleIcon = ShrunkenHeadMask_icon_female_rsc
+
+properties:
+
+   % Resources that save the users face when the mask is one.
+   prSaveEyes = $
+   prSaveNose = $
+   prSaveMouth = $
+
+messages:
+
+   NewUsed()
+   {
+      % Get face info, put it on the mask.
+      prSaveEyes = Send(poOwner,@GetEyesRsc);
+      prSaveNose = Send(poOwner,@GetNoseRsc);
+      prSaveMouth = Send(poOwner,@GetMouthRsc);
+
+      % Make all the face overlays invis, and remove hair.
+      Send(poOwner,@SetEyes,#eyes=admin_icon_blank);
+      Send(poOwner,@SetNose,#nose=admin_icon_blank);
+      Send(poOwner,@SetMouth,#mouth=admin_icon_blank);      
+      Send(poOwner,@RemoveHair,#what=self);
+
+      if Send(poOwner,@GetGender) = GENDER_FEMALE
+      {
+         Send(poOwner,@SetHead,#head=vrFemaleIcon);
+         Send(poOwner,@MsgSendUser,#message_rsc=ShrunkenHeadMask_wear_rsc);
+      }
+
+      if Send(poOwner,@GetGender) = GENDER_MALE
+      {
+         Send(poOwner,@SetHead,#head=vrMaleIcon);
+         Send(poOwner,@MsgSendUser,#message_rsc=ShrunkenHeadMask_wear_rsc);
+      }
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      % Put the face back on.
+      Send(poOwner,@SetEyes,#eyes=prSaveEyes);
+      Send(poOwner,@SetNose,#nose=prSaveNose);
+      Send(poOwner,@SetMouth,#mouth=prSaveMouth);
+      Send(poOwner,@ResetHair,#what=self);
+
+      % Clear out mask resources, so we don't get ladies with man faces.
+      prSaveEyes = $;
+      prSaveNose = $;
+      prSaveMouth = $;
+
+      if Send(poOwner,@GetGender) = GENDER_FEMALE
+      {
+         Send(poOwner,@SetHead,#head=charinfo_head_kx_icon);
+      }
+
+      if Send(poOwner,@GetGender) = GENDER_MALE
+      {
+         Send(poOwner,@SetHead,#head=charinfo_head_ax_icon);
+      }
+
+      propagate;
+   }
+
+   GetOverlay(animation = $)
+   {
+      % Returning $ causes errors, and we don't want the mask wearing a mask.
+      return admin_icon_blank;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ShockRing is ResistRing
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ShockRing_name_rsc = "ring of shock resistance"
+   ShockRing_desc_rsc = \
+      "This ring is smooth to the touch.  Magical runes are inscribed on its inner surface."
+  
+   ShockRing_use_rsc = \
+      "You feel the ring working.  You feel well grounded."
+  
+   ShockRing_dead_rsc = \
+      "The ring shatters in a small explosion of pieces!"
+
+classvars:
+
+   vrRealName = ShockRing_name_rsc
+   vrRealDesc = ShockRing_desc_rsc
+
+   vrUseMessage = ShockRing_use_rsc
+   vrDeadMessage = ShockRing_dead_rsc
+
+properties:
+
+   piResistanceType = -ATCK_SPELL_SHOCK
+   piResistanceChange = 50
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

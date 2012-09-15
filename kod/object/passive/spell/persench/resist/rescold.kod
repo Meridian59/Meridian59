@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistCold is ResistanceEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   resistcold_name_rsc = "resist cold"
+   resistcold_icon_rsc = irescold.bgf
+   resistcold_desc_rsc = \
+      "Infuses the target with the magical fire of Faren, "
+      "reducing damage from cold attacks for several minutes.  "
+      "Requires mushrooms and red mushrooms to cast."
+   
+   resistcold_already_enchanted = "You are already resistant to cold."
+
+   resistcold_on = "The magical fire of Faren enters your body."
+   resistcold_off = "Your body cools noticeably as the resist cold enchantment wears off."
+   resistcold_success = "%s%s's body burns with Faren's magical fire."
+   resistcold_spell_intro = "Faren Lv. 2: Infuses your body with the magical fire of Faren, reducing damage from cold attacks."
+
+classvars:
+
+   viPersonal_ench = True
+
+   vrName = resistcold_name_rsc
+   vrIcon = resistcold_icon_rsc
+   vrDesc = resistcold_desc_rsc
+
+   vrSpell_intro = resistcold_spell_intro
+   viSpell_num = SID_RESIST_COLD
+   viSchool = SS_FAREN
+   viSpell_level = 2
+   viMana = 9
+   viChance_To_Increase = 30
+
+   viFlash = FLASH_GOOD_SELF
+
+   viResistanceType = -ATCK_SPELL_COLD
+   vrAlreadyEnchanted = resistcold_already_enchanted
+   vrEnchantment_On = resistcold_on
+   vrEnchantment_Off = resistcold_off
+   vrSuccess = resistcold_success
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Mushroom,3],plReagents);
+      plReagents = Cons([&RedMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetResistanceStrength(iSpellpower = 0)
+   {
+      %% strength varies from 5 to 55
+      return iSpellPower/2 + 5;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;	   %%% 5 to 15 minutes
+      iDuration = 300 + iSpellPower * 6;
+      iDuration = iDuration * 1000;	  %% translate to milliseconds
+      return random(iDuration/2,iDuration);
+   }
+
+   GetPotionClass()
+   {
+      return &ResistColdPotion;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

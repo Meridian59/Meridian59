@@ -1,0 +1,17 @@
+# Mace 
+# groups
+# 1 dropped
+# 2 broken
+# 3 display
+
+-s 4
+3
+macdrp.bmp
+macbro.bmp
+macdis.bmp
+
+3
+1 1
+1 2
+1 3
+

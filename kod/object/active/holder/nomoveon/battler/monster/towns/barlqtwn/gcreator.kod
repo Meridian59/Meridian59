@@ -1,0 +1,381 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildCreator is BarloqueTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   GuildCreator_name_rsc = "Frular"
+   GuildCreator_icon_rsc = gcreator.bgf
+   GuildCreator_desc_rsc = \
+      "Before you stands the stately guild hall executor. Frular has made a "
+      "healthy profit off of selling official guild titles, maintenance of "
+      "their charters and the leasing of guild halls."
+
+   GuildCreator_mailname_rsc = "Frular, the Guild Creator"
+
+   GuildCreator_not_master = "Only the elite members of a guild may purchase a guild hall."
+   GuildCreator_not_mature_yet = \
+      "Thou cannot purchase a guild hall until thy guild hath been active for some time."
+   GuildCreator_have_guild = "Thou already hast both a guild and a guild hall."
+   GuildCreator_no_halls = "All of the guild halls have already been rented."
+   GuildCreator_no_rent = "Why dost thou make offers to me?  Thou owest not any guild rent."
+   GuildCreator_not_enough_money = "Thou hast not %i shillings to give me!"
+   GuildCreator_thanks = "I thank thee for thy payment."
+
+   GuildCreator_player_active = \
+      "My records indicate this citizen has been active sometime in the recent past."
+   GuildCreator_player_inactive = \
+      "Unfortunately, my records show that this citizen is currently inactive."
+
+   gcreator_no_guild = "Thou belongest to no guild, and thus owest no rent."
+   gCreator_no_rent = "Thou owest no rent at this time."
+   gcreator_rent_due = "%s%q owes %i coins in rent at this time."
+   gcreator_hours_til_rent = \
+      "The guild members have %i hours to pay off their balance, or the guild "
+      "will be disbanded."
+   gcreator_lesshour_til_rent = \
+      "The guild members have less than an hour to pay off their balance, or "
+      "the guild will be disbanded."
+   gcreator_hour_til_rent = \
+      "The guild members have an hour to pay off their balance, or the guild "
+      "will be disbanded."
+   gcreator_positive_balance = \
+      "%s%q has a positive balance of %i shillings.  I thank thee for thy "
+      "timely payments."
+
+   gcreator_low_level = "Thou art not yet ready to brave the dangers of guild intrigue."
+
+   gcreator_unwanted_give = \
+      "~k%s%s tells you, \"Thou canst pay thy rent only with shillings!~n~k\""
+
+   GuildCreator_rent_command = "rent"
+
+classvars:
+
+   vrName = GuildCreator_name_rsc
+   vrIcon = GuildCreator_icon_rsc
+   vrDesc = GuildCreator_desc_rsc
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+
+   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOB_LISTEN | MOB_RECEIVE%| MOB_BUYER
+   viOccupation = MOB_ROLE_GUILD_CREATOR
+
+   vrUnwanted_give = gcreator_unwanted_give
+
+properties:
+   
+messages:
+
+   UserEntered(who = $)
+   {
+      if Send(who,@GetGender) = GENDER_FEMALE
+      {
+         send(self,@SetMood,#new_mood=piMood+1);
+      }
+      
+      propagate;
+   }
+
+   SomeoneSaid(what=$,string=$)
+   {
+      local oPlayer, oGuild;
+      
+      if StringEqual(string,GuildCreator_rent_command)
+         OR StringEqual(string,"rent")
+      {
+         send(self,@ReportRent,#who=what);
+      }
+
+      if IsClass(what,&Player)
+      {
+         oGuild = send(what,@GetGuild);
+         if oGuild <> $
+            AND send(oGuild,@GetRank,#who=what) >= RANK_LORD
+         {
+            oPlayer = send(SYS,@FindUserByString,#string=string);
+            if oPlayer <> $
+               AND oPlayer <> what
+               AND send(oPlayer,@GetGuild) = oGuild
+            {
+               if send(oPlayer,@IsUserInactive)
+               {
+                  send(self,@SayToOne,#target=what,#message_rsc=GuildCreator_player_inactive);
+               }
+               else
+               {
+                  send(self,@SayToOne,#target=what,#message_rsc=GuildCreator_player_active);
+               }
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   AffectMood(why = $, what = $)
+   {
+      if why = MOODMOD_FACTION_CHANGE
+      {
+         if what = FACTION_DUKE
+         {
+            send(self,@SetMood,#new_mood=piMood+1);
+
+            return;
+         }
+         
+         if what = FACTION_REBEL
+         {
+            send(self,@SetMood,#new_mood=piMood-1);
+
+            return;
+         }
+      }
+      
+      if why = MOODMOD_ACCEPT_RENT
+      {
+         send(self,@SetMood,#new_mood=piMood+2);
+
+         return;
+      }
+      
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood+2);
+
+         return;
+      }
+      
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood-2);
+
+         return;
+      }
+      
+      if why = MOODMOD_SELL_GHALL
+      {
+         send(self,@SetMood,#new_mood=piMood+7);
+
+         return;
+      }
+
+      return;
+   }
+
+   ReportRent(who=$)
+   {
+      local oRent, oGuild, oHours;
+
+      oGuild = send(who,@GetGuild);
+      if oGuild = $
+         OR IsClass(oGuild,&NecromancerGuild)
+      {
+         send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=gcreator_no_guild);
+
+         return;
+      }
+
+      oRent = send(oGuild,@GetRentDue);
+
+      if oRent = 0
+      {
+         send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=gcreator_no_rent);
+
+         return;
+      }
+
+      if oRent > 0
+      {
+         send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=gcreator_rent_due,
+              #parm1=send(oGuild,@GetCapDef),#parm2=send(oGuild,@GetName),
+              #parm3=oRent);
+
+         oHours = send(oGuild,@GetRentCounter)/10;
+         
+         if oHours > 1
+         {
+            send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Gcreator_hours_til_rent,#parm1=oHours-1);
+         }
+         
+         if oHours = 2
+         {
+            send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Gcreator_hour_til_rent);
+         }
+
+         if oHours = 1
+         {
+            send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=Gcreator_lesshour_til_rent);
+         }
+         
+         return;
+      }
+
+      if oRent < 0
+      {
+         send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=gcreator_positive_balance,
+              #parm1=send(oGuild,@GetCapDef),
+              #parm2=send(oGuild,@GetName),#parm3=-(oRent));
+
+         return;
+      }
+
+      return;
+   }
+
+   MobIsSeller()
+   {
+      return TRUE;
+   }
+
+   GetForSale(who = $)
+   "This is hacky--user.kod:UserBuy() aborts if it gets $ returned from here, "
+   "so we can use it as a hook."
+   {
+      local oGuild,i,iAvailable;
+      
+      oGuild = Send(who,@GetGuild);
+      if oGuild <> $
+      {
+         if isClass(oGuild,&NecromancerGuild)
+         {
+            return $;
+         }
+
+         if Send(oGuild,@GetRank,#who=who) >= RANK_LIEUTENANT
+         {
+            if Send(oGuild,@IsMature) 
+            {
+               if Send(oGuild,@GetGuildHall) <> $
+               {
+                  Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                       #string=GuildCreator_have_guild);
+
+                  return;
+               }
+
+               iAvailable = 0;
+               for i in Send(SYS,@GetGuildHalls)
+               {
+                  if Send(i,@GetPurchaseValue,#who=who) <> -1
+                  {
+                     iAvailable = iAvailable + 1;
+                  }
+               }
+               
+               if iAvailable = 0
+               {
+                  Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                       #string=GuildCreator_no_halls);
+
+                  return;
+               }
+
+               Send(who,@SendBuyGuildHall);
+               send(self,@AffectMood,#why=MOODMOD_SELL_GHALL);
+               
+               return;
+            }
+            
+            Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=GuildCreator_not_mature_yet);
+
+            return;
+         }
+
+         Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=GuildCreator_not_master);
+
+         return;
+      }
+      
+      % Player doesn't have a guild.  check to see if he's eligible before
+      %  letting him start one.
+
+      if not send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=gcreator_low_level);
+
+         return;
+      }
+      
+      Send(who,@SendCreateGuild);
+      
+      return $;
+   }
+
+   ReqOffer(what = $,item_list = $)
+   {
+      local i, iMoney, oMoney, oGuild;
+
+      % Check for if in the same room.
+      if send(what,@GetOwner) <> poOwner
+      {
+         debug("ALERT! ",send(what,@GetTRUEName),what," offered items to ",send(self,@GetTrueName)," from distant RID ",send(send(what,@GetOwner),@GetRoomNum));
+         
+         return FALSE;
+      }     
+
+      for i in item_list
+      {
+         if NOT IsClass(i,&Money)
+         {
+            propagate;
+         }
+      }
+
+      oGuild = Send(what,@GetGuild);
+      if oGuild = $ OR IsClass(oGuild,&NecromancerGuild)
+      {
+         Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=GuildCreator_no_rent);
+         
+         return FALSE;
+      }
+
+      iMoney = 0;
+      for i in item_list
+      {
+         iMoney = iMoney + Send(i,@GetValue);
+      }
+
+      oMoney = Send(what,@GetMoneyObject);
+      
+      if oMoney = $
+         OR Send(oMoney,@GetNumber) < iMoney
+      {
+         Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+              #string=GuildCreator_not_enough_money,#parm1=iMoney);
+              
+         return FALSE;
+      }
+
+      Send(oMoney,@SubtractNumber,#number=iMoney);
+      Send(what,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=GuildCreator_thanks);
+      Send(self,@AffectMood,#why=MOODMOD_ACCEPT_RENT);
+      Send(Send(what,@GetGuild),@PayRent,#amount=iMoney);
+
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

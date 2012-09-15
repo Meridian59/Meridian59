@@ -1,0 +1,147 @@
+% Some general comments on Blakston
+% Started 5/17/94
+
+Blakston main executable (called BlakServ.exe)
+
+main loop has
+
+update time -> generate timeouts
+parse modem stuff -> generate commands
+
+valid command types:
+
+motion events
+data requests (what is terrain type in square x,y)(
+user data requests (inventory, statistics, train requests, etc.)
+
+BlakServ startup: 
+
+BlakServ loads *.kod from some directory, and keeps a data structure with ID's
+and event data types for them all (ID \#, \# of event data types, ID's for each
+data type, pointer to code).
+
+All objects are then loaded in from disk, including users.  Each object is
+really just a list of list type thing.  It knows what class it is, then just
+property lists that make up this object.
+
+when someone logs in, the C code dsends a login event to the user who generated
+the login.  Some messiness here in how the C code knows what name is what
+object.  The login event handler probably sets up some timers.
+
+Events are handled like this:
+
+All events are handled like this: the C code parses stuff from the modem until
+it recognizes a complete command.  This command contains an event type ID, as
+well as event data (and types).  The ID's match the ones of .kod files, so it
+then sends a message of the form (User, event data) to the appropriate .kod file
+(in memory).
+
+Timer events are a little different, because they are a separate event that can
+get sent to any class.  To register a timer, a class tells the timer when to
+call it, and the object that generated the timeout.  
+
+Rooms: large, have arrays of stuff.
+
+Motion:  at most x/sec, so no real time arrows or anything.
+
+Note: $ is NIL = an illegal value
+
+Sample Blakod file:
+
+; Sword.kod
+; created 5/19/94
+
+sword is weapon
+
+resources:
+	textname = "Sword"
+	icon = sword.ico
+	attack_text = "slice and dice"
+
+properties:
+	sharpness = 5
+	quality = 100
+non-intrinsics:
+	blood_on_sword = $
+
+messages:
+	constructor()	; properties are automatically potential parameters to this
+	{
+	local	blah1, blah2, x
+
+		name = textname
+	}
+
+	destructor()
+	{
+	}
+
+	attack(monster)
+	{
+		quality = quality - SendMessage(monster,rustfactor) * 2
+		if (quality = 0)
+		{
+			send_message(location,object_destroy)
+			delete_object(self)
+		}
+	}
+
+end sword
+
+to create a sword after a monster died:
+
+died:
+	item = create_object(sword,sharpness = random(4,8),location = room)
+
+C provides the following functions:
+CreateObject(class, constructor parameters)
+DeleteObject(object)
+
+SendMessage(object,message type,message parameters)
+SendMessageList(list,message type, message parameters)
+
+Cons(list,thing)
+First(list)
+Rest(list)
+Length(list)
+Nth(list,n)
+<other list stuff>
+
+Random(int min,int max)
+	
+Output(user object, thing, thing, ...)
+
+StringEqual(string id, string id)
+
+thing can be either a number, object, or list.
+
+for x in list
+{
+	if (SendMessage(x,'hp,parameters here) > 100)
+		SendMessage(x,'damage,amount=100)
+}
+
+must declare local variables
+while loops exist, for loops iterate through a list.
+if else statements exist
+= statements with +, -, *, /, %, ()'s, and, or, =, <=, >=, <, >, not
+things (local variables and properties), message name, class names, constructor parameters)
+
+CreateObject(sword,sharpness=9,value=1000, owner=self)
+
+for x in list
+{
+	DeleteObject(x)
+}
+
+y = CopyObject(x)
+
+SendMessage(x,died,by_whom=self)
+l = Cons(l,self)
+x = First(l)
+y = Rest(l)
+
+Output(j,l,x,y)
+
+
+Strings-- \ escapes next character

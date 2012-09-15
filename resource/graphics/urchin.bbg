@@ -1,0 +1,38 @@
+# urchin
+# groups
+# 1 standing
+# 2-3 walking
+# 4 hunched over
+-s 2
+24
+urch000A.bmp
+urch000B.bmp
+urch000C.bmp
+urch000D.bmp
+urch045A.bmp
+urch045B.bmp
+urch045C.bmp
+urch045D.bmp
+urch090A.bmp
+urch090B.bmp
+urch090C.bmp
+urch090D.bmp
+urch180A.bmp
+urch180B.bmp
+urch180C.bmp
+urch180D.bmp
+urch270A.bmp
+urch270B.bmp
+urch270C.bmp
+urch270D.bmp
+urch315A.bmp
+urch315B.bmp
+urch315C.bmp
+urch315D.bmp
+4
+8   1 21 17 13 13 13  9  5 
+8   2 22 18 14 14 14 10  6 
+8   3 23 19 15 15 15 11  7 
+8   4 24 20 16 16 16 12  8
+ 
+

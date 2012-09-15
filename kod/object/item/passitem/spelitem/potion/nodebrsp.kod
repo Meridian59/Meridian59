@@ -1,0 +1,56 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NodeBurstPotion is Potion
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   NodeBurstPotion_name_rsc = "pungent elixir"
+   %NodeBurstPotion_icon_rsc = potion01.bgf
+   NodeBurstPotion_desc_rsc = "This is a glass vial of colored liquid.  "
+                        "It has an extremely pungent odor; one whiff is enough to leave your head spinning.  "
+                        "Not surprisingly, it has a large warning label attached to it.  Apparently, this "
+                        "strange elixir has the power to open all of your mana node links to the maximum, "
+                        "supplying you with an instant burst of mana, but permanently severing one node link."
+   NodeBurstPotion_bad_desc_rsc = "This is a glass vial of slightly cloudy colored liquid.  "
+                        "It has an extremely pungent, acrid odor; one whiff is almost enough to make you pass "
+                        "out.  You would be well advised to heed the large warning label and avoid drinking "
+                        "it."
+
+
+classvars:
+
+   vrLabelName = NodeBurstPotion_name_rsc
+   vrBadDesc = NodeBurstPotion_bad_desc_rsc
+   vrDesc = NodeBurstPotion_desc_rsc
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 120
+
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+   viSpellEffect = SID_NODEBURST
+   viPoisonPercent = 100
+   viGoBadDamage = 25
+   viColor = XLAT_TO_RED
+
+properties:
+
+   vrName = NodeBurstPotion_name_rsc
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

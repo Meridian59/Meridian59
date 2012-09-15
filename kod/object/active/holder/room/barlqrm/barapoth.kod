@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarApoth is BarloqueRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   room_barapoth = barapoth.roo
+   room_name_barapoth = "Joguer's Herbs and Roots"
+
+   barapoth_music = smithy.mid
+
+classvars:
+
+   vrName = room_name_barapoth
+
+   viTeleport_row = 5
+   viTeleport_col = 5
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_barapoth
+   piRoom_num = RID_BAR_APOTH
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = barapoth_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 6, 4, RID_BAR_NORTH, 14, 16, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 4, RID_BAR_NORTH, 14, 16, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&BarloqueApothecary),
+           #new_row=3,#new_col=6,#new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=9);
+%      Send(self,@NewHold,#what=Create(&Brazier),
+%           #new_row=3,#new_col=3,#fine_col=0,#fine_row=0);
+%      (no light circle for this brazier)
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

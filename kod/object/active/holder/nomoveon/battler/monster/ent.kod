@@ -1,0 +1,238 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ent is Monster
+
+constants:
+
+   include blakston.khd
+
+   SPELL_RANGE_SQUARED = 666
+
+resources:
+
+   ent_koc_name_rsc = "tezmecya"
+   ent_name_rsc = "living tree"
+   ent_icon_rsc = res0003a.bgf
+   ent_desc_rsc = \
+      "A primordial spirit flows through the dark branches of "
+      "this ancient being.  A forest scent of aged wood and "
+      "fertile earth tingles your nostrils.  "
+      "You wonder if the story that it can summon lightning bolts to protect "
+      "the forest is really true."
+
+   ent_leaves_full_rsc = res0003b.bgf
+
+   ent_dead_icon_rsc = res0003d.bgf
+   ent_dead_leaves_full_rsc = res0003e.bgf
+   ent_dead_name_rsc = "dead remains of living tree"
+
+   ent_sound_hit = tr_atkh.wav
+   ent_sound_miss = tr_atkm.wav
+   ent_sound_death = tr_dth.wav
+   ent_sound_aware = tr_awr.wav
+
+classvars:
+
+   vrKocName = ent_koc_name_rsc
+   vrName = ent_name_rsc
+   vrIcon = ent_icon_rsc
+   vrDesc = ent_desc_rsc
+   vrDead_icon = ent_dead_icon_rsc
+   vrDead_name = ent_dead_name_rsc
+
+   viTreasure_type = TID_ENT
+   viAttack_types = ATCK_WEAP_WHIP
+   viSpeed = SPEED_NONE
+   viAttributes = MOB_NOMOVE 
+   viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
+   viLevel = 50
+   viDifficulty = 4
+   viKarma = 40
+
+   vrSound_hit = ent_sound_hit
+   vrSound_miss = ent_sound_miss
+   vrSound_aware = ent_sound_aware
+   vrSound_death = ent_sound_death
+
+   vrLeaves = ent_leaves_full_rsc
+   vrDead_leaves =ent_dead_leaves_full_rsc
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piSpell_chance = 10
+
+messages:
+
+   Constructor(iTrunkColor=$, iLeavesColor=$)
+   {
+      local iTrunk, iLeaves, lTrunk, lLeaves;
+
+      % Pick random colors.
+      iTrunk = iTrunkColor;
+      if iTrunk = $
+      {
+         lTrunk = [ XLAT_TO_SKIN2, XLAT_TO_SKIN2, XLAT_TO_SKIN2,
+                    XLAT_TO_SKIN4 ];
+         iTrunk = Nth(lTrunk,Random(1,Length(lTrunk)));
+      }
+
+      iLeaves = iLeavesColor;
+      if iLeaves = $
+      {
+         lLeaves = [ XLAT_TO_GREEN, XLAT_TO_GREEN,
+                     XLAT_TO_GREEN, XLAT_TO_RED ];
+         iLeaves = Nth(lLeaves,Random(1,Length(lLeaves)));
+      }
+
+      piColor_Translation = Send(SYS,@EncodeTwoColorXLAT,#color1=iTrunk,
+                                 #color2=iLeaves);
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      plResistances = [ [ 50, -ATCK_SPELL_COLD ],
+                        [ 50, ATCK_WEAP_BLUDGEON ],
+                        [-10, ATCK_WEAP_SLASH ],
+                        [-10, -ATCK_SPELL_FIRE ] ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,2);
+
+      return;
+   }
+
+   SendMoveOverlays()
+   {
+      AddPacket(1,1);
+
+      AddPacket(4,vrLeaves, 1,HS_HEAD);
+
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,2);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,2, 2,4, 2,1);
+         
+         return;
+      }
+
+      % if no body animation
+      AddPacket(1,ANIMATE_NONE,2,1);
+      
+      return;
+   }
+
+   SendOverlays()
+   {
+      % Send overlay bitmap info to user.  
+      AddPacket(1,1);
+
+      AddPacket(4,vrLeaves, 1,HS_HEAD);
+
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,2, 2,4, 2,1);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }
+
+   AssessDamage(aSpell=0)
+   {
+      % Living trees get more dangerous if you burn 'em.
+
+      if (aSpell & ATCK_SPELL_FIRE) AND piSpell_chance > 2
+      {
+         piSpell_chance = piSpell_chance - 1;
+      }
+
+      propagate;
+   }
+
+   MonsterCastSpell()
+   {
+      local oSpell, iBase;
+      
+      iBase = Send(self,@AdjustedChanceBase,#base=piSpell_chance);
+
+      if Random(1,iBase) = 1
+         AND Send(self,@SquaredDistanceTo,#what=poTarget) < SPELL_RANGE_SQUARED
+         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
+      {
+         piAnimation = ANIM_ATTACK;
+         Send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING);
+         Send(oSpell,@CastSpell,#who=self,#lTargets=List(poTarget));
+
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   CreateDeadBody(killer=$)
+   {
+      return Create(&DeadBody,#icon=vrDead_Icon,#name=vrDead_Name,
+                    #playername=Send(killer,@GetTrueName),#mob=TRUE,
+                    #BodyTranslation=piColor_Translation,
+                    #LegsTranslation=piColor_Translation,
+                    #monstername=ent_dead_name_rsc,
+                    #PlayerBodyOverlay=vrDead_leaves);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

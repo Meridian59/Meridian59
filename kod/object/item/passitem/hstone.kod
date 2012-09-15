@@ -1,0 +1,144 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HeartStone is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+   RESPAWN_MIN = 30000     % Minimum respawn time in milliseconds, 30 seconds
+   RESPAWN_MAX = 300000    % Maximum respawn time in milliseconds, 5 minutes
+
+resources:
+
+   HeartStone_icon_rsc = xeogem.bgf
+   HeartStone_name_rsc = "heartstone"
+   HeartStone_desc_rsc = \
+	   "This is called a 'heartstone'.  It is a huge gem taken from the body of a "
+	   "fallen Xeochicotl."
+	
+classvars:
+   
+   vrName = HeartStone_name_rsc
+   vrDesc = HeartStone_desc_rsc
+   vrIcon = HeartStone_icon_rsc
+
+   viValue_average = 100
+   viWeight = 20
+   viBulk = 10
+
+   viColor = 0
+
+properties:
+
+   ptRespawn = $           % Time until dropped stone respawns.
+
+messages:
+
+   Constructor()
+   {
+      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=viColor);
+      
+      propagate;
+   }
+
+   NewOwner(what = $)
+   {
+      if (IsClass(what,&Room))
+         AND (not send(what,@CheckRoomFlag,#flag=ROOM_NO_COMBAT))
+      {
+         if Send(Send(SYS,@GetNodeAttack),@GetRespawn)
+         {
+            ptRespawn = CreateTimer(self,@RespawnXeoTimer,random(RESPAWN_MIN,RESPAWN_MAX));
+         }
+      }
+      else
+      {
+         if ptRespawn <> $
+         {
+            DeleteTimer(ptRespawn);
+         }
+         
+         ptRespawn = $;
+      }
+      
+      propagate;
+   }
+
+   RespawnXeoTimer()
+   {
+      ptRespawn = $;
+      Send(self,@RespawnXeo);
+      
+      return;
+   }
+
+   RespawnXeo()
+   {
+      local oXeochicatl, iRow, iCol;
+
+      if ptRespawn <> $
+      {
+         DeleteTimer(ptRespawn);
+         
+         ptRespawn = $;
+      }
+
+      oXeochicatl = Send(self,@CreateXeo);
+      iRow = Send(self,@GetRow);
+      iCol = Send(self,@GetCol);
+      
+      if NOT IsClass(poOwner,&Room)
+      {
+         Debug("HStone::RespawnXeo called while not in a room!");
+         
+         return;
+      }
+
+      if Send(poOwner,@ReqNewHold,#what=oXeochicatl,#new_row=iRow,#new_col=iCol)
+      {
+         Send(poOwner,@NewHold,#what=oXeochicatl,#new_row=iRow,#new_col=iCol);
+         post(self,@Delete);
+      }
+      else
+      {
+         ptRespawn = CreateTimer(self,@RespawnXeoTimer,random(RESPAWN_MIN,RESPAWN_MAX));
+      }
+      
+      return;
+   }
+
+   IsInAttack()
+   {
+      return (Send(poOwner,@FindHolding,#class=&ManaNode) = Send(Send(SYS,@GetNodeAttack),@GetAttackedNode));
+   }
+
+   Delete()
+   {
+      if ptRespawn <> $
+      {
+         DeleteTimer(ptRespawn);
+      }
+      
+      ptRespawn = $;
+      
+      propagate;
+   }
+   
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

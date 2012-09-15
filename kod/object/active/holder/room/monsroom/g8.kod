@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsG8 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsG8 = G8.roo
+   room_name_OutdoorsG8 ="The Cragged Mountains"
+   OutdoorsG8_music = walk4.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsG8
+
+   viTeleport_row = 16
+   viTeleport_col = 11
+
+   viTerrain_type = TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_OutdoorsG8
+   prMusic = OutdoorsG8_music
+   piRoom_num = RID_G8
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+   piGen_time = 100000
+   piGen_percent = 80
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piInit_count_min = 6
+   piInit_count_max = 10
+
+   piMonster_count_max = 13
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&DeathSpider, 40], [&Troll, 60] ];
+
+      plGenerators = [ [4, 14], [16, 13], [18, 8], [27, 14], [34, 6],
+		      [26, 23], [37, 17], [22, 38], [14, 31], [11, 46], 
+		      [29, 42], [27, 37], [37, 39], [32, 33], [42, 27],
+                      [46, 18], [44, 47], [27, 24], [12, 18], [21, 18]];
+      propagate;
+   }
+
+   
+   CreateStandardExits()
+   {
+      plExits = $;
+%      plExits = Cons([ 28, 30, RID_NECROAREA1, 6, 18, ROTATE_NONE ],plExits); %% north
+   
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_F8, 43, 46, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_G6, 128, 71, ROTATE_NONE], plEdge_exits);
+   
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_G9, 2, 18, ROTATE_NONE,COL_IS_LESS_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_G9, 2, 61, ROTATE_NONE,COL_IS_GREATER_THAN,19], plEdge_exits);      	 
+
+      plEdge_Exits = Cons([LEAVE_EAST, RID_NECROAREA1, 7, 2, ROTATE_NONE], plEdge_exits);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,128 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanTailorShop is KocatanRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   room_koctail = koctail.roo
+   room_name_koctail = "The Crooked Hem Garment Shop"
+
+   koctail_music = song12.mid
+
+   koctail_locked_1 = "Tailor Tepal ix'Zonak's living quarters are locked."
+   koctail_locked_2 = "This door is locked fast."
+   koctail_locked_3 = "A dank stench wafts from beneath this locked iron door."
+
+   koctail_key_disappears = "The heavy iron key disappears!"
+classvars:
+
+   vrName = room_name_koctail
+
+   viTeleport_row = 17
+   viTeleport_col = 5
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+   viPermanent_flags = ROOM_NO_COMBAT
+
+properties:
+
+   prRoom = room_koctail
+   piRoom_num = RID_KOC_TAILOR
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = koctail_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% to town -- teleport in to (18,4)
+      plExits = Cons([ 17, 3, RID_KOC_SOUTH, 30, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 18, 3, RID_KOC_SOUTH, 30, 35, ROTATE_NONE ],plExits);
+
+      % this is the key door
+      % leave this here.  It will give the locked message if they 
+      % don't have a key.
+      plExits = Cons([ 15, 9, ROOM_LOCKED_DOOR, koctail_locked_2],plExits);
+      % don't need key going the other way
+      plExits = Cons([ 14, 9, RID_KOC_TAILOR, 16, 9, ROTATE_NONE ],plExits);
+ 
+      plExits = Cons([ 18, 10, ROOM_LOCKED_DOOR, koctail_locked_1],plExits);
+      plExits = Cons([ 9, 1, ROOM_LOCKED_DOOR, koctail_locked_2],plExits);
+      plExits = Cons([ 9, 2, ROOM_LOCKED_DOOR, koctail_locked_2],plExits);
+      plExits = Cons([ 2, 2, ROOM_LOCKED_DOOR, koctail_locked_3],plExits);
+      plExits = Cons([ 1, 2, ROOM_LOCKED_DOOR, koctail_locked_3],plExits);
+
+      plExits = Cons([ 3, 1, RID_KOC_SEWER2, 43, 47, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 2, RID_KOC_SEWER2, 43, 47, ROTATE_NONE ],plExits);
+  
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1, lObjCoords2;
+      lObjCoords1 = [
+               [16,03,24,24,OO_DRESS1],[17,03,08,24,OO_DRESS3],[16,07,16,32,OO_DRESS3],
+               [16,05,08,48,OO_JUG],[19,04,08,48,OO_CLOTH_BOLT1],[19,03,48,08,OO_CLOTH_BOLT2],
+               [19,07,48,48,OO_CLOTH_BOLT3],[19,10,32,32,OO_CLOTH_BOLT4],[18,08,40,40,OO_CLOTH_BOLT5],
+               [18,10,56,32,OO_CLOTH_BOLT6],[11,10,48,08,OO_GREY_JUG],
+               [10,10,56,08,OO_POT],[10,10,32,08,OO_GOLD_BOTTLE]
+               ];
+      lObjCoords2 = [
+               [16,3,48,56,OO_STOOL_KOCATAN],[11,10,48,08,OO_GREY_JUG],
+               [10,10,56,08,OO_POT],[10,10,32,08,OO_GOLD_BOTTLE]
+               ];
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords2);
+
+      send(self,@NewHold,#what=Create(&KocatanTailor),
+	 #new_row=18,#new_col=7,#fine_row=40,#fine_col=0,
+	 #new_angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$,row=$,col=$)
+   {
+      local i, lPassive, each_obj;
+      
+      if isClass(what,&user)
+      {
+         if (row=15) and (col=9)
+	 {
+	    lPassive=send(what,@getholderpassive);
+	    for i in lPassive
+	    {
+	       each_obj = send(what,@holderextractobject,#data=i);
+	       if isClass(each_obj, &SanctuaryKey)
+	       {
+		  send(each_obj,@delete);
+		  send(what,@msgsenduser,#message_rsc=koctail_key_disappears);		  
+		  send(SYS,@UtilGoToSquare,#what=what,#where=self,#what=what,#new_row=13,#new_col=9);
+		  return TRUE;
+	       }
+	    }
+	 }
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

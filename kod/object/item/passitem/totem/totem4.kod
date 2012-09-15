@@ -1,0 +1,48 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TotemFour is Totem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TotemFour_name_rsc = "Ancient Shield"
+   TotemFour_icon_rsc = qo09.bgf
+   TotemFour_desc_rsc = "Thought to be an artifact from the Empire of the Nexus before this land was even "
+         "discovered, this ancient shield is too old and valuable to be used in combat.\n\n"
+         "Being one of a kind, this shield can not be carried in one's possession for very long or tucked away "
+         "in a chest."
+
+classvars:
+
+
+   vrName = TotemFour_name_rsc
+   vrIcon = TotemFour_icon_rsc
+   vrDesc = TotemFour_desc_rsc
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 1
+
+   vrposs_article = object_article_cap_this_rsc
+
+   vrTotem_overlay = TotemFour_icon_rsc
+
+   viBulk = 100
+   viWeight = 100
+
+properties:
+   
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

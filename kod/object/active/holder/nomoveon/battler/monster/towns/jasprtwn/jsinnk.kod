@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperInnKeeper is JasperTown
+
+constants:
+
+   include blakston.khd
+   
+resources:
+
+   jasper_innkeep_name_rsc = "Widow Qesino"
+   jasper_innkeep_icon_rsc = jsinnk.bgf
+   jasper_innkeep_desc_rsc = \
+      "The Widow Qesino has run the Yonder Inn since her late husbands' disappearance.  "
+      "She seems to be a very straightforward if rather plain woman."
+
+classvars:
+
+   vrName = jasper_innkeep_name_rsc
+   vrIcon = jasper_innkeep_icon_rsc
+   vrDesc = jasper_innkeep_desc_rsc
+
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOMOVE | MOB_SELLER | MOB_TEACHER
+   viOccupation = MOB_ROLE_INNKEEPER
+   viGender = GENDER_FEMALE
+
+properties:   
+   
+messages:
+
+   UserEntered()
+   {
+      send(self,@SetMood,#new_mood=piMood + 1);
+      
+      propagate;
+   }
+   
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood + 2);
+         
+         return;
+      }
+      
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood - 2);
+         
+         return;
+      }
+      
+      if why = MOODMOD_SELL_ITEM
+      {
+         if isClass(what,&Food)
+         {
+            send(self,@SetMood,#new_mood=piMood + 2);
+         }
+      }
+      
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale=[[Create(&Stew,#number=4)],
+                  $,
+                  [ SID_SWEEP, SID_RESTORATE ] ];
+      return;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,250 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dazzle is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Dazzle_name_rsc = "dazzle"
+   Dazzle_icon_rsc = idazzle.bgf
+   Dazzle_desc_rsc = \
+      "Dazzles the target with the blinding light of Shal'ille's goodness.  "
+      "Requires emeralds and purple mushrooms."
+   
+   Dazzle_caster = "%s%s is now dazzled."
+   Dazzle_already_enchanted = "%s%s is already dazzled."
+
+   Dazzle_on = "The world is washed away in a flood of pure light."
+   Dazzle_off = "Your vision begins to clear."
+
+   Dazzle_sound = sDazzle.wav
+
+classvars:
+
+   vrName = Dazzle_name_rsc
+   vrIcon = Dazzle_icon_rsc
+   vrDesc = Dazzle_desc_rsc
+
+   viSpell_num = SID_DAZZLE
+   viSchool = SS_SHALILLE
+   viSpell_level = 4
+   viMana = 12
+   viChance_To_Increase = 15
+
+   viSpellExertion = 6
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   vrSucceed_wav = Dazzle_sound
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Emerald,1],plReagents);
+      plReagents = Cons([&PurpleMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if NOT IsClass(target,&Battler) OR IsClass(target,&Revenant)
+      {
+         if not bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+                 #parm1=vrName,#parm2=Send(target,@GetDef),
+                 #parm3=Send(target,@GetName));
+         }
+
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,
+                 #parm1=vrName);
+         }
+
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      if Send(target,@IsEnchanted,#what=self)
+      {
+         if not bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=Dazzle_already_enchanted,
+                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+         }
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget, iDuration;
+
+      oTarget = First(lTargets);
+      iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower,
+                       #caster=who,#target=otarget);
+
+      Send(self,@DoDazzle,#what=who,#oTarget=oTarget,#iDurationSecs=iDuration);
+      
+      propagate;
+   }
+
+   DoDazzle(what=$,oTarget=$,iDurationSecs=0)
+   {
+      local oSpell, iDuration;
+
+      iDuration = iDurationSecs;
+     
+      oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
+      if Send(oTarget,@IsEnchanted,#what=oSpell)
+      {
+         iDuration = Send(oSpell,@DoEagleEyes,#oCaster=what,#oTarget=oTarget,
+                          #iDuration=iDuration,#iFactor=2);
+         if iDuration = $
+         {
+            % Resisted completely.
+            return;
+         }
+      }
+
+      % Convert duration to milliseconds
+      iDuration = bound(iDuration,3,15);
+      iDuration = iDuration * 1000;
+
+      if IsClass(oTarget,&Player)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=Dazzle_on);
+         Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
+              #duration=iDuration);
+      }
+      else
+      {
+         % Class is Monster
+         Post(oTarget,@ResetBehaviorFlags);
+      }
+
+      Send(what,@MsgSendUser,#message_rsc=Dazzle_caster,
+           #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+      Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0,caster=$,target=$)
+   {
+      local iDuration,iKarmaDif,iKarma;
+
+      % 1-8 seconds based on spellpower.
+      iDuration = (iSpellPower/12);
+      if IsClass(caster,&Battler)
+      {
+         iKarma = Send(caster,@GetKarma);
+      }
+      else
+      {
+         % Non battlers, like the sun
+         iKarma = random(30,90);
+      }
+
+       % 1-10 seconds based on Karma difference.
+      iKarmaDif = (iKarma - Send(target,@GetKarma,#detect=TRUE))/20;
+      iDuration = bound(iDuration + iKarmaDif,3,15);  
+
+      return iDuration;
+   }
+   
+   EndEnchantment(who = $, report = TRUE)
+   {
+      if IsClass(who,&Player)
+      {
+         if report
+         {
+            Send(who,@MsgSendUser,#message_rsc=Dazzle_off);
+         }
+
+         Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=8000);
+         Send(who,@EffectSendUserXLat,#xlat=0);
+      } 
+      else  
+      {
+         % Class is monster
+         % Post this so it's done AFTER the enchantment is gone from the
+         %  monster's ench list
+         Post(who,@ResetBehaviorFlags);
+      }
+     
+      return;
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {      
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+
+      return;
+   }
+
+   SendEffectData()
+   {
+      return;
+   }
+
+   RestartEnchantmentEffect(who=$,state=$)
+   {
+      Send(who,@MsgSendUser,#message_rsc=Dazzle_on);
+
+      return;
+   }
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      Send(mob,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=TRUE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
+
+      return;      
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

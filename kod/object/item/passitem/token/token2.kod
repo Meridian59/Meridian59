@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TwoToken is Token
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TwoToken_name_rsc = "jeweled egg token"
+   TwoToken_desc_rsc = \
+      "Encrusted with every gemstone known, this ancient token is rumored to "
+      "call forth the riches of the land at the wish of the Councilor who tends "
+      "it. Returning it would likely raise your status in the Royal Court."
+   TwoToken_icon_rsc = tegg.bgf
+
+   % Overlays not implemented yet.
+   %TwoToken_overlay_rsc = tokhegg.bgf
+
+classvars:
+
+   vrName = TwoToken_name_rsc
+   vrDesc = TwoToken_desc_rsc
+   vrIcon = TwoToken_icon_rsc
+
+   viInitialTimeval = 30000000 
+
+   %vrTokenOverlay = TwoToken_overlay_rsc
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,198 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WallofLightning is ActiveWallElement
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   WallofLightning_name_rsc = "wall of lightning"
+   WallofLightning_icon_rsc = wolightn.bgf
+   WallofLightning_desc_rsc = \
+      "The wall of lightning crackles dangerously, almost as if hoping you "
+      "would walk into it."
+
+   lightningwall_damage0 = "You walk through the wall of lightning without incident."
+   lightningwall_damage5 = \
+      "Surely one day man will come up with a use for lightning other than "
+      "zapping the heck out of you."
+   lightningwall_damage10 = "Whoa that tingles!!"
+   lightningwall_damage15 = "Whoooooiiee, that'll wake you up in the morning!"
+   lightningwall_damage20 = "So THAT'S what that feels like."
+
+   lightningwall_dissipates = "Part of the lightning wall flickers, and disappears."
+
+   lightningwall_zap_snd = Fzap.wav
+
+classvars:
+
+   vrName = WallofLightning_name_rsc
+   vrIcon = WallofLightning_icon_rsc
+   vrdesc = WallofLightning_desc_rsc
+
+   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | MOVEON_NOTIFY | FLICKERING_YES
+
+   vrDissipateMessage = lightningwall_dissipates
+   vrUnaffectedMessage = lightningwall_damage0
+
+   viLightBonus = 7
+
+properties:
+
+   piMaxDamage = 0
+   ptPeriodicEffect = $
+
+messages:
+   
+   Constructor(caster = $, duration=75, MaxDamage = 0)
+   {
+      piMaxDamage = MaxDamage;
+
+      propagate;
+   }
+
+   GetDuration(duration = 0)
+   {
+      local iDuration;
+
+      iDuration = Random(duration-20,duration+20);
+      iDuration = iDuration * 1000;
+      iDuration = bound(iDuration,30000,200000);
+
+      return iDuration;
+   }
+
+   DoEffect(what = $, periodic=FALSE)
+   {
+      local iDamage, iMaxDamage, oWatcher, rMessage;
+    
+      iDamage = 0;
+      iMaxDamage = piMaxDamage;
+      
+      iDamage = Send(what,@AssessDamage,#what=poCaster,#damage=Random(0,iMaxDamage),
+                     #aspell=ATCK_SPELL_SHOCK,#report=FALSE,#report_resistance=FALSE);
+
+      if iDamage = $
+      {
+         Send(poCaster,@KilledSomething,#what=what);
+      }
+
+      if IsClass(poCaster,&Player)
+      {
+         if iDamage = $
+         {
+            Send(poCaster,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+
+            return;
+         }
+         else
+         {
+            if piMaxDamage > 0
+            {
+               Send(poCaster,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+            }
+         }
+      }
+
+      if IsClass(what,&Player)
+      {
+         if iDamage = 0
+         {
+            rMessage = lightningwall_damage0;
+         }
+         else
+         {
+            % Damage greater than 0
+            Send(what,@WaveSendUser,#wave_rsc=lightningwall_zap_snd);
+
+            if iDamage < 5
+            {
+               rMessage = lightningwall_damage5;
+            }
+            else
+            {
+               if iDamage < 10
+               {
+                  rMessage = lightningwall_damage10;
+               }
+               else
+               {
+                  if iDamage < 15
+                  {
+                     rMessage = lightningwall_damage15;
+                  }
+                  else
+                  {
+                     rMessage = lightningwall_damage20;
+                  }
+               }
+            }
+         }
+
+         Send(what,@MsgSendUser,#message_rsc=rMessage);
+      }
+      
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,random(100,140), 2,1, 2,5);
+
+      return;
+   }
+
+   NewOwner(what = $)
+   {
+      % Add a bit of light.  Lightning walls shed some light.
+   
+      % new room
+      if what <> $
+      {
+         Send(what,@AddBaseLight,#amount=viLightBonus);
+      }
+      
+      % old room
+      if poOwner <> $
+      {
+         Send(poOwner,@AddBaseLight,#amount=-viLightBonus);
+      }
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      % Take away the light we added.
+      if poOwner <> $
+      {
+         Send(poOwner,@AddBaseLight,#amount=-viLightBonus);
+      }
+      
+      propagate;
+   }
+
+   SendLightingInformation()
+   {
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      % 5 out of 255 intensity of light
+      AddPacket(1,5);
+      % Lightning color
+      AddPacket(2,LIGHT_LIGHTNING);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

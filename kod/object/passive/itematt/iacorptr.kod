@@ -1,0 +1,127 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttCorpsePointer is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  The job of corpsepointer is simply to point at the monster that 
+%    formerly 'carried' the loot, allowing whoever killed the monster
+%    to get first crack at the loot.  
+% 
+%  Form is: 
+%
+%      [IA_CORPSEPOINTER, $, oCorpse]
+%   
+%       oCorpse :: the corpse that the pointer is remembering
+%
+%  A final word: this pointer will stick around for only 20 seconds
+%     after a kill, then it will delete itself, removing it from the
+%     item's plItem_attribute's list.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+ 
+   corpsepointer_no_loot = "You reach for %s%s, but you can't get past %s picking over the loot of the kill."
+   
+classvars:
+
+   viItem_Att_Num = IA_CORPSEPOINTER
+   vrDesc = resource_blank
+
+properties:
+  
+messages:
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   %% A player can only pick up an item from a monster he has 
+   %% recently killed himself, or that has sat around for a bit.
+
+   CanGetAffectedItem(lData = $, who = $, oItem = $)
+   {
+      local oCorpse;
+     
+      oCorpse = nth(lData,3);
+     
+      % If the corpse object is pointing at who, then 'who' can pick up this item.
+      if NOT send(oCorpse,@CanGetMe,#what=who)
+      {
+         send(who,@MsgSendUser,#message_rsc=corpsepointer_no_loot,
+              #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName),
+              #parm3=send(oCorpse,@GetCorpseName));
+
+         return FALSE;
+      }   
+
+      return TRUE;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Infrastructure
+%%  (Adding and removing a ItemAtt from an item.)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   SetPrimaryState(state1=$)
+   "State1 contains the corpse that used to own us."
+   {
+      if state1 = $
+      {
+         debug("SetPrimaryState called with nil state!");
+
+         return FALSE;
+      }
+
+      return state1;
+   }
+
+   AddToTreasureTable()
+   {
+      %% do nothing
+      return FALSE;
+   }
+
+   SetItemsToAttribute()
+   {
+      %% plItems_to_attribute should never be used by this itematt
+      plItems_to_Attribute = $;
+
+      return;
+   }
+
+   InitiallyIdentified()
+   {
+      return TRUE;
+   }   
+
+   CanBeSpoofed()
+   {
+      return FALSE;
+   }
+
+   GetNamePriority()
+   {
+      return -1;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

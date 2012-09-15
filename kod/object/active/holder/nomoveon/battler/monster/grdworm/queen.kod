@@ -1,0 +1,62 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GroundWormQueen is GroundWorm
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   GroundWormQueen_name_rsc = "groundworm queen"
+   GroundWormQueen_koc_name_rsc = "koslithic"
+   GroundWormQueen_icon_rsc = worml.bgf
+   GroundWormQueen_desc_rsc = \
+      "The largest of the groundworms, the queen is a feared monster.  "
+      "After growing over long periods of time, groundworms need increasing "
+      "amounts of food to sustain themselves.  The queens are driven mad "
+      "by an overwhelming desire to consume food to satiate their immense "
+      "hunger.  Occasionally groundworm queens lay eggs in corpses that "
+      "hatch into groundworm larva."
+
+   GroundWormQueen_dead_icon_rsc = wormlX.bgf
+   GroundWormQueen_dead_name_rsc = "slain groundworm queen"
+   GroundWormQueen_sound_aware = gwrm2awr.wav
+
+classvars:
+
+   vrKocName = GroundWormQueen_koc_name_rsc
+   vrName = GroundWormQueen_name_rsc
+   vrIcon = GroundWormQueen_icon_rsc
+   vrDesc = GroundWormQueen_desc_rsc
+   vrDead_icon = GroundWormQueen_dead_icon_rsc
+   vrDead_name = GroundWormQueen_dead_name_rsc
+   vrSound_aware = GroundWormQueen_sound_aware
+
+   viTreasure_type = TID_WORM_QUEEN
+   viSpeed = SPEED_SLOW
+   viAttack_types = ATCK_WEAP_ACID
+   viLevel = 130
+   viDifficulty = 7
+   viKarma = -30
+   viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SINGLEMINDED
+   viGender = GENDER_FEMALE
+
+   viTrailLength = 4
+   vbTrailLarge = TRUE
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

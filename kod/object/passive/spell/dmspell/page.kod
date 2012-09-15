@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Page is DMSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   page_wave_rsc = god2god.wav
+
+   page_name_rsc = "page"
+   page_icon_rsc = light.bgf
+   page_desc_rsc = "Sends your target a little funny noise, to wake them if they are away from keyboard."
+
+   page_msg_DM = "You page %s%s."
+   page_msg_target = "You have been paged by %s%s."
+
+
+classvars:
+
+   vrName = page_name_rsc
+   vrIcon = page_icon_rsc
+   vrDesc = page_desc_rsc
+
+   viSpell_num = SID_page
+   viSchool = SS_DM_COMMAND
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(lTargets=$)
+   {
+      if (not isClass(first(lTargets),&User)) and
+            not (isClass(first(lTargets),&Reflection)) and
+            not (isClass(first(lTargets),&EvilTwin))
+      {
+         return FALSE;
+      }
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local i;
+      % redirect page to original for reflections and evil twins
+      if isClass(first(lTargets),&Reflection) or isClass(first(lTargets),&EvilTwin)
+      {
+         lTargets = [send(first(lTargets),@GetIllusionForm)];
+      }
+      
+      %% send self the page noise
+      send(who,@wavesenduser,#wave_rsc=page_wave_rsc);  
+      send(who,@msgsenduser,#message_rsc=page_msg_dm,
+	  #parm1=Send(First(lTargets),@GetDef),#parm2=Send(First(lTargets),@GetName));
+      for i in lTargets
+      {
+	 send(i,@wavesenduser,#wave_rsc=page_wave_rsc);
+	 send(i,@msgsenduser,#message_rsc=page_msg_target,
+	 #parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
+      }
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

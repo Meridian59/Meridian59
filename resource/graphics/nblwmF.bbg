@@ -1,0 +1,17 @@
+# Noblewoman - legs
+# groups
+# 1 standing
+# 2 walking
+-s 2
+8
+nf000aba.bmp   [-16, -6] 
+nf090aba.bmp   [-21, -4] 
+nf180aba.bmp   [-15, -4] 
+nf270aba.bmp   [-10, -4] 
+nf000bba.bmp   [-18, -6] 
+nf090bba.bmp   [-23, -4] 
+nf180bba.bmp   [-17, -4] 
+nf270bba.bmp   [-12, -4] 
+2
+ 4      1   4   3   2
+ 4      5   8   7   6

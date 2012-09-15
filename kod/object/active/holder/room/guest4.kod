@@ -1,0 +1,116 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Guest4 is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_guest4 = "Ravi's Magicks of Hazar's Crossing"
+   room_guest4 = guest4.roo
+   guest4_music = login.mid
+
+   guest4_signname = "selling items"
+   guest4_sign = \
+      "Occasionally, you will find quests where a shopkeeper "
+      "or other townsman desires you to bring him a certain item "
+      "or peform some errand.  "
+      "More frequently, after killing a monster you will find items "
+      "that you yourself have no need for but that you can sell to get "
+      "the weapons and other equipment that you do need.  For example, "
+      "you may have found entroot berries after killing some mummies.  "
+      "Use the OFFER command, or press the CONTROL key and O to offer "
+      "these to Ravi, the apothecary.\n\n"
+      "It should be noted that not every NPC wants every item.  Ravi, for "
+      "example, has no interest in purchasing weapons so if you offer them to him, "
+      "it will confuse him.  He may even think that it's a gift, and take it "
+      "from your astonished hands.  If you SAY 'buy' or 'sell', you should get "
+      "a good idea of what any shopkeeper is willing to take off your hands.\n"
+      "--------------------\n"
+      "This is the end of your tutorial.  Feel free to explore around a bit "
+      "and try new things.  You may wish to pay a visit to the Grand Museum, which "
+      "houses a number of exhibits about the wonders found in Meridian proper."
+
+classvars:
+
+   vrName = room_name_guest4
+
+   viTeleport_row = 3
+   viTeleport_col = 5
+
+   viDemo_base = RID_GUEST_BASE
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_GUEST_AREA
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_guest4
+   piRoom_num = RID_guest4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+   prMusic = guest4_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 2, 5, viDemo_base + 2, 23, 21, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 6, viDemo_base + 2, 23, 21, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 6, viDemo_base + 2, 23, 21, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      send(self,@NewHold,#what=create(&HazarApothecary),#new_row=6,#new_col=4,
+           #fine_row=32,#fine_col=32);
+
+      oSign = create(&sign,#desc=guest4_sign,#name=guest4_signname,#newbie=TRUE);
+      send(self,@NewHold,#what=oSign,#new_row=4,#new_col=6,#fine_row=48,#fine_col=32,
+           #newbie=TRUE);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TALLURN),
+           #new_row=2,#new_col=5,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_POTION),
+           #new_row=5,#new_col=5,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TALLURN),
+           #new_row=4,#new_col=7,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_FLASK_GREEN),
+           #new_row=5,#new_col=5,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_FLASK_STAND),
+           #new_row=5,#new_col=4,#fine_row=24,#fine_col=24,#angle=ANGLE_EAST); 
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=2,#new_col=3,#fine_row=59,#fine_col=51);
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

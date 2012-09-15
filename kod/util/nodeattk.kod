@@ -1,0 +1,662 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NodeAttack is UtilityFunctions
+
+constants:
+
+   include blakston.khd
+
+   RESPAWN_CHANCE = 10
+
+resources:
+
+   NodeAttack_initial_attack_rsc = \
+      "~IYou have an uneasy feeling that one of your nodes is being "
+      "threatened."
+   NodeAttack_location_attack_rsc = "~BThe node at %s is under attack!"
+   NodeAttack_attack_sound_rsc = ndanger.wav
+   NodeAttack_killed_rsc = "a Xeochicatl attack"
+   NodeAttack_room_message_rsc = \
+      "~IThe area shakes violently as several Xeochicatl pull themselves "
+      "from the ground and attack the node!"
+
+   NodeAttack_success_rsc = \
+      "~BThe Xeochicatl retreat from %s.  The node has been saved!"
+   NodeAttack_failure_rsc = \
+      "~BThe node at %s has been drained by the attacking Xeochicatl!"
+   NodeAttack_failure_sound_rsc = ndrained.wav
+
+   NodeAttack_loss_rsc = \
+      "~IYour head aches as you feel the loss of one of your nodes."
+   NodeAttack_severed_rsc = \
+      "~IYour head roars with pain as the link to one of your nodes is "
+      "severed!"
+
+   NodeAttack_loss_mail_rsc = "Subject: The loss of the node\n"
+      "It is with a heavy heart I report that the Xeochicatl have attacked "
+      "and drained the node at %s.  Our forces were not able to repel the "
+      "attacks and the node was lost to us.  As a result, you will not be "
+      "able to draw mana from this node for a while."
+      "\n\n"
+      "I hope in the future we will know how to better repel these attacks.  "
+      "We must be ever vigilant against these attacks."
+   NodeAttack_severed_mail_rsc = "Subject: The severing of your node\n"
+      "It is with a heavy heart I report that the Xeochicatl have attacked "
+      "and drained the node at %s.  Unfortunately, the violent draining of "
+      "the node severed your connection with it.  Our forces were not able to "
+      "repel the attacks and the node was lost to us.  As a result, you must "
+      "meld with the node again when it becomes available in the future."
+      "\n\n"
+      "I hope in the future we will know how to better repel these attacks.  "
+      "We must be ever vigilant against these attacks."
+
+   NodeAttack_keeper = "Alzahakar"
+
+classvars:
+
+properties:
+
+   % Are there node attacks?
+   pbAttackEnabled = FALSE
+   % Base number of Meridian days to use when figuring frequency of attacks.
+   piAttackFrequency = 36
+   % The number of Xeochicatl spawned during an attack.
+   piAttackIntensity = 8
+   % Number of minutes the whole attack lasts.
+   %  Divided into 1/3 time that node holders know, 2/3 time everyone knows.
+   piAttackDuration = 60
+
+   % Number of Meridian days a node loss lasts.
+   piLossDuration = 12
+   % Base percent chance to actually be severed from the node.
+   piSeveredChance = 5
+   % Number of users that must be on before a node attack goes on.
+   piNumberOnForAttack = 20
+
+   % NOTE: See specific notes in Recreate() for more information.
+   % The current node being attacked.
+   poAttackedNode = $
+   % List of all nodes (by ID) that can be attacked.
+   plAttackableNodes = $
+   % First piRandomNodes in plAttackable Nodes can be randomly attacked.
+   piRandomNodes = 0
+
+   % NOTE: the next three properties are lists, parallel to the list of
+   %  attackable nodes.
+   % This is a list of generation points for the Xeochicatl near the nodes.
+   %  Structure: list parallel to plAttackable nodes, each element is a list of
+   %  monster spawn locations, presented as a binary list of [Row,Col].
+   plMonsterGen = $
+
+   % This is a list of locations where we place Miriana, presented as binary
+   %  lists of [Row,Col]
+   plMirianaLocation = $
+
+   % This is the number of Meridian Days the node is dead after a failure.
+   plDownTime = $
+   % This is the number of days to wait for an attack, start small.
+   piWaitTime = 2
+
+   % This indicates if Xeochicatl can respawn from dropped heartstones.
+   pbXeoRespawn = FALSE
+   % This indicates if Miriana even goes to view node attacks.
+   pbMirianaAppears = FALSE
+   % This indicates if Miriana gets that possessed look during attacks.
+   pbMirianaPossessed = FALSE
+
+   % Timer for the attack.
+   ptAttack = $
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@Recreate);
+
+      return;
+   }
+
+   Recreate()
+   "This resets everything back down to base level.  Clears all attack "
+   "history, etc."
+   {
+      local iNode;
+
+      poAttackedNode = $;
+      plAttackableNodes = [ NODE_H9, NODE_VICTORIA, NODE_BADLANDS,
+                            NODE_ORCCAVES, NODE_A5, NODE_ICECAVE1, NODE_Q
+                          ];
+
+      % First piRandomNodes in plAttackable Nodes can be randomly attacked.
+      % Currently, Q's node in the Martyr's Battleground can be attacked, but it
+      % Won't be randomly selected.
+      piRandomNodes = 6;
+
+      % This is a list of generation points for the Xeochicatl near the nodes.
+      plMonsterGen = [ [[45,34],[45,30],[43,32]],  % NODE_H9
+                       [[14,45],[12,44],[14,43]],  % NODE_VICTORIA
+                       [[62,47],[63,43],[66,47]],  % NODE_BADLANDS
+                       [[25,53],[23,51],[22,49]],  % NODE_ORCCAVES
+                       [[20,15],[17,17],[20,18]],  % NODE_A5
+                       [[23,27],[24,20],[27,20]],  % NODE_ICECAVE1
+                       [[31,61],[26,64],[26,59]]   % NODE_Q
+                     ];
+
+      % This is the location where we place Miriana.
+      plMirianaLocation = [ [39,36],  % NODE_H9
+                            [14,41],  % NODE_VICTORIA
+                            [62,35],  % NODE_BADLANDS
+                            [27,52],  % NODE_ORCCAVES
+                            [17,19],  % NODE_A5
+                            [27,28],  % NODE_ICECAVE1
+                            [30,66]   % NODE_Q
+                          ];
+
+      % This is the number of Meridian Days the node is dead after a failure.
+      plDownTime = [0,0,0,0,0,0,0];
+
+      % This is the number of days to wait for an attack, start small.
+      piWaitTime = 2;
+
+      if ptAttack <> $
+      {
+         DeleteTimer(ptAttack);
+      }
+
+      ptAttack = $;
+
+      % Reset all nodes to be active.
+      for iNode in plAttackableNodes
+      {
+         Send(Send(SYS,@FindNodeByNum,#num=iNode),@Activate);
+      }
+
+      Send(self,@CalcAllPlayerMana);
+
+      return;
+   }
+
+   NewDay()
+   {
+      local iDelay, iIndex, iNodeNumber, bNodeActivated;
+
+      % Decrease counters in plDownTime, if zero, re-activeate node
+      iIndex = 1;
+      bNodeActivated = FALSE;
+
+      while iIndex <= Length(plDownTime)
+      {
+         iDelay = Nth(plDownTime,iIndex);
+         if iDelay > 0
+         {
+            iDelay = iDelay - 1;
+            if iDelay = 0
+            {
+               iNodeNumber = Nth(plAttackableNodes,iIndex);
+               Send(Send(SYS,@FindNodeByNum,#num=iNodeNumber),@Activate);
+               bNodeActivated = TRUE;
+            }
+
+            SetNth(plDownTime,iIndex,iDelay);
+         }
+
+         if bNodeActivated
+         {
+            Send(self,@CalcAllPlayerMana);
+         }
+
+         iIndex = iIndex + 1;
+      }
+
+      if NOT pbAttackEnabled
+      {
+         return;
+      }
+
+      % Check the wait time, see if we're up for attacking the node again!
+      piWaitTime = piWaitTime - 1;
+      if piWaitTime <= 0 AND poAttackedNode = $
+      {
+         % Generate a wait between a minute and 4 hours
+         ptAttack = CreateTimer(self,@StartAttackTimer,Random(60,14400)*1000);
+         piWaitTime = piAttackFrequency;
+      }
+
+      return;
+   }
+
+   CalcAllPlayerMana()
+   {
+      local lAllItems, oPlayer;
+
+      % We take care of logged on users here.  Other users will be adjusted
+      % when they log on.
+      lAllItems = Send(SYS,@GetUsersLoggedOn);
+      for oPlayer in lAllItems
+      {
+         Send(oPlayer,@ComputeMaxMana);
+      }
+
+      return;
+   }
+
+   StartAttackTimer()
+   {
+      local lUsers;
+
+      ptAttack = $;
+      if NOT Send(self,@DoNodeAttack)
+      {
+         % Between 1 and 2 hours
+         ptAttack = CreateTimer(self,@StartAttackTimer,Random(3600,7200)*1000);
+      }
+
+      return;
+   }
+
+   DoNodeAttack(iNode=$,bOverride=FALSE)
+   {
+      local Active, lUsers, iIndex, oRoom, oMonsters, lPosition, lAllItems,
+            oItem, iNumber, iNumberXeos;
+
+      % General fail conditions, not enough users, bad node, attacking an
+      %  already dead node.
+      lUsers = Send(SYS,@GetUsersLoggedOn);
+      if poAttackedNode <> $
+         OR (Length(lUsers) < piNumberOnForAttack AND NOT bOverride)
+      {
+         return FALSE;
+      }
+
+      if iNode = $
+      {
+         iIndex = Random(1,piRandomNodes);
+         iNode = Nth(plAttackableNodes,iIndex);
+      }
+      else
+      {
+         iIndex = FindListElem(plAttackableNodes,iNode);
+         if iIndex = $
+         {
+            Debug("NodeAttack::DoNodeAttack called with bad iNode");
+
+            return FALSE;
+         }
+      }
+
+      if Nth(plDownTime,iIndex) > 0
+      {
+         return FALSE;
+      }
+
+      % Setup node, get location.
+      poAttackedNode = Send(SYS,@FindNodeByNum,#num=iNode);
+      % TODO: Make sure node is in the room?
+      oRoom = Send(poAttackedNode,@GetOwner);
+
+      % Find Miriana, turn off wandering, move her to room.
+      if pbMirianaAppears
+      {
+         oMonsters = First(Send(Send(SYS,@GetLibrary),@GetOccupationList,
+                           #cNPC_class=&Heretic));
+         lPosition = Nth(plMirianaLocation,iIndex);
+         if Send(oRoom,@ReqNewHold,#what=oMonsters,#new_row=Nth(lPosition,1),
+                 #new_col=Nth(lPosition,2))
+         {
+            Send(oMonsters,@SetWandering,#value=FALSE);
+            Send(oMonsters,@SetPossessed,#bValue=pbMirianaPossessed);
+            Send(oRoom,@NewHold,#what=oMonsters,#new_row=Nth(lPosition,1),
+                 #new_col=Nth(lPosition,2));
+         }
+      }
+
+      % Turn off Monster spawning in room, Send message to room, kill monsters.
+      Send(oRoom,@SetMonsterGeneration,#bValue=FALSE);
+      Send(oRoom,@Rumble,#duration=1000);
+      lAllItems = Send(oRoom,@GetHolderActive);
+      for Active in lAllItems
+      {
+         oItem = Send(oRoom,@HolderExtractObject,#data=Active);
+
+         if IsClass(oItem,&Monster)
+         {
+            Send(oItem,@Killed,#what=self);
+         }
+
+         if IsClass(oItem,&Player)
+         {
+           Send(oItem,@MsgSendUser,#message_rsc=NodeAttack_room_message_rsc);
+         }
+      }
+
+      % Spawn Xeos around node, then in room.
+      iNumberXeos = 0;
+      lAllItems = Nth(plMonsterGen,iIndex);
+      for oItem in lAllItems
+      {
+         % For each spawn point, create 1/5 the total Xeochicatl.
+         iNumber=piAttackIntensity/5;
+         while iNumber > 0
+         {
+            oMonsters = Send(self,@CreateXeo);
+            Send(oRoom,@GenerateMonster,#oMonster=oMonsters,#iRow=Nth(oItem,1),
+                 #iCol=Nth(oItem,2),#bStack=TRUE);
+            iNumberXeos = iNumberXeos + 1;
+            iNumber = iNumber - 1;
+         }
+      }
+
+      % Other 2/5ths are spawned at the Gen Points.
+      while iNumberXeos <= piAttackIntensity
+      {
+         oMonsters = Send(self,@CreateXeo);
+         Send(oRoom,@GenerateMonster,#oMonster=oMonsters);
+         iNumberXeos = iNumberXeos + 1;
+      }
+
+      % Set timer for when everyone will be alerted, and send message to node
+      %  holders. Convert minutes to milliseconds.
+      ptAttack = CreateTimer(self,@WarnAllTimer,(piAttackDuration*60000)/3);
+      lAllItems = Send(SYS,@GetUsersLoggedOn);
+      for oItem in lAllItems
+      {
+         if Send(oItem,@GetNodeList) & Nth(plAttackableNodes,iIndex)
+         {
+            Send(oItem,@MsgSendUser,
+                 #message_rsc=NodeAttack_initial_attack_rsc);
+            Send(oItem,@WaveSendUser,#wave_rsc=NodeAttack_attack_sound_rsc);
+         }
+      }
+
+      return TRUE;
+   }
+
+   GetTrueName()
+   "This is for killing the monsters in room at attack time, gives an "
+   "appropriate string in the corpse desc"
+   {
+      return NodeAttack_killed_rsc;
+   }
+
+   GetOwner()
+   "This is for various things that call GetOwner of a monster's killer"
+   {
+      if poAttackedNode = $
+      {
+         return $;
+      }
+      return Send(poAttackedNode,@GetOwner);
+   }
+
+   CreateXeo(iType = 0)
+   "Creates and returns a random Xeochicatl for a node attack."
+   {
+      local iRandom, oXeo;
+
+      if (iType < 1) or (iType > 4)
+      {
+         iRandom = random(1,4);
+      }
+      else
+      {
+         iRandom = iType;
+      }
+
+      if iRandom = 1
+      {
+         oXeo = Create(&XeoFire,#InAttack=TRUE);
+      }
+
+      if iRandom = 2
+      {
+         oXeo = Create(&XeoWater,#InAttack=TRUE);
+      }
+
+      if iRandom = 3
+      {
+         oXeo = Create(&XeoEarth,#InAttack=TRUE);
+      }
+
+      if iRandom = 4
+      {
+         oXeo = Create(&XeoAir,#InAttack=TRUE);
+      }
+
+      return oXeo;
+   }
+
+   XeoKilled()
+   "Called when a Xeochicatl that's part of an attack is killed"
+   {
+      local oRoom, iNumber, lAllItems, oHeartStone, iNumStones, Passive;
+
+      if poAttackedNode = $
+      {
+         return;
+      }
+
+      oRoom = Send(poAttackedNode,@GetOwner);
+      iNumber = Send(oRoom,@CouNtholdingHowMany,#class=&Xeochicatl);
+      if iNumber = 0
+      {
+         iNumStones = Send(oRoom,@CouNtholdingHowMany,#class=&HeartStone);
+         % If we have more than one stone, respawn a Xeochicatl!
+         if iNumStones > 1 AND pbXeoRespawn
+         {
+            iNumber = 1;
+            lAllItems = Send(oRoom,@GetHolderPassive);
+            for Passive in lAllItems
+            {
+               oHeartStone = Send(oRoom,@HolderExtractObject,#data=Passive);
+               if IsClass(oHeartStone,&HeartStone)
+               {
+                  % Don't respawn first in the list (this is the last one
+                  %  created), and spawn the last one (this is the first one
+                  %  created).  The rest have a chance to respawn.
+                  if iNumber > 0
+                     AND (Random(1,100) < RESPAWN_CHANCE
+                          OR iNumber = iNumStones)
+                  {
+                     Send(oHeartStone,@RespawnXeo);
+                  }
+
+                  iNumber = iNumber + 1;
+               }
+            }
+         }
+         else
+         {
+            Send(self,@EndNodeAttack,#bFailure=FALSE);
+         }
+      }
+
+      return;
+   }
+
+   WarnAllTimer()
+   {
+      local lAllItems, oItem, rName, iTime;
+
+      ptAttack = $;
+      lAllItems = Send(SYS,@GetUsersLoggedOn);
+
+      % Get the room name from where the node thinks it is.  Useful for nodes
+      %  that disappear under certain conditions.
+      rName = Send(poAttackedNode,@GetLocationName);
+      for oItem in lAllItems
+      {
+         Send(oItem,@MsgSendUser,#message_rsc=NodeAttack_location_attack_rsc,
+              #parm1=rName);
+      }
+
+      % Convert minutes to milliseconds for timer,
+      iTime = (piAttackDuration * 60000 * 2) / 3;
+      ptAttack = CreateTimer(self,@EndAttackTimer,iTime);
+
+      return;
+   }
+
+   EndAttackTimer()
+   {
+      ptAttack = $;
+      Send(self,@EndNodeAttack,#bFailure=TRUE);
+
+      return;
+   }
+
+   EndNodeAttack(bFailure=FALSE)
+   {
+      local oMonsters, oRoom, lAllItems, oItem, bSevered, iIndex, iNodeNumber,
+            Active, rRoomName;
+
+      % Check timer
+      if ptAttack <> $
+      {
+         DeleteTimer(ptAttack);
+         ptAttack = $;
+      }
+
+      % Fix what we stopped: Miriana's wandering, monster spawning, etc.
+      oMonsters = First(Send(Send(SYS,@GetLibrary),@GetOccupationList,
+                        #cNPC_class=&Heretic));
+
+      Send(oMonsters,@SetWandering,#value=TRUE);
+      Send(oMonsters,@SetPossessed,#bValue=FALSE);
+      oRoom = Send(poAttackedNode,@GetOwner);
+      Send(oRoom,@SetMonsterGeneration,#bValue=TRUE);
+
+      % Kill the Xeo's flags about being part of a node attack
+      lAllItems = Send(oRoom,@GetHolderActive);
+      for Active in lAllItems
+      {
+         oItem = Send(oRoom,@HolderExtractObject,#data=Active);
+         if IsClass(oItem,&Xeochicatl)
+         {
+            Send(oItem,@EndAttack);
+         }
+      }
+
+      % Get the room name from the node, where it expects to be.
+      rRoomName = Send(poAttackedNode,@GetLocationName);
+      if rRoomName = $
+      {
+         Debug("can't find location name for node",poAttackedNode);
+      }
+      lAllItems = Send(SYS,@GetUsersLoggedOn);
+      if bFailure
+      {
+         % Shut off node
+         Send(poAttackedNode,@Deactivate);
+         iIndex = FindListElem(plAttackableNodes,
+                               Send(poAttackedNode,@GetNodeNum));
+         SetNth(plDownTime,iIndex,piLossDuration);
+
+         % Run through all people melded with node, checked for severed, then
+         %  give them message or mail.
+         lAllItems = Send(SYS,@GetUsers);
+         for oItem in lAllItems
+         {
+            % Tell everyone they blew it.
+            if Send(oItem,@IsLoggedOn)
+            {
+               Send(oItem,@MsgSendUser,#message_rsc=NodeAttack_failure_rsc,
+                    #parm1=Send(oRoom,@GetName));
+            }
+
+            if (Send(oItem,@GetNodeList) & Nth(plAttackableNodes,iIndex))
+               AND NOT IsClass(oItem,&DM)
+            {
+               bSevered = FALSE;
+               iNodeNumber = Send(poAttackedNode,@GetNodeNum);
+               if Random(1,100) <= piSeveredChance + Send(oItem,@NumManaNodes)
+               {
+                  Send(oItem,@RemoveNodeFromList,#node_num=iNodeNumber);
+                  bSevered = TRUE;
+               }
+
+               if Send(oItem,@IsLoggedOn)
+               {
+                  Send(oItem,@ComputeMaxMana);
+                  if bSevered
+                  {
+                     Send(oItem,@MsgSendUser,
+                          #message_rsc=NodeAttack_severed_rsc,
+                          #parm1=Send(oRoom,@GetName));
+                  }
+                  else
+                  {
+                     Send(oItem,@MsgSendUser,#message_rsc=NodeAttack_loss_rsc,
+                        #parm1=Send(oRoom,@GetName));
+                  }
+                  Send(oItem,@WaveSendUser,
+                  #wave_rsc=NodeAttack_failure_sound_rsc);
+               }
+               else
+               {
+		            if rRoomName <> $
+	       	      {
+                     if bSevered
+                     {
+                        Send(oItem,@receivenestedmail,#from=NodeAttack_keeper,
+                        #dest_list=[oItem],
+                        #nest_list=[4,NodeAttack_severed_mail_rsc,4,
+                        rRoomName]);
+                     }
+                     else
+                     {
+                        Send(oItem,@receivenestedmail,#from=NodeAttack_keeper,
+                        #dest_list=[oItem],
+                        #nest_list=[4,NodeAttack_loss_mail_rsc,4,rRoomName]);
+                     }
+		            }
+               }
+            }
+         }
+      }
+      else
+      {
+         % Not a failure, players succeeded!
+         for oItem in lAllItems
+         {
+            Send(oItem,@MsgSendUser,#message_rsc=NodeAttack_success_rsc,
+                 #parm1=Send(oRoom,@GetName));
+         }
+      }
+
+      poAttackedNode = $;
+
+      return;
+   }
+
+   GetAttackedNode()
+   {
+      return poAttackedNode;
+   }
+
+   GetRespawn()
+   {
+      return pbXeoRespawn;
+   }
+
+   SetAttacks(bValue=TRUE)
+   {
+      pbAttackEnabled = bValue;
+
+      return;
+   }
+
+   GetAttacks()
+   {
+      return pbAttackEnabled;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

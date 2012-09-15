@@ -1,0 +1,43 @@
+# Cow
+# groups
+# 1 standing
+# 2-5 walking
+
+-s 1
+30
+cow000a.bmp   [0, 0]
+cow045a.bmp   [0, 0]
+cow090a.bmp   [0, 0]
+cow180a.bmp   [0, 0]
+cow270a.bmp   [0, 0]
+cow315a.bmp   [0, 0]
+cow000a.bmp   [0, 0]
+cow045a.bmp   [0, 0]
+cow090a.bmp   [0, 0]
+cow180a.bmp   [0, 0]
+cow270a.bmp   [0, 0]
+cow315a.bmp   [0, 0]
+cow000b.bmp   [0, 0]
+cow045b.bmp   [0, 0]
+cow090b.bmp   [0, 0]
+cow180b.bmp   [0, 0]
+cow270b.bmp   [0, 0]
+cow315b.bmp   [0, 0]
+cow000a.bmp   [0, 0]
+cow045a.bmp   [0, 0]
+cow090a.bmp   [0, 0]
+cow180a.bmp   [0, 0]
+cow270a.bmp   [0, 0]
+cow315a.bmp   [0, 0]
+cow000b.bmp   [0, 0]
+cow045b.bmp   [0, 0]
+cow090b.bmp   [0, 0]
+cow180b.bmp   [0, 0]
+cow270b.bmp   [0, 0]
+cow315b.bmp   [0, 0]
+5
+8   1   6   5   4   4   4   3   2
+8   7  12  11  10  10  10   9   8
+8   13 18  17  16  16  16  15  14
+8   19 24  23  22  22  22  21  20
+8   25 30  29  28  28  28  27  26

@@ -1,0 +1,9 @@
+;
+; DEF file for chess DLL
+; 
+
+EXPORTS
+	GetModuleInfo		@1  NONAME
+	EventServerMessage      @2  NONAME
+	ModuleExit              @16 NONAME
+	EventResetData          @22 NONAME

@@ -1,0 +1,142 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AssassinHeadQuarters is BarloqueRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_asshq = "A shadowy corner"
+   room_asshq = asshq.roo
+   asshq_music = cave.mid
+
+   asshq_rules_name = "rules of the game"
+   asshq_sign = sign.bgf
+
+   asshq_rules1 = "Are you a true assassin, able to use guile, stealth and deception "
+      "over brute force? Do you have the stomach to stick a dagger between the shoulder "
+      "blades of a friend, a guild mate, or a lover? Be warned, this game is only for the "
+      "elite, and if you are not paranoid now, you will be.\n\n"
+      "+ Say 'advertise' to me if you wish to be told when I am calling a game."
+      "\n+ Say 'no advertise' to cease getting these messages.\n+ Say 'blade' to "
+      "get a blade.  Note that the game does not start until I tell you it starts.\n+ Say 'quit' "
+      "if you decide you have not the nerve for this.\n"
+      "\nI'd strongly advise you to read all five of the signs in these chambers.  You not knowing the "
+      "rules of the Assassin's Circle is not, ultimately, my problem."
+   asshq_rules2 = "+ If you join the proceedings, you will be given a dagger.  "
+      "Eventually, a name will appear on this dagger.  Your goal is to attack and "
+      "kill this person, but only with this dagger.\n\n+ Someone will also have your name on his "
+      "dagger.  Once you learn who he is (most likely when he attacks you), slay him with your blade "
+      "(and only with your blade).  Do not attack anyone else with your dagger.\n\n+A winner is declared when "
+      "there is only one combatant left in the Assassin's Circle.\n\n+ The black blades do not do their damage to the "
+      "body, but rather to your target's soul.  In the hilt of the dagger, there "
+      "are four gems set.  For each hit that you take from a would-be assassin, one gem "
+      "extinguishes itself, showing the damage done.  When all four go out, you die, and are expelled from the game. "
+      "These gems heal back at a rate of one every five minutes.\n\n"
+      "+ The paltry teachings of the weapon masters have no effects on your ability to wield the black dagger.  "
+      "All are equal in this contest, and have equal proficiency with the daggers."
+   asshq_rules3 = "+ I laugh at Shal'ille's protective magics.  While wielding a black dagger, "
+      "you may attack your targets nearly anywhere.  Be warned, though, for it also means that you, "
+      "as well, are vulnerable.\n\n+ True assassins are also above the law.  While wielding the "
+      "dagger, you will find that you are not troubled by such nuisances as safeties or outlaw/murderer "
+      "flags.  Be warned, though, that should you use any weapon other than the dark blade, even to "
+      "defend yourself, you have to take normal consequences for your actions.  Spells also have the same "
+      "consequences, whether you wield a blade or not. Keep your safety on "
+      "if you wish to avoid accidents.\n\n"
+      "+ Assassins should have honor.  Many wannabes do not, so the blades will divert their attacks from those "
+      "that are incapacitated by spells.  Also, magical means of stealth will be stripped from you after you "
+      "successfully strike your victim.\n\n"
+      "+ Note that killing your target with means other than a black dagger will not expel him from the game."
+
+   asshq_rules4 = "+ The same magic that makes a black dagger so deadly to whoever's name is "
+      "inscribed upon it also makes it very fragile should it hit anyone else, whether they are in the "
+      "game or not.  There is a chance that your blade could shatter, should you hit someone who is not "
+      "your proper target, and if this happens, I will expel you from the game. There is one exception: "
+      "you can (and should) use the black blade to defeat and kill whoever's blade bears your name.\n\n"
+      "+ Worry not about death by blade.  I have a compact with Qor, and therefore the cost of death is "
+      "lessened should you die by dark blade."
+   asshq_rules5 = "+ We cannot have the game polluted by people who join in and then do not log on "
+      "enough to risk being killed.  If you are not logging on enough to satisfy me, I will expel you "
+      "from the game.  This, ultimately, is not my problem.\n\n"
+      "+ I have no patience for cowards who depart this realm (i.e. 'log off') as soon as they find "
+      "themselves under attack.  If you leave this realm while your soul is rent (and one of your dagger gems"
+      " therefore extinguished), I will expel you from the game.  Again, this is not my problem.\n\n"
+      "+ If three days pass without a kill, I will call off the game in disgust."
+
+classvars:
+
+   vrName = room_name_asshq
+
+   viTeleport_row = 13
+   viTeleport_col = 2
+
+   viTerrain_Type = TERRAIN_CAVES | TERRAIN_SHOP
+
+properties:
+
+   piRoom_num = RID_ASSHQ
+   prRoom = room_asshq
+   prMusic = asshq_music
+
+   piBaseLight = 80
+   piOutside_factor = 0
+
+messages:
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&Sign,#name=asshq_rules_name,
+           #icon=asshq_sign,#desc=asshq_rules1),#new_row=8,#new_col=2,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Sign,#name=asshq_rules_name,
+           #icon=asshq_sign,#desc=asshq_rules2),#new_row=5,#new_col=4,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Sign,#name=asshq_rules_name,
+           #icon=asshq_sign,#desc=asshq_rules3),#new_row=2,#new_col=6,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Sign,#name=asshq_rules_name,
+           #icon=asshq_sign,#desc=asshq_rules4),#new_row=2,#new_col=11,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Sign,#name=asshq_rules_name,
+           #icon=asshq_sign,#desc=asshq_rules5),#new_row=5,#new_col=14,#fine_row=0,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&Assassin),#new_row=13,#new_col=20,#new_angle=ANGLE_NORTH_WEST);
+      Send(self,@newhold,#what=Create(&AssassinSign),#new_row = 14,#new_col=21);
+
+      % Lighting - Torches
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=5,#new_col=14,#fine_row=0,#fine_col=16);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=2,#new_col=11,#fine_row=32,#fine_col=16);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=1,#new_col=6,#fine_row=48,#fine_col=32);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=4,#new_col=4,#fine_row=48,#fine_col=32);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=7,#new_col=2,#fine_row=48,#fine_col=32);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=13,#new_col=2,#fine_row=32,#fine_col=32);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 12, 2, RID_BAR_SEWER, 22, 37, ROTATE_NONE ],plExits);
+
+      %plExits = Cons([ 54, 31, RID_I3, 7, 12, ROTATE_NONE ],plExits);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

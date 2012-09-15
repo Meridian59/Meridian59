@@ -1,0 +1,242 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Blind is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   blind_name_rsc = "blind"
+   blind_icon_rsc = iblind.bgf
+   blind_desc_rsc = \
+      "The magical force of Qor burns the target's eyes, "
+      "taking away all sight for a brief period.  "
+      "Requires entroot berries and purple mushrooms to cast."
+   
+   blind_caster = "%s%s is now blind."
+   blind_already_enchanted = "%s%s is already blind."
+
+   blind_on = \
+      "Something burns in your eyes, causing excruciating pain and a loss "
+      "of vision."
+   blind_off = "Your eyes begin to function again."
+
+   blind_sound = qblind.wav
+
+classvars:
+
+   vrName = blind_name_rsc
+   vrIcon = blind_icon_rsc
+   vrDesc = blind_desc_rsc
+
+   viSpell_num = SID_BLIND
+   viSchool = SS_QOR
+   viSpell_level = 5
+   viMana = 15
+   viChance_To_Increase = 15
+
+   viSpellExertion = 6
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   vrSucceed_wav = blind_sound
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&EntrootBerry,2],plReagents);
+      plReagents = Cons([&PurpleMushroom,1],plReagents);
+
+      return;
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {
+      if NOT (IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
+      {
+         Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
+         Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+      }
+      
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if (NOT IsClass(target,&Battler)) OR IsClass(target,&Revenant)
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,#parm1=vrName,
+                 #parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+         }
+         
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      if Send(target,@IsEnchanted,#what=self)
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=blind_already_enchanted,
+	              #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      % Spell effects
+      Send(self,@DoBlind,#what=who,#oTarget=oTarget,
+           #iDurationSecs=Send(self,@GetDuration,#iSpellPower=iSpellPower));
+      
+      propagate;
+   }
+
+   DoBlind(what=$,oTarget=$,iDurationSecs=0)
+   {
+      local oSpell, iDuration;
+
+      iDuration = iDurationSecs;
+      
+      oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
+      if Send(oTarget,@IsEnchanted,#what=oSpell)
+      {
+         iDuration = Send(oSpell,@DoEagleEyes,#oCaster=what,#oTarget=oTarget,
+                          #iDuration=iDuration);
+         if iDuration = $
+         {
+            % Resisted completely.
+            return;
+         }
+      }
+
+      % Bound and convert duration to milliseconds
+      iDuration = bound(iDuration,3,20);
+      iDuration = iDuration * 1000;
+
+      if IsClass(oTarget,&Player)
+      {
+         if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=blind_on);
+            Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_ON);
+         }
+      }
+      else  
+      {
+         % class is Monster
+         Post(oTarget,@ResetBehaviorFlags);
+      }
+
+      Send(what,@MsgSendUser,#message_rsc=blind_caster,
+           #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+      Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = (5 + iSpellPower/6);
+
+      return random(iDuration/2,iDuration);
+   }
+   
+   EndEnchantment(who = $, report = TRUE)
+   {
+      if IsClass(who,&Player)
+      {
+         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_OFF);
+         if report
+         {
+            Send(who,@MsgSendUser,#message_rsc=blind_off);
+         }
+      } 
+      else  
+      {
+         % Class is monster.
+         % This has to be done AFTER the enchantment is gone from the
+         %  monster's ench list - post it.
+         Post(who,@ResetBehaviorFlags);   
+      }
+     
+      return;
+   }
+
+   SendEffectData()
+   {
+      return;
+   }
+
+   RestartEnchantmentEffect(who=$,state=$)
+   {
+      Send(who,@MsgSendUser,#message_rsc=blind_on);
+      Send(who,@EffectSendUser, #what=self, #effect=EFFECT_BLIND_ON);
+      
+      return;
+   }
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      Send(mob,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=TRUE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
+      
+      return;      
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

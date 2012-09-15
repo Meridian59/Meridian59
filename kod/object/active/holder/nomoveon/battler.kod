@@ -1,0 +1,1049 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Battler is NoMoveOn
+
+constants:
+
+   include blakston.khd
+
+   % What's the percent chance to hit if offense and defense are equal?
+   % The higher this number is, the easier it is to hit in combat.
+   EQUAL_CHANCE_HIT = 55      
+                              
+   % Raise or lower this number to raise or lower the chance the 'avoids 
+   %  your attack' message comes up.
+   BATTLER_AVOID_CHANCE = 50  
+
+   % Threshold for the "wound" and "damage" levels of feedback.
+   DAMAGE_THRESHOLD_WOUND = 5
+   DAMAGE_THRESHOLD_DAMAGE = 15
+
+resources:
+
+   % KNOWN BUG: placing a comment on the same line as a resource definition
+   %  will comment out the next line.
+
+   battler_blue_text = "~b"
+   battler_plain_text = ""
+
+   % battler_attacker_hit - Your scimitar wounds Psychochild.
+   % battler_attacker_miss - Psychochild blocks your attack.
+   % battler_defender_hit - Psychochild wounds you with his scimitar.
+   % battler_defender_miss - You block Psychochild's attack.
+
+   battler_attacker_hit = "%sYour %s %s %s%s."       
+   battler_attacker_miss = "%s%s%s %s your attack."    
+   battler_defender_hit = "%s%s%s %s you with %s %s."  
+   battler_defender_miss = "%sYou %s %s%s's attack."   
+
+   battler_punch = "punch"
+   battler_attack = "attack"
+   battler_block  = "block" 
+   battler_blocks = "blocks"
+   battler_dodge  = "dodge"
+   battler_dodges = "dodges"
+   battler_parry  = "parry"
+   battler_parries  = "parries"
+   battler_avoid = "avoid"
+   battler_avoids = "avoids"
+
+   battler_fail = "fails to damage"
+   battler_nick = "nicks"
+   battler_wound = "wounds"
+   battler_damage = "damages"
+   battler_slay = "slays"
+
+   battler_acid_nick = "burns"
+   battler_acid_wound = "sears"
+   battler_acid_damage = "disfigures"
+   battler_acid_slay = "dissolves"
+
+   battler_fire_slay = "incinerates"
+   battler_fire_damage = "scorches"
+   battler_fire_wound = "chars"
+   battler_fire_nick = "singes"
+
+   battler_shock_slay = "electrocutes"
+   battler_shock_damage = "fries"
+   battler_shock_wound = "shocks"
+   battler_shock_nick =  "jolts"
+
+   battler_cold_slay = "freezes"
+   battler_cold_damage = "frosts"
+   battler_cold_wound = "chills"
+   battler_cold_nick = "cools"
+
+   battler_holy_slay = "purifies"
+   battler_holy_damage = "mortifies"
+   battler_holy_wound = "cleanses"
+   battler_holy_nick = "infuses"
+
+   battler_unholy_slay = "corrupts"
+   battler_unholy_damage = "appalls"
+   battler_unholy_wound = "pollutes"
+   battler_unholy_nick = "maligns"
+
+   battler_quake_slay = "flattens"
+   battler_quake_damage = "slams"
+   battler_quake_wound = "buffets"
+   battler_quake_nick = "shakes"
+
+   battler_bite_slay = "devours"
+   battler_bite_damage = "gnaws"
+   battler_bite_wound = "bites"
+   battler_bite_nick = "nips"
+
+   battler_claw_slay = "shreds"
+   battler_claw_damage = "rends"
+   battler_claw_wound = "rakes"
+   battler_claw_nick = "claws"
+
+   battler_sting_slay = "impales"
+   battler_sting_damage = "pricks"
+   battler_sting_wound = "stings"
+   battler_sting_nick = "irritates"
+
+   battler_punch_slay = "thrashes"
+   battler_punch_damage = "mangles"
+   battler_punch_wound = "pummels"
+   battler_punch_nick = "slaps"
+
+   battler_slash_slay = "cleaves"
+   battler_slash_damage = "maims"
+   battler_slash_wound = "slashes"
+   battler_slash_nick = "cuts"
+
+   battler_bludgeon_slay = "brutalizes"
+   battler_bludgeon_damage = "smashes"
+   battler_bludgeon_wound = "crushes"
+   battler_bludgeon_nick = "bashes"
+
+   battler_thrust_slay = "runs through"
+   battler_thrust_damage = "impales"
+   battler_thrust_wound = "stabs"
+   battler_thrust_nick = "pokes"
+
+   battler_pierce_slay = "fells"
+   battler_pierce_damage = "lacerates"
+   battler_pierce_wound = "pierces"
+   battler_pierce_nick = "grazes"
+
+classvars:
+
+   viObject_flags = MOVEON_NO | BATTLER_YES
+
+   viBattler_level = 50
+
+properties:
+
+   % list of resistances, Each element is [value, type].
+   plResistances = $
+
+messages:
+
+   % The first lump of code here deals with resistances and immunities/etc.
+   % They are included here in battler so both user and mobiles can enjoy
+   %  the effect.
+
+   TryDeflect()
+   {
+      return FALSE;
+   }
+  
+   ReqNewOwner(what = $)
+   {
+      return IsClass(what,&Room);
+   }
+
+   SayDyingWords(what=$)
+   {
+      return FALSE;
+   }
+
+   IsLikelyVictim()
+   {
+      % nearly all battlers can be attacked by a monster without provocation
+      return TRUE;
+   }
+
+   IsUndead()
+   {
+      return FALSE;
+   }
+
+   % This checks if the battler can completely resist the effects of the spell.
+   %  By default, the spell is not resisted.
+   SpellResist(oSpell=$,who=$,iSpellpower=$)
+   {
+      return FALSE;
+   }
+   
+   ResistanceCheck(atype = 0, aspell = 0)
+   "Given bitvectors of attack type and spell, find the resistance modifier "
+   "which applies. Largest resistance plus worst weakness gives the modifier."
+   {
+      local j, iResType, iMaxRes, iMinRes, iResistance;
+
+      iMaxRes = NO_RESISTANCE;
+      iMinRes = NO_RESISTANCE;
+
+      for j in plResistances
+      {
+         iResType = Nth(j,2);
+         if iResType > 0   
+         {
+            % It's a resistance to weapon type
+
+            if (atype & iResType) <> 0
+               OR (atype <> 0 AND iResType = ATCK_WEAP_ALL)
+            {
+               iResistance = Nth(j,1);
+               
+               if iResistance > iMaxRes
+               {
+                  iMaxRes = iResistance;
+               }
+
+               if iResistance < iMinRes
+               {
+                  iMinRes = iResistance;
+               }
+            }
+         }
+         else
+         {
+            % It's a resistance to spell type
+            iResType = -iResType;
+
+            if (aspell & iResType) <> 0
+               OR (aspell <> 0 AND iResType = ATCK_SPELL_ALL)
+            {
+               iResistance = Nth(j,1);
+               
+               if iResistance > iMaxRes
+               {
+                  iMaxRes = iResistance;
+               }
+
+               if iResistance < iMinRes
+               {
+                  iMinRes = iResistance;
+               }
+            }
+         }
+      }
+
+      % clip to max/min values
+      iMaxRes = bound(iMaxRes,$,MAX_RESISTANCE);
+      iMinRes = bound(iMinRes,MIN_RESISTANCE,$);
+
+      return iMaxRes + iMinRes;
+   }
+
+   GetDamageFromResistance(what = $, value = $)
+   "Adjust <what> damage according to the value multiplier"
+   {
+      local iDamage;
+
+      if value > NO_RESISTANCE
+      {
+         iDamage = what * (MAX_RESISTANCE - value) / MAX_RESISTANCE;
+      }
+      else
+      {
+         iDamage = what * (MIN_RESISTANCE + value) / MIN_RESISTANCE;
+      }
+
+      return iDamage;
+   }
+
+   AddResistance(what = $, value = NO_RESISTANCE)
+   "Adds a resistance of type (what) and value (value).  "
+   "If a resistance already exists, the new value will be added to the old."
+   {
+      local i;
+
+      for i in plResistances
+      {
+         if Nth(i,2) = what
+         {
+            SetNth(i,1,value + Nth(i,1));
+            if Nth(i,1) = NO_RESISTANCE
+            {
+               plResistances = DelListElem(plResistances,i);
+            }
+
+            return;
+         }
+      } 
+
+      plResistances = Cons([value,what],plResistances);
+
+      return;
+   }
+
+   RemoveAllResistances()
+   "This clears the resistance list... for if someone's char is really messed "
+   "up."
+   {
+      local i;
+
+      for i in plResistances
+      {
+         Send(self,@RemoveResistance,#what=Nth(i,2),#value=Nth(i,1));
+      }
+
+      return TRUE;
+   }
+
+   RemoveResistance(what = $, value = 0)
+   "Removes a resistance of type (what) and value (value)"
+   {
+      Send(self,@AddResistance,#what=what,#value=-value);
+
+      return TRUE;
+   }
+
+   %%% Combat functionality.
+
+   % This does one attack by the battler.
+   % For a monster, the stroke_obj is itself.
+   TryAttack(what = $,stroke_obj=$)
+   {
+      local iChanceToHit, iDamage, oWeapon;
+
+      oWeapon = Send(self,@GetWeapon);
+
+      % Derived class should have checked all specific restrictions by this
+      %  point.
+
+      % This is the generic checks and the calculation of chance to hit and
+      %  damage.
+      iChanceToHit = (Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj)
+                      * EQUAL_CHANCE_HIT)
+                     / Send(what,@GetDefense,#what=self,
+                            #stroke_obj=stroke_obj);
+      iChanceToHit = bound(iChanceToHit,10,95);
+      if iChanceToHit >= random(1,100)
+      {
+         % We hit!
+         iDamage = Send(what,@AssessDamage,#what=self,
+                        #damage=Send(self,@GetDamage,#what=what,
+                                     #stroke_obj=stroke_obj),
+                        #atype=Send(self,@GetDamageType),
+                        #aspell=Send(self,@GetSpellType));
+         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
+              #damage=iDamage);
+         if iDamage = $
+         {
+            Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
+                 #stroke_obj=stroke_obj);
+         }
+         else
+         {
+            Send(self,@DidDamage,#amount=iDamage,#what=what);
+         }
+      }
+      else
+      {
+         % Oops, a miss.  See if something happens.
+         Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
+      }
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingAttacked,#what=self,#victim=what,
+              #use_weapon=oWeapon);
+      }
+         
+      return TRUE;
+   }
+   
+   GetLevel()
+   {
+      return 65;
+   }
+
+   GetOffense(what = $, stroke_obj=$)
+   "Returns the battler's ability to-hit.  Ranges from 1 to 1000."
+   {
+      return 1;
+   }
+
+   GetDefense(what = $, stroke_obj=$)
+   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 1000."
+   {
+      return 1;
+   }
+
+   GetDamage(what = $, stroke_obj=$)
+   "Returns the damage done to target 'what'."
+   {
+      return 0;
+   }
+
+   GetDamageType(what = $)
+   "Returns the weapon type of damage done."
+   {
+      % Default type for the stub function.
+      return ATCK_WEAP_HIT;
+   }
+
+   GetSpellType(what = $)
+   "This is the magical type of damage done."
+   {
+      % Default, no spells
+      return 0;
+   }
+
+   AssessDamage(what = $,damage = $,atype = $, aspell = $)
+   "This applies damage to the battler, calculating appropriate resistances.  "
+   "Return $ if we were killed."
+   {
+      return 0;
+   }
+
+   GetDamageDesc(damage=0, type=0)
+   "This returns the severity of damage by type.  Gives a verb descriptor."
+   {
+      % For each type, Send unique words to describe the damage
+      if type < 0
+      {
+         type = -type;
+         if (type & ATCK_SPELL_FIRE)
+         {
+            if damage = $
+            {
+               return battler_fire_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_fire_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_fire_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_fire_nick;
+            }
+         }
+
+         if (type & ATCK_SPELL_SHOCK)
+         {
+            if damage = $
+            {
+               return battler_shock_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_shock_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_shock_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_shock_nick;
+            }
+         }
+
+         if (type & ATCK_SPELL_COLD)
+         {
+            if damage = $
+            {
+               return battler_cold_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_cold_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_cold_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_cold_nick;
+            }
+         }
+
+         if (type & ATCK_SPELL_ACID)
+         {
+            if damage = $
+            {
+               return battler_acid_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_acid_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_acid_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_acid_nick;
+            }
+         }
+
+         if (type & ATCK_SPELL_HOLY)
+         {
+            if damage = $
+            {
+               return battler_holy_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_holy_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_holy_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_holy_nick;
+            }
+         }
+
+         if (type & ATCK_SPELL_UNHOLY)
+         {
+            if damage = $
+            {
+               return battler_unholy_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_unholy_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_unholy_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_unholy_nick;
+            }
+         }
+
+         if (type & ATCK_SPELL_QUAKE)
+         {
+            if damage = $
+            {
+               return battler_quake_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_quake_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_quake_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_quake_nick;
+            }
+         }
+      }
+      else
+      {
+         if (type & ATCK_WEAP_BITE)
+         {
+            if damage = $
+            {
+               return battler_bite_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_bite_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_bite_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_bite_nick;
+            }            
+         }
+
+         if (type & ATCK_WEAP_CLAW)
+         {
+            if damage = $
+            {
+               return battler_claw_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_claw_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_claw_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_claw_nick;
+            }
+         }
+
+         if (type & ATCK_WEAP_STING)
+         {
+            if damage = $
+            {
+               return battler_sting_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_sting_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_sting_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_sting_nick;
+            }
+         }
+
+         % Repeat the acid spell words here
+         if (type & ATCK_WEAP_ACID)
+         {
+            if damage = $
+            {
+               return battler_acid_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_acid_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_acid_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_acid_nick;
+            }
+         }
+
+         if (type & ATCK_WEAP_PUNCH)
+         {
+            if damage = $
+            {
+               return battler_punch_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_punch_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_punch_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_punch_nick;
+            }
+         }
+
+         if (type & ATCK_WEAP_SLASH)
+         {
+            if damage = $
+            {
+               return battler_slash_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_slash_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_slash_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_slash_nick;
+            }
+         }
+
+         if (type & ATCK_WEAP_BLUDGEON)
+         {
+            if damage = $
+            {
+               return battler_bludgeon_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_bludgeon_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_bludgeon_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_bludgeon_nick;
+            }         
+         }
+
+         if (type & ATCK_WEAP_THRUST)
+         {
+            if damage = $
+            {
+               return battler_thrust_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_thrust_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_thrust_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_thrust_nick;
+            } 
+         }
+
+         if (type & ATCK_WEAP_PIERCE)
+         {
+            if damage = $
+            {
+               return battler_pierce_slay;
+            }
+
+            if damage > DAMAGE_THRESHOLD_DAMAGE
+            {
+               return battler_pierce_damage;
+            }
+
+            if damage > DAMAGE_THRESHOLD_WOUND
+            {
+               return battler_pierce_wound;
+            }
+
+            if damage > 0
+            {
+               return battler_pierce_nick;
+            } 
+         }
+      }
+      
+      % Use these as the "default"
+      if damage = $
+      {
+         return battler_slay;
+      }
+
+      if damage > DAMAGE_THRESHOLD_DAMAGE
+      {
+         return battler_damage;
+      }
+
+      if damage > DAMAGE_THRESHOLD_WOUND
+      {
+         return battler_wound;
+      }
+
+      if damage > 0
+      {
+         return battler_nick;
+      }
+
+      return battler_fail;
+   }
+
+   % This returns defense reason of why opponent missed this battler.
+   GetDefenseDesc(singular=TRUE, stroke_obj=$)
+   {
+      local iRandom, iParry, iBlock, iDodge;
+      
+      iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
+      iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
+      iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
+      iRandom = iParry + iBlock + iDodge + BATTLER_AVOID_CHANCE;
+      iRandom = random(0,iRandom);
+
+      if iRandom < iParry
+      {
+         if singular
+         {
+            return battler_parries;
+         }
+         return battler_parry;
+      }
+
+      if iRandom < (iParry + iBlock)
+      {
+         if singular
+         {
+            return battler_blocks;
+         }
+
+         return battler_block;
+      }
+
+      if iRandom < (iParry + iBlock + iDodge)
+      {
+         if singular
+         {
+            return battler_dodges;
+         }
+
+         return battler_dodge;
+      }
+
+      if singular
+      {
+         return battler_avoids;
+      }
+
+      return battler_avoid;
+   }
+
+   % The next three messages deal with the three defense skills.  These
+   %  messages return the relative values of the three skills.  Used in
+   %  player for defense, used in battler for defense messages.
+
+   GetParryAbility(stroke_obj=$)
+   {
+      return 0;
+   }
+
+   GetBlockAbility(stroke_obj=$)
+   {
+      return 0;
+   }
+
+   GetDodgeAbility(stroke_obj=$)
+   {
+      return 0;
+   }
+
+   AssessHit(what = $, stroke_obj = $, damage = $, use_weapon=$)
+   "This does the fallout of a hit, gives appropriate message, etc.  "
+   "Called on self when hit opponent."
+   {
+      local rColor, oWeapon, rWeaponName, iDmg, rDamageDesc, iType;
+
+      if use_weapon = $
+      {
+         oWeapon = Send(self,@GetWeapon);
+      }
+      else
+      {
+         oWeapon = use_weapon;
+      }
+
+      if oWeapon = $
+      {
+         rWeaponName = battler_punch;
+      }
+      else
+      {
+         % This returns the name of a melee weapon, the ammo of a ranged
+         %  weapon, or the attack name for a monster.
+         rWeaponName = Send(oWeapon,@GetAttackName);
+      }
+
+      % Spell types are usually represented by negative values, to
+      %  differentiate between physical and spell damage.
+      iType = Send(self,@GetSpellType,#use_weapon=use_weapon);
+
+      % We only want to use a unique word if the spell damage is NOT generic
+      %  or Hunter sword damage.  Otherwise, use the physical damage type.
+      if (iType & (~ATCK_SPELL_HUNTERSWORD | ~ATCK_SPELL_ALL)) = 0
+      {
+         iType = Send(self,@GetDamageType,#use_weapon=use_weapon);
+      }
+      else
+      {
+         % Make it negative to distinguish between physical types.
+         iType = -iType;
+      }
+
+      if IsClass(what,&Player)
+         AND damage <> $
+         AND damage >= (Send(what,@GetMaxHealth)/3)
+      {
+         % If we did at least 1/3 a player's hps in damage, then give
+         %  the best damage message.
+         iDmg = (DAMAGE_THRESHOLD_DAMAGE + 1);
+      }
+      else
+      {
+         iDmg = damage;
+      }
+
+      rDamageDesc = Send(self,@GetDamageDesc,#damage=iDmg,#type=iType);      
+      rColor = battler_blue_text;
+
+      if IsClass(self,&Player)
+      {
+         if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         {
+            % Don't use "punch" if we're morphed, use a more generic term.
+            if oWeapon = $
+            {
+               rWeaponName = battler_attack;
+            }
+         }
+         else
+         {
+            if IsClass(what,&Player)
+            {
+               rColor = battler_plain_text;
+            }
+         }
+
+         Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+      }
+
+      if IsClass(what,&Player)
+      {
+         Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+              #parm1=rColor,#parm2=Send(self,@GetCapDef),
+              #parm3=Send(self,@GetName),#parm4=rDamageDesc,
+              #parm5=Send(self,@GetHisHer),#parm6=rWeaponName);
+      }
+
+      return;
+   }
+
+   AssessMiss(what = $, stroke_obj = $)
+   "This does the fallout of a miss, gives appropriate message, etc. "
+   "Called on self when missing."
+   {
+      local rColor;
+
+      rColor = battler_blue_text;
+
+      % This is kinda kludgy, should call messages in subclasses instead.
+      if IsClass(self,&Player)
+      {
+         if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            AND IsClass(what,&Player)
+         {
+            rColor = battler_plain_text;
+         }
+
+         Send(self,@MsgSendUser,#message_rsc=battler_attacker_miss,
+              #parm1=rColor,
+              #parm2=Send(what,@GetCapDef),#parm3=Send(what,@GetName),
+              #parm4=Send(what,@GetDefenseDesc,#singular=TRUE,
+                          #stroke_obj=stroke_obj));
+         Send(stroke_obj,@SendMissMessageToAttacker,#who=self,#victim=what,
+              #color_rsc=rColor,#weapon_used=Send(self,@LookupPlayerWeapon),
+              #bText=FALSE);
+      }
+
+      if IsClass(what,&Player)
+      {
+         Send(what,@MsgSendUser,#message_rsc=battler_defender_miss,
+              #parm1=rColor,
+              #parm2=Send(what,@GetDefenseDesc,#singular=FALSE,
+                          #stroke_obj=stroke_obj),
+              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+         % Flag them as "dodging", so they can potentially improve.
+         Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);              
+      }
+
+      return;
+   }
+
+   % This function handles when damage is done by attacker.
+   DidDamage(what=$, amount=0)
+   {
+      return;
+   }
+
+   % This function is called when we killed something.
+   KilledSomething(what=$,use_weapon=$,stroke_obj=$)
+   {
+      return;
+   }
+
+   % This returns the wielded weapon
+   GetWeapon()
+   {
+      return self;
+   }
+
+   % Oo, 'e died
+   Killed(what = $)
+   {
+      return;
+   }
+
+   MsgPlayerHitResisted()
+   {
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

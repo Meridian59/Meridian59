@@ -1,0 +1,93 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Temples is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+   priestess_teach_quest_needed = "To learn that, you must first become my disciple by proving the strength of your faith."
+
+classvars:
+   
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+   viDefault_behavior = AI_NPC | AI_NOMOVE   %% mob doesn't move and cannot be attacked.
+
+   viSpeed = SPEED_SLOW
+   viQuestID = 0
+   viGender = GENDER_FEMALE
+   vrTeach_quest_needed = priestess_teach_quest_needed
+
+messages:
+
+   InitPermQuest()
+   {
+      if viQuestID <> 0
+      {
+         Post(Send(SYS,@GetLibrary),@CreateQuest,#type=QST_PERM,#quester=self,
+           #reward= [QST_REWARD_ID,viQuestID]);
+      }
+      
+      return;
+   }
+
+   Constructor()
+   "We start a permanent quest for becomming a disciple"
+   {
+      Send(self,@InitPermQuest);
+      
+      propagate;
+   }
+
+   CanAddSpell(who=$,num=0,report=FALSE)
+   "We require that a quest be done before 3-5 level spells can be learned"
+   {
+      local oSpell;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=num);
+
+      if oSpell=$
+      {
+         return FALSE;
+      }
+      
+      if Send(oSpell,@GetLevel) > 2 
+         AND NOT send(self,@HasDoneLearnQuest,#who=who)
+      {
+         if report
+         {
+            send(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self, 
+                 #string=vrTeach_quest_needed);
+         }
+         
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   NewHoldObject(what = $)
+   {
+      % Don't want them holding anything, so just delete it.
+      send(what,@Delete);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

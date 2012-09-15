@@ -1,0 +1,67 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tim Schubert  4-28-97
+% 
+
+
+StaminaBoon is Boon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   stamboon_name_rsc = "stamina effect"
+   stamboon_icon_rsc = iboonsta.bgf
+   stamboon_desc_rsc = "Your stamina seems abnormally affected."
+   stamboon_intro_rsc = "The stamina of the victim is boosted temporarily."
+
+   stamboon_inc = "You feel more resilient!"
+   stamboon_dec = "You suddenly less resilient."
+
+classvars:
+   viPersonal_ench = True
+   vrName = stamboon_name_rsc
+   vrIcon = stamboon_icon_rsc
+   vrDesc = stamboon_desc_rsc
+   vrSpell_intro = stamboon_intro_rsc
+
+   viSpell_num = SID_STAMINA_BOON
+   viMana = 0
+
+properties:
+
+messages:
+
+   DoSpellEffect(who = $, amount = $)
+   {
+   send(who,@AddStamina,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=stamboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=stamboon_dec); }
+
+   return;
+   }
+
+   UndoSpellEffect(who = $, amount = $)
+   {
+   amount = -amount;
+   send(who,@AddStamina,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=stamboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=stamboon_dec); }
+   return;
+   }
+
+end

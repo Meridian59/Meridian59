@@ -1,0 +1,39 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OfferingQor is Offering
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   OfferingQor_name_rsc = "blood of the innocent"
+   OfferingQor_icon_rsc = bloodinn.bgf
+   OfferingQor_desc_rsc = "This bottle of liquid holds some ominous purpose you can only guess at."
+
+classvars:         
+
+   vrName = OfferingQor_name_rsc
+   vrIcon = OfferingQor_icon_rsc
+   vrDesc = OfferingQor_desc_rsc
+
+   vrAllegiance = SS_QOR
+   viIndefinite = ARTICLE_THE
+
+   viGround_group = 1
+properties:  
+
+messages:   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

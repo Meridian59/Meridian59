@@ -1,0 +1,136 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NoMoveOn is Holder
+
+constants:
+
+   include blakston.khd
+
+classvars:
+
+   viObject_flags = MOVEON_NO
+
+properties:
+
+   % keep our row and col for speed and angle
+   piRow
+   piCol
+   piFine_row = 0
+   piFine_col = 0
+
+messages:
+
+   NewOwner(what = $)
+   {
+      if what <> $
+      {
+         piRow = First(Send(what,@GetRoomPos,#what=self));
+         piCol = Nth(Send(what,@GetRoomPos,#what=self),2);
+
+         piFine_row = Nth(Send(what,@GetRoomPos,#what=self),3);
+         piFine_col = Nth(Send(what,@GetRoomPos,#what=self),4);
+      }
+
+      propagate;
+   }
+
+   GetRow()
+   {
+      return piRow;
+   }
+
+   GetCol()
+   {
+      return piCol;
+   }
+
+   GetFineRow()
+   {
+      return piFine_row;
+   }
+
+   GetFineCol()
+   {
+      return piFine_col;
+   }
+
+   ReqSomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      local iRow,iCol;
+
+      if new_row = piRow AND new_col = piCol AND IsClass(what,&Battler)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $,fine_row = $,fine_col = $)
+   {
+      if what = self
+      {
+         %% posted so we know it happens last, and that new_row is going to be
+         %% the pre-coords, and piRow is going to be the post.  This was crucial
+         %% to making the spam protection on the walls work.
+
+         post(self,@ChangeCoords,#new_row=new_row,#new_col=new_col,
+               #fine_row=fine_row,#fine_col = fine_col);
+      }
+
+      propagate;
+   }
+
+   ChangeCoords(new_row = $,new_col = $,fine_row = $,fine_col = $)
+   {
+      %% posted so we know it happens last, and that new_row is going to be
+      %% the pre-coords, and piRow is going to be the post.  This was crucial
+      %% to making the spam protection on the walls work.
+
+      piRow = new_row;
+      piCol = new_col;
+      piFine_row = fine_row;
+      piFine_col = fine_col;
+
+      return;
+   }
+
+   SquaredDistanceTo(what = $)
+   "Computes squared distance to <what>.  Assumes they are in same room!"
+   {
+      local iRow, iCol;
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      % Sanity checking
+      if iRow = $ OR iCol = $
+      {
+         return $;
+      }
+
+      return send(self,@SquaredDistanceToLocation,#row=iRow,#col=iCol);
+   }
+
+   SquaredDistanceToLocation(row = $, col = $)
+   "Computes squared distance to (row,col)"
+   {
+      local iRow_diff, iCol_diff;
+
+      iRow_diff = piRow - row;
+      iCol_diff = piCol - col;
+
+      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

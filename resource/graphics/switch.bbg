@@ -1,0 +1,11 @@
+# Switch
+# groups
+# 1 off
+# 2 on
+-s 4
+2
+switchdn.bmp [0, -80]
+switchup.bmp [0, -80]
+2
+1 1
+1 2

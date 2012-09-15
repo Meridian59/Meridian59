@@ -1,0 +1,16 @@
+# ivy circlet overlay
+# groups
+# 1 worn 
+#^Applied to Hotspot: 13
+#*Groups: 1
+#* Unlabeled Group
+-s 21
+6
+ivy000.bmp     [-30, 1] 
+ivy315.bmp     [-28, -1] 
+ivy270.bmp     [-28, -2] 
+ivy180.bmp     [-26, 4] 
+ivy090.bmp     [-28, 0] 
+ivy045.bmp     [-32, -1] 
+1
+ 8   1 2 3 4 4 4 5 6 

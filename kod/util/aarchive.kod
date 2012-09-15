@@ -1,0 +1,99 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  ArtArchive.  This is where we store a whole bunch of art that, as Chris S put 
+%     it, we have taken great pains to take out.  I've made the objects 
+%     properties, so that they can easily look them up and see what they are.
+%     
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ArtArchive is UtilityFunctions
+
+constants:
+   
+   include blakston.khd
+
+resources:
+   archive_watcher = king.bgf
+   archive_priestess = priestes.bgf
+   archive_blacksmith = mrsmith.bgf
+   archive_hermit = hermit.bgf   
+   archive_Assassin = qroq.bgf
+   archive_OldDuke = duke.bgf
+   archive_OldPrincess = prncsold.bgf
+   archive_EventNPC1 = qw01i.bgf
+   archive_EventNPC2 = qw02i.bgf
+   archive_EventNPC3 = qw03i.bgf
+   archive_EventNPC4 = qw04i.bgf
+   archive_EventNPC5 = qw05i.bgf
+   archive_EventNPC6 = qw06i.bgf
+
+properties:
+
+   prHermit = archive_hermit
+   prBlacksmith = archive_blacksmith
+   prPriestess = archive_priestess
+   prWatcher = archive_watcher
+   prAssassin = archive_Assassin
+   prOldDuke = archive_OldDuke
+   prEventNPC1 = archive_EventNPC1
+   prEventNPC2 = archive_EventNPC2
+   prEventNPC3 = archive_EventNPC3
+   prEventNPC4 = archive_EventNPC4
+   prEventNPC5 = archive_EventNPC5
+   prEventNPC6 = archive_EventNPC6
+
+messages: 
+
+   Constructor()
+   {
+      return;
+   }
+
+   FindArchiveByString(string=$)
+   {
+      local l, i, j;
+
+      if string = $
+      {
+         return;
+      }
+
+      l = [ [ archive_watcher, "watcher", "king" ],
+            [ archive_priestess, "priestess" ],
+            [ archive_blacksmith, "blacksmith" ],
+            [ archive_hermit, "hermit" ],
+            [ archive_assassin, "assassin" ],
+            [ archive_OldDuke, "duke", "kalior" ],
+            [ archive_OldPrincess, "princess" ],
+            [ archive_EventNPC1, "npc1", "madam yaga", "yaga" ],
+            [ archive_EventNPC2, "npc2", "swamp wizard", "goth" ],
+            [ archive_EventNPC3, "npc3", "wood wizard", "tree man" ],
+            [ archive_EventNPC4, "npc4", "joline", "snake woman", "serpent" ],
+            [ archive_EventNPC5, "npc5", "bug wizard", "chiton general", "mant" ],
+            [ archive_EventNPC6, "npc6", "cat demon", "muscle man", "flesh golem" ]
+    ];
+    
+      for i in l
+      {
+         for j in i
+         {
+            if stringEqual(string,j)
+            {
+               return first(i);
+            }
+         }
+      }
+
+      return $;
+   }
+
+end

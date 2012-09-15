@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Skeleton2Treasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_SKELETON2
+
+   piItem_att_chance = 6
+   piDIff_seed = 2
+
+messages:
+   
+   Constructed()
+   {
+      plTreasure = [ [ &MetalShield, 50 ],
+                     [ &Knightshield, 15 ],
+                     [ &Money, 15 ],
+                     [ &Scimitar, 10 ],
+                     [ &NeruditeArrow, 5 ],
+                     [ &InkyCap, 4 ],
+                     [ &DiscordScroll, 1 ]
+                   ];
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

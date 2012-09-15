@@ -1,0 +1,156 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MovingSector is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MovingSector_name_rsc = "moving sector"
+   MovingSector_icon_rsc = light.bgf
+   MovingSector_desc_rsc = "A sector whose floor/ceiling moves up and down."
+
+classvars:
+
+   vrName = MovingSector_name_rsc
+   vrIcon = MovingSector_icon_rsc
+   vrDesc = MovingSector_desc_rsc
+
+properties:
+
+   poRoom = $
+   piSectorID = $
+   piSurface = ANIMATE_CEILING_LIFT
+   pbState = SECTOR_DN
+   piUpH = 0
+   piDownH = 0
+   piUpSpeed = 0
+   piDownSpeed = 0
+   piToggleTime = 1000
+   prMoveSound = $
+
+   ptToggleTimer = $
+
+
+messages:
+
+   Constructor(sectorroom=$,sectorID=$,surface=ANIMATE_CEILING_LIFT,state=SECTOR_DN,
+               upH=0,downH=0,upspeed=0,downspeed=0,toggletime=1000,movesound=$)
+   {
+      if sectorID = $ {
+         debug("You didn't specify which sectorID to associate with the MovingSector!");
+         post(self,@delete);
+         propagate;
+      }
+      if sectorroom = $ {
+         debug("You didn't specify which room the MovingSector is in!");
+         post(self,@delete);
+         propagate;
+      }
+      poRoom = sectorroom;
+      piSectorID = sectorID;
+      piSurface = surface;
+      if state = SECTOR_UP {
+         pbState = SECTOR_DN;
+         post(self,@MoveUp);
+      }
+      else {
+         pbState = SECTOR_UP;
+         post(self,@MoveDown);
+      }
+      piUpH = upH;
+      piDownH = downH;
+      piUpSpeed = upspeed;
+      piDownSpeed = downspeed;
+      piToggleTime = toggletime;
+      prMoveSound = movesound;
+
+      propagate;
+   }
+
+   MoveUp()
+   {
+      if pbState = SECTOR_DN {
+         send(poRoom,@setsector,#sector=piSectorID,#animation=piSurface,
+                  #height = piUpH,#speed=piUpSpeed);
+         if prMoveSound <> $ {
+            Send(poRoom,@SomethingWaveRoom,#wave_rsc=prMoveSound);
+         }
+         pbState = SECTOR_UP;
+      }
+      return;
+   }
+   MoveDown()
+   {
+      if pbState = SECTOR_UP {
+         send(poRoom,@setsector,#sector=piSectorID,#animation=piSurface,
+                  #height = piDownH,#speed=piDownSpeed);
+         pbState = SECTOR_DN;
+         if prMoveSound <> $ {
+            Send(poRoom,@SomethingWaveRoom,#wave_rsc=prMoveSound);
+         }
+      }
+      return;
+   }
+
+   Toggle(toggleback = TRUE)
+   {
+      if pbState = SECTOR_DN {
+         send(self,@MoveUp);
+         if toggleback {
+            ptToggleTimer = CreateTimer(self,@ToggleBackDownTrigger,piToggleTime);
+         }
+         return;
+      }
+      send(self,@MoveDown);
+      if toggleback {
+         ptToggleTimer = CreateTimer(self,@ToggleBackUpTrigger,piToggleTime);
+      }
+      return;
+   }
+   ToggleBackDownTrigger()
+   {
+      ptToggleTimer = $;
+      send(self,@MoveDown);
+      send(poRoom,@SomethingChanged,#what=self);
+      return;
+   }
+   ToggleBackUpTrigger()
+   {
+      ptToggleTimer = $;
+      send(self,@MoveUp);
+      send(poRoom,@SomethingChanged,#what=self);
+      return;
+   }
+
+   GetState()
+   {
+      return pbState;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   Delete()
+   {
+      if ptToggleTimer <> $ {
+         DeleteTimer(ptToggleTimer);
+         ptToggleTimer = $;
+      }
+     propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

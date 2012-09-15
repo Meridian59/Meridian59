@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SimpleHelm is Helmet
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SimpleHelm_name_rsc = "helm"
+   SimpleHelm_icon_rsc = helm.bgf
+   SimpleHelm_desc_rsc = \
+      "Steel and chain links give moderate protection to the wearer of this padded helmet."   
+
+classvars:
+
+   vrName = SimpleHelm_name_rsc
+   vrDesc = SimpleHelm_desc_rsc
+   vrIcon = SimpleHelm_icon_rsc
+
+   viHits_init_min = 200
+   viHits_init_max = 225
+
+   viValue_average = 100
+   viWeight = 50
+   viBulk = 25
+
+   viUse_type = ITEM_USE_HEAD
+   viUse_amount = 1
+   viSpell_modifier = -5
+
+   viGround_group = 3
+   viInventory_group = 2
+   viBroken_group = 4
+
+   viDefense_base = 20
+   viDamage_base = 1
+
+properties:
+
+
+messages:
+
+   NewUsed()
+   {
+      Send(poOwner,@RemoveHair,#what=self);
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      Send(poOwner,@ResetHair,#what=self);
+
+      propagate;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_BLUDGEON,-10]
+             ];
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,70 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Thief is Monster
+
+constants:
+
+   include blakston.khd
+
+   HS_LEG_LEFT = 43
+   HS_LEG_RIGHT = 42
+
+resources:
+
+   thief_name_rsc = "Thief"
+   thief_icon_rsc = thiefT.bgf
+   thief_desc_rsc = "This is a thief template."
+
+   thief_leg_left = thiefFL.bgf
+   thief_leg_right = thiefFR.bgf
+   thief_left_arm = thiefL.bgf       
+   thief_right_arm = thiefR.bgf
+
+
+classvars:
+
+   vrName = thief_name_rsc
+   vrIcon = thief_icon_rsc
+   vrDesc = thief_desc_rsc
+
+   viAttributes = MOB_NOFIGHT | MOB_BUYER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE
+
+properties:
+
+
+messages:
+
+   SendOverlays()
+   {
+      local i;
+      
+      % thief  has 2 legs, 2 arms
+      
+      AddPacket(1,4);
+      
+      % Overlay info -- display correct group for animation & action
+
+      AddPacket(4,thief_leg_left,1,HS_LEG_LEFT,1,ANIMATE_NONE,2,1);
+      AddPacket(4,thief_leg_right,1,HS_LEG_RIGHT,1,ANIMATE_NONE,2,1);
+      AddPacket(4,thief_left_arm,1,HS_LEFT_HAND,1,ANIMATE_NONE,2,1);
+      AddPacket(4,thief_right_arm,1,HS_RIGHT_HAND,1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

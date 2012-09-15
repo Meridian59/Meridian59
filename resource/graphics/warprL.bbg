@@ -1,0 +1,12 @@
+# War priest of Kranaan
+# Left arm
+-s 3
+6
+w000lak.bmp    [-17, -6] 
+w045lak.bmp    [-11, -6] 
+w090lak.bmp    [-8, -7] 
+w180lak.bmp    [-9, -11] 
+w270lak.bmp    [-44, -6] 
+w315lak.bmp    [-43, -9] 
+1
+ 8      1   6   5   4   4   4   3   2

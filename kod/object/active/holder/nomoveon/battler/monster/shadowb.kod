@@ -1,0 +1,176 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Shadowbeast is Monster
+
+constants:
+
+   include blakston.khd
+
+   FRAME_STAND = 1
+   FRAME_WALK_START = 2
+   FRAME_WALK_END = 6
+   FRAME_ATTACK_START = 7
+   FRAME_ATTACK_END = 12
+   ANIMSPEED_WALK = 125
+   ANIMSPEED_ATTACK = 142
+
+resources:
+
+   Shadowbeast_koc_name_rsc = "teotkriipa"
+   Shadowbeast_name_rsc = "shadowbeast"
+   Shadowbeast_icon_rsc = shadow.bgf
+   Shadowbeast_desc_rsc = \
+   "A magical abomination that hybrids the jungle kriipa with some quasi-substantial "
+	"entity from the nether world.  Residual Qor magic seems to make the air "
+	"darker when this foul beast is near.  Although they mainly prey on cave "
+	"orcs, the shadowbeast have been known to kill humans on occasion."
+
+   Shadowbeast_dead_icon_rsc = shadowX.bgf
+   Shadowbeast_dead_name_rsc = "slain shadowbeast"
+
+   Shadowbeast_sound_hit = sha_atkm.wav
+   Shadowbeast_sound_miss = sha_atkm.wav
+   Shadowbeast_sound_death = sha_dth.wav
+   Shadowbeast_sound_aware = sha_awr.wav
+
+classvars:
+   vrKocName = Shadowbeast_koc_name_rsc
+   vrName = Shadowbeast_name_rsc
+   vrIcon = Shadowbeast_icon_rsc
+   vrDesc = Shadowbeast_desc_rsc
+   vrDead_icon = Shadowbeast_dead_icon_rsc
+   vrDead_name = Shadowbeast_dead_name_rsc
+ 
+   viTreasure_type = TID_VERY_TOUGH
+   viAttack_types = ATCK_WEAP_SLASH
+   viSpeed = SPEED_AVERAGE
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE
+   viLevel = 200
+   viDifficulty = 7
+   viKarma = -100
+   viWimpy = 10
+
+   vrSound_hit = Shadowbeast_sound_hit
+   vrSound_miss = Shadowbeast_sound_miss
+   vrSound_aware = Shadowbeast_sound_aware
+   vrSound_death = Shadowbeast_sound_death
+
+   viDead_drawfx = DRAWFX_TRANSLUCENT_50
+   viLight_Penalty = 15
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piDrawfx = DRAWFX_TRANSLUCENT_50   
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 20, -ATCK_SPELL_COLD ],
+                        [ 60, ATCK_WEAP_SLASH ],
+                        [-15, -ATCK_SPELL_FIRE ],
+                        [-15, -ATCK_SPELL_SHOCK ],
+                        [-25, -ATCK_SPELL_HOLY ] ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,ANIMSPEED_ATTACK,2,FRAME_ATTACK_START,2,
+                FRAME_ATTACK_END);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,ANIMSPEED_WALK,2,FRAME_WALK_START,2,FRAME_WALK_END);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,ANIMSPEED_ATTACK,2,FRAME_ATTACK_START,2,
+                   FRAME_ATTACK_END,2,FRAME_STAND);
+         return;
+      }
+
+      % if no body animation
+      AddPacket(1,ANIMATE_NONE,2,3);
+      
+      return;
+   }
+
+   IsAlly(target = $, regroup = FALSE)
+   {
+      if isClass(target,&AvarShaman)
+         OR isClass(target,&AvarChieftain)
+      {
+         return TRUE;
+      }
+
+      if isClass(target,&avar)
+      {
+         if regroup
+         {
+            return FALSE;
+         }
+         
+         return TRUE;
+      }
+
+      %% charm checks up higher.
+      propagate;
+   }
+
+   NewOwner(what = $)
+   {
+      % new room
+      if what <> $
+      {
+         Send(what,@AddBaseLight,#amount=-viLight_Penalty);
+      }
+      
+      % old room
+      if poOwner <> $
+      {
+         Send(poOwner,@AddBaseLight,#amount=viLight_Penalty);
+      }
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      % old room
+      if poOwner <> $
+      {
+         Send(poOwner,@AddBaseLight,#amount=viLight_Penalty);
+      }
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

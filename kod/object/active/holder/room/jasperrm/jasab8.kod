@@ -1,0 +1,52 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperAB8 is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_jasperAB8 = jasab8.roo
+   room_name_JasperAB8 = "Abandoned Building"
+
+classvars:
+
+   vrName = room_name_jasperAB8
+
+   viTeleport_row = 6
+   viTeleport_col = 7
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_RESIDENCE
+
+properties:
+
+   prRoom = room_jasperAB8
+   piRoom_num = RID_JAS_AB8
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 8, 10, RID_JASWEST, 35, 25, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

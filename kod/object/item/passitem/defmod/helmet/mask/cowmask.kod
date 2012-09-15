@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CowMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   CowMask_name_rsc = "cow mask"
+   CowMask_icon_male_rsc = res0002c.bgf
+   CowMask_icon_female_rsc = res0002d.bgf
+   CowMask_desc_rsc = \
+      "Sculpted like the head of a cow, it is sometimes worn by divinity.  "
+      "Moo."
+ 
+classvars:
+
+   vrName = CowMask_name_rsc
+   vrDesc = CowMask_desc_rsc
+   vrIcon = CowMask_icon_male_rsc
+
+   vrMaleIcon = CowMask_icon_male_rsc
+   vrFemaleIcon = CowMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

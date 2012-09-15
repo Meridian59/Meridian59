@@ -1,0 +1,171 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DefenseModifier is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+   % Percent chance that an item gets damaged when defending.
+   DAMAGE_CHANCE = 50
+
+resources:
+
+   defmod_broken = "Your %s falls to pieces."   
+   defmod_broken_plural = "Your %s fall to pieces."   
+   defmod_broken_plural_clothes = "Your %s collapse into unwearable tatters."
+
+classvars:
+
+   viItem_type = ITEMTYPE_ARMOR
+   vrItem_broken = defmod_broken
+
+   viDefense_base = 0               % This is the default value for piDefense_bonus
+   viDamage_base = 0                % This is the default value for piDamage_reduce
+
+properties:
+
+   piDefense_bonus = 0              %% piDefense_bonus adds to player's defense. Ranges from 1 to 50
+   piDamage_reduce = 0              %% piDamage_reduce is the maximum amount of damage that will be reduced.
+
+messages:
+
+   DefaultValues()
+   {
+      piDefense_bonus = viDefense_base;
+      piDamage_reduce = viDamage_base;
+
+      propagate;
+   }
+
+   NewUsed(what = $)
+   {
+      Send(what,@AddDefenseModifier,#what=self);
+      send(self,@AddResistances);
+
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      Send(what,@RemoveDefenseModifier,#what=self);
+      send(self,@RemoveResistances);
+
+      propagate;
+   }
+
+   AddResistances()
+   {
+      local i;
+      
+      for i in send(self,@GetResistanceModifiers)
+      {
+         Send(poOwner,@AddResistance,#what=nth(i,1),#value=nth(i,2));
+      }
+      
+      return;
+   }
+
+   RemoveResistances()
+   {
+      local i;
+      
+      for i in send(self,@GetResistanceModifiers)
+      {
+         Send(poOwner,@RemoveResistance,#what=nth(i,1),#value=nth(i,2));
+      }
+      
+      return;
+   }
+
+   GetResistanceModifiers()
+   {
+      % format is [ [TYPE,resistance], [ATCK_WEAP_BLUDGEON,-20], ...]
+      return [];
+   }
+
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      return defense_power + piDefense_bonus;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Increase or decrease damage done to defender."
+   {
+      local iDamageReduce;
+
+      iDamageReduce = 0;
+      if piDamage_reduce <> 0
+      {
+         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
+         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+      }
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Only 2/3 of the damage reduction if we're doing both weapon
+            % and spell damage types.
+            iDamageReduce = iDamageReduce * 2 / 3;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iDamageReduce = 0;
+         }
+      }
+      
+      return damage - iDamageReduce;
+   }
+
+   % This assumes that none of the superclasses define a message for "defending hit" to do anything special.
+   % This will reduce the damage that armor is taking in battle currently.
+   DefendingHit(who = $,what = $)
+   {
+      % 50% chance to get damaged.
+      if (random(1,100) < DAMAGE_CHANCE)
+      {
+         propagate;
+      }
+      
+      return;
+   }
+
+   CanMend()
+   "For most defmods (armor and shields), mend is true."
+   {   
+      local i, oItemAtt;
+      
+      for i in plItem_Attributes
+      {
+         oItemAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
+         
+         if oItemAtt = $
+         {
+            DEBUG("Illegal ItemAtt in list!");
+            
+            continue;
+         }
+         
+         if NOT send(oItemAtt,@ItemCanMend,#oItem=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE; 
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,97 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tombstone is PassiveObject
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   tombstone_name_rsc = "tombstone"
+   tombstone_icon_normal_rsc = tombston.bgf
+   tombstone_icon_cross_rsc = tombcros.bgf
+   tombstone_desc1_rsc = "The name on this tombstone has been wiped away by time and weather."
+   tombstone_desc2_rsc = "R.I.P. a big goat, died 3 BME. She was loved by many."
+
+   tombstone_desc_player = \
+   "R.I.P. %q, born %i ME, died %i ME.\n\n"
+   "May the gods take their revenge!"
+
+
+classvars:
+
+   vrName = tombstone_name_rsc
+
+properties:
+
+   vrIcon 
+   vrDesc 
+
+   prPlayer_name = $
+   piBirth_year = 0
+   piDeath_year = 0
+
+messages:
+   
+   constructor(tombstone_type = TOMBSTONE_NORMAL)
+   {
+      if tombstone_type = TOMBSTONE_NORMAL 
+      {  vrIcon = tombstone_icon_normal_rsc; }
+      else
+      {  vrIcon = tombstone_icon_cross_rsc; }
+
+      if Random(1,2) = 1
+      {  vrDesc = tombstone_desc1_rsc; }
+      else
+      {  vrDesc = tombstone_desc2_rsc; }
+
+      propagate;
+   }
+
+   ShowDesc()
+   {
+      if prPlayer_name <> $
+      {
+	 AddPacket(4,tombstone_desc_player,STRING_RESOURCE,prPlayer_name,
+		   4,piBirth_year,4,piDeath_year);
+	 return;
+      }
+
+      propagate;
+   }
+
+   SetPlayerTombstone(who = $,killer = $)
+   {
+      prPlayer_name = Send(who,@GetTrueName);
+      piBirth_year = Send(who,@GetBirthYear);
+      piDeath_year = Send(SYS,@GetYear);
+
+      return;
+   }
+
+   NewOwner(what = $)
+   {
+      if isclass(what,&TosGraveyard)
+      {
+	 Send(what,@AvailableTombstone,#what=self);
+      }
+      propagate;
+   }
+
+   GetObjectFlags()
+   {
+      return LOOK_NO;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

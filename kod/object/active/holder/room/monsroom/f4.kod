@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsF4 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsF4 = F4.roo
+   room_name_OutdoorsF4 ="East Merchant Way"
+   OutdoorsF4_music = forest.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsF4
+
+   viTeleport_row = 27
+   viTeleport_col = 35
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_RIVER | TERRAIN_ROAD
+
+   viFlag_Row = 38
+   viFlag_Col = 13
+
+properties:
+
+   prRoom = room_OutdoorsF4
+   prMusic = OutdoorsF4_music
+   piRoom_num = RID_F4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 120000
+   piGen_percent = 60
+
+   piInit_count_min = 1
+   piInit_count_max = 3
+
+   piMonster_count_max = 6
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Spider, 45], [&Centipede, 55] ];
+
+      plGenerators = [ [5, 16], [9, 6], [13, 26], [10, 41], [19, 11],
+		      [22, 37], [37, 11], [42, 22], [35, 30], [33, 42] ];
+      propagate;
+   }
+
+ CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_F3, 32, 66, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_E4, 27, 49, ROTATE_NONE, ROW_IS_LESS_THAN,16], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_E4, 34, 49, ROTATE_NONE, ROW_IS_GREATER_THAN,15], plEdge_exits);        
+      plEdge_Exits = Cons([LEAVE_EAST, RID_G4, 42, 2, ROTATE_NONE, ROW_IS_GREATER_THAN,24], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_G4, 32, 2, ROTATE_NONE, ROW_IS_LESS_THAN,25], plEdge_exits);        
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

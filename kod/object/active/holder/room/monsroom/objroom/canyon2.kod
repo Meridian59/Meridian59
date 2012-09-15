@@ -1,0 +1,189 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Canyon2 is ObjectRoom
+
+constants:
+
+   TO_ROW = 37
+   TO_COL = 17
+
+   SECTOR_DOOR = 1
+
+   % 10 seconds
+   DOORWAY_DELAY = 10000
+
+   include blakston.khd
+
+resources:
+
+   room_name_canyons2 = "Martyr's Battleground"
+   room_canyons2 = canyons2.roo
+   canyon2_music = walk1.mid
+
+   canyon2_portal_icon_rsc = teleport.bgf
+
+classvars:
+
+   vrName = room_name_canyons2
+
+   viTeleport_row = 37
+   viTeleport_col = 17
+
+   viTerrain_type = TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_canyons2
+   piRoom_num = RID_CANYON2
+
+   prMusic = canyon2_music
+
+   prBackground = background_stars
+
+   piBaseLight = 255
+   piOutside_factor = 0
+
+   piDirectional_percent = 50
+
+   ptDoorway = $
+   poNode = $
+
+   piGen_time = 10000
+   piGen_percent = 85
+
+   piInit_count_min = 9
+   piInit_count_max = 12
+
+   piMonster_count_max = 20
+
+messages:
+
+   Constructed()
+   {
+      local oPortal;
+      plMonsters = [ [&StoneTroll, 85], [&GroundwormQueen, 15] ];
+
+      plGenerators = [ [9, 50], [11, 30], [6, 22], [24, 31], [25, 50],
+                       [30, 53], [52, 53], [36, 59], [50, 36], [42, 15],
+                       [52, 8], [60, 37], [62, 43], [32, 12], [10,10]
+                     ];
+
+      % Create the mana node.  We can find it and place it later.
+      Create(&ManaNode,#node_num=NODE_Q,#iRoomNum=piRoom_num);
+
+      oPortal = Create(&Portal,#icon=canyon2_portal_icon_rsc,
+                        #dest_room_num=RID_HERMIT_HUT,#dest_row=5,#dest_col=4);
+      Send(self,@Newhold,#what=oPortal,#new_row=25,#new_col=61);
+
+      propagate;
+   }
+
+   ActivatePortal()
+   {
+      % If the node exists, do nothing.
+      if poNode <> $
+      {
+         return;
+      }
+
+      poNode = Send(SYS,@FindNodeByNum,#num=NODE_Q);
+      Send(poNode,@NodeAppear,#where=self,#row=57,#col=45,
+           #fine_row=32,#fine_col=32);         
+
+      return;
+   }
+
+   DeactivatePortal()
+   {
+      % Remove the reference to the node, so we know it exists or not.
+      if poNode = $ 
+      {
+         Debug("Somehow, poNode is equal nil!  Something is wrong!");
+
+         return;
+      }
+
+      Send(poNode,@NodeDisappear);
+      poNode = $;
+
+      return;
+   }
+
+   FirstUserEntered()
+   {
+      Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=340,#speed=16);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_CANYON2, 70, 2, ROTATE_NONE ], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_CANYON2, 1, 28, ROTATE_NONE ], plEdge_exits);
+
+      propagate;
+   }
+
+   DoorCloseTimer()
+   {
+      ptDoorway = $;
+      Send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=440,#speed=16);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptDoorway <> $
+      {
+         DeleteTimer(ptDoorway);
+         ptDoorway = $;
+      }
+
+      propagate;
+   }
+
+   RecalcBackgroundSkyGraphic(iWeather=0)
+   {
+      return;
+   }
+
+   GetRegion()
+   {
+      return RID_CANYON2;
+   }
+
+   NewHold(what=$)
+   {      
+      if what <> $ and isClass(what,&token)
+      {
+         Post(what,@RandomTeleport);
+      }
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+   CanHavePlayerPortal(who = $)
+   {
+      % Don't allow portals into this room, bypassing puzzle
+      return false;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

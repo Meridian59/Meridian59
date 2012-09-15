@@ -1,0 +1,198 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorpseNode is Portal
+
+constants:
+
+   include blakston.khd
+
+   CORPSENODE_RANGE = 3
+
+resources:
+
+   corpsenode_name_rsc = "rip in space"
+   corpsenode_icon_rsc = teleport.bgf
+   corpsenode_desc_rsc = \
+      "You know not where this leads, for you see naught but insanity through "
+      "the gaping rip in reality."
+
+   corpsenode_already_melded = "You have already bonded with the corpsenode."
+   corpsenode_nothing = "Nothing seems to happen."
+   corpsenode_meld = \
+      "You reach out with your mind to touch the rip, and suddenly the universe "
+      "seems to collapse around you!  Vertigo strikes, and you fall to your knees.  "
+      "Yet, when you regain your equilibrium, you feel the course of magic flow "
+      "through your veins."
+
+   uworld_meld_sound = nodeup.wav
+
+classvars:
+
+   vrName = corpsenode_name_rsc
+
+   viObject_flags = MOVEON_TELEPORTER | ACTIVATE_YES | DRAWFX_TRANSLUCENT_75
+
+   viAnimationSpeed = 400
+
+properties:
+
+   vrIcon = corpsenode_icon_rsc
+   vrDesc = corpsenode_desc_rsc
+
+   piNode_num = NODE_CORPSENODE
+
+messages:
+
+   Constructor(node_num=0)
+   {
+      Send(SYS,@AddNode,#node=self,#num=node_num);
+
+      propagate;
+   }
+
+   TeleportSomething(what = $,new_row = $,new_col = $)
+   {
+      send(poOwner,@ZapToCorpse,#who=what);
+
+      return;
+   }
+
+   %%% Node stuff
+
+   GetLocationName()
+   {
+      % We appear in the underworld, but we're not always stored there
+      return Send(Send(SYS, @FindRoomByNum, #num = RID_UNDERWORLD), @GetName);
+   }
+
+   NodeAppear(where=$,row=0,col=0,fine_row=0,fine_col=0)
+   {
+      if NOT isClass(where,&room)
+      {
+         DEBUG("Not a room!");
+
+         return;
+      }
+
+      if poOwner <> $
+      {
+         DEBUG("Already has an owner!");
+
+         return;
+      }
+
+      if row = 0 OR col = 0
+      {
+         DEBUG("Bad coordinates!");
+
+         return;
+      }
+
+      send(where,@NewHold,#what=self,#new_row=row,#new_col=col);
+
+      return;
+   }
+
+   NodeDisappear()
+   "This is used by the three special nodes (Zjiria's Heart, Underworld, "
+   "and FeyNode) so that they don't actually leave the system list when "
+   "they disappear.  This way, a player's max mana can always be figured "
+   "on the fly."
+   {
+      if poOwner = $
+      {
+         DEBUG("NodeDisappear called with null owner!");
+
+         return;
+      }
+      
+      send(poOwner,@LeaveHold,#what=self);
+      poOwner = $;
+
+      return;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if poOwner = $
+      {
+         DEBUG("TryActivate called with nil owner!");
+
+         return TRUE;
+      }
+    
+      if isClass(who,&User) AND poOwner = send(who,@GetOwner)
+      {
+         if abs(send(who,@GetRow)-send(self,@GetRow)) < CORPSENODE_RANGE
+            AND abs(send(who,@GetCol)-send(self,@GetCol)) < CORPSENODE_RANGE
+         {
+            if piNode_num = 0
+            {
+               debug("this mana node was not assigned an ID!  Invalid!");
+
+               return FALSE;
+            }
+
+            if send(who,@GetNodeList) & piNode_num
+            {
+               send(who,@MsgSendUser,#message_rsc=corpsenode_already_melded);          
+
+               return TRUE;
+            }
+
+            send(self,@Meld,#who=who);
+         }
+         else
+         {
+            send(who,@MsgSendUser,#message_rsc=corpsenode_nothing);          
+         }
+      }
+
+      return TRUE;
+   }
+
+   Meld(who=$)
+   {
+      local mysticism;
+
+      send(who,@MsgSendUser,#message_rsc=corpsenode_meld);          
+      send(who,@WaveSendUser,#wave_rsc=uworld_meld_sound);
+      send(who,@NewMaxMana,#amount=Send(self,@GetManaAdjust,#who=who),#node_num=piNode_num);
+
+      return;
+   }
+
+   UnMeld(who=$)
+   {
+      Send(who,@NewMaxMana,#amount=(-1*Send(self,@GetManaAdjust,#who=who)),#node_num=piNode_num);
+
+      return;
+   }
+
+   GetNodeNum()
+   {
+      return piNode_num;
+   }
+
+   GetManaAdjust(who=$)
+   {
+      return (((5 + send(who,@GetMysticism)) / 10) + 3);
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

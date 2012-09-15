@@ -1,0 +1,48 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HazarElder is HazarTown
+
+constants:
+
+   include blakston.khd
+
+   ANIM_WAVE = 1
+
+resources:
+
+   HazarElder_name_rsc = "Rodric d'Stane"
+   HazarElder_icon_rsc = mrelder.bgf
+   HazarElder_desc_rsc = "The old man looks back at you with eyes that have seen beyond forever."
+   HzEl_entry_welcome = "Welcome, my son.  May the road of your life be the high one."
+
+classvars:
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+   vrName = HazarElder_name_rsc
+   vrIcon = HazarElder_icon_rsc
+   vrDesc = HazarElder_desc_rsc
+   viAttributes = MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT | MOB_NOMOVE | MOB_NOQUEST
+   viOccupation = MOB_ROLE_ELDER
+
+messages:
+
+   UserEntered()
+   {
+      Post(poOwner,@someoneSaid,#what=self,#string=HzEl_entry_welcome,
+          #type=SAY_RESOURCE);
+      propagate;
+   }
+
+   
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CorNothTailor is CorNothTown
+
+constants:
+
+   include blakston.khd
+   
+resources:
+
+   CornothTailor_name_rsc = "Hester Gilk"
+   CornothTailor_icon_rsc = cntailor.bgf
+   CornothTailor_desc_rsc = "Hester is from a very distant land, and her adept sewing reflects a distinct tradition "
+                        "that incorporates functionality with a powerful art.  The clothes she produces are "
+                        "beautiful."
+
+   CnTail_entry_welcome = "Please try not to track mud all over the place."   
+
+classvars:
+
+   vrName = CornothTailor_name_rsc
+   vrIcon = CornothTailor_icon_rsc
+   vrDesc = CornothTailor_desc_rsc
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_RECEIVE 
+   viOccupation = MOB_ROLE_TAILOR
+   viMerchant_markup = MERCHANT_DISCOUNT
+   viGender = GENDER_FEMALE
+
+properties:
+   
+messages:
+
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_SELL_ITEM
+      {
+         send( self, @SetMood, #new_mood = piMood + 2 );
+      }
+      
+      return;
+   }
+
+   SetForSale()
+   {
+      %% cor noth favors earth tones and dark, grim colors.
+
+      plFor_sale = [ [ Create(&PantsC), 	              
+	              Create(&PantsC,#translation=PT_GRAY_TO_BGREEN),
+	              Create(&PantsC,#translation=PT_GRAY_TO_SKY),
+	              Create(&PantsC,#translation=PT_GRAY_TO_DBLUE),
+	              Create(&PantsC,#translation=PT_GRAY_TO_PURPLE),
+	              Create(&PantsC,#translation=PT_GRAY_TO_GOLD),
+	              Create(&PantsC,#translation=PT_GRAY_TO_BBLUE),
+	              Create(&PantsC,#translation=PT_HAIR_OLDHAIR1),
+	              Create(&PantsC,#translation=PT_HAIR_OLDHAIR2),
+	              Create(&PantsC,#translation=PT_HAIR_OLDHAIR3),
+
+	           Create(&PantsA,#color=XLAT_TO_SKIN1),
+	           Create(&PantsA,#color=XLAT_TO_SKIN2),	           
+	           Create(&PantsA,#color=XLAT_TO_SKIN4),
+	           Create(&PantsA,#color=XLAT_TO_RED),
+	           Create(&PantsA,#color=XLAT_TO_GRAY),	           
+	           Create(&PantsA,#color=XLAT_TO_BLACK),
+
+	           Create(&Skirt,#color=XLAT_TO_SKIN1),
+	           Create(&Skirt,#color=XLAT_TO_SKIN2),	           
+	           Create(&Skirt,#color=XLAT_TO_SKIN4),
+	           Create(&Skirt,#color=XLAT_TO_RED),
+	           Create(&Skirt,#color=XLAT_TO_ORANGE),	           
+	           Create(&Skirt,#color=XLAT_TO_GREEN),
+	           Create(&Skirt,#color=XLAT_TO_BLUE),
+	           Create(&Skirt,#color=XLAT_TO_YELLOW),
+
+	          %% basic style shirts
+	           Create(&Shirt,#color=XLAT_TO_RED),	           
+	           Create(&Shirt,#color=XLAT_TO_BLACK),
+	           Create(&Shirt,#color=XLAT_TO_GRAY) ],
+                     $,
+                     $,
+                     $ ];
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      Post(poOwner,@SomeoneSaid,#what = self, #string=CnTail_entry_welcome,
+           #type = SAY_RESOURCE);
+         
+      if send(who,@GetFaction) = FACTION_DUKE
+      {
+         send(self,@SetMood,#new_mood=piMood - 4);
+         
+         propagate;
+      }
+      
+      if send(who,@GetFaction) = FACTION_PRINCESS
+      {
+         send(self,@SetMood,#new_mood=piMood - 4);
+      }
+      else
+      {
+         send(self,@SetMood,#new_mood=piMood + 2);
+      }
+      
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

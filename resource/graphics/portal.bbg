@@ -1,0 +1,28 @@
+# teleporter/gateway
+# groups
+# 1-3 pulsating center animaation
+-s 2
+18
+gate000a.bmp   [0, 0] 
+gate000b.bmp   [0, 0] 
+gate000c.bmp   [0, 0] 
+gate045a.bmp   [0, 0] 
+gate045b.bmp   [0, 0] 
+gate045c.bmp   [0, 0] 
+gate090a.bmp   [0, 0] 
+gate090b.bmp   [0, 0] 
+gate090c.bmp   [0, 0] 
+gate315a.bmp   [0, 0] 
+gate315b.bmp   [0, 0] 
+gate315c.bmp   [0, 0] 
+gate180a.bmp   [0, 0] 
+gate180b.bmp   [0, 0] 
+gate180c.bmp   [0, 0] 
+gate270a.bmp   [0, 0] 
+gate270b.bmp   [0, 0] 
+gate270c.bmp   [0, 0] 
+4
+ 8      1  10   16   4   1  10   7   4
+ 8      2  11   17   5   2  11   8   5
+ 8      3  12   18   6   3  12   9   6
+ 8      2  11   17   5   2  11   8   5

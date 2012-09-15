@@ -1,0 +1,37 @@
+# Priestess of Shalille
+# groups
+# 1 standing, arms at sides
+# 2-3 walking
+# 4 gesturing
+
+-s 4
+24
+prsts000.bmp
+prsts045.bmp
+prsts090.bmp
+prsts180.bmp
+prsts270.bmp
+prsts315.bmp
+prsac000.bmp
+prsac045.bmp
+prsac090.bmp
+prsac180.bmp
+prsac270.bmp
+prsac315.bmp
+prsad000.bmp
+prsad045.bmp
+prsad090.bmp
+prsad180.bmp
+prsad270.bmp
+prsad315.bmp
+prsab000.bmp
+prsab045.bmp
+prsab090.bmp
+prsab180.bmp
+prsab270.bmp
+prsab315.bmp
+4
+8 1 6 5 4 4 4 3 2
+8 7  12  11  10  10  10  9  8
+8 13 18  17  16  16  16 15 14
+8 19 24  23  22  22  22  21  20

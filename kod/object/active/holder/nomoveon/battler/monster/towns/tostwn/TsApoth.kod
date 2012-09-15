@@ -1,0 +1,123 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosApothecary is TosTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   tosapothecary_name_rsc = "Frisconar"
+   tosapothecary_icon_rsc = tsapoth.bgf
+   tosapothecary_desc_rsc = "This sickly man stares at you with bleary eyes from behind the counter.  "
+      "His breathing is somewhat labored and sweat mattes his forehead.  Frisconar is almost as well "
+      "known for his keen interest in magical reagents as he is for his dour out look on life."
+
+   TsAp_entry_welcome = "Close the door.  I can't take the draft."
+   TsAp_Solagh_sale = "Actually, I happen to have %s%s with which I would be willing to part.  "
+      "Ordinarily, I would save it for my own use, but I recently acquired some extra from a wizard who was "
+      "passing through town.  I think he makes it himself."
+   TsAp_unwanted_give = "~k%s%s tells you, \"What is this?  I don't want it!  It's probably cursed.~n~k\""
+
+
+classvars:
+
+   vrName = tosapothecary_name_rsc
+   vrIcon = tosapothecary_icon_rsc
+   vrDesc = tosapothecary_desc_rsc
+   viMerchant_markup = MERCHANT_DISCOUNT
+   viAttributes = MOB_NOFIGHT | MOB_TEACHER | MOB_NOMOVE | MOB_RANDOM | MOB_LISTEN | MOB_BUYER | MOB_SELLER | MOB_LAWFUL | MOB_COND_SELLER
+   viOccupation = MOB_ROLE_APOTHECARY
+
+   vrUnwanted_give = TsAp_unwanted_give
+
+properties:
+   
+messages:
+
+   AffectMood(why = $, what = $)
+   {
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood+5);
+
+         return;
+      }
+      
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood-5);
+
+         return;
+      }
+      
+      return;
+   }
+
+   ObjectDesired(what=$)
+   {
+      if send(self,@IsObjectReagent,#what=what)
+         AND NOT send(self,@IsObjectGem,#what=what)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ [Create(&Torch),
+                      Create(&Herbs,#number=5),
+                      Create(&Mushroom,#number=5),
+                      Create(&Elderberry,#number=4),
+                      Create(&BlueMushroom,#number=4),
+                      Create(&RedMushroom,#number=4),
+                      Create(&Flask)],$,
+                     [SID_HOSPICE], $];
+      return;
+   }
+
+   InitCondSale()
+   {
+      local oObj;
+
+      oObj = Create(&Solagh,#number=4);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,250,TsAp_Solagh_sale]);
+           
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      Send(poOwner,@SomeoneSaid,#what=self,#string=TsAp_entry_welcome,
+              #type = SAY_RESOURCE);
+              
+      if Send(who,@GetAction) = UA_SAD
+      {
+         send(self,@SetMood,#new_mood=piMood + 2);
+      }
+      
+      if Send(who,@GetAction) = UA_HAPPY
+      {
+         send(self,@SetMood,#new_mood=piMood - 2);
+      }
+      
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

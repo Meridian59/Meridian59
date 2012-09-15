@@ -1,0 +1,181 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosBanker is TosTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TosBanker_name_rsc = "Skivlat"
+   TosBanker_icon_rsc = tsbanker.bgf
+   TosBanker_desc_rsc = "Skivlat spends all of his time in the company of money and it shows.  His "
+      "hand lovingly caresses the gold as a large doting smile forms on his face.  Every so often "
+      "he will jingle the bag just to hear the melodious clinking of shillings."
+
+   TBank_gems_not_quality = "These stones are bad quality.  Let me dispose of these worthless %s for you."
+   TBank_cant_give_gems = "Were these %s to be of quality, you would be unable to carry their worth in shillings."
+   TBank_gems_traded = "A nicer set of %s I've never seen. Glad to do business with ~IGuh~I you."
+   TBank_not_gem_group ="Pardon me, but I'm a gem wholesaler. If you want to market only a few similar gems, try that ~Icollector~I in Barloque."
+
+   TBank_not_enough_gems = "Hmmm.  You don't seem to possess what you're trying to pawn to me."
+   TBank_unwanted_give = "~k%s%s tells you, \"~IGuh~I I don't have any place to put that.  Now if it were shillings...~n~k\""
+
+
+classvars:
+
+   vrName = TosBanker_name_rsc
+   vrDesc = TosBanker_desc_rsc
+   vrIcon = TosBanker_icon_rsc
+
+   % no quests allowed because his "receive offers" is still flaky
+   viAttributes = MOB_NOFIGHT | MOB_BANKER | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_SELLER | MOB_LAWFUL | MOB_NOQUEST
+   viOccupation = MOB_ROLE_BANKER
+
+   viBank = BID_TOS
+   viMerchant_markup = MERCHANT_BARGAIN
+
+   vrUnwanted_give = TBank_unwanted_give
+
+properties:
+
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_BANK_DEPOSIT )
+      {
+	 send( self, @SetMood, #new_mood = piMood + 2 );
+      }
+      if( why = MOODMOD_BANK_WITHDRAWAL )
+      {
+	 send( self, @SetMood, #new_mood = piMood - 2 );
+      }
+      return;
+   }
+
+   UserEntered( who = $ )
+   {
+      if Send(who,@GetAction)=UA_HAPPY
+      {
+	 send( self, @SetMood, #new_mood = piMood + 1 );
+      }
+      if Send(who,@GetAction)=UA_WRY
+      {
+	 send( self, @SetMood, #new_mood = piMood - 1 );
+      }
+      propagate;
+   }
+
+   Constructor()
+   {
+     plWantedItems = [&Money,&Ruby,&Emerald,&Diamond,&Sapphire];
+     propagate;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ [ Create(&Emerald,#number=15),
+                       Create(&Sapphire,#number=10),
+                       Create(&Diamond,#number=8) ],
+                       $,$];
+
+      return;
+   }
+
+   GetBankNum()
+   {
+      return viBank;
+   }
+
+   CheckWhyWanted(obj=$,who=$)
+   {
+      local oMoney, bfound, i, iValue;
+      if isClass(obj,&Ruby) OR isClass(obj,&Diamond) OR
+         isClass(obj,&Sapphire) OR isClass(obj,&Emerald)
+      {
+         %Every so often, we want to declare the gem to be fake and delete.
+         %Else we want to give them the money for it and delete the gem
+         %If they cant hold the money, we return the gems(return false)
+         if Send(obj,@GetNumber)<4 
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=TBank_not_gem_group);
+            return False;
+         }
+         if Random(0,19) = 0
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=TBank_gems_not_quality,#parm1=Send(obj,@GetName));
+            return True;
+         }
+	 
+         %% be sure they actually have this many gems.
+         bFound = FALSE;
+         for i in send(who,@GetHolderPassive)
+         {
+            if getClass(i) = getClass(obj)
+            {
+                if send(i,@GetNumber) >= send(obj,@GetNumber)
+                {
+                    bFound = TRUE;
+                    break;
+                }
+                else
+                {
+                    break;
+                }
+            }
+         }
+         if not bFound
+         {
+             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+             #string=TBank_not_enough_gems);
+             return False;
+         }
+
+         iValue = Send(obj,@GetValue);
+         % Skivlat needs to include markup to prevent scams where he buys more than he sells.
+         iValue = iValue * (100 - 10*viMerchant_markup) / 100;
+         oMoney=Create(&Money,#number=iValue);
+         if send(who,@ReqNewHold,#what=oMoney)
+         {
+             Send(who,@NewHold,#what=oMoney);
+             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=TBank_gems_traded,#parm1=Send(obj,@GetName));
+             return True;
+         }
+         else
+         {
+             Send(oMoney,@Delete);
+             Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                  #string=TBank_cant_give_gems,#parm1=Send(obj,@GetName));
+             return False;
+         }
+         return True;
+      }
+      propagate;
+   }
+
+   TryAddToQuestEngine()
+   "There was a problem with Skivlat getting quests involving gems.  Previously, he "
+   "would no longer accept gems if someone had recently brought him a gem.  By removing "
+   "him from the quest engine, we prevent this error.  Hopefully, we will find a better "
+   "way to do this in the future.  CDS"
+   {
+	  return FALSE;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

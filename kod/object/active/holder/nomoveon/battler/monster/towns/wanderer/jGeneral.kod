@@ -1,0 +1,159 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JealousGeneral is Wanderer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   JealousGeneral_name_rsc = "Jonas D'Accor"
+   JealousGeneral_icon_rsc = wngenera.bgf
+   JealousGeneral_desc_rsc =  \
+     "As front-line grunt and later a wise general, Jonas D'Accor has fought "
+	"every manner of evil that has besieged the Meridian cities.  Despite that, "
+	"he has lost the position of Weapon's Master to Rook and the esteemed seat "
+	"on the Meridian Council to Cylill.  He fancies himself far superior to "
+	"both, particularly when it comes to strategy and tactics, considering both "
+	"men to be simple brawlers. In truth, his swordplay is merely adequate, though "
+	"his tactics are superb. "
+
+   JealousGeneral_already_have_spell = "I believe you already have knowledge of the %s spell, m'%s"
+   JealousGeneral_no_murderer = "I am a servant of the Law, m'%s, and as such my conscience"
+         "will not allow me to help you.  Please be on your way."
+
+classvars:
+
+   vrName = JealousGeneral_name_rsc
+   vrIcon = JealousGeneral_icon_rsc
+   vrDesc = JealousGeneral_desc_rsc
+
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER
+   viOccupation = MOB_ROLE_SERGEANT
+
+properties:
+
+   pbShatterlockAvailable = TRUE
+   
+messages:
+
+   UserEntered(who = $)
+   {
+      if NOT ( Send(who,@GetFaction) = FACTION_NEUTRAL )
+      {
+	 send( self, @SetMood, #new_mood = piMood - 3 );
+      }
+      propagate;
+   }
+
+   AffectMood(what=$,why=$)
+   {
+      if( why = MOODMOD_FACTION_CHANGE )
+      {
+	 if( what = FACTION_DUKE )
+	 {
+	    send( self, @SetMood, #new_mood = piMood + 4 );
+	 }
+	 if( what = FACTION_PRINCESS )
+	 {
+	    send( self, @SetMood, #new_mood = piMood - 4 );
+	 }
+      }
+      if (why = MOODMOD_SELL_ITEM)
+      {
+	 send( self, @SetMood, #new_mood = piMood + 2 );
+      }
+      return;
+   }
+
+   CreateDestinationList()
+   {
+      plDestinations = [ [RID_JAS_ELDER_HUT, 8, 12] , [RID_TEMPLE_KRAANAN, 15, 21, 48, 48],
+         [RID_JAS_BAR, 13, 5], [RID_BAR_BAR, 10, 15], [RID_COR_INN, 2, 9, 32, 32] ];
+      return;
+   }
+   
+   SetForSale()
+   {
+      if pbShatterlockAvailable
+      {
+         Send(self,@SetForSaleWithShatterlock);
+      }
+      else
+      {
+         Send(self,@SetForSaleNoShatterlock);
+      }
+      return;
+   }
+
+   SetForSaleWithShatterlock()
+   {
+      plFor_Sale = [$,
+          [ SKID_BLOCK ],
+          [ SID_IDENTIFY, SID_REVEAL, SID_SHROUD,
+          SID_DISPEL_ILLUSION, SID_HASTE, SID_RESIST_POISON, SID_GLOW_WEAPON,
+          SID_FREE_ACTION,
+          SID_SHATTERLOCK]];
+      return;
+   }
+   SetForSaleNoShatterlock()
+   {
+      plFor_Sale = [$,
+          [ SKID_BLOCK ],
+          [ SID_IDENTIFY, SID_REVEAL, SID_SHROUD,
+          SID_DISPEL_ILLUSION, SID_HASTE, SID_RESIST_POISON, SID_GLOW_WEAPON,
+          SID_FREE_ACTION
+          ]];
+      return;
+   }
+
+   CanDoTeach(who=$,sid=0)
+   {
+      if not send(self,@SpecialTeachChecks,#report = TRUE,#who=who,#num=sid) { return FALSE; }
+      propagate;
+   }
+   
+   CanAddSpell(who=$,num=0, report = FALSE)
+   {
+      if not send(self,@SpecialTeachChecks,#who=who,#num=num,#report=report) { return FALSE; }
+      propagate;
+   }
+   
+   SpecialTeachChecks(who=$,num=0, report = FALSE)
+   {
+      if who = $ or num = 0
+      { DEBUG("Called SpecialTeachChecks with bad parameters!"); return FALSE; }
+   
+      if send(who,@hasspell,#num=num) 
+      {
+	 if report
+	 { 
+	    post(self,@saytoone,#target=who,#message_rsc=JealousGeneral_already_have_spell,
+	       #parm1=send(send(SYS,@FindSpellByNum,#num=num),@GetName),
+	       #parm2=send(who,@GetLordLady)); 
+	 }
+	 return FALSE;
+      }
+
+      if send(who,@checkplayerflag,#flag=PFLAG_MURDERER) 
+      { % won't sell to a murderer 
+	 if report
+	 { 
+	    post(self,@saytoone,#target=who,#message_rsc=JealousGeneral_no_murderer,
+	       #parm1=send(who,@GetLordLady)); }
+   	    return FALSE;
+	 }
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

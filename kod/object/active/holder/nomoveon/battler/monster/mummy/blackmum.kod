@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlackMummy is Mummy
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   blackmummy_koc_name_rsc = "teotnapleoc"
+   blackmummy_name_rsc = "shadow mummy"
+   blackmummy_desc_rsc = \
+   "This evil being has been brought to life by dark magics of unknown origin. "
+   "Its flesh is putrid and soft, and its eyes ask for rest from its cursed unlife.\n\n"
+   "This creature has been inflicted with a permanent shadow curse, "
+   "which gives it great strength but also great misery."
+
+   blackmummy_dead_name_rsc = "dead shadow mummy"
+
+classvars:
+
+   vrKocName = blackmummy_koc_name_rsc
+   vrName = blackmummy_name_rsc
+   vrDesc = blackmummy_desc_rsc
+
+   vrDead_name = blackmummy_dead_name_rsc
+   viDead_drawfx = DRAWFX_BLACK
+
+   viDifficulty = 4
+
+properties:
+   
+   piDrawfx = DRAWFX_BLACK
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

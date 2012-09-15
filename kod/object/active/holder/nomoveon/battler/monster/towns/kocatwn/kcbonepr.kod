@@ -1,0 +1,227 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanBonePriestess is KocatanTown
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanBonePriestess_name_rsc = "The Bone Priestess"
+   KocatanBonePriestess_icon_rsc = kcbonepr.bgf
+   KocatanBonePriestess_desc_rsc = "This female Avar has been exiled from her society for "
+      "her illegal magic practices. At least that's the common belief, although it is "
+      "difficult to determine if any reason can be applied to this strange creature."
+
+   %KocatanBonePriestess_entry_welcome = ""
+   KocatanBonePriestess_iteach = "ik QUAWK ak "
+   KocatanBonePriestess_atthatlevel = " nyuk KAW-KAW uk uk!"
+   KocatanBonePriestess_unwanted_keep = "~k%s%s tells you, \"ik CHEEE-UP nak ik nyuk AK-AK!!~n~k\""
+   KocatanBonePriestess_unwanted_pay = "~k%s%s tells you, \"chp ka-ak chp NAK-NAK ik AK!~n~k\""
+   KocatanBonePriestess_unwanted_give = "~k%s%s tells you, \"WAK-WAK! AAK WAK-NAK-NAK!! CHEEE-UP NYUK!!~n~k\""
+   KocatanBonePriestess_unwanted_token = "~k%s%s tells you, \"ik wak?  wak-wak chp aak ak nyuk!~n~k\""
+   KocatanBonePriestess_nothing_for_sale = "TIC-TIC-TIC WAK NYUK-NYUK AAAK AAAK!!"
+   KocatanBonePriestess_mrcnt_too_costly = "AAAK TIC-TIC NYUK IK NYUK-TAK!!"
+
+   KocatanBonePriestess_squawk_1 = "ak ak ak"
+   KocatanBonePriestess_squawk_2 = "wak-wak"
+   KocatanBonePriestess_squawk_3 = "ik ik"
+   KocatanBonePriestess_squawk_4 = "ak nyuk"
+   KocatanBonePriestess_squawk_5 = "kaw kaw"
+   KocatanBonePriestess_squawk_6 = "tic tic"
+   KocatanBonePriestess_squawk_7 = "chk chkaa"
+   KocatanBonePriestess_squawk_8 = "nyuk nyuk nyuk"
+   KocatanBonePriestess_squawk_9 = "ak ik ik"
+   KocatanBonePriestess_squawk_10 = "chp chp"
+   KocatanBonePriestess_squawk_11 = "cheee-up"
+   KocatanBonePriestess_squawk_12 = "ki-cla ka"
+   KocatanBonePriestess_squawk_13 = "chk reee-up"
+   KocatanBonePriestess_squawk_14 = "wik wyaak"
+   KocatanBonePriestess_squawk_15 = "queeep queeep"
+   KocatanBonePriestess_squawk_16 = "AK AK AK"
+   KocatanBonePriestess_squawk_17 = "WAK-WAK"
+   KocatanBonePriestess_squawk_18 = "IK IK"
+   KocatanBonePriestess_squawk_19 = "AK NYUK"
+   KocatanBonePriestess_squawk_20 = "KAW KAW"
+   KocatanBonePriestess_squawk_21 = "TIC TIC"
+   KocatanBonePriestess_squawk_22 = "CHK CHKAA"
+   KocatanBonePriestess_squawk_23 = "NYUK NYUK NYUK"
+   KocatanBonePriestess_squawk_24 = "AK IK IK"
+   KocatanBonePriestess_squawk_25 = "CHP CHP"
+   KocatanBonePriestess_squawk_26 = "CHEEE-UP"
+   KocatanBonePriestess_squawk_27 = "KI-CLA KA"
+   KocatanBonePriestess_squawk_28 = "CHK REEE-UP"
+   KocatanBonePriestess_squawk_29 = "WIK WYAAK"
+   KocatanBonePriestess_squawk_30 = "QUEEEP QUEEEP"
+   KocatanBonePriestess_squawk_31 = "ka-ak aak"
+   KocatanBonePriestess_squawk_32 = "KA-AK AAK"
+   KocatanBonePriestess_squawk_33 = "nak-nak"
+   KocatanBonePriestess_squawk_34 = "NAK-NAK"
+   KocatanBonePriestess_squawk_35 = "tak tak"
+   KocatanBonePriestess_squawk_36 = "TAK TAK"
+   KocatanBonePriestess_squawk_37 = "Ka-ak"
+   KocatanBonePriestess_squawk_38 = "KA-AK"
+   KocatanBonePriestess_squawk_39 = "queeep-quip"
+   KocatanBonePriestess_squawk_40 = "QUEEEP-QUIP"
+   KocatanBonePriestess_squawk_41 = "Ticataca"
+   KocatanBonePriestess_squawk_42 = "TICATACA"
+   KocatanBonePriestess_squawk_43 = "ki ki"
+   KocatanBonePriestess_squawk_44 = "KI KI"
+
+   bonepr_spellsquawk1 = "TAK TAK rijj rijj qornak"
+   bonepr_spellsquawk2 = "Ka-ak AKK AKK queeep-quip."
+   bonepr_spellsquawk3 = "Ticataca nak nak!"
+   bonepr_spellsquawk4 = "Ack!  Ack!  Zjiria no ki ki!"
+
+
+classvars:
+
+   vrName = KocatanBonePriestess_name_rsc
+   vrIcon = KocatanBonePriestess_icon_rsc
+   vrDesc = KocatanBonePriestess_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER
+   viOccupation = MOB_ROLE_PRIESTESS
+
+   viGender = GENDER_FEMALE
+
+   vrTeach_message = KocatanBonePriestess_iteach
+   vrTeach_message2 = KocatanBonePriestess_atthatlevel
+   vrUnwanted_keep = KocatanBonePriestess_unwanted_keep
+   vrUnwanted_pay = KocatanBonePriestess_unwanted_pay
+   vrUnwanted_give = KocatanBonePriestess_unwanted_give
+   vrUnwanted_token = KocatanBonePriestess_unwanted_token
+   vrNothing_for_sale = KocatanBonePriestess_nothing_for_sale
+   vrMrcnt_too_costly = KocatanBonePriestess_mrcnt_too_costly
+
+properties:
+
+   plSquawks = $
+
+messages:
+
+   Constructor()
+   {
+      plSquawks = [KocatanBonePriestess_squawk_1, KocatanBonePriestess_squawk_2, KocatanBonePriestess_squawk_3,
+                     KocatanBonePriestess_squawk_4,KocatanBonePriestess_squawk_5, KocatanBonePriestess_squawk_6,
+                     KocatanBonePriestess_squawk_7, KocatanBonePriestess_squawk_8, KocatanBonePriestess_squawk_9,
+                     KocatanBonePriestess_squawk_10, KocatanBonePriestess_squawk_11, KocatanBonePriestess_squawk_12,
+                     KocatanBonePriestess_squawk_13, KocatanBonePriestess_squawk_14, KocatanBonePriestess_squawk_15,
+                     KocatanBonePriestess_squawk_16, KocatanBonePriestess_squawk_17, KocatanBonePriestess_squawk_18,
+                     KocatanBonePriestess_squawk_19, KocatanBonePriestess_squawk_20, KocatanBonePriestess_squawk_21,
+                     KocatanBonePriestess_squawk_22, KocatanBonePriestess_squawk_23, KocatanBonePriestess_squawk_24,
+                     KocatanBonePriestess_squawk_25, KocatanBonePriestess_squawk_26, KocatanBonePriestess_squawk_27,
+                     KocatanBonePriestess_squawk_28, KocatanBonePriestess_squawk_29, KocatanBonePriestess_squawk_30
+                  ];
+      plSquawks = cons(KocatanBonePriestess_squawk_31, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_32, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_33, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_34, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_35, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_36, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_37, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_38, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_39, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_40, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_41, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_42, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_43, plSquawks);
+      plSquawks = cons(KocatanBonePriestess_squawk_44, plSquawks);
+      propagate;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ $,$,
+                     [SID_DETECT_INVIS,SID_HOLY_RESOLVE,SID_UNHOLY_RESOLVE,
+                      SID_SHALBANE, SID_QORBANE ]];
+      return;
+   }
+
+   AddLearnAdvice()
+   {
+      %% Add random response to five spells
+      local i, lFinal, lDialogue, oAbility, sid, oName, lTriggers;
+
+      if not (viAttributes & MOB_TEACHER) { return; }
+
+      if plFor_sale = $ or length(plFor_sale) < 3
+      {  return;  }
+
+      %debug("Adding learn advice for ",send(self,@getname));
+      lDialogue = $;
+      lTriggers = $;
+   
+      for sid in nth(plFor_sale,3)
+      {
+	 %% spells next
+	 oAbility = send(SYS,@FindSpellByNum,#num=sid);
+	 if oAbility <> $ and send(oAbility,@GiveAdvice)
+	 {  oName = send(oAbility,@GetName);  }
+
+	 lTriggers = cons(oName,lTriggers);
+      }	 	 
+      
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk1]],lDialogue);
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk2]],lDialogue);
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk3]],lDialogue);
+      lDialogue = cons([lTriggers,0,[LIBACT_SAY, bonepr_spellsquawk4]],lDialogue);
+      
+      lFinal = [ GetClass(self), lDialogue ];
+
+      send(send(SYS,@GetLibrary),@AppendSpeechLibrary,#lDialogue=lFinal);
+      return;
+   }
+
+   GetRandomSquawking(squawkLength = 1)
+   {
+      local returnString;
+      clearTempString();
+      while squawkLength > 0 {
+         squawkLength = (squawkLength - 1);
+         send(self,@AppendRandomSquawkToTempString);
+         if squawkLength > 0 { AppendTempString(" "); }
+      }
+      AppendTempString("!");
+      returnString = createString();
+      setString(returnString,GetTempString());
+      return returnString;
+   }
+   
+   AppendRandomSquawkToTempString()
+   {
+      local i;
+      i = random(1,length(plSquawks));
+      AppendTempString(nth(plSquawks,i));
+      return;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $)
+   {
+      local i;
+      if (isClass(what,&User)) and (type = SAY_NORMAL) {
+         for i in plSquawks {
+            if (stringContain(string, i)) {
+               send( self,@Say,#message_rsc=monster_percent_q,
+                     #parm1=send(self,@GetRandomSquawking,#squawkLength=random(2,5)) );
+               break;
+            }
+         }
+      }
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

@@ -1,0 +1,255 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PersonalEnchantment is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   PersonalEnchantment_name_rsc = "personal enchantment"
+   PersonalEnchantment_icon_rsc = iheat.bgf
+   PersonalEnchantment_desc_rsc = \
+      "An enchantment which is attached to a particular player."
+
+   PersonalEnchantment_already_enchanted_rsc = "You are already enchanted."
+   PersonalEnchantment_On_rsc = "Your body tingles with magical energy."
+   PersonalEnchantment_Off_rsc = "You feel your magical field crackle and dissipate."
+   PersonalEnchantment_Success_rsc = "You enchant %s%s."
+   PersonalEnchantment_Target_Already_Enchanted_rsc = "%s%s tried to cast %s%s on you."
+   PersonalEnchantment_Other_Already_Enchanted_rsc = "%s%s is already affected by that magic."
+   PersonalEnchantment_bad_target = "You cannot enchant %s%s."
+
+   PersonalEnchantment_bad_location = "You cannot cast enchantments upon others here."
+
+classvars:
+
+   vrName = PersonalEnchantment_name_rsc
+   vrIcon = PersonalEnchantment_icon_rsc
+   vrDesc = PersonalEnchantment_desc_rsc
+
+   % Overwrite these in subclasses to give specific messages.
+   vrAlreadyEnchanted = PersonalEnchantment_already_enchanted_rsc
+   vrEnchantment_On = PersonalEnchantment_On_rsc
+   vrEnchantment_Off = PersonalEnchantment_Off_rsc
+   vrSuccess = PersonalEnchantment_Success_rsc
+
+   % These messages don't need to be overwritten.  But I put them here to leave the option open.
+   vrOtherAlreadyEnchanted = PersonalEnchantment_Other_Already_Enchanted_rsc
+   vrTargetAlreadyEnchanted = PersonalEnchantment_Target_Already_Enchanted_rsc
+
+   % Overwrite for personal enchantments that can not be cast on others.
+   vbCanCastOnOthers = TRUE
+
+   % Overwrite to allow monster casts.
+   vbCanCastonMonsters = FALSE 
+
+   viPersonal_ench = TRUE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      if vbCanCastonOthers
+      {
+         return 1;
+      }
+      else
+      {
+         return 0;
+      }
+      
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local otarget, i;
+
+      if lTargets = $
+      {
+         lTargets = [who];
+      }
+   
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      otarget = First(lTargets);
+
+      % Targetable enchantment, not from a potion.  If we want to have wand effects
+      %  for these spells we will need to split bItemcast to differentiate between
+      %  wands and potions.
+      if vbCanCastOnOthers
+      {
+         if NOT bItemCast
+            AND NOT IsClass(otarget, &User)
+            AND NOT (vbCanCastOnMonsters AND IsClass(otarget,&monster))
+         {
+            Send(who,@MsgSendUser,#message_rsc=PersonalEnchantment_bad_target,
+                 #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+                 
+            return FALSE;
+         }
+
+         % Cannot cast buffs on others in any permanently safe rooms.
+         if who <> oTarget
+            AND (send(send(who,@GetOwner),@GetPermanentFlags) & ROOM_NO_COMBAT)
+         {
+            Send(who,@MsgSendUser,#message_rsc=PersonalEnchantment_bad_location);
+            
+            return FALSE;
+         }
+      }
+
+      % check for enchantment already applied
+      if Send(otarget,@IsEnchanted,#what=self)
+      {
+         % Can you override an existing enchantment on yourself?
+         if who = oTarget AND
+            Send(Send(SYS, @GetSettings), @CanRecastSelfEnchantment)
+         {
+            propagate;
+         } 
+
+         if NOT bItemCast
+         {
+            % Casting on self.
+            if who = otarget
+            {   
+               Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted);
+            }
+            else
+            {
+               % Casting on someone else.
+               Send(who,@MsgSendUser,#message_rsc=vrOtherAlreadyEnchanted,
+               #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+               Send(oTarget,@MsgSendUser,#Message_rsc=vrTargetAlreadyEnchanted,
+               #parm1=send(who,@GetCapDef),#parm2=send(who,@GetName),
+               #Parm3=send(self,@GetCapDef),#Parm4=send(self,@GetName));
+            }
+         }
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $,iSpellPower=0,lTargets=$)
+   {
+
+      local oTarget;
+      
+      if lTargets <> $
+      {
+         oTarget=first(lTargets);      
+      }
+      else
+      {
+         oTarget = who;
+      }
+
+      % Double check if our target is still logged on.
+      If IsClass(oTarget,&Player)
+         AND NOT send(oTarget,@IsLoggedOn)
+      {
+         Send(who,@MsgSendUser,#message_rsc=PersonalEnchantment_bad_target,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+              
+         return FALSE;
+      }
+      
+      % If target already has this enchantment, remove it
+      if Send(otarget,@IsEnchanted,#what=self) AND
+         Send(Send(SYS, @GetSettings), @CanRecastSelfEnchantment)
+      {
+         Send(oTarget, @RemoveEnchantment, #what = self, #report = FALSE);
+      } 
+   
+      Send(oTarget,@MsgSendUser,#message_rsc=vrEnchantment_On);
+ 
+      Send(oTarget,@StartEnchantment,#what=self,
+           #state=send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,#target=oTarget),
+           #time=send(self,@GetDuration,#iSpellPower=iSpellPower),
+           #lastcall=send(self,@GetLastCall),#addicon=send(self,@GetAddicon));
+           
+      % GetStateValue is sometimes (eg used for pre-enchantment behaviors, who is the caster, target is the target (sometimes the same as who).
+
+      if oTarget <> who
+      {
+         Send(who,@MsgSendUser,#message_rsc=vrSuccess,#parm1=send(otarget,@GetCapDef),#parm2=send(otarget,@Getname));
+      }
+
+      propagate;
+   }
+ 
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+      if report
+      {
+          Send(who,@MsgSendUser,#message_rsc=vrEnchantment_Off);
+      }
+      
+      return;
+   }
+
+   GetStateValue()
+   {
+      return $;
+   }
+
+   GetLastCall()
+   % Overwrite to false for periodic enchantments.
+   {
+      return TRUE;
+   }
+
+   GetAddIcon()
+   % Overwrite for iconless enchantments.
+   {
+      return TRUE;
+   }
+
+   %%% Defense and attack modifier stuff.
+
+   ModifyDamage(damage = $)
+   {
+      return damage;
+   }
+
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {
+      return hit_roll;
+   }
+
+   DefendingHit()
+   {
+      return;
+   }
+
+   ModifyDefenseDamage(damage = $)
+   {
+      return damage;
+   }
+
+   ModifyDefensePower(who = $, what = $,defense_power = $)
+   {
+      return defense_power;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

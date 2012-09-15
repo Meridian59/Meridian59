@@ -1,0 +1,14 @@
+# fairy, model (for Raza museum)
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 7
+6
+fg000cc.bmp    [0, 0] 
+fg315cc.bmp    [0, 0] 
+fg270cc.bmp    [0, 0] 
+fg180cc.bmp    [0, 0] 
+fg090cc.bmp    [0, 0] 
+fg045cc.bmp    [0, 0] 
+1
+ 8   1 2 3 4 4 4 5 6 

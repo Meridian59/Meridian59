@@ -1,0 +1,15 @@
+# Female hair 1 - short blonde
+# 1 group
+#^Applied to Hotspot: 13
+#*Groups: 1
+#* Unlabeled Group
+-s 13
+6
+pt000bbc.bmp   [-25, -5] 
+pt315bbc.bmp   [-28, -3] 
+pt270bbc.bmp   [-24, -5] 
+pt180bbc.bmp   [-34, -6] 
+pt090bbc.bmp   [-28, -5] 
+pt045bbc.bmp   [-26, -5] 
+1
+ 8   1 2 3 4 4 4 5 6 

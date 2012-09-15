@@ -1,0 +1,94 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosCrypt is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_toscrypt = "The Crypt"
+   room_toscrypt = toscrypt.roo
+   music_toscrypt = ksong.mid
+
+classvars:
+
+   vrName = room_name_toscrypt
+   
+   viTeleport_row = 13
+   viTeleport_col = 7
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_NECROPOLIS
+
+properties:
+
+   prRoom = room_toscrypt
+   piRoom_num = RID_TOS_CRYPT
+   prMusic = music_toscrypt
+
+   piBaseLight = LIGHT_VERY_DARK
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Zombie, 80], [&Skeleton, 20] ];
+
+      plGenerators = [ [11, 7], [11, 11], [15, 7],
+                       [15, 11], [19, 7], [19, 11]
+                     ];
+
+      propagate;
+   }
+
+   TryCreateMonster(initroom = FALSE,loadfirst = FALSE)
+   {
+      local iHour;
+   
+      iHour = Send(SYS,@GetHour);
+      if iHour < 5 or iHour > 21
+      {
+         propagate;
+      }
+
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % GRAVEYARD
+      plExits = Cons([ 24, 9, RID_TOS_GRAVEYARD, 10, 29, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=8,#fine_row=16,#fine_col=16,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=9,#new_col=10,#fine_row=16,#fine_col=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=23,#new_col=6,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=23,#new_col=12,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

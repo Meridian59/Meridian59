@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+ColdRing is ResistRing
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ColdRing_name_rsc = "ring of cold resistance"
+   ColdRing_desc_rsc = \
+      "This ring is warm to the touch.  Magical runes are inscribed on its inner surface."
+  
+   ColdRing_use_rsc = \
+      "You feel the ring working.  You feel pleasantly warm all over."
+  
+   ColdRing_dead_rsc = \
+      "The ring cracks into pieces!"
+
+classvars:
+
+   vrRealName = ColdRing_name_rsc
+   vrRealDesc = ColdRing_desc_rsc
+
+   vrUseMessage = ColdRing_use_rsc
+   vrDeadMessage = ColdRing_dead_rsc
+
+properties:
+
+   piResistanceType = -ATCK_SPELL_COLD
+   piResistanceChange = 50
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

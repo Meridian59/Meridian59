@@ -1,0 +1,527 @@
+\chapter{Tools}
+
+This chapter describes the parts of the system other than the server
+and the client.  This is mainly a guide to using these standalone
+programs, since their design is for the most part trivial.  However,
+in the discussion of the Blakod compiler, we touch on some of the
+implementation issues of Blakod that are separate from the
+specification of the language.  In the section on the room editor, we
+also explain some of the structures that are used in the client's
+graphics engine to describe a scene.
+
+\section{Blakod compiler ({\tt bc})}
+\label{sec:compiler}
+
+The Blakod compiler is a command line program that byte-compiles a
+Blakod source (\kod file) into an object file (\bof file), and usually a
+resource file (\rsc file).  The Blakod interpreter in the server loads all
+\bof files at startup, while the \rsc files are sent to clients.
+
+Link errors are appended to a file called kodbase.txt with a lowercase
+letter and an identifier to indicate unresolved linkages.  The
+lowercase letter indicates the type of the identifier that was
+unresolved (property, class, message handler, or class variable).
+This results in ``unrecognized character in kodbase.txt'' messages in
+the server status window if this kodbase.txt file is loaded.  To
+resolve these messages, the link error in Blakod must not only be
+corrected, but the error message at the end of kodbase.txt must be
+manually deleted.  The compiler will not remove these error messages,
+even after the link error is resolved.
+
+\subsection{Design of the compiler}
+
+The Blakod compiler follows traditional compiler design, with separate
+components for lexing, parsing, code generation, and optimization.  It
+links with the {\tt flex} and {\tt bison} programs, which are GNU
+versions of the UNIX utilities {\tt lex} and {\tt yacc}.  These
+utilities take as input simple descriptions of Blakod's tokens and
+grammar, and produce as output the parser component of the compiler.
+
+The parser checks the input Blakod source for errors, and converts it
+to an internal representation.  At the top level, this representation
+consists of a list of the classes present in the source file.  Each
+class holds a list of component resources, class variables,
+properties, and message handlers.  Finally, each message handler
+contains a parameter list, information on its local variables, and a
+list of statements.  Expressions within statements are represented as
+standard inorder expression trees, with operators at the nodes and
+values at the leaves.
+
+As the parser encounters new identifiers, it inserts them into a
+global symbol table.  This provides a rudimentary type checking,
+preventing, for example, a local variable and a parameter to share the
+same name.  The symbol table records the string name of each
+identifier, as well as a number that the object file will use to refer
+to the identifier.  The parser adds the names of built-in Blakod
+functions to the symbol during initialization; these use well-known
+identification numbers so that the server can tell which built-in
+function is being called by a particular statement.
+
+If the parser encounters errors, these are reported and compilation
+stops.  If there are no errors, the code generator recursively
+traverses the code tree and produces \bof intermediate language
+statements for each Blakod statements, and writes these out to disk.
+Finally, the resources for all the classes present in the input source
+file are placed in a \rsc file and encrypted.  Encryption is necessary
+to keep users from reading strings which might give them an advantage
+in game play.  If no resources are present, the \rsc file is not
+generated.
+
+The compiler performs the single optimization of constant folding;
+that is, constant expressions are replaced by the resultant value of
+the expression.  This optimization is important because it improves
+code readability: bitwise constant combinations and complicated
+formulas can be expressed simply without impacting performance.  Upon
+reaching an expression, the code generator calls the optimizer to
+simplify the expression if possible; the simplified expression
+replaces the original form.
+
+Because there is no linker, references to identifiers in other classes
+must be stored externally.  A text file named {\tt kodbase.txt} keeps
+track of all identifiers in previously compiled classes.  Each line in
+{\tt kodbase.txt} contains an identifier's text string, the
+identifier's compiler-generated number that appears in object files,
+and a letter indicating the identifier's type---either class, message
+handler, class variable, resource, property, parameter, or the special
+value ``missing.''  The missing value is for forward references, that
+is, identifiers that the compiler encounters before it can determine
+type information.  The compiler will replace the missing value with
+the identifier's type when it can be determined from another source
+file.
+
+The compiler loads {\tt kodbase.txt} upon startup, and writes it out
+again after code generation.  In addition to substituting for a
+linker, the file is used by the server in two ways.  First, saved
+games reference identifier names, so that a saved game can be reloaded
+even if all identifier numbers change.  Second, identifier names are
+used in administrator mode for user convenience.
+
+Saved games can be reloaded even if all identifier numbers change,
+since saved games reference the names, not the numbers.  Rebuilding
+the Blakod with working off the same kodbase.txt and hence the same
+reference numbers will still allow the server to reload saved games.
+To rebuild all the Blakod, you should first delete all the compiled
+bof files.
+
+The compiler supports an {\tt include} directive that inserts one
+source file in another.  Though this directive may appear anywhere, it
+is typically used to include global constants in the {\tt constants}
+section of a class declaration.  {\tt include}s may be nested to a
+depth of 10.
+
+\subsection{Running the compiler}
+
+The compiler is a console mode Win32 program named {\tt bc.exe}.  Its
+simplest invocation is
+
+{\tt bc} {\em input\_filename}{\tt .kod}
+
+\noindent
+which compiles the input file to output files with {\tt .bof} and {\tt
+.rsc} extensions.  The command line switches are
+
+\begin{tabular}{ll}
+{\em -d} & include debugging information in the \bof file (see the
+description \\
+	& of the \bof file format in Appendix~\ref{app:formats}).
+\\
+{\em -K filename} & use {\em filename} as the kodbase file.
+\\
+{\em -I path} & look for included files in the {\em path} directory.
+\end{tabular}
+
+If compilation completes without errors, the compiler exits with the
+value 0; otherwise, it exits with a nonzero value.  The build system
+uses this return value to know when to terminate.
+
+In \bof files, properties are identified by number.  The {\tt
+kodbase.txt} file is the only place that a subclass can find the
+number of properties in its superclasses; therefore, when a class is
+compiled, all of its subclasses must also be recompiled, in case a
+property has been added or deleted.  This is why the build system (see
+section~\ref{sec:build}) builds Blakod from the root of the hierarchy
+down to the leaves, and why subclasses are made to depend on their
+ancestors.
+
+
+\section{Room editor}
+
+The room editor reads, edits, and saves {\tt .roo} files.  The editor
+is a modified version of WinDEU, a Win32 GUI program for editing DOOM
+data files.  Because it uses Borland's Object Windows Library (OWL),
+it must be compiled with Borland's C++ compiler.
+
+A help file distributed with the editor describes the mechanics of
+editing parts of a room file.  Below we detail the differences between
+WinDEU and the Blakston room editor.
+
+An initialization file called {\tt windeu.ini} specifies options for
+the WinDEU.  The two options that we added to WinDEU are {\tt
+bitmapdir}, which specifies the directory containing the compiled
+textures ({\tt .bgf} files), and {\tt bitmapspec}, which gives the
+filespec for the texture files.  This should always be set to {\tt
+grd*.bgf}, because the client assumes that texture graphics have
+filenames of this form.
+
+If a file is given on the command line to the editor, that file is
+loaded upon startup.  Otherwise, the editor starts up without a room
+file, in a mode that used to contain many options in WinDEU, but is
+now obsolete.  The only options available are loading a room file to
+edit, or viewing a list of all available textures.  When a texture is
+viewed, its string name (specified by the {\em -n} option to {\tt
+makebgf}) is also shown.
+
+When the editor saves a file, it first renames any existing file with
+the same name by appending a tilde the end of the filename.  This
+provides a simple backup mechanism, and also protects users in the
+case of a bug in the editor that causes it to crash during a save.
+
+\subsection{Basic concepts}
+
+As in DOOM, the basic elements of a room file are {\em linedefs}, {\em
+sidedefs}, and {\em sectors}.  A linedef is a line on the map,
+connecting one point to another.  A sidedef is a description of the
+textures on one side of a wall; a linedef may have up to two
+associated sidedefs, one for each side of the wall.  A sector is a
+polygonal region on the floor, which conceptually also maps to the
+same polygon on the ceiling.  Properties of a sector include the
+associated wall and floor textures, as well as a number of flags that
+are described below.
+
+In order to save space, sidedefs that are exactly equivalent are
+merged when the room is saved to disk.  In other words, if two
+linedefs reference two identical sidedefs, the linedefs are modified
+to reference one of the sidedefs, and the other is discarded.  When
+the room is later reloaded into the editor, this procedure is undone
+by assigning each linedef two unique sidedefs.  Thus, the merging
+procedure does not destroy any information.
+
+A sidedef references up to three textures, referred to as {\em
+normal}, {\em above}, and {\em below}.  To understand how these are
+placed, consider two adjacent areas with different floor and ceiling
+heights.  The below texture is drawn in the vertical space between the
+two floors (like a riser on a staircase).  Similarly, the upper
+texture is drawn between the two ceilings.  The normal texture is
+drawn between the higher of the two floors and the lower of the two
+ceilings.  Each of these three textures may be set independently in
+each sidedef.
+
+\subsection{Graphic engine settings}
+
+Because the graphics engine in the client differs significantly from
+the DOOM graphics engine, many of the original WinDEU settings were
+removed or replaced.  In particular, the ``Things'' mode of the editor
+was mostly removed---it was used to place monsters in DOOM, while in
+Blakston, these are set in Blakod.  Below we outline the other
+differences.
+
+\subsubsection{Coordinates}
+
+The room editor displays vertex coordinates that don't exactly
+correspond to internal coordinates in the client or Blakod.  While the
+units are the same in the editor and Blakod, those in the client are
+64 times smaller.  In the editor, positive {\em y} is towards north,
+while in Blakod and the client, positive {\em y} is toward the south.
+The editor displays all three sets of coordinates in real time as the
+mouse moves around the screen.
+
+To restate, the editor displays both its internal coordinates for
+vertices, and the equivalent coordinates that Blakod will use.  Thus,
+there is no need to ever use the internal editor coordinates, unless
+that is helpful to room designers.  These coordinates are displayed
+for reference only; they aren't even saved in the room file.
+
+In the editor, the origin is at an arbitrary point.  In Blakod and the
+client, the origin is at a user-specified point, or at the upper
+leftmost vertex in the room if no point is specified.  The user
+specifies the origin by placing a point on the map in the editor's
+Thing mode.  A similar point can be placed to indicate the lower right
+corner of the room.  This is useful for placing linedefs outside the
+area where players can move, creating the illusion that rooms are
+smoothly connected.  The room Blakod can also automatically move a
+player from one room to another when the player moves outside the
+rectangle given by the two points in Thing mode.
+
+\subsubsection{Texture alignment}
+
+Texture alignment is achieved by specifying {\em x} and {\em y}
+offsets into the textures in a sidedef or sector.  Since only one pair
+of offsets exists in each sidedef or sector, the lower, upper, and
+normal textures on a linedef all use the same offsets, and the floor
+and ceiling textures in a sector also use the same offsets.  Thus, it
+is not always possible to align every texture to look smooth in the
+client.
+
+A question in texture alignment is where the origin of a texture is
+placed on a wall---the natural choices are at the northwest corner
+(drawing ``top-down''), or at the southwest corner (drawing ``bottom
+up'').  By default, above textures are drawn top down, while normal
+and below textures are drawn bottom up.  This arrangement tends to
+require fewer adjustments by the user to align textures; however,
+these defaults can be overridden by flags in each sidedef.
+
+Some functions in the editor perform automatic alignment of sidedef
+textures.  These functions carry carried over from WinDEU.
+
+\subsubsection{Lighting}
+
+Each sector may have its light level set independently.  Sidedefs that
+border on the sector are drawn with the same light level as the sector
+itself.  The actual brightness of a sector when drawn in the client is
+a combination of several factors:  the lighting level set in the
+editor, ambient light, proximity of the viewer, and any special
+effects.
+
+The light level in a sector may be set to any value between 0 and
+255.  Additionally, the sector contains a flag that can be set to make
+it immune to the effects of ambient light.  This is useful for indoor
+areas, where the time of day and sun's position should not change the
+lighting level of the sector.  However, since the ambient lighting
+flag and the light level information occupy the same byte in the {\tt
+.roo} file, one bit of resolution in the light level is discarded.
+Thus, setting the low bit of the light level in a sector has no
+effect; the light level is always a multiple of two.
+
+A sector can also be set to have its light level flicker randomly.
+When the flicker flag is set, the client randomly sets the light
+level of the sector every 100 milliseconds.  The light level is chosen
+uniformly between the sector's given light level, and the maximum
+possible brightness.
+
+\subsubsection{Additional fields}
+
+There are a number of additional fields in each sidedef and sector
+that are not present in WinDEU.  We describe each briefly below.
+
+By default, the client only draws a wall on the map after the player
+has seen it.  Two flags in the room editor can make the wall either
+always appear on the map, or never appear on the map, regardless of
+whether the player has seen it.
+
+A flag in a sidedef can cause all textures on the sidedef to be
+right-left flipped.  This helps keep down the number of textures in
+a game; a pair of symmetrical textures can be combined into one.
+
+% Passable drawn in purple
+
+Transparent textures present several problems.  For one thing, they
+are rather inefficient, since the client's graphics engine must also
+draw whatever is behind a transparent wall.  In many places, we want
+the benefit of transparency to give the top of a texture a rounded
+appearance (such as the canopy of a forest), and we can guarantee that
+nothing behind the wall need be drawn, because of the layout of the
+room.  In these situations, the ``no look through'' flag should be set
+on the sidedef; the sidedef will be drawn transparently, but the
+engine won't draw anything behind it, improving performance.  Another
+problem with a forest canopy is that textures tile vertically by
+default---clearly this isn't desired behavior for trees, signs, and
+other places where a linedef is used to represent objects other than
+walls.  For these cases, the editor has a ``no vertical tile'' flag
+that can be set for each sidedef.
+
+Each sector has a depth field that can be set to any of four values
+(one of which is zero depth, the default).  Objects in sectors with
+non-zero depths are drawn extending into the ground, as if they are
+wading through a liquid.  We use this effect for water and lava.
+
+Two types of texture animation are available in the room editor.  In
+the first, the bitmap displayed on a wall or sector changes at a
+regular interval between different bitmaps.  The length of the
+interval can be set in the editor in the ``animation speed'' field of
+a sidedef or sector.  If this is zero, there is no animation; if it is
+nonzero, the texture animates through all groups present in the {\tt
+bgf} file of the texture (see the description of groups in
+section~\ref{sec:makebgf}).  Another animation is a smooth scrolling
+of a single bitmap in one of the eight cardinal directions.  The speed
+of the scrolling can be set to one of four possible values (with zero
+speed being the default).  These two animation types may not both be
+specified for a given sidedef or sector.
+
+Another field in every sidedef and sector allows the user to specify
+an arbitrary two-byte tag.  While specifying this tag itself has no
+effect, all client/server protocol messages that refer to parts of a
+room do so via this tag value.  This extra level of indirection allows
+a single protocol message to refer to many sidedefs or sectors
+simultaneously, reducing the number of protocol messages that need to
+be sent.  In addition, all sectors with the same tag value and same
+light level flicker in unison.  We found this useful in some room
+designs where we needed neighboring sectors to flicker together.
+
+\section{Bitmap complier ({\tt makebgf})}
+\label{sec:makebgf}
+
+The client loads special-purpose graphic files with a {\tt .bgf}
+extension.  The \makebgf program takes as input one or more standard
+Windows bitmaps and a list of options on its command line, and
+produces as output a single \bgf file.  The \bgf file organizes
+bitmaps in a way that is convenient for the client to reference, and
+also stores some information that helps in animation.
+
+Since all graphics in the game use a single palette, the palette
+information in Windows bitmaps is redundant, and doesn't appear in a
+\bgf file.  The \bgf file is also compressed to save disk space on
+users' machines.
+
+\subsection{Running \makebgf}
+
+\makebgf is a Win32 console mode program, run from the command line.
+The command line switches operate as follows.
+
+First, specify the output file with the {\em -o} switch.  The {\em -s}
+switch optionally specifies a ``shrink factor'' that's used to
+determine the display size of the bitmap.  For example, the player
+bitmap is 128 by 256 pixels, but it's built with {\em -s 4}, so it's
+displayed as if it were 32 by 64.  Extra resolution in the bitmap is
+displayed when the object is close.  The default is shrink factor 1.
+
+The {\em -n} switch allows you to insert a 32 byte string into the bgf
+file; this is displayed by the room editor as the name of the texture.
+
+The {\em -r} switch causes all the bitmaps in a bgf to have their rows
+and columns swapped (i.e. a 90 degree rotation).  This is used for
+wall textures, which the client draws rotated 90 degrees for better
+performance.
+
+Next you give the number of bitmaps in the file, followed by their
+filenames.  Wildcards are allowed.
+
+Last you specify how the bitmaps are arranged into groups.  Each group
+consists of the object viewed from different angles.  First you give
+the number of groups.  Then, for each group, you give the number of
+bitmaps in the group, followed by the index into the filename list of
+each bitmap (the first bitmap is numbered 1).  For example:
+
+{\tt makebgf -o out.bgf 4 a b c d 2  1 1  3 2 3 4}
+
+\noindent
+This makes a bgf with 4 bitmaps and 2 groups.  The first group has
+bitmap {\em a}, which is visible from all 360 degrees.  The secound
+group has three bitmaps, each visible through an angle of 120 degrees.
+The {\em b} bitmap is the face on view, and the others progress around
+the circle in increasing order; that is, the {\em c} bitmap is visible
+from 120 degrees, and the {\em d} bitmap from 240 degrees.
+
+Specifying index 0 means that no bitmap should be displayed for
+combination of group and angle.  This is useful for overlay bitmaps,
+where, for example, parts of a face are only visible from certain angles.
+
+Bitmap group 0 is displayed by default by most Blakod, and the client
+uses it for display in certain dialogs.  Other groups are reached
+by animation or bitmap change commands sent from Blakod.
+
+For very long command lines, you can read the command line from a file, 
+like this:
+
+{\tt makebgf  @}{\em cmdfile}
+
+\noindent
+These command files by convention end with the extension {\tt .bbg},
+and are edited by the {\tt bbgun} program to make lining up bitmaps
+easier.
+
+Many objects have graphics that are made up of several pieces; for
+example, a player consists of bitmaps for the torso, legs, arms, head,
+and facial features.  The client organizes the graphics for a single
+object as a {\em base bitmap} and a set of {\em overlays}.  The base
+bitmap is drawn exactly at the object's position, while each overlay
+is attached to a {\em hotspot} on the base bitmap or on another
+overlay.  Despite the name, an overlay may be drawn either before
+(under) or after (over) the base bitmap, depending on the sign of its
+hotspot number.
+
+\subsubsection{Overlay offsets}
+
+You can specify the {\em x} and {\em y} offsets of an overlay bitmap by putting
+these numbers in brackets after the bitmap filename, like this:
+
+\begin{verbatim}
+makebgf -o out.bgf 2 a [10, 10] b [50, 100]
+\end{verbatim}
+\noindent
+These offsets are added to the overlay's location when the overlay is
+displayed.
+
+\subsubsection{Hotspots}
+
+Each bitmap can have one or more hotspots, which are locations
+referenced by Blakod to place overlays on bitmaps.  For example, you
+can place a head on a body by putting a neck hotspot in the body
+bitmap, and then displaying the head overlay attached to the neck
+hotspot.
+
+Hotspots are specified by putting them after the bitmap filenames, and
+after the (optional) offsets of the bitmap.  The syntax is like this:
+
+\begin{verbatim}
+makebgf -o out.bgf 2 a [10, 10] :1 1 [20, 20] \
+                     b [50, 100] :3 2 [10, 10] 4 [20, 20] 7 [1, 1]
+\end{verbatim}
+\noindent
+The {\em a} bitmap has one hotspot; it is numbered 1 and located at (20,
+20).  The {\em b} bitmap has three hotspots, numbered 2, 4, and 7.
+Hotspots are numbered 1-255 inclusive. The value 0 is reserved to
+indicate that no hotspot exists.  Positive one-byte values (1 to 127) are
+for overlays (drawn after the main bitmap) and negative one-byte
+values (-1 to -127) are for underlays (drawn before the main bitmap).
+
+When an overlay is attached to a hotspot in the underlying object, the
+overlay's position is determined by adding the overlay's offset to the
+hotspot's location.  An overlay can also be attached to a hotspot in
+another overlay (for example, placing eyes on a head overlay).  In
+this example, the position of the eyes is determined by adding the
+eye's offset to the eyes' hotspot location (this is given in the
+head's bgf), and then adding this to the head's hotspot location (this
+is given in the body's bgf).  In other words, the eyes' offset is
+computed relative to the head's location.
+
+If one overlay {\em A} is placed on another overlay {\em B}, the two
+overlays may be drawn in either possible order, depending on the sign
+of the hotspot in overlay {\em B}.  Since overlay {\em B} might be
+drawn before or after the base bitmap, there are a total of seven
+layers of bitmaps that may make up an object: the base bitmap itself
+makes up one layer, overlays on the base bitmap make up two more, and
+the remaining layers are overlays placed over or under other overlays.
+The current system does not support more levels of overlays.  While
+few require even these seven layers, player graphics do, in order to
+draw body parts and equipped items in just the right order.
+
+\section{Hotspot editor ({\tt bbgun})}
+
+Bbgun has been rewritten and is now obsolete. However, it comes with a
+Windows help file describing its use.
+
+\section{Resource merger ({\tt rscmerge})}
+
+After all the Blakod is compiled, there is one \rsc file that needs to
+be sent to the client for each Blakod class.  As of this writing,
+there are over 500 classes, and loading that many \rsc files into the
+client at startup is unacceptably slow.  A small command-line utility
+program called {\tt rscmerge} combines all of these \rsc files into a
+single file, which by convention we give the extension {\tt .rsb} to
+distinguish it from other resource files.  Thus, in each public
+distribution, there is only a single {\tt .rsb} file that contains the
+current version of all resources.
+
+The syntax of {\tt rscmerge} is
+
+{\tt rscmerge -o} {\em output\_filename} {\em input\_filename} {\em
+input\_filename} \dots
+
+\noindent
+Wildcard characters are allowed in {\em input\_filename}.
+
+\section{Room encrypter ({\tt roocrypt})}
+
+We must encrypt {\tt .roo} files before we send them to the public.  A
+command-line utility called {\tt roocrypt} performs this function.
+The syntax is
+
+{\tt roocrypt} {\em input\_filename} {\em output\_filename}
+
+\noindent
+The input and output files must be different.
+
+Since the room editor cannot load encrypted rooms, it is convenient to
+leave rooms in their unencrypted form until the last moment, and then
+encrypt them all just before releasing them to the public.  The client
+is able to load both encrypted and unencrypted rooms.

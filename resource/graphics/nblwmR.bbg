@@ -1,0 +1,28 @@
+# Noblewoman - right arm
+# 4 groups
+# 1 standing
+# 2 waving
+# 3-4 walking
+-s 2
+16
+nr000aba.bmp   [-5, -4] 
+nr090aba.bmp   [-3, -4] 
+nr180aba.bmp   [-11, -4] 
+nr270aba.bmp   [-18, -2] 
+nr000dba.bmp   [-33, -19] 
+nr090dba.bmp   [-8, -19] 
+nr180dba.bmp   [-6, -20] 
+nr270dba.bmp   [-4, -16] 
+nr000bba.bmp   [-7, -4] 
+nr090bba.bmp   [-26, -3] 
+nr180bba.bmp   [-7, -5] 
+nr270bba.bmp   [0, -2] 
+nr000bbb.bmp   [-7, -4] 
+nr090bbb.bmp   [-4, -2] 
+nr180bbb.bmp   [-6, -5] 
+nr270bbb.bmp   [-15, -1] 
+4
+ 4      1   4   3   2
+ 4      5   8   7   6
+ 4      9  12  11  10
+ 4     13  16  15  14

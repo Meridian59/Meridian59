@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PositionCacher is ActiveObject
+
+constants:
+
+   include blakston.khd
+
+classvars:
+
+
+properties:
+
+   % keep our row and col for speed
+   piRow
+   piCol
+   piFine_row = 0
+   piFine_col = 0
+
+messages:
+
+   NewOwner(what = $)
+   {
+      piRow = First(Send(what,@GetRoomPos,#what=self));
+      piCol = Nth(Send(what,@GetRoomPos,#what=self),2);
+
+      piFine_row = Nth(Send(what,@GetRoomPos,#what=self),3);
+      piFine_col = Nth(Send(what,@GetRoomPos,#what=self),4);
+
+      propagate;
+   }
+
+   GetRow()
+   {
+      return piRow;
+   }
+
+   GetCol()
+   {
+      return piCol;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $,fine_row = $,fine_col = $)
+   {
+      if what = self
+      {
+         piRow = new_row;
+         piCol = new_col;
+         piFine_row = fine_row;
+         piFine_col = fine_col;
+      }
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

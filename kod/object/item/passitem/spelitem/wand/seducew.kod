@@ -1,0 +1,37 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SeduceWand is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SeduceWand_label_name_rsc = "wand of charming"
+   SeduceWand_icon_rsc = wand6.bgf
+   SeduceWand_desc_rsc = "Magical energy crackles about this slender wand."
+
+classvars:
+
+   vrLabelName = SeduceWand_label_name_rsc
+   vrIcon = SeduceWand_icon_rsc
+   viSpellEffect = SID_SEDUCE
+   viColor = XLAT_TO_PURPLE
+
+properties:
+
+   vrDesc = SeduceWand_desc_rsc
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

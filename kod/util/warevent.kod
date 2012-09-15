@@ -1,0 +1,545 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WarEvent is UtilityFunctions
+
+% This is an event that keeps track of a war between various groups.
+% Potential issues:  Invis, Fade, Shadowform?
+
+constants:
+
+   include blakston.khd
+
+   WAR_UNRESTRICTED = 0
+   WAR_FACTION_RESTRICTED = 1
+   WAR_TOWN_RESTRICTED = 2
+
+resources:
+
+   WarEvent_Duke_name = "The Army of Duke Akardius"
+   WarEvent_Princess_name = "The Honor Guard of Princess Kateriina"
+   WarEvent_Rebel_name = "The Militia of the Rebel Jonas"
+
+   WarEvent_Tos_name = "The Tos Regular Army"
+   WarEvent_Barloque_name = "The Guardians of Barloque"
+   WarEvent_Jasper_name = "The Jasper Citizen's Militia"
+   WarEvent_CorNoth_name = "The Champions of Cor Noth"
+   WarEvent_Marion_name = "The Marion Defenders"
+
+   WarEvent_team_alpha_name = "Team Alpha"
+   WarEvent_team_beta_name = "Team Beta"
+   WarEvent_team_gamma_name = "Team Gamma"
+   WarEvent_team_delta_name = "Team Delta"
+
+   WarEvent_start_message = \
+      "~B~rWar has been declared!\n"
+      "~kYou may choose to join a side by using a war pendant found in your inventory.  "
+      "The pendant you use will determine which side you are part of for this battle.  "
+      "Each side can be identfied by the color of their shirt or robe; neutral characters "
+      "are dressed in grey.  Any kill scored by your side against an opposing non-neutral "
+      "character will be recorded.  The results of this battle will be announced at the "
+      "end of the war.  Good luck!"
+   WarEvent_end_message = \
+      "~B~rThe war has ended!  ~kNo more kills will count toward the score."
+   WarEvent_got_kill_rsc = "~B~bYou have scored a kill for your side!"
+
+   WarEvent_join_rsc = "You have joined: %s"
+   WarEvent_final_scores_rsc = "Final Scores: "
+   WarEvent_current_scores_rsc = "Current Scores: "
+   WarEvent_have_rsc = " have "
+   WarEvent_kill_rsc = " kill "
+   WarEvent_kills_rsc = " kills."
+
+   WarEvent_cant_join = "This team is too large currently. Join another team or wait for the teams to even out."
+
+   WarEvent_mail_sender = "War Event Report"
+
+classvars:
+
+   viNeutralColor = XLAT_TO_GRAY
+
+properties:
+
+   % A listing of the current sides of the dispute.
+   plSides = $
+
+   % A list of the players in each side.
+   plSoldiers = $
+
+   % A count of the kills scored by each side.
+   plKills = $
+
+   % Who do we mail final statstics to?
+   poReporter = $
+
+   % Are people restricted from joining a particular side?
+   %  If not we want to enforce size limits on the groups.
+   pbRestricted = WAR_UNRESTRICTED
+
+   % Is war active?
+   pbActive = FALSE
+
+   % This is the information about each side.
+   %  A list of side identifier, text description, shirt color.
+   plSideInfo = $
+
+messages:
+
+   Constructor()
+   {
+      send(self,@Reset);
+
+      return;
+   }
+
+   Reset()
+   "Resets the war, clears out all information."
+   {
+      pbActive = FALSE;
+      plSides = $;
+      plSoldiers = $;
+      plKills = $;
+      pbRestricted = WAR_UNRESTRICTED;
+
+      % Delete out WarJoin Items
+      send(&WarJoinPendant,@Delete);
+
+      plSideInfo = [ [FACTION_DUKE, WarEvent_Duke_name, XLAT_TO_PURPLE],
+                     [FACTION_PRINCESS, WarEvent_Princess_name, XLAT_TO_ORANGE],
+                     [FACTION_REBEL, WarEvent_Rebel_name, XLAT_TO_RED],
+
+                     [RID_TOS, WarEvent_Tos_name, XLAT_TO_BLUE],
+                     [RID_BARLOQUE, WarEvent_Barloque_name, XLAT_TO_GREEN],
+                     [RID_JASPER, WarEvent_Jasper_name, XLAT_TO_BLACK],
+                     [RID_CORNOTH, WarEvent_CorNoth_name, XLAT_TO_YELLOW],
+                     [RID_MARION, WarEvent_Marion_name, XLAT_TO_SKY],
+
+                     [WAR_TEAM_ALPHA, WarEvent_team_alpha_name, XLAT_TO_BLUE],
+                     [WAR_TEAM_BETA, WarEvent_team_beta_name, XLAT_TO_RED],
+                     [WAR_TEAM_GAMMA, WarEvent_team_gamma_name, XLAT_TO_GREEN],
+                     [WAR_TEAM_DELTA, WarEvent_team_delta_name, XLAT_TO_YELLOW]
+                   ];
+
+      return;
+   }
+
+   StartWar(override = FALSE)
+   "Starts the war!  Must be during a Frenzy or must send override as TRUE."
+   {
+      local lGiveList, oPlayer, iSide;
+      
+      % Only during frenzies, or during special occasions (testing), or when we have enough sides for a war.
+      if NOT (override OR send(SYS,@GetChaosNight))
+         OR length(plSides) < 2
+      {
+         return FALSE;
+      }
+
+      % Set as active
+      pbActive = TRUE;
+
+      % Get rid of those shirts!  Set everyone to neutral color.
+      send(&Player,@RemoveShirt);
+      send(&Player,@SetDefaultClothes,#shirt_color=viNeutralColor);
+      
+      % Give out joining objects
+      lGiveList = send(SYS,@GetUsers);
+
+      for oPlayer in lGiveList
+      {
+         % Give out global message.
+         send(oPlayer,@MsgSendUser,#message_rsc=WarEvent_start_message);
+         
+         if NOT pbRestricted
+         {
+            % Give out one pendant for everyone.
+            for iSide in plSides
+            {
+               send(oPlayer,@NewHold,#what=Create(&WarJoinPendant,#side=iSide));
+            }
+         }
+         else
+         {
+            % Restrict objects to qualified players.  Must be part of the group to join.
+            if pbRestricted = WAR_FACTION_RESTRICTED
+            {
+               iSide = send(oPlayer,@GetFaction);
+
+               if iSide <> FACTION_NEUTRAL
+               {
+                  send(oPlayer,@NewHold,#what=Create(&WarJoinPendant,#side=iSide));
+               }
+            }
+            else
+            {
+               if pbRestricted = WAR_TOWN_RESTRICTED
+               {
+                  iSide = send(oPlayer,@GetHomeRoom);
+
+                  if iSide <> RID_RAZA
+                  {
+                     send(oPlayer,@NewHold,#what=Create(&WarJoinPendant,#side=iSide));
+                  }
+               }
+            }
+         }
+      }
+
+      return TRUE;
+   }
+
+   EndWar(reporter=$)
+   "Ends the war, gmails out the details."
+   {
+      local sMessage;
+      
+      if reporter <> $
+      {
+         poReporter = reporter;
+      }
+
+      % Broadcast the end and the final scores.
+      send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=WarEvent_end_message);
+
+      ClearTempString();
+      AppendTempString("~B~k");
+      AppendTempString(WarEvent_final_scores_rsc);
+      AppendTempString("~n");
+      send(self,@ConstructScores);
+
+      send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=send(SYS,@GetPercentQRsc),
+           #parm1=GetTempString());
+
+      % Send out info mail to the reporter
+      if poReporter <> $
+      {
+         sMessage = CreateString();
+         SetString(sMessage,GetTempString());
+
+         % Remove color codes
+         StringSubstitute(sMessage,"~B~k","");
+         StringSubstitute(sMessage,"~n","");
+         
+         send(poReporter,@ReceiveNestedMail,#from=WarEvent_mail_sender,#dest_list=[poReporter],
+              #nest_list=[sMessage]);
+      }
+
+      % Reset everything.
+      send(self,@Reset);
+
+      return;
+   }
+
+   SetupFactionWar()
+   "Sets up a restricted war based on faction."
+   {
+      send(self,@Reset);
+      pbRestricted = WAR_FACTION_RESTRICTED;
+
+      send(self,@AddSide,#side=FACTION_REBEL);
+      send(self,@AddSide,#side=FACTION_DUKE);
+      send(self,@AddSide,#side=FACTION_PRINCESS);
+
+      return;
+   }
+
+   SetupTownWar()
+   "Sets up a restricted war based on hometowns."
+   {
+      send(self,@Reset);
+      pbRestricted = WAR_TOWN_RESTRICTED;
+
+      send(self,@AddSide,#side=RID_JASPER);
+      send(self,@AddSide,#side=RID_CORNOTH);
+      send(self,@AddSide,#side=RID_MARION);
+      send(self,@AddSide,#side=RID_BARLOQUE);
+      send(self,@AddSide,#side=RID_TOS);
+
+      return;
+   }
+
+   SetupTeamWar(number=4)
+   "Sets up an unrestricted war for 'number' generic teams."
+   {
+      local iNumber, iSide;
+
+      iNumber = bound(number,2,4);
+
+      send(self,@Reset);
+      pbRestricted = WAR_UNRESTRICTED;
+
+      iSide = 0;
+      while iSide < iNumber
+      {
+         send(self,@AddSide,#side=(WAR_TEAM_ALPHA+iSide));
+         iSide = iSide + 1;
+      }
+
+      return;
+   }
+
+   AddSide(side=$)
+   "Adds a side.  Either a faction value or a homeroom value."
+   {
+      % Don't allow duplicate sides.
+      if plSides = $
+         OR FindListElem(plSides,side) = 0
+      {
+         plSides = cons(side,plSides);
+         plSoldiers = cons($,plSoldiers);
+         plKills = cons(0,plKills);
+      }
+      
+      return;
+   }
+
+   AddPlayerToSide(who=$,side=$)
+   "Does proper checks, then adds player to specified side if able.  Returns success."
+   {
+      local iSidePosition, lSoldiers, iNumSoldiers;
+
+      % Bail for missing info or if not active
+      if who = $ OR side = $
+         OR NOT pbActive
+      {
+         return FALSE;
+      }
+
+      iSidePosition = FindListElem(plSides,side);
+
+      % Bail if not side not found.
+      if iSidePosition = $ OR iSidePosition = 0
+      {
+         return FALSE;
+      }
+
+      % See if the player is already a member of a side.
+      if send(self,@GetPlayerSide,#who=who) <> $
+      {
+         % Player was found.
+         return FALSE;
+      }
+
+      % See if player is restricted from this side.
+      if pbRestricted
+      {
+         if pbRestricted = WAR_FACTION_RESTRICTED
+         {
+            % Side is a faction
+            if send(who,@GetFaction) <> side
+               OR send(who,@GetFaction) = FACTION_NEUTRAL
+            {
+               return FALSE;
+            }
+         }
+         else
+         {
+            % Side is a homeroom
+            if pbRestricted = WAR_TOWN_RESTRICTED
+            {
+               if send(who,@GetHomeRoom) <> side
+                  OR send(who,@GetHomeRoom) = RID_RAZA
+               {
+                  return FALSE;
+               }
+            }
+         }
+      }
+      else
+      {
+         % We're unrestricted, so check for balance of numbers
+         % Don't mess around if we have less than 6 soldiers on a side
+         iNumSoldiers = length(Nth(plSoldiers,iSidePosition));
+         if iNumSoldiers >= 6
+         {
+            for lSoldiers in plSoldiers
+            {
+               % Allow them to join if other groups have at least 80% of the desired side's population.
+               %  This prevents one side from growing ungainly large.
+               if (length(lSoldiers) * 100) / iNumSoldiers < 80
+               {
+                  send(who,@MsgSendUser,#message_rsc=WarEvent_cant_join);
+                  
+                  return FALSE;
+               }
+            }
+         }
+      }
+
+      % Add to the appropriate list.
+      SetNth(plSoldiers,iSidePosition,cons(who,Nth(plSoldiers,iSidePosition)));
+
+      % Give a message and set the color
+      send(who,@MsgSendUser,#Message_rsc=WarEvent_join_rsc,#parm1=send(self,@GetSideName,#side=side));
+      send(who,@SetDefaultClothes,#shirt_color=send(self,@GetSideColor,#side=side));
+
+      return TRUE;
+   }
+
+   RecordWarKill(who=$,victim=$)
+   "Checks to see if who and victim are in the war, then increments the kill count if appropriate."
+   {
+      local lSoldiers, iSidePosition, iVictimSide;
+      
+      % Bail for missing info, if victim isn't a player, or if not active
+      if who = $ OR victim = $
+         OR NOT IsClass(victim,&Player)
+         OR NOT pbActive
+      {
+         return FALSE;
+      }
+
+      % Find who's side.
+      iSidePosition = send(self,@GetPlayerSide,#who=who,#position=TRUE);
+
+      % Bail if not found on a side.
+      if iSidePosition = $
+      {
+         return FALSE;
+      }
+
+      % Find victim's side.
+      iVictimSide = send(self,@GetPlayerSide,#who=victim,#position=TRUE);
+
+      % Bail if not found on a side or on who's side.
+      if iVictimSide = $
+         OR iSidePosition = iVictimSide
+      {
+         return FALSE;
+      }
+
+      % Increment the kills
+      SetNth(plKills,iSidePosition,Nth(plKills,iSidePosition)+1);
+
+      % Send a message
+      Send(who,@MsgSendUser,#message_rsc=WarEvent_got_kill_rsc);
+
+      return TRUE;
+   }
+
+   GetPlayerSide(who=$,position=FALSE)
+   "Returns the player's side.  If position=TRUE, then return the side's position in plSides."
+   {
+      local lSoldiers, iSide;
+
+      iSide = 0;
+      
+      for lSoldiers in plSoldiers
+      {
+         iSide = iSide + 1;
+
+         if lSoldiers <> $
+            AND FindListElem(lSoldiers,who) <> 0
+         {
+            if position
+            {
+               return iSide;
+            }
+            
+            return Nth(plSides,iSide);
+         }
+      }
+      
+      return $;
+   }
+
+   GetSideName(side=$)
+   "Returns the resource for the name of the side."
+   {
+      local lSideInfo;
+
+      for lSideInfo in plSideInfo
+      {
+         if first(lSideInfo) = side
+         {
+            return Nth(lSideInfo,2);
+         }
+      }
+      
+      return $;
+   }
+
+   GetSideColor(side=$)
+   "Returns the color of the shirts for the gives side."
+   {
+      local lSideInfo;
+
+      % This is the neutral color
+      if side = $
+      {
+         return viNeutralColor;
+      }
+
+      for lSideInfo in plSideInfo
+      {
+         if first(lSideInfo) = side
+         {
+            return Nth(lSideInfo,3);
+         }
+      }
+      
+      return $;
+   }
+
+   IsActive()
+   "Returns if war event is active or not."
+   {
+      return pbActive;
+   }
+
+   GetScores()
+   {
+      ClearTempString();
+      AppendTempString("~B~k");
+      AppendTempString(WarEvent_current_scores_rsc);
+      AppendTempString("~n");
+      send(self,@ConstructScores);
+
+      send(SYS,@SystemBroadcast,#type=SAY_MESSAGE,#string=send(SYS,@GetPercentQRsc),
+           #parm1=GetTempString());
+
+      return;
+   }
+
+
+   ConstructScores()
+   {
+      local n, iKills;
+
+      n = 1;
+
+      while n <= length(plSides)
+      {
+         AppendTempString("\n");
+         AppendTempString(send(self,@GetSideName,#side=Nth(plSides,n)));
+         AppendTempString(WarEvent_have_rsc);
+
+         iKills = Nth(plKills,n);
+         AppendTempString(iKills);
+         if iKills = 1
+         {
+            AppendTempString(WarEvent_kill_rsc);
+         }
+         else
+         {
+            AppendTempString(WarEvent_kills_rsc);
+         }
+
+
+         n = n + 1;
+      }
+
+      return;
+   }   
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

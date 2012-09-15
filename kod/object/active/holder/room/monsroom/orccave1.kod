@@ -1,0 +1,135 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Orccave1 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_orccave1 = oc01.roo
+   room_name_orccave1 = "Ugol's Warren Entrance"
+
+   orccave1_music = orc1.mid
+
+classvars:
+
+   vrName = room_name_orccave1
+
+   viTeleport_row = 11
+   viTeleport_col = 15
+
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_orccave1
+   piRoom_num = RID_ORC_CAVE1
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = orccave1_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Orc, 60], [&CaveOrc, 40] ];
+
+      plGenerators = [
+		       [30,7], [36,6], [5,8], [13,5], [25,9], [5,16],
+		       [9,14], [21,19], [29,19], [12,27], [3,30], [8,35],
+		       [16,35], [28,36], [37,40], [44,36]
+		     ];
+
+%      plGenerators = [[50,43], [36,31], [28,39], [15,35], [21,19], [15,12], [39,17], [44,29],
+%                     [44,34], [27,8],   [36,28], [48,22], [47,23], [45,31], [24,33], [20,39]];
+    
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_ORC_CAVE2, 59, 6, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_CAVE2, 11, 1, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_CAVE1_EXT, 105, 40, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   
+   CreateStandardObjects()
+   {
+      local oPortal;
+
+      include oc01.ktm;
+
+%      if not (send(SYS,@AreRoomIllusionsEnabled))
+%      {
+%      oPortal = Create(&Portal,#dest_room_num=RID_G9,#dest_col=56, #dest_row=19);
+%      Send(self,@NewHold,#what=oPortal,#new_row=39, #new_col=39,#new_angle=ANGLE_SOUTH_EAST);
+%      }
+      propagate;
+   }
+
+%   DisableIllusions()
+%   {
+%   local oPortal;
+%      if not (send(self,@CountHoldingHowMany,#class=&portal) > 0)
+%      {
+%	 oPortal = Create(&Portal,#dest_room_num=RID_G9,#dest_col=56, #dest_row=19);
+%	 Send(self,@NewHold,#what=oPortal,#new_row=39, #new_col=39,#new_angle=ANGLE_SOUTH_EAST);
+%      }
+%      send(self,@setsector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,
+%	 #height = 1608,#speed=0);
+%      return;
+%
+%   }
+
+%   EnableIllusions()
+%   {
+%   local i, each_obj;
+%   for i in plActive
+%   {
+%      each_obj = send(self,@HolderExtractObject,#Data=i);
+%      if isclass(each_obj,&portal)
+%      {  send(each_obj,@Delete); }
+%   }
+%   send(self,@setsector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,
+%      #height = 1492,#speed=0);
+%   return;
+%   }
+
+%   FirstUserEntered()
+%   {
+%   if not (send(SYS,@AreRoomIllusionsEnabled))
+%   {
+%   send(self,@setsector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,
+%	#height = 1608,#speed=0);
+%   }
+%   propagate;
+%   
+%   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

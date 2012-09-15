@@ -1,0 +1,80 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SafetyDepositBox is Holder
+
+%% these are used by storage.kod to store stuff in.  These items are never to 
+%% be placed in the world
+
+constants:
+
+   include blakston.khd
+ 
+resources:
+
+classvars:
+
+   viObject_flags = CONTAINER_YES
+
+   viBulk_hold_max = 2500
+   viWeight_hold_max = $
+
+properties:
+   
+   piVault_num = $
+   poPlayer = $
+
+messages:
+
+   Constructor(vid=$, who=$)
+   {
+      if vid = $ or who = $  { debug("vault not constructed correctly."); return; }
+
+      piVault_num = vid;
+      poPlayer = who;
+      propagate;
+   }
+
+   GetBulkMax()
+   {
+      local oVault;
+      oVault = send(SYS,@FindVaultByNum,#num=piVault_num);
+      return send(oVault,@GetCapacity);
+   }
+   
+   GetSafeBoxOwner()
+   {
+      return poPlayer;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   ReqNewHold(what=$)
+   {
+      return isClass(what,&PassiveItem);      
+   }
+
+   NewHold(what=$)
+   {
+      % debug(send(what,@GetName));
+      propagate;
+   }
+
+   Delete()
+   {      
+      poPlayer = $;
+
+      propagate;
+   }
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

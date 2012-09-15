@@ -1,0 +1,133 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EventSign is PassiveObject
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   EventSign_name_rsc = "Join an event!"
+   EventSign_icon_rsc = newbsign.bgf
+
+   EventSign_no_info = "Check back soon for more info!"
+   EventSign_info = "Check back on %s at about %i:00 %s (Pacific time)."
+
+   EventSign_Sunday = "Sunday"
+   EventSign_Monday = "Monday"
+   EventSign_Tuesday = "Tuesday"
+   EventSign_Wednesday = "Wednesday"
+   EventSign_Thursday = "Thursday"
+   EventSign_Friday = "Friday"
+   EventSign_Saturday = "Saturday"
+
+   EventSign_AM = "AM"
+   EventSign_PM = "PM"
+
+classvars:
+
+   vrName = EventSign_name_rsc
+   vrIcon = EventSign_icon_rsc
+   
+properties:
+
+   piHour = $
+   piDay = $
+   
+messages:
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   ShowDesc()
+   {
+      local iHour, rDay, rAMPM;
+   
+      if piDay = $ OR piHour = $
+      {
+   	   AddPacket(4,EventSign_no_info);
+
+   	   return;
+	   }
+
+      if (piHour / 12) > 0
+      {
+         iHour = piHour mod 12;
+         rAMPM = EventSign_PM;
+      }
+      else
+      {
+         iHour = piHour;
+         rAMPM = EventSign_AM;
+      }
+
+      % Fix 0 hour calculations
+      if iHour = 0
+      {
+         iHour = 12;
+      }
+
+      if piDay = 1
+      {
+         rDay = EventSign_Sunday;
+      }
+      else
+      {
+         if piDay = 2
+         {
+            rDay = EventSign_Monday;
+         }
+         else
+         {
+            if piDay = 3
+            {
+               rDay = EventSign_Tuesday;
+            }
+            else
+            {
+               if piDay = 4
+               {
+                  rDay = EventSign_Wednesday;
+               }
+               else
+               {
+                  if piDay = 5
+                  {
+                     rDay = EventSign_Thursday;
+                  }
+                  else
+                  {
+                     if piDay = 6
+                     {
+                        rDay = EventSign_Friday;
+                     }
+                     else
+                     {
+                        rDay = EventSign_Saturday;
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+ 	   AddPacket(4,EventSign_info,4,rDay,4,iHour,4,rAMPM);
+
+ 	   return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

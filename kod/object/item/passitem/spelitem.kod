@@ -1,0 +1,436 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SpellItem is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+   GO_BAD_TIME = 24 * 60 * 60 * 1000
+
+resources:
+
+   Spellitem_name_rsc = "spellitem"
+   Spellitem_label_name_rsc = "generic spellitem"
+   Spellitem_icon_rsc = scr07.bgf
+   Spellitem_desc_rsc = \
+      "This is the generic spellitem and I can think of no good reason for you to have it.  You have been reported to the authorities.  prepare to die!!!!!"
+   Spellitem_broken_desc = "Generic broken description"
+   Spellitem_Broken = "This is the generic broken message."
+   Spellitem_fails = "Generic failure message."
+   Spellitem_bad_item_rsc = "generic bad item message"
+   Spellitem_bad_karma = "Your karma cannot unleash the spell within %s%s."
+   Spellitem_has_karma_requirement = \
+     "To use this, you must have sufficient karma to cast the spell inside."
+
+   SpellItem_divine_rsc = "  Divinely Crafted."
+   SpellItem_made_rsc = "  Made by "
+   SpellItem_distiller_rsc = " Distiller"
+   SpellItem_novice_rsc = ", Novice"
+   SpellItem_apprentice_rsc = ", Apprentice"
+   SpellItem_journeyman_rsc = ", Journeyman"
+   SpellItem_master_rsc = ", Master"
+
+classvars:
+
+   vrLabelName = Spellitem_label_name_rsc
+   vrIcon = Spellitem_icon_rsc
+   viSpellEffect = SID_LIGHT
+   viColor = $
+   vrBadDesc = Spellitem_bad_item_rsc
+   vrBroken = Spellitem_Broken
+   vrBrokenDesc = Spellitem_broken_desc
+   vrFails = Spellitem_fails
+   vrKarmaDesc = Spellitem_has_karma_requirement
+
+   viUse_type = ITEM_SINGLE_USE
+
+   viObject_flags = APPLY_YES | GETTABLE_YES
+   vrIcon = Spellitem_icon_rsc
+   vrDesc = Spellitem_desc_rsc
+
+   viValue_average = 120
+   viWeight = 3
+   viBulk = 5
+
+   vbFailSafe = FALSE
+
+   % Set to true for items you want to have delete themselves when they run out of charges.
+   vbNoBrokenView = FALSE  
+
+   viGround_group = 2
+   viInventory_group = 1
+
+   viHits_init_min = 1
+   viHits_init_max = 1
+
+properties:
+
+   vrName = Spellitem_name_rsc
+
+   % Used by the item creation spells when making a spell item at a set power.
+   piSpellPower = $   
+   pbBad = FALSE
+   ptGoBadTimer = $
+   piGoBadTime = GO_BAD_TIME
+   piMinSpellPower = 30
+   piMaxSpellPower = 60
+   pbMade = FALSE
+   poMaker = $
+   piSkill = $
+   piLabelColor = 0
+   pbDisabled = FALSE
+
+   % If true, user has to pass spell's karma check.  Otherwise, can always cast.
+   pbCheckKarma = FALSE
+
+messages:
+
+   Constructor(labelled=FALSE,model=$,iSpellpower=$,gobadtime=$,maker=$,Ability=$)
+   {
+      local oItemAtt;
+
+      if model <> $
+      {
+         if GetClass(model) <> GetClass(self)
+         {
+            model = $;
+         }
+         else
+         {
+            if Send(model,@IsLabelled)
+            {
+               vrName = vrLabelName;
+            }
+         }
+      }
+
+      if labelled
+      {
+         vrName = vrLabelName;
+         % Potion was labelled, so it's in a sales list.
+         % We don't want labelled objects to go "bad", so don't do that code.
+      }
+      else
+      {
+         % Make the item go bad after the specified time.
+         if gobadtime <> $
+         {
+            piGoBadTime = gobadtime;
+         }
+
+         Send(self,@StartGoBadTimer);
+      }
+      
+      if maker <> $
+      {
+         pbMade = TRUE;
+         poMaker = maker;
+
+         piSkill = bound(((Ability / 25) + 1),1,4);
+         if piSkill = 1 { pilabelcolor = XLAT_TO_GREEN; }
+         if piSkill = 2 { pilabelcolor = XLAT_TO_YELLOW; }
+         if piSkill = 3 { pilabelcolor = XLAT_TO_PURPLE; }
+         if piSkill = 4 { pilabelcolor = XLAT_TO_RED; }
+      }
+
+      if viColor <> $
+      {
+         piItem_flags = Send(SYS,@EncodeTwoColorXLAT,#color1=viColor,#color2=pilabelcolor);
+      }
+
+      if iSpellpower <> $
+      {
+         piSpellPower = iSpellPower;
+      }
+
+      piHits = random(viHits_init_min,viHits_init_max);
+
+      propagate;
+   }
+
+   IsLabelled()
+   {
+      if vrName = vrLabelName
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   AppendDesc()
+   {
+      % Tell player if this has karma restrictions
+      if pbCheckKarma
+      {
+         AppendTempString("\n\n");
+         AppendTempString(vrKarmaDesc);
+      }
+
+      propagate;
+   }
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+      % Prevent use if you can't fight.
+      if (IsClass(what,&Player))
+         AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT))
+         OR pbDisabled
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+   
+   CastSpell(what = $, apply_on = $)
+   "Casts the spell set by the spell object"
+   {
+      local oSpell,iSpellPower,iRand,iInt,lTargets;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
+
+      % Get proper targets according to spell, assume that apply_on is our basic target.
+      lTargets = Send(oSpell,@GetTargets,#who=what,#lTargets=[apply_on]);
+
+      if Send(oSpell,@IsHarmful)
+         AND IsClass(apply_on,&Monster)
+         AND NOT Send(apply_on,@CanMonsterFight,#who=poOwner,#oStroke=self)
+      {
+         return;
+      }
+
+      % Karma check?
+      if pbCheckKarma AND NOT Send(oSpell, @KarmaCheck, #who = poOwner)
+      {
+         Debug("user karma = ", Send(poOwner, @GetKarma), " spell needs = ",
+             Send(oSpell, @GetLevel));
+         Post(what, @MsgSendUser, #message_rsc = SpellItem_bad_karma,
+              #parm1 = Send(self, @GetDef),
+              #parm2 = Send(self, @GetName));
+         return;
+      }
+
+      if piSpellPower = $
+      {   
+         iSpellPower = random(piMinSpellPower,piMaxSpellPower);
+      }
+      else
+      {
+         iSpellpower = piSpellpower;
+      }
+      
+      if (vbFailSafe)
+         OR ( (Send(oSpell,@CanPayCosts,#who=poOwner,#lTargets=lTargets,
+                    #iSpellPower=iSpellPower,#bItemCast=TRUE,#bMade=pbMade))
+              AND (Send(Send(what,@GetOwner),@ReqSpellCast,#who=what,#oSpell=oSpell))
+              AND ((NOT Send(oSpell,@IsHarmful))
+                   OR Send(Send(what,@GetOwner),@ReqSomethingAttack,#what=what,
+                            #victim=apply_on)) )
+      {         
+         Send(oSpell,@CastSpell,#who=poOwner,#lTargets=lTargets,
+              #iSpellPower=iSpellPower,#bItemCast=TRUE);
+      } 
+      else 
+      {
+         Send(self,@DoFailure,#what=what,#lTargets=lTargets);
+      }
+
+      return;
+   }
+
+   DoFailure(what = $,lTargets=$)
+   {      
+      % Override for special behavior
+      Send(what,@MsgSendUser,#message_rsc=vrFails);
+      
+      return;
+   }
+
+   CanIdentify()
+   {
+      return TRUE;
+   }
+
+   RevealHiddenAttributes()
+   {
+      if vrName <> vrLabelName
+      {
+         vrName = vrLabelName;
+         
+         % Let the world know something changed.
+         if poOwner <> $
+         {
+            Send(poOwner,@SomethingChanged,#what=self);
+         }
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   GetTrueName()
+   {
+      return vrLabelName;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   "Casts the spell specified by the item (see subclass) on whatever it"
+   "is being applied to, then reduces 1 charge--break the item if last charge"
+   {
+      piHits = piHits - 1;
+
+      % Cast the spell specific to the Spellitem
+      Send(self,@CastSpell,#what=what,#apply_on=apply_on);
+      
+      % Check and see if that does in the Spellitem 
+      if piHits <= 0
+      {
+         % Post this so it prints AFTER the spell message.
+         Post(poOwner,@MsgSendUser,#message_rsc=vrBroken,
+              #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+
+         % Due to a lack of art resources we are now deleting all used up spellitems.
+         % I'm leaving vbNoBrokenView in so that if/when we ever get broken wand art we just 
+         % pop in into wand.kod and uncomment the if statement below.
+
+         if vbNoBrokenView
+         {
+            Post(self,@Delete);
+         }
+      }
+      
+      return;
+   }
+
+   IsRangedAttack()
+   {
+      return FALSE;
+   }
+
+   DoBaseDesc()
+   {
+      ClearTempString();
+
+      if pbBad
+      {
+         AppendTempString(vrBadDesc);
+      }
+      else
+      {
+         AppendTempString(vrDesc);
+      }
+
+      if pbMade 
+      { 
+         if IsClass(poMaker,&Admin)
+         {
+            AppendTempString(SpellItem_Divine_rsc);
+            return;
+         }
+
+         AppendTempString(SpellItem_made_rsc);
+         AppendTempString(Send(poMaker,@GetTrueName));
+         AppendTempString(" ");
+         AppendTempString(Send(poMaker,@GetCapDef));
+         AppendTempString(Send(self,@GetTitle));
+         AppendTempString(SpellItem_distiller_rsc);
+      }  
+
+      return;
+   }
+
+   GetTitle()
+   {
+      local stitle;
+
+      if piSkill = 1 { stitle = SpellItem_novice_rsc; }
+      if piSkill = 2 { sTitle = SpellItem_apprentice_rsc; }
+      if piSkill = 3 { sTitle = SpellItem_journeyman_rsc; }
+      if piSkill = 4 { sTitle = SpellItem_master_rsc; }
+
+      return stitle;
+   }
+
+   GoBad()
+   {
+      ptGoBadTimer = $;
+      pbBad = TRUE;
+      
+      return;
+   }
+
+   GetGoBadTime()
+   {
+      return piGoBadTime;
+   }
+
+   SetBad(IsBad = FALSE)
+   {
+      % Intended to allow admins to set classes of items as bad or not for updates.
+      pbBad = IsBad;
+
+      return;
+   }
+
+   StartGoBadTimer()
+   {
+      % Kick off the go bad timer if we're not already bad.
+      if NOT pbBad
+         AND piGoBadTime > 0
+      {
+         ptGoBadTimer = CreateTimer(self,@GoBad,piGoBadTime);
+      }
+
+      return;
+   }
+
+   StopGoBadTimer()
+   {
+      % Delete the go bad timer so it won't go off.
+      if ptGoBadTimer <> $
+      {
+         % Put a lower cap on the go bad time to a sixt of the standard go bad time.
+         %  This is currently 4 hours.
+         piGoBadTime = bound(GetTimeRemaining(ptGoBadTimer),GO_BAD_TIME/6,$);
+
+         DeleteTimer(ptGoBadTimer);
+         ptGoBadTimer = $;
+      }
+
+      return;
+   }
+
+   SpellItemIsAccessible()
+   {
+      local oSpell;
+   
+      oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
+
+      return Send(oSpell,@IsAccessible);
+   }
+
+   Delete()
+   {
+      if ptGoBadTimer <> $
+      {
+         DeleteTimer(ptGoBadTimer);
+         ptGoBadTimer = $;
+      }
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

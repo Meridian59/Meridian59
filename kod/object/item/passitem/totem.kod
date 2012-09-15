@@ -1,0 +1,235 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Totem is DefenseModifier
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   totem_name_rsc = "totem"
+   totem_icon_rsc = totem.bgf
+   totem_desc_rsc = \
+      "This feathered totem is oft the objective of quests set "
+      "upon mortals by the Bards of the world of Meridian. "
+      "\n\n"
+      "The totem must be held when in possession, and is dropped when "
+      "removed from use."
+
+   totem_cantuse_rsc = \
+      "You are unable to hold so many items in your hands, and %s%s slips to the ground."
+   totem_unuse_rsc = \
+      "You drop %s%s to the ground to free your hands."
+
+   totem_drops = "%s%s slips from your grasp and falls to the ground!"
+
+classvars:
+
+   vrName = totem_name_rsc
+   vrIcon = totem_icon_rsc
+   vrDesc = totem_desc_rsc
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 1
+
+   vrposs_article = object_article_cap_this_rsc
+
+   vrTotem_overlay = totem_icon_rsc
+
+   viBulk = 100
+   viWeight = 100
+
+   viObject_flags = GETTABLE_YES | LOOK_NO
+
+properties:
+   
+
+messages:
+
+   DropSelf(what=$)
+   {
+      local oRoom, iRow, iCol;
+   
+      oRoom = send(what,@GetOwner);
+      iRow = send(what,@GetRow);
+      iCol = send(what,@GetCol);
+
+      send(oRoom,@NewHold,#what=self,#new_col=iCol,#New_row=iRow);
+
+      propagate;
+   }
+
+
+   % these 5 called by player, for window overlays
+   % Totem subclasses--do NOT set a window overlay unless you either
+   % set vrTotem_window_overlay correctly or override all these message handlers
+%  GetWindowOverlay()
+%  {
+%     return $; %vrTotem_window_overlay;
+%  }
+
+%  GetWindowOverlayID()
+%  {
+%     return PWO_LEFT_HAND;
+%  }
+
+%  GetWindowOverlayHotspot()
+%  {
+%     return 0;  % turns off the window overlay
+%  }
+
+%  SendWindowOverlayAnimation()
+%  {
+%     return;      
+%  }
+
+%  SendWindowOverlayOverlays()
+%  {
+%     AddPacket(1,0); % no first person overlays on top of Totem 
+%
+%     return; 
+%  }
+
+   % these 3 called by player, for normal 3rd-person overlays on user.
+   % Totem subclasses--do NOT set an overlay unless you either
+   % set vrTotem_overlay correctly or override all these message handlers
+
+%  GetOverlay()
+%  {
+%     return vrTotem_overlay;
+%  }
+   
+%  GetOverlayHotspot()
+%  {
+%     return HS_LEFT_WEAPON;
+%  }
+
+%  SendOverlayAnimation()
+%  {
+%     if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+%     {
+%        AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+%     }
+%     AddPacket(1,ANIMATE_NONE,2,5); % group 2 is the player-overlay group
+%     return;
+%  }
+
+   UserLogoff()
+   {
+      if IsClass(poOwner,&DM)
+      {
+         propagate;
+      }
+
+      send(poOwner,@MsgSendUser,#message_rsc=totem_drops,
+           #parm1=send(self,@GetCapDef),#parm2=vrName);
+      Send(poOwner,@TryUnuseItem,#what=self);
+
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      return FALSE;
+   }
+
+   NewOwner(what = $)
+   {
+      if what = $
+      {
+         propagate;
+      }
+
+      if IsClass(what,&User)
+      {
+         Post(self,@TryingToUse,#what=what);
+      } 
+
+      propagate;
+   }
+
+   TryingToUse(what = $)
+   {
+      local i,Temp;
+
+      Temp = FALSE;
+
+      Send(what,@TryUseItem,#what=self);
+
+      for i in Send(what,@GetPlayerUsing) 
+      { 
+         if i=self
+         {
+            return;
+         } 
+      }
+
+      Send(what,@MsgSendUser,#message_rsc=totem_cantuse_rsc,
+           #parm1=send(self,@getdef),#parm2=vrName);
+      Post(Send(what,@GetOwner),@NewHold,#what=self,
+           #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
+
+      return;
+   }
+
+   NewUnused(what = $,where=$, death=FALSE)
+   "Called when the token is dropped or unused (same thing). The special"
+   "where flag is needed to handle guild hall enterings."
+   {
+      local oldOwner,oldrow,oldcol,oldroom;
+
+      send(poOwner,@MsgSendUser,#message_rsc=totem_unuse_rsc,
+           #parm1=send(self,@GetDef),#parm2=vrName);
+
+      if where <> $
+      {
+        Post(where,@NewHold,#what=self,#new_row=Send(poOwner,@GetRow),
+             #new_col=Send(poOwner,@GetCol));
+      }
+      else
+      {
+         oldOwner = poOwner;
+         oldRoom = send(poOwner,@getowner);
+         oldCol = send(poOwner,@getcol);
+         oldRow = send(poOwner,@getrow);
+         Post(self,@CheckForDrop,#owned=oldOwner,#oldroom=oldroom,
+              #oldrow=oldrow,#oldcol=oldcol);
+      }
+      
+      propagate;
+   }
+
+   % Strange parameter naming here is to work around an apparent
+   % blakcomp bug 10/2010.  "error: Parameter oldroom appears twice"
+   CheckForDrop(owned=$, old_room = $, old_row = 20, old_col = 20)
+   {
+      if send(poOwner,@GetOwner) = $ AND old_room <> $
+      {
+         Send(old_room,@NewHold,#what=self,#new_row=old_row,#new_col=old_col);
+      }
+      else
+      {
+         Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
+              #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
+      }
+
+      return;
+   }
+
+   % Don't want these to be in vaults.
+   CanBeStoredInVault()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

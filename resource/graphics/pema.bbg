@@ -1,0 +1,27 @@
+#  Yellow female face 3 - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000maa.bmp   [-15, -9] 
+Pe045maa.bmp   [-20, -10] 
+Pe090maa.bmp   [-15, -12] 
+Pe270maa.bmp   [-3, -11] 
+Pe315maa.bmp   [-7, -9] 
+Pe000mba.bmp   [-15, -9] 
+Pe045mba.bmp   [-20, -10] 
+Pe315mba.bmp   [-7, -9] 
+Pe000mca.bmp   [-15, -9] 
+Pe045mca.bmp   [-20, -10] 
+Pe315mca.bmp   [-7, -9] 
+Pe000mda.bmp   [-15, -9] 
+Pe045mda.bmp   [-20, -10] 
+Pe315mda.bmp   [-7, -9] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

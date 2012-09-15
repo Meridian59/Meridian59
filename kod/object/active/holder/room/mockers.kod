@@ -1,0 +1,120 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+MockersRoom is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+   waterfall_soundmockers = wfall2.wav
+   room_mockers = mockers.roo
+   room_name_mockers = "Chamber of the Mocker"
+
+   mockers_music = castle.mid
+
+   mockers_lockdoor = "You lock the door, barring others from entry."
+   mockers_unlockdoor = "You unlock the door."
+
+classvars:
+
+   vrName = room_name_mockers
+
+   viTeleport_row = 8
+   viTeleport_col = 13
+   viTerrain_type = TERRAIN_CASTLE | TERRAIN_RESIDENCE | TERRAIN_MYSTICAL | TERRAIN_FOUNTAIN
+
+properties:
+
+   prMusic = mockers_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_3 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+
+   prRoom = room_mockers
+   piRoom_num = RID_MOCKERS_ROOM
+
+   pbLocked = FALSE
+
+messages:
+
+   Constructed()
+   {
+      plLooping_sounds = [[ waterfall_soundmockers, 8, 8, 15, 50  ]];
+
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   {
+      local object;
+
+      if isClass(what,&DM) AND StringEqual(string,"lock")
+      {
+         if NOT pbLocked
+         {
+            pbLocked = TRUE;
+            Send(what,@MsgSendUser,#message_rsc = mockers_lockdoor);
+         }
+         else
+         {
+           pbLocked = FALSE;
+           Send(what,@MsgSendUser,#message_rsc = mockers_unlockdoor);
+         }
+
+         return;
+       }
+
+      if StringEqual(string,"Mocker, in your greatness, reform me in your image! #2341")
+         AND (StringEqual(send(what,@GetName),"Mocker"))
+         AND IsClass(what,&DM)
+      {
+         object = create(&GuildShield);
+         send(object,@ChangeGuildShieldColor,#color1=XLAT_TO_SKIN1,#shape=SHIELDSHAPE_CHECKER,#override=1);
+         send(object,@ChangeGuildInsignia,#insignia=8);
+         send(what,@NewHold,#what=object);
+         send(what,@NewHold,#what=create(&BonkStick));
+         send(what,@NewHold,#what=create(&LeatherArmor));
+         send(what,@NewHold,#what=create(&Gauntlet));
+         send(what,@NewHold,#what=create(&PantsC));
+         send(what,@NewHold,#what=create(&Hammer));
+         send(what,@NewHold,#what=create(&Shirt));
+
+         return;    
+      }
+
+      propagate;
+   }
+
+   CheckLock()
+   {
+      return pbLocked; 
+   }
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 12, 10, RID_CASTLE2D, 31, 20, ROTATE_NONE ],plExits);
+
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

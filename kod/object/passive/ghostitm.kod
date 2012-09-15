@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GhostItem is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ghostItem_name_rsc = "illusionary item"
+   ghostItem_icon_rsc = music.bgf
+   ghostItem_desc_rsc = \
+      "An insubstantial image sits on the ground, unable to be picked up.  "
+      "The illusion appears to be "
+
+classvars:  
+
+   viObject_flags = LOOK_NO
+   vrName = ghostItem_name_rsc
+   vrDesc = ghostItem_desc_rsc
+   
+properties:
+
+   vrIcon = ghostItem_icon_rsc
+   poObj = $
+
+messages:
+
+   Constructor(obj = $)
+   {
+      send(self,@SetOriginal,#obj=obj);
+
+      propagate;
+   }
+
+   SetOriginal(obj = $)
+   {
+      vrIcon = Send(obj,@GetIcon);
+      poObj = obj;
+
+      return;
+   }
+
+   ShowDesc()
+   {
+      ClearTempString();
+      AppendTempString(vrDesc);
+      AppendTempString(send(poObj,@GetInDef));
+      AppendTempString(send(poObj,@GetTrueName));
+      AppendTempString(".");
+      Addpacket(4,send(SYS,@GetPercentQRsc),4,GetTempString());
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      local iTranslation;
+
+      iTranslation = send(poObj,@GetPaletteTranslation);
+
+      if iTranslation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,iTranslation);
+      }
+
+      % Sends further animation and icon info in superclass.
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

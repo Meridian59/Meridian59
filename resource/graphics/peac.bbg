@@ -1,0 +1,27 @@
+#  Dk. Brown face 1 - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000aac.bmp   [-15, -10] 
+Pe045aac.bmp   [-17, -10] 
+Pe090aac.bmp   [-11, -11] 
+Pe270aac.bmp   [-4, -9] 
+Pe315aac.bmp   [-5, -14] 
+Pe000abc.bmp   [-15, -10] 
+Pe045abc.bmp   [-17, -10] 
+Pe315abc.bmp   [-5, -14] 
+Pe000acc.bmp   [-15, -10] 
+Pe045acc.bmp   [-17, -10] 
+Pe315acc.bmp   [-5, -14] 
+Pe000adc.bmp   [-15, -10] 
+Pe045adc.bmp   [-17, -10] 
+Pe315adc.bmp   [-5, -14] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

@@ -1,0 +1,15 @@
+# Female hair 3 - long auburn
+# 1 group
+#^Applied to Hotspot: 13
+#*Groups: 1
+#* Unlabeled Group
+-s 13
+6
+pt000dbr.bmp   [-26, -4] 
+pt315dbr.bmp   [-27, -5] 
+pt270dbr.bmp   [-24, -4] 
+pt180dbr.bmp   [-24, -4] 
+pt090dbr.bmp   [-31, -4] 
+pt045dbr.bmp   [-27, -4] 
+1
+ 8   1 2 3 4 4 4 5 6 

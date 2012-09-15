@@ -1,0 +1,145 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BazmansRoom is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_bazmans = bizmans.roo
+   room_name_bazmans = "The Councilors' Chamber"
+
+
+   bazmans_music = castle.mid
+
+   bazmans_lockdoor = "You lock the door, barring others from entry."
+   bazmans_unlockdoor = "You unlock the door."
+
+classvars:
+
+   vrName = room_name_bazmans
+
+   viTeleport_row = 8
+   viTeleport_col = 13
+
+properties:
+
+   prMusic = bazmans_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_3 
+
+
+   prRoom = room_bazmans
+   piRoom_num = RID_BAZMANS_ROOM
+
+%   prBackground = background_mountains
+
+   pblocked = False
+
+
+messages:
+
+
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   {
+      if isClass(what,&dm) and stringEqual(string,"lock")
+      {
+     
+         if pbLocked = False
+         {
+            pbLocked = True;
+            Send(what,@MsgSendUser,#message_rsc = bazmans_lockdoor);
+         }
+         else
+         {
+            pbLocked = False;
+            Send(what,@MsgSendUser,#message_rsc = bazmans_unlockdoor);
+         }
+         return;
+      }
+      propagate;
+   }
+
+
+   CheckLock()
+   {
+      if pbLocked = False
+      {
+         return 0;
+      }
+      return 1; 
+   }
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % Out to the princess's castle.
+      plExits = Cons([ 26, 7, RID_CASTLE2A, 26, 15, ROTATE_180, DISTANCE_NORMAL ],plExits);
+
+
+      propagate;
+   }
+
+
+   CreateStandardObjects()
+   {
+      % throne
+      Send(self,@NewHold,#what=Create(&Throne),
+           #new_row=5,#new_col=11,#fine_row=36,#fine_col=54,#new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=13,#new_col=8,#fine_row=36,#fine_col=20);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=17,#new_col=7,#fine_row=32,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=21,#new_col=9,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=21,#new_col=13,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=17,#new_col=16,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=13,#new_col=15,#fine_row=36,#fine_col=12);
+
+      % left row of braziers
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=14,#new_col=6);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=14,#new_col=18);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=19,#new_col=6);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=19,#new_col=18);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=22,#new_col=7);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=23,#new_col=14);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=9,#new_col=10);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=9,#new_col=14);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=4,#new_col=9);
+      Send(self,@NewHold,#what=Create(&brazier),
+           #new_row=4,#new_col=14);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

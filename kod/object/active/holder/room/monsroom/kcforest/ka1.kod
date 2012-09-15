@@ -1,0 +1,94 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKA1 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKA1 = "Cliff Hive"
+   room_OutdoorsKA1 = KA1.roo
+   OutdoorsKA1_music = drgnfly.mid
+
+   KA1_GO_KA0 = "You step into the dark, humid cavern."
+
+classvars:
+
+   viAvar_clan = AVARCLAN_ANTIMAGIC 
+   vrName = room_name_OutdoorsKA1
+
+   viTeleport_row = 53
+   viTeleport_col = 30
+   viTerrain_type = TERRAIN_JUNGLE | TERRAIN_BEACH | TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_OutdoorsKA1
+   prMusic = OutdoorsKA1_music
+   piRoom_num = RID_KA1
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [ &Dragonfly, 90], [&DragonflyQueen, 10] ];
+      plGenerators = [ [27,48], [14,37], [14,25], [19,34], [11,31], 
+                       [23,27], [31,48], [13,48], [16,44], [36,34], 
+                       [43,47], [10,11], [58,16]
+                     ];
+
+      propagate;
+   } 
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plExits = $;
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KA2, 1, 33, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KB1, 16, 2, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$,row = $, col = $)
+   {
+      local oRoom;
+
+      if row = 13 AND col = 23
+      {
+         oRoom = send(SYS,@FindRoomByNum,#num=RID_KA0);
+         send(oRoom,@Newhold,#what=what,#new_row=5,#new_col=14,#new_angle=ANGLE_WEST);     
+         send(what,@MsgSendUser,#message_rsc=KA1_GO_KA0);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

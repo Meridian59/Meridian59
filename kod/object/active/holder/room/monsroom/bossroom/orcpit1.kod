@@ -1,0 +1,305 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Orcpit1 is BossRoom
+
+constants:
+
+   include blakston.khd
+
+   DOOR_RESET_TIME = 9000
+   SECTOR_DOOR1a = 1
+   SECTOR_DOOR1b = 2
+   SECTOR_DOOR2a = 3
+   SECTOR_DOOR2b = 4
+   SECTOR_DOOR3a = 5
+   SECTOR_DOOR3b = 6
+   H_DOOR1a_DOWN = 310
+   H_DOOR1a_UP = 380
+   H_DOOR1b_DOWN = 204
+   H_DOOR1b_UP = 274
+   H_DOOR2a_DOWN = 310
+   H_DOOR2a_UP = 380
+   H_DOOR2b_DOWN = 204
+   H_DOOR2b_UP = 274
+   H_DOOR3a_DOWN = 310
+   H_DOOR3a_UP = 380
+   H_DOOR3b_DOWN = 204
+   H_DOOR3b_UP = 274
+
+   DOOR_UP = 1
+   DOOR_DOWN = 0
+   DOOR_UP_SPEED = 8
+   DOOR_DOWN_SPEED = 150
+
+resources:
+
+   room_name_Orcpit1 = "Lair of the Orc Pit Boss"
+   room_Orcpit1 = ocp1.roo
+   Orcpit1_music = orcpit.mid
+
+   Orcpit1_door_sound = doorrsup.wav
+   Orcpit1_door_down_sound = arr_metl.wav
+
+classvars:
+
+   vrName = room_name_Orcpit1
+
+   viTeleport_row = 31
+   viTeleport_col = 41
+
+   viTerrain_type = TERRAIN_CAVES | TERRAIN_LAIR
+
+   % 20 seconds
+   viBossResetTime = 20000  
+
+properties:
+
+   prRoom = room_Orcpit1
+   piRoom_num = RID_ORC_PIT
+
+   piBaseLight = (LIGHT_VERY_DARK + LIGHT_MIN)/2
+   piOutside_factor = 0
+
+   prMusic = Orcpit1_music
+
+   piGen_time = 50000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 10
+
+   piMonster_count_max = 15
+
+   piDoor1Position = DOOR_DOWN
+   ptDoor1ResetTimer = $
+   piDoor2Position = DOOR_DOWN
+   ptDoor2ResetTimer = $
+   piDoor3Position = DOOR_DOWN
+
+   % Overridden from superclass value of 5 minutes.  This helps keep the
+   %  area clean of items which might crash people out.
+   piDispose_delay = 3 * 60 * 1000     % three minutes (in ms)
+
+messages:
+
+   Constructor()
+   {
+      plMonsters = [ [&CaveOrc, 100] ];
+      plGenerators = [ [52,19], [50,23], [57,18], [59,22], [58,28], [59,46],
+                       [63,46], [65,49], [63,52], [59,54]
+                     ];
+
+      propagate;
+   }
+   
+   SetupBossTemplates()
+   {
+      plBossTemplate = [ [&OrcPitBoss, 24, 41] ];
+      plHenchmenTemplate = [ [&OrcWizard, 24, 39], [&OrcWizard, 24, 43] ];
+
+      plBossTreasureTemplate = [ [&DiscipleRobe, 15, 41, 0, 0],
+                                 [&IvyCirclet, 16, 41, 0, 0],
+                                 [&OrcShield, 15, 42, 0, 0],
+                                 [&MysticSword, 16, 42, 0, 0] ,
+                                 [&OfferingShalille, 15, 41, 32, 32]
+                               ];
+      
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      local lBraziers;
+
+      lBraziers = [ [25, 40, 48, 8], [25, 42, 48, 56] ];
+
+      send(self,@CreateObjFromList,#lObjlist=lBraziers,#oObjectClassName=&OrcTorch);
+      
+      return;
+   }
+
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_PIT_A, 7, 61, ROTATE_NONE,ROW_IS_LESS_THAN,42], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_PIT_B, 8, 4, ROTATE_NONE,ROW_IS_LESS_THAN,42], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_CAVE1_EXT, 18, 43, ROTATE_NONE,ROW_IS_GREATER_THAN,42], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_CAVE5_EXT, 8, 3, ROTATE_NONE,ROW_IS_GREATER_THAN,42], plEdge_exits);
+
+      propagate;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%
+% Monster death code%
+%%%%%%%%%%%%%%%%%%%%%
+%
+   BossKilledTrigger()
+   {
+      local i;
+
+      % just killed the orc pit boss (opening door, creating treasure...)
+      
+      % raise the gate
+      Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
+      send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
+           #height=H_DOOR3a_UP,#speed=DOOR_UP_SPEED);
+      send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
+           #height=H_DOOR3b_UP,#speed=DOOR_UP_SPEED);
+      piDoor3Position = DOOR_UP;
+      
+      propagate;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Monster death code%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Boss resetting code %
+%%%%%%%%%%%%%%%%%%%%%%%
+%
+   ResetBoss()
+   {
+      local i;
+
+      % close the boss door instantaneously
+      send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
+           #height=H_DOOR3a_DOWN,#speed=0);
+      send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
+           #height=H_DOOR3b_DOWN,#speed=0);
+      piDoor3Position = DOOR_DOWN;
+
+      % Delete any boss bodies that may be lying around...
+      for i in plActive
+      {
+         if isClass(first(i),&OrcPitBossBody)
+         {
+            send(first(i),@Delete);
+         }
+      }
+      
+      propagate;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Boss resetting code %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% normal moving doors %
+%%%%%%%%%%%%%%%%%%%%%%%
+%
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+     
+      if ((row = 56 OR row = 57) AND (col = 14 OR col = 15))
+         AND piDoor1Position = DOOR_DOWN
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
+         send(self,@SetSector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR1a_UP,#speed=DOOR_UP_SPEED);
+         send(self,@SetSector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR1b_UP,#speed=DOOR_UP_SPEED);
+         piDoor1Position = DOOR_UP;
+         ptDoor1ResetTimer = CreateTimer(self,@DoorResetTrigger1,DOOR_RESET_TIME);
+
+         return TRUE;
+      }
+      
+      if ((row = 63 OR row = 64) AND (col = 55 OR col = 56))
+          AND piDoor2Position = DOOR_DOWN
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
+         send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR2a_UP,#speed=DOOR_UP_SPEED);
+         send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR2b_UP,#speed=DOOR_UP_SPEED);
+         piDoor2Position = DOOR_UP;
+         ptDoor2ResetTimer = CreateTimer(self,@DoorResetTrigger2,DOOR_RESET_TIME);
+
+         return TRUE;
+      }
+      
+      propagate;
+   }
+
+   DoorResetTrigger1()
+   {
+      ptDoor1ResetTimer = $;
+      
+      if piDoor1Position = DOOR_UP
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound); 
+         send(self,@setsector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR1a_DOWN,#speed=DOOR_DOWN_SPEED);
+         send(self,@setsector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR1b_DOWN,#speed=DOOR_DOWN_SPEED);
+         piDoor1Position = DOOR_DOWN;
+      }
+
+      return;
+   }
+
+   DoorResetTrigger2()
+   {
+      ptDoor2ResetTimer = $;
+      
+      if piDoor2Position = DOOR_UP
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound); 
+         send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR2a_DOWN,#speed=DOOR_DOWN_SPEED);
+         send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
+              #height=H_DOOR2b_DOWN,#speed=DOOR_DOWN_SPEED);
+         piDoor2Position = DOOR_DOWN;
+      }
+
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%
+% Logon safeguarding %
+%%%%%%%%%%%%%%%%%%%%%%
+
+   NewHold(what = $)
+   "Prevents anyone from logging on into a special zone"
+   {
+      if isClass(what,&User) AND (send(what,@GetOwner) = $)
+      {
+         post(self,@Teleport,#what=what);
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptDoor1ResetTimer <> $
+      {
+         DeleteTimer(ptDoor1ResetTimer);
+         ptDoor1ResetTimer = $;
+      }
+
+      if ptDoor2ResetTimer <> $
+      {
+         DeleteTimer(ptDoor2ResetTimer);
+         ptDoor2ResetTimer = $;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

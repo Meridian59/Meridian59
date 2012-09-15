@@ -1,0 +1,98 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sun is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   sun_icon_rsc = sun.bgf
+   sun_name_rsc = "sun"
+   sun_desc_rsc = \
+      "Some people have good enough sense not to look into the sun."
+
+classvars:
+
+   vrName = sun_name_rsc
+   vrIcon = sun_icon_rsc
+   vrDesc = sun_desc_rsc
+
+properties:
+
+   piAngle = 0
+   piHeight = 0
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@NewGameHour);
+      propagate;
+   }
+
+   NewGameHour()
+   {
+      local i,iHour,iDay;
+
+      iHour = Send(SYS,@GetHour);
+      iDay = Send(SYS,@GetDay);
+
+      % east = 0, west = 2048
+      piAngle = ((iHour+19) mod 24)*130;
+      piHeight = 420 - 7*(iHour - 13)*(iHour - 13);
+      if piHeight < -200
+      {
+	 piHeight = -200;
+      }
+      for i in Send(SYS,@GetUsersLoggedOn)
+      {
+	 Send(i,@ToCliChangeBackgroundOverlay,#what=self);
+      }
+
+      return;
+   }
+
+   AddBackgroundObject(who = $)
+   "Called by user upon logon"
+   {
+      Send(who,@ToCliAddBackgroundOverlay,#what=self);
+      return;
+   }
+
+   TryLook(what = $)
+   {
+      post(self,@BlindViewer,#who=what);
+      propagate;
+   }
+
+   BlindViewer(who=$)
+   {
+      local oSpell;
+      oSpell = send(SYS,@FindSpellByNum,#num=SID_DAZZLE);
+      send(oSpell,@CastSpell,#who=self,#lTargets=[who],#iSpellPower=50);
+
+      return;
+   }
+
+   GetBackgroundOverlayAngle()
+   {
+      return piAngle;
+   }
+   
+   GetBackgroundOverlayHeight()
+   {
+      return piHeight;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

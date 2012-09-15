@@ -1,0 +1,22 @@
+# fog
+# 
+#^Applied to Hotspot: 0
+#*Groups: 5
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 4
+5
+fogA.bmp   [0, 0] 
+fogB.bmp   [0, 0] 
+fogC.bmp   [0, 0] 
+fogD.bmp   [0, 0] 
+fogE.bmp   [0, 0] 
+5
+ 1   1 
+ 1   2 
+ 1   3 
+ 1   4 
+ 1   5 

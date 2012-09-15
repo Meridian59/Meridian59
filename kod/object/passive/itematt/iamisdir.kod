@@ -1,0 +1,217 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttMisdirection is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item, when viewed, has the description of another item.  It also
+%     hides any true powers that the item has.
+%
+%  If an identify or reveal spell is cast on the item, then the truth 
+%     about the item is shown, in the form of the misdirection_desc.
+% 
+%  Form is: 
+%
+%      [IA_MISDIRECTION, tTimer, iFakeItemAttNum, iFakeItemAttData]
+%
+%  tTimer :: timer counting down until illusion vanishes on it's own.
+%  iFakeItemAttNum :: the IA_ that the item pretends to have, as listed in
+%     blakston.khd.
+%  iFakeItemAttData :: data needed by the fake itematt to complete it,
+%     such as the name of the guild hall it's supposedly defending, or
+%     'the princess' sword/the dukes' sword
+%   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+   include protocol.khd
+
+resources:
+ 
+   itematt_misdirection_desc = "  An illusion has been cast on this item, hiding it's true abilities."
+   iaMisdirection_gone = "The illusion around your %s fades, and you can see it for what it truly is."
+   
+classvars:
+
+   viItem_Att_Num = IA_MISDIRECTION
+   vrDesc = itematt_misdirection_desc
+
+   viDifficulty = 5
+
+properties:
+  
+  plDiscarded_Strings = $
+  plFake_Att_Choices = $
+
+messages:
+
+   Constructor()
+   {
+      %% post this so it's done after all of the 
+      %% item atts have been constructed by recreate.      
+      post(self,@BuildFakeAttChoicesList);
+      
+      return;
+   }
+
+   GetFakeAttNum()
+   {
+      local iRand;
+
+      iRand = random(1,length(plFake_Att_Choices));
+      return nth(plFake_Att_Choices,iRand);
+   }
+
+   BuildFakeAttChoicesList()
+   {
+      local i;
+
+      plFake_Att_Choices = $;
+      for i in send(SYS,@GetItemAttributes)
+      {
+         if send(i,@CanBeSpoofed)
+         {
+            plFake_Att_Choices = cons(send(i,@GetItemAttNumber),plFake_Att_Choices);
+         }
+      }
+      
+      return;
+   }
+   
+   AppendMisdirectedDesc(oItem=$,lData=$)
+   {
+      local oItemAtt, iFakeAttNum, iFakeData;
+      
+      iFakeAttNum = nth(lData,3);
+      oItemAtt = send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
+
+      iFakeData = $;
+      if length(lData) > 3
+      {
+         iFakeData = nth(lData,4);
+      }
+
+      send(oItemAtt,@AppendDesc,#oItem=oItem,#iFakeData=iFakeData,
+           #iFakePower=send(self,@TranslatePowerFromCompound,#iCompound=first(lData)));
+           
+      return;
+   }
+      
+   AddMisdirectionToItem(iFakeAttNum = $, timer_duration = $, oItem = $)
+   {
+      local oItemAtt, iFakeAttData;
+      
+      if oItem = $ or timer_duration = $
+      {
+         DEBUG("Never should have happened!");
+         
+         return;
+      }
+
+      if iFakeAttNum = $  { iFakeAttNum = send(self,@GetFakeAttNum,#oItem=oItem); }
+      
+      oItemAtt = send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
+      if not send(oItemAtt,@CanBeSpoofed)
+      {
+         DEBUG("Spoofing unspoofable attribute!  Impossible!");
+         
+         return;
+      }
+      
+      %% this returns $ if something does not need data.
+      iFakeAttData = send(oItemAtt,@FakeAttData);
+      
+      if send(self,@ReqAddToItem,#oItem=oItem)
+      {
+         send(self,@AddToItem,#oItem=oItem,#state1=iFakeAttNum,
+              #state2=iFakeAttData,#timer_duration=timer_duration);
+      }
+
+      return;
+   }
+
+   SetPrimaryState(state1=$)
+   "This points to the itematt that the item is pretending to have."
+   {
+       if state1 = $ { DEBUG("SetPrimaryState called with nil state!"); return FALSE; }
+
+       return state1;
+   }
+
+   SetSecondaryState(state2=$)
+   "This points to any data the ItemAtt needs for a complete illusion."
+   {
+      %% this can have a nil state2 and still work.
+
+       return state2;
+   }
+
+   CanBeSpoofed()
+   {
+      return FALSE;
+   }
+
+   InitiallyIdentified()
+   {
+      return TRUE;
+   }
+
+   HasTimer(lData=$)
+   {
+      return TRUE;
+   }
+
+   TimerExpired(oItem=$,lData=$)
+   {
+      local oPlayer;
+
+      SetNth(lData,2,$);   %% timer is gone, now remove reference
+      
+      oPlayer = send(oItem,@GetOwner);
+      if oPlayer <> $ and isClass(oPlayer,&User)
+      {
+         send(oPlayer,@MsgSendUser,#message_rsc=iamisdirection_gone,
+              #parm1=send(oItem,@GetName));
+      }
+
+      send(self,@RemoveFromItem,#oItem=oItem,#lData=lData);
+
+      return;
+   }
+
+   %  Name Functions
+
+   ItemBuildDescName(oItem=$)
+   {  
+      local lData, iData, iFakeData, oItemAtt;
+      
+      lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+      
+      iData = nth(lData,2);    %% this is the IA_ of the faked attribute
+      iFakeData = nth(lData,3);  %% this is excess data that might be needed
+                                 %% example: see weapattfaction
+      
+      oItemAtt = send(SYS,@FindItemAttByNum,#num=iData);   
+      send(oItemAtt,@ItemBuildDescName,#oItem=oItem,#iFakeData=iFakeData);
+      
+      return;
+   }
+
+   GetNamePriority()
+   {
+      return 12;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

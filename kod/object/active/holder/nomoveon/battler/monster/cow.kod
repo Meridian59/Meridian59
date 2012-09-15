@@ -1,0 +1,103 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cow is Monster
+
+constants:
+
+   include blakston.khd
+
+%   DUNG_TIME = 6 * 60 * 60  % 6 hours
+   DUNG_TIME = 10  % 10 seconds
+
+resources:
+
+   cow_koc_name_rsc = "nahyijoa"
+   cow_name_rsc = "cow"
+   cow_icon_rsc = cow.bgf
+   cow_desc_rsc = \
+	"Alchemists and farmers endeavored to breed the perfect cow for sweet "
+	"milk and tender meat.  Unfortunately their experiments went too far and " 	
+	"eventually created the utterly useless Pygmy Cow.  Disappointed by their " 
+	"failure, they let loose their entire herd.  The undomesticated pygmy cow "
+	"is rarely seen anymore."
+
+   cow_cant_attack = "You can't attack the ~Ipoor~I cow!"
+   cow_dead_icon_rsc = cowX.bgf
+   cow_dead_name_rsc = "dead cow"
+   
+   cow_dung = "Startled, the poor cow deposits a steaming heap of dung onto the ground."
+   
+classvars:
+   vrName = cow_koc_name_rsc
+   vrName = cow_name_rsc
+   vrIcon = cow_icon_rsc
+   vrDesc = cow_desc_rsc
+
+   viMove_delay_min = 2000
+   viMove_delay_max = 10000
+   viAttributes = MOB_NOFIGHT
+   viSpeed = 8
+   viLevel = 200
+   
+
+properties:
+
+   piLastDungTime = 0
+   poDung = $
+
+messages:
+
+   Constructor()
+   {
+      piLastDungTime = GetTime();
+      propagate;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,5);
+
+      return;
+   }
+
+   Bonked()
+   {
+      if (GetTime() - piLastDungTime) > DUNG_TIME
+      {
+         piLastDungTime = GetTime();
+         if poDung <> $
+         {
+            send(poDung,@Delete);
+            poDung = $;
+         }
+         poDung = create(&OrnamentalObject,#type=OO_DUNG);
+         send(poOwner,@NewHold,#what=poDung,
+                  #new_row = send(self,@GetRow),
+                  #new_col = send(self,@GetCol),
+                  #fine_row = send(self,@GetFineRow),
+                  #fine_col = send(self,@GetFineCol) );
+         Post(poOwner,@SomeoneSaid,#what=self,#string=cow_dung, #type=SAY_MESSAGE);
+      }
+      return;
+   }
+
+   Delete()
+   {
+      if poDung <> $
+      {
+         send(poDung,@Delete);
+         poDung = $;
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

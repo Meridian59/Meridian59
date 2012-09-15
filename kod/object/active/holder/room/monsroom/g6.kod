@@ -1,0 +1,102 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsG6 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsG6 ="The King's Way"
+   room_OutdoorsG6 = G6.roo
+   OutdoorsG6_music = forest.mid
+
+   G6_lakewalk = \
+      "The bottom of the lake drops sharply here.  You doubt you should go "
+      "any further."
+
+classvars:
+
+   vrName = room_name_OutdoorsG6
+
+   viTeleport_row = 87
+   viTeleport_col = 59
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_LAKE | TERRAIN_MOUNTAIN | TERRAIN_ROAD
+
+   viFlag_row = 110
+   viFlag_col = 46
+
+properties:
+
+   prRoom = room_OutdoorsG6
+   prMusic = OutdoorsG6_music
+   piRoom_num = RID_G6
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+   piGen_time = 100000
+   piGen_percent = 80
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piInit_count_min = 4
+   piInit_count_max = 8
+
+   piMonster_count_max = 9
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Centipede, 60], [&Slime, 40] ];
+
+      plGenerators = [ [9,62], [18,77], [29,65], [38,76], [48,65],
+                       [104,30], [119,42], [110,22]
+                     ];
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      % A fire for poor Bei Naq
+      Send(self,@NewHold,#what=Create(&FirePit),#new_row=48,#new_col=5);
+
+      propagate;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_WEST) and (send(what,@GetRow) < 115)
+      {
+         send(what,@MsgSendUser,#message_rsc=G6_lakewalk);
+      }      
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_G8, 2, 13, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_G5, 46, 12, ROTATE_NONE, COL_IS_LESS_THAN,51], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_G5, 46, 45, ROTATE_NONE, COL_IS_GREATER_THAN,50], plEdge_exits);        
+      plEdge_Exits = Cons([LEAVE_WEST, RID_F6, 5, 49, ROTATE_NONE, ROW_IS_GREATER_THAN,115], plEdge_exits);        
+      plEdge_Exits = Cons([LEAVE_EAST, RID_H7, 5, 1, ROTATE_NONE ], plEdge_exits);        
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

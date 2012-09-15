@@ -1,0 +1,163 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RingInvisibility is Ring
+
+constants:
+
+   include blakston.khd
+
+   % use a charge every x milliseconds
+   RINGINVISIBILITY_CHARGE_RATE = 60000
+
+resources:
+
+   ringinvisibility_name_rsc = "ring of invisibility"   
+   ringinvisibility_icon_rsc = ring1.bgf
+   ringinvisibility_desc_rsc = "This ring bears strange markings and seems to shimmer, making it difficult to see clearly."
+
+   ringinvisibility_use = "Your physical form shimmers and then disappears altogether."
+  
+   ringinvisibility_dead_rsc = "Your ring of invisibility goes cold, having expended its magical energy."
+
+   ringinvisibility_already_invisible_rsc = \
+   "You can't use the ring of invisibility because you are already invisible."
+
+classvars:
+
+   vrRealName = ringinvisibility_name_rsc
+   vrIcon = ringinvisibility_icon_rsc
+   vrRealDesc = ringinvisibility_desc_rsc
+
+   viHits_init_min = 4
+   viHits_init_max = 7
+
+   viBulk = 5
+   viWeight = 10
+   
+   viValue_average = 470
+
+properties:
+
+   pbIn_use = False
+   ptCharge = $
+
+messages:
+
+   ReqUse(what = $)
+   {
+      if Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+      {
+	 Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_already_invisible_rsc);
+	 return False;
+      }
+
+      propagate;
+   }
+
+   NewUsed(what = $)
+   {
+      if ptCharge <> $
+      {
+	 debug("Ring of invisibility",self,"got used when already has timer");
+	 DeleteTimer(ptCharge);
+      }
+      ptCharge = CreateTimer(self,@ChargeTimer,RINGINVISIBILITY_CHARGE_RATE);
+
+      Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_use);
+
+      pbIn_use = True;
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=True);
+
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      if ptCharge = $
+      {
+	 %debug("Ringinvisibility",self,"got unused when has no timer");
+      }
+      else
+      {
+	 DeleteTimer(ptCharge);
+	 ptCharge = $;
+      }
+
+      pbIn_use = False;
+
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=False);
+
+      piHits = piHits - 1;
+      if piHits = 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_dead_rsc);
+         Send(self,@Delete);
+	 return;
+      }
+
+      propagate;
+   }
+
+   SetItemPlayerFlag()
+   {
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=TRUE);
+      propagate;
+   }
+
+   ChargeTimer()
+   "Called every minute to drain a hit, using up the ringinvisibility."
+   {
+      ptCharge = $;
+
+      piHits = piHits - 1;
+      if piHits = 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_dead_rsc);
+         Send(self,@Delete);
+         return;
+      }
+
+      ptCharge = CreateTimer(self,@ChargeTimer,RINGINVISIBILITY_CHARGE_RATE);
+      return;
+   }
+
+   UserLogoff()
+   {
+      Send(poOwner,@TryUnuseItem,#what=self);
+
+      propagate;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   delete()
+   {
+     if ptCharge <> $
+     {
+       DeleteTimer(ptCharge);
+       ptCharge = $;
+     }
+     propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

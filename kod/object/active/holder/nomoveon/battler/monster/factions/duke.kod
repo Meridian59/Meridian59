@@ -1,0 +1,126 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DukeLiege is Factions
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+
+   duke_name_rsc = "Duke Akardius"
+   duke_icon_rsc = dukeneph.bgf
+   duke_desc_rsc = "Despite being only 16 years old Duke Akardius skillfully maneuvered himself into position "
+                         "to succeed his murdered uncle.  The young Duke simply radiates confidence and power.  "
+                         "Rumor has it that he is a zealous devotee of Riija and his "
+                         "cunning smile suggests the manipulative, deceitful aspect of the Trickster God.  In spite of "
+                         "his lavish and very public displays of mourning for his Uncle, there are some who doubt the "
+                         "sincerity of his grief."
+   duke_murder_desc_rsc = "The young nephew of Duke Akardius's face is awash in grief.  He stands over his uncle's body with "
+                                "tears running down his face.  Yet, despite his pain, you can see a core of iron will that suggests "
+                                "strength and cunning greater than you have ever seen in a boy of only sixteen years"
+
+   duke_token_delivered_rsc = "Ahhh.  I will see that this gets returned to its rightful councilor.  Of course, he will owe me. %s"
+   duke_duke_delivered_rsc = "You are truly a worthy servant."
+   duke_neutral_delivered_rsc = "Since you akin to my cause, you should just join my faction. Sign the roll here..."
+   duke_other_delivered_rsc = "Well now, you chose to recognize my authority over the other Lieges!  Let me persuade you over to my faction."
+   duke_toopowered_rsc = "If we were not already a very powerful faction, I would offer to let you join us."
+
+   duke_dead_icon = playerXa.bgf
+   duke_dead_legs = playerXb.bgf
+   duke_dead_name_rsc = "The body of Duke Kalior!"
+
+classvars:
+
+   viFaction = FACTION_DUKE
+   viGender = GENDER_MALE   
+   viQuestID = QST_ID_DUKE_SERVICE
+   viKarma = 0
+   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_NOMOVE | MOB_PERM_QUESTER | MOB_TEACHER
+   viOccupation = MOB_ROLE_ROYALTY
+   viHomeroom = RID_DUKE3
+   viMyRow = 11
+   viMyCOl = 20
+   viMyAngle = ANGLE_SOUTH
+   viMyFR = 0
+   viMyFC = 32
+
+properties:
+
+   vrName = duke_name_rsc
+   vrIcon = duke_icon_rsc
+   vrDesc = duke_desc_rsc
+
+   poDeadKalior = $
+
+   piChangeName = 0
+
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_FACTION_CHANGE )
+      {
+         if( what = FACTION_DUKE )
+         {
+            send( self, @SetMood, #new_mood = piMood + 50 );
+         }
+         if( what = FACTION_PRINCESS )
+         {
+            send( self, @SetMood, #new_mood = piMood - 50 );
+         }
+      }
+      return;
+   }
+
+   Constructor()
+   {
+      plWantedItems=[&Token];
+      propagate;
+   }
+
+   CheckWhyWanted(obj=$,who=$)
+   {
+      local temp_rsc;
+      if isClass(obj,&Token) and Send(SYS,@GetTokenGame) <> $ and 
+        Send(Send(SYS,@GetTokenGame),@IsTokenReal,#obj=obj)
+      {
+         if Send(who,@GetFaction)=FACTION_DUKE
+           {temp_rsc=duke_duke_delivered_rsc;}
+         if (Send(who,@GetFaction)=FACTION_PRINCESS) or (Send(who,@GetFaction)=FACTION_REBEL)
+           {temp_rsc=duke_other_delivered_rsc;}
+         if Send(who,@GetFaction)=FACTION_NEUTRAL
+           {temp_rsc=duke_neutral_delivered_rsc;}
+         if (Send(Send(SYS,@GetParliament),@GetPower,
+               #faction=FACTION_DUKE)=FACTION_STRONGLY_IN) AND
+               (Send(who,@GetFaction)<>FACTION_DUKE)
+           { temp_rsc=duke_toopowered_rsc; }
+
+         Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+                 #string=duke_token_delivered_rsc,#parm1=temp_rsc);
+      return True;
+      }
+      propagate;
+   }
+
+   SetForSale()
+   {
+      plFor_Sale = [$,
+                    $,
+                    [ SID_CIVILITY] ];
+                    
+      return;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

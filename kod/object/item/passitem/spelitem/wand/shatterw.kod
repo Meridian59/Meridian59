@@ -1,0 +1,41 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShatterWand is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ShatterWand_label_name_rsc = "wand of destruction"
+   ShatterWand_icon_rsc = wand6.bgf
+   ShatterWand_desc_rsc = "Magical energy crackles about this slender wand."
+
+classvars:
+
+   vrLabelName = ShatterWand_label_name_rsc
+   vrIcon = ShatterWand_icon_rsc
+   viSpellEffect = SID_SHATTER
+   viColor = XLAT_TO_ORANGE
+
+
+properties:
+
+   vrDesc = ShatterWand_desc_rsc
+
+   viHits_init_min = 1
+   viHits_init_max = 2
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

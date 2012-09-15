@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GlowTree is Flickerer
+
+% This used to be ornamental object OO_NECTREE3.  It is now a light source.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   GlowTree_name = "soulsap willow tree"
+   GlowTree_desc = \
+      "A luminescent sap hangs from the branches of this bizarre tree.  Rather "
+      "than gather sunlight with plump foliage, the soulsap tree attracts insects "
+      "with the sweet glowing fluid, then absorbs the nutrients of the helpless "
+      "bugs directly."
+   GlowTree_icon = nectree3.bgf
+
+classvars:
+
+   vrName = GlowTree_name
+   vrDesc = GlowTree_desc
+   vrIcon = GlowTree_icon
+
+   viObject_flags = MOVEON_NO | LOOK_NO
+
+   viStart_frame = 1
+   viEnd_frame = 1
+
+   % Lighting flags.  Default "on" flag
+   viLightFlags = LIGHT_FLAG_ON 
+
+   % Light color.
+   viLightColor = LIGHT_DGREEN
+
+properties:
+
+   piAnim_speed = 0
+   
+   % Intensity, from 0-255.
+   piLightIntensity = 50
+
+messages:
+
+   SetAnimationSpeed()
+   {
+      % Does not animate
+      piAnim_speed = 0;
+
+      return;   
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

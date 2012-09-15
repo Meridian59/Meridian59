@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tim Schubert  4-28-97
+% 
+
+
+IntellectBoon is Boon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   intboon_name_rsc = "intellect effect"
+   intboon_icon_rsc = iboonint.bgf
+   intboon_desc_rsc = "Your intellect seems oddly affected."
+   intboon_intro_rsc = "The intellect of the victim is boosted temporarily."
+   
+   intboon_inc = "You suddenly feel wiser!"
+   intboon_dec = "Your intellect fails you."
+
+classvars:
+   viPersonal_ench = True
+   vrName = intboon_name_rsc
+   vrIcon = intboon_icon_rsc
+   vrDesc = intboon_desc_rsc
+   vrSpell_intro = intboon_intro_rsc
+
+   viSpell_num = SID_INTELLECT_BOON
+   viMana = 0
+
+properties:
+
+messages:
+
+   DoSpellEffect(who = $, amount = $)
+   {
+   send(who,@AddIntellect,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=intboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=intboon_dec); }
+   return;
+   }
+
+   UndoSpellEffect(who = $, amount = $)
+   {
+   amount = -amount;
+   send(who,@AddIntellect,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=intboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=intboon_dec); }
+   return;
+   }
+
+end

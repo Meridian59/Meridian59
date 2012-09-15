@@ -1,0 +1,99 @@
+# Giant Rat
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-11 Attack
+#^Applied to Hotspot: 0
+#*Groups: 11
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+66
+rat000sa.bmp   [0, -11] 
+rat315sa.bmp   [0, -13] 
+rat270sa.bmp   [0, -13] 
+rat180sa.bmp   [0, -12] 
+rat090sa.bmp   [0, -12] 
+rat045sa.bmp   [0, -10] 
+rat000wa.bmp   [0, -14] 
+rat315wa.bmp   [0, -11] 
+rat270wa.bmp   [0, -12] 
+rat180wa.bmp   [0, -4] 
+rat090wa.bmp   [0, -11] 
+rat045wa.bmp   [0, -12] 
+rat000wb.bmp   [0, -14] 
+rat315wb.bmp   [0, -13] 
+rat270wb.bmp   [0, -12] 
+rat180wb.bmp   [0, -4] 
+rat090wb.bmp   [0, -12] 
+rat045wb.bmp   [0, -13] 
+rat000wc.bmp   [0, -14] 
+rat315wc.bmp   [0, -13] 
+rat270wc.bmp   [0, -13] 
+rat180wc.bmp   [0, 1] 
+rat090wc.bmp   [0, -14] 
+rat045wc.bmp   [0, -13] 
+rat000wd.bmp   [0, -12] 
+rat315wd.bmp   [0, -10] 
+rat270wd.bmp   [0, -8] 
+rat180wd.bmp   [0, 2] 
+rat090wd.bmp   [0, -11] 
+rat045wd.bmp   [0, -12] 
+rat000we.bmp   [0, -15] 
+rat315we.bmp   [0, -14] 
+rat270we.bmp   [0, -14] 
+rat180we.bmp   [0, -6] 
+rat090we.bmp   [0, -11] 
+rat045we.bmp   [0, -13] 
+rat000aa.bmp   [0, -12] 
+rat315aa.bmp   [0, -12] 
+rat270aa.bmp   [0, -12] 
+rat180aa.bmp   [0, -17] 
+rat090aa.bmp   [0, -12] 
+rat045aa.bmp   [0, -10] 
+rat000ab.bmp   [0, -11] 
+rat315ab.bmp   [0, -11] 
+rat270ab.bmp   [0, -11] 
+rat180ab.bmp   [0, -17] 
+rat090ab.bmp   [0, -12] 
+rat045ab.bmp   [0, -10] 
+rat000ac.bmp   [0, -11] 
+rat315ac.bmp   [0, -11] 
+rat270ac.bmp   [0, -12] 
+rat180ac.bmp   [0, -16] 
+rat090ac.bmp   [0, -11] 
+rat045ac.bmp   [0, -10] 
+rat000ad.bmp   [0, -11] 
+rat315ad.bmp   [0, -11] 
+rat270ad.bmp   [0, -11] 
+rat180ad.bmp   [0, -7] 
+rat090ad.bmp   [0, -11] 
+rat045ad.bmp   [0, -10] 
+rat000ae.bmp   [0, -11] 
+rat315ae.bmp   [0, -11] 
+rat270ae.bmp   [0, -11] 
+rat180ae.bmp   [0, -5] 
+rat090ae.bmp   [0, -11] 
+rat045ae.bmp   [0, -10] 
+11
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 

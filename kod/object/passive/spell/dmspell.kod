@@ -1,0 +1,87 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DMSpell is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DMSpell_desc_rsc = "%s\n\nThis is a DM only command."
+
+classvars:
+
+   viMana = 0
+   viSpell_level = 50
+   viSpellExertion = 0
+
+   viSchool = SS_DM_COMMAND
+
+properties:
+
+messages:
+
+   ShowDesc()
+   "Adds a warning line to the look description."
+   {
+      AddPacket(4,DMspell_desc_rsc,4,vrDesc);
+
+      return;
+   }
+      
+   ResetReagents()
+   "Reagents for DM commands = nil"
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   CanPayCosts(who=$)
+   "Checks to be sure that only DMs use this command."
+   {
+      if NOT IsClass(who,&DM)
+      {
+         debug("Non-admin has a DM spell!");
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   PayCosts()
+   {
+      return TRUE;
+   }
+
+   SuccessChance()
+   "DM spells always succeed."
+   {
+      return TRUE;
+   }
+    
+   CanForget()
+   {
+      return FALSE;
+   }
+
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      % Can't remove DM spells normally.
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

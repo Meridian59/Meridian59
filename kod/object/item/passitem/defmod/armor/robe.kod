@@ -1,0 +1,193 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Robe is Armor
+
+%% Robe is the first item that takes two different use positions.
+%% Note that a robe forcibly unuses anything already there.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   robe_name_rsc = "robes"
+   robe_icon_rsc = robe.bgf
+   robe_desc_rsc = \
+   	"Heavy and warm, these full length robes generally denotes one's dedication to " 
+      "the higher arts of knowledge, spell craft or religion."
+
+   robe_male_icon_rsc = btc.bgf
+   robe_female_icon_rsc = btd.bgf
+
+   robe_legs_male = bfc.bgf
+   robe_legs_female = bfd.bgf
+
+   robe_leftarm_male = blc.bgf
+   robe_rightarm_male =brc.bgf
+   robe_leftarm_female = bld.bgf
+   robe_rightarm_female =brd.bgf
+
+   robe_condition_exc = " are in immaculate condition."
+   robe_condition_exc_mended = " are in excellent condition, but have been patched before.."
+   robe_condition_good = " are scuffed and slightly worn."
+   robe_condition_med = " have a few unsightly rips."
+   robe_condition_poor = " are in tatters, and barely holding together."
+   robe_condition_broken = " are covered in filth and ripped beyond use."
+
+classvars:
+
+   vrName = robe_name_rsc
+   vrIcon = robe_icon_rsc
+   vrDesc = robe_desc_rsc
+
+   vrBroken_rsc = defmod_broken_plural_clothes
+   vrItem_broken = item_broken_battle_plural
+
+   viHits_init_min = 550
+   viHits_init_max = 650
+
+   viValue_average = 400
+   viWeight = 100
+   viBulk = 150
+
+   viGround_group = 1
+   viInventory_group = 2
+   viBroken_group = 3
+
+   viSpell_modifier = 10
+   viDefense_base = 20
+
+   viUse_type = ITEM_USE_BODY | ITEM_USE_LEGS
+
+   vrIcon_male = robe_male_icon_rsc
+   vrIcon_female = robe_female_icon_rsc
+
+   vrLeftarm_male = robe_leftarm_male 
+   vrRightarm_male = robe_rightarm_male 
+   vrLeftarm_female = robe_leftarm_female 
+   vrRightarm_female = robe_rightarm_female 
+
+   vrLegs_male = robe_legs_male 
+   vrLegs_female = robe_legs_female 
+   
+   vrPoss_article = object_article_cap_these_rsc
+
+   vrCondition_exc = robe_condition_exc 
+   vrCondition_exc_mended = robe_condition_exc_mended 
+   vrCondition_good = robe_condition_good 
+   vrCondition_med = robe_condition_med 
+   vrCondition_poor = robe_condition_poor 
+   vrCondition_broken = robe_condition_broken 
+
+properties:   
+
+messages:
+
+   Constructor(translation = $,model = $, color = $)
+   {      
+      if color <> $
+      {
+         translation = send(SYS,@EncodeTwoColorXLAT,#color1=color,#color2=XLAT_TO_SKIN1);
+      }
+
+      if translation <> $
+      {
+         Send(self,@SetPaletteTranslation,#translation=translation);         
+
+         propagate;
+      }
+
+      if model <> $
+      {
+         Send(self,@SetPaletteTranslation,#translation=Send(model,@GetPaletteTranslation));         
+
+         propagate;
+      }     
+
+      Send(self,@SetPaletteTranslation,#translation=
+           send(SYS,@EncodeTwoColorXLAT, #color1 = XLAT_TO_BLUE, #color2 = XLAT_TO_SKIN1));
+
+      propagate;
+   }
+
+   ReqUse()
+   {
+      return (NOT send(send(SYS,@GetWarEvent),@IsActive));
+   }
+
+   ReqUseSomething(what = $)
+   {
+      if send(what,@GetItemUseType) & ITEM_USE_LEGS
+         AND NOT IsClass(what,&Robe)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   HasSkinTones()
+   {
+      return TRUE;
+   }
+
+   ItemChangesArms()
+   {
+      return 2;
+   }
+   
+   DoPlayerArt()
+   {
+      local oRoom;
+      
+      send(self,@ResetSkinColor);   %% make the player's hands match his sleeves.      
+      if send(self,@ShowShirt)
+      {
+         send(self,@ResetXLATsToShirt);
+      }
+
+      %  post this since robe arms always go on top.
+      if vrLeftArm_male <> $
+      {
+         post(self,@SetArms,#alldone=FALSE);
+      }
+      
+      if vrIcon_male <> $
+      {
+         send(self,@SetIcon,#alldone=FALSE);
+      }
+      
+      if  vrLegs_male <> $
+      {
+         send(self,@SetLegs,#alldone=FALSE);
+      }
+      
+      oRoom = send(poOwner,@GetOwner);
+      if oRoom <> $
+      {
+         %  post this to fix the arms after we change them.
+         post(oRoom,@SomethingChanged,#what=poOwner);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

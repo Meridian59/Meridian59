@@ -1,0 +1,169 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ForcesOfLight is RoomEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   forcesoflight_name_rsc = "forces of light"
+   forcesoflight_icon_rsc = ifrclite.bgf
+   forcesoflight_desc_rsc = \
+      "Summons Shal'ille to infuse her power into all good players in the room, "
+      "making their attacks more accurate and her spells more potent.  "
+      "Requires elderberries and emeralds to cast."
+   
+   forcesoflight_already_enchanted = "This place is already infused with the spirit of Shal'ille."
+
+   forcesoflight_on = "This place is infused with the spirit of Shal'ille."
+   forcesoflight_off = "The spirit of Shal'ille departs from this place."
+   forcesoflight_player_on = "You are filled with the spirit of Shal'ille."
+   forcesoflight_player_off = "The spirit of Shal'ille has left you."
+
+   forcesoflight_sound = sforcelt.wav
+
+classvars:
+
+   vrName = forcesoflight_name_rsc
+   vrIcon = forcesoflight_icon_rsc
+   vrDesc = forcesoflight_desc_rsc
+
+   viSpell_num = SID_FORCES_OF_LIGHT
+   viSchool = SS_SHALILLE
+   viSpell_level = 4
+   viMana = 12
+
+   vrSucceed_wav = forcesoflight_sound
+
+   viChance_To_Increase = 40
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Elderberry,2],plReagents);
+      plReagents = Cons([&Emerald,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+
+      % check for enchantment already applied
+      if Send(oRoom,@IsEnchanted,#what=self)
+      {
+	      Send(who,@MsgSendUser,#message_rsc=forcesoflight_already_enchanted);
+	      
+	      return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, iSpellpower = $)
+   {
+      local oRoom;
+
+      oRoom = Send(who,@GetOwner);
+
+      % global effects of the enchantment
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=forcesoflight_on,#what=self);
+
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellpower,#time=send(self,@GetDuration,#iSpellpower=iSpellpower),#state=$);
+      Send(oRoom,@EnchantAllOccupants,#what=self);
+
+      propagate;
+   }
+
+   StartEnchantmentNewOccupant(who = $)
+   "Called on new occupants of the enchanted room."
+   {
+      Send(self,@StartEnchantment,#who=who);
+      
+      return;
+   }
+
+   StartEnchantment(who = $)
+   "Starts enchantment effect on one player"
+   {
+      if Send(who,@GetKarma) > 0
+      {
+         Send(who,@AddAttackModifier,#what=self);
+         Send(who,@MsgSendUser,#message_rsc=forcesoflight_player_on);
+      }
+      
+      return;
+   }
+
+   EndSpell(where = $, state = $)
+   "Called when spell expires."
+   {
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=forcesoflight_off,#what=self);
+      Send(where,@UnenchantAllOccupants,#what=self,#state=state);
+      
+      return;
+   }
+
+   EndRoomEnchantment(who = $, state = $)
+   "Remove enchantment effects on this occupant"
+   {
+      Send(who,@RemoveAttackModifier,#what=self);
+      Send(who,@MsgSendUser,#message_rsc=forcesoflight_player_off);
+      
+      return;
+   }
+
+   % stuff we handle to be an attack modifier
+
+   ModifyHitRoll(who = $, what = $, hit_roll = $)
+   {
+      local iSpellpower,iHitMod;
+
+      iSpellpower = send(send(who,@GetOwner),@GetEnchantmentState,#what=self);
+      iHitMod = iSpellpower + 50;  %% 50 - 150
+      
+      return hit_roll + iHitMod;
+   }
+   
+   ModifyDamage(who = $, what = $, damage = $)
+   {
+      return damage;
+   }
+
+   GetDuration(iSpellpower = $)
+   {
+      local iDuration;
+
+      % Up to ~3 minutes.
+      iDuration = 6 * (iSpellpower/3 + 1); %% 1 - 33
+      % Convert to milliseconds
+      iDuration = iDuration * 1000;  
+
+      return iDuration;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,114 @@
+# skeleton head 4 - horned
+# Groups:
+# 1 standing
+# 2-7 walking
+# 8-13 fighting
+#^Applied to Hotspot: 1
+#*Groups: 13
+#* standing
+#* walk A
+#* walk B
+#* walk C
+#* walk D
+#* walk E
+#* walk F
+#* fight A
+#* fight B
+#* fight C
+#* fight D
+#* fight E
+#* fight F
+-s 3
+78
+sh4000s.bmp    [117, 40] 
+sh4315s.bmp    [109, 40] 
+sh4270s.bmp    [120, 41] 
+sh4180s.bmp    [154, 41] 
+sh4090s.bmp    [161, 40] 
+sh4045s.bmp    [147, 40] 
+sh4000wa.bmp   [132, 36] 
+sh4315wa.bmp   [114, 35] 
+sh4270wa.bmp   [110, 37] 
+sh4180wa.bmp   [139, 36] 
+sh4090wa.bmp   [166, 37] 
+sh4045wa.bmp   [162, 35] 
+sh4000wb.bmp   [138, 36] 
+sh4315wb.bmp   [117, 36] 
+sh4270wb.bmp   [109, 36] 
+sh4180wb.bmp   [134, 37] 
+sh4090wb.bmp   [166, 36] 
+sh4045wb.bmp   [164, 36] 
+sh4000wc.bmp   [142, 41] 
+sh4315wc.bmp   [121, 41] 
+sh4270wc.bmp   [109, 44] 
+sh4180wc.bmp   [130, 41] 
+sh4090wc.bmp   [166, 44] 
+sh4045wc.bmp   [165, 41] 
+sh4000wd.bmp   [143, 41] 
+sh4315wd.bmp   [120, 38] 
+sh4270wd.bmp   [109, 37] 
+sh4180wd.bmp   [130, 39] 
+sh4090wd.bmp   [166, 37] 
+sh4045wd.bmp   [165, 38] 
+sh4000we.bmp   [140, 36] 
+sh4315we.bmp   [118, 36] 
+sh4270we.bmp   [109, 36] 
+sh4180we.bmp   [132, 37] 
+sh4090we.bmp   [166, 36] 
+sh4045we.bmp   [165, 36] 
+sh4000wf.bmp   [133, 42] 
+sh4315wf.bmp   [113, 40] 
+sh4270wf.bmp   [111, 42] 
+sh4180wf.bmp   [139, 43] 
+sh4090wf.bmp   [166, 42] 
+sh4045wf.bmp   [161, 41] 
+sh4000aa.bmp   [123, 42] 
+sh4315aa.bmp   [108, 42] 
+sh4270aa.bmp   [112, 43] 
+sh4180aa.bmp   [148, 43] 
+sh4090aa.bmp   [166, 43] 
+sh4045aa.bmp   [155, 43] 
+sh4000ab.bmp   [131, 46] 
+sh4315ab.bmp   [109, 47] 
+sh4270ab.bmp   [105, 46] 
+sh4180ab.bmp   [141, 46] 
+sh4090ab.bmp   [169, 46] 
+sh4045ab.bmp   [163, 47] 
+sh4000ac.bmp   [132, 51] 
+sh4315ac.bmp   [110, 51] 
+sh4270ac.bmp   [103, 51] 
+sh4180ac.bmp   [140, 50] 
+sh4090ac.bmp   [170, 50] 
+sh4045ac.bmp   [165, 51] 
+sh4000ad.bmp   [129, 52] 
+sh4315ad.bmp   [105, 52] 
+sh4270ad.bmp   [104, 52] 
+sh4180ad.bmp   [142, 52] 
+sh4090ad.bmp   [169, 52] 
+sh4045ad.bmp   [163, 52] 
+sh4000ae.bmp   [127, 53] 
+sh4315ae.bmp   [102, 53] 
+sh4270ae.bmp   [103, 53] 
+sh4180ae.bmp   [144, 52] 
+sh4090ae.bmp   [168, 53] 
+sh4045ae.bmp   [161, 53] 
+sh4000af.bmp   [122, 50] 
+sh4315af.bmp   [102, 49] 
+sh4270af.bmp   [108, 50] 
+sh4180af.bmp   [149, 49] 
+sh4090af.bmp   [166, 50] 
+sh4045af.bmp   [157, 50] 
+13
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 

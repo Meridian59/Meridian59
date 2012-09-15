@@ -1,0 +1,12 @@
+# Male hair 3 - mohawk
+# 1 group
+-s 14
+6
+pt000cae.bmp   [-10, -6] 
+pt045cae.bmp   [-22, -6] 
+pt090cae.bmp   [-25, -8] 
+pt180cae.bmp   [-9, -5] 
+pt270cae.bmp   [-22, -6] 
+pt315cae.bmp   [-21, -6] 
+1
+ 8      1   6   5   4   4   4   3   2

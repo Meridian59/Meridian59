@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tim Schubert  4-28-97
+% 
+
+
+AgilityBoon is Boon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   agilboon_name_rsc = "agility effect"
+   agilboon_icon_rsc = iboonagi.bgf
+   agilboon_desc_rsc = "Your physical agility is not natural."
+   agilboon_intro_rsc = "The agility of the victim is boosted temporarily."
+
+   agilboon_inc = "You suddenly feel much quicker!"
+   agilboon_dec = "You suddenly feel more sluggish."
+
+classvars:
+   viPersonal_ench = True
+   vrName = agilboon_name_rsc
+   vrIcon = agilboon_icon_rsc
+   vrDesc = agilboon_desc_rsc
+   vrSpell_intro = agilboon_intro_rsc
+
+   viSpell_num = SID_AGILITY_BOON
+   viMana = 0
+
+properties:
+
+messages:
+
+   DoSpellEffect(who = $, amount = $)
+   {
+   send(who,@AddAgility,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=agilboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=agilboon_dec); }
+   return;
+   }
+
+   UndoSpellEffect(who = $, amount = $)
+   {
+   amount = -amount;
+   send(who,@AddAgility,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=agilboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=agilboon_dec); }
+   return;
+   }
+
+end

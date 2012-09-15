@@ -1,0 +1,82 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanWeaponsMaster is KocatanTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanWeaponsMaster_name_rsc = "Kochtal ko'Tulca"
+   KocatanWeaponsMaster_icon_rsc = kcweapon.bgf
+   KocatanWeaponsMaster_desc_rsc = "An older man who is obviously blind in both eyes. With his every "
+            "move exacting and his every word said with forethought, this former warrior defines the "
+            "slow grace of a seasoned hunter. Noted for his keen ear, some say he can hear those "
+            "things that make no noise, like a frown or a doubting thought."
+
+   KocatanWeaponsMaster_orcteeth_sale = "You want %s%s?  Yes, yes, I have a few old trophies that you can buy from me."
+
+classvars:
+
+   vrName = KocatanWeaponsMaster_name_rsc
+   vrIcon = KocatanWeaponsMaster_icon_rsc
+   vrDesc = KocatanWeaponsMaster_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_TEACHER | MOB_COND_SELLER
+   viOccupation = MOB_ROLE_SCHOLAR
+
+properties:
+   
+messages:
+
+   UserEntered(who = $)
+   {
+      if Send(who,@GetFaction) = FACTION_PRINCESS
+      {
+         send(self,@SetMood,#new_mood=piMood - 1);
+      }
+      
+      if Send(who,@GetFaction) = FACTION_DUKE
+      {
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_Sale = [[ Create(&PracticeBow) ],
+                    [SKID_FIRE, SKID_PROFICIENCY_BOW],
+                    $,$
+                   ];
+		return;
+   }
+
+   InitCondSale()
+   {
+      local oObj;
+      
+      oObj = Create(&OrcTooth,#number=2);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj,750,KocatanWeaponsMaster_orcteeth_sale]);
+           
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

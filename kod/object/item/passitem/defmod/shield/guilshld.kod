@@ -1,0 +1,592 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildShield is Shield
+
+constants:
+
+   include blakston.khd
+
+   DEFENDING = 3
+
+resources:
+
+   guildshield_name_rsc = "herald shield"
+
+   guildshield_base_sash = gshA.bgf
+   guildshield_base_halvesv = gshB.bgf
+   guildshield_base_stripeh = gshC.bgf
+   guildshield_base_checker = gshD.bgf
+
+   guildshield_pov_sash = povgshA.bgf
+   guildshield_pov_halvesv = povgshB.bgf
+   guildshield_pov_stripeh = povgshC.bgf
+   guildshield_pov_checker = povgshD.bgf
+
+
+   guildshield_duke = gshda.bgf
+   guildshield_duke_over = gshdaov.bgf
+
+   guildshield_old_duke = gshdu.bgf
+   guildshield_old_duke_over = gshduov.bgf
+
+   guildshield_princess = gshpr.bgf
+   guildshield_princess_over = gshprov.bgf
+
+   guildshield_rebel = gshre.bgf
+   guildshield_rebel_over = gshreov.bgf
+
+   guildshield_riija = gshri.bgf
+   guildshield_riija_over = gshriov.bgf
+
+   guildshield_faren = gshfa.bgf
+   guildshield_faren_over = gshfaov.bgf
+
+   guildshield_qor = gshqo.bgf
+   guildshield_qor_over = gshqoov.bgf
+
+   guildshield_shalille = gshsh.bgf
+   guildshield_shalille_over = gshshov.bgf
+
+   guildshield_kraanan = gshkr.bgf
+   guildshield_kraanan_over = gshkrov.bgf
+
+   guildshield_jala = gshja.bgf
+   guildshield_jala_over = gshjaov.bgf
+
+   guildshield_window_overlay_rsc = povshldE.bgf
+
+   guildshield_desc_rsc = \
+      "Heavy metal shields of this style are decorated in the standards of its owner guild. "
+
+   guildshield_heraldry_prefix = "The pattern on this shield is "
+
+   guildshield_red = "rose"
+   guildshield_skin1 = "sand"
+   guildshield_skin2 = "bronze"
+   guildshield_skin4 = "ochre"
+   guildshield_orange = "gold"
+   guildshield_green = "verdant"
+   guildshield_blue = "navy"
+   guildshield_purple = "violet"
+   guildshield_yellow = "gold"
+   guildshield_gray = "gris"
+   guildshield_sky = "azure"
+   guildshield_unknown = "a color"
+
+   guildshield_slash = " tierced in bend sinister by "
+   guildshield_half = " astride "
+   guildshield_horiz = " tierced in feld by "
+   guildshield_checker = " quartered with "
+
+   guildshield_heraldry_known = ": the mark of the "
+   guildshield_heraldry_postfix = ". "
+
+   guildshield_insig_riija = "The unblinking eye of Riija stares from its center. "
+   guildshield_insig_qor = "The skull insignia of Qor is upon it. "
+   guildshield_insig_kraanan = "The weapons of Kraanan are crossed acenter. "
+   guildshield_insig_faren = "The power of Faren arcs across it. "
+   guildshield_insig_jala = "The lute of Jala is depicted upon it. "
+   guildshield_insig_princess = "It is emblazoned with the Royal Crown of Kateriina. "
+   guildshield_insig_old_duke = "The bold seal of Kalior is affixed. "
+   guildshield_insig_duke = "The bold seal of Akardius is affixed. "
+   guildshield_insig_shalille = "The ankh of Shal'ille's blessing is afaced. "
+   guildshield_insig_rebel = "The rebel flag of Jonas is displayed proudly. "
+   guildshield_insig_none = ""
+
+classvars:
+
+   vrName = guildshield_name_rsc
+
+   viHits_init_min = 350
+   viHits_init_max = 400
+
+   % Being custom and made from ore, it's heavier than your average shield.
+   viValue_average = 400
+   viWeight = 200  
+   viBulk = 150
+
+   viDefense_base = 20
+   viDamage_base = 2
+
+properties:
+
+   vrDesc = guildshield_desc_rsc
+   vrIcon = guildshield_base_sash
+   vrShield_overlay = guildshield_base_sash
+   prShield_emblem_held = $
+   prShield_emblem_drop = $
+   vrShield_window_overlay = guildshield_window_overlay_rsc
+   piInsigniaType = INSIG_NONE
+
+   viGround_group = 3
+   viInventory_group = 1
+   viBroken_group = 4
+
+   piShield_shape = SHIELDSHAPE_DEFAULT
+
+messages:
+
+   Constructor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT,guildMember=$)
+   {
+      local oGuild;
+      
+      if guildMember <> $
+      {
+         oGuild = send(guildMember,@GetGuild);
+         color1 = send(oGuild,@GetPrimaryGuildColor);
+         color2 = send(oGuild,@GetSecondaryGuildColor);
+         shape  = send(oGuild,@GetShieldShape);
+      }
+      
+      send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
+      
+      propagate;
+   }
+
+   IsShieldColored()
+   {
+      local XLAT;
+      XLAT = send(self,@GetPaletteTranslation);
+
+      if (send(SYS,@DecodePrimaryColor,#xlat=XLAT) = XLAT_TO_GRAY)
+         AND (send(SYS,@DecodeSecondaryColor,#xlat=XLAT) = XLAT_TO_GRAY)
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   AppendColor(color = 0)
+   {
+      if color = XLAT_TO_RED { AppendTempString(guildshield_red); return; }
+      if color = XLAT_TO_SKIN1 { AppendTempString(guildshield_skin1); return; }
+      if color = XLAT_TO_SKIN2 { AppendTempString(guildshield_skin2); return; }
+      if color = XLAT_TO_SKIN4 { AppendTempString(guildshield_skin4); return; }
+      if color = XLAT_TO_ORANGE { AppendTempString(guildshield_orange); return; }
+      if color = XLAT_TO_GREEN { AppendTempString(guildshield_green); return; }
+      if color = XLAT_TO_BLUE { AppendTempString(guildshield_blue); return; }
+      if color = XLAT_TO_PURPLE { AppendTempString(guildshield_purple); return; }
+      if color = XLAT_TO_YELLOW { AppendTempString(guildshield_yellow); return; }
+      if color = XLAT_TO_GRAY { AppendTempString(guildshield_gray); return; }
+      if color = XLAT_TO_SKY { AppendTempString(guildshield_sky); return; }
+
+      AppendTempString(guildshield_unknown);
+
+      return;
+   }
+
+   AppendDesc()
+   {
+      local a, b, x;
+
+      % sample: "The pattern on this shield is rose astride gold;
+      %          the traditional mark of the Foobars.  The eye of
+      %          Riija is staring ahead."
+
+      AppendTempString(guildshield_heraldry_prefix);
+
+      % color 1
+      x = send(self,@GetPaletteTranslation);
+      a = send(SYS,@DecodePrimaryColor,#xlat=x);
+      send(self,@AppendColor,#color=a);
+
+      % shape
+      if piShield_shape = SHIELDSHAPE_SLASH { AppendTempString(guildshield_slash); }
+      if piShield_shape = SHIELDSHAPE_HALF { AppendTempString(guildshield_half); }
+      if piShield_shape = SHIELDSHAPE_HORIZ { AppendTempString(guildshield_horiz); }
+      if piShield_shape = SHIELDSHAPE_CHECKER { AppendTempString(guildshield_checker); }
+
+      % color 2
+      b = send(SYS,@DecodeSecondaryColor,#xlat=x);
+      send(self,@AppendColor,#color=b);
+
+      % guild, if known
+      x = send(SYS,@FindGuildByShield,#color1=a,#color2=b,#shape=piShield_shape);
+      if (x <> $) and isClass(x,&Guild)
+      {
+         if not send(x, @IsSecret)
+         {
+            AppendTempString(guildshield_heraldry_known);
+            AppendTempString(send(x, @GetName));
+         }
+      }
+      AppendTempString(guildshield_heraldry_postfix);
+
+      % insignia, if any
+      if piInsigniaType = INSIG_RIIJA { AppendTempString(guildshield_insig_riija); }
+      if piInsigniaType = INSIG_QOR { AppendTempString(guildshield_insig_qor); }
+      if piInsigniaType = INSIG_KRAANAN { AppendTempString(guildshield_insig_kraanan); }
+      if piInsigniaType = INSIG_FAREN { AppendTempString(guildshield_insig_faren); }
+      if piInsigniaType = INSIG_JALA { AppendTempString(guildshield_insig_jala); }
+      if piInsigniaType = INSIG_PRINCESS { AppendTempString(guildshield_insig_princess); }
+      if piInsigniaType = INSIG_DUKE { AppendTempString(guildshield_insig_duke); }
+      if piInsigniaType = INSIG_SHALILLE { AppendTempString(guildshield_insig_shalille); }
+      if piInsigniaType = INSIG_REBEL { AppendTempString( guildshield_insig_rebel); }
+      if piInsigniaType = INSIG_NONE { AppendTempString(guildshield_insig_none); }
+
+      propagate;
+   }
+
+   Randomize()
+   "Admin supported."
+   {
+      local color1, color2, shape, insignia;
+
+      color1 = random(XLAT_TO_RED, XLAT_TO_SKY);
+      color2 = random(XLAT_TO_RED, XLAT_TO_SKY);
+      shape = random(SHIELDSHAPE_SLASH, SHIELDSHAPE_CHECKER);
+      insignia = random(INSIG_RIIJA, INSIG_NONE);
+
+      send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
+      send(self,@ChangeGuildInsignia,#insignia=insignia);
+
+      return;
+   }
+
+   ChangeGuildInsignia(insignia = 0)
+   {
+      prShield_emblem_held = $;
+      prShield_emblem_drop = $;
+
+      if insignia = INSIG_RIIJA
+      {
+         prShield_emblem_held = guildshield_riija_over;
+         prShield_emblem_drop = guildshield_riija;
+      }
+      
+      if insignia = INSIG_QOR
+      {
+         prShield_emblem_held = guildshield_qor_over;
+         prShield_emblem_drop = guildshield_qor;
+      }
+      
+      if insignia = INSIG_KRAANAN
+      {
+         prShield_emblem_held = guildshield_kraanan_over;
+         prShield_emblem_drop = guildshield_kraanan;
+      }
+      
+      if insignia = INSIG_FAREN
+      {
+         prShield_emblem_held = guildshield_faren_over;
+         prShield_emblem_drop = guildshield_faren;
+      }
+      
+      if insignia = INSIG_JALA
+      {
+         prShield_emblem_held = guildshield_jala_over;
+         prShield_emblem_drop = guildshield_jala;
+      }
+      
+      if insignia = INSIG_PRINCESS
+      {
+         prShield_emblem_held = guildshield_princess_over;
+         prShield_emblem_drop = guildshield_princess;
+      }
+      
+      if insignia = INSIG_DUKE
+      {
+         prShield_emblem_held = guildshield_duke_over;
+         prShield_emblem_drop = guildshield_duke;
+      }
+      
+      if insignia = INSIG_SHALILLE
+      {
+         prShield_emblem_held = guildshield_shalille_over;
+         prShield_emblem_drop = guildshield_shalille;
+      }
+      
+      if insignia = INSIG_REBEL
+      {
+         prShield_emblem_held = guildshield_rebel_over;
+         prShield_emblem_drop = guildshield_rebel;
+      }
+ 
+      piInsigniaType = insignia;
+
+      if poOwner <> $
+      {
+         post(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;   
+   }
+
+   ChangeGuildShieldColor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT, override = FALSE)
+   {
+      local XLAT;
+      
+      %% override means do it no matter what.  good for testing
+
+      if NOT override AND send(self,@IsShieldColored)
+      {
+         return FALSE;
+      }
+
+      if (color1 > XLAT_HIGH_VALUE) or (color2 > XLAT_HIGH_VALUE)
+      {
+         if color1 = XLAT_TO_DGREEN
+         {
+            color1 = XLAT_TO_GREEN;
+         }
+         
+         if color2 = XLAT_TO_DGREEN
+         {
+            color2 = XLAT_TO_GREEN;
+         }
+         
+         if color1 = XLAT_TO_BLACK
+         {
+            color1 = XLAT_TO_GRAY;
+         }
+         
+         if color2 = XLAT_TO_BLACK
+         {
+            color2 = XLAT_TO_GRAY;
+         }
+      }
+      
+      if (color1 < XLAT_LOW_VALUE) OR (color1 > XLAT_HIGH_VALUE)
+         OR (color2 < XLAT_LOW_VALUE) OR (color2 > XLAT_HIGH_VALUE)
+      {
+         return FALSE;
+      }
+
+      XLAT = send(SYS,@EncodeTwoColorXLAT,#color1=color1,#color2=color2);
+      send(self,@SetPaletteTranslation,#translation=XLAT);
+      piShield_shape = shape;
+
+      if piShield_shape = SHIELDSHAPE_SLASH
+      {  
+         vrIcon = guildshield_base_sash; 
+         vrShield_overlay = guildshield_base_sash; 
+         vrShield_window_overlay = guildshield_pov_sash;
+      }
+      
+      if piShield_shape = SHIELDSHAPE_HALF
+      {  
+         vrIcon = guildshield_base_halvesv; 
+         vrShield_overlay = guildshield_base_halvesv; 
+         vrShield_window_overlay = guildshield_pov_halvesv;
+      }
+      
+      if piShield_shape = SHIELDSHAPE_HORIZ
+      {  
+         vrIcon = guildshield_base_stripeh; 
+         vrShield_overlay = guildshield_base_stripeh;       
+         vrShield_window_overlay = guildshield_pov_stripeh;
+      }
+      
+      if piShield_shape = SHIELDSHAPE_CHECKER
+      {  
+         vrIcon = guildshield_base_checker; 
+         vrShield_overlay = guildshield_base_checker;        
+         vrShield_window_overlay = guildshield_pov_checker;
+      }
+
+      %% redraw it if necessary
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+      
+      return;
+   }
+
+   GetNumberOverlays()
+   {
+      if prShield_emblem_held <> $
+      {
+         return 2;
+      }
+      
+      return 1;
+   }
+
+   GetOverlay()
+   {
+      return vrShield_overlay;
+   }
+   
+   GetOverlayHotspot()
+   {
+      return HS_LEFT_WEAPON;
+   }
+
+   SendOverlayInformation(iAnimation = $)
+   {
+      AddPacket(4,vrShield_Overlay);
+      AddPacket(1,HS_LEFT_WEAPON);
+      Send(self,@SendHeldAnimation,#iAnimation=iAnimation);       
+
+      if prShield_emblem_held <> $
+      {
+         AddPacket(4,prShield_emblem_held);
+         AddPacket(1,HS_LEFT_WEAPON);
+         AddPacket(1,ANIMATE_NONE,2,1);
+      }
+      
+      return;
+   }
+
+   SendHeldAnimation()
+   {
+      local XLAT;
+
+      XLAT = send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+      AddPacket(1,ANIMATE_NONE,2,2);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      local XLAT;
+
+      XLAT = send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+
+      if piHits > 0
+      {
+         AddPacket(1,ANIMATE_NONE,2,viGround_group);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,viBroken_group);
+      }
+
+      return;
+   }
+
+   SendWindowOverlayAnimation()
+   {
+      local XLAT;
+
+      XLAT = send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+
+      if piUsed = DEFENDING
+      { 
+         AddPacket(1,ANIMATE_ONCE,4,1000,2,2,2,2,2,1);
+         
+         return;
+      }
+      
+      AddPacket(1,ANIMATE_NONE,2,1);
+      
+      return;      
+   }
+
+   SendOverlays()
+   {
+      if prShield_emblem_held <> $
+      {      
+         AddPacket(1,1);   
+         AddPacket(4,prShield_emblem_drop,1,1,1,ANIMATE_NONE,2,2);
+      }
+      else
+      {
+         AddPacket(1,0);   
+      }
+      
+      return;   
+   }
+
+   SendLookAnimation()
+   {
+      local XLAT;
+
+      XLAT = send(self,@GetPaletteTranslation);
+      AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
+     
+      if piHits > 0
+      {
+         AddPacket(1,ANIMATE_NONE,2,viInventory_group);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,viBroken_group);
+      }
+
+      return;
+   }
+
+   SendLookOverlays()
+   {
+      if prShield_emblem_held <> $
+      {      
+         AddPacket(1,1);   
+         AddPacket(4,prShield_emblem_drop,1,1,1,ANIMATE_NONE,2,1);
+      }
+      else
+      {
+         AddPacket(1,0);   
+      }
+      
+      return;   
+   }
+
+   SendInventoryAnimation()
+   {
+      Send(self,@SendLookAnimation);
+      
+      return;
+   }
+
+   SendInventoryOverlays()
+   {
+      Send(self,@SendLookOverlays);
+      
+      return;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_PIERCE,10] ];
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      local iSchool;
+
+      if oSpell = $ OR piInsigniaType = INSIG_NONE
+      {
+         return 0;
+      }
+
+      iSchool = send(oSpell,@GetSchool);
+      
+      % Give a bonus to certain spells if the shield has the proper insignia
+      if (piInsigniaType = INSIG_FAREN AND iSchool = SS_FAREN)
+         OR (piInsigniaType = INSIG_KRAANAN AND iSchool = SS_KRAANAN)
+         OR (piInsigniaType = INSIG_QOR AND iSchool = SS_QOR)
+         OR (piInsigniaType = INSIG_SHALILLE AND iSchool = SS_SHALILLE)
+         OR (piInsigniaType = INSIG_RIIJA AND iSchool = SS_RIIJA)
+      {
+         return 10;
+      }
+
+      % Allow faction insignias to give a small random bonus.
+      if piInsigniaType = INSIG_DUKE
+         OR piInsigniaType = INSIG_PRINCESS
+         OR piInsigniaType = INSIG_REBEL
+      {
+         return random(3,7);
+      }
+
+      return 0;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,513 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CornothUniversity is CorNothRoom
+
+constants:
+
+   include blakston.khd             
+
+
+resources:
+
+   room_coruniv = coruniv.roo
+   room_name_coruniv = "The Hall of Genealogy"
+
+   coruniv_music = main.mid
+   coruniv_room_changed = "Your hometown has been changed."
+   coruniv_no_change = "You cannot change your hometown - it has already been chosen."
+
+   genealogy_tos = "Written by Lisbetta of the Crimson Blade\n"
+	"\n"
+	"   Tos, the oldest city in the land, how well I know your every cobblestone "
+	"and building crack.  You see I've lived in the big city all my life, never "
+	"saw a reason to move on or even leave her walls for more than a quick jaunt.  "
+	"Why bother, the old city is full of life, adventure and opportunity.  The "
+	"most popular bar, a renowned graveyard, the Arena of Kraanan, what more "
+	"could you want.\n"
+	"\n"
+	"   If you're going to live in Tos there are two things you have to remember, "
+	"everyone's out to get the better of you and you weren't born yesterday.  "
+	"It's not that the people are dishonest.  Fiercely competitive, capitalistic, "
+	"hedonistic perhaps, but not dishonest.  But if you're going to have the "
+	"excitement of living in The City, you've got to watch your back, trust me, "
+	"but not too much.\n"
+	"¶"
+	"   Primarily, we support our Duke.  He has done a lot to keep our merchants "
+	"competitive in the world and keep our walls from crumbling in.  Sure, we "
+	"may grumble about his taxes now and then, but he certainly knows the needs "
+	"of Tos better than those stuffed shirts up in Barloque.\n"  
+	"\n"
+	"Views on other Towns\n"
+	"\n"
+	"BARLOQUE\n"
+	"   For as long as I can remember we have hated those pompous idiots up in "
+	"Barloque.  Long ago there were wars between the people who want to stay in "
+	"the great city and those who wanted to move the center of power up to the "
+	"coast.  Although the wars ended hundreds of years ago, they still hold a "
+	"grudge against us.  I think they are all inbred.\n"
+	"¶"
+	"COR NOTH\n"
+	"   We have strong diplomatic relations with Cor Noth.  It's the only other "
+	"city I bother with.  The trade relations between Tos and Cor Noth have "
+	"always been amicable.\n"
+	"\n"
+	"JASPER\n"
+	"   You have to respect Jasper.  Hard working people.  Jala knows I couldn't "
+	"work that hard.  I also like Jasper because they have thumbed their nose at "
+	"the crown in Barloque.  They never just kneeled down before the aristocrats.  "
+	"They would make good allies if another war were to break out.\n"
+	"\n"
+	"MARION\n"
+	"   We've got a word for the people of Marion, \"Hicks\".  We've got another "
+	"word as well, \"Laughable\".  These simplistic farmers are nothing more than "
+	"shoe polishers for the nobles in Barloque.  Make fun of them at every chance."
+	"¶"
+	"Advantage - heavy freelanced commerce.\n"  
+	"\n"
+	"\n"
+	"To permanently select Tos as your hometown, merely speak this phrase aloud: "
+	"\"I grew up on the ancient streets of Tos.\"\n"
+	"\n"
+	"\n"
+	"PLEASE TAKE NOTICE: Once you have selected your hometown, it will become "
+	"permanent and can not be changed."
+
+   genealogy_barloque = "Written by Lord Fellmund III, member of the Royal Court\n"
+	"\n"
+	"   Never was there so noble a city as our fair Barloque.  'Tis said, my "
+	"good fellow, those born of proper class established a grand, ocean side "
+	"retreat in an age long past.  Full of fresh air and clear views of the "
+	"azure water, said nobility found reason in great measure to leave behind "
+	"the stagnant puddle known as Tos.  Thou wouldst think that any being with "
+	"a mind for reason would follow in suit, yet those craven clay-brained "
+	"knaves of the withered city moved not.  And to further salt a scratch, "
+	"they chose not to recognize the change in the location of power.  Such "
+	"was not to be tolerated by the Kingdom.\n"
+	"\n"
+	"   In faith, hailing from Barloque grants thee the privilege of nobility "
+	"and the respect of the peasant class.  Thou wouldst enjoy a comfortable "
+	"life filled with appreciation for elegant culture and courtly discourse.  "
+	"A false Lady or Lord would be found not within our stately walls.  I pray "
+	"thee, speak with the tongue befitting our mouths.  Take great care with "
+	"thy \"thous\" and \"thees\".  Speak not \"thither\" when thou mean \"yon\".\n"
+	"¶"
+	"   Whether thou taketh thy support to the Princess or doth grant it that "
+	"villainous Duke, thou must always defend to the best of thy ability and "
+	"with great fortitude the will of the Kingdom.  Many a time, traitorous "
+	"Tos and impertinent Jasper hath challenged the right of our rule, only "
+	"to find defeat at our soldiers' hands.  Barloque holds the honor and the "
+	"responsibility of defending and lording over the Meridian entire.  I "
+	"beseech thee, forget this not.\n"
+	"\n"
+	"Views on other Towns\n"
+ 	"\n"
+	"COR NOTH\n"
+	"   I doubt not, thou were properly taught all matters save language and "
+	"social grace in the University of Cor Noth.  And I say with equal "
+	"determination, thy children shall attend the same schools.  Yet, once "
+	"thy brain hath filled itself with the bountiful knowledge offered, get "
+	"thee back to regal life in Barloque.\n" 
+	"¶"
+	"JASPER\n"
+	"   Were there ever a place uncivilized she would answer to the call of "
+	"\"Jasper\".  They speak in uncouth words of rebellion, yet lack the true "
+	"merit to govern themselves.  With no offense to the Cragged Mountain, "
+	"those born of Jasper are best kept at mountain length from those of our "
+	"birth.\n"
+	"\n"
+	"MARION\n"
+	"   Forsooth, the loyalty displayed by the backcountry serfs of Marion "
+	"doth bring such pleasure to our countenance.  Nary a bad word can be said "
+	"of these goodly farmers and servants.  Treat them well and they will "
+	"serve thee well.\n"  
+	"\nTOS\n"
+	"   Roguish beetle-headed miscreants, Tos doth own but naught else."
+	"¶"
+	"Advantage - Vaultman\n" 
+	"\n"
+	"\n"
+	"To permanently select Barloque as thy hometown, merely speak this phrase "
+	"aloud: \"Good Barloque, thy regal streets shall be mine home.\"\n"
+	"\n"
+	"\n"
+	"PLEASE TAKE NOTICE: Once you have selected your hometown, it will become "
+	"permanent and can not be changed."  
+
+   genealogy_marion = "Written by Land Owner Donnal Reed\n"
+	"\n"
+	"   Life is simple here in Marion, and that's the way we like it.  Ya see, "
+	"all them cities try too hard to complicate life with this and that.  When "
+	"you grow up on the farm, you learn that it just ain't that difficult.  "
+	"You live your life decent and others'll treat you right.  It's like an "
+	"apple tree, you give it love and water and let the sun do its thing and "
+	"it will give you delicious apples.  Treat it bad and it dies.\n"
+	"\n"
+	"   We are proud to say that the most valiant and trustworthy knights come "
+	"from our little village.  Those guys are strong from working hard in life "
+	"and follow strict codes on how to treat women right, how to give respect "
+	"to nobility, and how to be generous to those less fortunate.\n"
+	"¶"
+	"   Most of us follow the way ways of Shal'ille and of the Princess, but "
+	"none will raise a pitchfork if yer supporting the Duke or Kraanan.  Why "
+	"even old Faren is to be respected for allowing nature to give us the food "
+	"that we need."
+	"¶"
+	"Views on other Towns\n"
+ 	"\n"
+	"BARLOQUE\n"
+	"   You got to give the proper respect to the royalty.  They were born of "
+	"higher blood than us.  Don't need to take their guff if they get rude on "
+	"you, but always remember your place in life.  And it's not that we are "
+	"any less important that they are, they just here on this world for a "
+	"different reason.\n"
+	"\n"
+	"COR NOTH\n"
+	"   I just don't understand.  They spend all of their time chattering away about "
+	"things that I quite frankly don't see any point to, like who wrote what "
+	"book and how different people think differently.  I got to respect that "
+	"they can think like that, but if it don't produce food or clothing or "
+	"make you laugh, then why bother.\n"
+	"¶"
+	"JASPER\n"
+	"   I've heard some good jokes about the people of Jasper.  Don't get me "
+	"wrong, we're just havin' some fun.  They are hard working folk that we "
+	"can relate to.  They're a mite bit strange in how they ain't so outgoing, "
+	"but deep down they carry similar values as us.\n"
+	"\n"
+	"TOS\n"
+	"   Slick city folk, never met one that I'd introduce to my daughter.  I "
+	"think the biggest problem with them down in Tos is their laziness.  They "
+	"don't seem to want to work for anything.  Always think they can talk their "
+	"way out of honest work."
+	"¶"
+	"Advantage - Town Healer.\n" 
+	"\n"
+	"\n"
+	"To permanently select Marion as your hometown, merely speak this phrase "
+	"aloud: \"Marion, home sweet home.\"\n"
+	"\n"
+	"\n"
+	"PLEASE TAKE NOTICE: Once you have selected your hometown, it will become "
+	"permanent and can not be changed."
+
+   genealogy_cornoth = "Written by Regifan Du Bukise, Dean of the University of Cor Noth\n"
+	"\n"
+	"   Let me tell you a little about my hometown of Cor Noth and the type of "
+	"people that we foster.  Once, it was little more than a country inn at the "
+	"crossroads of the King's Highway and the Merchant Way, and slowly buildings "
+	"started to pop up around it.  Its central location led it to become a "
+	"waypoint in most major trade and when the University was founded in the "
+	"year 330, it was declared a major city.  With people coming in from all different "
+	"lands, Cor Noth quickly became known as the Stew Pot.  The addition of "
+	"various cultures mixed with higher education bred tolerance and freethinking.\n"  
+	"\n"
+	"   By all accounts, Cor Noth is a free city.  It does not answer to the Duke "
+	"or the Princess in matters of politics.  In fact, because of its value as a "
+	"trade route between all of the cities, it does not even have a military to "
+	"speak of.  In times of need, Cor Noth has called upon one or more of her "
+	"allies for protection.\n"
+	"¶"
+	"   Most of the educated individuals in the land have hailed from our central "
+	"city.  It is common for them to annotate which degree they did their studies "
+	"in, such as History, Thaumaturgy, and Diplomacy, or the esoteric sub-curriculums "
+	"in Acarology, Pterylology, Meridianology, and etceteras.\n"
+	"\n"
+	"Views on other Towns\n"
+ 	"\n"
+	"BARLOQUE\n"
+	"   The Capital City inevitably sends all of its noble children to be learned "
+	"at our University.  Immense wealth and social stature leads to an unhealthy "
+	"view on the world and those less fortunate than themselves, however the "
+	"steady flow of income to our programs and fine arts make them a necessary "
+	"ally.  Perhaps with more liberal education we can eventually change the "
+	"elitism that Barloque has bred for so long.\n"
+	"¶"
+	"JASPER\n"
+	"   Mostly, I feel sorry for the miner's town.  The hills do not yield gems "
+	"and gold in the enormous quantities of fifty years ago.  Simple laws of "
+	"economics foretell the death of Jasper.  Unless a huge vein can be found "
+	"to flood their pockets, they have little hope for surviving another fifty "
+	"years.  To make matters worse, the people estrange themselves from the "
+	"rest of the cities both in attitude and in politics.  Too proud to ask "
+	"for or accept help from others.\n" 
+	"\n"
+	"MARION\n"
+	"   The people of Marion are extremely useful to the world.  We fully "
+	"respect their innate ability to produce crops year after year to feed the "
+	"world at large.  Unfortunately, that leaves them with no time for a formal "
+	"education.  Good people of a simpler time, just try not to offend them "
+	"as you slow down your speech so that they can comprehend you.\n"
+	"¶"
+	"TOS\n"
+	"   Every culture goes through stages, birth and foundation, growth and "
+	"self-discovery, prosperity and high culture - Tos has now entered the "
+	"final stage, corruption and decadence.  The Duke brings strength to the "
+	"land but one must wonder at what cost.  There is much to be learned from "
+	"the confidant inhabitants, but be on your guard."
+	"¶"
+	"Advantage - Central location.\n" 
+	"\n"
+	"\n"
+	"To permanently select Cor Noth as your hometown, merely speak this phrase "
+	"aloud: \"I commend my knowledge to the free city of Cor Noth.\"\n"
+	"\n"
+	"\n"
+	"PLEASE TAKE NOTICE: Once you have selected your hometown, it will become "
+	"permanent and can not be changed."
+
+   genealogy_jasper = "Written by Treban Kley, Historian Emeritus to the King's "
+	"Army and Professor at Cor Noth University\n"
+	"\n"
+	"   The Cragged Mountains are a barren range along the southern border of "
+	"Meridian. The rocky cliffs and sheer walls of these mountains extend for "
+	"many, many miles, forming a natural barrier impassable to all but a few "
+	"legendary explorers. These mountains are inhabited by dangerous and "
+	"mysterious tenants; by the fearsome Trolls of Ukgoth, by colonies of "
+	"mutant ants, and by the tribes of the Great Orc Warlord, whose Mountain "
+	"Fortress has eluded a dozen armies over many campaigns in the last two "
+	"centuries. But it could be said that the least understood of all are "
+	"the mountain people of Jasper.\n"
+	"¶"
+	"   The people of the Cragged Mountains see themselves as a separate "
+	"culture from that of the rest of Meridian. Their struggle for autonomy "
+	"from what they view as an imposed rule from governments in Tos and later "
+	"Barloque has led to three wars of open rebellion against the Crown. "
+	"Historians now refer to these struggles as the First Rebellion (or "
+	"Far'Nohl Insurrection) in year 436, the Second Rebellion (or The "
+	"Kraanan War) in year 511, and the Third Rebellion in year 569. Under "
+	"the leadership of a legacy of warlords, or Wryns as they were called, "
+	"¶"
+	"the people of Jasper proved their valor as a formidable irregular army, "
+	"stalwart on the defense and absolutely ruthless when attacking. The "
+	"people of Jasper were brought under the King's rule after the Battle "
+	"of Denthan Crossing in year 572, which claimed the life of King Zarcos "
+	"II but lead ultimately to the complete subjugation of Jasper. There has "
+	"not been a Wryn presiding over Jasper since, as this custom and many "
+	"others have been forbidden by Royal Decree. An uneasy peace has prevailed "
+	"between Barloque and Jasper since that time, although tensions have not "
+	"again escalated to full-scale war.\n" 
+	"¶"
+	"   Their heritage is little understood by outsiders, and the Jasper people "
+	"are very secretive about their customs and practices. In fact very little "
+	"is known about these ancient people besides their obvious and fierce "
+	"independence, a toughness bred of their wild mountain home, their "
+	"clannishness, and their legendary pride. The people of Jasper are renown "
+	"for their willingness to support and to stick up for each other. Jasper "
+	"enjoyed a brief period of economic boom as a number of hard rock mines "
+	"flourished in the area between years 648 and 696, although mining "
+	"activities in the area of the Cragged Mountain foothills has now all "
+	"but ceased."
+	"¶"
+	"Views on other Towns\n"
+	"\n"
+	"BARLOQUE\n"
+	"   The emotion hatred could be used to describe the feeling that the "
+	"people of Jasper have for the Royalty in Barloque, although it probably "
+	"isn't sufficiently vehement. Bad feelings built up over the course of "
+	"three separate civil wars take a long time to dispel, despite efforts "
+	"from more temperate factions on both sides to establish a meaningful "
+	"peace. Trade and commerce are conducted between the common folk, "
+	"although a strong sense of contempt seems to exist for the Royalty "
+	"regardless of time and distance from the original conflict.\n"
+	"¶"
+	"COR NOTH\n"
+	"   The people of Jasper seem to be much too founded in their "
+	"characteristically strong willed way to ever empathize with the "
+	"positions of their countrymen in Cor Noth. In particular, it is "
+	"apparently inconceivable that Cor Noth could remain neutral through "
+	"so much turmoil between the other cities and towns, or that a town "
+	"established around a university that they see as teaching a "
+	"\"pro-royalist\" curriculum could be anything but a toady, subservient "
+	"culture to the philosophically bankrupt government. As such, there "
+	"is little culturally that passes between the two communities, and "
+	"almost no economic ties.\n"
+	"¶"
+	"MARION\n"
+	"   Relations between the two townships of Jasper and Marion have "
+	"been both positive and active since almost the founding of Marion, "
+	"when the Jasper community essentially saved the lives of the new "
+	"immigrant population following a series of devastating crop failures "
+	"that hit the fledgling community. Despite Marion's political ties to "
+	"Barloque, the communities remain kindred in spirit. In fact there "
+	"is some evidence to suggest that an independent contingency of "
+	"warriors from Marion have been involved in each of Jasper's "
+	"rebellions, in some fighting cases against other Marion forces "
+	"loyal to the King.\n"
+	"¶"
+	"TOS\n"
+	"   The old adage that \"The enemy of my enemy is my friend\" could "
+	"scarcely be used more poignantly than to describe the relationship "
+	"between the township of Jasper and the city of Tos. The two "
+	"communities have built a relationship around a common enemy, "
+	"Barloque, although it would be difficult to argue that Tos shares "
+	"the vehemence of feeling towards the Crown that predominates "
+	"Jasper's political climate. Nevertheless, cooperation and trade "
+	"exist, and should civil war ever break out again, it is likely that "
+	"Jasper and Tos would ally and could indeed field a powerful army."
+	"¶"
+	"Advantage - More restful inn.\n" 
+	"\n"
+	"\n"
+	"To permanently select Jasper as your hometown, merely speak this "
+	"phrase aloud: \"With solidarity, we stand in Jasper.\"\n"
+	"\n"
+	"\n"
+	"PLEASE TAKE NOTICE: Once you have selected your hometown, it will "
+	"become permanent and can not be changed."
+
+   genealogy_tos_name = "Living on the streets of Tos"
+   genealogy_barloque_name = "The Official Writs of the Noble Class"
+   genealogy_marion_name = "Seasons, ever-changing yet always the same"
+   genealogy_cornoth_name = "Of Free Thinkers and Scholars"
+   genealogy_jasper_name = "The Wryn's Legacy"
+
+   coruniv_choose_jasper_trigger = "With solidarity, we stand in Jasper."
+   coruniv_choose_tos_trigger = "I grew up on the ancient streets of Tos."
+   coruniv_choose_marion_trigger = "Marion, home sweet home."
+   coruniv_choose_barloque_trigger = "Good Barloque, thy regal streets shall be mine home."
+   coruniv_choose_cornoth_trigger = "I commend my knowledge to the free city of Cor Noth."
+
+   coruniv_chose_jasper = "Seek out and have trust only in your fellow Jasperites."
+   coruniv_chose_tos = "Street savvy and ready for fame and fortune, you proudly display Tos as your hometown."
+   coruniv_chose_marion = "Be kind to all others, even those who follow the urban ways."
+   coruniv_chose_barloque = "Be true to thy noble blood."
+   coruniv_chose_cornoth = "Be sure to annotate your degrees of study on your description."
+
+classvars:
+
+   vrName = room_name_coruniv
+
+   viTeleport_row = 3
+   viTeleport_col = 25
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_coruniv
+   piRoom_num = RID_COR_UNIV
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = coruniv_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 11, 25, RID_CORNOTH, 12, 33, ROTATE_NONE ],plExits);
+   
+      propagate;
+   }
+   CreateStandardObjects()
+   {
+      local oBook;
+
+      oBook = Create(&BookPedestal,#Name=genealogy_tos_name,#Text=genealogy_tos);
+      Send(self,@NewHold,#what=oBook,
+           #new_row=10,#new_col=29,#fine_row=0,#new_angle=ANGLE_NORTH);
+
+      oBook = Create(&BookPedestal,#Name=genealogy_barloque_name,#Text=genealogy_barloque);
+      Send(self,@NewHold,#what=oBook,
+           #new_row=4,#new_col=29,#fine_row=0,#new_angle=ANGLE_SOUTH);
+
+      oBook = Create(&BookPedestal,#Name=genealogy_cornoth_name,#Text=genealogy_cornoth);
+      Send(self,@NewHold,#what=oBook,
+           #new_row=5,#new_col=31,#fine_row=0,#new_angle=ANGLE_SOUTH_WEST);
+
+      oBook = Create(&BookPedestal,#Name=genealogy_jasper_name,#Text=genealogy_jasper);
+      Send(self,@NewHold,#what=oBook,
+           #new_row=7,#new_col=32,#fine_row=0,#new_angle=ANGLE_WEST);
+
+      oBook = Create(&BookPedestal,#Name=genealogy_marion_name,#Text=genealogy_marion);
+      Send(self,@NewHold,#what=oBook,
+           #new_row=9,#new_col=31,#fine_row=0,#new_angle=ANGLE_NORTH_WEST);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=11,#new_col=16,#fine_row=32,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=2,#new_col=2,#fine_row=32,#fine_col=32);
+
+      Send(self,@NewHold,#what=Create(&Stool),
+           #new_row=6,#new_col=23,#fine_row=0,#fine_col=0);
+
+      propagate;
+   }
+
+   SomeoneSaid(what=$,string=$)
+   {
+      local iHomeRoom;
+      iHomeRoom = 0;
+      if StringEqual(string,coruniv_choose_tos_trigger) 
+      {
+	 iHomeRoom = RID_TOS_INN;
+      }
+      if StringEqual(string,coruniv_choose_barloque_trigger)
+      {
+	 iHomeRoom = RID_BAR_INN;
+      }
+      if StringEqual(string,coruniv_choose_cornoth_trigger)
+      {
+	 iHomeRoom = RID_COR_INN;
+      }
+      if StringEqual(string,coruniv_choose_jasper_trigger)
+      {
+	 iHomeRoom = RID_JAS_INN;
+      }
+      if StringEqual(string,coruniv_choose_marion_trigger)
+      {
+	 iHomeRoom = RID_MAR_INN;
+      }
+      if iHomeRoom <> 0  
+      { 
+	 if not send(what,@CanChangeHomeroom)
+	 {
+	    post(what,@msgsenduser,#message_rsc = coruniv_no_change);	 
+	 }
+	 else
+	 {
+	    send(what,@SetHomeRoom,#RID=iHomeRoom,#lock=TRUE);  
+	    send(self,@roomchangemessage,#iHomeRoom=iHomeRoom,#who=what);	    	 
+	 }
+      }
+      
+      propagate;
+   }
+
+   RoomChangeMessage(iHomeRoom=0,who=$)
+   {
+      local msg;
+      msg =$;
+      if iHomeRoom = RID_TOS_INN
+      {  msg = coruniv_chose_tos; }
+      if iHomeRoom = RID_BAR_INN
+      {  msg = coruniv_chose_barloque; }
+      if iHomeRoom = RID_COR_INN
+      {  msg = coruniv_chose_cornoth; }
+      if iHomeRoom = RID_JAS_INN
+      {  msg = coruniv_chose_jasper; }
+      if iHomeRoom = RID_MAR_INN
+      {  msg = coruniv_chose_marion; }
+      post(who,@msgsenduser,#message_rsc = msg);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

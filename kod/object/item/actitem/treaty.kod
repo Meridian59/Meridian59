@@ -1,0 +1,185 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildTreaty is ActiveItem
+
+constants:
+
+   include blakston.khd
+
+   SELF_DELETE_DELAY = 120000    %% 2 minutes     
+
+resources:
+
+   treaty_name_rsc = "treaty"
+   treaty_icon_rsc = light.bgf
+
+   treaty_desc_rsc = "This treaty will create an alliance between %s%s and %s%s."
+
+   treaty_cant_ditch = "You may not discard this treaty."
+
+   treaty_expires = "Your treaty with %s%s has expired."
+   treaty_vanishes = "The treaty with %s%s vanishes in a puff of smoke!"
+
+   treaty_fell_apart = "Your attempts to forge an alliance with %s%s have fallen apart."
+
+classvars:
+
+   vrName = treaty_name_rsc
+   vrIcon = treaty_icon_rsc
+   vrDesc = treaty_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viUse_amount = 1
+
+   viHits_init_min = 50
+   viHits_init_max = 50
+
+   viBulk = 0
+   viWeight = 0
+   viValue_average = 0
+
+   viUse_type = ITEM_SINGLE_USE
+
+properties:
+
+   poInductor = $            %% person who offers the treaty
+   poInductee = $            %% person who is offered the treaty
+   poInductorGuild = $       %% guild offering the treaty
+   poInducteeGuild = $       %% guild recieving the treaty
+
+   ptRatify = $
+
+messages:
+
+   Constructor(inductor=$,inductee=$)
+   {
+      debug("Constructor in treaty.",inductor,inductee);
+      poInductor = inductor;
+      poInductee = Inductee;
+      poInductorGuild = send(poInductor,@getguild);
+      poInducteeGuild = send(poInductee,@getguild);
+      send(poInductorGuild,@Addtreaty,#treaty_obj = self);
+      ptRatify = createtimer(self,@ratifytimer,SELF_DELETE_DELAY);
+      return;
+   }
+
+   RatifyTimer()
+   {
+      send(poInductorGuild,@Removetreaty,#treaty_obj=self);
+      send(poInductor,@msgsenduser,#message_rsc=treaty_expires,
+          #parm1=send(poInducteeGuild,@getdef), #parm2=send(poInducteeGuild,@getname) );
+      send(poInductee,@msgsenduser,#message_rsc=treaty_vanishes,
+          #parm1=send(poInductorGuild,@getdef), #parm2=send(poInductorGuild,@getname) );
+
+      send(self,@delete,#timerdelete=TRUE);
+      return;
+   }
+
+   treatyVanish()
+   {
+      send(poInductor,@msgsenduser,#message_rsc=treaty_expires,
+          #parm1=send(poInducteeGuild,@getdef), #parm2=send(poInducteeGuild,@getname) );
+      send(poInductee,@msgsenduser,#message_rsc=treaty_vanishes,
+          #parm1=send(poInductorGuild,@getdef), #parm2=send(poInductorGuild,@getname) );
+
+      send(self,@delete);
+      return;
+   }
+
+   GetInductor()
+   "A player may not offer more than one treaty at once."
+   {
+      return poInductor;      
+   }
+
+   ShowDesc()
+   "Tells those already in guilds that they cannot ratify unless they quit current guild."
+   {
+      local oGuild;
+
+      AddPacket(4,treaty_desc_rsc,4,send(poInductorGuild,@getdef),4,Send(poInductorGuild,@GetName),
+                 send(poInducteeGuild,@getdef),4,Send(poInducteeGuild,@GetName));
+      return;
+   }
+
+   ReqNewOwner()
+   {
+      send(poOwner,@msgsenduser,#message_rsc=treaty_cant_ditch);
+      return FALSE;
+   }
+
+   SomethingLeft(what=$)
+   "If carrier leaves the room, delete with cutesy messages."
+   {
+      debug("something left reached treaty.");
+      if what = poInductor or what = poInductee
+        {
+          send(poInductorGuild,@Removetreaty,#treaty_obj=self);
+          send(self,@treatyVanish);
+        }
+      return;
+   }
+
+   OwnerChangedOwner(what=$,where=$)
+   "If carrier leaves the room, delete with cutesy messages."
+   {
+      debug("ownerchangedowner reached in treaty.");
+      if what = poInductor or what = poInductee
+        {
+          send(poInductorGuild,@Removetreaty,#treaty_obj=self);
+          send(self,@treatyVanish);
+        }
+      return TRUE;
+   }
+
+
+   ReqNewApply()
+   {
+      return TRUE;
+   }
+
+   NewApplied(what = $)
+   {
+      if send(poInductorGuild,@canally,#otherguild = poInducteeGuild,
+         #rep = poInductor, #otherrep = poInductee)
+      and send(poInducteeGuild,@canally,#otherguild = poInductorGuild,
+         #rep = poInductee, #otherrep = poInductor)
+        {
+          send(poInductorGuild,@newally,#otherguild=poInducteeGuild);
+          send(poInducteeGuild,@newally,#otherguild=poInductorGuild);
+         }
+      else
+        {
+          post(poInductor,@msgsenduser,#message_rsc = treaty_fell_apart,
+             #parm1=send(poInducteeGuild,@getdef),#parm2=send(poInducteeGuild,@getname));
+          post(poInductee,@msgsenduser,#message_rsc = treaty_fell_apart,
+             #parm1=send(poInductorGuild,@getdef),#parm2=send(poInductorGuild,@getname));
+
+        }
+      send(poInductorGuild,@removetreaty,#treaty_obj = self);
+      send(self, @delete);
+      
+      return;
+   }
+
+   Delete(timerdelete=FALSE)
+   {
+      if ptRatify <> $ and TimerDelete = FALSE
+        {
+          deletetimer(ptRatify);
+        }
+      ptRatify = $;
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

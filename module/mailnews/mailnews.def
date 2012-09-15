@@ -1,0 +1,15 @@
+;
+; DEF file for mail and news DLL
+; 
+
+EXPORTS
+	GetModuleInfo		@1  NONAME
+	EventServerMessage      @2  NONAME
+	EventUserAction         @4  NONAME
+	EventFontChanged        @6  NONAME
+	EventColorChanged       @7  NONAME
+;	EventStateChanged       @11 NONAME
+;	EventToolButton         @14 NONAME
+	ModuleExit              @16 NONAME
+	EventTextCommand        @17 NONAME
+

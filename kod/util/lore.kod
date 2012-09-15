@@ -1,0 +1,738 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lore is UtilityFunctions
+
+   % This class keeps a rough player history.  This can be used in two places:
+   %  * Hall of Heroes, which wants to know the top players in a school.
+   %  * Future direction: NPC dialogue. For example, Parrin may sing about
+   %    fools who were killed by the yeti.  This might get implemented sometime
+   %    before the heat death of the universe.  But, don't hold your breath.
+   % We keep this information in a separate lore object so that
+   %  (a) it is not recreated on RecreateAll (the way the Hall of Heroes is)
+   %  (b) all information is centrally stored so that it can be purged when 
+   %      a user suicides.  Thus, we can put new things to delete here
+   % Ideally, in the future, other things might be added to the lore file.  A
+   %   good example are the arena trophies.
+
+   % NOTE: If you add a new list of information, add it to two places:
+   %   ResetLists should initialize the list (also for deleting the list)
+   %   PlayerSuicides should remove any instances of the player from the list.
+   %   This is crucial!
+
+constants:
+
+   include blakston.khd
+
+   POS_BEST = 1   
+   POS_SKILLS = 2
+   POS_SPELLS = 3
+   POS_R = 4
+   POS_F = 5
+   POS_K = 6
+   POS_S = 7
+   POS_Q = 8
+   POS_J = 9
+   POS_SF = 10
+   POS_QF = 11
+   POS_SK = 12
+   POS_QK = 13
+   POS_SFK = 14
+   POS_QFK = 15
+
+properties:
+
+   % Hall of Heroes
+   plFaren = $
+   plQor = $
+   plRiija = $
+   plJala = $
+   plShalille = $
+   plKraanan = $
+   plOverall = $
+   plSkillPoints = $
+   plSpellPoints = $
+
+   % Hall of Heroes, two lesser chambers
+   plShalilleFaren = $
+   plShalilleKraanan = $
+   plShalilleFarenKraanan = $
+   plQorFaren = $
+   plQorKraanan = $
+   plQorFarenKraanan = $
+
+   pbDMs = FALSE
+   plCurrentBest = $
+
+   plExclude = $
+
+   piSomethingChanged = FALSE
+
+   % Originally hid here for secrecy.  Now M59's worst kept secret.
+   pbEnableBetaPotions = FALSE    
+
+   poInvestigator = $
+   plSuspects = $
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@ResetLore);
+
+      return;
+   }
+
+   Recreate()
+   "Called only by System::RecreateAll in updates."
+   {
+      % Lore is meant to persist information across RecreateAll, so
+      % there's nothing to do here.  Historically this has been used
+      % to put code that needs to run after an update.
+      return;
+   }
+
+   ResetLore()
+   {
+      % Hall of Heroes lists.  These are lists of two element lists:  player, score.
+      % Note:  later lists need more elements to help prevent duplicate statues.
+      plOverall = [[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plSkillPoints = [[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plSpellPoints = [[$,0],[$,0],[$,0],[$,0],[$,0]];      
+      plFaren = [[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plQor = [[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plRiija = [[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plJala = [[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plShalille = [[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plKraanan = [[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0]];
+      plShalilleFaren = \
+         [ [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],
+           [$,0],[$,0],[$,0],[$,0],[$,0],[$,0] ];
+      plShalilleKraanan = \
+         [ [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],
+           [$,0],[$,0],[$,0],[$,0],[$,0],[$,0] ];
+      plQorFaren = \
+         [ [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],
+           [$,0],[$,0],[$,0],[$,0],[$,0],[$,0] ];
+      plQorKraanan = \
+         [ [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],
+           [$,0],[$,0],[$,0],[$,0],[$,0],[$,0] ];
+      plShalilleFarenKraanan = \
+         [ [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],
+           [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0] ];
+      plQorFarenKraanan = \
+         [ [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0],
+           [$,0],[$,0],[$,0],[$,0],[$,0],[$,0],[$,0] ];
+
+      plCurrentBest = [ $,$,$,$,$,$,$,$,$,$,$,$,$,$,$ ];
+
+      return;
+   }
+
+   PlayerSuicides(who=$)
+   "If a player suicides, remove all references to him.  Normally, we set their "
+   "nodes to be nil instead of deleting them for hall of heroes info."
+   {
+      Send(self,@RemovePlayerIfFirstElem,#lList=plFaren,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plQor,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plRiija,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plJala,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plShalille,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plKraanan,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plOverall,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plSkillPoints,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plSpellPoints,#who=who);
+
+      % Hall of Heroes, two lesser chambers
+      Send(self,@RemovePlayerIfFirstElem,#lList=plShalilleFaren,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plShalilleKraanan,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plShalilleFarenKraanan,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plQorFaren,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plQorKraanan,#who=who);
+      Send(self,@RemovePlayerIfFirstElem,#lList=plQorFarenKraanan,#who=who);
+
+      piSomethingChanged = 1;
+      Send(self,@ChooseCurrentBests);
+
+      return;
+   }
+
+   PlayerAdvanced(school = 0, who=$)
+   {
+      local faren, riija, sjala, skills, qor, shalille, kraanan;
+
+      if (NOT pbDMs AND IsClass(who,&DM))
+         OR (plExclude <> $
+             AND FindListElem(plExclude,who) <> 0)
+      {
+         return;
+      }
+
+      riija = Send(who,@GetNumAbilityPointsInSchool,#school=SS_RIIJA);
+      sjala = Send(who,@GetNumAbilityPointsInSchool,#school=SS_JALA);
+      shalille = Send(who,@GetNumAbilityPointsInSchool,#school=SS_SHALILLE);
+      qor = Send(who,@GetNumAbilityPointsInSchool,#school=SS_QOR);
+      faren = Send(who,@GetNumAbilityPointsInSchool,#school=SS_FAREN);
+      kraanan = Send(who,@GetNumAbilityPointsInSchool,#school=SS_KRAANAN);
+      skills = Send(who,@GetNumAbilityPointsInSchool,#school=SKS_FENCING);
+
+      piSomethingChanged = FALSE;
+
+      if school = 0
+      {
+         DEBUG("Playeradvanced called without any school!");
+
+         return;
+      }
+
+      Send(Self,@CheckForWorthiness,#lList=plOverall,#who=who,
+           #score=(faren+qor+riija+shalille+kraanan+sjala+(skills*2)),
+           #index=POS_BEST);
+
+      if school = SKS_FENCING
+      {
+         Send(self,@CheckForWorthiness,#lList=plSkillPoints,#who=who,
+              #score=skills,#index=POS_SKILLS);
+      }
+      else
+      {
+         Send(self,@CheckForWorthiness,#lList=plSpellPoints,#who=who,
+              #score=riija+sjala+shalille+qor+faren+kraanan,#index=POS_SPELLS);
+      }
+
+      if school = -1
+      {
+         %% Check everything
+
+         Send(self,@CheckForWorthiness,#lList=plSkillPoints,#who=who,
+              #score=skills,#index=POS_SKILLS);
+         Send(self,@CheckForWorthiness,#lList=plFaren,#who=who,
+              #score=faren,#index=POS_F);
+         Send(self,@CheckForWorthiness,#lList=plKraanan,#who=who,
+              #score=kraanan,#index=POS_K);
+         Send(self,@CheckForWorthiness,#lList=plQor,#who=who,
+              #score=qor,#index=POS_Q);
+         Send(self,@CheckForWorthiness,#lList=plJala,#who=who,
+              #score=sjala,#index=POS_J);
+         Send(self,@CheckForWorthiness,#lList=plShalille,#who=who,
+              #score=Shalille,#index=POS_S);
+         Send(self,@CheckForWorthiness,#lList=plRiija,#who=who,
+              #score=riija,#index=POS_R);
+
+         Send(self,@CheckForWorthiness,#lList=plQorFaren,#who=who,
+              #score=faren+qor,#index=POS_QF);
+         Send(self,@CheckForWorthiness,#lList=plShalilleFaren,#who=who,
+              #score=faren+shalille,#index=POS_SF);
+         Send(self,@CheckForWorthiness,#lList=plShalilleKraanan,#who=who,
+              #score=kraanan+shalille,#index=POS_SK);
+         Send(self,@CheckForWorthiness,#lList=plQorFarenKraanan,#who=who,
+              #score=faren+qor+kraanan,#index=POS_QFK);
+         Send(self,@CheckForWorthiness,#lList=plQorFarenKraanan,#who=who,
+              #score=faren+qor+kraanan,#index=POS_QFK);
+         Send(self,@CheckForWorthiness,#lList=plShalilleFarenKraanan,#who=who,
+              #score=faren+shalille+kraanan,#index=POS_SFK);
+      }
+
+      if school = SS_FAREN
+      {
+         Send(self,@CheckForWorthiness,#lList=plFaren,#who=who,
+              #score=faren,#index=POS_F);
+         Send(self,@CheckForWorthiness,#lList=plQorFaren,#who=who,
+              #score=faren+qor,#index=POS_QF);
+         Send(self,@CheckForWorthiness,#lList=plShalilleFaren,#who=who,
+              #score=faren+shalille,#index=POS_SF);
+         Send(self,@CheckForWorthiness,#lList=plQorFarenKraanan,#who=who,
+              #score=faren+qor+kraanan,#index=POS_QFK);
+         Send(self,@CheckForWorthiness,#lList=plShalilleFarenKraanan,#who=who,
+              #score=faren+shalille+kraanan,#index=POS_SFK);
+      }
+
+      if school = SS_KRAANAN
+      {
+         Send(self,@CheckForWorthiness,#lList=plKraanan,#who=who,
+              #score=kraanan,#index=POS_K);
+         Send(self,@CheckForWorthiness,#lList=plQorKraanan,#who=who,
+              #score=kraanan+qor,#index=POS_QK);
+         Send(self,@CheckForWorthiness,#lList=plShalilleKraanan,#who=who,
+              #score=kraanan+shalille,#index=POS_SK);
+         Send(self,@CheckForWorthiness,#lList=plQorFarenKraanan,#who=who,
+              #score=faren+qor+kraanan,#index=POS_QFK);
+         Send(self,@CheckForWorthiness,#lList=plShalilleFarenKraanan,#who=who,
+              #score=faren+shalille+kraanan,#index=POS_SFK);
+      }
+
+      if school = SS_QOR
+      {
+         Send(self,@CheckForWorthiness,#lList=plQor,#who=who,
+              #score=qor,#index=POS_Q);
+         Send(self,@CheckForWorthiness,#lList=plQorKraanan,#who=who,
+              #score=qor+kraanan,#index=POS_QK);
+         Send(self,@CheckForWorthiness,#lList=plQorFaren,#who=who,
+              #score=qor+faren,#index=POS_QF);
+         Send(self,@CheckForWorthiness,#lList=plQorFarenKraanan,#who=who,
+              #score=faren+qor+kraanan,#index=POS_QFK);
+      }
+
+      if school = SS_SHALILLE
+      {
+         Send(self,@CheckForWorthiness,#lList=plShalille,#who=who,
+              #score=Shalille,#index=POS_S);
+         Send(self,@CheckForWorthiness,#lList=plShalilleKraanan,#who=who,
+              #score=Shalille+kraanan,#index=POS_SK);
+         Send(self,@CheckForWorthiness,#lList=plShalilleFaren,#who=who,
+              #score=Shalille+faren,#index=POS_SF);
+         Send(self,@CheckForWorthiness,#lList=plShalilleFarenKraanan,#who=who,
+              #score=faren+Shalille+kraanan,#index=POS_SFK);
+      }
+
+      if school = SS_RIIJA
+      {
+         Send(self,@CheckForWorthiness,#lList=plRiija,#who=who,
+              #score=riija,#index=POS_R);
+      }
+
+      if school = SS_JALA
+      {
+         Send(self,@CheckForWorthiness,#lList=plJala,#who=who,
+              #score=sjala,#index=POS_J);
+      }
+
+      if piSomethingChanged <> 0
+      {
+         % This is called if anything has changed anywhere.  We now need to see
+         %  if we should redo the hall of heroes.
+         Send(self,@ChooseCurrentBests);
+      }
+
+      piSomethingChanged = 0;
+
+      return;
+   }
+
+   CheckForWorthiness(lList=$,who=$,score=$, index = 0)
+   "This is where we see if a person is appropriate to put in a list."
+   "We also make notes of a person's score."
+   {
+      local i, lowscore, lowest, lNode;
+
+      if who = $ OR score = $
+      {
+         DEBUG("Bad info passed to checkforworthiness");
+
+         return;
+      }
+
+      if lList = $
+      {
+         DEBUG("List set to nil somehow!");
+
+         return;
+      }
+
+      % Go through the list.  See if you're currently on the list.  If so,
+      %  replace the value and sort the list.
+      for i in lList
+      {
+         if (who = First(i))
+         {
+            SetNth(i,2,score);
+            Send(self,@SortHeroList,#lList=lList,#who=who);
+
+            % This tells the lore object how many searches it'll have to perform.
+            % If nothing has changed in the First four lists, you obviously don't
+            %  need to muck with it.
+            if piSomethingChanged = 0
+               OR piSomethingChanged > index
+            {
+               piSomethingChanged = index;
+            }
+
+            return;
+         }
+      }
+
+      % Okay, they aren't on the list.  Assume the lowest value in the list is
+      %  the last one.  If we're greater than that, replace it. 
+
+      % Get the last element of the list
+      lNode = Nth(llist,length(lList));
+
+      if score > Nth(lNode,2)
+      {
+         SetNth(lNode,1,who);
+         SetNth(lNode,2,score);
+         Send(self,@SortHeroList,#lList=lList,#who=who);
+         piSomethingChanged = index;
+
+         return;
+      }
+
+      return;
+   }
+
+   SortHeroList(lList = $, who = $)
+   "Used by both AddChampionToChampList and RemoveChampionFromChampList, "
+   "after a change to be sure that the champions are in a proper order.  "
+   "The parameter 'who' is an object that just advanced, used to allow new "
+   "blood to advance past old adventurers of equal scores."
+   {
+      local bCheckAgain, iCount, lFore, lAft, oSwap, iSwap;
+
+      bCheckAgain = TRUE;
+
+      % This is essentially a bubble sort.  Bubble up higher scores in the
+      %  list, and do multiple passes until the list ends up sorted.
+      % This isn't the most efficient, but it's adequate since most of the
+      %  time we're just adding one new element to an already sorted list.
+      while bCheckAgain
+      {
+         bCheckAgain = FALSE;
+         iCount = Length(lList);
+
+         % Work from the end of the list to the front.  If an earlier element
+         %  is greater than the current element, swap them.
+         while iCount > 1
+         {
+            lAft = Nth(lList,iCount);
+            lFore = Nth(lList,iCount-1);
+
+            % If the Aft is greater than the Fore element
+            % OR if the Aft element is a newly added element and scores are equal
+            %  (This allows for new blood to replace the existing champion,
+            %   giving a bit more incentive to new players.  Old players can
+            %   lose a bit and regain it to regain their position.)
+            if Nth(lAft,2) > Nth(lFore,2)
+               OR (who <> $
+                   AND First(lAft) = who
+                   AND Nth(lAft,2) = Nth(lFore,2))
+            {
+               % Swap the two elements.
+               oSwap = Nth(lAft,1);
+               iSwap = Nth(lAft,2);
+               SetNth(lAft,1,Nth(lFore,1));
+               SetNth(lAft,2,Nth(lFore,2));
+               SetNth(lFore,1,oSwap);
+               SetNth(lFore,2,iSwap);
+               bCheckAgain = TRUE;
+            }
+
+            % Proceed to the previous element for comparison.
+            iCount = iCount - 1;
+         }
+      }
+
+      return;
+   }
+
+   ChooseCurrentBests()
+   "This finds the best player in each list, and makes an effort to go to the second "
+   "best player if duplicates are found."
+   {
+      local index, oHall;
+
+      % Set them all to nil.
+      index = piSomethingChanged;
+      while index <= length(plCurrentBest)
+      {
+         SetNth(plCurrentBest,index,$);
+         index = index + 1;
+      }
+
+      if piSomethingChanged <= POS_BEST
+      {
+         Send(self,@SetBestInList,#lList=plOverall,#index=POS_BEST);
+      }
+
+      if piSomethingChanged <= POS_SKILLS
+      {
+         Send(self,@SetBestInList,#lList=plSkillpoints,#index=POS_SKILLS);
+      }
+
+      if piSomethingChanged <= POS_SPELLS
+      {
+         Send(self,@SetBestInList,#lList=plSpellpoints,#index=POS_SPELLS);
+      }
+
+      if piSomethingChanged <= POS_R
+      {
+         Send(self,@SetBestInList,#lList=plRiija,#index=POS_R);
+      }
+
+      if piSomethingChanged <= POS_J
+      {
+         Send(self,@SetBestInList,#lList=plJala,#index=POS_J);
+      }
+
+      if piSomethingChanged <= POS_F
+      {
+         Send(self,@SetBestInList,#lList=plFaren,#index=POS_F);
+      }
+
+      if piSomethingChanged <= POS_K
+      {
+         Send(self,@SetBestInList,#lList=plKraanan,#index=POS_K);
+      }
+
+      if piSomethingChanged <= POS_S
+      {
+         Send(self,@SetBestInList,#lList=plShalille,#index=POS_S);
+      }
+
+      if piSomethingChanged <= POS_Q
+      {
+         Send(self,@SetBestInList,#lList=plQor,#index=POS_Q);
+      }
+
+      if piSomethingChanged <= POS_SF
+      {
+         Send(self,@SetBestInList,#lList=plShalilleFaren,#index=POS_SF);
+      }
+
+      if piSomethingChanged <= POS_QF
+      {
+         Send(self,@SetBestInList,#lList=plQorFaren,#index=POS_QF);
+      }
+
+      if piSomethingChanged <= POS_SK
+      {
+         Send(self,@SetBestInList,#lList=plShalilleKraanan,#index=POS_SK);
+      }
+
+      if piSomethingChanged <= POS_QK
+      {
+         Send(self,@SetBestInList,#lList=plQorKraanan,#index=POS_QK);
+      }
+
+      if piSomethingChanged <= POS_SFK
+      {
+         Send(self,@SetBestInList,#lList=plShalilleFarenKraanan,#index=POS_SFK);
+      }
+
+      if piSomethingChanged <= POS_QFK
+      {
+         Send(self,@SetBestInList,#lList=plQorFarenKraanan,#index=POS_QFK);
+      }
+
+      oHall = Send(SYS,@FindRoomByNum,#num=RID_KOC_HALL_OF_HEROES);
+
+      if oHall <> $
+      {
+         Send(oHall,@UpdateStatues,#lData=plCurrentBest);
+      }
+
+      return;
+   }
+
+   IsInCurrentBest(who=$)
+   {
+      local i;
+
+      for i in plCurrentBest
+      {
+         if i = who
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   SetBestInList(lList=$,index=0)
+   {
+      local j, i, oChosen, bFound;
+
+      if lList = $
+      {
+         Debug("Nil List!  This could be bad!");
+
+         return;
+      }
+
+      if index = 0
+      {
+         DEBUG("Index = 0!  Bad!");
+
+         return;
+      }
+
+      % Okay, here's the plan.  Find the First player who doesn't appear 
+      % elsewhere in plCurrentBest.  If everyone appears, then use the 
+      % First person.  Remember, people at the front of the list are assumed
+      % to be the best.
+
+      oChosen = $;
+      For i in lList
+      {
+         if not Send(self,@IsInCurrentBest,#who=First(i))
+         {
+            oChosen = First(i);
+
+            break;
+         }
+      }
+
+      if oChosen = $
+      {
+         oChosen = First(First(lList));
+      }
+
+      SetNth(plCurrentBest,index,oChosen);
+
+      return;
+   }
+
+   RemovePlayerIfFirstElem(lList = $,who = $)
+   "This procedure will search any list of lists, and set to scratch any nodes which the "
+   "player is the First element of."
+   {
+      local i;
+
+      if lList = $
+      {
+         return;
+      }
+
+      for i in lList
+      {
+         if First(i) = who
+         {
+            SetNth(i,1,$);
+            SetNth(i,2,0);
+         }
+      }
+
+      Send(self,@SortHeroList,#llist=llist);
+
+      return;
+   }
+
+   ExcludePlayer(who = $)
+   {
+      if who <> $ AND IsClass(who,&User)
+      {
+         plExclude = cons(who,plExclude);
+
+         % Delete this player from current lists
+         Send(self,@PlayerSuicides,#who=who);
+      }
+
+      return;
+   }
+
+   IncludePlayer(who = $)
+   {
+      plExclude = DelListElem(plExclude,who);
+
+      return;
+   }
+
+   Delete()
+   {
+      Send(SYS,@DeleteLore);
+
+      plFaren = $;
+      plQor = $;
+      plRiija = $;
+      plJala = $;
+      plShalille = $;
+      plKraanan = $;
+      plOverall = $;
+      plSkillPoints = $;
+      plSpellPoints = $;
+      plShalilleFaren = $;
+      plShalilleKraanan = $;
+      plShalilleFarenKraanan = $;
+      plQorFaren = $;
+      plQorKraanan = $;
+      plQorFarenKraanan = $;
+      plCurrentBest = $;
+
+      return;
+   }
+
+   % Investigator stuff.
+
+   GetInvestigator()
+   {
+      return poInvestigator;
+   }
+
+   SetInvestigator(who=$)
+   {
+      if who <> $ AND NOT isClass(who,&DM)
+      {
+         return Send(SYS,@GetFailureRsc);
+      }
+
+      poInvestigator = who;
+
+      return Send(SYS,@GetSuccessRsc);
+   }
+
+   ClearSuspects()
+   {
+      plSuspects = $;
+
+      return;
+   }
+
+   GetSuspects()
+   {
+      return plSuspects;
+   }
+
+   IsSuspect(who=$)
+   {
+      if plSuspects = $
+      {
+         return FALSE;
+      }
+
+      return FindListElem(plSuspects, who);
+   }
+
+   AddSuspect(who=$)
+   {
+      if who <> $ AND isClass(who,&User)
+      {
+         plSuspects = Cons(who,plSuspects);
+
+         return who;
+      }
+
+      return $;
+   }
+
+   % Beta potion stuff.
+
+   BetaPotionsEnabled()
+   {
+      return pbEnablebetaPotions;
+   }
+
+   FlipBetaOn()
+   {
+      pbEnablebetaPotions = TRUE;
+
+      return;
+   }
+
+   FlipBetaOff()
+   {
+      pbEnablebetaPotions = FALSE;
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

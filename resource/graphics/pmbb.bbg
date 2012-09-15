@@ -1,0 +1,27 @@
+# Lt Brown mouth  2
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+-s 14
+14
+Pm000bab.bmp   [-14, -15] 
+Pm045bab.bmp   [-21, -14] 
+Pm090bab.bmp   [-17, -15] 
+Pm270bab.bmp   [-5, -14] 
+Pm315bab.bmp   [-6, -13] 
+Pm000bbb.bmp   [-14, -15] 
+Pm045bbb.bmp   [-21, -14] 
+Pm315bbb.bmp   [-6, -13] 
+Pm000bcb.bmp   [-14, -15] 
+Pm045bcb.bmp   [-21, -14] 
+Pm315bcb.bmp   [-6, -13] 
+Pm000bdb.bmp   [-14, -15] 
+Pm045bdb.bmp   [-21, -14] 
+Pm315bdb.bmp   [-6, -13] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

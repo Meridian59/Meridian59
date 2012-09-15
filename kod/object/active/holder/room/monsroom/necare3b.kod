@@ -1,0 +1,76 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Necropolis3b is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_Necropolis3b = nec3b.roo
+   room_name_Necropolis3b = "Ancient Building"
+
+   Necropolis3b_music = nec02.mid
+   Necropolis3b_loop = necloop4.wav
+
+classvars:
+
+   vrName = room_name_Necropolis3b
+
+   viTeleport_row = 6
+   viTeleport_col = 6
+
+   viTerrain_type = TERRAIN_NECROPOLIS
+
+properties:
+
+   prRoom = room_Necropolis3b
+   piRoom_num = RID_NECROAREA3b
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 40000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = Necropolis3b_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&DaemonSkeleton, 50], [&TuskedSkeleton, 50] ];
+      plGenerators = [ [ 4, 6 ], [ 6, 4 ], [ 1, 7 ] ];
+
+      plLooping_sounds = [[ Necropolis3b_loop, 0, 0, 200, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+
+      plExits = $;
+      plExits = Cons([ 5, 5, RID_NECROAREA3, 18, 26, ROTATE_NONE ],plExits);
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

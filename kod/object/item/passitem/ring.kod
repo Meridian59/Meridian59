@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ring is PassiveItem
+
+constants:
+   
+   include blakston.khd
+
+resources:
+
+   ring_unidentified_name_rsc = "magical ring"
+   ring_unidentified_description_rsc = "The ring pulses with magical energy."
+
+   ring_identified_name_rsc = "generic magical ring"
+   ring_identified_description_rsc = "The has some magical effect."
+
+classvars:
+
+   viUse_type = ITEM_USE_FINGER
+   viUse_Amount = 1
+
+   viItem_type = ITEMTYPE_RING
+
+   vrRealName = ring_identified_name_rsc
+   vrRealDesc = ring_identified_name_rsc
+
+properties:
+
+   vrName = ring_unidentified_name_rsc
+   vrDesc = ring_unidentified_description_rsc
+
+messages:
+
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what, &Ring)
+      {
+         if Send(poOwner, @TryUnuseItem, #what = self)
+         {
+            propagate;
+         }
+         
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   %%% Infrastructure for identification
+
+   CanIdentify()
+   {
+      return TRUE;
+   }
+
+   RevealHiddenAttributes()
+   {
+      if vrName <> vrRealName
+      {
+         vrName = vrRealName;
+         vrDesc = vrRealDesc;
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   GetTrueName()
+   {
+      return vrRealName;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

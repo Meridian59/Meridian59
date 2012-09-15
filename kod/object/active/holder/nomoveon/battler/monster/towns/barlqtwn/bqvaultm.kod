@@ -1,0 +1,146 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+barloqueVaultman is barloqueTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   barloquevaultman_name_rsc = "Obert Cair'bre"
+   barloquevaultman_icon_rsc = bqvaultm.bgf
+   barloquevaultman_desc_rsc =  \
+      "Obert is a relatively handsome gentleman who takes almost as much pride in his "
+      "vaults as he does in his family. His professional manner shows that he realizes his "
+      "customers are often in a hurry to retrieve their goods."
+
+   barloquevaultman_entry_welcome = "Well met!"
+
+   barloquevaultman_nogold = "Thou may not use my services to store %s%s."
+   barloquevaultman_nocursed = "I cannot take %s%s from thee."
+   barloquevaultman_fullvault = "Thy vault cannot hold all that!  Mayhaps thou should try offering items in smaller quantities."
+   barloquevaultman_thanks_amount = "That will cost %i shillings.  I thank thee for trusting me to quartermaster thy gear."
+   barloquevaultman_dont_have = "Hmmm, I can't seem to find %s%s in thy vault."
+   barloquevaultman_no_room = "Thou can not carry all of that!  Mayhaps thou should try withdrawing the items one at a time."
+   barloquevaultman_deposit_thanks = "I thank thee for trusting me to quartermaster thy gear."
+   barloquevaultman_thanks = "Have is thy gear.  I thank thee for thy patronage."
+   barloquevaultman_nowithdraw_cash = "Thou currently cannot pay the exit fee to get thy items out."
+   barloquevaultman_nodeposit_cash = "Storing these items would cost %i shillings - which I see thou doth not possess."
+   barloquevaultman_cant_part = "Zounds... I wish to not feel responsible if thy %s were to disappear - I cannot store it."
+   barloquevaultman_noaccount = "I do not seem to be storing any of thy gear."
+   barloquevaultman_not_enough = "Thou have not that many %s stored in thy name!"
+
+
+
+classvars:
+
+   vrName = barloquevaultman_name_rsc
+   vrIcon = barloquevaultman_icon_rsc
+   vrDesc = barloquevaultman_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_VAULTMAN | MOB_NOQUEST
+   viOccupation = MOB_ROLE_VAULTMAN
+
+   viVault = VID_BARLOQUE
+
+   vrvaultman_nogold = barloquevaultman_nogold
+   vrvaultman_nocursed = barloquevaultman_nocursed
+   vrvaultman_fullvault = barloquevaultman_fullvault
+   vrvaultman_thanks_amount = barloquevaultman_thanks_amount
+   vrvaultman_dont_have = barloquevaultman_dont_have
+   vrvaultman_no_room = barloquevaultman_no_room
+   vrvaultman_deposit_thanks = barloquevaultman_deposit_thanks
+   vrvaultman_thanks = barloquevaultman_thanks
+   vrvaultman_nowithdraw_cash = barloquevaultman_nowithdraw_cash
+   vrvaultman_nodeposit_cash = barloquevaultman_nodeposit_cash
+   vrvaultman_cant_part = barloquevaultman_cant_part
+   vrvaultman_noaccount = barloquevaultman_noaccount
+   vrvaultman_not_enough = barloquevaultman_not_enough
+
+properties:
+   
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_FACTION_CHANGE )
+      {
+	 if( what = FACTION_DUKE )
+	 {
+	    send( self, @SetMood, #new_mood = piMood - 4 );
+	    return;
+	 }
+	 if( what = FACTION_PRINCESS )
+	 {
+	    send( self, @SetMood, #new_mood = piMood + 4 );
+	    return;
+	 }
+      }
+      if( why = MOODMOD_DAWN )
+      {
+	 send( self, @SetMood, #new_mood = piMood + 3 );
+	 return;
+      }
+      if( why = MOODMOD_DUSK )
+      {
+	 send( self, @SetMood, #new_mood = piMood - 3 );
+	 return;
+      }
+      return;
+   }
+
+   UserEntered( who = $ )
+   {
+      local iFlags;
+      if Send(who,@GetAction)=UA_HAPPY
+      {
+	 send( self, @SetMood, #new_mood = piMood + 1 );
+      }
+      if Send(who,@GetAction)=UA_SAD
+      {
+	 send( self, @SetMood, #new_mood = piMood - 1 );
+      }
+      iFlags = send( who, @GetObjectFlags );
+      if Send(who,@GetFaction)=FACTION_PRINCESS
+      {
+	 send( self, @SetMood, #new_mood = piMood + 2 );
+      }
+      if Send(who,@GetFaction)=FACTION_DUKE
+      {
+	 send( self, @SetMood, #new_mood = piMood - 2 );
+      }
+      if iFlags & PLAYER_PK
+      {
+	 send( self, @SetMood, #new_mood = piMood - 2 );
+	 % don't welcome these guys
+	 propagate;
+      }
+      if iFlags & PLAYER_OUTLAW
+      {
+	 send( self, @SetMood, #new_mood = piMood - 1 );
+	 % don't welcome these guys
+	 propagate;
+      }
+      send(poOwner,@SomeoneSaid,#what=self,#string=barloquevaultman_entry_welcome,
+	 #type = SAY_RESOURCE);
+  
+      propagate;
+   }
+
+   GetVaultNum()
+   {
+      return viVault;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

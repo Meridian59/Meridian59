@@ -1,0 +1,100 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Necropolis4 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_Necropolis4 = "Within the Walls of Castle Brax"
+   room_Necropolis4 = necarea4.roo
+   Necropolis4_music = nec02.mid
+
+   Necropolis4_loop = necloop4.wav
+
+classvars:
+
+   vrName = room_name_Necropolis4
+
+   viTeleport_row = 10
+   viTeleport_col = 24
+
+   viTerrain_type = TERRAIN_NECROPOLIS
+
+properties:
+
+   prRoom = room_Necropolis4
+   piRoom_num = RID_NECROAREA4
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 40000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = Necropolis4_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&DaemonSkeleton, 60], [&TuskedSkeleton, 40] ];
+      plGenerators = [ [12,22], [11,46], [11,34], [17,41], [8,17], [11,13] ]; 
+
+      plLooping_sounds = [[ Necropolis4_loop, 0, 0, 200, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_NECROAREA5, 23, 2, ROTATE_NONE], plEdge_exits);
+
+      plExits = $;
+      plExits = Cons([ 11, 2, RID_NECROAREA3, 14, 43, ROTATE_NONE ],plExits);
+      plExits = Cons([ 12, 2, RID_NECROAREA3, 14, 43, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 12, 50, RID_NECROAREA5, 11, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 13, 50, RID_NECROAREA5, 11, 3, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
+           #new_row=9,#new_col=15,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
+           #new_row=13,#new_col=22,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
+           #new_row=15,#new_col=26,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
+           #new_row=9,#new_col=33,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
+           #new_row=11,#new_col=49,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
+           #new_row=14,#new_col=49,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

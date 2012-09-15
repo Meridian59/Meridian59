@@ -1,0 +1,158 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanTown is Towns
+
+constants:
+
+   include blakston.khd
+   
+resources:
+
+   kocatan_may_pass = "You may pass."
+   kocatan_no_alcohol = "No smuggling alcohol to the natives!"
+   kocatan_no_nerudite = \
+      "The avars must not be permitted to get their hands on raw nerudite!"
+   kocatan_no_weapons = \
+      "It is forbidden to carry into the jungle any weapons other than those "
+      "that are necessary to ensure the safety of the traveller."
+   kocatan_no_armor = "You may only carry one suit of armor into the jungle!"
+   kocatan_no_helm = "You may only take one helmet with you out there."
+   kocatan_no_gauntlets = "Only one set of gauntlets permitted."
+   kocatan_no_shields = "You may only take one shield with you into the outland."
+
+messages:
+
+   CanPass(what=$)
+   {
+      local i, iArmor, bNerudite, iWeapon, iGauntlet, iHelmet, iShield, bAlcohol;
+      iWeapon = 0;
+      iArmor = 0;
+      iShield = 0;
+      iHelmet = 0;
+      iGauntlet = 0;
+      bAlcohol = FALSE;
+      bNerudite = FALSE;
+      
+      for i in send(what,@GetHolderPassive)
+      {
+         % Don't include the assassin's weapon as a real weapon.
+         if IsClass(i,&Weapon) AND NOT IsClass(i,&BlackDagger)
+         {
+            iWeapon = iWeapon + 1;
+         }
+
+         if IsClass(i,&Gauntlet)
+         {
+            iGauntlet = iGauntlet + 1;
+         }
+
+         if IsClass(i,&Shield) AND NOT IsClass(i,&Torch)
+         {
+            iShield = iShield + 1;
+         }
+
+         if IsClass(i,&Armor) AND NOT (IsClass(i,&Robe) OR IsClass(i,&LightRobe))
+         {
+            iArmor = iArmor + 1;
+         }
+
+         if IsClass(i,&Helmet) AND NOT (IsClass(i,&Circlet) OR IsClass(i,&IvyCirclet))
+         {
+            iHelmet = iHelmet + 1;
+         }
+
+         if IsClass(i,&Food) AND send(i,@IsAlcohol)
+         {
+            bAlcohol = TRUE;
+         }
+
+         if IsClass(i,&NeruditeOreChunk)
+         {
+            bNerudite = TRUE;
+         }
+      }
+      
+      if (iWeapon < 3) AND (iArmor < 2)
+         AND (iShield < 2) AND (iHelmet < 2) AND (iGauntlet < 2)
+         AND (NOT bAlcohol) AND (NOT bNerudite)
+      {      
+         send(self,@say,#message_rsc = kocatan_may_pass);
+         
+         return TRUE;
+      }
+      
+      % Okay, at this point, we know they are illegal.  If we are the evil
+      % guy, we may allow them in anyway.
+      if send(self,@AllowContrabandToPass,#what=what)
+      {
+         return TRUE;
+      }
+      
+      if bAlcohol
+      {      
+         send(self,@Say,#message_rsc=kocatan_no_alcohol);
+         
+         return FALSE;
+      }
+      
+      if bNerudite
+      {
+         send(self,@Say,#message_rsc=kocatan_no_nerudite);
+         
+         return FALSE;
+      }
+      
+      if iWeapon > 2
+      {
+         send(self,@Say,#message_rsc=kocatan_no_weapons);
+         
+         return FALSE;
+      }
+      
+      if iArmor > 1
+      {
+         send(self,@Say,#message_rsc=kocatan_no_armor);
+         
+         return FALSE;
+      }
+      
+      if iHelmet > 1
+      {
+         send(self,@Say,#message_rsc=kocatan_no_helm);
+         
+         return FALSE;
+      }
+      
+      if iGauntlet > 1
+      {
+         send(self,@Say,#message_rsc=kocatan_no_gauntlets);
+         
+         return FALSE;
+      }
+      
+      if iShield > 1
+      {
+         send(self,@Say,#message_rsc=kocatan_no_shields);
+         
+         return FALSE;
+      }
+
+      return FALSE;
+   }
+
+   AllowContrabandToPass()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,1714 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+QuestNode is PassiveObject 
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+   
+% Field names for a QuestTemplate
+%   QT_NUM_PLAYERS       = 1
+%   QT_QUEST_TYPE        = 2
+%   QT_PLAYER_RESTRICT   = 3
+%   QT_QUEST_NODES       = 4
+%   QT_MAX_NUM_ACTIVE    = 5
+%   QT_ACTIVE_QUESTS     = 6
+%   QT_SCHEDULE_CHANCE   = 7
+%   QT_PLAYER_RESTRICT2  = 8
+
+resources:
+
+   default_cargo_desc = "whatchamacallit"
+   default_monster_desc = "monster"
+   default_message_desc = "message"
+   default_indef = "a "
+   default_def = "the "
+   default_money_desc = "bit o' cash"
+   default_prize_desc = "prize"
+   substitute_string = "%q"
+   sub_npc = "%NPC"
+   sub_source_npc = "%SOURCE_NPC"
+   sub_cargo = "%CARGO"
+   sub_indef_cargo = "%INDEF_CARGO"
+   sub_def_cargo = "%DEF_CARGO"
+   sub_prize = "%PRIZE"
+   sub_indef_prize = "%INDEF_PRIZE"
+   sub_def_prize = "%DEF_PRIZE"
+   sub_him_her_npc = "%HIMHER_NPC"
+   sub_monster = "%MONSTER"
+   sub_indef_monster = "%INDEF_MONSTER"
+   sub_def_monster = "%DEF_MONSTER"
+   sub_standard_prefix = "%"
+   sub_branch_prefix = "%QB"
+   sub_npc_branch = "%QBNPC"
+   sub_cargo_branch = "%QBCARGO"
+   sub_indef_cargo_branch = "%QBINDEF_CARGO"
+   sub_def_cargo_branch = "%QBDEF_CARGO"
+   sub_prize_branch = "%QBPRIZE"
+   sub_indef_prize_branch = "%QBINDEF_PRIZE"
+   sub_def_prize_branch = "%QBDEF_PRIZE"
+   sub_him_her_npc_branch = "%QBHIMHER_NPC"
+   sub_monster_branch = "%QBMONSTER"
+   sub_indef_monster_branch = "%QBINDEF_MONSTER"
+   sub_def_monster_branch = "%QBDEF_MONSTER"
+
+   %   sub_him_her_cargo = "%HIMHER_CARGO"
+   %   sub_him_her_cargo_branch = "%QBHIMHER_CARGO"
+
+   NPC_quote_to_one = "~k%s%s tells you, \"%q~n~k\""
+   questnode_not_enough_items = \
+      "~k%s%s tells you, \"You're on the right track, but you need to bring "
+      "me %q more than that.~n~k\""
+
+   % not actually used, but here in case we need the text later.
+   questnode_cant_carry = \
+      "Unable to hold any more than you are already carrying, you let the %q "
+      "slip to the ground."
+
+classvars:
+
+properties:
+
+   % Index of the current questnode template in
+   %  QuestEngine::plQuestNodeTemplates
+   piQuestNodeTemplateIndex = 0
+   % Current quest object
+   poQuest = $                     
+
+   % Current status of this questnode
+   piStatus = QN_STATUS_UNINITIALIZED   
+
+   poPreviousSourceNPC = $
+   poSourceNPC = $
+   poDestNPC = $
+   % Descriptions of monster, prize, cargo
+   plDescs = $
+   % Indefinite articles for monster, prize, cargo
+   plIndefDescs = $
+   % Definite articles for monster, prize, cargo
+   plDefDescs = $
+
+   % Whatever needs to be delivered
+   pCargo = $
+   % A dummy instance of the type of monster that we are awaiting the death of
+   poMonster = $
+
+   piStartTime = 0
+   piDeadline = 0
+   plDebug = $
+
+   % When a prize activates another quest, this temporarily points there
+   poQuestActivated = $
+
+messages:
+
+   Init(index = 1, owning_quest = $, waiting_for_players = FALSE,
+        passed_NPC = $)
+   "Initializes a new questnode instance from template #index, Chooses dest "
+   "NPC. Returns template_index if successful, FALSE if unsuccessful."
+   {
+      local iNPCMod, oQuestEngine;
+
+      oQuestEngine = Send(SYS,@GetQuestEngine);
+      % Validate that questnode template exists
+      if NOT Send(oQuestEngine,@IsValidQuestNodeTemplate,#index=index)
+      {   
+         Debug("Init questnode: invalid template");
+
+         return FALSE;
+      }
+
+      % Don't want to do this twice!
+      if passed_NPC = $
+      {                       
+         % Remember the template index
+         piQuestNodeTemplateIndex = index;
+
+         % Source from last node becomes previous source NPC, unless the last
+         %  node was NPC_MOD_SAME.
+         if NOT (poSourceNPC = poDestNPC AND poPreviousSourceNPC <> $)
+         {
+            poPreviousSourceNPC = poSourceNPC;
+         }
+
+         % Dest from last node becomes source NPC.
+         poSourceNPC = poDestNPC;
+
+         % Record which quest this questnode is a part of.
+         poQuest = owning_quest;
+      }
+   
+      % Setup dest NPC
+      iNPCMod = Send(oQuestEngine,@GetQuestNodeNPCModifier,#index=index);
+
+      if iNPCMod = QN_NPCMOD_PREVIOUS
+      {
+         % Use the previous node's source NPC (for back and forth quests)
+         poDestNPC = poPreviousSourceNPC;
+      }
+
+      if iNPCMod = QN_NPCMOD_SAME
+      {
+         % Use the same NPC (for return to me quests)
+         poDestNPC = poSourceNPC;
+      }
+      
+      if iNPCMod = QN_NPCMOD_NONE
+      {
+         % pick a new random NPC from the list
+         poDestNPC = Send(oQuestEngine,@GetRandomNPCFromQuestNodeTemplate,
+                          #index=index);
+      }
+
+      if iNPCMod = QN_NPCMOD_DIFFERENT
+      {
+         % Pick a new random NPC from the list, not the same as the source NPC
+         poDestNPC = Send(oQuestEngine,@GetRandomNPCFromQuestNodeTemplate,
+                          #index=index,#not_NPC=poSourceNPC);
+      }
+
+      if iNPCMod = QN_NPCMOD_PASSED
+      {
+         if passed_NPC = $
+         {
+            % We'll call init() again when the npc is passed in.
+            return index;
+         }
+
+         poDestNPC = passed_NPC;
+      }
+
+      % Validate dest NPC
+      if poDestNPC = $ OR NOT IsClass(poDestNPC,&Monster)
+      {
+         Debug("Init questnode type ",index,": invalid dest NPC");
+
+         return FALSE;
+      }
+
+      % Validate quest
+      if poQuest = $ OR NOT IsClass(poQuest,&QuestX)
+      {
+         Debug("Init questnode type ",index,": invalid quest");
+
+         return FALSE;
+      }
+
+      % Set descs to defaults
+      plDescs   = [ default_monster_desc, default_prize_desc,
+                    default_cargo_desc
+                  ];
+      plIndefDescs = [ default_indef, default_indef, default_indef ];
+      plDefDescs = [ default_def, default_def, default_def ];
+
+      % Set status to reflect whether we're waiting for players, or ready to go
+      if waiting_for_players
+      {
+         % Add self to dest NPC's list of active questnodes
+         Send(poDestNPC,@AddQuestNodeToActiveList,#node=self);
+   
+         piStatus = QN_STATUS_WAITING_FOR_PLAYERS;
+
+         % if the first node is a message type node, choose the message now.
+         % TODO: allow ITEM, ITEMCLASS as first node type too?
+         if Send(oQuestEngine,@GetQuestNodeType,#index=index) = QN_TYPE_MESSAGE
+         {
+            % Choose cargo
+            pCargo = Send(oQuestEngine,@GetRandomCargoFromQuestNodeTemplate,
+                          #index=piQuestNodeTemplateIndex);
+         }
+      }
+      else
+      {
+         piStatus = QN_STATUS_READY_TO_ASSIGN;
+      }
+
+      return index;
+   }
+
+   SubstituteParms(saystring = $, NPC = $, him_her_npc = $, quester = $)
+   "Substitutes hint parameters into saystring; allowed values for parm type "
+   "are cargo, NPC, prize (TBD: deadline). "
+   "Returns FALSE if the string is bugged, so we know not to say it."
+   {
+      local lParmList, iParmType;
+
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%
+      % How to kludge quest text
+      %--------------------------
+      %
+      %if StringContain(saystring, murder_maleval_w_5)
+      %{
+      %   StringSubstitute(saystring, "Maleval", "Kalior");
+      %}
+   
+      if NPC = $ AND poDestNPC <> $
+      {
+         NPC = Send(poDestNPC,@GetName);
+      }
+
+      if NPC <> $
+      {
+         while StringContain(saystring,sub_npc) 
+         {
+            if StringSubstitute(saystring,sub_npc,NPC) <> 1
+            {
+               break;
+            }
+         }
+      }
+
+      if poSourceNPC <> $
+      {
+         while StringContain(saystring,sub_source_npc) 
+         {
+            if StringSubstitute(saystring,sub_source_npc,
+                                Send(poSourceNPC,@GetName)) <> 1
+            {
+               break;
+            }
+         }
+      }
+
+      if Nth(plDescs,3) <> $
+      {
+         while StringContain(saystring,sub_cargo)
+         {
+            if StringSubstitute(saystring,sub_cargo,Nth(plDescs,3)) <> 1
+            {
+               break;
+            }
+         }
+
+         while StringContain(saystring,sub_indef_cargo)
+         {
+            if StringSubstitute(saystring,sub_indef_cargo,
+                                Nth(plIndefDescs,3)) <> 1
+            {
+               break;
+            }
+         }
+
+         while StringContain(saystring,sub_def_cargo)
+         {
+            if StringSubstitute(saystring,sub_def_cargo,Nth(plDefDescs,3)) <> 1
+            {
+               break;
+            }
+         }
+      }
+
+      if Nth(plDescs,2) <> $
+      {
+         while StringContain(saystring,sub_prize)
+         {
+            if StringSubstitute(saystring,sub_prize,Nth(plDescs,2)) <> 1
+            {
+               break;
+            }
+         }
+
+         while StringContain(saystring,sub_indef_prize)
+         {
+            if StringSubstitute(saystring,sub_indef_prize,
+                                Nth(plIndefDescs,2)) <> 1
+            {
+               break;
+            }
+         }
+
+         while StringContain(saystring,sub_def_prize)
+         {
+            if StringSubstitute(saystring,sub_def_prize,Nth(plDefDescs,2)) <> 1
+            {
+               break;
+            }
+         }
+      }
+
+      if him_her_npc = $ AND poDestNPC <> $
+      {
+         him_her_npc = Send(poDestNPC,@GetHimHer);
+      }
+
+      if him_her_npc <> $
+      {
+         while StringContain(saystring,sub_him_her_npc)
+         {
+            if StringSubstitute(saystring,sub_him_her_npc,him_her_npc ) <> 1
+            {
+               break;
+            }
+         }
+      }
+
+      if Nth(plDescs,1) <> $
+      {
+         while StringContain(saystring,sub_monster)
+         {
+            if StringSubstitute(saystring,sub_monster,Nth(plDescs,1)) <> 1
+            {
+               break;
+            }
+         }
+
+         while StringContain(saystring,sub_indef_monster)
+         {
+            if StringSubstitute(saystring,sub_indef_monster,
+                                Nth(plIndefDescs,1)) <> 1
+            {
+               break;
+            }
+         }
+
+         while StringContain(saystring,sub_def_monster)
+         {
+            if StringSubstitute(saystring,sub_def_monster,
+                                Nth(plDefDescs,1)) <> 1
+            {
+               break;
+            }
+         }
+      }
+
+      % now do regular NPC plugins
+      if quester <> $
+      {
+         SetString(saystring,Send(Send(SYS,@GetLibrary),@SpeechPlugIn,
+                   #unplugged=saystring,#who=quester));
+      }
+
+      % now do branch quest plugins
+      if poQuestActivated <> $
+      {
+         % We take off the '%QB's and then ask the other quest to fill in our
+         %  variables.
+         while StringContain(saystring,sub_branch_prefix)
+         {
+            if StringSubstitute(saystring,sub_branch_prefix,
+                                sub_standard_prefix) <> 1
+            {
+               break;
+            }
+         }
+
+         if NOT Send(Send(poQuestActivated,@GetActiveQuestNode),
+                     @SubstituteParms,#saystring=saystring)
+         {
+            return FALSE;
+         }
+      }
+      else
+      {
+         if StringContain( saystring, sub_branch_prefix )
+         {
+            Debug("No poQuestActivated to substitute from.  Cancelling quest "
+                  "of type ",Send(poQuest,@GetQuestTemplateIndex));
+            Send(self,@DeadlineExpired);
+
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   Assign()
+   "Announces quest to questers, selects and hands off cargo "
+   "(message/item/monster), starts deadline timer (called from "
+   "Quest::AssignNextNode) Returns TRUE if successful, FALSE otherwise."
+   {
+      local oQuester, oQuestEngine, iNodeType, lCargo, cItemClass, iAmount,
+            iQuestType, cMonsterClass, sSay;
+
+      sSay = CreateString();
+
+      % Validate status
+      if piStatus <> QN_STATUS_READY_TO_ASSIGN
+      {
+         Debug("QN Assign error not ready.");
+
+         return FALSE;
+      }
+
+      % Validate dest NPC
+      if poDestNPC = $
+      {
+         Debug("QN Assign error invalid dest NPC.");   
+
+         return FALSE;
+      }
+
+      iNodeType = Send(Send(SYS,@GetQuestEngine),@GetQuestNodeType,
+                       #index=piQuestNodeTemplateIndex);
+      piStatus = QN_STATUS_IN_PROGRESS;
+
+      oQuestEngine = Send(SYS,@GetQuestEngine);
+
+      if iNodeType <> QN_TYPE_MONSTER
+         AND iNodeType <> QN_TYPE_SHOWUP
+      {
+         % Choose cargo
+         lCargo = Send(oQuestEngine,@GetRandomCargoFromQuestNodeTemplate,
+                       #index=piQuestNodeTemplateIndex);
+      }
+
+      % If message type, select it
+      if iNodeType = QN_TYPE_MESSAGE
+      {
+         pCargo = lCargo;
+         % message is its own description
+         SetNth(plDescs,3,lCargo);
+         % def/indef shouldn't apply here
+      }
+
+      % If chessmove type, generate it
+      if iNodeType = QN_TYPE_CHESSMOVE
+      {
+         lCargo = Send(oQuestEngine,@GetRandomChessMove);
+         pCargo = lCargo;
+         % chessmove is its own description
+         SetNth(plDescs,3,lCargo);
+         % def/indef shouldn't apply here
+      }    
+
+      % If username type, generate it
+      if iNodeType = QN_TYPE_USERNAME
+      {
+         lCargo = Send(SYS,@GetRandomUser);
+         SetNth(plDescs,3,Send(lCargo,@GetName));
+         % TODO: need him_her_cargo here
+      }
+
+      % If loggedonname type, generate it
+      if iNodeType = QN_TYPE_LOGGEDONNAME
+      {
+         lCargo = Send(SYS,@GetRandomUserLoggedOn);
+         SetNth(plDescs,3,Send(lCargo,@GetName));
+         % TODO: need him_her_cargo here
+      }
+
+      % If item quest, create it and give to player(s) (if necessary)
+      if iNodeType = QN_TYPE_ITEM
+         OR iNodeType = QN_TYPE_ITEMCLASS
+         OR iNodeType = QN_TYPE_ITEMFINDCLASS
+         OR iNodeType = QN_TYPE_MONSTER_ITEMCLASS
+      {
+         % Cargo is a new item of given class (and amount)
+         cItemClass = Nth(lCargo,2);
+         iAmount = Nth(lCargo,3);
+
+         % For now, only collective is implemented
+         % So give one copy of item to first player in list
+         oQuester = First(Send(poQuest,@GetQuesters));
+
+         pCargo = Create(cItemClass,#number=iAmount);
+
+         % only give it to the player if it's ITEMCLASS,
+         %  but create it either way so we can get its name (geez)
+         if iNodeType = QN_TYPE_ITEMCLASS
+            OR iNodeType = QN_TYPE_ITEM
+         {
+            if iNodeType = QN_TYPE_ITEM
+            {
+               Send(Send(SYS,@FindItemAttByNum,#num=IA_QUEST_CARGO),@AddToItem,
+                    #oItem=pCargo,#oQuestnode=self,#oPlayer=oQuester,
+                    #identified=TRUE);
+            }
+
+            if IsClass(pCargo,&NumberItem)
+            {
+               % give the player a fresh copy of NumberItems to avoid any
+               % object merging wierdness.
+               Send(oQuester,@NewHold,
+                    #what=Create(cItemClass,#number=iAmount));
+            }
+            else
+            {
+               Send(oQuester,@NewHold,#what=pCargo);
+            }
+         }
+
+         if IsClass(pCargo,&NumberItem) AND iAmount > 1
+         {
+            ClearTempString();
+            Send(SYS,@AppendCardinalToTempString,#number=iAmount);
+            AppendTempString(" ");
+            AppendTempString(Send(pCargo,@GetName));
+            SetNth(plDescs,3,CreateString());
+            SetString(Nth(plDescs,3),GetTempString());
+            SetNth(plIndefDescs,3,object_article_none_rsc);
+         }
+         else
+         {
+            SetNth(plDescs,3,Send(pCargo,@GetName));
+            SetNth(plIndefDescs,3,Send(pCargo,@GetIndef));
+         }
+
+         SetNth(plDefDescs,3,Send(pCargo,@GetDef));
+
+         if iNodeType = QN_TYPE_ITEMFINDCLASS
+         {
+            Send(pCargo,@Delete);
+         }
+      }
+
+      if iNodeType = QN_TYPE_MONSTER
+         OR iNodeType = QN_TYPE_MONSTER_ITEMCLASS
+         OR iNodeType = QN_TYPE_MONSTER_BRING
+      {
+         cMonsterClass = Send(oQuestEngine,
+                              @GetRandomMonsterFromQuestNodeTemplate,
+                              #index=piQuestNodeTemplateIndex);
+
+         % Create a dummy instance so we can get its name (yuk)
+         poMonster = Create(cMonsterClass);   
+         if poMonster = $
+         {
+            Debug("Nil monster created in questnode assign");
+
+            return FALSE;
+         }
+
+         SetNth(plDescs,1,Send(poMonster,@GetName));
+         SetNth(plIndefDescs,1,Send(poMonster,@GetIndef));
+         SetNth(plDefDescs,1,Send(poMonster,@GetDef));
+
+         if iNodeType <> QN_TYPE_MONSTER_BRING
+         {
+            piStatus = QN_STATUS_AWAITING_MONSTER_DEATH;
+            Send(oQuestEngine,@AddQNToAwaitingMonsterDeathList,#QN=self);
+         }
+      }
+   
+      % Add self to dest NPC's list of active questnodes
+      Send(poDestNPC,@AddQuestNodeToActiveList,#node=self);
+
+      % Say assign hint
+      if Send(oQuestEngine,@GetQuestNodeAssignHint,
+              #index=piQuestNodeTemplateIndex) <> $
+      { 
+         for oQuester in Send(poQuest,@GetQuesters)
+         {
+            % Have to substitute each time, in case player %NAME is
+            %  substituted.
+            SetString(sSay,Send(oQuestEngine,@GetQuestNodeAssignHint,
+                      #index=piQuestNodeTemplateIndex));
+            if Send(self,@SubstituteParms,#saystring=sSay,#quester=oQuester)
+            {
+               Send(oQuester,@MsgSenduser,#message_rsc=NPC_quote_to_one,
+                    #parm1=Send(poSourceNPC,@GetCapDef),
+                    #parm2=Send(poSourceNPC,@GetName),
+                    #type3=STRING_RESOURCE,#parm3=sSay);
+            }
+         }
+      }
+
+      %   Calculate the deadline
+      piDeadline = GetTime() + Send(oQuestEngine,@GetQuestNodeTimeLimit,
+                                    #index=piQuestNodeTemplateIndex );
+
+      return TRUE;
+   }
+
+   CheckCompletionCriteria(who_tried = $, message = $, item_offered = $ )
+   "Checks if the message, item, or showing up satisfies the quest.  "
+   "Get here from dest NPC's ReqGive or OnSomethingSaid or OnSomeoneEntered.  "
+   "Returns FALSE if criteria not met, otherwise calls completion criteria "
+   "met to award prize/penalty."
+   {
+      local lQuesters, iDistance, iType, oQuester, bOnQuest, iNumber,
+            lMonster, oMonster, bFound;
+
+      % if the player isn't on this quest, bail out here
+      if piStatus <> QN_STATUS_WAITING_FOR_PLAYERS
+      {
+         bOnQuest = FALSE;
+         for oQuester in Send(poQuest,@GetQuesters)
+         {
+            if oQuester = who_tried
+            {
+               bOnQuest = TRUE;
+            }
+         }
+
+         if NOT bOnQuest
+         {
+            return FALSE;
+         }
+      }
+
+      % If the player is too far away, bail out.
+      iDistance = Send(poDestNPC,@SquaredDistanceTo,#what=who_tried);
+      if iDistance = $
+         OR iDistance > (Q_NPC_CLOSE_ENOUGH * Q_NPC_CLOSE_ENOUGH)
+      {
+         return FALSE;
+      }
+
+      % If it's a monster quest and we haven't been notified yet of the
+      %  monster's death, go no further
+      if piStatus = QN_STATUS_AWAITING_MONSTER_DEATH
+      {
+         return FALSE;
+      }
+
+      % If( it's a message quest AND the wrong message was given )
+      %   OR ( it's an item quest AND the wrong item was given )
+      %   return FALSE;
+      iType = Send(Send(SYS,@GetQuestEngine),@GetQuestNodeType,
+                   #index=piQuestNodeTemplateIndex);
+
+      % Deliver a message or chessmove
+      if iType = QN_TYPE_MESSAGE
+         OR iType = QN_TYPE_CHESSMOVE
+      {
+         if message = $
+         {
+            return FALSE;
+         }
+
+         % for now, use string contain:
+         if NOT StringContain(message,pCargo)
+         {
+            return FALSE;
+         }
+      }
+
+      % Deliver an item
+      if iType = QN_TYPE_ITEMCLASS
+         OR iType = QN_TYPE_ITEM
+         OR iType = QN_TYPE_ITEMFINDCLASS
+         OR iType = QN_TYPE_MONSTER_ITEMCLASS 
+      {
+         if item_offered = $
+         {
+            return FALSE;
+         }
+
+         if (iType = QN_TYPE_ITEMCLASS
+             OR iType = QN_TYPE_MONSTER_ITEMCLASS
+             OR iType = QN_TYPE_ITEMFINDCLASS)
+            AND GetClass(item_offered) <> GetClass(pCargo)
+         {
+            return FALSE;
+         }
+
+         if iType = QN_TYPE_ITEM
+            AND item_offered <> pCargo
+         {
+            return FALSE;
+         }
+
+         if IsClass(item_offered,&NumberItem)
+         {
+            if Send(item_offered,@GetNumber) < Send(pCargo,@GetNumber)
+            {
+               iNumber = Send(pCargo,@GetNumber)-Send(item_offered,@GetNumber);
+               Send(who_tried,@MsgSenduser,
+                    #message_rsc=questnode_not_enough_items,
+                    #parm1=Send(poDestNPC,@GetCapDef),
+                    #parm2=Send(poDestNPC, @GetName),
+                    #parm3=Send(SYS,@IntToString,#num=iNumber));
+
+               return TRUE;
+            }
+
+            if NOT Send(who_tried,@RemoveNumberItemFromPossession,
+                        #ToBeRemoved=pCargo)
+            {
+               return FALSE;
+            }
+         }
+         else
+         {
+            if iType = QN_TYPE_ITEM
+            {
+               if NOT Send(Send(SYS,@FindItemAttByNum,#num=IA_QUEST_CARGO),
+                           @RemoveFromItem,#oItem=pCargo,#oQuestnode=self)
+               {
+                  Debug("Item didn't have quest attribute for ",self);
+               }
+
+               pCargo = $;
+            }
+
+            Send(item_offered,@Delete);
+         }
+      }
+
+      if iType = QN_TYPE_MONSTER_BRING
+      {
+         bFound = FALSE;
+         % First see if there are any charmed by the quester.
+         for lMonster in Send(Send(who_tried,@GetOwner),@GetHolderActive)
+         {
+            oMonster = first(lMonster);
+            if IsClass(oMonster,GetClass(poMonster))
+               AND Send(oMonster,@GetMaster) = who_tried
+            {
+               bFound = TRUE;
+
+               break;
+            }
+         }
+
+         % next see if there are any uncharmed.
+         if NOT bFound
+         {
+            for lMonster in Send(Send(who_tried,@GetOwner),@GetHolderActive)
+            {
+               oMonster = first(lMonster);
+               if IsClass(oMonster, GetClass(poMonster))
+                  AND Send(oMonster,@GetMaster) = $
+               {
+                  bFound = TRUE;
+
+                  break;
+               }
+            }
+         }
+
+         if bFound
+         {
+            if Send(who_tried,@GetOwner)
+               = Send(SYS,@FindRoomByNum,#num=RID_MAD_SCIENTIST_HUT)
+            {
+               % Special case for the dragonfly queen quest on the island.
+               %  Make the npc its master, put the monster in the pen outside.
+               Send(oMonster,@SetMaster,#oMaster=poDestNPC);
+               Send(Send(SYS,@FindRoomByNum,#num=RID_KC5),@AddNewQueenToPen,
+                    #oQueen=oMonster);
+            }
+            else
+            {
+               Send(oMonster,@Delete);
+            }
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      % Validate status and select quester(s) if needed
+      if piStatus = QN_STATUS_WAITING_FOR_PLAYERS
+      {
+         % Does the person still qualify for the quest?
+         if Send(poQuest,@CheckPlayerCriteria,#quester_wannabe=who_tried) <> 1
+         {
+            return FALSE;
+         }
+
+         % This quester meets the criteria, so add him to the list
+         lQuesters = [ who_tried ];
+            
+ %       if ( multiplayer quest )
+ %       {
+ %          loop through players in room, find n-1 more that meet criteria
+ %             add them to the questerlist
+ %          if ( players fail to meet criteria )
+ %             say need more players
+ %             return FALSE;
+ %       }
+
+         % Ask the quest to remember the quester list
+         Send(poQuest,@SetQuesters,#questers=lQuesters);
+      }   
+      else    
+      {
+         if piStatus <> QN_STATUS_IN_PROGRESS
+         {
+            % error: status invalid
+            return FALSE;
+         }
+      }
+
+      Send(self,@CompletionCriteriaMet);
+
+      return TRUE;
+   }
+   
+   CompletionCriteriaMet()
+   {
+      local lQuesters, oQuester, oQuestEngine, lPrize, lPenalty, sSay;
+
+      lQuesters = Send(poQuest,@GetQuesters);
+
+      oQuestEngine = Send(SYS,@GetQuestEngine);
+
+      % Check deadline
+      if piDeadline = 0
+         OR (piDeadline-GetTime()) >= 1
+      {
+         % deadline met, or not yet started (for first node)
+         for lPrize in Send(oQuestEngine,@GetRandomPrizeFromQuestNodeTemplate,
+                            #index=piQuestNodeTemplateIndex)
+         {
+            Send(self,@AwardPrizeOrPenalty,#prize=lPrize,
+                 #recipients=lQuesters);
+         }
+
+         % Say success hint
+         if Send(oQuestEngine,@GetQuestNodeSuccessHint,
+                 #index=piQuestNodeTemplateIndex) <> $
+         { 
+            sSay = CreateString();
+            for oQuester in lQuesters
+            {
+               % Have to substitute each time, in case player %NAME is
+               %  substituted.
+               SetString(sSay,Send(oQuestEngine,@GetQuestNodeSuccessHint,
+                         #index=piQuestNodeTemplateIndex));
+               if Send(self,@SubstituteParms,#saystring=sSay,#quester=oQuester)
+               {
+                  Send(oQuester,@MsgSenduser,#message_rsc=NPC_quote_to_one,
+                       #parm1=Send(poDestNPC,@GetCapDef),
+                       #parm2=Send(poDestNPC,@GetName),
+                       #type3=STRING_RESOURCE,#parm3=sSay);
+               }
+            }
+         }
+
+         % clear our memory of the quest we just activated
+         poQuestActivated = $;
+      }
+      else
+      {
+         Send(self,@DeadlineExpired);
+
+         return;
+      }   
+
+      piStatus = QN_STATUS_COMPLETED;
+      if NOT Send(poQuest,@QuestHasMoreNodes)
+      {
+         for oQuester in lQuesters
+         {
+            Send(oQuester,@AddQuestHistory,
+                 #index=Send(poQuest,@GetQuestTemplateIndex),
+                 #success=TRUE);
+         }      
+      }
+
+      Post(poQuest,@AssignNextNode,#current_NPC=poDestNPC);
+
+      return;
+   }
+
+   AwardPrizeOrPenaltyActivateQuest(prize=$,recipients=$,oQuestEngine=$)
+   {
+      local lActiveQuests, oQuest;
+
+      % format for a prize entry of this type:
+      %     [ QN_PRIZETYPE_ACTIVATE_QUEST, quest id]
+      %
+      % The quest thus activated is then saved in poQuestActivated.
+      %  note that the object in poQuestActivated sticks around only long
+      %  enough to finish awarding prizes/penalties and say the appropriate
+      %  message, then it is cleared.
+
+      % make sure this is a valid quest id
+      if NOT Send(oQuestEngine,@IsValidQuestTemplate,#index=Nth(prize,2))
+      {
+         Debug("Tried to QN_PRIZETYPE_ACTIVATE_QUEST with an invalid quest id",
+                Nth(prize,2));
+
+         return;
+      }
+
+      Send(oQuestEngine,@ScheduleQuest,#index=Nth(prize,2),#override=TRUE);
+
+      lActiveQuests = Nth(Send(oQuestEngine,@GetQuestTemplate,
+                          #index=Nth(prize,2)),QT_ACTIVE_QUESTS);
+
+      if lActiveQuests = $
+      {
+         % Should never reach here
+         Debug("QN_PRIZETYPE_ACTIVATE_QUEST: no quests of type",Nth(prize,2),
+               "scheduled to modify restrictions on!");
+
+         return;
+      }
+
+      for oQuest in lActiveQuests
+      {
+         if Send(oQuest,@IsWaitingForActivation)
+         {
+            Send(oQuest,@ModifyPlayerRestrict2,#restrict_type=Q_R2_QN_ASSIGNABLE,
+                 #inst_num=1,#parm1=TRUE);
+            poQuestActivated = oQuest;
+            if Send(oQuestEngine,@GetDebugStatus) > 1
+            {
+               Debug("Activated quest of type: ",Nth(prize,2));
+            }
+
+            return;
+         }
+      }
+
+      % should never reach here
+      Debug("QN_PRIZETYPE_ACTIVATE_QUEST: no quests of type",Nth(prize,2),
+            "waiting for activation!");
+
+      return;
+   }
+
+   AwardPrizeOrPenaltyQuestRestrict2(prize=$,recipients=$,oQuestEngine=$)
+   {
+      local iPrizeRestrictParm1, iPrizeRestrictParm2, n1, n2, n3, i, oQuester;
+
+      % format for a prize entry of this type:
+      %     [ QN_PRIZETYPE_PASS_QUEST_RESTRICT2, restriction type,
+      %       restriction instance number ]
+      %
+      % note that this passes info to a quest that has just been activated.
+      % if no such node has been activated, it will do nothing.
+
+      % make sure there's a valid quest to pass info to!
+      if poQuestActivated = $
+      {
+         Debug("Tried to QN_PRIZETYPE_PASS_QUEST_RESTRICT2 with no "
+               "poQuestActivated.  quest template",
+               Send(poQuest,@GetQuestTemplateIndex));
+
+         return;
+      }
+
+      iPrizeRestrictParm1 = $;
+      iPrizeRestrictParm2 = $;
+
+      % modify the appropriate restriction
+      if Nth(prize,2) = Q_R2_IS_GUILD_MEMBER_OF
+      {
+         % find the majority guild amongst the questers
+         % number of members of current majority
+         n2 = 0;
+         % number of tied guilds
+         n3 = 0;  
+
+         for oQuester in recipients
+         {
+            n1 = 0;
+            for i in recipients
+            {
+               if Send(oQuester,@GetGuild) = Send(i,@GetGuild)
+               {
+                  n1 = n1 + 1;
+               }
+            }
+
+            if n1 > n2
+            {
+               iPrizeRestrictParm1 = Send(oQuester,@GetGuild);
+               n2 = n1;
+            }
+
+            if n1 = n2
+            {
+               n3 = n3 + 1;
+               if random(0,n3) = 0
+               {
+                  iPrizeRestrictParm1 = Send(oQuester,@GetGuild);
+               }
+            }
+         }
+      }
+
+      if Nth(prize,2) = Q_R2_IS_PLAYER
+      {
+         % pick a random prize recipient
+         iPrizeRestrictParm1 = Nth(recipients,random(1,Length(recipients)));
+      }
+
+      Send(poQuestActivated,@ModifyPlayerRestrict2,
+           #restrict_type=Nth(prize,2),#inst_num=Nth(prize,3),
+           #parm1=iPrizeRestrictParm1,#parm2=iPrizeRestrictParm2);
+
+      return;
+   }
+
+   AwardPrizeOrPenaltyInsignia(prize=$,recipients=$,oQuestEngine=$)
+   {
+      local oQuester, oGuildShield, i, iInsignia;
+
+      for oQuester in recipients
+      {
+         if Send(oQuester,@PossessesA,#class=&GuildShield)
+         {
+            oGuildShield = $;
+            for i in Send(oQuester,@GetPlayerUsing)
+            {
+               if IsClass(i,&GuildShield)
+               {
+                  oGuildShield = i;
+
+                  break;
+               }
+            }
+
+            if oGuildShield = $
+            {
+               for i in Send(oQuester,@GetHolderPassive)
+               {
+                  if IsClass(i,&GuildShield)
+                  {
+                     oGuildShield = i;
+
+                     break;
+                  }
+               }
+            }
+
+            if oGuildShield <> $
+            {
+               iInsignia = INSIG_NONE;
+               if IsClass(poDestNPC,&RiijaMonk)
+               {
+                  iInsignia = INSIG_RIIJA;
+               }
+
+               if IsClass(poDestNPC,&QorPriestess)
+               {
+                  iInsignia = INSIG_QOR;
+               }
+
+               if IsClass(poDestNPC,&KraananPriestess)
+               {
+                  iInsignia = INSIG_KRAANAN;
+               }
+
+               if IsClass(poDestNPC,&FarenPriestess)
+               {
+                  iInsignia = INSIG_FAREN;
+               }
+
+               if IsClass(poDestNPC,&Minstrel)
+               {
+                  iInsignia = INSIG_JALA;
+               }
+
+               if IsClass(poDestNPC,&PrincessLiege)
+               {
+                  iInsignia = INSIG_PRINCESS;
+               }
+
+               if IsClass(poDestNPC,&DukeLiege)
+               {
+                  iInsignia = INSIG_DUKE;
+               }
+
+               if IsClass(poDestNPC,&ShalillePriestess)
+               {
+                  iInsignia = INSIG_SHALILLE;
+               }
+
+               if IsClass(poDestNPC,&RebelLiege)
+               {
+                  iInsignia = INSIG_REBEL;
+               }
+
+               Send(oGuildShield,@ChangeGuildInsignia,#Insignia=iInsignia);
+            }
+         }
+         else
+         {
+            Debug("Quester ",oQuester," has no guild shield to emboss!");
+         }
+      }
+
+      return;
+   }
+
+   AwardPrizeOrPenalty( prize = $, recipients = $ )
+   {
+      local i, iPrizeStat, iPrizeType, cPrizeClass, oPrize, iAmount, iDays,
+            oBoon, iBoonNum, iPrizeBoon, iPrizeFaction, oQuestEngine, oQuester,
+            oLich;
+
+      if prize = $
+      {
+         return;
+      }
+
+      if recipients = $
+      {
+         return;
+      }
+   
+      iPrizeType = First(prize);
+      oQuestEngine = Send(SYS,@GetQuestEngine);
+
+      % switch on prize type
+      if iPrizeType = QN_PRIZETYPE_ITEM
+      {
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_ITEMCLASS
+      {
+         % Prize is a new item of given class (and amount)
+         cPrizeClass = Nth(prize,2);
+         iAmount = Nth(prize,3);
+
+         for oQuester in recipients
+         {
+            oPrize = Create(cPrizeClass,#number=iAmount,#guildMember=oQuester,
+                            #quester=oQuester);
+            Send(oQuester,@NewHold,#what=oPrize);
+         }
+
+         if IsClass(oPrize,&NumberItem)
+         {
+            ClearTempString();
+            AppendTempString(iAmount);
+            AppendTempString(" ");
+            AppendTempString(Send(oPrize,@GetName));
+            SetNth(plDescs,2,CreateString());
+            SetString(Nth(plDescs,2),GetTempString());
+         }
+         else
+         {
+            SetNth(plDescs,2,Send(oPrize,@GetName));
+         }
+
+         SetNth(plIndefDescs,2,Send(oPrize,@GetIndef));
+         SetNth(plDefDescs,2,Send(oPrize,@GetDef));
+
+         return;
+      } 
+
+      if iPrizeType = QN_PRIZETYPE_STATISTIC
+      {
+         for oQuester in recipients
+         {
+            % Prize is a boost of given statistic by amount
+            iPrizeStat = Nth(prize,2);
+            iAmount = Nth(prize,3);
+
+            if iPrizeStat = QN_PRIZE_STAT_MIGHT
+            {
+               Send(oQuester,@AddMight,#points=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_INTELLECT
+            {
+               Send(oQuester,@AddIntellect,#points=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_AIM
+            {
+               Send(oQuester,@AddAim,#points=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_STAMINA
+            {
+               Send(oQuester,@AddStamina,#points=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_AGILITY
+            {
+               Send(oQuester,@AddAgility,#points=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_MYSTICISM
+            {
+               Send(oQuester,@AddMysticism,#points=iAmount);
+               Send(oQuester,@ComputeMaxMana);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_HEALTH
+            {
+               Send(oQuester,@GainHealth,#amount=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_MAXHEALTH
+            {
+               Send(oQuester,@GainMaxHealth,#amount=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_BASEMAXHEALTH
+            {
+               Send(oQuester,@GainBaseMaxHealth,#amount=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_MANA
+            {
+               Send(oQuester,@GainMana,#amount=iAmount);
+            }
+
+            if iPrizeStat = QN_PRIZE_STAT_KARMA
+            {
+               Send(oQuester,@GainKarma,#amount=iAmount);
+            }
+         }
+
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_BOON
+      {
+         for oQuester in recipients
+         {
+            % A temporary boost/reduction of given statistic by amount
+            iPrizeBoon = Nth(prize,2);
+            iAmount = Nth(prize,3);
+            iDays = Nth(prize,4);
+
+            iBoonNum = $;
+            if iPrizeBoon = QN_PRIZE_BOON_VIGOR
+            {
+               iBoonNum = SID_VIGOR_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_INTELLECT
+            {
+               iBoonNum = SID_INTELLECT_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_AIM
+            {
+               iBoonNum = SID_AIM_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_STAMINA
+            {
+               iBoonNum = SID_STAMINA_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_AGILITY
+            {
+               iBoonNum = SID_AGILITY_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_MYSTICISM
+            {
+               iBoonNum = SID_MYSTICISM_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_STRENGTH
+            {
+               iBoonNum = SID_STRENGTH_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_HITPOINTS
+            {
+               iBoonNum = SID_HP_BOON;
+            }
+
+            if iPrizeBoon = QN_PRIZE_BOON_MANA
+            {
+               iBoonNum = SID_MANA_BOON;
+            }
+
+            if iBoonNum <> $
+            {
+               oBoon = Send(SYS,@FindSpellByNum,#num=iBoonNum);
+	       if oBoon = $
+	       {
+	       	       Debug("Can't find spell for boon",iBoonNum);
+		       return;
+	       }
+               SetNth(plDescs,2,Send(oBoon,@GetName));
+               SetNth(plIndefDescs,2,Send(oBoon,@GetIndef));
+               SetNth(plDefDescs,2,Send(oBoon,@GetDef));
+               Send(oBoon,@AddBoon,#target=oQuester,#days=iDays,
+                    #amount=iAmount);
+            }
+         }
+
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_SKILL
+      {
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_SPELL
+      {
+         return;
+      }
+
+      if( iPrizeType = QN_PRIZETYPE_FACTION )
+      {
+         for oQuester in recipients
+         {
+            iPrizeFaction = Nth(prize,2);
+
+            if iPrizeFaction = QN_PRIZE_FACTION_UPDATE
+            {
+               Send(oQuester,@UpdateFactionService,#full=TRUE);
+            }
+
+            if iPrizeFaction = QN_PRIZE_FACTION_DUKE
+            {
+               Send(oQuester,@ResignFaction);
+               Send(oQuester,@JoinFaction,#new_faction=FACTION_DUKE);
+            }
+
+            if iPrizeFaction = QN_PRIZE_FACTION_PRINCESS
+            {
+               Send(oQuester,@ResignFaction);
+               Send(oQuester,@JoinFaction,#new_faction=FACTION_PRINCESS);
+            }
+
+            if iPrizeFaction = QN_PRIZE_FACTION_REBEL
+            {
+               Send(oQuester,@ResignFaction);
+               Send(oQuester,@JoinFaction,#new_faction=FACTION_REBEL);
+            }
+
+            if iPrizeFaction = QN_PRIZE_FACTION_NEUTRAL
+            {
+               Send(oQuester,@ResignFaction);
+            }
+         }
+
+         return;
+      }
+
+      if iPrizeType = QN_PRIZETYPE_ACTIVATE_QUEST
+      {
+         return Send(self,@AwardPrizeOrPenaltyActivateQuest,
+                     #prize=prize,#recipients=recipients,
+                     #oQuestEngine=oQuestEngine);
+      }
+
+      if iPrizeType = QN_PRIZETYPE_PASS_QUEST_RESTRICT2
+      {
+         return Send(self,@AwardPrizeOrPenaltyQuestRestrict2,
+                     #prize=prize,#recipients=recipients,
+                     #oQuestEngine=oQuestEngine);
+      }
+
+      if iPrizeType = QN_PRIZETYPE_INSIGNIA
+      {
+         return Send(self,@AwardPrizeOrPenaltyInsignia,
+                     #prize=prize,#recipients=recipients,
+                     #oQuestEngine=oQuestEngine);
+      }
+
+      if iPrizeType = QN_PRIZETYPE_PASS_NPC
+      {
+         if poQuestActivated = $
+         {
+            Debug("No quest to pass npc to!");
+         }
+         else
+         {
+            Send(Send(poQuestActivated,@GetActiveQuestNode),@Init,
+                 #waiting_for_players=TRUE,#passed_NPC=poDestNPC);
+         }
+
+         return;
+      }
+   
+      if iPrizeType = QN_PRIZETYPE_PASS_SOURCE_NPC
+      {
+         if poQuestActivated = $
+         {
+            Debug("No quest to pass npc to!");
+         }
+         else
+         {
+            Send(Send(poQuestActivated,@GetActiveQuestNode),@Init,
+                 #waiting_for_players=TRUE,#passed_NPC=poSourceNPC);
+         }
+
+         return;
+      }
+   
+      if iPrizeType = QN_PRIZETYPE_PASS_PREVIOUS_SOURCE_NPC
+      {
+         if poQuestActivated = $
+         {
+            Debug("No quest to pass npc to!");
+         }
+         else
+         {
+            Send(Send(poQuestActivated,@GetActiveQuestNode),@Init,
+                 #waiting_for_players=TRUE,#passed_NPC=poPreviousSourceNPC);
+         }
+
+         return;
+      }
+   
+      if iPrizeType = QN_PRIZETYPE_SCHEDULE_QUEST
+      {
+         % format for a prize entry of this type:
+         %     [ QN_PRIZETYPE_SCHEDULE_QUEST, quest id]
+
+         if Send(oQuestEngine,@IsValidQuestTemplate,#index=Nth(prize,2))
+         {
+            Send(oQuestEngine,@ScheduleQuest,#index=Nth(prize,2),
+                 #override=TRUE);
+         }
+         else
+         {
+            Debug("QN_PRIZETYPE_SCHEDULE_QUEST: invalid index!");
+         }
+
+         return;
+      }
+   
+      if iPrizeType = QN_PRIZETYPE_ESTABLISH_NECROGUILD
+      {
+         % format for a prize entry of this type:
+         %     [ QN_PRIZETYPE_ESTABLISH_NECROGUILD ]
+
+         oLich = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),
+                      @FindHoldingActive,#class=&DeadLich);
+         if oLich <> $
+         {
+            Send(oLich,@EstablishNecromancerGuild,#master=First(recipients));
+         }
+         else
+         {
+            Debug("QN_PRIZETYPE_ESTABLISH_NECROGUILD: no lich!");
+         }
+
+         return;
+      }
+   
+      if iPrizeType = QN_PRIZETYPE_OUTLAW
+      {
+         % format for a prize entry of this type:
+         %     [ QN_PRIZETYPE_OUTLAW ]
+
+         for oQuester in recipients
+         {
+            if Send(SYS,@IsPKAllowed)
+            {
+               Send(oQuester,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
+            }
+            else
+            {
+               % In Sacred Haven, just give them a random negative stat boon
+               %  instead.
+               iPrizeBoon = Nth([QN_PRIZE_BOON_INTELLECT,
+                                 QN_PRIZE_BOON_AIM,
+                                 QN_PRIZE_BOON_STAMINA,
+                                 QN_PRIZE_BOON_AGILITY,
+                                 QN_PRIZE_BOON_MYSTICISM,
+                                 QN_PRIZE_BOON_STRENGTH ],random(1,6));
+               iAmount = 1;
+               iDays = 2;
+               Send(self,@AwardPrizeOrPenalty,#recipients=recipients,
+                     #prize=[QN_PRIZETYPE_BOON,iPrizeBoon,iAmount,iDays]);
+            }
+         }
+
+         return;
+      }
+   
+      Debug("AwardPrizesOrPenalties got unknown prize type",iPrizeType);
+
+      return;
+   }
+
+   GetDestNPC()
+   {
+      return poDestNPC;
+   }
+
+   GetSourceNPC()
+   {
+      return poSourceNPC;
+   }
+
+   MonsterKilled(dead_monster = $, killing_player = $, corpse = $)
+   "Returns TRUE if this was the one we were waiting for, FALSE otherwise."
+   {
+      local oRoom, iRow, iCol, iType, oQuester;
+
+      if piStatus <> QN_STATUS_AWAITING_MONSTER_DEATH
+      {
+         Debug("Questnode notified of monster death when not awaiting it.");
+         Send(Send(SYS,@GetQuestEngine),@RemoveQNFromAwaitingMonsterDeathList,
+              #QN=self);
+
+         return FALSE;
+      }
+
+      if GetClass(dead_monster) <> GetClass(poMonster)
+      {
+         return FALSE;
+      }
+
+      for oQuester in Send(poQuest,@GetQuesters)
+      {
+         if killing_player = oQuester
+         {
+            % right monster class, right player
+            iType = Send(Send(SYS,@GetQuestEngine),@GetQuestNodeType,
+                         #index=piQuestNodeTemplateIndex);
+
+            if iType = QN_TYPE_MONSTER
+            {
+               piStatus = QN_STATUS_IN_PROGRESS;
+
+               return TRUE;
+            }
+
+            if iType <> QN_TYPE_MONSTER_ITEMCLASS
+            {
+               Debug("Questnode of non-monster type processed monster death.");
+
+               return TRUE;
+            }
+
+            if pCargo = $
+            {
+               Debug("Questnode expected item to place after monster death.");
+
+               return TRUE;
+            }
+
+            % place the item on the corpse
+            oRoom = Send(corpse,@GetOwner);
+            iRow = Send(corpse,@GetRow);
+            iCol = Send(corpse,@GetCol);
+
+            if Send(oRoom,@ReqNewHold,#what=pCargo,#new_row=iRow,#new_col=iCol)
+               AND Send(oRoom,@ReqSomethingMoved,#what=pCargo,#new_row=iRow,
+                        #new_col=iCol)
+            {
+               Send(oRoom,@NewHold,#what=pCargo,#new_row=iRow,#new_col=iCol);
+               piStatus = QN_STATUS_IN_PROGRESS;
+
+               return TRUE;
+            }
+            else   
+            {
+               % no room at corpse! (sorry, better kill another)
+               Debug("No room at monster's corpse to place item.");
+
+               return FALSE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
+   GetDeadline()
+   {
+      return piDeadline;
+   }
+
+   GetStatus()
+   {
+      return piStatus;
+   }
+
+   DeadlineExpired()
+   {
+      local oQuestEngine, sSay, oQuester, lPenalty, lQuesters, iNodeType;
+
+      oQuestEngine = Send(SYS,@GetQuestEngine);
+   
+      % Get rid of our link to quest items
+      iNodeType = Send(oQuestEngine,@GetQuestNodeType,
+                       #index=piQuestNodeTemplateIndex);
+      if pCargo <> $
+         AND iNodeType = QN_TYPE_ITEM
+      {
+         if NOT Send(Send(SYS,@FindItemAttByNum,#num=IA_QUEST_CARGO),
+                     @RemoveFromItem,#oItem=pCargo,#oQuestnode=self)
+         {
+            Debug("Item didn't have quest attribute for ",self);
+         }
+
+         pCargo = $;
+      }
+
+      if poQuest = $
+      {
+         Debug("Trying to expire questnode with no owning quest! QN#=",
+               piQuestNodeTemplateIndex);
+         piStatus = QN_STATUS_UNINITIALIZED;
+
+         return;
+      }
+
+      lQuesters = Send(poQuest,@GetQuesters);
+
+      % penalties to the participants
+      for lPenalty in Send(oQuestEngine,@GetRandomPenaltyFromQuestNodeTemplate,
+                           #index=piQuestNodeTemplateIndex)
+      {
+         Send(self,@AwardPrizeOrPenalty,#prize=lPenalty,#recipients=lQuesters);
+      }
+
+      % notify player by mail
+      if Send(oQuestEngine,@GetQuestNodeFailureHint,
+              #index=piQuestNodeTemplateIndex) <> $
+      {
+         sSay = CreateString();
+
+         lQuesters = Send(poQuest,@GetQuesters);
+         for oQuester in lQuesters
+         {
+            % have to substitute each time, in case player %NAME is substituted
+            SetString(sSay,Send(oQuestEngine,@GetQuestNodeFailureHint,
+                                #index=piQuestNodeTemplateIndex));
+            if Send(self,@SubstituteParms,#saystring=sSay,#quester=oQuester)
+            {
+               Send(oQuester,@ReceiveNestedMail,
+                    #from=Send(poSourceNPC,@GetName),
+                    #dest_list=Send(poQuest,@GetQuesters),
+                    #nest_list=[4,substitute_string, 4,sSay]);
+            }
+         }
+      }
+
+      % clear our memory of the quest we just activated
+      poQuestActivated = $;
+   
+      for oQuester in lQuesters
+      {
+         Send(oQuester,@AddQuestHistory,
+              #index=Send(poQuest,@GetQuestTemplateIndex),
+              #success=FALSE);
+      }
+   
+      Post(poQuest,@Cancel);
+   
+      return;
+   }
+
+   GetQuestNodeTemplateIndex()
+   {
+      return piQuestNodeTemplateIndex;
+   }
+
+   Delete()
+   {
+      poQuest = $;
+      poPreviousSourceNPC = $;
+      poSourceNPC = $;
+      poDestNPC = $;
+      plDescs = $;
+      plIndefDescs = $;
+      plDefDescs = $;
+      pCargo = $;
+      poMonster = $;
+      poQuestActivated = $;
+      piStatus = QN_STATUS_UNINITIALIZED;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

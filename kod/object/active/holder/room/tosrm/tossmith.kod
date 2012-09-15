@@ -1,0 +1,108 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosSmithy is TosRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_tossmith = "The Freelance Merchant and Menders Shop"
+   room_tossmith = tossmith.roo
+   tossmith_music = smithy.mid
+
+   TosSmithy_forge_sound = fireplac.wav
+
+classvars:
+
+   vrName = room_name_tossmith
+
+   viTeleport_row = 3
+   viTeleport_col = 3
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_tossmith
+   piRoom_num = RID_TOS_SMITHY
+
+   piBaseLight = 100
+   piOutside_factor = OUTDOORS_NONE
+
+   prMusic = tossmith_music
+
+messages:
+
+   Constructed()
+   {
+      % Each looping sound is [wave_file, row, col, cutoff radius, maximum volume]
+      plLooping_sounds = [ [ TosSmithy_forge_sound, 6, 6, 7, 20 ] ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 2, 2, RID_TOS, 60, 12, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 3, RID_TOS, 60, 12, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BIGIRON),
+           #new_row=3,#new_col=7,#fine_row=30,#fine_col=31,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_JUG),
+           #new_row=4,#new_col=7,#fine_row=29,#fine_col=35,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BUCKET),
+           #new_row=8,#new_col=5,#fine_row=24,#fine_col=32,#angle=ANGLE_EAST);
+
+      % Lighting
+      % - Torches
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=15),
+           #new_row=2,#new_col=6,#fine_row=16,#fine_col=0);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=15),
+           #new_row=3,#new_col=2,#fine_row=55,#fine_col=16);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=15),
+           #new_row=6,#new_col=2,#fine_row=16,#fine_col=16);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=15),
+           #new_row=5,#new_col=7,#fine_row=48,#fine_col=48);
+
+      % - Forge
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BORANGE,#iIntensity=50),
+           #new_row=6,#new_col=6,#fine_row=32,#fine_col=16);
+
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      if IsClass(oSpellSkill,&Mend)
+      {
+         % Give a 20% bonus.
+         return ((chance * 12)/10);
+      }
+
+      return chance;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

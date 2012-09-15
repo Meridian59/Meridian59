@@ -1,0 +1,913 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Object
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   object_name_rsc = "something"
+   object_icon_rsc = somethin.bgf
+   object_desc_rsc = "You are looking at an object"
+
+   object_article_the_rsc = "the "
+   object_article_none_rsc = ""
+   object_article_a_rsc = "a "
+   object_article_an_rsc = "an "
+   object_article_your_rsc = "your "
+   object_article_this_rsc = "this "
+   object_article_these_rsc = "these "
+   object_article_some_rsc = "some "
+   object_article_cap_the_rsc = "The "
+   object_article_cap_none_rsc = ""
+   object_article_cap_a_rsc = "A "
+   object_article_cap_an_rsc = "An "
+   object_article_cap_your_rsc = "Your "
+   object_article_cap_this_rsc = "This "
+   object_article_cap_these_rsc = "These "
+   object_article_cap_some_rsc = "Some "
+
+   object_his = "his"
+   object_her = "her"
+   object_its = "its"
+   object_hers = "hers"
+   object_him = "him"
+   object_it = "it"
+   object_he = "he"
+   object_she = "she"
+   object_lord = "lord"
+   object_lady = "lady"
+
+   object_cap_his = "His"
+   object_cap_her = "Her"
+   object_cap_its = "Its"
+   object_cap_hers = "Hers"
+   object_cap_him = "Him"
+   object_cap_it = "It"
+   object_cap_he = "He"
+   object_cap_she = "She"
+   object_cap_lord = "Lord"
+   object_cap_lady = "Lady"
+
+
+
+classvars:
+   vrName = object_name_rsc
+   vrIcon = object_icon_rsc
+   vrDesc = object_desc_rsc
+
+   viIndefinite = ARTICLE_A
+   viDefinite = ARTICLE_THE
+
+   viBulk = 0
+   viWeight = 0 
+
+   viIllusion = FALSE
+   vbSummoned = FALSE
+
+   viGender = GENDER_NEUTER
+   viObject_flags = 0
+
+properties:
+
+   poOwner = $
+
+messages:
+
+   Constructor()
+   {
+      % Essential for creation stuff that needs to happen AFTER constructors
+      %  called
+      Send(self,@Constructed);
+      % Set any default values
+      Send(self,@DefaultValues);
+      return;
+   }
+
+   Constructed()
+   {
+      return;
+   }
+
+   Delete()
+   {
+      if poOwner <> $
+      {
+         Send(poOwner,@LeaveHold,#what=self);
+         poOwner = $;
+      }
+
+      return;
+   }
+
+   % This message will restore the default values in any object.  Must be
+   %  defined for any subclass that wants to use it. This is intended to
+   %  make updating a bit smoother, so you can re-set properties in objects
+   %  that have changed radically.
+   DefaultValues()
+   {
+      return;
+   }
+
+   TryLook(what = $)
+   {
+      Send(what,@SendLook,#what=self);
+
+      return;
+   }
+
+   ShowDesc()
+   {
+      AddPacket(4,vrDesc);
+
+      return;
+   }
+
+   GetDesc()
+   {
+      return vrDesc;
+   }
+
+   GetBulk()
+   {
+      return viBulk;
+   }
+
+   GetWeight()
+   {
+      return viWeight;
+   }
+
+   GetPos()
+   {
+      if poOwner <> $
+      {
+         if IsClass(poOwner,&Room)
+         {
+            return Send(poOwner,@GetRoomPos,#what=self);
+         }
+         else
+         {
+            return Send(poOwner,@GetPos);
+         }
+      }
+      
+      return $;
+   }
+
+   GetAngle()
+   {
+      if poOwner <> $
+      {
+         if IsClass(poOwner,&Room)
+         {
+            return Send(poOwner,@GetRoomAngle,#what=self);
+         }
+         else
+         {
+            return Send(poOwner,@GetAngle);
+         }
+      }
+      
+      return 0;
+   }
+
+   GetRow()
+   {
+      local lPos;
+
+      lPos = Send(self,@GetPos);
+
+      if lPos = $
+      {
+         return $;
+      }
+      
+      return First(lPos);
+   }
+
+   GetCol()
+   {
+      local lPos;
+
+      lPos = Send(self,@GetPos);
+
+      if lPos = $
+      {
+         return $;
+      }
+      
+      return Nth(lPos,2);
+   }
+
+   GetFineRow()
+   {
+      local lPos;
+
+      lPos = Send(self,@GetPos);
+
+      if lPos = $
+      {
+         return $;
+      }
+      
+      return Nth(lPos,3);
+   }
+
+   GetFineCol()
+   {
+      local lPos;
+
+      lPos = Send(self,@GetPos);
+
+      if lPos = $
+      {
+         return $;
+      }
+      
+      return Nth(lPos,4);
+   }
+
+   GetOwner()
+   {
+      return poOwner;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      % Don't go into a user.  Also, make sure we can leave our previous owner,
+      %  if we had one.
+      if IsClass(what,&User)
+         OR (poOwner <> $ AND NOT Send(poOwner,@ReqLeaveHold,#what=self))
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   ReqLeaveOwner()
+   {
+      return TRUE;
+   }
+
+   NewOwner(what = $)
+   {
+      if poOwner <> $
+      {
+         Send(poOwner,@LeaveHold,#what=self);
+      }
+
+      poOwner = what;
+
+      return;
+   }
+
+   IsIllusion()
+   {
+      return viIllusion;
+   }
+
+   IsSummoned()
+   {
+      return vbSummoned;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      return FALSE;
+   }
+
+   DestroyDisposable()
+   {
+      return;
+   }
+
+   % New Name Convention:
+   %
+   % Most cases, use GetName().
+   % A child class might override it to get an apparent pseudonym
+   % or the word "something".  It should never return the empty string,
+   % so that it's always suitable for use in sentences.
+   %
+   % If you want the real actual name, use GetTrueName().
+   % This *always* returns vrName, and shouldn't be overridden by any
+   % child class.
+   %
+   % For cases which might return a blank string, use GetApparentName().
+   % A child class can override it to return an apparent pseudonym or
+   % a blank string.  Not recommended for text, but recommended for
+   % visuals.
+
+   GetName()
+   {
+      return vrName;
+   }
+
+   GetTrueName()
+   {
+      return vrName;
+   }
+
+   GetApparentName()
+   {
+      return vrName;
+   }
+   
+   GetDef()
+   {
+      % return resource of definite article
+      return Send(self,@LookupArticle,#article_num=viDefinite);
+   }
+
+   GetIndef()
+   {
+      % return resource of indefinite article
+      return Send(self,@LookupArticle,#article_num=viIndefinite);
+   }
+
+   LookupArticle(article_num = $)
+   {
+      % returns resource of the article, given as an integer
+
+      if article_num = ARTICLE_THE
+      {
+         return object_article_the_rsc;
+      }
+
+      if article_num = ARTICLE_NONE
+      {
+         return object_article_none_rsc;
+      }
+
+      if article_num = ARTICLE_A
+      {
+         return object_article_a_rsc;
+      }
+
+      if article_num = ARTICLE_AN
+      {
+         return object_article_an_rsc;
+      }
+
+      if article_num = ARTICLE_YOUR
+      {
+         return object_article_your_rsc;
+      }
+
+      if article_num = ARTICLE_THIS
+      {
+         return object_article_this_rsc;
+      }
+
+      if article_num = ARTICLE_SOME
+      {
+         return object_article_some_rsc;
+      }
+
+      debug("Invalid article num",article_num);
+
+      return object_article_none_rsc;
+   }
+
+   GetCapDef()
+   {
+      % return resource of capitalized definite article
+      return Send(self,@LookupCapitalArticle,#article_num=viDefinite);
+   }
+
+   GetCapIndef()
+   {
+      % return resource of capitalized indefinite article
+      return Send(self,@LookupCapitalArticle,#article_num=viIndefinite);
+   }
+
+   LookupCapitalArticle(article_num = $)
+   {
+      % returns resource of the article, given as an integer
+
+      if article_num = ARTICLE_THE
+      {
+         return object_article_cap_the_rsc;
+      }
+
+      if article_num = ARTICLE_NONE
+      {
+         return object_article_cap_none_rsc;
+      }
+
+      if article_num = ARTICLE_A
+      {
+         return object_article_cap_a_rsc;
+      }
+
+      if article_num = ARTICLE_AN
+      {
+         return object_article_cap_an_rsc;
+      }
+
+      if article_num = ARTICLE_YOUR
+      {
+         return object_article_cap_your_rsc;
+      }
+
+      if article_num = ARTICLE_THIS
+      {
+         return object_article_cap_this_rsc;
+      }
+
+      if article_num = ARTICLE_SOME
+      {
+         return object_article_cap_some_rsc;
+      }
+
+      debug("Invalid article num",article_num);
+
+      return object_article_none_rsc;
+   }
+
+
+   GetIcon()
+   {
+      return vrIcon;
+   }
+
+   SendAnimation()
+   {
+      % Send animation info to user.  Default is no animation, display with
+      %  group 1.
+      AddPacket(1, ANIMATE_NONE, 2, 1);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      % Send animation info to user for when the user looks at the object.
+      Send(self,@SendAnimation);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      % Send animation when object moves smoothly from one square to another.
+      % Default is no animation, which is indicated by giving 0 for the speed.
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }
+
+   SendMoveOverlays()
+   {
+      % Send overlays when object moves smoothly from one square to another.
+      % Default is leave overlays alone
+      AddPacket(1,0);
+
+      return;
+   }
+
+   SendOverlays()
+   {
+      % Send overlay bitmap info to user.  Default is no overlays.
+      AddPacket(1, 0);
+
+      return;
+   }
+
+   SendLookOverlays()
+   {
+      % Send overlay info to user for when the user looks at the object
+      Send(self,@SendOverlays);
+
+      return;
+   }
+
+   SendEnchantmentAnimation()
+   {
+      Send(self,@SendAnimation);
+
+      return;
+   }
+
+   SendEnchantmentOverlays()
+   {
+      AddPacket(1,0);
+
+      return;
+   }
+
+   SendLightingInformation()
+   {
+      % Default: No lighting
+      AddPacket(2,0);
+
+      return;
+   }
+
+   MsgSendUser()
+   {
+      return;
+   }
+
+   SysMsgSendUser()
+   {
+      return;
+   }
+
+   WaveSendUser()
+   {
+      return;
+   }
+
+   MidiSendUser()
+   {
+      return;
+   }
+
+   EffectSendUser()
+   {
+      return;
+   }
+
+   SectorSendUser()
+   {
+      return;
+   }
+
+   SectorLightSendUser()
+   {
+      return;
+   }
+
+   WallSendUser()
+   {
+      return;
+   }
+
+   TryActivate()
+   {
+      return FALSE;
+   }
+
+   % Stuff that used to be in active. but no longer since passive isn't under
+   %  it any more.
+
+   ReqSomethingEntered(where = $,what = $)
+   {
+      return TRUE;
+   }
+   
+   SomethingEntered(where = $,what = $)
+   {
+      return;
+   }
+   
+   ReqSomethingLeft(where = $,what = $)
+   {      
+      return TRUE;
+   }
+
+   SomethingLeft(where = $,what = $)
+   {      
+      return;
+   }
+
+   ReqSomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      return TRUE;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      return;
+   }
+
+   SomethingTurned(what = $,new_angle = 0,cause = $)
+   {
+      return;
+   }
+
+   ReqSomethingDeleted(what = $)
+   {
+      return TRUE;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $)
+   {
+      return;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   {
+      return TRUE;
+   }
+
+   SomethingAttacked(what = $,victim = $,use_weapon = $)
+   {
+      return;
+   }
+
+   SomethingKilled(what = $,victim = $)
+   {
+      return;
+   }
+
+   ReqSomethingUse(what = $,use_item = $)
+   {
+      return TRUE;
+   }
+
+   SomethingUsed(what = $,use_item = $)
+   {
+      return;
+   }
+
+   ReqSomethingApply(what = $,use_item = $,apply_on = $)
+   {
+      return TRUE;
+   }
+
+   SomethingApplied(what = $,use_item = $,apply_on = $)
+   {
+      return;
+   }
+
+   SomethingChanged(what = $)
+   {
+      return;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      return TRUE;
+   }
+
+   SpellCast(who = $, oSpell = $, lItems = $)
+   {
+      return;
+   }
+
+   SomethingShot(who = $, target = $, projectile = $, flags = 0, lighting = 0)
+   {
+      return;
+   }
+
+   SomethingDidAction(what = $, action = $)
+   {
+      return;
+   }
+
+   SomeoneTryUserCommand(who = $,command = $,data = $)
+   {
+      return FALSE;
+   }
+
+   % These two messages are generated by the room, triggered by other messages
+   %  (NewHold and LeaveHold)
+
+   FirstUserEntered(what = $,new_row = $,new_col = $)
+   {
+      return;
+   }
+
+   LastUserLeft(what = $)
+   {
+      return;
+   }
+
+   AmbientLightChanged()
+   "This is generated by the room when the system recalcs the outside "
+   "light level"
+   {
+      return;
+   }
+
+   BackgroundChanged()
+   "This is sent when room background bitmap changes."
+   {
+      return;
+   }
+
+   CanAcceptOffer()
+   "Returns TRUE if the object should 'hear' when a player makes an offer."
+   "Returns FALSE for most things."
+   {
+      return FALSE;
+   }
+
+   GetObjectFlags()
+   {
+      return viObject_flags;
+   }
+
+   GetGender()
+   {
+      return viGender;
+   }
+
+   GetHimHer(cap = FALSE)
+   {
+      local iGender;
+
+      iGender = send(self,@GetGender);
+      if cap
+      {
+         if iGender = GENDER_MALE
+         {
+            return object_cap_him;
+         }
+
+         if iGender = GENDER_FEMALE
+         {
+            return object_cap_her;
+         }
+
+         return object_cap_it;
+      }
+
+      if iGender = GENDER_MALE
+      {
+         return object_him;
+      }
+
+      if iGender = GENDER_FEMALE
+      {
+         return object_her;
+      }
+
+      return object_it;
+   }
+
+   GetHisHer(cap = FALSE)
+   {
+      local iGender;
+
+      iGender = send(self,@GetGender);
+      if cap
+      {
+         if iGender = GENDER_MALE
+         {
+            return object_cap_his;
+         }
+
+         if iGender = GENDER_FEMALE
+         {
+            return object_cap_her;
+         }
+
+         return object_cap_its;
+      }
+
+      if iGender = GENDER_MALE
+      {
+         return object_his;
+      }
+
+      if iGender = GENDER_FEMALE
+      {
+         return object_her;
+      }
+
+      return object_its;
+   }
+
+   GetHisHers(cap = FALSE)
+   {
+      local iGender;
+
+      iGender = send(self,@GetGender);
+      if cap
+      {
+         if iGender = GENDER_MALE
+         {
+            return object_cap_his;
+         }
+
+         if iGender = GENDER_FEMALE
+         {
+            return object_cap_hers;
+         }
+
+         return object_cap_its;
+      }
+
+      if iGender = GENDER_MALE
+      {
+         return object_his;
+      }
+
+      if iGender = GENDER_FEMALE
+      {
+         return object_hers;
+      }
+
+      return object_its;
+   }
+
+   GetHeShe(cap = FALSE)
+   {
+      local iGender;
+
+      iGender = send(self,@GetGender);
+      if cap
+      {     
+         if iGender = GENDER_MALE
+         {
+            return object_cap_he;
+         }
+
+         if iGender = GENDER_FEMALE
+         {
+            return object_cap_she;
+         }
+
+         return object_cap_it;
+      }    
+
+      if iGender = GENDER_MALE
+      {
+         return object_he;
+      }
+
+      if iGender = GENDER_FEMALE
+      {
+         return object_she;
+      }
+
+      return object_it;
+   }
+
+   GetLordLady(cap = TRUE)
+   "Default for lord/lady is CAP = TRUE!"
+   {
+      local iGender;
+
+      iGender = send(self,@GetGender);
+      if cap
+      {     
+         if iGender = GENDER_MALE
+         {
+            return object_cap_lord;
+         }
+
+         if iGender = GENDER_FEMALE
+         {
+            return object_cap_lady;
+         }
+
+         return object_cap_lord;
+      }    
+
+      if iGender = GENDER_MALE
+      {
+         return object_lord;
+      }
+
+      if iGender = GENDER_FEMALE
+      {
+         return object_lady;
+      }
+
+      return object_lord;
+   }
+
+   ObjectCorpseFading()
+   "Only really matters for items."
+   {
+      return;
+   }
+
+   CanPlayerAdvanceOnMe()
+   {
+      return TRUE;
+   }
+
+   IsFire()
+   {
+      return FALSE;
+   }
+
+   CanEditInscription()
+   {
+      return FALSE;
+   }
+
+   HasInscription()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

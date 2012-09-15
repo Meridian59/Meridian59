@@ -1,0 +1,67 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Bell is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Bell_name_rsc = "service bell"
+   Bell_icon_rsc = roombell.bgf
+   Bell_desc_rsc = "This bellpull is used to notify the decorating staff that "
+      "the occupant requires their assistance."
+
+   Bell_not_in_range = "The bell pull is too far away to reach."
+   Bell_decorator_summoned = "A delicate chime echoes through the room."
+
+classvars:
+
+   vrName = Bell_name_rsc
+   vrIcon = Bell_icon_rsc
+   vrDesc = Bell_desc_rsc
+
+   viObject_flags = ACTIVATE_YES
+
+properties:
+
+   piRange = 1
+
+messages:
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if (abs(send(who,@getrow)-send(self,@getrow)) > piRange)
+            or (abs(send(who,@getcol)-send(self,@getcol)) > piRange)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Bell_not_in_range);          
+         return True;
+      }
+
+      %% play a bell sound
+      Send(who,@MsgSendUser,#message_rsc=Bell_decorator_summoned);          
+      
+      if not isClass(poOwner,&RentableRoom) { return TRUE; }
+      if who <> send(poOwner,@GetRenter) { return TRUE; }
+      send(poOwner,@SummonDecorator);
+
+      return True;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

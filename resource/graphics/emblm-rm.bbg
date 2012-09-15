@@ -1,0 +1,65 @@
+# insignia for robe-  riija
+# Groups:
+# 1 standing
+# 2-4 fighting
+# 5 bow-shooting
+# Hotspots:
+# 1 head
+# 21 right arm
+# 31 left arm
+# 41 legs
+#^Applied to Hotspot: 51
+#*Groups: 21
+#* Unlabeled Group
+#* attack A
+#* attack A
+#* attack B
+#* Unlabeled Group
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+-s 4
+8
+180caaRm.bmp   [168, 95] 
+270ccaRm.bmp   [191, 107] 
+180ccaRm.bmp   [163, 108] 
+180ccbRm.bmp   [170, 107] 
+090ccbRm.bmp   [167, 106] 
+315ckaRm.bmp   [193, 100] 
+270ckaRm.bmp   [181, 101] 
+180ckaRm.bmp   [172, 101] 
+21
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 6 7 8 8 8 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 0 1 1 1 0 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 2 3 3 3 0 0 
+ 8   0 0 0 4 4 4 5 0 
+ 8   0 0 0 1 1 1 0 0 

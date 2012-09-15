@@ -1,0 +1,148 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsE4 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+   waterfall_sounde4 = wfall2.wav
+   room_OutdoorsE4 = E4.roo
+   room_name_OutdoorsE4 ="East Merchant Way through Ilerian Woods"
+   OutdoorsE4_music = forest.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsE4
+
+   viTeleport_row = 26
+   viTeleport_col = 26
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_RIVER | TERRAIN_LAKE | TERRAIN_FOREST | TERRAIN_WATERFALL
+
+   viFlag_Row = 14
+   viFlag_Col = 36
+
+properties:
+
+   prRoom = room_OutdoorsE4
+   prMusic = OutdoorsE4_music
+   piRoom_num = RID_E4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 100000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 7
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&SpiderBaby, 65], [&Centipede, 35] ];
+
+      plGenerators = [ [6, 20], [10, 24], [17, 44], [15, 35], [14, 11],
+		      [18, 7], [28, 6], [31, 15], [26, 17], [41, 14] ];
+      plLooping_sounds = [[ waterfall_sounde4, 43, 33 ]];
+      propagate;
+   }
+
+ CreateStandardExits()
+   {
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_D4, 65, 79, ROTATE_NONE], plEdge_exits);
+
+      plEdge_Exits = Cons([LEAVE_EAST, RID_F4, 12, 2, ROTATE_NONE, ROW_IS_LESS_THAN,29], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_F4, 23, 2, ROTATE_NONE, ROW_IS_GREATER_THAN,28], plEdge_exits);        
+      
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_D5, 5, 77, ROTATE_NONE, COL_IS_LESS_THAN,28], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_D5, 5, 85, ROTATE_NONE, COL_IS_GREATER_THAN,27], plEdge_exits);        
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=6,#new_col=2);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=9,#new_col=3);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=12,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=10,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=16,#new_col=10);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=18,#new_col=7);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=26,#new_col=6);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=27,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=31,#new_col=5);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=36,#new_col=10);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=40,#new_col=13);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=42,#new_col=18);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=32,#new_col=14);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=28,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=26,#new_col=18);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=23,#new_col=15);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=20,#new_col=19);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=13,#new_col=23);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=10,#new_col=25);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=5,#new_col=20);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=6,#new_col=31);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=14,#new_col=45);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=15,#new_col=43);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=18,#new_col=44);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=29,#new_col=47);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=31,#new_col=41);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=29,#new_col=28);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=41,#new_col=28);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=39,#new_col=39);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=39,#new_col=46);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=47,#new_col=39);
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

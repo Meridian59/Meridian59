@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Punch is Unarmed
+
+constants:
+
+   include blakston.khd
+
+resources:
+   punch_name_rsc = "punch"
+   punch_icon_rsc = punchico.bgf
+   punch_desc_rsc = "This is the most basic hand-to-hand combat move.  Can be very strong for a powerful warrior, but is extremely tiring."
+
+   punch_player_was_hit = "%s%s connects a punch solidly on your jaw."
+   punch_player_hit_something = "%sYou hit %s%s with a hard right cross."
+
+   punch_player_killed_something = "%s%s crumples to the ground, never to rise again."
+   punch_player_was_killed = "The last thing you see is %s%s's fist speeding towards your nose."
+
+   punch_skill_intro = "Weaponcraft Lv. 1: The most basic of fighting skills, used by fighters and mages alike."
+classvars:
+
+   vrName = punch_name_rsc
+   vrIcon = punch_icon_rsc
+   vrDesc = punch_desc_rsc
+
+   vrPlayer_was_hit = punch_player_was_hit
+   vrPlayer_hit_something = punch_player_hit_something
+   vrPlayer_was_killed = punch_player_was_killed
+   vrPlayer_killed_something = punch_player_killed_something
+
+   vrSkill_intro = punch_skill_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+   viSchool = SKS_FENCING
+
+   viSkill_num = SKID_PUNCH
+   viskillExertion = 5
+   vbCheck_exertion = FALSE
+
+   viChance_to_increase = 60
+
+   viHit_Factor = 30
+   viSkill_level = 1
+
+   viSkill_Num = SKID_PUNCH
+
+   viMin_Damage = 1         % Damage_min here replaces a weapon    
+   viMax_Damage = 5         % Damage_max replaces the weapon's stats.
+
+   VbAutomatic = FALSE  %  If this is set to TRUE, then the effects of this
+                        %  skill happen automatically, and are not accessible
+                        %  via menu.
+
+   viAttack_Type = ATCK_WEAP_UNARMED+ATCK_WEAP_PUNCH
+
+properties:
+
+messages:
+
+   PlayerWasHitMsg(who=$,attacker=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will just choose a default."
+   {
+       send(who,@msgsenduser,#message_rsc=vrPlayer_was_hit,
+                #parm1=send(attacker,@getcapdef),#parm2=send(attacker,@getname));
+       return TRUE;
+   }
+
+   PlayerKilledSomethingMsg(who=$,victim=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will offer the default 'You killed the whatever' message."
+   {
+      % Is this really necessary?  Can't we just use the messages defined in battler instead?
+      
+      if (Send(who,@GetWeapon) <> $)
+      {
+         % They have a weapon, probably a touch attack.  Let that do it's own damage message.
+         return FALSE;
+      }
+      send(who,@msgsenduser,#message_rsc=vrPlayer_killed_something,
+           #parm1=send(victim,@getCapdef),#parm2=send(victim,@getname));
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

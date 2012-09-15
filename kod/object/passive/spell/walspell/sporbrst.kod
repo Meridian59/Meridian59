@@ -1,0 +1,277 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SporeBurst is WallSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SporeBurst_name_rsc = "spore burst"
+   SporeBurst_icon_rsc = isporecl.bgf
+   SporeBurst_desc_rsc = \
+      "Summons forth noxious clouds that paralyze any within it's bounds.  "
+      "Requires potent reagents specific to both Qor and Faren."
+      
+   SporeBurst_cast_rsc = \
+      "Following a loud popping sound, the room is filled with a cloud of "
+      "choking spore mold."
+   SporeBurst_failed_rsc = \
+      "There is too much summoning magic focused here to cause a spore burst."
+   SporeBurst_sound = farenspore822m.wav
+
+
+classvars:
+
+   vrName = SporeBurst_name_rsc
+   vrIcon = SporeBurst_icon_rsc
+   vrDesc = SporeBurst_desc_rsc
+
+   viSpell_num = SID_SPORE_BURST
+   viSchool = SS_FAREN
+   viSpell_level = 6
+   viMana = 20
+   viSpellExertion = 30
+   viCast_time = 5000
+
+   viChance_To_Increase = 15
+
+   vrSucceed_wav = SporeBurst_sound
+
+   viHarmful = TRUE
+
+   % Sporeburst can't kill anyone, so don't warn about being a murderer.
+   viWallCanKill = FALSE
+
+   % We technically have more elements, but that would never let us cast this
+   %  while another wall spell is active.  A little cheat here, only count 9
+   %  elements.
+   viNumElements = 9
+
+   vrSummonLimitMsg = SporeBurst_failed_rsc
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&PurpleMushroom,2],plReagents);
+      plReagents = Cons([&ShamanBlood,1],plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      Send(who,@MsgSendUser,#message_rsc=SporeBurst_cast_rsc);
+
+      propagate;
+   }
+
+   PlaceWallElements(who = $, iSpellPower = 0)
+   {
+      local i, oRoom, iCounter, iDiff, oActiveFog, oPassiveFog, iRadius,
+            iDuration, iCasterRow, iCasterCol, iCasterFineRow, iCasterFineCol;
+
+      oRoom = Send(who,@GetOwner);
+      iRadius = Bound(iSpellpower/30,1,3);
+      iDuration = Send(self,@GetDuration,#iSpellpower=iSpellpower);
+
+      iCasterRow = Send(who,@GetRow);
+      iCasterCol = Send(who,@GetCol);
+      iCasterFineRow = Send(who,@GetFineRow);
+      iCasterFineCol = Send(who,@GetFineCol);
+
+      % Active element, placed in the center of it all.
+      oActiveFog = Create(&ActiveSporeCloud,#Caster=who,#duration=iDuration,
+                          #range=iRadius);
+      Send(oRoom,@NewHold,#what=oActiveFog,#new_row=iCasterRow,#new_col=iCasterCol);
+
+      % Place the inactive elems.
+      % Our goal is to place the clouds in such a way that it gives the illusion of a
+      %  a larger cloud.  We don't want to use too many elements, but a radius of 3 is
+      %  going to require a fair number of elements to look right.
+
+      if iRadius >= 1
+      {
+         % Create 4 elements on the cardinal directions.
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+1,#new_col=iCasterCol);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-1,#new_col=iCasterCol);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow,#new_col=iCasterCol+1);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow,#new_col=iCasterCol-1);
+      }
+
+      if iRadius >= 2
+      {
+         % Create a diamond around the outside.
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+2,#new_col=iCasterCol);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+1,#new_col=iCasterCol+1);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+1,#new_col=iCasterCol-1);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow,#new_col=iCasterCol+2);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow,#new_col=iCasterCol-2);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-1,#new_col=iCasterCol+1);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-1,#new_col=iCasterCol-1);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-2,#new_col=iCasterCol);
+      }
+
+      if iRadius >= 3
+      {
+         % Add a few elements along the outside to simulate bulk.  The final pattern
+         % will look like a 7x7 checkerboard pattern with no corners and the center
+         % element being the active one.
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+3,#new_col=iCasterCol+1,
+              #fine_row=0,#fine_col=0);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+3,#new_col=iCasterCol-1,
+              #fine_row=0,#fine_col=FINENESS);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+2,#new_col=iCasterCol+2);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+2,#new_col=iCasterCol-2);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+1,#new_col=iCasterCol+3,
+              #fine_row=0,#fine_col=0);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow+1,#new_col=iCasterCol-3,
+              #fine_row=0,#fine_col=FINENESS);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-1,#new_col=iCasterCol+3,
+              #fine_row=FINENESS,#fine_col=0);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-1,#new_col=iCasterCol-3,
+              #fine_row=FINENESS,#fine_col=FINENESS);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-2,#new_col=iCasterCol+2);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-2,#new_col=iCasterCol-2);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-3,#new_col=iCasterCol+1,
+              #fine_row=FINENESS,#fine_col=0);
+
+         oPassiveFog = Create(&SporeCloud,#oRoom=oRoom,#Active_Elem=oActiveFog,
+                              #Caster=who,#duration=iDuration);
+         Send(oRoom,@NewHold,#what=oPassiveFog,
+              #new_row=iCasterRow-3,#new_col=iCasterCol-1,
+              #fine_row=FINENESS,#fine_col=FINENESS);
+      }         
+
+      propagate;
+   }
+
+   GetDuration(iSpellPower=$, caster=0)
+   {
+      local iDuration;
+
+      % Duration, in seconds
+      iDuration = iSpellPower * 2; 
+      iDuration = bound(iDuration,30,200);
+      % Convert to ms.
+      iDuration = iDuration * 1000;
+
+      return iDuration;
+   }
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
+
+      return;      
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

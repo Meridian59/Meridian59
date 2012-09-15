@@ -1,0 +1,143 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FreeAction is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+   % What percent of spellpower should we take in order to give the player
+   %  a chance to completely resist hold?
+   SPELL_RESIST_PERCENT = 15
+
+resources:
+
+   FreeAction_name_rsc = "free action"
+   FreeAction_icon_rsc = ifreeact.bgf
+   FreeAction_desc_rsc = \
+      "Kraanan's love of battle helps repel magic which might hinder "
+      "your movements, and thus the liberal dispensation of lusty blows.  "
+      "Requires red mushrooms and purple mushrooms to cast."
+   
+   FreeAction_on_rsc = \
+      "You feel a rush of energy and fluid motion throughout your body."
+   FreeAction_off_rsc= "Your strange feeling of freedom subsides."
+   FreeAction_already_enchanted_rsc = "You already have free action."
+   FreeAction_succeed_rsc = "You grant free action to %s%s."
+
+   FreeAction_resist = "You can feel Kraanan's magic working to free you."
+   FreeAction_evade = "You evade an attempt to restrict your movement."
+   FreeAction_resist_caster = \
+      "You sense a force struggling to break free of your magic."
+   FreeAction_evade_caster = \
+      "Kraanan's magic prevents you from hindering the free flow of battle."
+
+   FreeAction_sound = kfreeact.wav
+
+classvars:
+
+   vrName = FreeAction_name_rsc
+   vrIcon = FreeAction_icon_rsc
+   vrDesc = FreeAction_desc_rsc
+   vrSucceed_wav = FreeAction_sound
+
+
+   vrAlreadyEnchanted = FreeAction_already_enchanted_rsc
+   vrEnchantment_On = FreeAction_On_rsc
+   vrEnchantment_Off = FreeAction_Off_rsc
+   vrSucceed = FreeAction_succeed_rsc
+
+   viSpell_num = SID_FREE_ACTION
+   viSchool = SS_KRAANAN
+   viSpell_level = 3
+   viMana = 10
+   viSpellExertion = 5
+
+   viCast_time = 2000
+   viChance_To_Increase = 15
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RedMushroom,1],plReagents);
+      plReagents = Cons([&PurpleMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetStateValue(iSpellpower=$)
+   {
+      local iFactor;
+
+      iFactor = bound(iSpellPower/2+5,10,50);      
+
+      return iFactor;
+   }
+  
+   GetDuration(iSpellpower=0)
+   {
+      local iDuration;
+
+      % 3 - 8 minutes max, converted to ms.
+      iDuration = 180 + (3 * iSpellPower);   
+      iDuration = iDuration * 1000;
+      
+      return random(iDuration/2,iDuration);
+   }
+
+   DoFreeAction(oHoldCaster=$, oTarget=$, iDuration=0)
+   "Calculates adjustment if hold duration.  Returns $ if resisted completely."
+   {
+      local iNewDuration, oFreeActionStrength;
+
+      oFreeActionStrength = Send(oTarget,@GetEnchantedState,#what=self);
+
+      % Check if they repel hold outright 1 - 15% chance.
+      if Random(0,100) <= ((oFreeActionStrength * SPELL_RESIST_PERCENT) / 100)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=FreeAction_evade);
+         if IsClass(oHoldCaster,&Player)
+         {
+            Send(oHoldCaster,@MsgSendUser,#message_rsc=FreeAction_evade_caster);
+         }
+         
+         return $;
+      }
+
+      iNewDuration = iDuration - (iDuration * oFreeActionStrength)/150;
+      Post(oTarget,@MsgSendUser,#message_rsc=FreeAction_resist);
+      
+      if IsClass(oHoldCaster,&Player)
+      {
+         Post(oHoldCaster,@MsgSendUser,#message_rsc=FreeAction_resist_caster);
+      }
+
+      return iNewDuration;
+   }
+
+   OfferToNewCharacters()
+   {
+      % It's a PK-types spell.  Don't offer to newbies.
+      return FALSE;
+   }
+
+   GetPotionClass()
+   {
+      return &FreeActionPotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

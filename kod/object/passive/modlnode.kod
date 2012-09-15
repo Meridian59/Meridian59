@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ModelNode is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+   MANANODE_RANGE = 3
+
+   NODE_NORMAL = 1
+   NODE_CURSED = 2
+   NODE_DEAD = 3
+
+resources:
+
+   ModelNode_name_rsc = "miniature mana node"
+   ModelNode_icon_rsc = modnode.bgf
+   ModelNode_desc_rsc = \
+      "A plaque below the model reads:\n"
+      "Found at various places around Meridian, these gatherings of mystic energy provide "
+      "strength to spellcasters who can meld with them.  The origin of these nodes is a "
+      "mystery even to the most devoted scholars, such as Councillor Esseldi.  "
+      "Some mages believe that they have something to do with the Nexus which inexplicably shattered "
+      "hundreds of years ago, severing contact from Meridian59 to the other worlds of the Nexus.  "
+      "The mana nodes of Meridian may, therefore, be remnants of that cataclysmic magical upheaval, "
+      "though none can say for certain."
+
+classvars:
+
+   vrIcon = ModelNode_icon_rsc
+   vrDesc = ModelNode_desc_rsc
+
+   viObject_flags = DRAWFX_TRANSLUCENT_50
+
+properties:
+
+   vrName = ModelNode_name_rsc
+   piState = NODE_NORMAL
+
+messages:
+
+   SendAnimation()
+   {
+      if piState = NODE_NORMAL
+      {
+	 AddPacket(1,ANIMATE_CYCLE,4,150,2,1,2,5);
+	 return;
+      }
+      if piState = NODE_CURSED
+      {
+	 AddPacket(1,ANIMATE_CYCLE,4,250,2,6,2,7);
+	 return;
+      }
+      if piState = NODE_DEAD
+      {
+	 AddPacket(1,ANIMATE_NONE,2,8);
+	 return;
+      }
+      
+      debug("Mana node",self,"has invalid state",piState);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

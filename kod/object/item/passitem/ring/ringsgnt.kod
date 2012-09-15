@@ -1,0 +1,168 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SignetRing is Ring
+
+constants:
+
+   include blakston.khd
+   LAZY_RESET_TIME=180000
+
+resources:
+
+   ringsignet_name_rsc = "signet ring"
+   ringsignet_icon_rsc = signet.bgf
+   ringsignet_desc_rsc = "This ring is worn and dirty, but you make out the family crest of "
+   ringsignet_desc_rsc2 =". Surely, its return would be appreciated."
+
+classvars:
+
+   vrRealName = ringsignet_name_rsc
+   vrIcon = ringsignet_icon_rsc
+   vrRealDesc = ringsignet_desc_rsc
+
+   viHits_init_min = 30
+   viHits_init_max = 70
+
+   viBulk = 2
+   viWeight = 2
+   
+   viValue_average = 150
+
+properties:
+
+   vrName = ringsignet_name_rsc
+   vrDesc = ringsignet_desc_rsc
+
+   poRingOwner = $
+   ptLazyTimer = $
+
+messages:
+
+   Constructor(mob=$)
+   "This item should never be directly created. It should be created through"
+   "A call to library's CreateSignetRing."
+   {
+      if mob=$
+      {
+         debug("SignetRing created without a defined mob as goal.");
+         Post(self,@Delete);
+      }
+      
+      poRingOwner = mob;
+      Send(poRingOwner,@SetWantedItem,#class=&SignetRing);
+      Send(Send(SYS,@GetLibrary),@RegisterSignet,#newring=self);
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      % This needs to take the ring out of the wanted item of the owner.
+      % Also, take it out of the master list of signets
+      % It also needs to send a message to the owner if its a logged in player.
+      if poRingOwner<>$
+      {
+        Send(poRingOwner,@CutWantedItem,#class=&SignetRing);
+      }
+      
+      send(send(SYS,@GetLibrary),@UnregisterSignet,#newring=self);
+
+      if ptLazyTimer <> $
+      {
+         DeleteTimer(ptLazyTimer);
+         ptLazyTimer = $;
+      }
+      
+      propagate;
+   }
+
+   GetRingOwner()
+   {
+      return poRingOwner;
+   }
+
+   RewardReturner(who = $)
+   {
+      local iValue, oMoney;
+
+      % PAYOFF: newbie=10*value, oldbie=value
+      iValue = Send(self,@GetValue);
+
+      if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         iValue = iValue * 10;
+      }
+
+      oMoney = Send(who,@GetMoneyObject);
+
+      if oMoney = $
+      {
+         oMoney = Create(&Money,#number=iValue);
+         Send(who,@NewHold,#what=oMoney);
+      }
+      else
+      {
+         Send(oMoney,@AddNumber,#number=iValue);
+      }
+
+      return;
+   }
+
+   DestroyDisposable()
+   {
+      return FALSE;
+   }
+
+   NewOwner(what=$)
+   {
+      if ptLazyTimer <> $
+      {
+         DeleteTimer(ptLazyTimer);
+         ptLazyTimer=$;
+      }
+      
+      if what = $
+      {
+         propagate;
+      }
+      
+      if (IsClass(what,&Room))
+      {
+         ptLazyTimer=CreateTimer(self,@LazySignetTimer,LAZY_RESET_TIME);
+      }
+      
+      propagate;
+   }
+
+   LazySignetTimer()
+   {
+      ptLazyTimer=$;
+      if IsClass(poOwner,&Room)
+      {
+         Send(poOwner,@Teleport,#what=self);
+      }
+     
+      return;
+   }
+
+   DoBaseDesc()
+   {
+      AppendTempString(ringsignet_desc_rsc);
+      AppendTempString(Send(poRingOwner,@GetName));
+      AppendTempString(ringsignet_desc_rsc2);
+     
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

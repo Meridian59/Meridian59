@@ -1,0 +1,91 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistShock is ResistanceEnchantment
+
+constants:
+
+   include blakston.khd
+
+   RESISTSHOCK_TIME = 600000       % 10 realtime minutes
+
+   RESISTSHOCK_RESISTANCE = 50
+
+resources:
+
+   resistshock_name_rsc = "resist shock"
+   resistshock_icon_rsc = iresshok.bgf
+   resistshock_desc_rsc = \
+      "The grizzled nature god gives the target some relief from shock attacks.  "
+      "Requires mushrooms and blue mushrooms to cast."
+   
+   resistshock_already_enchanted = "You are already resisting shocks."
+   resistshock_success = "Faren fortifies %s%s against shock attacks."
+   resistshock_on = "Faren fortifies you against shock attacks."
+   resistshock_off = "Faren's magic departs, leaving you vulnerable to shock attacks once more."
+
+classvars:
+
+   viPersonal_ench = True
+
+   vrName = resistshock_name_rsc
+   vrIcon = resistshock_icon_rsc
+   vrDesc = resistshock_desc_rsc
+
+   viSpell_num = SID_RESIST_SHOCK
+   viMana = 6
+   viSchool = SS_FAREN
+   viSpell_level = 3
+   viChance_To_Increase = 30
+
+   viFlash = FLASH_GOOD_SELF
+
+   viResistanceType = -ATCK_SPELL_SHOCK
+   vrAlreadyEnchanted = resistshock_already_enchanted
+   vrEnchantment_On = resistshock_on
+   vrEnchantment_Off = resistshock_off
+   vrSuccess = resistshock_success
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Mushroom,3],plReagents);
+      plReagents = Cons([&BlueMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetResistanceStrength(iSpellpower = 0)
+   {
+      %% strength varies from 5 to 55
+      return iSpellPower/2 + 25;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;	   %%% 3 to 8 minutes
+      iDuration = 180 + iSpellPower * 3;
+      iDuration = iDuration * 1000;	  %% translate to milliseconds
+      return random(iDuration/2,iDuration);
+   }
+
+   GetPotionClass()
+   {
+      RETURN &ResistShockPotion;
+   }
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

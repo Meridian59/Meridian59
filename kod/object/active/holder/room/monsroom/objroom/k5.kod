@@ -1,0 +1,193 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsK5 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsK5 = K5.roo
+   room_name_OutdoorsK5 ="The Badlands"
+   OutdoorsK5_music = walk5.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsK5
+
+   viTeleport_row = 33
+   viTeleport_col = 32
+
+   viTerrain_type = TERRAIN_BADLANDS
+
+properties:
+
+   prRoom = room_OutdoorsK5
+   prMusic = OutdoorsK5_music
+   piRoom_num = RID_K5
+
+   piGen_object_time = 60000
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 60000
+   piGen_percent = 80
+
+   piInit_count_min = 5
+   piInit_count_max = 7
+
+   piMonster_count_max = 34   % Includes brambles.
+
+   plDeadBrambles = $      % A list of coordinate lists for brambles to create.
+   piBrambleDamage = 20    % Maximum damage the brambles do.
+   piBrambleHits = 100     % Number of hit points the brambles have.
+   poShrine = $
+   
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Troll, 30], [&GroundwormQueen, 70] ];
+
+      plGenerators = [ [10, 15], [19, 12], [23, 23], [4, 24], [8, 50],
+		      [11, 30], [25, 37], [37, 28], [36, 43], [41, 48], 
+		      [49, 34], [45, 22], [14, 41], [19, 30], [28, 50], [39, 37] ];
+
+      poShrine = create(&shrine,#shrine_num=SHRINE_BRAMBLE);
+      send(self,@newhold,#what=poShrine,#new_row=43,#new_col=32,#fine_col=32);
+
+      % Fill this list with all the brambles we want to create.
+      plDeadBrambles = $;
+      plDeadBrambles = Cons([40,31],plDeadBrambles);
+      plDeadBrambles = Cons([40,32],plDeadBrambles);
+      plDeadBrambles = Cons([40,33],plDeadBrambles);
+      plDeadBrambles = Cons([40,34],plDeadBrambles);
+      plDeadBrambles = Cons([41,31],plDeadBrambles);
+      plDeadBrambles = Cons([41,32],plDeadBrambles);
+      plDeadBrambles = Cons([41,33],plDeadBrambles);
+      plDeadBrambles = Cons([41,34],plDeadBrambles);
+      plDeadBrambles = Cons([35,44],plDeadBrambles);
+      plDeadBrambles = Cons([35,45],plDeadBrambles);
+      plDeadBrambles = Cons([35,46],plDeadBrambles);
+      plDeadBrambles = Cons([34,43],plDeadBrambles);
+      plDeadBrambles = Cons([34,44],plDeadBrambles);
+      plDeadBrambles = Cons([34,45],plDeadBrambles);
+      plDeadBrambles = Cons([34,46],plDeadBrambles);
+      plDeadBrambles = Cons([33,43],plDeadBrambles);
+      plDeadBrambles = Cons([33,44],plDeadBrambles);
+      plDeadBrambles = Cons([33,45],plDeadBrambles);
+      plDeadBrambles = Cons([32,44],plDeadBrambles);
+      plDeadBrambles = Cons([32,45],plDeadBrambles);
+      plDeadBrambles = Cons([19,54],plDeadBrambles);
+      plDeadBrambles = Cons([20,54],plDeadBrambles);
+      plDeadBrambles = Cons([21,54],plDeadBrambles);
+      plDeadBrambles = Cons([3,45],plDeadBrambles);
+
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      plObject_gen = Cons([ &Apple, GEN_ONE, 1, 33, 32 ],plObject_gen);
+      propagate;
+   }
+
+   FirstUserEntered()
+   {
+      local oBramble, lLocation;
+
+      for lLocation in plDeadBrambles
+      {
+         Send(self,@CreateBramble,#lLocation=lLocation);
+      }
+      propagate;
+   }
+
+   ObjectGenTimer()
+   {
+      local lLocation;
+   
+      Send(self,@CreateBramble);
+         
+      propagate;
+   }
+
+   CreateBramble(lLocation=$)
+   {
+      local lLoc, oBramble;
+   
+      if lLocation=$
+      {
+         if length(plDeadBrambles) > 0
+         {
+            lLoc = nth(plDeadBrambles,random(1,length(plDeadBrambles)));
+         } else {
+            return;
+         }
+      } else {
+         lLoc = lLocation;
+      }
+
+      plDeadBrambles = DelListElem(plDeadBrambles,lLoc);
+      % No duration when creating the Bramble means it doesn't go away, it isn't DestroyDisposable'd.
+      oBramble = Create(&Brambles,#MaxDamage=piBrambleDamage,#HitPoints=piBrambleHits); 
+      Send(self,@NewHold,#what=oBramble,#New_row=nth(lLoc,1),#New_col=nth(lLoc,2));
+
+      return;
+   }
+      
+
+   BrambleKilled(row=$,col=$)
+   {
+      local lLocation;
+
+      lLocation = Cons(row,Cons(col,[]));
+      plDeadBrambles = Cons(lLocation,plDeadBrambles);
+      return;
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_WEST)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_BADLAND1),
+              #new_row=3,#new_col=80,#new_angle=send(what,@getangle));
+         return;
+      }
+      propagate;
+   }
+
+   NewHold(what=$)
+   {
+      if isClass(what,&Item)
+      {
+         post(self,@PostShrineCheckItem,#what=what);  
+         %%Have to post this to handle numberitems and SYS can't handle posts.
+      }
+      propagate;
+   }
+
+   PostShrineCheckItem(what=$)
+   {
+      send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
+      return;
+   }
+                                                             
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

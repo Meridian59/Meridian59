@@ -1,0 +1,64 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Healer is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   healer_desc_rsc = "%s\n\nThis will help you feel better.%s"
+
+   healer_use = "You feel better."
+   healer_cant_use_on = "You can't heal %s%s."
+
+classvars:
+
+   viUse_type = ITEM_SINGLE_USE
+
+properties:
+
+   piHeal_min = 0
+   piHeal_max = 0
+
+messages:
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+      if IsClass(apply_on,&User)
+      {
+         return TRUE;
+      }
+
+      Send(what,@MsgSendUser,#message_rsc=healer_cant_use_on, 
+           #parm1=Send(apply_on,@GetIndef),#parm2=Send(apply_on,@GetName));
+
+      return FALSE;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      Send(apply_on,@MsgSendUser,#message_rsc=healer_use);
+      Send(apply_on,@GainHealthNormal,#amount=Random(piHeal_min,piHeal_max));
+
+      piHits = piHits - 1;
+      if piHits <= 0
+      {
+         Send(self,@Delete);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

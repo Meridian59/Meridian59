@@ -1,0 +1,108 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKD4 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKD4 ="The Clearing of the Trading Post"
+   room_OutdoorsKD4 = KD4.roo
+   OutdoorsKD4_music = boneprst.mid
+
+   OutdoorsKD4_outbuilding_locked = "You may not enter the outbuilding."
+   OutdoorsKD4_smokehouse_locked = "The smokehouse is locked."
+   OutdoorsKD4_guardshack_locked = "The guard shack is locked."
+
+classvars:
+
+   vrName = room_name_OutdoorsKD4
+
+   viTeleport_row = 55
+   viTeleport_col = 44
+   viTerrain_type = TERRAIN_JUNGLE
+   viPermanent_flags = ROOM_NO_COMBAT
+
+properties:
+
+   prRoom = room_OutdoorsKD4
+   prMusic = OutdoorsKD4_music
+   piRoom_num = RID_KD4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 120000
+   piGen_percent = 50
+
+   piInit_count_min = 2
+   piInit_count_max = 4
+
+   piMonster_count_max = 3
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [[ &Avar, 80], [&AvarShaman, 10], [&AvarChieftain,10]];      
+      plGenerators = [ [16,21], [14,36], [13,58], [50,45], [43,17] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&RainbowFern,20,4], [&RainbowFern,54,44], [&RainbowFern,10,62] ];
+
+      % Do not propagate
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      
+      plExits = Cons([ 24, 38, ROOM_LOCKED_DOOR, OutdoorsKD4_outbuilding_locked ],plExits);
+      plExits = Cons([ 25, 38, ROOM_LOCKED_DOOR, OutdoorsKD4_outbuilding_locked ],plExits);
+      plExits = Cons([ 39, 41, ROOM_LOCKED_DOOR, OutdoorsKD4_smokehouse_locked ],plExits);
+      plExits = Cons([ 39, 42, ROOM_LOCKED_DOOR, OutdoorsKD4_smokehouse_locked ],plExits);
+      plExits = Cons([ 32, 33, ROOM_LOCKED_DOOR, OutdoorsKD4_guardshack_locked ],plExits);
+      plExits = Cons([ 33, 33, ROOM_LOCKED_DOOR, OutdoorsKD4_guardshack_locked ],plExits);
+
+      %  teleport to tpost2:
+      plExits = Cons([ 33, 42, RID_JUNGLE_TRADING_POST_CELLAR, 06, 03, ROTATE_NONE ],plExits);
+      plExits = Cons([ 34, 42, RID_JUNGLE_TRADING_POST_CELLAR, 06, 03, ROTATE_NONE ],plExits);
+      %  teleport to tpost1 (front door):
+      plExits = Cons([ 30, 39, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 39, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 40, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 40, RID_JUNGLE_TRADING_POST, 05, 03, ROTATE_NONE ],plExits);
+      %  teleport to tpost1 (lower right door):
+      plExits = Cons([ 37, 49, RID_JUNGLE_TRADING_POST, 12, 13, ROTATE_NONE ],plExits);
+      plExits = Cons([ 38, 49, RID_JUNGLE_TRADING_POST, 12, 13, ROTATE_NONE ],plExits);
+      %  teleport to tpost1 (upper right door):
+      plExits = Cons([ 28, 49, RID_JUNGLE_TRADING_POST, 03, 13, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 49, RID_JUNGLE_TRADING_POST, 03, 13, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KD3, 59, 32, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KE4, 16, 1, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

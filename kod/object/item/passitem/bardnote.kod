@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BardLetter is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   bardletter_name_rsc = "slip of parchment"
+   bardletter_icon_rsc = scroll.bgf
+   bardletter_desc_written_rsc = \
+      "%q"
+
+classvars:
+
+   vrName = inscript_name_rsc
+   vrIcon = inscript_icon_rsc
+ 
+properties:
+
+   vrDesc = $
+
+messages:
+
+   SetDesc(desc = $)
+   {
+      vrDesc = desc;
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

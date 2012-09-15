@@ -1,0 +1,94 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JalaNecklace is Instrument
+
+% This "instrument" is special. It takes up the neck slot instead of the hands slot.
+% It also allows the user to maintain concentration in combat (attacking and
+% getting damaged).  The code for this is in spell/jala.kod.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   JalaNecklace_name_rsc = "necklace of Jala"
+   JalaNecklace_icon_rsc = jalaneck.bgf
+   JalaNecklace_desc_rsc = \
+      "This necklace looks like it would fit tightly around your neck.  The golden musical note hints "
+      "that this necklace may be of some value to those that call themselves Bards."
+
+   JalaNecklace_used_rsc = "The necklace of Jala vibrates against your throat, giving your voice a magical potence."
+   JalaNecklace_unused_rsc = "Your voice loses its potence."
+
+classvars:
+
+   vrName = JalaNecklace_name_rsc
+   vrDesc = JalaNecklace_desc_rsc
+
+   vrIcon = JalaNecklace_icon_rsc
+   vrInstrument_overlay = $
+   viInstrument_strength = 5
+
+   viUse_type = ITEM_USE_NECK
+   viItem_type = ITEMTYPE_NECKLACE
+   viUse_amount = 1  % Only use one neck.  Heh.
+
+   viGround_group = 2
+
+   viValue_average = 2000
+   viWeight = 75
+   viBulk = 150
+
+   
+properties:
+
+messages:
+
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what,&Necklace)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   NewUsed(what=$)
+   {
+      if what <> $
+      {
+         send(what,@MsgSendUser,#message_rsc=JalaNecklace_used_rsc);
+      }
+
+      propagate;
+   }
+
+   NewUnused(what=$)
+   {
+      if what <> $
+      {
+         send(what,@MsgSendUser,#message_rsc=JalaNecklace_unused_rsc);
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,129 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Sickness is PassiveObject 
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viShow_enchantment_icon = 0
+
+   % Default animation speed for icon if set to 0, then no animation.
+   viAnimationSpeed = 0
+   viAnimation_start = 1
+   viAnimation_end = 1
+   viIcon_animation_start = 2
+   viIcon_animation_end = 2
+
+properties:
+
+messages:
+
+   ShowEnchantmentIcon(type = $)
+   {
+      return viShow_enchantment_icon & 0x02;
+   }
+
+   RemoveEnchantmentEffects(who = $, state = $, report = TRUE)
+   {
+      Send(self,@EndEnchantment,#who=who,#state=state,#report=report);
+      
+      return;
+   }
+
+   RestartEnchantmentEffect(who=$, state = $)
+   {
+      return;
+   }
+
+   IsPeriodic(who=$, state = $)
+   {
+      return;
+   }
+   
+   IsIllusion()
+   {           
+      return FALSE;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      return;
+   }
+   
+   SendAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed, 2,viAnimation_start,
+                   2,viAnimation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viAnimation_start);
+      }
+      
+      return;
+   }
+
+   SendLookAnimation()
+   "Send animation for enchantment icon--default is to cycle through all groups"
+   {
+      if viAnimationSpeed <> 0
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,viAnimationSpeed, 2,viIcon_Animation_start,
+                   2,viIcon_Animation_end);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,viIcon_Animation_start);
+      }
+      
+      return;
+   }
+
+   AffectsMaxMana()
+   {
+      return FALSE;
+   }
+
+   ModifyMonsterBehavior()
+   {
+      return;
+   }
+
+   IsPersonalEnchantment()
+   {
+      % Purify will get rid of sickness.
+      return TRUE;   
+   }
+
+   IsHarmful()
+   {
+      % Purge won't get rid of sickness
+      return TRUE;   
+   }
+
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      % Most sicknesses can be purged or purified.
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

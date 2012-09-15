@@ -1,0 +1,17 @@
+# Hammer 
+# groups
+# 1 dropped
+# 2 broken
+# 3 display
+
+-s 4
+3
+hamdrp.bmp
+hambro.bmp
+hamdis.bmp
+
+3
+1 1
+1 2
+1 3
+

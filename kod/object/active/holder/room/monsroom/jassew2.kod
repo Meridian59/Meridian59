@@ -1,0 +1,101 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasSewer2 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   TO_ROW = 18
+   TO_COL = 25
+
+resources:
+
+   room_name_jassew2 = "The Sewers of Jasper"
+   room_jassew2 = jassew2.roo
+   jassew2_music = cave.mid
+
+   waterfall_soundjsew2 = wfall2.wav
+
+classvars:
+
+   vrName = room_name_jassew2
+
+   viTeleport_row = 18
+   viTeleport_col = 25
+   viTerrain_type = TERRAIN_SEWERS | TERRAIN_WATERFALL
+
+properties:
+
+   prRoom = room_jassew2
+   piRoom_num = RID_JAS_SEWER2
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   prMusic = jassew2_music
+
+   piGen_time = 55000
+   piGen_percent = 80
+
+   piInit_count_min = 5
+   piInit_count_max = 7
+
+   piMonster_count_max = 25
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&GiantRat, 39], [&Lupogg, 60], [&RebelTroop, 1] ];
+      plGenerators = [ [10, 14], [10, 19], [10, 29], [ 5, 36], [19, 24],
+                       [27, 28], [34, 26], [27, 15], [19, 10], [37,  6],
+                       [41, 14], [43, 24], [41, 37], [38, 50], [25, 48],
+                       [15, 43]
+                     ];
+
+      plLooping_sounds = [ [ waterfall_soundjsew2,  3, 14, 10, 100  ],
+                           [ waterfall_soundjsew2,  5, 21, 10, 100  ],
+                           [ waterfall_soundjsew2, 10, 27, 10, 100  ],
+                           [ waterfall_soundjsew2, 25, 44, 10, 100  ],
+                           [ waterfall_soundjsew2, 43, 36, 10, 100  ],
+                           [ waterfall_soundjsew2, 18, 10, 10, 100  ],
+                           [ waterfall_soundjsew2, 18, 24, 10, 100  ]
+                         ];
+
+      propagate;
+   }
+
+   AddBaseLight(amount=$)
+   {
+      if amount <> $
+      {
+         piBaseLight = piBaseLight + (amount/2);
+         Send(self,@AmbientLightChanged);
+      }
+
+      return;
+   }
+
+   CreateStandardExits()
+   {   
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_JAS_SEWER1, 40, 49, ROTATE_NONE], plEdge_exits);
+      
+      plEdge_Exits = Cons([LEAVE_EAST, RID_JAS_SEWER3, 43, 1, ROTATE_NONE,ROW_IS_LESS_THAN,33], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_JAS_SEWER3, 54, 1, ROTATE_NONE,ROW_IS_GREATER_THAN,32], plEdge_exits);
+     
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

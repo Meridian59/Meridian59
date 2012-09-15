@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OfferingKraanan is Offering
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   OfferingKraanan_name_rsc = "sweat of the warrior king"
+   OfferingKraanan_icon_rsc = sweat.bgf
+   OfferingKraanan_desc_rsc = "This bottle of liquid holds some ominous purpose you can only guess at."
+
+classvars:         
+
+   vrName = OfferingKraanan_name_rsc
+   vrIcon = OfferingKraanan_icon_rsc
+   vrDesc = OfferingKraanan_desc_rsc
+
+   vrAllegiance = SS_KRAANAN
+   viIndefinite = ARTICLE_THE
+
+properties:  
+
+   viGround_group = 2
+
+messages:   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

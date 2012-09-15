@@ -1,0 +1,109 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Zap is TouchAttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Zap_name_rsc = "zap"
+   Zap_icon_rsc = izap.bgf
+   Zap_desc_rsc = \
+      "Channels natural electrical energy into a powerful charge transmitted with a touch.  "
+      "Requires blue mushrooms to cast."
+
+   Zap_already_enchanted_rsc = "Your hands already crackle with electric charge."
+   Zap_On_rsc = "Sparks jump and crackle from your fingertips."
+   Zap_Off_rsc = "Your fingers are no longer charged with electrical power."
+
+   zap_player_was_hit = "%s%s's touch jolts you with a surge of electric current!"
+   zap_player_hit_something = "%sThe smell of burning flesh fills your nostrils as your touch singes %s%s!"
+   zap_player_was_killed = "%s%s's electric touch robs the last bit of life from your failing body!"
+   zap_player_killed_something = "%s%s lets out a final scream in protest to your electric touch."
+   zap_spell_intro = "Faren Lv. 1: Channels natural electrical energy into a powerful charge which singes the target."
+   
+   zap_sound = fzap.wav
+
+
+classvars:
+
+   vrName = Zap_name_rsc
+   vrIcon = Zap_icon_rsc
+   vrDesc = Zap_desc_rsc
+
+   vrAlreadyEnchanted = Zap_already_enchanted_rsc
+   vrEnchantment_On = Zap_On_rsc
+   vrEnchantment_Off = Zap_Off_rsc
+
+   vrPlayer_was_hit = zap_player_was_hit
+   vrPlayer_hit_something = zap_player_hit_something
+   vrPlayer_was_killed = zap_player_was_killed
+   vrPlayer_killed_something = zap_player_killed_something
+
+   vrSpell_intro = zap_spell_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SS_FAREN
+   viSpell_num = SID_ZAP
+   viSpellExertion = 2
+   viSpell_level = 1
+   viMana = 6
+
+   viHit_Factor = 50        %% typically, spells have hit probs
+                            %% that are high, provided you're good at the skill
+
+
+   viMin_Damage = 3         %% touch spells typically do good damage    
+   viMax_Damage = 8         %% but are unaffected by weapon or strength bonuses
+
+   viRange = 3              %% touch spell range can vary, but are typically good     
+
+   viSpellType = ATCK_SPELL_SHOCK + ATCK_SPELL_ALL
+   viStroke = STROKE_ZAP
+
+   vbAutomatic = FALSE
+
+   vrSucceed_wav = zap_sound
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+  ResetReagents()
+  {
+     plReagents = $;
+     plReagents = cons([&BlueMushroom,1],plReagents);
+     return;
+  }
+
+   PlayerWasHitMsg(who=$,attacker=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will just choose a default - which is true for most weapon-based"
+   "combat strokes (but not true for most punch strokes or touch spells."
+   {
+      if vrPlayer_was_hit = $
+        { return FALSE; }
+      send(who,@msgsenduser,#message_rsc=vrPlayer_was_hit,
+           #parm1=send(attacker,@getdef),#parm2=send(attacker,@getname));
+
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

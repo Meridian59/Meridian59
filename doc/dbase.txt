@@ -1,0 +1,36 @@
+Compiler class database
+
+This is a text file read by line, whitespace mandatory between stuff.
+Remember, case insensitive.
+
+First non-whitespace on line specifies the type of line:
+T = total line, must appear first in file
+C = new class
+M = new message
+P = new parameter
+Y = new property
+V = new classvar
+c = referenced but undefined class
+m = referenced but undefined message
+p = referenced but undefined parameter
+
+T <highest non-resource # used> <highest resource # used>
+C classname <unique class id> <superclass id> superclassname
+M messagename <message id>
+P parametername <global parameter id>
+V classvarname <classvar id>
+Y propertyname <property id>
+c classname <unique class id>
+m messagename <message id>
+p parametername <global parameter id>
+
+Superclass id of 0 means no superclass; in this case the superclassname doesn't appear.
+
+The superclass name is ignored in all cases.
+The order of parameters for each message indicates their local numbering.
+Classvar IDs should be numbered starting at 0 for unparented classes,
+or at the next integer after the parent's numbers for parented classes.
+Property IDs should be numbered starting at 1 for unparented classes,
+or at the next integer after the parent's numbers for parented classes.
+
+This file is named kodbase.txt by default by the compiler.

@@ -1,0 +1,142 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasSewer1 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_jassew1 = "The Sewers of Jasper"
+   room_jassew1 = jassew1.roo
+   jassew1_music = cave.mid
+
+   waterfall_soundjsew1 = wfall2.wav
+
+   jassewer1_book_name = "The Smuggler's Crossing"
+   jassewer1_book_text = \
+      "    In the early part of the 5th century, an oppressive tax was laid upon "
+      "the land to make reparations after the wars between Barloque and Tos and to "
+      "line the pockets of the Empire Investors.  Troupes of men would patrol the "
+      "countryside, ensuring that all merchandise was properly accounted for and "
+      "taxed.  This lead the age of smugglers.\n"
+      "    In the name of clean sanitation, the city workers of Barloque and Jasper "
+      "began working on an intricate sewer system.  Secretly funded by illicit "
+      "factions, they connected the subterranean tunnel system all the way from one "
+      "city to the other.  The smell alone kept the local constabulary from "
+      "investigating the extended work schedule.  Once complete, gems were taken "
+      "from the mines of Jasper to the ports of Barloque and stashed away for their "
+      "journey to the black markets of the Old Empire.  In return, certain goods "
+      "would avoid the taxation of the land by travelling back through the sewer "
+      "systems to the miners' town.  To avoid being double-crossed by the criminal "
+      "faction of the other city, a system was built to make equitable trades.\n"
+      "    The Smuggler's Crossing existed somewhere deep underground between the "
+      "two cities.  Gates were established in such a way that neither side could "
+      "cross without aid from the other.  Goods would be exchanged for gems here.\n"
+      "    Later, during the first Jasper rebellion, loyalists used the intricate "
+      "sewer system to smuggle armaments.  The government never was to become aware "
+      "of this method.\n"
+      "¶"
+      "    None know what exactly ended this practice.  Some say a heated argument "
+      "got out of control as wizards from the two factions violently battled at the "
+      "Crossing.  Others say that when the great Nexus buckled in 450 Meridian Era, "
+      "a tremendous earthquake ripped through the tunnels.  Whatever the cause, a "
+      "huge crack opened up at the crossing.  A bridge was to be built, but the "
+      "gaping chasm harbored more than met the eye.\n"
+      "    Strange croaking and groaning filled the cave.  Stories surfaced about "
+      "dead men being found in the sewer cut in half by mighty jaws of some unknown "
+      "creature.  As fear in the land rose, a threat of a Royal Investigation became "
+      "imminent.  Both factions decided it would be best to quit activities before "
+      "the public focus lead to them.  Some time around the middle of the 5th century, "
+      "the crossing was sealed up and forgotten from history.\n"
+      "   Recently, brave adventures have stumble upon the old Smuggler's Crossing.  "
+      "Stopped at the rusted gates, they claim to hear monstrous sounds echoing through "
+      "the caverns.  All who return say the same thing, \"There is Something down "
+      "there, something big!  Avoid the area at all costs or bring many, many "
+      "companions if you are foolish enough to investigate. \""
+
+classvars:
+
+   vrName = room_name_jassew1
+
+   viTeleport_row = 21
+   viTeleport_col = 31
+
+   viTerrain_type = TERRAIN_SEWERS | TERRAIN_WATERFALL
+
+properties:
+
+   prRoom = room_jassew1
+   piRoom_num = RID_JAS_SEWER1
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   prMusic = jassew1_music
+
+   piGen_time = 80000
+   piGen_percent = 80
+
+   piInit_count_min = 6
+   piInit_count_max = 7
+
+   piMonster_count_max = 25
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&GiantRat, 95], [&Lupogg, 5] ];
+      plGenerators = [ [32, 14], [32, 23], [23, 26], [30, 29], [16, 21],
+                       [ 6, 18], [ 9, 33], [16,  8], [17, 35], [28, 39],
+                       [36, 31], [42, 31], [42, 31], [44, 16], [33, 45],
+                       [38, 46], [21, 16], [26, 20]
+                     ];
+
+      plLooping_sounds = [ [ waterfall_soundjsew1, 19, 19, 10, 100  ] ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % TO TOWN
+      plExits = Cons([ 30, 5, RID_JASWEST, 35, 28, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_JAS_SEWER2, 7, 1, ROTATE_NONE], plEdge_exits);
+   
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oBook;
+
+      oBook = Create(&BookPedestal,#Name=jassewer1_book_name,#Text=jassewer1_book_text);
+      Send(self,@NewHold,#what=oBook,#new_row=30,#new_col=8,
+           #fine_row=0,#fine_col=32,#new_angle=ANGLE_SOUTH_WEST);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
+           #new_row=30,#new_col=8,#fine_row=0,#fine_col=48);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
+           #new_row=25,#new_col=8,#fine_row=50,#fine_col=0);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

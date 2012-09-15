@@ -1,0 +1,223 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall11 is GuildHall
+
+constants:
+
+   MAINDOOR  = 1
+   MAINDOOR2 = 3
+   SECRETDOOR = 2
+   
+   DOOR_DELAY = 5000
+       
+   include blakston.khd
+
+resources:
+
+   room_name_guildh11 = "The home of the Friends of the Forest"
+   room_guildh11 = guildh11.roo
+
+   guildh11_forest_sound = ambcntry.wav
+
+classvars:
+
+   vrName = room_name_guildh11
+
+   viTeleport_row = 5
+   viTeleport_col = 16
+
+   viNews_row = 18
+   viNews_col = 6
+   viNews_finerow = 48
+   viNews_finecol = 48
+
+   viFoyer_north = 2
+   viFoyer_south = 7
+   viFoyer_west = 11
+   viFoyer_east = 20
+
+   viLever_row = 26
+   viLever_col = 2
+   viLever_fine_row = 48
+   viLever_fine_col = 32
+
+   viInner_teleport_row = 22
+   viInner_teleport_col = 5
+
+   viQuality = 5
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_GUILDHALL | TERRAIN_RESIDENCE
+   viSeconds_til_close = 8
+
+properties:
+
+   prRoom = room_guildh11
+   piRoom_num = RID_GUILDH11
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_5
+
+   ptSecret = $
+   ptEntrance = $
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [ [7,16] ];
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      % Each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      % We have a special loopng sound here because we don't want the forest
+      %  sound to play in the foyer.
+      plLooping_sounds = [ [ guildh11_forest_sound, 25, 16, 20, 100 ] ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 2, 17, RID_F3, 30, 23, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 18, RID_F3, 30, 23, ROTATE_NONE ],plExits);
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSecret <> $
+      {
+         DeleteTimer(ptSecret);
+         ptSecret=$;
+      }
+      if ptEntrance <> $
+      {
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
+      }
+
+      propagate;
+   }
+
+
+   SomethingTryGo(what=$, row=$, col=$)
+   {
+      if row = 8 AND col = 16
+      {
+         if send(self,@ReqLegalEntry,#who = what)
+         {
+            send(self,@OpenEntranceDoor);
+
+            return TRUE;
+         }
+      }
+
+      propagate;
+   }
+
+   OpenEntranceDoor()
+   {
+      if ptEntrance = $
+      {
+         send(self,@TimeStampDoor);
+         send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height=48,#speed=50);
+         send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
+              #height=48,#speed=50);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
+         send(self,@OpenEntranceDoorSound);
+      }    
+
+      return;
+   }
+
+   CloseEntranceDoor()
+   {
+       ptEntrance = $;
+       send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=128,#speed=50);
+       send(self,@SetSector,#sector=MAINDOOR2,#animation=ANIMATE_FLOOR_LIFT,
+            #height=118,#speed=50);
+       send(self,@CloseEntranceDoorSound);
+       
+       return;
+   }
+
+   OpenSecretDoor()
+   {
+      if ptSecret = $
+      {
+         send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height=4,#speed=50);
+         ptSecret = CreateTimer(self,@CloseSecretDoor,DOOR_DELAY);
+         send(self,@OpenSecretDoorSound);
+      }
+
+      return; 
+   }
+
+   CloseSecretDoor()
+   {
+      ptSecret = $;
+      send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=45,#speed=50);
+      send(self,@CloseSecretDoorSound);
+
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&WoodenBox),#new_row=29,#new_col=29,
+           #fine_col=32,#fine_row=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=Create(&WoodenBox),#new_row=29,#new_col=30,
+           #fine_col=0,#fine_row=0,#new_angle=ANGLE_SOUTH_WEST);
+
+      Send(self,@NewHold,#what=Create(&Table),#new_row=25,#new_col=8,
+           #fine_col=16,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),#new_row=23,#new_col=10,
+           #fine_col=0,#fine_row=48);
+      Send(self,@NewHold,#what=Create(&Table),#new_row=23,#new_col=6,
+           #fine_col=32,#fine_row=48);
+      Send(self,@NewHold,#what=Create(&Table),#new_row=4,#new_col=19,
+           #fine_col=40,#fine_row=16);
+
+      Send(self,@NewHold,#what=Create(&Firepit),#new_row=11,#new_col=7,
+           #fine_col=16,#fine_row=48);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=8),
+           #new_row=7,#new_col=19,#fine_col=56,#fine_row=24);
+      
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+
+      lHotPlates = [ [8,16,1], [8,15,2], [9,15,2], [9,16,2], [8,17,2], [9,17,2] ];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col=nth(i,2));
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

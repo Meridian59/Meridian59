@@ -1,0 +1,501 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Brambles is Monster
+
+% This has code borrowed from ActiveWallElement.  Since brambles are considered
+%  monsters (you can attack them), they must be located here.
+
+constants:
+
+   include blakston.khd
+   ANIM_BRAMBLE_GROW = 2
+
+   % 1.5 seconds
+   EFFECT_INTERVAL = 1500
+
+resources:
+
+   brambles_name_rsc = "patch of bramble"
+   brambles_icon_rsc = wothorns.bgf
+   brambles_desc_rsc = "The patch of bramble looms dangerously, "
+                       "hoping to tear into your skin if you walk by."
+
+   Brambles_damage0 = "You walk through the patch of bramble without incident."
+   Brambles_damage2 = \
+      "As you walk through the patch of bramble, they scratch at that hard to "
+      "reach itch for you."
+   Brambles_damage3 = "Thats okay, you didn't need that piece of skin anyway."
+   Brambles_damage4 = \
+      "You just about lose your pants as the patch of bramble grabs at them."
+   Brambles_damage5 = "Ow ow ow ow ow ow ow..."
+
+   Brambles_scratch_snd = frying.wav
+   brambles_icon_dead = wolightn.bgf
+
+   brambles_dead_name_rsc = "the ruins of some bramble"
+
+   brambles_monster_healing = "The patch of brambles rustles as it grows back a little."
+   bramble_dissipates = "A patch of the bramble chokes and dies."
+
+classvars:
+
+   vrName = brambles_name_rsc
+   vrIcon = brambles_icon_rsc
+   vrDesc = brambles_desc_rsc
+   vrDead_icon = $
+   vrDead_name = brambles_dead_name_rsc
+
+   viTreasure_type = TID_NONE
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOVEON_NOTIFY | MOB_NOQUEST
+   viLevel = 25
+   viDifficulty = 4 
+   viKarma = 0
+   viDefault_behavior = AI_NOFIGHT | AI_NOMOVE
+   viObject_flags = BATTLER_YES
+
+   vrSound_hit = $
+   vrSound_miss = $
+   vrSound_aware = $
+   vrSound_death = $
+
+   vrMonster_healing = brambles_monster_healing
+
+properties:
+
+   piMaxDamage = 0
+   poCaster = $
+   ptExpire = $
+   piBrambleHits = 15
+
+   piAnimation = ANIM_BRAMBLE_GROW
+   ptNoGrow = $
+
+   vbSummoned = TRUE
+
+   % This is a periodic timer that clears the affected list.
+   ptPeriodic = $
+
+   % This is a list of objects already affected by the element this period.
+   plAffected = $
+
+   % The range at which this can affect people.
+   piRange = 0
+
+messages:
+
+   Constructor(MaxDamage=0,Caster=$,Duration=$,HitPoints=15)
+   {
+      local iDuration;
+
+      if Duration <> $
+      {
+         iDuration = Random(Duration-20,Duration+20);
+         iDuration = iDuration * 1000;
+         iDuration = bound(iDuration,30000,200000);
+         ptExpire = CreateTimer(self,@Expire,iDuration);
+      }
+
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,Send(self,@GetPeriodicDuration));
+
+      piBrambleHits = HitPoints;
+      piMaxDamage = MaxDamage;
+      if Caster <> $
+      {
+         poCaster = Caster;
+         vbSummoned = isClass(Caster,&Player);
+      }
+      else
+      {
+         poCaster = self;
+      }
+
+      ptNoGrow = CreateTimer(self,@NoGrow,2000);
+
+      propagate;
+   }
+      
+   Constructed()
+   {
+      piHit_points = piBrambleHits;
+      piMax_hit_points = piBrambleHits;
+
+      propagate;
+   }
+
+   GetPeriodicDuration()
+   {
+      % 90 - 110% of base interval
+      return (EFFECT_INTERVAL * random(90,110))/100;
+   }
+
+   PeriodicEffect()
+   {
+      local i;
+
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,Send(self,@GetPeriodicDuration));
+      plAffected = $;
+
+      return;
+   }
+
+   SomethingMoved(what = $, new_row = $, new_col = $)
+   {
+      local iRow,iCol,iDamage;
+    
+      % Determine victim's row and column
+      if new_row = $
+      {
+         iRow = Send(what,@GetRow);
+      }
+      else
+      {
+         iRow = new_row;
+      }
+
+      if new_col = $
+      {
+         iCol = Send(what,@GetCol);
+      }
+      else
+      {
+         iCol = new_col;
+      }
+
+      if IsClass(what,&Battler)
+         AND what <> self
+         AND Send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol,#bMovement=TRUE)
+      {
+         Send(self,@CheckForEffect,#what=what,#new_row=new_row,#new_col=new_col);
+      }
+
+      return;
+   }
+
+   CheckForEffect(what = $, new_row = $, new_col = $)
+   "Check for range to see if we apply the effect."
+   {
+      % Don't affect them again this cycle.
+      if plAffected <> $
+         AND FindListElem(plAffected,what) <> 0
+      {
+         return FALSE;
+      }
+
+      % If this is harmful, and both caster and victim are players,
+      %  then disallow damage if caster's safety is on or if cannot do attack
+      if IsClass(poCaster,&Player)
+         AND IsClass(what,&Player)
+         AND NOT Send(poCaster,@AllowPlayerAttack,#victim=what,#report=FALSE)
+      {
+         % We've been "affected" for this cycle.  This also prevents super-spam.
+         plAffected = cons(what,plAffected);
+         Send(what,@MsgSendUser,#message_rsc=Brambles_damage0);
+
+         return FALSE;
+      }
+
+      Send(self,@ScratchPerson,#what=what);
+
+      return TRUE;
+   }
+
+   ScratchPerson(what = $)
+   {
+      local iDamage;
+
+      % Keep track that we've affected this object.
+      plAffected = cons(what,plAffected);
+
+      iDamage = 0;
+      
+      if (what <> poCaster) OR (piMaxDamage = 0)
+      {
+         if isClass(poCaster,&Player)
+         {
+            iDamage = Send(what,@AssessDamage,#what=poCaster,
+                           #damage=Random(0,piMaxDamage),
+                           #atype=ATCK_WEAP_SLASH,#report=FALSE,
+                           #report_resistance=FALSE);
+         }
+         else
+         {
+            % Either there was no damage, or the caster is not a player.
+            % No caster means the wall was generated.  Either case, do max damage.
+            iDamage = Send(what,@AssessDamage,#what=self,#damage=piMaxDamage,
+                           #atype=ATCK_WEAP_SLASH,#report=FALSE,
+                           #report_resistance=FALSE);
+         }
+      }
+
+      if iDamage = $
+      {
+         Send(poCaster,@KilledSomething,#what=what);
+
+         return;
+      }
+
+      if (isClass(poCaster,&Player)) AND (piMaxDamage > 0)
+      {
+         Send(poCaster,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+      }
+
+      if isClass(what,&Player)
+      {
+         if iDamage > 0
+         {
+            Send(what,@WaveSendUser,#wave_rsc=Brambles_scratch_snd);
+         }
+
+         if iDamage = 0
+         {
+            Send(what,@MsgSendUser,#message_rsc=Brambles_damage0);
+
+            return;
+         }
+
+         if iDamage < 3
+         {
+            Send(what,@MsgSendUser,#message_rsc=Brambles_damage2);
+
+            return;
+         }
+
+         if iDamage = 3
+         {
+            Send(what,@MsgSendUser,#message_rsc=Brambles_damage3);
+
+            return;
+         }
+
+         if iDamage = 4
+         {
+            Send(what,@MsgSendUser,#message_rsc=Brambles_damage4);
+
+            return;
+         }
+
+         Send(what,@MsgSendUser,#message_rsc=Brambles_damage5);
+      }
+
+      return;
+   }
+
+   NoGrow()
+   {
+      ptNoGrow = $;
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   InRange(what = $, iRow = $, iCol = $, bMovement = FALSE)
+   "Checks if we can see the target and if so if they are in range."
+   {
+      local iRow_diff, iCol_diff, iDistanceSquared, iLongRange;
+
+      iRow_diff = Send(self,@GetRow) - iRow;
+      iCol_diff = Send(self,@GetCol) - iCol;
+
+      iDistanceSquared = iRow_diff * iRow_diff + iCol_diff * iCol_diff;
+
+      % This first check is to see if they're within a one square range if
+      %  this check was caused by movement.  If so, we reset the user's move
+      %  counter, since we make them spam move messages which can throw off
+      %  speedhack detection.
+      if bMovement
+      {
+         % Make sure we're checking at least 1 square away from current position.
+         iLongRange = bound(piRange,1,$);
+      }
+      else
+      {
+         iLongRange = piRange;
+      }
+
+      if iDistanceSquared <= (iLongRange * iLongRange)
+      {
+         if IsClass(what,&User)
+         {
+            % This resets the move counter, since we had additional (legal) 
+            %  moves request from this object.
+            % We have to reset the moves counter, because it seems wall elements
+            %  generate more requests than they handle.
+            Send(what,@AdjustMoveCounter,#bReset=TRUE);
+         }
+
+         if (iLongRange = piRange
+             OR iDistanceSquared <= (piRange * piRange))
+            AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   Expire()
+   {
+      ptExpire = $;
+      Send(self,@Delete);
+
+      return;
+   }
+
+   HitPointThreshold()
+   "Shows physical damage instead of a message."
+   {
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      Send(self,@SendAnimation);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      local iMaxHPDiv;
+
+      iMaxHPDiv = piMax_Hit_Points / 5;
+
+      if piAnimation = ANIM_BRAMBLE_GROW
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,250, 2,1, 2,5, 2,5);
+
+         return;
+      }
+
+      if piHit_Points < iMaxHPDiv
+      {
+         AddPacket(1,ANIMATE_NONE, 2,1);
+
+         return;
+      }
+
+      if piHit_Points < iMaxHPDiv * 2
+      {
+         AddPacket(1,ANIMATE_NONE, 2,2);
+
+         return;
+      }
+
+      if piHit_Points < iMaxHPDiv * 3
+      {
+         AddPacket(1,ANIMATE_NONE, 2,3);
+
+         return;
+      }
+
+      if piHit_Points < iMaxHPDiv * 4
+      {
+         AddPacket(1,ANIMATE_NONE, 2,4);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_NONE, 2,5);
+
+      return;
+   }
+
+   Delete()
+   {
+      if (poCaster = self)
+      {
+         Send(poOwner,@BrambleKilled,#row=Send(self,@GetRow),#col=Send(self,@GetCol));
+      }
+
+      poCaster = $;
+      plAffected = $;
+
+      if ptPeriodic <> $
+      {
+         DeleteTimer(ptPeriodic);
+         ptPeriodic = $;
+      }
+
+      poCaster = $;
+
+      if ptExpire <> $
+      {
+         DeleteTimer(ptExpire);
+         ptExpire = $;
+      }
+
+      if ptNoGrow <> $
+      {
+         DeleteTimer(ptNoGrow);
+         ptNoGrow = $;
+      }
+
+      propagate;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return IsClass(what,&Room);
+   }
+
+   NewOwner(what = $)
+   {
+      if (IsClass(what,&GuildHall)
+          AND Send(what,@InFoyer,#who=poCaster))
+         OR (Send(what,@IsArena)
+             AND NOT Send(what,@InPlay,#what=self,#bNonPlayerOkay=TRUE))
+      {
+         if IsClass(poCaster,&Player)
+         {
+            Send(poCaster,@MsgSendUser,#message_rsc=bramble_dissipates);
+         }
+
+         Post(self,@Delete);
+      }
+
+      plAffected = $;
+
+      propagate;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+   AssessDamage()
+   {
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      % Don't destroy me if I'm guarding a shrine!
+      if poCaster = self
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+   CanPlayerAdvanceOnMe()
+   {  
+      return FALSE;
+   }    
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

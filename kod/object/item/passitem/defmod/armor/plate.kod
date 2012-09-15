@@ -1,0 +1,74 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PlateArmor is Armor
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   platearmor_name_rsc = "plate armor"
+   platearmor_icon_rsc = plateamr.bgf
+   platearmor_desc_rsc = \
+      "Formed from solid sheets of hardened steel, this armor "
+      "offers protection from all but the most ferocious "
+      "assault.  It bears the mark of Fehr'loi Qan, a "
+      "sign of fine workmanship and first rate materials."
+
+   platearmor_male_icon_rsc = bte.bgf
+   platearmor_female_icon_rsc = btf.bgf
+
+classvars:
+   vrName = platearmor_name_rsc
+   vrIcon = platearmor_icon_rsc
+   vrDesc = platearmor_desc_rsc
+
+   viHits_init_min = 625
+   viHits_init_max = 725
+
+   viValue_average = 2000
+   viWeight = 600
+   viBulk = 600
+
+   viSpell_modifier = -30
+
+   vrIcon_male = platearmor_male_icon_rsc
+   vrIcon_female = platearmor_female_icon_rsc
+
+   viDefense_base = -200
+   viDamage_base = 6
+
+properties:
+
+messages:
+
+   ShowShirt()
+   {
+      return TRUE;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [ [-ATCK_SPELL_FIRE,-10],
+               [-ATCK_SPELL_SHOCK,-15]
+             ];
+   }
+
+   GetHeatDamage()
+   {
+      return 4;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

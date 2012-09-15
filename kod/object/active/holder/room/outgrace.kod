@@ -1,0 +1,118 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutOfGrace is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_outofgrace = outgrace.roo
+   room_name_outofgrace = "Out of Grace with the Higher Powers"
+
+   room_no_sound = "You open your lips, and panic strikes you as no words escape."
+   oog_casting_message = "~B%s tried to cast %s."
+   
+classvars:
+
+   vrName = room_name_outofgrace
+
+   viTeleport_row = 4
+   viTeleport_col = 5
+
+   viPermanent_flags = ROOM_HOMETOWN | ROOM_SAFELOGOFF
+   viTerrain_type = TERRAIN_MYSTICAL
+
+properties:
+
+   prRoom = room_outofgrace
+   piRoom_num = RID_OUTOFGRACE
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_3
+
+messages:
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   "No one may attack here."
+   {
+      Send(what,@MsgSendUser,#message_rsc=room_no_attack);
+
+      return FALSE;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   "Only DM-level characters may cast spells here."
+   {
+      % no-magic zone
+      if IsClass(oSpell,&Spell) AND (NOT IsClass(who,&DM))
+      {
+         Send(who,@MsgSendUser,#message_rsc=room_no_spell);
+         send(self,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,#string=oog_casting_message,
+              #parm1=send(who,@GetTrueName),#parm2=send(oSpell,@GetTrueName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   "Create one skull."
+   {
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=3,#new_col=3);
+
+      propagate;
+   }
+
+   RoomReqCommunication(who=$,type=$,string=$,users=$)
+   {
+       local i;
+
+       if IsClass(who,&DM)
+       {  return TRUE;  }
+
+       if type = SAY_GUILD or type = SAY_EVERYONE or type = SAY_YELL
+       {
+          Send(who,@MsgSendUser,#message_rsc=room_no_sound);
+
+          return FALSE;
+       }
+
+       if type = SAY_GROUP or type = SAY_GROUP_ONE
+       {
+          for i in users
+          {
+             if not isClass(i,&DM)
+             {
+                Send(who,@MsgSendUser,#message_rsc=room_no_sound);
+
+                return FALSE;
+             }
+          }
+       }
+
+       return TRUE;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+   CanHavePlayerPortal(who = $)
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

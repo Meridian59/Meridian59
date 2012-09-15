@@ -1,0 +1,76 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsI6 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsI6 = I6.roo
+   room_name_OutdoorsI6 ="Outskirts of Tos"
+   OutdoorsI6_music = walk1.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsI6
+
+   viTeleport_row = 23
+   viTeleport_col = 16
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_MOUNTAIN
+
+   viFlag_row = 39
+   viFlag_col = 21
+
+properties:
+
+   prRoom = room_OutdoorsI6
+   prMusic = OutdoorsI6_music
+   piRoom_num = RID_I6
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+   piGen_time = 80000
+   piGen_percent = 75
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piInit_count_min = 1
+   piInit_count_max = 4
+
+   piMonster_count_max = 6
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Spider, 50], [&Groundworm, 50] ];
+
+      plGenerators = [ [8, 9], [11, 24], [19, 10], [26, 21], [33, 7],
+		      [36, 16], [35, 26], [41, 6], [43, 20], [46, 35], 
+		      [38, 43], [29, 43], [20, 33], [9, 35], [16, 48]];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_H6, 54, 43, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_EAST_TOS, 57, 36, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_I7, 1, 39, ROTATE_NONE], plEdge_exits);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

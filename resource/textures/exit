@@ -1,0 +1,2 @@
+perl at.pl build.mak 09512w4 "tos-bldg a/f newfrntwl"
+call build grd09512.bgf

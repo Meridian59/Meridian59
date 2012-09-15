@@ -1,0 +1,409 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MiniGame is PassiveItem
+
+% A MiniGame is a game played by a small number of people, such as chess or checkers.
+% The rules of the game are implemented on the client; we simply store state and
+% route messages to the players here.
+%
+% Only "players" are allowed to send new game states (i.e. make moves).  All move
+% logic and turn order must be performed by the client.  "Observers" are sent game
+% state, but cannot send new states or pick up the game object (unless there are no
+% players).
+%
+% In order to keep the game as a passive (instead of active) object, the game object
+% doesn't respond to people leaving or entering the room.  Instead, every time it
+% receives a new move, it cleans out the observer list, discarding those who are not
+% in the current room.  These clients get a message to unload the client module for
+% the game.
+%
+% Each player's client is sent his player number when he first activates the game.
+% For game players, this is the order in which the player activated the game.  For
+% observers, this number is always (max # of players + 1).
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   minigame_name_rsc = "game board"
+   minigame_icon_rsc = marblplr.bgf
+   minigame_desc_rsc = "A game."
+   minigame_module_rsc = chess.dll
+
+   minigame_not_playing = "You're not even playing this game!"
+   minigame_game_full   = "The game is full; you are an observer."
+   minigame_cant_pickup = "Only players can pick up a game in progress."
+
+   % Initial state of game, before anyone has moved
+   minigame_default_state = ""
+   
+classvars:
+
+   vrName = minigame_name_rsc
+   vrIcon = minigame_icon_rsc
+   vrDesc = minigame_desc_rsc
+
+   vrModule = $
+
+   viObject_flags = ACTIVATE_YES | GETTABLE_YES
+
+   viMaxPlayers = 2     % Maximum number of people who can play the game at once
+
+   viUse_type = ITEM_SINGLE_USE    % So "use" command will work with it
+   viItem_type = ITEMTYPE_GAME
+
+properties:
+
+   piNumPlayers = 0     % Number of people currently playing game
+   plPlayers = $        % List of object IDs of people playing game
+   plObservers = $      % People who should be informed of game events (doesn't include players)
+   psState = $          % Current state of game, stored as a string  
+
+messages:
+   
+   constructor()
+   {
+      psState = CreateString();
+      SetString(psState, minigame_default_state);
+	  Send(self, @SetAppearance);
+      propagate;
+   }
+
+   Delete()
+   {
+      local i;
+
+      % Unload module for players, so that they don't send any messages to a 
+      % deleted object
+
+      for i in plPlayers
+      {
+	 Send(i, @UserUnloadModule, #module = vrModule);
+      }
+      propagate;
+   }
+
+   DestroyDisposable()
+   "Don't destroy self if any player is in the room"
+   {
+      local i, room;
+
+      room = Send(SYS, @UtilGetRoom, #what = self);
+      
+      for i in plPlayers
+      {
+	 if Send(SYS, @UtilGetRoom, #what = i) = room
+	 {
+	    return;
+	 }
+      }
+      propagate;
+   }
+
+   SetAppearance()
+   "Special games can change appearance if desired."
+   {
+      return;
+   }
+
+   TryActivate(who = $)
+   "If the game isn't full, joins the game.  Otherwise, become an observer."
+   {
+      local player_num, found, i;
+
+      % See if already a player
+      player_num = piNumPlayers;   % Count down, since added to list in reverse order
+      found = False;
+      for i in plPlayers
+      {
+	 if i = who
+	 {
+	    found = True;
+	    break;
+	 }
+	 player_num = player_num - 1;
+      }
+
+      if NOT found
+      {
+	 if piNumPlayers >= viMaxPlayers
+	 {
+	    % Game is full--become an observer
+	    found = False;
+	    for i in plObservers
+	    {
+	       if i = who
+	       {
+		  found = True;
+		  break;
+	       }
+	    }
+	    if NOT found
+	    {
+	       plObservers = Cons(who, plObservers);
+	    }
+	    Send(who, @MsgSendUser, #message_rsc = minigame_game_full);
+	    player_num = piNumPlayers + 1;    % An observer
+	 } 
+	 else
+	 {
+	    piNumPlayers = piNumPlayers + 1;
+
+	    % Tell current players & observers about new player
+	    Send(self, @SendNewPlayer, #who = who, #player_num = piNumPlayers);
+
+	    % Add a new player
+	    plPlayers = Cons(who, plPlayers);
+	    player_num = piNumPlayers;
+	 }
+      }
+
+      Send(self, @SetAppearance);
+      Send(who, @UserLoadModule, #module = vrModule);
+      Send(who, @UserGameStart, #game = self, #player_num = player_num);
+      Send(who, @GameStateSendUser, #game = self, #state = psState);
+
+      % Tell this person about current players
+      Send(self, @SendPlayers, #who = who);
+
+      return True;
+   }
+
+   ReqNewApply(what = $, apply_on = $)
+   {
+      return True;
+   }
+
+   NewApplied(what = $, apply_on = $)
+   "Turn a use command into an apply command"
+   {
+      Send(self, @TryActivate, #who = what);
+      return;
+   }
+
+   GotNewState(who = $, state = $)
+   "Got new game state from a player (i.e. player took his turn)"
+   {
+      local i, found;
+
+      % Make sure that "who" is playing the game
+      found = False;
+
+      for i in plPlayers
+      {
+	 if i = who
+	 {
+	    found = True;
+	    break;
+	 }
+      }
+      if NOT found
+      {
+	 Send(who, @MsgSendUser, #message_rsc = minigame_not_playing);
+	 return;
+      }
+
+      SetString(psState, state);
+      Send(self, @SetAppearance);
+
+      % Send new state to players
+      for i in plPlayers
+      {
+	 if (i <> who)
+	 {
+	    Send(i, @GameStateSendUser, #game = self, #state = state);
+	 }
+      }
+
+      % Send new state to observers--remove from list if not in same room as game
+      for i in plObservers
+      {
+	 if Send(SYS, @UtilGetRoom, #what = i) = Send(SYS, @UtilGetRoom, #what = self)
+	 {
+	    Send(i, @GameStateSendUser, #game = self, #state = state);
+	 }
+	 else
+	 {
+	    plObservers = DelListElem(plObservers, i);
+	    Send(i, @UserUnloadModule, #module = vrModule);
+	 }
+      }
+
+      return;
+   }
+
+   ResetPlayers(who = $)
+   "Player asked to reset player list for game"
+   {
+      local i, found;
+
+      % Make sure that "who" is playing the game
+      found = False;
+
+      for i in plPlayers
+      {
+	 if i = who
+	 {
+	    found = True;
+	    break;
+	 }
+      }
+      if not found
+      {
+	 Send(who, @MsgSendUser, #message_rsc = minigame_not_playing);
+	 return;
+      }
+
+      Send(self, @ResetGame);
+
+      return;
+   }
+
+   GetDefaultState()
+   {
+      return minigame_default_state;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      local i;
+
+      % Only a player can pick up a game in progress
+      if NOT IsClass(what, &User) OR plPlayers = $
+      {
+	 propagate;
+      }
+
+      for i in plPlayers
+      {
+	 if (i = what)
+	 {
+	    propagate;
+	 }
+      }
+
+      Send(what, @MsgSendUser, #message_rsc = minigame_cant_pickup);
+      return False;
+   }
+
+   FixOwner()
+   {
+      % if put somewhere for storage, etc., the game is over.
+
+      if (poOwner = $)
+      {
+         send(self,@ResetGame);
+	 return;
+      }
+
+      if not isClass(poOwner,&Room) and not isClass(poOwner,&User)
+      {
+         send(self,@ResetGame);
+	 return;
+      }
+
+      return;
+   }
+
+   NewOwner(what = $)
+   {
+      local i;
+
+      % if put somewhere for storage, etc., the game is over.
+      if not isClass(what,&Room) and not isClass(what,&User)
+      {
+         send(self,@ResetGame);
+	 propagate;
+      }
+
+      % if not being picked up by a user, then leave game in progress
+      if not IsClass(what, &User)
+      {
+	 propagate;
+      }
+
+      % being picked up by a user; keep game going but kick off any users watching
+
+      for i in plObservers
+      {
+	 Send(i, @UserUnloadModule, #module = vrModule);
+	 % XXX Send message here
+      }
+      plObservers = $;
+
+      for i in plPlayers
+      {
+	 if (i <> what)
+	 {
+	    Send(i, @UserUnloadModule, #module = vrModule);
+	    % XXX Send message here
+	 }
+      }
+      
+      propagate;
+   }
+
+   % Send given user a list of all people currently playing this game
+   SendPlayers(who = $)
+   {
+      local i, player_num;
+
+      player_num = piNumPlayers;   % Count down, since added to list in reverse order
+      for i in plPlayers
+      {
+	 Send(who, @GamePlayerSendUser, #who = i, #num = player_num);
+	 player_num = player_num - 1;
+      }
+      return;
+   }
+
+   % Send all people currently playing this game the new player information
+   SendNewPlayer(who = $, player_num = 0)
+   {
+      local i;
+
+      for i in plPlayers
+      {
+	 Send(i, @GamePlayerSendUser, #who = who, #num = player_num);
+      }
+      return;
+   }
+
+   ResetGame()
+   "Reset game state, remove all players and observers"
+   {
+      local i;
+
+      % Remove players and observers
+      for i in plObservers
+      {
+	 Send(i, @UserUnloadModule, #module = vrModule);
+      }
+      plObservers = $;
+
+      for i in plPlayers
+      {
+	 Send(i, @UserUnloadModule, #module = vrModule);
+      }
+      plPlayers = $;
+      piNumPlayers = 0;
+
+      % Reset game
+      SetString(psState, minigame_default_state);
+      Send(self, @SetAppearance);
+      
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

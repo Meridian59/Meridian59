@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Mint is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Mint_name_rsc = "chocolate mint"
+   Mint_icon_rsc = roommint.bgf
+   Mint_desc_rsc = \
+      "A small block of imported Kocatani chocolate infused with a strain of mint "
+      "which only grows in Faronath, this delicacy is purported to have certain "
+      "magical properties in addition to its unquestionable appeal to the taste "
+      "buds."
+
+   Mint_name_plural_rsc = "chocolate mints"
+      
+   Mint_use = \
+      "The mint dissolves against your tongue into a mess of chocolatey goodness, "
+      "sending a thrill of pleasure down your spine."
+
+classvars:
+
+   vrName = Mint_name_rsc
+   vrIcon = Mint_icon_rsc
+   vrDesc = Mint_desc_rsc
+
+   vrName_plural = Mint_name_plural_rsc
+
+   viBulk = 1
+   viWeight = 1
+   viValue_average = 10
+
+properties:
+
+   viFilling = 5   
+   viNutrition = 5
+   piNumber = 1
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      Send(apply_on,@MsgSendUser,#message_rsc=Mint_use);
+      return;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      send(apply_on,@GainMana,#Amount=viNutrition);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

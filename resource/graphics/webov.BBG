@@ -1,0 +1,30 @@
+# web overlay 
+#^Applied to Hotspot: 41
+#*Groups: 3
+#* standing legs
+#* attacking legs
+#* bow-shooting legs
+-s 8
+18
+webov.bmp      [146, 193] 
+webov.bmp      [144, 193] 
+webov.bmp      [146, 192] 
+webov.bmp      [149, 192] 
+webov.bmp      [147, 193] 
+webov.bmp      [148, 192] 
+webov.bmp      [152, 191] 
+webov.bmp      [141, 191] 
+webov.bmp      [131, 191] 
+webov.bmp      [133, 196] 
+webov.bmp      [152, 192] 
+webov.bmp      [161, 190] 
+webov.bmp      [139, 189] 
+webov.bmp      [135, 192] 
+webov.bmp      [143, 191] 
+webov.bmp      [156, 190] 
+webov.bmp      [153, 193] 
+webov.bmp      [145, 190] 
+3
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 

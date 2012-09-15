@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//SQ//DTD HTML 2.0 + all extensions//EN" "hmpro3.dtd">
+<HTML>
+<HEAD>
+<TITLE>Adventures In Texture Space</TITLE></HEAD>
+<BODY BGCOLOR="#FFFFFF">
+<H1 ALIGN="CENTER">Adventures In Texture Space</H1>
+<H2 ALIGN="CENTER">Bob Pendleton</H2>
+<P ALIGN="CENTER"><A HREF="mailto:bobp@pendleton.com">bobp@pendleton.com</A></P>
+<P>A while ago I decided to figure out how to do game style texture mapping so
+I could write about it.  People were making such a big deal out of it I figured
+it was a good subject for an article. And I figured it couldn't be as hard as
+people made it sound. </P>
+<P>As I usually do when I start researching a graphics topic I first looked up
+texture mapping in the standard graphics text books. That was fun.  I didn't
+find one text book with more than a page on the subject and they all seemed to
+use the same illustration.  I looked in &quot;Graphics Gems&quot; 1, 2, and 3
+and didn't find much there either. Then I got a clue thumbing through Foley &amp;
+van Dam.  I happened to look at a section on ray tracing and found some useful
+information. I looked back in &quot;Gems&quot; under ray tracing and found more
+useful information.  All in a section on ray tracing. </P>
+<P>After looking in my favorite books I went out looking on the net and found
+another reference that I'm going to add to my list of standard references. It's
+the &quot;PC Game Programmers Encyclopedia&quot; or PCGPE for short. PCGPE isn't
+a book. It's a program and a collection of articles put together by folks on the
+net. I found a copy on teeri.oulu.fi in /pub/msdos/programming/gpe. The quality
+of the articles I've looked at so far ranges from poor to excellent.  But, it
+seems to be a good place to pick up basic ideas and to learn the buzz words you
+need to find details other places. </P>
+<P>The PCGPE has two articles on texture mapping. One of the articles, in file
+texture.txt, by Sean Barrett is a very good reference on how to optimize the
+inner loop of a game quality texture engine. But, it doesn't give much
+information about how to draw a textured polygon. It really glosses over the
+math, describing a key transform as &quot;magic.&quot; If you want to write a
+fast texture engine you want to read it. But, I spent a week digging around in
+math books I haven't opened in 15 years to figure out the &quot;magic.&quot;</P>
+<P>So, what is all the mystery? It has to do with spaces and transformations.
+When you build a model of a world you do it in what is called, for obvious
+reasons, world space. You use normal x, y, z coordinates and you use units like
+meters, feet, millimeters, or inches or what ever makes sense to you. </P>
+<P>When you want to draw a view of your world into a frame buffer you use your
+favorite 3D graphics package to create a transform that when applied to points
+in world space converts them to points in view space. View space also has x, y,
+and z coordinates but in view space the coordinates have the special property
+that when you divide view space x by view space z you get a frame buffer x
+coordinate and when you divide view space y by view space z you get a frame
+buffer y coordinate. </P>
+<P>Let me say that again, to draw your 3D world into a frame buffer you start
+with world coordinates, call them wx, wy, wz, transform them to view space
+coordinates, vx, vy, vz, and then by division you transform them into 2D frame
+buffer coordinates, fx, and fy.  If those coordinates are the vertices of a
+polygon you can then use the information in my last column (#5) to draw the
+polygon in the frame buffer.  So far so good.</P>
+<P>We want to paint the polygon with a picture, called a texture, instead of a
+solid color. And, we want the texture to scale and rotate with the polygon. We
+have a transform that converts points in view space to points in the plane of
+the frame buffer.  What we want is a transform that maps frame buffer
+coordinates back into view space coordinates and also maps view space points
+onto the texture. </P>
+<P>Given that kind of a reverse transform we could use it with an ordinary
+polygon drawing routine to draw polygons filled with the contents of the texture
+rather than a solid color. We'd just use the new transform to convert each the
+x, y of each pixel in the polygon into the x, y of a pixel in the texture. </P>
+<P>To keep every thing straight I'm going to use &quot;u&quot; and &quot;v&quot;
+for texture &quot;x&quot; and texture &quot;y&quot;. It's traditional usage and
+it saves typing. </P>
+<P>Turns out that there is a little bit of mathemagic that gives us that
+transform with very little effort. It lets us transform screen coordinates into
+another space, called texture space, such that x / z, and y / z in texture space
+gives us two numbers, u and v, that are coordinates in the texture. </P>
+<P>First off you need 3 points in view space, that's very important, they must
+be in view space, and they must not be in a line. Any 3 points that are not in a
+line define a plane. We are going to construct this plane so that it is parallel
+to the plane of a polygon or polygons you want to paint with a texture. </P>
+<P>Given 3 points, p0, p1, and p2, you compute the differences between the
+points giving 3 vectors P, M, and N, like so:</P>
+<PRE><TT><B> 
+    px = p0.x;
+    py = p0.y;
+    pz = p0.z;
+
+    mx = p1.x - px;
+    my = p1.y - py;
+    mz = p1.z - pz;
+
+    nx = px - p2.x;
+    ny = py - p2.y;
+    nz = pz - p2.z;
+</B></TT></PRE>
+<P>The vector P is the where the texture origin in view space. M and N are the
+textures U and V direction vectors in view space. If the lenght of M and N
+aren't the same then the texture will be mapped onto a rectangle instead of a
+square.</P>
+<P>In the demo code I actually use the first 2 and the last point in a polygon
+outline for the 3 view space points. That's sort of a cheat.  You can use any
+three points as long as they are in the same plane as the polygon you want to
+draw. In fact, if you have a number of polygons that are all in the same plane
+you can compute this transform once and use it for all the polygons. </P>
+<P>The order of the subtracts above is also important. I compute the elements
+of M as p1 - P but compute N as P - p2. This is because in most frame buffers Y
+increases going down the screen and X increases going across the screen. If Y
+increased going up the screen you would compute M = P - p1. If you get the
+direction of the subtraction wrong when you rotate the polygon one direction the
+texture rotates another direction. The effect is very weird looking and kept me
+up most of a night before I figured it out. </P>
+<P>Once you have the first three vectors you take three cross products, like
+so:</P>
+<PRE><TT><B> 
+    hx = (py * mz) - (pz * my);
+    vx = (pz * mx) - (px * mz);
+    ox = (px * my) - (py * mx);
+
+    hy = (py * nz) - (pz * ny);
+    vy = (pz * nx) - (px * nz);
+    oy = (px * ny) - (py * nx);
+
+    hz = (ny * mz) - (nz * my);
+    vz = (nz * mx) - (nx * mz);
+    oz = (nx * my) - (ny * mx);
+</B></TT></PRE>
+<P>Giving 3 more vectors. These vectors are the transform we are looking for.
+The cross products gives you a vector at 90 degrees to the 2 vectors you are
+crossing. That is important.  We use these vectors in the following way to
+transform frame buffer coordinates (fx, fy) into texture coordinates (u, v).
+</P>
+<PRE><TT><B> 
+    x = ox + (hx * fx) + (vx * fy);
+    y = oy + (hy * fx) + (vy * fy);
+    z = oz + (hz * fx) + (vz * fy);
+
+    u = (x / z);
+    v = (y / z);
+</B></TT></PRE>
+<P>This code looks very much like the transformation code in a 3d graphics
+package, take a look at 3d.h and  3d.c for example, it looks the same because it
+does the same job. </P>
+<P>The last bit of mathemagic is that the points p0 and p1 in view space maps
+onto 0 and 1 on the X axis in texture space and p0 and p2 maps onto 0 and 1 on
+the Y axis in texture space. This means that if the texture is, say, 128x128
+pixels then the texture subscript, tu is computed from u by</P>
+<P><TT><B>tu = (u * 128) ^ 128;</B></TT></P>
+<P>If u is in fixed point then</P>
+<P><TT><B>tu = (u &lt;&lt; 7) &amp; 0x7f;</B></TT></P>
+<P>tv is computed the same way. The<TT><B>&amp;</B></TT> is important to keep
+the texture coordinates inside the texture. It also means that if the polygon is
+larger than the texture the texture will be tiled across the entire polygon.</P>
+<P>What follows is the actual span filling code from an early version of the
+texture code in the demo that goes with this article. The first part computes
+the texture space x, y, and z for the first pixel in the span we want to fill.</P>
+<PRE><TT><B> 
+    x = ox + 
+        (hx * (ix1 - fp2float(sXCenter))) + 
+        (vx * (iy - fp2float(sYCenter)));
+
+    y = oy + 
+        (hy * (ix1 - fp2float(sXCenter))) + 
+        (vy * (iy - fp2float(sYCenter)));
+
+    z = oz + 
+        (hz * (ix1 - fp2float(sXCenter))) + 
+        (vz * (iy - fp2float(sYCenter)));
+</B></TT></PRE>
+<BLOCKQUOTE>
+<P>The loop continues for each pixel in the span.</P></BLOCKQUOTE>
+<PRE><TT><B> 
+    do
+    {
+</B></TT></PRE>
+<BLOCKQUOTE>
+<P>Here we compute the indices into the texture we are drawing on the polygon.
+</P></BLOCKQUOTE>
+<PRE><TT><B> 
+        iu = ((long)(x / z * 128)) &amp; 0x7f;
+        iv = ((long)(y / z * 128)) &amp; 0x7f;
+
+        framebuffer[iy][ix1] = texture[iv][iu];
+</B></TT></PRE>
+<BLOCKQUOTE>
+<P>This part steps to the next point in texture space.</P></BLOCKQUOTE>
+<PRE><TT><B> 
+        x += hx;
+        y += hy;
+        z += hz;
+</B></TT></PRE>
+<BLOCKQUOTE>
+<P>And this part steps to the next pixel in the frame buffer.</P></BLOCKQUOTE>
+<PRE><TT><B> 
+      ix1++;
+
+    } while (ix1 &lt; ix2);
+</B></TT></PRE>
+<P>Now comes the hard part, making it run fast. </P>
+<P>The example code assumes floating point arithmetic. Even the demo program is
+written using lots and lots of floating point arithmetic.  When I'm coding a
+graphics algorithm for the first time I use floating point, even double
+precision, arithmetic because I don't have to worry about arithmetic precision
+problems caused by fixed point arithmetic.  The general rule is reduce the
+sources of error as much as possible.  After the code is working you can study
+the number ranges actually used in the code and convert it to fixed point if
+needed.</P>
+<P>The most obvious way to speed up this code is to use fixed point arithmetic.
+That works. But, it won't get you to speeds anything like what you need for a
+good game and virtual reality is even more demanding. </P>
+<P>In games the usual solution to the speed problem is to restrict the way you
+can change your point of view. By making it so that you can only look left and
+right, not up and down, they force texture space z to be constant for horizontal
+spans in floors and ceilings and constant for vertical spans in walls. Texture
+space z is constant for horizontal spans when hz is 0 and for vertical spans
+when vz is zero.  Texture z is constant when all the pixels are the same z
+distance from the viewer.</P>
+<P>When texture space z is constant you can move the divides out of the loop.
+On a PC each of the divides costs more than 40 cycles which means that if the
+divides are left in the loop it costs around 100 cycles to draw 1 pixel. If you
+move the divides out of the loop then, according to Sean Barrett, you can draw a
+textured pixel in about 5 cycles. If you are drawing 320x240 images on a DX2/66
+this is the difference between being able to generate around 8 frames per second
+and being able to generate 160 frames per second. (Not that your CRT can display
+160 frames per second, at least mine can't.)</P>
+<P>This approach works fine for your typical dungeon crawling game but it isn't
+any good for flight simulators or for use with head mounted displays or even for
+the simple task of texturing the surface of objects in your world. In all these
+cases you have to be able to draw textures on arbitrary planes, not just flat
+walls, ceilings, and floors. </P>
+<P>I tried out a lot of different ways of doing fast arbitrary plane texture
+mapping. One approach I tried was to break polygons into little pieces and do 2D
+texturing on the pieces. This sort of worked.  The texture didn't distort to
+badly, but you could see the seams between the pieces. I'm pretty sure you could
+get rid of the seams but the cost would be too high to make it worth while. </P>
+<P>The technique that worked best for me is straight out of the computer
+graphics literature, good old piecewise linear interpolation. The idea is that
+instead of computing the exact u, v for each pixel on a span you compute the
+exact value for every Nth pixel and use linear interpolation to estimate the u,
+v for the pixels in between. </P>
+<P>Linear interpolation worked so well that I decided to check out some higher
+order forms of interpolation. First I did a test to find out what kind of a
+function the texture space transformation really is. I didn't trust my self to
+figure it out from the math... So I built a difference table while drawing a
+textured polygon.</P>
+<P>Difference tables are a fun bit of mathematics. It works like this;</P>
+<P>Compute a table of exact values of a function. Then compute the differences
+between those points. If the differences are all the same then the function is a
+linear function. If the differences are not all the same then look at the
+differences between the differences (called the second differences.) If the
+second differences are all the same then the function is a quadratic. If the
+second differences aren't all the same then if the third differences are all the
+same you have a cubic function. Just keep going until you find Nth differences
+that are all the same or run out of precision in your floating point numbers...
+</P>
+<P>The difference table for a function shows the original values, and the
+differences out to where the constants stop changing. </P>
+<P>For example, the difference table for a simple linear function might look
+like:</P>
+<BLOCKQUOTE>
+<PRE><TT><B> 
+f(x)    1st diff
+
+ 1    |
+      |   1
+ 2    |
+      |   1
+ 3    |
+      |   1
+ 4    |
+</B></TT></PRE></BLOCKQUOTE>
+<P>and for a simple quadratic function like this:</P>
+<BLOCKQUOTE>
+<PRE><TT><B> 
+f(x)  | 1st diff | 2nd diff
+
+ 1    |
+      |    1
+ 2    |          |    1
+      |    2     |
+ 4    |          |    1
+      |    3     |
+ 7    |          |    1
+      |    4
+11    |
+</B></TT></PRE></BLOCKQUOTE>
+<P>I modified my textured polygon routines to do a running 4 level difference
+table for all the u coordinates  for every span of every polygon it drew. I
+generated about half a megabyte of data every time I ran that test. Here is a
+chunk of one of the difference tables:</P>
+<BLOCKQUOTE>
+<PRE><TT><B> 
+      f(x)         1st Diff       2nd Diff       3rd Diff       4th Diff
+
+ 0.999259732142 0.015727759567 0.000071746051 0.000000489814 0.000000004449
+ 0.983531972575 0.015656013516 0.000071256238 0.000000485365 0.000000004398
+ 0.967875959059 0.015584757278 0.000070770872 0.000000480967 0.000000004348
+ 0.952291201781 0.015513986406 0.000070289905 0.000000476619 0.000000004299
+ 0.936777215376 0.015443696500 0.000069813287 0.000000472319 0.000000004251
+ 0.921333518875 0.015373883214 0.000069340967 0.000000468068 0.000000004203
+ 0.905959635662 0.015304542246 0.000068872899 0.000000463865 0.000000004156
+</B></TT></PRE></BLOCKQUOTE>
+<P>The first difference is constant out to 3 decimal places. That means that
+linear interpolation is a good approximation of the texture transform over short
+runs. Out in the forth decimal place the first difference stops looking
+constant. The second difference is tiny and doesn't change all that fast (look
+at the third difference) so quadratic interpolation looks pretty good over
+longer runs.</P>
+<P>Even the 4th difference isn't constant... but it's starting to look more
+like round off error than an important value. Looks like cubic interpolation
+would be as close to perfect as you can get.</P>
+<P>Like I said earlier, I built a textured polygon drawer that uses piecewise
+linear interpolation and it works very well. I also built a polygon drawer that
+uses quadratic interpolation. Not piecewise quadratic, it fits a quadratic to
+the end points and the center point of a span no matter how long the span is.
+Even miss-used like that quadratic interpolation looks very good. </P>
+<P>So far I've been able to get better speed out of piecewise linear
+interpolation but I think piecewise quadratic might be the winner in the long
+run. I suspect that the number of registers that the CPU has determines which
+technique will be faster. Piecewise linear interpolation doesn't need as many
+registers as does quadratic interpolation. That means that the newer so called
+RISC architecture machines could do very well with quadratic interpolation while
+the widely used x86 architecture with its small number of registers would do
+better with linear interpolation.</P>
+<HR>
+<P>This months demo code draws textured squares in 3 space and lets you rotate
+and scale them. It includes a simple fixed point 3D graphics package, and a
+routine that reads 8 bit .pcx files. The demo uses textures that are 128x128 and
+will either use a very obnoxious default tile or try to read the texture from a
+file specified on the command line. Two sample textures are included. </P>
+<P><B>Run the program as</B></P>
+<BLOCKQUOTE>
+<P><TT><B>test</B></TT></P>
+<P><TT><B>test brick.pcx</B></TT></P>
+<P><TT><B>test tile.pcx</B></TT></P></BLOCKQUOTE>
+<P>The tile will show up in the middle of a 320x240 mode X screen. The type of
+texturing that is being done is drawn in the upper left hand corner of the
+screen. The demo responds to the following command keys while it's running.</P>
+<BLOCKQUOTE>
+<PRE><TT><B> 
+ESC -- stop the program.
+
+1   -- select &quot;perfect&quot; 2 divides per pixel texture mapping
+2   -- select linear interpolation texture mapping
+3   -- select quadratic interpolation texture mapping
+
+x   -- subtract 1 from the X axis rotation speed
+X   -- add 1 to the X axis rotation speed
+
+y   -- subtract 1 from the Y axis rotation speed
+Y   -- add 1 to the Y axis rotation speed
+
+z   -- subtract 1 from the Z axis rotation speed
+Z   -- add 1 to the Z axis rotation speed
+
++   -- make the tile bigger
+-   -- make the tile smaller
+
+s   -- stop spinning
+S   -- Start over
+</B></TT></PRE></BLOCKQUOTE>
+<P>The effect of typing the x, y, z, X, Y, and Z keys are cumulative and make
+the square rotate faster or slower. It is very interesting to let it spin until
+it is really twisted, press s, and then switch between the different kinds of
+texture mapping. You can really see the difference. </P>
+<P>The most interesting routines in the code are tpoly which computes the
+texture space transform and drives the polygon rendering, and the 3 span drawing
+routines. Tspan() does 2 divides per pixel &quot;perfect&quot; texture mapping. 
+Lspan() does piecewise linear interpolation texture mapping. And, qspan() does
+quadratic texture mapping. </P>
+<HR>
+<P><B>Copyright &copy;1993, 1996 Robert C. Pendleton. All rights reserved.</B></P></BODY></HTML>

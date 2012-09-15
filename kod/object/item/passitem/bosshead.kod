@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcPitBossHead is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   OrcPitBossHead_icon_rsc = OrcPitbX.bgf
+   OrcPitBossHead_name_rsc = "orc pit boss head"
+   OrcPitBossHead_desc_rsc = \
+	"Nearly three times the weight of a human head, this mass of thick skull "
+	"and oozing brains begins to attract flies.  The stench alone disrupts any "
+	"appetite you may have had."
+
+classvars:
+   
+   vrName = OrcPitBossHead_name_rsc
+   vrDesc = OrcPitBossHead_desc_rsc
+   vrIcon = OrcPitBossHead_icon_rsc
+
+   viValue_average = 600
+   viWeight = 80
+   viBulk = 100
+
+   viGround_group = 3
+   viInventory_group = 4
+
+properties:  
+
+messages:   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

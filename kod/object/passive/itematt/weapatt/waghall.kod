@@ -1,0 +1,308 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttGuildHallDefender is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This Weapon Attribute offers a +2 damage bonus if you attack with it
+%       in your guild hall, and it is also the guild hall of the weapon.
+%       The weapon's guild hall is shown in the description of the weapon.
+%
+%  Form is: 
+%
+%       [ WA_GUILD_HALL_DEFENDER, $, RID_GUILDHALL ]
+%	
+%       rid_guildhall:: the room id of the guild hall that 'owns' the weapon,
+%               as found in blakston.khd.  Example, RID_GUILDH4 = Wryn's Keep
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   weapattguildhalldesc= "  The crest of "
+   weapattguildhalldesc2 = " is inscribed on the hilt of the weapon, suggesting "
+   weapattguildhalldesc3 = " bonus in the defense of that hall."
+   weapattdefender_name = "%s of the defender"
+
+   defender_dm = "guild hall defender"
+
+classvars:
+
+   viItem_Att_Num = WA_GUILD_HALL_DEFENDER
+   viDamage_bonus = 2
+
+   viDifficulty = 8
+   vrName = weapattdefender_name
+   vrDM_trigger = defender_dm
+   vbAppears_in_Happyland = FALSE
+
+properties:
+
+   piValue_modifier = 200   %% modify the object's price by 100%
+   piValue_power_modifier = 5
+  
+messages:
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Treasure Gen Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   AddSelfToRandomItem(oItem = $, who=$)
+   {
+      local iHall, oGuild, oHall;
+
+      if oItem = $ or who = $
+      {
+         DEBUG("BAD BAD BAD");
+
+         return FALSE;
+      }
+
+      %% Most of the time, the player will get a weapon that is tied
+      %% to the guild hall he owns.  If he doesn't own a hall, then
+      %% it will choose a hall at random.
+
+      iHall = 0;
+      if random(1,100) > 50
+      {
+         %% see if the player belongs to a guild.
+         oGuild = send(who,@GetGuild);
+	
+         %% see if that guild has a hall already
+         if oGuild <> $
+         {
+            iHall = send(oGuild,@GetGuildHallNum);
+         }			
+      }
+      
+      if iHall = $ or (iHall < RID_GUILDH_MIN or iHall > RID_GUILDH_MAX)
+      {
+         %% choose a random guild hall
+			
+         iHall = random(RID_GUILDH_MIN,RID_GUILDH_MAX);
+      }
+
+      %% Okay, it's crazy, but someone could screw up and leave space
+      %% in the RIDlist.  So for as long as oHall = $, get a new iHall.
+      oHall = send(SYS,@FindRoomByNum,#num=iHall);
+      while oHall = $
+      {
+         iHall = random(RID_GUILDH_MIN,RID_GUILDH_MAX);
+         oHall = send(SYS,@FindRoomByNum,#num=iHall);
+      }
+
+      if send(self,@ReqAddToItem,#state1=iHall,#oItem=oItem)
+      {
+         send(self,@AddToItem,#oItem=oItem,#state1=iHall);
+      }
+      
+      return;
+   }
+
+   ReqAddToItem(state1=$)
+   {
+      if state1 < RID_GUILDH_MIN or state1 > RID_GUILDH_MAX
+      { 
+         debug("Illegal guild hall chosen.  No attribute added.");
+
+         return FALSE; 
+      }
+
+      propagate;
+   }
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   "If wielder is in his own guild hall, which is also the chosen guild hall "
+   "of the weapon, then wielder gets +power bonus."
+   {
+      local oGuild, oRoom, iPower;
+      
+      if lData = $
+      {
+         debug("This should definitely not happen! Weapon needs guild hall defined!");
+
+         return;
+      }
+
+      oGuild = send(wielder,@GetGuild);
+      oRoom = send(SYS,@FindRoomByNum,#num=nth(lData,3));
+
+      % Does this person's guild own the guild hall?
+      if oGuild <> $
+         AND send(oRoom,@GetGuildOwner) = oGuild
+      {
+         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+         iPower = send(self,@DecipherDamageFromPower,#iPower=iPower);
+
+         % Only give half bonus if we're not actively defending a guild hall.
+         if send(wielder,@GetOwner) <> oRoom
+         {
+            iPower = iPower/2;
+         }
+
+         return (damage + iPower);  
+      }
+      
+      return damage;
+   }
+
+   ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
+   "If wielder is in his own guild hall, which is also the chosen guild hall "
+   "of the weapon, then wielder gets +power bonus."
+   {
+      local oGuild, oRoom, iPower;
+
+      if lData = $
+      {
+         debug("This should definitely not happen! Weapon needs guild hall defined!");
+
+         return;
+      }
+
+      oGuild = send(wielder,@GetGuild);
+      oRoom = send(SYS,@FindRoomByNum,#num=nth(lData,3));
+
+      % Does this person's guild own the guild hall?
+      if oGuild <> $
+         AND send(oRoom,@GetGuildOwner) = oGuild
+      {
+         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+         iPower = send(self,@DecipherHitRollFromPower,#iPower=iPower);
+
+         % Only give half bonus if we're not actively defending a guild hall.
+         if send(wielder,@GetOwner) <> oRoom
+         {
+            iPower = iPower/2;
+         }
+
+         return (hitroll + iPower);  
+      }
+      
+      return hitroll;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Initialization Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   InitialPower(oItem=$)
+   {
+      if oItem = $
+      {
+         DEBUG("This shouldn't have happened!");
+
+         return;
+      }
+
+      return send(self,@InitialWeaponPower,#oItem=oItem);
+   }
+
+   SetPrimaryState(state1=$)
+   "State1 contains the attack spell type being added to the weapon."
+   {
+      if state1 = $
+      {
+         DEBUG("SetPrimaryState called with nil state!");
+
+         return FALSE;
+      }
+
+      return state1;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Description Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   AppendDesc(oItem =$,lData=$, iFakeData = 0, iFakePower=0)
+   {
+      local iData, oRoom, iPower;
+    
+      iData = 0;
+      if lData = $ 
+      {
+         if iFakeData = 0
+         {
+            debug("Got no data at all!  Bad.");
+
+            return;
+         }
+         
+         iData = iFakeData;
+         iPower = iFakePower;
+      }
+      else
+      {
+         if iFakeData <> 0
+         {
+            debug("Got both real data and fake data!  Shouldn't!");
+
+            return;
+         }
+         
+         iData = nth(lData,3);
+         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+      }
+		
+      appendTempString(weapattguildhalldesc);
+        
+      oRoom = send(SYS,@FindRoomByNum,#num=iData);
+      appendTempString(send(oRoom,@GetName));
+      appendTempString(weapattguildhalldesc2);
+      
+      AppendTempSTring(send(self,@GetPowerDesc,#iPower=iPower));
+      appendTempString(weapattguildhalldesc3);
+         
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Artifice Spell Functions (also see desc functions)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   FakeAttData()
+   {
+      local iRoom_num;
+
+      iRoom_num = $;
+      while iRoom_num = $
+      {
+         iRoom_num = random(RID_GUILDH_MIN,RID_GUILDH_MAX);
+         if send(SYS,@FindRoomByNum,#num=iRoom_num) = $
+         {
+            iRoom_num = $;
+         } 			
+      }
+      
+      return iRoom_num;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

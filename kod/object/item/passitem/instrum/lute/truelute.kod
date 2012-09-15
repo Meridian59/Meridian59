@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TrueLute is Lute
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TrueLute_name_rsc = "true lute"
+   TrueLute_icon_rsc = music.bgf
+   TrueLute_overlay_rsc = luteov.bgf
+   TrueLute_desc_rsc = "This is the most perfect lute you have ever seen.  It is rumored that Jala herself owned "
+      "a lute that was identical to this one.  It is made of a strange, dark, heavy wood and has a most beautiful sound.  "
+      "This lute surely gives more potence to the magical songs of the bard who plays it."
+
+classvars:
+
+   viInstrument_strength = 40
+   vrName = TrueLute_name_rsc
+   vrDesc = TrueLute_desc_rsc
+
+   vrIcon = TrueLute_icon_rsc
+   vrInstrument_overlay = TrueLute_overlay_rsc
+
+   viValue_average = 2500
+   viWeight = 100
+   viBulk = 150
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

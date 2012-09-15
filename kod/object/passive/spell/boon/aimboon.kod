@@ -1,0 +1,67 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tim Schubert  4-28-97
+% 
+
+
+AimBoon is Boon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   aimboon_name_rsc = "aim effect"
+   aimboon_icon_rsc = iboonaim.bgf
+   aimboon_desc_rsc = "Your sense of aim seems to be affected unnaturally."
+   aimboon_intro_rsc = "The aim of the victim is boosted temporarily."
+
+   aimboon_inc = "You feel more accurate!"
+   aimboon_dec = "You suddenly feel clumsier."
+
+classvars:
+   viPersonal_ench = True
+   vrName = aimboon_name_rsc
+   vrIcon = aimboon_icon_rsc
+   vrDesc = aimboon_desc_rsc
+   vrSpell_intro = aimboon_intro_rsc
+
+   viSpell_num = SID_AIM_BOON
+   viMana = 0
+
+properties:
+
+messages:
+
+   DoSpellEffect(who = $, amount = $)
+   {
+   send(who,@AddAim,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=aimboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=aimboon_dec); }
+
+   return;
+   }
+
+   UndoSpellEffect(who = $, amount = $)
+   {
+   amount = -amount;
+   send(who,@AddAim,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=aimboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=aimboon_dec); }
+   return;
+   }
+
+end

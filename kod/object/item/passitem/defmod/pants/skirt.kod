@@ -1,0 +1,60 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Skirt is Pants
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Skirt_icon_rsc = lgSkirt.bgf
+
+   Skirt_male_player_rsc = bfc.bgf
+   Skirt_female_player_rsc = bfd.bgf
+   Skirt_name_rsc = "long skirt"
+   Skirt_desc_rsc = \
+      "This skirt will cover your legs nicely but won't provide much protection."
+
+classvars:
+
+   vrIcon = Skirt_icon_rsc   
+   vrName = Skirt_name_rsc
+   vrDesc = Skirt_desc_rsc
+
+   vrLegs_male = Skirt_male_player_rsc
+   vrLegs_female = Skirt_female_player_rsc
+
+   vrPoss_article = item_this
+   vrCondition_exc = item_condition_exc 
+   vrCondition_exc_mended = item_condition_exc_mended
+   vrCondition_good = item_condition_good 
+   vrCondition_med = item_condition_med 
+   vrCondition_poor = item_condition_poor 
+   vrCondition_broken = item_condition_broken 
+   viBroken_group = 3
+
+   vrItem_Broken = item_broken_battle_clothing
+
+properties:
+
+   piItem_flags = PT_GRAY_TO_DBLUE
+
+messages:
+
+   IsPlural()
+   {
+      return FALSE;
+   }
+
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

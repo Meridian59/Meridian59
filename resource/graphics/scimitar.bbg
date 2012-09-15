@@ -1,0 +1,15 @@
+# scimitar
+# groups
+# 1 ground view 
+# 2 ground view broken
+# 3 display
+
+-s 7
+3
+scidrp.bmp
+scibro.bmp
+scidis.bmp
+3
+1  1
+1  2
+1  3

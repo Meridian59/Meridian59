@@ -1,0 +1,249 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SummonApparition is Spell
+
+constants:
+
+   include blakston.khd
+
+   % What number do we divide the true hps by in order to get the hps of
+   %  the apparition?
+   APPARITION_FRACTION = 5
+
+resources:
+
+   summonapparition_name_rsc = "apparition"
+   summonapparition_icon_rsc = iapparit.bgf
+   summonapparition_desc_rsc = \
+      "Summons an illusory creature to attack your enemies.  "
+      "The creature does good damage, but is easily banished.  "
+      "Requires web moss and rainbow fern to cast."
+
+   summonapparition_cast_rsc = \
+      "You smile as %s%s raises from the ground next to %s%s!"
+   summonapparition_failed_rsc = \
+      "There is already too much summoning magic focused here to summon an "
+      "apparition."
+   summonapparition_failed_inanimate = \
+      "%s%s has no mind to be tinkered with by your illusion magic."
+   apparition_fizzle = "Your apparition spell fizzles!"
+
+   summonapparition_sound = rapparit.wav
+
+classvars:
+
+   vrName = summonapparition_name_rsc
+   vrIcon = summonapparition_icon_rsc
+   vrDesc = summonapparition_desc_rsc
+
+   viSpell_num = SID_APPARITION
+   viSchool = SS_RIIJA
+   viSpell_level = 4
+   viMana = 30
+
+   viSpellExertion = 20
+   viCast_time = 4000
+   viChance_To_Increase = 25
+   vrSucceed_wav = summonapparition_sound
+
+   viHarmful = TRUE
+   viOutlaw = TRUE
+   viNoNewbieOffense = TRUE
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&WebMoss,1],plReagents);
+      plReagents = Cons([&RainbowFern,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, ltargets = $)
+   {
+      local oRoom, oTarget;
+      
+      if ltargets  = $
+      {
+         % For some reason, the client is Sending a null list if you
+         %  target a number item with a spell.  for now, assume it's bad.
+         Send(who,@MsgSendUser,#message_rsc=apparition_fizzle);
+      }
+
+      oRoom = Send(who,@GetOwner);
+
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+         OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_PK)
+         OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_GUILD_PK_ONLY)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
+         
+         return FALSE;
+      }
+
+      if Send(oRoom,@CountHoldingHowMany,#class=&monster) > 15
+         OR Send(oRoom,@CountHoldingSummoned)
+            > Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
+      {
+         Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_rsc);
+
+         return FALSE;
+      }
+      
+      oTarget = First(ltargets);
+
+      if NOT IsClass(oTarget,&battler)
+      {
+         Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_inanimate,
+              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+              
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellpower = $)
+   {
+      local oApparition, oRoom, iRow, iCol, iFine_Row, iFine_Col,
+            lMonsList, i;
+
+      oRoom = Send(who,@GetOwner);
+
+      if not isclass(oRoom,&MonsterRoom)
+      {
+         oApparition = Send(self,@CreateRandomMonster,#spellpower=iSpellpower);
+      }
+      else
+      {
+         lMonsList = Send(oRoom,@GetMonsterList);
+         if Length(lMonsList) = 0
+         {
+            oApparition = Send(self,@CreateRandomMonster,
+                               #spellpower=iSpellpower);
+         }
+         else
+         {           
+            i = Random(1,Length(lMonsList));
+            oApparition = Create(Nth(Nth(lMonsList,i),1));
+         }
+      }
+
+      Send(oApparition,@SetIllusion,#value=TRUE);
+      Send(oApparition,@SetSummoned,#value=TRUE);
+      
+      iRow = Send(Nth(lTargets,1),@GetRow);
+      iCol = Send(Nth(lTargets,1),@GetCol);
+      iFine_Row = Send(Nth(lTargets,1),@GetFineRow);
+      iFine_Col = Send(Nth(lTargets,1),@GetFineCol);
+
+      Send(oRoom,@newhold,#what=oApparition,#new_row=iRow,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      Send(oApparition,@TargetSwitch,#what=First(lTargets),#iHatred=1000);
+      Send(oApparition,@EnterStateAttack);
+
+      Send(who,@MsgSendUser,#message_rsc=summonapparition_cast_rsc,
+           #parm1=Send(oApparition,@GetIndef),
+           #parm2=Send(oApparition,@GetName),
+           #parm3=Send(Nth(lTargets,1),@GetIndef),
+           #parm4=Send(Nth(lTargets,1),@GetName));
+      
+      i = Send(oApparition,@ReturnMaxHitPoints);
+      i = i / APPARITION_FRACTION;
+
+      Send(oApparition,@SetMaxHitPoints,#amount=i);
+
+      propagate;
+   }
+
+   CreateRandomMonster(spellpower = $)
+   {
+      local i;
+
+      i = random(1,60);
+
+      if spellpower < 35
+      {
+         if i < 5
+         {
+            return Create(&Scorpion);
+         }
+         
+         if i < 15
+         {
+            return Create(&Spider);
+         }
+         
+         if i < 35
+         {
+            return Create(&SpiderBaby);
+         }
+         
+         return Create(&GiantRat);
+      }
+
+      if spellpower > 34 and spellpower < 66
+      {
+         if i < 5
+         {
+            return Create(&RedAnt);
+         }
+         
+         if i < 15
+         {
+            return Create(&Slime);
+         }
+         
+         if i < 35
+         {
+            return Create(&SpiderBaby);
+         }
+         
+         return Create(&Centipede);
+      }
+
+      if spellpower > 65
+      {
+         if i < 5
+         {
+            return Create(&Troll);
+         }
+         
+         if i < 15
+         {
+            return Create(&FungusBeast);
+         }
+         
+         if i < 35
+         {
+            return Create(&RedAnt);
+         }
+         
+         return Create(&Slime);
+      }
+   
+      return Create(&GiantRat);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

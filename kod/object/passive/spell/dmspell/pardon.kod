@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Pardon is DMSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   pardon_name_rsc = "pardon"
+   pardon_icon_rsc = light.bgf
+   pardon_desc_rsc = "Removes both murderer flags and outlaw flags."
+
+   pardon_msg_DM = "You pardon %s%s."
+   pardon_msg_target = "You have been pardoned by %s%s."
+   pardon_failed = "%s%s is not a murderer or an outlaw, and cannot be pardoned."
+
+classvars:
+
+   vrName = pardon_name_rsc
+   vrIcon = pardon_icon_rsc
+   vrDesc = pardon_desc_rsc
+
+   viSpell_num = SID_PARDON
+   viSchool = SS_DM_COMMAND
+
+properties:
+
+messages:
+
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      if not IsClass(First(lTargets),&User)
+      {
+	 send(who,@MsgSendUser,#message_rsc=pardon_failed,
+	      #parm1=Send(First(lTargets),@GetDef),#parm2=Send(First(lTargets),@getname));
+	 return False;
+      }
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local i;
+      
+      for i in lTargets
+      {
+	 if send(i,@checkplayerflag,#flag=PFLAG_MURDERER)
+         or send(i,@checkplayerflag,#flag=PFLAG_OUTLAW)
+	 {
+	    send(who,@MsgSendUser,#message_rsc=pardon_msg_DM,
+		#parm1=Send(i,@getdef),#parm2=Send(i,@getname));
+	    send(i,@MsgSendUser,#message_rsc=pardon_msg_target,
+		#parm1=Send(who,@getindef),#parm2=Send(who,@getname));      
+	    
+	    Send(i,@setplayerflag,#flag=PFLAG_MURDERER,#value=false); 
+            Send(i,@setplayerflag,#flag=PFLAG_OUTLAW,#value=false); 
+            post(i,@evaluatePKstatus);
+	 }
+	 else
+	 {
+	    send(who,@MsgSendUser,#message_rsc=pardon_failed,
+		 #parm1=Send(i,@GetDef),#parm2=Send(i,@getname));
+            return;
+         }
+      }
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,36 @@
+
+ Volume in drive C is unlabeled      Serial number is 9C32:9377
+ Directory of  C:\blakston\resource\graphics\*4.bbg
+
+ 6/04/97  18:18              60  APPLE4.BBG
+10/25/96  19:19              79  ARSIGN04.BBG
+10/30/96  18:03              61  ARTROP04.BBG
+ 6/04/97  18:18              56  BAGBEAN4.BBG
+ 6/04/97  18:18              49  basket4.bbg
+ 6/04/97  18:18              63  bigbag4.bbg
+ 6/04/97  18:18              59  birdbx4.bbg
+ 6/04/97  18:18              55  blubott4.bbg
+ 6/04/97  18:18              54  bolt4.bbg
+ 6/04/97  18:18              54  boxsnak4.bbg
+ 6/04/97  18:18              52  brnurn4.bbg
+ 6/04/97  18:18              57  decopot4.bbg
+ 6/04/97  18:18              59  dress4.bbg
+ 6/04/97  18:18              57  fixins4.bbg
+ 6/04/97  18:18              49  flower4.bbg
+ 6/04/97  18:18              63  garlic4.bbg
+ 6/04/97  18:18              57  goldbot4.bbg
+ 6/04/97  18:18              51  gryjug4.bbg
+ 6/04/97  18:18              61  herbs4.bbg
+ 6/04/97  18:18              43  jar4.bbg
+ 6/04/97  18:18              43  jug4.bbg
+ 6/04/97  18:18              69  poison4.bbg
+ 6/04/97  18:18              43  pot4.bbg
+ 6/04/97  18:18              49  potion4.bbg
+ 4/03/96  17:40              47  ring4.bbg
+ 6/04/97  17:41             177  scr04.bbg
+ 6/04/97  18:18              49  spices4.bbg
+ 6/04/97  18:18              59  sticks4.bbg
+ 4/29/97  14:10             199  test4.bbg
+ 6/04/97  18:18              43  urn4.bbg
+          1,917 bytes in 30 files and 0 dirs    983,040 bytes allocated
+    329,515,008 bytes free

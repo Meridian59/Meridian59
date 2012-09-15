@@ -1,0 +1,115 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperBartender is JasperTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Jasper_Bartender_name_rsc = "Pietro"
+   Jasper_Bartender_icon_rsc = jsbart.bgf
+   Jasper_Bartender_desc_rsc = \
+      "A peevish and sullen man tends this bar.  This is Pietro, the impetuous sot." 
+
+   JsBar_entry_welcome = "Close the door, would you!"
+
+   JasperBartender_unwanted_keep = "~k%s%s tosses the item into the garbage and sneers, \"Get lost.~n~k\""
+   JasperBartender_unwanted_pay = "~k%s%s tells you, \"I'll give you a couple schillings for that, "
+         "my mother's birthday is coming up.~n~k\""
+   JasperBartender_unwanted_give = "~k%s%s tells you, \"What do I look like, a freggin' junk buyer?  "
+         "There's no soliciting here so get out of my bar with your flim-flam, stranger.~n~k\""
+
+classvars:
+
+   vrName = Jasper_Bartender_name_rsc
+   vrIcon = Jasper_Bartender_icon_rsc
+   vrDesc = Jasper_Bartender_desc_rsc
+   viMerchant_markup = MERCHANT_NORMAL
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viOccupation = MOB_ROLE_BARTENDER
+
+   vrUnwanted_keep = JasperBartender_unwanted_keep
+   vrUnwanted_pay = JasperBartender_unwanted_pay
+   vrUnwanted_give = JasperBartender_unwanted_give
+
+properties:
+
+messages:
+
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_WANDERER_ENTERED
+      {
+         if IsClass(what,&Minstrel)
+         {
+            send(self,@SetMood,#new_mood=piMood - 50);
+         }
+         
+         return;
+      }
+      
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood + 7);
+         
+         return;
+      }
+      
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood - 7);
+         
+         return;
+      }
+      
+      if why = MOODMOD_SELL_ITEM
+      {
+         if isClass(what,&Food)
+         {
+            if send(what,@IsAlcohol)
+            {
+               send(self,@SetMood,#new_mood=piMood + 1);
+            }
+            else
+            {
+               send(self,@SetMood,#new_mood=piMood + 2);
+            }
+         }
+      }
+      
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale=[[Create(&Bread,#number=4),
+                   Create(&StoutGoblet),
+                   Create(&Chess),
+                   Create(&MeatPie,#number=4)
+                   ],
+                  $,$];
+      return;
+   }
+
+   UserEntered()
+   {
+      Send(poOwner,@SomeoneSaid,#what=self,#string=JsBar_entry_welcome,
+             #type = SAY_RESOURCE);
+      send( self, @SetMood, #new_mood = piMood - 2 );
+      
+      propagate;
+   }
+   
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,43 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NewbieAreaTreasure is TreasureType
+
+%% This is special because it is used only for newbieville/demoville area, and
+%% therefore must follow a reasonably tight script
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_NEWBIE_AREA
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &RedMushroom, 30 ],
+                     [ &EntrootBerry, 20 ],
+                     [ &Ruby, 15 ],
+                     [ &Snack, 15 ],
+                     [ &OrcTooth, 10 ],
+                     [ &Mace, 7 ],
+                     [ &Herbs, 3 ] ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

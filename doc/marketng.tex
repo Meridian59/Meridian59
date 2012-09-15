@@ -1,0 +1,157 @@
+%%
+%% LaTeX 2e documentation for BlakSton
+%%
+%% adapted from ``overview.tex'' 11/15/95 ARK
+%%
+
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+%\usepackage{draft}
+%\usepackage{secret}
+
+
+\begin{document}
+
+\begin{center}
+{\LARGE Other Realms, a multi-user gaming system}
+\vspace{0.2in}
+
+{\Large Andrew Kirmse}
+
+\vspace{0.1in}
+
+{\Large Terra Nova Interactive Corporation}
+
+\vspace{0.1in}
+
+{\Large November 15, 1995}
+\end{center}
+
+
+\section{Introduction}
+
+Other Realms is a system designed to provide multiuser entertainment
+through interaction with a virtual world.  Realtime 3-D graphics from
+a first person perspective make the user think that he is part of this
+world.  Users can interact with each other through graphical
+depictions of emotions and body movements, as well as with traditional
+text messages and mail.  Virtually any part of the virtual world can
+be altered while the game is still running.  The system is also
+flexible enough to allow a wide variety of game designs using the same
+software.
+
+The rest of this paper first gives an overview of the system, and then
+describes the features that make it a unique and powerful platform
+for creating games.
+
+\section{System overview}
+
+The Other Realms software consists of three main parts: the server,
+the client, and the game code.  Each player runs a separate copy of
+the client program, which handles the 3-D graphics and the user
+interface.  The server manages connections to clients, and also
+interprets the game code, which specifies how objects in the game
+world behave.
+
+At the heart of the system is the server program, running on a central
+computer.  The server's main function is to run the game code and
+communicate with clients via network (TCP/IP) or serial (modem)
+connections.  The server runs under Windows~NT or Windows~95.
+
+An interesting feature of the system is a special-purpose,
+object-oriented language called Blakod.  We designed this language
+specifically for use in a game setting, so that it is easy to specify
+how objects in the game world behave.  The game code resides on the
+server's machine.
+
+The client program is the only part of the system visible to the
+player.  It is responsible for displaying a 3-D, first-person view of
+the game world, and for providing the player with an interface to the
+commands and objects of the game world.  We currently have versions of
+the client for Windows~3.1, Windows~95, and Windows~NT.  We would also
+like to develop a version for the Macintosh.
+
+The client and server are constructed in a game-independent manner, so
+that they can run other games without modifications.  Knowledge of how
+objects appear and behave resides only in the game code; thus, only
+the game code need be rewritten in order to construct a completely
+different game world.
+
+In addition to the software, the system includes the artwork, sound,
+music, and geography of the game world.  Each client is initially
+installed with a complete copy of this information; however, the
+server can send updates to it at any time.  Thus, the appearance and
+geography of the game can be altered without writing any code.
+
+\section{Features}
+
+Other Realms will be one of the first 3-D multiplayer games playable
+on the Internet.  It has a number of graphical and design features
+that make it an attractive system for creating and running adventure
+games.
+
+The 3-D graphics engine in the client, while still under development,
+will be comparable to that in the popular DOOM series of games.  In
+particular, we use the same binary space-partitioning tree algorithms,
+which allow us to place vertical walls at arbitrary angles and
+heights.  Objects and textures can be animated in real time, to show
+moving water, swordfighting, or a laughing face.  We also have the
+capability of displaying different parts of a single object at different
+resolutions, a new feature in adventure games.
+
+\subsection{Interactivity}
+
+We have put a special emphasis on player interaction.  Players can
+design their own appearance by piecing together their character's face
+from a large set of facial features.  Thus, every character will be
+unique.  In addition, players can show emotions by dynamically
+changing their facial expressions with a single command.  We are also
+creating stock animations, which players use to show themselves
+performing actions like walking, waving, sitting, and standing.
+
+Players can also communicate by traditional text messages.  The
+client's text parser will give players a rich set of rapidly
+accessible commands, although most commands will also be accessible
+via a graphical interface.  The system also implements built-in email
+and newsgroup (bulletin board) systems for player communication.  We
+are also planning, and have partially implemented, an email gateway to
+the Internet, which will allow players to send mail anywhere in the
+world.  This kind of Internet access might make the system useful as a
+small on-line service.
+
+\subsection{Extensability}
+
+A major advantage of Other Realms over currently available on-line
+games is its ability to continually change and grow.  New artwork and
+rooms can be added at any time; clients will automatically retrieve
+the new data.  The game's behavior can be modified by writing
+additional game code; this can be loaded into the server with no
+interruption in service.  It is even possible to insert new code into
+the client program via dynamic libraries, which can add functionality
+to the client interface.  Because the server and client are designed
+as a platform for multiple games, entire new games can be created
+without distributing any new software.
+
+The concept of a specialized game language, while common in Internet
+Multi-User Dimension (MUD) games, is new to graphical on-line games.
+Our language is simple and powerful; we plan to use it to create a
+realistic game world, filled with intelligent creatures and
+imaginative adventures, all of which change constantly.
+
+In creating our initial game world, we have also developed some
+software tools to make the work easier.  We have a fully-featured room
+editor, and we are working on a bitmap editor that will allow us to
+design animations easily.  These tools would also aid in the
+construction of future Other Realms games.
+
+\section{Conclusion}
+
+We believe that Other Realms is an ideal environment for creating
+multi-user graphical adventure games.  These games are written in a
+high-level object-oriented language that is well suited for
+role-playing.  The system is highly interactive and dynamically
+extensible, so that the game world can evolve and give players a
+continual challenge.
+
+
+\end{document}

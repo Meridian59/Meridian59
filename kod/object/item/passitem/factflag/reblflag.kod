@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RebelFlag is FactionFlag
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RebelFlag_icon_rsc = flagjinv.bgf
+   RebelFlag_name_rsc = "rebel flag"
+   RebelFlag_desc_rsc = "This flag bears the colors of the rebel forces of Jasper."
+
+classvars:
+   
+   vrName = RebelFlag_name_rsc
+   vrDesc = RebelFlag_desc_rsc
+   vrIcon = RebelFlag_icon_rsc
+
+   viFaction = FACTION_REBEL
+
+properties:  
+
+messages:   
+
+   TeleportHome()
+   {
+      % right in front of the arsenal
+      send(send(SYS,@FindRoomByNum,#num=RID_JAS_BAR),@Newhold,#what=self,#new_row=6,#new_col=5);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

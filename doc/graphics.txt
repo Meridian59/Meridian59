@@ -1,0 +1,121 @@
+
+Palettes
+========
+
+To convert any graphics file to a BlakSton bitmap, use Image Alchemy.
+It takes a palette from an existent bitmap and matches images to that
+palette using error diffusion; the palette.bmp file in the blakston
+directory is used for this purpose.  Syntax:
+
+alchemy -w -f \blakston\palette.bmp <filenames>
+
+(The -w means BMP format for output).
+
+The transparent color is index 254 in the palette, which is (0, 255,
+255).
+
+The blakston.pal file in the blakston directory defines the palette
+used in the client.  The file contains 256 lines; each line has a red,
+green, and blue value for a single color, separated by spaces.
+
+
+Using makebgf
+=============
+
+First, specify the output file with the -o switch.  The -s switch
+optionally specifies a "shrink factor" that's used to determine the
+display size of the bitmap.  For example, the player bitmap is
+128x256, but it's built with -s 4, so it's displayed as if it were
+32x64, which is as tall as the normal 64x64 bitmaps.  Extra resolution
+in the bitmap is used when the object is close.  The default is shrink
+factor 1.
+
+The -n switch allows you to insert a 32-byte string into the bgf file;
+this is displayed by the room editor as the name of the texture.
+
+The -r switch causes all the bitmaps in a bgf to have their rows and
+columns swapped (i.e. a 90 degree rotation).  This is used for wall
+textures, which the client draws rotated 90 degrees for better 
+performance.
+
+Next you give the number of bitmaps in the file, followed by their
+filenames.  Wildcards work here.
+
+Last you specify how the bitmaps are arranged into groups.  Each group
+consists of the object viewed from different angles.  First you give
+the number of groups.  Then, for each group, you give the number of
+bitmaps in the group, followed by the index into the filename list of
+each bitmap (the first bitmap is numbered 1).  For example:
+
+makebgf -o out.bgf 4 a b c d 2  1 1  3 2 3 4
+
+This makes a bgf with 4 bitmaps and 2 groups.  The first group has
+bitmap "a", which is visible from all 360 degrees.  The secound group
+has three bitmaps, each visible through an angle of 120 degrees.  The
+"b" bitmap is the face on view, and the others progress around the
+circle (but I forget if they go clockwise or counterclockwise).
+
+Specifying index 0 means that no bitmap should be displayed for
+combination of group and angle.  This is useful for overlay bitmaps,
+where, for example, parts of a face are only visible from certain angles.
+
+See the makefile in the resource directory for more examples.
+
+Bitmap group 0 is displayed by default by the kod, and the client uses
+it for display in description dialogs.  Other groups are reached by
+animation or bitmap change commands sent from the kod.
+
+For very long command lines, you can read the command line from a file, 
+like this:
+
+makebgf @cmdfile
+
+These command files end with the extension "bbg", and are edited by
+the bbgun program to make lining up bitmaps easier.
+
+
+Overlays
+--------
+
+You can specify the x and y offsets of an overlay bitmap by putting
+these numbers in brackets after the bitmap filename, like this:
+
+makebgf -o out.bgf 2 a [10, 10] b [50, 100]
+
+These offsets are added to the overlay's location when the overlay is
+displayed.
+
+Hotspots
+--------
+
+Each bitmap can have one or more "hotspots", which are locations
+referenced by the kod to place overlays on bitmaps.  For example, you
+can place a head on a body by putting a neck hotspot in the body
+bitmap, and then displaying the head overlay attached to the neck
+hotspot.
+
+Hotspots are specified by putting them after the bitmap filenames, and
+after the (optional) offsets of the bitmap.  The syntax is like this:
+
+makebgf -o out.bgf 2 a [10, 10] :1 1 [20, 20] \
+	b [50, 100] :3 2 [10, 10] 4 [20, 20] 7 [1, 1]
+
+The "a" bitmap has one hotspot; it is numbered 1 and located at (20,
+20).  The "b" bitmap has three hotspots, numbered 2, 4, and 7.
+Hotspots are numbered 1-255 inclusive. The value 0 is reserved to
+indicate that no hotspot exists.  Positive one-byte values (1 to 127) are
+for overlays (drawn after the main bitmap) and negative one-byte
+values (-1 to -127) are for underlays (drawn before the main bitmap).
+
+When an overlay is attached to a hotspot in the underlying object, the
+overlay's position is determined by adding the overlay's offset to the
+hotspot's location.  An overlay can also be attached to a hotspot in
+another overlay (for example, placing eyes on a head overlay).  In
+this example, the position of the eyes is determined by adding the
+eye's offset to the eyes' hotspot location (this is given in the
+head's bgf), and then adding this to the head's hotspot location (this
+is given in the body's bgf).  In other words, the eyes' offset is
+computed relative to the head's location.
+
+
+

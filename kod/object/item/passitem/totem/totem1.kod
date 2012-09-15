@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TotemOne is Totem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TotemOne_name_rsc = "Priceless Heirloom of Barloque"
+   TotemOne_icon_rsc = qo03.bgf
+   TotemOne_desc_rsc = "This decorative piece of art was created for King Zarcos the 4th to be given to his wife "
+         "on their wedding day.  Later, when Queen Joline was convicted of treason and exiled, the king ordered "
+         "the heirloom destroyed because it reminded him of her.  Apparently, the orders were not completely "
+         "carried out.\n\n"
+         "Being one of a kind, this heirloom can not be carried in one's possession for very long or tucked away "
+         "in a chest."
+
+classvars:
+
+
+   vrName = TotemOne_name_rsc
+   vrIcon = TotemOne_icon_rsc
+   vrDesc = TotemOne_desc_rsc
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 1
+
+   vrposs_article = object_article_cap_this_rsc
+
+   vrTotem_overlay = TotemOne_icon_rsc
+
+   viBulk = 100
+   viWeight = 100
+
+properties:
+   
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

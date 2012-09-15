@@ -1,0 +1,107 @@
+# Orc Pit Boss
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-12 Attack
+#^Applied to Hotspot: 0
+#*Groups: 12
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+72
+orp000sa.bmp   [0, 3] 
+orp315sa.bmp   [0, 5] 
+orp270sa.bmp   [0, 0] 
+orp180sa.bmp   [0, -1] 
+orp090sa.bmp   [0, 4] 
+orp045sa.bmp   [0, -3] 
+orp000wa.bmp   [0, 2] 
+orp315wa.bmp   [0, 2] 
+orp270wa.bmp   [0, -5] 
+orp180wa.bmp   [0, -2] 
+orp090wa.bmp   [0, -2] 
+orp045wa.bmp   [0, -7] 
+orp000wb.bmp   [0, 3] 
+orp315wb.bmp   [0, 4] 
+orp270wb.bmp   [0, -2] 
+orp180wb.bmp   [0, -13] 
+orp090wb.bmp   [0, -5] 
+orp045wb.bmp   [0, -4] 
+orp000wc.bmp   [0, -3] 
+orp315wc.bmp   [0, -3] 
+orp270wc.bmp   [0, -1] 
+orp180wc.bmp   [0, -8] 
+orp090wc.bmp   [0, -9] 
+orp045wc.bmp   [0, -1] 
+orp000wd.bmp   [0, 7] 
+orp315wd.bmp   [0, -1] 
+orp270wd.bmp   [0, -12] 
+orp180wd.bmp   [0, -18] 
+orp090wd.bmp   [0, -3] 
+orp045wd.bmp   [0, 6] 
+orp000we.bmp   [0, -2] 
+orp315we.bmp   [0, -2] 
+orp270we.bmp   [0, -8] 
+orp180we.bmp   [0, -11] 
+orp090we.bmp   [0, -4] 
+orp045we.bmp   [0, -1] 
+orp000fa.bmp   [0, 3] 
+orp315fa.bmp   [0, 5] 
+orp270fa.bmp   [0, 0] 
+orp180fa.bmp   [0, -1] 
+orp090fa.bmp   [0, 2] 
+orp045fa.bmp   [0, -2] 
+orp000fb.bmp   [0, 3] 
+orp315fb.bmp   [0, 4] 
+orp270fb.bmp   [0, 0] 
+orp180fb.bmp   [0, -4] 
+orp090fb.bmp   [0, 2] 
+orp045fb.bmp   [0, -2] 
+orp000fc.bmp   [0, 4] 
+orp315fc.bmp   [0, 4] 
+orp270fc.bmp   [0, 0] 
+orp180fc.bmp   [0, -4] 
+orp090fc.bmp   [0, 2] 
+orp045fc.bmp   [0, -3] 
+orp000fd.bmp   [0, 2] 
+orp315fd.bmp   [0, 5] 
+orp270fd.bmp   [0, 0] 
+orp180fd.bmp   [0, -4] 
+orp090fd.bmp   [0, 2] 
+orp045fd.bmp   [0, -3] 
+orp000fe.bmp   [0, 4] 
+orp315fe.bmp   [0, 5] 
+orp270fe.bmp   [0, 0] 
+orp180fe.bmp   [0, -2] 
+orp090fe.bmp   [0, 2] 
+orp045fe.bmp   [0, -3] 
+orp000ff.bmp   [0, 3] 
+orp315ff.bmp   [0, 5] 
+orp270ff.bmp   [0, 0] 
+orp180ff.bmp   [0, -1] 
+orp090ff.bmp   [0, 2] 
+orp045ff.bmp   [0, -3] 
+12
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 

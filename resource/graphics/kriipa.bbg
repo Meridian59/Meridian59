@@ -1,0 +1,174 @@
+# Kriipa
+# 
+# Groups:
+#            1 Standing (on the ceiling)
+#            2 Standing (on the ground)
+#          3-5 jumping up to the ceiling
+#         6-10 jumping down to the ground
+#        11-15 walking
+#        16-20 attacking
+#^Applied to Hotspot: 0
+#*Groups: 20
+#* stand up
+#* stand down
+#* jump up A
+#* jump up B 
+#* jump up C 
+#* jump down A 
+#* jump down B 
+#* jump down C 
+#* jump down D 
+#* jump down E 
+#* walk A
+#* walk B 
+#* walk C 
+#* walk D 
+#* walk E 
+#* attack A
+#* attack B 
+#* attack C 
+#* attack D 
+#* attack E 
+-s 3
+120
+kri000sa.bmp   [0, -40] 
+kri315sa.bmp   [0, -75] 
+kri270sa.bmp   [0, -89] 
+kri180sa.bmp   [0, -54] 
+kri090sa.bmp   [0, -89] 
+kri045sa.bmp   [0, -54] 
+kri000sb.bmp   [0, -3] 
+kri315sb.bmp   [0, 3] 
+kri270sb.bmp   [0, 4] 
+kri180sb.bmp   [0, -3] 
+kri090sb.bmp   [0, 4] 
+kri045sb.bmp   [0, 4] 
+kri000ua.bmp   [0, -1] 
+kri315ua.bmp   [0, 5] 
+kri270ua.bmp   [0, 4] 
+kri180ua.bmp   [0, -8] 
+kri090ua.bmp   [0, 6] 
+kri045ua.bmp   [0, 4] 
+kri000ub.bmp   [0, -1] 
+kri315ub.bmp   [0, 5] 
+kri270ub.bmp   [0, 4] 
+kri180ub.bmp   [0, -9] 
+kri090ub.bmp   [0, 5] 
+kri045ub.bmp   [0, 3] 
+kri000uc.bmp   [0, 20] 
+kri315uc.bmp   [0, 18] 
+kri270uc.bmp   [0, 4] 
+kri180uc.bmp   [0, -11] 
+kri090uc.bmp   [0, 6] 
+kri045uc.bmp   [0, 20] 
+kri000da.bmp   [0, 77] 
+kri315da.bmp   [0, 75] 
+kri270da.bmp   [0, 74] 
+kri180da.bmp   [0, 69] 
+kri090da.bmp   [0, 74] 
+kri045da.bmp   [0, 74] 
+kri000db.bmp   [0, -3] 
+kri315db.bmp   [0, 3] 
+kri270db.bmp   [0, 5] 
+kri180db.bmp   [0, -4] 
+kri090db.bmp   [0, 4] 
+kri045db.bmp   [0, 3] 
+kri000dc.bmp   [0, -3] 
+kri315dc.bmp   [0, 3] 
+kri270dc.bmp   [0, 5] 
+kri180dc.bmp   [0, 14] 
+kri090dc.bmp   [0, 5] 
+kri045dc.bmp   [0, 3] 
+kri000dd.bmp   [0, -2] 
+kri315dd.bmp   [0, 8] 
+kri270dd.bmp   [0, 5] 
+kri180dd.bmp   [0, 47] 
+kri090dd.bmp   [0, 5] 
+kri045dd.bmp   [0, 3] 
+kri000de.bmp   [0, 12] 
+kri315de.bmp   [0, 15] 
+kri270de.bmp   [0, 5] 
+kri180de.bmp   [0, 14] 
+kri090de.bmp   [0, 5] 
+kri045de.bmp   [0, 3] 
+kri000wa.bmp   [0, -59] 
+kri315wa.bmp   [0, -93] 
+kri270wa.bmp   [0, -85] 
+kri180wa.bmp   [0, -50] 
+kri090wa.bmp   [0, -85] 
+kri045wa.bmp   [0, -71] 
+kri000wb.bmp   [0, -41] 
+kri315wb.bmp   [0, -55] 
+kri270wb.bmp   [0, -89] 
+kri180wb.bmp   [0, -54] 
+kri090wb.bmp   [0, -89] 
+kri045wb.bmp   [0, -74] 
+kri000wc.bmp   [0, -50] 
+kri315wc.bmp   [0, -52] 
+kri270wc.bmp   [0, -84] 
+kri180wc.bmp   [0, -49] 
+kri090wc.bmp   [0, -84] 
+kri045wc.bmp   [0, -93] 
+kri000wd.bmp   [0, -46] 
+kri315wd.bmp   [0, -63] 
+kri270wd.bmp   [0, -86] 
+kri180wd.bmp   [0, -50] 
+kri090wd.bmp   [0, -84] 
+kri045wd.bmp   [0, -77] 
+kri000we.bmp   [0, -40] 
+kri315we.bmp   [0, -75] 
+kri270we.bmp   [0, -89] 
+kri180we.bmp   [0, -54] 
+kri090we.bmp   [0, -89] 
+kri045we.bmp   [0, -54] 
+kri000fa.bmp   [0, -4] 
+kri315fa.bmp   [0, 3] 
+kri270fa.bmp   [0, 4] 
+kri180fa.bmp   [0, -10] 
+kri090fa.bmp   [0, 5] 
+kri045fa.bmp   [0, 5] 
+kri000fb.bmp   [0, 20] 
+kri315fb.bmp   [0, 31] 
+kri270fb.bmp   [0, 43] 
+kri180fb.bmp   [0, 43] 
+kri090fb.bmp   [0, 43] 
+kri045fb.bmp   [0, 30] 
+kri000fc.bmp   [0, -69] 
+kri315fc.bmp   [0, -62] 
+kri270fc.bmp   [0, -49] 
+kri180fc.bmp   [0, -10] 
+kri090fc.bmp   [0, -52] 
+kri045fc.bmp   [0, -63] 
+kri000fd.bmp   [0, -86] 
+kri315fd.bmp   [0, -80] 
+kri270fd.bmp   [0, -77] 
+kri180fd.bmp   [0, -68] 
+kri090fd.bmp   [0, -83] 
+kri045fd.bmp   [0, -88] 
+kri000fe.bmp   [0, -2] 
+kri315fe.bmp   [0, 1] 
+kri270fe.bmp   [0, -10] 
+kri180fe.bmp   [0, -45] 
+kri090fe.bmp   [0, -10] 
+kri045fe.bmp   [0, 2] 
+20
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 
+ 8   79 80 81 82 82 82 83 84 
+ 8   85 86 87 88 88 88 89 90 
+ 8   91 92 93 94 94 94 95 96 
+ 8   97 98 99 100 100 100 101 102 
+ 8   103 104 105 106 106 106 107 108 
+ 8   109 110 111 112 112 112 113 114 
+ 8   115 116 117 118 118 118 119 120 

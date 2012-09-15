@@ -1,0 +1,480 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanShopkeeper is KocatanTown
+
+constants:
+
+   include blakston.khd
+
+   % Max number of different items for sale.
+   MAX_FORSALE = 25
+
+   % Max number of number items that will be held.
+   NUMBER_ITEM_MAX = 5500
+
+resources:
+
+   kocatanShopkeeper_name_rsc = "Pacal ix'Anoak"
+   kocatanShopkeeper_icon_rsc = kcshopk.bgf
+   kocatanShopkeeper_desc_rsc =  \
+      "This somewhat scattered man runs a very scattered store set in an abandoned "
+      "arsenal.  Regardless of his apparent lack of organization, Pacal has a remarkable "
+      "understanding of exactly what is here and where."
+   
+   kocatanShopkeeper_entry_welcome = "I probably got what you're looking for.... somewhere...."
+
+   JunkMan_AlreadyHaveOne_rsc = "I've already got one of them to unload, I don't need another right now."
+   JunkMan_NumberItem_rsc = "Sorry, my friend, trinkets like those are things I `Bwon't`n take."
+   JunkMan_Full_rsc = "I wish I could take that off of your hands for you, but mine are all full too!"  
+   JunkMan_Not_Interested = "I thank ye, but I am not interested."
+
+classvars:
+
+   vrName = kocatanShopkeeper_name_rsc
+   vrIcon = kocatanShopkeeper_icon_rsc
+   vrDesc = kocatanShopkeeper_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_BUYER 
+   viOccupation = MOB_ROLE_MERCHANT
+
+properties:
+   
+   ptNew_Junk = $
+
+messages:
+
+   Constructed()
+   {
+      ptNew_Junk = CreateTimer(self,@AddNewJunkToSell,Random(900000,1800000));
+
+      propagate;
+   }
+
+   UserEntered(who = $)
+   {
+      local iFlags;
+
+      iFlags = send(who,@GetObjectFlags);
+
+      if (iFlags & PLAYER_PK) OR (iFlags & PLAYER_OUTLAW)
+      {
+         send(self,@SetMood,#new_mood=piMood+1);
+      }
+
+      if Send(who,@GetAction) = UA_HAPPY
+      {
+         send(self,@SetMood,#new_mood=piMood-2);
+      }
+
+      if Send(who,@GetAction) = UA_SAD
+      {
+         send(self,@SetMood,#new_mood=piMood-2);
+      }
+
+      Post(poOwner,@SomeoneSaid,#what=self,#string=KocatanTailor_entry_welcome,
+           #type=SAY_RESOURCE);
+
+      return;
+   }
+
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_DAWN 
+      {
+         send(self,@SetMood,#new_mood=piMood+1);
+
+         return;
+      }
+
+      if why = MOODMOD_DUSK 
+      {
+         send(self,@SetMood,#new_mood=piMood-1);
+
+         return;
+      }
+
+      if why = MOODMOD_ACCEPT_ITEM
+      {
+         send(self,@SetMood,#new_mood=piMood+1);
+
+         return;
+      }
+
+      if why = MOODMOD_SELL_ITEM
+      {
+         if IsClass(what,&Junk)
+         {
+            send(self,@SetMood,#new_mood=piMood+10);
+
+            return;
+         }
+      }
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptNew_Junk <> $
+      {
+         DeleteTimer(ptNew_Junk);
+         ptNew_Junk = $;
+      }
+
+      propagate;
+   }
+
+   AddNewJunkToSell()
+   "Adds more junk to sell, also reduces the amount of number items held if over max."
+   {
+      local oJunk, lForSale, i, bAdd;
+
+      ptNew_Junk = $;
+
+      lForSale = first(plFor_sale);
+
+      oJunk = Create(&Junk);
+      bAdd = (length(lForSale) < MAX_FORSALE);
+
+      for i in lForSale
+      {
+         if bAdd AND send(i,@GetName) = send(oJunk,@GetName)
+         {
+            bAdd = FALSE;
+            send(oJunk,@Delete);
+         }
+
+         % Reduce our stock at this point.
+         if IsClass(i,&NumberItem)
+         {
+            % Reduce number item stock by 1/3 to free up room to buy more.
+            send(i,@SubtractNumber,#Number=send(i,@GetNumber)/3);
+         }
+         else
+         {
+            % Likewise, delete about 1/3rd our non-number items.
+            if random(1,3) = 1
+            {
+               send(i,@Delete);
+            }
+         }
+      }
+
+      if bAdd
+      {
+         lForSale = cons(oJunk,lForSale);
+         SetNth(plFor_Sale,1,lForSale);
+      }
+
+      ptNew_Junk = CreateTimer(self,@AddNewJunkToSell,(Random(12,24)*60*60*1000)); % 12-24 hours.
+
+      return;
+   }
+
+   SetForSale()
+   {
+      local i, oJunk1, oJunk2, oJunk3, lForSale;
+
+      lForSale = $;
+
+      oJunk1 = Create(&Junk);
+      oJunk2 = Create(&Junk);
+      oJunk3 = Create(&Junk);
+
+      plFor_sale = [ [oJunk1,oJunk2,oJunk3 ],$,$ ];
+
+      send(self,@NewHold,#what=oJunk1);
+      send(self,@NewHold,#what=oJunk2);
+      send(self,@NewHold,#what=oJunk3);
+
+      return;
+   }
+
+   ObjectDesired(what=$,report=TRUE)
+   "This is set in individual buyers.  It allows them to pick and choose"
+   "what they want to buy."
+   {
+      local i;
+
+      % Don't take money for resale.  That's just silly.
+      if IsClass(what,&Money)
+      {
+         return FALSE;
+      }
+
+      if length(first(plFor_Sale)) > MAX_FORSALE
+      {
+         return FALSE;
+      }
+
+      for i in first(plFor_Sale)
+      {
+         if GetClass(i) = GetClass(what)
+         {
+            if IsClass(i,&NumberItem)
+               AND (send(what,@GetNumber) + send(i,@GetNumber)) < NUMBER_ITEM_MAX
+            {
+               return TRUE;
+            }
+
+            return FALSE;
+         }
+      }
+
+      if send(what,@HasAttribute,#ItemAtt=IA_BONDED) OR send(what,@IsItemType,#type=ITEMTYPE_SPECIAL)
+      {
+         return FALSE;
+      }
+
+      if IsClass(what,&Token) OR IsClass(what,&Totem)
+      {
+         return FALSE;
+      }
+      
+      return TRUE;
+   }
+
+   AcceptOffer()
+   "Transfer the purchased merchandise - MOB_BUYER"
+   {
+      local i,j,oHolder,lTake_items, bHadSomeNum, lForSale;
+
+      lForSale = First(plFor_Sale);
+
+      % set the stuff where the user can get to it
+      oHolder = Send(SYS,@GetSystemHolder2);
+      for i in plOffer_items
+      {
+         Send(oHolder,@NewHold,#what=i);
+      }
+
+      % take stuff the user put there
+      oHolder = Send(SYS,@GetSystemHolder1);
+      for lTake_items in [Send(oHolder,@GetHolderActive), Send(oHolder,@GetHolderPassive)]
+      {
+         for i in lTake_items
+         {
+            Send(self,@NewHold,#what=i);
+            if IsClass(i,&NumberItem)
+            {
+               bHadSomeNum = FALSE;
+               for j in lForSale
+               {
+                  if getclass(j) = getclass(i)
+                  {
+                     bHadSomeNum = TRUE;
+                     send(j,@AddNumber,#number=send(i,@GetNumber));
+
+                     break;
+                  }
+               }
+               if not bHadSomeNum
+               {
+                  lForSale = cons(i,lForSale);
+               }
+            }
+            else
+            {
+               % If this is a spell item, then stop the go bad timer.
+               if IsClass(i,&SpellItem)
+               {
+                  send(i,@StopGoBadTimer);
+               }
+               
+               lForSale = cons(i,lForSale);
+            }
+         }
+      }
+
+      % kill the cancel offer timer
+      SetNth(plFor_Sale,1,lForSale);
+      Send(self,@OfferCanceled);
+
+      return TRUE;
+   }
+
+   Buy(what = $,item_list = $,number_list = $)
+   "Handle things having to do with mobs who have stuff to sell"
+   "This is used for both teachers and sellers"
+   {
+      local i,j,bFound,oBuy,oMoney,iPrice,lForSale,
+            lNumbers,iDefaultAmount,iAmount; % New vars for player specified amounts in buying
+
+      lForSale = First(plFor_Sale);
+      if NOT send(self,@IsCustomerOkay,#who=what)
+      {
+         return;
+      }
+
+      % The next line added to handle player specified amounts
+      lNumbers = number_list;
+
+      for i in item_list
+      %The objects the user selected as wanting to purchase from our Sale list
+      {
+         % Find the dude's money.  Do this each time in case we exactly use it up.
+
+         oMoney = Send(what,@GetMoneyObject); % Get the amount of money for standard amount
+         iPrice = Send(self,@GetPrice,#what=i,#who=what); % Get the price for that amount
+         
+         % This code has been added to handle player specified amounts in buying
+         if IsClass(i,&Item) % If the item is an item (not a skill)
+         {
+            if IsClass(i,&NumberItem)  % If the player can specify an amount
+            {
+               % First get the item default amount and how many the player wants
+               iDefaultAmount = Send(i,@GetNumber);
+               iAmount = First(lNumbers);
+
+               % Make sure requested number of items is within MIN_BUY_AMOUNT - MAX_BUY_AMOUNT
+               if (iAmount < MIN_BUY_AMOUNT)
+               {
+                  iAmount = MIN_BUY_AMOUNT;
+               }
+
+               if (iAmount > iDefaultAmount)
+               {
+                  iAmount = iDefaultAmount;
+               }
+         
+               % Now figure price (remember price can be "Gold for #items".
+               iPrice = iPrice * iAmount;
+
+               % Make sure we have a price of at least one gold coin
+               if (iPrice < 1)
+               {
+                  iPrice = 1;
+               }
+
+               % Lastly, update lNumbers to point to the next number in the list
+               lNumbers = Rest(lNumbers);
+            }
+         }
+         % This is the end of the added code to handle player specified amounts in buying
+
+         if oMoney = $ OR (Send(oMoney,@GetValue) < iPrice)
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#string=Lm_mrcnt_too_costly,
+                 #type=SAY_RESOURCE,
+                 #parm1=Send(i,@GetDef),#parm2=Send(i,@GetName));
+
+            continue;
+         }
+
+         % make sure the item is really for sale from this mob
+         bFound = FALSE;
+         for j in Send(self,@GetForSale,#who=what)
+         {
+            if i = j
+            {
+               bFound = TRUE;
+            }
+         }
+
+         if NOT bFound
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,
+                 #string=Lm_mrcnt_not_selling,#type=SAY_RESOURCE);
+
+            continue;
+         }
+
+         if IsClass(i,&Item)
+         {
+            if IsClass(i,&NumberItem)
+            {
+               oBuy = Create(GetClass(i),#number=iAmount); % #number=Send(i,@GetNumber));
+            }
+            else
+            {
+               oBuy = i;
+            }
+
+            if Send(what,@ReqNewHold,#what=oBuy) AND Send(oBuy,@ReqNewOwner,#what=what)
+            {
+               if IsClass(i,&NumberItem)
+               {
+                  if send(i,@GetNumber) = iAmount
+                  {
+                     lForSale = DelListElem(lForSale,i);
+                  }
+
+                  send(i,@SubtractNumber,#Number=iAmount);
+               }
+               else
+               {
+                  % Start the go bad timer.
+                  if IsClass(i,&SpellItem)
+                  {
+                     send(i,@StartGoBadTimer);
+                  }
+
+                  lForSale = DelListElem(lForSale,i);
+               }
+
+               Send(what,@NewHold,#what=oBuy);
+               Send(oMoney,@SubtractNumber,#number=iPrice);
+               Send(self,@RemoveFromConditionalList,#obj=Send(self,@GetObjectOnConditionalList,#class=GetClass(i)));
+               if send(oBuy,@HasAttribute,#ItemAtt=IA_SELL_INFO)
+               {
+                  Post(poOwner,@SomeoneSaid,#what=self,
+                       #string=nth(send(oBuy,@GetAttributeData,#ItemAtt=IA_SELL_INFO),2),
+                       #type=SAY_RESOURCE);
+               }
+            }
+            else
+            {
+               Post(poOwner,@SomeoneSaid,#what=self,#string=Lm_mrcnt_cant_give,
+                     #type=SAY_RESOURCE,
+                     #parm1=Send(oBuy,@GetDef),#parm2=Send(oBuy,@GetName));
+            }
+         }
+         else 
+         % Its a skill or spell which we know to be legal to "sell"
+         % so go ahead and add it....
+         {
+            if IsClass(i,&Skill)
+            {
+               Send(what,@AddSkill,#num=Send(i,@GetSkillNum));
+               Send(oMoney,@SubtractNumber,#number=iPrice);
+            }
+            else
+            {
+               Send(what,@AddSpell,#num=Send(i,@GetSpellNum));
+               Send(oMoney,@SubtractNumber,#number=iPrice);
+            }
+         }
+      }
+
+      SetNth(plFor_Sale,1,lForSale);
+
+      return;
+   }
+
+   NewHoldObject(what = $)
+   {
+      local oOwner;
+
+      oOwner = send(what,@GetOwner);
+
+      if oOwner <> $
+      {
+         Send(poOwner,@LeaveHold,#what=what);
+         send(what,@NewOwner,#what=$);
+      }
+
+      return;  
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

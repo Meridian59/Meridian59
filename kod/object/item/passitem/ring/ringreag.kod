@@ -1,0 +1,182 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ReagentRing is Ring
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ReagentRing_name_rsc = "ring of Far'nohl"
+   ReagentRing_icon_rsc = ring01.bgf
+   ReagentRing_desc_rsc = "A replica of the powerful ring once worn by the "
+      "powerful King Far'nohl, this ring will let the bearer cast spells "
+      "even while lacking the necessary reagents.  Sadly, since it is "
+      "a mere copy of the original, it will only gift you with limited "
+      "usage."
+
+   ReagentRing_chargeslefta_rsc = "There are "
+   ReagentRing_chargesleftb_rsc = " charges left in this ring."
+
+   ReagentRing_disappear_rsc = \
+      "As the last charge is consumed, the ring of Far'nohl disappears in "
+      "a puff of dust."
+
+classvars:
+
+   vrRealName = ReagentRing_name_rsc
+   vrIcon = ReagentRing_icon_rsc
+   vrRealDesc = ReagentRing_desc_rsc
+
+   viHits_init_min = 5
+   viHits_init_max = 5
+
+   viBulk = 5
+   viWeight = 10
+   
+   viValue_average = 100
+
+properties:
+
+   vrName = ReagentRing_name_rsc
+   vrDesc = ReagentRing_desc_rsc
+
+   piItem_flags = PT_GRAY_TO_BLACK
+
+   piCharges = 5
+   pbIn_use = FALSE
+
+messages:
+
+   Constructor()
+   {
+      Send(self,@SetColor,#iColor=piCharges);
+      
+      propagate;
+   }
+
+   AppendDesc()
+   {
+      AppendTempString("\n\n");   
+      AppendTempString(ReagentRing_chargeslefta_rsc);      
+      Send(SYS,@AppendCardinalToTempString,#number=piCharges);
+      AppendTempString(ReagentRing_chargesleftb_rsc);
+      
+      return;
+   }
+
+   NewUsed(what=$)
+   {
+      pbIn_use = TRUE;
+
+      propagate;
+   }
+
+   NewUnused(what=$)
+   {
+      pbIn_use = FALSE;
+
+      propagate;
+   }
+
+   InUse()
+   {
+      return pbIn_use;
+   }
+
+   UseCharges(iCharges=1)
+   {
+      % Must be worn to be used.
+      if NOT pbIn_use
+      {
+         return FALSE;
+      }
+
+      if (piCharges - iCharges) < 0
+      {
+         return FALSE;
+      }
+      
+      piCharges = piCharges - iCharges;
+
+      Send(self,@SetColor,#iColor=piCharges);
+
+      if piCharges <= 0
+      {
+         Post(self,@Delete);
+      }
+
+      return TRUE;
+   }
+
+   SetColor(iColor=0)
+   {
+      if iColor > 3
+      {
+         piItem_flags = PT_GRAY_TO_DBLUE;
+      }
+      else
+      {
+         if iColor > 1 AND iColor < 4
+         {
+            piItem_flags = PT_GRAY_TO_BBLUE;
+         }
+         else
+         {
+            if iColor = 1
+            {
+               piItem_flags = PT_GRAY_TO_SKY;
+            }
+            else
+            {
+               piItem_flags = PT_GRAY_TO_BLACK;
+            }
+         }
+      }
+
+      if poOwner <> $
+      {
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;         
+   }
+
+   Delete()
+   {
+      % Print message to user that ring has been consumed.
+      Send(poOwner,@MsgSendUser,#message_rsc=ReagentRing_disappear_rsc);
+
+      propagate;
+   }
+
+   % This is a pretty pricey reward, so they must have earned it.
+   % Don't let the ring be taken away.
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+ 
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

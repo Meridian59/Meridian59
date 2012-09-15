@@ -1,0 +1,134 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Hospice is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   hospice_name_rsc = "hospice"
+   hospice_icon_rsc = ihospice.bgf
+   hospice_desc_rsc = \
+      "Rejuvenates the target of the spell with Shal'ille's healing energy.  "
+      "Shal'ille gives a small reward toward the karma of the mage who heals "
+      "another good soul.  "
+      "Requires herbs to cast."
+
+   hospice_cast_rsc = "The spirit of Shal'ille enters your body and rejuvenates it."
+   hospice_cast_on_other = "You heal %s%s."
+   hospice_unnecessary_rsc = "%s%s is perfectly healthy."
+
+classvars:
+
+   vrName = hospice_name_rsc
+   vrIcon = hospice_icon_rsc
+   vrDesc = hospice_desc_rsc
+
+   viSchool = SS_SHALILLE
+   viSpell_num = SID_HOSPICE
+   viMana = 10
+   viSpell_level = 3
+   viChance_To_Increase = 15
+
+   viCast_time = 600
+
+   viFlash = FLASH_GOOD
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Herbs,3],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if not IsClass(target, &User)
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
+                 #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      if Send(target,@GetHealth) >= Send(target,@GetMaxHealth)
+      {
+         if NOT bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=hospice_unnecessary_rsc,
+              #parm1=Send(target,@GetCapDef), #parm2=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local iHeal, oTarget;
+
+      oTarget = First(lTargets);
+          
+      iHeal = random(-3,3) + iSpellPower/5 + Send(oTarget,@GetKarma)/10;
+      iheal = bound(iHeal,0,25);
+
+      if who <> oTarget 
+      {
+         Send(who, @MsgSendUser, #message_rsc=hospice_cast_on_other,
+              #parm1=Send(oTarget,@GetDef),
+              #parm2=Send(oTarget,@GetName));
+
+         % Give them a little boost if they help someone of higher Karma.
+         if send(who,@GetKarma) < send(oTarget,@GetKarma)
+         {
+            send(who,@AddKarma,#amount = send(who,@CalculateKarmaChangeFromAct,
+                 #karma_doer=send(who,@GetKarma),#karma_act=send(oTarget,@GetKarma),
+                 #Swing_factor=2));
+         }
+      }       
+
+      Send(oTarget,@MsgSendUser,#message_rsc=hospice_cast_rsc);
+      Send(oTarget,@GainHealthNormal,#amount=iHeal);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

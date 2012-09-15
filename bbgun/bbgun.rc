@@ -1,0 +1,240 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+BBGUN MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open",                       IDM_OPENBBG
+        MENUITEM "&Save",                       IDM_SAVEBBG
+        MENUITEM "&New",                        IDM_CREATEBBG
+        MENUITEM "&Close",                      IDM_CLOSEBBG
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       IDM_EXIT
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Other settings...",          IDM_OTHER
+        MENUITEM "Animation...",                IDM_ANIME
+        MENUITEM "Use &transparency",           IDM_TRANSPARENT
+        MENUITEM "Show &hotspots",              IDM_SHOWHOTSPOTS
+    END
+    MENUITEM "&Help",                       IDM_HELP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+MainDialog DIALOG 9, 30, 461, 326
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "BBGun - Other Realms Hotspot Editor"
+CLASS "BBGun"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "",IDBITMAP,"Button",BS_OWNERDRAW | WS_BORDER | 
+                    WS_TABSTOP,2,2,200,282
+    LTEXT           "Zoom:",IDC_STATIC,15,291,21,8
+    SCROLLBAR       IDZOOMBAR,45,290,86,11
+    CTEXT           "",IDZOOMTEXT,131,290,19,11,WS_BORDER
+    GROUPBOX        "BBG files",IDC_GROUPBOX4,208,4,165,80
+    CTEXT           "Base",IDC_STATIC,232,14,21,8
+    CTEXT           "",ANCHORTEXT,216,25,55,13,WS_BORDER
+    CTEXT           "Overlay",IDC_STATIC,226,39,32,8
+    CTEXT           "",WANDER1TEXT,216,50,55,13,WS_BORDER
+    PUSHBUTTON      "<=",IDSETANCHOR,270,22,15,16
+    PUSHBUTTON      "<=",IDSETWANDERONE,270,47,15,16
+    LISTBOX         IDBBGLIST,286,18,77,46,LBS_HASSTRINGS | WS_VSCROLL
+    CONTROL         "Dual Bitmap Mode",IDC_DUALMODE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,218,70,78,10
+    GROUPBOX        "Base bitmaps",IDC_BASEGROUP,208,89,116,107
+    LISTBOX         IDC_FILELIST,212,101,71,89,LBS_HASSTRINGS | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "Insert",IDC_BITMAPLOAD,288,97,32,14
+    PUSHBUTTON      "Remove",IDC_BITMAPUNLOAD,288,112,32,14
+    LTEXT           "Offset",IDC_STATIC,296,129,22,8
+    CTEXT           "X",IDC_STATIC,288,140,8,8
+    CTEXT           "",IDC_XOFFSET,299,139,20,10,WS_BORDER
+    CTEXT           "Y",IDC_STATIC,288,153,8,8
+    CTEXT           "",IDC_YOFFSET,299,152,20,10,WS_BORDER
+    LTEXT           "Shrink",IDC_STATIC,298,163,21,8
+    CTEXT           "",IDC_SHRINK,303,173,13,11,WS_BORDER
+    SCROLLBAR       IDC_SHRINKSCROLL,303,184,13,8
+    GROUPBOX        "Overlay bitmaps",IDC_OVERLAYGROUP,334,89,116,107
+    LISTBOX         IDC_FILELIST2,338,100,71,89,LBS_HASSTRINGS | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "Insert",IDC_BITMAPLOAD2,413,97,32,14,WS_DISABLED
+    PUSHBUTTON      "Remove",IDC_BITMAPUNLOAD2,413,112,32,14,WS_DISABLED
+    LTEXT           "Offset",IDC_STATIC,421,129,22,8
+    CTEXT           "X",IDC_STATIC,414,140,8,8
+    CTEXT           "",IDC_XOFFSET2,424,139,20,10,WS_BORDER
+    CTEXT           "Y",IDC_STATIC,414,153,8,8
+    CTEXT           "",IDC_YOFFSET2,424,152,20,10,WS_BORDER
+    LTEXT           "Shrink",IDC_STATIC,424,163,23,8
+    CTEXT           "",IDC_SHRINK2,428,172,13,11,WS_BORDER
+    SCROLLBAR       IDC_SHRINKSCROLL2,428,184,13,8
+    GROUPBOX        "Hotspots",IDC_GROUPBOX3,208,202,77,110
+    LISTBOX         IDHOTLIST,212,215,23,65,LBS_HASSTRINGS | 
+                    LBS_DISABLENOSCROLL | WS_VSCROLL
+    LTEXT           "X",IDC_STATIC,240,215,8,8
+    CTEXT           "",IDC_HOTX,250,214,15,10,WS_BORDER
+    LTEXT           "Y",IDC_STATIC,240,227,8,8
+    CTEXT           "",IDC_HOTY,250,226,15,10,WS_BORDER
+    PUSHBUTTON      "Add",IDNEWHOTSPOT,238,240,32,14
+    PUSHBUTTON      "Remove",IDDELHOTSPOT,238,256,32,14
+    CONTROL         "View All",IDVIEWHOTS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,239,275,43,10
+    LTEXT           "Number",IDC_STATIC,211,286,27,8
+    EDITTEXT        IDHOTSPOT,211,294,27,12,ES_AUTOHSCROLL
+    SCROLLBAR       IDHOTNUMBER,240,289,8,17,SBS_VERT
+    PUSHBUTTON      "+/-",IDOPPOSITELAY,248,289,10,17
+    GROUPBOX        "Group controls",IDC_GROUPBOX1,294,202,161,100
+    LISTBOX         IDGROUPIES,297,217,67,81,LBS_HASSTRINGS | WS_VSCROLL
+    PUSHBUTTON      "Add Bitmap",IDGROUPADDBIT,371,209,52,14
+    LTEXT           "Insert",IDC_STATIC,366,230,20,8
+    PUSHBUTTON      "Bitmap",IDGROUPINSBIT,386,227,27,14
+    PUSHBUTTON      "0",IDINSERTZERO,413,227,9,14
+    PUSHBUTTON      "Remove Bitmap",IDGROUPREMOVEBIT,371,246,52,14
+    PUSHBUTTON      "Create Group",IDGROUPCREATE,371,264,52,14
+    PUSHBUTTON      "Remove Group",IDGROUPREMOVE,371,281,52,14
+    LISTBOX         IDGROUPLIST,425,210,25,89,LBS_DISABLENOSCROLL | 
+                    WS_VSCROLL
+END
+
+IDD_SETTINGS DIALOG DISCARDABLE  75, 97, 254, 175
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "BBG file settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "BBG filename:",IDC_STATIC,7,11,45,8
+    EDITTEXT        IDFILENAME,66,9,82,12,ES_AUTOHSCROLL
+    LTEXT           "Comments:",IDC_STATIC,7,26,36,8
+    EDITTEXT        IDC_COMMENTS,5,38,245,110,ES_MULTILINE | ES_AUTOVSCROLL | 
+                    ES_WANTRETURN | WS_VSCROLL
+    PUSHBUTTON      "OK",IDOK,82,154,37,15
+    PUSHBUTTON      "Cancel",IDCANCEL,135,154,37,15
+END
+
+IDD_SAVE DIALOG DISCARDABLE  0, 0, 183, 92
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Save BBGs"
+FONT 8, "MS Sans Serif"
+BEGIN
+    LTEXT           "Which BBGs do you want to save?",IDC_STATIC,35,12,112,8
+    CONTROL         "Anchor",IDC_SAVEANCHOR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,21,30,39,10
+    LTEXT           "",IDC_ANCHORNAME,67,31,115,8
+    CONTROL         "Overlay",IDC_SAVEOVERLAY,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,21,46,40,10
+    LTEXT           "",IDC_OVERLAYNAME,67,48,115,8
+    DEFPUSHBUTTON   "OK",IDOK,38,71,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,103,71,50,14
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON                ICON    DISCARDABLE     "logo.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        RIGHTMARGIN, 439
+        BOTTOMMARGIN, 308
+    END
+
+    IDD_SAVE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 176
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 85
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

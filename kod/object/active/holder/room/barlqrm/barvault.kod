@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarVault is BarloqueRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_barvault = "Office of the Barloque Vaultman"
+   room_barvault = barvault.roo
+   BarVault_music = smithy.mid
+
+   BarVault_sign_name = "Welcome to the Barloque Vaults"
+   BarVault_sign_desc = \
+      "To use my fair services, simply type DEPOSIT with no further argument.  "
+      "A list of your inventory will appear, and you can choose the items you "
+      "wish to deposit.  To retrieve these items, simply use the WITHDRAW "
+      "command.  Note that this service is not free (the cost will be automatically "
+      "removed from your purse), and that I will not store shillings."
+
+classvars:
+
+   vrName = room_name_barvault
+
+   viTeleport_row = 2
+   viTeleport_col = 5
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_barvault
+   piRoom_num = RID_BAR_VAULT
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = barvault_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 3, 12, RID_BAR_PORT, 10, 55, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 12, RID_BAR_PORT, 10, 55, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&Barloquevaultman),
+           #new_row=4,#new_col=11,#fine_row=48,#fine_col=16);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=5,#new_col=10,#fine_row=40,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=5,#new_col=13,#fine_row=40,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&QuillPen),
+           #new_row=5,#new_col=11,#fine_row=40,#fine_col=48);
+
+      Send(self,@NewHold,#what=create(&Sign,#desc=BarVault_sign_desc,#name=BarVault_sign_name),
+            #new_row=5,#new_col=9,#fine_row=32,#fine_col=32);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=25),
+           #new_row=1,#new_col=8,#fine_row=56,#fine_col=8);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

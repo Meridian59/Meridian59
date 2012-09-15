@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DaemonMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DaemonMask_name_rsc = "daemon skeleton mask"
+   DaemonMask_icon_male_rsc = res0002e.bgf
+   DaemonMask_icon_female_rsc = res0002f.bgf
+   DaemonMask_desc_rsc = \
+      "This mask looks sinister, good for scaring little children.  It would "
+      "be dangerous to store this in your pocket."
+
+classvars:
+
+   vrName = DaemonMask_name_rsc
+   vrDesc = DaemonMask_desc_rsc
+   vrIcon = DaemonMask_icon_male_rsc
+
+   vrMaleIcon = DaemonMask_icon_male_rsc
+   vrFemaleIcon = DaemonMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

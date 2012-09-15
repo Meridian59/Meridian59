@@ -1,0 +1,228 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarionInnkeeper is MarionTown
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   MarionInnkeep_name_rsc = "Morrigan"
+   MarionInnkeep_icon_rsc = mrinnk.bgf
+   MarionInnkeep_desc_rsc = "A silly little man, Morrigan maintains a modest business alternately "
+      "buying and selling reagents and other various notions.  Although his heart doesn't seem to be in "
+      "commerce, there can be little doubt Morrigan loves his job. "
+
+   MrIk_entry_welcome = "Pardon me for saying so, but you look like you could use a rest, %s%s."
+
+   MarionInnkeeper_room_rented = "Here ya go then.  Hope you enjoy your stay, if you have any problems Tova will be glad to help you."
+
+   MarionInnkeeper_cost1 = "Oh, good, you should rest.  Let me see....  I charge "
+   MarionInnkeeper_cost2 = " shillings to ~Irent~n a nice ~Iroom~n here for 85 days.  If you wish to stay longer, I charge "
+   MarionInnkeeper_cost3 = " per day if you pre-pay.  Key copies, uh, key copies....  Oh, they cost "
+   MarionInnkeeper_cost4 = " shillings to make.  I know you'll like your room."
+
+   MarionInnkeeper_days_left = "You like it here, I see.  There are %q days until you should pay me again."
+   MarionInnkeeper_too_long = "Oh, I can't be responsible for holding so much money!  Pay me again later when you don't have so many days left on your tab."
+
+   MarionInnkeeper_destroy_key_copy = "~kMorrigan tells you, \"Oh, yes. I can get rid of this key for you.  No problem.\""
+
+   MrIk_room_command = "room"
+   MrIk_rent_command = "rent"
+   MrIk_cost_command = "cost"
+   MrIk_copy_key_command = "copy key"
+
+classvars:
+
+   vrName = MarionInnkeep_name_rsc
+   vrIcon = MarionInnkeep_icon_rsc
+   vrDesc = MarionInnkeep_desc_rsc
+   viMerchant_Markup = MERCHANT_RIPOFF
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_SELLER | MOB_LISTEN_MOB | MOB_FULL_TALK
+   viOccupation = MOB_ROLE_INNKEEPER
+
+properties:
+
+   piInitialRoomCost = 5000
+   piPerDayCost = 75
+   piKeyCopyCosts = 500
+
+messages:
+
+   % special handling to make him laugh at Tova's chatter
+   SomeoneSaid(what=$,string=$)
+   {
+      local oRoomMaint, rSayRsc;
+
+      % if it's Tova talking
+      if IsClass(what, &MarionBartender)
+      {
+         % one out of three times
+         if Random(1,3) = 1
+         {
+            % simulate randomtimer firing
+            send(self,@RandomTimer,#test=TRUE);
+            return;
+         }
+      }
+      
+      if isClass(what,&User)
+      {
+         oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
+      
+         if (StringContain(string,MrIk_rent_command) AND StringContain(string,MrIk_room_command))
+            OR (StringContain(string,"rent") AND StringContain(string,"room"))
+         {
+            rSayRsc = send(oRoomMaint,@RentRoom,#who=what,#iLocation=RID_MAR_INN,#iCost=piInitialRoomCost);
+
+            % rSayRsc is $ on success.  Use the innkeeper's saying.
+            if rSayRsc = $
+            {
+               rSayRsc = MarionInnkeeper_room_rented;
+            }
+
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
+
+            return;
+         }          
+
+         if StringContain(string,MrIk_copy_key_command)
+            OR StringContain(string,"copy key")
+         {
+            rSayRsc = send(oRoomMaint,@CopyKey,#who=what,#iLocation=RID_MAR_INN,#iCost=piKeyCopyCosts);
+
+            % tell the player.
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=rSayRsc);
+
+            return;
+         }
+
+         if (StringContain(string,MrIk_room_command) AND StringContain(string,MrIk_cost_command))
+            OR (StringContain(string,"room") AND StringContain(string,"cost"))
+         {
+            ClearTempString();
+            AppendTempString(MarionInnkeeper_cost1);
+            AppendTempString(piInitialRoomCost);
+            AppendTempString(MarionInnkeeper_cost2);
+            AppendTempString(piPerDayCost);
+            AppendTempString(MarionInnkeeper_cost3);
+            AppendTempString(piKeyCopyCosts);
+            AppendTempString(MarionInnkeeper_cost4);
+            
+            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,#string=send(SYS,@GetPercentQRsc),
+                 #parm1=GetTempString(),#type1=0);
+
+            return;
+         }          
+      }
+
+      propagate;
+   }
+
+   ReqOffer(what = $,item_list = $)
+   {
+      local i, iMoney, oRoomMaint, iNewDays;
+   
+      % Check for if in the same room.
+      if send(what,@GetOwner) <> poOwner
+      {
+         debug("ALERT! ",send(what,@GetTrueName),what," offered items to NPC ",send(self,@GetTrueName)," from distant RID ",send(send(what,@GetOwner),@GetRoomNum));
+         
+         return FALSE;
+      }     
+
+      for i in item_list
+      {
+         if NOT IsClass(i,&Money)
+         {
+            if GetClass(i) = &RoomKeyCopy
+            {
+               % Say something and delete the key.
+               send(what,@MsgSendUser,#message_rsc=MarionInnkeeper_destroy_key_copy);
+               send(i,@Delete);
+
+               return FALSE;
+            }
+
+            propagate;
+         }
+      }
+
+      iMoney = 0;
+      for i in item_list
+      {
+         iMoney = iMoney + Send(i,@GetValue);
+      }
+
+      oRoomMaint = send(SYS,@GetRentableRoomMaintenance);
+
+      iNewDays = send(oRoomMaint,@GotRent,#who=what,#iAmount=iMoney,#iCost=piPerDayCost,#iLocation=RID_MAR_INN);
+
+      if iNewDays <> $
+      {
+         % iNewDays = 0 means that we've trying to pay for more days than allowed.
+         if iNewDays = 0
+         {
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=MarionInnkeeper_too_long);
+         }
+         else
+         {
+            Post(poOwner,@SomeoneSaid,#type=SAY_RESOURCE,#what=self,#string=MarionInnkeeper_days_left,
+                 #parm1=send(SYS,@IntToString,#num=iNewDays),#type1=STRING_RESOURCE);
+         }
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   ObjectDesired(what=$)
+   {
+      if Send(self,@IsObjectSundry,#what=what)
+         OR Send(self,@IsObjectReagent,#what=what)
+         OR Send(self,@IsObjectWearable,#what=what)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   SetForSale()
+   {
+      plFor_sale=[[           
+		   Create(&PantsC,#translation=PT_GRAY_TO_LRED),
+		   Create(&PantsC,#translation=PT_GRAY_TO_KORANGE),
+		   Create(&Herbs,#number=5),
+         Create(&Elderberry,#number=4),
+		   Create(&Torch)
+		  ],
+		  $,$];
+		  
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      Post(poOwner,@SomeoneSaid,#what=self,#string=MrIk_entry_welcome,
+          #type=SAY_RESOURCE,
+          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+	 
+      propagate;
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,113 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Tanktop is Shirt 
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   tanktop_name_rsc = "light jerkin"
+   tanktop_ground_icon = tanktop.bgf
+   tanktop_male = bta.bgf
+   tanktop_female = btb.bgf
+   tanktop_desc_rsc = \
+      "Thin and lightweight, this close-cropped shirt is the "
+      "preferred style of the jungle community. "
+
+   exotic_top_name_rsc = "undershirt"
+   exotic_top_ground_icon = tanktop.bgf
+   exotic_top_male = btae.bgf
+   exotic_top_female = btbe.bgf
+   exotic_top_desc_rsc = \
+      "This undergarment is obviously cut to be flattering, "
+      "and leaves only a minimum to the imagination when worn. "
+
+
+classvars:
+
+   viHits_init_min = 350
+   viHits_init_max = 450
+
+   viValue_average = 40
+
+properties:
+
+   vrDesc = tanktop_desc_rsc
+   vrName = tanktop_name_rsc
+   vrIcon = tanktop_ground_icon
+
+   vrIcon_male = tanktop_male 
+   vrIcon_female = tanktop_female
+
+messages:
+
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      if vrIcon_female = exotic_top_female
+      {
+         % No bonuses for the skimpy top
+         return defense_power;
+      }
+      return defense_power + piDefense_bonus;
+   }
+
+   SetArms()
+   {
+      send(self,@SetNakedArms);
+      return;
+   }
+
+   Exotic()
+   "Admin supported."
+   {
+      vrDesc = exotic_top_desc_rsc;
+      vrName = exotic_top_name_rsc;
+      vrIcon = exotic_top_ground_icon;
+
+      vrIcon_male = exotic_top_male;
+      vrIcon_female = exotic_top_female;
+
+      send(send(SYS,@UtilGetRoom,#what=self),@SomethingChanged,#what=self);
+
+      return;
+   }
+
+   NewUsed()
+   {
+      local iSkinColor, translation;
+
+      translation = send(self,@GetPaletteTranslation);
+
+      iSkinColor = send(poOwner,@GetSkinColor);
+
+      % The exotic shirts look better if you shift down one level.
+      iSkinColor = bound(iSkinColor-1,1,3);
+
+      translation = send(SYS,@EncodeTwoColorXlat,
+                         #color1=send(SYS,@DecodePrimaryColor,#Xlat=translation),
+                         #color2=iSkinColor);
+
+      send(self,@SetPaletteTranslation,#translation=translation);
+      
+      propagate;
+   }
+
+   HasSkinTones()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

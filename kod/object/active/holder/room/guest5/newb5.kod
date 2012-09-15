@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Newb5 is Guest5
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_newb5 = "Raza Hut"
+
+   newb5_sign = \
+      "Being able to communicate is an important part of Meridian, "
+      "whether you're solving a quest or you're plotting with your "
+      "allies. The most common way to communicate is with the SAY "
+      "command. For example, if you type SAY HELLO, the elder in this "
+      "hut will respond.\n\n"				 
+      "Any other player who happens to be in the same map area as you "
+      "can hear what you say.  However, most shopkeepers and elders "
+      "are hard of hearing; you need to get close for them to hear you.\n\n"
+      "Another communication option is BROADCAST.  If you type BROADCAST HELLO, "
+      "you will then be saying hello to everyone online.  However, you should note "
+      "that it is not considered good etiquette to fill the broadcast channel with "
+      "useless messages, and for that reason, every broadcast you do carries a cost of "
+      "half your mana.  Watch what other people broadcast to get a feel for what is "
+      "appropriate.\n"
+      "-------------------------\n"
+      "Say QUEST to see what you should do next."
+
+classvars:
+
+   vrName = room_name_newb5
+   vrSign = newb5_sign
+
+   viDemo_base = RID_NEWB_BASE
+
+properties:
+
+   piRoom_num = RID_NEWB5
+
+messages:
+
+   Constructed()
+   {
+      piRoom_flags = piRoom_flags & ~ROOM_GUEST_AREA;
+
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      % Don't let them get over 25%.
+      if oSpellSkill <> $
+         AND send(oSpellSkill,@GetAbility,#who=who) >= 25
+      {
+         return CANNOT_IMPROVE;
+      }
+      
+      % Give a general bonus to the nice newbies.
+      return (chance * 3)/2;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

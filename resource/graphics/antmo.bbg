@@ -1,0 +1,15 @@
+# nt mouth
+# groups
+# 1-4 opening and closing
+6
+antm000A.bmp   [-12, -5] 
+antm045A.bmp   [-13, -7] 
+antm315A.bmp   [-9, -6] 
+antm000B.bmp   [-17, -4] 
+antm045B.bmp   [-12, -6] 
+antm315B.bmp   [-12, -6] 
+4
+ 8      1   3   0   0   0   0   0   2
+ 8      4   6   0   0   0   0   0   5
+ 8      1   3   0   0   0   0   0   2
+ 8      4   6   0   0   0   0   0   5

@@ -1,0 +1,94 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKB1 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+   room_OutdoorsKB1 = KB1.roo
+   room_name_OutdoorsKB1 ="The Cliffs"
+   OutdoorsKB1_music = drgnfly.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKB1
+
+   viTeleport_row = 5
+   viTeleport_col = 31
+   viTerrain_type = TERRAIN_JUNGLE | TERRAIN_BEACH | TERRAIN_MOUNTAIN
+
+   viAvar_clan = AVARCLAN_BONE_FACTION 
+
+properties:
+
+   prRoom = room_OutdoorsKB1
+   prMusic = OutdoorsKB1_music
+   piRoom_num = RID_KB1
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Dragonfly, 90], [&Avar, 10] ];
+      plGenerators = [ [13,23], [21,14], [21,36] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&RainbowFern,22,47], [&RainbowFern,19,10], [&RainbowFern,41,21],
+                        [&FireSand,6,17], [&FireSand,6,39]
+                      ];
+
+      % Do not propagate
+      return;
+   }
+ 
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KA1, 50, 62, ROTATE_NONE, ROW_IS_LESS_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KA2, 15, 58, ROTATE_NONE, ROW_IS_GREATER_THAN,20], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KC1, 28, 1, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB2, 1, 25, ROTATE_NONE], plEdge_exits);      
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=30,#new_col=27,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=35,#new_col=28,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

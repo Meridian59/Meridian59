@@ -1,0 +1,157 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Deflect is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Deflect_name_rsc = "deflect"
+   Deflect_icon_rsc = imirror.bgf
+   Deflect_desc_rsc = \
+      "Calls upon Kraanan's will to form a protective barrier around the target "
+      "which protects them from direct damaging attack magics, but not from "
+      "other magics, such as enchantments.  "
+      "Requires solagh and kriipa claws to cast."
+   
+   Deflect_already_enchanted_rsc = "You are already enchanted by deflect."
+
+   Deflect_on_rsc = "A magical barrier surrounds you."
+   Deflect_success_rsc = "You sense a magical barrier surround %s%s."
+   Deflect_off_rsc = "The magical barrier protecting you seems to be waning."
+
+   Deflect_spell_intro = \
+      "Kraanan Level 4: Forms a magical barrier around the target, protecting"
+      "them from harm of magics that damage directly."
+
+   Deflect_sound = kdeflect.wav
+
+   Deflect_success_to_victim = \
+      "Your deflect enchantment bounces %s's spell back onto its caster!"
+   Deflect_success_to_caster = \
+      "A barrier of mystical energy coalesces in front of %s, bouncing "
+      "your spell back at you!"
+   Deflect_failure_to_victim = \
+      "Your deflect enchantment attempts to bounce %s's spell back, "
+      "but is not strong enough."
+
+classvars:
+
+   viPersonal_ench = True
+
+   viSpellExertion = 10
+   vrName = Deflect_name_rsc
+   vrIcon = Deflect_icon_rsc
+   vrDesc = Deflect_desc_rsc
+
+   vrAlreadyEnchanted = Deflect_already_enchanted_rsc
+   vrEnchantment_On = Deflect_On_rsc
+   vrEnchantment_Off = Deflect_Off_rsc
+   vrSuccess = Deflect_Success_rsc
+
+   viSpell_num = SID_DEFLECT
+
+   vrSpell_intro = Deflect_spell_intro
+
+   viMana = 20
+   viCast_time = 3000
+   viSpell_level = 4
+   viSchool = SS_KRAANAN
+
+   viChance_To_Increase = 20
+
+   viFlash = FLASH_GOOD_SELF
+
+   vrSucceed_wav = Deflect_sound
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Solagh,1],plReagents);
+      plReagents = Cons([&KriipaClaw,1],plReagents);
+
+      return;
+   }
+
+   GetStateValue(who = $,iSpellPower= 0,Target=$)
+   {
+      local iReflectOdds;
+
+      iReflectOdds = iSpellPower * 3 / 4;
+
+      return bound(iReflectOdds,10,75);
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % 21-119 seconds
+      iDuration = (20 + iSpellPower) * 1000;
+
+      return random(iDuration/2,iDuration);
+   }
+
+   TryDeflect(caster = $, victim = $, oSpell = $)
+   "Returns TRUE if the spell is deflected."
+   {
+      local chance;
+
+      if Send(oSpell,@IsHarmful)
+         AND Send(oSpell,@GetNumSpellTargets) = 1
+         AND IsClass(oSpell,&AttackSpell)
+      {
+         chance = Send(caster,@GetEnchantedState,#what=self);
+         if Random(0,100) > chance
+         {
+            Send(self,@SendMessageTryDeflectSuccess,#victim=victim,#caster=caster);
+
+            return TRUE;
+         }
+         
+         Send(self,@SendMessageTryDeflectFailure,#victim=victim,#caster=caster);
+      }
+
+      return FALSE;
+   }
+
+   SendMessageTryDeflectSuccess(victim=$,caster=$)
+   {
+      Send(victim,@MsgSendUser,#message_rsc=Deflect_success_to_victim,
+           #parm1=Send(caster,@GetName));
+      Send(caster,@MsgSendUser,#message_rsc=Deflect_success_to_caster,
+           #parm1=Send(victim,@GetName));
+
+      return;
+   }
+
+   SendMessageTryDeflectFailure(victim=$,caster=$)
+   {
+      Send(victim,@MsgSendUser,#message_rsc=Deflect_failure_to_victim,
+           #parm1=Send(caster,@GetName));
+
+      return;
+   }
+
+   GetPotionClass()
+   {
+      return &DeflectPotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

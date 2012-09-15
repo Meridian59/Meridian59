@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MummyTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_MUMMY
+
+   %% mummies will generally generate crap.
+   piDiff_seed = 1
+   piItem_Att_chance = 4
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &Money, 17 ],
+                     [ &RedMushroom, 10 ],
+                     [ &BlueMushroom, 10 ],
+                     [ &Mushroom, 10 ],
+                     [ &Herbs, 10],
+                     [ &Elderberry, 10 ],
+                     [ &Torch, 8 ],
+                     [ &EntrootBerry, 5 ],
+                     [ &Mace, 5 ],
+                     [ &Shortsword, 5 ],
+                     [ &Longsword, 4],
+                     [ &OrcTooth, 3],
+                     [ &MetalShield, 3] ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

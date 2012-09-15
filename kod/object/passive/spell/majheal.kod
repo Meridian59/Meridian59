@@ -1,0 +1,123 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MajorHeal is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   majorheal_name_rsc = "major heal"
+   majorheal_icon_rsc = imajheal.bgf
+   majorheal_desc_rsc = \
+      "The compassionate power of Shal'ille heals severe "
+      "wounds in the caster or another player.  Casting this powerful magic "
+      "on evil souls will reduce your own karmic standing.  "
+      "Requires herbs to cast."
+
+   majorheal_cast_rsc = "You are amazed to see your wounds close up and begin to heal, as if by magic."
+   majorheal_cast_on_other = "You heal %s%s."
+   majorheal_unnecessary_rsc = "%s%s is perfectly healthy."
+
+
+classvars:
+
+   vrName = majorheal_name_rsc
+   vrIcon = majorheal_icon_rsc
+   vrDesc = majorheal_desc_rsc
+
+   viSpell_num = SID_MAJOR_HEAL
+   viMana = 20
+   viSchool = SS_SHALILLE
+   viSpell_level = 5
+
+   viFlash = FLASH_GOOD
+   
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Herbs,5],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if NOT IsClass(target, &User)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+              
+         return FALSE;
+      }
+      
+      if Send(target,@GetHealth) >= Send(target,@GetMaxHealth)
+      {
+         Send(who,@MsgSendUser,#message_rsc=majorheal_unnecessary_rsc,
+              #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+              
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local iHeal, oTarget;
+
+      oTarget = First(lTargets);
+      
+      iHeal  = random(7,13) + iSpellPower/5 + Send(oTarget,@GetKarma)/5;
+      iheal = bound(iHeal,0,50);
+
+      % Nudge the karma of the caster towards that of the healed.
+      if who <> oTarget 
+      {
+         Send(who,@MsgSendUser,#message_rsc=majorheal_cast_on_other,
+              #parm1=Send(oTarget,@GetDef),
+              #parm2=Send(oTarget,@GetName));
+
+         send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
+             #karma_doer=send(who,@GetKarma),#karma_act=send(oTarget,@GetKarma),
+             #Swing_factor=2));
+      }       
+
+      Send(oTarget,@MsgSendUser,#message_rsc=majorheal_cast_rsc);
+      Send(oTarget,@GainHealthNormal,#amount=iHeal);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

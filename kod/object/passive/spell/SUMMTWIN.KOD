@@ -1,0 +1,208 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SummonEvilTwin is Spell
+
+% TODO: Fix it so that if someone actually KILLS the evil twin, the spell goes
+%  away.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   summonEvilTwin_name_rsc = "evil twin"
+   summonEvilTwin_icon_rsc = ievltwin.bgf
+   summonEvilTwin_desc_rsc = \
+      "Summons the darker side of an adventurer to attack them.  Note that "
+      "you are responsible for any of your evil twins' actions, and that they "
+      "are notoriously hard to control.  "
+      "Requires solagh and web moss to cast."
+
+   summonEvilTwin_cast_rsc = \
+      "An evil twin mysteriously appears beside your target."
+   summonEvilTwin_failed_rsc = \
+      "There is too much summoning magic focused here to summon an evil twin."
+   summonEvilTwin_bad_target = "You can't cast evil twin on %s%s"
+   summonEvilTwin_no_self = \
+      "You decide you really don't want to summon your evil against yourself."
+
+   summonEvilTwin_sound = rmirrimg.wav
+
+classvars:
+
+   vrName = summonEvilTwin_name_rsc
+   vrIcon = summonEvilTwin_icon_rsc
+   vrDesc = summonEvilTwin_desc_rsc
+
+   viSpell_num = SID_EVIL_TWIN
+   viSchool = SS_RIIJA
+   viSpell_level = 5
+   viMana = 20
+   viManaDrain = 10
+   viDrainTime = 5000
+
+   viSpellExertion = 15
+   viCast_time = 1000
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   vrSucceed_wav = summonEvilTwin_sound
+
+   vbCastable_in_HappyLand = FALSE
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Solagh,3], plReagents);
+      plReagents = Cons([&WebMoss,3], plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local  oTarget, oRoom;
+
+      oTarget = First(lTargets);
+
+      % Check (and deny) casting on yourself.
+      if who = oTarget
+      {
+         Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_no_self);
+
+         return FALSE;
+      }
+
+      % Don't cast on non-players or morphed players.
+      if NOT IsClass(oTarget,&Player)
+         OR Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      {
+         Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
+              #parm1=Send(First(ltargets),@GetDef),
+              #parm2=Send(First(ltargets),@GetName));
+            
+         return FALSE;
+      }
+      else
+      {
+         % Is a player.  Check for valid attack.
+         if NOT Send(who,@AllowPlayerAttack,#victim=oTarget)
+         {
+            return FALSE;
+         }
+      }
+
+      oRoom = Send(SYS,@UtilGetRoom,#what=who);
+
+      if Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
+         OR Send(oRoom,@CountHoldingHowMany,#class=&EvilTwin) > 10
+         OR Send(oRoom,@CountHoldingSummoned) > Send(SYS,@GetPlayerSummonedObjectLimit)
+      {
+         Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_failed_rsc);
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   {
+      local oTwin, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget;
+
+      oTarget = First(lTargets);
+      oTwin = Create(&EvilTwin,#iSpellpower=iSpellpower,#oMaster=who,
+                     #oTarget=oTarget);
+      oRoom = Send(who,@GetOwner);
+
+      iRow = Send(oTarget,@GetRow);
+      iCol = Send(oTarget,@GetCol);
+      iFine_Row = Send(oTarget,@GetFineRow);
+      iFine_Col = Send(oTarget,@GetFineCol);
+
+      Send(oTwin,@SetOriginal,#who=oTarget);
+
+      Send(oRoom,@NewHold,#what=oTwin,#new_row=iRow,#new_col=iCol,
+           #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_cast_rsc);
+
+      Send(SYS,@AddReflection,#who=oTarget,#oReflection=oTwin);
+
+      Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
+           #state=[oTwin,oRoom],#addicon=True,#lastcall=False);
+
+      propagate;
+   }
+
+   EndEnchantment(who=$, state=$)
+   {
+      Send(First(state),@Delete);
+      
+      return;
+   }
+
+   StartPeriodicEnchantment( who = $, state = $ )
+   {
+      % If caster runs out of mana or loses trance, spell ends.
+      if Send(who,@GetMana) < viManaDrain * 2
+      {
+         Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
+              #state=state,#addicon=FALSE,#lastcall=TRUE);
+      }
+      else
+      {      
+         Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
+              #state=state,#addicon=FALSE,#lastcall=FALSE);
+      }
+      
+      Send(who,@LoseMana,#amount=viManaDrain);
+      
+      return;
+   }
+
+   BreakTrance( who = $, state = $, event = $ )
+   {
+      % If caster runs out of mana or loses trance, spell ends.
+      if event = EVENT_NEWOWNER
+      {
+         if Send(First(state),@GetOwner) = Nth(state,2)
+         {
+            Send(First(state),@Delete);   
+            Send(who,@RemoveEnchantment,#what=self,#state=state);
+         }
+         else
+         {
+            SetNth(state,2,$);
+         }
+
+         propagate;
+      }
+
+      Post(First(state),@Delete);
+      Send(who,@RemoveEnchantment,#what=self,#state=state);
+      
+      propagate;
+   }
+
+   SetSpellPlayerFlag(who=$,state=$)
+   {
+      Send(who,@SetTranceFlag);
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

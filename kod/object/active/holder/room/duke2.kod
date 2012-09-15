@@ -1,0 +1,243 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Duke2 is Room
+
+constants:
+
+   include blakston.khd
+
+   WEST_DOOR = 2
+   EAST_DOOR = 1
+   FEAST_DOOR_CLOSED = 3
+   FEAST_DOOR_OPEN = 4
+
+   DOOR_TIME = 10000
+
+   TO_ROW = 38
+   TO_COL = 16
+
+resources:
+
+   room_name_Duke2 = "Blackstone Keep"
+   room_Duke2 = Duke2.roo
+
+   Duke2_music = area01.mid
+
+   Duke2_West_Wing_Door = \
+      "The west wing of the keep is closed by the Duke's orders."
+   Duke2_East_Wing_Door = \
+      "The east wing of the keep is closed by the Duke's orders."
+   Duke2_West_Wing_Door_Open = \
+      "The feast hall is now opened on the Duke's authority."
+   Duke2_East_Wing_Door_Open = \
+      "The ceremony hall is now opened on the Duke's authority."
+
+   Duke2_Hall_Open_Sound = fanfare1.wav
+   Duke2_Hall_Close_Sound = dorclose.wav
+   fountain_soundDuke2 = boil.wav
+
+   Duke2_door_open_sound = doordown.wav
+   Duke2_door_close_sound = doorrsup.wav
+
+classvars:
+
+   vrName = room_name_Duke2
+
+   viTeleport_row = 39
+   viTeleport_col = 16
+
+   viTerrain_Type = TERRAIN_CASTLE | TERRAIN_FOUNTAIN
+
+properties:
+
+   ptDoorTimer = $
+
+   prRoom = room_Duke2
+   piRoom_num = RID_DUKE2
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   prMusic = Duke2_music
+
+   pbCeremonyHall = FALSE
+
+messages:
+
+   Constructed()
+   {
+      plLooping_sounds = [[ fountain_soundDuke2, 27, 16, 20, 40 ]];
+
+      propagate;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      % steel door to east stairs and observation station
+      if row >= 17 AND row <= 19 AND col >= 22 AND col <= 24
+      {
+         Send(self,@SetSector,#sector=EAST_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height=356,#speed=16);
+         Send(self,@SomethingWaveRoom,#wave_rsc=Duke2_door_open_sound);
+         ptDoorTimer = CreateTimer(self,@ResetDoorTimer,DOOR_TIME);
+
+         return TRUE;
+      }
+
+      % steel door to west stairs and observation station
+      if row >= 17 AND row <= 19 AND col >= 7 AND col <= 9
+      {
+         Send(self,@SetSector,#sector=WEST_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height=356,#speed=16);
+         Send(self,@SomethingWaveRoom,#wave_rsc=Duke2_door_open_sound); 
+         ptDoorTimer = CreateTimer(self,@ResetDoorTimer,DOOR_TIME);
+
+         return TRUE;
+      }
+
+      % wood door to west wing of keep (feast and dance halls)
+      if row >= 9 AND row <= 10 AND col = 14
+      {
+         % If you're an actor, you may actually change the state of pbFeastHall
+         if IsClass(what,&DM) AND Send(what,@IsActor)
+         {
+            if NOT Send(Send(SYS,@FindRoomByNum,#num=RID_DUKE4),@IsLocked)
+            {
+               Send(Send(SYS,@FindRoomByNum,#num=RID_DUKE4),@SetLocked,
+                    #value=1);
+               Send(self,@SetSector,#sector=FEAST_DOOR_OPEN,
+                    #animation=ANIMATE_FLOOR_LIFT,#height=356,#speed=0);
+               Send(self,@SetSector,#sector=FEAST_DOOR_CLOSED,
+                    #animation=ANIMATE_FLOOR_LIFT,#height=420,#speed=0);
+
+               Send(Send(SYS,@FindRoomByNum,#num=RID_DUKE4),
+                    @HustleUsersOutOfRoom,#new_rid=RID_DUKE2,
+                    #new_row=9,#new_col=15);
+               Send(Send(SYS,@FindRoomByNum,#num=RID_DUKE5),
+                    @HustleUsersOutOfRoom,#new_rid=RID_DUKE2,
+                    #new_row=10,#new_col=15);
+
+               Send(self,@SomethingWaveRoom,#what=what,#wave_rsc=Duke2_Hall_Close_Sound);
+            }
+            else
+            {
+               Send(self,@SetSector,#sector=FEAST_DOOR_CLOSED,
+                    #animation=ANIMATE_FLOOR_LIFT,#height=356,#speed=0);
+               Send(self,@SetSector,#sector=FEAST_DOOR_OPEN,
+                    #animation=ANIMATE_FLOOR_LIFT,#height=419,#speed=0);
+               Send(Send(SYS,@FindRoomByNum,#num=RID_DUKE4),@SetLocked,
+                    #value=0);
+               Send(what,@MsgSendUser,#message_rsc=Duke2_West_Wing_Door_Open);
+               Send(self,@SomethingWaveRoom,#what=what,
+                    #wave_rsc=Duke2_Hall_Open_Sound);
+            }
+         }
+
+         if Send(Send(SYS,@FindRoomByNum,#num=RID_DUKE4),@IsLocked)
+         {
+            Send(what,@MsgSendUser,#message_rsc=Duke2_West_Wing_Door);
+
+            return TRUE;
+         }
+      }
+
+      % Wood door to east wing of keep (not yet implemented, but someday a
+      %  ceremony hall might be there).
+      if row >= 9 AND row <= 10 AND col = 17
+      {
+         % TODO: if you're an actor, you may actually change the state of
+         %  pbCeremonyHall
+
+         if NOT pbCeremonyHall
+         {
+            Send(what,@MsgSendUser,#message_rsc=Duke2_East_Wing_Door);
+
+            return TRUE;
+         }
+      }
+
+      propagate;
+   }
+
+   ResetDoorTimer()
+   {
+      ptDoorTimer = $;
+      
+      Send(self,@SetSector,#sector=WEST_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=436,#speed=16);
+      Send(self,@SetSector,#sector=EAST_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=436,#speed=16);
+      Send(self,@SomethingWaveRoom,#wave_rsc=Duke2_door_close_sound);
+
+      return;
+   }
+
+   Delete()
+   {
+      if (ptDoorTimer <> $)
+      {
+         DeleteTimer(ptDoorTimer);
+         ptDoorTimer = $;
+      }
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 40, 15, RID_DUKE1, 14, 29, ROTATE_NONE ],plExits);
+      plExits = Cons([ 40, 16, RID_DUKE1, 14, 29, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 42, 2, RID_DUKE1, 15, 16, ROTATE_NONE ],plExits);
+      plExits = Cons([ 42, 3, RID_DUKE1, 15, 16, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 42, 28, RID_DUKE1, 15, 44, ROTATE_NONE ],plExits);
+      plExits = Cons([ 42, 29, RID_DUKE1, 15, 44, ROTATE_NONE ],plExits);
+
+      plExits = Cons([  9, 13, RID_DUKE2,  9, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 10, 13, RID_DUKE2, 10, 15, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 2, 15, RID_DUKE3, 20, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 16, RID_DUKE3, 20, 20, ROTATE_NONE ],plExits);
+
+      plExits = Cons([  9, 9, RID_DUKE4, 15, 24, ROTATE_NONE ],plExits);
+      plExits = Cons([ 10, 9, RID_DUKE4, 15, 24, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=5),
+           #new_row=41,#new_col=17,#fine_row=8,#fine_col=24);
+      Send(self,@NewHold,#what=Create(&Firepit,#iSoundRadius=5),
+           #new_row=41,#new_col=14,#fine_row=8,#fine_col=40);
+
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=28,#new_col=19,
+           #fine_row=40,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=25,#new_col=19,
+           #fine_row=24,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=25,#new_col=12,
+           #fine_row=24,#fine_col=24);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=28,#new_col=12,
+           #fine_row=40,#fine_col=24);
+
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=9,#new_col=9,
+           #fine_row=0,#fine_col=32,#new_angle=ANGLE_SOUTH_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

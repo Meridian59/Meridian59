@@ -1,0 +1,150 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LabeledWand is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+   LabeledWand_name0_rsc = "magical brushless broom"
+   LabeledWand_name1_rsc = "wand of sparks"
+   LabeledWand_name2_rsc = "rod of soup stirring"
+   LabeledWand_name3_rsc = "wand of thwacking"
+   LabeledWand_name4_rsc = "wand of equilibrium"
+   LabeledWand_name5_rsc = "wand of butterflies"
+   LabeledWand_name6_rsc = "rod of misdirection"
+   LabeledWand_name7_rsc = "wand of lobotomization"
+   LabeledWand_name8_rsc = "divining rod"
+   LabeledWand_name9_rsc = "wand of infinite fatigue"
+   LabeledWand_name10_rsc = "rod of correction"
+   LabeledWand_name11_rsc = "mysterious stick of walking"
+   LabeledWand_name12_rsc = "rod of warmth"
+   LabeledWand_name13_rsc = "wand of vibrating massages"
+   LabeledWand_name14_rsc = "wand of uselessness"
+   LabeledWand_name15_rsc = "rod of extention"
+   LabeledWand_name16_rsc = "wand of hasty decisions"
+   LabeledWand_name17_rsc = "wand of wrinkling"
+
+   LabeledWand_icon_rsc = joltstaf.bgf
+   LabeledWand_desc_rsc = \
+      "This is an odd wand with a hand-written label attached to it.  You are not sure if "
+      "you can trust the label on the wand or not...."
+
+classvars:
+
+   vrIcon = LabeledWand_icon_rsc
+   vrDesc = LabeledWand_desc_rsc
+
+   viValue_average = 20
+   viWeight = 15
+   viBulk = 20
+
+properties:
+
+   vrName = LabeledWand_name0_rsc
+
+messages:
+
+   Constructor()
+   {
+      local iRandomNumber;
+
+      iRandomNumber = random(0,17);
+
+      % 0 keeps the "default" name
+      if iRandomNumber = 1
+      {
+         vrName = LabeledWand_name1_rsc;
+      } else {
+         if iRandomNumber = 2
+         {
+            vrName = LabeledWand_name2_rsc;
+         } else {
+            if iRandomNumber = 3
+            {
+               vrName = LabeledWand_name3_rsc;
+            } else {
+               if iRandomNumber = 4
+               {
+                  vrName = LabeledWand_name4_rsc;
+               } else {
+                  if iRandomNumber = 5
+                  {
+                     vrName = LabeledWand_name5_rsc;
+                  } else {
+                     if iRandomNumber = 6
+                     {
+                        vrName = LabeledWand_name6_rsc;
+                     } else {
+                        if iRandomNumber = 7
+                        {
+                           vrName = LabeledWand_name7_rsc;
+                        } else {
+                           if iRandomNumber = 8
+                           {
+                              vrName = LabeledWand_name8_rsc;
+                           } else {
+                              if iRandomNumber = 9
+                              {
+                                 vrName = LabeledWand_name9_rsc;
+                              } else {    
+                                 if iRandomNumber = 10
+                                 {
+                                    vrName = LabeledWand_name10_rsc;
+                                 } else {
+                                    if iRandomNumber = 11
+                                    {
+                                       vrName = LabeledWand_name11_rsc;
+                                    } else {
+                                       if iRandomNumber = 12
+                                       {
+                                          vrName = LabeledWand_name12_rsc;
+                                       } else {
+                                          if iRandomNumber = 13
+                                          {
+                                             vrName = LabeledWand_name13_rsc;
+                                          } else {
+                                             if iRandomNumber = 14
+                                             {
+                                                vrName = LabeledWand_name14_rsc;
+                                             } else {
+                                                if iRandomNumber = 15
+                                                {
+                                                   vrName = LabeledWand_name15_rsc;
+                                                } else {
+                                                   if iRandomNumber = 16
+                                                   {
+                                                      vrName = LabeledWand_name16_rsc;
+                                                   } else {
+                                                      vrName = LabeledWand_name17_rsc;
+                                                   }
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

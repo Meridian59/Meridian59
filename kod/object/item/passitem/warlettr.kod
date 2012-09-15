@@ -1,0 +1,452 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WarLetter is PassiveItem
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+   WARLETTER_CLOSED = 1
+   WARLETTER_OPEN = 2
+
+resources:
+
+   WarLetter_name_rsc = "personal letter"
+   WarLetter_icon_rsc = scr01.bgf
+   WarLetter_desc_closed_rsc = \
+      "This is a rather simple letter.  It is tied closed with a simple string "
+      "which looks easily removeable."
+   WarLetter_desc_opened_rsc = \
+      "This is a rather simple letter written in an easily readable script."
+   WarLetter_intro_rsc = \
+      "\n\nThe letter reads as follows:\n\n"
+
+   WarLetter_open_rsc = "You carefully remove the string and open the letter."
+   WarLetter_close_rsc = "You carefully replace the string, closing the letter."
+
+   Warletter_text_default = "The letter is blank."
+
+   Warletter_text1_rsc = \
+      "Dear %s,\n"
+      "  I hope this letter finds you well.  Given the times, one must keep their "
+      "own security in mind.  As you know, these are troubling times, indeed.\n"
+      "  I have written you to get your opinion of the recent murder.  Such a henious "
+      "act will undoubtedly be punished swiftly.  Of course, I am very interested in "
+      "aiding the investigation; I am sure this issue is of utmost importance to you "
+      "as well.  Perhaps we can help each other in this investigation.\n"
+      "  As of late, I have reason to mistrust Maleval and his motives.  His interests "
+      "in both the former Duke and the Priestess of Qor are important in my mind.  I "
+      "wonder if the dark mage is part of some dark plot.\n"
+      "  I have also heard rumors that a certain outcast is stirring trouble with the "
+      "common folk, particularly around Jasper.  Such a character has never had much "
+      "concern for the decent folk in our land, and may have some hidden ambition "
+      "that we should watch.\n"
+      "  Please respond if you have any information.  As I mentioned, the murder must "
+      "be punished swiftly and efficiently.  Together, I am certain we will be able "
+      "to bring justice to the fallen Duke.\n\n"
+      "Sincerely,\n%s"
+
+   Warletter_text2_rsc = \
+      "%s,\n"
+      "  I respond to your last letter out of courtesy.  Such remarks do nothing to "
+      "enhance yourself or to your point of view in my eyes.\n"
+      "  First, one should not defend the acts of a murderer.  I know you will deny "
+      "this accusation, but the tone of your previous correspondence leaves no doubt "
+      "that you hold this person in high reguard.  Although certain members of our "
+      "society see nothing wrong with murder to accomplish their tasks, I believe the "
+      "more visible members of our society should be above that.\n"
+      "  Furthermore, I cannot agree with your support of any talks of rebellion.  I "
+      "believe that any dissention should be quelled as soon as it is mentioned!  "
+      "Perhaps I talked of such things when I was younger and more foolish, but I have "
+      "seen the truth of that matter.  Talk of rebellion only causes more problems "
+      "and more suffering.  The commoners are already well cared for; should we allow "
+      "another to inflict more suffering on the people that are content with their "
+      "lives?\n"
+      "  I hope my letter has opened your eyes and that you keep yourself from falling "
+      "into dangerous traps of logic.  The murderer should be brought to justice, and "
+      "any talk of rebellion need to be banished.  Our lands must be united in peace, "
+      "not divided in war.\n\n"
+      "%s"
+
+   Warletter_text3_rsc = \
+      "Dearest %s,\n"
+      "  If I did not know you as well as I do, I would worry that you are suggesting "
+      "I had some hand in the diabolical plot that is on everyone's mind currently.  "
+      "However, I am certain that this is not the case.\n"
+      "  As I have told you before, I do not know who plotted against the Duke.  I "
+      "have heard some interesting rumors that perhaps it was not one person that "
+      "murdered in cold blood, but rather several people plotting together.  People "
+      "have said that too much seemingly plausable information is spreading "
+      "through the lands to be restricted to just one person.\n"
+      "  I do not know what to think.  The roving troops of both factions frighten "
+      "me, and I often find myself wishing for the more calm and peaceful days of "
+      "recent memory.\n"
+      "  I hope you are doing well.  Keep yourself safe from harm.  I hope to see you "
+      "soon.\n\n"
+      "Your friend,\n%s"
+
+   Warletter_text4_rsc = \
+      "%s,\n"
+      "  Do not send me correspondence of that type ever again through such public "
+      "channels.  We must make sure we use people we trust in order to communicate "
+      "our ideas.\n"
+      "  Keep this in mind.  Hail to the Third!\n\n"
+      "%s"
+
+   Warletter_text5_rsc = \
+      "Dear %s,\n"
+      "  I could not agree more with your last letter.  It was almost as if you "
+      "were reading my mind as you penned it.\n"
+      "  Who else but the nephew could have known so much and could have reaped "
+      "such a huge benefit from the murder?  No one, I say.  I realize you were "
+      "merely speculating on the limited information we had, but if you think about "
+      "the whole scenario logically, only one answer remains in any sane person's "
+      "mind.  Only someone like Ran er'Hoth could believe otherwise.\n"
+      "  Well, I must attend to other matters.  I will send this letter via a "
+      "courier as soon as I can locate one.  I await your quick response.\n\n"
+      "Sincerely,\n%s"
+
+   Warletter_text6_rsc = \
+      "%s,\n"
+      "  Please do not write me again, as your irrational and oppressive views of "
+      "rebellion cannot be tolerated in our current environment.  If you are so "
+      "blind as to not see how your ideas will only hurt the people living near "
+      "the Meridian, then you are more insane than I thought possible.\n\n"
+      "%s"
+
+   Warletter_text7_rsc = \
+      "My friend, dear %s\n"
+      "  Allow me to appologize for my last letter.  I truly cannot say what madness "
+      "took over my thoughts and prevented me from thinking rationally.  All I can "
+      "say is that your response set my thinking straight.\n"
+      "  I wish all my friends were as level-headed as you are.  I fear that perhaps "
+      "the idle chatter of some of my other acquaintances influenced my thinking for "
+      "the worse.  I should be more mindful of the company I keep.\n"
+      "  I will take measures to guard against this type of thought in the future.\n\n"
+      "Again, my deepest appologies,\n%s"
+
+   Warletter_text8_rsc = \
+      "Dear %s,\n"
+      "  Perhaps rebellion is the answer.  I loathe to think of the suffering it "
+      "might cause, but sometimes it is better to stand up for a principle we believe "
+      "in rather than allow the other horrible events.  I am sure these words may "
+      "brand me as a malcontent, but I feel in my heart that this is the thinking we "
+      "must do in order to save our fair lands.\n"
+      "  Does the nobility really care for the common folk anymore?  I fear they are "
+      "too wrapped up in their games of the court to see how many people suffer.  The "
+      "people of Jasper have been living in a depressed town for a long time now "
+      "without so much as even a kind word.  Not to speak ill of the departed, but I "
+      "think the only reason the former Duke cared for the place is because he owned "
+      "the bank.  I fear that less rational minds than yours and mine in this town "
+      "may take the idea of rebellion to a frightening conclusion.\n"
+      "  Not only do the towns suffer, but even our thriving population of adventurers "
+      "is preyed upon by the greedy and selfish.  Have either of the leaders, the fair "
+      "Princess, the former Duke, or even the Councilmembers ever moved to stop this?  "
+      "No, they have not.  I fear that the adventurers may also take it upon themselves "
+      "to correct past and current problems.  Obviously, these will be the best place "
+      "from which to gather fighters for any military offensive.\n"
+      "  I am deeply worried about our lands.  May Kraanan the Fist grant us the strength "
+      "do do what is best.\n\n"
+      "%s"
+
+   Warletter_text9_rsc = \
+      "To %s, my trusted friend,\n"
+      "  People say I'm being paranoid, but I am beginning to fear for my safety.  People "
+      "always seem to be walking past me, giving me odd stares and seemingly ready to "
+      "spring upon me for no good reason!\n"
+      "  Perhaps it is the current atmosphere, but I worry about every armed adventurer "
+      "that walks past me.  Some of us don't have their ability to fight against the "
+      "underworld.  Although the spirits protect us, the death of the late Duke prove "
+      "even they can fail against the blade of a ruthless killer.\n"
+      "  What now?  Do I live my life in fear of unscrupulous people?  Perhaps it isn't "
+      "even one of the adventurers that did the foul deed.  Perhaps it is one of the "
+      "disenchanted nobles.  I've never trusted some of them.  I'll be wary of them from "
+      "now on.\n"
+      "  Or, perhaps it is the evil Lich Queen and her dark Necromancers that have done "
+      "this dark act in order to bring more chaos to our land.  Ever since that ancient "
+      "evil came to life, I have feared for my safety.  I should be cautious, those "
+      "minions are everywhere.  When will the Hunters do their duty to eliminate this "
+      "menace from our midst?"
+      "  I should end my letter now, before the murder's blade comes down upon my head.  "
+      "This letter will be sent via the next adventurer that doesn't have a bloodlust "
+      "in his or her eyes.  Unfortunately, that type seems to be few and far in between.\n\n"
+      "Yours in the gods,\n%s"
+
+   Warletter_text10_rsc = \
+      "%s,\n"
+      "  Although it is a bit frightening, I find the current atmosphere to be a bit "
+      "exciting.  The death of the Duke, while unfortunate, has stirred up all sorts of "
+      "conversation about justice and rebellion.  Some people are very excited about "
+      "finding the killer and bringing him or her to justice.\n"
+      "  The rise of the Duke's nephew also has people questioning the true value of "
+      "the nobility.  I find this sort of talk a refreshing change of pace.  I hope "
+      "people will begin to question the world around them and to bring some change.\n"
+      "  We should be wary, though, that the people wanting change don't agitate people "
+      "too much.  Some change is good, but bloody, violent change helps none but the "
+      "truly evil.  Not that there's anything wrong with a bit of evil, mind you.\n"
+      "  I await your return letter.  Unfortunately, I cannot include my chess move "
+      "with this letter.  Your last move was truly diabolical, and I am still in the "
+      "middle of planning my countermove.  Perhaps I will find another courier to carry "
+      "the move to you verbally.\n\n"
+      "Yours in the name of the five gods,\n%s"
+
+   Warletter_text11_rsc = \
+      "%s,\n"
+      "  ergot lumbago francolin zeitgeist rigatoni\n\n"
+      "%s"
+
+   Warletter_text12_rsc = \
+      "To %s,\n"
+      "  You would not believe the stir that a few well-placed words can create.  It "
+      "seems that some people are looking for any reason to act violently.  I don't "
+      "know whether this is a good or bad thing given our current state of affairs.\n"
+      "  I've heard that there are other agitators in the area as well.  I do not know "
+      "what to make of them.  Perhaps they will support the cause?  In any case, I "
+      "think we should be waiting and watching as things develop.\n"
+      "  Well, other than that, my life has been pretty mundane.  I have taken to long "
+      "walks in the countryside contemplating the future of the Meridian.  Luckily, I have "
+      "been able to dodge most of the monsters in the area.  It seems that there are "
+      "many adventurers out these days slaying monsters.\n"
+      "  Is our society to blame for this?  With the rampant killing of monsters, it "
+      "makes sense in a twisted way that one may turn against his fellow travellers.  "
+      "it would not suprise me that this is exactly what caused the murder of the Duke.  "
+      "But, does violence need violence to end the madness?\n"
+      "  Well, I shall not bore you further with my thoughts.  I hope that there are "
+      "brighter days in the future for us.  Unfortunately, all anyone can see currently "
+      "is the darkness.\n\n"
+      "Your friend,\n%s"
+
+   Warletter_text13_rsc = \
+      "Dear %s,\n"
+      "  Trouble seems to follow you no matter where you go!  After your last letter, "
+      "some guards where here asking about you.  Of course, I denied all knowledge of "
+      "your actions.  I guess you can thank me later.\n"
+      "  Well, what have you been up to?  Nothing much new around here.  Some rumors "
+      "about the dark wizard again.  Other rumors about the Jasperites getting upset "
+      "over something or the other.  You haven't fallen into that fever, have you?  "
+      "Seems like every day there's new talk about how the Duke's murder signifies "
+      "the end of the old nobility.  Why are people so willing to rebel against a "
+      "society that benefits them so?  Aside from the occasional adventurer killing "
+      "another, our lives are peaceful and calm.\n"
+      "  I should do something productive today.  Perhaps I'll visit a temple and "
+      "see a priestess.  I haven't done that in a while.  Write when you can!\n\n"
+      "Sincerely,\n%s"
+
+   Warletter_text14_rsc = \
+      "%s,\n"
+      "  How can you possibly suggest than anything short of a rebellion will change "
+      "the current situation?  Have you seen the Duke and Princess organizing troops "
+      "like they are mobilizing for war?  Have you seen how they have turned their "
+      "attention from the people to trying to control the court?  Are you already a "
+      "blind, crazy old fool?\n"
+      "  You know me; given the bloodshed I have already seen, I am the last person "
+      "that would advocate more violence.  But, there truly no alternative.  I have "
+      "searched long and hard for any other answer, and each time I come up with "
+      "no alternative to a probable insurrection.\n"
+      "  What we need is a strong leader that cares about people more than silly games "
+      "of the court.  Such a person would lead the land to a new golden age.  Once "
+      "again, the land of the Meridian would stand proud as it did when we had "
+      "contact with the central Kingdom long ago.\n"
+      "  Think more on this, and I am sure you will agree that my words are more sane "
+      "than you first thought.\n\n"
+      "Yours in mind and spirit,\n%s"
+
+   Warletter_text15_rsc = \
+      "To %s,\n"
+      "  I couldn't help but laugh as I read your last letter.  You just don't realize "
+      "what a wonderful opportunity we have with the current situation.\n"
+      "  You have often accompanied me to the inn and talked about how our society "
+      "needs to change.  We have talked long and hard about what events must happen "
+      "before we can continue to grow as a people.  Were those talks merely idle "
+      "chatter of an old goat trying to fill the time?\n"
+      "  Yes, the death of the former Duke is unfortunate.  I would not advocate that "
+      "it was ever a good idea, but it sets the stage for the changes we talked about!  "
+      "Now we can organize and strike against the society that held as at bay for so "
+      "long.  Our time has come, and you can only express hesitation!\n"
+      "  What can I say to convince you?  If you cannot see the truth in our past talks, "
+      "then perhaps I will have to proceed alone.  I cannot allow this opporunity to "
+      "escape me.  Whether history knows me as a hero or a fool it does not matter.  "
+      "What will matter is that I know that I did what I thought was right to further "
+      "the cause of the people of these lands.  Will you not join me?\n\n"
+      "Yours faithfully,\n%s"
+
+      Warletter_percent_s = "%s"
+
+classvars:
+
+   vrName = WarLetter_name_rsc
+   vrIcon = WarLetter_icon_rsc
+
+   viUse_type = ITEM_USE_HAND
+   viValue_average = 40
+   viWeight = 3
+   viBulk = 10
+
+properties:
+
+   piState = WARLETTER_CLOSED
+   viInventory_group = WARLETTER_CLOSED
+   psAssembledText = $
+   vrDesc = WarLetter_desc_closed_rsc
+
+messages:
+
+   Constructor()
+   {
+      post(self,@UpdateText);
+      propagate;
+   }
+
+   NewUsed(what = $)
+   {
+      piState = WARLETTER_OPEN;
+
+      if poOwner = $
+      {
+         propagate;
+      }
+      if isClass(poOwner, &Player)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=WarLetter_open_rsc);
+      }
+      vrDesc = WarLetter_desc_opened_rsc;
+      viInventory_group = WARLETTER_OPEN;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      piState = WARLETTER_CLOSED;
+
+      if poOwner = $
+      {
+         propagate;
+      }
+      if isClass(poOwner, &Player)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=WarLetter_close_rsc);
+      }
+      vrDesc = WarLetter_desc_closed_rsc;
+      viInventory_group = WARLETTER_CLOSED;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      propagate;
+   }
+
+   AppendDesc()
+   {
+      if piState = WARLETTER_OPEN
+      {
+         AppendTempString(WarLetter_intro_rsc);
+         AppendTempString(psAssembledText);
+      }
+      
+      return;
+   }
+
+
+   UpdateText()
+   {
+      local lQuestInfo, iRandomNumber, rText, Temp;
+      
+      lQuestInfo = Send(self,@GetAttributeData,#ItemAtt=IA_QUEST_CARGO);
+      iRandomNumber = random(1,15);
+
+      if iRandomNumber = 1
+      {
+         rText = Warletter_text1_rsc;
+      } else {
+         if iRandomNumber = 2
+         {
+            rText = Warletter_text2_rsc;
+         } else {
+            if iRandomNumber = 3
+            {
+               rText = Warletter_text3_rsc;
+            } else {
+               if iRandomNumber = 4
+               {
+                  rText = Warletter_text4_rsc;
+               } else { 
+                  if iRandomNumber = 5
+                  {
+                     rText = Warletter_text5_rsc;
+                  } else {
+                     if iRandomNumber = 6
+                     {
+                        rText = Warletter_text6_rsc;
+                     } else {
+                        if iRandomNumber = 7
+                        {
+                           rText = Warletter_text7_rsc;
+                        } else {
+                           if iRandomNumber = 8
+                           {  
+                              rText = Warletter_text8_rsc;
+                           } else {
+                              if iRandomNumber = 9
+                              {
+                                 rText = Warletter_text9_rsc;
+                              } else {
+                                 if iRandomNumber = 10
+                                 {
+                                    rText = Warletter_text10_rsc;
+                                 } else {
+                                    if iRandomNumber = 11
+                                    {
+                                       rText = Warletter_text11_rsc;
+                                    } else {
+                                       if iRandomNumber = 12
+                                       {
+                                          rText = Warletter_text12_rsc;
+                                       } else {
+                                          if iRandomNumber = 13
+                                          {
+                                             rText = Warletter_text13_rsc;
+                                          } else {
+                                             if iRandomNumber = 14
+                                             {
+                                                rText = Warletter_text14_rsc;
+                                             } else {
+                                                if iRandomNumber = 15
+                                                {
+                                                   rText = Warletter_text15_rsc;
+                                                } else {
+                                                   rText = Warletter_text_default;
+                                                }
+                                             }
+                                          }
+                                       }
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      psAssembledText = createString();
+      SetString(psAssembledText,rText);
+      StringSubstitute(psAssembledText,Warletter_percent_s,Send(Send(nth(lQuestInfo,2),@GetDestNPC),@GetName));
+      StringSubstitute(psAssembledText,Warletter_percent_s,Send(Send(nth(lQuestInfo,2),@GetSourceNPC),@GetName));
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

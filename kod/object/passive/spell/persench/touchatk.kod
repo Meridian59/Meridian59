@@ -1,0 +1,409 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TouchAttackSpell is PersonalEnchantment
+
+% A touch attack spell is essentially a 'combat stroke' enchantment.
+
+constants:
+
+   include blakston.khd
+
+   HITVALUE_MAX = 100
+
+resources:
+
+   TouchAttackSpell_name_rsc = "Touch Spell"
+   TouchAttackSpell_icon_rsc = light.bgf
+   TouchAttackSpell_desc_rsc = "This is a touch spell that does damage."
+
+   TouchAttack_Succeed_rsc = \
+      "You have cast a touch attack on another player.  This is a bug.  "
+      "Please report it.  Have a nice day."
+   TouchAttack_missed1_sound = swswish1.wav
+   TouchAttack_missed2_sound = swswish2.wav
+   TouchAttack_missed3_sound = swswish3.wav
+   
+   TouchAttack_hit_sound = patk.wav
+
+classvars:
+
+   vrName = TouchAttackSpell_name_rsc
+   vrIcon = TouchAttackSpell_icon_rsc
+   vrDesc = TouchAttackSpell_desc_rsc
+
+   vrMiss_sound = $
+   
+   vrMissed_message_attacker = $
+   vrMissed_message_defender = $
+
+   vrAlreadyEnchanted = PersonalEnchantment_already_enchanted_rsc
+   vrEnchantment_On = PersonalEnchantment_On_rsc
+   vrEnchantment_Off = PersonalEnchantment_Off_rsc
+   vrSuccess = PersonalEnchantment_Success_rsc
+   vrSucceed = TouchAttack_Succeed_rsc
+
+   vrPlayer_hit_something = $
+   vrPlayer_was_hit = $
+   vrPlayer_killed_something = $
+   vrPlayer_was_killed = $
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = 0
+   viSpell_num = 0
+   viStroke = 0
+
+   viSpellExertion = 2
+
+   viChance_To_Increase = 10
+
+   % typically, spells have hit probs that are high, provided you're good at
+   %  the skill.
+   viHit_Factor = 80
+
+   % Touch spells typically do good damage but are unaffected by typical weapon
+   %  bonuses.
+   viMin_Damage = 3
+   viMax_Damage = 6
+
+   % Touch spell range can vary, but are typically good     
+   viRange = 2
+
+   % Touch spells are now linked to punch attacks, so make it do punch damage
+   %  for default.
+   viAttackType = ATCK_WEAP_UNARMED+ATCK_WEAP_PUNCH
+   % Touch spells typically DO have a spell type.
+   viSpellType = 0          
+
+   viPostCast_time = 1
+
+   % Cannot enchant others with touch attacks.
+   vbCanCastOnOthers = FALSE
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+   ImproveStroke(who=$,target=$)
+   {
+      Send(self,@ImproveAbility,#who=who,#target=target);
+      
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
+   {
+      propagate;
+   }
+
+   CastSpell(who = $,iSpellPower=0,lTargets=$)
+   {
+      % Remove other touch attack spells.  Won't remove self, because
+      %  we've checked for re-enchantment in CanPayCosts.
+      Send(who,@RemoveEnchantmentClass,#class=&TouchAttackSpell);
+      
+      propagate;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CheckWeaponAndDoAnimation(who=$,weapon_used=$,victim=$)
+   "Spell does not require a weapon, but a player may use this spell even"
+   "if they are armed."
+   "Also does the cast animation.  In future, may provide different grfx"
+   "for different touch spells."
+   {
+      Send(who,@DoCast);
+      
+      return TRUE;
+   }
+
+   ToHitImprovers(raw_hitroll=0)
+   "A weapon stroke may have IMPROVERS, which may boost the performance of "
+   "the stroke.  Example, if a player has renweed, that may boost his thrust "
+   "Default, return the hitroll raw."
+   {
+      return Raw_hitroll; 
+   }
+
+   DamageFactors(damage = 0, who = $)
+   "Attack spells typically are unaffected by strength, although they may "
+   "be affected by other factors."
+   {
+      return damage;
+   }
+
+   GetHitsound()
+   {
+      return touchattack_hit_sound;
+   }
+
+   %%% This section for combat
+
+   %%% These are the weapon functions
+
+   % What's the stroke number?
+   % Touch attacks are "backwards", they use Punch as the proficiency, or the
+   %  secondary bonus to hit.  Added bonus for "pure" mages, can substitute
+   %  1.5 * Mysticism instead of punch.  This allows for a more focused
+   %  character, but you can reach higher levels if you learn punch.
+   GetProf(who=$)
+   {
+      local iProf, iMysticism;
+
+      iProf = Send(who,@GetSkillAbility,#skill_num=SKID_PUNCH);
+      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
+      
+      iMysticism = (Send(who,@GetMysticism)*3)/2;
+      
+      if iProf < iMysticism
+      {
+         iProf = iMysticism;
+      }
+
+      return iProf;
+   }
+
+   GetStroke(who=$)
+   {
+      % Touch attacks are "backwards", they use the specialized spell as the
+      %  stroke, or primary bonus to hit.
+      Send(who,@FlipSpellAtrophyFlag,#SID=viSpell_num);
+
+      return Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+   }
+
+   GetAttackType(weapon_used=$)
+   {
+      return viAttackType;
+   }
+
+   GetAttackSpell(weapon_used=$)
+   {
+      return viSpellType;
+   }
+
+   GetParryAbility()
+   {
+      % Touch attacks have no parrying ability.
+      return 0;
+   }
+
+   %%% These are the stroke functions
+
+   % Can this touch attack be blocked?
+   CanBlock()
+   {
+      return TRUE;
+   }
+
+   % Can this touch attack be parried?
+   CanParry()
+   {
+      return TRUE;
+   }
+
+   % Can this touch attack be blocked?
+   CanDodge()
+   {
+      return TRUE;
+   }
+
+   % This returns the "weapon" name for combat attacks.
+   GetAttackName()
+   {
+      return vrName;
+   }
+
+   GetRange(weapon_used = $)
+   "This returns the range of the spell.  Usually, this hovers around 2-3."
+   {
+      return viRange;
+   }
+
+   CheckSpecial(who=$,victim=$)
+   "Checks to see if there are any special circumstances which prevents"
+   "the target player from performing this spell."
+   {
+      return TRUE;
+   }
+
+   FindDamage(weapon_used=$,who=$,victim=$)
+   "Damage for attack spells is determined largely by expertise in the spell."
+   {
+      local spell_ability, damage, iPower;
+
+      % base weapon damage
+      damage = random(viMin_Damage,viMax_damage);
+
+      iPower = Send(who,@GetEnchantedState,#what=self);
+      
+      % factor in the person's ability with the spell      
+      damage = damage/2 + ((damage/2)*iPower)/SPELLPOWER_MAXIMUM + 1;
+      
+      % might affects damage from different weapons differently
+      damage = Send(self,@DamageFactors,#damage=damage,#who=who,
+                    #victim=victim);
+      
+      return bound(damage,1,$);
+   }
+
+   PlayerWasHitMsg(who=$,attacker=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise "
+   "player.kod will just choose a default - which is true for most weapon-"
+   "based combat strokes (but not true for most punch strokes or touch spells."
+   {
+      if vrPlayer_was_hit = $
+      {
+         return FALSE;
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=vrPlayer_was_hit,
+           #parm1=Send(attacker,@GetCapDef),#parm2=Send(attacker,@GetName));
+           
+      return TRUE;
+   }
+
+   PlayerHitSomethingMsg(who=$,victim=$,damage=$,color_rsc=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise "
+   "player.kod will just choose a default - which is true for most weapon-"
+   "based combat strokes (but not true for most punch strokes or touch spells."
+   {
+      if vrPlayer_hit_something = $
+      {
+         return FALSE;
+      }
+       
+      Send(who,@MsgSendUser,#message_rsc=vrPlayer_hit_something,
+           #parm1=color_rsc,#parm2=Send(victim,@GetDef),
+           #parm3=Send(victim,@GetName));
+          
+      return TRUE;
+   }
+
+   SendMissMessageToAttacker(who=$,victim=$,color_rsc=$)
+   {
+      local iRandom, rSound;
+      
+      % 'miss' sound
+      if vrMiss_Sound = $
+      {
+         % Play a random miss sound.
+         iRandom = random(1,3);
+         if iRandom = 1
+         {
+            rSound = TouchAttack_missed1_sound;
+         }
+         else
+         {
+            if iRandom = 2
+            {
+               rSound = TouchAttack_missed2_sound;
+            }
+            else
+            {
+               rSound = TouchAttack_missed3_sound;
+            }
+         }
+      }
+      else
+      {
+         rSound = vrMiss_Sound;
+      }
+      
+      Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=rSound);
+      
+      % Text messages
+      if vrMissed_Message_Attacker <> $
+      {
+         Send(who,@MsgSendUser,#message_rsc=vrMissed_Message_Attacker,
+              #parm1=color_rsc,#parm2=vrName,#parm3=Send(victim,@GetDef),
+              #parm4=Send(victim,@GetName));
+              
+         return TRUE;
+      }
+      
+      return;
+   }
+
+   SendMissMessageToDefender(who=$,attacker=$)
+   {
+      if vrMissed_message_Defender <> $
+      {
+         Send(who,@MsgSendUser,#message_rsc=vrMissed_Message_Defender,
+              #parm1=Send(attacker,@GetCapDef),#parm2=Send(attacker,@GetName),
+              #parm3=vrName);
+              
+         return TRUE;
+      }
+
+      return;
+   }
+
+   PlayerKilledSomethingMsg(who=$,victim=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will offer the default 'You killed the whatever' message."
+   {
+       if vrPlayer_killed_Something = $
+       {
+         return FALSE ;
+       }
+       
+       Send(who,@MsgSendUser,#message_rsc=vrPlayer_killed_something,
+            #parm1=Send(victim,@GetCapDef),#parm2=Send(victim,@GetName));
+                
+       return TRUE;
+   }
+
+   PlayerWasKilledMsg(who=$,attacker=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will just choose a default - as it does for most strokes."
+   {
+       if vrPlayer_was_hit = $
+       {
+         return FALSE ;
+       }
+       
+       Send(who,@MsgSendUser,#message_rsc=vrPlayer_was_killed,
+            #parm1=Send(attacker,@GetDef),#parm2=Send(attacker,@GetName));
+            
+       return TRUE;
+   }
+
+   %%% Enchantment support
+
+   GetDuration(iSpellpower=$)
+   {
+      local iDuration;
+
+      iDuration = Random(iSpellpower/3,iSpellpower/2);
+      % 1 to 7.5 minutes
+      iDuration =  bound(iDuration,10,75);
+      iDuration = iDuration * 6 * 1000;  
+
+      return iDuration;
+   }  
+
+   GetStateValue(iSpellpower=$)
+   {
+      Return iSpellpower;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

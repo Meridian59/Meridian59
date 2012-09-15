@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CouncilLetter is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   CouncilLetter_name_rsc = "letter"
+   CouncilLetter_icon_rsc = scr04.bgf
+   CouncilLetter_desc_rsc = \
+      "This official-looking piece of correspondence is embossed with a gilt crest.  You "
+      "wonder what is written on it, but dare not break the seal to peek."
+
+classvars:
+
+   vrName = CouncilLetter_name_rsc
+   vrIcon = CouncilLetter_icon_rsc
+   vrDesc = CouncilLetter_desc_rsc
+
+   viValue_average = 40
+   viWeight = 3
+   viBulk = 10
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

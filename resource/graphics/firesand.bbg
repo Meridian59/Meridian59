@@ -1,0 +1,18 @@
+# firesand
+# display
+# dropped bag
+# dropped pile
+#^Applied to Hotspot: 0
+#*Groups: 3
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 12
+3
+firesnd3.bmp   [0, 0] 
+firesnd1.bmp   [0, 0] 
+firesnd2.bmp   [0, 0] 
+3
+ 1   1 
+ 1   2 
+ 1   3 

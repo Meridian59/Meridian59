@@ -1,0 +1,110 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Helmet is DefenseModifier
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   helmet_condition_exc = " is in flawless condition."
+   helmet_condition_exc_mended = " is in great condition, but has been patched before."
+   helmet_condition_good = " is stained with blood but otherwise in good condition."
+   helmet_condition_med = " is marked with the scars of battle but is still serviceable."
+   helmet_condition_poor = " has been dented and worn nearly to the point of breaking."
+   helmet_condition_broken = " is useless, having been cleft in two by a forceful blow."
+
+classvars:
+
+   viUse_type = ITEM_USE_HEAD
+   viUse_amount = 1
+   
+   vrPoss_article = object_article_cap_this_rsc
+
+   vbShow_condition = TRUE
+   vrCondition_exc = helmet_condition_exc 
+   vrCondition_exc_mended = helmet_condition_exc_mended 
+   vrCondition_good = helmet_condition_good 
+   vrCondition_med = helmet_condition_med 
+   vrCondition_poor = helmet_condition_poor 
+   vrCondition_broken = helmet_condition_broken
+
+properties:
+
+
+messages:
+
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what,&Helmet)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   NewUsed()
+   {
+      Send(poOwner,@SetOverlay,#what=self);
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      Send(poOwner,@RemoveOverlay,#what=self);
+
+      propagate;
+   }   
+
+   % These 3 called by player, for normal 3rd-person overlays on user.
+
+   GetOverlay(animation = $)
+   {
+      return vrIcon; 
+   }
+
+   GetOverlayHotspot(animation = $)
+   {
+      return HS_TOUPEE;
+   }
+
+   SendOverlayAnimation(animation = $)
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+      
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   ReqRepair()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

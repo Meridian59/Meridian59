@@ -1,0 +1,113 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuestLever is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+   GUESTLEVER_RANGE = 1
+
+   GUESTLEVER_UP = 1
+   GUESTLEVER_DOWN = 2
+
+resources:
+
+   guestlever_name_rsc = "lever"
+   guestlever_icon_rsc = lever.bgf
+   guestlever_desc_rsc = \
+   "This lever looks old and worn, yet must still control something."
+
+   guestlever_not_in_range = "The lever is not close enough to switch."
+
+   guestlever_changed = "You switch the lever."
+
+   guestlever_stuck = "The lever is stuck in its current position."
+
+classvars:
+
+   vrName = guestlever_name_rsc
+   vrIcon = guestlever_icon_rsc
+   vrDesc = guestlever_desc_rsc
+
+   viObject_flags = ACTIVATE_YES
+
+properties:
+
+   piState = GUESTLEVER_UP
+
+messages:
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to send its own error message to user."
+   {
+      if abs(send(who,@getrow)-send(self,@getrow)) > GUESTLEVER_RANGE or
+         abs(send(who,@getcol)-send(self,@getcol)) > GUESTLEVER_RANGE
+      {
+	 Send(who,@MsgSendUser,#message_rsc=guestlever_not_in_range);          
+	 return True;
+      }
+
+      if piState = GUESTLEVER_UP
+      {
+	 piState = GUESTLEVER_DOWN;
+      }
+      else
+      {
+	 Send(who,@MsgSendUser,#message_rsc=guestlever_stuck);
+	 return True;
+      }
+      
+      Send(who,@MsgSendUser,#message_rsc=guestlever_changed);          
+      Send(poOwner,@SomethingChanged,#what=self);
+     
+      Send(poOwner,@LeverChanged,#what=self);
+ 
+      return True;
+   }
+
+   IsSwitched()
+   {
+      return piState = GUESTLEVER_DOWN;
+   }
+
+   SetSwitched(switched = True)
+   {
+      local iNew_state;
+
+      if switched
+      {  iNew_state = GUESTLEVER_DOWN; }
+      else
+      {  iNew_state = GUESTLEVER_UP; }
+
+      if iNew_state <> piState
+      {
+	 piState = iNew_state;
+	 Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,piState);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

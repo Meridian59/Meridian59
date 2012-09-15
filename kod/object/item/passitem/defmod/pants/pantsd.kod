@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PantsD is Pants
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   pantsD_icon_rsc = pantsD.bgf
+
+   pantsD_male_player_rsc = bfe.bgf
+   pantsD_female_player_rsc = bff.bgf
+
+classvars:
+
+   vrIcon = pantsD_icon_rsc
+   viGender = GENDER_FEMALE
+
+   vrLegs_male = pantsD_male_player_rsc
+   vrLegs_female = pantsD_female_player_rsc
+   viBroken_group = 3
+
+properties:
+
+   piItem_flags = PT_GRAY_TO_DBLUE
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,190 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Disarm is Skill
+
+constants:
+
+   include blakston.khd
+
+   BRAWL_THRESHOLD = 40          % Base brawl needed to attempt to disarm someone while unarmed
+   DISARM_FACTOR = 10            % Divide raw success total by this number before taking percent chance.
+
+resources:
+   Disarm_name_rsc = "disarm"
+   Disarm_icon_rsc = idisarm.bgf
+   Disarm_desc_rsc = "A technique that allows a warrior to strike at his or her opponent's weapon.  Often "
+                     "successful use of this skill will put the opponent at a disadvantage, and occasionally "
+                     "throw the weapon from an opponent's grasp."
+                     
+   Disarm_skill_intro = "Weaponcraft Lv. 5: The ability to press on even when exhausted."
+
+   Disarm_unwield = "You have put %s%s at a disadvantage."
+   Disarm_opp_unwield = "%s%s's strike causes you to fumble your weapon."
+   Disarm_dropped = "You have disarmed %s%s!"
+   Disarm_opp_dropped = "%s%s's strike has thrown your weapon from your hands!"
+
+classvars:
+
+   vrName = Disarm_name_rsc
+   vrIcon = Disarm_icon_rsc
+   vrDesc = Disarm_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSkill_num = SKID_DISARM
+   viSchool = SKS_FENCING
+   viSkill_Level = 6
+   viChance_to_Increase = 15
+
+   viSkillExertion = 10
+   vbCheck_exertion = FALSE
+
+   vbAutomatic = TRUE
+
+properties:
+
+messages:
+
+   GetRequisiteStat(who=$)
+   "Varies from skill to skill and spell to spell."
+   {
+      return Send(who,@GetAgility);
+   }
+
+   PayCosts(who=$,modifier=0)
+   "Some skills may require certain stats to be depleted."
+   "return TRUE if they were successfully depleted."
+   {
+      if not send(self,@successchance,#who=who,#modifier=modifier)
+      {
+         return FALSE;
+      }
+      
+      send(who,@AddExertion,#amount=1000*viSkillExertion);
+      
+      return TRUE;
+   }
+
+   SuccessChance(who=$,modifier=0)
+   "Modifier indicates the plusses (or minuses, if negative) to apply to the chance"
+   {
+       local reqstat,iAbility,num;
+
+       reqstat=send(self,@GetRequisiteStat,#who=who);
+       iAbility=send(who,@GetSkillAbility,#skill_num=viSkill_num);
+       num = ((100-reqstat)*iAbility/100) + reqstat;
+       num = (num + 1 + modifier) / DISARM_FACTOR;
+       
+       if random(1,100) < num
+       {
+         return TRUE;
+       }
+         
+       return FALSE;
+   }
+
+   DoSkill(who=$,oTarget=$,oWeapon=$)
+   {
+      local iAbil,iModifier,oOppWeapon, oHoldSpell;
+   
+      if (who=$)
+      {
+         debug("DoSkill called with bad who.");
+         return FALSE;
+      }
+
+      if oWeapon=$
+      {
+         % Talented people can disarm even bare-handed.
+         iAbil = Send(who,@GetSkillAbility,#Skill_num=SKID_BRAWLING);
+         if iAbil < BRAWL_THRESHOLD
+         {
+            return FALSE;
+         }
+         
+         iModifier = iAbil - 100;
+      }
+      else
+      {
+         iModifier = Send(oWeapon,@GetDisarmBonus);
+      }
+      
+      if not (Send(self,@CanPayCosts,#who=who) and Send(self,@PayCosts,#who=who,#modifier=iModifier))
+      {
+         return FALSE;
+      }
+
+      % Get player's ability in this skill.
+      iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
+
+      if (IsClass(oTarget,&Player)) and (Send(SYS,@IsPKAllowed) or Send(Send(who,@GetOwner),@IsArena))
+      {
+         % Players will unwield weapon
+
+         oOppWeapon = Send(oTarget,@LookupPlayerWeapon);
+         if oOppWeapon = $
+         {
+            return FALSE;
+         }
+
+         if Send(oTarget,@TryUnuseItem,#what=oOppWeapon)
+         {
+            % Currently, have 1/5th your percent plus your modifier chance to make opponent drop weapon.
+            iAbil = (iAbil + 1 + iModifier) / DISARM_FACTOR;
+            if (random(1,100) < iAbil) and (not Send(Send(oTarget,@GetOwner),@IsArena))
+            {
+               % Success!  They dropped it!
+               Send(oTarget,@DropItem,#droppedItem=oOppWeapon);
+               send(who,@MsgSendUser,#message_rsc=Disarm_dropped,
+                    #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+               send(oTarget,@MsgSendUser,#message_rsc=Disarm_opp_dropped,
+                    #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+            }
+               else
+            {
+               Send(oTarget,@UnuseItem,#what=oOppWeapon);
+               send(who,@MsgSendUser,#message_rsc=Disarm_unwield,
+                    #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+               send(oTarget,@MsgSendUser,#message_rsc=Disarm_opp_unwield,
+                    #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+            }
+            % Disarming players takes a bit more vigor than usual, about 5x more.
+            % This adds the additional 4x extra in addition to the amount already taken
+            % This is because it's much more harmful to players.
+            send(who,@AddExertion,#amount=4 * (1000 * viSkillExertion));
+         }
+      }
+      else
+      {
+         % Monsters are stunned.
+         oHoldSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+         % Don't stun held monsters...
+         if Send(oTarget,@IsEnchanted,#what=oHoldSpell)
+         {
+            return FALSE;
+         }
+         
+         send(who,@MsgSendUser,#message_rsc=Disarm_unwield,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+              
+         % The better you are, the better your weapon, the longer your stun is.
+         % The bigger the monster is, the shorter the stun is.
+         % Stun between 2 and 6 seconds.
+         iAbil = bound((iAbil + iModifier - Send(oTarget,@GetLevel)/2)/10,2,6);
+         Send(oHoldSpell,@DoHold,#what=who,#otarget=oTarget,#idurationsecs=iAbil,#report=FALSE);
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

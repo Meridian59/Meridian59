@@ -1,0 +1,114 @@
+# skeleton head 3 - damaged
+# Groups:
+# 1 standing
+# 2-7 walking
+# 8-13 fighting
+#^Applied to Hotspot: 1
+#*Groups: 13
+#* standing
+#* walk A
+#* walk B
+#* walk C
+#* walk D
+#* walk E
+#* walk F
+#* fight A
+#* fight B
+#* fight C
+#* fight D
+#* fight E
+#* fight F
+-s 3
+78
+sh3000s.bmp    [128, 58] 
+sh3315s.bmp    [117, 57] 
+sh3270s.bmp    [120, 57] 
+sh3180s.bmp    [157, 57] 
+sh3090s.bmp    [163, 57] 
+sh3045s.bmp    [146, 58] 
+sh3000wa.bmp   [140, 55] 
+sh3315wa.bmp   [118, 54] 
+sh3270wa.bmp   [111, 54] 
+sh3180wa.bmp   [145, 53] 
+sh3090wa.bmp   [166, 54] 
+sh3045wa.bmp   [161, 53] 
+sh3000wb.bmp   [146, 54] 
+sh3315wb.bmp   [121, 54] 
+sh3270wb.bmp   [110, 54] 
+sh3180wb.bmp   [141, 54] 
+sh3090wb.bmp   [166, 54] 
+sh3045wb.bmp   [164, 54] 
+sh3000wc.bmp   [150, 59] 
+sh3315wc.bmp   [125, 59] 
+sh3270wc.bmp   [110, 61] 
+sh3180wc.bmp   [136, 58] 
+sh3090wc.bmp   [166, 61] 
+sh3045wc.bmp   [165, 59] 
+sh3000wd.bmp   [151, 58] 
+sh3315wd.bmp   [125, 56] 
+sh3270wd.bmp   [110, 54] 
+sh3180wd.bmp   [137, 56] 
+sh3090wd.bmp   [166, 54] 
+sh3045wd.bmp   [165, 55] 
+sh3000we.bmp   [147, 54] 
+sh3315we.bmp   [123, 54] 
+sh3270we.bmp   [109, 54] 
+sh3180we.bmp   [139, 54] 
+sh3090we.bmp   [166, 54] 
+sh3045we.bmp   [165, 54] 
+sh3000wf.bmp   [140, 60] 
+sh3315wf.bmp   [119, 59] 
+sh3270wf.bmp   [111, 60] 
+sh3180wf.bmp   [146, 60] 
+sh3090wf.bmp   [166, 60] 
+sh3045wf.bmp   [161, 58] 
+sh3000aa.bmp   [132, 60] 
+sh3315aa.bmp   [114, 60] 
+sh3270aa.bmp   [113, 60] 
+sh3180aa.bmp   [153, 60] 
+sh3090aa.bmp   [166, 60] 
+sh3045aa.bmp   [154, 60] 
+sh3000ab.bmp   [138, 65] 
+sh3315ab.bmp   [113, 64] 
+sh3270ab.bmp   [106, 64] 
+sh3180ab.bmp   [148, 64] 
+sh3090ab.bmp   [169, 64] 
+sh3045ab.bmp   [163, 65] 
+sh3000ac.bmp   [140, 69] 
+sh3315ac.bmp   [112, 69] 
+sh3270ac.bmp   [103, 68] 
+sh3180ac.bmp   [146, 67] 
+sh3090ac.bmp   [170, 68] 
+sh3045ac.bmp   [165, 69] 
+sh3000ad.bmp   [139, 63] 
+sh3315ad.bmp   [116, 63] 
+sh3270ad.bmp   [110, 63] 
+sh3180ad.bmp   [147, 62] 
+sh3090ad.bmp   [169, 63] 
+sh3045ad.bmp   [163, 63] 
+sh3000ae.bmp   [137, 62] 
+sh3315ae.bmp   [118, 62] 
+sh3270ae.bmp   [113, 61] 
+sh3180ae.bmp   [149, 61] 
+sh3090ae.bmp   [168, 62] 
+sh3045ae.bmp   [161, 62] 
+sh3000af.bmp   [133, 61] 
+sh3315af.bmp   [117, 61] 
+sh3270af.bmp   [116, 60] 
+sh3180af.bmp   [152, 60] 
+sh3090af.bmp   [166, 61] 
+sh3045af.bmp   [156, 61] 
+13
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 

@@ -1,0 +1,517 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Thrasher is Monster
+
+constants:
+
+   include blakston.khd
+   ANIM_SPIN = 2
+   
+   PALSY_CHANCE = 20
+
+   SPIN_DAMAGE_MIN = 7
+   SPIN_DAMAGE_MAX = 15
+
+resources:
+
+   thrasher_koc_name_rsc = "teotixleoc"
+   thrasher_name_rsc = "thrasher"
+   thrasher_icon_rsc = res0001a.bgf
+   thrasher_desc_rsc = \
+      "The powerful smell of rotted flesh and embalming herbs assault your "
+      "nostrils.  This shambling horror in front of you seems like it was "
+      "crafted in madness, and birthed in nightmares. Various limbs, none of "
+      "them matching, sprout from this monster in disarray, and in its eye a "
+      "strange malignance glows.  Run for your life. "
+   
+   thrasher_shield_overlay = res0001e.bgf
+   thrasher_mace_overlay = res0001c.bgf
+   thrasher_scimitar_overlay = res0001d.bgf
+
+   thrasher_dead_icon_rsc = res0001b.bgf
+   thrasher_dead_name_rsc = "dead thrasher"
+
+   thrasher_sound_attack = res0001b.wav
+   thrasher_sound_death = res0001c.wav
+   thrasher_sound_aware = res0001a.wav
+
+   thrasher_spin_message = "~bThe thrasher spins, damaging you with its attack."
+
+classvars:
+
+   vrKocName = thrasher_koc_name_rsc
+   vrName = thrasher_name_rsc
+   vrIcon = thrasher_icon_rsc
+   vrDesc = thrasher_desc_rsc
+   vrDead_icon = thrasher_dead_icon_rsc
+   vrDead_name = thrasher_dead_name_rsc
+
+   viTreasure_type = TID_THRASHER
+
+   viNormalSpeed = SPEED_FAST
+   viAttack_type = ATCK_WEAP_BLUDGEON
+   viAttributes = 0
+   viKarma = -75
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE \
+                        | AI_FIGHT_LASHOUT | AI_MOVE_FLEE_FRIGHTENERS
+
+   vrSound_hit = thrasher_sound_attack
+   vrSound_miss = thrasher_sound_attack
+   vrSound_aware = thrasher_sound_aware
+   vrSound_death = thrasher_sound_death
+
+properties:
+
+   viSpeed = SPEED_FAST
+   viLevel = 150
+   viDifficulty = 7
+
+   piAnimation = ANIM_NONE
+   % Default shield or $ for default.
+   prShieldOverlay = $
+   pbFirstAttack = TRUE
+   ptSecondAttack = $
+   piSpinDelay = 75
+   ptSpin = $
+   piSpinAngle = ANGLE_EAST
+
+messages:
+
+   Constructor(bAwake=TRUE)
+   {
+      if NOT bAwake
+      {
+         viSpeed = SPEED_NONE;
+      }
+
+      propagate;
+   }   
+
+   Constructed()
+   {
+
+      % Think brainless frankenstein type mob.  Smash me, beat me, FIRE BAD!!!
+      plResistances = [ [ 50, ATCK_WEAP_PIERCE ],
+                        [ 50, ATCK_WEAP_SLASH ],
+                        [ 50, ATCK_WEAP_BLUDGEON ],
+                        [ 50, -ATCK_SPELL_UNHOLY ],
+                        [ 90, -ATCK_SPELL_SHOCK ],
+                        [ -20, -ATCK_SPELL_FIRE ],
+                        [ -15, -ATCK_SPELL_HOLY ]
+                      ]; 
+
+      Send(self,@SelectAdditionalWeapon);
+      Send(self,@TweakBehavior);
+
+      propagate;
+   }
+
+   SelectAdditionalWeapon()
+   "Decides which shield/weapon/drumstick is part of the thrasher and sets "
+   "the appropriate overlay and stat adjustments."
+   {
+      local RandomNumber, oObject;
+
+      % Choose randomly
+      RandomNumber = random(0,2);
+      if RandomNumber = 0
+      {
+         % Shield: Increase hps.
+         viLevel = viLevel + 10;
+         oObject = Create(&GoldShield);
+         Send(self,@NewHold,#what=oObject);
+         prShieldOverlay = thrasher_shield_overlay;
+      }
+      else
+      {
+         if RandomNumber = 1
+         {
+            % Mace: No change in stats, we just get a second attack.
+            oObject = Create(&Mace);
+            Send(self,@NewHold,#what=oObject);
+            prShieldOverlay = thrasher_mace_overlay;
+         }
+         else
+         {
+            % Scimitar: Increase difficulty by 1 and get second attack.
+            viDifficulty = viDifficulty + 1;
+            oObject = Create(&Scimitar);
+            Send(self,@NewHold,#what=oObject);
+            prShieldOverlay = thrasher_scimitar_overlay;
+         }
+      }
+
+      return;
+   }
+
+   HitSideEffect(what = $)
+   {
+      local oSpell;
+      
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
+      if NOT Send(what,@IsEnchanted,#what=oSpell) 
+         AND Random(1,PALSY_CHANCE) = 1
+      {
+         Send(oSpell,@MakeSick,#who=what);
+      }
+      
+      return;
+   }
+
+   %%% Thrasher dormant code.
+
+   % Stolen from Living Statue, but with a 100% chance of waking up, and none
+   % of that going back to sleep crap. Wussy statues. =)
+
+   TweakBehavior()
+   "Our default behavior is to not be noticable as a monster."
+   {
+      if viSpeed = SPEED_NONE
+      {
+         piBehavior = AI_NOMOVE | AI_NOFIGHT | AI_NPC;
+      }
+
+      return;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      local iDelay;
+      
+      % Only care about moving stuff if we're not already moving
+      % Only care about non-immortal players we can see and are "close"
+      % We only care about players within 7 squares of us.
+      if viSpeed = SPEED_NONE
+         AND what <> $
+         AND IsClass(what,&Player)
+         AND NOT (IsClass(what,&DM) AND Send(what,@PlayerIsImmortal))
+         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
+         AND Send(self,@SquaredDistanceTo,#what=what) <= 49
+      {
+         % Set our intruder as our target if we don't have another one.
+         % 25 hatred is pretty low.
+         if Send(self,@GetHatred) <= 25
+         {
+            Send(self,@TargetSwitch,#what=what,#iHatred=25);
+         }
+
+         % Someone walked close enough!  Spring to life!
+         Send(self,@WakeUp);
+      }
+
+      propagate;
+   } 
+
+   WakeUp()
+   {
+      % Make ourselves mobile!
+      viSpeed = viNormalSpeed;
+      piBehavior = piBehavior & ~(AI_NOMOVE | AI_NOFIGHT | AI_NPC);
+      Send(poOwner,@SomethingChanged,#what=self);
+      Send(self,@EnterStateChase,#target=poTarget,#actnow=TRUE);
+
+      return;
+   }
+
+   %%% Thrasher attack code
+
+   TryAttack(what=$,stroke_obj=$)
+   {
+      local lFinalTargets, oRoom;
+
+      oRoom = Send(self,@GetOwner);
+
+      % Don't attack while spinning.
+      if piAnimation = ANIM_SPIN
+      {
+         return;
+      }
+
+      lFinalTargets = Send(self,@GetFinalTargets);
+      If Length(lFinalTargets) > 1
+         AND NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+
+      {
+         Send(self,@StartSpin);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      % The thrasher has a dual attack, like the Pit Boss...
+      % but only if the thrasher has a secondary weapon on 
+      % in its prShieldOverlay.
+      
+      if pbFirstAttack 
+      {
+         Send(self,@DoBludgeon);
+         if ptSecondAttack = $ 
+         {
+            ptSecondAttack = CreateTimer(self,@SecondAttackTimer,400); 
+            pbFirstAttack = FALSE;
+
+            return;
+         }
+ 
+         pbFirstAttack = TRUE; 
+      }
+
+      return;
+   }
+
+   SecondAttackTimer()
+   {
+      if pbFirstAttack
+      {
+         return;  
+      }
+
+      ptSecondAttack = $;
+      if poTarget <> $ AND Send(self,@GetOwner) = Send(poTarget,@GetOwner)
+      {  
+         % We only want one extra attack if the thrasher is armed with weapon.
+         if prShieldOverlay <> thrasher_shield_overlay
+         {
+            % Create another timer here so it doesn't blend so well.
+            Send(self,@TryAttack,#what=poTarget);
+
+         }
+
+         pbFirstAttack = TRUE;
+      }      
+
+      return;
+   }
+
+   DoBludgeon()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   GetBlockAbility(stroke_obj=$)
+   {
+      % Thrasher blocking code, only active if the overlay is a shield.
+      % Otherwise, 0 is returned, and the mob doesn't block.  Neat, eh?
+
+      if (stroke_obj <> $ AND Send(stroke_obj,@CanBlock))
+         AND prShieldOverlay = thrasher_shield_overlay
+      {
+         return (viDifficulty*10);
+      }
+
+      return 0;
+   }
+
+   %%% Thrasher spin attack
+
+   GetFinalTargets()
+   {
+      local oRoom, i, each_obj, lValidTargets;
+
+      lValidTargets = $;
+
+      oRoom = Send(self,@GetOwner);
+      for i in Send(oRoom,@GetHolderActive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+            AND Send(self,@CanReach,#what=each_obj)
+         {
+            lValidTargets = Cons(each_obj,lValidTargets);
+         }
+      }
+
+      return lValidTargets; 
+   }
+
+   DoSpinAttack(lFinalTargets=$)
+   {
+      local i, lTargets, iDamage;
+
+      iDamage = Random(SPIN_DAMAGE_MIN,SPIN_DAMAGE_MAX);
+
+      lTargets = lFinalTargets;
+      
+      if lTargets = $
+      {
+         lTargets = Send(self,@GetFinalTargets);
+      }
+
+      for i in lTargets
+      {
+         iDamage = Send(i,@AssessDamage,#what=self,#damage=iDamage,
+                        #atype=viAttack_type,#aspell=viAttack_spell);
+         if iDamage = $
+         {
+            Send(self,@KilledSomething,#what=i,#use_weapon=self);
+         } 
+
+         Send(i,@MsgSendUser,#message_rsc=thrasher_spin_message);
+         Send(i,@WaveSendUser,#wave_rsc=thrasher_sound_attack);
+      }
+
+      return;
+   }      
+
+   %%% Animation for spin attack
+
+   StartSpin(delay = 200)
+   { 
+      local i;
+   
+      if poOwner = $
+      {
+         return;
+      }
+
+      piSpinDelay = delay;
+      piSpinAngle = ANGLE_EAST;
+      Send(self,@SpinTimer);      
+
+      return;
+   }
+
+   SpinTimer()
+   {
+      ptSpin = $;
+
+      piAnimation = ANIM_SPIN;
+
+      if piSpinAngle > MAX_ANGLE
+      {
+         % We have spun all the way around.
+         piAnimation = ANIM_NONE;
+         Send(poOwner,@SomethingChanged,#what=self);
+
+         % Now do our damage!
+         Send(self,@DoSpinAttack);
+
+         return;
+      }
+
+      Send(poOwner,@SomethingTurned,#what=self,#new_angle=piSpinAngle);
+      Send(poOwner,@SomethingChanged,#what=self);
+      piSpinAngle = piSpinAngle + (MAX_ANGLE / 4);
+
+      ptSpin = CreateTimer(self,@SpinTimer,piSpinDelay);
+
+      return;   
+   }
+
+   %%% Animation and overlays
+
+   SendMoveAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      % Walk is frames 1-5
+      AddPacket(1,ANIMATE_CYCLE, 4,80, 2,1, 2,5);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      if piAnimation = ANIM_ATTACK
+      {
+         % Attacking is frames 6-8 then back to standing, (9)
+         AddPacket(1,ANIMATE_ONCE, 4,150, 2,6, 2,8, 2,9);
+
+         return;
+      }
+
+      if piAnimation = ANIM_SPIN
+      {
+         % 7 was the proper frizzame, I think.
+         AddPacket(1,ANIMATE_NONE, 2,7);
+
+         return;
+      }
+
+      % Standing is frame 9
+      AddPacket(1,ANIMATE_NONE, 2,9); 
+
+      return;
+   }
+
+   SendMoveOverlays()
+   {
+      AddPacket(1,1);
+      % Also walking, 1-5 I assume. currently 1, 2, 1 to test
+      AddPacket(4,prShieldOverlay, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);
+      
+      return;
+   }
+
+   SendOverlays()
+   {
+      % Send overlay bitmap info to user.  
+      AddPacket(1,1);
+
+      if piAnimation = ANIM_ATTACK
+      {
+         % Shield and Mace have no attack frames.
+         % Scimitar animates from group 2-4 for an attack.
+         AddPacket(4,prShieldOverlay, 1,HS_HEAD, 1,ANIMATE_ONCE, 4,150,
+                   2,1, 2,1, 2,1);
+  
+         return;
+      }
+
+      % Default setting: no animation.  This includes when spinning.
+      AddPacket(4,prShieldOverlay, 1,HS_HEAD, 1,ANIMATE_NONE, 2,1);
+
+      return;
+      
+   }
+  
+   IsUndead()
+   {
+      % Let's see... walking pile o' body parts...
+      return TRUE;
+   }
+
+   Delete()
+   {
+      if ptSecondAttack <> $
+      {
+         DeleteTimer(ptSecondAttack);
+         ptSecondAttack = $;
+      }
+
+      if ptSpin <> $
+      {
+         DeleteTimer(ptSpin);
+         ptSpin = $;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

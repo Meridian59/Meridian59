@@ -1,0 +1,230 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarionCrypt2 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   SECTOR_DOOR_CRYPT3A = 5
+
+   BOSS_MESSAGE_ROW_MIN = 5
+   BOSS_MESSAGE_ROW_MAX = 10
+   BOSS_MESSAGE_COL_MIN = 5
+   BOSS_MESSAGE_COL_MAX = 10
+
+   MESSAGE_INTERVAL = 30 * 1000  % 30 seconds (in ms).
+
+resources:
+
+   room_name_MarionCrypt2 = "Resting place of Marion's ancestors"
+   room_MarionCrypt2 = MarDun02.roo
+   MarionCrypt2_music = Song.mid
+
+   MarionCrypt2_boss_message = \
+      "~kAn eerie voice echos, \"~IYou may not pass yet!~I\""
+
+   MarionCrypt2_warning_sign_name = "Warning!"
+   MarionCrypt2_warning_sign = \
+      "By order of the King Far'Nohl none are to venture beyond this point.  "
+      "This place is lost to civility and those that enter are likely to "
+      "die.  No pity shall be given to those that cross this order. "
+  
+   MarionCrypt2_door_sound = stoneup2.wav
+
+classvars:
+
+   vrName = room_name_MarionCrypt2
+  
+   viTeleport_row = 17
+   viTeleport_col = 18
+
+   viTerrain_type = TERRAIN_NECROPOLIS | TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_MarionCrypt2
+   piRoom_num = RID_MAR_CRYPT2
+
+   piGenTime = 15000
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_NONE
+
+   prMusic = MarionCrypt2_music
+
+   piInit_count_min = 1
+   piInit_count_max = 3
+   piMonster_count_max = 25
+
+   % What locations do we want to spawn states at?  Each element is a
+   %  [row, col, direction] triplet.
+   plStatueLocations = $
+
+   % Is the door to MarionCrypt3a enabled?
+   pbSecondaryDoorEnabled = TRUE
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Skeleton, 80], [&BatteredSkeleton, 20] ];
+      plGenerators = [ [7, 16], [11, 8], [14, 6], [17, 2], 
+                       [18, 3], [24, 7], [23, 9], [26, 8], 
+                       [27, 5], [31, 7], [32, 3], [28, 11], 
+                       [29, 15], [36, 14], [37, 20], [31, 25], 
+                       [32, 27], [33, 31], [34, 35], [31, 37], 
+                       [31, 43], [27, 45], [24, 46], [22, 45], 
+                       [21, 48], [19, 42], [23, 41], [12, 50], 
+                       [13, 45], [16, 45], [11, 42], [8, 39], 
+                       [3, 41], [2, 38], [5, 37]
+                     ];
+
+      % [row, col, angle]
+      plStatueLocations = [ [25,  2, ANGLE_NORTH], [37,  2, ANGLE_NORTH],
+                            [37,  4, ANGLE_NORTH], [19,  7, ANGLE_NORTH],
+                            [20, 10, ANGLE_NORTH], [21, 35, ANGLE_NORTH],
+                            [21, 37, ANGLE_NORTH], [27, 20, ANGLE_NORTH],
+                            [37, 42, ANGLE_NORTH], [37, 44, ANGLE_NORTH],
+                            [ 8, 12, ANGLE_WEST],  [31, 10, ANGLE_WEST],
+                            [33, 11, ANGLE_WEST],  [35, 10, ANGLE_WEST],
+                            [11, 18, ANGLE_WEST],  [16, 18, ANGLE_WEST],
+                            [20, 20, ANGLE_WEST],  [22, 20, ANGLE_WEST],
+                            [28, 41, ANGLE_WEST],  [17, 52, ANGLE_WEST],
+                            [ 8, 47, ANGLE_WEST],  [ 2, 47, ANGLE_WEST],
+                            [28, 51, ANGLE_WEST],  [26, 51, ANGLE_WEST],
+                            [12,  3, ANGLE_SOUTH], [23, 12, ANGLE_SOUTH],
+                            [ 2, 50, ANGLE_SOUTH], [24, 14, ANGLE_SOUTH],
+                            [32, 17, ANGLE_SOUTH], [32, 19, ANGLE_SOUTH],
+                            [10, 10, ANGLE_EAST],  [ 7,  3, ANGLE_EAST], 
+                            [ 9,  3, ANGLE_EAST],  [26, 33, ANGLE_EAST],
+                            [16, 40, ANGLE_EAST],  [14, 40, ANGLE_EAST],  
+                            [17, 47, ANGLE_EAST]
+                         ];
+
+      propagate;
+   }
+
+   Delete()
+   {
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 2, 26, RID_MAR_CRYPT1, 37, 6, ROTATE_NONE,
+                       DISTANCE_NORMAL ], plExits);
+      plExits = Cons([ 2, 27, RID_MAR_CRYPT1, 37, 7, ROTATE_NONE,
+                       DISTANCE_NORMAL ], plExits);
+      plExits = Cons([ 38, 26, RID_MAR_CRYPT3A, 31, 17, ROTATE_NONE,
+                       DISTANCE_NORMAL ], plExits);
+      plExits = Cons([ 38, 27, RID_MAR_CRYPT3A, 31, 17, ROTATE_NONE,
+                       DISTANCE_NORMAL ], plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      oSign = Create(&Sign,#desc=MarionCrypt2_warning_sign,
+                     #name=MarionCrypt2_warning_sign_name);
+      Send(self,@NewHold,#what=oSign,#new_row=38,#new_col=27,
+           #fine_row=0,#fine_col=0);
+
+      propagate;
+   }
+
+
+   FirstUserEntered(what = $)
+   {
+      Send(self,@PlaceStatues);
+   
+      if pbSecondaryDoorEnabled
+      {           
+         Send(self,@CloseSecondaryDoorDown);
+      }
+
+      propagate;
+   }
+
+   PlaceStatues()
+   {
+      local oStatue, lLocation;
+
+      % Don't do anything if there's already statues here.
+      if Send(self,@FindHoldingActive,#class=&LivingStatue) <> $
+      {
+         return;
+      }
+
+      for lLocation in plStatueLocations
+      {
+         oStatue = Create(&LivingStatue);
+
+         Send(self,@NewHold,#what=oStatue,
+              #new_row=Nth(lLocation,1),#new_col=Nth(lLocation,2));
+         Send(self,@SomethingTurned,#what=oStatue,#new_angle=Nth(lLocation,3));
+      }
+
+      return;
+   }
+
+   SomethingKilled(what = $,victim = $)
+   {
+      if IsClass(victim,&LivingStatue)
+         AND Send(self,@FindHoldingActive,#class=&LivingStatue,#sequence=2) = $
+      {
+         Send(self,@OpenSecondaryDoorDown);
+      }
+
+      propagate;
+   }
+
+   OpenDoorDown()
+   {
+      return;
+   }
+
+   OpenSecondaryDoorDown()
+   {
+      if pbSecondaryDoorEnabled = TRUE
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=MarionCrypt2_door_sound); 
+         Send(self,@SetSector,#sector=SECTOR_DOOR_CRYPT3A,
+              #animation=ANIMATE_CEILING_LIFT,#height=1098,#speed=8);
+ 
+         return;
+      }
+
+      return;
+    }
+
+    CloseSecondaryDoorDown()
+    {
+       Send(self,@SetSector,#sector=SECTOR_DOOR_CRYPT3A,
+            #animation=ANIMATE_CEILING_LIFT,#height=1045,#speed=150);
+
+       return;
+    }
+
+   CanHavePlayerPortal(who = $)
+   {
+      % Don't allow portals into this room, bypassing puzzle
+      return false;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

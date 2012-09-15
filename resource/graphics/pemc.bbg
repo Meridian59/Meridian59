@@ -1,0 +1,27 @@
+#  Dk Brown female face 3 - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000mac.bmp   [-15, -9] 
+Pe045mac.bmp   [-20, -10] 
+Pe090mac.bmp   [-15, -12] 
+Pe270mac.bmp   [-3, -11] 
+Pe315mac.bmp   [-7, -9] 
+Pe000mbc.bmp   [-15, -9] 
+Pe045mbc.bmp   [-20, -10] 
+Pe315mbc.bmp   [-7, -9] 
+Pe000mcc.bmp   [-15, -9] 
+Pe045mcc.bmp   [-20, -10] 
+Pe315mcc.bmp   [-7, -9] 
+Pe000mdc.bmp   [-15, -9] 
+Pe045mdc.bmp   [-20, -10] 
+Pe315mdc.bmp   [-7, -9] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

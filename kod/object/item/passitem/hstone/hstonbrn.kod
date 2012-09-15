@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BrownHeartStone is HeartStone
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BrownHeartStone_name_rsc = "brown heartstone"
+   BrownHeartStone_desc_rsc = \
+	"This is called a 'heartstone'.  It is a huge brown gem taken from the body of a "
+	"fallen Te'Xeochicatl.  It feels much like a normal stone.  The uses for "
+	"this gem are not widely known."
+	
+classvars:
+   
+   vrName = BrownHeartStone_name_rsc
+   vrDesc = BrownHeartStone_desc_rsc
+
+   viValue_average = 100
+   viWeight = 25
+   viBulk = 10
+
+   viColor = XLAT_TO_SKIN4
+
+properties:
+
+messages:
+
+   CreateXeo()
+   {
+      return Create(&XeoEarth,#InAttack=Send(self,@IsInAttack));
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

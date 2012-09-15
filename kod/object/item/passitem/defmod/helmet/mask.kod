@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FaceMask is Helmet
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FaceMask_name_rsc = "mask"
+   FaceMask_icon_male_rsc = mmskl.bgf
+   FaceMask_icon_female_rsc = mfskl.bgf
+   FaceMask_desc_rsc = \
+      "This mask can be used as a disguise."   
+
+classvars:
+
+   vrName = FaceMask_name_rsc
+   vrDesc = FaceMask_desc_rsc
+   vrIcon = FaceMask_icon_male_rsc
+
+   viGround_group = 2
+   viInventory_group = 3
+
+   viItem_type = ITEMTYPE_ARMOR | ITEMTYPE_MASK
+
+   vbShow_condition = FALSE
+
+   vrMaleIcon = FaceMask_icon_male_rsc
+   vrFemaleIcon = FaceMask_icon_female_rsc
+
+properties:
+
+messages:
+
+   DefendingHit(who = $,what = $)
+   {
+      % Return here to avoid damage.
+      return;
+   }
+
+   GetOverlay(animation = $)
+   {
+      if send(poOwner,@GetGender) = GENDER_FEMALE
+      {
+         return vrFemaleIcon;
+      }
+      
+      return vrMaleIcon; 
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

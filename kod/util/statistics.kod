@@ -1,0 +1,349 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Statistics is UtilityFunctions
+
+% This class keeps statistics about the game.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+properties:
+
+   piPlayer_deaths = 0
+   piPlayer_kills = 0
+
+   % List of [spell id, successful casts, failed casts] elements, one for each spell
+   plSpell_cast_counts = $
+
+   % List of [room id, times entered by player] elements, one for each room
+   plRoom_entered_counts = $
+
+messages:
+
+   Constructor()
+   {
+      local lSpells, oSpell, lRooms, oRoom;
+
+      % Set up spell counts
+      lSpells = Send(SYS, @GetSpells);
+      for oSpell in lSpells
+      {
+         plSpell_cast_counts = Cons([Send(oSpell, @GetSpellNum), 0, 0],
+                                    plSpell_cast_counts);
+      }
+
+      % Set up room counts
+      lRooms = Send(SYS, @GetRooms);
+      for oRoom in lRooms
+      {
+         plRoom_entered_counts = Cons([Send(oRoom, @GetRoomNum), 0],
+                                      plRoom_entered_counts);
+      }
+      return;
+   }
+
+   PlayerKillsCounter()
+   "Increment the count of how many times a player has killed something"
+   {
+      piPlayer_kills = piPlayer_kills + 1;
+      return;
+   }
+
+   PlayerDiedCounter()
+   "Increment the count of how many times a player has died"
+   {
+      piPlayer_deaths = piPlayer_deaths + 1;
+      return;
+   }
+
+   SpellCast(oSpell = $, who = $)
+   "Increment the count of how many times the given spell has been cast successfully"
+   {
+      local iNum, lItem;
+
+      if (oSpell <> $)
+      {
+         iNum = Send(oSpell, @GetSpellNum);
+         for lItem in plSpell_cast_counts
+         {
+            if First(lItem) = iNum
+            {
+               SetNth(lItem, 2, Nth(lItem, 2) + 1);
+               return;
+            }
+         }
+         Debug("Got an unknown spell cast, id is", iNum);
+      }
+      return;
+   }
+
+   PlayerEnteredRoom(oRoom = $, who = $)
+   "Increment the count of how many times the given room has been entered"
+   {
+      local iNum, lItem;
+
+      if (oRoom <> $)
+      {
+         iNum = Send(oRoom, @GetRoomNum);
+         for lItem in plRoom_entered_counts
+         {
+            if First(lItem) = iNum
+            {
+               SetNth(lItem, 2, Nth(lItem, 2) + 1);
+               return;
+            }
+         }
+         Debug("Got an unknown room entered, id is", iNum);
+      }
+      return;
+   }
+
+
+   PrintSpellStats()
+   "Prints out how many time each spell has been cast"
+   {
+      local oSpell, lItem, iNum;
+      for lItem in plSpell_cast_counts
+      {
+         iNum = Nth(lItem, 1);
+         oSpell = Send(SYS, @FindSpellByNum, #num = iNum);
+         if (oSpell = $)
+         {
+            Debug("Unknown spell id", iNum);
+         } 
+         else 
+         {
+            Debug(iNum, Send(oSpell, @GetName), Nth(lItem, 2), Nth(lItem, 3));
+         }
+      }
+      return;
+   }   
+
+   PrintRoomStats()
+   "Prints out how many time each room has been entered by players"
+   {
+      local oRoom, lItem, iNum;
+      for lItem in plRoom_entered_counts
+      {
+         iNum = Nth(lItem, 1);
+         oRoom = Send(SYS, @FindRoomByNum, #num = iNum);
+         if (oRoom = $)
+         {
+            Debug("Unknown room id", iNum);
+         } 
+         else 
+         {
+            Debug(iNum, Send(oRoom, @GetName), Nth(lItem, 2));
+         }
+      }
+      return;
+   }   
+
+   PrintUserStats(iDays = 30)
+   "Prints out stats about users who have played in the last given number of days. "
+   "DMs are not included."
+   {
+      local iNow, lUsers, oUser, iActiveUsers, lHealthBins, lManaBins, lStatBins,
+         lMightCounts, lIntellectCounts, lStaminaCounts, lAgilityCounts, lMysticismCounts,
+         lAimCounts, lHealthCounts, lManaCounts, lBadKillBins, lBadKillCounts,
+         lGoodKillBins, lGoodKillCounts, iLastLoginTime, lFactionCounts, lFactionBins,
+         lGenderCounts, lGenderBins;
+
+      iNow = GetTime();
+      lUsers = Send(SYS, @GetUsers);
+      iActiveUsers = 0;
+
+      % Build histograms according to these values
+      lStatBins = [1, 10, 20, 30, 40, 50];
+
+      lMightCounts = $;
+      lIntellectCounts = $;
+      lStaminaCounts = $;
+      lAgilityCounts = $;
+      lMysticismCounts = $;
+      lAimCounts = $;
+
+      lHealthCounts = $;
+      lHealthBins = [20, 29, 39, 49, 59, 69, 79, 89, 99, 109, 119, 129, 139, 149, 150];
+      lManaCounts = $;
+      lManaBins = [20, 29, 39, 49, 59, 69, 79, 89, 99, 109, 119, 129, 139, 149, 150];
+
+      lBadKillCounts = $;
+      lBadKillBins = [0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+      lGoodKillCounts = $;
+      lGoodKillBins = [0, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000];
+
+      lGenderCounts = $;
+      lGenderBins = [GENDER_NEUTER, GENDER_MALE, GENDER_FEMALE];
+
+      lFactionCounts = $;
+      lFactionBins = [FACTION_NEUTRAL, FACTION_DUKE, FACTION_PRINCESS, FACTION_REBEL];
+
+      for oUser in lUsers
+      {
+         % Attempt to deal with the Blakod timer value wraparound, but
+         % this doesn't really work.  We don't have a foolproof way to
+         % determine who has actually logged in recently.
+         iLastLoginTime = Send(oUser, @GetLastLoginTime);
+         if NOT IsClass(oUser, &DM) 
+            AND iNow > iLastLoginTime
+            AND iNow - iLastLoginTime < iDays * 24 * 60 * 60
+         {
+            iActiveUsers = iActiveUsers + 1;
+
+            % Player stats
+            lMightCounts = 
+               Send(self, @AccumulateBin, #counts = lMightCounts, 
+                    #value = Send(oUser, @GetMight), #bins = lStatBins);
+            lIntellectCounts = 
+               Send(self, @AccumulateBin, #counts = lIntellectCounts, 
+                    #value = Send(oUser, @GetIntellect), #bins = lStatBins);
+            lStaminaCounts = 
+               Send(self, @AccumulateBin, #counts = lStaminaCounts, 
+                    #value = Send(oUser, @GetStamina), #bins = lStatBins);
+            lAgilityCounts = 
+               Send(self, @AccumulateBin, #counts = lAgilityCounts, 
+                    #value = Send(oUser, @GetAgility), #bins = lStatBins);
+            lMysticismCounts = 
+               Send(self, @AccumulateBin, #counts = lMysticismCounts, 
+                    #value = Send(oUser, @GetMysticism), #bins = lStatBins);
+            lAimCounts = 
+               Send(self, @AccumulateBin, #counts = lAimCounts, 
+                    #value = Send(oUser, @GetAim), #bins = lStatBins);
+
+            % Health and mana
+            lHealthCounts = 
+               Send(self, @AccumulateBin, #counts = lHealthCounts, 
+                    #value = Send(oUser, @GetBaseMaxHealth), #bins = lHealthBins);
+            lManaCounts = 
+               Send(self, @AccumulateBin, #counts = lManaCounts, 
+                    #value = Send(oUser, @GetMaxMana), #bins = lManaBins);
+
+            % Player kills, unjustified (bad), justified (good)
+            lBadKillCounts = 
+               Send(self, @AccumulateBin, #counts = lBadKillCounts, 
+                    #value = Send(oUser, @GetUnjustifiedKills), #bins = lBadKillBins);
+            lGoodKillCounts = 
+               Send(self, @AccumulateBin, #counts = lGoodKillCounts, 
+                    #value = Send(oUser, @GetJustifiedKills), #bins = lGoodKillBins);
+            
+            % Faction
+            lFactionCounts = 
+               Send(self, @AccumulateBin, #counts = lFactionCounts, 
+                    #value = Send(oUser, @GetFaction), #bins = lFactionBins);
+
+            % Gender
+            lGenderCounts = 
+               Send(self, @AccumulateBin, #counts = lGenderCounts, 
+                    #value = Send(oUser, @GetGender), #bins = lGenderBins);
+         }
+      }
+
+      % Print the output
+      Debug("Total Users:", Length(lUsers));
+      Debug("Active Users:", iActiveUsers);
+
+      Send(self, @PrintBinCounts, #name = "Might", 
+         #counts = lMightCounts, #bins = lStatBins);
+      Send(self, @PrintBinCounts, #name = "Intellect", 
+         #counts = lIntellectCounts, #bins = lStatBins);
+      Send(self, @PrintBinCounts, #name = "Stamina", 
+         #counts = lStaminaCounts, #bins = lStatBins);
+      Send(self, @PrintBinCounts, #name = "Agility", 
+         #counts = lAgilityCounts, #bins = lStatBins);
+      Send(self, @PrintBinCounts, #name = "Mysticism", 
+         #counts = lMysticismCounts, #bins = lStatBins);
+      Send(self, @PrintBinCounts, #name = "Aim",
+         #counts = lAimCounts, #bins = lStatBins);
+      
+      Send(self, @PrintBinCounts, #name = "Max health", 
+         #counts = lHealthCounts, #bins = lHealthBins);
+      Send(self, @PrintBinCounts, #name = "Max mana", 
+         #counts = lManaCounts, #bins = lManaBins);
+
+      Send(self, @PrintBinCounts, #name = "Player kills: justified", 
+         #counts = lGoodKillCounts, #bins = lGoodKillBins);
+      Send(self, @PrintBinCounts, #name = "Player kills: unjustified", 
+         #counts = lBadKillCounts, #bins = lBadKillBins);
+
+      % Faction
+      Send(self, @PrintBinCounts, #name = "Faction", 
+         #counts = lFactionCounts, #bins = lFactionBins);
+
+      % Male / female
+      Send(self, @PrintBinCounts, #name = "Gender", 
+         #counts = lGenderCounts, #bins = lGenderBins);
+
+      % Money in the bank
+
+      return;
+   }
+
+   AccumulateBin(counts = $, value = 0, bins = $)
+   "Put the value in the right bin, and update the corresponding element of counts. "
+   "Return the newly updated count list. If the count list is $, it's initialized "
+   "with 0s."
+   {
+      local i, bin;
+
+      % Initialize new list with 0 values?
+      if counts = $
+      {
+         for bin in bins
+         {
+            counts = Cons(0, counts);
+         }
+         % Add one for being greater than the highest bin
+         counts = Cons(0, counts);
+      }
+
+      % Find the right bin
+      i = 1;
+      for bin in bins
+      {
+         if value <= bin
+         {
+            break;
+         }
+         i = i + 1;
+      }
+
+      SetNth(counts, i, Nth(counts, i) + 1);
+
+      return counts;
+   }
+
+   PrintBinCounts(name = $, counts = $, bins = $)
+   "Print the count of values in each bin"
+   {
+      local bin, i;
+
+      Debug("*******************");
+      Debug(name);
+
+      i = 1;
+      for bin in bins
+      {
+         Debug(bin, Nth(counts, i));
+         i = i + 1;
+      }
+      Debug("more", Nth(counts, i));
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

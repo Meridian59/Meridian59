@@ -1,0 +1,87 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DMRescue is DMSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   dmrescue_name_rsc = "deliverance"
+   dmrescue_icon_rsc = light.bgf
+   
+classvars:
+
+   vrName = dmrescue_name_rsc
+   vrIcon = dmrescue_icon_rsc
+
+   viSpell_num = SID_DMRESCUE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local i, j, oRoom, sHonor;
+
+      for j in lTargets
+      {
+         i = j;
+
+         if isClass(i,&LogoffGhost)
+         {
+            i = send(i,@GetGhostedPlayer);
+            Send(i,@AdminGoToSafety);
+            oRoom = send(SYS,@FindRoomByNum,#num=send(i,@GetSaveRoom));
+            send(SYS,@UtilGoToSquare,#what=j,#where=oRoom,
+                 #row=send(i,@GetSaveRow),#col=send(i,@GetSaveCol));
+
+            sHonor = send(i,@GetHonorString);
+            if StringContain(sHonor,damn_last_annoyed)
+            {
+               ClearTempString();
+               send(i,@SetHonorString,#string=GetTempString());
+            }
+
+            continue;
+         }
+
+         if isClass(i,&Player)
+         {
+            Send(i,@AdminGoToSafety);
+
+            sHonor = send(i,@GetHonorString);
+            if StringContain(sHonor,damn_last_annoyed)
+            {
+               ClearTempString();
+               send(i,@SetHonorString,#string=GetTempString());
+            }
+
+            continue;
+         }
+
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+              #parm1=Send(self,@GetName),#parm2=Send(i,@GetIndef),
+              #parm3=Send(i,@GetName));
+      }
+
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

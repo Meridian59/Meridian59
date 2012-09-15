@@ -1,0 +1,13 @@
+# Faerie Fireball
+-s 3
+4
+ffballa.bmp [0, -110]
+ffballb.bmp [0, -110]
+ffballc.bmp [0, -110]
+ffballd.bmp [0, -110]
+4
+1 1
+1 2
+1 3
+1 4
+

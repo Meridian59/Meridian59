@@ -1,0 +1,77 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperInn is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_JasperInn = "Yonder Inn of Jasper"
+   room_jasperInn = jasinn.roo
+   jasinn_music = bar2.mid
+
+   jasnews_god_name = "Designers' News"
+   jasnews_god_desc = "Check here for information from the game administrators."
+
+classvars:
+
+   vrName = room_name_jasperInn
+
+   viTeleport_row = 4
+   viTeleport_col = 10
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_HOMETOWN | ROOM_SAFELOGOFF | ROOM_TRIPLE_HEAL
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_jasperInn
+   piRoom_num = RID_JAS_INN
+
+   prMusic = jasinn_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+messages:
+
+   CreateStandardObjects()
+   {
+      local oNews;
+      
+      oNews = Create(&NewsLink,#nid=NID_ANNOUNCEMENTS,
+                     #name=jasnews_god_name,#desc=jasnews_god_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=3,#new_col=12,#fine_row=56,#fine_col=48);
+
+      Send(self,@NewHold,#what=Create(&JasperInnkeeper),
+           #new_row=6,#new_col=6,#new_angle=ANGLE_NORTH_EAST);
+
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=5,#new_col=11,#fine_col=0,#fine_row=32);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      
+      %% TO TOWN
+      plExits = Cons([ 2, 8, RID_JASWEST, 42, 25, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

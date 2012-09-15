@@ -1,0 +1,39 @@
+# apothecary right arm
+# groups
+# 1 = standing
+# 2-7 = waving (3 unique)
+-s 4
+24
+ar000aaa.bmp   [-23, -8] 
+ar045aaa.bmp   [-16, -9] 
+ar090aaa.bmp   [-9, -7] 
+ar180aaa.bmp   [-12, -10] 
+ar270aaa.bmp   [-32, -9] 
+ar315aaa.bmp   [-37, -8] 
+ar000daa.bmp   [-63, -9] 
+ar045daa.bmp   [-27, -8] 
+ar090daa.bmp   [-10, -9] 
+ar180daa.bmp   [-13, -12] 
+ar270daa.bmp   [-44, -11] 
+ar315daa.bmp   [-80, -7] 
+ar000dab.bmp   [-66, -42] 
+ar045dab.bmp   [-61, -44] 
+ar090dab.bmp   [-15, -43] 
+ar180dab.bmp   [-16, -42] 
+ar270dab.bmp   [-8, -40] 
+ar315dab.bmp   [-37, -40] 
+ar000dac.bmp   [-48, -49] 
+ar045dac.bmp   [-45, -50] 
+ar090dac.bmp   [-11, -56] 
+ar180dac.bmp   [-13, -47] 
+ar270dac.bmp   [-7, -51] 
+ar315dac.bmp   [-34, -48] 
+8
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14
+ 8     19  24  23  22  22  22  21  20
+ 8     13  18  17  16  16  16  15  14
+ 8     19  24  23  22  22  22  21  20
+ 8     13  18  17  16  16  16  15  14
+ 8      7  12  11  10  10  10   9   8

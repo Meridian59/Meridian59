@@ -1,0 +1,108 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         episdlg.rh
+*/
+#ifndef __episdlg_rh
+#define __episdlg_rh
+
+#define IDD_EPISODE_MISSION	23
+
+#define IDC_EM_DOOM2_CHECK	100
+#define IDC_EM_DOOM1_GROUP	101
+#define IDC_EM_DOOM2_GROUP	102
+
+#define IDC_EM_EPISODE_FIRST	103
+#define IDC_EM_EPISODE1 IDC_EM_EPISODE_FIRST
+#define IDC_EM_EPISODE3	IDC_EM_EPISODE_FIRST + 1
+#define IDC_EM_EPISODE2	IDC_EM_EPISODE_FIRST + 2
+
+#define IDC_EM_SEPARATOR_FIRST	110
+#define IDC_EM_SEPARATOR_1 IDC_EM_SEPARATOR_FIRST
+#define IDC_EM_SEPARATOR_2 IDC_EM_SEPARATOR_FIRST + 1
+
+#define IDC_EM_FIRST 120
+#define IDC_EM_E1M1	IDC_EM_FIRST
+#define IDC_EM_E1M2	IDC_EM_FIRST + 1
+#define IDC_EM_E1M3 IDC_EM_FIRST + 2
+#define IDC_EM_E1M4	IDC_EM_FIRST + 3
+#define IDC_EM_E1M5	IDC_EM_FIRST + 4
+#define IDC_EM_E1M6	IDC_EM_FIRST + 5
+#define IDC_EM_E1M7	IDC_EM_FIRST + 6
+#define IDC_EM_E1M8	IDC_EM_FIRST + 7
+#define IDC_EM_E1M9	IDC_EM_FIRST + 8
+
+#define IDC_EM_E2M1	IDC_EM_FIRST + 9
+#define IDC_EM_E2M2	IDC_EM_FIRST + 10
+#define IDC_EM_E2M3 IDC_EM_FIRST + 11
+#define IDC_EM_E2M4	IDC_EM_FIRST + 12
+#define IDC_EM_E2M5	IDC_EM_FIRST + 13
+#define IDC_EM_E2M6	IDC_EM_FIRST + 14
+#define IDC_EM_E2M7	IDC_EM_FIRST + 15
+#define IDC_EM_E2M8	IDC_EM_FIRST + 16
+#define IDC_EM_E2M9	IDC_EM_FIRST + 17
+
+#define IDC_EM_E3M1	IDC_EM_FIRST + 18
+#define IDC_EM_E3M2	IDC_EM_FIRST + 19
+#define IDC_EM_E3M3 IDC_EM_FIRST + 20
+#define IDC_EM_E3M4	IDC_EM_FIRST + 21
+#define IDC_EM_E3M5	IDC_EM_FIRST + 22
+#define IDC_EM_E3M6	IDC_EM_FIRST + 23
+#define IDC_EM_E3M7	IDC_EM_FIRST + 24
+#define IDC_EM_E3M8	IDC_EM_FIRST + 25
+#define IDC_EM_E3M9	IDC_EM_FIRST + 26
+
+#define IDC_EM_MAP_FIRST 180
+#define IDC_EM_MAP_01	IDC_EM_MAP_FIRST
+#define IDC_EM_MAP_02	IDC_EM_MAP_FIRST + 1
+#define IDC_EM_MAP_03	IDC_EM_MAP_FIRST + 2
+#define IDC_EM_MAP_04	IDC_EM_MAP_FIRST + 3
+#define IDC_EM_MAP_05	IDC_EM_MAP_FIRST + 4
+#define IDC_EM_MAP_06	IDC_EM_MAP_FIRST + 5
+#define IDC_EM_MAP_07	IDC_EM_MAP_FIRST + 6
+#define IDC_EM_MAP_08	IDC_EM_MAP_FIRST + 7
+#define IDC_EM_MAP_09	IDC_EM_MAP_FIRST + 8
+#define IDC_EM_MAP_10	IDC_EM_MAP_FIRST + 9
+#define IDC_EM_MAP_11	IDC_EM_MAP_FIRST + 10
+#define IDC_EM_MAP_12	IDC_EM_MAP_FIRST + 11
+#define IDC_EM_MAP_13	IDC_EM_MAP_FIRST + 12
+#define IDC_EM_MAP_14	IDC_EM_MAP_FIRST + 13
+#define IDC_EM_MAP_15	IDC_EM_MAP_FIRST + 14
+#define IDC_EM_MAP_16	IDC_EM_MAP_FIRST + 15
+#define IDC_EM_MAP_17	IDC_EM_MAP_FIRST + 16
+#define IDC_EM_MAP_18	IDC_EM_MAP_FIRST + 17
+#define IDC_EM_MAP_19	IDC_EM_MAP_FIRST + 18
+#define IDC_EM_MAP_20	IDC_EM_MAP_FIRST + 19
+#define IDC_EM_MAP_21	IDC_EM_MAP_FIRST + 20
+#define IDC_EM_MAP_22	IDC_EM_MAP_FIRST + 21
+#define IDC_EM_MAP_23	IDC_EM_MAP_FIRST + 22
+#define IDC_EM_MAP_24	IDC_EM_MAP_FIRST + 23
+#define IDC_EM_MAP_25	IDC_EM_MAP_FIRST + 24
+#define IDC_EM_MAP_26	IDC_EM_MAP_FIRST + 25
+#define IDC_EM_MAP_27	IDC_EM_MAP_FIRST + 26
+#define IDC_EM_MAP_28	IDC_EM_MAP_FIRST + 27
+#define IDC_EM_MAP_29	IDC_EM_MAP_FIRST + 28
+#define IDC_EM_MAP_30	IDC_EM_MAP_FIRST + 29
+#define IDC_EM_MAP_31	IDC_EM_MAP_FIRST + 30
+#define IDC_EM_MAP_32	IDC_EM_MAP_FIRST + 31
+
+#endif

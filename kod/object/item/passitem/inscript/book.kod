@@ -1,0 +1,160 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Book is InscriptionItem
+
+constants:
+
+   include blakston.khd
+
+   BOOK_OPEN = 1
+   BOOK_CLOSED = 2
+
+   BOOK_USE_RANGE = 5
+
+resources:
+
+   book_name_rsc = "book"
+   book_icon_rsc = book1.bgf
+   book_desc_rsc = \
+      "A thick leather cover binds this book, darkened with age and wear.  "
+      "It appears to come from some ancient time."
+
+   book_emote_open_rsc = "You flip open %s%s and thumb to a good page."
+   book_emote_open_third_rsc = "%s%s flips open %s%s and thumbs through the pages."
+   book_emote_close_rsc = "You close %s%s with a satisfying thump."
+   book_emote_close_third_rsc = "%s%s closes %s%s."
+
+classvars:
+
+   vrName = book_name_rsc
+   vrIcon = book_icon_rsc
+   vrDesc = book_desc_rsc
+
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 1
+
+   viHits_init_min = 10
+   viHits_init_max = 20
+
+   viValue_average = 1000
+   viBulk = 50
+   viWeight = 50
+
+properties:
+
+   piState = BOOK_CLOSED
+   pbIn_use = False
+   viInventory_group = 3
+
+messages:
+
+   NewUsed(what=$)
+   {
+      pbIn_use = True;
+      piState = BOOK_OPEN;
+
+      if poOwner = $
+      {
+         propagate;
+      }
+
+      if isClass(poOwner, &Player)
+      {
+         Send(self,@RoomMessage,#range=BOOK_USE_RANGE,
+              #except=poOwner,#except_rsc=book_emote_open_rsc,
+              #message_rsc=book_emote_open_third_rsc,
+              #parm1=send(poOwner,@GetCapIndef),
+              #parm2=send(poOwner,@GetName),
+              #parm3=send(self,@GetDef),
+              #parm4=send(self,@GetName));
+      }
+
+      viInventory_group = 4;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      propagate;
+   }
+
+   NewUnused(what=$)
+   {
+      pbIn_use = False;
+      piState = BOOK_CLOSED;
+
+      if poOwner = $
+      {
+         propagate;
+      }
+
+      if IsClass(poOwner,&Player)
+      {
+         send(self,@RoomMessage,#range=BOOK_USE_RANGE,
+              #except=poOwner,#except_rsc=book_emote_close_rsc,
+              #message_rsc=book_emote_close_third_rsc,
+              #parm1=send(poOwner,@GetCapIndef),
+              #parm2=send(poOwner,@GetName),
+              #parm3=send(self,@GetDef),
+              #parm4=send(self,@GetName));
+      }
+
+      viInventory_group = 3;
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      propagate;
+   }
+
+   ShowDesc()
+   {
+      AddPacket(4,vrDesc);
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piState = BOOK_OPEN
+      {
+         AddPacket(1,ANIMATE_NONE,2,2);
+
+         return;
+      }
+
+      if piState = BOOK_CLOSED
+      {
+         AddPacket(1,ANIMATE_NONE,2,1);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   CanEditInscription()
+   {
+      if piState = BOOK_CLOSED
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   HasInscription()
+   {
+      if piState = BOOK_CLOSED
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

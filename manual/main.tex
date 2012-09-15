@@ -1,0 +1,79 @@
+% -*- Mode:TeX -*-
+
+%% The documentstyle options along with the pagestyle can be used to generate
+%% a technical report, a draft copy, or a regular thesis.  You may need to
+%% re-specify the pagestyle after you \include  cover.tex.  For more
+%% information, see the first few lines of mitthesis.sty. 
+
+
+\documentclass[12pt]{report}
+
+\usepackage{fullpage}
+\usepackage{epsfig}
+\usepackage{fancyh}
+% \usepackage{changebar}
+
+\setcounter{tocdepth}{1}  % Display contents down to section
+\pagestyle{plain}
+
+%% This bit allows you to either specify only the files which you wish to
+%% process, or `all' to process all files which you \include.
+%% Krishna Sethuraman (1990).
+
+\typein [\files]{Enter file names to process, (chap1,chap2 ...), or `all' to
+process all files:}
+\def\all{all}
+\ifx\files\all \typeout{Including all files.} \else \typeout{Including only \files.} \includeonly{\files} \fi
+
+
+% Change ``Bibliography'' to ``References''
+\makeatletter
+\def\thebibliography#1{\chapter*{References\@mkboth
+ {REFERENCES}{REFERENCES}}\list
+ {[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+   \advance\leftmargin\labelsep
+   \usecounter{enumi}}
+   \def\newblock{\hskip .11em plus .33em minus .07em}
+   \sloppy\clubpenalty4000\widowpenalty4000
+   \sfcode`\.=1000\relax}
+\makeatother
+
+\begin{document}
+
+\newcommand{\kod}[0]{{\tt kod }}
+\newcommand{\bof}[0]{{\tt bof }}
+\newcommand{\rsc}[0]{{\tt rsc }}
+\newcommand{\makebgf}[0]{{\tt makebgf }}
+\newcommand{\bgf}[0]{{\tt .bgf }}
+
+% Commands for formatting file-format grammar
+\newenvironment{protocol}
+	{\begin{tabbing}
+	 100 \= bytes Bytes in field \= \kill}
+	{\end{tabbing}}
+
+\newcommand{\nonterminal}[1]{{\it $<${\bf #1}$>$}}
+\newcommand{\newnonterminal}[1]{\nonterminal{#1} = \\}
+\newcommand{\pline}[2]{#1 \> \> #2 \\}   % ``Protocol line''
+\newcommand{\plineindent}[2]{\> #1 \> #2 \\}
+
+\include{cover}
+%\pagestyle{plain}
+\pagestyle{fancy}
+
+\chead{Meridian 59 Documentation by Andrew and Christopher Kirmse \\}
+\setlength{\headrulewidth}{0in}
+%\tableofcontents
+\include{contents}
+\include{chap1}
+\include{chap2}
+\include{chap3}
+\include{chap4}
+\include{chap5}
+\appendix
+\include{appa}
+\include{appb}
+\include{appc}
+%\include{biblio}
+\end{document}
+

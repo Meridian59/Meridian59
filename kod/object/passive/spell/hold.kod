@@ -1,0 +1,305 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Hold is Spell
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   hold_name_rsc = "hold"
+   hold_icon_rsc = ihold.bgf
+   hold_desc_rsc = \
+      "Surrounds the target with magical energy, causing "
+      "paralysis for several seconds.  "
+      "Requires purple mushrooms to cast."
+   
+   hold_already_enchanted = "%s%s is already held."
+   hold_caster = "%s%s is now held in place by a magical force."
+   hold_on = "A magical tingling pulses through your body.  You are unable to move."
+   hold_off = "The magical hold lifts and you are able to move once more."
+
+classvars:
+
+   vrName = hold_name_rsc
+   vrIcon = hold_icon_rsc
+   vrDesc = hold_desc_rsc
+
+   viSpell_num = SID_HOLD
+   viSchool = SS_QOR
+   viSpell_level = 4
+
+   viSpellExertion = 8
+   viMana = 15
+
+   viHarmful = TRUE
+   viOutlaw = TRUE
+   viNoNewbieOffense = TRUE
+
+   viChance_To_Increase = 10
+
+   viFlash = FLASH_BAD
+
+   % In seconds, since it works off GetTime()
+   viPostCast_time = 2
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&PurpleMushroom,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if NOT IsClass(target, &Battler) OR IsClass(target,&Revenant)
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
+                 #parm1=vrName,#parm2=Send(target,@GetDef),
+                 #parm3=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+         }
+         
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      if Send(target,@IsEnchanted,#what=self)
+      {
+         if IsClass(target,&Battler) AND NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=hold_already_enchanted,
+                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+    
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who=$, lTargets=$, iSpellpower=0)
+   {
+      local oTarget,oSpell,iDuration;
+
+      oTarget = First(lTargets);
+      iDuration = Send(self,@GetDuration,#ispellPower=iSpellPower);
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_FREE_ACTION);
+
+      % Check if the target has free action
+      if Send(oTarget,@IsEnchanted,#what=oSpell)
+      {
+         iDuration = Send(oSpell,@DoFreeAction,#oHoldCaster=who,
+                          #oTarget=oTarget,#iDuration=iDuration);
+         if iDuration = $
+         {
+            % Resisted completely
+            propagate;
+         }
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=hold_caster,
+           #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+      Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,#state=TRUE);
+
+      if IsClass(oTarget,&Player)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=hold_on);    
+
+         % Do not paralyze DMs.
+         if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
+         {
+            Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+         }
+      }
+      else  
+      {
+         % class is &Monster
+         Send(oTarget,@ResetBehaviorFlags);
+      }
+      
+      propagate;
+   }
+
+   EndEnchantment(who = $,report = TRUE,state=$)
+   {
+      if IsClass(who,&Player)
+      {
+         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
+         if state
+         {
+            Send(who,@MsgSendUser,#message_rsc=hold_off);
+         }
+      }
+      else  % class is &Monster
+      {
+         % This has to be done AFTER the enchantment is gone from the
+         %  monster's ench list - Post it
+         Post(who,@ResetBehaviorFlags);   
+      }
+     
+      return;
+   }
+
+   SendEffectData()
+   {
+      return;
+   }
+
+   RestartEnchantmentEffect(who = $, state = $)
+   {
+      Send(who,@MsgSendUser,#message_rsc=hold_on);
+      Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+      
+      return;
+   } 
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;
+
+      % about 2 - 6 seconds
+      iDuration = 2000 + (40 * iSpellPower);
+
+      return random(iDuration/2,iDuration);
+   }
+
+   DoHold(what = $, otarget = $, iDurationSecs = $, iDuration = $, report=TRUE,
+          bAllowFreeAction=TRUE)   
+   "Holds target for durationsecs seconds."
+   {
+      local i, oSpell, iTotalDuration;
+            
+      if otarget = $
+      {
+         return FALSE;
+      }
+
+      % check for enchantment already applied
+      if Send(otarget,@IsEnchanted,#what=self)
+      {
+         return FALSE;
+      }
+
+      % Use iDuration (in ms).  If it is nil, then covert iDurationSecs to ms.
+      if iDuration = $
+      {
+         if iDurationSecs = $
+         {
+            iTotalDuration = 5000;
+         }
+         else
+         {
+            iTotalDuration = iDurationSecs * 1000;
+         }
+      }
+      else
+      {
+         iTotalDuration = iDuration;
+      }
+
+      % check if the target has free action unless not allowed
+      if bAllowFreeAction
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_FREE_ACTION);
+         if Send(otarget,@IsEnchanted,#what=oSpell)
+         {
+            iTotalDuration = Send(oSpell,@DoFreeAction,#oHoldCaster=what,
+                                  #oTarget=oTarget,#iDuration=iTotalDuration);
+            if iTotalDuration = $
+            {
+               % Resisted completely
+               return FALSE;
+            }
+         
+            iTotalDuration = bound(iTotalDuration,500,10000);
+         }
+      }
+
+      Send(oTarget,@StartEnchantment,#what=self,#time=iTotalDuration,
+           #report=report,#state=report);
+
+      if IsClass(oTarget,&Player)
+      {
+         if report
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=hold_on); 
+         }
+         
+         % Do not paralyze DMs.
+         if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
+         {
+            Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+         }
+      }
+      else
+      {
+         Send(oTarget,@ResetBehaviorFlags);
+      }
+      
+      return;
+   }
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
+      
+      return;      
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {
+      if NOT (IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
+      {
+         Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
+         Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
+         Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+      }
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,50 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NewsJusticar is News
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   newsjust_icon_rsc = jbook.bgf
+
+classvars:
+
+   vrIcon = newsjust_icon_rsc
+
+properties:
+
+
+messages:
+
+   GetNewsPermission(what = $)
+   {
+      local oCaramo;
+      
+      if poOwner = $
+      {
+         return NEWS_PERMISSION_READ;
+      }
+      
+      oCaramo = send(SYS,@GetCaramo);
+
+      if (what = oCaramo) or (what = send(oCaramo,@GetJusticar) or IsClass(what,&DM))
+      {	 
+   	   return NEWS_PERMISSION_READ_WRITE;
+      }
+
+      return NEWS_PERMISSION_READ;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

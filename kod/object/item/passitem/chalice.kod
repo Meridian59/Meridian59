@@ -1,0 +1,184 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Chalice is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   chalice_name_rsc = "Chalice of the Rain"
+   chalice_icon_rsc = chalice.bgf
+   chalice_desc_rsc = \
+      "This ornate chalice is adorned with holy markings "
+      "of Shal'ille.  An inscription reads \"to catch her tears.\""
+
+   chalice_cant_get = "You try to pick up the chalice, but it mystically clings to the stone altar."
+
+   chalice_use = "You sip a bit of the water out of the Chalice of Rain."
+   chalice_empty = "You sip the last bit of water from the Chalice of Rain."
+   chalice_combine = "You pour the water from one Chalice into the other."
+   chalice_cant_use_pkill = "Only innocents who forswear human combat may partake of the chalice."
+
+classvars:
+
+   vrName = chalice_name_rsc
+   vrIcon = chalice_icon_rsc
+   vrDesc = chalice_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+
+   viObject_flags = GETTABLE_YES
+
+   viBulk = 20
+   viWeight = 20
+
+   viHits_init_min = 3
+   viHits_init_max = 5
+
+   viValue_average = 500
+
+properties:
+   
+messages:
+
+   ReqNewOwner(what=$)
+   {
+      if poOwner = send(SYS,@FindRoomByNum,#num=RID_CAVE2)
+         AND send(self,@GetRow)=23 AND send(self,@GetCol)=11
+         AND NOT send(poOwner,@OkayToGetChalice)
+      {
+         send(what,@MsgSendUser,#message_rsc=chalice_cant_get);
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   NewOwner(what = $)
+   {
+      local oOtherChalice;
+
+      if what = $
+      {
+         propagate;
+      }
+
+      % If we drop it in a room with a high Shal'ille bonus, refill the chalice
+      if IsClass(what,&Room)
+         AND send(what,@GetShalilleBonus) > 20
+      {
+         piHits = piHits_init;
+      }
+
+      % If a user already has a chalice, then "combine" them.
+      if IsClass(what,&User)
+      {
+         % Get the second chalice in sequence.  This is the one the
+         % user was originally holding, if any.
+
+         oOtherChalice = send(what,@FindHolding,#class=&Chalice,#sequence=2);
+
+         if oOtherChalice <> $
+            AND NOT (IsClass(what,&DM) AND send(what,@PlayerIsImmortal))
+         {
+            send(what,@MsgSendUser,#message_rsc=chalice_combine);
+            send(oOtherChalice,@SetHits,#number=send(oOtherChalice,@GetHits)+piHits);
+            post(self,@Delete);
+         }
+      }
+
+      propagate;
+   }
+
+	DestroyDisposable()
+	{
+		if poOwner = send(SYS,@FindRoomByNum,#num=RID_CAVE2)
+		{
+			return FALSE;
+		}
+		
+		propagate;
+	}
+
+   ReqNewApply(what = $, apply_on = $)
+   {
+      if (IsClass(what,&Player))
+      {
+         % Prevent use if you're pkill enabled.  This is because player killers
+         % were using this to escape too easily after kills.
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(what, @MsgSendUser, #message_rsc = chalice_cant_use_pkill);
+            return FALSE;
+         }
+         
+         % Prevent use if you can't fight.
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   NewApplied(what = $, apply_on = $)
+   {
+      local oRescue;
+      
+      piHits = piHits - 1;
+      
+      if piHits > 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=chalice_use);
+      }
+      else
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=chalice_empty);
+
+         Post(self,@Delete);
+      }
+
+      % Cast Rescue at really low power.
+      oRescue = send(SYS,@FindSpellByNum,#num=SID_RESCUE);
+      Send(oRescue,@CastSpell,#who=apply_on,#iSpellPower=1,#bItemCast=TRUE);
+      
+      return;
+   }
+
+   SetHits(number = $)
+   {
+      if (number = $)
+      {
+         return;
+      }
+
+      piHits = number;
+
+      if piHits > piHits_init
+      {
+         piHits = piHits_init;
+      }
+
+      return;
+   }
+
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,111 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsH4 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsH4 ="The Flatlands"
+   room_OutdoorsH4 = H4.roo
+   OutdoorsH4_music = forest.mid
+
+   waterfall_msg1 = "You aren't daring enough to take ~BTHAT~n plunge!"
+   waterfall_soundH4 = wfall2.wav
+   
+classvars:
+
+   vrName = room_name_OutdoorsH4
+
+   viTeleport_row = 24
+   viTeleport_col = 29
+
+   viTerrain_type = TERRAIN_ROAD | TERRAIN_RIVER | TERRAIN_FOREST
+
+   viFlag_row = 21
+   viFlag_col = 29
+
+properties:
+
+   prRoom = room_OutdoorsH4
+   prMusic = OutdoorsH4_music
+   piRoom_num = RID_H4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 120000
+   piGen_percent = 70
+
+   piInit_count_min = 2
+   piInit_count_max = 5
+
+   piMonster_count_max = 8
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Spider, 45], [&Ant, 55] ];
+      plGenerators = [ [11, 31], [12, 21], [22, 26], [23, 17], [26,  4],
+		                 [31, 22], [35, 14], [40,  5], [40, 24], [35, 36]
+		               ];
+
+      plLooping_sounds = [ [ waterfall_soundH4, 19, 1, 30, 100 ] ];
+
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 4, 29, 4 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 2, 15, 30 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 4, 21, 17 ],plObject_gen);
+      plObject_gen = Cons([ &ElderBerry, GEN_INF, 3, 42, 26 ],plObject_gen);
+      plObject_gen = Cons([ &ElderBerry, GEN_INF, 2, 32, 23 ],plObject_gen);
+
+      propagate;
+
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      if (dir = LEAVE_WEST) AND (send(what,@GetRow) < 29)
+      {
+         send(what,@MsgSendUser,#message_rsc = waterfall_msg1);
+
+         return;
+      }
+
+      propagate;
+   }
+            
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;      
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H5, 4, 3, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_G4, 42, 49, ROTATE_NONE, ROW_IS_GREATER_THAN,28], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_H3, 46, 14, ROTATE_NONE, COL_IS_LESS_THAN,33], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_H3, 46, 33, ROTATE_NONE, COL_IS_GREATER_THAN,32], plEdge_exits);
+
+      propagate;                                                 
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

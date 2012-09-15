@@ -1,0 +1,74 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LightRobe is Robe
+
+%% Robe is the first item that takes two different use positions.
+%% Note that a robe forcibly unuses anything already there.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   lightrobe_name_rsc = "light robes"
+   lightrobe_icon_rsc = ltrobe.bgf
+   lightrobe_desc_rsc = \
+      "Woven from fine jungle textiles, this light robe offers little in the way of "
+      "protection."
+
+   lightrobe_male_icon_rsc = btc.bgf
+   lightrobe_female_icon_rsc = btd.bgf
+
+   lightrobe_legs_male = bfc.bgf
+   lightrobe_legs_female = bfd.bgf
+
+classvars:
+   
+   vrName = lightrobe_name_rsc
+   vrIcon = lightrobe_icon_rsc
+   vrDesc = lightrobe_desc_rsc
+
+   vrBroken_rsc = defmod_broken_plural_clothes
+   vrItem_broken = item_broken_battle_plural
+
+   viHits_init_min = 450
+   viHits_init_max = 550
+
+   viValue_average = 300
+   viWeight = 75
+   viBulk = 125
+
+   viUse_type = ITEM_USE_BODY | ITEM_USE_LEGS
+
+   vrIcon_male = lightrobe_male_icon_rsc
+   vrIcon_female = lightrobe_female_icon_rsc
+
+   vrLeftarm_male = $
+   vrRightarm_male = $
+   vrLeftarm_female = $
+   vrRightarm_female = $
+
+   vrLegs_male = lightrobe_legs_male 
+   vrLegs_female = lightrobe_legs_female 
+
+properties:   
+
+messages:
+
+   ItemChangesArms()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

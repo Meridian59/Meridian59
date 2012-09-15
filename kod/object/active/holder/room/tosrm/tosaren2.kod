@@ -1,0 +1,128 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosArena2 is TosRoom
+
+constants:
+
+   include blakston.khd
+
+   TO_ROW = 26
+   TO_COL = 30
+
+resources:
+
+   room_TosArena2 = tosaren2.roo
+   name_TosArena2 = "The Arena of Kraanan"
+
+   TosArena2_music = tos.mid
+   wind_sound_tosarena2 = ambcntry.wav
+   wind1_sound_tosarena2 = rs_wind.wav
+
+   TosArena2_locked = "The Arena of Kraanan is at capacity - the doors have been locked by Guardian command."
+classvars:
+
+   vrName = name_TosArena2
+   viPermanent_flags = ROOM_GUILD_PK_ONLY
+   viTerrain_type = TERRAIN_CITY
+
+properties:
+
+   prRoom = room_TosArena2
+   piRoom_num = RID_TOS_ARENA2
+
+   prMusic = TosArena2_music
+
+   piBaseLight = LIGHT_NICE
+
+
+messages:
+
+
+   Teleport(what=$)
+   "Admin supported."
+   "Teleports object to coordinates specified in constants."
+   {
+       send(SYS,@UtilGoNearSquare,#what=what,
+	  #where=self,#new_row=TO_ROW,#new_col=TO_COL);
+       return;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 22, 36, RID_TOS_ARENA, 4, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 22, 37, RID_TOS_ARENA, 4, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 23, 36, RID_TOS_ARENA, 4, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 23, 37, RID_TOS_ARENA, 4, 7, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 24, 34, RID_TOS_ARENA, 7, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 24, 35, RID_TOS_ARENA, 7, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 25, 34, RID_TOS_ARENA, 7, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 25, 35, RID_TOS_ARENA, 7, 4, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 27, 34, RID_TOS_ARENA, 18, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 35, RID_TOS_ARENA, 18, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 28, 34, RID_TOS_ARENA, 18, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 28, 35, RID_TOS_ARENA, 18, 4, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 29, 36, RID_TOS_ARENA, 21, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 37, RID_TOS_ARENA, 21, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 36, RID_TOS_ARENA, 21, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 37, RID_TOS_ARENA, 21, 7, ROTATE_NONE ],plExits);
+
+
+      plExits = Cons([ 26, 27, RID_EAST_TOS, 26, 25, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 27, RID_EAST_TOS, 27, 25, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 37, 36, RID_EAST_TOS, 39, 36, ROTATE_NONE ],plExits);
+      plExits = Cons([ 37, 37, RID_EAST_TOS, 39, 37, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 16, 36, RID_EAST_TOS, 14, 36, ROTATE_NONE ],plExits);
+      plExits = Cons([ 16, 37, RID_EAST_TOS, 14, 37, ROTATE_NONE ],plExits);
+
+
+   propagate;
+	}
+
+  CreateStandardObjects()
+  {
+	 Send(self,@NewHold,#what=Create(&ArenaSign2,#style=STYLE_ONE_ON_ONE),
+            #new_row=25,#new_col=33,#fine_row=24,#fine_col=16);
+	 Send(self,@NewHold,#what=Create(&ArenaSign2,#style=STYLE_LAST_MAN_STANDING),
+            #new_row=26,#new_col=33,#fine_row=8,#fine_col=16);
+	 Send(self,@NewHold,#what=Create(&ArenaSign2,#style=STYLE_GUILD_VS_GUILD),
+            #new_row=27,#new_col=33,#fine_row=40,#fine_col=16);
+	 Send(self,@NewHold,#what=Create(&ArenaSign2,#style=STYLE_LAST_GUILD_STANDING),
+            #new_row=26,#new_col=33,#fine_row=56,#fine_col=16);
+   propagate;
+  }
+
+  SomethingTryGo(what = $, row = $, col = $)
+  {
+     local i;
+
+     for i in plExits
+     {
+        if (row = first(i) and col = nth(i,2)) and nth(i,3) = RID_TOS_ARENA
+        {
+           if send(send(SYS,@findroombynum,#num=RID_TOS_ARENA),@isLocked)
+             {
+                send(what,@msgsenduser,#message_rsc=TosArena2_locked);
+                return TRUE;
+             }
+        }
+     }
+     propagate;
+  }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,129 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TradingPost is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   room_name_TradingPost = "The Remote Trading Post of Wulfgang zax'Ak"
+   room_TradingPost = tpost1.roo
+   TradingPost_music = boneprst.mid
+
+   TradingPost_locked_1 = "The storeroom is locked."
+   TradingPost_locked_2 = "Wulfgang keeps his quarters locked."
+   TradingPost_locked_3 = "The attic door is locked."
+
+   fire_sound_tradingpost = fireplac.wav
+   frying_sound_tradingpost = frying.wav
+
+classvars:
+
+   vrName = room_name_TradingPost
+
+   viTeleport_row = 6
+   viTeleport_col = 4
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP 
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_SAFELOGOFF
+
+properties:
+
+   prRoom = room_TradingPost
+   piRoom_num = RID_JUNGLE_TRADING_POST
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = TradingPost_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 04, 10, ROOM_LOCKED_DOOR, TradingPost_locked_1],plExits);
+      plExits = Cons([ 02, 09, ROOM_LOCKED_DOOR, TradingPost_locked_2],plExits);
+      plExits = Cons([ 03, 09, ROOM_LOCKED_DOOR, TradingPost_locked_2],plExits);
+      plExits = Cons([ 12, 12, ROOM_LOCKED_DOOR, TradingPost_locked_3],plExits);
+
+      %% to jungle
+      plExits = Cons([ 05, 02, RID_KD4, 29, 39, ROTATE_NONE ],plExits);
+      plExits = Cons([ 13, 13, RID_KD4, 39, 49, ROTATE_NONE ],plExits);
+      plExits = Cons([ 02, 13, RID_KD4, 26, 49, ROTATE_NONE ],plExits);
+  
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1;
+      lObjCoords1 = [ [02,02,24,24, OO_pitcher1],  [11,08,48,00, OO_pitcher1],
+                      [03,06,40,16, OO_pitcher2],  [04,04,08,08, OO_pitcher2],
+                      [13,10,32,00, OO_bigiron],   [12,07,16,32, OO_goose],
+                      [11,07,16,32, OO_bunny],     [12,08,16,24, OO_pigeon],
+                      [13,11,40,08, OO_barrel],    [09,07,40,16, OO_rice],
+                      [13,07,40,16, OO_rice],      [13,07,40,56, OO_BAG_OF_BEANS],
+                      [06,11,32,16, OO_tallurn],   [12,10,00,32, OO_poison],
+                      [03,04,40,40, OO_mugs],      [10,11,56,16, OO_lantern],
+                      [13,08,40,32, OO_ironpot],   [02,08,16,32, OO_CLOTH_BOLT1],
+                      [02,08,16,48, OO_BARBOLT4],  [02,08,32,48, OO_3_CLOTH_BOLTS]
+                    ];
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+      
+      Send(self,@NewHold,#what=Create(&KocatanTradeMaster),#new_row=3,#new_col=7,
+           #fine_row=48,#fine_col=24);
+
+      Send(self,@NewHold,#what=Create(&Candle),#new_row=03,#new_col=04,
+           #fine_row=24,#fine_col=24);
+      Send(self,@NewHold,#what=Create(&Candle),#new_row=04,#new_col=06,
+           #fine_row=24,#fine_col=32);
+
+      % Lighting
+      %  Fireplaces
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=13,#new_col=9,#fine_row=32,#fine_col=32);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=35),
+           #new_row=5,#new_col=7,#fine_row=64,#fine_col=32);
+
+      %  Wall candles
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=5),
+           #new_row=6,#new_col=2,#fine_row=28,#fine_col=16);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=5),
+           #new_row=4,#new_col=2,#fine_row=37,#fine_col=16);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=5),
+           #new_row=9,#new_col=7,#fine_row=52,#fine_col=61);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=5),
+           #new_row=9,#new_col=10,#fine_row=52,#fine_col=45);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=5),
+           #new_row=13,#new_col=12,#fine_row=55,#fine_col=29);
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=5),
+           #new_row=2,#new_col=12,#fine_row=19,#fine_col=28);
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      plLooping_sounds = [ [ frying_sound_tradingpost, 13, 9, 10, 50 ],
+                           [ fire_sound_tradingpost, 6, 7, 10, 100 ]
+                         ];
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

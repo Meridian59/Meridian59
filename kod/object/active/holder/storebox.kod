@@ -1,0 +1,199 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StorageBox is Holder
+
+constants:
+
+   include blakston.khd
+
+   CLEAN_DELAY = 21600000   %% if the chests aren't replaced in 6 hours,
+                            %% they delete themselves.
+
+resources:
+
+   storagebox_name_rsc = "some storage"
+   storagebox_icon_rsc = box1.bgf
+
+   storagebox_desc_rsc = "This is a place to store stuff."
+
+classvars:
+
+   vrName = storagebox_name_rsc
+   vrIcon = storagebox_icon_rsc
+   vrDesc = storagebox_desc_rsc
+
+   viBulk_hold_max = 4000
+   viWeight_hold_max = $
+
+properties:
+
+   % Placed here so we can change it when locked.
+   viObject_flags = CONTAINER_YES
+
+   pbLocked = FALSE
+   ptClean = $
+
+messages:
+
+   Constructor(bLocked=$)
+   {
+      if bLocked
+      {
+         pbLocked = TRUE;
+         viObject_Flags = viObject_Flags & ~CONTAINER_YES;
+      }
+
+      propagate;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   SendAnimation()
+   {
+      if pbLocked
+      {
+         AddPacket(1,ANIMATE_NONE,2,1);
+       
+         return;
+      }
+ 
+      AddPacket(1,ANIMATE_NONE,2,2);
+
+      return;
+   }
+
+   EnterLimbo()
+   {
+      if poOwner<> $
+      {
+         send(poOwner,@LeaveHold,#what=self);
+         poOwner = $;
+      }
+      
+      ptClean = CreateTimer(self,@CleanTimer,CLEAN_DELAY);
+      
+      return;
+   }
+
+   CleanTimer()
+   {
+      ptClean = $;
+      if poOwner = $
+      {
+         DEBUG("Self-cleaning excess chests.");
+         send(self,@Delete);
+      }
+      
+      return;
+   }
+
+   NewOwner(what=$)
+   {
+      if what <> $ 
+      {
+         if ptClean <> $
+         {
+            deletetimer(ptClean);
+            ptClean = $;
+         }
+      }
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptClean <> $
+      {
+         deletetimer(ptClean);
+         ptClean = $;
+      }
+      
+      send(SYS,@RemoveChestFromList,#oChest=self);
+      
+      propagate;
+   }
+
+
+   ReqTaker(what=$,taker=$)
+   {
+      local oTakerOwner;
+
+      oTakerOwner = send(taker,@GetOwner);
+      
+      if IsClass(taker,&User)
+         AND NOT IsClass(taker,&Admin)
+         AND IsClass(oTakerOwner,&Room) AND IsClass(poOwner,&Room)
+         AND oTakerOwner <> poOwner
+      {
+         debug("ALERT!  ",send(taker,@GetTrueName),taker," in RID ",send(oTakerOwner,@GetRoomNum)," taking from distant chest in RID ",send(poOwner,@GetRoomNum));
+         
+         return FALSE;
+      }
+   
+      if isClass(poOwner,&GuildHall)
+      {
+         return send(poOwner,@ReqTakeFromGuildChest,#what=what,#taker=taker);
+      }
+
+      propagate;
+   }
+
+   ReqNewHold(what = $, who = $)
+   {
+      local oWhoOwner;
+
+      % The player's owner.
+      oWhoOwner = send(who,@GetOwner);
+
+      if IsClass(who,&User)
+         AND NOT IsClass(who,&Admin)
+         AND IsClass(oWhoOwner,&Room) AND IsClass(poOwner,&Room) 
+         AND oWhoOwner <> poOwner
+      {
+         debug("ALERT!  ",send(who,@GetTrueName),who," in RID ",send(oWhoOwner,@GetRoomNum)," putting into distant chest in RID ",send(poOwner,@GetRoomNum));
+         
+         return FALSE;
+      }
+
+      if NOT Send(what,@CanBeStoredInVault)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   LockChest(bLocked=$)
+   {
+      pbLocked = bLocked;
+ 
+      if pbLocked
+      {
+         viObject_Flags = viObject_Flags & ~CONTAINER_YES;
+      }
+
+      if NOT pbLocked
+      {
+         viObject_Flags = viObject_Flags | CONTAINER_YES;
+      }
+      
+      Send(poOwner,@SomethingChanged,#what=self);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

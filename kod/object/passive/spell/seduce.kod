@@ -1,0 +1,244 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+seduce is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   seduce_name_rsc = "seduce"
+   seduce_icon_rsc = iseduce.bgf
+   seduce_desc_rsc = \
+      "You worm your way into the mind of a weak-willed creature, "
+      "in the hope that it will follow you and fight for you "
+      "if you are attacked.  "
+      "Requires web moss and firesand."
+   
+   seduce_caster = "%s%s has been seduced."
+   seduce_player_first = "You make your move on %s%s."
+   seduce_player_second = "%s%s tries %s best to seduce you."
+   seduce_player_third = "%s%s attempts a seduction on %s%s."
+   seduce_already_enchanted = "%s%s is already at your beck and call."
+   seduce_fail_1 = "Your feeble attempt to charm "
+   seduce_fail_2 = " fails."
+
+   seduce_sound = qseduce.wav
+
+classvars:
+
+   vrName = seduce_name_rsc
+   vrIcon = seduce_icon_rsc
+   vrDesc = seduce_desc_rsc
+   viDrainTime = 2000
+
+   viSpell_num = SID_SEDUCE
+   viSchool = SS_RIIJA
+   viSpell_level = 6
+   viMana = 15
+   viChance_To_Increase = 15
+
+   viSpellExertion = 6
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   vrSucceed_wav = seduce_sound
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&WebMoss,5],plReagents);
+      plReagents = Cons([&FireSand,5],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return False;
+      }
+
+      % Can cast on any battler (player or monster) unless it's a revenant or supermonster.
+      % Casting on a player is just for roleplay.  See CastSpell().
+
+      target = First(lTargets);
+      if not IsClass(target, &Battler) or isClass(target,&revenant)
+               or isClass(target,&Lich) or isClass(target,&DeadLich)
+               or isClass(target,&LupoggKing) or isClass(target,&Ghost)
+               or isClass(target,&SpiderQueen) or isClass(target,&Brambles)
+               or isClass(target,&OrcPitBoss) or isClass(target,&Yeti)
+               or isClass(target,&OrcPitBossBody)
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
+              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+         return False;
+      }
+
+      if target = who
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_no_self_target,
+              #parm1=vrName);
+         }
+         return False;
+      }
+
+      % check for enchantment already applied
+      if Send(target,@IsEnchanted,#what=self)
+      {
+         if not bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=seduce_already_enchanted,
+	           #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+         }
+         return False;
+      }
+      if send(target,@getMaster) <> $	     %% target has a master already.
+      {
+         return FALSE;
+      }
+
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget, i, lOthers, oEach, oRoom, iRoll;
+
+      oTarget = First(lTargets);
+
+      % Tell everyone if the caster is making a move on a player.
+      % A 'seduce' on another player is just for roleplay.
+      %
+      if isClass(oTarget,&Player)
+      {
+	 % Tell the caster the spell is happening on a player.
+	 %
+	 Send(who,@MsgSendUser,#message_rsc=seduce_player_first,
+	      #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+	 % Tell the target the spell is happening.
+	 %
+	 Send(oTarget,@MsgSendUser,#message_rsc=seduce_player_second,
+	      #parm1=Send(who,@GetCapDef),#parm2=send(who,@GetName),
+	      #parm3=send(who,@GetHisHer));
+
+	 % Everyone else in the room sees the spell.
+	 %
+	 oRoom = send(who,@GetOwner);
+	 lOthers = send(oRoom,@GetHolderActive);
+	 for i in lOthers
+	 {
+	    oEach = Send(oRoom,@HolderExtractObject,#data=i);
+	    if (IsClass(oEach,&Player) and (oEach <> who) and (oEach <> oTarget))
+	    {
+	       send(oEach,@MsgSendUser,#message_rsc=seduce_player_third,
+	         #parm1=Send(who,@GetCapDef),
+	         #parm2=Send(who,@GetName),
+	         #parm3=Send(oTarget,@GetDef),
+	         #parm4=Send(oTarget,@GetName));
+	    }
+	 }
+      }
+      else
+      {
+         iRoll = (send(who,@GetMaxHealth)/2);         % 0-75
+         iRoll = (iRoll + send(who,@GetIntellect));   % 0-50
+         iRoll = (iRoll + random(0,25));              % 0-25
+         iRoll = (iRoll * bound(iSpellPower,25,100) / 100);
+         iRoll = bound(iRoll,0,(send(who,@GetMaxHealth)*2));
+         if iRoll > send(oTarget,@GetMaxHitPoints)
+         {
+            % Tell the caster the spell is happening on a monster.
+            Send(who,@MsgSendUser,#message_rsc=seduce_caster,
+                  #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+            % Do the work on the monster.
+            Send(oTarget,@StartEnchantment,#what=self,#time=viDrainTime,#state=who);
+            send(oTarget,@SetMaster,#omaster=who);
+            Post(oTarget,@ResetBehaviorFlags);
+         }
+         else
+         {
+            ClearTempString();
+            AppendTempString(seduce_fail_1);
+            AppendTempString(send(oTarget,@GetDef));
+            AppendTempString(send(oTarget,@GetName));
+            AppendTempString(seduce_fail_2);
+            send(who,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=getTempString(),#type1=0);
+            if iRoll < (send(oTarget,@GetMaxHitPoints)/4)
+            {
+               % oops!  since you failed, now they really hate you!
+               send(oTarget, @TargetSwitch, #what=who, #iHatred=bound((iSpellPower*2),25,100));
+               send(oTarget, @EnterStateChase, #target=who, #actnow=True);
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      debug(iSpellPower);
+      iDuration = (5 + iSpellPower/4)*10000;
+      return random(iDuration/2,iDuration);
+   }
+   
+   EndEnchantment(who = $, report = TRUE, state = $)
+   {
+      if send(state,@GetMana) >= (send(who,@getlevel) / 10)
+      {
+         Send(state,@LoseMana,#amount=send(who,@getlevel) / 10);
+         Post(who,@StartEnchantment,#what=self,#time=viDrainTime,#state=state);
+         return;
+      }
+      post(who,@ResetBehaviorFlags);   %% this has to be done AFTER the enchantment 
+   				       %% is gone from the monster's ench list - post it    
+      send(who,@SetMaster,#oMaster=$);
+      return;
+   }
+
+   ModifyMonsterBehavior(mob = $)
+   {
+      send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
+      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
+      return;      
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

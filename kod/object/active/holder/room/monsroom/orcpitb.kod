@@ -1,0 +1,344 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcPitB is MonsterRoom
+
+constants:
+
+   DOORSECTOR = 2
+   SOLUTIONSECTOR = 1
+
+   SOLUTIONHEIGHTB1 = 0
+   SOLUTIONHEIGHTB2 = 100
+   SOLUTIONHEIGHTB3 = 250
+
+   REGULARHEIGHTB = 500
+
+
+   SOLUTIONHEIGHTA1 = 900
+   SOLUTIONHEIGHTA2 = 750
+   SOLUTIONHEIGHTA3 = 600
+
+   REGULARHEIGHTA = 500
+
+   include blakston.khd
+
+resources:
+
+   room_OrcPitB = ocpb.roo
+   room_name_OrcPitB = "Brog's Antechamber"
+
+   OrcPitB_music = orcpit.mid
+
+classvars:
+
+   vrName = room_name_OrcPitB
+
+   viTeleport_row = 113
+   viTeleport_col = 29
+
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_OrcPitB
+   piRoom_num = RID_ORC_PIT_B
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+   poSwitch = $
+
+   ptDoor = $
+   ptPuzzle = $
+
+   prMusic = OrcPitB_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&CaveOrc, 70], [&GroundwormQueen, 30] ];
+      %plGenerators = [[50,43], [36,31], [28,39], [15,35], [21,19], [15,12], [39,17], [44,29],
+      %		     [44,34], [27,8],   [36,28], [48,22], [47,23], [45,31], [24,33], [20,39]];
+    
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_ORC_CAVE2, 2, 14, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_PIT, 35, 67, ROTATE_NONE], plEdge_exits);
+      propagate;
+   }
+
+
+   CreateStandardObjects()
+   {
+      local i, o;
+
+      poSwitch = Create(&Lever);  
+      send(self,@NewHold,#what=poSwitch,#new_row=48,#new_col=29);
+
+      % some barriers for the pass tunnel
+
+      for i in [
+
+	 [ 50, 33, 40, 44, OO_STALACTITE1 ],
+	 [ 53, 35, 32, 32, OO_STALAGMITE1 ],
+
+	 [ 53, 36, 50, 50, OO_STALACTITE2 ],
+	 [ 53, 37, 45, 32, OO_STALAGMITE1 ],
+	 [ 53, 38, 50, 14, OO_STALACTITE2 ],
+
+	 [ 54, 36, 32, 50, OO_STALAGMITE2 ],
+	 [ 54, 37, 32, 32, OO_STALACTITE2 ],
+	 [ 54, 38, 32, 14, OO_STALAGMITE1 ],
+
+	 [ 54, 37, 50, 50, OO_STALAGMITE1 ],
+	 [ 54, 37, 50, 14, OO_STALACTITE2 ],
+	 [ 54, 37, 14, 50, OO_STALAGMITE2 ],
+	 [ 54, 37, 14, 14, OO_STALACTITE1 ],
+
+	 [ 53, 37, 40, 32, OO_STALAGMITE2 ],
+	 [ 53, 37, 50, 32, OO_STALACTITE1 ],
+	 [ 53, 37, 60, 32, OO_STALACTITE2 ],
+	 [ 54, 37,  6, 32, OO_STALAGMITE1 ],
+	 [ 54, 37, 16, 32, OO_STALACTITE2 ],
+	 [ 54, 37, 26, 32, OO_STALAGMITE2 ],
+	 [ 54, 37, 36, 32, OO_STALACTITE1 ],
+	 [ 54, 37, 46, 32, OO_STALAGMITE1 ],
+	 [ 54, 37, 56, 32, OO_STALACTITE1 ],
+	 [ 55, 37,  4, 32, OO_STALACTITE2 ],
+	 [ 55, 37, 14, 32, OO_STALAGMITE1 ],
+	 [ 55, 37, 24, 32, OO_STALACTITE2 ],
+
+	 [ 55, 36, 14, 50, OO_STALACTITE2 ],
+	 [ 55, 37, 19, 32, OO_STALAGMITE1 ],
+	 [ 55, 38, 14, 14, OO_STALACTITE2 ],
+
+	 [ 55, 39, 40, 44, OO_STALACTITE2 ],
+	 [ 55, 41, 32, 32, OO_STALAGMITE2 ],
+
+	 [ 18, 44, 32, 32, OO_STALACTITE1 ],
+	 [ 11, 11, 32, 32, OO_STALAGMITE1 ],
+	 [ 28, 53, 32, 32, OO_STALAGMITE2 ]
+
+	 ]
+      {
+	 o = create(&OrnamentalObject,#type=nth(i,5));
+	 send(o,@SetNoMoveOn);
+	 send(self,@NewHold,#what=o,
+	    #new_row=nth(i,1),#new_col=nth(i,2),
+	    #fine_row=nth(i,3),#fine_col=nth(i,4));
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if (ptDoor <> $)
+      {
+	 DeleteTimer(ptDoor);
+	 ptDoor = $;
+      }
+      if (ptPuzzle <> $)
+      {
+	 DeleteTimer(ptPuzzle);
+	 ptPuzzle = $;
+      }
+      poSwitch = $;
+      propagate;
+   }                                    
+
+
+   SomethingTryGo(What=$,Row=$,Col=$)
+   {
+      if (Row >= 53 and Col >=28 and Row <=55 and Col <=30)
+      {
+	 send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+	    #height = 600,#speed=50);
+	 ptDoor = createtimer(self,@CloseDoor,60000);
+	 return TRUE;
+      }
+      propagate;
+   }
+
+
+   CloseDoor()
+   {
+      ptDoor = $;
+
+      send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+	 #height = 500,#speed=0);
+      return;
+   }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Puzzle stuff.  More info on puzzle in orcpitb.kod
+%
+%
+% Room "A" is RID_ORC_PIT_A; Room "B" is RID_ORC_PIT_B  (this room)
+% This puzzle is solved when there are 1/3, 1/2. or 2/3 as many people
+% in the the chamber of room "A" as in room "B"
+%
+% Different Solutions are possible depending on whether there is someone
+% standing on certain squares in either of these rooms.  For example, if
+% there is someone on each square 'A' in room "A" and each square 'A' in
+% room "B," we do solution 3.
+%
+%
+%
+
+   SomethingChanged(what=$)
+   {
+   if what = poSwitch
+      { send(self,@EvaluatePuzzle); }
+   propagate;
+   }
+
+   EvaluatePuzzle()
+   {
+      local NumChamberA, NumChamberB, oRoomA, bAllAA, bAllAB, bAllBA, bAllBB;
+      oRoomA = Send(SYS,@FindRoombynum,#num=RID_ORC_PIT_A);
+   
+      NumChamberA = send(oRoomA,@NumInChamber);
+      NumChamberB = send(self,@NumInChamber);
+   
+      If NumChamberA * 3 = NumChamberB or
+	 NumChamberA * 2 = NumChamberB or
+	 NumChamberA * 2 = NumChamberB * 3
+      {
+	 bAllAA = Send(oRoomA,@AllAUsed);
+	 bAllAB = Send(oRoomA,@AllBUsed);
+	 bAllBA = Send(Self,@AllAUsed);
+	 bAllBB = Send(Self,@AllBUsed);
+	 ptPuzzle = createtimer(self,@ResetPuzzle,60000);
+	 
+	 if bAllAA and bAllAB and bAllBA and bAllBB % Person on all "A" and "B" in each room.
+	    {
+	    send(oRoomA,@DoSolution,#height=SOLUTIONHEIGHTA1);
+	    send(Self,@DoSolution,#height=SOLUTIONHEIGHTB1);
+	    return;
+	    }
+
+	 if bAllAA and bAllBA % Person on all "A" in each room.
+	    {
+	    send(oRoomA,@DoSolution,#height=SOLUTIONHEIGHTA3);
+	    send(Self,@DoSolution,#height=SOLUTIONHEIGHTB3);
+	    return;
+	    }      
+	 
+	 if bAllAB and bAllBB % Person on all "B" in each room.
+	    {
+	    send(oRoomA,@DoSolution,#height=SOLUTIONHEIGHTA2);
+	    send(Self,@DoSolution,#height=SOLUTIONHEIGHTB2);
+	    return;
+	    }      
+	    send(oRoomA,@DoSolution,#height=SOLUTIONHEIGHTA1);  % None of the above
+	    send(Self,@DoSolution,#height=SOLUTIONHEIGHTB1);
+        }
+      return;
+   }
+
+   ResetPuzzle()
+   {
+   ptPuzzle = $;
+   Send(Send(SYS,@FindRoomByNum,#num=RID_ORC_PIT_A),@DoSolution,#Height=REGULARHEIGHTA,#Speed=50);
+   Send(Self,@DoSolution,#Height=REGULARHEIGHTB,#Speed=50);
+   if Send(poSwitch,@GetState) = LEVER_UP
+      { Send(poSwitch,@SwitchLever); }
+
+   return;
+   }
+
+
+   DoSolution(height=500,speed=50)
+   {
+   send(self,@setsector,#sector=SOLUTIONSECTOR,#animation=ANIMATE_FLOOR_LIFT,
+      #height = height,#speed=speed);
+   return;
+   }
+
+   NumInChamber()
+   {
+      local i, each_obj, count, iRow, iCol;
+      count = 0;
+      
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+	 iRow = send(each_obj,@getrow);
+	 iCol = send(each_obj,@getcol);
+	 if iRow > 43 and iCol > 24 and iRow < 53 and iCol < 34 and isclass(each_obj,&user)
+	    { count = count + 1; }	 
+      }
+      return count;
+   }
+
+   AllAUsed()
+   {
+      local i, each_obj, iRow, iCol, bAOne, bATwo;
+      bAOne = FALSE;
+      bATwo = FALSE;
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+	 iRow = send(each_obj,@getrow);
+	 iCol = send(each_obj,@getcol);
+	 if iRow = 45 and iCol = 29 and isclass(each_obj,&user)
+	    { bAOne = TRUE; }	 
+	 if iRow = 51 and iCol = 29 and isclass(each_obj,&user)
+	    { bATwo = TRUE; }	 
+
+      }
+      return (bAOne and bATwo);
+   }
+
+   AllBUsed()
+   {
+      local i, each_obj, count, iRow, iCol, bBOne, bBTwo, bBThree, bBFour;
+      bBOne = FALSE;
+      bBTwo = FALSE;
+      bBThree = FALSE;
+      bBFour = FALSE;
+      
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+	 iRow = send(each_obj,@getrow);
+	 iCol = send(each_obj,@getcol);
+	 if (iRow = 46 and iCol = 28) and isclass(each_obj,&user)
+	    {bBOne = TRUE; } 
+	 if (iRow = 46 and iCol = 30) and isclass(each_obj,&user)
+	    {bBTwo = TRUE; }
+	 if (iRow = 50 and iCol = 28) and isclass(each_obj,&user)
+	    {bBTwo = TRUE; }
+	 if (iRow = 50 and iCol = 30) and isclass(each_obj,&user)
+	    {bBTwo = TRUE; }
+
+   
+      }
+      return (bBOne and bBTwo and bBThree and bBFour);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanBartender is KocatanTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanBartender_name_rsc = "Oxal ix'Tokak"
+   kocatanBartender_icon_rsc = kcbart.bgf
+   kocatanBartender_desc_rsc = "After losing his right arm in action at Balo na'te Din, "
+      "Oxal was discharged from service with the Ko'catan Army and assigned to The Barking "
+      "Monster. It is a great honor to be the veteran selected to run this military owned "
+      "establishment, but Oxal performs the work with little apparent relish."
+
+   kocatanBartender_entry_welcome = "What do you want?"
+   
+classvars:
+
+   vrName = KocatanBartender_name_rsc
+   vrIcon = KocatanBartender_icon_rsc
+   vrDesc = KocatanBartender_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE | MOB_BUYER
+   viOccupation = MOB_ROLE_BARTENDER
+
+properties:
+   
+messages:
+
+   ObjectDesired(what=$)
+   {
+      if isClass(what,&ShortSword)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_DAWN
+      {
+         send(self,@SetMood,#new_mood=piMood - 3);
+         return;
+      }
+      if why = MOODMOD_DUSK
+      {
+         send(self,@SetMood,#new_mood=piMood + 3);
+         return;
+      }
+      if (why = MOODMOD_SELL_ITEM)
+      {
+         if isClass(what,&food) 
+         {
+            if send(what, @IsAlcohol) 
+            {
+               send(self,@SetMood,#new_mood=piMood + 1);
+            }
+         }
+      }
+      
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [ [
+                       Create(&KocatanMug,#number=4),
+                       Create(&Bread,#number=4) ],
+                      $, $ ];
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      if send(who, @GetGender) = GENDER_MALE
+      {
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+      
+      if Send(who,@GetAction) = UA_WRY
+      {
+         send(self,@SetMood,#new_mood=piMood + 1);
+      }
+      
+      Send(poOwner,@SomeoneSaid,#what=self,#string=KocatanBartender_entry_welcome,
+             #type = SAY_RESOURCE);
+             
+      propagate;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

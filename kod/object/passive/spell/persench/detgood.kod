@@ -1,0 +1,114 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DetectGood is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DetectGood_name_rsc = "detect good"
+   DetectGood_icon_rsc = iDetGood.bgf
+   DetectGood_desc_rsc = \
+      "Allows you to see the disgustingly pure of heart.  This spell will reveal all good "
+      "people and monsters that are more good than you are corrupted.  "
+      "Requires a fairy wing to cast."
+   
+   DetectGood_on_rsc = "You can now sense all things good, merely waiting to be defiled."
+   DetectGood_off_rsc = "Your eyesight returns to its former mundanity."
+   DetectGood_already_enchanted_rsc = "You can already see the pure."
+   DetectGood_Success_rsc = "%s%s can now see the pure."
+
+   DetectGood_sound = qdetgood.wav
+
+   DetectGood_spell_intro = "Qor Lv. 1: Allows you to detect good people and monsters."
+
+classvars:
+
+   vrName = DetectGood_name_rsc
+   vrIcon = DetectGood_icon_rsc
+   vrDesc = DetectGood_desc_rsc
+
+   vrAlreadyEnchanted = DetectGood_already_enchanted_rsc
+   vrEnchantment_On = DetectGood_On_rsc
+   vrEnchantment_Off = DetectGood_Off_rsc
+   vrSuccess = DetectGood_Success_rsc
+
+   viSpell_num = SID_DETECT_GOOD
+   viSchool = SS_QOR
+   viSpell_level = 1
+   viMana = 10
+   viSpellExertion = 5
+
+   viCast_time = 3000
+   viChance_To_Increase = 15
+
+   vrSpell_intro = DetectGood_spell_intro
+
+   vrSucceed_wav = DetectGood_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&FairyWing, 1],plReagents);
+
+      return;
+   }
+
+   CastSpell(who = $,iSpellPower=0)
+   {
+      % Post this so it's after the flag being applied.
+      post(who,@ToCliRoomContents);
+
+      propagate;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG2_DETECT_GOOD,#flagset=2,#value=TRUE);
+
+      return;
+   }
+   
+   GetDuration(iSpellpower = 0)
+   {
+      local iDuration;
+
+      % 4 - 8 minutes max.
+      iDuration = 2400 * (100 + iSpellPower);   
+
+      return Random(iDuration/2,iDuration);
+   }
+   
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+      if send(who,@IsLoggedOn)
+      {
+	      % Must post this so it's after the flag being removed.
+	      Post(who,@ToCliRoomContents);
+      }
+
+      propagate;
+   }
+
+   GetPotionClass()
+   {
+      RETURN &DetectGoodPotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

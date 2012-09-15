@@ -1,0 +1,150 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CurePoison is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   curepoison_name_rsc = "cure poison"
+   curepoison_icon_rsc = icurpoi.bgf
+   curepoison_desc_rsc = \
+      "Pure, healing energy fights the effects of poison in the target.  "
+	   "Requires herbs and elderberries to cast."
+   
+   curepoison_on = "The power of Shal'ille fights the effects of poison in your blood."
+
+   curepoison_unnecessary = "%s%s is not suffering from poison."
+   curepoison_abates = "You feel the poison grow weaker."
+
+   curepoison_spell_intro = "Shal'ille Lv. 2: Fights the effects of any poisons which may flow through the target's body."
+classvars:
+
+   vrName = curepoison_name_rsc
+   vrIcon = curepoison_icon_rsc
+   vrDesc = curepoison_desc_rsc
+
+   vrSpell_intro = curepoison_spell_intro
+   viSpell_num = SID_CURE_POISON
+   viSchool = SS_SHALILLE
+   viSpell_level = 2
+   viMana = 10
+
+   viChance_To_Increase = 30
+
+   viFlash = FLASH_GOOD_SELF
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Herbs,2],plReagents);
+      plReagents = Cons([&Elderberry,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local target, i, oPoison;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+	      return False;
+      }
+
+      target = First(lTargets);
+      if not IsClass(target, &User)
+      {
+	      Send(who,@MsgSendUser,#message_rsc=spell_bad_target,#parm1=vrName,
+	      #parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+	      return False;
+      }
+
+      %% make sure target is indeed poisoned
+      oPoison = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+      if not Send(target,@IsEnchanted,#what=oPoison) 
+      {
+	      Send(who, @MsgSendUser, #message_rsc=curepoison_unnecessary,
+           #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName)); 
+	      return False;
+      }
+
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellpower = $)
+   {
+      local oTarget, oPoison, lPoisonEnchantment, iRandom, iLossRate, iLossRateAfter, iDuration;
+      
+      oTarget = First(lTargets);
+      
+      Send(oTarget,@MsgSendUser,#message_rsc=curepoison_on);
+      Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
+	        #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
+	        #parm3=Send(oTarget,@GetName));
+	        
+      oPoison = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+
+      % Take the first item, could return a list of poison enchantments.
+      % Format of individual enchantment info: [ timer, spell object, state ]
+      lPoisonEnchantment = first(send(oTarget,@GetEnchantmentsByClass,#enchClass=&Poison));
+      
+      iLossRate = nth(lPoisonEnchantment,3);
+      iLossRateAfter = iLossrate - ((iLossRate * iSpellpower) / 100);
+
+      iRandom = Random(1,100);
+
+      % It has an iSpellPower percent chance to be removed
+      %  Also removed if the loss rate is already really low
+      %  Also removed if the remaining lossrate is really low
+      if iRandom < iSpellpower
+         OR iLossRate <= 100
+         OR iLossRateAfter < iLossRate/10
+         OR iLossRateAfter < 100
+      {
+         Send(oTarget,@RemoveEnchantment,#what=oPoison);
+      }
+      else
+      {
+         % Remove the old enchantment and put a new one on with the new strength.
+         iDuration = GetTimeRemaining(first(lPoisonEnchantment));
+         send(oTarget,@RemoveEnchantment,#what=oPoison,#Report=FALSE);
+         send(otarget,@StartEnchantment,#what=oPoison,#state=iLossRateAfter,#time=iDuration,#report=FALSE);
+
+         % Tell the player we've added back only part of the poison.            
+         send(oTarget,@AddPoison,#strength=iLossRateAfter,#bVigorLoss=FALSE);
+
+         send(oTarget,@MsgSendUser,#message_rsc=curepoison_abates);
+      }
+      
+      propagate;
+   } 
+
+   GetPotionClass()
+   {
+      RETURN &CurePoisonPotion;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,197 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Fairy is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   good_fairy_koc_name_rsc = "kinimixlal"
+   good_fairy_name_rsc = "fey elhai"
+   good_fairy_icon_rsc = faerie-g.bgf
+   good_fairy_desc_rsc = \
+      "One of the noble woodland fairies, the fey elhai are most "
+      "reknown for their utter hatred of their dark brothers, the fey "
+      "dirhai."
+
+   fairy_dead_icon_rsc = faerieXG.bgf
+   fairy_dead_name_rsc = "dead fey"
+	
+	fairy_fireball = feyball.bgf
+
+   fairy_sound_hit = god_atkh.wav
+   fairy_sound_miss = god_atkm.wav
+   fairy_sound_death = god_die.wav
+   fairy_sound_aware = god_awr.wav
+
+classvars:
+   
+   vrDesc = good_fairy_desc_rsc
+   vrKocName = good_fairy_koc_name_rsc
+   vrName = good_fairy_name_rsc
+   vrIcon = good_fairy_icon_rsc
+   
+   vrDead_icon = fairy_dead_icon_rsc
+   vrDead_name = fairy_dead_name_rsc
+ 
+   viTreasure_type = TID_FAIRY
+
+   viSpeed = SPEED_VERY_FAST
+   viAttack_types = 0
+   viAttack_spells = ATCK_SPELL_SHOCK
+   viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
+   viWimpy = 10
+
+   viLevel = 60
+   viDifficulty = 5
+   
+   vrSound_hit = fairy_sound_hit
+   vrSound_miss = fairy_sound_miss
+   vrSound_aware = fairy_sound_aware
+   vrSound_death = fairy_sound_death
+   
+properties:
+
+   piDrawfx = BOUNCE_YES
+   viKarma = 50
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructor()
+   {
+      plResistances = [ [ 30, -ATCK_SPELL_HOLY ],
+                        [ 30, -ATCK_SPELL_ALL ],
+                        [ 30, ATCK_WEAP_MAGIC ],
+                        [-30, -ATCK_SPELL_UNHOLY ]
+                      ];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      % add in any attack animation calls
+      Send(self,@DoSlash);
+	   Send(poOwner,@SomethingShot,#who=self,#target=what,#projectile=self,
+	        #flags=PROJ_FLAG_LIGHT_SOURCE);
+
+		return;
+   }
+   
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,3,2,4);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,100,2,5,2,8,2,1);
+
+         return;
+      }
+
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,2);
+	             
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return fairy_fireball;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 7;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,50,2,1,2,4);
+
+      return;
+   }      
+
+   GetProjectileLightFlags()
+   {
+      % General lighting information.
+      return LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      % Fairly small light radius for projectile.  Out of 255 levels.
+      return 50;
+   }
+
+   GetProjectileLightColor()
+   {
+      % Color is orange.
+      return LIGHT_ORANGE;
+   }
+
+   AssessDamage(what=$)
+   {
+      if isClass(what,&EvilFairy)
+      {
+         return 1;
+      }
+
+      propagate;
+   }
+
+   GetObjectFlags()
+   {
+      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
+   }
+
+   SendLightingInformation()
+   {
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      % Intensity (out of 255)
+      AddPacket(1,30);
+      % Color
+      AddPacket(2,LIGHT_WHITE);
+
+      return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

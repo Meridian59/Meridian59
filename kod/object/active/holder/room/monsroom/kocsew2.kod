@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanSewer2 is MonsterRoom
+
+% Todo?:  Add in items that appear in the water.  
+%         Good coordinates: [78. 33], [37, 24], [7, 37], [19, 3]
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   room_name_kocsew2 = "Up Chuk Creek without a paddle"
+   room_kocsew2 = kocsew2.roo
+
+   kocsew2_music = cave.mid
+
+   kocsew2_locked_1 = \
+      "Alternately wading and swimming in digusting filth, you rattle "
+      "the locked gate without any effect."
+
+classvars:
+
+   vrName = room_name_kocsew2
+
+   viTeleport_row = 37
+   viTeleport_col = 32
+
+   viTerrain_Type = TERRAIN_SEWERS
+
+properties:
+
+   prRoom = room_kocsew2
+   piRoom_num = RID_KOC_SEWER2
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   prMusic = kocsew2_music
+
+   piGen_time = 40000
+   piGen_percent = 90
+
+   piInit_count_min = 4
+   piInit_count_max = 6
+
+   piMonster_count_max = 15
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&DuskRat, 100] ];
+      plGenerators = [ [4, 16], [15, 37], [32, 32], [32, 36], [36,34], [52, 33] ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % Locked doors
+      plExits = Cons([ 76, 32, ROOM_LOCKED_DOOR, kocsew2_locked_1],plExits);
+      plExits = Cons([ 76, 33, ROOM_LOCKED_DOOR, kocsew2_locked_1],plExits);
+      plExits = Cons([ 8, 37, ROOM_LOCKED_DOOR, kocsew2_locked_1],plExits);
+      plExits = Cons([ 8, 38, ROOM_LOCKED_DOOR, kocsew2_locked_1],plExits);
+      plExits = Cons([ 18, 4, ROOM_LOCKED_DOOR, kocsew2_locked_1],plExits);
+      plExits = Cons([ 19, 4, ROOM_LOCKED_DOOR, kocsew2_locked_1],plExits);
+
+      % To tailor -- teleport in to (43,47)
+      plExits = Cons([ 43, 48, RID_KOC_TAILOR, 4, 2, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 4, 13, RID_KOC_SEWER1, 42, 7, ROTATE_NONE ],plExits);
+  
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

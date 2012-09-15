@@ -1,0 +1,134 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Lupogg is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   lupogg_koc_name_rsc = "tez"
+   lupogg_name_rsc = "lupogg"
+   lupogg_icon_rsc = lupogg.bgf
+   lupogg_desc_rsc = \
+      "This underwater denizen, although hideous and brutish, is rumored to be  "
+      "peaceful in nature, but there is no evidence of that now.  The "
+      "lupoggs seem upset that their territory has been trespassed upon, and "
+      "seem eager to challenge any they can find."   
+
+   lupogg_dead_icon_rsc = lupoggX.bgf
+   lupogg_dead_name_rsc = "dead lupogg"
+
+   lupogg_sound_hit = lup_atkh.wav
+   lupogg_sound_miss = lup_atkm.wav
+   lupogg_sound_death = lup_dth.wav
+   lupogg_sound_aware = lup_awr.wav
+
+classvars:
+
+   vrKocName = lupogg_koc_name_rsc
+   vrName = lupogg_name_rsc
+   vrIcon = lupogg_icon_rsc
+   vrDesc = lupogg_desc_rsc
+   vrDead_icon = lupogg_dead_icon_rsc
+   vrDead_name = lupogg_dead_name_rsc
+
+   viTreasure_type = TID_VERY_TOUGH
+   viSpeed = 2
+   viAttributes = 0
+   viLevel = 105
+   viDifficulty = 9
+   viKarma = 75
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
+
+   vrSound_hit = lupogg_sound_hit
+   vrSound_miss = lupogg_sound_miss
+   vrSound_aware = lupogg_sound_aware
+   vrSound_death = lupogg_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 70, ATCK_WEAP_ALL],
+                        [ 90, -ATCK_SPELL_COLD],
+                        [ 90, -ATCK_SPELL_SHOCK],
+                        [-20, -ATCK_SPELL_ACID ],
+                        [-10, -ATCK_SPELL_FIRE ],
+                        [-10, ATCK_WEAP_SLASH ],
+                        [-25, ATCK_WEAP_NERUDITE ] ];
+      propagate;
+   }
+
+   CalculateDamage(what = $,hit_roll = $)
+   "We hit <what> with a roll of <hit_roll>, and now need to calculate"
+   "how much damage we caused."
+   {
+      local damage;
+
+      damage = send(self,@Fuzzy,#num=viLevel/Random(8,11));
+
+      if piEnch_flags & ENCH_PALSY
+      {
+         damage = damage * 3 / 4 ;
+      }
+
+      return damage;
+   }
+
+   GetAttackRange()
+   {
+      return 2;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,5);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,5);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,100,2,6,2,8,2,1);
+
+         return;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

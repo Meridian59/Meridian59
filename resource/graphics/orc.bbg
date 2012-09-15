@@ -1,0 +1,99 @@
+# Forest Orc
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-11 Attack
+#^Applied to Hotspot: 0
+#*Groups: 11
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+66
+orf000sa.bmp   [0, 3] 
+orf315sa.bmp   [0, 5] 
+orf270sa.bmp   [0, -3] 
+orf180sa.bmp   [0, -7] 
+orf090sa.bmp   [0, -2] 
+orf045sa.bmp   [0, -6] 
+orf000wa.bmp   [0, 4] 
+orf315wa.bmp   [0, 0] 
+orf270wa.bmp   [0, -11] 
+orf180wa.bmp   [0, -8] 
+orf090wa.bmp   [0, -7] 
+orf045wa.bmp   [0, -7] 
+orf000wb.bmp   [0, 4] 
+orf315wb.bmp   [0, 4] 
+orf270wb.bmp   [0, -6] 
+orf180wb.bmp   [0, -19] 
+orf090wb.bmp   [0, -7] 
+orf045wb.bmp   [0, -5] 
+orf000wc.bmp   [0, -2] 
+orf315wc.bmp   [0, -5] 
+orf270wc.bmp   [0, -6] 
+orf180wc.bmp   [0, -15] 
+orf090wc.bmp   [0, -14] 
+orf045wc.bmp   [0, -3] 
+orf000wd.bmp   [0, 8] 
+orf315wd.bmp   [0, -2] 
+orf270wd.bmp   [0, -12] 
+orf180wd.bmp   [0, -21] 
+orf090wd.bmp   [0, -6] 
+orf045wd.bmp   [0, 5] 
+orf000we.bmp   [0, -3] 
+orf315we.bmp   [0, -2] 
+orf270we.bmp   [0, -11] 
+orf180we.bmp   [0, -18] 
+orf090we.bmp   [0, -7] 
+orf045we.bmp   [0, -2] 
+orf000fa.bmp   [0, 3] 
+orf315fa.bmp   [0, 6] 
+orf270fa.bmp   [0, -4] 
+orf180fa.bmp   [0, -8] 
+orf090fa.bmp   [0, -2] 
+orf045fa.bmp   [0, -6] 
+orf000fb.bmp   [0, 2] 
+orf315fb.bmp   [0, 6] 
+orf270fb.bmp   [0, -3] 
+orf180fb.bmp   [0, -10] 
+orf090fb.bmp   [0, -2] 
+orf045fb.bmp   [0, -4] 
+orf000fc.bmp   [0, 3] 
+orf315fc.bmp   [0, 6] 
+orf270fc.bmp   [0, -3] 
+orf180fc.bmp   [0, -8] 
+orf090fc.bmp   [0, -2] 
+orf045fc.bmp   [0, -6] 
+orf000fd.bmp   [0, 3] 
+orf315fd.bmp   [0, 4] 
+orf270fd.bmp   [0, -3] 
+orf180fd.bmp   [0, -8] 
+orf090fd.bmp   [0, -2] 
+orf045fd.bmp   [0, -4] 
+orf000fe.bmp   [0, 2] 
+orf315fe.bmp   [0, 4] 
+orf270fe.bmp   [0, -4] 
+orf180fe.bmp   [0, -8] 
+orf090fe.bmp   [0, -2] 
+orf045fe.bmp   [0, -6] 
+11
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 

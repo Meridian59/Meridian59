@@ -1,0 +1,12 @@
+# fishkey for Kocatan tailor's shop
+#^Applied to Hotspot: 0
+#*Groups: 2
+#* Unlabeled Group
+#* Unlabeled Group
+-s 16
+2
+fishkey.bmp    [0, 0] 
+fishkedr.bmp   [0, 0] 
+2
+ 1   1 
+ 1   2 

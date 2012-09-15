@@ -1,0 +1,18 @@
+# gold-trimmed shield
+#^Applied to Hotspot: 32
+#*Groups: 3
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 5
+6
+sheld045.bmp   [186, 96] 
+sheld000.bmp   [152, 95] 
+sheld315.bmp   [136, 90] 
+sheld225.bmp   [142, 89] 
+sheld135.bmp   [192, 89] 
+sheld090.bmp   [214, 94] 
+3
+ 1   1 
+ 8   1 2 3 4 4 4 5 6 
+ 1   2 

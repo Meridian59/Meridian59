@@ -1,0 +1,101 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CreateSpiritualHammer is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   createspiritualhammer_cast_rsc = "A spiritual hammer appears."
+   createspiritualhammer_inv_full_rsc = "A spiritual appears in the air before you, "
+      "but before you can drop something and grab it, it vanishes."
+
+   createspiritualhammer_name_rsc = "spiritual hammer"
+   createspiritualhammer_icon_rsc = ispirith.bgf
+   createspiritualhammer_desc_rsc = \
+      "Materializes a spiritual hammer.  "
+      "Requires emeralds and orc teeth to cast."
+
+   createspiritualhammer_sound = sspham.wav
+
+classvars:
+
+   vrName = createspiritualhammer_name_rsc
+   vrIcon = createspiritualhammer_icon_rsc
+   vrDesc = createspiritualhammer_desc_rsc
+   
+   viSpell_num = SID_SPIRITUAL_HAMMER
+   viSchool = SS_SHALILLE
+   viSpell_level = 3
+   viMana = 15
+   viSpellExertion = 5
+   viCast_time = 5000
+
+   vrSucceed_wav = createspiritualhammer_sound
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Emerald,2],plReagents);
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   GetLongevity(iSpellPower = 0)
+   {
+      local iLongevity;
+
+      iLongevity = 10 + ((50 * iSpellpower) / 100);  % lasts 10 - 60 minutes
+      iLongevity = iLongevity * 60 * 1000;  % Convert to ms
+
+      return iLongevity;   
+   }
+
+
+   CastSpell(who = $, lTargets = $,iSpellPower = $)
+   {
+      local oSpiritualHammer, iLongevity, iToHitBonus;
+
+      iLongevity = send(self,@GetLongevity,#iSpellPower=iSpellPower);
+      iToHitBonus = (iSpellPower * 3) / 2;
+      oSpiritualHammer = Create(&SpiritualHammer,#iLongevity=iLongevity,#iToHitBonus=iToHitBonus);
+
+      if Send(who,@ReqNewHold,#what=oSpiritualHammer)
+      {
+         Send(who,@NewHold,#what=oSpiritualHammer);
+         Send(who,@MsgSendUser,#message_rsc=createspiritualhammer_cast_rsc);
+      }
+      else
+      {
+         Send(oSpiritualHammer,@Delete);
+         Send(who,@MsgSendUser,#message_rsc=createspiritualhammer_inv_full_rsc);
+      }
+
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

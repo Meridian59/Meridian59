@@ -1,0 +1,337 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  Revenants are produced with some probability upon the event
+%  of a player kill.  Revenants lock onto the killer and follow
+%  him until either the revenant dies or the killer does.  If the
+%  killer leaves the room, a new revenant is created near him (4.5-9 units)
+%  in his new room after an initial delay of 5-20 seconds.  Revenants
+%  are invisible and walk (and attack) through walls.
+%
+%  Revenants level and difficulty is a factor of his victim's piMax_health.
+%  Revenant strength is determined in player.kod.  Revenants are weaker when first
+%    created.  They get stronger if the player runs (enters another room, quits, etc).
+%    Initial Revenant difficulty:
+%       Level = 110% of maxhealth
+%       Difficulty = maxhealth/12 (bounded at 4 and 9)
+%    Standard Revenant difficulty:
+%       Level = 150% of maxhealth
+%       Difficulty = maxhealth/10 (bounded at 4 and 10)
+
+
+Revenant is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   revenant_name_rsc = "revenant"
+   revenant_icon_rsc = zombie.bgf
+   revenant_desc_rsc = \
+   "The reward for someone's misdeeds: a battle to the death with a lost soul.  Although it is harmless to all but the murderer it haunts, anyone foolish enough to interfere will suffer the same fate."
+
+   Rev_grouping_is_bad = "Your soul twitches as you interfere in another's battle.  You realize that you too will now be haunted when you leave this place."
+   Rev_vanquished = "You feel a great weight lifted from your soul."
+   Rev_coming_to_get_ya = "Your spine tingles as you sense the foreboding presence of a pursuing revenant drawing near."
+   Rev_draining_effect = "The revenant makes a mystical motion... you feel drained."
+
+classvars:
+   vrName = revenant_name_rsc
+   vrIcon = revenant_icon_rsc
+   vrDesc = revenant_desc_rsc
+
+   viSpeed = SPEED_FAST
+   viAttack_types = ATCK_WEAP_SLASH
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
+
+properties:
+
+   viLevel = 55                 %% These are reset in constructor
+   viDifficulty = 5
+   viKarma = 20
+
+   % our private data
+
+   piAnimation = ANIM_NONE
+
+   poRoom = $                  %% The room we are scheduled to be created in.
+   poHauntee = $               %% The player we are to hunt.
+   ptPlace = $                 %% Timer for the delay before we are created.
+
+messages:
+
+   Constructor(target = $, location = $, diff = 0, level = 0, karmic = 0)
+   {
+      if target = $ 
+         OR location = $  
+         OR Send(location,@CheckRoomFlag,#flag=ROOM_NO_COMBAT) 
+         OR Send(location,@CheckRoomFlag,#flag=ROOM_SANCTUARY)
+         OR Send(location,@checkRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         return ;
+      }
+      
+      poRoom = location;
+      poHauntee = target;
+      poTarget = poHauntee;
+      
+      if diff <> $
+      {
+         viDifficulty = diff;
+      }
+      
+      if level <> $
+      {
+         viLevel = level;
+      }
+      
+      if karmic <> $
+      {
+         viKarma = karmic;
+      }
+
+      %% place near target in 3-12 seconds
+      ptPlace = CreateTimer(self,@Place,Random(3000,12000));
+      
+      propagate;
+   }
+
+   Constructed()
+   {
+      plResistances = [ [ 40, -ATCK_SPELL_ALL ],
+                        [ 40, ATCK_WEAP_MAGIC ] ];
+      propagate;
+   }
+
+   Place()
+   "Sets revenant down near (but not too near) his target"
+   {
+      local oRoom, bValid_location, iTries, iRow, iCol, iRow_sign, iCol_sign,
+            iTarg_row, iTarg_col ;
+
+      oRoom = Send(poHauntee,@GetOwner);
+      
+      if oRoom <> poRoom
+      {
+         %% target has moved on, let new revenant take over
+         Send(self,@Delete);
+         
+         return;
+      }
+      
+      iTarg_row = Send(poHauntee,@GetRow);
+      iTarg_col = Send(poHauntee,@GetCol);
+      
+      iTries = 0;
+      bValid_location = FALSE;
+      
+      %% revenant will not be created inside tiny rooms (if there are any)
+      while NOT bValid_location
+            AND iTries < 7
+      {
+         iTries = iTries + 1;
+         if Random(1,2) = 1
+         {
+            iRow_sign= -1 ;
+         }
+         else
+         {
+            iRow_sign=  1 ;
+         }
+         
+         if Random(1,2) = 1
+         {
+            iCol_sign= -1 ;
+         }
+         else
+         {
+            iCol_sign=  1 ;
+         }
+         
+         iRow = iTarg_row + iRow_sign*Random(3,6);
+         iCol = iTarg_col + iCol_sign*Random(3,6);
+         
+         if iRow >= 1
+            AND iRow <= Send(poRoom,@GetRoomRows)
+            AND iCol >= 1
+            AND iCol <= Send(poRoom,@GetRoomCols)
+         {
+            bValid_location = TRUE;
+         }
+      }
+      
+      Send(poRoom,@NewHold,#what=self,#new_row=iRow,#new_col=iCol);
+      poTarget = poHauntee;
+      send(self,@EnterStateChase);
+      Post(poHauntee,@MsgSendUser,#message_rsc=Rev_coming_to_get_ya);
+      
+      return;
+   }
+
+   GetVisionDistance()
+   {
+      return 9999;       %% effectively infinite
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      %Extra revenant penalty.. each time it hits, it drains away vigor
+      %The 20% drain might be too high, but well see. *cackle*
+      if Random(0,9) = 0
+      {
+         Send(what,@MsgSendUser,#message_rsc=Rev_draining_effect);
+         Send(what,@AddExertion,#amount=Send(what,@GetVigor)*10000/10);
+      }
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,200,2,2,2,3);
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      % Cycle through "walking" bitmaps (groups 2-5) at 50 milliseconds per frame
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,2,2,3);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,200,2,2,2,3,2,1);
+         
+         return;
+      }
+
+      % if no body animation
+      
+      propagate;
+   }
+
+   GetObjectFlags()
+   {
+      return BATTLER_YES | DRAWFX_INVISIBLE;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % COMBAT MESSAGES
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   %% Keeps revenant from attacking back if non-target attacks
+   %% But if its not the target, lets haunt them for interference.
+   SomethingAttacked(what = $,victim = $,use_weapon = $)
+   {
+      if victim = self
+         AND isClass(what,&user)
+      {
+         Send(self,@RevenantWasAttacked,#what=what);
+      }
+      
+      propagate;
+   }
+
+   RevenantWasAttacked(what = $)
+   {
+      if what <> poHauntee and IsClass(what,&User) AND
+         (not Send(what,@CheckPlayerFlag,#flag=PFLAG_HAUNTED))
+      {
+         Send(what,@MsgSendUser,#message_rsc=Rev_grouping_is_bad);
+         Send(what,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=TRUE);
+      }
+      
+      return;
+   }
+
+   %% Revenants live for this
+   SomethingKilled(what = $,victim = $,use_weapon = $)
+   {
+      if poHauntee = victim
+      {
+         post(self,@Delete);  % MUST post this
+      }
+      
+      return ; 
+   }
+
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % MOVEMENT MESSAGES
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   %% If it's the target, delete revenant
+   SomethingLeft(what = $)
+   {
+      if what = poHauntee 
+      { 
+         post(self,@Delete); 
+      }
+      
+      return;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % OTHER TRIGGER MESSAGES
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   %% The only escape from haunting is the death of the revenant
+   Killed(what = $)
+   {
+      If what <> poHauntee
+         AND IsClass(what,&User)
+         AND (NOT Send(what,@checkPlayerFlag,#flag=PFLAG_HAUNTED))
+      {
+         Send(what,@MsgSendUser,#message_rsc=Rev_grouping_is_bad);
+         Send(what,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=TRUE);
+      }
+
+      Send(poHauntee,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=FALSE);
+      Send(poHauntee,@MsgSendUser,#message_rsc=Rev_vanquished);
+      Send(self,@Delete);
+      
+      return;  %% do not propagate (revenants leave no corpse or treasure)
+   }
+
+   %%%%%%%%%%%%%%
+   %  Utilities
+   %%%%%%%%%%%%%%
+
+   GetHauntee()
+   {
+      return poHauntee;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }  
+   
+   CanPlayerAdvanceOnMe()
+   {  
+      return FALSE;
+   }    
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

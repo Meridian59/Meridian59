@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ThreeToken is Token
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ThreeToken_name_rsc = "jade cat token"
+   ThreeToken_desc_rsc = \
+      "Like a living cat is known for its dexterity and mastery of skills, this "
+      "ancient token is rumored to teach its techniques to its Councilor master. "
+      "Returning it would likely raise your status in the Royal Court."
+   ThreeToken_icon_rsc = tcat.bgf
+
+   % Overlays not implemented yet.
+   %ThreeToken_overlay_rsc = tokhcat.bgf
+
+classvars:
+
+   vrName = ThreeToken_name_rsc
+   vrDesc = ThreeToken_desc_rsc
+   vrIcon = ThreeToken_icon_rsc
+
+   viInitialTimeval = 40000000
+
+   %vrTokenOverlay = ThreeToken_overlay_rsc
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

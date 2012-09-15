@@ -1,0 +1,43 @@
+# animated armor
+# groups
+# 1 standing
+# 2-3 walking
+# 4-5 attacking
+-s 2
+30
+Arm000a.BMP
+Arm000b.BMP
+Arm000caa.BMP
+arm000cb.BMP
+Arm000s.BMP
+Arm045a.BMP
+Arm045b.BMP
+Arm045caa.BMP
+arm045cb.BMP
+Arm045s.BMP
+Arm090a.BMP
+Arm090b.BMP
+Arm090caa.BMP
+arm090cb.BMP
+Arm090s.BMP
+Arm180a.BMP
+Arm180b.BMP
+Arm180caa.BMP
+arm180cb.BMP
+Arm180s.BMP
+Arm270a.BMP
+Arm270b.BMP
+Arm270caa.BMP
+arm270cb.BMP
+Arm270s.BMP
+Arm315a.BMP
+Arm315b.BMP
+Arm315caa.BMP
+arm315cb.BMP
+Arm315s.BMP
+5
+8  5 30 25 20 20 20 15 10 
+8  1 26 21 16 16 16 11  6
+8  2 27 22 17 17 17 12  7
+8  3 28 23 18 18 18 13  8
+8  4 29 24 19 19 19 14  9

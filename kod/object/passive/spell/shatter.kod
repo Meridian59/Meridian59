@@ -1,0 +1,201 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Shatter is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   shatter_name_rsc = "shatter"
+   shatter_icon_rsc = ishatter.bgf
+   shatter_desc_rsc = \
+      "The icy magic of Faren shatters one or more items in "
+      "the inventory of the target.  "
+      "Requires red and purple mushrooms to cast."
+
+   shatter_sound = fshatter.wav
+
+   shatter_cast_rsc = "Your %s frosts, trembles, and shatters!"
+   shatter_cast_plural_rsc = "Your %s frost, tremble, and shatter!"
+   shatter_succeed = "You shatter %s%s's %s!"
+
+   shatter_failed_caster = "You point at %s%s, but nothing seems to happen."
+   shatter_failed_target = "%s%s points at you, but nothing seems to happen."
+
+   shatter_not_enough_hp = "You are not yet powerful enough to sunder objects."
+
+classvars:
+
+   vrName = shatter_name_rsc
+   vrIcon = shatter_icon_rsc
+   vrDesc = shatter_desc_rsc
+
+   viSpell_num = SID_SHATTER
+   viSchool = SS_FAREN
+   viSpell_level = 5
+   viMana = 12
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   viCast_time = 6000
+   vbCastable_in_HappyLand = FALSE
+
+   vrSucceed_wav = shatter_sound
+   viFlash = FLASH_BAD
+
+   % in seconds, since it works off gettime()
+   viPostCast_time = 5        
+
+   vrToo_few_hp = shatter_not_enough_hp
+
+properties:
+
+   % Must have this many HP to cast the spell.  Added this to reduce
+   % griefing: mules who shatter will likely be killed, and then have
+   % to get the HP back.  
+   piMinHitPoints = 40
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&RedMushroom,3],plReagents);
+      plReagents = Cons([&PurpleMushroom,3],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if NOT IsClass(target,&Player)
+      {
+         if not bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+                 #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower=0)
+   {
+      local oShatter, oTarget, count, oChosen, iNumber, iPercent;
+            
+      oTarget = First(lTargets);
+      if NOT IsClass(oTarget,&Player)
+      {
+         return;
+      }
+
+      count = random(0,iSpellpower/33) + 1;
+      oChosen = $;
+
+      while count > 0
+      {
+         count = count - 1;
+         oShatter = Send(oTarget,@GetRandomItem);
+         if oShatter = $  { break; }
+         if NOT send(oShatter,@CanShatter)
+         {
+            continue;
+         }
+
+         if oChosen = $ or send(oShatter,@GetValue) > send(oChosen,@GetValue)
+         {
+            oChosen = oShatter;
+         }
+      }
+      
+      oShatter = oChosen;      
+      if oShatter = $ OR NOT send(oShatter,@CanShatter) 
+      {
+         % You get here if the spell failed to find something shatterable.
+         Send(who,@MsgSendUser,#message_rsc=shatter_failed_caster,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+         Send(oTarget,@MsgSendUser,#message_rsc=shatter_failed_target,
+              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+              
+         propagate;
+      }
+
+      if Send(oTarget,@ReqLeaveHold,#what=oShatter)
+      {
+         if send(oShatter,@IsPlural)
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=shatter_cast_plural_rsc,
+                 #parm1=Send(oShatter,@GetName));
+         }
+         else
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=shatter_cast_rsc,
+                 #parm1=Send(oShatter,@GetName));
+         }
+         
+         Send(who,@MsgSendUser,#message_rsc=shatter_succeed,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),
+              #parm3=Send(oShatter,@GetName));
+            
+         count = count -1;
+
+         % Only delete a percent of a number item
+         If IsClass(oShatter,&NumberItem)
+         {
+            iNumber = send(oShatter,@GetNumber);
+            iPercent = bound(iSpellpower-29,20,70);
+            iPercent = Random(iPercent/2,iPercent+30);
+
+            % Always shatter at least one item 'cause we round down.
+            iNumber = bound((iNumber*iPercent)/100,1,$);
+
+            send(oShatter,@SubtractNumber,#number=iNumber);
+         }
+         else
+         {
+            Send(oShatter,@DoShatter);
+         }
+      }
+
+      propagate;      
+   }
+
+   SpellBannedInArena()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

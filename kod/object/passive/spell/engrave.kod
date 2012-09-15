@@ -1,0 +1,153 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Engrave is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   engrave_name_rsc = "engrave"
+   engrave_icon_rsc = iillufrm.bgf
+   engrave_desc_rsc = "Adds a message to an item.  A DM only spell, currently.  "
+
+   engrave_already_engraved = "%s%s already has a message engraved onto it."
+   engrave_cant_engrave = "You can't engrave a message on %s%s."
+   engrave_no_message = "With no message to engrave, the spell fizzles into nothing."
+
+   engrave_do = "You watch in fascination as the words '%q' write themselves in eldritch script on %s%s."
+
+classvars:
+
+   vrName = engrave_name_rsc
+   vrIcon = engrave_icon_rsc
+   vrDesc = engrave_desc_rsc
+
+   viSpell_num = SID_ENGRAVE
+   viSpell_level = 100
+   viSchool = SS_DM_COMMAND
+   viMana = 0
+   viSpellExertion = 0
+   viCast_time = 30000   
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {      
+      plReagents = $;
+      
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      % Tell client how many targets this spell needs
+      return 1;
+   }
+
+   IsTargetInRange(who = $,target = $)
+   {
+      if who = Send(target,@GetOwner) 
+         OR send(who,@GetOwner) = send(target,@GetOwner)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oTarget;
+     
+      % check for enchantment already applied
+      
+      oTarget = first(lTargets);
+
+      % Only castable on items.
+      if NOT IsClass(oTarget,&Item)
+      {
+         return FALSE;
+      }
+      
+      if send(oTarget,@HasAttribute,#itematt=IA_ENGRAVED)
+      {
+         Send(who,@MsgSendUser,#message_rsc=engrave_already_engraved,
+              #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+              
+         return FALSE;
+      }    
+      
+      if isClass(oTarget,&NumberItem)
+      {
+         Send(who,@MsgSendUser,#message_rsc=engrave_cant_engrave,
+              #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+              
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $)
+   {
+      send(who,@MsgSendUser,#message_rsc=engrave_no_message);
+      
+      return FALSE;
+   }
+
+   GetTranceTime(iSpellpower=0,who=$)
+   {
+      % Since this spell uses the trance, don't scale it down depending on iSpellpower
+      return viCast_time;
+   }
+
+   PerformEngrave(caster = $,oTarget = $, sMessage = $)
+   "Realistically, this will usually be called by SomethingSaidDuringTrance."
+   {
+      local oItemAtt;
+      
+      if send(oTarget,@HasAttribute,#itematt=IA_ENGRAVED)
+      {
+         Send(caster,@MsgSendUser,#message_rsc=engrave_already_engraved,
+              #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+              
+         return FALSE;
+      }
+      
+      oItemAtt = send(SYS,@FindItemAttByNum,#num=IA_ENGRAVED);
+      
+      if send(oItemAtt,@ReqAddToItem,#oItem=oTarget)
+      {
+         send(oItemAtt,@AddToItem,#oItem=oTarget,#state1=sMessage);
+      }
+      
+      send(caster,@MsgSendUser,#message_rsc=engrave_do,#parm1=sMessage,
+           #parm2=send(oTarget,@GetDef),#parm3=send(oTarget,@GetName));
+           
+      return;
+   }
+
+   SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
+   {
+      % Don't print fizzle message.
+      send(who,@BreakTrance,#event=EVENT_STEER);
+      send(self,@PerformEngrave,#caster=who,#oTarget=first(lTargets),#sMessage=string);
+
+      return;
+   }  
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

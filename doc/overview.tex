@@ -1,0 +1,298 @@
+%%
+%% LaTeX 2e documentation for BlakSton
+%%
+%% started 5/26/95 by Chris Kirmse
+%%
+
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+%\usepackage{draft}
+%\usepackage{secret}
+
+
+\begin{document}
+
+\begin{center}
+{\LARGE An overview of Blakston}
+\vspace{0.2in}
+
+{\Large by Andrew and Christopher Kirmse}
+
+\vspace{0.2in}
+
+{\Large revised February 8, 1996}
+\end{center}
+
+
+\section{Introduction}
+
+Blakston is a system designed to provide multiuser entertainment
+through interaction with a virtual world.  Realtime 3-D graphics from
+a first person perspective make the user think that he is part of this
+world.  Users can interact with each other by typing messages that
+their characters ``say'', by sending email to other users, or by
+posting messages on bulletin boards.  Users can interact with the game
+in a variety of ways, including normal movement, casting of spells,
+attacking, picking up or dropping items, and using items.
+
+The Blakston system is divided into three different parts: the client,
+the server, and the game code.  The client program runs on a user's
+machine, and sets up a connection with the server over a TCP/IP
+network.  A Win32 client has been developed; it runs under Windows 95,
+Windows NT 3.51, or Windows 3.1 with the Win32s extensions.  The
+server runs on a separate machine, under Windows NT.  The game code is
+written in a proprietary language called Blakod, which is byte
+compiled into a set of binary files.  The heart of the server is a
+Blakod interpreter that runs the game. The server also handles
+communication with the client for logging in, downloading files, and
+other administrative functions.  When the user enters the game, the
+server then forwards messages from the client to functions that
+interpret the Blakod, which then handles the client messages.
+
+The rest of this paper gives an overview of the design and current
+implementation of the Blakston client and server; we will describe the
+Blakod language in a separate paper.  The first two sections describe
+the server and client, which make up the bulk of the code in
+Blakston. In section 4 we mention a few of our development tools.  In
+the last section we identify the most important areas for immediate
+future work, and some ideas for long-term development of the game.
+
+\section{The server}
+
+The Blakston server performs many tasks to link users, who run the
+Blakston client, to the game.  It maintains a file with all of the
+accounts in the system.  When a user connects to the server, he must
+enter a valid user name and password to get to the main menu of the
+system.  When the user chooses to enter the game, the server sends a
+list of characters in the game that he may use.  A user might start
+with only one or two characters, but might buy or earn others.
+
+The game code (Blakod) is interpreted by several modules of the
+server, and many other modules maintain data for the game, including
+objects, lists, and dynamically created strings (for email and
+bulletin boards).
+
+Blakod defines classes and messages within the classes.  An object is
+an instance of a class.  The server communicates with the game code by
+sending messages to an object.  There are two special classes and
+several messages in these classes that the server knows about.  One is
+the system class, of which there is one instance.  This system object
+is sent specific messages from the server when users log in or out,
+and when other administrative actions occur.  The other class of
+object that the server can send messages to directly is the user
+class.  Anytime the server receives a message from a client in the
+game, the message is passed on to the user object associated with that
+client.  The server is responsible for validating the format of the
+message before sending it to the user object.
+
+The system and user objects then send messages to other objects, based
+on the message they receive.  For example, when a user object receives
+a ``user move'' message, it sends a message to the room the user is in
+asking whether it is allowed to move.  The room object then sends a
+message to certain objects in the room asking whether the user can
+move, and returns the replies to the user object.  If the user is
+allowed to move, it then sends the room a message, telling it that the
+user moved.
+
+Messages are sent from one Blakod object to another through the help
+of a C function in the server.  There are also C functions available
+to Blakod to create objects, operate on lists (as in LISP), send
+messages to a client, create timers, and more.
+
+Another feature of Blakod is that messages not handled by a particular
+class are propagated up to the class' parent class, until a class is
+found to handle the message.  If no class that an object is derived
+from handles a message, an error message is logged.
+
+The server periodically performs garbage collection and saves the
+current state of the game to disk.  The period which with this is
+done, as well as most other parameters in the server, are configurable
+by placing values in a special configuration file that is read at
+startup time.
+
+We expect that the limiting factor in the number of users that the
+server can handle simultaneously will be the interepretation of Blakod
+resulting from user movement.  Thus, the frequency with which the
+client communicates movement to the server should be kept to a
+minimum.  This frequency represents a tradeoff between high server
+load when the frequency is high, and the jumpy appearance of movement
+at other clients when the frequency is low.  
+
+The server is written in C and runs under Windows NT or Windows 95.
+
+
+\section{The client}
+
+We have tried to design the client to be independent of the particular
+game being played.  The client does not interpret any of the graphics
+or text it displays; it simply displays rooms and objects and allows
+the user to select commands that are sent to the server.  Some of the
+text strings used in dialogs and names of commands (such as ``cast
+spell'') are particular to the medieval adventure game that we have
+written.  If the server were running multiple games, we would keep
+game-specific names in files at the server.  The client would download
+these files the first time it entered a game.
+
+Code can even be added to the client via Windows dynamic-link libaries
+(DLLs).  We plan to keep game-specific code in DLLs, while the client
+executable will contain only core functions that can be used to
+implement a wide variety of games or other applications.  DLLs are
+loaded at run-time in response to messages from the server.
+
+In fact, the client executable itself can be completely replaced at
+runtime.  If a player's client fails a version check upon login, it
+spawns an updater program that retrieves a new client program via ftp.
+This allows us to automatically update clients with no effort on the
+part of users.
+
+The client is written in C and is compiled with the Microsoft Visual
+C++ compiler, version 4.0.
+
+\subsection{Graphics}
+
+The graphics engine is a DOOM-like BSP engine built from scratch.  It
+incorporates many of the features of similar engines, such as
+per-sector lighting, variable wall heights, and lifts.  We continue to
+make improvements to the engine.
+
+The client runs in 256 color mode, and all graphics are drawn with the
+same 256 color palette.  Walls, floors, ceilings, and objects are made
+from 64 by 64 pixel tiles.  Walls must appear in between grid squares;
+however, each wall may have two bitmaps, one on each side.  Objects
+appear in the center of grid squares.
+
+Objects and walls may contain arbitrary transparency.  Pixels are
+marked transparent by using a certain color in the palette reserved
+for this purpose.  Floor and ceiling tiles cannot contain
+transparency, although tiles can be omitted from the floor or ceiling
+to see through to the background.
+
+A single object can consist of many bitmaps; these bitmaps can even
+have different resolutions.  Objects are made to animate through
+messages sent from the server describing the precise details of the
+animation.
+
+The graphics engine uses the WinG graphics library for drawing the
+room.  Windows 95 and Windows NT have the equivalent of WinG built in,
+so we plan to move away from WinG eventually.  WinG is freely
+distributable, so we include it with the client installation.  We are
+also considering support for DirectDraw and DirectSound.
+
+\subsection{Communication}
+
+A key design issue in Blakston is minimizing the amount of
+communication between the client and server, because the available
+bandwidth is typically very low.  We address this problem by initially
+transferring a large set of graphic files to the client machine in the
+installation package.  Every time the user enters the game, the server
+determines if the user is missing any newly created or updated graphic
+and sound files, and if so, sends these files in an archive using a
+proprietary protocol.  The client uncompresses and unpacks this
+archive automatically.
+
+Strings and filenames referenced by the game are sent to the user in
+the same way.  This includes names and descriptions of all objects in
+the game.  In this way the communication between the client and the
+game is kept short, because the game sends its potentially very long
+strings by sending a number identifying the string, since the client
+has already downloaded it.
+
+During game play, the client and server communicate with a protocol
+designed to minimize the amount of communication.  Objects and
+built-in strings are referenced by identification numbers.  Strings
+typed by other users, such as words spoken by characters, mail
+messages, and bulletin board messages, are sent in raw form.
+
+Another place where bandwidth is important is in communicating user
+motions.  For this reason, user movement is at the pixel level of
+granularity on the client, but only movements crossing a larger block
+boundary are communicated to the server.  On the server side, each
+room is a grid of moderate size (on the order of 50 by 50 blocks).
+
+
+\section{Tools}
+
+We've developed a few utility programs that are used for internal
+development:
+
+\subsection{Blakod compiler}
+
+Blakod is byte compiled to an intermediate language that is then
+interpreted by the server.  The compiler does not optimize its
+generated code.
+
+\subsection{Room editor}
+
+We have significantly modified the WinDEU DOOM room editor for our
+use.  It shows a top-down view of a room, allows modifications of any
+of the room parameters, and loads and saves rooms in our file format.
+The editor is compiled with Borland C++ version 4.52.
+
+\subsection{Hotspot editor}
+
+When an object consists of several bitmaps, these sub-bitmaps must be
+aligned relative to each other.  We have a makeshift program called
+``bbgun'' that allows bitmaps to be loaded, displayed, and moved
+around.
+
+
+\section{Current status and future plans}
+
+An alpha version of the game was released on December 15, 1995; we
+have been using it as a test platform.  As of this writing, over 2400
+people had played the game.  We have successfully updated the game
+(including the client program) several times.
+
+The server can currently handle about 40 simultaneous users.  We plan
+on major changes to the server internals to increase this number.
+
+The client interface will also be undergoing a major overhaul.  In
+addition, more code will be moved into DLLs, and the graphics engine
+will be enhanced and accelerated.
+
+The game world consists of approximately 50 rooms, a few monster
+types, and a small collection of items.  We will be adding to the game
+graphics and code substantially.
+
+We also need to address some issues of scale; some of the systems such
+as mail were not designed to handle the flood of players we expect.
+The entire system of ``dynamic resources'' that we currently use for
+player names and descriptions needs to be replaced.
+
+Game files are currently compressed using a modified version of GNU's
+gzip.  Gzip is unsuitable for the final release because of copyright
+problems.  We have bought a commercial compression library to replace
+gzip, but have yet to integrate it with the rest of the system.
+
+There are some interesting possibilities for a multi-user game on the
+Internet.  Where the game currently allows mail and posted messages
+between users, the server could incorporate real email and Usenet
+newsgroups.  The game would essentially be an online service with an
+impressive graphical front end and game built in.  All kinds of
+popular Internet activites could be incorporated into the game.
+
+We are also interested in giving users a limited ability to create
+rooms.  They would probably select from several prebuilt room types,
+and add some customization.  (It is dangerous to have users writing
+their own code---an error can cause the corruption of the entire
+object database.)
+
+\section{Conclusion}
+
+We believe that Blakston is an ideal environment for creating
+multi-user graphical role-playing games.  These games are written in a
+high-level object-oriented language that is well suited for
+role-playing games.  Rooms are created without much programming, using
+a special editor.  The client and server handle mundane tasks such as
+communication, account management, and administration.
+
+A primary goal of continuing development is to move development of the
+game worlds away from the programmers and towards game designers.  The
+first step in this direction is settling on exactly which features
+will be supported by the client and server, and the details of the
+graphics and sound elements.  After this, we will solidify the basic
+class structure of the game code and improve tools like the room
+editor.  The game designers will then be able to focus on creating a
+lifelike world without worrying about the underlying software.
+
+\end{document}

@@ -1,0 +1,158 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttPKPointer is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item prevents anyone from picking up loot after a player kill,
+%     unless they are also killable.  
+% 
+%  Form is: 
+%
+%   	[IA_PKPOINTER, tTimer]
+%	
+%       tTimer :: When this expires, the attribute goes away.
+%
+%  A final word: this pointer will stick around for only 10 minutes
+%     after a kill, then it will delete itself, removing it from the
+%     item's plItem_attribute's list.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+ 
+   PKpointer_no_loot = "You reach for %s%s, but you are mystically barred from grasping it."   
+   PKPointer_no_offer_accept = "%s tries to offer you %s%s, but you are mystically barred from grasping it."   
+   PKpointer_no_offer = "%s is unable to take %s%s off your hands."
+   
+classvars:
+
+   viItem_Att_Num = IA_PKPOINTER
+   vrDesc = resource_blank
+
+properties:
+  
+messages:
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   % A player can only pick up an item from a player if he is also killable.
+
+   CanGetAffectedItem(lData = $, Who = $, oItem = $, type = 0)
+   {
+      local oCorpse;
+	   
+      %% is this the player that died?  He can always get his own stuff.
+      if who = nth(lData,3)
+         OR NOT IsClass(who,&Player)
+      {
+         return TRUE;
+      }
+
+      if NOT send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         if type = 0
+         {
+            send(who,@MsgSendUser,#message_rsc=PKpointer_no_loot,
+                 #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
+
+            return FALSE;
+         }
+         else
+         {
+            send(who,@MsgSendUser,#message_rsc=PKpointer_no_offer_accept,
+                 #parm1=send(send(oItem,@GetOwner),@GetName),
+                 #parm2=send(oItem,@GetDef),#parm3=send(oItem,@GetName));
+            send(send(oItem,@GetOwner),@MsgSendUser,#message_rsc=PKPointer_no_offer,
+                 #parm1=send(who,@GetName),
+                 #parm2=send(oItem,@GetDef),#parm3=send(oItem,@GetName));
+
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Odd ends
+%%  (Adding and removing a ItemAtt from an item.)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   TimerExpired(oItem=$,lData=$)
+   {
+      SetNth(lData,2,$);   %% timer is gone, now remove reference
+      send(self,@RemoveFromItem,#oItem=oItem, #lData = lData);
+   
+      return;
+   }
+
+   AddToTreasureTable()
+   {
+      %% do nothing
+      return FALSE;
+   }
+
+   HasTimer(lData=$)
+   {
+      return TRUE;
+   }
+
+   SetItemsToAttribute()
+   {
+      % plItems_to_attribute should never be used by this itematt
+      plItems_to_Attribute = $;
+
+      return;
+   }
+
+   InitiallyIdentified()
+   {
+      return TRUE;
+   }   
+
+   CanBeSpoofed()
+   {
+      return FALSE;
+   }
+
+   GetNamePriority()
+   {
+      return -1;
+   }
+
+   SetPrimaryState(state1=$)
+   "State1 contains the attack spell type being added to the weapon."
+   {
+      if state1=$
+      {
+         debug("ILLEGAL!  PKpointer called without someone to point to!");
+
+         return FALSE;
+      }
+
+      return state1;		
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

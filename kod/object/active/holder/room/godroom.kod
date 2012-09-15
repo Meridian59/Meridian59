@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GodRoom is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_Godroom = Zndramas.roo
+   room_name_Godroom ="The meeting place of the Gods"
+   godroom_music = main.mid
+   waterfall_soundGodroom = wfall2.wav
+
+   news_godroom_name = "God discussion"
+   news_godroom_desc = "courtesy of Q and Zandramas (tm)"
+
+classvars:
+
+   vrName = room_name_Godroom
+   viTerrain_type = TERRAIN_MYSTICAL | TERRAIN_WATERFALL
+   viPermanent_flags = ROOM_SAFELOGOFF
+
+   viTeleport_row = 21
+   viTeleport_col = 10
+
+properties:
+
+   prRoom = room_Godroom
+   piRoom_num = RID_GODROOM
+   prMusic = godroom_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+messages:
+
+   Constructed()
+   {
+      plLooping_sounds = [[ waterfall_soundGodroom, 2, 10, 25, 30 ]];
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      oNews = Send(SYS,@FindNewsByNum,#num=NID_GODROOM);
+      if oNews = $
+      {
+         oNews = Create(&News,#nid=NID_GODROOM,
+                        #name=news_godroom_name,#desc=news_godroom_desc);
+      }
+
+      Send(self,@NewHold,#what=oNews,#new_row=16,#new_col=10);
+      send(self,@Newhold,#what=Create(&chest),#new_row=22,#new_col=10);
+
+      Send(self,@NewHold,#what=Create(&Minstrel),#new_row=15,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Heretic),#new_row=17,#new_col=9);
+      Send(self,@NewHold,#what=Create(&DarkWizard),#new_row=15,#new_col=11);
+      Send(self,@NewHold,#what=Create(&HunterGhost),#new_row=21,#new_col=11);
+      Send(self,@NewHold,#what=Create(&Izzio),#new_row=19,#new_col=9);
+
+      propagate;
+   }
+
+   ReqNewHold(what = $,new_row = $,new_col = $)
+   {
+      if IsClass(what,&User) AND NOT IsClass(what,&DM)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   Teleport(what=$)
+   "Admin supported."
+   "Teleports object to coordinates specified in class vars."
+   {
+      % Don't let mortals in here.
+      if IsClass(what,&User) AND NOT IsClass(what,&DM)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

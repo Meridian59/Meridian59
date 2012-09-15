@@ -1,0 +1,231 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Castle2b is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_castle2b = "Bourgeois Castle"
+   room_castle2b = castle2b.roo
+   castle2b_music = castle.mid
+
+   fountain_soundcastle2b = fountain.wav
+
+classvars:
+
+   vrName = room_name_castle2b
+   viTerrain_Type = TERRAIN_CASTLE | TERRAIN_FOUNTAIN
+
+   viTeleport_row = 8
+   viTeleport_col = 13
+
+properties:
+
+   prMusic = castle2b_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_3 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_castle2b
+   piRoom_num = RID_CASTLE2B
+
+messages:
+
+   Constructed()
+   {
+      plLooping_sounds = [[ fountain_soundcastle2b, 19, 46 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 15, 12, RID_CASTLE2A, 7, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 15, 13, RID_CASTLE2A, 7, 16, ROTATE_NONE ],plExits);
+      plExits = Cons([ 19, 27, RID_CASTLE2A, 7, 31, ROTATE_NONE ],plExits);
+      plExits = Cons([ 20, 27, RID_CASTLE2A, 7, 31, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 40, 47, RID_CASTLE2C, 2, 23, ROTATE_NONE ],plExits);
+      plExits = Cons([ 40, 48, RID_CASTLE2C, 2, 23, ROTATE_NONE ],plExits);
+      plExits = Cons([ 40, 49, RID_CASTLE2C, 2, 23, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 41, 27, RID_CASTLE2D, 13, 12, ROTATE_NONE ],plExits);
+      plExits = Cons([ 41, 28, RID_CASTLE2D, 13, 12, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 7,9, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 7,10, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 7,11, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 7,12, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 7,13, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 7,14, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 8,6, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 9,6, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 10,6, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 11,6, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 12,6, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 8,7, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 9,7, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 10,7, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 11,7, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 12,7, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 12,8, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 12,9, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 13,8, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 13,9, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 11,14, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 11,15, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 34,26, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 35,26, ROOM_LOCKED_DOOR ],plExits);
+
+      plEdge_exits = $;
+      plEdge_Exits = Cons([ LEAVE_EAST, RID_J3, 37, 2, ROTATE_NONE ], plEdge_exits); 
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      % NORTH WALL
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=40,#new_col=45);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=40,#new_col=51,
+           #fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=21,#new_col=27,
+           #fine_row=0);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=18,#new_col=62,
+           #fine_row=16,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=18,#new_col=64,
+           #fine_row=16,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=23,#new_col=62,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=23,#new_col=64,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=45,#new_col=63);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=3,#new_col=63);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=23,#new_col=64,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&PrincessGuard),#new_row=23,#new_col=64,
+           #fine_row=48,#fine_col=48);
+
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=4,#new_col=26,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=4,#new_col=32,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=4,#new_col=38,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=4,#new_col=44,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=4,#new_col=50,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=4,#new_col=56,
+           #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=4,#new_col=29,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=4,#new_col=35,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=4,#new_col=47,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=4,#new_col=41,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=4,#new_col=53,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=4,#new_col=59,
+           #new_angle=ANGLE_SOUTH);
+
+      % NORTH OF GATE BY WALL
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=7,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=13,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=10,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+
+      %SOUTH OF GATE BY WALL
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=28,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=34,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=40,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=31,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=37,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=43,#new_col=61,
+           #new_angle=ANGLE_SOUTH);
+
+      % WEST OF THRONE ROOM BY WALL
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=43,#new_col=58,
+           #new_angle=ANGLE_SOUTH);
+
+      % EAST OF THRONE ROOM BY WALL
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=44,#new_col=38,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=44,#new_col=35,
+           #new_angle=ANGLE_SOUTH);
+
+      % Other side of library window
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=40,#new_col=31,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=48,#new_col=57,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Tallbush),#new_row=30,#new_col=41,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=14,#new_col=57,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=9,#new_col=50,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=9,#new_col=44,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=12,#new_col=40,
+           #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=25,#new_col=58,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=30,#new_col=54,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=16,#new_col=58,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=11,#new_col=54,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=9,#new_col=46,
+           #new_angle=ANGLE_SOUTH);
+
+      % In the enclove
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=30,#new_col=26,
+           #fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH);
+
+      % By Wall behind fence
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=36,#new_col=26,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&TallBush),#new_row=40,#new_col=26,
+           #new_angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Shrub),#new_row=38,#new_col=26,
+           #new_angle=ANGLE_SOUTH);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

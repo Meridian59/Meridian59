@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_ORC
+
+   %% high chance of getting crappy stuff
+   piItem_att_chance = 5
+   piDiff_seed = 1
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &OrcTooth, 40 ],
+                     [ &PurpleMushroom, 20],
+                     [ &Scimitar, 16 ],
+                     [ &MetalShield, 10 ],
+                     [ &LeatherArmor, 5],
+                     [ &ShadowAmulet, 3],
+                     [ &RingofLethargy, 3], 
+                     [ &Money, 2],
+                     [ &DarknessScroll,1]
+                   ];
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

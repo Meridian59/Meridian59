@@ -1,0 +1,184 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Seance is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Seance_cast_rsc = SID_SEANCE
+
+   Seance_name_rsc = "seance"
+   Seance_icon_rsc = iseance.bgf
+   Seance_desc_rsc = \
+      "Shal'ille's magic allows communication with the spirit world to reveal "
+      "the location of the last person to slay an innocent.  "
+      "Requires herbs to cast."
+
+   Seance_No_Murderer_rsc = "There is no murderer to be hunted."
+   Seance_I_See_You_rsc = "You sense that someone is aware of your whereabouts."
+   Seance_Cloaked_Target_rsc = "Qor's dark magic has diverted an enemy's attention."
+   Seance_casting_rsc = "You appeal to Shal'ille for knowledge of %s%s's whereabouts."
+   Seance_Target_Location_rsc = "You sense that %s%s can be found somewhere around %s."
+
+   seance_spell_intro_rsc = "Shal'ille Lv. 1: Gives a chance of knowing the location of the last person to have committed murder."
+
+   Seance_sound = sseance.wav
+
+classvars:
+
+   vrName = Seance_name_rsc
+   vrIcon = Seance_icon_rsc
+   vrDesc = Seance_desc_rsc
+   vrSucceed_wav = Seance_sound
+
+   vrSpell_intro = Seance_spell_intro_rsc
+
+   viSpell_num = SID_SEANCE
+   viSchool = SS_SHALILLE
+   viSpell_level = 1
+   viMana = 10
+   viSpellExertion = 20
+  
+   viFlash = FLASH_GOOD
+
+   vbCastable_in_HappyLand = FALSE
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Herbs,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      local oKiller;
+   
+      oKiller = send(SYS,@GetLastMurderer);
+
+      if oKiller = $ OR (NOT send(oKiller,@IsLoggedOn))
+         OR (isClass(oKiller,&DM) AND NOT send(oKiller,@IsHuntable))
+      { 
+         send(who,@MsgSendUser,#message_rsc=Seance_No_Murderer_rsc);
+
+         return FALSE;
+      }  
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower=0)
+   {
+      local oKiller,iValue,lRoomlist,oSpell,oRoom,oLocation,rLocationName;
+
+      oKiller = send(SYS,@GetLastMurderer);
+      iValue = send(self,@GetSeanceStrength,#iSpellpower=iSpellPower,#who=who);
+
+      oLocation = send(oKiller,@GetOwner);
+      if oLocation <> $
+      {
+         rLocationName = Send(oLocation,@GetName);
+      }
+
+      if Send(who,@IsEnchanted,#what=self)
+      {
+         rlocationName = Send(who,@GetEnchantedState,#what=self);
+      }
+      else
+      {
+         oSpell = send(SYS,@FindSpellByNum,#Num=SID_CLOAK);
+
+         % Will mislead caster with random room if caster fails seance or target passes cloak.
+         if (Random(1,100) > iValue)
+            OR (send(oKiller,@IsEnchanted,#what=oSpell)
+                AND (Random(1,100) < send(oKiller,@GetEnchantedState,#what=oSpell)))
+         {
+            % Enchant the caster with the "false" room so it repeats.
+            oRoom = send(oSpell,@GetWrongRoom);                            
+            rLocationName = Send(oRoom,@GetName);
+            Send(who,@StartEnchantment,#what=self,#state=rLocationName,
+                 #time=Send(self,@GetDuration,#spellpower=ispellpower,#who=who),
+                 #iSpellPower=iSpellPower,#lastcall=TRUE,#addicon=FALSE);
+
+            if (send(oKiller,@IsEnchanted,#what=oSpell))
+            {
+               Send(oKiller,@MsgSendUser,#message_rsc=Seance_Cloaked_Target_rsc);
+            }
+            
+         }
+         else
+         {
+            % Notify hunted that someone has pinned him or her down.
+            Send(oKiller,@MsgSendUser,#message_rsc=Seance_I_See_You_rsc);
+         }
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=Seance_casting_rsc,#parm1=Send(oKiller,@GetDef),
+           #parm2=Send(oKiller,@GetUserName));
+      Send(who,@MsgSendUser,#message_rsc=Seance_Target_Location_rsc,
+           #parm1=Send(oKiller,@GetDef),#parm2=Send(oKiller,@GetUserName),
+           #parm3=rLocationName);
+
+      propagate;
+   }
+
+   GetSeanceStrength(iSpellpower = 0, who = $)
+   {
+      local iPower;
+
+      if IsClass(who,&DM) AND Send(who,@PlayerIsImmortal)
+      {
+         % Always work for DMs.
+         return 100;
+      }
+
+      % Strength varies from 15 to 90% chance to be right.
+      iPower = iSpellpower/2 + send(who,@GetKarma)/3 + 15;
+      iPower = bound(iPower,15,90);
+
+      return iPower;
+   }
+
+   GetDuration(iSpellPower = 0, who = $)
+   {
+      local iDuration;      
+
+      % 1 to 5 minutes
+      iDuration = 300 - (((7 * iSpellpower)/5) + send(who,@GetKarma));
+      iDuration = bound(iDuration,60,300);
+      iDuration = iDuration * 1000;     
+
+      return random(iDuration/2,iDuration);
+   }
+
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

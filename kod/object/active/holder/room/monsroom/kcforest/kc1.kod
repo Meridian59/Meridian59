@@ -1,0 +1,93 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKC1 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKC1 ="The Chasm"
+   room_OutdoorsKC1 = KC1.roo
+   OutdoorsKC1_music = avarwar.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKC1
+
+   viTeleport_row = 23
+   viTeleport_col = 35
+   viTerrain_type = TERRAIN_JUNGLE | TERRAIN_BEACH | TERRAIN_MOUNTAIN
+
+   viAvar_clan = AVARCLAN_BONE_FACTION 
+
+properties:
+
+   prRoom = room_OutdoorsKC1
+   prMusic = OutdoorsKC1_music
+   piRoom_num = RID_KC1
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Avar, 90], [&AvarChieftain, 10] ];
+      plGenerators = [ [30,23], [20,22], [17,53], [22,53] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&FireSand,19,45], [&FireSand,24,14] ];
+
+      % Do not propagate
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_KB1, 22, 49, ROTATE_NONE], plEdge_exits);      
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KD1, 26, 1, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL2),
+           #new_row=23,#new_col=15,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL3),
+           #new_row=24,#new_col=18,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL6),
+           #new_row=22,#new_col=18,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

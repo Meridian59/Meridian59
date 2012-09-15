@@ -1,0 +1,170 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Listener is ActiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Listener_enters = "In the distance, someone enters the area."
+   Listener_leaves = "In the distance, someone leaves the area."
+   Listener_say_rsc = "In the distance, someone says, \"%q\""
+   Listener_emote_rsc = "In the distance, someone %q"
+   Listener_name_enters = "In the distance, %s%s enters the area."
+   Listener_name_leaves = "In the distance, %s%s leaves the area."
+   Listener_name_say_rsc = "In the distance, %s%s says, \"%q\""
+   Listener_name_emote_rsc = "In the distance, %s%s %q"
+   Listener_icon_rsc = blank.bgf
+   
+classvars:
+
+   viListenToEmotes = TRUE  %% toggle this if we want to ignore Emotes in the future.
+   viObject_flags = LOOK_NO
+   vrIcon = Listener_icon_rsc
+
+properties:
+
+   piSpellpower = $
+   poEnchanted = $  %% The enchantment that's listening to us.
+
+messages:
+
+   Constructor(Enchanted = $,iSpellpower=$)
+   {
+      poEnchanted = Enchanted;
+      piSpellpower = iSpellpower;
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+              parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   {
+
+      local bGiveName;
+
+      bGiveName = FALSE;
+
+      if Random(1,piSpellpower) > 70
+      {
+         bGiveName = TRUE;
+      } 
+
+      if not send(poEnchanted,@IsLoggedOn)
+      {
+         send(self,@delete);
+           return;
+      }
+      if IsClass(what,&player)
+      {
+         if (viListenToEmotes) and (type = SAY_EMOTE)
+         {
+            if bGiveName
+            {
+               Send(self,@ReportNameToTarget,#who=what,#BaseString=Listener_name_emote_rsc,#InfoString=string);
+            }
+            else
+            {
+               Send(self,@ReportToTarget,#BaseString=Listener_emote_rsc,#InfoString=string);
+            }
+         } else {
+            if (type <> SAY_YELL) and (type <> SAY_EVERYONE)
+            {
+               if bGiveName
+               {
+                  Send(self,@ReportNameToTarget,#who=what,#BaseString=Listener_name_say_rsc,#InfoString=string);
+               }
+               else
+               {                  
+                  Send(self,@ReportToTarget,#BaseString=Listener_say_rsc,#InfoString=string);
+               }
+            }
+         }
+      }
+      return;
+   }
+   
+   SomethingEntered(where = $,what = $)
+   {
+      local sTempStr;
+
+      if not send(poEnchanted,@IsLoggedOn)
+      {
+         send(self,@delete);
+         return;
+      }
+
+      if IsClass(what,&Player)
+      {
+         if Random(1,piSpellpower) > 70
+         {
+            Send(self,@ReportNameToTarget,#who=what,#BaseString=Listener_name_enters);
+         }
+         else
+         {
+            Send(self,@ReportToTarget,#BaseString=Listener_enters);
+         }
+      }
+      return;
+   }
+   
+   SomethingLeft(where = $,what = $)
+   {      
+      local sTempStr;
+
+      if not send(poEnchanted,@IsLoggedOn)
+      {
+         send(self,@delete);
+           return;
+      }
+
+      if IsClass(what,&Player)
+      {
+         if Random(1,piSpellpower) > 70
+         {    
+            Send(self,@ReportToTarget,#who=what,#BaseString=Listener_name_leaves);
+         }
+         else
+         {  
+            Send(self,@ReportToTarget,#BaseString=Listener_leaves);
+         }
+      }
+      return;
+   }
+
+   ReportToTarget(BaseString = "",InfoString = $)
+   {
+
+      Send(poEnchanted,@MsgSendUser,#message_rsc=BaseString,#parm1=InfoString);
+
+      return;
+   }
+
+   ReportNameToTarget(who = $,BaseString = "",InfoString = $)
+   {
+      Send(poEnchanted,@MsgSendUser,#message_rsc=BaseString,#parm1=send(who,@GetCapDef),#parm2=send(who,@GetName),#parm3=InfoString);
+      return;
+   }
+
+   DestroyDisposable()
+   {
+      if not send(poEnchanted,@IsLoggedOn)
+      {
+         send(self,@delete);
+           return;
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

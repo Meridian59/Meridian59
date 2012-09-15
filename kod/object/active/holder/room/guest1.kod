@@ -1,0 +1,136 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Guest1 is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_guest1 = "The Inn of Hazar"
+   room_guest1 = guest1.roo
+   guest1_music = login.mid
+
+   Guest1_Back_Door = "The back door is locked."
+
+   Guest1_Signname = "Welcome"
+   Guest1_Sign = \
+      "Welcome to the game!  We hope that you come to enjoy this "
+      "unique online experience.\n\n"
+      "The first thing you need to learn is how to walk, using the W, A, S, and D keys "
+      "alone with the left and right arrows. "
+      "You can walk forward and back using the W and S keys, and turn "
+      "using the left and right arrows.  We will get more into movement "
+      "in a moment.\n\n"
+      "Also, you should note that you can right-click on many of the "
+      "things you see in the world. These signs are a good example, "
+      "as is the innkeeper. You can even view yourself "
+      "by right-clicking on the head on the upper-right corner of the "
+      "screen.\n\n"
+      "If you wish to activate 'mouselook' you can do so at this time "
+      "by pressing the C key. If you wish to deactivate it, you can do "
+      "so by pressing the C key again.\n\n"
+      "Lastly, you can go through doors by pressing the space bar.\n "
+      "-------------------\n"             
+      "When you're ready to proceed, walk to the exit door (forward and to your left), "
+      "hit the space bar, and then read the next sign which will be in plain sight."
+
+   guest1_welcome = "~kMarcus says, \"Welcome to Meridian 59, %s!  Please enjoy your stay.\""
+
+classvars:
+
+   vrName = room_name_guest1
+
+   viTeleport_row = 7
+   viTeleport_col = 4
+   viTeleport_angle = ANGLE_EAST
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_HOMETOWN | ROOM_GUEST_AREA | ROOM_SAFELOGOFF
+
+   viDemo_base = RID_GUEST_BASE
+
+properties:
+
+   prRoom = room_guest1
+   piRoom_num = RID_GUEST1
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+   prMusic = guest1_music
+
+messages:
+
+   NewHold(what=$)
+   {
+      if IsClass(what,&Player)
+         AND send(what,@GetOwner) = $
+      {
+         post(what,@msgsenduser,#message_rsc=guest1_welcome,
+              #parm1=send(what,@GetTrueName));
+      }
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 1, 6, viDemo_base + 2, 25, 41, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 8, 9, ROOM_LOCKED_DOOR, Guest1_Back_Door ],plExits);
+      
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oSign;
+
+      send(self,@NewHold,#what=Create(&HazarInnkeeper),#new_row = 3, #new_col = 9);
+
+      oSign = Create(&Sign,#desc=guest1_sign,#newbie=TRUE,#name=guest1_signname);
+      send(self,@NewHold,#what=oSign,#new_row=6,#new_col=7,#fine_row=32,#fine_col=32);
+
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=3,#new_col=2,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=8,#new_col=3,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=7,#new_col=9,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=3,#new_col=3,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=5,#new_col=10,#fine_row=48,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&BarStool),
+           #new_row=8,#new_col=2,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      % Dynamic lights
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=8,#new_col=4,#fine_row=63,#fine_col=54); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=2,#new_col=11,#fine_row=55,#fine_col=40); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=2,#new_col=4,#fine_row=2,#fine_col=15); 
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=5,#new_col=2,#fine_row=48,#fine_col=58); 
+
+      propagate;
+   }
+   
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

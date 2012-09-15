@@ -1,0 +1,372 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Assassin is BarloqueTown
+
+%  The assassin is little more than an empty vessel, who responds to the 
+%   'say' commands of players.  This way, recreates don't have to be handled
+%   special in any way, shape or form.  All of the real work of the assassin's
+%   game is done by the AssassinGame object, found in the \util directory.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   assassin_name_rsc = "Roq"
+   assassin_mailname_rsc = "Roq the Dark Blade"
+
+   assassin_icon_rsc = assassin.bgf
+   assassin_desc_rsc = \
+      "There is a malevolent, otherworldly quality to this man.  He clings to "
+      "the shadows of this vile place, a servant to some dark power."
+
+   assassin_eyes_rsc = asseyes.bgf
+
+   assassin_help = "Say 'blade' to get a weapon for the next game.  Say "
+      "'quit' to hand your blade back in.  Say 'advertise' to be told when a "
+      "fight starts.  Say 'no advertise' if you do not wish to be informed of "
+      "current developments."
+
+   assassin_in_session = \
+      "~IYou may not join in while a game is in session.  %s."
+   assassin_is_advertised = "However, I will let you know when the next starts"
+   assassin_is_not_advertised = \
+      "Say 'advertise' if you want to be told when the next one starts"
+   assassin_already_combatant = "~IYou are already marked."
+   assassin_not_ready = "~IYou are not ready."
+
+   assassin_new_combatant = "~IHere is your blade."
+   assassin_not_combatant = \
+      "~IYou may not quit something that you are not taking part in."
+   assassin_quit_combatant = \
+      "~IAllow me to take your blade, as your cowardice prevents you from "
+      "victory."
+   assassin_not_yet = \
+      "~II am not accepting combatants at this time.  Say 'advertise' if you "
+      "wished to be notified when I do."
+
+   assassin_advert = "~II will let you know when things start to happen."
+   assassin_already_advert = \
+      "~IYou are already in the know. Trouble me no further."
+   assassin_stop_advert = "~II shall trouble you no longer."
+   assassin_not_advert = \
+      "~II have not troubled you of late.  I know not of what you speak."
+
+   assassin_no_game = \
+      "~IThere is currently no game in progress.  DM ACCEPT MODE to begin "
+      "accepting combatants."
+   assassin_already_game = \
+      "~IThere is already a game in progress.  DM RESET GAME will end it."
+   assassin_not_viable = \
+      "~IThere are not enough combatants in the game yet.  DM ACCEPT MODE "
+      "to allow more people to join."
+   assassin_in_accept = \
+      "~IThe game is already in accept mode.  Have players say 'blade' to the "
+      "assassin to enter the match."   
+
+   % Append "word" on the end of help since assassin_help was already taken.
+   assassin_help_word = "help"
+   assassin_blade = "blade"
+   assassin_quit = "quit"
+   assassin_advertise = "advertise"
+   assassin_no_advertise = "no advertise"
+
+   assassin_goodbye_angel = "goodbye angel"
+
+   assassin_reset_game = "reset game"
+   assassin_start_game = "start game"
+   assassin_accept_mode = "accept mode"
+   
+classvars:
+
+   vrName = assassin_name_rsc
+   vrIcon = assassin_icon_rsc
+   vrDesc = assassin_desc_rsc
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+
+   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOB_BUYER | MOB_TEACHER
+   viOccupation = MOB_ROLE_ASSASSIN
+
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+properties:
+
+   poAssassin_game = $
+
+   % If true, players can make themselves killable here.
+   pbBeta = FALSE                  
+
+messages:
+
+   Constructor()
+   {
+      if Send(SYS,@GetAssassinGame) = $
+      {
+         Send(SYS,@RecreateAssassinGame);
+      }
+      
+      poAssassin_game = Send(SYS,@GetAssassinGame);
+      
+      propagate;
+   }
+
+   SomeoneSaid(what=$, string=$, type=$)
+   {
+      local oGame;
+
+      % If not a player, ignore it all.
+      if NOT isClass(what,&User)
+      {
+         propagate;
+      }
+
+      % Beta test check:  during a beta test, a player can say 'goodbye angel'
+      %  to get rid of his guardian angel.
+      if StringEqual(string, assassin_goodbye_angel) AND pbBeta 
+         AND NOT Send(what,@checkplayerflag,#flag=PFLAG_PKILL_ENABLE)
+	   {
+         Send(what,@PkillEnable);
+		}
+
+      % If a player says 'help', then give him a generic bit of advice
+      % on how to interface with Roq.
+      if StringEqual(string, assassin_help_word)
+      {
+         Send(self,@SayToOne,#target=what,#message_rsc=assassin_help);
+      }
+
+      % If a player says 'blade', check to see
+      %  a. if he's a legal combatant,
+      %  b. if he's not already a combatant and
+      %  c. if there's no match in session.
+      if StringEqual(string, assassin_blade)
+      {
+         if NOT Send(poAssassin_game,@IsLegalCombatant,#who=what)
+         {
+            Post(self,@SayToOne,#target=what,#message_rsc=assassin_not_ready);
+            
+            return;
+         }
+         
+         if Send(poAssassin_game,@IsCombatant,#who=what)
+         {
+            Post(self,@SayToOne,#target=what,
+                 #message_rsc=assassin_already_combatant);
+            
+            return;
+         }
+         
+         if Send(poAssassin_game,@InSession)
+         {
+            if Send(poAssassin_game,@IsAdvertised,#who=what)
+            {
+               Post(self,@SayToOne,#target=what,
+                    #message_rsc=assassin_in_session,
+                    #parm1=assassin_is_advertised);
+            }
+            else
+            {
+               Post(self,@SayToOne,#target=what,
+                    #message_rsc=assassin_in_session,
+                    #parm1=assassin_is_not_advertised);
+            }
+            
+            return;
+         }
+         
+         if NOT Send(poAssassin_game,@InAcceptMode)
+         {
+            Post(self,@SayToOne,#target=what,#message_rsc=Assassin_not_yet);
+            
+            return;
+         }
+         
+         if Send(poAssassin_game,@NewCombatant,#who=what)
+         {
+            Post(self,@SayToOne,#target=what,
+                 #message_rsc=Assassin_new_combatant);
+            
+            return;
+         }
+         else
+         {
+            DEBUG("Somehow, a player failed to become a new combatant!");
+         }
+      }
+
+      % Here, the player is trying to say 'Quit' to quit the proceedings.
+      %  be sure that he's actually a combatant before you kick him out.
+
+      if StringEqual(string,assassin_quit)
+      {
+         if NOT Send(poAssassin_game,@IsCombatant,#who=what)
+         {
+            Post(self,@SayToOne,#target=what,
+                 #message_rsc=Assassin_not_combatant);
+            
+            return;
+         }
+         
+         if Send(poAssassin_game,@QuitCombatant,#who=what)
+         {
+            Post(self,@SayToOne,#target=what,
+                 #message_rsc=Assassin_quit_combatant);
+            
+            return;
+         }
+         else
+         {
+            DEBUG("Somehow, a player failed to quit being a combatant!");
+         }
+      }
+
+      % Does the player want to know when a match starts?  If so, add him
+      %  to this list.  This way, people who are non-combatants can get info
+      %  for the next bout, if they came in late.
+      if StringEqual(string, assassin_advertise)
+      {
+         if NOT Send(poAssassin_game,@IsAdvertised,#who=what)
+         {
+            if Send(poAssassin_game,@AdvertiseTo,#who=what)
+            {
+               Post(self,@SayToOne,#target=what,#message_rsc=Assassin_advert);
+               
+               return;
+            }
+            else
+            {
+               DEBUG("Somehow, a player failed in becoming advertised to!");
+            }
+         }
+         else
+         {
+            Post(self,@SayToOne,#target=what,
+                 #message_rsc=Assassin_already_advert);
+            
+            return;
+         }
+      }
+
+      if StringEqual(string, assassin_no_advertise)
+      {
+         if Send(poAssassin_game,@IsAdvertised,#who=what)
+         {
+            if Send(poAssassin_game,@StopAdvertising,#who=what)
+            {
+               Post(self,@SayToOne,#target=what,
+                    #message_rsc=Assassin_stop_advert);
+               
+               return;
+            }
+            else
+            {
+               DEBUG("Somehow, a player failed in stopping ads!");
+            }
+         }
+         else
+         {
+            Post(self,@SayToOne,#target=what,#message_rsc=Assassin_not_advert);
+            
+            return;
+         }
+      }
+
+      % The following are DM/actor commands to control the game.
+      if type = SAY_DM
+         AND Send(what,@isActor)
+      {
+         oGame = Send(SYS,@GetAssassinGame);
+
+         if StringEqual(string,assassin_reset_game)
+         {
+            if Send(oGame,@inSession)
+            {
+               Send(oGame,@ResetGame,#report=TRUE);
+               
+               return;
+            }
+            else
+            {
+               Post(self,@SayToOne,#target=what,#message_rsc=assassin_no_game);
+               
+               return;
+            }
+         }
+
+         if StringEqual(string,assassin_start_game)
+         {
+            if Send(oGame,@inSession)
+            {
+               Post(self,@SayToOne,#target=what,
+                    #message_rsc=assassin_already_game);
+               
+               return;
+            }
+
+            if Send(oGame,@isViableGame)
+            {
+               Send(oGame,@StartGame);
+
+               return;
+            }
+            else
+            {
+               Post(self,@SayToOne,#target=what,
+                    #message_rsc=assassin_not_viable);
+
+               return;
+            }
+         }
+
+         if StringEqual(string, assassin_accept_mode)
+         {
+            if Send(oGame,@inSession)
+            {
+               Post(self,@SayToOne,#target=what,
+                    #message_rsc=assassin_already_game);
+
+               return;
+            }
+
+            if Send(oGame,@InAcceptMode)
+            {
+               Post(self,@SayToOne,#target=what,
+                    #message_rsc=Assassin_in_accept);
+
+               return;
+            }
+            else
+            {
+               Send(oGame,@EnterAcceptMode);
+
+               return;
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [$,$,
+                    [ SID_EAVESDROP ],
+                    $ ];
+                    
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

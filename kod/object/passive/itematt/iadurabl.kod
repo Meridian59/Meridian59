@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttDurable is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item gets it's max_hit_points multiplied by three, at the 
+%	  point when the item is first 'enchanted' (usually on or near
+%     the creation of the object.
+%
+%  Another effect can change the durability factor, by giving a value
+%	  for state1 when the itematt is applied.  If none is given, the
+%     default of 300 is used (or three times the current Hp of the 
+%     item).   Note that this value is not stored, because this value
+%	  is completely unimportant after the value of max_hit_points 
+%     changes.
+% 
+%  Form is: 
+%
+%   	[IA_DURABLE]
+%	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+ 
+   itematt_durable_name = "well-crafted %s"
+   durable_dm = "durable"
+   itematt_durable_desc_1 = "  The craftsmanship of this "
+   itematt_durable_desc_2 = " is admirable, obviously the result of hundreds of hours of work by expert hands."
+
+classvars:
+
+   viItem_Att_Num = IA_DURABLE   
+   vrName = itematt_durable_name
+
+   viDefault_bonus = 300    %%% 300 percent bonus to enchanted item.
+
+   vrDM_Trigger = durable_DM
+
+properties:
+
+   piValue_modifier = 150
+   piValue_power_modifier = 0
+  
+messages:
+
+   AddEffects(oItem=$,state1=$)
+   {
+	local iHits;
+	
+	if state1=$  { state1 = viDefault_Bonus; }
+
+        iHits = send(oItem,@GetMaxHits);
+	iHits = (iHits * state1)/100;
+	iHits = bound(iHits,1,$);
+	send(oItem,@setMaxHits,#number=iHits);
+
+	return;
+   }
+  
+   AppendDesc(oItem =$)
+   {
+      local lData, oRoom;
+
+      AppendTempString(itematt_durable_desc_1);
+      AppendTempString(send(oItem,@getname));		
+      AppendTempString(itematt_durable_desc_2);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

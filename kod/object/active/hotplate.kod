@@ -1,0 +1,113 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HotPlate is ActiveObject
+
+% A hotplate is simply an object which tells the server, "Hey, this guy
+%  stepped on me!"  By carefully placing them, you can tell if a player
+%  legally or illegally got to certain places, such as in guild halls.
+
+constants:
+
+   include blakston.khd
+
+resources:
+   
+   hotplate_icon_rsc = blank.bgf
+
+classvars:
+
+   viObject_flags = MOVEON_NOTIFY | LOOK_NO
+   vrIcon = hotplate_icon_rsc
+
+properties:
+
+   piHotPlateID = 0
+   poLastTread = $
+   pbTreadOnce = TRUE
+
+messages:
+
+   GetObjectFlags()
+   {
+      if not Send(Send(SYS, @GetSettings), @ShowHotPlates)
+      {
+         return (MOVEON_NOTIFY | LOOK_NO);
+      }
+      
+      %% used for debugging
+
+      if piHotPlateID = 1
+      {
+         return (MOVEON_NOTIFY | BATTLER_YES | USER_YES | LOOK_NO);
+      }
+
+      return (MOVEON_NOTIFY | BATTLER_YES | LOOK_NO);
+   }
+
+   Constructor(hpid = 0)
+   {      
+      if hpid = $  { Debug("hotplate created with bad HPID!");  propagate; }
+
+      piHotPlateID = hpid;
+
+      propagate;
+   }
+
+   SomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      local iRow,iCol;
+      
+      iRow = Send(self,@GetRow);
+      iCol = Send(self,@GetCol);
+
+      if IsClass(what,&User)
+      {
+         % This decrements the move counter by 1, since we had an additional (legal) 
+         %  move request from this object.
+         Send(what,@AdjustMoveCounter,#bReset=TRUE);
+      }
+
+      if new_row = iRow AND new_col = iCol
+      {
+         if what = self
+         {
+            return;
+         }
+
+         if what = poLastTread AND pbTreadOnce
+         {
+            return;
+         }
+
+         poLastTread = what;
+         Send(poOwner,@SomethingHitHotPlate,#what=what,#hpid=piHotPlateID);
+
+         propagate;
+      }
+
+      if what = poLastTread
+      {
+         poLastTread = $;
+      }
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      poLastTread = $;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

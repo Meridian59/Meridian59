@@ -1,0 +1,228 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Gift is PassiveItem
+
+constants:
+
+   include blakston.khd
+   include protocol.khd     
+
+resources:
+
+   gift_name_rsc = "gift"
+   gift_icon_rsc = package.bgf
+   gift_desc_rsc = \
+      "This is a gift from the gods, to thank you for your patience and "
+      "your patronage."
+
+   gift_open = "With unbridled delight, you open the gift to find %s%s inside!"
+
+   gift_desc_1 = "This is a neatly wrapped present.  A tag attached to the bow reads, 'From "
+   gift_desc_2 = " with love'."
+   gift_bonded_wrapped_1 = "You sense that your "
+   gift_bonded_wrapped_2 = " has been giftwrapped."
+   gift_bonded_unwrapped_1 = "You sense that your gift has been unwrapped to reveal a "
+   gift_bonded_unwrapped_2 = "."
+
+classvars:
+
+   vrName = gift_name_rsc
+   vrIcon = gift_icon_rsc
+   vrDesc = gift_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viUse_amount = 1
+
+   viBulk = 50
+   viWeight = 50
+
+   viValue_average = 30
+
+properties:
+
+   poGiftGiver = $     %% if poGiftGIver = $, then it's from the gods.
+   poContents = $
+
+messages:
+
+   Constructor(contents = $, giver = $)
+   {
+      local oBondee;
+      if contents <> $
+      {
+         if send(contents,@HasAttribute,#ItemAtt=IA_BONDED)
+         {
+            oBondee = nth(send(contents,@GetAttributeData,#ItemAtt=IA_BONDED),2);
+            send(oBondee,@ClearBondedItem);
+            send(oBondee,@BondItem,#what=self);
+            if send(contents,@GetOwner) <> oBondee
+            {
+               ClearTempString();
+               AppendTempString(gift_bonded_wrapped_1);
+               AppendTempString(send(contents,@GetName));
+               AppendTempString(gift_bonded_wrapped_2);
+               send(oBondee,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),#parm1=GetTempString(),#type1=STRING_RESOURCE);
+            }
+         }
+         if send(contents,@GetOwner) <> $
+         {
+            send(send(contents,@GetOwner),@LeaveHold,#what=contents);
+            send(contents,@NewOwner,#what=$);
+         }
+      }
+      poGiftGiver = giver;
+      poContents = contents;
+      propagate;
+   }
+
+   GetBulk()
+   {
+      if poContents <> $
+      {
+         return send(poContents,@GetBulk)+1;
+      }
+
+      propagate;
+   }
+
+   GetWeight()
+   {
+      if poContents <> $
+      {
+         return send(poContents,@GetWeight)+1;
+      }
+
+      propagate;
+   }
+
+   GetValue()
+   {
+      % can't really tell the value of an item in a box
+      return 10;
+   }
+
+   DoBaseDesc()
+   {
+      if poGiftGiver = $
+      {
+         AppendTempString(gift_desc_rsc);
+
+         return;
+      }
+
+      AppendTempString(gift_desc_1);
+      AppendTempSTring(send(poGiftGiver,@GetTrueName));
+      AppendTempString(gift_desc_2);
+      
+      return;
+   }
+
+   ReqNewApply()
+   {
+      return TRUE;
+   }
+
+   NewApplied(what = $)
+   {
+      local rand, bAny, oBondee, oldOwner;
+
+      bAny = FALSE;
+      if length(send(what,@GetSpellList)) < 5
+      {
+         bAny = TRUE;
+      }
+
+      while poContents = $
+      {
+         % Give one of the five amulets.
+         rand = random(1,9);
+
+         if rand <= 2
+            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_QOR) > 1)
+         {
+            poContents = Create(&QorCharm);
+         }
+
+         if (rand = 3 OR rand = 4)
+            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_KRAANAN) > 1)
+         {
+            poContents = Create(&KraananCharm);
+         }
+
+         if (rand = 5 or rand = 6)
+            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_FAREN) > 1)
+         {
+            poContents = Create(&FarenCharm);
+         }
+
+         if (rand = 7 or rand = 8)
+            AND (bAny OR send(what,@GetNumSpellsInSchool,#school=SS_SHALILLE) > 1)
+         {
+            poContents = Create(&ShalilleCharm);
+         }
+
+         if rand = 9
+         {
+            poContents = Create(&RiijaCharm);
+         }
+      }
+
+      send(poOwner,@MsgSendUser,#message_rsc=gift_open,
+           #parm1=send(poContents,@GetIndef),#parm2=send(poContents,@GetName));
+
+      oldOwner = poOwner;
+      send(poOwner,@LeaveHold,#what=self);
+      send(self,@NewOwner,#what=$);
+      send(oldOwner,@NewHold,#what=poContents);
+
+      % Note that this RecalcBulkAndWeight is entirely superfluous,
+      %  but we'll leave it here as a safeguard against future wierdness.
+      send(oldOwner,@RecalcBulkAndWeight);
+      if send(self,@HasAttribute,#ItemAtt=IA_BONDED)
+      {
+         oBondee = nth(send(self,@GetAttributeData,#ItemAtt=IA_BONDED),2);
+         send(oBondee,@ClearBondedItem);
+         send(oBondee,@BondItem,#what=poContents);
+         if oldOwner <> oBondee
+         {
+            ClearTempString();
+            AppendTempString(gift_bonded_unwrapped_1);
+            AppendTempString(send(poContents,@GetName));
+            AppendTempString(gift_bonded_unwrapped_2);
+            send(oBondee,@MsgSendUser,#message_rsc=send(SYS,@GetPercentQRsc),
+                 #parm1=GetTempString(),#type1=STRING_RESOURCE);
+         }
+      }
+
+      poContents = $;
+
+      send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      if poContents <> $
+      {
+         send(poContents,@Delete);
+      }
+
+      poContents = $;
+      poGiftGiver = $;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

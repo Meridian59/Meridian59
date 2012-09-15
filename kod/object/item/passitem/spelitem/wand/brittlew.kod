@@ -1,0 +1,37 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BrittleWand is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BrittleWand_label_name_rsc = "wand of weapon weakening"
+   BrittleWand_icon_rsc = wand6.bgf
+   BrittleWand_desc_rsc = "Magical energy crackles about this slender wand."
+
+classvars:
+
+   vrLabelName = BrittleWand_label_name_rsc
+   vrIcon = BrittleWand_icon_rsc
+   viSpellEffect = SID_BRITTLE
+   viColor = XLAT_TO_ORANGE
+
+properties:
+
+   vrDesc = BrittleWand_desc_rsc
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

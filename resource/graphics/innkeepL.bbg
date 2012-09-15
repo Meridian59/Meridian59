@@ -1,0 +1,31 @@
+# innkeeper left arms
+# groups
+# 1 standing
+# 2-3 wiping
+# 4-5 repeat wiping
+-s 4
+18
+il000aaa.bmp   [-12, -5] 
+il045aaa.bmp   [-13, -6] 
+il090aaa.bmp   [-9, -14] 
+il180aaa.bmp   [-12, -10] 
+il270aaa.bmp   [-35, -6] 
+il315aaa.bmp   [-20, -9] 
+il000waa.bmp   [-16, -6] 
+il045waa.bmp   [-10, -5] 
+il090waa.bmp   [-11, -16] 
+il180waa.bmp   [-42, -11] 
+il270waa.bmp   [-82, -6] 
+il315waa.bmp   [-48, -10] 
+il000wab.bmp   [-30, -6] 
+il045wab.bmp   [-9, -6] 
+il090wab.bmp   [-12, -14] 
+il180wab.bmp   [-21, -11] 
+il270wab.bmp   [-77, -9] 
+il315wab.bmp   [-67, -7] 
+5
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14

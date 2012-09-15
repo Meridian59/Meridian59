@@ -1,0 +1,100 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+YrxlTree is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+   SAP_TIME_MIN = 60000*30  % 30 - 90 minutes
+   SAP_TIME_MAX = 60000*90
+
+resources:
+
+   yrxltree_name_rsc = "yrxl tree"
+   yrxltree_desc_rsc = \
+      "The last of many yrxl trees, this is the only one to "
+      "survive the thoughtless harvest of the sap of these trees "
+      "for its magical properties.  It is an unspoken rule that "
+      "this tree be unharmed and treated with utmost respect."
+
+   yrxltree_icon_rsc = yrxltree.bgf
+
+classvars:
+
+   vrName = yrxltree_name_rsc
+   vrIcon = yrxltree_icon_rsc
+   vrDesc = yrxltree_desc_rsc
+
+properties:
+
+   piBottom = TREE_OAK
+   ptSap = $
+
+messages:
+   
+   constructor(bottom = TREE_OAK,top = $)
+   {
+   ptSap = CreateTimer(self,@DropSap,Random(SAP_TIME_MIN,SAP_TIME_MAX));
+   propagate;
+   }
+
+   CheckUserNear()
+   {
+   local oRoom, each_obj, i;
+
+   oRoom = send(self,@getowner);
+   for i in Send(oRoom,@GetHolderActive)
+      {
+      each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+      if isclass(each_obj,&player)
+         {
+         if (send(each_obj,@SquareddistanceTo,#what=self) < 100)
+            { return TRUE; }
+         }
+      }
+   return FALSE;
+   } 
+
+
+   DropSap()
+   {
+   local oRoom;
+   oRoom = Send(self,@getowner);
+   if not send(self,@CheckUserNear) and
+      not send(oRoom,@PossessesA,#class=&yrxlsap)
+      {
+      Send(oRoom,@NewHold,#what=Create(&yrxlsap,#Gathered=FALSE),
+         #new_row=send(self,@getrow) + 1,
+         #new_col=send(self,@getcol) + 1);
+      }
+   ptSap = CreateTimer(self,@DropSap,Random(SAP_TIME_MIN,SAP_TIME_MAX));
+   return;
+   }
+
+   Delete()
+   {
+   if ptSap <> $
+      {
+      deletetimer(ptsap);
+      ptSap = $;
+      }
+   propagate;
+   }
+
+   GetObjectFlags()
+   {
+      return LOOK_NO;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

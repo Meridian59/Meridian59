@@ -1,0 +1,757 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosArena is TosRoom
+
+constants:
+
+   include blakston.khd
+
+   % Boundaries of the playing field
+   NORTH_BOUNDARY = 6
+   SOUTH_BOUNDARY = 20
+   WEST_BOUNDARY = 6
+   EAST_BOUNDARY = 20
+
+resources:
+
+   room_TosArena = tosarena.roo
+   name_TosArena = "The Arena of Kraanan"
+
+   TosArena_music = pk_fm.mid
+
+   TosArena_commence_wav = forest.wav
+   wind_sound_tosarena = ambcntry.wav
+   wind1_sound_tosarena = rs_wind.wav
+
+   TosArena_no_offer = "The Watcher says, \"Spectators and combatants may not exchange goods during matches."
+   TosArena_no_attack = "You may not fight here unless you are a combatant."
+   TosArena_no_spell = "Only the combatants may cast spells."
+   TosArena_no_rescue = "No chickening out!"
+   TosArena_no_target = "That's awfully rude of you!"
+   TosArena_between_bouts = "No horseplay between bouts!"
+
+   TosArena_cant_go = "The Watcher says, \"You can't leave!  You're a combatant!\""
+
+   TosArena_traditional = "Traditional"
+   TosArena_traditional_rules = "Traditional bouts are those between only two combatants, a champion "
+      "and a challenger.  If there is no champion, say CHAMPION to claim the title.  A potential "
+      "fighter then says CHALLENGE to challenge the champion.  The champion may then choose to either ACCEPT the "
+      "challenge or RENEGE his title."
+   TosArena_lastman = "Last Man Standing"
+   TosArena_lastman_rules = "Last man standing bouts may have up to 25 combatants.  First, a CHAMPION "
+      "must be declared.  Once someone CHALLENGES him, others have 30 seconds to also CHALLENGE.  "
+      "After the Watcher has begun the match, it's every man for himself.  The last gladiator left in "
+      "the ring wins the glory of Kraanan."
+   TosArena_guildvguild = "Guild Vs Guild"
+   TosArena_guildvguild_rules = "Two guilds may choose to combat each other.  A representative "
+      "from one guild registers that guild as the CHAMPION, and then a member of "
+      "the challenging guild proffers a CHALLENGE.  At this point, other guild members "
+      "from both guilds have 30 seconds to join in, although no more than 10 "
+      "people from any one guild may participate."
+   TosArena_battleRoyale = "Battle Royale"
+   TosArena_battleRoyale_rules = "A mix between last man standing and guild vs guild, "
+      "first a CHAMPION is needed, and then other guild members from other guilds may "
+      "CHALLENGE.  Any number of guilds may take part in the proceedings, but there may "
+      "be no more than 5 members of any one guild in the pit, and no more than 25 combatants total."
+
+   TosArena_rules = "Rules"
+   TosArena_rules_rules = \
+      "* Between bouts, any person may say the name of a combat style to change combat styles.  "  
+      "However, all matches must be over and any current champions must RENEGE their titles.\n"
+      "* Magic and combat are limited to between combatants on the arena pit.  Players in the "
+      "stands cannot be harmed by wayward combatants.\n"
+      "* The Watcher reserves the right to make the proceedings more... interesting... if "
+      "he so desires.\n"
+      "* Matches are 'to the death'.  However, combatants suffer no ill effects from arena death."
+
+   TosArena_traditional_icon = arsign01.bgf
+   TosArena_lastman_icon = arsign02.bgf
+   TosArena_rules_icon = arsign03.bgf
+   TosArena_guild_icon = arsign04.bgf
+   TosArena_battleroyale_icon = arsign05.bgf
+
+   TosArena_start_tournament = "Banners unfurl and bugles warble to signify the beginning of the Royal Tournament!"
+   TosArena_end_tournament = "The Royal Tournament has come to an end."
+   TosArena_doors_locked = "You lock the doors of the Arena of Kraanan.  Players may now only enter if a Guardian brings them here."
+   TosArena_doors_unlocked = "You unlock the doors to the Arena, so that all may enter once again."
+
+   TosArena_Fanfare_Sound = fanfare1.wav
+   TosArena_Combat_Sound = arena1.wav
+   TosArena_Huzzah_Sound = huzzah.wav
+
+   TosArena_booth_command = "booth"
+   TosArena_lock_command = "lock"
+
+classvars:
+
+   vrName = name_TosArena
+
+   viTeleport_row = 22
+   viTeleport_col = 13
+
+   viPermanent_flags = ROOM_SAFE_DEATH
+
+properties:
+
+   poWatcher = $
+
+   prRoom = room_TosArena
+   piRoom_num = RID_TOS_ARENA
+
+   prMusic = TosArena_music
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 5
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   viTerrain_type = TERRAIN_CITY
+
+   pbLocked = FALSE
+   pbRealdeath = FALSE
+
+messages:
+
+
+   CanOffer(who = $, target = $)
+   {
+      if who = $ or target = $
+      {
+         return FALSE;
+      }
+
+      if poWatcher = $
+      {
+         return TRUE;
+      }
+
+      if not Send(poWatcher,@FightInSession)
+      {
+         return TRUE;
+      }
+
+      if Send(poWatcher,@IsCombatant,#who=who) = Send(poWatcher,@IsCombatant,#who=target)
+      {
+         return TRUE;
+      }
+
+      Send(who,@msgSenduser,#message_rsc=TosArena_no_offer);
+
+      return FALSE;
+   }
+
+
+   CheckWatcher(what=$)
+   {
+      if poWatcher = $
+      {
+         poWatcher = what;
+         Send(self,@NewHold,#what=what,#new_row=13,#new_col=20,#fine_row=0,#new_angle=ANGLE_WEST);
+      }
+
+      return;
+   }
+
+   SafePlayerAttack()
+   {
+      return TRUE;
+   }
+
+   NewHold(what = $,new_row = 22, new_col = 11)
+   "Sends cutesey messages to anyone who enters the room."
+   "Also, note that it will move anyone who enters in the playing field into the stands."
+   "This should only be necessary for people who drop link."
+   {
+      if isClass(what,&User) AND (Send(what,@GetOwner) = $)
+      {
+         post(self,@Teleport,#what=what,#outofplay=TRUE);
+      }
+
+      propagate;
+   }
+   
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 4, 6, RID_TOS_ARENA2, 22, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 4, 7, RID_TOS_ARENA2, 22, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 5, 7, RID_TOS_ARENA2, 22, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 4, RID_TOS_ARENA2, 22, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 4, RID_TOS_ARENA2, 22, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 5, RID_TOS_ARENA2, 22, 35, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 18, 4, RID_TOS_ARENA2, 29, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 18, 5, RID_TOS_ARENA2, 29, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 19, 4, RID_TOS_ARENA2, 29, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 20, 7, RID_TOS_ARENA2, 29, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 21, 6, RID_TOS_ARENA2, 29, 35, ROTATE_NONE ],plExits);
+      plExits = Cons([ 21, 7, RID_TOS_ARENA2, 29, 35, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      plLooping_sounds = [[ wind_sound_tosarena, 1, 1, 200, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardObjects()   
+   "Creates the watcher and two signposts."
+   {
+      if poWatcher = $
+      {
+         poWatcher = Create(&TosWatcher);
+         Send(self,@NewHold,#what=poWatcher,#new_row=13,#new_col=20,#fine_row=0,#new_angle=ANGLE_WEST);
+         
+         Send(self,@NewHold,#what=Create(&ArenaSign1,#name=tosarena_rules,#icon=tosarena_rules_icon,
+              #desc=tosarena_rules_rules),#new_row=13,#new_col=19,#fine_row=0,#fine_col=31);
+         Send(self,@NewHold,#what=Create(&ArenaSign1,#name=tosarena_traditional,#icon=tosarena_traditional_icon,
+              #desc=tosarena_traditional_rules),#new_row=11,#new_col=19,#fine_row=28,#fine_col=31);
+         Send(self,@NewHold,#what=Create(&ArenaSign1,#name=tosarena_lastman,#icon=tosarena_lastman_icon,
+              #desc=tosarena_lastman_rules),#new_row=12,#new_col=19,#fine_row=12,#fine_col=31);
+         Send(self,@NewHold,#what=Create(&ArenaSign1,#name=tosarena_guildvguild,#icon=tosarena_guild_icon,
+              #desc=tosarena_guildvguild_rules),#new_row=13,#new_col=19,#fine_row=52,#fine_col=31);
+         Send(self,@NewHold,#what=Create(&ArenaSign1,#name=tosarena_battleroyale,#icon=tosarena_battleroyale_icon,
+              #desc=tosarena_battleroyale_rules),#new_row=14,#new_col=19,#fine_row=36,#fine_col=31);
+      }
+
+      propagate;
+   }
+
+   InPlay(what=$,row=0,col=0, bNonPlayerOkay = FALSE)
+   "Returns true if player is on playing field, false if not."
+   "Can check either by row and column or by object."
+   "Returns false if not a player, unless the nonPlayerOkay flag is marked"
+   {
+      local iRow, iCol;
+
+      if what = $ AND row = 0
+      {
+         return FALSE;
+      }
+      else
+      {
+         if row <> 0
+         {
+           iRow = row;
+           iCol = Col;
+         }
+         else
+         {
+            if isClass(what,&Player) or bNonPlayerOkay
+            {
+               iRow = Send(what,@GetRow);
+               iCol = Send(what,@GetCol);
+            }
+            else
+            {
+               return FALSE;
+            }
+         }
+
+         if iRow = $
+            OR iCol = $
+         {
+            return FALSE;
+         }
+            
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+         %%Special for players in alcoves.                  %%   
+         %% Format is:                                      %%
+         %% if (Under watcher's area)                       %%
+         %%    OR (Upper left box defining north alcove)    %%
+         %%    OR (Lower right box defining north alcove)   %%
+         %%    OR (Lower left bow defining south alcove)    %%
+         %%    OR (Upper right box defining south alcove)   %%
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+         if (iRow < NORTH_BOUNDARY OR iCol < WEST_BOUNDARY)
+            OR (iRow > SOUTH_BOUNDARY OR iCol > EAST_BOUNDARY)
+         {                                                                         
+            if (not bNonPlayerOkay)
+               AND ( ((iRow > 8 AND iRow < 17) AND (iCol > 18 AND iCol < 26))
+                     OR ((iRow = 4 OR iRow = 5) AND (iCol = 4 OR iCol = 5))
+                     OR ((iRow = 5 OR iRow = 6) AND (iCol = 5 OR iCol = 6))
+                     OR ((iRow = 20 OR iRow = 21) AND (iCol = 4 OR iCol = 5))
+                     OR ((iRow = 19 OR iRow = 20) AND (iCol = 5 OR iCol = 6)) )         
+            {
+               return TRUE;
+            }
+            else
+            {
+               return FALSE;
+            }
+         }
+         else
+         {   
+            %% special for walls
+            if bNonPlayerOkay
+               AND (iRow = NORTH_BOUNDARY
+                    OR iCol = WEST_BOUNDARY
+                    OR iRow = SOUTH_BOUNDARY 
+                    OR iCol = EAST_BOUNDARY)
+            {
+               return FALSE;
+            }
+            else
+            {
+               return TRUE;
+            } 
+         }
+      }
+      
+      return;
+   }
+
+   IsArena()
+   {
+      return TRUE;
+   }
+
+   IsValidTarget(who=$)
+   {
+      local i, oWatcher;
+
+      if NOT Send(self,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         return FALSE;
+      }
+
+      oWatcher = $;
+      for i in plActive
+      {
+      
+         if IsClass(First(i),&TosWatcher)
+         {
+            oWatcher = First(i);
+
+            break;
+         }
+      }
+      
+      if oWatcher = $
+      {
+         Debug("IsValidTarget called with no watcher in existence!");
+
+         return;
+      }
+      
+      if Send(oWatcher,@IsCombatant,#who=who) AND Send(oWatcher,@FightInSession)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   GetWatcher()
+   {
+      local i, oEachObj;
+
+      for i in plActive
+      {
+         oEachObj = Send(self,@HolderExtractObject,#data=i);
+         if isClass(oEachObj,&TosWatcher)
+         {
+            return oEachObj;
+         }                  
+      }
+      
+      return $;
+   }
+
+   Teleport(what=$,goinplay=FALSE,outofplay=FALSE)
+   {
+      local row, col, rand;
+
+      if goinplay              
+      {
+         % Teleport to the playing field
+         row = random(7,18);
+         col = random(7,18);
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=row,#new_col=col);
+         
+         return;
+      }
+      
+      if outofplay
+      {
+         rand = random(1,3);
+
+         if rand = 1
+         {
+            Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=22,#new_col=13,#new_angle=ANGLE_NORTH);
+
+            return;
+         }
+         
+         if rand = 2
+         {
+            Send(SYS,@utilGoNearSquare,#what=what,#where=self,#new_row=4,#new_col=13,#new_angle=ANGLE_SOUTH);
+
+            return;
+         }
+
+         Send(SYS,@utilGoNearSquare,#what=what,#where=self,#new_row=13,#new_col=4,#new_angle=ANGLE_EAST);
+
+         return;
+      }
+      
+      if Send(poWatcher,@IsCombatant,#who=what)
+      {
+         % teleport to the playing field
+         row = random(7,18);
+         col = random(7,18);
+         Send(SYS,@utilGoNearSquare,#what=what,#where=self,#new_row=row,#new_col=col);
+
+         return;
+      }
+      
+      rand = random(1,3);
+
+      if rand = 1
+      {
+          Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=22,#new_col=13,#new_angle=ANGLE_NORTH);
+
+          return;
+      }
+
+      if rand = 2
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=4,#new_col=13,#new_angle=ANGLE_SOUTH);
+
+         return;
+      }
+
+      Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=13,#new_col=4,#new_angle=ANGLE_EAST);
+
+      return;
+    }
+
+   SpecialGreeting()
+   {
+      Send(self,@SomethingWaveRoom,#wave_rsc=TosArena_Fanfare_Sound);
+
+      return;
+   }
+
+   BeginFight(lCombatants=$)
+   {
+      local maze;
+
+      maze = random(1,14);
+
+      if length(lCombatants) = 2       
+      {
+         % teleport 'em to the cage.      
+         Send(SYS,@UtilGoNearSquare,#what=first(lCombatants),#where=self,
+              #new_row=5,#new_col=5,#fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH_EAST);
+         Send(SYS,@UtilGoNearSquare,#what=nth(lCombatants,2),#where=self,
+              #new_row=21,#new_col=5,#fine_row=0,#fine_col=0,#new_angle=ANGLE_NORTH_EAST);
+      }
+
+      Send(self,@RaiseMaze,#maze=maze);
+      Send(self,@SomethingWaveRoom,#wave_rsc=TosArena_Combat_Sound);
+
+      return;
+   }
+
+   RaiseMaze(maze = 14, sector = 0, height = 192)
+   {
+      if sector <> 0
+      {
+         Send(self,@SetSector,#sector=sector,#animation=ANIMATE_FLOOR_LIFT,#height=height,#speed=32);
+
+         return;
+      }
+
+      maze = bound(maze,1,14);
+      if maze = 1
+      {
+         Send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 2
+      {
+         Send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 3
+      {
+         Send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 4
+      {
+         Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 5
+      {
+         Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=6,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 6
+      {
+         Send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 7
+      {
+         Send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 8
+      {
+         Send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=6,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 9
+      {
+         Send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=6,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 10
+      {
+         Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 11
+      {
+         Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 12
+      {
+         Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=6,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      if maze = 13
+      {
+         Send(self,@SetSector,#sector=6,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+         Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=192,#speed=32);
+      }
+
+      return;
+   }
+
+   EndFight(lCombatants = $)
+   {
+      Send(self,@LowerMaze);
+
+      %% cages in corners.
+      Send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,#height=124,#speed=32);
+      Send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,#height=230,#speed=32);
+
+      Send(self,@SomethingWaveRoom,#wave_rsc=TosArena_Huzzah_Sound);
+      Send(self,@CheckBehindBars);
+
+      return;
+   }
+
+   LowerMaze(sector=0)
+   "If a sector is specified, just lower that sector.  Otherwise, lower 'em all."
+   {
+      if sector <> 0
+      {
+         Send(self,@SetSector,#sector=sector,#animation=ANIMATE_FLOOR_LIFT,#height=129,#speed=32);
+
+         return;
+      }
+
+      Send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=129,#speed=32);
+      Send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=129,#speed=32);
+      Send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=129,#speed=32);
+      Send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=129,#speed=32);
+      Send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=129,#speed=32);
+      Send(self,@SetSector,#sector=6,#animation=ANIMATE_FLOOR_LIFT,#height=129,#speed=32);
+
+      return;
+   }
+
+   CommenceFight()
+   {
+      Send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,#height=194,#speed=32);
+      Send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,#height=300,#speed=32);
+
+      return;
+   }
+
+   StartTournament(marshal = $)
+   {
+      Send(self,@SomeoneSaid,#string=TosArena_start_tournament,#type=SAY_MESSAGE,#what=self);
+      Send(self,@TeleportToBooth,#who=marshal);
+      Send(self,@SomethingWaveRoom,#wave_rsc=TosArena_Fanfare_Sound);
+
+      return;
+   }
+
+   EndTournament(marshal = $)
+   {
+      Send(self,@someonesaid,#string=TosArena_end_tournament,#type=SAY_MESSAGE,#what=self);
+      Send(self,@SomethingWaveRoom,#wave_rsc=TosArena_Fanfare_Sound);
+      
+      return;
+   }
+
+   TeleportToBooth(who=$)
+   {
+      Send(SYS,@UtilGoNearSquare,#what=who,#where=self,#new_row=13,#new_col=20,
+           #fine_row=0,#new_angle=ANGLE_WEST);
+
+      return;
+   }
+
+   SomeoneSaid(what=$,string=$)
+   {
+      if what <> $ AND isClass(what,&DM)
+      {
+         if (StringEqual(string,TosArena_booth_command) OR StringEqual(string,"booth"))
+         {
+            Send(self,@TeleportToBooth,#who=what);
+
+            return;
+         }
+
+         if Send(what,@IsActor)
+            AND (StringEqual(string,TosArena_lock_command) OR StringEqual(string,"lock"))
+         {
+            if pbLocked
+            {
+               Send(what,@MsgSendUser,#message_rsc=TosArena_doors_unlocked);
+               pbLocked = FALSE;
+            }
+            else
+            {
+               Send(what,@MsgSendUser,#message_rsc=TosArena_doors_locked);
+               pbLocked = TRUE;
+            }
+
+            return;
+         }
+      }
+
+      propagate;
+   }
+
+   IsLocked()
+   {
+      return pbLocked;
+   }
+
+   UnlockArena()
+   {
+      pbLocked = FALSE;
+
+      return;
+   }
+
+   SomethingTryGo(what = $,row = $, col = $,fine_row = $,fine_col = $)
+   {
+      if row = 20 AND col = 6 AND fine_row > 32 AND fine_col > 32
+      {
+         Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),
+              #new_row=29,#new_col=35,#new_angle=Send(what,@GetAngle));
+
+         return TRUE;
+      }
+
+      if row = 19 AND col = 5 AND fine_row < 32 AND fine_col < 32
+      {
+         Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),
+              #new_row=29,#new_col=35,#new_angle=Send(what,@GetAngle));
+
+         return TRUE;
+      }
+
+      if row = 6 AND col = 5 AND fine_row > 32 AND fine_col < 32
+      {
+         Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),
+              #new_row=22,#new_col=35,#new_angle=Send(what,@GetAngle));
+
+         return TRUE;
+      }
+
+      if row = 5 AND col = 6 AND fine_row < 32 AND fine_col > 32
+      {
+         Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
+         Send(what,@WaveSendUser,#wave_rsc=vrDoor_Sound);
+
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_TOS_ARENA2),
+              #new_row=22,#new_col=35,#new_angle=Send(what,@GetAngle));
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   CheckBehindBars()
+   {
+      local oWatcher, lCombatants, i;
+
+      oWatcher = Send(self,@GetWatcher);
+      lCombatants = Send(oWatcher,@GetCombatantList);
+
+      for i in lCombatants
+      {
+         if Send(i,@GetCol) < 7
+         {
+            Send(self,@Teleport,#what=i,#goinplay=TRUE);
+         }
+      }
+
+      return;
+   }
+
+   CreatePeriodicSounds()
+   {
+      plPeriodic_sounds = [ wind1_sound_tosarena ];
+      pbPeriodic_sound_random_location = TRUE;
+
+      propagate;
+   }
+
+   ArenaRealDeath()
+   "Admins can activate real death in TosArena."
+   {
+      return pbRealdeath;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

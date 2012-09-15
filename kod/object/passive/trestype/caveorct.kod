@@ -1,0 +1,59 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CaveOrcTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_CAVE_ORC
+   piItem_att_chance = 3
+   piDiff_seed = 3
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &OrcTooth, 30 ],
+                     [ &OreChunk, 10 ],
+                     [ &Scimitar, 8 ],
+                     [ &GoldShield, 5 ],
+                     [ &SimpleHelm, 5 ],
+                     [ &Emerald, 3 ],
+                     [ &Sapphire, 3 ],
+                     [ &Diamond, 3 ],
+                     [ &Ruby, 3 ],
+                     [ &NeruditeOreChunk, 3 ],
+                     [ &FireRing, 3 ],
+                     [ &ColdRing, 3 ],
+                     [ &ShockRing, 3 ],
+                     [ &AcidRing, 2 ],
+                     [ &Money, 2 ],
+                     [ &UncutSeraphym, 2 ],
+                     [ &CurePoisonPotion, 2 ],
+                     [ &CureDiseasePotion, 2 ],
+                     [ &RemoveCursePotion, 2 ],
+                     [ &PurifyPotion, 2 ],
+                     [ &RingofLethargy, 2 ],
+                     [ &KnightShield, 1 ],
+                     [ &FlashScroll, 1 ]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

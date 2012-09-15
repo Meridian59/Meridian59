@@ -1,0 +1,44 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         cnflddlg.rh
+*/
+#ifndef __cnflddlg_rh
+#define DIALOG_3	3
+#define DIALOG_2	2
+#define __cnflddlg_rh
+
+/* IDC of flags check boxes */
+#include "lineedit.rh"
+
+#define IDD_CONFIRM_LINEDEF	31
+
+#define IDC_LINEDEF_GROUP	101
+#define IDC_LD_SECTOR	104
+#define IDC_LD_SIDEDEF1	107
+#define IDC_LD_SIDEDEF2	108
+#define IDC_LD_VERTEX2	106
+#define IDC_LD_VERTEX1	105
+#define IDC_LD_TYPE	102
+#define IDC_LD_FLAGS	103
+
+#endif

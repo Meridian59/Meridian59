@@ -1,0 +1,29 @@
+# Thief Skill Master NPC
+# Right leg 
+# groups
+# 1 standing
+# 2 -3 walking
+-s 3
+18
+t000rls.bmp    [-8, -16] 
+t045rls.bmp    [-10, -16] 
+t090rls.bmp    [-10, -12] 
+t180rls.bmp    [-13, -14] 
+t270rls.bmp    [-10, -19] 
+t315rls.bmp    [-12, -12] 
+t000rla.bmp    [-6, -15] 
+t045rla.bmp    [-9, -15] 
+t090rla.bmp    [-9, -14] 
+t180rla.bmp    [-9, -8] 
+t270rla.bmp    [-28, -10] 
+t315rla.bmp    [-20, -15] 
+t000rlb.bmp    [-10, -13] 
+t045rlb.bmp    [-21, -13] 
+t090rlb.bmp    [-27, -9] 
+t180rlb.bmp    [-10, -13] 
+t270rlb.bmp    [-9, -5] 
+t315rlb.bmp    [-4, -14] 
+3
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14

@@ -1,0 +1,222 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%The Amulet of Shadows is a cursed item which when worn attaches itself to the
+%users neck, doing a wee bit of damage if the user tries to remove it through 
+%conventional means.   
+%
+%SOMETHING MUST CALL PLAYER'S UNUSEITEM() NOT TRYUNUSEITEM() IN ORDER TO 
+%REMOVE THE AMULET.  This could be an Uncurse spell, a certain NPC, whatever.
+%  
+%While used, the wearer's armor class is decreased, but his light is 
+%decreased as well, as he is cloaked in shadows.  
+%
+%We may want to consider adding other skill increases or decreases as well 
+%when new skills are made
+%
+%code by Justin Houk, 98jsh@williams.edu
+%
+% tweaked by Chris Kirmse
+
+ShadowAmulet is Necklace
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   shadowAmulet_name_rsc = "Amulet of Shadows"
+   shadowamulet_icon_rsc = amulet.bgf
+   shadowAmulet_desc_rsc = \
+      "You cannot get a good look at the amulet.  "
+      "Shadows seem to cling to it even in direct sunlight."
+
+   shadowAmulet_used_rsc = \
+      "As you put the amulet on, shadows seem to gather around you.  "
+      "You feel vulnerable to the world and the amulet begins "
+      "to feel cold... very, very cold..."
+
+   shadowAmulet_try_unuse_rsc = \
+      "Painful sparks fly from the amulet when you try to "
+      "remove it from your neck!"
+
+   shadowAmulet_unused_rsc = \
+      "You feel a wave of vertigo.  Suddenly, you realize the "
+      "Amulet of Shadows is in your hands, not around your neck!"
+
+classvars:
+
+   viIndefinite = ARTICLE_AN
+
+   vrName = shadowAmulet_name_rsc
+   vrIcon = shadowamulet_icon_rsc
+   vrDesc = shadowAmulet_desc_rsc
+
+   viValue_average = 100
+
+   viBulk = 25
+   viWeight = 25
+
+   viDamage_min = 1
+   viDamage_max = 5
+
+   viDefense_change = -150
+   viLight_change = 50
+
+properties:
+   
+   pbIn_use = FALSE	
+
+messages:
+
+   NewUsed(what = $)
+   "When the amulet is put on, the wearer's light goes down and defense is worse"
+   {
+      pbIn_use = TRUE;
+
+      if Send(poOwner,@PlayerIsImmortal)
+      {
+         propagate;
+      }
+
+      send(poOwner,@MsgSendUser,#message_rsc=shadowAmulet_used_rsc);
+      send(poOwner,@LoseLight,#amount=viLight_change);
+      send(what,@AddDefenseModifier,#what=self);
+
+      propagate;
+   }
+
+   ModifyDefensePower(defense_power = 0)
+   "For the player's GetDefense procedure"
+   {
+      return defense_power + viDefense_change;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $)
+   {
+      return damage;
+   }
+
+   DefendingHit(who = $, what = $)
+   "Also for the player's GetDefense procedure"
+   {
+      return;
+   }
+
+   ReqNewOwner(what=$)
+   {
+      % This code is very important!  A favorite cheater tactic is to give Amulets of Shadow to
+      %  a player, causing lots of damage.  We stop that here.
+      
+      % If owner already has one and isn't a DM, then don't give them another one.
+      if IsClass(what,&User)
+         AND send(what,@IsUsingA,#class=&ShadowAmulet)
+         AND NOT (IsClass(what,&DM) AND send(what,@PlayerIsImmortal))
+      {
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   ReqLeaveOwner()
+   "don't allow new owner while we're in use"
+   {
+      if NOT isClass(poOwner,&User) OR (IsClass(poOwner,&DM) AND Send(poOwner,@PlayerIsImmortal))
+      {
+         propagate;
+      }
+      
+      if pbIn_use 
+      {
+         Send(self,@TortureOwner);
+         
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   ReqUnuse()
+   "When something tries to unuse the Amulet, it will not come off, and will"
+   "teach the user a lesson in the process."
+   {
+      if IsClass(poOwner,&DM) AND Send(poOwner,@PlayerIsImmortal)
+      {
+         return TRUE;
+      }
+      
+      Send(self,@TortureOwner);
+      
+      return FALSE;
+   }
+
+   NewUnused(what = $)
+   "When something that can break the curse unuses the item"
+   {
+      pbIn_use = FALSE;
+
+      if Send(poOwner,@PlayerIsImmortal) {propagate;}
+      if NOT send(what,@IsDead)
+      {
+         send(poOwner,@MsgSendUser,#message_rsc=shadowAmulet_unused_rsc);
+      }
+      
+      send(poOwner,@GainLight,#amount=viLight_change);
+      send(what,@RemoveDefenseModifier,#what = self);
+      
+      propagate;
+   }
+
+   TortureOwner()
+   {
+      send(poOwner,@MsgSendUser,#message_rsc = shadowAmulet_try_unuse_rsc);
+      if Send(poOwner,@AssessDamage,#what=self,#damage=Random(viDamage_min, viDamage_max),
+	           #report=FALSE) = $
+      {
+         % we killed someone off... heh heh heh
+         Send(Send(poOwner,@GetOwner),@SomethingKilled,#what=self,#victim=poOwner);
+         Send(poOwner,@Killed,#what=self);
+         send(self,@Delete);
+      }
+      
+      return;
+   }
+
+   IsCursed()
+   {
+      return TRUE;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+
+      return;
+   }
+
+   GetLightEffect()
+   {
+      return -viLight_change;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

@@ -1,0 +1,649 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Admin is DM
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   admin_login = "Welcome to the game, Administrator %s."
+   admin_admin_module = admin.dll
+
+   admin_mortal = "You are mortal."
+   admin_immortal = "You are immortal."
+   admin_morphed = "You are not in your plain human form."
+
+   admin_anonymous = "You are now anonymous."
+   admin_anonymous_hint = "(Repeat the command to restore your name.)"
+   admin_not_anonymous = "You are again known as %s."
+   admin_black = "You are now shadowform."
+
+   admin_currently_in = "The ROO for `b%s`n is `k`B%s`n."
+
+   admin_create_itematt_command = "create item attribute"
+   admin_anonymous_command = "anonymous"
+   admin_shadow_command = "shadow"
+   admin_relic_command = "relic"
+   admin_start_tour_command = "start tour"
+   admin_end_tour_command = "end tour"
+   admin_mortal_command = "mortal"
+   admin_immortal_command = "immortal"
+   admin_create_dynamic_light_command = "place dynamic light"
+   admin_logoffghost_on_command = "logoffghost on"
+   admin_logoffghost_off_command = "logoffghost off"
+   admin_logoffghost_temp_off_command = "logoffghost temp off"
+
+   admin_no_longer = "This command no longer exists; try the DM command form."
+
+   % not for admin use, but to let creator work
+   admin_icon_priestess = priestes.bgf 
+   admin_cant_create_itematt = \
+      "You cannot create an item attributed weapon with that name."
+   admin_need_weapon = \
+      "You need to equip the weapon you wish to give an attribute to (this "
+      "command only works on weapons, for the time being)."
+
+   admin_made_itematt = "%s raises %s%s, glowing briefly with a mystical light!"
+   admin_gone_mortal = "%s appears more vulnerable."
+   admin_gone_immortal = "%s appears less vulnerable."
+
+   admin_logoffghost_on = "Logoff penalties are now active."
+   admin_logoffghost_off = "Logoff penalties are now inactive."
+   admin_logoffghost_temp_off = "Logoff penalties are now temporarily inactive."
+
+classvars:
+
+
+properties:
+
+   pbCapableAdmin = TRUE
+   pbSay_commands = TRUE
+   pbAdvancement = TRUE
+   pbActor = TRUE
+   pbMonsterMaker = TRUE
+
+   piTour_delay
+   ptTour
+   piTour_count
+
+messages:
+
+   UserLogonHook()
+   {
+      if pbCapableAdmin
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_login,
+              #parm1=Send(self,@GetTrueName));
+         Send(self,@UserLoadModule,#module=admin_admin_module);
+      }
+
+      if NOT pbImmortal
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_mortal);
+      }
+
+      if (piDMFlags & DMFLAG_ANONYMOUS)
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_anonymous);
+      }
+
+      if pbMorph
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_morphed);
+      }
+
+      Send(self,@SuspectRollcall);
+
+      propagate;
+   }
+
+   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
+   {
+      if Send(self,@PlayerIsImmortal)
+      {
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   ComputeMaxMana()
+   {
+      % Don't change the max mana if the player is immortal
+      if Send(self,@PlayerIsImmortal)
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+   SquelchPlayer(value=$)
+   "Don't squelch admins!"
+   {
+      return FALSE;
+   }
+
+   UserSay(string = $,type = $)
+   {
+      local oWeapon, i, lObjects, oObject, rRoom, iRow, iCol, iFineRow, iFineCol;
+
+      if type = SAY_DM
+         AND (StringContain(string,admin_create_itematt_command)
+              OR StringContain(string,"create itematt"))
+      {
+         %% Only works on weapons for now.
+         oWeapon = Send(self,@LookupPlayerWeapon);
+         
+         if oWeapon= $
+         {   
+            Send(self,@MsgSendUser,#message_rsc=admin_need_weapon);   
+
+            return;  
+         }
+	 
+         for i in Send(SYS,@GetItemAtts)
+         {
+            if Send(i,@DMCreateItemAtt,#who=self,#string=string,
+                    #oWeapon=oWeapon)
+            {
+               if NOT pbStealth
+               {
+                  Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                       #string=admin_made_itematt,#parm1=Send(self,@GetName),
+                       #parm2=Send(oWeapon,@GetDef),
+                       #parm3=Send(oWeapon,@GetName));
+               }
+
+               return;
+            }
+         }
+         
+         Send(self,@MsgSendUser,#message_rsc=admin_cant_create_itematt);   
+
+         return;
+      }
+
+      if (StringContain(string,admin_relic_command)
+          OR StringContain(string,"relic"))
+      {
+         if (StringContain(string,"1") OR StringContain(string,"heirloom"))
+         {
+            Send(self,@NewHold,#what=Send(SYS,@GetTotem,#num=1));
+
+            return;
+         }
+
+         if (StringContain(string,"2") OR StringContain(string,"trophy"))
+         {
+            Send(self,@NewHold,#what=Send(SYS,@GetTotem,#num=2));
+
+            return;
+         }
+
+         if (StringContain(string,"3") OR StringContain(string,"vase"))
+         {
+            Send(self,@NewHold,#what=Send(SYS,@GetTotem,#num=3));
+
+            return;
+         }
+
+         if (StringContain(string,"4") OR StringContain(string,"shield"))
+         {
+            Send(self,@NewHold,#what=Send(SYS,@GetTotem,#num=4));
+
+            return;
+         }
+
+         if (StringContain(string,"5") OR StringContain(string,"chalice"))
+         {
+            Send(self,@NewHold,#what=Send(SYS,@GetTotem,#num=5));
+
+            return;
+         }
+      }
+
+      if StringEqual(string,admin_anonymous_command)
+         OR StringEqual(string,"anonymous")
+      {
+         if NOT (piFlags & PFLAG_ANONYMOUS)
+         {
+            Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);            
+            piDMFlags = piDMFlags | DMFLAG_ANONYMOUS;
+            
+            Send(self,@MsgSendUser,#message_rsc=admin_anonymous);
+            Send(self,@MsgSendUser,#message_rsc=admin_anonymous_hint);
+         }
+         else
+         {
+            oObject = Send(SYS,@FindSpellByNum,#num=SID_ANONYMITY);
+            if Send(self,@IsEnchanted,#what=oObject)
+            {
+               Send(self,@RemoveEnchantment,#what=oObject);
+            }
+            else
+            {
+               Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=FALSE);
+               piDMFlags = piDMFlags & ~DMFLAG_ANONYMOUS;
+               
+               Send(self,@MsgSendUser,#message_rsc=admin_not_anonymous,
+                    #parm1=Send(self,@GetTrueName));
+            }
+         }
+
+         Send(self,@ResetPlayerFlagList); 
+
+         return;
+      }
+
+      if StringEqual(string,admin_shadow_command)
+         OR StringEqual(string,"shadow")
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_black);
+         Send(self,@SetPlayerDrawfx,#drawfx=DRAWFX_BLACK);
+         piDMFlags = piDMFlags | DMFLAG_SHADOW;
+         Send(self,@ResetPlayerFlagList);
+
+         return;
+      }
+
+
+      if StringEqual(string,admin_start_tour_command)
+         OR StringEqual(string,"start tour")
+      {
+         Send(self,@StartTour);
+
+         return;
+      }
+
+      if StringEqual(string,admin_end_tour_command)
+         OR StringEqual(string,"end tour")
+      {
+         Send(self,@EndTour);
+
+         return;
+      }
+
+      if StringEqual(string,admin_mortal_command)
+         or StringEqual(string,"mortal")
+      {
+         pbImmortal = FALSE;
+
+         if NOT pbStealth
+         {
+            Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                 #string=admin_gone_mortal,#parm1=Send(self,@GetName));
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=admin_mortal);
+         }
+
+         Send(poOwner,@SomethingChanged,#what=self);
+
+         return;
+      }
+
+      if StringEqual(string,admin_immortal_command)
+         OR StringEqual(string,"immortal")
+      {
+         pbImmortal = pbImmortalSave;
+
+         if NOT pbStealth
+         {
+            Send(poOwner,@SomeoneSaid,#what=self,#type=SAY_MESSAGE,
+                 #string=admin_gone_immortal,#parm1=Send(self,@GetName));
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=admin_immortal);
+         }
+
+         Send(poOwner,@SomethingChanged,#what=self);
+
+         return;
+      }
+
+      if StringEqual(string,"get roo")
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_currently_in,#parm1=send(poOwner,@GetName),
+            #parm2=send(poOwner,@GetRoomResource));
+
+         return;
+      }
+
+      %%% Code for placing light items.
+
+      if StringEqual(string,admin_create_dynamic_light_command)
+         OR StringEqual(string,"place dynamic light")
+      {
+         oObject = create(&DynamicLight,#bVisible=TRUE);
+
+         Send(poOwner,@NewHold,#what=oObject,
+              #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
+              #fine_row=Send(self,@GetFineRow),
+              #fine_col=Send(self,@GetFineCol));
+         
+         return;
+      }
+
+      if StringContain(string,"place lamp")
+      {
+         oObject = create(&Lamp);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol));
+
+         return;
+      }
+
+      if StringContain(string,"place brazier")
+      {
+         oObject = create(&Brazier);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol));
+
+         return;
+      }
+
+      if StringContain(string,"place candelabra")
+      {
+         oObject = create(&Candelabra);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol));
+
+         return;
+      }
+
+      if StringContain(string,"place candle")
+      {
+         oObject = create(&Candle);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol));
+
+         return;
+      }
+
+      if StringContain(string,"place firepit")
+      {
+         oObject = create(&Firepit);
+
+         Send(poOwner,@NewHold,#what=oObject,#new_row=Send(self,@GetRow),
+              #new_col=Send(self,@GetCol));
+
+         return;
+      }
+
+      if StringEqual(string,admin_logoffghost_on_command)
+         OR StringEqual(string,"logoffghost on")
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_on);
+         Send(SYS,@SetLogoffPenaltyEnable,#enable=TRUE);
+
+         return;
+      }
+
+      if StringEqual(string,admin_logoffghost_off_command)
+         OR StringEqual(string,"logoffghost off")
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_off);
+         Send(SYS,@SetLogoffPenaltyEnable,#enable=FALSE);
+
+         return;
+      }
+
+      if StringEqual(string,admin_logoffghost_temp_off_command)
+         OR StringEqual(string,"logoffghost temp off")
+      {
+         Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_temp_off);
+         Send(SYS,@TempDisableLogoffPenalties);         
+
+         return;
+      }
+
+      % Snooping commands.  Better left alone.
+
+      if StringEqual(string,"investigator")
+      {
+         Send(self,@BecomeInvestigator);
+
+         return;
+      }
+
+      if StringEqual(string,"end investigation")
+      {
+         if Send(SYS,@GetInvestigator) <> self
+         {
+            propagate;
+         }
+
+         Send(SYS,@ClearSuspects);
+         Send(SYS,@SetInvestigator,#who=$);
+
+         return;
+      }
+
+      if StringContain(string,"snoop")
+      {
+         if Send(SYS,@GetInvestigator) <> self
+         {
+            propagate;
+         }
+
+         StringSubstitute(string,"snoop "," ");
+         i = Send(SYS,@FindUserByString,#string=string);
+         if i <> $
+         {
+            Send(SYS,@AddSuspect,#who=i);
+         }
+
+         Send(self,@SuspectRollcall);
+
+         return;
+      }
+
+      if StringEqual(string,"list suspects")
+      {
+         if Send(SYS,@GetInvestigator) <> self
+         {
+            propagate;
+         }
+
+         Send(self,@SuspectRollcall);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   %%% Room tours
+
+   StartTour(delay = 2000)
+   {
+      local i;
+
+      piTour_delay = delay;
+      piTour_count = 1;
+      Send(self,@TourTimer);
+
+      return;
+   }
+
+   TourTimer()
+   {
+      ptTour = $;
+
+      if piTour_count > Length(Send(SYS,@GetRooms))
+      {
+         return;
+      }
+
+      Send(Nth(Send(SYS,@GetRooms),piTour_count),@Teleport,#what=self);
+      ptTour = CreateTimer(self,@TourTimer,piTour_delay);
+      piTour_count = piTour_count + 1;
+
+      return;
+   }
+
+   EndTour()
+   {
+      if ptTour <> $
+      {
+         DeleteTimer(ptTour);
+         ptTour = $;
+      }
+
+      return;
+   }
+
+   SomeoneLogon(what=$, bTrue=TRUE)
+   "We aren't tricked by admins only going hidden."
+   {
+      if NOT bTrue
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+   SomeoneLogoff(what=$, bTrue=TRUE)
+   "Don't be tricked by admins only going hidden."
+   {
+      if NOT bTrue
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+   %%% Investigator stuff
+
+   BecomeInvestigator()
+   {
+      local r;
+
+      r = Send(SYS,@SetInvestigator,#who=self);
+
+      ClearTempString();
+      AppendTempString("~B~g[~rWARNING:~n ");
+      AppendTempString("Anything seen in ~B~g[ ]~n should ~BNEVER~n be ");
+      AppendTempString("mentioned, or hinted, to anyone. Do not prosecute ");
+      AppendTempString("on any secrets until you also have publicly ");
+      AppendTempString("available evidence. If any rumor got to any ");
+      AppendTempString("customer, these tools would become useless ");
+      AppendTempString("overnight.~B~g]");
+      Send(self,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+           #parm1=GetTempString(),#type1=0);
+      clearTempString();
+
+      Send(self,@SuspectRollcall);
+
+      return r;
+   }
+
+   InvestigateDeath(killer=$,victim=$,cheap=FALSE)
+   {
+      if Send(SYS,@GetInvestigator) = self and
+         not Send(SYS,@GetChaosNight)
+      {
+         clearTempString();
+         AppendTempString("~B~g[~n");
+         AppendTempString(Send(killer,@GetTrueName));
+         AppendTempString(" killed ");
+         AppendTempString(Send(victim,@GetTrueName));
+         AppendTempString(" in ");
+         AppendTempString(Send(Send(killer,@GetOwner),@GetName));
+         if cheap
+         {
+            AppendTempString(" (victim had no penalty)");
+         }
+
+         AppendTempString("~B~g]");
+
+         Send(self,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+              #parm1=getTempString(),#type1=0);
+      }
+
+      return;
+   }
+
+   SuspectRollcall()
+   {
+      local i, plSuspects;
+
+      if Send(SYS,@GetInvestigator) = self
+      {
+         % (example) [Suspects: Greenwich, Daisy, May Hem]
+         % The suspects that are logged in are named in red,
+         %  others in black.
+
+         clearTempString();
+         AppendTempString("~B~g[~nSuspects: ");
+         plSuspects = Send(SYS,@GetSuspects);
+
+         for i in plSuspects
+         {
+            if i <> first(plSuspects)
+            {
+               AppendTempString("~n, ");
+            }
+
+            if Send(i,@IsLoggedOn)
+            {
+               AppendTempString("~r");
+            }
+            else
+            {
+               AppendTempString("~k");
+            }
+
+            AppendTempString(Send(i,@GetTrueName));
+         }
+
+         AppendTempString("~B~g]");
+
+         Send(self,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+              #parm1=getTempString(),#type1=0);
+      }
+
+      return;
+   }
+
+   UserLogoffHook()
+   {
+      Send(self,@EndTour);
+
+      propagate;
+   }
+
+   AddDefaultSpells()
+   "Admins start with no spells, they can add their own."
+   {
+      return;
+   }
+
+   GetPriestessIconRsc()
+   {
+      return admin_icon_priestess;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

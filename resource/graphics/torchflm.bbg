@@ -1,0 +1,16 @@
+# flame for torch
+# groups
+# 1-3 animation
+# 4-6 repeats of animation 
+-s 10
+3 
+tchflamA.bmp [-32, -64] 
+tchflamB.bmp [-32, -55] 
+tchflamC.bmp [-32, -52] 
+6 
+1 1 
+1 2 
+1 3 
+1 2 
+1 3 
+1 2 

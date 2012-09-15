@@ -1,0 +1,766 @@
+Server:
+Email access
+Convert to network byte order, and standard byte order in files
+Error checking of blakserv.cfg values
+Profile & accelerate interpreter
+Report error messages to administrators
+Make "trace" admin command safer
+When subclass is missing some of superclass's properties, server crashes on exit
+Delete unreferenced timers during garbage collection
+Create objects from descriptions in roo files
+Decide what to do about guests
+x "show string n" fries in game admin mode
+x Fix SendBytes bailing delays
+x Trace command doesn't work in admin from game mode
+x Redownloading roo files when a roo file changes still doesn't work
+x Clean up CPPCOMM messages
+x Save game filenames
+x Delete timers in admin mode
+x Downloading dynamic resources
+x Threads for writes
+x Session confusion in server
+x Synchronization in server -- need a full state chart 
+x Downloading a file multiple times
+x Turn on & off automatic garbage collection, etc.
+x Set file times on download so that file time isn't later than download time
+x Escape G sent to wrong session on quit from admin mode
+x Avoid downloading all dynarscs when server restarts
+x When server gets a message that user has moved within square, it moves user back
+x Dynamic modem config
+x Good formatting of game admin mode responses, for parsing
+x Reduce CPU load during downloading
+x Create object, set its icon to dynarsc of new bgf file ==> not downloaded
+x If DLL not present in resource dir, and then added, reload sys doesn't cause it to be downloaded
+x Building allresource automatically
+x Fix up dynamic resources
+x Some way to send more than 5k
+x Use buffer pools
+x Add magic # to AP_ protocol to distinguish message types
+x Be able to reload more without saving game
+x Move game-specific stuff out of server core
+x Fix up delrscs
+
+Kod:
+Remove extraneous Create functions from system.kod
+Break up user.kod
+Get/drop more than one object at a time
+Put in some lighting and weather
+Kod profiler
+Move object position from nomoveon to active
+Possible optimization:  find message handler for class when bof is loaded
+Move spells, etc. out of object hierarchy
+Put player's eye height in kod; a message to change height
+Add player's width property, and send to client (determines min distance to walls)
+Divide rooms into regions
+Fix moving between rooms; initial position when entering room is wrong (in room contents)
+Automatic welcome message mailing at first login
+Be able to delete spells and newsgroups
+x Send correct user description when description is blank
+x Split up active and passive
+x Newsgroups with > 75 messages
+x Admin message to move player back to safe place
+x Teleporting to safety when logged off
+x Strings in kod that are loaded by server but not sent to client
+x When user enters game, his angle is always 0
+x Spells: per-user spells, make more solid, and spell selection
+x Message to set object's angle
+x Clean up "player" message sent to client (some fields can be removed)
+x Make admins immune to harm
+x Levels, training
+x Allow user to select facial features, etc. during char creation
+x Have character list sent from kod, not from server
+x Improve combat
+x Stats
+x Don't move object smoothly when it's teleported & animation on
+
+Compiler:
+Compile kod to C++?
+Add types?
+Barf on duplicate resource names
+Load equivalent of function.c from a table at runtime
+Handle multiple classes in one file
+? Add constants to kodbase
+x Debug vs. normal resources
+x Allow missing kodbase when given with -K
+x Mutil-line string constants
+x Don't write out empty rsc files
+x Fix filenames that begin with numbers
+x Improve line number reporting in bofs
+x Put bof debugging info in separate table
+x Class variables
+
+Install:
+N Win32s installation
+N Add Win32s directory to path (for DLLs)
+
+Roomedit:
+See why X texture alignment isn't working
+Option to check grid snap
+INI entries for grid size, grid snap, grid on/off
+When sector deleted, adjacent sidedefs can't be deleted
+? Animate wall textures
+x Fix memory.h naming
+x Fix bugs in BSP tree creator
+x Don't load/unload textures every time a roo file is loaded/exited
+x Only load bits of textures when user asks to display it
+x Shrink roo files by changing most things from 4 to 2 bytes
+x Make backup of roo file before saving
+x Option to display coordinates relative to upper left thing, in server coords
+x Fix preferences dialog
+x Add wall floor array to room file
+x Show passable walls in a different color
+x Label row and column kod coordinates
+x Fix default textures in preferences dialog
+x Remove unneeded lower/upper textures from client section
+x Add room security/checksum to file
+x Flip wall bitmaps 90 degrees
+x Assertion fails when vertices merged (objects.cpp line 482)
+x Turn off auto scroll
+x Flipped walls can have wrong texture X offsets
+x Add animation speed per sidedef
+x Add wall ids per sidedef (for reference from kod)
+x Can die on saving after vertex added to a linedef
+
+
+BBgun:
+Close one bitmap while in dual bitmap mode, stuff not drawn correctly
+Add bitmap doesn't work on new (empty) BBG file under Win95
+Set offsets of base bitmap
+Perform simple animations
+Default hotspot #1 when added
+Dialog to ask are you sure when modifying a saved bbg
+x Use msvc
+x Don't scroll to top of listbox when bitmap removed from bbg
+x With one bbg loaded, right clicking on graphics area crashes
+x Cursor doesn't always disappear during drag
+x Fixed-width group bitmap field in bbg file
+x Be able to enter hotspot # manually
+x Attempt to keep same hotspot # when bitmaps changed
+x Allow comments in BBG
+x Keys for scrolling bitmap list boxes
+
+Makebgf:
+Print out line number when an error occurs
+x Allow command file agrument to appear somewhere other that first argument
+x Flip walls 90 degrees
+
+Club:
+x Replace gzip
+x Reduce command line length
+
+Client:
+How to restart background music without pause?
+Put dialogs on main window
+Display objects with different lighting palettes
+If we get a 0 row or column position from server, give error
+Multipart messages for mail and news text
+Queue up sound/animation events 
+If there's a comm error while client is waiting for new room info, it gets stuck forever
+Motion falling too far behind actual position 
+Standardize mouse button usage in dialogs (right button = look, etc)
+Optimize drawing with assembly
+Buffer overflows when large messages sent in mail
+Leave game when can't load any resources
+Have modules able to turn off graphics drawing and get handles to WinG mem
+Adapt max number of walls/floors/ceilings in room to amount in room file
+Roundoff errors in overlay placement and size
+Don't statically allocate objectdata array in drawbsp.c
+Better sliding along walls
+Box around selected object in graphics area
+Check height in "get", "attack", etc.
+Use wsprintf instead of sprintf, wvsprintf instead of vsprintf
+Fog effect
+Drag and drop cursor to object
+Menu option to save contents of text area
+Have groups work in mail
+Better movement system--store last n points and route movement between them
+Light animations and light changes for sectors
+Bounce animation type
+Non-standard Windows key codes fry on foreign keyboards
+Broadcast channels
+Threading in news
+Notification when certain people log in or out
+Simultaneous floor and ceiling sector move animation
+Greater %q depth in server strings
+Display objects on the ceiling
+Center view when stopping or falling or changing rooms
+Fix lifts with animation off
+Optional room cache
+Include original message in news and mail replies
+Distinguish between read and unread mail and news
+Notepad for recording stuff
+Inventory sometimes doesn't redraw
+Single keypress causes two actions (for move or turn)
+No quotes needed in text commands
+Splash screen animations (in intro DLL)
+Sound effects: volume, stereo automatically adjusted
+Monsters attacking through walls, big vertical differences
+Highlight entire lines in list view
+Fizz in walls with negative y offsets
+Stats list scroll bar doesn't always reflect correct position
+Draw floor textures on map
+Objects sometimes slide (move / stand animations switched)
+Inventory scrollbar can overlap items
+Asynchronous DNS lookup
+Wall drawing is a little fizzy (esp. with lifts)
+
+? Can't move along sector boundary
+? Display something for inside objects in game window
+? Reflect bitmaps
+? "No clipping" feature for admins
+? Toolbar buttons for text styles
+? Compress rooms
+? Tooltips on main window for objects
+? Greater maximum depth of levels of overlay hotspots
+? Save ignore list to INI file
+? Single player mode; doesn't need server connection
+? Reset animations in progress when animation turned off
+? Re-enable client uploading
+? Improve error recovery in file transfer protocol (for serial connections)
+? Displaying adjacent rooms
+? Preallocate some list nodes in util.c
+? Don't load in all resources; cache them
+? Volume controls for sound and music
+? Way for kod to ask a simple yes/no question 
+? Have window background texture be settable from server
+? Palette-switching effect
+? Picking up, attacking, etc. through transparent walls
+? Color selection in 256 color mode
+? DirectDraw on Win95
+? Reduce length of some ints in files to save space (null-terminate rsc strings too)
+? Draw unstretched to arbitrary window size
+? Small main window icon to turn off current music
+? Allow multiple servers by marking INI entries and resource (etc.) directories
+? Gamma correction
+? "Zoom" feature that effectively moves your viewpoint forward
+? Edit boxes that allow only numbers/letters to be typed
+? Save/Load files in mail. 
+? Arrange strings in string tables better
+? Sound on speaker driver
+? Stop animating when focus is lost
+? Drop things in front of you (not in same square)
+? Some kind of security for tampering with client executable (Send code CRC?)
+? Get real hashing functions for ID #s in loadrsc.c
+? Make bar graph control DLL for resource editor
+? Inertia on movement
+? Add "special" commands that have different meanings depending on room
+? Rewrite server.c to use table
+? Display dialog during synchronization
+? Special cursors for different windows
+? Allow user to customize keys
+N Different mail directories for different users (mix all messages together)
+N Redraw all when menu up
+N In offer dialogs, show icon & name of offerer and receiver?
+N Save last n commands in admin mode input edit box
+N Allow user to # objects
+N Use GetClipBox to determine when grid area isn't completely visible
+N Display coordinates
+N Store only last n resource strings, instead of mondo hash table for all resources.
+N 16-color mode transparent color
+N Moving at shallow angles--allow x and y increments to be fixed point
+N Instead of freeing discarded bitmaps, reuse memory
+N Call heapmin in client every once in a while
+N When a mail message is deleted, go to next message
+N Shrink grid
+N Add something to bgf to indicate frame rate of animation (for upward compatability)
+N Use multimedia timer for for drawing callback
+N Load object bitmaps upon entering room
+N Compass to show direction player is facing
+N Owner draw buttons to get rid of white corners
+N Integrate bar and gzip
+N Cursors for mouse movement
+N Display faces in char selection dialog
+N Fix com reading under Win32s--notification instead of timer
+N Make walking look natural from sides and backwards
+
+Done:
+x Weirdness in highlight of owner-drawn list boxes.
+x Multiple selections for dropping, getting objects
+x Be able to look at a square when only 1 object is there
+x Transparent bitmaps in owner-drawn list boxes
+x In ScrollWindow, don't use DrawSquare to update new areas; instead DrawRectangle so that
+x   we only have to go through objects once.
+x Draw object behind & in front 
+x Move diagonally?
+x If we get a garbage collection message while look dialog box is up, have to
+x   abort box because ids are invalid
+x If we lose server connection while dialog box is up, things fry.
+x What to do in Windows after menu has been activated--can't use BitBlt!
+x Edit box scrolling & updating (yucky buffer now)
+x Mail
+x Display long descriptions of objects nicely
+x Focus rectangle for grid view area
+x When inventory & using fonts change, need to destroy & redraw list box
+x Fix Look Dialog edit box placement
+x Use ini file to save options
+x Focus rectangle in list boxes getting drawn twice sometimes
+x Selectively display inventory, stats, etc.
+x Certain keys should perform actions on inventory and use list boxes
+x Draw title bar of window ourselves in cool font?
+x Look at & access objects in inventory
+x Change font on settings --> erase old area, in case font shrunk
+x Save window size and position
+x Hiding objects
+x Save setting of "save settings on exit"
+x Screen flashes on startup
+x Center room (may be smaller than display area)
+x Get rid of say & description dialog boxes if we lose connection
+x Grid highlight should size to room
+x When looking inside object & it's empty, do something better than a beep
+x Give & take -- offer dialog
+x Say to object
+x If main window doesn't have focus, redraw all
+x Gray out text in disable say box.  Also always select self.
+x Can't color controls under Windows
+x Highlight list box and edit box
+x Type in look dialog, select matched object automatically
+x If "All" pressed, don't select amount items
+x ChangeObject should change name and icon of stuff in inventory, other lists
+x Settable colors for:  main highlight, edit box, unselected list box items (?)
+x Slow down attacking
+x Remove junk from old messages in protocol
+x Redo server.c
+x Errors from server, such as if you look at an object that has been deleted
+x Text windows should be allowed to be variable height
+x When you receive an offer, simply notify the user; then pressing O brings up dialog
+x Size titles to font size
+x Locks up sometimes when holding down arrow keys with serial connection
+x Buying 
+x Save user's keystrokes if moving too fast
+x %z in strings
+x Load kod dynamically
+x Abort music if option turned off; start if turned on
+x Add colors for dialog backgrounds, foregrounds
+x Services, such as repair
+x Mail dialog colors
+x Check for sound card at startup
+x Check for running out of timers
+x Real login sequence
+x Add an "Are you sure you want to quit?" dialog
+x Message of the day
+x Colors and fonts for main window stuff
+x Store only last n bitmaps, and perhaps move to front?
+x Move most recently used bitmaps to front of list?
+x Display room names
+x Downloading/uploading
+x Save user's name in INI file; display in login dialog
+x Add "are you sure" when logging off from login state
+x Better inventory scroll bar
+x Logout timer on client
+x Use objects on other objects
+x Clean up description dialog
+x Draw objects in correct order
+x Account registration 
+x Reliable protocol
+x Send note to administrators
+x Choosing characters
+x Version checking
+x Check for drawing over cursor
+x Ask for character name in account registration
+x 0 file size in download dialog
+x Initial login always needs to resynchronize
+x When we encounter unknown resource, auto download (with option not to)
+x Deletion of old resource files
+x Dialing
+x Sometimes get junk char at end of mail message when received
+x If we lose server connection or time out while modal dialog is up, close dialog & reset
+x Mail sometimes doesn't display correct message on startup
+x When user does something in mail, reset logoff timer
+x Window minimum size
+x Owner draw recipients list box to get colors right
+x No inside button in spells dialog
+x Dialogs appearing over main menu must work better
+x After out of credits dialog appears, there is no menu 
+x Bar should exclude directories
+x Magic
+x If you can't look inside something, put message in dialog box, not edit box
+x Double click in look dialog ==> look at object
+x Keyboard interface to select mode
+x When login times out, dialog box should have main window as parent
+x "That account is already in use" ==> restore login dialog
+x Keyboard interface to normal mode--move cursor, look & attack
+x Close character selection dialog when lose server connection
+x Turn off modem's error correction (or just have bad modems on server?)
+x Fix memory leaks
+x Compression
+x Why can you walk through walls?
+x Fix wall/floor junction
+x Make 3D graphics into a library
+x Side-to-side movement
+x Disallow direct diagonal moves
+x 3-D graphics
+x Draw objects--sort by depth
+x Login name not being saved when changed
+x Moving diagonally and through corners
+x Displaying default bitmaps 
+x Draw all walls in .roo file; ceilings (if present)
+x Drawing bugs: seeing through corners, rays in NSEW direction
+x New room editor for 3D
+x WinG--also change bitmap usage
+x When grid bitmaps loaded in, flip them to top down for easier use in drawing
+x Creating character
+x Swizzle floor, ceiling and wall tiles #s to PDIBS when room entered & loaded
+x Precompute visible walls when room entered
+x Visible objects select dialog
+x A way to pick squares to look at via keyboard
+x Save user's offset within square and angle
+x Load bitmaps for room when room is entered
+x Bug in say dialog... always selects send
+x Display user's icon somewhere; use to select self.
+x Fix 45 degree tangent table problem
+x Perform arctangent with binary search of table
+x How to select objects, perform actions?
+x Make bar multithreaded (get rid of static CRC)
+x New sparse .roo format
+x Object drawing: fizz sometimes, and not drawn in right place
+x Fix Windows modem interface
+x Check for walls correctly when moving
+x Fix graph controls in dialog box--arrow keys eaten by dialog box
+x Sort look dialogs with closest objects first
+x Hitting Next on last message selects text
+x Better keyboard interface to movement (multiple keys, etc.)
+x Get transparency back in object drawing on client area
+x Fix color selection--has to work with WinG palette now
+x Change loadrsc.c to keep resource table statically; no one else needs to see it
+x Only draw a maximum number of objects per square
+x Only draw as much as is visible on screen; don't worry about sides
+x Monsters moving through walls!
+x Windows resource loading bug first time you enter the game
+x Fix key handling
+x Bulletin boards
+x Frame rate timer
+x Add time to mail messages
+x Allow guests to log in again
+x Lighting effects
+x Fix sideways floor and ceiling tiles
+x High/low graphic detail option
+x Display all objects in dialogs, even though only a max # drawn per square
+x Add background bitmaps to protocol
+x Backdrop bitmaps
+x Fixed point roundoff errors
+x Fix keyboard--actions other than arrow keys shouldn't auto repeat
+x Check things read from INI file for correct ranges
+x Don't get player info message twice at startup
+x Fix using/unusing & using list--must be real object nodes
+x Fix colors in real color mode
+x Transparent walls
+x Speed up object drawing; eliminate divides, etc.
+x CTL3D
+x Objects & background in Windows version
+x Timeout on modem redial (configurable)
+x If < 256 colors, bring up warning at the beginning
+x Origin of graphics window
+x Alt-F4 handling
+x Remove reading from serial port at every keypress?
+x Fix palettes so that there fewer really dark ones
+x When music turned on, play room music if appropriate
+x Try to use wavemix to get multiple sounds
+x Scale things to size of screen
+x Sounds getting fried sometimes (not closing WAVE elements?)
+x Graph control background with CTL3D
+x Dispose of all but the bits of each bitmap (wastes 800b per bitmap otherwise)
+x Magic number in rsc files
+x Let server know about players' angles, and display front/back/side bitmaps for objects
+x Make sure Windows version doesn't crash when server saves
+x Background getting wrong bitmap sometimes
+x Win32s
+x Change bitmap format--bitmaps first, then array of indices
+x Put all INI file stuff in one source file
+x Detect # of colors at startup correctly
+x Animate grid tiles
+x Installation
+x Reset animation clocks when new room entered
+x Assembly stretch in Win32s
+x Default bitmap when real one can't be loaded
+x Make sure that dialogs, etc. come up on the screen
+x Get rid of compiler warnings
+x Animation
+x Say dialog doesn't remember last setting
+x "Change object" message should be able to change bitmap group
+x One-time animations
+x Objects clipping to transparent walls
+x Flying objects
+x Allow user to be positioned at different heights
+x Multiple login dialogs
+x Redo mail to make it more like news (subject lines, index window, etc.)
+x Usernames in mail
+x Reply in mail.  Also display current message #
+x Problems with having multiple description dialogs up at once
+x Special menu choice for turning off animation
+x When window at minimum height and large graphics area drawing, graphics window fries
+x Fuzz on outside of draw area
+x Fix highlight and view window when game isn't entered yet
+x Recopy graphics area on expose events (for example, when a dialog covers it & moves)
+x ALT-TAB doesn't work in Win32s
+x Improve modem handling
+x Using dotted quads for server address is slow
+x Allow server to set user's angle (and offset in square?)
+x Give warning or create dir if download & resource directories not present
+x ALT key problems
+x Restoring user list after garbage collection
+x Dialogs sometimes appear under main window in Win32s
+x Character's initial angle sent to other clients is wrong
+x Can get "yell" dialog if y held down after quit dialog
+x Dialing should time out if no response from modem
+x Rearrange post news buttons, dialog, etc.
+x Small problems in news & mail dialogs (caret vs. selection, etc.)
+x Rescanning newsgroups
+x Allow newsgroups with many messages--change protocol
+x Downloadable code into client (DLLs)
+x Admin commands in client
+x Client save maximized state & size
+x Mail/news DLL
+x During resynchronization in game mode, can get infinite loop of GameSetState & ResetUserData
+x Single news/description dialog, brought up when news looked at
+x Allow only one copy of client to run at a time (DLL conflict otherwise)
+x Abort char creation dialog if connection lost
+x Have client send last successful download time
+x Make sure DLLs work with C runtime library DLL
+x Compile everything to use C runtime DLL
+x Char creation DLL/char creation on server
+x Pick character's name in char creation dialog; sent automatically to other users
+x Call UpdateWindow() to get rid of dialogs drawn on main window
+x Icons for mail dialogs
+x Fix MIDI playing
+x Don't convert mail subjects & recipients to resources for display
+x Mail name resources not being found
+x Allow some commands (like quit) to work even when game data invalid
+x Time zone in news and mail postings -- daylight savings time
+x Take mail off menu (be able to send mail from read mail dialog) 
+x Fix graph controls under Windows
+x The first time user's icon is drawn in stats area, it's often wrong or missing
+x Send fine coordinate changes of players
+x Put arctangent table in trig.c
+x Precompute light palettes and place in a generated source file
+x Allow only one client to run at a time
+x Specify basic palette in a file (blakston.pal)
+x F1 in dialogs, main dial button should bring up help
+x When going to game & downloading, get rid of main menu immediately
+x Speed up entering game time (before char creation dialog)
+x When download fails, delete file
+x Use big bitmaps to increase resolution (have obj width and height)
+x Fix user motion
+x Background bitmap should be displayed at normal size
+x Getting too close to walls & objects
+x Use zero-based grid coordinates in client
+x Have projectiles go from object to object (with fineness), instead of square to square
+x DrawStretchedObject with objects bigger than 64x64
+x With fine object locations, they sometimes overlap walls
+x Fizz appears in graphics area when starting up
+x Center message boxes on window, not screen
+x Create player bitmaps out of pieces
+x Bug in years in mail (0095 instead of 1995)
+x Redo interface
+x When drawing is too slow, server messages don't get processed
+x Combine socket writes into 1 per message
+x Move wavemix to client directory and change name
+x Delete overlay list when objects deleted
+x Fix motion when going between rooms
+x Toolbar for common commands, so that they can be accessed via mouse
+x Allow for higher frame rate
+x Move player with mouse
+x Walls at arbitrary positions
+x Background brush on main window is only 8x8 under Windows
+x Check palette on opening screen
+x Move background bitmap when window smaller than max vertically
+x Get rid of 100x100 hack-o-rama restriction on room sizes
+x Have step size/max drawing rate depend on machine speed
+x Can move too fast by holding down multiple keys, at least with animation off
+x DrawStretchedObject should draw overlays
+x Fix up system messages
+x Disallow diagonal moves through wall corners
+x More careful checking of getting too close to walls
+x Fix angle of objects
+x Getting stuck in narrow passages
+x Display newsgroup name or description
+x Have server send nomoveons, so that client doesn't have to teleport away from them
+x Map
+x Get rid of beep when TAB pressed in text input window
+x Recompute floorpalettes only when light changes
+x Add inventory/desc dialog display group to bgf
+x Animate stuff in inventory & on dialogs
+x 16x16 BMPs for display in dialog boxes
+x In get (other?) dialogs, only display objects that are within range
+x Resize mail and news dialogs
+x Palette problems when redrawing main window
+x Get a good palette
+x In examine dialog, bitmap disappears when you move dialog
+x Min size on admin dialog
+x Remove coarsefactor
+x Remove old room loading code
+x If you hit a wall at an angle, keep moving in allowed direction
+x Building in resource dir needs to be redone
+x Cooler admin mode, with more parsing of server replies
+x Turn FINENESS down; find floor drawing bug
+x Taller (but uniform height) rooms
+x When player has no characters, return to main menu in a better way
+x Look up and down (move eyes vertically)
+x When server tells us that we're in bad room, don't crash
+x Decide on real value for MAX_ANGLE (affects client-server traffic)
+x Speed up turning around (90 degree increments)
+x Single quote for going right to say window
+x Use fine object coordinates from server
+x Reorganize menus
+x Add other objects to map; improve map
+x Randomize char creation starting choices
+x Sometimes fireball not visible
+x Download bug
+x Server movement grid problems
+x CTL3D on Win95
+x Player face self-view fries when there are more than face overlays
+x Better player overlays:  sub-overlays, and hotspots on window (?)
+x Cache bitmaps--compute a good size of cache
+x Crashes when hung up at char pick dialog
+x Decide on highlight rectangle
+x In offer list boxes, set caret to first item
+x Redo say dialog so it doesn't load all user bitmaps
+x Post animation timer events to main window
+x Send client platform to server
+x Have server inform client of need to download before starting zip
+x Client quits without error after entering game for second time
+x Include overlays in saved screen rectangle of drawn objects
+x Inventory key handling--parse according to normal table if not handled by inventory
+x Sub-overlays in player overlays
+x Drag and drop from inventory to main window (and to stats area?)
+x Scrollable stats area
+x If client version is out of date, redownload immediately (before main menu)
+x Blank lines in ClientMsgBox don't contribute to height of text (edit box problem)
+x When a character is being used for the first time, require stats editing
+x New inventory interface
+x Objects being cut by sector boundaries
+x Wall textures apparantly wrapping around horizontally (such as cave entrance)
+x Use actual game bitmaps in char creation dialog
+x Help file
+x Get real icon
+x Remove edge (e) coefficients from room file
+x Arbitrary height walls
+x Include z coordinate in projectile motion
+x Have player smoothly move up and down with animation on
+x Object flags
+x Incorporate pseudo-transparent linedef changes
+x Draw walls at minimum distance away
+x Draw tall objects over shorter walls
+x Walking into a room in tos--client continuously sends messages
+x Don't start animations when animation is off, and reset animations in progress
+x Big mem leak under Windows
+x Per-sector lighting
+x Draw upper textures top-down
+x Clear all object numbers in admin dialog when we server resets our data
+x Send roo file checksum for security on user moves
+x Make sure that edit boxes are large enough for default fonts
+x Remove serial support
+x Display projectile angles
+x Fix redownload dialog, and appearing more than once
+x Sometimes crashes on reload sys
+x Allow floors to be 64x64 or 128x128
+x Get rid of 3D library; integrate 3D with normal stuff
+x Option to draw names of players in main graphics window
+x Change dependence of light on distance--should have an effect farther away
+x Block messages from other users
+x Animate inventory
+x Arrow keys on char creation dialog
+x Attacking via keyboard
+x Animated grid types, for doors, etc.
+x Good default colors and fonts
+x Put animation structure in each wall or sidedef, animate independently
+x Fix top-down drawing of upper textures
+x Get rid of bouncing's effect on palette
+x Test with Win32s 1.3
+x Objects in inventory, examine view getting chopped off on bottom, right
+x Have server be able to remove modules (i.e. temporary ones)
+x Sometimes reports 32 bit color as 1 bit color
+x Replace gzip
+x Get rid of WinG
+x In W95, maximize window, animation on, font dialog doesn't come up until key pressed
+x Windows version fries with animation sometimes
+x When state is invalid (i.e. transmission error) stop redrawing!
+x Limit frequency of even non-movement actions (expressions, etc.)
+x Use a compressed bitmap format
+x Save map
+x Split splash screen off into a separate file
+x Don't use body bitmap to draw char creation/self view faces
+x Decide what to do with looking up and down with background bitmaps 
+x Encrypt resource and room files (CRC also?)
+x Check out music playing even when supposed to be turned off
+x Colors in rich edit text
+x Use rich edit control for main text area
+x Crashes when you hit cancel on face making dialog
+x Remove CTL3D
+x Main rsc file, and others override
+x Can move window when maximized in small graphics mode
+x Improve module action handling:  have modules send their key tables, and respond
+x   only to user actions
+x Faster mail system with many users--type recipient names?
+x Text interpreter
+x Option to disable vertical tiling on a sidedef
+x Make dprintf into null call in optimized version
+x Let user run
+x Getting too close to nomoveons, but still allow closeups
+x After save, player height is wrong (under floor)
+x Aliases
+x Allow user to change description
+x Change movement to give locations at most once per second
+x Invisible objects
+x Main BlakSton DLL
+x If one character, skip char selection when possible.  Add suicide command
+x Graphics engine fry sometimes--out of item nodes and can't move
+x Objects being drawn too high up when near a step
+x Option to display numbers in graph bars
+x Have running affected by stats
+x Earthquake effect
+x Problem with edit box scrolling in admin window, and in rich edit (win 95 only)
+x Fix Crusher for > 2G free on drive
+x Stat bars sometimes not destroyed (on GC/save?)
+x Tool tips for toolbar buttons
+x Set download time after download of each file
+x Get rid of bfer; use ftp
+x Crashes when disconnected during download
+x When you quit char creation, should leave game state
+x Get rid of as many flags as possible (waiting, goto_game, ...)
+x Containers
+x Display # for number items in inventory
+x Scroll numerical stats
+x Display enchantments
+x Keys frying with num lock on
+x Main text window changing color to all black when resized
+x No vertical tile tiles when bottom of wall offscreen
+x Passing over rooms (bogus coords when entering new room)
+x Blank lines at the bottom of text window
+x Remove need for tasm
+x Normal palette in toolbar buttons
+x Music spontaneously turning off
+x Check for errors on all resource allocations
+x DLL for splash screen stuff
+x Apply objects
+x Alias option to not add carriage return
+x On system save, keep old angle and fine offset
+x Take object height into account when walking in BSP tree (e.g. trees and looking up)
+x Sends sometimes go to the wrong person
+x Better inventory highlights
+x Examine inventory objects in admin mode
+x Slide along objects
+x Wading
+x Clean up client message boxes: default buttons and text width
+x Ping during idle time and file transfers
+x When holding only money and trying to drop, ask for amount
+x New char creation
+x Register animation info for object motion
+x Read URLs in game
+x Remove main menu
+x Clean up login state dialogs
+x Change password from inside game
+x Gets extra bytes in connecting state, can't connect
+x Prev and Next buttons on char creation sometimes not disabled
+x Annotate map
+x Crashes when changing rooms S -> N Barloque
+x Remove unused colors and fonts
+x Stop message spoofing with new color
+x Background overlays
+x Remove roundoff errors in motion vector
+x Group dialog
+x Getting crushed by lifts
+x Scrolling textures
+x Admin dialog can get messed up with CR/LF when very full
+x Animate enchantments
+x Mail message numbers getting messed up when lots of messages deleted
+x Color replacement with extra palettes

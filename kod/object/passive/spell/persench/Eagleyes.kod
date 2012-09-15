@@ -1,0 +1,186 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EagleEyes is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+   % What percent of spellpower should we take in order to give the player a chance
+   %  to completely resist a blinding spell?
+   SPELL_RESIST_PERCENT = 5
+
+resources:
+
+   EagleEyes_name_rsc = "eagle eyes"
+   EagleEyes_icon_rsc = ieagleye.bgf
+   EagleEyes_desc_rsc = \
+      "Bestows a supernatural acuity of vision on the caster, protecting "
+      "against spells that attack sight and improving accuracy at long range.  "
+      "Requires mushrooms and purple mushrooms."
+   
+   EagleEyes_on_rsc = "Your eyes burn and the world leaps into surreal clarity."
+   EagleEyes_off_rsc = "The world seems somehow less distinct and vivid."
+   EagleEyes_already_enchanted_rsc = "You already have Eagle Eyes."
+   EagleEyes_Success_rsc = "You grant %s%s preternatural sight."
+
+   EagleEyes_resist = "Krannan's magic fights to penetrate the veil of darkness."
+   EagleEyes_evade = "The magic of Krannan preserves your sight."
+   EagleEyes_resist_caster = "You sense a force resisting your blinding spell."
+   EagleEyes_evade_caster = "The magic of Krannan preserves the sight of your target."
+
+   EagleEyes_sound = keagleye.wav
+
+classvars:
+
+   vrName = EagleEyes_name_rsc
+   vrIcon = EagleEyes_icon_rsc
+   vrDesc = EagleEyes_desc_rsc
+   vrSucceed_wav = EagleEyes_sound
+
+   vrAlreadyEnchanted = EagleEyes_already_enchanted_rsc
+   vrEnchantment_On = EagleEyes_On_rsc
+   vrEnchantment_Off = EagleEyes_Off_rsc
+   vrSuccess = EagleEyes_Success_rsc
+
+   viSpell_num = SID_EAGLE_EYES
+   viSchool = SS_KRAANAN
+   viSpell_level = 4
+   viMana = 5
+   viSpellExertion = 10
+
+   viCast_time = 2000
+   viChance_To_Increase = 20
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = cons([&Mushroom,3],plReagents);
+      plReagents = cons([&PurpleMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetStateValue(who=$,iSpellpower=$,target = $)
+   {
+      local iFactor;
+      
+      Send(target,@AddAttackModifier,#what=self);
+      iFactor = bound(iSpellPower+1,10,100);
+      
+      return iFactor;
+   }  
+
+   EndEnchantment(who=$,report=TRUE,state=$)
+   {
+      Send(who,@RemoveAttackModifier,#what=self);
+      
+      propagate;
+   }
+
+   GetDuration(iSpellpower = 0)
+   {
+      local iDuration;
+
+      % 2 - 5.3 minutes max.
+      iDuration = 120 + (2 * iSpellPower);
+      % Convert to ms.
+      iDuration = iDuration * 1000;
+      
+      return random(iDuration/2,iDuration);
+   }   
+
+   OfferToNewCharacters()
+   {
+      return FALSE;
+   }
+
+   GetPotionClass()
+   {
+      return &EagleEyesPotion;
+   }
+
+   DoEagleEyes(oCaster=$, oTarget=$, iDuration=0, iFactor=1)
+   "Calculates adjustment of blinding spell duration.  Returns $ if resisted "
+   "completely.  iFactor is the factor by which we want to increase the effect."
+   {
+      local iNewDuration, iChance, oEagleEyesStrength;
+
+      oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
+
+      % Check if they repel the blinding spell outright 1-10% base chance,
+      %  modified by factor.
+      iChance = (oEagleEyesStrength * (SPELL_RESIST_PERCENT * iFactor)) / 100;
+      if Random(0,100) <= iChance
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=EagleEyes_evade);
+         if IsClass(oCaster,&Player)
+         {
+            Send(oCaster,@MsgSendUser,#message_rsc=EagleEyes_evade_caster);
+         }
+         
+         return $;
+      }
+
+      % Duration reduced 0-50%, depending on spellpower.
+      iNewDuration = iDuration - (iDuration * oEagleEyesStrength)/200;
+      Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_resist);
+      
+      if IsClass(oCaster,&Player)
+      {
+         Post(oCaster,@MsgSendUser,#message_rsc=EagleEyes_resist_caster);
+      }
+
+      return iNewDuration;
+   }
+
+   %%% Attack Modifier stuff
+
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {
+      local iFactor, oWeapon;
+
+      iFactor = Send(who,@GetEnchantedState,#what=self);
+
+      oWeapon = Send(who,@LookupPlayerWeapon);
+
+      if oWeapon <> $ AND IsClass(oWeapon,&RangedWeapon)
+      {
+         return hit_roll + iFactor;
+      }
+
+      return hit_roll;
+   }
+
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      local iFactor, oWeapon;
+
+      iFactor = Send(who,@GetEnchantedState,#what=self);
+
+      oWeapon = Send(who,@LookupPlayerWeapon);
+
+      if oWeapon <> $ AND IsClass(oWeapon,&RangedWeapon)
+      {
+         return damage + 1;
+      }
+
+      return damage;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

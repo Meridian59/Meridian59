@@ -1,0 +1,474 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AvarShaman is Monster
+
+constants:
+
+   include blakston.khd
+
+   SPELL_CHANCE = 12
+   SPELL_RANGE_SQUARED = 666
+   MANA_REGEN_TIME = 1000
+
+   ANIM_CAST = 2     %% cast spell animation.     
+
+   FRAME_STAND = 1
+   FRAME_WALK_START = 2
+   FRAME_WALK_END = 6
+   FRAME_ATTACK_START = 7
+   FRAME_ATTACK_END = 11
+   FRAME_CAST_START = 12
+   FRAME_CAST_END = 16
+
+resources:
+
+   avarshaman_koc_name_rsc = "avarya"
+   avarshaman_default_name = "avar shaman"
+
+   avarshaman_icon_rsc = avsham.bgf
+
+   avarshaman_name_rsc = "peet-seeeep avar shaman"
+   avarshaman_desc_rsc = \
+      "This is a shaman of the Peet-Seeeep clan.  "
+      "Legend says that the Shaman Avar blind themselves in order to force "
+      "their third, 'magical' eye to sprout forth.  Only a fool would willingly "
+      "offend one of these fearsome warlocks."      
+
+   avarshaman_bone_name = "bone faction shaman"
+   avarshaman_bone_desc = \
+      "This is the powerful shaman of the mystic Bone faction.  "
+      "Legend says that the Shaman Avar blind themselves in order to force "
+      "their third, 'magical' eye to sprout forth.  Only a fool would willingly "
+      "offend one of these fearsome warlocks."  
+
+   avarshaman_nomagic_name = "kyip-kyip-kreeet avar shaman"
+   avarshaman_nomagic_desc = \
+      "This is a thrall shaman to the Kyip-Kyip-Kreet clan.  "
+      "Legend says that the Shaman Avar blind themselves in order to force "
+      "their third, 'magical' eye to sprout forth.  Only a fool would willingly "
+      "offend one of these fearsome warlocks."  
+
+   avarshaman_dead_icon_rsc = avshamX.bgf
+   avarshaman_dead_name_rsc = "dead avar shaman"
+
+   avarshaman_sound_hit = as_atkh.wav
+   avarshaman_sound_miss = as_atkm.wav
+   avarshaman_sound_death = as_dth.wav
+   avarshaman_sound_aware = as_awr.wav
+
+   avarshaman_lightning = avarspel.bgf
+   shaman_cast_spell = "The shaman calls upon the great spirits to aid him!"
+
+classvars:
+
+   vrKocName = avarshaman_koc_name_rsc
+
+   vrIcon = avarshaman_icon_rsc
+   vrDead_icon = avarshaman_dead_icon_rsc
+   vrDead_name = avarshaman_dead_name_rsc
+   
+   viIndefinite = ARTICLE_AN
+   viTreasure_type = TID_AVAR_SHAMAN
+   viAttack_types = ATCK_WEAP_PIERCE
+   viSpeed = SPEED_SLOW
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_MONSTERS
+   viLevel = 100
+   viDifficulty = 8
+   viKarma = 80
+
+   vrSound_hit = avarshaman_sound_hit
+   vrSound_miss = avarshaman_sound_miss
+   vrSound_aware = avarshaman_sound_aware
+   vrSound_death = avarshaman_sound_death
+
+properties:
+
+   vrName = avarshaman_name_rsc
+   vrDesc = avarshaman_desc_rsc
+
+   piAnimation = ANIM_NONE
+   piMana = 10
+   ptMana = $
+   piColor_Translation = PT_PURPLETORED
+
+messages:
+
+   Constructor(clan = $)
+   {
+      if clan <> $
+      {
+         send(self,@SetClan,#clan=clan);
+      }
+      else
+      {
+         post(self,@ChooseClan); 
+      }
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      plResistances = [ [-20, -ATCK_SPELL_COLD ],
+                        [ 10, -ATCK_SPELL_SHOCK ],
+                        [-15, -ATCK_SPELL_ACID ],
+                        [-20, ATCK_WEAP_NERUDITE ],
+                        [ 10, ATCK_WEAP_SLASH ],
+                        [ 40, ATCK_WEAP_NONMAGIC ],
+                        [-10, ATCK_WEAP_MAGIC ]
+                      ];
+
+      propagate;
+   }
+
+   SetClan(clan = AVARCLAN_PROMAGIC)
+   {
+      piColor_translation = clan;
+
+      if clan = AVARCLAN_ANTIMAGIC
+      {
+         vrName = avarshaman_nomagic_name;
+         vrDesc = avarshaman_nomagic_desc;
+      }
+      else
+      {
+         if clan = AVARCLAN_BONE_FACTION
+         {
+            vrName = avarshaman_bone_name;
+            vrDesc = avarshaman_bone_desc;
+         }
+         else
+         {
+            vrName = avarshaman_name_rsc;
+            vrDesc = avarshaman_desc_rsc;
+         }
+      }
+
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+      
+      return;
+   }
+
+   GetClan()
+   {
+      return piColor_translation;
+   }
+   
+   ChooseClan()
+   {
+      if poOwner = $ OR NOT IsClass(poOwner,&KCForest)
+      {         
+         if random (1,5) > 1
+         {
+            send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
+         }
+
+         return;
+      }
+
+      % Ask our owner what clan we should be in.
+      send(self,@SetClan,#clan=send(poOwner,@GetClan));
+
+      return;
+   }
+
+   GetName()
+   {
+      if poOwner = $
+      {
+         return avarshaman_default_name;
+      }
+
+      propagate;
+   }
+
+   ManaTimer()
+   {
+      piMana = piMana + 1;
+
+      if piMana >=10
+      {
+         ptMana = $;
+
+         return;
+      }
+
+      ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptMana <> $
+      {
+         deletetimer(ptMana);
+         ptMana = $;
+      }
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;      
+      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self,
+           #flags=PROJ_FLAG_LIGHT_SOURCE);
+      Send(what,@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   GetAttackRange()
+   {
+      return 5;
+   }
+
+   SendMoveAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,FRAME_WALK_START,2,FRAME_WALK_END);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_ATTACK_START,2,
+                   FRAME_ATTACK_END,2,FRAME_STAND);
+         return;
+      }
+
+      if piAnimation = ANIM_CAST
+      {
+         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_CAST_START,2,
+                   FRAME_CAST_END,2,FRAME_STAND);
+         return;
+      }
+
+      % if no body animation
+      AddPacket(1,ANIMATE_NONE,2,3);
+      
+      return;
+   }
+
+   MonsterCastSpell()
+   {
+      local iSpell, iBase, oSpell, iManaCost, iRandom, lTargets;
+
+      iBase = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+      if random(1,iBase) <> 1
+      {
+         return FALSE;
+      }
+
+      iRandom = random(1,100);
+      
+      if  iRandom < 40
+      {
+         iSpell = SID_HOLD;
+         iManaCost = 5;
+      }
+      else
+      {
+         if iRandom < 70
+         {
+            iSpell = SID_MANA_BOMB;
+            iManaCost = 6;
+         }
+         else
+         {
+            if iRandom < 85
+            {
+               iSpell = SID_SAND_STORM;
+               iManaCost = 4;
+            }
+            else
+            {
+               if iRandom < 90      
+               {
+                  iSpell = SID_SHATTER;
+                  iManaCost = 10;
+               }
+               else
+               {   
+                  iSpell = SID_EARTHQUAKE;
+                  iManaCost = 10;
+               }
+            }
+         }
+      }
+
+      if piMana < iManaCost
+      {
+         return FALSE;
+      }
+
+      piMana = piMana - iManaCost;
+
+      if piMana < 10
+      {
+         ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
+      }
+
+      piAnimation = ANIM_CAST;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;                            
+         
+      oSpell = send(SYS,@FindSpellByNum,#num=iSpell);
+
+      if send(oSpell,@GetNumSpellTargets) > 0
+         AND NOT send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+      {
+         return FALSE;
+      }
+
+      lTargets = send(oSpell,@GetTargets,#who=self,#lTargets=[poTarget]);
+
+      if send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,#iSpellPower=75)
+         AND send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#litems=lTargets)
+      {
+         send(oSpell,@CastSpell,#who=self,#ltargets=lTargets,#iSpellPower=75);
+      }
+
+      return TRUE;
+   }
+
+   GetProjectileIcon()
+   {
+      return avarshaman_lightning;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+   
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 8);   % 40ms between animations
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % General lighting information.
+      return LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      % Fairly small light radius for projectile.  Out of 255 levels.
+      return 25;
+   }
+
+   GetProjectileLightColor()
+   {
+      % Color is a deep, bloody red.
+      return LIGHT_BLOOD;
+   }
+
+   SendEffectData()
+   {
+      % for EFFECT_INVERT, 4 bytes of time to be inverted - 1/10 of a second
+      AddPacket(4,200);
+      
+      return;
+   }
+
+   IsWizard()
+   {
+      return TRUE;
+   }
+  
+   GetOptimalRange()
+   {
+      return random(6,12);
+   }
+
+   IsAlly(target = $)
+   {
+      if (IsClass(target,&Avar)          
+          OR IsClass(target,&AvarShaman)
+          OR IsClass(target,&AvarChieftain))
+         AND send(target,@GetClan) = send(self,@GetClan)
+      {
+         return TRUE;
+      }
+
+      % Charm checks up higher.
+      propagate;
+   }
+
+   SpecialHatredBehavior(what=$)
+   {
+      % Avars attack other avars of other clans, but only in the
+      %  temple of riija ruins (rid_KC3).
+      if IsClass(what,&AvarShaman)
+         OR IsClass(what,&AvarChieftain)
+         OR IsClass(what,&Avar)
+      {
+         if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
+            AND send(what,@GetClan) <> send(self,@GetClan)
+         {
+            return 25;
+         }
+      }
+
+      return 0;
+   }
+
+   GetTreasureType()
+   {
+      if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
+      {
+         return TID_NONE;
+      }
+
+      return viTreasure_type;
+   }
+
+   CreateDeadBody(killer=$)
+   {
+      local oBody;
+
+      oBody = $;
+      if vrDead_icon <> $
+      {
+         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
+                        #BodyTranslation=send(self,@GetClan),
+                        #playername=Send(killer,@GetTrueName),
+                        #monstername=vrName,#drawfx=viDead_drawfx);         
+      }
+
+      return oBody;  
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,95 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+XeoFire is Xeochicatl
+
+constants:
+
+   include blakston.khd
+
+   ANIM_CAST = 2     %% cast spell animation.             
+
+resources:
+
+   XeoFire_name_rsc = "ro'xeochicatl"
+   XeoFire_koc_name_rsc = "ro'xeo'chicatl"
+   XeoFire_icon_rsc = Xeo.bgf
+   XeoFire_desc_rsc = \
+      "Before you is a ro'xeochicatl, a fearsome monster given life by the chaotic "
+      "magic of the Meridian.  The ro'xeochicatl is the embodiment of destruction, "
+      "a violent monster that seems uncontrollable.  These monsters feed off of "
+      "the magic of the lands which makes them very powerful.  Rumors abound "
+      "about the origin of these monsters, but you have little time to contemplate "
+      "these rumors in the presence of such destructive power!"
+
+   XeoFire_sound_aware = xeo3awr.wav
+
+ classvars:
+
+   vrName = XeoFire_name_rsc
+   vrKocName = XeoFire_koc_name_rsc
+   
+   viAttack_types = ATCK_WEAP_MAGIC
+   viLevel = 170
+   viDifficulty = 7
+   viSpeed = SPEED_FAST
+   vrSound_aware = XeoFire_sound_aware
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piMana = 20
+
+   % What do we drop on death?
+   pcTreasureItem = &RedHeartStone
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [110, -ATCK_SPELL_FIRE ],
+                        [-20, -ATCK_SPELL_COLD ],
+                        [-10, ATCK_WEAP_MAGIC ],
+                        [100, -ATCK_SPELL_QUAKE ]
+                      ];
+         
+      piColor_Translation = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_RED);
+
+      propagate;
+   }
+
+   ChooseSpell()
+   {
+      local iRandom;
+
+      iRandom = random(1,100);
+     
+      if iRandom < 60
+      {
+         return [SID_FIREBALL, 2];
+      }
+      else
+      {
+         if (iRandom < 70) and (Send(self,@CanCastWallSpell))
+         {
+            return [SID_FIREWALL, 10];
+         }
+         else
+         {
+            return [ SID_DEMENT, 3];
+         }
+      }
+
+      return $;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

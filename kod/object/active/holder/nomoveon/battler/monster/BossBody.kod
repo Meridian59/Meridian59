@@ -1,0 +1,100 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcPitBossBody is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   OrcPitBossBody_name_rsc = "body of the orc pit boss"
+   OrcPitBossBody_live_name = "orc pit boss"
+   OrcPitBossBody_icon_rsc = OrcPitbX.bgf
+   OrcPitBossBody_desc_rsc = \
+      "This is the body of the orc pit boss.  It's head is almost completely "
+      "severed."
+
+   OrcPitBossBody_dead_icon_rsc = OrcPitbX.bgf
+   OrcPitBossBody_dead_name_rsc = "headless orc pit boss body"
+
+   OrcPitBossBody_sound_hit = tr_atkh.wav
+   OrcPitBossBody_sound_miss = tr_atkm.wav
+   OrcPitBossBody_sound_death = tr_dth.wav
+   OrcPitBossBody_sound_aware = tr_awr.wav
+
+   OrcPitBossBody_monster_healing = \
+      "The body of the orc pit boss twitches slightly, its nearly-severed "
+      "neck gurgling grotesquely as its lungs spasm."
+
+classvars:
+
+   vrName = OrcPitBossBody_name_rsc
+   vrIcon = OrcPitBossBody_icon_rsc
+   vrDesc = OrcPitBossBody_desc_rsc
+   vrDead_icon = OrcPitBossBody_dead_icon_rsc
+   vrDead_name = OrcPitBossBody_dead_name_rsc
+
+   viTreasure_type = TID_NONE
+   viAttack_types = ATCK_WEAP_WHIP
+   viSpeed = SPEED_NONE
+   viAttributes = MOB_NOMOVE 
+   viDefault_behavior = AI_NOMOVE| AI_NOFIGHT
+   viLevel = 1
+   viDifficulty = 1
+   viKarma = 0
+
+   vrSound_hit = OrcPitBossBody_sound_hit
+   vrSound_miss = OrcPitBossBody_sound_miss
+   vrSound_aware = OrcPitBossBody_sound_aware
+   vrSound_death = OrcPitBossBody_sound_death
+
+   vrMonster_healing = OrcPitBossBody_monster_healing
+
+properties:  
+
+messages:
+
+   CreateTreasure(who=$,corpse=$)
+   {
+      local oHead;
+
+      if poOwner <>$
+      {
+         oHead = Create(&OrcPitBossHead,#corpse=corpse);
+         Send(poOwner,@NewHold,#what=oHead,
+              #new_row=send(self,@GetRow),#new_col=send(self,@getCol),
+	           #fine_row=send(self,@GetFineRow),#fine_col=send(self,@GetFineCol));
+      }
+
+      propagate;
+   }
+
+   GetMaxHitPoints()
+   {
+      return 100;      
+   }
+
+   SendAnimation()
+   {
+      Addpacket(1,ANIMATE_NONE,2,2);
+
+      return;
+   }
+
+   DMCanArmageddon()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

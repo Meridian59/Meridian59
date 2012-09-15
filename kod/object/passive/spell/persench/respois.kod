@@ -1,0 +1,100 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistPoison is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ResistPoison_name_rsc = "resist poison"
+   ResistPoison_icon_rsc = irespois.bgf
+   ResistPoison_desc_rsc = \
+      "Stabilizes your immune system, protecting you from some poisons.  "
+      "Requires herbs and red mushrooms."
+   
+   ResistPoison_on_rsc = "Your body tingles for a moment, and you feel a little "
+                         "strange."
+   ResistPoison_off_rsc = "Your strange feeling of tolerance subsides."
+   ResistPoison_already_enchanted_rsc = "You're already resistant to poisons."
+   ResistPoison_success_rsc = "Your magic increases %s%s's resistance to poison."
+
+   resistpoison_sound = kresistp.wav
+
+classvars:
+
+   vrName = ResistPoison_name_rsc
+   vrIcon = ResistPoison_icon_rsc
+   vrDesc = ResistPoison_desc_rsc
+
+   vrAlreadyEnchanted = ResistPoison_already_enchanted_rsc
+   vrEnchantment_On = ResistPoison_On_rsc
+   vrEnchantment_Off = ResistPoison_Off_rsc
+   vrSuccess = ResistPoison_Success_rsc
+
+   viSpell_num = SID_RESIST_POISON
+   viSchool = SS_KRAANAN
+   viSpell_level = 2
+   viMana = 10
+   viSpellExertion = 5
+
+   viCast_time = 2000
+   viChance_To_Increase = 15
+   vrSucceed_wav = resistpoison_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = [ [&Herbs, 2], [&RedMushroom,1] ];
+
+      return;
+   }
+
+   GetStateValue(iSpellpower=$)
+   {
+      local ifactor;    
+
+      iFactor = bound(iSpellPower,10,99);
+
+      return iFactor;
+   }
+  
+   GetDuration(iSpellpower = 0)
+   {
+      local iDuration;
+
+      % 5 - 15 minutes max
+      iDuration = 300 + (100 * 6);
+      % Convert to ms.
+      iDuration = iDuration * 1000;
+
+      % randomly choose between max and half-max
+      return random(iDuration/2,iDuration);     
+   }
+
+   OfferToNewCharacters()
+   {
+      %% available only on island
+      return FALSE;
+   }
+
+   GetPotionClass()
+   {
+      RETURN &ResistPoisonPotion;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

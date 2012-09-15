@@ -1,0 +1,3877 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Room is Holder
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   room_name_rsc = "Room"
+
+   room_door_is_locked = "This door is locked."
+   room_sound_locked = doorlck.wav
+
+   room_move_req_no = "You're unable to change rooms."
+
+   room_no_attack = "You can't fight here."
+   room_no_harmful = \
+      "You cannot cast harmful spells here when someone else is present."
+   room_no_pk_allowed = "You cannot attack another player here."
+   room_guild_combat = "Only those in guilds may attack each other here."
+
+   room_no_magic_allowed = "You can't cast spells here."
+   room_no_spell = "You can't cast spells here."
+
+   room_no_combat_magic = "You can't cast offensive spells here."
+
+   room_no_teleport = "This room does not yet have teleport support."
+   room_door_was_opened = "You open the door and walk through."
+   room_silenced_rsc = "Your words catch in your throat and you cannot speak."
+
+   %  note that these 'stormy' skies are the normal skies,
+   %     and the 'normal' skies are just flat colors (and we don't use them)...
+   background_stars = night.bgf
+   background_light_sky = lt-blue.bgf
+   background_light_stormy_sky = lt-sky.bgf
+   background_dusk_sky = dk-blue.bgf
+   background_dusk_stormy_sky = dk-sky.bgf
+   background_chaos_night = redsky.bgf
+
+   background_kocatan_afternoon_sky = 1skya.bgf
+   background_kocatan_evening_sky = 1skyb.bgf
+   background_kocatan_morning_sky = 1skyc.bgf
+   background_kocatan_night_sky = 1skyd.bgf
+
+   background_afternoon_sky = 2skya.bgf
+   background_evening_sky = 2skyb.bgf
+   background_morning_sky = 2skyc.bgf
+   background_night_sky = 2skyd.bgf
+
+   % Unlike the rest of these, this is actually a stormy sky.
+   background_stormy_sky = 3sky.bgf
+
+   creaky_door_sound = doropen1.wav
+
+   water_wading_sound = splash.wav
+
+   room_jungle_sound1 = jungle01.wav
+   room_jungle_sound2 = jungle02.wav
+   room_jungle_sound3 = jungle03.wav
+   room_jungle_sound4 = jungle04.wav
+   room_jungle_sound5 = jungle05.wav
+   room_jungle_sound6 = jungle06.wav
+   room_jungle_sound7 = jungle07.wav
+   room_jungle_sound8 = jungle08.wav
+   room_jungle_sound9 = jungle09.wav
+   room_jungle_sound10 = jungle10.wav
+   room_jungle_sound11 = jungle11.wav
+   room_jungle_sound12 = jungle12.wav
+   room_jungle_sound13 = jungle13.wav
+   room_jungle_sound14 = jungle14.wav
+   room_jungle_sound15 = jungle15.wav
+   room_jungle_sound16 = jungle16.wav
+   room_jungle_sound17 = jungle17.wav
+   room_jungle_sound18 = jungle18.wav
+   room_jungle_sound19 = jungle19.wav
+   room_jungle_sound20 = jungle20.wav
+   room_jungle_sound21 = jungle21.wav
+   room_jungle_sound22 = jungle22.wav
+   room_jungle_sound23 = jungle23.wav
+   room_jungle_sound24 = jungle24.wav
+   room_jungle_sound25 = jungle25.wav
+
+   room_sewer_sound1 = sewer03.wav
+   room_sewer_sound2 = sewer04.wav
+   room_sewer_sound3 = drips.wav
+   room_sewer_sound4 = sngldrip.wav
+   % Not included for now.  Kinda stupid rat sound.
+   room_sewer_sound5 = sewer01.wav
+
+   room_badmount_sound1 = ice04.wav
+   room_badmount_sound2 = ice03.wav
+   room_badmount_sound3 = sws_wind.wav
+   room_badmount_sound4 = rs_wind.wav
+   room_badmount_sound5 = eagle.wav
+
+   room_beach_sound1 = sws_wind.wav
+   room_beach_sound2 = beach.wav
+   room_beach_sound3 = gulls.wav
+   room_beach_sound4 = wave1.wav
+   room_beach_sound5 = wave2.wav
+   room_beach_sound6 = wave3.wav
+   room_beach_sound7 = wave4.wav
+
+   room_waterfront_sound1 = wfront03.wav
+   room_waterfront_sound2 = wfront05.wav
+
+   room_cave_sound1 = drop.wav
+
+   room_forest_sound1 = rs_for01.wav
+   room_forest_sound2 = rs_for02.wav
+   room_forest_sound3 = rs_for03.wav
+   room_forest_sound4 = rs_for05.wav
+   room_forest_sound5 = rs_for14.wav
+   room_forest_sound6 = rs_for18.wav
+   room_forest_sound7 = rs_for20.wav
+
+   room_necropolis_sound1 = necro01.wav
+   room_necropolis_sound2 = necro02.wav
+   room_necropolis_sound3 = necro03.wav
+   room_necropolis_sound4 = necro04.wav
+   room_necropolis_sound5 = necro05.wav
+   room_necropolis_sound6 = necro06.wav
+   room_necropolis_sound7 = necro07.wav
+   room_necropolis_sound8 = necro08.wav
+   room_necropolis_sound9 = necro09.wav
+
+   room_jungle_sound = jungle.wav
+   room_sewer_sound = seweramb.wav
+   room_cave_sound = ambcave.wav
+   room_badmount_sound = icecave.wav
+   room_lava_sound = lavaflow.wav
+   room_forest_sound = ambcntry.wav
+   room_necro_sound = necloop2.wav
+   room_beach_sound = ocean.wav
+
+   no_use_jig = \
+      "You can't wield that - it would interfere with your funky moves!"
+
+classvars:
+
+   % This variable is passed down to client for render flags for room
+   viClientFlags = 0
+
+   viOverrideDepth1 = 0
+   viOverrideDepth2 = 0
+   viOverrideDepth3 = 0
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+
+   vrName = room_name_rsc
+
+   viTeleport_row = $
+   viTeleport_col = $
+   viTeleport_angle = $
+
+   % Used to keep track of the 'natural' state of room flags.
+   viPermanent_Flags = 0
+
+   % Used to determine sounds and by some spells to gauge bonuses
+   viTerrain_type = 0
+
+   vrDoor_sound = creaky_door_sound
+   vrWading_Sound = water_wading_sound
+
+   viFlag_row = $
+   viFlag_col = $
+
+properties:
+
+   piRoom_Flags = 0
+
+   prRoom                       % the room resource id
+   prmRoom                      % the room data id
+   piRoom_num
+   piRows
+   piCols
+
+   piSecurity
+
+   prMusic = $
+
+   % Ambient light level
+   piBaseLight = LIGHT_MAX
+   piOutside_factor = OUTDOORS_COMPLETE
+   % intensity of directional light (multiplied by % height of sun)
+   piDirectional_percent = 0
+   % calculated when time changes
+   piDirectional_light = 0
+   % Background bitmap for room
+   prBackground = $
+
+   % Default length: five minutes (in ms)
+   piDispose_delay = 300000
+   ptDispose = $
+
+   % Exits list: each member is a list of row in this room, col in this room
+   % to activate on, then destination room number, row, column, angle modifier,
+   % and max distance from dest square to move the thing
+   plExits = $
+
+   % List of exits that are hit when you hit the edge of a room.
+   % Format is [ Edge, RID_TO, row, col, angle_modifier ];
+   plEdge_Exits = $
+
+   % A list of rooms that can hear yells done in this room.
+   plYell_Zone = $
+
+   % List of all sectors that have height change.  Each element in list is
+   % sector ID #, animation (floor or ceiling), and height.
+   plSector_changes = $
+
+   % List of all walls that have animations changed.  Each element in list is
+   %  wall ID #, animation (none or cycle), first group, second group, speed,
+   %  passable second group and speed not used with animation none.
+   plWall_changes = $
+
+   % List of all id groups that have texture # changes.  Each element in list
+   % is ID #, new texture #, flags.
+   plTexture_changes = $
+
+   % List of all sectors that have light changes.  Each element in list is
+   % sector ID #, light change.
+   plSector_light_changes = $
+
+   % List of enchantments.  Each element is [timer, id of spell, state].
+   plEnchantments = $
+
+   pbUser_in_room = FALSE
+
+   % For wave files that go off sometimes.  plPeriodic_sounds is a list of wav
+   %  resources
+   plPeriodic_sounds = $
+   % timer value
+   piPeriodic_sounds = 20000
+   ptPeriodic_sounds = $
+   % Percentage of the timer value to vary randomly +/-
+   piPeriodic_sound_factor = 20
+   % Set to true to have sounds originate from random locations
+   pbPeriodic_sound_random_location = FALSE
+   % set to true to have sounds' pitch vary randomly +/-
+   pbPeriodic_sound_random_pitch = FALSE
+
+   % for looping wave sounds that play continuously while player is in the room
+   %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+   plLooping_sounds = $
+
+   % Don't set this.  It is set automatically.
+   % Instead, override something in SetFarenBonus.
+   piFaren_Bonus
+
+messages:
+
+   Constructor()
+   {
+      local iDelay;
+      % classes derived from room must have prRoom and piRoom_num
+      % set correctly, and propagate the Constructor
+
+      Send(self,@LoadRoomData);
+
+      % Start dispose timer, so that first user entering will cause
+      % FirstUserEntered message to be sent (see NewHoldObject)
+
+      iDelay = piDispose_delay + Random(-5000,5000);
+      ptDispose = CreateTimer(self,@DisposeTimer,iDelay);
+      piRoom_flags = viPermanent_flags;
+
+      ptPeriodic_sounds = $;
+      Send(self,@CreatePeriodicSounds);
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      local iTerrain;
+
+      Send(self,@CreateStandardObjects);
+      Send(self,@CreateStandardExits);
+      Send(self,@CreateYellZoneList);
+      Send(self,@ComputeFarenBonus);
+
+      iTerrain = Send(self,@GetTerrainType);
+
+      % each looping sound is [wave_file, row, col, cutoff radius, maximum volume]
+
+      if (iTerrain & TERRAIN_BADLANDS) OR (iTerrain & TERRAIN_MOUNTAIN)
+      {
+         plLooping_sounds = Cons([ room_badmount_sound, 1, 1, 300, 100 ], plLooping_sounds);
+
+         propagate;
+      }
+
+      if (iTerrain & TERRAIN_BEACH)
+      {
+         plLooping_sounds = Cons([ room_beach_sound, 1, 1, 300, 100 ],
+                                 plLooping_sounds);
+
+         propagate;
+      }
+
+      if (iTerrain & TERRAIN_JUNGLE)
+      {
+         plLooping_sounds = Cons([ room_jungle_sound, 1, 1, 300, 100 ],
+                                 plLooping_sounds);
+
+         propagate;
+      }
+
+      if (iTerrain & TERRAIN_CAVES)
+      {
+         plLooping_sounds = Cons([ room_cave_sound, 1, 1, 300, 70 ],
+                                 plLooping_sounds);
+
+         propagate;
+      }
+
+      % Special case for guild hall 11, which is both forest and indoors
+      %  It sets it's own looping forest sound.
+      if (iTerrain & TERRAIN_FOREST) AND NOT (iTerrain & TERRAIN_GUILDHALL)
+      {
+         plLooping_sounds = Cons([ room_forest_sound, 1, 1, 300, 100 ],
+                                 plLooping_sounds);
+
+         propagate;
+      }
+
+      if (iTerrain & TERRAIN_SEWERS)
+      {
+         plLooping_sounds = Cons([ room_sewer_sound, 1, 1, 300, 100 ],
+                                 plLooping_sounds);
+
+         propagate;
+      }
+
+      if (iTerrain & TERRAIN_LAVA)
+      {
+         plLooping_sounds = Cons([ room_lava_sound, 18, 14, 300, 100 ],
+                                 plLooping_sounds);
+
+         propagate;
+      }
+
+      if (iTerrain & TERRAIN_NECROPOLIS) AND plLooping_sounds = $
+      {
+         % Some areas of Brax set their own special looping sounds.
+         %  Don't interfere.
+         plLooping_sounds = Cons([ room_necro_sound, 1, 1, 300, 100 ],
+                                 plLooping_sounds);
+
+         propagate;
+      }
+
+      propagate;
+   }
+
+   EnableIllusions()
+   {
+      return;
+   }
+
+   DisableIllusions()
+   {
+      return;
+   }
+
+   RecreateExits()
+   {
+      plExits = $;
+      plEdge_exits = $;
+      plYell_zone = $;
+      Send(self,@CreateStandardExits);
+      Send(self,@CreateYellZoneList);
+
+      return;
+   }
+
+   Recreate()
+   {
+      local cClass, lUsers, oNewRoom, i;
+
+      lUsers = $;
+      cClass = GetClass(self);
+      for i in plActive
+      {
+         if isClass(first(i),&User)
+         {
+            lUsers = Cons(first(i),lUsers);
+         }
+      }
+
+      Send(self,@Delete);
+      Send(SYS,@CreateOneRoomIfNew,#num=piRoom_num,#class=cClass);
+      for i in lUsers
+      {
+         oNewRoom = Send(SYS,@FindRoomByNum,#num=piRoom_num);
+         Send(oNewRoom,@Teleport,#what=i);
+      }
+
+      return;
+   }
+
+   CreatePeriodicSounds()
+   {
+      local iTerrain, rSound, lTempSounds;
+
+      iTerrain = Send(self,@GetTerrainType);
+
+      piPeriodic_sound_factor = 100;
+      pbPeriodic_sound_random_location = TRUE;
+      pbPeriodic_sound_random_pitch = TRUE;
+
+      if (iTerrain & TERRAIN_BADLANDS) OR (iTerrain & TERRAIN_MOUNTAIN)
+      {
+         piPeriodic_sounds = piPeriodic_sounds / 2;
+         lTempSounds = [ room_badmount_sound1, room_badmount_sound2,
+                         room_badmount_sound3, room_badmount_sound4
+                       ];
+
+         for rSound in lTempSounds
+         {
+            plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
+         }
+
+         % No eagle sound in the jungle.
+         if NOT (iTerrain & TERRAIN_JUNGLE)
+         {
+            Cons(room_badmount_sound5, plPeriodic_sounds);
+         }
+
+      }
+
+      if (iTerrain & TERRAIN_JUNGLE)
+      {
+         piPeriodic_sounds = piPeriodic_sounds / 4;
+         lTempSounds = [ room_jungle_sound1, room_jungle_sound2,
+                         room_jungle_sound3, room_jungle_sound4,
+                         room_jungle_sound5, room_jungle_sound6,
+                         room_jungle_sound7, room_jungle_sound8,
+                         room_jungle_sound9, room_jungle_sound10,
+                         room_jungle_sound11, room_jungle_sound12,
+                         room_jungle_sound13, room_jungle_sound14,
+                         room_jungle_sound15, room_jungle_sound16,
+                         room_jungle_sound17, room_jungle_sound18,
+                         room_jungle_sound19, room_jungle_sound20,
+                         room_jungle_sound21, room_jungle_sound22,
+                         room_jungle_sound23, room_jungle_sound24,
+                         room_jungle_sound25
+                       ];
+
+         for rSound in lTempSounds
+         {
+            plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
+         }
+      }
+
+      if (iTerrain & TERRAIN_BEACH) OR (iTerrain & TERRAIN_LAKE)
+      {
+         piPeriodic_sounds = piPeriodic_sounds / 2;
+         lTempSounds =  [ room_beach_sound1, room_beach_sound2,
+                          room_beach_sound3, room_beach_sound4,
+                          room_beach_sound5, room_beach_sound6,
+                          room_beach_sound7
+                        ];
+
+         for rSound in lTempSounds
+         {
+            plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
+         }
+
+         % Additional sounds for cities that are beaches (IE, waterfronts)
+         if (iTerrain & TERRAIN_CITY)
+         {
+            plPeriodic_sounds = Cons(room_waterfront_sound1,
+                                     plPeriodic_sounds);
+            plPeriodic_sounds = Cons(room_waterfront_sound2,
+                                     plPeriodic_sounds);
+         }
+      }
+
+      if (iTerrain & TERRAIN_NECROPOLIS)
+      {
+         piPeriodic_sounds = piPeriodic_sounds / 2;
+         lTempSounds =  [ room_necropolis_sound1, room_necropolis_sound2,
+                          room_necropolis_sound3, room_necropolis_sound4,
+                          room_necropolis_sound5, room_necropolis_sound6,
+                          room_necropolis_sound7, room_necropolis_sound8,
+                          room_necropolis_sound9
+                        ];
+
+         for rSound in lTempSounds
+         {
+            plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
+         }
+      }
+
+      if (iTerrain & TERRAIN_CAVES) AND NOT (iTerrain & TERRAIN_LAVA)
+      {
+         % We're only adding one sound, don't reduce piPeriodic_sounds.
+         lTempSounds = [ room_cave_sound1 ];
+
+         for rSound in lTempSounds
+         {
+            plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
+         }
+      }
+
+      % Special case for guild hall 11, which is both forest and indoors !?
+      if (iTerrain & TERRAIN_FOREST) AND NOT (iTerrain & TERRAIN_GUILDHALL)
+      {
+         piPeriodic_sounds = piPeriodic_sounds / 2;
+         lTempSounds = [ room_forest_sound1, room_forest_sound2,
+                         room_forest_sound3, room_forest_sound4,
+                         room_forest_sound5, room_forest_sound6,
+                         room_forest_sound7
+                       ];
+
+         for rSound in lTempSounds
+         {
+            plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
+         }
+      }
+
+      if (iTerrain & TERRAIN_SEWERS)
+      {
+         piPeriodic_sounds = piPeriodic_sounds / 2;
+         lTempSounds =  [ room_sewer_sound1, room_sewer_sound2,
+                          room_sewer_sound3, room_sewer_sound4
+                        ];
+
+         for rSound in lTempSounds
+         {
+            plPeriodic_sounds = Cons(rSound, plPeriodic_sounds);
+         }
+      }
+
+      piPeriodic_sounds = bound(piPeriodic_sounds,2000,20000);
+
+      return;
+   }
+
+   PeriodicSoundTimer()
+   {
+      local i, rSound, iFlags, iSoundX, iSoundY, iTime;
+
+      ptPeriodic_sounds = $;
+      if (plPeriodic_sounds = $)
+      {
+         return;
+      }
+
+      rSound = Nth(plPeriodic_sounds,Random(1,Length(plPeriodic_sounds)));
+
+      if (rSound <> $)
+      {
+         iFlags = SOUND_RANDOM_PLACE;
+         if pbPeriodic_sound_random_pitch
+         {
+            iFlags = iFlags | SOUND_RANDOM_PITCH;
+         }
+
+         iSoundX = 0;
+         iSoundY = 0;
+         if pbPeriodic_sound_random_location
+         {
+            if ( piCols = $ ) OR ( piRows = $ )
+            {
+               debug("Nil rows/cols in RID ",piRoom_num);
+
+               return;
+            }
+
+            iSoundX = Random(0,piCols);
+            iSoundY = Random(0,piRows);
+         }
+
+         for i in plActive
+         {
+            Send(First(i),@WaveSendUser,#wave_rsc=rSound,#flags=iFlags,
+                 #row=iSoundY,#col=iSoundX);
+         }
+      }
+
+      if plPeriodic_sounds <> $
+      {
+         iTime = piPeriodic_sounds;
+         % Add a bit of fuzziness to the delay.
+         iTime = iTime + Random(-piPeriodic_sounds/5,piPeriodic_sounds/5);
+         ptPeriodic_sounds = CreateTimer(self,@PeriodicSoundTimer,iTime);
+      }
+
+      return;
+   }
+
+   % Tell client to begin playing room-owned sounds that loop
+   SendLoopingSounds(who = $)
+   {
+      local lLoopSound, iRadius, iMaxVol;
+
+      % Each sound is:
+      %  [wave_file, row, col, cutoff radius, maximum volume, object]
+
+      if who <> $
+      {
+         for lLoopSound in plLooping_sounds
+         {
+            iRadius = 0;
+            iMaxVol = 0;
+            if length(lLoopSound) > 3
+            {
+               iRadius = Nth(lLoopSound,4);
+            }
+
+            if length(lLoopSound) > 4
+            {
+               iMaxVol = Nth(lLoopSound,5);
+            }
+
+            Send(who,@WaveSendUser,#wave_rsc=First(lLoopSound),
+                 #flags=SOUND_LOOP,
+                 #row=Nth(lLoopSound,2),#col=Nth(lLoopSound,3),
+                 #cutoff_radius=iRadius,#max_volume=iMaxVol);
+         }
+      }
+
+      return;
+   }
+
+   AddLoopingSound(lSoundData = $)
+   {
+      local iRadius, iMaxVol, oObject;
+
+      if lSoundData <> $
+      {
+         plLooping_sounds = Cons(lSoundData,plLooping_sounds);
+
+         % Send sound to all players
+         iRadius = 0;
+         iMaxVol = 0;
+         if length(lSoundData) > 3
+         {
+            iRadius = Nth(lSoundData,4);
+         }
+
+         if length(lSoundData) > 4
+         {
+            iMaxVol = Nth(lSoundData,5);
+         }
+
+         for oObject in plActive
+         {
+            if IsClass(first(oObject),&User)
+            {
+               Send(first(oObject),@WaveSendUser,#wave_rsc=First(lSoundData),
+                    #flags=SOUND_LOOP,
+                    #row=Nth(lSoundData,2),#col=Nth(lSoundData,3),
+                    #cutoff_radius=iRadius,#max_volume=iMaxVol);
+           }
+        }
+      }
+
+      return;
+   }
+
+   RemoveObjectLoopingSound(what = $)
+   "Removes a looping sound added by an object."
+   {
+      local lSoundData;
+
+      for lSoundData in plLooping_sounds
+      {
+         if length(lSoundData) > 5
+            AND Nth(lSoundData,6) = what
+         {
+            plLooping_sounds = DelListElem(plLooping_sounds,lSoundData);
+         }
+      }
+
+      return;
+   }
+
+   SomethingKilled(what = $,victim = $)
+   {
+      local oSpell, oCaster;
+
+      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATHLINK);
+
+      if Send(self,@IsEnchanted,#what=oSpell)
+      {
+         oCaster = Send(self,@GetEnchantmentState,#what=oSpell);
+         Send(oSpell,@GiveKilledBenefits,#Caster=oCaster,#Victim=victim);
+      }
+
+      propagate;
+   }
+
+   GetTeleportRow()
+   {
+      return viTeleport_row;
+   }
+
+   GetTeleportCol()
+   {
+      return viTeleport_col;
+   }
+
+   GetTeleportAngle()
+   {
+      return viTeleport_angle;
+   }
+
+   IsHometown()
+   {
+      return Send(self,@CheckRoomFlag,#flag=ROOM_HOMETOWN);
+   }
+
+   IsGuestRoom()
+   {
+      return Send(self,@CheckRoomFlag,#flag=ROOM_GUEST_AREA);
+   }
+
+   Teleport(what=$)
+   "Admin supported."
+   "Teleports object to coordinates specified in class vars."
+   {
+      if Send(self,@GetTeleportRow) <> $ AND Send(self,@GetTeleportCol) <> $
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+              #new_row=Send(self,@GetTeleportRow),
+              #new_col=Send(self,@GetTeleportCol),
+              #new_angle=Send(self,@GetTeleportAngle));
+
+         return TRUE;
+      }
+
+      Send(what,@MsgSendUser,#message_rsc=room_no_teleport);
+
+      return FALSE;
+   }
+
+   CreateStandardExits()
+   "Nothing in this class.\n"
+   "Subclasses should set plExits appropriately."
+   {
+      return;
+   }
+
+   CreateStandardObjects()
+   "Nothing in this class.\n"
+   "Subclasses should create objects that should start out in this room."
+   {
+      return;
+   }
+
+   CreateOrnObjFromList(lObjlist = $)
+   "Useful for creating large amounts of ornamental objects in a room,\n"
+   "usually in CreateStandardObjects."
+   "Format: list of lists,"
+   "each list: [row, col, OO_TYPE] or [row, col, finerow, finecol, OO_TYPE]"
+   {
+      local lElement, oObject;
+
+      if lObjList = $
+      {
+         return;
+      }
+
+      for lElement in lObjList
+      {
+         if length(lElement) = 3
+         {
+            oObject = Create(&OrnamentalObject,#type=Nth(lElement,3));
+            Send(self,@NewHold,#what=oObject,
+                 #new_row=Nth(lElement,1),#new_col=Nth(lElement,2));
+         }
+         else
+         {
+            if length(lElement) = 5
+            {
+               oObject = Create(&OrnamentalObject,#type=Nth(lElement,5));
+               Send(self,@NewHold,#what=oObject,
+                    #new_row=Nth(lElement,1),#new_col=Nth(lElement,2),
+                    #fine_row=Nth(lElement,3),#fine_col=Nth(lElement,4));
+            }
+            else
+            {
+               debug("Sent invalid coord list to CreateOrnObjFromList:", first(lObjList));
+
+               return;
+            }
+         }
+      }
+
+      return;
+   }
+
+   CreateObjFromList(lObjlist = $, oObjectClassName = &Skull)
+   "Useful for creating large amounts of an object in a room,\n"
+   "usually in CreateStandardObjects."
+   "Format: list of lists,"
+   "each list: [row, col] or [row, col, finerow, finecol]"
+   {
+      local lElement;
+
+      if lObjList = $
+      {
+         return;
+      }
+
+      for lElement in lObjList
+      {
+         if length(lElement) = 2
+         {
+            Send(self,@NewHold,#what=Create(oObjectClassName),
+                 #new_row=Nth(lElement,1),#new_col=Nth(lElement,2));
+         }
+         else
+         {
+            if length(lElement) = 4
+            {
+               Send(self,@NewHold,#what=Create(oObjectClassName),
+                    #new_row=Nth(lElement,1),#new_col=Nth(lElement,2),
+                    #fine_row=Nth(lElement,3),#fine_col=Nth(lElement,4));
+            }
+            else
+            {
+               debug("Sent invalid coord list to CreateObjFromList:", first(lObjList));
+
+               return;
+            }
+         }
+      }
+
+      return;
+   }
+
+   GetRegion()
+   {
+      % identifies congruous world regions of rooms
+      % mortals cannot be teleported between different regions
+      % exceptions are carefully made:  dm spells damn/deliverance,
+      %  newbie portal, etc.
+
+      % region ids are simply key room ids:
+      %    rid_default for most of the mainland
+      %    rid_guest1 for all guest rooms
+      %    rid_newb1 for all newbie rooms
+      %    rid_outofgrace for the outofgrace room only
+      %    rid_kocaton for all kocaton island areas
+      %    rid_orc_cave for all orc cave (mainland-to-island-cave) areas
+
+      % this is ugly to do it here, but was lowest risk to add as an emergency patch
+      % change this later by overriding GetRegion() please!
+
+      if (piRoom_num >= RID_GUEST_BASE) and (piRoom_num < RID_NEWB_BASE)
+      {
+         return RID_GUEST_BASE;
+      }
+
+      if (piRoom_num >= RID_NEWB_BASE) and (piRoom_num <= RID_NEWB_MAX)
+      {
+         return RID_NEWB_BASE;
+      }
+
+      if (piRoom_num >= RID_KOCATAN) and (piRoom_num <= RID_KOCATAN_END)
+      {
+         return RID_KOCATAN;
+      }
+
+      if (piRoom_num = RID_GUILDH12) or (piRoom_num = RID_GUILDH13)
+      {
+         return RID_KOCATAN;
+      }
+
+      if (piRoom_num >= RID_ORC_CAVE1) and (piRoom_num <= RID_ORC_CAVE_END)
+      {
+         return RID_ORC_CAVE1;
+      }
+
+      if (piRoom_num >= RID_BRAX_START) and (piRoom_num <= RID_BRAX_END)
+      {
+         return RID_BRAX;
+      }
+
+      if piRoom_num = RID_GUILDH15
+      {
+         return RID_BRAX;
+      }
+
+      if piRoom_num = RID_OUTOFGRACE
+      {
+         return RID_OUTOFGRACE;
+      }
+
+      return RID_DEFAULT;
+   }
+
+   CreateYellZoneList()
+   "Creates a list of room ID numbers (RIDs) that yells are extended to.  Does "
+   "this by traversing plExits and plEdge_exits. Additional exits hardcoded "
+   "with somethingmoved can be propagated on down."
+   {
+      local i, j, bFound, iRID;
+
+      for i in plExits
+      {
+         iRID = Nth(i,3);
+
+         % Locked doors are less than 0.
+         if iRID > 0
+         {
+            bFound = FALSE;
+            for j in plYell_Zone
+            {
+               if j = iRID
+               {
+                  bFound = TRUE;
+                  break;
+               }
+            }
+
+            if not bFound and iRID <> piRoom_num
+            {
+               plYell_Zone = Cons(iRID, plYell_Zone);
+            }
+         }
+      }
+
+      for i in plEdge_Exits
+      {
+         iRID = Nth(i,2);
+         bFound = FALSE;
+         for j in plYell_Zone
+         {
+            if j = iRID
+            {
+               bFound = TRUE;
+               break;
+            }
+         }
+
+         if NOT bFound
+         {
+            plYell_Zone = Cons(iRID, plYell_Zone);
+         }
+      }
+
+      return;
+   }
+
+   DeletePassive()
+   "Deletes all passive objects in the room.  Be very careful with this!"
+   {
+      local lPassiveObject;
+
+      if (plPassive = $)
+      {
+         return;
+      }
+
+      for lPassiveObject in plPassive
+      {
+         Send(first(lPassiveObject),@Delete);
+      }
+
+      return;
+   }
+
+   Delete()
+   {
+      local i;
+
+      for i in plActive
+      {
+         if isClass(first(i),&StorageBox)
+         {
+            Send(SYS,@AddChestToList,#oChest=first(i));
+            Send(first(i),@EnterLimbo);
+         }
+      }
+
+      if ptDispose <> $
+      {
+         DeleteTimer(ptDispose);
+         ptDispose = $;
+      }
+
+      if ptPeriodic_sounds <> $
+      {
+         DeleteTimer(ptPeriodic_sounds);
+         ptPeriodic_sounds = $;
+      }
+
+      Send(SYS,@DeleteRoom,#what=self);
+      Send(self,@RemoveAllEnchantments);
+
+      propagate;
+   }
+
+   HustleUsersOutOfRoom(new_rid = $, new_row = $, new_col = $)
+   {
+      local oNewRoom, i, oUser;
+      oNewRoom = Send(SYS,@FindRoomByNum,#num=new_rid);
+      for i in plActive
+      {
+         oUser = Send(self,@HolderExtractObject,#data=i);
+         if isClass(oUser,&User)
+         {
+            if oNewRoom = $
+            {
+               Send(oUser,@AdminGotoSafety);
+            }
+            else
+            {
+               Send(SYS,@UtilGoNearSquare,#what=oUser,#where=oNewRoom,
+                    #new_row=new_row,#new_col=new_col);
+            }
+         }
+      }
+
+      return;
+   }
+
+   LoadRoomData()
+   {
+      local lRoom_data;
+
+      if prRoom = $
+      {
+         debug("Problems with",vrName,piRoom_num);
+      }
+
+      prmRoom = LoadRoom(prRoom);
+      lRoom_data = RoomData(prmRoom);
+      piRows = First(lRoom_data);
+      piCols = Nth(lRoom_data,2);
+      piSecurity = Nth(lRoom_data,3);
+
+      return;
+   }
+
+   ReqNewOwner()
+   {
+      return FALSE;
+   }
+
+   GetRoomSecurity()
+   {
+      return piSecurity;
+   }
+
+   GetRoomNum()
+   {
+      return piRoom_num;
+   }
+
+   GetRoomResource()
+   {
+      return prRoom;
+   }
+
+   GetRoomRows()
+   {
+      return piRows;
+   }
+
+   GetRoomCols()
+   {
+      return piCols;
+   }
+
+   GetRoomBackground()
+   {
+      return prBackground;
+   }
+
+   SafePlayerAttack()
+   % Should be called GetCanAttackPlayers
+   "Used to determine whether or not a player can attack another player"
+   "Without restrictions or repercussions.  Default is True.  May be"
+   "set to true in areas like arenas or hunting zones."
+   {
+      return Send(self,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH);
+   }
+
+   GetPermanentFlags()
+   {
+      return viPermanent_flags;
+   }
+
+   SetRoomFlag(flag=0, value=FALSE)
+   "This always requires the POSITIVE flag name."
+   {
+      if NOT Value
+      {
+         piRoom_Flags=piRoom_Flags & ~flag;
+      }
+      else
+      {
+         piRoom_Flags=piRoom_Flags | flag ;
+      }
+
+      return;
+   }
+
+   TrySetRoomFlag(flag=0,value = FALSE)
+   "This sees if the current flag differs from the permanent flag."
+   "If so, don't change it."
+   {
+      if (Send(self,@GetPermanentFlags) & flag) <> (piRoom_flags & flag)
+      {
+         return;
+      }
+
+      Send(self,@SetRoomFlag,#flag=flag,#value=value);
+
+      return;
+   }
+
+   SetRoomFlagToDefault(flag=0)
+   {
+      % Reset flag to its default state.
+      % But, during frenzy don't set no_combat flag in non-homerooms.
+      if (Send(self,@GetPermanentFlags) & flag)
+         AND NOT (Send(SYS,@GetChaosNight)
+                  AND flag = ROOM_NO_COMBAT
+                  AND NOT (Send(self,@GetPermanentFlags) & ROOM_HOMETOWN))
+      {
+         Send(self,@SetRoomFlag,#flag=flag,#value=TRUE);
+      }
+      else
+      {
+         Send(self,@SetRoomFlag,#flag=flag,#value=FALSE);
+      }
+
+      return;
+   }
+
+   CheckRoomFlag(flag=0)
+   "This always checks to be sure that the flag exists."
+   {
+      return (piRoom_Flags & flag);
+   }
+
+   CheckDefaultRoomFlag(flag=0)
+   "This always checks to be sure that the flag exists.  It checks the "
+   "permanent flags, ignoring whatever it may be set at at the time."
+   {
+      return (Send(self,@GetPermanentFlags) & flag);
+   }
+
+   CountMonsters(class = $,mastered = FALSE)
+   {
+      local n,i,each_obj;
+
+      if class = $
+      {
+         class = &Monster;
+      }
+
+      n = 0;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if isClass(each_obj, class)
+         {
+            if (NOT mastered) OR Send(each_obj,@GetMaster) <> $
+            {
+               n = n + 1;
+            }
+         }
+      }
+
+      return n;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   {
+      local oWatcher;
+
+      % Arena checks.
+      if Send(self,@IsArena)
+      {
+         oWatcher = Send(self,@GetWatcher);
+
+         % if a fight isnt in session, attack fails.
+         if NOT Send(oWatcher,@FightInSession)
+         {
+            return FALSE;
+         }
+
+         % if the afflicted person is not a combatant, attack fails.
+         if IsClass(victim,&Player)
+            AND NOT Send(oWatcher,@IsCombatant,#who=victim)
+         {
+            return FALSE;
+         }
+
+         % if the caster is not a combatant, attack fails.
+         if NOT Send(oWatcher,@IsCombatant,#who=what)
+         {
+            return FALSE;
+         }
+
+         % Anything else is legal in the Arena.
+         return TRUE;
+      }
+
+      if (piRoom_flags & ROOM_NO_COMBAT)
+      {
+         Send(what,@MsgSendUser,#message_rsc=room_no_attack);
+
+         return FALSE;
+      }
+
+      if (piRoom_flags & ROOM_NO_PK) AND IsClass(what,&Player)
+         AND (victim = $ OR IsClass(victim,&Player))
+      {
+         Send(what,@MsgSendUser,#message_rsc=room_no_pk_allowed);
+
+         return FALSE;
+      }
+
+      if (piRoom_flags & ROOM_GUILD_PK_ONLY) AND IsClass(what,&Player)
+         AND (victim = $ OR IsClass(victim,&Player))
+      {
+         if (NOT Send(self,@AllowGuildAttack,#what=what,#victim=victim))
+            AND Send(SYS,@IsPKAllowed)
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_guild_combat);
+
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   AllowGuildAttack(what = $, victim = $)
+   "Returns TRUE if you can attack in ROOM_GUILD_PK_ONLY locations."
+   {
+      local oSoldierShield, oOtherShield;
+
+      % Monsters can always attack.
+      if IsClass(what,&Monster)
+         OR (victim <> $ AND IsClass(victim,&Monster))
+      {
+         return TRUE;
+      }
+
+      oSoldierShield = Send(what,@FindUsing,#class=&SoldierShield);
+      oOtherShield = $;
+      if victim <> $
+      {
+         oOtherShield = Send(victim,@FindUsing,#class=&SoldierShield);
+      }
+
+      % What this if statement translates to:
+      % If we're in a room that restricts attacks to guilds only:
+      % And if there is a victim, if s/he does not have a token,
+      %  is unguilded and not a murder and doesn't have a soldier shield,
+      %  then the attack fails.
+      %  Or, if the person attacking is not in a guild and not a murder and
+      %   doesn't have a soldier shield, then the attack fails as well.
+      if Send(self,@CheckRoomFlag,#flag=ROOM_GUILD_PK_ONLY)
+         AND ((Send(what,@GetGuild) = $
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               AND oSoldierShield = $)
+              OR (victim <> $
+                  AND NOT Send(victim,@PossessesA,#class=&Token)
+                  AND Send(victim,@GetGuild) = $
+                  AND NOT Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+                  AND oOtherShield = $))
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   AddBaseLight(amount=$)
+   {
+      if amount <> $
+      {
+         piBaseLight = piBaseLight + amount;
+         Send(self,@AmbientLightChanged);
+      }
+
+      return;
+   }
+
+   SetBaseLight(amount=$)
+   {
+      if amount <> $
+      {
+         piBaseLight = amount;
+         Send(self,@AmbientLightChanged);
+      }
+
+      return;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if (piRoom_flags & ROOM_NO_MAGIC)
+      {
+         Send(who,@MsgSendUser,#message_rsc=room_no_magic_allowed);
+
+         return FALSE;
+      }
+
+      % Certain rooms do not allow attacks.
+      if (Send(oSpell,@IsHarmful)
+         OR Send(oSpell,@IsOutlawCast,#who=who,#ltargets=litems))
+         AND (piRoom_flags & ROOM_NO_COMBAT)
+      {
+         Send(who,@MsgSendUser,#message_rsc=room_no_attack);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SpellCast(who = $, oSpell = $, lItems = $)
+   {
+      local state, school, roomench;
+
+      school = Send(oSpell,@GetSchool);
+
+      if school = SS_SHALILLE
+      {
+         roomench = Send(SYS,@FindSpellByNum,#num=SID_SHALILLEBANE);
+         state = Send(self,@GetEnchantmentState,#what=roomench);
+         if state <> $
+         {
+            Send(roomench,@HurtCaster,#shalCaster=who,#iSpellPower=state,
+                 #shalSpellLevel=Send(oSpell,@GetLevel));
+         }
+      }
+
+      if school = SS_QOR
+      {
+         roomench = Send(SYS,@FindSpellByNum,#num=SID_QORBANE);
+         state = Send(self,@GetEnchantmentState,#what=roomench);
+         if state <> $
+         {
+            Send(roomench,@HurtCaster,#qorCaster=who,#iSpellPower=state,
+                 #qorSpellLevel=Send(oSpell,@GetLevel));
+         }
+      }
+
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the "
+   "improve_chance.  This supercedes (but still supports) the ROOM_HARD_LEARN "
+   "flag."
+   {
+      if Send(self,@CheckRoomFlag,#flag=ROOM_HARD_LEARN)
+      {
+         return (chance / 10);
+      }
+
+      return chance;
+   }
+
+   GetOutsideFactor()
+   {
+      return piOutside_factor;
+   }
+
+   GetRoomLight()
+   {
+      local iLight;
+
+      iLight = piBaseLight;
+      iLight = iLight + piOutside_factor*(Send(SYS,@SystemGetBrightness)-50)/4;
+      if iLight < LIGHT_MIN
+      {
+         iLight = LIGHT_MIN;
+      }
+
+      if iLight > LIGHT_MAX
+      {
+         iLight = LIGHT_MAX;
+      }
+
+      return iLight;
+   }
+
+   GetDirectionalLightIntensity()
+   {
+      return piDirectional_light;
+   }
+
+   GetDirectionalLightHeight()
+   {
+      local oSun;
+
+      oSun = Send(SYS,@GetSun);
+      if oSun = $
+      {
+         return 0;
+      }
+
+      return Send(oSun,@GetBackgroundOverlayHeight);
+   }
+
+   GetDirectionalLightAngle()
+   {
+      local oSun;
+
+      oSun = Send(SYS,@GetSun);
+      if oSun = $
+      {
+         return 0;
+      }
+
+      return Send(oSun,@GetBackgroundOverlayAngle);
+   }
+
+   DisposeTimer()
+   {
+      local iTime, iLen, i, oEachObj, count, delete_index;
+
+      ptDispose = $;
+      iTime = piDispose_delay + Random(-5000,5000);
+      ptDispose = CreateTimer(self,@DisposeTimer,iTime);
+
+      for i in plPassive
+      {
+         % If there is a player's corpse anywhere, don't clear it.
+         %  player's corpse has own delete timer.  Monster corpses
+         %  do not trigger this effect.
+
+         oEachObj = Send(self,@HolderExtractObject,#data=i);
+
+         if IsClass(oEachObj,&DeadBody) AND Send(oEachObj,@WasPlayer)
+         {
+            return;
+         }
+      }
+
+      if NOT pbUser_in_room
+      {
+         % If no one is here, then try to destroy everything.
+         Send(self,@DestroyDisposable);
+
+         return;
+      }
+      else
+      {
+         % Someone's in the room.  If there are more than 5 things in the room,
+         %  delete the 20% that are the oldest.  Note:  this may be screwed up
+         %  by permanent, non-deleting objects like trees and braziers.
+
+         iLen = Length(plPassive);
+         if iLen > 5
+         {
+            delete_index = 4*iLen/5;
+            count = 0;
+            for i in plPassive
+            {
+               count = count + 1;
+               if count > delete_index
+               {
+                  Send(First(i),@DestroyDisposable);
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   RecalcKocatanSkyGraphic(iWeather=0)
+   {
+      prBackground = background_stars;
+
+      if iWeather = WEATHER_DAY
+      {
+         prBackground = background_kocatan_afternoon_sky;
+      }
+
+      if iWeather = WEATHER_DAY_STORMY
+      {
+         prBackground = background_kocatan_afternoon_sky;
+      }
+
+      if iWeather = WEATHER_DUSK
+      {
+         prBackground = background_kocatan_evening_sky;
+      }
+
+      if iWeather = WEATHER_DUSK_STORMY
+      {
+         prBackground = background_kocatan_evening_sky;
+      }
+
+      if iWeather = WEATHER_DAWN
+      {
+         prBackground = background_kocatan_morning_sky;
+      }
+
+      if iWeather = WEATHER_DAWN_STORMY
+      {
+         prBackground = background_kocatan_morning_sky;
+      }
+
+      if iWeather = WEATHER_NIGHT
+      {
+         prBackground = background_kocatan_night_sky;
+      }
+
+      return;
+   }
+
+   RecalcBackgroundSkyGraphic(iWeather=0)
+   "Doing this this way allows us to have some zones, such as Ko'catan, have "
+   "different skies."
+   {
+      prBackground = background_night_sky;
+      if Send(self,@GetRegion) = RID_KOCATAN
+      {
+         Send(self,@RecalcKocatanSkyGraphic,#iWeather=iWeather);
+         return;
+      }
+
+      if iWeather = WEATHER_DAY
+      {
+         prBackground = background_light_sky;
+      }
+
+      if iWeather = WEATHER_DAY_STORMY
+      {
+         prBackground = background_afternoon_sky;
+      }
+
+      if iWeather = WEATHER_DUSK
+      {
+         prBackground = background_dusk_sky;
+      }
+
+      if iWeather = WEATHER_DUSK_STORMY
+      {
+         prBackground = background_evening_sky;
+      }
+
+      if iWeather = WEATHER_DAWN
+      {
+         prBackground = background_dusk_sky;
+      }
+
+      if iWeather = WEATHER_DAWN_STORMY
+      {
+         prBackground = background_morning_sky;
+      }
+
+      if iWeather = WEATHER_NIGHT
+      {
+         prBackground = background_night_sky;
+      }
+
+      return;
+   }
+
+   RecalcLightAndWeather()
+   {
+      local i,each_obj,iWeather, iRand;
+
+      % Change weather for background if outdoors and tell everyone the
+      %  background changed
+
+      iWeather = Send(SYS,@GetWeather);
+
+      if Send(SYS,@GetChaosNight)
+      {
+         Send(self,@AmbientLightChanged);
+
+         return;
+      }
+
+      Send(self,@RecalcBackgroundSkyGraphic,#iWeather=iWeather);
+      Send(self,@RecalculateDirectionalLight);
+
+      Send(self,@AmbientLightChanged);
+      Send(self,@BackgroundChanged);
+      Send(self,@DirectionalLightChanged);
+
+      return;
+   }
+
+   RecalculateDirectionalLight()
+   {
+      local oSun;
+
+      oSun = Send(SYS,@GetSun);
+      if oSun <> $
+      {
+         piDirectional_light = piDirectional_percent
+                               * Send(oSun,@GetBackgroundOverlayHeight)
+                               / 420 * 64 / 100;
+         piDirectional_light = Bound(piDirectional_light,0,64);
+      }
+
+      return;
+   }
+
+   SomeoneSaidRoom(what = $, type = $, string = $, parm1 = $, parm2 = $,
+                   parm3 = $, parm4= $, parm5 = $, parm6 = $, parm7 = $,
+                   parm8 = $)
+   {
+      local oRoom, i;
+
+      Send(self,@SomeoneSaid,#what=what,#type=type,#string=string,#parm1=parm1,
+           #parm2=parm2,#parm3=parm3,#parm4=parm4,#parm5=parm5,#parm6=parm6,
+           #parm7=parm7,#parm8=parm8);
+
+      if type = SAY_YELL
+      {
+         for i in plYell_Zone
+         {
+            oRoom = Send(SYS,@FindRoomByNum,#num=i);
+            if oRoom <> self
+            {
+               Send(oRoom,@SomeoneSaid,#what=what,#type=type,#string=string);
+            }
+         }
+      }
+
+      return;
+   }
+
+   GetYellZone()  % Includes THIS ROOM in list!!
+   {
+      return plYell_Zone;
+   }
+
+   ReqNewHold(what = $,new_row = $,new_col = $)
+   {
+      local i,each_obj,square_type;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if NOT Send(each_obj,@ReqSomethingEntered,#what=what)
+         {
+            return FALSE;
+         }
+
+         if IsClass(what,&Monster)
+            AND piRoom_Flags & ROOM_JIG
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   NewHold(what = $, new_angle = ANGLE_EAST, new_row = 1, new_col = 1,
+           fine_row = FINENESS/2, fine_col = FINENESS/2, session = $,
+           merge = TRUE)
+   {
+      local i,each_obj,bUser, lLoopSound;
+
+      if what = $
+      {
+         return;
+      }
+
+      bUser = IsClass(what,&User);
+
+      if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
+         OR new_angle = $
+      {
+         debug("Tried to NewHold",Send(what,@GetName),"at bad coords.");
+
+         return;
+      }
+
+      if merge AND isClass(what,&NumberItem)
+      {
+         for i in plPassive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+
+            if each_obj <> what AND Send(each_obj,@GetRow) = new_row
+               AND Send(each_obj,@GetCol) = new_col
+            {
+               if GetClass(what) = GetClass(each_obj)
+               {
+                  % Should only be one of these, so can quit loop if found.
+                  Send(each_obj,@AddNumber,#number=Send(what,@GetNumber));
+                  Send(what,@Delete);
+
+                  return;
+               }
+            }
+         }
+      }
+
+      if bUser
+      {
+         session = Send(what,@GetSession);
+         
+         Send(Send(SYS, @GetStatistics), @PlayerEnteredRoom,
+              #oRoom = self, #who = what);
+      }
+
+      Send(self,@NewHoldObject,#what=what,
+           #new_pos=[new_angle,new_row,new_col,fine_row,fine_col,session]);
+
+      return;
+   }
+
+   NewHoldObject(what = $,new_pos = $)
+   {
+      local iTimeLeft, i, each_obj;
+
+      % weight here just to be like normal holder
+      piBulk_hold = piBulk_hold + Send(what,@GetBulk);
+      piWeight_hold = piWeight_hold + Send(what,@GetWeight);
+
+      % The object still thinks it's with it's old owner.  If it's an item from
+      %   a player, then make sure the items don't disappear immediately.
+      if IsClass(what,&Item)
+         AND Send(what,@GetOwner) <> $
+         AND IsClass(Send(what,@GetOwner),&Player)
+      {
+         % Check the time currently left on the dipose timer.  Reset the timer
+         %  to a minute if we have less than a minute left.  This should cut
+         %  down on cases of someone dropping an object and it being cleaned up
+         %  immediately afterwards.
+         iTimeLeft = GetTimeRemaining(ptDispose);
+         if iTimeLeft < 60000
+         {
+            DeleteTimer(ptDispose);
+            ptDispose = CreateTimer(self,@DisposeTimer,60000);
+         }
+      }
+
+      Send(self,@HolderAddNode,#node=Cons(what,new_pos));
+
+      if IsClass(what,&User)
+      {
+         if NOT pbUser_in_room
+         {
+            Send(self,@FirstUserEntered,#what=what,#new_row=First(new_pos),
+                 #new_col=Nth(new_pos,2));
+         }
+
+         % Now send music.
+         Send(what,@SendRoomMusic,#music_rsc=prMusic);
+
+         % add room enchantment effects
+         for i in plEnchantments
+         {
+            % User will request to get enchantment icons, so don't need to send
+            %  here.
+            each_obj = Nth(i,2);
+            Send(each_obj,@StartEnchantmentNewOccupant,#who=what,
+                 #state=(Nth(i,3)));
+         }
+      }
+
+      return;
+   }
+
+   SendEnchantmentIcons(what = $)
+   "Users send this after GC to redisplay the enchantments in the room"
+   {
+      local i,each_obj;
+
+      for i in plEnchantments
+      {
+         each_obj = Nth(i,2);
+         Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
+      }
+
+      return;
+   }
+
+   SendSectorChanges(who = $)
+   "Called by user when gets into new room"
+   {
+      local i;
+
+      % it's a user, so send sector changes (with infinite speed)
+
+      for i in plSector_changes
+      {
+         Send(who,@SectorSendUser,#sector=First(i),#animation=Nth(i,2),
+              #height=Nth(i,3),#speed=0);
+      }
+
+      return;
+   }
+
+   SendSectorLightChanges(who = $)
+   "Called by user when gets into new room"
+   {
+      local i;
+
+      % it's a user, so send light changes
+      for i in plSector_light_changes
+      {
+         Send(who,@SectorLightSendUser,#sector=First(i),
+              #light_effect=Nth(i,2));
+      }
+
+      return;
+   }
+
+   SendWallChanges(who = $)
+   "Called by user when gets into new room"
+   {
+      local i;
+
+      % it's a user, so send wall changes
+
+      for i in plWall_changes
+      {
+         Send(who,@WallSendUser,#wall=First(i),#animation=Nth(i,2),
+              #first_group=Nth(i,3),#second_group=Nth(i,4),#speed=Nth(i,5),
+              #passable=Nth(i,6));
+      }
+
+      return;
+   }
+
+   SendTextureChanges(who = $)
+   "Called by user when gets into new room"
+   {
+      local i;
+
+      % it's a user, so send texture changes
+      for i in plTexture_changes
+      {
+         Send(who,@TextureSendUser,#id=First(i),#new_texture=Nth(i,2),
+              #flags=Nth(i,3));
+      }
+
+      return;
+   }
+
+   SendExtraRoomInfo()
+   {
+      AddPacket(4,Send(self,@GetWadingSound));
+      AddPacket(4,viClientFlags);
+      AddPacket(4,viOverrideDepth1);
+      AddPacket(4,viOverrideDepth2);
+      AddPacket(4,viOverrideDepth3);
+
+      return;
+   }
+
+   GetWadingSound()
+   {
+      return vrWading_Sound;
+   }
+
+   LeaveHold(what = $)
+   {
+      local i,each_obj;
+
+      if NOT IsClass(what,&User)
+      {
+         propagate;
+      }
+
+      % unenchant this one occupant
+      for i in plEnchantments
+      {
+         Send(Nth(i,2),@EndRoomEnchantment,#who=what,#state=Nth(i,3));
+      }
+
+      for i in plActive
+      {
+         each_obj = First(i);   % optimized for room
+         if IsClass(each_obj,&User) AND each_obj <> what
+         {
+            propagate;
+         }
+      }
+
+      Send(self,@LastUserLeft,#what=what);
+
+      propagate;
+   }
+
+   GetRoomPos(what = $)
+   {
+      local i;
+
+      for i in plActive
+      {
+         if First(i) = what
+         {
+            % This is [ row, col, fine_row, fine_col ].
+            return Rest(Rest(i));
+         }
+      }
+
+      for i in plPassive
+      {
+         if First(i) = what
+         {
+            % This is [ row, col, fine_row, fine_col ].
+            return Rest(Rest(i));
+         }
+      }
+
+      return $;
+   }
+
+   GetRoomAngle(what = $)
+   {
+      local i;
+
+      for i in plActive
+      {
+         if First(i) = what
+         {
+            return Nth(i,2);
+         }
+      }
+
+      for i in plPassive
+      {
+         if First(i) = what
+         {
+            return Nth(i,2);
+         }
+      }
+
+      return;
+   }
+
+   ReqSomethingUse(what = $, use_item = $)
+   {
+      if piRoom_Flags & ROOM_JIG
+      {
+         Send(what,@MsgSendUser,#message_rsc=no_use_jig);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   ReqSomethingApply(what = $, use_item = $,apply_on=$)
+   {
+      if piRoom_Flags & ROOM_JIG
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   ReqSomethingMoved(what = $, new_row = $, new_col = $, entering_room = FALSE,
+                     dir = $, server_validate = TRUE)
+   "Ask if possible for <what> to move to <new_row>,<new_col>. "
+   "<server_validate> is set to false for user moves, which have already been "
+   "checked by client (HAHA!)."
+   {
+      local i, each_obj, iRow, iCol, iLOS;
+
+      if new_row > piRows OR new_row < 1 OR new_col > piCols OR new_col < 1
+      {
+         % just let it try to move, since it will check when you
+         % go between rooms in RoomObjOffGrid
+         return TRUE;
+      }
+
+      if Send(what,@GetOwner) = self AND Send(self,@IsHolding,#what=what)
+      {
+         iRow = Send(what,@GetRow);
+         iCol = Send(what,@GetCol);
+      }
+      else
+      {
+         if entering_room and dir <> $
+         {
+            % If doing a normal room to room movement (not teleport across
+            %  rooms).
+            if dir = ENTER_NORTH
+            {
+               iRow = new_row - 1;
+               iCol = new_col;
+            }
+
+            if dir = ENTER_SOUTH
+            {
+               iRow = new_row + 1;
+               iCol = new_col;
+            }
+
+            if dir = ENTER_EAST
+            {
+               iRow = new_row;
+               iCol = new_col + 1;
+            }
+
+            if dir = ENTER_WEST
+            {
+               iRow = new_row;
+               iCol = new_col - 1;
+            }
+         }
+         else
+         {
+            % make sure it knows it's a teleport
+            iRow = -10;
+            iCol = -10;
+         }
+      }
+
+      if server_validate
+      {
+         iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
+
+         if iLOS = LOS_NEW_BOTH
+            OR (iLOS = LOS_NEW_MONSTER AND IsClass(what,&Monster))
+            OR (iLOS = LOS_NEW_PLAYER AND IsClass(what,&Player))
+         {
+            if NOT CanMoveInRoomFine(prmRoom,iRow,iCol,new_row,new_col)
+            {
+               return FALSE;
+            }
+         }
+         else
+         {
+            if NOT CanMoveInRoom(prmRoom,iRow,iCol,new_row,new_col)
+            {
+               return FALSE;
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   LineOfSight(obj1 = $, obj2 = $)
+   "Returns TRUE if there is a line of sight between obj1 and obj2"
+   {
+      local r, c, r2, c2, iRow, iCol, iRSign, iCSign, iLOS;
+
+      if Send(obj1,@GetOwner) <> Send(obj2,@GetOwner)
+      {
+         return FALSE;
+      }
+
+      r = Send(obj1,@GetRow);
+      c = Send(obj1,@GetCol);
+
+      if r = $ OR c = $
+      {
+         Debug("Can't get row or column for",obj1,Send(obj1,@GetTrueName),"in",Send(self,@GetName));
+
+         return FALSE;
+      }
+
+      r2 = r;
+      c2 = c;
+      iRow = Send(obj2,@GetRow);
+      iCol = Send(obj2,@GetCol);
+      if iRow = $ OR iCol = $
+      {
+         Debug("Can't get row or column for",obj2,Send(obj2,@GetTrueName),"in",Send(self,@GetName));
+
+         return FALSE;
+      }
+
+      if iRow - r >= 0
+      {
+         iRSign = 1;
+      }
+      else
+      {
+         iRSign = -1;
+      }
+
+      if iCol - c >= 0
+      {
+         iCSign = 1;
+      }
+      else
+      {
+         iCSign = -1;
+      }
+
+      while r <> iRow OR c <> iCol
+      {
+         % Generate new location to test
+         if abs(r-iRow) > abs(c-iCol)
+         {
+            r2 = r2 + iRSign;
+         }
+         else
+         {
+            c2 = c2 + iCSign;
+         }
+
+         % If we can't move there, we assume vision through this
+         %  location is blocked as well.  This assumption is violated
+         %  by, for example, fences and altitude changes in the floor.
+
+         iLOS = Send(Send(SYS, @GetSettings), @GetLOS);
+
+         % Making the assumption that obj1 is the "doer" in this case.
+         if iLOS = LOS_NEW_BOTH
+            OR (iLOS = LOS_NEW_MONSTER AND IsClass(obj1,&Monster))
+            OR (iLOS = LOS_NEW_PLAYER AND IsClass(obj1,&Player))
+         {
+            if NOT CanMoveInRoomFine(prmRoom,r,c,r2,c2)
+            {
+               return FALSE;
+            }
+         }
+         else
+         {
+            if NOT CanMoveInRoom(prmRoom,r,c,r2,c2)
+            {
+               return FALSE;
+            }
+         }
+
+         r = r2;
+         c = c2;
+      }
+
+      return TRUE;
+   }
+
+   SomethingMoved(what = $, new_row = $, new_col = $, fine_row = FINENESS/2,
+                  fine_col = FINENESS/2, cause = CAUSE_UNKNOWN, speed = 0,
+                  non_monsters_only = FALSE)
+   {
+      local i,temp,bFound,each_obj,packet_built;
+
+      if new_row = $ OR new_col = $ OR fine_row = $ OR fine_col = $
+      {
+         Debug("Tried to SomethingMoved",Send(what,@GetName),"at bad coords.");
+         new_row = viTeleport_row;
+         new_col = viTeleport_col;
+         fine_row = 32;
+         fine_col = 32;
+      }
+
+      if new_row > piRows
+      {
+         Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_SOUTH,#pos=new_col);
+
+         return;
+      }
+
+      if new_row < 1
+      {
+         Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_NORTH,#pos=new_col);
+
+         return;
+      }
+
+      if new_col > piCols
+      {
+         Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_EAST,#pos=new_row);
+
+         return;
+      }
+
+      if new_col < 1
+      {
+         Send(self,@StandardLeaveDir,#what=what,#dir=LEAVE_WEST,#pos=new_row);
+
+         return;
+      }
+
+      bFound = FALSE;
+
+      for i in plActive
+      {
+         if First(i) = what
+         {
+            SetNth(i,3,new_row);
+            SetNth(i,4,new_col);
+            SetNth(i,5,fine_row);
+            SetNth(i,6,fine_col);
+            bFound = TRUE;
+
+            break;
+         }
+      }
+
+      for i in plPassive
+      {
+         if First(i) = what
+         {
+            SetNth(i,3,new_row);
+            SetNth(i,4,new_col);
+            SetNth(i,5,fine_row);
+            SetNth(i,6,fine_col);
+            bFound = TRUE;
+
+            break;
+         }
+      }
+
+      if NOT bFound
+      {
+         % Couldn't find the thing to move.
+         return;
+      }
+
+      % If we propagated here, it should work but be inefficient.
+      % So instead we handle moving special to be fast.
+
+      % Here's the strategy:
+      % 1. Find the first user in the active list
+      % 2. Get this first user to build up the packet to send
+      % 3. Go through all the users and SendCopyPacket 'em
+
+      packet_built = FALSE;
+
+      temp = plActive;
+      while temp <> $
+      {
+         i = First(temp);
+
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            if not packet_built
+            {
+               Send(each_obj,@BuildPacketSomethingMoved,#what=what,
+                    #new_row=new_row,#new_col=new_col,
+                    #fine_row=fine_row,#fine_col=fine_col,
+                    #cause=cause,#speed=speed);
+               packet_built = TRUE;
+            }
+
+            if each_obj = what
+            {
+               % People need to know they moved, they store the coords
+               % However, sending this message could do addpackets... so we
+               %  need to reset
+               ClearPacket();
+               packet_built = FALSE;
+               Send(each_obj,@SomethingMoved,#what=what,
+                    #new_row=new_row,#new_col=new_col,
+                    #fine_row=fine_row,#fine_col=fine_col,
+                    #cause=cause,#speed=speed);
+            }
+            else
+            {
+               % This will be a user's session
+               SendCopyPacket(Nth(i,7));
+            }
+
+         }
+         else
+         {
+            if what = each_obj
+               OR NOT non_monsters_only
+               OR NOT IsClass(each_obj,&Monster)
+            {
+               ClearPacket();
+               packet_built = FALSE;
+               Send(each_obj,@SomethingMoved,#what=what,
+                    #new_row=new_row,#new_col=new_col,
+                    #fine_row=fine_row,#fine_col=fine_col,
+                    #cause=cause,#speed=speed);
+            }
+         }
+
+         temp = Rest(temp);
+      }
+
+      ClearPacket();
+
+      return;
+   }
+
+   SomethingTurned(what = $,new_angle = $,cause = CAUSE_UNKNOWN)
+   {
+      local i,bFound,each_obj,packet_built,temp;
+
+      bFound = FALSE;
+
+      for i in plActive
+      {
+         if First(i) = what
+         {
+            SetNth(i,2,new_angle);
+            bFound = TRUE;
+
+            break;
+         }
+      }
+      for i in plPassive
+      {
+         if First(i) = what
+         {
+            SetNth(i,2,new_angle);
+            bFound = TRUE;
+
+            break;
+         }
+      }
+
+      if not bFound
+      {
+         return;
+      }
+
+      if (new_angle >= MAX_ANGLE)
+      {
+         new_angle = new_angle mod MAX_ANGLE;
+      }
+
+      % if we propagated here, it should work but be inefficient.
+      % so instead we handle turning special to be fast.
+
+      % here's our strategy:
+      % 1. Find the first user in the active list
+      % 2. Get this first user to build up the packet to send
+      % 3. Go through all the users and SendCopyPacket 'em
+
+      packet_built = FALSE;
+
+      temp = plActive;
+      while temp <> $
+      {
+         i = First(temp);
+
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            % we don't send turns to non-users
+            if not packet_built
+            {
+               Send(each_obj,@BuildPacketSomethingTurned,#what=what,
+                    #new_angle=new_angle,#cause=cause);
+               packet_built = TRUE;
+            }
+
+            if each_obj <> what or cause <> CAUSE_USER_INPUT
+            {
+               % Seventh element will be a user's session
+               SendCopyPacket(Nth(i,7));
+            }
+         }
+
+         temp = Rest(temp);
+      }
+
+      ClearPacket();
+
+      return;
+   }
+
+   IsUserInRoom()
+   {
+      return pbUser_in_room;
+   }
+
+   FirstUserEntered()
+   {
+      local iTime;
+
+      pbUser_in_room = TRUE;
+
+      if plPeriodic_sounds <> $ AND ptPeriodic_sounds = $
+      {
+         iTime = piPeriodic_sounds;
+         iTime = iTime = Random(-piPeriodic_sounds/5,piPeriodic_sounds/5);
+         ptPeriodic_sounds = CreateTimer(self,@PeriodicSoundTimer,iTime);
+      }
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      pbUser_in_room = FALSE;
+
+      if (ptPeriodic_sounds <> $)
+      {
+         deleteTimer(ptPeriodic_sounds);
+         ptPeriodic_sounds = $;
+      }
+
+      propagate;
+   }
+
+   SetSector(sector = $,animation = $,height = $,speed = $)
+   "Call this to change the height of a sector (affects clients only, not "
+   "move grid)."
+   {
+      local i,each_obj;
+
+      % tell everyone in the room at the moment about the change
+
+      for i in plActive
+      {
+         each_obj = First(i);
+         Send(each_obj,@SectorSendUser,#animation=animation,#sector=sector,
+              #height=height,#speed=speed);
+      }
+
+      % and store so that new people in room will get the change
+
+      for i in plSector_changes
+      {
+         if First(i) = sector and Nth(i,2) = animation
+         {
+            SetNth(i,3,height);
+
+            return;
+         }
+      }
+
+      % not already in list, so add
+      plSector_changes = Cons([ sector, animation, height ],plSector_changes);
+
+      return;
+   }
+
+   SetSectorLight(sector = $,light_effect = $)
+   "Call this to change the light of a sector."
+   {
+      local i,each_obj;
+
+      % if this is being set to the same light effect it currently has,
+      % it must NOT send anything to client, because client will choke
+      for i in plSector_light_changes
+      {
+         if First(i) = sector AND Nth(i,2) = light_effect
+         {
+            return;
+         }
+      }
+
+      % tell everyone in the room at the moment about the change
+      for i in plActive
+      {
+         each_obj = First(i);
+         Send(each_obj,@SectorLightSendUser,#sector=sector,
+              #light_effect=light_effect);
+      }
+
+      % store so that new people in room will get the change
+      for i in plSector_light_changes
+      {
+         if First(i) = sector
+         {
+            SetNth(i,2,light_effect);
+            return;
+         }
+      }
+
+      % not already in list, so add
+      plSector_light_changes = Cons([ sector, light_effect ],
+                                    plSector_light_changes);
+
+      return;
+   }
+
+   AnimateWall(wall = $,animation = $,first_group = $,second_group = $,end_group = $,
+               speed = $,passable = $)
+   "Changes a wall in a room. <Passable> = $ means leave alone."
+   {
+      local i,each_obj;
+
+      % tell everyone in the room at the moment about the change
+      for i in plActive
+      {
+         each_obj = First(i);
+         Send(each_obj,@WallSendUser,#wall=wall,#animation=animation,
+              #first_group=first_group,#second_group=second_group,#speed=speed,
+              #passable=passable);
+      }
+
+      % and store so that new people in room will get the change
+
+      if animation = ANIMATE_ONCE
+      {
+         % translate one-times into permanent, for new people who enter
+         animation = ANIMATE_NONE;
+         first_group = end_group;
+      }
+
+      for i in plWall_changes
+      {
+         if First(i) = wall
+         {
+            SetNth(i,2,animation);
+            SetNth(i,3,first_group);
+            SetNth(i,4,second_group);
+            SetNth(i,5,speed);
+            SetNth(i,6,passable);
+
+            return;
+         }
+      }
+
+      % not already in list, so add
+      plWall_changes = Cons([wall, animation, first_group, second_group,
+                             speed, passable], plWall_changes);
+
+      return;
+   }
+
+   ChangeTexture(id = $,new_texture = $,flags = 0)
+   {
+      local i,each_obj;
+
+      % tell everyone in the room at the moment about the change
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@TextureSendUser,#id=id,#new_texture=new_texture,
+                 #flags=flags);
+         }
+      }
+
+      % and store so that new people in room will get the change
+      for i in plTexture_changes
+      {
+         if first(i) = id AND Nth(i,3) = flags
+         {
+            SetNth(i,2,new_texture);
+
+            return;
+         }
+      }
+
+      % not already in list, so add
+      plTexture_changes = Cons([ id, new_texture, flags ], plTexture_changes);
+
+      return;
+   }
+
+   HolderExtractObject(data = $)
+   {
+      return First(data);
+   }
+
+   StandardLeaveDir(what = $,dir = $,pos = $,new_room_num = $)
+   {
+      local i ,iAngle, iRoom, iRow, iCol;
+
+      iRoom = 0;
+      iRow = 0;
+      iCol = 0;
+
+      for i in plEdge_exits
+      {
+         if dir = First(i)
+         {
+            if Length(i) = 5
+            {
+               iRoom = Nth(i,2);
+               iRow = Nth(i,3);
+               iCol = Nth(i,4);
+
+               break;
+            }
+            else
+            {
+               if Nth(i,6) = ROW_IS_GREATER_THAN
+                  AND Send(what,@getrow) > Nth(i,7)
+               {
+                  iRoom = Nth(i,2);
+                  iRow = Nth(i,3);
+                  iCol = Nth(i,4);
+
+                  break;
+               }
+
+               if Nth(i,6) = ROW_IS_LESS_THAN
+                  AND Send(what,@getrow) < Nth(i,7)
+               {
+                  iRoom = Nth(i,2);
+                  iRow = Nth(i,3);
+                  iCol = Nth(i,4);
+
+                  break;
+               }
+
+               if Nth(i,6) = COL_IS_GREATER_THAN
+                  AND Send(what,@getcol) > Nth(i,7)
+               {
+                  iRoom = Nth(i,2);
+                  iRow = Nth(i,3);
+                  iCol = Nth(i,4);
+
+                  break;
+               }
+
+               if Nth(i,6) = COL_IS_LESS_THAN
+                  AND Send(what,@getcol) < Nth(i,7)
+               {
+                  iRoom = Nth(i,2);
+                  iRow = Nth(i,3);
+                  iCol = Nth(i,4);
+
+                  break;
+               }
+
+               if Nth(i,6) = NO_OTHER_CONDITIONS
+               {
+                  % Go through the loop, but if nothing else found then use
+                  %  this one.
+                  iRoom = Nth(i,2);
+                  iRow = Nth(i,3);
+                  iCol = Nth(i,4);
+               }
+            }
+         }
+      }
+
+      if iRoom <> 0
+      {
+         % Don't move monsters to new rooms.
+         if IsClass(what,&Monster)
+         {
+            % For now, just ignore monsters moving around.
+            % In the future, we want to throw it to a gen point.
+            %  Send(self,@GenerateMonster,#oMonster=what);
+
+            return;
+         }
+
+         if IsClass(what,&User) AND NOT Send(what,@UserReqNewOwner,#RID=iRoom)
+         {
+            return FALSE;
+         }
+
+         iAngle = Send(self,@TranslateAngleChange,#iAngle=Send(what,@GetAngle),
+                       #iAngle_Change=Nth(i,5));
+
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=iRoom),
+              #new_row=iRow,#new_col=iCol,#new_angle=iAngle);
+
+         return;
+      }
+
+      % NOTE: Avoid situations where the room has a bounding box that the thing
+      %  could walk through, but there is no LEAVE_<dir> entry in plEdge_exits
+      %  to say where to go.  It's a bad thing, but we just ignore it for now
+      %  taking the thing that goes outside the box nowhere.
+
+      return;
+   }
+
+   TranslateAngleChange(iAngle_change = 0, iAngle = 0)
+   {
+      if iAngle_change >= ROTATE_NONE
+      {
+         iAngle = (iAngle + (iAngle_change-ROTATE_NONE) * (MAX_ANGLE/8));
+      }
+      else
+      {
+         iAngle = (iAngle_change * (MAX_ANGLE/8));
+      }
+
+      % Make sure we don't go over max.
+      iAngle = iAngle mod MAX_ANGLE;
+
+      return iAngle;
+   }
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      local i, iAngle;
+
+      for i in plExits
+      {
+         if (row = First(i)) and (col = Nth(i,2))
+         {
+            if Nth(i,3) = ROOM_LOCKED_DOOR
+            {
+               if length(i) = 4
+               {
+                  Send(what,@MsgSendUser,#message_rsc=Nth(i,4));
+               }
+               else
+               {
+                  Send(what,@MsgSendUser,#message_rsc=room_door_is_locked);
+               }
+
+               Send(what,@WaveSendUser,#wave_rsc=room_sound_locked);
+
+               return TRUE;
+            }
+
+            if IsClass(what,&User)
+               AND NOT Send(what,@UserReqNewOwner,#RID=Nth(i,3))
+            {
+               return TRUE;
+            }
+
+            Send(what,@MsgSendUser,#message_rsc=room_door_was_opened);
+
+            iAngle = Send(self,@TranslateAngleChange,
+                          #iAngle=Send(what,@GetAngle),
+                          #iAngle_Change=Nth(i,6));
+
+            Send(what,@WaveSendUser,#wave_rsc=Send(self,@GetDoorSound));
+
+            Send(SYS,@UtilGoNearSquare,#what=what,
+                 #where=Send(SYS,@FindRoomByNum,#num=Nth(i,3)),
+                 #new_row=Nth(i,4),#new_col=Nth(i,5),#new_angle=iAngle);
+
+            return TRUE;
+         }
+      }
+
+      propagate;
+   }
+
+   GetDoorSound()
+   {
+      return vrDoor_sound;
+   }
+
+   SomethingWaveRoom(what = 0,wave_rsc = $)
+   "Don't send <what> if not from any particular object"
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         Send(First(i),@WaveSendUser,#wave_rsc=wave_rsc,#source_obj=what);
+      }
+
+      return;
+   }
+
+   EnchantmentTimer(timer = $)
+   {
+      local i,oEnchanter;
+
+      for i in plEnchantments
+      {
+         if First(i) = timer
+         {
+            if Length(i) >= 3
+            {
+               Send(Nth(i,2),@EndSpell,#where=self,#state=Nth(i,3));
+            }
+            else
+            {
+               Send(Nth(i,2),@EndSpell,#where=self,#state=$);
+            }
+
+            Send(self,@ShowUsersRemoveEnchantment,#what=Nth(i,2));
+            plEnchantments = DelListElem(plEnchantments,i);
+
+            return;
+         }
+      }
+
+      Debug("Enchantment timer went off with no enchantment",timer);
+
+      return;
+   }
+
+   PeriodicEnchantmentTimer(timer = $)
+   {
+      local i,oEnchanter;
+
+      for i in plEnchantments
+      {
+         if First(i) = timer
+         {
+            plEnchantments = DelListElem(plEnchantments,i);
+
+            if Length(i) >= 3
+            {
+               Send(Nth(i,2),@StartPeriodicEnchantment,#where=self,
+                    #state=Nth(i,3));
+            }
+            else
+            {
+               Send(Nth(i,2),@StartPeriodicEnchantment,#where=self,#state=$);
+            }
+
+            return;
+         }
+      }
+
+      return;
+   }
+
+   EnchantAllOccupants(what = $, iSpellPower=0)
+   {
+      local i, each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Player)
+         {
+            Send(what,@StartEnchantment,#who=each_obj,
+                 #iSpellPower=iSpellPower);
+         }
+      }
+
+      return;
+   }
+
+   UnenchantAllOccupants( what = $, state = $ )
+   {
+      local i, each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Player)
+         {
+            Send(what,@EndRoomEnchantment,#who=each_obj,#state=state);
+         }
+      }
+
+      return;
+   }
+
+   EnchantAllInRange(what = $, range = 0, center = $, monsters = FALSE,
+                     iSpellPower = 0)
+   "<center> is the reference object for range measurements."
+   {
+      local iRange_squared, iRowDiff, iColDiff, iRowCenter, iColCenter,
+            lEnchanted, each_obj, i;
+
+      lEnchanted = $ ;
+      iRange_squared = range * range ;
+      iRowCenter = Send(center,@GetRow);
+      iColCenter = Send(center,@GetCol);
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj, &Player)
+            OR (monsters and IsClass(each_obj, &Monster))
+         {
+            iRowDiff = iRowCenter - Send(each_obj,@GetRow);
+            iColDiff = iColCenter - Send(each_obj,@GetCol);
+            if (iRowDiff*iRowDiff + iColDiff*iColDiff) < iRange_squared
+            {
+               Send(what,@StartEnchantment,#who=each_obj,
+                    #iSpellPower=iSpellPower);
+               lEnchanted = Cons(each_obj,lEnchanted);
+            }
+         }
+      }
+
+      return lEnchanted;
+   }
+
+   RoomStartEnchantment(what=$,time=$,state=$,addicon=TRUE,lastcall=TRUE)
+   "Adds <what> to our enchantments, and creates a timer that will cause it "
+   "to end."
+   {
+      local oTimer;
+
+      if time <> $
+         AND time > 0
+      {
+         if lastcall
+         {
+            oTimer = CreateTimer(self,@EnchantmentTimer,time);
+         }
+         else
+         {
+            oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+         }
+      }
+      else
+      {
+         oTimer = $;
+      }
+
+      plEnchantments = Cons([ oTimer, what, state ],plEnchantments);
+
+      if addicon
+      {
+         Send(self,@ShowUsersAddEnchantment,#what=what);
+      }
+
+      return;
+   }
+
+   IsEnchanted(what = $)
+   "Returns whether or not currently enchanted by <what>."
+   "If <what> is $, returns TRUE if any room enchantments are present."
+   {
+      local i;
+
+      if what = $
+      {
+         if plEnchantments
+         {
+            return TRUE;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   GetEnchantmentState(what = $)
+   "If enchanted by <what>, return enchantment state."
+   {
+      local i;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            return Nth(i,3);
+         }
+      }
+
+      return $;
+   }
+
+   GetEnchantedState(what = $)
+   "If Enchanted by <what>, return enchantment state.  "
+   "A redirection to GetEnchantmentState to mimic the function call in Player."
+   {
+      return Send(self,@GetEnchantmentState,#what=what);
+   }
+
+   RemoveAllEnchantments()
+   "Remove all current enchantments."
+   {
+      local i;
+
+      for i in plEnchantments
+      {
+         Send(self,@RemoveEnchantment,#what=Nth(i,2));
+      }
+
+      return;
+   }
+
+   RemoveEnchantment(what = $, report = TRUE)
+   "If have a current enchantment set by <what>, end it."
+   {
+      local i;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            % Make sure timer isn't $, as in a perma-enchantment set by a room
+            %  or an admin.
+            if First(i) <> $
+            {
+               DeleteTimer(First(i));
+            }
+
+            Send(Nth(i,2),@EndSpell,#who=self,#state=Nth(i,3),#where=self,
+                 #report=report);
+            Send(self,@ShowUsersRemoveEnchantment,#what=what);
+            plEnchantments = DelListElem(plEnchantments,i);
+
+            return;
+         }
+      }
+
+      return;
+   }
+
+   ShowUsersAddEnchantment(what = $)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
+         }
+      }
+
+      return;
+   }
+
+   ShowUsersRemoveEnchantment(what = $)
+   {
+      local i, each_obj;
+
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@ShowRemoveEnchantment,#what=what,
+                 #type=ENCHANTMENT_ROOM);
+         }
+      }
+
+      return;
+   }
+
+   DestroyDisposable()
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@DestroyDisposable);
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@DestroyDisposable);
+      }
+
+      return;
+   }
+
+   AmbientLightChanged()
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@AmbientLightChanged);
+      }
+
+      if piRoom_flags & ROOM_LAMPS
+      {
+         for i in plPassive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            Send(each_obj,@AmbientLightChanged);
+         }
+      }
+
+      return;
+   }
+
+   DirectionalLightChanged()
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@ToCliShading);
+         }
+      }
+
+      return;
+   }
+
+   BackgroundChanged()
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@BackgroundChanged);
+      }
+
+      if piRoom_flags & ROOM_LAMPS
+      {
+         for i in plPassive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            Send(each_obj,@BackgroundChanged);
+         }
+      }
+
+      return;
+   }
+
+   StartChaosNight()
+   {
+      %% set the room flags so the only safe place in the world is the inns.
+
+      Send(self,@SetRoomFlag,#flag=ROOM_KILL_ZONE,#value=TRUE);
+      Send(self,@TrySetRoomFlag,#flag=ROOM_NO_COMBAT,#value=FALSE);
+      Send(self,@TrySetRoomFlag,#flag=ROOM_GUILD_PK_ONLY,#value=FALSE);
+      Send(self,@TrySetRoomFlag,#flag=ROOM_NO_PK,#value=FALSE);
+      Send(self,@TrySetRoomFlag,#flag=ROOM_NO_MAGIC,#value=FALSE);
+
+      % change the background graphic
+      prBackground = background_chaos_night;
+      Send(self,@BackgroundChanged);
+
+      return;
+   }
+
+   EndChaosNight()
+   "This should never be called in the real game!  Games should always be "
+   "restored manually!"
+   {
+      % Change all the room flags to the way that they are supposed to be.
+      Send(self,@SetRoomFlagToDefault,#flag=ROOM_KILL_ZONE);
+
+      if (Send(self,@GetPermanentFlags) & ROOM_NO_COMBAT)
+          AND NOT (piRoom_flags & ROOM_NO_COMBAT)
+      {
+         Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_COMBAT,#value=FALSE);
+      }
+
+      Send(self,@SetRoomFlagToDefault,#flag=ROOM_GUILD_PK_ONLY,#value=FALSE);
+      Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_PK,#value=FALSE);
+      Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_MAGIC,#value=FALSE);
+
+      % Restore the old background.
+      Send(self,@RecalcLightAndWeather);
+
+      return;
+   }
+
+   IsArena()
+   {
+      return FALSE;
+   }
+
+   IsValidTarget(who=$)
+   "Used for Arenas to see if something is a valid target.  Non-arenas just "
+   "return FALSE."
+   {
+      return FALSE;
+   }
+
+   GetWatcher()
+   "Used for Arenas to get the watcher."
+   {
+      return $;
+   }
+
+   CorpseFading(corpse=$)
+   {
+      local i;
+
+      for i in plPassive
+      {
+         Send(First(i),@ObjectCorpseFading,#corpse=corpse);
+      }
+
+      for i in plActive
+      {
+         Send(First(i),@ObjectCorpseFading,#corpse=corpse);
+      }
+
+      return;
+   }
+
+   StartTournament()
+   {
+      return;
+   }
+
+   EndTournament()
+   {
+      return;
+   }
+
+   RoomReqCommunication(who=$,type=$,string=$)
+   {
+      local oSpell;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SILENCE);
+
+      if Send(self,@IsEnchanted,#what=oSpell) AND (NOT IsClass(who,&DM))
+      {
+         Send(who,@MsgSendUser,#message_rsc=room_silenced_rsc);
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   ReqAssassinGameAttack(what=$)
+   {
+      local oWatcher;
+
+      if NOT Send(self,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+      {
+         return TRUE;
+      }
+
+      oWatcher = Send(self,@GetWatcher);
+
+      if oWatcher = $
+      {
+         return TRUE;
+      }
+
+      return Send(oWatcher,@ReqAssassinGameAttack,#what=what);
+   }
+
+   GetTerrainType()
+   {
+      return viTerrain_Type;
+   }
+
+   BreakTrance(who=$, event=$)
+   {
+      local i, oEnch, lState, bRetVal;
+
+      bRetVal = FALSE;
+
+      for i in plEnchantments
+      {
+         oEnch = Nth(i,2);
+         if IsClass(oEnch,&Jala)
+         {
+            lState = Nth(i,3);
+            if who = Nth(lState,2)
+            {
+               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,
+                              #state=lState,#location=self);
+            }
+         }
+
+         % It's a room enchantment! It's a trance spell! It's both!
+         %  It's Silence!  Handle the special case here.
+         if IsClass(oEnch,&Silence)
+         {
+            lState = Nth(i,3);
+            if who = First(lState)
+            {
+               bRetVal = Send(oEnch,@BreakTrance,#who=who,#event=event,
+                              #state=lState,#location=self);
+            }
+         }
+      }
+
+      return bRetVal;
+   }
+
+   RemoveSchoolEnchantments(school = $,report=TRUE)
+   {
+      local i,pSpell,each_obj,oSpell;
+
+      for i in plEnchantments
+      {
+         oSpell = Nth(i,2);
+         if Send(oSpell,@GetSchool) = school
+         {
+            Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
+         }
+      }
+
+      if IsClass(self,&Room)
+      {
+         for i in plActive
+         {
+            each_obj = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&Battler)
+            {
+               Send(each_obj,@RemoveSchoolEnchantments,#school=school,
+                    #report=report);
+            }
+         }
+      }
+
+      return;
+   }
+
+   DispelIllusionEnchantments(report = TRUE, iChance = 100)
+   {
+      local i,pSpell,each_obj,oSpell;
+
+      for i in plEnchantments
+      {
+         oSpell = Nth(i,2);
+         if Send(oSpell,@IsIllusion)
+            AND Random(1,100) <= iChance
+         {
+            Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
+         }
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Battler)
+         {
+            Send(each_obj,@DispelIllusionEnchantments,#report=report,
+                 #iChance=iChance);
+         }
+      }
+
+      return;
+   }
+
+   DispelIllusions(what = $, iChance = 100, bAll = TRUE)
+   {
+      local i, each_obj;
+
+      if NOT bAll
+      {
+         % This means we just want to dispel room illusions, not the specific
+         %  illusions in the room.  Usually because the caster is angeled.
+         return;
+      }
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(each_obj,@IsIllusion)
+            AND Random(1,100) <= iChance
+         {
+            Send(each_obj,@Delete);
+         }
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(each_obj,@IsIllusion)
+            AND Random(1,100) <= iChance
+         {
+            Send(each_obj,@Delete);
+         }
+      }
+
+      return;
+   }
+
+   GetJalaInfo()
+   "Returns all the info about the current Jala spell.  Returns a list of "
+   "[timer, spell object, state]."
+   {
+      local i,oSpell;
+
+      for i in plEnchantments
+      {
+         oSpell = Nth(i,2);
+         if Send(oSpell,@GetSchool) = SS_JALA
+         {
+            return i;
+         }
+      }
+
+      return $;
+   }
+
+   GetShalilleBonus()
+   {
+      local iTerrain;
+      iTerrain = Send(self,@GetTerrainType);
+
+      if (iTerrain & TERRAIN_FOREST)
+      {
+         return 25;
+      }
+
+      if (iTerrain & TERRAIN_JUNGLE)
+      {
+         return 25;
+      }
+
+      if (iTerrain & TERRAIN_MOUNTAIN)
+      {
+         return 20;
+      }
+
+      if (iTerrain & TERRAIN_SWAMP)
+      {
+         return 20;
+      }
+
+      if (iTerrain & TERRAIN_BADLANDS)
+      {
+         return 15;
+      }
+
+      if (iTerrain & TERRAIN_HILLS)
+      {
+         return 15;
+      }
+
+      if (iTerrain & TERRAIN_TUNDRA)
+      {
+         return 10;
+      }
+
+      if (iTerrain & TERRAIN_FIELDS)
+      {
+         return 10;
+      }
+
+      if (iTerrain & TERRAIN_DESERT)
+      {
+         return 5;
+      }
+
+      if (iTerrain & TERRAIN_BEACH)
+      {
+         return 5;
+      }
+
+      if (iTerrain & TERRAIN_NECROPOLIS)
+      {
+         return 0;
+      }
+
+      % Default: most likely underground.
+      return 0;
+   }
+
+   GetFarenBonus()
+   {
+      % There is some tricky math here, but it only needs to be
+      %  done once.  Store it as a property.
+      return piFaren_bonus;
+   }
+
+   ComputeFarenBonus()
+   {
+      local iBonus, iTerrain, i;
+
+      iBonus = 0;
+      iTerrain = Send(self,@GetTerrainType);
+
+      if (iTerrain & TERRAIN_LAVA)
+      {
+         iBonus = iBonus +  20;
+      }
+
+      if (iTerrain & TERRAIN_BEACH)
+      {
+         iBonus = iBonus +  20;
+      }
+
+      if (iTerrain & TERRAIN_WATERFALL)
+      {
+         iBonus = iBonus +  15;
+      }
+
+      if (iTerrain & TERRAIN_SWAMP)
+      {
+         iBonus = iBonus +  15;
+      }
+
+      if (iTerrain & TERRAIN_LAKE)
+      {
+         iBonus = iBonus +  10;
+      }
+
+      if (iTerrain & TERRAIN_RIVER)
+      {
+         iBonus = iBonus +  10;
+      }
+
+      if (iTerrain & TERRAIN_SEWERS)
+      {
+         iBonus = iBonus +  10;
+      }
+
+      if (iTerrain & TERRAIN_FOUNTAIN)
+      {
+         iBonus = iBonus +  5;
+      }
+
+      if (iTerrain & TERRAIN_BADLANDS)
+      {
+         iBonus = iBonus +  15;
+      }
+
+      if (iTerrain & TERRAIN_HILLS)
+      {
+         iBonus = iBonus +  15;
+      }
+
+      if (iTerrain & TERRAIN_TUNDRA)
+      {
+         iBonus = iBonus +  10;
+      }
+
+      if (iTerrain & TERRAIN_FIELDS)
+      {
+         iBonus = iBonus +  10;
+      }
+
+      if (iTerrain & TERRAIN_DESERT)
+      {
+         iBonus = iBonus +  5;
+      }
+
+      if (iTerrain & TERRAIN_BEACH)
+      {
+         iBonus = iBonus +  5;
+      }
+
+      for i in plPassive
+      {
+         if Send(First(i),@IsFire)
+         {
+            iBonus = iBonus + 1;
+         }
+      }
+
+      piFaren_bonus = bound(iBonus,0,30);
+
+      return;
+   }
+
+   DeleteAllMonsters()
+   {
+      local i, oMonster;
+
+      for i in plActive
+      {
+         oMonster = First(i);
+         if IsClass(oMonster,&Monster)
+         {
+            Send(oMonster,@Delete);
+         }
+      }
+
+      return;
+   }
+
+   FirstMove(what=$, new_row=0, new_col = 0)
+   {
+      local i, oTarg1, oTarg2, oTarg3, oTarg4, oTarg5,
+            iHate1, iHate2, iHate3, iHate4, iHate5, oBrain,
+            iHate, oTarg, iTempHate, oTempTarg;
+
+      if isClass(what,&user)
+      {
+         Send(what,@ResetMonsterChasers);
+      }
+
+      oTarg1 = $;
+      oTarg2 = $;
+      oTarg3 = $;
+      oTarg4 = $;
+      oTarg5 = $;
+      iHate1 = 0;
+      iHate2 = 0;
+      iHate3 = 0;
+      iHate4 = 0;
+      iHate5 = 0;
+      oBrain = $;
+
+      for i in plActive
+      {
+         if isClass(first(i),&monster)
+         {
+            if oBrain = $
+            {
+               oBrain = Send(first(i),@GetBrain);
+            }
+
+            iHate = Send(oBrain,@GetHatred,#what=what,#mob=first(i),
+                         #behavior=Send(first(i),@GetBehavior),#event=6);
+            oTarg = First(i);
+
+            if iHate > iHate1
+            {
+               iTempHate = iHate1;
+               iHate1 = iHate;
+               iHate = iTempHate;
+               oTempTarg = oTarg1;
+               oTarg1 = oTarg;
+               oTarg = oTempTarg;
+            }
+
+            if iHate > iHate2
+            {
+               iTempHate = iHate2;
+               iHate2 = iHate;
+               iHate = iTempHate;
+               oTempTarg = oTarg2;
+               oTarg2 = oTarg;
+               oTarg = oTempTarg;
+            }
+
+            if iHate > iHate3
+            {
+               iTempHate = iHate3;
+               iHate3 = iHate;
+               iHate = iTempHate;
+               oTempTarg = oTarg3;
+               oTarg3 = oTarg;
+               oTarg = oTempTarg;
+            }
+
+            if iHate > iHate4
+            {
+               iTempHate = iHate4;
+               iHate4 = iHate;
+               iHate = iTempHate;
+               oTempTarg = oTarg4;
+               oTarg4 = oTarg;
+               oTarg = oTempTarg;
+            }
+
+            if iHate > iHate5
+            {
+               iTempHate = iHate5;
+               iHate1 = iHate;
+               iHate = iTempHate;
+               oTempTarg = oTarg5;
+               oTarg5 = oTarg;
+               oTarg = oTempTarg;
+            }
+         }
+      }
+
+      % Okay, at this point we should know the five
+      %  monsters in the room that hate the player the
+      %  most.  sic' em.
+
+      Send(self,@TargetSwitchMob,#mob=oTarg1,#what=what);
+      Send(self,@TargetSwitchMob,#mob=oTarg2,#what=what);
+      Send(self,@TargetSwitchMob,#mob=oTarg3,#what=what);
+      Send(self,@TargetSwitchMob,#mob=oTarg4,#what=what);
+      Send(self,@TargetSwitchMob,#mob=oTarg5,#what=what);
+
+      return;
+   }
+
+   TargetSwitchMob(mob=$,what=$)
+   {
+      local oBrain;
+
+      if mob = $
+      {
+         return;
+      }
+
+      oBrain = Send(mob,@GetBrain);
+      if mob <> $
+      {
+         if Send(oBrain,@AttemptTargetSwitch,#mob=mob,#what=what,#event=7)
+         {
+            if Send(mob,@CanReach,#what=what)
+            {
+               Send(mob,@EnterStateAttack,#target=what,#actnow=TRUE);
+
+               return;
+            }
+
+            % If they hit us, we chase them whether we can see them or not
+            Send(mob,@EnterStateChase,#target=what,#actnow=TRUE);
+
+            return;
+         }
+      }
+
+      return;
+   }
+
+   FactionChanged(new_fact = $)
+   {
+      local i, oMonster;
+
+      if new_fact = $
+      {
+         return;
+      }
+
+      for i in plActive
+      {
+         oMonster = First(i);
+         if isClass(oMonster,&Monster)
+         {
+            Post(oMonster,@AffectMood,#why=MOODMOD_FACTION_CHANGE,
+                 #what=new_fact);
+         }
+      }
+
+      return;
+   }
+
+   WandererEntered(mob = $)
+   "Called when a wandering NPC arrives; used to trigger mood changes"
+   {
+      local i, oMonster;
+
+      if mob = $
+      {
+         return;
+      }
+
+      for i in plActive
+      {
+         oMonster = First(i);
+         if isClass(oMonster,&Monster)
+         {
+            Post(oMonster,@AffectMood,#why=MOODMOD_WANDERER_ENTERED,#what=mob);
+         }
+      }
+
+      return;
+   }
+
+   Rumble(duration=250, disruption=0)
+   {
+      local oTrance, oActive, i;
+
+      % Shake the ground.
+      % A chance each person might lose any active trance.
+
+      oTrance = Send(SYS,@FindSpellByNum,#num=SID_TRANCE);
+      for i in plActive
+      {
+         oActive = first(i);
+         if isClass(oActive,&Player)
+         {
+            Send(oActive,@EffectSendUserDuration,#effect=EFFECT_SHAKE,
+                 #duration=duration);
+            if random(1,100) < disruption
+               AND Send(oActive,@IsEnchanted,#what=oTrance)
+            {
+               % Post this so we don't disrupt Earthquake (which caused this
+               %  disruption).
+               Post(oActive,@BreakTrance,#event=EVENT_DISRUPT);
+            }
+         }
+      }
+
+      return;
+   }
+
+   ShowExits()
+   {
+      local i, oObject;
+
+      for i in plExits
+      {
+         oObject = Create(&Apple);
+         Send(self,@NewHold,#what=oObject,#new_row=Nth(i,1),#new_col=Nth(i,2));
+      }
+
+      return;
+   }
+
+   GetEnchantmentList()
+   {
+      return plEnchantments;
+   }
+
+   GetplPassive()
+   {
+      return plPassive;
+   }
+
+   GetplActive()
+   {
+      return plActive;
+   }
+
+   GetFlagRow()
+   {
+      return viFlag_row;
+   }
+
+   GetFlagCol()
+   {
+      return viFlag_col;
+   }
+
+   SeanceCheck()
+   {
+      return TRUE;
+   }
+
+   ArenaRealDeath()
+   {
+      % Should never get called from here but just in case . . .
+      debug("ArenaRealDeath() called in room.kod  Ergo: SNAFU  Q.E.D.");
+      return FALSE;
+   }
+
+   ShrineUsed()
+   {
+      return;
+   }
+
+   GenerateMonster()
+   "Just a stub function here."
+   {
+      % Do nothing.  To handle monsters going off the edge of the map
+      %  without a nasty IsClass check.
+      return;
+   }
+
+   CanHavePlayerPortal(who = $)
+   "Return whether it's permissible to have a player-created portal in this room. "
+   "who gives the player trying to create the portal."
+   {
+      % No portals into "historic" (i.e. inaccessible, dead) areas
+      if Send(self, @GetRegion) = RID_HISTORIC
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   ContainsNewsID(nid = $)
+   "Return whether this room contains a newsgroup with the given ID."
+   {
+      local num, oNews, i;
+      
+      % Have to check News and Newslink separately, as the classes aren't related.
+      num = Send(self, @CountHoldingHowMany, #class = &News);
+      i = 1;
+      while i <= num
+      {
+         oNews = Send(self, @FindHolding, #class = &News, #sequence = i);
+         if Send(oNews, @GetNewsNum) = nid
+         {
+            return TRUE;
+         }
+         i = i + 1;
+      }
+
+      num = Send(self, @CountHoldingHowMany, #class = &NewsLink);
+      i = 1;
+      while i <= num
+      {
+         oNews = Send(self, @FindHolding, #class = &NewsLink, #sequence = i);
+         if Send(oNews, @GetNewsNum) = nid
+         {
+            return TRUE;
+         }
+         i = i + 1;
+      }
+
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,14 @@
+# centipede, model (for Raza museum)
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 12
+6
+cen000kc.bmp   [0, 0] 
+cen315kc.bmp   [0, 0] 
+cen270kc.bmp   [0, 0] 
+cen180kc.bmp   [0, 0] 
+cen090kc.bmp   [0, 0] 
+cen045kc.bmp   [0, 0] 
+1
+ 8   1 2 3 4 4 4 5 6 

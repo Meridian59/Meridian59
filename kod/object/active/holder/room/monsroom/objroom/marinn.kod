@@ -1,0 +1,183 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarionInn is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_marinn = "The Limping Toad Inn and Tavern"
+   room_marinn = marinn.roo
+
+   marinn_music = bar.mid
+
+   news_marinn_name = "Events in Marion"
+   news_marinn_desc = "Find out what people are saying about Marion."
+
+   marnews_god_name = "Designers' News"
+   marnews_god_desc = "Check here for information from the game administrators."
+
+   marinn_rentableroom_door = "The door won't budge.  Strangely, it doesn't look like it opens at all.  "
+         "There is a small keyhole in the door, however.  Perhaps if you used a key in it, something "
+         "interesting might happen."
+
+classvars:
+
+   vrName = room_name_marinn
+
+   viTeleport_row = 11
+   viTeleport_col = 6
+
+   viPermanent_Flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_HOMETOWN | ROOM_SAFELOGOFF
+   
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prRoom = room_marinn
+   piRoom_num = RID_MAR_INN
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+
+   prMusic = marinn_music
+
+messages:
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      % some mugs
+
+      plObject_gen = Cons([ &Mug, GEN_ONE, 1, 14, 7,  36, 20 ],plObject_gen);
+      plObject_gen = Cons([ &Mug, GEN_ONE, 1,  14, 8, 12, 42 ],plObject_gen);
+      plObject_gen = Cons([ &Mug, GEN_ONE, 1,  14, 10, 8, 48 ],plObject_gen);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 4, 1, RID_MARION, 56, 53, ROTATE_NONE ],plExits);
+      plExits = Cons([ 12, 5, RID_MARION, 62, 57, ROTATE_NONE ],plExits);
+      plExits = Cons([ 12, 4, RID_MARION, 62, 57, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 5, 9, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+      plExits = Cons([ 5, 12, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+      plExits = Cons([ 5, 15, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+      plExits = Cons([ 5, 16, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+      plExits = Cons([ 7, 11, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+      plExits = Cons([ 7, 12, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+      plExits = Cons([ 7, 15, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+      plExits = Cons([ 7, 16, ROOM_LOCKED_DOOR, marinn_rentableroom_door ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      send(self,@NewHold,#what=Create(&Table),#new_row=11,#new_col=10,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Table),#new_row=11,#new_col=13,
+           #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Table),#new_row=11,#new_col=15,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Table),#new_row=13,#new_col=14,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=14,#new_col=12,
+           #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=13,#new_col=11,
+           #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=13,#new_col=9,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=14,#new_col=7,
+           #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=14,#new_col=15,
+           #fine_row=8,#fine_col=8,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=11,#new_col=14,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=11,#new_col=12,
+           #fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+      send(self,@NewHold,#what=Create(&Stool),#new_row=11,#new_col=9,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+
+      oNews = Create(&NewsLink,#nid=NID_ANNOUNCEMENTS,
+                     #name=marnews_god_name,#desc=marnews_god_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=13,#new_col=16,#fine_row=0);
+
+      send(self,@NewHold,#what=Create(&MarionInnKeeper),
+           #new_row=2,#new_col=4,#fine_row=48,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      send(self,@NewHold,#what=Create(&MarionBartender),
+           #new_row=14,#new_col=9,#fine_row=48,#fine_col=0,#new_angle=ANGLE_NORTH);
+
+      propagate;
+   }
+
+   % Force Morrigan's mood to follow Tova's
+   SetInnkeeperMood(iMood = $)
+   {
+      local i;
+
+      if (iMood = $)
+      {
+         return;
+      }
+
+      for i in plActive 
+      {
+         if IsClass(first(i), &MarionInnkeeper)
+         {
+            send(first(i),@SetMood,#new_mood=iMood);
+
+            return;
+         }
+      }
+      
+      return;
+   }
+
+   EnterRentableRoom(who=$)
+   "Sees if we are in the proper location to enter a rentable room in this inn."
+   {
+      local iRow, iCol;
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      
+      % coords: [5,9],[5,12],[5,15],[5,16],[7,11],[7,12],[7,15],[7,16]
+      if ( iRow = 5
+           AND (iCol = 9
+                OR iCol = 12
+                OR iCol = 15
+                OR iCol = 16) ) 
+         OR ( iRow = 7
+              AND (iCol = 11
+                   OR iCol = 12
+                   OR iCol = 15
+                   OR iCol = 16) )
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

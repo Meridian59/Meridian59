@@ -1,0 +1,11 @@
+;
+; DEF file for sprocket DLL
+; 
+
+EXPORTS
+	GetParseClientTable
+	InitSprocket       
+
+
+
+

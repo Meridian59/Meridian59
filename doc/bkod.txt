@@ -1,0 +1,166 @@
+bkod definition
+
+byte 1  = opcode
+
+     MSB      LSB
+byte : 00000000
+bit #: 76543210
+
+bits 7-5 are the command bits, bit 4 is the "dest" bit, bits 3 and 2
+are the "source1" bits, and bits 1 and 0 are the "source2"
+bits.  For some commands, the names "dest", "source1", and "source2" don't
+really correspond to useful names.  For example, return uses the "dest" bit
+as meaning propagate or no propagate.
+
+
+byte 2  = info
+byte 3+ = data
+--------------------------------------------------------------------------------
+unary assignment
+	destination	opcode value
+	local var	0000xx00 
+	property	0001xx00 
+
+xx = source location code
+
+byte 2 =
+	operation	info
+	logical not	0
+	unary minus	1
+	NONE		2
+	bitwise not	3
+
+bytes 3-6 are the destination index (either property id or local var)
+bytes 7-10 are the source index (either property id or local var or constant or class var)
+--------------------------------------------------------------------------------
+binary assignment
+	destination	opcode value
+	local var	0010xxyy
+	property	0011xxyy
+
+xx = source1 location code
+yy = source2 location code
+
+byte 2 =
+	operation	info
+	+		0
+	-		1
+	*		2
+	/		3
+	modulo		4
+	logical and	5
+	logical or	6
+	=		7
+	!=		8
+	<		9
+	>		10 
+	<=		11
+	>=		12
+	&		13
+	|		14
+
+bytes 3-6 are the destination index (either property id or local var)
+bytes 7-10 are the first source index (either property id or local var or class var)
+bytes 11-14 are the second source index (either property id or local var or class var)
+--------------------------------------------------------------------------------
+goto
+	check			opcode value
+	!= 0			0100xx00
+	= 0			0101xx00
+	always goto		01000001
+
+xx = location code of value to check
+
+bytes 2-5 are the destination address, relative to the beginning of this
+instruction
+
+bytes 6-9 are the index (either property id or local var or constant or class var)
+for conditional goto
+--------------------------------------------------------------------------------
+call
+	return value storage	opcode value
+	none			01101000 
+	local var		01100000 
+	property		01100100 
+
+	function		info
+object				
+	CreateObject		1
+	DeleteObject		2
+message
+	SendMessage		11
+	SendMessageList		12
+output	
+	Output			21
+string
+	StringEqual		31
+
+timer	SetTimer		51
+
+list
+	Cons			101
+	First			102
+	Rest			103
+	Length			104
+	Nth			105
+misc
+	Random			201
+
+
+If the return value is stored, the next 4 bytes are the destination index
+(either property id or local var).
+
+The next byte is the number of parameters to the function.  
+
+Each parameter follows, in the following format:
+
+	1 byte	type of parameter
+	4 bytes	value of parameter
+
+	type of parameter	type value
+	local var		0
+	property		1
+	constant		2
+	class variable		3
+
+The next byte is the number of match-by-name parameters.
+These parameters must be sorted in increasing match-by-name id.
+
+Each match-by-name parameter follows, in the following format:
+
+	4 bytes	match-by-name id (for the particular class & message being 
+				  called)
+	1 byte 	type of parameter
+	4 bytes	value of parameter
+
+	type of parameter	type value
+	local var		0
+	property		1
+	constant		2
+	class variable		3
+--------------------------------------------------------------------------------
+return
+	propagation	opcode value
+	no		1000xx00 
+	yes		10010000
+
+xx = location code of return value
+
+byte 2 is not an info byte.
+
+If there is no propagation, then bytes 2-5 are the return index
+(either property id or local var or constant).
+--------------------------------------------------------------------------------
+debug
+	opcode = 10100000
+
+byte 2 is not an info byte.
+bytes 2-5 are the source line number for the following bkod statements.
+--------------------------------------------------------------------------------
+
+location codes (2 bits)
+
+00 = local variable
+01 = property
+10 = constant
+11 = class variable

@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Shrub is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   shrub_icon_rsc = shrub.bgf
+   shrub_name_rsc = "shrub"
+   shrub_desc_rsc = "This is a woody plant with multiple permanent stems branching near the ground."
+
+classvars:
+
+   vrName = shrub_name_rsc
+   vrIcon = shrub_icon_rsc
+   vrDesc = shrub_desc_rsc
+
+properties:
+
+
+messages:
+
+   GetObjectFlags()
+   {
+      return LOOK_NO;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+

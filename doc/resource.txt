@@ -1,0 +1,365 @@
+=======================================================================================
+Resource files (.rsc)
+
+Compiling a .kod file generates a .rsc file, containing strings and their ID numbers.
+These files are sent to the clients.
+
+.rsc format:
+4 bytes magic number = 52 53 43 01 (in hex)
+4 bytes version ( = 2)
+4 bytes # of resources
+4 bytes		length of encrypted section of file
+4 bytes         response to challenge of version number (used in decryption)
+
+The rest of the file then follows, encrypted by the following password:
+"\x0F1\x071\x0C6\x0BB\x019\x06E\x02E\x071\0x6F"
+
+<resource>*
+
+<resource> =
+4 bytes   resource id
+<x bytes> null-terminated string (value of the resource)
+
+=======================================================================================
+Graphics files (.bgf)
+
+Contains bitmaps.
+
+4 bytes magic number = 42 47 46 11 (in hex)
+4 bytes version ( = 9)
+
+32 bytes bitmap name (null terminated)
+
+4 bytes number of <bitmap>s
+4 bytes number of <bitmap group>s
+4 bytes largest number of bitmaps in any single bitmap group
+4 bytes "shrink factor" of all bitmaps; divide by this to get size to draw bitmap on screen 
+<bitmap>*
+<bitmap group>*
+
+<bitmap group> = 
+4 bytes  number of <bitmap index>s
+<bitmap index>*
+
+<bitmap index> =
+4 bytes  index into bitmaps in file (starts counting from 0)
+
+<bitmap> = 
+4 bytes    width
+4 bytes    height
+4 bytes    x offset   (used for displaying one bitmap on another)
+4 bytes    y offset   (used for displaying one bitmap on another)
+1 byte     # of hotspots
+<hotspot>* hotspot locations
+1 byte     format of image, 0 = raw, 1 = compressed
+
+if format = 0
+4 bytes    unused (must be 0)
+(width * height) bytes  raw bytes of image
+
+if format = 1
+4 bytes    size of compressed image
+(width * height) bytes  raw bytes of image, compressed by Crusher
+
+The rows in a bitmap appear in order top to bottom.  Each row contains
+1 byte per column, left to right.  This byte's value is an index into
+the standard BlakSton palette.
+
+<hotspot> =
+1 byte   hotspot number (unique to this object and all its overlays)
+4 bytes  x coordinate
+4 bytes  y coordinate
+
+=======================================================================================
+Room file format (.roo):
+
+.roo format:
+4 bytes 	magic number = 52 4F 4F B1
+4 bytes 	version ( = 12)
+4 bytes         room security check (see below)
+4 bytes         offset in file of <main_info>
+4 bytes         offset in file of <server_info>
+<main_info>
+<server_info>
+
+Main section
+--------------
+
+<main_info> =
+4 bytes 	width of room (in FINENESS units)
+4 bytes 	height of room (in FINENESS units)
+4 bytes         offset of <node_subsection>
+4 bytes         offset of <client_wall_subsection>
+4 bytes         offset of <roomedit_wall_subsection>
+4 bytes         offset of <sidedef_subsection>
+4 bytes         offset of <sector_subsection>
+4 bytes         offset of <thing_subsection>
+
+If the width of the room is -1, then the main section is encrypted.  In
+this case, these bytes follow the -1:
+
+4 bytes		length of encrypted section of file
+4 bytes         response to challenge of room security check (used in decryption)
+
+The <main_info> then follows, encrypted by the following password:
+"\x015\x020\x053\x001\x0FC\x0AA\x064"
+
+
+---
+
+<node_subsection> = 
+2 bytes 	number of <BSP_node>s
+<BSP_node>*     nodes of tree; root must appear first
+
+<client_wall_subsection> = 
+2 bytes 	number of <client_wall>s
+<client_wall>*
+
+<roomedit_wall_subsection> = 
+2 bytes 	number of <roomedit_wall>s
+<roomedit_wall>*
+
+<sidedef_subsection> = 
+2 bytes 	number of <sidedef>s
+<sidedef>*
+
+<sector_subsection> = 
+2 bytes 	number of <sector>s
+<sector>*
+
+<thing_subsection> = 
+2 bytes 	number of <thing>s
+<thing>*
+
+---
+
+<BSP_node> =
+1 byte          1 if internal node, 2 if leaf node
+<box>		bounding box of node
+<internal_node> or <leaf_node>
+
+<internal_node> =
+<plane>		equation of this plane
+<node_id>	BSP node # of + subtree (0 if none, 1 = first wall in file)
+<node_id>	BSP node # of - right subtree (0 if none, 1 = first wall in file)
+2 bytes 	wall number of first wall in this plane (starts at 1 = first wall in file; 0 if none)
+
+<leaf_node> =
+2 bytes         sector number corresponding to this node (1 = first sector in file)
+2 bytes		# of points in polygon defining leaf node
+<point>*        points of polygon defining leaf node (clockwise order as seen from above)
+
+<client_wall> =
+2 bytes         next wall in list of walls in plane (0 if none)
+2 bytes         sidedef on + side of wall (0 = none, 1 = first sidedef in file)
+2 bytes         sidedef on - side of wall (0 = none, 1 = first sidedef in file)
+<point>		coordinates of start of wall
+<point>		coordinates of end of wall  (positive side is on right going start->end)
+2 bytes         length of wall (units: 1 grid square = length 64)
+2 bytes         texture x offset on positive side (units: 1 grid square = length 64)
+2 bytes         texture x offset on negative side (units: 1 grid square = length 64)
+2 bytes         texture y offset on positive side (units: 1 grid square = length 64)
+2 bytes         texture y offset on negative side (units: 1 grid square = length 64)
+2 bytes         sector number on + side of wall (0 = none, 1 = first sector in file)
+2 bytes         sector number on - side of wall (0 = none, 1 = first sector in file)
+
+<plane> =  (Ax + By + C = 0)
+4 bytes         A
+4 bytes         B
+4 bytes         C
+
+<box> = 
+<point>         coordinates of NW corner of bounding box
+<point>         coordinates of SE corner of bounding box
+
+<point> =
+4 bytes		x coordinate
+4 bytes		y coordinate
+
+<node_id> =
+2 bytes
+
+<sidedef> =
+2 bytes         user-defined id (used for referencing from server)
+2 bytes		grid ID # of normal bitmap on positive side of wall
+2 bytes		grid ID # of above bitmap on positive side of wall
+2 bytes		grid ID # of below bitmap on positive side of wall
+<wall_flags>	various characteristics of the wall
+1 byte		animation speed of bitmap on wall, in tenths of a frame per second
+
+<sector> =
+2 bytes         user-defined id (used for referencing from sector) (0 if none)
+2 bytes         grid ID # of floor bitmap
+2 bytes         grid ID # of ceiling bitmap
+2 bytes		x coordinate of origin of floor and ceiling textures (1 grid square = 64)
+2 bytes		y coordinate of origin of floor and ceiling textures (1 grid square = 64)
+2 bytes         floor height (units: 1 grid square high = 64)
+2 bytes         ceiling height (units: 1 grid square high = 64)
+1 byte          <light level>
+<sector_flags>	various characteristics of the sector
+1 byte          animation speed of bitmaps in sector, in tenths of a frame per second
+
+<light_level> = 
+0-127           sector not affected by ambient light; 0 = darkest, 127 = brightest
+128-255         sector affected by ambient light; 128 = darkest, 255 = brightest
+                192 = neutral
+
+<roomedit_wall> =
+2 bytes         sidedef on + side of wall (0 = none, 1 = first sidedef in file)
+2 bytes         sidedef on - side of wall (0 = none, 1 = first sidedef in file)
+2 bytes         texture x offset on positive side (units: 1 grid square = length 64)
+2 bytes         texture x offset on negative side (units: 1 grid square = length 64)
+2 bytes         texture y offset on positive side (units: 1 grid square = length 64)
+2 bytes         texture y offset on negative side (units: 1 grid square = length 64)
+2 bytes         sector # on + side of wall
+2 bytes         sector # on - side of wall
+<point>		coordinates of start of wall
+<point>		coordinates of end of wall  (positive side is on right going start->end)
+
+<thing> =
+<point>         location of thing
+
+<wall_flags> =
+4 bytes		(bit 0 is least significant)
+	bit 0 	1 if bitmaps on wall should be drawn backwards (left-right reversed)
+	bit 1 	1 if normal wall has some transparency
+	bit 2 	1 if objects can pass through wall
+	bit 3   1 if wall should never be shown on map
+	bit 4   1 if wall should always be shown on map
+	bit 5   1 if wall is transparent, but there's nothing behind it
+	bit 6   1 if upper wall should be drawn bottom up (default is top down)
+	bit 7   1 if lower wall should be drawn top down (default is bottom up)
+	bit 8   1 if normal wall should be drawn top down (default is bottom up)
+
+<sector_flags> =
+4 bytes		(bit 0 is least significant)
+	bits 0 and 1	"depth" of sector (for wading effects)
+			0 = no depth, 1 = shallow, 2 = deep, 3 = very deep
+Server section
+--------------
+
+<server_info> =
+4 bytes   	# of grid rows
+4 bytes   	# of grid cols
+<move_grid_player>     inter-square movement grid for players
+<flag_grid>            server square flags
+<move_grid_monster>    inter-square movement grid for monsters
+
+<move_grid_player> = 
+1 byte*         one byte for each square in the room, by row:  
+	(bit 0 is least significant) 
+	bit 0 	1 if possible to move to adjacent square to N
+	bit 1 	1 if possible to move to adjacent square to NE
+	bit 2 	1 if possible to move to adjacent square to E
+	bit 3 	1 if possible to move to adjacent square to SE
+	bit 4 	1 if possible to move to adjacent square to S
+	bit 5 	1 if possible to move to adjacent square to SW
+	bit 6 	1 if possible to move to adjacent square to W
+	bit 7 	1 if possible to move to adjacent square to NW
+
+<flag_grid> =
+1 byte* 	one byte for each square in the room, by row:  
+	(bit 0 is least significant) 
+	bit 0   1 if square is entirely within playable region (i.e. a real floor covers square)
+
+<move_grid_monster> = 
+   Same as move_grid_player, except that the calculation for moving to
+   adjacent squares is done differently.  Monsters are treated as
+   having a narrower width than players.
+
+--------------------------------
+
+The room security check is determined by:
+
+1) Calculate the 32 bit signed sum of the following things in the file:
+
+file version #
+for each internal_node in main section:
+  a, b, c coefficients of plane
+  wall number of first wall in plane
+for each leaf_node in main section:
+  x and y coordinates of each point
+for each client_wall in client section:
+  + and - sidedef numbers
+  x and y coordinates of start and end of wall
+  + and - sector numbers
+for each sidedef in main section:
+  user-defined id 
+  grid id #s of normal, above, and below walls
+  wall_flags value
+for each sector in client section:
+  user-defined id
+  grid ID #s of floor and ceiling
+  floor and ceiling heights
+  light level
+  sector_flags value
+
+2) XOR with 0x89ab786c
+
+=======================================================================================
+Map file format (.map):
+
+Contains saved automaps.
+
+4 bytes		magic number = 4D 41 50 0F
+4 bytes         version ( = 1)
+<header_table>
+<offset_table>*
+<map_info>*
+
+<header_table> = 
+<offset>        offset of first <offset_table> for <digits> 00; 0 if none
+..
+<offset>        offset of first <offset_table> for <digits> 99; 0 if none
+
+More <offset_table>s and <map_info>s occur interspersed in the file.
+
+<offset_table> = 
+<offset>	offset of next <offset_table> in file with same last 2 digits; 0 if none
+<offset_table_entry>*   100 entries
+
+<offset_table_entry> =
+<security>	room security value of a room, 0 if entry is invalid
+<offset>	offset of <map_info> for this room
+
+<map_info> =
+4 bytes		# of bits in bit_table = # of walls in room
+<bit_table>	which walls in room are saved as visible
+<offset>	offset in file of <annotations>, 0 if none
+
+<bit_table> =
+array of bits, 1 bit per wall in the room file, with the first bit corresponding
+to the first wall.  If the bit is 1, the corresponding wall should be shown on the map.
+The bit_table is rounded up in size to the nearest byte.
+
+<annotations> =
+4 bytes		number of <map_annotation>s
+<map_annotation>*
+
+<map_annotation> =
+4 bytes		x position of annotation (FINENESS units)
+4 bytes		y position of annotation (FINENESS units)
+100 bytes	text of annotation (null-terminated)
+
+<offset> =
+4 bytes		offset in bytes from the beginning of the file
+
+<security> =
+4 bytes		room security value
+
+=======================================================================================
+Old resource files (.rsc)
+
+Rsc files in this old format are used by the server to save dynamic resources (player names).
+
+.rsc format:
+4 bytes magic number = 52 53 43 01 (in hex)
+4 bytes version ( = 1)
+4 bytes # of resources
+<resource>
+
+each <resource> is
+4 bytes resource id
+4 bytes resource type (0 = filename, 1 = string)
+4 bytes length of data
+<data>

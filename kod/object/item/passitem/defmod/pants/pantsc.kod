@@ -1,0 +1,70 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PantsC is Pants
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   pantsC_icon_rsc = pantsC.bgf
+
+   pantsC_male_player_rsc = bfe.bgf
+   pantsC_female_player_rsc = bff.bgf
+
+classvars:
+
+   vrIcon = pantsC_icon_rsc
+
+   viGender = GENDER_MALE
+   vrLegs_male = pantsC_male_player_rsc
+   vrLegs_female = pantsC_female_player_rsc
+   viBroken_group = 3
+
+properties:
+
+   piItem_flags = PT_GRAY_TO_RED
+
+messages:
+
+   Constructor(translation = $,model = $, color = $)
+   {      
+      if translation <> $
+      {
+	      Send(self,@SetPaletteTranslation,#translation=translation);	 
+	      propagate;
+      }
+
+      if model <> $
+      {
+	      Send(self,@SetPaletteTranslation,#translation=Send(model,@GetPaletteTranslation));
+	      
+	      propagate;
+      }     
+
+      Send(self,@SetPaletteTranslation,#translation=PT_GRAY_TO_RED);
+	   
+      propagate;
+   }
+
+   GetInitValue()
+   {
+      if (send(self,@GetPaletteTranslation) = PT_GRAY_TO_RED)
+      {
+         return (viValue_average/2);
+      }
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

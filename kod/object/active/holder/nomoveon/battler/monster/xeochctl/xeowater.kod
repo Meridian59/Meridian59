@@ -1,0 +1,105 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+XeoWater is Xeochicatl
+
+constants:
+
+   include blakston.khd
+   
+   ANIM_CAST = 2     %% cast spell animation.             
+
+resources:
+
+   XeoWater_name_rsc = "ma'xeochicatl"
+   XeoWater_koc_name_rsc = "ma'xeo'chicatl"
+   XeoWater_icon_rsc = Xeo.bgf
+   XeoWater_desc_rsc = \
+      "Before you is a ma'xeochicatl, a fearsome monster given life by the chaotic "
+      "magic of the Meridian.  The ma'xeochicatl is the embodiment of destruction, "
+      "a violent monster that seems uncontrollable.  These monsters feed off of "
+      "the magic of the lands which makes them very powerful.  Rumors abound "
+      "about the origin of these monsters, but you have little time to contemplate "
+      "these rumors in the presence of such destructive power!"
+
+   XeoWater_sound_aware = xeo1awr.wav
+
+ classvars:
+
+   vrName = XeoWater_name_rsc
+   vrKocName = XeoWater_koc_name_rsc
+   
+   viAttack_types = ATCK_WEAP_MAGIC
+   viLevel = 190
+   viDifficulty = 8
+   viSpeed = SPEED_FAST
+   vrSound_aware = XeoWater_sound_aware
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piMana = 20
+
+   % percent of victim's max mana it will try to drain, double normal rate.
+   piDrainAmount = 10    
+
+   % What do we drop on death?
+   pcTreasureItem = &BlueHeartStone  
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 70, -ATCK_SPELL_COLD ],
+                        [-20, -ATCK_SPELL_FIRE ],
+                        [-10, ATCK_WEAP_MAGIC ],
+                        [100, -ATCK_SPELL_QUAKE ]
+                      ];
+         
+      piColor_Translation = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_BLUE);
+   
+      propagate;
+   }
+
+   ChooseSpell()
+   {
+      local iRandom;
+
+      iRandom = random(1,100);
+     
+      if iRandom < 30
+      {
+         return [SID_ENFEEBLE, 5];
+      }
+      else
+      {
+         if iRandom < 60
+         {
+            return [SID_HOLD, 5];
+         }
+         else
+         {
+            if iRandom < 90
+            {
+               return $; % removed for lag reasons: [SID_SUMMON_POISON_FOG, 5];
+            }
+            else
+            {
+               return [SID_SHATTER, 15];
+            }
+         }
+      }
+
+      return $;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

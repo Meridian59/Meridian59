@@ -1,0 +1,89 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Scroll is SpellItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Scroll_name_rsc = "scroll"
+   Scroll_label_name_rsc = "generic scroll"
+   Scroll_icon_rsc = scr07.bgf
+   Scroll_desc_rsc = \
+      "This scroll is covered with indecipherable mystical writing in a spidery hand."
+
+   Scroll_Broken = "The scroll burns and chars in your hands, crumbling to ashes."
+   Scroll_fails = "You finish reading the scroll, but nothing happens."
+   Scroll_Sense_Failure = "You sense that something is amiss and abort the casting in time to keep the scroll from misfiring."
+
+classvars:
+
+   vrLabelName = Scroll_label_name_rsc
+   vrIcon = Scroll_icon_rsc
+   vrFails = Scroll_fails
+   viSpellEffect = SID_LIGHT
+   viColor = XLAT_TO_RED
+
+   viUse_type = ITEM_SINGLE_USE
+
+   viObject_flags = GETTABLE_YES
+   viItem_type = ITEMTYPE_SCROLL
+   vbNoBrokenView = TRUE
+
+   vrIcon = Scroll_icon_rsc
+   vrDesc = Scroll_desc_rsc
+   vrBroken = Scroll_Broken
+
+   viValue_average = 120
+   viWeight = 3
+   viBulk = 5
+
+   viGround_group = 2
+   viInventory_group = 1
+
+   viHits_init_min = 1
+   viHits_init_max = 1
+
+properties:
+
+   vrName = Scroll_name_rsc
+
+   % Set to negative so it doesn't expire naturally.
+   piGoBadTime = -1
+
+messages:
+
+   DoFailure(what = $)
+   {    
+      local iInt, iRand;
+         
+      iInt = send(poOwner,@GetIntellect);
+      iRand = Random(1,70);
+      if iRand <= iInt
+      {        
+         piHits = 1;
+         Send(poOwner,@MsgSendUser,#message_rsc=Scroll_Sense_Failure,
+              #parm1=send(self,@GetCapDef),#parm2=send(self,@GetName));
+            
+      }
+      else
+      {	         
+         Send(what,@MsgSendUser,#message_rsc=Scroll_fails);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,27 @@
+# Pink mouth  2
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+-s 14
+14
+Pm000bad.bmp   [-14, -15] 
+Pm045bad.bmp   [-21, -14] 
+Pm090bad.bmp   [-17, -15] 
+Pm270bad.bmp   [-5, -14] 
+Pm315bad.bmp   [-6, -13] 
+Pm000bbd.bmp   [-14, -15] 
+Pm045bbd.bmp   [-21, -14] 
+Pm315bbd.bmp   [-6, -13] 
+Pm000bcd.bmp   [-14, -15] 
+Pm045bcd.bmp   [-21, -14] 
+Pm315bcd.bmp   [-6, -13] 
+Pm000bdd.bmp   [-14, -15] 
+Pm045bdd.bmp   [-21, -14] 
+Pm315bdd.bmp   [-6, -13] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

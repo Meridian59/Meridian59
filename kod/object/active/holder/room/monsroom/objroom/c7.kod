@@ -1,0 +1,93 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsC7 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsC7 = C7.roo
+   room_name_OutdoorsC7 ="Faronath, home of the TreeFolk"
+   OutdoorsC7_music = walk5.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsC7
+
+   viTeleport_row = 15
+   viTeleport_col = 19
+
+   viTerrain_type = TERRAIN_FOREST
+
+   viFlag_row = 42
+   viFlag_col = 15
+
+properties:
+
+   prRoom = room_OutdoorsC7
+   prMusic = OutdoorsC7_music
+   piRoom_num = RID_C7
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 45000
+   piGen_percent = 80
+
+   piInit_count_min = 6
+   piInit_count_max = 12
+
+   piMonster_count_max = 8
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Spider, 5], [&Ent, 95]];
+
+      plGenerators = [ [3, 11], [5, 35], [13, 10], [14, 22], [19, 7],
+		      [24, 11], [17, 18], [24, 24], [18, 35], [19, 42], 
+		      [23, 35], [39, 9], [45, 11], [40, 17], [34, 28],
+		      [41, 27], [38, 34], [37, 46] ];
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      plObject_gen = Cons([ &ElderBerry, GEN_INF, 3, 40, 18 ],plObject_gen);
+      plObject_gen = Cons([ &Elderberry, GEN_INF, 2, 20, 22 ],plObject_gen);
+      plObject_gen = Cons([ &Elderberry, GEN_INF, 2, 4, 8 ],plObject_gen);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 6, 13, RID_GUILDH7, 20, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 14, RID_GUILDH7, 20, 4, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_D7, 6, 3, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_C6, 45, 26, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,98 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BowmakerHut is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   room_name_BowmakerHut = "The Bowmaker's Hut"
+   room_BowmakerHut = bowmaker.roo
+   BowmakerHut_music = avarwar.mid
+
+   BowmakerHut_locked = "~kHanla zax'Ta says, \"You may not go back there.\""
+   fire_sound_bowmakerhut = fireplac.wav
+
+classvars:
+
+   vrName = room_name_BowmakerHut
+
+   viTeleport_row = 4
+   viTeleport_col = 4
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+   viPermanent_flags = ROOM_NO_COMBAT
+
+properties:
+
+   prRoom = room_BowmakerHut
+   piRoom_num = RID_JUNGLE_BOWMAKER_HUT
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = BowmakerHut_music
+
+messages:
+
+   Constructed()
+   {
+      %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      plLooping_sounds = [[ fire_sound_bowmakerhut, 4, 7, 10, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 2, 5, ROOM_LOCKED_DOOR, BowmakerHut_locked],plExits);
+      plExits = Cons([ 2, 6, ROOM_LOCKED_DOOR, BowmakerHut_locked],plExits);
+      plExits = Cons([ 2, 7, ROOM_LOCKED_DOOR, BowmakerHut_locked],plExits);
+      plExits = Cons([ 3, 7, ROOM_LOCKED_DOOR, BowmakerHut_locked],plExits);
+
+      %% to jungle
+      plExits = Cons([ 7, 4, RID_KA3, 29, 12, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 5, RID_KA3, 29, 12, ROTATE_NONE ],plExits);
+  
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1;
+      lObjCoords1 = [ [06,02,32,56,OO_quiver],[07,04,16,00,OO_quiver],
+                      [03,07,48,24,OO_ironpot],[02,07,16,40,OO_bluejug]
+                    ];
+
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+
+      send(self,@NewHold,#what=Create(&Candle),#new_row=2,#new_col=4,
+           #fine_row=56,#fine_col=40);
+      send(self,@NewHold,#what=Create(&Candle),#new_row=5,#new_col=3,
+           #fine_row=0,#fine_col=8);
+      
+      Send(self,@NewHold,#what=Create(&KocatanBowmaker),#new_row=3,#new_col=6,
+           #fine_row=56,#fine_col=32);
+
+      % Lighting
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_FIRE,#iIntensity=30),
+           #new_row=4,#new_col=7,#fine_row=16,#fine_col=32);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

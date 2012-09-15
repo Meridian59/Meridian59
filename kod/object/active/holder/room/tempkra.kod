@@ -1,0 +1,300 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TempleKraanan is Room
+
+constants:
+
+   SECTOR_DOOR = 1
+
+   RESET_TIME = 10000
+
+   DOOR_CLOSED = 0
+   DOOR_OPEN = 1
+
+   include blakston.khd
+
+resources:
+
+   room_name_templekra = "The Temple of Kraanan"
+   room_templekra = tempkra.roo
+   templekra_music = temple.mid
+
+   templekra_sound = down2.wav
+
+   tempkra_scimitar_name = "scimitar"
+   tempkra_scimitar_icon = scimitar.bgf
+   tempkra_scimitar_desc = "Kraanan's mighty scimitar."
+   tempkra_axe_name = "axe"
+   tempkra_axe_icon = axe.bgf
+   tempkra_axe_desc = "Kraanan's axe."
+   tempkra_longsword_name = "long sword"
+   tempkra_longsword_icon = sword.bgf
+   tempkra_longsword_desc = "Kraanan's long sword."
+   tempkra_hammer_name = "hammer"
+   tempkra_hammer_icon = hammer.bgf
+   tempkra_hammer_desc = "Kraanan's hammer."
+   tempkra_shortsword_name = "short sword"
+   tempkra_shortsword_icon = shswd.bgf
+   tempkra_shortsword_desc = "Kraanan's short sword."
+   tempkra_mace_name = "mace"
+   tempkra_mace_icon = mace.bgf
+   tempkra_mace_desc = "Kraanan's mace."
+   tempkra_goldshield_name = "gold round shield"
+   tempkra_goldshield_icon = rshield.bgf
+   tempkra_goldshield_desc = "Kraanan's gold shield."
+   tempkra_platearmor_name = "plate armor"
+   tempkra_platearmor_icon = plateamr.bgf
+   tempkra_platearmor_desc = "Kraanan's plate armor."
+   tempkra_knightshield_name = "knight's shield"
+   tempkra_knightshield_icon = mtlshld.bgf
+   tempkra_knightshield_desc = "Kraanan's shield of the knights."
+   tempkra_chainarmor_name = "chain armor"
+   tempkra_chainarmor_icon = chainamr.bgf
+   tempkra_chainarmor_desc = "Kraanan's chain armor."
+   tempkra_metalshield_name = "small round shield"
+   tempkra_metalshield_icon = metlshld.bgf
+   tempkra_metalshield_desc = "Kraanan's small round shield."
+
+classvars:
+
+   vrName = room_name_templekra
+
+   viTeleport_row = 47
+   viTeleport_col = 40
+
+   viTerrain_type = TERRAIN_TEMPLE | TERRAIN_MOUNTAIN
+
+properties:
+
+   prRoom = room_templekra
+   piRoom_num = RID_TEMPLE_KRAANAN
+
+   prMusic = templekra_music
+
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piPosition = DOOR_CLOSED
+
+   ptReset = $
+
+messages:
+
+   Delete()
+   {
+      if ptReset <> $
+      {
+         DeleteTimer(ptReset);
+         ptReset = $;
+      }
+
+      propagate;
+   }
+
+   ResetTimer()
+   {
+      ptReset = $;
+
+      if piPosition = DOOR_OPEN
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=templekra_sound);
+         send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=92,#speed=16);
+         piPosition = DOOR_CLOSED;
+      }
+     
+      return;
+   }
+
+
+   SomethingTryGo(what = $,row = $,col = $)
+   {
+      local lPassive,i,each_obj;
+      
+      if ((row = 30 AND col = 20)
+          OR (row = 31 AND col = 20))
+         AND piPosition = DOOR_CLOSED
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=templekra_sound); 
+         send(self,@SetSector,#sector=SECTOR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=164,#speed=16);
+         piPosition = DOOR_OPEN;
+         ptReset = CreateTimer(self,@ResetTimer,RESET_TIME);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([ LEAVE_SOUTH, RID_G9, 43, 3, ROTATE_NONE ], plEdge_exits); 
+
+      return;
+   }
+   
+   CreateStandardObjects()
+   {
+      % priestess
+      
+      Send(self,@NewHold,#what=Create(&KraananPriestess),
+           #new_row=13,#new_col=20,#fine_row=24,#fine_col=32,#new_angle=ANGLE_SOUTH);
+
+      % Braziers,Weapons, and Armor, Inside Temple
+
+      % Braziers
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=11,#new_col=18);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=11,#new_col=22);
+
+      % Altar
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_scimitar_name,
+                                      #icon=tempkra_scimitar_icon,
+                                      #desc=tempkra_scimitar_desc),
+           #new_row=14,#new_col=20,#fine_row=16);
+      
+      % Left side, Weapons
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_axe_name,
+                                      #icon=tempkra_axe_icon,
+                                      #desc=tempkra_axe_desc),
+           #new_row=10,#new_col=16,#fine_row=0,#fine_col=0);
+      
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_longsword_name,
+                                      #icon=tempkra_longsword_icon,
+                                      #desc=tempkra_longsword_desc),
+           #new_row=14,#new_col=14);
+      
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_hammer_name,
+                                      #icon=tempkra_hammer_icon,
+                                      #desc=tempkra_hammer_desc),
+           #new_row=20,#new_col=13,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_shortsword_name,
+                                      #icon=tempkra_shortsword_icon,
+                                      #desc=tempkra_shortsword_desc),
+           #new_row=26,#new_col=14);
+
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_mace_name,
+                                      #icon=tempkra_mace_icon,
+                                      #desc=tempkra_mace_desc),
+           #new_row=31,#new_col=16,#fine_row=0,#fine_col=0);
+
+      % Right side, Armor
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_knightshield_name,
+                                      #icon=tempkra_knightshield_icon,
+                                      #desc=tempkra_knightshield_desc),
+           #new_row=10,#new_col=25,#fine_row=0,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_platearmor_name,
+                                      #icon=tempkra_platearmor_icon,
+                                      #desc=tempkra_platearmor_desc,
+                                      #display=2),
+           #new_row=14,#new_col=26);
+
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_goldshield_name,
+                                      #icon=tempkra_goldshield_icon,
+                                      #desc=tempkra_goldshield_desc),
+           #new_row=20,#new_col=28,#fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_chainarmor_name,
+                                      #icon=tempkra_chainarmor_icon,
+                                      #desc=tempkra_chainarmor_desc,
+                                      #display=2),
+           #new_row=26,#new_col=26);
+
+      Send(self,@NewHold,#what=Create(&DecoItem,#name=tempkra_metalshield_name,
+                                      #icon=tempkra_metalshield_icon,
+                                      #desc=tempkra_metalshield_desc),
+           #new_row=31,#new_col=25,#fine_row=0,#fine_col=0);
+      
+      % Pillars around perimeter
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=6,#new_col=20,#fine_row=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=7,#new_col=19,#fine_row=48,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=7,#new_col=16,#fine_row=48,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=10,#new_col=13,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=13,#new_col=13,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=14,#new_col=12,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=19,#new_col=12,#fine_row=0,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=20,#new_col=10,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=22,#new_col=12,#fine_row=0,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=26,#new_col=12,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=28,#new_col=13,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=31,#new_col=13,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=33,#new_col=16,#fine_row=16,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=31,#new_col=17,#fine_row=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=31,#new_col=19,#fine_row=48,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=7,#new_col=22,#fine_row=48,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=7,#new_col=25,#fine_row=48,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=10,#new_col=27,#fine_row=0,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=13,#new_col=27,#fine_row=0,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=14,#new_col=28,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=19,#new_col=28,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=20,#new_col=30,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=22,#new_col=28,#fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=26,#new_col=28,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=28,#new_col=27,#fine_row=0,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=31,#new_col=27,#fine_row=0,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=33,#new_col=25,#fine_row=16,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=31,#new_col=23,#fine_row=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=31,#new_col=21,#fine_row=48,#fine_col=48);
+
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      if IsClass(oSpellSkill,&Spell)
+         AND send(oSpellSkill,@GetSchool) = SS_KRAANAN
+      {
+         % Give a 10% bonus.
+         return ((chance * 11)/10);
+      }
+
+      return chance;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

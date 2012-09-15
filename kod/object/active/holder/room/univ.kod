@@ -1,0 +1,89 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+University is Room
+
+constants:
+
+
+   include blakston.khd
+
+resources:
+
+   room_university = univ.roo
+   room_name_university = "Meridian University"
+   univ_music = main.mid
+
+classvars:
+
+   vrName = room_name_university
+
+   viTeleport_row = 16
+   viTeleport_col = 8
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SAFELOGOFF
+   viTerrain_type = TERRAIN_MYSTICAL
+
+properties:
+
+   prRoom = room_university
+   prMusic = univ_music
+   piRoom_num = RID_UNIVERSITY
+
+   piBaseLight = LIGHT_NICE
+
+messages:
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=4,#new_col=6,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=4,#new_col=9,#fine_row=0);
+
+      Send(self,@NewHold,#what=Create(&HellPortal),#new_row=17,#new_col=2);
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %plExits = Cons([ 54, 30, RID_I3, 7, 11, ROTATE_NONE ],plExits);
+      %plExits = Cons([ 54, 31, RID_I3, 7, 12, ROTATE_NONE ],plExits);
+
+      return;
+   }
+
+   SomeoneSaid(what=$,string=$,type=$)
+   {
+      local i, bFound;
+
+      if type = SAY_DM and StringEqual(string,"portal")
+      {
+         bFound = FALSE;
+         for i in plActive
+         {
+            if isClass(first(i),&HellPortal)
+            { send(first(i),@delete);  bFound = TRUE; }
+         }
+         if not bFound
+         {
+            Send(self,@NewHold,#what=Create(&HellPortal),#new_row=17,#new_col=2);
+         }
+      }
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

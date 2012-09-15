@@ -1,0 +1,35 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HospiceWand is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   HospiceWand_label_name_rsc = "wand of rejuvenation"
+   HospiceWand_desc_rsc = "Magical energy crackles about this slender wand."
+
+classvars:
+
+   vrLabelName = HospiceWand_label_name_rsc
+   viSpellEffect = SID_HOSPICE
+   viColor = XLAT_TO_SKY
+
+properties:
+
+   vrDesc = HospiceWand_desc_rsc
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

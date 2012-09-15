@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlueHeartStone is HeartStone
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BlueHeartStone_name_rsc = "blue heartstone"
+   BlueHeartStone_desc_rsc = \
+	"This is called a 'heartstone'.  It is a huge blue gem taken from the body of a "
+	"fallen Ma'Xeochicatl.  It wiggles slightly and is cool to the touch.  The uses for "
+	"this gem are not widely known."
+	
+classvars:
+   
+   vrName = BlueHeartStone_name_rsc
+   vrDesc = BlueHeartStone_desc_rsc
+
+   viValue_average = 100
+   viWeight = 20
+   viBulk = 10
+
+   viColor = XLAT_TO_BLUE
+
+properties:
+
+messages:
+
+   CreateXeo()
+   {
+      return Create(&XeoWater,#InAttack=Send(self,@IsInAttack));
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,22 @@
+# Ice person torsso and left arm
+# groups
+# 1 all views
+# 2 wounded
+# 3 very wounded
+# Hotspots
+# 21 Right arm
+# 41 legs
+-s 1
+8
+icet000a.bmp   [0, -20] :2     21 [9, 17]  41 [20, 38]
+icet045a.bmp   [0, -20] :2     21 [10, 21]  41 [21, 39]
+icet090a.bmp   [0, -20] :2     21 [9, 20] -41 [10, 39]
+icet180a.bmp   [0, -20] :2    -21 [31, 16]  41 [22, 36]
+icet270a.bmp   [0, -20] :2    -21 [11, 19] -41 [14, 38]
+icet315a.bmp   [0, -20] :2     21 [8, 22] -41 [18, 38]
+icet000b.bmp   [0, -20] :2     21 [11, 19]  41 [19, 38]
+icet000c.bmp   [0, -20] :2     21 [8, 17]  41 [18, 36]
+3
+ 8      1   6   5   4   4   4   3   2
+ 8      7   6   5   4   4   4   3   2
+ 8      8   6   5   4   4   4   3   2

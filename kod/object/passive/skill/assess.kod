@@ -1,0 +1,126 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Assess is Skill
+
+constants:
+   include blakston.khd
+
+resources:
+
+   assess_name_rsc = "assess"
+   assess_icon_rsc = light.bgf
+   assess_desc_rsc = \
+   "This is a crude and often inaccurate technique used to gauge how good an opponent is in the art of hand-to-hand combat."
+
+   assess_below_20 = "%s%s is a twig, waiting to be broken."    
+   assess_20_30 = "%s%s is an infant of the battlefield."
+   assess_30_40 = "%s%s fights hardly better than a lowly squire."
+   assess_40_50 = "%s%s possesses not talent, but great potential."
+   assess_50_60 = "%s%s has a good sense in the ways of combat."
+   assess_60_70 = "%s%s is firmly competent on the battlefield."
+   assess_70_80 =  "%s%s shows the scars of many battles."
+   assess_80_90 = "%s%s is certainly no one to be trifled with."
+   assess_90_100 = "%s%s wins many conflicts without so much as shrugging."
+   assess_100_150 = "%s%s possesses near super-human abilities on the battlefield."
+   assess_150_up = "%s%s could crush you like a bug!"
+
+   assess_self = "Who?  This person?  A cinch!"
+
+classvars:
+
+   vrName = assess_name_rsc
+   vrIcon = assess_icon_rsc
+   vrDesc = assess_desc_rsc
+
+   viSkill_num = SKID_assess
+   vischool = SKS_BRAWLING
+
+   viSkill_level = 50
+
+properties:
+
+   piSkillExertion = 5
+
+messages:
+
+   CanPayCosts(who = $, oTarget = $)
+   {
+      %debug("CanPayCosts in Assess");
+      
+      if oTarget=who
+        {
+           send(who,@msgsenduser,#message_rsc=assess_self);
+           return FALSE;
+        }
+
+      if not IsClass(oTarget, &battler)
+      {
+         Send(who, @MsgSendUser, #message_rsc=skill_bad_target, 
+           #parm1=vrName,#parm2=Send(otarget,@GetCapDef),#parm3=Send(otarget,@GetName));
+	 return False;
+      }
+
+      propagate;   % Check other things higher up
+   }
+
+   DoSkill(who = $, oTarget = $)
+   {
+      local dodge, health, slash, strength,agility,totalpower, message;
+
+      %debug("got to DoSkill in Assess.");
+
+      if isclass(oTarget,&user)
+      {
+	 dodge=send(otarget,@getskillability,#skill_num=SKID_DODGE);
+	 health=send(otarget,@getmaxhealth);
+	 slash=send(otarget,@getskillability,#skill_num=SKID_SLASH);
+	 strength=send(otarget,@getmight);
+	 agility=(send(oTarget,@getagility));
+	 totalpower=(dodge+health+slash+strength+agility)/4;
+      }
+      else
+      {
+	 totalpower=send(oTarget,@getlevel);
+      }
+      message = $;
+
+      if totalpower < 20
+        { message = assess_below_20; }
+      if totalpower > 19 and totalpower < 30
+        { message = assess_20_30 ;  }
+      if totalpower > 29 and totalpower < 40
+        { message = assess_30_40 ;  }
+      if totalpower > 39 and totalpower < 50
+        { message = assess_40_50 ;  }
+      if totalpower > 49 and totalpower < 60
+        { message = assess_50_60 ;  }
+      if totalpower > 59 and totalpower < 70
+        { message = assess_60_70 ;  }
+      if totalpower > 69 and totalpower < 80
+        { message = assess_70_80 ;  }
+      if totalpower > 79 and totalpower < 90
+        { message = assess_80_90 ;  }
+      if totalpower > 89 and totalpower < 100
+        { message = assess_90_100 ;  }
+      if totalpower > 99 and totalpower < 150
+        { message = assess_100_150 ;  }
+      if message = $
+        { message = assess_150_up ; }
+
+      Send(who, @MsgSendUser, #message_rsc=message,
+          #parm1=send(oTarget,@getdef),#parm2=send(oTarget,@getname));
+       
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

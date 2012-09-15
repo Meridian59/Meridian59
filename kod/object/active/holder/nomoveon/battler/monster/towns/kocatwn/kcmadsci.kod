@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanMadScientist is KocatanTown
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanMadScientist_name_rsc = "Bahal zax'Ot"
+   KocatanMadScientist_icon_rsc = kcmadsci.bgf
+   KocatanMadScientist_desc_rsc = "Leering at you as if you were a potential subject "
+      "for some twisted experiment, Bahal smiles and chortles to himself.  The moody "
+      "little man seems unnaturally obsessed with the horrific and the bizarre."
+
+   %KocatanMadScientist_entry_welcome = ""
+   
+classvars:
+
+   vrName = KocatanMadScientist_name_rsc
+   vrIcon = KocatanMadScientist_icon_rsc
+   vrDesc = KocatanMadScientist_desc_rsc
+   viMerchant_markup = MERCHANT_EXPENSIVE
+
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viOccupation = MOB_ROLE_WIZARD
+
+properties:
+   
+messages:
+
+   AffectMood( why = $, what = $ )
+   {
+      if( why = MOODMOD_DAWN )
+      {
+	 send( self, @SetMood, #new_mood = piMood - 5 );
+	 return;
+      }
+      if( why = MOODMOD_DUSK )
+      {
+	 send( self, @SetMood, #new_mood = piMood + 5 );
+	 return;
+      }
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      local iFlags;
+      if Send(who,@GetAction)=UA_HAPPY
+      {
+	 send( self, @SetMood, #new_mood = piMood - 1 );
+      }
+      if Send(who,@GetAction)=UA_WRY
+      {
+	 send( self, @SetMood, #new_mood = piMood + 1 );
+      }
+      iFlags = send( who, @GetObjectFlags );
+      if iFlags & PLAYER_PK
+      {
+	 send( self, @SetMood, #new_mood = piMood + 1 );
+	 propagate;
+      }
+      if not (iFlags & PLAYER_OUTLAW)
+      {
+	 send( self, @SetMood, #new_mood = piMood - 1 );
+      }
+%      Post(poOwner,@SomeoneSaid,#what = self, #string=KocatanTailor_entry_welcome,
+%         #type = SAY_RESOURCE);
+      propagate;
+   }
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

@@ -1,0 +1,53 @@
+# Scorpion
+# 6 groups
+# 1 standing
+# 2-3 walking
+# 4-6 attacking
+
+-s 1
+36
+scor000s.bmp
+scor045s.bmp
+scor090s.bmp
+scor180s.bmp
+scor270s.bmp
+scor315s.bmp
+scor000a.bmp
+scor045a.bmp
+scor090a.bmp
+scor180a.bmp
+scor270a.bmp
+scor315a.bmp
+scor000b.bmp
+scor045b.bmp
+scor090b.bmp
+scor180b.bmp
+scor270b.bmp
+scor315b.bmp
+scra000a.bmp
+scra045a.bmp
+scra090a.bmp
+scra180a.bmp
+scra270a.bmp
+scra315a.bmp
+scra000b.bmp
+scra045b.bmp
+scra090b.bmp
+scra180b.bmp
+scra270b.bmp
+scra315b.bmp
+scra000c.bmp
+scra045c.bmp
+scra090c.bmp
+scra180c.bmp
+scra270c.bmp
+scra315c.bmp
+
+6
+8    1     6    5    4    4    4    3    2
+8    7    12   11   10   10   10    9    8
+8   13    18   17   16   16   16   15   14
+8   19    24   23   22   22   22   21   20
+8   25    30   29   28   28   28   27   26
+8   31    36   35   34   34   34   33   32
+

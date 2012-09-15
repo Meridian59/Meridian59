@@ -1,0 +1,95 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FountainJet is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   fountainjet_name_rsc = "fountain"
+   fountainjet_icon_rsc = fountjet.bgf
+   fountainjet_desc_rsc = "A spray of water from some underground source."
+
+   fountainjet_sound_rsc = fountain.wav
+
+classvars:
+
+   vrName = fountainjet_name_rsc
+   vrIcon = fountainjet_icon_rsc
+   vrDesc = fountainjet_desc_rsc
+
+properties:
+
+   % These settings are specific to the Duke's Feast Hall (RID_DUKE2).
+   piSoundRadius = 18
+   piSoundIntensity = 80
+
+messages:
+   
+   Constructor(iSoundRadius = 18, iSoundIntensity = 80)
+   {
+      piSoundRadius = iSoundRadius;
+      piSoundIntensity = iSoundIntensity;
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if poOwner <> $ AND IsClass(poOwner,&Room)
+      {
+         % Remove ourselves as part of the sound list.
+         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+      }
+
+      propagate;
+   }
+
+   NewOwner(what=$)
+   {
+      local lPosition, lSoundData;
+
+      % Check the old (current) owner.  It shouldn't happen, but let's be sane about it.
+      if poOwner <> $ AND IsClass(poOwner,&Room)
+      {
+         % Remove ourselves as part of the sound list.
+         send(poOwner,@RemoveObjectLoopingSound,#what=self);
+      }
+
+      if piSoundRadius AND what <> $ AND IsClass(what,&Room)
+      {
+         % Sound data is [wave_file, row, col, cutoff radius, maximum volume, object]
+         lPosition = send(what,@GetRoomPos,#what=self);
+         lSoundData = [fountainjet_sound_rsc, First(lPosition), Nth(lPosition,2),
+                       piSoundRadius, piSoundIntensity, self];
+         send(what,@AddLoopingSound,#lSoundData=lSoundData);
+      }
+
+		propagate;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,100,2,1,2,1);
+
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      return MOVEON_NO | LOOK_NO;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

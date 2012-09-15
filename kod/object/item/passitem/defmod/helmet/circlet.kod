@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Circlet is Helmet
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   circlet_name_rsc = "circlet"
+   circlet_icon_rsc = invcirc.bgf
+   circlet_desc_rsc = \
+      "This pewter stranded circlet is hot to the touch.  "
+      "A message inscribed on the inside of this magical "
+      "device reads \"Physical essence into magical power.\""
+
+   circlet_overlay_rsc = circlet.bgf
+
+classvars:
+
+   vrName = circlet_name_rsc
+   vrIcon = circlet_icon_rsc
+   vrDesc = circlet_desc_rsc
+
+   viHits_init_min = 355
+   viHits_init_max = 400
+
+   viValue_average = 350
+   viWeight = 20
+   viBulk = 15
+
+   viUse_type = ITEM_USE_HEAD
+   viUse_amount = 1
+
+   viGround_group = 1
+   viInventory_group = 1
+
+   viDefense_base = 5               % This is the default value for piDefense_bonus
+
+properties:
+
+   piMana_change = 0
+   piHealth_change = 0
+
+messages:
+
+   NewUsed()
+   {
+      local iHealthMod;
+
+      iHealthMod = bound(Send(poOwner,@GetMaxHealth)/7,5,20);
+      piHealth_change = Send(poOwner,@GainMaxHealth,#amount=-iHealthMod);
+      piMana_change = Send(poOwner,@NewMaxMana,#amount=-(2*piHealth_change));
+
+      propagate;
+   }
+
+   GetHealthChange()
+   {
+      return piHealth_change;
+   }
+
+   GetManaChange()
+   {
+      return piMana_change;
+   }
+
+   NewUnused()
+   {
+      Send(poOwner,@NewMaxMana,#amount=-piMana_change);
+      Send(poOwner,@GainMaxHealth,#amount=-piHealth_change);
+
+      piHealth_change = 0;
+      piMana_change = 0;
+
+      propagate;
+   }
+
+   % these 3 called by player, for normal 3rd-person overlays on user.
+
+   GetOverlay(animation = $)
+   {
+      return circlet_overlay_rsc;
+   }
+   
+   AdjustsMaxMana()
+   {
+      return TRUE;
+   }
+
+   AdjustsMaxHealth()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%an Arrow is a NumberItem used by a bow--it needs properties and procedures
+%for ShowSomething() and GetDamage()
+%
+Bolt is Ammo
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   bolt_name_rsc = "bolts"
+   bolt_icon_rsc = sphere.bgf           %NEEDS A PICTURE
+   bolt_desc_rsc = "These are fired from your typical crossbow."
+
+classvars:
+
+   vrName = bolt_name_rsc
+   vrIcon = bolt_icon_rsc
+   vrDesc = bolt_desc_rsc
+
+   viAmmo_type = AMMO_BOLT
+   viValue_average = 20
+   viBulk = 2
+   viWeight = 3
+
+properties:
+
+   piNumber = 20
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

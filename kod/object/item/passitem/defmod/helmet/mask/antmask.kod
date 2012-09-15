@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AntMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AntMask_name_rsc = "ant mask"
+   AntMask_icon_male_rsc = mmant.bgf
+   AntMask_icon_female_rsc = mfant.bgf
+   AntMask_desc_rsc = \
+      "Finally!  An adult-sized ant mask from Ko'catan.  Now you can participate "
+      "in the strange island ritual you've always heard about."
+
+classvars:
+
+   vrName = AntMask_name_rsc
+   vrDesc = AntMask_desc_rsc
+   vrIcon = AntMask_icon_male_rsc
+
+   vrMaleIcon = AntMask_icon_male_rsc
+   vrFemaleIcon = AntMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

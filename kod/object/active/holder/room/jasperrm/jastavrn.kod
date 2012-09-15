@@ -1,0 +1,138 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperTavern is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_jasperTavern = jastavrn.roo
+   room_name_JasperTavern = "Pietro's Wicked Brews"
+
+   jasbar_music = bar.mid
+   jastav_adv_icon = jbook.bgf
+   jastav_adv_name = "Tales of Adventure"
+   jastav_adv_desc = "Stories from the people of Meridian, collected by Bards"
+classvars:
+
+   vrName = room_name_jaspertavern
+
+   viTeleport_row = 8
+   viTeleport_col = 6
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY | ROOM_SAFELOGOFF
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   prMusic = jasbar_music
+   prRoom = room_jaspertavern
+   piRoom_num = RID_JAS_TAVERN
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+messages:
+
+   CreateStandardObjects()
+   {
+      local oNews;
+
+      Send(self,@NewHold,#what=Create(&JasperBartender),
+	   #new_row=15,#new_col=6,#new_angle=ANGLE_NORTH);
+
+      oNews = Create(&Newslink,#nid=NID_ADVENTURE,#name=jastav_adv_name,#icon=jastav_adv_icon,#desc=jastav_adv_desc);
+      Send(self,@NewHold,#what=oNews,#new_row=16,#new_col=2,#fine_row=8,#fine_col=32,#new_angle = ANGLE_NORTH_EAST);
+
+% Stools N of Bar
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=13,#new_col=4,#fine_row=48,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=13,#new_col=5,#fine_row=48,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=13,#new_col=6,#fine_row=48,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=13,#new_col=7,#fine_row=48,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=13,#new_col=8,#fine_row=48,#fine_col=32);
+
+% Stools W of Bar
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=14,#new_col=3,#fine_row=32,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=15,#new_col=3,#fine_row=32,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=16,#new_col=3,#fine_row=32,#fine_col=48);
+
+% Stools E of Bar
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=14,#new_col=9,#fine_row=32,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=15,#new_col=9,#fine_row=32,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&BarStool),
+	   #new_row=16,#new_col=9,#fine_row=32,#fine_col=16);
+
+
+% W Tables
+
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=5,#new_col=4,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=7,#new_col=4,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=9,#new_col=4,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=11,#new_col=4,#fine_col=0,#fine_row=0);
+
+
+% E Tables
+
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=5,#new_col=9,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=7,#new_col=9,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=9,#new_col=9,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Table),
+	   #new_row=11,#new_col=9,#fine_col=0,#fine_row=0);
+
+
+
+%      % and some braziers
+      Send(self,@NewHold,#what=Create(&Brazier),
+	   #new_row=6,#new_col=5,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Brazier),
+	   #new_row=10,#new_col=5,#fine_col=0,#fine_row=0);
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+	   #new_row=6,#new_col=8,#fine_col=0,#fine_row=0);
+      Send(self,@NewHold,#what=Create(&Brazier),
+	   #new_row=10,#new_col=8,#fine_col=0,#fine_row=0);
+
+
+      propagate;
+   }
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 2, 6, RID_JASWEST, 63, 20, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   
+      
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

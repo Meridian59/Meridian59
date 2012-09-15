@@ -1,0 +1,23 @@
+# Ornate Helm Male - worn
+# groups
+# 1 worn
+# 2 inventory
+#^Applied to Hotspot: 13
+#*Groups: 3
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 15
+8
+helma000.bmp   [-22, -6] 
+helma315.bmp   [-23, -5] 
+helma270.bmp   [-27, -6] 
+helma180.bmp   [-20, -4] 
+helma090.bmp   [-26, -9] 
+helma045.bmp   [-25, -9] 
+helmadrp.bmp   [0, 0] 
+helmabro.bmp   [0, 0] 
+3
+ 8   1 2 3 4 4 4 5 6 
+ 1   7 
+ 1   8 

@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NeruditeOreChunk is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   NeruditeOreChunk_icon_rsc = neruOre.bgf
+   NeruditeOreChunk_name_rsc = "chunk of nerudite"
+   NeruditeOreChunk_desc_rsc = "This is a huge, unwieldy hunk of ugly, green rock, with strong, luminent veins suggesting immense hidden value inside."
+
+classvars:
+   
+   vrName = NeruditeOreChunk_name_rsc
+   vrDesc = NeruditeOreChunk_desc_rsc
+   vrIcon = NeruditeOreChunk_icon_rsc
+
+   viValue_average = 1500
+   viWeight = 300
+   viBulk = 300
+
+
+properties:  
+
+messages:   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

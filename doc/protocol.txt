@@ -1,0 +1,914 @@
+GAME MODE MESSAGES
+==================
+
+Message format:
+
+<length> <checksum> <length> <seqno> <rest-of-message>
+
+<length> 		=	2 bytes 	length of rest-of-message
+<checksum>              =       2 byte CRC16 checksum of <rest-of-message>
+<seqno>                 
+<rest-of-message>   		one of the messages described below
+
+<seqno> =
+0	for AP_* messages
+GC sequence number ("epoch") for BP_* messages.  Server only processes
+messages whose epoch matches its internal value.  This prevents
+messages from before a GC from corrupting the server's information
+(since object numbers can change).
+
+Message identifiers (such as RESEND, SAY, etc.) are each 1 byte.
+
+==========================================================
+Items are referred to by server id #
+
+Messages from client:
+====================
+
+Low-level comm:
+----------------------------------------------------------
+Resyncrhonize--error has occurred
+<BP_RESYNC>
+----------------------------------------------------------
+Client is active
+<BP_PING>
+----------------------------------------------------------
+Return of roundtrip latency message
+<BP_ROUNDTRIP2> <data>
+<data> = 
+4 bytes		server time message originated
+----------------------------------------------------------
+
+
+Administrative actions:
+----------------------------------------------------------
+Logoff
+<BP_LOGOFF>
+----------------------------------------------------------
+User wants to quit game
+<BP_REQ_QUIT>
+----------------------------------------------------------
+Send room contents
+<BP_SEND_ROOM_CONTENTS>
+----------------------------------------------------------
+Send player's location & id
+<BP_SEND_PLAYER>
+----------------------------------------------------------
+Send info on all stat groups
+<BP_SEND_STAT_GROUPS>
+----------------------------------------------------------
+Send group of game statistics
+<BP_SEND_STATS> <group>
+----------------------------------------------------------
+Send list of users currently logged on 
+<BP_SEND_PLAYERS>
+----------------------------------------------------------
+Send list of characters to choose from
+<BP_SEND_CHARACTERS>
+----------------------------------------------------------
+Send list of available spells
+<BP_SEND_SPELLS>
+----------------------------------------------------------
+Add spell
+<BP_SPELL_ADD> <spell>
+----------------------------------------------------------
+Remove spell
+<BP_SPELL_REMOVE> <object>
+----------------------------------------------------------
+User has selected character to use in game
+<BP_USE_CHARACTER> <object>
+----------------------------------------------------------
+Admin command
+<BP_REQ_ADMIN> <string>
+----------------------------------------------------------
+DM command
+<BP_REQ_DM> <type> <string>
+<type> = 
+1 byte	command type:
+	1 = go to room (string = room id constant or object id)
+	2 = go to player (string = object id)
+	3 = get player (string = object id)
+----------------------------------------------------------
+User is blocking message sent to him (sent in reply to BP_SAID)
+<BP_SAY_BLOCKED> <sender_id>
+sender_id = object ID of message's original sender
+----------------------------------------------------------
+Send enchantment information
+<BP_SEND_ENCHANTMENTS> <enchant_type>
+----------------------------------------------------------
+Change password
+<BP_CHANGE_PASSWORD> <old_passwd_string> <new_passwd_string>
+----------------------------------------------------------
+
+Game actions:
+----------------------------------------------------------
+Move player
+<BP_REQ_MOVE> <coords> <speed> <room id>
+<speed> = 
+	1 byte		# of grid squares per ten seconds
+<room id> =
+	<object>	object id of player's room
+----------------------------------------------------------
+Turn
+<BP_REQ_TURN> <object> <angle> 
+User turned object to given angle
+----------------------------------------------------------
+Send player's inventory and using list
+<BP_REQ_INVENTORY>
+----------------------------------------------------------
+Look inside
+<BP_SEND_OBJECT_CONTENTS> <object>
+----------------------------------------------------------
+Look at
+<BP_REQ_LOOK> <object>
+----------------------------------------------------------
+Use/Activate
+<BP_REQ_USE> <object>
+----------------------------------------------------------
+Stop Using/Deactivate
+<BP_REQ_UNUSE> <object>
+----------------------------------------------------------
+Attack
+<BP_REQ_ATTACK> <attack_info> <object>
+
+<attack_info> = 	1 byte
+	ATTACK_NORMAL	Normal attack
+----------------------------------------------------------
+Say
+<BP_SAY_TO> <say_info> <string> 
+
+<say_info> =      	1 byte
+	SAY_NORMAL	Say to everyone in room 
+	SAY_YELL	Yelling
+	SAY_EVERYONE	Say to everyone logged on
+	SAY_EMOTE	Show string as user action
+----------------------------------------------------------
+Say to arbitrary people
+<BP_SAY_GROUP> <object_list> <string>
+----------------------------------------------------------
+Get
+<BP_REQ_GET> <object>
+----------------------------------------------------------
+Drop
+<BP_REQ_DROP> <object> 
+----------------------------------------------------------
+Put
+<BP_REQ_PUT> <object1> <object2>
+To ask to put object1 inside object 2
+----------------------------------------------------------
+Hide
+<BP_REQ_HIDE> <object>
+----------------------------------------------------------
+Give/Sell
+<BP_REQ_OFFER> <taker-object> <object_list>
+----------------------------------------------------------
+Cancel current offer
+<BP_CANCEL_OFFER> 
+----------------------------------------------------------
+Respond to an offer
+<BP_REQ_COUNTEROFFER> <object_list>
+----------------------------------------------------------
+Accept offer
+<BP_ACCEPT_OFFER>
+----------------------------------------------------------
+Enter 
+<BP_REQ_GO>
+----------------------------------------------------------
+Buy from object
+<BP_REQ_BUY> <object>
+----------------------------------------------------------
+Buy given items
+<BP_REQ_BUY_ITEMS> <object> <object_list>
+Object is seller's id
+----------------------------------------------------------
+Use one object on another
+<BP_REQ_APPLY> <object1> <object2>
+to use object1 on object2
+----------------------------------------------------------
+Cast spell
+<BP_REQ_CAST> <spell object id> <object_list>
+----------------------------------------------------------
+Action/facial expression
+<BP_ACTION> <action>
+<action> =
+	1 byte	action identifier
+----------------------------------------------------------
+Change object description
+<BP_CHANGE_DESCRIPTION> <object> <string>
+----------------------------------------------------------
+User command (generic non-standard command)
+<BP_USERCOMMAND> <command> <data>
+<command> = 
+	1 byte	command type
+<data> = per-command data; see separate documentation (usercmd.txt)
+----------------------------------------------------------
+Activate object in the room
+<BP_REQ_ACTIVATE> <object>
+----------------------------------------------------------
+
+System messages:
+These messages all start with <BP_SYSTEM>.  The remainder
+of the message, as described below, is passed to the 
+system object in the kod:
+----------------------------------------------------------
+Send character characteristics and abilities
+<BP_SEND_CHARINFO>
+----------------------------------------------------------
+Character's new information
+One value is sent for each info_item in the server's
+BP_CHARINFO message.  If the item was a multiple-choice,
+then the value is the index of the chosen item.  If the
+item was a number, then the value is the chosen value
+of the number.
+<BP_NEW_CHARINFO> <object> <name string> <description string> <new_charinfo>
+----------------------------------------------------------
+
+Mail:
+----------------------------------------------------------
+Get all new mail messages
+<BP_REQ_GET_MAIL>
+----------------------------------------------------------
+Server can delete mail message 
+<BP_DELETE_MAIL> <index>
+<index> =
+	4 bytes		Message's server index (sent in BP_MAIL message)
+----------------------------------------------------------
+User wants to send a mail message
+<BP_SEND_MAIL> <client_mail_message>
+----------------------------------------------------------
+Return object # for given player name string
+<BP_REQ_LOOKUP_NAMES> <num_names> <string>
+<num_names> = 
+	2 bytes		# of names in <string>
+<string> contains a sequence of player names, separated by commas
+----------------------------------------------------------
+
+News:
+----------------------------------------------------------
+Get article indexes for a newsgroup
+<BP_REQ_ARTICLES> <newsgroup-id>
+----------------------------------------------------------
+Get article's text
+<BP_REQ_ARTICLE> <newsgroup-id> <article-index>
+----------------------------------------------------------
+Post article
+<BP_POST_ARTICLE> <newsgroup-id> <title string> <body string>
+----------------------------------------------------------
+
+
+
+Messages from server:
+=============================================================
+
+Low level comm:
+----------------------------------------------------------
+Resyncrhonize--error has occurred
+<BP_RESYNC>
+----------------------------------------------------------
+Return of roundtrip latency message
+<BP_ROUNDTRIP1> <data>
+<data> = 
+4 bytes		server time message originated
+----------------------------------------------------------
+
+
+Administrative actions:
+----------------------------------------------------------
+System message
+<BP_SYS_MESSAGE> <string>
+----------------------------------------------------------
+Room contents
+<BP_ROOM_CONTENTS> <room> <object_location_list> 
+----------------------------------------------------------
+Contents of object
+<BP_OBJECT_CONTENTS> <object> <object_contents_list>
+----------------------------------------------------------
+Quit game
+<BP_QUIT>
+----------------------------------------------------------
+Logoff
+<BP_LOGOFF>
+----------------------------------------------------------
+Wait
+<BP_WAIT>
+----------------------------------------------------------
+Unwait
+<BP_UNWAIT>
+----------------------------------------------------------
+List of users currently logged on
+<BP_PLAYERS> <player_info_list>
+----------------------------------------------------------
+New player has logged on
+<BP_PLAYER_ADD> <player_info>
+----------------------------------------------------------
+Player has logged off
+<BP_PLAYER_REMOVE> <object>
+----------------------------------------------------------
+List of characters user should select from
+<BP_CHARACTERS> <character_list> <motd>
+<motd> =
+<string>	message of the day
+----------------------------------------------------------
+List of spells available to player
+<BP_SPELLS> <# of spells> <spell>*
+<# of spells> =  	2 bytes
+----------------------------------------------------------
+Character's information
+<BP_CHARINFO> <charinfo-list>
+----------------------------------------------------------
+Load DLL
+<BP_LOAD_MODULE> <DLL resource id>
+----------------------------------------------------------
+Unload DLL
+<BP_UNLOAD_MODULE> <DLL resource id>
+----------------------------------------------------------
+Result of admin command
+<BP_ADMIN> <string>
+----------------------------------------------------------
+Change resource's value, or add if not already present
+<BP_CHANGE_RESOURCE> <resource> <string>
+----------------------------------------------------------
+Character info is valid
+<BP_CHARINFO_OK>
+----------------------------------------------------------
+Character info is invalid
+<BP_CHARINFO_NOT_OK>
+----------------------------------------------------------
+Password changed
+<BP_PASSWDOK>
+----------------------------------------------------------
+
+Information:
+----------------------------------------------------------
+Add to inventory
+<BP_INVENTORY_ADD> <object_desc>
+----------------------------------------------------------
+Remove from inventory
+<BP_INVENTORY_REMOVE> <object>
+----------------------------------------------------------
+Create object
+<BP_CREATE> <object_info> 
+----------------------------------------------------------
+Remove object
+<BP_REMOVE> <object>
+----------------------------------------------------------
+Move object
+<BP_MOVE> <object> <coords> <speed>
+<speed> = 
+	1 byte		# of grid squares per ten seconds
+speed = 0 means teleport the object
+----------------------------------------------------------
+Turn object
+<BP_TURN> <object> <angle>
+angle is object's new angle
+----------------------------------------------------------
+Use object
+<BP_USE> <object>
+----------------------------------------------------------
+Stop using object
+<BP_UNUSE> <object>
+----------------------------------------------------------
+Change object
+<BP_CHANGE> <object_desc> <animation> <overlays>
+
+<animation>     how to animate object when it moves
+<overlays>	overlays for object when it moves
+----------------------------------------------------------
+Display object's description
+<BP_LOOK> <object_desc> <flags> <resource> <printf-param>*
+<flags> =
+	1 byte		bit flags for object description:
+bit 0			1 if player can set description of object
+----------------------------------------------------------
+Message
+<BP_MESSAGE> <source> <resource> <printf-param>*
+
+<source> = 
+	1 byte		source of message; 0 = from system, 1 = from another player
+
+<resource> is the resource id of a printf-style format string
+
+<printf-param> = 
+	4 bytes		a resource id or integer
+	OR a <string> 
+	The interpretation of the value of printf-param
+	depends on the matching field in the format string:
+Field in format string 	Interpretation of corresponding printf-param 
+%d or %i     		Integer
+%s           		<resource>
+%q           		<string>
+----------------------------------------------------------
+Message from another player
+<BP_SAID> <source_obj> <source_name> <say_info> <resource> <printf-param>*
+
+<source_obj>  = source object of message
+<source_name> = name resource of source object
+<say_info>   = how source_obj said message
+	SAY_NORMAL	Say to everyone in room 
+	SAY_YELL	Yelling
+	SAY_EVERYONE	Say to everyone logged on
+	SAY_GROUP	Sent to a group of people
+	SAY_RESOURCE	Resource string "said" by an object
+	SAY_EMOTE	Show string as user action
+
+other paramaters as in BP_MESSAGE
+----------------------------------------------------------
+Perform effect
+<BP_EFFECT> <EFFECT-#> <effect-dependent info>
+<effect-#> = 
+	2 bytes		# of effect to perform:
+	EFFECT_INVERT =
+	4 bytes         # of milliseconds to keep screen colors inverted 
+	EFFECT_SHAKE =
+	4 bytes         # of milliseconds to shake user's view
+	EFFECT_PARALYZE prevent player from moving
+	EFFECT_RELEASE  allow player to move
+	EFFECT_BLIND    make player blind
+	EFFECT_SEE      remove blindness
+----------------------------------------------------------
+Player's information
+
+<BP_PLAYER> <player object id #> <icon resource> <name resource> <location> 
+            <lighting> <background>
+
+<location> = 
+	4 bytes    current room id #
+	4 bytes    current room resource #
+	4 bytes    current room name resource id #
+	
+	4 bytes    room security check (number in roo file)
+
+<lighting> = 
+        <light>    ambient light level
+        <light>    player's light level
+
+<background> =
+	4 bytes    resource id of background bitmap for room
+----------------------------------------------------------
+Player's inventory
+<BP_INVENTORY> <object_contents_list>
+----------------------------------------------------------
+List of objects player is using
+<BP_USE_LIST> <object_list>
+----------------------------------------------------------
+Info on stat groups
+<BP_STAT_GROUPS> <num_groups> <group_info>*
+<num_groups> =		1 byte
+<group_info> =		<resource> 	resource of stat group name
+----------------------------------------------------------
+Group of game statistics
+<BP_STAT_GROUP> <group> <num_stats> <stat>*
+<num_stats> = 		1 byte
+All stats in a group must be of same type (see <stat>)
+----------------------------------------------------------
+Update game statistic
+<BP_STAT> <group> <stat>
+----------------------------------------------------------
+Player receives an offer
+<BP_OFFER> <object_desc> <object_contents_list>
+    	       ^-- object which made offer
+----------------------------------------------------------
+Player made an offer; this is list of offered items
+<BP_OFFERED> <object_contents_list>
+----------------------------------------------------------
+Current offer was canceled
+<BP_OFFER_CANCELED> 
+----------------------------------------------------------
+Counteroffer was made
+<BP_COUNTEROFFER> <object_contents_list>
+----------------------------------------------------------
+Player made a counteroffer; this is list of offered items
+<BP_COUNTEROFFERED> <object_contents_list>
+----------------------------------------------------------
+Items available to buy
+<BP_BUY_LIST> <object_desc> <server_buy_list>
+object_desc is seller object
+----------------------------------------------------------
+Play wave file
+<BP_PLAY_WAVE> <sound_resource> <object> <sound_flags>
+object tells where sound should appear to originate from.
+If object = 0, should originate from user.
+<sound_flags> =
+bit 0		1 if sound should repeat while player is in current room
+----------------------------------------------------------
+Play MIDI file
+<BP_PLAY_MIDI> <sound_resource>
+----------------------------------------------------------
+Play room music
+<BP_PLAY_MUSIC> <sound_resource>
+----------------------------------------------------------
+Set ambient light level
+<BP_LIGHT_AMBIENT> <light>
+----------------------------------------------------------
+Set light level at player
+<BP_LIGHT_PLAYER> <light>
+----------------------------------------------------------
+Set background bitmap in room
+<BP_BACKGROUND> <background resource>
+----------------------------------------------------------
+Shoot (move bitmap continuously from one place to another)
+<BP_SHOOT> <icon resource> <animation> <source object> 
+  <destination object> <speed>
+<speed> =
+	1 byte		# of grid squares per second
+----------------------------------------------------------
+Add or change player overlay (bitmap drawn over graphics window)
+<BP_PLAYER_OVERLAY> <hotspot> <object_desc>
+
+object id in <object_desc> identifies overlay, e.g. 1 = left hand, etc. 
+                   can be in range [1. NUM_PLAYER_OVERLAYS]
+Setting hotspot to 0 removes an overlay
+
+Hotspots for player overlay:
+	HOTSPOT_NW 	upper left corner of graphics window
+	HOTSPOT_N 	centered horizontally on middle of top side of graphics window
+	HOTSPOT_NE 	upper right corner of graphics window
+	HOTSPOT_E  	centered vertically on middle of right side of graphics window
+	HOTSPOT_SE	lower right corner of graphics window
+	HOTSPOT_S 	centered horizontally on middle of bottom side of graphics window
+	HOTSPOT_SW 	lower left corner of graphics window
+	HOTSPOT_W 	centered vertically on middle of left side of graphics window
+	HOTSPOT_CENTER	centered on center of graphics window
+----------------------------------------------------------
+Raise or lower sector
+<BP_SECTOR_MOVE> <type> <sector_id> <height> <speed>
+<type> =
+	1 byte		animation type (ANIMATE_FLOOR_LIFT or ANIMATE_CEILING_LIFT)
+<sector_id> = 
+	2 bytes		sector to move
+<height> = 
+	2 bytes		final height of sector (1 grid square = 64)
+<speed> =
+	1 byte		height units per second to move sector
+			(0 = infinite speed)	
+----------------------------------------------------------
+Animate wall
+<BP_WALL_ANIMATE> <wall_id> <animation> <wall_effect>
+<wall_id> = 
+	2 bytes		wall to animate
+<wall_effect> = 
+	1 byte		what to do to wall after animation is finished
+0 = 	do nothing
+1 = 	make wall passable
+2 = 	make wall impassable
+3 = 	make normal wall impassable
+----------------------------------------------------------
+Animate sector
+<BP_SECTOR_ANIMATE> <sector_id> <animation> <sector_effect>
+<sector_id> = 
+	2 bytes		sector to animate
+<sector_effect> = 
+	1 byte		what to do to sector after animation is finished
+0 = 	do nothing
+----------------------------------------------------------
+Add display enchantment
+<BP_ADD_ENCHANTMENT> <enchant_type> <object_desc>
+----------------------------------------------------------
+Remove display enchantment
+<BP_REMOVE_ENCHANTMENT> <enchant_type> <object>
+----------------------------------------------------------
+Add background overlay
+<BP_ADD_BG_OVERLAY> <bg_overlay>
+----------------------------------------------------------
+Remove background overlay
+<BP_REMOVE_BG_OVERLAY> <object>
+----------------------------------------------------------
+Change background overlay
+<BP_CHANGE_BG_OVERLAY> <bg_overlay>
+----------------------------------------------------------
+
+
+Mail:
+----------------------------------------------------------
+Contents of next mail message
+<BP_MAIL> <server_mail_message>
+If # of recipients = 0, there is no next mail message, and
+there is no <string> in the <MAIL> message.
+----------------------------------------------------------
+Return object #s from a name lookup (BP_REQ_LOOKUP_NAMES)
+<BP_LOOKUP_NAMES> <num_objects> <object>*
+If an object is 0, the lookup failed for that name
+<num_objects> = 
+	2 bytes
+----------------------------------------------------------
+
+News:
+----------------------------------------------------------
+Object description of newsgroup
+<BP_LOOK_NEWSGROUP> <newsgroup-id> <permission> <object_desc> <resource> <printf-param>*
+<permission> = 1 byte 
+	bit 0 is 1 if user can read group
+	bit 1 is 1 if user can post to group
+----------------------------------------------------------
+List of newsgroup's articles
+<BP_ARTICLES> <newsgroup-id> <part> <num-articles> <article-header>*
+<num-articles> = 
+	2 bytes 	number of articles in this part of message
+----------------------------------------------------------
+Article contents
+<BP_ARTICLE> <string>
+----------------------------------------------------------
+
+
+
+
+Primitives:
+==========
+
+**********************************************************************
+NEWS
+
+<newsgroup-id> =
+	2 bytes      	unique identifier of newsgroup
+
+<article-header> = 
+	<article-index> index # of article
+	<time>          time article was posted
+	<string>        name of poster
+	<string>        title string, limited to 52 bytes including length
+
+<article-index> = 
+	4 bytes 	index # of article
+
+<time> = 
+	4 bytes         # of seconds since midnight, January 1, 1996
+			(this is later than Jan 1 1970 by 820454400 seconds)
+
+News articles must be limited to 4K
+**********************************************************************
+CHAR CREATION
+
+<character_list> =
+	2 bytes         # of characters in list
+	<char_desc>     descriptions of characters
+
+<char_desc> =
+	4 bytes         object id
+	<string>        character's name
+	1 byte		extra info: 0 = char has been in game before, 1 = char is new
+
+<charinfo-list> =
+	<face_info>
+	<spell_info>
+	<skill_info>
+
+<face_info> =
+	<hair_info>     male hair choices
+	<color_info>    male face choices for color #1
+	<color_info>    male face choices for color #2
+	<color_info>    male face choices for color #3
+	<color_info>    male face choices for color #4
+	<hair_info>     female hair choices
+	<color_info>    female face choices for color #1
+	<color_info>    female face choices for color #2
+	<color_info>    female face choices for color #3
+	<color_info>    female face choices for color #4
+
+<hair_info> =
+	4 bytes		# of hair choices
+	<resource>*     icon resources of hair choices
+
+<color_info> =
+	<resource>      icon resource of head
+	4 bytes		# of eye choices
+	<resource>*     icon resources of eye choices
+	4 bytes		# of nose choices
+	<resource>*     icon resources of nose choices
+	4 bytes		# of mouth choices
+	<resource>*     icon resources of mouth choices
+
+<spell_info> =
+	4 bytes		number of spells
+	<spell_info_one>*
+
+<spell_info_one> =
+	4 bytes		spell ID
+	<resource>	spell's name resource
+	<resource>	spell's description resource
+	4 bytes		cost of selecting spell
+	1 byte		school of spell (1 = Shalille, 2 = Qor, 3 = Kraanan, 4 = Faren, 
+                                5 = Riija, 6 = Jala)
+
+<skill_info> =
+	4 bytes		number of skills
+	<skill_info_one>*
+
+<skill_info_one> =
+	4 bytes		skill ID
+	<resource>	skill's name resource
+	<resource>	skill's description resource
+	4 byets		cost of selecting skill
+	
+<new_charinfo> =
+	1 byte		gender, 1 = male, 2 = female
+	2 bytes		# of face parts = 5
+	<resource>	head icon resource
+	<resource>	hair icon resource
+	<resource>	eye icon resource
+	<resource>	nose icon resource
+	<resource>	mouth icon resource
+	2 bytes		# of stats = 6
+	4 bytes         might value
+	4 bytes         intellect value
+	4 bytes         stamina value
+	4 bytes         mysticism value
+	4 bytes         agility value
+	4 bytes         aim value
+	2 bytes		# of spells chosen
+	4 bytes*	spell ID
+	2 bytes		# of skills chosen
+	4 bytes*	skill ID
+**********************************************************************
+MAIL
+
+<server_mail_message> = 
+	4 bytes         message's server index
+	<string>        sender's name
+	4 bytes         <time>        (time message sent)
+	2 bytes	        # of recipients
+	<string>*       recipients' names
+	4 bytes         <resource>    (format string for mail message)
+	x bytes         <printf-param>*
+
+<client_mail_message> = 
+	2 bytes	        # of recipients
+	<object>*       recipient object ids
+	<string>        body of message
+
+<part> =
+	1 byte		number of this part of message
+	1 byte		highest numbered part in this message
+this acts as a "part x of y" label on the message.  The parts
+must arrive consecutively and in order.
+
+**********************************************************************
+GENERAL
+
+<light> = 
+        1 byte          light intensity; 0 = min, 64 = full intensity
+
+<spell> = 
+	4 bytes		spell's object id #
+	4 bytes		spell's icon resource id #
+	4 bytes		spell's name resource id #
+	<animation>
+	1 byte          # of target objects for spell (should be 0 or 1)
+	1 byte          school number (1 = first school)
+
+<server_buy_list> =
+	2 bytes         # of objects in list
+	<server_buy_item>*
+<server_buy_item> =
+	<object_desc>
+	4 bytes		cost of item
+
+<object_contents_list> = 
+	2 bytes 	# of objects in list
+	x bytes         <object_desc>*
+
+<object_desc> =
+	4 bytes    	object id #
+	4 bytes	   	object icon resource id #
+	4 bytes	   	object name resource id #
+	4 bytes         flags that describe properties of object
+	<animation>
+	<overlays>      overlay bitmaps for object
+
+if object id # contains CLIENT_TAG_NUMBER (= 0x1) in its upper 4 bits, then instead the 
+format is <object_desc> = 
+	4 bytes    	object id #
+	4 bytes         amount of object
+	4 bytes	   	object icon resource id #
+	4 bytes	   	object name resource id #
+	4 bytes         flags that describe properties of object 
+	<animation>
+	<overlays>      overlay bitmaps for object
+
+object flags (low order bit is bit 0):
+
+bit 0 and bit 1:	nomoveon type (0 = ok to move on, 1 = can't move on, 2 = teleporter)
+bit 2			1 = player
+bit 3			1 = legal attack target
+bit 4			1 = object can be picked up
+bit 5			1 = container
+bit 6			1 = object can't be examined
+bit 8			1 = invisible
+bit 9                   1 = legal offer target
+bit 10                  1 = legal buy source
+bit 11                  1 = can be activated
+bit 12                  1 = can be applied to another object
+bit 13                  1 = player has safety on (for self only)
+bits 14-16              player flags
+
+player flags:
+0x1			murderer
+0x2			outlaw
+0x3			DM
+0x4			creator
+
+<object_location_list> = 
+	2 bytes		# of objects in room
+	x bytes         <object_info>*
+
+<object_info> = 
+	<object_desc>
+	<coords>	object's location in room
+	<angle>         angle object is facing
+	<animation>     how to animate object when it moves
+	<overlays>	overlays for object when it moves
+
+<object_list> = 
+	2 bytes 	# of objects in list
+	x bytes         <object>*
+
+<player_info_list> = 
+	2 bytes 	# of objects in list
+	x bytes         <player_info>*
+
+<player_info> =
+	4 bytes		object id #
+	4 bytes		name resource id #
+	<string>	string associated with name resource
+
+<overlays> =
+	1 byte          # of overlay bitmaps
+	<overlay>*
+
+<overlay> =
+	<resource>      icon resource of overlay bitmap
+	<hotspot>       hotspot to place overlay on (0 if none; < 0 to draw under object)
+	<animation>     animation for overlay
+
+<enchant_type> =
+	1 byte		1 = player enchantment, 2 = room enchantment
+
+<bg_overlay> =
+	<object>    	object id of overlay
+	<resource>      icon resource of overlay bitmap
+	<resource>      name resource of overlay bitmap
+	<animation>     animation for overlay
+	<angle>		x coordinate of overlay (angle at which to display overlay on background)
+	2 bytes		y coordinate of overlay (in pixels; 0 = on horizon, positive = up)
+	
+
+<stat> = 
+	1 byte		ordinal # of stat within group (starts at 1)
+	4 bytes		name resource id #
+	1 byte          type of stat, 1 = numeric stat, 2 = list type stat
+	<number_stat> or <list_stat>
+
+<number_stat> =
+	1 byte		type tag for next field.  1 = integer, 2 = resource
+	4 bytes		current value of stat or resource id, depending on tag
+if tag = 1, these fields follow:
+	4 bytes         minimum value of stat
+	4 bytes         maximum value of stat
+	4 bytes         current maximum value of stat
+
+<list_stat> =
+	<object>	object # to examine when user examines stat
+	4 bytes		value associated with stat (currently unused)
+
+<string> = 
+	2 bytes         length of string
+	<length> bytes  string itself (NOT null terminated)
+
+<room> = 
+	4 bytes		room id #
+
+<resource> =
+	4 bytes 	resource id #
+
+<object> = 
+	4 bytes   	object id #
+
+<group> =	
+	1 byte		group number (for statistics)
+
+<coords> = 
+	2 bytes         row (y position)
+	2 bytes         column (x position)
+
+<angle> =
+        2 bytes         new angle 0 = east, NUMDEGREES - 1 = just north of east
+
+<hotspot> =
+	1 byte          hotspot # for placement of overlays
+
+<animation> =
+	1 byte          type of animation
+Animation types and extra data:
+ANIMATE_NONE = no animation (no extra data)
+	2 bytes         bitmap group to display
+ANIMATE_CYCLE = cycle through bitmap groups 
+   	4 bytes         Milliseconds between changing groups
+	2 bytes         low end of bitmap groups to cycle through
+	2 bytes         high end of bitmap groups to cycle through 
+                        (if low = high, cycle through all groups)
+ANIMATE_ONCE = single-shot animation 
+   	4 bytes         Milliseconds between changing groups
+	2 bytes         low end of bitmap groups to cycle through
+	2 bytes         high end of bitmap groups to cycle through 
+	2 bytes         group to display after this animation is done
+Bitmap group numbers start at 1.
+

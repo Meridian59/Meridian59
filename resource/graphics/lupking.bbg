@@ -1,0 +1,168 @@
+# Lupogg King
+# 
+# Groups:
+#        1 Standing
+#      2-6 Breathing (ambient)
+#         7-11 Walking
+#        12-16 Attack
+#        17-21 Spitting
+#^Applied to Hotspot: 0
+#*Groups: 21
+#* stand
+#* breathing A
+#* breathing B
+#* breathing C
+#* breathing B
+#* breathing A
+#* walking A
+#* walking B 
+#* walking C 
+#* walking D 
+#* walking E 
+#* biting A
+#* biting B 
+#* biting C 
+#* biting D 
+#* biting E 
+#* spitting A
+#* spitting B 
+#* spitting C 
+#* spitting D 
+#* spitting E 
+114
+lpk000sa.bmp   [0, 0] 
+lpk315sa.bmp   [0, 0] 
+lpk270sa.bmp   [0, 0] 
+lpk180sa.bmp   [0, 0] 
+lpk090sa.bmp   [0, 0] 
+lpk045sa.bmp   [0, 0] 
+lpk000aa.bmp   [0, 0] 
+lpk315aa.bmp   [0, 0] 
+lpk270aa.bmp   [0, 0] 
+lpk180aa.bmp   [0, 0] 
+lpk090aa.bmp   [0, 0] 
+lpk045aa.bmp   [0, 0] 
+lpk000ab.bmp   [0, 0] 
+lpk315ab.bmp   [0, 0] 
+lpk270ab.bmp   [0, 0] 
+lpk180ab.bmp   [0, 0] 
+lpk090ab.bmp   [0, 0] 
+lpk045ab.bmp   [0, 0] 
+lpk000ac.bmp   [0, 0] 
+lpk315ac.bmp   [0, 0] 
+lpk270ac.bmp   [0, 0] 
+lpk180ac.bmp   [0, 0] 
+lpk090ac.bmp   [0, 0] 
+lpk045ac.bmp   [0, 0] 
+lpk000wa.bmp   [0, 0] 
+lpk315wa.bmp   [0, 0] 
+lpk270wa.bmp   [0, 0] 
+lpk180wa.bmp   [0, 0] 
+lpk090wa.bmp   [0, 0] 
+lpk045wa.bmp   [0, 0] 
+lpk000wb.bmp   [0, 0] 
+lpk315wb.bmp   [0, 0] 
+lpk270wb.bmp   [0, 0] 
+lpk180wb.bmp   [0, 0] 
+lpk090wb.bmp   [0, 0] 
+lpk045wb.bmp   [0, 0] 
+lpk000wc.bmp   [0, 0] 
+lpk315wc.bmp   [0, 0] 
+lpk270wc.bmp   [0, 0] 
+lpk180wc.bmp   [0, 0] 
+lpk090wc.bmp   [0, 0] 
+lpk045wc.bmp   [0, 0] 
+lpk000wd.bmp   [0, 0] 
+lpk315wd.bmp   [0, 0] 
+lpk270wd.bmp   [0, 0] 
+lpk180wd.bmp   [0, 0] 
+lpk090wd.bmp   [0, 0] 
+lpk045wd.bmp   [0, 0] 
+lpk000we.bmp   [0, 0] 
+lpk315we.bmp   [0, 0] 
+lpk270we.bmp   [0, 0] 
+lpk180we.bmp   [0, 0] 
+lpk090we.bmp   [0, 0] 
+lpk045we.bmp   [0, 0] 
+lpk000fa.bmp   [0, 0] 
+lpk315fa.bmp   [0, 0] 
+lpk270fa.bmp   [0, 0] 
+lpk180fa.bmp   [0, 0] 
+lpk090fa.bmp   [0, 0] 
+lpk045fa.bmp   [0, 0] 
+lpk000fb.bmp   [0, 0] 
+lpk315fb.bmp   [0, 0] 
+lpk270fb.bmp   [0, 0] 
+lpk180fb.bmp   [0, 0] 
+lpk090fb.bmp   [0, 0] 
+lpk045fb.bmp   [0, 0] 
+lpk000fc.bmp   [0, 0] 
+lpk315fc.bmp   [0, 0] 
+lpk270fc.bmp   [0, 0] 
+lpk180fc.bmp   [0, 0] 
+lpk090fc.bmp   [0, 0] 
+lpk045fc.bmp   [0, 0] 
+lpk000fd.bmp   [0, 0] 
+lpk315fd.bmp   [0, 0] 
+lpk270fd.bmp   [0, 0] 
+lpk180fd.bmp   [0, 0] 
+lpk090fd.bmp   [0, 0] 
+lpk045fd.bmp   [0, 0] 
+lpk000fe.bmp   [0, 0] 
+lpk315fe.bmp   [0, 0] 
+lpk270fe.bmp   [0, 0] 
+lpk180fe.bmp   [0, 0] 
+lpk090fe.bmp   [0, 0] 
+lpk045fe.bmp   [0, 0] 
+lpk000ra.bmp   [0, 0] 
+lpk315ra.bmp   [0, 0] 
+lpk270ra.bmp   [0, 0] 
+lpk180ra.bmp   [0, 0] 
+lpk090ra.bmp   [0, 0] 
+lpk045ra.bmp   [0, 0] 
+lpk000rb.bmp   [0, 0] 
+lpk315rb.bmp   [0, 0] 
+lpk270rb.bmp   [0, 0] 
+lpk180rb.bmp   [0, 0] 
+lpk090rb.bmp   [0, 0] 
+lpk045rb.bmp   [0, 0] 
+lpk000rc.bmp   [0, 0] 
+lpk315rc.bmp   [0, 0] 
+lpk270rc.bmp   [0, 0] 
+lpk180rc.bmp   [0, 0] 
+lpk090rc.bmp   [0, 0] 
+lpk045rc.bmp   [0, 0] 
+lpk000rd.bmp   [0, 0] 
+lpk315rd.bmp   [0, 0] 
+lpk270rd.bmp   [0, 0] 
+lpk180rd.bmp   [0, 0] 
+lpk090rd.bmp   [0, 0] 
+lpk045rd.bmp   [0, 0] 
+lpk000re.bmp   [0, 0] 
+lpk315re.bmp   [0, 0] 
+lpk270re.bmp   [0, 0] 
+lpk180re.bmp   [0, 0] 
+lpk090re.bmp   [0, 0] 
+lpk045re.bmp   [0, 0] 
+21
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   13 14 15 16 16 16 17 18 
+ 8   7 8 9 10 10 10 11 12 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 
+ 8   79 80 81 82 82 82 83 84 
+ 8   85 86 87 88 88 88 89 90 
+ 8   91 92 93 94 94 94 95 96 
+ 8   97 98 99 100 100 100 101 102 
+ 8   103 104 105 106 106 106 107 108 
+ 8   109 110 111 112 112 112 113 114 

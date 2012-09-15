@@ -1,0 +1,320 @@
+Blakod-->Bkod compiler documentation 6/6/94
+Modified 1/16/95  ARK
+Modified 8/3/95  ARK
+
+
+Symbol tables
+-------------
+
+	The global variable st contains the global state of the
+compiler.  There are four tables, one each for local, class, global,
+and missing variables.  These tables are meant to hold things of
+id_type.
+
+	The main method of accessing the symbol tables is through the
+lookup_id and add_identifier procedures.  Lookup_id takes an id_type
+variable and compares its name against the variables in the local,
+class, global, and missing tables, in that order.  If a match is
+found, the id that was passed in has its fields set to those of the id
+in the table, essentially making a copy of the id in the table.
+
+	Add_identifier takes an id_type variable and an identifier
+type constant (i.e. property, local, etc.).  It sets the type of the
+id, and then inserts it into the appropriate symbol table.  
+
+	Class names, message handler names, and parameter names go in
+the global table.  Because parameters act as local variables in the
+interpreter, parameter names are also inserted into the local table.
+However, since the local table is searched first in lookup_id,
+parameters appear as local variables in procedure bodies.  Properties
+and resources go in the class table.  Local variables (and parameters)
+go in the local variable table.  The local and class tables are
+cleared when the parser leaves their corresponding scopes.
+
+	In addition to the symbol tables, a global linked list holds
+all the classes that have been compiled so far.  Each class, in turn,
+holds lists of all the class's messages and properties.  The messages
+hold a list of arguments; each argument consists of a parameter and a
+default value.
+
+Variable numbering
+------------------
+
+	Classes, message handlers and parameters belong to the same
+name space, so they are numbered uniquely (i.e. none has the same # as
+any other).  Properties are numbered starting at 1 for each class.
+However, the properties of a superclass come before the properties of
+a subclass.  Thus if B is a subclass of A, which has 3 properties,
+then B's properties are numbered starting at 4.  Property #0 is used
+for "self".
+
+	Resources have their own numbering, starting with 1.  These
+numbers are global, despite the fact that resources are defined inside
+a class, because the server and client use these resource numbers
+without knowledge of classes.
+
+	Local variables are numbered beginning with 0 in each message
+handler; however, parameters are treated as local variables and come
+first.  Thus the first parameter to a function is local variable #0 (BUT
+see "Sorting" below).  Expression flattening may require the use of
+temporary values, which are all stored in local variables.  Thus the
+actual # of local variables in a message is likely to be higher than the
+# of variables declared by that procedure.
+
+Superclasses
+------------
+	
+	When a new class is defined, its ancestors' properties must be
+inserted into the class's class variable tables, since properties are
+inherited.  This task is performed by the add_parent_properties
+procedure, which recursively find's a class's superclass and adds its
+properties to the current class table.
+
+Built-in identifiers
+--------------------
+
+	A table of built-in identifiers is in function.c.  These
+identifiers are hard-coded so that their id #s will be fixed, and then
+the interpreter	can use these id #s to call Bkod from C.
+
+	An identifier with the name "self" is inserted into the global
+table when the parser starts.  It has the type of property and is
+numbered 0.  Any references to self in the program thus find this
+identifier upon table lookup; references to self are thus turned into
+references to property #0.
+
+Built in functions
+------------------
+
+	Built in (C language) functions are listed in a table in
+actions.c.  This table gives the function name, function number, and
+argument types for each function.  When the parser starts up, it
+inserts each function name into the global table.  This prevents name
+conflicts, and allows calls to find information on the appropriate
+function.
+
+	When parsing a call, the compiler checks each of its arguments
+against the function argument list to make sure that types match.  The
+possible types are class id, message id, setting, and expression.  All
+but expressions are literals, which much begin with a pound sign.  A
+setting looks like <literal> = <expression>, where literal names a
+parameter.  In addition, functions might allow a list of one or more
+parameters or settings; the parser also allows such cases.
+
+	Calls to the "List" function can be abbreviated with square
+brackets:
+	List(3, 4, List(2, 3)) <==> [ 3, 4, [ 2, 3] ]
+
+Missing variables
+-----------------
+
+	Because of functions such as CreateObject and SendMessage, it
+may be necessary to reference class, message and parameter names
+before they are declared.  To handle such cases, the "missing" symbol
+table was added.  Variables are only inserted here if they appeared as
+literals to a procedure call.  Literals must be preceded by a pound
+sign to signal the parser that they refer to names that may not have
+been delcared.  If a literal name isn't found in any of the normal
+symbol tables, it is inserted into the missing table, with its type
+set to missing.  An id # is reserved for it so that future references
+to the name will all use the same id #, and no other names will have
+this id #.  Future class, message, and parameter declarations all
+check to see if an identifier of their same name exists in the missing
+table.  If so, the identifier is moved out of the missing table and
+into the global table, with its type set appropriately (i.e. to class,
+message, or parameter).
+
+	After the entire file has been parsed, the missing table might
+not be empty, because some statements may have referred to classes,
+messages or parameters that are only declared in other files.  This
+must be allowed so that classes can be referred to in arbitrary
+fashion in function calls (otherwise circular dependencies couldn't be
+compiled).  The compiler generates a warning message for these
+variables, and they are marked as missing in the database file.
+
+
+Database & recompilation
+------------------------
+
+	Before any compilation is done, the database file kodbase.txt
+is read in.  This file contains id numbers for code that has been
+previously compiled.  Since old code should work with newly compiled
+code, it is essential that the same id numbers are used to mean the
+same thing everywhere.  As each identifier is read in from the
+database, it is inserted into the appropriate symbol table.  Missing
+variables are inserted into the missing table, so that definitions of
+missing variables will use the correct id #s.
+
+	If a file is recompiled, all identifiers that remain unchanged
+will use the same id #s.  New identifiers will of course use new
+numbers.  Thus run-time objects that used the old code won't be able
+to refer to these new identifiers.  For example, if a property is
+added to a class, old objects won't have this property.
+
+	When identifiers from the database are inserted into the
+symbol table, they have their source fields set to DBASE.  Identifiers
+from compiled code, on the other hand, have their source fields set to
+COMPILE.  Code is only generated for COMPILE classes.  Also, when a
+new class is encountered in the source code, we check to see whether
+the class is being recompiled (source = DBASE), in which case we
+delete the old id from the table, or if the class has already appeared
+in this file (soruce = COMPILE), which is an error.
+
+	When a class in the source code is found to have come from the
+database, its source must be set to COMPILE.  This way future
+definitions of the class will find that the class has already been
+defined in source code, so an error should be generated.  The source
+fields of messages must be set in the same way.
+
+	When a new class is encountered, it is deleted from the class
+list.  A warning is generated for each of the class's subclasses,
+since these should each be recompiled so that the subclass's property
+numbers can take into account changes in the superclass.
+
+	The database needs to be written out between each file.  For
+example, suppose files A and B are compiled at the same time.  File A
+compiles correctly, but then file B has errors.  Then the user fixes
+file B and recompiles it.  File A's information still needs to be
+written out to the database, since it doesn't need to be recompiled.
+
+	An alternate filename can be specified for the database with the
+-K command line option.
+
+Constants and resources
+-----------------------
+
+	Constants and resources are unique in that they always just
+evaluate to integers.  When the compiler comes across an expression
+involving an identifier of constant or resource type, it modifies the
+expression to contain the numeric value of the constant or resource.
+Thus the code generator just sees constants, and never constant
+identifiers or resources.
+
+	Each source code file has an associated resource (.rsc) file.
+It is written out after code generation is performed.  This file
+contains the value of all resources, matched with their resource id
+#s.  Note that resource id #s are separate from other id #s, such as
+classes and messages.  However, resources are also written out to the
+database, so that recompiling will allow resources to keep their old
+id numbers.
+
+Code generation
+---------------
+
+	Code generation is pretty straightforward.  The heart is the
+function flatten_expr, which reduces expressions to a series of
+assignments with at most one operation per assignment.  This procedure
+allocates temporary variables as necessary to store intermediate
+values.  Procedure calls also use flatten_expr to reduce arguments to
+single identifiers from compilcated expressions.
+
+	If-thens, while loops, and for loops are reduced to simpler
+forms using conditional gotos.  Continue statements simply jump to
+the top of the current loop.  Break statements are accumulated in a
+list; when the code generator reaches the end of the loop, each
+statement on the list is backpatched to jump to the end of the loop.
+
+	Despite the use of missing variables, superclasses must still
+be compiled before subclasses, so that a class's ancestors' properties
+can be inserted into the class itself.
+
+	If the -d command line switch is given, line number statements
+are put in the output Bkod file.  The interpreter uses these lines to
+report errors, but otherwise treats them as NOPs.  The line numbering
+isn't always exactly right; for example, the first line of a for loop is
+actually numbered with the last line of the loop.
+
+Error handling
+--------------
+
+	Any error sets the generate_code flag to False.  After the
+parser has scanned the entire program, the code generator is only
+called if generate_code has remained True.
+
+	Parsing errors are reported by yyerror; semantic errors go
+through action_error.  Errors with the database go through
+simple_error; these shouldn't occur under normal operation.  Codegen
+errors should be extremely rare (such as > 256 locals in a procedure);
+those that aren't due to parser flaws should probably be moved into
+the parser so that codegen errors never occur.
+
+Compiling multiple files
+------------------------
+
+	The main function loops over each file on the command line and
+calls yyparse for each one.  After the parser is done, main calls
+codegen to generate code for the file that was just read (this also
+saves the database), and resets the parser for the next file.  After
+each file, the number of unresolved externals (i.e. missing variables)
+is printed out.
+
+	Every time the parser encounters a class definition, it adds
+that class's subclasses to a list of files that should be recompiled.
+At the same time, it removes the newly defined class from the list.
+After all files have been processed, we print out this list of files,
+because all the classes on the list have had one of their ancestors
+recompiled, and they should be recompiled themselves (their ancestors
+might have new properties, for example).
+
+	An object code (.bof) file should only contain object code for
+the source code (.kod) file from which it came, even if multiple files
+are compiled.  So each class has a "new" field which is True if the
+class should have code generated for it when the next object file is
+written out.  After this file is written, the flags of all old classes
+is set to False.  In addition, classes read in from the database have
+their new fields set to False.
+
+Include files
+-------------
+
+	Files can be included with a statment of the form "include
+<filename>" in the constants section of the file.  This simply
+includes the file <filename> as if it were in the original source
+file, so it's useful for creating "header files" of constants that
+need to be shared across source files.
+
+	Include files could be permitted elsewhere by just modifying
+the grammar to allow the include statement to appear.  Nested includes
+are allowed.
+
+	A directory to look for include files can be specified by using
+the -I command line option; multiple directories are allowed.
+
+Sorting
+-------
+
+	Certain sets of identifiers are sorted to allow the interpreter
+to perform a binary search instead of a linear search.  Message handlers
+are sorted by id number in the dispatch table at the beginning of a
+class.  Parameters to a message handler are also sorted by id number;
+note that this means that the first parameter listed in the handler's
+header in the source code might not correspond to local variable #0, and
+that the order of arguments in a call might be permuted.  We must wait
+until the parameters of a handler are sorted before inserting them as
+local variables into the symbol table (see make_message_handler in actions.c).
+
+Debugging strings
+-----------------
+
+	Strings given in the "resource" section of a kod file are
+placed into a resource file, which is eventually sent to the client.
+There is no need for the server to load these strings, except that we
+often want to print out a debugging string to the server.  Thus we
+allow strings to appear directly in a message handler for debugging
+purposes.  These strings aren't resources; instead, they are put at
+the end of the bof file, so that the server loads them in but they
+aren't send to the client.  Kod references these strings by an index
+into the string table at the end of its bof file.
+	
+Files
+-----
+
+	The grammar is in blakcomp.y; the lexing table is in
+blakcomp.l along with the main procedure and the error handlers.  The
+grammar actions are all in actions.c.  Code generation is handled in
+codegen.c and codeutil.c.  The linked-list procedures are in util.c;
+the hash table used for symbol tables is in table.c.  kodbase.c
+handles loading and saving the database.  There are also a bunch of
+header files.  Constants for the output Bkod file are in bkod.h; this
+file should also be used by the interpreter so that the compiler and
+interpreter agree on the object code values.

@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AphrodesiacPotion is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AphrodesiacPotion_name_rsc = "vial of perfume"
+   AphrodesiacPotion_name_plural_rsc = "vials of perfume"
+   AphrodesiacPotion_icon_rsc = solagh.bgf
+   AphrodesiacPotion_desc_rsc = \
+	"One whiff of this musky-scented fluid is enough to give you a warm, fuzzy feeling."
+
+classvars:
+
+   vrName = AphrodesiacPotion_name_rsc
+   vrIcon = AphrodesiacPotion_icon_rsc
+   vrDesc = AphrodesiacPotion_desc_rsc
+
+   vrName_plural = AphrodesiacPotion_name_plural_rsc
+
+   viValue_average = 20
+   viWeight = 20
+   viBulk = 25
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

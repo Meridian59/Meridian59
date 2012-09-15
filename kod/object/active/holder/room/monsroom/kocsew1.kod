@@ -1,0 +1,135 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanSewer1 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_kocsew1 = "A foul place to wander"
+   room_kocsew1 = kocsew1.roo
+
+   kocsew1_music = cave.mid
+
+   kocsewer1_locked = \
+      "You stand up to your knees in raw sewage, rattling at the gate, "
+      "but it's locked fast."
+
+   kocsewer1_no_cheat = "The door seems unwilling to budge for you."
+
+classvars:
+
+   vrName = room_name_kocsew1
+
+   viTeleport_row = 31
+   viTeleport_col = 6
+
+   viTerrain_type = TERRAIN_SEWERS
+
+properties:
+
+   prRoom = room_kocsew1
+   piRoom_num = RID_KOC_SEWER1
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   prMusic = kocsew1_music
+
+   piGen_time = 80000
+   piGen_percent = 20
+
+   piInit_count_min = 0
+   piInit_count_max = 1
+
+   piMonster_count_max = 5
+
+   % A list of people that came in from the other side.  Only allow them to go back.
+   plFromOtherSewer = $
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&DuskRat, 95] ];
+      plGenerators = [ [33, 7], [42, 5] ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % Locked Doors
+      plExits = Cons([ 25, 5, ROOM_LOCKED_DOOR, kocsewer1_locked ], plExits);
+      plExits = Cons([ 25, 6, ROOM_LOCKED_DOOR, kocsewer1_locked ], plExits);
+      plExits = Cons([ 46, 5, ROOM_LOCKED_DOOR, kocsewer1_locked ], plExits);
+      plExits = Cons([ 46, 6, ROOM_LOCKED_DOOR, kocsewer1_locked ], plExits);
+
+      % TO TOWN
+      plExits = Cons([ 40, 20, RID_KOC_STORE, 3, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 40, 21, RID_KOC_STORE, 3, 15, ROTATE_NONE ],plExits);   
+      
+      plExits = Cons([ 42, 8, RID_KOC_SEWER2, 4, 14, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+
+      propagate;
+   }
+
+   NewHold(what = $, new_row = 1, new_col = 1)
+   {
+      % If a player is put near the other door....
+      if IsClass(what,&Player)
+         AND (new_row >= 41 AND new_row <= 43)
+         AND (new_col >= 7 AND new_col <= 8)
+      {
+         % Record it so we can let them back.
+         plFromOtherSewer = Cons(what,plFromOtherSewer);
+      }
+
+      propagate;
+   }
+
+   LeaveHold(what = $)
+   {
+      if IsClass(what,&Player)
+         AND plFromOtherSewer <> $
+      {
+         plFromOtherSewer = DelListElem(plFromOtherSewer,what);
+      }
+
+      propagate;
+   }
+
+   SomethingTryGo(what = $, row = $, col = $)
+   {
+      if row = 42 AND col = 8
+         AND (plFromOtherSewer = $
+              OR FindListElem(plFromOtherSewer,what) = 0)
+         AND NOT IsClass(what,&DM)
+      {
+         send(what,@MsgSendUser,#message_rsc=kocsewer1_no_cheat);
+         debug("ALERT! ",send(self,@GetTrueName),self," tried to illegally enter the door in RID_KOC_SEWER1!");
+
+         % Stop here.
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,63 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttTranscendant is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item will remain in your inventory, even if you die.
+% 
+%  Form is: 
+%
+%   	[IA_TRANSCENDANT]
+%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+ 
+   itematttranscendant_desc = "  It glows with a soft, white light."
+   itematttranscendant_name = "transcendant %s"
+
+   transcendant_DM = "transcendant"
+
+classvars:
+
+   viItem_Att_Num = IA_TRANSCENDANT
+   vrDesc = itematttranscendant_desc
+   vrName = itematttranscendant_name
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Value Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   viDifficulty = 3
+   vrDM_Trigger = transcendant_DM
+
+properties:
+
+   piValue_modifier = 150
+   piValue_power_modifier = 0
+  
+messages:
+
+   ItemDropOnDeath()
+   {
+      return FALSE; 
+   }
+ 
+end  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

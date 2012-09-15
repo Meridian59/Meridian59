@@ -1,0 +1,181 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Discordance is Spell
+
+constants:
+
+   include blakston.khd
+
+   % At least how many enchantments should there be in the room to check for auto-remove?
+   MIN_ENCHANTMENTS_FOR_AUTOREMOVE = 1
+
+   % What's the minimum chance to remove spells we want before checking for auto-remove?
+   MIN_CHANCE_FOR_AUTOREMOVE = 60
+
+   % What's percentage of the chance do we keep for trying to remove Jala spells?
+   JALA_PERCENT = 50
+
+resources:
+
+   discordance_name_rsc = "discordance"
+   discordance_icon_rsc = idiscord.bgf
+   discordance_desc_rsc = \
+      "Magical energy is unleashed "
+      "which tries to destroy magical enchantments on the room.  "
+      "Requires sapphires to cast."
+   
+   discordance_on = \
+      "The fabric of space twists subtly, just enough to damage the brittle mana field."
+
+   discordance_sound = kdiscord.wav
+
+classvars:
+
+   vrName = discordance_name_rsc
+   vrIcon = discordance_icon_rsc
+   vrDesc = discordance_desc_rsc
+   vrSucceed_wav = discordance_sound
+
+   viSpell_num = SID_DISCORDANCE
+   viSchool = SS_KRAANAN
+   viMana = 8
+   viSpell_level = 4
+
+   viCast_time = 1000
+   viChance_To_Increase = 5
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Sapphire,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who=$)
+   {
+      if send(send(who,@GetOwner),@GetEnchantmentList) = $
+      {
+         Send(who, @MsgSendUser, #message_rsc=spell_bad_location, #parm1=vrName);
+         return FALSE;
+      }
+      propagate;
+   }
+
+   CastSpell(who = $,lTargets = $,iSpellPower = $)
+   {
+      local oRoom;
+
+      if isClass(who,&Room)
+      {
+         %% this way a room can automatically discord.
+         oRoom = who;
+      }    
+      else
+      {
+         oRoom = Send(who,@GetOwner);
+      }
+
+      % keep tabs on guides/bards, but not admins.
+      if IsClass(who, &DM)
+      {
+         if GetClass(who) = &DM
+         {
+            debug(send(who,@GetTrueName)," cast discordance in ",send(oRoom,@GetName));
+         }
+
+         if send(who,@PlayerIsImmortal)
+         {
+            % If they're immortal, let them clear everything.
+            iSpellPower = $;
+         }
+      }
+
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=discordance_on,#what=self);
+      Send(self,@DoDiscordance,#oRoom=oRoom,#iChance=iSpellPower);
+
+      if not IsClass(who,&Player)
+      {
+         return;
+      }
+           
+      propagate;
+   }
+
+   DoDiscordance(oRoom = $,iChance = $)
+   "Remove enchantments in the room with a given chance to remove each one."
+   {
+      local iNumEnchantments, lEnchantments, iModifiedChance, oEnchantment, oSpell, bRemovedSomething;
+
+      if oRoom = $
+      {
+         return FALSE;
+      }
+
+      % Chance of $ means that we want to remove it all.
+      %  Used by things like super-monsters (the Yeti)
+      if iChance = $ OR iChance >= 100
+      {
+         Send(oRoom,@RemoveAllEnchantments);
+         
+         return TRUE;
+      }
+
+      bRemovedSomething = FALSE;
+      lEnchantments = send(oRoom,@GetEnchantmentList);
+      iNumEnchantments = length(lEnchantments);
+
+      % Anti-clumpy code: If dispell is greater than 60%, then auto-remove one enchantment.
+      if iNumEnchantments >= MIN_ENCHANTMENTS_FOR_AUTOREMOVE
+         AND iChance >= MIN_CHANCE_FOR_AUTOREMOVE
+      {
+         oEnchantment = Nth(lEnchantments,random(1,iNumEnchantments));
+         Send(oRoom,@RemoveEnchantment,#what=Nth(oEnchantment,2));
+         bRemovedSomething = TRUE;
+
+         % Re-get the information
+         lEnchantments = send(oRoom,@GetEnchantmentList);
+         iNumEnchantments = length(lEnchantments);
+      }
+
+      for oEnchantment in lEnchantments
+      {
+         oSpell = Nth(oEnchantment,2);
+         iModifiedChance = iChance;
+         if send(oSpell,@GetSchool) = SS_JALA
+         {
+            % Only half chance to discord a Jala song
+            iModifiedChance = (iModifiedChance * JALA_PERCENT) / 100;
+         }
+         
+         if iChance = $ OR iModifiedChance > random(1,100)
+         {
+            Send(oRoom,@RemoveEnchantment,#what=oSpell);
+            bRemovedSomething = TRUE;
+         }
+      }
+      
+      return bRemovedSomething;
+   }   
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

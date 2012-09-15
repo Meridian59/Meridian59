@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarloquePort is BarloqueRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_barloqueport = "The Ports of Barloque"
+   room_barloqueport = barlport.roo
+   barloqueport_music = corloth.mid
+   
+classvars:
+
+   viTeleport_row = 25
+   viTeleport_col = 29
+
+   viPermanent_flags = ROOM_GUILD_PK_ONLY
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_BEACH
+
+   vrName = room_name_barloqueport
+
+properties:
+
+   prRoom = room_barloqueport
+   piRoom_num = RID_BAR_PORT
+
+   piBaseLight = LIGHT_NICE
+
+   prMusic = barloqueport_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 29, 27, RID_BAR_NORTH, 4, 49, ROTATE_NONE ],plExits);
+      plExits = Cons([ 29, 26, RID_BAR_NORTH, 4, 49, ROTATE_NONE ],plExits);
+      plExits = Cons([ 22, 5,  RID_GUILDH9, 9, 23, ROTATE_NONE ],plExits);
+      plExits = Cons([ 11, 55,  RID_BAR_VAULT, 3, 11, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 15,4 , ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 23,13, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 24,13, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 10,10, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 10,11, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 9,15 , ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 9,16 , ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 9,19 , ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 17,26, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 18,26, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 20,26, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 14,32, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 14,33, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 13,32, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 13,33, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 12,34, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 12,35, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 13,34, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 13,25, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 24,41, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 24,45, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 25,45, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 22,52, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 19,57, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 19,58, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 10,47, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 10,48, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 10,50, ROOM_LOCKED_DOOR ],plExits);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,37 @@
+# Thief Skill Master NPC
+# Left arm
+# groups
+# 1 standing
+# 2 -3 walking
+# 4 knife tossing
+-s 3
+24
+t000las.bmp    [-7, -3] 
+t045las.bmp    [-12, -5] 
+t090las.bmp    [-5, -8] 
+t180las.bmp    [0, 0] 
+t270las.bmp    [-7, -7] 
+t315las.bmp    [-5, -7] 
+t000laa.bmp    [-9, -4] 
+t045laa.bmp    [-9, -7] 
+t090laa.bmp    [-5, -6] 
+t180laa.bmp    [-25, -5] 
+t270laa.bmp    [-20, -5] 
+t315laa.bmp    [-8, -7] 
+t000lab.bmp    [-9, -7] 
+t045lab.bmp    [-9, -4] 
+t090lab.bmp    [-21, -4] 
+t180lab.bmp    [-11, -5] 
+t270lab.bmp    [-5, -6] 
+t315lab.bmp    [-6, -7] 
+t000lak.bmp    [-10, -5] 
+t045lak.bmp    [-9, -6] 
+t090lak.bmp    [-6, -5] 
+t180lak.bmp    [-24, -5] 
+t270lak.bmp    [-10, -8] 
+t315lak.bmp    [-4, -7] 
+4
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8
+ 8     13  18  17  16  16  16  15  14
+ 8     19  24  23  22  22  22  21  20

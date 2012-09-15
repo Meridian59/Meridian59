@@ -1,0 +1,115 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GMHall is BarloqueRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   room_GM_Hall = gmhall.roo
+   room_name_GM_Hall = "The Guildmaster's Hall"
+
+   GM_Hall_music = bar.mid
+
+   guild_charter_ball = "Guild Charters"
+   guild_charter_desc = "Here, guildmasters may post information for potential members."
+
+classvars:
+
+   vrName = room_name_GM_Hall
+
+   viTeleport_row = 8
+   viTeleport_col = 7
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP | TERRAIN_FOUNTAIN
+
+   prRoom = room_GM_Hall
+   piRoom_num = RID_GM_HALL
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = GM_Hall_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+      plExits = Cons([ 19, 6, RID_BAR_SOUTH, 34, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 19, 7, RID_BAR_SOUTH, 34, 21, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+CreateStandardObjects()
+   {
+     local oNews;
+
+%%%%%%%%%% guild creator
+
+      Send(self,@NewHold,#what=Create(&GuildCreator),
+           #new_row=5,#new_col=7,#fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH);
+
+%%%%%%%%%% charter newsball
+
+      oNews = send(SYS,@FindNewsByNum,#num=NID_GUILD_CHARTER);
+      if oNews = $
+        {
+           oNews=Create(&NewsGuildCharter,#nid=NID_GUILD_CHARTER,
+              #name=guild_charter_ball,#desc=guild_charter_desc);
+        }
+      Send(self,@NewHold,#what=oNews,
+           #new_row=5,#new_col=12,#fine_row=32,#fine_col=56,#new_angle=ANGLE_SOUTH);
+
+%%%%%%%%%%  some braziers
+
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=3,#new_col=3,#fine_row=40,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=3,#new_col=11,#fine_row=40, #fine_col=0);
+
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=9,#new_col=1,#fine_row=32, #fine_col=56);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=12,#new_col=1,#fine_row=32, #fine_col=56);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=15,#new_col=1,#fine_row=32, #fine_col=56);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=9,#new_col=12,#fine_row=32, #fine_col=8);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=12,#new_col=12,#fine_row=32, #fine_col=8);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=15,#new_col=12,#fine_row=32, #fine_col=8);
+
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=4,#new_col=4,#fine_row=48, #fine_col=48);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=6,#new_col=6,#fine_row=0, #fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=6,#new_col=8,#fine_row=0, #fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=4,#new_col=9,#fine_row=48, #fine_col=16);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

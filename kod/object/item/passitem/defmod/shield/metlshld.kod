@@ -1,0 +1,62 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MetalShield is Shield
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   metalshield_name_rsc = "small round shield"
+   metalshield_icon_rsc = metlshld.bgf
+   metalshield_desc_rsc = \
+      "This small shield is made from a sheet of tin bent and "
+      "fitted to a wooden frame.  Although the workmanship is "
+      "poor, it offers some protection during battle."
+
+   metalshield_window_overlay_rsc = povshldA.bgf
+
+classvars:
+
+   vrName = metalshield_name_rsc
+   vrIcon = metalshield_icon_rsc
+   vrDesc = metalshield_desc_rsc
+
+   viHits_init_min = 250
+   viHits_init_max = 300
+
+   viValue_average = 160
+   viWeight = 100
+   viBulk = 125
+
+   vrShield_window_overlay = metalshield_window_overlay_rsc
+   vrShield_overlay = metalshield_icon_rsc
+
+   viGround_group = 3
+   viInventory_group = 1
+
+   viDefense_base = 0
+   viDamage_base = 1
+
+properties:
+
+messages:
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_SLASH,10]
+             ];
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

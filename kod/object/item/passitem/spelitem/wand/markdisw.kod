@@ -1,0 +1,37 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MarkOfDishonorWand is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MarkOfDishonorWand_label_name_rsc = "wand of branding"
+   MarkOfDishonorWand_icon_rsc = wand6.bgf
+   MarkOfDishonorWand_desc_rsc = "Magical energy crackles about this slender wand."
+
+classvars:
+
+   vrLabelName = MarkOfDishonorWand_label_name_rsc
+   vrIcon = MarkOfDishonorWand_icon_rsc
+   viSpellEffect = SID_MARK_OF_DISHONOR
+   viColor = XLAT_TO_RED
+
+properties:
+
+   vrDesc = MarkOfDishonorWand_desc_rsc
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

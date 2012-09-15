@@ -1,0 +1,86 @@
+# Larva Worm
+# 
+# Groups:
+#            1 buried
+#          2-4 popup
+#            5 stand
+#          6-9 attack
+#        10-12 popdown
+#^Applied to Hotspot: 0
+#*Groups: 12
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+49
+Swm000pa.bmp   [0, -9] 
+Swm315pa.bmp   [0, -13] 
+Swm270pa.bmp   [0, -14] 
+Swm180pa.bmp   [0, -13] 
+Swm090pa.bmp   [0, 1] 
+Swm045pa.bmp   [0, -2] 
+Swm000pb.bmp   [0, -7] 
+Swm315pb.bmp   [0, -3] 
+Swm270pb.bmp   [0, -7] 
+Swm180pb.bmp   [0, -4] 
+Swm090pb.bmp   [0, 1] 
+Swm045pb.bmp   [0, 2] 
+Swm000pc.bmp   [0, 10] 
+Swm315pc.bmp   [0, 19] 
+Swm270pc.bmp   [0, -4] 
+Swm180pc.bmp   [0, 2] 
+Swm090pc.bmp   [0, -3] 
+Swm045pc.bmp   [0, 9] 
+Swm000sa.bmp   [0, -8] 
+Swm315sa.bmp   [0, -6] 
+Swm270sa.bmp   [0, -4] 
+Swm180sa.bmp   [0, 2] 
+Swm090sa.bmp   [0, -2] 
+Swm045sa.bmp   [0, -6] 
+Swm000fa.bmp   [0, -8] 
+Swm315fa.bmp   [0, -6] 
+Swm270fa.bmp   [0, -4] 
+Swm180fa.bmp   [0, 2] 
+Swm090fa.bmp   [0, -3] 
+Swm045fa.bmp   [0, -6] 
+Swm000fb.bmp   [0, -8] 
+Swm315fb.bmp   [0, -6] 
+Swm270fb.bmp   [0, -4] 
+Swm180fb.bmp   [0, 2] 
+Swm090fb.bmp   [0, -3] 
+Swm045fb.bmp   [0, -6] 
+Swm000fc.bmp   [0, -8] 
+Swm315fc.bmp   [0, -6] 
+Swm270fc.bmp   [0, -4] 
+Swm180fc.bmp   [0, 2] 
+Swm090fc.bmp   [0, -3] 
+Swm045fc.bmp   [0, -6] 
+Swm000fd.bmp   [0, -8] 
+Swm315fd.bmp   [0, -7] 
+Swm270fd.bmp   [0, -4] 
+Swm180fd.bmp   [0, 2] 
+Swm090fd.bmp   [0, -2] 
+Swm045fd.bmp   [0, -7] 
+worm00.bmp
+12
+ 1   49
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   13 14 15 16 16 16 17 18 
+ 8   7 8 9 10 10 10 11 12 
+ 8   1 2 3 4 4 4 5 6 

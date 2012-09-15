@@ -1,0 +1,500 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LupoggKing is Monster
+
+constants:
+
+   include blakston.khd
+   
+
+   ANIM_BREATH = 1
+   ANIM_BITE = 2
+   ANIM_SPIT = 3
+
+   SPIT_COLOR = 82
+
+resources:
+
+   lupoggking_name_rsc = "lupogg king"
+   lupoggking_icon_rsc = lupking.bgf
+   lupoggking_desc_rsc = \
+      "The ancient King of the Lupoggs lords over these dark caves, knowing "
+      "no creature to be its equal.  The rock walls rumble and shake whenever "
+      "this monstrosity wails.  You feel as though you have already outlived "
+      "most people who encounter the Lupogg King, but that thought does not "
+      "comfort you any."
+
+
+   lupoggking_dead_icon_rsc = lupkingx.bgf
+   lupoggking_dead_name_rsc = "dead lupogg king"
+
+   lupoggking_sound_hit = lup_atkm.wav
+   lupoggking_sound_miss = lup_atkm.wav
+   lupoggking_sound_death = lup_dth.wav
+   lupoggking_sound_aware = lup_awr.wav
+
+   lupoggking_cast_spell = "The lupogg king covers you in a foul paralyzing slime!"
+   lupoggking_cast_sound = bsp_dth.wav
+
+   lupoggking_death_blow    = "Your last attack ends the lupogg king's reign!"
+   lupoggking_single_killer = "You have personally slain the mighty lupogg king all by your lonesome!"
+   lupoggking_double_killer = "The lupogg king is dead, thanks to you and your comrade!"
+   lupoggking_helper_killer = "The lupogg king is dead, thanks to you and your comrades!"
+   lupoggking_no_truce      = "The evil in this place eliminates the possibility of any truce."
+
+   lupoggking_spit = gob.bgf
+
+classvars:
+   vrName = lupoggking_name_rsc
+   vrIcon = lupoggking_icon_rsc
+   vrDesc = lupoggking_desc_rsc
+   vrDead_icon = lupoggking_dead_icon_rsc
+   vrDead_name = lupoggking_dead_name_rsc
+
+   viTreasure_type = TID_LUPOGG_KING
+   viSpeed = SPEED_SLOW
+   viAttack_types = ATCK_WEAP_CLAW
+   viLevel = 200
+   viDifficulty = 9
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE
+   viAttributes = MOB_SPASM
+   viGender = GENDER_MALE   
+
+   vrSound_hit = lupoggking_sound_hit
+   vrSound_miss = lupoggking_sound_miss
+   vrSound_aware = lupoggking_sound_aware
+   vrSound_death = lupoggking_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+   plAttackers = $  % [player,player....]
+
+   piHoldAttackChance = 12       % Chance he'll attack with a hold
+   piHoldCounterChance = 5    % Chance he'll counter a spell or arrow with a hold
+   piHoldDurationMax = 45  % seconds
+   piHoldDurationMin = 30  % seconds
+
+messages:
+
+   Constructed()
+   {
+      pimax_Hit_Points = pimax_hit_Points * 3;
+      piHit_Points = pimax_hit_points;
+
+      plResistances = [ [ 40, ATCK_WEAP_ALL ],
+                        [ 90, ATCK_WEAP_PIERCE ],
+                        [ 90, -ATCK_SPELL_COLD ],
+                        [ 90, -ATCK_SPELL_SHOCK],
+                        [-20, -ATCK_SPELL_ACID ],
+                        [-20, -ATCK_SPELL_FIRE ],
+                        [-40, ATCK_WEAP_NERUDITE ]
+                      ];
+      propagate;
+   }
+
+   
+   AssessDamage(what = $,damage = $,atype = 0, aspell = 0,bonus = 0)
+   "This is called when something causes damage to us"
+   {
+      local i;
+
+      for i in plAttackers
+      {
+         if i = what
+         {
+            propagate;
+         }
+      }
+
+      plAttackers = cons(what,plAttackers);
+
+      propagate;
+   }
+
+   DoSpasm()
+   {
+      Send(self,@DoBreath);
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_BITE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SomethingMoved(what=$)
+   {
+      local oTrance, oActive, lActive, i;
+
+      if what <> self OR poOwner = $
+      {
+         propagate;
+      }
+
+      % Shake the ground when I take a step.
+      % Small chance each person might lose any active trance.
+
+      Send(poOwner,@Rumble,#duration=250,#disruption=50);
+      
+      propagate;
+   }
+
+   DoCast()
+   {
+      piAnimation = ANIM_SPIT;
+      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return lupoggking_spit;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+   
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
+   }
+
+   DoBreath()
+   {
+      piAnimation = ANIM_BREATH;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,7, 2,11);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,2, 2,21);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_BITE
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,12, 2,16, 2,1);
+
+         return;
+      }
+
+      if piAnimation = ANIM_SPIT
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,17, 2,21, 2,1);
+
+         return;
+      }
+
+      if piAnimation = ANIM_BREATH
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,2, 2,6, 2,1);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_TRUCE)
+      {  
+         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_truce);            
+
+         return FALSE; 
+      }
+
+      if Random(1,piHoldCounterChance) = 1 AND Send(self,@CanSee,#what=who)
+      {
+         Send(self,@MonsterCastAttackSpell,#what=who);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   {
+      if use_weapon <> $
+         AND IsClass(use_weapon,&RangedWeapon)
+         AND victim = self
+         AND Send(self,@CanSee,#what=what)
+         AND Random(1,piHoldCounterChance) = 1 
+      {
+         Send(self,@MonsterCastAttackSpell,#What=what);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   MonsterCastAttackSpell(what=$)
+   {
+      local oSpell, iRandom, oTarget;
+
+      if what = $
+      {
+         oTarget = poTarget;
+      }
+      else
+      {
+         oTarget = what;
+      }
+
+      if not Send(self,@CanSee,#what=poTarget)
+      {
+         return;
+      }
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      iRandom = Random(piHoldDurationMin,piHoldDurationMax);
+
+      if NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,#use_weapon=self)
+      {
+         return;
+      }
+
+      Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=lupoggking_cast_sound);
+      Send(self,@DoCast);
+      Send(oSpell,@DoHold,#what=self,#oTarget=oTarget,#iDurationSecs=iRandom);
+      Send(oTarget,@MsgSendUser,#message_rsc=lupoggking_cast_spell);
+      Send(oTarget,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=iRandom*1000,#xlat=SPIT_COLOR); 
+
+      % Do damage?
+
+      return; 
+   }
+
+   AttackTimer( timer = $ )
+   "We were bashing on something before, and now its time to hit it again."
+   {
+      local oSpell, iRandom;
+      
+      iRandom = Random(1,piHoldAttackChance);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      Send(self,@ClearBehavior,#timer=timer);
+
+      % sanity checks
+
+      if poOwner = $
+      {
+         debug("Unreachable. Null Owner"); 
+         Send(self,@EnterStateLimbo);
+
+         return;
+      }
+
+      if poTarget=$
+      {
+         debug("Unreachable. Null poTarget","monster",self); 
+         Send(self,@EnterStateWait);
+
+         return;
+      }
+
+      Send(self,@FindNewTarget);
+      if NOT Send(self,@CanReach,#what=poTarget) 
+         AND Send(poTarget,@IsEnchanted,#what=oSpell)
+      {
+         Send(self,@EnterStateChase,#Target=poTarget);
+
+         return;
+      }
+      else
+      {
+         if NOT Send(self,@CanReach,#what=poTarget) 
+         {
+            Send(self,@MonsterCastAttackSpell);
+            Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+
+            return;
+         }
+      }
+ 
+      if NOT Send(poTarget,@IsEnchanted,#what=oSpell)
+         AND iRandom = 1
+      { 
+         Send(self,@MonsterCastAttackSpell); 
+      }
+      else 
+      {
+         Send(self,@TryAttack,#what=poTarget); 
+      }
+
+      Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+
+      return;
+   }
+
+   ReqMonsterMove(new_row = $,new_col = $)
+   "Called by monster moving code to check if we really want to go"
+   "to <new_row>,<new_col>."
+   {
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_SEWER_KING
+         AND (new_row > 17 OR new_col > 43 OR new_row < 2 OR new_col < 12)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CanSee(what=$)
+   {
+      local iRow, iCol;
+
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_SEWER_KING
+         AND what <> $
+      {
+         iRow = Send(what,@GetRow);
+         iCol = Send(what,@GetCol);
+
+         if iRow > 18 and iCol > 43
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   FindNewTarget()
+   {
+      local oHold, lActive, iRandom, iDistance, iBestDistance, i, each_obj;
+
+      % Only one in three people are considered eligable 
+      % targets.  The closest is targeted.  Held people
+      % aren't considered - he deals with his current 
+      % target first.  Only people in veiw are considered.
+
+      oHold = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      lActive = Send(poOwner,@getholderactive);
+      iRandom = Random(1,30);
+      iBestDistance = 10000;
+
+      if Send(poTarget,@isenchanted,#what=oHold)
+      {
+         for i in lActive
+         {
+            each_obj = Send(poOwner,@HolderExtractObject,#data=i);
+            iDistance = Send(self,@SquaredDistanceTo,#what=each_obj);
+
+            if IsClass(each_obj,&User)
+               AND Send(self,@CanSee,#what=each_obj)
+               AND NOT Send(each_obj,@isenchanted,#what=oHold)
+               AND (iRandom < 10 OR iDistance < iBestDistance)
+            {
+               iBestDistance = iDistance;
+               poTarget = each_obj;
+               if iRandom < 5
+               {
+                  return;
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   Killed(what=$)
+   {
+      local oSpell, oRoom, NumAttackers, i;
+
+      NumAttackers = length(plAttackers);
+ 
+      for i in plAttackers
+      {
+         if i = what
+         {
+            Send(i,@MsgSendUser,#message_rsc=lupoggking_death_blow );      
+         }
+
+         if NumAttackers = 1
+         {
+            Send(i,@MsgSendUser,#message_rsc=lupoggking_single_killer );
+         }
+
+         if NumAttackers = 2
+         {
+            Send(i,@MsgSendUser,#message_rsc=lupoggking_double_killer );
+         }
+
+         if NumAttackers > 2
+         {
+            Send(i,@MsgSendUser,#message_rsc=lupoggking_helper_killer );
+         }
+
+      }
+   
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
+      post(oSpell,@DoEarthQuake,#where=poOwner,#severity=2);
+
+      propagate;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+ 
+   DMCanArmageddon()
+   {
+      % Can't destroy the lupogg king in his home.
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_SEWER_KING
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

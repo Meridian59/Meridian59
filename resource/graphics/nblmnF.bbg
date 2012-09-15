@@ -1,0 +1,22 @@
+# Nobleman - legs
+# groups
+# 1 standing
+# 2-3 walking
+-s  4
+12
+nf000aaa.bmp   [-30, 0] 
+nf090aaa.bmp   [-20, -2] 
+nf180aaa.bmp   [-28, -2] 
+nf270aaa.bmp   [-18, -4] 
+nf000baa.bmp   [-24, 0] 
+nf090baa.bmp   [-46, -4] 
+nf180baa.bmp   [-28, -2] 
+nf270baa.bmp   [-42, -4] 
+nf000bab.bmp   [-26, -2] 
+nf090bab.bmp   [-42, -4] 
+nf180bab.bmp   [-28, -2] 
+nf270bab.bmp   [-46, -2] 
+3
+ 4      1   4   3   2
+ 4      5   8   7   6
+ 4      9  12  11  10

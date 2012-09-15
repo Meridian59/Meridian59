@@ -1,0 +1,178 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+guest is user
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   guest_cant_broadcast = "Only regular players may broadcast messages."
+
+   guest_cant_send_non_guest = "Only regular players may send messages to the real world."
+
+classvars:
+
+
+properties:
+
+messages:
+
+   UserLogonSetPosition()
+   {
+      Send(self,@AdminGotoSafety);
+
+      return;
+   }
+
+   CheckPlayerFlag(flag=0)
+   {
+      if flag = PFLAG_SAFETY
+      {  return True; }
+
+      propagate;
+   }
+
+   SetRandomHomeroom()
+   {
+      %debug("setrandomhomeroom");
+      piHomeroom = RID_GUEST1;
+      return;
+   }
+
+   SetInitialHomeroom()
+   {
+      piHomeroom = RID_GUEST1;
+      return;
+   }
+
+   GetInitialRoomID()
+   {
+      return RID_GUEST1;
+   }
+
+   UserGotoDeadRoom()
+   {
+      Send(self,@TeleportTo,#RID=RID_GUEST1);
+
+      return;
+   }
+
+   TryBroadcast()
+   "Called when the user wants to broadcast a string.  Guests can't! "
+   {
+      Send(self,@MsgSendUser,#message_rsc=guest_cant_broadcast);
+
+      return False;
+   }
+
+   TrySayGroup(users = $)
+   {
+      local i,oRoom;
+
+      for i in users
+      {
+		oRoom = Send(SYS,@UtilGetRoom,#what=i);
+		if oRoom = $ { continue; }        %% this group member is not logged in - lagged out?
+
+		if not Send(oRoom,@IsGuestRoom)
+		{
+			Send(self,@MsgSendUser,#message_rsc=guest_cant_send_non_guest);
+			return False;
+		}
+      }
+      propagate;
+   }
+
+   SendFirstTimeAppeal()
+   {
+      return;
+   }
+
+   PlayerNewCharInfo()
+   {
+      %debug("player new char info");
+      propagate;
+   }
+
+   UserLogon()
+   {
+      local i;
+
+      %debug("userlogon");
+
+      piHealth = piBase_max_health;
+      Send(self,@NewHealth);
+      Send(self,@setplayerflag,#flag=PFLAG_PKILL_ENABLE,#value=True);
+
+
+      propagate;
+   }
+
+   LoadMailNews()
+   {
+      return;
+   }
+   UserMail()
+   {
+      return;
+   }
+   UserGetNewMail()
+   {
+      return;
+   }
+   ReceiveMail()
+   {
+      return;
+   }
+   ReceiveNestedMail()
+   {
+      return;
+   }
+      
+   AddDefaultSpells()
+   "Add the spells a player is given when creating a character"
+   {
+      Send(self,@AddSpell,#num=SID_FIREBALL,#iability=50);
+      return;
+   }
+
+   AddDefaultSkills()
+   "Add the skills that all players have."
+   {
+      Send(self,@AddSkill,#num=SKID_SLASH);
+      Send(self,@AddSkill,#num=SKID_PROFICIENCY_MACE);
+      return;
+   }
+
+   AddDefaultObjects()
+   "Add the objects a player is given when creating a character in newbie zone"
+   {
+      Send(self,@NewHold,#what=Create(&Money,#number=2500));
+      Send(self,@NewHold,#what=Create(&Mace));
+      Send(self,@NewHold,#what=Create(&RedMushroom,#number=20));
+      Send(self,@NewHold,#what=Create(&OrcTooth,#number=10));
+
+      return;
+   }
+  
+
+   IsFirstTime()
+   {
+      %debug("isfirsttime");
+
+      % called by server to tell client if they NEED to go through char creation or not
+      return True;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

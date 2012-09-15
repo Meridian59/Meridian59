@@ -1,0 +1,12 @@
+;
+; DEF file for intro DLL
+;
+
+EXPORTS
+	GetModuleInfo		@1  NONAME
+	EventKey                @3  NONAME
+	EventMouseClick         @5  NONAME
+	ModuleExit              @16 NONAME
+	EventResize             @18 NONAME
+	EventRedraw             @20 NONAME
+	EventSetFocus           @26 NONAME

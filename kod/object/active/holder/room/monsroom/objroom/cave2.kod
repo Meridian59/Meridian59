@@ -1,0 +1,166 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cave2 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_cave2 = cave2.roo
+   room_name_cave2 = "A Deep, Dark, Spooky, Icky Cave"
+
+   cave2_music = song.mid
+
+classvars:
+
+   vrName = room_name_cave2
+
+   viTeleport_row = 23
+   viTeleport_col = 16
+
+   viTerrain_type = TERRAIN_CAVES | TERRAIN_TEMPLE
+
+properties:
+
+   prRoom = room_cave2
+   piRoom_num = RID_CAVE2
+
+   prMusic = cave2_music
+
+   piBaseLight = LIGHT_DARK
+
+   piOutside_factor = OUTDOORS_2
+
+   piGen_time = 45000
+   piGen_percent = 80
+
+   piGen_Object_Time = 1200000
+
+   ptIllusionResetTimer = $
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 18, 30, RID_CAVE3, 74, 34, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H7, 19, 3, ANGLE_SOUTH], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_ORC_CAVE1, 43, 41, ANGLE_SOUTH], plEdge_exits);
+
+      propagate;
+   }
+
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+      plObject_gen = Cons([ &Chalice, GEN_ONE, 0, 23, 11, 16, 48 ],plObject_gen);
+      plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 3, 24, 49 ],plObject_gen);
+      plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 3, 25, 53 ],plObject_gen);
+
+      propagate;
+    }
+
+   Constructed()
+   {
+      plMonsters = [ [&Orc, 50], [&Spider, 50] ];
+
+      plGenerators = [ [51, 14], [50, 34], [18, 50], [27, 47], [23, 39],
+                       [19, 30], [25, 26], [25, 33], [32, 35], [31, 31],
+                       [35, 58], [15, 43], [16, 56] ];
+
+      propagate;
+   }
+
+   DispelIllusions(what=$)
+   {
+      send(self,@ChangeTexture,#id=2,#new_texture=01605, #flags=CTF_FLOOR); %1605 is
+      send(self,@ChangeTexture,#id=3,#new_texture=01605, #flags=CTF_FLOOR); %cave stone 5
+      send(self,@ChangeTexture,#id=4,#new_texture=01605, #flags=CTF_FLOOR);
+      send(self,@ChangeTexture,#id=5,#new_texture=01605, #flags=CTF_FLOOR);
+
+      send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
+      send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
+      send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
+      send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
+      send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
+   
+      ptIllusionResetTimer = createtimer(self,@ReplaceIllusions,30000);  % 3o seconds
+      
+      return;   
+   }
+
+   ReplaceIllusions()
+   {
+      ptIllusionResetTimer = $;
+
+      send(self,@ChangeTexture,#id=2,#new_texture=01722,#flags=CTF_FLOOR); %marble peach2
+      send(self,@ChangeTexture,#id=3,#new_texture=01701,#flags=CTF_FLOOR); %marble white1
+      send(self,@ChangeTexture,#id=4,#new_texture=01701,#flags=CTF_FLOOR);
+      send(self,@ChangeTexture,#id=5,#new_texture=01701,#flags=CTF_FLOOR);
+
+      send(self,@SetSector,#sector=1,#animation=ANIMATE_FLOOR_LIFT,#height=128,#speed=0);
+      send(self,@SetSector,#sector=2,#animation=ANIMATE_FLOOR_LIFT,#height=56,#speed=0);
+      send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=48,#speed=0);
+      send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=40,#speed=0);
+      send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=32,#speed=0);
+   
+      return;   
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_ORCCAVES),
+           #new_row=23,#new_col=53,#new_angle=ANGLE_WEST);
+           
+      propagate;
+   }
+
+   OkayToGetChalice()
+   {
+      local i, Each_obj;
+
+      % Must dispell the illusion to get the chalice.
+      if ptIllusionResetTimer = $
+      {
+         return FALSE;
+      }
+
+      for i in plActive
+      {
+         each_obj=Send(self,@holderExtractObject,#data=i);
+         if isClass(each_obj,&orc)
+         {
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   Delete()
+   {
+      if ptIllusionResetTimer <> $
+      {
+         DeleteTimer(ptIllusionResetTimer);
+         ptIllusionResetTimer=$;
+      }
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

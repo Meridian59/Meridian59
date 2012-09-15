@@ -1,0 +1,22 @@
+# guild shield A
+#^Applied to Hotspot: 32
+#*Groups: 3
+#* display Group
+#* carrying Group
+#* dropped Group
+-s 5
+9
+gshA000.bmp    [89, 13] :1      1 [-112, -17]
+gshA045.BMP    [195, 79] 
+gshA000.bmp    [167, 82] 
+gshA315.bmp    [144, 85] 
+gshA225.BMP    [150, 80] 
+gshA135.BMP    [193, 81] 
+gshA090.bmp    [215, 83] 
+gshAdrp.bmp    [7, 0] :1      1 [-8, -20]
+gshAbro.bmp    [0, 0] :1      1 [-8, -20]
+4
+ 1   1 
+ 8   2 3 4 5 5 5 6 7 
+ 1   8 
+ 1   9

@@ -1,0 +1,220 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OldBlackSmith is NoMoveOn
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   oblak_name_rsc = "oblak"
+   oblak_icon_rsc = bsmith.bgf
+   oblak_desc_rsc = "This is an oblak, who can repair your broken items."
+
+   oblak_busy = "I can only handle only one person and one item at a time!"
+   oblak_cant_fix = "I can't repair that there %s, sorry"
+   oblak_cost = "Repairing this %s will cost ya, oh, about %i shillin's"
+   oblak_cant_return = "You can't carry the %s, so I'll put it on the ground for ya"
+   oblak_too_good = "I can't fix the %s, it's in as good shape as I could put it."
+   oblak_only_money = "Sorry, I only take shillings"
+   oblak_more_money = "That's not enough, it will cost me %i shils to repair the %s"
+   oblak_change = "Here's your change"
+   oblak_success = "Thankee for your business, here's your %s"
+
+classvars:
+   vrName = oblak_name_rsc
+   vrIcon = oblak_icon_rsc
+   vrDesc = oblak_desc_rsc
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+
+properties:
+
+
+   poOffer_who = $
+   plOffer_items = $
+
+   piHits_max_prev = $
+   piHits_prev = $
+
+messages:
+
+   Repair(what = $,who = $)
+   {
+      local iMax,iCurrent;
+
+      if poOffer_who <> $
+      {
+	 Send(who,@MsgSendUser,#message_rsc=oblak_busy);
+	 Send(self,@Reject,#what=what,#who=who);
+	 return;
+      }
+
+      if not IsClass(what,&Item) or not Send(what,@ReqRepair)
+      {
+	 Send(who,@MsgSendUser,#message_rsc=oblak_cant_fix,#parm1=Send(what,@GetName));
+	 Send(self,@Reject,#what=what,#who=who);
+	 return;
+      }
+
+      iMax = Send(what,@GetMaxHits);
+      iCurrent = Send(what,@GetHits);
+      if iCurrent >= ((4*iMax)/9)
+      {
+	 Send(who,@MsgSendUser,#message_rsc=oblak_too_good,#parm1=Send(what,@GetName));
+	 Send(self,@Reject,#what=what,#who=who);
+	 return;
+      }
+
+      % should really send fixed item here...
+
+      if not Send(who,@ReqOffer,#what=self,#item_list=plOffer_items)
+      {
+	 Send(self,@CleanupCancelOffer);
+	 return;
+      }
+
+      % fix item 
+
+      %Send(what,@SetMaxHits,#number=(4*iMax)/9);
+      Send(what,@SetHits,#number=(4*iMax)/9);
+
+      Send(who,@MsgSendUser,#message_rsc=oblak_cost,#parm1=Send(what,@GetName), 
+	   #parm2=Send(what,@GetInitValue)/2);
+
+      poOffer_who = who;
+      plOffer_items = [what];
+
+      piHits_prev = iCurrent;
+      piHits_max_prev = iMax;
+
+      Send(who,@Offer,#what=self,#item_list=plOffer_items);
+      
+      return;
+   }
+
+   Reject(what = $,who = $)
+   {
+      local oRoom;
+      if Send(what,@ReqNewOwner,#what=who) and Send(who,@ReqNewHold,#what=what)
+      {
+	 Send(who,@NewHold,#what=what);
+	 return;
+      }
+      % user can't take it back, put on ground
+      oRoom = Send(who,@GetOwner);
+
+      Send(oRoom,@NewHold,#what=what,#new_row=Send(who,@GetRow),#new_col=Send(who,@GetCol));
+
+      Send(who,@MsgSendUser,#message_rsc=oblak_cant_return,#parm1=Send(what,@GetName));
+      return;
+   }
+
+   OfferCanceled()
+   {
+      local oRepaired;
+
+      oRepaired = First(plOffer_items);
+
+      %Send(oRepaired,@SetMaxHits,#number=piHits_max_prev);
+      Send(oRepaired,@SetHits,#number=piHits_prev);
+
+      Send(self,@Reject,#what=First(plOffer_items),#who=poOffer_who);
+
+      poOffer_who = $;
+      plOffer_items = $;
+
+      return;
+   }
+
+   CounterOffer(item_list = $)
+   {
+      local i,oHolder,iLists,lTake_items,iValue_offered,oRepaired,iDiff;
+
+      if poOffer_who = $
+      {
+	 return False	 ;
+      }
+
+      oRepaired = First(plOffer_items);
+
+      iValue_offered = 0;
+      for i in item_list
+      {
+	 if not IsClass(i,&Money)
+	 {
+	    Send(poOffer_who,@MsgSendUser,#message_rsc=oblak_only_money);
+	    Send(self,@OfferCanceled);
+	    return False;
+	 }
+	 iValue_offered = iValue_offered + Send(i,@GetValue);
+      }
+
+      iDiff = iValue_offered - Send(oRepaired,@GetInitValue)/2;
+
+      if iDiff < 0
+      {
+	 Send(poOffer_who,@MsgSendUser,#message_rsc=oblak_more_money, 
+	      #parm1=Send(oRepaired,@GetInitValue)/2,#parm2=Send(oRepaired,@GetName));
+	 Send(self,@OfferCanceled);
+	 return False;
+      }
+
+      if iDiff > 0
+      {
+	 Send(poOffer_who,@MsgSendUser,#message_rsc=oblak_change);
+	 plOffer_items = Cons(Create(&Money,#number=iDiff),plOffer_items);
+      }
+
+      oHolder = Send(SYS,@GetSystemHolder1);
+      for i in plOffer_items
+      {
+	 Send(oHolder,@NewHold,#what=i);
+      }
+      
+      Send(poOffer_who,@AcceptOffer);
+
+      Send(poOffer_who,@MsgSendUser,#message_rsc=oblak_success,
+	   #parm1=Send(oRepaired,@GetName));
+      % take his stuff
+     
+      oHolder = Send(SYS,@GetSystemHolder2);
+      iLists = 1;
+      while iLists <= 2 
+      {
+	 if iLists = 1
+	 {
+	    lTake_items = Send(oHolder,@GetHolderActive);
+	 }
+	 if iLists = 2
+	 {
+	    lTake_items = Send(oHolder,@GetHolderPassive);
+	 }
+
+	 for i in lTake_items
+	 {
+	    Send(i,@Delete);
+	 }
+	 iLists = iLists + 1;
+      }
+      
+      poOffer_who = $;
+      plOffer_items = $;
+
+      return True;
+   }
+
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

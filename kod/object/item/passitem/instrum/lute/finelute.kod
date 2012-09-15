@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FineLute is Lute
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   FineLute_name_rsc = "fine lute"
+   FineLute_icon_rsc = music.bgf
+   FineLute_overlay_rsc = luteov.bgf
+   FineLute_desc_rsc = "The lute is of a higher quality than most lutes.   "
+        "The instrument has been constructed flawlessly and the dark stain was obviously applied by a master craftsman.  "
+		  "Its pine construction offers a richer sound than the more common rosewoods lutes."
+
+classvars:
+
+   viInstrument_strength = 30
+   vrName = FineLute_name_rsc
+   vrDesc = FineLute_desc_rsc
+
+   vrIcon = FineLute_icon_rsc
+   vrInstrument_overlay = FineLute_overlay_rsc
+
+   viValue_average = 1600
+   viWeight = 85
+   viBulk = 150
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

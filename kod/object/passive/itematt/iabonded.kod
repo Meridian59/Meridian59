@@ -1,0 +1,153 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttBonded is ItemAttribute
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item is bonded to a player.
+% 
+%  Form is: 
+%
+%   	[IA_BONDED, oPlayer]
+%	
+%  oPlayer::the player to which this item is bonded.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+ItemAttBonded_desc = ""
+
+classvars:
+
+   viItem_Att_Num = IA_BONDED
+   vrDesc = ItemAttBonded_desc
+
+properties:
+
+messages:
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   InitiallyIdentified(random_gen=FALSE)
+   {            
+      return TRUE;
+   }   
+
+   ItemCanIdentify()
+   {
+      return FALSE;
+   }	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Infrastructure
+%%  (Adding and removing a ItemAtt from an item.)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AddToItem(oItem=$,oPlayer=$,identified=false)   
+   {
+      local lData, iValue;
+	  
+      lData = $;
+
+      lData = cons(oPlayer,lData);
+      
+      iValue = send(self,@SetCompound,#oItem=oItem,#iPower=0);
+      lData = cons(iValue,lData);
+	  
+      send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+      return;  	  
+   }
+
+   RemoveFromItem(oItem=$)
+   "This must be called.  In fact, this is what all attribute "
+   "removing things should call."
+   {
+      local lData;
+      lData = send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_num);
+      if lData <> $
+      {
+         send(nth(lData,2),@ClearBondedItem);
+      }
+      send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
+      return;
+   }   
+
+   AddEffects(oItem = $, lData = $, oPlayer = $)
+   "AddEffects, in general, does anything that is triggered upon creation, "
+   "including changing the stats of the Item's wielder/wearer, or changing "
+   "some part of the item's stats.\n"   
+   "This should be tailored for each Attribute."
+   {
+      return;
+   }
+
+   RemoveEffects(oItem = $, lData = $)
+   "This simply undoes whatever AddEffects does."
+   {
+      % remove IA_APPEND_DESCRIPTION label if there are no more quest attributes?
+      %     for now, leave it on.
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Maintenance Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AppendDesc(oItem=$)
+   {
+      %AppendTempString(vrDesc);
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%	Treasure Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   AddToTreasureTable()
+   {
+      return;
+   }
+
+   CanBeSpoofed()
+   {
+      return FALSE;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Name Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   ItemBuildDescName(oItem=$)
+   {
+      %Addpacket(4,vrName);
+      Addpacket(4,send(oItem,@getname));
+      return;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

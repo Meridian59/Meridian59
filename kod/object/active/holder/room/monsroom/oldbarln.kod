@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OldBarloqueNorth is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OldBarloqueNorth = "Historic North Barloque"
+   room_OldBarloqueNorth = obarln.roo
+   OldBarloqueNorth_music = corloth.mid
+
+classvars:
+
+   vrName = room_name_OldBarloqueNorth
+
+   viTeleport_row = 25
+   viTeleport_col = 42
+
+   viTerrain_type = TERRAIN_CITY
+
+properties:
+
+   prRoom = room_OldBarloqueNorth
+   piRoom_num = RID_OLD_BAR_NORTH
+
+   prMusic = OldBarloqueNorth_music
+
+   piBaseLight = LIGHT_NICE
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = $;
+
+      plGenerators = $;
+
+      propagate;
+   }
+
+   SomethingMoved(what = $, new_row = $, new_col = $)
+   {
+      if new_col = 53 AND (new_row >= 44 AND new_row <= 46)
+      {
+         send(send(SYS,@FindRoomByNum,#num=RID_OLD_BAR_SOUTH),@NewHold,
+              #what=what,#new_row=3,#new_col=38,#new_angle=ANGLE_EAST);
+      }
+
+      if new_col = 38 AND (new_row >= 67 AND new_row <= 69)
+      {
+         send(send(SYS,@FindRoomByNum,#num=RID_OLD_BAR_SOUTH),@NewHold,
+              #what=what,#new_row=27,#new_col=27,#new_angle=ANGLE_EAST);
+      }
+
+      propagate;
+   }
+
+   GetRegion()
+   {
+      return RID_HISTORIC;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

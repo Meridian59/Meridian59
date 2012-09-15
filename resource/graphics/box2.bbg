@@ -1,0 +1,23 @@
+# Plain chest
+# groups
+# 1 closed
+# 2 opened
+
+-s 3
+12
+ftl000a.bmp
+ftl045a.bmp
+ftl090a.bmp
+ftl180a.bmp
+ftl270a.bmp
+ftl315a.bmp
+ftl000b.bmp
+ftl045b.bmp
+ftl090b.bmp
+ftl180b.bmp
+ftl270b.bmp
+ftl315b.bmp
+
+2
+8  1  6  5  4  4  4  3  2
+8  7 12 11 10 10 10  9  8

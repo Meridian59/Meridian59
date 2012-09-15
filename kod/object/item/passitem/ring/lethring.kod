@@ -1,0 +1,172 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%The ring of lethargy is a cursed ring which, when the player wears it,reduces
+%his vigor rest threshold.  When the player attempts to remove the ring, some
+%of his current vigor drains away.
+%code by Justin, 98jsh@williams.edu
+ 
+RingofLethargy is Ring
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ringoflethargy_name_rsc = "ring of lethargy"
+   ringoflethargy_icon_rsc = ring3.bgf
+
+   ringoflethargy_desc_rsc = \
+      "The ring looks dangerous even from here.  Perhaps you should not wear it."
+
+   ringoflethargy_desc_used_rsc = \
+      "The ring seems to pulse upon your finger--almost as if it were feeding."
+
+   ringoflethargy_use_rsc = \
+      "After putting on the ring you feel drained and out of breath."
+  
+   ringoflethargy_try_unuse_rsc = \
+      "As you remove the ring, you suddenly feel your strength flow from your body!  "
+      "Involuntarily you place the ring back on-- you are linked to it, and need special help to remove it."
+
+   ringoflethargy_unuse_rsc = \
+      "The ring pops off of your finger of its own volition.  "
+      "Air fills your lungs!  At last you can breathe freely again!"
+
+classvars:
+
+   vrRealName = ringoflethargy_name_rsc
+   vrRealDesc = ringoflethargy_desc_rsc
+   vrIcon = ringoflethargy_icon_rsc
+
+   viBulk = 5
+   viWeight = 10
+   
+   viValue_average = 70
+
+   viVigorDrop = 400000
+
+properties:
+
+   pbIn_use = FALSE
+
+   piVigorRestThresholdChange = 20
+
+messages:
+
+   DoBaseDesc()
+   {
+      if pbIn_use
+      {
+         AppendTempString(ringoflethargy_desc_used_rsc);
+         
+         return;
+      }
+      
+      propagate;
+   }
+
+   NewUsed(what = $)
+   "When the ring is worn, the wearer's rest threshold goes down"
+   {
+      local iVigorRestThreshold;
+
+      pbIn_use = TRUE;
+
+      if NOT isClass(poOwner,&player) OR Send(poOwner,@PlayerIsImmortal)
+      {
+         propagate;
+      }
+
+      iVigorRestThreshold = send(poOwner, @GetVigorRestThreshold);
+
+      % this is to ensure both that the player's rest threshold does not drop below
+      %   10 as well as to make sure we don't make it above maximum when the ring comes
+      %   off  (see player.kod line 529 for why)
+      if (iVigorRestThreshold - piVigorRestThresholdChange < 10)
+      {
+         piVigorRestThresholdChange = iVigorRestThreshold - 10;
+      }
+
+      Send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_use_rsc);
+      Send(poOwner,@SetVigorRestThreshold, #amount = iVigorRestThreshold - piVigorRestThresholdChange);
+
+      propagate;
+   }
+
+   ReqLeaveOwner()
+   "Don't allow if in use"
+   {
+      if NOT isClass(poOwner,&Player) OR Send(poOwner,@PlayerIsImmortal)
+      {
+         propagate;
+      }
+
+      if pbIn_use
+      {
+         Send (self, @TortureOwner);
+         return false;
+      }
+
+      propagate;
+   }
+
+   ReqUnuse()
+   "Since it is a cursed item, it does not come off easily, and there is a price to be paid to try it..."
+   {
+      if Send(poOwner,@PlayerIsImmortal)
+      {
+         return TRUE;
+      }
+      
+      Send(self, @TortureOwner);
+      
+      return FALSE;
+   }
+
+   TortureOwner()
+   {
+      send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_try_unuse_rsc);
+      send(poOwner,@AddExertion,#amount=viVigorDrop);
+      
+      return;
+   }
+
+   NewUnused(what = $)
+   "Called when the curse is broken"
+   {
+      local iVigorRestThreshold;
+      iVigorRestThreshold = send(poOwner, @GetVigorRestThreshold);
+
+      pbIn_use = FALSE;
+      
+      if Send(poOwner,@PlayerIsImmortal)
+      {
+         propagate;
+      }
+
+      send(poOwner,@MsgSendUser,#message_rsc=ringoflethargy_unuse_rsc);
+      send(poOwner,@SetVigorRestThreshold,#amount=iVigorRestThreshold+piVigorRestThresholdChange);
+
+      % reset the vigor change in case it was adjusted earlier
+      piVigorRestThresholdChange = 20;
+
+      propagate;
+   }
+
+   IsCursed()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

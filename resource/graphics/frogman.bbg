@@ -1,0 +1,55 @@
+# Frog-man
+# groups
+# 1 squatting
+# 2-3 hopping
+# 4-5 attacking
+# 6-7 wounded attacking
+# 8-9 very wounded attacking
+
+-s 1
+34
+f000s.bmp
+f045s.bmp
+f090s.bmp
+f180s.bmp
+f270s.bmp
+f315s.bmp
+f000a.bmp
+f045a.bmp
+f090a.bmp
+f180a.bmp
+f270a.bmp
+f315a.bmp
+f000b.bmp
+f045b.bmp
+f090b.bmp
+f180b.bmp
+f270b.bmp
+f315b.bmp
+f000caa.bmp
+f045caa.bmp
+f090caa.bmp
+f180caa.bmp
+f270caa.bmp
+f315caa.bmp
+f000cab.bmp
+f045cab.bmp
+f090cab.bmp
+f180cab.bmp
+f270cab.bmp
+f315cab.bmp
+f000w.bmp
+f000wb.bmp
+f000rw.bmp
+f000rwb.bmp
+
+9
+8   1   6   5   4   4   4   3   2
+8   7  12  11  10  10  10   9   8
+8  13  18  17  16  16  16  15  14
+8  19  24  23  22  22  22  21  20
+8  25  30  29  28  28  28  27  26
+8  31  24  23  22  22  22  21  20
+8  32  30  29  28  28  28  27  26
+8  33  24  23  22  22  22  21  20
+8  34  30  29  28  28  28  27  26

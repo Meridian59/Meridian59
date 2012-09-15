@@ -1,0 +1,23 @@
+# host
+# 2 views
+# 1 - right arm raised
+# 2 - left arm raised
+# hotspots
+# 11 eyes
+-s 4
+12
+ghos000a.bmp   [0, -20] :1     11 [96, 21]
+ghos045a.bmp   [0, -20] :1     11 [102, 19]
+ghos090a.bmp   [0, -20] :1     11 [105, 23]
+ghos180a.bmp   [0, -20] 
+ghos270a.bmp   [0, -20] :1     11 [80, 21]
+ghos315a.bmp   [0, -20] :1     11 [86, 17]
+ghos000b.bmp   [0, -20] :1     11 [97, 19]
+ghos045b.bmp   [0, -20] :1     11 [103, 20]
+ghos090b.bmp   [0, -20] :1     11 [106, 22]
+ghos180b.bmp   [0, -20] 
+ghos270b.bmp   [0, -20] :1     11 [78, 21]
+ghos315b.bmp   [0, -20] :1     11 [87, 17]
+2
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8

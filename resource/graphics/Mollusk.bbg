@@ -1,0 +1,165 @@
+# Molluskoid
+# 
+# Groups:
+#            1 Standing
+#          2-6 Walking
+#         7-10 Attack
+#        11-14 Throw
+#        15-19 popup
+#^Applied to Hotspot: 0
+#*Groups: 19
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+114
+mol000sa.bmp   [0, -16] 
+mol315sa.bmp   [0, -12] 
+mol270sa.bmp   [0, -13] 
+mol180sa.bmp   [0, -19] 
+mol090sa.bmp   [0, -17] 
+mol045sa.bmp   [0, -14] 
+mol000wa.bmp   [0, -4] 
+mol315wa.bmp   [0, -3] 
+mol270wa.bmp   [0, -11] 
+mol180wa.bmp   [0, -16] 
+mol090wa.bmp   [0, -19] 
+mol045wa.bmp   [0, -13] 
+mol000wb.bmp   [0, -4] 
+mol315wb.bmp   [0, 0] 
+mol270wb.bmp   [0, -3] 
+mol180wb.bmp   [0, -15] 
+mol090wb.bmp   [0, -15] 
+mol045wb.bmp   [0, -13] 
+mol000wc.bmp   [0, -20] 
+mol315wc.bmp   [0, -13] 
+mol270wc.bmp   [0, -11] 
+mol180wc.bmp   [0, -17] 
+mol090wc.bmp   [0, -17] 
+mol045wc.bmp   [0, -21] 
+mol000wd.bmp   [0, -20] 
+mol315wd.bmp   [0, -14] 
+mol270wd.bmp   [0, -13] 
+mol180wd.bmp   [0, -19] 
+mol090wd.bmp   [0, -18] 
+mol045wd.bmp   [0, -22] 
+mol000we.bmp   [0, -6] 
+mol315we.bmp   [0, 1] 
+mol270we.bmp   [0, 0] 
+mol180we.bmp   [0, -17] 
+mol090we.bmp   [0, -22] 
+mol045we.bmp   [0, -15] 
+mol000fa.bmp   [0, -15] 
+mol315fa.bmp   [0, -11] 
+mol270fa.bmp   [0, -13] 
+mol180fa.bmp   [0, -20] 
+mol090fa.bmp   [0, -17] 
+mol045fa.bmp   [0, -14] 
+mol000fb.bmp   [0, -15] 
+mol315fb.bmp   [0, -12] 
+mol270fb.bmp   [0, -13] 
+mol180fb.bmp   [0, -20] 
+mol090fb.bmp   [0, -17] 
+mol045fb.bmp   [0, -14] 
+mol000fc.bmp   [0, -15] 
+mol315fc.bmp   [0, -11] 
+mol270fc.bmp   [0, -13] 
+mol180fc.bmp   [0, -19] 
+mol090fc.bmp   [0, -17] 
+mol045fc.bmp   [0, -14] 
+mol000fd.bmp   [0, -13] 
+mol315fd.bmp   [0, -9] 
+mol270fd.bmp   [0, -13] 
+mol180fd.bmp   [0, -20] 
+mol090fd.bmp   [0, -17] 
+mol045fd.bmp   [0, -14] 
+mol000ra.bmp   [0, -16] 
+mol315ra.bmp   [0, -12] 
+mol270ra.bmp   [0, -13] 
+mol180ra.bmp   [0, -20] 
+mol090ra.bmp   [0, -16] 
+mol045ra.bmp   [0, -14] 
+mol000rb.bmp   [0, -16] 
+mol315rb.bmp   [0, -2] 
+mol270rb.bmp   [0, 6] 
+mol180rb.bmp   [0, -16] 
+mol090rb.bmp   [0, -17] 
+mol045rb.bmp   [0, -14] 
+mol000rc.bmp   [0, -16] 
+mol315rc.bmp   [0, -12] 
+mol270rc.bmp   [0, -13] 
+mol180rc.bmp   [0, -20] 
+mol090rc.bmp   [0, -17] 
+mol045rc.bmp   [0, -15] 
+mol000rd.bmp   [0, -16] 
+mol315rd.bmp   [0, -12] 
+mol270rd.bmp   [0, -13] 
+mol180rd.bmp   [0, -20] 
+mol090rd.bmp   [0, -17] 
+mol045rd.bmp   [0, -14] 
+mol000pa.bmp   [0, -17] 
+mol315pa.bmp   [0, -9] 
+mol270pa.bmp   [0, -5] 
+mol180pa.bmp   [0, 9] 
+mol090pa.bmp   [0, -10] 
+mol045pa.bmp   [0, -16] 
+mol000pb.bmp   [0, -9] 
+mol315pb.bmp   [0, -8] 
+mol270pb.bmp   [0, -3] 
+mol180pb.bmp   [0, 9] 
+mol090pb.bmp   [0, -8] 
+mol045pb.bmp   [0, -9] 
+mol000pc.bmp   [0, -17] 
+mol315pc.bmp   [0, -14] 
+mol270pc.bmp   [0, -6] 
+mol180pc.bmp   [0, 9] 
+mol090pc.bmp   [0, -10] 
+mol045pc.bmp   [0, -15] 
+mol000pd.bmp   [0, -15] 
+mol315pd.bmp   [0, -14] 
+mol270pd.bmp   [0, -6] 
+mol180pd.bmp   [0, 9] 
+mol090pd.bmp   [0, -10] 
+mol045pd.bmp   [0, -14] 
+mol000pe.bmp   [0, -16] 
+mol315pe.bmp   [0, -14] 
+mol270pe.bmp   [0, -6] 
+mol180pe.bmp   [0, 9] 
+mol090pe.bmp   [0, -10] 
+mol045pe.bmp   [0, -14] 
+19
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 
+ 8   79 80 81 82 82 82 83 84 
+ 8   85 86 87 88 88 88 89 90 
+ 8   91 92 93 94 94 94 95 96 
+ 8   97 98 99 100 100 100 101 102 
+ 8   103 104 105 106 106 106 107 108 
+ 8   109 110 111 112 112 112 113 114 

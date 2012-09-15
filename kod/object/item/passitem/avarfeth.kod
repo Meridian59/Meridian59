@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AvarShamanFeather is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AvarShamanFeather_name_rsc = "feather of an avar shaman"
+   AvarShamanFeather_icon_rsc = avfeathr.bgf
+   AvarShamanFeather_desc_rsc = \
+      "This is an undamaged tail feather from an avar shaman.  The strong barbs "
+	"of the feather would make excellent guides for an arrow shaft."
+
+classvars:
+
+   vrName = AvarShamanFeather_name_rsc
+   vrIcon = AvarShamanFeather_icon_rsc
+   vrDesc = AvarShamanFeather_desc_rsc
+
+   viValue_average = 50
+   viWeight = 2
+   viBulk = 5
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

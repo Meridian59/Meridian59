@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildSetPassword is GuildCommand
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   guildsetpassword_name_rsc = "set password"
+   guildsetpassword_icon_rsc = light.bgf
+
+   guildsetpassword_lieutenant = "Changes a guild hall's password."
+
+   setpassword_not_guilded = "You are not a member of a guild, and have no password to change!"
+   setpassword_cant_setpassword = "Only guildmasters may change a guild's password!"
+   setpassword_no_hall = "You cannot set your guild hall's password, if you have no guild hall!"
+
+classvars:
+
+   vrName = guildsetpassword_name_rsc
+   vrIcon = guildsetpassword_icon_rsc
+   vrDesc = guildsetpassword_lieutenant
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_SET_PASSWORD
+   virank_needed = RANK_MASTER
+
+properties:
+
+messages:
+
+   ResetCommand(who=$)
+   {
+     local oGuild;
+
+     oGuild = send(who,@getguild);
+     if send(oGuild,@getguildhall) = $
+        {
+           send(who,@removeguildcommand,#command_num=viGuildCOmmand_num);
+           return;
+        }
+     propagate;
+   }
+
+   DoCommand(who=$, data = $)
+   "Change the password of the target player to a new password!"  
+   {
+      local oGuild, oHall;
+
+      oGuild = send(who,@getguild);
+
+      if oGuild = $
+        {
+          send(who,@msgsenduser,#message_rsc=setpassword_not_guilded);
+          return FALSE;
+        }
+
+      if send(oGUild,@getrank,#who=who) < RANK_MASTER
+        {
+          send(who,@msgsenduser,#message_rsc=setpassword_cant_setpassword);
+          return FALSE;
+        }
+
+      oHall = send(oGuild,@getguildhall);
+      if oHall = $
+        {
+          send(who,@msgsenduser,#message_rsc=setpassword_no_hall);
+          return FALSE;          
+        }
+
+      send(oGuild,@changePassword,#password=data);
+
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

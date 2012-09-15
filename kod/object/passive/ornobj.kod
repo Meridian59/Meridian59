@@ -1,0 +1,1295 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrnamentalObject is PassiveObject
+
+%% ornamental object is something with no other properties other than normal.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   oo_3bolts_name = "bolts of cloth"
+   oo_3bolts_icon = 3bolts.bgf
+   oo_3bolts_desc = "These three bolts are used for the common clothes of Ko'catan."
+
+   oo_apple4_name = "basket of sand apples"
+   oo_apple4_icon = apple4.bgf
+   oo_apple4_desc = "These sand apples are especially good for pickling.  After "
+      "they soak in a salty brine for eight months, their bitter taste provides "
+      "a perfect compliment to sweet wine."
+
+   oo_bagbean4_name = "bag of beans"
+   oo_bagbean4_icon = bagbean4.bgf
+   oo_bagbean4_desc = "Dried Kuto beans completely fill this hemp bag."
+
+   oo_basket4_name = "basket of grapes"
+   oo_basket4_icon = basket4.bgf
+   oo_basket4_desc = "Grapes native to the island are too tangy for most as food, "
+      "but make for excellent wine."
+
+   oo_bigbag4_name = "bag of browncorn"
+   oo_bigbag4_icon = bigbag4.bgf
+   oo_bigbag4_desc = "Browncorn is the staple food of the Ko'catani people."
+
+   oo_birdbx4_name = "rodent cage"
+   oo_birdbx4_icon = birdbx4.bgf
+   oo_birdbx4_desc = "This is a captive Zi zi yijoa, a friendly pet and sometimes food item."
+
+   oo_blubott4_name = "Sko'pa bottle"
+   oo_blubott4_icon = blubott4.bgf
+   oo_blubott4_desc = "Within this blue bottle is a magical concoction taken by most merchants "
+      "before initiating a transaction.  This liquid is not meant to be ingested, only "
+      "rolled over the tongue until its strong mint flavor is too much to endure."
+
+   oo_bolt1_name = "bolt of hopit silk"
+   oo_bolt1_icon = bolt1.bgf
+   oo_bolt1_desc = "Made from the tiny beach worm, this silk is colored from the crushed up "
+      "shells of Hopit crab."
+
+   oo_bolt2_name = "bolt of silk"
+   oo_bolt2_icon = bolt2.bgf
+   oo_bolt2_desc = "Robes made from this silk will keep the wearer cool on the hottest day, "
+      "yet provides sufficient insulation for windy nights."
+
+   oo_bolt3_name = "bolt of silk"
+   oo_bolt3_icon = bolt3.bgf
+   oo_bolt3_desc = "Fabric for fancy dresses."
+
+   oo_bolt4_name = "kawil velvet"
+   oo_bolt4_icon = bolt4.bgf
+   oo_bolt4_desc = "Primarily used for capes, the kawil dye for this luxurious fabric can "
+      "only be extracted during the winter months when the Temda root is molting."
+
+   oo_bolt5_name = "blue silk"
+   oo_bolt5_icon = bolt5.bgf
+   oo_bolt5_desc = "Lined with the fur or the rare jungle ermine, this fabric is used "
+      "almost exclusively for the spiritualists of the Settlement."
+
+   oo_bolt6_name = "rare cloth"
+   oo_bolt6_icon = bolt6.bgf
+   oo_bolt6_desc = "This fabric contains real gold threads.  Wearing clothes made of "
+      "this fabric is restricted to one day a year, the birthday of the Tezcha."
+
+   oo_boxsnak4_name = "box of dried snakes"
+   oo_boxsnak4_icon = boxsnak4.bgf
+   oo_boxsnak4_desc = "These snake carcasses have been split and dried.  The revolting "
+      "smell indicates that the poison has been drained, or at least that's what "
+      "you've heard."
+
+   oo_brnurn4_name = "clay pot"
+   oo_brnurn4_icon = brnurn4.bgf
+   oo_brnurn4_desc = "This clay pot holds a mound of ground Umacha beans."
+
+   oo_decopot4_name = "ceramic seed pot"
+   oo_decopot4_icon = decopot4.bgf
+   oo_decopot4_desc = "Various types of seeds and beans fill this clay pot."
+
+   oo_dress1_name = "dress form"
+   oo_dress1_icon = dress1.bgf
+   oo_dress1_desc = "Work in progress."
+
+   oo_dress3_name = "dress form"
+   oo_dress3_icon = dress3.bgf
+   oo_dress3_desc = "Tepal's master project, a very expensive robe for a high-ranking military "
+      "official.  Made to be a replica of Konima's legendary war robe."
+
+   oo_dress4_name = "dress form"
+   oo_dress4_icon = dress4.bgf
+   oo_dress4_desc = "Nearly complete, this outfit is designed for a rich merchant of the "
+      "settlement."
+
+   oo_fixins4_name = "basket of eggs"
+   oo_fixins4_icon = fixins4.bgf
+   oo_fixins4_desc = "Eggs from the Nahzotz, a domesticated lizard."
+
+   oo_flower_name = "tucol mec"
+   oo_flower_icon = flower.bgf
+   oo_flower_desc = "Travelers are warned not to drink the honey sweet water that this "
+      "plant stores after a downpour.  Ingesting the nectar produces a condition the "
+      "locals call \"Tezchot\", which is quite unpleasant."
+
+   oo_flower4_name = "dried flowers"
+   oo_flower4_icon = flower4.bgf
+   oo_flower4_desc = "Lecumec drying out to eventually be used to as herbs for medicine."
+
+   oo_garlic4_name = "garlic"
+   oo_garlic4_icon = garlic4.bgf
+   oo_garlic4_desc = "Cloves of garlic hang from the ceiling to ward away the evil spirits."
+
+   oo_goldbot4_name = "scented oil"
+   oo_goldbot4_icon = goldbot4.bgf
+   oo_goldbot4_desc = "An aromatic mixture useful in several potions, not because of its "
+      "mystical properties, but because it masks the smell."
+
+   oo_gryjug4_name = "water jug"
+   oo_gryjug4_icon = gryjug4.bgf
+   oo_gryjug4_desc = "Filled with tepid water."
+
+   oo_herbs4_name = "hanging herbs"
+   oo_herbs4_icon = herbs4.bgf
+   oo_herbs4_desc = "Once fully dried, these aromatic herbs will make fine pipe stuffing."
+
+   oo_jar4_name = "specimen jar"
+   oo_jar4_icon = jar4.bgf
+   oo_jar4_desc = "You are not sure if you want to know what is floating around in this murky jar."
+
+   oo_jbook_name = "tome"
+   oo_jbook_icon = jbook.bgf
+   oo_jbook_desc = "The pages of this ancient book are yellowed with age, almost "
+      "rendering the thin, wispy script illegible.  Unfortunately, the book appears "
+      "to be written in a language which probably predates the severing of the Nexus, "
+      "as it bears little resemblance to modern writing."
+
+   oo_jug4_name = "water urn"
+   oo_jug4_icon = jug4.bgf
+   oo_jug4_desc = "This urn is used to store drinking water."
+
+   oo_palm_name = "exzor mec"
+   oo_palm_icon = palm.bgf
+   oo_palm_desc = "This small palm requires a moderate amount of water to cultivate.  Sharp "
+      "spines extend from the crown of the plant."
+
+   oo_poison4_name = "basket of telo fruit"
+   oo_poison4_icon = poison4.bgf
+   oo_poison4_desc = "After using a knife to carve through the thick outer husk, the sweet "
+      "fruit inside is delicious."
+
+   oo_pot4_name = "ornate ceramic pot"
+   oo_pot4_icon = pot4.bgf
+   oo_pot4_desc = "This small container holds dried fruit."
+
+   oo_potion4_name = "apothecary jar"
+   oo_potion4_icon = potion4.bgf
+   oo_potion4_desc = "Used for fermenting potions and enchanted mixtures."
+
+   oo_rock_name = "rough boulder"
+   oo_rock_icon = rock.bgf
+   oo_rock_desc = "This firmly fused rock would take an army to shove aside."
+
+   oo_rock1_name = "ocean rock"
+   oo_rock1_icon = rock1.bgf
+   oo_rock1_desc = "Protruding from the ocean, this great rock is the home to many sea birds."
+
+   oo_rock2_name = "ocean rock"
+   oo_rock2_icon = rock2.bgf
+   oo_rock2_desc = "Swimming to these rocks would be extremely dangerous."
+
+   oo_spices4_name = "basket of spices"
+   oo_spices4_icon = spices4.bgf
+   oo_spices4_desc = "This shallow basket holds some of the most used spices in Ko'catanese "
+      "cuisine."
+
+   oo_stac1_name = "stalagmite"
+   oo_stac1_icon = stac1.bgf
+   oo_stac1_desc = "This mighty stalagmite rises up from the floor."
+
+   oo_stac2_name = "stalagmite"
+   oo_stac2_icon = stac2.bgf
+   oo_stac2_desc = "A calcium carbonate deposit formed on the floor of a cave by the "
+      "dripping of percolating calcareous water. "
+
+   oo_stag1_name = "stalactite"
+   oo_stag1_icon = stag1.bgf
+   oo_stag1_desc = "This impressive stalactite grips the ceiling tightly."
+
+   oo_stag2_name = "stalactite"
+   oo_stag2_icon = stag2.bgf
+   oo_stag2_desc = "A calcium carbonate deposit, shaped like an icicle, hanging from the "
+      "roof of the cave."
+
+   oo_sticks4_name = "basket of temda root sticks"
+   oo_sticks4_icon = sticks4.bgf
+   oo_sticks4_desc = "Temda Root is boiled to extract kawil dye.  Some say that chewing the raw "
+      "sticks provides relief from bowel pains, eruptions, reduces redness, swelling, dryness "
+      "and painful itching."
+
+   oo_stoolko_name = "tailor's stool"
+   oo_stoolko_icon = stoolko.bgf
+   oo_stoolko_desc = "An excellent seat for getting those hems right."
+
+   oo_tree1_name = "tingi vine tree"
+   oo_tree1_icon = tree1.bgf
+   oo_tree1_desc = "This tree is being slowly suffocated by a parasitic tingi vine colony."
+
+   oo_tree2_name = "kichan tree"
+   oo_tree2_icon = tree2.bgf
+   oo_tree2_desc = "This is a mature kichan tree, its leaves interlacing the canopy far "
+      "above your head."
+
+   oo_urn4_name = "achalot urn"
+   oo_urn4_icon = urn4.bgf
+   oo_urn4_desc = "This urn is overflowing with Achalot nuts, a common seasoning and "
+      "popular snack."
+
+   oo_anvil_name = "anvil of the Totl family"
+   oo_anvil_icon = anvil.bgf
+   oo_anvil_desc = "This well worn iron anvil is lavishly decorated with magic runes."
+
+   oo_quiver_name = "quiver"
+   oo_quiver_icon = quiver.bgf
+   oo_quiver_desc = "Handmade by Hanla awaiting retrieval by a wealthy archer."
+  
+   oo_rice_name = "bag of purple potatoes"
+   oo_rice_icon = rice.bgf
+   oo_rice_desc = "These sticky potatoes make for excellent pancakes in the morning."
+
+   oo_barrel_name = "storage barrel"
+   oo_barrel_icon = barrel.bgf
+   oo_barrel_desc = "This is a barrel used to store fruity Kin pekonch, light enough "
+      "to be enjoyed by anyone."
+   
+   oo_barrel2_name = "storage barrel"
+   oo_barrel2_icon = barrel2.bgf
+   oo_barrel2_desc = "This is a barrel used to store Teot pekonch, comparable to a hefty merlot."
+   
+   oo_bees_name = "beehive"
+   oo_bees_icon = bees.bgf
+   oo_bees_desc = "Wulfgang's bees are hard at work.  The small jungle bees produce honey at a "
+      "remarkable pace."
+
+   oo_bigiron_name = "cooking cauldron"
+   oo_bigiron_icon = bigiron.bgf
+   oo_bigiron_desc = "It takes years to properly season one of these pots."
+
+   oo_bigurn_name = "decorative urn"
+   oo_bigurn_icon = bigurn.bgf
+   oo_bigurn_desc = "It is unclear what this urn is meant to store, perhaps it is only there "
+      "for decoration."
+   
+   oo_block_name = "chopping block"
+   oo_block_icon = block.bgf
+   oo_block_desc = "Used to split wood and occasionally behead an animal.  The axe would "
+      "be useless in a battle."
+   
+   oo_bluejug_name = "decorative blue urn"
+   oo_bluejug_icon = bluejug.bgf
+   oo_bluejug_desc = "This ornate earthenware is empty right now. You can only wonder as "
+      "to its true purpose."
+   
+   oo_tallurn_name = "slag urn"
+   oo_tallurn_icon = tallurn.bgf
+   oo_tallurn_desc = "You decide it was a bad idea to look in here.  The brown urn is "
+      "half way filled with discarded fruit skins, animal bones and other rubbish."
+
+   oo_bucket_name = "well bucket"
+   oo_bucket_icon = bucket.bgf
+   oo_bucket_desc = "Used for hauling water up from the well."
+   
+   oo_bunny_name = "dead rabbits"
+   oo_bunny_icon = bunny.bgf
+   oo_bunny_desc = "The haul from an early morning hunting trip."
+   
+   oo_corn_name = "browncorn plant"
+   oo_corn_icon = corn.bgf
+   oo_corn_desc = "The browncorn cobs of this healthy stalk have been recently harvested."
+   
+   oo_dress1b_name = "dress form"
+   oo_dress1b_icon = dress1b.bgf
+   oo_dress1b_desc = "Work in progress."
+
+   oo_goose_name = "dead vineyard goose"
+   oo_goose_icon = goose.bgf
+   oo_goose_desc = "Waiting to be plucked."
+
+   oo_ironpot_name = "cooking pot"
+   oo_ironpot_icon = ironpot.bgf
+   oo_ironpot_desc = "A small iron pot used for cooking broth and soups.  You smell the "
+      "fishy aroma of a salty Mapkina stew."
+   
+   oo_lantern_name = "iron lantern"
+   oo_lantern_icon = lantern.bgf
+   oo_lantern_desc = "The iron sides protect the candle flame within."
+
+   oo_lettuce_name = "Marion cabbage"
+   oo_lettuce_icon = lettuce.bgf
+   oo_lettuce_desc = "A full head of Marion Cabbage grows here."
+  
+   oo_mugs_name = "empty pekonch mugs"
+   oo_mugs_icon = mugs.bgf
+   oo_mugs_desc = "Waiting to be cleaned up."
+   
+   oo_pigeon_name = "dead palm grouse"
+   oo_pigeon_icon = pigeon.bgf
+   oo_pigeon_desc = "Baked with browncorn, these birds will make an excellent evening meal."
+   
+   oo_pitcher1_name = "pitcher of tea"
+   oo_pitcher1_icon = pitcher1.bgf
+   oo_pitcher1_desc = "Piping hot pitcher of herbal tea.  Its bitter taste must mean that "
+      "it is only used for medicinal purposes."
+   
+   oo_pitcher2_name = "pitcher of telo juice"
+   oo_pitcher2_icon = pitcher2.bgf
+   oo_pitcher2_desc = "Too sweet for the tastes of a mainlander like yourself."
+   
+   oo_pitcher3_name = "pitcher of egg yolk"
+   oo_pitcher3_icon = pitcher3.bgf
+   oo_pitcher3_desc = "This pitcher is filled with viscous yolks of the palm grouse."
+
+   oo_pitcher4_name = "copper pekonch pitcher"
+   oo_pitcher4_icon = pitcher4.bgf
+   oo_pitcher4_desc = "Full to the brim with powerful wine."
+
+   oo_skull1_name = "skull tower"
+   oo_skull1_icon = skull1.bgf
+   oo_skull1_desc = "It is difficult to imagine why the bone priestess would carefully stack "
+      "human skulls this way."
+
+   oo_skull2_name = "stacked skulls"
+   oo_skull2_icon = skull2.bgf
+   oo_skull2_desc = "Strange and eerie."
+
+   oo_skull3_name = "human skull tree"
+   oo_skull3_icon = skull3.bgf
+   oo_skull3_desc = "A horror created from a dark mind."
+
+   oo_skull4_name = "bone structure"
+   oo_skull4_icon = skull4.bgf
+   oo_skull4_desc = "Something is definitely not right here."
+
+   oo_skull5_name = "skull post"
+   oo_skull5_icon = skull5.bgf
+   oo_skull5_desc = "You are uncomfortable looking at this tower of human skulls."
+
+   oo_skull6_name = "skull totem"
+   oo_skull6_icon = skull6.bgf
+   oo_skull6_desc = "Human skulls top this frail branch."
+
+   oo_deadtree_name = "dead tree"
+   oo_deadtree_icon = dead.bgf
+   oo_deadtree_desc = "This tree died unnaturally young.  This is a bad omen."
+
+   oo_altar_name = "bone altar"
+   oo_altar_icon = altar.bgf
+   oo_altar_desc = "A foul stench surrounds this bizarre death altar.  "
+      "You feel uncomfortable standing so close it."
+
+   oo_tree3_name = "motubanak tree"
+   oo_tree3_icon = tree3.bgf
+   oo_tree3_desc = "The motubanak tree is said to be the only place that kriipa will sleep."
+
+   oo_head2_name = "skull"
+   oo_head2_icon = head.bgf
+   oo_head2_desc = "A freakishly large skull sits atop a wooden post.  A warning, perhaps?"
+        
+   oo_bones_name = "pile of bones"
+   oo_bones_icon = bonepile.bgf
+   oo_bones_desc = \
+      "These are the splintered, well-gnawed remains of some unlucky, and probably unwise, "
+      "explorer.  You shudder to think of the fate that must have befallen this poor soul."
+
+   oo_nestobj1_name = "mound of dirt"
+   oo_nestobj1_icon = nestobj1.bgf
+   oo_nestobj1_desc = "This is a mound of rich dirt and organic loam."
+
+   oo_nestobj2_name = "mound of dirt"
+   oo_nestobj2_icon = nestobj2.bgf
+   oo_nestobj2_desc = "This is a mound of rich soil, mostly fresh animal droppings."
+
+   oo_barbolt1_name = "bolt of cloth"
+   oo_barbolt1_icon = barbolt1.bgf
+   oo_barbolt1_desc = "This is a bolt of fine cloth."
+
+   oo_barbolt2_name = "bolt of cloth"
+   oo_barbolt2_icon = barbolt2.bgf
+   oo_barbolt2_desc = "This is a bolt of fine cloth."
+
+   oo_barbolt3_name = "bolt of cloth"
+   oo_barbolt3_icon = barbolt3.bgf
+   oo_barbolt3_desc = "This is a bolt of fine cloth."
+
+   oo_barbolt4_name = "bolt of cloth"
+   oo_barbolt4_icon = barbolt4.bgf
+   oo_barbolt4_desc = "This is a bolt of fine cloth.  The unusual coloration comes from "
+      "dye extracted from the lisith clams found along Ko'catan's beaches."
+
+   oo_barbolt5_name = "bolts of cloth"
+   oo_barbolt5_icon = barbolt5.bgf
+   oo_barbolt5_desc = "These are bolts of fine cloth."
+
+   oo_Bigurn2_name = "large urn"
+   oo_Bigurn2_icon = Bigurn2.bgf
+   oo_Bigurn2_desc = "This is a large empty urn."
+
+   oo_nectree1_name = "gnarlwood tree"
+   oo_nectree1_icon = nectree1.bgf
+   oo_nectree1_desc = "The wood of these trees is known as the hardest of all woods, "
+      "but the knots and twisting grain make it all but impossible to craft anything useful from it.  "
+      "The trees are known to thrive in nearly any setting, but grow to enormous girth when near decay and gloom."
+
+   oo_nectree2_name = "coal oak tree"
+   oo_nectree2_icon = nectree2.bgf
+   oo_nectree2_desc = "The black color of this oak has been used in dyes and pigments, as well as more than a few "
+      "mystical potions.  A campfire of coal oak lasts for days, but it would take quite the axe to dent the bark.  "
+      "Some varieties have been known to stand for centuries after they are completely dead, simply because they are "
+      "too strongly rooted to topple."
+
+   oo_nectree4_name = "spine vine"
+   oo_nectree4_icon = nectree4.bgf
+   oo_nectree4_desc = "The spine vine is a parasitic plant that wraps itself around the tallest "
+      "gnarlwood or oak, and uses the position to spread its tendrils across the higher branches for its nourishment.  "
+      "Narthyl creatures are particularly attracted to the weblike leaves."
+
+   oo_necgrave1_name = "grave"
+   oo_necgrave1_icon = necgrav1.bgf
+   oo_necgrave1_desc = "Somehow you doubt that whoever was buried here rests in peace."
+   oo_necgrave2_name = "grave"
+   oo_necgrave2_icon = necgrav2.bgf
+   oo_necgrave2_desc = "Somehow you doubt that whoever was buried here rests in peace."
+   oo_necgrave3_name = "grave"
+   oo_necgrave3_icon = necgrav3.bgf
+   oo_necgrave3_desc = "Somehow you doubt that whoever was buried here rests in peace."
+
+   oo_halfskull_name = "skull"
+   oo_halfskull_icon = halfskul.bgf
+   oo_halfskull_desc = "Crushed though this skull is, you half expect it to leap up and bite you."
+
+   oo_skull7_name = "skull"
+   oo_skull7_icon = skulnorm.bgf
+   oo_skull7_desc = "The skull of some poor stupid human."
+
+   oo_skull8_name = "skull"
+   oo_skull8_icon = skulbrok.bgf
+   oo_skull8_desc = "The skull of something definitely inhuman."
+   
+   oo_skull9_name = "skull"
+   oo_skull9_icon = skultusk.bgf
+   oo_skull9_desc = "The skull of something definitely inhuman."
+   
+   oo_skull10_name = "horned skull"
+   oo_skull10_icon = skulhorn.bgf
+   oo_skull10_desc = "What this creature might have looked like while alive simply does not bear thinking on."
+
+   oo_necrock_name = "rock"
+   oo_necrock_icon = necrock.bgf
+   oo_necrock_desc = "A big rock."
+
+   oo_dung_name = "dung"
+   oo_dung_icon = dung.bgf
+   oo_dung_desc = "A fresh steaming pile of dung."
+   oo_hay_name = "hay bundle"
+   oo_hay_icon = hay.bgf
+   oo_hay_desc = "A bundle of hay, picked some time ago.  It looks like something small has been nibbling on it."
+   oo_rockB_name = "rock"
+   oo_rockB_icon = rockB.bgf
+   oo_rockB_desc = "A big rock."
+   oo_rockC_name = "boulder"
+   oo_rockC_icon = rockC.bgf
+   oo_rockC_desc = "A chunk of Kardde limestone."
+
+   oo_goathead_name = "goat head"
+   oo_goathead_icon = goathead.bgf
+   oo_goathead_desc = "This must be the grisly remains of some bizarre mystical ritual.  "
+   oo_mortpest_name = "mortar and pestle"
+   oo_mortpest_icon = mortpest.bgf
+   oo_mortpest_desc = "A common tool used to prepare ingredients for cooking, or for other more mystical "
+      "pursuits."
+   oo_necbottle_name = "bottle"
+   oo_necbottle_icon = necbottl.bgf
+   oo_necbottle_desc = "A bottle containing some strange fluid."
+   oo_necvase_name = "vase"
+   oo_necvase_icon = necvase.bgf
+   oo_necvase_desc = "This vase is obviously of ancient design.  You can only vaguely guess at how old it must "
+      "be."
+   oo_necvase2_name = "vase"
+   oo_necvase2_icon = necvase2.bgf
+   oo_necvase2_desc = "This vase is obviously of ancient design.  You can only vaguely guess at how old it must "
+      "be."
+   oo_necvase3_name = "vase"
+   oo_necvase3_icon = necvase3.bgf
+   oo_necvase3_desc = "This vase is obviously of ancient design.  You can only vaguely guess at how old it must "
+      "be."
+   oo_sacrificialbowl_name = "sacrificial bowl"
+   oo_sacrificialbowl_icon = sacrbowl.bgf
+   oo_sacrificialbowl_desc = "A bowl filled with something unidentifiable.  The contents look organic, but are "
+      "probably not of this world."
+   oo_stonechair_name = "stone chair"
+   oo_stonechair_icon = stochair.bgf
+   oo_stonechair_desc = "A chair carved out of stone.  It doesn't look very comfortable."
+
+   oo_necvine1_name = "vine"
+   oo_necvine1_icon = necvine1.bgf
+   oo_necvine1_desc = "Something about this vine looks otherworldly.  You half expect it to reach out and "
+      "grab your ankle."
+   oo_necslime_name = "slimy deposit"
+   oo_necslime_icon = necslime.bgf
+   oo_necslime_desc = "The origin of this deposit of slime is beyond your ken.  Sure is yucky, though."
+   
+   oo_razshrub_name = "shrub"
+   oo_razshrub_icon = razshrub.bgf
+   oo_razshrub_desc = "This is a woody plant with multiple permanent stems branching near the ground."
+   oo_raztree1_name = "tree"
+   oo_raztree1_icon = raztree1.bgf
+   oo_raztree1_desc = "These trees offer cool shade and beautiful scenery."
+
+   oo_modaltar_name = "miniature altar"
+   oo_modaltar_icon = modaltar.bgf 
+   oo_modaltar_desc = "A plaque below the model reads:\n"
+      "This is a replica of a strange altar which was discovered on the Lost Island of Konima.  It had "
+      "apparently been built by a strange hermit bird-woman who lives in the hut where it was found.  One can "
+      "only guess as to its purpose, as the bird-woman appeared to be quite mad;  though obviously of "
+      "the race of bird-people who inhabit the island, she spoke a language which even our avar guide "
+      "was unable to understand."
+
+   oo_modant_name = "miniature giant ant"
+   oo_modant_icon = modant.bgf
+   oo_modant_desc = "A plaque below the model reads:\n"
+      "These enormous, chitinous creatures seem to be everywhere, but particularly prefer "
+      "to cling to high, mountainous areas.  Fledgling adventurers should run, should they see "
+      "one of these."
+   oo_modavar_name = "miniature avar"
+   oo_modavar_icon = modavar.bgf
+   oo_modavar_desc = "A plaque below the model reads:\n"
+      "This is a replica of one of the race of bird-people who inhabit the recently rediscovered Lost Island "
+      "of Konima.  They appear to have a fairly sophisticated culture and language, which human inhabitants of "
+      "the island have yet to decipher completely.  As with the inhabitants of the human settlement of "
+      "Ko'Catan, the avar seem to be a fairly war-like race, often embroiled in skirmishes amongst tribes and "
+      "with the humans on the island.  One should therefore exercise caution in any encounter with an avar, "
+      "as they are truly fearsome opponents in combat.  Particularly dangerous are the rarely-seen avar "
+      "shaman, whose third eye gives them strange mystical abilities."
+   oo_modlupog_name = "miniature lupogg"
+   oo_modlupog_icon = modlupog.bgf
+   oo_modlupog_desc = "A plaque below the model reads:\n"
+      "A race of relatively peaceful amphibious creatures rumored to dwell in the sewers beneath the major cities."
+   oo_modorc_name = "miniature orc"
+   oo_modorc_icon = modorc.bgf
+   oo_modorc_desc = "A plaque below the model reads:\n"
+      "A race of evil, subhuman creatures.  They were thought to be all but exterminated in the Konima wars, "
+      "but an ancient warren has recently been rediscovered, and found to be teeming with the crude vermin."
+   oo_modspider_name = "miniature baby spider"
+   oo_modspider_icon = modspdr.bgf
+   oo_modspider_desc = "A plaque below the model reads:\n"
+      "Common vermin that can be found wandering around Meridian, these "
+      "are excellent opponents for fledgling adventurers to develop their "
+      "fighting skills."
+   oo_modcentipede_name = "miniature giant centipede"
+   oo_modcentipede_icon = modcen.bgf
+   oo_modcentipede_desc = "A plaque below the model reads:\n"
+      "These are relatively peaceful insects, but when provoked can be quite vicious."
+   oo_modfungusbeast_name = "miniature fungus beast"
+   oo_modfungusbeast_icon = modfung.bgf
+   oo_modfungusbeast_desc = "A plaque below the model reads:\n"
+      "Often mistaken for a cluster of mushrooms, the fungus beast is a relatively "
+      "peaceful creature, though if provoked it will certainly defend its territory."
+   oo_modfey_name = "miniature fey elhai"
+   oo_modfey_icon = modfey.bgf
+   oo_modfey_desc = "A plaque below the model reads:\n"
+      "The good fairy folk of the Vale of Sorrow, the Fey Elhai are locked in a perpetual "
+      "struggle with their dark brothers, the Fey Dirhai, for control of the Vale."
+
+   oo_modscimitar_name = "model scimitar"
+   oo_modscimitar_icon = scimitar.bgf
+   oo_modscimitar_desc = "A plaque below the model reads:\nThe preferred weapon of the advanced warriors of the land."
+   oo_modhammer_name = "model hammer"
+   oo_modhammer_icon = hammer.bgf
+   oo_modhammer_desc = "A plaque below the model reads:\nA sturdy weapon, oft found around the hills of Jasper."
+   oo_modshortsword_name = "model short sword"
+   oo_modshortsword_icon = shswd.bgf
+   oo_modshortsword_desc = "A plaque below the model reads:\nA suitable weapon for a starting adventurer.  Cheap, crude, but suitable for smaller beasts."
+   oo_modhelm_name = "model helm"
+   oo_modhelm_icon = helm.bgf
+   oo_modhelm_desc = "A plaque below the model reads:\nA wizard once said, \"I don't see why warriors feel the need "
+      "to wear helms anyway.  It's not like they ever use what a helm protects.\""
+   
+   oo_modplatearmor_name = "model plate armor"
+   oo_modplatearmor_icon = plateamr.bgf
+   oo_modplatearmor_desc = "A plaque below the model reads:\nThe solid and seamless construction of this "
+      "armor makes it more than preferred against an enemy warrior.  However, "
+      "sorcerers have found ways to turn the armor of their opponents to their advantage."
+   oo_modgauntlets_name = "model gauntlets"
+   oo_modgauntlets_icon = gauntlet.bgf
+   oo_modgauntlets_desc = "A plaque below the model reads:\nRumor has it that these mystical gloves allow their wearer to strike with precision."
+
+   oo_modpotion_name = "model potion"
+   oo_modpotion_icon = potion01.bgf
+   oo_modpotion_desc = "A plaque below the model reads:\nMystical elixers are common in Meridian."
+   oo_modscroll_name = "model scroll"
+   oo_modscroll_icon = scr01.bgf
+   oo_modscroll_desc = "A plaque below the model reads:\nLetters, scrolls and recipes are often the objects of quests!"
+   oo_modwand_name = "model wand"
+   oo_modwand_icon = wand2.bgf
+   oo_modwand_desc = "A plaque below the model reads:\nThis powerful artifact allows the bearer to strike his foe with fire!"
+   oo_modtoken_name = "model token"
+   oo_modtoken_icon = tcat.bgf
+   oo_modtoken_desc = "A plaque below the model reads:\nA mystical item so coveted that the throne of Meridian rides upon it!"
+   oo_modlute_name = "model lute"
+   oo_modlute_icon = music.bgf
+   oo_modlute_desc = "A plaque below the model reads:\nThe instrument of the common bard."
+   oo_modprism_name = "model prism"
+   oo_modprism_icon = prism3.bgf
+   oo_modprism_desc = "A plaque below the model reads:\nA powerful device allowing multiple casters to combine their energies into more powerful spells."
+   oo_modinkycap_name = "wax inkycap mushrooms"
+   oo_modinkycap_icon = mushroom.bgf
+   oo_modinkycap_desc = "A plaque below the model reads:\nRich and meaty in texture, inkycap mushrooms are considered ambrosia by the populace of Meridian, and their restorative properties are widely documented."
+   oo_modsignetring_name = "model signet ring"
+   oo_modsignetring_icon = signet.bgf
+   oo_modsignetring_desc = "A plaque below the model reads:\nEveryone seems to have one of these rings.  And everyone seems to lose them, as well."
+
+   oo_modnewsb_name = "miniature newsball"
+   oo_modnewsb_icon = modnewsb.bgf
+   oo_modnewsb_desc = "A plaque below the model reads:\nThe common means for a citizen to trade information with others."
+   oo_modshrin_name = "miniature shrine"
+   oo_modshrin_icon = modshrin.bgf
+   oo_modshrin_desc = "A plaque below the model reads:\nThe shrines of Meridian undoubtedly have great mystical significance, but the scholars of the land have been unable to agree on what, precisely, that is."
+   oo_modthron_name = "miniature throne"
+   oo_modthron_icon = modthron.bgf
+   oo_modthron_desc = "A plaque below the model reads:\nA model of the throne that the great King Far'Nohl once sat in, before his fall from grace."
+   oo_modchalice_name = "model chalice of the rain"
+   oo_modchalice_icon = chalice.bgf
+   oo_modchalice_desc = "A plaque below the model reads:\nThis ancient holy grail has long been lost, bound to the darkness by the presence of evil."
+   oo_modrelic_name = "model relic of Qor"
+   oo_modrelic_icon = scepter.bgf
+   oo_modrelic_desc = "A plaque below the model reads:\nThe purpose of this unholy artifact has been lost."
+   oo_modmananode_name = "miniature mana node"
+   oo_modmananode_icon = modnode.bgf
+   oo_modmananode_desc = "A plaque below the model reads:\nA mage can acquire greater power by melding with this influx of mystical energy."
+
+   oo_modgrapes_name = "platter of wax grapes"
+   oo_modgrapes_icon = grapepla.bgf
+   oo_modgrapes_desc = "A plaque below the model reads:\n"
+      "Please do not eat the wax grapes."
+
+   oo_flaskgrn_name = "flask"
+   oo_flaskgrn_icon = flaskgrn.bgf
+   oo_flaskgrn_desc = "A flask filled with some strange green liquid."
+   oo_flaskw_name = "flask"
+   oo_flaskw_icon = flaskw.bgf
+   oo_flaskw_desc = "A flask filled with some strange purple liquid."
+
+   oo_jasperlamp_name = "lantern"
+   oo_jasperlamp_icon = lampjasp.bgf
+   oo_jasperlamp_desc = "This oil lamp is intricately crafted of wrought iron, "
+      "obviously the product of many days of work.  You can almost see the sweat "
+      "of its maker's labour worked into the metal, a fine sheen that catches the "
+      "light.  Only in Jasper would one find such a transformation of the mundane into a "
+      "work of art."
+
+   oo_RRplant1_name = "jade plant"
+   oo_RRplant1_icon = roompla1.bgf
+   oo_RRplant1_desc = "A lush green plant."
+
+   oo_RRplant2_name = "palm"
+   oo_RRplant2_icon = roompla2.bgf
+   oo_RRplant2_desc = "A small tree of the palm variety."
+
+   oo_RRtable_name = "table"
+   oo_RRtable_icon = roomtabl.bgf
+   oo_RRtable_desc = "This small wooden table is simple in design yet sturdily "
+      "constructed."
+
+   oo_RRwashbasin_name = "wash basin"
+   oo_RRwashbasin_icon = roomwash.bgf
+   oo_RRwashbasin_desc = "This small basin, accompanied by a magical pitcher "
+      "kept eternally full of cool, fresh water, is ideal for rejuvenating the "
+      "spirits of a traveller."
+
+classvars:
+
+properties:
+
+   vrName = $
+   vrIcon = $
+   vrDesc = $
+
+   pbHanging = FALSE
+   pbNoMoveOn = FALSE
+   pbFlicker = FALSE
+   piXlat = $
+   piGroup = 1
+
+messages:
+
+   Constructor(type=0, rName=$, rIcon=$, rDesc=$)
+   {
+      if (type = 0) AND (rName = $ OR rIcon = $ OR rDesc = $)
+      {
+         debug("Not assigned an id!");
+
+         return;
+      }
+
+      if type <> 0
+      {
+         send(self,@ResetObjectType,#type=type,#const=TRUE);
+      }
+      else
+      {
+         vrName = rName;
+         vrIcon = rIcon;
+         vrDesc = rDesc;
+      }
+
+      propagate;
+   }
+
+   GetObjectFlags()
+   {
+      local f;
+
+      f = LOOK_NO;
+      if pbHanging { f = f | OF_HANGING; }
+      if pbFlicker { f = f | FLICKERING_YES; }
+      if pbNoMoveOn { f = f | MOVEON_NO; }
+      
+      return f;
+   }
+
+   SetHanging(value = TRUE)
+   {
+      pbHanging = value;
+      if poOwner { send(poOwner,@SomethingChanged,#what=self); }
+
+      return;
+   }
+
+   SetNoMoveOn(value = TRUE)
+   {
+      pbNoMoveOn = value;
+      if poOwner { send(poOwner,@SomethingChanged,#what=self); }
+
+      return;
+   }
+
+   DuplicateCheck()
+   {
+      local i, oPassive, lPassive;
+
+      if poOwner = $
+      {
+         return;
+      }
+
+      lPassive = send(poOwner,@GetHolderPassive);
+      for i in lPassive
+      {
+         oPassive = first(i);
+         if isClass(oPassive,&OrnamentalObject)
+            AND oPassive <> self
+            AND send(oPassive,@GetTrueName) = vrName
+         {
+            if send(self,@GetRow) = send(oPassive,@GetRow)
+               AND send(self,@GetCol) = send(oPassive,@GetCol)
+               AND send(self,@GetFineRow) = send(oPassive,@GetFineRow)
+               AND send(self,@GetFineCol) = send(oPassive,@GetFineCol)
+            {
+               send(self,@Delete);
+
+               return;
+            }
+         }
+      }
+
+      return;
+   }
+
+   ResetObjectType(type=0,const=FALSE)
+   "We keep this seperate so you can call this dynamically."
+   {
+      if type = 0 { debug("Not assigned an id!"); return;}
+
+      % Reset the flags
+      pbHanging = FALSE;
+      pbNoMoveOn = FALSE;
+      pbFlicker = FALSE;
+
+      if type = OO_3_CLOTH_BOLTS
+      {  vrName = oo_3bolts_name;  vrIcon = oo_3bolts_icon;  vrDesc = oo_3bolts_desc;  }
+  
+      if type = OO_APPLE
+      {  vrName = oo_apple4_name;  vrIcon = oo_apple4_icon;  vrDesc = oo_apple4_desc;  }
+
+      if type = OO_BAG_OF_BEANS
+      {  vrName = oo_bagbean4_name;  vrIcon = oo_bagbean4_icon;  vrDesc = oo_bagbean4_desc;  }
+      
+      if type = OO_BASKET
+      {  vrName = oo_basket4_name;  vrIcon = oo_basket4_icon;  vrDesc = oo_basket4_desc;  }
+      
+      if type = OO_BIG_BAG
+      {  vrName = oo_bigbag4_name;  vrIcon = oo_bigbag4_icon;  vrDesc = oo_bigbag4_desc;  }
+      
+      if type = OO_BIRD_CAGE
+      {  vrName = oo_birdbx4_name;  vrIcon = oo_birdbx4_icon;  vrDesc = oo_birdbx4_desc;  }
+      
+      if type = OO_BLUE_BOTTLE
+      {  vrName = oo_blubott4_name;  vrIcon = oo_blubott4_icon;  vrDesc = oo_blubott4_desc;  }
+      
+      if type = OO_CLOTH_BOLT1 
+      {  vrName = oo_bolt1_name;  vrIcon = oo_bolt1_icon;  vrDesc = oo_bolt1_desc;  }
+      
+      if type = OO_CLOTH_BOLT2 
+      {  vrName = oo_bolt2_name;  vrIcon = oo_bolt2_icon;  vrDesc = oo_bolt2_desc;  }
+       
+      if type = OO_CLOTH_BOLT3
+      {  vrName = oo_bolt3_name;  vrIcon = oo_bolt3_icon;  vrDesc = oo_bolt3_desc;  }
+      
+      if type = OO_CLOTH_BOLT4
+      {  vrName = oo_bolt4_name;  vrIcon = oo_bolt4_icon;  vrDesc = oo_bolt4_desc;  }
+      
+      if type = OO_CLOTH_BOLT5 
+      {  vrName = oo_bolt5_name;  vrIcon = oo_bolt5_icon;  vrDesc = oo_bolt5_desc;  }
+      
+      if type = OO_CLOTH_BOLT6 
+      {  vrName = oo_bolt6_name;  vrIcon = oo_bolt6_icon;  vrDesc = oo_bolt6_desc;  }
+      
+      if type = OO_BOX_WITH_SNAKE 
+      {  vrName = oo_boxsnak4_name;  vrIcon = oo_boxsnak4_icon;  vrDesc = oo_boxsnak4_desc;  }
+      
+      if type = OO_BROWN_URN
+      {  vrName = oo_brnurn4_name;  vrIcon = oo_brnurn4_icon;  vrDesc = oo_brnurn4_desc;  }
+      
+      if type = OO_DECORATIVE_POT 
+      {  vrName = oo_decopot4_name;  vrIcon = oo_decopot4_icon;  vrDesc = oo_decopot4_desc;  }
+      
+      if type = OO_DRESS1 
+      {  vrName = oo_dress1_name;  vrIcon = oo_dress1_icon;  vrDesc = oo_dress1_desc;  }
+      
+      if type = OO_DRESS2 
+      {  vrName = oo_dress3_name;  vrIcon = oo_dress3_icon;  vrDesc = oo_dress3_desc;  }
+      
+      if type = OO_DRESS3
+      {  vrName = oo_dress4_name;  vrIcon = oo_dress4_icon;  vrDesc = oo_dress4_desc;  }
+      
+      if type = OO_FIXINS
+      {  vrName = oo_fixins4_name;  vrIcon = oo_fixins4_icon;  vrDesc = oo_fixins4_desc;  }
+      
+      if type = OO_FLOWER1 
+      {  vrName = oo_flower_name;  vrIcon = oo_flower_icon;  vrDesc = oo_flower_desc;  }
+      
+      if type = OO_FLOWER2 
+      {  vrName = oo_flower4_name;  vrIcon = oo_flower4_icon;  vrDesc = oo_flower4_desc; pbHanging = TRUE; }
+      
+      if type = OO_GARLIC 
+      {  vrName = oo_garlic4_name;  vrIcon = oo_garlic4_icon;  vrDesc = oo_garlic4_desc; pbHanging = TRUE; }
+      
+      if type = OO_GOLD_BOTTLE 
+      {  vrName = oo_goldbot4_name;  vrIcon = oo_goldbot4_icon;  vrDesc = oo_goldbot4_desc;  }
+      
+      if type = OO_GREY_JUG 
+      {  vrName = oo_gryjug4_name;  vrIcon = oo_gryjug4_icon;  vrDesc = oo_gryjug4_desc;  }
+      
+      if type = OO_HERBS 
+      {  vrName = oo_herbs4_name;  vrIcon = oo_herbs4_icon;  vrDesc = oo_herbs4_desc; pbHanging = TRUE; }
+      
+      if type = OO_JAR 
+      {  vrName = oo_jar4_name;  vrIcon = oo_jar4_icon;  vrDesc = oo_jar4_desc;  }
+      
+      if type = OO_JALA_BOOK 
+      {  vrName = oo_jbook_name;  vrIcon = oo_jbook_icon;  vrDesc = oo_jbook_desc;  }
+      
+      if type = OO_JUG 
+      {  vrName = oo_jug4_name;  vrIcon = oo_jug4_icon;  vrDesc = oo_jug4_desc;  }
+      
+      if type = OO_PALM 
+      {  vrName = oo_palm_name;  vrIcon = oo_palm_icon;  vrDesc = oo_palm_desc;  }
+      
+      if type = OO_POISON
+      {  vrName = oo_poison4_name;  vrIcon = oo_poison4_icon;  vrDesc = oo_poison4_desc;  }
+      
+      if type = OO_POT 
+      {  vrName = oo_pot4_name;  vrIcon = oo_pot4_icon;  vrDesc = oo_pot4_desc;  }
+      
+      if type = OO_POTION 
+      {  vrName = oo_potion4_name;  vrIcon = oo_potion4_icon;  vrDesc = oo_potion4_desc;  }
+      
+      if type = OO_ROCK1
+      {  vrName = oo_rock_name;  vrIcon = oo_rock_icon;  vrDesc = oo_rock_desc;  }
+      
+      if type = OO_ROCK2 
+      {  vrName = oo_rock1_name;  vrIcon = oo_rock1_icon;  vrDesc = oo_rock1_desc;  }
+
+      if type = OO_ROCK3 
+      {  vrName = oo_rock2_name;  vrIcon = oo_rock2_icon;  vrDesc = oo_rock2_desc;  }
+      
+      if type = OO_SPICES 
+      {  vrName = oo_spices4_name;  vrIcon = oo_spices4_icon;  vrDesc = oo_spices4_desc;  }
+      
+      if type = OO_STALACTITE1 
+      {  vrName = oo_stac1_name;  vrIcon = oo_stac1_icon;  vrDesc = oo_stac1_desc;  }
+      
+      if type = OO_STALACTITE2 
+      {  vrName = oo_stac2_name;  vrIcon = oo_stac2_icon;  vrDesc = oo_stac2_desc;  }
+      
+      if type = OO_STALAGMITE1 
+      {  vrName = oo_stag1_name;  vrIcon = oo_stag1_icon;  vrDesc = oo_stag1_desc; pbHanging = TRUE; }
+      
+      if type = OO_STALAGMITE2 
+      {  vrName = oo_stag2_name;  vrIcon = oo_stag2_icon;  vrDesc = oo_stag2_desc; pbHanging = TRUE; }
+      
+      if type = OO_STICKS 
+      {  vrName = oo_sticks4_name;  vrIcon = oo_sticks4_icon;  vrDesc = oo_sticks4_desc;  }
+      
+      if type = OO_STOOL_KOCATAN 
+      {  vrName = oo_stoolko_name;  vrIcon = oo_stoolko_icon;  vrDesc = oo_stoolko_desc;  }
+      
+      if type = OO_TREE1 
+      {  vrName = oo_tree1_name;  vrIcon = oo_tree1_icon;  vrDesc = oo_tree1_desc;  }
+      
+      if type = OO_TREE2
+      {  vrName = oo_tree2_name;  vrIcon = oo_tree2_icon;  vrDesc = oo_tree2_desc;  }
+      
+      if type = OO_URN 
+      {  vrName = oo_urn4_name;  vrIcon = oo_urn4_icon;  vrDesc = oo_urn4_desc;  }
+      
+      if type = OO_anvil 
+      {  vrName = oo_anvil_name;  vrIcon = oo_anvil_icon;  vrDesc = oo_anvil_desc;  }
+
+      if type = OO_quiver 
+      {  vrName = oo_quiver_name;  vrIcon = oo_quiver_icon;  vrDesc = oo_quiver_desc;  }
+
+      if type = OO_rice 
+      {  vrName = oo_rice_name;  vrIcon = oo_rice_icon;  vrDesc = oo_rice_desc;  }
+
+      if type = OO_barrel 
+      {  vrName = oo_barrel_name;  vrIcon = oo_barrel_icon;  vrDesc = oo_barrel_desc;  }
+
+      if type = OO_barrel2 
+      {  vrName = oo_barrel2_name;  vrIcon = oo_barrel2_icon;  vrDesc = oo_barrel2_desc;  }
+
+      if type = OO_bees 
+      {  vrName = oo_bees_name;  vrIcon = oo_bees_icon;  vrDesc = oo_bees_desc;  }
+
+      if type = OO_bigiron 
+      {  vrName = oo_bigiron_name;  vrIcon = oo_bigiron_icon;  vrDesc = oo_bigiron_desc;  }
+
+      if type = OO_bigurn 
+      {  vrName = oo_bigurn_name;  vrIcon = oo_bigurn_icon;  vrDesc = oo_bigurn_desc;  }
+
+      if type = OO_block 
+      {  vrName = oo_block_name;  vrIcon = oo_block_icon;  vrDesc = oo_block_desc;  }
+
+      if type = OO_bluejug 
+      {  vrName = oo_bluejug_name;  vrIcon = oo_bluejug_icon;  vrDesc = oo_bluejug_desc;  }
+
+      if type = OO_tallurn 
+      {  vrName = oo_tallurn_name;  vrIcon = oo_tallurn_icon;  vrDesc = oo_tallurn_desc;  }
+
+      if type = OO_bucket 
+      {  vrName = oo_bucket_name;  vrIcon = oo_bucket_icon;  vrDesc = oo_bucket_desc;  }
+
+      if type = OO_bunny 
+      {  vrName = oo_bunny_name;  vrIcon = oo_bunny_icon;  vrDesc = oo_bunny_desc; pbHanging = TRUE; }
+
+      if type = OO_corn 
+      {  vrName = oo_corn_name;  vrIcon = oo_corn_icon;  vrDesc = oo_corn_desc;  }
+
+      if type = OO_dress1b 
+      {  vrName = oo_dress1b_name;  vrIcon = oo_dress1b_icon;  vrDesc = oo_dress1b_desc;  }
+
+      if type = OO_goose 
+      {  vrName = oo_goose_name;  vrIcon = oo_goose_icon;  vrDesc = oo_goose_desc; pbHanging = TRUE; }
+
+      if type = OO_ironpot 
+      {  vrName = oo_ironpot_name;  vrIcon = oo_ironpot_icon;  vrDesc = oo_ironpot_desc;  }
+
+      if type = OO_lantern 
+      {  vrName = oo_lantern_name;  vrIcon = oo_lantern_icon;  vrDesc = oo_lantern_desc;  pbFlicker = TRUE;  }
+
+      if type = OO_lettuce 
+      {  vrName = oo_lettuce_name;  vrIcon = oo_lettuce_icon;  vrDesc = oo_lettuce_desc;  }
+
+      if type = OO_mugs 
+      {  vrName = oo_mugs_name;  vrIcon = oo_mugs_icon;  vrDesc = oo_mugs_desc;  }
+
+      if type = OO_pigeon 
+      {  vrName = oo_pigeon_name;  vrIcon = oo_pigeon_icon;  vrDesc = oo_pigeon_desc; pbHanging = TRUE; }
+
+      if type = OO_pitcher1 
+      {  vrName = oo_pitcher1_name;  vrIcon = oo_pitcher1_icon;  vrDesc = oo_pitcher1_desc;  }
+
+      if type = OO_pitcher2 
+      {  vrName = oo_pitcher2_name;  vrIcon = oo_pitcher2_icon;  vrDesc = oo_pitcher2_desc;  }
+
+      if type = OO_pitcher3 
+      {  vrName = oo_pitcher3_name;  vrIcon = oo_pitcher3_icon;  vrDesc = oo_pitcher3_desc;  }
+
+      if type = OO_pitcher4 
+      {  vrName = oo_pitcher4_name;  vrIcon = oo_pitcher4_icon;  vrDesc = oo_pitcher4_desc;  }
+
+      if type = OO_skull1 
+      {  vrName = oo_skull1_name;  vrIcon = oo_skull1_icon;  vrDesc = oo_skull1_desc;  }
+
+      if type = OO_skull2 
+      {  vrName = oo_skull2_name;  vrIcon = oo_skull2_icon;  vrDesc = oo_skull2_desc;  }
+
+      if type = OO_skull3 
+      {  vrName = oo_skull3_name;  vrIcon = oo_skull3_icon;  vrDesc = oo_skull3_desc;  }
+
+      if type = OO_skull4 
+      {  vrName = oo_skull4_name;  vrIcon = oo_skull4_icon;  vrDesc = oo_skull4_desc;  }
+
+      if type = OO_skull5 
+      {  vrName = oo_skull5_name;  vrIcon = oo_skull5_icon;  vrDesc = oo_skull5_desc;  }
+
+      if type = OO_skull6 
+      {  vrName = oo_skull6_name;  vrIcon = oo_skull6_icon;  vrDesc = oo_skull6_desc;  }
+
+      if type = OO_deadtree 
+      {  vrName = oo_deadtree_name;  vrIcon = oo_deadtree_icon;  vrDesc = oo_deadtree_desc;  }
+
+      if type = OO_ALTAR 
+      {  vrName = oo_altar_name;  vrIcon = oo_altar_icon;  vrDesc = oo_altar_desc;  }
+
+      if type = OO_HEAD2
+      {  vrName = oo_head2_name;  vrIcon = oo_head2_icon;  vrDesc = oo_head2_desc;  pbFlicker = TRUE; }
+
+      if type = OO_TREE3 
+      {  vrName = oo_tree3_name;  vrIcon = oo_tree3_icon;  vrDesc = oo_tree3_desc;  }
+
+      if type = OO_BONES 
+      {  vrName = oo_bones_name;  vrIcon = oo_bones_icon;  vrDesc = oo_bones_desc;  }
+
+      if type = OO_NESTOBJ1 
+      {  vrName = oo_nestobj1_name;  vrIcon = oo_nestobj1_icon;  vrDesc = oo_nestobj1_desc;  }
+
+      if type = OO_NESTOBJ2 
+      {  vrName = oo_nestobj2_name;  vrIcon = oo_nestobj2_icon;  vrDesc = oo_nestobj2_desc;  }
+
+      if type = OO_BARBOLT1
+      {  vrName = oo_barbolt1_name;  vrIcon = oo_barbolt1_icon;  vrDesc = oo_barbolt1_desc;  }
+
+      if type = OO_BARBOLT2
+      {  vrName = oo_barbolt2_name;  vrIcon = oo_barbolt2_icon;  vrDesc = oo_barbolt2_desc;  }
+
+      if type = OO_BARBOLT3
+      {  vrName = oo_barbolt3_name;  vrIcon = oo_barbolt3_icon;  vrDesc = oo_barbolt3_desc;  }
+
+      if type = OO_BARBOLT4
+      {  vrName = oo_barbolt4_name;  vrIcon = oo_barbolt4_icon;  vrDesc = oo_barbolt4_desc;  }
+
+      if type = OO_BARBOLT5
+      {  vrName = oo_barbolt5_name;  vrIcon = oo_barbolt5_icon;  vrDesc = oo_barbolt5_desc;  }
+
+      if type = OO_BIGURN2
+      {  vrName = oo_Bigurn2_name;  vrIcon = oo_Bigurn2_icon;  vrDesc = oo_Bigurn2_desc;  }
+
+      if type = OO_NECTREE1
+      {  vrName = oo_nectree1_name;  vrIcon = oo_nectree1_icon;  vrDesc = oo_nectree1_desc;  }
+      if type = OO_NECTREE2
+      {  vrName = oo_nectree2_name;  vrIcon = oo_nectree2_icon;  vrDesc = oo_nectree2_desc;  }
+      if type = OO_NECTREE4
+      {  vrName = oo_nectree4_name;  vrIcon = oo_nectree4_icon;  vrDesc = oo_nectree4_desc;  }
+
+      % OO_NECTREE3 was removed.  It was given a dynamic light.  This is here for reasons
+      %  of sanity-checking.  Now shows icon for tree 4.
+      if type = OO_NECTREE3
+      {  vrName = oo_nectree4_name;  vrIcon = oo_nectree4_icon;  vrDesc = oo_nectree4_desc;  }
+      
+      if type = OO_NECGRAVE1
+      {  vrName = oo_necgrave1_name;  vrIcon = oo_necgrave1_icon;  vrDesc = oo_necgrave1_desc;  }
+      if type = OO_NECGRAVE2
+      {  vrName = oo_necgrave2_name;  vrIcon = oo_necgrave2_icon;  vrDesc = oo_necgrave2_desc;  }
+      if type = OO_NECGRAVE3
+      {  vrName = oo_necgrave3_name;  vrIcon = oo_necgrave3_icon;  vrDesc = oo_necgrave3_desc;  }
+
+      if type = OO_HALFSKULL
+      {  vrName = oo_halfskull_name;  vrIcon = oo_halfskull_icon;  vrDesc = oo_halfskull_desc;  }
+
+      if type = OO_SKULL7
+      {  vrName = oo_skull7_name;  vrIcon = oo_skull7_icon;  vrDesc = oo_skull7_desc;  }
+      if type = OO_SKULL8
+      {  vrName = oo_skull8_name;  vrIcon = oo_skull8_icon;  vrDesc = oo_skull8_desc;  }
+      if type = OO_SKULL9
+      {  vrName = oo_skull9_name;  vrIcon = oo_skull9_icon;  vrDesc = oo_skull9_desc;  }
+      if type = OO_SKULL10
+      {  vrName = oo_skull10_name;  vrIcon = oo_skull10_icon;  vrDesc = oo_skull10_desc;  }
+
+      if type = OO_NECROCK
+      {  vrName = oo_necrock_name;  vrIcon = oo_necrock_icon;  vrDesc = oo_necrock_desc;  }
+
+      if type = OO_DUNG
+      {  vrName = oo_dung_name;  vrIcon = oo_dung_icon;  vrDesc = oo_dung_desc;  }
+      if type = OO_HAY
+      {  vrName = oo_hay_name;  vrIcon = oo_hay_icon;  vrDesc = oo_hay_desc;  }
+      if type = OO_ROCKB
+      {  vrName = oo_rockB_name;  vrIcon = oo_rockB_icon;  vrDesc = oo_rockB_desc;  }
+      if type = OO_ROCKC
+      {  vrName = oo_rockC_name;  vrIcon = oo_rockC_icon;  vrDesc = oo_rockC_desc;  }
+
+      if type = OO_GOATHEAD
+      {  vrName = oo_goathead_name;  vrIcon = oo_goathead_icon;  vrDesc = oo_goathead_desc;  }
+      if type = OO_MORTARANDPESTLE
+      {  vrName = oo_mortpest_name;  vrIcon = oo_mortpest_icon;  vrDesc = oo_mortpest_desc;  }
+      if type = OO_NECBOTTLE
+      {  vrName = oo_necbottle_name;  vrIcon = oo_necbottle_icon;  vrDesc = oo_necbottle_desc;  }
+      if type = OO_NECVASE
+      {  vrName = oo_necvase_name;  vrIcon = oo_necvase_icon;  vrDesc = oo_necvase_desc;  }
+      if type = OO_NECVASE2
+      {  vrName = oo_necvase2_name;  vrIcon = oo_necvase2_icon;  vrDesc = oo_necvase2_desc;  }
+      if type = OO_NECVASE3
+      {  vrName = oo_necvase3_name;  vrIcon = oo_necvase3_icon;  vrDesc = oo_necvase3_desc;  }
+      if type = OO_SACRIFICIALBOWL
+      {  vrName = oo_sacrificialbowl_name;  vrIcon = oo_sacrificialbowl_icon;  vrDesc = oo_sacrificialbowl_desc;  }
+      if type = OO_STONECHAIR
+      {  vrName = oo_stonechair_name;  vrIcon = oo_stonechair_icon;  vrDesc = oo_stonechair_desc;  }
+
+      if type = OO_NECVINE1
+      {  vrName = oo_necvine1_name;  vrIcon = oo_necvine1_icon;  vrDesc = oo_necvine1_desc;  }
+      if type = OO_NECSLIME
+      {  vrName = oo_necslime_name;  vrIcon = oo_necslime_icon;  vrDesc = oo_necslime_desc;  }
+      if type = OO_RAZA_SHRUB
+      {  vrName = oo_razshrub_name;  vrIcon = oo_razshrub_icon;  vrDesc = oo_razshrub_desc;  }
+      if type = OO_RAZA_TREE1
+      {  vrName = oo_raztree1_name;  vrIcon = oo_raztree1_icon;  vrDesc = oo_raztree1_desc;  }
+      
+      if type = OO_MUSEUM_ANT
+      {  vrName = oo_modant_name;  vrIcon = oo_modant_icon;  vrDesc = oo_modant_desc;  }
+      if type = OO_MUSEUM_AVAR
+      {  vrName = oo_modavar_name;  vrIcon = oo_modavar_icon;  vrDesc = oo_modavar_desc;  piXlat = AVARCLAN_ANTIMAGIC;}
+      if type = OO_MUSEUM_LUPOGG
+      {  vrName = oo_modlupog_name;  vrIcon = oo_modlupog_icon;  vrDesc = oo_modlupog_desc;  }
+      if type = OO_MUSEUM_ORC
+      {  vrName = oo_modorc_name;  vrIcon = oo_modorc_icon;  vrDesc = oo_modorc_desc;  }
+      if type = OO_MUSEUM_SPIDER
+      {  vrName = oo_modspider_name;  vrIcon = oo_modspider_icon;  vrDesc = oo_modspider_desc;  }
+      if type = OO_MUSEUM_CENTIPEDE
+      {  vrName = oo_modcentipede_name;  vrIcon = oo_modcentipede_icon;  vrDesc = oo_modcentipede_desc;  }
+      if type = OO_MUSEUM_FUNGUSBEAST
+      {  vrName = oo_modfungusbeast_name;  vrIcon = oo_modfungusbeast_icon;  vrDesc = oo_modfungusbeast_desc;  }
+      if type = OO_MUSEUM_FEY
+      {  vrName = oo_modfey_name;  vrIcon = oo_modfey_icon;  vrDesc = oo_modfey_desc;  }
+
+      if type = OO_MUSEUM_SCIMITAR
+      {  vrName = oo_modscimitar_name;  vrIcon = oo_modscimitar_icon;  vrDesc = oo_modscimitar_desc;  }
+      if type = OO_MUSEUM_HAMMER
+      {  vrName = oo_modhammer_name;  vrIcon = oo_modhammer_icon;  vrDesc = oo_modhammer_desc;  }
+      if type = OO_MUSEUM_SHORTSWORD
+      {  vrName = oo_modshortsword_name;  vrIcon = oo_modshortsword_icon;  vrDesc = oo_modshortsword_desc;  }
+      if type = OO_MUSEUM_HELM
+      {  vrName = oo_modhelm_name;  vrIcon = oo_modhelm_icon;  vrDesc = oo_modhelm_desc;  piGroup = 2; }
+      if type = OO_MUSEUM_PLATEARMOR
+      {  vrName = oo_modplatearmor_name;  vrIcon = oo_modplatearmor_icon;  vrDesc = oo_modplatearmor_desc;  piGroup = 2; }
+      if type = OO_MUSEUM_GAUNTLETS
+      {  vrName = oo_modgauntlets_name;  vrIcon = oo_modgauntlets_icon;  vrDesc = oo_modgauntlets_desc;  }
+
+      if type = OO_MUSEUM_POTION
+      {  vrName = oo_modpotion_name;  vrIcon = oo_modpotion_icon;  vrDesc = oo_modpotion_desc;  piXlat = PT_GRAY_TO_SKY; }
+      if type = OO_MUSEUM_SCROLL
+      {  vrName = oo_modscroll_name;  vrIcon = oo_modscroll_icon;  vrDesc = oo_modscroll_desc;  }
+      if type = OO_MUSEUM_WAND
+      {  vrName = oo_modwand_name;  vrIcon = oo_modwand_icon;  vrDesc = oo_modwand_desc;  piGroup = 2;}
+      if type = OO_MUSEUM_TOKEN
+      {  vrName = oo_modtoken_name;  vrIcon = oo_modtoken_icon;  vrDesc = oo_modtoken_desc;  }
+      if type = OO_MUSEUM_LUTE
+      {  vrName = oo_modlute_name;  vrIcon = oo_modlute_icon;  vrDesc = oo_modlute_desc;  }
+      if type = OO_MUSEUM_PRISM
+      {  vrName = oo_modprism_name;  vrIcon = oo_modprism_icon;  vrDesc = oo_modprism_desc;  }
+      if type = OO_MUSEUM_INKYCAP
+      {  vrName = oo_modinkycap_name;  vrIcon = oo_modinkycap_icon;  vrDesc = oo_modinkycap_desc; piXlat = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_GREEN,#color2=XLAT_TO_SKIN4);  }
+      if type = OO_MUSEUM_SIGNETRING
+      {  vrName = oo_modsignetring_name;  vrIcon = oo_modsignetring_icon;  vrDesc = oo_modsignetring_desc;  }
+
+      if type = OO_MUSEUM_ALTAR
+      {  vrName = oo_modaltar_name;  vrIcon = oo_modaltar_icon;  vrDesc = oo_modaltar_desc;  }
+      if type = OO_MUSEUM_NEWS
+      {  vrName = oo_modnewsb_name;  vrIcon = oo_modnewsb_icon;  vrDesc = oo_modnewsb_desc;  }
+      if type = OO_MUSEUM_SHRINE
+      {  vrName = oo_modshrin_name;  vrIcon = oo_modshrin_icon;  vrDesc = oo_modshrin_desc;  }
+      if type = OO_MUSEUM_THRONE
+      {  vrName = oo_modthron_name;  vrIcon = oo_modthron_icon;  vrDesc = oo_modthron_desc;  }
+      if type = OO_MUSEUM_CHALICE
+      {  vrName = oo_modchalice_name;  vrIcon = oo_modchalice_icon;  vrDesc = oo_modchalice_desc;  }
+      if type = OO_MUSEUM_RELIC
+      {  vrName = oo_modrelic_name;  vrIcon = oo_modrelic_icon;  vrDesc = oo_modrelic_desc;  }
+
+      if type = OO_MUSEUM_GRAPES
+      {  vrName = oo_modgrapes_name;  vrIcon = oo_modgrapes_icon;  vrDesc = oo_modgrapes_desc;  }
+
+      if type = OO_FLASK_GREEN
+      {  vrName = oo_flaskgrn_name;  vrIcon = oo_flaskgrn_icon;  vrDesc = oo_flaskgrn_desc;  }
+      if type = OO_FLASK_STAND
+      {  vrName = oo_flaskw_name;  vrIcon = oo_flaskw_icon;  vrDesc = oo_flaskw_desc;  }
+
+      if type = OO_JASPERLAMP
+      {  vrName = oo_jasperlamp_name;  vrIcon = oo_jasperlamp_icon;  vrDesc = oo_jasperlamp_desc;  pbFlicker = TRUE;  }
+
+      if type = OO_RR_PLANT1
+      {  vrName = oo_RRplant1_name;  vrIcon = oo_RRplant1_icon;  vrDesc = oo_RRplant1_desc;  }
+
+      if type = OO_RR_PLANT2
+      {  vrName = oo_RRplant2_name;  vrIcon = oo_RRplant2_icon;  vrDesc = oo_RRplant2_desc;  }
+
+      if type = OO_RR_TABLE
+      {  vrName = oo_RRtable_name;  vrIcon = oo_RRtable_icon;  vrDesc = oo_RRtable_desc;  }
+
+      if type = OO_RR_BASIN
+      {  vrName = oo_RRwashbasin_name;  vrIcon = oo_RRwashbasin_icon;  vrDesc = oo_RRwashbasin_desc;  }
+
+
+      %% tell the room we changed, unless this is in constructor
+      if (NOT const) AND poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      post(self,@DuplicateCheck);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piXlat <> $
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piXlat);
+      }
+
+      AddPacket(1,ANIMATE_NONE,2,piGroup);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      send(self,@SendAnimation);      
+
+      return;
+   }
+
+   SendLightingInformation()
+   {
+      if pbFlicker
+      {
+         AddPacket(2,LIGHT_FLAG_ON);
+         % intensity out of 255
+         AddPacket(1,20);
+         % Color.  Most ornamental objects are fire-type objects.
+         AddPacket(2,LIGHT_FIRE);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   %%%%%%%%%%%%%%%%%%%%%%%%
+   % Object copying stuff %
+   %%%%%%%%%%%%%%%%%%%%%%%%
+   Duplicate()
+   {
+      local oDuplicate;
+
+      oDuplicate = create(&OrnamentalObject,#rName=vrName,#rIcon=vrIcon,#rDesc=vrDesc);
+      if send(self,@GetObjectFlags) & OF_HANGING
+      {
+         send(oDuplicate,@SetHanging,#value=TRUE);
+      }
+      if send(self,@GetObjectFlags) & MOVEON_NO
+      {
+         send(oDuplicate,@SetNoMoveOn,#value=TRUE);
+      }
+
+      return oDuplicate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

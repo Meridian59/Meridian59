@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SkullMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SkullMask_name_rsc = "skull mask"
+   SkullMask_icon_male_rsc = mmskl.bgf
+   SkullMask_icon_female_rsc = mfskl.bgf
+   SkullMask_desc_rsc = \
+      "An odd skull mask originally crafted in Ko'catan.  It's used to "
+      "represent death in certain island ceremonies."
+
+classvars:
+
+   vrName = SkullMask_name_rsc
+   vrDesc = SkullMask_desc_rsc
+   vrIcon = SkullMask_icon_male_rsc
+
+   vrMaleIcon = SkullMask_icon_male_rsc
+   vrFemaleIcon = SkullMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

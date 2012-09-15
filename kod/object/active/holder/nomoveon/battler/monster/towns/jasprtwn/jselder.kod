@@ -1,0 +1,127 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperElder is JasperTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   JasperElder_name_rsc = "Afiera D'xor"
+   JasperElder_icon_rsc = jselder.bgf
+   JasperElder_desc_rsc = "Afiera D'xor spent many, many years of solitude in these mountains, and now devotes "
+                          "his life to his art.  His stone carvings are intricate designs of mathematical perfection.  "
+                          "He will make time, however, to entertain travelers who hope to share some of the "
+                          "wisdom he has gained from a life of secluded meditation."
+
+   JasperElder_entry_welcome = "Greetings.  May you live to see my years."
+
+   JasperElder_unwanted_keep = "~k%s%s tells you, \"Perhaps I may find some use for that.~n~k\""
+   JasperElder_unwanted_pay = "~k%s%s tells you, \"How convenient.~n~k\""
+   JasperElder_unwanted_give = "~k%s%s tells you, \"Most material goods are of little consequence "
+                               "to an old man like me.~n~k\""
+
+classvars:
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+   vrName = JasperElder_name_rsc
+   vrIcon = JasperElder_icon_rsc
+   vrDesc = JasperElder_desc_rsc
+   viAttributes = MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT | MOB_NOMOVE | MOB_TEACHER | MOB_PERM_QUESTER
+   viOccupation = MOB_ROLE_ELDER
+
+   viQuestID = QST_ID_DEMENTIA_SPELL
+
+   vrUnwanted_keep = JasperElder_unwanted_keep
+   vrUnwanted_pay = JasperElder_unwanted_pay
+   vrUnwanted_give = JasperElder_unwanted_give
+
+messages:
+
+   AffectMood(what=$,why=$)
+   {
+      if why = MOODMOD_ACCEPT_ITEM
+      {
+         if IsClass(what, &RainbowFern)
+            OR IsClass(what, &WebMoss)
+            OR IsClass(what, &OrcTooth) 
+         {
+            send(self,@SetMood,#new_mood=piMood + 7);
+         }
+      }
+      
+      return;
+   }
+
+   InitPermQuest()
+   {
+      Post(Send(SYS,@GetLibrary),@CreateQuest,#type=QST_PERM,#quester=self,
+           #reward= [QST_REWARD_ID,viQuestID]);
+           
+      return;
+   }
+
+   Constructor()
+   "We start a permanent quest for learning a spell" 
+   {
+      Send(self,@InitPermQuest);
+      propagate;
+   }
+
+   CanAddSpell(who=$,num=0)
+   "We require that a quest be done before one of the spells can be learned"
+   {
+      if num=SID_DEMENT
+         AND NOT send(self,@HasDoneLearnQuest,#who=who)
+      {
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   SetForSale()
+   {
+      plFor_sale=[$,$,[SID_LIGHTNING_BOLT,SID_DEMENT]];
+      return;
+   }
+
+   UserEntered(who = $)
+   {
+      local iFlags;
+      
+      iFlags = send(who,@GetObjectFlags);
+      if iFlags & PLAYER_OUTLAW
+      {
+         send(self,@SetMood,#new_mood=piMood+2);
+      }
+      
+      if iFlags & PLAYER_PK
+      {
+         send(self,@SetMood,#new_mood=piMood+1);
+      }
+      
+      if send(who,@GetHomeRoom) = RID_JAS_INN
+      {
+         send(self,@SetMood,#new_mood=piMood+2);
+      }
+      
+      Post(poOwner,@someoneSaid,#what=self,#string=JasperElder_entry_welcome,
+          #type=SAY_RESOURCE);
+          
+      propagate;
+   }
+   
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

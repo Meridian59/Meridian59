@@ -1,0 +1,267 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DeadBody is PassiveObject
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   deadbody_desc_rsc = "This is a dead, decomposing %s, slain by %q."
+
+   deadbody_player_desc_rsc = \
+      "The dead body of %q, decomposing quickly in the living air of Meridian."
+
+   deadbody_assassinated_rsc = \
+      "Here lies %q, slain by an unknown assassin."
+
+classvars:
+
+   vrDesc = deadbody_desc_rsc
+   vrPlayer_desc = deadbody_player_desc_rsc
+
+   vrAssassinated_desc = deadbody_assassinated_rsc
+   viIndefinite = ARTICLE_A
+
+properties:
+
+   vrName
+   vrIcon
+
+   ptDelete = $
+   ptNoSteal = $
+
+   prMonster_name = $
+
+   prPlayer_name = $
+   pbWas_good_player = FALSE
+   pbMob = FALSE
+   pbAssassinated = FALSE
+
+   piDrawfx = 0
+
+   prPlayerBodyOverlay = $
+   piBodyTrans = 0
+   piLegsTrans = 0
+   piGroup = 1
+
+   poDearlyDeparted = $
+   piTimeOfDeath = $
+
+   pbResurrected = FALSE
+
+messages:
+
+   % you gotta pass in name, icon, and description to constructor
+   Constructor(name = $,icon = $,playername = $,good = FALSE, mob=FALSE ,monstername = $,
+               inKocatan = FALSE, assassinated = FALSE,drawfx = 0, BodyTranslation = 0,
+               LegsTranslation = 0, PlayerBodyOverlay = $, Decomposes=TRUE,
+               DearlyDeparted = $)
+   {
+      vrName = name;
+      vrIcon = icon;
+      pbMob = mob;
+      piDrawfx = drawfx;
+      prPlayer_name = playername;
+      pbWas_good_player = good; 
+      pbAssassinated = assassinated;
+      prPlayerBodyOverlay = PlayerBodyOverlay;
+      piBodyTrans = BodyTranslation;
+      piLegsTrans = LegsTranslation;      
+      poDearlyDeparted = DearlyDeparted;
+      piTimeOfDeath = GetTime();
+
+      if decomposes
+      {
+         if mob
+         { 
+            ptDelete = CreateTimer(self,@DeleteTimerMessage,120000);
+            prmonster_name = monstername;
+         }
+         else
+         {
+            % Make player corpses hang around longer.
+            ptDelete = CreateTimer(self,@DeleteTimerMessage,600000);	    
+            Send(Send(SYS,@Findroombynum,#num=RID_UNDERWORLD),@Newdeath,#what=self,#inKocatan=inKocatan);
+         }
+      }
+
+      % only the killer can pick up things for the first 25 seconds.
+      ptNoSteal = CreateTimer(self,@NoStealTimer,25000);
+      propagate;
+   }
+
+   NoStealTimer()
+   {
+      ptNoSteal = $;
+
+      return;
+   }
+
+   CanGetMe(what=$)
+   {
+      if ptNoSteal = $
+      {
+         return TRUE;
+      }
+      
+      if send(what,@GetTrueName) = prPlayer_name
+      {
+         return TRUE;
+      }
+         
+      return FALSE;
+   }
+
+   GetCorpseName()
+   {
+      return prPlayer_Name;
+   }
+
+   Delete()
+   {
+      if ptDelete <> $
+      {
+         Send(Send(SYS,@FindRoomByNum,#num=RID_UNDERWORLD),@CorpseDecomposed,#what=self);
+         DeleteTimer(ptDelete);
+         ptDelete = $;
+      }
+      
+      if ptNoSteal <> $
+      {
+         DeleteTimer(ptNoSteal);
+         ptNoSteal=$;
+      }
+      
+      if poOwner <> $
+      {
+         send(poOwner,@CorpseFading,#corpse=self);
+      }
+      
+      propagate;
+   }
+
+   DeleteTimerMessage()
+   {
+      ptDelete = $;
+      Send(self,@Delete);
+      
+      return;
+   }
+
+   DestroyDisposable()
+   {
+      return;
+   }
+
+   ShowDesc()
+   {
+      % need to do STRING_RESOURCE for names because player might not be logged in
+      if pbMob
+      {
+         AddPacket(4,vrDesc, 4,prMonster_name, STRING_RESOURCE,prPlayer_name);
+         
+         return;
+      }
+      
+      if pbAssassinated
+      {
+	      AddPacket(4,vrAssassinated_desc, STRING_RESOURCE,prPlayer_name);
+      }
+      
+      AddPacket(4,vrPlayer_desc, STRING_RESOURCE,prPlayer_name);
+
+      return;
+   }
+
+   WasGoodPlayer()
+   {
+      return pbWas_good_player;
+   }
+
+   WasPlayer()
+   {
+      return (NOT pbMob);
+   }
+
+   GetObjectFlags()
+   {
+      if pbMob
+      {
+         return LOOK_NO | piDrawfx;
+      }
+      
+      return viObject_flags | piDrawfx;
+   }
+   
+   SendAnimation()
+   {
+      if piBodyTrans <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piBodyTrans);
+      }
+      
+      AddPacket(1,ANIMATE_NONE, 2,1);
+      
+      return;
+   }
+
+   SendOverlays()
+   {
+      if (prPlayerBodyOverlay <> $)
+      {
+         % one overlay
+         AddPacket(1,1);
+         % hotspot = 1
+         AddPacket(4,prPlayerBodyOverlay, 1,1);
+         
+         if piLegsTrans <> 0
+         {
+            AddPacket(1,ANIMATE_TRANSLATION, 1,piLegsTrans);
+         }
+         
+         AddPacket(1,ANIMATE_NONE, 2,1);
+         
+         return;
+      }
+      
+      propagate;
+   }
+
+   GetDearlyDeparted()
+   {
+      return poDearlyDeparted;
+   }
+
+   GetTimeOfDeath()
+   {
+      return piTimeOfDeath;
+   }
+
+   % Next two messages are for portal of life.  Checks if the body was resurrected
+   %   already or not, to prevent multiple castings.
+   SetResurrected()
+   {
+      pbResurrected = TRUE;
+      
+      return;
+   }
+
+   GetResurrected()
+   {
+      return pbResurrected;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

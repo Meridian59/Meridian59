@@ -1,0 +1,99 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarlSewer2 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   TO_ROW = 26
+   TO_COL = 33
+
+resources:
+
+   room_barlsew2 = barlsew2.roo
+   room_name_barsew2 = "The Sewers of Barloque"
+   barsew2_music = cave.mid
+
+   waterfall_soundbsew2 = wfall2.wav
+
+classvars:
+
+   vrName = room_name_barsew2
+
+   viTeleport_row = 26
+   viTeleport_col = 33
+
+   viTerrain_type = TERRAIN_SEWERS | TERRAIN_WATERFALL
+   
+properties:
+
+   prRoom = room_barlsew2
+   piRoom_num = RID_BAR_SEWER2
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+
+   prMusic = barsew2_music
+
+   piGen_time = 70000
+   piGen_percent = 80
+
+   piInit_count_min = 4
+   piInit_count_max = 6
+
+   piMonster_count_max = 25
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&GiantRat, 55], [&Lupogg, 45] ];
+      plGenerators = [ [ 4, 32], [13,  8], [11, 27], [21, 21], [23, 12],
+                       [40, 10], [47, 14], [47, 5], [40, 26], [27, 32],
+                       [17, 33], [ 6, 46], [12, 52], [22, 56], [17, 41],
+                       [42, 46], [31, 40], [45, 36]
+                     ];
+
+      plLooping_sounds = [ [ waterfall_soundbsew2, 49, 23, 10, 100 ],
+                           [ waterfall_soundbsew2, 29, 30, 10, 100 ],
+                           [ waterfall_soundbsew2, 29, 35, 10, 100 ],
+                           [ waterfall_soundbsew2, 24, 58, 10, 100 ],
+                           [ waterfall_soundbsew2,  1, 32, 10, 100  ]
+                         ];
+
+      propagate;
+   }
+
+   AddBaseLight(amount=$)
+   {
+      if amount <> $
+      {
+         piBaseLight = piBaseLight + (amount/2);
+         Send(self,@AmbientLightChanged);
+      }
+
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_BAR_SEWER, 23, 1, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_BAR_SEWER3, 29, 48, ROTATE_NONE], plEdge_exits);
+
+      return;
+   }         
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

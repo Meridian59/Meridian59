@@ -1,0 +1,105 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Newbportal is Portal
+
+constants:
+
+   include blakston.khd
+
+   % What do we adjust 
+   ROW_ADJUST = 2
+   COL_ADJUST = 1
+
+resources:
+
+   newbportal_desc_rsc = \
+      "Entering this portal strips you of your training gear and brings you into the "
+      "mainland of Meridian 59, never to return."
+
+   newbportal_dead = "This archway stands cold and inanimate."
+   newbportal_enter = "You enter the portal and begin your adventure in Meridian 59!"
+   newbportal_warning = \
+      "~BWarning~B: If you enter this portal, you will not be able to return to Raza.  "
+      "Only enter this portal if you are confident in your skills.  For more information "
+      "read (right-click) on the sign to the right of this portal."
+
+classvars:
+
+   viObject_flags = MOVEON_TELEPORTER
+
+properties:
+
+   pbAnimate = TRUE
+
+   vrDesc = Newbportal_desc_rsc
+
+   plWarnedList = $
+   
+messages:
+
+   Constructed()
+   {
+      % Clear out the destination room to not interfere with the main purpose of the portal.
+      piDest_room = $;
+
+      propagate;
+   }
+
+   TeleportSomething(what=$)
+   "Called when something walks on top of us."
+   {
+      % Warn true newbies of the perils of going through the portal.
+      % Check to see if we warn them or let them through.
+      if (NOT send(what,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL))
+         AND (plWarnedList = $ OR FindListElem(plWarnedList,what) = 0)
+      {
+         % This player hasn't tried to enter yet, or isn't a true newbie.
+         %  Give them the warning and bump them, then record that we warned them.
+         Send(what,@MsgSendUser,#message_rsc=newbportal_warning);
+         send(SYS,@UtilGoNearSquare,#what=what,#where=poOwner,
+              #new_row=send(self,@GetRow)+ROW_ADJUST,#new_col=send(self,@GetCol)+COL_ADJUST,
+              #new_angle=ANGLE_NORTH);
+         plWarnedList = cons(what,plWarnedList);
+      }
+      else
+      {
+         % They have already been warned, let them through.
+         % Don't keep the record around.
+         if plWarnedList <> $
+         {
+            plWarnedList = DelListElem(plWarnedList,what);
+         }
+         
+         Send(what,@SetRandomHomeroom);
+
+         % Allow an admin to set the portal to go somewhere else if needed.
+         if piDest_room <> $
+         {
+            propagate;
+         }
+         else
+         {
+            Send(what,@AdminGotoSafety);
+         }
+
+         Send(what,@AddExertion,#amount=(send(what,@GetVigor) - 80) * 10000);
+
+         % teleporting them out of region will clean inventory, etc.
+         Post(what,@AddRealWorldObjects);
+         Send(what,@MsgSendUser,#message_rsc=newbportal_enter);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

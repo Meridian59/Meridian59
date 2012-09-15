@@ -1,0 +1,39 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ChickenSoup is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ChickenSoup_name_rsc = "The Widow Qesino's famous chicken soup"
+   ChickenSoup_icon_rsc = soupbowl.bgf
+   ChickenSoup_desc_rsc = \
+      "This is a bowl of the Widow Qesino's award-winning chicken soup.  Mmmmm, smells mighty fine."
+
+classvars:
+
+   vrName = ChickenSoup_name_rsc
+   vrIcon = ChickenSoup_icon_rsc
+   vrDesc = ChickenSoup_desc_rsc
+
+   viValue_average = 20
+   viWeight = 15
+   viBulk = 20
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

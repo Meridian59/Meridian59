@@ -1,0 +1,165 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PawnMan is NoMoveOn
+
+constants:
+
+   include blakston.khd
+   
+resources:
+
+   pawnman_name_rsc = "Pawn man"
+   pawnman_icon_rsc = pawnman.bgf
+   pawnman_desc_rsc = "This is a pawn broker."
+
+   pawnman_offer_busy = "%s is busy right now with another customer" 
+   pawnman_no_value = "I can't even give you a shillin' fer that"
+
+classvars:
+   vrName = pawnman_name_rsc
+   vrIcon = pawnman_icon_rsc
+   vrDesc = pawnman_desc_rsc
+
+   viDefinite = ARTICLE_NONE
+   viIndefinite = ARTICLE_NONE
+
+properties:
+
+
+   poOffer_who = $
+   plOffer_items = $
+
+messages:
+
+   ReqOffer(what = $,item_list = $)
+   {
+      local i,iValue_offered;
+
+      if poOffer_who <> $
+      {
+	 Send(what,@MsgSendUser,#message_rsc=pawnman_offer_busy,#parm1=vrName);
+	 return False	 ;
+      }
+
+      iValue_offered = 0;
+      for i in item_list
+      {
+	 iValue_offered = iValue_offered + Send(i,@GetValue);
+      }
+
+      if iValue_offered = 0
+      {
+	 Send(what,@MsgSendUser,#message_rsc=pawnman_no_value);
+	 return False;
+      }
+      return True;
+   }
+
+   Offer(what = $,item_list = $)
+   {
+      local i,iValue_offered;
+
+      if poOffer_who <> $
+      {
+	 Send(what,@MsgSendUser,#message_rsc=pawnman_offer_busy,#parm1=vrName);
+	 Send(what,@OfferCanceled);
+	 return;
+      }
+
+      iValue_offered = 0;
+      for i in item_list
+      {
+	 iValue_offered = iValue_offered + Send(i,@GetValue);
+      }
+
+      if iValue_offered = 0
+      {
+	 Send(what,@MsgSendUser,#message_rsc=pawnman_no_value);
+	 Send(what,@OfferCanceled);
+	 return;
+      }
+
+      poOffer_who = what;
+      plOffer_items = [Create(&Money,#number=iValue_offered)];
+
+      Send(what,@CounterOffer,#item_list=plOffer_items);
+
+      return;
+   }
+
+   OfferCanceled()
+   {
+      poOffer_who = $;
+      plOffer_items = $;
+
+      return;
+   }
+
+   AcceptOffer()
+   {
+      local i,oHolder,iLists,lTake_items;
+
+      % drop the stuff
+
+      oHolder = Send(SYS,@GetSystemHolder2);
+      for i in plOffer_items
+      {
+	 Send(oHolder,@NewHold,#what=i);
+      }
+
+      % take his stuff
+
+      oHolder = Send(SYS,@GetSystemHolder1);
+      iLists = 1;
+      while iLists <= 2 
+      {
+	 if iLists = 1
+	 {
+	    lTake_items = Send(oHolder,@GetHolderActive);
+	 }
+	 if iLists = 2
+	 {
+	    lTake_items = Send(oHolder,@GetHolderPassive);
+	 }
+
+	 for i in lTake_items
+	 {
+	    if Send(self,@ReqNewHold,#what=i)
+	    {
+	       Send(self,@NewHold,#what=i);
+	    }
+	    else
+	    {
+	       if Send(poOwner,@ReqNewHold,#what=i,#new_row=piRow,#new_col=piCol)
+	       {
+		  % send self warning
+		  Send(poOwner,@NewHold,#what=i,#new_row=piRow,#new_col=piCol);
+	       }
+	    }
+	 }
+	 iLists = iLists + 1;
+      }
+
+      poOffer_who = $;
+      plOffer_items = $;
+
+      return True;
+   }
+
+   NewHoldObject(what = $)
+   {
+      Send(what,@Delete);
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

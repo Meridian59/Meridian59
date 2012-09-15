@@ -1,0 +1,79 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanLanguageMaster is KocatanTown
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KocatanLanguageMaster_name_rsc = "Quetzal"
+   KocatanLanguageMaster_icon_rsc = kclangua.bgf
+   KocatanLanguageMaster_desc_rsc = "Brilliant yet begrudged by most of the island for "
+      "his age, this high pitched youth rose from an annoying bookworm to one of the "
+      "most sought after individuals due to his extensive knowledge of languages. He "
+      "regards most of the adults around him as intellectual inferiors who cannot "
+      "appreciate his mind."
+
+   KocatanLanguageMaster_entry_welcome = "Greetings, you have come in search of knowledge?"
+   KocatanLanguageMaster_unwanted_give = "~k%s%s tells you, \"Very interesting, but I don't need it.~n~k\""
+
+classvars:
+
+   vrName = KocatanLanguageMaster_name_rsc
+   vrIcon = KocatanLanguageMaster_icon_rsc
+   vrDesc = KocatanLanguageMaster_desc_rsc
+   viMerchant_markup = MERCHANT_RIPOFF
+
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_LISTEN | MOB_NOMOVE | MOB_RECEIVE
+   viOccupation = MOB_ROLE_SCHOLAR
+
+   vrUnwanted_give = KocatanLanguageMaster_unwanted_give
+
+properties:
+   
+messages:
+
+     SetForSale()
+   {
+      plFor_sale = [ [ Create(&YrxlSap,#number=1),
+                       Create(&ShamanBlood,#number=1),
+                       Create(&KriipaClaw,#number=4),
+                       Create(&PolishedSeraphym,#number=2) ],
+                      $, $ ];
+      return;
+   }
+
+
+
+   UserEntered(who = $)
+   {
+      Post(poOwner,@SomeoneSaid,#what = self, #string=KocatanLanguageMaster_entry_welcome,
+           #type=SAY_RESOURCE);
+           
+      if Send(who,@GetGender) = GENDER_MALE
+      {
+         send(self,@SetMood,#new_mood=piMood - 1);
+      }
+      
+      if Send(who,@GetGender) = GENDER_FEMALE
+      {
+         send(self,@SetMood,#new_mood=piMood + 1 );
+      }
+      
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

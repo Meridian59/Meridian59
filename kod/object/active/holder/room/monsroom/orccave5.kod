@@ -1,0 +1,159 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcCave5 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_orccave5 = "Obfal's Sepulchre"
+   room_orccave5 = oc05.roo
+   orccave5_music = orc2.mid
+
+classvars:
+
+   vrName = room_name_orccave5
+
+   viTeleport_row = 40
+   viTeleport_col = 23
+
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   piRoom_num = RID_ORC_CAVE5
+   prRoom = room_orccave5
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 15000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = orccave5_music
+
+   poShrine = $
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&CaveOrc, 75], [&OrcWizard, 25] ];
+      plGenerators = [ [20,74], [20,58], [30,66], [14,58], [12,50], [34,58], [23,53],
+	                    [41,71], [58,56], [69,57], [71,40], [57,24], [48,08], [49,23],
+	                    [56,33], [56,45], [63,39], [49,39], [42,48], [40,55], [38,17],
+	                    [42,28], [34,37], [34,42], [33,07], [33,25], [19,38], [19,42],
+	                    [23,19], [21,11], [21,15], [14,13], [09,40]
+	                  ];
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=19,#new_col=34,#fine_row=32,#fine_col=0,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=30,#new_col=32,#fine_row=16,#fine_col=0,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=25,#new_col=16,#fine_row=16,#fine_col=16,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=41,#new_col=60,#fine_row=16,#fine_col=8,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=36,#new_col=55,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=36,#new_col=57,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=38,#new_col=56,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=39,#new_col=59,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=44,#new_col=58,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=44,#new_col=53,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=44,#new_col=56,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=46,#new_col=57,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=45,#new_col=62,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=41,#new_col=63,#fine_row=0,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=37,#new_col=61,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=38,#new_col=63,#fine_row=0,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=39,#new_col=52,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=37,#new_col=54,#fine_row=0,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=46,#new_col=55,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),
+           #new_row=59,#new_col=24,#fine_row=0,#fine_col=32,#angle=ANGLE_SOUTH);
+
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=13,#new_col=22,
+           #fine_row=32,#fine_col=48,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=13,#new_col=25,
+           #fine_row=32,#fine_col=48,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=63,#new_col=45,
+           #fine_row=48,#fine_col=48,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=59,#new_col=52,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=72,#new_col=45,
+           #fine_row=0,#fine_col=0,#angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Skull),#new_row=75,#new_col=52,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_SOUTH);
+
+      poShrine = Create(&Shrine,#shrine_num=SHRINE_ORCSHRINE);
+      Send(self,@NewHold,#what=poShrine,#new_row=67,#new_col=42);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_SOUTH,RID_ORC_CAVE4,2,91, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST,RID_ORC_CAVE6,72,2,ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST,RID_ORC_CAVE5_EXT,49,40,ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   NewHold(what=$)
+   {
+      if isClass(what,&Item)
+      {
+         % Have to post this to handle numberitems and SYS can't handle posts.
+         post(self,@PostShrineCheckItem,#what=what);  
+      }
+
+      propagate;
+   }
+
+   PostShrineCheckItem(what=$)
+   {
+      send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

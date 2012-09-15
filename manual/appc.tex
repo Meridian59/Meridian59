@@ -1,0 +1,234 @@
+\chapter{Blakod Grammar}
+\label{app:grammar}
+
+The following is a grammar of Blakod.  Terminals are enclosed in single quotes.
+
+\begin{verbatim}
+Classes: 
+                /* empty */        
+        |       Classes Class        
+
+Class:
+                Class_Signature Constants_Block Resources_Block Classvars_Block 
+                Properties_Block Messages_Block end_junk
+                
+
+end_junk:       END 
+        |       END EOL
+
+Class_Signature:
+                id EOL                
+        |       id 'IS' id EOL        
+
+Constants_Block:
+                /* empty */                                
+        |       'CONSTANTS' ':' EOL constants_list      
+
+Resources_Block:
+                /* empty */
+        |       'RESOURCES' ':' EOL resource_list
+ 
+Classvars_Block:
+                /* empty */                        
+        |       'CLASSVARS' ':' EOL classvar_list 
+
+Properties_Block:
+                /* empty */                        
+        |       'PROPERTIES' ':' EOL property_list
+
+Messages_Block:
+                /* empty */                                
+        |       'MESSAGES' ':' message_handler_list        
+
+constants_list: 
+                /* empty */                        
+        |       constants_list constant_assign  
+
+constant_assign:
+                id '=' expression EOL
+        |       'INCLUDE' fname EOL    
+        |       error EOL                
+
+resource_list:
+                /* empty */                
+        |       resource_list resource  
+
+resource:
+                id '=' resource_const EOL
+        |       error EOL                        
+
+resource_const:
+                STRING_CONSTANT 
+        |       fname                
+
+classvar_list:
+                /* empty */                
+        |       classvar_list classvar         
+
+property_list:
+                /* empty */                
+        |       property_list property         
+
+classvar:
+                id '=' expression EOL        
+        |       id EOL                        
+        |       error EOL                
+
+property:
+                id '=' expression EOL        
+        |       id EOL                        
+        |       error EOL                
+
+message_handler_list:
+                /* empty */                                
+        |       message_handler_list message_handler        
+
+message_handler:
+                message_header '{' locals statement_list '}'
+        |       message_header STRING_CONSTANT '{' locals statement_list '}'
+
+message_header:
+                id parameter_list
+
+locals:
+                /* empty */        
+        |       'LOCAL' vars SEP  
+
+vars:
+                var                
+        |       vars ',' var        
+
+var:            id                
+
+parameter_list:
+                '(' ')'                        
+        |       '(' param_list2 ')'         
+
+param_list2:
+                parameter                        
+        |       param_list2 ',' parameter        
+
+parameter:
+                id '=' expression        
+
+statement_list:
+                /* empty */        
+        |       statement_list statement         
+
+statement: 
+                call SEP        
+        |       if_stmt                
+        |       assign_stmt        
+        |       for_stmt        
+        |       while_stmt        
+        |       'PROPAGATE' SEP        
+        |       'RETURN' expression SEP
+        |       'RETURN' SEP
+        |       'BREAK' SEP
+        |       'CONTINUE' SEP
+        |       error SEP
+
+if_stmt:
+                IF expression '{' statement_list '}'
+        |       IF expression '{' statement_list '}'  
+                ELSE '{' statement_list '}' 
+
+assign_stmt:
+                id '=' expression SEP
+
+for_stmt:
+                'FOR' id 'IN' expression '{' start_loop statement_list '}' end_loop
+
+while_stmt:
+                'WHILE' expression '{' start_loop statement_list '}' end_loop
+
+start_loop:     /* empty*/
+
+end_loop:       /* empty*/
+
+call:
+                id argument_list        
+        |       '[' ']'                        
+        |       '[' expression_list ']'        
+
+expression_list:
+                expression                        
+        |       expression_list ',' expression        
+
+argument_list:
+                '(' ')'                        
+        |       '(' arg_list2   ')'         
+
+arg_list2:
+                argument                
+        |       arg_list2 ',' argument        
+
+argument:
+                expression                
+        |       '#' id '=' expression  
+
+expression:
+                expression 'AND' expression        
+        |       expression 'OR' expression        
+        |       expression REL_OP expression        
+        |       expression '=' expression        
+        |       expression '+' expression        
+        |       expression '-' expression        
+        |       expression '*' expression        
+        |       expression '/' expression        
+        |       expression 'MOD' expression        
+        |       expression '&' expression        
+        |       expression '|' expression        
+        |       '-' expression
+        |       'NOT' expression                        
+        |       '~' expression                  
+        |       constant                        
+        |       literal                                
+        |       call                                
+        |       id                                
+        |       '(' expression ')'                
+
+constant:
+                NUMBER                
+        |       '$'                
+        |       STRING_CONSTANT        
+
+fname:
+                FILENAME        
+        |       IDENTIFIER        
+
+literal:
+                '&' id                
+        |       '@' id                
+
+id:
+                IDENTIFIER        
+
+SEP:
+                ';'
+
+NUMBER:
+                [0-9]+
+        |       0x[0-9a-fA-F]+
+
+IDENTIFIER:
+                [A-Za-z][A-Za-z0-9_]*
+
+FILENAME:
+                [A-Za-z0-9_\-]*\.[A-Za-z0-9_\-]*
+
+STRING_CONSTANT:
+                (([^\"\n\\]|\\.)*\")[ \t\r]*
+
+EOL:
+                '\n'
+
+REL_OP:
+                '<'
+        |       '>'
+        |       '<>'
+        |       '<='
+        |       '>='
+        |       '='
+
+\end{verbatim}

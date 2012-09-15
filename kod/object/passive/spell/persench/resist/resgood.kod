@@ -1,0 +1,91 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ResistGood is ResistanceEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   resistgood_name_rsc = "unholy resolve"
+   resistgood_icon_rsc = iresgood.bgf
+   resistgood_desc_rsc = \
+      "Summons the vile force of Qor to protect the user from holy damage.  "
+      "Requires solagh and fairy wings to cast."
+
+   resistgood_spell_intro = "Qor Level 1: Protects you from damage from holy sources."
+
+   resistgood_already_enchanted = "You already have unholy resolve."
+   resistgood_success = "The spirt of Qor enters %s%s's body, protecting them from the forces of good."
+   resistgood_on = "The spirit of Qor enters your body, protecting you from the forces of good."
+   resistgood_off = "You no longer have resistance to good."
+ 
+classvars:
+
+   viPersonal_ench = TRUE
+
+   vrName = resistgood_name_rsc
+   vrIcon = resistgood_icon_rsc
+   vrDesc = resistgood_desc_rsc
+
+   vrSpell_intro = resistgood_spell_intro
+
+   viSpell_num = SID_UNHOLY_RESOLVE
+   viSchool = SS_QOR
+   viSpell_level = 1
+   viMana = 3
+   
+   viChance_To_Increase = 35
+   viFlash = FLASH_GOOD_SELF
+
+   viResistanceType = -ATCK_SPELL_HOLY
+   vrAlreadyEnchanted = resistgood_already_enchanted
+   vrEnchantment_On = resistgood_on
+   vrEnchantment_Off = resistgood_off
+   vrSuccess = resistgood_success
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&FairyWing,1],plReagents);
+      plReagents = Cons([&Solagh,1],plReagents);
+
+      return;
+   }
+
+   GetResistanceStrength(iSpellpower = 0)
+   {
+      %% strength varies from 15 to 65
+      return iSpellPower/2 + 15;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;	   %%% 5 to 15 minutes
+      iDuration = 300 + iSpellPower * 6;
+      iDuration = iDuration * 1000;	  %% translate to milliseconds
+      return random(iDuration/2,iDuration);
+   }
+
+   OfferToNewCharacters()
+   {
+      % It's an island spell with island reagents.  Denied.
+      return FALSE;
+   }
+   
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

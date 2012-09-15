@@ -1,0 +1,9 @@
+# #Ko'Catan Lamp
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Standing
+-s 2
+1
+outlamp.bmp    [0, 0] :1      1 [0, 0]
+1
+ 1   1 

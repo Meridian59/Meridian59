@@ -1,0 +1,77 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsD6 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsD6 = D6.roo
+   room_name_OutdoorsD6 ="Deep in the Forest of Farol"
+   OutdoorsD6_music = walk7.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsD6
+
+   viTeleport_row = 20
+   viTeleport_col = 21
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_RIVER
+
+   viFlag_row = 29
+   viFlag_col = 31
+
+properties:
+
+   prRoom = room_OutdoorsD6
+   prMusic = OutdoorsD6_music
+   piRoom_num = RID_D6
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 100000
+   piGen_percent = 80
+
+   piInit_count_min = 4
+   piInit_count_max = 8
+
+   piMonster_count_max = 13
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&MolluskMonster, 30], [&Ent, 70] ];
+
+      plGenerators = [ [8, 4], [15, 11], [24, 5], [27, 13], [36, 9],
+		      [5, 14], [9, 22], [6, 30], [19, 19], [17, 35], 
+		      [24, 32], [30, 29], [37, 36], [39, 21], [44, 26]];
+      propagate;
+   }
+
+    CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_C6, 13, 46, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_D5, 48, 22, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_D7, 3, 19, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

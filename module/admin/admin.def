@@ -1,0 +1,11 @@
+;
+; DEF file for admin DLL
+; 
+
+EXPORTS
+	GetModuleInfo		@1  NONAME
+	EventServerMessage      @2  NONAME
+	EventUserAction         @4  NONAME
+	EventFontChanged        @6  NONAME
+	ModuleExit              @16 NONAME
+	EventResetData          @22 NONAME

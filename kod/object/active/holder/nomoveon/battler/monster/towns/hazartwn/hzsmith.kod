@@ -1,0 +1,67 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HazarBlacksmith is HazarTown
+
+constants:
+
+   include blakston.khd
+
+   ANIM_WAVE = 1
+
+resources:
+
+   HazarBlacksmith_name_rsc = "Tomas"
+   HazarBlacksmith_icon_rsc = bqsmith.bgf
+   HazarBlacksmith_desc_rsc = "A maker of unremarkable but reliable weapons, Tomas earns his customers with good comradeship and low prices."
+   HzBla_entry_welcome = "Hello %s%s, and welcome."
+
+classvars:
+
+   vrName = HazarBlacksmith_name_rsc
+   vrIcon = HazarBlacksmith_icon_rsc
+   vrDesc = HazarBlacksmith_desc_rsc
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_NOQUEST
+   viOccupation = MOB_ROLE_BLACKSMITH
+   viMerchant_markup = MERCHANT_BARGAIN   
+
+messages:
+
+   SetForSale()
+   {
+      plFor_sale = [ [ Create(&Mace),Create(&ShortSword),
+                     Create(&LongSword),Create(&ScaleArmor),
+					 Create(&LeatherArmor)],$,$];
+      return;
+   }
+
+   ObjectDesired(what=$)
+   {
+           if send(what,@CanBeGivenToNPC) AND
+           (send(self,@IsObjectWearable,#what=what)
+           or send(self,@IsObjectWeapon,#what=what))
+	   { return TRUE; }
+	   
+	   return FALSE;		   
+   }
+
+   UserEntered(who = $)
+   {
+      Post(poOwner,@SomeoneSaid,#what = self, #string=HzBla_entry_welcome,
+         #type = SAY_RESOURCE, 
+         #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+      return;
+   }
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

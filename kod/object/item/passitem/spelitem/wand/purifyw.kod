@@ -1,0 +1,35 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PurifyWand is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   PurifyWand_label_name_rsc = "wand of magical cleansing"
+   PurifyWand_desc_rsc = "Magical energy crackles about this slender wand."
+
+classvars:
+
+   vrLabelName = PurifyWand_label_name_rsc
+   viSpellEffect = SID_PURIFY
+   viColor = XLAT_TO_SKY
+
+properties:
+
+   vrDesc = PurifyWand_desc_rsc
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

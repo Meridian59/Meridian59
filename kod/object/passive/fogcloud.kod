@@ -1,0 +1,112 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FogCloud is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   fogcloud_name_rsc = "thick fog"
+   fogcloud_icon_rsc = poisoncl.bgf
+   fogcloud_desc_rsc = "You choke just looking at the thick putrid fog."
+
+classvars:
+
+   vrName = fogcloud_name_rsc
+   vrIcon = fogcloud_icon_rsc
+
+   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50
+   vrdesc = fogcloud_desc_rsc
+
+properties:
+
+   poCaster = $
+   ptExpire = $
+   vbSummoned = TRUE
+
+messages:
+
+   constructor(Caster=$,Duration=75)
+   {
+     local iDuration;
+     iDuration = Random(Duration-15,Duration+15);
+     iDuration = iDuration * 750;
+     iDuration = bound(iDuration,22500,150000);
+
+     poCaster = Caster;
+     vbSummoned = isClass(Caster,&User);
+     ptExpire = CreateTimer(self,@Expire,iDuration);
+
+     propagate;
+   }
+
+   Constructed()
+   {
+      %% at this point, the wall should have already been created.
+      %% therefore, it should be safe to delete it.
+      post(self,@ArenaCheck);
+
+      propagate;
+   }
+
+   ArenaCheck()
+   {
+      if send(poOwner,@IsArena)
+      and not send(poOwner,@InPlay,#what=self,#bNonPlayerOkay = TRUE)
+      {	 
+	      post(self,@Delete);
+      }
+      return;
+   }
+
+   Expire()
+   {
+      ptExpire = $;
+      Send(self,@Delete);
+      return;
+   }
+
+   Delete()
+   {
+      if ptExpire <> $
+      {
+         DeleteTimer(ptExpire);
+         ptExpire = $;
+      }
+      propagate;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return IsClass(what,&Room);
+   }
+
+   NewOwner(what = $)
+   {
+      if IsClass(what,&GuildHall) and
+         (send(what,@InFoyer,#who=poCaster) <> send(what,@InFoyer,#who=self))
+      {
+         post(self,@delete);
+      }
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, random(280,300), 2, 1, 2, 5);
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

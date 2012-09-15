@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsA6 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsA6 = a6.roo
+   room_name_OutdoorsA6 ="The Hills"
+   OutdoorsA6_music = forest.mid
+
+   waterfall_sounda6 = wfall2.wav
+
+   
+classvars:
+
+   vrName = room_name_OutdoorsA6
+
+   viTeleport_row = 34
+   viTeleport_col = 11
+
+   viTerrain_type = TERRAIN_LAKE | TERRAIN_FOREST | TERRAIN_RIVER | TERRAIN_HILLS
+
+properties:
+
+   prRoom = room_OutdoorsA6
+   prMusic = OutdoorsA6_music
+   piRoom_num = RID_A6
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 40000
+   piGen_percent = 80
+
+   piInit_count_min = 4
+   piInit_count_max = 6
+
+   piMonster_count_max = 12
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&RedAnt, 30], [&Troll, 70] ];
+
+      plGenerators = [ [20, 15], [26, 7], [28, 26], [29, 43], [14, 38],
+		      [17, 49], [7, 27], [14, 13], [12, 4], [29, 18], 
+		      [3, 40], [6, 46], [3, 28], [ 1, 23] ];
+
+      plLooping_sounds = [[ waterfall_sounda6, 16, 37 ],[ waterfall_sounda6, 2, 34 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_A5, 50,31, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_B6, 1,6, ROTATE_NONE], plEdge_exits);
+
+      return;
+   }                                                             
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

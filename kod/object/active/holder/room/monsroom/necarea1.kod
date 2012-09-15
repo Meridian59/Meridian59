@@ -1,0 +1,85 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Necropolis1 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_Necropolis1 = necarea1.roo
+   room_name_Necropolis1 = "Winding Caverns"
+
+   Necropolis1_music = nec01.mid
+   Necropolis1_loop = necloop1.wav
+
+classvars:
+
+   vrName = room_name_Necropolis1
+
+   viTeleport_row = 6
+   viTeleport_col = 18
+
+   viTerrain_type = TERRAIN_NECROPOLIS
+
+properties:
+
+   prRoom = room_Necropolis1
+   piRoom_num = RID_NECROAREA1
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = 0
+
+   piGen_time = 40000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = Necropolis1_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&DeathSpider, 45], [&Skeleton, 55] ];
+
+      include necarea1.kmn ;
+
+      plLooping_sounds = [[ Necropolis1_loop, 0, 0, 200, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_NECROAREA2, 5, 2, ROTATE_NONE], plEdge_exits);
+%      plEdge_Exits = Cons([LEAVE_NORTH, RID_G8, 27, 49, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_G8, 27, 49, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+
+   
+   CreateStandardObjects()
+   {
+
+      include necarea1.ktm ;
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

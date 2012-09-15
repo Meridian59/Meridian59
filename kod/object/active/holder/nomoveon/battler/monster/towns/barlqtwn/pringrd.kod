@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PrincessGuard is BarloqueTown
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   princess_guard_name_rsc = "Keep Guard"
+   princess_guard_icon_rsc = pringard.bgf
+   princess_guard_desc_rsc = \
+      "Doing his best to look as stately as the royalty that he is charged "
+	  "to protect, this guard wears his uniform with pride.  "
+	  "A sense of security fills the air in the area around the "
+	  "courtly guard."
+
+
+classvars:
+   vrName = princess_guard_name_rsc
+   vrIcon = princess_guard_icon_rsc
+   vrDesc = princess_guard_desc_rsc
+
+   viAttributes = MOB_NOFIGHT | MOB_NOMOVE | MOB_LISTEN | MOB_RANDOM | MOB_NOQUEST
+   viOccupation = MOB_ROLE_GUARD
+
+%   viAttributes = MOB_NOFIGHT  | MOB_RECEIVE | MOB_NOMOVE
+
+properties:
+
+   piAnimation = ANIM_NONE
+   
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,342 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall12 is GuildHall
+
+constants:
+
+   MAIN_DOOR  = 59
+   MAIN_DOOR_OPEN = 700
+   MAIN_DOOR_CLOSED = 600
+   SECRET_DOOR = 155
+   SECRET_DOOR_OPEN = 190
+   SECRET_DOOR_CLOSED = 105
+   
+   DOOR_DELAY = 5000
+       
+   LEVEL_FOYER = 1
+   LEVEL_ONE =   2
+   LEVEL_TWO =   3
+
+   include blakston.khd
+
+resources:
+
+   room_name_guildh12 = "West Tower Guild Hall in Ko'catan"
+   room_guildh12 = guildh12.roo
+
+   guildh12_sealed1 = "This door is sealed by the order of the captain of the guard."
+   guildh12_sealed2 = "The door to the inner city wall is locked to non-military personnel."
+   guildh12_sealed3 = "The door to the upper barracks is locked."
+   guildh12_sealed4 = "Access to the upper wall is denied to non-military personnel."
+   guildh12_sealed5 = "All access to the upper levels of the west tower is blocked by an iron "
+      "gate.  It would not be wise to violate a lease with the Ko'catan army."
+
+   guildh12_gong = gong.wav
+
+   guildh12_lift_up_sound = stoneup2.wav
+   guildh12_lift_down_sound = stonedn2.wav
+
+classvars:
+
+   vrName = room_name_guildh12
+
+   viTeleport_row = 34
+   viTeleport_col = 8
+
+   viNews_row = 37
+   viNews_col = 46
+   viNews_finerow = 32
+   viNews_finecol = 16
+
+   viFoyer_north = 27
+   viFoyer_south = 48
+   viFoyer_west = 0
+   viFoyer_east = 27
+
+   viLever_row = 7
+   viLever_col = 49
+   viLever_fine_row = 24
+   viLever_fine_col = 24
+
+   viInner_teleport_row = 36
+   viInner_teleport_col = 48
+
+   viQuality = 8
+   viTerrain_type = TERRAIN_GUILDHALL | TERRAIN_CASTLE
+   viSeconds_til_close = 7
+   
+   vrEntrancedoor_open_sound = guildh12_lift_up_sound
+   vrEntrancedoor_close_sound = guildh12_lift_up_sound
+   %vrSecretdoor_open_sound = 
+   %vrSecretdoor_close_sound = 
+
+properties:
+
+   prRoom = room_guildh12
+   piRoom_num = RID_GUILDH12
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_5
+
+   ptSecret = $
+   ptEntrance = $
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [[ 37,2],[37,3]];
+      
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 37, 9, ROOM_LOCKED_DOOR, guildh12_sealed1 ],plExits);
+      plExits = Cons([ 37, 7, ROOM_LOCKED_DOOR, guildh12_sealed1 ],plExits);
+      plExits = Cons([ 37, 5, ROOM_LOCKED_DOOR, guildh12_sealed1 ],plExits);
+      plExits = Cons([ 37, 5, ROOM_LOCKED_DOOR, guildh12_sealed1 ],plExits);
+      plExits = Cons([ 36, 52, ROOM_LOCKED_DOOR, guildh12_sealed2 ],plExits);
+      plExits = Cons([ 9, 47, ROOM_LOCKED_DOOR, guildh12_sealed3 ],plExits);
+      plExits = Cons([ 9, 48, ROOM_LOCKED_DOOR, guildh12_sealed3 ],plExits);
+      plExits = Cons([ 8, 49, ROOM_LOCKED_DOOR, guildh12_sealed3 ],plExits);
+      plExits = Cons([ 9, 49, ROOM_LOCKED_DOOR, guildh12_sealed3 ],plExits);
+      plExits = Cons([ 7, 53, ROOM_LOCKED_DOOR, guildh12_sealed4 ],plExits);
+      plExits = Cons([ 8, 53, ROOM_LOCKED_DOOR, guildh12_sealed4 ],plExits);
+      plExits = Cons([ 11, 50, ROOM_LOCKED_DOOR, guildh12_sealed5 ],plExits);
+      plExits = Cons([ 12, 50, ROOM_LOCKED_DOOR, guildh12_sealed5 ],plExits);
+
+      plExits = Cons([ 3, 50, RID_GUILDH12, 30, 48, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 49, RID_GUILDH12, 4, 51, ROTATE_NONE ],plExits);
+      plExits = Cons([ 30, 49, RID_GUILDH12, 4, 51, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 41, 9, RID_GUILDH12, 40, 50, ROTATE_NONE ],plExits);
+      plExits = Cons([ 40, 9, RID_GUILDH12, 40, 50, ROTATE_NONE ],plExits);
+      plExits = Cons([ 40, 49, RID_GUILDH12, 41, 8, ROTATE_NONE ],plExits);
+
+      %% teleport in to (44, 23)
+      plExits = Cons([ 46, 24, RID_KOC_NORTH, 4, 14, ROTATE_NONE ],plExits);
+      plExits = Cons([ 46, 25, RID_KOC_NORTH, 4, 14, ROTATE_NONE ],plExits);
+      plExits = Cons([ 45, 25, RID_KOC_NORTH, 4, 14, ROTATE_NONE ],plExits);
+      plExits = Cons([ 45, 24, RID_KOC_NORTH, 4, 14, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSecret <> $
+      {
+         DeleteTimer(ptSecret);
+         ptSecret = $;
+      }
+      
+      if ptEntrance <> $
+      {
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
+      }
+      
+      propagate;
+   }
+
+   SomethingTryGo(what=$, row=$,  col = $)
+   {
+      if row = 32 AND (col = 2 OR col = 3)
+      {
+   	   if send(self,@CanEnter,#who = what)
+         {
+           send(self,@OpenEntranceDoor);
+           
+           return TRUE;
+         }
+      }
+      
+      propagate;
+   }
+
+   OpenEntranceDoor()
+   {
+      if ptEntrance = $
+      {
+         send(self,@TimeStampDoor);
+         send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height=MAIN_DOOR_OPEN,#speed=50);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
+         send(self,@OpenEntranceDoorSound);
+      }    
+
+      return;
+   }
+
+   CloseEntranceDoor()
+   {
+       ptEntrance = $;
+       send(self,@SetSector,#sector=MAIN_DOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=MAIN_DOOR_CLOSED,#speed=50);
+       send(self,@CloseEntranceDoorSound);
+       
+       return;
+   }
+
+
+   OpenSecretDoor()
+   {
+      if ptSecret = $
+      {
+         send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+              #height=SECRET_DOOR_OPEN,#speed=50);
+         ptSecret = CreateTimer(self,@CloseSecretDoor,DOOR_DELAY);
+         send(self,@OpenSecretDoorSound);
+      }
+      
+      return; 
+   }
+
+   CloseSecretDoor()
+   {
+      ptSecret = $;
+      send(self,@setsector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+           #height=SECRET_DOOR_CLOSED,#speed=50);
+      send(self,@CloseSecretDoorSound);
+      
+      return;
+   }
+
+
+   CreateStandardObjects()
+   {
+      local lObjCoords1;
+   
+      Send(self,@NewHold,#what=Create(&Chest),
+           #new_row=39,#new_col=47,#fine_col=56,#fine_row=40,#new_angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&Chest),
+           #new_row=41,#new_col=47,#fine_col=8,#fine_row=32,#new_angle=ANGLE_WEST);
+
+      lObjCoords1 = [ [41,13,48,24,OO_GREY_JUG], [41,50,48,00,OO_APPLE],
+                      [32,48,24,24,OO_POT], [06,53,24,40,OO_JUG],
+                      [41,13,40,16,OO_barrel], [41,10,24,56,OO_barrel],
+                      [05,42,56,48,OO_barrel], [32,05,00,16,OO_barrel2],
+                      [33,06,32,08,OO_barrel2], [05,43,24,48,OO_barrel2],
+                      [33,04,56,40,OO_rice], [31,06,24,32,OO_rice],
+                      [37,04,00,48,OO_rice],
+                      [38,08,08,24,OO_bigurn],[29,08,24,16,OO_bigurn],
+                      [41,49,32,56,OO_bluejug],[30,49,24,32,OO_bluejug],
+                      [33,49,08,32,OO_tallurn],[08,46,16,24,OO_tallurn]
+                    ];
+               
+      Send(self,@CreateOrnObjFromList,#lObjlist=lObjCoords1);
+
+      Send(self,@NewHold,#what=Create(&KocatanLamp),#new_row=32,#new_col=46,#fine_col=24,#fine_row=24);
+
+      propagate;
+   }
+
+   DefensesDown()
+   {
+      Send(self,@SomethingWaveRoom,#what=poShield_Lever,#wave_rsc=guildh12_gong);
+      
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   {
+      local i, each_obj;
+
+      if NOT isClass(what,&Player)
+         OR type = SAY_YELL
+      {
+         propagate;
+      }
+
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+         
+         if send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         {
+            if (send(self,@InZone,#who=what)) = (send(self,@InZone,#who=each_obj))       
+            {
+               Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
+                    #parm1=parm1, #parm2=parm2,#parm3=parm3,#parm4=parm4,
+                    #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+            }
+            else
+            {
+               send(each_obj,@msgsenduser,#message_rsc=guildhall_muffled);
+            }
+         }
+      }
+      
+      if poGuild_Owner <> $
+         AND StringEqual(string,send(poGuild_owner,@getpassword))
+         AND send(self,@InZone,#who=what) = LEVEL_TWO
+         AND ptSecret = $
+         AND type <> SAY_EMOTE
+      {
+         send(self,@OpenSecretDoor);
+      }
+
+      return;
+   }
+
+   InZone(who=$)
+   {
+      local iRow, iCol;
+
+      if who = $
+      {
+         DEBUG("InZone passed bad info!");
+
+         return FALSE;
+      }
+
+      if send(self,@InFoyer,#who=who)
+      {
+         return LEVEL_FOYER;
+      }
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+    
+      if (iRow > 29 and iRow < 42) and (iCol > 41 and iCol < 54)
+      {
+         return LEVEL_TWO;
+      }
+
+      return LEVEL_ONE;
+   }
+
+   GetRegion()
+   {
+      return RID_KOCATAN;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+      lHotPlates = [ [37,2,1], [37,3,1], [39,4,2], [40,4,2] ];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+      }
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

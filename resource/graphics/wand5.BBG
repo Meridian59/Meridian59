@@ -1,0 +1,13 @@
+# wand 5
+# 
+#^Applied to Hotspot: 0
+#*Groups: 2
+#* display
+#* dropped
+-s 5
+2
+wand5dis.bmp   [0, 0] 
+wand5drp.bmp   [0, 0] 
+2
+ 1   1 
+ 1   2 

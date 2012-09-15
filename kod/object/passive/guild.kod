@@ -1,0 +1,2748 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Guild is PassiveObject 
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+   % Once you leave a guild, you cannot rejoin another one for 4 hours
+   % You cannot rejoin the same one for 18 times this length.
+   % This is measured in minutes.
+   CANNOT_REJOIN_TIME = 4 * 60  
+
+   % maximum number of people allowed in a guild.
+   MAX_MEMBERS = 400         
+
+   % How much money do you lose if you pull out of a mutually-declared war?
+   WAR_LOSS_PENALTY = 50000
+   % What percent of the war penalty do you gain from a vanquished enemy?
+   WAR_WINNER_PERCENT = 60
+
+   MATURITY_SECRET = 60
+   MATURITY_NONSECRET = 30
+
+   THREE_PERSON_LIMIT = 240    
+
+   MINIMUM_MEMBERS = 3
+
+   RENT_BASE = 5
+   RENT_SECRET = 10
+
+   RENT_PER_MEMBER = 1
+   RENT_PER_ALLY = -2
+   RENT_PER_ENEMY = 5
+
+   % this is in 6 minute periods.
+   RENT_MAX_OVERDUE = 480   
+
+   % Maximum number of lieutenants
+   MAX_LIEUTENANT = 2
+
+   % How long before you can back out of a mutual guild war?
+   %  2 hours (1 Meridian day).
+   PEACE_DELAY = 2 * 60 * 60 * 1000
+
+resources:
+
+   guild_name_rsc = "guild"
+   guild_icon_rsc = light.bgf
+   guild_desc_rsc = "An organization of individuals with similar purposes."
+
+   guild_master = "Guildmaster"
+   guild_mistress = "Guildmistress"
+   Guild_lieutenant_Male = "Lieutenant"
+   Guild_lieutenant_female = "Lieutenant"
+   guild_lord = "Lord"
+   guild_lady = "Lady"
+   guild_sir = "Sir"
+   guild_madame = "Madame"
+   guild_apprentice = "Apprentice"
+   guild_apprenticette = "Apprentice"
+
+   guild_newly_formed = "~BYour new guild has now been formed."
+
+   guild_threeperson_failing = \
+      "Your guild has fewer than 3 members.  If you do not get your "
+      "membership up to three in the next %i %s, your guild will be "
+      "disbanded."
+
+   guild_threeperson_failed = \
+      "Your guild has been disbanded for lack of membership."
+
+   guild_welcome = "~BPlease welcome the newest member of %s%q, %s."
+   guild_induct_already_guilded = "You are already the member of a guild."
+   guild_induct_already_member = "You are already a member of this guild."
+
+   guild_lieut_cant_promote = \
+      "%ss cannot promote guild members above the rank of %q."
+   guild_cant_promote_lieut = \
+      "You cannot promote someone above %q because there may only be one %q."
+   guild_cant_promote_capt = \
+      "A guild may not have more than two members of rank %q."
+   guild_cant_promote_sire = \
+      "There are too many members of rank %q to promote another to that "
+      "status."
+
+   guild_promotee = "~B%q has promoted you to the rank of %q!"
+   guild_promoter = "~BYou promote %q to the the rank of %q."
+   guild_promoted = "~B%s has promoted %q to the rank of %q."
+   guild_promotee_no_promoter = "~BYou have been promoted to the rank of %q!"
+   guild_promote_too_high = \
+      "You can't promote someone to a rank so high it doesn't exist!"
+
+   guild_demotee = "~B%q has demoted you to the rank of %q!"
+   guild_demoter = "~BYou demote %q to the the rank of %q!"
+   guild_demoted = "~B%s has demoted %q to the rank of %q."
+   guild_demotee_no_demoter = "~BYou have been demoted to the rank of %q!"
+
+   guild_demote_apprentice = \
+      "You can't demote someone of rank %q!  They can't go any lower!"
+   guild_demote_equal_higher = \
+      "You can't demote someone who is equal or better to you in rank!"
+
+   guild_cant_vote_outsider = \
+      "You can't vote for %q%s, who does not belong to %s%q!"
+   guild_cant_vote_nonuser = "%s%s thanks you for your support.  Really."
+
+   guild_descension = "~BYou have been ousted as %q of %s%q!"
+   guild_ascension = "~BCongratulations!  You are the new %q of %s%q!"
+
+   guild_reassure = "~B%s promises you continued political support."
+   guild_talking_to_self = \
+      "~BYou reassure yourself once again that you really do like yourself."
+   guild_support_withers = "~BYou can feel your political support wither."
+
+   guild_support_self = "~BYou decide to make your own bid to lead %s%q."
+   guild_support_other = "~BYou pledge your support to %q to lead %s%q."
+   guild_supported = "~B%s pledges to support you on your bid to lead %s%q."
+
+   guild_new_master = "~BCongratulate %q, the new %q of %s%q!"
+   guild_abdicate = "~B%s has chosen to abdicate his position leading %s%q."
+
+   guild_allies_defunct = "~BYour honorable ally, %s%q, has disbanded."
+   guild_enemies_defunct = "~BYour hated enemy, %s%q, has disbanded."
+
+   guild_cant_ally_enemy = \
+      "You cannot declare an alliance with %s%q!  They are your sworn enemies!"
+   guild_already_allies = "Your guild already has an alliance with %s%q!"
+   guild_not_member_currently = \
+      "You are not a member of %s%q and cannot form alliances on their behalf!"
+   guild_not_qualified = \
+      "You are not high enough in rank to forge alliances with other guilds!"
+   guild_cant_enemy_ally = \
+      "You cannot declare an allied guild an enemy without First "
+      "ending the alliance!"
+   guild_already_enemies = "Members of %s%q are already hated enemies of %s%q!"
+
+   guild_new_allies = \
+      "~BToday marks the forging of an alliance between %s%q and %s%q."
+   guild_new_enemies = \
+      "~BBe it known that members of %s%q are sworn enemies of %s%q!"
+   guild_declared_allies = \
+      "~BBe it known that %s%q have declared themselves allies to your "
+      "guild, %s%q!"
+   guild_declared_enemies = \
+      "~BBe it known that %s%q have declared themselves the enemies of %s%q!"
+
+   guild_mutual_enemies = "~BBe it known that %s%q and %s%q are now at war!"
+
+   guild_cant_enemy_mature = \
+      "You cannot declare enemies until your guild is more mature."
+   guild_cant_enemy_funds = \
+      "You need %q shillings prepaid rent to declare an enemy and fund a war."
+   guild_end_enemy_loser = \
+      "~BYour guild has lost %q shillings in rent for your cowardly loss."
+   guild_end_enemy_winner = \
+      "~BYour guild is awarded %q shillings in rent for conquering your "
+      "cowardly enemy."
+
+   guild_end_alliance = \
+      "~BBe it known that the alliance twixt %s%q and %s%q has been shattered!"
+   guild_not_enemies = \
+      "~BBe it known that members of %s%q are no longer the enemies of %s%q."
+
+   guild_end_declared_alliance = \
+      "~BBe it known that %s%q have decided to end their alliance with %s%q."
+   guild_not_declared_enemies = \
+      "~BBe it known that members of %s%q have ceased their hostilities "
+      "towards %s%q."
+
+   guild_sue_for_peace  = \
+      "~BBe it known that members of %s%q are asking for peace in their "
+      "war with %s%q."
+   guild_already_suing_for_peace = "You are already suing for peace from %s%q."
+   guild_only_one_suing_for_peace = \
+      "You can only sue for peace from one enemy at a time."
+
+   guild_mature = \
+      "~B%s%q is now a mature guild, meaning it can now own and conquer "
+      "guild halls."
+
+   guild_hour_rsc = "hour"
+   guild_hours_rsc = "hours"
+
+   guild_rent_nonpayment = \
+      "~BYour guild has been disbanded for not paying rent!"
+   guild_rent_due = \
+      "~BYour guild owes %i in rent.  If this number is not reduced to 0 "
+      "in the next %i %s, your guild will be disbanded."
+
+   guild_new_hall = "~B%s is the new home of %s%q!"
+   guild_abandon_hall = "~B%s is no longer the home of %s%q!"
+   guild_hall_conquered = "~B%s, home of %s%q, has been conquered!"
+   guild_hall_betrayed = "~B%s, home of %s%q, was betrayed from within!"
+
+   guild_ranks_full = \
+      "~BYou could not be accepted into %s%q because the ranks are "
+      "already full."
+   guild_ranks_full_inductor = \
+      "~B%s%s could not be accepted into %s%q because the ranks are "
+      "already full."
+
+   guild_invitation_one = \
+      "You may only have one outstanding invitation at a time."
+   guild_invitation_one_inductee = \
+      "Someone in your guild has already issued %s%s an invitation."
+
+   guild_cannot_rejoin = "~BThis ex-member of your guild may not rejoin yet."   
+   guild_you_cannot_rejoin = "~BYou may not rejoin your former guild yet."
+
+   guild_new_password = "~B%s's password has been changed."
+
+   guild_frular = "Frular, the Guild Administrator"
+
+   guild_creation_mail ="Subject: Your guild has been formed\n"
+      "I congratulate you on the formation of %s%q!  "
+      "However, there are some rules that you should know about.\n\n"
+      "MATURITY:  I will not allow just any guild to rent a hall.  You "
+      "must First prove your mettle out in the world.  I will inform "
+      "you when I feel your guild is mature.  Then (and only then) may "
+      "you rent a hall or conquer another guild's hall."
+      "\n\n"
+      "MEMBERSHIP:  I leave you to determine the details of your guild's "
+      "memberships, but if your guild does not have at least 3 members in "
+      "it, it is not worth my trouble to keep up the paperwork on it, and "
+      "I will disband the guild.  Thus, your First priority now should be "
+      "getting your guild up to three members."
+      "\n\n"
+      "INVITING NEW MEMBERS:  When you invite a potential member into the "
+      "fold, an invitation is created in their inventory, which they may "
+      "then choose to accept or ignore.  An invitation will always be "
+      "created, even if someone may not join a guild for some reason.  A "
+      "player must be of reasonably high power before he may join a guild, "
+      "and may only be a member of one guild at a time."
+      "\n\n"
+      "RANKS:  You may promote people to different ranks, thus giving them "
+      "more power as well as more responsibility.  You may also keep "
+      "players at low ranks if you do not feel prepared to trust them.  "
+      "These are the ranks:\n"
+      "  +++ %q:  have no special abilities, other than to vote for the "
+      "leader of their choice.  They may not even open the outer doors of "
+      "their own guild hall.\n"
+      "  +++ %q:  only have the ability to vote.\n"
+      "  +++ %q:  have the ability to vote and invite new members into the "
+      "guild.\n"
+      "  +++ %q:  may vote, invite new members in, kick unruly members out, "
+      "promote or demote people of lower ranks than themselves, and form or "
+      "shatter alliances.  They may also rent a guild hall if their guild "
+      "is mature.\n"
+      "  +++ %q:  has all powers associated with guilding, including the "
+      "right to disband the guild.\n\n"
+      "RENT:  It costs me time and money to keep up the paperwork involved "
+      "with your charter, and thus I charge for the service.  Rent is accrued "
+      "at a regular rate, and the rate of increase is affected by many "
+      "factors, including the number of members in your guild and the number "
+      "of enemies and allies you have declared.  The largest affector of rent "
+      "is whether or not you own a guild hall.  Guild halls can be quite "
+      "expensive, and so it is recommended that you wait until your guild has "
+      "several members First."
+      "\n\n"
+      "Incidentally, anyone in your guild can pay me rent owed.  However, to "
+      "avoid confusion, it is recommended that you assign one person to "
+      "handle the task of tracking and verifying rent payments by members."
+      "\n\n"
+      "Congratulations on the formation of your guild, and don't forget to "
+      "pay your rent!"
+      "\n\n"
+      "  -- Frular, the Guild Administrator"
+
+   guild_mature_mail = "Subject: Your guild is now mature\n"
+      "%s%q is now a mature guild, meaning that its members may now "
+      "own and conquer guild halls.\n\n"
+      "GUILD HALLS:  A guild may lay claim to a guild hall by purchasing "
+      "a lease from myself.  Guild halls offer their owners a handful of "
+      "perks, including a reasonably safe place to rest, a newsglobe for "
+      "guild news, a secret door guarded by a password that you set.  Guild "
+      "halls are also sanctuaries, where a player heals faster.\n\n"
+      "Guild halls are guarded by an outer door with a mystic defense "
+      "shield.  Only members of the owner guild may open a guild's outer "
+      "door.  However, once the door is open, anyone may enter.  The door "
+      "stays open for a very limited period of time."
+      "\n\n"
+      "CONQUEST:  Each guild hall also has a mystic shield deactivator.  "
+      "If this deactivator is used, then the guild hall's defenses go down, "
+      "and anyone may open the hall's outer doors.  If the deactivator ever "
+      "stays down for ten minutes at a time, the guild hall is declared "
+      "'conquered'."
+      "\n\n"
+      "Only the guild that conquered a specific guild hall may rent it "
+      "afterwards.  However, you may only own one guild hall at a time, "
+      "meaning that the conquering guild must abandon their current hall to "
+      "get the new one.  After a period of one hour after being conquered, "
+      "the guild hall re-enters the open market, and anyone may rent it."
+      "\n\n"
+      "BETRAYAL AND MERCENARY CONQUEST:  If a guild hall is conquered by a "
+      "member of your own guild, then the guild is officially embarrassed.  "
+      "At that point, anyone other than the conquered guild may rent the "
+      "hall.  This limit lasts one hour."
+      "\n\n"
+      "ALLIES:  If you declare a guild to be an ally, then they may enter "
+      "your guild hall as if it were their own.  This measure of trust also "
+      "lowers your guild's rent."
+      "\n\n"
+      "ENEMIES:  If you declare a guild to be an enemy, then you will obtain "
+      "very immediate and detailed warning if they attempt to conquer your "
+      "guild.  Otherwise, you will get very fuzzy and somewhat delayed "
+      "information from your guild's mystic defenses.  Also, if two guilds "
+      "mutually declare war on each other, they enter a state of war as I "
+      "will describe in a moment.  This additional security and recognition "
+      "comes at the cost of additional rent."
+      "\n\n"
+      "WAR:  If you and declare a guild to be an enemy and that guild "
+      "likewise declares your guild as an enemy, you enter a state of war.  "
+      "This war is recognized by all the powers in Meridian; during such a "
+      "mutually declared war, either guild may attack the other without fear "
+      "of punishment from either the gods, the Justicar, or any lieges.  "
+      "Note that leaving a state of war is not immediate or without cost.  "
+      "You must wait a full Meridian day during which you must sue for peace "
+      "from the enemy guild yet can still be attacked under the rules of "
+      "war.  Should a guild sue for peace in a mutually declared war, I shall "
+      "deduct part of that guild's rent and give a share to the victorious "
+      "guild.  But, if an enemy sues for peace you must wait a day before "
+      "you can undeclare them as enemies, otherwise I will assume you wish "
+      "to end hostilities early, and both guilds will be penalized.  After "
+      "the delay, your status as non-enemies will be offically noted.  Please "
+      "note that you must have a considerable sum of rent prepaid to even "
+      "declare a guild an enemy in the First place.  This is to cover the "
+      "costs should that guild return the declaration and initiate a war."
+      "\n\n"
+      "LOW RANKS:  Anyone of rank '%q' may not open the outer doors of your "
+      "guild hall, regardless of if they are in your own guild or in an "
+      "ally's guild."
+      "\n\n"
+      "Congratulations on your guild's coming of age.  I know you'll go far."
+      "\n\n"
+      "  -- Frular, the Guild Administrator"
+
+   guild_mature_happyland_mail = "Subject: Your guild is now mature\n"
+      "%s%q is now a mature guild, meaning that its members may now "
+      "own a guild hall.\n\n"
+      "A guild may lay claim to a guild hall by purchasing "
+      "a lease from myself.  Guild halls offer their owners a handful of "
+      "perks, including a reasonably safe place to rest, a newsglobe for "
+      "guild news, a secret door guarded by a password that you set.  Guild "
+      "halls are also sanctuaries, where a player heals faster."
+      "\n\n"
+      "Guild halls are guarded by an outer door with a mystic defense "
+      "shield.  Only members of the owner guild may open a guild's outer "
+      "door.  However, once the door is open, anyone may enter.  The door "
+      "stays open for a very limited period of time."
+      "\n\n"
+      "Note that while someone can sneak into your hall, they cannot conquer "
+      "it in this world.  This additional security is compensated by, how "
+      "shall we say, ENHANCED rent values."
+      "\n\n"
+      " -- Frular, the Guild Administrator."
+
+   guild_conquered_mail =  "Subject: Guild hall conquered\n"
+      "%s, home of %s%q, was conquered while you were away.\n\n"
+      "  -- Frular, the Guild Administrator"
+   guild_disbanded_mail = "Subject: Guild disbanded\n"
+      "Your guild, %s%q, was disbanded while you were away.\n\n"
+      "  -- Frular, the Guild Administrator"
+   guild_deposed_mail = "Subject: Mutiny in the ranks\n"
+      "You were deposed as %q of %s%q while you were away.  "
+      "%q is the new %q.\n\n"
+      "  -- Frular, the Guild Administrator"
+   guild_new_master_mail = "Subject: Mutiny in the ranks\n"
+      "There was a change in leadership while you were away.  "
+      "%q is the new %q of %s%q.\n\n"
+      "  -- Frular, the Guild Administrator"
+   guild_new_hall_mail = "Subject: New guild hall\n"
+      "%s was declared the new home of %s%q while you were away.\n\n"
+      "  -- Frular, the Guild Administrator"
+   guild_ascension_mail = "Subject: Congratulations!\n"
+      "You were chosen to be the new %q of %s%q!\n\n"
+      "  -- Frular, the Guild Administrator"
+   guild_left_another = "You have left another guild too recently to join "
+   guild_left_another_2 = \
+      " has left another guild too recently to join your guild."
+
+classvars:
+
+   vrIcon = guild_icon_rsc
+   vrDesc = guild_desc_rsc
+
+properties:
+
+   % Settable by players
+   vrName = guild_name_rsc
+
+   % Titles settable by players.
+   prMaster                             
+   prMistress
+   prLieutenant_Male 
+   prLieutenant_Female
+   prLady 
+   prLord 
+   prMadame
+   prSir 
+   prApprentice_Male
+   prApprentice_Female
+
+   piMature = 0
+
+   % This is a list of lists each representing a member, of the form:
+   %  [object ID, rank, member's current 'vote' (if guild votes for leader)]
+   plMembers   = $
+
+   piGuild_Hall = $
+
+   piSuccession = GS_VOTING
+
+   % Secret societies do not advertise their existence in who lists or
+   %  look descs.  Set at guild creation.
+   pbSecret = FALSE
+
+   ptMaintenance = $
+
+   % If a guild has less than three members for 24 hours in a row,
+   %  delete the guild.
+   piThreePersonWarning = 0
+
+   % These are stored only so that, if the guild goes while an invitation is
+   %  extended, the invitation disappears.
+   plInvitations = $
+
+   % These are only stored so that, if the guild is deleted, all treaties
+   %  are deleted.
+   plTreaties = $
+
+   % Keeps track of your allies.  Main benefit of being an ally:  you can share
+   %  a guild hall and get cheaper rent.  Ally lists must always match.
+   plAllies = $
+
+   % Keeps track of your enemies.  Main benefit of declaring an enemy?
+   %  You get warned if one attacks your guild hall.
+   plEnemies = $
+
+   % List of guilds that has declared YOURS as an enemy
+   plEnemiesOf = $
+
+   % List of guilds that has declared YOURS as an ally
+   plAlliesOf = $
+
+   % Ex-members cannot rejoin for a while
+   plFormerMembers = $
+
+   piRentDue = 0
+   piRentCounter = 0
+
+   psPassword = $
+
+   piColor1 = XLAT_TO_GRAY
+   piColor2 = XLAT_TO_GRAY
+   piShield_shape = SHIELDSHAPE_DEFAULT
+
+   piLastGuildhallRaid = 0
+
+   % Information for suing for peace from a mutual guild war.
+   ptSuingForPeace = $
+   poGuildSuingForPeace = $
+
+messages:
+
+   Constructor(guildname = guild_name_rsc, secret = FALSE,
+               succession = GS_VOTING, master = $,
+               rMaster = guild_master,
+               rMistress = guild_mistress,
+               rLieutenant_Male = guild_lieutenant_male,
+               rLieutenant_Female = guild_lieutenant_female,
+               rLord = guild_lord, rLady = guild_lady,
+               rSir = guild_sir, rMadame = guild_madame,
+               rApprentice_Male = guild_apprentice,
+               rApprentice_Female = guild_apprenticette
+              )
+   {   
+      if IsClass(self,&NecromancerGuild)
+      {
+         propagate;
+      }
+
+      vrName = guildname;
+
+      % Text names for guild ranks.
+      prMaster = rMaster;
+      prMistress = rMistress;
+      prLieutenant_Male = rLieutenant_male;
+      prLieutenant_Female = rLieutenant_female;
+      prLady = rLady;
+      prLord = rLord;
+      prMadame = rMadame;
+      prSir = rSir;
+      prApprentice_Male = rApprentice_Male;
+      prApprentice_Female = rApprentice_Female;
+
+      % Is the guild secret?
+      pbSecret = secret;
+
+      piMature = MATURITY_NONSECRET;
+      if secret
+      {
+         piMature = MATURITY_SECRET;
+      }
+
+      % What path of succession allows the leadership to change hands?
+      piSuccession = succession;              
+
+      plMembers = cons([master, RANK_MASTER, master], plMembers);
+
+      Send(master,@SetGuild,#guild_obj=self);
+      Send(self,@ResetPowers,#who=master,#rank=RANK_MASTER);
+
+      Send(master,@MsgSendUser,#message_rsc=guild_newly_formed);
+      Send(master,@ReceiveNestedMail,#from=guild_frular,
+           #dest_list=[master],
+           #nest_list=[4,guild_creation_mail,4,Send(self,@GetDef),
+                       4,Send(self,@GetName),4,rApprentice_male,4,rSir,
+                       4,rLord,4,rLieutenant_male,4,rMaster]);
+
+      ptMaintenance = CreateTimer(self,@MaintenanceTimer,
+                                  Send(SYS,@GetMaintenanceDelay));
+
+      piThreePersonWarning = THREE_PERSON_LIMIT;
+      psPassword = $;
+
+      plFormerMembers = $;
+
+      piLastGuildhallRaid = 0;
+
+      Send(SYS,@NewGuild,#what=self);
+
+      propagate;
+   }
+
+   ResetPowers(who=$,rank = 0)
+   {
+      local i, lGuildCommands, bIsNecro;
+
+      bIsNecro = IsClass(self,&NecromancerGuild);
+
+      if who = $ or rank = 0
+      {
+         DEBUG("Passed to ResetPowers with bogus information!");
+         
+         return FALSE;
+      }
+      else
+      {
+         lGuildCommands=Send(SYS,@GetGuildcommands);
+
+         for i in lGuildCommands
+         {
+            Send(i,@ResetCommand,#who=who,#rank=rank,#necro=bIsNecro); 
+         }
+      }
+      
+      return;
+   }
+
+   IsSecret()
+   {
+      return pbSecret;
+   }
+
+   IsMature()
+   {
+      if piMature = 0
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   GetLastGuildhallRaid()
+   {
+      return piLastGuildhallRaid;
+   }
+
+   SetLastGuildhallRaid(now=$)
+   {
+      if now = $
+      {
+         now = getTime();
+      }
+      
+      piLastGuildhallRaid = now;
+      
+      return;
+   }
+
+   MaintenanceTimer()
+   "Do five things here: "
+   "1) Check to be sure they have 3 members."
+   "2) Check for guild maturity."
+   "3) Check to ensure there is a guildmaster."
+   "4) Accrue rent."
+   "5) Check to see if former members of the guild can once more rejoin the "
+   "guild."
+   {
+      local i, hourhours, timeleft, bPKServer;                    
+
+      if Send(self,@GetGuildMaster) = $
+      {
+         %% this should never happen!  This is just in as a failsafe, since
+         %% some commands are guildmaster only!
+         DEBUG("MaintenanceTimer: Guild",vrName,"has no guildmaster!");
+
+         % CountVotes will choose whoever has the most political support 
+         Send(self,@CountVotes);
+      }
+
+      if length(plMembers) < MINIMUM_MEMBERS
+      {
+         if piThreePersonWarning = 0
+         {
+            piThreePersonWarning = THREE_PERSON_LIMIT;
+         }
+         else
+         {
+            piThreePersonWarning = piThreePersonWarning - 1;
+         }
+         
+         if piThreePersonWarning = 0
+         {
+            for i in plMembers
+            {
+               Post(First(i),@MsgSendUser,
+                    #message_rsc=guild_threeperson_failed);
+            }
+            
+            Send(self,@Delete,#timerdelete=TRUE);
+            
+            return;
+         }
+         else
+         {
+            if (piThreePersonWarning mod 40) = 0
+               OR ((piThreePersonWarning mod 10) = 0
+                   AND piThreePersonWarning < 40)
+            {
+               if piThreePersonWarning = 10
+               {
+                  hourhours = guild_hour_rsc;
+               }
+               else
+               {
+                  hourhours = guild_hours_rsc;
+               }
+               
+               for i in plMembers
+               {
+                  Post(First(i),@MsgSendUser,
+                       #message_rsc=guild_threeperson_failing,
+                       #parm1=piThreePersonWarning/10,#parm2=hourhours);
+               }
+            }
+         }
+      }
+      else
+      {
+         piThreePersonWarning = 0;
+      }
+
+      if piMature > 0
+      {
+         for i in plMembers
+         {
+            if Send(First(i),@IsLoggedOn)
+            {
+               if piMature <> 1
+	            {
+	               piMature = piMature - 1;
+	            }
+	            else
+	            {
+	               %% if they're about to become mature, then
+	               %% don't let them if they have fewer than 3 members.
+	               if length(plMembers) >= 3
+	               {
+                     piMature = piMature - 1;
+	               }
+	            }
+
+               break;
+            }
+         }
+         
+         if piMature = 0
+         {
+            bPKserver = Send(SYS,@IsPKAllowed);
+            for i in plMembers
+            {
+	                 if bPKserver
+	                 {
+	                    Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+		                      #dest_list=[First(i)],
+		                      #nest_list=[4,guild_mature_mail,
+		                                  4,Send(self,@GetCapDef),
+                                        4,Send(self,@GetName),
+                                        4,prApprentice_male]);
+	                 }
+	                 else
+	                 {
+                       Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                            #dest_list=[First(i)],
+                            #nest_list=[4,guild_mature_happyland_mail,
+                                        4,Send(self,@GetCapDef),
+                                        4,Send(self,@GetName)]);
+               }
+            }
+         }
+      }
+
+      Send(self,@AccrueRent);
+     
+      for i in plFormerMembers
+      {
+         timeleft = Nth(i,2) - 1;
+         
+         if timeleft < 1
+         {
+            plFormerMembers = DelListElem(plFormerMembers,i); 
+         }
+         else
+         {
+            SetNth(i,2,timeleft);
+         }
+      }
+      
+      if piGuild_hall <> $
+         AND Send(Send(self,@GetGuildHall),@GetGuildOwner) <> self
+      {
+         DEBUG("Guild points to a guild hall that does not point back to it!");
+         piGuild_hall = $;
+         for i in plMembers
+         {
+            Post(self,@ResetPowers,#who=First(i),
+                 #rank=Send(self,@GetRank,#who=First(i)));
+         }
+      }
+      
+      ptMaintenance = CreateTimer(self,@MaintenanceTimer,
+                                  Send(SYS,@GetMaintenanceDelay));
+      
+      return;
+   }
+
+   AccrueRent(amount=$)
+   "Accrues 'amount' rent if non-nil.  Otherwise, calculates rent that "
+   "accrues periodically."
+   {
+      local rent, i, hourhours;
+
+      if amount <> $
+      {
+         piRentDue = piRentDue + amount;
+
+         return;
+      }
+
+      if piRentDue < 1
+      {
+         piRentCounter = 0;
+      }
+
+      if piRentCounter = 1
+      {
+         for i in plMembers
+         {
+            Post(First(i),@MsgSendUser,#message_rsc=guild_rent_nonpayment);
+         }
+         
+         Send(self,@Delete,#timerdelete=TRUE);
+         
+         return;
+      }
+
+      rent = RENT_BASE;
+      
+      if pbSecret
+      {
+         rent = rent + RENT_SECRET;
+      }
+      
+      for i in plMembers
+      {
+         rent = rent + RENT_PER_MEMBER;
+      }
+
+      if piGuild_hall <> $
+      {
+         rent = rent + Send(Send(self,@GetGuildHall),@GetRentValue)/10;   
+         for i in plAllies
+         {
+            rent = rent + RENT_PER_ALLY;
+         }
+         
+         for i in plEnemies
+         {
+            rent = rent + RENT_PER_ENEMY;
+         }
+         
+         rent = bound(rent,2,$);
+      }
+      else
+      {
+         for i in plAllies
+         {
+            rent = rent + RENT_PER_ALLY/2;
+         }
+         
+         for i in plEnemies
+         {
+            rent = rent + RENT_PER_ENEMY/5;
+         }
+         
+         rent = bound(rent,2,$);
+      }
+
+      piRentDue = piRentDue + rent;
+      if piRentCounter = 0
+      {
+         if piRentDue > (rent * RENT_MAX_OVERDUE)
+         {
+            piRentCounter = RENT_MAX_OVERDUE;
+         }
+      }
+      else
+      {
+         piRentCounter = piRentCounter - 1;
+      }
+      
+      if piRentCounter > 0
+         AND ((piRentCounter MOD 40) = 0
+              OR (piRentCounter < 40 AND piRentCounter MOD 10 = 0))
+      {
+         hourhours = guild_hours_rsc;
+         if piRentCounter = 10
+         {
+            hourhours = guild_hour_rsc;
+         }
+         
+         for i in plMembers
+         {
+            Post(First(i),@MsgSendUser,#message_rsc=guild_rent_due,
+                 #parm1=piRentDue,#parm2=piRentCounter/10,#parm3=hourhours);
+         }
+      }
+
+      return;
+   }
+
+   PayRent(amount = $)
+   "This merely subtracts a number from the rentdue."
+   {
+      piRentDue = piRentDue - amount;
+      if piRentDue < 1
+      {
+         piRentCounter = 0;
+      }
+      
+      return;
+   }
+
+   GetRentDue()
+   {
+      return piRentDue;
+   }
+
+   GetRentCounter()
+   {
+      return piRentCounter;
+   }
+   
+   GetGuildHall()
+   "Returns the guildhall's object, not the guildhall's RID!"
+   {
+      if piGuild_hall = $
+      {
+         return $;
+      }
+      
+      return Send(SYS,@FindRoomByNum,#num=piGuild_hall);
+   }
+
+   GetGuildHallNum()
+   "Used by system to relink recreated guild halls with their former owners."
+   {
+      return piGuild_hall;
+   }
+
+   SetGuildHall(RID=$, name = $, password = $)
+   "Performs no checks - those checks are almost all done in ghall.kod."
+   {
+      local i,j, members;
+
+      if RID = $ or name = $ or password = $
+      {
+         DEBUG("Invalid info sent to SetGuildHall!");
+         
+         return FALSE;
+      } 
+
+      psPassword = password;
+      piGuild_hall = RID;
+      for i in plMembers
+      {
+         Send(self,@ResetPowers,#who=First(i),
+              #rank=Send(self,@GetRank,#who=First(i)));
+
+         if NOT Send(First(i),@IsLoggedOn)
+         {
+            Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                 #dest_list=[First(i)],
+                 #nest_list=[4,guild_new_hall_mail, 4,name,
+                             4,Send(self,@GetDef), 4,Send(self,@GetName)]);
+         }
+         else
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=guild_new_hall,
+                 #parm1=name,#parm2=Send(self,@GetDef),
+                 #parm3=Send(self,@GetName));
+         }
+      }
+      
+      for j in plAllies
+      {
+         members = Send(j,@GetMemberList);
+         for i in Members
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=guild_new_hall,
+                 #parm1=name,#parm2=Send(self,@GetDef),
+                 #parm3=Send(self,@GetName));
+         }
+      }
+      
+      return;
+   }
+
+   AbandonGuildHall()
+   {
+      local i, j, members;
+
+      if piGuild_hall = $
+      {
+         return FALSE;  
+      }
+
+      psPassword = $;
+      
+      for i in plMembers
+      {
+         Send(First(i),@MsgSendUser,#message_rsc=guild_abandon_hall,
+              #parm1=Send(Send(self,@GetGuildHall),@GetName),
+              #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName));
+      }
+      
+      for j in plAllies
+      {
+         members = Send(j,@GetMemberList);
+         for i in Members
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=guild_abandon_hall,
+                 #parm1=Send(Send(self,@GetGuildHall),@GetName),
+                 #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName));
+         }
+      }
+      
+      Send(Send(self,@GetGuildHall),@ResetGuildHall);
+      piGuild_hall = $;
+      
+      for i in plMembers
+      {
+         Send(self,@ResetPowers,#who=First(i),
+              #rank=Send(self,@GetRank,#who=First(i)));
+      }
+      
+      return;
+   }
+
+   GuildHallConquered(name=$, betrayed = $, oConquerer = $)
+   {
+      local i, j, members, conq_msg;
+
+      if betrayed = TRUE
+      {
+         Debug("Guild hall betrayed.");
+         conq_msg = guild_hall_betrayed;
+      }
+      else
+      {
+         Debug("guild hall just conquered.");     
+         conq_msg = guild_hall_conquered;
+      }
+      
+      for i in plMembers
+      {
+         Post(self,@ResetPowers,#who=First(i),
+              #rank=Send(self,@GetRank,#who=First(i)));
+         if NOT Send(First(i),@IsLoggedOn)
+         {
+            Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                 #dest_list=[First(i)],
+                 #nest_list=[4,guild_conquered_mail, 4,name,
+                             4,Send(self,@GetDef), 4,Send(self,@GetName)]);
+         }
+         else
+         {
+            Send(First(i),@MsgSendUser,#message_rsc=conq_msg,
+                 #parm1=name,#parm2=Send(self,@GetDef),
+                 #parm3=Send(self,@GetName));
+         }
+      }
+      
+      psPassword = $;
+      piGuild_hall = $;
+
+      for j in plAllies
+      {
+         if j <> oConquerer
+         {
+            members = Send(j,@GetMemberList);
+            for i in Members
+            {
+               Send(First(i),@MsgSendUser,#message_rsc=conq_msg,
+                    #parm1=name,#parm2=Send(self,@GetDef),
+                    #parm3=Send(self,@GetName));
+            }
+         }
+      }
+
+      return;
+   }
+
+   ChangePassword(password = $)
+   {
+      local oMaster;
+
+      psPassword = password;
+      oMaster = Send(self,@GetGuildMaster);
+      Send(oMaster,@MsgSendUser,#message_rsc=guild_new_password,
+           #parm1 = Send(Send(self,@GetGuildHall),@GetName));
+
+      return;
+   }
+
+   GetPassword()
+   {
+      return psPassword;
+   }
+
+   
+   ReceiveMail(from = $, dest_list = $, perm_string = $)
+   "Sends mail to all the members. Structured just like it is when sent to a "
+   "player."
+   {
+      local lMemberInfo;
+      
+      for lMemberInfo in plMembers
+      {
+         % First element is the guild object.
+         Send(First(lMemberInfo),@ReceiveMail,#from=from,#dest_list=dest_list,
+              #perm_string=perm_string);
+      }
+      
+      return;
+   }
+
+   CheckInvitationList(inductor = $, inductee = $)
+   {
+      local i;
+
+      for i in plInvitations
+      {
+         if Send(i,@getinductor) = inductor
+         {
+            Send(inductor,@MsgSendUser,#message_rsc=guild_invitation_one);
+            
+            return FALSE;
+         }
+      }
+      
+      for i in plInvitations
+      {
+         if Send(i,@getinductee) = inductee
+         {
+            Send(inductor,@MsgSendUser,
+                 #message_rsc=guild_invitation_one_inductee,
+                 #parm1=Send(inductee,@GetDef),
+                 #parm2=Send(inductee,@GetName));
+                 
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   AddInvitation(invite_obj = $)
+   "Adds the invitation to the list.  This list is stored only so it can"
+   "be deleted if the guild is deleted."
+   {
+      plInvitations = cons(invite_obj, plInvitations);
+      
+      return;
+   }
+
+   RemoveInvitation(invite_obj = $)
+   {
+      local i;
+
+      for i in plInvitations
+      {
+         if i = invite_obj
+         {
+            plInvitations = DelListElem(plInvitations, i);
+            
+            return TRUE;
+         }
+      }
+      
+      DEBUG("invitation wasn't here!");
+      
+      return FALSE;
+   }
+
+   AddTreaty(treaty_obj = $)
+   "Adds the invitation to the list.  This list is stored only so it can"
+   "be deleted if the guild is deleted."
+   {
+      plTreaties = cons(treaty_obj, plTreaties);
+      return;
+   }
+
+   RemoveTreaty(treaty_obj = $)
+   {
+      local i;
+
+      for i in plTreaties
+      {
+         if i = treaty_obj
+         {
+            plTreaties = DelListElem(plTreaties, i);
+            return TRUE;
+         }
+      }
+      
+      DEBUG("treaty wasn't here!");
+      
+      return FALSE;
+   }
+
+   GetRank(who=$)
+   {
+      local i;
+      for i in plMembers
+      {
+         if First(i) = who
+         {
+            return Nth(i,2);
+         }
+      }
+      
+      return 0;
+   }
+
+   GetRankNames()
+   {
+      return [ prApprentice_Male, prApprentice_Female, prSir, prMadame,
+               prLord, prLady, prLieutenant_Male, prLieutenant_Female,
+               prMaster, prMistress ];
+   }
+
+
+   GetRankName(sex = GENDER_MALE, rank = RANK_MASTER)
+   {
+      if rank = RANK_MASTER
+      {
+         if sex = GENDER_MALE
+         {
+            return prMaster;
+         }
+         else
+         {
+            return prMistress;
+         }
+      }
+
+      if rank = RANK_LIEUTENANT
+      {
+         if sex = GENDER_MALE
+         {
+            return prLieutenant_male;
+         }
+         else
+         {
+            return prLieutenant_female;
+         }
+      }
+      
+      if rank = RANK_LORD
+      {
+         if sex = GENDER_MALE
+         {
+            return prLord;
+         }
+         else
+         {
+            return prLady;
+         }
+      }
+      
+      if rank = RANK_SIR
+      {
+         if sex = GENDER_MALE
+         {
+            return prSir;
+         }
+         else
+         {
+            return prMadame;
+         }
+      }
+      
+      if sex = GENDER_MALE
+      {
+         return prApprentice_male;
+      }
+      
+      return prApprentice_female;
+   }
+
+   GetMemberList()
+   {
+      return plMembers;
+   }
+
+   GetGuildMaster()
+   {
+      local i;
+
+      for i in plMembers
+      {
+         if Nth(i,2) = RANK_MASTER
+         {
+            return First(i);
+         }
+      }
+
+      return $;
+   }
+
+   GetOfficers()
+   "Returns a list of players RANK_LIEUTENANT and higher."
+   {
+      local i, lOfficers;
+
+      lOfficers = [];
+
+      for i in plMembers
+      {
+         if Nth(i,2) >= RANK_LIEUTENANT
+         {
+            Cons(First(i), lOfficers);
+         }
+      }
+
+      return lOfficers;
+   }
+
+   IsMember(who=$)
+   {
+      local i;
+
+      for i in plMembers
+      {
+         if First(i) = who
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   InductNewMember(who=$,inductor=$)
+   {
+      local i;
+
+      if length(plMembers) >= MAX_MEMBERS
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_ranks_full,
+              #parm1=Send(self,@GetDef),#parm2=vrName);
+              
+         if inductor <> $
+         {
+            Send(inductor,@MsgSendUser,#message_rsc=guild_ranks_full_inductor,
+                 #parm1=Send(who,@getcapdef),#parm2=Send(who,@GetName),
+                 #parm3=Send(self,@GetDef),#parm4=vrName);
+         }
+         
+         return FALSE;
+      }
+      
+      for i in plMembers
+      {
+         if First(i) = who
+         {
+            Send(who,@MsgSendUser,#message_rsc = guild_induct_already_member);
+            
+            return FALSE;
+         }
+      }
+      
+      if Send(who,@GetGuild) <> $
+      {
+         Send(who,@MsgSendUser,#message_rsc = guild_induct_already_guilded);
+         
+         return FALSE;
+      }
+      
+      % Cannot rejoin the guild if you left recently
+      if Send(self,@CheckFormerMemberList,#who=who)
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_you_cannot_rejoin);
+         if inductor <> $
+         {
+            Send(inductor,@MsgSendUser,#message_rsc=guild_cannot_rejoin);
+         }
+         
+         return FALSE;
+      }
+      
+      if Send(who,@HasLeftAGuildTooRecently)
+      {
+         ClearTempString();
+         AppendTempString(guild_left_another);
+         AppendTempString(Send(self,@GetDef));
+         AppendTempString(Send(self,@GetName));
+         AppendTempString(".");
+         
+         Send(who,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+              #parm1=GetTempString(),#type1=STRING_RESOURCE);
+         
+         if inductor <> $
+         {
+            ClearTempString();
+            AppendTempString(Send(who,@GetName));
+            AppendTempString(guild_left_another_2);
+            Send(inductor,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
+                 #parm1=GetTempString(),#type1=STRING_RESOURCE);
+         }
+         
+         return FALSE;
+      }
+     
+      % Cleared checks.  Go ahead and set the guild.
+
+      Send(who,@SetGuild,#guild_obj=self);
+      plMembers = cons([who,RANK_APPRENTICE,Send(self,@GetGuildMaster)],
+                       plMembers);
+      Send(self,@ResetPowers,#who=who,#rank=RANK_APPRENTICE);
+
+      if length(plMembers) >= MINIMUM_MEMBERS
+      {
+         piThreePersonWarning = 0;
+      }
+
+      for i in plMembers
+      {
+         Send(First(i),@MsgSendUser,#message_rsc=guild_welcome,
+              #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
+              #parm3=Send(who,@GetTrueName));
+
+         % Reset friend/foe colors
+         Send(First(i),@ToCliRoomContents);
+      }
+
+      return TRUE;
+   }
+
+   RemoveFromGuild(who=$)
+   {
+      local i, bFound, oOwner;
+
+      bFound = FALSE;
+
+      for i in plMembers
+      {
+         if First(i) = who
+         {
+            % Remove powers, reset poGuild
+            Send(who,@ResetGuildStuff);
+
+            Send(who,@EvaluatePKstatus);
+
+            % No joining a guild again for 4 hours.
+            Send(who,@SetGuildRejoinTime,#delayMinutes=CANNOT_REJOIN_TIME);
+
+            % No rejoining the same guild for 72 hours.  This is the number of
+            %  six-minute periods to wait.
+            plFormerMembers = cons([who,CANNOT_REJOIN_TIME*3],plFormerMembers);
+
+            plMembers = DelListElem(plMembers,i);
+            bFound = TRUE;
+         }
+
+         % Reset friend/foe colors for everyone
+         Send(First(i),@ToCliRoomContents);
+      }
+      
+      if bFound = TRUE
+      {
+         % If this player has an owner (is logged on), then let the room know
+         %  something changed so that other players can reset friend/foe
+         %  colors.
+         oOwner = Send(who,@GetOwner);
+         if oOwner <> $
+         {
+            Send(oOwner,@SomethingChanged,#what=who);
+         }
+
+         return TRUE;
+      }
+      
+      DEBUG("Was not a member of this guild!");
+      
+      return FALSE;
+   }
+   
+   NewGuildMaster(who=$, abdicate = FALSE)
+   "Other than creating a guild, this is the only way to have someone's "
+   "rank set to guildmaster.  Note that it will depose any current "
+   "guildmaster to the rank of normal peon, and reset votes to neutral (nil)!"
+   {
+      local i, new_master, old_master;
+
+      if who = $
+      {
+         DEBUG("Tried to promote -no one- to the rank of guildmaster!");
+         
+         return;
+      }
+      
+      if who = Send(self,@GetGuildMaster)
+      {
+         DEBUG("Tried to promote existing guildmaster to guildmaster!  Should never happen!");
+         
+         return;
+      }
+
+      %% demote anyone at guildmaster rank
+      for i in plMembers                
+      {                              
+         if Nth(i,2) = RANK_MASTER
+         {
+            old_master = First(i);
+            SetNth(i,2,RANK_SIR);
+            if abdicate = FALSE
+            {
+               if not Send(First(i),@IsLoggedOn)
+               {
+                  Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                       #dest_list=[First(i)],
+                       #nest_list=[4,guild_deposed_mail,
+                                   4,Send(self,@GetRankName,#rank=RANK_MASTER,
+                                          #sex=Send(old_master,@GetGender)),
+                                   4,Send(self,@GetDef),
+                                   STRING_RESOURCE,Send(self,@GetName),
+                                   STRING_RESOURCE,Send(who,@GetName),
+                                   4,Send(self,@GetRankName,#rank=RANK_MASTER,
+                                          #sex=Send(who,@GetGender))]);
+               }
+               else
+               {
+                  Send(First(i),@MsgSendUser,#message_rsc=guild_descension,
+                       #parm1=Send(self,@GetRankName,#rank=RANK_MASTER,
+                                   #sex=Send(old_master,@GetGender)),
+                       #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName));
+               }
+            }
+            Send(self,@ResetPowers,#who=First(i),#rank=RANK_SIR);
+         }
+
+         if First(i) = who
+         {
+            %% promote to master.
+            new_master = First(i);
+            SetNth(i,2,RANK_MASTER);
+            
+            if NOT Send(First(i),@IsLoggedOn)
+            {
+               Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                    #dest_list=[First(i)],
+                    #nest_list=[4,guild_ascension_mail,
+                                4,Send(self,@GetRankName,#rank=RANK_MASTER,
+                                       #sex=Send(who,@GetGender)),
+                                4,Send(self,@GetDef), 4,Send(self,@GetName)]);
+            }
+            else
+            {
+               Post(First(i),@MsgSendUser,#message_rsc=guild_ascension,
+                    #parm1=Send(self,@GetRankName,#rank=RANK_MASTER,
+                                #sex=Send(new_master,@GetGender)),
+                    #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName));
+            }
+            
+            Send(self,@ResetPowers,#who=First(i),#rank=RANK_MASTER);
+         }
+      }
+      
+      for i in plMembers
+      {
+         if First(i) <> new_master
+            AND (First(i) <> old_master OR abdicate = FALSE)
+         {
+            if abdicate = TRUE
+            {
+               Post(First(i),@MsgSendUser,#message_rsc=guild_abdicate,
+                    #parm1=Send(old_master,@GetName),#parm2=Send(self,@GetDef),
+                    #parm3=Send(self,@GetName));
+            }
+            
+            if not Send(First(i),@IsLoggedOn)
+            {
+               if First(i) <> old_master
+               {
+                  Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                       #dest_list=[First(i)],
+                       #nest_list=[4,guild_new_master_mail,
+                                   STRING_RESOURCE,Send(new_master,@GetName),
+	                                4,Send(self,@GetRankName,#rank=RANK_MASTER,
+	                                       #sex=Send(new_master,@GetGender)),
+                                   4,Send(self,@GetDef),
+                                   4,Send(self,@GetName)]);
+               }
+            }
+            else
+            {
+               Post(First(i),@MsgSendUser,#message_rsc=guild_new_master,
+                    #parm1=Send(new_master,@GetTrueName),
+                    #type1=STRING_RESOURCE,
+	                 #parm2=Send(self,@GetRankName,#rank=RANK_MASTER,
+	                             #sex=Send(new_master,@GetGender)),
+                    #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+            }
+         }
+         
+         SetNth(i,3,$);
+      }
+      
+      return;
+   }
+
+   NewLieutenantOkay()
+   {
+      local i, number;
+
+      number = 0;
+      for i in plMembers
+      {
+         if Nth(i,2) = RANK_LIEUTENANT
+         {
+            number = number + 1;
+         }
+      }
+      
+      if number >= MAX_LIEUTENANT
+      {
+         return FALSE;
+      }
+      
+      return TRUE;
+   }
+
+   NewLordOkay()
+   "Currently, always returns TRUE."
+   {
+     return TRUE;
+   }
+
+   CheckChangeRank(who=$, promoter = $, newrank = $)
+   "Bumps the person up a rank, with some limitations: "
+   {
+      local who_rank, promoter_rank, i, count, bcount;
+
+      if who = $ OR promoter = $ OR newrank = $
+      {
+         return FALSE;
+      }
+
+      promoter_rank= Send(self,@GetRank,#who=promoter);
+      if promoter_rank < RANK_LIEUTENANT
+      {
+         return FALSE;
+      }
+
+      who_rank = Send(self,@GetRank,#who=who);
+      
+      if who_rank >= RANK_MASTER 
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_promote_too_high);
+         
+         return FALSE;
+      }  
+
+      if newrank = RANK_LIEUTENANT
+      {
+         if Send(self,@NewLieutenantOkay)
+         {
+            return TRUE;
+         }
+         else
+         {
+            Send(promoter,@MsgSendUser,#message_rsc=guild_cant_promote_capt,
+                 #parm1=Send(self,@GetRankName,#rank=RANK_LIEUTENANT,
+                             #sex=GENDER_MALE));
+
+            return FALSE;
+         }
+      }
+      
+      if newrank = RANK_LORD
+      {
+         if Send(self,@NewLordOkay)
+         {
+            return TRUE;
+         }
+         else
+         {
+            Send(promoter,@MsgSendUser,#message_rsc=guild_cant_promote_sire,
+                 #parm1=Send(self,@GetRankName,#rank=RANK_LORD,
+                             #sex=GENDER_MALE));
+                 
+            return FALSE;
+         }
+      }
+
+      % Every possible scenario should be 'if'ed out above.
+      return TRUE;      
+   }
+
+   ChangeRank(who=$,promoter=$, newrank= $)
+   "This promotes someone whether or not they pass CheckPromote or not."
+   "anything that calls promote, it is assumed, also passes checkpromote."
+   "One caveat.  No one may be promoted to Guildmaster or demoted below "
+   "apprentice with this mechanism."
+   {
+      local i, bPromotion, oldrank, j;
+
+      if newrank <> bound(newrank,1,4)
+      {
+         return FALSE;
+      }
+      
+      if Send(who,@GetGuild) = self
+      {
+         for i in plMembers
+         {
+            if First(i) = who
+            {
+               oldrank = Nth(i,2);
+               if oldrank = newrank
+               {
+                  return FALSE;
+               }
+               
+               bPromotion = FALSE;               
+               if oldrank < newrank
+               {
+                  bPromotion = TRUE;
+               }
+
+               SetNth(i,2,newrank);
+               
+               Send(self,@ResetPowers,#who=First(i),#rank=newrank);
+               if bPromotion = TRUE
+               {
+                  if promoter <> $ 
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=guild_promotee,
+                          #parm1=Send(promoter,@GetTrueName),
+                          #type1=STRING_RESOURCE,
+                          #parm2=Send(self,@GetRankName,#rank=newrank,
+                                      #sex=Send(who,@GetGender)));
+                     Send(promoter,@MsgSendUser,#message_rsc=guild_promoter,
+                          #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE,
+                          #parm2=Send(self,@GetRankName,#rank=newrank,
+                                      #sex=Send(who,@GetGender)));
+                          
+                     for j in plMembers
+                     {
+                        if First(j) <> promoter AND First(j) <> who
+                        {
+                           Send(First(j),@MsgSendUser,
+                                #message_rsc=guild_promoted,
+                                #parm1=Send(promoter,@GetTrueName),
+                                #type2=STRING_RESOURCE,
+                                #parm2=Send(who,@GetTrueName),
+                                #parm3=Send(self,@GetRankName,#rank=newrank,
+                                            #sex=Send(who,@GetGender)));
+                        }
+                     }
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,
+                          #message_rsc=guild_promotee_no_promoter,
+                          #parm1=Send(self,@GetRankName,#rank=newrank,
+                                      #sex=Send(who,@GetGender)));
+                  }
+               }
+               else
+               {
+                  if promoter <> $
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=guild_demotee,
+                          #parm1=Send(promoter,@GetTrueName),
+                          #type1=STRING_RESOURCE,
+                          #parm2=Send(self,@GetRankName,#rank=newrank,
+                                      #sex=Send(who,@GetGender)));
+                     Send(promoter,@MsgSendUser,#message_rsc=guild_demoter,
+                          #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE,
+                          #parm2=Send(self,@GetRankName,#rank=newrank,
+                                      #sex=Send(who,@GetGender)));
+                          
+                     for j in plMembers
+                     {
+                        if First(j) <> promoter AND First(j) <> who
+                        {
+                           Send(First(j),@MsgSendUser,
+                                #message_rsc=guild_demoted,
+                                #parm1=Send(promoter,@GetTrueName),
+                                #type2=STRING_RESOURCE,
+                                #parm2=Send(who,@GetTrueName),
+                                #parm3=Send(self,@GetRankName,#rank=newrank,
+                                            #sex=Send(who,@GetGender)));
+                        }
+                     }
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,
+                          #message_rsc=guild_demotee_no_demoter,
+                          #parm1=Send(self,@GetRankName,#rank=newrank,
+                                      #sex=Send(who,@GetGender)));
+                  }
+               }
+               
+               return TRUE;
+            }
+         }
+      } 
+      else
+      {
+          DEBUG("guild member is not a member of this guild!");
+      }
+      
+      return;
+   }
+
+   Vote(who=$,candidate=$)
+   {
+      local i, bFound, j, oldvote, newleader;
+
+      if NOT Send(self,@ismember, #who=who)
+      {
+         DEBUG("Somehow, someone's voting in a guild that is not their own!");
+          
+         return FALSE;
+      }
+
+      if NOT IsClass(candidate,&User)
+      {
+         DEBUG("voted for an inanimate object of some sort!");
+         Send(who,@MsgSendUser,#message_rsc=guild_cant_vote_nonuser,
+              #parm1=Send(candidate,@getcapdef),
+              #parm2=Send(candidate,@GetTrueName));
+
+      }
+      
+      for i in plMembers
+      {
+         if First(i) = candidate
+         {
+            for j in plMembers
+            {
+               if First(j) = who
+               {
+                  oldvote = Nth(j,3);
+                  if oldvote = candidate
+                  {
+                     if who = candidate
+                     {         
+                        Send(who,@MsgSendUser,
+                             #message_rsc=guild_talking_to_self,
+                             #parm1=Send(candidate,@GetName));
+
+                        return;
+                     }
+                     
+                     Send(candidate,@MsgSendUser,#message_rsc=guild_reassure,
+                          #parm1=Send(who,@GetTrueName));
+                          
+                     return;
+                  }
+
+                  SetNth(j,3,candidate);
+                  newleader = Send(self,@CountVotes);
+
+                  if candidate = who
+                  {
+                     Send(who,@MsgSendUser,#message_rsc= guild_support_self,
+                          #parm1=Send(self,@GetDef),
+                          #parm2=Send(self,@GetName));
+                     if oldvote <> $ AND oldvote <> who AND newleader = FALSE
+                     {
+                        Send(oldvote,@MsgSendUser,
+                             #message_rsc=guild_support_withers);
+                     }
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=guild_support_other,
+                          #parm1=Send(candidate,@GetTrueName),
+                          #type1=STRING_RESOURCE,
+                          #parm2=Send(self,@GetDef),
+                          #parm3=Send(self,@GetName));
+                     Send(candidate,@MsgSendUser,#message_rsc=guild_supported,
+                          #parm1=Send(who,@GetTrueName),
+                          #parm2=Send(self,@GetDef),
+                          #parm3=Send(self,@GetName));
+                          
+                     if oldvote <> $ and oldvote <> who and newleader = FALSE
+                     {
+                        Send(oldvote,@MsgSendUser,
+                             #message_rsc=guild_support_withers);
+                     }
+                  }
+                  
+                  return;
+               }
+            }
+         }
+      }
+         
+      DEBUG("Somehow, someone's voting for someone outside their guild!");
+      Send(who,@MsgSendUser,#message_rsc=guild_cant_vote_outsider,
+           #parm1=Send(candidate,@GetDef),
+           #type2=STRING_RESOURCE,#parm2=Send(candidate,@GetTrueName),
+           #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+           
+      return FALSE;
+   }
+
+   CountVotes()
+   "Note:  currently, all ties go to the oldest guild member."
+   {
+      local winner, i, j, count, mostvotes, guildmaster;
+
+      % This code is convoluted and slow, so initially, just check to see
+      %  if current guildmaster still has the majority.
+
+      guildmaster = Send(self,@GetGuildmaster);
+
+      if guildmaster <> $
+      {
+         count = 0;   
+         for i in plMembers
+         {
+            if Nth(i,3) = guildmaster
+            {
+               count = count + 1;
+            }
+         }
+         
+         if count > (length(plMembers)/2)
+         {
+            return FALSE;
+         }
+      }
+
+      % Guildmaster does not have the majority.  If guildmaster exists, he
+      %  still retains leadership as long as no one else has a majority.
+      % Since there must always be a guildmaster, if there is no guildmaster,
+      %  person with most votes is chosen.
+
+      mostvotes = -1;
+      winner = $;
+      for i in plMembers
+      {
+         count = 0;
+         for j in plMembers
+         {
+            if Nth(j,3) = First(i)
+            {
+               count = count + 1;
+            }
+         }        
+         if count >= mostvotes
+         {
+            winner = First(i);
+            mostvotes = count;
+         }
+      }
+
+      if (winner <> $) AND (mostvotes > (length(plMembers)/2))
+      {
+         Send(self,@NewGuildMaster,#who=winner);
+         
+         return TRUE;
+      }
+      else
+      {
+         if winner <> $ AND guildmaster = $
+         {
+            DEBUG("New guildmaster was declared because there was no old guildmaster!");
+            Send(self,@NewGuildMaster,#who=winner);
+            
+            return TRUE;  
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   DefunctGuild(what=$)
+   "Removes the guild from all ally and enemy lists."
+   {
+      local i, j;
+
+      for i in plAllies
+      {
+         if i = what
+         {
+            plAllies = DelListElem(plAllies, i);
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,#message_rsc=guild_allies_defunct,
+                    #parm1=Send(what,@GetDef), #parm2=Send(what,@GetName));
+            }
+         }
+      }
+      
+      for i in plEnemies
+      {
+         if i = what
+         {
+            plEnemies = DelListElem(plEnemies, i);
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,#message_rsc=guild_enemies_defunct,
+                    #parm1=Send(what,@GetDef), #parm2=Send(what,@GetName));
+            }
+         }
+      }
+      
+      for i in plEnemiesOf
+      {
+         if i = what
+         {
+            plEnemiesOf = DelListElem(plEnemiesOf, i);
+         }
+      }
+      
+      for i in plAlliesOf
+      {
+         if i = what
+         {
+            plAlliesOf = DelListElem(plAlliesOf, i);
+         }
+      }
+
+      % Reset friend/foe colors
+      for i in plMembers
+      {
+         Send(First(i),@ToCliRoomContents);
+      }
+
+      return;
+   }
+
+   GetEnemyList()
+   {
+     return plEnemies;
+   }
+
+   GetAllyList()
+   {
+     return plAllies;
+   }
+
+   GetDeclaredEnemyList()
+   {
+     return plEnemiesOf;
+   }
+
+   GetDeclaredAllyList()
+   {
+     return plAlliesOf;
+   }
+
+   IsAlly(otherguild = $)
+   "returns TRUE if the guild in question is in the ally list."
+   {
+      local i;
+
+      for i in plAllies
+      {
+         if i = otherguild
+         {
+            return TRUE;
+         }
+     }
+     
+     return FALSE;
+   }
+
+   IsEnemy(otherguild = $)
+   "returns TRUE if the guild in question is in the enemy list."
+   {
+      local i;
+
+      for i in plEnemies
+      {
+         if i = otherguild
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   IsMutualEnemy(otherguild = $)
+   {
+      if otherguild <> $
+         AND Send(otherguild,@IsEnemy,#otherguild=self)
+         AND Send(self,@IsEnemy,#otherguild=otherguild)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CanAlly(otherguild = $, rep = $, otherrep = $)
+   "Can the guild ally itself with another guild?  Three checks:"
+   "1) Must not be on either ally or enemy list.  2) Rep must be a member. "
+   "3) Rep must be at least a lieutenant."
+   {
+      local i;
+
+      if not Send(self,@IsMember,#who=rep)
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guild_not_member_currently,
+              #parm1=Send(self,@GetDef),#parm2=Send(self, @GetName));
+             
+         return FALSE;
+      }
+      
+      if Send(self,@GetRank,#who=rep) < RANK_LIEUTENANT
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guild_not_qualified);
+         
+         return FALSE;
+      }
+      
+      for i in plEnemies
+      {
+         if i = otherguild
+         {
+            Send(rep,@MsgSendUser,#message_rsc=guild_cant_ally_enemy,
+                 #parm1 = Send(otherguild,@GetDef),
+                 #parm2 = Send(otherguild,@GetName));
+                 
+            return FALSE;
+         }
+      }
+       
+      for i in plAllies
+      {
+         if i = otherguild
+         {
+            Send(rep,@MsgSendUser,#message_rsc=guild_already_allies,
+                 #parm1 = Send(otherguild,@GetDef),
+                 #parm2 = Send(otherguild,@GetName));
+                 
+            return FALSE;
+         }
+      }
+     
+      return TRUE;
+   }
+
+   NewAlly(otherguild = $)
+   "Put the guild in question in the ally list."
+   {
+      local i;
+
+      plAllies = cons(otherguild, plAllies);
+      
+      for i in plMembers
+      {
+         Send(First(i),@MsgSendUser,#message_rsc=guild_new_allies,
+              #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
+              #parm3=Send(otherguild,@GetDef),
+              #parm4=Send(otherguild,@GetName));
+
+         % Reset friend/foe colors
+         Send(First(i),@ToCliRoomContents);
+      }
+      
+      Send(otherguild,@DeclareAlly,#otherguild=self);
+
+      return;
+   }
+
+   DeclareAlly(otherguild = $)
+   {
+      local i;
+
+      plAlliesOf = cons(otherguild, plAlliesOf);
+      for i in plMembers
+      {
+         Send(First(i),@MsgSendUser,#message_rsc=guild_declared_allies,
+              #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
+              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+         % Reset friend/foe colors
+         Send(First(i),@ToCliRoomContents);
+      }
+      
+      return;
+   }
+
+   EndAlly(otherguild = $)
+   "Removes the guild in question from the ally list.  Tells the other guild "
+   "to end it's alliance with you."
+   {
+      local i, j;
+
+      for i in plAllies
+      {
+         if i = otherguild
+         {
+            plAllies = DelListElem(plAllies, i);
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,#message_rsc=guild_end_alliance,
+                    #parm1=Send(otherguild,@GetDef),
+                    #parm2=Send(otherguild,@GetName),
+                    #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+               % Reset friend/foe colors
+               Send(First(j),@ToCliRoomContents);
+            }
+            
+            Send(otherguild,@RemoveDeclaredAlly,#otherguild=self);
+            
+            return TRUE;
+         }
+     }
+     
+     DEBUG("tried to end an alliance that didn't exist!");
+     
+     return FALSE;
+   }
+
+   RemoveDeclaredAlly(otherguild = $)
+   "Removes the guild in question from the ally list.  Tells the other guild "
+   "to end it's alliance with you."
+   {
+      local i, j;
+
+      for i in plAlliesOf
+      {
+         if i = otherguild
+         {
+            plAlliesOf = DelListElem(plAlliesOf, i);
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,
+                    #message_rsc=guild_end_declared_alliance,
+                    #parm1=Send(otherguild,@GetDef),
+                    #parm2=Send(otherguild,@GetName),
+                    #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+               % Reset friend/foe colors
+               Send(First(i),@ToCliRoomContents);
+            }
+            
+            Send(otherguild,@RemoveDeclaredAlly,#otherguild=self);
+            
+            return TRUE;
+         }
+      }
+      
+      DEBUG("tried to end an alliance that didn't exist!");
+      
+      return FALSE;
+   }
+
+   CanEnemy(otherguild = $, rep = $)
+   {
+      % Gotta be mature enough to declare war.
+
+      if NOT Send(self,@IsMature)
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guild_cant_enemy_mature);
+
+         return FALSE;
+      }
+
+      % Gotta have enough cash to declare a war, in case of losing.
+      if Send(self,@GetRentDue) > -WAR_LOSS_PENALTY
+      {
+         ClearTempString();
+         AppendTempString(WAR_LOSS_PENALTY);
+         Send(rep,@MsgSendUser,#message_rsc=guild_cant_enemy_funds,
+              #parm1=GetTempString());
+
+         return FALSE;
+      }
+
+      if Send(self,@IsEnemy,#otherguild=otherguild)
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guild_already_enemies,
+              #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
+              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+         return FALSE;
+      }
+      
+      if Send(self,@IsAlly,#otherguild=otherguild)        
+      {
+         Send(rep,@MsgSendUser,#message_rsc=guild_cant_enemy_ally);
+         
+         return FALSE;
+      }
+      
+      return TRUE;
+   }
+
+   NewEnemy(otherguild = $)
+   "Put the guild in question in the enemy list."
+   {
+      local i, rMessage;
+
+      plEnemies = cons(otherguild, plEnemies);
+
+      % Give the separate war message if this kicks off a mutual war.
+      if Send(self,@IsMutualEnemy,#otherguild=otherguild)
+      {
+         rMessage = guild_mutual_enemies;
+      }
+      else
+      {
+         rMessage = guild_new_enemies;
+      }
+
+      for i in plMembers
+      {
+         Send(First(i),@MsgSendUser,#message_rsc=rMessage,
+              #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
+              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+         % Reset friend/foe colors
+         Send(First(i),@ToCliRoomContents);
+      }
+      
+      Send(otherguild,@DeclaredEnemy,#otherguild=self);
+      
+      return;
+   }
+
+   DeclaredEnemy(otherguild=$)
+   "Called when another guild declares this guild as an enemy."
+   {
+      local i,rMessage;
+
+      plEnemiesOf = cons(otherguild, plEnemiesOf);
+
+      % Give the separate war message if this kicks off a mutual war.
+      if Send(self,@IsMutualEnemy,#otherguild=otherguild)
+      {
+         rMessage = guild_mutual_enemies;
+      }
+      else
+      {
+         rMessage = guild_declared_enemies;
+      }
+
+      for i in plMembers
+      {
+         Send(First(i),@MsgSendUser,#message_rsc=rMessage,
+              #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
+              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+         % Reset friend/foe colors
+         Send(First(i),@ToCliRoomContents);
+      }
+      
+      return;
+   }
+
+   CanEndEnemy(otherguild = $, rep = $)
+   "Can this guild end enemy status with this guild?"
+   {
+      % Are we already suing for peace?
+      if ptSuingForPeace <> $
+         AND Send(self,@IsMutualEnemy,#otherguild=otherguild)
+      {
+         % Are we being repetitive with the same guild?
+         if otherguild = poGuildSuingForPeace
+         {
+            Send(rep,@MsgSendUser,#message_rsc=guild_already_suing_for_peace,
+                 #parm1=Send(otherguild,@GetDef),
+                 #parm2=Send(otherguild,@GetName));
+         }
+         else
+         {
+            Send(rep,@MsgSendUser,#message_rsc=guild_only_one_suing_for_peace);
+         }
+
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   EndEnemy(otherguild = $, bSetTimer = TRUE)
+   "Removes the guild in question from your enemy list."
+   {
+      local i, j, iSpoils;
+
+      if NOT Send(self,@IsMutualEnemy,#otherguild=otherguild)
+      {
+         Send(self,@FinalizeEndEnemy,#otherguild=otherguild);
+
+         return TRUE;
+      }
+
+      % Set up temp string for message below.
+      ClearTempString();
+      AppendTempString(WAR_LOSS_PENALTY);
+
+      Send(self,@AccrueRent,#amount=WAR_LOSS_PENALTY);
+
+      % Give our enemy spoils equal to 60% of the positive rent lost.
+      iSpoils = WAR_LOSS_PENALTY - bound(Send(self,@GetRentDue),0,
+                                         WAR_LOSS_PENALTY);
+      iSpoils = (iSpoils * WAR_WINNER_PERCENT) / 100;
+
+      for i in plEnemies
+      {
+         if i = otherguild
+         {
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,#message_rsc=guild_sue_for_peace,
+                    #parm1=Send(self,@GetDef),#parm2=Send(self,@GetName),
+                    #parm3=Send(otherguild,@GetDef),
+                    #parm4=Send(otherguild,@GetName));
+
+               Send(First(j),@MsgSendUser,#message_rsc=guild_end_enemy_loser,
+                    #parm1=GetTempString());
+            }
+            
+            Send(otherguild,@NotifyOtherEndEnemy,#otherguild=self,
+                 #spoils=iSpoils);
+
+            % Don't set the timer if we're undeclaring enemies when deleting.
+            if bSetTimer
+            {
+               ptSuingForPeace = CreateTimer(self,@TimerEndEnemy,PEACE_DELAY);
+               poGuildSuingForPeace = otherguild;
+            }
+
+            return TRUE;
+         }
+      }
+
+      DEBUG("tried to remove an enemy that didn't exist!");
+
+      return FALSE;      
+   }
+
+   NotifyOtherEndEnemy(otherguild=$, spoils=0)
+   "A notification that otherguild wants to sue for peace in mutual war."
+   {
+      local j;
+
+      % Do we get spoils from a humiliated enemy?
+      if spoils > 0
+      {
+         Send(self,@PayRent,#amount=spoils);
+
+         % Setup temp string for message below.
+         ClearTempString();
+         AppendTempString(spoils);
+      }
+
+      for j in plMembers
+      {
+         Send(First(j),@MsgSendUser,#message_rsc=guild_sue_for_peace,
+              #parm1=Send(otherguild,@GetDef),#parm2=Send(otherguild,@GetName),
+              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+         if spoils > 0
+         {
+            Send(First(j),@MsgSendUser,#message_rsc=guild_end_enemy_winner,
+               #parm1=GetTempString());
+         }
+      }
+      
+      return TRUE;
+   }
+
+   TimerEndEnemy()
+   "Called after the Timer expires to remove an enemy that was mutual."
+   {
+      ptSuingForPeace = $;
+      Send(self,@FinalizeEndEnemy,#otherguild=poGuildSuingForPeace);
+      poGuildSuingForPeace = $;
+
+      return;
+   }
+
+   FinalizeEndEnemy(otherguild=$)
+   "Does the final cleanup of ending an Enemy declaration."
+   {
+      local i, j;
+
+      for i in plEnemies
+      {
+         if i = otherguild
+         {
+            plEnemies = DelListElem(plEnemies, i);
+
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,#message_rsc=guild_not_enemies,
+                    #parm1=Send(otherguild,@GetDef),
+                    #parm2=Send(otherguild,@GetName),
+                    #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+               % Reset all friend/foe colors
+               Send(First(j),@ToCliRoomContents);
+            }
+            
+            Send(otherguild,@RemoveDeclaredEnemy,#otherguild=self);
+            
+            return TRUE;
+         }
+      }
+
+      DEBUG("tried to remove an enemy that didn't exist!");
+
+      return FALSE;
+   }
+
+   RemoveDeclaredEnemy(otherguild=$)
+   {
+      local i,j;
+
+      for i in plEnemiesOf
+      {
+         if i = otherguild
+         {
+            plEnemiesOf = DelListElem(plEnemiesOf, i);
+
+            % Check to see if we're suing for peace, too.  If so, end our wait
+            %  early.
+            if poGuildSuingForPeace = otherguild
+            {
+               DeleteTimer(ptSuingForPeace);
+               Post(self,@TimerEndEnemy);
+            }
+
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,
+                    #message_rsc=guild_not_declared_enemies,
+                    #parm1=Send(otherguild,@GetDef),
+                    #parm2=Send(otherguild,@GetName),
+                    #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+               % Reset friend/foe colors
+               Send(First(j),@ToCliRoomContents);
+            }
+            
+            return TRUE;
+         }
+      }
+      
+      DEBUG("tried to remove an enemy that didn't exist!");
+      
+      return FALSE;
+   }
+
+   Delete(timerdelete=FALSE)
+   "Kick all members out First!"
+   "Since the timer may delete the object, TimerDelete checks to be sure "
+   "the timer isn't already gone (getting rid of an error message."
+   {
+      local i;
+
+      if piGuild_hall <> $
+      {
+         Send(Send(self,@GetGuildHall),@ResetGuildHall);
+      }
+      
+      piGuild_hall = $;
+      psPassword = $;
+
+      for i in plEnemies
+      {
+         % Give mutual enemies their reward for destroying the guild.
+         if Send(self,@IsMutualEnemy,#otherguild=i)
+         {
+            Send(self,@EndEnemy,#otherguild=i,#bSetTimer=FALSE);
+         }
+      }
+
+      for i in plMembers
+      {
+         if NOT Send(First(i),@IsLoggedOn)
+            AND NOT IsClass(self,&NecromancerGuild)
+         {
+            Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                 #dest_list=[First(i)],
+                 #nest_list=[4,guild_disbanded_mail,4,Send(self,@GetDef),
+                             4,Send(self,@GetName)]);
+         }
+         
+         Send(self,@RemoveFromGuild,#who=First(i));
+      }
+      
+      if plMembers <> $
+      {
+         debug("plMembers not fully empty!",Send(self,@GetName));
+         
+         plMembers = $;
+      }
+
+      % Delete any outstanding invites
+      for i in plInvitations
+      {
+         Send(i,@InvitationVanish);
+      }
+      
+      plInvitations = $;
+
+      if ptMaintenance <> $ AND NOT TimerDelete
+      {
+         DeleteTimer(ptMaintenance);
+      }
+
+      if ptSuingForPeace <> $
+      {
+         DeleteTimer(ptSuingForPeace);
+         ptSuingForPeace = $;
+      }
+
+      ptMaintenance = $;
+      
+      plEnemies = $;
+      plAllies = $;
+      plEnemiesOf = $;
+      plAlliesOf = $;
+
+      % This must be done *after* removing players from guild
+      plFormerMembers = $;
+
+      % Reset friend/foe colors
+      for i in plMembers
+      {
+         Send(First(i),@ToCliRoomContents);
+      }
+
+      Send(sys,@SystemRemoveFromChampionLists,#oldChamp=self);
+      Send(sys,@DefunctGuild,#what=self);
+
+      propagate;
+   }
+
+   GetMaxMembers()
+   {
+      return MAX_MEMBERS;
+   }
+
+   ChangeRentDue(amount = -20000)
+   {
+      if piRentDue < amount
+      {
+         piRentdue = amount;
+      }
+      
+      return;
+   }
+
+   ResetAllGuildCommands()
+   "Called from RecreateGuildcommands."
+   {
+      local i;
+
+      for i in plMembers
+      {
+         Send(self,@ResetPowers,#who=First(i),
+              #rank=Send(self,@GetRank,#who=First(i)));
+      }
+      
+      return;
+   }
+
+   CheckFormerMemberList(who=$)
+   {
+      local i;
+
+      for i in plFormerMembers
+      {
+         if First(i) = who
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;     
+   }
+
+   RemoveFromFormerMemberList(who=$)
+   "Kills any errant pointers to a deleted player."     
+   {
+      local i;
+
+      if who = $
+      {
+         DEBUG("Called removefromformermemberlist without an argument!");
+         
+         return;
+      }
+      
+      for i in plFormerMembers
+      {
+         if First(i) = who
+         {
+            plFormerMembers = DelListElem(plFormerMembers,i); 
+         }
+      }
+      
+      return;  
+   }
+
+   HasGuildColors()
+   {
+      if piColor1 = XLAT_TO_GRAY
+         AND piColor2 = XLAT_TO_GRAY
+      {
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   GetPrimaryGuildColor()
+   {
+      return piColor1;
+   }
+
+   GetSecondaryGuildColor()
+   {
+      return piColor2;
+   }
+
+   GetShieldShape()
+   {
+      return piShield_shape;
+   }
+
+   SetGuildColors(color1=$, color2=$, shape = $)
+   {
+      if Send(self,@HasGuildColors)
+      {
+         return FALSE;
+      }
+
+      if (color1 = $) OR (color2 = $) OR (shape = $)  
+      {
+         return FALSE;
+      }
+
+      if (color1 < XLAT_LOW_VALUE) OR (color1 > XLAT_HIGH_VALUE)
+         OR (color2 < XLAT_LOW_VALUE) OR (color2 > XLAT_HIGH_VALUE)
+      {
+         return FALSE;
+      }
+
+      piColor1 = color1;
+      piColor2 = color2;
+      piShield_shape = shape;
+
+      return TRUE; 
+   }
+
+   RecalibrateGuild()
+   {
+      if plMembers = $
+      {  
+         debug("Defunct guild still hanging around!  Members are $!",Send(self,@GetName));
+         
+         plEnemies = $;
+         plAllies = $;
+         plEnemiesOf = $;
+         plAlliesOf = $;
+      }
+
+      if Send(self,@GetGuildMaster) = $
+      {
+         Debug("Guild has no guildmaster!  That's just wrong!", Send(self,@GetName));
+      }
+
+      if ptMaintenance = $
+      {
+         Debug("Guild has no maintenance timer!", Send(self,@GetName));
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

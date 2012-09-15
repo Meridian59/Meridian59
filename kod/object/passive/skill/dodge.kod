@@ -1,0 +1,61 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dodge is Skill
+
+constants:
+
+   include blakston.khd
+
+resources:
+   dodge_name_rsc = "dodge"
+   dodge_icon_rsc = dodgeico.bgf
+   dodge_desc_rsc = "Dodge is a basic skill, allowing people to avoid blows in combat."
+
+   dodge_skill_intro = "Weaponcraft Lv. 2: The ability to avoid blows in combat, and thus stay alive longer."
+
+classvars:
+
+   vrName = dodge_name_rsc
+   vrIcon = dodge_icon_rsc
+   vrDesc = dodge_desc_rsc
+
+   vrSkill_intro = dodge_skill_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSkill_num = SKID_DODGE
+   viSchool = SKS_FENCING
+   viSkill_Level = 2
+   viChance_to_Increase = 20
+
+   viSkillExertion = 0
+   vbCheck_exertion = FALSE
+
+   vbAutomatic = TRUE
+
+properties:
+
+messages:
+
+   CanPayCosts(who=$,oTarget=$)
+   {
+      % No dodging if you aren't moving.
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_NO_MOVE)
+      {
+         return 0;
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

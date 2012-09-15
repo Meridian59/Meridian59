@@ -1,0 +1,594 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EvilTwin is Monster
+
+constants:
+
+   include blakston.khd
+
+   MANA_DRAIN_DELAY = 5000
+   MANA_DRAIN_AMOUNT = 1
+
+resources:
+ 
+
+   EvilTwin_name_rsc = "evil twin"
+
+   EvilTwin_male_icon_rsc = btg.bgf
+   EvilTwin_female_icon_rsc = bth.bgf
+
+   EvilTwin_dead_icon_rsc = amoebaX.bgf
+   EvilTwin_dead_name_rsc = "dead evil twin"
+   EvilTwin_weapon_rsc = scimov.bgf
+
+   EvilTwin_sound_hit = orc_atkh.wav
+   EvilTwin_sound_miss = orc_atkm.wav
+   EvilTwin_sound_death = orc_dth.wav
+   EvilTwin_sound_aware = orc_awr.wav
+
+   EvilTwin_delete =  "%s%s disappears into a puff of smoke."
+
+   EvilTwin_trouble = "You sense that a evil twin you summoned has gotten you into some trouble..."
+
+classvars:
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   vrDead_icon = EvilTwin_dead_icon_rsc
+   vrDead_name = EvilTwin_dead_name_rsc
+
+   viTreasure_type = TID_NONE
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viLevel = 45
+   viDifficulty = 4
+   viKarma = $
+
+   viManaDrain = 10     % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
+
+   vrSound_hit = EvilTwin_sound_hit
+   vrSound_miss = EvilTwin_sound_miss
+   vrSound_aware = EvilTwin_sound_aware
+   vrSound_death = EvilTwin_sound_death
+
+   viDefault_behavior = AI_FIGHT_SINGLEMINDED | AI_FIGHT_MONSTERS | AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE
+
+properties:
+
+   vrName = EvilTwin_name_rsc
+   piDrawfx = 4
+   vrIcon = EvilTwin_male_icon_rsc
+   piAnimation = PANM_NONE
+   poCaster = $
+   poOriginal = $         % Who the EvilTwin is of.
+   piGender = GENDER_MALE
+   pbIllusion = TRUE
+
+   piSpellpower = 1
+   poArrow = $
+
+   vbSummoned = TRUE
+
+messages:
+
+   Constructor(iSpellPower=1, oMaster = $, oTarget = $)
+   {
+      local i, each_obj, oRoom;
+      
+      oRoom = send(oTarget,@GetOwner);
+      
+      if oMaster <> $
+      {
+         poCaster = oMaster;
+      }
+
+      if oTarget <> $
+      {
+         poOriginal = oTarget;
+         poTarget = oTarget;
+         for i in send(oRoom,@GetHolderActive)
+         {
+            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+
+            if (IsClass(each_obj,&Reflection) OR IsClass(each_obj,&EvilTwin))
+               AND send(each_obj,@GetIllusionForm) = oTarget
+               AND random(1,2) = 1
+               AND each_obj <> self
+            {
+               poTarget = each_obj;
+            }
+         }
+      }
+      
+      piSpellpower = iSpellpower;
+      poArrow = Create(&Arrow);
+      post(self,@TargetSwitch,#what=oTarget,#iHatred=1000);
+      post(self,@EnterStateChase);
+      
+      propagate;
+   }
+
+   Delete(bMonsterReport=TRUE)
+   {
+      send(SYS,@RemoveReflection,#oReflection=self);
+
+      % Let the caster take care of the appropriate bookkeeping
+      if poCaster <> $
+      {
+         if IsClass(poCaster,&Monster)
+            AND bMonsterReport
+         {
+            send(poCaster,@SummonDeleted,#what=self);
+         }
+      }
+
+      if (poOwner <> $)
+         AND (IsClass(poOriginal,&Monster)
+              OR send(poOriginal,@isLoggedOn))
+      {
+         Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=EvilTwin_delete,
+              #parm1=send(self,@GetDef,#cap=TRUE),#parm2=send(self,@Getname,#cap=FALSE));
+      }
+      
+      poOriginal = $;
+      poCaster = $;
+      poArrow = $;
+
+      propagate;
+   }
+
+   KilledSomething(what=$, use_weapon=$)
+   {
+      if IsClass(poCaster,&Player)
+         AND (NOT send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         AND IsClass(what,&Player)
+      {
+         Send(poCaster,@MsgSendUser,#message_rsc=EvilTwin_trouble);
+      }
+      
+      post(self,@Delete);
+      
+      return send(poCaster,@KilledSomething,#what=what,#use_weapon=use_weapon);
+   }
+
+   SomethingKilled(what = $,victim = $)
+   {
+      % Remove our enchantment if the original died.
+      if victim = poOriginal
+      {
+         if poCaster <> $
+            AND IsClass(poCaster,&Player)
+         {
+            send(poCaster,@RemoveEnchantmentClass,#class=&SummonEvilTwin);
+         }
+         else
+         {
+            post(self,@Delete);
+         }
+      }
+      
+      return ; 
+   }
+   
+   GetApparentName()
+   {
+      return send(poOriginal,@GetApparentName);
+   }
+
+   GetName(cap=FALSE)
+   {
+      return send(poOriginal,@GetName,#cap=cap);
+   }
+   
+   GetDef(cap=FALSE)
+   {
+      return send(poOriginal,@GetDef,#cap=cap);
+   }
+
+   GetIndef(cap=FALSE)
+   {
+      return send(poOriginal,@GetIndef,#cap=cap);
+   }
+
+   GetHisHer(cap=FALSE)
+   {
+      return send(poOriginal,@GetHisHer,#cap=cap);
+   }
+
+   GetHeShe(cap=FALSE)
+   {
+      return send(poOriginal,@GetHeShe,#cap=cap);
+   }
+
+   GetLordLady(cap=FALSE)
+   {
+      return send(poOriginal,@GetLordLady,#cap=cap);
+   }
+
+   GetHisHers(cap=FALSE)
+   {
+      return send(poOriginal,@GetHisHers,#cap=cap);
+   }
+
+   GetHimHer(cap=FALSE)
+   {
+      return send(poOriginal,@GetHimHer,#cap=cap);
+   }
+
+   ReqSomethingEntered(what=$)
+   {
+      if NOT send(poOriginal,@IsLoggedOn)
+      {
+         Send(self,@Delete);
+      }
+      
+      propagate;
+   }
+
+   SomethingLeft(what=$)
+   {
+      if poOriginal = $
+	   {
+	      Send(self,@Delete);
+      }
+
+      if IsClass(poOriginal,&Player)
+         AND NOT send(poOriginal,@IsLoggedOn)
+	   {
+	      Send(self,@Delete);
+      }
+
+      if what = poOriginal
+      {
+         % If target leaves room, hunt them down.
+         if IsClass(send(poOriginal,@GetOwner),&UnderWorld)
+         {
+            post(self,@Delete);
+
+            propagate;
+         }
+         else
+         {
+            post(self,@GotoOriginal);
+         }
+      }
+      
+      propagate;
+   }
+
+   GotoOriginal()
+   {
+      if poOriginal = $
+      {
+         post(self,@Delete);
+
+         return;
+      }
+   
+      send(send(poOriginal,@GetOwner),@NewHold,#what=self,
+           #new_row = send(poOriginal,@getRow),#new_col = send(poOriginal,@getcol),
+           #new_angle = send(poOriginal,@GetAngle));
+      post(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
+      post(self,@EnterStateChase);
+      
+      return;
+
+   }
+
+   GetOriginalInfo()
+   {
+      vrIcon = send(poOriginal,@GetPlayerIcon);
+      vrName = send(poOriginal,@GetTrueName);
+      piGender = send(poOriginal,@GetGender);
+      piDrawfx = send(poOriginal,@GetPlayerDrawfx);
+      
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      local iFlags;
+      
+      iFlags = send(poOriginal,@GetObjectFlags);
+      if (iFlags & USER_YES) {  iFlags = (iFlags | FALSEPLAYER_YES);  }
+      
+      return iFlags;
+   }
+
+
+   GetAttackRange()
+   {
+      local iWeapon;
+      
+      iWeapon = send(poOriginal,@LookupPlayerWeapon);
+      if iWeapon <> $
+      {  
+         return send(iWeapon,@GetRange);  
+      }
+      
+      return 1;
+   }
+
+   % This returns the battler's ability to-hit.  Ranges from 1 to 1000
+   GetOffense(what = $, stroke_obj=$)
+   {
+      return Send(poOriginal,@GetOffense,#what=what,#stroke_obj=stroke_obj);
+   }
+
+   % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
+   GetDefense(what = $, stroke_obj=$)
+   {
+      return Send(poOriginal,@GetDefense,#what=what,#stroke_obj=stroke_obj);
+   }
+
+   GetDamage(what = $, stroke_obj=$)
+   {
+      local oStroke;
+
+      oStroke = stroke_obj;
+      if IsClass(poOriginal,&Player)
+      {
+         oStroke = $;
+      }
+      
+      return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
+   }
+
+   GetKarma(detect=FALSE)
+   {
+      if detect
+      {
+         return send(poOriginal,@GetKarma);
+      }
+      
+      propagate;
+   }
+
+   SomethingChanged(what=$)
+   {
+      if what = poOriginal
+      {
+         if Send(what,@GetAnimation) = PANM_WAVE
+         {
+            Send(self,@DoWave);
+         }
+         
+         if Send(what,@GetAnimation) = PANM_POINT
+         {
+            Send(self,@DoPoint);
+         }
+         
+         if Send(what,@GetAnimation) = PANM_DANCE
+         {
+            Send(self,@DoDance);
+         }
+         
+         piDrawfx = send(poOriginal,@GetPlayerDrawfx);
+      }
+      
+      propagate;
+   }
+
+   DoWave()
+   "Causes the EvilTwin to wave."
+   {
+      send(self,@GetOriginalInfo);
+      piAnimation = PANM_WAVE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+      
+      return;
+   }
+
+   DoPoint()
+   {
+      send(self,@GetOriginalInfo);
+      piAnimation = PANM_POINT;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+      
+      return;
+   }
+
+   DoDance()
+   {
+      send(self,@GetOriginalInfo);
+      piAnimation = PANM_DANCE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+      
+      return;
+    }
+
+   SetOriginal(who=$)
+   {
+      if who = $
+      {
+         post(self,@Delete);
+
+         return;
+      }
+      
+      poOriginal = who;
+      Send(self,@GetOriginalInfo);
+
+      return;
+   }
+
+   GetIcon()
+   {
+      return send(poOriginal,@GetIcon);
+   }
+   
+   TryAttack(what=$,stroke_obj=$)
+   {
+      local bWasBad;
+
+      if IsClass(poCaster,&Player)
+         AND NOT Send(poOwner,@IsArena)
+      {
+         %Is the caster bad to start with?
+         bWasBad = (send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+                    OR send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
+   
+         if NOT send(poCaster,@AllowPlayerAttack,#victim=what)
+         {
+            return FALSE;
+         }
+
+         % If they weren't bad and become bad, let them know.
+         if NOT bWasBad
+            AND (send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+                 OR send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         {
+            Send(poCaster,@MsgSendUser,#message_rsc=EvilTwin_trouble);
+         }
+      }
+
+      propagate;
+   }
+
+   MonsterAttack(what=$)
+   {
+      % Do the animation!
+      send(self,@DoAttack);
+
+      return;
+   }
+
+   % The next three messages deal with the three defense skills.  These messages return the relative values of the three
+   % skills.  Used in player for defense, used in battler for defense messages.
+   GetParryAbility(stroke_obj=$)
+   {
+      return Send(poOriginal,@GetParryAbility,#stroke_obj=stroke_obj);
+   }
+
+   GetBlockAbility(stroke_obj=$)
+   {
+      return Send(poOriginal,@GetBlockAbility,#stroke_obj=stroke_obj);
+   }
+
+   GetDodgeAbility(stroke_obj=$)
+   {
+      return Send(poOriginal,@GetDodgeAbility,#stroke_obj=stroke_obj);
+   }
+
+   DoAttack()
+   {
+      local Weapon, ammotype, i;
+      
+      Weapon = send(poOriginal,@LookupPlayerWeapon);
+      ammotype = poArrow;
+      Send(self,@GetOriginalInfo);
+
+      if Weapon <> $   %IsClass(Weapon,&Weapon)
+      {
+         if IsClass(Weapon,&Longbow)
+         {
+            piAnimation = PANM_BOW_FIRE;
+
+            for i in send(poOriginal,@GetPlayerUsing)
+            {
+               if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+               {
+                  AmmoType = i;
+               }
+            }
+            
+            send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = AmmoType);
+         }
+         else
+         {
+            piAnimation = PANM_WEAPON_ATTACK;
+         }
+      }
+      else
+      {
+         piAnimation = PANM_FIST_ATTACK;
+      }
+      
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+      
+      return;
+   }
+   
+   ShowDesc()
+   {
+      send(poOriginal,@ShowDesc);
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      % Make it look like EvilTwin is walking
+
+      Send(poOriginal,@SendMoveAnimation);
+      
+      return;
+   }
+
+   SendMoveOverlays()
+   {
+      send(poOriginal,@SendMoveOverlays);
+      
+      return;
+   }
+
+   SendAnimation()
+   {
+       send(poOriginal,@SendAnimation,#iAnimation=piAnimation);
+       
+       return;
+   }
+
+   SendOverlays()
+   {
+       Send(poOriginal,@SendOverlays,#iAnimation=piAnimation);
+       
+       return;
+   }
+
+
+   GetIllusionForm()
+   {
+      return poOriginal;
+   }  
+
+   TryLook(what = $)
+   {
+      if poOriginal = $
+      {
+         post(self,@Delete);
+
+         return;
+      }
+   
+      if IsClass(poOriginal,&Player)
+         AND send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+         AND what <> poOriginal
+      {
+         return;
+      }
+      
+      Send(what,@SendLookPlayer,#what=poOriginal);
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

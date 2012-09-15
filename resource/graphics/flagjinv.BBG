@@ -1,0 +1,13 @@
+# rebel flag (item)
+# 
+#^Applied to Hotspot: 0
+#*Groups: 2
+#* display
+#* dropped
+-s 5
+2
+flagcinv.bmp   [0, 0] 
+flagcdrp.bmp   [0, 0] 
+2
+ 1   1 
+ 1   2 

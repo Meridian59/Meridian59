@@ -1,0 +1,459 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall5 is GuildHall
+
+constants:
+
+   include blakston.khd
+
+   DOOR_DELAY = 6000
+
+resources:
+
+   room_name_guildhall5 ="Konima's Abandoned Dwelling"
+   room_guildhall5 = guildh5.roo
+
+   guildhall5_sound = down2.wav
+   guildhall5_door_up = woodup1.wav
+   guildhall5_door_down = wooddn1.wav
+   water_soundguildhall5 = boil.wav
+
+   guildhall5_privacy_command = "privacy"
+   guildhall5_no_privacy_command = "no privacy"
+
+classvars:
+
+   vrName = room_name_guildhall5
+
+   viQuality = 8
+
+   viNews_row = 25
+   viNews_col = 18
+   viNews_finerow = 32
+   viNews_finecol = 16
+
+   viFoyer_north = 25
+   viFoyer_south = 33
+   viFoyer_east = 23
+   viFoyer_west = 13
+
+   viLever_row = 27
+   viLever_col = 11
+   viLever_finerow = 32
+   viLever_finecol = 32
+
+   viTeleport_row = 29
+   viTeleport_col = 18
+
+   viInner_teleport_row = 7
+   viInner_teleport_col = 18
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_GUILDHALL | TERRAIN_FOUNTAIN
+   viSeconds_til_close = 11
+
+properties:
+
+   prRoom = room_guildhall5
+   piRoom_num = RID_GUILDH5
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   pbPrivate = TRUE
+   pbChestAvailable = FALSE
+
+   ptSouthDoor = $
+   ptEastDoor = $
+   ptWestDoor = $
+   ptMainDoor = $
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [[25,14],[25,15],[25,21],[25,22]];
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      plLooping_sounds = [[ water_soundguildhall5, 29, 18, 20, 30 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      % TO TOWN
+
+      plExits = Cons([ 33, 17, RID_EAST_TOS, 1, 41,ROTATE_NONE,DISTANCE_NORMAL ],plExits);
+      plExits = Cons([ 33, 18, RID_EAST_TOS, 1, 41,ROTATE_NONE,DISTANCE_NORMAL ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&chest),
+           #new_row=5,#new_col=18,#fine_row=24,#fine_col=16,
+           #new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=24,#new_col=29,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=18,#new_col=29,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=12,#new_col=29,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=12,#new_col=6,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=18,#new_col=6,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Brazier),
+           #new_row=24,#new_col=6,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=33,#new_col=17,#fine_row=16,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=33,#new_col=19,#fine_row=16,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=25,#new_col=23,#fine_row=8,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=25,#new_col=20,#fine_row=8,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=25,#new_col=16,#fine_row=8,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=25,#new_col=13,#fine_row=8,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=24,#new_col=23,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=21,#new_col=23,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=18,#new_col=23,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=15,#new_col=23,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=12,#new_col=23,#fine_row=32,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=11,#new_col=23,#fine_row=56,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=11,#new_col=20,#fine_row=56,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=11,#new_col=16,#fine_row=56,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=11,#new_col=13,#fine_row=56,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=12,#new_col=12,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=15,#new_col=12,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=18,#new_col=12,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=21,#new_col=12,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),
+           #new_row=24,#new_col=12,#fine_row=32,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=10,#new_col=10,#fine_row=40,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=6,#new_col=10,#fine_row=56,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=6,#new_col=26,#fine_row=56,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=10,#new_col=26,#fine_row=48,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=28,#new_col=17,#fine_row=56,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=28,#new_col=18,#fine_row=56,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=29,#new_col=17,#fine_row=40,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Shrub),
+           #new_row=29,#new_col=18,#fine_row=40,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&Tree),
+           #new_row=29,#new_col=18,#fine_row=16,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=13,#new_col=9,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=13,#new_col=11,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=15,#new_col=11,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=17,#new_col=9,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Table),
+           #new_row=17,#new_col=11,#fine_row=32,#fine_col=32);
+
+      propagate;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)                       
+   {
+      local i, each_obj;
+
+      if NOT isClass(what,&player) OR type = SAY_YELL
+      {
+         propagate;
+      }
+
+      if StringEqual(string,guildhall5_privacy_command)
+         AND NOT pbPrivate
+         AND (poGuild_owner = $ OR send(poGuild_owner,@GetGuildMaster) = what)
+         AND send(self,@InGMOffice,#who=what)
+      {
+         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
+         send(self,@SetSector,#sector=3,#animation=ANIMATE_CEILING_LIFT,
+              #height=78,#speed=16);
+         send(self,@SetSector,#sector=4,#animation=ANIMATE_CEILING_LIFT,
+              #height=70,#speed=16);
+         send(self,@SetSector,#sector=5,#animation=ANIMATE_CEILING_LIFT,
+              #height=86,#speed=16);
+      
+         pbPrivate = TRUE;
+      }
+
+      if StringEqual(string,guildhall5_no_privacy_command)
+         AND pbPrivate
+         AND (poGuild_owner = $ or send(poGuild_owner,@getguildmaster) = what)
+         AND send(self,@InGMOffice,#who=what)
+      {
+         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
+         send(self,@SetSector,#sector=3,#animation=ANIMATE_CEILING_LIFT,
+              #height=150,#speed=16);
+         send(self,@SetSector,#sector=4,#animation=ANIMATE_CEILING_LIFT,
+              #height=150,#speed=16);
+         send(self,@SetSector,#sector=5,#animation=ANIMATE_CEILING_LIFT,
+              #height=150,#speed=16);
+      
+         pbPrivate = FALSE;
+      }
+
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+         if send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         {
+            if send(self,@InFoyer,#who=what) = send(self,@InFoyer,#who=each_obj)
+               AND (NOT pbPrivate OR send(self,@InGMOffice,#who=what) = send(self,@InGMOffice,#who=each_obj))
+            {
+               Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
+                    #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
+                    #parm5=parm5,#parm6=parm6,#parm7=parm7,#parm8=parm8);
+            }
+            else
+            {
+               send(each_obj,@MsgSendUser,#message_rsc=guildhall_muffled);
+            }
+         }
+      }
+
+      if poGuild_Owner <> $ AND StringEqual(string,send(poGuild_owner,@GetPassword))
+         AND send(self,@InGMOffice,#who=what) AND pbSecretDoorOpen = FALSE
+         AND type <> SAY_EMOTE
+      {
+         send(self,@OpenSecretDoor);
+      }
+
+      return;
+   }
+
+   inGMoffice(who=$)
+   {
+      local row, col;
+
+      row = send(who,@getrow);
+      col = send(who,@getcol);
+
+      if row > 5 AND row < 11 AND col > 13 AND col < 23
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   OpenSecretDoor()
+   "Unlike other guild halls, Password makes door go both up and down."
+   {
+      if pbChestAvailable = FALSE
+      {
+         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
+         send(self,@SetSector,#sector=1,#animation=ANIMATE_CEILING_LIFT,
+              #height=125,#speed=16);
+         send(self,@SetSector,#sector=2,#animation=ANIMATE_CEILING_LIFT,
+              #height=157,#speed=16);
+         send(self,@OpenSecretDoorSound);
+         pbChestAvailable = TRUE;
+      }
+      else
+      {
+         Send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_sound);
+         send(self,@setsector,#sector=1,#animation=ANIMATE_CEILING_LIFT,
+              #height=93,#speed=16);
+         send(self,@setsector,#sector=2,#animation=ANIMATE_CEILING_LIFT,
+              #height=125,#speed=16);
+         send(self,@CloseSecretDoorSound);
+         pbChestAvailable = FALSE;
+      }
+
+      return;
+   }
+
+   SomethingTryGo(row=$, col=$, what=$)
+   {
+      if (row = 11 OR row = 12) AND (col = 17 OR col = 18) AND ptSouthDoor = $
+      {
+         send(self,@SetSector,#sector=6,#animation=ANIMATE_CEILING_LIFT,
+              #height=168,#speed=32);
+         ptSouthDoor = createtimer(self,@CloseSouthDoor,DOOR_DELAY);
+
+         return TRUE;
+      }
+
+      if (row = 8 OR row = 9) AND (col = 23 OR col = 24) AND ptEastDoor = $
+      {
+         send(self,@SetSector,#sector=7,#animation=ANIMATE_CEILING_LIFT,
+              #height=134,#speed=32);
+         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_up);
+         ptEastDoor = createtimer(self,@CloseEastDoor,DOOR_DELAY);
+
+         return TRUE;
+      }
+
+      if (row = 8 OR row = 9) AND (col = 12 OR col = 13) AND ptWestDoor = $
+      {
+         send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,
+              #height=134,#speed=32);
+         send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_up);
+         ptWestDoor = createtimer(self,@CloseWestDoor,DOOR_DELAY);
+
+         return TRUE;
+      }
+
+      if row = 24 AND (col = 14 OR col = 15 OR col = 21 OR col = 22) AND ptMainDoor = $
+      {
+         if send(self,@ReqLegalEntry,#who=what)
+         {
+            send(self,@OpenEntranceDoor);
+
+            return TRUE;
+         }
+      }
+
+      propagate;
+   }
+
+   OpenEntranceDoor()
+   {
+      if ptMainDoor = $
+      {
+         send(self,@TimeStampDoor);
+         send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,
+              #height=70,#speed=16);
+         send(self,@SetSector,#sector=10,#animation=ANIMATE_CEILING_LIFT,
+              #height=70,#speed=16);
+         send(self,@OpenEntranceDoorSound);
+
+         ptMainDoor = createtimer(self,@CloseEntranceDoor,DOOR_DELAY);
+      }
+
+      return;
+   }
+
+   CloseEntranceDoor()
+   {
+      send(self,@SetSector,#sector=9,#animation=ANIMATE_CEILING_LIFT,
+           #height=0,#speed=32);
+      send(self,@SetSector,#sector=10,#animation=ANIMATE_CEILING_LIFT,
+           #height=0,#speed=32);
+      send(self,@CloseEntranceDoorSound);
+      ptMainDoor = $;
+
+      return;
+   }
+
+   CloseSouthDoor()
+   {
+      send(self,@SetSector,#sector=6,#animation=ANIMATE_CEILING_LIFT,
+           #height=70,#speed=32);
+      ptSouthDoor = $;
+
+      return;
+   }
+
+   CloseEastDoor()
+   {
+      send(self,@SetSector,#sector=7,#animation=ANIMATE_CEILING_LIFT,
+           #height=54,#speed=32);
+      send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_down);
+      ptEastDoor = $;
+
+      return;
+   }
+
+   CloseWestDoor()
+   {
+      send(self,@SetSector,#sector=8,#animation=ANIMATE_CEILING_LIFT,
+          #height=54,#speed=32);
+      send(self,@SomethingWaveRoom,#wave_rsc=guildhall5_door_down);
+      ptWestDoor = $;
+
+      return;
+   }
+
+   Delete()
+   "Be sure all door timers are deleted."
+   {
+      if ptSouthDoor <> $
+      {
+         DeleteTimer(ptSouthDoor);
+         ptSouthDoor = $;
+      }
+
+      if ptEastDoor <> $
+      {
+         DeleteTimer(ptEastDoor);
+         ptEastDoor = $;
+      }
+
+      if ptWestDoor <> $
+      {
+         DeleteTimer(ptWestDoor);
+         ptWestDoor = $;
+      }
+
+      if ptMainDoor <> $
+      {
+         DeleteTimer(ptMainDoor);
+         ptMainDoor = $;
+      }
+
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+
+      lHotPlates = [ [24,13,1], [24,14,1], [24,15,1], [24,20,1], [24,21,1], [24,22,1],
+                     [23,13,2], [23,14,2], [23,15,2], [23,20,2], [23,21,2], [23,22,2],
+                     [23,12,2], [23,16,2], [24,16,2], [24,19,2], [23,19,2], [23,23,2]
+                   ];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         send(self,@NewHold,#what=oPlate,#new_row=nth(i,1),#new_col=nth(i,2));
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

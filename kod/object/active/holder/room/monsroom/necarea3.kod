@@ -1,0 +1,176 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Necropolis3 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   room_name_Necropolis3 = "Decaying City of Brax"
+   room_Necropolis3 = necarea3.roo
+   Necropolis3_music = nec02.mid
+
+   Necropolis3_locked_gate = \
+      "The gate has no visible means of opening, and the spikes atop it serve as a "
+      "sufficient deterrent to climbing over it."
+
+   Necropolis3_locked_door = \
+      "The massive stone door won't budge, no matter how hard you push it."
+
+   Necropolis3_loop = necloop4.wav
+
+   Necropolis3_no_rift = "Casting shadow rift here would be pointless."
+
+classvars:
+
+   vrName = room_name_Necropolis3
+
+   viTeleport_row = 15
+   viTeleport_col = 19
+
+   viTerrain_type = TERRAIN_NECROPOLIS
+
+properties:
+
+   prRoom = room_Necropolis3
+   piRoom_num = RID_NECROAREA3
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 40000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   prMusic = Necropolis3_music
+
+messages:
+
+   Constructed()
+   {
+	% chris--for CanMonsterMoveInRoom testing
+	%local i,j;
+      plMonsters = [ [&NarthylWorm, 60], [&TuskedSkeleton, 40] ];
+      plGenerators = [ [9,15], [14,24], [22,20], [17,15], [8,19], [14,30], [15,28] ];
+
+      plLooping_sounds = [[ Necropolis3_loop, 0, 0, 200, 100 ]];
+
+%      i=0;
+%      while i < 50
+%	{
+%      if (CanMonsterMoveInRoom(prmRoom, i, i, i+2, i+1))
+%{
+%	debug("yes");
+%}
+%else
+%	{
+%	debug("no");
+%	}    
+%i = i+1;
+%}
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+     
+      % To Ancient Graveyard of Brax
+      plEdge_Exits = Cons([LEAVE_WEST, RID_NECROAREA2, 24, 36, ROTATE_NONE], plEdge_exits);
+      
+      % To Goad's Arena
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_BRAX_ARENA, 2, 11, ROTATE_NONE], plEdge_exits);
+
+      plExits = $;
+
+      % Locked gate to the north
+      plExits = Cons([ 5, 20, ROOM_LOCKED_DOOR, Necropolis3_locked_gate ],plExits);
+      plExits = Cons([ 5, 21, ROOM_LOCKED_DOOR, Necropolis3_locked_gate ],plExits);
+
+      % Southwest abandoned building
+      plExits = Cons([ 19, 12, ROOM_LOCKED_DOOR, Necropolis3_locked_door ],plExits);
+      plExits = Cons([ 20, 12, ROOM_LOCKED_DOOR, Necropolis3_locked_door ],plExits);
+      plExits = Cons([ 20, 13, ROOM_LOCKED_DOOR, Necropolis3_locked_door ],plExits);
+
+      % Northeast abandoned building
+      plExits = Cons([ 7, 23, RID_NECROAREA3A, 2, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 24, RID_NECROAREA3A, 2, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 26, RID_NECROAREA3A, 3, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 26, RID_NECROAREA3A, 3, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 8, 27, RID_NECROAREA3A, 3, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 10, 27, RID_NECROAREA3A, 7, 8, ROTATE_NONE ],plExits);
+      plExits = Cons([ 11, 27, RID_NECROAREA3A, 7, 8, ROTATE_NONE ],plExits);
+      
+      % Southeast abandoned building
+      plExits = Cons([ 19, 26, RID_NECROAREA3B, 6, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 19, 27, RID_NECROAREA3B, 6, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 20, 27, RID_NECROAREA3B, 6, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 20, 26, RID_NECROAREA3B, 6, 6, ROTATE_NONE ],plExits);
+
+      % To within the walls of castle brax.
+      plExits = Cons([ 13, 44, RID_NECROAREA4, 12, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 14, 44, RID_NECROAREA4, 12, 4, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Skull),
+           #new_row=6,#new_col=21,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);      
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_HALFSKULL),
+           #new_row=17,#new_col=15,#fine_row=0,#fine_col=16,#angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECTREE1),
+           #new_row=14,#new_col=10,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECTREE2),
+           #new_row=14,#new_col=20,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);   
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECTREE4),
+           #new_row=5,#new_col=13,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&GlowTree),#new_row=17,#new_col=26,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_NECSLIME),
+           #new_row=18,#new_col=12,#fine_row=16,#fine_col=16,#angle=ANGLE_EAST);
+
+
+      % Lighting
+
+      send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BLOOD,#iIntensity=50),
+           #new_row=14,#new_col=20,#fine_row=0,#fine_col=0);
+
+      propagate;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if IsClass(oSpell,&DeathsDoor)
+      {
+	      Send(who,@MsgSendUser,#message_rsc=Necropolis3_no_rift);            
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

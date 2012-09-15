@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BattleBow is Bow
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BattleBow_name_rsc = "battle bow"
+   BattleBow_desc_rsc = \
+      "Expertly carved for power, this bow gives you the envious advantage of "
+      "a stronger attack at a sacrifice of accuracy at long ranges.  You should "
+      "only use this bow at closer ranges."
+
+classvars:
+
+   vrName = BattleBow_name_rsc
+   vrDesc = BattleBow_desc_rsc
+
+   viWeaponDamage = 2
+   viRange = 17
+   viHit_roll_modifier = 0
+   
+   viValue_average = 3000
+   viBulk = 80
+   viWeight = 70
+
+   viSpell_modifier = -30
+
+   % What's the basic color of the wood?
+   viBaseXLAT = XLAT_TO_SKIN4
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsH5 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsH5 = H5.roo
+   room_name_OutdoorsH5 ="The border of the Badlands"
+   OutdoorsH5_music = forest.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsH5
+
+   viTeleport_row = 26
+   viTeleport_col = 12
+
+   viTerrain_type = TERRAIN_BADLANDS | TERRAIN_FIELDS | TERRAIN_ROAD
+
+   viFlag_row = 30
+   viFlag_col = 18
+
+properties:
+
+   prRoom = room_OutdoorsH5
+   prMusic = OutdoorsH5_music
+   piRoom_num = RID_H5
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 160000
+   piGen_percent = 80
+
+   piInit_count_min = 1
+   piInit_count_max = 5
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Troll, 30], [&Groundworm, 70] ];
+
+      plGenerators = [ [19, 7], [22, 14], [27, 25], [25, 36],
+                      [38, 34], [46, 26], [36, 17], [35,  8] ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+
+      plEdge_Exits = Cons([LEAVE_WEST, RID_H4, 39, 36, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_H6, 3, 20, ROTATE_NONE], plEdge_exits);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

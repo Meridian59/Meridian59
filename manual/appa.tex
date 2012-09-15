@@ -1,0 +1,1795 @@
+\chapter{Protocols}
+\label{app:protocols}
+
+\newcommand{\tline}{\noindent \rule{\textwidth}{0.1mm}}
+\newcommand{\msg}[1]{\rule{\textwidth}{0.1mm} \\ \nonterminal{#1}}
+\newcommand{\nt}[1]{\nonterminal{#1}}
+
+All messages are binary, and all data fields are stored in
+little-endian byte order, unless otherwise specified.  To describe a
+message, we use the conventions shown in the following example:
+
+\begin{protocol}
+\pline{Bytes in field}{Description of field}
+\\
+\pline{4 bytes}{number of \nt{entry}s (= $n$)}
+\pline{4$n$ bytes}{\nt{entry}s}
+\\
+\newnonterminal{entry}
+\pline{4 bytes}{per-entry information}
+\\
+\pline{\nt{entry}$*$}{zero or more instances of
+\nt{entry}}
+\\
+Sample message \\
+\msg{BP\_TEST} \nt{data} \\
+\newnonterminal{data}
+\pline{$n$ bytes}{data for this message}
+
+\end{protocol}
+
+A message is described in sequential order.  A token within angle
+brackets ({\tt <>}) is a nonterminal symbol that is defined elsewhere
+in the specification.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Client/server protocol}
+
+The client and the server communicate via two similar protocols.
+While the client is logging in, the ``login mode'' protocol handles
+getting the player into the game, and performing any necessary dynamic
+updates.  The ``game mode'' protocol takes over once the player has
+entered the game.  In addition, many of the Meridian-specific game
+messages are split off into a ``user command'' sub-protocol within the
+game mode protocol.
+
+Each message is in the following format:
+
+\begin{protocol}
+
+\nt{length} \\
+\nt{security} \\
+\nt{sequence number} \\
+\nt{message type} \\
+\nt{data} \\
+\\
+\newnonterminal{length}
+\pline{2 bytes}{length of \nt{data}}
+\\
+\newnonterminal{security}
+In messages from the server to the client, this is always 0. \\
+In client messages, it's the following expression: \\
+\nt{length} XOR (\nt{message type} $\ll$ 4) XOR
+\nt{checksum} XOR \nt{random output} \\
+\\
+\newnonterminal{sequence number}
+1 byte \\
+In login mode, this is always 0. \\
+In game mode, this is a monotonically increasing value that increments
+\\
+at each server garbage collection.  The server rejects all messages \\
+with old sequence numbers.  This prevents client messages from using
+stale object numbers. \\
+\\
+\newnonterminal{message type}
+\pline{1 byte}{type of message}
+\\
+\newnonterminal{data}
+\pline{$n$ bytes}{message-dependent data}
+\\
+\newnonterminal{checksum}
+\pline{2 bytes}{CRC16 of \nt{data}}
+\\
+\newnonterminal{random output}
+\pline{2 bytes}{}
+This is a pseudo-random number generated for each message from the \\
+client to the server.  The server and client each step their \\
+generators in sync, and the server rejects any message whose \\
+\nt{random output} field doesn't match.  This prevents \\
+malicious users from replaying messages. \\
+\\
+\end{protocol}
+
+Each message below is described by its message type, per-message data,
+and a brief description of what the message is used for.
+
+\subsection{Login mode protocol}
+
+Login protocol message types are constants that begin with AP.
+
+\begin{protocol}
+{\bf Messages from the client to the server:} \\
+
+\msg{AP\_LOGIN} \nt{version} \nt{sysinfo} \nt{username}
+\nt{password} \\
+Player wants to log on. \\
+\\
+\newnonterminal{version}
+\pline{1 byte}{high byte of version number}
+\pline{1 byte}{low byte of version number}
+\\
+\newnonterminal{sysinfo}
+\pline{4 bytes}{operating system identifier}
+\pline{4 bytes}{operating system major version}
+\pline{4 bytes}{operating system minor version}
+\pline{4 bytes}{amount of physical memory on system}
+\pline{4 bytes}{processor identifier}
+\pline{2 bytes}{width of screen in pixels}
+\pline{2 bytes}{height of screen in pixels}
+\pline{12 bytes}{reserved (set to 0 for upward compatability)}
+
+\msg{AP\_REQ\_GAME} \nt{download time} \\
+Player wants to enter the game. \\
+\\
+\pline{\nt{download time}}{\nt{file time} for last
+downloaded file}
+
+\msg{AP\_REQ\_ADMIN} \\
+Player wants to go into administrator mode. \\
+
+\msg{AP\_REQ\_MENU} \\
+Requests main menu info (obsolete, but still used trivially). \\
+
+\msg{AP\_RESYNC} \\
+Resynchronize; a protocol error has occurred. \\
+
+\msg{AP\_PING} \\
+Client is active (sent during downloads to prevent timeouts). \\
+\\
+
+{\bf Messages from the server to the client:} \\
+
+\msg{AP\_GETLOGIN} \\
+Prompt user for login information. \\
+
+\msg{AP\_LOGINOK} \nt{account type} \\
+Login accepted. \\ 
+\newnonterminal{account type}
+\pline{1 byte}{type of account; normal user = 0, admin = 1, guest = 2}
+
+\msg{AP\_LOGINFAILED} \\
+Login rejected. \\
+
+\msg{AP\_GAME} \\
+Go into client's game state. \\
+
+\msg{AP\_ADMIN} \\
+Go into client's administrator mode. \\
+
+\msg{AP\_GETCHOICE} \nt{seed1} \nt{seed2} \nt{seed3} \nt{seed4} \nt{seed5} \\
+Display main menu (obsolete); used to initialize random number
+generators. \\
+\newnonterminal{seed}
+\pline{4 bytes}{random number seed}
+
+\msg{AP\_MESSAGE} \nt{string} \nt{action} \\
+Display error message. \\
+\newnonterminal{action}
+\pline{1 byte}{what to do after displaying message}
+\plineindent{0}{continue normally}
+\plineindent{1}{log off}
+
+\msg{AP\_ACCOUNTUSED} \\
+Account is already in use. \\
+
+\msg{AP\_TOOMANYLOGINS} \\
+Too many login attempts. \\
+
+\msg{AP\_TIMEOUT} \\
+Login timed out. \\
+
+\msg{AP\_CREDITS} \nt{number} \\
+User has given number of credits (obsolete). \\
+
+\msg{AP\_DOWNLOAD} \nt{number of files} \nt{machine} \nt{path}
+\nt{file}* \\
+Begin a file download. \\
+\newnonterminal{number of files}
+\pline{2 bytes}{}
+\\
+\newnonterminal{machine}
+\pline{\nt{string}}{name of machine to ftp files from}
+\\
+\newnonterminal{path}
+\pline{\nt{string}}{pathname where files reside on
+\nt{machine}}
+\\
+\newnonterminal{file}
+\pline{4 bytes}{file time}
+\pline{4 bytes}{\nt{file flags}}
+\pline{\nt{string}}{filename}
+\\
+\newnonterminal{file flags}
+\pline{1 byte}{what to do with the file}
+\\
+bits 0-1:    what to do with file (``command'') \\
+\plineindent{0}{ftp file}
+\plineindent{1}{delete file (machine, path, file time ignored)}
+bits 2-4:    local location of file (``location'') \\
+\plineindent{0}{resource directory}
+\plineindent{1}{client directory}
+\plineindent{2}{Windows directory}
+\plineindent{3}{Windows system directory}
+\plineindent{4}{help subdirectory}
+\plineindent{5}{mail subdirectory}
+\plineindent{6}{client directory (reserved to identify advertisement files)}
+bit 5: \\
+\plineindent{1}{if file applies to guest accounts}
+\\
+The files must appear in increasing file time order. \\
+
+\msg{AP\_NOCREDITS} \\
+User is out of credits (obsolete). \\
+
+\msg{AP\_RESYNC} \\
+Resynchronize; a protocol error has occurred. \\
+
+\msg{AP\_DELETERSC} \nt{strings} \\
+Delete given resource files. \\
+
+\msg{AP\_GETCLIENT} \nt{ftp string} \nt{fname string} \\
+New version of client needed. \\
+\\
+\newnonterminal{ftp string}
+\pline{\nt{string}}{name of ftp server to connect to}
+\\
+\newnonterminal{fname string}
+\pline{\nt{string}}{name of filename to retrieve}
+
+\msg{AP\_GUEST} \nt{status} \nt{min range} \nt{max range} \\
+Guest trying to log in. \\
+\\
+\newnonterminal{status}
+\pline{1 byte}{0 if it's OK to log in here; 1 if not}
+\\
+\newnonterminal{min range}
+\pline{4 bytes}{low end of range of available server numbers}
+\\
+\newnonterminal{max range}
+\pline{4 bytes}{high end of range of available server numbers}
+\\
+\newnonterminal{strings}
+\pline{2 bytes}{number of strings}
+\nt{string}$*$ \\
+\\
+\newnonterminal{string}
+\pline{2 bytes}{length of string (= $n$)}
+\pline{$n$ bytes}{string itself (NOT null terminated)}
+\\
+\newnonterminal{number}
+\pline{4 bytes}{}
+\\
+\newnonterminal{time}
+\pline{4 bytes}{UNIX time (number of seconds since 12:00 am, Jan 1 1970)}
+
+\end{protocol}
+
+\subsection{Game mode protocol}
+
+Login protocol message types are constants that begin with BP.
+
+\begin{protocol}
+{\bf Messages from the client to the server:} \\
+
+\msg{BP\_RESYNC} \\
+Resynchronize; a protocol error has occurred. \\
+
+\msg{BP\_PING} \\
+Client is active (used to prevent timeouts). \\
+
+\msg{BP\_LOGOFF} \\
+Logoff. \\
+
+\msg{BP\_REQ\_QUIT} \\
+Player wants to quit game. \\
+
+\msg{BP\_SEND\_ROOM\_CONTENTS} \\
+Send room contents. \\
+
+\msg{BP\_SEND\_PLAYER} \\
+Send player's location and other information. \\
+
+\msg{BP\_SEND\_STAT\_GROUPS} \\
+Send info on all statistic groups. \\
+
+\msg{BP\_SEND\_STATS} \nt{group} \\
+Send given group of game statistics. \\
+
+\msg{BP\_SEND\_PLAYERS} \\
+Send list of players currently logged on. \\
+
+\msg{BP\_SEND\_CHARACTERS} \\
+Send list of characters to choose from. \\
+
+\msg{BP\_SEND\_SPELLS} \\
+Send list of available spells. \\
+
+\msg{BP\_USE\_CHARACTER} \nt{object} \\
+Player has selected character to use in game. \\
+
+\msg{BP\_REQ\_ADMIN} \nt{string} \\
+Admin command. \\
+
+\msg{BP\_REQ\_DM} \nt{type} \nt{string} \\
+DM command. \\
+\newnonterminal{type}
+\pline{1 byte}{command type}
+\plineindent{1}{go to room (string = room id constant or object id)}
+\plineindent{2}{go to player (string = object id)}
+\plineindent{3}{get player (string = object id)}
+
+\msg{BP\_SAY\_BLOCKED} \nt{sender id} \\
+Player is blocking message sent to him (sent in reply to \nt{BP\_SAID}). \\
+\newnonterminal{sender id}
+\pline{\nonterminal{object}}{object ID of message's original sender}
+
+\msg{BP\_SEND\_ENCHANTMENTS} \nt{enchant type} \\
+Send enchantment information. \\
+
+\msg{BP\_CHANGE\_PASSWORD} \nt{old password} \nt{new password} \\
+Change password. \\
+\newnonterminal{old password}
+\pline{string}{old password}
+\\
+\newnonterminal{new password}
+\pline{string}{new password}
+
+\msg{BP\_AD\_SELECTED} \nt{num} \\
+Player viewed an advertisement (used to collect marketing data). \\
+\newnonterminal{num}
+\pline{1 byte}{advertisement number, 1 = first one}
+
+\msg{BP\_REQ\_MOVE} \nt{coords} \nt{speed} \nt{room id} \\
+Move player. \\
+\newnonterminal{speed}
+\pline{1 byte}{number of server squares per ten seconds}
+\newnonterminal{room id}
+\pline{\nt{object}}{object id of player's currentroom}
+
+\msg{BP\_REQ\_TURN} \nt{object} \nt{angle} \\
+Player turned object to given angle. \\
+
+\msg{BP\_REQ\_INVENTORY} \\
+Send player's inventory and list of objects in use. \\
+
+\msg{BP\_SEND\_OBJECT\_CONTENTS} \nt{object} \\
+Look inside given object. \\
+
+\msg{BP\_REQ\_LOOK} \nt{object} \\
+Examine given object. \\
+
+\msg{BP\_REQ\_USE} \nt{object} \\
+Use given object. \\
+
+\msg{BP\_REQ\_UNUSE} \nt{object} \\
+Stop using given object. \\
+
+\msg{BP\_REQ\_ATTACK} \nt{attack info} \nt{object} \\
+Attack given object. \\
+\newnonterminal{attack info}
+\pline{1 byte}{Reserved; always 1.}
+
+\msg{BP\_SAY\_TO} \nt{say type} \nt{string} \\
+Say something. \\
+
+\msg{BP\_SAY\_GROUP} \nt{object list} \nt{string} \\
+Say to arbitrary group of people. \\
+
+\msg{BP\_REQ\_GET} \nt{object} \\
+Get given object. \\
+
+\msg{BP\_REQ\_DROP} \nt{object} \\
+Drop given object. \\
+
+\msg{BP\_REQ\_PUT} \nt{object1} \nt{object2} \\
+Put \nt{object1} inside \nt{object 2}. \\
+
+\msg{BP\_REQ\_OFFER} \nt{receiver} \nt{object list} \\
+Initiate trade of given objects. \\
+\newnonterminal{receiver}
+\pline{\nt{object}}{object to receive offered objects}
+
+\msg{BP\_CANCEL\_OFFER} \\
+Cancel current trade offer. \\
+
+\msg{BP\_REQ\_COUNTEROFFER} \nt{object list} \\
+Respond to an offer with a list of objects to exchange. \\
+
+\msg{BP\_ACCEPT\_OFFER} \\
+Accept offer. \\
+
+\msg{BP\_REQ\_GO} \\
+Try to enter a door. \\
+
+\msg{BP\_REQ\_BUY} \nt{object} \\
+Get list of buyable items from given object. \\
+
+\msg{BP\_REQ\_BUY\_ITEMS} \nt{seller} \nt{object list} \\
+Buy given objects. \\
+\newnonterminal{seller}
+\pline{\nt{object}}{object to buy from}
+
+\msg{BP\_REQ\_APPLY} \nt{object1} \nt{object2} \\
+Use object1 on object2. \\
+
+\msg{BP\_REQ\_CAST} \nt{spell object} \nt{targets} \\
+Cast a spell. \\
+\newnonterminal{targets}
+\pline{\nt{object list}}{list of target objects}
+
+\msg{BP\_ACTION} \nt{action} \\
+Perform simple action or facial expression. \\
+\newnonterminal{action}
+\pline{1 byte}{action identifier}
+
+\msg{BP\_CHANGE\_DESCRIPTION} \nt{object} \nt{string} \\
+Change given object's description. \\
+
+\msg{BP\_REQ\_ACTIVATE} \nt{object} \\
+Activate given object in the room. \\
+
+\msg{BP\_USERCOMMAND} \nt{command} \nt{data} \\
+User command (generic non-standard command). \\
+\newnonterminal{command}
+\pline{1 byte}{command message type}
+\pline{\nt{data}}{per-command data; see section \ref{sec:usercmd}}
+
+\msg{BP\_REQ\_GET\_MAIL} \\
+Get all new mail messages. \\
+
+\msg{BP\_DELETE\_MAIL} \nt{index} \\
+Mail message received; server can delete mail message. \\
+\newnonterminal{index}
+\pline{4 bytes}{message's server index (sent in \nt{BP\_MAIL} message).}
+
+\msg{BP\_SEND\_MAIL} \nt{client mail message} \\
+Player wants to send a mail message. \\
+
+\msg{BP\_REQ\_LOOKUP\_NAMES} \nt{num names} \nt{string} \\
+Return object numbers for given player name strings. \\
+\newnonterminal{num names}
+\pline{2 bytes}{number of names in \nt{string}}
+\pline{\nt{string}}{contains a sequence of player names, separated by commas}
+
+\msg{BP\_REQ\_ARTICLES} \nt{newsgroup id} \\
+Get news article indexes for a newsgroup. \\
+
+\msg{BP\_REQ\_ARTICLE} \nt{newsgroup id} \nt{article index} \\
+Get news article's text. \\
+
+\msg{BP\_POST\_ARTICLE} \nt{newsgroup id} \nt{title string} \nt{body string} \\
+Post news article. \\
+\end{protocol}
+
+The following two messages are prefixed with \nt{BP\_SYSTEM}.  The
+remainder of the message, as described below, is passed to the unique
+system object on the server.
+
+\begin{protocol}
+\msg{BP\_SEND\_CHARINFO} \\
+Send character characteristics and abilities. \\
+
+\msg{BP\_NEW\_CHARINFO} \nt{object} \nt{name string} \nt{description string} \nt{new charinfo} \\
+Character's new information.
+\end{protocol}
+One value is sent for each item in the server's \nt{BP\_CHARINFO}
+message.  If the item was a multiple-choice, then the value is the
+index of the chosen item.  If the item was a number, then the value is
+the chosen value of the number.
+
+\begin{protocol}
+
+{\bf Messages from the server to the client:} \\
+\msg{BP\_RESYNC} \\
+Resynchronize; a protocol error has occurred. \\
+
+\msg{BP\_ECHO\_PING} \\
+Reply to \nt{BP\_PING}. \\
+
+\msg{BP\_SYS\_MESSAGE} \nt{string} \\
+Display system text message. \\
+
+\msg{BP\_ROOM\_CONTENTS} \nt{room} \nt{object location list} \\ 
+Contents of current room. \\
+
+\msg{BP\_OBJECT\_CONTENTS} \nt{object} \nt{object contents list} \\
+Contents of given object. \\
+
+\msg{BP\_QUIT} \\
+Quit game. \\
+
+\msg{BP\_WAIT} \\
+Don't allow player input until a \nt{BP\_UNWAIT} is received. \\
+
+\msg{BP\_UNWAIT} \\
+Allow player input again. \\
+
+\msg{BP\_PLAYERS} \nt{player info list} \\
+List of players currently logged on. \\
+
+\msg{BP\_PLAYER\_ADD} \nt{player info} \\
+New player has logged on. \\
+
+\msg{BP\_PLAYER\_REMOVE} \nt{object} \\
+Player has logged off. \\
+
+\msg{BP\_CHARACTERS} \nt{character list} \nt{motd} \nt{ad info} \\
+List of characters player should select from. \\
+\newnonterminal{motd}
+\pline{string}{message of the day}
+\\
+\newnonterminal{ad info}
+\pline{1 byte}{number of ads}
+\pline{\nt{ad}$*$}{}
+\\
+\newnonterminal{ad}
+\pline{\nt{string}}{filename for ad graphic}
+\pline{\nt{string}}{URL associated with ad}
+
+\msg{BP\_SPELLS} \nt{num spells} \nt{spell}$*$ \\
+List of spells available to player. \\
+\newnonterminal{numspells}
+\pline{2 bytes}{number of spells in next field}
+
+\msg{BP\_SPELL\_ADD} \nt{spell} \\
+Add spell. \\
+
+\msg{BP\_SPELL\_REMOVE} \nt{object} \\
+Remove spell. \\
+
+\msg{BP\_CHARINFO} \nt{charinfo list} \\
+Character creation information. \\
+
+\msg{BP\_LOAD\_MODULE} \nt{DLL} \\
+Load DLL. \\
+
+\msg{BP\_UNLOAD\_MODULE} \nt{DLL} \\
+Unload DLL. \\
+
+\msg{BP\_ADMIN} \nt{string} \\
+Result of previous admin command. \\
+
+\msg{BP\_CHANGE\_RESOURCE} \nt{resource} \nt{string} \\
+Change resource's value, or add if not already present. \\
+
+\msg{BP\_CHARINFO\_OK} \\
+Character creation info is valid. \\
+
+\msg{BP\_CHARINFO\_NOT\_OK} \\
+Character creation info is invalid. \\
+
+\msg{BP\_PASSWORD\_OK} \\
+Password changed. \\
+
+\msg{BP\_PASSWORD\_NOT\_OK} \\
+Password not changed; old password doesn't match. \\
+
+
+\msg{BP\_INVENTORY\_ADD} \nt{object desc} \\
+Add given object to inventory. \\
+
+\msg{BP\_INVENTORY\_REMOVE} \nt{object} \\
+Remove given object from inventory. \\
+
+\msg{BP\_CREATE} \nt{object info} \\
+Create object. \\
+
+\msg{BP\_REMOVE} \nt{object} \\
+Remove object. \\
+
+\msg{BP\_MOVE} \nt{object} \nt{coords} \nt{speed} \\
+Move object. \\
+\newnonterminal{speed}
+\pline{1 byte}{number of server squares per ten seconds}
+A value of 0 means teleport the object instantaneously. \\
+
+\msg{BP\_TURN} \nt{object} \nt{angle} \\
+Turn object to given angle. \\
+
+\msg{BP\_USE} \nt{object} \\
+Display given object as in use. \\
+
+\msg{BP\_UNUSE} \nt{object} \\
+Stop displaying given object as in use. \\
+
+\msg{BP\_CHANGE} \nt{object desc} \nt{animation} \nt{overlays} \\
+Change object. \\
+\pline{\nt{animation}}{how to animate object when it moves}
+\pline{\nt{overlays}}{overlays for object when it moves}
+
+\msg{BP\_LOOK} \nt{object desc} \nt{flags} \nt{resource} \nt{printf-param}$*$ \\
+Display object's description. \\
+\newnonterminal{flags}
+\pline{1 byte}{bit flags for object description}
+\plineindent{bit 0}{1 if player can set description of object}
+
+\msg{BP\_MESSAGE} \nt{source} \nt{resource} \nt{printf-param}$*$ \\
+Display text message. \\
+\newnonterminal{source}
+\pline{1 byte}{source of message}
+\plineindent{0}{from system}
+\plineindent{1}{from another player}
+
+\msg{BP\_SAID} \nt{source obj} \nt{source name} \nt{say type} \nt{resource} \nt{printf-param}$*$ \\
+Message from another player. \\
+\newnonterminal{source obj}
+\pline{\nt{object}}{source object of message}
+\\
+\newnonterminal{source name}
+\pline{\nt{resource}}{name resource of source object}
+
+\msg{BP\_EFFECT} \nt{effect num} \nt{effect-dependent data} \\
+Perform special effect. \\
+\newnonterminal{effect num} 
+\pline{2 bytes}{effect to perform}
+\plineindent{effect\_invert}{}
+\plineindent{4 bytes}{number of milliseconds to keep screen colors inverted }
+\plineindent{effect\_shake}{}
+\plineindent{4 bytes}{number of milliseconds to shake player's view}
+\plineindent{effect\_paralyze}{prevent player from moving}
+\plineindent{effect\_release}{allow player to move}
+\plineindent{effect\_blind}{make player blind}
+\plineindent{effect\_see}{remove blindness}
+
+
+\msg{BP\_PLAYER} \nt{player object} \nt{icon resource} \nt{name resource} \\
+\nt{location} \nt{lighting} \nt{background} \nt{wading} \\
+Player's information. \\
+\newnonterminal{location}
+\pline{4 bytes}{current room id number}
+\pline{4 bytes}{current room resource number}
+\pline{4 bytes}{current room name resource id number}
+\pline{4 bytes}{room security check (number in room file)}
+\\
+\newnonterminal{lighting} 
+\pline{\nt{light}}{ambient light level}
+\pline{\nt{light}}{player's light level}
+\\
+\newnonterminal{background}
+\pline{\nt{resource}}{background bitmap for room}
+\\
+\newnonterminal{wading}
+\pline{\nt{resource}}{sound for wading/splashing in room}
+
+\msg{BP\_INVENTORY} \nt{object contents list} \\
+Player's inventory. \\
+
+\msg{BP\_USE\_LIST} \nt{object list} \\
+List of objects player is using. \\
+
+\msg{BP\_STAT\_GROUPS} \nt{num groups} \nt{group info}$*$ \\
+List of stat groups. \\
+\newnonterminal{num groups}
+\pline{1 byte}{number of \nt{group info}s to follow}
+\\
+\newnonterminal{group info}
+\pline{\nt{resource}}{resource of stat group name}
+
+\msg{BP\_STAT\_GROUP} \nt{group} \nt{num stats} \nt{stat}$*$ \\
+Group of game statistics. \\
+\newnonterminal{num stats}
+\pline{1 byte}{number of \nt{stat}s to follow}
+All stats in a group must be of the same type (see \nt{stat}). \\
+
+\msg{BP\_STAT} \nt{group} \nt{stat} \\
+Update given game statistic. \\
+
+\msg{BP\_OFFER} \nt{sender} \nt{object contents list} \\
+Player received an offer. \\
+\newnonterminal{sender}
+\pline{\nt{object desc}}{object which made offer}
+
+\msg{BP\_OFFERED} \nt{object contents list} \\
+Player made an offer; this is list of offered items. \\
+
+\msg{BP\_OFFER\_CANCELED} \\
+Current offer was canceled. \\
+
+\msg{BP\_COUNTEROFFER} \nt{object contents list} \\
+Counteroffer was made. \\
+
+\msg{BP\_COUNTEROFFERED} \nt{object contents list} \\
+Player made a counteroffer; this is list of offered items. \\
+
+\msg{BP\_BUY\_LIST} \nt{object desc} \nt{server buy list} \\
+Items available to buy from given object. \\
+
+\msg{BP\_PLAY\_WAVE} \nt{resource} \nt{object} \nt{sound flags} \\
+Play wave file originating from given object. \\
+If object = 0, should originate from player. \\
+\newnonterminal{sound flags}
+\pline{1 byte}{change the way the sound is played}
+\plineindent{bit 0}{1 if sound should repeat while player is in current room}
+
+\msg{BP\_PLAY\_MUSIC} \nt{resource} \\
+Play room music. \\
+
+\msg{BP\_LIGHT\_AMBIENT} \nt{light} \\
+Set ambient light level. \\
+
+\msg{BP\_LIGHT\_PLAYER} \nt{light} \\
+Set light level at player. \\
+
+\msg{BP\_BACKGROUND} \nt{resource} \\
+Set background bitmap in room. \\
+
+\msg{BP\_SHOOT} \nt{icon resource} \nt{animation} \nt{source object} \\
+\nt{destination object} \nt{speed} \\
+Shoot; move bitmap continuously from source to destination. \\
+\newnonterminal{speed}
+\pline{1 byte}{number of server squares per second}
+
+\msg{BP\_PLAYER\_OVERLAY} \nt{hotspot} \nt{object desc} \\
+Add or change player overlay (bitmap drawn over graphics window). \\
+\\
+The object id in \nt{object desc} identifies the overlay, \\
+e.g. 1 = left hand, etc. It can be in the range 1 .. NUM\_PLAYER\_OVERLAYS. \\
+\\
+\newnonterminal{hotspot}
+\pline{1 byte}{Location to place player overlay}
+\plineindent{0}{Remove overlay.}
+\plineindent{hotspot\_nw}{upper left corner of graphics window}
+\plineindent{hotspot\_n}{centered horizontally on middle of top side of graphics window}
+\plineindent{hotspot\_ne}{upper right corner of graphics window}
+\plineindent{hotspot\_e}{centered vertically on middle of right side of graphics window}
+\plineindent{hotspot\_se}{lower right corner of graphics window}
+\plineindent{hotspot\_s}{centered horizontally on middle of bottom side of graphics window}
+\plineindent{hotspot\_sw}{lower left corner of graphics window}
+\plineindent{hotspot\_w}{centered vertically on middle of left side of graphics window}
+\plineindent{hotspot\_center}{centered on graphics window}
+
+\msg{BP\_SECTOR\_MOVE} \nt{type} \nt{sector id} \nt{height} \nt{speed} \\
+Raise or lower sector. \\
+\newnonterminal{type}
+\pline{1 byte}{animation type (ANIMATE\_FLOOR\_LIFT or ANIMATE\_CEILING\_LIFT).}
+\\
+\newnonterminal{height}
+\pline{2 bytes}{final height of sector (1 server square = 64)}
+\\
+\newnonterminal{speed}
+\pline{1 byte}{height units per second to move sector (0 = infinite speed)}
+
+\msg{BP\_WALL\_ANIMATE} \nt{wall id} \nt{animation} \nt{wall effect} \\
+Animate wall texture. \\
+\newnonterminal{wall id}
+\pline{2 bytes}{wall to animate}
+\\
+\newnonterminal{wall effect}
+\pline{1 byte}{what to do to wall after animation is finished}
+\plineindent{0}{do nothing}
+\plineindent{1}{make wall passable}
+\plineindent{2}{make wall impassable}
+\plineindent{3}{make normal wall passable and invisible}
+
+\msg{BP\_SECTOR\_ANIMATE} \nt{sector id} \nt{animation} \nt{sector effect} \\
+Animate sector. \\
+\newnonterminal{sector effect}
+\pline{1 byte}{reserved; must be 0}
+
+\msg{BP\_CHANGE\_TEXTURE} \nt{id} \nt{texture} \nt{flags} \\
+Change texture. \\
+\newnonterminal{id}
+\pline{2 bytes}{sector or wall to change}
+\\
+\newnonterminal{texture}
+\pline{2 bytes}{new texture number}
+\\
+\newnonterminal{flags}
+\pline{1 byte}{which elements to change}
+\plineindent{bit 0}{1 to change above wall texture}
+\plineindent{bit 1}{1 to change normal wall texture}
+\plineindent{bit 2}{1 to change below wall texture}
+\plineindent{bit 3}{1 to change floor texture}
+\plineindent{bit 4}{1 to change ceiling texture}
+
+\msg{BP\_SECTOR\_LIGHT} \nt{sector id} \nt{type} \\
+Change sector lighting. \\
+\newnonterminal{type}
+\pline{1 byte}{type of lighting change}
+\plineindent{1}{turn flickering on}
+\plineindent{2}{turn flickering off}
+
+\msg{BP\_ADD\_ENCHANTMENT} \nt{enchant type} \nt{object desc} \\
+Add display enchantment. \\
+
+\msg{BP\_REMOVE\_ENCHANTMENT} \nt{enchant type} \nt{object} \\
+Remove display enchantment. \\
+
+\msg{BP\_ADD\_BG\_OVERLAY} \nt{bg overlay} \\
+Add background overlay. \\
+
+\msg{BP\_REMOVE\_BG\_OVERLAY} \nt{object} \\
+Remove background overlay. \\
+
+\msg{BP\_CHANGE\_BG\_OVERLAY} \nt{bg overlay} \\
+Change background overlay. \\
+
+\msg{BP\_LIGHT\_SHADING} \nt{light} \nt{angle} \nt{y coord} \\
+Set directional lighting parameters. \\
+\pline{\nt{light}}{directional light level}
+\pline{\nt{angle}}{angle in xy plane of light source}
+\newnonterminal{y coord}
+\pline{2 bytes}{y coordinate of light source (in pixels; 0 = on horizon, positive = up)}
+
+\msg{BP\_MAIL} \nt{server mail message} \\
+Contents of next mail message. \\
+If the number of recipients is 0, there is no next mail message. \\
+
+\msg{BP\_LOOKUP\_NAMES} \nt{num objects} \nt{object}$*$ \\
+Return object numbers from a \nt{BP\_REQ\_LOOKUP\_NAMES} request. \\
+\newnonterminal{num objects}
+\pline{2 bytes}{number of \nt{object}s}
+If an object number is 0, the lookup failed for that name. \\
+
+\msg{BP\_LOOK\_NEWSGROUP} \nt{newsgroup id} \nt{permission} \nt{object desc} \\
+\nt{resource} \nt{printf-param}$*$ \\
+Description of newsgroup. \\
+\newnonterminal{permission}
+\pline{1 byte}{Player's permissions with this newsgroup}
+\plineindent{bit 0}{1 if player can read group}
+\plineindent{bit 1}{1 if player can post to group}
+
+\msg{BP\_ARTICLES} \nt{newsgroup id} \nt{part} \nt{num articles} \nt{article header}$*$ \\
+List of newsgroup's articles. \\
+\newnonterminal{num articles}
+\pline{2 bytes}{number of \nt{article header}s}
+
+\msg{BP\_ARTICLE} \nt{string} \\
+Newsgroup article contents. \\
+\\
+{\bf Primitives:} \\
+\\
+\newnonterminal{newsgroup id}
+\pline{2 bytes}{unique identifier of newsgroup}
+\\
+\newnonterminal{article header}
+\pline{\nt{article index}}{index number of article}
+\pline{\nt{time}}{time article was posted}
+\pline{\nt{string}}{name of poster}
+\pline{\nt{string}}{title string, limited to 52 bytes including length}
+\\
+\newnonterminal{article index}
+\pline{4 bytes}{index number of article}
+\\
+\newnonterminal{time} 
+\pline{4 bytes}{number of seconds since midnight, January 1, 1996}
+\\
+\newnonterminal{character list}
+\pline{2 bytes}{number of characters in list}
+\pline{\nt{char desc}$*$}{descriptions of characters}
+\\
+\newnonterminal{char desc}
+\pline{4 bytes}{object id}
+\pline{\nt{string}}{character's name}
+\pline{1 byte}{extra info}
+\plineindent{0}{character has been in the game before}
+\plineindent{1}{character is new}
+\\
+\newnonterminal{charinfo list}
+\nonterminal{face info} \\
+\nonterminal{spell info} \\ 
+\nonterminal{skill info} \\
+\\
+\newnonterminal{face info} 
+\pline{\nt{translations}}{allowed hair palette translations}
+\pline{\nt{translations}}{allowed face palette translations}
+\pline{\nt{hair info}}{male hair choices}
+\pline{\nt{color info}}{male face choices}
+\pline{\nt{hair info}}{female hair choices}
+\pline{\nt{color info}}{female face choices}
+\\
+\newnonterminal{translations}  
+\pline{1 byte}{number of palette translations}
+\pline{1 byte$*$}{each palette translation}
+\\
+\newnonterminal{hair info} 
+\pline{4 bytes}{number of hair choices}
+\pline{\nt{resource}$*$}{icon resources of hair choices}
+\\
+\newnonterminal{color info} 
+\pline{\nt{resource}}{icon resource of head}
+\pline{4 bytes}{number of eye choices}
+\pline{\nt{resource}$*$}{icon resources of eye choices}
+\pline{4 bytes}{number of nose choices}
+\pline{\nt{resource}$*$}{icon resources of nose choices}
+\pline{4 bytes}{number of mouth choices}
+\pline{\nt{resource}$*$}{icon resources of mouth choices}
+\\
+\newnonterminal{spell info} 
+\pline{4 bytes}{number of spells}
+\pline{\nt{spell info one}$*$}{}
+\\
+\newnonterminal{spell info one} 
+\pline{4 bytes}{spell ID}
+\pline{\nt{resource}}{spell's name resource}
+\pline{\nt{resource}}{spell's description resource}
+\pline{4 bytes}{cost of selecting spell}
+\\
+\newnonterminal{skill info} 
+\pline{4 bytes}{number of skills}
+\pline{\nt{skill info one}$*$}{}
+\\
+\newnonterminal{skill info one} 
+\pline{4 bytes}{skill ID}
+\pline{\nt{resource}}{skill's name resource}
+\pline{\nt{resource}}{skill's description resource}
+\pline{4 bytes}{cost of selecting skill}
+\\	
+\newnonterminal{new charinfo} 
+\pline{1 byte}{gender, 1 = male, 2 = female}
+\pline{2 bytes}{number of face parts = 5}
+\pline{\nt{resource}}{head icon resource}
+\pline{\nt{resource}}{hair icon resource}
+\pline{\nt{resource}}{eye icon resource}
+\pline{\nt{resource}}{nose icon resource}
+\pline{\nt{resource}}{mouth icon resource}
+\pline{1 byte}{selected hair palette translation}
+\pline{1 byte}{selected face palette translation}
+\pline{2 bytes}{number of stats = 6}
+\pline{4 bytes}{might value}
+\pline{4 bytes}{intellect value}
+\pline{4 bytes}{stamina value}
+\pline{4 bytes}{mysticism value}
+\pline{4 bytes}{agility value}
+\pline{4 bytes}{aim value}
+\pline{2 bytes}{number of spells chosen}
+\pline{4 bytes$*$}{spell ID}
+\pline{2 bytes}{number of skills chosen}
+\pline{4 bytes$*$}{skill ID}
+\\
+\newnonterminal{server mail message}  
+\pline{4 bytes}{message's server index}
+\pline{\nt{string}}{sender's name}
+\pline{\nt{time}}{time message sent}
+\pline{2 bytes}{number of recipients}
+\pline{\nt{string}$*$}{recipients' names}
+\pline{\nt{resource}}{format string for mail message}
+\pline{$n$ bytes}{\nt{printf-param}$*$}
+\\
+\newnonterminal{client mail message}  
+\pline{2 bytes}{number of recipients}
+\pline{\nt{object}$*$}{recipient object ids}
+\pline{\nt{string}}{body of message}
+\\
+\newnonterminal{part} 
+\pline{1 byte}{number of this part of message}
+\pline{1 byte}{highest numbered part in this message}
+This acts as a ``part x of y'' label on the message.  The parts must arrive consecutively and in order. \\
+\\
+\newnonterminal{light}  
+\pline{1 byte}{light intensity; 0 = dark, 64 = full intensity}
+\\
+\newnonterminal{spell}  
+\pline{4 bytes}{spell's object id number}
+\pline{4 bytes}{spell's icon resource id number}
+\pline{4 bytes}{spell's name resource id number}
+\pline{\nt{animation}}{}
+\pline{1 byte}{number of target objects for spell (should be 0 or 1)}
+\pline{1 byte}{school number (1 = first school)}
+\\
+\newnonterminal{server buy list} 
+\pline{2 bytes}{number of objects in list}
+\pline{\nt{server buy item}$*$}{}
+\\
+\newnonterminal{server buy item} 
+\pline{\nt{object desc}}{}
+\pline{4 bytes}{cost of item}
+\\
+\newnonterminal{object contents list}  
+\pline{2 bytes}{number of objects in list}
+\pline{\nt{object desc}$*$}{}
+\\
+\newnonterminal{object desc} 
+\pline{4 bytes}{object id number}
+\pline{4 bytes}{object icon resource id number}
+\pline{4 bytes}{object name resource id number}
+\pline{\nt{object flags}}{}
+\pline{\nt{animation}}{}
+\pline{\nt{overlays}}{overlay bitmaps for object}
+\\
+If object id number contains CLIENT\_TAG\_NUMBER (= 0x1) in its upper 4 bits, \\
+then instead the format is 
+\newnonterminal{object desc}  
+\pline{4 bytes}{object id number}
+\pline{4 bytes}{amount of object}
+\pline{4 bytes}{object icon resource id number}
+\pline{4 bytes}{object name resource id number}
+\pline{\nt{object flags}}{}
+\pline{\nt{animation}}{}
+\pline{\nt{overlays}}{overlay bitmaps for object}
+\\
+\newnonterminal{object flags}
+\pline{bits 0-1}{nomoveon type}
+\plineindent{0}{player can move onto this object}
+\plineindent{1}{player can't move onto this object}
+\plineindent{2}{object is a teleporter}
+\pline{bit 2}{1 = player}
+\pline{bit 3}{1 = legal attack target}
+\pline{bit 4}{1 = object can be picked up}
+\pline{bit 5}{1 = container}
+\pline{bit 6}{1 = object can't be examined}
+\pline{bit 9}{1 = legal offer target}
+\pline{bit 10}{1 = legal buy source}
+\pline{bit 11}{1 = can be activated}
+\pline{bit 12}{1 = can be applied to another object}
+\pline{bit 13}{1 = player has safety on (sent for self only)}
+\pline{bits 14-16}{\nt{player flags}}
+\pline{bits 17-21}{\nt{drawing effect flags}}
+\\
+\newnonterminal{player flags}
+\pline{0x1}{murderer}
+\pline{0x2}{outlaw}
+\pline{0x3}{DM}
+\pline{0x4}{creator}
+\\
+\newnonterminal{drawing effect flags}
+\pline{0x00}{no effects}
+\pline{0x01}{25\% translucency}
+\pline{0x02}{50\% translucency}
+\pline{0x03}{75\% translucency}
+\pline{0x04}{all black}
+\pline{0x05}{invisible}
+\\
+\newnonterminal{object location list}  
+\pline{2 bytes}{number of objects in room}
+\pline{\nt{object info}$*$}{}
+\\
+\newnonterminal{object info}  
+\pline{\nt{object desc}}{}
+\pline{\nt{coords}}{object's location in room}
+\pline{\nt{angle}}{angle object is facing}
+\pline{\nt{animation}}{how to animate object when it moves}
+\pline{\nt{overlays}}{overlays for object when it moves}
+\\
+\newnonterminal{object list}  
+\pline{2 bytes}{number of objects in list}
+\pline{\nt{object}$*$}{}
+\\
+\newnonterminal{player info list}  
+\pline{2 bytes}{number of objects in list}
+\pline{\nt{player info}$*$}{}
+\\
+\newnonterminal{player info} 
+\pline{4 bytes}{object id number}
+\pline{4 bytes}{name resource id number}
+\pline{\nt{string}}{string associated with name resource}
+\\
+\newnonterminal{overlays} 
+\pline{1 byte}{number of overlay bitmaps}
+\pline{\nt{overlay}$*$}
+\\
+\newnonterminal{overlay} 
+\pline{\nt{resource}}{icon resource of overlay bitmap}
+\pline{\nt{hotspot}}{hotspot to place overlay on (0 if none; negative to draw under object)}
+\pline{\nt{animation}}{animation for overlay}
+\\
+\newnonterminal{enchant type} 
+\pline{1 byte}{1 = player enchantment, 2 = room enchantment}
+\\
+\newnonterminal{bg overlay} 
+\pline{\nt{object}}{object id of overlay}
+\pline{\nt{resource}}{icon resource of overlay bitmap}
+\pline{\nt{resource}}{name resource of overlay bitmap}
+\pline{\nt{animation}}{animation for overlay}
+\pline{\nt{angle}}{x coordinate of overlay (angle at which to display overlay on background)}
+\pline{2 bytes}{y coordinate of overlay (in pixels; 0 = on horizon, positive = up)}
+\\
+\newnonterminal{stat}  
+\pline{1 byte}{ordinal number of stat within group (starts at 1)}
+\pline{4 bytes}{name resource id number}
+\pline{1 byte}{type of stat, 1 = numeric stat, 2 = list stat}
+\pline{\nt{number stat} or \nt{list stat}}
+\\
+\newnonterminal{number stat} 
+\pline{1 byte}{type tag for next field; must be 1}
+\pline{4 bytes}{current value of stat}
+\pline{4 bytes}{minimum value of stat}
+\pline{4 bytes}{maximum value of stat}
+\pline{4 bytes}{current maximum value of stat}
+\\
+\newnonterminal{list stat} 
+\pline{\nt{object}}{object number to examine when player examines stat}
+\pline{4 bytes}{value associated with stat (currently unused)}
+\\
+\newnonterminal{string}  
+\pline{2 bytes}{length of string}
+\pline{\nt{length} bytes}{string itself (NOT null terminated)}
+\\
+\newnonterminal{room}  
+\pline{4 bytes}{room id number}
+\\
+\newnonterminal{resource} 
+\pline{4 bytes}{resource id number}
+\\
+\newnonterminal{object}  
+\pline{4 bytes}{object id number}
+\\
+\newnonterminal{group} 	
+\pline{1 byte}{group number (for statistics)}
+\\
+\newnonterminal{coords}  
+\pline{2 bytes}{row (y position)}
+\pline{2 bytes}{column (x position)}
+\\
+\newnonterminal{angle} 
+\pline{2 bytes}{new angle 0 = east, proceeds clockwise}
+\\
+\newnonterminal{hotspot} 
+\pline{1 byte}{hotspot number for placement of overlays}
+\\
+\newnonterminal{DLL}
+\pline{\nt{resource}}{name of DLL file in client's resource directory}
+\\
+\newnonterminal{sector id}
+\pline{2 bytes}{sector to animate}
+\\
+\newnonterminal{animation} 
+\pline{1 byte}{type of animation}
+\pline{2 bytes}{bitmap group to display}
+\plineindent{animate\_none}{no animation (no extra data)}
+\plineindent{animate\_cycle}{cycle through bitmap groups}
+\plineindent{4 bytes}{milliseconds between changing groups}
+\plineindent{2 bytes}{low end of bitmap groups to cycle through}
+\plineindent{2 bytes}{high end of bitmap groups to cycle through}
+\plineindent{}{(if low = high, cycle through all groups)}
+\plineindent{animate\_once}{single-shot animation}
+\plineindent{4 bytes}{milliseconds between changing groups}
+\plineindent{2 bytes}{low end of bitmap groups to cycle through}
+\plineindent{2 bytes}{high end of bitmap groups to cycle through}
+\plineindent{2 bytes}{group to display after this animation is done}
+\plineindent{animate\_translation}{special code that indicates the object with this}
+\plineindent{}{animation info should use a palette translation}
+\plineindent{1 byte}{palette translation type}
+\plineindent{\nt{animation}}{actual animation info (can't have aniamte\_translation)}
+Bitmap group numbers start at 1. \\
+\\
+\newnonterminal{say type}
+\pline{1 byte}{How \nt{string} is said:}
+\plineindent{SAY\_NORMAL}{Say to everyone in room}
+\plineindent{SAY\_YELL}{Yelling}
+\plineindent{SAY\_EVERYONE}{Say to everyone logged on}
+\plineindent{SAY\_EMOTE}{Show string as player action}
+\plineindent{SAY\_GROUP}{Sent to a group of people}
+\plineindent{SAY\_RESOURCE}{Resource string ``said'' by an object}
+\\
+\newnonterminal{printf-param}
+\pline{4 bytes}{a resource id or integer}
+\pline{or a \nt{string}}{}
+The interpretation of the value of printf-param depends on the matching field in the format string: \\
+\\
+\pushtabs
+Field in format string 	\hspace{0.2in}\=\=Interpretation of corresponding printf-param \\
+\pline{\%d or \%i}{integer}
+\pline{\%s}{\nt{resource}}
+\pline{\%q}{\nt{string}}
+\poptabs
+
+\end{protocol}
+
+\subsection{User command protocol}
+\label{sec:usercmd}
+
+These are specific commands that apply only to the game of Meridian.
+Examples include guild commands and chess.  All user command messages
+are sent in the data field of the \nt{BP\_USERCOMMAND} game mode
+message, and all message type constants begin with UC.
+
+\begin{protocol}
+{\bf Messages from the client to the server:} \\
+
+\msg{UC\_REST} \\
+Rest character. \\
+
+\msg{UC\_STAND} \\
+Stand (stop resting). \\
+
+\msg{UC\_SUICIDE} \\
+Suicide (destroy character). \\
+
+\msg{UC\_SAFETY} \nt{state} \\
+Toggle player safety flag (disallows player attacking). \\
+\newnonterminal{state}
+\pline{1 byte}{1 = safety on, 0 = safety off}
+
+\msg{UC\_REQ\_GUILDINFO} \\
+Ask for guild information. \\
+
+\msg{UC\_INVITE} \nt{object} \\
+Invite new guild member. \\
+
+\msg{UC\_RENOUNCE} \\
+Renounce guild ties. \\
+
+\msg{UC\_ABDICATE} \nt{object} \\
+Abdicate guildmaster position to another player. \\
+
+\msg{UC\_VOTE} \nt{object} \\
+Vote for guild member. \\
+
+\msg{UC\_SET\_RANK} \nt{object} \nt{rank} \\
+Set guild member's rank. \\
+\newnonterminal{rank}
+\pline{1 byte}{Guild member's new rank.}
+
+\msg{UC\_GUILD\_CREATE} \nt{guild name} \nt{rank names} \nt{secret} \\
+Create guild. \\
+\newnonterminal{secret}
+\pline{1 byte}{1 if guild is secret, 0 otherwise}
+
+\msg{UC\_DISBAND} \\
+Disband guild. \\
+
+\msg{UC\_MAKE\_ALLIANCE} \nt{object} \\
+Declare guild as ally. \\
+
+\msg{UC\_END\_ALLIANCE} \nt{object} \\
+End alliance with guild. \\
+
+\msg{UC\_MAKE\_ENEMY} \nt{object} \\
+Declare guild as enemy. \\
+
+\msg{UC\_END\_ENEMY} \nt{object} \\
+End hostilities with guild. \\
+
+\msg{UC\_REQ\_GUILD\_LIST} \\
+Ask for list of all guilds. \\
+
+\msg{UC\_GUILD\_RENT} \nt{object} \nt{password} \\
+Try to rent given guild hall. \\
+\newnonterminal{password}
+\pline{\nt{string}}{Password for guild hall}
+
+\msg{UC\_ABANDON\_GUILD\_HALL} \\
+Abandon guild hall. \\
+
+\msg{UC\_GUILD\_PASSWORD} \nt{password} \\
+Change guild hall password. \\
+
+\msg{UC\_CHANGE\_URL} \nt{object} \nt{string} \\
+Set URL associated with object. \\
+
+\msg{UC\_BALANCE} \\
+Check bank account balance. \\
+
+\msg{UC\_DEPOSIT} \nt{amount} \\
+Deposit to bank account. \\
+\newnonterminal{amount}
+\pline{4 bytes}{amount of money to deposit}
+
+\msg{UC\_WITHDRAW} \\
+Withdraw from bank account. \\
+\newnonterminal{amount}
+\pline{4 bytes}{amount of money to withdraw}
+
+\msg{UC\_APPEAL} \nt{string} \\
+Appeal to system administrators. \\
+
+\msg{UC\_REQ\_RESCUE} \\
+Return character to safety. \\
+
+\msg{UC\_MINIGAME\_STATE} \nt{object} \nt{state} \\
+State of given minigame object (chess, etc.). \\
+\newnonterminal{state}
+\pline{\nt{string}}{encoded state of game}
+
+\msg{UC\_MINIGAME\_RESET\_PLAYERS} \nt{object} \\
+Reset players of given minigame. \\
+\\
+{\bf Messages from the server to the client:} \\
+
+\msg{UC\_GUILDINFO} \nt{guild name} \nt{password} \nt{commands} \\
+\nt{guild id} \nt{rank names} \nt{current vote} \nt{userlist} \\
+Information on player's guild. \\
+\newnonterminal{guild name}
+\pline{\nt{string}}{name of guild}
+\\
+\newnonterminal{password}
+\pline{1 byte}{0 if guild has no password, 1 if it does.}
+If the guild has a password, it follows: \\
+\pline{\nt{string}}{guild password}
+\\
+\newnonterminal{commands}
+\pline{4 bytes}{bitvector of allowed guild commands}
+\\
+\newnonterminal{guild id}
+\pline{\nt{object}}{object id of guild which player belongs to}
+\\
+\newnonterminal{rank names}
+\pline{\nt{string}}{male rank 1 name}
+\pline{\nt{string}}{female rank 1 name}
+\pline{\nt{string}}{male rank 2 name}
+\pline{\nt{string}}{female rank 2 name}
+\pline{\nt{string}}{male rank 3 name}
+\pline{\nt{string}}{female rank 3 name}
+\pline{\nt{string}}{male rank 4 name}
+\pline{\nt{string}}{female rank 4 name}
+\pline{\nt{string}}{male rank 5 name}
+\pline{\nt{string}}{female rank 5 name}
+\\
+\newnonterminal{current vote}
+\pline{\nt{object}}{guild member player is currently supporting}
+\\
+\newnonterminal{userlist}
+\pline{2 bytes}{number of players in guild}
+\pline{\nt{guild user}$*$}{}
+\\
+\newnonterminal{guild user}
+\pline{\nt{object}}{member's object id}
+\pline{\nt{string}}{member's name}
+\pline{1 byte}{member's rank (0 = lowest)}
+\pline{1 byte}{member's gender (1 = male, 2 = female)}
+
+\msg{UC\_GUILD\_ASK} \nt{cost1} \nt{cost2} \\
+Ask player to set guild creation parameters. \\
+
+\newnonterminal{cost1}
+\pline{4 bytes}{cost of buying non-secret guild}
+\\
+\newnonterminal{cost2}
+\pline{4 bytes}{cost of buying secret guild}
+
+\msg{UC\_GUILD\_LIST} \nt{guilds} \nt{allied guilds} \nt{enemy guilds}
+\\
+\nt{allies} \nt{enemies} \\
+Information on all guilds in the system. \\
+
+\newnonterminal{guilds}
+\pline{\nt{guild list}}{list of all guilds}
+\\
+\newnonterminal{allied guilds}
+\pline{\nt{guild id list}}{list of guilds that are allies of player's guild}
+\\
+\newnonterminal{enemy guilds}
+\pline{\nt{guild id list}}{list of guilds that are enemies of player's guild}
+\\
+\newnonterminal{guild list}
+\pline{2 bytes}{number of guilds}
+\pline{\nt{guild info}$*$}{}
+\\
+\newnonterminal{guild info}
+\pline{\nt{object}}{object id of guild}
+\pline{\nt{string}}{name of guild}
+\\
+\newnonterminal{allies}
+\pline{\nt{guild id list}}{guilds that consider you an ally}
+\\
+\newnonterminal{enemies}
+\pline{\nt{guild id list}}{guilds that consider you an enemy}
+\\
+\newnonterminal{guild id list}
+\pline{2 bytes}{number of guilds}
+\pline{\nt{object}$*$}{}
+
+\msg{UC\_GUILD\_HALLS} \nt{guild hall list} \\
+List of guild halls available to buy. \\
+\newnonterminal{guild hall list}
+\pline{2 bytes}{number of guild halls}
+\pline{\nt{guild hall}$*$}{}
+\\
+\newnonterminal{guild hall}
+\pline{\nt{object id}}{id of guild hall}
+\pline{\nt{resource}}{guild hall name}
+\pline{4 bytes}{cost of buying guild}
+\pline{4 bytes}{daily rent of guild}
+
+\msg{UC\_LOOK\_PLAYER} \nt{object desc} \nt{flags} \nt{resource} \\
+\nt{printf-param}$*$ \nt{resource} \nt{printf-param}$*$ \nt{web
+string} \nt{age} \\
+Display player's description. \\
+Second resource and printf-param are for player's guild
+information. \\
+\\
+\newnonterminal{web string}
+\pline{\nt{string}}{Web page address of player}
+\\
+\newnonterminal{age}
+\pline{4 bytes}{player's age in game years}
+
+\msg{UC\_SEND\_QUIT} \\
+Leave the game (asks client to send a \nt{BP\_QUIT}). \\
+
+\msg{UC\_SPELL\_SCHOOLS} \nt{num schools} \nt{school}$*$ \\
+Names of spell schools. \\
+\newnonterminal{num schools}
+\pline{1 byte}{number of spell schools}
+\\
+\newnonterminal{school}
+\pline{\nt{resource}}{name of spell school}
+
+\msg{UC\_MINIGAME\_START} \nt{object} \nt{player number} \\
+Minigame just started (used to send object number to client). \\
+
+\newnonterminal{player number}
+\pline{1 byte}{this player's ordinal number among minigame players}
+
+\msg{UC\_MINIGAME\_MOVE} \nt{object1} \nt{object2} \nt{state} \\
+Move occurred in minigame (chess, etc.). \\
+\pline{\nt{object1}}{minigame object}
+\pline{\nt{object2}}{player who made move}
+\\
+\newnonterminal{state}
+\pline{\nt{string}}{encoded state of game}
+
+\msg{UC\_MINIGAME\_PLAYER} \nt{player number} \nt{string} \\
+Sends name of a player in a minigame (chess, etc.). \\
+
+\end{protocol}
+
+\begin{verbatim}
+ * The following is the state string for the only existent minigame, Chess:
+ *
+ * Board states are communicated to the server via a string.  The encoding works
+ * as follows:
+ *
+ * Each of the first 64 bytes represents one square of the board, in right-to-left,
+ * top-down order.  The high order bit is the color of the piece, 0 = white, 1 = black.
+ * The low order 3 bits give the piece type:
+ * 1 = pawn
+ * 2 = rook
+ * 3 = knight
+ * 4 = bishop
+ * 5 = queen
+ * 6 = king
+ * 7 = empty square
+ *
+ * White starts out on the top of the board.
+ *
+ * The next byte contains:
+ * bit 0   always 1
+ * bit 1   whose turn it is; 0 = white, 1 = black
+ * bit 2   1 if white can castle on the left side
+ * bit 3   1 if white can castle on the right side
+ * bit 4   1 if black can castle on the left side
+ * bit 5   1 if black can castle on the right side
+ *
+ * The next byte contains:
+ * bit 0   always 1
+ * bit 1   1 if last move was a pawn move 2 squares forward
+ * bit 2-4 row of square which could capture pawn en passant (if bit 1 is 1)
+ * bit 5-7 column of square which could capture pawn en passant (if bit 1 is 1)
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Server email control protocol}
+
+The server can be configured to accept data via the SMTP port.  The
+body of a mail message sent this way can be used to create or delete
+user accounts.  The following mail message body creates a user account:
+
+\begin{verbatim}
+VERSION:1
+NAME:username
+PASSWORD:password
+\end{verbatim}
+
+and this message body deletes an account:
+
+\begin{verbatim}
+VERSION:1
+NAME:username
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Server billing interface protocol}
+
+The server can be configured to send TCP/IP messages to an external
+machine whenever someone logs in or out.  This was originally intended
+to work with the billing system, but it is now unused.
+
+When the server starts up, it attempts to connect to the machine
+specified in its configuration file (if any).  It then sends a STARTUP
+message over the connection, identifying itself, and waits for a
+response.  When a player logs in, the server sends a LOGIN message,
+and waits for a respose telling whether the login should be allowed.
+Finally, when a player logs out, the server sends a LOGOUT message.
+
+Each message is an ASCII string terminated by a newline, with tabs
+separating fields.
+
+\tline
+\begin{verbatim}
+STARTUP n
+\end{verbatim}
+where {\em n} is the server's number (from its configuration file).  The
+server waits to receive an identical message before allowing any
+logins.
+
+\tline
+\begin{verbatim}
+LOGIN username n
+\end{verbatim}
+means the given user is trying to login ({\em n} is again the server
+number).  The server waits to receive one of the following messages,
+indicating whether or not the user should be allowed to login:
+
+\begin{verbatim}
+LOGIN YES username n
+LOGIN NO username n
+\end{verbatim}
+\tline
+\begin{verbatim}
+LOGOUT username n
+\end{verbatim}
+means the given user has logged out.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Client module interface specification}
+
+Modules are Windows DLLs loaded by the client in response to
+\nt{BP\_LOAD\_MODULE} messages. When the client loads a module, it
+first calls its {\tt GetModuleInfo} procedure, which has the following
+prototype:
+
+\begin{verbatim}
+void WINAPI GetModuleInfo(ModuleInfo *info, ClientInfo *client_info)
+\end{verbatim}
+
+The ModuleInfo structure is filled in by the module to register its
+interest in client events.  The ClientInfo structure contains global
+state data that the module may need to use.  The structures have these
+formats:
+
+\begin{verbatim}
+typedef struct {
+   HANDLE      handle;
+   int         event_mask;   // Events for which module wants notifications
+   int         priority;     // Order in which modules called; 1 = first
+   ID          rsc;          // Resource # of filename, 0 if none
+   int         module_id;    // Unique module identifier
+} ModuleInfo;
+\end{verbatim}
+
+The {\tt handle} field is set by the client; it contains the Windows handle
+of the DLL.  Similarly, the {\tt rsc} field gives the resource string
+identifier of the DLL's filename.  All other fields are set by the module.  
+
+The {\tt event\_mask} indicates which events the module wishes to
+receive; see below.  The client adds each module to a list when the
+module is loaded.  When a module receives an event, it can choose
+whether it wishes other modules farther down the list to receive the
+event.  The {\tt priority} field specifies the order in which modules
+are added to the list; the list is kept in order of increasing {\tt
+priority} field so that a module can choose the order in which it
+receives or blocks events.
+
+The {\tt module\_id} field is an integer unique to each module, used
+for identification purposes.
+
+A module has access to the following client state:
+\begin{verbatim}
+typedef struct {
+   HWND         hMain;           // Handle of main window
+   Config      *config;
+   room_type   *current_room;
+   player_info *player;
+   HWND        *hCurrentDlg;     // Handle of active modeless dialog
+   HINSTANCE    hInst;           // Instance handle of client
+   char        *ini_file;        // Name of our private configuration file
+   list_type   *current_users;   // List of users currently in game
+   HMENU        main_menu;       // Handle of main window menu
+   int          platform;        // Operating system (from GetVersionEx)
+   Effects     *effects;         // Special effects status
+   HPALETTE     hPal;            // Main palette
+   HWND         hToolTips;       // Tooltip control
+   char        *szAppName;       // Program name
+   Bool        *map;             // True when map is being drawn
+   Bool        *first_load;      // True when the FIRST module is loaded
+   BYTE        (*light_palettes)[NUM_PALETTES][NUM_COLORS]; 
+                                 // Palettes at different light levels
+   int         *latency;         // Server latency in milliseconds
+} ClientInfo;
+\end{verbatim}
+
+When the client receives a \nt{BP\_UNLOAD\_MODULE} message, it calls
+the corresponding module's {\tt ModuleExit} procedure, without
+actually unmapping the DLL from memory.  The module should free its
+resources and then call back into the client to unmap itself.  The
+{\tt ModuleExit} procedure has the following prototype:
+\begin{verbatim}
+void WINAPI ModuleExit(void)
+\end{verbatim}
+
+\subsection{Module event types}
+
+The following is a description of all the events that modules may
+receive.  A module first registers its interest in an event by
+specifying the event's id in the {\tt event\_mask} field of its {\tt
+ModuleInfo} strucure, and then receives the event through an exported
+event handler function.  Below we list each event's id, the prototype
+of its event handler, and a description of the per-event information.
+
+An event handler returns True to allow other modules to receive the
+event, and False to prevent any further modules from receiving the event.
+
+\subsubsection{EVENT\_SERVERMSG}
+\begin{verbatim}
+Bool WINAPI EventServerMessage(char *message, long len)
+\end{verbatim}
+
+Called when a protocol message arrives from the server; {\tt len}
+gives the length of the message, which resides in {\tt message}.
+
+\subsubsection{EVENT\_KEY}
+\begin{verbatim}
+Bool WINAPI EventKey(HWND hwnd, UINT vk, BOOL fDown, 
+                     int cRepeat, UINT flags)
+\end{verbatim}
+
+{\tt hwnd} is the window that received the message; all other fields
+are as in the Windows WM\_KEYDOWN message.
+
+\subsubsection{EVENT\_USERACTION}
+\begin{verbatim}
+Bool WINAPI EventUserAction(int action, void *action_data)
+\end{verbatim}
+
+The user action {\tt action} is about to be performed.  {\tt
+action\_data} gives any action-specific data.
+
+\subsubsection{EVENT\_MOUSECLICK}
+\begin{verbatim}
+Bool WINAPI EventMouseClick(HWND hwnd, BOOL fDoubleClick, 
+                            int x, int y, UINT keyFlags)
+\end{verbatim}
+
+The player clicked a mouse button.  The parameters are the same as in
+the WM\_LBUTTONDOWN message.
+
+\subsubsection{EVENT\_FONTCHANGED}
+\begin{verbatim}
+Bool WINAPI EventFontChanged(WORD font_id, LOGFONT *font)
+\end{verbatim}
+
+The player changed the given game font to have the properties
+specified in {\tt font}.
+
+\subsubsection{EVENT\_COLORCHANGED}
+\begin{verbatim}
+Bool WINAPI EventColorChanged(WORD color_id, COLORREF color)
+\end{verbatim}
+
+The player changed the given game color to the RGB color {\tt color}.
+
+\subsubsection{EVENT\_MENUITEM}
+\begin{verbatim}
+Bool WINAPI EventMenuItem(int id)
+\end{verbatim}
+
+The player selected the given item from a menu.
+
+\subsubsection{EVENT\_MODULEMSG}
+\begin{verbatim}
+Bool WINAPI EventModuleMsg(...)
+\end{verbatim}
+
+This variable argument event type is used for modules to send events
+to each other.  A module may pass in any data it wishes as parameters.
+
+\subsubsection{EVENT\_STATECHANGED}
+\begin{verbatim}
+Bool WINAPI EventStateChanged(int old_state, int new_state)
+\end{verbatim}
+
+The client changed from the {\tt old\_state} game state to {\tt new\_state}.
+
+\subsubsection{EVENT\_WINDOWMSG}
+\begin{verbatim}
+Bool WINAPI EventWindowMsg(HWND hwnd, UINT message, WPARAM wParam,
+                           LPARAM lParam)
+\end{verbatim}
+
+The client's main window loop received the given Windows message.
+Capturing this message can have serious performance implications,
+since so many Windows messages arrive.
+
+\subsubsection{EVENT\_ANIMATE}
+\begin{verbatim}
+Bool WINAPI EventAnimate(int dt)
+\end{verbatim}
+
+The client is about to render another frame.  {\tt dt} is the number
+of milliseconds since the previous frame was rendered.
+
+\subsubsection{EVENT\_TOOLBUTTON}
+\begin{verbatim}
+Bool WINAPI EventToolbarButton(Button *b)
+\end{verbatim}
+
+The player clicked on the given toolbar button.
+
+\subsubsection{EVENT\_TEXTCOMMAND} 
+\begin{verbatim}
+Bool WINAPI EventTextCommand(char *str)
+\end{verbatim}
+
+The player entered the given text command.
+
+\subsubsection{EVENT\_RESIZE}
+\begin{verbatim}
+Bool WINAPI EventResize(int xsize, int ysize, AREA *view)
+\end{verbatim}
+
+The main window has been resized to {\tt xsize} by {\tt ysize}.  {\tt
+view} gives the position and size of the client's graphical viewport.
+
+\subsubsection{EVENT\_USERCHANGED}
+\begin{verbatim}
+Bool WINAPI EventUserChanged(void)
+\end{verbatim}
+
+Some part of the global {\tt player} structure has changed as a result
+of a server message.
+
+\subsubsection{EVENT\_REDRAW}
+\begin{verbatim}
+Bool WINAPI EventRedraw(HDC hdc)
+\end{verbatim}
+
+The main window is being entirely redrawn; {\tt hdc} gives the device
+context to use in redrawing.
+
+\subsubsection{EVENT\_DRAWITEM}
+\begin{verbatim}
+Bool WINAPI EventDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
+\end{verbatim}
+
+The client has received a WM\_DRAWITEM message with the given parameters.
+
+\subsubsection{EVENT\_RESETDATA}   
+\begin{verbatim}
+Bool WINAPI EventResetData(void)
+\end{verbatim}
+
+All of the client's game data is stale and needs to be resent by the server.
+
+\subsubsection{EVENT\_INVENTORY}   
+\begin{verbatim}
+Bool WINAPI EventInventory(int command, void *data)
+\end{verbatim}
+
+Something has occurred that affects the player's inventory.  The
+possible values are:
+
+\begin{tabular}{l|l} 
+{\tt command} & {\tt data} \\
+\hline \\
+INVENTORY\_SET     &  NULL       \\
+INVENTORY\_ADD     &  {\tt object\_node} of a new object in the inventory      \\
+INVENTORY\_REMOVE  &  id number of an object removed from the inventory          \\
+INVENTORY\_USE     &  id number of an object newly in use          \\
+INVENTORY\_UNUSE   &  id number of an object no longer in use \\
+INVENTORY\_CHANGE  &  id number of an object that changed in the inventory       \\
+INVENTORY\_USELIST &  list of {\tt object\_node}s of all objects in use          \\
+\end{tabular}
+
+\subsubsection{EVENT\_SETCURSOR}   
+\begin{verbatim}
+Bool WINAPI EventSetCursor(HCURSOR cursor)
+\end{verbatim}
+
+The client is about to set the cursor for the client window to {\tt cursor}.
+
+\subsubsection{EVENT\_NEWROOM}     
+\begin{verbatim}
+Bool WINAPI EventNewRoom(void)
+\end{verbatim}
+
+The player has entered a new room.
+
+\subsubsection{EVENT\_SETFOCUS}    
+\begin{verbatim}
+Bool WINAPI EventSetFocus(void)
+\end{verbatim}
+
+The client window received the focus.
+
+\subsubsection{EVENT\_CONFIGCHANGED}
+\begin{verbatim}
+Bool WINAPI EventConfigChanged(void)
+\end{verbatim}
+
+The player changed some configuration settings in the Preferences
+dialog box.

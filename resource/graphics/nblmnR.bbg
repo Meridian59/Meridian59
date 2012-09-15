@@ -1,0 +1,29 @@
+# Nobleman - right arm
+# groups
+# 1 standing
+# 2 waving
+# 3-4 walking
+-s 4
+16
+nr000aaa.bmp   [-14, -10] 
+nr090aaa.bmp   [-18, -8] 
+nr180aaa.bmp   [-28, -8] 
+nr270aaa.bmp   [-6, -2] 
+nr000daa.bmp   [-64, -46] 
+nr090daa.bmp   [-16, -46] 
+nr180daa.bmp   [-8, -46] 
+nr270daa.bmp   [-6, -46] 
+nr000baa.bmp   [-18, -10] 
+nr090baa.bmp   [-58, -6] 
+nr180baa.bmp   [-10, -8] 
+nr270baa.bmp   [-2, -8] 
+nr000bab.bmp   [0, 0] 
+nr090bab.bmp   [-8, -6] 
+nr180bab.bmp   [-6, -10] 
+nr270bab.bmp   [-34, -10] 
+5
+ 4      1   4   3   2
+ 4      5   8   7   6
+ 4      9  12  11  10
+ 4     13  16  15  14
+ 4      9  12  11  10

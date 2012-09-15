@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TradingPostCellar is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+  
+   room_TradingPostCellar = tpost2.roo
+   room_name_TradingPostCellar = "The Cellar Rooms"
+
+   TradingPostCellar_music = boneprst.mid
+
+   TradingPostCellar_locked_1 = "Room One is locked."
+   TradingPostCellar_locked_2 = "Room Two is locked."
+   TradingPostCellar_locked_3 = "Room Three is locked."
+
+classvars:
+
+   vrName = room_name_TradingPostCellar
+
+   viTeleport_row = 5
+   viTeleport_col = 3
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+   viPermanent_flags = ROOM_NO_COMBAT
+
+properties:
+
+   prRoom = room_TradingPostCellar
+   piRoom_num = RID_JUNGLE_TRADING_POST_CELLAR
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = TradingPostCellar_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 5, 7, ROOM_LOCKED_DOOR, TradingPostCellar_locked_1],plExits);
+      plExits = Cons([ 1, 4, ROOM_LOCKED_DOOR, TradingPostCellar_locked_2],plExits);
+      plExits = Cons([ 2, 2, ROOM_LOCKED_DOOR, TradingPostCellar_locked_3],plExits);
+
+      %% to jungle
+      plExits = Cons([ 7, 3, RID_KD4, 35, 42, ROTATE_NONE ],plExits);
+  
+      propagate;
+   }
+
+%   CreateStandardObjects()
+%   {
+%      Send(self,@NewHold,#what=Create(&),#new_row=,#new_col=,#fine_row=,#fine_col=);
+%
+%      propagate;
+%   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

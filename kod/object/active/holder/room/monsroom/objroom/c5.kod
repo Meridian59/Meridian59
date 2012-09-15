@@ -1,0 +1,95 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsC5 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsC5 = C5.roo
+   room_name_OutdoorsC5 ="West Merchant Way through Ilerian Woods"
+   OutdoorsC5_music = walk1.mid
+   waterfall_soundC5 = wfall2.wav
+
+classvars:
+
+   vrName = room_name_OutdoorsC5
+
+   viTeleport_row = 19
+   viTeleport_col = 18
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_LAKE | TERRAIN_WATERFALL | TERRAIN_ROAD
+
+   viFlag_row = 26
+   viFlag_col = 28
+
+properties:
+
+   prRoom = room_OutdoorsC5
+   prMusic = OutdoorsC5_music
+   piRoom_num = RID_C5
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 70000
+   piGen_percent = 70
+
+   piInit_count_min = 1
+   piInit_count_max = 4
+
+   piMonster_count_max = 6
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&SpiderBaby, 30], [&GiantRat, 70] ];
+      plGenerators = [ [13, 12], [17, 24], [25, 8], [25, 19], [26, 29], 
+		      [25, 39], [39, 10], [39, 23], [47, 35], [53, 24] ];
+      plLooping_sounds = [[ waterfall_soundC5, 30, 27 ]];
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+      plObject_gen = Cons([ &PurpleMushroom, GEN_INF, 3, 44, 35 ],plObject_gen);
+      plObject_gen = Cons([ &BlueMushroom, GEN_INF, 2, 46, 36 ],plObject_gen);
+      plObject_gen = Cons([ &Herbs, GEN_INF, 2, 14, 45 ],plObject_gen);
+      plObject_gen = Cons([ &Herbs, GEN_INF, 2, 38, 7 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 2, 29, 33 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 2, 30, 41 ],plObject_gen);
+      propagate;
+
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+      plExits = Cons([ 50, 35, RID_GUILDH7, 2, 9, ROTATE_NONE ],plExits);
+
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_MARION, 83, 52, ANGLE_NORTH], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_C6, 4, 6, ANGLE_SOUTH], plEdge_exits);
+      
+      plEdge_Exits = Cons([LEAVE_EAST, RID_D5, 21, 6, ROTATE_NONE, ROW_IS_LESS_THAN,23], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_D5, 33, 6, ROTATE_NONE, ROW_IS_GREATER_THAN,22], plEdge_exits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

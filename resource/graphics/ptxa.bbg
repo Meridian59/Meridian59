@@ -1,0 +1,15 @@
+# Male hair -bald
+# 1 group
+#^Applied to Hotspot: 13
+#*Groups: 1
+#* Unlabeled Group
+-s 14
+6
+pt000xaa.bmp   [-25, 6] 
+pt315xaa.bmp   [3, 12] 
+pt270xaa.bmp   [-5, 7] 
+pt180xaa.bmp   [-24, 9] 
+pt090xaa.bmp   [-26, 4] 
+pt045xaa.bmp   [-28, 9] 
+1
+ 8   1 2 3 4 4 4 5 6 

@@ -1,0 +1,83 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Arsenic is PassiveItem                   % poison that looks like healer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   arsenic_use = "You realize too late that you have made a serious mistake."
+   arsenic_cant_use_on = "You can't serve %s%s"
+
+   arsenic_name_rsc = "flask"
+   arsenic_icon_rsc = flask.bgf
+   arsenic_desc_rsc = \
+      "The pungent liquid in this bottle contains floating "
+      "bits of strange matter."
+   arsenic_gulp_sound = drkptn.wav
+
+classvars:
+   vrName = arsenic_name_rsc
+   vrIcon = arsenic_icon_rsc
+   vrDesc = arsenic_desc_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_POTION
+
+   viLossRate = 3000                    % 0.3 health points/sec
+   viDuration = 60000                   % one real minute
+
+   viBulk = 20
+   viWeight = 20
+   viValue_average = 40
+
+properties:
+
+
+messages:
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+      if IsClass(apply_on,&User)
+      {
+         return TRUE;
+      }
+      
+      Send(what,@MsgSendUser,#message_rsc=arsenic_cant_use_on, 
+	        #parm1=Send(apply_on,@GetIndef),
+	        #parm2=Send(apply_on,@GetName));
+	        
+      return FALSE;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      local oPoison;
+
+      if isClass(apply_on,&User) 
+      {
+         Send(apply_on,@MsgSendUser,#message_rsc=arsenic_use);
+         send(apply_on,@WaveSendUser,#wave_rsc=arsenic_gulp_sound);
+      }
+
+      oPoison = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+      Send(oPoison,@MakePoisoned,#who=apply_on,#lossrate=viLossRate,#duration=viDuration);
+      piHits = piHits - 1;
+      Send(self,@Delete);
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

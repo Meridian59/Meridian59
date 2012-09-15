@@ -1,0 +1,85 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsC6 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsC6 = C6.roo
+   room_name_OutdoorsC6 ="Forest of Farol"
+   OutdoorsC6_music = walk5.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsC6
+
+   viTeleport_row = 31
+   viTeleport_col = 23
+
+   viTerrain_type = TERRAIN_FOREST
+
+   viFlag_row = 20
+   viFlag_col = 11
+
+properties:
+
+   prRoom = room_OutdoorsC6
+   prMusic = OutdoorsC6_music
+   piRoom_num = RID_C6
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 110000
+   piGen_percent = 70
+
+   piInit_count_min = 3
+   piInit_count_max = 8
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Spider, 70], [&Ent, 30] ];
+
+      plGenerators = [ [5, 7], [10, 27], [14, 46], [17, 11], [22, 17], 
+		      [27, 25], [33, 30], [26, 29], [30, 47], [36, 38],
+		      [44, 27], [40, 17], [27, 13], [30, 5], [35, 8],
+		      [44, 5] ];
+      propagate;
+   }
+
+    CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 2, 17, RID_GUILDH7, 2, 21, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 17, RID_GUILDH7, 2, 21, ROTATE_NONE ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_D6, 8, 4, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_C7, 4, 34, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_C5, 55, 24, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_B6, 39, 48, ROTATE_NONE], plEdge_exits);
+
+      propagate;
+   }
+  
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

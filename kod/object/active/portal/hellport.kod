@@ -1,0 +1,176 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HellPortal is Portal
+
+constants:
+
+   include blakston.khd
+   SWITCH_DELAY_MIN = 5000
+   SWITCH_DELAY_MAX = 10000
+
+resources:
+
+   hellportal_name_rsc = "rip in space"
+   hellportal_icon_rsc = teleport.bgf
+   hellportal_desc_rsc = "Gazing through the anomaly, you can see %s."
+
+   hellportal_move_req_no = "Some force prevents you from entering the anomaly."
+
+   hellportal_tos = "the bustling bar of Familiars"
+   hellportal_marion = "the laid-back atmosphere of the Limping Toad"
+   hellportal_jasper = "the quiet Yonder Inn of Jasper"
+   hellportal_cornoth = "the lazy happenings in the Ciblo Creek Inn"
+   hellportal_barloque = "the fine Brownstone Inn in a bustling Barloque"
+
+   hellportal_kocatan = "the sturdy, island fortress of Ko'catan"
+
+classvars:
+
+   vrName = hellportal_name_rsc
+
+   viObject_flags = MOVEON_TELEPORTER | DRAWFX_TRANSLUCENT_75
+
+   viAnimationSpeed = 400
+
+properties:
+   
+   vrIcon = hellportal_icon_rsc
+   vrDesc = hellportal_desc_rsc
+
+   piDest_room = RID_TOS_INN
+
+   plPossibleLocations = $
+   ptLocations = $
+
+messages:
+
+   Constructed()
+   {
+      plPossibleLocations = [RID_TOS_INN, RID_COR_INN, RID_BAR_INN, RID_JAS_INN, RID_MAR_INN ];
+
+      % Set up the locations timer.
+      Send(self,@LocationsTimer);
+
+      propagate;
+   }
+
+   LocationsTimer()
+   {
+      ptLocations = $;
+
+      send(self,@SwapLocations);
+      ptLocations = Createtimer(self,@LocationsTimer,random(SWITCH_DELAY_MIN,SWITCH_DELAY_MAX));
+
+      return;
+   }
+
+   SwapLocations()
+   {
+      local number,chosen, rand, oRoom;
+
+      number = length(plPossibleLocations);
+
+      chosen = piDest_Room;
+      while chosen = piDest_room
+      {
+         rand = random(1,number);
+         chosen = Nth(plPossibleLocations,rand);
+      }
+
+      oRoom = send(SYS,@FindRoomByNum,#num=chosen);
+
+      % If room doesn't exist, dont' change anything.
+      if oRoom <> $
+      {
+         piDest_room = chosen;
+         piDest_row = send(oRoom,@GetTeleportRow);
+         piDest_col = send(oRoom,@GetTeleportCol);
+      }
+
+      return;
+   }
+
+   ShowDesc(who=$)
+   "Okay, if you're from Ko'catan, you can only see the island."
+   {
+      local rLocation;
+
+      if (poOwner <> $ AND IsClass(poOwner,&Underworld))
+         AND send(who,@CheckPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#flagset=2)
+      {
+         rLocation = hellportal_kocatan;
+      }
+      else
+      {
+         % Default
+         rLocation = hellportal_tos; 
+
+         if piDest_room = RID_MAR_INN
+         {
+            rLocation = hellportal_marion;
+         }
+
+         if piDest_room = RID_COR_INN
+         {
+            rLocation = hellportal_cornoth;
+         }
+
+         if piDest_room = RID_JAS_INN
+         {
+            rLocation = hellportal_jasper;
+         }
+
+         if piDest_room = RID_BAR_INN
+         {
+            rLocation = hellportal_barloque;
+         }
+      }
+
+      AddPacket(4,vrDesc,4,rLocation);
+
+      return;
+   }
+
+   TeleportSomething(what=$)
+   "Called when something walks on top of us."
+   {
+      local oRoom;
+
+      % Check for Ko'catanites.
+      if poOwner <> $ and isClass(poOwner,&Underworld)
+         AND IsClass(what,&Player)
+         AND send(what,@CheckPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#flagset=2)
+      {
+         % Allow them to head to the island.
+         send(what,@SetPlayerFlag,#flag=PFLAG2_KOCATAN_DEATH,#value=FALSE,#flagset=2);
+         oRoom = send(SYS,@FindRoomByNum,#num=RID_KOC_INN);
+         send(oRoom,@Teleport,#what=what);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptLocations <> $
+      {
+         DeleteTimer(ptLocations);
+         ptLocations = $;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,156 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PassiveWallofFire is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   PassiveWallofFire_name_rsc = "wall of fire"
+   PassiveWallofFire_icon_rsc = woflame.bgf
+   PassiveWallofFire_desc_rsc = \
+      "The wall of fire flickers dangerously, threatening to make the day "
+      "of anyone passing through a bad one."
+
+   PassiveWallofFire_Cold = \
+      "The wall of fire flickers dangerously, threatening to make the day "
+      "of anyone passing through a bad one.  However, the fire seems "
+      "strangely cool."
+
+classvars:
+
+
+   vrName = PassiveWallofFire_name_rsc
+   vrIcon = PassiveWallofFire_icon_rsc
+
+   viObject_flags = LOOK_NO | DRAWFX_TRANSLUCENT_50 | FLICKERING_YES
+   vrdesc = PassiveWallofFire_desc_rsc
+
+properties:
+
+   viIllusion = TRUE
+
+   piMaxDamage = 0
+   ptExpire = $
+   vbSummoned = TRUE
+   poCaster = $
+
+messages:
+
+   Constructor(MaxDamage=0,Duration=75,Illusionary=TRUE,Caster=$)
+   {
+      local iDuration;
+
+      viIllusion = Illusionary;
+      iDuration = Random(Duration-20,Duration+20);
+      iDuration = iDuration * 1000;
+      iDuration = bound(iDuration,30000,200000);
+
+      piMaxDamage = MaxDamage;
+      ptExpire = CreateTimer(self,@Expire,iDuration);
+
+      poCaster = Caster;
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      % At this point, the wall should have already been created.
+      %  therefore, it should be safe to delete it.
+      Post(self,@ArenaCheck);
+
+      propagate;
+   }
+
+   ShowDesc()
+   {
+      if piMaxDamage > 0
+      {
+         propagate;
+      }
+      else
+      {
+         Addpacket(4,PassiveWallofFire_Cold);
+      }
+
+      return;
+   }
+
+   ArenaCheck()
+   {
+      if Send(poOwner,@IsArena)
+         AND NOT Send(poOwner,@InPlay,#what=self,#bNonPlayerOkay=TRUE)
+      {	 
+         Post(self,@Delete);
+      }
+
+      return;
+   }
+
+   Expire()
+   {
+      ptExpire = $;
+      Send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptExpire <> $
+      {
+         DeleteTimer(ptExpire);
+         ptExpire = $;
+      }
+
+      propagate;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return IsClass(what,&Room);
+   }
+
+   NewOwner(what = $)
+   {
+      if (NOT viIllusion) AND IsClass(what,&GuildHall)
+         AND (Send(what,@InFoyer,#who=poCaster) <> Send(what,@InFoyer,#who=self))
+      {
+         Post(self,@Delete);
+      }
+
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,random(100,140), 2,1, 2,5);
+
+      return;
+   }
+
+   SendLightingInformation()
+   {
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      % 0 out of 255 intensity of light
+      AddPacket(1,0);
+      % Lightning color
+      AddPacket(2,LIGHT_RED);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

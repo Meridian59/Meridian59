@@ -1,0 +1,20 @@
+call build kcapoth.bgf
+call build kcshopk.bgf
+call build kcsmith.bgf
+call build kcguardG.bgf
+call build kcguardE.bgf
+call build kcbanker.bgf
+call build kcvault.bgf
+call build kcweapon.bgf
+call build kclangua.bgf
+call build kcbart.bgf
+call build kctailor.bgf
+call build kcinnk.bgf
+call build kcbonepr.bgf
+call build kcmerch.bgf
+call build kcbowmak.bgf
+call build kcmadsci.bgf
+call build kcrjmonk.bgf
+call build kcrjgirl.bgf
+call build kcsentry.bgf
+

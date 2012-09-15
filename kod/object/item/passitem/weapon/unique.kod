@@ -1,0 +1,189 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+UniqueWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   UniqueWeapon_name_rsc = "Dark Blade of Roq"
+   UniqueWeapon_icon_rsc = bkswd.bgf
+   UniqueWeapon_desc_rsc = \
+      "The personal blade of Roq the assassin.  This blade appears to be "
+      "identical to the black daggers Roq hands out for the Assassin game.  "
+      "But the dried blood of Duke Kalior along the blade reveals this to be "
+      "a much more potent weapon.  It almost crackles with malevolent energy."
+
+   UniqueWeapon_window_overlay_rsc = povshswd.bgf
+   UniqueWeapon_player_overlay = shswdov.bgf
+
+   UniqueWeapon_cant_vault = \
+      "Your weapon sears into your flesh, clinging to your hand as it burns."
+   UniqueWeapon_logoff = \
+      "Your weapon writhes free to seek a more blood thirsty owner."
+   
+classvars:
+   vrName = UniqueWeapon_name_rsc
+   vrIcon = UniqueWeapon_icon_rsc
+   vrDesc = UniqueWeapon_desc_rsc
+
+   % The Assassin's dagger is a low quality thrusting weapon, making it
+   %  shortsword like.
+   viWeaponType = WEAPON_TYPE_THRUST
+   viWeaponQuality = WEAPON_QUALITY_LOW
+
+   viMin_damage = 8
+   viMax_damage = 12
+
+   viProficiency_Needed = SKID_PROFICIENCY_SWORD
+
+   viValue_average = 0
+   viBulk = 35
+   viWeight = 25
+
+   viGround_group = 1
+   viInventory_group = 1
+   viBroken_group = 3
+
+   viItem_type = ITEMTYPE_WEAPON | ITEMTYPE_SPECIAL
+
+   vrWeapon_window_overlay = blackdagger_window_overlay_rsc
+   vrWeapon_overlay = blackdagger_player_overlay
+
+properties:
+
+   piAttack_type = ATCK_WEAP_NONMAGIC + ATCK_WEAP_PIERCE
+   pbNewlyCreated = 0
+
+messages:
+
+   Constructor(corpse=$)
+   {
+      pbNewlyCreated = 1;
+      Send(&UniqueWeapon,@CheckNewlyCreated);
+      pbNewlyCreated = 0;
+        
+      propagate;
+   }
+
+   GetBaseDamage(who=$,target=$)
+   {
+      return random(viMin_damage,viMax_damage);
+   }
+
+   ModifyHitRoll()
+   {
+      % Return a good bonus
+      return 20;
+   }
+
+   CheckNewlyCreated()
+   {
+      if pbNewlyCreated = 0
+      {
+         Post(self,@delete);
+         debug("Someone tried to make Multiple Unique Items.");
+      }
+
+      return;
+   }
+
+   ReqDMDelete()
+   "Item will not be deleted by DM Clear Inventory command"
+   {
+      return FALSE;
+   }
+
+   CanBeStoredInVault()   
+   {
+      Send(poOwner,@msgSenduser,#message_rsc=UniqueWeapon_cant_vault);
+
+      return FALSE;
+   }
+
+   CanBeGivenToNPC()
+   "NPCs will refuse to take this item if offered to them."
+   {
+      return FALSE;
+   }
+
+   CanWeaken()
+   "Brittle will not work on item."
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   "Swap will never yank ."
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   "Black daggers will not shatter."
+   {
+      return FALSE;
+   }
+
+   CanEnchant()
+   {
+      return FALSE;
+   }
+
+   DestroyDisposable()
+   {
+      local oRoom;
+
+      oRoom = Send(SYS,@FindRoomByNum,#num=rid_DUKE4);
+      % called every 2 minutes, so this means an average of 30 minutes.
+      if random(1,15) = 1        
+      {
+         Send(oRoom,@NewHold,#what=self,#new_row=20,#new_col=15);
+      }
+
+      return;
+   }
+
+   UserLogoff()
+   "20% chance of item dropping on log-off.  (tee-hee-hee)"
+   {
+      local iRandom;
+
+      iRandom = random(1,5);
+
+      % 20% chance to drop if you're not a DM+
+      if iRandom = 1 AND NOT IsClass(poOwner,&DM)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=UniqueWeapon_logoff);
+         Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
+              #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol),
+              #fine_row=Send(poOwner,@GetFineRow),
+              #fine_col=Send(poOwner,@GetFineCol));
+      }
+
+      propagate;
+   }
+
+   ReqNewOwner(what=$)
+   {
+      if IsClass(what,&StorageBox)
+      {
+         return FALSE;
+      }
+
+      return ((poOwner = $) OR Send(poOwner,@ReqLeaveHold,#what=self));
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,102 @@
+# male legs, skirt
+# groups
+# 1 = standing
+# 2-5 = walking
+# 6 = attacking
+# 7 = bow-shooting
+#^Applied to Hotspot: 41
+#*Groups: 24
+#* standing legs
+#* walking legs A
+#* walking legs B
+#* walking legs C
+#* walking legs D
+#* attacking legs
+#* bow-shooting legs
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+#* dancing
+-s 2
+42
+bf000gaa.bmp   [168, 134] 
+bf315gaa.bmp   [172, 134] 
+bf270gaa.bmp   [161, 134] 
+bf180gaa.bmp   [167, 134] 
+bf090gaa.bmp   [160, 134] 
+bf045gaa.bmp   [158, 134] 
+bf000gba.bmp   [168, 134] 
+bf315gba.bmp   [153, 134] 
+bf270gba.bmp   [153, 134] 
+bf180gba.bmp   [167, 134] 
+bf090gba.bmp   [131, 134] 
+bf045gba.bmp   [157, 134] 
+bf000gbb.bmp   [168, 134] 
+bf315gbb.bmp   [171, 134] 
+bf270gbb.bmp   [170, 134] 
+bf180gbb.bmp   [168, 134] 
+bf090gbb.bmp   [152, 134] 
+bf045gbb.bmp   [165, 134] 
+bf000gbc.bmp   [168, 134] 
+bf315gbc.bmp   [161, 134] 
+bf270gbc.bmp   [144, 134] 
+bf180gbc.bmp   [167, 134] 
+bf090gbc.bmp   [137, 134] 
+bf045gbc.bmp   [146, 134] 
+bf000gbd.bmp   [168, 134] 
+bf315gbd.bmp   [169, 134] 
+bf270gbd.bmp   [158, 134] 
+bf180gbd.bmp   [167, 134] 
+bf090gbd.bmp   [137, 134] 
+bf045gbd.bmp   [146, 134] 
+bf000gca.bmp   [168, 143] 
+bf315gca.bmp   [148, 146] 
+bf270gca.bmp   [141, 147] 
+bf180gca.bmp   [154, 150] 
+bf090gca.bmp   [159, 148] 
+bf045gca.bmp   [164, 145] 
+bf000gka.bmp   [158, 142] 
+bf315gka.bmp   [158, 142] 
+bf270gka.bmp   [154, 143] 
+bf180gka.bmp   [168, 143] 
+bf090gka.bmp   [157, 143] 
+bf045gka.bmp   [154, 142] 
+24
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   7 8 9 10 10 10 11 12 
+ 8   1 2 3 4 4 4 5 6  
+ 8   19 20 21 22 22 22 23 24 
+ 8   1 2 3 4 4 4 5 6  
+ 8   7 8 9 10 10 10 11 12 
+ 8   1 2 3 4 4 4 5 6  
+ 8   19 20 21 22 22 22 23 24  
+ 8   1 2 3 4 4 4 5 6 
+ 8   31 32 33 34 34 34 35 36 
+ 8   31 32 33 34 34 34 35 36 
+ 8   31 32 33 34 34 34 35 36 
+ 8   31 32 33 34 34 34 35 36 
+ 8   31 32 33 34 34 34 35 36 
+ 8   31 32 33 34 34 34 35 36 
+ 8   31 32 33 34 34 34 35 36 
+ 8   31 32 33 34 34 34 35 36 
+ 8   1 2 3 4 4 4 5 6 
+

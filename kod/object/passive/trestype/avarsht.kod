@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AvarShamanTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_AVAR_SHAMAN
+   piItem_att_chance = 8
+   piDiff_seed = 4
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &ShamanBlood, 40 ],
+                     [ &Yrxlsap, 13],
+                     [ &WebMoss, 10 ],
+                     [ &RainbowFern, 9 ],
+                     [ &KriipaClaw, 6],
+                     [ &CurePoisonPotion, 4],
+                     [ &CureDiseasePotion, 4],
+                     [ &RemoveCursePotion, 4],
+                     [ &PurifyPotion, 4],
+                     [ &UncutSeraphym, 3],
+                     [ &PolishedSeraphym, 3]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

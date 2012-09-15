@@ -1,0 +1,7 @@
+% Monster Generator KOD Generation file
+
+	plGenerators = $;
+
+	plGenerators = Cons([17,42],plGenerators);
+	plGenerators = Cons([28,42],plGenerators);
+	plGenerators = Cons([24,19],plGenerators);

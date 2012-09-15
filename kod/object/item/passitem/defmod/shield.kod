@@ -1,0 +1,232 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Shield is DefenseModifier
+
+constants:
+
+   include blakston.khd
+
+   USED = 1
+   UNUSED = 2
+   DEFENDING = 3
+
+resources:
+
+   shield_condition_exc = " shines with smooth perfection."
+   shield_condition_exc_mended = " is in great condition, but has been patched before."
+   shield_condition_good = " is marred by a deep gouge but otherwise is in fine condition."
+   shield_condition_med = " is deeply scarred from battle but still functional."
+   shield_condition_poor = " is cracked in several places and may not last much longer."
+   shield_condition_broken = " has been shattered by a forceful blow, leaving it useless."
+
+classvars:
+
+   viUse_type = ITEM_USE_HAND
+   viUse_amount = 1
+
+   vrposs_article = object_article_cap_this_rsc
+
+   vrShield_window_overlay = $
+   vrShield_overlay = $
+
+   viBroken_group = 4
+   vbShow_condition = TRUE
+   vrCondition_exc = shield_condition_exc 
+   vrCondition_exc_mended = shield_condition_exc_mended 
+   vrCondition_good = shield_condition_good 
+   vrCondition_med = shield_condition_med 
+   vrCondition_poor = shield_condition_poor 
+   vrCondition_broken = shield_condition_broken
+
+properties:
+   
+   piUsed = UNUSED
+
+   % The bonus to block afforded by the shield.
+   piBlockBonus = 0
+
+messages:
+
+   % General Combat messages:
+
+   % Called here, different shields can give different bonuses.
+   GetBlockAbility(who = $)
+   {
+      return bound(send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) + piDefense_bonus,1,120);
+   }
+
+   % Shields use the defense bonus as a bonus to block instead.
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      return defense_power;
+   }
+
+   % Shields only reduce damage if you make your block check.
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   {
+      local oBlock;
+
+      oBlock = Send(SYS,@FindSkillByNum,#num=SKID_BLOCK);
+      
+      % If shield gives a damage reduction, and if the user has block, give them a skill check
+      %  with the defense bonus as a positive modifier.
+      if (send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) > 0)
+         AND Send(oBlock,@SuccessChance,#who=who,#modifier=piDefense_bonus)
+      {
+         % We succeeded!  Propagate up and reduce damage.
+         propagate;
+      }
+      
+      return damage;
+   }
+
+   % General unsorted messages:
+
+   ReqUseSomething(what = $)
+   {
+      if isClass(what,&Shield)
+      {
+         if not send(poOwner,@TryUnuseItem,#what=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+
+   NewUsed()
+   {
+      piUsed = USED;
+
+      % do first person overlay if we have one
+      if vrShield_window_overlay <> $
+      {
+         Send(poOwner,@SetWindowOverlay,#what=self);
+      }
+
+      % do third person overlay if we have one
+      if vrShield_overlay <> $
+      {
+         Send(poOwner,@SetOverlay,#what=self);
+      }
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      piUsed = UNUSED;
+      if vrShield_window_overlay <> $
+      {
+         Send(poOwner,@RemoveWindowOverlay,#what=self);
+      }
+
+      Send(poOwner,@RemoveOverlay,#what=self);
+
+      propagate;
+   }
+
+   DefendingHit()
+   {
+      piUsed = DEFENDING;
+      if vrShield_window_overlay <> $
+      {
+         Send(poOwner,@ChangeWindowOverlay,#what=self);
+      }
+      
+      if vrShield_overlay <> $
+      {
+         piUsed = USED;
+      }
+      
+      propagate;
+   }
+
+   ReqRepair()
+   {
+      return TRUE;
+   }
+
+   % These 5 called by player, for window overlays.
+   % Shield subclasses--do NOT set a window overlay unless you either
+   %  set vrShield_window_overlay correctly or override all these message handlers.
+
+   GetWindowOverlay()
+   {
+      return vrShield_window_overlay;
+   }
+
+   GetWindowOverlayID()
+   {
+      return PWO_LEFT_HAND;
+   }
+
+   GetWindowOverlayHotspot()
+   {
+      % turns off the window overlay
+      if piUsed = UNUSED
+      {
+         return 0;
+      } 
+
+      return HS_SW;
+   }
+
+   SendWindowOverlayAnimation()
+   {
+      if piUsed = DEFENDING
+      { 
+         AddPacket(1,ANIMATE_ONCE,4,1000,2,2,2,2,2,1);
+         return;
+      }
+      
+      AddPacket(1,ANIMATE_NONE,2,1);
+      
+      return;      
+   }
+
+   SendWindowOverlayOverlays()
+   {
+      AddPacket(1,0); % no first person overlays on top of shield 
+
+      return; 
+   }
+
+   % These 3 called by player, for normal 3rd-person overlays on user.
+   % Shield subclasses--do NOT set an overlay unless you either
+   %  set vrShield_overlay correctly or override all these message handlers.
+
+   GetOverlay()
+   {
+      return vrShield_overlay;
+   }
+   
+   GetOverlayHotspot()
+   {
+      return HS_LEFT_WEAPON;
+   }
+
+   SendOverlayAnimation()
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+      
+      AddPacket(1,ANIMATE_NONE,2,2); % group 2 is the player-overlay group
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

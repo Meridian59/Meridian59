@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildPeace is GuildCommand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   guildpeace_name_rsc = "end alliance"
+   guildpeace_icon_rsc = light.bgf
+   guildpeace_desc_Rsc = "Use this to declare that an enemy guild is no longer an enemy.  Note that you will still not be allied with that guild."
+
+   peace_non_user = "%s%s is not impressed by your peaceful overtures."
+   peace_not_member = "%s%s is not a member of an enemy guild!"
+   peace_your_guild = "%s is a member of your guild!"
+
+   peace_cant_self = "You become at total peace with yourself.  Whee."
+
+classvars:
+
+   vrName = guildpeace_name_rsc
+   vrIcon = guildpeace_icon_rsc
+   vrDesc = guildpeace_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_PEACE
+   viRank_needed = RANK_LIEUTENANT
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, otarget = $)
+   "Makes peace with the target guild!"
+   {
+      local yourGuild,myguild,i,lmembers;
+
+      if not isClass(oTarget,&Guild)
+      {
+         send(who,@MsgSendUser,#message_rsc=peace_non_user,
+              #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      yourGuild= oTarget;
+      myGuild = send(who,@GetGuild);
+
+      if yourguild = myguild
+      {
+          send(who,@MsgSendUser,#message_rsc=peace_your_guild,
+              #parm1=send(oTarget,@GetTrueName));
+
+          return FALSE;
+      }
+       
+      if yourguild = $ OR NOT send(myguild,@IsEnemy,#otherguild=yourguild)
+      {
+         send(who,@MsgSendUser,#message_rsc=peace_not_member,
+              #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+
+          return FALSE;
+      }
+
+      if send(myGuild,@CanEndEnemy,#otherguild=yourguild,#rep=who)
+      {
+         send(myGuild,@EndEnemy,#otherguild=yourguild);
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

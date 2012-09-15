@@ -1,0 +1,173 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcPitA is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   SOLUTIONSECTOR = 1
+   DOORSECTOR = 2
+
+resources:
+
+   room_OrcPitA = ocpa.roo
+   room_name_OrcPitA = "Grog's Antechamber"
+
+   OrcPitA_music = orcpit.mid
+
+classvars:
+
+   vrName = room_name_OrcPitA
+
+   viTeleport_row = 86
+   viTeleport_col = 12
+
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_OrcPitA
+   piRoom_num = RID_ORC_PIT_A
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+
+   ptDoor = $
+
+   prMusic = OrcPitA_music
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&CaveOrc, 60], [&OrcWizard,40] ];
+%      plGenerators = [[50,43], [36,31], [28,39], [15,35], [21,19], [15,12], [39,17], [44,29],
+%		     [44,34], [27,8],   [36,28], [48,22], [47,23], [45,31], [24,33], [20,39]];
+    
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_ORC_CAVE3, 3, 41, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_PIT, 35, 5, ROTATE_NONE], plEdge_exits);
+      propagate;
+   }
+
+   SomethingTryGo(What=$,Row=$,Col=$)
+   {
+      if (Row = 93 and (Col = 24 or Col = 25 or Col = 26)) or
+	 (Row = 91 and (Col = 24 or Col = 25 or Col = 26))
+      {
+	 send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+	    #height = 600,#speed=50);
+	 ptDoor = createtimer(self,@CloseDoor,60000);
+	 return TRUE;
+      }
+      propagate;
+   }
+
+   Delete()
+   {
+      if (ptDoor <> $)
+      {
+	 DeleteTimer(ptDoor);
+	 ptDoor = $;
+      }
+      propagate;
+   }
+
+   CloseDoor()
+   {
+      ptDoor = $;
+
+      send(self,@setsector,#sector=DOORSECTOR,#animation=ANIMATE_CEILING_LIFT,
+	 #height = 500,#speed=0);
+      return;
+   }
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Puzzle stuff.  More info on puzzle in orcpitb.kod
+%
+
+   DoSolution(height=500,Speed=50)
+   {
+   send(self,@setsector,#sector=SOLUTIONSECTOR,#animation=ANIMATE_FLOOR_LIFT,
+      #height = height,#speed=Speed);
+   return;
+   }
+
+
+
+
+   NumInChamber()
+   {
+      local i, each_obj, count, iRow, iCol;
+      count = 0;
+      
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+	 iRow = send(each_obj,@getrow);
+	 iCol = send(each_obj,@getcol);
+	 if iRow > 81 and iCol > 20 and iRow < 91 and iCol < 30 and isclass(each_obj,&user)
+	    { count = count + 1; }	 
+      }
+      return count;
+   }
+
+   AllAUsed()
+   {
+      local i, each_obj, iRow, iCol, bAOne;
+      bAOne = FALSE;
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+	 iRow = send(each_obj,@getrow);
+	 iCol = send(each_obj,@getcol);
+	 if iRow = 83 and iCol = 25 and isclass(each_obj,&user)
+	    { bAOne = TRUE; }	 
+      }
+      return bAOne;
+   }
+
+   AllBUsed()
+   {
+      local i, each_obj, count, iRow, iCol, bBOne, bBTwo;
+      bBOne = FALSE;
+      bBTwo = FALSE;
+      for i in plActive
+      {
+         each_obj = send(self,@HolderExtractObject,#data=i);
+	 iRow = send(each_obj,@getrow);
+	 iCol = send(each_obj,@getcol);
+	 if (iRow = 86 and iCol = 22) and isclass(each_obj,&user)
+	    {bBOne = TRUE; } 
+	 if (iRow = 86 and iCol = 28) and isclass(each_obj,&user)
+	    {bBTwo = TRUE; }
+   
+      }
+      return (bBOne and bBTwo);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

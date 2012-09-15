@@ -1,0 +1,101 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SummonCow is MultiCastSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SummonCow_name_rsc = "summon bovine"
+   SummonCow_icon_rsc = cow.bgf
+   SummonCow_desc_rsc = "Summons a pygmy cow for the amusement of all nearby.  "
+      "Requires 5 perfectly polished seraphym, and the casters' mystical energies must be focused "
+      "through a prism."
+   
+   SummonCow_sound = lichres.wav
+
+   summoncow_failed_rsc = "There is too much summoning magic focused here to bring a cow into existence."
+
+classvars:
+
+   vrName = SummonCow_name_rsc
+   vrIcon = SummonCow_icon_rsc
+   vrDesc = SummonCow_desc_rsc
+
+   vrSucceed_wav = SummonCow_sound
+                                 
+   viMana = 5           % Mana is amount used upon inititiation
+
+   viSpell_num = SID_SUMMON_COW
+   viSchool = SS_RIIJA
+   viSpell_level =6
+
+   viSpellExertion = 10
+   viCast_time = 20000
+   viChance_To_Increase = 15
+
+   viManaDrain = 1       % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
+
+   viCast_time = 2000    % in milliseconds
+
+properties:
+
+   viMultiCast_Spellpower = 2250000   % (20 min, 5 casters) This is the total sum of spellpower
+
+messages:      
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&PolishedSeraphym,5],plReagents);
+
+      return;
+   }
+
+   PrismCast(spellpower = 0, lCasters=$)  % Remember - this number could be MASSIVE
+   {
+      local oCow, oRoom, iRow, iCol, iFine_Row, iFine_Col, who;
+
+      who = first(lCasters);
+      oRoom = send(who,@GetOwner);
+
+      iRow = send(who,@GetRow);
+      iCol = send(who,@GetCol);
+      iFine_Row = send(who,@GetFineRow);
+      iFine_Col = send(who,@GetFineCol);
+
+      if (send(oRoom,@CountHoldingHowMany,#class=&monster) > 25) or
+         (send(oRoom,@CountHoldingHowMany,#class=&cow) > 5) or
+         ((send(oRoom,@CountHoldingSummoned)) > 
+           Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
+      {
+         for who in lCasters
+         {
+            send(who,@MsgSendUser,#message_rsc=summoncow_failed_rsc);
+         }
+      }
+      else
+      {
+         oCow = Create(&Cow);
+         send(oCow,@SetSummoned,#value=TRUE);
+         send(oRoom,@newhold,#what=oCow,#new_row=iRow,#new_col=iCol,
+               #fine_row=iFine_Row,#fine_col=iFine_Col);
+      }
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,55 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ArenaSign1 is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   arenasign_name_rsc = "Arena Tapestry.. don't use"
+   arenasign_icon1_rsc = arsign01.bgf
+   arenasign_desc1_rsc = "This is an informational sign."
+
+classvars:
+
+properties:
+
+   vrName = arenasign_name_rsc
+   vrIcon = arenasign_icon1_rsc
+   vrDesc = arenasign_desc1_rsc
+
+messages:
+
+   Constructor(name = $,icon = $,desc = $)
+   {
+      if name <> $
+      {  vrName = name; }
+
+      if icon <> $
+      {  vrIcon = icon; }
+
+      if desc <> $
+      {  vrDesc = desc; }
+
+      propagate;
+   }
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,164 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Forest5 is objectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_forest5 = forest5.roo
+   name_forest5 = "The Deep Dark Woods of Marion"
+
+   forest5_music = walk2.mid
+
+classvars:
+
+   vrName = name_forest5
+
+   viTeleport_row = 31
+   viTeleport_col = 21
+   
+   viTerrain_type = TERRAIN_FOREST
+
+properties:
+
+   prRoom = room_forest5
+   piRoom_num = RID_FOREST5
+
+   prMusic = forest5_music
+
+   piBaseLight = LIGHT_VERY_DARK
+   piOutside_factor = OUTDOORS_6 
+   
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Ant, 60], [&Spider, 40] ];
+
+      plGenerators = [ [42, 26], [31, 17], [29, 23], [19, 17], [20, 25],
+                       [25, 33], [39, 41], [16, 35], [22, 45], [17,48] ];
+
+      propagate;
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      % some mushrooms
+
+      plObject_gen = Cons([ &Elderberry, GEN_INF, 4, 20,  25 ],plObject_gen);
+      plObject_gen = Cons([ &Elderberry, GEN_INF, 4, 40, 41 ],plObject_gen);
+      plObject_gen = Cons([ &Elderberry, GEN_INF, 4, 25, 44 ],plObject_gen);
+      plObject_gen = Cons([ &Elderberry, GEN_INF, 4, 15, 34 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 4, 17, 18 ],plObject_gen);
+      plObject_gen = Cons([ &Mushroom, GEN_INF, 4, 17, 44 ],plObject_gen);
+
+      propagate;
+    }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+      if (new_row = 7) and (new_col = 58)
+      {
+	 Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_FOREST4),
+              #new_row=47,#new_col = 4,#fine_row = 0,#fine_col = 0,
+	      #new_angle=Send(what,@GetAngle));
+	 return;
+      }
+
+      if (new_row = 36)and ((new_col = 5) or (new_col = 6))
+      {
+	 Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_MARION),
+              #new_row=30,#new_col = 65 , #fine_row = 0,
+	      #new_angle=Send(what,@GetAngle));
+	 return;
+      }
+
+      if ((new_row = 17)or(new_row = 18)) and (new_col = 12)
+      {
+	 Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_TEMPLE),
+              #new_row=9,#new_col = 31,
+	      #new_angle=Send(what,@GetAngle));
+	 return;
+      }
+
+   propagate;
+   }
+
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=33,#new_col=9);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=39,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=40,#new_col=22);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=41,#new_col=27);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=33,#new_col=18);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=28,#new_col=22);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=33,#new_col=26);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=18,#new_col=14);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=23,#new_col=24);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=27,#new_col=31);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=15,#new_col=16);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=39,#new_col=39);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=41,#new_col=42);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=48,#new_col=41);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=26,#new_col=45);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=15,#new_col=46);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=17,#new_col=50);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=34,#new_col=39);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=28,#new_col=30);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=38,#new_col=13);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=24,#new_col=20);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_OAK,#bottom=TREE_ELM),
+          #new_row=7,#new_col=51);
+      Send(self,@NewHold,#what=Create(&Tree,#top=TREE_PINE,#bottom=TREE_PINE),
+          #new_row=6,#new_col=53);
+
+      propagate;
+   }
+
+   SeanceCheck()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

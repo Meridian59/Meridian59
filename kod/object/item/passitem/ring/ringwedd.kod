@@ -1,0 +1,177 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RingWedding is Ring
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ringwedding_name_rsc = "wedding ring"
+   ringwedding_icon_rsc = ring1.bgf
+   ringwedding_desc_rsc = "This is an elegant gold band demonstrating the bond between two people."
+
+   ringwedding_one = " Inscribed with magic runes is the name "
+   ringwedding_two = " Inscribed with magic runes are the names "
+   ringwedding_and = " and "
+   ringwedding_dot = "."
+
+classvars:
+
+   vrRealName = ringwedding_name_rsc
+   vrIcon = ringwedding_icon_rsc
+   vrRealDesc = ringwedding_desc_rsc
+
+   viHits_init_min = 3
+   viHits_init_max = 7
+
+   viBulk = 2
+   viWeight = 3
+   
+   viValue_average = 100
+
+   viDefense_bonus = 100
+
+properties:
+
+   vrName = ringwedding_name_rsc
+   vrDesc = ringwedding_desc_rsc
+
+   poFirstHeld = $
+   poSecondHeld = $
+
+messages:
+
+   AppendDesc()
+   {
+      if poFirstHeld <> $
+      {
+         if poSecondHeld <> $
+         {
+            AppendTempString(ringwedding_two);
+         }
+         else
+         {
+            AppendTempString(ringwedding_one);
+         }
+
+         AppendTempString(send(poFirstHeld,@GetTrueName));
+
+         if poSecondHeld <> $
+         {
+            AppendTempString(ringwedding_and);
+            AppendTempString(send(poSecondHeld,@GetTrueName));
+         }
+
+         AppendTempString(ringwedding_dot);
+      }
+
+      return;
+   }
+
+   NewUsed(what=$)
+   {
+      % First two unique players to use the ring get their name on it.
+
+      if what <> $ AND isClass(what,&Player)
+      {
+         if poFirstHeld = $
+         {
+            poFirstHeld = what;
+
+            propagate;
+         }
+         
+         if poSecondHeld = $
+         {
+            if what <> poFirstHeld
+            {
+               poSecondHeld = what;
+            }
+         }
+         else
+         {
+            if what = poFirstHeld
+               OR what = poSecondHeld
+            {
+               send(what,@AddDefenseModifier,#what=self);
+            }
+         }
+      }
+      
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      if what = poFirstHeld
+         OR what = poSecondHeld
+      {
+         Send(what,@RemoveDefenseModifier,#what=self);
+      }
+
+      propagate;
+   }
+
+   DropOnDeath()
+   {
+      % Who was the stupid fuck that let these be dropped on death?
+      return FALSE;
+   }
+
+   DefendingHit()
+   "Called when the item provides defense."
+   {
+      % Return here so we don't damage the ring!
+      return;
+   }
+
+   % No taking the rings from people in rude ways.
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   ReqDMDelete()
+   "Will this item be deleted by a DM Clear Inventory command?"
+   {
+      return FALSE;
+   }
+
+   DestroyDisposable()
+   {
+      return FALSE;
+   }
+
+   % Things we handle to be a defense modifier:
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   "Increase or decrease the defense of the defender."
+   {
+      % Add a small amount of defense.  Only added as a defmod if the user is
+      %  One of the original 2 users, and both user slots are filled.
+      return defense_power + viDefense_bonus;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Increase or decrease damage done to defender."
+   {
+      return damage;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Table is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   table_icon_rsc = table.bgf
+   table_name_rsc = "table"
+   table_desc_rsc = "This is a wooden table, weathered from years of use and abuse."
+
+classvars:
+
+   vrName = table_name_rsc
+   vrIcon = table_icon_rsc
+   vrDesc = table_desc_rsc
+
+properties:
+
+
+messages:
+
+   GetObjectFlags()
+   {
+      return MOVEON_NO + LOOK_NO;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

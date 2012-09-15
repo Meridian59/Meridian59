@@ -1,0 +1,62 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosTan is TosRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_tostan = tostan.roo
+   room_name_tostan = "Abandoned Building"
+   tostan_music = tos.mid
+
+classvars:
+
+   vrName = room_name_tostan
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_RESIDENCE
+
+properties:
+
+   prRoom = room_tostan
+   piRoom_num = RID_TOS_TAN
+   prMusic = tostan_music
+
+   viTeleport_Row = 6
+   viTeleport_Col = 4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 0
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % exits back to tos
+
+      plExits = Cons([  6,  3, RID_TOS, 41, 21, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      include tostan.ktm ;
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

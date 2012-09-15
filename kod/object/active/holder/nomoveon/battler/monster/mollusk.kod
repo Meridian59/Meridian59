@@ -1,0 +1,282 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MolluskMonster is Monster
+
+% TODO: Make the creature hide in his shell until he's aware of someone or
+%       he's attacked.
+
+constants:
+
+   include blakston.khd
+
+   ANIM_POPUP = 2
+   ANIM_THROW = 3
+
+   FRAME_STANDING = 1
+   FRAME_WALK_START = 2
+   FRAME_WALK_END = 6
+   FRAME_ATTACK_START = 7
+   FRAME_ATTACK_END = 10
+   FRAME_THROW_START = 11
+   FRAME_THROW_END = 14
+   FRAME_POPUP_START = 15
+   FRAME_POPUP_END = 19
+
+   ANIMATION_WALK_SPEED = 80
+   ANIMATION_ATTACK_SPEED = 225
+   ANIMATION_THROW_SPEED = 80
+   ANIMATION_POPUP_SPEED = 200
+
+   % Percent chance to throw a rock at someone.
+   THROW_CHANCE = 50
+   % Distance, squared, we can throw a rock.  It's 10 squares for now.
+   ROCK_RANGE_SQUARED = 100
+   % Time from creation to "popping up"
+   POPUP_DELAY = 2500
+
+resources:
+
+   MolluskMonster_koc_name_rsc = "kolisith"
+   MolluskMonster_name_rsc = "mollusk creature"
+   MolluskMonster_icon_rsc = mollusk.bgf
+   MolluskMonster_desc_rsc = \
+      "A recent arrival to the lands, this giant creature is rather "
+      "peaceful.  It roams the area, looking for food.  It rarely attacks "
+      "people unless it is attacked first.  But, be warned, its thick shell "
+      "and powerful claw make it a tough foe to face."
+
+   MolluskMonster_dead_icon_rsc = molX.bgf
+   MolluskMonster_dead_name_rsc = "slain mollusk creature"
+
+   MolluskMonster_sound_miss = mol_atk.wav
+   MolluskMonster_sound_death = mol_dth.wav
+   MolluskMonster_sound_aware = mol_awr.wav
+
+   MolluskMonster_rock_small = rocksm.bgf
+   MolluskMonster_rock_large = rockla.bgf
+
+classvars:
+
+   vrKocName = MolluskMonster_koc_name_rsc
+   vrName = MolluskMonster_name_rsc
+   vrIcon = MolluskMonster_icon_rsc
+   vrDesc = MolluskMonster_desc_rsc
+   vrDead_icon = MolluskMonster_dead_icon_rsc
+   vrDead_name = MolluskMonster_dead_name_rsc
+
+   viTreasure_type = TID_TOUGH
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_BLUDGEON
+   viAttributes = 0
+   viLevel = 150
+   viDifficulty = 7
+   viKarma = 90
+
+   vrSound_miss = MolluskMonster_sound_miss
+   vrSound_aware = MolluskMonster_sound_aware
+   vrSound_death = MolluskMonster_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+   ptActive = $
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ -10, ATCK_WEAP_MAGIC ],
+                        [  30, ATCK_WEAP_BLUDGEON ],
+                        [  50, -ATCK_SPELL_QUAKE ]
+                      ];
+
+      piAnimation = ANIM_NONE;
+      if poOwner <> $
+      {
+         ptActive = CreateTimer(self,@PopupTimer,POPUP_DELAY);
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptActive <> $
+      {
+         DeleteTimer(ptActive);
+         ptActive = $;
+      }
+
+      propagate;
+   }
+
+   PopupTimer()
+   {
+      ptActive = $;
+      piAnimation = ANIM_POPUP;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_NONE
+      {
+         if ptActive = $
+         {
+            AddPacket(1,ANIMATE_NONE, 2,FRAME_STANDING);
+         }
+         else
+         {
+            AddPacket(1,ANIMATE_NONE, 2,FRAME_POPUP_START);
+         }         
+
+         return;
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         send(self,@SendAttackAnimation);
+
+         return;
+      }
+
+      if piAnimation = ANIM_THROW
+      {
+         send(self,@SendThrowAnimation);
+
+         return;
+      }
+
+      if piAnimation = ANIM_POPUP
+      {
+         send(self,@SendPopupAnimation);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   SendAttackAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_ATTACK_SPEED,
+                2,FRAME_ATTACK_START, 2,FRAME_ATTACK_END, 2,FRAME_STANDING);
+
+      return;
+   }
+
+   SendThrowAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_THROW_SPEED,
+                2,FRAME_THROW_START, 2,FRAME_THROW_END, 2,FRAME_STANDING);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,ANIMATION_WALK_SPEED,
+                2,FRAME_WALK_START, 2,FRAME_WALK_END);
+
+      return;
+   }
+
+   SendPopupAnimation()
+   {
+      AddPacket(1,ANIMATE_ONCE, 4,ANIMATION_POPUP_SPEED,
+                2,FRAME_POPUP_START, 2,FRAME_POPUP_END, 2,FRAME_STANDING);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE, 2,FRAME_STANDING);
+
+      return;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   MonsterCastSpell()
+   {
+      local iDistance;
+
+      iDistance = Send(self,@SquaredDistanceTo,#what=poTarget);
+      if Random(1,100) < THROW_CHANCE
+         AND iDistance > Send(self,@GetAttackRange)
+         AND iDistance <= ROCK_RANGE_SQUARED
+         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+         AND Send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget,
+                  #use_weapon=self)
+      {
+        Send(self,@DoMissileAttack);
+
+        return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   DoMissileAttack()
+   {
+      piAnimation = ANIM_THROW;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
+      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+
+   SendProjectileAnimation()
+   {
+      % Both rocks cycle from frame 1 to 4.
+      AddPacket(1,ANIMATE_CYCLE, 4,175, 2,1, 2,4);  
+
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      if Random(1,100) < 30
+      {
+         return MolluskMonster_rock_large;
+      }
+
+      return MolluskMonster_rock_small;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

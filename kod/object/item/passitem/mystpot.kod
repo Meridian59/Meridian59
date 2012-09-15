@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MysteryPotion is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   MysteryPotion_name_rsc = "mysterious potion"
+   MysteryPotion_icon_rsc = potion01.bgf
+   MysteryPotion_desc_rsc = \
+      "This is an odd potion of a type you have not seen before.  It certainly doesn't look like "
+      "something you would want to drink willingly."
+
+classvars:
+
+   vrName = MysteryPotion_name_rsc
+   vrIcon = MysteryPotion_icon_rsc
+   vrDesc = MysteryPotion_desc_rsc
+
+   viBulk = 20
+   viWeight = 17
+   viValue_average = 10
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

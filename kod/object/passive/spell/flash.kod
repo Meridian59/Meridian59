@@ -1,0 +1,129 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Flash is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Flash_name_rsc = "flash"
+   Flash_icon_rsc = iflash.bgf
+   Flash_desc_rsc = \
+      "Causes a bright flash, likely to interrupt the concentration of any "
+      "spellcasters in the area or confuse monsters temporarily.  "
+      "Requires the eyes of a dragonfly to cast."
+
+   flash_sound = rflash.wav
+
+classvars:
+
+   vrSucceed_wav = flash_sound
+
+   vrName = Flash_name_rsc
+   vrIcon = Flash_icon_rsc
+   vrDesc = Flash_desc_rsc
+
+   viSpell_num = SID_FLASH
+   viSchool = SS_RIIJA
+   viSpell_level = 1
+   viMana = 15
+   viSpellExertion=3
+   viChance_To_Increase = 15
+
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&DragonflyEye,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   GetTargets(who=$,lTargets=$)
+   "This returns a list of valid targets in the room."
+   {
+      local oRoom, i, each_obj, lFinalTargets;
+
+      lFinalTargets = $;
+
+      oRoom = send(who,@GetOwner);
+      for i in send(oRoom,@GetHolderActive)
+      {
+         each_obj = send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Battler)
+         {
+            lFinalTargets = cons(each_obj,lFinalTargets);
+         }
+      }
+
+      return lFinalTargets;
+   }
+
+   CastSpell(who=$, lTargets = $, iSpellPower=0)
+   {
+      local oRoom, i, iChance, oHold;
+      
+      oRoom = send(who,@GetOwner);
+
+      % What's our chance to affect the target?
+      iChance = 33 + ((2 * iSpellPower) / 3);
+
+      % Find the hold spell to temporarily hold monsters
+      oHold = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+
+      if IsClass(who,&Player)
+      {
+         Send(who,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
+      }
+
+      for i in lTargets
+      {
+         if random(1,100) > iChance
+         {
+            continue;
+         }
+         
+         if IsClass(i,&Player) 
+         {
+            if send(i,@CheckPlayerFlag,#flag=PFLAG_TRANCE)
+            { 
+               send(i,@BreakTrance,#event=EVENT_DISRUPT); 
+ 	         }
+ 	         
+            Send(i,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=750);
+         }
+         else
+         {
+            % Is a monster, stun it.
+            send(oHold,@DoHold,#what=who,#otarget=i,#iDurationSecs=1,#bAllowFreeAction=FALSE);
+         }
+      }
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

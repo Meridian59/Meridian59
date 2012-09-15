@@ -1,0 +1,13 @@
+# Spore clouds for fungus beast
+# groups
+# 1 -2 attacking
+
+-s 2
+2
+spor000a.bmp [0, -50]
+spor000b.bmp [0, -50]
+
+2
+1   1
+1   2
+

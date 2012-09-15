@@ -1,0 +1,23 @@
+# bottom part of overlay, and held view
+# 
+#^Applied to Hotspot: 33
+#*Groups: 2
+#* bottom part of overlay
+#* held view
+-s 4
+12
+bow000ba.bmp   [188, 112] 
+bow315ba.bmp   [124, 109] 
+bow270ba.bmp   [102, 106] 
+bow180ba.bmp   [136, 102] 
+bow090ba.bmp   [249, 106] 
+bow045ba.bmp   [253, 108] 
+bow000sa.bmp   [197, 53] 
+bow315sa.bmp   [178, 50] 
+bow270sa.bmp   [159, 50] 
+bow180sa.bmp   [146, 50] 
+bow090sa.bmp   [192, 50] 
+bow045sa.bmp   [215, 50] 
+2
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 

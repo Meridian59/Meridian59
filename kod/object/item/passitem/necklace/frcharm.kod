@@ -1,0 +1,105 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Damion Schubert, November 1996
+
+FarenCharm is Necklace
+
+constants:
+
+   include blakston.khd
+
+   STAMINA_CHANGE = 5
+   AIM_CHANGE = 2
+
+resources:
+
+   FarenCharm_name_rsc = "brass medallion"
+   FarenCharm_icon_rsc = frcharm.bgf
+   FarenCharm_desc_rsc = \
+   "This necklace is a long string of brass medallions carefully crafted together.  "
+   "In the largest of the medallions, the image of a storm has been delicately engraved."
+
+   FarenCharm_whisper = "A voice whispers, \"~I...the master of the storm must withstand his strongest enemy... himself...\""
+
+classvars:
+
+   vrName = FarenCharm_name_rsc
+   vrIcon = FarenCharm_icon_rsc
+   vrDesc = FarenCharm_desc_rsc
+
+   viValue_average = 500
+
+   viBulk = 20
+   viWeight = 25
+   viMax_Disp_hits = 5
+
+   viGround_group = 2
+
+properties:
+   
+   pbIn_use = False
+
+   piStamina_change = STAMINA_CHANGE
+   piAim_change = AIM_CHANGE
+
+   piDisp_hits = 0
+
+messages:
+
+   Constructor()
+   {
+      piDisp_hits = viMax_disp_hits;
+      propagate;
+   }
+
+   NewOwner()
+   {
+      piDisp_hits = viMax_disp_hits;
+      propagate;
+   }
+
+   NewUsed(what = $)
+   "When the charm is put on, the wearer gets a moderate bonus to both might and aim."
+   {
+      piAim_change = send(what,@addaim,#points=AIM_CHANGE);
+      piStamina_change = send(what,@addStamina,#points = STAMINA_CHANGE);      
+      if random(1,5) = 3   %% 20% chance
+        {
+          send(what,@msgsenduser,#message_rsc=FarenCharm_whisper);
+        }
+      propagate;
+   }
+
+   NewUnused(what = $)
+   "When something that can break the curse unuses the item"
+   {
+      send(what,@addaim,#points=-piAim_change);
+      send(what,@addStamina,#points = -piStamina_change);
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      if piDisp_Hits = 0
+        {
+           send(self,@delete);
+           return;
+        }
+      piDisp_hits = piDisp_hits - 1;
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+

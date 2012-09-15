@@ -1,0 +1,291 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Bow is RangedWeapon
+
+constants:
+
+   include blakston.khd
+   USED = 1
+   UNUSED = 2
+   ATTACKING = 3
+
+resources:
+
+   bow_name_rsc = "bow"
+   bow_icon_rsc = bow.bgf          
+
+   bow_desc_rsc = \
+      "This bow offers the advantage of long ranged attacks." 
+
+   bow_top = bowaov.bgf
+   bow_bottom = bowbov.bgf
+   bow_window_overlay_rsc = povbow.bgf
+
+   bow_top_faction = bwfaov.bgf
+   bow_bottom_faction = bwfbov.bgf
+   bow_window_overlay_faction_rsc = povbowf.bgf
+
+classvars:
+
+   vrName = bow_name_rsc
+   vrIcon = bow_icon_rsc
+   vrDesc = bow_desc_rsc
+
+   vcAmmo = &Arrow
+
+   vrWeapon_window_attack_start = 1
+   vrWeapon_window_attack_end = 4
+   vrWeapon_window_hold = 5
+
+   viGround_group = 1
+   viInventory_group = 3
+   viBroken_group = 2
+
+   % Base damage determined by ammo, but this can add to the bow's strength.
+   viWeaponDamage = 0
+   viRange = 100
+
+   viValue_average = 2500
+   viBulk = 80
+   viWeight = 70
+
+   viSpell_modifier = -25
+
+   % What's the basic color of the wood?
+   viBaseXLAT = XLAT_TO_SKIN4
+
+properties:
+
+   prBowTop = bow_top
+   prBowBottom = bow_bottom
+   prBowOverlay = bow_window_overlay_rsc
+
+   vrWeapon_window_overlay = bow_window_overlay_rsc
+   vrWeapon_overlay = bow_bottom
+
+messages:
+
+   Constructor()
+   {
+      send(self,@UpdateColor);
+
+      propagate;
+   }
+
+   WeaponAttack(what = $)
+   "Called by ReqWeaponAttack when the weapon is actually used in an attack."
+   {
+      piUsed = ATTACKING;
+      
+      if vrWeapon_window_overlay <> $
+      {
+         Send(poOwner,@ChangeWindowOverlay,#what=self);
+      }
+      
+      if vrWeapon_overlay <> $
+      {
+         Send(poOwner,@DoBowFire);
+      }
+      
+      piUsed = USED;
+
+      return;
+   }   
+
+   NewUsed()
+   {
+      local oSoldierShield, iFaction, iTranslation;
+      
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+      {
+         iFaction = FACTION_NEUTRAL;
+
+         % Check for shield
+         oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
+
+         % Sling it on the back if it's there.
+         %  Also, record faction so we can set our bands if needed.
+         if oSoldierShield <> $
+         {
+            iFaction = send(oSoldierShield,@GetFaction);
+            send(oSoldierShield,@SlingOnBack);
+         }
+
+         if iFaction = FACTION_NEUTRAL
+         {
+            prBowTop = bow_top;
+            prBowBottom = bow_bottom;
+            prBowOverlay = bow_window_overlay_rsc;
+            % No faction translation
+            iTranslation = 0;
+         }
+         else
+         {
+            prBowTop = bow_top_faction;
+            prBowBottom = bow_bottom_faction;
+            prBowOverlay = bow_window_overlay_faction_rsc;
+
+            if iFaction = FACTION_DUKE
+            {
+               iTranslation = XLAT_TO_PURPLE;
+            }
+
+            if iFaction = FACTION_PRINCESS
+            {
+               iTranslation = XLAT_TO_ORANGE;
+            }
+
+            if iFaction = FACTION_REBEL
+            {
+               iTranslation = XLAT_TO_RED;
+            }
+
+         }
+
+         send(self,@UpdateColor,#iFactionColor=iTranslation);
+      }
+
+      vrWeapon_window_overlay = prBowOverlay;
+      vrWeapon_overlay = prBowBottom;
+
+      propagate;
+   }
+
+   NewUnused()
+   {
+      local oSoldierShield;
+      
+      % Take shield off back.
+      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
+
+      if oSoldierShield <> $
+      {
+         send(oSoldierShield,@RemoveFromBack);
+      }
+
+      propagate;
+   }
+
+   GetOverlayHotspot(animation = $)
+   {
+      return HS_BOTTOM_BOW;
+   }
+
+   GetSecondOverlay()
+   {
+      return prBowTop;
+   }
+
+   SendOverlayInformation(iAnimation = $)
+   {
+      if piUsed = ATTACKING and iAnimation <> $
+      {
+         AddPacket(4,prBowTop);
+         AddPacket(1,HS_TOP_BOW);
+         Send(self,@SendSecondaryOverlayAnimation,#iAnimation=iAnimation);       
+      
+         AddPacket(4,prBowBottom);
+         AddPacket(1,HS_BOTTOM_BOW);
+         Send(self,@SendOverlayAnimation,#iAnimation=iAnimation);      
+      }
+      else
+      {
+         propagate;
+      }
+      
+      return;
+   }
+      
+   SendSecondaryOverlayAnimation(iAnimation = $)
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+      
+      if piUsed = ATTACKING and iAnimation <> $
+      {
+         AddPacket(1,ANIMATE_ONCE,4,1200,2,1,2,1,2,2);
+         
+         return;	 
+      }
+      else
+      { 
+         AddPacket(1,ANIMATE_NONE,2,2);
+         
+         return;
+      }
+
+      return;
+   }
+
+   SendOverlayAnimation(ianimation = $)
+   {
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+      
+      if  piUsed = ATTACKING and iAnimation <> $
+      {
+         AddPacket(1,ANIMATE_ONCE,4,1200,2,1,2,1,2,2);	 
+      }
+      else
+      { 
+         AddPacket(1,ANIMATE_NONE,2,2);
+      }
+      
+      return;
+   }
+
+   GetNumberOverlays(iAnimation = $)
+   {
+      %% most overlay items only offer one overlay.  weapons and bows may offer two.
+      if piUsed = ATTACKING
+         AND iAnimation <> $
+      {  
+         return 2;  
+      }
+      
+      propagate;
+   }
+   
+   GetWindowOverlayHotspot()
+   {
+      % turns off the window overlay
+      if piUsed = UNUSED
+      {
+         return 0;
+      } 
+
+      return HS_SW;
+   }
+
+   GetDisarmBonus()
+   {
+      % Keep this a big negative.  Disarming with a bow is possible, just not likely. ;)
+      return -90;
+   }
+
+   UpdateColor(iFactionColor=0)
+   {
+      local iTranslation;
+      
+      iTranslation = send(SYS,@EncodeTwoColorXlat,#color1=iFactionColor,#color2=viBaseXLAT);
+      send(self,@SetPaletteTranslation,#translation=iTranslation);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

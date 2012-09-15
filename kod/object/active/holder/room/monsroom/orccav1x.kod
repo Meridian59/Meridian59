@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcCave1Extension is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OrcCave1Ext  = oc1a.roo
+   room_name_OrcCave1Ext = "A Tranquil Place"
+
+   OrcCave1Ext_music = orcpit.mid
+
+classvars:
+
+   vrName = room_name_OrcCave1Ext
+   
+   viTeleport_row = 85
+   viTeleport_col = 22
+
+   viTerrain_type = TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_OrcCave1Ext
+   piRoom_num = RID_ORC_CAVE1_EXT
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 25
+   poSwitch = $
+
+   ptDoor = $
+   ptPuzzle = $
+
+   prMusic = OrcCave1Ext_music
+
+messages:
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_CAVE1, 23, 2, ROTATE_NONE, ROW_IS_GREATER_THAN,39], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_ORC_PIT, 58, 1, ROTATE_NONE, ROW_IS_LESS_THAN,39], plEdge_exits);
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      include oc1a.ktm;
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,110 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+JasperWest is JasperRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_JasperWest="West Jasper"
+   room_JasperWest = jas-west.roo
+
+   jasper_factory_closed = "Since the mines dried up, this factory has been closed for good."
+   jasper_yevitan_rsc = "Although severely vandalized, Yevitan's house refuses entry."
+   jasper_bank_closed_rsc = "No trespassing!  Property of the Royal Bank of Jasper."
+   jasper_hard_times_rsc = "Hard times have left his home abandoned."
+   jasper_tenement = "The tenement is deserted."
+   jasper_schoolmarm_rsc = "The schoolmarm's house has fallen into disrepair."
+	
+classvars:
+
+   vrName = room_name_JasperWest
+   viPermanent_flags = ROOM_GUILD_PK_ONLY 
+
+   viTeleport_row = 37
+   viTeleport_col = 25
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_MOUNTAIN
+
+   viFlag_row = 35
+   viFlag_col = 25
+
+properties:
+
+   prRoom = room_JasperWest
+   piRoom_num = RID_JASWEST
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % Gates to East Jasper
+      % Large Gate
+      plExits = Cons([ 43, 39, RID_JASPER, 36, 34, ROTATE_NONE ],plExits);
+      plExits = Cons([ 44, 39, RID_JASPER, 37, 34, ROTATE_NONE ],plExits);
+      plExits = Cons([ 45, 39, RID_JASPER, 38, 34, ROTATE_NONE ],plExits);
+
+      % Small Gate
+      plExits = Cons([ 51, 37, RID_JASPER, 44, 33, ROTATE_NONE ],plExits);
+      plExits = Cons([ 52, 37, RID_JASPER, 44, 33, ROTATE_NONE ],plExits);
+
+      % Hidden Gate
+      plExits = Cons([ 59, 32, RID_JASPER, 51, 28, ROTATE_NONE ],plExits);
+      plExits = Cons([ 59, 33, RID_JASPER, 51, 28, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 44, 25, RID_JAS_INN, 3, 8, ROTATE_NONE ],plExits);
+      plExits = Cons([ 44, 26, RID_JAS_INN, 3, 8, ROTATE_NONE ],plExits);
+      plExits = Cons([ 64, 20, RID_JAS_TAVERN, 3, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 31, 27, RID_JAS_ELDER_HUT, 10, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 32, 28, RID_JAS_ELDER_HUT, 10, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 52, 20, RID_JAS_BANK, 7, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 53, 20, RID_JAS_BANK, 7, 7, ROTATE_NONE ],plExits);
+      plExits = Cons([ 35, 29, RID_JAS_SEWER1, 29, 6, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 43, 37, RID_JAS_AB3, 16, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 43, 38, RID_JAS_AB3, 16, 15, ROTATE_NONE ],plExits);
+
+      % Abandoned buildings
+      plExits = Cons([ 49, 36, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 51, 33, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 43, 32, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 30, 22, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 34, 21, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 43, 19, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 42, 15, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 38, 15, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 40, 19, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 63, 18, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 45, 34, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 39, 19, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 42, 19, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 64, 22, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 63, 30, ROOM_LOCKED_DOOR ],plExits);
+
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_D7, 40, 48, ANGLE_WEST ], plEdge_exits); 
+      plEdge_Exits = Cons([ LEAVE_NORTH, RID_E7, 48, 32, ANGLE_NORTH ], plEdge_exits); 
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,89 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsG4 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsG4 ="Main gate to Cor Noth"
+   room_OutdoorsG4 = G4.roo
+   OutdoorsG4_music = walk1.mid
+
+   waterfall_soundg4 = wfall2.wav
+
+classvars:
+
+   vrName = room_name_OutdoorsG4
+
+   viTeleport_row = 42
+   viTeleport_col = 15
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_RIVER | TERRAIN_LAKE | TERRAIN_ROAD | TERRAIN_WATERFALL
+
+   viFlag_Row = 27
+   viFlag_Col = 9
+
+properties:
+
+   prRoom = room_OutdoorsG4
+   prMusic = OutdoorsG4_music
+   piRoom_num = RID_G4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 150000
+   piGen_percent = 40
+
+   piInit_count_min = 1
+   piInit_count_max = 4
+
+   piMonster_count_max = 7
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&SpiderBaby, 75], [&Centipede, 25] ];
+      plGenerators = [ [ 5, 42], [15, 16], [22,  7], [21, 44], [30, 43],
+                       [47, 47], [45, 33], [35, 32], [46, 11], [38,  6]
+                     ];
+
+      plLooping_sounds = [[ waterfall_soundg4, 13, 49, 40, 100 ]];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % TO TOWN
+      plExits = Cons([ 55, 24, RID_CORNOTH, 2, 39, ROTATE_NONE ],plExits);
+      plExits = Cons([ 55, 25, RID_CORNOTH, 2, 39, ROTATE_NONE ],plExits);
+
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_H4, 32, 3, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_F3, 31, 66, ROTATE_NONE], plEdge_exits);       
+      plEdge_Exits = Cons([LEAVE_WEST, RID_F4, 28, 48, ROTATE_NONE, ROW_IS_GREATER_THAN,37], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_F4, 18, 48, ROTATE_NONE, ROW_IS_LESS_THAN,38], plEdge_exits);        
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

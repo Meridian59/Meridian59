@@ -1,0 +1,11 @@
+# scepter.bgf
+# groups
+# 1 normal/ground
+# 2 examine
+-s 4
+2
+sceptdrp.bmp   [0, 0] 
+sceptexa.bmp   [0, 0]
+2
+ 1      1   
+ 1      2

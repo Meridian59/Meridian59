@@ -1,0 +1,72 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ScaleArmor is Armor
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   scalearmor_name_rsc = "scale armor"
+   scalearmor_icon_rsc = scaleamr.bgf
+   scalearmor_desc_rsc = \
+      "Thousands of overlapping steel scales give this armor "
+      "its strength.  This armor is stronger than chain mail "
+      "and lighter than plate.  Markings suggest it was made "
+      "by Quintor, master armor maker."
+
+   scalearmor_male_icon_rsc = bti.bgf
+   scalearmor_female_icon_rsc = btj.bgf
+
+classvars:
+   vrName = scalearmor_name_rsc
+   vrIcon = scalearmor_icon_rsc
+   vrDesc = scalearmor_desc_rsc
+
+   viHits_init_min = 550
+   viHits_init_max = 650
+
+   viValue_average = 1500
+   viWeight = 330
+   viBulk = 350
+
+   viSpell_modifier = -20
+
+   vrIcon_male = scalearmor_male_icon_rsc
+   vrIcon_female = scalearmor_female_icon_rsc
+
+   viDefense_base = -100
+   viDamage_base = 4
+
+properties:
+
+messages:
+
+   ShowShirt()
+   {
+      return TRUE;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_BLUDGEON,-10]
+             ];
+   }
+
+   GetHeatDamage()
+   {
+      return 3;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

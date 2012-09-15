@@ -1,0 +1,87 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildDeclareEnemy is GuildCommand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   guildDeclareEnemy_name_rsc = "declare enemy"
+   guildDeclareEnemy_icon_rsc = light.bgf
+   guildDeclareEnemy_desc_Rsc = "Use this declare an opposing guild an enemy."
+
+   DeclareEnemy_non_user = "%s%s doesn't like you much either."
+   DeclareEnemy_not_member = "%s is not a member of an enemy guild!"
+   DeclareEnemy_your_guild = "%s is a member of your own guild!"
+
+   DeclareEnemy_cant_self = "Have a self-esteem problem, do we?"
+
+classvars:
+
+   vrName = guildDeclareEnemy_name_rsc
+   vrIcon = guildDeclareEnemy_icon_rsc
+   vrDesc = guildDeclareEnemy_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_DECLARE_ENEMY
+   viRank_needed = RANK_LIEUTENANT
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, otarget = $)
+   "Declares the target an enemy to your guild!"
+   {
+      local yourGuild,myguild,i,lmembers;
+
+      if not isClass(oTarget,&guild)
+        {
+          send(who,@msgsenduser,#message_rsc=DeclareEnemy_non_user,
+            #parm1 = send(oTarget,@getcapdef), #parm2 = send(oTarget,@getname));
+          return FALSE;
+        }
+
+      yourGuild= oTarget;
+      myGuild = send(who, @getguild);
+
+      if yourguild = myguild
+        {
+          send(who,@msgsenduser,#message_rsc=DeclareEnemy_your_guild,
+              #parm1=send(oTarget,@getname));
+          return FALSE;
+        }
+       
+      if yourguild = $ 
+        {
+          send(who,@msgsenduser,#message_rsc=DeclareEnemy_not_member,
+              #parm1=send(oTarget,@getname));
+          return FALSE;
+        }
+
+      if send(myGuild,@canEnemy,#otherguild = yourguild, #rep = who)
+        {
+           send(myGuild,@NewEnemy,#otherguild = yourguild);
+        }
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

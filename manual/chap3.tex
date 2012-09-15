@@ -1,0 +1,998 @@
+\newcommand{\class}[1]{\textbf{#1}}
+\newcommand{\prop}[1]{\texttt{#1}}
+
+\newenvironment{leftlines}
+{\setlength{\oldindent}{\parindent}
+ \setlength{\parindent}{0in}\vspace{\baselineskip}}
+{\setlength{\parindent}{\oldindent}\vspace{\baselineskip}}
+
+\newcommand{\function}[2]{ {\tt #1(} {\em #2} {\tt )} }
+
+\chapter{The Blakod language}
+
+Blakod is the language that BlakSton uses to define objects in its
+game world.  BlakSton contains a byte compiler from Blakod to an
+simple intermediate language, and an interpreter for the intermediate
+language.  This chater informally describes the syntax and semantics of
+Blakod.  
+
+Blakod is an object-oriented language that uses message passing as a
+primary means of flow control.  An object consists of some private
+data, called {\em properties\/}, and a set of methods (which we refer
+to as {\em message handlers\/}) for observing and manipulating this
+private data.  The syntax of the language is much like that of
+C or Pascal.  
+
+Because Blakod is a special-purpose language, meant to describe
+objects for use in role-playing games, there is a close relationship
+between the Blakod written for a game and the runtime system in the
+BlakSton server.  Blakod code calls built-in C functions in the server
+when an operation would be too slow or complicated in Blakod, or where
+the operation requires communication with other parts of the server,
+such as sending messages to clients running on user machines.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Specification}
+
+A Blakod code file contains definitions for one or more classes.  Each
+class definition consists of six parts, as illustrated in
+figure~\ref{fig:class}.  The class header lists the name of the class,
+and optionally the name of a single superclass.  Only single
+inheritance is allowed.
+
+
+\begin{figure}
+
+\begin{verbatim}
+Classname is Superclass                      % Class header
+
+constants:                                   % Constant block
+
+  include constants.khd
+  seconds_per_hour = 3600
+
+resources:                                   % Resource block
+
+  filename = picture.bmp
+  string = "Text goes here"
+
+classvars:                                   % Class variable block
+
+  ciBitmap = filename
+
+properties:                                  % Property block
+
+  piWeight = 10
+
+messages:                                    % Message block
+
+  Move(distance = 1, direction = 1)
+  "This message handler moves this object in some way."
+  "And these comments can extend over multiple lines."
+  {
+    local i, j;
+    ...
+  }
+
+end
+\end{verbatim}
+
+\caption{Basic format of a Blakod class}
+\label{fig:class}
+
+\end{figure}
+
+The constant block lists identifiers to be used as abbreviations for
+simple constant expressions.  Such an identifier evaluates to the
+right hand side of the assignment given in the constant block wherever
+it appears.  The constant block can also contain {\tt include}
+compiler directives that can be used to include a set of constant
+definitions from other files.
+
+Identifiers in the resource block reference filenames and strings.  A
+class's resources are placed in a resource file during compilation,
+and this file is sent to clients.  Each resource is assigned a unique
+number during compilation, and it is these numbers that the server
+uses to refer to files and strings in messages to the client.  In
+Blakod, resources can only be passed as parameters or appear by
+themselves on the right hand side of assignments; they cannot be
+assigned to or appear in compound expressions.
+
+Properties are the equivalent of protected class data in C++.  A class
+inherits all the properties of its direct and indirect superclasses;
+these properties are all accessible within the class.  Properties of a
+superclass can appear in the subclass's property section in order to
+override the superclass's values for these properties.
+
+A class variable is a piece of read-only, per-class data.  Class
+variables are inherited by subclasses just as properties are.  The
+main use of class variables is to save space in the object database;
+data that doesn't vary across instances of a class should be put in
+class variables to avoid allocating space in each object for the
+data.
+
+A subclass can overload a superclass's class variable by declaring a
+property with the same name.  The subclass can then use the property
+as read-write data just like any other property.  In this way, a class
+high in the hierarchy can declare read-only data to save space in most
+objects, while subclasses can still write to the location if they need
+to (though instances of the subclass will of course require extra
+space to hold the property).
+
+Properties and class variables can be initialized to any constant
+expression.  If no expression is given, they are initialized to the
+special value nil.
+
+The message block contains the class's message handlers.  Each message
+handler begins with a header that lists the handler's name and
+parameters.  Parameters are matched by name, so that calls of a
+handler need not assign values to all of the parameters listed in the
+handler's header.  The header can list default values for any of its
+parameters; a default value is bound to its parameter when a call does
+not list the parameter.  The header is optionally followed by a
+comment, describing the message handler.  Administrators can view
+these comments in the game.
+
+A message handler's body contains a sequence of statements, each
+ending with a semicolon.  The first statement optionally declares a
+list of local variables used by the handler.  A class also inherits
+its superclass's message handlers.  When an object's class hierarchy
+contains more than one message handler of the same name, the handler
+for the lowest class in the object's hierarchy is called first.  This
+handler can propagate the message to the next handler up the
+hierarchy, or it can return a value, in which case the other handlers
+are not called.
+
+A special message handler called {\tt Constructor} is called when an
+object is created.  Right before an object's constructor is invoked,
+its default property values are set in descending class order,
+starting with the top of the object's class hierarchy and ending with
+the object's actual class.  This is the reverse order of the message
+handler call sequence, allowing subclasses to override property values
+of superclasses.
+
+Some objects call the message {\tt Constructed} in their constructor.
+This is no longer needed, but at one time was done to allow certain
+processing after the {\tt Constructor} message was propagated
+all the way up to the {\tt Object} class.  Since {\tt Object}'s
+constructor now does very little, {\tt Constructed} is no longer necessary.
+
+Class and message handler names have global scope. Each class name
+must be globally unique, and message handler names must be unique
+within a class.  The scope of all identifiers appearing on the left
+hand sides of assignments in the constant, resource, property, and
+classvar blocks is the class in which the blocks appear.  Parameter
+names and local variables appearing in a message handler have scope
+restricted to that message handler.
+
+\subsection{Statements and expressions}
+
+Blakod statements correspond roughly to similar statements in C.  The
+main differences are due to Blakod's dynamic type scheme, and message
+handler calls.
+
+Values in Blakod are 32 bits long; 4 of these bits act as a tag that
+determine the value's type.  Thus, 28 bits are actually available to
+the program\footnote{With one sign bit, this means that $2^{27} - 1
+\approx $
+134 million is the largest number expressible in a single Blakod
+variable.}.  Blakod can directly express values of type integer,
+resource, class, message handler, and nil.  There is no non-integer
+numerical type.  The interpreter uses other tag values for runtime
+types such as objects and list cells.  Type checking is done at
+runtime; thus, expressions with type errors will compile but may cause
+runtime errors.
+
+The special value nil is denoted by a dollar sign ({\tt \$}).  Nil is
+assigned to message handler parameters that are not explicitly
+assigned a value, and it is also used to mark the end of a list.  Nil
+can be assigned to variables, returned from message handlers, or
+tested for equality; it is an error to perform any other operation on
+nil.
+
+The special value {\tt self} contains the identifier of the object
+whose message handler is being executed.  {\tt Self} is implemented as a
+property of every object.
+
+Expressions consist of identifiers, constants, and message handler
+calls combined with standard operators.  Blakod contains the following
+operators: addition, subtraction, multiplication, division, unary
+minus, modulo, logical and bitwise AND, OR, and NOT, and the standard
+relational operators (equal, less than, etc.).  A boolean expression
+evaluates to 0 if it is false, or nonzero if it is true.  The logical
+AND and OR operators ``short-circuit;'' i.e. they only evaluate their
+second arguments if necessary.  The following table shows the
+precedence of Blakod operators in descending order.
+
+\begin{center}
+\begin{tabular}{|l|}
+\hline
+$-$ NOT $\sim$ \\
+$*\ /$\ MOD \\
+$+ -$ \\
+$<\  >\ <=\ >=\ =\ <>$ \\
+\& \\
+$\mid$ \\
+AND \\ 
+OR \\
+\hline
+\end{tabular}
+\end{center}
+
+
+Blakod programs are made up of assignment statements, conditional
+clauses, loops, calls, and return statements.  Comments are introduced
+by the percent character ({\tt \%}) and extend to the end of the
+line.
+
+Assignments take the form {\em lvalue} {\tt =} {\em expression}, where
+{\em lvalue} is the name of a property or a local variable.  The right
+hand side is evaulated, and the result is assigned to the left hand
+side.
+
+The {\tt if} statement performs conditional execution.  Its syntax is
+\begin{center}
+{\tt if} {\em test} {\tt \{} {\em then-clause} {\tt \}} or
+\linebreak
+{\tt if} {\em test} {\tt \{} {\em then-clause} {\tt \} else \{} {\em
+else-clause} {\}}.
+\end{center}
+The braces are required in all cases.
+
+The basic looping construct in Blakod is the {\tt while} loop.  A while
+statement has the syntax 
+\begin{center}
+{\tt while} {\em loop-test} {\tt \{} {\em loop-body} {\tt \}}.
+\end{center}
+The loop body is evaluated until the loop test becomes false (equal to
+zero).  The {\tt for} loop construct is for use with lists only.  Its
+syntax is
+\begin{center}
+{\tt for} {\em loop-var} {\tt in} {\em list} {\tt \{} {\em loop-body} {\tt \}}.
+\end{center}
+The loop variable takes on each of the first values of the list during
+evaluation of the body of the loop.  The {\tt break} and {\tt
+continue} statements can be used to interrupt loop execution as in C.
+These statements apply to the innermost enclosing loop; it is an error
+for these statements to appear outside a loop.
+
+Function calls may appear either as expressions, in which case they evaluate
+to the return value of the function they call, or as statements, in
+which case the return value is ignored.  The most important call is
+{\tt Send}, which calls an object's message handler.  The syntax is
+\begin{center}
+{\tt Send(} {\em object, } {\tt @}{\em message}, {\tt \#}{\em param1}
+{\tt =} {\em val1}, {\tt \#}{\em param2} {\tt =} {\em val2}, \ldots
+{\tt )}
+\end{center}
+{\em Object} gives the object whose message handler is to be called;
+{\em message} is the name of the message handler to call.  The
+parameters are matched by name, so they can appear in any order.
+Execution immediately passes to the object's message handler, and
+returns to the caller when a return statement is reached in the
+handler.  All parameters do not need to be supplied.  Any parameters
+not passed to a message handler are initialized to the value specified
+in the message handler definition before the message handler code
+gets control.
+
+\texttt{Post} has the same syntax as \texttt{Send}, but the
+call is not made until after the current message (and all of the
+callers, back to the original client message forwarded by the server)
+is complete.  This is useful when something should be done after the
+current call, such as responding to speech said by a user.
+
+There are two kinds of return statements, {\tt return} and {\tt
+propagate}.  One of these must be the last statement in every message
+handler.  A {\tt propagate} statement indicates that execution should
+proceed to the message handler of the same name in the closest
+superclass in the current class's hierarchy, if any.  A {\tt return}
+statement indicates that execution should return immediately to the
+caller.  {\tt Return} can optionally be followed by an expression
+whose value is returned to the caller as the value of the calling
+expression.  If no expression appears after the {\tt return}, the
+value nil is returned to the caller.
+
+Debug strungs are a special kind of string that is only intended for
+debugging use.  They are specified by a text string inside
+double quotes in an expression.  The primary use for debug strings
+is to pass them to the {\tt Debug} function, described in the next section,
+for output to a log file.  However, they can also be used as parameters
+to {\tt StringEqual} and {\tt ParseString} for use in text comparisions
+and in parsing mail destination lists.  Debug strings are not handled
+by the other string functions, so care must be taken not to use debug
+strings where they are not appropriate.
+
+\subsection{Built-in functions}
+
+Below we give brief descriptions of each built-in function, arranged
+by category.  All parameters are passed by value.  A more thorough description 
+is given in the previous chapter.
+
+\subsubsection{List operations}
+
+These functions support linked lists similar to those in Lisp.  The
+interpreter has a linked list data type; values of this type are
+passed as list arguments to these functions, and appear in {\tt for}
+statements.
+
+\newlength{\oldindent}
+
+\begin{leftlines}
+\function{Cons}{expr1, expr2}
+
+\function{First}{list node}
+
+\function{Rest}{list node}
+\end{leftlines}
+
+Same as their Lisp counterparts.  {\tt Cons} creates a ``dotted pair'' of
+its arguments, which we refer to as a {\em list node}.  {\tt First}
+and {\tt Rest} return the first and second parts of a list node.
+
+\begin{leftlines}
+\function{List}{expr1, expr2, \ldots}
+\end{leftlines}
+
+Create a list of its arguments.  A list is a sequence of list nodes,
+where the first element of the $n^{th}$ node contains the value of the
+$n^{th}$ expression, and the second element contains a reference to
+the $(n+1)^{st}$ node.  The second element of the last node contains
+nil.
+
+A call to {\tt List} can be abbreviated by the syntactic sugar {\tt [}
+{\em expr1, expr2,} \ldots {\tt ]}.
+
+\begin{leftlines}
+\function{Nth}{list, n}
+\end{leftlines}
+
+Return the first element of the $n^{th}$ node in the list.
+
+\begin{leftlines}
+\function{SetFirst}{list}
+
+\function{SetNth}{list, n}
+\end{leftlines}
+
+Mutate the first element of the $n^{th}$ node of {\em list} in place, that is, without
+creating any new list nodes.  SetFirst is a special case with $n = 1$.
+
+\begin{leftlines}
+\function{Length}{list}
+\end{leftlines}
+
+Return the length of the given list.
+
+\begin{leftlines}
+\function{DelListElem}{list, n}
+\end{leftlines}
+
+Returns the list with the first occurrence of the specified value ($n$) 
+removed from the list.
+
+
+\subsubsection{Communication}
+
+These commands assemble and send messages that the interpreter passes
+to the client.
+
+\begin{leftlines}
+\function{AddPacket}{expr1, expr2, \ldots}
+\end{leftlines}
+
+Add to the interpreter's communication queue.  The first argument
+gives the length of the second argument in bytes, the third argument
+gives the length of the fourth argument, etc.  The communication queue
+contains everything passed in via calls to {\tt AddPacket} since the
+last call to {\tt SendPacket}.
+
+\begin{leftlines}
+\function{SendPacket}{session}
+
+\function{SendCopyPacket}{session}
+
+\function{ClearPacket}{}
+\end{leftlines}
+
+Send the contents of the communication queue to the client identified
+by {\em session}, and then clear the queue.  The interpreter passes
+session numbers to Blakod when users log on.
+
+{\tt SendCopyPacket} performs the same function, except that it
+doesn't clear the queue.  The queue can be cleared manually by calling
+{\tt ClearPacket}.
+
+\subsubsection{Class operations}
+
+\begin{leftlines}
+\function{Create}{{\tt \&}class, {\tt \#}param1 {\tt =} val1, {\tt \#}param2 
+{\tt =} val2, \ldots}
+\end{leftlines}
+
+Create and return a new object of the given class.  The parameters are
+passed to the class's constructor.
+
+\begin{leftlines}
+\function{IsClass}{object, {\tt \&}class}
+\end{leftlines}
+
+Return true if the object is a subclass of the given class.
+
+\begin{leftlines}
+\function{GetClass}{object}
+\end{leftlines}
+
+Return the class of the given object.
+
+
+\subsubsection{Strings}
+
+\begin{leftlines}
+\function{StringEqual}{string1, string2}
+\end{leftlines}
+
+Return true if the two strings contain the same ASCII string; the
+comparison is case insensitive.
+
+\begin{leftlines}
+\function{StringContain}{string1, string2}
+\end{leftlines}
+
+Return true if the string1 contains the ASCII string in string2; the
+comparison is case insensitive.
+
+\begin{leftlines}
+\function{SetString}{string1, text}
+\end{leftlines}
+
+Set the string to the given ASCII text.
+
+\begin{leftlines}
+\function{SetResource}{resource, string}
+\end{leftlines}
+
+Set the dynamic resource to the given string.
+
+\begin{leftlines}
+\function{CreateString}{}
+\end{leftlines}
+
+Create a new, empty string.
+
+\begin{leftlines}
+\function{ParseString}{string, separators, message}
+\end{leftlines}
+
+Parse the given string into a set of substrings, separated by
+characters in the string {\tt separators}.
+
+\subsubsection{Timers}
+
+\begin{leftlines}
+\function{CreateTimer}{time, message}
+\end{leftlines}
+
+Create and return a new timer.  The timer will go off in {\tt time}
+milliseconds, when the given message will be sent to the current object.
+
+\begin{leftlines}
+\function{DeleteTimer}{timer}
+\end{leftlines}
+
+Delete the given timer.
+
+\begin{leftlines}
+\function{GetTimeRemaining}{timer}
+\end{leftlines}
+
+Return the number of milliseconds remaining on the given timer.
+
+\begin{leftlines}
+\function{GetTime}{}
+\end{leftlines}
+
+Return the current wall clock time.
+
+\subsubsection{Room operations}
+
+\begin{leftlines}
+\function{LoadRoom}{expr}
+\end{leftlines}
+
+Return a reference to the room description given by the resource
+number {\em expr}.  This function is used to load the room's
+description file when the room is created.  The data that BlakServ loads
+about a room is nearly permanently stored in memory.  It is only unloaded
+upon a {\tt reload sys} command, which unloads the data about every loaded
+room.  The Blakod for every game must reload rooms after every system
+reload, and also erase all references to the room data that no longer
+exists.  I coded Meridian 59 to automatically take care of this through
+the {\tt Room} class, and it is important not to remove that code.  Other
+games may not need rooms at all, and can ignore this warning.  There is no
+way to unload room data except by a system reload.
+
+\begin{leftlines}
+\function{CanMoveInRoom}{room, row1, col1, row2, col2 }
+\end{leftlines}
+
+Return true if room does not contain any impassable walls when moving
+from ({\em row1, col1}) to ({\em row2, col2}).  This is used to
+determine if monster moves should be allowed.  This is currently the
+only interaction between Blakod and the geometry of a room.
+
+\subsubsection{Hash tables}
+
+\begin{leftlines}
+\function{CreateTable}{}
+\end{leftlines}
+
+Return a new, empty hash table.  The ``size'' of the table is fixed in {\tt ccode.c},
+but the hash table uses open hashing.  Open hashing is a very common
+hashing system which is quite simple.  Each entry in a hash table is
+actually a linked list of elements that have the same hash value.  In
+this way, the hash table is never full, because it is not of a fixed size,
+just a fixed number of hash values.  This considerably eases coding using
+a hash table because the programmer never has to deal with a full hash table.
+However, implementing open hashing is slightly more complex.  I believe that
+the hash tables work perfectly in BlakServ.
+
+
+\begin{leftlines}
+\function{AddTableEntry}{table, key, value}
+\end{leftlines}
+
+Add the (key, value) pair to the given hash table.
+
+\begin{leftlines}
+\function{GetTableEntry}{table, key}
+\end{leftlines}
+
+Return the value matching the given key in the hash table, or nil if
+the key is not present in the table.
+
+\begin{leftlines}
+\function{DeleteTableEntry}{table, key}
+\end{leftlines}
+
+Remove the entry in the hash table with the given key, if any.
+
+\begin{leftlines}
+\function{DeleteTable}{table}
+\end{leftlines}
+
+Free all memory associated with the given hash table, and delete the
+table.
+
+\subsubsection{Miscellaneous}
+
+\begin{leftlines}
+\function{Random}{expr1, expr2}
+\end{leftlines}
+
+Return a random number uniformly distributed over the given closed
+interval of integers.
+
+\begin{leftlines}
+\function{Debug}{expr1, expr2, \ldots }
+\end{leftlines}
+
+Print given values on the server's terminal.
+
+\begin{leftlines}
+\function{Bound}{expr1, expr2, expr3 }
+\end{leftlines}
+
+Bound {\em expr1} to the interval [{\em expr2, expr3}], and return
+the result.
+
+\begin{leftlines}
+\function{Abs}{expr}
+\end{leftlines}
+
+Return the absolute value of the given expression.
+
+\begin{leftlines}
+\function{GetInactiveTime}{session}
+\end{leftlines}
+
+Return the number of milliseconds since a message was received on the
+given session.
+
+\begin{leftlines}
+\function{IsList}{object}
+\end{leftlines}
+
+Return true if the object is a list node.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Intermediate language}
+
+Blakod is byte-compiled into an intermediate language we call Bkod.
+Bkod is an extremely simple language, similar to a generic
+register-oriented assembly language.  Each instruction contains an
+opcode, one to three sources or destinations, and occasionally some
+other fields. For a full specification, see Appendix~\ref{app:formats}.
+
+Bkod contains opcodes for unary and binary operations, jumps, function
+calls, and returns.  The unary and binary operations have the same
+semantics as C (except, of course, that they operate on Blakod's 28
+bit values).  Jumps may be conditional or unconditional, and returns
+may or may not propagate (corresponding to the Blakod commands {\tt
+propagate} and {\tt return}).
+
+The only locations allowed in Bkod instructions are local variables
+and properties.  Temporary values, such as values that arise in the
+evaluation of complex expressions, are stored in extra local variables
+generated by the compiler.  Immediate (constant) values can also
+appear in Bkod instructions.
+
+In addition to instructions, a \bof file contains some organizational
+information about the class from which it was compiled.  The class has
+a table of message handlers; each handler contains a list of its
+parameters, as well as the actual handler's Bkod instructions.  The
+file also contains a mapping of \bof file offsets to source (Blakod)
+line numbers; the server uses this to report Blakod line numbers in
+debugging messages.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Existent Blakod}
+
+\subsection{Class Hierarchy}
+As of the date of this writing, the following class tree shows the
+class hierarchy of the Blakod, except for the leaves.  In most
+cases leaf classes have little or no added functionality.  Their only
+purpose is to have resources for the individual object and use these
+to override properties.
+
+\begin{verbatim}
+Object*
+    ActiveObject*
+        Holder*
+            NoMoveOn*
+                Battler*
+                    Monster*
+                        Council
+                        Factions
+                        Mummy
+                        Temples
+                        Towns
+                            BarloqueTown
+                            CorNothTown
+                            HazarTown
+                            JasperTown
+                            MarionTown
+                            TosTown
+                    Player
+                        User
+                            dm
+                                admin
+            Room*
+                Guest1
+                Guest2
+                Guest3
+                Guest4
+                Guest5
+                Guest7
+                GuildHall
+                MonsterRoom
+                    FeyForest
+                    Guest6
+                    ObjectRoom
+    Item*
+        ActiveItem*
+        PassiveItem*
+            AttackModifier
+            DefenseModifier
+                Armor
+                Helmet
+                Pants
+                Shield
+            ForgetPotion
+            Healer
+            MiniGame
+            Necklace
+            NumberItem
+                Ammo
+                Food
+            Ring
+            Token
+            Wand
+            Weapon
+                RangedWeapon
+    PassiveObject*
+        Brain*
+        GuildCommand
+        ManaNode
+        News
+        Sickness
+            Disease
+        Skill
+            Proficiency
+            Stroke
+                Unarmed
+        Spell
+            AttackSpell
+            DMSpell
+            TouchAttackSpell
+        TreasureType
+UtilityFunctions*
+    System* (an important leaf class)
+\end{verbatim}
+* infrastructure class
+
+\begin{center}
+Non-leaf classes in the class hierarchy
+\end{center}
+
+\subsection{Some important classes}
+
+\subsection{Holder}
+
+The \class{Holder} class is critical to the function of the system in
+many ways.  See the following table for its properties.
+
+\begin{center}
+\begin{tabular}{||l|l||} \hline
+Property name & Description 
+\\ \hline \hline
+\prop{plActive} &  A list of active objects being held by this object.
+\\ \hline
+\prop{plPassive} &  A list of passive objects being held by this object.
+\\ \hline
+\prop{piBulk\_hold} &  The amount of bulk this object is currently holding.
+\\ \hline
+\prop{piWeight\_hold} &  The amount of weight this object is currently holding.
+\\ \hline
+\end{tabular}
+\end{center}
+
+The \class{Holder} class uses the concept of active and passive
+objects.  When an \class{Holder} class receives a message indicating
+something has happened or might happen, it sends this message to all
+the active objects that it holds.  This is the primary way that
+objects learn about what is going on with other objects, and how they
+affect other objects.
+
+Many of the messages come in pairs.  This is because an object first
+checks to see if it can do something (such as cast a spell), and then if
+nothing prevents it, it actually performs the action.  The most important
+of these messages are summarized in the following table.
+
+\begin{center}
+\begin{tabular}{||l|l||} \hline
+Message name & Description 
+\\ \hline \hline
+ReqSomethingUse &  An object would like to use an item.
+\\ \hline
+SomethingUse  &  An object just used an item.
+\\ \hline
+ReqSomethingMoved &  An object would like to move.
+\\ \hline
+SomethingMoved &  An object actually did move.
+\\ \hline
+ReqSpellCast &  An object would like to cast a spell.
+\\ \hline
+SpellCast    & An object just cast a spell.
+\\ \hline
+SomethingChanged &  An object just changed its look (either bitmap or overlays).
+\\ \hline
+\vdots & \vdots
+\\ \hline
+\end{tabular}
+\end{center}
+
+The idea here is that rooms have no owner, but every other object is
+either directly owned by a room or owned by an object which is owned
+by a room, some levels up.  When something happens in a room, every
+active object in the room is sent a message, and any of these objects
+which are holders forward the message to any active objects they are holding.
+
+\subsubsection{Room}
+
+The \class{Room} class derives from the \class{Holder} class, but adds
+essential features to store object coordinates and a few other things.
+Its properties are listed in the following table.
+\begin{center}
+\begin{tabular}{||l|p{4in}||} \hline
+Property name & Description 
+\\ \hline \hline
+\prop{piRoom\_flags} & Specified properties of a room---whether it is
+a no combat zone, whether it is an anti-magic zone, etc.
+\\ \hline
+\prop{prRoom} &  The resource of the room filename (.roo file)
+\\ \hline
+\prop{prmRoom} &  The server room id  returned by the server when the .roo
+file \\
+               &  is loaded each time the server is started (or reloaded).
+\\ \hline
+\prop{piRoom\_num} &  The room id for this room, which is unique for
+each room \\
+	         &  (constants have prefix RID\_)
+\\ \hline
+\prop{piSecurity} & The security value of the .roo file associated with
+this room, retrieved from the server.
+\\ \hline
+\prop{prMusic} &  The resource of the midi file to play for users in
+this room.
+\\ \hline
+\prop{piNorth} &  The room id of the room to send objects to if they
+leave to the north.
+\\ \hline
+\prop{piSouth} &  The room id of the room to send objects to if they
+leave to the south.
+\\ \hline
+\prop{piEast} &  The room id of the room to send objects to if they
+leave to the east.
+\\ \hline
+\prop{piWest} &  The room id of the room to send objects to if they
+leave to the west.
+\\ \hline
+\prop{piBaseLight} &  The base light level in this room (constants
+have prefix LIGHT\_).
+\\ \hline
+\prop{piOutside\_factor} &  How much this room's light is affected by
+time of day \\
+                   & (constants have prefix OUTDOORS\_).
+\\ \hline
+\prop{piDirectional\_percent} & How effective directional light is in this room.
+\\ \hline
+\prop{piDirectional\_light} & An internal measure of directional light calculated
+over time.
+\\ \hline
+\prop{prBackground} & The resource of the background bitmap of this room.
+\\ \hline
+\prop{piDispose\_delay} &  The amount of time between sending
+DestroyDisposable() messages.
+\\ \hline
+\prop{ptDispose} &  The timer id returned by the server when a timer
+is created to call DestroyDisposable().
+\\ \hline
+\prop{plExits} & The list of exits from this room (accessed by a user hitting
+the space bar).
+\\ \hline
+\prop{plSector\_changes} & The list of all sectors that have a changed floor or
+ceiling height from the .roo file height.
+\\ \hline
+\prop{plWall\_changes} & The list of wall ids that have a different animation
+type from the .roo file value.
+\\ \hline
+\prop{plTexture\_changes} & The list of wall texture ids that have been assigned
+a different texture from the .roo file value.
+\\ \hline
+\prop{plSector\_light\_changes} & The list of sectors that have a different
+light value from the .roo file value.
+\\ \hline
+\prop{plEnchantments} & The list of all room enchantments that are currently
+affecting this room.
+\\ \hline
+\end{tabular}
+
+\begin{tabular}{||l|p{4in}||} \hline
+Property name & Description 
+\\ \hline \hline
+\prop{pbUser\_in\_room} & Internally calculated.  True when there is at least
+one user in the room.
+\\ \hline
+\prop{plPeriodic\_sounds} & The list of all sounds that are set to periodically
+be sent to all users in the room.
+\\ \hline
+\prop{piPeriodic\_sounds} & The number of milliseconds between periodic sounds
+going off.
+\\ \hline
+\prop{ptPeriodic\_sounds} & The timer that goes off when a new periodic sound is
+set to be sent to all users in the room.
+\\ \hline
+
+\end{tabular}
+\end{center}
+
+An object of class \class{Room} stores the angle, row, column, fine
+row, and fine column of each object it is holding in the
+\prop{plActive} and \prop{plPassive} lists, besides the actual object.
+
+The \class{Room} class keeps track of when the first user enters the
+room and when the last user leaves.  The room itself uses this to send
+all the objects in the room a \texttt{DestroyDisposable()} when the
+user leaves, or every \prop{piDispose\_Delay} seconds when users are
+present.  Objects which are not permanent should delete themselves
+upon receiving this message.  Items by default do this, as do
+monsters.  Any ``permanent'' items or monsters override this behavior.
+
+\subsubsection{Monsters}
+
+The \class{Monster} class has a simple system of fighting, by
+returning attacks by anything that attacks a monster, and retaliating
+by a timer.  It has properties to keep track of its hit points and
+damage capabilities, and to create treasure when it is killed.
+
+This class was originally written by Chris Kirmse, but was rewritten
+by John Murphy; he and Damion Schubert understand its behavior best.
+
+\subsection{Users}
+\label{section:users}
+
+The code and data to handle users is split primarily into two classes,
+\class{Player} and \class{User} (which derives from \class{Player}).
+The \class{Player} class handles attacking, using and holding items,
+and animations and overlays.  The \class{User} class handles all the
+interaction with the server (which comes through the message handler
+ReceiveClient()).
+
+\subsubsection{Using items}
+
+The \class{Player} class allows users to use items.  Items may be used
+in several different ways, as seen in table~\ref{tabconstantsuse}.
+
+\begin{center}
+\begin{center}Table \ref{tabconstantsuse} \end{center}
+\begin{tabular}{||l|l||} \hline
+Value of item's \prop{piUse\_type} & Description 
+\\ \hline \hline
+ITEM\_CANT\_USE &  The item cannot be used.
+\\ \hline
+ITEM\_SINGLE\_USE  &  The item does something when used, like a
+magical staff or bandage.
+\\ \hline
+ITEM\_USE\_HAND &  The item is held in a hand.
+\\ \hline
+ITEM\_USE\_BODY &  The item is held on the body.
+\\ \hline
+ITEM\_BROKEN    &  The item is broken, and so cannot be used.
+\\ \hline
+\end{tabular}
+\label{tabconstantsuse}
+\end{center}
+
+Each user has an amount of \emph{space} to hold things in his hands or on
+his body, stored in \prop{piHand\_space} and \prop{piBody\_space}.  If
+the amount of space is greater than the amount the item will use
+(specified in its \prop{piUse\_amount}), then there is enough space to
+use the item.
+
+Items themselves may have other restrictions on usage--for example,
+only one weapon may be used at a time, and if a user tries to use
+another weapon, the currently used weapon will ``unuse'' itself.
+
+
+\section{Strings and dynamic resources}
+
+\subsection{How player names work}
+
+Player names presented quite a challenge to us early on in BlakSton, but
+after several tries we came up with a good solution.  The problem is that
+Blakod refers to all object's names as resources.  This makes it possible
+for a piece of Blakod to deal with all objects the same--there is no special
+case code for users.  However, players need the ability to change their
+name (when they create their character the first time, and any time they
+commit suicide).  Additionally, player names are not known before the
+game is shipped, which is the case for all other resources.
+
+The solution currently implemented in BlakSton is that player names are
+treated as special resources, called \textit{dynamic resources}.  All resources
+with resource ids of at least 1 million are treated as dynamic resources.
+Unlike regular resources, when the server saves the game state, it also saves
+all of the dynamic resources.  A C code function (\texttt{SetResource}) exists
+for the Blakod to change a player's name.  The only remaining issue is how to
+make sure all clients always know the dynamic resources associated with every
+player currently logged in.
+
+This is simple to accomplish--when a player logs in, all other players are sent
+a special message from the server with the new player's name resource id and 
+the string value of the resource.  The new player is sent a message with
+every logged in player's resource ids and associated strings.  In this way,
+all clients always know the string values of all static resource ids and
+all dynamic resource ids of currently logged in players.
+
+\subsection{How strings and dynamic resources are saved}
+
+When the server saves the game state, it writes several files with a suffix
+indicating the time of the save.  One of these files is called \texttt{dynarscs.X},
+which contains the dynamic resources in the same format as a \texttt{.rsc} file.
+When the game is reloaded, the server reads the file and so never loses track
+of player names.
+
+The game strings are saved to a file called \texttt{striings.X}, which is in
+a very simple binary format.  It starts with the bytes 00, 00, 00, 01.  Then
+the number of strings is written as a four byte integer in little endian format.
+Then each string is written to the file, as a two byte integer length and then
+the actual string data.

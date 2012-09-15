@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsG5 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+   waterfall_soundg5 = wfall2.wav
+   room_OutdoorsG5 = G5.roo
+   room_name_OutdoorsG5 ="The King's Way"
+   OutdoorsG5_music = walk1.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsG5
+
+   viTeleport_row = 35
+   viTeleport_col = 34
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_RIVER | TERRAIN_ROAD | TERRAIN_WATERFALL
+
+   viFlag_Row = 16
+   viFlag_Col = 28
+
+properties:
+
+   prRoom = room_OutdoorsG5
+   prMusic = OutdoorsG5_music
+   piRoom_num = RID_G5
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+   piGen_time = 50000
+   piGen_percent = 40
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piInit_count_min = 1
+   piInit_count_max = 3
+
+   piMonster_count_max = 7
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&SpiderBaby, 50], [&GiantRat, 50] ];
+
+      plGenerators = [ [30, 14], [30, 26], [23, 32], [33, 31], [33, 37],
+		      [30, 44], [36, 23], [38, 16], [45, 19], [47, 22]];
+      plLooping_sounds = [[ waterfall_soundg5, 26, 10, 100, 100 ]];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 6, 18, RID_CORNOTH, 30, 68, ROTATE_NONE ],plExits);
+      plExits = Cons([ 7, 18, RID_CORNOTH, 31, 68, ROTATE_NONE ],plExits);
+
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_CORNOTH, 31, 67, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_G6, 2, 36, ROTATE_NONE, COL_IS_LESS_THAN,31], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_G6, 2, 69, ROTATE_NONE, COL_IS_GREATER_THAN,30], plEdge_exits);        
+ 
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

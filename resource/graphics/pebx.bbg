@@ -1,0 +1,33 @@
+#  Pink male - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+#^Applied to Hotspot: 11
+#*Groups: 4
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 14
+14
+Pe000bax.bmp   [-15, -10] 
+Pe315bax.bmp   [-5, -14] 
+Pe270bax.bmp   [-4, -9] 
+Pe090bax.bmp   [-11, -11] 
+Pe045bax.bmp   [-17, -10] 
+Pe000bbx.bmp   [-15, -10] 
+Pe315bbx.bmp   [-5, -14] 
+Pe045bbx.bmp   [-17, -10] 
+Pe000bcx.bmp   [-15, -10] 
+Pe315bcx.bmp   [-5, -14] 
+Pe045bcx.bmp   [-17, -10] 
+Pe000bdx.bmp   [-15, -10] 
+Pe315bdx.bmp   [-5, -14] 
+Pe045bdx.bmp   [-17, -10] 
+4
+ 8   1 2 3 0 0 0 4 5 
+ 8   6 7 3 0 0 0 4 8 
+ 8   9 10 3 0 0 0 4 11 
+ 8   12 13 3 0 0 0 4 14 

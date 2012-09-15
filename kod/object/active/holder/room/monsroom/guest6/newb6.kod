@@ -1,0 +1,99 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Newb6 is Guest6
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_newb6 = "Mausoleum"
+   newb6_signname = "looking around"
+   newb6_signtext = "If a monster isn't chasing you, now's a good time "
+         "to learn another handy interface ability.  By pressing PAGEUP "
+		 "and PAGEDOWN, you can have your character look up at the ceiling, "
+		 "and down at the pit full of mummies.  Once you do so, you may feel "
+		 "inclined to wave at the mummies. You can do that by typing WAVE. "
+		 "They won't wave back, of course, being uncultured brutes, but at least "
+		 "you get the satisfaction of being polite before going out and killing "
+		 "more of their friends.\n\n"
+		 "It's a good thing to keep in mind that PAGEDOWN is extremely useful when facing "
+		 "a foe shorter than yourself - and most of your early Meridian foes will be "
+		 "shorter than yourself.  However, for the time being, center your view "
+		 "by pressing HOME, and head back into the fray."
+
+classvars:
+
+   vrName = room_name_newb6
+
+   viDemo_base = RID_NEWB_BASE
+
+   % Max # of monsters in the pit area
+   viPit_monsters_max = 2
+   
+   vrSignName = newb6_signname
+   vrSignText = newb6_signtext
+
+properties:
+
+   piRoom_num = RID_NEWB6
+
+messages:
+
+   Constructed()
+   {
+      piRoom_flags = piRoom_flags & ~ROOM_GUEST_AREA;
+
+      propagate;
+   }
+
+   SetupColumnDown()
+   {
+      return;
+   }
+
+   DoColumnDown()
+   {
+      local oMoney;
+
+      oMoney = Create(&Elderberry,#number=random(5,10));
+      Send(self,@NewHold,#what=oMoney,#new_row=34,#new_col=4,#fine_row=48,#fine_col=48);
+
+      oMoney = Create(&Herbs,#number=random(10,15));
+      Send(self,@NewHold,#what=oMoney,#new_row=34,#new_col=5,#fine_row=48,#fine_col=16);
+
+      oMoney = Create(&Mushroom,#number=random(10,15));
+      Send(self,@NewHold,#what=oMoney,#new_row=35,#new_col=4,#fine_row=16,#fine_col=48);
+
+      oMoney = Create(&Money,#number=(random(45,55)*10));
+      Send(self,@NewHold,#what=oMoney,#new_row=35,#new_col=5,#fine_row=16,#fine_col=16);
+      
+      return;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      % Don't let them get over 25%.
+      if oSpellSkill <> $
+         AND send(oSpellSkill,@GetAbility,#who=who) >= 25
+      {
+         return CANNOT_IMPROVE;
+      }
+
+      % Give a general bonus to the nice newbies.
+      return (chance * 3)/2;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

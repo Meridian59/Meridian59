@@ -1,0 +1,193 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall9 is GuildHall
+
+constants:
+
+   MAINDOOR = 1
+   SECRETDOOR = 2
+   
+   DOOR_DELAY = 5000
+       
+   include blakston.khd
+
+resources:
+
+   room_name_guildh9 = "The Abandoned Warehouse"
+   room_guildh9 = guildh9.roo
+
+classvars:
+
+   vrName = room_name_guildh9
+
+   viTeleport_row = 9
+   viTeleport_col = 19
+
+   viNews_row = 25
+   viNews_col = 24
+   viNews_finerow = 32
+   viNews_finecol = 32
+
+   viFoyer_north = 5
+   viFoyer_south = 11
+   viFoyer_west = 15
+   viFoyer_east = 24
+
+   viLever_row = 16
+   viLever_col = 10
+   viLever_fine_row = 32
+   viLever_fine_col = 32
+
+   viInner_teleport_row = 24
+   viInner_teleport_col = 17
+
+   viQuality = 1
+   viTerrain_type = TERRAIN_CITY | TERRAIN_GUILDHALL
+
+   viSeconds_til_close = 7
+
+properties:
+
+   prRoom = room_guildh9
+   piRoom_num = RID_GUILDH9
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_5
+
+   ptSecret = $
+   ptEntrance = $
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [ [11,19] ];
+
+      propagate;
+   }
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 9, 24, RID_BAR_PORT, 22, 6, ROTATE_NONE ],plExits);
+      plExits = Cons([ 10, 24, RID_BAR_PORT, 22, 6, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSecret <> $
+      {
+         DeleteTimer(ptSecret);
+         ptSecret = $;
+      }
+
+      if ptEntrance <> $
+      {
+         DeleteTimer(ptEntrance);
+         ptEntrance = $;
+      }
+
+      propagate;
+   }
+
+   SomethingTryGo(what=$, row=$, col = $)
+   {
+      if row = 12 AND col = 19
+      {
+         if send(self,@ReqLegalEntry,#who = what)
+         {
+            send(self,@openEntrancedoor);
+            return TRUE;
+         }
+      }
+
+      propagate;
+   }
+
+
+   OpenEntranceDoor()
+   {
+      if ptEntrance = $
+      {
+         send(self,@TimeStampDoor);
+         send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height=128,#speed=100);
+         send(self,@OpenEntranceDoorSound);
+         ptEntrance = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
+      }    
+
+      return;
+   }
+
+   CloseEntranceDoor()
+   {
+      ptEntrance = $;
+      send(self,@SetSector,#sector=MAINDOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=224,#speed=100);
+      send(self,@CloseEntranceDoorSound);
+
+      return;
+   }
+
+   OpenSecretDoor()
+   {
+      if ptSecret = $
+      {
+         send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+              #height=128,#speed=100);
+         send(self,@OpenSecretDoorSound);
+         ptSecret = createtimer(self,@CloseSecretDoor,DOOR_DELAY);
+      }
+
+      return; 
+   }
+
+   CloseSecretDoor()
+   {
+      ptSecret = $;
+      send(self,@SetSector,#sector=SECRETDOOR,#animation=ANIMATE_FLOOR_LIFT,
+           #height=224,#speed=100);
+      send(self,@CloseSecretDoorSound);
+
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&WoodenBox),
+           #new_row=6,#new_col=5,#fine_col=24,#new_angle=ANGLE_SOUTH_EAST);
+
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+
+      lHotPlates = [ [12,19,1], [12,18,2], [12,20,2], [13,18,2], [13,19,2], [13,20,2] ];
+
+      for i in lHotPlates
+      {
+         oPlate = Create(&Hotplate,#hpid=nth(i,3));
+         send(self,@NewHold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

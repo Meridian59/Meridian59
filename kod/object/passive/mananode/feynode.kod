@@ -1,0 +1,177 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FeyNode is ManaNode
+
+% FeyNode has three properties that make it distinct:
+% 1) It gives twice as much mana
+% 2) Only people of matching karma can meld with it.
+% 3) When created, it strips everyone of opposing mana of their link
+
+constants:
+
+   include blakston.khd
+
+   FEYNODE_GOOD = 1
+   FEYNODE_EVIL = 2
+   FEYNODE_DAMAGE = 10
+
+   % From superclass
+   NODE_DEAD = 3
+
+resources:
+
+   feynode_name_good = "kii'elhai"
+   feynode_name_evil = "kii'dirhai"
+
+   feynode_stripped = "~IYou feel some of your magical energies depart you."
+   feynode_scream = \
+      "~IYou scream out in pain as the mana node lashes out at you!"
+
+classvars:
+
+properties:
+
+   piKarma = 0
+
+messages:
+
+   NodeAppear(karma=0)
+   {
+      if karma = 0
+      {
+         Debug("FeynodeAppears called with Karma = 0!");
+
+         return;
+      }
+
+      if karma = FEYNODE_GOOD
+      {
+         piKarma = FEYNODE_GOOD;
+         vrName = feynode_name_good;
+      }
+
+      if karma = FEYNODE_EVIL
+      {
+         piKarma = FEYNODE_EVIL;
+         vrName = feynode_name_evil;
+      }
+
+      Send(self,@StripUsers);
+
+      propagate;
+   }
+
+   StripUsers()
+   {
+      local lUsers, i;
+
+      lUsers = Send(SYS,@GetUsers);
+      if piKarma = FEYNODE_GOOD
+      {
+         for i in lUsers
+         {
+            % If player is evil and has node, strip it.
+            if (Send(i,@GetKarma) <= 0)
+               AND (Send(i,@GetNodeList) & piNode_num)
+            {
+               Send(self,@UnMeld,#who=i);
+               Send(i,@MsgSendUser,#message_rsc=feynode_stripped);
+            }
+         }
+      }
+      else
+      {
+         for i in lUsers
+         {
+            % If player is good and has node, strip it.
+            if (Send(i,@GetKarma) > 0)
+               AND (Send(i,@GetNodeList) & piNode_num)
+            {
+               Send(self,@UnMeld,#who=i);
+               Send(i,@MsgSendUser,#message_rsc=feynode_stripped);
+            }
+         }
+      }
+
+      return;
+   }
+
+   TryActivate(who=$)
+   "Return False only if you want user.kod to Send its own error message to "
+   "user."
+   {
+      if (piKarma = FEYNODE_GOOD AND (Send(who,@GetKarma) < 0))
+         OR (piKarma = FEYNODE_EVIL AND (Send(who,@GetKarma) > 0))
+      {
+         Send(self,@LashOut,#who=who);
+
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   LashOut(who=$)
+   {
+      Send(who,@MsgSendUser,#message_rsc=feynode_scream);
+      if Send(who,@AssessDamage,#what=self,#damage=FEYNODE_DAMAGE,
+              #report=FALSE) = $
+      {
+         Send(poOwner,@SomethingKilled,#what=self,#victim=who);
+         Send(who,@Killed,#what=self);
+      }
+
+      return;
+   }
+
+   GetManaAdjust(who=$)
+   {
+      % Twice the standard.
+      return (2*(((5 + Send(who,@GetMysticism)) / 10) + 3));
+   }
+
+   SendAnimation()
+   {
+      if piKarma = FEYNODE_GOOD
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,150, 2,1, 2,5);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_CYCLE, 4,250, 2,6, 2,7);
+      }
+
+      return;
+   }
+
+   SendLightingInformation()
+   {
+      if piState <> NODE_DEAD
+      {
+         % Special case for an evil aligned node.
+         if piKarma = FEYNODE_EVIL
+         {
+            % Flags, intensity, and color.
+            AddPacket(2,LIGHT_FLAG_ON);
+            AddPacket(1,100);
+            AddPacket(2,LIGHT_SPECTRAL);
+
+            return;
+         }
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

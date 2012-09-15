@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SkullBrazier is Flickerer
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   skullbrazier_name = "skull brazier"
+   skullbrazier_desc = \
+      "This skull brazier offers an ominous, eerie glow.  Fire glints in the eye "
+      "sockets giving it a life like appearance."
+   skullbrazier_icon = head.bgf
+
+classvars:
+
+   vrName = skullbrazier_name
+   vrDesc = skullbrazier_desc
+   vrIcon = skullbrazier_icon
+
+   % Lighting flags.  Default "on" and wavering flags
+   viLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_WAVERING
+
+   % Light color.
+   viLightColor = LIGHT_ORANGE
+
+properties:
+
+   % Intensity, from 0-255.
+   piLightIntensity = 130
+
+messages:
+
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

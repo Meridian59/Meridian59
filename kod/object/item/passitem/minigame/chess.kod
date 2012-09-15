@@ -1,0 +1,75 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Chess is Minigame
+
+% The game of chess.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   chess_name_rsc = "chess board"
+   chess_closed_rsc = chesclos.bgf
+   chess_open_rsc = chesopen.bgf
+   chess_table_rsc = chestabl.bgf
+   chess_desc_rsc = "Two players can use this board to play a game of chess.  Anyone else can use the board to observe.  "
+       "The board must be on the ground for people to be able to play each other.  If you pick up a board "
+       "in the middle of a match, the board will save the status of the game so that it may be concluded later.  "
+       "It is wise to find a safe area to play."
+   chess_module_rsc = chess.dll
+
+classvars:
+
+   vrName = chess_name_rsc
+   vrDesc = chess_desc_rsc
+
+   vrModule = chess_module_rsc
+
+   viValue_average = 10
+   viBulk = 30
+
+properties:
+
+   vrIcon = chess_closed_rsc
+
+messages:
+
+   SetAppearance()
+   {
+        local icon;
+		
+        if chess_table_rsc = vrIcon
+		{
+			return;
+		}
+
+		icon = vrIcon;
+		if 0 = piNumPlayers
+		{
+			icon = chess_closed_rsc;
+		}
+		else
+		{
+			icon = chess_open_rsc;
+		}
+
+		if icon <> vrIcon
+		{
+		    vrIcon = icon;
+			send(poOwner, @somethingchanged, #what=self);
+		}
+		return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

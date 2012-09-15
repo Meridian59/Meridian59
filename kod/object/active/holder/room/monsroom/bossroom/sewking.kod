@@ -1,0 +1,477 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SewerKingLair is BossRoom
+
+constants:
+
+   include blakston.khd
+   DOOR_RESET_TIME = 60000
+   SECTOR_DOOR1 = 1
+   H_DOOR1_UP =1160
+   H_DOOR1_DN =961
+   SECTOR_DOOR2 = 2
+   H_DOOR2_UP = 1060
+   H_DOOR2_DN = 953
+   SECTOR_WATERa = 5
+   H_WATERa_UP = 780
+   H_WATERa_DN = 100
+   SECTOR_WATERb = 6
+   H_WATERb_UP = 219
+   H_WATERb_DN = 100
+   SECTOR_WATERc = 7
+   H_WATERc_UP = 169
+   H_WATERc_DN = 100
+   SECTOR_WATERd = 3
+   H_WATERd_UP = 949
+   H_WATERd_DN = 100
+   SECTOR_WATERFALL = 4
+   H_WATERFALL_UP = 850
+   H_WATERFALL_DN = 100
+
+   DOOR_UP = 1
+   DOOR_DN = 0
+   DOOR_UP_SPEED = 4
+   DOOR_DN_SPEED = 4
+   WATER_UP_SPEED = 10
+   WATERFALL_DN_SPEED = 2000
+
+   REGION_W=1
+   REGION_C=2
+   REGION_E=3
+
+   BLINKBOX1_S = 43
+   BLINKBOX1_W = 15
+   BLINKBOX1_E = 49
+   BLINKBOX1_N = 28
+   BLINKBOX2_W = 21
+   BLINKBOX2_E = 43
+   BLINKBOX2_N = 1
+
+   DROWN_COUNTDOWN_TIME = 11500
+   DROWN_INTERVAL = 5000
+   DROWN_DAMAGE = 10
+   DROWNBOX1_S = 28
+   DROWNBOX1_W = 24
+   DROWNBOX1_E = 41
+   DROWNBOX1_N = 18
+   DROWNBOX2_W = 33
+   DROWNBOX2_N = 16
+
+resources:
+
+   room_SewerKingLair = sewking.roo
+   room_name_SewerKingLair = "The Ancient Smuggler's Crossing"
+
+   SewerKingLair_music = cave.mid
+   SewerKingLair_door_sound = down2.wav
+   SewerKingLair_water_sound = wfall2.wav
+   SewerKingLair_drowning_sound = ouchf2.wav
+
+   SewerKingLair_lever_desc = "This lever is caked with years' worth of accumulated rust and slime."
+   SewerKingLair_drowning = "You gasp for breath in the last half-inch of air left near the ceiling, "
+                           "taking as much water as air into your lungs."
+
+%   sewking_bones_name = "pile of bones"
+%   sewking_bones_icon = skelX.bgf
+%   sewking_bones_desc = \
+%      "These are the splintered, well-gnawed remains of some unlucky, and probably unwise, "
+%      "explorer.  You shudder to think of the fate that must have befallen this poor soul."
+
+   SewerKingLair_waterfall_sound = wfall2.wav
+
+classvars:
+
+   vrName = room_name_SewerKingLair
+
+   viTeleport_row = 38
+   viTeleport_col = 33
+   viTeleport_rowW = 40
+   viTeleport_colW = 10
+   viTeleport_rowE = 18
+   viTeleport_colE = 54
+
+   viTerrain_type = TERRAIN_SEWERS | TERRAIN_LAIR
+
+   viBossResetTime = 30 * 60 * 1000
+
+
+properties:
+
+   prRoom = room_SewerKingLair
+   piRoom_num = RID_SEWER_KING
+
+   piBaseLight = (LIGHT_VERY_DARK + LIGHT_MIN)/2
+   piOutside_factor = 0
+
+   piGen_time = 25000
+   piGen_percent = 80
+
+   piInit_count_min = 7
+   piInit_count_max = 9
+
+   piMonster_count_max = 15
+
+   poDoor1 = $
+   poDoor2 = $
+   piWaterPosition = DOOR_DN
+
+   poLever1 = $
+   poLever2 = $
+   
+   ptDrownCountdownTimer = $
+   ptDrownIntervalTimer = $
+
+messages:
+
+   Constructor()
+   {
+      plMonsters = [ [&Lupogg, 100] ];
+      plGenerators = [ [19,19], [23,44], [23,31] ];
+
+      poDoor1 = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_DOOR1,
+                        #upH=H_DOOR1_UP,#downH=H_DOOR1_DN,#upspeed=DOOR_UP_SPEED,
+                        #downspeed=DOOR_DN_SPEED,#toggletime=DOOR_RESET_TIME,
+                        #movesound=SewerKingLair_door_sound);
+      poDoor2 = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_DOOR2,
+                        #upH=H_DOOR1_UP,#downH=H_DOOR1_DN,#upspeed=DOOR_UP_SPEED,
+                        #downspeed=DOOR_DN_SPEED,#toggletime=DOOR_RESET_TIME,
+                        #movesound=SewerKingLair_door_sound);
+      plLooping_sounds = [ [ SewerKingLair_waterfall_sound, 36, 33, 100, 120 ] ];
+      
+      propagate;
+   }
+   
+   SetupBossTemplates()
+   {
+      plBossTemplate = [ [&LupoggKing, 6, 32] ];
+      plHenchmenTemplate = [ [&Lupogg, 14,32], [&Lupogg, 7,41], [&Lupogg, 13,26]];
+
+      plBossTreasureTemplate = [ [&OfferingKraanan, 11, 50, 29, 45], [&LongBow, 12, 52, 13, 23],
+				 [&MysticSword, 12, 53, 13, 32], [&DiscipleRobe, 11, 52, 20, 31]  ];
+      
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_exits = $;
+      plEdge_Exits = Cons([LEAVE_EAST, RID_BAR_SEWER3, 35, 1, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_JAS_SEWER3, 2, 19, ROTATE_NONE], plEdge_exits);
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      poLever1 = Create(&Lever,#description=SewerKingLair_lever_desc);
+      Send(self,@NewHold,#what=poLever1,#new_row=39,#new_col=13,#fine_row=00,#fine_col=32);
+      poLever2 = Create(&Lever,#description=SewerKingLair_lever_desc);
+      Send(self,@NewHold,#what=poLever2,#new_row=33,#new_col=51,#fine_row=00,#fine_col=00);
+
+      Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=48,#fine_col=00);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=00,#fine_col=00);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=16,#fine_col=00);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=32,#fine_col=00);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=48,#fine_col=00);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=00,#fine_col=16);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=16,#fine_col=16);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=32,#fine_col=16);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=48,#fine_col=16);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=00,#fine_col=32);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=16,#fine_col=32);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=32,#fine_col=32);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=48,#fine_col=32);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=00,#fine_col=48);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=16,#fine_col=48);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=32,#fine_col=48);
+      %Send(self,@NewHold,#what=create(&Skull),#new_row=20,#new_col=36,#fine_row=48,#fine_col=48);
+      %Send(self,@NewHold,
+      %   #what=create(&sign,#desc=sewking_bones_desc,#name=sewking_bones_name,#icon=sewking_bones_icon),
+      %   #new_row=21,#new_col=26,#fine_row=32,#fine_col=55);
+      Send(self,@NewHold,#what=create(&OrnamentalObject,#type=OO_BONES),#new_row=21,#new_col=26,#fine_row=32,#fine_col=55);
+
+      propagate;
+   }
+
+%%%%%%%%%%%%%%%%%%%
+% Lever/Door Code %
+%%%%%%%%%%%%%%%%%%%
+%
+   SomethingChanged(what=$)
+   {
+      if what = poLever1 and send(poLever1,@GetState)=LEVER_DOWN {
+         send(poLever1,@SetStuck,#newstuck=true);
+         send(poDoor2,@toggle);
+      }
+      if what = poLever2 and send(poLever2,@GetState)=LEVER_DOWN {
+         send(poLever2,@SetStuck,#newstuck=true);
+         send(poDoor1,@toggle);
+      }
+      if what = poDoor2 {
+         send(poLever1,@SwitchLever);
+         send(poLever1,@SetStuck,#newstuck=false);
+      }
+      if what = poDoor1 {
+         send(poLever2,@SwitchLever);
+         send(poLever2,@SetStuck,#newstuck=false);
+      }
+      propagate;
+   }
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%
+% end Lever/Door Code %
+%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%
+% Monster death code %
+%%%%%%%%%%%%%%%%%%%%%%
+%
+   BossKilledTrigger()
+   {
+      local i;
+      % These should be placed in Killed() of monster:
+      %        lupogg king death wail
+      %        cast earthquake
+
+      % raise the water, lower the waterfalls:
+      Send(self,@SomethingWaveRoom,#wave_rsc=SewerKingLair_water_sound);
+      send(self,@setsector,#sector=SECTOR_WATERa,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERa_UP,#speed=WATER_UP_SPEED);
+      send(self,@setsector,#sector=SECTOR_WATERb,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERb_UP,#speed=WATER_UP_SPEED);
+      send(self,@setsector,#sector=SECTOR_WATERc,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERc_UP,#speed=WATER_UP_SPEED);
+      send(self,@setsector,#sector=SECTOR_WATERd,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERd_UP,#speed=WATER_UP_SPEED);
+      send(self,@setsector,#sector=SECTOR_WATERFALL,#animation=ANIMATE_CEILING_LIFT,
+            #height = H_WATERFALL_DN,#speed=WATERFALL_DN_SPEED);
+      piWaterPosition = DOOR_UP;
+      plLooping_sounds = [[ SewerKingLair_waterfall_sound, 15, 33, 100, 100 ],
+                           [ SewerKingLair_waterfall_sound, 14, 41, 40, 100 ],
+                           [ SewerKingLair_waterfall_sound, 5, 43, 40, 100 ],
+                           [ SewerKingLair_waterfall_sound, 3, 39, 40, 100 ],
+                           [ SewerKingLair_waterfall_sound, 3, 33, 40, 100 ],
+                           [ SewerKingLair_waterfall_sound, 5, 27, 40, 100 ] ];
+      for i in plActive{
+         if isClass(first(i),&User) {
+            Send(self, @SendLoopingSounds, #who = first(i) );
+         }
+      }
+
+
+      % handle drowning in the middle passage:
+      ptDrownCountdownTimer = createTimer(self,@DrownCountdownTimerTrigger,DROWN_COUNTDOWN_TIME);
+      
+      propagate;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Monster death code%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+% Boss resetting code %
+%%%%%%%%%%%%%%%%%%%%%%%
+%
+   ResetBoss()
+   {
+      % lower the water instantaneously
+      send(self,@setsector,#sector=SECTOR_WATERa,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERa_DN,#speed=0);
+      send(self,@setsector,#sector=SECTOR_WATERb,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERb_DN,#speed=0);
+      send(self,@setsector,#sector=SECTOR_WATERc,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERc_DN,#speed=0);
+      send(self,@setsector,#sector=SECTOR_WATERd,#animation=ANIMATE_FLOOR_LIFT,
+            #height = H_WATERd_DN,#speed=0);
+      send(self,@setsector,#sector=SECTOR_WATERFALL,#animation=ANIMATE_CEILING_LIFT,
+            #height = H_WATERFALL_UP,#speed=0);
+      piWaterPosition = DOOR_DN;
+      plLooping_sounds = [[ SewerKingLair_waterfall_sound, 36, 33, 100, 100 ],[ room_sewer_sound, 1, 1, 200, 70 ]];
+
+      propagate;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% end Boss resetting code %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+% Blink handling %
+%%%%%%%%%%%%%%%%%%
+%
+   FindRegion(who=$,testrow=$,testcol=$)
+   "call with either a user or a pair of coords to test which region the point is in."
+   {
+      if (who <> $) and (send(who,@getOwner) <> self) { return REGION_E; }
+      
+      if testrow = $ {
+         testrow = send(who,@getrow);
+      }
+      if testcol = $ {
+         testcol = send(who,@getcol);
+      }
+
+      % in central area
+      if (testrow <= BLINKBOX1_S) and
+         ((testrow >= BLINKBOX1_N and testcol >= BLINKBOX1_W and testcol <= BLINKBOX1_E) or
+         (testcol >= BLINKBOX2_W and testcol <= BLINKBOX2_E and testrow >= BLINKBOX2_N)) {
+         return REGION_C;
+      }
+      % outside central area
+      if (testcol <= ((BLINKBOX1_W + BLINKBOX1_E)/2)) {
+         return REGION_W;
+      }
+         return REGION_E;      
+   }
+
+   Teleport(what=$,region=0)
+   "Admin supported."
+   "For guild halls - if you're in the guild hall, use secondary blink coordinates."
+   {
+      if region = 0 {
+         region = send(self,@FindRegion,#who=what);
+      }
+
+      if region = REGION_C {
+         propagate;
+      }
+      if region = REGION_W {
+         send(SYS,@utilGoNearSquare,#what=what,#where=self,
+               #new_row=viTeleport_rowW,#new_col=viTeleport_colW);
+         return TRUE;
+      }
+      if region = REGION_E {
+         send(SYS,@utilGoNearSquare,#what=what,#where=self,
+               #new_row=viTeleport_rowE,#new_col=viTeleport_colE);
+         return TRUE;
+      }
+      propagate;
+   }
+
+   NewHold(what = $,new_row=$,new_col=$)
+   "Prevents anyone from logging on into a special zone"
+   {
+      % if players log on into the central region above the entry room,
+      %     send them to the central teleport point
+      if isClass(what,&User) and (send(what,@getowner) = $) {
+         if (send(self,@FindRegion,#testrow=new_row,#testcol=new_col) = REGION_C) and (new_row < BLINKBOX1_N) {
+            post(self,@teleport,#what=what,#region=REGION_C);
+         }
+      }
+      propagate;
+   }
+%
+%%%%%%%%%%%%%%%%%%%%%%
+% end Blink handling %
+%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%
+% Drowning %
+%%%%%%%%%%%%
+%
+   IsInDrownArea(who=$)
+   {
+      local iRow,iCol;
+      if who = $ {return false;}
+
+      iRow=send(who,@getrow);
+      iCol=send(who,@getcol);
+
+      if (iRow <= DROWNBOX1_S) and (iCol <= DROWNBOX1_E) and (iCol >= DROWNBOX1_W) and
+            (iRow > DROWNBOX2_N or (iRow = DROWNBOX2_N and send(who,@getfinerow) > 32)) and
+            (iRow >= DROWNBOX1_N or iCol >= DROWNBOX2_W)
+      {
+         return true;
+      }
+      
+      return false;
+   }
+
+   DrownCountdownTimerTrigger()
+   {
+      local i;
+      ptDrownCountdownTimer = $;
+
+      for i in plActive {
+         if isClass(first(i),&User) and send(self,@isInDrownArea,#who=first(i)) {
+            % do horrible nasty drowning stuff here.  (heh, heh, heh...)
+            %        but for now, just a teleport.  :(
+            %send(self,@Teleport,#what=first(i),#region=REGION_W);
+            send(self,@DrownIntervalTrigger);
+            return;     % only want to start this once, no matter how many people are drowning!
+         }
+      }
+      return;
+   }
+
+   DrownIntervalTrigger()
+   {
+      local i,UsersStillDrowning;
+      UsersStillDrowning = false;
+      ptDrownIntervalTimer = $;
+
+      for i in plActive {
+         if isClass(first(i),&User) and send(self,@isInDrownArea,#who=first(i)) {
+            % do horrible nasty drowning stuff here.  (heh, heh, heh...)
+            %  damage, etc.
+            Send(self,@SomethingWaveRoom,#what=first(i),#wave_rsc=SewerKingLair_drowning_sound);
+            Send(first(i),@MsgSendUser,#message_rsc=SewerKingLair_drowning);
+            %Send(first(i),@LoseHealth,#amount=DROWN_DAMAGE,#decay=true);  %set #decay=true to avoid breaking trances
+            if Send(first(i), @AssessDamage, #report=FALSE,#what = first(i),
+               #damage = (DROWN_DAMAGE*Random(8,12)/10)) = $
+            {
+               Send(first(i), @KilledSomething, #what = first(i));
+            }
+            UsersStillDrowning = true;
+         }
+      }
+
+      %  this should never be necessary, but just in case...
+      %     (if the boss is alive, the water should be low, hence no drowning)
+      if plBoss <> $ {
+         UsersStillDrowning = false;
+      }
+
+      if UsersStillDrowning {
+         % ready for another go...
+         ptDrownIntervalTimer = CreateTimer(self,@DrownIntervalTrigger,DROWN_INTERVAL);
+      }
+      
+      return;
+   }
+%
+%%%%%%%%%%%%%%%%
+% end Drowning %
+%%%%%%%%%%%%%%%%
+
+   Delete()
+   {
+      send(poDoor1,@delete);
+      poDoor1 = $;
+      send(poDoor2,@delete);
+      poDoor2 = $;
+      poLever1 = $;
+      poLever2 = $;
+      if ptDrownCountdownTimer <> $ {
+         DeleteTimer(ptDrownCountdownTimer);
+         ptDrownCountdownTimer = $;
+      }
+      if ptDrownIntervalTimer <> $ {
+         DeleteTimer(ptDrownIntervalTimer);
+         ptDrownIntervalTimer = $;
+      }
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

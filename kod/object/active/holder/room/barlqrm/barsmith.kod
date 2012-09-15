@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarloqueSmithy is BarloqueRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_barloquesmith = barsmith.roo
+   room_name_barloquesmith = "The Royal Blacksmith of Barloque"
+
+   barsmith_music = smithy.mid
+   fire_sound_barsmith = fireplac.wav
+
+classvars:
+
+   vrName = room_name_barloquesmith
+
+   viTeleport_row = 4
+   viTeleport_col = 2
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_barloquesmith
+   piRoom_num = RID_BAR_SMITHY
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_NONE
+
+   prMusic = barsmith_music
+
+messages:
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO TOWN
+      plExits = Cons([ 3, 1, RID_BAR_SOUTH, 28, 41, ROTATE_NONE ],plExits);      
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&BarloqueBlacksmith),
+	 #new_row=4,#new_col=7,#fine_col=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Firepit),
+         #new_row=4,#new_col=12,#fine_row=32,#fine_col=32);
+ 
+      propagate;
+   }
+
+   Constructed()
+   {
+   %  each sound is [wave_file, row, col, cutoff radius, maximum volume]
+      plLooping_sounds = [[ fire_sound_barsmith, 4, 11, 10, 100 ]];
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

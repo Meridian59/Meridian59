@@ -1,0 +1,64 @@
+% Chapter 1--Introduction
+\chapter{System overview and philosophy}
+
+The BlakSton game system is a set of programs used to develop and run
+a large-scale persistent world.  The system consists of a server, a
+client, and a group of tools.  All of the programs run under Win32.
+At present, the only instance of the system is the roleplaying game
+Meridian 59.
+
+The server runs at a central location and accepts TCP/IP connections
+from remote clients.  It also runs an interpreter for an embedded
+language called Blakod, which has been specifically designed for
+implementing persistent world games.  A built-in administration mode
+allows the server to be remotely configured while it is running.
+
+Players run the client on their local machines and use their username
+and password to access the server.  The client displays a graphical
+view of the player's vicinity, and allows the player to move, speak,
+and interact with other objects in the world.  The client/server
+protocol has been designed so that it will use less than 9600 bits per
+second, a reasonable lower limit for modem users.
+
+The tools consist of a Blakod byte compiler, a room editor, a bitmap
+compiler, a hotspot editor, and third-party libraries for performing
+compression and encryption, ftp file transfer, and sound mixing.
+
+The system was designed to support many different games using the same
+client and server.  On the server side, all of the game play resides
+in Blakod, so that the server itself is independent of the details of
+any one particular game.  On the client side, most of the
+game-specific interface and data components reside in DLLs outside the
+main client executable.  The client/server protocol is also fairly
+general, and it can be easily extended.
+
+BlakSton is also meant to be a completely dynamic system.  The server
+can reload Blakod at any time, so that game play can be modified
+without shutting down the server.  In addition, many of the server's
+configuration options can be changed while the server is running.  The
+server's protocol tables reside in a separate module that can be
+reloaded at any time.  Any piece of the client can be modified by
+requiring users to download changes.  Additional downloadable files
+can be added while users are still connected.
+
+Security is a serious problem in an online environment.  Through a
+combination of encryption and careful protocol design, the system can
+prevent the most obvious attacks, and can detect most others.  Almost
+all data from the client is verified, so that a malicious entity
+should not be able to obtain an advantage in game play, or deny
+service to others.
+
+Another design goal was reliability, even at the expense of some
+performance.  The server has not experienced a software fault in over
+25,000 hours of commercial operation, and there are no known ways to
+crash the client.  Although the Blakod for Meridian 59 contains
+numerous errors, the server simply reports the errors and continues
+normal operation.  It was the overriding design goal of reliability
+that allowed the system to become a commercial success.
+
+Meridian 59 is a medieval roleplaying game that uses the BlakSton
+system.  Players try to improve their characters through a combination
+of combat, magic spells, and teamwork with other players.  An alpha
+version of the game appeared on December 15, 1995, and a commercial
+version launched on September 27, 1996.
+

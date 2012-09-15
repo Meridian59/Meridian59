@@ -1,0 +1,44 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KriipaMask is FaceMask
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   KriipaMask_name_rsc = "kriipa mask"
+   KriipaMask_icon_male_rsc = mmkrp.bgf
+   KriipaMask_icon_female_rsc = mfkrp.bgf
+   KriipaMask_desc_rsc = \
+      "A mask with the image of the fierce Kriipa.  It doesn't seem to make "
+      "you jump any higher, however."
+
+classvars:
+
+   vrName = KriipaMask_name_rsc
+   vrDesc = KriipaMask_desc_rsc
+   vrIcon = KriipaMask_icon_male_rsc
+
+   vrMaleIcon = KriipaMask_icon_male_rsc
+   vrFemaleIcon = KriipaMask_icon_female_rsc
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

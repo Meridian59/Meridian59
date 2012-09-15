@@ -1,0 +1,115 @@
+# fungus Beast
+# groups
+# 1 standing
+# 2-7 walking
+# 8-12 attacking
+# 13 sleeping
+#^Applied to Hotspot: 0
+#*Groups: 13
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+78
+fun000sa.bmp   [0, -2] 
+fun315sa.bmp   [0, -1] 
+fun270sa.bmp   [0, -1] 
+fun180sa.bmp   [0, 3] 
+fun090sa.bmp   [0, -2] 
+fun045sa.bmp   [0, -1] 
+fun000wa.bmp   [0, -2] 
+fun315wa.bmp   [0, -2] 
+fun270wa.bmp   [0, -2] 
+fun180wa.bmp   [0, 0] 
+fun090wa.bmp   [0, -5] 
+fun045wa.bmp   [0, -2] 
+fun000wb.bmp   [0, 0] 
+fun315wb.bmp   [0, -2] 
+fun270wb.bmp   [0, -4] 
+fun180wb.bmp   [0, 1] 
+fun090wb.bmp   [0, -2] 
+fun045wb.bmp   [0, 0] 
+fun000wc.bmp   [0, 0] 
+fun315wc.bmp   [0, -2] 
+fun270wc.bmp   [0, -5] 
+fun180wc.bmp   [0, -1] 
+fun090wc.bmp   [0, 0] 
+fun045wc.bmp   [0, 2] 
+fun000wd.bmp   [0, -2] 
+fun315wd.bmp   [0, -3] 
+fun270wd.bmp   [0, -6] 
+fun180wd.bmp   [0, 2] 
+fun090wd.bmp   [0, -1] 
+fun045wd.bmp   [0, 0] 
+fun000we.bmp   [0, 0] 
+fun315we.bmp   [0, 0] 
+fun270we.bmp   [0, -4] 
+fun180we.bmp   [0, 4] 
+fun090we.bmp   [0, 0] 
+fun045we.bmp   [0, 2] 
+fun000wf.bmp   [0, 0] 
+fun315wf.bmp   [0, 0] 
+fun270wf.bmp   [0, -1] 
+fun180wf.bmp   [0, 1] 
+fun090wf.bmp   [0, -4] 
+fun045wf.bmp   [0, 0] 
+fun000aa.bmp   [0, 0] 
+fun315aa.bmp   [0, 0] 
+fun270aa.bmp   [0, -1] 
+fun180aa.bmp   [0, 4] 
+fun090aa.bmp   [0, 0] 
+fun045aa.bmp   [0, 0] 
+fun000ab.bmp   [0, 0] 
+fun315ab.bmp   [0, 0] 
+fun270ab.bmp   [0, -1] 
+fun180ab.bmp   [0, 4] 
+fun090ab.bmp   [0, 0] 
+fun045ab.bmp   [0, 0] 
+fun000ac.bmp   [0, -2] 
+fun315ac.bmp   [0, -2] 
+fun270ac.bmp   [0, 0] 
+fun180ac.bmp   [0, 2] 
+fun090ac.bmp   [0, -2] 
+fun045ac.bmp   [0, -2] 
+fun000ad.bmp   [0, 0] 
+fun315ad.bmp   [0, 0] 
+fun270ad.bmp   [0, 0] 
+fun180ad.bmp   [0, 6] 
+fun090ad.bmp   [0, 0] 
+fun045ad.bmp   [0, 0] 
+fun000ae.bmp   [0, 0] 
+fun315ae.bmp   [0, 0] 
+fun270ae.bmp   [0, -1] 
+fun180ae.bmp   [0, 2] 
+fun090ae.bmp   [0, 0] 
+fun045ae.bmp   [0, 0] 
+fung000z.bmp    [0, 0] 
+fung315z.bmp    [0, 0] 
+fung270z.bmp    [0, 0] 
+fung180z.bmp    [0, 0] 
+fung090z.bmp    [0, 0] 
+fung045z.bmp    [0, 0] 
+13
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   61 62 63 64 64 64 65 66 
+ 8   67 68 69 70 70 70 71 72 
+ 8   73 74 75 76 76 76 77 78 

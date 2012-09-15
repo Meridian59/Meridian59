@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Tim Schubert  4-28-97
+% 
+
+
+MysticismBoon is Boon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   mystboon_name_rsc = "mysticism effect"
+   mystboon_icon_rsc = iboonmys.bgf
+   mystboon_desc_rsc = "You feel a change in your natural mysticism."
+   mystboon_intro_rsc = "The mysticism of the victim is boosted temporarily."
+
+   mystboon_inc = "You feel more magically powerful!"
+   mystboon_dec = "You suddenly feel less magically powerful."
+
+ 
+classvars:
+   viPersonal_ench = True
+   vrName = mystboon_name_rsc
+   vrIcon = mystboon_icon_rsc
+   vrDesc = mystboon_desc_rsc
+   vrSpell_intro = mystboon_intro_rsc
+
+   viSpell_num = SID_MYSTICISM_BOON
+   viMana = 0
+
+properties:
+   
+messages:
+
+   DoSpellEffect(who = $, amount = $)
+   {
+   send(who,@AddMysticism,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=mystboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=mystboon_dec); }
+
+   return;
+   }
+
+   UndoSpellEffect(who = $, amount = $)
+   {
+   amount = -amount;
+   send(who,@AddMysticism,#points=amount);
+   if amount >= 0
+      { Send(who,@MsgSendUser,#message_rsc=mystboon_inc); }
+   else
+      { Send(who,@MsgSendUser,#message_rsc=mystboon_dec); }
+   return;
+   }
+
+end

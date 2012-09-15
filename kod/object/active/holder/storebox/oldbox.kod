@@ -1,0 +1,41 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Box is StorageBox
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   box_name_rsc = "old wooden box"
+   box_icon_rsc = box1.bgf
+
+   box_desc_rsc = \
+      "This wooden box is just large enough to store a few things.  "
+      "It is one of the few remaining boxes of its type in Meridian."
+
+classvars:
+
+   vrName = box_name_rsc
+   vrIcon = box_icon_rsc
+   vrDesc = box_desc_rsc
+
+   viBulk_hold_max = 4000
+   viWeight_hold_max = $
+
+properties:
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

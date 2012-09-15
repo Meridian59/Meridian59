@@ -1,0 +1,392 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Distill is Spell
+
+% NOTE: Not in the jala super-class because it does not require an instrument.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Distill_name_rsc = "distill"
+   Distill_icon_rsc = idistill.bgf
+   Distill_desc_rsc = \
+      "Allows the caster to distill their knowledge of a spell into liquid "
+      "form.  After casting, simply say the name of the spell you want to "
+      "turn into a potion.  "
+      "Requires a ruby and ingredients for the potion.  "
+
+   Distill_no_message = \
+      "With no spell to distill, the spell fizzles into nothing."
+   Distill_bad_spell = "You cannot make a potion with those powers."
+   Distill_do = \
+      "Through careful preperation of the ingredients you create %s%s."
+   Distill_Dont_have_target = "You have no knowledge of %s."
+   Distill_no_ingredient = "You do not have all the ingredients you need."
+   Distill_Fail_Target = \
+      "Your knowledge of %s is unsteady and you are not certain how to "
+      "proceed."
+
+   Distill_sound = Jdistill.wav
+
+classvars:
+
+   vrName = Distill_name_rsc
+   vrIcon = Distill_icon_rsc
+   vrDesc = Distill_desc_rsc
+   vrSucceed_wav = Distill_sound
+
+   viSpell_num = SID_DISTILL
+   viSpell_level = 3
+   viSchool = SS_JALA
+   viMana = 20
+   viSpellExertion = 25
+   viCast_time = 30000   
+   viChance_To_Increase = 20
+
+properties:
+
+   % Base from which the factor by which the reagents of the target
+   %  spell are multiplied to get ingrediant requirments.  1 to 4
+   %  (based on spellpower) is subtracted from this number to get
+   %  the final multiple.
+   piMultipleBase = 8
+
+messages:
+
+   ResetReagents()
+   {      
+      plReagents = $;
+      plReagents = Cons([&Ruby,1], plReagents);
+      
+      return;
+   }
+   
+   CanPayCosts(who = $, lTargets = $)
+   { 
+      propagate;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $)
+   "Basically this spell does nothing except create a trance in which potion "
+   "creation can be triggered if the person says the right thing."
+   {
+      Send(who,@MsgSendUser,#message_rsc=Distill_no_message);
+      
+      return FALSE;
+   }
+
+   GetTranceTime(iSpellpower=0,who=$)
+   {
+      % Since this spell uses the trance, don't scale it down depending on
+      %  iSpellpower
+      return viCast_time;
+   }
+
+   PerformDistill(caster = $,oTarget = $)
+   "Realistically, this will usually be called by SomethingSaidDuringTrance."
+   {
+      If Send(self,@CanPayIngredients,#caster=caster,#oTarget=oTarget)
+      {
+         Send(self,@PayIngredients,#caster=caster,#oTarget=oTarget);
+         Send(self,@MakePotion,#caster=caster,#oTarget=oTarget);
+
+         % Call this here since "cast spell" is actually a failure condition.
+         Send(self,@ImproveAbility,#who=caster);
+      }
+     
+      return;      
+   }
+
+   CanPayIngredients(caster = $, oTarget = $)
+   "Do we have the ingredients?"
+   {
+      local lIngredients, lIngredient, cReagentClass, iNumNeeded, bFound,
+            lItems, lLists, oUserObject, iNum, oOwner, oSpell; 
+
+      % Most of this is a modified cut and paste from CanPayReagents() in
+      %  Spell superclass.
+
+      lIngredients = Send(self,@GetIngredients,#caster=caster,
+                          #oTarget=oTarget);
+
+      % Check reagents
+      for lIngredient in lIngredients
+      {
+         cReagentClass = first(lIngredient);
+         iNumNeeded = Nth(lIngredient, 2);
+
+         bFound = FALSE;
+
+         lLists = [ Send(caster,@GetHolderActive),
+                    Send(caster,@GetHolderPassive)
+                  ];
+
+         % Count # of reagent that user has; complain if not enough
+         for lItems in lLists
+         {
+            for oUserObject in lItems
+            {
+               if isClass(oUserObject,cReagentClass)
+               {
+                  if isClass(oUserObject,&NumberItem)
+                  {
+                     iNum = Send(oUserObject,@GetNumber);
+                     if iNum >= iNumNeeded
+                     {
+                        iNumNeeded = 0;
+                     }
+                     else
+                     {
+                        iNumNeeded = iNumNeeded - iNum;
+                     }
+                  }
+                  else
+                  {
+                     iNumNeeded = iNumNeeded - 1;
+                  }
+
+                  if iNumNeeded = 0
+                  {
+                     bFound = TRUE;
+
+                     break;
+                  }
+               }
+            }
+            if bFound
+            {
+               break;
+            }
+         }
+
+         if not bFound
+         {
+            Send(caster,@WaveSendUser,#wave_rsc=spell_fail_wav);
+            Send(caster,@MsgSendUser,#message_rsc=distill_no_ingredient);
+
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   PayIngredients(caster = $, oTarget = $)
+   "Now we're making a potion so remove the ingredients."
+   {
+      local num, reqstat, iability, lIngredient, lIngredients,
+            cIngredientClass, iLists, lItems, iNumNeeded,oUserObject;
+
+      % Again: Cut and paste from spell.kod
+
+      lIngredients = Send(self,@GetIngredients,#caster=caster,
+                          #oTarget=oTarget);
+      
+      if NOT IsClass(caster,&Player)
+      {
+         return TRUE;
+      }
+
+      % Use up reagents
+      for lIngredient in lIngredients
+      {
+         cIngredientClass = First(lIngredient);
+         iNumNeeded = Nth(lIngredient, 2);
+         iLists = 1;
+
+         while iLists <= 2 
+         {
+            if iLists = 1
+            {
+               lItems = Send(caster, @GetHolderActive);
+            }
+            else
+            {
+               lItems = Send(caster, @GetHolderPassive);
+            }
+
+            % Since spell is cast, we can be cavalier about deleting things
+            for oUserObject in lItems
+            {
+               if IsClass(oUserObject,cIngredientClass)
+               {
+                  if IsClass(oUserObject,&NumberItem)
+                  {
+                     Send(oUserObject,@SubtractNumber,#number=iNumNeeded);
+                     iNumNeeded = 0;
+
+                     break;
+                  }
+                  else 
+                  {
+                     Send(oUserObject,@Delete);
+                     iNumNeeded = iNumNeeded - 1;
+                     if iNumNeeded = 0
+                     {
+                        break;
+                     }
+                  }
+               }
+            }   
+
+            if iNumNeeded = 0 
+            {
+               % Found all we need
+               break;
+            }
+
+            iLists = iLists + 1;
+         }
+      }      
+
+      return TRUE;
+   }
+
+   MakePotion(caster = $, oTarget = $)
+   "Determine the potion's atributes.  Make it.  Hold it."
+   {
+      local oPotion, cPotionClass, iAbility, iSpellpower, iPotionPower,
+            iLevel, iSkill, iGoBadTime;
+
+      cPotionClass = Send(oTarget,@GetPotionClass);
+
+      if cPotionClass = FALSE
+      {
+         return;
+      }
+
+      iLevel = Send(oTarget,@GetLevel);
+      iAbility = Send(caster,@GetSpellAbility,
+                      #spell_num=Send(oTarget,@GetSpellNum));
+      iSkill = Send(caster,@GetSpellAbility,#spell_num=viSpell_num);
+      iSpellPower = Send(self,@GetSpellPower,#who=caster);
+
+      % Potion is created at spellpower determined by the distill skill and
+      %  target spell ability. Target spell level also affects potion quality
+      %  (higher levels have less quality), but can be offset by caster's hit
+      %  point total to reward built characters.
+      iPotionPower = Bound(((iAbility * (iSkill + 1)) / 100),20,99);
+      iPotionPower = iPotionPower - bound((iLevel*15)
+                     - (Send(caster,@GetMaxHealth)-20),0,$);
+      iPotionPower = iPotionPower + Random(-20,(iSpellPower/10));
+      iPotionPower = Bound(iPotionPower,5,SPELLPOWER_MAXIMUM);
+
+      % Potion has duration (In days) determined by distill spellpower and
+      %  spell level.
+      iGoBadTime = Bound((iSpellPower / iLevel) / 3,1,7);
+      iGoBadTime = iGoBadTime * 24 * 60 * 60 * 60 * 1000;
+
+      oPotion = Create(cPotionClass,#labelled=TRUE,#iSpellPower=iPotionPower,
+                       #gobadtime=igobadtime,#maker=caster,#ability=iSkill);
+           
+      Send(caster,@NewHold,#what=oPotion);
+      Send(caster,@MsgSendUser,#message_rsc=Distill_do,
+           #parm1=Send(oPotion,@GetIndef),#parm2=Send(oPotion,@GetName));
+
+      return;
+   }
+
+   GetIngredients(oTarget = $, caster = $)
+   "Ask oTarget what its reagents are and multiply by proper factor, scale "
+   "this to spellpower."
+   {
+      local iMultiple,lreagents,lIngredients,i,iNumber,cType,lList,iSpellpower;
+
+      lIngredients = $;
+      iSpellpower = Send(self,@GetSpellPower,#who=caster);
+
+      iMultiple = Bound(iSpellpower / 20,1,4);
+      iMultiple = Bound(piMultipleBase - iMultiple,3,15);
+
+      lReagents  = Send(oTarget,@GetReagents);
+
+      for i in lReagents
+      {  
+         cType  = Nth(i,1);
+         iNumber = Nth(i,2) * iMultiple;
+         lList = [ cType,iNumber ];
+         lIngredients = Cons(lList,lIngredients);
+      }
+
+      return lIngredients;
+   }
+
+   SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
+   "Check if string is a potion spell.  If it is make it the target."
+   {
+      local lSpells, name, oTarget, iAbility, iRand, i;
+
+      lSpells = Send(SYS,@GetSpells);
+      iRand = Random(1,100);
+
+      % Use EVENT_STEER: don't print fizzle message
+      Send(who,@BreakTrance,#event=EVENT_STEER);  
+
+      for i in lSpells
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            oTarget = i;
+
+            break;
+         }
+      }
+      
+      if oTarget = $
+      {
+         return;
+      }
+      
+      if Send(oTarget,@GetPotionClass) = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=Distill_bad_spell);
+
+         return;
+      }
+    
+      % Get percent in the target spell.  If not there or fail check bail and
+      %  print failure.
+      iAbility = Send(who,@GetSpellAbility,
+                      #spellnum=Send(oTarget,@GetSpellNum));
+
+      if iAbility <> $
+      {
+         if iRand > iAbility
+         {
+            % If pass check Start distilling.      
+            Send(self,@PerformDistill,#caster=who,#oTarget=oTarget);
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=Distill_fail_target,
+                 #parm1=Send(oTarget,@GetName));
+         }
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=Distill_Dont_have_target,
+              #parm1=Send(oTarget,@GetName));
+      }
+      
+      return;
+   }  
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

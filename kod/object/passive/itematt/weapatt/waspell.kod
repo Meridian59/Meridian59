@@ -1,0 +1,183 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttSpellCaster is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This weapon enacts a particular spell effect on its target.
+%
+%  Form is: 
+%
+%       [ WA_SPELLCASTER, Spell, spellpower ]
+%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   WeapAttSpellCaster_desc = "  Mystical energy flits about this weapon."      
+   WeapAttSpellCaster_dm = "spellcaster"
+
+classvars:
+
+   vrDesc = WeapAttSpellCaster_desc
+   vrDesc2 = $
+
+   viItem_Att_Num = WA_SPELLCASTER
+
+   viDifficulty = 9
+   vrDM_trigger = WeapAttSpellCaster_dm
+
+properties:
+  
+   piValue_modifier = 150   %% modify the object's price by 100%
+   piValue_power_modifier = 10
+
+   plSpells = $
+
+messages:
+
+Constructor()
+{
+   plSpells = [ [SID_DEMENT, 12], [SID_ENFEEBLE, 13],
+                [SID_VERTIGO, 13], [SID_SWAP, 12],
+                [SID_INVISIBILITY, 12], [SID_FORGET, 13],
+                [SID_EVIL_TWIN, 12], [SID_MARK_OF_DISHONOR, 13]
+              ];
+              
+   propagate;
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   "Wielder has a chance of affecting the target with the given spell."
+   {
+      local oSpell;
+      
+      if (random(1,100) <= ((100-nth(lData,3))/10)) and send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         oSpell = nth(lData,2);
+         if send(oSpell,@CanPayCosts,#who=self,#ltargets=[target],#ispellpower=nth(lData,3))
+         {
+            send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=nth(lData,3),#bItemCast=TRUE);
+         }
+      }
+      
+      return Damage;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Infrastructure
+%%  (Adding and removing a ItemAtt from an item.)
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   DMCreateItemAtt(who=$,string=$,oWeapon=$)
+   {
+      local iSpell, i;
+
+      if who = $ OR string= $ OR oWeapon = $
+      {
+         DEBUG("BAD data sent to DMCreateItemAtt!");
+
+         return FALSE;
+      }
+
+      if not stringContain(string,WeapAttSpellCaster_dm)
+      {
+         return FALSE;
+      }
+      
+      iSpell = 0;
+      for i in plSpells
+      {
+         if stringContain(string,send(send(SYS,@FindSpellByNum,#num=first(i)),@GetName))
+         {
+            iSpell = first(i);
+         }
+      }
+      
+      if iSpell = 0
+      {
+         return FALSE;
+      }
+      
+      if send(self,@ReqAddToItem,#state1=iSpell,#oItem=oWeapon)
+      {
+         debug("Adding to item");
+         
+         send(self,@AddToItem,#oItem=oWeapon, #spellNum = iSpell,
+              #random_gen=TRUE);
+              
+         return TRUE;
+      }
+      
+      debug("Failed to add");
+      
+      return FALSE;
+   }
+
+   AddToItem(oItem=$,spellNum=$,oPlayer=$,identified=false)   
+   {
+      local lData, iValue, i;
+          
+      lData = $;
+
+      %spellpower
+      lData = cons(random(30,60),lData);
+
+      %spell
+      if spellNum = $
+      {
+         iValue = random(1,100);
+         spellNum = first(first(plSpells));
+         
+         for i in plSpells
+         {
+            if iValue <= nth(i,2)
+            {
+               spellNum = nth(i,1);
+            }
+            else
+            {
+               iValue = iValue - nth(i,2);
+            }
+         }
+      }
+      
+      lData = cons(send(SYS,@FindSpellByNum, #num=spellNum),lData);
+      
+      iValue = send(self,@SetCompound,#oItem=oItem,#iPower=0);
+      lData = cons(iValue,lData);
+          
+      if identified
+      {
+         send(self,@AddEffects,#oItem=oItem,#lData=lData,#oPlayer=oPlayer);
+      }
+
+      
+      send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+      return;            
+   }
+   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SwordProficiency is Proficiency
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Swordproficiency_name_rsc = "fencing"
+   Swordproficiency_icon_rsc = fenceico.bgf
+   Swordproficiency_desc_rsc = "This skill offers added expertise in swords with long blades, magical or not."
+
+classvars:
+
+   vrName = Swordproficiency_name_rsc
+   vrIcon = Swordproficiency_icon_rsc
+   vrDesc = Swordproficiency_desc_rsc
+
+   viSchool = SKS_FENCING
+   viSkill_num = SKID_PROFICIENCY_SWORD
+   viSkill_level = 3
+   viChance_to_increase = 30
+
+properties:
+
+   plPrerequisites = $
+
+messages:
+
+   GetRequisiteStat(who=$)
+   {
+      return send(who,@GetAim);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

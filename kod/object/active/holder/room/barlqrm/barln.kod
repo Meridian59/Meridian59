@@ -1,0 +1,272 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarloqueNorth is BarloqueRoom
+
+constants:
+
+   CLOCK1 = 1
+   CLOCK2 = 2
+   CLOCK3 = 3
+   CLOCK4 = 4
+   CLOCK5 = 5
+   CLOCK6 = 6
+
+   include blakston.khd
+
+resources:
+
+   room_name_barloquenorth = "North Barloque"
+   room_barloquenorth = barlN.roo
+   barloquenorth_music = corloth.mid
+
+   barloquenorth_sound_rsc = down2.wav
+
+classvars:
+
+   vrName = room_name_barloquenorth
+
+   viTeleport_row = 25
+   viTeleport_col = 42
+
+   viPermanent_flags = ROOM_GUILD_PK_ONLY | ROOM_LAMPS
+
+   % Not technically a beach, but we want the ocean-type sounds.
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP | TERRAIN_FOUNTAIN | TERRAIN_BEACH
+
+   viFlag_row = 40
+   viFlag_col = 41
+
+properties:
+
+   prRoom = room_barloquenorth
+   piRoom_num = RID_BAR_NORTH
+
+   piBaseLight = LIGHT_NICE
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prMusic = barloquenorth_music
+
+messages:
+
+   CreateYellZoneList()
+   {
+      plYell_Zone = [ RID_BAR_SOUTH, RID_BAR_PORT ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  
+      plExits = Cons([ 2, 48, RID_BAR_PORT, 27, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 49, RID_BAR_PORT, 27, 27, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 47, 41, RID_BAR_SEWER, 56, 9, ROTATE_NONE ],plExits);
+      plExits = Cons([ 48, 41, RID_BAR_SEWER, 56, 9, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 13,  16, RID_BAR_APOTH, 5, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 16, 36, RID_BAR_HALL, 25, 8, ROTATE_NONE ],plExits);
+      plExits = Cons([ 16, 37, RID_BAR_HALL, 25, 8, ROTATE_NONE ],plExits);
+      plExits = Cons([ 19, 26, RID_BAR_INN,  16, 12, ROTATE_180 ],plExits);
+      plExits = Cons([ 28, 59, RID_BAR_BAR, 21, 11, ROTATE_NONE ],plExits);
+      plExits = Cons([ 28, 60, RID_BAR_BAR, 21, 11, ROTATE_NONE ],plExits);
+      plExits = Cons([ 21,15 , RID_GUILDH14, 2, 33, ROTATE_NONE ],plExits);
+      plExits = Cons([ 21,16 , RID_GUILDH14, 2, 33, ROTATE_NONE ],plExits);
+
+      %% Gates into BAR_SOUTH
+      plExits = Cons([ 44,52, RID_BAR_SOUTH, 4, 38, ROTATE_NONE ],plExits);
+      plExits = Cons([ 45,52, RID_BAR_SOUTH, 4, 38, ROTATE_NONE ],plExits);
+      plExits = Cons([ 46,52, RID_BAR_SOUTH, 4, 38, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 63,39, RID_BAR_SOUTH, 23, 28, ROTATE_NONE ],plExits);
+      plExits = Cons([ 64,39, RID_BAR_SOUTH, 23, 28, ROTATE_NONE ],plExits);
+      plExits = Cons([ 65,39, RID_BAR_SOUTH, 23, 28, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 26,55, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 16,22, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 13,30, ROOM_LOCKED_DOOR ],plExits);
+      plExits = Cons([ 15,21, ROOM_LOCKED_DOOR ],plExits);
+      
+
+      plExits = Cons([ 35,54, RID_BAR_COURT, 3, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 35,55, RID_BAR_COURT, 3, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 38,52, RID_BAR_COURT, 4, 3, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 32,62, RID_BAR_JAIL, 2, 7, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=7,#new_col=25,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=7,#new_col=26,#fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=7,#new_col=28,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=25,#new_col=39,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=25,#new_col=45,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=40,#new_col=45,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=40,#new_col=39,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=24,#new_col=55,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=29,#new_col=56,#fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),
+           #new_row=52,#new_col=42,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=17,#new_col=19,#fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=17,#new_col=22,#fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=17,#new_col=20,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=52,#new_col=40,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=46,#new_col=34,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=28,#new_col=32,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=26,#new_col=32,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=24,#new_col=32,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+           #new_row=22,#new_col=32,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=8,#new_col=24,
+           #fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=21,#new_col=16,
+           #fine_row=48,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=4,#new_col=50,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=4,#new_col=47,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=28,#new_col=65,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=50,#new_col=42,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=65,#new_col=36,
+           #fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&Lamp),#new_row=21,#new_col=55,
+           #fine_row=48,#fine_col=0,#new_angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TALLURN),
+           #new_row=39,#new_col=42,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TALLURN),
+           #new_row=26,#new_col=42,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL),
+           #new_row=4,#new_col=41,#fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL2),
+           #new_row=10,#new_col=28,#fine_row=16,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL2),
+           #new_row=7,#new_col=28,#fine_row=48,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL2),
+           #new_row=9,#new_col=28,#fine_row=0,#fine_col=16,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL),
+           #new_row=7,#new_col=42,#fine_row=32,#fine_col=0,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BARREL),
+           #new_row=7,#new_col=43,#fine_row=0,#fine_col=32,#new_angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+   ResetClock()
+   "Set the clypsedra water clock"
+   {
+      local iHour,iNewHeight;
+
+      iHour = Send(SYS,@GetHour);
+
+      Send(self,@SomethingWaveRoom,#wave_rsc=barloquenorth_sound_rsc);
+
+      iNewHeight = 152+(6*iHour);
+      
+      if (iHour = 1) OR (iHour = 7) OR (iHour = 13) OR (iHour = 19) OR (iHour = 0)
+      {
+         send(self,@SetSector,#sector=CLOCK1,#animation=ANIMATE_FLOOR_LIFT,
+              #height=iNewHeight,#speed=10);
+      }
+
+      if (iHour = 2) OR (iHour = 8) OR (iHour = 14) OR (iHour = 20) OR (iHour = 0)
+      {
+         send(self,@SetSector,#sector=CLOCK2,#animation=ANIMATE_FLOOR_LIFT,
+              #height=iNewHeight,#speed=10);
+      }
+
+      if (iHour = 3) OR (iHour = 9) OR (iHour = 15) OR (iHour = 21) OR (iHour = 0)
+      {
+         send(self,@SetSector,#sector=CLOCK3,#animation=ANIMATE_FLOOR_LIFT,
+              #height=iNewHeight,#speed=10);
+      }
+
+      if (iHour = 4) OR (iHour = 10) OR (iHour = 16) OR (iHour = 22) OR (iHour = 0)
+      {
+         send(self,@SetSector,#sector=CLOCK4,#animation=ANIMATE_FLOOR_LIFT,
+              #height=iNewHeight,#speed=10);
+      }
+
+      if (iHour = 5) OR (iHour = 11) OR (iHour = 17) OR (iHour = 23)  OR (iHour = 0)
+      {
+         send(self,@SetSector,#sector=CLOCK5,#animation=ANIMATE_FLOOR_LIFT,
+              #height=iNewHeight,#speed=10);
+      }
+
+      if (iHour = 6) OR (iHour = 12) OR (iHour = 18) OR (iHour = 0)
+      {
+         send(self,@SetSector,#sector=CLOCK6,#animation=ANIMATE_FLOOR_LIFT,
+              #height=iNewHeight,#speed=10);
+      }
+
+      return;
+   }
+
+   RecalcLightAndWeather()
+   "Set the flicker sectors appropriately based on time"
+   {
+      local iHour,iLight_effect;
+
+      iHour = Send(SYS,@GetHour);
+
+      if iHour >= 11 AND iHour <= 17
+      {
+         iLight_effect = FLICKER_OFF;
+      }
+      else
+      {
+         iLight_effect = FLICKER_ON;
+      }
+
+      Send(self,@SetSectorLight,#sector=7,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=8,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=9,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=10,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=11,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=12,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=13,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=14,#light_effect=iLight_effect);
+      Send(self,@SetSectorLight,#sector=15,#light_effect=iLight_effect);
+      send(self,@ResetClock);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

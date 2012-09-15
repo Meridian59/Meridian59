@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildDisband is GuildCommand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   guilddisband_name_rsc = "disband"
+   guilddisband_icon_rsc = light.bgf
+   guilddisband_desc_Rsc = "This is how to delete a guild."
+
+   guilddisband_disband_master = "~BYou disband %s%q."
+   guilddisband_disband_users = "~BYour guild has been disbanded by %s%s."
+
+   guilddisband_necro_nak = "~BThe Order of the Necromancers is bound by a blood oath.  "
+      "It cannot simply be disbanded."
+
+classvars:
+
+   vrName = guilddisband_name_rsc
+   vrIcon = guilddisband_icon_rsc
+   vrDesc = guilddisband_desc_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_DISBAND
+   viRank_needed = RANK_MASTER
+   viNecro_enabled = FALSE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, otarget = $)
+   "Deletes the guild."
+   {
+      local oGuild,i,oUser;
+
+      oGuild = Send(who,@GetGuild);
+
+      % Can't disband the necromancer guild
+      if isClass(oGuild,&NecromancerGuild) {
+         Send(who,@MsgSendUser,#message_rsc=guilddisband_necro_nak);
+         return FALSE;
+      }
+
+      % Tell people the guild is going away
+      for i in Send(oGuild,@GetMemberList)
+      {
+         oUser = First(i);
+         if oUser = who
+         {
+            Send(oUser,@MsgSendUser,#message_rsc=guilddisband_disband_master,
+            #parm1=Send(oGuild,@GetDef),#parm2=Send(oGuild,@GetName));
+         }
+         else
+         {
+            Send(oUser,@MsgSendUser,#message_rsc=guilddisband_disband_users,
+            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+         }
+      }
+      
+      Send(oGuild,@delete);
+
+      return;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

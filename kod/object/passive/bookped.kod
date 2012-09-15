@@ -1,0 +1,88 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BookPedestal is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   bookped_name_rsc = "book on a pedestal"
+   bookped_icon_rsc = jbook.bgf
+   bookped_desc_rsc = "A hefty book resting on a sturdy pedestal."
+
+   bookped_text_rsc = \
+      " "
+
+classvars:
+
+   vrIcon = bookped_icon_rsc
+
+properties:
+
+   vrName = bookped_name_rsc
+   vrDesc = bookped_desc_rsc
+
+   prText = bookped_text_rsc
+
+messages:
+
+   Constructor(Name=$,Text=$)
+   {
+      if name <> $
+	 { vrName = name; }
+      if Text <> $
+	 { prText = Text; }
+
+      propagate;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1, ANIMATE_NONE, 2, 2);
+      return;
+   }
+
+   GetObjectFlags()
+   {
+      return MOVEON_NO | LOOK_NO;
+   }
+
+   CanEditInscription()
+   {
+      return FALSE;
+   }
+
+   HasInscription()
+   {
+      return TRUE;
+   }
+
+   GetInscription()
+   {
+      return prText;
+   }
+
+   ShowInscription()
+   {
+      AddPacket(4, prText);
+      return;
+   }
+
+   ShowDesc()
+   {
+      AddPacket(4, vrDesc);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

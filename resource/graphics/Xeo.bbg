@@ -1,0 +1,92 @@
+# Xeochicatl
+# 
+# Groups:
+#            1 Standing
+#            2 Fly
+#          3-6 Attack
+#         7-10 cast spell
+#^Applied to Hotspot: 0
+#*Groups: 10
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+60
+Xeo000sa.bmp   [-55, -25] 
+Xeo315sa.bmp   [-55, -21] 
+Xeo270sa.bmp   [-54, -22] 
+Xeo180sa.bmp   [-55, -37] 
+Xeo090sa.bmp   [-55, -16] 
+Xeo045sa.bmp   [-55, -16] 
+Xeo000wa.bmp   [-54, -26] 
+Xeo315wa.bmp   [-55, -24] 
+Xeo270wa.bmp   [-55, -31] 
+Xeo180wa.bmp   [-55, -48] 
+Xeo090wa.bmp   [-55, -24] 
+Xeo045wa.bmp   [-55, -19] 
+Xeo000fa.bmp   [-54, -57] 
+Xeo315fa.bmp   [-54, -60] 
+Xeo270fa.bmp   [-55, -61] 
+Xeo180fa.bmp   [-54, -59] 
+Xeo090fa.bmp   [-54, -55] 
+Xeo045fa.bmp   [-54, -56] 
+Xeo000fb.bmp   [-55, -58] 
+Xeo315fb.bmp   [-55, -61] 
+Xeo270fb.bmp   [-55, -61] 
+Xeo180fb.bmp   [-54, -57] 
+Xeo090fb.bmp   [-54, -55] 
+Xeo045fb.bmp   [-54, -57] 
+Xeo000fc.bmp   [-54, -65] 
+Xeo315fc.bmp   [-54, -65] 
+Xeo270fc.bmp   [-54, -62] 
+Xeo180fc.bmp   [-54, -53] 
+Xeo090fc.bmp   [-54, -57] 
+Xeo045fc.bmp   [-54, -62] 
+Xeo000fd.bmp   [-54, -57] 
+Xeo315fd.bmp   [-54, -47] 
+Xeo270fd.bmp   [-54, -48] 
+Xeo180fd.bmp   [-55, -53] 
+Xeo090fd.bmp   [-54, -54] 
+Xeo045fd.bmp   [-54, -60] 
+Xeo000ra.bmp   [-55, -53] 
+Xeo315ra.bmp   [-54, -58] 
+Xeo270ra.bmp   [-55, -62] 
+Xeo180ra.bmp   [-54, -64] 
+Xeo090ra.bmp   [-54, -55] 
+Xeo045ra.bmp   [-55, -52] 
+Xeo000rb.bmp   [-55, -54] 
+Xeo315rb.bmp   [-55, -58] 
+Xeo270rb.bmp   [-54, -64] 
+Xeo180rb.bmp   [-54, -46] 
+Xeo090rb.bmp   [-54, -46] 
+Xeo045rb.bmp   [-54, -52] 
+Xeo000rc.bmp   [-55, -66] 
+Xeo315rc.bmp   [-55, -64] 
+Xeo270rc.bmp   [-54, -60] 
+Xeo180rc.bmp   [-55, -51] 
+Xeo090rc.bmp   [-54, -57] 
+Xeo045rc.bmp   [-54, -63] 
+Xeo000rd.bmp   [-55, -65] 
+Xeo315rd.bmp   [-55, -62] 
+Xeo270rd.bmp   [-55, -60] 
+Xeo180rd.bmp   [-54, -54] 
+Xeo090rd.bmp   [-54, -60] 
+Xeo045rd.bmp   [-54, -64] 
+10
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 

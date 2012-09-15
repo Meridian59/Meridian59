@@ -1,0 +1,312 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+News is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   news_name_rsc = "Newscroll"
+   news_icon_rsc = news.bgf
+   news_desc_rsc = "You are looking at a public posting device."
+
+classvars:
+
+   vrIcon = news_icon_rsc
+
+properties:
+
+   vrName = news_name_rsc
+   vrDesc = news_desc_rsc
+
+   piNews			% newsgroup id (nid) 
+
+   plMessages = $               % don't change structure of this without
+                                % changing user.kod!!!
+
+   % plMessages is a list of lists.
+   %
+   % Each element list is a posted message.
+   %
+   % The format of each posted message is:
+   %
+   %   [ INT message number,
+   %     OBJECT that posted the message,
+   %     INT post time,
+   %     STRING title of message,
+   %     STRING message text
+   %   ]
+
+   piNext_num = 1
+
+   piMax_messages = 75          % the # of posts we keep
+
+messages:
+
+   Constructor(nid = $,name = $,desc = $)
+   {
+      if nid = $
+      {
+         debug("Newsgroup created with no nid");
+         
+         propagate;
+      }
+      
+      if name <> $
+      {
+         vrName = name;
+      }
+      
+      if desc <> $
+      {
+         vrDesc = desc;
+      }
+
+      piNews = nid;
+
+      Send(SYS,@SystemNewNews,#what = self);
+
+      propagate;      
+   }
+
+   Delete()
+   "Don't do anything on delete--stay in system's list of newsgroups, so if "
+   "a room is deleted and wants to recreate us, it can find us in system.\n\n"
+   "Note: this means that deleting newsgroups is currently impossible."
+   {
+      propagate;
+   }
+
+   TryLook(what = $)
+   {
+      Send(what,@SendLookNews,#what=self);
+      
+      return;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   GetNewsNum()
+   {
+      return piNews;
+   }
+
+   GetNewsPermission(what = $)
+   {
+      return NEWS_PERMISSION_READ_WRITE;			% read-write by everybody
+   }
+
+   PostNews(what = $,title = $,body = $)
+   {
+      local iMessage_num;
+
+      if NOT (send(self,@GetNewsPermission,#what=what) & NEWS_PERMISSION_WRITE)
+      {
+         debug("ALERT!  Player ",send(what,@GetTrueName),what," tried to write to a newsglobe without permission.");
+         
+         return;
+      }
+
+      Send(self,@ClearSpaceToPost);
+
+      iMessage_num = piNext_num;
+      piNext_num = piNext_num + 1;
+
+      title = send(SYS,@CleanseString,#string=title);
+      body = send(SYS,@CleanseString,#string=body);
+
+      plMessages = Cons([iMessage_num,what,GetTime(),title,body],plMessages);
+
+      return;
+   }
+
+   GetNumArticles()
+   {
+      return Length(plMessages);
+   }
+
+   GetArticleList()
+   {
+      return plMessages;
+   }
+
+   GetNewsBody(num = $)
+   {
+      local i;
+
+      for i in plMessages
+      {
+         if First(i) = num
+         {
+            return Nth(i,5);
+         }
+      }
+      
+      return $;
+   }
+
+   ClearSpaceToPost()
+   {
+      local lOld;
+
+      % if we have too many news messages, delete oldest ones
+      % to allow one message to be posted
+
+      if Length(plMessages) < piMax_messages
+      {
+         return;
+      }
+
+      % unless piMax_messages has been modified, there is only
+      % one node to delete.  So, be safe.
+
+      lOld = Nth(plMessages,piMax_messages);
+      while lOld <> $
+      {
+         DelListElem(plMessages,lOld);
+         if Length(plMessages) < piMax_messages
+         {
+            break;
+         }
+
+         lOld = Nth(plMessages,piMax_messages);
+      }      
+
+      return;
+   }
+
+   GetNextNum()
+   "Admin supported\n"
+   "Prints out the next news num to help tracking down mail to delete"
+   {
+      return piNext_num;
+   }
+
+   GetString(number = $)
+   "Admin supported\n"
+   "Prints out string of a message number."
+   {
+      local i;
+      
+      for i in plMessages
+      {
+         if First(i) = number
+         {
+            return Nth(i,5);
+         }
+      }
+
+      return $;
+   }
+
+   DeleteMail(number = $)
+   "Admin supported.\n"
+   "Deletes a mail message by mail number."
+   {
+      local i;
+
+      for i in plMessages
+      {
+         if First(i) = number
+         {
+            plMessages = DelListElem(plMessages,i);
+            
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   DeletePost(number = $)
+   "Admin supported.\n"
+   "Deletes a mail message by mail number."
+   {
+      return send(self,@DeleteMail,#number=number);
+   }
+
+   SearchForPosts(name = $, poster = $, contains = $)
+   "Admin supported.\n"
+   "Finds all posts made that fit the name, the poster, or a string it contains."
+   {
+      local list, i;
+
+      if (poster = $) AND (name <> $)
+      {
+         poster = send(SYS,@FindUserByString,#string=name);
+      }
+
+      if (poster = $) AND (contains = $)
+      {
+         return $;
+      }
+
+      list = $;
+      for i in plMessages
+      {
+         if (poster <> $) AND (Nth(i, 2) = poster)
+         {
+            list = cons(Nth(i, 1), list);
+            
+            continue;
+         }
+
+         if (contains <> $) AND stringContain(Nth(i, 4), contains)
+         {
+            list = cons(Nth(i, 1), list);
+            
+            continue;
+         }
+
+         if (contains <> $) AND stringContain(Nth(i, 5), contains)
+         {
+            list = cons(Nth(i, 1), list);
+            
+            continue;
+         }
+      }
+
+      if length(list) = 1
+      {
+         return Nth(list, 1);
+      }
+
+      return list;
+   }
+
+   DeleteAllMessages()
+   {
+      plMessages = $;
+      piNext_num = 1;
+      
+      return;
+   }
+
+   % Give globes a soft glow.
+   SendLightingInformation()
+   {
+      AddPacket(2,LIGHT_FLAG_ON);
+      % Intensity (out of 255)
+      AddPacket(1,5);
+      % Color
+      AddPacket(2,LIGHT_NEWSGLOBE);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

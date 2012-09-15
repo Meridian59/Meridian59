@@ -1,0 +1,15 @@
+# Quest Sword, whole
+# groups
+# 1 dropped
+# 2 broken
+# 3 inventory
+-s 4
+3
+qswdrp.bmp   [0, 0]
+qswbro.bmp   [0, 0]
+qswxdis.bmp   [0, 0]
+3
+1 1
+1 2
+1 3
+

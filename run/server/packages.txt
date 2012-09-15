@@ -1,0 +1,43 @@
+#
+# Packages for Meridian 59 Updates
+#
+# Each line:
+#   <filename.arq> <sequencenumber> <destination> [<arqsize>]
+#
+# Where:
+#   <sequencenumber> increases as new packages are added to this file.
+#                    Compared against client's meridian.ini [Miscellaneous] Download=number.
+#
+#   <destination> is a coded number for different subdirectories in client.
+#                   0 = retrieve file to client .\resource
+#                   4 = retrieve file to client .\
+#                   8 = retrieve file to Windows directory (e.g., C:\WINDOWS)
+#                  12 = retrieve file to Windows System directory (e.g., C:\WINDOWS\SYSTEM)
+#                  16 = retrieve file to client .\help
+#                  20 = retrieve file to client .\mail
+#                  24 = retrieve file to client .\ads
+#                 Special:
+#                  +1 = delete file (e.g., 21 = delete from .\mail)
+#                  +32 = guest clients should download (obsolete)
+#                 Actually, arq files are retrieved to .\download, then un-arq'd to location.
+#
+#   <arqsize> is in bytes, optional, used by new client versions to estimate download time
+#
+#
+# For each update, a CD-ROM of the already-updated client is delivered.
+# Those CD-ROMs include meridian.ini files that have [Miscellaneous] Download= set to the last
+# package sequence number here.  Since the CD-ROM is usually made before this file is made,
+# the sequence numbers here are manipulated to match.  For example, if the CD-ROM has
+# Download=3000, then this file should have the last update set to 2999.  When a non-CD-ROM
+# client finishes downloading package 2999, then it will set its Download=3000 to anticipate
+# the next time.
+#
+# As a convenience to the user, each package should be about 1Mb or less.  Failed downloads
+# will be retried on later attempts.
+#
+# Keep a record of what each file contains.  Keep items that may be replaced later in separate
+# archives.  This allows us to delete old archive file so that users do not have to re-download
+# files that will be replaced by later downloads later.  This saves on bandwidth, too!
+#
+# Sample line:
+# resu0009.arq      14 0 89007		# Statue monster sounds

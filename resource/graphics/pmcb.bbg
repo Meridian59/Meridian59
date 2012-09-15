@@ -1,0 +1,27 @@
+# Lt Brown head 3 - mouth 
+# 4 groups
+# 1 neutral
+# 2 happy
+# 3 sad
+# 4 wry
+-s 14
+14
+Pm000cab.bmp   [-14, -15] 
+Pm045cab.bmp   [-21, -15] 
+Pm090cab.bmp   [-19, -15] 
+Pm270cab.bmp   [-4, -14] 
+Pm315cab.bmp   [-6, -14] 
+Pm000cbb.bmp   [-14, -15] 
+Pm045cbb.bmp   [-21, -15] 
+Pm315cbb.bmp   [-6, -14] 
+Pm000ccb.bmp   [-14, -15] 
+Pm045ccb.bmp   [-21, -15] 
+Pm315ccb.bmp   [-6, -14] 
+Pm000cdb.bmp   [-14, -15] 
+Pm045cdb.bmp   [-21, -15] 
+Pm315cdb.bmp   [-6, -14] 
+4
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

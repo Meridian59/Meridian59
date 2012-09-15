@@ -1,0 +1,39 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EarthquakeScroll is Scroll
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   EarthquakeScroll_label_name_rsc = "scroll of earthquake"
+   EarthquakeScroll_icon_rsc = scr07.bgf
+   EarthquakeScroll_desc_rsc = \
+      "This scroll is covered with indecipherable mystical writing in a spidery hand."
+
+classvars:
+
+   vrLabelName = EarthquakeScroll_label_name_rsc
+   vrIcon = EarthquakeScroll_icon_rsc
+   viSpellEffect = SID_EARTHQUAKE
+   viColor = XLAT_TO_ORANGE
+
+properties:
+
+   vrDesc = EarthquakeScroll_desc_rsc
+   pbDisabled = TRUE
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

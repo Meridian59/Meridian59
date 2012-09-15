@@ -1,0 +1,21 @@
+# Ice person spear
+# groups 
+# 1 Held 
+# 2 ready to throw
+-s 1
+12
+icsp000h.bmp   [-18, -9] 
+icsp045h.bmp   [-17, -4] 
+icsp090h.bmp   [-32, -3] 
+icsp180h.bmp   [-19, -10] 
+icsp270h.bmp   [-31, -4] 
+icsp315h.bmp   [-20, -4] 
+icsp000a.bmp   [-4, -5] 
+icsp045a.bmp   [-15, -7] 
+icsp090a.bmp   [-22, -2] 
+icsp180a.bmp   [-6, -6] 
+icsp270a.bmp   [-33, -1] 
+icsp315a.bmp   [-24, -6] 
+2
+ 8      1   6   5   4   4   4   3   2
+ 8      7  12  11  10  10  10   9   8

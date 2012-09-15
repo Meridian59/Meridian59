@@ -1,0 +1,27 @@
+# Pink female face 1 - eyes 
+# 4 groups 
+# 1 neutral
+# 2 happy
+# 3 angry
+# 4 wry
+-s 14
+14
+Pe000kad.bmp   [-15, -9] 
+Pe045kad.bmp   [-19, -9] 
+Pe090kad.bmp   [-15, -11] 
+Pe270kad.bmp   [-3, -11] 
+Pe315kad.bmp   [-7, -9] 
+Pe000kbd.bmp   [-15, -9] 
+Pe045kbd.bmp   [-19, -9] 
+Pe315kbd.bmp   [-7, -9] 
+Pe000kcd.bmp   [-15, -9] 
+Pe045kcd.bmp   [-19, -9] 
+Pe315kcd.bmp   [-7, -9] 
+Pe000kdd.bmp   [-15, -9] 
+Pe045kdd.bmp   [-19, -9] 
+Pe315kdd.bmp   [-7, -9] 
+4      
+ 8      1   5   4   0   0   0   3   2
+ 8      6   8   4   0   0   0   3   7
+ 8      9  11   4   0   0   0   3  10
+ 8     12  14   4   0   0   0   3  13

@@ -1,0 +1,331 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ActiveWallElement is ActiveObject
+
+% Brambles, a monster-type wall element, uses code from this file.  If you
+%  update this file, double-check the code in Brambles as well.
+
+constants:
+
+   include blakston.khd
+
+   % 1.5 seconds
+   EFFECT_INTERVAL = 1500
+
+resources:
+
+   ActiveWallElement_name_rsc = "wall element"
+   ActiveWallElement_icon_rsc = poisoncl.bgf
+   ActiveWallElement_desc_rsc = "This is a wall spell element."
+   
+   ActiveWallElement_dissipate_rsc = "The wall element dissipates."
+   ActiveWallElement_unaffected_rsc = "You are unaffected by the wall element."
+
+classvars:
+
+   vrName = ActiveWallElement_name_rsc
+   vrIcon = ActiveWallElement_icon_rsc
+   vrdesc = ActiveWallElement_desc_rsc
+
+   viObject_flags = LOOK_NO | MOVEON_NOTIFY
+
+   vrDissipateMessage = ActiveWallElement_dissipate_rsc
+   vrUnaffectedMessage = ActiveWallElement_unaffected_rsc
+
+   % Flag to see if the wall element effect is harmful.
+   vbIsHarmful = TRUE
+
+   % Does this have a Periodic timer check?
+   vbPeriodic = TRUE
+
+   % Does the element affect the caster?
+   vbCanAffectCaster = FALSE
+   
+properties:
+
+   vbSummoned = FALSE
+
+   poCaster = $
+   ptExpire = $
+
+   % This is the squared range that the element will affect.
+   piRange = 0
+
+   % This is a periodic timer that triggers periodic effects and
+   %  clears the affected list.
+   ptPeriodic = $
+
+   % This is a list of objects already affected by the element
+   %  this period.
+   plAffected = $
+
+messages:
+
+   
+   Constructor(caster=$,duration=$)
+   {
+      poCaster = caster;
+
+      ptExpire = CreateTimer(self,@Expire,send(self,@GetDuration,#duration=duration));
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,send(self,@GetPeriodicDuration));
+
+      if IsClass(caster,&User)
+      {
+         vbSummoned = TRUE;
+      }
+
+      propagate;
+   }
+
+   GetPeriodicDuration()
+   {
+      % 90 - 110% of base interval
+      return (EFFECT_INTERVAL * random(90,110))/100;
+   }
+
+   GetDuration(duration = 0)
+   "Return the final duration modified as necessary."
+   {
+      return duration;
+   }
+
+   SomethingMoved(what = $, new_row = $, new_col = $)
+   {
+      local iRow, iCol;
+
+      % Determine victim's row and column
+      if new_row = $
+      {
+         iRow = send(what,@GetRow);
+      }
+      else
+      {
+         iRow = new_row;
+      }
+
+      if new_col = $
+      {
+         iCol = send(what,@GetCol);
+      }
+      else
+      {
+         iCol = new_col;
+      }
+
+      % Check for range
+      if IsClass(what,&Battler)
+         AND send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol)
+      {
+         send(self,@CheckForEffect,#what=what,#new_row=iRow,#new_col=iCol,#bMovement=TRUE);
+      }
+      
+      return;
+   }
+
+   CheckForEffect(what = $, new_row = $, new_col = $)
+   "Check for range to see if we apply the effect."
+   {
+      local oRoom;
+      
+      oRoom = Send(self,@GetOwner);
+
+      % Might not affect caster.
+      if (NOT IsClass(what,&Battler))
+         OR ((NOT vbCanAffectCaster) AND what = poCaster)
+      {
+         return FALSE;
+      }
+
+      % Is room truced, or otherwise a NO_COMBAT area?
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      {
+         return FALSE;
+      }
+
+      % Don't affect them again this cycle.
+      if plAffected <> $
+         AND FindListElem(plAffected,what) <> 0
+      {
+         return FALSE;
+      }
+
+      % Player target specific checks
+      if IsClass(what,&Player)
+      {
+         % Don't affect users that haven't moved yet.
+         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY)
+         {
+            return FALSE;
+         }
+
+         % If this is harmful, and both caster and victim are players,
+         %  then disallow damage if caster's safety is on or if cannot do attack
+         if vbIsHarmful
+            AND IsClass(poCaster,&Player)
+            AND NOT Send(poCaster,@AllowPlayerAttack,#victim=what,
+                         #report=FALSE)
+         {
+            % We've been "affected" for this cycle.  This prevents super-spam.
+            plAffected = cons(what,plAffected);
+            send(what,@MsgSendUser,#message_rsc=vrUnaffectedMessage);
+
+            return FALSE;
+         }
+      }
+
+      Send(self,@DoEffect,#what=what,#new_row=new_row,#new_col=new_col);
+
+      return TRUE;
+   }
+
+   PeriodicEffect()
+   "Periodic check. Clears the affected list, does the effect if the wall is periodic."
+   {
+      local i, oObject;
+
+      ptPeriodic = $;
+      plAffected = $;
+
+      if vbPeriodic
+      {
+         for i in send(poOwner,@GetHolderActive)
+         {
+            oObject = send(poOwner,@HolderExtractobject,#data=i);
+            if IsClass(oObject,&Battler)
+               AND send(self,@InRange,#what=oObject,#iRow=send(oObject,@GetRow),#iCol=send(oObject,@GetCol))
+            {
+               send(self,@CheckForEffect,#what=oObject);
+            }
+         }
+      }
+
+      ptPeriodic = CreateTimer(self,@PeriodicEffect,send(self,@GetPeriodicDuration));
+
+      return;
+   }
+
+   DoEffect(what = $, new_row = $, new_col = $)
+   "Apply the wall's effect to 'what'."
+   {
+      % Keep track that we've affected this object.
+      plAffected = cons(what,plAffected);
+      
+      return;
+   }
+
+   InRange(what = $, iRow = $, iCol = $, bMovement = FALSE)
+   "Checks if we can see the target and if so if they are in range."
+   {
+      local iRow_diff, iCol_diff, iDistanceSquared, iLongRange;
+
+      iRow_diff = send(self,@GetRow) - iRow;
+      iCol_diff = send(self,@GetCol) - iCol;
+
+      iDistanceSquared = iRow_diff * iRow_diff + iCol_diff * iCol_diff;
+
+      % This first check is to see if they're within a one square range if this check
+      %  was caused by movement.  If so, we reset the user's move counter, since we
+      %  make them spam move messages which can throw off speedhack detection.
+      if bMovement
+      {
+         % Make sure we're checking at least 1 square away from current position.
+         iLongRange = bound(piRange,1,$);
+      }
+      else
+      {
+         iLongRange = piRange;
+      }
+
+      if iDistanceSquared <= (iLongRange * iLongRange)
+      {
+         if IsClass(what,&User)
+         {
+            % This resets the move counter, since we had additional (legal) 
+            %  moves request from this object.
+            % We have to reset the moves counter, because it seems wall elements
+            %  generate more requests than they handle.
+            send(what,@AdjustMoveCounter,#bReset=TRUE);
+         }
+
+         if (iLongRange = piRange
+             OR iDistanceSquared <= (piRange * piRange))
+            AND send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
+         {
+            return TRUE;
+         }
+      }
+      
+      return FALSE;
+   }
+
+   Expire()
+   {
+      ptExpire = $;
+      Send(self,@Delete);
+
+      return;
+   }
+
+   Delete()
+   {
+      poCaster = $;
+      plAffected = $;
+
+      if ptPeriodic <> $
+      {
+         DeleteTimer(ptPeriodic);
+         ptPeriodic = $;
+      }
+
+      if ptExpire <> $
+      {
+         DeleteTimer(ptExpire);
+         ptExpire = $;
+      }
+
+      propagate;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return IsClass(what,&Room);
+   }
+
+   NewOwner(what = $)
+   {
+      Post(self,@LocationCheck,#where=what);
+
+      plAffected = $;
+
+      propagate;
+   }
+
+   LocationCheck(where = $)
+   {
+      if (IsClass(where,&GuildHall)
+          AND send(where,@InFoyer,#who=poCaster))
+         OR (send(where,@IsArena)
+             AND NOT send(where,@InPlay,#what=self,#bNonPlayerOkay=TRUE))
+      {
+         if IsClass(poCaster,&Player)
+         {
+            Send(poCaster,@MsgSendUser,#message_rsc=vrDissipateMessage);
+         }
+
+         Post(self,@Delete);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

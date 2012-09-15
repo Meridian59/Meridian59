@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Skull is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   skull_name_rsc = "skull"
+   skull_icon_rsc = skull.bgf
+   skull_desc_rsc = \
+   "You are looking at a skull.  It appears someone ran into a little trouble "
+   "here.  If you are not careful, you may meet the same fate."
+
+classvars:
+
+   vrName = skull_name_rsc
+   vrIcon = skull_icon_rsc
+   vrDesc = skull_desc_rsc
+
+properties:
+
+
+messages:
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

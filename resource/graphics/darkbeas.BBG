@@ -1,0 +1,76 @@
+# DarkBeast ("flukebat")
+# Groups:
+# 1 standing
+# 2-7 walking
+# 8-13 fighting
+# Hotspots:
+# 1 head
+#^Applied to Hotspot: 0
+#*Groups: 8
+#* walk A
+#* walk B
+#* walk C
+#* walk D
+#* fight A
+#* fight B
+#* fight C
+#* fight D
+-s 3
+48
+dkb000wa.bmp    [0, 0] 
+dkb315wa.bmp    [0, 0] 
+dkb270wa.bmp    [0, 0] 
+dkb180wa.bmp    [0, 0] 
+dkb090wa.bmp    [0, 0] 
+dkb045wa.bmp    [0, 0] 
+dkb000wb.bmp    [0, 0] 
+dkb315wb.bmp    [0, 0] 
+dkb270wb.bmp    [0, 0] 
+dkb180wb.bmp    [0, 0] 
+dkb090wb.bmp    [0, 0] 
+dkb045wb.bmp    [0, 0] 
+dkb000wc.bmp    [0, 0] 
+dkb315wc.bmp    [0, 0] 
+dkb270wc.bmp    [0, 0] 
+dkb180wc.bmp    [0, 0] 
+dkb090wc.bmp    [0, 0] 
+dkb045wc.bmp    [0, 0] 
+dkb000wd.bmp    [0, 0] 
+dkb315wd.bmp    [0, 0] 
+dkb270wd.bmp    [0, 0] 
+dkb180wd.bmp    [0, 0] 
+dkb090wd.bmp    [0, 0] 
+dkb045wd.bmp    [0, 0] 
+dkb000aa.bmp    [0, 0] 
+dkb315aa.bmp    [0, 0] 
+dkb270aa.bmp    [0, 0] 
+dkb180aa.bmp    [0, 0] 
+dkb090aa.bmp    [0, 0] 
+dkb045aa.bmp    [0, 0] 
+dkb000ab.bmp    [0, 0] 
+dkb315ab.bmp    [0, 0] 
+dkb270ab.bmp    [0, 0] 
+dkb180ab.bmp    [0, 0] 
+dkb090ab.bmp    [0, 0] 
+dkb045ab.bmp    [0, 0] 
+dkb000ac.bmp    [0, 0] 
+dkb315ac.bmp    [0, 0] 
+dkb270ac.bmp    [0, 0] 
+dkb180ac.bmp    [0, 0] 
+dkb090ac.bmp    [0, 0] 
+dkb045ac.bmp    [0, 0] 
+dkb000ad.bmp    [0, 0] 
+dkb315ad.bmp    [0, 0] 
+dkb270ad.bmp    [0, 0] 
+dkb180ad.bmp    [0, 0] 
+dkb090ad.bmp    [0, 0] 
+dkb045ad.bmp    [0, 0] 
+8
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 

@@ -1,0 +1,205 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Duke4 is ObjectRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_duke4 = "The Duke's Feast Hall"
+   room_duke4 = duke4.roo
+   duke4_music = bar.mid
+
+classvars:
+
+   vrName = room_name_duke4
+
+   viTeleport_row = 8
+   viTeleport_col = 23
+   
+   viTerrain_type = TERRAIN_CASTLE
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_SANCTUARY
+
+   prRoom = room_duke4
+   piRoom_num = RID_DUKE4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = OUTDOORS_SOME
+   
+   pbLocked = TRUE
+   prMusic = duke4_music
+
+messages:
+
+   SetLocked(value = TRUE)
+   {
+      pbLocked = value;
+
+      return;
+   }
+
+   IsLocked()
+   {
+      return pbLocked;
+   }
+
+   NewHold(what = $)   
+   {
+      if isClass(what,&Player)
+      {
+         if pbLocked
+            AND NOT IsClass(what,&DM)
+         {
+            post(self,@HustleUsersOutOfRoom,#new_rid=RID_DUKE2,#new_row=9,#new_col=15);
+         }
+      }
+
+      propagate;  
+   }
+
+   CreateObjectGeneration()
+   {
+      plObject_gen = $;
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% TO HALLWAY (RID_DUKE2)
+      plExits = Cons([ 15, 24, RID_DUKE2, 9, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 15, 25, RID_DUKE2, 9, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 16, 25, RID_DUKE2, 9, 10, ROTATE_NONE ],plExits);
+      plExits = Cons([ 16, 24, RID_DUKE2, 9, 10, ROTATE_NONE ],plExits);
+
+      %% TO DANCE HALL (RID_DUKE5)
+      plExits = Cons([ 3, 15, RID_DUKE5, 26, 15, ROTATE_NONE ],plExits);
+      plExits = Cons([ 3, 16, RID_DUKE5, 26, 15, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 5, 10, RID_DUKE5, 28, 9, ROTATE_NONE ],plExits);
+      plExits = Cons([ 5, 11, RID_DUKE5, 28, 9, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 10, RID_DUKE5, 28, 9, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 11, RID_DUKE5, 28, 9, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 5, 19, RID_DUKE5, 28, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 5, 20, RID_DUKE5, 28, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 19, RID_DUKE5, 28, 20, ROTATE_NONE ],plExits);
+      plExits = Cons([ 6, 20, RID_DUKE5, 28, 20, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      % guards
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=11,#new_col=25,
+           #fine_row=48,#fine_col=0,#new_angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=19,#new_col=25,
+           #fine_row=48,#fine_col=0,#new_angle=ANGLE_WEST);
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=5,#new_col=15,
+           #fine_row=32,#fine_col=48,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=Create(&DukeGuard),#new_row=26,#new_col=15,
+           #fine_row=0,#fine_col=48,#new_angle=ANGLE_NORTH);
+
+      % candelabras
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=10,#new_col=19,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=10,#new_col=11,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=15,#new_col=11,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=20,#new_col=11,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=20,#new_col=19,
+           #fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Candelabra),#new_row=15,#new_col=6,
+           #fine_row=48,#fine_col=48);
+
+      % Braziers
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=11,#new_col=27,
+           #fine_row=0,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=20,#new_col=27,
+           #fine_row=32,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=28,#new_col=15,
+           #fine_row=0,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=28,#new_col=4,
+           #fine_row=0,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=4,
+           #fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=14,
+           #fine_row=16,#fine_col=16);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=17,
+           #fine_row=16,#fine_col=16);
+      
+
+
+      % food dispensers (infinite for now, may change)
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Goblet),
+           #new_row=10,#new_col=12,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Goblet),
+           #new_row=20,#new_col=12,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Soup),
+           #new_row=10,#new_col=13,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Soup),
+           #new_row=20,#new_col=13,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Spideye),
+           #new_row=10,#new_col=14,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Spideye),
+           #new_row=20,#new_col=14,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Drumstick),
+           #new_row=10,#new_col=15,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Drumstick),
+           #new_row=20,#new_col=15,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Pork),
+           #new_row=10,#new_col=16,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Pork),
+           #new_row=20,#new_col=16,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Grapes),
+           #new_row=10,#new_col=17,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Grapes),
+           #new_row=20,#new_col=17,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&FortuneCookie),
+           #new_row=10,#new_col=18,#fine_row=48,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&FortuneCookie),
+           #new_row=20,#new_col=18,#fine_row=48,#fine_col=40);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Grapes),
+           #new_row=11,#new_col=11,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Pork),
+           #new_row=12,#new_col=11,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Drumstick),
+           #new_row=13,#new_col=11,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Spideye),
+           #new_row=14,#new_col=11,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Spideye),
+           #new_row=16,#new_col=11,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Drumstick),
+           #new_row=17,#new_col=11,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Pork),
+           #new_row=18,#new_col=11,#fine_row=48,#fine_col=48);
+      Send(self,@NewHold,#what=Create(&FoodDispenser,#classtype=&Grapes),
+           #new_row=19,#new_col=11,#fine_row=48,#fine_col=48);
+
+      Send(self,@NewHold,#what=Create(&FountainJet),#new_row=15,#new_col=16,
+           #fine_row=48,#fine_col=48);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

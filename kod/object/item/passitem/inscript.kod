@@ -1,0 +1,151 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+InscriptionItem is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   inscript_name_rsc = "slip of parchment"
+   inscript_icon_rsc = scroll.bgf
+   inscript_desc_blank_rsc = "A fresh bit of parchment paper, without a mark on it."
+   inscript_desc_written_rsc = \
+      "A small sheet of parchment paper, with something scrawled across it."
+
+   inscript_emote_write_third_rsc = "%s scribbles something on %s%s."
+
+   inscript_blank_rsc = " "
+   inscript_q = "%q"
+
+classvars:
+
+   vrName = inscript_name_rsc
+   vrIcon = inscript_icon_rsc
+   vrDesc = inscript_desc_blank_rsc
+
+   viUse_type = ITEM_SINGLE_USE
+   viUse_amount = 1
+
+properties:
+
+   psInscription = $
+   poLastInscriber = $
+
+messages:
+
+   CanEditInscription()
+   {
+      return TRUE;
+   }
+
+   HasInscription()
+   {
+      return TRUE;
+   }
+
+   SetInscription(string = $)
+   "Admin supported."
+   {
+      if (string = GetTempString())
+      {
+         psInscription = CreateString();
+         SetString(psInscription, string);
+      }
+      else
+      {
+         psInscription = string;
+      }
+
+      poLastInscriber = poOwner;
+
+      return psInscription;
+   }
+
+   ReqNewApply()
+   {
+      local oOwner;
+
+      oOwner=send(self,@GetOwner);
+
+      if IsClass(self,&BallotItem) or IsClass(self,&Book)
+      {
+         return FALSE;
+      }
+
+      if send(oOwner,@IsActor)
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   NewApplied()  
+   {
+      local oOwner,oletter,rString;
+
+      rString=psInscription;
+      if rString = $
+      {
+         return;
+      }
+
+      oOwner=send(self,@GetOwner);
+      if send(oOwner,@IsActor)
+      {
+         oLetter=create(&bardletter);
+         send(oLetter,@SetDesc,#desc=rString);
+         send(oOwner,@NewHold,#what=oLetter);
+         send(self,@Delete);
+      }
+
+      return;
+   }
+
+   GetInscription()
+   {
+      return psInscription;
+   }
+
+   ShowInscription()
+   {
+      if (psInscription)
+      {
+         AddPacket(4, inscript_q);
+         AddPacket(0, psInscription);
+      }
+      else
+      {
+         AddPacket(4, inscript_blank_rsc);
+      }
+
+      return;
+   }
+
+   ShowDesc()
+   {
+      if (psInscription)
+      {
+         AddPacket(4, inscript_desc_written_rsc);
+      }
+      else
+      {
+         AddPacket(4, inscript_desc_blank_rsc);
+      }
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

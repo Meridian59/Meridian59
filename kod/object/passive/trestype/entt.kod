@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EntTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_ENT
+
+   %% really pitiful chance to get reasonably good stuff
+   piItem_att_chance = 1
+   piDiff_seed = 4
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &Entrootberry, 40],
+                     [ &Snack, 30 ],
+                     [ &RedMushroom,9],
+                     [ &Sapphire, 8 ],
+                     [ &Emerald, 8 ],
+                     [ &PurpleMushroom, 3 ],
+                     [ &Lightningwand,2]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

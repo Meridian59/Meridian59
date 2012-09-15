@@ -1,0 +1,71 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         mainmenu.rh
+*/
+#ifndef __mainmenu_rh
+#define BITMAP_4	4
+#define BITMAP_3	3
+#define BITMAP_2	2
+#define BITMAP_1	1
+#define __mainmenu_rh
+
+//
+// Help pop-up menu
+//
+
+
+#define CM_HELP_CONTENTS	50	// Also defined in editmenu.rh
+#define CM_HELP_USING_HELP	51	// Also defined in editmenu.rh
+#define CM_HELP_SEARCH		52	// Also defined in editmenu.rh
+#define CM_HELP_TUTORIAL	53	// Also defined in editmenu.rh
+
+#define CM_HELP_MAIN_MENU	55
+
+
+//
+// MENU_MAIN
+//
+
+#define MENU_MAIN	100
+
+#define CM_FILE_BUILDMAIN		100
+#define CM_FILE_SAVEOBJECT		101
+#define CM_FILE_GROUPPATCH		102
+#define CM_FILE_LISTMASTER		103
+#define CM_FILE_LISTDIR			104
+#define CM_FILE_READPATCH		105
+#define CM_FILE_INSERTRAW		106
+#define CM_FILE_EXTRACTOBJ		107
+#define CM_FILE_DISPLAYFILES	108
+#define CM_FILE_EXIT			109
+
+#define CM_EDITOR_CREATELEVEL	200
+#define CM_EDITOR_EDITLEVEL		201
+#define CM_EDITOR_DUMPENTRY		202
+#define CM_EDITOR_VIEWSPRITE	203
+#define CM_EDITOR_VIEWWTEXTURE	204
+#define CM_EDITOR_VIEWFTEXTURE	205
+#define CM_FILEOPEN	24332
+#define CM_FILESAVE	24333
+
+#endif

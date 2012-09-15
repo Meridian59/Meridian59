@@ -1,0 +1,185 @@
+LOGIN MODE MESSAGES
+===================
+
+Protocol for logging in:
+
+Client sends these character numbers:
+1   255   66   76   65   75    10    13    2
+
+Server sends these character numbers:
+3   251   98   108   97   107    10    13    1
+
+Client sends these character numbers:
+7   230   98   108   97   107    10    13    8
+
+
+Then we enter login mode, which has these messages:
+
+The general message format is the same as the one given in protocol.txt
+for game mode messages.
+
+Messages from client:
+=====================
+
+----------------------------------------------------------
+Login
+<AP_LOGIN> <version> <sysinfo> <username_string> <password_string>
+<version> = 	
+	1 byte		major revision #
+	1 byte		minor revision #
+<sysinfo> =
+	4 bytes 	operating system identifier
+	4 bytes		operating system major version
+	4 bytes		operating system minor version
+	4 bytes		amount of physical memory on system
+	4 bytes		processor identifier
+	2 bytes         width of screen in pixels
+	2 bytes         height of screen in pixels
+	12 bytes        reserved (set to 0 for upward compatability)
+----------------------------------------------------------
+User wants to go into game
+<AP_REQ_GAME> <time>
+----------------------------------------------------------
+User wants to go into admin mode
+<AP_REQ_ADMIN>
+----------------------------------------------------------
+Send main menu info
+<AP_REQ_MENU>
+----------------------------------------------------------
+Download new resource files
+<AP_GETRESOURCE>
+----------------------------------------------------------
+Download new client
+<AP_GETCLIENT>
+----------------------------------------------------------
+Download all files
+<AP_GETALL>
+----------------------------------------------------------
+Client is about to upload a file
+<AP_UPLOAD>
+----------------------------------------------------------
+Register new user
+<AP_REGISTER> <string>
+----------------------------------------------------------
+Resynchronize--Error has occurred
+<AP_RESYNC>
+----------------------------------------------------------
+Send note to administrator
+<AP_ADMINNOTE> <string>
+----------------------------------------------------------
+Client is active (sent during download)
+<AP_PING>
+----------------------------------------------------------
+
+
+Messages from server:
+=====================
+----------------------------------------------------------
+Ask user for username & password
+<AP_GETLOGIN>
+----------------------------------------------------------
+Login accepted
+<AP_LOGINOK> <admin>
+
+<admin> = 	
+	1 byte		normal user = 0, admin = 1, guest = 2
+----------------------------------------------------------
+Login rejected
+<AP_LOGINFAILED>
+----------------------------------------------------------
+Go into game
+<AP_GAME>
+----------------------------------------------------------
+Go into admin mode
+<AP_ADMIN>
+----------------------------------------------------------
+Display main menu
+<AP_GETCHOICE>
+----------------------------------------------------------
+Display error message
+<AP_MESSAGE> <string> <action>
+<action> = 
+1 byte		what to do after displaying message
+		0 = continue normally
+		1 = log off
+----------------------------------------------------------
+Account is already in use
+<AP_ACCOUNTUSED>
+----------------------------------------------------------
+Too many login attempts
+<AP_TOOMANYLOGINS>
+----------------------------------------------------------
+Login timed out
+<AP_TIMEOUT>
+----------------------------------------------------------
+# of user's credits
+<AP_CREDITS> <number>
+----------------------------------------------------------
+Begin a file download
+<AP_DOWNLOAD> <# of files> <machine> <path> <file>*
+<# of files> = 2 bytes
+<machine> =
+	<string>	name of machine to ftp files from
+<path> =
+	<string>	pathname where files reside on machine
+<file> =
+	4 bytes		file time
+	4 bytes		<file_flags>
+	<string>	filename
+
+<file_flags> =
+	1 byte		what to do with file:
+
+bits 0-1:    what to do with file ("command")
+        0 = ftp file
+	1 = delete file (machine, path, file time ignored)
+bits 2-4:    local location of file ("location")
+        0 = resource directory
+	1 = client directory
+	2 = Windows directory
+	3 = Windows system directory
+	4 = help subdirectory
+	5 = mail subdirectory
+
+The files must appear in increasing file time order.
+----------------------------------------------------------
+User is out of credits
+<AP_NOCREDITS>
+----------------------------------------------------------
+Resynchronize--Error has occurred
+(same format as message from client)
+<AP_RESYNC>
+----------------------------------------------------------
+Delete resource files
+<AP_DELETERSC> <strings>
+----------------------------------------------------------
+Delete all resource files
+<AP_DELETEALLRSC> 
+----------------------------------------------------------
+New version of client needed
+<AP_GETCLIENT> <ftp_string> <fname_string>
+
+<ftp_string> =
+<string>	name of ftp server to connect to
+<fname_string> =
+<string>	name of filename to retrieve
+----------------------------------------------------------
+
+
+
+
+Types
+=====
+
+<strings> = 
+	2 bytes		# of strings
+	x <string>s
+
+<string> = 
+	2 bytes         length of string
+	<length> bytes  string itself (NOT null terminated)
+
+<number> = 4 bytes
+
+<time> = 
+	4 bytes         UNIX time (# of seconds since 12:00 am, Jan 1 1970)

@@ -1,0 +1,102 @@
+# Medium Worm
+# 
+# Groups:
+#            1 buried
+#          2-6 popup
+#            7 stand
+#         8-11 Attack
+#        12-14 popdown
+#^Applied to Hotspot: 0
+#*Groups: 14
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+61
+Mwm000pa.bmp   [0, -17] 
+Mwm315pa.bmp   [0, -23] 
+Mwm270pa.bmp   [0, -26] 
+Mwm180pa.bmp   [0, -26] 
+Mwm090pa.bmp   [0, -11] 
+Mwm045pa.bmp   [0, -15] 
+Mwm000pb.bmp   [0, -12] 
+Mwm315pb.bmp   [0, 3] 
+Mwm270pb.bmp   [0, 4] 
+Mwm180pb.bmp   [0, -11] 
+Mwm090pb.bmp   [0, -10] 
+Mwm045pb.bmp   [0, -8] 
+Mwm000pc.bmp   [0, -7] 
+Mwm315pc.bmp   [0, 2] 
+Mwm270pc.bmp   [0, -2] 
+Mwm180pc.bmp   [0, -5] 
+Mwm090pc.bmp   [0, -4] 
+Mwm045pc.bmp   [0, -7] 
+Mwm000pd.bmp   [0, -2] 
+Mwm315pd.bmp   [0, -2] 
+Mwm270pd.bmp   [0, 10] 
+Mwm180pd.bmp   [0, -1] 
+Mwm090pd.bmp   [0, 0] 
+Mwm045pd.bmp   [0, -3] 
+Mwm000pe.bmp   [0, 0] 
+Mwm315pe.bmp   [0, -1] 
+Mwm270pe.bmp   [0, -1] 
+Mwm180pe.bmp   [0, 1] 
+Mwm090pe.bmp   [0, 2] 
+Mwm045pe.bmp   [0, 1] 
+Mwm000sa.bmp   [0, 0] 
+Mwm315sa.bmp   [0, -2] 
+Mwm270sa.bmp   [0, -1] 
+Mwm180sa.bmp   [0, 1] 
+Mwm090sa.bmp   [0, 2] 
+Mwm045sa.bmp   [0, 0] 
+Mwm000fa.bmp   [0, 0] 
+Mwm315fa.bmp   [0, -1] 
+Mwm270fa.bmp   [0, -1] 
+Mwm180fa.bmp   [0, 1] 
+Mwm090fa.bmp   [0, 2] 
+Mwm045fa.bmp   [0, 1] 
+Mwm000fb.bmp   [0, 0] 
+Mwm315fb.bmp   [0, -2] 
+Mwm270fb.bmp   [0, -2] 
+Mwm180fb.bmp   [0, 1] 
+Mwm090fb.bmp   [0, 2] 
+Mwm045fb.bmp   [0, 0] 
+Mwm000fc.bmp   [0, 0] 
+Mwm315fc.bmp   [0, -1] 
+Mwm270fc.bmp   [0, -2] 
+Mwm180fc.bmp   [0, 0] 
+Mwm090fc.bmp   [0, 2] 
+Mwm045fc.bmp   [0, 1] 
+Mwm000fd.bmp   [0, 0] 
+Mwm315fd.bmp   [0, -1] 
+Mwm270fd.bmp   [0, -1] 
+Mwm180fd.bmp   [0, 0] 
+Mwm090fd.bmp   [0, 2] 
+Mwm045fd.bmp   [0, 1] 
+worm00.bmp
+14
+ 1   61
+ 8   1 2 3 4 4 4 5 6 
+ 8   7 8 9 10 10 10 11 12 
+ 8   13 14 15 16 16 16 17 18 
+ 8   19 20 21 22 22 22 23 24 
+ 8   25 26 27 28 28 28 29 30 
+ 8   31 32 33 34 34 34 35 36 
+ 8   37 38 39 40 40 40 41 42 
+ 8   43 44 45 46 46 46 47 48 
+ 8   49 50 51 52 52 52 53 54 
+ 8   55 56 57 58 58 58 59 60 
+ 8   13 14 15 16 16 16 17 18 
+ 8   7 8 9 10 10 10 11 12 
+ 8   1 2 3 4 4 4 5 6 

@@ -1,0 +1,101 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+NecromancerTroop is FactionTroop
+
+constants:
+
+include blakston.khd
+
+   FACTIONTROOP_TRANSLATION_Skin_MASK = 0xff0000
+   FACTIONTROOP_TRANSLATION_Skin_MUL = 0x10000
+
+resources:
+
+   NecromancerTroop_name_rsc = "necromancer"
+
+   NecromancerTroop_desc_rsc = \
+   "Transfixed under the unearthly stare of this foul being, your mind skitters "
+   "fearfully around the thought of the dark rituals which must have transformed it "
+   "into what it is.  Indeed, the necromancer is an unliving testimonial to the "
+   "terrible price of magical power."
+
+   NecromancerTroop_dead_name_rsc = "dead necromancer"
+   NecromancerTroop_sound_aware = skl2_awr.wav
+
+classvars:
+
+   vrName = NecromancerTroop_name_rsc
+   vrDesc = NecromancerTroop_desc_rsc
+   vrDead_name = NecromancerTroop_dead_name_rsc
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP
+
+   viChanceFemale = 60  % percentage chance to be female
+
+   % We use a colored guildshield
+   viColorTranslate1 = XLAT_TO_GRAY     % Shirt
+   viColorTranslate2 = XLAT_TO_BLACK   % Pants
+   viShieldColor1 = XLAT_TO_RED
+   viShieldColor2 = XLAT_TO_RED
+   viShieldShape = SHIELDSHAPE_HORIZ
+   viInsignia = INSIG_QOR
+
+properties:
+
+   piBaseLevel = 60
+   piBaseDifficulty = 4
+
+   %Here so they can be set
+   viLevel = 60         % piBaseLevel
+   viDifficulty = 4     % piBaseDifficulty
+
+   piBody_translations = 0
+   vrSound_aware = NecromancerTroop_sound_aware
+
+messages:
+
+   SetSkinColor()
+   % Sets skin to one of the four skin colors.
+   {
+      local skin_color;
+      skin_color = PT_BLUE_TO_ASHEN;
+
+      piBody_translations = piBody_translations & ~FACTIONTROOP_TRANSLATION_SKIN_MASK;
+      piBody_translations = piBody_translations | (skin_color * FACTIONTROOP_TRANSLATION_SKIN_MUL);
+
+      return;
+   }
+
+   % Overwrites base class
+   SetKarma()
+   {
+      viKarma = -40;
+      return;
+   }
+
+   % maybe put in a DoCast at some point
+   MonsterAttack(what = $)
+   {
+      % add in any attack animation calls
+      Send(self,@DoSlash);
+      return;
+   }
+
+   IsUndead()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

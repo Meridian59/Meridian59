@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OreChunk is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   OreChunk_icon_rsc = Ore.bgf
+   OreChunk_name_rsc = "chunk of ore"
+   OreChunk_desc_rsc = "This is a huge, unwieldy hunk of rock, with strong, silver veins suggesting immense hidden value inside."
+
+classvars:
+   
+   vrName = OreChunk_name_rsc
+   vrDesc = OreChunk_desc_rsc
+   vrIcon = OreChunk_icon_rsc
+
+   viValue_average = 1000
+   viWeight = 600
+   viBulk = 600
+
+
+properties:  
+
+messages:   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

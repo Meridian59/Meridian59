@@ -1,0 +1,27 @@
+# Street light ('lamp')
+#^Applied to Hotspot: 0
+#*Groups: 7
+#* unlit
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+#* Unlabeled Group
+-s 3
+7
+lampA.bmp      [0, 0] 
+lampB.bmp      [0, 0] 
+lampC.bmp      [0, 0] 
+lampD.bmp      [0, 0] 
+lampE.bmp      [0, 0] 
+lampF.bmp      [0, 0] 
+lampG.bmp      [0, 0] 
+7
+ 1   1 
+ 1   2 
+ 1   3 
+ 1   4 
+ 1   5 
+ 1   6 
+ 1   7 

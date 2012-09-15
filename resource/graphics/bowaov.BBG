@@ -1,0 +1,18 @@
+# bow overlay, top part
+# 
+#^Applied to Hotspot: 32
+#*Groups: 2
+#* top part of overlay
+#* blank
+-s 4
+7
+bow000aa.bmp   [111, 98] 
+bow315aa.bmp   [101, 93] 
+bow270aa.bmp   [101, 93] 
+bow180aa.bmp   [203, 93] 
+bow090aa.bmp   [257, 99] 
+bow045aa.bmp   [183, 98] 
+blank.bmp      [0, 0] 
+2
+ 8   1 2 3 4 4 4 5 6 
+ 1   7 

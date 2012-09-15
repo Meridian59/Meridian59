@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKA3 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKA3 ="A notch in the jungle"
+   room_OutdoorsKA3 = KA3.roo
+   OutdoorsKA3_music = avarwar.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKA3
+
+   viTeleport_row = 4
+   viTeleport_col = 24
+   viTerrain_type = TERRAIN_JUNGLE | TERRAIN_BEACH | TERRAIN_MOUNTAIN
+
+   viAvar_clan = AVARCLAN_ANTIMAGIC
+
+properties:
+
+   prRoom = room_OutdoorsKA3
+   prMusic = OutdoorsKA3_music
+   piRoom_num = RID_KA3
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Dragonfly, 100] ];
+      plGenerators = [ [65,20], [7,34], [60,61] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&FireSand,24,8], [&FireSand,21,11] ];
+
+      % Do not propagate
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      % teleport to Bowmaker:
+      plExits = Cons([ 28, 12, RID_JUNGLE_BOWMAKER_HUT, 6, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 27, 12, RID_JUNGLE_BOWMAKER_HUT, 6, 5, ROTATE_NONE ],plExits);
+      
+      plEdge_Exits = $;
+      % teleport in to 6,39
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KA2, 56, 30, ROTATE_NONE], plEdge_exits);
+
+      % teleport in to 71,48
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KA4, 1, 26, ROTATE_NONE], plEdge_exits);      
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&SmokeColumn),
+           #new_row=23,#new_col=15,#fine_row=56,#fine_col=32,#new_angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

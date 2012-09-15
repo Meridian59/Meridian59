@@ -1,0 +1,14 @@
+# baby spider, model (for Raza museum)
+#^Applied to Hotspot: 0
+#*Groups: 1
+#* Unlabeled Group
+-s 8
+6
+spby000a.bmp   [0, 0] 
+spby315a.bmp   [0, 0] 
+spby270A.bmp   [0, 0] 
+spby180A.bmp   [0, 0] 
+spby090A.bmp   [0, 0] 
+spby045A.bmp   [0, 0] 
+1
+ 8   1 2 3 4 4 4 5 6 

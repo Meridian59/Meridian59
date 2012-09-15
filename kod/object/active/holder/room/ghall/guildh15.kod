@@ -1,0 +1,391 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildHall15 is GuildHall 
+
+constants:
+
+   SECRET_SECTOR = 1
+   SECRET_H_DN = 0
+   SECRET_H_UP = 96
+   ENTRANCE_SECTOR = 2
+   ENTRANCE_H_DN = 10
+   ENTRANCE_H_UP = 200
+   
+   LIFT_DELAY = 13000
+
+   LEVER_REACTIVATE_DELAY = 2000    % 2 seconds
+
+   TREASURE_ROW_MIN = 6
+   TREASURE_ROW_MAX = 9
+   TREASURE_COL_MIN = 40
+   TREASURE_COL_MAX = 43
+       
+   include blakston.khd
+
+resources:
+
+   room_name_guildh15 = "Inner Sanctum of Queen Venya'cyr"
+   room_guildh15 = guildh15.roo
+
+   Guildh15_lever_desc = "This lever is clearly of archaic design, yet it seems to be in pristine condition.  "
+      "You can't help but wonder what it controls."
+   Guildh15_lever_icon = neclever.bgf
+
+   Guildhall15_loop = necloop3.wav
+   Guildhall15_music = nec03.mid
+
+   guildh15_guildwarning = "Your amulet vibrates vigorously for a moment.  Something is amiss."
+
+classvars:
+
+   vrName = room_name_guildh15
+
+   viTeleport_row = 13
+   viTeleport_col = 14
+
+   viNews_row = 16
+   viNews_col = 47
+   viNews_finerow = 52
+   viNews_finecol = 56
+
+   viFoyer_north = 0
+   viFoyer_south = 27
+   viFoyer_west = 0
+   viFoyer_east = 31
+
+   viLever_row = 7
+   viLever_col = 9
+   viLever_fine_row = 32
+   viLever_fine_col = 32
+
+   viQuality = 4
+
+   viInner_teleport_row = 13
+   viInner_teleport_col = 42
+   viSeconds_til_close = 24
+   
+   viTerrain_type = TERRAIN_GUILDHALL | TERRAIN_NECROPOLIS | TERRAIN_LAIR
+
+properties:
+
+   prMusic = Guildhall15_music
+
+   prRoom = room_guildh15
+   piRoom_num = RID_guildh15
+
+   piBaseLight = LIGHT_NICE
+
+   ptSecret = $
+   ptEntrance = $
+
+   plLevers = $
+   ptReactivateLevers = $
+
+messages:
+
+   Constructor()
+   {
+      plGuild_doors = [[12,30],[13,30],[14,30]];
+      plLooping_sounds = [[ Guildhall15_loop, 0, 0, 200, 100 ]];
+      propagate;
+   }
+
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+  %% TO TOWN
+%      plExits = Cons([ 2, 3, RID_LICH_MAZE, 42, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 3, RID_LICH_MAZE, 42, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 4, RID_LICH_MAZE, 42, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 5, RID_LICH_MAZE, 42, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 3, RID_LICH_MAZE, 42, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 4, RID_LICH_MAZE, 42, 27, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 5, RID_LICH_MAZE, 42, 27, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSecret <> $ {
+         deletetimer(ptSecret);
+         ptSecret=$;
+      }
+      if ptEntrance <> $ {
+         deletetimer(ptEntrance);
+         ptEntrance = $;
+      }
+      plLevers = $;
+      if ptReactivateLevers <> $ {
+         deletetimer(ptReactivateLevers);
+         ptReactivateLevers = $;
+      }
+
+      propagate;
+   }
+
+
+   SomethingTryGo(what=$, row=$,  col = $)
+   {
+      if ((row = 12) or (row = 13) or (row = 14) ) and ((col = 31) or (col = 32) or (col = 33))         
+      {
+         if send(self,@ReqLegalEntry,#who = what)
+         {
+            send(self,@openEntrancedoor);
+            return TRUE;
+         }
+      }
+      if (poGuild_Owner=$) and (row=19) and ((col=13) or (col=14) or (col=15))
+      {
+         send(self,@OpenSecretDoor);
+      }
+      propagate;
+   }
+
+
+   OpenEntranceDoor()
+   {
+       if ptEntrance = $
+         {
+           send(self,@TimeStampDoor);
+	    send(self,@setsector,#sector=ENTRANCE_SECTOR,#animation=ANIMATE_FLOOR_LIFT,
+               #height = ENTRANCE_H_DN,#speed=16);
+            ptEntrance=createtimer(self,@closeentrancedoor,LIFT_DELAY);
+            send(self,@OpenEntranceDoorSound);
+          }    
+       return;
+   }
+
+   CloseEntranceDoor()
+   {
+       ptEntrance = $;
+       send(self,@setsector,#sector=ENTRANCE_SECTOR,#animation=ANIMATE_FLOOR_LIFT,
+               #height = ENTRANCE_H_UP,#speed=16);
+       send(self,@CloseEntranceDoorSound);
+       return;
+   }
+
+
+   OpenSecretDoor()
+   {
+     if ptSecret = $
+        {
+        send(self,@setsector,#sector=SECRET_SECTOR,#animation=ANIMATE_CEILING_LIFT,
+           #height = SECRET_H_UP,#speed=16);
+        ptSecret = createtimer(self,@CloseSecretDoor,LIFT_DELAY);
+        send(self,@OpenSecretDoorSound);
+        }
+   return; 
+   }
+
+   CloseSecretDoor()
+   {
+      ptSecret = $;
+      send(self,@setsector,#sector=SECRET_SECTOR,#animation=ANIMATE_CEILING_LIFT,
+         #height = SECRET_H_DN,#speed=16);
+      send(self,@CloseSecretDoorSound);
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      local oLever;
+
+   	send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SACRIFICIALBOWL),#new_row=4,#new_col=14,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+	   send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SKULL10),#new_row=4,#new_col=15,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+   	send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_SACRIFICIALBOWL),#new_row=4,#new_col=13,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+	   send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),#new_row=6,#new_col=42,#fine_row=8,#fine_col=8,#new_angle=ANGLE_SOUTH);
+   	send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),#new_row=20,#new_col=42,#fine_row=48,#fine_col=48,#new_angle=ANGLE_NORTH);
+	   send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_GOATHEAD),#new_row=3,#new_col=10,#fine_row=16,#fine_col=24,#new_angle=ANGLE_SOUTH_EAST);
+
+      if poGuild_owner = $
+      {
+         Send(self,@NewHold,#what=Create(&DeadLich),
+               #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
+      }
+      else
+      {
+         Send(self,@NewHold,#what=Create(&Lich,#oNecromancerGuild=poGuild_owner),
+               #new_row=13,#new_col=49,#fine_row=16,#fine_col=00,#new_angle=ANGLE_WEST);
+      }
+
+      Send(self,@NewHold,#what=Create(&Chest),
+           #new_row=23,#new_col=14,#new_angle=ANGLE_NORTH);
+
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=22,#new_col=11,#fine_row=48,#fine_col=55,#new_angle=ANGLE_EAST);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=23,#new_col=11,#fine_row=32,#fine_col=55,#new_angle=ANGLE_EAST);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=24,#new_col=11,#fine_row=16,#fine_col=55,#new_angle=ANGLE_EAST);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=25,#new_col=13,#fine_row=55,#fine_col=16,#new_angle=ANGLE_NORTH);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=25,#new_col=14,#fine_row=55,#fine_col=00,#new_angle=ANGLE_NORTH);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=25,#new_col=14,#fine_row=55,#fine_col=48,#new_angle=ANGLE_NORTH);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=25,#new_col=15,#fine_row=55,#fine_col=32,#new_angle=ANGLE_NORTH);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=24,#new_col=16,#fine_row=16,#fine_col=55,#new_angle=ANGLE_WEST);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=23,#new_col=16,#fine_row=32,#fine_col=55,#new_angle=ANGLE_WEST);           
+      oLever = Create(&Lever,#description=Guildh15_lever_desc,#icon=Guildh15_lever_icon,#range=2);
+      plLevers = cons(oLever,plLevers);
+      Send(self,@NewHold,#what=oLever,
+           #new_row=22,#new_col=16,#fine_row=48,#fine_col=55,#new_angle=ANGLE_WEST);           
+
+      propagate;
+   }
+
+   CreateHotPlates()
+   {
+      local lHotPlates, i, oPlate;
+      lHotPlates = [[ 12, 30, 1 ],[ 13, 30, 1 ],[ 14, 30, 1 ],[ 12, 31, 2 ],[ 13, 31, 2 ],[ 14, 31, 2 ]];
+
+      for i in lHotPlates
+      {
+	  oPlate = Create(&Hotplate,#hpid=nth(i,3));
+	  send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+      }
+      return;
+   }
+
+   CreateShieldLever()
+   {
+      return;
+   }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Maze control lever code %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+   SomethingChanged(what=$)
+   {
+      local oLever, i;
+      if isClass(what,&Lever) {
+         for oLever in plLevers {
+            if what = oLever {
+               send(send(SYS,@FindRoomByNum,#num=RID_LICH_MAZE),@LeverPulled,#num=FindListElem(plLevers,oLever));
+               for i in plLevers {
+                  send(i,@SetStuck,#newStuck=TRUE);
+               }
+               ptReactivateLevers = CreateTimer(self,@ReactivateLevers,LEVER_REACTIVATE_DELAY);
+            }
+         }
+      }
+      propagate;
+   }
+
+   ReactivateLevers()
+   {
+      local i;
+      ptReactivateLevers = $;
+
+      for i in plLevers {
+         send(i,@SetStuck,#newStuck=FALSE);
+      }
+      
+      return;
+   }
+
+   GetTreasureRow()
+   {
+      return random(TREASURE_ROW_MIN,TREASURE_ROW_MAX);
+   }
+   GetTreasureCol()
+   {
+      return random(TREASURE_COL_MIN,TREASURE_COL_MAX);
+   }
+
+  GetPurchaseValue(who=$)
+  "This returns the value that the GuildCreator will sell the guild to."
+  "When the guild has been conquered, he will only sell the guild hall to "
+  "someone in the Conquering guild."
+  "return -1 if this player cannot rent this guild hall."
+  {
+     return -1;   %% A player can never normally rent this guild hall.
+  }
+
+   NewHold(what=$)
+   {
+      local oNecroGuild,lMembers,oNecro,iChance;
+      if isclass(what,&User) and not isclass(what,&dm)
+      {
+         oNecroGuild = send(send(SYS,@FindRoomByNum,#num=RID_GUILDH15),@GetGuildOwner);
+         if oNecroGuild <> $
+         {
+            if not send(what,@IsUsingA,#Class=&NecromancerAmulet)
+            {
+               iChance = 2;
+               if (send(what,@FindHoldingActive,#class=&HunterSword)<>$)
+               {
+                  iChance = iChance/2;
+               }
+               if random(1,iChance)=1
+               {
+                  lMembers = send(oNecroGuild,@GetMemberList);
+                  oNecro = First(nth(lMembers,random(1,length(lMembers))));
+                  if send(oNecro,@isLoggedOn)
+                  {
+                     Send(oNecro,@MsgSendUser,#message_rsc=guildh15_guildwarning);
+                  }
+               }
+            }
+         }
+      }
+      propagate;
+   }
+
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,stroke_obj = $)
+   "No one may attack through the door if it's closed."
+   {
+      if (what = $) or (victim = $)
+      {
+         propagate;
+      }
+      if send(self,@InFoyer,#who=what) <> send(self,@InFoyer,#who=victim)
+      {
+         if ptEntrance = $      % if the door was closed recently - note that this treats the door as closed the instant it starts closing - oh well.
+         {
+            if isClass(what,&player)
+            {
+               send(what,@SendAttackOutOfRangeMessage,#what=victim,#use_weapon=use_weapon,#stroke_obj=stroke_obj);
+            }
+            return FALSE;
+         }
+      }
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

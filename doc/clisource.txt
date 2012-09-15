@@ -1,0 +1,200 @@
+
+The list below groups client source files according to function, and
+gives a very brief description of some files.
+
+Items underlined by equals signs (=====) correspond to subdirectories
+of the top-level source directory (\blakston).  Items underlined by
+hyphens (-----) are subject headings, with no necessary correspondence
+in the source tree.
+
+The client contains a "state" variable which summarizes the current
+state of the client/server communication (in game, downloading, not
+connected, etc.).  In general, one source file handles the events for
+each state.
+
+---Andrew Kirmse 5/6/96
+
+CLIENT
+======
+
+Main loop
+---------
+
+client.c    - Startup code, main loop, and message dispatch.
+winmsg.c    - Further message dispatch.
+winmenu.c   - Handle menu events.
+
+Game states
+-----------
+
+statgame.c  - Dispatch on messages while in STATE_GAME.
+statstrt.c  - Try to synchronize with server while in STATE_STARTUP. 
+statdial.c  - Try to connect to server while in STATE_DIALING (not used).
+statoffl.c  - Display background bitmap in STATE_OFFLINE.
+statterm.c  - Act as a terminal while in STATE_TERM.
+login.c     - Handle logging in (STATE_LOGIN).
+mainmenu.c  - Display main game menu dialog (STATE_LOGIN).
+
+Manage game data structures
+---------------------------
+
+game.c      - Handle most server messages.
+object.c    - Basic object creation, deletion, etc.
+loadrsc.c   - Manage resource hash table (for game strings).
+config.c    - Load and save configuration info to INI file.
+modules.c   - Load modules and dispatch messages to them.
+userlist.c  - Manage list of all users in the system (soon to be
+              obsolete).
+uselist.c   - Keep track of which objects are in use.
+idlist.c    - Data structure for list of IDs (numbers).
+
+Communications
+--------------
+
+server.c    - Parses and dispatches on server messages.
+protocol.c  - Assembles client messages to send to the server.
+download.c  - Retrieves files from the server.
+ftp.c       - Interface to WININET.DLL, which uses ftp to retrieve files.
+com.c       - Low-level communications routines.
+
+Graphics engine
+---------------
+
+bspload.c   - Load room file and assemble BSP tree.
+bspdraw.c   - Draw BSP tree in 3D window; contains most of the engine.
+draw3d.c    - Set up drawing and call functions in bspdraw.c.
+object3d.c  - Draw objects in 3D window.
+client3d.c  - Utility functions to get object positions on screen,
+              etc.
+overlay.c   - Draws player overlays in the 3D window.
+
+Other graphics code
+-------------------
+
+draw.c      - A few utility drawing routines.
+drawbmp.c   - Draw objects outside of 3D window; draw window background.
+map.c       - Draw the map.
+mapfile.c   - Load and save the map.
+bitmap.c    - Search for bitmaps; high-level load functions.
+cache.c     - Maintain the bitmap cache.
+dibutil.c   - Read bitmaps from disk.
+palette.c   - Create palettes from tables in pal.c.
+graphics.c  - Utility functions for 3D view area, including drag and
+              drop of objects.
+ 
+animate.c   - Handle animation timer, and animate objects.
+move.c      - User motion.
+moveobj.c   - Motion of other objects.
+project.c   - Motion of projectils.
+roomanim.c  - Animate room elements (walls, floors, ceilings)
+effect.c    - Perform special effects.
+
+User interface
+--------------
+
+inventry.c  - Dispatch events to interface components.
+graphctl.c  - Implements bar graph control.
+toolbar.c   - Implements the toolbar.
+tooltip.c   - Implements the tooltip controls that appear on the toolbar buttons.
+editbox.c   - Implements the text display area.
+textin.c    - Implements the text input area.
+ownerdrw.c  - Implements owner-drawn list boxes.
+
+buy.c       - Implements the "buy objects" dialog.
+offer.c     - Implements the "offer objects" dialog.
+lookdlg.c   - Implements the "examine object" dialog.
+dialog.c    - Implements the object description and amount dialogs.
+maindlg.c   - Implements some non-game dialogs (comm options, about dialog)
+say.c       - Implements "say" dialog
+msgfilter.c - Implements "who" dialog, and blocks unwanted user
+              messages.
+
+color.c     - Implements color choice dialog, and color routines.
+font.c      - Implements font choice dialog, and font routines.
+
+key.c       - Read the keyboard and translate to events.
+gameuser.c  - Respond to user requests.
+select.c    - Implements target selection.
+parse.c     - Parse text typed by the user.
+
+Utilities
+---------
+
+list.c      - Linked list implementation.
+table.c     - Hash table implementation.
+util.c      - Random Windows utilities; most are exported to modules.
+msgbox.c    - Display warning messages in a dialog; similar to
+              MessageBox.
+memmap.c    - Generic functions for dealing with memory-mapped files.
+
+Miscellaneous
+-------------
+
+sound.c     - Play WAV files.
+music.c     - Play MIDI files.
+srvrstr.c   - Assemble printf-style strings from server.
+
+Standalone programs
+-------------------
+
+makepal.c   - Program to automatically generate palettes.
+maketrig.c  - Program to automatically generate trig tables.
+
+
+INCLUDE
+=======
+
+module.h    - Included by each module; describes the client/module
+              interface.
+proto.h     - Contains constants for the client/server protocol.
+trig.h      - Automatically generated trig tables header file.
+
+dibutil.h   - Definitions of our custom bitmap data structure.
+rscfile.h,
+rscload.h   - Definitions for loading .rsc ("resource") files.
+
+roomtype.h, bkod.h - not used by client
+
+
+MODULE
+======
+
+Admin
+-----
+
+Handles the admin mode dialog that is accessible to game administrators.
+
+Char
+----
+
+Handles the character selection and creation dialogs.  These appear
+just as the user enters the game for the first time.
+
+Mailnews
+--------
+
+Handles mail and news.
+
+Merintr
+-------
+
+Handles parts of the main window interface. 
+
+merintr.c   - The main module interface procedure; contains module message handlers.
+mermain.c   - Dispatches module messages to interface components.
+
+alias.c     - Implements the "alias" dialog, and saves aliases to INI file.
+command.c   - Handlers for text commands.
+enchant.c   - Displays enchantments for spells (these indicate that spells have
+              been cast on the player or the current room).
+groups.c    - Implements groups for user communication.
+statbtn.c,
+statcach.c, 
+statlist.c, 
+statmain.c,
+stats.c     - Implements the stats area.
+inventry.c  - Implements the inventory.
+roomtitl.c  - Implements room title window.
+spells.c    - Implements "cast spell" dialog.
+userarea.c  - Implements user self-view head.
+

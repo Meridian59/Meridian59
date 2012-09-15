@@ -1,0 +1,226 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RiijaMonk is Temples
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RiijaMonk_name_rsc = "Monk of Riija"
+   RiijaMonk_icon_rsc = kcrjmonk.bgf
+   RiijaMonk_desc_rsc = "Floating several feet above the ground, this enigma of a "
+      "being watches you.  When it speaks, the monk's voice crackles like century "
+      "old parchment. You have a very uneasy feeling that all is not as it seems. "
+
+   RiijaMonk_name_rsc2 = "spooky little girl"
+   RiijaMonk_icon_rsc2 = kcrjgirl.bgf
+   RiijaMonk_desc_rsc2 = "With a sickly sweet child's voice and an unwholesome look of innocence, the priestess "
+      "of Riija welcomes you to her inner sanctum of unreality."
+
+   riijamonk_teach = "Through ~I~rRiija's madness, ~byou can learn "
+   riijamonk_notworthy = "~II see ~gno evidence that ~byou~g are ready to ~rlearn."
+   riijamonk_worthy = "~IAre you prepared for ~I~B~renlightenment?"
+
+   riijamonk_dispel = "~B~rNever do that again!"
+   riijamonk_respel = "Yrxlfle'man ~I~gGrn'Solagh ~rYippie ~bYup-Yup..."
+   riijamonk_unwanted_give = "~k%s%s tells you, \"~BFool,~I I do not need anything from ~n~r~Byou~n~k\""
+
+
+classvars:
+
+   vrName = RiijaMonk_name_rsc
+   vrIcon = RiijaMonk_icon_rsc
+   vrDesc = RiijaMonk_desc_rsc
+   vrName2 = RiijaMonk_name_rsc2
+   vrIcon2 = RiijaMonk_icon_rsc2
+   vrDesc2 = RiijaMonk_desc_rsc2
+   viMerchant_markup = MERCHANT_EXPENSIVE
+   viKarma = 0
+   viDefinite = ARTICLE_THE
+   viIndefinite = ARTICLE_THE
+
+   viAttributes = MOB_NOFIGHT | MOB_LISTEN | MOB_RANDOM | MOB_RECEIVE | MOB_TEACHER | MOB_PERM_QUESTER | MOB_SELLER
+   viOccupation = MOB_ROLE_PRIESTESS
+
+   viGender = GENDER_NEUTER
+   vrTeach_message = riijamonk_teach
+   vrUnwanted_give = riijamonk_unwanted_give
+
+   viQuestID = 0
+
+properties:
+
+   pbIllusioned = TRUE
+   piDrawfx = BOUNCE_YES
+
+   ptGoIllusioned = $
+
+messages:
+
+   Constructed()
+   {
+      piDrawfx = BOUNCE_YES;
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptGoIllusioned <> $
+      {
+         deletetimer(ptGoIllusioned);
+         ptGoIllusioned = $;
+      }
+
+      propagate;
+   }
+
+   GetIcon()
+   {
+      if pbIllusioned
+      {
+         return vrIcon;
+      }
+
+      return vrIcon2;
+   }
+
+   GetName()
+   {
+      if pbIllusioned
+      {
+         return vrName;
+      }
+
+      return vrName2;
+   }
+
+   GetApparentName()
+   {
+      if pbIllusioned
+      {
+         return vrName;
+      }
+
+      return vrName2;
+   }
+   
+   ShowDesc()
+   {
+      if pbIllusioned
+      {
+         AddPacket(4,vrDesc);
+         return;
+      }
+      
+      AddPacket(4,vrDesc2);
+      
+      return;
+   }
+
+   DispelIllusions()
+   {
+      if not pbIllusioned
+      {
+         return;
+      }
+
+      Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_dispel,
+           #type=SAY_RESOURCE);
+
+      pbIllusioned = FALSE;
+      piDrawfx = DRAWFX_NO;
+      send(poOwner,@Somethingchanged,#what=self);
+      
+      if ptGoIllusioned <> $
+      {
+         deleteTimer(ptGoIllusioned);
+         ptGoIllusioned = $;
+      }
+      
+      ptGoIllusioned=createtimer(self,@ReplaceIllusions,18000);  % 3o seconds
+
+      return;
+   }
+
+   ReplaceIllusions()
+   {
+      ptGoIllusioned = $;
+
+      if pbIllusioned
+      {
+         return;
+      }
+
+      Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_respel,
+           #type=SAY_RESOURCE);
+
+      pbIllusioned = TRUE;
+      piDrawfx = BOUNCE_YES;
+      send(poOwner,@Somethingchanged,#what=self);
+      
+      return;
+   }
+
+   SetForSale()
+   {
+      plFor_sale = [$,$,
+                    [ SID_ANONYMITY, SID_APPARITION, SID_ARTIFICE,
+                      SID_FORGET, SID_MORPH, SID_REFLECTION, SID_ILLUSIONARY_FORM,
+                      SID_FORESIGHT, SID_VERTIGO, SID_DENIAL, SID_ILLUSIONARY_WOUNDS,
+                      SID_FLASH, SID_SHADOW_FORM, SID_ILLUSIONARY_FIREWALL, SID_BAIT, 
+                      SID_FEIGN_DEATH, SID_ELUSION, SID_EVIL_TWIN ]];
+      return;
+   }
+   
+   CanAddSpell(who=$,num=$,report=FALSE)
+   {
+      local bWorthy, i;
+      bWorthy = FALSE;
+
+      for i in send(who,@GetPlayerUsing)
+      {
+         if isClass(i,&RiijaSword) and send(i,@GetQuester) = who
+         {  bWorthy = TRUE;  }
+      }      
+
+      if report
+      {
+         if not bWorthy
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_notworthy,
+                 #type=SAY_RESOURCE);
+         }
+         else
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_worthy,
+                 #type=SAY_RESOURCE);
+         }      
+      }
+      
+      if NOT bWorthy
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   GetFaction()
+   {
+      return FACTION_NEUTRAL;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

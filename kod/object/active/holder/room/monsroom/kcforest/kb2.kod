@@ -1,0 +1,104 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsKB2 is KCForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_OutdoorsKB2 ="Headquarters for the Avar Warriors"
+   room_OutdoorsKB2 = KB2.roo
+   OutdoorsKB2_music = avarwar.mid
+
+classvars:
+
+   vrName = room_name_OutdoorsKB2
+
+   viTeleport_row = 43
+   viTeleport_col = 23
+   viTerrain_type = TERRAIN_JUNGLE
+
+   viAvar_clan = AVARCLAN_ANTIMAGIC
+
+properties:
+
+   prRoom = room_OutdoorsKB2
+   prMusic = OutdoorsKB2_music
+   piRoom_num = RID_KB2
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 90000
+   piGen_percent = 70
+
+   piInit_count_min = 5
+   piInit_count_max = 9
+
+   piMonster_count_max = 12
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Avar, 60], [&AvarShaman, 18], [&AvarChieftain, 7],[&Kriipa,15] ];
+      plGenerators = [ [43,22], [39,25], [49,40], [59,24], [20,25], [38,48] ];
+
+      propagate;
+   }
+
+   CreateJungleItemCoords()
+   {      
+      plItem_coords = [ [&RainbowFern,49,28], [&RainbowFern,42,18], [&RainbowFern,36,26] ];
+
+      % Do not propagate
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=20,#new_col=21,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=25,#new_col=33,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=31,#new_col=11,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=38,#new_col=32,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=49,#new_col=14,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=62,#new_col=19,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=44,#new_col=46,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_TREE2),
+           #new_row=60,#new_col=50,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_KB1, 49, 24, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_EAST, RID_KC2, 20, 1, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_KB3, 1, 21, ROTATE_NONE], plEdge_exits);      
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

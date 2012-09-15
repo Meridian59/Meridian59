@@ -1,0 +1,6 @@
+# rentable rooms object: small table, for placing objects on
+-s 3
+1
+roomtabl.bmp   [0, 0] :1     1 [0, 0]
+1
+ 1 1

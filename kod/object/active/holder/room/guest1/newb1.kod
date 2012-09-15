@@ -1,0 +1,76 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Newb1 is Guest1
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_newb1 = "Raza Inn"
+
+   Newbie1_god_name = "Designers' News"
+   Newbie1_god_desc = "Check here for information from the game administrators."
+
+classvars:
+
+   vrName = room_name_newb1
+
+   viDemo_base = RID_NEWB_BASE
+
+properties:
+
+   piRoom_num = RID_NEWB1
+
+messages:
+
+   Constructed()
+   {
+      piRoom_flags = piRoom_flags & ~ROOM_GUEST_AREA;
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oParliament, oNews;
+
+      % Put an admin announcement globe here if we're in Beta.
+      oParliament = Send(SYS,@GetParliament);
+
+      if oParliament <> $ AND Send(oParliament,@BetaPotionsEnabled)
+      {
+         oNews = Create(&NewsLink,#nid=NID_ANNOUNCEMENTS,
+                        #name=Newbie1_god_name,#desc=Newbie1_god_desc);
+         Send(self,@NewHold,#what=oNews,#new_row=3,#new_col=8,#fine_row=32,#fine_col=16);
+      }
+
+      propagate;
+   }
+
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      % Don't let them get over 25%.
+      if oSpellSkill <> $
+         AND send(oSpellSkill,@GetAbility,#who=who) >= 25
+      {
+         return CANNOT_IMPROVE;
+      }
+      
+      % Give a general bonus to the nice newbies.
+      return (chance * 3)/2;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

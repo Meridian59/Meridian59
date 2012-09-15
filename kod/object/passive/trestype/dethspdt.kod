@@ -1,0 +1,66 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DeathSpiderTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_BLACK_SPIDER
+
+   piItem_att_chance = 2
+   piDIff_seed = 4
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &NeruditeArrow, 10 ],
+                     [ &NightVisionPotion, 9],
+                     [ &FireRing, 3],
+                     [ &ColdRing, 3],
+                     [ &ShockRing, 3],
+                     [ &AcidRing, 3],
+                     [ &StrengthPotion, 3],
+                     [ &ShadowFormPotion, 3],
+                     [ &RemoveCursePotion, 3],
+                     [ &ResistShockPotion, 3],
+                     [ &ResistPoisonPotion, 3],
+                     [ &ResistMagicPotion, 3],
+                     [ &ResistFirePotion, 3],
+                     [ &ResistColdPotion, 3],
+                     [ &MagicShieldPotion, 3],
+                     [ &KaraholsCursePotion, 3],
+                     [ &AnonymityPotion, 3],
+                     [ &FeignDeathPotion, 3],
+                     [ &DetectInvisibilityPotion, 3],
+                     [ &DetectGoodPotion, 3],
+                     [ &DetectEvilPotion, 3],
+                     [ &CurePoisonPotion, 3],
+                     [ &CureDiseasePotion, 3],
+                     [ &BaitPotion, 3],
+                     [ &HastePotion, 3],
+                     [ &PurifyPotion, 3],
+                     [ &NodeBurstPotion, 3],
+                     [ &DenialPotion, 3],
+                     [ &DeflectPotion, 3]
+                      ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

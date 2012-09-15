@@ -1,0 +1,26 @@
+% Item KOD Generation file
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),#new_row=47,#new_col=6,#fine_row=32,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),#new_row=42,#new_col=8,#fine_row=16,#fine_col=0,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&Skull),#new_row=37,#new_col=17,#fine_row=48,#fine_col=48,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&Skull),#new_row=35,#new_col=18,#fine_row=32,#fine_col=0,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=17,#new_col=20,#fine_row=48,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=12,#new_col=27,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=14,#new_col=32,#fine_row=0,#fine_col=48,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=10,#new_col=42,#fine_row=48,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=16,#new_col=40,#fine_row=48,#fine_col=32,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=10,#new_col=21,#fine_row=0,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=10,#new_col=42,#fine_row=48,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=16,#new_col=40,#fine_row=48,#fine_col=32,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=14,#new_col=32,#fine_row=0,#fine_col=48,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=12,#new_col=27,#fine_row=0,#fine_col=0,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=17,#new_col=20,#fine_row=48,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_STALACTITE2),#new_row=10,#new_col=21,#fine_row=0,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),#new_row=25,#new_col=55,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),#new_row=36,#new_col=52,#fine_row=48,#fine_col=32,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),#new_row=54,#new_col=56,#fine_row=0,#fine_col=32,#angle=ANGLE_NORTH);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),#new_row=60,#new_col=47,#fine_row=48,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_BONES),#new_row=32,#new_col=75,#fine_row=32,#fine_col=48,#angle=ANGLE_NORTH);
+	Send(self,@NewHold,#what=Create(&Skull),#new_row=64,#new_col=59,#fine_row=16,#fine_col=16,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&Skull),#new_row=59,#new_col=76,#fine_row=48,#fine_col=48,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&Skull),#new_row=42,#new_col=89,#fine_row=0,#fine_col=48,#angle=ANGLE_EAST);
+	Send(self,@NewHold,#what=Create(&Skull),#new_row=3,#new_col=90,#fine_row=16,#fine_col=32,#angle=ANGLE_EAST);

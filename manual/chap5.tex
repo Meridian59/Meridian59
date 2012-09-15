@@ -1,0 +1,809 @@
+\chapter{Using the system}
+
+\section{Server configuration}
+
+BlakServ has many configuration options which control its behavior.  
+Just about anything that could have been made a compile-time constant
+has instead been placed in an external file, \texttt{blakserv.cfg},
+that the server reads upon startup.  Several options can be changed
+while the server continues to run.  
+
+The format of \texttt{blakserv.cfg} is the same as a Windows \texttt{.ini}
+file except that there is no equals sign between the option name and
+its value.  Comments can be added by starting a line with a semicolon.
+Like a \texttt{.ini} file, configuration options are separated into groups,
+which are specified by putting the group name in brackets on its own line.
+
+Here is a sample \texttt{blakserv.cfg} file:
+
+\begin{verbatim}
+; sample blakserv.cfg file
+[Path]               
+Bof                  loadkod\
+Memmap               memmap\
+Rsc                  rsc\
+Rooms                rooms\
+Motd                 loadkod\
+Channel              channel\
+LoadSave             game\
+Forms                forms\
+Kodbase              .\
+PackageFile          .\
+
+[Socket]             
+Port                 5959
+DNSLookup            No
+
+[Channel]            
+DebugDisk            Yes
+ErrorDisk            Yes
+LogDisk              Yes
+
+[Guest]              
+
+[Login]              
+MinVersion           325
+
+[Inactive]           
+
+[MessageOfTheDay]    
+
+[Credit]             
+
+[Session]            
+MaxActive            250
+MaxConnect           400
+
+[Lock]               
+
+[Resource]           
+
+[Memory]             
+
+[Auto]               
+GarbageTime          320
+GarbagePeriod        640
+SavePeriod           640
+
+[Email]              
+Listen               No
+
+[Update]             
+ClientMachine        meridian59.3do.com
+ClientFilename       /pub/m.arq
+PackageMachine       meridian59.3do.com
+PackagePath          pub/package/
+
+[Console]            
+
+[Constants]          
+Enabled              Yes
+Filename             .\blakston.khd
+
+[Portal]             
+
+[Advertise]          
+File1 latex.avi      
+URL1 http://meridian.3do.com/meridian
+File2 hints.avi
+URL2 http://www.3do.com/studio3do/customerservice/hintline.html
+
+[Debug]              
+
+
+\end{verbatim}
+
+Below is a description of every configuration option, one table per group.
+
+\begin{center}
+
+\textbf{Path} \par
+
+\begin{tabular}{|l|l|l|l|p{3.6in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Bof & String & . & No & The directory with \textit{new} .bof files.
+\\ \hline 
+Memmap & String & . & No & The directory to memory map .bof files from.
+\\ \hline 
+Rsc & String & . & No & The directory with all .rsc files.
+\\ \hline 
+Rooms & String & . & No & The directory with all .roo files.
+\\ \hline 
+Motd & String & . & No & The directory with the motd.txt (message of the day) file.
+\\ \hline 
+Channel & String & . & No & The directory to write the log, error, and debug channels to.
+\\ \hline 
+LoadSave & String & . & No & The directory to load games from and save games to.
+\\ \hline 
+Forms & String & . & No & Obsolete.
+\\ \hline 
+Kodbase & String & . & No & The directory with kodbase.txt.
+\\ \hline 
+PackageFile & String & . & No & The directory with packages.txt
+\\ \hline
+\end{tabular}
+
+\textbf{Socket} \par
+
+\begin{tabular}{|l|l|l|l|p{2.8in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Port & Integer & 9999 & No & The port that BlakServ listens for clients on.
+\\ \hline 
+MaintenancePort & Integer & 9998 & No & The port that BlakServ listens for maintenance
+requests on.
+\\ \hline 
+MaintenanceMask & String & 198.211.33.48 & No & The IP address to listen for
+maintenance requests on.
+\\ \hline 
+DNSLookup & Boolean & No & No & Whether BlakServ performs a reverse DNS lookup
+on each incoming client or not.
+\\ \hline 
+Nagle & Boolean & Yes & No & Whether or not to enable the Nagle algorithm on socket
+connections (see Internet RFC 896).
+\\ \hline
+\end{tabular}
+
+\textbf{Channel} \par
+
+\begin{tabular}{|l|l|l|l|p{3.7in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+DebugDisk & Boolean & No & No & Whether BlakServ should write debug.txt to disk or not.
+\\ \hline 
+ErrorDisk & Boolean & No & No & Whether BlakServ should write error.txt to disk or not.
+\\ \hline 
+LogDisk & Boolean & No & No & Whether BlakServ should write log.txt to disk or not.
+\\ \hline
+\end{tabular}
+
+\textbf{Guest} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.8in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Account & String & Guest & No & The account name that is mapped to the guest system.
+\\ \hline 
+Credits & Integer & 10 & No & Obsolete.
+\\ \hline 
+Max & Integer & 30 & Yes & The maximum number of guests allowed on this server at one time.
+\\ \hline
+ServerMin & Integer & 30 & Yes & The lowest server number guests can log in on.
+\\ \hline
+ServerMax & Integer & 55 & Yes & The highest server number guests can log in on.
+\\ \hline
+TooMany & String & Too many guests are logged onright now; please try again later. &
+No & The string sent to a client trying to log on as a guest when this server is already
+maxed out with guests.
+\\ \hline
+\end{tabular}
+
+
+\textbf{Login} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.4in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+MaxAttempts & Integer & 3 & No & Number of login attempts allowed before BlakServ hangs
+up the client.
+\\ \hline 
+MinVersion & Integer & 0 & Yes & The lowest client version number that works with this
+server setup.
+\\ \hline 
+OldVersionStr & String & The game software has been upgraded while you have been online.
+Logoff and then login again to automatically upgrade your software. & 
+No & The string sent to clients who quit the game and now have an outdated version of the
+client.
+\\ \hline
+InvalidVersion & Integer & 100 & No & The maximum client version number which cannot
+be updated to the latest client configuration automatically.
+\\ \hline
+InvalidVersionStr & String & Your version of the game software is beta; you need to
+purchase the latest version. & No & The string sent to clients that are too out of date
+to update to the latest version.
+\\ \hline
+\end{tabular}
+
+\textbf{Inactive} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.8in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Synched & Integer & 10 & Yes & The number of minutes to wait for a client message
+in STATE\_SYNCHED before automatically disconnecting the socket.
+\\ \hline 
+Transfer & Integer & 2 & Yes & The number of minutes to wait for a client message
+in STATE\_SYNCHED when performing a file transfer before automatically disconnecting
+the socket.
+\\ \hline 
+SelectChar & Integer & 10 & Yes & The number of minutes to wait for a client
+message in STATE\_GAME before picking a character before automatically disconnecting
+the socket.
+\\ \hline
+Game & Integer & 20 & Yes & The number of seconds to wait for a client message
+in STATE\_GAME before automatically disconnecting the socket.
+\\ \hline
+\end{tabular}
+
+\textbf{MessageOfTheDay} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.9in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Default & String & & No & The default message of the day.
+\\ \hline 
+\end{tabular}
+
+\textbf{Credit} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.4in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+DrainAmount & Integer & -1 & No & Obsolete.
+\\ \hline 
+DrainTime & Integer & 1 & No & Obsolete.
+\\ \hline 
+Warn1 & Integer & 5 & No & Obsolete.
+\\ \hline 
+Warn2 & Integer & 1 & No & Obsolete.
+\\ \hline 
+Initial & Integer & 0 & No & Obsolete.
+\\ \hline 
+Admin & Integer & 25 & No & Obsolete.
+\\ \hline 
+\end{tabular}
+
+\textbf{Session} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.6in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+MaxActive & Integer & 10 & Yes & The maximum number of logged on users at any time
+(excluding admins).
+\\ \hline 
+MaxConnect & Integer & 20 & No & The maximum number of logged on users total.
+\\ \hline 
+Busy & String & Too many people are logged on right now; please try again later. &
+No & The message sent to clients unable to login because this server is too busy.
+\\ \hline 
+\end{tabular}
+
+\textbf{Lock} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{3.0in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Default & String & The game is temporarily closed for maintenance, sorry. & 
+No & The message sent to clients unable to enter the game because it was locked
+by an administrator.
+\\ \hline 
+\end{tabular}
+
+\textbf{Resource} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.9in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+RscSpec & String & *.rsc & No & The file spec of all resource files to load at startup.
+\\ \hline 
+\end{tabular}
+
+\textbf{Memory} \par
+
+\begin{tabular}{|l|l|p{1.5in}|l|p{2.6in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+SizeClassHash & Integer & 1997 & No & The size of the hash table of loaded Blakod classes.
+\\ \hline 
+\end{tabular}
+
+\textbf{Auto} \par
+
+\begin{tabular}{|l|l|l|l|p{2.6in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+GarbageTime & Integer & 90 & No & When the number of minutes since 1970 mod GarbagePeriod
+= this number, perform garbage collection.
+\\ \hline 
+GarbagePeriod & Integer & 180 & No & 
+\\ \hline 
+SaveTime & Integer & 0 & No & When the number of minutes since 1970 mod SavePeriod
+= this number, save the game to disk.
+\\ \hline 
+SavePeriod & Integer & 180 & No & 
+\\ \hline 
+KodTime & Integer & 90 & No & When the number of minutes since 1970 mod KodPeriod
+= this number, send a \texttt{NewHour} message to the system object.
+\\ \hline 
+KodPeriod & Integer & 50 & No & 
+\\ \hline 
+InterfaceUpdate & Integer & 5 & No & The server updates its interface window every
+this many seconds.
+\\ \hline 
+TransmittedTime & Integer & 0 & No & When the number of seconds since 1970 mod 
+TransmittedPeriod = this number, reset the internal count of the number of bytes written 
+to all sockets.
+\\ \hline 
+TransmittedPeriod & Integer & 60 & No & 
+\\ \hline 
+ResetPoolTime & Integer & 0 & No & When the number of minutes since 1970 mod ResetPoolPeriod
+= this number, free any memory buffers used in BlakServ's network buffering that aren't
+currently in use.
+\\ \hline 
+ResetPoolPeriod & Integer & 60 & No & 
+\\ \hline 
+CheckPortalTime & Integer & 4 & No & When the number of minutes since 1970 mod 
+CheckPortalPeriod = this number, check the socket connected to the Portal server
+(if enabled).  If it's disconnected, try to reconnect.
+\\ \hline 
+CheckPortalPeriod & Integer & 5 & No & 
+\\ \hline 
+\end{tabular}
+
+\textbf{Email} \par
+
+\begin{tabular}{|l|l|p{1.4in}|l|p{2.2in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Listen & Boolean & Yes & No & Whether or not to listen for email account
+creation and deletion requests.
+\\ \hline 
+Port & Integer & 25 & No & The port to listen for email account creation
+and deletion requests.
+\\ \hline 
+AccountCreateName & String & account-create & No & The email account name
+to use for account creation requests.
+\\ \hline 
+AccountDeleteName & String & account-delete & No & The email account name
+to use for account deletion requests. 
+\\ \hline 
+LocalMachineName & String & unknown & Yes & The machine name in email
+account creation and deletion requests.  Usually the same as the machine's
+primary DNS lookup name.
+\\ \hline 
+\end{tabular}
+
+\textbf{Update} \par
+
+\begin{tabular}{|l|l|p{1.4in}|l|p{2.4in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+ClientMachine & String & unknown & No & The machine name sent to clients with outdated
+clients (this machine must be running an ftp server).
+\\ \hline 
+ClientFilename & String & unknown & No & The filename to retrieve via ftp from
+ClientMachine to update the client.
+\\ \hline 
+PackageMachine & String & unknown & No & The machine name sent to clients that
+need to download new data files (this machine must be running an ftp server).
+\\ \hline 
+PackagePath & String & unknown & No & This path is prepended by the client to
+the files it needs to download from PackageMachine.
+\\ \hline 
+\end{tabular}
+
+\textbf{Console} \par
+
+\begin{tabular}{|l|l|p{1.4in}|l|p{2.4in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Administrator & String & Administrator & No & The name used for admin
+\texttt{say} commands typed on the server interface.
+\\ \hline 
+\end{tabular}
+
+\textbf{Constants} \par
+
+\begin{tabular}{|l|l|p{1.4in}|l|p{2.4in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Enabled & Boolean & No & No & Whether the server should try to load constants
+to use in admin mode.
+\\ \hline 
+Filename & String & .$\backslash$blakston.khd & No & The filename to load constant 
+values from to use symbolic names for numbers in admin mode.
+\\ \hline 
+\end{tabular}
+
+\textbf{Portal} \par
+
+\begin{tabular}{|l|l|p{1.4in}|l|p{2.4in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+Enabled & Boolean & No & No & Whether or not to attempt to connect to a Portal
+server.
+\\ \hline 
+Ignore & Boolean & No & No & Whether or not to ignore Portal's feedback and log
+in all users with correct passwords.
+\\ \hline 
+Machine & String & pc2.3do.com & No & The machine to connect to, running a Portal
+server.
+\\ \hline 
+Port & Integer & 4949 & No & The port on Machine to connect to.
+\\ \hline 
+ServerNumber & Integer & 1 & No & The server number to send to the portal server
+to identify this server machine.
+\\ \hline 
+ErrorReport & String & An error has occurred in verifying your account information;
+please try again in a few minutes. & No & The string sent to a client that logins 
+in with Portal enabled when there is an error connecting to Portal.
+\\ \hline 
+\end{tabular}
+
+\textbf{Advertise} \par
+
+\begin{tabular}{|l|l|p{2.4in}|l|p{2.2in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+File1 & String & ad1.avi & Yes & The filename of the animation sent to the client for 
+advertisement 1.
+\\ \hline 
+Url1 & String & http://www.3do.com & Yes & The URL sent to the client for it to visit
+if the user clicks on advertisement 1.
+\\ \hline 
+File2 & String & ad1.avi & Yes & The filename of the animation sent to the client for
+advertisement 2.
+\\ \hline 
+Url2 & String & http://meridian.3do.com/meridian & Yes & The URL sent to the client
+for it to visit of the user clicks on advertisement 2.
+\\ \hline 
+\end{tabular}
+
+\textbf{Debug} \par
+
+\begin{tabular}{|l|l|l|l|p{2.7in}|} \hline
+Name & Type & Default & Dynamic & Description 
+\\ \hline
+SMTP & Boolean & No & Yes & Whether or not to print debugging information in
+the email listening module.
+\\ \hline
+CanMoveInRoom & Boolean & No & Yes & Whether or not to print debugging information
+in the CanMoveInRoom function.
+\\ \hline
+Heap & Boolean & No & Yes & Whether or not to print debugging information in the
+memory allocation and freeing functions.
+\\ \hline
+TransmittedBytes & Boolean & No & Yes & Whether or not to print out the number
+of bytes sent over all sockets every minute.
+\\ \hline
+Hash & Boolean & No & Yes & Whether or not to print out debugging information
+in the hash calculation function.
+\\ \hline
+Portal & Boolean & No & Yes & Whether or not to print out debugging information
+in the Portal connection routines.
+\\ \hline
+
+\end{tabular}
+
+\end{center}
+
+\section{Administrator mode}
+
+Users with administrator accounts have access to the total system.  They can
+control the game down to the Blakod object and list node level.  Below is
+a description of every administrator command.
+
+\begin{description}
+
+\item[Garbage] (no parameters) Immediately perform garbage collection.
+\item[Who] (no parameters) Show all connected clients.
+\item[Lock] (string) Lock the game so that new client connections are not
+allowed into game mode, and instead sent the specified string as the reason.
+\item[Unlock] (no parameters) Unlock the game so that anyone can enter game mode.
+\item[Mail] (no parameters) Obsolete.
+\item[Page] (no parameters) Plays a sound on the machine running BlakServ.
+\item[Say] (string) Sends the string to all users in admin mode.
+\item[Read] (string) Reads the indicated filename and parses it as a list of
+admin commands, performing them immediately.
+\end{description}
+
+\textbf{Show} command
+\begin{description}
+
+\item[Show Status] (no parameters) Shows the uptime of the server, number of objects,
+list nodes, strings, and whether the game is locked. 
+\item[Show Memory] (no parameters) Shows the memory usage by server memory category, 
+including a total.
+\item[Show Called] (integer) Shows the specified number of most called Blakod messages.
+\item[Show Object] (integer) Shows the properties of the specified object.
+\item[Show ListNode] (integer) Shows the specified list node.
+\item[Show List] (integer) Treating the number as the first list node of a complete list,
+shows the complete list.
+\item[Show Users] (no parameters) Shows every account number and associated object ids.
+\item[Show User] (integer) Shows the account number associated with the associed object
+id (which must be of the user class).
+\item[Show Usage] (no parameters) Shows the number of regular users and guests logged on.
+\item[Show Accounts] (no parameters) Shows every account number and account name in
+the system.
+\item[Show Account] (integer) Shows the specified account number and the associated
+account name.
+\item[Show Resource] (string) Shows the string value of the specified resource name.
+\item[Show Dynamic Resources] (no parameters) Shows every dynamic resource (player name)
+in the system.
+\item[Show Timers] (no parameters) Shows every timer id, time remaining, and associated
+messages.
+\item[Show Timer] (integer) Shows the specified timer id, its time remaining, and the
+message that will be called when the timer goes off.
+\item[Show Configuration] (no parameters) Shows every configuration value in the system.
+\item[Show String] (integer) Shows the specified string id and associated string value.
+\item[Show SysTimers] (no parameters) Shows every built in system timer, and when they
+will next go off.
+\item[Show Calls] (integer) Shows the specified number of most called C code functions
+(from Blakod).
+\item[Show Message] (string, string) Shows the parameters and Blakod comment about
+the specified class and message handler.
+\item[Show Class] (string) Shows the specified class name and its class variables.
+\item[Show Packages] (no parameters) Shows every filename specified in packages.txt
+that are sent to clients with old data files.
+\item[Show Constant] (string) Shows the value of the specified admin constant name.
+\item[Show Transmitted] (no parameters) Shows the number of bytes written on all sockets
+since the last time the count was reset (through the system timer).
+\item[Show Table] (integer) Shows the specified hash table id and every entry in the table.
+\item[Show Name] (string) Shows the user object id associated with the specified user name.
+\item[Show References] (integer) Shows every object that has a property that references
+the specified object id.
+\item[Show Instances] (string) Shows every object id of the specified class name.
+\item[Show Protocol] (no parameters) Shows the number of times each message type has
+been received from any client.
+
+\end{description}
+
+\textbf{Set} command
+\begin{description}
+
+\item[Set Object] (integer, string, Blakod value) Sets the specified property of the
+specified object id to the specified Blakod value.
+\item[Set Account Name] (integer, string) Sets the specified account number to have
+the specified user name.
+\item[Set Account Password] (integer, string) Sets the specified account number to
+have the specified password.
+\item[Set Account Credits] Obsolete.
+\item[Set Account Object] (integer, integer) Creates a new association between the
+specified account number and the specified object id (which must be class user).
+\item[Set Config Integer] (string, string, integer) Sets the configuration option
+of the specified configuration group to the specified integer (the configuration
+option must be of type integer).
+\item[Set Config String] (string, string, string) Sets the configuration option
+of the specified configuration group to the specified integer (the configuration
+option must be of type string).
+\item[Set Config Boolean] (string, string, boolean) Sets the configuration option
+of the specified configuration group to the specified integer (the configuration
+option must be of type boolean).
+
+\end{description}
+
+\textbf{Create} command
+\begin{description}
+\item[Create Account] (string, string, string) Creates a new account with the specified
+type (user, admin, dm, or guest), name, and password.
+\item[Create Automated] (string, string) Creates a user type account and game user object
+with the specified account name and account password.
+\item[Create User] (integer) Creates a game user object associated with the specified
+account id.
+\item[Create Admin] (integer) Creates a game admin object associated with the specified
+account id.
+\item[Create DM] (integer) Creates a game dm object associated with the specified
+account id.
+\item[Create Object] (string) Creates a new object of the specified class.
+\item[Create List Node] (Blakod value, Blakod value) Creates a new list node
+with the specified first and rest values.
+\item[Create Timer] (integer, string, integer) Creates a new Blakod timer
+with the specified object id, message name, and milliseconds until it goes off.
+\item[Create Resource] (string) Creates a new dynamic resource with the given
+string value.
+\end{description}
+
+\textbf{Delete} command
+\begin{description}
+\item[Delete Timer] (integer) Deletes the specified timer id.
+\item[Delete Account] (integer) Deletes the specified account id and associated
+game objects.
+\item[Delete User] (integer) Deletes the association between the specified object 
+id (which must be a user class object) and the account associated with it.
+\end{description}
+
+\textbf{Send} command
+\begin{description}
+\item[Send Object] (integer, string) Sends the specified message to the specified
+object id.
+\item[Send Users] (string) Sends the string as an in game broadcast to all users.
+\end{description}
+
+\textbf{Trace} command
+\begin{description}
+\item[Trace On] Obsolete.
+\item[Trace Off] Obsolete.
+\end{description}
+
+\textbf{Add} command
+\begin{description}
+\item[Add Credits] Obsolete.
+\end{description}
+
+\textbf{Kickoff} command
+\begin{description}
+\item[Kickoff All] (no parameters) Sets any client in game mode back to the
+main menu mode.
+\item[Kickoff Account] (integer) If a logged in client is using the specified account
+id and is in game mode, it is set back to the main menu mode.
+\end{description}
+
+\textbf{Hangup} command
+\begin{description}
+\item[Hangup Account] (integer) If a logged in client is using the specified account id,
+it is disconnected.
+\item[Hangup Session] (integer) Disconnects the specified session id.
+\end{description}
+
+\textbf{Reload} command
+\begin{description}
+\item[Reload System] (no parameters) Performs garbage collection, saves the game, unloads all
+Blakod, then reloads the Blakod, message of the day, and saved game.
+\item[Reload Game] Obsolete.
+\item[Reload MOTD] (no parameters) Reloads the message of the day from motd.txt.
+\item[Reload Packages] (no parameters) Reloads the list of files to send to clients 
+with outdated
+data files from packages.txt.
+\item[Reload Protocol] (no parameters) Unloads and reloads sprocket.dll.
+\item[Reload Portal] (no parameters) If Portal is enabled, checks the socket connection
+and attempts to reconnect if it is disconnected.
+\end{description}
+
+\textbf{Disable} command
+\begin{description}
+\item[Disable Systimer] (integer) Disables the specified system timer id.
+\end{description}
+
+\textbf{Enable} command
+\begin{description}
+\item[Enable Systimer] (integer) Enables the specified system timer id, if it has
+been previously disabled.
+\end{description}
+
+\textbf{Terminate} command
+\begin{description}
+\item[Terminate NoSave] (no parameters) Terminates the server immediately.
+\item[Terminate Save] (no parameters) Saves the game state and then terminates the server.
+\end{description}
+
+\textbf{Save} command
+\begin{description}
+\item[Save Game] (no parameters) Saves the game state to disk.
+\item[Save Configuration] (no parameters) Saves all configuration parameters
+to blakserv.cfg.
+\end{description}
+
+\section{The build system}
+\label{sec:build}
+
+Each part of the system (client, server, etc.) occupies a separate
+directory in the source tree.  Under each source directory is a
+directory named {\tt nt} into which all object code and executables go
+as they are built.  All C code except the room editor is compiled with
+Microsoft Visual C++; the editor uses Borland C++.
+
+The build system requires that the file ``build.bat'' exist in the
+path.  All build commands must be entered from the command shell 4nt.
+Building the Blakod complier requires that the GNU programs flex and
+bison reside in the path.  
+
+When installing the source code on a new system, some paths must be
+set by hand.  A line in build.bat points to the root of the source
+tree.  In the source tree root directory, the file common.mak points
+to the Microsoft C compiler.  Another line in common.mak points to a
+directory in the path (called $\backslash$blakbin by default) where
+intermediate programs are placed as they're built.  Several lines in
+the windeu.mak file in the roomedit directory point to pieces of the
+Borland C++ compiler.
+
+To build a piece of the system, run 4nt, change to the piece's
+directory, and type \texttt{build}.  By default, this builds a debugging
+version of the program.  To build an optimized version, type {\tt
+build RELEASE=1}.  The command {\tt build FINAL=1} in the client or
+module directories builds an optimized version with all debugging
+strings removed from the target.  To build the room editor, type {\tt
+make -f windeu.mak} in the roomedit directory.
+
+\subsubsection{Dependencies}
+
+Building Blakod requires that the Blakod compiler is built.  The
+modules import functions from the client, so the client needs to be
+built first.  The client itself links with libraries for the wavemix
+and crusher DLLs, so these need to be built before the client.
+Building graphics (in the resource directory) uses the makebgf program.
+
+Other than these dependencies, components may be built in any order.
+
+\section{Adding new artwork}
+
+To add new artwork, first save it as a set of bitmaps using the
+standard BlakSton palette, and copy the bitmaps to the correct
+subdirectory under the resource directory:  the textures subdirectory
+for wall, floor, and ceiling textures, and the graphics subdirectory
+for everything else.  Add a line to the list of targets in the
+build.mak file.
+
+For textures, add an entry to the build.mak file that lists the source
+bitmap for the new bgf file.  Use the -w command line option to
+makebgf for wall bitmaps to rotate them appropriately.
+
+For other graphics, create a bbg file using bbgun to specify how the
+bitmaps are are assembled into a bgf file.  You also need to reference
+the new bgf file from the Blakod for the new object (typically in the
+vrIcon property).
+
+When you type build in the appropriate subdirectory, the build script
+will run makebgf on the new bitmaps, and produce a bgf file.  This
+file will go into the bin subdirectory of the resource directory.
+
+\section{Adding new rooms}
+
+First, create a new roo file with the room editor and save it.  Next,
+locate the appropriate place in the class hierarchy for the new room
+(usually under the room or monsroom classes).  Create a new kod file
+for the room there, add a line to build the kod file in the build.mak
+file in that directory, and reference the new roo file in the prRoom
+property of the kod file.  In the blakston.khd header file, reserve a
+new identifier for the room, and enter this in the piRoom\_num property
+of the class.  Finally, in the CreateAllRoomsIfNew function of the
+System class, add a line that creates the new room.
+
+To actually create the new room object, enter the administrator
+command {\tt send object 0 createallroomsifnew} in the server.
+
+To connect the room to other existing rooms, add handlers for the
+CreateStandardExits and SomethingTryGo messages.  The contents of
+these message handlers can be copied from those in existing room
+Blakod.
+
+Before the roo file is released to the public, it should be encrypted
+with the roocrypt utility.
+
+\section{Perparing a release}
+
+To assemble a client release for the public, a complete image of all
+client files must be assembled in one place, with the same directory
+structure as the installation on client machines.  To summarize, the
+client executable and INI file reside in the top level directory,
+while all room files, graphics, sounds, and DLLs reside in the
+``resource'' subdirectory.  Each of the room files should be encrypted
+with the roocrypt utility before the release is built; no other files
+need to be processed.
+
+The client setup should go under a directory called ``program''.
+Parallel to this is a directory called ``system'' that receives the
+files that will be installed in the Windows system directory on client
+machines.  These files include wininet.dll and urlcache.dll, two files
+used by the Microsoft implementation of ftp, used for client updates.
+
+The installation system uses InstallShield3 and a modified sample
+script.  This script first checks the operating system (Windows 95 or
+Windows NT), and ensures that the user's selected destination
+directory has enough available disk space.  It creates registry
+entries under the Studio 3DO vendor name and Meridian 59 application
+name, for uninstallation purposes.  It then installs client files in
+the destination directory, and the shared files in the Windows system
+directory.  Next it installs the Heidelberg-Normal font by directly
+modifying registry entries.  Finally, it creates a shortcut in the
+Start menu for the client program.
+
+The InstallShield script also displays two text files during
+installation.  These are called ``readme.txt'' and ``install.txt''.
+The readme.txt file contains general information on running the game.
+The install.txt file is a licensing agreement.  These files reside in
+the same directory as the InstallShield script, and they are placed in
+the root directory of the CD.
+
+All that is required to build a client installation is to copy the
+client and shared files as described above, then change to the
+install directory and type ``build''.  The makefile will invoke the
+InstallShield utilities to set up the final installation files.
+
+In order to make the installer run automatically when the CD is placed
+in the drive, a file called autorun.inf is typically placed on the CD
+by someone outside the development team.  This file references an icon
+(meridian.ico) which is also placed in the root directory of the CD,
+and which shows up as the icon of the CD drive in the Windows
+explorer.  The autorun file also references the setup executable that
+should run when the CD is put in the drive.

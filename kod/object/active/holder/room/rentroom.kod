@@ -1,0 +1,1445 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RentableRoom is Room
+
+constants:
+
+   include blakston.khd
+
+   BED_DOWN = 0
+   BED_UP = 25
+
+   CARPET_SECTOR = 8
+
+   WALLPAPER_ID = 10       % picture locations are 11,12,13,14
+
+   CARPET_A = 50050        % light gray (green) carpet
+   CARPET_B = 50051        % omit - didn't palletize well
+   CARPET_C = 50052        % dark grey (purple, tweed) carpet
+   CARPET_D = 09588        % light wood (tos inn floor)
+   CARPET_E = 09637        % dark wood
+                           % add?: bar inn red carpet
+
+   WALLPAPER_A = 50053     % cream vines (off-white)
+   WALLPAPER_B = 50057     % brown victorian medallions
+   WALLPAPER_C = 50065     % black floral
+   WALLPAPER_D = 50069     % white paisley brocade
+   WALLPAPER_E = 09583     % brick (tos apoth wall - no picture allowed)
+   WALLPAPER_F = 09586     % wood panelling
+
+   BEDSPREAD_A = 50061     % blue
+   BEDSPREAD_B = 50063     % red
+   BEDSPREAD_C = 50073     % black (floral)
+   BEDSPREAD_D = 50075     % white (linen brocade)
+
+   PICTURE_NONE = 0
+   PICTURE_A = 1           % flowers
+   PICTURE_B = 2           % battle
+   PICTURE_C = 3           % portrait
+
+   % in milliseconds
+   DECORATOR_DELAY = 3000  
+
+   % How many items we can get from a heartstone
+   ITEMS_FROM_HEARTSTONES = 10    
+
+   % How much to lighten/darken the room by.
+   LIGHT_STEP = 40
+
+resources:
+
+   RentableRoom_name = "A tastefully appointed room"
+   RentableRoom_roo = barrent.roo
+
+   RentableRoom_landlord = "The Landlord"
+
+   RentableRoom_music = bar.mid
+
+   RentableRoom_carpet_options = \
+      "We have two shades of carpet, a light grey and a darker grey, or "
+      "if you prefer wood floors I can put in one with a light or a dark finish."
+   RentableRoom_bedspread_options = \
+      "We have basic red and blue bedspreads, as well as a nice "
+      "black floral pattern and my personal favorite, white linen."
+   RentableRoom_wallpaper_options = \
+      "I can offer you a number of different kinds of wallpaper.  I have "
+      "a nice vine pattern in a cream color, a traditional Barloquan medallion "
+      "pattern in brown, a floral pattern on black, or a white paper with a "
+      "delicately embossed pattern.  Also, if you want a more spare look we "
+      "can go with brick or wood panelling, but if you choose one of those, "
+      "I can't hang a painting for you; they're too hard to put a hole in."
+   RentableRoom_picture_options = \
+      "Right now, the only framed art I have ready to hang is a still life "
+      "of a flower vase, a reproduction of an ancient tapestry depicting a "
+      "battle scene, or a portrait done in charcoal.  Alternately, you "
+      "could opt to have nothing on the wall."
+
+   RentableRoom_expiry_warning = \
+      "Subject: Room check-out reminder notice\n"
+      "This is a courtesy notice to remind you that your room rental will expire "
+      "in %q days.  Please be sure to clear your room of any personal effects "
+      "before then.  I hope you are enjoying your stay."
+   RentableRoom_expiry = \
+      "Subject: Room check-out\n"
+      "Your room rental has expired, and the room has been cleared of any "
+      "personal effects.  Thank you for being our guest, and I hope that "
+      "you enjoyed your stay."
+
+   RentableRoom_teleport = \
+      "As you touch the doorknob, a strange white glow envelops you, and you "
+      "find yourself somewhere else."
+
+   RentableRoom_heartstone_red = \
+      "Ah, with this red heartstone, I can offer you items that require fire."
+   RentableRoom_heartstone_blue = \
+      "Excellent!  I can make water containers with this blue heartstone."
+   RentableRoom_heartstone_sky = \
+      "With this sky heartstone, I can make some wonderful things!"
+   RentableRoom_heartstone_brown = \
+      "I can now offer you a few items made from stone since I have this "
+      "brown heartstone."
+   RentableRoom_heartstone_all = \
+      "I am also impressed that you have all the heartstones.  I can make "
+      "some rare objects that require them all."
+   
+   RentableRoom_comma = ", "
+   RentableRoom_and = "and "
+
+   % Rentable Room commands:
+   RentableRoom_command_here = "here"
+
+   RentableRoom_command_blue = "blue"
+   RentableRoom_command_red = "red"
+   RentableRoom_command_black = "black"
+   RentableRoom_command_floral = "floral"
+   RentableRoom_command_white = "white"
+   RentableRoom_command_linen = "linen"
+   
+   RentableRoom_command_light_gray = "light gray"
+   RentableRoom_command_light_grey = "light grey"
+   RentableRoom_command_dark_gray = "dark gray"
+   RentableRoom_command_dark_grey = "dark grey"
+   RentableRoom_command_light_wood = "light wood"
+   RentableRoom_command_light_hardwood = "light hardwood"
+   RentableRoom_command_dark_wood = "dark wood"
+   RentableRoom_command_dark_hardwood = "dark hardwood"
+   
+   RentableRoom_command_cream = "cream"
+   RentableRoom_command_vine = "vine"
+   RentableRoom_command_brown = "brown"
+   RentableRoom_command_formal = "formal"
+   RentableRoom_command_traditional = "traditional"
+   RentableRoom_command_barloq = "Barloq"
+   RentableRoom_command_medallion = "medallion"
+   
+   RentableRoom_command_flower = "flower"
+   RentableRoom_command_paisley = "paisley"
+   RentableRoom_command_brick = "brick"
+   RentableRoom_command_wood = "wood"
+   
+   RentableRoom_command_still_life = "still life"
+   RentableRoom_command_still_life_dashed = "still-life"
+   RentableRoom_command_stilllife = "stilllife"
+   RentableRoom_command_flowers = "flowers"
+   RentableRoom_command_monet = "monet"
+   RentableRoom_command_tapestry = "tapestry"
+   RentableRoom_command_reproduction = "reproduction"
+   RentableRoom_command_battle = "battle"
+   RentableRoom_command_portrait = "portrait"
+   RentableRoom_command_charcoal = "charcoal"
+   RentableRoom_command_nothing = "nothing"
+   RentableRoom_command_no_painting = "no painting"
+   RentableRoom_command_no_picture = "no picture"
+   RentableRoom_command_no_portrait = "no portrait"
+   RentableRoom_command_no_still_life = "no still life"
+   RentableRoom_command_no_tapestry = "no tapestry"
+   RentableRoom_command_none = "none"
+
+classvars:
+
+   vrName = RentableRoom_name
+
+   viTeleport_row = 16
+   viTeleport_col = 6
+
+   viTerrain_Type = TERRAIN_CITY | TERRAIN_SHOP
+
+   viBedSectorMin = 1
+   viBedSectorMax = 7
+   viPictureLocationMax = 4
+
+   vrLandlord = RentableRoom_landlord
+   viLocation = RID_BAR_INN
+
+   viDecorator_row = 15
+   viDecorator_col = 4
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_HOMETOWN | ROOM_SANCTUARY | ROOM_SAFELOGOFF | ROOM_HARD_LEARN
+
+   prRoom = RentableRoom_roo
+   piRoom_num = $
+
+   % Keep the room a bit dark so lights show off better.
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = 1
+
+   prMusic = RentableRoom_music
+
+   poRenter = $
+
+   piBedSector = 1
+   piBedSpread = BEDSPREAD_A
+   piCarpet = CARPET_A
+   piWallpaper = WALLPAPER_A
+   piPicture = PICTURE_NONE
+   piPictureLocation = 1
+
+   plBedCoords = $
+   plPictureCoords = $
+   ptDecoratorArrives = $
+
+   plObjects = $
+
+   piCredit = 0
+
+   % One offline week in Meridian days (12 * 7)
+   piDaysLeft = 85
+
+   % How many heartstones parts do we have left?
+   %  Start off with a few fragments (4), so we can decorate a bit.
+   piRedHeartstone = 4
+   piBlueHeartstone = 4
+   piBrownHeartstone = 4
+   piSkyHeartstone = 4
+
+messages:
+
+   Constructor(iRID=RID_RENTABLE_START)
+   {
+      piRoom_num = iRID;
+      plObjects = [ [ % always available
+                     Create(&OrnamentalObject,#type=OO_RR_BASIN),
+                     Create(&OrnamentalObject,#type=OO_RR_TABLE),
+                     Create(&OrnamentalObject,#type=OO_RR_PLANT2),
+                     Create(&Stool)
+                    ],
+                    [ % earth heartstone
+                     Create(&OrnamentalObject,#type=OO_STONECHAIR),
+                     Create(&OrnamentalObject,#type=OO_BIGURN),
+                     Create(&OrnamentalObject,#type=OO_BIGURN2),
+                     Create(&OrnamentalObject,#type=OO_BLUEJUG),
+                     Create(&Pillar)
+                    ],
+                    [ % fire heartstone
+                     Create(&SkullBrazier),
+                     Create(&Brazier),
+                     Create(&OrcTorch),
+                     Create(&TableLamp),
+                     Create(&Candle)
+                    ],
+                    [ % water heartstone
+                     Create(&OrnamentalObject,#type=OO_JUG),
+                     Create(&OrnamentalObject,#type=OO_GREY_JUG),
+                     Create(&OrnamentalObject,#type=OO_RR_PLANT1),
+                     Create(&OrnamentalObject,#type=OO_BIGIRON)
+                    ],
+                    [ % air heartstone
+                     Create(&OrnamentalObject,#type=OO_JALA_BOOK),
+                     Create(&OrnamentalObject,#type=OO_3_CLOTH_BOLTS),
+                     Create(&OrnamentalObject,#type=OO_BOX_WITH_SNAKE),
+                     Create(&OrnamentalObject,#type=OO_SKULL4)
+                    ],
+                    [ % all heartstones
+                     Create(&DragonflyCage),
+                     Create(&SmallBox)
+                    ]
+                  ];
+
+      Post(self,@InitializeDecor);
+
+      propagate;
+   }
+
+   InitializeDecor()
+   {
+      Send(self,@SetBedSector);
+      Send(self,@SetBedSpread);
+      Send(self,@SetCarpet);
+      Send(self,@SetWallpaper);
+      Send(self,@SetPicture,#num=random(1,3));
+      Send(self,@SetPictureLocation,#num=random(1,viPictureLocationMax));
+      Send(self,@NewHold,#what=create(&Mint),
+           #new_row=nth(nth(nth(plBedCoords,piBedSector),1),1),
+           #new_col=nth(nth(nth(plBedCoords,piBedSector),1),2),
+           #fine_row=nth(nth(nth(plBedCoords,piBedSector),3),1),
+           #fine_col=nth(nth(nth(plBedCoords,piBedSector),3),2),
+           #new_angle= nth(nth(plBedCoords,piBedSector),5) );
+      
+      return;
+   }
+
+   GetRenter()
+   {
+      return poRenter;
+   }
+
+   SetRenter(who=$)
+   {
+      if who <> $ AND IsClass(who,&User)
+      {
+         poRenter = who;
+      }
+      return;
+   }
+
+   GetLocation()
+   {
+      return viLocation;
+   }
+   
+   GetLocationName()
+   {
+      return Send(Send(SYS,@FindRoomByNum,#num=viLocation),@GetName);
+   }
+
+   SetBedSector(sector=$)
+   {
+      local i;
+
+      if sector = $
+      {
+         sector = random(viBedSectorMin,viBedSectorMax);
+      }
+
+      if piBedSector = sector
+         OR sector < viBedSectorMin
+         OR sector > viBedSectorMax
+      {
+         return;
+      }
+
+      piBedSector = sector;
+
+      i = viBedSectorMin - 1;
+      while i < viBedSectorMax
+      {
+         i = i + 1;
+         Send(self,@SetSector,#sector=i,#animation=ANIMATE_FLOOR_LIFT,
+              #height=BED_DOWN,#speed=0);
+         Send(self,@ChangeTexture,#id=i,#new_texture=piCarpet,#flags=CTF_FLOOR);
+      }
+
+      Send(self,@SetSector,#sector=piBedSector,#animation=ANIMATE_FLOOR_LIFT,
+           #height=BED_UP,#speed=0);
+      Send(self,@ChangeTexture,#id=piBedSector,#new_texture=piBedSpread,
+           #flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=piBedSector,#new_texture=(piBedSpread+1),
+           #flags=CTF_BELOWWALL);
+
+      for i in Send(self,@GetHolderPassive)
+      {
+         if isClass(first(i),&Pillow)
+         {
+            Send(first(i),@Delete);
+         }
+      }
+
+      if plBedCoords <> $
+      {
+         Send(self,@NewHold,#what=create(&Pillow),
+              #new_row=nth(nth(nth(plBedCoords,piBedSector),1),1),
+              #new_col=nth(nth(nth(plBedCoords,piBedSector),1),2),
+              #fine_row=nth(nth(nth(plBedCoords,piBedSector),3),1),
+              #fine_col=nth(nth(nth(plBedCoords,piBedSector),3),2),
+              #new_angle= nth(nth(plBedCoords,piBedSector),5) );
+
+         Send(self,@NewHold,#what=create(&Pillow),
+              #new_row=nth(nth(nth(plBedCoords,piBedSector),1),1),
+              #new_col=nth(nth(nth(plBedCoords,piBedSector),1),2),
+              #fine_row=nth(nth(nth(plBedCoords,piBedSector),4),1),
+              #fine_col=nth(nth(nth(plBedCoords,piBedSector),4),2),
+              #new_angle= nth(nth(plBedCoords,piBedSector),5) );
+      }
+
+      return;
+   }
+
+   SetBedSpread(num=BEDSPREAD_A)
+   {
+      if piBedSpread = num
+      {
+         return FALSE;
+      }
+
+      piBedSpread = num;
+      Send(self,@ChangeTexture,#id=piBedSector,#new_texture=piBedSpread,
+           #flags=CTF_FLOOR);
+      Send(self,@ChangeTexture,#id=piBedSector,#new_texture=(piBedSpread+1),
+           #flags=CTF_BELOWWALL);
+
+      return TRUE;
+   }
+
+   SetCarpet(num=CARPET_A)
+   {
+      local i;
+
+      if piCarpet = num
+      {
+         return FALSE;
+      }
+
+      piCarpet = num;
+
+      i = viBedSectorMin - 1;
+      while i < viBedSectorMax
+      {
+         i = i + 1;
+         if i = piBedSector
+         {
+            continue;
+         }
+
+         Send(self,@ChangeTexture,#id=i,#new_texture=piCarpet,#flags=CTF_FLOOR);
+      }
+
+      Send(self,@ChangeTexture,#id=CARPET_SECTOR,#new_texture=piCarpet,#flags=CTF_FLOOR);
+
+      return TRUE;
+   }
+
+   SetWallpaper(num=WALLPAPER_A)
+   {
+      local i;
+
+      if piWallpaper = num
+      {
+         return FALSE;
+      }
+
+      piWallpaper = num;
+
+      i = WALLPAPER_ID - 1;
+      while i < (WALLPAPER_ID + viPictureLocationMax)
+      {
+         i = i + 1;
+         if i = (WALLPAPER_ID + piPictureLocation)
+         {
+            continue;
+         }
+
+         Send(self,@ChangeTexture,#id=i,#new_texture=piWallpaper,#flags=CTF_NORMALWALL);
+      }
+
+      Send(self,@ChangeTexture,#id=(WALLPAPER_ID+piPictureLocation),
+           #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
+
+      return TRUE;
+   }
+
+   SetPicture(num=PICTURE_A)
+   {
+      if piPicture = num
+      {
+         return FALSE;
+      }
+
+      piPicture = num;
+      Send(self,@ChangeTexture,#id=(WALLPAPER_ID+piPictureLocation),
+           #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
+
+      return TRUE;
+   }
+
+   SetPictureLocation(num=1)
+   {
+      local i;
+
+      if piPictureLocation = num
+         OR num < 1
+         OR num > viPictureLocationMax
+      {
+         return FALSE;
+      }
+
+      piPictureLocation = num;
+
+      i = WALLPAPER_ID - 1;
+      while i < (WALLPAPER_ID + viPictureLocationMax)
+      {
+         i = i + 1;
+         if i = (WALLPAPER_ID + piPictureLocation) { continue; }
+         Send(self,@ChangeTexture,#id = i,#new_texture=piWallpaper,#flags=CTF_NORMALWALL);
+      }
+
+      Send(self,@ChangeTexture,#id = (WALLPAPER_ID+piPictureLocation),
+           #new_texture=(piWallpaper+piPicture),#flags=CTF_NORMALWALL);
+
+      return TRUE;
+   }
+
+   % A note on how the "TrySet*" fuctions work.
+   % Return values:
+   % TRUE means we could change it.
+   % FALSE means that is not available
+   % $ means we need more information
+   % -> Exception is BedSector.
+
+   TrySetBedSector(who=$,string=$,oDecorator=$)
+   {
+      local iBedSector, i;
+
+      if string = $
+      {
+         return FALSE;
+      }
+
+      if StringContain(string,RentableRoom_command_here)
+      {
+         iBedSector = Send(self,@GetBedSectorNear,#who=who);
+         if iBedSector <> $
+         {
+            for i in Send(self,@GetHolderPassive)
+            {
+               if Send(self,@GetBedSectorNear,#who=first(i))=iBedSector
+               {
+                  if oDecorator <> $
+                  {
+                     Send(oDecorator,@SendBedBlockedMessage,#who=who);
+                  }
+
+                  return FALSE;
+               }
+            }
+
+            Send(self,@SetBedSector,#sector=iBedSector);
+
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   TrySetBedSpread(string=$)
+   {
+      local iBlue, iRed, iBlack, iWhite;
+
+      if string = $ { return FALSE; }
+      iBlue = StringContain(string,RentableRoom_command_blue);
+      iRed = StringContain(string,RentableRoom_command_red);
+      iBlack = (StringContain(string,RentableRoom_command_black)
+                OR StringContain(string,RentableRoom_command_floral));
+      iWhite = (StringContain(string,RentableRoom_command_white)
+                OR StringContain(string,RentableRoom_command_linen));
+
+      if (iBlue+iRed+iBlack+iWhite) > 1
+      {
+         % Confusing command.  Ask for more info.
+         return $;
+      }
+
+      if iBlue
+      {
+         return Send(self,@SetBedSpread,#num=BEDSPREAD_A);
+      }
+
+      if iRed
+      {
+         return Send(self,@SetBedSpread,#num=BEDSPREAD_B);
+      }
+
+      if iBlack
+      {
+         return Send(self,@SetBedSpread,#num=BEDSPREAD_C);
+      }
+
+      if iWhite
+      {
+         return Send(self,@SetBedSpread,#num=BEDSPREAD_D);
+      }
+
+      return $;
+   }
+
+   TrySetCarpet(string=$)
+   {
+      local iLtGray, iDkGray, iLtWood, iDkWood;
+
+      if string = $
+      {
+         return FALSE;
+      }
+
+      iLtGray = (StringContain(string,RentableRoom_command_light_gray)
+                 OR StringContain(string,RentableRoom_command_light_grey));
+      iDkGray = (StringContain(string,RentableRoom_command_dark_gray)
+                 OR StringContain(string,RentableRoom_command_dark_grey));
+      iLtWood = (StringContain(string,RentableRoom_command_light_wood)
+                 OR StringContain(string,RentableRoom_command_light_hardwood));
+      iDkWood = (StringContain(string,RentableRoom_command_dark_wood)
+                 OR StringContain(string,RentableRoom_command_dark_hardwood));
+
+      if (iLtGray + iDkGray + iLtWood + iDkWood) > 1
+      {
+         % Confusing command.  Ask for more info.
+         return $;
+      }
+
+      if iLtGray
+      {
+         return Send(self,@SetCarpet,#num=CARPET_A);
+      }
+
+      if iDkGray
+      {
+         return Send(self,@SetCarpet,#num=CARPET_C);
+      }
+
+      if iLtWood
+      {
+         return Send(self,@SetCarpet,#num=CARPET_D);
+      }
+
+      if iDkWood
+      {
+         return Send(self,@SetCarpet,#num=CARPET_E);
+      }
+
+      return $;
+   }
+
+   TrySetWallpaper(string=$)
+   {
+      local iCream,iBrown,iBlack,iWhite,iBrick,iWood,iRetValue;
+
+      if string = $
+      {
+         return FALSE;
+      }
+
+      iCream = (StringContain(string,RentableRoom_command_cream)
+                OR StringContain(string,RentableRoom_command_vine));
+      iBrown = (StringContain(string,RentableRoom_command_brown)
+                OR StringContain(string,RentableRoom_command_formal)
+                OR StringContain(string,RentableRoom_command_traditional)
+                OR StringContain(string,RentableRoom_command_Barloq)
+                OR StringContain(string,RentableRoom_command_medallion));
+      iBlack = (StringContain(string,RentableRoom_command_black)
+                OR StringContain(string,RentableRoom_command_floral)
+                OR StringContain(string,RentableRoom_command_flower));
+      iWhite = (StringContain(string,RentableRoom_command_white)
+                OR StringContain(string,RentableRoom_command_paisley));
+      iBrick = StringContain(string,RentableRoom_command_brick);
+      iWood = StringContain(string,RentableRoom_command_wood);
+
+      if (iCream+iBrown+iBlack+iWhite+iBrick+iWood) > 1
+      {
+         % Confusing command.  Ask for more info.
+         return $;
+      }
+
+      if iCream
+      {
+         return Send(self,@SetWallpaper,#num=WALLPAPER_A);
+      }
+
+      if iBrown
+      {
+         return Send(self,@SetWallpaper,#num=WALLPAPER_B);
+      }
+
+      if iBlack
+      {
+         return Send(self,@SetWallpaper,#num=WALLPAPER_C);
+      }
+
+      if iWhite
+      {
+         return Send(self,@SetWallpaper,#num=WALLPAPER_D);
+      }
+
+      if iBrick
+      {
+         Send(self,@SetPicture,#num=PICTURE_NONE);
+
+         return Send(self,@SetWallpaper,#num=WALLPAPER_E);
+      }
+
+      if iWood
+      {
+         Send(self,@SetPicture,#num=PICTURE_NONE);
+
+         return Send(self,@SetWallpaper,#num=WALLPAPER_F);
+      }
+
+      return $;
+   }
+
+   TrySetPicture(string=$,bRemove=FALSE)
+   {
+      local iStillLife,iTapestry,iPortrait,iNothing;
+
+      if (string = $ AND NOT bRemove)
+         OR (piWallPaper = WALLPAPER_E)
+         OR (piWallPaper = WALLPAPER_F)
+      {
+         return FALSE;
+      }
+
+      iStillLife = (StringContain(string,RentableRoom_command_still_life)
+                    OR StringContain(string,RentableRoom_command_still_life_dashed)
+                    OR StringContain(string,RentableRoom_command_stilllife)
+                    OR StringContain(string,RentableRoom_command_flowers)
+                    OR StringContain(string,RentableRoom_command_monet));
+      iTapestry = (StringContain(string,RentableRoom_command_tapestry)
+                   OR StringContain(string,RentableRoom_command_reproduction)
+                   OR StringContain(string,RentableRoom_command_battle));
+      iPortrait = (StringContain(string,RentableRoom_command_portrait)
+                   OR StringContain(string,RentableRoom_command_charcoal));
+      iNothing =  (StringContain(string,RentableRoom_command_nothing)
+                   OR StringContain(string,RentableRoom_command_no_painting)
+                   OR StringContain(string,RentableRoom_command_no_picture)
+                   OR StringContain(string,RentableRoom_command_no_portrait)
+                   OR StringContain(string,RentableRoom_command_no_still_life)
+                   OR StringContain(string,RentableRoom_command_no_tapestry)
+                   OR StringContain(string,RentableRoom_command_none));
+
+      if (iStillLife+iTapestry+iPortrait+iNothing) > 1
+      {
+         % Confusing command.  Ask for more info.
+         return $;
+      }
+
+      if iStillLife
+      {
+         return Send(self,@SetPicture,#num=PICTURE_A);
+      }
+
+      if iTapestry
+      {
+         return Send(self,@SetPicture,#num=PICTURE_B);
+      }
+
+      if iPortrait
+      {
+         return Send(self,@SetPicture,#num=PICTURE_C);
+      }
+
+      if iNothing or bRemove
+      {
+         return Send(self,@SetPicture,#num=PICTURE_NONE);
+      }
+
+      return $;
+   }
+
+   TrySetPictureLocation(who=$, string=$)
+   {
+      local iPictureLocation;
+
+      if string = $
+         OR (piWallPaper = WALLPAPER_E)
+         OR (piWallPaper = WALLPAPER_F)
+      {
+         return FALSE;
+      }
+
+      if StringContain(string,RentableRoom_command_here)
+      {
+         iPictureLocation = Send(self,@GetPictureLocationNear,#who=who);
+         if iPictureLocation <> $
+         {
+            return Send(self,@SetPictureLocation,#num=iPictureLocation);
+         }
+      }
+
+      return $;
+   }
+
+   GetObjectCategory(oItem=$)
+   {
+      local iLoop, oObj;
+
+      iLoop = 0;
+      while iLoop < length(plObjects)
+      {
+         iLoop = iLoop + 1;
+         for oObj in nth(plObjects,iLoop)
+         {
+            if Send(oObj,@GetName) = Send(oItem,@GetName)
+            {
+               return iLoop;
+            }
+         }
+      }
+
+      return 0;
+   }
+
+   ParseObject(string=$,who=$,oDecorator=$)
+   {
+      local i, j;
+
+      for i in plObjects
+      {
+         for j in i
+         {
+            if StringContain(string,Send(j,@GetName))
+            {
+               return j;
+            }
+         }
+      }
+
+      return $;
+   }
+
+   GetObjectList(who=$,oDecorator=$)
+   {
+      local i, j, oPreviousObject, sObjectList;
+
+      % Note: we get away with a simple algorithm here
+      %       because we know there are at least 4 objects at all times.
+
+      ClearTempString();
+      oPreviousObject = $;
+
+      i = 0;
+      while i < length(plObjects)
+      {
+         i = i + 1;
+         if Send(self,@CanAccessObject,#category=i,#who=who)
+         {
+            for j in nth(plObjects,i)
+            {
+               if oPreviousObject <> $
+               {
+                  AppendTempString(Send(oPreviousObject,@GetIndef));
+                  AppendTempString(Send(oPreviousObject,@GetName));
+                  AppendTempString(RentableRoom_comma);
+               }
+
+               oPreviousObject = j;
+            }
+         }
+      }
+
+      if oPreviousObject <> $
+      {
+         AppendTempString(RentableRoom_and);
+         AppendTempString(Send(oPreviousObject,@GetIndef));
+         AppendTempString(Send(oPreviousObject,@GetName));
+      }
+
+      sObjectList = CreateString();
+      SetString(sObjectList,GetTempString());
+
+      return sObjectList;
+   }
+
+   TryPlaceObject(who=$, string=$, template=$, oDecorator=$)
+   {
+      local oDecorativeObject, i, iSnapFineRow, iSnapFineCol;
+
+      if who = $ OR string = $ OR template = $
+      {
+         return FALSE;
+      }
+
+      % Only two boxes per room.
+      if NOT Send(self,@CanAccessObject,#who=who,
+                  #category=Send(self,@GetObjectCategory,#oItem=template))
+      {
+         return FALSE;
+      }
+
+      % StorageBox is the superclass of all storage boxes.
+      if IsClass(template,&StorageBox)
+         AND (Send(self,@CountHoldingHowMany,#class=&StorageBox) > 1)
+      {
+         return FALSE;
+      }
+
+      if StringContain(string, RentableRoom_command_here)
+      {
+         iSnapFineRow = Send(self,@GetSnappedFineCoord,
+                             #unsnappedCoord=Send(who,@GetFineRow));
+         iSnapFineCol = Send(self,@GetSnappedFineCoord,
+                             #unsnappedCoord=Send(who,@GetFineCol));
+
+         for i in Send(self,@GetHolderPassive)
+         {
+            if (Send(first(i),@GetRow)=Send(who,@GetRow))
+               AND (Send(first(i),@GetCol)=Send(who,@GetCol))
+               AND (Send(first(i),@GetFineRow)=iSnapFineRow)
+               AND (Send(first(i),@GetFineCol)=iSnapFineCol)
+            {
+               if oDecorator <> $
+               {
+                  Send(oDecorator,@SendNoObjectStacking,#who=who);
+               }
+
+               return $;
+            }
+         }
+
+         if IsClass(template,&OrnamentalObject)
+         {
+            oDecorativeObject = Send(template,@Duplicate); 
+         }
+         else
+         {
+            oDecorativeObject = Create(getClass(template)); 
+         }
+
+         Send(self,@NewHold,#what=oDecorativeObject,
+             #new_row=Send(who,@GetRow),#new_col=Send(who,@GetCol),
+             #fine_row=iSnapFineRow,#fine_col=iSnapFineCol);
+
+         return TRUE;
+      }
+
+      return $;
+   }
+
+   GetSnappedFineCoord(unsnappedCoord=32)
+   "Returns a fine coordinate snapped to a specific grid."
+   {
+      if unsnappedCoord > 32
+      {
+         return 48;
+      }
+
+      return 16;
+   }
+
+   TryRemoveObject(who=$, template=$)
+   {
+      local i, lInventory, oClosest, iClosestDistance, iCurrentDistance, iTemp,
+            iFirst, iSecond, iRowDiff, iColDiff, bConfused;
+
+      if who = $ OR template = $
+      {
+         return FALSE;
+      }
+
+      oClosest = $;
+
+      % About 1.5 squares away
+      iClosestDistance = FINENESS + FINENESS_HALF;
+
+      % Apply distance formula.
+      iClosestDistance = (iClosestDistance*iClosestDistance);
+      iClosestDistance = iClosestDistance * 2;
+
+      % This is set if there could be confusion between two objects.
+      bConfused = FALSE;          
+
+      % Determine which list to use.
+      if Send(template,@GetObjectType) = ACTIVE
+      {
+         lInventory = Send(self,@GetHolderActive);
+      }
+      else
+      {
+         lInventory = Send(self,@GetHolderPassive);
+      }
+      
+      for i in lInventory
+      {
+         if isClass(first(i),GetClass(template))
+            AND StringEqual(Send(first(i),@GetName),Send(template,@GetName))
+         {
+            % First, figure the difference between the rows.  Depending on
+            %  the sign of the difference depends on what amount of the
+            %  fine row we need to count.  IE, if the difference is negative,
+            %  that means that the player has a greater row value than the
+            %  object, so count the fineness between them (from object's
+            %  fineness to max fineness, then from 0 to the player's fineness)
+            %  Space between them is the number of full squares between
+            %  them.  Same logic for columns.
+            iRowDiff = Send(first(i),@GetRow) - Send(who,@GetRow);
+            iColDiff = Send(first(i),@GetCol) - Send(who,@GetCol);
+
+            % Don't bother if it's greater than two full rows/columns away.
+            if abs(iRowDiff) > 2 OR abs(iColDiff) > 2
+            {
+               continue;
+            }
+
+            if iRowDiff < 0
+            {
+               iFirst = FINENESS - Send(first(i),@GetFineRow);
+               iSecond = Send(who,@GetFineRow);
+               iTemp = iFirst + iSecond + ((abs(iRowDiff) - 1) * FINENESS);
+            }
+            else
+            {
+               if iRowDiff > 0
+               {
+                  iFirst = FINENESS - Send(who,@GetFineRow);
+                  iSecond = Send(first(i),@GetFineRow);
+                  iTemp = iFirst + iSecond + ((abs(iRowDiff) - 1) * FINENESS);
+               }
+               else
+               {
+                  % This means iRowDiff = 0
+                  iTemp = abs((Send(first(i),@GetFineRow) - Send(who,@GetFineRow)));
+               }
+            }
+
+            iCurrentDistance = (iTemp * iTemp);
+
+            if iColDiff < 0
+            {
+               iFirst = FINENESS - Send(first(i),@GetFineCol);
+               iSecond = Send(who,@GetFineCol);
+               iTemp = iFirst + iSecond + ((abs(iColDiff) - 1) * FINENESS);
+            }
+            else
+            {
+               if iColDiff > 0
+               {
+                  iFirst = FINENESS - Send(who,@GetFineCol);
+                  iSecond = Send(first(i),@GetFineCol);
+                  iTemp = iFirst + iSecond + ((abs(iColDiff) - 1) * FINENESS);
+               }
+               else
+               {
+                  % This means iColDiff = 0
+                  iTemp = abs((Send(first(i),@GetFineCol) - Send(who,@GetFineCol)));
+               }
+            }
+
+            iCurrentDistance = (iCurrentDistance + (iTemp * iTemp));
+
+            if iCurrentDistance < iClosestDistance
+            {
+               % We're cool if we're closer than about a quarter of a "box" away,
+               % otherwise there may be some confusion.
+               if (iClosestDistance - iCurrentDistance) > ((FINENESS/4) * (FINENESS/4))
+               {
+                  iClosestDistance = iCurrentDistance;
+                  oClosest = first(i);
+               }
+               else
+               {
+                  bConfused = TRUE;
+               }
+            }
+         }
+      }
+
+      if NOT bConfused AND oClosest <> $
+      {
+         Send(oClosest,@Delete);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   SummonDecorator()
+   {
+      if Send(self,@FindHoldingActive,#class=&Decorator) <> $
+      {
+         % Don't bother, it's already here.
+         return;
+      }
+
+      if ptDecoratorArrives = $
+      {
+         ptDecoratorArrives = createTimer(self,@DecoratorArrives,DECORATOR_DELAY);
+      }
+
+      return;
+   }
+
+   DecoratorArrives()
+   {
+      ptDecoratorArrives = $;
+      Send(self,@NewHold,#what=Create(&Decorator),
+           #new_row=viDecorator_Row,#new_col=viDecorator_col);
+
+      return;
+   }
+
+   GetBedSectorNear(who=$,iRow=$,iCol=$)
+   {
+      local i;
+
+      if who <> $ AND Send(who,@GetOwner) <> $
+      {
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+      }
+
+      if iRow = $ OR iCol = $
+      {
+         return 0;
+      }
+
+      i = 0;
+      while i < length(plBedCoords)
+      {
+         i = i + 1;
+         if (iRow = nth(nth(nth(plBedCoords,i),1),1)
+             AND iCol = nth(nth(nth(plBedCoords,i),1),2))
+            OR (iRow = nth(nth(nth(plBedCoords,i),2),1)
+                AND iCol = nth(nth(nth(plBedCoords,i),2),2))
+         {
+            return i;
+         }
+      }
+
+      return 0;
+   }
+
+   GetPictureLocationNear(who=$,iRow=$,iCol=$)
+   {
+      local i,j;
+
+      if who <> $ AND Send(who,@GetOwner) <> $
+      {
+         iRow = Send(who,@GetRow);
+         iCol = Send(who,@GetCol);
+      }
+
+      if iRow = $ OR iCol = $
+      {
+         return 0;
+      }
+
+      i = 0;
+      while i < length(plPictureCoords)
+      {
+         i = i + 1;
+
+         j = 0;
+         while j < length(nth(plPictureCoords,i))
+         {
+            j = j + 1;
+            if iRow = nth(nth(nth(plPictureCoords,i),j),1)
+               AND iCol = nth(nth(nth(plPictureCoords,i),j),2)
+            {
+               return i;
+            }
+         }
+      }
+
+      return 0;
+   }
+
+   GetCarpetOptions()
+   {
+      return RentableRoom_carpet_options;
+   }
+
+   GetBedSpreadOptions()
+   {
+      return RentableRoom_bedspread_options;
+   }
+
+   GetWallpaperOptions()
+   {
+      return RentableRoom_wallpaper_options;
+   }
+
+   GetPictureOptions()
+   {
+      return RentableRoom_picture_options;
+   }
+
+   ChangeRoomLight(iChange = 0)
+   {
+      local iAmount;
+      
+      if iChange > 0
+      {
+         % Increase light by a step.
+         iAmount = LIGHT_STEP;
+      }
+      else
+      {
+         if iChange < 0
+         {
+            % Decrease light by a step.
+            iAmount = -LIGHT_STEP;
+         }
+      }
+
+      % Bind between 44 and 244 for consistent, reasonable levels of light.
+      % Note: the spells Light and Darkness alter these threshold.
+      % Saying 'lighter' or 'darker' resets it though.  
+      iAmount = bound((piBaseLight + iAmount),44,244);
+      Send(self,@SetBaseLight,#amount=iAmount);
+
+      return;
+   }
+
+   CanAccessObject(category=1,who=$)
+   {
+      % No attacks mean no heartstones.  Everything except for 6th category is fine.
+      if NOT Send(Send(SYS,@GetNodeAttack),@GetAttacks)
+      {
+         if category <> 6
+         {
+            return TRUE;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+   
+      % Has the user given use those neat-o Heartstones?  If so, what can we make?
+      % Note: 6th category stuff is primo!  You gotta have a all heartstones at
+      %       full to get it.
+      if (category = 1)
+         OR ((category = 2) AND piBrownHeartStone)
+         OR ((category = 3) AND piRedHeartStone)
+         OR ((category = 4) AND piBlueHeartStone)
+         OR ((category = 5) AND piSkyHeartStone)
+         OR ((category = 6)
+             AND (piRedHeartStone >= ITEMS_FROM_HEARTSTONES)
+             AND (piBlueHeartStone >= ITEMS_FROM_HEARTSTONES)
+             AND (piSkyHeartStone >= ITEMS_FROM_HEARTSTONES)
+             AND (piBrownHeartStone >= ITEMS_FROM_HEARTSTONES))
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   AddHeartStone(oStone=$, oDecorator=$)
+   {
+      local bGotAll;
+      
+      bGotAll = (piRedHeartStone AND piBlueHeartStone
+                 AND piSkyHeartStone AND piBrownHeartStone);
+      
+      % Increment appropriate type of heartstone.
+      if IsClass(oStone,&RedHeartStone)
+      {
+         piRedHeartStone = piRedHeartStone + ITEMS_FROM_HEARTSTONES;
+         Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
+              #string=RentableRoom_heartstone_red);
+      }
+      
+      if IsClass(oStone,&BlueHeartStone)
+      {
+         piBlueHeartStone = piBlueHeartStone + ITEMS_FROM_HEARTSTONES;
+         Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
+              #string=RentableRoom_heartstone_blue);
+      }
+      
+      if IsClass(oStone,&BrownHeartStone)
+      {
+         piBrownHeartStone = piBrownHeartStone + ITEMS_FROM_HEARTSTONES;
+         Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
+              #string=RentableRoom_heartstone_brown);
+      }
+      
+      if IsClass(oStone,&SkyHeartStone)
+      {
+         piSkyHeartStone = piSkyHeartStone + ITEMS_FROM_HEARTSTONES;
+         Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
+              #string=RentableRoom_heartstone_sky);
+      }
+
+      if (NOT bGotAll)
+         AND (piRedHeartStone AND piBlueHeartStone
+              AND piSkyHeartStone AND piBrownHeartStone)
+      {
+         Post(self,@SomeoneSaid,#type=SAY_RESOURCE,#what=oDecorator,
+              #string=RentableRoom_heartstone_all);
+      }      
+
+      return;
+   }
+
+   UpdateHeartStones(oItem=$)
+   {
+      local iCategory;
+
+      % Don't worry if there's no attacks.
+      if not Send(Send(SYS,@GetNodeAttack),@GetAttacks)
+      {
+         return;
+      }
+
+      % We placed an item that required heartstones
+      iCategory = Send(self,@GetObjectCategory,#oItem=oItem);
+
+      if iCategory = 2
+      {
+         piBrownHeartStone = piBrownHeartStone - 1;
+      }
+      
+      if iCategory = 3
+      {
+         piRedHeartStone = piRedHeartStone - 1;
+      }
+      
+      if iCategory = 4
+      {
+         piBlueHeartStone = piBlueHeartStone - 1;
+      }
+      
+      if iCategory = 5
+      {
+         piSkyHeartStone = piSkyHeartStone - 1;
+      }
+      
+      if iCategory = 6
+      {
+         piBrownHeartStone = piBrownHeartStone - ITEMS_FROM_HEARTSTONES;
+         piRedHeartStone = piRedHeartStone - ITEMS_FROM_HEARTSTONES;
+         piSkyHeartStone = piSkyHeartStone - ITEMS_FROM_HEARTSTONES;
+         piBlueHeartStone = piBlueHeartStone - ITEMS_FROM_HEARTSTONES;
+      }
+
+      return;
+   }
+
+   GetCreditBalance()
+   {
+      return piCredit;
+   }
+
+   DeductCredit(amount=0)
+   {
+      if piCredit < amount
+      {
+         DEBUG("DeductCredit:: amount is too big");
+         piCredit = 0;
+      }
+
+      piCredit = piCredit - amount;
+
+      return;
+   }
+
+   AddCredit(amount=0)
+   {
+      Send(self,@DeductCredit,#amount=(-amount));
+
+      return;
+   }
+
+   GetDaysLeft()
+   {
+      return piDaysLeft;
+   }
+
+   DecrementDaysLeft()
+   {
+      piDaysLeft = piDaysLeft - 1;
+
+      if piDaysLeft <= 0
+      {
+         Post(self,@RoomExpired);
+         return;
+      }
+
+      % Send warning every 12 Meridian days (2 real days), and when we have 4 hours left
+      if (piDaysLeft <= 2)
+         OR ((piDaysLeft mod 12) = 0)
+      {
+         Send(self,@SendExpiryWarningMail);
+      }
+
+      return;
+   }
+
+   RenewRental(iTimeAdded=12)
+   "Adds time to the room.  Default is 12 Meridian days = 1 offline day.  "
+   "Returns total days left."
+   {
+      piDaysLeft = piDaysLeft + iTimeAdded;
+      
+      return piDaysLeft;
+   }
+
+   SendExpiryWarningMail()
+   {
+      Send(poRenter,@ReceiveNestedMail,#from=vrLandlord,
+            #dest_list=[poRenter],
+            #nest_list=[4,RentableRoom_expiry_warning,
+                        6,Send(SYS,@IntToString,#num=piDaysLeft)]);
+
+      return;
+   }
+
+   RoomExpired()
+   {
+      Send(poRenter,@ReceiveNestedMail,#from=vrLandlord,
+            #dest_list=[poRenter],
+            #nest_list=[4,RentableRoom_expiry]);
+
+      Send(self,@Delete);
+
+      return;
+   }
+
+   DisposeTimer()
+   "Called by the dispose timer."
+   {
+      % If someone's in the room, don't do anything.  Try later.
+      if pbUser_in_room
+      {
+         ptDispose = $;
+         ptDispose = CreateTimer(self,@DisposeTimer,piDispose_delay);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   NewHold(what=$)
+   {
+      % Get rid of tokens.
+      if what <> $ AND isClass(what,&Token)
+      {
+         Post(what,@RandomTeleport);
+      }
+      
+      propagate;
+   }
+
+   Delete()
+   {
+      Send(Send(SYS,@GetRentableRoomMaintenance),@RoomDeleted,#what=self);
+      Send(&RoomKey,@RoomExpired,#iRID=piRoom_num);
+
+      if ptDecoratorArrives <> $
+      {
+         DeleteTimer(ptDecoratorArrives);
+         ptDecoratorArrives = $;
+      }
+
+      poRenter = $;
+      plBedCoords = $;
+      plPictureCoords = $;
+      plObjects = $;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

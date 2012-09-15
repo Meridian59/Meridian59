@@ -1,0 +1,73 @@
+/*----------------------------------------------------------------------------*
+ | This file is part of WinDEU, the port of DEU to Windows.                   |
+ | WinDEU was created by the DEU team:                                        |
+ |  Renaud Paquay, Raphael Quinet, Brendon Wyber and others...                |
+ |                                                                            |
+ | DEU is an open project: if you think that you can contribute, please join  |
+ | the DEU team.  You will be credited for any code (or ideas) included in    |
+ | the next version of the program.                                           |
+ |                                                                            |
+ | If you want to make any modifications and re-distribute them on your own,  |
+ | you must follow the conditions of the WinDEU license. Read the file        |
+ | LICENSE or README.TXT in the top directory.  If do not  have a copy of     |
+ | these files, you can request them from any member of the DEU team, or by   |
+ | mail: Raphael Quinet, Rue des Martyrs 9, B-4550 Nandrin (Belgium).         |
+ |                                                                            |
+ | This program comes with absolutely no warranty.  Use it at your own risks! |
+ *----------------------------------------------------------------------------*
+
+	Project WinDEU
+	DEU team
+	Jul-Dec 1994, Jan-Mar 1995
+
+	FILE:         thingdlg.rh
+*/
+#ifndef __thingdlg_rh
+#define __thingdlg_rh
+
+#define IDD_THING_EDIT		27
+
+//
+#define IDC_ANGLE_GROUP	100
+#define IDC_ANGLE_SW	101
+#define IDC_ANGLE_NE	102
+#define IDC_ANGLE_N		103
+#define IDC_ANGLE_NW	104
+#define IDC_ANGLE_W		105
+#define IDC_ANGLE_S		106
+#define IDC_ANGLE_E		107
+#define IDC_ANGLE_SE	108
+
+#define IDC_APPEARS_GROUP	110
+#define IDC_SELECT_FROM_ENTRANCES	124
+#define IDC_ENTRANCE	119
+#define IDC_LEVEL12			111
+#define IDC_LEVEL3			112
+#define IDC_XEXIT	111
+#define IDC_YEXIT	112
+#define IDC_EXIT_ROOM_ID	109
+#define IDC_SUBTYPE	114
+#define IDC_DONT_GENERATE	115
+#define IDC_COMMENT	116
+#define IDC_OBJECTS	123
+#define IDC_EXIT	122
+
+#define IDC_TYPE_GROUP		120
+#define IDC_PLAYER			121
+#define IDC_ENEMY			122
+#define IDC_WEAPON			123
+#define IDC_BONUS			124
+#define IDC_DEAD_BODIES		126
+#define IDC_LIGHT_SOURCES	127
+#define IDC_KEYS	109
+#define IDC_HANGINGBODIES	116
+#define IDC_DECORATION		128
+
+#define IDC_THING_LIST	130
+#define IDC_THING_XPOS	117
+#define IDC_THING_YPOS	118
+#define IDC_MONSTERGEN	113
+
+#define IDC_SPRITE_GROUP	140
+
+#endif

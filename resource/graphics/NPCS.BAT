@@ -1,0 +1,9 @@
+call barloque.bat
+call tos.bat
+call cornoth.bat
+call marion.bat
+call jasper.bat
+call kocatan.bat
+call holyones.bat
+call council.bat
+call wanders.bat

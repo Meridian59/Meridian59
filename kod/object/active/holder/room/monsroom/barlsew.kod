@@ -1,0 +1,105 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BarlSewer is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   TO_ROW = 4
+   TO_COL = 11
+
+resources:
+
+   room_name_barlsew = "The Sewers of Barloque"
+   room_barlsew = barlsew.roo
+   barlsew_music = cave.mid
+
+   waterfall_soundbsew1 = wfall2.wav
+
+classvars:
+
+   vrName = room_name_barlsew
+
+   viTeleport_row = 58
+   viTeleport_col = 11
+
+   viTerrain_type = TERRAIN_SEWERS | TERRAIN_WATERFALL
+
+properties:
+
+   prRoom = room_barlsew
+   piRoom_num = RID_BAR_SEWER
+
+   piBaseLight = LIGHT_MIN
+   piOutside_factor = 0
+
+   prMusic = barlsew_music
+
+   piGen_time = 60000
+   piGen_percent = 80
+
+   piInit_count_min = 4
+   piInit_count_max = 6
+
+   piMonster_count_max = 25
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&GiantRat, 94], [&Lupogg, 6] ];
+      plGenerators = [ [14, 39], [8, 45], [15, 44], [15, 35], [19, 23], 
+                      [25, 32], [31, 38], [29, 42], [43, 44], [51, 43],
+                      [54, 40], [58, 33], [48, 33], [69, 23], [62, 8] ];
+
+      plLooping_sounds = [ [ waterfall_soundbsew1,  1, 47, 10, 100 ],
+                           [ waterfall_soundbsew1, 51, 19, 10, 100 ],
+	                        [ waterfall_soundbsew1, 65, 34, 10, 100 ],
+	                        [ waterfall_soundbsew1, 48, 31, 10, 100 ],
+                           [ waterfall_soundbsew1, 27, 39, 10, 100 ]
+                         ];
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % TO TOWN
+      plExits = Cons([ 56, 8, RID_BAR_NORTH, 47, 40, ROTATE_NONE ],plExits);
+
+      % TO ASSASSIN'S HEADQUARTERS
+      plExits = Cons([ 21, 37, RID_ASSHQ, 13, 2, ROTATE_NONE ],plExits);
+
+      % TO GUILD HALL IN SEWERS
+      plExits = Cons([ 5, 42, RID_GUILDH8, 26, 8, ROTATE_NONE ],plExits);
+      plExits = Cons([ 5, 43, RID_GUILDH8, 26, 9, ROTATE_NONE ],plExits);
+   
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_BAR_SEWER2, 34, 62, ROTATE_NONE, ROW_IS_LESS_THAN,47], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_WEST, RID_F2, 7, 106, ROTATE_NONE, ROW_IS_GREATER_THAN,46], plEdge_exits);        
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=59,#new_col=8);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=58,#fine_col=0,#new_col=13);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

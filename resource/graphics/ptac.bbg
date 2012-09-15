@@ -1,0 +1,12 @@
+# Male hair 1 - short blond
+# 1 group
+-s 13
+6
+pt000aac.bmp   [-27, -10] 
+pt045aac.bmp   [-31, -13] 
+pt090aac.bmp   [-31, -10] 
+pt180aac.bmp   [-26, -7] 
+pt270aac.bmp   [-25, -7] 
+pt315aac.bmp   [-25, -10] 
+1
+ 8      1   6   5   4   4   4   3   2

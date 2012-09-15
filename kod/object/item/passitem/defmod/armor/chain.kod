@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ChainArmor is Armor
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   chainarmor_name_rsc = "chain armor"
+   chainarmor_icon_rsc = chainamr.bgf
+   chainarmor_desc_rsc = \
+      "Thousands of tiny, steel links make up this chain "
+      "armor.  Although light and reasonably comfortable, it "
+      "provides a fair measure of protection."
+
+   chainarmor_male_icon_rsc = btk.bgf
+   chainarmor_female_icon_rsc = btl.bgf
+
+classvars:
+   vrName = chainarmor_name_rsc
+   vrIcon = chainarmor_icon_rsc
+   vrDesc = chainarmor_desc_rsc
+
+   viHits_init_min = 550
+   viHits_init_max = 650
+
+   viSpell_modifier = -15
+   viValue_average = 1000
+   viWeight = 200
+   viBulk = 250
+
+   viDefense_base = -50               
+   viDamage_base = 2
+
+properties:
+   
+   vrIcon_male = chainarmor_male_icon_rsc
+   vrIcon_female = chainarmor_female_icon_rsc
+
+messages:
+
+   ShowShirt()
+   {
+      return TRUE;
+   }
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_THRUST,-5],
+               [ATCK_WEAP_PIERCE,-25],
+               [ATCK_WEAP_BLUDGEON,-15],
+               [ATCK_WEAP_SLASH,20]
+             ];
+   }
+
+   GetHeatDamage()
+   {
+      return 2;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

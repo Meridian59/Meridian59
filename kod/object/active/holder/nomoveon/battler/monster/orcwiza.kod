@@ -1,0 +1,301 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OrcWizard is Monster
+
+constants:
+
+   include blakston.khd
+   
+   SPELL_CHANCE = 10
+   SPELL_RANGE_SQUARED = 666
+   MANA_REGEN_TIME = 1000
+
+   ANIM_CASTARMS = 2
+   ANIM_CASTSTAFF = 3
+
+   FRAME_STAND = 1
+   FRAME_WALK_START = 2
+   FRAME_WALK_END = 6
+   FRAME_ATTACK_START = 7
+   FRAME_ATTACK_END = 11
+   FRAME_CASTARMS_START = 12
+   FRAME_CASTARMS_END = 16
+   FRAME_CASTSTAFF_START = 17
+   FRAME_CASTSTAFF_END = 19
+
+resources:
+
+   OrcWizard_koc_name_rsc = "utomya"
+   OrcWizard_name_rsc = "orc wizard"
+   OrcWizard_icon_rsc = orcwiza.bgf
+   OrcWizard_desc_rsc = \
+      "Harnessing dark powers from deep underground, the Orc Wizards "
+      "enforce the mandates of their chieftain, such as extermination "
+      "of the enemy shadow beasts.  How the orcs came "
+      "upon the powers of magic is unknown, but the thought of man's "
+      "greatest enemy armed with arcane power is enough to make any warrior "
+      "queasy."
+
+   OrcWizard_dead_icon_rsc = orcwizaX.bgf
+   OrcWizard_dead_name_rsc = "dead orc"
+
+   OrcWizard_sound_hit = orc_atkh.wav
+   OrcWizard_sound_miss = orc_atkm.wav
+   OrcWizard_sound_death = wor_dth.wav
+   OrcWizard_sound_aware = wor_awr.wav
+
+classvars:
+
+   viIndefinite = ARTICLE_AN
+   vrKocName = OrcWizard_koc_name_rsc
+   vrName = OrcWizard_name_rsc
+   vrIcon = OrcWizard_icon_rsc
+   vrDesc = OrcWizard_desc_rsc
+   vrDead_icon = OrcWizard_dead_icon_rsc
+   vrDead_name = OrcWizard_dead_name_rsc
+
+   viTreasure_type = TID_ORC_WIZARD
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_BLUDGEON
+   viAttributes = 0
+   viLevel = 80
+   viDifficulty = 7
+   viKarma = -60
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
+
+   viWimpy = 3
+
+   vrSound_hit = orc_sound_hit
+   vrSound_miss = orc_sound_miss
+   vrSound_aware = orc_sound_aware
+   vrSound_death = orc_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piMana = 10
+   ptMana = $
+
+messages:
+
+   ManaTimer()
+   {
+      piMana = piMana + 1;
+      if piMana >=10
+      {
+    ptMana = $;
+    return;
+      }
+      ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
+      return;
+   }
+
+   Delete()
+   {
+      if ptMana <> $
+      {
+    deletetimer(ptMana);
+    ptMana = $;
+      }
+      propagate;
+   }
+
+   Constructed()
+   {
+      plResistances = [ [ 40, -ATCK_SPELL_UNHOLY ],
+                        [ 40, ATCK_WEAP_PIERCE ],
+                        [ 40, ATCK_WEAP_SLASH ],
+                        [-25, -ATCK_SPELL_HOLY ] ];
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSlash);
+
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,125,2,FRAME_CASTSTAFF_START,2,FRAME_CASTSTAFF_END);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      % Make it look like orc is walking
+      % Cycle through "walking" bitmaps (groups 2-6) at 125 ms per frame
+      AddPacket(1,ANIMATE_CYCLE,4,125,2,FRAME_WALK_START,2,FRAME_WALK_END);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_STAND);
+
+         return;
+      } 
+
+      if piAnimation = ANIM_CASTARMS
+      {
+         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_CASTARMS_START,2,FRAME_CASTARMS_END,2,FRAME_STAND);
+
+         return;
+      } 
+
+      if piAnimation = ANIM_CASTSTAFF
+      {
+         AddPacket(1,ANIMATE_ONCE,4,125,2,FRAME_CASTSTAFF_START,2,FRAME_CASTSTAFF_END,2,FRAME_STAND);
+
+         return;
+      } 
+
+      propagate;
+   }
+
+    MonsterCastSpell()
+    {
+      local iSpell, iBase, oSpell, iManaCost, iRandom, lTargets;
+
+      iBase = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+      if random(1,iBase) <> 1
+      {
+         return FALSE;
+      }
+
+      iRandom = random(1,100);
+      
+      if iRandom < 40
+      {
+         iSpell = SID_SLITHERBOLT;
+         iManaCost = 5;
+         piAnimation = ANIM_CASTSTAFF;
+      }
+      else
+      {
+         if iRandom < 50
+         {
+            iSpell = SID_KILLING_FIELDS;
+            iManaCost = 10;
+            piAnimation = ANIM_CASTARMS;
+         }
+         else
+         {
+            if iRandom < 85
+            {
+               iSpell = SID_PURGE;
+               iManaCost = 4;
+               piAnimation = ANIM_CASTSTAFF;
+            }
+            else
+            {
+               if iRandom < 90
+               {
+                  iSpell = SID_MANA_BOMB;
+                  iManaCost = 6;
+                  piAnimation = ANIM_CASTARMS;
+               }
+               else
+               {
+                  iSpell = SID_FORGET;
+                  iManaCost = 4;
+                  piAnimation = ANIM_CASTSTAFF;
+               }
+            }
+         }
+      }
+              
+      if piMana < iManaCost
+      {
+         return FALSE;
+      }
+
+      piMana = piMana - iManaCost;
+
+      if piMana < 10
+      {
+         ptMana = CreateTimer(self,@ManaTimer,MANA_REGEN_TIME);
+      }
+
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;             
+    
+      oSpell = send(SYS,@FindSpellByNum,#num=iSpell);
+
+      if send(oSpell,@GetNumSpellTargets) > 0
+         AND NOT send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+      {
+         return FALSE;
+      }
+
+      lTargets = send(oSpell,@GetTargets,#who=self,#lTargets=[poTarget]);
+
+      if send(oSpell,@CanPayMonsterCosts,#who=self,#lTargets=lTargets,#iSpellPower=75)
+         AND send(poOwner,@ReqSpellCast,#who=self,#oSpell=oSpell,#litems=lTargets)
+      {
+         send(oSpell,@CastSpell,#who=self,#ltargets=lTargets,#iSpellPower=75);
+      }
+
+      return TRUE;
+   }
+
+   IsWizard()
+   {
+      return TRUE;
+   }
+
+   IsAlly(target = $)
+   {
+      if target = $
+      {
+         return FALSE;
+      }
+
+      if isClass(target,&Orc)          
+         OR isClass(target,&CaveOrc)
+         OR isClass(target,&OrcPitBoss)
+         OR isClass(target,&OrcWizard)
+      {
+         return TRUE;
+      }
+
+      propagate;
+   }
+
+   IsFrightenedOf(target=$)
+   {
+      if target <> $ AND isClass(target,&ShadowBeast)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

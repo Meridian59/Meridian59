@@ -1,0 +1,13 @@
+# princess flag (item)
+# 
+#^Applied to Hotspot: 0
+#*Groups: 2
+#* display
+#* dropped
+-s 5
+2
+flagbinv.bmp   [0, 0] 
+flagbdrp.bmp   [0, 0] 
+2
+ 1   1 
+ 1   2 

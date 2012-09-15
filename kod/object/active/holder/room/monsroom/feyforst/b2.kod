@@ -1,0 +1,88 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OutdoorsB2 is FeyForest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_OutdoorsB2 = B2.roo
+   room_name_OutdoorsB2 ="Lower Elhadrim"
+   OutdoorsB2_music = walk7.mid
+
+classvars:
+
+	vrName = room_name_OutdoorsB2
+
+	viEquilibrium = 60              %%% This is where this section of the faerie forest
+					%%% will 'aim' for on the karmic scale.
+	viTeleport_row = 38
+	viTeleport_col = 51
+
+properties:
+
+   prRoom = room_OutdoorsB2
+   prMusic = OutdoorsB2_music
+   piRoom_num = RID_B2
+   
+   piGen_time = 240000
+
+messages:
+   
+   Constructed()
+   {
+	   plGenerators = [ [5, 10], [5, 16], [25, 24], [12, 27], [14, 40],
+                      [14, 13], [25, 9], [38, 19], [40, 26], [38, 33],
+                      [24, 48], [31, 40], [38, 50], [47, 28] ];
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_B1, 49, 45, ROTATE_NONE], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_SOUTH, RID_C3, 1, 4, ROTATE_NONE], plEdge_exits);
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=3,#new_col=10);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=7,#new_col=16);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=14,#new_col=14);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=12,#new_col=26);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=24,#new_col=48);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=17,#new_col=47);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=3,#new_col=40);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=40,#new_col=46);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=13,#new_col=38);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=18,#new_col=31);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=31,#new_col=19);
+      Send(self,@NewHold,#what=Create(&FeyTree),
+          #new_row=24,#new_col=17);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

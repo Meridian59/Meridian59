@@ -1,0 +1,372 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AvarChieftain is Monster
+
+constants:
+
+   include blakston.khd
+
+   SPELL_CHANCE = 6
+   SPELL_RANGE_SQUARED = 666
+
+   % Fire bow animation.  Normal attack animation with claws is anim_attack.
+   ANIM_FIRE = 2
+
+   FRAME_STAND = 1
+   FRAME_WALK_START = 2
+   FRAME_WALK_END = 6
+   FRAME_ATTACK_START = 7
+   FRAME_ATTACK_END = 11
+   FRAME_FIRE_START = 12
+   FRAME_FIRE_END = 16
+
+resources:
+
+   avarchief_koc_name_rsc = "koavar"
+   avarchief_default_name = "avar chieftain"
+   avarchief_icon_rsc = avchief.bgf
+
+   avarchief_name_rsc = "peet-seeeep avar chieftain"    %% default
+   avarchief_desc_rsc = \
+      "Known for their noble grace, the Peet-Seeeep tribe "
+      "efficiently controls the southeastern shores of the island.  This "
+      "clan leader is feared for its keen accuracy with a bow and deadly "
+      "slasher."
+
+   avarchief_nomagic_name = "kyip-kyip-kreeet avar chieftain"
+   avarchief_nomagic_desc = \
+      "Known for their brutal instincts, the Kyip-Kyip-Kreeet tribe "
+      "relentlessly lords over the northwestern shores of the island.  This "
+      "clan leader is feared for its keen accuracy with a bow and deadly "
+      "slasher."
+
+   avarchief_bone_name = "avar leader of the bone faction"
+   avarchief_bone_desc = \
+      "Dedicated to preserving the ancient ways of the Bone faction, this "
+      "clan leader is feared for its keen accuracy with a bow and deadly "
+      "slasher."
+
+   avarchief_dead_icon_rsc = avchiefX.bgf
+   avarchief_dead_name_rsc = "former avar chieftain"
+
+   avarchief_sound_hit = ac_atkh.wav
+   avarchief_sound_miss = ac_atkm.wav
+   avarchief_sound_death = ac_dth.wav
+   avarchief_sound_aware = ac_awr.wav
+
+   avarchief_arrow = arrow.bgf
+
+   avarchief_fire_misses = "The avar chieftain cocks and fires, narrowly missing you."
+   avarchief_fire_hits = "The chieftain's well-aimed arrow strikes you with pinpoint accuracy!"
+
+classvars:
+
+   vrKocName = avarchief_koc_name_rsc
+   vrIcon = avarchief_icon_rsc
+   
+   vrDead_icon = avarchief_dead_icon_rsc
+   vrDead_name = avarchief_dead_name_rsc
+
+   viIndefinite = ARTICLE_AN
+   viTreasure_type = TID_AVAR_CHIEF
+   viAttack_types = ATCK_WEAP_PIERCE
+   viSpeed = SPEED_FAST
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_WIZARD_KILLER | AI_FIGHT_MONSTERS
+   viLevel = 135
+   viDifficulty = 9
+   viKarma = 80
+
+
+   vrSound_hit = avarchief_sound_hit
+   vrSound_miss = avarchief_sound_miss
+   vrSound_aware = avarchief_sound_aware
+   vrSound_death = avarchief_sound_death
+
+properties:
+
+   vrName = avarchief_name_rsc
+   vrDesc = avarchief_desc_rsc
+
+   pbFire = FALSE
+   
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructor(clan = $)
+   {
+      if clan <> $
+      {
+         send(self,@SetClan,#clan=clan);
+      }
+      else
+      {
+         post(self,@ChooseClan); 
+      }
+
+      propagate;
+   }
+
+   Constructed()
+   {
+      plResistances = [ [ 40, -ATCK_SPELL_FIRE ],
+                        [ 20, -ATCK_SPELL_SHOCK],
+                        [-15, -ATCK_SPELL_ACID ],
+                        [-20, -ATCK_SPELL_COLD ],
+                        [ 10, ATCK_WEAP_SLASH ],
+                        [-15, ATCK_WEAP_NERUDITE ]
+                      ];
+
+      propagate;
+   }
+
+   SetClan(clan = AVARCLAN_PROMAGIC)
+   {
+      piColor_translation = clan;
+      
+      if clan = AVARCLAN_ANTIMAGIC
+      {
+         vrName = avarchief_nomagic_name;
+         vrDesc = avarchief_nomagic_desc;
+      }
+      else
+      {
+         if clan = AVARCLAN_BONE_FACTION
+         {
+            vrName = avarchief_bone_name;
+            vrDesc = avarchief_bone_desc;
+         }
+         else
+         {
+            vrName = avarchief_name_rsc;
+            vrDesc = avarchief_desc_rsc;
+         }
+      }
+
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+      }
+      
+      return;
+   }
+
+   GetClan()
+   {
+      return piColor_translation;
+   }
+   
+   ChooseClan()
+   {
+      if poOwner = $ OR NOT IsClass(poOwner,&KCForest)
+      {         
+         if random (1,5) > 1
+         {
+            send(self,@SetClan,#clan=random(PT_PURPLETOBLUE,PT_PURPLETOYELLOW));
+         }
+
+         return;
+      }
+
+      % Ask our owner what clan we should be in.
+      send(self,@SetClan,#clan=send(poOwner,@GetClan));
+
+      return;
+   }
+
+   GetName()
+   {
+      if poOwner = $
+      {
+         return avarchief_default_name;
+      }
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      if pbFire
+      {
+         piAnimation = ANIM_FIRE;
+      }
+      else
+      {
+         piAnimation = ANIM_ATTACK;
+      }
+
+      pbFire = FALSE;
+      
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   % You cannot parry the chief's attacks.
+   CanParry()
+   {
+      return FALSE;
+   }
+
+   SendMoveAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      AddPacket(1,ANIMATE_CYCLE,4,200,2,FRAME_WALK_START,2,FRAME_WALK_END);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if (piColor_Translation <> 0)
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_STAND);
+         return;
+      }
+
+      if piAnimation = ANIM_FIRE
+      {
+         AddPacket(1,ANIMATE_ONCE,4,200,2,FRAME_FIRE_START,2,FRAME_FIRE_END,2,FRAME_STAND);
+         return;
+      }
+
+      % if no body animation
+      AddPacket(1,ANIMATE_NONE,2,3);
+      
+      return;
+   }
+
+   MonsterCastSpell()
+   {
+      local iBase;
+
+      iBase = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+
+      if Random(1,iBase) = 1
+         AND Send(self,@SquaredDistanceTo,#what=poTarget) < SPELL_RANGE_SQUARED
+         AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+         AND send(poowner,@reqsomethingattack,#what=self,#victim=poTarget,#use_weapon=self)
+      {
+         send(self,@DoMissileAttack);
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   DoMissileAttack()
+   {
+      pbFire = TRUE;
+      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile=self);
+      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 15;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return avarchief_arrow;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
+   }
+
+   GetOptimalRange()
+   {
+      return random(8,15);
+   }
+
+   IsAlly(target = $)
+   {
+      if (IsClass(target,&Avar)          
+          OR IsClass(target,&AvarShaman)
+          OR IsClass(target,&AvarChieftain))
+         AND send(target,@GetClan) = send(self,@GetClan)
+      {
+         return TRUE;
+      }
+
+      % Charm checks up higher.
+      propagate;
+   }
+
+   SpecialHatredBehavior(what=$)
+   {
+      % Avars attack other avars of other clans, but only in the
+      %  temple of riija ruins (rid_KC3).
+      if IsClass(what,&AvarShaman)
+         OR IsClass(what,&AvarChieftain)
+         OR IsClass(what,&Avar)
+      {
+         if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
+            AND send(what,@GetClan) <> send(self,@GetClan)
+         {
+            return 25;
+         }
+      }
+
+      return 0;
+   }
+
+   GetTreasureType()
+   {
+      if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_KC3
+      {
+         return TID_NONE;
+      }
+
+      return viTreasure_type;
+   }
+
+   CreateDeadBody(killer=$)
+   {
+      local oBody;
+
+      oBody = $;
+      if vrDead_icon <> $
+      {
+         oBody = Create(&DeadBody,#icon=vrDead_icon,#name=vrDead_name,#mob=TRUE,
+                        #BodyTranslation=send(self,@GetClan),
+                        #playername=Send(killer,@GetTrueName),
+                        #monstername=vrName,#drawfx=viDead_drawfx);         
+      }
+
+      return oBody;  
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

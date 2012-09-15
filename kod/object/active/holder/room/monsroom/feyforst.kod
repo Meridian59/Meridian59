@@ -1,0 +1,439 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FeyForest is MonsterRoom
+   
+constants:
+   
+   include blakston.khd
+
+   % Base light value for the room.
+   BASE_LIGHT = LIGHT_NICE
+
+   % What we adjust the Karma in the room by to get the light modifier.
+   LIGHT_KARMA_ADJUST = -70
+   
+resources:
+
+   feyforest_music_neutral = neutfor.mid
+   feyforest_music_evil = badfor.mid
+   feyforest_music_good = goodfor.mid
+   
+classvars:
+   
+   % This is where this section of the faerie forest will 'aim' for on the karmic scale.
+   viEquilibrium = 50              
+
+   viTerrain_type = TERRAIN_FOREST | TERRAIN_MYSTICAL
+
+properties:
+   
+   piBaseLight = BASE_LIGHT
+   piOutside_factor = 8
+   
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piGen_time = 150000
+   piGen_percent = 80
+   
+   piRoom_Karma = 50                %%% Room Karma is the karma of the Faerie Forest
+                                    %%% and determines the state of the forest.
+   ptFaerie = $
+
+messages:
+   
+   Constructor()
+   {
+      piRoom_Karma = viEquilibrium;
+      ptFaerie = CreateTimer(self,@FaerieTimer,piGen_time/2);
+
+      propagate;
+   }
+   
+   FaerieTimer()
+   {
+      if not pbUser_in_room
+      {
+         if piRoom_Karma < viEquilibrium
+         {
+            piRoom_Karma = piRoom_Karma + random(1,5);
+         }
+         else
+         {
+            piRoom_Karma = piRoom_Karma - random(1,5);
+         }
+         
+         if piInit_count_max < length(plGenerators)
+         {
+            piInit_count_min = piInit_count_min + 1;
+            piInit_count_max = piInit_count_max + 1;	
+         }
+      }		
+
+      ptFaerie = CreateTimer(self,@FaerieTimer,piGen_time/2);
+
+      return;
+   }
+   
+   Delete()
+   {
+      if ptFaerie <> $
+      {
+         DeleteTimer(ptFaerie);
+         ptFaerie = $;
+      }
+
+      propagate;
+   }
+   
+   SomethingKilled(victim = $)
+   {      
+      if victim = $
+      {
+         debug("SomethingKilled() reached with no victim!");
+      }
+      
+      if isClass(victim,&Fairy) OR isClass(victim,&EvilFairy)
+      {
+         post(self,@FigureRoomKarma);
+      }
+
+      propagate;
+   }
+   
+   LastUserLeft()
+   {
+      piInit_count_min = piMonster_count - 2;
+      piInit_count_max = piMonster_count + 2;	
+      
+      propagate;
+   }
+   
+   TryCreateMonster(initroom = FALSE,goodguy=FALSE,darkguy=FALSE,nofigure=FALSE)
+   {
+      local oMonster,iRoll,iTotal,lMonster_info,iRow,iCol,lPos;
+      
+      if piMonster_count >= piMonster_count_max
+      {
+         return;
+      }
+      
+      iRoll = Random(1,100);
+      if (iRoll > piGen_percent) AND (initroom = FALSE)
+      {
+         return;
+      }
+      
+      iRoll = Random(1,100);
+      iRoll = iRoll + (bound((piRoom_Karma - viEquilibrium)/5,-10,10));
+      
+      if (iRoll >= piRoom_Karma AND NOT darkguy) OR goodguy
+      {
+         % Forest is evil.  Make it good.
+         oMonster = Create(&Fairy);
+      }  
+      else
+      {
+         % Forest is good.  Make it evil.      
+         oMonster = Create(&EvilFairy);
+      }
+
+      if plGenerators = $
+      {            
+         iRow = Random(1,piRows);
+         iCol = Random(1,piCols);
+      }
+      else
+      {
+         iRoll = Random(1,Length(plGenerators));
+         lPos = Nth(plGenerators,iRoll);
+         iRow = First(lPos);
+         iCol = Nth(lPos,2);
+      }
+      
+      if Send(self,@ReqNewHold,#what=oMonster,#new_row=iRow,#new_col=iCol)
+         and Send(self,@ReqSomethingMoved,#what=oMonster,#new_row=iRow,#new_col=iCol)
+      {
+         Send(self,@NewHold,#what=oMonster,#new_row=iRow,#new_col=iCol,
+              #fine_row=FINENESS/2,#fine_col=FINENESS/2);
+      }
+      else
+      {
+         Send(oMonster,@Delete);
+
+         return FALSE;
+      }            
+
+      if NOT noFigure
+      {
+         send(self,@FigureRoomKarma);
+      }
+      
+      return TRUE;
+   }
+   
+   FigureRoomKarma(bForceChange=FALSE)
+   {
+      local i, gCount, eCount, oldKarma, iIndex;
+      
+      gCount = 0;
+      eCount = 0;
+      oldKarma = send(self,@GetKarma);
+      
+      for i in plActive
+      {
+         if isClass(first(i),&Fairy) OR isClass(first(i),&EvilFairy)
+         {
+            if send(first(i),@GetKarma) > 0
+            {
+               gCount = gCount + 1;
+            }
+            else
+            {
+               eCount = eCount + 1;
+            }
+         }
+      }
+      
+      if gCount = 0 AND eCount = 0
+      {
+         gCount = 1;
+         eCount = 1;
+      }
+
+      piRoom_Karma = (100 * gCount) / (gCount+eCount);
+      
+      % enough have died for a change in the forest.
+      if send(self,@GetKarma) <> oldKarma
+         OR bForceChange
+      {		              
+         send(self,@SetRoomKarma,#karma=send(self,@GetKarma));
+      }
+
+      return;
+   }
+   
+   GetKarma()
+   {
+      if piRoom_Karma < 20 { return KVERY_EVIL; }
+      if piRoom_Karma < 40 { return KEVIL; }
+      if piRoom_Karma > 80 { return KVERY_GOOD; }
+      if piRoom_Karma > 60 { return KGOOD; }
+
+      return KNEUTRAL;
+   }
+   
+   SetRoomKarma(karma = $)
+   {
+      local karma1, karma2, karma3, oCenter,rMusic,i,each_obj;
+      
+      rMusic = feyforest_music_neutral;
+
+      if karma = KVERY_EVIL
+      {
+         rMusic = feyforest_music_evil;
+      }
+
+      if karma = KVERY_GOOD
+      {
+         rMusic = feyforest_music_good;
+      }
+
+      prMusic = rMusic;
+
+      for i in plActive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@SendRoomMusic,#music_rsc=rMusic);
+         }
+      }
+
+      for i in plPassive
+      {
+         each_obj = First(i);
+         if IsClass(each_obj,&FeyTree)
+         {
+            Send(each_obj,@SetKarma,#karma=karma);
+         }
+      }
+
+      karma1 = 8871;
+      karma2 = 8860 + ((karma - 1) * 2) + 1;
+      karma3 = 8860 + (karma * 2);
+      
+      send(self,@ChangeTexture,#id=2,#new_texture=karma2,#flags=CTF_NORMALWALL);
+      send(self,@ChangeTexture,#id=3,#new_texture=karma3,#flags=CTF_NORMALWALL);
+      
+      if (karma = KVERY_EVIL)
+      {
+         send(self,@ChangeTexture,#id=1,#new_texture=karma1,#flags=CTF_NORMALWALL);
+      }     
+      else
+      {
+         send(self,@ChangeTexture,#id=1,#new_texture=karma2,#flags=CTF_NORMALWALL);
+      }
+      
+      % See if we need to load the node.
+      oCenter = send(SYS,@FindRoomByNum,#num=RID_C2);    
+      send(oCenter,@KarmaChanged,#karma=karma);
+
+      % Lighten/darken the room as appropriate.
+      send(self,@SetBaseLight,#amount=BASE_LIGHT+piRoom_Karma+LIGHT_KARMA_ADJUST);
+
+      return;
+   }
+   
+   SomeoneSaid(what=$,string=$,type=$)
+   {
+      local i, iValue, oRoom,oCenter;
+
+      iValue = -1;
+      
+      if type <> SAY_DM
+         OR NOT isClass(what,&DM)
+      {
+         propagate;
+      }
+      
+      % Codes to change the room Karma
+      if StringEqual(string,"room very good")
+      {
+         send(self,@AdjustRoomKarma,#value=100);
+      }
+
+      if StringEqual(string,"room good")
+      {
+         send(self,@AdjustRoomKarma,#value=75);
+      }
+
+      if StringEqual(string,"room neutral")
+      {
+         send(self,@AdjustRoomKarma,#value=50);
+      }
+
+      if StringEqual(string,"room evil")
+      {
+         send(self,@AdjustRoomKarma,#value=25);
+      }
+
+      if StringEqual(string,"room very evil")
+      {
+         send(self,@AdjustRoomKarma,#value=0);
+      }
+      
+      % Codes to spawn monsters
+      if StringEqual(string,"good fey")
+      {
+         send(self,@TryCreateMonster,#goodguy=TRUE);
+      }
+
+      if StringEqual(string,"evil fey")
+      {
+         send(self,@TryCreateMonster,#darkguy=TRUE);
+      }
+      
+      % Codes to set forest Karma
+      if StringEqual(string,"forest very good")
+      {
+         iValue = 100;
+      }
+
+      if StringEqual(string,"forest good")
+      {
+         iValue = 75;
+      }
+
+      if StringEqual(string,"forest neutral")
+      {
+         iValue = 50;
+      }
+
+      if StringEqual(string,"forest evil")
+      {
+         iValue = 25;
+      }
+
+      if StringEqual(string,"forest very evil")
+      {
+         iValue = 0;
+      }
+      
+      if iValue <> -1
+      {
+         oCenter = send(SYS,@FindRoomByNum,#num=RID_C2);
+         for i in send(oCenter,@GetFeyForest)
+         {
+            oRoom = send(SYS,@FindRoomByNum,#num=i);
+            if oRoom = $
+            {
+               continue;
+            }
+
+            send(oRoom,@AdjustRoomKarma,#value=iValue);
+         }
+      }
+
+      propagate;
+   }
+   
+   AdjustRoomKarma(value = 50)
+   {
+      local i, iGood, iBad;
+      
+      piRoom_karma = value;
+
+      for i in plActive
+      {
+         if isClass(first(i),&Monster)
+         {
+            send(first(i),@Delete);
+         }
+      }
+      
+      if pbUser_in_room
+      {
+         iGood = value / 10;
+         iBad = 10 - iGood;
+
+         while iGood > 0 
+         {
+            if send(self,@TryCreateMonster,#goodguy=TRUE,#nofigure=TRUE)
+            {
+               iGood = iGood - 1;
+            }
+         } 
+         
+         while iBad > 0 
+         {
+            if send(self,@TryCreateMonster,#darkguy=TRUE,#nofigure=TRUE)
+            {
+               iBad = iBad-1;
+            }
+         } 
+      }
+
+      % Force a change, because we've pre-set the Karma value.
+      send(self,@FigureRoomKarma,#bForceChange=TRUE);
+
+      return;
+   }
+
+   CreateYellZoneList()
+   {
+      plYell_zone = [RID_A1, RID_B1, RID_B2, RID_C1, RID_C2, RID_C3, RID_D2, RID_D1];
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

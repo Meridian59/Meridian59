@@ -1,0 +1,142 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SpiderNest1 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   QUEEN_ROW = 21
+   QUEEN_COL = 15
+
+   HOUR_MILLI = 3600000
+
+resources:
+
+   room_name_nest1 = "The Spider Nest"
+   room_nest1 = nest1.roo
+
+   nest1_music = song00.mid
+
+   Nest_to_Cave_1 = "~r~B>Ouch<~n  You fall through a hole in the floor, landing squarely on your rump."
+   Nest_to_Cave_2 = "You hop through a hole in the floor to a cave below."
+
+classvars:
+
+   vrName = room_name_nest1
+
+   viTeleport_row = 32
+   viTeleport_col = 7
+
+   viTerrain_type = TERRAIN_LAIR | TERRAIN_CAVES
+
+properties:
+
+   prRoom = room_nest1
+   piRoom_num = RID_NEST1
+
+   prMusic = nest1_music
+
+   piBaseLight = LIGHT_DARK
+   
+   piMonster_Count_Max = 10
+   piGen_time = 20000
+   piGen_percent = 60
+
+   ptQueen_gen = $
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&SpiderBaby, 80], [&Spider, 20] ];
+
+      plGenerators = [ [8, 22], [27, 22], [22, 19], [19, 20], [31, 15],
+                       [36, 11], [30, 2], [35, 19], [19, 25], [15, 24],
+                       [24, 8], [23, 2], [4, 13], [15, 16], [2, 12],
+                       [13, 5], [9, 15], [5, 11], [17, 5], [20, 8],
+                       [28, 12], [35, 16], [25, 24] , [31, 10],
+                       [34, 7], [4, 23] ];
+
+      Send(self,@QueenGenTimer);
+
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptQueen_gen <> $
+      {
+         DeleteTimer(ptQueen_gen);
+         ptQueen_gen = $;
+      }
+
+      propagate;
+   }
+
+   QueenGenTimer()
+   "Check if there's a queen spider in room.  If not, make one."
+   {
+      local i,bFound,each_obj;
+
+      ptQueen_gen = $;
+
+      bFound = FALSE;
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&SpiderQueen)
+         {
+            bFound = TRUE;
+         }
+      }
+
+      if not bFound
+      {
+         Send(self,@NewHold,#what=Create(&SpiderQueen),#new_row=QUEEN_ROW,#new_col=QUEEN_COL);
+      }
+      
+      ptQueen_gen = CreateTimer(self,@QueenGenTimer,1*HOUR_MILLI);
+
+      return;
+   }
+
+   SomethingMoved(what = $, new_row = $, new_col = $)
+   {
+      if (new_row = 26) AND (new_col = 14)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_CAVE2),
+              #new_row=53,#new_col=14,#fine_row=16,#fine_col=16,
+              #new_angle=Send(what,@GetAngle));
+
+         send(what,@MsgSendUser,#message_rsc=Nest_to_Cave_2);
+
+         return;
+      }
+      
+      if (new_row = 2) AND (new_col = 19)
+      {
+         Send(SYS,@UtilGoNearSquare,#what=what,
+              #where=Send(SYS,@FindRoomByNum,#num=RID_CAVE2),
+              #new_row=50 ,#new_col = 25,#new_angle=Send(what,@GetAngle));
+
+         send(what,@MsgSendUser,#message_rsc=Nest_to_Cave_1);
+
+         return;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

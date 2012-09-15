@@ -1,0 +1,61 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+BlindBrain is Brain
+
+   %% This kod is no longer used.  It was replaced by behavior flags.
+   %% Damion Schubert.   5/19/97
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viBrain_num = BRAIN_BLIND
+
+properties:
+
+messages:
+
+   MobConstructor( mob = $ )  { return; }
+   MobDelete( mob = $, state = $ )  { return; }
+   NewOwner( mob = $, state = 0, what = $ )  { return; }
+   FirstUserEntered( mob=$, state=$, what=$, new_row=$, new_col=$ )  { return; }
+   LastUserLeft( mob=$, state=$ )  { return; }
+   SomethingMoved( mob=$, state=$, what=$, new_row=$, new_col=$ )  { return; }
+   SomethingAttacked( mob=$, state=$, what=$, victim=$, use_weapon=$ )  { return; }
+   SomethingEntered( mob=$, state=$, what=$, where=$ )  { return; }
+   SomethingLeft( mob=$, state=$, what=$ )  { return; }
+   SomethingKilled( mob=$, state=$, what=$, victim=$, use_weapon=$ )  { return; }
+   PostAttackTimer( mob = $ )  { return; }
+
+   PreChaseTimer( mob = $ )
+   { return False; }
+
+   PostChaseTimer( mob = $ )  { return; }
+   PostMoveTimer( mob = $ )  
+   { 
+      Send(mob,@EnterStateMove);
+      return;
+   }
+
+   PostWaitTimer( mob = $ )  { return; }
+
+   Reset( mob = $ )
+   {
+      Send(mob,@EnterStateMove,#actnow=True);
+      return;
+   }
+
+end
+
+   

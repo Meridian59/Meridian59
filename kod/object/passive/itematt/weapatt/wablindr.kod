@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeapAttBlinder is WeaponAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This weapon has a chance to blind the opponent every time it does
+%     damage.
+%
+%  Form is: 
+%
+%       [ WA_BLINDER]
+%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   weapattblinder_desc = "  Q's insignia is emblazoned on the metal of the weapon."      
+   blinder_fail_use = "You are not yet ready to use %s%s."
+   blinder_worked = "%s%s stumbles away, screaming and clutching %s eyes!"
+   blinder_dm = "blinder"
+
+classvars:
+
+   vrDesc = weapattblinder_desc
+   vrDesc2 = $
+
+   viItem_Att_Num = WA_BLINDER
+
+   viDifficulty = 9
+   vrDM_trigger = blinder_dm
+
+properties:
+  
+   piValue_modifier = 200   %% modify the object's price by 100%
+   piValue_power_modifier = 10
+   piEffect_percent = 15
+
+messages:
+
+   ItemReqUse(oItem=$,oPlayer=$)
+   {
+      %% this person needs 50% in the weapon's proficiency to use
+      if send(oItem,@GetProf,#who=oPlayer) < 50      
+      {
+         send(oPlayer, @MsgSendUser, #message_rsc = blinder_fail_use,
+              #parm1=send(oItem,@getdef),#parm2=send(oItem,@GetName));
+              
+         return FALSE;      
+      }
+      
+      return TRUE;
+   }
+
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Effect Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   "Wielder has a 1% chance of blinding target with any hit."
+   {
+      local oSpell;
+      if random(1,100) < piEffect_percent
+      {
+         oSpell = send(SYS,@FindSpellByNum,#num=SID_blind);
+         
+         %% no duplicates
+         if not Send(target,@IsEnchanted,#what=oSpell)
+         {	          
+            send(oSpell,@CastSpell,#who=self,#ltargets=[target],#iSpellPower=50);
+            send(wielder, @MsgSendUser, #message_rsc = blinder_worked,
+                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName),
+                 #parm3=send(target,@GetHisher));
+         }
+      }
+
+      return Damage;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

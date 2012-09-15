@@ -1,0 +1,69 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KocatanHallA is KocatanRoom
+
+constants:
+
+   include blakston.khd
+
+
+resources:
+
+   room_KocatanHallA = Kochoha.roo
+   room_name_KocatanHallA = "The Hall of Heroes West"
+
+   KocatanHallA_music = extra01.mid
+
+classvars:
+
+   vrName = room_name_KocatanHallA
+
+   viTeleport_row = 9
+   viTeleport_col = 4
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
+
+properties:
+
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_KocatanHallA
+   piRoom_num = RID_KOC_HALL_OF_HEROES_A
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 3
+
+   prMusic = KocatanHallA_music
+   plStatues = $
+   pbEverEntered = FALSE
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      %% to Main hall
+      plExits = Cons([ 3, 3, RID_KOC_HALL_OF_HEROES, 3, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 3, RID_KOC_HALL_OF_HEROES, 3, 2, ROTATE_NONE ],plExits);
+      
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&KocatanWeaponsMaster),#new_row=5,#new_col=5,#fine_row=32,#fine_col=32);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

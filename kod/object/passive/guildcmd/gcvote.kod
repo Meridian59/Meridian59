@@ -1,0 +1,62 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GuildVote is GuildCommand
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   guildvote_name_rsc = "vote"
+   guildvote_icon_rsc = light.bgf
+   guildvote_desc_text_rsc = "Use this command to swing your support for leadership of the guild for one person in particular."
+
+   vote_no_gms = "Guildmasters may not vote their ties before abdicating their titles."
+   vote_ties_renouncer = "You renounce your ties to %s%s."
+   vote_ties_others = "%s renounces all ties to %s%s!"
+
+
+classvars:
+
+   vrName = guildvote_name_rsc
+   vrIcon = guildvote_icon_rsc
+   vrDesc = guildvote_desc_text_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viGuildcommand_num = GCID_VOTE
+   viRank_needed = RANK_APPRENTICE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   DoCommand(who=$, oTarget = $)
+   "Most of this is handled in guild.kod."
+   {
+      local oGuild;
+
+      oGuild = send(who,@getguild);
+
+      send(oGuild,@vote,#who=who,#candidate = oTarget);
+      propagate;
+   }
+  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

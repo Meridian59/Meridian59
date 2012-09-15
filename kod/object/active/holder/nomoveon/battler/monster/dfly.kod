@@ -1,0 +1,290 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DragonFly is Monster
+
+constants:
+
+   include blakston.khd
+
+   ANIM_SPEED = 100
+   WING_ANIM_SPEED = 100
+   ANIM_HOVER = 2
+   HOVER_DELAY = ANIM_SPEED * 5
+   LAND_DELAY = HOVER_DELAY * 5
+
+   FRAME_STAND = 1
+   FRAME_LAND = 1
+   FRAME_HOVER_START = 2
+   FRAME_HOVER_END = 3
+   FRAME_FLY_START = 4
+   FRAME_FLY_END = 5
+   FRAME_ATTACK_START = 6
+   FRAME_ATTACK_END = 9
+
+   HS_WINGS = 1
+
+resources:
+
+   DragonFly_koc_name_rsc = "huzotz"
+   DragonFly_name_rsc = "dragonfly"
+   DragonFly_icon_rsc = dfly.bgf
+   DragonFly_desc_rsc = \
+      "These small lizards look exceptionally friendly.  Their gossamer wings allow "
+      "them to jump into the air and take flight for brief periods of time.  When "
+      "backed into a corner, dragonflies are known to have a nasty spitting attack."
+
+   DragonFly_wings_rsc = dflywing.bgf
+
+   DragonFly_dead_icon_rsc = dflyX.bgf
+   DragonFly_dead_name_rsc = "dead dragonfly"
+
+   DragonFly_sound_hit = df_atkm.wav
+   DragonFly_sound_miss = df_atkm.wav
+   DragonFly_sound_death = df_dth.wav
+   DragonFly_sound_aware = df_awr.wav
+
+   DragonFly_spit = loogy.bgf
+
+classvars:
+
+   viIndefinite = ARTICLE_A
+   vrName = DragonFly_name_rsc
+   vrIcon = DragonFly_icon_rsc
+   vrDesc = DragonFly_desc_rsc
+   vrDead_icon = DragonFly_dead_icon_rsc
+   vrDead_name = DragonFly_dead_name_rsc
+
+   viTreasure_type = TID_DRAGONFLY
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_PIERCE
+   viLevel = 120
+   viDifficulty = 6
+   viKarma = 40
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE
+
+   viWimpy = 5
+
+   vrSound_hit = DragonFly_sound_hit
+   vrSound_miss = DragonFly_sound_miss
+   vrSound_aware = DragonFly_sound_aware
+   vrSound_death = DragonFly_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+   ptHover = $   
+   ptLand = $   
+
+   piDrawfx = BOUNCE_YES
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 25, -ATCK_SPELL_COLD ],
+                        [ 40, -ATCK_SPELL_SHOCK ],
+                        [ -20, -ATCK_SPELL_FIRE ],
+                        [ 40, ATCK_WEAP_THRUST ],
+                        [ 25, ATCK_WEAP_NERUDITE ],
+                        [ -10, ATCK_WEAP_MAGIC ]
+                      ];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSpit);
+
+      return;
+   }
+
+   DoSpit()
+   {
+      piAnimation = ANIM_ATTACK;
+      piDrawFX = piDrawFX | BOUNCE_YES;
+      Send(poOwner,@SomethingChanged,#what=self);
+      send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
+      piAnimation = ANIM_HOVER;
+
+      if ptHover = $
+      {
+         ptHover = CreateTimer(self,@HoverTimer,HOVER_DELAY);
+      }
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+   
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
+
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return DragonFly_spit;
+   }
+      
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
+   }
+
+   HoverTimer()
+   {  
+      ptHover = $;
+      
+      Send(poOwner,@SomethingChanged,#what=self);
+      if ptLand <> $
+      {
+         DeleteTimer(ptLand);
+      }
+
+      ptLand = CreateTimer(self,@LandTimer,LAND_DELAY);
+
+      return;
+   }
+
+   LandTimer()
+   {
+      ptLand = $;
+
+      if (poTarget = $) AND (piAnimation = ANIM_HOVER)
+      {
+         piAnimation = ANIM_NONE;
+         piDrawFX = (piDrawFX & (~BOUNCE_YES));
+         Send(poOwner,@SomethingChanged,#what=self);
+      }
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE);
+      AddPacket(2,FRAME_LAND);
+
+      return;
+   }
+
+   SendLookOverlays()
+   {
+      AddPacket(1,0);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,2,FRAME_FLY_START,2,FRAME_FLY_END);
+
+      return;
+   }
+
+   SendmoveOverlays()
+   {
+      AddPacket(1,1);
+      AddPacket(4,DragonFly_wings_rsc,1,HS_WINGS);
+      AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
+      AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_FLY_START - 1),2,(FRAME_FLY_END - 1) );
+
+      return;
+   }
+
+   SendOverlays()
+   {
+      if piAnimation = ANIM_HOVER
+      {
+         AddPacket(1,1);
+         AddPacket(4,DragonFly_wings_rsc,1,HS_WINGS);
+         AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
+         AddPacket(1,ANIMATE_CYCLE,4,WING_ANIM_SPEED,2,(FRAME_HOVER_START - 1),2,(FRAME_HOVER_END - 1) );
+
+         return;
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,1);                                             %% uses normal body speed for attack
+         AddPacket(4,DragonFly_wings_rsc,1,HS_WINGS);
+         AddPacket(1,ANIMATE_EFFECT,1,DRAWFX_TRANSLUCENT_25-DRAWFX_TRANSLUCENT_25+1);
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,(FRAME_ATTACK_START - 1),2,(FRAME_ATTACK_END - 1),2,(FRAME_HOVER_END - 1) );
+
+         return;
+      }
+
+     propagate;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_HOVER
+      {
+         AddPacket(1,ANIMATE_CYCLE,4,ANIM_SPEED,2,FRAME_HOVER_START,2,FRAME_HOVER_END);
+
+         return;
+      }
+
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE,4,ANIM_SPEED,2,FRAME_ATTACK_START,2,FRAME_ATTACK_END,2,FRAME_HOVER_END);
+
+         return;
+      }
+
+      % if no body animation.     
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptHover <> $
+      {
+         DeleteTimer(ptHover);
+         ptHover = $;
+      }
+
+      if ptLand <> $
+      {
+         DeleteTimer(ptLand);
+         ptLand = $;
+      }
+
+      propagate;
+   }
+
+   GetObjectFlags()
+   {
+      if piAnimation = ANIM_NONE
+      {
+         return MOVEON_NO | BATTLER_YES;
+      }
+
+      return MOVEON_NO | BOUNCE_YES | BATTLER_YES;
+   }
+   
+   CanMorphTo()
+   {
+      return FALSE;
+   }      
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

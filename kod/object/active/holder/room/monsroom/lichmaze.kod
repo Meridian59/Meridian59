@@ -1,0 +1,251 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LichMaze is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   H_MAZE_UP = 55
+   H_MAZE_DN = 0
+   MAZE_UP_SPEED = 15
+   MAZE_DN_SPEED = 15
+
+resources:
+
+   LichMaze_room_name = "The Dungeon of Castle Brax"
+   LichMaze_room = lichmaze.roo
+   LichMaze_music = nec03.mid
+
+   LichMaze_door_sound = necmaze.wav
+   LichMaze_loop = necloop2.wav
+
+   LichMaze_guildwarning = "Your amulet vibrates for a moment, startling you."
+
+classvars:
+
+   vrName = LichMaze_room_name
+
+   viTeleport_row = 9
+   viTeleport_col = 37
+
+   viTerrain_type = TERRAIN_NECROPOLIS
+
+properties:
+
+   prMusic = LichMaze_music
+
+   piBaseLight = LIGHT_VERY_DARK
+   piOutside_factor = OUTDOORS_3
+
+
+   prRoom = LichMaze_room
+   piRoom_num = RID_LICH_MAZE
+
+   plSectors = $
+   plLeverEffects = $
+
+messages:
+
+   Constructed()
+   {
+      local oMovingSector,lSectorIDs, IDs, lTemp;
+
+      plMonsters = [ [&DaemonSkeleton, 50], [&TuskedSkeleton, 50] ];
+
+      include lichmaze.kmn ;
+
+      plLooping_sounds = [[ LichMaze_loop, 0, 0, 200, 100 ]];
+
+      lSectorIDs = [ [1,2],[3,4],[5,6],[7,8],[9,10],
+                     [11,12],[13,14],[15,16],[17,18],[19,20]
+                   ];
+
+      plSectors = $;
+      for IDs in lSectorIDs
+      {
+         lTemp = $;
+         oMovingSector = Create(&MovingSector,#sectorroom=self,#sectorID=Nth(IDs,1),
+                        #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_DN,
+                        #upH=H_MAZE_UP,#downH=H_MAZE_DN,#upspeed=MAZE_UP_SPEED,
+                        #downspeed=MAZE_DN_SPEED,#toggletime=0,
+                        #movesound=LichMaze_door_sound);
+         lTemp = cons(oMovingSector,lTemp);
+         oMovingSector = Create(&MovingSector,#sectorroom=self,#sectorID=Nth(IDs,2),
+                        #surface=ANIMATE_FLOOR_LIFT,#state=SECTOR_UP,
+                        #upH=H_MAZE_UP,#downH=H_MAZE_DN,#upspeed=MAZE_UP_SPEED,
+                        #downspeed=MAZE_DN_SPEED,#toggletime=0,
+                        #movesound=LichMaze_door_sound);
+         lTemp = cons(oMovingSector,lTemp);
+         plSectors = cons(lTemp,plSectors);
+      }
+
+      Send(self,@RandomizeLeverEffects);
+      
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+      local oTargetGlobe;
+      
+      include lichmaze.ktm ;
+
+      oTargetGlobe = Create(&TargetGlobe);
+      Send(self,@NewHold,#what=oTargetGlobe,
+           #new_row=32,#new_col=23,#fine_row=20,#fine_col=26,#new_angle=ANGLE_NORTH_EAST);
+      Send(self,@NewHold,#what=Create(&ViewpointGlobe,#target=oTargetGlobe),
+           #new_row=33,#new_col=27,#fine_row=45,#fine_col=51,#new_angle=ANGLE_SOUTH);
+           
+      oTargetGlobe = Create(&TargetGlobe);
+      Send(self,@NewHold,#what=oTargetGlobe,
+           #new_row=16,#new_col=23,#fine_row=09,#fine_col=26,#new_angle=ANGLE_SOUTH_EAST);
+      Send(self,@NewHold,#what=Create(&ViewpointGlobe,#target=oTargetGlobe),
+           #new_row=33,#new_col=29,#fine_row=45,#fine_col=13,#new_angle=ANGLE_SOUTH);
+           
+      oTargetGlobe = Create(&TargetGlobe);
+      Send(self,@NewHold,#what=oTargetGlobe,
+           #new_row=16,#new_col=36,#fine_row=09,#fine_col=52,#new_angle=ANGLE_SOUTH_WEST);
+      Send(self,@NewHold,#what=Create(&ViewpointGlobe,#target=oTargetGlobe),
+           #new_row=35,#new_col=30,#fine_row=11,#fine_col=35,#new_angle=ANGLE_WEST);
+           
+      oTargetGlobe = Create(&TargetGlobe);
+      Send(self,@NewHold,#what=oTargetGlobe,
+           #new_row=32,#new_col=36,#fine_row=20,#fine_col=52,#new_angle=ANGLE_NORTH_WEST);
+      Send(self,@NewHold,#what=Create(&ViewpointGlobe,#target=oTargetGlobe),
+           #new_row=36,#new_col=30,#fine_row=31,#fine_col=35,#new_angle=ANGLE_WEST);
+
+      propagate;
+   }
+
+   CreateStandardExits()
+   {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_NECROAREA5, 30, 20, ROTATE_NONE, COL_IS_GREATER_THAN,30], plEdge_exits);
+      plEdge_Exits = Cons([LEAVE_NORTH, RID_NECROAREA5, 29, 10, ROTATE_NONE, COL_IS_LESS_THAN,30], plEdge_exits);
+
+      plExits = $;
+      plExits = Cons([ 1, 44, RID_NECROAREA5, 28, 32, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 45, RID_NECROAREA5, 28, 32, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 43, 27, RID_GUILDH15, 3, 4, ROTATE_NONE ],plExits);
+      plExits = Cons([ 43, 28, RID_GUILDH15, 3, 4, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+   RandomizeLeverEffects()
+   "generates a random permutation of 1-10."
+   {
+      local l, index;
+
+      l = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      plLeverEffects = $;
+      while length(l) > 0
+      {
+         index = random(1,length(l));
+         plLeverEffects = cons(Nth(l,index),plLeverEffects);
+         l = DelListElem(l,Nth(l,index));
+      }
+
+      return;
+   }
+
+   LeverPulled(num=$)
+   {
+      local oSector;
+
+      if num = $
+      {
+         DEBUG("nil lever pulled");
+
+         return;
+      }
+      if (num < 1) OR (num > length(plLeverEffects))
+      {
+         DEBUG("lever index out of range:",num);
+
+         return;
+      }
+
+      for oSector in Nth(plSectors,Nth(plLeverEffects,num))
+      {
+         Send(oSector,@Toggle,#toggleback=FALSE);
+      }
+
+      num = num + 1;
+      if num > length(plLeverEffects)
+      {
+         num = 1;
+      }
+
+      for oSector in Nth(plSectors,Nth(plLeverEffects,num))
+      {
+         Send(oSector,@Toggle,#toggleback=FALSE);
+      }
+      
+      return;
+   }
+
+   NewHold(what=$)
+   {
+      local oNecroGuild,lMembers,oNecro,iChance;
+
+      if IsClass(what,&User) AND NOT IsClass(what,&dm)
+      {
+         oNecroGuild = Send(Send(SYS,@FindRoomByNum,#num=RID_GUILDH15),@GetGuildOwner);
+         if oNecroGuild <> $
+         {
+            if not Send(what,@IsUsingA,#Class=&NecromancerAmulet)
+            {
+               iChance = 4;
+               if (Send(what,@FindHoldingActive,#class=&HunterSword)<>$)
+               {
+                  iChance = iChance/2;
+               }
+
+               if random(1,iChance) = 1
+               {
+                  lMembers = Send(oNecroGuild,@GetMemberList);
+                  oNecro = First(Nth(lMembers,random(1,length(lMembers))));
+                  if Send(oNecro,@IsLoggedOn)
+                  {
+                     Send(oNecro,@MsgSendUser,#message_rsc=lichmaze_guildwarning);
+                  }
+               }
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      local i,j;
+
+      for i in plSectors
+      {
+         for j in i
+         {
+            Send(j,@Delete);
+         }
+      }
+
+      plSectors = $;
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

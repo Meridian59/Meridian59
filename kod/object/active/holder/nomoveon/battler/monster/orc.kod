@@ -1,0 +1,139 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Orc is Monster
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   orc_name_rsc = "orc"
+   orc_icon_rsc = orc.bgf
+   orc_desc_rsc = \
+   "This foul servant of Qor, body covered in filth, towers "
+   "above human height.  It fiercely grips a blade in "
+   "one gnarled hand."
+
+   orc_dead_icon_rsc = orcX.bgf
+   orc_dead_name_rsc = "dead orc"
+
+   orc_sound_hit = orc_atkh.wav
+   orc_sound_miss = orc_atkm.wav
+   orc_sound_death = orc_dth.wav
+   orc_sound_aware = orc_awr.wav
+
+
+classvars:
+
+   viIndefinite = ARTICLE_AN
+   vrName = orc_name_rsc
+   vrIcon = orc_icon_rsc
+   vrDesc = orc_desc_rsc
+   vrDead_icon = orc_dead_icon_rsc
+   vrDead_name = orc_dead_name_rsc
+
+   viTreasure_type = TID_ORC
+
+   viSpeed = SPEED_AVERAGE
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = 0
+   viLevel = 45
+   viDifficulty = 6
+   viKarma = -40
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_SWITCHALOT
+
+
+   viWimpy = 10
+
+   vrSound_hit = orc_sound_hit
+   vrSound_miss = orc_sound_miss
+   vrSound_aware = orc_sound_aware
+   vrSound_death = orc_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructed()
+   {
+      plResistances = [ [ 40, -ATCK_SPELL_UNHOLY ],
+                        [ 40, ATCK_WEAP_PIERCE ],
+                        [ 20, ATCK_WEAP_SLASH ],
+                        [-25, -ATCK_SPELL_HOLY ] ];
+      propagate;
+   }
+
+   % Used for defense messages
+   GetParryAbility(stroke_obj=$)
+   {
+      if (stroke_obj <> $) and not Send(stroke_obj,@CanParry)
+      {
+         return 0;
+      }
+      return (viDifficulty*10)/2;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSlash);
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE);
+      AddPacket(4,100,2,2,2,6);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      % Make it look like orc is walking
+      % Cycle through "walking" bitmaps (groups 2-6) at 50 ms per frame
+      AddPacket(1,ANIMATE_CYCLE,4,50,2,2,2,6);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+	 AddPacket(1,ANIMATE_ONCE,4,75,2,7,2,11,2,1);
+	 return;
+      } 
+      %% if no body animation.     
+      propagate;
+   }
+
+   IsFrightenedOf(target=$)
+   {
+      if isClass(target,&giantrat)
+      { return TRUE; }
+
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

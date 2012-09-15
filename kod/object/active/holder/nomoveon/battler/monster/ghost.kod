@@ -1,0 +1,223 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Ghost is Monster
+
+constants:
+
+   include blakston.khd
+
+   SPELL_CHANCE = 4
+
+resources:
+
+   ghost_koc_name_rsc = "far'nohl kotezleoc"
+   ghost_name_rsc = "ghost of Far'Nohl"
+   ghost_generic_name_rsc = "ghost"
+   ghost_icon_rsc = ghost.bgf
+   ghost_desc_rsc = \
+      "Rags and rotten flesh hang on the bones of this magical "
+      "apparition.  This is the ghost of a former tyrant "
+      "of Meridian, Far'Nohl, who gave his life and his soul "
+      "to the dark arts."
+
+   ghost_normal_desc_rsc = \
+      "Lost souls of unending wrath, these fearsome undead are "
+      "amongst the most feared creatures to walk the mainlands "
+      "of Meridian.  The torture and pain necessary to create one "
+      "means that their occurance is relatively rare - which is a "
+      "blessing for the living."
+
+   ghost_eyes_rsc = gheye.bgf
+
+   ghost_dead_icon_rsc = ghostX.bgf
+   ghost_dead_name_rsc = "dead ghost"
+
+   ghost_sound_hit = gst_atkh.wav
+   ghost_sound_miss = gst_atkm.wav
+   ghost_sound_death = gst_dth.wav
+   ghost_sound_aware = gst_awr.wav
+
+classvars:
+
+   vrKocName = ghost_koc_name_rsc
+   vrName = ghost_generic_name_rsc
+   vrIcon = ghost_icon_rsc
+   
+   vrDead_icon = ghost_dead_icon_rsc
+   vrDead_name = ghost_dead_name_rsc
+
+   viTreasure_type = TID_GHOST
+   viSpeed = SPEED_FAST
+   viAttributes = MOB_ONE_TREASURE
+   viLevel = 200
+   viDifficulty = 5
+   viKarma = -100
+
+   vrSound_hit = ghost_sound_hit
+   vrSound_miss = ghost_sound_miss
+   vrSound_aware = ghost_sound_aware
+   vrSound_death = ghost_sound_death
+
+   viDead_drawfx = DRAWFX_TRANSLUCENT_75
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_WIZARD_KILLER | AI_MOVE_FLEE_FRIGHTENERS
+
+properties:
+
+   piAnimation = ANIM_NONE
+   piGroup = 1
+   piDrawfx = DRAWFX_TRANSLUCENT_75 | FLICKERING_YES
+   vrDesc = ghost_desc_rsc
+
+messages:
+
+   Constructed()
+   {      
+      plResistances = [ [ 90, -ATCK_SPELL_FIRE],
+                        [ 90, -ATCK_SPELL_COLD],
+                        [ 90, -ATCK_SPELL_UNHOLY],
+                        [ 90, -ATCK_SPELL_ACID],
+                        [ 90, ATCK_WEAP_NONMAGIC],
+                        [-50, ATCK_WEAP_MAGIC],
+                        [-50, -ATCK_SPELL_HOLY ]
+                      ];
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piGroup = Random(1,5);
+      if piGroup > 2
+      {
+         piGroup = 2;
+      }
+
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,1);
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1,ANIMATE_CYCLE, 4,200, 2,1, 2,2);
+
+      return;
+   }
+
+   SendmoveOverlays()
+   {
+      Send(self,@SendOverlays);
+
+      return;
+   }
+
+   SendOverlays()
+   {
+      AddPacket(1,1);
+      AddPacket(4,ghost_eyes_rsc, 1,HS_EYES, 1,ANIMATE_NONE, 2,1);
+      
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,200, 2,1, 2,2, 2,piGroup);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   MonsterCastSpell()
+   {
+      local oSpell,iBase;
+
+      oSpell = send(SYS,@FindSpellByNum,#num=SID_FIREBALL);
+      iBase = send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+
+      if Random(1,iBase) = 1
+         AND send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
+         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=75)
+         AND send(poowner,@ReqSpellCast,#who=self,#ospell=oSpell,#litems=[poTarget])
+         AND send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+      {
+         piAnimation = ANIM_ATTACK;
+         send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+         send(oSpell,@CastSpell,#who=self,#lTargets=[poTarget]);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   GetName()
+   {
+      % there's only one Far'nohl, and he's in the castle.
+      if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_THRONE1
+      {
+         return ghost_name_rsc;
+      }
+
+      propagate;
+   }
+
+   GetApparentName()
+   {
+      return send(self,@GetName);
+   }
+
+   ShowDesc()
+   {
+      if poOwner <> $ and send(poOwner,@GetRoomNum) = RID_THRONE1
+      {
+         vrDesc = ghost_desc_rsc;
+      }
+      else
+      {
+         vrDesc = ghost_normal_desc_rsc;
+      }
+
+      propagate;
+   }
+
+   IsUndead()
+   {
+      return TRUE;
+   }
+
+   SendLightingInformation()
+   {
+      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+      % 50 out of 255 intensity of light
+      AddPacket(1,50);
+      % Blue
+      AddPacket(2,LIGHT_WHITE);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

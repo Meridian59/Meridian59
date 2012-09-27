@@ -2172,7 +2172,7 @@ messages:
 
       % Bind the bonuses to reasonable values.
       iPrimaryBonus = bound(iPrimaryBonus,0,30);
-      iSecondaryBonus = bound(iPrimaryBonus,0,10);
+      iSecondaryBonus = bound(iSecondaryBonus,0,10);
 
       iSpellPower = iPrimaryBonus + iSecondaryBonus + iPowerBonus + iBase;
            

@@ -8,7 +8,7 @@ TOPDIR=.
 .SILENT:
 
 # make ignores targets if they match directory names
-all: Bserver Bclient Bmodules Bcompiler Bdiff Bkod Bdeco Bmakebgf Bsprocket Butil Bupdater Bbbgun Bkeybind
+all: Bserver Bclient Bmodules Bcompiler Bdiff Bkod Bdeco Bmakebgf Bsprocket Butil Bupdater Bbbgun 
 
 Bserver: Bsprocket
 	echo Making in $(BLAKSERVDIR)

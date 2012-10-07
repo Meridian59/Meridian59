@@ -129,7 +129,7 @@ messages:
       }
       
       Send(oDementia,@MakeSick,#who=oTarget,#iAmount=(iSpellPower/3+1),
-           #duration=send(self,@GetDuration,#iSpellPower=iSpellPower));
+           #iDuration=send(self,@GetDuration,#iSpellPower=iSpellPower));
 
       propagate;
    }

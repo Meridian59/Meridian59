@@ -236,7 +236,7 @@ resources:
    player_was_clawed = "%s%s%s rends your flesh with razor sharp claws."
    player_was_punched = "%s%s%s hits you with a solid punch."
    player_was_kicked = "%s%s%s slams a foot into your gut."
-   player_was_headbutt = "%s%s%s slams their head into your face."
+
    
    player_out_of_room = "%s%s is not here."
    player_not_supported = "Not supported yet"

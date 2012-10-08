@@ -20,7 +20,7 @@ resources:
    room_MarionHealerShop = marheal.roo
    room_name_MarionHealerShop = "Lady Aftyn's Sanctuary"
 
-   MarionHealerShop_music = main.mid
+   MarionHealerShop_music = main.mp3
 
 classvars:
 

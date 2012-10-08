@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsG8 = G8.roo
    room_name_OutdoorsG8 ="The Cragged Mountains"
-   OutdoorsG8_music = walk4.mid
+   OutdoorsG8_music = walk4.mp3
 
 classvars:
 

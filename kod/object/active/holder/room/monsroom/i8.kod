@@ -20,7 +20,7 @@ resources:
 
    room_OutdoorsI8 = I8.roo
    room_name_OutdoorsI8 ="The Cragged Mountains"
-   OutdoorsI8_music = walk4.mid
+   OutdoorsI8_music = walk4.mp3
 
 classvars:
 

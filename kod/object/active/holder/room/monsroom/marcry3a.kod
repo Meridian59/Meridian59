@@ -140,7 +140,7 @@ resources:
 
    room_name_mar_crypt3a = "Affirmation of the Forsaken"
    room_mar_crypt3a = RES00001.roo
-   music_mar_crypt3a = song10.mid
+   music_mar_crypt3a = song10.mp3
    marcrypt3a_gate_open = doorrsup.wav
    marcrypt3a_gate_close = arr_metl.wav
 

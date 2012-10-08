@@ -28,7 +28,7 @@ resources:
    light_on = "A magical glow suffuses through the area."
    light_off = "The light spell wears off."
    light_new_entrant = "This place is illuminated by a magical glow."  %replace by icon
-   light_spell_intro = "Faren Lv. 1:  Fills an area with magical illumination."
+   light_spell_intro = "Shal'ille Lv. 1:  Fills an area with magical illumination."
 
    light_sound = flight.wav
 
@@ -42,7 +42,7 @@ classvars:
    vrSpell_intro = light_spell_intro
 
    viSpell_num = SID_LIGHT
-   viSchool = SS_FAREN
+   viSchool = SS_SHALILLE
    viMana = 5
    viSpell_level = 1
    
@@ -126,6 +126,11 @@ messages:
       Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=light_off,#what=self);
       Send(where,@AddBaseLight,#amount=(-1)*state);
       return;
+   }
+
+   GetScrollClass()
+   {
+      RETURN &LightScroll;
    }
 
 end

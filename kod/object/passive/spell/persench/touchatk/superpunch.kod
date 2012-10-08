@@ -1,0 +1,105 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SuperPunch is TouchAttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SuperPunch_name_rsc = "mega punch"
+   SuperPunch_icon_rsc = impunch.bgf
+   SuperPunch_desc_rsc = \
+      "Infuse your fists with Kranaan's fighting fury. "
+	  "Requires nothing but a violent will."
+
+   SuperPunch_already_enchanted_rsc = "Your fists are already super powered!"
+   SuperPunch_On_rsc = "You feel Kranaan's power flowing through your fists."
+   SuperPunch_Off_rsc = "Your fists are no longer super powered."
+
+   SuperPunch_spell_intro = "Kranaan Lv. 1: Increase the power of your fists. Requires nothing but a violent will."
+   
+   SuperPunch_sound = fSuperPunch.wav
+
+
+classvars:
+
+   vrName = SuperPunch_name_rsc
+   vrIcon = SuperPunch_icon_rsc
+   vrDesc = SuperPunch_desc_rsc
+
+   vrAlreadyEnchanted = SuperPunch_already_enchanted_rsc
+   vrEnchantment_On = SuperPunch_On_rsc
+   vrEnchantment_Off = SuperPunch_Off_rsc
+
+   vrSpell_intro = SuperPunch_spell_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SS_KRAANAN
+   viSpell_num = SID_SUPER_PUNCH
+   viSpellExertion = 6
+   viSpell_level = 1
+   viMana = 5
+
+   viHit_Factor = 50        %% typically, spells have hit probs
+                            %% that are high, provided you're good at the skill
+
+
+   viMin_Damage = 6         %% touch spells typically do good damage    
+   viMax_Damage = 11         %% but are unaffected by weapon or strength bonuses
+
+   viRange = 3              %% touch spell range can vary, but are typically good     
+
+   viSpellType = ATCK_SPELL_ALL
+   viStroke = STROKE_PUNCH
+
+   vbAutomatic = FALSE
+
+   vrSucceed_wav = SuperPunch_sound
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+  ResetReagents()
+  {
+     plReagents = $;
+     return;
+  }
+
+   PlayerWasHitMsg(who=$,attacker=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will just choose a default - which is true for most weapon-based"
+   "combat strokes (but not true for most punch strokes or touch spells."
+   {
+      if vrPlayer_was_hit = $
+        { return FALSE; }
+      send(who,@msgsenduser,#message_rsc=vrPlayer_was_hit,
+           #parm1=send(attacker,@getdef),#parm2=send(attacker,@getname));
+
+      return TRUE;
+   }
+
+   CheckWeaponAndDoAnimation(who=$,weapon_used=$,victim=$)
+   {
+      Send(who,@DoFistAttack);
+      
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

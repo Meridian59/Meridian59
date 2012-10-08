@@ -1,0 +1,126 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PoisonTouch is TouchAttackSpell
+
+constants:
+
+   include blakston.khd
+   
+   POISON_BASE_CHANCE = 15
+   POISON_DURATION = 30000   %%% in milliseconds
+   POISON_LOSSRATE = 10000    %%% in health points * 10^-4 / second
+
+resources:
+
+   PoisonTouch_name_rsc = "poison touch"
+   PoisonTouch_icon_rsc = ipoistch.bgf
+   PoisonTouch_desc_rsc = \
+      "Covers your hands in a deadly poison coat. "
+      "Requires purple mushrooms."
+
+   PoisonTouch_On_rsc = "The poison oozes from the pores of your hand."
+   PoisonTouch_Off_rsc = "Your hands are no longer covered in poison."
+   PoisonTouch_Already_Enchanted_rsc = "Your hands are already covered in poison."
+
+   PoisonTouch_player_was_hit = "%s%s injects your body with a poisonous touch."
+   PoisonTouch_player_poison = \
+	  "As the poison travels to your head, you begin "
+      "to feel a little lightheaded.  The room spins around you."
+	  
+   PoisonTouch_player_killed_something = "%s%s screams as the poison burns through."
+   PoisonTouch_was_killed = "At the touch of %s%s, you let out a final scream and die."
+	  
+   PoisonTouch_player_hit_something = "%sYou watch %s%s scream in agony at your touch."
+
+   PoisonTouch_sound = poisoned.wav
+  
+classvars:
+
+   vrName = PoisonTouch_name_rsc
+   vrIcon = PoisonTouch_icon_rsc
+   vrDesc = PoisonTouch_desc_rsc
+
+   vrAlreadyEnchanted = PoisonTouch_already_enchanted_rsc
+   vrEnchantment_On = PoisonTouch_On_rsc
+   vrEnchantment_Off = PoisonTouch_Off_rsc
+
+   vrPlayer_was_hit = PoisonTouch_player_was_hit
+   vrPlayer_hit_something = PoisonTouch_player_hit_something
+   
+   vrPlayer_was_killed = PoisonTouch_was_killed
+   vrPlayer_killed_something = PoisonTouch_player_killed_something
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SS_QOR
+   viSpell_num = SID_POISON_TOUCH
+   viSpellExertion = 5
+   viSpell_level = 5
+   viMana = 12
+
+   viHit_Factor = 20       %% typically, spells have hit probs
+                           %% that are high, provided you're good at the skill
+
+
+   viMin_Damage = 3        %% touch spells typically do good damage    
+   viMax_Damage = 6      %% but are unaffected by weapon or strength bonuses
+
+   viRange = 2             %% touch spell range can vary, but are typically good     
+
+   viSpellType = ATCK_SPELL_ALL
+   viStroke = STROKE_ACID_TOUCH
+
+   vbAutomatic = FALSE
+
+   vrSucceed_wav = PoisonTouch_sound
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+  ResetReagents()
+  {
+     plReagents = $;
+     plReagents = cons([&PurpleMushroom,1],plReagents);
+     return;
+  }
+  
+   FindDamage(who = $, victim = $)
+   "This message is used to do poison effect."
+   {
+      local oSpell, iSpellpower, iPoisonChance;
+	  
+	  iSpellpower = Send(self,@GetSpellPower,#who=who);
+	  
+	  iPoisonChance = POISON_BASE_CHANCE - (iSpellpower / 10);
+
+      if Random(1,iPoisonChance) = 1
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+         Send(oSpell,@MakePoisoned,#who=victim,
+              #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+			  
+		 if isClass(victim,&User)
+		 {
+			Send(victim,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=10000);
+			Send(victim,@MsgSendUser,#message_rsc=PoisonTouch_player_poison);
+		 }
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

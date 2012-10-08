@@ -20,7 +20,7 @@ resources:
 
    room_dungeon = greeny.roo
    room_name_dungeon = "Underbasement of Victoria"
-   dungeon_music = cave.mid
+   dungeon_music = cave.mp3
 
    climb_crates_rsc = "You climb up on the crate."
    search_crates_rsc = "You rummage around in an open crate."

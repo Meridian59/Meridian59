@@ -18,30 +18,12 @@ resources:
 
    room_name_guest5 = "The Home of Roderic D'Stane"
    room_guest5 = guest5.roo
-   guest5_music = login.mid
-
-   guest5_signname = "communication"
-   guest5_sign = \
-      "Being able to communicate is an important part of Meridian, "
-      "whether you're solving a quest or you're plotting with your "
-      "allies. The most common way to communicate is with the SAY "
-      "command. For example, if you type SAY HELLO, the elder in this "
-      "hut will respond. The hotkey for SAY is F, which will automatically "
-      "bring you down to the chat window.\n\n"             
-      "Any other player who happens to be in the same map area as you "
-      "can hear what you say.  However, most shopkeepers and elders "
-      "are hard of hearing; you need to get close for them to hear you.\n\n"
-      "There are other communications options.  For example, you may see other "
-      "players broadcasting what's going on in the rest of the world. "
-      "However, for the most part, you will not have these capabilities "
-      "unless you become involved in the full version of the game.\n"
-      "-------------------------\n"
-      "Say QUEST to see what you should do next."
+   guest5_music = login.mp3
 
 classvars:
 
    vrName = room_name_guest5
-   vrSign = guest5_sign
+   viSign = NEWB_SIGN_TALK
 
    viTeleport_row = 2
    viTeleport_col = 2
@@ -82,8 +64,8 @@ messages:
       send(self,@NewHold,#what=Create(&HazarElder),#new_row=5,#new_col=3,#fine_row=32,#fine_col=32,
            #new_angle=ANGLE_EAST);
 
-      oSign = Create(&Sign,#desc=vrSign,#newbie=TRUE,#name=guest5_signname);
-      send(self,@NewHold,#what=oSign,#new_row=3,#new_col=2,#fine_row=32,#fine_col=00);
+      oSign = Create(&NewbieSign,#type=viSign,#extra=TRUE);
+	  send(self,@NewHold,#what=oSign,#new_row=3,#new_col=2,#fine_row=32,#fine_col=0);
 
       Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_JUG),
            #new_row=2,#new_col=4,#fine_row=32,#fine_col=32,#angle=ANGLE_EAST);

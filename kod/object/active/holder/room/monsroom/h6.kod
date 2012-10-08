@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsH6 = H6.roo
    room_name_OutdoorsH6 ="Main gate to the city of Tos"
-   OutdoorsH6_music = walk1.mid
+   OutdoorsH6_music = walk1.mp3
 
 classvars:
 
@@ -63,7 +63,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&GiantRat, 70], [&Centipede, 30] ];
+      plMonsters = [ [&GiantRat, 70], [&SpiderBaby, 30] ]; %Spawn change 09/27/2012
       plGenerators = [ [8, 8], [9, 14], [5, 25], [10, 30], [18, 18], 
 		      [25, 19], [20, 3], [25, 9], [42, 5], [45, 12],
 		      [41, 22], [35, 30], [47, 34] ];

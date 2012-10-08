@@ -9,6 +9,6 @@ BOFS = mrtrscrl.bof lghtscrl.bof darkscrl.bof discscrl.bof \
       disilscl.bof earthscl.bof firitscl.bof flashscl.bof \
       heatscrl.bof killfscl.bof lghtscrl.bof \
       mrtrscrl.bof pfogscrl.bof sporescl.bof trucescl.bof \
-      windscrl.bof
+      windscrl.bof foflscrl.bof
 
 !include $(KODDIR)\kod.mak

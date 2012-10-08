@@ -130,7 +130,7 @@ messages:
       
       Send(oPalsy,@MakeSick,#who=oTarget,#iAmount=(iSpellPower/3+1),
            #iDuration=send(self,@GetDuration,#iSpellPower=iSpellPower));
-           
+		   
       propagate;
    }
 

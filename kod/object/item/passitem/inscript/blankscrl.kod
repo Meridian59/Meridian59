@@ -1,0 +1,29 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlankScroll is InscriptionItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   blankscroll_name_rsc = "slip of parchment"
+   blankscroll_icon_rsc = scroll.bgf
+   blankscroll_desc_blank_rsc = "A fresh bit of parchment paper, without a mark on it."
+   blankscroll_desc_written_rsc = \
+      "A small sheet of parchment paper, with something scrawled across it."
+	  
+properties:
+   viValue_average = 300
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

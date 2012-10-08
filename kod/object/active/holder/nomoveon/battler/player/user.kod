@@ -2245,18 +2245,23 @@ messages:
 
       if pbLogged_On
       {
+ 
          iRoom = Send(poOwner,@GetRoomNum);
       
          if iRoom >= RID_NEWB_BASE and iRoom <= RID_NEWB_MAX
          {
             Send(self,@TeleportTo,#RID=RID_NEWB1);
          }
+		 if Send(Send(SYS, @GetSettings), @IsMarionStarterTown) and piBase_Max_health < PKILL_ENABLE_HP
+		 {
+		    Send(self,@TeleportTo,#RID=RID_MAR_INN);
+		 }
          else
          {
             oNew_room = Send(SYS,@FindRoomByNum,#num=RID_UNDERWORLD);
             if NOT Send(SYS,@UtilGoNearSquare,#what=self,#where=oNew_room,
-                        #new_row=24,#new_col=10,
-                        #fine_row=38,#fine_col=54,#new_angle=3072)
+                        #new_row=25,#new_col=16,
+                        #fine_row=32,#fine_col=32,#new_angle=ANGLE_NORTH)
             {
                Debug("UserGotoDeadRoom unable to Send user to dead room",
                      self,vrName);
@@ -2275,14 +2280,21 @@ messages:
             piSave_Row = Send(oRoom,@GetTeleportRow);
             piSave_Col = Send(oRoom,@GetTeleportCol);
          }
+		 if Send(Send(SYS, @GetSettings), @IsMarionStarterTown) and piBase_Max_health < PKILL_ENABLE_HP
+		 {
+            piSave_Room = RID_MARION;
+            oRoom = Send(SYS,@FindRoomByNum,#num=RID_MARION);
+            piSave_Row = Send(oRoom,@GetTeleportRow);
+            piSave_Col = Send(oRoom,@GetTeleportCol);
+		 }
          else
          {
             piSave_Room = RID_UNDERWORLD;
-            piSave_Row = 24;
-            piSave_Col = 10;
-            piSave_Fine_Row = 38;
-            piSave_Fine_Col = 54;
-            piSave_Angle = 3072;
+            piSave_Row = 25;
+            piSave_Col = 16;
+            piSave_Fine_Row = 32;
+            piSave_Fine_Col = 32;
+            piSave_Angle = ANGLE_NORTH;
          }
       }
 
@@ -6858,8 +6870,12 @@ messages:
 
    SetInitialHomeroom()
    {
-      piHomeroom = RID_NEWB1;
-      
+      % Check whether Marion or Raza is the starter town. - Tarandeep 
+	  if Send(Send(SYS, @GetSettings), @IsMarionStarterTown)
+	   { piHomeroom = RID_MAR_INN; }
+      else 
+	   { piHomeroom = RID_NEWB1; }
+	  
       return;
    }
    
@@ -7049,7 +7065,14 @@ messages:
 
    GetInitialRoomID()
    {
-      return RID_NEWB1;
+     local InitialRoom;
+      % Check whether Marion or Raza is the starter town. - Tarandeep
+	  if Send(Send(SYS, @GetSettings), @IsMarionStarterTown)
+	   { InitialRoom = RID_MARION; }
+      else 
+	   { InitialRoom = RID_NEWB1; }
+	   
+	   return InitialRoom;
    }
 
    TeleportTo(RID = RID_TOS,foyer=TRUE)
@@ -7365,6 +7388,20 @@ messages:
       return;
    }
 
+   % Check if player meets the minimum requirements to leave starter zone
+	TryLeaveNewbieRegion()
+	{
+	  if piBase_Max_health > PKILL_ENABLE_HP or Send(self,@PlayerIsImmortal) or
+	    Send(Send(SYS, @GetSettings), @IsMarionStarterTown) = FALSE
+	  {
+	     return TRUE;
+	  }
+	
+	  Send(self,@MsgSendUser,#message_rsc=player_no_enter);
+	  
+	  return FALSE;
+	}
+   
    CheckLeavingNewbieOrGuest(leaving=$)
    {
       local oldregion, region;

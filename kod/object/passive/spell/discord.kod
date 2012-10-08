@@ -175,7 +175,12 @@ messages:
       return bRemovedSomething;
    }   
 
+   GetScrollClass()
+   {
+      RETURN &DiscordScroll;
+   }
 
+   
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

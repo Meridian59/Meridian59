@@ -18,7 +18,7 @@ resources:
 
    room_Godroom = Zndramas.roo
    room_name_Godroom ="The meeting place of the Gods"
-   godroom_music = main.mid
+   godroom_music = main.mp3
    waterfall_soundGodroom = wfall2.wav
 
    news_godroom_name = "God discussion"

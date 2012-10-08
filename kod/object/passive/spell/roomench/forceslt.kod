@@ -164,6 +164,10 @@ messages:
       return iDuration;
    }
 
+   GetScrollClass()
+   {
+      RETURN &ForcesOfLightScroll;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

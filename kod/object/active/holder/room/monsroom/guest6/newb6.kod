@@ -17,19 +17,6 @@ constants:
 resources:
 
    room_name_newb6 = "Mausoleum"
-   newb6_signname = "looking around"
-   newb6_signtext = "If a monster isn't chasing you, now's a good time "
-         "to learn another handy interface ability.  By pressing PAGEUP "
-		 "and PAGEDOWN, you can have your character look up at the ceiling, "
-		 "and down at the pit full of mummies.  Once you do so, you may feel "
-		 "inclined to wave at the mummies. You can do that by typing WAVE. "
-		 "They won't wave back, of course, being uncultured brutes, but at least "
-		 "you get the satisfaction of being polite before going out and killing "
-		 "more of their friends.\n\n"
-		 "It's a good thing to keep in mind that PAGEDOWN is extremely useful when facing "
-		 "a foe shorter than yourself - and most of your early Meridian foes will be "
-		 "shorter than yourself.  However, for the time being, center your view "
-		 "by pressing HOME, and head back into the fray."
 
 classvars:
 
@@ -40,8 +27,7 @@ classvars:
    % Max # of monsters in the pit area
    viPit_monsters_max = 2
    
-   vrSignName = newb6_signname
-   vrSignText = newb6_signtext
+   vSign = NEWB_SIGN_LOOKING
 
 properties:
 

@@ -19,7 +19,7 @@ resources:
    room_barloquesmith = barsmith.roo
    room_name_barloquesmith = "The Royal Blacksmith of Barloque"
 
-   barsmith_music = smithy.mid
+   barsmith_music = smithy.mp3
    fire_sound_barsmith = fireplac.wav
 
 classvars:

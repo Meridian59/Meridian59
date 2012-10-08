@@ -18,27 +18,7 @@ resources:
 
    room_name_guest7 = "Eric's Stout Spirits"
    room_guest7 = guest7.roo
-   guest7_music = login.mid
-
-   guest7_signname = "health, mana and vigor"
-   guest7_sign = \
-      "In the upper right-hand corner of your screen, you'll see "
-      "three stats: health, mana, and vigor.  Health is simple--"
-      "you lose it when you take damage (usually in battle).  If your health is "
-      "reduced to zero, you die.  Mana determines how many spells "
-      "you can cast.  Both of these come back with time.\n\n"
-      "Vigor, the third stat, is the most important.  How fast your "
-      "health and your mana return depends largely on your vigor. "
-      "Also, running requires vigor "
-      "so you definitely want to keep your vigor high. "
-      "There are two ways to increase your vigor--by eating food ([USE] it from your inventory) "
-      "and by resting (click on the button in the toolbar).  "
-      "Resting in inns and taverns will heal your vigor "
-      "twice as quickly.  Taverns and stores also frequently sell foodstuffs "
-      "that you can take with you as you explore.\n"
-      "-----------------------\n"
-      "From here, go to the elder's home.  It is the small house "
-      "south and to the west of here."
+   guest7_music = login.mp3
              
 classvars:
 
@@ -81,7 +61,7 @@ messages:
       send(self,@NewHold,#what=Create(&Hazarbartender),#new_row=8,#new_col=7,
            #new_angle=ANGLE_SOUTH_WEST);
       
-      oSign = Create(&Sign,#desc=guest7_sign,#newbie=TRUE,#name=guest7_signname);
+      oSign = Create(&NewbieSign,#type=NEWB_SIGN_STATS,#extra=TRUE);
       send(self,@NewHold,#what=oSign,#new_row=4,#new_col=7);
 
       Send(self,@NewHold,#what=Create(&Stool),#new_row=6,#new_col=4,

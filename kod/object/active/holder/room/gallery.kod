@@ -19,7 +19,7 @@ resources:
 
    room_gallery = univ.roo
    room_name_gallery = "object gallery"
-   gallery_music = main.mid
+   gallery_music = main.mp3
 
 classvars:
 

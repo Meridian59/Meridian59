@@ -1,0 +1,411 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CreateScroll is Spell
+
+% NOTE: Not in the jala super-class because it does not require an instrument.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   CreateScroll_name_rsc = "inscription"
+   CreateScroll_icon_rsc = icrescroll.bgf
+   CreateScroll_desc_rsc = \
+      "Allows the caster to scribe their knowledge of a spell on to a scroll. "
+      "Simply write the name of the spell you want onto a slip of parchment and cast. "
+      "Requires the ingredients for spell.  "
+   CreateScroll_not_scroll = \
+      "You may not create a scroll using %s%s."
+   CreateScroll_not_holding_scroll = \
+      "You are not holding the slip of parchment."
+   CreateScroll_no_message = \
+      "With no spell to scribe, the spell fizzles into nothing."
+   CreateScroll_bad_spell = "You cannot make a scroll with those powers."
+   CreateScroll_do = \
+      "You seal magic into %s%s."
+   CreateScroll_Dont_have_target = "You have no knowledge of %s."
+   CreateScroll_no_ingredient = "You do not have all the indgredients you need."
+   CreateScroll_Fail_Target = \
+      "Your knowledge of %s is unsteady and you are not certain how to proceed."
+
+   CreateScroll_sound = Jdistill.wav
+
+classvars:
+
+   vrName = CreateScroll_name_rsc
+   vrIcon = CreateScroll_icon_rsc
+   vrDesc = CreateScroll_desc_rsc
+   vrSucceed_wav = CreateScroll_sound
+
+   viSpell_num = SID_CREATE_SCROLL
+   viSpell_level = 5
+   viSchool = SS_JALA
+   viMana = 20
+   viSpellExertion = 25
+   viChance_To_Increase = 20
+
+properties:
+
+   % Base from which the factor by which the reagents of the target
+   %  spell are multiplied to get ingrediant requirments.  1 to 4
+   %  (based on spellpower) is subtracted from this number to get
+   %  the final multiple.
+   piMultipleBase = 5
+
+messages:
+
+   CanPayCosts(who = $, lTargets = $)
+   { 
+      local oTarget;
+      oTarget = First(lTargets);
+   
+	  if NOT isClass(oTarget,&BlankScroll)
+	  {
+         Send(who,@MsgSendUser,#message_rsc=CreateScroll_not_scroll,
+         #parm1=Send(oTarget,@GetDef),
+         #parm2=Send(oTarget,@GetName));
+		 return FALSE;
+	  }
+	  
+	  if NOT Send(who,@IsHolding,#what=oTarget)
+	  {
+         Send(who,@MsgSendUser,#message_rsc=CreateScroll_not_holding_scroll,
+         #parm1=Send(oTarget,@GetDef),
+         #parm2=Send(oTarget,@GetName));
+		 return FALSE;
+	  }
+	  
+      propagate;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local oTarget, sInscription;
+      oTarget = First(lTargets);
+   
+	  if isClass(oTarget,&BlankScroll) and Send(who,@IsHolding,#what=oTarget)
+	  {
+		 Send(self,@TryCreateScroll,#who=who,#target=oTarget,
+			 #string=send(oTarget,@GetInscription));
+	  }
+	  else
+	  {
+         Send(who,@MsgSendUser,#message_rsc=CreateScroll_not_scroll,
+			 #parm1=Send(oTarget,@GetDef),
+			 #parm2=Send(oTarget,@GetName));
+		 Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+	  }
+	  
+	  return;
+   }
+   
+   TryCreateScroll(who = $, target = $, string = $)
+   {
+	  local lSpells, oSpell, iAbility, iRand, i;
+	  
+      lSpells = Send(SYS,@GetSpells);
+      iRand = Random(1,100);
+	  
+	  if string = $
+	  {
+         Send(who,@MsgSendUser,#message_rsc=CreateScroll_no_message);
+		 Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+		 return;
+	  }
+	  
+      for i in lSpells
+      {
+         if StringEqual(string,Send(i,@GetName))
+         {
+            oSpell = i;
+
+            break;
+         }
+      }
+	  
+      if oSpell = $
+      {
+         return;
+      }
+	  
+      if Send(oSpell,@GetScrollClass) = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=CreateScroll_bad_spell);
+
+         return;
+      }
+
+	  % Get percent in the target spell.  If not there or fail check bail and
+      %  print failure.
+      iAbility = Send(who,@GetSpellAbility,
+                      #spellnum=Send(oSpell,@GetSpellNum));
+					  
+      if iAbility <> $
+      {
+         if iRand > iAbility
+         {
+            % If pass check Start create scrolling.      
+            Send(self,@PerformCreateScroll,#caster=who,#oSpell=oSpell,#oParchment=target);
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=CreateScroll_fail_target,
+                 #parm1=Send(oSpell,@GetName));
+         }
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=CreateScroll_Dont_have_target,
+              #parm1=Send(oSpell,@GetName));
+      }
+	  
+	  return;
+   }
+
+   PerformCreateScroll(caster = $,oSpell = $,oParchment = $)
+   {
+      If Send(self,@CanPayIngredients,#caster=caster,#oTarget=oSpell)
+      {
+         Send(self,@PayIngredients,#caster=caster,#oTarget=oSpell);
+         Send(self,@MakeScroll,#caster=caster,#oTarget=oSpell,#oParchment=oParchment);
+
+         % Call this here since "cast spell" is actually a failure condition.
+         Send(self,@ImproveAbility,#who=caster);
+      }
+     
+      return;      
+   }
+
+   CanPayIngredients(caster = $, oTarget = $)
+   "Do we have the ingredients?"
+   {
+      local lIngredients, lIngredient, cReagentClass, iNumNeeded, bFound,
+            lItems, lLists, oUserObject, iNum, oOwner, oSpell; 
+
+      % Most of this is a modified cut and paste from CanPayReagents() in
+      %  Spell superclass.
+
+      lIngredients = Send(self,@GetIngredients,#caster=caster,
+                          #oTarget=oTarget);
+
+      % Check reagents
+      for lIngredient in lIngredients
+      {
+         cReagentClass = first(lIngredient);
+         iNumNeeded = Nth(lIngredient, 2);
+
+         bFound = FALSE;
+
+         lLists = [ Send(caster,@GetHolderActive),
+                    Send(caster,@GetHolderPassive)
+                  ];
+
+         % Count # of reagent that user has; complain if not enough
+         for lItems in lLists
+         {
+            for oUserObject in lItems
+            {
+               if isClass(oUserObject,cReagentClass)
+               {
+                  if isClass(oUserObject,&NumberItem)
+                  {
+                     iNum = Send(oUserObject,@GetNumber);
+                     if iNum >= iNumNeeded
+                     {
+                        iNumNeeded = 0;
+                     }
+                     else
+                     {
+                        iNumNeeded = iNumNeeded - iNum;
+                     }
+                  }
+                  else
+                  {
+                     iNumNeeded = iNumNeeded - 1;
+                  }
+
+                  if iNumNeeded = 0
+                  {
+                     bFound = TRUE;
+
+                     break;
+                  }
+               }
+            }
+            if bFound
+            {
+               break;
+            }
+         }
+
+         if not bFound
+         {
+            Send(caster,@WaveSendUser,#wave_rsc=spell_fail_wav);
+            Send(caster,@MsgSendUser,#message_rsc=CreateScroll_no_ingredient);
+
+            return FALSE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   PayIngredients(caster = $, oTarget = $)
+   "Now we're making a potion so remove the ingredients."
+   {
+      local num, reqstat, iability, lIngredient, lIngredients,
+            cIngredientClass, iLists, lItems, iNumNeeded,oUserObject;
+
+      % Again: Cut and paste from spell.kod
+
+      lIngredients = Send(self,@GetIngredients,#caster=caster,
+                          #oTarget=oTarget);
+      
+      if NOT IsClass(caster,&Player)
+      {
+         return TRUE;
+      }
+
+      % Use up reagents
+      for lIngredient in lIngredients
+      {
+         cIngredientClass = First(lIngredient);
+         iNumNeeded = Nth(lIngredient, 2);
+         iLists = 1;
+
+         while iLists <= 2 
+         {
+            if iLists = 1
+            {
+               lItems = Send(caster, @GetHolderActive);
+            }
+            else
+            {
+               lItems = Send(caster, @GetHolderPassive);
+            }
+
+            % Since spell is cast, we can be cavalier about deleting things
+            for oUserObject in lItems
+            {
+               if IsClass(oUserObject,cIngredientClass)
+               {
+                  if IsClass(oUserObject,&NumberItem)
+                  {
+                     Send(oUserObject,@SubtractNumber,#number=iNumNeeded);
+                     iNumNeeded = 0;
+
+                     break;
+                  }
+                  else 
+                  {
+                     Send(oUserObject,@Delete);
+                     iNumNeeded = iNumNeeded - 1;
+                     if iNumNeeded = 0
+                     {
+                        break;
+                     }
+                  }
+               }
+            }   
+
+            if iNumNeeded = 0 
+            {
+               % Found all we need
+               break;
+            }
+
+            iLists = iLists + 1;
+         }
+      }      
+
+      return TRUE;
+   }
+
+   MakeScroll(caster = $, oTarget = $, oParchment = $)
+   "Determine the scroll's atributes.  Make it.  Hold it."
+   {
+      local oScroll, cScrollClass, iAbility, iSpellpower, iPotionPower,
+            iLevel, iSkill, iGoBadTime;
+
+      cScrollClass = Send(oTarget,@GetScrollClass);
+
+      if cScrollClass = FALSE
+      {
+         return;
+      }
+
+      iLevel = Send(oTarget,@GetLevel);
+      iAbility = Send(caster,@GetSpellAbility,
+                      #spell_num=Send(oTarget,@GetSpellNum));
+      iSkill = Send(caster,@GetSpellAbility,#spell_num=viSpell_num);
+      iSpellPower = Send(self,@GetSpellPower,#who=caster);
+
+      % Potion is created at spellpower determined by the CreateScroll skill and
+      %  target spell ability. Target spell level also affects potion quality
+      %  (higher levels have less quality), but can be offset by caster's hit
+      %  point total to reward built characters.
+      iPotionPower = Bound(((iAbility * (iSkill + 1)) / 100),20,99);
+      iPotionPower = iPotionPower - bound((iLevel*15)
+                     - (Send(caster,@GetMaxHealth)-20),0,$);
+      iPotionPower = iPotionPower + Random(-20,(iSpellPower/10));
+      iPotionPower = Bound(iPotionPower,5,SPELLPOWER_MAXIMUM);
+
+      % Potion has duration (In days) determined by CreateScroll spellpower and
+      %  spell level.
+      iGoBadTime = Bound((iSpellPower / iLevel) / 3,1,7);
+      iGoBadTime = iGoBadTime * 24 * 60 * 60 * 60 * 1000;
+
+      oScroll = Create(cScrollClass,#labelled=TRUE,#iSpellPower=iPotionPower,
+                       #gobadtime=igobadtime,#maker=caster,#ability=iSkill);
+           
+      Send(caster,@NewHold,#what=oScroll);
+      Send(caster,@MsgSendUser,#message_rsc=CreateScroll_do,
+           #parm1=Send(oScroll,@GetIndef),#parm2=Send(oScroll,@GetName));
+
+	  Send(oParchment, @Delete);
+      return;
+   }
+
+   GetIngredients(oTarget = $, caster = $)
+   "Ask oTarget what its reagents are and multiply by proper factor, scale "
+   "this to spellpower."
+   {
+      local iMultiple,lreagents,lIngredients,i,iNumber,cType,lList,iSpellpower;
+
+      lIngredients = $;
+      iSpellpower = Send(self,@GetSpellPower,#who=caster);
+
+      iMultiple = Bound(iSpellpower / 20,1,4);
+      iMultiple = Bound(piMultipleBase - iMultiple,3,15);
+
+      lReagents  = Send(oTarget,@GetReagents);
+
+      for i in lReagents
+      {  
+         cType  = Nth(i,1);
+         iNumber = Nth(i,2) * iMultiple;
+         lList = [ cType,iNumber ];
+         lIngredients = Cons(lList,lIngredients);
+      }
+
+      return lIngredients;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

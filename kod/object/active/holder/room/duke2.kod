@@ -29,7 +29,7 @@ resources:
    room_name_Duke2 = "Blackstone Keep"
    room_Duke2 = Duke2.roo
 
-   Duke2_music = area01.mid
+   Duke2_music = area01.mp3
 
    Duke2_West_Wing_Door = \
       "The west wing of the keep is closed by the Duke's orders."

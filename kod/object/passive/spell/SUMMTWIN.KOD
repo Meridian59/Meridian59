@@ -36,7 +36,7 @@ classvars:
 
    viSpell_num = SID_EVIL_TWIN
    viSchool = SS_RIIJA
-   viSpell_level = 5
+   viSpell_level = 4
    viMana = 20
    viManaDrain = 10
    viDrainTime = 5000

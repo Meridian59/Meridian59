@@ -47,71 +47,7 @@ resources:
 
    room_name_guest6 = "Mausoleum"
    room_guest6 = guest6.roo
-   guest6_music = nec03.mid
-
-   guest6_signname = "spells"
-   guest6_sign = \
-      "There are more than 120 spells in the Meridian universe.  We've given you "
-      "one of the higher level ones to practice: the fireball spell.\n\n"
-      "Below you, there is a pit full of mummies just wandering around.  First, you "
-      "need to be able to see them.  Press the PAGEDOWN key until your view lowers "
-      "and you can see them.  You can also look up by pressing the PAGEUP key, and "
-      "center your view with the HOME key.  Keep in mind that this is also useful "
-      "should you ever find yourself fighting foes shorter than you are.\n\n"
-      "Now that you can see your enemies, let's smite them.  In your SPELLS menu, "
-      "select SCHOOL OF FAREN, and then FIREBALL.  Your cursor will change into "
-      "a target.  Place that target on a mummy, and fire away using your left mouse button.  "
-      "It may take more than one fireball to kill a mummy.\n\n"
-      "Note that how many fireballs you can cast are limited by a number of things. "
-      "You need mana to cast the spell, and also you need reagents (in this case, "
-      "red mushrooms and orc teeth).  Fortunately, the mummies that you kill elsewhere "
-      "provide the reagents you need."
-
-   guest6_signname2 = "fighting"
-   guest6_sign2 = \
-      "Combat is essential in Meridian 59, but it's also "
-      "pretty easy.  If you push your 'E' key by default, you will swing at "
-      "the monster closest to you with whatever weapon you have armed.  If "
-      "you don't have a weapon armed, you should do so now, because "
-      "punching is not an effective way to kill much of anything.\n\n"
-      "While fighting, be sure to keep an eye on your Health bar, marked "
-      "by a cross in the top-right corner of the screen.  If it gets too low, "
-      "don't hesitate to run away!  Then "
-      "rest or eat some food to get your strength up faster. "
-      "Keep in mind that you can neither fight nor "
-      "run while resting, so you want to be sure you find a safe place to "
-      "hide while you heal.\n\n"
-      "Monsters you kill will frequently drop treasure behind which "
-      "can be sold.  Be sure to get whatever they drop, by either using the "
-      "GET command, or dragging and dropping the items from the floor to your "
-      "inventory."
-
-   guest6_signname3 = "targetting"
-   guest6_sign3 = \
-      "Now that you are familiar with fighting and spellcasting, you're ready to "
-      "try out the advanced targetting feature.\n"
-      "Press [ or ] while facing a monster or player to activate the targetting "
-      "system.  You should see your target "
-      "outlined in color (you can set the color in your preferences).  As long as "
-      "a target is outlined, the game will assume that all attacks or spells "
-      "are to be directed at that target.  Note that this is true regardless of "
-      "whether you can hit or even see your target, so be careful about leaving "
-      "inaccessible enemies targetted!\n"
-      "Pressing [ or ] will cycle through your available targets, and pressing Esc "
-      "will clear your current target and return you to the default attack/spell mode.\n\n"
-      "With a little practise, you'll see how useful targetting can be, especially "
-      "when casting spells.  Just set up a hotkey to the spell of your choice, "
-      "highlight a target and fire away!"
-
-   guest6_signname4 = "jumping"
-   guest6_sign4 = \
-      "Jumping in Meridian 59 is especially tricky as there is no jump key or command.  "
-      "Consider it more like falling at an angle.  There will be many places in the world "
-      "that will require you to leap from one area to the next.  To cross these areas, "
-      "like the one ahead, get a running start by holding down the SHIFT key while using "
-      "your arrow keys to guide your avatar.  Just aim where you’re trying to land and "
-      "run from one ledge to the next.  If you don’t make the jump on your first try, "
-      "you can go around and try again."
+   guest6_music = nec03.mp3
    
    guest6_bones_name = "pile of bones"
    guest6_bones_icon = bonepile.bgf
@@ -126,8 +62,7 @@ classvars:
    vrName = room_name_guest6
 
    % These are here so we can have different text in the guest area as opposed to the newbie area.
-   vrSignName = guest6_signname
-   vrSignText = guest6_sign
+   viSign = NEWB_SIGN_SPELLS
    
    viTeleport_row = 11
    viTeleport_col = 23
@@ -204,16 +139,16 @@ messages:
    {
       local oSign;
 
-      oSign = Create(&sign,#desc=vrSignText,#newbie=TRUE,#name=vrSignName);
+      oSign = Create(&NewbieSign,#type=viSign);
       send(self,@NewHold,#what=oSign,#new_row=11,#new_col=2,#fine_col=48);
 
-      oSign = Create(&sign,#desc=guest6_sign2,#newbie=TRUE,#name=guest6_signname2);
+      oSign = Create(&NewbieSign,#type=NEWB_SIGN_FIGHTING);
       send(self,@NewHold,#what=oSign,#new_row=11,#new_col=14,#fine_row=32,#fine_col=48);
       
-      oSign = Create(&sign,#desc=guest6_sign3,#newbie=TRUE,#name=guest6_signname3);
+      oSign = Create(&NewbieSign,#type=NEWB_SIGN_TARGETTING);
       send(self,@NewHold,#what=oSign,#new_row=11,#new_col=3,#fine_row=32,#fine_col=32);
 
-      oSign = Create(&sign,#desc=guest6_sign4,#newbie=TRUE,#name=guest6_signname4);
+      oSign = Create(&NewbieSign,#type=NEWB_SIGN_JUMPING);
       send(self,@NewHold,#what=oSign,#new_row=29,#new_col=30,#fine_row=0,#fine_col=32);
       
       oSign = Create(&Skull);

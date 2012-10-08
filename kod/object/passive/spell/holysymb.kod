@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-HolySymbol is Spell
+HolySymbol is AttackSpell
 
 constants:
 
@@ -16,7 +16,7 @@ constants:
 
    % If we miss our roll by this much, we really pissed the monster off
    HATE_MARGIN = 25
-
+   
 resources:
 
    HolySymbol_name_rsc = "holy symbol"
@@ -24,34 +24,37 @@ resources:
    HolySymbol_desc_rsc = \
       "This spell involves weaving your hands in a holy tracery which frightens nearby unholy beings.  "
       "Requires elderberries to be crushed onto the skin of your hands to ritually cleanse them."
+   HolySymbol_sound = sholysym.wav
    
    HolySymbol_success = "Your hands weave through the air in a delicate tracery, speaking through motion "
       "the purity of Shal'ille, a ward against the unholy."
-
-   HolySymbol_sound = sholysym.wav
-
-   holysymbol_intro = "Shal'ille Lv. 1: Weaves a holy symbol in the air which repels any nearby undead."
 
 classvars:
 
    vrName = HolySymbol_name_rsc
    vrIcon = HolySymbol_icon_rsc
    vrDesc = HolySymbol_desc_rsc
-
-   vrSpell_intro = holysymbol_intro
-
+   
    viSpell_num = SID_HOLY_SYMBOL
-   viSchool = SS_SHALILLE
-   viSpell_level = 1
-   viMana = 8
-   viSpellExertion = 15
 
-   viCast_time = 2000
-   viChance_To_Increase = 15
+   viAttack_spell = ATCK_SPELL_ALL + ATCK_SPELL_HOLY
+
+   viSchool = SS_SHALILLE
+   viSpell_level = 3
+   viMana = 8
 
    vrSucceed_wav = HolySymbol_sound
 
+   % In seconds, since it works off GetTime().
+   viPostCast_time = 2
+
+   viChance_To_Increase = 5
+
 properties:
+
+   piDamageMin = 10
+   piDamageMax = 20
+   piRange = 4
 
 messages:
 
@@ -62,26 +65,24 @@ messages:
 
       return;
    }
-
-   GetNumSpellTargets()
+   
+   DoSideEffect(who = $)
    {
-      return 0;
-   }
-	 
-   CastSpell(who = $,iSpellPower=0)
-   {
-      local oRoom, oObject, oMonster, iChance, iRoll;
+      local oRoom, oObject, oMonster, iChance, iRoll, iSpellPower;
       
+	  iSpellPower = send(self,@GetSpellpower,#who=who);
+	  
       Send(who,@MsgSendUser,#message_rsc=HolySymbol_success);
       oRoom = send(who,@GetOwner);
 
       for oObject in send(oRoom,@GetHolderActive) 
       {
          oMonster = Send(oRoom,@HolderExtractObject,#data=oObject);
-      
+	  
          if isClass(oMonster,&Monster)
             AND NOT (send(oMonster,@GetBehavior) & AI_NPC)
             AND (send(oMonster,@IsUndead))
+		    AND Send(who,@SquaredDistanceTo,#what=oMonster) < (piRange * piRange)
          {
             % Use the "detect" option for the monster's karma incase we're trying to turn an event monster.
             iChance = (iSpellPower*3/4) + (send(who,@GetBaseMaxHealth) - send(oMonster,@GetLevel)/2)
@@ -122,6 +123,7 @@ messages:
 
       return iDuration;
    }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

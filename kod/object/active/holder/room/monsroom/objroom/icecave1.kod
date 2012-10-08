@@ -28,7 +28,7 @@ resources:
 
    room_Icecave1 = icecave1.roo
    room_name_Icecave1 ="The Dreaded Caves of Ice"
-   Icecave1_music = castle.mid
+   Icecave1_music = castle.mp3
 
 classvars:
 
@@ -64,7 +64,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&SnowRat, 55],  [&Troll, 45] ];
+      plMonsters = [ [&SnowRat, 55],  [&IcePerson, 45] ]; %Spawn change 09/27/2012
 
       plGenerators = [ [23, 5], [8, 6], [13, 20], [6, 25], [20, 20],
                       [8, 38], [23, 40], [20, 43], [41, 44], [46, 37], 

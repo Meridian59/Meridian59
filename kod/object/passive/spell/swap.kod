@@ -40,8 +40,8 @@ classvars:
    vrDesc = swap_desc_rsc
 
    viSpell_num = SID_SWAP
-   viSchool = SS_QOR
-   viSpell_level = 5
+   viSchool = SS_RIIJA
+   viSpell_level = 4
    viMana = 9
 
    viChance_To_Increase = 10

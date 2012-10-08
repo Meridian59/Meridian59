@@ -92,7 +92,8 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[$,$,[SID_LIGHTNING_BOLT,SID_DEMENT]];
+      plFor_sale=[ [Create(&BlankScroll)],
+                    $,[SID_LIGHTNING_BOLT,SID_DEMENT,SID_CREATE_SCROLL] ];
       return;
    }
 

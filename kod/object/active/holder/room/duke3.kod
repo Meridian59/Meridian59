@@ -23,7 +23,7 @@ resources:
    room_name_Duke3_old = "The Chambers of Duke Kalior"
    room_name_Duke3 = "The Chambers of Duke Akardius"
 
-   Duke3_music = area01.mid
+   Duke3_music = area01.mp3
 
    duke3_West_Door = "The Duke shouts angrily at you as you attempt to open the door.  You wisely put your efforts to a halt."
    duke3_East_Door = "The Duke would have your head if you entered his quarters.  You decide you'd rather keep it and leave the door alone."

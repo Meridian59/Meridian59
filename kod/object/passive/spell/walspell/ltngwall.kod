@@ -38,7 +38,7 @@ classvars:
 
    viSpell_num = SID_LIGHTNING_WALL
    viSchool = SS_FAREN
-   viSpell_level = 6
+   viSpell_level = 5
    viMana = 20
    viSpellExertion = 10
 

@@ -18,10 +18,10 @@ resources:
    createfood_name_rsc = "create food"
    createfood_icon_rsc = icrefood.bgf
    createfood_desc_rsc = \
-      "The power of Kraanan is summoned to materialize various nourishing foods.  "
+      "The power of Jala is summoned to materialize various nourishing foods.  "
       "Requires elderberries and herbs to cast."
 
-   createfood_spell_intro = "Kraanan Lv. 1: Turns basic elderberries into food for you to eat and increase your vigor."
+   createfood_spell_intro = "Jala Lv. 1: Turns basic elderberries into food for you to eat and increase your vigor."
 
    createfood_sound = kcreatef.wav
 
@@ -37,7 +37,7 @@ classvars:
 
    vrSpell_intro = createfood_spell_intro
    viSpell_num = SID_CREATE_FOOD
-   viSchool = SS_KRAANAN
+   viSchool = SS_JALA
    viSpell_level = 1
    viMana = 10 
    viSpellExertion = 0

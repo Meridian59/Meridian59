@@ -74,7 +74,7 @@ messages:
    {
       plFor_sale=[[Create(&Stew,#number=4)],
                   $,
-                  [ SID_SWEEP, SID_RESTORATE ] ];
+                  [ SID_SWEEP, SID_RESTORATE, SID_CREATE_FOOD ] ];
       return;
    }
    

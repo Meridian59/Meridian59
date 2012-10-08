@@ -20,25 +20,9 @@ resources:
 
    room_name_guest2 = "Hazar"
    room_guest2 = guest2.roo
-   guest2_music = login.mid
+   guest2_music = login.mp3
 
    guest2_wading_sound = weatstp1.wav
-
-   guest2_signname = "getting around"
-   guest2_sign = \
-      "Now that you're outside, you can really practice moving "
-      "around.  Autorun is on by default, but if you wish to slow down a bit use "
-      "the SHIFT key to walk while you move.  Also, "
-      "you can use the A and D keys to slide "
-      "sideways (or 'strafe').  The END key is good for turning around 180 degrees "
-      "in a hurry.\n\n"
-      "It's also a good time to learn about the map. "
-      "You can add comments to the map by RIGHT CLICKING on the map, and then "
-      "entering your reminder to yourself.\n"
-      "-------------------\n"             
-      "After you experiment a bit, you should "
-      "head towards the blacksmith's shop, which is housed in the north wing of the "
-      "stone building at the west end of the pond."
 
    guest2_locked_farm = "The door to the farmhouse is firmly bolted from the inside."
    guest2_locked_stable = "The door to the tiny shed is locked."
@@ -116,7 +100,7 @@ messages:
    {
       local oSign;
 
-      oSign=Create(&sign,#desc=guest2_sign,#newbie=TRUE,#name=guest2_signname);
+      oSign=Create(&NewbieSign,#type=NEWB_SIGN_MOVING,#extra=TRUE);
       send(self,@NewHold,#what=oSign,#new_row=20,#new_col=41);
 
       Send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_TREE1),

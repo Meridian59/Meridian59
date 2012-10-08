@@ -126,6 +126,10 @@ messages:
       return random(iDuration/2,iDuration);
    }
 
-
+   GetScrollClass()
+   {
+      RETURN &DarknessScroll;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

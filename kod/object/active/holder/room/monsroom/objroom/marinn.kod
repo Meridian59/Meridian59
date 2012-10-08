@@ -19,7 +19,7 @@ resources:
    room_name_marinn = "The Limping Toad Inn and Tavern"
    room_marinn = marinn.roo
 
-   marinn_music = bar.mid
+   marinn_music = bar.mp3
 
    news_marinn_name = "Events in Marion"
    news_marinn_desc = "Find out what people are saying about Marion."
@@ -125,6 +125,17 @@ messages:
            #new_row=2,#new_col=4,#fine_row=48,#fine_col=32,#new_angle=ANGLE_SOUTH);
       send(self,@NewHold,#what=Create(&MarionBartender),
            #new_row=14,#new_col=9,#fine_row=48,#fine_col=0,#new_angle=ANGLE_NORTH);
+		   
+ 	  % Create newbie signs if Marion is set as the starter town
+	  if (Send(Send(SYS, @GetSettings), @IsMarionStarterTown))
+	  {
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_STATS),
+           #new_row=15,#new_col=6,#fine_row=0,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_SELLING),
+           #new_row=2,#new_col=3,#fine_row=15,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_RENTING_A_ROOM),
+           #new_row=6,#new_col=16,#fine_row=16,#fine_col=32);
+	  }
 
       propagate;
    }

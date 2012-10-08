@@ -28,6 +28,8 @@ resources:
       "and curses the user to wield it until he or she gains "
       "divine aid.  "
       "Requires the blood of a magic-casting beast and teeth of a fierce fighting monster."
+	  
+   curseweapon_no_weapon = "%s%s isn't wielding anything that you can curse."
 
    curseweapon_sound = qcurweap.wav
    
@@ -45,8 +47,11 @@ classvars:
    viSpellExertion = 40
    viCast_time = 20000
    vrSucceed_wav = CurseWeapon_sound
+   
+   viOutlaw = TRUE
 
 properties:
+   vbTargetedPlayer = FALSE
 
 messages:
 
@@ -67,9 +72,28 @@ messages:
    CanPayCosts(who = $, lTargets = $)
    {
       local oWeapon, oTarget;
-   
-      oTarget = First(lTargets);
-
+	  
+	  oTarget = First(lTargets);
+	  
+	  % if target is a player go after their weapon.
+	  if isClass(oTarget,&Player)
+	  {
+		 oWeapon = Send(oTarget,@LookupPlayerWeapon);
+		 
+		 %% if target has no wielded weapon, the spell is wasted.
+		 if oWeapon = $
+		 { 
+			 Send(who,@MsgSendUser,#message_rsc=curseweapon_no_weapon,
+				 #parm1=Send(oTarget,@GetCapDef),
+				 #parm2=Send(oTarget,@GetName));
+				 
+			 return FALSE; 
+		 }
+		 
+		 vbTargetedPlayer = TRUE;
+		 oTarget = oWeapon;
+	  }
+	  
       % Check that target is enchantable
       if NOT isClass(oTarget,&weapon) OR NOT send(oTarget,@CanEnchant,#oSpell=self)
       {
@@ -95,9 +119,28 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oItem, oItemAtt;
+      local oItem, oItemAtt, bPlayerDuration, oWeapon;
 
       oItem = first(lTargets);
+	  
+	  % if target is a player go after their weapon.
+	  if isClass(oItem,&Player)
+	  {
+		 oWeapon = Send(oItem,@LookupPlayerWeapon);
+		 
+		 %% if target has no wielded weapon, the spell is wasted.
+		 if oWeapon = $
+		 { 
+			 Send(who,@MsgSendUser,#message_rsc=curseweapon_no_weapon,
+				 #parm1=Send(oItem,@GetCapDef),
+				 #parm2=Send(oItem,@GetName));
+				 
+			 return FALSE; 
+		 }
+		 
+		 vbTargetedPlayer = TRUE;
+		 oItem = oWeapon;
+	  }
 
       if send(oItem,@HasAttribute,#ItemAtt = WA_CURSED)
       {
@@ -128,9 +171,19 @@ messages:
    GetDuration(iSpellPower=0)
    {
       local iDuration;
-      %% duration = 1 to 25 hours, plus a smattering of minutes.
-      iDuration = bound((iSpellPower+1)/4,1,25)*3600000;
-      iDuration = iDuration + random(1,3600000);    
+	  
+	  if vbTargetedPlayer
+	  {
+		 %% shorter duration is used when targeting a player. 
+		 iDuration = (iSpellPower+1) * 500;
+	  }
+	  else
+	  {
+		 %% duration = 1 to 25 hours, plus a smattering of minutes.
+		 iDuration = bound((iSpellPower+1)/4,1,25)*3600000;
+		 iDuration = iDuration + random(1,3600000);   
+	  }
+	  
       return iDuration;
    }
 

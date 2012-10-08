@@ -119,6 +119,12 @@ properties:
    % Justicar
    piMinHPForJusticar = 100
 
+   % Set either Raza or Marion as the starter town.
+   pbMarionAsStarterTown = TRUE
+   
+   % If system will reveal location where player died.
+   pbDeathLocations = TRUE
+
 
 messages:
 
@@ -288,6 +294,16 @@ messages:
    GetMinHPForJusticar()
    {
       return piMinHPForJusticar;
+   }
+   
+   IsMarionStarterTown()
+   {
+	  return pbMarionAsStarterTown;
+   }
+   
+   DeathLocationsEnabled()
+   {
+	  return pbDeathLocations;
    }
 
 end

@@ -19,7 +19,7 @@ resources:
    room_name_kocsew1 = "A foul place to wander"
    room_kocsew1 = kocsew1.roo
 
-   kocsew1_music = cave.mid
+   kocsew1_music = cave.mp3
 
    kocsewer1_locked = \
       "You stand up to your knees in raw sewage, rattling at the gate, "

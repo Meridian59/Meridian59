@@ -18,7 +18,7 @@ resources:
 
    room_badland2 = badland2.roo
    name_badland2 = "Kardde's Canyon"
-   Badland2_music = walk5.mid
+   Badland2_music = walk5.mp3
 
 classvars:
 

@@ -294,7 +294,6 @@ messages:
    {
       Send(who,@SetTranceFlag);
       Send(who,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
-      
       return;
    }
 

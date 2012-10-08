@@ -56,8 +56,8 @@ classvars:
    viMana = 50         % Mana is amount used upon inititiation
 
    viSpell_num = SID_SHATTERLOCK
-   viSchool = SS_KRAANAN
-   viSpell_level = 6
+   viSchool = SS_JALA
+   viSpell_level = 5
 
    viSpellExertion = 50
    viCast_time = 20000

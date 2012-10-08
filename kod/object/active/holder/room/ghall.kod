@@ -96,7 +96,7 @@ resources:
    guildhall_sound_down = shielddn.wav
    guildhall_sound_up = shieldup.wav
 
-   guildhall_music = ltlgirl.mid
+   guildhall_music = ltlgirl.mp3
 
    guildhall_entrancedoor_open_sound = doorrsup.wav
    guildhall_entrancedoor_close_sound = doordown.wav

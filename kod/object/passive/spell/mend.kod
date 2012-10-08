@@ -37,7 +37,7 @@ classvars:
    vrDesc = mend_desc_rsc
 
    viSpell_num = SID_MEND
-   viSchool = SS_KRAANAN
+   viSchool = SS_JALA
    viSpell_level = 4
    viMana = 9
    viChance_To_Increase = 10

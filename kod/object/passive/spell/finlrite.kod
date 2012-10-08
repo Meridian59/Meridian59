@@ -146,6 +146,10 @@ messages:
       propagate;
    }
 
-
+   GetScrollClass()
+   {
+      RETURN &FinalRitesScroll;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

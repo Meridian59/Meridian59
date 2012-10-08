@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsC7 = C7.roo
    room_name_OutdoorsC7 ="Faronath, home of the TreeFolk"
-   OutdoorsC7_music = walk5.mid
+   OutdoorsC7_music = walk5.mp3
 
 classvars:
 

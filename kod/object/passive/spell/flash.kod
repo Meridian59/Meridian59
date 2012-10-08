@@ -124,6 +124,10 @@ messages:
       propagate;
    }
 
+   GetScrollClass()
+   {
+      RETURN &FlashScroll;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

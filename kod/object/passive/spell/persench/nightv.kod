@@ -19,7 +19,7 @@ resources:
    nightvision_name_rsc = "night vision"
    nightvision_icon_rsc = nitvsico.bgf
    nightvision_desc_rsc = \
-      "Magically enhances the vision of the target.  "
+      "Magically enhances the vision.  "
 	   "Requires elderberry to cast."
    
    nightvision_already_enchanted_rsc = "You already have night vision."
@@ -40,7 +40,7 @@ classvars:
    vrSuccess = nightvision_Success_rsc
 
    viSpell_num = SID_NIGHT_VISION
-   viSchool = SS_KRAANAN
+   viSchool = SS_QOR
    viSpell_level = 3
    viMana = 6
 
@@ -49,6 +49,8 @@ classvars:
    viFlash = FLASH_GOOD_SELF
 
 properties:
+
+   vbCanCastOnOthers = FALSE
 
 messages:
 

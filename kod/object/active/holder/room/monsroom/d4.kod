@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsD4 = D4.roo
    room_name_OutdoorsD4 ="Valley of Ileria"
-   OutdoorsD4_music = walk7.mid
+   OutdoorsD4_music = walk7.mp3
 classvars:
 
    vrName = room_name_OutdoorsD4

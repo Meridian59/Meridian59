@@ -18,7 +18,7 @@ resources:
    waterfall_sounde4 = wfall2.wav
    room_OutdoorsE4 = E4.roo
    room_name_OutdoorsE4 ="East Merchant Way through Ilerian Woods"
-   OutdoorsE4_music = forest.mid
+   OutdoorsE4_music = forest.mp3
 
 classvars:
 
@@ -53,7 +53,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&SpiderBaby, 65], [&Centipede, 35] ];
+      plMonsters = [ [&SpiderBaby, 65], [&Ant, 35] ]; %Spawn change 09/27/2012
 
       plGenerators = [ [6, 20], [10, 24], [17, 44], [15, 35], [14, 11],
 		      [18, 7], [28, 6], [31, 15], [26, 17], [41, 14] ];

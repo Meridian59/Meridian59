@@ -77,8 +77,8 @@ messages:
    {
       local iDuration;
 
-      % Duration in seconds, from 1-33.
-      iDuration = bound(iSpellPower/3,1,33);
+      % Duration in seconds, from 1-66.
+      iDuration = bound(iSpellPower*2/3,1,66);
       
       return iSpellpower * 1000;
    }
@@ -122,6 +122,7 @@ messages:
 
             Send(what,@MsgSendUser,#message_rsc=paralyze_target_on,
                  #parm1=send(who,@GetDef),#parm2=send(who,@GetName));
+				 
          }
 
          Send(who,@MsgSendUser,#message_rsc=paralyze_caster,

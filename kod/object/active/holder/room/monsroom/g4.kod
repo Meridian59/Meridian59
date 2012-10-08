@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsG4 ="Main gate to Cor Noth"
    room_OutdoorsG4 = G4.roo
-   OutdoorsG4_music = walk1.mid
+   OutdoorsG4_music = walk1.mp3
 
    waterfall_soundg4 = wfall2.wav
 

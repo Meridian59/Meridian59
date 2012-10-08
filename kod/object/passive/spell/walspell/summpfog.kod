@@ -198,6 +198,10 @@ messages:
       propagate;
    }
 
+   GetScrollClass()
+   {
+      RETURN &summonpoisonfogScroll;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

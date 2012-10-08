@@ -153,6 +153,10 @@ messages:
       return damage + Random(2,5);
    }
 
+   GetScrollClass()
+   {
+      RETURN &KillingFieldScroll;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -43,22 +43,22 @@ constants:
 
 resources:
 
-   system_user_killed = "### %q was just killed by %s%q."
-   system_user_killed_by_pker = "### %q has been murdered in cold blood."
+   system_user_killed = "### %q was just killed by %s%q%q"
+   system_user_killed_by_pker = "### %q has been murdered in cold blood%q"
    system_user_killed_pker = \
-      "### The notorious murderer, %q, has been killed by %s%q."
+      "### The notorious murderer, %q, has been killed by %s%q%q"
    system_user_killed_outlaw = \
-      "### The feared outlaw, %q, has just met justice at %s%q's hands."
-   system_killed_self = "### %q was just slain by %s own folly."
+      "### The feared outlaw, %q, has just met justice at %s%q's hands%q"
+   system_killed_self = "### %q was just slain by %s own folly%q"
    system_user_killed_room = \
       "### %s have laid claim to yet another poor soul, %q."
    system_user_killed_bridge_faith = \
       "### %q just hurled %sself from the cliffs of Riija to find a watery "
       "grave."
-   system_user_killed_token = "### %q lost a token to %s%q."
-   system_user_killed_shield = "### %q was bested by faction rival %s%q."
+   system_user_killed_token = "### %q lost a token to %s%q%q"
+   system_user_killed_shield = "### %q was bested by faction rival %s%q%q"
    system_user_killed_guild = \
-      "### %q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
+      "### %q of %s%q has been slaughtered by %s%q of %s%q in guild combat%q"
 
    system_admin_message = "%q"
 
@@ -1459,8 +1459,8 @@ messages:
 
    UserKilled(what = $,killer = $)
    {
-      local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
-            param2, param3, param4, param5, param6, param7, type5, type7;
+      local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild, oRoom, sLocation,
+            param2, param3, param4, param5, param6, param7, param8, type4, type5, type7, type8;
 
       if IsClass(what,&Guest)
          OR (killer = $)
@@ -1488,6 +1488,19 @@ messages:
 
       Send(Send(self,@FindRoomByNum,#num=RID_TOS_GRAVEYARD),@PlayerKilled,
            #who=what,#killer=killer);
+		   
+	  % Set location if enabled.
+	  ClearTempString();
+	  sLocation = CreateString();
+	  if Send(Send(SYS, @GetSettings), @DeathLocationsEnabled)
+	  {
+		 oRoom = Send(killer,@GetOwner);
+	     AppendTempString(" at ");
+		 AppendTempString(Send(oRoom,@GetDef));
+		 AppendTempString(Send(oRoom,@GetName));
+	  }
+	  AppendTempString(".");
+	  SetString(sLocation,GetTempString());
 
       % Nil out all our parameters we use.
       param2 = $;
@@ -1496,8 +1509,10 @@ messages:
       param5 = $;
       param6 = $;
       param7 = $;
+      param8 = $;
 
       % Resource types for the parameters.
+	  type4 = STRING_RESOURCE;
       type5 = STANDARD_RESOURCE;
       type7 = STANDARD_RESOURCE;
 
@@ -1505,6 +1520,7 @@ messages:
       rMessage = $;
       param2 = Send(killer,@GetIndef);
       param3 = Send(killer,@GetName);
+	  param4 = sLocation;
 
       if IsClass(killer,&Room)
       {
@@ -1519,8 +1535,9 @@ messages:
             param2 = Send(what,@GetTrueName);
          }
 
-         % Eliminate param3 that was set by default
+         % Eliminate param3 and param4 and that was set by default
          param3 = $;
+         param4 = $;
       }
 
       if what = killer
@@ -1528,8 +1545,9 @@ messages:
          rMessage = System_killed_self;
          param2 = Send(what,@GetHisHer);
 
-         % Eliminate param3 that was set by default
-         param3 = $;
+         % Overwrite the values set by default
+         param3 = sLocation;
+         param4 = $;
       }
       else
       {
@@ -1544,13 +1562,13 @@ messages:
             if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
             {
                rMessage = system_user_killed_outlaw;
-               % Parameters set by default
+			   % Parameters set by default
             }
 
             if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             {
                rMessage = system_user_killed_pker;
-               % Parameters set by default
+			   % Parameters set by default
             }
 
             if IsClass(killer,&User)
@@ -1579,8 +1597,11 @@ messages:
                   param5 = Send(killer,@GetName);
                   param6 = Send(oKillerGuild,@GetDef);
                   param7 = Send(oKillerGuild,@GetName);
+                  param8 = sLocation;
+				  type4 = STANDARD_RESOURCE;
                   type5 = STRING_RESOURCE;
                   type7 = STRING_RESOURCE;
+                  type8 = STRING_RESOURCE;
                }
 
                % Notify who killed whom during frenzies.
@@ -1601,8 +1622,8 @@ messages:
                   rMessage = system_user_killed_by_pker;
                   poLastMurderer = killer;
 
-                  % Nil out the values set by default.
-                  param2 = $;
+                  % Overwrite the values set by default.
+                  param2 = sLocation;
                   param3 = $;
                }
             }
@@ -1614,13 +1635,13 @@ messages:
       {
          rMessage = system_user_killed;
       }
-
+	  
       % Send the proper message to all logged on, if we get a message.
       for i in plUsers_logged_on
       {
          Send(i,@MsgSendUser,#message_rsc=rMessage,#parm1=Send(what,@GetTrueName),#type1=STRING_RESOURCE,
               #parm2=param2,#parm3=param3,#parm4=param4,#parm5=param5,#parm6=param6,
-              #parm7=param7,#type3=STRING_RESOURCE,#type5=type5,#type7=type7);
+              #parm7=param7,#parm8=param8,#type3=STRING_RESOURCE,#type4=type4,#type5=type5,#type7=type7,#type8=type8);
       }
 
       return;
@@ -2964,6 +2985,13 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_MELANCHOLY,#class=&Melancholy);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
+	  
+	  % Open-source spells
+      Send(self,@CreateOneSpellIfNew,#num=SID_UNHOLY_TOUCH,#class=&UnholyTouch);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SUPER_PUNCH,#class=&SuperPunch);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CREATE_SCROLL,#class=&CreateScroll);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
+      Send(self,@CreateOneSpellIfNew,#num=SID_POISON_TOUCH,#class=&PoisonTouch);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -4679,6 +4707,7 @@ messages:
       plItemTemplates = cons(create(&Robe),plItemTemplates);
       plItemTemplates = cons(create(&LightRobe),plItemTemplates);
       plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
+      plItemTemplates = cons(create(&DiscipleLightRobe),plItemTemplates); %Open-source addition. (Tarandeep)
       plItemTemplates = cons(create(&NeruditeArmor),plItemTemplates);
 
       plItemTemplates = cons(create(&Helm),plItemTemplates);
@@ -4911,6 +4940,7 @@ messages:
       plItemTemplates = cons(create(&SporeBurstScroll),plItemTemplates);
       plItemTemplates = cons(create(&TruceScroll),plItemTemplates);
       plItemTemplates = cons(create(&WindScroll),plItemTemplates);
+      plItemTemplates = cons(create(&ForcesOfLightScroll),plItemTemplates);
 
       plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
       plItemTemplates = cons(create(&SkullMask),plItemTemplates);
@@ -4925,6 +4955,10 @@ messages:
       plItemTemplates = cons(create(&MummyMask),plItemTemplates);
       plItemTemplates = cons(create(&FeyMask),plItemTemplates);
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
+
+      plItemTemplates = cons(create(&CowMask),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&BlankScroll),plItemTemplates);
 
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
 

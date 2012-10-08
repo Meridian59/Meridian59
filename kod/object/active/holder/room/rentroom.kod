@@ -61,7 +61,7 @@ resources:
 
    RentableRoom_landlord = "The Landlord"
 
-   RentableRoom_music = bar.mid
+   RentableRoom_music = bar.mp3
 
    RentableRoom_carpet_options = \
       "We have two shades of carpet, a light grey and a darker grey, or "

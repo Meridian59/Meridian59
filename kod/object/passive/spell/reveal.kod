@@ -35,7 +35,7 @@ classvars:
    vrDesc = reveal_desc_rsc
 
    viSpell_num = SID_REVEAL
-   viSchool = SS_SHALILLE
+   viSchool = SS_JALA
    viSpell_level = 5
    viMana = 30
    viSpellExertion = 20

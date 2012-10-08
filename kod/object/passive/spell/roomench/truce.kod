@@ -226,6 +226,10 @@ messages:
       return TRUE;
    }
 
+   GetScrollClass()
+   {
+      RETURN &TruceScroll;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

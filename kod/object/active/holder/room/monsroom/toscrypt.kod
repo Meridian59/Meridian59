@@ -18,7 +18,7 @@ resources:
 
    room_name_toscrypt = "The Crypt"
    room_toscrypt = toscrypt.roo
-   music_toscrypt = ksong.mid
+   music_toscrypt = ksong.mp3
 
 classvars:
 
@@ -41,7 +41,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Zombie, 80], [&Skeleton, 20] ];
+      plMonsters = [ [&Skeleton, 65], [&Zombie, 45] ]; %Spawn change 09/27/2012
 
       plGenerators = [ [11, 7], [11, 11], [15, 7],
                        [15, 11], [19, 7], [19, 11]

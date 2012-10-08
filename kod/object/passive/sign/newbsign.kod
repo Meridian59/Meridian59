@@ -1,0 +1,323 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Created seperate class for newbie signs to keep things neat and tidy.
+% This was mainly created because of being able to set Marion as a starter town. - Tarandeep
+
+NewbieSign is Sign
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   newbsign_name_rsc = "Newbie Sign"
+   newbsign_icon_rsc = razsign1.bgf
+   newbsign_desc_rsc = "This is a sign used for tutorials."
+   newbsign_extra_rsc = ""
+
+   newbsign_name_welcome = "Welcome"
+   newbsign_desc_welcome = \
+      "Welcome to the game!  We hope that you come to enjoy this "
+      "unique online experience.\n\n"
+      "The first thing you need to learn is how to walk, using the W, A, S, and D keys "
+      "alone with the left and right arrows. "
+      "You can walk forward and back using the W and S keys, and turn "
+      "using the left and right arrows.  We will get more into movement "
+      "in a moment.\n\n"
+      "Also, you should note that you can right-click on many of the "
+      "things you see in the world. These signs are a good example, "
+      "as is the innkeeper. You can even view yourself "
+      "by right-clicking on the head on the upper-right corner of the "
+      "screen.\n\n"
+      "If you wish to activate 'mouselook' you can do so at this time "
+      "by pressing the C key. If you wish to deactivate it, you can do "
+      "so by pressing the C key again.\n\n"
+      "Lastly, you can go through doors by pressing the space bar.\n "
+   newbsign_welcome_extra = \
+      "When you're ready to proceed, walk to the exit door (forward and to your left), "
+      "hit the space bar, and then read the next sign which will be in plain sight."
+	  
+   newbsign_name_moving = "getting around"
+   newbsign_desc_moving = \
+      "Once you get used to the basics, you can really practice moving "
+      "around.  Autorun is on by default, but if you wish to slow down a bit use "
+      "the SHIFT key to walk while you move.  Also, "
+      "you can use the A and D keys to slide "
+      "sideways (or 'strafe').  The END key is good for turning around 180 degrees "
+      "in a hurry.\n\n"
+      "It's also a good time to learn about the map. "
+      "You can add comments to the map by RIGHT CLICKING on the map, and then "
+      "entering your reminder to yourself.\n"
+   newbsign_moving_extra = \        
+      "After you experiment a bit, you should "
+      "head towards the blacksmith's shop, which is housed in the north wing of the "
+      "stone building at the west end of the pond."
+	  
+   newbsign_name_buying = "buying items"   
+   newbsign_desc_buying = \
+      "You've come into this world virtually empty handed.  Fortunately, "
+      "you also started with a bit of cash, so that you might "
+      "buy some of the items you need to get started.  Go up to the blacksmith, "
+      "press return to enter the chat window, type BUY and press return again. "
+      "A list of items that the blacksmith has for sale will appear.  Choose the "
+      "items you want, and then press [OK].  First buy a weapon, and then "
+      "some armor.  If you have enough money "
+      "to pay for them all, they will appear in your inventory.\n\n"
+      "However, you're still unarmed.  Right-click on the weapon that you "
+      "purchased, and then press the [USE] button.  A yellow glow will "
+      "appear around it, meaning that you're wielding it.  Repeat this for "
+      "the armor. To remove an object from use, simply "
+      "right-click the object and press the [UNUSE] button.\n"
+      "You may also just double-click on an item in your inventory to use or unuse it."
+   newbsign_buying_extra = \
+      "When you're done here you should go to the tavern, the large brown "
+      "building at the east end of town."
+
+   newbsign_name_selling = "selling items"
+   newbsign_desc_selling = \
+      "Occasionally, you will find quests where a shopkeeper "
+      "or other townsman desires you to bring him a certain item "
+      "or peform some errand.  "
+      "More frequently, after killing a monster you will find items "
+      "that you yourself have no need for but that you can sell to get "
+      "the weapons and other equipment that you do need.  For example, "
+      "you may have found entroot berries after killing some mummies.  "
+      "Use the OFFER command, or press the CONTROL key and O to offer "
+      "these to Ravi, the apothecary.\n\n"
+      "It should be noted that not every NPC wants every item.  Ravi, for "
+      "example, has no interest in purchasing weapons so if you offer them to him, "
+      "it will confuse him.  He may even think that it's a gift, and take it "
+      "from your astonished hands.  If you SAY 'buy' or 'sell', you should get "
+      "a good idea of what any shopkeeper is willing to take off your hands.\n"
+   newbsign_selling_extra = \
+      "This is the end of your tutorial.  Feel free to explore around a bit "
+      "and try new things.  You may wish to pay a visit to the Grand Museum, which "
+      "houses a number of exhibits about the wonders found in Meridian proper."
+	  
+   newbsign_name_talk = "communication"
+   newbsign_desc_talk = \
+      "Being able to communicate is an important part of Meridian, "
+      "whether you're solving a quest or you're plotting with your "
+      "allies. The most common way to communicate is with the SAY "
+      "command. For example, if you type SAY HELLO, the elder in this "
+      "hut will respond.\n\n"				 
+      "Any other player who happens to be in the same map area as you "
+      "can hear what you say.  However, most shopkeepers and elders "
+      "are hard of hearing; you need to get close for them to hear you.\n\n"
+      "Another communication option is BROADCAST.  If you type BROADCAST HELLO, "
+      "you will then be saying hello to everyone online.  However, you should note "
+      "that it is not considered good etiquette to fill the broadcast channel with "
+      "useless messages, and for that reason, every broadcast you do carries a cost of "
+      "half your mana.  Watch what other people broadcast to get a feel for what is "
+      "appropriate.\n"
+   newbsign_talk_extra = \
+      "Say QUEST to see what you should do next."
+
+   newbsign_name_stats = "health, mana and vigor"
+   newbsign_desc_stats = \
+      "In the upper right-hand corner of your screen, you'll see "
+      "three stats: health, mana, and vigor.  Health is simple--"
+      "you lose it when you take damage (usually in battle).  If your health is "
+      "reduced to zero, you die.  Mana determines how many spells "
+      "you can cast.  Both of these come back with time.\n\n"
+      "Vigor, the third stat, is the most important.  How fast your "
+      "health and your mana return depends largely on your vigor. "
+      "Also, running requires vigor "
+      "so you definitely want to keep your vigor high. "
+      "There are two ways to increase your vigor--by eating food ([USE] it from your inventory) "
+      "and by resting (click on the button in the toolbar).  "
+      "Resting in inns and taverns will heal your vigor "
+      "twice as quickly.  Taverns and stores also frequently sell foodstuffs "
+      "that you can take with you as you explore.\n"
+   newbsign_stats_extra = \
+      "From here, go to the elder's home.  It is the small house "
+      "south and to the west of here."
+
+   newbsign_name_spells = "spells"
+   newbsign_desc_spells = \
+      "There are more than 120 spells in the Meridian universe.  We've given you "
+      "one of the higher level ones to practice: the fireball spell.\n\n"
+      "Below you, there is a pit full of mummies just wandering around.  First, you "
+      "need to be able to see them.  Press the PAGEDOWN key until your view lowers "
+      "and you can see them.  You can also look up by pressing the PAGEUP key, and "
+      "center your view with the HOME key.  Keep in mind that this is also useful "
+      "should you ever find yourself fighting foes shorter than you are.\n\n"
+      "Now that you can see your enemies, let's smite them.  In your SPELLS menu, "
+      "select SCHOOL OF FAREN, and then FIREBALL.  Your cursor will change into "
+      "a target.  Place that target on a mummy, and fire away using your left mouse button.  "
+      "It may take more than one fireball to kill a mummy.\n\n"
+      "Note that how many fireballs you can cast are limited by a number of things. "
+      "You need mana to cast the spell, and also you need reagents (in this case, "
+      "red mushrooms and orc teeth).  Fortunately, the mummies that you kill elsewhere "
+      "provide the reagents you need."
+
+   newbsign_name_fighting = "fighting"
+   newbsign_desc_fighting = \
+      "Combat is essential in Meridian 59, but it's also "
+      "pretty easy.  If you push your 'E' key by default, you will swing at "
+      "the monster closest to you with whatever weapon you have armed.  If "
+      "you don't have a weapon armed, you should do so now, because "
+      "punching is not an effective way to kill much of anything.\n\n"
+      "While fighting, be sure to keep an eye on your Health bar, marked "
+      "by a cross in the top-right corner of the screen.  If it gets too low, "
+      "don't hesitate to run away!  Then "
+      "rest or eat some food to get your strength up faster. "
+      "Keep in mind that you can neither fight nor "
+      "run while resting, so you want to be sure you find a safe place to "
+      "hide while you heal.\n\n"
+      "Monsters you kill will frequently drop treasure behind which "
+      "can be sold.  Be sure to get whatever they drop, by either using the "
+      "GET command, or dragging and dropping the items from the floor to your "
+      "inventory."
+
+   newbsign_name_targetting = "targetting"
+   newbsign_desc_targetting = \
+      "Now that you are familiar with fighting and spellcasting, you're ready to "
+      "try out the advanced targetting feature.\n"
+      "Press [ or ] while facing a monster or player to activate the targetting "
+      "system.  You should see your target "
+      "outlined in color (you can set the color in your preferences).  As long as "
+      "a target is outlined, the game will assume that all attacks or spells "
+      "are to be directed at that target.  Note that this is true regardless of "
+      "whether you can hit or even see your target, so be careful about leaving "
+      "inaccessible enemies targetted!\n"
+      "Pressing [ or ] will cycle through your available targets, and pressing Esc "
+      "will clear your current target and return you to the default attack/spell mode.\n\n"
+      "With a little practise, you'll see how useful targetting can be, especially "
+      "when casting spells.  Just set up a hotkey to the spell of your choice, "
+      "highlight a target and fire away!"
+
+   newbsign_name_jumping = "jumping"
+   newbsign_desc_jumping = \
+      "Jumping in Meridian 59 is especially tricky as there is no jump key or command.  "
+      "Consider it more like falling at an angle.  There will be many places in the world "
+      "that will require you to leap from one area to the next.  To cross these areas, "
+      "like the one ahead, get a running start by holding down the SHIFT key while using "
+      "your arrow keys to guide your avatar.  Just aim where you’re trying to land and "
+      "run from one ledge to the next.  If you don’t make the jump on your first try, "
+      "you can go around and try again."
+	  
+   newbsign_name_looking = "looking around"
+   newbsign_desc_looking = "If a monster isn't chasing you, now's a good time "
+         "to learn another handy interface ability.  By pressing PAGEUP "
+		 "and PAGEDOWN, you can have your character look up at the ceiling, "
+		 "and down at the pit full of mummies.  Once you do so, you may feel "
+		 "inclined to wave at the mummies. You can do that by typing WAVE. "
+		 "They won't wave back, of course, being uncultured brutes, but at least "
+		 "you get the satisfaction of being polite before going out and killing "
+		 "more of their friends.\n\n"
+		 "It's a good thing to keep in mind that PAGEDOWN is extremely useful when facing "
+		 "a foe shorter than yourself - and most of your early Meridian foes will be "
+		 "shorter than yourself.  However, for the time being, center your view "
+		 "by pressing HOME, and head back into the fray."
+
+   newbsign_name_renting = "renting a room"
+   newbsign_desc_renting = "Go to Morrigan that runs the inn and say 'rent room'. "
+		 "If there is a room available and you have 5000 shillings in your inventory "
+		 "you will be given a gold room key. This key will have your player's name on it."
+		 "You can also make copies of your key for 500 shillings each by saying 'copy key'.\n\n" 
+		 "The first 5000 shillings will buy you 84 Meridian days with your room. "
+		 "Each RL day equals about 12 meridian days, so you now have the room for one week." 
+		 "Offer the innkeeper more money to extend the room. You can only rent a maximum of 3 RL weeks."
+		 "1K per RL day, or 1K per 12 Meridian days.\n\n"
+		 "Walk to the room door, normally at the back of an inn and double-click your key. "
+		 "A white flashing light will appear briefly and you will be standing in your newly purchased room. "
+		 "There will be a bell on one of the walls. Right click the bell and hit the use button. " 
+		 "A servant will tell you he is ready to help. Say 'help' and the servant will list the options "
+		 "you have in purchasing and rearranging furniture."
+	  
+classvars:
+
+properties:
+
+   vrName = newbsign_name_rsc
+   vrIcon = newbsign_icon_rsc
+   vrDesc = newbsign_desc_rsc
+   vrExtra = newbsign_extra_rsc
+
+messages:
+
+   Constructor(type =  0, extra = FALSE)
+   {
+	  
+      if type =  NEWB_SIGN_WELCOME
+      {  vrName = newbsign_name_welcome;  vrDesc = newbsign_desc_welcome;  }
+	  
+      if type =  NEWB_SIGN_MOVING
+      {  vrName = newbsign_name_moving;  vrDesc = newbsign_desc_moving;  }
+	  
+      if type =  NEWB_SIGN_BUYING
+      {  vrName = newbsign_name_buying;  vrDesc = newbsign_desc_buying;  }
+	  
+      if type =  NEWB_SIGN_SELLING
+      {  vrName = newbsign_name_selling;  vrDesc = newbsign_desc_selling;  }
+	  
+      if type =  NEWB_SIGN_TALK
+      {  vrName = newbsign_name_talk;  vrDesc = newbsign_desc_talk;  }
+	  
+      if type =  NEWB_SIGN_STATS
+      {  vrName = newbsign_name_stats;  vrDesc = newbsign_desc_stats;  }
+	  
+      if type =  NEWB_SIGN_SPELLS
+      {  vrName = newbsign_name_spells;  vrDesc = newbsign_desc_spells;  }
+	  
+      if type =  NEWB_SIGN_FIGHTING
+      {  vrName = newbsign_name_fighting;  vrDesc = newbsign_desc_fighting;  }	  
+	  
+      if type =  NEWB_SIGN_TARGETTING
+      {  vrName = newbsign_name_targetting;  vrDesc = newbsign_desc_targetting;  }	  
+	  
+      if type =  NEWB_SIGN_JUMPING
+      {  vrName = newbsign_name_jumping;  vrDesc = newbsign_desc_jumping;  }
+	  
+      if type =  NEWB_SIGN_LOOKING
+      {  vrName = newbsign_name_looking;  vrDesc = newbsign_desc_looking;  }
+
+	  if type =  NEWB_SIGN_RENTING_A_ROOM
+      {  vrName = newbsign_name_renting;  vrDesc = newbsign_desc_renting;  }
+	  
+	  if extra = TRUE 
+	  {
+	     %Add Raza specific information.
+	  
+	     if type =  NEWB_SIGN_WELCOME
+         {  vrExtra = newbsign_welcome_extra;  }
+		 
+	     if type =  NEWB_SIGN_MOVING
+         {  vrExtra = newbsign_moving_extra;  }
+		 
+	     if type =  NEWB_SIGN_BUYING
+         {  vrExtra = newbsign_buying_extra;  }
+		 
+	     if type =  NEWB_SIGN_SELLING
+         {  vrExtra = newbsign_selling_extra;  }
+		 
+	     if type =  NEWB_SIGN_TALK
+         {  vrExtra = newbsign_talk_extra;  }
+		 
+	     if type =  NEWB_SIGN_STATS
+         {  vrExtra = newbsign_stats_extra;  }
+		 
+	  }
+	  
+	propagate;
+   }
+   
+   ShowDesc()
+   {
+      AddPacket(4,vrDesc,4,1,4,vrExtra);
+      return;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

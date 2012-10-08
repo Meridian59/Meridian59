@@ -94,6 +94,10 @@ messages:
       propagate;
    }
 
+   GetScrollClass()
+   {
+      RETURN &DispellIllusionScroll;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

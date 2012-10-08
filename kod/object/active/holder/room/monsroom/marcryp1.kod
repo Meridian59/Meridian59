@@ -46,7 +46,7 @@ resources:
    room_MarionCrypt1 = MarDun01.roo
    room_name_MarionCrypt1 = "The crypt in Marion"
 
-   MarionCrypt1_music = nec01.mid
+   MarionCrypt1_music = nec01.mp3
 
    MarionCrypt1_corpse_name = "mummified corpse"
    MarionCrypt1_corpse_icon = mummyX.bgf
@@ -98,7 +98,11 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&SpectralMummy, 100] ];
+ 	  % Set spawn based on if Marion is starter town.
+	  if (Send(Send(SYS, @GetSettings), @IsMarionStarterTown))
+	  {  plMonsters = [ [&Mummy, 90], [&BlackMummy, 10] ];  }
+	  else 
+	  {  plMonsters = [ [&SpectralMummy, 100] ];  }
 
       plGenerators = [ [5, 21], [5, 36], [9, 28], [17, 35], [21, 23], [25, 11], [29, 18], [37, 35], [38, 19] ];
 
@@ -187,6 +191,15 @@ messages:
       Send(self,@NewHold,#what=Create(&Brazier),#new_row=14,#new_col=18,#fine_row=0,#fine_col=48);
 
       Send(self,@CreateLevers);
+	  
+ 	  % Create newbie signs if Marion is set as the starter town
+	  if (Send(Send(SYS, @GetSettings), @IsMarionStarterTown))
+	  {
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_FIGHTING),
+           #new_row=11,#new_col=15,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_JUMPING),
+           #new_row=31,#new_col=31,#fine_row=32,#fine_col=32);
+	  }
 
       propagate;
    }

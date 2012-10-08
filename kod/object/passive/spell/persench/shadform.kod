@@ -38,7 +38,7 @@ classvars:
    vrDesc = shadowform_desc_rsc
 
    viSpell_num = SID_SHADOW_FORM
-   viSpell_level = 1
+   viSpell_level = 2
    viSchool = SS_RIIJA
    viMana = 5
    viSpellExertion = 5
@@ -49,6 +49,8 @@ classvars:
    viFlash = FLASH_GOOD_SELF
 
 properties:
+
+   vbCanCastOnOthers = FALSE
 
 messages:
 
@@ -64,6 +66,12 @@ messages:
    {
       local oTarget, iDrawFX;
 
+      % If it's only self cast, spoof self as target for following code
+      if NOT vbCanCastOnOthers
+      {
+         lTargets = Cons(who, lTargets);
+      }
+	  
       oTarget = first(lTargets);
 
       if NOT IsClass(oTarget,&Player)

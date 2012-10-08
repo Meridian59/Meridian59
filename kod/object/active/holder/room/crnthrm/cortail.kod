@@ -20,7 +20,7 @@ resources:
    room_cortail = cortail.roo
    room_name_cortail = "The Spindle and the Spinster"
 
-   cortail_music = city04.mid
+   cortail_music = city04.mp3
 
 classvars:
 

@@ -43,7 +43,7 @@ classvars:
 
    viSpell_num = SID_BLOOD_INHERITANCE
    viSchool = SS_QOR
-   viSpell_level = 5
+   viSpell_level = 6
 
    viSpellExertion = 50
    viCast_time = 20000

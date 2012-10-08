@@ -25,7 +25,7 @@ resources:
    room_TosArena = tosarena.roo
    name_TosArena = "The Arena of Kraanan"
 
-   TosArena_music = pk_fm.mid
+   TosArena_music = pk_fm.mp3
 
    TosArena_commence_wav = forest.wav
    wind_sound_tosarena = ambcntry.wav
@@ -209,6 +209,7 @@ messages:
    CreateStandardObjects()   
    "Creates the watcher and two signposts."
    {
+	  local oTargetGlobe;
       if poWatcher = $
       {
          poWatcher = Create(&TosWatcher);
@@ -224,6 +225,23 @@ messages:
               #desc=tosarena_guildvguild_rules),#new_row=13,#new_col=19,#fine_row=52,#fine_col=31);
          Send(self,@NewHold,#what=Create(&ArenaSign1,#name=tosarena_battleroyale,#icon=tosarena_battleroyale_icon,
               #desc=tosarena_battleroyale_rules),#new_row=14,#new_col=19,#fine_row=36,#fine_col=31);
+		
+		% Added seeing globes - Tarandeep.
+		 oTargetGlobe = Create(&TargetGlobe);
+         Send(self,@NewHold,#what=oTargetGlobe,#new_row=6,#new_col=6,#fine_row=52,#fine_col=52,#new_angle=ANGLE_SOUTH_EAST);
+         Send(self,@NewHold,#what=Create(&ViewPointGlobe,#target=oTargetGlobe),#new_row=5,#new_col=3,#fine_row=32,#fine_col=16);
+         Send(self,@NewHold,#what=Create(&ViewPointGlobe,#target=oTargetGlobe),#new_row=3,#new_col=5,#fine_row=32,#fine_col=22);
+		 oTargetGlobe = Create(&TargetGlobe);
+         Send(self,@NewHold,#what=oTargetGlobe,#new_row=19,#new_col=6,#fine_row=11,#fine_col=55,#new_angle=ANGLE_NORTH_EAST);
+         Send(self,@NewHold,#what=Create(&ViewPointGlobe,#target=oTargetGlobe),#new_row=20,#new_col=3,#fine_row=42,#fine_col=32);
+         Send(self,@NewHold,#what=Create(&ViewPointGlobe,#target=oTargetGlobe),#new_row=22,#new_col=5,#fine_row=32,#fine_col=22);
+		 oTargetGlobe = Create(&TargetGlobe);
+         Send(self,@NewHold,#what=oTargetGlobe,#new_row=9,#new_col=19,#fine_row=50,#fine_col=25,#new_angle=ANGLE_WEST);
+         Send(self,@NewHold,#what=Create(&ViewPointGlobe,#target=oTargetGlobe),#new_row=8,#new_col=24,#fine_row=16,#fine_col=16);
+		 oTargetGlobe = Create(&TargetGlobe);
+         Send(self,@NewHold,#what=oTargetGlobe,#new_row=16,#new_col=19,#fine_row=20,#fine_col=22,#new_angle=ANGLE_WEST);
+         Send(self,@NewHold,#what=Create(&ViewPointGlobe,#target=oTargetGlobe),#new_row=17,#new_col=24,#fine_row=45,#fine_col=16);
+	
       }
 
       propagate;

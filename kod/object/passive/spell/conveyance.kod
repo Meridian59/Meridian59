@@ -1,0 +1,141 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Conveyance is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Conveyance_name_rsc = "conveyance"
+   Conveyance_icon_rsc = icounter.bgf
+   Conveyance_desc_rsc = \
+      "Transports an item or stack of items from your inventory to your guildhall chests. "
+      "Requires that the caster be guilded, and that the guild owns a hall with sufficient space in its chests."
+   
+   conveyance_cant = "You cannot cast conveyance on %s%s."
+   conveyance_no_guild = "You must be in a guild to cast this spell."
+   conveyance_no_ghall = "Your guild does not have a guild hall."
+   conveyance_not_enough_space = "Your guild hall does not have enough space!"
+   conveyance_not_holding = "You cannot cast conveyance on an item you are not holding!"
+   conveyance_fail = "Your attempt at casting conveyance fails."
+   conveyance_success = "You send your %s%s to your guildhall's chest."
+
+classvars:
+
+   vrName = Conveyance_name_rsc
+   vrIcon = Conveyance_icon_rsc
+   vrDesc = Conveyance_desc_rsc
+
+   viSpell_num = SID_CONVEYANCE
+   viSchool = SS_RIIJA
+   viSpell_level = 1
+   viMana = 15
+   viSpellExertion = 10
+   viChance_to_increase = 15
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget, oGuild, oGuildHall;
+      oTarget = First(lTargets);
+   
+	  if NOT isClass(oTarget,&Item) OR send(oTarget,@CanBeStoredInVault) = FALSE
+	  {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
+         #parm1=Send(oTarget,@GetDef),
+         #parm2=Send(oTarget,@GetName));
+		 return FALSE;
+	  }
+	  
+	  if NOT Send(who,@IsHolding,#what=oTarget)
+	  {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_not_holding);
+		 return FALSE;
+	  }
+	  
+	  oGuild = Send(who,@GetGuild);
+	  if oGuild = $
+	  {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_no_guild);
+		 return FALSE;
+	  }
+	  
+	  oGuildHall = Send(oGuild,@GetGuildHall);
+	  if oGuildHall = $
+	  {
+         Send(who,@MsgSendUser,#message_rsc=conveyance_no_ghall);
+		 return FALSE;
+	  }
+	  
+	  Send(self,@SendtoGuildChest,#who=who,#what=oTarget,#oGuildHall = oGuildHall);
+	  
+      propagate;
+   }
+
+   SendtoGuildChest(who = $, what = $, oGuildHall = $)
+   {
+      local oChest, each_obj, i;
+	  oChest = $;
+	  
+      if NOT Send(what,@ReqLeaveOwner)
+	  {
+		 Send(who,@MsgSendUser,#message_rsc=conveyance_fail);
+		 return FALSE;
+	  }
+	  
+      for i in send(oGuildHall,@GetHolderActive)
+      {
+         each_obj=Send(oGuildHall,@holderExtractObject,#data=i);
+         if isClass(each_obj,&StorageBox)
+         {
+			if Send(each_obj,@ReqNewHold,#who=who,#what=what)
+			{
+				 oChest = each_obj;
+				 break;
+			}
+         }
+      }
+
+	  if oChest = $
+	  {
+		 Send(who,@MsgSendUser,#message_rsc=conveyance_not_enough_space);
+		 return FALSE;
+	  }
+	  else
+	  {
+		 Send(oChest,@NewHold,#who=who,#what=what);
+		 Send(who,@MsgSendUser,#message_rsc=conveyance_success,
+         #parm1=Send(what,@GetDef),
+         #parm2=Send(what,@GetName));
+		 return TRUE;
+	  }
+	  
+	  return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

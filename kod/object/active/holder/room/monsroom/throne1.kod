@@ -22,7 +22,7 @@ resources:
    name_throne1 = "The Throne Room of Victoria Castle" 
    room_throne1 = throne1.roo
 
-   throne1_music = castle2.mid
+   throne1_music = castle2.mp3
 
    throne1_ghost_spawn = \
       "~kA raspy voice moans, \"~r~IWitness my revenge, tresspasser!~I~k\""

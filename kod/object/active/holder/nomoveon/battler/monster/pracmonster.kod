@@ -1,0 +1,100 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PracticeMonster is Monster
+
+% This monster is used for training. Cut-out board of a Kriipa.
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   PracticeMonster_name_rsc = "training board"
+   PracticeMonster_icon_rsc = bullseye.bgf
+   PracticeMonster_desc_rsc = "Cut out board of a legendary Kriipa. Young warriors "
+                       "usually use this to test their aim and their hand to hand combat skills. "
+
+   PracticeMonster_monster_healing = ""
+   PracticeMonster_damage = "[Damage: %d]"
+
+classvars:
+
+   vrName = PracticeMonster_name_rsc
+   vrIcon = PracticeMonster_icon_rsc
+   vrDesc = PracticeMonster_desc_rsc
+   vrDead_icon = $
+
+   viTreasure_type = TID_NONE
+   viAttack_types = ATCK_WEAP_SLASH
+   viAttributes = MOB_NOMOVE | MOB_NOFIGHT | MOVEON_NOTIFY | MOB_NOQUEST
+   viLevel = 100
+   viDifficulty = 0
+   viKarma = 0
+   viDefault_behavior = AI_NOFIGHT | AI_NOMOVE
+   viObject_flags = BATTLER_YES
+
+   vrSound_hit = $
+   vrSound_miss = $
+   vrSound_aware = $
+   vrSound_death = $
+
+   vrMonster_healing = PracticeMonster_monster_healing
+
+properties:
+
+messages:
+
+   AssessDamage(what = $,damage = $)
+   "Message user the damage done to the practice monster."
+   {
+	  piHit_points = piMax_hit_points;
+	  Post(what,@MsgSendUser,#message_rsc=PracticeMonster_damage,#parm1=damage);
+
+      propagate;
+   }
+   
+   SendMoveAnimation()
+   {
+      Send(self,@SendAnimation);
+
+      return;
+   }
+   
+   HitPointThreshold()
+   "Shows physical damage instead of a message."
+   {
+      return;
+   }
+   
+   DestroyDisposable()
+   {
+	  return;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }   
+   
+   CanPlayerAdvanceOnMe()
+   {  
+      return FALSE;
+   }    
+
+   DMCanArmageddon()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

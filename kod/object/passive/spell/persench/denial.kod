@@ -120,9 +120,10 @@ messages:
       {
          Send(who,@LoseHealth,#amount=state);
       
+		 % Instead of outright killing you it takes you to 1 hp.
          if send(who,@GetHealth) < 1
 	      {
-	         send(who,@Killed,#what=who);
+	         send(who,@GainHealthNormal,#amount=1);
 	      }
       }
       

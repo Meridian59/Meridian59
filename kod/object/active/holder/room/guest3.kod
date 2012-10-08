@@ -18,29 +18,9 @@ resources:
 
    room_name_guest3 = "The Blacksmith of Hazar"
    room_guest3 = guest3.roo
-   guest3_music = smithy.mid
+   guest3_music = smithy.mp3
 
    fire_sound_guest3 = fireplac.wav
-
-   guest3_signname = "buying items"   
-   guest3_sign = \
-      "You've come into this world virtually empty handed.  Fortunately, "
-      "you also started with a bit of cash, so that you might "
-      "buy some of the items you need to get started.  Go up to the blacksmith, "
-      "press return to enter the chat window, type BUY and press return again. "
-      "A list of items that the blacksmith has for sale will appear.  Choose the "
-      "items you want, and then press [OK].  First buy a weapon, and then "
-      "some armor.  If you have enough money "
-      "to pay for them all, they will appear in your inventory.\n\n"
-      "However, you're still unarmed.  Right-click on the weapon that you "
-      "purchased, and then press the [USE] button.  A yellow glow will "
-      "appear around it, meaning that you're wielding it.  Repeat this for "
-      "the armor. To remove an object from use, simply "
-      "right-click the object and press the [UNUSE] button.\n"
-      "You may also just double-click on an item in your inventory to use or unuse it."
-      "-------------\n" 
-      "When you're done here you should go to the tavern, the large brown "
-      "building at the east end of town."
 
 classvars:
 
@@ -86,7 +66,7 @@ messages:
       Send(self,@NewHold,#what=Create(&HazarBlacksmith),
             #new_row=4,#new_col=5,#fine_row=32,#fine_col=32,#new_angle=ANGLE_SOUTH);
 
-      oSign = Create(&sign,#desc=guest3_sign,#name=guest3_signname,#newbie=TRUE);
+      oSign = Create(&NewbieSign,#type=NEWB_SIGN_BUYING,#extra=TRUE);
       send(self,@NewHold,#what=oSign,#new_row=4,#new_col=7,#fine_row=32,#fine_col=32);
 
       % Lighting

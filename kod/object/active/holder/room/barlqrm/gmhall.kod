@@ -20,7 +20,7 @@ resources:
    room_GM_Hall = gmhall.roo
    room_name_GM_Hall = "The Guildmaster's Hall"
 
-   GM_Hall_music = bar.mid
+   GM_Hall_music = bar.mp3
 
    guild_charter_ball = "Guild Charters"
    guild_charter_desc = "Here, guildmasters may post information for potential members."

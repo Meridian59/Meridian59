@@ -1619,6 +1619,7 @@
    IA_BONDED               = 18
    IA_MADE                 = 19
    IA_MADE_TRANSCENDANT    = 20
+   IA_RENAMED    		   = 21
 
    % Weapon Attributes.  These are attributes only applied to weapons.
    WA_TRAINING             = 51
@@ -1957,6 +1958,13 @@
    SID_MIRTH = 179
    SID_MELANCHOLY = 180
    SID_CRYSTALIZE_MANA = 181
+
+   % Open-source spells
+   SID_UNHOLY_TOUCH = 182
+   SID_SUPER_PUNCH = 183
+   SID_CREATE_SCROLL = 184
+   SID_CONVEYANCE = 185
+   SID_POISON_TOUCH = 186
 
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT
@@ -2944,3 +2952,17 @@
 	MAX_GUILD_NAME_LEN = 30
 	MAX_GUILD_RANK_LEN = 20
 	MAX_URL_LEN = 200
+
+	% Newbie signs
+	NEWB_SIGN_WELCOME = 1
+	NEWB_SIGN_MOVING = 2
+	NEWB_SIGN_BUYING = 3
+	NEWB_SIGN_SELLING = 4
+	NEWB_SIGN_TALK = 5
+	NEWB_SIGN_STATS = 6
+	NEWB_SIGN_SPELLS = 7
+	NEWB_SIGN_FIGHTING = 8
+	NEWB_SIGN_TARGETTING = 9
+	NEWB_SIGN_JUMPING = 10
+	NEWB_SIGN_LOOKING = 11
+	NEWB_SIGN_RENTING_A_ROOM = 12

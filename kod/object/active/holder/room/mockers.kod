@@ -20,7 +20,7 @@ resources:
    room_mockers = mockers.roo
    room_name_mockers = "Chamber of the Mocker"
 
-   mockers_music = castle.mid
+   mockers_music = castle.mp3
 
    mockers_lockdoor = "You lock the door, barring others from entry."
    mockers_unlockdoor = "You unlock the door."

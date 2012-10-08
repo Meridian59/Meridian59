@@ -43,7 +43,7 @@ classvars:
 
    viSpell_num = SID_MANA_BOMB
    viMana = 0
-   viSchool = SS_KRAANAN
+   viSchool = SS_JALA
    viSpell_level = 4
 
    viHarmful = TRUE

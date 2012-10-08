@@ -24,7 +24,7 @@ resources:
    room_name_marion = "Marion"
    room_marion = marion.roo
 
-   mar_music = city02.mid
+   mar_music = login.mp3
 
    wind_sound_marion = rs_wind.wav
 
@@ -65,10 +65,11 @@ resources:
 classvars:
 
    vrName = room_name_marion
-   viPermanent_flags = ROOM_NO_COMBAT | ROOM_LAMPS
+   viPermanent_flags = ROOM_GUILD_PK_ONLY | ROOM_LAMPS
 
-   viTeleport_row = 56
-   viTeleport_col = 39
+   viTeleport_row = 60
+   viTeleport_col = 52
+   viTeleport_angle = ANGLE_WEST
 
    viTerrain_type = TERRAIN_CITY | TERRAIN_ROAD | TERRAIN_FIELDS | TERRAIN_FOREST
 
@@ -151,19 +152,24 @@ messages:
    {
       if (new_row < 32) and (new_col > 66)
       {
-         Send(SYS,@UtilGoNearSquare,#what=what,
-              #where=Send(SYS,@FindRoomByNum,#num=RID_C4),
-              #new_row=34,#new_col=5,#new_angle=ANGLE_NORTH_EAST);
+		 if Send(what,@TryLeaveNewbieRegion) = TRUE 
+		 {
+			 Send(SYS,@UtilGoNearSquare,#what=what,
+				 #where=Send(SYS,@FindRoomByNum,#num=RID_C4),
+				 #new_row=34,#new_col=5,#new_angle=ANGLE_NORTH_EAST);
+		 }
          return;
       }
 
       if (new_row > 83) and (new_col > 48)
       {
-         Send(SYS,@UtilGoNearSquare,#what=what,
-              #where=Send(SYS,@FindRoomByNum,#num=RID_C5),
-              #new_row=3,#new_col=23,#new_angle=ANGLE_SOUTH_WEST);
-              
-         return;
+		 if Send(what,@TryLeaveNewbieRegion) = TRUE
+		 {
+			 Send(SYS,@UtilGoNearSquare,#what=what,
+				 #where=Send(SYS,@FindRoomByNum,#num=RID_C5),
+				 #new_row=3,#new_col=23,#new_angle=ANGLE_SOUTH_WEST);
+		 }
+		 return;
       }
 
       propagate;
@@ -196,6 +202,25 @@ messages:
       send(self,@NewHold,#what=Create(&DynamicLight,#iColor=LIGHT_BWHITE,#iIntensity=5),
            #new_row=45,#new_col=7,#fine_row=32,#fine_col=32);
 
+	  % Create newbie signs if Marion is set as the starter town
+	  if (Send(Send(SYS, @GetSettings), @IsMarionStarterTown))
+	  {
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_WELCOME),
+           #new_row=60,#new_col=48,#fine_row=0,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_TALK),
+           #new_row=69,#new_col=40,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_MOVING),
+           #new_row=45,#new_col=45,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&NewbieSign,#type=NEWB_SIGN_TARGETTING),
+           #new_row=65,#new_col=25,#fine_row=32,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&PracticeMonster),
+           #new_row=70,#new_col=26,#fine_row=32,#fine_col=32,#new_angle=ANGLE_NORTH_WEST);
+      Send(self,@NewHold,#what=Create(&PracticeMonster),
+           #new_row=70,#new_col=23,#fine_row=32,#fine_col=32,#new_angle=ANGLE_NORTH_WEST);
+      Send(self,@NewHold,#what=Create(&PracticeMonster),
+           #new_row=68,#new_col=22,#fine_row=32,#fine_col=32,#new_angle=ANGLE_NORTH_WEST);
+	  }
+		   
       propagate;
    }
 

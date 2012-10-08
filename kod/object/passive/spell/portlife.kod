@@ -113,9 +113,10 @@ messages:
       %% If the corpse is still around then this must be between 0 and 600
       iTimePenalty = iTimePenalty - TimeofDeath;  
 
-      if iTimePenalty < 60
+	  %% Section Adjusted to make Portal of Life more valuable but allow for defile
+      if iTimePenalty < 300
       {
-         iTimePenalty = -(60 - iTimePenalty); %1 - 59 spellpower bonus.
+         iTimePenalty = -(300 - iTimePenalty); %1 - 59 spellpower bonus.
       }
       else
       {
@@ -123,7 +124,21 @@ messages:
       }
 
       iDeathCost = iDeathCost - (iSpellpower - iTimePenalty);
-      iDeathCost = bound(iDeathCost,5,80);
+      iDeathCost = bound(iDeathCost,0,50);
+	 
+	 
+	 %%% ORIGINAL SECTION
+	 % if iTimePenalty < 60
+     % {
+     %    iTimePenalty = -(60 - iTimePenalty); %1 - 59 spellpower bonus.
+     % }
+     % else
+     % {
+     %    iTimePenalty = iTimePenalty/10 - 6;  %0 - 54 spellpower penalty.
+     % }
+     %
+     % iDeathCost = iDeathCost - (iSpellpower - iTimePenalty);
+     % iDeathCost = bound(iDeathCost,5,80);
 
       return iDeathCost;
    }

@@ -27,6 +27,10 @@ resources:
       "Requires fairy wings and the slain."
 
    defile_cast_rsc = "Your nausea betokens the imminence of Qor."
+   
+   defile_isdefiled_rsc = \
+      "Another practitioner of the dark arts has dedicated this body as a token "
+	  "of Qor.  You are too late!  Qor frowns upon failure."
 
    defile_corpse_gone = \
       "Your defile spell fails because the corpse has already returned to the earth."
@@ -104,13 +108,23 @@ messages:
 
 	      return FALSE;
       }
-
-      if NOT Send(target,@WasGoodPlayer)
-      {
-	      Send(who,@MsgSendUser,#message_rsc=defile_not_good);           
-
-	      return FALSE;
+	  
+     % ADDED SECTION TO CHECK FOR PREVIOUSLY DEFILED
+	  if NOT Send(target,@GetDefiled)
+	  {
+	       Send(who,@MsgSendUser,#message_rsc=defile_isdefiled_rsc);
+		   
+		   return FALSE;
       }
+	  
+	 % This section removed to allow all player corpses to be defiled
+	 % Resolution of positive vs negative karma bonus will be resolved seperately
+     % if NOT Send(target,@WasGoodPlayer)
+     % {
+	 %     Send(who,@MsgSendUser,#message_rsc=defile_not_good);           
+	 %
+	 %     return FALSE;
+     % }
 
       propagate;
    }
@@ -157,7 +171,10 @@ messages:
 
       Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
       Send(who,@GainMana,#amount=(viMana_bonus+(iSpellPower/3)));
-      Send(oTarget,@Delete);
+     % Removed Delete Target in order to avoid abuse and allow for Portal of Life
+	 % Send(oTarget,@Delete);
+	 % Added to stop multiple defiles of the same corpse by checking if its been defiled before
+	  Send(oTarget,@SetDefiled);
 
       propagate;
    }

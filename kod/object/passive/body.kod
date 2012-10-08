@@ -24,6 +24,10 @@ resources:
 
    deadbody_assassinated_rsc = \
       "Here lies %q, slain by an unknown assassin."
+	  
+   deadbody_defiled_rsc = \
+      "The dead body of %q, decomposing quickly in the living air of Meridian."
+	  "This body has had unspeakable ritualistic things done to it postmortem."
 
 classvars:
 
@@ -31,6 +35,7 @@ classvars:
    vrPlayer_desc = deadbody_player_desc_rsc
 
    vrAssassinated_desc = deadbody_assassinated_rsc
+   vrDefiled_desc = deadbody_defiled_rsc
    viIndefinite = ARTICLE_A
 
 properties:
@@ -47,7 +52,9 @@ properties:
    pbWas_good_player = FALSE
    pbMob = FALSE
    pbAssassinated = FALSE
-
+% Added for Defile
+   pbDefiled = FALSE
+   
    piDrawfx = 0
 
    prPlayerBodyOverlay = $
@@ -62,15 +69,17 @@ properties:
 
 messages:
 
-   % you gotta pass in name, icon, and description to constructor
+   % you gotta pass in name, icon, and description to constructor + added defile
    Constructor(name = $,icon = $,playername = $,good = FALSE, mob=FALSE ,monstername = $,
                inKocatan = FALSE, assassinated = FALSE,drawfx = 0, BodyTranslation = 0,
                LegsTranslation = 0, PlayerBodyOverlay = $, Decomposes=TRUE,
-               DearlyDeparted = $)
+               DearlyDeparted = $, defiled=FALSE)
    {
       vrName = name;
       vrIcon = icon;
       pbMob = mob;
+	  % Added for Defile
+	  pbDefiled = defiled;
       piDrawfx = drawfx;
       prPlayer_name = playername;
       pbWas_good_player = good; 
@@ -178,12 +187,18 @@ messages:
       {
 	      AddPacket(4,vrAssassinated_desc, STRING_RESOURCE,prPlayer_name);
       }
-      
+     
+     % Added for Defile Description
+      if pbDefiled
+	  {
+          AddPacket(4,vrDefiled_desc, STRING_RESOURCE,prPlayer_name);
+      }
+	  
       AddPacket(4,vrPlayer_desc, STRING_RESOURCE,prPlayer_name);
 
       return;
    }
-
+   
    WasGoodPlayer()
    {
       return pbWas_good_player;
@@ -260,6 +275,27 @@ messages:
    GetResurrected()
    {
       return pbResurrected;
+   }
+   
+   % Added section for defile so it can't be cast on a body multiple times and may be used for
+   % adding penalties or bonuses later so two functions return pbDefiled.
+   SetDefiled()
+   {
+      pbDefiled = TRUE;
+	  
+	  return;
+   }
+   
+   % Used to avoid multiple casts
+   GetDefiled()
+   {
+      return pbDefiled;
+   }
+   
+   %Not yet used but may be changed and used to determine karma and debuffs
+   IsDefiled()
+   {
+	  return pbDefiled;
    }
 
 

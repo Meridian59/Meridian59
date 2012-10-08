@@ -236,6 +236,7 @@ resources:
    player_was_clawed = "%s%s%s rends your flesh with razor sharp claws."
    player_was_punched = "%s%s%s hits you with a solid punch."
    player_was_kicked = "%s%s%s slams a foot into your gut."
+   player_was_headbutt = "%s%s%s slams their head into your face."
    
    player_out_of_room = "%s%s is not here."
    player_not_supported = "Not supported yet"
@@ -1895,7 +1896,7 @@ messages:
          Send(oSnoop,@MsgSendUser,#message_rsc=player_eavesdrop_login_str,#parm1=vrName);
       }
       
-      Send(self,@SetPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY,#value=FALSE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY,#value=TRUE);
 
       % If we log into the Raza/Hazar inn and aren't past the tutorial,
       %   then give us a commands list.
@@ -2389,7 +2390,6 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
-      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       
       return;
    }

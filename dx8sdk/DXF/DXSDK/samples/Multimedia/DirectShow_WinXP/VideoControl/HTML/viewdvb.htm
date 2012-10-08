@@ -1,0 +1,149 @@
+<HTML>
+<HEAD>
+<TITLE>MSVidCtl: DVB Digital TV</TITLE>
+</HEAD>
+
+<!--
+	This sample requires a DVB digital TV tuner card that is compatible with the Microsoft TV Technologies 
+		driver architecture (BDA - Broadcast Driver Architecture).  
+
+	You must also have a MPEG-2 decoder installed that is capable of decoding the resolution 
+		(e.g. 480p or 1080i) of the digital broadcast.  
+	
+	High definition (HDTV) broadcasts may be at a resolution greater than your video card or MPEG-2 deocoder 
+		are capable of operating.
+-->
+
+<BODY BGCOLOR="#000001" TEXT="#FFFFFF" LINK="#FCCB7A" VLINK="#551A8B" ALINK="#EE0000">
+
+<CENTER>
+<P>
+<INPUT id=startbutton type=button value="Power On">
+<INPUT id=stopbutton type=button value="Power Off">
+</P>
+
+<OBJECT ID="MSVidCtl" CLASSID="CLSID:B0EDF163-910A-11D2-B632-00C04F79498E"></OBJECT>
+
+</CENTER>
+
+<P>
+<INPUT id=chanup type=button value="Up">
+<INPUT id=chandown type=button value="Down">
+	<B>Channel: </B> <INPUT TYPE="text" id=currentchannel maxlength=3 SIZE=3>
+	<INPUT id=enter type=button value="Enter">
+</P>
+<P id=dl>xxx</P>
+
+<SCRIPT language=vbscript>
+option explicit
+
+Dim tuner
+Dim tscontainer
+Dim ts
+Dim local_ts
+Dim tr
+Dim locator
+
+sub window_onload
+        'Create a DVB Tuning Space
+	'The tuning space contains the system information for the broadcast service
+	'See the documentation on IDVBTuningSpace and DVBTuningSpace Object in MSDN or SDK for more info
+	'The tuning space created below is based on the settings for Echostar Dish Network in the USA
+	set tscontainer = CreateObject("BDATuner.SystemTuningSpaces")
+	set ts = CreateObject("BDATuner.DVBSTuningSpace") 
+	set locator = CreateObject("BDATuner.DVBSLocator")   
+
+	'Check if the tuning space already exists
+	For Each local_ts In tscontainer
+		If local_ts.UniqueName = "MYDVB" Then
+			Set ts = local_ts
+		End If
+	Next	
+
+	'The tuning space doesn't already exist, create it
+	If Not (ts.UniqueName = "MYDVB") Then
+		MsgBox "adding"    
+		ts.UniqueName = "MYDVB"
+		ts.FriendlyName = "MYDVB Tuning Space"
+		ts.SystemType = 2 'DVB_Satellite
+		ts.NetworkType = "{FA4B375A-45B4-4D45-8440-263957B11623}"
+		ts.LowOscillator = 11250000
+		ts.HighOscillator = -1
+		ts.LNBSwitch = -1
+
+		locator.CarrierFrequency = 12384000
+		locator.InnerFEC = 1 'BDA_FEC_VITERBI
+		locator.InnerFECRate = 3 'BDA_BCC_RATE_3_4
+		locator.Modulation = 20 'BDA_MOD_QPSK
+		locator.SignalPolarisation = 1 'BDA_POLARISATION_LINEAR_H
+		locator.SymbolRate = 20000
+		locator.Elevation = 5
+		ts.DefaultLocator = locator
+		tscontainer.Add ts
+	End If
+
+        
+	Set ts = tscontainer("MYDVB")
+	Set tr = ts.CreateTuneRequest
+        
+	'Set the DVBTuneRequest Properties Here:
+	'tr.ONID = -1
+	tr.SID = 101
+
+	'Display some information
+
+	
+	'Uncomment the lines below if you need to have the DVB-S Locator property for the tune request set.
+	'set locator = createobject("BDATuner.DVBSLocator")
+	'locator.CarrierFrequency = -1
+	'locator.InnerFEC = -1
+	'locator.InnerFECRate = -1
+	'locator.Modulation = -1
+	'locator.OuterFEC = -1
+	'locator.OuterFECRate = -1
+	'locator.SymbolRate = -1
+	'locator.Azimuth = -1
+	'locator.Elevation = -1
+	'locator.Elevation = -1
+	'locator.OrbitalPosition = -1
+	'locator.SignalPolarisation = -1
+	'locator.WestPosition = -1
+	'tr.locator = locator
+	  
+
+	MSVidCtl.Width = 800
+	MSVidCtl.Height = 600
+        MSVidCtl.View tr
+        dl.innertext = tr.SID
+end sub
+
+sub startbutton_onclick
+
+        MSVidCtl.Run
+end sub
+
+sub stopbutton_onclick
+        MSVidCtl.Stop
+end sub
+
+sub chanup_onclick
+        MsgBox "Nobody Home."
+end sub
+
+sub chandown_onclick
+        MsgBox "Nobody Home."
+end sub
+
+sub enter_onclick
+	'Tune to the channel the user entered in the textbox
+	'We allow the user to change to different virtual channels (minor channels)
+	tr.SID = currentchannel.value
+	MSVidCtl.View tr
+        
+	dl.innertext = tr.SID
+	currentchannel.value = tr.SID
+end sub
+</Script>
+
+</BODY>
+</HTML>

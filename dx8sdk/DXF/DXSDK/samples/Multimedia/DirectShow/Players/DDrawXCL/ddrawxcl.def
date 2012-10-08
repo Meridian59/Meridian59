@@ -1,0 +1,5 @@
+
+; Module-Definition file for DDrawXCL Sample -- used by LINK.EXE
+; ==========================================================================
+; This isn't really needed for an Application, but it's handy to use for
+; setting the 'NAME         DDrawXCL       ; application's module name

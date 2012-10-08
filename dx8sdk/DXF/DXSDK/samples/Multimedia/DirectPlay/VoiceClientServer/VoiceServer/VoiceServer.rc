@@ -1,0 +1,126 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOG DISCARDABLE  0, 0, 233, 169
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "VoiceServer"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Number of players in game:",IDC_STATIC,7,56,86,8
+    LTEXT           "0",IDC_NUM_PLAYERS,97,56,65,8
+    RTEXT           "Session Name:",IDC_STATIC,7,9,66,8
+    PUSHBUTTON      "Exit",IDCANCEL,176,148,50,14
+    EDITTEXT        IDC_SESSION_NAME,78,7,93,12,ES_AUTOHSCROLL
+    PUSHBUTTON      "Start Server",IDC_START,170,52,56,14
+    LTEXT           "Server Status:",IDC_STATIC,7,151,46,8
+    LTEXT           "Static",IDC_STATUS,58,151,95,8
+    LISTBOX         IDC_PLAYER_LIST,7,69,219,76,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Voice Codec:",IDC_STATIC,7,24,66,8
+    COMBOBOX        IDC_COMPRESSION_COMBO,78,22,148,97,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Voice Session Type:",IDC_STATIC,7,40,66,8
+    CONTROL         "Forwarding",IDC_FORWARDING,"Button",BS_AUTORADIOBUTTON,
+                    78,40,51,10
+    CONTROL         "Mixing",IDC_MIXING,"Button",BS_AUTORADIOBUTTON,135,40,
+                    36,10
+    RTEXT           "Port:",IDC_STATIC,173,9,16,8
+    EDITTEXT        IDC_PORT,192,7,34,12,ES_AUTOHSCROLL | ES_NUMBER
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 226
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 162
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON    DISCARDABLE     "directx.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

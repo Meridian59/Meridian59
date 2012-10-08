@@ -1,0 +1,140 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "winres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "1 TYPELIB ""GargleDMO.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 8,1,0,0
+ PRODUCTVERSION 8,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x2L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "Comments", "DirectShow Sample\0"
+            VALUE "CompanyName", "Microsoft\0"
+            VALUE "FileDescription", "GargleDMO Sample\0"
+            VALUE "FileVersion", "8.10\0"
+            VALUE "InternalName", "GargleDMO\0"
+            VALUE "LegalCopyright", "Copyright (c) 2000-2001 Microsoft Corporation\0"
+            VALUE "OriginalFilename", "GargleDMO.DLL\0"
+            VALUE "ProductName", "DirectX 8 SDK\0"
+            VALUE "ProductVersion", "8.1\0"
+            VALUE "OLESelfRegister", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_GARGLE              REGISTRY DISCARDABLE    "Gargle.rgs"
+IDR_GARGDMOPROP         REGISTRY DISCARDABLE    "GargDMOProp.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_GARGDMOPROP DIALOGEX 0, 0, 225, 71
+STYLE WS_CHILD
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    RTEXT           "Waveform:",IDC_STATIC,2,15,43,10,SS_CENTERIMAGE
+    CONTROL         "&Square",IDC_RADIO_SQUARE,"Button",BS_AUTORADIOBUTTON,
+                    50,15,38,10
+    CONTROL         "&Triangle",IDC_RADIO_TRIANGLE,"Button",
+                    BS_AUTORADIOBUTTON,90,15,41,10
+    RTEXT           "&Rate (Hz):",IDC_STATIC,2,45,43,14,SS_CENTERIMAGE
+    EDITTEXT        IDC_EDIT_Rate,50,45,35,14,ES_AUTOHSCROLL
+    CONTROL         "Slider1",IDC_SLIDER_Rate,"msctls_trackbar32",
+                    TBS_AUTOTICKS | TBS_TOP | WS_TABSTOP,90,45,130,19
+    CTEXT           "1",IDC_STATIC,87,37,19,8
+    CTEXT           "1000",IDC_STATIC,202,37,19,8
+END
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    IDS_PROJNAME            "GargleDMO"
+    IDS_TITLEGargDMOProp    "Gargle DMO Sample"
+    IDS_DOCSTRINGGargDMOProp "property page for Gargle DMO Sample"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+

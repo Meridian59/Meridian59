@@ -1,0 +1,159 @@
+<!-- This shows using the compositor transition to show playing       -->
+<!-- four movies at once!                                             -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+<timeline>
+  <group type="video" bitdepth="16" width="320" height="240">
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\skiing.avi"   start="0" stop="5" mstart="4" mstop="9" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="0" stop="5">
+            <param name="Width"  value="160"/>
+            <param name="Height" value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\ruby.avi"     start="0" stop="5" mstart="3" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="0" stop="5">
+    	    <param name="OffsetX" value="160"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\water.mpg"    start="0" stop="5" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="0" stop="5">
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\highway.avi" start="0" stop="5" mstart="2" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}"  start="0" stop="5">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+
+
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\water.mpg"    start="5" stop="10" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="5" stop="10">
+    	    <param name="OffsetX" value="0"/>
+    	    <param name="OffsetY" value="0"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\skiing.avi"   start="5" stop="10" mstart="4" mstop="9"/>
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="5" stop="10">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="0"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\highway.avi" start="5" stop="10" mstart="2" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}"  start="5" stop="10">
+    	    <param name="OffsetX" value="0"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\ruby.avi"     start="5" stop="10" mstart="3" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="5" stop="10">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+
+
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\ruby.avi"     start="10" stop="13" mstart="5" mstop="8" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="10" stop="13">
+    	    <param name="OffsetX" value="0"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\skiing.avi"   start="10" stop="13" mstart="4" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="10" stop="13">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\highway.avi"   start="10" stop="13" mstart="4" mstop="7"/>
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}"  start="10" stop="13">
+    	    <param name="OffsetX" value="0"/>
+    	    <param name="OffsetY" value="0"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\water.mpg"    start="10" stop="13" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="10" stop="13">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="0"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+
+
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\ruby.avi"     start="13" stop="16" mstart="5" mstop="8" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="13" stop="16">
+    	    <param name="OffsetX" value="0"/>
+    	    <param name="OffsetY" value="0"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\highway.avi"   start="13" stop="16" mstart="4" mstop="7" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}"  start="13" stop="16">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="0"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\skiing.avi"   start="13" stop="16" mstart="4" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="13" stop="16">
+    	    <param name="OffsetX" value="0"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\water.mpg"    start="13" stop="16" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="13" stop="16">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+
+  </group>
+</timeline>
+
+

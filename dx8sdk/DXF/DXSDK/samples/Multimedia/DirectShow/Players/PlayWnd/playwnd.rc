@@ -1,0 +1,132 @@
+//==========================================================================;
+//
+//  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+//  KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+//  PURPOSE.
+//
+//  Copyright (c) 1998 - 2001  Microsoft Corporation.  All Rights Reserved.
+//
+//--------------------------------------------------------------------------;
+//
+//   Resource file for Video in window movie player sample
+//
+
+#include <windows.h>
+#include "playwnd.h"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&Open clip...",               ID_FILE_OPENCLIP
+        MENUITEM "&Close clip",                 ID_FILE_CLOSE
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+    POPUP "&Control"
+    BEGIN
+        MENUITEM "&Pause/Play\tP",              ID_FILE_PAUSE
+        MENUITEM "&Stop\tS",                    ID_FILE_STOP
+        MENUITEM "&Mute/Unmute\tM",             ID_FILE_MUTE
+        MENUITEM SEPARATOR
+        MENUITEM "Single F&rame Step\t<Space>", ID_SINGLE_STEP
+        MENUITEM SEPARATOR
+        MENUITEM "&Half size (50%)\tH",         ID_FILE_SIZE_HALF
+        MENUITEM "&Three-quarter size (75%)\tT",ID_FILE_SIZE_THREEQUARTER
+        MENUITEM "&Normal size (100%)\tN",      ID_FILE_SIZE_NORMAL, CHECKED
+        MENUITEM "&Double size (200%)\tD",      ID_FILE_SIZE_DOUBLE
+        MENUITEM SEPARATOR
+        MENUITEM "&Full Screen\t<Enter> or F",  ID_FILE_FULLSCREEN
+    END
+    POPUP "&Rate"
+    BEGIN
+        MENUITEM "&Increase Playback Rate\t<Right arrow>",  ID_RATE_INCREASE
+        MENUITEM "&Decrease Playback Rate\t<Left arrow>",   ID_RATE_DECREASE
+        MENUITEM SEPARATOR
+        MENUITEM "&Normal Playback Rate\t<Down arrow>",     ID_RATE_NORMAL
+        MENUITEM "&Half Playback Rate",         ID_RATE_HALF
+        MENUITEM "Dou&ble Playback Rate",       ID_RATE_DOUBLE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About...",                   ID_HELP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+IDI_PLAYWND             ICON    DISCARDABLE     "playwnd.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About PlayWnd"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            IDI_PLAYWND,-1,11,17,20,20
+    LTEXT           "DirectShow PlayWindow Sample",-1,40,10,131,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (C) 1999-2001 Microsoft Corporation",-1,40,34,
+                    188,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+    LTEXT           "Version 8.1",-1,40,22,119,8,SS_NOPREFIX
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 8,1,0,0
+ PRODUCTVERSION 8,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "DirectShow Sample\0"
+            VALUE "CompanyName", "Microsoft\0"
+            VALUE "FileDescription", "PlayWnd Application\0"
+            VALUE "FileVersion", "8.10\0"
+            VALUE "InternalName", "PlayWnd\0"
+            VALUE "LegalCopyright", "Copyright (c) 2000-2001 Microsoft Corporation\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "PlayWnd.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "DirectX 8 SDK\0"
+            VALUE "ProductVersion", "8.1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+

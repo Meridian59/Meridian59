@@ -1,0 +1,64 @@
+[Language]
+LangName = Русский
+LangCode = RUS
+
+[Program]
+pg_Name         = Meridian 59-- BinaryGraphicalEditor
+
+[MainMenu]
+mm_file         = Файл
+mm_save         = Сохранить BGF
+mm_create       = Создать BGF
+mm_export       = Экспорт кадра в BMP
+mm_replace      = Заменить кадр
+mm_show         = Начать слайд-шоу
+mm_stop         = Остановить слайд-шоу
+mm_exit         = Выход
+mm_language     = Язык интерфейса
+mm_help         = Помощь
+mm_contents     = Справка
+mm_about        = О программе ...
+
+[MainForm]
+gb_Files        = Файлы
+gb_Bgfinfo      = Информация о текущем BGF
+gb_Frameinfo    = Информация о текущем кадре
+gb_Frame        = Текущий кадр
+gb_Actions      = Действия
+
+la_CurrentFrame = Текущий кадр:
+
+le_Delay        = Задержка для слайд-шоу:
+
+ch_transp       = Прозрачный фон
+
+bt_Create       = Создать BGF
+bt_Export       = Экспорт в BMP
+bt_Replace      = Заменить кадр
+bt_Save         = Сохранить BGF
+bt_Show         = Слайд-шоу
+bt_Stop         = Остановить
+bt_Exit         = Выход
+
+st_BgfName      = Имя BGF:
+st_Version      = Версия:
+st_Frames       = Кадров:
+st_FrameSets    = Наборов кадров:
+st_Sites        = Участков:
+st_Zoom         = Уменьшение:
+st_Footer       = Дополнение:
+
+st_BGFCreating  = Создание BGF...
+st_About        = О программе...
+st_Resolution   = Разрешение:
+st_CompSize     = Размер:
+st_Bytes        = байт
+st_Compressed   = сжатый
+st_NotCompressed= не сжатый
+st_UnknData     = Неизвестные данные:
+st_AddUnknData  = Дополнительные данные:
+
+st_fileexists   = Файл уже существует! Вы хотите его заменить?
+st_changed      = Некоторые кадры были заменены! Сохранить BGF?
+st_notbgf       = Не корректный BGF-файл!
+st_notstand     = Нестандартные параметры! Корректная работа не гарантируется!

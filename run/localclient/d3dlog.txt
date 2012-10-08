@@ -1,0 +1,8 @@
+Video Hardware Detected
+Driver:  nvd3dum.dll
+Description:  NVIDIA GeForce 310M 
+Product:  8
+Version:  16
+Subversion:  11
+Build:  8911
+GUID:  d7b71e3e, 4935, 11cf, 2UaàÂÅ5

@@ -1,0 +1,235 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\StillCap.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\StillCap.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 73
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About SysEnum"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,21,20
+    LTEXT           "StillCap Version 8.1",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (c) 2000-2001 Microsoft Corporation",IDC_STATIC,40,
+                    25,188,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+    LTEXT           "This sample demonstrates capturing still images and video from a video camera.",
+                    IDC_STATIC,42,39,186,27
+END
+
+IDD_STILLCAP_DIALOG DIALOGEX 0, 0, 274, 236
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION |
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "StillCap+ Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CONTROL         "Sti&ll Capture (Bitmap)",IDC_CAPSTILLS,"Button",
+                    BS_AUTORADIOBUTTON | WS_TABSTOP,145,19,103,11
+    CONTROL         "&Video Capture",IDC_CAPVID,"Button",BS_AUTORADIOBUTTON,
+                    145,32,83,11
+    LTEXT           "(capture starts automatically)",IDC_STATIC,155,44,92,10
+    EDITTEXT        IDC_CAPDIR,69,170,197,12,ES_AUTOHSCROLL
+    LTEXT           "",IDC_SNAPNAME,69,186,120,12,SS_SUNKEN | WS_BORDER
+    CONTROL         "&Increment filename after each capture?",IDC_AUTOBUMP,
+                    "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,7,
+                    205,139,9
+    DEFPUSHBUTTON   "&Snap Still",IDC_SNAP,202,208,65,17
+    CTEXT           "Capture Device Selected:",IDC_STATIC,14,12,108,8
+    CTEXT           "<None>",IDC_CAPOBJ,14,22,108,8
+    GROUPBOX        "Capture Type",IDC_STATIC,139,7,118,50
+    CTEXT           "Live Video Preview",IDC_STATIC,7,61,120,10
+    CONTROL         "",IDC_PREVIEW,"Static",SS_BLACKRECT,7,73,120,90
+    CTEXT           "Captured Video / Bitmap",IDC_STATIC,137,61,120,10
+    CONTROL         "",IDC_STILL,"Static",SS_BLACKRECT,137,73,120,90
+    LTEXT           "Capture Directory:",IDC_STATIC,7,172,59,8
+    LTEXT           "Last Captured File:",IDC_STATIC,7,187,60,9
+    PUSHBUTTON      "&Reset Counter",IDC_BUTTON_RESET,202,185,65,14
+    CONTROL         "&Play sound after capturing still?",IDC_PLAYSOUND,
+                    "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,7,
+                    217,139,9
+    CTEXT           "Status:",IDC_STATIC,14,35,108,8
+    CTEXT           "<No capture hardware>",IDC_STATUS,14,45,108,8
+    GROUPBOX        "",IDC_STATIC,7,7,120,50
+    PUSHBUTTON      "&View Still",IDC_BUTTON_VIEWSTILL,148,208,50,17,
+                    WS_DISABLED
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 8,1,0,0
+ PRODUCTVERSION 8,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "Comments", "DirectShow Sample\0"
+            VALUE "CompanyName", "Microsoft\0"
+            VALUE "FileDescription", "StillCap MFC Application\0"
+            VALUE "FileVersion", "8.10\0"
+            VALUE "InternalName", "StillCap\0"
+            VALUE "LegalCopyright", "Copyright (c) 2000-2001 Microsoft Corporation\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "StillCap.EXE\0"
+            VALUE "ProductName", "DirectX 8 SDK\0"
+            VALUE "ProductVersion", "8.1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 66
+    END
+
+    IDD_STILLCAP_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 267
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 229
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    IDS_ABOUTBOX            "&About StillCap..."
+END
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\StillCap.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,254 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\AudioCap.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\AudioCap.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 73
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About DirectShow AudioCap Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "AudioCap Version 8.1",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright (c) 2000-2001 Microsoft Corporation",IDC_STATIC,40,
+                    25,135,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+    LTEXT           "This sample demonstrates how to capture audio data in selectable PCM formats, using any installed audio capture hardware and input pins.",
+                    IDC_STATIC,40,40,165,24
+END
+
+IDD_AUDIOCAP_DIALOG DIALOGEX 0, 0, 351, 146
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "DirectShow AudioCapture Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LISTBOX         IDC_LIST_INPUT_DEVICES,7,40,89,51,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_LIST_INPUT_PINS,107,40,89,52,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Audition audio input?",IDC_CHECK_AUDITION,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,95,83,10
+    CONTROL         "&Write audio output to file?",IDC_CHECK_WRITE,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,7,106,97,10
+    EDITTEXT        IDC_EDIT_FILENAME,49,120,147,14,ES_AUTOHSCROLL
+    LISTBOX         IDC_LIST_FILTERS,207,77,70,62,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Mono",IDC_RADIO_MONO,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,211,30,35,10
+    CONTROL         "Stereo",IDC_RADIO_STEREO,"Button",BS_AUTORADIOBUTTON,
+                    256,30,45,10
+    CONTROL         "8-bit",IDC_RADIO_8BIT,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,211,41,37,10
+    CONTROL         "16-bit",IDC_RADIO_16BIT,"Button",BS_AUTORADIOBUTTON,256,
+                    41,45,10
+    CONTROL         "11 kHz",IDC_RADIO_11KHZ,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,211,52,40,10
+    CONTROL         "22 kHz",IDC_RADIO_22KHZ,"Button",BS_AUTORADIOBUTTON,256,
+                    52,40,10
+    CONTROL         "44 kHz",IDC_RADIO_44KHZ,"Button",BS_AUTORADIOBUTTON,303,
+                    52,38,10
+    PUSHBUTTON      "&Record",IDC_BUTTON_RECORD,7,7,40,14
+    PUSHBUTTON      "P&ause",IDC_BUTTON_PAUSE,51,7,40,14
+    PUSHBUTTON      "&Stop",IDC_BUTTON_STOP,95,7,40,14
+    PUSHBUTTON      "&Play",IDC_BUTTON_PLAY,139,7,40,14
+    CTEXT           "Select an Input Device",-1,7,31,89,8
+    CTEXT           "Select an Input Pin",-1,107,31,89,8
+    CTEXT           "Graph Filters",-1,207,68,70,8
+    GROUPBOX        "Audio Properties",-1,207,18,137,47
+    PUSHBUTTON      "&Device Properties",IDC_BUTTON_PROPERTIES,132,97,64,14,
+                    WS_DISABLED
+    CTEXT           "Input Pins",-1,282,68,62,8
+    LISTBOX         IDC_LIST_FILTER_INPUTS,282,77,62,26,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Output Pins",-1,282,105,62,8
+    LISTBOX         IDC_LIST_FILTER_OUTPUTS,282,113,62,26,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Status :",-1,207,6,29,8
+    LTEXT           "Ready",IDC_STATIC_STATUS,240,6,97,8
+    CTEXT           "Capture To:",-1,7,123,38,8
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 8,1,0,0
+ PRODUCTVERSION 8,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "DirectShow Sample\0"
+            VALUE "CompanyName", "Microsoft\0"
+            VALUE "FileDescription", "AudioCap MFC Application\0"
+            VALUE "FileVersion", "8.10\0"
+            VALUE "InternalName", "AudioCap\0"
+            VALUE "LegalCopyright", "Copyright (c) 2000-2001 Microsoft Corporation\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "AudioCap.EXE\0"
+            VALUE "PrivateBuild", "\0"
+            VALUE "ProductName", "DirectX 8 SDK\0"
+            VALUE "ProductVersion", "8.1\0"
+            VALUE "SpecialBuild", "\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 66
+    END
+
+    IDD_AUDIOCAP_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 344
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 139
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About AudioCap..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\AudioCap.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,32 @@
+HKCR
+{
+	CPPVideoControl.CompositeControl.1 = s 'CompositeControl Class'
+	{
+		CLSID = s '{CDDFD429-EDFD-4C72-AE9C-B70FE6955051}'
+	}
+	CPPVideoControl.CompositeControl = s 'CompositeControl Class'
+	{
+		CLSID = s '{CDDFD429-EDFD-4C72-AE9C-B70FE6955051}'
+		CurVer = s 'CPPVideoControl.CompositeControl.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {CDDFD429-EDFD-4C72-AE9C-B70FE6955051} = s 'CompositeControl Class'
+		{
+			ProgID = s 'CPPVideoControl.CompositeControl.1'
+			VersionIndependentProgID = s 'CPPVideoControl.CompositeControl'
+			ForceRemove 'Programmable'
+			LocalServer32 = s '%MODULE%'
+			val AppID = s '{06751985-1ADD-416A-951E-2FEF4FAEFB2D}'
+			ForceRemove 'Control'
+			ForceRemove 'Insertable'
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 101'
+			'MiscStatus' = s '0'
+			{
+			    '1' = s '131473'
+			}
+			'TypeLib' = s '{C03567A2-8044-40F0-8ABB-301A005F9FF1}'
+			'Version' = s '1.0'
+		}
+	}
+}

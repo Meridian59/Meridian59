@@ -1,0 +1,46 @@
+#include <activex.ver>
+#include "resource.h"
+
+#include "winres.h"
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""winres.h""\r\n"
+    "\0"
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+//==========================================================================;
+//
+//  THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY
+//  KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+//  PURPOSE.
+//
+//  Copyright (c) 2000-2001  Microsoft Corporation.  All Rights Reserved.
+//
+//--------------------------------------------------------------------------;
+
+IDR_SAMPLE              REGISTRY DISCARDABLE    "Sample.rgs"
+
+
+//
+// Version Info
+//
+#define VERSION_RES_BIN_NAME		"DMOSample.dll\0"
+#define VERSION_RES_BIN_DESCRIPTION	"DMO Sample Filter (Sample)\0"
+
+#define AMOVIE_SELF_REGISTER
+
+#include <activex.rcv>
+
+

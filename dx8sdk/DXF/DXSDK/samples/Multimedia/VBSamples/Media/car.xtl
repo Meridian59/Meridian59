@@ -1,0 +1,35 @@
+<!-- This project seeks through a clip of a moving car, plays selected portions, -->
+<!-- and applies transitions between clips.                                      -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+<timeline>
+	<group type="video">
+		<track>
+			<clip src="c:\dxsdk\samples\multimedia\media\highway.avi"  start="0" stop="3" mstart="4" mstop="7" />
+		</track>
+		
+		<track>
+			<clip src="c:\dxsdk\samples\multimedia\media\highway.avi"  start="3" stop="6" mstart="3" mstop="6" />
+			<transition clsid="{99999999-9999-9999-9999-999999999999}" start="3" stop="4" />		
+		</track>
+
+		<track>
+			<clip src="c:\dxsdk\samples\multimedia\media\highway.avi"  start="6" stop="8" mstart="2" mstop="4" />
+			<transition clsid="{af279b30-86eb-11d1-81bf-0000f87557db}" start="6" stop="7" />		
+		</track>
+
+		<track>
+			<clip src="c:\dxsdk\samples\multimedia\media\highway.avi"  start="8" stop="11" mstart="4" mstop="7" />
+			<transition clsid="{2A54C913-07AA-11D2-8D6D-00C04F8EF8E0}" start="8" stop="10" />		
+		</track>
+	</group>
+
+
+	<group type="audio">
+		<track>	
+			<clip src="c:\dxsdk\samples\multimedia\media\track2.mp3"   start="0" stop="11" mstart="0" />
+		</track>
+	</group>
+</timeline>

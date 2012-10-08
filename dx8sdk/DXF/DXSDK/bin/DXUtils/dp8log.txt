@@ -1,0 +1,115 @@
+DIRECTPLAY® 8 LOGGING UTILITY (DP8LOG.EXE)
+
+Like many parts of DirectX, the debug version of DirectPlay 8 sends 
+debugging messages meant to aid you in development to a debug program. 
+DirectPlay is also able to send this debugging information to a region 
+of shared memory. The purpose of the dp8log.exe utility is to read and 
+display the contents of that region of memory. This allows you to obtain 
+the debug information on machines that do not have a debugger and also 
+gives you a convenient way to save the debugging information to a file 
+by redirecting the output from dp8log.exe to a file.
+
+To display the contents of shared memory simply run dp8log.exe from the 
+command prompt. The contents of the shared memory will be output to the 
+standard output device (the screen). If you want to save the debug 
+output to a file, simply redirect standard output to a file. For example, 
+the command:
+
+dp8log > debug.txt
+
+Will save the debug output in a file called debug.txt in the current 
+directory.
+
+Note that the shared memory region only exists while a DirectPlay 8 
+application is running and has loaded one or more of the DirectPlay 8 
+dlls. When all DirectPlay applications exit or unload the DirectPlay 8 
+dlls, the shared memory region is deallocated. This means that you can 
+only get output from dp8log.exe while one or more of the DirectPlay 8 
+dlls are loaded (i.e. the application using DirectPlay 8 is running).
+
+Also note that all DirectPlay 8 applications share the same area of
+shared memory. This means that the debug output will contain output
+from all processes using DirectPlay 8.
+
+You can change the behavior of the DirectPlay 8 debug output by adding 
+entries to win.ini in the windows directory.
+
+DirectPlay 8 looks for the [DirectPlay8] section in win.ini, and it 
+recognizes the following attributes:
+
+debug=x
+log=x
+debug.<component>=x
+log.<component>=x
+verbose=x
+
+These attributes are described below:
+
+debug - determines how much information is sent to the debug log, 0 is 
+the least amount (critical errors only), 9 is the most (practically 
+everything that DirectPlay does). Note that setting "debug" to a high 
+level takes a fair amount of CPU time and will lower the performance 
+of your application.
+
+DirectPlay is subdivided into a number of components. It is possible to 
+control the debug level of individual components. The following 
+compoenents are available:
+
+core - session layer protocol (e.g. player and group management)
+addr - DirectPlay addressing (i.e. IDirectPlay8Address)
+lobby - lobby client and lobbied application
+protocol - transport protocol (i.e. retries, acks, etc.)
+voice - DirectPlay Voice
+dpnsvr - the enumeration server/redirector (dpnsvr.exe)
+wsock - winsock (IP/IPX) service provider
+modem - serial and modem service provider
+shared - shared untility functions in DirectPlay
+
+The "debug" setting sets the default debug level. You can override this 
+with specific component levels, e.g.
+
+debug=1 ; sets the default level to 1
+debug.voice=5 ; set voice related debug level to 5
+debug.wsock=0 ; set the winsock service provider debug level to 0
+
+The "log" attribute determines where the debug information is sent.
+The following values are valid:
+
+log=0 ; send no debug information
+log=1 ; send debug info to debug console (i.e vc++ debug window)
+log=2 ; send debug info to shared memory
+log=3 ; send debug info to both console and shared memory
+
+As with the "debug" attribute, you can specify components for the
+log attribute. For example:
+
+log=1 ; default to sending debug information to the debug console
+log.voice=3 ; send voice debug information to console and memory
+log.wsock=0 ; send winsock service provider debug information to nowhere
+
+The "verbose" attribute determines how much information is contained
+in each debug message. There are two verbosity levels, "0" and "1".
+"0" is the default. Example:
+
+verbose=1 ; sent the verbosity level to 1
+
+Experiment with the different verbosity levels and decide which one
+serves your purposes best.
+
+Here is a complete example win.ini section:
+
+[DirectPlay8]
+debug=1      ; set the default debug level to 1
+debug.core=5 ; set the core debug level to 5
+log=1        ; default to sending debug output to console only
+log.core=3   ; send the core debug output to both console and memory
+verbose=1    ; use verbosity level 1
+
+If no [DirectPlay8] section is found in win.ini, DirectPlay defaults
+to the following settings:
+
+[DirectPlay8]
+log=1
+debug=0
+
+Therefore you will always see critical errors in the debug console.

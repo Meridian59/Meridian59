@@ -1,0 +1,135 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include <windows.h>
+#define IDC_STATIC -1
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOG DISCARDABLE  0, 0, 322, 180
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "DirectMusic Audiopath Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    GROUPBOX        "DirectMusic Segments",IDC_STATIC,7,7,308,80
+    PUSHBUTTON      "Lullaby",IDC_PLAY1,15,19,63,13
+    PUSHBUTTON      "Snore",IDC_PLAY2,15,35,63,13
+    PUSHBUTTON      "Mumble",IDC_PLAY3,15,51,63,13
+    PUSHBUTTON      "Rude Awakening",IDC_PLAY4,15,67,63,13
+    GROUPBOX        "3D Positioning of AudioPath",IDC_STATIC,7,90,145,61
+    LTEXT           "X",IDC_STATIC,13,101,8,8
+    CONTROL         "Slider1",IDC_XPOS,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,19,99,108,14
+    LTEXT           "Y",IDC_STATIC,13,117,8,8
+    CONTROL         "Slider1",IDC_YPOS,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,19,115,108,14
+    LTEXT           "Z",IDC_STATIC,13,133,8,8
+    CONTROL         "Slider1",IDC_ZPOS,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,19,131,108,14
+    DEFPUSHBUTTON   "Exit",IDCANCEL,265,157,50,14
+    LTEXT           "Segment file. Start over if pressed twice. Plays as primary segment.",
+                    IDC_STATIC,86,21,223,8
+    LTEXT           "Segment file. Overlaps if pressed twice. Plays as secondary segment.  ",
+                    IDC_STATIC,86,37,223,8
+    LTEXT           "Wave file. Overlaps if pressed twice. Plays as secondary segment.  ",
+                    IDC_STATIC,86,53,223,8
+    LTEXT           "Segment file. Stops all sound on audiopath. Plays as primary segment.",
+                    IDC_STATIC,86,69,223,8
+    GROUPBOX        "Description",IDC_STATIC,157,90,158,61
+    LTEXT           "All of the sounds above will play on a 3D audiopath.  Click on the buttons to hear various methods of using PlaySegmentEx().  To the left, you can adjust the 3D position of the audiopath.",
+                    IDC_STATIC,165,101,143,43
+    LTEXT           "Static",IDC_ZDISPLAY,129,132,18,12
+    LTEXT           "Static",IDC_YDISPLAY,129,116,18,12
+    LTEXT           "Static",IDC_XDISPLAY,129,100,18,12
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 315
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include <windows.h>\r\n"
+    "#define IDC_STATIC -1\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "directx.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

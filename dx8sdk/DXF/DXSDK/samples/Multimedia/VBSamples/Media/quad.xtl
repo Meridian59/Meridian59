@@ -1,0 +1,47 @@
+<!-- This shows using the compositor transition to show playing       -->
+<!-- four movies at once!                                             -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+<timeline>
+  <group type="video" bitdepth="16" width="320" height="240">
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\skiing.avi"   start="0" stop="8" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="0" stop="8">
+            <param name="Width"  value="160"/>
+            <param name="Height" value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\ruby.avi"     start="0" stop="8" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="0" stop="8">
+    	    <param name="OffsetX" value="160"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\water.mpg"    start="0" stop="4" mstart="0" />
+        <clip src="c:\dxsdk\samples\multimedia\media\water.mpg"    start="4" stop="8" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="0" stop="8">
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+    <vtrack>
+        <clip src="c:\dxsdk\samples\multimedia\media\butterfly.mpg" start="0" stop="3" mstart="0" />
+        <clip src="c:\dxsdk\samples\multimedia\media\butterfly.mpg" start="3" stop="6" mstart="0" />
+        <clip src="c:\dxsdk\samples\multimedia\media\butterfly.mpg" start="6" stop="8" mstart="0" />
+        <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}"  start="0" stop="8">
+    	    <param name="OffsetX" value="160"/>
+    	    <param name="OffsetY" value="120"/>
+            <param name="Width"   value="160"/>
+            <param name="Height"  value="120"/>
+        </transition>
+    </vtrack>
+  </group>
+</timeline>
+
+

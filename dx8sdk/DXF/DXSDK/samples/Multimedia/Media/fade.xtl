@@ -1,0 +1,39 @@
+<!-- This demonstrates changing audio volume over time to fade in a clip -->
+<!-- and how to fade one video from track to track, and do slo-mo video  -->
+<!-- and it also shows using an X-ray effect                             -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+<timeline>
+  <group type="video" bitdepth="24">
+    <track>
+      <clip start="0" stop="20" src="c:\dxsdk\samples\multimedia\Media\lake2.jpg" mstart="0" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>  
+    </track>
+    <track>
+      <clip src="c:\dxsdk\samples\multimedia\Media\highway.avi" start="0" stop="20" mstart="0" mstop="7">
+	  <effect clsid="{16B280C8-EE70-11D1-9066-00C04FD9189D}"    start="10" stop="15" >
+	    <param name="XRay" value="1"/>
+       	  </effect>
+      </clip>		
+      <transition start="0" stop="20" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}">
+          <param name="Progress" value="0.0">
+            <linear time="10"    value="1.0"/>
+            <linear time="20"    value="0.0"/>
+          </param>
+      </transition>
+    </track>
+  </group>
+  <group type="audio">
+    <track>
+      <clip src="c:\dxsdk\samples\multimedia\Media\track3.mp3" start="0" stop="20">
+        <effect clsid="{036A9790-C153-11d2-9EF7-006008039E37}" start="0" stop="20">
+          <param name="Vol"   value="0.0">
+            <linear time="10" value="1.0"/>
+            <linear time="20" value="0.0"/>
+          </param>
+        </effect>
+      </clip>
+    </track>
+  </group>
+</timeline>

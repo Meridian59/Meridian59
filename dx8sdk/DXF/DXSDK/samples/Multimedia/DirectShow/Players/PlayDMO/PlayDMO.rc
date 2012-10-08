@@ -1,0 +1,248 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif //_WIN32\r\n"
+    "#include ""res\\PlayDMO.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\PlayDMO.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 235, 89
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About PlayDMO DirectShow Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,21,20
+    LTEXT           "PlayDMO Version 8.1",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2001 Microsoft Corporation",IDC_STATIC,40,
+                    26,150,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,14,WS_GROUP
+    LTEXT           "This sample demonstrates using audio DMOs to affect the audio portion of an audio/video file.  You can select from any audio DMO installed in your system, including Echo, Flanger, Chorus, and Reverb.",
+                    IDC_STATIC,40,42,176,40
+END
+
+IDD_PLAYDMO_DIALOG DIALOGEX 0, 0, 347, 205
+STYLE DS_MODALFRAME | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "PlayDMO DirectShow Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    EDITTEXT        IDC_EDIT_FILENAME,10,52,173,14,ES_AUTOHSCROLL
+    LISTBOX         IDC_LIST_AUDIO_DMOS,7,111,89,68,LBS_SORT | 
+                    LBS_MULTIPLESEL | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "&Apply",IDC_BUTTON_ADD_DMO,7,183,42,14
+    PUSHBUTTON      "&Clear",IDC_BUTTON_CLEAR,54,183,42,14
+    LISTBOX         IDC_LIST_FILTERS,101,111,106,43,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Audio Effects DMOs",IDC_STATIC,7,103,89,8
+    CTEXT           "Filters/DMOs In Graph",IDC_STATIC,107,103,89,8
+    GROUPBOX        "Audio DMO Input",IDC_STATIC,211,107,129,53
+    GROUPBOX        "Audio DMO Output",IDC_STATIC,211,162,129,35
+    LTEXT           "Max Latency :",IDC_STATIC,218,148,82,8
+    LTEXT           "0",IDC_STATIC_MAXLATENCY,306,148,30,8
+    LTEXT           "Minimum buffer size:",IDC_STATIC,218,119,82,8
+    LTEXT           "Buffer alignment (bytes):",IDC_STATIC,218,129,82,8
+    LTEXT           "Maximum lookahead:",IDC_STATIC,218,139,82,8
+    LTEXT           "0",IDC_STATIC_IN_MINBUFFERSIZE,306,119,30,8
+    LTEXT           "0",IDC_STATIC_IN_ALIGNMENT,306,129,30,8
+    LTEXT           "0",IDC_STATIC_IN_MAXLOOKAHEAD,306,139,30,8
+    LTEXT           "Minimum buffer size:",IDC_STATIC,215,173,82,8
+    LTEXT           "Buffer alignment (bytes):",IDC_STATIC,215,183,82,8
+    LTEXT           "0",IDC_STATIC_OUT_MINBUFFERSIZE,306,173,30,8
+    LTEXT           "0",IDC_STATIC_OUT_ALIGNMENT,306,183,30,8
+    CTEXT           "Input Pins",IDC_STATIC,101,156,47,8
+    LISTBOX         IDC_LIST_FILTER_INPUTS,101,166,50,31,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Output Pins",IDC_STATIC,156,156,47,8
+    LISTBOX         IDC_LIST_FILTER_OUTPUTS,156,166,51,31,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "&Browse For Media...",IDC_BUTTON_FILE,10,35,78,14
+    CTEXT           "Select a media file below, apply one or more audio effects DMOs, then click Play.",
+                    IDC_STATIC,11,11,167,21
+    CONTROL         "",IDC_SCREEN,"Static",SS_BLACKRECT,191,7,148,96
+    PUSHBUTTON      "&Filter Properties",IDC_BUTTON_PROPPAGE,105,35,78,14,
+                    WS_DISABLED
+    GROUPBOX        "",IDC_STATIC,7,3,180,96
+    PUSHBUTTON      "Pa&use",IDC_BUTTON_PAUSE,53,77,40,14
+    PUSHBUTTON      "&Stop",IDC_BUTTON_STOP,96,77,40,14
+    PUSHBUTTON      "&Play",IDC_BUTTON_PLAY,9,77,40,14
+    CTEXT           "Ready",IDC_STATIC_STATUS,137,80,46,8
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 8,1,0,0
+ PRODUCTVERSION 8,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "Comments", "DirectShow Sample\0"
+            VALUE "CompanyName", "Microsoft\0"
+            VALUE "FileDescription", "PlayDMO MFC Application\0"
+            VALUE "FileVersion", "8.10\0"
+            VALUE "InternalName", "PlayDMO\0"
+            VALUE "LegalCopyright", "Copyright (c) 2000-2001 Microsoft Corporation\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "PlayDMO.EXE\0"
+            VALUE "ProductName", "DirectX 8 SDK\0"
+            VALUE "ProductVersion", "8.1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 82
+    END
+
+    IDD_PLAYDMO_DIALOG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 340
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 198
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_ABOUTBOX            "&About PlayDMO..."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif //_WIN32
+#include "res\PlayDMO.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

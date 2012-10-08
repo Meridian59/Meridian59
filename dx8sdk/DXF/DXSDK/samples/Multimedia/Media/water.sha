@@ -1,0 +1,400 @@
+//
+// Water effect
+// Copyright (c) 2000 Microsoft Corporation. All rights reserved.
+//
+
+matrix mID;     // Identity transform
+matrix mENV;    // Environment map transform
+
+texture tFLR;   // Floor texture
+texture tCAU;   // Caustic texture
+texture tENV;   // Cubic environment map
+    
+
+//
+// Technique 0 - One pass
+//
+
+technique T0
+{
+    pass P0
+    {        
+        VertexShader = xyz | normal | diffuse | tex1;
+
+        Lighting       = True;
+        SpecularEnable = True;
+
+
+        // Stage0
+        ColorOp[0]   = SelectArg1;
+        ColorArg1[0] = Texture;
+        AlphaOp[0]   = SelectArg2;
+        AlphaArg2[0] = Current;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0] = <tFLR>;
+        TextureTransform[0] = <mID>;
+        TextureTransformFlags[0] = Count2;
+
+
+        // Stage1
+        ColorOp[1]   = Add;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+        AlphaOp[1]   = SelectArg2;
+        AlphaArg2[1] = Current;
+
+        MinFilter[1] = Linear;
+        MagFilter[1] = Linear;
+        MipFilter[1] = Point;
+
+        Texture[1] = <tCAU>;
+        TextureTransform[1] = <mID>;
+        TextureTransformFlags[1] = Count2;
+
+
+        // Stage2
+        ColorOp[2]   = BlendCurrentAlpha;
+        ColorArg1[2] = Texture;
+        ColorArg2[2] = Current;
+        AlphaOp[2]   = Disable;
+
+        MinFilter[2] = Linear;
+        MagFilter[2] = Linear;
+        MipFilter[2] = Point;
+
+        Texture[2] = <tENV>;
+        TextureTransform[2] = <mENV>;
+        TextureTransformFlags[2] = Count3;
+        TexCoordIndex[2] = CameraSpaceReflectionVector;
+
+        // Stage3
+        ColorOp[3] = Disable;
+        AlphaOp[3] = Disable;
+    }
+}
+
+
+//
+// Technique 1 - Two pass
+//
+
+technique T1
+{
+    pass P0
+    {       
+        VertexShader = xyz | normal | diffuse | tex1;
+
+        // Stage0
+        ColorOp[0]   = SelectArg1;
+        ColorArg1[0] = Texture;
+        AlphaOp[0]   = Disable;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0] = <tFLR>;
+        TextureTransform[0] = <mID>;
+        TextureTransformFlags[0] = Count2;
+
+
+        // Stage1
+        ColorOp[1]   = Add;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+        AlphaOp[1]   = Disable;
+
+        MinFilter[1] = Linear;
+        MagFilter[1] = Linear;
+        MipFilter[1] = Point;
+
+        Texture[1] = <tCAU>;
+        TextureTransform[1] = <mID>;
+        TextureTransformFlags[1] = Count2;
+
+
+        // Stage2
+        ColorOp[2] = Disable;
+        AlphaOp[2] = Disable;
+    }
+
+
+    pass P1
+    {
+        SrcBlend  = One;
+        DestBlend = InvSrcAlpha;
+
+        Lighting         = True;
+        SpecularEnable   = True;
+        AlphaBlendEnable = True;
+
+
+        // Stage0
+        ColorOp[0]   = BlendDiffuseAlpha;
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Diffuse;
+        AlphaOp[0]   = SelectArg2;
+        AlphaArg2[0] = Diffuse;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0] = <tENV>;
+        TextureTransform[0] = <mENV>;
+        TextureTransformFlags[0] = Count3;
+        TexCoordIndex[0] = CameraSpaceReflectionVector;
+
+
+        // Stage1
+        ColorOp[1] = Disable;
+        AlphaOp[1] = Disable;
+    }
+}
+
+
+//
+// Technique 2 - Three pass
+//
+
+technique T2
+{
+    pass P0
+    {
+        VertexShader = xyz | normal | diffuse | tex1;
+
+        // Stage0
+        ColorOp[0]   = SelectArg1;
+        ColorArg1[0] = Texture;
+        AlphaOp[0]   = Disable;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0] = <tFLR>;
+        TextureTransform[0] = <mID>;
+        TextureTransformFlags[0] = Count2;
+
+        // Stage1
+        ColorOp[1] = Disable;
+        AlphaOp[1] = Disable;
+    }
+
+
+    pass P1
+    {
+        SrcBlend  = One;
+        DestBlend = One;
+
+        Lighting         = False;
+        SpecularEnable   = True;
+        AlphaBlendEnable = True;
+
+
+        // Stage0
+        ColorOp[0]   = Add;
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Current;
+        AlphaOp[0]   = Disable;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0] = <tCAU>;
+        TextureTransform[0] = <mID>;
+        TextureTransformFlags[0] = Count2;
+
+
+        // Stage1
+        ColorOp[1] = Disable;
+        AlphaOp[1] = Disable;
+    }
+
+
+    pass P2
+    {
+        SrcBlend  = One;
+        DestBlend = InvSrcAlpha;
+
+        Lighting         = True;
+        SpecularEnable   = True;
+        AlphaBlendEnable = True;
+
+
+        // Stage0
+        ColorOp[0]   = BlendDiffuseAlpha;
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Diffuse;
+        AlphaOp[0]   = SelectArg2;
+        AlphaArg2[0] = Diffuse;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0] = <tENV>;
+        TextureTransform[0] = <mENV>;
+        TextureTransformFlags[0] = Count3;
+        TexCoordIndex[0] = CameraSpaceReflectionVector;
+
+
+        // Stage1
+        ColorOp[1] = Disable;
+        AlphaOp[1] = Disable;
+    }
+}
+
+
+//
+// Technique 3 - One pass, no reflection
+//
+
+technique T3
+{
+    pass P0
+    {
+        VertexShader = xyz | normal | diffuse | tex1;
+
+        Lighting       = True;
+        SpecularEnable = True;
+
+
+        // Stage0
+        ColorOp[0]   = SelectArg1;
+        ColorArg1[0] = Texture;
+        AlphaOp[0]   = Disable;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0]   = <tFLR>;
+
+
+        // Stage1
+        ColorOp[1]   = Add;
+        ColorArg1[1] = Texture;
+        ColorArg2[1] = Current;
+        AlphaOp[1]   = Disable;
+
+        MinFilter[1] = Linear;
+        MagFilter[1] = Linear;
+        MipFilter[1] = Point;
+
+        Texture[1]   = <tCAU>;
+
+
+        // Stage2
+        ColorOp[2]   = Disable;
+        AlphaOp[2]   = Disable;
+    }
+}
+
+
+//
+// Technique 4 - Two pass, no reflection
+//
+
+technique T4
+{
+    pass P0
+    {
+        VertexShader = xyz | normal | diffuse | tex1;
+
+        // Stage 0
+        ColorOp[0]   = SelectArg1;
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Diffuse;
+
+        AlphaOp[0]   = SelectArg1;
+        AlphaArg1[0] = Texture;
+        AlphaArg2[0] = Diffuse;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0]   = <tFLR>;
+
+
+        // Stage 1
+        ColorOp[1]   = Disable;
+        AlphaOp[1]   = Disable;
+    }
+
+
+    pass P1
+    {
+        SrcBlend  = One;
+        DestBlend = One;
+
+        Lighting         = True;
+        SpecularEnable   = True;
+        AlphaBlendEnable = True;
+
+
+        // Stage 0
+        ColorOp[0]   = SelectArg1;
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Current;
+
+        AlphaOp[0]   = SelectArg1;
+        AlphaArg1[0] = Texture;
+        AlphaArg2[0] = Current;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = Point;
+
+        Texture[0]   = <tCAU>;
+
+
+        // Stage 1
+        ColorOp[1]   = Disable;
+        AlphaOp[1]   = Disable;
+    }
+}
+
+
+
+
+//
+// Technique 5 - One pass, no reflection, no caustics
+//
+
+technique T5
+{
+    pass P0
+    {
+        VertexShader = xyz | normal | diffuse | tex1;
+
+        Lighting       = True;
+        SpecularEnable = True;
+
+
+        // Stage 0
+        ColorOp[0]   = SelectArg1;
+        ColorArg1[0] = Texture;
+        ColorArg2[0] = Current;
+
+        AlphaOp[0]   = SelectArg1;
+        AlphaArg1[0] = Texture;
+        AlphaArg2[0] = Current;
+
+        MinFilter[0] = Linear;
+        MagFilter[0] = Linear;
+        MipFilter[0] = None;
+
+        Texture[0]   = <tFLR>;
+
+        // Stage 1
+        ColorOp[1]   = Disable;
+        AlphaOp[1]   = Disable;
+    }
+}

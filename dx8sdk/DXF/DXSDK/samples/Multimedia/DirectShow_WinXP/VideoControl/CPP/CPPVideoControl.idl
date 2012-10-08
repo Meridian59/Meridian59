@@ -1,0 +1,47 @@
+//------------------------------------------------------------------------------
+// File: CPPVideoControl.idl
+//
+// Desc: IDL source for CPPVideoControl.dll
+//		 for the Windows XP MSVidCtl C++ sample
+//
+// Copyright (c) 2001 Microsoft Corporation.  All rights reserved.
+//------------------------------------------------------------------------------
+
+// This file will be processed by the MIDL tool to
+// produce the type library (CPPVideoControl.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+#include "olectl.h"
+	
+
+	[
+		object,
+		uuid(3E119535-D5AB-4520-B0E1-495B322E2A1A),
+		dual,
+		helpstring("ICompositeControl Interface"),
+		pointer_default(unique)
+	]
+	interface ICompositeControl : IDispatch
+	{
+	};
+
+[
+	uuid(C03567A2-8044-40F0-8ABB-301A005F9FF1),
+	version(1.0),
+	helpstring("CPPVideoControl 1.0 Type Library")
+]
+library CPPVIDEOCONTROLLib
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+
+	[
+		uuid(CDDFD429-EDFD-4C72-AE9C-B70FE6955051),
+		helpstring("CompositeControl Class")
+	]
+	coclass CompositeControl
+	{
+		[default] interface ICompositeControl;
+	};
+};

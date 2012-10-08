@@ -1,0 +1,41 @@
+<!-- This example shows SMPTE wipe #130 (a heart) as the transition.  It   -->
+<!-- demonstrates the parameters you can set. (It is a tall, pointy heart  -->
+<!-- and uses an array of 2 hearts across by 3 down).  Also, the border    -->
+<!-- color is slowly changed over time from green to black.                -->
+<!-- previewmode="0" is used so every frame will be shown during preview,  -->
+<!-- even if you are on a slow machine.                                    -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+
+<timeline>
+  <group type="video" previewmode="0">
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\ruby.avi" start="0" stop="6" mstart="0" />
+    </track>
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\highway.avi"      start="2" stop="8" mstart="0" />
+        <transition clsid="{dE75D012-7A65-11D2-8CEA-00A0C9441E20}" start="2" stop="6" >
+    	    <param name="MaskNum"     value="130"/>
+    	    <param name="ScaleY"      value="2"/>
+    	    <param name="ReplicateX"  value="2"/>
+    	    <param name="ReplicateY"  value="3"/>
+    	    <param name="BorderColor" value="65280">
+		<linear time="4" value="0"/>
+	    </param>
+    	    <param name="BorderWidth"    value="2"/>
+    	    <param name="BorderSoftness" value="5"/>
+        </transition>
+    </track>
+  </group>
+
+  <group type="audio">
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\track2.mp3" start="0" stop="6" mstart="0"/>
+    </track>
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\track3.mp3" start="4" stop="8" mstart="4" />
+    </track>
+  </group>
+</timeline>

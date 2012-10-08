@@ -1,0 +1,3 @@
+VBGROUP 5.0
+StartupProject=Server\vb_MsgServer.vbp
+Project=Client\vb_MsgClient.vbp

@@ -1,0 +1,287 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define IDC_STATIC -1
+#include <windows.h>
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN_ICON           ICON    DISCARDABLE     "app.ico"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define IDC_STATIC -1\r\n"
+    "#include <windows.h>\r\n"
+    "\r\n"
+    "\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_CONFIGURE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 182
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 227
+    END
+
+    IDD_SINGLEMONITORSETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 90
+    END
+
+    IDD_MULTIMONITORSETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 252
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 273
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_CONFIGURE DIALOG DISCARDABLE  0, 0, 189, 234
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Moire Settings"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,71,214,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,127,214,50,14
+    PUSHBUTTON      "&Display Settings...",IDC_SCREENSETTINGS,44,18,102,14
+    GROUPBOX        "&Animation Speed",IDC_STATIC,10,47,168,56
+    CONTROL         "Slider1",IDC_SPEED,"msctls_trackbar32",TBS_AUTOTICKS | 
+                    WS_TABSTOP,21,60,147,22
+    LTEXT           "Slow",IDC_STATIC,23,82,16,8
+    LTEXT           "Fast",IDC_STATIC,152,82,14,8
+    GROUPBOX        "Color Type",IDC_STATIC,10,110,168,29
+    CONTROL         "&Intense",IDC_INTENSE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_TABSTOP,16,123,65,10
+    CONTROL         "&Pastel",IDC_PASTEL,"Button",BS_AUTORADIOBUTTON,91,122,
+                    73,10
+    GROUPBOX        "&Options",IDC_STATIC,10,145,168,62
+    LTEXT           "Change Shape Every",IDC_STATIC,18,157,77,8
+    EDITTEXT        IDC_MESHINTERVAL,102,154,25,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "seconds",IDC_STATIC,134,157,28,8
+    LTEXT           "Change Colors Every",IDC_STATIC,18,173,77,8
+    EDITTEXT        IDC_COLORINTERVAL,102,170,25,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "seconds",IDC_STATIC,134,173,28,8
+    LTEXT           "Change Texture Every",IDC_STATIC,18,189,77,8
+    EDITTEXT        IDC_TEXTUREINTERVAL,102,186,25,14,ES_AUTOHSCROLL | 
+                    ES_NUMBER
+    LTEXT           "seconds",IDC_STATIC,134,189,28,8
+    GROUPBOX        "Display Settings",IDC_STATIC,10,4,168,37
+END
+
+IDD_SINGLEMONITORSETTINGS DIALOG DISCARDABLE  0, 0, 255, 170
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Display Settings"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    GROUPBOX        "Video adapter",IDC_STATIC,7,7,241,69
+    LTEXT           "Name:",IDC_STATIC,13,18,33,8
+    LTEXT           "",IDC_ADAPTERNAME,57,18,159,8
+    LTEXT           "Rendering:",IDC_STATIC,13,31,36,8
+    LTEXT           "",IDC_RENDERING,57,31,130,17
+    PUSHBUTTON      "&Help",IDC_MOREINFO,194,33,50,14
+    CONTROL         "&Disable hardware 3D rendering",IDC_DISABLEHW,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,14,54,215,10
+    GROUPBOX        "Display mode",IDC_DISPLAYMODEBOX,7,84,241,55
+    LTEXT           "Display &mode for this video adapter:",IDC_MODESSTATIC,
+                    13,95,126,8
+    COMBOBOX        IDC_MODESCOMBO,144,93,100,133,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Note: The Automatic display mode finds a mode that works well with your current screen saver settings and video adapter.",
+                    IDC_DISPLAYMODENOTE,13,109,227,27
+    LTEXT           "Automatic",IDC_AUTOMATIC,184,126,32,8,NOT WS_VISIBLE
+    LTEXT           "%d by %d, %d bit color",IDC_MODEFMT,13,152,71,8,NOT 
+                    WS_VISIBLE
+    DEFPUSHBUTTON   "OK",IDOK,143,148,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,197,148,50,14
+END
+
+IDD_MULTIMONITORSETTINGS DIALOG DISCARDABLE  0, 0, 270, 281
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Display Settings"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Monitor %d",IDC_TABNAMEFMT,214,8,32,8,NOT WS_VISIBLE
+    GROUPBOX        "Video adapter",IDC_STATIC,13,23,244,65
+    LTEXT           "Name:",IDC_STATIC,19,35,40,8
+    LTEXT           "",IDC_ADAPTERNAME,65,35,168,8
+    LTEXT           "Rendering:",IDC_STATIC,19,48,40,8
+    LTEXT           "",IDC_RENDERING,65,48,132,17
+    PUSHBUTTON      "&Help",IDC_MOREINFO,202,49,50,14
+    CONTROL         "&Disable hardware 3D rendering on this monitor",
+                    IDC_DISABLEHW,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,19,
+                    71,215,10
+    GROUPBOX        "Monitor usage",IDC_SCREENUSAGEBOX,13,94,244,44
+    CONTROL         "Display &screen saver on this monitor",IDC_RENDER,
+                    "Button",BS_AUTORADIOBUTTON,19,107,200,10
+    CONTROL         "Display &nothing on this monitor",IDC_LEAVEBLACK,"Button",
+                    BS_AUTORADIOBUTTON,19,120,200,10
+    GROUPBOX        "Display mode",IDC_DISPLAYMODEBOX,13,146,244,55
+    LTEXT           "Display &mode for this video adapter:",IDC_MODESSTATIC,
+                    19,158,126,8
+    COMBOBOX        IDC_MODESCOMBO,152,156,100,133,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Note: The Automatic display mode finds a mode that works well with your current screen saver settings and video adapter.",
+                    IDC_DISPLAYMODENOTE,19,173,232,22
+    LTEXT           "Automatic",IDC_AUTOMATIC,193,182,32,8,NOT WS_VISIBLE
+    LTEXT           "%d by %d, %d bit color",IDC_MODEFMT,7,265,71,8,NOT 
+                    WS_VISIBLE
+    DEFPUSHBUTTON   "OK",IDOK,159,259,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,213,259,50,14
+    GROUPBOX        "General Monitor Settings",IDC_GENERALBOX,7,214,256,32
+    CONTROL         "Render same &image on all monitors",IDC_SAME,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,22,227,210,10
+    CONTROL         "Tab1",IDC_MONITORSTAB,"SysTabControl32",WS_TABSTOP,7,7,
+                    256,201
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DDS
+//
+
+IDR_STRIPES_DDS         DDS     DISCARDABLE     "stripes.dds"
+IDR_BALL_DDS            DDS     DISCARDABLE     "ball.dds"
+IDR_NOISE_DDS           DDS     DISCARDABLE     "noise.dds"
+IDR_SPIRAL_DDS          DDS     DISCARDABLE     "spiral.dds"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_DESCRIPTION         "Moire Screensaver"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDS_ERR_GENERIC         "There was an unspecified problem with this screen saver."
+    IDS_ERR_NODIRECT3D      "Direct3D 8.0 could not be initialized.  Please install the latest version of DirectX."
+    IDS_ERR_NOWINDOWEDHAL   "Could not initialize the screen saver."
+    IDS_ERR_CREATEDEVICEFAILED "Could not create the Direct3D device."
+    IDS_ERR_NOCOMPATIBLEDEVICES 
+                            "Could not find any compatible Direct3D devices."
+    IDS_ERR_NOHARDWAREDEVICE 
+                            "No hardware-accelerated Direct3D devices were found."
+    IDS_ERR_HALNOTCOMPATIBLE 
+                            "This screen saver requires functionality that is not available on your Direct3D hardware accelerator."
+    IDS_ERR_NOHALTHISMODE   "This screen saver requires functionality that is not available on your Direct3D hardware accelerator with the current desktop display settings."
+    IDS_ERR_MEDIANOTFOUND   "Could not load required media."
+    IDS_ERR_RESIZEFAILED    "Could not reset the Direct3D device."
+    IDS_ERR_OUTOFMEMORY     "Not enough memory."
+    IDS_ERR_OUTOFVIDEOMEMORY "Not enough video memory."
+END
+
+STRINGTABLE PRELOAD DISCARDABLE 
+BEGIN
+    IDS_ERR_NOPREVIEW       "No preview available"
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_INFO_GOODHAL        "This video adapter supports hardware 3D rendering.  This screen saver can be displayed on this monitor."
+    IDS_INFO_BADHAL_GOODSW  "This video adapter supports hardware 3D rendering, but this screensaver requires functionality not available in hardware.  A software renderer will be used instead.  This screen saver can be displayed on this monitor."
+    IDS_INFO_BADHAL_BADSW   "This video adapter supports hardware 3D rendering, but this screensaver requires functionality not available in hardware or software.  This screen saver cannot be displayed on this monitor."
+    IDS_INFO_BADHAL_NOSW    "This video adapter supports hardware 3D rendering, but this screensaver requires functionality not available in hardware.  No software renderer is available.  This screen saver cannot be displayed on this monitor."
+    IDS_INFO_NOHAL_GOODSW   "This video adapter does not support hardware 3D rendering.  A software renderer will be used instead.  This screen saver can be displayed on this monitor."
+    IDS_INFO_NOHAL_BADSW    "This video adapter does not support hardware 3D rendering.  This screensaver requires functionality not available in the software renderer.  This screen saver cannot be displayed on this monitor."
+    IDS_INFO_NOHAL_NOSW     "This video adapter does not support hardware 3D rendering.  No software renderer is available.  This screen saver cannot be displayed on this monitor."
+    IDS_INFO_DISABLEDHAL_GOODSW 
+                            "The video adapter supports hardware 3D rendering, but it has been disabled.  A software renderer will be used instead.  This screen saver can be displayed on this monitor."
+END
+
+STRINGTABLE DISCARDABLE 
+BEGIN
+    IDS_INFO_DISABLEDHAL_BADSW 
+                            "This video adapter supports hardware 3D rendering, but it has been disabled.  This screensaver requires functionality not available in the software renderer.  This screen saver cannot be displayed on this monitor."
+    IDS_INFO_DISABLEDHAL_NOSW 
+                            "This video adapter supports hardware 3D rendering, but it has been disabled.  No software renderer is available.  This screen saver cannot be displayed on this monitor."
+    IDS_RENDERING_HAL       "The screen saver can use hardware 3D rendering on this monitor."
+    IDS_RENDERING_SW        "The screen saver can use software 3D rendering on this monitor."
+    IDS_RENDERING_NONE      "The screen saver cannot be displayed on this monitor."
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

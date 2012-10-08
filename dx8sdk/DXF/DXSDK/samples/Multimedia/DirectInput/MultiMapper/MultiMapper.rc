@@ -1,0 +1,160 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define IDC_STATIC -1
+#include <Windows.h>
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define IDC_STATIC -1\r\n"
+    "#include <Windows.h>\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON    DISCARDABLE     "DirectX.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 326
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 251
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOG DISCARDABLE  0, 0, 333, 260
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "DirectInput MultiMapper Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    PUSHBUTTON      "E&xit",IDCANCEL,262,55,64,14
+    PUSHBUTTON      "Configure &Input",IDM_CONFIGINPUT,262,7,64,14
+    RTEXT           "Left/Right Axis:",IDC_STATIC,16,89,55,8
+    RTEXT           "Up/Down Axis:",IDC_STATIC,16,79,55,8
+    LTEXT           "Static",IDC_UD_AXIS_STATE_P1,80,79,48,8
+    LTEXT           "Static",IDC_LR_AXIS_STATE_P1,80,89,48,8
+    RTEXT           "Button State:",IDC_STATIC,16,99,55,8
+    LTEXT           "Static",IDC_BUTTON_STATE_P1,80,99,48,8
+    LTEXT           "Set the number of players, and click 'Configure Input' to view or change input settings.",
+                    IDC_STATIC,7,27,244,17
+    GROUPBOX        "Player 1",IDC_PLAYER1_GROUP,7,70,319,43
+    GROUPBOX        "Player 2",IDC_PLAYER2_GROUP,7,115,319,43
+    RTEXT           "Left/Right Axis:",IDC_TEXT2_P2,16,135,55,8
+    RTEXT           "Up/Down Axis:",IDC_TEXT1_P2,16,125,55,8
+    LTEXT           "Static",IDC_UD_AXIS_STATE_P2,80,125,48,8
+    LTEXT           "Static",IDC_LR_AXIS_STATE_P2,80,135,48,8
+    RTEXT           "Button State:",IDC_TEXT3_P2,16,145,55,8
+    LTEXT           "Static",IDC_BUTTON_STATE_P2,80,145,48,8
+    LTEXT           "Number of active players:",IDC_STATIC,7,54,81,8
+    COMBOBOX        IDC_NUM_PLAYERS_COMBO,91,52,30,51,CBS_DROPDOWN | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    RTEXT           "Left/Right Axis:",IDC_TEXT2_P3,16,180,55,8
+    RTEXT           "Up/Down Axis:",IDC_TEXT1_P3,16,170,55,8
+    LTEXT           "Static",IDC_UD_AXIS_STATE_P3,80,170,48,8
+    LTEXT           "Static",IDC_LR_AXIS_STATE_P3,80,180,48,8
+    RTEXT           "Button State:",IDC_TEXT3_P3,16,190,55,8
+    LTEXT           "Static",IDC_BUTTON_STATE_P3,80,190,48,8
+    GROUPBOX        "Player 3",IDC_PLAYER3_GROUP,7,160,319,43
+    GROUPBOX        "Player 4",IDC_PLAYER4_GROUP,7,206,319,43
+    RTEXT           "Left/Right Axis:",IDC_TEXT2_P4,16,225,55,8
+    RTEXT           "Up/Down Axis:",IDC_TEXT1_P4,16,215,55,8
+    LTEXT           "Static",IDC_UD_AXIS_STATE_P4,80,215,48,8
+    LTEXT           "Static",IDC_LR_AXIS_STATE_P4,80,225,48,8
+    RTEXT           "Button State:",IDC_TEXT3_P4,16,235,55,8
+    LTEXT           "Static",IDC_BUTTON_STATE_P4,80,235,48,8
+    LTEXT           "This sample shows how a game can use the DirectInput action mapper to assign input devices to players based on knowledge of a user's prefered device. ",
+                    IDC_STATIC,7,7,252,19
+    LTEXT           "Sum of movement:",IDC_STATIC,130,54,60,8
+    LTEXT           "Static",IDC_WORLD_STATE,191,54,65,8
+    PUSHBUTTON      "Reset &Ownership",IDC_RESET_OWNERSHIP,262,23,64,14
+    LISTBOX         IDC_DEVICE_ASSIGNED_P1,133,80,185,27,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | LBS_NOSEL | WS_VSCROLL | 
+                    WS_TABSTOP
+    LISTBOX         IDC_DEVICE_ASSIGNED_P2,133,125,185,27,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | LBS_NOSEL | WS_VSCROLL | 
+                    WS_TABSTOP
+    LISTBOX         IDC_DEVICE_ASSIGNED_P3,133,170,185,27,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | LBS_NOSEL | WS_VSCROLL | 
+                    WS_TABSTOP
+    LISTBOX         IDC_DEVICE_ASSIGNED_P4,133,216,185,27,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | LBS_NOSEL | WS_VSCROLL | 
+                    WS_TABSTOP
+    PUSHBUTTON      "Reset &Mappings",IDC_RESET_MAPPINGS,262,39,64,14
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

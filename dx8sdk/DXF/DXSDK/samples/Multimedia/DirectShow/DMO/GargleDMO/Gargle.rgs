@@ -1,0 +1,26 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {458F93F3-4769-4370-8A7D-D055EE97679C} = s 'CGargle Class'
+		{
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+		}
+    }
+
+	NoRemove CLSID
+	{
+		ForceRemove {3E7BB80F-2245-4483-ACC5-3A2EFDE0ACA6} = s 'GargDMOProp Class'
+		{
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+		}
+	}
+}

@@ -1,0 +1,151 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include <windows.h>
+#define IDC_STATIC -1
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOGEX 0, 0, 294, 146
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "DirectX 3D Audio Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "Open &file...",IDC_SOUNDFILE,7,7,54,13
+    PUSHBUTTON      "&Play",IDC_PLAY,7,123,50,14,WS_DISABLED
+    PUSHBUTTON      "&Stop",IDC_STOP,57,123,50,14,WS_DISABLED
+    PUSHBUTTON      "E&xit",IDCANCEL,237,123,50,14
+    EDITTEXT        IDC_FILENAME,66,7,221,14,ES_AUTOHSCROLL | ES_READONLY
+    GROUPBOX        "Sound properties",IDC_STATIC,7,25,200,94
+    RTEXT           "Doppler factor (%)",IDC_STATIC,13,41,58,13,
+                    SS_CENTERIMAGE
+    CTEXT           "0",IDC_DOPPLERFACTOR,75,41,32,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider1",IDC_DOPPLER_SLIDER,"msctls_trackbar32",
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,112,42,90,10
+    RTEXT           "Rolloff factor (%)",IDC_STATIC,13,55,58,13,
+                    SS_CENTERIMAGE
+    CTEXT           "0",IDC_ROLLOFFFACTOR,75,55,32,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider2",IDC_ROLLOFF_SLIDER,"msctls_trackbar32",
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,112,56,90,10
+    RTEXT           "Min distance (m)",IDC_STATIC,13,70,58,13,SS_CENTERIMAGE
+    CTEXT           "0",IDC_MINDISTANCE,75,70,32,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider3",IDC_MINDISTANCE_SLIDER,"msctls_trackbar32",
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,112,71,90,10
+    RTEXT           "Max distance (m)",IDC_STATIC,13,86,58,13,SS_CENTERIMAGE
+    CTEXT           "0",IDC_MAXDISTANCE,75,86,32,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider3",IDC_MAXDISTANCE_SLIDER,"msctls_trackbar32",
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,112,87,90,10
+    CONTROL         "Defer Settings",IDC_DEFER,"Button",BS_AUTOCHECKBOX | 
+                    BS_PUSHLIKE | WS_TABSTOP,49,102,53,11
+    GROUPBOX        "Sound movement",IDC_STATIC,212,25,75,94,BS_LEFT
+    CONTROL         130,IDC_RENDER_WINDOW,"Static",SS_BITMAP,222,46,46,42,
+                    WS_EX_CLIENTEDGE
+    CONTROL         "Slider1",IDC_VERTICAL_SLIDER,"msctls_trackbar32",
+                    TBS_VERT | TBS_TOP | TBS_NOTICKS | WS_TABSTOP,272,41,10,
+                    50
+    CONTROL         "Slider1",IDC_HORIZONTAL_SLIDER,"msctls_trackbar32",
+                    TBS_TOP | TBS_NOTICKS | WS_TABSTOP,217,90,55,10
+    PUSHBUTTON      "Apply Settings",IDC_APPLY,121,102,53,11
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 287
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 137
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include <windows.h>\r\n"
+    "#define IDC_STATIC -1\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "directx.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_GRID_BITMAP         BITMAP  DISCARDABLE     "bitmap1.bmp"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,53 @@
+<!-- This shows the compositor transition, doing a picture in picture effect, -->
+<!-- changing the position and size over time using solid colors (green and blue) -->
+
+<timeline>
+    <group type="video" bitdepth="16" width="320" height="240">
+        <track>
+            <clip start="0" stop="10" clsid="{0cfdd070-581a-11d2-9ee6-006008039e37}">
+                <param name="Color" value="00FF00"/>
+            </clip>
+        </track>
+        <track>
+            <clip start="0" stop="10" clsid="{0cfdd070-581a-11d2-9ee6-006008039e37}">
+                <param name="Color" value="0000FF"/>
+            </clip>
+            <transition clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}" start="0" stop="10">
+                <param name="OffsetX" value="0">
+                    <linear time="1"  value="160"/>
+                    <linear time="2"  value="160"/>
+                    <linear time="3"  value="0"/>
+                    <linear time="4"  value="0"/>
+                    <linear time="5"  value="160"/>
+                    <linear time="6"  value="0"/>
+                    <linear time="7"  value="160"/>
+                    <linear time="8"  value="0"/>
+                    <linear time="9"  value="0"/>
+                </param>
+                <param name="OffsetY" value="0">
+                    <linear time="1"  value="0"/>
+                    <linear time="2"  value="120"/>
+                    <linear time="3"  value="120"/>
+                    <linear time="4"  value="0"/>
+                    <linear time="5"  value="120"/>
+                    <linear time="6"  value="120"/>
+                    <linear time="7"  value="0"/>
+                    <linear time="8"  value="0"/>
+                    <linear time="9"  value="120"/>
+                </param>
+                <param name="Width"   value="160">
+                    <linear time="7"  value="160"/>
+                    <linear time="8"  value="320"/>
+                    <linear time="9"  value="160"/>
+                </param>
+                <param name="Height"  value="120">
+                    <linear time="7"  value="120"/>
+                    <linear time="8"  value="240"/>
+                    <linear time="9"  value="120"/>
+                </param>
+            </transition>
+        </track>
+    </group>
+</timeline>
+
+

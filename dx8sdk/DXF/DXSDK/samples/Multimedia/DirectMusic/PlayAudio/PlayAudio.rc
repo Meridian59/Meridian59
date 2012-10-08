@@ -1,0 +1,123 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include <windows.h>
+#define IDC_STATIC -1
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOG DISCARDABLE  0, 0, 262, 84
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "DirectX Sample Audio Player"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "Open &file...",IDC_SOUNDFILE,7,7,54,13
+    CONTROL         "&Loop file",IDC_LOOP_CHECK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,28,61,10
+    PUSHBUTTON      "&Play",IDC_PLAY,69,26,50,14,WS_DISABLED
+    PUSHBUTTON      "&Stop",IDC_STOP,119,26,50,14,WS_DISABLED
+    PUSHBUTTON      "E&xit",IDCANCEL,205,26,50,14
+    EDITTEXT        IDC_FILENAME,69,7,186,14,ES_AUTOHSCROLL | ES_READONLY
+    CONTROL         "Slider1",IDC_TEMPO_SLIDER,"msctls_trackbar32",
+                    WS_TABSTOP,15,60,103,12
+    CONTROL         "Slider2",IDC_VOLUME_SLIDER,"msctls_trackbar32",
+                    WS_TABSTOP,144,60,109,12
+    LTEXT           "Slow",IDC_TEMPO_SLOWTXT,18,52,16,8
+    LTEXT           "Fast",IDC_TEMPO_FASTTXT,101,52,14,8
+    LTEXT           "Min",IDC_STATIC,148,52,12,8
+    LTEXT           "Max",IDC_STATIC,236,52,14,8
+    GROUPBOX        "Tempo",IDC_TEMPO_GROUPBOX,7,43,115,32
+    GROUPBOX        "Master Volume",IDC_STATIC,139,43,116,32
+    LTEXT           "Normal",IDC_TEMPO_NORMALTXT,56,52,23,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 75
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include <windows.h>\r\n"
+    "#define IDC_STATIC -1\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "directx.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,208 @@
+//Microsoft Developer Studio generated resource script.
+//
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+#include "resource.h"
+#include "ntverp.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+BDASAMPLICON            ICON    DISCARDABLE     "bdasampl.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+BDASAMPL MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       IDM_EXIT
+    END
+    POPUP "HDTV &Control"
+    BEGIN
+        MENUITEM "Build &ATSC Graph\tCtrl+A",   IDM_BUILD_ATSC
+        MENUITEM SEPARATOR
+        MENUITEM "&Run Graph\tCtrl+R",          IDM_RUN_GRAPH
+        MENUITEM "S&top Graph\tCtrl+T",         IDM_STOP_GRAPH
+        MENUITEM SEPARATOR
+        MENUITEM "&Select Channel\tCtrl+S",     IDM_SELECT_CHANNEL
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About...",                   IDM_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+ACC_GRAPH ACCELERATORS MOVEABLE PURE 
+BEGIN
+    "^A",           IDM_BUILD_ATSC,         ASCII,  NOINVERT
+    "^R",           IDM_RUN_GRAPH,          ASCII,  NOINVERT
+    "^S",           IDM_SELECT_CHANNEL,     ASCII,  NOINVERT
+    "^T",           IDM_STOP_GRAPH,         ASCII,  NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SELECT_CHANNEL DIALOG DISCARDABLE  12, 15, 178, 71
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Select Channel"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    EDITTEXT        IDC_MAJOR_CHANNEL,41,20,22,12,ES_CENTER | ES_LOWERCASE | 
+                    ES_NUMBER | WS_GROUP
+    CONTROL         "Spin1",IDC_SPIN_MAJOR,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_AUTOBUDDY | UDS_ARROWKEYS,62,20,11,14
+    EDITTEXT        IDC_MINOR_CHANNEL,41,40,22,12,ES_CENTER | ES_LOWERCASE | 
+                    ES_NUMBER | WS_GROUP
+    CONTROL         "Spin2",IDC_SPIN_MINOR,"msctls_updown32",UDS_SETBUDDYINT | 
+                    UDS_AUTOBUDDY | UDS_ARROWKEYS,62,39,11,14
+    PUSHBUTTON      "&Enter",IDC_ENTER,82,29,28,14,WS_GROUP
+    DEFPUSHBUTTON   "&OK",IDOK,127,13,40,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,127,30,40,14
+    GROUPBOX        "ATSC Channels",IDC_STATIC,11,9,106,49,WS_GROUP
+    CTEXT           "Major",109,18,23,18,8,SS_CENTERIMAGE
+    CTEXT           "Minor",108,18,42,18,8,SS_CENTERIMAGE
+END
+
+IDD_ABOUT DIALOG DISCARDABLE  12, 15, 182, 107
+STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "About BDA Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    CTEXT           "DirectX 8 SDK BDA Sample",IDC_STATIC,51,12,98,8,NOT 
+                    WS_GROUP
+    CTEXT           "Version 8.1",IDC_STATIC,21,56,140,8,NOT WS_GROUP
+    CTEXT           "Copyright © 2000-2001  Microsoft Corporation",
+                    IDC_STATIC,8,70,166,8,NOT WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,72,87,32,14,WS_GROUP
+    LTEXT           "This sample allows you to build ATSC filter graphs to tune and view digital television signals.",
+                    IDC_STATIC,10,34,161,21
+    ICON            "BDASAMPLICON",IDC_STATIC,21,5,20,20
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resrc1.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""bdasampl.h""\r\n"
+    "#include ""resource.h""\r\n"
+    "#include ""ntverp.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 8,1,0,0
+ PRODUCTVERSION 8,1,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "Comments", "DirectShow Sample\0"
+            VALUE "CompanyName", "Microsoft\0"
+            VALUE "FileDescription", "BDA Sample Application\0"
+            VALUE "FileVersion", "8.10\0"
+            VALUE "InternalName", "BDASample\0"
+            VALUE "LegalCopyright", "Copyright (c) 2000-2001 Microsoft Corporation\0"
+            VALUE "LegalTrademarks", "\0"
+            VALUE "OriginalFilename", "BDASample.EXE\0"
+            VALUE "ProductName", "DirectX 8 SDK\0"
+            VALUE "ProductVersion", "8.1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

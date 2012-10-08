@@ -1,0 +1,8 @@
+
+LIBRARY         Dump.ax
+EXPORTS
+                DllGetClassObject PRIVATE
+                DllCanUnloadNow PRIVATE
+                DllUnregisterServer PRIVATE
+                DllRegisterServer PRIVATE
+

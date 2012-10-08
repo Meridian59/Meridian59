@@ -1,0 +1,281 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MULTIPLAYER_CONNECT DIALOG DISCARDABLE  0, 0, 282, 151
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Multiplayer Connect"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Player Name:",IDC_STATIC,7,10,43,8
+    EDITTEXT        IDC_PLAYER_NAME_EDIT,7,22,268,14,ES_AUTOHSCROLL
+    LTEXT           "Connection Type:",IDC_STATIC,7,41,57,8
+    LISTBOX         IDC_CONNECTION_LIST,7,53,268,72,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    DEFPUSHBUTTON   "OK",IDOK,171,130,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,225,130,50,14
+END
+
+IDD_MULTIPLAYER_GAMES DIALOG DISCARDABLE  0, 0, 282, 140
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Multiplayer Games"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT           "Select Game To Join:",-1,7,15,69,8
+    CONTROL         "Start Search",IDC_SEARCH_CHECK,"Button",BS_AUTOCHECKBOX | 
+                    BS_PUSHLIKE | WS_TABSTOP,220,7,55,14
+    LISTBOX         IDC_GAMES_LIST,7,24,268,91,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Join",IDC_JOIN,7,119,50,14
+    PUSHBUTTON      "Create",IDC_CREATE,61,119,50,14
+    PUSHBUTTON      "Cancel",IDC_BACK,225,119,50,14
+END
+
+IDD_MULTIPLAYER_CREATE DIALOG DISCARDABLE  0, 0, 186, 77
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Create Game"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    EDITTEXT        IDC_EDIT_SESSION_NAME,7,19,172,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,56,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,129,56,50,14
+    LTEXT           "Game Name:",IDC_STATIC,7,7,42,8
+    CONTROL         "Migrate Host",IDC_MIGRATE_HOST,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,66,40,56,10
+END
+
+IDD_LOBBY_WAIT_STATUS DIALOG DISCARDABLE  120, 110, 162, 52
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION
+CAPTION "Lobby Connection Status"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "&Cancel",IDCANCEL,55,31,51,14
+    CTEXT           "Finding Game...",IDC_WAIT_TEXT,7,14,141,8
+END
+
+IDD_VOICE_SETUP DIALOG DISCARDABLE  0, 0, 284, 206
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "DirectPlayVoice Configuration"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    GROUPBOX        "Client Options (adjust any time)",IDC_STATIC,7,7,270,
+                    124
+    GROUPBOX        "Playback Volume",IDC_STATIC,15,17,81,55,WS_GROUP
+    CONTROL         "Default",IDC_PLAYBACK_DEFAULT,"Button",
+                    BS_AUTORADIOBUTTON,23,27,39,10
+    CONTROL         "Set",IDC_PLAYBACK_SET,"Button",BS_AUTORADIOBUTTON,63,27,
+                    27,10
+    CONTROL         "Slider1",IDC_PLAYBACK_SLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,21,47,70,11
+    LTEXT           "Min",IDC_STATIC,25,58,12,8
+    LTEXT           "Max",IDC_STATIC,73,58,14,8
+    GROUPBOX        "Record Volume",IDC_STATIC,102,17,81,55,WS_GROUP
+    CONTROL         "Auto",IDC_RECORD_AUTO,"Button",BS_AUTORADIOBUTTON,110,
+                    27,31,10
+    CONTROL         "Default",IDC_RECORD_DEFAULT,"Button",BS_AUTORADIOBUTTON,
+                    142,27,39,10
+    CONTROL         "Set",IDC_RECORD_SET,"Button",BS_AUTORADIOBUTTON,130,37,
+                    27,10
+    CONTROL         "Slider1",IDC_RECORD_SLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,108,47,70,11
+    LTEXT           "Min",IDC_STATIC,112,58,12,8
+    LTEXT           "Max",IDC_STATIC,160,58,14,8
+    GROUPBOX        "Threshold",IDC_STATIC,189,17,81,55,WS_GROUP
+    CONTROL         "Auto",IDC_THRESHOLD_AUTO,"Button",BS_AUTORADIOBUTTON,
+                    197,27,31,10
+    CONTROL         "Default",IDC_THRESHOLD_DEFAULT,"Button",
+                    BS_AUTORADIOBUTTON,229,27,39,10
+    CONTROL         "Set",IDC_THRESHOLD_SET,"Button",BS_AUTORADIOBUTTON,
+                    217,37,27,10
+    CONTROL         "Slider1",IDC_THRESHOLD_SLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,195,47,70,11
+    LTEXT           "Min",IDC_STATIC,199,58,12,8
+    LTEXT           "Max",IDC_STATIC,247,58,14,8
+    GROUPBOX        "Quality",IDC_STATIC,59,73,81,53,WS_GROUP
+    CONTROL         "Default",IDC_QUALITY_DEFAULT,"Button",
+                    BS_AUTORADIOBUTTON,69,86,39,10
+    CONTROL         "Set",IDC_QUALITY_SET,"Button",BS_AUTORADIOBUTTON,111,86,
+                    27,10
+    CONTROL         "Slider1",IDC_QUALITY_SLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,65,100,70,11
+    LTEXT           "Min",IDC_STATIC,69,111,12,8
+    LTEXT           "Max",IDC_STATIC,117,111,14,8
+    GROUPBOX        "Aggressiveness",IDC_STATIC,146,73,81,53,WS_GROUP
+    CONTROL         "Default",IDC_AGGRESSIVENESS_DEFAULT,"Button",
+                    BS_AUTORADIOBUTTON,154,86,39,10
+    CONTROL         "Set",IDC_AGGRESSIVENESS_SET,"Button",BS_AUTORADIOBUTTON,
+                    198,86,27,10
+    CONTROL         "Slider1",IDC_AGGRESSIVENESS_SLIDER,"msctls_trackbar32",
+                    TBS_NOTICKS | WS_TABSTOP,150,100,70,11
+    LTEXT           "Min",IDC_STATIC,154,111,12,8
+    LTEXT           "Max",IDC_STATIC,202,111,14,8
+    GROUPBOX        "Server Options (set only when creating a new game)",
+                    IDC_STATIC,7,134,270,45
+    GROUPBOX        "Compression Codec",IDC_SESSIONCOMPRESION_GROUP,17,143,
+                    250,28,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,173,184,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,227,184,50,14
+    COMBOBOX        IDC_COMPRESSION_COMBO,22,152,240,51,CBS_DROPDOWNLIST | 
+                    WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_MAIN_GAME DIALOG DISCARDABLE  0, 0, 262, 191
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
+CAPTION "DirectPlayVoice Sample"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    PUSHBUTTON      "E&xit",IDCANCEL,199,16,50,14
+    LTEXT           "Number of people in conversation:",IDC_STATIC,14,19,109,
+                    8
+    LTEXT           "0",IDC_NUM_PLAYERS,127,19,13,8
+    GROUPBOX        "",IDC_STATIC,7,7,248,177
+    CONTROL         "List1",IDC_PEOPLE_LIST,"SysListView32",LVS_REPORT | 
+                    LVS_SORTASCENDING | LVS_AUTOARRANGE | WS_BORDER | 
+                    WS_TABSTOP,13,34,236,109
+    PUSHBUTTON      "&Setup",IDC_SETUP,146,16,50,14
+    PUSHBUTTON      "Cycle &Group Assignment",IDC_CYCLEGROUP,161,146,88,14
+    LTEXT           "DirectPlayVoice group: ",IDC_STATIC,13,149,75,8
+    LTEXT           "Static",IDC_GROUP_TEXT,91,149,59,8
+    PUSHBUTTON      "Cycle &Target Assignment",IDC_CYCLETARGET,161,163,88,14
+    LTEXT           "DirectPlayVoice target:",IDC_STATIC,13,166,73,8
+    LTEXT           "Static",IDC_TARGET_TEXT,91,166,59,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MULTIPLAYER_CONNECT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 275
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 144
+    END
+
+    IDD_MULTIPLAYER_GAMES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 275
+        VERTGUIDE, 141
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 133
+    END
+
+    IDD_MULTIPLAYER_CREATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 179
+        VERTGUIDE, 94
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 70
+    END
+
+    IDD_LOBBY_WAIT_STATUS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 148
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 45
+    END
+
+    IDD_VOICE_SETUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 277
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 198
+    END
+
+    IDD_MAIN_GAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 255
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 184
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON    DISCARDABLE     "directx.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

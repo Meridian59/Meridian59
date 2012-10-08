@@ -1,0 +1,55 @@
+ps.1.1
+
+
+def c1, 1.0f,0.0f,0.0f,0.0f
+def c4, 0.0f,0.0f,1.0f,0.0f
+def c2, 1.0f,1.0f,1.0f,1.0f 
+def c3, 1.0f,1.0f,1.0f,1.0f
+def c0, 0.0f,0.0f,0.0f,0.0f
+
+tex t0
+tex t1
+tex t2
+
+
+//t1 is far plane
+//t0 is near plane
+//input:
+//b    = low bits (a)  (4 bits) 
+//r   = high bits (b) (8 bits)
+//output: 
+//r1.b = (a1 - a2) (can't be greater than 7 bits set )
+//r1.r  = (b1 - b2)
+sub r1.rgb,t1,t0
++sub_x4 r1.a,t0,t1
+mov_x4 r1.a,r1.a
+mad r1,t2,r1.a,r1
+
+dp3 t0.rgba,r1,c4
+
+//mov r1.a,r0.a
+
+
+//need to shift r1.rgb 6 bits
+//techinically, this will saturate
+//to 255 if any other bits are set, but thats fine
+//because in this case, the end result of the subtract 
+//would have to be saturated since we can't be subtracting
+//more than 127
+mov_x4 r1.rgb,r1
+dp3_x4 t1.rgba,r1,c1  //move into the alpha
+
+//now add them together
+add_x2   r0.a,t0,t1 //the subtract was between 0-127,
++mov r0.rgb,c3   		      
+  
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,149 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "directx.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOGEX 0, 0, 315, 119
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "AmplitudeModulation"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "Sound &file...",IDC_SOUNDFILE,7,7,46,13
+    LTEXT           "Static",IDC_FILENAME,57,7,251,13,SS_CENTERIMAGE,
+                    WS_EX_CLIENTEDGE
+    LTEXT           "Status",IDC_STATIC,7,24,42,13,SS_CENTERIMAGE
+    LTEXT           "Static",IDC_STATUS,57,24,251,13,SS_CENTERIMAGE,
+                    WS_EX_CLIENTEDGE
+    LTEXT           "Frequency",IDC_STATIC,12,49,42,13,SS_CENTERIMAGE
+    CTEXT           "0",IDC_FREQUENCY,57,49,35,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CTEXT           "1 Hz",IDC_STATIC,97,49,25,13,SS_CENTERIMAGE
+    CONTROL         "Slider1",IDC_FREQUENCY_SLIDER,"msctls_trackbar32",
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,125,48,144,15
+    CTEXT           "1000 Hz",IDC_STATIC,268,49,30,13,SS_CENTERIMAGE
+    CONTROL         "&Loop sound",IDC_LOOP_CHECK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,85,53,10
+    PUSHBUTTON      "&Play",IDC_PLAY,7,97,50,14,WS_DISABLED
+    PUSHBUTTON      "&Stop",IDC_STOP,62,97,50,14,WS_DISABLED
+    PUSHBUTTON      "E&xit",IDCANCEL,258,97,50,14
+    LTEXT           "Wave Form",IDC_STATIC,12,64,42,13,SS_CENTERIMAGE
+    CONTROL         "Triangle",IDC_WAVEFORM_TRIANGLE,"Button",
+                    BS_AUTORADIOBUTTON,82,65,44,10
+    CONTROL         "Square",IDC_WAVEFORM_SQUARE,"Button",BS_AUTORADIOBUTTON,
+                    125,65,49,10
+    GROUPBOX        "Effect Runtime Settings",IDC_STATIC,7,38,301,43
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 308
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 112
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "afxres.rc"         // Standard components
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

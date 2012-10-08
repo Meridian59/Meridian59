@@ -1,0 +1,14 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {df20ddfa-0d19-463a-ab46-e5d8ef6efd69} = s ' DMO Sample Class'
+		{
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Both'
+			}
+			val MERIT = d '0'
+		}
+	}
+}

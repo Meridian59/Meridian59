@@ -1,0 +1,10 @@
+;===========================================================================;
+;  Copyright (c) 1992-2001  Microsoft Corporation.  All Rights Reserved.
+;===========================================================================;
+LIBRARY		Ball.ax
+;DESCRIPTION	'Microsoft DirectShow Bouncing Ball Source Filter'
+EXPORTS
+            DllRegisterServer PRIVATE
+            DllUnregisterServer PRIVATE
+            DllGetClassObject PRIVATE
+            DllCanUnloadNow PRIVATE

@@ -1,0 +1,64 @@
+[Language]
+LangName = English
+LangCode = ENU
+
+[Program]
+pg_Name         = Meridian 59-- BinaryGraphicalEditor
+
+[MainMenu]
+mm_file         = File
+mm_save         = Save BGF
+mm_create       = Create BGF
+mm_export       = Export to BMP
+mm_replace      = Replace frame
+mm_show         = Start slide show
+mm_stop         = Stop slide show
+mm_exit         = Exit
+mm_language     = Interface language
+mm_help         = Help
+mm_contents     = Notes
+mm_about        = About ...
+
+[MainForm]
+gb_Files        = Files
+gb_Bgfinfo      = Current BGF info
+gb_Frameinfo    = Current frame info
+gb_Frame        = Current frame
+gb_Actions      = Actions
+
+la_CurrentFrame = Current frame:
+
+le_Delay        = Slide show delay:
+
+ch_transp       = Transparent background
+
+bt_Create       = Create BGF
+bt_Export       = Export to BMP
+bt_Replace      = Replace frame
+bt_Save         = Save BGF
+bt_Show         = Start slide show
+bt_Stop         = Stop show
+bt_Exit         = Exit
+
+st_BgfName      = BGF name:
+st_Version      = Version:
+st_Frames       = Frames:
+st_FrameSets    = Framesets:
+st_Sites        = Sites:
+st_Zoom         = Diminution:
+st_Footer       = Footer:
+
+st_BGFCreating  = BGF creating...
+st_About        = About...
+st_Resolution   = Resolution:
+st_CompSize     = Size:
+st_Bytes        = bytes
+st_Compressed   = compressed
+st_NotCompressed= not compressed
+st_UnknData     = Unknown data:
+st_AddUnknData  = Additional data:
+
+st_fileexists   = File already exists! Replase?
+st_changed      = Some frames was changed! Save BGF?
+st_notbgf       = Bad format BGF!
+st_notstand     = Not standard parameters!

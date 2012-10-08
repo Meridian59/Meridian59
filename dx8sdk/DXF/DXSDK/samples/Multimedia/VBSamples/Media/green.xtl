@@ -1,0 +1,11 @@
+<!-- This shows using DES to generate a solid color (green) -->
+
+<timeline>
+    <group type="video">
+            <track>
+                <clip start="0" stop="3" clsid="{0cfdd070-581a-11d2-9ee6-006008039e37}">
+         	    <param name="Color" value="0x00FF00"/>
+                </clip>
+            </track>
+    </group>
+</timeline>

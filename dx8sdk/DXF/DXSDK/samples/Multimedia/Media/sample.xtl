@@ -1,0 +1,204 @@
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+<timeline>
+    <group type="video" bitdepth="24" framerate="29.97">
+        <track>
+            <!-- Fade in from white instead of the default black -->
+            <clip start="0" stop="3" clsid="{0cfdd070-581a-11d2-9ee6-006008039e37}">
+         	    <param name="Color" value="FFFFFF"/>
+            </clip>
+        </track>
+        <track>
+            <clip start="0" stop="4.9" src="c:\dxsdk\samples\multimedia\Media\water.mpg" mstart="0" stretchmode="PreserveAspectRatio"/>
+            
+            <!-- Simple fade from the water.mpg clip to the solid white -->
+            <transition start="0" stop="3" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+        <track>
+            <clip start="3.6" stop="9.6" src="c:\dxsdk\samples\multimedia\Media\water.mpg" mstart="0" stretchmode="PreserveAspectRatio"/>
+            <transition start="3.6" stop="5" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+            
+        </track>
+        <track>
+            <clip start="9.0" stop="12.3" src="c:\dxsdk\samples\multimedia\Media\water.mpg" mstart="0" stretchmode="PreserveAspectRatio"/>
+            <transition start="9.0" stop="9.6" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+            
+        </track>
+        <track>
+            <clip start="8.5" stop="11.1" src="c:\dxsdk\samples\multimedia\Media\lake.mpg" mstart="0" stretchmode="PreserveAspectRatio"/>
+            
+            <!-- Use SMPTE Wipe 120 to simulate eyes -->
+            <transition start="8.5" stop="11.1" clsid="{DE75D012-7A65-11D2-8CEA-00A0C9441E20}">
+                <param name="MaskNum" value="120"/>
+                <param name="BorderSoftness" value="6"/>
+                <param name="ReplicateX" value="2"/>
+                <param name="Progress" value="0">       <!-- Start closed -->
+                    <linear time="1" value="0.5"/>      <!-- Open up -->
+                    <at time="1.5" value="0.5"/>        <!-- Stay open -->
+                    <linear time="1.6" value="0"/>      <!-- Blink Close -->
+                    <linear time="1.7" value="0.5"/>    <!-- Blink Open -->
+                    <at time="2" value="0.5"/>          <!-- Stay open -->
+                    <linear time="2.6" value="0"/>      <!-- Slowly close -->
+                </param>
+
+            </transition>
+        </track>
+        <track>
+            <clip start="10.5" stop="14" src="c:\dxsdk\samples\multimedia\Media\seatosky1.jpg" mstart="0" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+            <transition start="10.5" stop="11.1" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+        <track>
+            <clip start="13" stop="16" src="c:\dxsdk\samples\multimedia\Media\seatosky2.jpg" mstart="0" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+            <transition start="13" stop="14" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+        <track>
+            <clip start="15" stop="18" src="c:\dxsdk\samples\multimedia\Media\seatosky3.jpg" mstart="0" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+            <transition start="15" stop="16" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+        <track>
+            <clip start="17" stop="20" src="c:\dxsdk\samples\multimedia\Media\seatosky4.jpg" mstart="0" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+            <transition start="17" stop="18" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+        <track>
+            <clip start="19" stop="22" src="c:\dxsdk\samples\multimedia\Media\lake.bmp" mstart="0" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+            <transition start="19" stop="20" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+        <composite username="Butterfly Effect">
+            <track>
+                <!-- Play it in slow motion for effect (mstart/mstop times shorter than start/stop) -->
+                <clip start="17" stop="24" src="c:\dxsdk\samples\multimedia\Media\butterfly.mpg" mstart="0" mstop="3" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+                <transition start="17" stop="22" clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}">
+                    <param name="Height" value="120"/>
+                    <param name="Width" value="160"/>
+                    <param name="OffsetY" value="0"/>
+                    <param name="OffsetX" value="160"/>
+                    <param name="SrcHeight" value="240">
+                        <at time="1" value="240"/>
+                        <linear time="3" value="120"/>
+                    </param>
+                 
+                    <param name="SrcWidth" value="320">
+                        <at time="1" value="320"/>
+                        <linear time="3" value="160"/>
+                    </param>
+                    <param name="SrcOffsetY" value="0"/>
+                    <param name="SrcOffsetX" value="0">
+                        <at time="1" value="0"/>
+                        <linear time="3" value="160"/>
+                    </param>
+                </transition>
+            </track>
+            <track>
+                <clip start="17" stop="24" src="c:\dxsdk\samples\multimedia\Media\butterfly.mpg" mstart="0" mstop="3" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+                <transition start="17" stop="22" clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}">
+                    <param name="Height" value="120"/>
+                    <param name="Width" value="160"/>
+                    <param name="OffsetY" value="0"/>
+                    <param name="OffsetX" value="0"/>
+                    <param name="SrcHeight" value="240">
+                        <at time="1" value="240"/>
+                        <linear time="3" value="120"/>
+                    </param>
+                    <param name="SrcWidth" value="320">
+                        <at time="1" value="320"/>
+                        <linear time="3" value="160"/>
+                    </param>
+                    <param name="SrcOffsetY" value="0"/>
+                    <param name="SrcOffsetX" value="0"/>
+                </transition>
+            </track>
+            <track>
+                <clip start="17" stop="24" src="c:\dxsdk\samples\multimedia\Media\butterfly.mpg" mstart="0" mstop="3" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+                <transition start="17" stop="22" clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}">
+                    <param name="Height" value="120"/>
+                    <param name="Width" value="160"/>
+                    <param name="OffsetY" value="120"/>
+                    <param name="OffsetX" value="0"/>
+                    <param name="SrcHeight" value="240">
+                        <at time="1" value="240"/>
+                        <linear time="3" value="120"/>
+                    </param>
+                    <param name="SrcWidth" value="320">
+                        <at time="1" value="320"/>
+                        <linear time="3" value="160"/>
+                    </param>
+                    <param name="SrcOffsetY" value="0">
+                        <at time="1" value="0"/>
+                        <linear time="3" value="120"/>
+                    </param>
+                    <param name="SrcOffsetX" value="0"/>
+                </transition>
+            </track>
+            <track>
+                <clip start="17" stop="24" src="c:\dxsdk\samples\multimedia\Media\butterfly.mpg" mstart="0" mstop="3" stretchmode="PreserveAspectRatioNoLetterBox" framerate="0.000"/>
+                <transition start="17" stop="22" clsid="{BB44391D-6ABD-422f-9E2E-385C9DFF51FC}">
+                    <param name="Height" value="120"/>
+                    <param name="Width" value="160"/>
+                    <param name="OffsetY" value="120"/>
+                    <param name="OffsetX" value="160"/>
+                    <param name="SrcHeight" value="240">
+                        <at time="1" value="240"/>
+                        <linear time="3" value="120"/>
+                    </param>
+                    <param name="SrcWidth" value="320">
+                        <at time="1" value="320"/>
+                        <linear time="3" value="160"/>
+                    </param>
+                    <param name="SrcOffsetY" value="0">
+                        <at time="1" value="0"/>
+                        <linear time="3" value="120"/>
+                    </param>
+                    <param name="SrcOffsetX" value="0">
+                        <at time="1" value="0"/>
+                        <linear time="3" value="160"/>
+                    </param>
+                </transition>
+            </track>
+            <transition start="17" stop="19" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </composite>
+        <track>
+            <clip start="21" stop="30" src="c:\dxsdk\samples\multimedia\Media\dx5_logo.bmp" mstart="0" stretchmode="PreserveAspectRatio" framerate="0.000"/>
+            <transition start="21" stop="24" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+        <track>
+            <!-- Fade out to black -->
+            <clip start="24" stop="30" clsid="{0cfdd070-581a-11d2-9ee6-006008039e37}">
+         	    <param name="Color" value="000000"/>
+            </clip>
+            <transition start="24" stop="30" clsid="{16B280C5-EE70-11D1-9066-00C04FD9189D}"/>
+        </track>
+
+
+
+    </group>
+
+
+
+    <group type="audio">
+        <composite username="Background water sound">
+            <track>
+                <!-- Repeat the water sound over and over -->
+                <clip start="0" stop="5" src="c:\dxsdk\samples\multimedia\Media\water.mpg"   mstart="0"/>
+                <clip start="5" stop="10" src="c:\dxsdk\samples\multimedia\Media\water.mpg"  mstart="0"/>
+                <clip start="10" stop="15" src="c:\dxsdk\samples\multimedia\Media\water.mpg" mstart="0"/>
+                <clip start="15" stop="20" src="c:\dxsdk\samples\multimedia\Media\water.mpg" mstart="0"/>
+                
+                <!-- The water sound is too quiet, so double the volume -->
+                <effect start="0" stop="20" clsid="{036A9790-C153-11D2-9EF7-006008039E37}">					
+                    <param name="vol" value="2.0"/>
+                </effect>
+            </track>
+        </composite>
+		
+        <track>
+            <clip start="0" stop="30" src="c:\dxsdk\samples\multimedia\Media\piano.mp3" mstart="0">
+                <effect start="22" stop="30" clsid="{036A9790-C153-11D2-9EF7-006008039E37}">					
+                    <param name="vol" value="1.0">
+                        <linear time="8" value="0.0"/>
+                    </param>
+                </effect>
+            </clip>
+        </track>
+    </group>
+</timeline>

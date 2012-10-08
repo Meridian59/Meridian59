@@ -1,0 +1,32 @@
+<!-- In this example, a sequence of bmps are used in motion, as well as   -->
+<!-- some individual stills.  The project is authored at 15fps, so the    -->
+<!-- first bmp sequence will play each bitamp for 3 frames, since it is   -->
+<!-- told the sequence is supposed to play at 5fps to achieve normal      -->
+<!-- playback speed. Then we'll see some still images, with aspect ratios -->
+<!-- preserved, then we'll see the tga sequence 3 times faster (normal speed) -->
+<!-- since it is told 15fps is the correct frame rate for that sequence.  -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+<timeline>
+
+  <group type="video" framerate="15" width="480" height="360" previewmode="0">
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\shine0.bmp"   start="0" stop="2" framerate="5"/>
+	<clip src="c:\dxsdk\samples\multimedia\media\lake.jpg"     start="2" stop="4" stretchmode="PreserveAspectRatio"/>
+	<clip src="c:\dxsdk\samples\multimedia\media\lake2.jpg"    start="4" stop="6" stretchmode="PreserveAspectRatio"/>
+	<clip src="c:\dxsdk\samples\multimedia\media\lake3.jpg"    start="6" stop="8" stretchmode="PreserveAspectRatio"/>
+	<clip src="c:\dxsdk\samples\multimedia\media\caust00.tga"  start="8" stop="10" stretchmode="PreserveAspectRatio" framerate="15"/>
+	<clip src="c:\dxsdk\samples\multimedia\media\dx5_logo.bmp" start="10" stop="13"/>
+
+    </track>
+  </group>
+
+  <group type="audio">
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\piano.mp3"    start="0" stop="13" />
+    </track>
+  </group>
+</timeline>
+

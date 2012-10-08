@@ -1,0 +1,144 @@
+//------------------------------------------------------------------------------
+// File: IAMovie.idl
+//
+// Desc: 
+//
+// Copyright (c) 1992-2001, Microsoft Corporation.  All rights reserved.
+//------------------------------------------------------------------------------
+
+
+[
+object,
+uuid(359ace10-7688-11cf-8b23-00805f6cef60),
+pointer_default(unique)
+]
+interface IAMovie : IFilterGraph
+{
+        // IGraphBuilder
+        // Connect these two pins directly or indirectly, using transform filters
+        // if necessary.
+
+        HRESULT Connect
+        ( [in] IPin * ppinOut,    // the output pin
+          [in] IPin * ppinIn      // the input pin
+        );
+
+
+        // Connect this output pin directly or indirectly, using transform filters
+        // if necessary to something that will render it.
+
+        HRESULT Render
+        ( [in] IPin * ppinOut     // the output pin
+        );
+
+
+        // IMediaControl methods
+        HRESULT Run();
+        HRESULT Pause();
+        HRESULT Stop();
+
+        //returns the state. same semantics as IMediaFilter::GetState
+
+        HRESULT GetState(
+                    [in] LONG msTimeout,
+                    [out] FILTER_STATE* pfs);
+
+        // adds and connects filters needed to play the specified file
+        HRESULT RenderFile(
+                    [in] LPCWSTR strFilename);
+
+        // adds to the graph the source filter that can read this file,
+        // and returns an IFilterInfo object for it
+        HRESULT AddSourceFilter(
+                    [in] LPCWSTR strFilename,
+                    [out] IBaseFilter ** ppUnk);
+
+        // get back the event handle. This is manual-reset
+        // (don't - it's reset by the event mechanism) and remains set
+        // when events are queued, and reset when the queue is empty.
+        HRESULT GetEventHandle(
+                        [out] HEVENT * hEvent);
+
+        // remove the next event notification from the head of the queue and
+        // return it. Waits up to msTimeout millisecs if there are no events.
+        // if a timeout occurs without any events, this method will return
+        // E_ABORT, and the value of the event code and other parameters
+        // is undefined.
+        HRESULT GetEvent(
+                        [out] long * lEventCode,
+                        [out] long * lParam1,
+                        [out] long * lParam2,
+                        [in] long msTimeout
+                        );
+
+        // Calls GetEvent repeatedly discarding events until it finds a
+        // completion event (EC_COMPLETE, EC_ERRORABORT, or EC_USERABORT).
+        // The completion event is removed from the queue and returned
+        // in pEvCode. Note that the object is still in running mode until
+        // a Pause or Stop call is made.
+        // If the timeout occurs, *pEvCode will be 0 and E_ABORT will be
+        // returned.
+        HRESULT WaitForCompletion(
+                        [in] long msTimeout,
+                        [out] long * pEvCode);
+
+        // cancels any system handling of the specified event code
+        // and ensures that the events are passed straight to the application
+        // (via GetEvent) and not handled. A good example of this is
+        // EC_REPAINT: default handling for this ensures the painting of the
+        // window and does not get posted to the app.
+        HRESULT CancelDefaultHandling(
+                        [in] long lEvCode);
+
+        // restore the normal system default handling that may have been
+        // cancelled by CancelDefaultHandling().
+        HRESULT RestoreDefaultHandling( [in] long lEvCode);
+
+        // properties
+        HRESULT get_Duration(
+                    [out] REFTIME* plength);
+
+        HRESULT put_CurrentPosition(
+                    [in] REFTIME llTime);
+
+        HRESULT get_CurrentPosition(
+                    [out] REFTIME* pllTime);
+
+        HRESULT get_StopTime(
+                    [out] REFTIME* pllTime);
+
+        HRESULT put_StopTime(
+                    [in] REFTIME llTime);
+
+        HRESULT get_PrerollTime(
+                    [out] REFTIME* pllTime);
+        HRESULT put_PrerollTime(
+                    [in] REFTIME llTime);
+
+        HRESULT put_Rate(
+                    [in] double dRate);
+        HRESULT get_Rate(
+                    [out] double * pdRate);
+
+    /* New methods */
+    HRESULT RemoveAllFilters();
+    HRESULT Play();
+    HRESULT PlayFile([in] LPCWSTR strFilename);
+    HRESULT EnumFiltersByInterface( [in] REFIID riid, [out] IEnumFilters ** ppEnum );
+    HRESULT EnumPins( [out] IEnumPins ** ppEnum );
+    HRESULT EnumPinsIn( [out] IEnumPins ** ppEnum );
+    HRESULT EnumPinsOut( [out] IEnumPins ** ppEnum );
+    HRESULT RenderAll();
+    HRESULT RenderNewFile( [in] LPCWSTR strFilename);
+
+    // Free any resources associated with the parameters to an event.
+        // Event parameters may be LONGs, IUnknown* or BSTR. No action
+        // is taken with LONGs. IUnknown are passed addrefed and need a
+        // Release call. BSTR are allocated by the task allocator and will be
+        // freed by calling the task allocator.
+        HRESULT FreeEventParams(
+                    [in] long lEvCode,
+                    [in] long lParam1,
+                    [in] long lParam2);
+}
+

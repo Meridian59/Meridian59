@@ -1,0 +1,113 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#undef APSTUDIO_HIDDEN_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+DONUTS_ICON             ICON    DISCARDABLE     "donuts.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+SPLASH                  BITMAP  MOVEABLE PURE   "SPLASH.BMP"
+DONUTS8                 BITMAP  MOVEABLE PURE   "donuts.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// WAV
+//
+
+BEGINLEVEL              WAV     MOVEABLE PURE   "level.wav"
+ENGINEIDLE              WAV     MOVEABLE PURE   "hum.wav"
+ENGINEREV               WAV     MOVEABLE PURE   "rev.wav"
+SKIDTOSTOP              WAV     MOVEABLE PURE   "skid.wav"
+SHIELDBUZZ              WAV     MOVEABLE PURE   "shield.wav"
+GUNFIRE                 WAV     MOVEABLE PURE   "gunfire.wav"
+SHIPBOUNCE              WAV     MOVEABLE PURE   "bounce.wav"
+SHIPEXPLODE             WAV     MOVEABLE PURE   "bangbang.wav"
+DONUTEXPLODE            WAV     MOVEABLE PURE   "d_bang.wav"
+PYRAMIDEXPLODE          WAV     MOVEABLE PURE   "p_bang.wav"
+CUBEEXPLODE             WAV     MOVEABLE PURE   "c_bang.wav"
+SPHEREEXPLODE           WAV     MOVEABLE PURE   "s_bang.wav"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "#include ""windows.h""\r\n"
+    "#undef APSTUDIO_HIDDEN_SYMBOLS\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAIN_ACCEL ACCELERATORS DISCARDABLE 
+BEGIN
+    VK_RETURN,      IDM_TOGGLEFULLSCREEN,   VIRTKEY, ALT, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,45 @@
+REGEDIT4
+
+; *******************************************************************************
+; *                        Async file reader                                    *
+; *******************************************************************************
+
+[HKEY_CLASSES_ROOT\Filter\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}]
+@="Sample File Source (Async.)"
+
+[HKEY_CLASSES_ROOT\CLSID\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}]
+@="Sample File Source (Async)"
+"Merit"=dword:00400000
+
+[HKEY_CLASSES_ROOT\CLSID\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}\InprocServer32]
+@="asyncflt.ax"
+"ThreadingModel"="Both"
+
+[HKEY_CLASSES_ROOT\CLSID\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}\Pins]
+
+[HKEY_CLASSES_ROOT\CLSID\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}\Pins\Output]
+"Direction"=dword:00000001
+"IsRendered"=dword:00000000
+"AllowedZero"=dword:00000000
+"AllowedMany"=dword:00000000
+
+[HKEY_CLASSES_ROOT\CLSID\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}\Pins\Output\Types]
+
+[HKEY_CLASSES_ROOT\CLSID\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}\Pins\Output\Types\{E436EB83-524F-11CE-9F53-0020AF0BA770}]
+
+[HKEY_CLASSES_ROOT\CLSID\{c553f2c0-1529-11d0-b4d1-00805f6cbbea}\Pins\Output\Types\{E436EB83-524F-11CE-9F53-0020AF0BA770}\{00000000-0000-0000-0000-000000000000}]
+
+
+
+; ********************************************************************************
+; *                        File type determination entries                       *
+; *  Files starting TEXT
+; ********************************************************************************
+
+
+;
+; MEDIATYPE_Stream\MEDIASUBTYPE_SampleAsync
+;
+[HKEY_CLASSES_ROOT\Media Type\{e436eb83-524f-11ce-9f53-0020af0ba770}\{03b01b20-1534-11d0-b4d1-00805f6cbbea}]
+"0" = "0, 4, FFFFFFFF, 54455854"
+"Source Filter" = "{c553f2c0-1529-11d0-b4d1-00805f6cbbea}"

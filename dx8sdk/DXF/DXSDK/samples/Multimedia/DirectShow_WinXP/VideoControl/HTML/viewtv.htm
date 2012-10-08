@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<TITLE>MSVidCtl: NTSC Analog TV</TITLE>
+</HEAD>
+
+<!--
+	This sample requires an analog TV tuner card compatible with the Windows Driver Model.
+-->
+
+<BODY BGCOLOR="#000001" TEXT="#FFFFFF" LINK="#FCCB7A" VLINK="#551A8B" ALINK="#EE0000">
+<CENTER>
+
+<P>
+<INPUT id=startbutton type=button value="Power On">
+<INPUT id=stopbutton type=button value="Power Off">
+</P>
+
+<OBJECT ID="MSVidCtl" CLASSID="CLSID:B0EDF163-910A-11D2-B632-00C04F79498E"></OBJECT>
+
+</CENTER>
+
+<P align="center"> 
+  	<BR>
+  	<B>Channel: </B> 
+  	<INPUT TYPE="text" id=currentchannel maxlength=3 SIZE=3>
+  	<INPUT id=enter type=button value="Enter">
+	<BR>
+  	<INPUT id=chanup type=button value="Channel Up">
+  	<INPUT id=chandown type=button value="Channel Down">
+  	<BR>
+</P>
+
+<P id=dl>X</P>
+
+<SCRIPT language=vbscript>
+option explicit
+
+dim tscontainer 'tuning space collection
+dim ts 'Analog TV tuning space
+dim tr 'Analog TV tune request
+
+
+sub window_onload
+	MSVidCtl.Width = 800
+	MSVidCtl.Height = 600
+	
+	set tscontainer = CreateObject("BDATuner.SystemTuningSpaces")
+
+	'Get the tuning space with the word "Cable" in its name.  
+	'This tuning space works with North American NTSC Cable 
+	'You can use the tuning space "Antenna" if you are using NTSC terrestrial analog broadcast
+	'For other types of analog broadcast, you will need to create your own tuning space
+        set ts = tscontainer("Cable")
+
+        set tr = ts.CreateTuneRequest
+        
+	'By default we will start on channel 5
+	tr.Channel = 5
+        
+	'Pass the tune request to the View() method and then build the graph
+	MSVidCtl.View tr
+        MSVidCtl.Run
+
+	'This will alpha blend the image mstv.jpg over the video
+	dim pict
+	dim alpha
+	dim tempvidrend
+	dim myrect
+
+	dim CurrentPath
+	CurrentPath = location.href
+	CurrentPath = Replace(CurrentPath,"%20"," ")
+	CurrentPath = Replace(CurrentPath,"/","\")
+	CurrentPath = Mid(CurrentPath,6,InstrRev(CurrentPath,"\")-6)
+	if Mid(CurrentPath, 5, 1) = ":" then CurrentPath = Mid(CurrentPath, 4, Len(CurrentPath)-3)
+    
+	dim fileLoc
+	fileLoc = CurrentPath & "\mstv.jpg"
+	set pict = LoadPicture(fileLoc)
+
+	alpha = 35
+	set tempvidrend = MSVidCtl.VideoRendererActive
+	tempvidrend.MixerBitmapOpacity = alpha
+	set myrect = tempvidrend.MixerBitmapPositionRect
+	myrect.Top = 20
+	myrect.Left = 20
+	myrect.Width = 50
+	myrect.Height = 20
+	tempvidrend.MixerBitmapPositionRect = myrect
+	tempvidrend.MixerBitmap = pict
+
+	'Display the channel information
+	dl.innertext = MSVidCtl.InputActive.Tune.Channel
+	currentchannel.value = MSVidCtl.InputActive.Tune.Channel
+end sub
+
+sub startbutton_onclick
+	'This starts the graph and begins displaying audio and video
+        MSVidCtl.Run
+end sub
+
+
+sub stopbutton_onclick
+	'This stops the graph, but does not destroy it
+        MSVidCtl.Stop
+end sub
+
+sub chanup_onclick
+	'Tune to the next channel up
+	tr.Channel = tr.Channel + 1
+        MSVidCtl.View tr
+
+        dl.innertext = MSVidCtl.InputActive.Tune.Channel
+	currentchannel.value = MSVidCtl.InputActive.Tune.Channel
+end sub
+
+
+sub chandown_onclick
+	'Tune to the next channel down
+	tr.Channel = tr.Channel - 1
+        MSVidCtl.View tr
+
+        dl.innertext = MSVidCtl.InputActive.Tune.Channel
+	currentchannel.value = MSVidCtl.InputActive.Tune.Channel
+end sub
+
+sub enter_onclick
+	'Tune to the channel the user entered in the textbox
+	tr.channel = currentchannel.value
+        MSVidCtl.View tr
+
+        dl.innertext = MSVidCtl.InputActive.Tune.Channel
+	currentchannel.value = MSVidCtl.InputActive.Tune.Channel
+end sub
+
+</Script>
+
+</BODY>
+</HTML>

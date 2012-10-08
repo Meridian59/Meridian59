@@ -1,0 +1,45 @@
+<!-- In this example, you will see a 400x300 24 bit movie.  The first clip  -->
+<!-- will be in slow motion, and use the "crop" mode of stretching, and the -->
+<!-- second clip will be sped up, and use the "PreserveAspectRatio" mode of -->
+<!-- stretching.  There will be a fade transition between the two.          -->
+<!-- Also, the audio will crossfade using the volume effect, and since      -->
+<!-- the second clip is much louder than the first, the second clip's audio -->
+<!-- volume will be cut.                                                    -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+
+<timeline>
+  <group type="video" framerate="15" width="400" height="300" bitdepth="24">
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\butterfly.mpg" start="0" stop="6" mstart="0" mstop="3" stretchmode="crop" />
+    </track>
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\clocktxt.avi"  start="6" stop="9" mstart="0" mstop="9" stretchmode="PreserveAspectRatio"/>
+	<transition clsid="{16b280c5-ee70-11d1-9066-00c04fd9189d}"  start="5" stop="7" />
+    </track>
+  </group>
+
+  <group type="audio">
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\piano2.mp3"    start="0" stop="6" mstart="4" mstop="8"/>
+	  <effect clsid="{036A9790-C153-11d2-9EF7-006008039E37}"    start="0" stop="6">
+	  <param name="vol" value="1">
+	    <linear time="6" value=".5"/>
+	  </param>
+	  </effect>
+    </track>
+
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\clocktxt.avi"  start="6" stop="9" mstart="0" mstop="9"/>
+	  <effect clsid="{036A9790-C153-11d2-9EF7-006008039E37}"    start="6" stop="9">
+	  <param name="vol" value=".2">
+	  </param>
+	  </effect>
+    </track>
+  </group>
+
+</timeline>
+
+

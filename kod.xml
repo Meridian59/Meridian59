@@ -1,0 +1,36 @@
+<NotepadPlus>
+    <UserLang name="Bkod" ext="kod">
+        <Settings>
+            <Global caseIgnored="yes" escapeChar="," />
+            <TreatAsSymbol comment="no" commentLine="yes" />
+            <Prefix words1="no" words2="no" words3="yes" words4="yes" />
+        </Settings>
+        <KeywordLists>
+            <Keywords name="Delimiters">&quot;00&quot;00</Keywords>
+            <Keywords name="Folder+">{</Keywords>
+            <Keywords name="Folder-">}</Keywords>
+            <Keywords name="Operators">$ ( ) ; [ ] =</Keywords>
+            <Keywords name="Comment">1local 2; 0%</Keywords>
+            <Keywords name="Words1">messages: classvars: constants: resources: properties:</Keywords>
+            <Keywords name="Words2">include is end Cons Send</Keywords>
+            <Keywords name="Words3">pr pi pl pb vr vi vb ,pr ,pi ,pb ,pl ,vr ,vi ,vb</Keywords>
+            <Keywords name="Words4">&amp; TRUE FALSE INFINITE_COUNT SYS MAX_INT MS_PER_DAY DAY HOUR MINUTE ACTIVE PASSIVE MOVEON_ USER_ BATTLER_ GETTABLE_ CONTAINER_ LOOK_ INVISIBLE_ OFFER_ BUY_ ACTIVATE_ FALSEPLAYER_YES APPLY_ SAFETY_ FLICKERING_ FLASHING_ BOUNCE_ PHASING_ DRAWFX_ OF_ PLAYER_ PROJ_ LIGHT_ ITEM_ XLAT_ PT_ SOUND_ NID_ NEWS_ ROOM_LOCKED_DOOR RID_ ROOM_ TERRAIN_ DIRECTIONAL_PERCENT_OUTDOORS OUTDOORS_ WEATHER_ TREE_ TOMBSTONE_ CTF_ FINENESS SECTOR_ KVERY_ KGOOD KNEUTRAL KEVIL STYLE_ BRIDGE_OF_FAITH_LEVEL GEN_ OFF ON FLICKER_ LEVER_ CANNOT_IMPROVE DISTANCE_NORMAL ROW_ COL_ LEAVE_ ENTER_ ANGLE_ ROTATE_ SET_ANGLE_ BID_ VID_ BANK_ GENDER_ SAY_RADIUS LIBACT_ MOODMOD_ MERCHANT_ MOB_ STATE_ ESTATE_ BRAIN_ AI_ SPEED_ ENCH_ MAX_ MIN_ NO_ HIGH_ MEDIUM_ LOW_ NEUTRAL_ AVARCLAN_ TID_ ARTICLE_ ITEM_ ITEMTYPE_ IA_ WA_ SHIELDSHAPE_ INSIG_ WEAPON_ ATCK_ STROKE_ SKID_ SID_ SS_ SKS_ ENCHANTMENT_ LEARN_ SC_ SPELLPOWER_ PKILL_ENABLE_HP PFLAG_ PFLAG2_ DMFLAG_ EFFECT_ FLASH_ SAY_ STAT_ CHARINFO_ CAUSE_ EVENT_ HS_ PWO_ NODE_ RANK_ GCID_ SERVICE_GOLD_REWARD INTRIGUE_ FACTION_ COURT_STATE_WRONG_CHANCE TOKEN_ FACTION_ ANIMATE_ PANM_ UA_ SECURITY_ OO_ SHRINE_ SERVER_ QST_ Q_ QN_ HUNGER_ WAR_ LOS_</Keywords>
+        </KeywordLists>
+        <Styles>
+            <WordsStyle name="DEFAULT" styleID="11" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+            <WordsStyle name="FOLDEROPEN" styleID="12" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle name="FOLDERCLOSE" styleID="13" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle name="KEYWORD1" styleID="5" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="5" />
+            <WordsStyle name="KEYWORD2" styleID="6" fgColor="0000A0" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle name="KEYWORD3" styleID="7" fgColor="0000FF" bgColor="FFFFFF" fontName="" fontStyle="0" />
+            <WordsStyle name="KEYWORD4" styleID="8" fgColor="FF0000" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle name="COMMENT" styleID="1" fgColor="FF00FF" bgColor="FFFFFF" fontName="" fontStyle="2" />
+            <WordsStyle name="COMMENT LINE" styleID="2" fgColor="008000" bgColor="FFFFFF" fontName="" fontStyle="2" />
+            <WordsStyle name="NUMBER" styleID="4" fgColor="400080" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle name="OPERATOR" styleID="10" fgColor="FF8000" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle name="DELIMINER1" styleID="14" fgColor="400080" bgColor="FFFFFF" fontName="" fontStyle="1" />
+            <WordsStyle name="DELIMINER2" styleID="15" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+            <WordsStyle name="DELIMINER3" styleID="16" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" />
+        </Styles>
+    </UserLang>
+</NotepadPlus>

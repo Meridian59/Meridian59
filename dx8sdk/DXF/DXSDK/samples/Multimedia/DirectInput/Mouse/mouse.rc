@@ -1,0 +1,166 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MOUSE DIALOGEX 0, 0, 375, 257
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+EXSTYLE WS_EX_CLIENTEDGE
+CAPTION "DirectInput Mouse Sample"
+MENU IDR_MENU
+FONT 8, "MS Shell Dlg"
+BEGIN
+    GROUPBOX        "Cooperative Level",IDC_STATIC,7,7,165,36
+    CONTROL         "&Exclusive",IDC_EXCLUSIVE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,16,16,46,10
+    CONTROL         "&Nonexclusive",IDC_NONEXCLUSIVE,"Button",
+                    BS_AUTORADIOBUTTON,16,27,59,10
+    CONTROL         "F&oreground",IDC_FOREGROUND,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,100,16,52,10
+    CONTROL         "&Background",IDC_BACKGROUND,"Button",BS_AUTORADIOBUTTON,
+                    100,27,55,10
+    GROUPBOX        "Data Style",IDC_STATIC,178,7,70,36
+    CONTROL         "&Immediate",IDC_IMMEDIATE,"Button",BS_AUTORADIOBUTTON | 
+                    WS_GROUP,188,16,48,10
+    CONTROL         "B&uffered",IDC_BUFFERED,"Button",BS_AUTORADIOBUTTON,188,
+                    27,43,10
+    LTEXT           "Data:",IDC_DATA_STATIC,7,222,18,8
+    LTEXT           "Device not created",IDC_DATA,31,222,337,11,SS_SUNKEN
+    DEFPUSHBUTTON   "&Create Device",IDC_CREATEDEVICE,7,236,60,14
+    PUSHBUTTON      "E&xit",IDCANCEL,318,236,50,14
+    GROUPBOX        "Expected Behavior",IDC_STATIC,7,47,361,171
+    LTEXT           "Behavior",IDC_BEHAVIOR,14,57,347,157
+    LTEXT           "Static",IDC_HELP_TEXT,252,16,110,26
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MOUSE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 368
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 250
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON    DISCARDABLE     "directx.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU MENU DISCARDABLE 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       IDCANCEL
+    END
+    POPUP "&Device"
+    BEGIN
+        MENUITEM "&Create",                     IDM_CREATEDEVICE
+        MENUITEM "&Release",                    IDM_RELEASEDEVICE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_ACCELERATOR1 ACCELERATORS DISCARDABLE 
+BEGIN
+    "B",            IDC_BACKGROUND,         VIRTKEY, ALT, NOINVERT
+    "C",            IDC_CREATEDEVICE,       VIRTKEY, ALT, NOINVERT
+    "E",            IDC_EXCLUSIVE,          VIRTKEY, ALT, NOINVERT
+    "I",            IDC_IMMEDIATE,          VIRTKEY, ALT, NOINVERT
+    "I",            IDC_BUFFERED,           VIRTKEY, ALT, NOINVERT
+    "N",            IDC_NONEXCLUSIVE,       VIRTKEY, ALT, NOINVERT
+    "O",            IDC_FOREGROUND,         VIRTKEY, ALT, NOINVERT
+    "R",            IDC_CREATEDEVICE,       VIRTKEY, ALT, NOINVERT
+    "X",            IDCANCEL,               VIRTKEY, ALT, NOINVERT
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

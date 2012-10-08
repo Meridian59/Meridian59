@@ -1,0 +1,173 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "directx.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOGEX 0, 0, 315, 257
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "AdjustSound"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Sound &file...",IDC_SOUNDFILE,7,7,46,13
+    LTEXT           "Static",IDC_FILENAME,57,7,251,13,SS_CENTERIMAGE,
+                    WS_EX_CLIENTEDGE
+    LTEXT           "Status",IDC_STATIC,7,24,42,13,SS_CENTERIMAGE
+    LTEXT           "Static",IDC_STATUS,57,24,251,13,SS_CENTERIMAGE,
+                    WS_EX_CLIENTEDGE
+    LTEXT           "Frequency",IDC_STATIC,7,41,42,13,SS_CENTERIMAGE
+    CTEXT           "0",IDC_FREQUENCY,57,41,35,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CTEXT           "100 Hz",IDC_STATIC,96,41,25,13,SS_CENTERIMAGE
+    CONTROL         "Slider1",IDC_FREQUENCY_SLIDER,"msctls_trackbar32",
+                    TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,120,40,157,15
+    CTEXT           "100 kHz",IDC_STATIC,278,41,30,13,SS_CENTERIMAGE
+    LTEXT           "Pan",IDC_STATIC,7,59,42,13,SS_CENTERIMAGE
+    CTEXT           "0",IDC_PAN,57,59,35,13,SS_CENTERIMAGE,WS_EX_STATICEDGE
+    CTEXT           "Left",IDC_STATIC,106,59,15,13,SS_CENTERIMAGE
+    CONTROL         "Slider2",IDC_PAN_SLIDER,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,120,58,157,15
+    CTEXT           "Right",IDC_STATIC,278,58,30,13,SS_CENTERIMAGE
+    LTEXT           "Volume",IDC_STATIC,7,75,42,13,SS_CENTERIMAGE
+    CTEXT           "0",IDC_VOLUME,57,75,35,13,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CTEXT           "Low",IDC_STATIC,106,75,15,13,SS_CENTERIMAGE
+    CONTROL         "Slider3",IDC_VOLUME_SLIDER,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,120,74,157,15
+    CTEXT           "High",IDC_STATIC,278,74,30,13,SS_CENTERIMAGE
+    LTEXT           "Focus",IDC_STATIC,12,99,20,8
+    CONTROL         "Normal",IDC_FOCUS_NORMAL,"Button",BS_AUTORADIOBUTTON,82,
+                    98,38,10
+    CONTROL         "Sticky",IDC_FOCUS_STICKY,"Button",BS_AUTORADIOBUTTON,
+                    131,98,35,10
+    CONTROL         "Global",IDC_FOCUS_GLOBAL,"Button",BS_AUTORADIOBUTTON,
+                    177,98,36,10
+    LTEXT           "Buffer Mixing",IDC_STATIC,12,110,42,8
+    CONTROL         "Default",IDC_MIX_DEFAULT,"Button",BS_AUTORADIOBUTTON,82,
+                    109,39,10
+    CONTROL         "Hardware",IDC_MIX_HARDWARE,"Button",BS_AUTORADIOBUTTON,
+                    131,109,47,10
+    CONTROL         "Software",IDC_MIX_SOFTWARE,"Button",BS_AUTORADIOBUTTON,
+                    177,109,44,10
+    CONTROL         "&Loop sound",IDC_LOOP_CHECK,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,7,224,53,10
+    PUSHBUTTON      "&Play",IDC_PLAY,7,236,50,14,WS_DISABLED
+    PUSHBUTTON      "&Stop",IDC_STOP,62,236,50,14,WS_DISABLED
+    PUSHBUTTON      "E&xit",IDCANCEL,258,236,50,14
+    GROUPBOX        "Expected Behavior",IDC_STATIC,7,126,301,94
+    LTEXT           "Static",IDC_BEHAVIOR,13,136,288,77
+    GROUPBOX        "Buffer Settings",IDC_STATIC,7,89,301,36
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 308
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 250
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "afxres.rc"         // Standard components
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

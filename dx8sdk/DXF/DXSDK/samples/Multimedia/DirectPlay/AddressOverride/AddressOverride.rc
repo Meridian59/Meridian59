@@ -1,0 +1,157 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN_GAME DIALOG DISCARDABLE  0, 0, 240, 183
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "The Greeting Game"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "Wave to other players!",IDC_WAVE,20,162,80,14
+    LTEXT           "In this extremely simple non-violent game the only action you can",
+                    IDC_STATIC,11,16,214,8
+    LTEXT           "do is to wave to the other players, or they in turn can wave to you!",
+                    IDC_STATIC,11,26,214,8
+    LTEXT           "Number of players in game:",IDC_STATIC,11,59,86,8
+    LTEXT           "0",IDC_NUM_PLAYERS,99,59,127,8
+    GROUPBOX        "Rules",IDC_STATIC,7,7,226,30
+    GROUPBOX        "Game Status",IDC_STATIC,7,39,226,118
+    LTEXT           "Local Player Name:",IDC_STATIC,11,49,62,8
+    LTEXT           "Static",IDC_PLAYER_NAME,76,49,150,8
+    PUSHBUTTON      "Exit",IDCANCEL,155,162,50,14
+    EDITTEXT        IDC_LOG_EDIT,13,71,213,80,ES_MULTILINE | ES_READONLY
+END
+
+IDD_ADDRESS_OVERRIDE DIALOG DISCARDABLE  0, 0, 215, 130
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "DirectPlay Address Override"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    RTEXT           "Player Name:",IDC_STATIC,7,25,55,8
+    EDITTEXT        IDC_PLAYER_NAME,68,23,140,12,ES_AUTOHSCROLL
+    RTEXT           "Session Name:",IDC_STATIC,7,43,55,8
+    EDITTEXT        IDC_SESSION_NAME,68,41,140,12,ES_AUTOHSCROLL
+    RTEXT           "Serivce Provider:",IDC_STATIC,7,60,55,8
+    COMBOBOX        IDC_SP_COMBO,68,58,140,65,CBS_DROPDOWNLIST | CBS_SORT | 
+                    WS_VSCROLL | WS_TABSTOP
+    RTEXT           "IP Address:",IDC_ADDRESS_LINE1_TEXT,7,77,55,8
+    EDITTEXT        IDC_ADDRESS_LINE1,68,75,68,12,ES_AUTOHSCROLL
+    RTEXT           "Port:",IDC_ADDRESS_LINE2_TEXT,139,77,24,8
+    EDITTEXT        IDC_ADDRESS_LINE2,165,75,43,12,ES_AUTOHSCROLL
+    RTEXT           "Adapter:",IDC_STATIC,7,94,55,8
+    COMBOBOX        IDC_ADAPTER_COMBO,68,92,140,65,CBS_DROPDOWNLIST | 
+                    CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Host session",IDC_HOST_SESSION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,21,111,56,10
+    PUSHBUTTON      "&OK",IDOK,103,109,50,14
+    PUSHBUTTON      "&Cancel",IDCANCEL,158,109,50,14
+    LTEXT           "Local IP Address:",IDC_STATIC,53,9,56,8
+    LTEXT           "Static",IDC_LOCAL_IP,114,9,94,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN_GAME, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 233
+        VERTGUIDE, 60
+        VERTGUIDE, 120
+        VERTGUIDE, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_ADDRESS_OVERRIDE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 208
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 123
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAIN                ICON    DISCARDABLE     "directx.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

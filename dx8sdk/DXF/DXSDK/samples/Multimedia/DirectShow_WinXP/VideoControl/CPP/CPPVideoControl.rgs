@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		{06751985-1ADD-416A-951E-2FEF4FAEFB2D} = s 'CPPVideoControl'
+		'CPPVideoControl.EXE'
+		{
+			val AppID = s {06751985-1ADD-416A-951E-2FEF4FAEFB2D}
+		}
+	}
+}

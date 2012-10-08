@@ -1,0 +1,43 @@
+Dexter (DirectShow Editing Services) VB Sample Application
+
+Source: (SDK root)\Samples\Multimedia\VBSamples\DirectShow\Editing\DexterVB
+
+The Dexter VB Sample application is a GUI-based tool used to create a multimedia timeline and to load, edit, and save the timeline to an .XTL file.  This sample application demonstrates the following tasks related to timeline functions in Visual Basic:
+
+* Loading and saving .XTL files through the Dexter libraries
+* Adding, editing, and deleting items from the timeline through the Dexter libraries
+* Support for rendering audio and video playback to an ActiveMovie window through the Dexter libraries
+
+The user interface is divided into the following parts.
+
+1. Pull Down Menus
+	a. Creating New Timelines.
+	b. Opening Existing Timelines
+	c. Saving Timelines
+	d. Exiting the Application
+2. Button Bar
+3. Tree View
+4. Explorer View
+
+The button bar is divided into the following sections, from left to right.
+
+	New
+	Open
+	Save
+	Seek To Beginning of timeline
+	Seek Backward 1 second
+	Play Timeline
+	Pause Playback
+	Stop Playback
+	Seek Forward 1 second
+	Seek to End of timeline
+
+
+Once the timeline is loaded, the timeline will appear in the left pane of the application in the tree view.
+
+If you select an item in the tree view, the properties for that item are displayed in the right pane (in a read-only list view control).
+ 
+Timeline Operations (Inserts / Edits / Deletes) are accomplished by right clicking on an item in the left pane. A context-sensitive menu will appear that will allow you to modify the timeline. A different popup menu will appear depending on the item selected in the TreeView.  For example, right clicking on the timeline will bring up the timeline menu, whereas right clicking on the group will bring up the group menu. These menus are different and will only allow you to do timeline modifications that are allowed on the selected object.
+
+The pull-down menus are for creating a new timeline, opening an existing timeline, and saving a timeline as an XML file.
+

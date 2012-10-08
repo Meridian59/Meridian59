@@ -1,0 +1,39 @@
+<!-- This example shows the transition feature "SwapInputs" that lets you    -->
+<!-- transition either from A to B, or back from B to A, and it also         -->
+<!-- demonstrates running a transition backwards (eg: a wipe that's normally -->
+<!-- a left to right wipe being made a right to left wipe)                   -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+
+<timeline>
+  <group type="video">
+    <track>
+        <clip src="c:\dxsdk\samples\multimedia\media\skiing.avi" start="0" stop="10"/>
+    </track>
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\lake.mpg"      start="0" stop="3"/>
+	<clip src="c:\dxsdk\samples\multimedia\media\lake.mpg"      start="3" stop="6"/>
+	<clip src="c:\dxsdk\samples\multimedia\media\butterfly.mpg" start="6" stop="10" mstart="0" mstop="2"/>
+	<transition clsid="{af279b30-86eb-11d1-81bf-0000f87557db}"  start="0" stop="2" />
+	<transition clsid="{af279b30-86eb-11d1-81bf-0000f87557db}"  start="2" stop="6" swapinputs="1"/>
+	<transition clsid="{af279b30-86eb-11d1-81bf-0000f87557db}"  start="6" stop="8" swapinputs="1">
+	    <param name="progress" value="1.0">
+		<linear time="2" value="0"/>
+	    </param>
+	</transition>
+	<transition clsid="{af279b30-86eb-11d1-81bf-0000f87557db}"  start="8" stop="10" >
+	    <param name="progress" value="1.0">
+		<linear time="2" value="0"/>
+	    </param>
+	</transition>
+    </track>
+  </group>
+
+  <group type="audio">
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\track1.mp3" start="0" stop="10"/>
+    </track>
+  </group>
+</timeline>

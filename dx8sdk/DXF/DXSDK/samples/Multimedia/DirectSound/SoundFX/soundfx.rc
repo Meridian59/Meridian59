@@ -1,0 +1,218 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define IDC_STATIC -1
+#include <windows.h>
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "#define IDC_STATIC -1\r\n"
+    "#include <windows.h>\r\n"
+    "\r\n"
+    "\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAIN DIALOGEX 100, 100, 467, 266
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "SoundFX - Sound effects applied to IDirectSoundBuffer8"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    DEFPUSHBUTTON   "E&xit",IDOK,30,245,45,14
+    GROUPBOX        "Parameters",IDC_FRAME,110,48,350,212
+    RTEXT           "Param 1 name",IDC_PARAM_NAME1,113,83,78,8
+    CTEXT           "Value",IDC_PARAM_VALUE1,196,82,45,10,0,WS_EX_STATICEDGE
+    CONTROL         "Slider1",IDC_SLIDER1,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,284,79,130,15
+    CTEXT           "min",IDC_PARAM_MIN1,244,82,40,10
+    CTEXT           "max",IDC_PARAM_MAX1,418,82,35,8
+    RTEXT           "Param 1 name",IDC_PARAM_NAME2,113,105,78,8
+    CTEXT           "Value",IDC_PARAM_VALUE2,196,105,45,10,0,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider1",IDC_SLIDER2,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,284,102,130,15
+    CTEXT           "min",IDC_PARAM_MIN2,244,105,40,10
+    CTEXT           "max",IDC_PARAM_MAX2,418,105,35,8
+    RTEXT           "Param 1 name",IDC_PARAM_NAME3,113,127,78,8
+    CTEXT           "Value",IDC_PARAM_VALUE3,196,126,45,10,0,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider1",IDC_SLIDER3,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,284,123,130,15
+    CTEXT           "min",IDC_PARAM_MIN3,244,126,40,10
+    CTEXT           "max",IDC_PARAM_MAX3,418,126,35,8
+    RTEXT           "Param 1 name",IDC_PARAM_NAME4,113,148,78,8
+    CTEXT           "Value",IDC_PARAM_VALUE4,196,148,45,10,0,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider1",IDC_SLIDER4,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,284,145,130,15
+    CTEXT           "min",IDC_PARAM_MIN4,244,148,40,10
+    CTEXT           "max",IDC_PARAM_MAX4,418,148,35,8
+    RTEXT           "Param 1 name",IDC_PARAM_NAME5,113,170,78,8
+    CTEXT           "Value",IDC_PARAM_VALUE5,196,169,45,10,0,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider1",IDC_SLIDER5,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,284,166,130,15
+    CTEXT           "min",IDC_PARAM_MIN5,244,169,40,10
+    CTEXT           "max",IDC_PARAM_MAX5,418,169,35,8
+    RTEXT           "Param 1 name",IDC_PARAM_NAME6,113,192,78,8
+    CTEXT           "Value",IDC_PARAM_VALUE6,196,192,45,10,0,
+                    WS_EX_STATICEDGE
+    CONTROL         "Slider1",IDC_SLIDER6,"msctls_trackbar32",TBS_BOTH | 
+                    TBS_NOTICKS | WS_TABSTOP,284,189,130,15
+    CTEXT           "min",IDC_PARAM_MIN6,244,192,40,10
+    CTEXT           "max",IDC_PARAM_MAX6,418,192,35,8
+    CONTROL         "Triangle",IDC_RADIO_TRIANGLE,"Button",
+                    BS_AUTORADIOBUTTON,130,231,41,10
+    CONTROL         "Square",IDC_RADIO_SQUARE,"Button",BS_AUTORADIOBUTTON,
+                    180,231,39,10
+    CONTROL         "Sine",IDC_RADIO_SINE,"Button",BS_AUTORADIOBUTTON,230,
+                    231,30,10
+    GROUPBOX        "Waveform",IDC_FRAME_WAVEFORM,120,220,150,25
+    GROUPBOX        "FX",IDC_STATIC,8,48,95,155
+    CONTROL         "",IDC_CHECK_CHORUS,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,80,16,8
+    CONTROL         "",IDC_CHECK_COMPRESSOR,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,94,16,8
+    CONTROL         "",IDC_CHECK_DISTORTION,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,109,16,8
+    CONTROL         "",IDC_CHECK_ECHO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,
+                    28,124,16,8
+    CONTROL         "",IDC_CHECK_FLANGER,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,139,16,8
+    CONTROL         "",IDC_CHECK_GARGLE,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,154,16,8
+    CONTROL         "",IDC_CHECK_PARAMEQ,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,168,16,8
+    CONTROL         "",IDC_CHECK_REVERB,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,183,16,8
+    CTEXT           "Enable",IDC_STATIC,18,63,25,10,0,WS_EX_STATICEDGE
+    CTEXT           "Adjust",IDC_STATIC,48,63,25,10,0,WS_EX_STATICEDGE
+    PUSHBUTTON      "&Open File",IDC_BUTTON_OPEN,8,8,50,14
+    LTEXT           "Filename",IDC_TEXT_FILENAME,63,9,397,12,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CTEXT           "Status",IDC_STATIC,13,28,45,10,SS_CENTERIMAGE
+    LTEXT           "Status",IDC_TEXT_STATUS,63,28,397,12,SS_CENTERIMAGE,
+                    WS_EX_STATICEDGE
+    CONTROL         "&Loop Sound",IDC_CHECK_LOOP,"Button",BS_AUTOCHECKBOX | 
+                    WS_TABSTOP,28,210,55,10
+    PUSHBUTTON      "&Play",IDC_BUTTON_PLAY,5,225,45,14
+    PUSHBUTTON      "&Stop",IDC_BUTTON_STOP,55,225,45,14
+    CONTROL         "&Chorus",IDC_RADIO_CHORUS,"Button",BS_AUTORADIOBUTTON,
+                    48,80,38,10
+    CONTROL         "Co&mpressor",IDC_RADIO_COMPRESSOR,"Button",
+                    BS_AUTORADIOBUTTON,48,94,53,10
+    CONTROL         "&Distortion",IDC_RADIO_DISTORTION,"Button",
+                    BS_AUTORADIOBUTTON,48,109,45,10
+    CONTROL         "&Echo",IDC_RADIO_ECHO,"Button",BS_AUTORADIOBUTTON,48,
+                    124,33,10
+    CONTROL         "&Flanger",IDC_RADIO_FLANGER,"Button",BS_AUTORADIOBUTTON,
+                    48,139,39,10
+    CONTROL         "&Gargle",IDC_RADIO_GARGLE,"Button",BS_AUTORADIOBUTTON,
+                    48,154,37,10
+    CONTROL         "P&aramEq",IDC_RADIO_PARAMEQ,"Button",BS_AUTORADIOBUTTON,
+                    48,168,45,10
+    CONTROL         "&Reverb",IDC_RADIO_REVERB,"Button",BS_AUTORADIOBUTTON,
+                    48,183,39,10
+    CTEXT           "Min",IDC_STATIC,248,63,35,10,0,WS_EX_STATICEDGE
+    GROUPBOX        "Phase (Degrees)",IDC_FRAME_PHASE,280,220,165,25
+    CTEXT           "Max",IDC_STATIC,418,63,35,10,0,WS_EX_STATICEDGE
+    CONTROL         "-180",IDC_RADIO_NEG_180,"Button",BS_AUTORADIOBUTTON,286,
+                    231,30,10
+    CONTROL         "-90",IDC_RADIO_NEG_90,"Button",BS_AUTORADIOBUTTON,322,
+                    231,26,10
+    CONTROL         "0",IDC_RADIO_ZERO,"Button",BS_AUTORADIOBUTTON,352,231,
+                    20,10
+    CONTROL         "90",IDC_RADIO_90,"Button",BS_AUTORADIOBUTTON,382,231,24,
+                    10
+    CONTROL         "180",IDC_RADIO_180,"Button",BS_AUTORADIOBUTTON,412,231,
+                    28,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE 
+BEGIN
+    IDD_MAIN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 460
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 259
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON                ICON    DISCARDABLE     "directx.ico"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

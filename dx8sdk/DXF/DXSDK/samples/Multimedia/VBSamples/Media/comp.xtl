@@ -1,0 +1,66 @@
+<!-- This file demonstrates composites.  The video group consists of 2   -->
+<!-- tracks, but the first track is really an entire composition, not    -->
+<!-- just a single track.  That composition consists of 3 tracks, one of -->
+<!-- which is a composition itself.                                      -->
+
+<!-- In this example, 4 clips will transition to each other,             -->
+<!-- except for the last transition which is muted, so the 3rd will cut  -->
+<!-- to the fourth. The audio will be mixed during the transition times, -->
+<!-- even during the muted video transition.                             -->
+<!-- The first clip is cropped, the second is aspect ratio preserved,    -->
+<!-- the third is cropped, and the fourth is stretched.                  -->
+
+<!-- Also note that the first transition, 9999999... is invalid, so a    -->
+<!-- default push wipe transition will be used, and you will be notified -->
+<!-- of the problem that was corrected.                                  -->
+
+<!-- NOTE: If you install the DirectX SDK to a path other than c:\dxsdk,  -->
+<!-- then you must change the media path for each clip src below.         -->
+
+
+<timeline>
+  <group type="video" bitdepth="16" height="240" framerate="15">
+    <composite>
+        <track>
+	    <clip src="c:\dxsdk\samples\multimedia\media\water.mpg" start="0" stop="5" mstart="0" stretchmode="Crop"/>
+        </track>
+        <track>
+	    <clip src="c:\dxsdk\samples\multimedia\media\ruby.avi"     start="3" stop="8" mstart="0" stretchmode="PreserveAspectRatio"/>
+	    <transition clsid="{99999999-9999-9999-9999-999999999999}" start="3" stop="5" />
+        </track>
+        <composite>
+            <track>
+	        <clip src="c:\dxsdk\samples\multimedia\media\lake.mpg" start="7" stop="10" mstart="0"  stretchmode="Crop"/>
+		<transition clsid="{af279b30-86eb-11d1-81bf-0000f87557db}" start="7" stop="10" />
+            </track>
+        </composite>
+    </composite>
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\highway.avi"  start="10" stop="17" mstart="0" />
+	<transition clsid="{2A54C913-07AA-11D2-8D6D-00C04F8EF8E0}" start="9" stop="12" mute="1"/>
+    </track>
+  </group>
+
+
+  <group type="audio" samplingrate="44100">
+    <composite>
+        <track>
+	    <clip src="c:\dxsdk\samples\multimedia\media\water.mpg" start="0" stop="5" mstart="0" />
+        </track>
+        <track>
+	    <clip src="c:\dxsdk\samples\multimedia\media\piano.mp3" start="3" stop="8" mstart="0" />
+        </track>
+        <composite>
+            <track>
+	        <clip src="c:\dxsdk\samples\multimedia\media\track1.mp3" start="7" stop="10" mstart="0" />
+            </track>
+        </composite>
+    </composite>
+    <track>
+	<clip src="c:\dxsdk\samples\multimedia\media\track3.mp3" start="10" stop="18" mstart="0" />
+    </track>
+  </group>
+
+</timeline>
+
+

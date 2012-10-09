@@ -90,9 +90,11 @@ messages:
 
    CanPayCosts(who = $, lTargets = $)
    {
-      local oRoom, i, oActive;
+      local oRoom, i, oKilling, oActive;
 
       oRoom = Send(who,@GetOwner);
+	  oKilling = Send(SYS,@FindSpellByNum,#num=SID_KILLING_FIELDS);
+
 
       % check if combat already banned in room
       if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
@@ -102,8 +104,8 @@ messages:
          return FALSE;
       }
 
-	  % Check if the room is a Killing Field.  Currently looking for spell directly not using oSpell
-      if Send(oRoom,@IsEnchanted,#what=Send(SYS,@FindSpellByNum,#num=SID_KILLING_FIELDS))
+	  % Check if the room is a Killing Field.  Currently looking looking for oKilling defined above
+      if Send(oRoom,@IsEnchanted,#what=oKilling)
       {
          Send(who,@MsgSendUser,#message_rsc=truce_killingfields);
          

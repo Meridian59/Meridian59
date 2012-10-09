@@ -103,7 +103,7 @@ messages:
       }
 
 	  % Check if the room is a Killing Field.  Currently looking for spell directly not using oSpell
-      if Send(oRoom,@IsEnchanted,#what=SID_KILLING_FIELDS)
+      if Send(oRoom,@IsEnchanted,#what=Send(SYS,@FindSpellByNum,#num=SID_KILLING_FIELDS))
       {
          Send(who,@MsgSendUser,#message_rsc=truce_killingfields);
          

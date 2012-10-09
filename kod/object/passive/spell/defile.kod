@@ -110,7 +110,7 @@ messages:
       }
 	  
      % ADDED SECTION TO CHECK FOR PREVIOUSLY DEFILED
-	  if NOT Send(target,@GetDefiled)
+	  if Send(target,@GetDefiled)
 	  {
 	       Send(who,@MsgSendUser,#message_rsc=defile_isdefiled_rsc);
 		   

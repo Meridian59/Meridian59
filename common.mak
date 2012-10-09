@@ -126,5 +126,5 @@ BC = $(BLAKBINDIR)\bc
 
 # environment variables for compiler
 
-LIB = $(LIB);$(BLAKLIBDIR);$(TOPDIR)\miles\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(TOPDIR)\miles\include
+LIB = $(LIB);$(BLAKLIBDIR);$(TOPDIR)\miles\lib;$(TOPDIR)\dx8sdk\DXF\DXSDK\lib
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(TOPDIR)\miles\include;$(TOPDIR)\dx8sdk\DXF\DXSDK\include

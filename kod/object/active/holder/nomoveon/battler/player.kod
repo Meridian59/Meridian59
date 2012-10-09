@@ -1896,7 +1896,20 @@ messages:
          Send(oSnoop,@MsgSendUser,#message_rsc=player_eavesdrop_login_str,#parm1=vrName);
       }
       
-      Send(self,@SetPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY,#value=TRUE);
+	  % FLASH LOGGING AI FOOL PREVENTION (could add something here to log to cheater logs if desired)
+	  % Upon login, the Moved_Since_Entry flag is set to false by default behavior
+	  % This means every time a user logs in it DOES NOT count as a move
+      Send(self,@SetPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY,#value=FALSE);
+	  % User took an action! Logging into the game in this case
+	  % Wake any AIs in the room to the user's presence!
+      % bitflag check instead of function for speed.  We set the bit flag in the prior line
+	  % This method is a bit more elegant than forcing the AI to think we have taken any action
+      % other than logging in to the game.  We simply count logging in as a move now
+      % Net effect is still setting Moved_Since_Entry flag to true but this gives us future options	  
+      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  
+      {
+         Send(self,@NotifyMonstersOfPresence);
+      }
 
       % If we log into the Raza/Hazar inn and aren't past the tutorial,
       %   then give us a commands list.

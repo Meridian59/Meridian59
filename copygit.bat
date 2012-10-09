@@ -1,9 +1,0 @@
-@echo off
-echo Copying BGFs...
-xcopy .\resource\bgf\*.bgf .\run\localclient\resource\ /y /d >nul
-
-echo Copying git to local...
-xcopy C:\Users\Admin\Documents\GitHub\Meridian59\* .\ /e /d /y >nul
-
-echo Copying local to git...
-xcopy .\* C:\Users\Admin\Documents\GitHub\Meridian59\ /e /d /y >nul

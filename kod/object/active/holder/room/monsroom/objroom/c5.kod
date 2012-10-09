@@ -56,7 +56,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Centipede, 30], [&GiantRat, 70] ]; %Spawn change 09/27/2012
+      plMonsters = [ [&Centipede, 30], [&GiantRat, 70] ];
       plGenerators = [ [13, 12], [17, 24], [25, 8], [25, 19], [26, 29], 
 		      [25, 39], [39, 10], [39, 23], [47, 35], [53, 24] ];
       plLooping_sounds = [[ waterfall_soundC5, 30, 27 ]];

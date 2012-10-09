@@ -56,7 +56,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Ant, 65], [&Centipede, 35] ]; %Spawn change 09/27/2012
+      plMonsters = [ [&Ant, 65], [&Centipede, 35] ];
 
       plGenerators = [ [ 8, 10], [ 5, 39], [ 6, 59], [25,  9], [18, 24],
                        [26, 35], [16, 45], [16, 62], [20, 76], [12, 94],

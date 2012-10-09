@@ -1,0 +1,11 @@
+/H: "localhost"
+/P: "5959"
+New main state = 0
+Loading DLL resource\intro.dll
+GetBitmapResource failed to find bitmap 101
+Successfully loaded DLL resource\intro.dll, handle = 74450000
+music filename = D:\Meridian 59\run\localclient\resource\main.mid
+OpenMidiFile error code = 275
+Cannot find the specified file.  Make sure the path and filename are correct.SaveProfaneTerms(): never been loaded
+Freeing a NULL pointer!
+Old main state = 0

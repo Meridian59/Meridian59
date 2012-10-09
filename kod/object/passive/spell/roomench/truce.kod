@@ -39,6 +39,11 @@ resources:
    truce_no_towns = "Shal'ille does not permit you to interfere right now."
 
    truce_sound = shalille.wav
+   
+   truce_killingfields = \
+      "The lust to reap the harvest of the Killing Fields overwhelms you "
+	  "and you cannot bring yourself to raise the flag of Truce.  Must..."
+	  "kill..."
 
 classvars:
 
@@ -97,6 +102,14 @@ messages:
          return FALSE;
       }
 
+	  % Check if the room is a Killing Field.  Currently looking for spell directly not using oSpell
+      if Send(oRoom,@IsEnchanted,#what=SID_KILLING_FIELDS)
+      {
+         Send(who,@MsgSendUser,#message_rsc=truce_killingfields);
+         
+         return FALSE;
+      }
+	  
       if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          for i in Send(oRoom,@GetHolderActive)

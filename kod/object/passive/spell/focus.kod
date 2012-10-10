@@ -119,13 +119,14 @@ messages:
       return;
    }
 
-   AdjustFarenTime(time=0, iSpellPower=0)
+   AdjustManaTime(who = $, time = 0)
    "Reduces time passed in so that mana regens faster.  Returns reduced time."
-   "In particular did not use AdjustManaTime so this does not get confused with Rejuv from Jala"
    {
-      local iTime;
-
+      local iTime, iSpellPower;
+	  iSpellpower = Send(self,@GetSpellpower,#who=who);
+	  
       iTime = (time * (400-iSpellPower)) / 400;
+	  iTime = bound(iTime,500,60000);
 
       return iTime;
    }

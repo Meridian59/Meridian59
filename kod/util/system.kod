@@ -2992,6 +2992,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CREATE_SCROLL,#class=&CreateScroll);
       Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
       Send(self,@CreateOneSpellIfNew,#num=SID_POISON_TOUCH,#class=&PoisonTouch);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CIRCLE_HEAL,#class=&CircleHeal);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

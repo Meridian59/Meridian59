@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CircleHeal is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   circleheal_name_rsc = "circle of healing"
+   circleheal_icon_rsc = icircleheal.bgf
+   circleheal_desc_rsc = \
+      "The compassionate power of Shal'ille heals the wounds of anyone within the circle's range. "  
+	  "Shal'ille gives a small reward toward the karma of the mage who heals another good soul. "
+	  "More spellpower increases the radius of the circle. "
+      "Requires herbs to cast."
+
+classvars:
+
+   vrName = circleheal_name_rsc
+   vrDesc = circleheal_desc_rsc
+   vrIcon = circleheal_icon_rsc
+
+   viSpell_num = SID_CIRCLE_HEAL
+   viSchool = SS_SHALILLE
+   viSpell_level = 5
+   viMana = 7
+
+properties:
+
+
+messages:
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

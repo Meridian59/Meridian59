@@ -61,7 +61,7 @@ messages:
    {
       return 0;
    }
-
+      
    CanPayCosts(who = $, lTargets = $)
    {
       % check for enchantment already applied
@@ -119,6 +119,16 @@ messages:
       return;
    }
 
+   AdjustFarenTime(time=0, iSpellPower=0)
+   "Reduces time passed in so that mana regens faster.  Returns reduced time."
+   "In particular did not use AdjustManaTime so this does not get confused with Rejuv from Jala"
+   {
+      local iTime;
+
+      iTime = (time * (400-iSpellPower)) / 400;
+
+      return iTime;
+   }
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

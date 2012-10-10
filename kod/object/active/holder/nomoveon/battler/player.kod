@@ -5565,10 +5565,28 @@ messages:
       return bound(iTime,1000,60000);
    }
 
+   GetFarenInfo()
+   "Returns all the info about the current Faren spell.  Returns a list of "
+   "[timer, spell object, state]. Currently only for Mana Focus as of 10/9/2012 update here if changed "
+   {
+      local i,oSpell;
+
+      for i in plEnchantments
+      {
+         oSpell = Nth(i,2);
+         if Send(oSpell,@GetSchool) = SS_FAREN
+         {
+            return i;
+         }
+      }
+
+      return $;
+   }
+   
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, lJalaInfo, lFarenInfo, oJalaSpell, oFarenSpell, iJalaPower, iFarenPower;
 
       if piMana > piMax_mana
       {
@@ -5597,6 +5615,23 @@ messages:
                   iJalaPower = Nth(Nth(lJalaInfo,3),3);
                   iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
                                #iSpellPower=iJalaPower);
+               }
+            }
+         
+            iTime = bound(iTime,500,60000);
+         }
+		 if poOwner <> $
+         {
+            lFarenInfo = Send(poOwner,@GetFarenInfo);
+
+            if lFarenInfo <> $
+            {
+               oFarenSpell = Nth(lFarenInfo,2);
+               if IsClass(oFarenSpell,&ManaFocus)
+               {
+                  iFarenPower = Nth(Nth(lFarenInfo,3),3);
+                  iTime = Send(oFarenSpell,@AdjustFarenTime,#time=iTime,
+                               #iSpellPower=iFarenPower);
                }
             }
          

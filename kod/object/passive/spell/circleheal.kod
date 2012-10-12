@@ -15,7 +15,7 @@ constants:
 
    include blakston.khd
    
-   CIRCLE_RANGE = 8           %  max distance to enchantees 
+   CIRCLE_RANGE = 6           %  max distance to enchantees 
 
 resources:
 

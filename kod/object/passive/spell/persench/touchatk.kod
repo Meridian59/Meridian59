@@ -91,6 +91,7 @@ classvars:
    
    % Light effects that is used by the FLICKERING_YES flag 
    viLightColor = $
+   viLightIntensity = 60
 
 properties:
 
@@ -431,6 +432,11 @@ messages:
    "Touch attack spells can give off their own unique light."
    {
 	  return viLightColor;
+   }
+   
+   GetLightIntensity()
+   {
+	  return viLightIntensity;
    }
 
 end

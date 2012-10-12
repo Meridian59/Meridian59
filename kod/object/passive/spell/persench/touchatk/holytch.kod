@@ -85,6 +85,7 @@ classvars:
    vrSucceed_wav = holytouch_sound
    
    viLightColor = LIGHT_BWHITE
+   viLightIntensity = 100
 
 properties:
 

@@ -78,6 +78,7 @@ classvars:
    vrSucceed_wav = zap_sound
    
    viLightColor = LIGHT_LIGHTNING
+   viLightIntensity = 80
 
 properties:
 

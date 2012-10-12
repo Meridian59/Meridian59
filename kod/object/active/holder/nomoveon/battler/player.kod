@@ -12278,10 +12278,7 @@ messages:
 	  local oSpell, light_intensity, light_color;
 	  
 	  % Default values
-	  
-	  % 75 out of 255 intensity of light
 	  light_intensity = 60;
-	  % Color
 	  light_color = LIGHT_FIRE;
 	  
       if poIllusion_set <> $
@@ -12307,10 +12304,14 @@ messages:
 			{
 				 % The spell object is the second element of the list.  Get that.
 				 oSpell = Nth(first(oSpell),2);
+				 
+				 % These values are overwritten by touch attack's light
 				 light_color = Send(oSpell,@GetLightColor);
+				 light_intensity = Send(oSpell,@GetLightIntensity);
 			}
 			
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+			% 75 out of 255 intensity of light
             AddPacket(1,light_intensity);
             AddPacket(2,light_color);
 

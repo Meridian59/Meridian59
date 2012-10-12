@@ -48,9 +48,9 @@ classvars:
    viSpell_level = 5
 
    viCast_time = 10000            %% 10 seconds
-   viPostCast_time = 4 % in seconds, since it works off gettime()
+   viPostCast_time = 3 % in seconds, since it works off gettime()
    
-   viSpell_Interval = 3000 % heal targets every 3 secs
+   viSpell_Interval = 7000 % heal targets every 7 secs
    
    vrProjectile_icon = CircleHeal_projectile
    
@@ -149,7 +149,7 @@ messages:
    
    StartPeriodicEnchantment(who = $, state = $ )
    {
-      local iHeal, each_obj, lTargets, oRoom;
+      local oRoom, iSpellpower, iHeal, each_obj, lTargets;
 	  
 	  oRoom = Send(who,@GetOwner);
 	  
@@ -161,13 +161,16 @@ messages:
       % check if enchantment is still on
       if Send(who,@IsEnchanted,#what=self)
       {
-
 		 lTargets = Send(self,@GetTargets,#who=who);
+		 iSpellpower = Send(self,@GetSpellpower,#who=who);
 		 
 		 for each_obj in lTargets
 		 {
+		 	 iHeal = random(1,5) + ((iSpellPower + 1)/20) + (Send(each_obj,@GetKarma)/20);
+			 iHeal = bound(iHeal,1,10);
+			 
 			 if each_obj <> who
-			 {
+			 {   
 				 % Give them a little boost if they help someone of higher Karma.
 				 if send(who,@GetKarma) < send(each_obj,@GetKarma)
 				 {
@@ -181,9 +184,12 @@ messages:
 					 #projectile=self,#flags=viProjectileFlag);
 			 }
 			 
-			 Send(each_obj,@GainHealthNormal,#amount=iHeal);
-			 Send(each_obj,@MsgSendUser,#message_rsc=CircleHeal_heal);
-		 }     
+			 if Send(each_obj,@GetHealth) < Send(each_obj,@GetMaxHealth)
+			 {
+				 Send(each_obj,@GainHealthNormal,#amount=iHeal);
+				 Send(each_obj,@MsgSendUser,#message_rsc=CircleHeal_heal);
+			 }
+		 }   
 	  }
       else
       {      

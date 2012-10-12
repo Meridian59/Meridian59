@@ -7,39 +7,250 @@
 % Meridian is a registered trademark.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The only way to lose this enchantment is to break the trance.
 CircleHeal is Spell
 
 constants:
 
    include blakston.khd
+   
+   CIRCLE_RANGE = 8           %  max distance to enchantees 
 
 resources:
 
-   circleheal_name_rsc = "circle of healing"
-   circleheal_icon_rsc = icircleheal.bgf
-   circleheal_desc_rsc = \
+   CircleHeal_name_rsc = "circle of healing"
+   CircleHeal_icon_rsc = icircleheal.bgf
+   CircleHeal_desc_rsc = \
       "The compassionate power of Shal'ille heals the wounds of anyone within the circle's range. "  
-	  "Shal'ille gives a small reward toward the karma of the mage who heals another good soul. "
-	  "More spellpower increases the radius of the circle. "
+	  "The spell dissipates if caster breaks concentration by running or combat."
       "Requires herbs to cast."
+	  
+   CircleHeal_projectile = ifrclite.bgf
+
+   CircleHeal_on = "The spirit of Shal'ille enters your body and rejuvenates it."
+   CircleHeal_break_trance = "Loss of concentration causes the circle to fade!"
+   CircleHeal_already_enchanted = "You already have %s%s."
+	  
+   CircleHeal_heal = "You are amazed to see your wounds close up and begin to heal, as if by magic."
 
 classvars:
 
-   vrName = circleheal_name_rsc
-   vrDesc = circleheal_desc_rsc
-   vrIcon = circleheal_icon_rsc
+   viPersonal_ench = TRUE
+
+   vrName = CircleHeal_name_rsc
+   vrIcon = CircleHeal_icon_rsc
+   vrDesc = CircleHeal_desc_rsc
 
    viSpell_num = SID_CIRCLE_HEAL
+   viMana = 11
    viSchool = SS_SHALILLE
    viSpell_level = 5
-   viMana = 7
+
+   viCast_time = 10000            %% 10 seconds
+   viPostCast_time = 4 % in seconds, since it works off gettime()
+   
+   viSpell_Interval = 3000 % heal targets every 3 secs
+   
+   vrProjectile_icon = CircleHeal_projectile
+   
+   viProjectileFlag = PROJ_FLAG_LIGHT_SOURCE
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 100
+   % Default color is lightning.
+   viProjectileLightColor = LIGHT_BYELLOW
 
 properties:
 
-
 messages:
 
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = cons([&Herbs,4],plReagents);
 
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+   
+   GetTargets(who=$,lTargets=$)
+   "This returns a list of valid targets in the room."
+   {
+      local oRoom, i, each_obj, lFinalTargets;
+
+      lFinalTargets = $;
+
+      oRoom = Send(who,@GetOwner);
+      for i in Send(oRoom,@GetHolderActive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+         {
+		   % if target is within the range of the caster
+           if Send(who,@SquaredDistanceTo,#what=each_obj) < (CIRCLE_RANGE * CIRCLE_RANGE) 
+		   {  
+			  lFinalTargets = Cons(each_obj,lFinalTargets);  
+		   }
+         }
+      }
+
+      return lFinalTargets;
+   }
+      
+   CanPayCosts(who = $, lTargets = $)
+   {
+      % check for enchantment already applied
+      if Send(who,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=CircleHeal_already_enchanted,
+              #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
+              
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   SetSpellPlayerFlag(who = $)
+   {
+      Send(who,@SetTranceFlag);
+      
+      return;
+   }
+
+   CastSpell(who = $, iSpellPower = 0, lTargets = $)
+   {
+	  local each_obj, oRoom;
+	  
+	  oRoom = Send(who,@GetOwner);
+	  
+      % Save out iSpellPower as our state so that the spells affected by this spell can use it.
+      Send(who,@StartEnchantment,#what=self,#time=viSpell_Interval,#lastcall=FALSE,
+           #state=[iSpellPower]);
+	  
+	  if lTargets = $
+	  {
+		 lTargets = Send(self,@GetTargets,#who=who);
+	  }
+	  
+      for each_obj in lTargets
+      {
+		 Send(each_obj,@MsgSendUser,#message_rsc=CircleHeal_on);
+	  }
+           
+      propagate;
+   }
+   
+   StartPeriodicEnchantment(who = $, state = $ )
+   {
+      local iHeal, each_obj, lTargets, oRoom;
+	  
+	  oRoom = Send(who,@GetOwner);
+	  
+	  Send(self,@PlaySpellSound,#room_obj=oRoom,#what=who);
+	  
+	  Send(who,@StartEnchantment,#what=self,#time=viSpell_Interval,
+		   #state=state,#addicon=FALSE,#lastcall=FALSE);
+	  
+      % check if enchantment is still on
+      if Send(who,@IsEnchanted,#what=self)
+      {
+
+		 lTargets = Send(self,@GetTargets,#who=who);
+		 
+		 for each_obj in lTargets
+		 {
+			 if each_obj <> who
+			 {
+				 % Give them a little boost if they help someone of higher Karma.
+				 if send(who,@GetKarma) < send(each_obj,@GetKarma)
+				 {
+					send(who,@AddKarma,#amount = send(who,@CalculateKarmaChangeFromAct,
+						 #karma_doer=send(who,@GetKarma),#karma_act=send(each_obj,@GetKarma),
+						 #Swing_factor=2));
+				 }
+			 
+				 % Send projectile animation to all targets
+				 Send(oRoom,@SomethingShot,#who=who,#target=each_obj, 
+					 #projectile=self,#flags=viProjectileFlag);
+			 }
+			 
+			 Send(each_obj,@GainHealthNormal,#amount=iHeal);
+			 Send(each_obj,@MsgSendUser,#message_rsc=CircleHeal_heal);
+		 }     
+	  }
+      else
+      {      
+         Send(who,@StartEnchantment,#what=self,#time=viSpell_Interval,
+              #state=state,#addicon=FALSE,#lastcall=TRUE);
+      }
+
+      return;
+   }
+
+   EndEnchantment(who = $, state = $, report = TRUE)
+   {
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=CircleHeal_break_trance);
+      }
+      
+      return;
+   }
+
+   BreakTrance( who = $, state = $, event = 0, what = $ )
+   {
+      %% Casting spells will not break this trance
+      if event = EVENT_CAST
+	  {
+         return;
+      }
+
+      Send(who,@RemoveEnchantment,#what=self);
+      return;
+   }
+   
+   % Return the icon used to display a spell shooting through the air.
+   GetProjectileIcon()
+   {
+      return vrProjectile_Icon;
+   }
+
+   % Return the speed at which a particular spell should appear to shoot through the air.
+   GetProjectileSpeed()
+   {
+      return 5;
+   }
+
+   SendProjectileAnimation()
+   {
+      % Send animation info to user.  Default is no animation, display with group 1
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }      
+
+   GetProjectileLightFlags()
+   {
+      return viProjectileLightFlags;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      return viProjectileLightIntensity;
+   }
+
+   GetProjectileLightColor()
+   {
+      return viProjectileLightColor;
+   }
+   
 end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

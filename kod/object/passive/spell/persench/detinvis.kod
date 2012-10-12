@@ -38,7 +38,7 @@ classvars:
 
    viSpell_num = SID_DETECT_INVISIBLE
    viSchool = SS_KRAANAN
-   viSpell_level = 3
+   viSpell_level = 4
    viMana = 15
    viSpellExertion = 5
 

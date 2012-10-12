@@ -76,6 +76,8 @@ classvars:
    vbAutomatic = FALSE
 
    vrSucceed_wav = zap_sound
+   
+   viLightColor = LIGHT_LIGHTNING
 
 properties:
 

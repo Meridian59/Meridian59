@@ -88,6 +88,9 @@ classvars:
 
    % Cannot enchant others with touch attacks.
    vbCanCastOnOthers = FALSE
+   
+   % Light effects that is used by the FLICKERING_YES flag 
+   viLightColor = $
 
 properties:
 
@@ -399,11 +402,36 @@ messages:
       return iDuration;
    }  
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(iSpellpower=$,target=$)
    {
+      local iState;
+
+	  if viLightColor <> $
+	  {
+		 iState = iSpellPower + 10;
+		 Send(target,@GainLight,#amount=iState);
+		 Send(target,@SetFlickerFlag);
+	  }
+   
       Return iSpellpower;
    }
 
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+	  if viLightColor <> $
+	  {
+		 Send(who,@LoseLight,#amount=state);
+		 Send(who,@ClearFlickerFlag);
+	  }
+	  
+	  propagate;
+   }
+   
+   GetLightColor()
+   "Touch attack spells can give off their own unique light."
+   {
+	  return viLightColor;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

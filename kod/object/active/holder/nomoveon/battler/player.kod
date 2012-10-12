@@ -12275,6 +12275,15 @@ messages:
 
    SendLightingInformation()
    {
+	  local oSpell, light_intensity, light_color;
+	  
+	  % Default values
+	  
+	  % 75 out of 255 intensity of light
+	  light_intensity = 60;
+	  % Color
+	  light_color = LIGHT_FIRE;
+	  
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12289,13 +12298,21 @@ messages:
       {
          % A bit of a kludge.  Ideally, we should query the objects we are using
          %  to find out if any want to add lighting information to us.
+		 
          if (piDrawFX & FLICKERING_YES)
          {
+            % Touch attack spells have own unique lighing effects 
+			oSpell = Send(self,@GetEnchantmentsByClass,#EnchClass=&TouchAttackSpell);
+			if oSpell <> $
+			{
+				 % The spell object is the second element of the list.  Get that.
+				 oSpell = Nth(first(oSpell),2);
+				 light_color = Send(oSpell,@GetLightColor);
+			}
+			
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
-            % 75 out of 255 intensity of light
-            AddPacket(1,60);
-            % Color
-            AddPacket(2,LIGHT_FIRE);
+            AddPacket(1,light_intensity);
+            AddPacket(2,light_color);
 
             return;
          }

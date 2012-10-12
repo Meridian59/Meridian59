@@ -15,7 +15,7 @@ constants:
 
    include blakston.khd
    
-   CIRCLE_RANGE = 6           %  max distance to enchantees 
+   CIRCLE_RANGE = 7           %  max distance to enchantees 
 
 resources:
 
@@ -47,7 +47,6 @@ classvars:
    viSchool = SS_SHALILLE
    viSpell_level = 5
 
-   viCast_time = 10000            %% 10 seconds
    viPostCast_time = 3 % in seconds, since it works off gettime()
    
    viSpell_Interval = 7000 % heal targets every 7 secs

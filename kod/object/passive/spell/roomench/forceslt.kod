@@ -108,10 +108,15 @@ messages:
    StartEnchantment(who = $)
    "Starts enchantment effect on one player"
    {
+	  local iSpellpower;
+	  
       if Send(who,@GetKarma) > 0
       {
          Send(who,@AddAttackModifier,#what=self);
          Send(who,@MsgSendUser,#message_rsc=forcesoflight_player_on);
+		 
+		 iSpellpower = Send(self,@GetSpellpower,#who=who);
+		 Send(who,@GainLight,#amount=(35+iSpellpower));
       }
       
       return;
@@ -129,8 +134,13 @@ messages:
    EndRoomEnchantment(who = $, state = $)
    "Remove enchantment effects on this occupant"
    {
+	  local iSpellpower;
+	  
       Send(who,@RemoveAttackModifier,#what=self);
       Send(who,@MsgSendUser,#message_rsc=forcesoflight_player_off);
+
+	  iSpellpower = Send(self,@GetSpellpower,#who=who);
+	  Send(who,@LoseLight,#amount=(35+iSpellpower));
       
       return;
    }

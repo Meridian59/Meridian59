@@ -71,13 +71,13 @@ classvars:
                            %% that are high, provided you're good at the skill
 
 
-   viMin_Damage = 3        %% touch spells typically do good damage    
+   viMin_Damage = 1        %% touch spells typically do good damage    
    viMax_Damage = 6      %% but are unaffected by weapon or strength bonuses
 
    viRange = 2             %% touch spell range can vary, but are typically good     
 
-   viSpellType = ATCK_SPELL_ALL
-   viStroke = STROKE_ACID_TOUCH
+   viSpellType = ATCK_SPELL_ALL + ATCK_SPELL_ACID
+   viStroke = STROKE_POISON_TOUCH
 
    vbAutomatic = FALSE
 

@@ -1751,6 +1751,8 @@
    STROKE_ZAP = 23
    STROKE_ICY_FINGERS = 24
    STROKE_ACID_TOUCH = 25
+   STROKE_UNHOLY_TOUCH = 26
+   STROKE_POISON_TOUCH = 27
 
    %%% Unique skill constants
 

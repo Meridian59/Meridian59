@@ -41,7 +41,7 @@ resources:
       "The touch of %s%s separates body from soul and sends you to the underworld."
 
    UnholyTouch_spell_intro = \
-      "Qor Lv. 2: Delivers the evil of Qor in your touch."
+      "Qor Lv. 1: Delivers the evil of Qor in your touch."
 
    UnholyTouch_sound = qcurweap.wav
 
@@ -68,7 +68,7 @@ classvars:
    viSchool = SS_QOR
    viSpell_num = SID_UNHOLY_TOUCH
    viSpellExertion = 4
-   viSpell_level = 2
+   viSpell_level = 1
    viMana = 13
 
    viHit_Factor = 15
@@ -79,7 +79,7 @@ classvars:
    viRange = 2
 
    viSpellType = ATCK_SPELL_UNHOLY+ATCK_SPELL_ALL
-   viStroke = STROKE_ACID_TOUCH
+   viStroke = STROKE_UNHOLY_TOUCH
 
    viDifficulty = 1
 

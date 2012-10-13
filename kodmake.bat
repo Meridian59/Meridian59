@@ -8,7 +8,7 @@ for /R .\kod\ %%k in (*.kod) do (
 )
 
 cd kod
-nmake
+nmake FINAL=1
 cd ..
 
 echo Clearing BOF files...

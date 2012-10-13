@@ -82,7 +82,9 @@ messages:
    SetForSale()
    {
       plFor_Sale = [$,$,[SID_FIREWALL, SID_MARTYRS_BATTLEGROUND, SID_BRAMBLEWALL, SID_BOND,
-                         SID_SILENCE, SID_RING_OF_FLAMES, SID_MANA_BOMB ]];
+                         SID_SILENCE, SID_RING_OF_FLAMES, SID_MANA_BOMB,
+						 SID_BRITTLE, SID_SHATTER
+						 ]];
       return;
    }
 

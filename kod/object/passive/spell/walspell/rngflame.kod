@@ -38,7 +38,7 @@ classvars:
 
    viSpell_num = SID_RING_OF_FLAMES
    viSchool = SS_FAREN
-   viSpell_level = 6
+   viSpell_level = 5
    viMana = 15
    viSpellExertion = 10
    

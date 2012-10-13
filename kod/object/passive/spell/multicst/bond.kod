@@ -54,7 +54,7 @@ classvars:
 
    viSpell_num = SID_BOND
    viSchool = SS_SHALILLE
-   viSpell_level = 6
+   viSpell_level = 5
 
    viSpellExertion = 50
    viCast_time = 20000

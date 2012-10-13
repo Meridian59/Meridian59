@@ -43,7 +43,7 @@ classvars:
 
    viSpell_num = SID_BLOOD_INHERITANCE
    viSchool = SS_QOR
-   viSpell_level = 6
+   viSpell_level = 5
 
    viSpellExertion = 50
    viCast_time = 20000    % in milliseconds, this is the time it takes the spell to start casting

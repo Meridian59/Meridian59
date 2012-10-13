@@ -46,18 +46,23 @@ classvars:
    viSpell_level = 6
 
    viSpellExertion = 50
-   viCast_time = 20000
+   viCast_time = 20000    % in milliseconds, this is the time it takes the spell to start casting
    viChance_To_Increase = 35
 
+   % Rewrite of this section because a bad template must have been used at some point
+   % Variables were in the wrong place forcing them the be ignored and using the default
+   % Multi-cast settings rather than actually being able to set the timers here.
+   % viCast_time was also listed twice so extra listing was removed to avoid confusion
    viManaDrain = 1       % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
+   viMultiCast_Spellpower = 3000  % 10 minutes for worst case, 2.3 mins for best case.  This is the time
+                                  % it takes for the spell to load the prism as defined for multicast spells   
 
-   viCast_time = 0    % in milliseconds
 
 
 properties:                     
 
-   viMultiCast_Spellpower = 3000  % 10 minutes for worst case, 2.3 mins for best case. 
+   % Moved the Class Variable that was written here in to the correct location
 
 messages:      
 
@@ -91,56 +96,62 @@ messages:
       propagate;
    }
 
-   PrismCast(spellpower = 0, lCasters=$, lTargets=$) 
+   % Massive clean-up here.  Moved each random outcome to deal with its event seperately
+   % rather than passing the variable due to unpredicatable results of passing the variable
+   % Also fixed a bug where only Unholy weapons were created and in certain circumstances the 
+   % unholy enchant was being deleted.
+   PrismCast(iSpellpower = 0, lTargets = $, who = $) 
    {
-      local oCaster, iRandom, ItemAtt;
-
-%      for oCaster in lCasters
-%      {
-%         if oCaster <> oOwner
-%         {
-%            Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_succeeded,
-%                     #parm1=send(first(lTargets),@GetIndef),
-%                       #parm2=send(first(lTargets),@GetName));
-%         }
-%      }
-%
+      local oItem, iRandom;
 
       iRandom = Random(1,10);
 
       if iRandom = 1
       {
-         ItemAtt = WA_VAMPER;
+		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_VAMPER),@AddToItem,#oItem=First(lTargets));
+		 
+		 return;
       }
 
       if iRandom = 2
       {
-         ItemAtt = WA_BLINDER;
+		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_BLINDER),@AddToItem,#oItem=First(lTargets));
+		 
+		 return;
       }
 
       if iRandom = 3
       {
-         ItemAtt = WA_PARALYZER;
+		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_PARALYZER),@AddToItem,#oItem=First(lTargets));
+		 
+		 return;
       }
 
       if iRandom >= 4
       {
-         % This is the most common, a perma-unholy damage enchantment.
-         ItemAtt = WA_ATTACKSPELLTYPE;
-
-         % Specify the damage type
-         send(send(SYS,@FindItemAttByNum,#Num=ItemAtt),@AddToItem,#oItem=first(lTargets),#state1=ATCK_SPELL_UNHOLY);
-
-         % We're done here, return out.
+		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_ATTACKSPELLTYPE),@AddToItem,#oItem=first(lTargets),#state1=ATCK_SPELL_UNHOLY,#timer_duration = send(self,@getDuration,#iSpellPower=iSpellPower));
+		 
          return;
-      }
-
-      % For the other types.
-      send(send(SYS,@FindItemAttByNum,#Num=ItemAtt),@AddToItem,#what=first(lTargets));
-
-      return;
+      }	  
+	  	  
+	  return;
    }
 
+      GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = random(900,904) + (iSpellPower*900);
+      % Basically we use absurd numbers here to make the enchant semi-permanent
+      % We convert to hours for the iDuration, essentially the hours convert to several years of time
+	  % Duration is added here to deal with AttackSpellType requiring a timer to avoid possible crash
+      % scenarios in dealing with several situations where this timer is checked (on reveal for example)
+      % There were incidents where reveal was deleting the enchant.  It is best to set the state to avoid
+      % cascade of issues later not only with reveal but with future items.	  
+      iDuration = iDuration * 1000 * 60 * 60;
+      return iDuration;
+   }
+   
    GetNumSpellTargets()
    {
       return 1;

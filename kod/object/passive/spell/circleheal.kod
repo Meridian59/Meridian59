@@ -54,11 +54,8 @@ classvars:
    vrProjectile_icon = CircleHeal_projectile
    
    viProjectileFlag = PROJ_FLAG_LIGHT_SOURCE
-   % Projectile lighting information.
    viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
-   % Medium light range, out of 255.
    viProjectileLightIntensity = 100
-   % Default color is lightning.
    viProjectileLightColor = LIGHT_BYELLOW
 
 properties:

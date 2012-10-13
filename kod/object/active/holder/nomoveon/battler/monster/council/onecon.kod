@@ -91,7 +91,7 @@ messages:
 
    SetForSale()
    {
-		plFor_Sale = [$,$,[SID_SHADOW_FORM]];
+		plFor_Sale = [$,$,[SID_SHADOW_FORM, SID_SHADOW_BALL]];
 		return;
    }
 

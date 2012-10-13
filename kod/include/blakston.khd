@@ -1968,6 +1968,7 @@
    SID_CONVEYANCE = 185
    SID_POISON_TOUCH = 186
    SID_CIRCLE_HEAL = 187
+   SID_SHADOW_BALL = 188
 
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT

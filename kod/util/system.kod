@@ -2993,6 +2993,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
       Send(self,@CreateOneSpellIfNew,#num=SID_POISON_TOUCH,#class=&PoisonTouch);
       Send(self,@CreateOneSpellIfNew,#num=SID_CIRCLE_HEAL,#class=&CircleHeal);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_BALL,#class=&ShadowBall);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

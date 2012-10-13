@@ -1,0 +1,95 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShadowBall is BoltSpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   ShadowBall_name_rsc = "shadow ball"
+   ShadowBall_icon_rsc = shadball.bgf
+   ShadowBall_look_icon = shadball.bgf
+   ShadowBall_desc_rsc = \
+      "Consists of concentrating shadow energy into a round ball to toss at opponents. "
+      "Requires dark angel feathers to cast"
+
+   ShadowBall_hit_rsc = "A ball of shadows strikes %s%s!"
+
+   ShadowBall_sound = qdthdoor.wav
+
+classvars:
+
+   vrName = ShadowBall_name_rsc
+   vrIcon = ShadowBall_look_icon
+   vrDesc = ShadowBall_desc_rsc
+   vrProjectile_icon = ShadowBall_icon_rsc
+
+   viSpell_num = SID_SHADOW_BALL
+
+   viAttack_spell = ATCK_SPELL_ALL + ATCK_SPELL_UNHOLY
+
+   viMana = 8
+   viSchool = SS_RIIJA
+   viSpell_level = 5
+
+   vrSucceed_wav = ShadowBall_sound
+   
+   viPostCast_time = 2        % in seconds, since it works off gettime()
+
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 100
+   % Color is orange.
+   viProjectileLightColor = LIGHT_DPURPLE
+
+properties:
+   
+   piDamageMin = 8
+   piDamageMax = 12
+   prSpellHit = ShadowBall_hit_rsc
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&DarkAngelFeather,2],plReagents);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 10;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }
+
+   SendProjectileAnimation()
+   {
+      % 40ms between animations, between frames 1-2
+      AddPacket(1,ANIMATE_CYCLE, 4,40, 2,1, 2,2);   
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\boltspel.bof
-BOFS = lightnin.bof fireball.bof smite.bof slitherb.bof
+BOFS = lightnin.bof fireball.bof smite.bof slitherb.bof shadball.bof
 
 !include $(KODDIR)\kod.mak

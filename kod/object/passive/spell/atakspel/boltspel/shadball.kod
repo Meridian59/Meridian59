@@ -17,10 +17,10 @@ resources:
 
    ShadowBall_name_rsc = "shadow ball"
    ShadowBall_icon_rsc = shadball.bgf
-   ShadowBall_look_icon = shadball.bgf
+   ShadowBall_look_icon = ishadbal.bgf
    ShadowBall_desc_rsc = \
       "Consists of concentrating shadow energy into a round ball to toss at opponents. "
-      "Requires dark angel feathers to cast"
+      "Requires dark angel feathers to cast. "
 
    ShadowBall_hit_rsc = "A ball of shadows strikes %s%s!"
 
@@ -54,8 +54,8 @@ classvars:
 
 properties:
    
-   piDamageMin = 8
-   piDamageMax = 12
+   piDamageMin = 10
+   piDamageMax = 15
    prSpellHit = ShadowBall_hit_rsc
 
 messages:
@@ -72,14 +72,7 @@ messages:
 
    GetProjectileSpeed()
    {
-      return 10;
-   }
-
-   SendLookAnimation()
-   {
-      AddPacket(1,ANIMATE_NONE, 2,1);
-
-      return;
+      return 8;
    }
 
    SendProjectileAnimation()
@@ -89,7 +82,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

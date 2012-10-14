@@ -1,0 +1,106 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemAttSbind is ItemAttribute
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  This item will remain in your inventory, even if you die.
+% 
+%  Form is: 
+%
+%   	[IA_SBIND]
+%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+ 
+   itemattsbind_desc = "  It hums with an angelic oratorio."
+   itemattsbind_name = "soulbound %s"
+
+   sbind_DM = "sbind"
+
+classvars:
+
+   viItem_Att_Num = IA_SBIND
+   vrDesc = itemattsbind_desc
+   vrName = itemattsbind_name
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%  Value Functions
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   viDifficulty = 11
+   vrDM_Trigger = sbind_DM
+
+properties:
+
+   piValue_modifier = 150
+   piValue_power_modifier = 0
+  
+messages:
+
+   % Stays with you when you die
+   ItemDropOnDeath()
+   {
+      return FALSE; 
+   }
+   
+   % Can be mended
+   ItemCanMend()
+   {
+      return TRUE;
+   }
+
+   % Cannot be brittled
+   ItemCanWeaken()
+   {
+      return FALSE;
+   }
+
+  % Go ahead!  Add an enchant
+   ItemCanEnchant()
+   {
+      return TRUE;
+   }
+
+   % Cannot be swapped
+   ItemCanSwap()
+   {
+      return FALSE;
+   }
+
+   % No shatter policy
+   ItemCanShatter()
+   {
+      return FALSE;
+   }
+
+   % Default can be identified
+   ItemCanIdentify()
+   {
+      return TRUE;
+   }   
+
+   % Returns the amount added to an item's spell usage percentage, default is 0, could be used to make
+   % Soul bound items more powerful or weaker than normal
+   ItemGetSpellModifier(oCaster=$,oItem=$)
+   {
+      return 0;
+   }
+end  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

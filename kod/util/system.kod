@@ -3046,6 +3046,7 @@ messages:
       Send(self,@CreateOneItemAttIfNew,#num=WA_ATTACKSPELLTYPE,#class=&WeapAttSpellType);
       Send(self,@CreateOneItemAttIfNew,#num=WA_ENCHANTED,#class=&WeapAttEnchanted);
       Send(self,@CreateOneItemAttIfNew,#num=IA_BONDED,#class=&ItemAttBonded);
+	  Send(self,@CreateOneItemAttIfNew,#num=IA_SBIND,#class=&ItemAttSbind);
       Send(self,@CreateOneItemAttIfNew,#num=WA_GLOWING,#class=&WeapAttGlowing);
       Send(self,@CreateOneItemAttIfNew,#num=IA_MADE,#class=&ItemAttMade);
 

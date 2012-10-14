@@ -59,7 +59,7 @@ messages:
 		 poViewer = viewer;
 	  }
 	  
-	  if time <> 0
+	  if time > 0
 	  {
 		 createTimer(self,@Delete,time);
 	  }

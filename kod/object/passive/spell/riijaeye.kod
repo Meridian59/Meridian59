@@ -81,7 +81,7 @@ messages:
 	  
 	  if oEye = $
 	  {
-		 oEye = Create(&GiantEyeball,#viewer=who,#timer=Send(self,@GetDuration,#iSpellPower=iSpellPower));
+		 oEye = Create(&GiantEyeball,#viewer=who,#time=Send(self,@GetDuration,#iSpellPower=iSpellPower));
 		 Send(oRoom,@NewHold,#what=oEye,#new_row=Send(who,@GetRow),#new_col=Send(who,@GetCol),#new_angle=Send(who,@GetAngle));
 		 
 		 Send(who,@MsgSendUser,#message_rsc=RiijaEye_new);

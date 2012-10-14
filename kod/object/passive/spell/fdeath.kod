@@ -43,7 +43,7 @@ classvars:
    viChance_To_Increase = 40
 
    viSchool = SS_RIIJA
-   viSpell_level = 1
+   viSpell_level = 2
 
    viHarmful = FALSE
 

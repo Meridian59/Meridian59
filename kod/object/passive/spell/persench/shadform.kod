@@ -38,7 +38,7 @@ classvars:
    vrDesc = shadowform_desc_rsc
 
    viSpell_num = SID_SHADOW_FORM
-   viSpell_level = 2
+   viSpell_level = 1
    viSchool = SS_RIIJA
    viMana = 5
    viSpellExertion = 5

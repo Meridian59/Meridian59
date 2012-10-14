@@ -27,6 +27,8 @@ resources:
    RiijaEye_view = \
 	 "You close your eyes and begin to focus your vision through the eye of Riija. \n"
 	 "[Press Esc when you are ready to return to your normal viewpoint.]"
+	 
+   RiijaEye_sound = rmirrimg.wav
 
 classvars:
 
@@ -39,6 +41,8 @@ classvars:
    viSpell_level = 3
    viMana = 6
    viSpellExertion = 5
+  
+   vrSucceed_wav = RiijaEye_sound
 
 properties:
    
@@ -77,8 +81,9 @@ messages:
 	  
 	  if oEye = $
 	  {
-		 oEye = Create(&GiantEyeball,#viewer=who);
+		 oEye = Create(&GiantEyeball,#viewer=who,#timer=Send(self,@GetDuration,#iSpellPower=iSpellPower));
 		 Send(oRoom,@NewHold,#what=oEye,#new_row=Send(who,@GetRow),#new_col=Send(who,@GetCol),#new_angle=Send(who,@GetAngle));
+		 
 		 Send(who,@MsgSendUser,#message_rsc=RiijaEye_new);
 	  }
 	  else
@@ -90,6 +95,14 @@ messages:
 	  }
 	  
       propagate;
+   }
+   
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+      iDuration = (300 + 8*iSpellPower) * 1000;    %%% 3-15 minutes
+      
+      return random(iDuration/2,iDuration);
    }
 
 end

@@ -52,11 +52,27 @@ properties:
 
 messages:
 
-   Constructor(viewer = $)
+   Constructor(viewer = $, time = 0)
    {
 	  if viewer <> $
 	  {
 		 poViewer = viewer;
+	  }
+	  
+	  if time <> 0
+	  {
+		 createTimer(self,@Delete,time);
+	  }
+	  
+      propagate;
+   }
+   
+   Delete()
+   {
+	  if ptTime <> $
+	  {
+		 deleteTimer(ptTime);
+		 ptTime = $;
 	  }
 	  
       propagate;

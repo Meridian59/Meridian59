@@ -47,7 +47,7 @@ classvars:
    viSpell_num = SID_DISCORDANCE
    viSchool = SS_KRAANAN
    viMana = 8
-   viSpell_level = 4
+   viSpell_level = 5
 
    viCast_time = 1000
    viChance_To_Increase = 5

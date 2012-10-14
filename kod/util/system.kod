@@ -2994,6 +2994,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_POISON_TOUCH,#class=&PoisonTouch);
       Send(self,@CreateOneSpellIfNew,#num=SID_CIRCLE_HEAL,#class=&CircleHeal);
       Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_BALL,#class=&ShadowBall);
+      Send(self,@CreateOneSpellIfNew,#num=SID_RIIJA_EYE,#class=&RiijaEye);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -4671,6 +4672,9 @@ messages:
       plMonsterTemplates = cons(create(&DuskRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
+	  
+	  % Open-source monsters
+      plMonsterTemplates = cons(create(&GiantEyeball),plMonsterTemplates);
 
       return;
    }
@@ -4710,7 +4714,6 @@ messages:
       plItemTemplates = cons(create(&Robe),plItemTemplates);
       plItemTemplates = cons(create(&LightRobe),plItemTemplates);
       plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
-      plItemTemplates = cons(create(&DiscipleLightRobe),plItemTemplates); %Open-source addition. (Tarandeep)
       plItemTemplates = cons(create(&NeruditeArmor),plItemTemplates);
 
       plItemTemplates = cons(create(&Helm),plItemTemplates);
@@ -4960,10 +4963,12 @@ messages:
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
 
       plItemTemplates = cons(create(&CowMask),plItemTemplates);
-	  
-      plItemTemplates = cons(create(&BlankScroll),plItemTemplates);
 
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
+	  
+	  %Open-source items
+      plItemTemplates = cons(create(&DiscipleLightRobe),plItemTemplates);
+      plItemTemplates = cons(create(&BlankScroll),plItemTemplates);
 
       return;
    }

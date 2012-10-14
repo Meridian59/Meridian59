@@ -17,7 +17,7 @@ BOFS  = ant.bof centip.bof cow.bof ent.bof fairy.bof \
         stntroll.bof snowrat.bof lich.bof deadlich.bof duskrat.bof thrasher.bof \
         nrthlwrm.bof bramble.bof eviltwin.bof dethspid.bof grdworm.bof troop.bof \
         xeochctl.bof dflypet.bof dangel.bof mollusk.bof specmum.bof lvstatue.bof \
-        evilent.bof pracmonster.bof\
+        evilent.bof pracmonster.bof eyeball.bof \
 
 
 

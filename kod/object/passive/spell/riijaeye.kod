@@ -1,0 +1,96 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RiijaEye is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RiijaEye_name_rsc = "eye of riija"
+   RiijaEye_icon_rsc = iriijaeye.bgf
+   RiijaEye_desc_rsc = \
+      "Summons the eye of Riija. It enables the caster to see in the eye's field of vision. "
+      "While your viewpoint is magically transferred, you will be unable to cast spells or attack. "
+	  "Requires dragonfly eyes. "
+   
+   RiijaEye_new = "You awaken your inner eye of Riija!"
+   RiijaEye_view = \
+	 "You close your eyes and begin to focus your vision through the eye of Riija. \n"
+	 "[Press Esc when you are ready to return to your normal viewpoint.]"
+
+classvars:
+
+   vrName = RiijaEye_name_rsc
+   vrIcon = RiijaEye_icon_rsc
+   vrDesc = RiijaEye_desc_rsc
+
+   viSpell_num = SID_RIIJA_EYE
+   viSchool = SS_RIIJA
+   viSpell_level = 3
+   viMana = 6
+   viSpellExertion = 5
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&DragonflyEye,2],plReagents);
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local i, each_obj, oRoom, oEye;
+	  
+	  oEye = $;
+	  oRoom = Send(who,@GetOwner);
+   
+      for i in send(oRoom,@GetHolderActive)
+      {
+         each_obj=Send(oRoom,@holderExtractObject,#data=i);
+         if isClass(each_obj,&GiantEyeball)
+         {
+			if Send(each_obj,@GetViewer) = who
+			{
+			  oEye = each_obj;
+			}
+         }
+      }
+	  
+	  if oEye = $
+	  {
+		 oEye = Create(&GiantEyeball,#viewer=who);
+		 Send(oRoom,@NewHold,#what=oEye,#new_row=Send(who,@GetRow),#new_col=Send(who,@GetCol),#new_angle=Send(who,@GetAngle));
+		 Send(who,@MsgSendUser,#message_rsc=RiijaEye_new);
+	  }
+	  else
+	  {
+		  send(who,@SetPlayerView,#what=oEye,
+				 #iFlags=(REMOTE_VIEW_TURN | REMOTE_VIEW_TILT | REMOTE_VIEW_CONTROL | REMOTE_VIEW_TOP));
+			
+		 Send(who,@MsgSendUser,#message_rsc=RiijaEye_view);
+	  }
+	  
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

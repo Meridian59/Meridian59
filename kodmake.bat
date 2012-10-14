@@ -11,6 +11,9 @@ cd kod
 nmake FINAL=1
 cd ..
 
+echo Copying any new graphics...
+xcopy .\resource\bgf\*.bgf .\run\localclient\resource\ /d /y >nul
+
 echo Clearing BOF files...
 del .\run\server\memmap\*.bof 2>nul
 echo Copying BOF files...
@@ -24,7 +27,5 @@ for /R .\kod\ %%f in (*.rsc) do xcopy "%%f" .\run\server\rsc\ /y >nul
 echo Building RSB file....
 .\bin\rscmerge.exe -o .\run\localclient\resource\rsc0000.rsb .\run\server\rsc\*.rsc
 if "%errorlevel%"=="0" echo RSB Success.
-echo Copying any new graphics...
-xcopy .\resource\bgf\*.bgf .\run\localclient\resource\ /d /y >nul
 
 echo Kodmake Successful!

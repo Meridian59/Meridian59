@@ -72,14 +72,12 @@ messages:
 
    GetProjectileSpeed()
    {
-      return 8;
+      return 12;
    }
 
    SendProjectileAnimation()
    {
-      % 40ms between animations, between frames 1-2
-      AddPacket(1,ANIMATE_CYCLE, 4,40, 2,1, 2,2);   
-
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 2, 2, 3);   % 40ms between animations
       return;
    }
 

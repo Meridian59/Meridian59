@@ -34197,6 +34197,26 @@ M	InitiallyIdentified 14617
 M	CanBeSpoofed 14620
 M	GetAttributeDesc 14828
 P		oItem 12259
+C ItemAttSbind 10872 14476 ItemAttribute
+R	itemattsbind_desc 30598
+R	itemattsbind_name 30599
+R	sbind_DM 30600
+V	viItem_Att_Num 11
+V	vrDesc 2
+V	vrName 0
+V	vrDM_Trigger 13
+Y	piValue_modifier 3
+Y	piValue_power_modifier 4
+M	ItemCanIdentify 12328
+M	ItemCanShatter 12330
+M	ItemCanSwap 12332
+M	ItemCanWeaken 12334
+M	ItemCanEnchant 12337
+M	ItemDropOnDeath 12339
+M	ItemGetSpellModifier 12363
+P		oItem 12259
+P		oCaster 12364
+M	ItemCanMend 14606
 C WeapAttSpellType 10869 14815 WeaponAttribute
 R	iaSpelltype_gone 28745
 R	iaSpelltype_holy 28746
@@ -41847,23 +41867,3 @@ M	CastSpell 13997
 P		what 10002
 P		apply_on 10112
 M	IsLabelled 14914
-C ItemAttSbind 10872 14476 ItemAttribute
-R	itemattsbind_desc 30598
-R	itemattsbind_name 30599
-R	sbind_DM 30600
-V	viItem_Att_Num 11
-V	vrDesc 2
-V	vrName 0
-V	vrDM_Trigger 13
-Y	piValue_modifier 3
-Y	piValue_power_modifier 4
-M	ItemCanIdentify 12328
-M	ItemCanShatter 12330
-M	ItemCanSwap 12332
-M	ItemCanWeaken 12334
-M	ItemCanEnchant 12337
-M	ItemDropOnDeath 12339
-M	ItemGetSpellModifier 12363
-P		oItem 12259
-P		oCaster 12364
-M	ItemCanMend 14606

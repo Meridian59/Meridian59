@@ -1,0 +1,207 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Bond is Spell
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   Bond_name_rsc = "bond"
+   Bond_icon_rsc = ibond.bgf
+   Bond_desc_rsc = \
+      "Forms a supernatural connection between an item and its owner. " 
+	  "When the item is not in that player's possession, the player will have an intuitive knowledge of its current location. " 
+	  "Due to the strength of the bond, a player may only be bonded to one item at a time. "  
+	  "The item to be bonded must be targetted, then whoever is holding the item when the spell is complete will be bonded to the item. " 
+	  "Note that this will dissipate any previous bond the player has formed with an item."
+
+   bond_successful_rsc = "You feel a magical bond form between you and your %s."
+   bond_failed = "You feel the magical bond begin to reach out in vain for one of its targets, but finding nothing it dissipates."
+   bond_already_bonded = "This item is already bonded to someone."
+   bond_bad_target = "You may only bond items to a player."
+   
+   Bond_report_room = "Somehow, you sense that your %s is in %s."
+   Bond_report_user = "Somehow, you sense that your %s is in %q's possession."
+
+   Bond_lable_rsc = "bond"
+
+classvars:
+
+   vrName = Bond_name_rsc
+   vrIcon = Bond_icon_rsc
+   vrDesc = Bond_desc_rsc
+
+   vrEnchantment_type = Bond_lable_rsc 
+
+   viSpell_num = SID_BOND
+   viSchool = SS_KRAANAN
+   viSpell_level = 5
+
+   viSpellExertion = 50
+   viCast_time = 20000
+   viChance_To_Increase = 66
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&PolishedSeraphym,6],plReagents);
+		
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      % Tell client how many targets this spell needs
+      return 1;
+   }
+
+   IsTargetInRange(who = $,target = $)
+   {
+      return who = Send(target, @GetOwner) 
+      OR send(who,@getOwner) = send(target,@getowner);  
+   }
+
+   CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oItem;
+      oItem = first(lTargets);
+      if oItem = $ or not isClass(oItem,&Item)
+      {
+		 Send(who, @MsgSendUser, #message_rsc=bond_bad_target);
+		 return False;
+      }
+	  
+      if Send(oItem,@HasAttribute,#ItemAtt=IA_BONDED)
+      {
+		 Send(who, @MsgSendUser, #message_rsc=bond_already_bonded);
+		 return False;
+      }
+	  
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oItem, oItemAtt, iDuration;
+
+      oItem = first(lTargets);
+      if oItem = $ or not isClass(oItem,&Item)
+      {
+		 Send(who, @MsgSendUser, #message_rsc=bond_bad_target);
+		 return False;
+      }
+      
+      if not Send(self,@IsTargetInRange,#who=who,#target=oItem)
+      {  
+		 Send(who, @MsgSendUser,#message_rsc=spell_out_of_range, 
+			 #parm1=Send(oItem,@GetCapDef),#parm2=Send(oItem,@GetName));
+			 
+		 return False;
+      }
+
+	  Send(who, @BondItem, #what=oItem);
+      Send(who, @MsgSendUser, #message_rsc=bond_successful_rsc,
+		 #parm1=Send(oItem,@GetName));
+
+      propagate;
+   }
+   
+   BondedItemReport(BondedItem=$,BondedPlayer=$,BondedItemOwner=$)
+   {
+      if BondedPlayer = $
+      {
+         DEBUG("tried to report to a $ player!");
+
+         return;
+      }
+
+      if BondedItem = $
+      {
+         DEBUG("tried to report to ",Send(BondedPlayer,@GetTrueName)," on a $ item!  Clearing bond.");
+         Send(BondedPlayer,@ClearBondedItem);
+
+         return;
+      }
+
+      % Check if the item is in its owner's inventory.
+      if Send(BondedPlayer,@IsHolding,#what=BondedItem)
+      {
+         return;
+      }
+
+      if BondedItemOwner = $
+      {
+         BondedItemOwner = Send(BondedItem,@GetOwner);
+      }
+
+      if BondedItemOwner = $
+      {
+         DEBUG(Send(BondedItem,@GetTrueName)," bonded to ",Send(BondedPlayer,@GetTrueName)," has no owner!  Clearing bond.");
+         Send(BondedPlayer,@ClearBondedItem);
+
+         return;
+      }
+
+      if Send(BondedItem,@GetHits) = 0
+      {
+         Send(BondedPlayer,@ClearBondedItem);
+
+         return;
+      }
+      
+      if IsClass(BondedItemOwner,&StorageBox)
+      {
+         BondedItemOwner = Send(SYS,@UtilGetRoomRecurse,#what=BondedItemOwner);
+      }
+
+      if IsClass(BondedItemOwner,&Room)
+      {
+         Send(BondedPlayer,@MsgSendUser,#message_rsc=Bond_report_room,
+               #parm1=Send(BondedItem,@GetName),
+               #parm2=Send(BondedItemOwner,@GetName));
+
+         return;
+      }
+
+      if IsClass(BondedItemOwner,&SafetyDepositBox)
+      {
+         BondedItemOwner = Send(BondedItemOwner,@GetSafeBoxOwner);
+      }
+
+      if IsClass(BondedItemOwner,&User)
+      {
+         Send(BondedPlayer,@MsgSendUser,#message_rsc=Bond_report_user,
+               #parm1=Send(BondedItem,@GetName),
+               #parm2=Send(BondedItemOwner,@GetName),#type2=STRING_RESOURCE);
+
+         return;
+      }
+
+      debug(Send(BondedItem,@GetTrueName)," bonded to ",Send(BondedPlayer,@GetTrueName)," not in room or in player's possession!  In ",Send(BondedItemOwner,@GetTrueName));
+      Send(BondedPlayer,@MsgSendUser,#message_rsc=Bond_report_room,
+            #parm1=Send(BondedItem,@GetName),
+            #parm2=Send(BondedItemOwner,@GetName));
+
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

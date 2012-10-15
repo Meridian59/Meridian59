@@ -43,8 +43,6 @@ classvars:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
-   viDifficulty = 11
    vrDM_Trigger = sbind_DM
 
 properties:

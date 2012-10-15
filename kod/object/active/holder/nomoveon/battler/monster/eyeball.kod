@@ -45,7 +45,9 @@ classvars:
 
 properties:
 
+   piDrawfx = BOUNCE_YES
    pbIllusion = TRUE
+   vbSummoned = TRUE
    
    ptTime = $
    poViewer = $
@@ -77,20 +79,50 @@ messages:
 	  
       propagate;
    }
-   
-   DispelIllusionEnchantments(report = TRUE, iChance = 100)
+
+   ReqSomethingEntered(what=$)
    {
-	  if iChance >= random(1,100)
-	  {
-		  Send(self,@Delete);
-	  }
-	  
+      if poViewer = $
+      {
+         Send(self,@Delete);
+      }
+      
+      if IsClass(poViewer,&Player)
+         AND NOT Send(poViewer,@IsLoggedOn)
+      {
+         Send(self,@Delete);
+      }
+      
       propagate;
    }
- 
-   DMCanArmageddon()
+   
+   SomethingLeft(what=$)
    {
-      return FALSE;
+      if poViewer = $
+      {
+         Send(self,@Delete);
+      }
+      else
+      {
+         if IsClass(poViewer,&Player)
+            and not Send(poViewer,@IsLoggedOn)
+         {
+            Send(self,@Delete);
+         }
+      }
+
+      propagate;
+   }
+   
+   SomethingKilled(what = $,victim = $,use_weapon = $)
+   "Someone just died, perhaps we need to clear our target."
+   {
+      if victim = poViewer
+      {
+         post(self,@Delete);
+      }
+      
+      propagate;
    }
    
    GetViewer()

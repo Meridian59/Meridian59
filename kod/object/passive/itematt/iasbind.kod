@@ -16,7 +16,7 @@ ItemAttSbind is ItemAttribute
 % 
 %  Form is: 
 %
-%   	[IA_SBIND]
+%   	[IA_SOULBIND]
 %	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -33,7 +33,7 @@ resources:
 
 classvars:
 
-   viItem_Att_Num = IA_SBIND
+   viItem_Att_Num = IA_SOULBIND
    vrDesc = itemattsbind_desc
    vrName = itemattsbind_name
    
@@ -100,5 +100,11 @@ messages:
    {
       return 0;
    }
+   
+   AddToTreasureTable()
+   {
+      return;
+   }
+ 
 end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

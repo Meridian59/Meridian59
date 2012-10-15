@@ -1622,7 +1622,7 @@
    IA_RENAMED    		   = 21
    
    % Open-source item attributes
-   IA_SBIND     		   = 22
+   IA_SOULBIND     		   = 22
 
    % Weapon Attributes.  These are attributes only applied to weapons.
    WA_TRAINING             = 51

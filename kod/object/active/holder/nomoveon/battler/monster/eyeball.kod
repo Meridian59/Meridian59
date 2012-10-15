@@ -40,7 +40,7 @@ classvars:
 
    viTreasure_type = TID_NONE
    viLevel = 30
-   viDifficulty = 0
+   viDifficulty = 1
    viKarma = 0
 
 properties:

@@ -77,6 +77,16 @@ messages:
 	  
       propagate;
    }
+   
+   DispelIllusionEnchantments(report = TRUE, iChance = 100)
+   {
+	  if iChance >= random(1,100)
+	  {
+		  Send(self,@Delete);
+	  }
+	  
+      propagate;
+   }
  
    DMCanArmageddon()
    {

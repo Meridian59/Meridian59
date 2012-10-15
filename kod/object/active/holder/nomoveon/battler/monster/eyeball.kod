@@ -61,7 +61,7 @@ messages:
 	  
 	  if time > 0
 	  {
-		 createTimer(self,@Delete,time);
+		 ptTime = createTimer(self,@Delete,time);
 	  }
 	  
       propagate;

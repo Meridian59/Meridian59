@@ -2995,6 +2995,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_CIRCLE_HEAL,#class=&CircleHeal);
       Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_BALL,#class=&ShadowBall);
       Send(self,@CreateOneSpellIfNew,#num=SID_RIIJA_EYE,#class=&RiijaEye);
+      Send(self,@CreateOneSpellIfNew,#num=SID_SOUL_BIND,#class=&SoulBind);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -3047,7 +3048,7 @@ messages:
       Send(self,@CreateOneItemAttIfNew,#num=WA_ATTACKSPELLTYPE,#class=&WeapAttSpellType);
       Send(self,@CreateOneItemAttIfNew,#num=WA_ENCHANTED,#class=&WeapAttEnchanted);
       Send(self,@CreateOneItemAttIfNew,#num=IA_BONDED,#class=&ItemAttBonded);
-	  Send(self,@CreateOneItemAttIfNew,#num=IA_SOULBIND,#class=&ItemAttSbind);
+	  Send(self,@CreateOneItemAttIfNew,#num=IA_SOULBOUND,#class=&ItemAttSbind);
       Send(self,@CreateOneItemAttIfNew,#num=WA_GLOWING,#class=&WeapAttGlowing);
       Send(self,@CreateOneItemAttIfNew,#num=IA_MADE,#class=&ItemAttMade);
 

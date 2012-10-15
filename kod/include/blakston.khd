@@ -1622,7 +1622,7 @@
    IA_RENAMED    		   = 21
    
    % Open-source item attributes
-   IA_SOULBIND     		   = 22
+   IA_SOULBOUND    		   = 22
 
    % Weapon Attributes.  These are attributes only applied to weapons.
    WA_TRAINING             = 51
@@ -1964,16 +1964,6 @@
    SID_MELANCHOLY = 180
    SID_CRYSTALIZE_MANA = 181
 
-   % Open-source spells
-   SID_UNHOLY_TOUCH = 182
-   SID_SUPER_PUNCH = 183
-   SID_CREATE_SCROLL = 184
-   SID_CONVEYANCE = 185
-   SID_POISON_TOUCH = 186
-   SID_CIRCLE_HEAL = 187
-   SID_SHADOW_BALL = 188
-   SID_RIIJA_EYE = 189
-
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT
    SID_HEAL = 2                        % use SID_MINOR_HEAL
@@ -2016,6 +2006,18 @@
    SID_MANA_BOON =    196
    SID_HP_BOON =      197
    SID_VIGOR_BOON =      198
+   
+   % Open-source spells
+   SID_UNHOLY_TOUCH = 200
+   SID_SUPER_PUNCH = 201
+   SID_CREATE_SCROLL = 202
+   SID_CONVEYANCE = 203
+   SID_POISON_TOUCH = 204
+   SID_CIRCLE_HEAL = 205
+   SID_SHADOW_BALL = 206
+   SID_RIIJA_EYE = 207
+   SID_SOUL_BIND = 208
+
    % No sids above 400 to keep spell IDs unique from skill IDs!
 
    %%% Spells and Skills

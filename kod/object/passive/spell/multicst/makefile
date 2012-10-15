@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\multicst.bof
-BOFS = hunt.bof shttrlck.bof summcow.bof bond.bof bldinher.bof shadrift.bof
+BOFS = hunt.bof shttrlck.bof summcow.bof bldinher.bof shadrift.bof soulbind.bof
 
 !include $(KODDIR)\kod.mak

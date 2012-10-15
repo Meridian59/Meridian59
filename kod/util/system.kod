@@ -4963,6 +4963,7 @@ messages:
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
 
       plItemTemplates = cons(create(&CowMask),plItemTemplates);
+      plItemTemplates = cons(create(&ReagentRing),plItemTemplates);
 
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
 	  

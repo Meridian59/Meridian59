@@ -16,6 +16,7 @@ constants:
 
 resources:
 
+   GiantEyeball_koc_name_rsc = "riijamoch"
    GiantEyeball_name_rsc = "giant eyeball"
    GiantEyeball_icon_rsc = eyeball.bgf
    GiantEyeball_desc_rsc = \
@@ -25,23 +26,34 @@ resources:
 
    GiantEyeball_dead_icon_rsc = blank.bgf
    GiantEyeball_dead_name_rsc = ""
+   
+   GiantEyeball_sound_hit = orc_atkh.wav
+   GiantEyeball_sound_miss = orc_atkm.wav
+   GiantEyeball_sound_death = orc_dth.wav
+   GiantEyeball_sound_aware = orc_awr.wav
 
 classvars:
 
+   vrKocName = GiantEyeball_koc_name_rsc
    vrName = GiantEyeball_name_rsc
    vrIcon = GiantEyeball_icon_rsc
    vrDesc = GiantEyeball_desc_rsc
    vrDead_icon = GiantEyeball_dead_icon_rsc
    vrDead_name = GiantEyeball_dead_name_rsc
-
+   
+   viTreasure_type = TID_NONE
+   viAttack_types = ATCK_WEAP_WHIP
    viSpeed = SPEED_NONE
    viAttributes = MOB_NOMOVE 
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
-
-   viTreasure_type = TID_NONE
-   viLevel = 30
-   viDifficulty = 1
+   viLevel = 50
+   viDifficulty = 5
    viKarma = 0
+   
+   vrSound_hit = GiantEyeball_sound_hit
+   vrSound_miss = GiantEyeball_sound_miss
+   vrSound_aware = GiantEyeball_sound_aware
+   vrSound_death = GiantEyeball_sound_death
 
 properties:
 

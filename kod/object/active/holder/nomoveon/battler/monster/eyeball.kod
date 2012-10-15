@@ -19,8 +19,8 @@ resources:
    GiantEyeball_name_rsc = "giant eyeball"
    GiantEyeball_icon_rsc = eyeball.bgf
    GiantEyeball_desc_rsc = \
-   "Surely an illusion of Riija! "
-   "It is spoken of as the gate that leads to inner realms and spaces of higher consciousness. "
+   "Floating several feet above the ground, giant eyeballs are creatures of disputed origin. "
+   "It is spoken of as a gate that leads to inner realms and spaces of higher consciousness. "
    "You get the funny feeling that you are being watched. "
 
    GiantEyeball_dead_icon_rsc = blank.bgf

@@ -103,7 +103,7 @@ messages:
       oTarget = First(lTargets);
       
       iHeal = random(1,5) + ((iSpellPower + 1)/20) + (Send(oTarget,@GetKarma)/20);
-      iHeal = bound(iHeal,1,10);
+      iHeal = bound(iHeal,1,15);
 
       % A little boost for casting on newbies, even if you're the newbie!
       if NOT send(oTarget,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)

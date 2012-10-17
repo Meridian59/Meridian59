@@ -25,6 +25,7 @@ resources:
 	  "Due to the strength of the bond, a player may only be bonded to one item at a time. "  
 	  "The item to be bonded must be targetted, then whoever is holding the item when the spell is complete will be bonded to the item. " 
 	  "Note that this will dissipate any previous bond the player has formed with an item."
+	  "Requires half a dozen polished seraphym."
 
    bond_successful_rsc = "You feel a magical bond form between you and your %s."
    bond_failed = "You feel the magical bond begin to reach out in vain for one of its targets, but finding nothing it dissipates."

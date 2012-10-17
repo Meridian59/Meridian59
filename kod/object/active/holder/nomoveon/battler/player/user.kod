@@ -185,8 +185,10 @@ resources:
       "You cannot Send a message to your guild, as you do not belong to a "
       "guild."
    user_no_guild_logged_on = "No one else from your guild is logged on."
-   user_someone_logon = "### Please welcome %s."
-   user_someone_logoff = "### Au revoir to %s."
+   user_admin_logon = "### Please welcome %s."
+   user_admin_logoff = "### Au revoir to %s."
+   user_someone_logon = "### %s logs on."
+   user_someone_logoff = "### %s logged off."
    user_guildmate_logon = "~IHail your guildmate %s!"
    user_guildmate_logoff = "~IYour guildmate %s has just departed."
 
@@ -774,7 +776,7 @@ messages:
 
    SomeoneLogon(what = $)
    {
-      local rName;
+      local rName, i;
 
       rName = Send(what,@GetTrueName);
 
@@ -785,10 +787,20 @@ messages:
          AddPacket(STRING_RESOURCE,rName);
          AddPacket(4,Send(what,@GetObjectFlags));
          SendPacket(poSession);
+		 
+		% if user attacked this person recently
+	    for i in plRecentPlayersAttacked AND Send(Send(SYS, @GetSettings), @GetRecentlyAttackedMax) > 0
+		{
+			if what = i
+			{
+               Send(self,@MsgSendUser,#message_rsc=user_someone_logon,#
+                     parm1=rName);
+			}
+		}
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
          {
-            Send(self,@MsgSendUser,#message_rsc=user_someone_logon,#
+            Send(self,@MsgSendUser,#message_rsc=user_admin_logon,#
                   parm1=rName);
          }
 
@@ -804,15 +816,25 @@ messages:
 
    SomeoneLogoff(what = $)
    {
-      local rName;
+      local rName, i;
 
       rName = Send(what,@GetTrueName);
 
       if pbLogged_on
       {
+		% if user attacked this person recently
+	    for i in plRecentPlayersAttacked
+		{
+			if what = i AND Send(Send(SYS, @GetSettings), @GetRecentlyAttackedMax) > 0
+			{
+               Send(self,@MsgSendUser,#message_rsc=user_someone_logoff,#
+                     parm1=rName);
+			}
+		}
+	  
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
          {
-            Send(self,@MsgSendUser,#message_rsc=user_someone_logoff,
+            Send(self,@MsgSendUser,#message_rsc=user_admin_logoff,
                  #parm1=rName);
          }
 

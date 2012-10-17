@@ -940,6 +940,14 @@ properties:
    %  This is used in conjunction with the constant ATTACKED_PLAYER_WAIT
    %  to disallow casting by angeled "mules".
    piTimeAttackedPlayer = 0 
+   
+   % plRecentPlayersAttacked records a list of players recently attacked within 
+   % the ATTACKED_PLAYER_WAIT constant. This is used by user.kod's  SomeoneLogon 
+   % and SomeoneLogoff messages in order to report "Player has logged off" messages.
+   plRecentPlayersAttacked = $
+   
+   % Timer used for logging notifications. Created when a player attacked someone recently.
+   ptLogAlertTimer = $
 
    % piDeathcost is used to tell the underworld what percent of normal
    %  penalties to apply when the players leaves.  FALSE means no penalties.
@@ -1009,6 +1017,12 @@ messages:
       {
          DeleteTimer(ptAttackTimer);
          ptAttackTimer = $;
+      }
+	  
+      if ptLogAlertTimer <> $
+      {
+         DeleteTimer(ptLogAlertTimer);
+         ptLogAlertTimer = $;
       }
 
       Send(self,@RemoveAllEnchantments,#report=FALSE);
@@ -3794,6 +3808,9 @@ messages:
 
       % Okay, attack is against a player, so record the time
       piTimeAttackedPlayer = GetTime();
+	  
+	  % Add player to recently attacked list
+	  Send(self,@AddRecentlyAttacked,#what=victim);
       
       return TRUE;
    }
@@ -12348,7 +12365,73 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
+   
+   % The next three functions are used with "logged on/off" message.
+   
+   AddRecentlyAttacked(what = $)
+   {
+	  local i;
+	  
+      if what = $
+      {
+         return $;
+      }
+	  
+	  % Do not add player to recent list if already exists.
+	  for i in plRecentPlayersAttacked
+	  {
+		  if what = i
+		  {
+             return;
+		  }
+	  }
+	  
+	  % If list exceeds the threshold, clear the list.
+	  if length(plRecentPlayersAttacked) >= Send(Send(SYS, @GetSettings), @GetRecentlyAttackedMax)
+	  {
+		 plRecentPlayersAttacked = $;
+	     
+	  }
 
+	  plRecentPlayersAttacked = Cons(what,plRecentPlayersAttacked);
+	  
+      if ptLogAlertTimer <> $
+      {
+         DeleteTimer(ptLogAlertTimer);
+         ptLogAlertTimer = $;
+      }
+	  
+	  ptLogAlertTimer = CreateTimer(self,@ClearRecentlyAttacked,ATTACKED_PLAYER_WAIT);
+	  
+	  return;
+   }
+   
+   ClearRecentlyAttacked()
+   {
+      if ptLogAlertTimer <> $
+      {
+         DeleteTimer(ptLogAlertTimer);
+         ptLogAlertTimer = $;
+      }
+   
+	  % Only clear list if player has not attacked a player within ATTACKED_PLAYER_WAIT.
+      if (piTimeAttackedPlayer + ATTACKED_PLAYER_WAIT) < GetTime()
+      {
+         plRecentPlayersAttacked = $;
+      }
+	  else
+	  {
+		 ptLogAlertTimer = CreateTimer(self,@ClearRecentlyAttacked,ATTACKED_PLAYER_WAIT);
+	  }
+	  
+	  return;
+   }
+   
+   % Meant for an admin looking for recent players a person has attacked.
+   GetRecentPlayersAttacked()
+   {
+      return plRecentPlayersAttacked;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

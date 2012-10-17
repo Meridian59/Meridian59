@@ -124,6 +124,11 @@ properties:
 
    % Set either Raza or Marion as the starter town.
    pbMarionAsStarterTown = TRUE
+   
+   % Max number of players to store in the recently attacked list
+   % Setting this to zero will still store the last player attacked, 
+   % but will disable logging alerts.
+   piRecentlyAttackedMax = 5
 
 messages:
 
@@ -304,7 +309,12 @@ messages:
    {
 	  return pbMarionAsStarterTown;
    }
-
+   
+   GetRecentlyAttackedMax()
+   {
+	  return piRecentlyAttackedMax;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

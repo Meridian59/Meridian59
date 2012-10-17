@@ -47,7 +47,7 @@ classvars:
    vrDesc = forgetspell_desc_rsc
 
    viSpell_num = SID_FORGET
-   viSpell_level = 2
+   viSpell_level = 3
    viSchool = SS_RIIJA
    viMana = 20
    viSpellExertion = 5

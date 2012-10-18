@@ -35,7 +35,7 @@ classvars:
 
    viSpell_num = SID_IDENTIFY
    viSchool = SS_JALA
-   viSpell_level = 3
+   viSpell_level = 2
    viMana = 10
    viSpellExertion = 15
    viCast_time = 15000

@@ -36,7 +36,7 @@ classvars:
 
    viSpell_num = SID_REVEAL
    viSchool = SS_JALA
-   viSpell_level = 5
+   viSpell_level = 4
    viMana = 30
    viSpellExertion = 20
    viChance_to_increase = 30

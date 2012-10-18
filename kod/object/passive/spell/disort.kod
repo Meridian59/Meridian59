@@ -13,8 +13,6 @@ Disorient is Spell
 constants:
 
    include blakston.khd
-   
-   FAIL_CHANCE = 10
 
 resources:
 
@@ -51,9 +49,8 @@ classvars:
    viChance_To_Increase = 10
 
    viFlash = FLASH_BAD
-
-   % In seconds, since it works off GetTime()
-   viPostCast_time = 2
+   
+   viCast_time = 600
    
    vrSucceed_wav = Disorient_sound
 
@@ -113,7 +110,7 @@ messages:
 
    CastSpell(who=$, lTargets=$, iSpellpower=0)
    {
-      local oTarget,oRoom,oSpell,iFreeAction,iAngle;
+      local oTarget,oRoom,oSpell,iFreeAction;
 
       oTarget = First(lTargets);
       oRoom = Send(oTarget,@GetOwner);
@@ -132,31 +129,20 @@ messages:
             propagate;
          }
       }
+	  
+	  Send(who,@MsgSendUser,#message_rsc=Disorient_caster,
+		   #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 
-	  if iSpellpower >= random(1,100-FAIL_CHANCE)
+	  if IsClass(oTarget,&Player)
 	  {
-		  Send(who,@MsgSendUser,#message_rsc=Disorient_caster,
-			   #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
-
-		  if IsClass(oTarget,&Player)
-		  {
-			 Send(oTarget,@MsgSendUser,#message_rsc=Disorient_cast);
-			 Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=2000);
-		  }
-
-		  % Do not disorient DMs.
-		  if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
-		  {
-			 iAngle = random(ANGLE_EAST,MAX_ANGLE);
-			 
-			 send(oRoom,@SomethingTurned,#what=oTarget,#new_angle=iAngle);
-		  }
+		 Send(oTarget,@MsgSendUser,#message_rsc=Disorient_cast);
+		 Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=2000);
 	  }
-	  else
-	  {
-		  Send(who,@MsgSendUser,#message_rsc=Disorient_fail);
-		  Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-		  return FALSE;
+
+	  % Do not disorient DMs.
+	  if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
+	  { 
+		 send(oRoom,@SomethingTurned,#what=oTarget,#new_angle=random(0,MAX_ANGLE-1));
 	  }
       
       propagate;

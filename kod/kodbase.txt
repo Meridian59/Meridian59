@@ -41942,7 +41942,7 @@ V	viOutlaw 28
 V	viNoNewbieOffense 31
 V	viChance_To_Increase 18
 V	viFlash 32
-V	viPostCast_time 26
+V	viCast_time 25
 V	vrSucceed_wav 27
 M	CanPayCosts 13702
 P		who 10116

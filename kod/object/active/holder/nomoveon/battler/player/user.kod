@@ -789,12 +789,15 @@ messages:
          SendPacket(poSession);
 		 
 		% if user attacked this person recently
-	    for i in plRecentPlayersAttacked AND Send(Send(SYS, @GetSettings), @GetRecentlyAttackedMax) > 0
+		if plRecentPlayersAttacked <> $
 		{
-			if what = i
+			for i in plRecentPlayersAttacked AND Send(Send(SYS, @GetSettings), @GetRecentlyAttackedMax) > 0
 			{
-               Send(self,@MsgSendUser,#message_rsc=user_someone_logon,#
-                     parm1=rName);
+				if what = i
+				{
+				   Send(self,@MsgSendUser,#message_rsc=user_someone_logon,#
+						 parm1=rName);
+				}
 			}
 		}
 
@@ -823,12 +826,15 @@ messages:
       if pbLogged_on
       {
 		% if user attacked this person recently
-	    for i in plRecentPlayersAttacked
+		if plRecentPlayersAttacked <> $
 		{
-			if what = i AND Send(Send(SYS, @GetSettings), @GetRecentlyAttackedMax) > 0
+			for i in plRecentPlayersAttacked
 			{
-               Send(self,@MsgSendUser,#message_rsc=user_someone_logoff,#
-                     parm1=rName);
+				if what = i AND Send(Send(SYS, @GetSettings), @GetRecentlyAttackedMax) > 0
+				{
+				   Send(self,@MsgSendUser,#message_rsc=user_someone_logoff,#
+						 parm1=rName);
+				}
 			}
 		}
 	  

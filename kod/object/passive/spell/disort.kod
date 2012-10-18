@@ -29,6 +29,8 @@ resources:
    Disorient_cast = "You feel disoriented, losing your bearings."
    Disorient_fail = "Your attempt at disorient fails!"
 
+   Disorient_sound = rdistrac.wav
+   
 classvars:
 
    vrName = Disorient_name_rsc
@@ -39,8 +41,8 @@ classvars:
    viSchool = SS_RIIJA
    viSpell_level = 4
 
-   viSpellExertion = 6
-   viMana = 12
+   viSpellExertion = 4
+   viMana = 8
 
    viHarmful = TRUE
    viOutlaw = TRUE
@@ -52,6 +54,8 @@ classvars:
 
    % In seconds, since it works off GetTime()
    viPostCast_time = 2
+   
+   vrSucceed_wav = Disorient_sound
 
 properties:
 
@@ -151,6 +155,8 @@ messages:
 	  else
 	  {
 		  Send(who,@MsgSendUser,#message_rsc=Disorient_fail);
+		  Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
+		  return FALSE;
 	  }
       
       propagate;

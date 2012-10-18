@@ -2996,6 +2996,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SHADOW_BALL,#class=&ShadowBall);
       Send(self,@CreateOneSpellIfNew,#num=SID_RIIJA_EYE,#class=&RiijaEye);
       Send(self,@CreateOneSpellIfNew,#num=SID_SOUL_BIND,#class=&SoulBind);
+      Send(self,@CreateOneSpellIfNew,#num=SID_DISORIENT,#class=&Disorient);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

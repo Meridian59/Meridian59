@@ -2017,6 +2017,7 @@
    SID_SHADOW_BALL = 206
    SID_RIIJA_EYE = 207
    SID_SOUL_BIND = 208
+   SID_DISORIENT = 209
 
    % No sids above 400 to keep spell IDs unique from skill IDs!
 

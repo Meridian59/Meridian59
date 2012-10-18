@@ -178,7 +178,7 @@ messages:
                       SID_FORESIGHT, SID_VERTIGO, SID_DENIAL, SID_ILLUSIONARY_WOUNDS,
                       SID_FLASH, SID_SHADOW_FORM, SID_ILLUSIONARY_FIREWALL, SID_BAIT, 
                       SID_FEIGN_DEATH, SID_ELUSION, SID_EVIL_TWIN, SID_SWAP,
-					  SID_RIIJA_EYE]];
+					  SID_RIIJA_EYE, SID_DISORIENT]];
       return;
    }
    

@@ -1,0 +1,160 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Disorient is Spell
+
+constants:
+
+   include blakston.khd
+   
+   FAIL_CHANCE = 10
+
+resources:
+
+   Disorient_name_rsc = "disorient"
+   Disorient_icon_rsc = iDisort.bgf
+   Disorient_desc_rsc = \
+      "Using the powers of the tickster god, "
+	  "spin your target in a random direction. "
+      "Requires dark angel feathers and purple mushrooms to cast. "
+   
+   Disorient_caster = "%s%s is disoriented."
+   Disorient_cast = "You feel disoriented, losing your bearings."
+   Disorient_fail = "Your attempt at disorient fails!"
+
+classvars:
+
+   vrName = Disorient_name_rsc
+   vrIcon = Disorient_icon_rsc
+   vrDesc = Disorient_desc_rsc
+
+   viSpell_num = SID_DISORIENT
+   viSchool = SS_RIIJA
+   viSpell_level = 4
+
+   viSpellExertion = 6
+   viMana = 12
+
+   viHarmful = TRUE
+   viOutlaw = TRUE
+   viNoNewbieOffense = TRUE
+
+   viChance_To_Increase = 10
+
+   viFlash = FLASH_BAD
+
+   % In seconds, since it works off GetTime()
+   viPostCast_time = 2
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&PurpleMushroom,1],plReagents);
+      plReagents = Cons([&DarkAngelFeather,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if NOT IsClass(target, &Battler) OR IsClass(target,&Revenant)
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
+                 #parm1=vrName,#parm2=Send(target,@GetDef),
+                 #parm3=Send(target,@GetName));
+         }
+         
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+         }
+         
+         return FALSE;
+      }
+    
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who=$, lTargets=$, iSpellpower=0)
+   {
+      local oTarget,oRoom,oSpell,iFreeAction,iAngle;
+
+      oTarget = First(lTargets);
+      oRoom = Send(oTarget,@GetOwner);
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_FREE_ACTION);
+
+      % Check if the target has free action 
+	  % 1-15% chance to reject the spell.
+      if Send(oTarget,@IsEnchanted,#what=oSpell)
+      {
+         iFreeAction = Send(oSpell,@DoFreeAction,#oHoldCaster=who,
+                          #oTarget=oTarget);
+         if iFreeAction = $
+         {
+            % Resisted completely
+            propagate;
+         }
+      }
+
+	  if iSpellpower >= random(1,100-FAIL_CHANCE)
+	  {
+		  Send(who,@MsgSendUser,#message_rsc=Disorient_caster,
+			   #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+		  if IsClass(oTarget,&Player)
+		  {
+			 Send(oTarget,@MsgSendUser,#message_rsc=Disorient_cast);
+			 Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=2000);
+		  }
+
+		  % Do not disorient DMs.
+		  if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
+		  {
+			 iAngle = random(ANGLE_EAST,MAX_ANGLE);
+			 
+			 send(oRoom,@SomethingTurned,#what=oTarget,#new_angle=iAngle);
+		  }
+	  }
+	  else
+	  {
+		  Send(who,@MsgSendUser,#message_rsc=Disorient_fail);
+	  }
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

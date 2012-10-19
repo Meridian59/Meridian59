@@ -94,7 +94,7 @@ messages:
 	                SID_DEATHLINK, SID_GAZE_OF_THE_BASILISK, SID_ANIMATE,
 	                SID_SHOCKING_FURY, SID_BLAST_OF_FIRE,
 	                SID_EXPLOSIVE_FROST, SID_SPLASH_OF_ACID, SID_VAMPIRIC_DRAIN,
-			SID_DEATHS_DOOR ]];
+					SID_DEATHS_DOOR, SID_DEATH_NOTE ]];
       return;
    }
    

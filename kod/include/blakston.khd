@@ -2018,6 +2018,7 @@
    SID_RIIJA_EYE = 207
    SID_SOUL_BIND = 208
    SID_DISORIENT = 209
+   SID_DEATH_NOTE = 210
 
    % No sids above 400 to keep spell IDs unique from skill IDs!
 

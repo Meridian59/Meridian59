@@ -146,7 +146,7 @@ messages:
 		 Send(oRoom,@SomethingAttacked,#what=who,#victim=each_obj,#use_weapon=self);
 	  
 		 Send(who,@MsgSendUser,#message_rsc=deathnote_hit_target_rsc,
-             #parm1=Send(each_obj,@GetDef),
+             #parm1=Send(each_obj,@GetCapDef),
              #parm2=Send(each_obj,@GetName));
 			 
 		 if IsClass(each_obj,&Player)
@@ -161,7 +161,7 @@ messages:
 			Send(who,@KilledSomething,#what=each_obj,#use_weapon=self);
 			
 		    Send(who,@MsgSendUser,#message_rsc=deathnote_killed_someone,
-             #parm1=Send(each_obj,@GetCapdef),
+             #parm1=Send(each_obj,@GetDef),
              #parm2=Send(each_obj,@GetName),
              #parm3=Send(each_obj,@GetHeShe));
 		 }

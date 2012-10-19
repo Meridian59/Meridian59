@@ -40,7 +40,7 @@ classvars:
    viSpell_num = SID_ARTIFICE
    viSchool = SS_RIIJA
 
-   viSpell_level = 3
+   viSpell_level = 2
    viMana = 10
    viSpellExertion = 10
    viCast_time = 10000

@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
    
-   ATTACK_RANGE = 8
+   ATTACK_RANGE = 6
 
 resources:
 
@@ -26,7 +26,7 @@ resources:
       "Requires purple mushrooms and a ruby to cast." 
 
    deathnote_hit_target_rsc = \
-      "%s%s cries in agony listening to your tune."
+      "%s%s cries in agony while hearing to your tune."
    deathnote_hit_rsc = \
       "OUCH! A loud high pitch sound hurts your ears."
    deathnote_killed_someone = \
@@ -53,7 +53,7 @@ classvars:
    viSpell_level = 4
    viMana = 10
 
-   viCast_time = 3000
+   viCast_time = 4000
    viChance_to_increase = 10
 
    viAttack_spell = ATCK_SPELL_ALL
@@ -64,8 +64,8 @@ classvars:
    vrSucceed_wav = deathnote_sound
 
 properties:
-   piDamageMin = 7
-   piDamageMax = 15
+   piDamageMin = 3
+   piDamageMax = 12
 
 messages:
 
@@ -139,10 +139,11 @@ messages:
 	  % Everyone in the room will hear this spell being casted.
 	  Send(oRoom,@SomethingWaveRoom,#wave_rsc=vrSucceed_wav);
 	  
-	  piDamageMax = iSpellPower / 6;
+	  piDamageMax = iSpellPower / 8;
 	  
       for each_obj in lTargets
       {
+		 Send(oRoom,@SomethingAttacked,#what=who,#victim=each_obj,#use_weapon=self);
 	  
 		 Send(who,@MsgSendUser,#message_rsc=deathnote_hit_target_rsc,
              #parm1=Send(each_obj,@GetDef),
@@ -160,7 +161,7 @@ messages:
 			Send(who,@KilledSomething,#what=each_obj,#use_weapon=self);
 			
 		    Send(who,@MsgSendUser,#message_rsc=deathnote_killed_someone,
-             #parm1=Send(each_obj,@GetDef),
+             #parm1=Send(each_obj,@GetCapdef),
              #parm2=Send(each_obj,@GetName),
              #parm3=Send(each_obj,@GetHeShe));
 		 }
@@ -177,7 +178,7 @@ messages:
       }
         
 	  Send(hearer,@MsgSendUser,#message_rsc=deathnote_murmur_rsc,
-		   #parm1=Send(caster,@GetCapIndef),
+		   #parm1=Send(caster,@GetCapdef),
 		   #parm2=Send(caster,@GetName),
 		   #parm3=Send(caster,@GetHisHer));
       

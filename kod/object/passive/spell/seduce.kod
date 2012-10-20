@@ -43,7 +43,7 @@ classvars:
 
    viSpell_num = SID_SEDUCE
    viSchool = SS_RIIJA
-   viSpell_level = 6
+   viSpell_level = 5
    viMana = 15
    viChance_To_Increase = 15
 

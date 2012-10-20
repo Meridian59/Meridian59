@@ -53,7 +53,6 @@ classvars:
    viSpell_level = 4
    viMana = 10
 
-   viCast_time = 4000
    viChance_to_increase = 10
 
    viAttack_spell = ATCK_SPELL_ALL
@@ -62,6 +61,9 @@ classvars:
    viNoNewbieOffense = TRUE
    
    vrSucceed_wav = deathnote_sound
+   
+   % In seconds, since it works off GetTime(),
+   viPostCast_time = 2
 
 properties:
    piDamageMin = 3

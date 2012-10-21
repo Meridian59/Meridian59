@@ -5750,10 +5750,10 @@ messages:
       }
 
       % Keep health from going above max if affected by Mark of Dishonor.
-      if piHealth > piMax_health
+      if piHealth > piBase_Max_health
          AND Send(self,@IsEnchanted,#byClass=&MarkOfDishonor)
       {
-         piHealth = piMax_health;
+         piHealth = piBase_Max_health;
       }
 
       if ptHealth = $

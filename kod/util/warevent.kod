@@ -20,6 +20,7 @@ constants:
    WAR_UNRESTRICTED = 0
    WAR_FACTION_RESTRICTED = 1
    WAR_TOWN_RESTRICTED = 2
+   WAR_GUILD_RESTRICTED = 3 % Experimental, is not complete!
 
 resources:
 
@@ -37,6 +38,8 @@ resources:
    WarEvent_team_beta_name = "Team Beta"
    WarEvent_team_gamma_name = "Team Gamma"
    WarEvent_team_delta_name = "Team Delta"
+   
+   WarEvent_guild_name = "%s%s"
 
    WarEvent_start_message = \
       "~B~rWar has been declared!\n"
@@ -125,8 +128,9 @@ messages:
                      [WAR_TEAM_BETA, WarEvent_team_beta_name, XLAT_TO_RED],
                      [WAR_TEAM_GAMMA, WarEvent_team_gamma_name, XLAT_TO_GREEN],
                      [WAR_TEAM_DELTA, WarEvent_team_delta_name, XLAT_TO_YELLOW]
+					 
                    ];
-
+	
       return;
    }
 
@@ -188,6 +192,17 @@ messages:
                      send(oPlayer,@NewHold,#what=Create(&WarJoinPendant,#side=iSide));
                   }
                }
+			   else
+			   {
+					if pbRestricted = WAR_GUILD_RESTRICTED
+					{
+					  iSide = send(oPlayer,@GetGuild);
+					  if iSide <> $
+					  {
+						 send(oPlayer,@NewHold,#what=Create(&WarJoinPendant,#side=iSide));
+					  }
+					}
+			   }
             }
          }
       }
@@ -261,6 +276,31 @@ messages:
       send(self,@AddSide,#side=RID_MARION);
       send(self,@AddSide,#side=RID_BARLOQUE);
       send(self,@AddSide,#side=RID_TOS);
+
+      return;
+   }
+   
+   % Only use this for testing purposes. This message is not complete.
+   SetupGuildWar()
+   "Sets up a restricted war based on current guilds."
+   {
+      local iSide, lGuilds, oGuild;
+      send(self,@Reset);
+      pbRestricted = WAR_GUILD_RESTRICTED;
+
+	  iSide = 0;
+	  lGuilds = Send(SYS,@GetGuilds);
+	  if lGuilds = $ or length(lGuilds) = 1
+	  {
+		 Debug("Not enough guilds on the server for a guild war.");
+		 return Send(SYS,@GetFailureRsc);
+	  }
+      for oGuild in lGuilds
+      {
+		 plSideInfo = cons([WAR_GUILD+iSide, WarEvent_guild_name, send(oGuild,@GetPrimaryGuildColor)],plSideInfo);
+		 send(self,@AddSide,#side=(WAR_GUILD+iSide));
+         iSide = iSide + 1;
+      }
 
       return;
    }
@@ -350,6 +390,18 @@ messages:
                   return FALSE;
                }
             }
+			else
+			{
+			   % Side is a guild
+			   if pbRestricted = WAR_GUILD_RESTRICTED
+			   {
+			      if send(who,@GetGuild) <> side 
+				     OR send(who,@GetGuild) = $
+				  {
+					return FALSE;
+				  }
+			   }
+			}
          }
       }
       else

@@ -2948,9 +2948,6 @@
    WAR_TEAM_BETA = 11
    WAR_TEAM_GAMMA = 12
    WAR_TEAM_DELTA = 13
-   
-   % Team number for guilds start from this value.
-   WAR_GUILD = 1000
 
    %%% Line of Sight (LOS) testing
 

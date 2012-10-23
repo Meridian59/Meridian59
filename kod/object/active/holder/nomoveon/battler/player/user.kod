@@ -826,7 +826,7 @@ messages:
       if pbLogged_on
       {
 		% if user attacked this person recently
-		if plRecentPlayersAttacked <> $
+		if plRecentPlayersAttacked <> $ 
 		{
 			for i in plRecentPlayersAttacked
 			{

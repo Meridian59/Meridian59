@@ -41950,7 +41950,6 @@ R	WarEvent_team_alpha_name 21471
 R	WarEvent_team_beta_name 21472
 R	WarEvent_team_gamma_name 21473
 R	WarEvent_team_delta_name 21474
-R	WarEvent_guild_name 30634
 R	WarEvent_start_message 21475
 R	WarEvent_end_message 21476
 R	WarEvent_got_kill_rsc 21477

@@ -20,7 +20,7 @@ constants:
    WAR_UNRESTRICTED = 0
    WAR_FACTION_RESTRICTED = 1
    WAR_TOWN_RESTRICTED = 2
-   WAR_GUILD_RESTRICTED = 3 % Experimental, is not complete!
+   WAR_GUILD_RESTRICTED = 3 % Only guilds with a guild hall can participate in the war.
 
 resources:
 
@@ -38,8 +38,6 @@ resources:
    WarEvent_team_beta_name = "Team Beta"
    WarEvent_team_gamma_name = "Team Gamma"
    WarEvent_team_delta_name = "Team Delta"
-   
-   WarEvent_guild_name = "%s%s"
 
    WarEvent_start_message = \
       "~B~rWar has been declared!\n"
@@ -137,7 +135,7 @@ messages:
    StartWar(override = FALSE)
    "Starts the war!  Must be during a Frenzy or must send override as TRUE."
    {
-      local lGiveList, oPlayer, iSide;
+      local lGiveList, oPlayer, iSide, oGuild;
       
       % Only during frenzies, or during special occasions (testing), or when we have enough sides for a war.
       if NOT (override OR send(SYS,@GetChaosNight))
@@ -196,7 +194,13 @@ messages:
 			   {
 					if pbRestricted = WAR_GUILD_RESTRICTED
 					{
-					  iSide = send(oPlayer,@GetGuild);
+					  % We match a side based on a guild's hall id.
+					  oGuild = send(oPlayer,@GetGuild);
+					  if oGuild <> $
+					  {
+						 iSide = Send(oGuild,@GetGuildHallNum);
+					  }
+
 					  if iSide <> $
 					  {
 						 send(oPlayer,@NewHold,#what=Create(&WarJoinPendant,#side=iSide));
@@ -280,26 +284,29 @@ messages:
       return;
    }
    
-   % Only use this for testing purposes. This message is not complete.
    SetupGuildWar()
    "Sets up a restricted war based on current guilds."
    {
-      local iSide, lGuilds, oGuild;
+      local iGuildHallNum, lGuilds, oGuild;
       send(self,@Reset);
       pbRestricted = WAR_GUILD_RESTRICTED;
 
-	  iSide = 0;
 	  lGuilds = Send(SYS,@GetGuilds);
-	  if lGuilds = $ or length(lGuilds) = 1
+	  if lGuilds = $
 	  {
-		 Debug("Not enough guilds on the server for a guild war.");
+		 Debug("No guilds on the server for a guild war.");
 		 return Send(SYS,@GetFailureRsc);
 	  }
       for oGuild in lGuilds
       {
-		 plSideInfo = cons([WAR_GUILD+iSide, WarEvent_guild_name, send(oGuild,@GetPrimaryGuildColor)],plSideInfo);
-		 send(self,@AddSide,#side=(WAR_GUILD+iSide));
-         iSide = iSide + 1;
+		 % Only guilds with a guild hall can participate in the war
+		 iGuildHallNum = Send(oGuild,@GetGuildHallNum);
+		 
+		 if iGuildHallNum <> $
+		 {
+		     plSideInfo = cons([iGuildHallNum, send(oGuild,@GetName), send(oGuild,@GetPrimaryGuildColor)],plSideInfo);
+		     send(self,@AddSide,#side=iGuildHallNum);
+		 }
       }
 
       return;
@@ -326,7 +333,7 @@ messages:
    }
 
    AddSide(side=$)
-   "Adds a side.  Either a faction value or a homeroom value."
+   "Adds a side.  Either a faction, homeroom or a guild value."
    {
       % Don't allow duplicate sides.
       if plSides = $
@@ -395,8 +402,7 @@ messages:
 			   % Side is a guild
 			   if pbRestricted = WAR_GUILD_RESTRICTED
 			   {
-			      if send(who,@GetGuild) <> side 
-				     OR send(who,@GetGuild) = $
+			      if send(send(who,@GetGuild),@GetGuildHallNum) <> side
 				  {
 					return FALSE;
 				  }

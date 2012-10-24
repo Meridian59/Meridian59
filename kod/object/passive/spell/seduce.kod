@@ -39,12 +39,12 @@ classvars:
    vrName = seduce_name_rsc
    vrIcon = seduce_icon_rsc
    vrDesc = seduce_desc_rsc
-   viDrainTime = 2000
+   viDrainTime = 3000
 
    viSpell_num = SID_SEDUCE
    viSchool = SS_RIIJA
-   viSpell_level = 5
-   viMana = 15
+   viSpell_level = 6
+   viMana = 12
    viChance_To_Increase = 15
 
    viSpellExertion = 6

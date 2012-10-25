@@ -52,12 +52,9 @@ classvars:
    viManaDrain = 1       % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
 
-   viCast_time = 0    % in milliseconds
-
+   viMultiCast_Spellpower = 3000  % 10 minutes for worst case, 2.3 mins for best case. 
 
 properties:                     
-
-   viMultiCast_Spellpower = 3000  % 10 minutes for worst case, 2.3 mins for best case. 
 
 messages:      
 

@@ -36,7 +36,7 @@ resources:
    cow_dung = "Startled, the poor cow deposits a steaming heap of dung onto the ground."
    
 classvars:
-   vrName = cow_koc_name_rsc
+   vrKocName = cow_koc_name_rsc
    vrName = cow_name_rsc
    vrIcon = cow_icon_rsc
    vrDesc = cow_desc_rsc

@@ -10755,6 +10755,7 @@ messages:
          iLevel = Send(oSpellObj,@GetLevel);
 
          if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+		    OR IsClass(oSpellObj,&Conveyance)  % DON'T COUNT CONVEYANCE!
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {

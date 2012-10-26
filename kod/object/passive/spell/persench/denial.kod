@@ -122,7 +122,7 @@ messages:
       
          if send(who,@GetHealth) < 1
 	      {
-	         send(who,@Killed,#what=who);
+	         send(who,@GainHealthNormal,#amount=1);
 	      }
       }
       

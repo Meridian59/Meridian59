@@ -702,6 +702,8 @@ resources:
    player_admin_added_skill = "Skill added."
    player_admin_modified_skill = "Skill modified."
    player_admin_removed_skill = "Skill removed."
+   
+   player_LearnPoints = "You currently used ~B%i/%i~n points."
 
 classvars:
 
@@ -956,6 +958,9 @@ properties:
    % List of integer years in which the player has donated money to the game.
    % Used to construct a string for their description.
    plDonationYears = $
+   
+   % Used to check if a player drank a beta potion. This flag will allow them to select schools.
+   pbDrankBetaPotion = FALSE
 
 messages:
 
@@ -2441,6 +2446,12 @@ messages:
       {
          Send(self,@NewHold,#what=Create(&Money,#number=2000));
          Send(self,@AddReagentsForSpells);
+      }
+	  
+	  % If the server has beta potions enabled, give every new player one!
+      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
+      {
+         Send(self,@NewHold,#what=Create(&BetaPotion));
       }
 
       return;
@@ -12025,13 +12036,26 @@ messages:
    {
       local oSnoop;
 
-      if type = SAY_NORMAL and what <> self and IsClass(what,&Player)
+      if type = SAY_NORMAL
       {
-         oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
-         if oSnoop <> $
-         {
-            Send(oSnoop,@SomeoneOverheard,#from=what,#to=self,#string=string);
-         }
+	     if what = self
+		 {
+		     % If has Beta Potion flag send the string to the function for further checks.
+		     if pbDrankBetaPotion
+		     {
+			     Send(self,@BetaPotionSay,#string=string);
+		     }
+		 }
+	  
+		 if what <> self AND IsClass(what,&Player)
+		 {
+             oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
+             if oSnoop <> $
+             {
+                 Send(oSnoop,@SomeoneOverheard,#from=what,#to=self,#string=string);
+             }
+		 }
+		 
       }
 
       if NOT Send(SYS,@IsSuspect,#who=self)
@@ -12432,6 +12456,181 @@ messages:
    GetRecentPlayersAttacked()
    {
       return plRecentPlayersAttacked;
+   }
+   
+   %
+   % Beta Potion 2.0
+   % Now allow players to select their schools
+   %
+   
+   DrankBetaPotion()
+   {	  
+      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
+      {
+		 pbDrankBetaPotion = TRUE;
+		 return TRUE;
+	  }
+	  
+	  return;
+   }
+   
+   BetaPotionSay(string = $)
+   {
+	  local iSchool, iLevel, iLearnPoints, iMaxLearnPoints;
+	  
+	  iSchool = 0;
+	  iLevel = 0;
+	  iLearnPoints = 0;
+	  iMaxLearnPoints = 0;
+   
+      if NOT Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
+      {
+		 Debug("Player has beta potion flag while game is not in beta!");
+		 pbDrankBetaPotion = FALSE;
+		 return FALSE;
+	  }
+	  else
+	  {
+
+		 iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
+			 (Send(self,@GetRawIntellect) * 2) / 5;
+
+		 iSchool = send(self,@BetaPotionCheckSchool,#string=string);
+		 iLevel = send(self,@BetaPotionCheckLevel,#string=string);
+
+		 if iSchool <> 0 AND iLevel <> 0
+		 {
+		 
+			 % 10 is used for weaponcraft
+			 if iSchool = 10
+			 {
+				 send(self,@GivePlayerAllSkills,#school=iSchool,#level=iLevel,#upto=TRUE);
+			 }
+			 else
+			 {
+				 if iSchool = SS_SHALILLE
+				 {
+					 % Can't add Shal'ille when already has Qor.
+					 if Send(self,@GetNumSpellsInSchool,#school=SS_QOR) 
+					 { 
+						 return FALSE;
+					 }
+					 
+				     Send(self,@GainKarma,#amount=MAX_GOOD);
+				 }
+
+				 if iSchool = SS_QOR
+				 {
+					 % Can't add Qor when already has Shal'ille.
+					 if Send(self,@GetNumSpellsInSchool,#school=SS_SHALILLE) 
+					 { 
+						 return FALSE;
+					 }
+
+					 Send(self,@GainKarma,#amount=MAX_EVIL);
+				 }
+			 }
+
+			 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#upto=TRUE);
+			 
+			 iLearnPoints = Send(self,@GetTotalLearnPoints);
+			 send(self,@MsgSendUser,#message_rsc=player_LearnPoints,#parm1=iLearnPoints,#parm2=iMaxLearnPoints);
+			 
+			 % iLearnPoints should always equal iMaxLearnPoints,
+			 % only time it will go over if its a DM
+		     if iLearnPoints >= iMaxLearnPoints
+		     {
+		         pbDrankBetaPotion = FALSE;
+			     return TRUE;
+		     }
+		 }
+	  }
+
+	  return;
+   }
+ 
+   BetaPotionCheckSchool(string = $)
+   "Check if player says the name of a school."
+   {
+	  local school;
+	  
+	  school = 0;
+	  
+	  if StringContain(string,"Shal'ille")
+	  {
+		 school = SS_SHALILLE;
+	  }
+	  
+	  if StringContain(string,"Qor")
+	  {
+		 school = SS_QOR;
+	  }
+	  
+	  if StringContain(string,"Kraanan")
+	  {
+		 school = SS_KRAANAN;
+	  }
+	  
+	  if StringContain(string,"Faren")
+	  {
+		 school = SS_FAREN;
+	  }
+	  
+	  if StringContain(string,"Riija")
+	  {
+		 school = SS_RIIJA;
+	  }
+	  
+	  if StringContain(string,"Jala")
+	  {
+		 school = SS_JALA;
+	  }
+	  
+	  if StringContain(string,"Weaponcraft")
+	  {
+		 % We use 10 to indicate skills.
+		 school = 10;
+	  }
+	  
+	  return school;
+   }
+   
+   BetaPotionCheckLevel(string = $)
+   "Check if player also says the level."
+   {
+	  local level;
+	  
+	  if StringContain(string,"level one")
+	  {
+		 level = 1;
+	  }
+	  
+	  if StringContain(string,"level two")
+	  {
+		 level = 2;
+	  }
+	  
+	  if StringContain(string,"level three")
+	  {
+		 level = 3;
+	  }
+	  
+	  if StringContain(string,"level four")
+	  {
+		 level = 4;
+	  }
+	  
+	  if StringContain(string,"level five")
+	  {
+		 level = 5;
+	  }
+	  
+	  if StringContain(string,"level six")
+	  {
+		 level = 6;
+	  }
+	  
+	  return level;
    }
 
 end

@@ -19,25 +19,19 @@ resources:
    BetaPotion_icon_rsc = potion01.bgf
 
    BetaPotion_name_rsc = "The infamous BETA POTION!"
-   BetaPotion_desc_rsc = "This potion is to facilitate beta testing by allowing "
+   BetaPotion_desc_rsc = \
+	   "This potion is to facilitate beta testing by allowing "
        "the testers to test the more advanced parts of the game.\n\n"
-
-   BetaPotion_Append_rsc = "This potion will give you a boost of " 
-   
-   BetaPotion_Append2_rsc = " hit points (but will not raise your health above "
-   BetaPotion_Append3_rsc = ").  "
-       "The size of the boost is directly related to how much time your "
-       "character has spent online.  Thus, beta testers who have devoted "
-       "more to the game have been rewarded greater.  "
-       "It will also give you all the spells up to level "
-   BetaPotion_Append4_rsc = " in the "
-   BetaPotion_Append5_rsc = " school of magic, limited by your Intellect.\n\n"
+	   "This potion will boost stats including your Mana and Hit Points. "
+	   "Once you drink the potion, you can also select your schools of magic "
+	   "by saying the name of the schools and the levels you wish to recieve. "
+	   "You may not have both Shal'ille and Qor spells. Limited by your Intellect you will "
+	   "only recieve a certain amount of points before the potion effect wears off. \n\n"
        "If you lose the potion in any way, shape or form (including if you give "
        "it to a friend and s/he quaffs it, or you step through the portal in "
        "Raza, or your little sister suicides your character just to spite you), "
-       "or you didn't get a potion in the school you wanted and threw it away, "
-       "you will NOT get another potion.  So don't ask.\n\n"
-         
+       "or you just threw it away, you will NOT get another potion.  So don't ask.\n\n"
+
    BetaPotion_gulp_sound = drkptn.wav
 
    BetaPotion_drink = "You quaff the contents of the vial in a single gulp."
@@ -45,6 +39,11 @@ resources:
    BetaPotion_bad_drink = \
       "You choke down the foul-tasting contents of the vial, realizing almost "
       "immediately that this was a pretty bad idea. Time has caused it to sour."
+
+   BetaPotion_ask = \
+	  "Add your schools until your out of points. Say one of the following:\n"
+      "~B\"[SHAL'ILLE, QOR, KRAANAN, FAREN, RIIJA, JALA, WEAPONCRAFT]\"~n "
+	  "followed by ~B\"LEVEL [ONE, TWO, THREE, FOUR, FIVE, SIX]\""
 
 classvars:
    
@@ -68,104 +67,61 @@ properties:
    piGoBadTime = 0
    piItem_flags = PT_GRAY_TO_RED
 
-   piSchool = 0
-   piLevel = 0
-   piHealth = 0
-   piHealthCap = 100
-   pbGiveHealth = FALSE
+   % By default we will give these boosts
+   piHealth = 150
+   piHealthCap = 150
+   pbGiveHealth = TRUE
+   pbGiveMana = TRUE
 
 messages:
 
-   Constructor(school=SS_FAREN, level = 0, health = 0, giveHealth = FALSE, healthCap = 100)
+   Constructor(health = 150, healthCap = 150, giveHealth = TRUE, giveMana = TRUE)
    {
-      piSchool = school;
-      piLevel = level;
       piHealth = health;
       piHealthCap = healthCap;
       pbGiveHealth = giveHealth;
+      pbGiveMana = giveMana;
 
       propagate;
    }
 
-   AppendDesc()
-   {
-      local oSpellOrSkill;
-
-      AppendTempString(BetaPotion_Append_rsc);
-
-      if pbGiveHealth
-      {
-         AppendTempString(piHealth);
-      }
-      else
-      {
-         AppendTempString(0);
-      }
-      
-      AppendTempString(BetaPotion_Append2_rsc);
-      AppendTempString(piHealthCap);
-      AppendTempString(BetaPotion_Append3_rsc);
-      AppendTempString(piLevel);
-      AppendTempString(BetaPotion_Append4_rsc);
-      
-      if piSchool >= SKS_FENCING
-      {
-         % Any skill will do.
-         oSpellOrSkill = Send(SYS,@FindSkillByNum,#num=SKID_PUNCH); 
-      }
-      else
-      {
-         % Any spell will do.
-         oSpellOrSkill = Send(SYS,@FindSpellByNum,#num=SID_BONK); 
-      }
-      
-      AppendTempString(Send(oSpellOrSkill,@GetSchoolStr,#iSchool=piSchool));
-      AppendTempString(BetaPotion_Append5_rsc);
-      
-      return;
-   }
-
    ApplyPotionEffects(apply_on = $)
    {
-      local HealthBoost, iBaseMaxHealth;
-
+	  local iBaseMaxHealth, HealthBoost;
+	  
       if Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
-         AND Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
       {
-         iBaseMaxHealth = Send(apply_on,@GetBaseMaxHealth);
-         Send(apply_on,@MsgSendUser,#message_rsc=BetaPotion_worked);
-         if pbGiveHealth AND (iBaseMaxHealth < piHealthCap)
+		 % Give Mana
+		 if pbGiveMana
+         {
+            Send(&ManaNode,@Meld,#who=apply_on);
+		 }
+		 
+		 % Give Health
+		 iBaseMaxHealth = Send(apply_on,@GetBaseMaxHealth);
+		 
+		 if pbGiveHealth AND (iBaseMaxHealth < piHealthCap)
          {
             % How many hps?  Don't give them over potion max, and don't give
             %  them over stamina max.
             HealthBoost = bound(piHealth,0,(100+Send(apply_on,@GetStamina)));
             HealthBoost = bound(HealthBoost,0,(piHealthCap-iBaseMaxHealth));
             Send(apply_on,@GainBaseMaxHealth,#amount=HealthBoost);
-
-            % Don't use iBaseMaxHealth, because it changed.
-            if (Send(apply_on,@GetBaseMaxHealth) >= PKILL_ENABLE_HP)
-               AND (NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
-            {
-               Send(apply_on,@PkillEnable);
-            }
-         }
-         
-         if piLevel <> 0
+		 }
+		 
+		 %  Don't use iBaseMaxHealth, because it changed.
+         if (Send(apply_on,@GetBaseMaxHealth) >= PKILL_ENABLE_HP)
+            AND (NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
          {
-            if piSchool >= SKS_FENCING
-            {
-               Send(apply_on,@GivePlayerAllSkills,#school=piSchool,#level=piLevel,
-                    #iAbility=piHealth,#upto=TRUE);
-            }
-            else
-            {
-               Send(apply_on,@GivePlayerAllSpells,#school=piSchool,#level=piLevel,
-                    #iAbility=piHealth,#upto=TRUE);
-            }
+             Send(apply_on,@PkillEnable);
          }
-      }
-      
-      return;
+			
+		 Send(apply_on,@MsgSendUser,#message_rsc=BetaPotion_worked);
+		 post(apply_on,@MsgSendUser,#message_rsc=BetaPotion_ask);
+		 send(apply_on,@DrankBetaPotion);
+	  }
+
+	  return;
    }
 
    %%% Old Potion stuff
@@ -187,7 +143,7 @@ messages:
       {
          Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
       }
-
+	  
       Send(apply_on,@MsgSendUser,#message_rsc=BetaPotion_drink);
       Send(self,@ApplyPotionEffects,#apply_on=apply_on);
 
@@ -210,7 +166,6 @@ messages:
    {
       return FALSE;
    }
-
-
+  
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

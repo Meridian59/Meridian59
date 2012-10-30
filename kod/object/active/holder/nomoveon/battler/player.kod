@@ -186,6 +186,7 @@ resources:
       "~kRoq tells you, \"~IA new Assassin's Circle shall be initiated "
       "shortly.\""
 
+   player_tougher_wav_rsc = tougher.wav
    player_missed_something_wave_rsc = swordmis.wav
    player_killed_something = "You killed %s%s."
    player_killed_player = \
@@ -5760,7 +5761,7 @@ messages:
          piHealth = 0;
       }
 
-      % Keep health from going above max if affected by Mark of Dishonor.
+      % Keep health from going above natural max if affected by Mark of Dishonor.
       if piHealth > piBase_Max_health
          AND Send(self,@IsEnchanted,#byClass=&MarkOfDishonor)
       {
@@ -7705,6 +7706,7 @@ messages:
                Send(self,@evaluatepkstatus);
 
                Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
+			   Send(self,@WaveSendUser, #what=self, #wave_rsc=player_tougher_wav_rsc);
 
                piGain_chance = -(piBase_Max_health/2);
                

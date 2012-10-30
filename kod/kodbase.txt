@@ -1,4 +1,4 @@
-T 14977 30636
+T 14977 30637
 C UtilityFunctions 10001 0
 M	UtilGoNearSquare 10011
 P		what 10002
@@ -39876,6 +39876,7 @@ R	player_safety_caught 23463
 R	player_safe_server 23464
 R	player_no_enter 23465
 R	player_assgame_soon 23466
+R	player_tougher_wav_rsc 30637
 R	player_missed_something_wave_rsc 23467
 R	player_killed_something 23468
 R	player_killed_player 23469

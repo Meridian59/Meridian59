@@ -186,7 +186,7 @@ resources:
       "~kRoq tells you, \"~IA new Assassin's Circle shall be initiated "
       "shortly.\""
 
-   player_tougher_wave_rsc = tougher.wav
+   player_tougher_wav_rsc = tougher.wav
    player_missed_something_wave_rsc = swordmis.wav
    player_killed_something = "You killed %s%s."
    player_killed_player = \

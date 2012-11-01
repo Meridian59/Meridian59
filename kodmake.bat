@@ -1,5 +1,6 @@
 @echo off
 echo Starting Kodmake.
+
 echo Checking for uncompiled KODs....
 for /R .\kod\ %%k in (*.kod) do (
 	if not exist "%%~dk%%~pk%%~nk.bof" (
@@ -13,11 +14,6 @@ cd ..
 
 echo Copying any new graphics...
 xcopy .\resource\bgf\*.bgf .\run\localclient\resource\ /d /y >nul
-
-echo Clearing BOF files...
-del .\run\server\memmap\*.bof 2>nul
-echo Copying BOF files...
-for /R .\kod\ %%f in (*.bof) do xcopy "%%f" .\run\server\loadkod\ /y >nul
 
 echo Clearing RSC files...
 del .\run\localclient\resource\*.rsc 2>nul

@@ -12633,7 +12633,7 @@ messages:
 	  }
 	  
 	  if StringContain(string,"six") OR
-		 StringContain(string,"")
+		 StringContain(string,"6")
 	  {
 		 level = 6;
 	  }

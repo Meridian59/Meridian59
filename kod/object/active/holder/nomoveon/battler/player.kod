@@ -12504,7 +12504,7 @@ messages:
 		 {
 		 
 			 % 10 is used for weaponcraft
-			 if iSchool = 10
+			 if iSchool = SKS_FENCING
 			 {
 				 send(self,@GivePlayerAllSkills,#school=iSchool,#level=iLevel,#upto=TRUE);
 			 }
@@ -12518,7 +12518,7 @@ messages:
 						 return FALSE;
 					 }
 					 
-				     Send(self,@GainKarma,#amount=MAX_GOOD);
+				     Send(self,@GainKarma,#amount=1000);
 				 }
 
 				 if iSchool = SS_QOR
@@ -12529,13 +12529,13 @@ messages:
 						 return FALSE;
 					 }
 
-					 Send(self,@GainKarma,#amount=MAX_EVIL);
+					 Send(self,@LoseKarma,#amount=1000);
 				 }
 			 }
 
 			 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#upto=TRUE);
 			 
-			 iLearnPoints = Send(self,@GetTotalLearnPoints);
+			 iLearnPoints = Send(self,@GetTotalLearnPoints,#except=0);
 			 send(self,@MsgSendUser,#message_rsc=player_LearnPoints,#parm1=iLearnPoints,#parm2=iMaxLearnPoints);
 			 
 			 % iLearnPoints should always equal iMaxLearnPoints,
@@ -12591,7 +12591,7 @@ messages:
 	  if StringContain(string,"Weaponcraft")
 	  {
 		 % We use 10 to indicate skills.
-		 school = 10;
+		 school = SKS_FENCING;
 	  }
 	  
 	  return school;

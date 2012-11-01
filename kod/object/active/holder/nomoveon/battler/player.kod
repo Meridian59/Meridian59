@@ -12602,32 +12602,38 @@ messages:
    {
 	  local level;
 	  
-	  if StringContain(string,"level one")
+	  if StringContain(string,"one") OR
+	     StringContain(string,"1")
 	  {
 		 level = 1;
 	  }
 	  
-	  if StringContain(string,"level two")
+	  if StringContain(string,"two") OR
+		 StringContain(string,"2")
 	  {
 		 level = 2;
 	  }
 	  
-	  if StringContain(string,"level three")
+	  if StringContain(string,"three") OR
+		 StringContain(string,"3")
 	  {
 		 level = 3;
 	  }
 	  
-	  if StringContain(string,"level four")
+	  if StringContain(string,"four") OR
+		 StringContain(string,"4")
 	  {
 		 level = 4;
 	  }
 	  
-	  if StringContain(string,"level five")
+	  if StringContain(string,"five") OR
+		 StringContain(string,"5")
 	  {
 		 level = 5;
 	  }
 	  
-	  if StringContain(string,"level six")
+	  if StringContain(string,"six") OR
+		 StringContain(string,"")
 	  {
 		 level = 6;
 	  }

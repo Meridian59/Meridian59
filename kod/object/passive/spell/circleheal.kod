@@ -46,6 +46,9 @@ classvars:
    viMana = 11
    viSchool = SS_SHALILLE
    viSpell_level = 5
+   
+   vbCastable_in_HappyLand = TRUE
+   viFlash = FLASH_GOOD
 
    viPostCast_time = 3 % in seconds, since it works off gettime()
    

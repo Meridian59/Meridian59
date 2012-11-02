@@ -1199,8 +1199,11 @@ messages:
          }
       }
 
-      num = bound(num,5,95);
+      num = bound(num,5,99);
 
+	  % ~To Be Reviewed.~
+	  % I believe a major problem with the fizzle rates lies 
+	  % somewhere in the code below.
       if lTargets <> $
          AND Send(self,@GetNumSpellTargets) = 1
          AND IsClass(first(lTargets),&Battler)

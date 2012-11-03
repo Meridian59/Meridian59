@@ -24,7 +24,7 @@ resources:
    CircleHeal_desc_rsc = \
       "The compassionate power of Shal'ille heals the wounds of anyone within the circle's range. "  
 	  "The spell dissipates if caster breaks concentration by running or combat."
-      "Requires herbs to cast."
+      "Requires herbs and a polished seraphym to cast."
 	  
    CircleHeal_projectile = ifrclite.bgf
 
@@ -69,6 +69,7 @@ messages:
    {
       plReagents = $;
       plReagents = cons([&Herbs,4],plReagents);
+      plReagents = Cons([&PolishedSeraphym,1],plReagents);
 
       return;
    }

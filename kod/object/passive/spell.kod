@@ -1202,33 +1202,34 @@ messages:
       num = bound(num,5,99);
 
 	  % ~To Be Reviewed.~
-	  % I believe a major problem with the fizzle rates lies 
-	  % somewhere in the code below.
-      if lTargets <> $
-         AND Send(self,@GetNumSpellTargets) = 1
-         AND IsClass(first(lTargets),&Battler)
-         AND NOT Send(Send(who,@GetOwner),@LineOfSight,#obj1=who,
-                      #obj2=first(lTargets))
-         AND NOT(IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
-      {
-         oTarget = first(lTargets);
-         
-         iDistance = Send(who,@SquaredDistanceTo,#what=oTarget);
+	  % Disabled distance portion of the fizzle code.
+	  % Will hopefully improve spells vs weaponcraft.
+	  %
+      %if lTargets <> $
+      %   AND Send(self,@GetNumSpellTargets) = 1
+      %   AND IsClass(first(lTargets),&Battler)
+      %   AND NOT Send(Send(who,@GetOwner),@LineOfSight,#obj1=who,
+      %                #obj2=first(lTargets))
+      %   AND NOT(IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
+      %{
+      %   oTarget = first(lTargets);
+      %   
+      %   iDistance = Send(who,@SquaredDistanceTo,#what=oTarget);
 
-         iDistance = iDistance / 4;
+      %   iDistance = iDistance / 4;
          
-         if iDistance > num / 2
-         {
-            num = num / 2;
-         }
-         else
-         {
-            if iDistance < num / 2
-            {
-               num = num - iDistance;
-            }
-         }
-      }
+      %   if iDistance > num / 2
+      %   {
+      %      num = num / 2;
+      %   }
+      %   else
+      %   {
+      %      if iDistance < num / 2
+      %      {
+      %         num = num - iDistance;
+      %      }
+      %   }
+      %}
 
       if random(1,100) > num
       {

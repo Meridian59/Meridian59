@@ -74,6 +74,8 @@ messages:
          OR send(oRoom,@CountHoldingHowMany,#class=&Reflection) > 10
          OR send(oRoom,@CountHoldingSummoned) > 
             Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
+		 OR send(self,@CountPlayerReflections,#original=who) > 
+		    Send(Send(SYS, @GetSettings), @GetPlayerReflectionLimit)
       {
          send(who,@MsgSendUser,#message_rsc=summonreflection_failed_rsc);
          
@@ -111,6 +113,29 @@ messages:
       Send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
 
       propagate;
+   }
+   
+   CountPlayerReflections(original = $)
+   "Count number of reflections in a room created by the caster."
+   {
+	  local i, each_obj, count, oRoom;
+	  
+	  count = 0;
+	  oRoom = Send(original,@GetOwner);
+   
+      for i in send(oRoom,@GetHolderActive)
+      {
+         each_obj=Send(oRoom,@holderExtractObject,#data=i);
+         if isClass(each_obj,&Reflection)
+         {
+			if Send(each_obj,@GetOriginal) = original
+			{
+			  count = count + 1;
+			}
+         }
+      }
+	  
+	  return count;
    }
 
 end

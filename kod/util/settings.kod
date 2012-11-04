@@ -114,6 +114,9 @@ properties:
 
    % How many summoned objects can be in a room
    piPlayerSummonedObjectLimit = 18
+   
+   % How many reflections one player can cast in a room
+   piPlayerReflectionLimit = 3
 
    % Minimum number of HP you have to have to vote for or become
    % Justicar

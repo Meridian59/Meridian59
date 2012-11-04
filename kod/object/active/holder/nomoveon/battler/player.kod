@@ -12518,7 +12518,7 @@ messages:
 						 return FALSE;
 					 }
 					 
-				     Send(self,@GainKarma,#amount=1000);
+				     piKarma = 100000;
 				 }
 
 				 if iSchool = SS_QOR
@@ -12529,7 +12529,7 @@ messages:
 						 return FALSE;
 					 }
 
-					 Send(self,@LoseKarma,#amount=1000);
+					 piKarma = -100000;
 				 }
 			 }
 

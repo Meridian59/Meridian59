@@ -297,6 +297,11 @@ messages:
    {
       return piPlayerSummonedObjectLimit;
    }
+   
+   GetPlayerReflectionLimit()
+   {
+      return piPlayerReflectionLimit;
+   }
 
    GetMinHPForJusticar()
    {

@@ -74,7 +74,7 @@ messages:
          OR send(oRoom,@CountHoldingHowMany,#class=&Reflection) > 10
          OR send(oRoom,@CountHoldingSummoned) > 
             Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
-		 OR send(self,@CountPlayerReflections,#original=who) > 
+		 OR send(self,@CountPlayerReflections,#original=who) >=
 		    Send(Send(SYS, @GetSettings), @GetPlayerReflectionLimit)
       {
          send(who,@MsgSendUser,#message_rsc=summonreflection_failed_rsc);

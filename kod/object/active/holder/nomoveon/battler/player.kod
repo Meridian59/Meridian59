@@ -12422,6 +12422,15 @@ messages:
 
 	  plRecentPlayersAttacked = Cons(what,plRecentPlayersAttacked);
 	  
+	  % Delete timer beforehand if attacked another player.
+	  % This is done so it does not clear list of players
+	  % we've recently attacked.
+      if ptLogAlertTimer <> $
+      {
+         DeleteTimer(ptLogAlertTimer);
+         ptLogAlertTimer = $;
+      }
+	  
 	  ptLogAlertTimer = CreateTimer(self,@ClearRecentlyAttacked,ATTACKED_PLAYER_WAIT);
 	  
 	  return;
@@ -12429,11 +12438,6 @@ messages:
    
    ClearRecentlyAttacked()
    {
-      if ptLogAlertTimer <> $
-      {
-         DeleteTimer(ptLogAlertTimer);
-         ptLogAlertTimer = $;
-      }
    
 	  % Only clear list if player has not attacked a player within ATTACKED_PLAYER_WAIT.
       if (piTimeAttackedPlayer + ATTACKED_PLAYER_WAIT) < GetTime()

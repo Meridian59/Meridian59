@@ -30,4 +30,7 @@ echo Building RSB file....
 .\bin\rscmerge.exe -o .\run\localclient\resource\rsc0000.rsb .\run\server\rsc\*.rsc
 if "%errorlevel%"=="0" echo RSB Success.
 
+echo Creating RSB package file...
+.\run\localclient\arq -a .\packages\m .\run\localclient\resource\rsc0000.rsb
+
 echo Kodmake Successful!

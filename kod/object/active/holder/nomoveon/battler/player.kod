@@ -1029,6 +1029,7 @@ messages:
       {
          DeleteTimer(ptLogAlertTimer);
          ptLogAlertTimer = $;
+		 plRecentPlayersAttacked = $;
       }
 
       Send(self,@RemoveAllEnchantments,#report=FALSE);

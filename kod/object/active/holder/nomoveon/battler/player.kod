@@ -12422,12 +12422,6 @@ messages:
 
 	  plRecentPlayersAttacked = Cons(what,plRecentPlayersAttacked);
 	  
-      if ptLogAlertTimer <> $
-      {
-         DeleteTimer(ptLogAlertTimer);
-         ptLogAlertTimer = $;
-      }
-	  
 	  ptLogAlertTimer = CreateTimer(self,@ClearRecentlyAttacked,ATTACKED_PLAYER_WAIT);
 	  
 	  return;

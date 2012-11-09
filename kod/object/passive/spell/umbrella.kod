@@ -20,7 +20,7 @@ resources:
    Umbrella_icon_rsc = iumbrela.bgf
    Umbrella_desc_rsc = \
       "Creates a dome of magical energy that protects effectiveness of area spells. "
-      "The spell dissipates if caster breaks concentration by running or combat."
+      "The spell dissipates if caster breaks concentration by running or combat. "
       "Requires emeralds to cast."
    
    Umbrella_unnecessary = "This area already has a dome of magical energy."
@@ -42,7 +42,7 @@ classvars:
    viSchool = SS_SHALILLE
    viSpell_level = 5
 
-   viManaDrain = 15      % Drain is amount used every viDrainTime milliseconds
+   viManaDrain = 10      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
    
    viChance_To_Increase = 35

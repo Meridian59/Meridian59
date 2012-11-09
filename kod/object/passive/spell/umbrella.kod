@@ -99,7 +99,7 @@ messages:
       }
 
       % global effects of the enchantment
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=Umbrella_on,#what=self);
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=Umbrella_on,#what=self,#parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
       Send(oRoom,@RoomStartEnchantment,#what=self,#state=[who,iSpellPower],
            #time=send(self,@GetDuration,#iSpellPower=iSpellPower),#iSpellPower=iSpellPower,#lastcall=FALSE);
       Send(who,@SetTranceFlag);

@@ -111,6 +111,11 @@ messages:
    {
       local oRoom;
 
+      if event = EVENT_ATTACK
+      {
+         return FALSE;
+      }
+
       if location = $
       {
          oRoom = send(who,@GetOwner);

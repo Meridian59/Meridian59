@@ -81,9 +81,16 @@ messages:
 
    CastSpell(who = $,iSpellPower = 0)
    {
-      local oRoom;
+      local oRoom, oTruce;
 
       oRoom = Send(who,@GetOwner);
+	  
+	  % Remove Truce
+	  oTruce = Send(SYS,@FindSpellByNum,#num=SID_TRUCE);
+	  if Send(oRoom,@IsEnchanted,#what=oTruce)
+	  {
+		 Send(oRoom,@RemoveEnchantment,#what=oTruce);
+	  }
 
       % Global effects of the enchantment.
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=killingfields_on,#what=self);

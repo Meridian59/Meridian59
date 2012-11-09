@@ -7,41 +7,29 @@
 % Meridian is a registered trademark.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Umbrella is Spell
-% Termination conditions
-%  caster breaks trance 
-%  enchantee moves out of range
-%  total spell time elapses
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Umbrella is RoomEnchantment
 
 constants:
 
    include blakston.khd
-
-   UMBRELLA_TIME = 180000       %  3 realtime minutes
-   UMBRELLA_RANGE = 5           %  max distance to enchantees 
-   UMBRELLA_CHECK_TIME = 1000   %Time between checks for who is inside, no worse than an active object lag-wise
 
 resources:
 
    Umbrella_name_rsc = "umbrella"
    Umbrella_icon_rsc = iumbrela.bgf
    Umbrella_desc_rsc = \
-      "Creates a dome of magical energy that protects all "
-      "players near the caster for several minutes.  The spell "
-      "dissipates if caster breaks concentration by running or "
-      "combat.  Requires emeralds to cast."
+      "Creates a dome of magical energy that protects effectiveness of area spells. "
+      "The spell dissipates if caster breaks concentration by running or combat."
+      "Requires emeralds to cast."
+   
+   Umbrella_unnecessary = "This area already has a dome of magical energy."
 
-   Umbrella_already_enchanted = "You already have %s%s."
-
-   Umbrella_cast = "A mystic, shimmering dome of light emerges from %s%s's fingertips."
-   Umbrella_on = "You are encompassed by a dome of magical energy."
+   Umbrella_on = "A mystic, shimmering dome of light emerges from %s%s's fingertips."
    Umbrella_off = "The dome of magical energy dissipates."
-   Umbrella_outside = "You have passed outside the dome of magical energy."
-   Umbrella_break_trance = "Loss of concentration causes the dome of magical energy to implode!"
-
-   Umbrella_deflected = "%s%s's guardian angel deflects the brunt of the blast back at you!"
-   Umbrella_deflected_implosion = "A guardian angel sweeps down and deflects the blast back at %s%s!"
+   Umbrella_new_entrant = "You are encompassed by a dome of magical energy."
+   
+   Umbrella_AMA = "The Anti-Magic Aura causes the dome of magical energy to implode."
 
 classvars:
 
@@ -54,13 +42,15 @@ classvars:
    viSchool = SS_SHALILLE
    viSpell_level = 5
 
-   viIndefinite = ARTICLE_AN
-   viHarmful = FALSE
-   viChance_To_Increase = 35
-   viCast_Time = 10000
-
-properties:
+   viManaDrain = 15      % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
    
+   viChance_To_Increase = 35
+   
+   viIndefinite = ARTICLE_AN
+   
+properties:
+
 messages:
 
    ResetReagents()
@@ -78,235 +68,115 @@ messages:
 
    CanPayCosts(who = $, lTargets = $)
    {
-      % check for enchantment already applied
-      if Send(who,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=Umbrella_already_enchanted,
-              #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
-
-         return FALSE;
-      }
-
-      propagate;
-   }
-
-   CastSpell(who = $, iSpellpower = $)
-   {
-      local oRoom, lEnchanted, oObj, oUser,iDuration, iElapsed;
+      local oRoom;
 
       oRoom = Send(who,@GetOwner);
-      lEnchanted = $;
 
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=umbrella_cast,
-           #what=self,#parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
-
-      for oObj in send(oRoom,@GetplActive)
+      if Send(oRoom,@IsEnchanted,#what=self)
       {
-         oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
-
-         if IsClass(oUser,&User)
-            AND (FindListElem(lEnchanted,oUser) = 0)
-            AND NOT Send(self,@OutRange,#obj1=oUser,#obj2=who)
-         {
-            send(self,@EnterUmbrella,#who=oUser,#iSpellpower=iSpellpower);
-            lEnchanted = cons(oUser,lEnchanted);
-         }
+   	   Send(who,@MsgSendUser,#message_rsc=Umbrella_unnecessary);
+   	   
+	      return FALSE;
       }
-      
-      iElapsed = 0;
-
-      iDuration = iSpellpower * 2;  %%20 - 198
-      iDuration = iDuration + random(1,30);
-      iDuration = bound(iDuration,50,240);
-      iDuration = iDuration * 1000;
-
-      % Put spell maintenance info in casters enchantment list.
-      Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
-           #state=[iElapsed,lEnchanted,iSpellpower,iDuration]);      
 
       propagate;
    }
 
-   EnterUmbrella( who = $,iSpellpower = $ )
-   "Starts enchantment effect on one player"
+   CastSpell(who = $, iSpellPower = 0)
+   "Initiation point for the spell."
    {
-      local iValue;
+      local oRoom, oAMA;
 
-      Send(who,@MsgSendUser,#message_rsc=umbrella_on);
-      Send(who,@AddDefenseModifier,#what=self);
-      iValue = send(self,@GetResistanceStrength,#iSpellPower=iSpellPower);
-      send(self,@AddResistances,#who=who,#value=iValue);
-
-      return;
-   }
-
-   LeaveUmbrella(who = $,iSpellpower=$)
-   {
-      local iValue;
-
-      iValue = send(self,@GetResistanceStrength,#iSpellPower=iSpellPower);
-
-      Send(who,@RemoveDefenseModifier,#what=self);
-      send(self,@RemoveResistances,#who=who,#value=iValue);
-
-      return;
-   }
-
-   EndEnchantment( who = $, state = $ )
-   "Called only for caster. Do spell test and/or end spell."
-   {
-      local lEnchanted, iElapsed, oUser, iSpellpower, iDuration, oRoom, lActive;
-
-      iElapsed = Nth(state,1);
-      lEnchanted = Nth(state,2);
-      iSpellpower = Nth(state,3);
-      iDuration = Nth(state,4);
-
-      oRoom = send(who,@GetOwner);
-
-      if iElapsed >= iDuration  %% end spell
+      oRoom = Send(who,@GetOwner);
+	  
+	  % do not allow umbrella to protect Anti-magic aura
+	  oAMA = Send(SYS,@FindSpellByNum,#num=SID_ANTIMAGIC_AURA);
+      if Send(oRoom,@IsEnchanted,#what=oAMA)
       {
-         Send(who,@ClearTranceFlag);
-         for oUser in lEnchanted
-         {
-            Send(oUser,@MsgSendUser,#message_rsc=umbrella_off);
-            Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
-         }
-         return;
+		  Send(who,@MsgSendUser,#message_rsc=Umbrella_AMA);
+   	   
+	      return FALSE;
+      }
+
+      % global effects of the enchantment
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=Umbrella_on,#what=self);
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=[who,iSpellPower],
+           #time=send(self,@GetDuration,#iSpellPower=iSpellPower),#iSpellPower=iSpellPower,#lastcall=FALSE);
+      Send(who,@SetTranceFlag);
+
+      propagate;
+   }
+
+   BreakTrance(who=$, event=$, state=$, location=$)
+   {
+      local oRoom;
+
+      if location = $
+      {
+         oRoom = send(who,@GetOwner);
       }
       else
       {
-         % Then increment it.
-         iElapsed = iElapsed + UMBRELLA_CHECK_TIME;
+         oRoom = location;
       }
+      
+      Send(oRoom,@RemoveEnchantment,#what=self);
 
-      % Do test.
-      for oUser in lEnchanted
-      {
-         if Send(self,@OutRange,#obj1=oUser,#obj2=who)
-         {
-            Send(oUser,@MsgSendUser,#message_rsc=umbrella_outside);
-            Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
-            lEnchanted = DelListElem(lEnchanted,oUser);
-         }
-      }
-      for lActive in send(oRoom,@GetplActive)
-      {
-         oUser = Send(oRoom,@HolderExtractObject,#data=lActive);
-
-         if IsClass(oUser,&User)
-            AND (FindListElem(lEnchanted,oUser) = 0)
-            AND not Send(self,@OutRange,#obj1=oUser,#obj2=who)
-         {
-            % Then we have a new entry.
-            send(self,@EnterUmbrella,#who=oUser,#iSpellpower=iSpellpower);
-            lEnchanted = cons(oUser,lEnchanted);
-         }
-      }
-
-      Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
-           #state=[iElapsed,lEnchanted,iSpellpower,iDuration],#Report=FALSE);
-
-      return;
+      propagate;
    }
 
-   RemoveEnchantment()
-   "Called instead of EndEnchantment when trance is broken"
-   {
-      return;
-   }
-
-   OutRange(obj1 = $, obj2 = $)
-   {
-      local iRange_squared, iRowDiff, iColDiff;
-
-      if Send(obj1,@GetOwner) <> Send(obj2,@GetOwner)
-      {
-         return TRUE;
-      }
-
-      iRange_squared = UMBRELLA_RANGE * UMBRELLA_RANGE ;
-      iRowDiff = Send(obj1,@GetRow) - Send(obj2,@GetRow);
-      iColDiff = Send(obj1,@GetCol) - Send(obj2,@GetCol);
-
-      if (iRowDiff*iRowDiff + iColDiff*iColDiff) < iRange_squared
-      {
-         return FALSE;
-      }
-
-      return TRUE;
-   }
-
-   BreakTrance( who = $, state = $ )
-   {
-      local oUser,lEnchanted,iSpellpower;
+   StartPeriodicEnchantment(where=$, state=$)
+   "Sends enchantment message to room like CastSpell for most room enchantments, "
+   "but silent, and done as often as necessary"
+    {
+      local oCaster;
+      
+      oCaster = first(state);
    
-      iSpellpower = Nth(state,3);
-
-      % Clean up Trance.
-      Send(who,@ClearTranceFlag);
-      Send(who,@RemoveEnchantment,#what=self);
-      lEnchanted = Nth(state,2);
-      for oUser in lEnchanted
+      % If caster runs out of mana or loses trance, spell ends.
+      if send(oCaster,@GetMana) < viManaDrain * 2
       {
-         Send(oUser,@MsgSendUser,#message_rsc=Umbrella_break_trance);
-         Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
+         Send(where,@RoomStartEnchantment,#what=self,#time=send(self,@GetDuration,#iSpellPower=Nth(state,2)),
+              #state=state,#addicon=FALSE,#lastcall=TRUE);
+
       }
+      else
+      {      
+         Send(where,@RoomStartEnchantment,#what=self,#time=send(self,@GetDuration,#iSpellPower=Nth(state,2)),
+              #state=state,#addicon=FALSE,#lastcall=FALSE);
+      }
+      
+      Send(oCaster,@LoseMana,#amount=viManaDrain);
       
       return;
    }
 
-   RemoveEnchantmentEffects()
-   "Need to override spell.kod's thing, since we do this ourselves specially."
+   StartEnchantmentNewOccupant(who = $)
+   "Called on new occupants of the enchanted room."
    {
+      Send(who,@MsgSendUser,#message_rsc=Umbrella_new_entrant);
+      
       return;
    }
 
-   %%% Defense modifier stuff.
-
-   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   EndSpell(where = $, state = $)
+   "Called when spell expires."
    {
-      return defense_power + 500;
-   }
-
-   ModifyDefenseDamage(who = $,what = $,damage = $)
-   {
-      return damage;
-   }
-
-   DefendingHit(who = $,what = $)
-   {
-      return;
-   }
-
-   SetSpellPlayerFlag(who=$)
-   {
-      Send(who,@SetTranceFlag);
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=Umbrella_off,#what=self);
 
       return;
    }
 
-   %%% Resistance stuff:
-
-   GetResistanceStrength(iSpellpower=$)
+   GetDuration(iSpellPower=0)
    {
-      return 50 + iSpellpower/2;
+      local iDuration;
+
+      % Better spellpower means longer time between drains.
+      iDuration = viDrainTime + ((viDrainTime * iSpellPower) / SPELLPOWER_MAXIMUM);
+
+      return iDuration;
    }
-
-   AddResistances(who=$,value=$)
-   {
-      Send(who,@AddResistance,#what=-ATCK_SPELL_ALL,#value=value);
-
-      return;
-   }
-
-   RemoveResistances(who=$,value=$)
-   {
-      Send(who,@RemoveResistance,#what=-ATCK_SPELL_ALL,#value=value);
-
-      return;
-   }
-
 
 end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

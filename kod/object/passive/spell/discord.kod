@@ -36,6 +36,8 @@ resources:
       "The fabric of space twists subtly, just enough to damage the brittle mana field."
 
    discordance_sound = kdiscord.wav
+   
+   discordance_umbrella = "Magical energies here remain stable."
 
 classvars:
 
@@ -71,17 +73,22 @@ messages:
 
    CanPayCosts(who=$)
    {
-      if send(send(who,@GetOwner),@GetEnchantmentList) = $
+	  local oRoom;
+	  
+	  oRoom = send(who,@GetOwner);
+   
+      if send(oRoom,@GetEnchantmentList) = $
       {
          Send(who, @MsgSendUser, #message_rsc=spell_bad_location, #parm1=vrName);
          return FALSE;
       }
+	  
       propagate;
    }
 
    CastSpell(who = $,lTargets = $,iSpellPower = $)
    {
-      local oRoom;
+      local oRoom, oUmbrella;
 
       if isClass(who,&Room)
       {
@@ -107,9 +114,20 @@ messages:
             iSpellPower = $;
          }
       }
-
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=discordance_on,#what=self);
-      Send(self,@DoDiscordance,#oRoom=oRoom,#iChance=iSpellPower);
+	  
+	  % Check if Umbrella is up trying to prevent Discord
+	  oUmbrella = Send(SYS,@FindSpellByNum,#num=SID_UMBRELLA);
+      if Send(oRoom,@IsEnchanted,#what=oUmbrella) AND iSpellPower <> $
+      {
+		 if random(iSpellPower/2,iSpellPower) < Nth(Send(oRoom,@GetEnchantmentState,#what=oUmbrella),2)
+		 {
+			 Send(who,@MsgSendUser,#message_rsc=discordance_umbrella);
+			 return FALSE;
+		 }
+      }
+	  
+	  Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=discordance_on,#what=self);
+	  Send(self,@DoDiscordance,#oRoom=oRoom,#iChance=iSpellPower);
 
       if not IsClass(who,&Player)
       {

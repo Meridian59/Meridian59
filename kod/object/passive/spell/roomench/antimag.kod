@@ -90,9 +90,16 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oRoom, iAbility;
+      local oRoom, iAbility, oUmbrella;
 
       oRoom = Send(who,@GetOwner);
+	  
+	  % Remove Umbrella
+	  oUmbrella = Send(SYS,@FindSpellByNum,#num=SID_UMBRELLA);
+	  if Send(oRoom,@IsEnchanted,#what=oUmbrella)
+	  {
+		 Send(oRoom,@RemoveEnchantment,#what=oUmbrella);
+	  }
       
       % Global effects of the enchantment.
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=AntiMagicAura_on,

@@ -37,7 +37,7 @@ resources:
 
    discordance_sound = kdiscord.wav
    
-   discordance_umbrella = "Magical energies here remain stable."
+   discordance_umbrella = "Magical energies within the dome remain stable."
 
 classvars:
 

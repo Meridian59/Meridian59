@@ -32,6 +32,8 @@ resources:
    AntiMagicAura_on = "The mana field begins to fluctuate."
    AntiMagicAura_off = "The mana field returns to normal."
    AntiMagicAura_new_occupant = "The mana field is fluctuating here."
+   
+   AMA_umbrella = "The umbrella collapses on itself! Your anti-magic aura takes its toll. "
 
    AntiMagicAura_sound = kantimag.wav
 
@@ -90,16 +92,24 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oRoom, iAbility, oUmbrella;
+      local oRoom, iAbility, oUmbrella, iUmbrellaPower;
 
       oRoom = Send(who,@GetOwner);
 	  
-	  % Remove Umbrella
+	  % Check if Umbrella is up trying to weaken AMA
 	  oUmbrella = Send(SYS,@FindSpellByNum,#num=SID_UMBRELLA);
-	  if Send(oRoom,@IsEnchanted,#what=oUmbrella)
-	  {
+      if Send(oRoom,@IsEnchanted,#what=oUmbrella)
+      {
+		 iUmbrellaPower = Nth(Send(oRoom,@GetEnchantmentState,#what=oUmbrella),2);
+		 if random(iSpellPower/2,iSpellPower) < iUmbrellaPower
+		 {
+			 Send(who,@MsgSendUser,#message_rsc=AMA_umbrella);
+			 iSpellPower = iSpellPower - iUmbrellaPower;
+			 bound(iSpellPower, 0, 99);
+		 }
+		 
 		 Send(oRoom,@RemoveEnchantment,#what=oUmbrella);
-	  }
+      }
       
       % Global effects of the enchantment.
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=AntiMagicAura_on,

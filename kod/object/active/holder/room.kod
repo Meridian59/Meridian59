@@ -3260,8 +3260,8 @@ messages:
          }
 
          % It's a room enchantment! It's a trance spell! It's both!
-         %  It's Silence!  Handle the special case here.
-         if IsClass(oEnch,&Silence)
+         %  It's Silence or Umbrella!  Handle the special case here.
+         if IsClass(oEnch,&Silence) OR IsClass(oEnch,&Umbrella)
          {
             lState = Nth(i,3);
             if who = First(lState)

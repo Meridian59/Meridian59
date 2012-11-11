@@ -43,7 +43,7 @@ classvars:
    viSpell_level = 5
 
    viManaDrain = 10      % Drain is amount used every viDrainTime milliseconds
-   viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
+   viDrainTime = 3000    % Drain some mana every viDrainTime milliseconds
    
    viChance_To_Increase = 35
    

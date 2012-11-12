@@ -142,6 +142,7 @@ messages:
 	  Send(oRoom,@SomethingWaveRoom,#wave_rsc=vrSucceed_wav);
 	  
 	  piDamageMax = iSpellPower / 8;
+	  bound(piDamageMax, 5, 12);
 	  
       for each_obj in lTargets
       {

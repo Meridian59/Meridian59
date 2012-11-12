@@ -33,7 +33,7 @@ resources:
    AntiMagicAura_off = "The mana field returns to normal."
    AntiMagicAura_new_occupant = "The mana field is fluctuating here."
    
-   AMA_umbrella = "The umbrella collapses on itself! Your anti-magic aura takes its toll. "
+   AMA_umbrella = "The umbrella collapses on itself. Your anti-magic aura is barely stable! "
 
    AntiMagicAura_sound = kantimag.wav
 
@@ -105,7 +105,7 @@ messages:
 		 {
 			 Send(who,@MsgSendUser,#message_rsc=AMA_umbrella);
 			 iSpellPower = iSpellPower - iUmbrellaPower;
-			 bound(iSpellPower, 0, 99);
+			 bound(iSpellPower, 1, 99);
 		 }
 		 
 		 Send(oRoom,@RemoveEnchantment,#what=oUmbrella);

@@ -29,7 +29,7 @@ resources:
    Umbrella_off = "The dome of magical energy dissipates."
    Umbrella_new_entrant = "You are encompassed by a dome of magical energy."
    
-   Umbrella_AMA = "The Anti-Magic Aura causes the dome of magical energy to implode."
+   Umbrella_AMA = "The mana field is not stable enough to create a dome."
 
 classvars:
 

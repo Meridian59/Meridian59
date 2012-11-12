@@ -30,7 +30,7 @@ resources:
    deathnote_hit_rsc = \
       "OUCH! A loud high pitch sound hurts your ears."
    deathnote_killed_someone = \
-      "The muscial notes from your lute drives %s%s mad, causing %s ears to bleed."
+      "The muscial notes from your instrument drives %s%s mad, causing %s ears to bleed."
 	  
    DeathNote_need_instrument = "You need an instrument!"
    DeathNote_no_newbie = \

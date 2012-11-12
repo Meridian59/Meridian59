@@ -184,11 +184,11 @@ void ConfigLoad(void)
    config.save_settings = GetConfigInt(misc_section, INISaveOnExit, True, ini_file);
    config.play_music    = GetConfigInt(misc_section, INIPlayMusic, True, ini_file);
    config.play_sound    = GetConfigInt(misc_section, INIPlaySound, True, ini_file);
-   config.music_volume    = GetConfigInt(misc_section, INIMusicVolume, 100, ini_file);
+   config.music_volume    = GetConfigInt(misc_section, INIMusicVolume, 75, ini_file);
    config.sound_volume    = GetConfigInt(misc_section, INISoundVolume, 100, ini_file);
    config.play_loop_sounds    = GetConfigInt(misc_section, INIPlayLoopSounds, True, ini_file);
    config.play_random_sounds    = GetConfigInt(misc_section, INIPlayRandomSounds, True, ini_file);
-   config.large_area    = GetConfigInt(misc_section, INIArea, False, ini_file);
+   config.large_area    = GetConfigInt(misc_section, INIArea, True, ini_file);
    gLargeArea = config.large_area;
    // Animation option removed 3/4/97 to fix movement bug
 #ifndef NODPRINTFS
@@ -198,7 +198,7 @@ void ConfigLoad(void)
 #endif
    config.ini_version   = GetConfigInt(misc_section, INIVersion, 0, ini_file);
    config.default_browser = GetConfigInt(misc_section, INIDefaultBrowser, True, ini_file);
-   GetPrivateProfileString(misc_section, INIUserName, "", 
+   GetPrivateProfileString(misc_section, INIUserName, "username", 
 			   config.username, MAXUSERNAME, ini_file); 
    GetPrivateProfileString(misc_section, INIBrowser, "", 
 			   config.browser, MAX_PATH, ini_file); 
@@ -236,7 +236,7 @@ void ConfigLoad(void)
    config.ignoreprofane = GetConfigInt(interface_section, INIIgnoreProfane, False, ini_file);
    config.extraprofane = GetConfigInt(interface_section, INIExtraProfane, False, ini_file);
    config.lagbox       = GetConfigInt(interface_section, INILagbox, True, ini_file);
-   config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 0, ini_file);
+   config.halocolor    = GetConfigInt(interface_section, INIHaloColor, 2, ini_file);
    config.colorcodes   = GetConfigInt(interface_section, INIColorCodes, True, ini_file);
    config.map_annotations = GetConfigInt(interface_section, INIMapAnnotations, True, ini_file);
 

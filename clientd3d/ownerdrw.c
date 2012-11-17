@@ -423,14 +423,6 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
 
 	if (style & OD_COLORTEXT)
 	{
-		// if it's not a priveleged player, don't do the color effects
-		if ((PF_DM != GetPlayerFlags(obj->flags) &&
-		     PF_SUPER != GetPlayerFlags(obj->flags) &&
-		     PF_EVENTCHAR != GetPlayerFlags(obj->flags) &&
-		     PF_CREATOR != GetPlayerFlags(obj->flags)))
-		{
-			style &= ~OD_COLORTEXT;
-		}
 
 		// get the color we'd prefer for this particular obj
 		if (style & OD_COLORTEXT)

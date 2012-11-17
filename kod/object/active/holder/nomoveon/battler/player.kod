@@ -2277,6 +2277,9 @@ messages:
 
       % Do this after we add spells so that we can give reagents if appropriate.
       Send(self,@AddDefaultObjects);
+	  
+	  % Update stomach right away!
+	  Send(self,@UpdateStomach);
 
       % If the player chose either a Qor spell or a Shalille spell to start, 
       %  give him a favorable karma to start from.  However, if he chose both, 

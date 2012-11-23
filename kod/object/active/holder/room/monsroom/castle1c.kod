@@ -40,6 +40,8 @@ properties:
 
    prRoom = room_castle1c
    piRoom_num = RID_CASTLE1C
+   
+   piMonster_count_max = 5
 
 messages:
 

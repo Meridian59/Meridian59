@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Castle1c is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_castle1c = castle1c.roo
+   
+   castle1c_name = "Outside Castle Victoria"
+   castle1c_music = castle.mp3
+
+classvars:
+
+   vrName = castle1c_name
+
+   viTeleport_row = 7
+   viTeleport_col = 24
+   viTerrain_Type = TERRAIN_MOUNTAIN | TERRAIN_FOREST
+
+properties:
+
+   prMusic = castle1c_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_10 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_castle1c
+   piRoom_num = RID_CASTLE1C
+
+messages:
+
+   Constructed()
+   {
+%      include tosgrave.kmn ;
+      plMonsters = [ [&Zombie, 85], [&Skeleton, 15] ];
+
+      plGenerators = [ [12, 23], [1, 23], [4, 28], [1, 42], [5, 43] ];
+
+      propagate;
+   }
+
+   TryCreateMonster(initroom = FALSE,loadfirst = FALSE)
+   {
+      local iHour;
+   
+      iHour = Send(SYS,@GetHour);
+      if iHour < 5 or iHour > 21 { propagate; }
+      return;
+   }
+   
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 3, 44, RID_CASTLE1, 15, 17, ROTATE_270 ],plExits);
+      plExits = Cons([ 4, 44, RID_CASTLE1, 15, 17, ROTATE_270 ],plExits);
+      plExits = Cons([ 5, 44, RID_CASTLE1, 15, 17, ROTATE_270 ],plExits);                                                                                
+
+      plEdge_exits = $;
+      plEdge_Exits = Cons([ LEAVE_WEST, RID_I9, 2, 27, ANGLE_SOUTH_WEST ], plEdge_exits); 
+
+    propagate;
+
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

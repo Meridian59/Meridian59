@@ -46,12 +46,21 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Skeleton, 40], [&Zombie,20] ];
+      plMonsters = [ [&Skeleton, 60], [&Zombie,40] ];
 
       plGenerators = [ [13, 3], [14, 7], [12, 12],
                        [13, 8], [14, 24], [12, 27] ,
                        [13, 30], [12, 37], [19, 40] ,
                        [15, 44] , [ 6,3 ], [ 7,32 ] ] ;
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_VICTORIA),
+           #new_row=20,#new_col=36,#fine_row=16,#fine_col=63,
+           #new_angle=ANGLE_WEST);
 
       propagate;
    }

@@ -8,7 +8,7 @@ DEPEND = ..\room.bof
 
 BOFS =  barlqrm.bof crnthrm.bof jasperrm.bof kocarm.bof marnrm.bof tosrm.bof \
 	ghall.bof godroom.bof \
-	badland2.bof castle1c.bof cave3.bof dungeon.bof field1.bof bazmans.bof \
+	badland2.bof cave3.bof field1.bof bazmans.bof \
 	hermhut.bof monsroom.bof outgrace.bof profroom.bof \
 	temple.bof tempkra.bof tempqor.bof temprii.bof \
 	castle2a.bof castle2d.bof \
@@ -19,6 +19,7 @@ BOFS =  barlqrm.bof crnthrm.bof jasperrm.bof kocarm.bof marnrm.bof tosrm.bof \
 
 # Removed
 #        a4.bof a5.bof b4.bof b5.bof b7.bof b8.bof c3.bof c8.bof c9.bof \
-#        d8.bof d9.bof e8.bof e9.bof f5.bof f6.bof f7.bof f9.bof
+#        d8.bof d9.bof e8.bof e9.bof f5.bof f6.bof f7.bof f9.bof 
+#		 dungeon.bof castle1c.bof
 
 !include $(KODDIR)\kod.mak

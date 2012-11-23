@@ -56,15 +56,6 @@ messages:
       propagate;
    }
 
-   CreateStandardObjects()
-   {
-      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_VICTORIA),
-           #new_row=13,#new_col=46,#fine_row=0,#fine_col=0,
-           #new_angle=ANGLE_WEST);
-
-      propagate;
-   }
-
    CreateStandardExits()
    {
       plExits = $;

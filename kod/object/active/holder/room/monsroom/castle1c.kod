@@ -47,7 +47,6 @@ messages:
 
    Constructed()
    {
-%      include tosgrave.kmn ;
       plMonsters = [ [&Zombie, 85], [&Skeleton, 15] ];
 
       plGenerators = [ [12, 23], [1, 23], [4, 28], [1, 42], [5, 43] ];

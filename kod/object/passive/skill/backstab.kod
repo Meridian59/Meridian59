@@ -66,7 +66,7 @@ messages:
       {
 		 % Does not work with blunt weapons.
          if Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_MACE OR 
-		    if Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_HAMMER
+		    Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_HAMMER
 		 {
 			 return FALSE;
 		 }
@@ -86,7 +86,7 @@ messages:
 		 iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
 		 
          iDamage = Send(oTarget,@AssessDamage,#what=who,
-                        #damage=Send(oWeapon,@GetDamage,#target=oTraget));
+                        #damage=Send(oWeapon,@GetDamage,#target=oTarget));
 						
 		 iDamage = bound((iDamage * iAbil / 100), 1, 30);
 
@@ -94,11 +94,8 @@ messages:
 	  
 		  propagate;
 	  }
-	  else
-	  {
-	  	  return FALSE;
-	  }
 
+	  return FALSE;
    }
    
    AttackedFromBehind(attacker = $, target = $)
@@ -109,14 +106,12 @@ messages:
 	  iAttackerAngle = Send(attacker,@GetAngle);
 	  iTargetAngle = Send(target,@GetAngle);
 	  
-	  if iAttackerAngle >= abs(iTargetAngle - ANGLE_SSE) AND if iAttackerAngle <= abs(iTargetAngle + ANGLE_SSE)
+	  if iAttackerAngle >= abs(iTargetAngle - ANGLE_SSE) AND iAttackerAngle <= abs(iTargetAngle + ANGLE_SSE)
 	  {
 		 return TRUE;
 	  }
-	  else
-	  {
-		 return FALSE;
-	  }
+
+	 return FALSE;
    }
 
 end

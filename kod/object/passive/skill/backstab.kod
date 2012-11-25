@@ -13,6 +13,8 @@ Backstab is Skill
 constants:
 
    include blakston.khd
+   
+   SHORTSWORD_BONUS = 150
 
 resources:
 
@@ -85,10 +87,17 @@ messages:
 		 % Get player's ability in this skill.
 		 iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
 		 
+		 iDamage = (Send(oWeapon,@GetDamage,#target=oTarget) * iAbil) / 100;
+		 iDamage = bound(iDamage,1,30);
+		 
+		 % Short swords got a backstab bonus
+		 if isClass(oWeapon,&ShortSword)
+		 {
+			 iDamage = (iDamage * SHORTSWORD_BONUS) / 100;
+		 }
+		 
          iDamage = Send(oTarget,@AssessDamage,#what=who,
-                        #damage=Send(oWeapon,@GetDamage,#target=oTarget));
-						
-		 iDamage = bound((iDamage * iAbil / 100), 1, 30);
+                        #damage=iDamage);
 
          Send(who,@AssessHit,#what=oTarget,#damage=iDamage);
 	  

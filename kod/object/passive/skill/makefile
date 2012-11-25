@@ -5,6 +5,7 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\skill.bof
-BOFS = profic.bof stroke.bof dodge.bof parry.bof assess.bof block.bof secwind.bof disarm.bof
+BOFS = profic.bof stroke.bof dodge.bof parry.bof assess.bof block.bof secwind.bof disarm.bof \
+	   backstab.bof
 
 !include $(KODDIR)\kod.mak

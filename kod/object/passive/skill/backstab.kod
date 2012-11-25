@@ -1,0 +1,123 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Backstab is Skill
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Backstab_name_rsc = "backstab"
+   Backstab_icon_rsc = bckstbico.bgf
+   Backstab_desc_rsc = "Backstab is a skill that allows a player to execute a sneak attack on an unsuspecting enemy."
+   
+   Backstab_attacked_rsc = "You just been stabbed in the back!"
+   Backstab_attack_rsc = "You stab your opponent in the back!"
+
+classvars:
+
+   vrName = Backstab_name_rsc
+   vrIcon = Backstab_icon_rsc
+   vrDesc = Backstab_desc_rsc
+
+   viSchool = SKS_FENCING
+   viSkill_num = SKID_BACKSTAB
+   viSkill_level = 5
+   viChance_to_increase = 30
+
+properties:
+
+   plPrerequisites = $
+   piSchool = 0
+
+   piChanceToIncrease = 100
+
+messages:
+
+   GetRequisiteStat(who=$)
+   {
+     return send(who,@GetAgility);
+   }
+   
+   DoSkill(who=$,oTarget=$,oWeapon=$)
+   {
+      local iAbil, iAngle, iDamage;
+   
+      if (who=$)
+      {
+         debug("DoSkill called with bad who.");
+         return FALSE;
+      }
+
+      if oWeapon=$
+      {
+         return FALSE;
+      }
+      else
+      {
+		 % Does not work with blunt weapons.
+         if Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_MACE OR 
+		    if Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_HAMMER
+		 {
+			 return FALSE;
+		 }
+      }
+	  
+	  if Send(self,@AttackedFromBehind,#attacker=who,#target=oTarget)
+	  {
+	  
+		 send(who,@MsgSendUser,#message_rsc=Backstab_attack_rsc);
+		 
+		 if isClass(oTarget,&Player)
+		 {
+			 send(oTarget,@MsgSendUser,#message_rsc=Backstab_attacked_rsc);
+		 }
+	  
+		 % Get player's ability in this skill.
+		 iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
+		 
+         iDamage = Send(oTarget,@AssessDamage,#what=who,
+                        #damage=Send(oWeapon,@GetDamage,#target=oTraget));
+						
+		 iDamage = bound((iDamage * iAbil / 100), 1, 30);
+
+         Send(who,@AssessHit,#what=oTarget,#damage=iDamage);
+	  
+		  propagate;
+	  }
+	  else
+	  {
+	  	  return FALSE;
+	  }
+
+   }
+   
+   AttackedFromBehind(attacker = $, target = $)
+   "Determine if attacker is behind target."
+   {
+	  local iAttackerAngle, iTargetAngle;
+	  
+	  iAttackerAngle = Send(attacker,@GetAngle);
+	  iTargetAngle = Send(target,@GetAngle);
+	  
+	  if iAttackerAngle >= abs(iTargetAngle - ANGLE_SSE) AND if iAttackerAngle <= abs(iTargetAngle + ANGLE_SSE)
+	  {
+		 return TRUE;
+	  }
+	  else
+	  {
+		 return FALSE;
+	  }
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

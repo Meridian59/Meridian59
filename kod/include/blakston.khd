@@ -1766,6 +1766,8 @@
    SKID_SECOND_WIND = 405
    SKID_DISARM = 406
 
+   SKID_BACKSTAB = 407
+
    % Melee weapon strokes start here.
    SKID_DEFAULT = 420
    SKID_SLASH = 421

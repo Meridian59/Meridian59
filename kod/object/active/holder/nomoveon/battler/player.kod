@@ -4675,6 +4675,18 @@ messages:
          Send(Send(SYS,@FindSkillByNum,#num=SKID_DISARM),@DoSkill,#who=self,
               #oTarget=what,#oWeapon=oWeapon);
       }
+	  
+	  % Added Backstab skill
+      if Send(self,@GetSkillAbility,#Skill_num=SKID_BACKSTAB) > 0
+      {
+         if oWeapon <> $ AND IsClass(oWeapon,&Spell)
+         {
+            oWeapon = $;
+         }
+         
+         Send(Send(SYS,@FindSkillByNum,#num=SKID_BACKSTAB),@DoSkill,#who=self,
+              #oTarget=what,#oWeapon=oWeapon);
+      }
 
       if amount > 0
       {

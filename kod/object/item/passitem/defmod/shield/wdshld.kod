@@ -66,6 +66,11 @@ messages:
 	  return FALSE;
    }
    
+   CanShatter()
+   {
+      return FALSE;
+   }
+   
    ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
    "Fire attacks will do damage to shield."
    {

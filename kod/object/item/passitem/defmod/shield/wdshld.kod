@@ -1,0 +1,98 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WoodenShield is Shield
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   WoodenShield_name_rsc = "wooden shield"
+   WoodenShield_icon_rsc = wdshld.bgf
+   WoodenShield_desc_rsc = \
+      "A shield made of tough hard wood, it offers good protection. "
+	  "However, due to it being made of wood, it easily burns to a crisp if set on fire."
+
+   WoodenShield_window_overlay_rsc = povwshd.bgf
+   
+   WoodenShield_burn = "Your wooden shield burned to a crisp!"
+
+classvars:
+
+   vrName = WoodenShield_name_rsc
+   vrIcon = WoodenShield_icon_rsc
+   vrDesc = WoodenShield_desc_rsc
+
+   viHits_init_min = 250
+   viHits_init_max = 300
+
+   viValue_average = 180
+   viWeight = 100
+   viBulk = 125
+
+   vrShield_window_overlay = WoodenShield_window_overlay_rsc
+   vrShield_overlay = WoodenShield_icon_rsc
+
+   viGround_group = 3
+   viInventory_group = 1
+
+   viDefense_base = 0
+   viDamage_base = 1
+
+properties:
+
+messages:
+
+   GetResistanceModifiers()
+   {
+      return [ [ATCK_WEAP_SLASH,10],
+               [ATCK_WEAP_BLUDGEON,5],
+			   [-ATCK_SPELL_FIRE,15],
+			   [ATCK_SPELL_ALL,5]
+             ];
+   }
+   
+   CanMend()
+   {
+	  return FALSE;
+   }
+   
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Fire attacks will do damage to shield."
+   {
+	  if aspell = ATCK_SPELL_FIRE
+	  {
+		 post(self,@BurnShield,#damage=damage);
+	  }
+   
+	  propagate;
+   }
+   
+   BurnShield(damage = $)
+   {
+	  piHits = piHits - damage;
+	  
+	  if piHits < 5
+	  {
+		 if isClass(poOwner,&Player)
+		 {
+			 Send(poOwner,@MsgSendUser,#message_rsc=WoodenShield_burn);
+		 }
+		 
+		 post(self,@Delete);
+	  }
+   
+	  return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

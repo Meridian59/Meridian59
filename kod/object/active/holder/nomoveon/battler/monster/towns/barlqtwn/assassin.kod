@@ -361,7 +361,7 @@ messages:
    SetForSale()
    {
       plFor_sale = [$,$,
-                    [ SID_EAVESDROP ],
+                    [ SID_EAVESDROP, SKID_BACKSTAB ],
                     $ ];
                     
       return;

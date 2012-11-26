@@ -4701,49 +4701,76 @@ messages:
       }
 
       plItemTemplates = $;
-      plItemTemplates = cons(create(&Arsenic),plItemTemplates);
-      plItemTemplates = cons(create(&Book),plItemTemplates);
-      plItemTemplates = cons(create(&Chalice),plItemTemplates);
-      plItemTemplates = cons(create(&Key),plItemTemplates);
-      plItemTemplates = cons(create(&SanctuaryKey),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&Chess),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&DukeFlag),plItemTemplates);
+      plItemTemplates = cons(create(&PrincessFlag),plItemTemplates);
+      plItemTemplates = cons(create(&RebelFlag),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&SwordShardD),plItemTemplates);
+      plItemTemplates = cons(create(&SwordShardC),plItemTemplates);
+      plItemTemplates = cons(create(&SwordShardB),plItemTemplates);
+      plItemTemplates = cons(create(&SwordShardA),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&AvarShamanFeather),plItemTemplates);
+      plItemTemplates = cons(create(&OrcPitBossHead),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&NeruditeOreChunk),plItemTemplates);
+      plItemTemplates = cons(create(&OreChunk),plItemTemplates);
+	  
       plItemTemplates = cons(create(&SpiderEggShell),plItemTemplates);
       plItemTemplates = cons(create(&SpiderEgg),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&Sacchaqua),plItemTemplates);
+      plItemTemplates = cons(create(&ChickenSoup),plItemTemplates);
+      plItemTemplates = cons(create(&FormulaScroll),plItemTemplates);
+      plItemTemplates = cons(create(&RecipeScroll),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&Letter),plItemTemplates);
+      plItemTemplates = cons(create(&BallotItem),plItemTemplates);
+      plItemTemplates = cons(create(&BlankScroll),plItemTemplates); %Open-source
+	  
+      plItemTemplates = cons(create(&Arsenic),plItemTemplates);
+      plItemTemplates = cons(create(&SanctuaryKey),plItemTemplates);
+      plItemTemplates = cons(create(&Key),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&RoomKeyCopy),plItemTemplates);
+      plItemTemplates = cons(create(&RoomKey),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&OfferingRiija),plItemTemplates);
+      plItemTemplates = cons(create(&OfferingFaren),plItemTemplates);
+      plItemTemplates = cons(create(&OfferingKraanan),plItemTemplates);
+      plItemTemplates = cons(create(&OfferingQor),plItemTemplates);
+      plItemTemplates = cons(create(&OfferingShalille),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&SkyHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&BrownHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&BlueHeartStone),plItemTemplates);
+      plItemTemplates = cons(create(&RedHeartStone),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
+      plItemTemplates = cons(create(&Prism),plItemTemplates);
       plItemTemplates = cons(create(&Scepter),plItemTemplates);
-      plItemTemplates = cons(create(&Torch),plItemTemplates);
-      plItemTemplates = cons(create(&Gauntlet),plItemTemplates);
+      plItemTemplates = cons(create(&Chalice),plItemTemplates);
+      plItemTemplates = cons(create(&Book),plItemTemplates);
+      plItemTemplates = cons(create(&ShrunkenHead),plItemTemplates);
+      plItemTemplates = cons(create(&Rose),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&TrueLute),plItemTemplates);
+      plItemTemplates = cons(create(&FineLute),plItemTemplates);
+      plItemTemplates = cons(create(&Lute),plItemTemplates);
+	  
       plItemTemplates = cons(create(&JewelOfFroz),plItemTemplates);
-
-      plItemTemplates = cons(create(&ChainArmor),plItemTemplates);
-      plItemTemplates = cons(create(&PlateArmor),plItemTemplates);
-      plItemTemplates = cons(create(&LeatherArmor),plItemTemplates);
-      plItemTemplates = cons(create(&ScaleArmor),plItemTemplates);
-      plItemTemplates = cons(create(&Robe),plItemTemplates);
-      plItemTemplates = cons(create(&LightRobe),plItemTemplates);
-      plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
-      plItemTemplates = cons(create(&NeruditeArmor),plItemTemplates);
-
-      plItemTemplates = cons(create(&Helm),plItemTemplates);
-      plItemTemplates = cons(create(&SimpleHelm),plItemTemplates);
-      plItemTemplates = cons(create(&Circlet),plItemTemplates);
-      plItemTemplates = cons(create(&IvyCirclet),plItemTemplates);
-      plItemTemplates = cons(create(&PantsC),plItemTemplates);
-      plItemTemplates = cons(create(&PantsA),plItemTemplates);
-      plItemTemplates = cons(create(&Shirt),plItemTemplates);
-      plItemTemplates = cons(create(&Skirt),plItemTemplates);
-      plItemTemplates = cons(create(&Tanktop),plItemTemplates);
-      plItemTemplates = cons(create(&ShortSkirt),plItemTemplates);
-      plItemTemplates = cons(create(&RoyalShirt),plItemTemplates);
-
-      plItemTemplates = cons(create(&GoldShield),plItemTemplates);
-      plItemTemplates = cons(create(&MetalShield),plItemTemplates);
-      plItemTemplates = cons(create(&KnightShield),plItemTemplates);
-      plItemTemplates = cons(create(&OrcShield),plItemTemplates);
-      plItemTemplates = cons(create(&GuildShield),plItemTemplates);
-
-      plItemTemplates = cons(create(&Flask),plItemTemplates);
-      plItemTemplates = cons(create(&Chess),plItemTemplates);
-      plItemTemplates = cons(create(&ShadowAmulet),plItemTemplates);
-
+      plItemTemplates = cons(create(&Gauntlet),plItemTemplates);
+      plItemTemplates = cons(create(&Torch),plItemTemplates);
+	  
+	  %% Ammo
+      plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
+      plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
+	  plItemTemplates = cons(create(&Arrow),plItemTemplates);
+	  
+	  %% Reagents
       plItemTemplates = cons(create(&BlueDragonScale),plItemTemplates);
       plItemTemplates = cons(create(&DarkAngelFeather),plItemTemplates);
       plItemTemplates = cons(create(&Diamond),plItemTemplates);
@@ -4771,108 +4798,41 @@ messages:
       plItemTemplates = cons(create(&WebMoss),plItemTemplates);
       plItemTemplates = cons(create(&YrxlSap),plItemTemplates);
       plItemTemplates = cons(create(&RainbowFern),plItemTemplates);
-
-      plItemTemplates = cons(create(&Letter),plItemTemplates);
-      plItemTemplates = cons(create(&InscriptionItem),plItemTemplates);
-      plItemTemplates = cons(create(&BallotItem),plItemTemplates);
-      plItemTemplates = cons(create(&Rose),plItemTemplates);
-      plItemTemplates = cons(create(&OreChunk),plItemTemplates);
-      plItemTemplates = cons(create(&NeruditeOreChunk),plItemTemplates);
-      plItemTemplates = cons(create(&ShrunkenHead),plItemTemplates);
-      plItemTemplates = cons(create(&Lute),plItemTemplates);
-      plItemTemplates = cons(create(&FineLute),plItemTemplates);
-      plItemTemplates = cons(create(&TrueLute),plItemTemplates);
-      plItemTemplates = cons(create(&JalaNecklace),plItemTemplates);
-      plItemTemplates = cons(create(&OrcPitBossHead),plItemTemplates);
-      plItemTemplates = cons(create(&FormulaScroll),plItemTemplates);
-      plItemTemplates = cons(create(&AvarShamanFeather),plItemTemplates);
-      plItemTemplates = cons(create(&ChickenSoup),plItemTemplates);
-      plItemTemplates = cons(create(&RecipeScroll),plItemTemplates);
-      plItemTemplates = cons(create(&Sacchaqua),plItemTemplates);
-
-      plItemTemplates = cons(create(&SwordShardA),plItemTemplates);
-      plItemTemplates = cons(create(&SwordShardB),plItemTemplates);
-      plItemTemplates = cons(create(&SwordShardC),plItemTemplates);
-      plItemTemplates = cons(create(&SwordShardD),plItemTemplates);
-
-      plItemTemplates = cons(create(&OfferingRiija),plItemTemplates);
-      plItemTemplates = cons(create(&OfferingFaren),plItemTemplates);
-      plItemTemplates = cons(create(&OfferingQor),plItemTemplates);
-      plItemTemplates = cons(create(&OfferingShalille),plItemTemplates);
-      plItemTemplates = cons(create(&OfferingKraanan),plItemTemplates);
-
-      plItemTemplates = cons(create(&Arrow),plItemTemplates);
-      plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
-      plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
-
-      plItemTemplates = cons(create(&Apple),plItemTemplates);
-      plItemTemplates = cons(create(&Bread),plItemTemplates);
+	  
+	  %% Food
+      plItemTemplates = cons(create(&Mint),plItemTemplates);
+	  
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
-      plItemTemplates = cons(create(&Meatpie),plItemTemplates);
-      plItemTemplates = cons(create(&Mug),plItemTemplates);
-      plItemTemplates = cons(create(&KocatanMug),plItemTemplates);
-      plItemTemplates = cons(create(&Goblet),plItemTemplates);
       plItemTemplates = cons(create(&Snack),plItemTemplates);
-      plItemTemplates = cons(create(&Waterskin),plItemTemplates);
-      plItemTemplates = cons(create(&Grapes),plItemTemplates);
-      plItemTemplates = cons(create(&Spideye),plItemTemplates);
-      plItemTemplates = cons(create(&Pork),plItemTemplates);
-      plItemTemplates = cons(create(&Drumstick),plItemTemplates);
-      plItemTemplates = cons(create(&Soup),plItemTemplates);
-      plItemTemplates = cons(create(&FortuneCookie),plItemTemplates);
-      plItemTemplates = cons(create(&StoutGoblet),plItemTemplates);
       plItemTemplates = cons(create(&WineGoblet),plItemTemplates);
+      plItemTemplates = cons(create(&Goblet),plItemTemplates);
+      plItemTemplates = cons(create(&KocatanMug),plItemTemplates);
+      plItemTemplates = cons(create(&StoutGoblet),plItemTemplates);
+      plItemTemplates = cons(create(&Mug),plItemTemplates);
+      plItemTemplates = cons(create(&Waterskin),plItemTemplates);
+      plItemTemplates = cons(create(&FortuneCookie),plItemTemplates);
+      plItemTemplates = cons(create(&Drumstick),plItemTemplates);
+      plItemTemplates = cons(create(&Pork),plItemTemplates);
+      plItemTemplates = cons(create(&Spideye),plItemTemplates);
       plItemTemplates = cons(create(&Stew),plItemTemplates);
+      plItemTemplates = cons(create(&Soup),plItemTemplates);
+      plItemTemplates = cons(create(&Meatpie),plItemTemplates);
       plItemTemplates = cons(create(&Cheese),plItemTemplates);
+      plItemTemplates = cons(create(&Bread),plItemTemplates);
+      plItemTemplates = cons(create(&Grapes),plItemTemplates);
+      plItemTemplates = cons(create(&Apple),plItemTemplates);
 
-      plItemTemplates = cons(create(&BerserkerRing),plItemTemplates);
-      plItemTemplates = cons(create(&RingOfLethargy),plItemTemplates);
-      plItemTemplates = cons(create(&RingInvisibility),plItemTemplates);
-      plItemTemplates = cons(create(&RingWedding),plItemTemplates);
-
-      plItemTemplates = cons(create(&AcidRing),plItemTemplates);
-      plItemTemplates = cons(create(&ColdRing),plItemTemplates);
-      plItemTemplates = cons(create(&FireRing),plItemTemplates);
-      plItemTemplates = cons(create(&ShockRing),plItemTemplates);
-
-      plItemTemplates = cons(create(&FireWand),plItemTemplates);
-      plItemTemplates = cons(create(&HealWand),plItemTemplates);
-      plItemTemplates = cons(create(&VampireWand),plItemTemplates);
-      plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
-
-      plItemTemplates = cons(create(&ShortSword),plItemTemplates);
-      plItemTemplates = cons(create(&LongSword),plItemTemplates);
-      plItemTemplates = cons(create(&MysticSword),plItemTemplates);
-      plItemTemplates = cons(create(&RiijaSword),plItemTemplates);
-      plItemTemplates = cons(create(&NeruditeSword),plItemTemplates);
-      plItemTemplates = cons(create(&Mace),plItemTemplates);
-      plItemTemplates = cons(create(&Scimitar),plItemTemplates);
-      plItemTemplates = cons(create(&Hammer),plItemTemplates);
-      plItemTemplates = cons(create(&Axe),plItemTemplates);
-      plItemTemplates = cons(create(&Longbow),plItemTemplates);
-      plItemTemplates = cons(create(&BattleBow),plItemTemplates);
-      plItemTemplates = cons(create(&PracticeBow),plItemTemplates);
-      plItemTemplates = cons(create(&NeruditeBow),plItemTemplates);
-      plItemTemplates = cons(create(&GoldSword),plItemTemplates);
-
-      plItemTemplates = cons(create(&MagicBow),plItemTemplates);
-
+	  %% Spell Items
+	  
+	  % Potions
+      plItemTemplates = cons(create(&ForgetPotionSkills),plItemTemplates);
+      plItemTemplates = cons(create(&ForgetPotionJala),plItemTemplates);
+      plItemTemplates = cons(create(&ForgetPotionRiija),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionFaren),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionKraanan),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionQor),plItemTemplates);
       plItemTemplates = cons(create(&ForgetPotionShalille),plItemTemplates);
-      plItemTemplates = cons(create(&ForgetPotionSkills),plItemTemplates);
-      plItemTemplates = cons(create(&ForgetPotionRiija),plItemTemplates);
-      plItemTemplates = cons(create(&ForgetPotionJala),plItemTemplates);
-
-      plItemTemplates = cons(create(&FarenCharm),plItemTemplates);
-      plItemTemplates = cons(create(&RiijaCharm),plItemTemplates);
-      plItemTemplates = cons(create(&KraananCharm),plItemTemplates);
-      plItemTemplates = cons(create(&ShalilleCharm),plItemTemplates);
-      plItemTemplates = cons(create(&QorCharm),plItemTemplates);
-
-      plItemTemplates = cons(create(&Gift),plItemTemplates);
-
+	  
       plItemTemplates = cons(create(&IllusionaryFormPotion),plItemTemplates);
 
       plItemTemplates = cons(create(&PurifyPotion),plItemTemplates);
@@ -4903,10 +4863,28 @@ messages:
       plItemTemplates = cons(create(&RescuePotion),plItemTemplates);
       plItemTemplates = cons(create(&EagleEyesPotion),plItemTemplates);
 
-      plItemTemplates = cons(create(&NecromancerAmulet),plItemTemplates);
-      plItemTemplates = cons(create(&HunterSword),plItemTemplates);
-      plItemTemplates = cons(create(&Prism),plItemTemplates);
-
+      plItemTemplates = cons(create(&CloakPotion),plItemTemplates);
+      plItemTemplates = cons(create(&ResistAcidPotion),plItemTemplates);
+      plItemTemplates = cons(create(&FreeActionPotion),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&Flask),plItemTemplates);
+	  
+	  % Scrolls
+      plItemTemplates = cons(create(&DarknessScroll),plItemTemplates);
+      plItemTemplates = cons(create(&DiscordScroll),plItemTemplates);
+      plItemTemplates = cons(create(&DispellIllusionScroll),plItemTemplates);
+      plItemTemplates = cons(create(&FinalRitesScroll),plItemTemplates);
+      plItemTemplates = cons(create(&FlashScroll),plItemTemplates);
+      plItemTemplates = cons(create(&HeatScroll),plItemTemplates);
+      plItemTemplates = cons(create(&KillingFieldScroll),plItemTemplates);
+      plItemTemplates = cons(create(&MartyrScroll),plItemTemplates);
+      plItemTemplates = cons(create(&SummonPoisonFogScroll),plItemTemplates);
+      plItemTemplates = cons(create(&SporeBurstScroll),plItemTemplates);
+      plItemTemplates = cons(create(&TruceScroll),plItemTemplates);
+      plItemTemplates = cons(create(&WindScroll),plItemTemplates);
+      plItemTemplates = cons(create(&ForcesOfLightScroll),plItemTemplates);
+	  
+	  % Wands
       plItemTemplates = cons(create(&SwapWand),plItemTemplates);
       plItemTemplates = cons(create(&SlitherWand),plItemTemplates);
       plItemTemplates = cons(create(&ShatterWand),plItemTemplates);
@@ -4922,60 +4900,121 @@ messages:
       plItemTemplates = cons(create(&HospiceWand),plItemTemplates);
       plItemTemplates = cons(create(&DementWand),plItemTemplates);
       plItemTemplates = cons(create(&ForgetWand),plItemTemplates);
-
-      plItemTemplates = cons(create(&CloakPotion),plItemTemplates);
-      plItemTemplates = cons(create(&ResistAcidPotion),plItemTemplates);
-      plItemTemplates = cons(create(&FreeActionPotion),plItemTemplates);
-
-      plItemTemplates = cons(create(&DukeFlag),plItemTemplates);
-      plItemTemplates = cons(create(&PrincessFlag),plItemTemplates);
-      plItemTemplates = cons(create(&RebelFlag),plItemTemplates);
-
-      plItemTemplates = cons(create(&RoomKey),plItemTemplates);
-      plItemTemplates = cons(create(&RoomKeyCopy),plItemTemplates);
-      plItemTemplates = cons(create(&Mint),plItemTemplates);
-
-      plItemTemplates = cons(create(&RedHeartStone),plItemTemplates);
-      plItemTemplates = cons(create(&SkyHeartStone),plItemTemplates);
-      plItemTemplates = cons(create(&BlueHeartStone),plItemTemplates);
-      plItemTemplates = cons(create(&BrownHeartStone),plItemTemplates);
-
-      plItemTemplates = cons(create(&DarknessScroll),plItemTemplates);
-      plItemTemplates = cons(create(&DiscordScroll),plItemTemplates);
-      plItemTemplates = cons(create(&DispellIllusionScroll),plItemTemplates);
-      plItemTemplates = cons(create(&FinalRitesScroll),plItemTemplates);
-      plItemTemplates = cons(create(&FlashScroll),plItemTemplates);
-      plItemTemplates = cons(create(&HeatScroll),plItemTemplates);
-      plItemTemplates = cons(create(&KillingFieldScroll),plItemTemplates);
-      plItemTemplates = cons(create(&MartyrScroll),plItemTemplates);
-      plItemTemplates = cons(create(&SummonPoisonFogScroll),plItemTemplates);
-      plItemTemplates = cons(create(&SporeBurstScroll),plItemTemplates);
-      plItemTemplates = cons(create(&TruceScroll),plItemTemplates);
-      plItemTemplates = cons(create(&WindScroll),plItemTemplates);
-      plItemTemplates = cons(create(&ForcesOfLightScroll),plItemTemplates);
-
-      plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
-      plItemTemplates = cons(create(&SkullMask),plItemTemplates);
-      plItemTemplates = cons(create(&RatMask),plItemTemplates);
-      plItemTemplates = cons(create(&AntMask),plItemTemplates);
-      plItemTemplates = cons(create(&TrollMask),plItemTemplates);
-      plItemTemplates = cons(create(&KriipaMask),plItemTemplates);
-
-      plItemTemplates = cons(create(&SpecialGiftTwo),plItemTemplates);
-      plItemTemplates = cons(create(&XeoMask),plItemTemplates);
-      plItemTemplates = cons(create(&DaemonMask),plItemTemplates);
-      plItemTemplates = cons(create(&MummyMask),plItemTemplates);
-      plItemTemplates = cons(create(&FeyMask),plItemTemplates);
-      plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
-
-      plItemTemplates = cons(create(&CowMask),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&VampireWand),plItemTemplates);
+      plItemTemplates = cons(create(&FireWand),plItemTemplates);
+      plItemTemplates = cons(create(&HealWand),plItemTemplates);
+      plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
+	  
+	  % Rings
       plItemTemplates = cons(create(&ReagentRing),plItemTemplates);
 
-      plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
+      plItemTemplates = cons(create(&RingWedding),plItemTemplates);
+      plItemTemplates = cons(create(&RingInvisibility),plItemTemplates);
+      plItemTemplates = cons(create(&BerserkerRing),plItemTemplates);
+      plItemTemplates = cons(create(&RingOfLethargy),plItemTemplates);
+
+      plItemTemplates = cons(create(&AcidRing),plItemTemplates);
+      plItemTemplates = cons(create(&ColdRing),plItemTemplates);
+      plItemTemplates = cons(create(&FireRing),plItemTemplates);
+      plItemTemplates = cons(create(&ShockRing),plItemTemplates);
 	  
-	  %Open-source items
-      plItemTemplates = cons(create(&DiscipleLightRobe),plItemTemplates);
-      plItemTemplates = cons(create(&BlankScroll),plItemTemplates);
+	  %% Necklaces
+      plItemTemplates = cons(create(&NecromancerAmulet),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&JalaNecklace),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&Gift),plItemTemplates);
+      plItemTemplates = cons(create(&RiijaCharm),plItemTemplates);
+      plItemTemplates = cons(create(&FarenCharm),plItemTemplates);
+      plItemTemplates = cons(create(&KraananCharm),plItemTemplates);
+      plItemTemplates = cons(create(&QorCharm),plItemTemplates);
+      plItemTemplates = cons(create(&ShalilleCharm),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&ShadowAmulet),plItemTemplates);
+	  
+	  %% Armor
+	  
+	  % Masks
+      plItemTemplates = cons(create(&CowMask),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&SpecialGiftTwo),plItemTemplates);
+      plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
+      plItemTemplates = cons(create(&FeyMask),plItemTemplates);
+      plItemTemplates = cons(create(&MummyMask),plItemTemplates);
+      plItemTemplates = cons(create(&DaemonMask),plItemTemplates);
+      plItemTemplates = cons(create(&XeoMask),plItemTemplates);
+
+      plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
+      plItemTemplates = cons(create(&KriipaMask),plItemTemplates);
+      plItemTemplates = cons(create(&TrollMask),plItemTemplates);
+      plItemTemplates = cons(create(&AntMask),plItemTemplates);
+      plItemTemplates = cons(create(&RatMask),plItemTemplates);
+      plItemTemplates = cons(create(&SkullMask),plItemTemplates);
+	  
+	  % Head
+      plItemTemplates = cons(create(&Helm),plItemTemplates);
+      plItemTemplates = cons(create(&SimpleHelm),plItemTemplates);
+      plItemTemplates = cons(create(&IvyCirclet),plItemTemplates);
+      plItemTemplates = cons(create(&Circlet),plItemTemplates);
+
+	  % Clothing
+      plItemTemplates = cons(create(&PantsC),plItemTemplates);
+      plItemTemplates = cons(create(&PantsA),plItemTemplates);
+      plItemTemplates = cons(create(&Shirt),plItemTemplates);
+      plItemTemplates = cons(create(&Skirt),plItemTemplates);
+      plItemTemplates = cons(create(&ShortSkirt),plItemTemplates);
+      plItemTemplates = cons(create(&RoyalShirt),plItemTemplates);
+      plItemTemplates = cons(create(&Tanktop),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&DiscipleLightRobe),plItemTemplates); %Open-source
+	  
+      plItemTemplates = cons(create(&LightRobe),plItemTemplates);
+      plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
+      plItemTemplates = cons(create(&Robe),plItemTemplates);
+	  
+	  % Body
+      plItemTemplates = cons(create(&NeruditeArmor),plItemTemplates);
+      plItemTemplates = cons(create(&PlateArmor),plItemTemplates);
+      plItemTemplates = cons(create(&ChainArmor),plItemTemplates);
+      plItemTemplates = cons(create(&ScaleArmor),plItemTemplates);
+      plItemTemplates = cons(create(&LeatherArmor),plItemTemplates);
+
+	  % Shields
+      plItemTemplates = cons(create(&GuildShield),plItemTemplates);
+      plItemTemplates = cons(create(&OrcShield),plItemTemplates);
+      plItemTemplates = cons(create(&KnightShield),plItemTemplates);
+      plItemTemplates = cons(create(&GoldShield),plItemTemplates);
+      plItemTemplates = cons(create(&MetalShield),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&WoodenShield),plItemTemplates); %Open-source
+
+	  %% Weapons
+	  
+	  % Ranged
+      plItemTemplates = cons(create(&MagicBow),plItemTemplates);
+      plItemTemplates = cons(create(&NeruditeBow),plItemTemplates);
+	  plItemTemplates = cons(create(&BattleBow),plItemTemplates);
+      plItemTemplates = cons(create(&Longbow),plItemTemplates);
+      plItemTemplates = cons(create(&PracticeBow),plItemTemplates);
+	  
+	  % Swords
+      plItemTemplates = cons(create(&HunterSword),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&GoldSword),plItemTemplates);
+      plItemTemplates = cons(create(&RiijaSword),plItemTemplates);
+      plItemTemplates = cons(create(&NeruditeSword),plItemTemplates);
+      plItemTemplates = cons(create(&Scimitar),plItemTemplates);
+      plItemTemplates = cons(create(&MysticSword),plItemTemplates);
+      plItemTemplates = cons(create(&LongSword),plItemTemplates);
+      plItemTemplates = cons(create(&ShortSword),plItemTemplates);
+	  
+	  % Edged
+      plItemTemplates = cons(create(&Axe),plItemTemplates);
+	  
+	  % Blunt
+      plItemTemplates = cons(create(&Hammer),plItemTemplates);
+      plItemTemplates = cons(create(&Mace),plItemTemplates);
 
       return;
    }

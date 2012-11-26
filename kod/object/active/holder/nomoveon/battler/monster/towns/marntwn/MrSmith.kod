@@ -72,7 +72,12 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[ [Create(&LeatherArmor),Create(&MetalShield),Create(&Axe),Create(&Shortsword),Create(&Mace)],
+      plFor_sale=[ [Create(&LeatherArmor),
+					Create(&MetalShield),
+					Create(&WoodenShield),
+					Create(&Axe),
+					Create(&Shortsword),
+					Create(&Mace)],
                     $,[SID_MEND] ];
       return;
    }

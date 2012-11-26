@@ -88,7 +88,7 @@ messages:
 		 iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
 		 
 		 iDamage = (Send(oWeapon,@GetDamage,#target=oTarget) * iAbil) / 100;
-		 iDamage = bound(iDamage,1,30);
+		 iDamage = bound(iDamage,1,10);
 		 
 		 % Short swords got a backstab bonus
 		 if isClass(oWeapon,&ShortSword)

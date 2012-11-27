@@ -32,15 +32,13 @@ classvars:
    vrIcon = ThrowingAxe_icon_rsc
    vrDesc = ThrowingAxe_desc_rsc
 
-   viIndefinite = ARTICLE_AN
-
    % ThrowingAxes are normal quality slashing weapons.
    viWeaponType = WEAPON_TYPE_SLASH
    viWeaponQuality = WEAPON_QUALITY_NORMAL
    
-   viValue_average = 700
-   viWeight = 90
-   viBulk = 90
+   viValue_average = 500
+   viWeight = 60
+   viBulk = 60
 
    vrWeapon_window_overlay = ThrowingAxe_window_overlay_rsc
    vrWeapon_overlay = ThrowingAxe_player_overlay

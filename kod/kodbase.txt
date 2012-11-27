@@ -42123,7 +42123,6 @@ R	ThrowingAxe_ProjectileIcon 30667
 V	vrName 0
 V	vrIcon 1
 V	vrDesc 2
-V	viIndefinite 3
 V	viWeaponType 46
 V	viWeaponQuality 47
 V	viValue_average 18

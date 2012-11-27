@@ -360,8 +360,9 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [$,$,
-                    [ SID_EAVESDROP, SKID_BACKSTAB ],
+      plFor_sale = [$,
+				    [ SKID_BACKSTAB ],
+                    [ SID_EAVESDROP ],
                     $ ];
                     
       return;

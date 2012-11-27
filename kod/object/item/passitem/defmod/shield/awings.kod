@@ -1,0 +1,131 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AngelWings is Shield
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AngelWings_name_rsc = "angel wings"
+   AngelWings_icon_rsc = anglwing.bgf
+   AngelWings_desc_rsc = \
+      "These wings glow with some mystical energy, "
+	  "a calm presence of peace and serenity seems to envelop anything they come in contact with. "
+
+   AngelWings_window_overlay_rsc = blank.bgf
+
+classvars:
+
+   vrName = AngelWings_name_rsc
+   vrIcon = AngelWings_icon_rsc
+   vrDesc = AngelWings_desc_rsc
+
+   viHits_init_min = 250
+   viHits_init_max = 300
+
+   viValue_average = 2000
+   viWeight = 250
+   viBulk = 200
+
+   vrShield_window_overlay = AngelWings_window_overlay_rsc
+   vrShield_overlay = AngelWings_icon_rsc
+
+   viGround_group = 3
+   viInventory_group = 1
+
+   viDefense_base = 15
+   viDamage_base = 2
+
+properties:
+
+   piMana_change = 0
+
+   viUse_amount = 0
+
+messages:
+
+   GetResistanceModifiers()
+   {
+      return [ 
+			   [-ATCK_SPELL_FIRE,20],
+			   [-ATCK_SPELL_SHOCK,20],
+			   [-ATCK_SPELL_COLD,20],
+			   [-ATCK_SPELL_ACID,20],
+			   [ATCK_SPELL_UNHOLY,10],
+			   [ATCK_SPELL_QUAKE,15]
+             ];
+   }
+   
+   NewUsed()
+   {
+	  local iManaMod;
+   
+      % This makes it not take a hand.
+      viUse_amount = 0;
+	  
+      iManaMod = bound(Send(poOwner,@GetMaxHealth)/7,5,20);
+      piMana_change = Send(poOwner,@NewMaxMana,#amount=(2*iManaMod));
+		 
+	  propagate;
+   }
+   
+   NewUnused()
+   {
+      Send(poOwner,@NewMaxMana,#amount=-piMana_change);
+
+      piMana_change = 0;
+
+      propagate;
+   }
+   
+   ReqUseSomething(what = $)
+   "Overwrite parent class, this allows player to equip both shields and angel wings."
+   {
+      if isClass(what,&AngelWings)
+      {
+         if not send(poOwner,@TryUnuseItem,#what=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      return TRUE;
+   }
+   
+   CanMend()
+   {
+	  return FALSE;
+   }
+   
+   CanShatter()
+   {
+      return FALSE;
+   }
+   
+   GetManaChange()
+   {
+      return piMana_change;
+   }
+   
+   AdjustsMaxMana()
+   {
+      return TRUE;
+   }
+   
+   GetOverlayHotSpot()
+   {
+	  return HS_WINGS;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

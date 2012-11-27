@@ -4761,6 +4761,7 @@ messages:
       plItemTemplates = cons(create(&FineLute),plItemTemplates);
       plItemTemplates = cons(create(&Lute),plItemTemplates);
 	  
+      plItemTemplates = cons(create(&AngelWings),plItemTemplates); %Open-Source
       plItemTemplates = cons(create(&JewelOfFroz),plItemTemplates);
       plItemTemplates = cons(create(&Gauntlet),plItemTemplates);
       plItemTemplates = cons(create(&Torch),plItemTemplates);

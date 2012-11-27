@@ -3213,6 +3213,7 @@ messages:
 	   
 	   %Open-Source Skills
 	   Send(self,@CreateOneSKillIfNew,#num=SKID_BACKSTAB,#class=&Backstab);
+	   Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_THROW_WEAPON,#class=&ThrowProficiency);
 
        return;
    }
@@ -5011,6 +5012,7 @@ messages:
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
 	  
 	  % Edged
+      plItemTemplates = cons(create(&ThrowingAxe),plItemTemplates);
       plItemTemplates = cons(create(&Axe),plItemTemplates);
 	  
 	  % Blunt

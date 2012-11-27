@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ThrowProficiency is Proficiency
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ThrowProficiency_name_rsc = "throw weapon"
+   ThrowProficiency_icon_rsc = thweapico.bgf
+   ThrowProficiency_desc_rsc = "Allows added proficiency with throwing weapons."
+
+classvars:
+
+   vrName = ThrowProficiency_name_rsc
+   vrIcon = ThrowProficiency_icon_rsc
+   vrDesc = ThrowProficiency_desc_rsc
+
+   viSchool = SKS_FENCING
+   viSkill_num = SKID_PROFICIENCY_THROW_WEAPON
+   viSkill_level = 5
+   viChance_to_increase = 20
+
+properties:
+
+   plPrerequisites = $
+
+messages:
+
+   GetRequisiteStat(who=$)
+   {
+      return send(who,@GetAim);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

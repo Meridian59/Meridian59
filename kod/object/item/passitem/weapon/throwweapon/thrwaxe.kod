@@ -1,0 +1,61 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ThrowingAxe is ThrowingWeapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ThrowingAxe_name_rsc = "throwing axe"
+   ThrowingAxe_icon_rsc = thwaxe.bgf
+   ThrowingAxe_desc_rsc = \
+   "Extremely sharp and deadly, this throwing axe is ready for war. "
+   "Any unfortunate being to face the sharp edge of this blade would surely meet their doom."
+
+   ThrowingAxe_window_overlay_rsc = povthaxe.bgf
+   ThrowingAxe_player_overlay = thwaxeov.bgf
+   
+   ThrowingAxe_ProjectileIcon = thwaxep.bgf
+
+classvars:
+   vrName = ThrowingAxe_name_rsc
+   vrIcon = ThrowingAxe_icon_rsc
+   vrDesc = ThrowingAxe_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   % ThrowingAxes are normal quality slashing weapons.
+   viWeaponType = WEAPON_TYPE_SLASH
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   
+   viValue_average = 700
+   viWeight = 90
+   viBulk = 90
+
+   vrWeapon_window_overlay = ThrowingAxe_window_overlay_rsc
+   vrWeapon_overlay = ThrowingAxe_player_overlay
+   
+   vrProjectileIcon = ThrowingAxe_ProjectileIcon
+
+   viGround_group = 1
+   viInventory_group = 3
+   viBroken_group = 2
+
+properties:
+
+   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_SLASH
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

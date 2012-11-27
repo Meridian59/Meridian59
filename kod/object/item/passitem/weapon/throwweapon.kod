@@ -1,0 +1,161 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ThrowingWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+   
+   THROW_DELAY = 800 %in ms
+   
+   THROW = 1
+   UNUSED = 2
+   ATTACKING = 3
+
+resources:
+
+	  ThrowWeapon_ProjectileIcon = "blank.bgf"
+	  
+	  ThrowWeapon_cursed = "You can't seem to let go of your weapon."
+
+classvars:
+
+	  vrProjectileIcon = ThrowWeapon_ProjectileIcon
+	  
+	  viProjectileSpeed = 6
+
+      viProficiency_needed = SKID_PROFICIENCY_THROW_WEAPON
+	  
+	  viDisarmBonus = 20
+	  viRange = 25
+
+properties:
+
+	  ptThrow = $
+	  poThrow_Target = $
+
+messages:
+
+   GetRange()
+   {
+	  return viRange;
+   }
+   
+   GetDisarmBonus()
+   {
+	  return viDisarmBonus;
+   }
+
+   Delete()
+   {
+      if ptThrow <> $
+      {
+         DeleteTimer(ptThrow);
+         ptThrow = $;
+      }
+	  
+	  propagate;
+   }
+   
+   ReqWeaponAttack(what = $)
+   {
+	  if Send(self,@IsCursed)
+	  {
+		  if isClass(poOwner,&Player)
+		  {
+			  Send(poOwner,@MsgSendUser,#message_rsc=ThrowWeapon_cursed);
+		  }
+		  
+		  return FALSE;
+	  }
+   
+	  propagate;
+   }
+   
+   WeaponAttack(what = $)
+   "Overwrite parent class."
+   {
+	  local who;
+   
+      piUsed = ATTACKING;
+      
+      if vrWeapon_window_overlay <> $
+      {
+         Send(poOwner,@ChangeWindowOverlay,#what=self);
+      }
+      
+      if vrWeapon_overlay <> $
+      {
+         Send(poOwner,@DoAttackSwing);
+      }
+      
+      piUsed = THROW;
+	  
+	  if isClass(poOwner,&Player)
+	  {
+		 who = poOwner;
+	  }
+	  else
+	  {
+		 who = $;
+	  }
+	  
+	  if who <> $
+	  {
+		 % Send projectile animation
+		 Send(Send(who,@GetOwner),@SomethingShot,#who=who,#target=what,#projectile=self,#flags=PROJ_FLAG_NONE);
+		 ptThrow = CreateTimer(self,@ThrowWeapon,THROW_DELAY);
+		 poThrow_Target = what;
+	  }
+
+      return;
+   }
+   
+   ThrowWeapon()
+   "This will move the weapon from one place to another."
+   {
+	  local oRoom, iRow, iCol;
+	  
+	  if isClass(poOwner,&Player)
+	  {
+		 Send(poOwner,@TryUnuseItem,#what=self);
+	  }
+	  
+	  oRoom = Send(poOwner,@GetOwner);
+	  iRow = Send(poThrow_Target,@GetRow);
+	  iCol = Send(poThrow_Target,@GetCol);
+	  Send(oRoom,@NewHold,#what=self,#new_row=iRow,#new_col=iCol);
+	  
+   
+   
+	  return;
+   }
+   
+   %% Projectile stuff
+   GetProjectileIcon()
+   {
+	  return vrProjectileIcon;
+   }
+   
+   GetProjectileSpeed()
+   {
+	  return viProjectileSpeed;
+   }
+   
+   SendProjectileAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);   
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

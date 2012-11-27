@@ -61,7 +61,8 @@ messages:
 
    SetForSale()
    {
-      plFor_Sale = [$,[ SKID_SECOND_WIND ],$,$];
+      plFor_sale=[ [Create(&ThrowingAxe)],
+                    $,[SKID_SECOND_WIND,SKID_PROFICIENCY_THROW_WEAPON] ];
       return;
    }
 

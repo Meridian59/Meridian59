@@ -56,10 +56,14 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [Create(&ChainArmor),
+      plFor_sale = [ [
+					 Create(&PlateArmor,#price=9700),
+					 Create(&ChainArmor),
+					 Create(&KnightShield,#price=6000),
+					 Create(&MetalShield),
+                     Create(&LongSword,#price=1600),
                      Create(&Axe),
-                     Create(&Hammer),
-                     Create(&MetalShield)],
+                     Create(&Hammer)],
                      $,
                      [SID_MAGICSHIELD], $ ];
       return;

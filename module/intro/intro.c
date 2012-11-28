@@ -36,7 +36,7 @@ static POINT button_origin;      /* Upper left corner of button */
 
 static char *splash_filename = "resource\\splash.bgf";  // Splash screen bitmap
 static char *logo_filename   = "resource\\logo.bgf";    // Logo bgf file
-static char *splash_music    = "resource\\main.mid";    // Music file to play
+static char *splash_music    = "resource\\main.mp3";    // Music file to play
 
 static BYTE light_level;         // Light level for logo fade
 

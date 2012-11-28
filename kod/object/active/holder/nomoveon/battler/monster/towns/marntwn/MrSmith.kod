@@ -72,7 +72,9 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[ [Create(&LeatherArmor),
+      plFor_sale=[ [
+					Create(&ChainArmor),
+					Create(&LeatherArmor),
 					Create(&MetalShield),
 					Create(&WoodenShield),
 					Create(&Axe),

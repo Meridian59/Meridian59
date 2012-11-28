@@ -2254,8 +2254,6 @@
    HS_TOP_BOW = 32
    HS_BOTTOM_BOW = 33
    HS_LEGS = 41
-   % Same as legs
-   HS_WINGS = 41
    HS_EMBLEM = 51
    HS_SHIELD_BACK = 61
 

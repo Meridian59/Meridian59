@@ -13,6 +13,8 @@ AngelWings is Shield
 constants:
 
    include blakston.khd
+   
+   HS_WINGS = 41
 
 resources:
 

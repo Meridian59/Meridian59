@@ -20,7 +20,7 @@ resources:
    ThrowingAxe_icon_rsc = thwaxe.bgf
    ThrowingAxe_desc_rsc = \
    "Extremely sharp and deadly, this throwing axe is ready for war. "
-   "Any unfortunate being to face the sharp edge of this blade would surely meet their doom."
+   "Any unfortunate being to face the sharp edge of this blade would surely meet their doom. "
 
    ThrowingAxe_window_overlay_rsc = povthaxe.bgf
    ThrowingAxe_player_overlay = thwaxeov.bgf

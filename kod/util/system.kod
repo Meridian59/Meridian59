@@ -4767,39 +4767,40 @@ messages:
       plItemTemplates = cons(create(&Gauntlet),plItemTemplates);
       plItemTemplates = cons(create(&Torch),plItemTemplates);
 	  
+	  plItemTemplates = cons(create(&Money),plItemTemplates);
+	  
 	  %% Ammo
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeArrow),plItemTemplates);
 	  plItemTemplates = cons(create(&Arrow),plItemTemplates);
 	  
 	  %% Reagents
-      plItemTemplates = cons(create(&BlueDragonScale),plItemTemplates);
-      plItemTemplates = cons(create(&DarkAngelFeather),plItemTemplates);
-      plItemTemplates = cons(create(&Diamond),plItemTemplates);
-      plItemTemplates = cons(create(&Elderberry),plItemTemplates);
-      plItemTemplates = cons(create(&Emerald),plItemTemplates);
-      plItemTemplates = cons(create(&Fairywing),plItemTemplates);
-      plItemTemplates = cons(create(&Herbs),plItemTemplates);
-      plItemTemplates = cons(create(&Money),plItemTemplates);
-      plItemTemplates = cons(create(&BlueMushroom),plItemTemplates);
-      plItemTemplates = cons(create(&PurpleMushroom),plItemTemplates);
-      plItemTemplates = cons(create(&RedMushroom),plItemTemplates);
-      plItemTemplates = cons(create(&Mushroom),plItemTemplates);
-      plItemTemplates = cons(create(&OrcTooth),plItemTemplates);
-      plItemTemplates = cons(create(&Ruby),plItemTemplates);
-      plItemTemplates = cons(create(&Sapphire),plItemTemplates);
-      plItemTemplates = cons(create(&EntrootBerry),plItemTemplates);
-
+      plItemTemplates = cons(create(&YrxlSap),plItemTemplates);
       plItemTemplates = cons(create(&ShamanBlood),plItemTemplates);
-      plItemTemplates = cons(create(&UncutSeraphym),plItemTemplates);
       plItemTemplates = cons(create(&PolishedSeraphym),plItemTemplates);
+      plItemTemplates = cons(create(&UncutSeraphym),plItemTemplates);
       plItemTemplates = cons(create(&FireSand),plItemTemplates);
       plItemTemplates = cons(create(&DragonflyEye),plItemTemplates);
       plItemTemplates = cons(create(&KriipaClaw),plItemTemplates);
       plItemTemplates = cons(create(&Solagh),plItemTemplates);
       plItemTemplates = cons(create(&WebMoss),plItemTemplates);
-      plItemTemplates = cons(create(&YrxlSap),plItemTemplates);
       plItemTemplates = cons(create(&RainbowFern),plItemTemplates);
+	  
+      plItemTemplates = cons(create(&BlueDragonScale),plItemTemplates);
+      plItemTemplates = cons(create(&DarkAngelFeather),plItemTemplates);
+      plItemTemplates = cons(create(&Fairywing),plItemTemplates);
+      plItemTemplates = cons(create(&OrcTooth),plItemTemplates);
+      plItemTemplates = cons(create(&Ruby),plItemTemplates);
+      plItemTemplates = cons(create(&Diamond),plItemTemplates);
+      plItemTemplates = cons(create(&Sapphire),plItemTemplates);
+      plItemTemplates = cons(create(&Emerald),plItemTemplates);
+      plItemTemplates = cons(create(&EntrootBerry),plItemTemplates);
+      plItemTemplates = cons(create(&Elderberry),plItemTemplates);
+      plItemTemplates = cons(create(&Herbs),plItemTemplates);
+      plItemTemplates = cons(create(&PurpleMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&BlueMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&RedMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&Mushroom),plItemTemplates);
 	  
 	  %% Food
       plItemTemplates = cons(create(&Mint),plItemTemplates);
@@ -5012,7 +5013,7 @@ messages:
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
 	  
 	  % Edged
-      plItemTemplates = cons(create(&ThrowingAxe),plItemTemplates);
+      plItemTemplates = cons(create(&ThrowingAxe),plItemTemplates); %Open-source
       plItemTemplates = cons(create(&Axe),plItemTemplates);
 	  
 	  % Blunt

@@ -114,9 +114,11 @@ messages:
    {
       plFor_sale = [
            [
+			   Create(&SimpleHelm,#price=950),
 			   Create(&ScaleArmor),
 			   Create(&LeatherArmor),
 			   Create(&GoldShield),
+			   Create(&Scimitar,#price=2400),
 			   Create(&ShortSword),
 			   Create(&Hammer),
 			   Create(&Mace)

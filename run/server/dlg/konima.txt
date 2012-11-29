@@ -1,0 +1,39 @@
+send o 0 randomlibquote who class JealousGeneral mood i LIBRES_MOOD_NOT_BAD quote q ~kJonas says, "I've been researching the old Konima legends.  You know the stories of th
+send o 0 randomlibappend quote q e great Konima, don't you?"
+
+send o 0 speechlibtrigger who class JealousGeneral trigger q konima
+send o 0 speechlibquote who class JealousGeneral quote q ~kJonas says, "Konima was the greatest hero known to man.  His war party led a vicious a
+send o 0 speechlibappend quote q ssault on the Orc caves beyond the Western Twisted Forest.  Sixty warriors went in those
+send o 0 speechlibappend quote q  caves, none came back."
+
+send o 0 speechlibtrigger who class JealousGeneral trigger q caves
+send o 0 speechlibquote who class JealousGeneral quote q ~kJonas says, "Some say Konima still rages a war deep in the bowels of those caves.  Oth
+send o 0 speechlibappend quote q ers say Shal'ille still cries for the lost warrior.  Either way, he saved humankind from
+send o 0 speechlibappend quote q  the foul orcs."
+
+send o 0 randomlibquote who class DarkWizard mood i LIBRES_MOOD_NOT_GOOD quote q ~kMaleval says, "That old wizard Alzahakar believes that the Tokens have great power.  R
+send o 0 randomlibappend quote q eunite the tokens.  Ha!  He and his followers are on a fools errand."
+
+send o 0 randomlibquote who class FiveCouncilor quote q ~kEsseldi says, "Jonas D'Accor knows more than anybody about the old legends of Konima."
+send o 0 randomlibappend quote q 
+
+send o 0 randomlibquote who class FiveCouncilor quote q ~kEsseldi says, "History claims that the ancient Empire used to trade with us through th
+send o 0 randomlibappend quote q e Nexus near Castle Victoria. The Nexus was destroyed centuries ago. Now only trolls gua
+send o 0 randomlibappend quote q rd the stones that once marked the gateway."
+
+send o 0 randomlibquote who class TwoCouncilor quote q ~kBei Naq says, "Wealth of coin or token should not be brought together in a lump in you
+send o 0 randomlibappend quote q r home. There are better places to hoard your power."
+
+send o 0 randomlibquote who class Heretic quote q ~kMiriana sings, "~IOh, at a time not night, not day, when the stones stand up and dance
+send o 0 randomlibappend quote q  and play, with wicked grins of the hardest gray, gods take revenge on those who slay.~I
+send o 0 randomlibappend quote q "
+
+send o 0 randomlibquote who class ShalillePriestess quote q ~kPriestess Xiana says, "Legend has it that the gods martyred themselves out in the Holy
+send o 0 randomlibappend quote q  Land of Trolls when the Nexus collapsed hundreds of years ago."
+
+send o 0 randomlibquote who class JasperElder quote q ~kAfiera D'xor says, "Those councilors are trying to reopen the ancient Nexus with the t
+send o 0 randomlibappend quote q okens. I'm not so sure that's a good idea. Who knows what will happen when those tokens 
+send o 0 randomlibappend quote q are brought together? They ought to be ready to call the attention of the gods when that
+send o 0 randomlibappend quote q  happens."
+
+say Processed 10 quest triggers.

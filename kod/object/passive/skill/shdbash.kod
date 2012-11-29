@@ -1,0 +1,103 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShieldBash is Skill
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ShieldBash_name_rsc = "shield bash"
+   ShieldBash_icon_rsc = shdbashico.bgf
+   ShieldBash_desc_rsc = "Bash an opponent with a shield, often causing the enemy to recoil."
+   
+   ShieldBash_use_rsc = "You bash your %s%s into %s%s."
+   ShieldBash_use_target_rsc = "%s%s bashes their %s into you!"
+
+classvars:
+
+   vrName = ShieldBash_name_rsc
+   vrIcon = ShieldBash_icon_rsc
+   vrDesc = ShieldBash_desc_rsc
+
+   viSchool = SKS_FENCING
+   viSkill_num = SKID_SHIELD_BASH
+   viSkill_level = 4
+   viChance_to_increase = 30
+
+properties:
+
+   plPrerequisites = $
+   piSchool = 0
+
+   piChanceToIncrease = 100
+
+messages:
+
+   GetRequisiteStat(who=$)
+   {
+     return send(who,@GetMight);
+   }
+   
+   DoSkill(who=$,oTarget=$)
+   {
+      local iAbil, iDamage, oShield, oRoom;
+   
+      if (who=$)
+      {
+         debug("DoSkill called with bad who.");
+         return FALSE;
+      }
+
+	  oShield = Send(who,@LookupPlayerShield);
+	  oRoom = Send(who,@GetOwner);
+	  
+	  % Check if faction shield is on player's back
+	  if isClass(oShield,&SoldierShield)
+	  {
+		 if Send(oShield,@GetWindowOverlayHotspot) = 0
+		 {
+		    return FALSE;
+		 }
+	  }
+	  
+	  Send(oShield,@DefendingHit,#who=who,#what=oTarget);
+	  
+	  Send(who,@MsgSendUser,#message_rsc=ShieldBash_use_rsc,
+			#parm1=Send(oShield,@GetInDef),#parm2=Send(oShield,@GetName),
+			#parm3=Send(oTarget,@GetInDef),#parm4=Send(oTarget,@GetName));
+			
+	  if isClass(oTarget,&Player)
+	  {
+		 Send(oTarget,@MsgSendUser,#message_rsc=ShieldBash_use_target_rsc,
+			#parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=Send(oShield,@GetName));
+			
+	     % Get player's ability in this skill.
+	     iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
+	  
+	     % Chance to disrupt
+	     if iAbil > random(1,100)
+	     {
+		    send(oTarget,@BreakTrance,#event=EVENT_DISRUPT);
+	     }
+	  }
+	  
+	  % do some damage
+	  iDamage = random(1,4);
+	  Send(oTarget,@AssessDamage,#what=who,#damage=iDamage);
+	  Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=oShield);
+	  
+	  propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -55,6 +55,8 @@ resources:
    battler_avoid = "avoid"
    battler_avoids = "avoids"
 
+   battler_shield = "shield"
+
    battler_fail = "fails to damage"
    battler_nick = "nicks"
    battler_wound = "wounds"

@@ -81,7 +81,7 @@ messages:
    "Unarmed strokes may be performed even with a weapon in hand."
    "To be added, different animations for different attack types."
    {
-      send(who,@DoFistAttack);
+	  send(who,@DoFistAttack);
 
       return TRUE;
    }
@@ -104,6 +104,22 @@ messages:
       damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=$);
 
       return damage;
+   }
+   
+   CheckSpecial(who=$,victim=$)
+   "Check for shield bash!"
+   {
+	  % do a shield bash!
+      if Send(who,@LookupPlayerShield)
+	  {
+		 if Send(who,@HasSkill,#num=SKID_SHIELD_BASH)
+		 {
+			 Send(Send(SYS,@FindSkillByNum,#num=SKID_SHIELD_BASH),@DoSkill,#who=who,#oTarget=victim);
+			 return FALSE;
+		 }
+	  }
+   
+	  propagate;
    }
 
 end

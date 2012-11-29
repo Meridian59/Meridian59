@@ -3213,6 +3213,7 @@ messages:
 	   
 	   %Open-Source Skills
 	   Send(self,@CreateOneSKillIfNew,#num=SKID_BACKSTAB,#class=&Backstab);
+	   Send(self,@CreateOneSKillIfNew,#num=SKID_SHIELD_BASH,#class=&ShieldBash);
 	   Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_THROW_WEAPON,#class=&ThrowProficiency);
 
        return;

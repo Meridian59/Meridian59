@@ -244,6 +244,7 @@ resources:
    
    player_attack_out_of_range = "%s%s is too far away to hit with %s%s."
    player_attack_out_of_punch_range = "You can't reach %s%s with your %s."
+   player_attack_out_of_shield_range = "You can't reach %s%s with your shield."
    player_attack_out_of_spell_range = "%s%s is out of range."
    player_attack_not_in_view = "You can't see your selected target."
 
@@ -4443,7 +4444,7 @@ messages:
    % This is the type of damage done.
    GetDamageType(what = $, use_weapon = $)
    {
-      local oWeapon, oMonster;
+      local oWeapon, oMonster, oShield;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -5340,9 +5341,19 @@ messages:
          }
          else
          {
-            Send(self,@MsgSendUser,#message_rsc=player_attack_out_of_PUNCH_range,
-                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
-                 #parm3=Send(stroke_obj,@GetName));
+			% if unarmed with a shield, do shield bash message
+			if Send(self,@LookupPlayerShield)
+			{
+				Send(self,@MsgSendUser,#message_rsc=player_attack_out_of_SHIELD_range,
+					#parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+					#parm3=Send(stroke_obj,@GetName));
+			}
+			else
+			{
+				Send(self,@MsgSendUser,#message_rsc=player_attack_out_of_PUNCH_range,
+					#parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+					#parm3=Send(stroke_obj,@GetName));
+			}
          }
       }
       

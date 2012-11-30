@@ -31,7 +31,7 @@ classvars:
 
    viSchool = SKS_FENCING
    viSkill_num = SKID_SHIELD_BASH
-   viSkill_level = 4
+   viSkill_level = 5
    viChance_to_increase = 30
 
 properties:

@@ -41991,27 +41991,6 @@ R	creator_icon_tree 25844
 M	UserSay 14283
 P		string 14
 P		type 31
-C ShieldBash 14991 13074 Skill
-R	ShieldBash_name_rsc 30668
-R	ShieldBash_icon_rsc 30669
-R	ShieldBash_desc_rsc 30670
-R	ShieldBash_use_rsc 30676
-R	ShieldBash_use_target_rsc 30677
-V	vrName 0
-V	vrIcon 1
-V	vrDesc 2
-V	viSchool 14
-V	viSkill_num 13
-V	viSkill_level 15
-V	viChance_to_increase 16
-Y	plPrerequisites 2
-Y	piSchool 3
-Y	piChanceToIncrease 4
-M	DoSkill 13586
-P		who 10116
-P		oTarget 12851
-M	GetRequisiteStat 14457
-P		who 10116
 C Unarmed 14804 13707 Stroke
 R	unarmed_name_rsc 28483
 R	unarmed_icon_rsc 28484
@@ -42164,3 +42143,24 @@ M	SpecialTeachChecks 14251
 P		num 10041
 P		who 10116
 P		report 11807
+C ShieldBash 14991 13074 Skill
+R	ShieldBash_name_rsc 30668
+R	ShieldBash_icon_rsc 30669
+R	ShieldBash_desc_rsc 30670
+R	ShieldBash_use_rsc 30676
+R	ShieldBash_use_target_rsc 30677
+V	vrName 0
+V	vrIcon 1
+V	vrDesc 2
+V	viSchool 14
+V	viSkill_num 13
+V	viSkill_level 15
+V	viChance_to_increase 16
+Y	plPrerequisites 2
+Y	piSchool 3
+Y	piChanceToIncrease 4
+M	DoSkill 13586
+P		who 10116
+P		oTarget 12851
+M	GetRequisiteStat 14457
+P		who 10116

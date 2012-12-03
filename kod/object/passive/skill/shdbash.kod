@@ -62,7 +62,7 @@ messages:
 	  oRoom = Send(who,@GetOwner);
 	  
 	  % Check if shield can use skill.
-	  if Send(oShield,@CanShieldBash)
+	  if Send(oShield,@CanShieldBash) = FALSE
 	  {
 		 return FALSE;
 	  }
@@ -90,8 +90,13 @@ messages:
 	  
 	  % do some damage
 	  iDamage = random(1,4);
-	  Send(oTarget,@AssessDamage,#what=who,#damage=iDamage);
+	  Send(who,@DoHitMessageSound,#what=oTarget,#damage=iDamage,#stroke_obj=self);
 	  Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=oShield);
+	  
+	  if Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#report=FALSE) = $
+	  {
+		 Send(who,@KilledSomething,#what=oTarget,#use_weapon=self);
+	  }
 	  
 	  propagate;
    }

@@ -33045,27 +33045,6 @@ P		who 10116
 M	SuccessChance 14473
 P		who 10116
 P		modifier 14531
-C ShieldBash 14991 13074 Skill
-R	ShieldBash_name_rsc 30668
-R	ShieldBash_icon_rsc 30669
-R	ShieldBash_desc_rsc 30670
-R	ShieldBash_use_rsc 30676
-R	ShieldBash_use_target_rsc 30677
-V	vrName 0
-V	vrIcon 1
-V	vrDesc 2
-V	viSchool 14
-V	viSkill_num 13
-V	viSkill_level 15
-V	viChance_to_increase 16
-Y	plPrerequisites 2
-Y	piSchool 3
-Y	piChanceToIncrease 4
-M	DoSkill 13586
-P		who 10116
-P		oTarget 12851
-M	GetRequisiteStat 14457
-P		who 10116
 C SwordProficiency 10910 13829 Proficiency
 R	Swordproficiency_name_rsc 28452
 R	Swordproficiency_icon_rsc 28453
@@ -42170,3 +42149,24 @@ P		who 10116
 M	AttackedFromBehind 14982
 P		target 10121
 P		attacker 11827
+C ShieldBash 14991 13074 Skill
+R	ShieldBash_name_rsc 30668
+R	ShieldBash_icon_rsc 30669
+R	ShieldBash_desc_rsc 30670
+R	ShieldBash_use_rsc 30676
+R	ShieldBash_use_target_rsc 30677
+V	vrName 0
+V	vrIcon 1
+V	vrDesc 2
+V	viSchool 14
+V	viSkill_num 13
+V	viSkill_level 15
+V	viChance_to_increase 16
+Y	plPrerequisites 2
+Y	piSchool 3
+Y	piChanceToIncrease 4
+M	DoSkill 13586
+P		who 10116
+P		oTarget 12851
+M	GetRequisiteStat 14457
+P		who 10116

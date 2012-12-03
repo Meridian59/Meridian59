@@ -96,10 +96,10 @@ messages:
 			 iDamage = (iDamage * SHORTSWORD_BONUS) / 100;
 		 }
 		 
-         iDamage = Send(oTarget,@AssessDamage,#what=who,
-                        #damage=iDamage);
-
-         Send(who,@AssessHit,#what=oTarget,#damage=iDamage);
+         if Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#report=FALSE) = $
+		 {
+		     Send(who,@KilledSomething,#what=oTarget,#use_weapon=oWeapon);
+		 }
 	  
 		  propagate;
 	  }

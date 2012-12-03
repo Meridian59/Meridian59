@@ -19,6 +19,8 @@ constants:
    THROW = 1
    UNUSED = 2
    ATTACKING = 3
+   
+   DAMAGE_MULTIPLER = 2 %twice the damage 
 
 resources:
 
@@ -155,6 +157,34 @@ messages:
       AddPacket(1,ANIMATE_NONE,2,1);   
 
       return;
+   }
+   
+   GetDamage(target=$)
+   "Overwrite parent class"
+   {
+      local iDamage, i, oWeapAtt;
+
+      % First, get base damage.
+      iDamage = send(self,@GetBaseDamage);
+
+      % Then check weapon attributes
+      %  Weapon Attributes in general should only + or - damage - no multipliers!
+      for i in plItem_Attributes
+      {
+         oWeapAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if isClass(oWeapAtt,&WeaponAttribute)
+         {
+            iDamage = send(oWeapAtt,@ModifyDamage,#damage=iDamage,#wielder=poOwner,
+                           #target=target,#lData=i);
+         }
+      }
+
+      iDamage = iDamage + piDamageBonus;
+	  
+	  iDamage = iDamage * DAMAGE_MULTIPLER;
+
+
+      return iDamage;
    }
 
 end

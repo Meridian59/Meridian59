@@ -43,7 +43,7 @@ classvars:
    vrDesc = CircleHeal_desc_rsc
 
    viSpell_num = SID_CIRCLE_HEAL
-   viMana = 11
+   viMana = 15
    viSchool = SS_SHALILLE
    viSpell_level = 5
    

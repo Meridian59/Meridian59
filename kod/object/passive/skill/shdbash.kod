@@ -98,7 +98,8 @@ messages:
 		  }
 		  
 		  % do some damage
-		  iDamage = random(1,6);
+		  iDamage = Send(self,@GetDamage,#who=who,#oShield=oShield);
+		  
 		  Send(who,@DoHitMessageSound,#what=oTarget,#damage=iDamage,#stroke_obj=self);
 		  Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=oShield);
 		  
@@ -109,6 +110,18 @@ messages:
 	  }
 	  
 	  propagate;
+   }
+   
+   GetDamage(who = $, oShield = $)
+   {
+	  local iDamage, iBlockBonus;
+	  iBlockBonus = Send(oShield,@GetBlockAbility,#who=who);
+	  
+	  iDamage = iBlockBonus / 20;
+	  
+	  iDamage = random(1,bound(iDamage,1,10));
+	  
+	  return iDamage;
    }
 
 end

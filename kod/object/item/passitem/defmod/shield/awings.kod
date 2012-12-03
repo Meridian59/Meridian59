@@ -131,7 +131,7 @@ messages:
    
    CanShieldBash()
    {
-	  return FALSE:
+	  return FALSE;
    }
 
 end

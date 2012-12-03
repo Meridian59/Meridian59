@@ -833,10 +833,10 @@ messages:
    CanShieldBash()
    {
    
-	  if Send(oShield,@GetWindowOverlayHotspot) = 0
-	  {
-		 return FALSE;
-	  }
+      if piOverlayHotspot = HS_SHIELD_BACK
+      {
+         return FALSE;
+      }
 	  
 	  return TRUE;
    }

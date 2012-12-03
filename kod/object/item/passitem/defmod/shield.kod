@@ -229,7 +229,7 @@ messages:
    
    CanShieldBash()
    {
-	  return TRUE:
+	  return TRUE;
    }
 
 

@@ -42162,6 +42162,7 @@ V	viSchool 14
 V	viSkill_num 13
 V	viSkill_level 15
 V	viChance_to_increase 16
+V	viskillExertion 17
 Y	plPrerequisites 2
 Y	piSchool 3
 Y	piChanceToIncrease 4

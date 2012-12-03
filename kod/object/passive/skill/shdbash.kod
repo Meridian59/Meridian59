@@ -33,6 +33,8 @@ classvars:
    viSkill_num = SKID_SHIELD_BASH
    viSkill_level = 5
    viChance_to_increase = 30
+   
+   viskillExertion = 5
 
 properties:
 
@@ -67,35 +69,43 @@ messages:
 		 return FALSE;
 	  }
 	  
-	  Send(oShield,@DefendingHit,#who=who,#what=oTarget);
-	  
-	  Send(who,@MsgSendUser,#message_rsc=ShieldBash_use_rsc,
-			#parm1=Send(oShield,@GetInDef),#parm2=Send(oShield,@GetName),
-			#parm3=Send(oTarget,@GetInDef),#parm4=Send(oTarget,@GetName));
-			
-	  if isClass(oTarget,&Player)
-	  {
-		 Send(oTarget,@MsgSendUser,#message_rsc=ShieldBash_use_target_rsc,
-			#parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=Send(oShield,@GetName));
-			
-	     % Get player's ability in this skill.
-	     iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
-	  
-	     % Chance to disrupt
-	     if iAbil > random(1,100)
-	     {
-		    send(oTarget,@BreakTrance,#event=EVENT_DISRUPT);
-	     }
-	  }
-	  
-	  % do some damage
-	  iDamage = random(1,4);
-	  Send(who,@DoHitMessageSound,#what=oTarget,#damage=iDamage,#stroke_obj=self);
-	  Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=oShield);
-	  
-	  if Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#report=FALSE) = $
-	  {
-		 Send(who,@KilledSomething,#what=oTarget,#use_weapon=self);
+	  % Check can pay costs
+      if Send(self,@CanPayCosts,#who=who,#oTarget=oTarget)
+      {
+		  % Vigor costs
+		  Send(who,@AddExertion,#amount=(1000*viSkillExertion));
+		  
+		  % Do shield's block animation
+		  Send(oShield,@DefendingHit,#who=who,#what=oTarget);
+		  
+		  Send(who,@MsgSendUser,#message_rsc=ShieldBash_use_rsc,
+				#parm1=Send(oShield,@GetInDef),#parm2=Send(oShield,@GetName),
+				#parm3=Send(oTarget,@GetInDef),#parm4=Send(oTarget,@GetName));
+				
+		  if isClass(oTarget,&Player)
+		  {
+			 Send(oTarget,@MsgSendUser,#message_rsc=ShieldBash_use_target_rsc,
+				#parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=Send(oShield,@GetName));
+				
+			 % Get player's ability in this skill.
+			 iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
+		  
+			 % Chance to disrupt
+			 if iAbil > random(1,100)
+			 {
+				send(oTarget,@BreakTrance,#event=EVENT_DISRUPT);
+			 }
+		  }
+		  
+		  % do some damage
+		  iDamage = random(1,6);
+		  Send(who,@DoHitMessageSound,#what=oTarget,#damage=iDamage,#stroke_obj=self);
+		  Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=oShield);
+		  
+		  if Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#report=FALSE) = $
+		  {
+			 Send(who,@KilledSomething,#what=oTarget,#use_weapon=self);
+		  }
 	  }
 	  
 	  propagate;

@@ -226,6 +226,11 @@ messages:
       
       return;
    }
+   
+   CanShieldBash()
+   {
+	  return TRUE:
+   }
 
 
 end

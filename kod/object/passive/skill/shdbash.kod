@@ -61,13 +61,10 @@ messages:
 	  oShield = Send(who,@LookupPlayerShield);
 	  oRoom = Send(who,@GetOwner);
 	  
-	  % Check if faction shield is on player's back
-	  if isClass(oShield,&SoldierShield)
+	  % Check if shield can use skill.
+	  if Send(oShield,@CanShieldBash)
 	  {
-		 if Send(oShield,@GetWindowOverlayHotspot) = 0
-		 {
-		    return FALSE;
-		 }
+		 return FALSE;
 	  }
 	  
 	  Send(oShield,@DefendingHit,#who=who,#what=oTarget);

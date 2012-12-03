@@ -297,6 +297,11 @@ messages:
       % To prevent cheesy working of Mend by using/unusing torch repeatedly.
       return FALSE;
    }
+   
+   CanShieldBash()
+   {
+	  return FALSE:
+   }
 
 
 end

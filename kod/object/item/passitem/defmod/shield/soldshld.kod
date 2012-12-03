@@ -829,6 +829,17 @@ messages:
 
       return;
    }
+   
+   CanShieldBash()
+   {
+   
+	  if Send(oShield,@GetWindowOverlayHotspot) = 0
+	  {
+		 return FALSE;
+	  }
+	  
+	  return TRUE;
+   }
 
 
 end

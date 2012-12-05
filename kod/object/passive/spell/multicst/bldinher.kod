@@ -126,8 +126,29 @@ messages:
 		 
 		 return;
       }
+	  
+      if iRandom = 4
+      {
+		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_BONKER),@AddToItem,#oItem=First(lTargets));
+		 
+		 return;
+      }
+	  
+      if iRandom = 5
+      {
+		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_TWISTER),@AddToItem,#oItem=First(lTargets));
+		 
+		 return;
+      }
+	  
+      if iRandom = 6
+      {
+		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_SPELLCASTER),@AddToItem,#oItem=First(lTargets));
+		 
+		 return;
+      }
 
-      if iRandom >= 4
+      if iRandom >= 7
       {
 		 Send(Send(SYS,@FindItemAttByNum,#Num=WA_ATTACKSPELLTYPE),@AddToItem,#oItem=first(lTargets),#state1=ATCK_SPELL_UNHOLY,#timer_duration = send(self,@getDuration,#iSpellPower=iSpellPower));
 		 

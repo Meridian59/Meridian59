@@ -66,9 +66,10 @@ messages:
       }
       else
       {
-		 % Does not work with blunt weapons.
+		 % Does not work with blunt weapons or bows
          if Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_MACE OR 
-		    Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_HAMMER
+		    Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_HAMMER OR
+		    Send(oWeapon,@GetProfNumber) = SKID_PROFICIENCY_BOW
 		 {
 			 return FALSE;
 		 }
@@ -96,10 +97,10 @@ messages:
 			 iDamage = (iDamage * SHORTSWORD_BONUS) / 100;
 		 }
 		 
-         if Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#report=FALSE) = $
-		 {
-		     Send(who,@KilledSomething,#what=oTarget,#use_weapon=oWeapon);
-		 }
+         iDamage = Send(oTarget,@AssessDamage,#what=who,
+                        #damage=iDamage);
+
+         Send(who,@AssessHit,#what=oTarget,#damage=iDamage);
 	  
 		  propagate;
 	  }

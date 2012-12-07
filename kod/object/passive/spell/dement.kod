@@ -37,7 +37,7 @@ classvars:
    viSpell_num = SID_DEMENT
    viSchool = SS_RIIJA
    viSpell_level = 5
-   viMana = 6
+   viMana = 16
    viChance_To_Increase = 30
 
    viOutlaw = TRUE

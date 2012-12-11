@@ -15,6 +15,8 @@ constants:
    include blakston.khd
 
    TRANCE_TIME = 30000
+   
+   NODE_RANGE = 5
 
 resources:
 
@@ -22,8 +24,8 @@ resources:
    Elusion_icon_rsc = ielusion.bgf
    Elusion_desc_rsc = \
       "Allows the caster to elude trouble and escape off to another location.  "
-      "A number of destinations may be available, and the caster must call out "
-      "the name of the location he wishes to travel to.  "
+      "Using the magical bond between you and your mana nodes, this allows the user to transport to the exact spot to which the mana node was found. "
+	  "The caster must call out the name of the location he wishes to travel to. "
       "Requires the claws of the fearsome kriipa to cast."
 
    Elusion_No_Location_Given = "With no location specified your elusion attempt fails."
@@ -37,6 +39,10 @@ resources:
 
    % Yeah, it's Illusionary wounds sound, but it fits.  Plus, Ill. Wounds wasn't using it anymore.
    Elusion_sound = riluswnd.wav
+   
+   Elusion_no_node = "You may only elude using the power of a nearby mana node."
+   
+   Elusion_no_bonds = "You don't have any bonded nodes to travel to."
 
 classvars:
 
@@ -57,8 +63,6 @@ classvars:
 
 properties:
 
-   % If true, can cast elusion from any room.  Otherwise it's limited.
-   pbCanCastFromAnywhere = FALSE
 
 messages:
 
@@ -72,7 +76,7 @@ messages:
 
    CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
    {
-      local oRoom, iRoomNum;
+      local oRoom, oNode, iNodeList, iRoomNum;
 
       % Can't cast just after attacking someone
       if Send(who, @GetLastPlayerAttackTime) + 
@@ -81,30 +85,24 @@ messages:
       {
          Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
          return FALSE;
-      }         
-
-      if pbCanCastFromAnywhere
-      {
-         propagate;
       }
 
-      % Can only cast from certain rooms.  This was added because being
-      % able to escapt from anywhere was too powerful.
-
-      oRoom = Send(who, @GetOwner);
-      iRoomNum = Send(oRoom, @GetRoomNum);
-
-      if (iRoomNum <> RID_TOS AND iRoomNum <> RID_MARION AND
-          iRoomNum <> RID_BARLOQUE AND iRoomNum <> RID_CORNOTH AND
-          iRoomNum <> RID_JASPER AND iRoomNum <> RID_KOC_INN)
-      {
-         % In your guild hall?
-         if oRoom <> Send(who, @GetGuildHall)
-         {
-            Send(who, @MsgSendUser, #message_rsc = Elusion_cant_cast_here);
-            return FALSE;
-         }
-      }
+	  % look for a nearby mana node
+	  oRoom = send(who,@GetOwner);
+	  oNode = Send(oRoom,@FindHolding,#class=&ManaNode);
+	  
+	  if oNode = $ OR
+		 Send(who,@SquaredDistanceTo,#what=oNode) > (NODE_RANGE * NODE_RANGE)
+	  {
+         Send(who, @MsgSendUser, #message_rsc = Elusion_no_node);
+         return FALSE;
+	  }
+	  
+	  if Send(who,@GetNodeList) = 0
+	  {
+         Send(who, @MsgSendUser, #message_rsc = Elusion_no_bonds);
+         return FALSE;
+	  }
       
       propagate;
    }
@@ -149,9 +147,9 @@ messages:
       lAllTargets = lTargets;
 
       % Special bonus!  Warp to guild hall with high enough spellpower.
-      %  Spellpower has to be high enough that you were already going to 5
+      %  Spellpower has to be high enough that you were already going to 6
       %  or more places.
-      if length(lTargets) >= 5
+      if length(lTargets) >= 6
       {
          oGuildHall = Send(who, @GetGuildHall);
 
@@ -187,38 +185,40 @@ messages:
 
    GetLocations(iSpellpower=$,target=$)
    {
-      local lLocations, lAvailable, iNumLocations, oRoom, sLocations;
+      local i, iNodeList, oNode, oNodeRoom, lLocations;
+	  
+	  lLocations = $;
+	  
+	  iNodeList = send(target,@GetNodeList);
+	  
+      i = 1;
 
-      lLocations = [send(SYS,@FindRoomByNum,#num=RID_TOS),
-                    send(SYS,@FindRoomByNum,#num=RID_MARION),
-                    send(SYS,@FindRoomByNum,#num=RID_BARLOQUE),
-                    send(SYS,@FindRoomByNum,#num=RID_CORNOTH),
-                    send(SYS,@FindRoomByNum,#num=RID_JASPER)];
-                    
-      lAvailable = $;
-
-      % By dividing by 16, this means we need 96+ spellpower to get the Kocatan option.
-      iNumLocations = bound(iSpellPower/16,1,6);
-
-      if send(send(target,@GetOwner),@GetRegion) = RID_KOCATAN
-         OR iNumLocations = 6
+      while i <= NODE_MAX_VALUE
       {
-         lAvailable = cons(send(SYS,@FindRoomByNum,#num=RID_KOC_INN),lAvailable);
-         iNumLocations = iNumLocations - 1;
+         if iNodeList & i
+         {
+            oNode = Send(SYS,@FindNodeByNum,#num=i);
+			
+			% Following are nodes we do not want users to teleport to
+			if i = NODE_Q OR
+			   i = NODE_CORPSENODE OR
+			   i = NODE_GUEST
+			{
+			   break;
+			}
+			
+			oNodeRoom = Send(oNode,@GetOwner);
+			
+			if oNodeRoom <> $ 
+			{
+			   lLocations = cons(Send(SYS,@FindRoomByNum,#num=Send(oNodeRoom,@GetRoomNum)),lLocations);
+			}
+         }
+         
+         i = 2 * i;
       }
 
-      while iNumLocations > 0
-      {
-         % Make these completely random, since we're just escaping to somewhere ...anywhere... else.
-      
-         oRoom = Nth(lLocations,random(1,length(lLocations)));
-         lAvailable = cons(oRoom,lAvailable);
-         lLocations = DelListElem(lLocations,oRoom);
-
-         iNumLocations = iNumLocations - 1;
-      }
-
-      return lAvailable;
+      return lLocations;
    }
 
    GetLocationsString(lLocations=$)
@@ -244,7 +244,7 @@ messages:
             else
             {
                AppendTempString(send(i,@GetName));
-               AppendTempString(", ");
+               AppendTempString("; ");
             }
          }
          else

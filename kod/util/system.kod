@@ -2998,6 +2998,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SOUL_BIND,#class=&SoulBind);
       Send(self,@CreateOneSpellIfNew,#num=SID_DISORIENT,#class=&Disorient);
       Send(self,@CreateOneSpellIfNew,#num=SID_DEATH_NOTE,#class=&DeathNote);
+      Send(self,@CreateOneSpellIfNew,#num=SID_BARD_ESCAPE,#class=&BardEscape);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

@@ -15,7 +15,7 @@ constants:
 
 resources:
 
-   dmrescue_name_rsc = "deliverance"
+   dmrescue_name_rsc = "dm rescue"
    dmrescue_icon_rsc = light.bgf
    
 classvars:

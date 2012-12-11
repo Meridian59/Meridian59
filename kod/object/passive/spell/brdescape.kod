@@ -1,0 +1,277 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BardEscape is Spell
+
+constants:
+
+   include blakston.khd
+
+   TRANCE_TIME = 30000
+
+resources:
+
+   BardEscape_name_rsc = "deliverance"
+   BardEscape_icon_rsc = ideliverance.bgf
+   BardEscape_desc_rsc = \
+      "Allows a bard to whisk away from trouble and escape off to another location.  "
+      "A number of destinations may be available, and the caster must call out "
+      "the name of the location he wishes to travel to.  "
+      "Requires rubies to cast."
+
+   BardEscape_No_Location_Given = "With no location specified your deliverance attempt fails."
+   BardEscape_Success = "The world folds in on itself."
+   BardEscape_Location_list = "The world shimmers and secret paths are revealed, leading to %q."
+   BardEscape_fail = "That is not a valid destination."
+   BardEscape_cant_cast_here = \
+       "You may only cast this spell from a place you can teleport to."
+
+   BardEscape_and = "and "
+
+   % Yeah, it's Illusionary wounds sound, but it fits.  Plus, Ill. Wounds wasn't using it anymore.
+   BardEscape_sound = riluswnd.wav
+
+classvars:
+
+   vrName = BardEscape_name_rsc
+   vrIcon = BardEscape_icon_rsc
+   vrDesc = BardEscape_desc_rsc
+
+   viSpell_num = SID_BARD_ESCAPE
+   viSchool = SS_JALA
+   viSpell_level = 6
+   viMana = 25
+   viSpellExertion = 50
+
+   viChance_To_Increase = 10
+
+   vrSucceed_wav = BardEscape_sound
+   viFlash = FLASH_GOOD
+
+properties:
+
+   % If true, can cast Deliverance from any room.  Otherwise it's limited.
+   pbCanCastFromAnywhere = FALSE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Ruby,2],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local oRoom, iRoomNum;
+
+      % Can't cast just after attacking someone
+      if Send(who, @GetLastPlayerAttackTime) + 
+         Send(Send(SYS, @GetSettings), @TeleportAttackDelaySec) >
+         GetTime()
+      {
+         Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
+         return FALSE;
+      }         
+
+      if pbCanCastFromAnywhere
+      {
+         propagate;
+      }
+
+      % Can only cast from certain rooms.  This was added because being
+      % able to escapt from anywhere was too powerful.
+
+      oRoom = Send(who, @GetOwner);
+      iRoomNum = Send(oRoom, @GetRoomNum);
+
+      if (iRoomNum <> RID_TOS AND iRoomNum <> RID_MARION AND
+          iRoomNum <> RID_BARLOQUE AND iRoomNum <> RID_CORNOTH AND
+          iRoomNum <> RID_JASPER AND iRoomNum <> RID_KOC_INN)
+      {
+         % In your guild hall?
+         if oRoom <> Send(who, @GetGuildHall)
+         {
+            Send(who, @MsgSendUser, #message_rsc = BardEscape_cant_cast_here);
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
+
+   GetTranceTime(iSpellpower=0,who=$)
+   {
+      % Since this spell uses the trance, don't scale it down depending on iSpellpower
+      return viCast_time;
+   }
+
+   BeginCastingTrance(who=$,lTargets=$,iSpellpower=$)
+   {
+      local oTrance, lLocations, sLocations;
+
+      %%Get rid of the regular casting trance, we need a special one put on below.
+      send(who,@BreakTrance,#event=EVENT_STEER);  
+
+      oTrance = send(SYS,@FindSpellByNum,#num=SID_TRANCE);
+
+      lLocations = send(self,@GetLocations,#iSpellpower=iSpellpower,#target=who);
+      
+      sLocations = send(self,@GetLocationsString,#lLocations=lLocations);
+      send(who,@MsgSendUser,#message_rsc=BardEscape_location_list,#parm1=sLocations);
+
+      % lTargets is of the form = [location1, location2,...]
+      send(oTrance,@BeginCastingTrance,#what=self,#who=who,#lTargets=lLocations,#time=TRANCE_TIME);
+
+      propagate;
+   }
+
+   SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
+   {
+      local lAllTargets, oGuildHall, sRoomName, bFound, oRoom;
+
+      % Check if string is a location.  If it is, and the caster has sufficent spellpower make 
+      %   it the target.  Get percent in the target spell.  If not there or fail check bail and print failure.
+
+      send(who,@BreakTrance,#event=EVENT_STEER);  %% don't print fizzle message
+
+      bFound = FALSE;
+
+      lAllTargets = lTargets;
+
+      % Special bonus!  Warp to guild hall with high enough spellpower.
+      %  Spellpower has to be high enough that you were already going to 5
+      %  or more places.
+      if length(lTargets) >= 5
+      {
+         oGuildHall = Send(who, @GetGuildHall);
+
+         if oGuildHall <> $
+         {
+            lAllTargets = cons(oGuildHall,lAllTargets);
+         }
+      }
+
+      for oRoom in lAllTargets
+      {
+         sRoomName = send(oRoom,@GetName);
+         if StringContain(string,sRoomName)
+         {
+            bFound = TRUE;
+            post(oRoom,@Teleport,#what=who);
+            
+            break;
+         }
+      }
+
+      if bFound
+      { 
+         send(who,@MsgSendUser,#message_rsc=BardEscape_success); 
+      }
+      else
+      {
+         send(who,@MsgSendUser,#message_rsc=BardEscape_fail);
+      }
+
+      return;
+   } 
+
+   GetLocations(iSpellpower=$,target=$)
+   {
+      local lLocations, lAvailable, iNumLocations, oRoom, sLocations;
+
+      lLocations = [send(SYS,@FindRoomByNum,#num=RID_TOS),
+                    send(SYS,@FindRoomByNum,#num=RID_MARION),
+                    send(SYS,@FindRoomByNum,#num=RID_BARLOQUE),
+                    send(SYS,@FindRoomByNum,#num=RID_CORNOTH),
+                    send(SYS,@FindRoomByNum,#num=RID_JASPER)];
+                    
+      lAvailable = $;
+
+      % By dividing by 16, this means we need 96+ spellpower to get the Kocatan option.
+      iNumLocations = bound(iSpellPower/16,1,6);
+
+      if send(send(target,@GetOwner),@GetRegion) = RID_KOCATAN
+         OR iNumLocations = 6
+      {
+         lAvailable = cons(send(SYS,@FindRoomByNum,#num=RID_KOC_INN),lAvailable);
+         iNumLocations = iNumLocations - 1;
+      }
+
+      while iNumLocations > 0
+      {
+         % Make these completely random, since we're just escaping to somewhere ...anywhere... else.
+      
+         oRoom = Nth(lLocations,random(1,length(lLocations)));
+         lAvailable = cons(oRoom,lAvailable);
+         lLocations = DelListElem(lLocations,oRoom);
+
+         iNumLocations = iNumLocations - 1;
+      }
+
+      return lAvailable;
+   }
+
+   GetLocationsString(lLocations=$)
+   {
+      local i, iNumRooms, sString, iCounter;
+
+      ClearTempString();
+      iCounter = 0;
+
+      iNumRooms = length(lLocations);
+
+      for i in lLocations
+      {
+         iCounter = iCounter + 1;
+
+         if iNumRooms > 1
+         {
+            if iCounter = iNumRooms
+            {
+               AppendTempString(BardEscape_and);
+               AppendTempString(send(i,@GetName));
+            }
+            else
+            {
+               AppendTempString(send(i,@GetName));
+               AppendTempString(", ");
+            }
+         }
+         else
+         {
+            AppendTempString(send(i,@GetName));
+         }
+
+      }    
+
+      sString = CreateString();
+      sString = GetTempString();
+      
+      return sString;
+   }
+
+   DoubleCheckAfterTrance(who=$,lTargets=$)
+   {
+      send(who,@MsgSendUser,#message_rsc=BardEscape_No_Location_Given);        
+             
+      return;
+   }
+
+   SpellBannedInArena()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

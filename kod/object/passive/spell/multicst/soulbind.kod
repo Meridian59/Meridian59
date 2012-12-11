@@ -77,7 +77,7 @@ messages:
       plReagents = $;
       plReagents = Cons([&PolishedSeraphym,50],plReagents);
       plReagents = Cons([&Diamond,50],plReagents);
-      plReagents = Cons([&Heartstone,4],plReagents);
+      plReagents = Cons([&Heartstone,1],plReagents);
 
       return;
    }

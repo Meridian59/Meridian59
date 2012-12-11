@@ -2025,6 +2025,7 @@
    SID_SOUL_BIND = 208
    SID_DISORIENT = 209
    SID_DEATH_NOTE = 210
+   SID_BARD_ESCAPE = 211
 
    % No sids above 400 to keep spell IDs unique from skill IDs!
 

@@ -47,7 +47,7 @@ classvars:
    viAttributes = MOB_NOMOVE 
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
    viLevel = 50
-   viDifficulty = 5
+   viDifficulty = 10
    viKarma = 0
    
    vrSound_hit = GiantEyeball_sound_hit

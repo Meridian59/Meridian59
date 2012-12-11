@@ -26,6 +26,6 @@ BOFS = heal.bof atakspel.bof rescue.bof earthqua.bof \
        sweep.bof mysttch.bof relay.bof distill.bof \
        dazzle.bof purge.bof elusion.bof walspell.bof \
 	   creascrl.bof circleheal.bof bond.bof \
-	   conveyance.bof riijaeye.bof disort.bof dthnote.bof
+	   conveyance.bof riijaeye.bof disort.bof dthnote.bof brdescape.bof
 
 !include $(KODDIR)\kod.mak

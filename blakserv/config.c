@@ -123,8 +123,8 @@ config_table_type config_table[] =
 { CREDIT_ADMIN,           T, "Admin",         CONFIG_INT,   "25" },
 
 { SESSION_GROUP,          F, "[Session]",     CONFIG_GROUP, "" },
-{ SESSION_MAX_ACTIVE,     T, "MaxActive",     CONFIG_INT,   "10" },
-{ SESSION_MAX_CONNECT,    F, "MaxConnect",    CONFIG_INT,   "20" },
+{ SESSION_MAX_ACTIVE,     T, "MaxActive",     CONFIG_INT,   "300" },
+{ SESSION_MAX_CONNECT,    F, "MaxConnect",    CONFIG_INT,   "300" },
 { SESSION_BUSY,           F, "Busy",          CONFIG_STR,
      "Too many people are logged on right now; please try again later." },
 

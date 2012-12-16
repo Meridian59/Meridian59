@@ -12491,8 +12491,8 @@ messages:
    %
    
    DrankBetaPotion()
-   {	  
-      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
+   {
+      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) OR isClass(self,&Guest)
       {
 		 pbDrankBetaPotion = TRUE;
 		 return TRUE;

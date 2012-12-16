@@ -93,6 +93,15 @@ messages:
    ReqUseSomething(what = $)
    "Overwrite parent class, this allows player to equip both shields and angel wings."
    {
+	 local oSoldierShield;
+   
+     oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
+	 % Sling it on the back if it's there.
+	 if oSoldierShield <> $
+	 {
+		send(oSoldierShield,@SlingOnBack);
+	 }
+   
       if isClass(what,&AngelWings)
       {
          if not send(poOwner,@TryUnuseItem,#what=self)
@@ -132,6 +141,11 @@ messages:
    CanShieldBash()
    {
 	  return FALSE;
+   }
+   
+   GetBaseSpellModifier(oSpell=$)
+   {
+      return 5;
    }
 
 end

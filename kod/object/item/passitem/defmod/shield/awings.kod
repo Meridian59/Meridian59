@@ -86,6 +86,20 @@ messages:
       Send(poOwner,@NewMaxMana,#amount=-piMana_change);
 
       piMana_change = 0;
+	  
+	  % Change colour based on karma.
+	  if piItem_Flags = 0 OR
+		piItem_Flags = 116
+	  {
+		 if Send(poOwner,@GetKarma) < 0
+         {
+            piItem_Flags = 0;
+         }
+	     else
+	     {
+	        piItem_Flags = 116;
+	     }
+	  }
 
       propagate;
    }

@@ -82,7 +82,6 @@ messages:
 
    SendFirstTimeAppeal()
    {
-	  Post(self,@MsgSendUser,#message_rsc=guest_welcome);
    
       return;
    }
@@ -102,6 +101,8 @@ messages:
       piHealth = piBase_max_health;
       Send(self,@NewHealth);
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
+	  
+	  Post(self,@MsgSendUser,#message_rsc=guest_welcome);
 
 
       propagate;

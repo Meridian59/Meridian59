@@ -41861,29 +41861,6 @@ M	SetSaveLocation 14405
 P		row 10025
 P		col 10026
 P		rid 11433
-C guest 20 1 User
-R	guest_cant_broadcast 25668
-R	guest_cant_send_non_guest 25669
-R	guest_welcome 30690
-M	UserLogon 2
-M	IsFirstTime 28
-M	CheckPlayerFlag 10312
-P		flag 10313
-M	PlayerNewCharInfo 10981
-M	ReceiveNestedMail 11488
-M	AddDefaultSpells 13643
-M	AddDefaultObjects 13646
-M	SetInitialHomeroom 13647
-M	TryBroadcast 13681
-M	TrySayGroup 13682
-P		users 12832
-M	UserGotoDeadRoom 13856
-M	SendFirstTimeAppeal 14262
-M	UserLogonSetPosition 14268
-M	UserMail 14285
-M	UserGetNewMail 14286
-M	LoadMailNews 14343
-M	ReceiveMail 14383
 C DM 32 1 User
 R	dm_module 25670
 R	dm_login 25671
@@ -42228,3 +42205,26 @@ R	creator_icon_tree 25844
 M	UserSay 14283
 P		string 14
 P		type 31
+C guest 20 1 User
+R	guest_cant_broadcast 25668
+R	guest_cant_send_non_guest 25669
+R	guest_welcome 30690
+M	UserLogon 2
+M	IsFirstTime 28
+M	CheckPlayerFlag 10312
+P		flag 10313
+M	PlayerNewCharInfo 10981
+M	ReceiveNestedMail 11488
+M	AddDefaultSpells 13643
+M	AddDefaultObjects 13646
+M	SetInitialHomeroom 13647
+M	TryBroadcast 13681
+M	TrySayGroup 13682
+P		users 12832
+M	UserGotoDeadRoom 13856
+M	SendFirstTimeAppeal 14262
+M	UserLogonSetPosition 14268
+M	UserMail 14285
+M	UserGetNewMail 14286
+M	LoadMailNews 14343
+M	ReceiveMail 14383

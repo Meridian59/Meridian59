@@ -21,7 +21,7 @@ resources:
          "A successfully blocked blow will be more damaging to the attacking weapon and to the "
          "defending shield."
 
-   Block_skill_intro = "Weaponcraft Lv. 1: The ability to block blows in combat, and thus stay alive longer."
+   Block_skill_intro = "Weaponcraft Lv. 2: The ability to block blows in combat, and thus stay alive longer."
 
 classvars:
 
@@ -36,7 +36,7 @@ classvars:
 
    viSkill_num = SKID_BLOCK
    viSchool = SKS_FENCING
-   viSkill_Level = 1
+   viSkill_Level = 2
    viChance_to_Increase = 60
 
    viSkillExertion = 0

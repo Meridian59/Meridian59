@@ -101,7 +101,7 @@ messages:
 
       piHealth = piBase_max_health;
       Send(self,@NewHealth);
-      Send(self,@setplayerflag,#flag=PFLAG_PKILL_ENABLE,#value=True);
+      Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
 
 
       propagate;

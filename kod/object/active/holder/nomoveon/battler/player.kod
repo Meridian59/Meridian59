@@ -12510,12 +12510,15 @@ messages:
    
    BetaPotionSay(string = $)
    {
-	  local iSchool, iLevel, iLearnPoints, iMaxLearnPoints;
+	  local iSchool, iLevel, iLearnPoints, iMaxLearnPoints, oItem, oItemAtt, oRobe, iItemDuration;
 	  
 	  iSchool = 0;
 	  iLevel = 0;
 	  iLearnPoints = 0;
 	  iMaxLearnPoints = 0;
+	  
+	  oItemAtt = send(SYS,@FindItemAttByNum,#Num=IA_MADE);
+	  iItemDuration = 60 * 60 * 1000;
 
 	  iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
 		  (Send(self,@GetRawIntellect) * 2) / 5;
@@ -12529,6 +12532,7 @@ messages:
 		 % 10 is used for weaponcraft
 		 if iSchool = SKS_FENCING
 		 {
+		 
 			 send(self,@GivePlayerAllSkills,#school=iSchool,#level=iLevel,#upto=TRUE);
 		 }
 		 else
@@ -12556,9 +12560,26 @@ messages:
 				 piKarma = -100000;
 				 Send(self,@NewKarma);
 			 }
+			 
+			 % Give robe of that school
+			 oItem = Create(&DiscipleRobe,#school=iSchool);
+			 send(oItemAtt,@AddtoItem,#oitem=oItem,#timer_duration=(iItemDuration));
+			 
+			 oRobe = Send(self,@FindHolding,#class=&DiscipleRobe);
+			 if oRobe = $
+			 {
+				 Send(self,@NewHold,#what=oItem);
+			 }
+			 else
+			 {
+			    if Send(oRobe,@GetSchool) <> iSchool
+			    {
+				    Send(self,@NewHold,#what=oItem);
+			    }
+			 }
+			 
+			 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#upto=TRUE);
 		 }
-
-		 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#upto=TRUE);
 		 
 		 iLearnPoints = Send(self,@GetTotalLearnPoints,#except=0);
 		 send(self,@MsgSendUser,#message_rsc=player_LearnPoints,#parm1=iLearnPoints,#parm2=iMaxLearnPoints);
@@ -12567,6 +12588,9 @@ messages:
 		 % only time it will go over if its a DM
 		 if iLearnPoints >= iMaxLearnPoints
 		 {
+			 % Give reagents for spells
+			 Post(self,@AddReagentsForSpells,#iNumCasts=3);
+			 
 			 pbDrankBetaPotion = FALSE;
 			 return TRUE;
 		 }

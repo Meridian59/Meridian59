@@ -19,6 +19,10 @@ resources:
    guest_cant_broadcast = "Only regular players may broadcast messages."
 
    guest_cant_send_non_guest = "Only regular players may send messages to the real world."
+   
+   guest_welcome = "~B~rYou are currently logged in as a guest. This character is only temporary, "
+				   "dying or logging off will delete your character permanently. "
+				   "You have been given a beta potion for your survival here on the island. Enjoy!"
 
 classvars:
 
@@ -29,7 +33,7 @@ messages:
 
    UserLogonSetPosition()
    {
-      Send(self,@AdminGotoSafety);
+      Send(Send(SYS,@FindRoomByNum,#num=RID_JUNGLE_TRADING_POST),@Teleport,#what=self);
 
       return;
    }
@@ -42,27 +46,10 @@ messages:
       propagate;
    }
 
-   SetRandomHomeroom()
-   {
-      %debug("setrandomhomeroom");
-      piHomeroom = RID_GUEST1;
-      return;
-   }
-
-   SetInitialHomeroom()
-   {
-      piHomeroom = RID_GUEST1;
-      return;
-   }
-
-   GetInitialRoomID()
-   {
-      return RID_GUEST1;
-   }
-
    UserGotoDeadRoom()
    {
-      Send(self,@TeleportTo,#RID=RID_GUEST1);
+	  % Guests have a perm death
+      Post(self,@PerformSuicide);
 
       return;
    }
@@ -95,6 +82,8 @@ messages:
 
    SendFirstTimeAppeal()
    {
+	  Post(self,@MsgSendUser,#message_rsc=guest_welcome);
+   
       return;
    }
 
@@ -138,29 +127,12 @@ messages:
    {
       return;
    }
-      
-   AddDefaultSpells()
-   "Add the spells a player is given when creating a character"
-   {
-      Send(self,@AddSpell,#num=SID_FIREBALL,#iability=50);
-      return;
-   }
-
-   AddDefaultSkills()
-   "Add the skills that all players have."
-   {
-      Send(self,@AddSkill,#num=SKID_SLASH);
-      Send(self,@AddSkill,#num=SKID_PROFICIENCY_MACE);
-      return;
-   }
 
    AddDefaultObjects()
-   "Add the objects a player is given when creating a character in newbie zone"
+   "Add the objects a player is given when creating a guest character"
    {
       Send(self,@NewHold,#what=Create(&Money,#number=2500));
-      Send(self,@NewHold,#what=Create(&Mace));
-      Send(self,@NewHold,#what=Create(&RedMushroom,#number=20));
-      Send(self,@NewHold,#what=Create(&OrcTooth,#number=10));
+      Send(self,@NewHold,#what=Create(&BetaPotion));
 
       return;
    }
@@ -172,6 +144,13 @@ messages:
 
       % called by server to tell client if they NEED to go through char creation or not
       return True;
+   }
+   
+   SetInitialHomeroom()
+   {
+      piHomeroom = RID_JUNGLE_TRADING_POST;
+	  
+      return;
    }
 
 end

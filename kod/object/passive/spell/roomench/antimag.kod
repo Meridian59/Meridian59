@@ -55,6 +55,8 @@ classvars:
    viChance_To_Increase = 10
 
 properties:
+	
+	pbRemoveReflections = FALSE
 
 messages:
 
@@ -92,7 +94,7 @@ messages:
    CastSpell(who = $, iSpellPower = 0)
    "Initiation point for the spell."
    {
-      local oRoom, iAbility, oUmbrella, iUmbrellaPower;
+      local oRoom, iAbility, oUmbrella, iUmbrellaPower, iChance;
 
       oRoom = Send(who,@GetOwner);
 	  
@@ -116,6 +118,13 @@ messages:
            #what=self);
       Send(oRoom,@RoomStartEnchantment,#what=self,#state=((iSpellPower/2)+25),
            #time=send(self,@GetDuration,#iSpellPower=iSpellpower));
+		   
+	  % Remove reflections with AMA.
+	  if pbRemoveReflections
+	  {
+		 iChance = Bound(iSpellPower,10,99);
+		 Send(self,@RemoveReflections,#who=who,#iChance=iChance);
+	  }
         
       propagate;
    }
@@ -186,6 +195,30 @@ messages:
 
       % This is subtracted from spell power in spell.kod
       return iChange;
+   }
+   
+   RemoveReflections(who = $, iChance = 0)
+   "Delete reflections casted by the original caster."
+   {
+	  local lActive, each_obj, i, oRoom;
+   
+	  oRoom = send(who,@GetOwner);
+	  lActive = Send(oRoom,@GetHolderActive);
+      for i in lActive
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if isClass(each_obj,&Reflection)
+            AND Random(1,100) <= iChance
+         {
+			% Only delete if reflection belongs to caster
+			if Send(each_obj,@GetOriginal) = who
+			{
+				 Send(each_obj,@Delete);
+			}
+         }
+      }
+	  
+	  return;
    }
 
 

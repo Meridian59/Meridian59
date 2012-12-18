@@ -282,6 +282,7 @@
 #define IDC_OK                          1080
 #define IDC_MAINLIST                    1081
 #define IDC_GUEST                       1081
+#define IDC_                            1081
 #define IDC_HOMEPAGE                    1082
 #define IDC_CREDITS                     1083
 #define IDC_SCREENSIZE                  1085

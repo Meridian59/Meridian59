@@ -12492,10 +12492,17 @@ messages:
    
    DrankBetaPotion()
    {
-      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) OR isClass(self,&Guest)
+      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) OR 
+	     isClass(self,&Guest)
       {
 		 pbDrankBetaPotion = TRUE;
 		 return TRUE;
+	  }
+	  else
+      {
+		 Debug("Normal player has beta potion flag while game is not in beta!");
+		 pbDrankBetaPotion = FALSE;
+		 return FALSE;
 	  }
 	  
 	  return;
@@ -12509,67 +12516,59 @@ messages:
 	  iLevel = 0;
 	  iLearnPoints = 0;
 	  iMaxLearnPoints = 0;
-   
-      if NOT Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
-      {
-		 Debug("Player has beta potion flag while game is not in beta!");
-		 pbDrankBetaPotion = FALSE;
-		 return FALSE;
-	  }
-	  else
+
+	  iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
+		  (Send(self,@GetRawIntellect) * 2) / 5;
+
+	  iSchool = send(self,@BetaPotionCheckSchool,#string=string);
+	  iLevel = send(self,@BetaPotionCheckLevel,#string=string);
+
+	  if iSchool <> 0 AND iLevel <> 0
 	  {
-
-		 iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
-			 (Send(self,@GetRawIntellect) * 2) / 5;
-
-		 iSchool = send(self,@BetaPotionCheckSchool,#string=string);
-		 iLevel = send(self,@BetaPotionCheckLevel,#string=string);
-
-		 if iSchool <> 0 AND iLevel <> 0
+	 
+		 % 10 is used for weaponcraft
+		 if iSchool = SKS_FENCING
 		 {
+			 send(self,@GivePlayerAllSkills,#school=iSchool,#level=iLevel,#upto=TRUE);
+		 }
+		 else
+		 {
+			 if iSchool = SS_SHALILLE
+			 {
+				 % Can't add Shal'ille when already has Qor.
+				 if Send(self,@GetNumSpellsInSchool,#school=SS_QOR) 
+				 { 
+					 return FALSE;
+				 }
+				 
+				 piKarma = 100000;
+				 Send(self,@NewKarma);
+			 }
+
+			 if iSchool = SS_QOR
+			 {
+				 % Can't add Qor when already has Shal'ille.
+				 if Send(self,@GetNumSpellsInSchool,#school=SS_SHALILLE) 
+				 { 
+					 return FALSE;
+				 }
+
+				 piKarma = -100000;
+				 Send(self,@NewKarma);
+			 }
+		 }
+
+		 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#upto=TRUE);
 		 
-			 % 10 is used for weaponcraft
-			 if iSchool = SKS_FENCING
-			 {
-				 send(self,@GivePlayerAllSkills,#school=iSchool,#level=iLevel,#upto=TRUE);
-			 }
-			 else
-			 {
-				 if iSchool = SS_SHALILLE
-				 {
-					 % Can't add Shal'ille when already has Qor.
-					 if Send(self,@GetNumSpellsInSchool,#school=SS_QOR) 
-					 { 
-						 return FALSE;
-					 }
-					 
-				     piKarma = 100000;
-				 }
-
-				 if iSchool = SS_QOR
-				 {
-					 % Can't add Qor when already has Shal'ille.
-					 if Send(self,@GetNumSpellsInSchool,#school=SS_SHALILLE) 
-					 { 
-						 return FALSE;
-					 }
-
-					 piKarma = -100000;
-				 }
-			 }
-
-			 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#upto=TRUE);
-			 
-			 iLearnPoints = Send(self,@GetTotalLearnPoints,#except=0);
-			 send(self,@MsgSendUser,#message_rsc=player_LearnPoints,#parm1=iLearnPoints,#parm2=iMaxLearnPoints);
-			 
-			 % iLearnPoints should always equal iMaxLearnPoints,
-			 % only time it will go over if its a DM
-		     if iLearnPoints >= iMaxLearnPoints
-		     {
-		         pbDrankBetaPotion = FALSE;
-			     return TRUE;
-		     }
+		 iLearnPoints = Send(self,@GetTotalLearnPoints,#except=0);
+		 send(self,@MsgSendUser,#message_rsc=player_LearnPoints,#parm1=iLearnPoints,#parm2=iMaxLearnPoints);
+		 
+		 % iLearnPoints should always equal iMaxLearnPoints,
+		 % only time it will go over if its a DM
+		 if iLearnPoints >= iMaxLearnPoints
+		 {
+			 pbDrankBetaPotion = FALSE;
+			 return TRUE;
 		 }
 	  }
 

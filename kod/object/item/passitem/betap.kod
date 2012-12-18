@@ -89,7 +89,8 @@ messages:
    {
 	  local iBaseMaxHealth, HealthBoost;
 	  
-      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
+      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) OR 
+	     isClass(apply_on,&Guest)
       {
 		 % Give Mana
 		 if pbGiveMana

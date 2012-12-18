@@ -247,7 +247,7 @@ BEGIN
     CONTROL         "",1167,"Static",SS_GRAYRECT | SS_SUNKEN | WS_BORDER,23,146,143,105
 END
 
-119 DIALOGEX 0, 0, 251, 119
+119 DIALOGEX 0, 0, 251, 127
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Meridian 59 Login"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
@@ -256,13 +256,14 @@ BEGIN
     EDITTEXT        1076,93,41,143,13,ES_AUTOHSCROLL
     EDITTEXT        1077,93,55,143,13,ES_PASSWORD | ES_AUTOHSCROLL
     EDITTEXT        1150,93,69,143,13,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "Einloggen",1080,137,86,100,14
-    ICON            IDI_ICON,-1,6,6,20,20
+    DEFPUSHBUTTON   "Einloggen",1080,156,86,81,14
+    ICON            IDI_ICON,-1,6,6,21,20
     LTEXT           "Solltest Du noch kein Meridian59-Account haben, so kannst Du Dich auf www.meridian59.com kostenfrei anmelden.",-1,36,6,206,18
     LTEXT           "Benutzername:",-1,43,43,50,10
     LTEXT           "Passwort:",-1,59,58,31,8
     LTEXT           "Server:",-1,67,70,26,8
-    PUSHBUTTON      "Account kostenlos erstellen...",1082,3,101,100,14
+    PUSHBUTTON      "Account kostenlos erstellen...",1082,3,109,100,14
+    PUSHBUTTON      "Jetzt spielen",IDC_GUEST,91,86,57,14
 END
 
 118 DIALOGEX 0, 0, 239, 378
@@ -533,6 +534,10 @@ END
 #ifdef APSTUDIO_INVOKED
 GUIDELINES DESIGNINFO
 BEGIN
+    181, DIALOG
+    BEGIN
+    END
+
     155, DIALOG
     BEGIN
         BOTTOMMARGIN, 201
@@ -544,7 +549,7 @@ BEGIN
 
     119, DIALOG
     BEGIN
-        BOTTOMMARGIN, 118
+        BOTTOMMARGIN, 126
     END
 
     118, DIALOG
@@ -555,6 +560,10 @@ BEGIN
     116, DIALOG
     BEGIN
         BOTTOMMARGIN, 266
+    END
+
+    1018, DIALOG
+    BEGIN
     END
 
     1017, DIALOG
@@ -1031,14 +1040,14 @@ BEGIN
     EDITTEXT        IDC_USERNAME,93,44,143,13,ES_AUTOHSCROLL
     EDITTEXT        IDC_PASSWORD,93,58,143,13,ES_PASSWORD | ES_AUTOHSCROLL
     EDITTEXT        IDC_SERVERNUM,93,74,143,13,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "Log In",IDC_OK,137,95,100,14
+    DEFPUSHBUTTON   "Log In",IDC_OK,158,95,79,14
     ICON            IDI_ICON,IDC_STATIC,6,6,20,20
     LTEXT           "Meridian 59 is a game played over the Internet.  To play, you must have an account with the central server.",IDC_STATIC,36,6,206,18
     LTEXT           "Login name:",IDC_STATIC,43,47,45,10
     LTEXT           "Password:",IDC_STATIC,43,60,45,8
     LTEXT           "Server:",IDC_STATIC,43,76,44,8
-    PUSHBUTTON      "Sign up for an account...",IDC_HOMEPAGE,10,116,100,14
-    PUSHBUTTON      "Play Now!",IDC_GUEST,73,95,57,14
+    PUSHBUTTON      "Sign up for an account...",IDC_HOMEPAGE,7,118,100,14
+    PUSHBUTTON      "Play Now!",IDC_GUEST,93,95,57,14
 END
 
 IDD_DOWNLOAD DIALOG 0, 0, 252, 146

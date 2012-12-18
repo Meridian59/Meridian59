@@ -8145,8 +8145,12 @@ messages:
             % If you're not new, chance to lose a hp!
             if random(1,100) <= piDeathCost
             {
-               Send(self,@GainBaseMaxHealth,#amount=-1);
-               bLostHealth = TRUE;
+			   % Players under 100 HP will not lose a hp.
+			   if pibase_max_health > 100
+			   {
+				  Send(self,@GainBaseMaxHealth,#amount=-1);
+				  bLostHealth = TRUE;
+			   }
             }
          }
       }
@@ -12518,7 +12522,7 @@ messages:
 	  iMaxLearnPoints = 0;
 	  
 	  oItemAtt = send(SYS,@FindItemAttByNum,#Num=IA_MADE);
-	  iItemDuration = 60 * 60 * 1000;
+	  iItemDuration = 18000000; %5 hours
 
 	  iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
 		  (Send(self,@GetRawIntellect) * 2) / 5;

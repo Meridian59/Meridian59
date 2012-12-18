@@ -41871,6 +41871,7 @@ M	CheckPlayerFlag 10312
 P		flag 10313
 M	PlayerNewCharInfo 10981
 M	ReceiveNestedMail 11488
+M	AddDefaultSpells 13643
 M	AddDefaultObjects 13646
 M	SetInitialHomeroom 13647
 M	TryBroadcast 13681

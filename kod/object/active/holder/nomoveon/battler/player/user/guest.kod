@@ -136,6 +136,12 @@ messages:
 
       return;
    }
+   
+   AddDefaultSpells()
+   "Guests do not get the starter spells."
+   {
+      return;
+   }
   
 
    IsFirstTime()

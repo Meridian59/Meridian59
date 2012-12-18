@@ -18,6 +18,8 @@ constants:
 
 classvars:
 
+   viPermanent_flags = ROOM_KILL_ZONE
+
    viAvar_clan = AVARCLAN_PROMAGIC   %% which avar clan controls this part of the jungle.
    
 properties:

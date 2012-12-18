@@ -155,7 +155,7 @@ messages:
    
    SetInitialHomeroom()
    {
-      piHomeroom = RID_JUNGLE_TRADING_POST;
+      piHomeroom = -(RID_JUNGLE_TRADING_POST);
 	  
       return;
    }

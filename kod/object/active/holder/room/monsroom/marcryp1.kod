@@ -71,6 +71,8 @@ classvars:
    viTeleport_col = 23
 
    viTerrain_type = TERRAIN_NECROPOLIS | TERRAIN_CAVES
+   
+   viPermanent_flags = ROOM_NO_PK
 
 properties:
 

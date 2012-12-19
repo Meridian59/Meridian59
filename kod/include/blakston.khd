@@ -2103,7 +2103,10 @@
 
    %%% Player flags
 
-   PKILL_ENABLE_HP = 30
+   PKILL_ENABLE_HP = 40
+   
+   % HP players start at
+   STARTER_HP = 30
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList

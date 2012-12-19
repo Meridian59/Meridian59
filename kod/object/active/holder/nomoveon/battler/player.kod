@@ -799,9 +799,9 @@ properties:
 
    % The player sees piMax_Health in their client.
    % piBase_Max_Health is their base without any modifiers
-   piHealth = 20
-   piMax_Health = 20
-   piBase_Max_Health = 20
+   piHealth = STARTER_HP
+   piMax_Health = STARTER_HP
+   piBase_Max_Health = STARTER_HP
 
    piMax_Mana = 20
    piMana = 20
@@ -2157,9 +2157,9 @@ messages:
 
       % set some other stats based on these
 
-      piHealth = 20;
+      piHealth = STARTER_HP;
       Send(self,@NewHealth);
-      piBase_Max_Health = 20;
+      piBase_Max_Health = STARTER_HP;
       piMax_health = piBase_max_health;
       Send(self,@GainBaseMaxHealth);
       
@@ -2358,7 +2358,7 @@ messages:
       }
 
       % setup some stats
-      piBase_max_health = 20;
+      piBase_max_health = STARTER_HP;
       piMax_health = piBase_max_health;
       piMax_mana = Send(self, @GetInitialMaxMana);
       piMana = piMax_mana;
@@ -5867,7 +5867,7 @@ messages:
       amount = piBase_max_health - iPrev_max;
 
       % Give them the "further info" gmail if they've advanced to 25.
-      if piBase_Max_health = 25
+      if piBase_Max_health = 35
          AND amount > 0
          AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL)
       {
@@ -6463,9 +6463,9 @@ messages:
    {
       local iChange, iSwing, oRoom;
 
-      % No karma changes from killing players during Frenzies.
+      % No karma changes from killing players.
       % Also, no Karma change from event monsters: Xeos and admin-spawned.
-      if (Send(SYS,@GetChaosNight) AND NOT bIsMob)
+      if NOT bIsMob
          OR karma_victim = $
       {
          return 0;

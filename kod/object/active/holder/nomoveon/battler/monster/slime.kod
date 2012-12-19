@@ -13,6 +13,9 @@ Slime is Monster
 constants:
 
    include blakston.khd
+   
+   % Chance (1 in this many) to cast reflection.
+   SPELL_CHANCE = 10
 
 resources:
 
@@ -60,8 +63,24 @@ properties:
 
    piAnimation = ANIM_NONE
    piDrawfx = DRAWFX_TRANSLUCENT_75
+   
+   plSummoned = $
 	      
 messages:
+
+   Delete()
+   {
+      local oEachObj;
+
+      for oEachObj in plSummoned
+      {
+         Send(oEachObj,@Delete,#bMonsterReport=FALSE);
+      }
+
+      plSummoned = $;
+
+      propagate;
+   }
 
    Constructed()
    {
@@ -70,7 +89,7 @@ messages:
                         [ 45, -ATCK_SPELL_HOLY ],
                         [ 45, -ATCK_SPELL_ACID ],
                         [ 45, ATCK_WEAP_ALL ],
-			[ 10, ATCK_WEAP_BLUDGEON ],
+						[ 10, ATCK_WEAP_BLUDGEON ],
                         [-25, -ATCK_SPELL_COLD ] ];
       propagate;
    }
@@ -109,6 +128,68 @@ messages:
       % if no body animation
       
       propagate;
+   }
+   
+   MonsterCastSpell()
+   {
+	  local iRandom;
+   
+      iRandom = Send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+      if Random(1,iRandom) = 1
+	  {
+		  Send(self,@CreateReflection,#target=self);
+		  return TRUE;
+	  }
+   
+	  return FALSE;
+   }
+   
+   % This summons a reflection type monster.
+   CreateReflection(target = $)
+   {
+      local oRoom, iRow, iCol, oReflection;
+
+      oRoom = Send(target,@GetOwner);
+
+      % Check the summon limit restrictions
+      if Send(oRoom,@CountHoldingHowMany,#class=&monster) > 25
+         OR Send(oRoom,@CountHoldingHowMany,#class=&EvilTwin) > 10
+         OR Send(oRoom,@CountHoldingHowMany,#class=&Reflection) > 10
+         OR Send(oRoom,@CountHoldingSummoned)
+            > Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
+      {
+         return FALSE;
+      }
+
+      if target = self
+      {
+         oReflection = Create(&Reflection,#iSpellpower=100,#oMaster=self);  
+      }
+	  
+      iRow = Send(target,@GetRow);
+      iCol = Send(target,@GetCol);
+	  
+      Send(oReflection,@SetOriginal,#who=target);
+      
+      if NOT Send(oRoom,@ReqNewHold,#what=oReflection,#new_row=iRow,#new_col=iCol)
+      {
+         Send(oReflection,@Delete);
+
+         return FALSE;
+      }
+
+      Send(oRoom,@NewHold,#what=oReflection,#new_row=iRow,#new_col=iCol);
+      Send(SYS,@AddReflection,#who=target,#oReflection=oReflection);
+      plSummoned = cons(oReflection,plSummoned);
+   
+      return TRUE;
+	}
+	
+   SummonDeleted(what=$)
+   {
+      plSummoned = DelListElem(plSummoned,what);
+
+      return;
    }
 
 end

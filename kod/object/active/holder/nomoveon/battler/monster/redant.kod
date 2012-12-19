@@ -45,7 +45,7 @@ classvars:
    viSpeed = SPEED_AVERAGE
    viAttack_types = ATCK_WEAP_BITE
    viAttributes = MOB_SPASM
-   viLevel = 65
+   viLevel = 80
    viDifficulty = 8
    viKarma = -40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER

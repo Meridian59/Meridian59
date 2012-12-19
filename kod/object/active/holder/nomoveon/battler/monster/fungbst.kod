@@ -54,7 +54,7 @@ classvars:
    viTreasure_type = TID_MEDIUM
    viSpeed = SPEED_VERY_SLOW
    viAttributes = MOB_SPASM
-   viLevel = 50
+   viLevel = 60
    viDifficulty = 1
    viKarma = 10
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER

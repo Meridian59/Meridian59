@@ -45,7 +45,7 @@ classvars:
    viSpeed = SPEED_SLOW
    viAttack_spells = ATCK_SPELL_ACID
    viAttributes = 0
-   viLevel = 35
+   viLevel = 50
    viDifficulty = 4
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED

@@ -52,7 +52,7 @@ classvars:
    viTreasure_type = TID_WORM_LARVA
    viSpeed = SPEED_SLOW
    viAttack_types = ATCK_WEAP_ACID
-   viLevel = 35
+   viLevel = 50
    viDifficulty = 3
    viKarma = -10
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE

@@ -47,7 +47,7 @@ classvars:
    viSpeed = SPEED_AVERAGE
    viAttack_types = ATCK_WEAP_PIERCE
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
-   viLevel = 70
+   viLevel = 75
    viDifficulty = 5
    viKarma = 80
 

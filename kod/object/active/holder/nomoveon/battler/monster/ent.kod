@@ -53,7 +53,7 @@ classvars:
    viSpeed = SPEED_NONE
    viAttributes = MOB_NOMOVE 
    viDefault_behavior = AI_NOMOVE | AI_FIGHT_KARMA_AGGRESSIVE
-   viLevel = 50
+   viLevel = 65
    viDifficulty = 4
    viKarma = 40
 

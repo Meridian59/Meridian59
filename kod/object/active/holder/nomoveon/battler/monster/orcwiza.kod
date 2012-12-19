@@ -67,7 +67,7 @@ classvars:
    viSpeed = SPEED_AVERAGE
    viAttack_types = ATCK_WEAP_BLUDGEON
    viAttributes = 0
-   viLevel = 80
+   viLevel = 85
    viDifficulty = 7
    viKarma = -60
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS

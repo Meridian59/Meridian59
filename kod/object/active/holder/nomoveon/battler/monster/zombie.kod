@@ -61,7 +61,7 @@ properties:
    % our private data
 
    viTreasure_type = TID_ZOMBIE
-   viLevel = 55
+   viLevel = 60
 
    piAnimation = ANIM_NONE
 

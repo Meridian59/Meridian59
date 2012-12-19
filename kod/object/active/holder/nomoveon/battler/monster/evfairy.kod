@@ -52,7 +52,7 @@ classvars:
    viAttack_types = 0
    viAttack_spells = ATCK_SPELL_SHOCK
     
-   viLevel = 85
+   viLevel = 80
    viDifficulty = 5
    viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_MONSTERS | AI_FIGHT_KARMA_AGGRESSIVE
    viWimpy = 10

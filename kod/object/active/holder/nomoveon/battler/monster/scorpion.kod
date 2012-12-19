@@ -45,7 +45,7 @@ classvars:
    viSpeed = SPEED_FAST
    viAttack_types = ATCK_WEAP_STING
 
-   viLevel = 55
+   viLevel = 70
    viDifficulty = 8
    viKarma = 20
    viWimpy = 40

@@ -44,9 +44,9 @@ classvars:
    vrDead_icon = ant_dead_icon_rsc
    vrDead_name = ant_dead_name_rsc
 
-   viSpeed = SPEED_SLOW
+   viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_BITE
-   viLevel = 40
+   viLevel = 55
    viDifficulty = 4
    viKarma = -10
 

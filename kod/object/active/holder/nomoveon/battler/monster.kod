@@ -5789,6 +5789,16 @@ messages:
    {
       return;
    }
+   
+   % Used for leveling HP
+   GetKillExperience()
+   {
+	  local exp;
+	  
+	  exp = viLevel + viDifficulty + viSpeed;
+   
+	  return exp;
+   }
 
 
 end

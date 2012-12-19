@@ -736,6 +736,9 @@ properties:
    % This is used to determine raises in hit points only.
    poKill_target = $
    piGain_chance = 0
+   
+   % This also helps determine HP gains
+   piExperience_Gained = 0
 
    % Flags for various character attributes.
    piFlags = 0
@@ -7635,10 +7638,12 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, roll, iNumber, oWeapon;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, roll, iNumber, oWeapon, needed, exp;
             
       gain = 0;
       roll = FALSE;
+	  
+	  exp = (Send(what,@GetKillExperience) * send(send(SYS, @GetSettings), @GetTougherRate)) / 100;
 
       % Some things just never allow advancement.
       % Can advance in arena if realdeath is on in an arena.
@@ -7668,6 +7673,8 @@ messages:
                % Player took damage and landed killing blow
                gain = 2;
                roll = TRUE;
+			   
+			   exp = exp + 20;
             }
             else
             {
@@ -7675,6 +7682,8 @@ messages:
                %  or did take damage, did not land killing blow.
                gain = 1;
                roll = TRUE;
+			   
+			   exp = exp + 10;
             }
          }
          else
@@ -7686,6 +7695,8 @@ messages:
                AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                gain = 1;
+			   
+			   exp = exp + 5;
             }
             else
             {
@@ -7697,8 +7708,8 @@ messages:
             }
          }
 
-         % Give newbies a little bonus.
-         if piBase_Max_health < 26 and random(20,bound(piBase_Max_health,20,25)) = 20
+         % Give everyone under 100 HP a bonus.
+         if piBase_Max_health < 100
          {
             gain = gain + 1;
          }
@@ -7710,6 +7721,8 @@ messages:
          {
             gain = gain / 2;
             roll = FALSE;
+			
+			exp = exp - 20;
          }
 
          piGain_chance = piGain_chance + gain;
@@ -7723,28 +7736,29 @@ messages:
             if rand < iNumber
                AND piBase_Max_health < (101 + Send(self,@GetStamina))
             {
-               Send(self,@GainBaseMaxHealth,#amount = 1);
-               if Send(self,@CheckLog)
-               {
-                  Debug("LOG:  ",vrName," gained a health point: ",
-                        piMax_health,pibase_max_health);
-               }
-
-               Send(self,@evaluatepkstatus);
-
-               Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
-			   Send(self,@WaveSendUser, #what=self, #wave_rsc=player_tougher_wav_rsc);
-
-               piGain_chance = -(piBase_Max_health/2);
-               
-               if piBase_max_health > 30
-               {
-                  piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
-               }
+			   Send(self,@LevelUp);
 
                return TRUE;
             }
          }
+
+		 % Added additional experience system to gain HPs
+		 % A player will need a certain amount of experience per mob regardless of their HP.
+		 % Experienced required is based on current max health.
+		 
+		 needed = piBase_Max_health * piBase_Max_health;
+		 piExperience_Gained = piExperience_Gained + exp;
+		
+		 if piExperience_Gained >= needed
+		 {
+			
+			if piBase_Max_health < (101 + Send(self,@GetStamina))
+			{
+				Send(self,@LevelUp);
+				
+				return TRUE;
+			}
+		 }
       }
       
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
@@ -7776,6 +7790,33 @@ messages:
       }
 
       return FALSE;
+   }
+   
+   LevelUp()
+   "Gain a HP."
+   {
+   
+	  piExperience_Gained = 0;
+   
+	  Send(self,@GainBaseMaxHealth,#amount = 1);
+	  if Send(self,@CheckLog)
+	  {
+		  Debug("LOG:  ",vrName, " gained a health point: ",piMax_health,pibase_max_health);
+	  }
+
+	  Send(self,@evaluatepkstatus);
+
+	  Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
+	  Send(self,@WaveSendUser, #what=self, #wave_rsc=player_tougher_wav_rsc);
+
+	  piGain_chance = -(piBase_Max_health/2);
+	   
+	  if piBase_max_health > 30
+	  {
+		  piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
+	  }
+	   
+	  return;
    }
 
    GetGainChance()

@@ -57,6 +57,10 @@ properties:
    %  this will lower the odds of a dead player losing health and skill/spell
    %  percents.
    piDefaultDeathCost = 100
+   
+   % piTougherRate: Determines how much experience gained per kill. 
+   % Based on percentage.
+   piTougherRate = 100
 
    % piAdvancementRate: Determines how fast or slow advancement goes for all
    %  spells and skills.  This is a percent of normal, and only affects the
@@ -321,6 +325,11 @@ messages:
    GetRecentlyAttackedMax()
    {
 	  return piRecentlyAttackedMax;
+   }
+   
+   GetTougherRate()
+   {
+	  return piTougherRate;
    }
    
 end

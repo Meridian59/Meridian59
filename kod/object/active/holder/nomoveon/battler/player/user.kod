@@ -117,12 +117,12 @@ resources:
    user_no_fight = "You find yourself unable to lift your weapon."
    user_cant_mail_to = "Can't mail to nonexistent user %s."
    user_mail_to = "Sending mail."
-   user_new_mail = "You have new mail from %s."
-   user_new_nested_mail = "You have new mail."
+   user_new_mail = "~BYou have new mail from %s."
+   user_new_nested_mail = "~BYou have new mail."
    user_show_mail = "%q"
    user_show_nested_mail = "%s"
-   user_logon_one_mail = "You have %i piece of new mail."
-   user_logon_many_mail = "You have %i pieces of new mail."
+   user_logon_one_mail = "~BYou have %i piece of new mail."
+   user_logon_many_mail = "~BYou have %i pieces of new mail."
  
    user_was_killed = \
       "You are dead, poor soul.  Go now, and take revenge on %s%s!"

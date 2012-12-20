@@ -75,7 +75,7 @@ messages:
 
    DoEffect(what = $)
    {
-      local iDamage, oIllusWounds, iDuration, rMessage;
+      local iDamage, oIllusWounds, iDuration, rMessage, iHealthPercent;
 
       iDamage = 0;
       
@@ -85,6 +85,16 @@ messages:
          {
             return;
          }
+		 
+		 % No damage if monster's HP is less than 50%
+		 if isClass(what,&Monster)
+		 {
+			 iHealthPercent = (Send(what,@GetHealth) / Send(what,@ReturnMaxHitPoints)) * 100;
+			 if iHealthPercent < 50
+			 {
+				 return;
+			 }
+		 }
 
          oIllusWounds = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_WOUNDS);
          iDuration = Send(oIllusWounds,@GetDuration,#iSpellPower=piMaxDamage);

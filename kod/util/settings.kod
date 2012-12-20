@@ -43,6 +43,9 @@ properties:
    %
    % Player advancement
    %
+   
+   % Set either Raza or Marion as the starter town.
+   pbMarionAsStarterTown = TRUE
 
    % If true, you can't take any objects out of the newbie area.
    pbCleanNewbieInventoryOnEnteringRealWorld = FALSE
@@ -90,6 +93,9 @@ properties:
 
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15
+   
+   % How many reflections one player can cast in a room
+   piPlayerReflectionLimit = 3
 
    %
    % Guild hall settings
@@ -118,9 +124,6 @@ properties:
 
    % How many summoned objects can be in a room
    piPlayerSummonedObjectLimit = 18
-   
-   % How many reflections one player can cast in a room
-   piPlayerReflectionLimit = 3
 
    % Minimum number of HP you have to have to vote for or become
    % Justicar
@@ -128,9 +131,6 @@ properties:
 
    % If system will reveal location where player died.
    pbDeathLocations = TRUE
-
-   % Set either Raza or Marion as the starter town.
-   pbMarionAsStarterTown = TRUE
    
    % Max number of players to store in the recently attacked list
    % Setting this to zero will still store the last player attacked, 
@@ -177,7 +177,7 @@ messages:
             piItemFactor         = 200;
             piMagicItemModifier  = 100;
             piSpawnRate          = 100;
-			piTougherRate		 = 200;
+			piTougherRate		 = 150;
          } 
       }
       return;

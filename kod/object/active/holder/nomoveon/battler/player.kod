@@ -7708,11 +7708,11 @@ messages:
             }
          }
 
-         % Give everyone under 100 HP a bonus.
-         if piBase_Max_health < 100
+         % Give everyone under 75 HP a bonus.
+         if piBase_Max_health < 75
          {
             gain = gain + 1;
-			exp = exp * 2;
+			exp = exp + piBase_Max_health;
          }
 
          % If they're cheesing the situation by fighting wussy monsters in an altered form,
@@ -7743,9 +7743,9 @@ messages:
             }
          }
 
-		 % Added additional experience system to gain HPs
-		 % A player will need a certain amount of experience per mob regardless of their HP.
-		 % Experienced required is based on current max health.
+		 % Additional experience system to gain HPs
+		 % A player will gain a certain amount of experience per mob regardless of their HP.
+		 % Experience needed to level is based on current max health.
 		 
 		 needed = (piBase_Max_health * piBase_Max_health) - piStamina;
 		 piExperience_Gained = (piExperience_Gained + exp) + piStamina;

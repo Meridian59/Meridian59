@@ -40,7 +40,14 @@ messages:
 
    SetForSale()
    {
-      plFor_sale=[[  Create(&PurifyPotion,#labelled=TRUE),
+      plFor_sale=[[  
+					 Create(&RescuePotion,#labelled=TRUE,#price=5000),
+					 Create(&KaraholsCursePotion,#labelled=TRUE,#price=750),
+					 Create(&ShadowFormPotion,#labelled=TRUE,#price=750),
+					 Create(&HastePotion,#labelled=TRUE,#price=500),
+					 Create(&MagicShieldPotion,#labelled=TRUE,#price=500),
+					 Create(&StrengthPotion,#labelled=TRUE,#price=500),
+					 Create(&PurifyPotion,#labelled=TRUE),
                      Create(&RemoveCursePotion,#labelled=TRUE),
                      Create(&CurePoisonPotion,#labelled=TRUE),
                      Create(&CureDiseasePotion,#labelled=TRUE),

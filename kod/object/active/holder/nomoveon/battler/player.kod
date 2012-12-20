@@ -7746,8 +7746,8 @@ messages:
 		 % A player will need a certain amount of experience per mob regardless of their HP.
 		 % Experienced required is based on current max health.
 		 
-		 needed = piBase_Max_health * piBase_Max_health;
-		 piExperience_Gained = piExperience_Gained + exp;
+		 needed = (piBase_Max_health * piBase_Max_health) - piStamina;
+		 piExperience_Gained = (piExperience_Gained + exp) + piStamina;
 		
 		 if piExperience_Gained >= needed
 		 {

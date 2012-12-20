@@ -23,6 +23,8 @@ resources:
       "and uncut seraphym to cast."
 
    summonreflection_failed_rsc = "There is too much summoning magic focused here to summon a reflection."
+   
+   summonreflection_limit_rsc = "You have too many reflections here."
 
    summonreflection_sound = rmirrimg.wav
 
@@ -74,13 +76,21 @@ messages:
          OR send(oRoom,@CountHoldingHowMany,#class=&Reflection) > 10
          OR send(oRoom,@CountHoldingSummoned) > 
             Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
-		 OR send(self,@CountPlayerReflections,#original=who) >=
-		    Send(Send(SYS, @GetSettings), @GetPlayerReflectionLimit)
       {
          send(who,@MsgSendUser,#message_rsc=summonreflection_failed_rsc);
          
          return FALSE;
       }
+	  
+	  % limit reflections
+	  if send(self,@CountPlayerReflections,#original=who) >= 
+		  Send(Send(SYS, @GetSettings), @GetPlayerReflectionLimit) AND
+		 NOT send(self,@PlayerIsImmortal)
+	  {
+         send(who,@MsgSendUser,#message_rsc=summonreflection_limit_rsc);
+         
+         return FALSE;
+	  }
 
       propagate;
    }

@@ -7419,7 +7419,7 @@ messages:
    % Check if player meets the minimum requirements to leave starter zone
 	TryLeaveNewbieRegion()
 	{
-	  if piBase_Max_health > PKILL_ENABLE_HP or Send(self,@PlayerIsImmortal) or
+	  if piBase_Max_health >= PKILL_ENABLE_HP or Send(self,@PlayerIsImmortal) or
 	    Send(Send(SYS, @GetSettings), @IsMarionStarterTown) = FALSE
 	  {
 	     return TRUE;

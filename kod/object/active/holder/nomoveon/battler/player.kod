@@ -7674,7 +7674,7 @@ messages:
                gain = 2;
                roll = TRUE;
 			   
-			   exp = exp + 20;
+			   exp = exp + (piBase_Max_health * 2);
             }
             else
             {
@@ -7683,7 +7683,7 @@ messages:
                gain = 1;
                roll = TRUE;
 			   
-			   exp = exp + 10;
+			   exp = exp + piBase_Max_health;
             }
          }
          else
@@ -7696,7 +7696,7 @@ messages:
             {
                gain = 1;
 			   
-			   exp = exp + 5;
+			   exp = exp + (piBase_Max_health / 2);
             }
             else
             {
@@ -7712,6 +7712,7 @@ messages:
          if piBase_Max_health < 100
          {
             gain = gain + 1;
+			exp = exp * 2;
          }
 
          % If they're cheesing the situation by fighting wussy monsters in an altered form,

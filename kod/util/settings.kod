@@ -167,6 +167,18 @@ messages:
             piMagicItemModifier  = 100;
             piSpawnRate          = 85;
          } 
+		 
+		 % Settings for open-source server
+         if server_num = 59
+         {
+            piDefaultDeathCost   = 100;
+            piAdvancementRate    = 200;
+            piMoneyFactor        = 100;
+            piItemFactor         = 200;
+            piMagicItemModifier  = 100;
+            piSpawnRate          = 100;
+			piTougherRate		 = 200;
+         } 
       }
       return;
    }

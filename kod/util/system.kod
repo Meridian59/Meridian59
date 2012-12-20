@@ -389,7 +389,7 @@ properties:
 
    % What's the current server number?  Must be set manually.
    % Currently used for admin gmail to flag message origin.
-   piServerNumber = 0
+   piServerNumber = 59
 
    poSrGuardian = $
 

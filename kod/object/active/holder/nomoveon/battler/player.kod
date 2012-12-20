@@ -11442,7 +11442,7 @@ messages:
    }
 
    PlayerIsHPIntrigue()
-   "If player has over 40hp base."
+   "If player has over INTRIGUE base."
    {
       return (piBase_Max_health >= INTRIGUE_ENABLE_HP);
    }

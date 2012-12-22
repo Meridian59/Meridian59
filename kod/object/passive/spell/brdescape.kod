@@ -25,6 +25,8 @@ resources:
       "A number of destinations may be available, and the caster must call out "
       "the name of the location he wishes to travel to.  "
       "Requires rubies to cast."
+	  
+   BardEscape_need_instrument = "You need an instrument!"
 
    BardEscape_No_Location_Given = "With no location specified your deliverance attempt fails."
    BardEscape_Success = "The world folds in on itself."
@@ -35,8 +37,8 @@ resources:
 
    BardEscape_and = "and "
 
-   % Yeah, it's Illusionary wounds sound, but it fits.  Plus, Ill. Wounds wasn't using it anymore.
-   BardEscape_sound = riluswnd.wav
+   % Use same sound as what page uses
+   BardEscape_sound = God2god.wav
 
 classvars:
 
@@ -81,7 +83,13 @@ messages:
       {
          Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
          return FALSE;
-      }         
+      }
+
+      if Send(who,@GetInstrumentLevel) = 0
+      { 
+         Send(who,@MsgSendUser,#message_rsc=BardEscape_need_instrument);
+         return FALSE; 
+      }	  
 
       if pbCanCastFromAnywhere
       {

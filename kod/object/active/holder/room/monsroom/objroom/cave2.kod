@@ -75,7 +75,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Orc, 50], [&Spider, 50] ];
+      plMonsters = [ [&CaveOrc, 40], [&Orc, 30], [&Spider, 30] ];
 
       plGenerators = [ [51, 14], [50, 34], [18, 50], [27, 47], [23, 39],
                        [19, 30], [25, 26], [25, 33], [32, 35], [31, 31],
@@ -141,7 +141,7 @@ messages:
       for i in plActive
       {
          each_obj=Send(self,@holderExtractObject,#data=i);
-         if isClass(each_obj,&orc)
+         if isClass(each_obj,&CaveOrc)
          {
             return FALSE;
          }

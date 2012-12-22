@@ -85,7 +85,7 @@ messages:
 	  % limit reflections
 	  if send(self,@CountPlayerReflections,#original=who) >= 
 		  Send(Send(SYS, @GetSettings), @GetPlayerReflectionLimit) AND
-		 NOT send(self,@PlayerIsImmortal)
+		 NOT send(who,@PlayerIsImmortal)
 	  {
          send(who,@MsgSendUser,#message_rsc=summonreflection_limit_rsc);
          

@@ -32,10 +32,11 @@ messages:
    {
     plTreasure = [ [ &DarkAngelFeather, 45 ],
                    [ &BlueDragonScale, 10],
-                   [ &EntrootBerry, 20],
+                   [ &EntrootBerry, 15],
                    [ &FairyWing, 15],
                    [ &ShamanBlood, 5],
-                   [ &InkyCap, 5]
+                   [ &InkyCap, 5],
+                   [ &AngelWings, 5]
                  ];
 
       propagate;

@@ -797,6 +797,9 @@ properties:
    piAgilityMod = 0
    piMysticismMod = 0
    piAimMod = 0
+   
+   % Modifer for vigor rest threshold
+   piVigorMod = 0
 
    %%% Variable character values.
 
@@ -1277,6 +1280,10 @@ messages:
       }
 
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
+	  
+	  % Add vigor mod
+	  iAmount = iAmount + piVigorMod;
+	  
       Send(self,@SetVigorRestThreshold,#amount=iAmount);
       Send(self,@NewVigor);
       
@@ -1298,7 +1305,7 @@ messages:
          piVigor_rest_threshold = 10;
       }
       
-      piVigor_rest_threshold = Bound(piVigor_rest_threshold,10,100);
+      piVigor_rest_threshold = Bound(piVigor_rest_threshold,10,125);
 
       Send(self,@DrawVigor);
 
@@ -7794,9 +7801,10 @@ messages:
    }
    
    LevelUp()
-   "Gain a HP."
+   "Increase your max health and vigor."
    {
-   
+	  local iAmount;
+	  
 	  piExperience_Gained = 0;
    
 	  Send(self,@GainBaseMaxHealth,#amount = 1);
@@ -7816,6 +7824,15 @@ messages:
 	  {
 		  piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
 	  }
+	  
+	  % Determine vigor mod based on agility and current max hp
+	  piVigorMod = ((piAgility / 2) * piBase_max_health) / 100;
+	  piVigorMod = bound(piVigorMod,0,25);
+	  
+      iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
+	  iAmount = iAmount + piVigorMod;
+      Send(self,@SetVigorRestThreshold,#amount=iAmount);
+      Send(self,@NewVigor);
 	   
 	  return;
    }
@@ -10222,6 +10239,10 @@ messages:
       }
 
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
+	  
+	  % Add the vigor mod 
+	  iAmount = iAmount + piVigorMod;
+	  
       Send(self,@SetVigorRestThreshold,#amount=iAmount);
 
       % All attack modifiers should be a room enchantment, a personal enchantment

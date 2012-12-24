@@ -1,0 +1,69 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TrollCave is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_TrollCave = trollcave.roo
+   room_name_TrollCave ="Mountainside Dwelling of the Trolls"
+   TrollCave_music = orcpit.mp3
+
+classvars:
+
+   vrName = room_name_TrollCave
+
+   viTeleport_row = 21
+   viTeleport_col = 3
+
+   viTerrain_type = TERRAIN_CAVES | TERRAIN_LAIR
+
+properties:
+
+   prRoom = room_TrollCave
+   prMusic = TrollCave_music
+   piRoom_num = RID_TROLL_CAVE
+   
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 8
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Troll, 60], [&GroundwormQueen, 40] ];
+      plGenerators = [ [33, 9], [44, 5], [45, 23], [39, 21], [36, 31],
+                      [38, 40], [40, 35], [45, 40], [40, 44], [29, 45],
+                      [22, 36], [33, 47], [14, 48], [10, 34] ];
+      propagate;
+   }
+
+    CreateStandardExits()
+    {
+      plEdge_Exits = $;
+      plEdge_Exits = Cons([LEAVE_WEST, RID_I8, 53, 45, ROTATE_NONE], plEdge_exits);
+     
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+		   
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -2259,6 +2259,8 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_TEMPLE_RIIJA,#class=&TempleRiija);
 
       Send(self,@CreateOneRoomIfNew,#num=RID_ICE_CAVE1,#class=&IceCave1);
+	  
+	  Send(self,@CreateOneRoomIfNew,#num=RID_TROLL_CAVE,#class=&TrollCave); %Open-source
 
    % Orc Warrens
       Send(self,@CreateOneRoomIfNew,#num=RID_ORC_CAVE1,#class=&OrcCave1);

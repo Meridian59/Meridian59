@@ -18,8 +18,6 @@ constants:
    ANIM_BREATH = 1
    ANIM_BITE = 2
    ANIM_SPIT = 3
-
-   SPIT_COLOR = 82
    
    SPELL_CHANCE = 3
    
@@ -56,7 +54,7 @@ classvars:
    vrDead_icon = BlueDragon_dead_icon_rsc
    vrDead_name = BlueDragon_dead_name_rsc
 
-   viTreasure_type = TID_LUPOGG_KING
+   viTreasure_type = TID_BLUE_DRAGON
    viSpeed = SPEED_VERY_SLOW
    viAttack_types = ATCK_WEAP_BITE
    viLevel = 200
@@ -85,8 +83,8 @@ messages:
 
       plResistances = [
                         [  80, -ATCK_SPELL_ACID ],
-                        [ -80, ATCK_WEAP_NERUDITE ],
-                        [  80, ATCK_WEAP_NONMAGIC ]
+                        [  80, ATCK_WEAP_NONMAGIC ],
+                        [  60, -ATCK_SPELL_SHOCK ]
                       ];
       propagate;
    }

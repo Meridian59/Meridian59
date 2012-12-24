@@ -3457,6 +3457,9 @@ messages:
       Create(&DarkAngelTreasure);
 
       Create(&ThrasherTreasure);
+	  
+	  % Open-source
+      Create(&BlueDragonTreasure);
 
       return;
    }

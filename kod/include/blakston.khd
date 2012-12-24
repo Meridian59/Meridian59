@@ -1549,6 +1549,9 @@
    TID_DARK_ANGEL    = 51
    TID_MUMMY         = 52
    TID_THRASHER      = 53
+   
+   % Open-Source
+   TID_BLUE_DRAGON	 = 54
 
    %%% English articles
 

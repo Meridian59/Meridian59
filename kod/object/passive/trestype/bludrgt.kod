@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlueDragonTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_BLUE_DRAGON
+
+   piItem_att_chance = 10
+   piDiff_seed = 10
+
+messages:
+   
+   constructed()
+   {
+    plTreasure = [ 
+					 [ &BlueDragonScale, 47 ],
+                     [ &MysticSword, 25 ],
+                     [ &PlateArmor, 10 ],	
+                     [ &RingInvisibility, 10 ],
+                     [ &NeruditeBow, 5 ],
+                     [ &SpecialGiftTwo, 1 ],
+                     [ &SpecialGift, 1 ],
+                     [ &Helm, 1 ]
+                 ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

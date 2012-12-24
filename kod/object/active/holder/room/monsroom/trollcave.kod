@@ -27,7 +27,7 @@ classvars:
    viTeleport_row = 21
    viTeleport_col = 3
 
-   viTerrain_type = TERRAIN_CAVES | TERRAIN_LAIR
+   viTerrain_type = TERRAIN_LAIR
 
 properties:
 
@@ -61,7 +61,9 @@ messages:
    
    CreateStandardObjects()
    {
-		   
+
+      Send(self,@NewHold,#what=Create(&DragonSkull),#new_row=18,#new_col=24,#fine_row=32,#fine_col=32);
+
       propagate;
    }
 

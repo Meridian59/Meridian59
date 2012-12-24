@@ -1,0 +1,304 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlueDragon is Monster
+
+constants:
+
+   include blakston.khd
+   
+
+   ANIM_BREATH = 1
+   ANIM_BITE = 2
+   ANIM_SPIT = 3
+
+   SPIT_COLOR = 82
+   
+   SPELL_CHANCE = 3
+   
+   MAGIC_RESIST = 40
+
+resources:
+
+   BlueDragon_name_rsc = "blue dragon"
+   BlueDragon_icon_rsc = bdragon.bgf
+   BlueDragon_desc_rsc = \
+      "This cold blooded and fire breathing dragon can easily rip a players head clear from their shoulders. "
+	  "These creatures were the result of the fall of the dinosaurs and the result of many deaths. "
+	  "You can see by the size and power of this monster that you shouldn't go near it without a group of companions."
+
+
+   BlueDragon_dead_icon_rsc = bdragonX.bgf
+   BlueDragon_dead_name_rsc = "slain blue dragon"
+
+   BlueDragon_sound_hit = drg_atkm.wav
+   BlueDragon_sound_miss = drg_atkm.wav
+   BlueDragon_sound_death = drg_dth.wav
+   BlueDragon_sound_aware = drg_awr.wav
+
+   BlueDragon_cast_sound = drg_awr.wav
+
+   BlueDragon_spit = fireball.bgf
+   
+   BlueDragon_no_truce      = "A truce appears to be impossible with this ressurected beast!"
+
+classvars:
+   vrName = BlueDragon_name_rsc
+   vrIcon = BlueDragon_icon_rsc
+   vrDesc = BlueDragon_desc_rsc
+   vrDead_icon = BlueDragon_dead_icon_rsc
+   vrDead_name = BlueDragon_dead_name_rsc
+
+   viTreasure_type = TID_LUPOGG_KING
+   viSpeed = SPEED_VERY_SLOW
+   viAttack_types = ATCK_WEAP_BITE
+   viLevel = 200
+   viDifficulty = 15
+   viKarma = 0
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE
+   viAttributes = MOB_RANDOM
+   viGender = GENDER_MALE   
+
+   vrSound_hit = BlueDragon_sound_hit
+   vrSound_miss = BlueDragon_sound_miss
+   vrSound_aware = BlueDragon_sound_aware
+   vrSound_death = BlueDragon_sound_death
+
+properties:
+
+   piAnimation = ANIM_NONE
+   plAttackers = $  % [player,player....]
+
+messages:
+
+   Constructed()
+   {
+      pimax_Hit_Points = pimax_hit_Points * 5;
+      piHit_Points = pimax_hit_points;
+
+      plResistances = [
+                        [  80, -ATCK_SPELL_ACID ],
+                        [ -80, ATCK_WEAP_NERUDITE ],
+                        [  80, ATCK_WEAP_NONMAGIC ]
+                      ];
+      propagate;
+   }
+
+   
+   AssessDamage(what = $,damage = $,atype = 0, aspell = 0,bonus = 0)
+   "This is called when something causes damage to us"
+   {
+      local i;
+
+      for i in plAttackers
+      {
+         if i = what
+         {
+            propagate;
+         }
+      }
+
+      plAttackers = cons(what,plAttackers);
+
+      propagate;
+   }
+
+   DoSpasm()
+   {
+      Send(self,@DoBreath);
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      piAnimation = ANIM_BITE;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SomethingMoved(what=$)
+   {
+      local oTrance, oActive, lActive, i;
+
+      if what <> self OR poOwner = $
+      {
+         propagate;
+      }
+
+      % Shake the ground when I take a step.
+      % Small chance each person might lose any active trance.
+
+      Send(poOwner,@Rumble,#duration=250,#disruption=50);
+      
+      propagate;
+   }
+
+   DoCast()
+   {
+      piAnimation = ANIM_SPIT;
+      Send(poOwner,@SomethingChanged,#what=self);
+      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return BlueDragon_spit;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+   
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
+   }
+
+   DoBreath()
+   {
+      piAnimation = ANIM_BREATH;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 200, 2, 2, 2, 5);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 200, 2, 2, 2, 5);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piAnimation = ANIM_BITE
+      {
+         AddPacket(1, ANIMATE_ONCE, 4, 100, 2, 6, 2, 8, 2, 1);
+
+         return;
+      }
+
+      if piAnimation = ANIM_SPIT
+      {
+         AddPacket(1, ANIMATE_ONCE, 4, 100, 2, 6, 2, 8, 2, 1);
+
+         return;
+      }
+
+      if piAnimation = ANIM_BREATH
+      {
+         AddPacket(1, ANIMATE_ONCE, 4, 100, 2, 6, 2, 8, 2, 1);
+
+         return;
+      }
+
+      propagate;
+   }
+
+   CanMorphTo()
+   {
+      return FALSE;
+   }
+   
+   MonsterCastSpell()
+   {
+      local oSpell, oHold, iBase;
+
+      oSpell = send(SYS,@FindSpellByNum,#num=SID_FIREBALL);
+      oHold = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      iBase = send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+
+      if Random(1,iBase) = 1
+         AND send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
+         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=75)
+         AND send(poowner,@ReqSpellCast,#who=self,#ospell=oSpell,#litems=[poTarget])
+         AND send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+      {
+         send(self,@DoBreath);
+         send(oSpell,@CastSpell,#who=self,#lTargets=[poTarget]);
+         send(oHold,@DoHold,#who=self,#otarget=poTarget,#report=FALSE);
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   SpellResist(oSpell=$,who=$,iSpellpower=$)
+   {
+      local iResistChance;
+
+      if IsClass(who,&DM)
+      {
+         return FALSE;
+      }
+ 
+      if (Send(oSpell,@IsHarmful))
+      {
+         % Unaffected by qor spells.  Period.
+         if (Send(oSpell,@GetSchool) = SS_QOR)
+         {
+            return TRUE;
+         }
+      
+         iResistChance = MAGIC_RESIST;
+         if IsClass(oSpell,&Dazzle)
+         {
+            % extra 50% chance to resist.
+            iResistChance = (iResistChance * 150)/100;
+         }
+
+         if (iSpellPower < 30) or (random(0,100) < iResistChance)
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+   
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE)
+      {  
+         Send(who,@MsgSendUser,#message_rsc=bluedragon_no_truce);            
+
+         return FALSE; 
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

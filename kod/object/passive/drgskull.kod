@@ -1,0 +1,48 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DragonSkull is PassiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DragonSkull_name_rsc = "dragon's skull"
+   DragonSkull_icon_rsc = dragskul.bgf
+   DragonSkull_desc_rsc = \
+   "Skull of what appears to be of a legendary dragon. "
+   "Dragons were creatures that once existed on the continents of the great Nexus, "
+   "but until the great collapse were considered to have been extinct for over a century. "
+
+classvars:
+
+   vrName = DragonSkull_name_rsc
+   vrIcon = DragonSkull_icon_rsc
+   vrDesc = DragonSkull_desc_rsc
+
+properties:
+
+
+messages:
+
+   ReqNewOwner(what = $)
+   {
+      return False;
+   }
+   
+   RessurectDragon()
+   {
+	  return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

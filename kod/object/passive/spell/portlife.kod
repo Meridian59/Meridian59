@@ -70,6 +70,14 @@ messages:
    {
       local target;
       target = first(ltargets);
+	  
+	  % Also be used to ressurect a dragon!
+	  if IsClass(target, &DragonSkull)
+	  {
+		 send(target,@RessurectDragon,#who=who);
+		 return FALSE;
+	  }
+	  
       if not IsClass(target, &DeadBody)
          or (send(target,@GetDearlyDeparted) = $)
          or Send(target,@GetResurrected)

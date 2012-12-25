@@ -15,13 +15,9 @@ constants:
    include blakston.khd
    
 
-   ANIM_BREATH = 1
-   ANIM_BITE = 2
-   ANIM_SPIT = 3
+   ANIM_BITE = 1
    
    SPELL_CHANCE = 3
-   
-   MAGIC_RESIST = 40
 
 resources:
 
@@ -72,7 +68,6 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   plAttackers = $  % [player,player....]
 
 messages:
 
@@ -89,39 +84,55 @@ messages:
       propagate;
    }
 
-   
-   AssessDamage(what = $,damage = $,atype = 0, aspell = 0,bonus = 0)
-   "This is called when something causes damage to us"
+   MonsterCastSpell()
    {
-      local i;
+      local oSpell, oHold, iBase;
 
-      for i in plAttackers
+      oSpell = send(SYS,@FindSpellByNum,#num=SID_FIREBALL);
+
+      iBase = send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+
+      if Random(1,iBase) = 1
+         AND send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
+         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=75)
+         AND send(poowner,@ReqSpellCast,#who=self,#ospell=oSpell,#litems=[poTarget])
+         AND send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
       {
-         if i = what
-         {
-            propagate;
-         }
+         send(self,@DoBite);
+         send(oSpell,@CastSpell,#who=self,#lTargets=[poTarget]);
+
+         return TRUE;
       }
 
-      plAttackers = cons(what,plAttackers);
+      return FALSE;
+   }
+   
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE)
+      {  
+         Send(who,@MsgSendUser,#message_rsc=bluedragon_no_truce);            
+
+         return FALSE; 
+      }
 
       propagate;
    }
-
-   DoSpasm()
+   
+   AssessDamage(what = $,damage = $,atype = 0, aspell = 0,bonus = 0)
+   "Blue Dragon has Gaze."
    {
-      Send(self,@DoBreath);
+	  local oHold, iBase;
+	  
+      iBase = send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+
+      if Random(1,iBase) = 1
+	  {
+		 oHold = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+		 send(oHold,@DoHold,#who=self,#otarget=what);
+	  }
 
       propagate;
-   }
-
-   MonsterAttack(what = $)
-   {
-      piAnimation = ANIM_BITE;
-      Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;
-
-      return;
    }
 
    SomethingMoved(what=$)
@@ -140,43 +151,31 @@ messages:
       
       propagate;
    }
-
-   DoCast()
+   
+   DoSpasm()
    {
-      piAnimation = ANIM_SPIT;
-      Send(poOwner,@SomethingChanged,#what=self);
-      Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = self);
-      piAnimation = ANIM_NONE;
+      Send(self,@DoBite);
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoBite);
 
       return;
-   }
-
-   GetProjectileIcon()
-   {
-      return BlueDragon_spit;
-   }
-
-   GetProjectileSpeed()
-   {
-      return 8;
    }
    
-   SendProjectileAnimation()
+   DoCast()
    {
-      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
+      Send(self,@DoBite);
 
       return;
    }
 
-   GetProjectileLightFlags()
+   DoBite()
    {
-      % No lighting information.
-      return LIGHT_FLAG_NONE;
-   }
-
-   DoBreath()
-   {
-      piAnimation = ANIM_BREATH;
+      piAnimation = ANIM_BITE;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
 
@@ -206,20 +205,6 @@ messages:
          return;
       }
 
-      if piAnimation = ANIM_SPIT
-      {
-         AddPacket(1, ANIMATE_ONCE, 4, 100, 2, 6, 2, 8, 2, 1);
-
-         return;
-      }
-
-      if piAnimation = ANIM_BREATH
-      {
-         AddPacket(1, ANIMATE_ONCE, 4, 100, 2, 6, 2, 8, 2, 1);
-
-         return;
-      }
-
       propagate;
    }
 
@@ -227,76 +212,6 @@ messages:
    {
       return FALSE;
    }
-   
-   MonsterCastSpell()
-   {
-      local oSpell, oHold, iBase;
-
-      oSpell = send(SYS,@FindSpellByNum,#num=SID_FIREBALL);
-      oHold = send(SYS,@FindSpellByNum,#num=SID_HOLD);
-      iBase = send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
-
-      if Random(1,iBase) = 1
-         AND send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
-         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=75)
-         AND send(poowner,@ReqSpellCast,#who=self,#ospell=oSpell,#litems=[poTarget])
-         AND send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
-      {
-         send(self,@DoBreath);
-         send(oSpell,@CastSpell,#who=self,#lTargets=[poTarget]);
-         send(oHold,@DoHold,#who=self,#otarget=poTarget,#report=FALSE);
-
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-   
-   SpellResist(oSpell=$,who=$,iSpellpower=$)
-   {
-      local iResistChance;
-
-      if IsClass(who,&DM)
-      {
-         return FALSE;
-      }
- 
-      if (Send(oSpell,@IsHarmful))
-      {
-         % Unaffected by qor spells.  Period.
-         if (Send(oSpell,@GetSchool) = SS_QOR)
-         {
-            return TRUE;
-         }
-      
-         iResistChance = MAGIC_RESIST;
-         if IsClass(oSpell,&Dazzle)
-         {
-            % extra 50% chance to resist.
-            iResistChance = (iResistChance * 150)/100;
-         }
-
-         if (iSpellPower < 30) or (random(0,100) < iResistChance)
-         {
-            return TRUE;
-         }
-      }
-
-      return FALSE;
-   }
-   
-   ReqSpellCast(who = $, oSpell = $, lItems = $)
-   {
-      if oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE)
-      {  
-         Send(who,@MsgSendUser,#message_rsc=bluedragon_no_truce);            
-
-         return FALSE; 
-      }
-
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

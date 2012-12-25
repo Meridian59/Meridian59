@@ -22,6 +22,14 @@ resources:
    "Skull of what appears to be of a legendary dragon. "
    "Dragons were creatures that once existed on the continents of the great Nexus, "
    "but until the great collapse were considered to have been extinct for over a century. "
+   
+   DragonSkull_wav_rsc = "drg_dth.wav"
+   DragonSkull_portaloflife_sound = "sraised.wav"
+   
+   DragonSkull_summon = "A dragon has been summoned!"
+   DragonSkull_already_summoned = "It will be wise not to summon another dragon here."
+   
+   DragonSkull_projectile = "lightnin.bgf"
 
 classvars:
 
@@ -31,6 +39,7 @@ classvars:
 
 properties:
 
+   ptSummon = $
 
 messages:
 
@@ -39,9 +48,63 @@ messages:
       return False;
    }
    
-   RessurectDragon()
+   RessurectDragon(who = $)
    {
+   	  local oSpell;
+   
+	  if Send(poOwner,@CountMonsters,#class=&BlueDragon)
+	  {
+		 Send(who,@MsgSendUser,#message_rsc=DragonSkull_already_summoned);
+		 return FALSE;
+	  }
+	  
+	  Send(poOwner,@SomethingWaveRoom, #what=who, #wave_rsc=DragonSkull_portaloflife_sound);
+	  Send(poOwner,@SomethingWaveRoom, #what=self, #wave_rsc=DragonSkull_wav_rsc);
+	  
+	  Send(poOwner,@SomethingShot,#who=who,#target=self,#projectile=self);
+	  
+	  Send(poOwner,@Rumble,#duration=2000);
+	  
+	  oSpell = Send(SYS,@FindSpellByNum,#num=SID_ARMAGEDDON);
+	  send(oSpell,@CastSpell,#who=self);
+	  
+	  Post(who,@MsgSendUser,#message_rsc=DragonSkull_summon);
+	  
+	  % Delay the spawn
+	  ptSummon = CreateTimer(self,@SummonDragon,500);
+   
+	  return TRUE;
+   }
+   
+   SummonDragon()
+   {
+
+	  Send(poOwner,@NewHold,#what=Create(&BlueDragon),#new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol));
+	  
 	  return;
+   }
+   
+   GetProjectileIcon()
+   {
+      return DragonSkull_projectile;
+   }
+
+   GetProjectileSpeed()
+   {
+      return 8;
+   }
+   
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 1, 2, 5);   % 40ms between animations
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      % No lighting information.
+      return LIGHT_FLAG_NONE;
    }
 
 end

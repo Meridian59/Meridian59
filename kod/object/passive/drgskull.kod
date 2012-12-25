@@ -39,8 +39,6 @@ classvars:
 
 properties:
 
-   ptSummon = $
-
 messages:
 
    ReqNewOwner(what = $)
@@ -63,25 +61,14 @@ messages:
 	  
 	  Send(poOwner,@SomethingShot,#who=who,#target=self,#projectile=self);
 	  
-	  Send(poOwner,@Rumble,#duration=2000);
-	  
 	  oSpell = Send(SYS,@FindSpellByNum,#num=SID_ARMAGEDDON);
 	  send(oSpell,@CastSpell,#who=self);
 	  
 	  Post(who,@MsgSendUser,#message_rsc=DragonSkull_summon);
 	  
-	  % Delay the spawn
-	  ptSummon = CreateTimer(self,@SummonDragon,500);
+	  Send(poOwner,@NewHold,#what=Create(&BlueDragon),#new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol));
    
 	  return TRUE;
-   }
-   
-   SummonDragon()
-   {
-
-	  Send(poOwner,@NewHold,#what=Create(&BlueDragon),#new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol));
-	  
-	  return;
    }
    
    GetProjectileIcon()

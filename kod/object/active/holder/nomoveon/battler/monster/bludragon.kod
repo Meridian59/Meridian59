@@ -107,6 +107,21 @@ messages:
       return FALSE;
    }
    
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   {
+      if use_weapon <> $
+         AND IsClass(use_weapon,&RangedWeapon)
+         AND victim = self
+         AND Send(self,@CanSee,#what=what)
+      {
+         Send(self,@MonsterCastAttackSpell);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+   
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
       if oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE)
@@ -114,6 +129,20 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=bluedragon_no_truce);            
 
          return FALSE; 
+      }
+
+      propagate;
+   }
+   
+   ReqMonsterMove(new_row = $,new_col = $)
+   "Called by monster moving code to check if we really want to go"
+   "to <new_row>,<new_col>."
+   {
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_TROLL_CAVE
+         AND (new_col > 24) OR (new_col < 15)
+      {
+		 return FALSE;
       }
 
       propagate;
@@ -131,6 +160,26 @@ messages:
 		 oHold = send(SYS,@FindSpellByNum,#num=SID_HOLD);
 		 send(oHold,@DoHold,#who=self,#otarget=what);
 	  }
+
+      propagate;
+   }
+   
+   CanSee(what=$)
+   {
+      local iRow, iCol;
+
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_TROLL_CAVE
+         AND what <> $
+      {
+         iRow = Send(what,@GetRow);
+         iCol = Send(what,@GetCol);
+
+         if iCol > 25 AND iRow < 11
+         {
+            return FALSE;
+         }
+      }
 
       propagate;
    }

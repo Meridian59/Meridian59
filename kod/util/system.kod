@@ -4690,6 +4690,7 @@ messages:
 	  % Open-source monsters
       plMonsterTemplates = cons(create(&GiantEyeball),plMonsterTemplates);
       plMonsterTemplates = cons(create(&BlueDragon),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&BlindOne),plMonsterTemplates);
 
       return;
    }

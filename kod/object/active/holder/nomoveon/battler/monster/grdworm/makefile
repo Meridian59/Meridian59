@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\grdworm.bof
-BOFS  = queen.bof larva.bof
+BOFS  = queen.bof larva.bof blindone.bof
 
 !include $(KODDIR)\kod.mak

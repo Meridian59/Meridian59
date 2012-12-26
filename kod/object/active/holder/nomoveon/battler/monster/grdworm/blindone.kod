@@ -1,0 +1,186 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlindOne is GroundWorm
+
+constants:
+
+   include blakston.khd
+   
+   SPELL_CHANCE = 4
+
+resources:
+
+   BlindOne_name_rsc = "blind one"
+   BlindOne_icon_rsc = blindone.bgf
+   BlindOne_desc_rsc = \
+      "Covered in gold plates. The blind one is the oldest of all groundworms, although completely blind, "
+	  "the blind one uses its keen sense of smell to hunt and attack from below the ground."
+
+   BlindOne_dead_icon_rsc = wormlX.bgf
+   BlindOne_dead_name_rsc = "slain blind one"
+   
+   BlindOne_sound_miss = qn_atkm.wav
+   BlindOne_sound_death = qn_dth.wav
+   BlindOne_sound_aware = qn_awr.wav
+
+classvars:
+
+   vrName = BlindOne_name_rsc
+   vrIcon = BlindOne_icon_rsc
+   vrDesc = BlindOne_desc_rsc
+   vrDead_icon = BlindOne_dead_icon_rsc
+   vrDead_name = BlindOne_dead_name_rsc
+
+   vrSound_miss = BlindOne_sound_miss
+   vrSound_aware = BlindOne_sound_aware
+   vrSound_death = BlindOne_sound_death
+
+   viTreasure_type = TID_WORM_QUEEN
+   viSpeed = SPEED_SLOW
+   viAttack_types = ATCK_WEAP_ACID
+   viLevel = 200
+   viDifficulty = 9
+   viKarma = -30
+   viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SINGLEMINDED
+   viGender = GENDER_FEMALE
+
+   viTrailLength = 7
+   vbTrailLarge = TRUE
+
+properties:
+
+messages:
+
+   Constructed()
+   {
+      pimax_Hit_Points = pimax_hit_Points * 3;
+      piHit_Points = pimax_hit_points;
+
+      propagate;
+   }
+
+   MonsterAttack(what = $)
+   {
+      Send(self,@DoSlash);
+      
+      return;
+   }
+
+   DoSlash()
+   {
+      piAnimation = ANIM_ATTACK;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = ANIM_NONE;
+      
+      return;
+   }
+
+   SendMoveAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      AddPacket(1,ANIMATE_CYCLE, 4,100, 2,2, 2,2);
+
+      return;
+   }
+
+   SendAnimation()
+   {
+      if piColor_Translation <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
+      }
+      
+      if piAnimation = ANIM_ATTACK
+      {
+         AddPacket(1,ANIMATE_ONCE, 4,100, 2,4, 2,6, 2,1);
+         
+         return;
+      }
+
+      % if no body animation
+      propagate;
+   }
+
+   SomethingMoved(what=$)
+   {
+      if what <> self OR poOwner = $
+      {
+         propagate;
+      }
+
+      % Shake the ground when I take a step.
+      send(poOwner,@Rumble,#duration=1000,#disruption=100);
+
+      propagate;
+   }
+   
+   CanMorphTo()
+   {
+      % Art is too big.
+      return FALSE;
+   }
+   
+   MonsterCastSpell()
+   {
+      local oSpell,iBase;
+
+      oSpell = send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
+      iBase = send(self,@AdjustedChanceBase,#base=SPELL_CHANCE);
+
+      if Random(1,iBase) = 1
+         AND send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
+         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=75)
+         AND send(poowner,@ReqSpellCast,#who=self,#ospell=oSpell,#litems=[poTarget])
+         AND send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
+      {
+         piAnimation = ANIM_ATTACK;
+         send(poOwner,@SomethingChanged,#what=self);
+         piAnimation = ANIM_NONE;
+         send(oSpell,@DoEarthQuake,#who=self,#lTargets=Send(self,@GetTargets));
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   CanMonsterFight(who=$, oStroke = $, use_weapon = $)
+   {
+      return TRUE;
+   }
+   
+   GetTargets()
+   "This returns a list of valid targets in the room."
+   {
+      local oRoom, i, each_obj, lFinalTargets;
+
+      lFinalTargets = $;
+
+      oRoom = Send(self,@GetOwner);
+      for i in Send(oRoom,@GetHolderActive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&Battler)
+         {
+            lFinalTargets = Cons(each_obj,lFinalTargets);
+         }
+      }
+
+      return lFinalTargets;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

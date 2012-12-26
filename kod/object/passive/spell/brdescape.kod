@@ -37,8 +37,7 @@ resources:
 
    BardEscape_and = "and "
 
-   % Use same sound as what page uses
-   BardEscape_sound = God2god.wav
+   BardEscape_sound = Illus11m.wav
 
 classvars:
 

@@ -22,7 +22,7 @@ resources:
    
    
    curseweapon_name_rsc = "curse weapon"
-   curseweapon_icon_rsc = icurswpn.bgf
+   curseweapon_icon_rsc = iunholyw.bgf
    curseweapon_desc_rsc = \
       "Makes the target weapon nearly ineffective for a time, "
       "and curses the user to wield it until he or she gains "

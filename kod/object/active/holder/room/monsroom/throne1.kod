@@ -26,6 +26,7 @@ resources:
 
    throne1_ghost_spawn = \
       "~kA raspy voice moans, \"~r~IWitness my revenge, tresspasser!~I~k\""
+   ghost_spawn_wav_rsc = ghost_respawn.wav
 
 classvars:
 
@@ -93,7 +94,7 @@ messages:
 
    SpawnGhost()
    {
-      local iTime, i;
+      local iTime, i, oGhost;
 
       if ptGhost = $
       {
@@ -117,13 +118,16 @@ messages:
          }
 		}       
 		
-      % Set up the timer for the next spawn if there's a user in the room.
+      oGhost = Create(&Ghost);
+      Send(self,@NewHold,#what=oGhost,#new_row=2,#new_col=5,#new_angle=ANGLE_SOUTH);
+
       if pbUser_in_room
       {
-         Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=throne1_ghost_spawn,#what=self);
+         Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=throne1_ghost_spawn,
+              #what=self);
+         Send(self, @SomethingWaveRoom, #what=oGhost, 
+              #wave_rsc=ghost_spawn_wav_rsc);
       }
-
-      Send(self,@NewHold,#what=Create(&Ghost),#new_row=2,#new_col=5,#new_angle=ANGLE_SOUTH);
 
       return TRUE;
    }

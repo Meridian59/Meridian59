@@ -23,6 +23,7 @@ resources:
    lute_overlay_rsc = luteov.bgf
    lute_desc_rsc = "The simple lute is the instrument of choice among the meridian bards.  "
 		  "Its rosewood construction offers a rich tone in the hands of an expert."
+   lute_used_wav_rsc = lute_eqip.wav
 
 classvars:
 
@@ -43,7 +44,7 @@ messages:
 
    NewUsed()
    {
-      local oSoldierShield;
+      local oSoldierShield, oRoom;
       
       % Check for shield
       oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
@@ -52,6 +53,14 @@ messages:
       if oSoldierShield <> $
       {
          send(oSoldierShield,@SlingOnBack);
+      }
+
+      % Play a sound
+      oRoom = Send(poOwner, @GetOwner);
+      if oRoom <> $
+      {
+         Send(oRoom, @SomethingWaveRoom, #what = poOwner,
+              #wave_rsc = lute_used_wav_rsc);
       }
 
       propagate;

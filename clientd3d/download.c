@@ -614,7 +614,7 @@ bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
    }
 
    // Other errors
-   if (status != EXTRACT_OK && extraction_error == 0)
+   if (status != EXTRACT_OK && status != EXTRACT_DONE && extraction_error == 0)
       extraction_error = IDS_UNKNOWNERROR;
 
    // Check for user abort

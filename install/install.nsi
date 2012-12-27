@@ -1,30 +1,31 @@
 ; install.msi
 ;
-; Installer for Meridian 59 client
+; Installer for Meridian 59: The Internet Quest Continues client
 ;--------------------------------
 
 !include FontReg.nsh
 !include FontName.nsh
 !include WinMessages.nsh
+!include UAC.nsh
 
-!define SOURCEDIR "..\run\installclient"
+!define SOURCEDIR "..\run\localclient"
 
 ; First is default
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\English.nlf"
 LoadLanguageFile "${NSISDIR}\Contrib\Language files\German.nlf"
 
 ; The name of the installer
-Name "Meridian 59"
+Name "Meridian 59: The Internet Quest Continues"
 
 ; The file to write
 OutFile "meridian59-installer.exe"
 
 ; The default installation directory
-InstallDir "$PROGRAMFILES\Meridian 59"
+InstallDir "$PROGRAMFILES\Meridian 59: The Internet Quest Continues"
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKLM "Software\Meridian 59" "Install_Dir"
+InstallDirRegKey HKLM "Software\Meridian 59: The Internet Quest Continues" "Install_Dir"
 
 ; Compress to the max
 SetCompressor /SOLID LZMA
@@ -36,7 +37,7 @@ RequestExecutionLevel user
 Function .OnInit
  
 UAC_Elevate:
-    UAC::RunElevated 
+    !insertmacro UAC_RunElevated
     StrCmp 1223 $0 UAC_ElevationAborted ; UAC dialog aborted by user?
     StrCmp 0 $0 0 UAC_Err ; Error?
     StrCmp 1 $1 0 UAC_Success ;Are we the real deal or just the wrapper?
@@ -59,16 +60,6 @@ UAC_Success:
  
 FunctionEnd
 
-
-Function .OnInstFailed
-    UAC::Unload ;Must call unload!
-FunctionEnd
- 
-Function .OnInstSuccess
-    UAC::Unload ;Must call unload!
-FunctionEnd
-;--------------------------------
-
 ; Pages
 
 Page license
@@ -85,16 +76,16 @@ LicenseData "license.rtf"
 
 Function InstallWithUserPrivilege
   ; These files go to the local data directory, not Program Files
-  SetOutPath "$LOCALAPPDATA\Meridian 59\resource"
+  SetOutPath "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues\resource"
   File ${SOURCEDIR}\resource\*.*
-  SetOutPath "$LOCALAPPDATA\Meridian 59\mail"
+  SetOutPath "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues\mail"
   File "${SOURCEDIR}\mail\*.*"
-  SetOutPath "$LOCALAPPDATA\Meridian 59"
+  SetOutPath "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues"
   File "${SOURCEDIR}\meridian.ini"
 
   ; Create download directory now; creating it on demand seems to fail
   ; under some UAC conditions.
-  CreateDirectory "$LOCALAPPDATA\Meridian 59\download"
+  CreateDirectory "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues\download"
 
    ; Copy settings from previous installation  
   ClearErrors
@@ -130,7 +121,7 @@ Function InstallWithUserPrivilege
 FunctionEnd
 
 ; The stuff to install
-Section "Meridian 59 (required)"
+Section "Meridian 59: The Internet Quest Continues (required)"
 
   SectionIn RO
   
@@ -160,15 +151,15 @@ Section "Meridian 59 (required)"
   WriteRegStr HKLM SOFTWARE\Meridian59 "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59" "DisplayName" "Meridian 59"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59: The Internet Quest Continues" "DisplayName" "Meridian 59: The Internet Quest Continues"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59: The Internet Quest Continues" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59: The Internet Quest Continues" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59: The Internet Quest Continues" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
 
   ; Install resources and copy old settings at user level
   GetFunctionAddress $0 InstallWithUserPrivilege
-  UAC::ExecCodeSegment $0
+  !insertmacro UAC_AsUser_Call function InstallWithUserPrivilege ${UAC_SYNCREGISTERS}|${UAC_SYNCINSTDIR}
 SectionEnd
 
 ; Optional section (can be disabled by the user)
@@ -177,7 +168,7 @@ Section "Desktop Shortcut"
   ; by InstallWithUserPrivilege
 
   ; Set to run in data directory
-  SetOutPath "$LOCALAPPDATA\Meridian 59"
+  SetOutPath "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues"
   CreateShortCut "$DESKTOP\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
   
 SectionEnd
@@ -185,13 +176,13 @@ SectionEnd
 ; Optional section
 Section "Start Menu Shortcuts"
 
-  CreateDirectory "$SMPROGRAMS\Meridian 59"
-  CreateShortCut "$SMPROGRAMS\Meridian 59\Uninstall Meridian 59.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateDirectory "$SMPROGRAMS\Meridian 59: The Internet Quest Continues"
+  CreateShortCut "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Uninstall Meridian 59: The Internet Quest Continues.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
 
   ; Set to run in data directory
-  SetOutPath "$LOCALAPPDATA\Meridian 59"
+  SetOutPath "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues"
 
-  CreateShortCut "$SMPROGRAMS\Meridian 59\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
+  CreateShortCut "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
   
 SectionEnd
 
@@ -201,7 +192,7 @@ SectionEnd
 
 Function un.OnInit
 UAC_Elevate:
-    UAC::RunElevated 
+    !insertmacro UAC_RunElevated
     StrCmp 1223 $0 UAC_ElevationAborted ; UAC dialog aborted by user?
     StrCmp 0 $0 0 UAC_Err ; Error?
     StrCmp 1 $1 0 UAC_Success ;Are we the real deal or just the wrapper?
@@ -224,22 +215,14 @@ UAC_Success:
  
 FunctionEnd
 
-Function un.OnUnInstFailed
-    UAC::Unload ;Must call unload!
-FunctionEnd
- 
-Function un.OnUnInstSuccess
-    UAC::Unload ;Must call unload!
-FunctionEnd
-
 Section "Uninstall"
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59"
-  DeleteRegKey HKLM "SOFTWARE\Meridian 59"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Meridian 59: The Internet Quest Continues"
+  DeleteRegKey HKLM "SOFTWARE\Meridian 59: The Internet Quest Continues"
 
   ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\Meridian 59\Meridian 59.lnk"
-  Delete "$SMPROGRAMS\Meridian 59\Uninstall Meridian 59.lnk"
+  Delete "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Meridian 59.lnk"
+  Delete "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Uninstall Meridian 59.link"
   Delete "$DESKTOP\Meridian 59.lnk"
 
   ; Remove font
@@ -248,8 +231,8 @@ Section "Uninstall"
   ;  !insertmacro RemoveTTFFont "$INSTDIR\heidelb1.ttf"
 
   ; Remove directories used
-  RMDir "$SMPROGRAMS\Meridian 59"
+  RMDir "$SMPROGRAMS\Meridian 59: The Internet Quest Continues"
   RMDir /r "$INSTDIR"
-  RMDir /r "$LOCALAPPDATA\Meridian 59"
+  RMDir /r "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues"
 
 SectionEnd

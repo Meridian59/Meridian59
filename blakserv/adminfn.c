@@ -4242,7 +4242,7 @@ void AdminBlockIP(int session_id,admin_parm_type parms[],
 	if( ( blocktoAdd.s_addr = inet_addr( arg_str ) ) != -1 ) {
 		if(FindBlock( &blocktoAdd ) == NULL )  {
 			AddBlock(-1, &blocktoAdd);
-			aprintf("IP %s bocked\n",inet_ntoa( blocktoAdd ) );
+			aprintf("IP %s blocked\n",inet_ntoa( blocktoAdd ) );
 		} else {
 			DeleteBlock( &blocktoAdd );
 			aprintf("IP %s has been unblocked\n" ,inet_ntoa( blocktoAdd ) );

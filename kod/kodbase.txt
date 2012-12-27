@@ -41438,24 +41438,6 @@ P		who 10116
 P		iSpellPower 12499
 P		lTargets 12595
 M	ResetReagents 14452
-C Field1 10358 10012 Room
-R	room_name_field1 21779
-R	room_field1 21780
-R	field1_music 21781
-V	viTeleport_row 17
-V	viTeleport_col 18
-V	viTerrain_type 21
-V	viPermanent_flags 20
-V	vrName 0
-Y	prData 38
-Y	prRoom 7
-Y	piRoom_num 9
-Y	prMusic 13
-Y	piBaseLight 14
-Y	piOutside_factor 15
-M	GetName 10040
-M	GetRegion 12571
-M	SeanceCheck 12719
 C DragonSkull 15003 12259 PassiveObject
 R	DragonSkull_name_rsc 30696
 R	DragonSkull_icon_rsc 30697
@@ -42399,3 +42381,21 @@ P		oStroke 13708
 M	CanMorphTo 13551
 M	DoSlash 14000
 M	GetTargets 14023
+C Field1 10358 10012 Room
+R	room_name_field1 21779
+R	room_field1 21780
+R	field1_music 21781
+V	viTeleport_row 17
+V	viTeleport_col 18
+V	viTerrain_type 21
+V	viPermanent_flags 20
+V	vrName 0
+Y	prData 38
+Y	prRoom 7
+Y	piRoom_num 9
+Y	prMusic 13
+Y	piBaseLight 14
+Y	piOutside_factor 15
+M	GetName 10040
+M	GetRegion 12571
+M	SeanceCheck 12719

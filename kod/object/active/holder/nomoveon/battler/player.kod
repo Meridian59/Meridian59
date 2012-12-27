@@ -1636,12 +1636,27 @@ messages:
 
    ShowExtraInfo()
    {
-      local i, j, obj, year;
+      local i, j, obj, year, kills;
 
       ClearTempString();
 
       if NOT IsClass(self,&DM)
       {
+	  
+		 % kill count
+		 AppendTempString("Has recently killed ");
+		 kills = piJustified_kill_count + piKill_count;
+		 Send(SYS,@AppendCardinalToTempString,#number=kills);
+		 if kills = 1
+		 {
+		    AppendTempString(" player.");
+		 }
+		 else
+		 {
+		    AppendTempString(" players.");
+		 }
+		 AppendTempString(player_nl);
+		 
          % (example) She has called Jasper home for eight years.
 
          AppendTempString(Send(self,@GetHeShe,#cap=TRUE));

@@ -79,6 +79,8 @@ resources:
 
    LogoffGhost_someone = "Someone"
 
+   LogoffGhost_poof_wav_rsc = logoffghost_poof.wav
+
 classvars:
 
 
@@ -209,6 +211,13 @@ messages:
                  #dest_list=[poGhostedPlayer],
                  #nest_list=[4,LogoffGhost_newbie_mail]);
          }
+      }
+
+      % Play a sound audible in the room
+      if poOwner <> $ 
+      {
+         Send(poOwner, @SomethingWaveRoom, #what=self,
+              #wave_rsc = LogoffGhost_poof_wav_rsc);
       }
 
       % Send this person to the room's blink coordinates.  This helps get 

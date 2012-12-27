@@ -21,6 +21,7 @@ resources:
    healWand_desc_rsc = "This wand is almost comically decorated by obviously fake gems.   "
        "Still, the wand hums nearly inaudibly, and when you put your hand on it, it is "
        "warm to the touch."
+   healWand_success_wav_rsc = healwand.wav
    healed_rsc = "You feel better."
    wand_used_rsc = "The wand pulses once in your hand."
    wand_fail_snd = spelfail.wav
@@ -46,58 +47,63 @@ properties:
 
 messages:
 
-%the wand of healing can only be applied to a user
-ReqNewApply(what = $,apply_on = $)
-{
-	local oWatcher;
-
-	if send(send(poOwner,@getowner),@checkroomflag,#flag=ROOM_SAFE_DEATH)
-    {
-		oWatcher=send(send(poOwner,@getowner),@getwatcher);
-        if oWatcher = $
-        {  DEBUG("Safe Death room without watcher!");  return FALSE; }
-        
-		if not send(oWatcher,@isCombatant,#who=poOwner)
-        or not send(oWatcher,@IsCombatant,#who=apply_on)
-        or not send(oWatcher,@FightInSession)
-        {
-			Send(poOwner, @MsgSendUser, #message_rsc = wand_fail_rsc);
-			Send(poOwner, @WaveSendUser, #wave_rsc = wand_fail_snd);
-			return FALSE;
-        }
-	}
-    %%% Target must be in the same room as you.  Possibility, someone else
-	%%% just killed the monster, or target just logged off and is ahead of
-	%%% you in the thread.
-	if send(apply_on,@GetOwner) <> send(poOwner,@GetOwner)
-	{
-		send(poOwner,@msgsenduser,#message_rsc=wand_target_gone,
+   %the wand of healing can only be applied to a user
+   ReqNewApply(what = $,apply_on = $)
+   {
+	   local oWatcher;
+      
+	   if send(send(poOwner,@getowner),@checkroomflag,#flag=ROOM_SAFE_DEATH)
+      {
+		   oWatcher=send(send(poOwner,@getowner),@getwatcher);
+         if oWatcher = $
+         {
+            DEBUG("Safe Death room without watcher!");  return FALSE; 
+         }
+         
+		   if not send(oWatcher,@isCombatant,#who=poOwner)
+         or not send(oWatcher,@IsCombatant,#who=apply_on)
+         or not send(oWatcher,@FightInSession)
+         {
+			   Send(poOwner, @MsgSendUser, #message_rsc = wand_fail_rsc);
+			   Send(poOwner, @WaveSendUser, #wave_rsc = wand_fail_snd);
+			   return FALSE;
+         }
+	   }
+      %%% Target must be in the same room as you.  Possibility, someone else
+	   %%% just killed the monster, or target just logged off and is ahead of
+	   %%% you in the thread.
+	   if send(apply_on,@GetOwner) <> send(poOwner,@GetOwner)
+	   {
+		   send(poOwner,@msgsenduser,#message_rsc=wand_target_gone,
 			#parm1=send(apply_on,@getdef),#parm2=send(apply_on,@getname));
-	   return FALSE;
-	}
-
-	if IsClass(apply_on, &User)
-    {
-		return True;
-    }
-    Send(poOwner, @MsgSendUser, #message_rsc = wand_fail_rsc);
-    Send(poOwner, @WaveSendUser, #wave_rsc = wand_fail_snd);
-    return False;
-}
-
-CastSpell(apply_on = $)
-"Casts heal on single target"
-{
-	local iHeal;
-
-    iHeal = Random(piHeal_min, piHeal_max);
-    Send(poOwner, @MsgSendUser, #message_rsc = wand_used_rsc);
-    Send(apply_on, @MsgSendUser, #message_rsc = healed_rsc);
-    Send(apply_on, @GainHealthNormal, #amount = iHeal);
-
-    return;
-}
-
+	      return FALSE;
+	   }
+      
+	   if IsClass(apply_on, &User)
+      {
+		   return True;
+      }
+      Send(poOwner, @MsgSendUser, #message_rsc = wand_fail_rsc);
+      Send(poOwner, @WaveSendUser, #wave_rsc = wand_fail_snd);
+      return False;
+   }
+      
+   CastSpell(apply_on = $)
+   "Casts heal on single target"
+   {
+	   local iHeal, oRoom;
+      
+      iHeal = Random(piHeal_min, piHeal_max);
+      Send(poOwner, @MsgSendUser, #message_rsc = wand_used_rsc);
+      Send(apply_on, @MsgSendUser, #message_rsc = healed_rsc);
+      Send(apply_on, @GainHealthNormal, #amount = iHeal);
+      
+      oRoom = Send(poOwner, @GetOwner);
+      Send(oRoom, @SomethingWaveRoom, #what = poOwner, 
+           #wave_rsc = healWand_success_wav_rsc);
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

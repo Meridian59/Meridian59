@@ -24,6 +24,7 @@ resources:
    ringinvisibility_desc_rsc = "This ring bears strange markings and seems to shimmer, making it difficult to see clearly."
 
    ringinvisibility_use = "Your physical form shimmers and then disappears altogether."
+   ringinvisibility_use_wav_rsc = invis_ring.wav
   
    ringinvisibility_dead_rsc = "Your ring of invisibility goes cold, having expended its magical energy."
 
@@ -55,8 +56,8 @@ messages:
    {
       if Send(what,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
       {
-	 Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_already_invisible_rsc);
-	 return False;
+	      Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_already_invisible_rsc);
+	      return False;
       }
 
       propagate;
@@ -64,15 +65,21 @@ messages:
 
    NewUsed(what = $)
    {
+      local oRoom;
+
       if ptCharge <> $
       {
-	 debug("Ring of invisibility",self,"got used when already has timer");
-	 DeleteTimer(ptCharge);
+	      debug("Ring of invisibility",self,"got used when already has timer");
+	      DeleteTimer(ptCharge);
       }
       ptCharge = CreateTimer(self,@ChargeTimer,RINGINVISIBILITY_CHARGE_RATE);
 
+      % Give message and play sound
       Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_use);
-
+      oRoom = Send(poOwner, @GetOwner);
+      Send(oRoom, @SomethingWaveRoom, #what = poOwner, 
+           #wave_rsc = ringinvisibility_use_wav_rsc);
+      
       pbIn_use = True;
       Send(poOwner,@SetPlayerFlag,#flag=PFLAG_INVISIBLE,#value=True);
 

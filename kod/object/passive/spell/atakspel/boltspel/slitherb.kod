@@ -22,7 +22,7 @@ resources:
    "Hurls a bolt of Slitherbolt at the target.  "
    "Requires blue mushroom and orc teeth to cast."
 
-   Slitherbolt_sound = fbolt.wav
+   Slitherbolt_sound = slitherboltwand.wav
 
 classvars:
 

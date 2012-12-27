@@ -21,6 +21,9 @@ resources:
    healWand_desc_rsc = "This wand is almost comically decorated by obviously fake gems.   "
        "Still, the wand hums nearly inaudibly, and when you put your hand on it, it is "
        "warm to the touch."
+	   
+   healWand_success_wav_rsc = healwand.wav
+	   
    healed_rsc = "You feel better."
    wand_used_rsc = "The wand pulses once in your hand."
    wand_fail_snd = spelfail.wav
@@ -88,12 +91,17 @@ ReqNewApply(what = $,apply_on = $)
 CastSpell(apply_on = $)
 "Casts heal on single target"
 {
-	local iHeal;
+	local iHeal, oRoom;
 
     iHeal = Random(piHeal_min, piHeal_max);
     Send(poOwner, @MsgSendUser, #message_rsc = wand_used_rsc);
     Send(apply_on, @MsgSendUser, #message_rsc = healed_rsc);
     Send(apply_on, @GainHealthNormal, #amount = iHeal);
+	
+	  % Play sound
+      oRoom = Send(poOwner, @GetOwner);
+      Send(oRoom, @SomethingWaveRoom, #what=poOwner,
+		 #wave_rsc=healWand_success_wav_rsc);
 
     return;
 }

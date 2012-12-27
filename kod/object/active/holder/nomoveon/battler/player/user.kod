@@ -70,11 +70,13 @@ resources:
 
    user_garbage_collecting = "System is saving; please wait."
    user_garbage_collecting_done = "System save completed; resume play."
+   user_saving_wav_rsc = system_save.wav
 
    user_err_get_unk = "You can't pick up %s%s; it is no longer accessible."
    user_err_get_dist = "You can't pick up %s%s; it's too far away."
    user_disallow_get = "You're unable to pick up %s%s."
    user_got_some = "You can't pick up all the %s."
+   user_cant_pickup_item_wav_rsc = player_cannot_carry.wav
    user_disallow_drop = "You are unable to drop %s%s."
    user_err_drop = "You're not holding that."
    user_err_put = "You can't put %s%s in %s%s; %s%s can't hold things!"
@@ -199,6 +201,7 @@ resources:
       "hurt those around you."   
 
    user_cant_go = "You are unable to go anywhere."
+   user_cant_go_wav_rsc = cant_go_anywhere_louder.wav
    user_blocked_send = "%s is ignoring messages from you."
 
    user_cant_suicide = \
@@ -2176,6 +2179,7 @@ messages:
       Send(self,@InvalidateData);
 
       Send(self,@SysMsgSendUser,#message_rsc=user_garbage_collecting_done);
+	  Send(self, @WaveSendUser, #what = self, #wave_rsc = user_saving_wav_rsc);
 
       AddPacket(1,BP_UNWAIT);
       SendPacket(poSession);
@@ -3582,8 +3586,9 @@ messages:
          OR IsClass(Send(what,@GetOwner),&User)
       {
          Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
-              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-              
+              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));    
+		 Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+			  
          return;
       }
 
@@ -3592,6 +3597,7 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+		 Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
          return;
       }
@@ -3615,6 +3621,7 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=user_err_get_dist,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+		 Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
 
          return;
       }
@@ -3631,6 +3638,7 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+		 Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
          return;
       }
@@ -3639,6 +3647,7 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+		 Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
          return;
       }
@@ -3664,6 +3673,7 @@ messages:
                   Send(what,@AddNumber,#number=iCan_hold);
                   Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
                        #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+				   Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
                        
                   return;
                }
@@ -3672,6 +3682,7 @@ messages:
             {
                Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+			   Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
                     
                return;
             }
@@ -5587,6 +5598,7 @@ messages:
          OR Send(self,@IsEnchanted,#byClass=&Blind)
       {         
          Send(self,@MsgSendUser,#message_rsc=user_cant_go);
+		 Send(self,@WaveSendUser, #what=self, #wave_rsc=user_cant_go_wav_rsc);
 
          return;
       }
@@ -5603,6 +5615,7 @@ messages:
          }
 
          Send(self,@MsgSendUser,#message_rsc=user_cant_go);
+		 Send(self,@WaveSendUser, #what=self, #wave_rsc=user_cant_go_wav_rsc);
 
          return;
       }

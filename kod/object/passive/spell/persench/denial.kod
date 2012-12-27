@@ -123,6 +123,7 @@ messages:
 		 % Instead of outright killing you it takes you to 1 hp.
          if send(who,@GetHealth) < 1
 	      {
+			 % Don't die: too harsh; makes spell unusable.
 	         send(who,@GainHealthNormal,#amount=1);
 	      }
       }

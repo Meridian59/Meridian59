@@ -100,7 +100,7 @@ constants:
    MIN_NEEDED_TO_ADVANCE = 75       
                                     
    % How many weapon swings until we get an improve check?
-   SWINGS_PER_IMPROVE_CHECK = 75    
+   SWINGS_PER_IMPROVE_CHECK = 40    
 
    % What's the length after having a player attacked before we let "mules" 
    %  cast on them again.  Currently set to 5 minutes.  Should be bigger 

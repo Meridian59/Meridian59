@@ -42225,48 +42225,6 @@ P		what 10002
 P		who 10116
 P		damage 13091
 M	WeaponHitTarget 13724
-C Lute 11226 13957 Instrument
-R	lute_name_rsc 30254
-R	lute_icon_rsc 30255
-R	lute_overlay_rsc 30256
-R	lute_desc_rsc 30257
-R	lute_used_wav_rsc 30733
-V	viInstrument_strength 38
-V	vrName 0
-V	vrDesc 2
-V	vrIcon 1
-V	vrInstrument_overlay 39
-V	viValue_average 18
-V	viWeight 6
-V	viBulk 5
-M	NewUsed 12294
-M	NewUnused 12302
-C FineLute 11227 11226 Lute
-R	FineLute_name_rsc 30263
-R	FineLute_icon_rsc 30264
-R	FineLute_overlay_rsc 30265
-R	FineLute_desc_rsc 30266
-V	viInstrument_strength 38
-V	vrName 0
-V	vrDesc 2
-V	vrIcon 1
-V	vrInstrument_overlay 39
-V	viValue_average 18
-V	viWeight 6
-V	viBulk 5
-C TrueLute 11228 11226 Lute
-R	TrueLute_name_rsc 30267
-R	TrueLute_icon_rsc 30268
-R	TrueLute_overlay_rsc 30269
-R	TrueLute_desc_rsc 30270
-V	viInstrument_strength 38
-V	vrName 0
-V	vrDesc 2
-V	vrIcon 1
-V	vrInstrument_overlay 39
-V	viValue_average 18
-V	viWeight 6
-V	viBulk 5
 C HealWand 11276 13515 SpecialWand
 R	healWand_name_rsc 30558
 R	healWand_icon_rsc 30559
@@ -42413,3 +42371,45 @@ M	CreateStandardObjects 12548
 M	CreateStandardExits 12549
 M	SpawnGhost 13146
 M	GhostTimer 13147
+C Lute 11226 13957 Instrument
+R	lute_name_rsc 30254
+R	lute_icon_rsc 30255
+R	lute_overlay_rsc 30256
+R	lute_desc_rsc 30257
+R	lute_used_wav_rsc 30733
+V	viInstrument_strength 38
+V	vrName 0
+V	vrDesc 2
+V	vrIcon 1
+V	vrInstrument_overlay 39
+V	viValue_average 18
+V	viWeight 6
+V	viBulk 5
+M	NewUsed 12294
+M	NewUnused 12302
+C FineLute 11227 11226 Lute
+R	FineLute_name_rsc 30263
+R	FineLute_icon_rsc 30264
+R	FineLute_overlay_rsc 30265
+R	FineLute_desc_rsc 30266
+V	viInstrument_strength 38
+V	vrName 0
+V	vrDesc 2
+V	vrIcon 1
+V	vrInstrument_overlay 39
+V	viValue_average 18
+V	viWeight 6
+V	viBulk 5
+C TrueLute 11228 11226 Lute
+R	TrueLute_name_rsc 30267
+R	TrueLute_icon_rsc 30268
+R	TrueLute_overlay_rsc 30269
+R	TrueLute_desc_rsc 30270
+V	viInstrument_strength 38
+V	vrName 0
+V	vrDesc 2
+V	vrIcon 1
+V	vrInstrument_overlay 39
+V	viValue_average 18
+V	viWeight 6
+V	viBulk 5

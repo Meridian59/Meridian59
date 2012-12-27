@@ -61,7 +61,7 @@ messages:
 	  
       if oRoom <> $ 
       {
-         Send(oRoom, @SomethingWaveRoom, #what=self, 
+         Send(oRoom, @SomethingWaveRoom, #what=poOwner, 
               #wave_rsc=lute_used_wav_rsc);
       }
 

@@ -22,6 +22,9 @@ constants:
 
    % What's percentage of the chance do we keep for trying to remove Jala spells?
    JALA_PERCENT = 50
+   
+   % What's percentage of the chance do we keep for trying to remove AMA?
+   AMA_PERCENT = 150
 
 resources:
 
@@ -177,10 +180,18 @@ messages:
       {
          oSpell = Nth(oEnchantment,2);
          iModifiedChance = iChance;
+		 
          if send(oSpell,@GetSchool) = SS_JALA
          {
             % Only half chance to discord a Jala song
             iModifiedChance = (iModifiedChance * JALA_PERCENT) / 100;
+         }
+		 
+		 % Discord has a greater chance to remove AMA
+         if send(oSpell,@GetSpellNum) = SID_ANTIMAGIC_AURA
+         {
+			iModifiedChance = (iModifiedChance * AMA_PERCENT) / 100;
+			bound(iModifiedChance,1,100);
          }
          
          if iChance = $ OR iModifiedChance > random(1,100)

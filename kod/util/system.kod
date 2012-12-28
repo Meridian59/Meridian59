@@ -1156,6 +1156,9 @@ messages:
       Send(&SoldierShield,@NewDay);
 
       Send(Send(self,@FindSpellByNum,#num=SID_NODEBURST),@NewDay);
+	  
+	  % Auto fix any broken Karma
+	  Send(&Player,@AutoFixKarma);
 
       return;
    }

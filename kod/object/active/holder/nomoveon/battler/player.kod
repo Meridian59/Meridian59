@@ -6556,6 +6556,16 @@ messages:
             iSwing = Send(Send(SYS, @GetSettings), @GetKillKarmaSwingNeutral);
          }
       }
+	  
+	  % Prevent karma change for killing monsters of same lower karma 
+	  if bIsMob 
+	  { 
+		 if (karma_killer > 0) = (karma_victim > 0) 
+			AND (abs(karma_killer) > abs(karma_victim)) 
+		 { 
+			return 0; 
+		 }
+	  }
 
       iChange = Send(self,@CalculateKarmaChangeFromAct,#karma_doer = karma_killer,
                      #karma_act = -(karma_victim),#swing_factor = iSwing);
@@ -12792,6 +12802,30 @@ messages:
 	  
 	  return level;
    }
+   
+	AutoFixKarma()
+	"Correct karma based on player's schools."
+	{
+		 if Send(self,@GetNumSpellsInSchool,#school=SS_SHALILLE)
+		 {
+			if piKarma < 0
+			{
+			  piKarma = 10;
+			}
+		 }
+		 
+		 if Send(self,@GetNumSpellsInSchool,#school=SS_QOR)
+		 {
+			if piKarma > 0
+			{
+			  piKarma = -10;
+			}
+		 }
+		 
+	  Send(self,@NewKarma);
+		 
+	  return piKarma;
+	}
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

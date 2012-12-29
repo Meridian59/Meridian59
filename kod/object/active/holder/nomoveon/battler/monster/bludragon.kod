@@ -107,21 +107,6 @@ messages:
       return FALSE;
    }
    
-   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
-   {
-      if use_weapon <> $
-         AND IsClass(use_weapon,&RangedWeapon)
-         AND victim = self
-         AND Send(self,@CanSee,#what=what)
-      {
-         Send(self,@MonsterCastAttackSpell);
-
-         return FALSE;
-      }
-
-      propagate;
-   }
-   
    ReqSpellCast(who = $, oSpell = $, lItems = $)
    {
       if oSpell = send(SYS,@FindSpellByNum,#num=SID_TRUCE)

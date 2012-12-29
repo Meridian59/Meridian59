@@ -96,7 +96,7 @@ config_table_type config_table[] =
      "then login again to automatically upgrade your software." },
 { LOGIN_INVALID_VERSION,  T, "InvalidVersion",CONFIG_INT,   "100" }, 
 { LOGIN_INVALID_VERSION_STR,F,"InvalidVersionStr",CONFIG_STR,  
-    "Your version of the game software is beta; you need to purchase the latest version." }, 
+    "Your version of the client is outdated! Please download the latest client here: http://source.meridian59.net" }, 
 { LOGIN_SUSPEND_STR,      F, "SuspendStr", CONFIG_STR,   
      "Your account has been disabled temporarily. "
 	 "Check your email to see if the administrator has sent you a message." },

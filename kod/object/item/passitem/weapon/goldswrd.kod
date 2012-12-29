@@ -71,6 +71,11 @@ messages:
 
       return iDamage;
    }
+   
+   CanDualWield()
+   {
+	  return FALSE;
+   }
 
 
 end

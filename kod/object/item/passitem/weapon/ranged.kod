@@ -212,6 +212,11 @@ messages:
       return ranged_ammo_name;      
    }
    
+   CanDualWield()
+   {
+	  return FALSE;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

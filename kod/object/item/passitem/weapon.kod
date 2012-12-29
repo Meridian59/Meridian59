@@ -499,10 +499,18 @@ messages:
 
    ReqUseSomething(what = $)
    {
+	  
       if IsClass(what,&Weapon)
       {
          if Send(poOwner,@TryUnuseItem,#what=self)
          {
+			% dual wielding
+			if Send(poOwner,@HasSkill,#num=SKID_PROFICIENCY_DUAL) AND send(self,@CanDualWield)
+			{
+			   Send(Send(SYS,@FindSkillByNum,#num=SKID_PROFICIENCY_DUAL),
+					@DoDualWield,#who=poOwner,#WeaponLeft=what,#WeaponRight=self);
+			}
+			
             propagate;
          }
          else
@@ -935,6 +943,11 @@ messages:
    ReqRepair()
    {
       return TRUE;
+   }
+   
+   CanDualWield()
+   {
+	  return TRUE;
    }
 
 end

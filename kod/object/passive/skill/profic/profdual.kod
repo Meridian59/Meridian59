@@ -41,6 +41,28 @@ messages:
    {
       return send(who,@GetAgility);
    }
+   
+   DoDualWield(who = $, WeaponLeft = $, WeaponRight = $)
+   {
+	   local oDualWeapon;
+   
+	   % Only dual wield if they are of the same class
+	   if GetClass(WeaponLeft) <> GetClass(WeaponRight)
+	   {
+		   return FALSE;
+	   }
+	   Send(who,@TryUnuseItem,#what=WeaponLeft);
+	   Send(who,@TryUnuseItem,#what=WeaponRight);
+	   
+	   Send(who,@LeaveHold,#what=WeaponLeft);
+	   Send(who,@LeaveHold,#what=WeaponRight);
+	   
+	   oDualWeapon = Create(&DualWeapon,#WeaponLeft=WeaponLeft,#WeaponRight=WeaponRight);
+	   Send(who,@NewHold,#what=oDualWeapon);
+	   Post(who,@TryUseItem,#what=oDualWeapon);
+   
+	   return TRUE;
+   }
 
 
 end

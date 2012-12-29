@@ -8,6 +8,6 @@ DEPEND = ..\weapon.bof
 BOFS = shrtswrd.bof mystswrd.bof mace.bof bkdagger.bof spirhamm.bof\
         scimitar.bof longswrd.bof hammer.bof ranged.bof axe.bof goldswrd.bof \
         riijaswd.bof neruswd.bof huntsw.bof unique.bof \
-		throwweapon.bof
+		throwweapon.bof dualweap.bof
 
 !include $(KODDIR)\kod.mak

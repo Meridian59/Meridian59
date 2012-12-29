@@ -1,0 +1,251 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DualWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+   dualmaces_name_rsc = "dual maces"
+   dualmaces_icon_rsc = dmace.bgf
+   dualmaces_desc_rsc = \
+		 "Often considered a weak weapon of choice, but when in pairs it becomes a powerful combination."
+   dualmaces_window_overlay = povdmace.bgf
+   
+   dualhammers_name_rsc = "dual hammers"
+   dualhammers_icon_rsc = dhammer.bgf
+   dualhammers_desc_rsc = \
+		 "Twice the bone shatter, this pair of pummelling power is sure to be a crowd pleaser."
+   dualhammers_window_overlay = povdhamr.bgf
+   
+   dualaxes_name_rsc = "dual axes"
+   dualaxes_icon_rsc = daxe.bgf
+   dualaxes_desc_rsc = \
+		 "You are overcome by the urge to windmill into something."
+   dualaxes_window_overlay = povdaxe.bgf
+   
+   dualshortswords_name_rsc = "dual short swords"
+   dualshortswords_icon_rsc = dulshrtswrd.bgf
+   dualshortswords_desc_rsc = \
+		 "Underestimated alone, when in pairs it causes great amounts of damage to its enemies."
+   dualshortswords_window_overlay = povdulshswd.bgf
+   
+   duallongswords_name_rsc = "dual long swords"
+   duallongswords_icon_rsc = dsword.bgf
+   duallongswords_desc_rsc = \
+		 "These blades of steel are for the truly skilled of warriors. Only the greatest warriors can face in the combat of melee."
+   duallongswords_window_overlay = povdsword.bgf
+   
+   dualscimitars_name_rsc = "dual scimitars"
+   dualscimitars_icon_rsc = dscim.bgf
+   dualscimitars_desc_rsc = \
+		 "Deadly arts stolen from the Orc Pit Boss, leader of the foul orcish invaders. "
+		 "Only the most skilled of warriors are trained in the ability of dual wielding the deadly scimitar. "
+   dualscimitars_window_overlay = povdscim.bgf
+   
+   dualnerudites_name_rsc = "dual nerudite swords"
+   dualnerudites_icon_rsc = dnerswd.bgf
+   dualnerudites_desc_rsc = \
+		 "These strong and dependable weapons are sure to find their way into any warrior's collection"
+   dualnerudites_window_overlay = povdnersw.bgf
+
+classvars:
+
+   viProficiency_Needed = SKID_PROFICIENCY_DUAL
+   
+   % Set as one just to unequip things before (eg. Shield)
+   viUse_amount = 2
+   
+   viGround_group = 1
+   viInventory_group = 3
+   viBroken_group = 2
+   
+   viSpell_modifier = -25
+   
+
+properties:
+   vrName = $
+   vrIcon = $
+   vrDesc = $
+   vrWeapon_window_overlay = $
+
+   pcWeaponClass = $
+
+   poWeaponLeft = $
+   poWeaponRight = $
+
+   pbFirstAttack = FALSE
+   ptSecondAttack = $
+
+messages:
+
+   Constructor(WeaponLeft = $, WeaponRight = $)
+   {
+	  poWeaponLeft = WeaponLeft;
+	  poWeaponRight = WeaponRight;
+	  
+	  % Only need to get class from one of the weapons
+	  % They both should be the same
+	  pcWeaponClass = GetClass(poWeaponRight);
+	  
+	  if pcWeaponClass = &Mace
+	  {
+	     vrName = dualmaces_name_rsc;
+		 vrIcon = dualmaces_icon_rsc;
+		 vrDesc = dualmaces_desc_rsc;
+		 vrWeapon_window_overlay = dualmaces_window_overlay;
+	  }
+	  
+	  if pcWeaponClass = &Hammer
+	  {
+	     vrName = dualhammers_name_rsc;
+		 vrIcon = dualhammers_icon_rsc;
+		 vrDesc = dualhammers_desc_rsc;
+		 vrWeapon_window_overlay = dualhammers_window_overlay;
+	  }
+	  
+	  if pcWeaponClass = &Axe
+	  {
+	     vrName = dualaxes_name_rsc;
+		 vrIcon = dualaxes_icon_rsc;
+		 vrDesc = dualaxes_desc_rsc;
+		 vrWeapon_window_overlay = dualaxes_window_overlay;
+	  }
+	  
+	  if pcWeaponClass = &ShortSword
+	  {
+	     vrName = dualshortswords_name_rsc;
+		 vrIcon = dualshortswords_icon_rsc;
+		 vrDesc = dualshortswords_desc_rsc;
+		 vrWeapon_window_overlay = dualshortswords_window_overlay;
+	  }
+	  
+	  if pcWeaponClass = &LongSword
+	  {
+	     vrName = duallongswords_name_rsc;
+		 vrIcon = duallongswords_icon_rsc;
+		 vrDesc = duallongswords_desc_rsc;
+		 vrWeapon_window_overlay = duallongswords_window_overlay;
+	  }
+	  
+	  if pcWeaponClass = &Scimitar
+	  {
+	     vrName = dualscimitars_name_rsc;
+		 vrIcon = dualscimitars_icon_rsc;
+		 vrDesc = dualscimitars_desc_rsc;
+		 vrWeapon_window_overlay = dualscimitars_window_overlay;
+	  }
+	  
+	  if pcWeaponClass = &NeruditeSword
+	  {
+	     vrName = dualnerudites_name_rsc;
+		 vrIcon = dualnerudites_icon_rsc;
+		 vrDesc = dualnerudites_desc_rsc;
+		 vrWeapon_window_overlay = dualnerudites_window_overlay;
+	  }
+   
+      propagate;
+   }
+
+   Delete()
+   {
+      if ptSecondAttack <> $
+	  {
+	     deleteTimer(ptSecondAttack);
+	  }
+   
+      propagate;
+   }
+
+   NewUsed()
+   {
+      local oShield;
+	  
+      % Unuse any shield
+      oShield = send(poOwner,@FindUsing,#class=&Shield);
+      if oShield <> $
+      {
+		 % Check for soldier shield
+		 if GetClass(oShield) = &SoldierShield
+		 {
+			 % Sling it on the back if it's there.
+			 send(oShield,@SlingOnBack);
+		 }
+		 else
+		 {
+			 send(poOwner,@TryUnuseItem,#what=oShield);
+		 }
+      }
+
+      propagate;
+   }
+   
+   NewUnused()
+   {
+	  local oWeaponLeft, oWeaponRight;
+	  
+	  oWeaponLeft = Create(pcWeaponClass);
+	  oWeaponRight = Create(pcWeaponClass);
+	  
+	  Send(poOwner,@NewHold,#what=oWeaponLeft);
+	  Send(poOwner,@NewHold,#what=oWeaponRight);
+	  
+	  % Clean up
+	  Post(poWeaponLeft,@Delete);
+	  Post(poWeaponRight,@Delete);
+	  Post(self,@Delete);
+	  
+	  propagate;
+   }
+   
+   CanMend()
+   {
+	  return FALSE;
+   }
+   
+   CanEnchant()
+   {
+	  return FALSE;
+   }
+   
+   CanBeGivenToNPC()
+   {
+	  return FALSE;
+   }
+   
+   CanBeStoredInVault()
+   {
+	  return FALSE;
+   }
+   
+   CanSwap()
+   {
+	  return FALSE;
+   }
+   
+   CanWeaken()
+   {
+	  return FALSE;
+   }
+   
+   CanShatter()
+   {
+	  return FALSE;
+   }
+   
+   ReqLeaveOwner()
+   {
+	  return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

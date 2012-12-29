@@ -682,6 +682,11 @@ messages:
 		
 		return;
    }
+   
+   CanDualWield()
+   {
+	  return FALSE;
+   }
 
 
 end

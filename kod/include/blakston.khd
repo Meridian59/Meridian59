@@ -1805,6 +1805,7 @@
    
    % Open-Source
    SKID_PROFICIENCY_THROW_WEAPON = 458
+   SKID_PROFICIENCY_DUAL = 459
 
    %%% Unique spell constants
 

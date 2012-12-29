@@ -7,6 +7,6 @@
 DEPEND = ..\profic.bof
 BOFS = profswrd.bof profmace.bof profscim.bof brawling.bof profhamr.bof \
         profaxe.bof archery.bof profshsw.bof \
-		profthwep.bof
+		profthwep.bof profdual.bof
 
 !include $(KODDIR)\kod.mak

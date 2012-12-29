@@ -5,5 +5,6 @@ Graphics by DrMadCow:
 - grd03802.bgf
 - grd04712.bgf
 - eyeball.bgf
+- bdragon.bgf bdragonX.bgf
 
 All other graphics created/modifed by Tarandeep Shergill.

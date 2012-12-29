@@ -42,7 +42,7 @@ classvars:
 
    viSkill_num = SKID_DISARM
    viSchool = SKS_FENCING
-   viSkill_Level = 6
+   viSkill_Level = 5
    viChance_to_Increase = 15
 
    viSkillExertion = 10

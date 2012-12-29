@@ -82,7 +82,7 @@ config_table_type config_table[] =
 { GUEST_GROUP,            F, "[Guest]",       CONFIG_GROUP, "" },
 { GUEST_ACCOUNT,          F, "Account",       CONFIG_STR,   "GUEST" },
 { GUEST_CREDITS,          F, "Credits",       CONFIG_INT,   "10" },
-{ GUEST_MAX,              T, "Max",           CONFIG_INT,   "30" },
+{ GUEST_MAX,              T, "Max",           CONFIG_INT,   "50" },
 { GUEST_SERVER_MIN,       T, "ServerMin",     CONFIG_INT,   "100" },
 { GUEST_SERVER_MAX,       T, "ServerMax",     CONFIG_INT,   "109" },
 { GUEST_TOO_MANY,         F, "TooMany",       CONFIG_STR,   
@@ -100,7 +100,7 @@ config_table_type config_table[] =
 { LOGIN_SUSPEND_STR,      F, "SuspendStr", CONFIG_STR,   
      "Your account has been disabled temporarily. "
 	 "Check your email to see if the administrator has sent you a message." },
-{ LOGIN_MAX_PER_IP,       T, "MaxPerIPAddress", CONFIG_INT, "0" },
+{ LOGIN_MAX_PER_IP,       T, "MaxPerIPAddress", CONFIG_INT, "2" },
 { LOGIN_TOO_MANY_PER_IP_STR,F, "TooManyPerIPAddressStr", CONFIG_STR,
       "Too many logins from the same IP address." },
 
@@ -123,8 +123,8 @@ config_table_type config_table[] =
 { CREDIT_ADMIN,           T, "Admin",         CONFIG_INT,   "25" },
 
 { SESSION_GROUP,          F, "[Session]",     CONFIG_GROUP, "" },
-{ SESSION_MAX_ACTIVE,     T, "MaxActive",     CONFIG_INT,   "10" },
-{ SESSION_MAX_CONNECT,    F, "MaxConnect",    CONFIG_INT,   "20" },
+{ SESSION_MAX_ACTIVE,     T, "MaxActive",     CONFIG_INT,   "300" },
+{ SESSION_MAX_CONNECT,    F, "MaxConnect",    CONFIG_INT,   "300" },
 { SESSION_BUSY,           F, "Busy",          CONFIG_STR,
      "Too many people are logged on right now; please try again later." },
 
@@ -728,4 +728,3 @@ int LoadConfigLine(char *line,int lineno,char *filename,int current_group)
 
    return current_group;
 }
-

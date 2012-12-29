@@ -419,6 +419,21 @@ messages:
    {
       return FALSE;
    }
+   
+   IsAlly(target = $)
+   {
+      if target = $
+      {
+         return FALSE;
+      }
+
+      if IsClass(target,&Groundworm)
+      {
+         return TRUE;
+      }
+
+      propagate;
+   }
 
 
 end

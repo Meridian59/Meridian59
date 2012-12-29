@@ -21,8 +21,10 @@ resources:
    BlindOne_name_rsc = "blind one"
    BlindOne_icon_rsc = blindone.bgf
    BlindOne_desc_rsc = \
-      "Covered in gold plates. The blind one is the oldest of all groundworms, although completely blind, "
-	  "the blind one uses its keen sense of smell to hunt and attack from below the ground."
+	  "The blind one is the largest of all groundworms, although completely blind, "
+	  "the blind one uses its keen sense of smell to hunt and attack. Once an ordinary "
+	  "queen, its overwhelming desire to consume food resulted in consuming vast amounts "
+	  "of their own kind!"
 
    BlindOne_dead_icon_rsc = wormlX.bgf
    BlindOne_dead_name_rsc = "slain blind one"
@@ -44,7 +46,7 @@ classvars:
    vrSound_death = BlindOne_sound_death
 
    viTreasure_type = TID_WORM_QUEEN
-   viSpeed = SPEED_SLOW
+   viSpeed = SPEED_FAST
    viAttack_types = ATCK_WEAP_ACID
    viLevel = 200
    viDifficulty = 9
@@ -121,7 +123,7 @@ messages:
       }
 
       % Shake the ground when I take a step.
-      send(poOwner,@Rumble,#duration=1000,#disruption=100);
+      send(poOwner,@Rumble,#duration=750,#disruption=100);
 
       propagate;
    }

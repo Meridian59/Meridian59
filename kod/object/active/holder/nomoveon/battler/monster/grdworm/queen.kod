@@ -20,7 +20,7 @@ resources:
    GroundWormQueen_koc_name_rsc = "koslithic"
    GroundWormQueen_icon_rsc = worml.bgf
    GroundWormQueen_desc_rsc = \
-      "The largest of the groundworms, the queen is a feared monster.  "
+      "The queen is a feared monster.  "
       "After growing over long periods of time, groundworms need increasing "
       "amounts of food to sustain themselves.  The queens are driven mad "
       "by an overwhelming desire to consume food to satiate their immense "

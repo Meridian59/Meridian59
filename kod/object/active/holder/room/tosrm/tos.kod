@@ -22,6 +22,8 @@ resources:
 
    tos_locked_residence_doors = "The doors to this residence are locked."
    tos_locked_residence_door = "The door to this residence is locked."
+   
+   tos_locked_tavern_door = "The door to this tavern is locked."
 
 classvars:
 
@@ -41,7 +43,7 @@ properties:
    prRoom = room_tos
    piRoom_num = RID_TOS
 
-   piBaseLight = ((LIGHT_MAX+LIGHT_NICE)/2)
+   piBaseLight = LIGHT_NICE
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
@@ -51,7 +53,7 @@ messages:
 
    CreateYellZoneList()
    {
-      plYell_Zone = [ RID_TOS_GRAVEYARD, RID_EAST_TOS, RID_DUKE1 ];
+      plYell_Zone = [ RID_TOS_GRAVEYARD, RID_EAST_TOS, RID_DUKE1, RID_TOS_OLD_TAVERN ];
 
       propagate;
    }
@@ -62,9 +64,9 @@ messages:
       plEdge_Exits = Cons([LEAVE_WEST, RID_TOS_GRAVEYARD, 28, 32, ROTATE_NONE], plEdge_exits);
       
       plExits = $;
-      plExits = Cons([ 50, 10, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
-      plExits = Cons([ 50, 11, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
-      plExits = Cons([ 49, 11, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
+      plExits = Cons([ 50, 10, ROOM_LOCKED_DOOR, tos_locked_tavern_door ],plExits);
+      plExits = Cons([ 50, 11, ROOM_LOCKED_DOOR, tos_locked_tavern_door ],plExits);
+      plExits = Cons([ 49, 11, ROOM_LOCKED_DOOR, tos_locked_tavern_door ],plExits);
 
       plExits = Cons([ 32, 23, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
       plExits = Cons([ 33, 23, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);

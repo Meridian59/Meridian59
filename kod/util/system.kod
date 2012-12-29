@@ -2043,6 +2043,11 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_SMITHY,#class=&TosSmithy);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_CRYPT,#class=&TosCrypt);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_HALL,#class=&TosHall);
+	  
+	  % Tos (Open-source)
+      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_INN_CELLAR,#class=&TosInnCellar);
+      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_SECRET_PASSAGE,#class=&TosSecretPassage);
+      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_OLD_TAVERN,#class=&TosTavern);
 
       % Marion stuff
       Send(self,@CreateOneRoomIfNew,#num=RID_MARION,#class=&Marion);

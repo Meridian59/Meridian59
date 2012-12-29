@@ -69,10 +69,12 @@ messages:
    {
       plExits = $;
       plExits = Cons([ 1, 4, ROOM_LOCKED_DOOR, tosinn_no_rooms ],plExits);
-      plExits = Cons([ 1, 3, ROOM_LOCKED_DOOR, tosinn_locked_basement ],plExits);
       plExits = Cons([ 6, 10, ROOM_LOCKED_DOOR, tosinn_locked_cabinet ],plExits);
       plExits = Cons([ 7, 10, ROOM_LOCKED_DOOR, tosinn_locked_cabinet ],plExits);
       plExits = Cons([ 4, 4, ROOM_LOCKED_DOOR, tosinn_locked_confused ],plExits);
+	  
+	  %% To Basement
+      plExits = Cons([ 1, 3, RID_TOS_INN_CELLAR, 2, 5, ROTATE_NONE ],plExits);
 
       %% TO TOWN
       plExits = Cons([ 3, 10, RID_TOS, 45, 31, ROTATE_NONE ],plExits);

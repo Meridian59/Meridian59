@@ -7,8 +7,11 @@
 DEPEND = ..\tosrm.bof
 
 BOFS =  tos.bof easttos.bof \
-	tosapoth.bof tosarena.bof tosaren2.bof tosbank.bof tosgrey.bof \
-	toshall.bof tossmith.bof tostan.bof toslover.bof tosforgt.bof
+	tosapoth.bof tosarena.bof tosaren2.bof tosbank.bof \
+	toshall.bof tossmith.bof tostan.bof toslover.bof tosforgt.bof \
+	toscellar.bof toshidden.bof tostavern.bof
+	
+	# tosgrey.bof
 
 !include $(KODDIR)\kod.mak
 

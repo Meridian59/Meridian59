@@ -57,7 +57,7 @@ messages:
       }
 	  
 	  % Play a sound
-      oRoom = Send(self, @GetOwner);
+      oRoom = Send(poOwner, @GetOwner);
 	  
       if oRoom <> $ 
       {

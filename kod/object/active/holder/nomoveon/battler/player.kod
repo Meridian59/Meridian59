@@ -3986,7 +3986,7 @@ messages:
 
       % Check attack time.
       % IsOkayAttackTime defaults to 1 second
-      if NOT Send(self,@IsOkayAttackTime) 
+      if NOT Send(self,@IsOkayAttackTime)
       {
          return FALSE;
       }  

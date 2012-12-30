@@ -945,6 +945,20 @@ messages:
       return TRUE;
    }
    
+   % Functions used by Dual Wielding 
+   
+   GetItemAttributes()
+   {
+	  return plItem_Attributes;
+   }
+   
+   SetItemAttributes(attributes = $)
+   {
+	  plItem_Attributes = attributes;
+	  
+	  return;
+   }
+   
    CanDualWield()
    {
 	  return TRUE;

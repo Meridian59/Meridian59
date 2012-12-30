@@ -1239,6 +1239,7 @@
    % Vaults
    VID_BARLOQUE   = 1
    VID_KOCATAN    = 2
+   VID_PLAYER     = 3
 
    % These are different banking 'systems'.  Note that
    %  Jasper and Tos banks are in the same (and only) system.

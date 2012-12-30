@@ -2583,6 +2583,10 @@ messages:
            #capacity=12000);
       Send(self,@CreateOneVaultIfNew,#num=VID_KOCATAN,#class=&Storage,
            #capacity=15000);
+		   
+	  % A player vault that can only be accessed through special means
+      Send(self,@CreateOneVaultIfNew,#num=VID_PLAYER,#class=&Storage,
+           #capacity=20000);
 
       return;
    }

@@ -13,6 +13,10 @@ DualWeapon is Weapon
 constants:
 
    include blakston.khd
+   
+   SECOND_ATTACK_DELAY_SLOW = 800
+   SECOND_ATTACK_DELAY_AVERAGE = 400
+   SECOND_ATTACK_DELAY_FAST = 100
 
 resources:
    dualmaces_name_rsc = "dual maces"
@@ -20,30 +24,35 @@ resources:
    dualmaces_desc_rsc = \
 		 "Often considered a weak weapon of choice, but when in pairs it becomes a powerful combination."
    dualmaces_window_overlay = povdmace.bgf
+   dualmaces_player_overlay = maceov.bgf
    
    dualhammers_name_rsc = "dual hammers"
    dualhammers_icon_rsc = dhammer.bgf
    dualhammers_desc_rsc = \
 		 "Twice the bone shatter, this pair of pummelling power is sure to be a crowd pleaser."
    dualhammers_window_overlay = povdhamr.bgf
+   dualhammers_player_overlay = hamrov.bgf
    
    dualaxes_name_rsc = "dual axes"
    dualaxes_icon_rsc = daxe.bgf
    dualaxes_desc_rsc = \
 		 "You are overcome by the urge to windmill into something."
    dualaxes_window_overlay = povdaxe.bgf
+   dualaxes_player_overlay = axeov.bgf
    
    dualshortswords_name_rsc = "dual short swords"
    dualshortswords_icon_rsc = dulshrtswrd.bgf
    dualshortswords_desc_rsc = \
 		 "Underestimated alone, when in pairs it causes great amounts of damage to its enemies."
    dualshortswords_window_overlay = povdulshswd.bgf
+   dualshortswords_player_overlay = shswdov.bgf
    
    duallongswords_name_rsc = "dual long swords"
    duallongswords_icon_rsc = dsword.bgf
    duallongswords_desc_rsc = \
 		 "These blades of steel are for the truly skilled of warriors. Only the greatest warriors can face in the combat of melee."
    duallongswords_window_overlay = povdsword.bgf
+   duallongswords_player_overlay = swordov.bgf
    
    dualscimitars_name_rsc = "dual scimitars"
    dualscimitars_icon_rsc = dscim.bgf
@@ -51,18 +60,18 @@ resources:
 		 "Deadly arts stolen from the Orc Pit Boss, leader of the foul orcish invaders. "
 		 "Only the most skilled of warriors are trained in the ability of dual wielding the deadly scimitar. "
    dualscimitars_window_overlay = povdscim.bgf
+   dualscimitars_player_overlay = scimov.bgf
    
    dualnerudites_name_rsc = "dual nerudite swords"
    dualnerudites_icon_rsc = dnerswd.bgf
    dualnerudites_desc_rsc = \
 		 "These strong and dependable weapons are sure to find their way into any warrior's collection"
    dualnerudites_window_overlay = povdnersw.bgf
+   dualnerudites_player_overlay = nerswdov.bgf
 
 classvars:
 
    viProficiency_Needed = SKID_PROFICIENCY_DUAL
-   
-   % Set as one just to unequip things before (eg. Shield)
    viUse_amount = 2
    
    viGround_group = 1
@@ -77,11 +86,15 @@ properties:
    vrIcon = $
    vrDesc = $
    vrWeapon_window_overlay = $
+   vrWeapon_overlay = $
 
    pcWeaponClass = $
 
    poWeaponLeft = $
    poWeaponRight = $
+   
+   piWeaponLeftHits = 0
+   piWeaponRightHits = 0
 
    pbFirstAttack = FALSE
    ptSecondAttack = $
@@ -93,6 +106,9 @@ messages:
 	  poWeaponLeft = WeaponLeft;
 	  poWeaponRight = WeaponRight;
 	  
+	  piWeaponLeftHits = Send(poWeaponLeft,@GetHits);
+	  piWeaponRightHits = Send(poWeaponRight,@GetHits);
+	  
 	  % Only need to get class from one of the weapons
 	  % They both should be the same
 	  pcWeaponClass = GetClass(poWeaponRight);
@@ -103,6 +119,7 @@ messages:
 		 vrIcon = dualmaces_icon_rsc;
 		 vrDesc = dualmaces_desc_rsc;
 		 vrWeapon_window_overlay = dualmaces_window_overlay;
+		 vrWeapon_overlay = dualmaces_player_overlay;
 	  }
 	  
 	  if pcWeaponClass = &Hammer
@@ -111,6 +128,7 @@ messages:
 		 vrIcon = dualhammers_icon_rsc;
 		 vrDesc = dualhammers_desc_rsc;
 		 vrWeapon_window_overlay = dualhammers_window_overlay;
+		 vrWeapon_overlay = dualhammers_player_overlay;
 	  }
 	  
 	  if pcWeaponClass = &Axe
@@ -119,6 +137,7 @@ messages:
 		 vrIcon = dualaxes_icon_rsc;
 		 vrDesc = dualaxes_desc_rsc;
 		 vrWeapon_window_overlay = dualaxes_window_overlay;
+		 vrWeapon_overlay = dualaxes_player_overlay;
 	  }
 	  
 	  if pcWeaponClass = &ShortSword
@@ -127,6 +146,7 @@ messages:
 		 vrIcon = dualshortswords_icon_rsc;
 		 vrDesc = dualshortswords_desc_rsc;
 		 vrWeapon_window_overlay = dualshortswords_window_overlay;
+		 vrWeapon_overlay = dualshortswords_player_overlay;
 	  }
 	  
 	  if pcWeaponClass = &LongSword
@@ -135,6 +155,7 @@ messages:
 		 vrIcon = duallongswords_icon_rsc;
 		 vrDesc = duallongswords_desc_rsc;
 		 vrWeapon_window_overlay = duallongswords_window_overlay;
+		 vrWeapon_overlay = duallongswords_player_overlay;
 	  }
 	  
 	  if pcWeaponClass = &Scimitar
@@ -143,6 +164,7 @@ messages:
 		 vrIcon = dualscimitars_icon_rsc;
 		 vrDesc = dualscimitars_desc_rsc;
 		 vrWeapon_window_overlay = dualscimitars_window_overlay;
+		 vrWeapon_overlay = dualscimitars_player_overlay;
 	  }
 	  
 	  if pcWeaponClass = &NeruditeSword
@@ -151,6 +173,7 @@ messages:
 		 vrIcon = dualnerudites_icon_rsc;
 		 vrDesc = dualnerudites_desc_rsc;
 		 vrWeapon_window_overlay = dualnerudites_window_overlay;
+		 vrWeapon_overlay = dualnerudites_player_overlay;
 	  }
    
       propagate;
@@ -165,29 +188,6 @@ messages:
    
       propagate;
    }
-
-   NewUsed()
-   {
-      local oShield;
-	  
-      % Unuse any shield
-      oShield = send(poOwner,@FindUsing,#class=&Shield);
-      if oShield <> $
-      {
-		 % Check for soldier shield
-		 if GetClass(oShield) = &SoldierShield
-		 {
-			 % Sling it on the back if it's there.
-			 send(oShield,@SlingOnBack);
-		 }
-		 else
-		 {
-			 send(poOwner,@TryUnuseItem,#what=oShield);
-		 }
-      }
-
-      propagate;
-   }
    
    NewUnused()
    {
@@ -196,15 +196,161 @@ messages:
 	  oWeaponLeft = Create(pcWeaponClass);
 	  oWeaponRight = Create(pcWeaponClass);
 	  
-	  Send(poOwner,@NewHold,#what=oWeaponLeft);
-	  Send(poOwner,@NewHold,#what=oWeaponRight);
+	  % Copy traits
+	  Send(oWeaponLeft,@SetHits,#num=piWeaponLeftHits);
+	  Send(oWeaponRight,@SetHits,#num=piWeaponRightHits);
+
+	  %Send(self,@CopyWeaponTraits,#original=poWeaponRight,#new=oWeaponRight);
+	  %Send(self,@CopyWeaponTraits,#original=poWeaponLeft,#new=oWeaponLeft);
+	  
+	  Send(poOwner,@NewHold,#what=poWeaponLeft);
+	  Send(poOwner,@NewHold,#what=poWeaponRight);
 	  
 	  % Clean up
-	  Post(poWeaponLeft,@Delete);
-	  Post(poWeaponRight,@Delete);
 	  Post(self,@Delete);
 	  
 	  propagate;
+   }
+   
+   WeaponAttack()
+   {
+      if (not pbFirstAttack)
+      {
+         Send(poOwner,@DoAttackSwing);
+         pbFirstAttack = TRUE;
+      }
+      else
+      {
+         pbFirstAttack = FALSE;
+         if ptSecondAttack = $
+         {
+			%% this code executes the attack twice, but only does the animation once.
+            ptSecondAttack = CreateTimer(self,@SecondAttackTimer,Send(self,@GetSecondAttackDelay));   
+	 		
+         }
+      }
+      propagate;
+   }
+   
+   
+   SecondAttackTimer()
+   {
+	  local oTarget;
+	  
+	  oTarget = Send(poOwner,@GetTarget);
+	  
+      if pbFirstAttack
+      {  
+		 return;  
+	  }
+
+      ptSecondAttack = $;
+      if oTarget <> $ and send(poOwner,@GetOwner) = send(oTarget,@GetOwner)
+      {  
+		 Send(poOwner,@AssessHit,#what=oTarget,#damage=Send(self,@GetDamage),#stroke_obj=Send(poWeaponLeft,@GetStroke,#who=poOwner)); 
+	  }
+	  
+      return;
+   }
+   
+   GetSecondAttackDelay()
+   {
+	  local iDelay;
+	  
+	  if pcWeaponClass = &Mace
+	  {
+	     iDelay = SECOND_ATTACK_DELAY_AVERAGE;
+	  }
+	  
+	  if pcWeaponClass = &Hammer
+	  {
+	     iDelay = SECOND_ATTACK_DELAY_SLOW;
+	  }
+	  
+	  if pcWeaponClass = &Axe
+	  {
+	     iDelay = SECOND_ATTACK_DELAY_AVERAGE;
+	  }
+	  
+	  if pcWeaponClass = &ShortSword
+	  {
+	     iDelay = SECOND_ATTACK_DELAY_FAST;
+	  }
+	  
+	  if pcWeaponClass = &LongSword
+	  {
+	     iDelay = SECOND_ATTACK_DELAY_SLOW;
+	  }
+	  
+	  if pcWeaponClass = &Scimitar
+	  {
+	     iDelay = SECOND_ATTACK_DELAY_FAST;
+	  }
+	  
+	  if pcWeaponClass = &NeruditeSword
+	  {
+	     iDelay = SECOND_ATTACK_DELAY_SLOW;
+	  }
+	  
+	  return iDelay;
+   }
+   
+   WeaponHitTarget()
+   {
+      % Higher damage rate compared to using one weapon
+      if random(1,100) < 80   
+	  {
+		  if pbFirstAttack
+		  {
+			piWeaponRightHits = piWeaponRightHits - 1;
+		  }
+		  else
+		  {
+			piWeaponLeftHits = piWeaponLeftHits - 1;
+		  }
+		  
+
+		  if piWeaponRightHits <= 0 OR piWeaponLeftHits <= 0
+		  {
+			 send(self,@WeaponBroke);
+		  }
+	  }
+	  
+	  return;
+   }
+   
+   CopyWeaponTraits(orignal = $, new = $)
+   {
+	  Send(new,@SetItemAttributes,#attributes=Send(orignal,@GetItemAttributes));
+	  
+	  % Seperate message in case we need to copy more traits
+   
+	  return;
+   }
+   
+   GetDamage()
+   {
+	  local iDamage;
+	  
+	  if pbFirstAttack
+	  {
+		 iDamage = Send(poWeaponRight,@GetDamage,#stroke_obj=Send(poWeaponRight,@GetStroke,#who=poOwner));
+	  }
+	  else
+	  {
+		 iDamage = Send(poWeaponLeft,@GetDamage,#stroke_obj=Send(poWeaponLeft,@GetStroke,#who=poOwner));
+	  }
+	  
+	  return iDamage;
+   }
+   
+   GetRange()
+   {
+	  local iRange;
+	  
+	  iRange = Send(poWeaponRight,@GetRange) + 1;
+	  
+	  return iRange;
    }
    
    CanMend()

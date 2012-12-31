@@ -76,6 +76,7 @@ OBJS =  \
 	$(OUTDIR)\parsecli.obj \
 	$(OUTDIR)\rscload.obj \
 	$(OUTDIR)\memmap.obj \
+	$(OUTDIR)\crc.obj \
 	$(OUTDIR)\md5.obj \
 	$(OUTDIR)\maintenance.obj \
 	$(OUTDIR)\block.obj \
@@ -89,6 +90,9 @@ $(OUTDIR)\rscload.obj : $(TOPDIR)\util\rscload.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\memmap.obj : $(TOPDIR)\util\memmap.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
+
+$(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c

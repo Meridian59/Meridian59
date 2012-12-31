@@ -13,7 +13,7 @@ LIBS =  \
 	 user32.lib gdi32.lib comdlg32.lib shell32.lib \
 	 ws2_32.lib comctl32.lib advapi32.lib \
 	 winmm.lib wrap.lib rscload.lib wininet.lib \
-	 ole32.lib waveplay.lib \
+	 ole32.lib mss32.lib mss32midi.lib waveplay.lib \
 	 dxerr8.lib d3d8.lib d3dx8.lib libpng.lib zdll.lib
 
 DEFFILE  = $(SOURCEDIR)\client.def
@@ -58,6 +58,7 @@ OBJS = \
         $(OUTDIR)\cursor.obj \
         $(OUTDIR)\client3d.obj \
         $(OUTDIR)\md5.obj \
+	     $(OUTDIR)\crc.obj \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
         $(OUTDIR)\guest.obj \
@@ -125,6 +126,12 @@ $(OUTDIR)\trig.c $(OUTDIR)\trig.h: $(OUTDIR)\maketrig.exe
 
 $(OUTDIR)\pal.c: $(OUTDIR)\makepal.exe $(PALETTEFILE)
 	$(OUTDIR)\makepal $(PALETTEFILE) $(OUTDIR)
+
+$(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
+
+$(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<

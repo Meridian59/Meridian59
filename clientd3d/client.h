@@ -85,7 +85,7 @@ extern "C" {
 // Use this #define to enable Miles Sound System version.  If not defined,
 // music is played through the default MIDI player, and sound goes through the
 // ancient wavemix DLL.
-//#define M59_MSS
+#define M59_MSS
 
 
 #ifdef M59_MSS
@@ -223,6 +223,7 @@ M59EXPORT void _cdecl dprintf(char *fmt,...);
 #include "xform.h"
 #include "d3ddriver.h"
 #include "rscload.h"
+#include "crc.h"
 
 // Only include externs if compiling main client
 #ifdef BLAKCLIENT

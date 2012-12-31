@@ -191,7 +191,7 @@ void VerifiedLoginSession(int session_id);
 
 unsigned int __inline GetCRC16(char *buf,int len_buf)
 {
-   return 0xffff & WrapCRC32(buf,len_buf);
+   return 0xffff & CRC32(buf,len_buf);
 }
 
 

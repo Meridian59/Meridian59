@@ -92,8 +92,25 @@ messages:
 
    ReqUseSomething(what = $)
    {
+	  local oSoldierShield;
+   
       if isClass(what,&Shield)
       {
+	  
+		 if GetClass(what) <> &SoldierShield
+		 {
+			% Check for soldier Shield
+			oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
+
+			% Sling it on the back if it's there.
+			if oSoldierShield <> $
+			{
+				send(oSoldierShield,@SlingOnBack);
+			}
+			return TRUE;
+		 }
+
+	  
          if not send(poOwner,@TryUnuseItem,#what=self)
          {
             return FALSE;
@@ -105,6 +122,8 @@ messages:
 
    NewUsed()
    {
+	  local oSoldierShield;
+   
       piUsed = USED;
 
       % do first person overlay if we have one

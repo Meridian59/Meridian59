@@ -503,51 +503,6 @@ void VerifyLogin(session_node *s)
    }
  
 }
-/*
-
-  OSVERSIONINFOEX osvi;
-  BOOL bOsVersionInfoEx;
-  
-	// Try calling GetVersionEx using the OSVERSIONINFOEX structure,
-	// which is supported on Windows NT versions 5.0 and later.
-	// If that fails, try using the OSVERSIONINFO structure,
-	// which is supported on earlier versions of Windows and Windows NT
-	
-	  ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-	  
-	osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-	if (! (bOsVersionInfoEx = GetVersionEx ( (OSVERSIONINFO *) &osvi) ) ) 
-	{
-		// If OSVERSIONINFOEX doesn't work, try OSVERSIONINFO.
-		osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-		if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) )       
-			return 0;
-	}
-
-  switch (osvi.dwPlatformId) 
-	{
-		case VER_PLATFORM_WIN32_NT:
-			printf ("Microsoft Windows NT ");
-			break;
-		case VER_PLATFORM_WIN32_WINDOWS:
-			if ((osvi.dwMajorVersion > 4) ||  ((osvi.dwMajorVersion == 4) && (osvi.dwMinorVersion > 0)))
-				printf ("Microsoft Windows 98 ");      
-			else
-				printf ("Microsoft Windows 95 ");
-			break;
-		case VER_PLATFORM_WIN32s:
-			printf ("Microsoft Win32s ");      
-			break;
-	}
-
-	printf ("version %d.%d (Build %d)\n",   osvi.dwMajorVersion, 
-	osvi.dwMinorVersion,
-	osvi.dwBuildNumber & 0xFFFF);
-	
-	if (bOsVersionInfoEx)
-		printf ("Service Pack %d.%d\n", osvi.wServicePackMajor,                 osvi.wServicePackMinor);
-		
-*/
 
 void LogUserData(session_node *s)
 {
@@ -557,9 +512,6 @@ void LogUserData(session_node *s)
 
    switch (s->os_type)
    {
-   case VER_PLATFORM_WIN32s : 
-      strcat(buf,"Windows 3.1");
-      break;
    case VER_PLATFORM_WIN32_WINDOWS :
 		if ((s->os_version_major > 4) ||  ((s->os_version_major == 4) && (s->os_version_minor > 0)))
 			strcat(buf,"Windows 98");

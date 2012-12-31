@@ -15,7 +15,7 @@
 
 #include "blakserv.h"
 
-HANDLE strfile;
+FILE *strfile;
 
 /* local function prototypes */
 void SaveEachString(string_node *snod,int string_id);
@@ -23,46 +23,44 @@ void SaveEachString(string_node *snod,int string_id);
 Bool SaveStrings(char *filename)
 {
    int write_int;
-   DWORD written;
+   int written;
 
-   strfile = CreateFile(filename,GENERIC_WRITE,0,NULL,CREATE_ALWAYS,
-			FILE_ATTRIBUTE_NORMAL,NULL);
-   if (strfile == INVALID_HANDLE_VALUE)
+   strfile = fopen(filename, "wb");
+   if (strfile == NULL)
    {
       eprintf("SaveStrings can't open %s to save strings!\n",filename);
       return False;
    }
 
    write_int = 1; /* version */
-   if (!WriteFile(strfile,&write_int,LEN_STR_VERSION,&written,NULL) || 
-       written != LEN_STR_VERSION)
+   written = fwrite(&write_int, 1, LEN_STR_VERSION, strfile);
+   if (written != LEN_STR_VERSION)
       eprintf("SaveStrings 1 error writing to file!\n");
    
    write_int = GetNumStrings();
-   if (!WriteFile(strfile,&write_int,LEN_NUM_STRS,&written,NULL) || 
-       written != LEN_NUM_STRS)
+   written = fwrite(&write_int, 1, LEN_NUM_STRS, strfile);
+   if (written != LEN_NUM_STRS)
       eprintf("SaveStrings 2 error writing to file!\n");
-   
 
    ForEachString(SaveEachString);
-   CloseHandle(strfile);
+   fclose(strfile);
 
    return True;
 }
 
 void SaveEachString(string_node *snod,int string_id)
 {
-   DWORD written;
+   int written;
 
-   if (!WriteFile(strfile,&string_id,LEN_STR_ID,&written,NULL) || 
-       written != LEN_STR_ID)
+   written = fwrite(&string_id, 1, LEN_STR_ID, strfile);
+   if (written != LEN_STR_ID)
       eprintf("SaveEachString 1 error writing to file!\n");
 
-   if (!WriteFile(strfile,&snod->len_data,LEN_STR_LEN,&written,NULL) || 
-       written != LEN_STR_LEN)
+   written = fwrite(&snod->len_data, 1, LEN_STR_LEN, strfile);
+   if (written != LEN_STR_LEN)
       eprintf("SaveEachString 2 error writing to file!\n");
 
-   if (!WriteFile(strfile,snod->data,snod->len_data,&written,NULL) ||
-       written != snod->len_data)
+   written = fwrite(snod->data, 1, snod->len_data, strfile);
+   if (written != snod->len_data)
       eprintf("SaveEachString 3 error writing to file!\n");
 }

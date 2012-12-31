@@ -52,19 +52,19 @@ messages:
 		   return FALSE;
 	   }
 	   
+	   % Sling faction shield on the back if it's there.
+	   oSoldierShield = send(who,@FindUsing,#class=&SoldierShield);
+	   if oSoldierShield <> $
+	   {
+		  send(oSoldierShield,@SlingOnBack);
+	   }
+	   
 	   % Free up both hands
 	   Send(who,@FreeHands);
 
 	   % Place weapons in player's vault
 	   oVault = Send(SYS,@FindVaultByNum,#num=VID_PLAYER);
 	   Post(oVault,@DepositItems,#lItems=[WeaponLeft, WeaponRight],#who=who);
-	   
-	   % Sling it on the back if it's there.
-	   oSoldierShield = send(who,@FindUsing,#class=&SoldierShield);
-	   if oSoldierShield <> $
-	   {
-		  send(oSoldierShield,@SlingOnBack);
-	   }
 	   
 	   oDualWeapon = Create(&DualWeapon,#WeaponLeft=WeaponLeft,#WeaponRight=WeaponRight);
 	   Send(who,@NewHold,#what=oDualWeapon);

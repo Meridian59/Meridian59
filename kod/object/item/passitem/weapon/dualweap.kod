@@ -190,19 +190,11 @@ messages:
    }
    
    NewUnused()
-   {
-	  local oWeaponLeft, oWeaponRight;
-	  
-	  oWeaponLeft = Create(pcWeaponClass);
-	  oWeaponRight = Create(pcWeaponClass);
-	  
-	  % Copy traits
-	  Send(oWeaponLeft,@SetHits,#num=piWeaponLeftHits);
-	  Send(oWeaponRight,@SetHits,#num=piWeaponRightHits);
-
-	  %Send(self,@CopyWeaponTraits,#original=poWeaponRight,#new=oWeaponRight);
-	  %Send(self,@CopyWeaponTraits,#original=poWeaponLeft,#new=oWeaponLeft);
-	  
+   {  
+	  % Set weapon hits
+	  Send(poWeaponLeft,@SetHits,#number=piWeaponLeftHits);
+	  Send(poWeaponRight,@SetHits,#number=piWeaponRightHits);
+   
 	  Send(poOwner,@NewHold,#what=poWeaponLeft);
 	  Send(poOwner,@NewHold,#what=poWeaponRight);
 	  
@@ -309,22 +301,22 @@ messages:
 			piWeaponLeftHits = piWeaponLeftHits - 1;
 		  }
 		  
-
-		  if piWeaponRightHits <= 0 OR piWeaponLeftHits <= 0
+		  if piWeaponRightHits <= 0
 		  {
-			 send(self,@WeaponBroke);
+			 piWeaponRightHits = 0;
+			 Send(self,@NewUnused);
+			 Post(poWeaponRight,@WeaponBroke);
 		  }
+			  
+		  if piWeaponLeftHits <= 0
+		  {
+			 piWeaponLeftHits = 0;
+			 Send(self,@NewUnused);
+			 Post(poWeaponLeft,@WeaponBroke);
+		  }
+	  
 	  }
 	  
-	  return;
-   }
-   
-   CopyWeaponTraits(orignal = $, new = $)
-   {
-	  Send(new,@SetItemAttributes,#attributes=Send(orignal,@GetItemAttributes));
-	  
-	  % Seperate message in case we need to copy more traits
-   
 	  return;
    }
    

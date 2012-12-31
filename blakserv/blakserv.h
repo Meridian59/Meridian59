@@ -147,6 +147,7 @@ enum
 #include "rscload.h"
 #include "roomtype.h"
 #include "bkod.h"
+#include "crc.h"
 #include "md5.h"
 typedef union 
 {

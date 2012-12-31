@@ -77,7 +77,7 @@ messages:
 
    SetForSale()
    {
-      plFor_Sale = [$,[ SKID_DISARM ],$,$];
+      plFor_Sale = [$,[ SKID_DISARM, SKID_PROFICIENCY_DUAL ],$,$];
       return;
    }
 

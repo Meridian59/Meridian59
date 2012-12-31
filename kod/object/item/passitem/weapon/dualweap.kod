@@ -247,7 +247,7 @@ messages:
       ptSecondAttack = $;
       if oTarget <> $ and send(poOwner,@GetOwner) = send(oTarget,@GetOwner)
       {  
-		 Send(poOwner,@AssessHit,#what=oTarget,#damage=Send(self,@GetDamage),#stroke_obj=Send(poWeaponLeft,@GetStroke,#who=poOwner)); 
+		 Send(poOwner,@AssessHit,#what=oTarget,#damage=Send(self,@GetDamage),#stroke_obj=Send(SYS,@FindSkillByNum,#num=SKID_SLASH));
 	  }
 	  
       return;
@@ -334,11 +334,11 @@ messages:
 	  
 	  if pbFirstAttack
 	  {
-		 iDamage = Send(poWeaponRight,@GetDamage,#stroke_obj=Send(poWeaponRight,@GetStroke,#who=poOwner));
+		 iDamage = Send(poWeaponRight,@GetDamage,#stroke_obj=Send(SYS,@FindSkillByNum,#num=SKID_SLASH));
 	  }
 	  else
 	  {
-		 iDamage = Send(poWeaponLeft,@GetDamage,#stroke_obj=Send(poWeaponLeft,@GetStroke,#who=poOwner));
+		 iDamage = Send(poWeaponLeft,@GetDamage,#stroke_obj=Send(SYS,@FindSkillByNum,#num=SKID_SLASH));
 	  }
 	  
 	  return iDamage;
@@ -391,6 +391,11 @@ messages:
    ReqLeaveOwner()
    {
 	  return FALSE;
+   }
+   
+   GetWeaponClass()
+   {
+	  return pcWeaponClass;
    }
 
 end

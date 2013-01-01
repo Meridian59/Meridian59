@@ -227,7 +227,7 @@ messages:
    
    SecondAttackTimer()
    {
-	  local oTarget;
+	  local oTarget, iDamage;
 	  
 	  oTarget = Send(poOwner,@GetTarget);
 	  
@@ -239,7 +239,13 @@ messages:
       ptSecondAttack = $;
       if oTarget <> $ and send(poOwner,@GetOwner) = send(oTarget,@GetOwner)
       {  
-		 Send(poOwner,@AssessHit,#what=oTarget,#damage=Send(self,@GetDamage),#stroke_obj=Send(SYS,@FindSkillByNum,#num=SKID_SLASH));
+		 iDamage = Send(self,@GetDamage);
+		 Send(poOwner,@AssessHit,#what=oTarget,#damage=iDamage,#stroke_obj=Send(SYS,@FindSkillByNum,#num=SKID_SLASH));
+		 
+		 if Send(oTarget,@AssessDamage,#what=poOwner,#damage=iDamage,#report=FALSE) = $
+		 {
+			Send(poOwner,@KilledSomething,#what=oTarget,#use_weapon=self);
+		 }
 	  }
 	  
       return;

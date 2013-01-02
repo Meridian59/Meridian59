@@ -12349,6 +12349,13 @@ messages:
       return;
    }
    
+   % Combat pens flag erased on pen
+   EraseCombatPensFlag()
+   {
+		piCombatPens = 0;
+		return;
+   }
+   
    % Used to set combat pens for victim as well as attacker
 	SetCombatPensFlag()
 	{

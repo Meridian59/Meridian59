@@ -233,7 +233,7 @@ messages:
       % Send this person to the room's blink coordinates.  This helps get 
       %  people out of continuous crash situations and mounting penalties.
       Send(poGhostedPlayer,@AdminGoToSafety);
-
+	  	  
       Send(self,@Delete);
 
       return;
@@ -257,25 +257,13 @@ messages:
       numItemsLost = 0;
       numSpellPointsLost = 0;
       numSkillPointsLost = 0;
-      iStamina = Send(poGhostedPlayer,@GetStamina);
-      penaltyCounter = (Send(poGhostedPlayer,@GetLogoffPenaltyCount)
-                       + Send(poGhostedPlayer,@GetDecayedUnjustifiedKills));
-      iEquivDeath = (Send(SYS,@GetLogoffPenaltyEquivDeath));
-      Send(poGhostedPlayer,@IncrementLogoffPenaltyCount);
 
       % Do bad things here - see player.kod::killed()
 
       % drop items
       numItemsLost = Send(poGhostedPlayer,@GetNumItemsInInventory);
-      LossCounter = Send(poGhostedPlayer,@GetNumItemsInInventory)
-                    * penaltyCounter / iEquivDeath;
-
-      if penaltyCounter < iEquivDeath
-         AND Random(1,iEquivDeath-1) < penaltyCounter
-      {
-         LossCounter = LossCounter + 1;
-      }
-
+      LossCounter = 1;
+	  
       iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
       if LossCounter >= iNumItemsInventory
       {
@@ -327,27 +315,15 @@ messages:
       iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
       numItemsLost = numItemsLost - iNumItemsInventory;
 
-      % Lose maxhealth
-      Send(poGhostedPlayer,@GainBaseMaxHealth,
-           #amount=-(penaltyCounter/iEquivDeath));
-      if Random(1,iEquivDeath-1) < penaltyCounter mod iEquivDeath
-      {
-         Send(poGhostedPlayer,@GainBaseMaxHealth,#amount=-1);
-      }
-
       % Lose spell ability
       lSpells = Send(poGhostedPlayer,@GetSpellList);
       if lSpells <> $
       {
-         LossCounter = (Length(lSpells) * penaltyCounter) / iEquivDeath;
-         if Random(1,(iEquivDeath - 1)) < (penaltyCounter mod iEquivDeath)
-         {
-            LossCounter = (LossCounter + 1);
-         }
+         LossCounter = 2;
 
          if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
-            BaseLossAmount = -2;
+            BaseLossAmount = -1;
          }
          else
          {
@@ -424,11 +400,7 @@ messages:
       lSkills = Send(poGhostedPlayer,@GetSkillList);
       if (lSkills <> $)
       {
-         LossCounter = Length(lSkills) * penaltyCounter / iEquivDeath;
-         if Random(1,iEquivDeath-1) < penaltyCounter mod iEquivDeath
-         {
-            LossCounter = LossCounter + 1;
-         }
+         LossCounter = 2;
 
          % Loop through once to reduce LossCounter below Length(lSkills),
          %  and keep iterations down for large penalties
@@ -506,18 +478,9 @@ messages:
            #nest_list=[4,LogoffGhost_penalty_mail, 4,prItemsLost,
                        4,prSpellPointsLost, 4,prSkillPointsLost]);
 
-      % Let the faction shield know of this person's naughtiness if we took a
-      %  penalty.
-      oSoldierShield = Send(poGhostedPlayer,@FindUsing,#class=&SoldierShield);
-      if oSoldierShield <> $
-         AND penaltyCounter > 0
-      {
-         % Treat it like a death.
-         Send(oSoldierShield,@OwnerDied,#logoff=TRUE);
-      }
-
       % Reset the time to avoid any funny business like potential double
       %  penalties.
+      Send(poGhostedPlayer,@EraseCombatPensFlag);
       Send(poGhostedPlayer,@ResetLogoffPenaltyTime);
 
       return;

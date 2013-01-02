@@ -232,7 +232,7 @@ messages:
 
       % Send this person to the room's blink coordinates.  This helps get 
       %  people out of continuous crash situations and mounting penalties.
-      Send(poGhostedPlayer,@AdminGoToBlink);
+      Send(poGhostedPlayer,@AdminGoToSafety);
 
       Send(self,@Delete);
 

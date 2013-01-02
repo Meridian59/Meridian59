@@ -79,6 +79,8 @@ resources:
 
    LogoffGhost_someone = "Someone"
 
+   LogoffGhost_poof_wav_rsc = logoffghost_poof.wav
+
 classvars:
 
 
@@ -127,7 +129,9 @@ properties:
    prItemsLost = $
    prSpellPointsLost = $
    prSkillPointsLost = $
-
+   
+   flagCombatPens = $
+   
 messages:
 
    Constructor(GhostedPlayer = $, iPenaltyTime = $)
@@ -145,11 +149,19 @@ messages:
                  #fine_row=(Send(poGhostedPlayer,@GetFineRow)+2),
                  #fine_col=(Send(poGhostedPlayer,@GetFineCol)+2),
                  #new_angle=Send(poGhostedPlayer,@GetAngle));
-            ptPenaltyTimer = CreateTimer(self,@PenaltyTrigger,
-                                         (iPenaltyTime*1000));
          }
       }
-
+    
+	flagCombatPens = Send(poGhostedPlayer,@GetCombatPensFlag);
+	if NOT flagCombatPens
+	{				 
+		ptPenaltyTimer = CreateTimer(self,@PenaltyTrigger,(iPenaltyTime*1000));
+	}
+	else
+	{
+		Post(self,@PenaltyTrigger);
+	}
+				 
       propagate;
    }
 
@@ -209,6 +221,13 @@ messages:
                  #dest_list=[poGhostedPlayer],
                  #nest_list=[4,LogoffGhost_newbie_mail]);
          }
+      }
+
+      % Play a sound audible in the room
+      if poOwner <> $ 
+      {
+         Send(poOwner, @SomethingWaveRoom, #what=self,
+              #wave_rsc = LogoffGhost_poof_wav_rsc);
       }
 
       % Send this person to the room's blink coordinates.  This helps get 

@@ -107,6 +107,9 @@ constants:
    %  than logoff ghost time (currently 10 mins)
    ATTACKED_PLAYER_WAIT = 15 * 60
 
+   % Five minutes for the special combat pens flag to wear off.
+   COMBAT_PENS_WAIT = 5 * 60
+   
    % Damage is capped at piBase_Max_Health divided by this number.  Reduces
    %  newbie slaughter.
    MAX_HEALTH_DAMAGE_FRACTION = 3
@@ -174,6 +177,7 @@ resources:
       "~IYour aggression halts your attempt to escape from the current situation."
 
    player_improved = "~I~BYou have improved in the art of %s."
+   player_improved_wav_rsc = imp.wav
    player_aggressor = "Shal'ille frowns upon your unprovoked attack."
    player_safety_caught = \
       "Hey!  You almost hit %s%s!  Good thing your safety was on!"
@@ -703,6 +707,9 @@ resources:
    player_admin_modified_skill = "Skill modified."
    player_admin_removed_skill = "Skill removed."
 
+   player_logged_on_wav_rsc = player_login_or_out.wav
+   player_logged_off_wav_rsc = player_logout2.wav
+
 classvars:
 
    viHand_space = 2
@@ -949,7 +956,15 @@ properties:
    % Used to construct a string for their description.
    plDonationYears = $
 
+   % This is a special combat flag for determining whether a player
+   % should pen instantly instead of leaving a log-off ghost.
+   % Generally, innocents will always have ghosts.
+   % Murderers/Outlaws, Faction Soldiers, and Warring should instant pen.
+   % This creates a soft opt-in pvp system with strict disadvantages for PKs.
+   piCombatPens = 0
+   
 messages:
+
 
    Constructor()
    {
@@ -1811,19 +1826,19 @@ messages:
 
       if plDonationYears <> $
       {
-        % Example: Benefactor of Meridian in 2010, 2011
-	AppendTempString(player_donation_title);
-	i = 0;
-        for year in plDonationYears
-        {
-	  if i <> 0
- 	  {
-	    AppendTempString(player_donation_separator);
-          }
-	  AppendTempString(year);
-	  i = i + 1;
-        }
-	AppendTempString(player_dot);
+         % Example: Benefactor of Meridian in 2010, 2011
+	      AppendTempString(player_donation_title);
+	      i = 0;
+         for year in plDonationYears
+         {
+	         if i <> 0
+ 	         {
+	            AppendTempString(player_donation_separator);
+            }
+	         AppendTempString(year);
+	         i = i + 1;
+         }
+	      AppendTempString(player_dot);
       }
 
       AddPacket(0,GetTempString());
@@ -1833,7 +1848,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oSnoop;
+      local i, oGame, oCaramo, oSnoop, oRoom;
       
       for i in plPassive
       {
@@ -1912,12 +1927,20 @@ messages:
       % over all players became far too expensive.
       Send(self,@ComputeMaxMana);
 
+      % Tell others that we're here
+      oRoom = Send(self, @GetOwner);
+      if oRoom <> $ AND NOT IsClass(self, &DM) 
+      {
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_logged_on_wav_rsc);
+      }
+
       return;
    }
 
    UserLogoffHook()
    {
-      local i, oSnoop;
+      local i, oSnoop, oRoom;
    
       oSnoop = Send(SYS,@GetInvestigator);
       if oSnoop <> $
@@ -1962,6 +1985,14 @@ messages:
       {
          DeleteTimer(ptRescue);
          ptRescue = $;
+      }
+
+      % Tell others that we're leaving
+      oRoom = Send(self, @GetOwner);
+      if oRoom <> $ AND NOT IsClass(self, &DM) 
+      {
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_logged_off_wav_rsc);
       }
       
       return;
@@ -3731,6 +3762,8 @@ messages:
       {
          % Okay, attack is against a player, so record the time
          piTimeAttackedPlayer = GetTime();
+		 Send(self,@SetCombatPensFlag);
+		 Send(victim,@SetCombatPensFlag);
 
          return TRUE;
       }
@@ -3768,10 +3801,26 @@ messages:
                % gain the outlaw flag.
                Send(self,@MsgSendUser,#message_rsc=player_aggressor);
                Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
-               Send(self,@EvaluatePKStatus,#dbug=TRUE);
+               Send(self,@EvaluatePKStatus,#dbug=TRUE);			   
             }
          }
       }
+	  
+	  % Murderers and outlaws always receive Combat Pens for attacking
+	  % They do not apply Combat Pens to victims
+	  % They do not give Combat Pens to people that attack them
+	  if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+	     OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+	  {
+		 Send(self,@SetCombatPensFlag);
+	  }
+	  
+	  % Murderers and outlaws always receive Combat Pens when attacked
+	  if Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+	     OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+	  {
+		 Send(victim,@SetCombatPensFlag);
+	  }
 
       % Check for faction loss.  Handles appropriate conditions.
       if NOT Send(self,@CheckFactionAttack,#what=victim)
@@ -6562,7 +6611,7 @@ messages:
                       refigureschools = TRUE)
    {
       local i, bFound, elemnum, iability, bUsed, spellname, iChange,
-            newability, oSpell;
+            newability, oSpell, oRoom;
 
       oSpell = Send(sys,@FindSpellByNum,#num=spell_num);
       if oSpell = $
@@ -6609,7 +6658,10 @@ messages:
       Send(self,@DrawStatSpell,#index=elemnum);
       if report AND iChange > 0
       {
+         oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_improved_wav_rsc);
       }
       
       if iChange > 0 
@@ -7121,7 +7173,8 @@ messages:
 
    ChangeSkillAbility(Skill_num = 0, amount = 0, report = FALSE, refigureschools = TRUE, bDM = FALSE)
    {
-      local i, bFound, elemnum, iability, bUsed, iChange, skillname, newability, oSkill;
+      local i, bFound, elemnum, iability, bUsed, iChange, skillname, 
+            newability, oSkill, oRoom;
  
       oSkill = Send(SYS,@FindSkillByNum,#num=skill_num);
       if oSkill = $
@@ -7174,7 +7227,10 @@ messages:
       Send(self,@DrawStatSkill,#index=elemnum);
       if report AND (iChange > 0)
       {
+         oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=skillName);
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_improved_wav_rsc);
       }
       
       if iChange > 0 
@@ -12292,6 +12348,24 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
+   
+   % Used to set combat pens for victim as well as attacker
+	SetCombatPensFlag()
+	{
+		piCombatPens = GetTime();
+		return;
+	}
+   
+	GetCombatPensFlag()
+	{
+      if (piCombatPens + COMBAT_PENS_WAIT) > GetTime()
+         AND NOT Send(SYS,@GetChaosNight)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+	}
 
 
 end

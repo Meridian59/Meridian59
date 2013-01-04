@@ -107,8 +107,8 @@ constants:
    %  than logoff ghost time (currently 10 mins)
    ATTACKED_PLAYER_WAIT = 15 * 60
 
-   % Five minutes for the special combat pens flag to wear off.
-   COMBAT_PENS_WAIT = 5 * 60
+   % Five minutes for the instant penalty flag to wear off.
+   APPLY_INSTANT_PENALTIES_WAIT = 5 * 60
    
    % Damage is capped at piBase_Max_Health divided by this number.  Reduces
    %  newbie slaughter.
@@ -961,7 +961,7 @@ properties:
    % Generally, innocents will always have ghosts.
    % Murderers/Outlaws, Faction Soldiers, and Warring should instant pen.
    % This creates a soft opt-in pvp system with strict disadvantages for PKs.
-   piCombatPens = 0
+   piApplyInstantPenalties = 0
    
 messages:
 
@@ -3762,8 +3762,8 @@ messages:
       {
          % Okay, attack is against a player, so record the time
          piTimeAttackedPlayer = GetTime();
-		 Send(self,@SetCombatPensFlag);
-		 Send(victim,@SetCombatPensFlag);
+		 Send(self,@SetInstantPenaltiesFlag);
+		 Send(victim,@SetInstantPenaltiesFlag);
 
          return TRUE;
       }
@@ -3812,14 +3812,14 @@ messages:
 	  if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
 	     OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
 	  {
-		 Send(self,@SetCombatPensFlag);
+		 Send(self,@SetInstantPenaltiesFlag);
 	  }
 	  
 	  % Murderers and outlaws always receive Combat Pens when attacked
 	  if Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
 	     OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
 	  {
-		 Send(victim,@SetCombatPensFlag);
+		 Send(victim,@SetInstantPenaltiesFlag);
 	  }
 
       % Check for faction loss.  Handles appropriate conditions.
@@ -12349,23 +12349,23 @@ messages:
       return;
    }
    
-   % Combat pens flag erased on pen
-   EraseCombatPensFlag()
+   % Instant penalties flag erased on penalty
+   EraseInstantPenaltiesFlag()
    {
-		piCombatPens = 0;
+		piApplyInstantPenalties = 0;
 		return;
    }
    
-   % Used to set combat pens for victim as well as attacker
-	SetCombatPensFlag()
+   % Used to set instant penalties for victim as well as attacker
+	SetInstantPenaltiesFlag()
 	{
-		piCombatPens = GetTime();
+		piApplyInstantPenalties = GetTime();
 		return;
 	}
    
-	GetCombatPensFlag()
+	GetInstantPenaltiesFlag()
 	{
-      if (piCombatPens + COMBAT_PENS_WAIT) > GetTime()
+      if (piApplyInstantPenalties + APPLY_INSTANT_PENALTIES_WAIT) > GetTime()
          AND NOT Send(SYS,@GetChaosNight)
       {
          return TRUE;

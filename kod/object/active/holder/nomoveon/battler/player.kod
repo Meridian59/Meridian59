@@ -12373,6 +12373,15 @@ messages:
 
       return FALSE;
 	}
+	
+	InstantPenaltiesRefreshHealthAndMana()
+	{
+	  piHealth = piMax_Health;
+      piMana = piMax_Mana;
+      Send(self,@NewHealth);
+      Send(self,@NewMana);
+	  return;
+	}
 
 
 end

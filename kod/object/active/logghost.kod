@@ -526,6 +526,7 @@ messages:
                        4,prSpellPointsLost, 4,prSkillPointsLost]);
 
 		Send(poGhostedPlayer,@EraseInstantPenaltiesFlag);
+		Send(poGhostedPlayer,@InstantPenaltiesRefreshHealthAndMana);
 
 		penaltyInRoom = Send(SYS,@UtilGetRoomRecurse,#what=self);
 		Send(self,@PlayPenaltySound,#room_obj=penaltyInRoom,#what=poGhostedPlayer);

@@ -19,10 +19,11 @@ resources:
    RingOfFlames_name_rsc = "ring of flames"
    RingOfFlames_icon_rsc = iringfir.bgf
    RingOfFlames_desc_rsc = \
-      "Creates a ring of flames around the caster.  "
+      "Creates a ring of flames around target.  "
       "Requires red mushrooms and firesand to cast."
 
-   RingOfFlames_cast_rsc = "A blazing hot ring of flames appears around you."
+   RingOfFlames_caster = "A blazing hot ring of flames appears around %s%q."
+   RingOfFlames_target = "A blazing hot ring of flames appears around you!"
    RingOfFlames_failed_rsc = \
       "There is too much summoning magic focused here to create a ring of "
       "flames." 
@@ -40,7 +41,8 @@ classvars:
    viSpell_level = 5
    viMana = 15
    viSpellExertion = 10
-
+   
+   viCast_time = 1000
    vrSucceed_wav = RingOfFlames_sound
 
    viHarmful = TRUE
@@ -66,32 +68,40 @@ messages:
 
    GetNumSpellTargets()
    {
-      return 0;
+      return 1;
    }
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      Send(who,@MsgSendUser,#message_rsc=RingOfFlames_cast_rsc);
+     local oTarget;
+	  
+	  oTarget = First(lTargets);
+      Send(oTarget,@MsgSendUser,#message_rsc=RingOfFlames_target,
+		    #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+	  
+      Send(who,@MsgSendUser,#message_rsc=RingOfFlames_caster);
 
       propagate;
    }
 
-   PlaceWallElements(who = $, iSpellPower = 0)
+   PlaceWallElements(who = $, lTargets = $, iSpellPower = 0)
    {
       local oRoom, iRow, iCol, iFine_Row, iFine_Col, iXStep, iYStep,
             iAngle, iMaxDamage, iDuration, iHalfrow, iHalfCol, iHalfFine_Row,
-            iHalfFine_Col, oElement;
+            iHalfFine_Col, oElement, oTarget;
+			
+	  oTarget = First(lTargets);
 
-      iAngle = Send(who,@GetAngle);
+      iAngle = Send(oTarget,@GetAngle);
       iMaxDamage = iSpellPower / 5;
       iMaxDamage = bound(iMaxDamage,1,20);
       iDuration = (iSpellPower * 2) + 30;
       iDuration = bound(iDuration,30,180);
 
-      oRoom = Send(who,@GetOwner);
+      oRoom = Send(oTarget,@GetOwner);
 
-      iRow = Send(who,@GetRow);
-      iCol = Send(who,@GetCol);
+      iRow = Send(oTarget,@GetRow);
+      iCol = Send(oTarget,@GetCol);
 
       % Create fire in eight cardinal directions
       oElement = Create(&WallofFire,#Caster=who,#MaxDamage=iMaxDamage,

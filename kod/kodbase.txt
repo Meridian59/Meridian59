@@ -42561,3 +42561,4 @@ V	vrIcon 1
 V	vrDesc 2
 V	viWeight 6
 M	ShowDesc 10049
+M	DropOnDeath 12340

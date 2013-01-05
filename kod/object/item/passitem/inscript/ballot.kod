@@ -48,6 +48,13 @@ messages:
       AddPacket(4, ballot_desc_rsc);
 	  return;
    }
+   
+   % We don't want players carrying these to avoid penalties
+   % Making them nodrop will solve that problem
+   DropOnDeath()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

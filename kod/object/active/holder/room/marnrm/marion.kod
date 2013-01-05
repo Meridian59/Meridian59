@@ -38,7 +38,7 @@ resources:
       "Your offering to the fallen falls softly on a bed of dried flower petals."
 
    mimosa_name = "the mimosa tree"
-   mimosa_icon = treebot.bgf
+   mimosa_icon = tree2.bgf
    mimosa_desc = \
       "This tree stands as a memorial of a fallen friend. "
       "A small metal plaque is affixed near the ground; a few dried rose petals rest nearby."

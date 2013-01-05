@@ -19,6 +19,8 @@ constants:
 
    % Damage in health points * 10^-4 / second
    POISON_LOSSRATE = 5000    
+   
+   POISON_CHANCE = 30
 
 resources:
 
@@ -74,9 +76,10 @@ messages:
       
       if Random(1,100) < piOdds
       {
+     
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
 
-         if NOT Send(what,@IsEnchanted,#what=oSpell)
+         if NOT Send(what,@IsEnchanted,#what=oSpell) or Random(1,POISON_CHANCE) = 1
          {
             if isClass(what,&User)
             {

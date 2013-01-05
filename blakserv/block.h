@@ -24,7 +24,7 @@ void AddBlock(int iSeconds, struct in_addr* piaPeer);
 void DeleteBlock(struct in_addr* piaPeer);
 void DeleteAllBlocks(void);
 
-BOOL CheckBlockList(struct in_addr* piaPeer);
+bool CheckBlockList(struct in_addr* piaPeer);
 
 void BuildBannedIPBlocks( char *filename );
 

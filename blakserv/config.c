@@ -321,7 +321,7 @@ char * AddConfig(int config_id,char *config_data,int config_type,int is_dynamic)
 	    fgets(s, sizeof(s)-1, f);
 	    strtok(s, "\r\n\x1A");
 	    fclose(f);
-	    c->is_dynamic = FALSE;
+	    c->is_dynamic = false;
 	 }
       }
       c->config_str_value = (char *)AllocateMemory(MALLOC_ID_CONFIG,strlen(s)+1);

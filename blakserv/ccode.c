@@ -518,11 +518,11 @@ int C_GetClass(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-// Look up the string given by val.  If found, return TRUE and set *str and *len
+// Look up the string given by val.  If found, return true and set *str and *len
 // to the string value and length respectively.  function_name is the C function
 // name used in reporting errors.
-// If the string isn't found (including if val corresponds to NIL), FALSE is returned.
-BOOL LookupString(val_type val, char *function_name, char **str, int *len)
+// If the string isn't found (including if val corresponds to NIL), false is returned.
+bool LookupString(val_type val, char *function_name, char **str, int *len)
 {
 	string_node *snod;
 	resource_node *r;
@@ -535,7 +535,7 @@ BOOL LookupString(val_type val, char *function_name, char **str, int *len)
 		{
 			bprintf( "%s can't use invalid string %i,%i\n",
                   function_name, val.v.tag, val.v.data );
-			return FALSE;
+			return false;
 		}
 		*str = snod->data;
 		break;
@@ -551,7 +551,7 @@ BOOL LookupString(val_type val, char *function_name, char **str, int *len)
 		{
 			bprintf( "%s can't use invalid resource %i as string\n",
                   function_name, val.v.data );
-			return FALSE;
+			return false;
 		}
 		*str = r->resource_val;
 		break;
@@ -568,7 +568,7 @@ BOOL LookupString(val_type val, char *function_name, char **str, int *len)
       {
          bprintf("%s can't find class %i, can't get debug str\n",
                  function_name, kstat->interpreting_class);
-         return FALSE;
+         return false;
       }
       *str = GetClassDebugStr(c, val.v.data);
       break;
@@ -576,19 +576,19 @@ BOOL LookupString(val_type val, char *function_name, char **str, int *len)
 
    case TAG_NIL:
 		bprintf( "%s can't use nil as string\n", function_name );
-      return FALSE;
+      return false;
    
 	default :
 		bprintf( "%s can't use with non-string thing %i,%i\n",
                function_name, val.v.tag, val.v.data );
-		return FALSE;
+		return false;
 	}
 
    if (*str == NULL)
-      return FALSE;
+      return false;
    *len = strlen(*str);
    
-   return TRUE;
+   return true;
 }
 
 
@@ -654,10 +654,10 @@ void FuzzyCollapseString(char* pTarget, char* pSource, int len)
 	*pTarget = '\0';
 }
 
-BOOL FuzzyBufferEqual(char *s1,int len1,char *s2,int len2)
+bool FuzzyBufferEqual(char *s1,int len1,char *s2,int len2)
 {
 	if (!s1 || !s2 || len1 <= 0 || len2 <= 0)
-		return False;
+		return false;
 	
 	// skip over leading whitespace
 	while (len1 && iswhite(*s1)) { s1++; len1--; }
@@ -669,7 +669,7 @@ BOOL FuzzyBufferEqual(char *s1,int len1,char *s2,int len2)
 	
 	// empty strings can't match anything
 	if (!len1 || !len2)
-		return False;
+		return false;
 	
 	// walk the strings until we find a mismatch or an end
 	while (len1 && len2 && toupper(*s1) == toupper(*s2))
@@ -903,12 +903,12 @@ int C_StringContain(int object_id,local_var_type *local_vars,
 "orcteeth" == "orc teeth"
 */
 
-// return TRUE if s1 contains s2,
+// return true if s1 contains s2,
 //	first converting to uppercase and squashing tabs and spaces to a single space
-BOOL FuzzyBufferContain(char *s1,int len_s1,char *s2,int len_s2)
+bool FuzzyBufferContain(char *s1,int len_s1,char *s2,int len_s2)
 {
 	if (!s1 || !s2 || len_s1 <= 0 || len_s1 <= 0)
-		return FALSE;
+		return false;
 	
 	FuzzyCollapseString(buf0, s1, len_s1);
 	FuzzyCollapseString(buf1, s2, len_s2);
@@ -1486,7 +1486,7 @@ int C_CanMoveInRoom(int object_id,local_var_type *local_vars,
     */
 	
 	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = FALSE;
+	ret_val.v.data = false;
 	
 	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);
@@ -1560,7 +1560,7 @@ int C_CanMoveInRoomFine(int object_id,local_var_type *local_vars,
     */
 	
 	ret_val.v.tag = TAG_INT;
-	ret_val.v.data = FALSE;
+	ret_val.v.data = false;
 	
 	room_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
 		normal_parm_array[0].value);

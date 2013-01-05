@@ -141,8 +141,6 @@ enum
 
 #include "btime.h"
 
-#include "wrap.h"
-
 #include "bool.h"
 #include "rscload.h"
 #include "roomtype.h"

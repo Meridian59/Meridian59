@@ -116,7 +116,7 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 	if (!ConfigBool(SOCKET_NAGLE))
 	{
 		/* turn off Nagle algorithm--improve latency? */
-		xxx = TRUE;
+		xxx = true;
 		if (setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(char *)&xxx,sizeof xxx))
 		{
 			eprintf("AcceptSocketConnections error setting sock opts 3\n");

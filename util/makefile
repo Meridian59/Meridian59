@@ -50,7 +50,7 @@ $(OUTDIR)\rscload.lib: $(OUTDIR)\rscload.obj $(OUTDIR)\memmap.obj
 	$(CP) $@ $(BLAKLIBDIR)
 
 $(OUTDIR)\rscprint.exe: $(OUTDIR)\rscprint.obj
-	$(LINK) $(LINKFLAGS) $** $(NTLIBS) rscload.lib wrap.lib setargv.obj -out:$@
+	$(LINK) $(LINKFLAGS) $** $(NTLIBS) rscload.lib setargv.obj -out:$@
 	$(CP) $@ $(BLAKBINDIR)
 
 $(OUTDIR)\bmpdump.exe: $(OUTDIR)\bmpdump.obj $(OUTDIR)\memmap.obj
@@ -62,11 +62,11 @@ $(OUTDIR)\paldump.exe: $(OUTDIR)\paldump.obj $(OUTDIR)\memmap.obj
 	$(CP) $@ $(BLAKBINDIR)
 
 $(OUTDIR)\rscmerge.exe: $(OUTDIR)\rscmerge.obj
-	$(LINK) $(LINKFLAGS) $** $(NTLIBS) rscload.lib wrap.lib setargv.obj -out:$@
+	$(LINK) $(LINKFLAGS) $** $(NTLIBS) rscload.lib setargv.obj -out:$@
 	$(CP) $@ $(BLAKBINDIR)
 
 $(OUTDIR)\syscolors.exe: syscolors.obj
-	$(LINK) $(LINKFLAGS) $** $(NTLIBS) rscload.lib wrap.lib setargv.obj -out:$@
+	$(LINK) $(LINKFLAGS) $** $(NTLIBS) rscload.lib setargv.obj -out:$@
 	$(CP) $@ $(BLAKBINDIR)
 
 $(OUTDIR)\palcomp.exe: $(OUTDIR)\palcomp.obj $(OUTDIR)\memmap.obj

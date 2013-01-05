@@ -6508,9 +6508,9 @@ messages:
    {
       local iChange, iSwing, oRoom;
 
-      % No karma changes from killing players.
+      % No karma changes from killing players during Frenzies.
       % Also, no Karma change from event monsters: Xeos and admin-spawned.
-      if NOT bIsMob
+      if (Send(SYS,@GetChaosNight) AND NOT bIsMob)
          OR karma_victim = $
       {
          return 0;
@@ -6556,16 +6556,6 @@ messages:
             iSwing = Send(Send(SYS, @GetSettings), @GetKillKarmaSwingNeutral);
          }
       }
-	  
-	  % Prevent karma change for killing monsters of same lower karma 
-	  if bIsMob 
-	  { 
-		 if (karma_killer > 0) = (karma_victim > 0) 
-			AND (abs(karma_killer) > abs(karma_victim)) 
-		 { 
-			return 0; 
-		 }
-	  }
 
       iChange = Send(self,@CalculateKarmaChangeFromAct,#karma_doer = karma_killer,
                      #karma_act = -(karma_victim),#swing_factor = iSwing);
@@ -12703,7 +12693,7 @@ messages:
 		 if iLearnPoints >= iMaxLearnPoints
 		 {
 			 % Give reagents for spells
-			 Post(self,@AddReagentsForSpells,#iNumCasts=3);
+			 Post(self,@AddReagentsForSpells,#iNumCasts=5);
 			 
 			 pbDrankBetaPotion = FALSE;
 			 return TRUE;
@@ -12810,7 +12800,7 @@ messages:
 		 {
 			if piKarma < 0
 			{
-			  piKarma = 10;
+			  piKarma = 1000;
 			}
 		 }
 		 
@@ -12818,7 +12808,7 @@ messages:
 		 {
 			if piKarma > 0
 			{
-			  piKarma = -10;
+			  piKarma = -1000;
 			}
 		 }
 		 

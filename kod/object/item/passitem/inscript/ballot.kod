@@ -34,7 +34,10 @@ classvars:
    vrIcon = ballot_icon_rsc
    vrDesc = ballot_desc_rsc
 
-   viWeight = 2
+   % Ballots have always been a potential problem due to having only 2 weight
+   %   while not being stackable. These shouldn't be exploitable.
+   %   Let's make the weight 50. Players should just be using these to vote.
+   viWeight = 50
 
 properties:
 

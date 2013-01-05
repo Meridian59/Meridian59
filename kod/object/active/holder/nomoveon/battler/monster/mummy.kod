@@ -46,7 +46,6 @@ classvars:
    viAttributes = 0
    viLevel = 40
    viDifficulty = 2
-   viKarma = -20
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
 
    vrSound_hit = mummy_sound_hit

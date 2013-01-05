@@ -135,16 +135,20 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&KocatanMug,#number=4),
-                       Create(&WineGoblet,#number=4),
-                       Create(&Bread,#number=4),
-                       Create(&Apple),
-                       Create(&Mace),
-                       Create(&LeatherArmor),
+      plFor_sale = [ [ 
+                       Create(&InkyCap,#price=850),
                        Create(&SilverArrow),
                        Create(&NeruditeArrow),
-                       Create(&Torch),
-                       Create(&MetalShield) ],
+                       Create(&BattleBow,#price=9500),
+                       Create(&LongBow,#price=6800),
+                       Create(&NeruditeArmor,#price=12000),
+                       Create(&PlateArmor,#price=9000),
+                       Create(&ScaleArmor,#price=4800),
+					   Create(&LongSword,#price=1800),
+					   Create(&ShortSword),
+					   Create(&Mace)
+					   
+					   ],
                      $,
                      [ SID_BLOOD_INHERITANCE ],
                      $ ];

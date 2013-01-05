@@ -38,18 +38,10 @@ messages:
       return;
    }
 
-   CheckPlayerFlag(flag=0)
-   {
-      if flag = PFLAG_SAFETY
-      {  return True; }
-
-      propagate;
-   }
-
    UserGotoDeadRoom()
    {
-	  % Guests have a perm death
-      Post(self,@PerformSuicide);
+	  % Guests will be brought back to island
+      Send(Send(SYS,@FindRoomByNum,#num=RID_JUNGLE_TRADING_POST),@Teleport,#what=self);
 
       return;
    }
@@ -62,33 +54,18 @@ messages:
       return False;
    }
 
-   TrySayGroup(users = $)
-   {
-      local i,oRoom;
-
-      for i in users
-      {
-		oRoom = Send(SYS,@UtilGetRoom,#what=i);
-		if oRoom = $ { continue; }        %% this group member is not logged in - lagged out?
-
-		if not Send(oRoom,@IsGuestRoom)
-		{
-			Send(self,@MsgSendUser,#message_rsc=guest_cant_send_non_guest);
-			return False;
-		}
-      }
-      propagate;
-   }
-
    SendFirstTimeAppeal()
    {
-   
+	  
       return;
    }
 
    PlayerNewCharInfo()
    {
       %debug("player new char info");
+	  Send(self,@PKillEnable);
+	  Send(self,@PkillLock); 
+	  
       propagate;
    }
 
@@ -101,6 +78,8 @@ messages:
       piHealth = piBase_max_health;
       Send(self,@NewHealth);
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=TRUE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
 	  
 	  Post(self,@MsgSendUser,#message_rsc=guest_welcome);
 
@@ -132,15 +111,9 @@ messages:
    AddDefaultObjects()
    "Add the objects a player is given when creating a guest character"
    {
-      Send(self,@NewHold,#what=Create(&Money,#number=2500));
+      Send(self,@NewHold,#what=Create(&Money,#number=15000));
       Send(self,@NewHold,#what=Create(&BetaPotion));
 
-      return;
-   }
-   
-   AddDefaultSpells()
-   "Guests do not get the starter spells."
-   {
       return;
    }
   
@@ -159,6 +132,33 @@ messages:
 	  
       return;
    }
+   
+   UserDrop(what = $,number = $)
+   {
+	  if isClass(what,&NumberItem)
+	  {
+          Send(self,@MsgSendUser,#message_rsc=user_disallow_drop, 
+                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+
+		  return FALSE;
+	  }
+   
+	  propagate;
+   }
+   
+   UserOffer(what = $,item_list = $,number_list = $)
+   {
+	  if isClass(what,&NumberItem)
+	  {
+          Send(self,@MsgSendUser,#message_rsc=user_disallow_drop, 
+                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+
+		  return FALSE;
+	  }
+	  
+	  propagate;
+   }
+   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

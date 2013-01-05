@@ -30,8 +30,6 @@ resources:
    light_new_entrant = "This place is illuminated by a magical glow."  %replace by icon
    light_spell_intro = "Shal'ille Lv. 1:  Fills an area with magical illumination."
 
-   light_sound = flight.wav
-
 classvars:
 
    vrName = light_name_rsc

@@ -169,7 +169,7 @@ Section "Desktop Shortcut"
 
   ; Set to run in data directory
   SetOutPath "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues"
-  CreateShortCut "$DESKTOP\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
+  CreateShortCut "$DESKTOP\Meridian 59: The Internet Quest Continues.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
   
 SectionEnd
 
@@ -182,7 +182,7 @@ Section "Start Menu Shortcuts"
   ; Set to run in data directory
   SetOutPath "$LOCALAPPDATA\Meridian 59: The Internet Quest Continues"
 
-  CreateShortCut "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Meridian 59.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
+  CreateShortCut "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Meridian 59: The Internet Quest Continues.lnk" "$INSTDIR\meridian.exe" "" "$INSTDIR\meridian.exe" 0
   
 SectionEnd
 
@@ -223,7 +223,7 @@ Section "Uninstall"
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Meridian 59.lnk"
   Delete "$SMPROGRAMS\Meridian 59: The Internet Quest Continues\Uninstall Meridian 59.link"
-  Delete "$DESKTOP\Meridian 59.lnk"
+  Delete "$DESKTOP\Meridian 59: The Internet Quest Continues.lnk"
 
   ; Remove font
 

@@ -2256,7 +2256,7 @@ messages:
                Send(Send(what,@GetOwner),@GetRoomNum));
          
          return FALSE;
-      }     
+      }
 
       % If there are active quest nodes, notify them   -AJM
       for i in item_list

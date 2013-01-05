@@ -66,8 +66,6 @@ messages:
       plEdge_Exits = $;
       plEdge_Exits = Cons([LEAVE_NORTH, RID_I7, 48, 32, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_SOUTH, RID_I9, 4, 63, ROTATE_NONE], plEdge_exits);
-	  
-	  plEdge_Exits = Cons([LEAVE_EAST, RID_TROLL_CAVE, 16, 2, ROTATE_NONE], plEdge_exits);
      
       propagate;
    }
@@ -107,7 +105,7 @@ messages:
 	 return;
       }
 	  
-     if (new_row < 61) and (new_row > 57) and (new_col < 48)
+     if (new_col > 42) and (new_row > 57)
      {
         Send(SYS,@UtilGoNearSquare,#what=what,
              #where=Send(SYS,@FindRoomByNum,#num=RID_TROLL_CAVE),

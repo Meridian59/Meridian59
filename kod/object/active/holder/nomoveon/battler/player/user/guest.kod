@@ -13,6 +13,8 @@ guest is user
 constants:
 
    include blakston.khd
+   
+   CAN_PK_HP = 100
 
 resources:
 
@@ -40,7 +42,6 @@ messages:
 
    UserGotoDeadRoom()
    {
-	  % Guests will be brought back to island
       Send(Send(SYS,@FindRoomByNum,#num=RID_JUNGLE_TRADING_POST),@Teleport,#what=self);
 
       return;
@@ -63,8 +64,6 @@ messages:
    PlayerNewCharInfo()
    {
       %debug("player new char info");
-	  Send(self,@PKillEnable);
-	  Send(self,@PkillLock); 
 	  
       propagate;
    }
@@ -156,6 +155,19 @@ messages:
 		  return FALSE;
 	  }
 	  
+	  propagate;
+   }
+   
+   TryAttack(what = $)
+   {
+	  if Send(what,@GetBaseMaxHealth) < CAN_PK_HP
+	  {
+		  Send(self,@MsgSendUser,#message_rsc=player_guardian_angel,
+			  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+
+		  return FALSE;
+	  }
+   
 	  propagate;
    }
    

@@ -7985,6 +7985,7 @@ messages:
       % Don't drop anything or take any penalties.
       if Send(SYS,@GetChaosNight)
         OR (iRoom >= RID_NEWB_BASE AND iRoom <= RID_NEWB_MAX)
+        OR isClass(self,&Guest)
         OR (piBase_Max_health < PKILL_ENABLE_HP
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
@@ -12682,7 +12683,7 @@ messages:
 			    }
 			 }
 			 
-			 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#upto=TRUE);
+			 send(self,@GivePlayerAllSpells,#school=iSchool,#level=iLevel,#iability=50,#upto=TRUE);
 		 }
 		 
 		 iLearnPoints = Send(self,@GetTotalLearnPoints,#except=0);

@@ -1465,9 +1465,7 @@ messages:
       local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild, oRoom, sLocation,
             param2, param3, param4, param5, param6, param7, param8, type4, type5, type7, type8;
 
-      if IsClass(what,&Guest)
-         OR (killer = $)
-         OR IsClass(killer,&Guest)
+      if killer = $
       {
          return;
       }

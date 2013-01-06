@@ -295,7 +295,7 @@ resources:
    user_guild_rsc = "guild"
    user_guildofficer_rsc = "guildofficer"
 
-   user_default_url = "http://www.Meridian59.com/"
+   user_default_url = "http://www.source.meridian59.net/"
 
 classvars:
 

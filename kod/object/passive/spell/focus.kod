@@ -119,6 +119,17 @@ messages:
       Send(who,@RemoveEnchantment,#what=self);
       return;
    }
+   
+   AdjustManaTime(time=0, iSpellPower=0)
+   "Reduces time passed in so that mana regens faster.  Returns reduced time."
+   {
+      local iTime;
+
+      iTime = (time * (200-iSpellPower)) / 200;
+	  iTime = bound(iTime,500,60000);
+
+      return iTime;
+   }
 
 end
 

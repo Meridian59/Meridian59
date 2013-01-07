@@ -616,7 +616,7 @@ messages:
 
    ExcludePlayer(who = $)
    {
-      if who <> $ AND IsClass(who,&User)
+      if who <> $ AND IsClass(who,&User) OR IsClass(who,&Guest)
       {
          plExclude = cons(who,plExclude);
 

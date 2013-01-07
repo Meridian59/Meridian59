@@ -27,6 +27,11 @@ constants:
    TREASURE_ROW_MAX = 9
    TREASURE_COL_MIN = 40
    TREASURE_COL_MAX = 43
+   
+   ANGEL_ROW = 13
+   ANGEL_COL = 14
+   
+   HOUR_MILLI = 3600000
        
    include blakston.khd
 
@@ -48,8 +53,8 @@ classvars:
 
    vrName = room_name_guildh15
 
-   viTeleport_row = 13
-   viTeleport_col = 14
+   viTeleport_row = 16
+   viTeleport_col = 6
 
    viNews_row = 16
    viNews_col = 47
@@ -88,6 +93,8 @@ properties:
 
    plLevers = $
    ptReactivateLevers = $
+   
+   ptAngel_gen = $
 
 messages:
 
@@ -95,6 +102,9 @@ messages:
    {
       plGuild_doors = [[12,30],[13,30],[14,30]];
       plLooping_sounds = [[ Guildhall15_loop, 0, 0, 200, 100 ]];
+	  
+	  Send(self,@DarkAngelGenTimer);
+	  
       propagate;
    }
 
@@ -129,6 +139,12 @@ messages:
       if ptReactivateLevers <> $ {
          deletetimer(ptReactivateLevers);
          ptReactivateLevers = $;
+      }
+	  
+      if ptAngel_gen <> $
+      {
+         DeleteTimer(ptAngel_gen);
+         ptAngel_gen = $;
       }
 
       propagate;
@@ -384,6 +400,33 @@ messages:
          }
       }
       propagate;
+   }
+   
+   DarkAngelGenTimer()
+   "Check if there's a dark angel in room.  If not, make one."
+   {
+      local i,bFound,each_obj;
+
+      ptAngel_gen = $;
+
+      bFound = FALSE;
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&DarkAngel)
+         {
+            bFound = TRUE;
+         }
+      }
+
+      if not bFound
+      {
+         Send(self,@NewHold,#what=Create(&DarkAngel),#new_row=ANGEL_ROW,#new_col=ANGEL_COL);
+      }
+      
+      ptAngel_gen = CreateTimer(self,@DarkAngelGenTimer,1*HOUR_MILLI);
+
+      return;
    }
 
 

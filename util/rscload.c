@@ -7,7 +7,7 @@
 #include "rscload.h"
 
 static const int RSC_VERSION = 4;
-static const int MAX_RSC_LEN = 5000;
+static const int MAX_RSC_LEN = 20000;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
 
 static bool RscFileRead(char *fname, FILE *f, RscCallbackProc callback);
@@ -62,9 +62,10 @@ bool RscFileRead(char *fname, FILE *f, RscCallbackProc callback)
       int pos = 0;
       while (!feof(f) && fread(&rsc[pos], 1, 1, f) == 1)
       {
-         // Reached end of buffer?
+         // Too big for buffer?
          if (pos == MAX_RSC_LEN - 1)
-            rsc[pos] = 0;
+            return false;
+         
          // Reached end of string?
          if (rsc[pos] == 0)
             break;

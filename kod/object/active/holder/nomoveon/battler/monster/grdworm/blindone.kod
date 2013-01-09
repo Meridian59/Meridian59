@@ -32,6 +32,8 @@ resources:
    BlindOne_sound_miss = qn_atkm.wav
    BlindOne_sound_death = qn_dth.wav
    BlindOne_sound_aware = qn_awr.wav
+   
+   BlindOne_cant_blind = "The BLIND one is already blind!"
 
 classvars:
 
@@ -190,6 +192,7 @@ messages:
       if Send(oSpell,@GetSpellNum) = SID_BLIND OR 
 		 Send(oSpell,@GetSpellNum) = SID_DAZZLE
       {
+		 send(who,@MsgSendUser,#message_rsc=BlindOne_cant_blind);
 		 return TRUE;
       }
 

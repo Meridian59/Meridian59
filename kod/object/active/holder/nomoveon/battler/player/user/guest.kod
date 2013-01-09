@@ -25,6 +25,8 @@ resources:
    guest_welcome = "~B~rYou are currently logged in as a guest. This character is only temporary, "
 				   "dying or logging off will delete your character permanently. "
 				   "You have been given a beta potion for your survival here on the island. Enjoy!"
+				   
+   guest_cant_hit_player = "You cannot hit a regular player that is not strong enough."
 
 classvars:
 
@@ -145,27 +147,16 @@ messages:
 	  propagate;
    }
    
-   UserOffer(what = $,item_list = $,number_list = $)
-   {
-	  if isClass(what,&NumberItem)
-	  {
-          Send(self,@MsgSendUser,#message_rsc=user_disallow_drop, 
-                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-
-		  return FALSE;
-	  }
-	  
-	  propagate;
-   }
-   
    TryAttack(what = $)
    {
-	  if Send(what,@GetBaseMaxHealth) < CAN_PK_HP
+	  if isClass(what,&Player) AND NOT isClass(what,&Guest)
 	  {
-		  Send(self,@MsgSendUser,#message_rsc=player_guardian_angel,
-			  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+		  if Send(what,@GetBaseMaxHealth) < CAN_PK_HP
+		   { 
+			  Send(self,@MsgSendUser,#message_rsc=guest_cant_hit_player);
+			  return FALSE;
+		   }
 
-		  return FALSE;
 	  }
    
 	  propagate;

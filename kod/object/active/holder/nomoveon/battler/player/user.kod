@@ -4900,6 +4900,15 @@ messages:
       {
          return FALSE;
       }
+	  
+	  % Guests can't offer to players
+      if isClass(self,&Guest) AND isClass(what,&Player)
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_cant_offer,
+              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+              
+         return FALSE;
+      }
 
       poOffer_who = what;
       plOffer_items = $;

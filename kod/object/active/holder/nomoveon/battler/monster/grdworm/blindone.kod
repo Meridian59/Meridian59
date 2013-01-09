@@ -123,7 +123,7 @@ messages:
       }
 
       % Shake the ground when I take a step.
-      send(poOwner,@Rumble,#duration=750,#disruption=100);
+      send(poOwner,@Rumble,#duration=600,#disruption=100);
 
       propagate;
    }
@@ -181,6 +181,32 @@ messages:
       }
 
       return lFinalTargets;
+   }
+   
+   SpellResist(oSpell=$,who=$,iSpellpower=$)
+   "Blind One is already blind!"
+   {
+ 
+      if Send(oSpell,@GetSpellNum) = SID_BLIND OR 
+		 Send(oSpell,@GetSpellNum) = SID_DAZZLE
+      {
+		 return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   ReqMonsterMove(new_row = $,new_col = $)
+   "Make sure blind one doesn't fall in the badland3 pit"
+   {
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_BADLAND3
+         AND (new_col > 36)
+      {
+		 return FALSE;
+      }
+
+      propagate;
    }
 
 

@@ -638,6 +638,7 @@
    
    % Open-Source
    RID_TROLL_CAVE = 751
+   RID_BADLAND3 = 752
 
    RID_TEMPLE_KRAANAN = 801
    RID_TEMPLE_QOR = 802
@@ -1556,6 +1557,7 @@
    
    % Open-Source
    TID_BLUE_DRAGON	 = 54
+   TID_BLIND_ONE	 = 55
 
    %%% English articles
 

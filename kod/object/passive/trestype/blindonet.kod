@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlindOneTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_BLIND_ONE
+
+   piItem_att_chance = 10
+   piDiff_seed = 10
+
+messages:
+   
+   constructed()
+   {
+					 
+      plTreasure = [ [ &BerserkerRing, 20 ],
+                     [ &Diamond, 20 ],
+                     [ &PlateArmor, 10 ],	
+                     [ &UncutSeraphym, 10 ],
+                     [ &OrcShield, 10 ],
+                     [ &Money, 8 ],
+                     [ &RingInvisibility, 5 ],
+                     [ &AcidRing, 5 ],
+                     [ &MysticSword, 4 ],
+                     [ &InkyCap, 3 ],
+                     [ &Gauntlet, 3 ],
+                     [ &JalaNecklace, 1 ],
+                     [ &Gift, 1 ]
+				   ];
+			 
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

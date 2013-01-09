@@ -1,0 +1,121 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Badland3 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   badland3_name = "The Badlands"
+   room_badland3 = badland3.roo
+   badland3_music = walk5.mp3
+
+classvars:
+
+   vrName = badland3_name
+
+   viTeleport_row = 39
+   viTeleport_col = 44
+
+   viTerrain_type = TERRAIN_BADLANDS | TERRAIN_TEMPLE | TERRAIN_LAIR
+   
+   BOSS_ROW = 41
+   BOSS_COL = 18
+   BOSS_ANGLE = ANGLE_SOUTH
+
+   HOUR_MILLI = 3600000
+
+properties:
+
+   prRoom = room_badland3
+   prMusic = badland3_music
+   piRoom_num = RID_BADLAND3
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   
+   ptBoss_gen = $
+
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&GroundwormQueen, 50], [&Groundworm, 30], [&GroundwormLarva, 20] ];
+	  
+      plGenerators = [ [38, 26], [44, 47], [49, 46], [47, 27], [13, 11],
+		      [38, 11], [19, 16], [51, 37], [42, 42], [50, 12] ];
+					   
+      Send(self,@BlindOneGenTimer);
+
+      propagate;
+   }
+   
+   Delete()
+   {
+      if ptBoss_gen <> $
+      {
+         DeleteTimer(ptBoss_gen);
+         ptBoss_gen = $;
+      }
+
+      propagate;
+   }
+   
+   BlindOneGenTimer()
+   {
+      local i,bFound,each_obj;
+
+      ptBoss_gen = $;
+
+      bFound = FALSE;
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&BlindOne)
+         {
+            bFound = TRUE;
+         }
+      }
+
+      if not bFound
+      {
+         Send(self,@NewHold,#what=Create(&BlindOne),#new_row=BOSS_ROW,#new_col=BOSS_COL,#new_angle=BOSS_ANGLE);
+      }
+      
+      ptBoss_gen = CreateTimer(self,@BlindOneGenTimer,1*HOUR_MILLI);
+
+      return;
+   }
+
+   CreateStandardObjects()
+   {
+
+      propagate;
+   }
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+	  
+     if (new_row < 40) AND (new_col < 5)
+     {
+        Send(SYS,@UtilGoNearSquare,#what=what,
+             #where=Send(SYS,@FindRoomByNum,#num=RID_K5),
+             #new_row=50,#new_col=49,#new_angle=ANGLE_WEST);
+        return;
+     }
+	  
+      propagate;
+   }   
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

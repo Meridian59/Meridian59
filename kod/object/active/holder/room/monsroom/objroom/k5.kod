@@ -59,7 +59,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Troll, 30], [&Groundworm, 70] ];
+      plMonsters = [ [&Scorpion, 30], [&Groundworm, 70] ];
 
       plGenerators = [ [10, 15], [19, 12], [23, 23], [4, 24], [8, 50],
 		      [11, 30], [25, 37], [37, 28], [36, 43], [41, 48], 
@@ -169,6 +169,7 @@ messages:
               #new_row=3,#new_col=80,#new_angle=send(what,@getangle));
          return;
       }
+	  
       propagate;
    }
 
@@ -187,7 +188,20 @@ messages:
       send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
       return;
    }
-                                                             
+
+   SomethingMoved(what = $,new_row = $, new_col = $)
+   {
+	  
+     if (new_row > 48) AND (new_col > 48)
+     {
+        Send(SYS,@UtilGoNearSquare,#what=what,
+             #where=Send(SYS,@FindRoomByNum,#num=RID_BADLAND3),
+             #new_row=36,#new_col=6);
+        return;
+     }
+	  
+      propagate;
+   }   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

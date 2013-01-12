@@ -1,0 +1,113 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Castle1E is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_castle1e = castle1e.roo
+   
+   castle1e_name = "Chamber of Castle Victoria"
+   castle1e_music = castle.mp3
+
+classvars:
+
+   vrName = castle1e_name
+
+   viTeleport_row = 19
+   viTeleport_col = 9
+   viTerrain_Type = TERRAIN_CASTLE
+
+properties:
+
+   prMusic = castle1e_music
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_10 
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+   prRoom = room_castle1e
+   piRoom_num = RID_castle1e
+   
+   piMonster_count_max = 12
+   
+   poShrine = $
+
+messages:
+
+   Constructed()
+   {
+      plMonsters = [ [&Skeleton, 65], [&Zombie, 45] ];
+
+      plGenerators = [ [11, 7], [11, 11], [17, 7],
+                       [14, 11], [19, 7], [19, 11]
+                     ];
+	  
+	  poShrine = create(&shrine,#shrine_num=SHRINE_CASTLE);
+	  send(self,@newhold,#what=poShrine,#new_row=11,#new_col=9,#fine_row=32,#fine_col=32);
+
+      propagate;
+   }
+   
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 24, 9, RID_CASTLE1, 13, 3, ROTATE_270 ],plExits);                                                                                
+
+      propagate;
+
+   }
+   
+   NewHold(what=$)
+   {
+      if isClass(what,&Item)
+      {
+         post(self,@PostShrineCheckItem,#what=what);  
+         %%Have to post this to handle numberitems and SYS can't handle posts.
+      }
+      propagate;
+   }
+   
+   PostShrineCheckItem(what=$)
+   {
+      send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=3);
+      return;
+   }
+
+   FirstUserEntered(what = $)
+   {
+
+      if Send(self,@FindHoldingActive,#class=&LivingStatue) = $
+      {
+		  % Create statues
+		  Send(self,@NewHold,#what=Create(&LivingStatue),#new_row=17,#new_col=15,
+			 #fine_row=60,#fine_col=48,#new_angle=ANGLE_WEST);
+			 
+		  Send(self,@NewHold,#what=Create(&LivingStatue),#new_row=13,#new_col=15,
+			 #fine_row=60,#fine_col=48,#new_angle=ANGLE_WEST);
+			 
+		  Send(self,@NewHold,#what=Create(&LivingStatue),#new_row=17,#new_col=3,
+			 #fine_row=60,#fine_col=16,#new_angle=ANGLE_EAST);
+			 
+		  Send(self,@NewHold,#what=Create(&LivingStatue),#new_row=13,#new_col=3,
+			 #fine_row=60,#fine_col=16,#new_angle=ANGLE_EAST);
+      }
+	  
+      propagate;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

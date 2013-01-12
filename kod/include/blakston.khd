@@ -639,6 +639,7 @@
    % Open-Source
    RID_TROLL_CAVE = 751
    RID_BADLAND3 = 752
+   RID_CASTLE1E = 753
 
    RID_TEMPLE_KRAANAN = 801
    RID_TEMPLE_QOR = 802
@@ -2677,6 +2678,7 @@
    SHRINE_ISLAND     = 3
    SHRINE_BRAX       = 4
    SHRINE_FOREST     = 5
+   SHRINE_CASTLE     = 6
 
    %%% Server types
 

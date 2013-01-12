@@ -2266,8 +2266,10 @@ messages:
 
       Send(self,@CreateOneRoomIfNew,#num=RID_ICE_CAVE1,#class=&IceCave1);
 	  
-	  Send(self,@CreateOneRoomIfNew,#num=RID_TROLL_CAVE,#class=&TrollCave); %Open-source
-	  Send(self,@CreateOneRoomIfNew,#num=RID_BADLAND3,#class=&BadLand3); %Open-Source
+	  %Open-source - SATIVA
+	  Send(self,@CreateOneRoomIfNew,#num=RID_TROLL_CAVE,#class=&TrollCave);
+	  Send(self,@CreateOneRoomIfNew,#num=RID_BADLAND3,#class=&BadLand3);
+	  Send(self,@CreateOneRoomIfNew,#num=RID_CASTLE1E,#class=&Castle1E);
 
    % Orc Warrens
       Send(self,@CreateOneRoomIfNew,#num=RID_ORC_CAVE1,#class=&OrcCave1);

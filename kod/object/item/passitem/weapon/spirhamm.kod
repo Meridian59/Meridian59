@@ -164,6 +164,11 @@ messages:
       % It's mystically created and temporary.  No penalties.
       return 0;
    }
+   
+   CanDualWield()
+   {
+	  return FALSE;
+   }
 
 
 end

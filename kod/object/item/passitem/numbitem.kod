@@ -344,6 +344,17 @@ messages:
    
 	 propagate;
    }
+   
+   ReqNewOwner(what=$)
+   {
+	  if isClass(poOwner,&Guest)
+	  {
+		  return FALSE;
+	  }
+
+      propagate;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

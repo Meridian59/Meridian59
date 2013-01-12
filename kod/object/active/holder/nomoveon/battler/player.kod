@@ -7793,6 +7793,11 @@ messages:
 		 
 		 needed = (piBase_Max_health * piBase_Max_health) - piStamina;
 		 piExperience_Gained = (piExperience_Gained + exp) + piStamina;
+		 
+		 if isClass(what,&Player)
+		 {
+			 piExperience_Gained = 0;
+		 }
 		
 		 if piExperience_Gained >= needed
 		 {

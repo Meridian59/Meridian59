@@ -27,6 +27,10 @@ resources:
 				   "You have been given a beta potion for your survival here on the island. Enjoy!"
 				   
    guest_cant_hit_player = "You cannot hit a regular player that is not strong enough."
+   
+   guest_cant_hit_monster = "This monster is too strong for you to take on!"
+   
+   guest_no_spell = "Your powers seem to have no effect."
 
 classvars:
 
@@ -85,6 +89,13 @@ messages:
 	  Post(self,@MsgSendUser,#message_rsc=guest_welcome);
 
 
+      propagate;
+   }
+   
+   UserLogoff()
+   {
+	  send(self,@StripInventory);
+   
       propagate;
    }
 
@@ -158,8 +169,43 @@ messages:
 		   }
 
 	  }
+	  
+	  if isClass(what,&Monster)
+	  {
+		  if Send(what,@GetBaseMaxHealth) > 100
+		   { 
+			  Send(self,@MsgSendUser,#message_rsc=guest_cant_hit_monster);
+			  return FALSE;
+		   }
+
+	  }
    
 	  propagate;
+   }
+   
+   ReqGuestCast(what = $)
+   {
+	  if isClass(what,&Player) AND NOT isClass(what,&Guest)
+	  {
+		  if Send(what,@GetBaseMaxHealth) < CAN_PK_HP
+		   { 
+			  Send(self,@MsgSendUser,#message_rsc=guest_no_spell);
+			  return FALSE;
+		   }
+
+	  }
+	  
+	  if isClass(what,&Monster)
+	  {
+		  if Send(what,@GetBaseMaxHealth) > 100
+		   { 
+			  Send(self,@MsgSendUser,#message_rsc=guest_no_spell);
+			  return FALSE;
+		   }
+
+	  }
+	  
+	  return TRUE;
    }
    
 

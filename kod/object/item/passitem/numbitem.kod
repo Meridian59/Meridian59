@@ -335,6 +335,15 @@ messages:
       return (piNumber > 1);
    }
 
+   CanBeStoredInVault()
+   {
+	  if isClass(poOwner,&Guest)
+	  {
+		  return FALSE;
+	  }
+   
+	 propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

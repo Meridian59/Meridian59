@@ -115,7 +115,17 @@ messages:
      }
 	  
       propagate;
-   }   
+   }
+   
+   ReqNewHold(what = $)
+   {
+	  if isClass(what,&ActiveWallElement)
+	  {
+		 return FALSE;
+	  }
+   
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

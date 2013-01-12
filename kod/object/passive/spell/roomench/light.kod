@@ -35,7 +35,7 @@ classvars:
    vrName = light_name_rsc
    vrIcon = light_icon_rsc
    vrDesc = light_desc_rsc
-   vrSucceed_wav = light_sound
+   %vrSucceed_wav = light_sound
 
    vrSpell_intro = light_spell_intro
 

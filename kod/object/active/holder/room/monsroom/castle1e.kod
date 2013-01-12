@@ -41,7 +41,7 @@ properties:
    prRoom = room_castle1e
    piRoom_num = RID_castle1e
    
-   piMonster_count_max = 12
+   piMonster_count_max = 8
    
    poShrine = $
 
@@ -49,7 +49,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Skeleton, 65], [&Zombie, 45] ];
+      plMonsters = [ [&Zombie,60], [&BatteredSkeleton, 40] ];
 
       plGenerators = [ [11, 7], [11, 11], [17, 7],
                        [14, 11], [19, 7], [19, 11]

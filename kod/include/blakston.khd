@@ -635,11 +635,6 @@
    RID_GUILDH_MAX = 715
 
    RID_ICE_CAVE1 = 750
-   
-   % Open-Source
-   RID_TROLL_CAVE = 751
-   RID_BADLAND3 = 752
-   RID_CASTLE1E = 753
 
    RID_TEMPLE_KRAANAN = 801
    RID_TEMPLE_QOR = 802
@@ -817,6 +812,13 @@
    RID_MAR_CRYPT1 = 2600
    RID_MAR_CRYPT2 = 2601
    RID_MAR_CRYPT3A = 2602
+   
+   % Open-Source
+   RID_BADLAND3 = 2800
+   RID_BADLAND4 = 2801
+   
+   RID_CASTLE1E = 2910
+   RID_TROLL_CAVE = 2911
 
    % "Historical" rooms 9000-10000
    % These are older rooms that we're throwing in for historical/nostalgia

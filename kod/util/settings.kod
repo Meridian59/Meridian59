@@ -118,6 +118,26 @@ properties:
    % Minimum number of HP you have to have to vote for or become
    % Justicar
    piMinHPForJusticar = 100
+   
+   % Ghost and Logoff Penalty booleans
+   %
+   % pbHometownPenalties TRUE sends players to their hometown if they
+   %   suffer a penalty from logging off. FALSE sends them to room's blink spot.
+   %
+   % pbInstantPenalties TRUE applies logoff penalties instantly to combatants
+   %   that are part of opt-in PvP (soldier, war, murderer/outlaw) and then log off
+   %   during combat. This is kept track of by a 5 minute flag in player.kod,
+   %   duration determined by APPLY_INSTANT_PENS_WAIT.
+   %   FALSE will use old ghost system.
+   % 
+   % pbFlatPenalties TRUE eliminates free penalties and increasing penalties.
+   %   All penalties will be 1 item, 2% spells, 2% skills.
+   %   Soldier status also won't drop due to logoff penalties.
+   %   FALSE will use the old penalty system.
+   
+   pbHometownPenalties = TRUE
+   pbInstantPenalties = TRUE
+   pbFlatPenalties = TRUE
 
 
 messages:
@@ -289,6 +309,22 @@ messages:
    {
       return piMinHPForJusticar;
    }
+   
+	GetHometownPenalties()
+	{
+		return pbHometownPenalties;
+	}
+	
+	GetInstantPenalties()
+	{
+		return pbInstantPenalties;
+	}
+	
+	GetFlatPenalties()
+	{
+		return pbFlatPenalties;
+	}
+	
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

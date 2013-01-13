@@ -1,0 +1,45 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Badland4 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   badland4_name = "The Pit"
+   room_badland4 = badland4.roo
+   badland4_music = walk5.mp3
+
+classvars:
+
+   vrName = badland4_name
+
+   viTeleport_row = 47
+   viTeleport_col = 40
+
+   viTerrain_type = TERRAIN_BADLANDS | TERRAIN_LAIR
+
+properties:
+
+   prRoom = room_badland4
+   prMusic = badland3_music
+   piRoom_num = RID_BADLAND4
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+   
+   ptBoss_gen = $
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

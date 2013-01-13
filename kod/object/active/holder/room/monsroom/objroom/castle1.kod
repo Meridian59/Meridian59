@@ -108,8 +108,8 @@ messages:
 
       plExits = Cons([ 4, 33, RID_DUNGEON, 24, 2, ROTATE_NONE ],plExits);
 	  
-      plExits = Cons([ 12, 1, RID_CASTLE1E, 29, 9, ROTATE_90 ],plExits);
-      plExits = Cons([ 13, 1, RID_CASTLE1E, 23, 9, ROTATE_90 ],plExits);
+      plExits = Cons([ 12, 1, RID_CASTLE1E, 22, 9, ROTATE_90 ],plExits);
+      plExits = Cons([ 13, 1, RID_CASTLE1E, 22, 9, ROTATE_90 ],plExits);
 
       propagate;
    }

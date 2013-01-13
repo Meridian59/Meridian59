@@ -42584,24 +42584,6 @@ M	CreateJewel 12803
 M	RaiseTemple 12804
 M	LowerTemple 12808
 M	DeleteLight 12809
-C CASTLE1 10528 13139 ObjectRoom
-R	room_castle1 22979
-R	room_name_castle1 22980
-R	castle1_music 22981
-V	vrName 0
-V	viTeleport_row 17
-V	viTeleport_col 18
-V	viTerrain_type 21
-V	viPermanent_Flags 20
-Y	prMusic 13
-Y	piBaseLight 14
-Y	piOutside_factor 15
-Y	prRoom 7
-Y	piRoom_num 9
-M	Constructed 10044
-M	CreateStandardObjects 12548
-M	CreateStandardExits 12549
-M	CreateObjectGeneration 13140
 C Castle1c 10536 11540 MonsterRoom
 R	room_castle1c 21763
 R	castle1c_name 21764
@@ -42646,3 +42628,21 @@ P		what 10002
 M	CreateStandardExits 12549
 M	PostShrineCheckItem 12956
 P		what 10002
+C CASTLE1 10528 13139 ObjectRoom
+R	room_castle1 22979
+R	room_name_castle1 22980
+R	castle1_music 22981
+V	vrName 0
+V	viTeleport_row 17
+V	viTeleport_col 18
+V	viTerrain_type 21
+V	viPermanent_Flags 20
+Y	prMusic 13
+Y	piBaseLight 14
+Y	piOutside_factor 15
+Y	prRoom 7
+Y	piRoom_num 9
+M	Constructed 10044
+M	CreateStandardObjects 12548
+M	CreateStandardExits 12549
+M	CreateObjectGeneration 13140

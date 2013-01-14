@@ -208,6 +208,12 @@ messages:
 	  return TRUE;
    }
    
+   CanAcceptOffer(who=$)
+   {
+
+      return FALSE;
+   }
+   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

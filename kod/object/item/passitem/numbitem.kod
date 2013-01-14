@@ -347,7 +347,7 @@ messages:
    
    ReqNewOwner(what=$)
    {
-	  if isClass(poOwner,&Guest)
+	  if isClass(what,&Guest)
 	  {
 		  return FALSE;
 	  }

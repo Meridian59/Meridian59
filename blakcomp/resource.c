@@ -28,7 +28,6 @@ void write_resources(char *fname)
    class_type cl;
    FILE *f;
    char *str;
-   unsigned char byte;
 
    /* Count resources and compute length */
    num_resources = 0;

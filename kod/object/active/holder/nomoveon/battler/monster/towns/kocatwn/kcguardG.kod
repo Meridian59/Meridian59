@@ -38,7 +38,7 @@ classvars:
 
    viMerchant_markup = MERCHANT_RIPOFF
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOMOVE | MOB_FULL_TALK
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOMOVE | MOB_FULL_TALK | MOB_TEACHER
    viOccupation = MOB_ROLE_SERGEANT
 
 messages:
@@ -79,6 +79,13 @@ messages:
       Send(oMoney,@SubtractNumber,#number=amount);      
       post(self,@SayToOne,#target=who,#message_rsc=goodguard_thanks);
       return true;
+   }
+   
+   SetForSale()
+   {
+	  plFor_Sale = [$,[ SKID_PROFICIENCY_SCIMITAR ],$,$];
+
+      return;
    }
    
 end

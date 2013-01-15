@@ -117,7 +117,7 @@ messages:
 	  local iDamage, iBlockBonus;
 	  iBlockBonus = Send(oShield,@GetBlockAbility,#who=who);
 	  
-	  iDamage = bound((iBlockBonus / 20),1,10);
+	  iDamage = bound((iBlockBonus / 10),1,10);
 	  
 	  iDamage = random(iDamage/2,iDamage);
 	  

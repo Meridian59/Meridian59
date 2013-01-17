@@ -2309,6 +2309,7 @@
    NODE_GUEST        = 0x0400
    NODE_Q            = 0x0800
    NODE_AVAR         = 0x1000
+   NODE_SEWERS       = 0x2000
    % If more nodes are added, this value should go up
    %  to be at least as high as the highest node value.
    %  Extra room was consciously left.

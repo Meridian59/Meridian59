@@ -9952,29 +9952,6 @@ M	Constructed 10044
 M	CreateStandardExits 12549
 M	AddBaseLight 12591
 P		amount 10988
-C JasSewer3 10417 11540 MonsterRoom
-R	room_name_jassew3 22810
-R	room_jassew3 22811
-R	jassew3_music 22812
-R	waterfall_soundjsew3 22813
-V	vrName 0
-V	viTeleport_row 17
-V	viTeleport_col 18
-V	viTerrain_type 21
-Y	prRoom 7
-Y	piRoom_num 9
-Y	piBaseLight 14
-Y	piOutside_factor 15
-Y	prMusic 13
-Y	piGen_time 38
-Y	piGen_percent 46
-Y	piInit_count_min 44
-Y	piInit_count_max 45
-Y	piMonster_count_max 47
-M	Constructed 10044
-M	CreateStandardExits 12549
-M	AddBaseLight 12591
-P		amount 10988
 C Orccave1 10574 11540 MonsterRoom
 R	room_orccave1 22814
 R	room_name_orccave1 22815
@@ -42662,3 +42639,27 @@ M	CastSpell 13999
 P		what 10002
 P		apply_on 10112
 M	IsLabelled 14915
+C JasSewer3 10417 11540 MonsterRoom
+R	room_name_jassew3 22810
+R	room_jassew3 22811
+R	jassew3_music 22812
+R	waterfall_soundjsew3 22813
+V	vrName 0
+V	viTeleport_row 17
+V	viTeleport_col 18
+V	viTerrain_type 21
+Y	prRoom 7
+Y	piRoom_num 9
+Y	piBaseLight 14
+Y	piOutside_factor 15
+Y	prMusic 13
+Y	piGen_time 38
+Y	piGen_percent 46
+Y	piInit_count_min 44
+Y	piInit_count_max 45
+Y	piMonster_count_max 47
+M	Constructed 10044
+M	CreateStandardObjects 12548
+M	CreateStandardExits 12549
+M	AddBaseLight 12591
+P		amount 10988

@@ -90,6 +90,14 @@ messages:
 
       propagate;
    }
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&ManaNode,#node_num=NODE_SEWERS),
+           #new_row=33,#new_col=29,#new_angle=ANGLE_WEST);
+		   
+	  propagate;  
+   }
 
 
 end

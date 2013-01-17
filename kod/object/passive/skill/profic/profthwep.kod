@@ -29,7 +29,7 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_num = SKID_PROFICIENCY_THROW_WEAPON
    viSkill_level = 5
-   viChance_to_increase = 20
+   viChance_to_increase = 100 %you drop weapon everytime, lets make it imp!
 
 properties:
 

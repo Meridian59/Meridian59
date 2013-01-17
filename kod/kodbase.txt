@@ -33555,20 +33555,6 @@ V	viChance_to_increase 16
 Y	plPrerequisites 2
 M	GetRequisiteStat 14457
 P		who 10116
-C ThrowProficiency 14986 13829 Proficiency
-R	ThrowProficiency_name_rsc 30657
-R	ThrowProficiency_icon_rsc 30658
-R	ThrowProficiency_desc_rsc 30659
-V	vrName 0
-V	vrIcon 1
-V	vrDesc 2
-V	viSchool 14
-V	viSkill_num 13
-V	viSkill_level 15
-V	viChance_to_increase 16
-Y	plPrerequisites 2
-M	GetRequisiteStat 14457
-P		who 10116
 C DualWielding 15022 13829 Proficiency
 R	DualWield_name_rsc 30756
 R	DualWield_icon_rsc 30757
@@ -42663,3 +42649,17 @@ M	CreateStandardObjects 12548
 M	CreateStandardExits 12549
 M	AddBaseLight 12591
 P		amount 10988
+C ThrowProficiency 14986 13829 Proficiency
+R	ThrowProficiency_name_rsc 30657
+R	ThrowProficiency_icon_rsc 30658
+R	ThrowProficiency_desc_rsc 30659
+V	vrName 0
+V	vrIcon 1
+V	vrDesc 2
+V	viSchool 14
+V	viSkill_num 13
+V	viSkill_level 15
+V	viChance_to_increase 16
+Y	plPrerequisites 2
+M	GetRequisiteStat 14457
+P		who 10116

@@ -194,7 +194,6 @@ config_table_type config_table[] =
 { ADVERTISE_URL2,         T, "Url2",          CONFIG_STR,   "http://meridian59.neardeathstudios.com" },
 
 { DEBUG_GROUP,            F, "[Debug]",       CONFIG_GROUP, "" },
-{ DEBUG_SMTP,             T, "SMTP",          CONFIG_BOOL,  "No" }, 
 { DEBUG_CANMOVEINROOM,    T, "CanMoveInRoom", CONFIG_BOOL,  "No" },
 { DEBUG_HEAP,             T, "Heap",          CONFIG_BOOL,  "No" },
 { DEBUG_TRANSMITTED_BYTES,T, "TransmittedBytes",CONFIG_BOOL,"No" },

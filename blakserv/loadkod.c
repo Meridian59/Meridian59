@@ -21,7 +21,6 @@
 
 #define BOF_SPEC "*.bof"
 
-/* I don't check the magic # yet, but here's what it should be */
 static unsigned char magic_num[] = { 'B', 'O', 'F', 0xFF };
 #define BOF_MAGIC_LEN sizeof(magic_num)
 
@@ -119,50 +118,47 @@ void ResetLoadBof(void)
 
 Bool LoadBofName(char *fname)
 {
-	HANDLE fh,mapfh;
-	char *file_mem;
-	int file_size;
-	char *ptr;
+   FILE *f = fopen(fname, "rb");
+	if (f == NULL)
+   {
+      eprintf("LoadBofName can't open %s\n", fname);
+		return False;
+   }
 
-	fh = CreateFile(fname,GENERIC_READ,FILE_SHARE_READ,NULL,
-		OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-	if (fh == INVALID_HANDLE_VALUE)
-	{
-		return False;
-	}
-	
-	file_size = GetFileSize(fh,NULL);
-	
-	mapfh = CreateFileMapping(fh,NULL,PAGE_READONLY,0,file_size,NULL);
-	if (mapfh == NULL)
-	{
-		CloseHandle(fh);
-		return False;
-	}
-	
-	file_mem = (char *)MapViewOfFile(mapfh,FILE_MAP_READ,0,0,0);
-	if (file_mem == NULL)
-	{
-		CloseHandle(mapfh);
-		CloseHandle(fh);
-		return False;
-	}
-	
-	if (((bof_file_header *)file_mem)->version != 5)
+   for (int i = 0; i < BOF_MAGIC_LEN; ++i)
+   {
+      unsigned char c;
+      if (fread(&c, 1, 1, f) != 1 || c != magic_num[i])
+      {
+         eprintf("LoadBofName %s is not in BOF format\n", fname);
+         fclose(f);
+         return False;
+      }
+   }
+   
+   int version;
+   if (fread(&version, 1, 4, f) != 4 || version != 5)
 	{
 		eprintf("LoadBofName %s can't understand bof version != 5\n",fname);
-		UnmapViewOfFile(file_mem);
-		CloseHandle(mapfh);
-		CloseHandle(fh);
-		return True;
+      fclose(f);
+		return False;
 	}
+   
+   // Go back to start of file and read the whole thing into memory.
+   fseek(f, 0, SEEK_SET);
+   
+   struct stat st;
+   stat(fname, &st);
+   int file_size = st.st_size;
 
-	ptr = (char *)AllocateMemory(MALLOC_ID_LOADBOF,file_size);
-	memcpy(ptr,file_mem,file_size);
+	char *ptr = (char *)AllocateMemory(MALLOC_ID_LOADBOF,file_size);
+   if (fread(ptr, 1, file_size, f) != file_size)
+   {
+      fclose(f);
+      return False;
+   }
 
-	UnmapViewOfFile(file_mem);
-	CloseHandle(mapfh);
-	CloseHandle(fh);
+   fclose(f);
 
 	AddFileMem(fname,ptr,file_size);
 	

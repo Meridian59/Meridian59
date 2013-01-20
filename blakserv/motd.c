@@ -69,7 +69,7 @@ Bool LoadMotdName(char *fname)
 {
    FILE *file;
    int file_size;
-   DWORD num_read;
+   int num_read;
    
    file = fopen(fname, "rb");
    if (file == NULL)

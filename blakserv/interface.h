@@ -37,7 +37,6 @@ void InterfaceSendBufferList(buffer_node *blist);
 void InterfaceSendBytes(char *buf,int len_buf);
 
 void StartAsyncSocketAccept(SOCKET sock,int connection_type);
-void StartAsyncSMTPSocketAccept(SOCKET sock);
 HANDLE StartAsyncNameLookup(char *peer_addr,char *buf);
 void StartAsyncSession(session_node *s);
 void StartAsyncPortalSocket(SOCKET sock);

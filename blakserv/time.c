@@ -23,9 +23,10 @@ void InitTime()
 {
 /* I use the multimedia timers (set to accuracy of 1ms here) because
 for millisecond timing because they are more accurate than 
-	GetTickCount(). */
+	GetTickCount().
 	
 	timeBeginPeriod(1);
+    */
 }
 
 int GetTime()

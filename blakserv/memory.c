@@ -194,7 +194,7 @@ char *memory_stat_names[] =
 		"Systimer", "Nameid",
 		"Class", "Message", "Object",
 		"List", "Object properties",
-		"Configuration", "SMTP", "Rooms",
+		"Configuration", "Rooms",
 		"Admin constants", "Buffers", "Game loading",
 		"Tables", "Socket blocks",
 		

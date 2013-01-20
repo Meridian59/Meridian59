@@ -105,7 +105,7 @@ BEGIN
     LTEXT           "Version:",IDC_ABOUT_PIC_ICON,11,133,26,8
     LTEXT           "",IDC_ABOUT_TITLE,41,132,189,10,SS_SUNKEN
     LTEXT           "BlakSton Server",IDC_STATIC,11,58,220,8
-    LTEXT           "Copyright © 1994-2010 Andrew and Chris Kirmse",IDC_STATIC2,11,67,220,8
+    LTEXT           "Copyright © 1994-2013 Andrew and Chris Kirmse",IDC_STATIC2,11,67,220,8
     LTEXT           "All Rights Reserved",IDC_STATIC3,11,77,220,8
 END
 

@@ -182,11 +182,11 @@ void SynchedProtocolParse(session_node *s,client_msg *msg)
       s->screen_y = *(short *)(msg->data+index);
       index += 2;
 
-      s->displays_possible = *(DWORD *)(msg->data+index);
+      s->displays_possible = *(int *)(msg->data+index);
       index += 4;
-      s->bandwidth = *(DWORD *)(msg->data+index);
+      s->bandwidth = *(int *)(msg->data+index);
       index += 4;
-      s->reserved = *(DWORD *)(msg->data+index);
+      s->reserved = *(int *)(msg->data+index);
       index += 4;
       s->screen_color_depth = (short)(s->reserved & 0xFF);
       s->partner = (short)((s->reserved & 0xFF00) >> 8);

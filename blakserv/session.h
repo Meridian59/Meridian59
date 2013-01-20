@@ -99,9 +99,9 @@ typedef struct
    short screen_y;
    short screen_color_depth;
    short partner;
-   DWORD displays_possible;
-   DWORD bandwidth;
-   DWORD reserved;
+   int displays_possible;
+   int bandwidth;
+   int reserved;
    
    Bool exiting_state;		/* true iff in ExitXXX, so errors on writing don't inf loop */
 				/* only needs to be set if you write, so it's only in exitgame */

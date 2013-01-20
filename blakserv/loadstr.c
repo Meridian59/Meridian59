@@ -19,71 +19,43 @@
 
 Bool LoadBlakodStrings(char *filename)
 {
-   HANDLE fh,mapfh;
-   char *file_mem,*str_file_ptr;
-   int file_size;
+   FILE *f;
    
    int i,version,num_strs,len_str,str_id;
 
-   fh = CreateFile(filename,GENERIC_READ,FILE_SHARE_READ,NULL,
-		   OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-   if (fh == INVALID_HANDLE_VALUE)
+   f = fopen(filename, "rb");
+   if (f == NULL)
    {
       eprintf("LoadBlakodStrings can't open %s to load the strings, none loaded\n",
-	      filename);
+              filename);
       return False;
    }
    
-   file_size = GetFileSize(fh,NULL);
+   if (fread(&version, 1, LEN_STR_VERSION, f) != LEN_STR_VERSION ||
+       fread(&num_strs, 1, LEN_NUM_STRS, f) != LEN_NUM_STRS)
+   {
+      fclose(f);
+      return False;
+   }
    
-   mapfh = CreateFileMapping(fh,NULL,PAGE_READONLY,0,file_size,NULL);
-   if (mapfh == NULL)
-   {
-      CloseHandle(fh);
-      return False;
-   }
-
-   file_mem = (char *) MapViewOfFile(mapfh,FILE_MAP_READ,0,0,0);
-   if (file_mem == NULL)
-   {
-      CloseHandle(mapfh);
-      CloseHandle(fh);
-      return False;
-   }
-
-   str_file_ptr = file_mem;
-
-   version = *(int *)str_file_ptr;
-   str_file_ptr += LEN_STR_VERSION;
-   num_strs = *(int *)str_file_ptr;
-   str_file_ptr += LEN_NUM_STRS;
-
    for (i=0;i<num_strs;i++)
    {
-      str_id = *(int *)str_file_ptr;
-      str_file_ptr += LEN_STR_ID;
-
-      len_str = *(int *)str_file_ptr;
-      str_file_ptr += LEN_STR_LEN;
-
-      if (!LoadBlakodString(str_file_ptr,len_str,str_id))
+      if (fread(&str_id, 1, LEN_STR_ID, f) != LEN_STR_ID ||
+          fread(&len_str, 1, LEN_STR_LEN, f) != LEN_STR_LEN)
       {
-	 UnmapViewOfFile(file_mem);
-	 CloseHandle(mapfh);
-	 CloseHandle(fh);
-	 return False;
+         fclose(f);
+         return False;
       }
-      str_file_ptr += len_str;
+      
+      if (!LoadBlakodString(f,len_str,str_id))
+      {
+         fclose(f);
+         return False;
+      }
    }
 
-   UnmapViewOfFile(file_mem);
-   CloseHandle(mapfh);
-   CloseHandle(fh);
+   fclose(f);
 
-   /*
-   dprintf("LoadBlakodStrings successfully loaded strings from %s\n",
-	   STRING_FILE);
-   */
    return True;
 }
 

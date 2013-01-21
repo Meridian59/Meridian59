@@ -16,6 +16,7 @@ constants:
 
 resources:
 
+   orc_koc_name_rsc = "utomca"
    orc_name_rsc = "orc"
    orc_icon_rsc = orc.bgf
    orc_desc_rsc = \
@@ -35,6 +36,7 @@ resources:
 classvars:
 
    viIndefinite = ARTICLE_AN
+   vrKocName = orc_koc_name_rsc
    vrName = orc_name_rsc
    vrIcon = orc_icon_rsc
    vrDesc = orc_desc_rsc

@@ -107,6 +107,9 @@ constants:
    %  than logoff ghost time (currently 10 mins)
    ATTACKED_PLAYER_WAIT = 15 * 60
 
+   % Five minutes for the instant penalty flag to wear off.
+   APPLY_INSTANT_PENALTIES_WAIT = 5 * 60
+   
    % Damage is capped at piBase_Max_Health divided by this number.  Reduces
    %  newbie slaughter.
    MAX_HEALTH_DAMAGE_FRACTION = 3
@@ -953,7 +956,15 @@ properties:
    % Used to construct a string for their description.
    plDonationYears = $
 
+   % This is a special combat flag for determining whether a player
+   % should pen instantly instead of leaving a log-off ghost.
+   % Generally, innocents will always have ghosts.
+   % Murderers/Outlaws, Faction Soldiers, and Warring should instant pen.
+   % This creates a soft opt-in pvp system with strict disadvantages for PKs.
+   piApplyInstantPenalties = 0
+   
 messages:
+
 
    Constructor()
    {
@@ -3751,6 +3762,8 @@ messages:
       {
          % Okay, attack is against a player, so record the time
          piTimeAttackedPlayer = GetTime();
+		 Send(self,@SetInstantPenaltiesFlag);
+		 Send(victim,@SetInstantPenaltiesFlag);
 
          return TRUE;
       }
@@ -3788,10 +3801,26 @@ messages:
                % gain the outlaw flag.
                Send(self,@MsgSendUser,#message_rsc=player_aggressor);
                Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
-               Send(self,@EvaluatePKStatus,#dbug=TRUE);
+               Send(self,@EvaluatePKStatus,#dbug=TRUE);			   
             }
          }
       }
+	  
+	  % Murderers and outlaws always receive Combat Pens for attacking
+	  % They do not apply Combat Pens to victims
+	  % They do not give Combat Pens to people that attack them
+	  if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+	     OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+	  {
+		 Send(self,@SetInstantPenaltiesFlag);
+	  }
+	  
+	  % Murderers and outlaws always receive Combat Pens when attacked
+	  if Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+	     OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+	  {
+		 Send(victim,@SetInstantPenaltiesFlag);
+	  }
 
       % Check for faction loss.  Handles appropriate conditions.
       if NOT Send(self,@CheckFactionAttack,#what=victim)
@@ -12319,6 +12348,40 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
+   
+   % Instant penalties flag erased on penalty
+   EraseInstantPenaltiesFlag()
+   {
+		piApplyInstantPenalties = 0;
+		return;
+   }
+   
+   % Used to set instant penalties for victim as well as attacker
+	SetInstantPenaltiesFlag()
+	{
+		piApplyInstantPenalties = GetTime();
+		return;
+	}
+   
+	GetInstantPenaltiesFlag()
+	{
+      if (piApplyInstantPenalties + APPLY_INSTANT_PENALTIES_WAIT) > GetTime()
+         AND NOT Send(SYS,@GetChaosNight)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+	}
+	
+	InstantPenaltiesRefreshHealthAndMana()
+	{
+	  piHealth = piMax_Health;
+      piMana = piMax_Mana;
+      Send(self,@NewHealth);
+      Send(self,@NewMana);
+	  return;
+	}
 
 
 end

@@ -329,8 +329,6 @@ properties:
    piLogoffPenaltyDecayTime = 12                
                                                 
    pbLogoffPenaltyEnable = TRUE
-   
-   pbHometownPenaltiesEnable = TRUE
 
    % At this value of the player's penalty counter, penalties are as severe as
    %  death.
@@ -5659,11 +5657,6 @@ messages:
       AppendTempString(system_fuzzy_cardinal_deficit);
 
       return getTempString();
-   }
-   
-   GetHometownPenaltiesEnable()
-   {
-		return pbHometownPenaltiesEnable;
    }
 
    GetLogoffPenaltyEnable()

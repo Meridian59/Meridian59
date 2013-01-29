@@ -32,8 +32,7 @@ messages:
       plTreasure = [ [ &Entrootberry, 40],
                      [ &Money, 30 ],
                      [ &RedMushroom,9],
-                     [ &Sapphire, 8 ],
-                     [ &Emerald, 8 ],
+                     [ &Snack, 16 ],
                      [ &PurpleMushroom, 3 ],
                      [ &Lightningwand,2]
                    ];

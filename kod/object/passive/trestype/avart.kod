@@ -30,7 +30,10 @@ messages:
       plTreasure = [ [ &RainbowFern, 20],
                      [ &Firesand, 5],
                      [ &KriipaClaw, 15],
-                     [ &Money, 39],
+                     [ &Money, 36],
+					 [ &NeruditeSword, 1],
+					 [ &NeruditeArmor, 1],
+					 [ &IvyCirclet, 1],
                      [ &WebMoss, 8],
                      [ &KaraholsCursePotion, 3],
                      [ &Yrxlsap, 10]

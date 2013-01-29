@@ -28,7 +28,7 @@ resources:
    chalice_use = "You sip a bit of the water out of the Chalice of Rain."
    chalice_empty = "You sip the last bit of water from the Chalice of Rain."
    chalice_combine = "You pour the water from one Chalice into the other."
-   chalice_cant_use_pkill = "Only innocents who forswear human combat may partake of the chalice."
+   chalice_cant_use_pkill = "Only innocents may partake of the chalice."
 
 classvars:
 
@@ -116,9 +116,10 @@ messages:
    {
       if (IsClass(what,&Player))
       {
-         % Prevent use if you're pkill enabled.  This is because player killers
+         % Prevent use if you're red.  This is because player killers
          % were using this to escape too easily after kills.
-         if Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+		     OR Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
             Send(what, @MsgSendUser, #message_rsc = chalice_cant_use_pkill);
             return FALSE;

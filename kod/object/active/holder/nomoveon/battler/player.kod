@@ -952,6 +952,10 @@ properties:
    % List of integer years in which the player has donated money to the game.
    % Used to construct a string for their description.
    plDonationYears = $
+   
+   % New flag to detect if a player is Truced (Truce is now a personal enchantment)
+   % by Gar 1-30-13
+   piTruced = 0
 
 messages:
 
@@ -3711,8 +3715,16 @@ messages:
    "PFLAG_SAFETY prevents accidental attacks. You can always successfully "
    "hit a murderer or outlaw, though."     
    {
-      local oEnemyGuild, oSoldierShield;
+      local oEnemyGuild, oSoldierShield, oTruce;
 
+	  % remove truce PE on any attack attempt
+	  % by Gar 1-30-13
+	  oTruce = Send(SYS,@FindSpellByNum,#Num=SID_TRUCE);
+	  if Send(self,@IsEnchanted,#what=oTruce)
+	  {
+		 Send(self,@RemoveEnchantment,#what=oTruce);
+	  }
+	  
       % Don't care about monsters.
       % And, free attacks on token holders.
       if IsClass(victim,&Monster)
@@ -12318,6 +12330,23 @@ messages:
    {
       plDonationYears = DelListElem(plDonationYears, year);
       return;
+   }
+   
+   EnableTruceFlag()
+   {
+		piTruced = 1;
+		return;
+   }
+   
+   DisableTruceFlag()
+   {
+        piTruced = 0;
+		return;
+   }
+   
+   GetTruceFlag()
+   {
+		return piTruced;
    }
 
 

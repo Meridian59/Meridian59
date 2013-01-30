@@ -1402,6 +1402,13 @@ messages:
       {
          return FALSE;
       }
+	  
+	  % Attack fails if player is using the new Truce Personal Enchantment
+	  % by Gar 1-30-13
+	  if Send(what,@GetTruceFlag)
+	  {
+			return FALSE;
+	  }
 
       % Make sure room allows the attack.
       if NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=what,

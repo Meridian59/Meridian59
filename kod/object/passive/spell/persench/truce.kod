@@ -1,0 +1,105 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Truce is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   truce_name_rsc = "truce"
+   truce_icon_rsc = itruce.bgf
+   truce_desc_rsc = \
+      "The spirit of Shal'ille descends upon you and "
+      "calms the minds of aggressive creatures, preventing combat for "
+      "several minutes.  "
+      "Requires emerald and yrxl sap to cast."
+
+   truce_unnecessary = "You are already truced."
+
+   truce_on = \
+      "A numbing calm emanates from you, driving out all thought of "
+      "conflict and war."
+   truce_off = \
+      "The magical calm departs.  You feel wary of "
+      "battle once more."
+
+   truce_guardian = \
+      "Your guardian angel tells you, \"You are not ready to cast this spell "
+      "so it hinders other players or logoff ghosts.\""
+   truce_no_towns = "Shal'ille does not permit you to interfere right now."
+
+   truce_sound = shalille.wav
+
+classvars:
+
+   vrIcon = truce_icon_rsc
+   vrDesc = truce_desc_rsc
+   vrName = truce_name_rsc
+   vrSucceed_wav = truce_sound
+
+   viSpell_num = SID_TRUCE
+   viSchool = SS_SHALILLE
+   viMana = 20
+   viSpellExertion = 10
+   viSpell_level = 4
+   viChance_To_Increase = 15
+
+   % in seconds, since it works off GetTime()
+   viPostCast_time = 3
+   
+   vrAlreadyEnchanted = truce_unnecessary
+   vrEnchantment_On = truce_on
+   vrEnchantment_Off = truce_off
+
+   vbCanCastonOthers = FALSE
+   
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Emerald,1],plReagents);
+      plReagents = Cons([&Yrxlsap,1],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;
+
+      % Duration in seconds, from 1-40.
+      iDuration = bound(iSpellPower/3,1,40);
+      
+      return iSpellpower * 1000;
+   }
+
+   GetStateValue(who = $, iSpellPower = 0)      
+   {      
+      Send(who,@EnableTruceFlag,#what=self);      
+
+      return iSpellPower;
+   }
+
+   EndEnchantment(who = $, report = TRUE, state = 0)
+   {
+      Send(who,@DisableTruceFlag,#what=self);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -174,7 +174,7 @@ messages:
 
    GetDamage(who=$,target=$)
    {
-      local iDamage, ammotype, i;
+      local iDamage, ammotype, i, oWeapAtt;
 
       if poOwner = $
       {
@@ -198,6 +198,20 @@ messages:
 
       iDamage = iDamage + viWeaponDamage;
 
+      % Then check weapon attributes
+      %  Weapon Attributes in general should only + or - damage - no multipliers!
+      for i in plItem_Attributes
+      {
+         oWeapAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if isClass(oWeapAtt,&WeaponAttribute)
+         {
+            iDamage = send(oWeapAtt,@ModifyDamage,#damage=iDamage,#wielder=poOwner,
+                           #target=target,#lData=i);
+         }
+      }
+
+      iDamage = iDamage + piDamageBonus;
+	  
       return iDamage;
    }
 

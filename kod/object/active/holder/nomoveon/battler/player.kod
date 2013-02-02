@@ -12643,7 +12643,7 @@ messages:
 		 if iSchool = SKS_FENCING
 		 {
 		 
-			 send(self,@GivePlayerAllSkills,#school=iSchool,#level=iLevel,#upto=TRUE);
+			 send(self,@GivePlayerAllSkills,#school=iSchool,#level=iLevel,#iability=50,#upto=TRUE);
 		 }
 		 else
 		 {
@@ -12700,6 +12700,9 @@ messages:
 		 {
 			 % Give reagents for spells
 			 Post(self,@AddReagentsForSpells,#iNumCasts=5);
+			 
+			 % Remove conveyance for GBs
+			 Send(self,@RemoveSpell,#num=SID_CONVEYANCE);
 			 
 			 pbDrankBetaPotion = FALSE;
 			 return TRUE;

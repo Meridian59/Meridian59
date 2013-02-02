@@ -181,7 +181,7 @@ messages:
 
       iDamage = iDamage + piDamageBonus;
 	  
-	  iDamage = random(iDamage, iDamage * DAMAGE_MULTIPLER);
+	  iDamage = random(iDamage, iDamage*DAMAGE_MULTIPLER);
 	  iDamage = bound(iDamage, 0, 20);
 
 

@@ -335,6 +335,10 @@ messages:
       return (piNumber > 1);
    }
 
+   %
+   % Messages for Play Now characters
+   %
+   
    CanBeStoredInVault()
    {
 	  if isClass(poOwner,&Guest)
@@ -345,16 +349,10 @@ messages:
 	 propagate;
    }
    
-   ReqNewOwner(what=$)
+   CanSwap()
    {
-	  if isClass(what,&Guest)
-	  {
-		  return FALSE;
-	  }
-
-      propagate;
+		return FALSE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

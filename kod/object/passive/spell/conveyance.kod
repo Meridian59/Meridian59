@@ -63,7 +63,7 @@ messages:
       local oTarget, oGuild, oGuildHall;
       oTarget = First(lTargets);
    
-	  if NOT isClass(oTarget,&Item) OR send(oTarget,@CanBeStoredInVault) = FALSE
+	  if NOT isClass(oTarget,&Item) OR send(oTarget,@CanBeStoredInVault) = FALSE OR isClass(who,&Guest)
 	  {
          Send(who,@MsgSendUser,#message_rsc=conveyance_cant,
          #parm1=Send(oTarget,@GetDef),

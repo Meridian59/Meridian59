@@ -152,6 +152,10 @@ messages:
 
    ReqNewHold(what = $, who = $)
    {
+	  if isClass(who,&Guest)
+	  {
+		 return FALSE;
+	  }
 
       if NOT Send(what,@CanBeStoredInVault)
       {

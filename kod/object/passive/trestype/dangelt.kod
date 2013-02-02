@@ -35,8 +35,7 @@ messages:
                    [ &EntrootBerry, 15],
                    [ &FairyWing, 15],
                    [ &ShamanBlood, 5],
-                   [ &InkyCap, 5],
-                   [ &AngelWings, 1]
+                   [ &InkyCap, 5]
                  ];
 
       propagate;

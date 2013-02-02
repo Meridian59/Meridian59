@@ -172,7 +172,7 @@ messages:
 	  
 	  if isClass(what,&Monster)
 	  {
-		  if Send(what,@GetBaseMaxHealth) > 100
+		  if Send(what,@GetLevel) > 100
 		   { 
 			  Send(self,@MsgSendUser,#message_rsc=guest_cant_hit_monster);
 			  return FALSE;

@@ -83,7 +83,7 @@ messages:
    
    SetForSale()
    {
-	  plFor_Sale = [$,[ SKID_PROFICIENCY_SCIMITAR ],$,$];
+      plFor_Sale = [$,[ SKID_PROFICIENCY_SCIMITAR ],$,$];
 
       return;
    }

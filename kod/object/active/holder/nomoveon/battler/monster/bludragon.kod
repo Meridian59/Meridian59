@@ -125,8 +125,16 @@ messages:
    {
       if poOwner <> $
          AND Send(poOwner,@GetRoomNum) = RID_TROLL_CAVE
-         AND (new_col > 24) OR (new_col < 15)
+         AND (new_col > 24)
       {
+		 return FALSE;
+      }
+	  
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_TROLL_CAVE
+         AND (new_col < 18)
+      {
+		 Send(self,@MonsterCastSpell);
 		 return FALSE;
       }
 

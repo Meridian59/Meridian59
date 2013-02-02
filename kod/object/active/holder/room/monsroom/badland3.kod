@@ -117,11 +117,11 @@ messages:
       propagate;
    }
    
-   ReqNewHold(what = $)
+   NewHold(what = $)
    {
 	  if isClass(what,&ActiveWallElement)
 	  {
-		 return FALSE;
+		 post(what,@Delete);
 	  }
    
       propagate;

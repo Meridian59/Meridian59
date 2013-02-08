@@ -119,6 +119,9 @@ properties:
    % Justicar
    piMinHPForJusticar = 100
 
+   % If enabled, unsafe penalties send the player to their hometown.
+   % This is intended to prevent being players 'kept offline' by enemies.
+   pbHometownPenaltiesEnable = TRUE
 
 messages:
 
@@ -288,6 +291,11 @@ messages:
    GetMinHPForJusticar()
    {
       return piMinHPForJusticar;
+   }
+   
+   HometownPenaltiesEnabled()
+   {
+		return pbHometownPenaltiesEnable;
    }
 
 end

@@ -167,6 +167,29 @@ messages:
    {
       return FALSE;
    }
+   
+   %%% Making the potion undroppable
+   
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+   
+   ReqLeaveOwner()
+   {
+      return FALSE;
+   }
+
+   ReqNewOwner(what=$)
+   {
+      if NOT IsClass(what,&Battler)
+         AND NOT IsClass(what,&DM)
+      {
+         return FALSE;
+      }
+
+      propagate;
+   }
   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

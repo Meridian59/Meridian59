@@ -6489,7 +6489,10 @@ messages:
    {
       local iBase, iChange;
 
-      if karma_doer = $ OR karma_act = $
+	  % Do not change karma if player is good, act is good, but not as good as player.
+	  % I.e. only change karma if good player does bad stuff (or vice versa)
+      if (karma_doer > 0 AND karma_act > 0 AND karma_doer > karma_act)
+	  OR (karma_doer < 0 AND karma_act < 0 AND karma_doer < karma_act)
       {
          return 0;
       }

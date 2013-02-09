@@ -7652,6 +7652,8 @@ messages:
             roll = FALSE;
          }
 
+		 gain = (gain * Send(Send(SYS, @GetSettings), @GetGainMult))
+
          piGain_chance = piGain_chance + gain;
 
          if roll

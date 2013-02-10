@@ -228,11 +228,11 @@ messages:
 	  if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
 		AND Send(Send(SYS, @GetSettings), @HometownPenaltiesEnabled)
 	  {
-			Send(poGhostedPlayer,@AdminGoToSafety);
+	     Send(poGhostedPlayer,@AdminGoToSafety);
 	  }
 	  else
 	  {
-			Send(poGhostedPlayer,@AdminGoToBlink);
+	     Send(poGhostedPlayer,@AdminGoToBlink);
 	  }
 
       Send(self,@Delete);

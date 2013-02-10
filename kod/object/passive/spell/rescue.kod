@@ -89,12 +89,12 @@ messages:
 
       % Start with the base time.  Reduce time by spellpower.
       iDelay = 1000 * Send(Send(SYS, @GetSettings), @RescueBaseDelaySec);
-      iDelay = iDelay - (iSpellPower * iDelay) / 100 / 4;
+      iDelay = iDelay - (iSpellPower * (iDelay-3000)) / 100;
 
       % Add a little delay in sometimes.
-      if random(1,2) = 1
+      if random(1,4) = 1
       {
-         iDelay = iDelay + random(5000, 10000);
+         iDelay = iDelay + random(0, 5000);
       }
 
       send(who,@StartRescueTimer,#time=iDelay);

@@ -174,7 +174,7 @@ messages:
 
    GetBaseDamage(who=$,target=$)
    {
-      local iDamage, ammotype, i, oWeapAtt;
+      local iDamage, ammotype, i;
 
       if poOwner = $
       {
@@ -195,6 +195,8 @@ messages:
             }
          }
       }
+	  
+	  iDamage = iDamage + viWeaponDamage;
 	  
       return iDamage;
    }

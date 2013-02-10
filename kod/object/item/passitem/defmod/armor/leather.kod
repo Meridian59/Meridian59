@@ -40,7 +40,7 @@ classvars:
    viWeight = 100
    viBulk = 150
 
-   viSpell_modifier = -10
+   viSpell_modifier = 0
 
 
    vrIcon_male = Leatherarmor_male_icon_rsc

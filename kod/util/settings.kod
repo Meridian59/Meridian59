@@ -121,7 +121,7 @@ properties:
 
    % If enabled, unsafe penalties send the player to their hometown.
    % This is intended to prevent being players 'kept offline' by enemies.
-   pbHometownPenaltiesEnable = TRUE
+   pbHometownPenaltiesEnable = FALSE
 
 messages:
 
@@ -293,9 +293,10 @@ messages:
       return piMinHPForJusticar;
    }
    
+   % This returns whether players go to a room's blink spot or their hometown when they pen
    HometownPenaltiesEnabled()
    {
-		return pbHometownPenaltiesEnable;
+      return pbHometownPenaltiesEnable;
    }
 
 end

@@ -141,7 +141,6 @@ messages:
          {
             piDefaultDeathCost   = 90;
             piAdvancementRate    = 125;
-            piHPGainMultiplier   = 3;
             piMoneyFactor        = 120;
             piItemFactor         = 125;
             piMagicItemModifier  = 80;
@@ -152,7 +151,6 @@ messages:
          {
             piDefaultDeathCost   = 60;
             piAdvancementRate    = 190;
-            piHPGainMultiplier   = 3;
             piMoneyFactor        = 100;
             piItemFactor         = 175;
             piMagicItemModifier  = 100;

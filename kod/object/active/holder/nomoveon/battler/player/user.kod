@@ -4257,7 +4257,7 @@ messages:
             found = TRUE;
             break;
          }
-         what_owner = Send(what, @GetOwner);
+         what_owner = Send(what_owner, @GetOwner);
       }
 
       if NOT found

@@ -32,7 +32,7 @@ classvars:
    viHarmful = TRUE
 
    % Can wall elements kill?  Affects the warning message we append.
-   viWallCanKill = TRUE
+   viWallCanKill = FALSE
 
    % How many elements do we expect to summon?
    viNumElements = 9

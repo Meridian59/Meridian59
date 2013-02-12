@@ -12,7 +12,7 @@ BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug /subsystem:windows
 
 SOURCEDIR = .
 
-LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib wrap.lib
+LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib
 
 OBJS =  \
 	$(OUTDIR)\main.obj \
@@ -21,7 +21,6 @@ OBJS =  \
 	$(OUTDIR)\message.obj \
 	$(OUTDIR)\object.obj \
 	$(OUTDIR)\sendmsg.obj \
-	$(OUTDIR)\smtpserv.obj \
 	$(OUTDIR)\roofile.obj \
 	$(OUTDIR)\bufpool.obj \
 	$(OUTDIR)\ccode.obj \
@@ -75,7 +74,7 @@ OBJS =  \
 	$(OUTDIR)\table.obj \
 	$(OUTDIR)\parsecli.obj \
 	$(OUTDIR)\rscload.obj \
-	$(OUTDIR)\memmap.obj \
+	$(OUTDIR)\crc.obj \
 	$(OUTDIR)\md5.obj \
 	$(OUTDIR)\maintenance.obj \
 	$(OUTDIR)\block.obj \
@@ -88,7 +87,7 @@ all : makedirs $(OUTDIR)\blakserv.exe
 $(OUTDIR)\rscload.obj : $(TOPDIR)\util\rscload.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
-$(OUTDIR)\memmap.obj : $(TOPDIR)\util\memmap.c
+$(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
 	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c

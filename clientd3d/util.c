@@ -644,7 +644,7 @@ int MenuFindItemByName(HMENU hMenu, char *name)
  */
 WORD GetCRC16(char *buf, int length)
 {
-   unsigned int crc = WrapCRC32(buf, length);
+   DWORD crc = GetCRC32(buf, length);
    return (WORD) (crc & 0xffff);
 }
 /********************************************************************/
@@ -653,7 +653,7 @@ WORD GetCRC16(char *buf, int length)
  */
 DWORD GetCRC32(char *buf, int length)
 {
-   return WrapCRC32(buf, length);
+   return CRC32(buf, length);
 }
 /********************************************************************/
 /*

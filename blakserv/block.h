@@ -16,7 +16,7 @@
 typedef struct block_node_struct
 {
    int iExpires;
-   IN_ADDR iaPeer;
+   struct in_addr iaPeer;
    struct block_node_struct *next;
 } block_node;
 
@@ -24,7 +24,7 @@ void AddBlock(int iSeconds, struct in_addr* piaPeer);
 void DeleteBlock(struct in_addr* piaPeer);
 void DeleteAllBlocks(void);
 
-BOOL CheckBlockList(struct in_addr* piaPeer);
+bool CheckBlockList(struct in_addr* piaPeer);
 
 void BuildBannedIPBlocks( char *filename );
 

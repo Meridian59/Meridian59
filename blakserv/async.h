@@ -17,8 +17,6 @@ void InitAsyncConnections(void);
 void ExitAsyncConnections(void);
 void AsyncSocketStart(void);
 void AsyncSocketAccept(SOCKET sock,int event,int error,int connection_type);
-void AsyncSMTPSocketAccept(SOCKET sock,int event,int error);
-void AcceptSMTPSocketConnections(int socket_port);
 void AsyncNameLookup(HANDLE hLookup,int error);
 void AsyncSocketSelect(SOCKET sock,int event,int error);
 

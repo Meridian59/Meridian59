@@ -507,30 +507,11 @@ int SendBlakodMessage(int object_id,int message_id,int num_parms,parm_node parms
 /* interpret code below here */
 
 #define get_byte() (*bkod++)
-#if 0
-__inline unsigned char get_byte()
-{
-#if 1
-	bkod++;
-	return *(bkod-1);
-#else
-	register BYTE value = *(BYTE*)bkod;
-	bkod += sizeof(BYTE);
-	return value;
-#endif
-}
-#endif
 
 __inline unsigned int get_int()
 {
-#if 1
 	bkod += 4;
 	return *((unsigned int *)(bkod-4));
-#else
-	register DWORD value = *(DWORD*)bkod;
-	bkod += sizeof(DWORD);
-	return value;
-#endif
 }
 
 /* before calling this, you MUST set bkod to point to valid bkod. */

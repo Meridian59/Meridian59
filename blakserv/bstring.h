@@ -34,7 +34,7 @@ string_node * GetStringByID(int string_id);
 Bool IsStringByID(int string_id);
 int CreateString(char *new_str);
 int CreateStringWithLen(char *buf,int len);
-Bool LoadBlakodString(char *new_str,int len_str,int string_id);
+Bool LoadBlakodString(FILE *f,int len_str,int string_id);
 void ForEachString(void (*callback_func)(string_node *snod,int string_id));
 void FreeString(int string_id);
 void MoveStringNode(int dest_id,int source_id);

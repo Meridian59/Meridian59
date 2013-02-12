@@ -43,15 +43,9 @@ typedef struct load_game_class_struct
 typedef struct loaded_file_struct
 {
    char fname[MAX_PATH+FILENAME_MAX];
-	HANDLE fh;
-	HANDLE mapfh;
-   char *mem;
-   int length;
-   struct loaded_file_struct *next;
+   FILE *file;
 } loaded_file_node;
 loaded_file_node loadfile;
-
-int load_offset;
 
 int current_object_id;
 int current_object_class_id;
@@ -65,13 +59,11 @@ ishash_type load_game_resources;
 
 #define LoadGameRead(buf,len) \
 { \
-	if (load_offset + len > loadfile.length) \
-{ \
-	eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); \
-	return False; \
-} \
-	memcpy(buf,loadfile.mem + load_offset,len); \
-	load_offset += len; \
+   if (fread(buf, 1, len, loadfile.file) != len) \
+   { \
+	   eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); \
+      return False; \
+   } \
 } 
 
 #define LoadGameReadInt(buf) LoadGameRead(buf,4)
@@ -80,25 +72,23 @@ ishash_type load_game_resources;
 #define LoadGameReadString(buf,max_len) \
 { \
 	unsigned short len; \
-	if (load_offset + 2 > loadfile.length) \
-{ \
-	eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); \
-	return False; \
-} \
-	memcpy(&len,loadfile.mem + load_offset,2); \
-	load_offset += 2; \
+   if (fread(&len, 1, 2, loadfile.file) != 2) \
+   { \
+      eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); \
+      return False; \
+   } \
+\
 	if (len > max_len-1) \
-{ \
-	eprintf("File %s Line %i string too long (%i >= %i)\n",__FILE__,__LINE__,len,max_len); \
-	return False; \
-} \
-	if (load_offset + len > loadfile.length) \
-{ \
-	eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); \
-	return False; \
-} \
-	memcpy(buf,loadfile.mem + load_offset,len); \
-	load_offset += len; \
+   { \
+      eprintf("File %s Line %i string too long (%i >= %i)\n",__FILE__,__LINE__,len,max_len); \
+      return False; \
+   } \
+\
+   if (fread(buf, 1, len, loadfile.file) != len) \
+   { \
+      eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); \
+      return False; \
+   } \
 	buf[len] = 0; \
 }
 
@@ -197,49 +187,32 @@ Bool LoadGame(char *filename)
 
 Bool LoadGameOpen(char *fname)
 {
-	loadfile.fh = CreateFile(fname,GENERIC_READ,FILE_SHARE_READ,NULL,
-		OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-	if (loadfile.fh == INVALID_HANDLE_VALUE)
-	{
-		return False;
-	}
-	
-	loadfile.length = GetFileSize(loadfile.fh,NULL);
-	
-	loadfile.mapfh = CreateFileMapping(loadfile.fh,NULL,PAGE_READONLY,0,loadfile.length,NULL);
-	if (loadfile.mapfh == NULL)
-	{
-		CloseHandle(loadfile.fh);
-		return False;
-	}
-	
-	loadfile.mem = (char *) MapViewOfFile(loadfile.mapfh,FILE_MAP_READ,0,0,0);
-	if (loadfile.mem == NULL)
-	{
-		CloseHandle(loadfile.mapfh);
-		CloseHandle(loadfile.fh);
-		return False;
-	}
-	
-	load_offset = 0;
-	return True;
+   loadfile.file = fopen(fname, "rb");
+	return loadfile.file != NULL;
 }
 
 void LoadGameClose(void)
 {
-	UnmapViewOfFile(loadfile.mem);
-	CloseHandle(loadfile.mapfh);
-	CloseHandle(loadfile.fh);
+	fclose(loadfile.file);
 }
 
 Bool LoadGameParse(char *filename)
 {
 	char cmd;
 	
-	while (load_offset < loadfile.length)
+	while (true)
 	{
-		LoadGameReadChar(&cmd);
-		/* dprintf("load game %i\n",cmd); */
+      if (fread(&cmd, 1, 1, loadfile.file) != 1)
+      {
+         if (feof(loadfile.file))
+            return True;
+
+         eprintf("File %s Line %i couldn't read type\n",
+                 __FILE__,__LINE__);
+         return False;
+      }
+
+      //      dprintf("load game %i\n",cmd);
 		switch (cmd)
 		{
 		case SAVE_GAME_CLASS :
@@ -272,7 +245,7 @@ Bool LoadGameParse(char *filename)
 			break;
 		default :
 			eprintf("LoadGameFile found invalid command byte %u at offset %i in %s\n",
-				cmd,load_offset,filename);
+                 cmd,ftell(loadfile.file),filename);
 			return False;
 		}
 	}
@@ -410,28 +383,7 @@ Bool LoadGameClass(void)
 	
 	for (i=1;i<=num_props;i++)
 	{
-		unsigned short len,max_len = sizeof(buf); 
-		if (load_offset + 2 > loadfile.length) 
-		{ 
-			eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); 
-			return False; 
-		} 
-		memcpy(&len,loadfile.mem + load_offset,2); 
-		load_offset += 2; 
-		if (len > max_len-1) 
-		{ 
-			eprintf("File %s Line %i string too long (%i >= %i)\n",__FILE__,__LINE__,len,max_len); 
-			return False; 
-		} 
-		if (load_offset + len > loadfile.length) 
-		{ 
-			eprintf("File %s Line %i not enough bytes to read\n",__FILE__,__LINE__); 
-			return False; 
-		} 
-		memcpy(buf,loadfile.mem + load_offset,len); 
-		load_offset += len; 
-		buf[len] = 0; 
-		
+      LoadGameReadString(buf, sizeof(buf));
 		LoadAddPropertyName(lgc,i,buf);
 	}   
 	

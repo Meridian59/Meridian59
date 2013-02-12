@@ -82,7 +82,7 @@ config_table_type config_table[] =
 { GUEST_GROUP,            F, "[Guest]",       CONFIG_GROUP, "" },
 { GUEST_ACCOUNT,          F, "Account",       CONFIG_STR,   "GUEST" },
 { GUEST_CREDITS,          F, "Credits",       CONFIG_INT,   "10" },
-{ GUEST_MAX,              T, "Max",           CONFIG_INT,   "50" },
+{ GUEST_MAX,              T, "Max",           CONFIG_INT,   "30" },
 { GUEST_SERVER_MIN,       T, "ServerMin",     CONFIG_INT,   "100" },
 { GUEST_SERVER_MAX,       T, "ServerMax",     CONFIG_INT,   "109" },
 { GUEST_TOO_MANY,         F, "TooMany",       CONFIG_STR,   
@@ -96,11 +96,11 @@ config_table_type config_table[] =
      "then login again to automatically upgrade your software." },
 { LOGIN_INVALID_VERSION,  T, "InvalidVersion",CONFIG_INT,   "100" }, 
 { LOGIN_INVALID_VERSION_STR,F,"InvalidVersionStr",CONFIG_STR,  
-    "Your version of the client is outdated! Please download the latest client here: http://source.meridian59.net" }, 
+    "Your version of the game software is beta; you need to purchase the latest version." }, 
 { LOGIN_SUSPEND_STR,      F, "SuspendStr", CONFIG_STR,   
      "Your account has been disabled temporarily. "
 	 "Check your email to see if the administrator has sent you a message." },
-{ LOGIN_MAX_PER_IP,       T, "MaxPerIPAddress", CONFIG_INT, "2" },
+{ LOGIN_MAX_PER_IP,       T, "MaxPerIPAddress", CONFIG_INT, "0" },
 { LOGIN_TOO_MANY_PER_IP_STR,F, "TooManyPerIPAddressStr", CONFIG_STR,
       "Too many logins from the same IP address." },
 
@@ -194,7 +194,6 @@ config_table_type config_table[] =
 { ADVERTISE_URL2,         T, "Url2",          CONFIG_STR,   "http://meridian59.neardeathstudios.com" },
 
 { DEBUG_GROUP,            F, "[Debug]",       CONFIG_GROUP, "" },
-{ DEBUG_SMTP,             T, "SMTP",          CONFIG_BOOL,  "No" }, 
 { DEBUG_CANMOVEINROOM,    T, "CanMoveInRoom", CONFIG_BOOL,  "No" },
 { DEBUG_HEAP,             T, "Heap",          CONFIG_BOOL,  "No" },
 { DEBUG_TRANSMITTED_BYTES,T, "TransmittedBytes",CONFIG_BOOL,"No" },
@@ -321,7 +320,7 @@ char * AddConfig(int config_id,char *config_data,int config_type,int is_dynamic)
 	    fgets(s, sizeof(s)-1, f);
 	    strtok(s, "\r\n\x1A");
 	    fclose(f);
-	    c->is_dynamic = FALSE;
+	    c->is_dynamic = false;
 	 }
       }
       c->config_str_value = (char *)AllocateMemory(MALLOC_ID_CONFIG,strlen(s)+1);
@@ -728,3 +727,4 @@ int LoadConfigLine(char *line,int lineno,char *filename,int current_group)
 
    return current_group;
 }
+

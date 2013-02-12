@@ -15,7 +15,7 @@
 
 typedef struct
 {
-   HANDLE file;
+   FILE *file;
 } channel_node;
 
 enum

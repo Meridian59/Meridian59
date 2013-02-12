@@ -31,11 +31,6 @@ int WRAPAPI WrapCompress(const char *input, char *output, int len);
 // input_len is the compressed length, output_len must match the uncompressed length.
 bool WRAPAPI WrapDecompress(const char *input, int input_len, char *output, int output_len);
 
-unsigned int WRAPAPI WrapCRC32(const char *ptr, int len);
-
-// Combine the CRC of the given block with the previous value, and return it.
-unsigned int WRAPAPI WrapCRC32Incremental(unsigned int crc, const char *ptr, int len);
-
 // Return true iff the given archive file exists and has the right format.
 bool WINAPI WrapIsArchive(const char *archive_name);
 

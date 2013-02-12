@@ -15,17 +15,17 @@
 /* Room contents to draw */
 typedef struct
 {
-   WORD rows;             /* Size of room in grid squares */
-   WORD cols;
+   short rows;             /* Size of room in grid squares */
+   short cols;
    int  width, height;    /* Size of room in FINENESS units */
 
-   BYTE **grid;           /* Array that tells whether its legal to move between adjacent squares 
+   unsigned char **grid;           /* Array that tells whether its legal to move between adjacent squares 
 			   * (used only in server) */
-   BYTE **flags;          /* Array that gives per-square flags 
+   unsigned char **flags;          /* Array that gives per-square flags 
 			   * (used only in server) */
-   BYTE **monster_grid;   /* Array that tells whether its legal for monsters to move between adjacent squares  (used only in server) */
-   DWORD bkgnd;           /* Resource ID of background bitmap; 0 if none */
-   BYTE ambient_light;    /* Intensity of ambient light, 0 = min, 15 = max */
+   unsigned char **monster_grid;   /* Array that tells whether its legal for monsters to move between adjacent squares  (used only in server) */
+   int bkgnd;           /* Resource ID of background bitmap; 0 if none */
+   unsigned char ambient_light;    /* Intensity of ambient light, 0 = min, 15 = max */
 
    int security;          /* Security number, unique to each roo file, to ensure that client
                              loads the correct roo file */

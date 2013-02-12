@@ -2,11 +2,10 @@
  * rscprint.c:  A short test program to dump the contents of a rsc file.
  */
 
-#include <windows.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "rscload.h"
-#include "wrap.h"
 
 static int num;
 
@@ -20,11 +19,11 @@ void Usage(void)
 /*
  * test_callback:  Just print out rscs.
  */
-BOOL test_callback(char *filename, int rsc, char *name)
+bool test_callback(char *filename, int rsc, char *name)
 {
    printf("rsc # = %d, string = %s\n", rsc, name);
    num++;
-   return TRUE;
+   return true;
 }
 /***************************************************************************/
 int main(int argc, char **argv)
@@ -36,16 +35,12 @@ int main(int argc, char **argv)
 
    num = 0;
 
-   WrapInit();
-
    for (i=1; i < argc; i++)
    {
       printf("*** File %s\n", argv[i]);
       if (!RscFileLoad(argv[i], test_callback))
-	 printf("Failure reading rsc file!\n");
+         printf("Failure reading rsc file!\n");
    }
-
-   WrapShutdown();
 
    printf("Total: %d resources\n", num);
 }

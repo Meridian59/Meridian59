@@ -38,13 +38,14 @@ void LoadMotd(void)
 
    /* if there's a new motd file, move it in */
 
-   if (access(file_load_path,0) != -1)
-      if (!MoveFileEx(file_load_path,file_copy_path,MOVEFILE_REPLACE_EXISTING))
-	 eprintf("LoadMotd can't move %s\n",MOTD_FILE);
-      /*
-      else
-	 dprintf("LoadMotd moved in the new message of the day\n");
-      */
+   if (access(file_load_path, 0) != -1)
+   {
+      // Delete any existing file
+      if (access(file_copy_path, 0) != -1)
+         unlink(file_copy_path);
+      if (!rename(file_load_path,file_copy_path))
+         eprintf("LoadMotd can't move %s\n",MOTD_FILE);
+   }
 
    LoadMotdName(file_copy_path);
 /*
@@ -66,30 +67,32 @@ void ResetLoadMotd()
 
 Bool LoadMotdName(char *fname)
 {
-   HANDLE fh;
+   FILE *file;
    int file_size;
-   DWORD num_read;
+   int num_read;
    
-   fh = CreateFile(fname,GENERIC_READ,FILE_SHARE_READ,NULL,
-		   OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-   if (fh == INVALID_HANDLE_VALUE)
+   file = fopen(fname, "rb");
+   if (file == NULL)
       return False;
 
-   file_size = GetFileSize(fh,NULL);
+   // Get file size
+   struct stat st;
+   stat(fname, &st);
+   file_size = st.st_size;
    
    motd = (char *)AllocateMemory(MALLOC_ID_MOTD,file_size + 1);
-
-   if (!ReadFile(fh,motd,file_size,&num_read,NULL) || num_read != file_size)
+   num_read = fread(motd, 1, file_size, file);
+   if (num_read != file_size)
    {
       FreeMemory(MALLOC_ID_MOTD,motd,file_size + 1);
       motd = NULL;
-      CloseHandle(fh);
+      fclose(file);
       return False;
    }
 
    motd[file_size] = 0; /* zero terminate string */
 
-   CloseHandle(fh);
+   fclose(file);
 
    return True;
 }

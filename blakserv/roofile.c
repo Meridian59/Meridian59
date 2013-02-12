@@ -17,7 +17,7 @@
 
 #define ROO_VERSION 4
 
-static BYTE room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
+static unsigned char room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
 
 /*********************************************************************************************/
 /*
@@ -27,7 +27,7 @@ static BYTE room_magic[] = { 0x52, 0x4F, 0x4F, 0xB1 };
 Bool BSPRooFileLoadServer(char *fname, room_type *room)
 {
    int infile, i, j, temp,roo_version;
-   BYTE byte;
+   unsigned char byte;
 
    infile = open(fname, O_BINARY | O_RDONLY);
    if (infile < 0)
@@ -62,15 +62,15 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    { close(infile); return False; }
 
    // Allocate and read movement grid
-   room->grid = (BYTE **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(BYTE *));
+   room->grid = (unsigned char **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(char *));
    for (i=0; i < room->rows; i++)
    {
-      room->grid[i] = (BYTE *)AllocateMemory(MALLOC_ID_ROOM,room->cols * sizeof(BYTE));
+      room->grid[i] = (unsigned char *)AllocateMemory(MALLOC_ID_ROOM,room->cols);
       if (read(infile, room->grid[i], room->cols) != room->cols)
       {
 	 for (j=0; j <= i; j++)
-	    FreeMemory(MALLOC_ID_ROOM,room->grid[i],room->cols * sizeof(BYTE));
-	 FreeMemory(MALLOC_ID_ROOM,room->grid,room->rows * sizeof(BYTE *));
+	    FreeMemory(MALLOC_ID_ROOM,room->grid[i],room->cols);
+	 FreeMemory(MALLOC_ID_ROOM,room->grid,room->rows * sizeof(char *));
 
 	 close(infile);
 	 return False;
@@ -78,15 +78,15 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    }
 
    // Allocate and read flag grid
-   room->flags = (BYTE **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(BYTE *));
+   room->flags = (unsigned char **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(char *));
    for (i=0; i < room->rows; i++)
    {
-      room->flags[i] = (BYTE *)AllocateMemory(MALLOC_ID_ROOM,room->cols * sizeof(BYTE));
+      room->flags[i] = (unsigned char *)AllocateMemory(MALLOC_ID_ROOM,room->cols);
       if (read(infile, room->flags[i], room->cols) != room->cols)
       {
 	 for (j=0; j <= i; j++)
-	    FreeMemory(MALLOC_ID_ROOM,room->flags[i],room->cols * sizeof(BYTE));
-	 FreeMemory(MALLOC_ID_ROOM,room->flags,room->rows * sizeof(BYTE *));
+	    FreeMemory(MALLOC_ID_ROOM,room->flags[i],room->cols);
+	 FreeMemory(MALLOC_ID_ROOM,room->flags,room->rows * sizeof(char *));
 
 	 close(infile);
 	 return False;
@@ -99,15 +99,15 @@ Bool BSPRooFileLoadServer(char *fname, room_type *room)
    {   
 	   /* dprintf("found a new room version 12\n");*/
 	   // Allocate and read monster movement grid
-	   room->monster_grid = (BYTE **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(BYTE *));
+	   room->monster_grid = (unsigned char **)AllocateMemory(MALLOC_ID_ROOM,room->rows * sizeof(char *));
 	   for (i=0; i < room->rows; i++)
 	   {
-		   room->monster_grid[i] = (BYTE *)AllocateMemory(MALLOC_ID_ROOM,room->cols * sizeof(BYTE));
+		   room->monster_grid[i] = (unsigned char *)AllocateMemory(MALLOC_ID_ROOM,room->cols);
 		   if (read(infile, room->monster_grid[i], room->cols) != room->cols)
 		   {
 			   for (j=0; j <= i; j++)
-				   FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols * sizeof(BYTE));
-			   FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(BYTE *));
+				   FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols);
+			   FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(char *));
 			   
 			   close(infile);
 			   return False;
@@ -142,18 +142,18 @@ void BSPRoomFreeServer(room_type *room)
    int i;
 
    for (i=0; i < room->rows; i++)
-      FreeMemory(MALLOC_ID_ROOM,room->grid[i],room->cols * sizeof(BYTE));
-   FreeMemory(MALLOC_ID_ROOM,room->grid,room->rows * sizeof(BYTE *));
+      FreeMemory(MALLOC_ID_ROOM,room->grid[i],room->cols);
+   FreeMemory(MALLOC_ID_ROOM,room->grid,room->rows * sizeof(char *));
    
    for (i=0; i < room->rows; i++)
-      FreeMemory(MALLOC_ID_ROOM,room->flags[i],room->cols * sizeof(BYTE));
-   FreeMemory(MALLOC_ID_ROOM,room->flags,room->rows * sizeof(BYTE *));
+      FreeMemory(MALLOC_ID_ROOM,room->flags[i],room->cols);
+   FreeMemory(MALLOC_ID_ROOM,room->flags,room->rows * sizeof(char *));
 
    if (room->monster_grid != NULL)
    {
 	   for (i=0; i < room->rows; i++)
-		   FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols * sizeof(BYTE));
-	   FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(BYTE *));
+		   FreeMemory(MALLOC_ID_ROOM,room->monster_grid[i],room->cols);
+	   FreeMemory(MALLOC_ID_ROOM,room->monster_grid,room->rows * sizeof(char *));
    }
    room->grid = NULL;
    room->flags = NULL;

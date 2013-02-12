@@ -2,12 +2,12 @@
  * rscmerge.c:  Combine multiple rsc files into one.
  */
 
-#include <windows.h>
+#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "memmap.h"
 #include "rscload.h"
-#include "wrap.h"
 
 typedef struct _Resource {
    int   number;
@@ -17,11 +17,8 @@ typedef struct _Resource {
 
 static Resource *resources;
 
-#define RSC_VERSION 3
+static const int RSC_VERSION = 4;
 static char rsc_magic[] = {0x52, 0x53, 0x43, 0x01};
-
-// Encryption password
-static char *password = "\x02F\x0C6\x046\x0DA\x020\x00E\x09F\x0F9\0x72";
 
 static void Error(char *fmt, ...);
 
@@ -30,9 +27,9 @@ static void Error(char *fmt, ...);
  * SafeMalloc:  Calls _fmalloc to get small chunks of memory ( < 64K).
  *   Need to use this procedure name since util library calls it.
  */
-void *SafeMalloc(UINT bytes)
+void *SafeMalloc(unsigned int bytes)
 {
-   void *temp = (void *) malloc((UINT) bytes);
+   void *temp = (void *) malloc(bytes);
    if (temp == NULL)
       Error("Out of memory!\n");
 
@@ -73,79 +70,55 @@ void Error(char *fmt, ...)
 /***************************************************************************/
 /*
  * SaveRscFile:  Save contents of global var resources to given rsc filename.
- *   Return TRUE on success.
+ *   Return true on success.
  */
-BOOL SaveRscFile(char *filename)
+bool SaveRscFile(char *filename)
 {
-   int num_resources, max_length, i, temp, response;
-   char *main_pos;
+   int num_resources, i, temp;
    Resource *r;
-   BYTE byte;
-   file_node f;
+   FILE *f;
 
-   /* Count resources and compute length */
+   /* Count resources */
    num_resources = 0;
-   max_length = 0;
    for (r = resources; r != NULL; r = r->next)
    {
       num_resources++;
-      max_length += 4 + strlen(r->name) + 1;
    }
 
    /* If no resources, do nothing */
    if (num_resources == 0)
-      return TRUE;
+      return true;
 
-   max_length += 100;  // For header, etc.; be on the safe side
-   if (!MappedFileOpenWrite(filename, &f, max_length))
-      return False;
+   f = fopen(filename, "wb");
+   if (f == NULL)
+      return false;
    
    /* Write out header information */
    for (i=0; i < 4; i++)
-      MappedFileWrite(&f, &rsc_magic[i], 1);
+      fwrite(&rsc_magic[i], 1, 1, f);
 
    temp = RSC_VERSION;
-   MappedFileWrite(&f, &temp, 4);
-   MappedFileWrite(&f, &num_resources, 4);
+   fwrite(&temp, 4, 1, f);
+   fwrite(&num_resources, 4, 1, f);
 
-   // Leave 8 bytes of space for encryption info
-   f.ptr += 8;
-   main_pos = f.ptr;
-      
    /* Loop through classes in this source file, and then their resources */
    for (r = resources; r != NULL; r = r->next)
    {
       // Write out id #
-      MappedFileWrite(&f, &r->number, 4);
+      fwrite(&r->number, 4, 1, f);
 
       // Write string
-      MappedFileWrite(&f, r->name, strlen(r->name));
-      byte = 0;
-      MappedFileWrite(&f, &byte, 1);
+      fwrite(r->name, strlen(r->name) + 1, 1, f);
    }
 
-   response = WrapEncrypt(main_pos, (f.ptr - main_pos), password, RSC_VERSION);
-
-   // Write out length of encrypted section and response to challenge
-   temp = (f.ptr - main_pos);
-   memcpy(main_pos - 8, &temp, 4);
-   memcpy(main_pos - 4, &response, 4);
-
-   // Set length of file
-   UnmapViewOfFile(f.mem);
-   CloseHandle(f.mapfh);
-
-   SetFilePointer(f.fh, (f.ptr - f.mem), NULL, FILE_BEGIN);
-   SetEndOfFile(f.fh);
-
-   CloseHandle(f.fh);
-   return TRUE;
+   fclose(f);
+   return true;
 }
 /***************************************************************************/
 /*
  * EachRscCallback:  Called for each resource that's loaded.
  */
-BOOL EachRscCallback(char *filename, int rsc, char *name)
+bool EachRscCallback(char *filename, int rsc, char *name)
 {
    Resource *r;
 
@@ -154,14 +127,14 @@ BOOL EachRscCallback(char *filename, int rsc, char *name)
    r->name = strdup(name);
    r->next = resources;
    resources = r;
-   return TRUE;
+   return true;
 }
 /***************************************************************************/
 /*
  * LoadRscFiles:  Read resources from given rsc files into global resources variable.
- *   Return TRUE on success.
+ *   Return true on success.
  */
-BOOL LoadRscFiles(int num_files, char **filenames)
+bool LoadRscFiles(int num_files, char **filenames)
 {
    int i;
 
@@ -169,10 +142,10 @@ BOOL LoadRscFiles(int num_files, char **filenames)
    if (!RscFileLoad(filenames[i], EachRscCallback))
    {
       printf("Failure reading rsc file %s!\n", filenames[i]);
-      return FALSE;
+      return false;
    }
 
-   return TRUE;
+   return true;
 }
 /***************************************************************************/
 int main(int argc, char **argv)
@@ -180,53 +153,49 @@ int main(int argc, char **argv)
    int arg, len;
    char *output_filename;
    int output_file_found = 0;
-
+   
    if (argc < 3)
       Usage();
-
+   
    for (arg = 1; arg < argc; arg++)
    {
       len = strlen(argv[arg]);
       if (len == 0)
-	 break;
-
+         break;
+      
       if (argv[arg][0] != '-')
-	 break;
-
+         break;
+      
       if (len < 2)
       {
-	 printf("Ignoring unknown option -\n");
-	 continue;
+         printf("Ignoring unknown option -\n");
+         continue;
       }
-
+      
       switch(argv[arg][1])
       {
       case 'o':
-	 arg++;
-	 if (arg >= argc)
-	 {
-	    printf("Missing output filename\n");
-	    break;
-	 }
-	 output_filename = argv[arg];
-	 output_file_found = 1;
-	 break;
+         arg++;
+         if (arg >= argc)
+         {
+            printf("Missing output filename\n");
+            break;
+         }
+         output_filename = argv[arg];
+         output_file_found = 1;
+         break;
       }
    }
-
+   
    if (!output_file_found)
       Error("No output file specified");
    
    if (arg >= argc)
       Error("No input files specified");
 
-   WrapInit();
-
    if (!LoadRscFiles(argc - arg, argv + arg))
       Error("Unable to load rsc files.");
 
    if (!SaveRscFile(output_filename))
       Error("Unable to save rsc file.");      
-
-   WrapShutdown();
 }

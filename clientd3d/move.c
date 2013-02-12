@@ -910,6 +910,8 @@ void UserTurnPlayer(int action)
    // TURNDEGREES per TURN_DELAY milliseconds.
    now = timeGetTime();
    dt = now - last_turn_time;
+   if (last_turn_time == 0 || dt <= 0)
+      dt = 1;
    if (dt < TURN_DELAY && config.animate)
    {
       delta = delta * dt / TURN_DELAY;
@@ -1055,6 +1057,8 @@ void PlayerChangeHeight(int dz)
 
    now = timeGetTime();
    dt = now - last_time;
+   if (last_time == 0 || dt <= 0)
+      dt = 1;
    if (dt < HEIGHT_DELAY && config.animate)
    {
       dz = dz * dt / HEIGHT_DELAY;

@@ -243,7 +243,7 @@ int C_MinigameStringToNumber(int object_id,local_var_type *local_vars,
 
 
 void FuzzyCollapseString(char* pTarget, char* pSource, int len);
-BOOL FuzzyBufferEqual(char *s1,int len1,char *s2,int len2);
-BOOL FuzzyBufferContain(char *s1,int len1,char *s2,int len2);
+bool FuzzyBufferEqual(char *s1,int len1,char *s2,int len2);
+bool FuzzyBufferContain(char *s1,int len1,char *s2,int len2);
 
 #endif

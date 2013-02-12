@@ -23,6 +23,10 @@
 */
 
 #include "blakserv.h"
+#include <mmsystem.h>
+#include <windowsx.h>
+#include <commctrl.h>
+#include <richedit.h>
 
 /* event sent to our interface when it should update numbers */
 #define WM_BLAK_NEW_INFO       (WM_APP + 0)
@@ -38,7 +42,6 @@
 /* events for asynchronous socket I/O */
 #define WM_BLAK_SOCKET_ACCEPT  (WM_APP + 7)
 #define WM_BLAK_SOCKET_MAINTENANCE_ACCEPT (WM_APP + 8)
-#define WM_BLAK_SMTP_SOCKET_ACCEPT  (WM_APP + 9)
 #define WM_BLAK_SOCKET_NAME_LOOKUP (WM_APP + 10)
 #define WM_BLAK_SOCKET_SELECT  (WM_APP + 11)
 
@@ -342,10 +345,6 @@ long WINAPI InterfaceWindowProc(HWND hwnd,UINT message,UINT wParam,LONG lParam)
 				SOCKET_MAINTENANCE_PORT);
 			break;
 			
-		case WM_BLAK_SMTP_SOCKET_ACCEPT :
-			AsyncSMTPSocketAccept(wParam,WSAGETSELECTEVENT(lParam),WSAGETSELECTERROR(lParam));
-			break;
-			
 		case WM_BLAK_SOCKET_NAME_LOOKUP :
 			AsyncNameLookup((HANDLE)wParam,WSAGETASYNCERROR(lParam));
 			break;
@@ -517,16 +516,6 @@ void StartAsyncSocketAccept(SOCKET sock,int connection_type)
 	val = WSAAsyncSelect(sock,hwndMain,window_event,FD_ACCEPT);
 	if (val != 0)
 		eprintf("StartAsyncSocketAccept got error %i\n",val);
-}
-
-/* this is executed in the main, non-interface thread */
-void StartAsyncSMTPSocketAccept(SOCKET sock)
-{
-	int val;
-	
-	val = WSAAsyncSelect(sock,hwndMain,WM_BLAK_SMTP_SOCKET_ACCEPT,FD_ACCEPT);
-	if (val != 0)
-		eprintf("StartAsyncSMTPSocketAccept got error %i\n",val);
 }
 
 /* this is executed in our thread, actually */

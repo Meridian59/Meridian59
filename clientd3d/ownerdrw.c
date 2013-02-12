@@ -421,12 +421,24 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
 
    SelectObject(lpdis->hDC, GetFont(FONT_LIST));
 
+	if (style & OD_COLORTEXT)
+	{
+		// if it's not a priveleged player, don't do the color effects
+		if ((PF_DM != GetPlayerFlags(obj->flags) &&
+		     PF_SUPER != GetPlayerFlags(obj->flags) &&
+		     PF_EVENTCHAR != GetPlayerFlags(obj->flags) &&
+		     PF_CREATOR != GetPlayerFlags(obj->flags)))
+		{
+			style &= ~OD_COLORTEXT;
+		}
+
+		// get the color we'd prefer for this particular obj
+		if (style & OD_COLORTEXT)
+			crColorText = GetPlayerNameColor(obj->flags,NULL);
+	}
+
    if (style & OD_COLORTEXT)
    {
-
-	// get the color we'd prefer for this particular obj
-	crColorText = GetPlayerNameColor(obj->flags,NULL);
-   
 	// draw a black halo around the text just to ensure it is visible
 	SetTextColor(lpdis->hDC, RGB(0, 0, 0));
         OffsetRect(&r, 1, 0);

@@ -50,13 +50,10 @@ Bool GuestGetLogin(void)
       config.comm.server_num = config.server_guest;
    else
    {
-	  
-	  //Only connect to the main server.
-      low = 59;
-      high = 59;
-	  
+      low = config.server_low;
+      high = config.server_high;
       if (high >= low)
-		config.comm.server_num = 59;
+	 config.comm.server_num = low + (rand() % (high - low + 1));
       else
       {
 	 debug(("GuestLoggingIn got low server #%d > high server #%d\n", low, high));
@@ -92,8 +89,8 @@ void GuestConnectError(void)
  */
 void GuestLoggingIn(BYTE status, int low, int high)
 {
-   config.server_low = 59;
-   config.server_high = 59;
+   config.server_low = low;
+   config.server_high = high;
 
    // If we're allowed onto this server, we're done
    if (status == 0)

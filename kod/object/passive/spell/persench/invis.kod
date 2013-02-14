@@ -57,6 +57,8 @@ classvars:
 
 properties:
 
+   vbCanCastOnOthers = FALSE
+
 messages:
 
    ResetReagents()
@@ -69,6 +71,12 @@ messages:
 
    CastSpell(who = $,iSpellPower=0, lTargets = $)
    {
+     % If it's only self cast, spoof self as target for following code
+      if NOT vbCanCastonOthers
+      {
+         lTargets = Cons(who, lTargets);
+      }
+
       Send(first(lTargets),@ResetPlayerFlagList);
       Send(first(lTargets),@AddDefenseModifier,#what=self);
       

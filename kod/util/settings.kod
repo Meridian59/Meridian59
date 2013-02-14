@@ -90,9 +90,6 @@ properties:
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15
 
-   % How many reflections one player can cast in a room
-   piPlayerReflectionLimit = 0
-
    %
    % Guild hall settings
    %
@@ -258,11 +255,6 @@ messages:
    RescueBaseDelaySec()
    {
       return piRescueBaseDelaySec;
-   }
-
-   GetPlayerReflectionLimit()
-   {
-      return piPlayerReflectionLimit;
    }
 
    %

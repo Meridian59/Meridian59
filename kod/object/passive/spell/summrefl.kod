@@ -46,6 +46,10 @@ classvars:
 
 properties:
 
+   % How many reflections one player can cast in a room
+   % Setting this to zero will disable the limit.
+   piPlayerReflectionLimit = 0
+
 
 messages:
 
@@ -82,15 +86,14 @@ messages:
          return FALSE;
       }
      
-	  % limit reflections
-	  if send(self,@CountPlayerReflections,#original=who) >= 
-		  Send(Send(SYS, @GetSettings), @GetPlayerReflectionLimit) AND
-		 NOT send(who,@PlayerIsImmortal)
-	  {
+      % limit reflections
+      if send(self,@CountPlayerReflections,#original=who) >= piPlayerReflectionLimit
+         AND NOT send(who,@PlayerIsImmortal)
+      {
          send(who,@MsgSendUser,#message_rsc=summonreflection_limit_rsc);
          
          return FALSE;
-	  }
+      }
 
       propagate;
    }
@@ -128,24 +131,25 @@ messages:
    CountPlayerReflections(original = $)
    "Count number of reflections in a room created by the caster."
    {
-	  local i, each_obj, count, oRoom;
-	  
-	  count = 0;
-	  oRoom = Send(original,@GetOwner);
-   
+      local i, each_obj, count, oRoom;
+      
+      count = 0;
+      oRoom = Send(original,@GetOwner);
+      
       for i in send(oRoom,@GetHolderActive)
       {
-         each_obj=Send(oRoom,@holderExtractObject,#data=i);
-         if isClass(each_obj,&Reflection)
-         {
-			if Send(each_obj,@GetOriginal) = original
-			{
-			  count = count + 1;
-			}
-         }
+           each_obj = Send(oRoom,@holderExtractObject,#data=i);
+
+           if isClass(each_obj,&Reflection)
+           {
+                if Send(each_obj,@GetOriginal) = original
+                {
+                     count = count + 1;
+                }
+           }
       }
 	  
-	  return count;
+      return count;
    }
 
 end

@@ -5609,7 +5609,13 @@ messages:
          
             iTime = bound(iTime,500,60000);
          }
-      }
+
+         % Mana Focus will adjust mana regen time based on its spellpower.
+         oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
+         if Send(self,@IsEnchanted,#what=oSpell)
+         {
+            iTime = Send(oSpell,@AdjustManaTime,#who=self,#time=iTime);
+         }
 
       return iTime;
    }

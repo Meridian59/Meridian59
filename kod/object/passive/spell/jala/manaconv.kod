@@ -34,7 +34,7 @@ classvars:
    vrDesc = ManaConvergence_desc_rsc
 
    viMana = 10          % Mana is amount used upon inititiation
-   viManaDrain = 9     % Drain is amount used every viDrainTime milliseconds
+   viManaDrain = 9      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
    viSpell_num = SID_MANA_CONVERGENCE
 

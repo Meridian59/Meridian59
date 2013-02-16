@@ -71,7 +71,7 @@ messages:
 
       if not send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_guardian);
+         send(who,@MsgSendUser,#message_rsc=spell_guardian);
          
          return FALSE;
       }
@@ -79,7 +79,7 @@ messages:
       if send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
          OR send(oRoom,@CountHoldingHowMany,#class=&Reflection) > 10
          OR send(oRoom,@CountHoldingSummoned) > 
-            Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
+            send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
       {
          send(who,@MsgSendUser,#message_rsc=summonreflection_failed_rsc);
          
@@ -87,8 +87,9 @@ messages:
       }
      
       % limit reflections
-      if send(self,@CountPlayerReflections,#original=who) >= piPlayerReflectionLimit
+      if send(self,@CountPlayerReflections,#player=who) >= piPlayerReflectionLimit
          AND NOT send(who,@PlayerIsImmortal)
+         AND NOT piPlayerReflectionLimit = 0
       {
          send(who,@MsgSendUser,#message_rsc=summonreflection_limit_rsc);
          
@@ -121,14 +122,14 @@ messages:
       send(oRoom,@NewHold,#what=oReflection,#new_row=iRow,#new_col=iCol,
            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
-      Send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
+      send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
 
-      Send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
+      send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
 
       propagate;
    }
    
-   CountPlayerReflections(original = $)
+   CountPlayerReflections(player = $)
    "Count number of reflections in a room created by the caster."
    {
       local i, each_obj, count, oRoom;
@@ -138,11 +139,11 @@ messages:
       
       for i in send(oRoom,@GetHolderActive)
       {
-           each_obj = Send(oRoom,@holderExtractObject,#data=i);
+           each_obj = send(oRoom,@HolderExtractObject,#data=i);
 
            if isClass(each_obj,&Reflection)
            {
-                if Send(each_obj,@GetOriginal) = original
+                if send(each_obj,@GetOriginal) = player
                 {
                      count = count + 1;
                 }

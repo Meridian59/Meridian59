@@ -87,7 +87,7 @@ messages:
       }
      
       % limit reflections
-      if send(self,@CountPlayerReflections,#player=who) >= piPlayerReflectionLimit
+      if send(self,@CountPlayerReflections,#who=who) >= piPlayerReflectionLimit
          AND NOT send(who,@PlayerIsImmortal)
          AND NOT piPlayerReflectionLimit = 0
       {
@@ -129,13 +129,13 @@ messages:
       propagate;
    }
    
-   CountPlayerReflections(player = $)
+   CountPlayerReflections(who = $)
    "Count number of reflections in a room created by the caster."
    {
       local i, each_obj, count, oRoom;
       
       count = 0;
-      oRoom = Send(original,@GetOwner);
+      oRoom = Send(who,@GetOwner);
       
       for i in send(oRoom,@GetHolderActive)
       {
@@ -143,7 +143,7 @@ messages:
 
            if isClass(each_obj,&Reflection)
            {
-                if send(each_obj,@GetOriginal) = player
+                if send(each_obj,@GetOriginal) = who
                 {
                      count = count + 1;
                 }

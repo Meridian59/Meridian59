@@ -7682,7 +7682,7 @@ messages:
                
                if piBase_max_health > 30
                {
-                  piGain_chance = piGain_chance - ((50+Send(self,@GetStamina))*50);
+                  piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))*50);
                }
 
                return TRUE;

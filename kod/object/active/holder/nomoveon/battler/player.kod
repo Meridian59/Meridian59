@@ -7606,14 +7606,14 @@ messages:
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 2;
+               gain = 200;
                roll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 1;
+               gain = 100;
                roll = TRUE;
             }
          }
@@ -7625,7 +7625,7 @@ messages:
                AND IsClass(what,&monster) AND killing_blow 
                AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
-               gain = 1;
+               gain = 100;
             }
             else
             {
@@ -7640,7 +7640,7 @@ messages:
          % Give newbies a little bonus.
          if piBase_Max_health < 26 and random(20,bound(piBase_Max_health,20,25)) = 20
          {
-            gain = gain + 1;
+            gain = gain + 100;
          }
 
          % If they're cheesing the situation by fighting wussy monsters in an altered form,
@@ -7652,8 +7652,8 @@ messages:
             roll = FALSE;
          }
 
-         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,100);
-         gain = gain * gainmult;
+         gainmod = Send(Send(SYS, @GetSettings), @GetHPGainRate);
+         gain = (gain * gainmod)/100;
 
          piGain_chance = piGain_chance + gain;
 
@@ -7661,7 +7661,7 @@ messages:
          {
             highmark = Send(self,@GetHighMark);
             rand = random(1,highmark);
-            iNumber = Send(self,@GetGainChance) + bound((monster_level-piBase_Max_health)/5,0,10);
+            iNumber = (Send(self,@GetGainChance)/100) + bound((monster_level-piBase_Max_health)/5,0,10);
                   
             if rand < iNumber
                AND piBase_Max_health < (101 + Send(self,@GetStamina))
@@ -7678,11 +7678,11 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
                Send(self,@WaveSendUser, #what=self, #wave_rsc=player_tougher_wav_rsc);
 
-               piGain_chance = -(piBase_Max_health/2);
+               piGain_chance = -(piBase_Max_health*50);
                
                if piBase_max_health > 30
                {
-                  piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
+                  piGain_chance = piGain_chance - ((50+Send(self,@GetStamina))*50);
                }
 
                return TRUE;

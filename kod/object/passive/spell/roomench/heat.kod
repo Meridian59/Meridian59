@@ -14,8 +14,8 @@ constants:
 
    include blakston.khd
 
-   % Damage every 10 secs.
-   HEAT_PERIOD = 10000
+   % Damage every 5 secs.
+   HEAT_PERIOD = 5000
    % Total duration: 10 realtime minutes
    HEAT_TIME = 300000       
 

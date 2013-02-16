@@ -7575,7 +7575,7 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, roll, iNumber, oWeapon;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
             
       gain = 0;
       roll = FALSE;
@@ -7651,6 +7651,9 @@ messages:
             gain = gain / 2;
             roll = FALSE;
          }
+
+         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,100);
+         gain = gain * gainmult;
 
          piGain_chance = piGain_chance + gain;
 

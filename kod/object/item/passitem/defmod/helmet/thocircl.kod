@@ -70,8 +70,7 @@ messages:
    {
       return [ [-ATCK_SPELL_FIRE,-10],
                [-ATCK_SPELL_SHOCK,20],
-               [-ATCK_SPELL_HOLY,20],
-               [-ATCK_WEAP_SILVER,30]
+               [-ATCK_WEAP_SILVER,65]
              ];
    }
 

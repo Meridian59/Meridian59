@@ -47,7 +47,7 @@ classvars:
    viChance_To_Increase = 35
    viFlash = FLASH_GOOD_SELF
 
-   viResistanceType = -ATCK_SPELL_HOLY
+   viResistanceType = -ATCK_WEAP_SILVER
    vrAlreadyEnchanted = resistgood_already_enchanted
    vrEnchantment_On = resistgood_on
    vrEnchantment_Off = resistgood_off

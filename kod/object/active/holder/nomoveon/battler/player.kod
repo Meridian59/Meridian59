@@ -7652,10 +7652,9 @@ messages:
             roll = FALSE;
          }
 
-         gainmult = Send(Send(SYS, @GetSettings), @GetTougherRate);
-         gain = (gain * gainmult) / 100;
+         gainmult = Bound(Send(Send(SYS, @GetSettings), @GetTougherRate), 1, $);
 
-         piGain_chance = piGain_chance + gain;
+         piGain_chance = ((piGain_chance * 100) + (gain * gainmult)) / 100;
 
          if roll
          {

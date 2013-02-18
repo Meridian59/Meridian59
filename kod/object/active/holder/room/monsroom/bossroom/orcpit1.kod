@@ -108,7 +108,6 @@ messages:
       plBossTreasureTemplate = [ [&DiscipleRobe, 15, 41, 0, 0],
                                  [&IvyCirclet, 16, 41, 0, 0],
                                  [&OrcShield, 15, 42, 0, 0],
-                                 [&ThornedCirclet, 17, 42, 0, 0],
                                  [&MysticSword, 16, 42, 0, 0],
                                  [&OfferingShalille, 15, 41, 32, 32]
                                ];

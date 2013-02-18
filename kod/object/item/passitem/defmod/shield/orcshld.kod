@@ -21,7 +21,11 @@ resources:
    OrcShield_desc_rsc = \
       "The skull that decorates the face of the shield offers a fair "
       "amount of fear to potential opponents, but the shield seems to "
-      "be far more decorative than useful."
+      "be far more decorative than useful.  Still, there seems to be a "
+      "darker edge to the shield that you can't place your finger on, and "
+      "one wonders if this device has some hidden attribute."
+
+   orcshield_cant = "You try to grab the handle of the shield, but it insistently slips out of your fingers."
 
    OrcShield_window_overlay_rsc = povosh.bgf
 
@@ -46,19 +50,58 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viDefense_base = 20
-   viDamage_base = 2
+   viDefense_base = 15
+   viDamage_base = 1
 
 properties:
 
 messages:
+   
+   ReqUse()
+   {
+      if send(poOwner,@GetKarma) > -50  
+      { 
+         send(poOwner,@MsgSendUser,#message_rsc=orcshield_cant);
+         
+         return FALSE; 
+      }
+      
+      propagate;
+   }
+
+   GetBaseSpellModifier(oSpell=$)
+   {
+      if send(oSpell,@GetSchool) = SS_SHALILLE
+      {
+         return -15;
+      }
+      
+      if send(oSpell,@GetSchool) = SS_QOR
+      {
+         return 15;
+      }
+
+      return 0;
+   }
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_PIERCE,15],
-               [-ATCK_SPELL_HOLY,-20]
+      return [ [ATCK_WEAP_THRUST,-20],
+               [-ATCK_SPELL_SHOCK,15],
+               [-ATCK_SPELL_HOLY,20]
              ];
    }
+
+   SendOverlayAnimation(animation = $)
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      if (piItem_flags & ITEM_PALETTE_MASK) <> 0
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+
+      return;
+   }   
 
 
 end

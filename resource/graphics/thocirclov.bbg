@@ -1,0 +1,16 @@
+# thorned circlet overlay
+# groups
+# 1 worn 
+#^Applied to Hotspot: 13
+#*Groups: 1
+#* Unlabeled Group
+-s 21
+6
+thocirclov.bgf_frame0.bmp     [-30, 1] 
+thocirclov.bgf_frame1.bmp     [-28, -1] 
+thocirclov.bgf_frame2.bmp     [-28, -2] 
+thocirclov.bgf_frame3.bmp     [-26, 4] 
+thocirclov.bgf_frame4.bmp     [-28, 0] 
+thocirclov.bgf_frame5.bmp     [-32, -1] 
+1
+ 8   1 2 3 4 4 4 5 6 

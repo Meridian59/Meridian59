@@ -3458,8 +3458,8 @@ messages:
       }
 
       oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
-      Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_balance,#parm1=Send(oBank,@GetAccount,#what=who));
+      Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_balance,
+                 #parm1=Send(oBank,@GetAccount,#what=who));
 
       return;
    }
@@ -3541,16 +3541,15 @@ messages:
       oMoney = Send(who,@GetMoneyObject);
       if oMoney = $ 
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_deposit,#parm1=0);
+         Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_not_enough_deposit,
+              #parm1=0,#what=self));
 
          return;
       }
 
       if Send(oMoney,@GetValue) < amount
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_deposit,
+         Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_not_enough_deposit,
               #parm1=Send(oMoney,@GetValue));
 
          return;
@@ -3558,9 +3557,7 @@ messages:
       
       Send(oMoney,@SubtractNumber,#number=amount);
       Send(oBank,@DepositAccount,#what=who,#amount=amount);
-
-      Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_did_deposit,
+      Send(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_did_deposit,
            #parm1=Send(oBank,@GetAccount,#what=who));
 
       Send(self,@AffectMood,#why=MOODMOD_BANK_DEPOSIT);
@@ -3599,8 +3596,8 @@ messages:
 
       if iAmount = 0
       {
-         Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_no_account,
-              #type=SAY_RESOURCE);
+         Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_no_account,
+              #what=who));
 
          return;
       }
@@ -3608,8 +3605,8 @@ messages:
       if amount > iAmount
       {
          Send(oBank,@DepositAccount,#what=who,#amount=iAmount);
-         Post(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-              #string=Lm_bnkr_not_enough_withdraw,#parm1=iAmount);
+         Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_not_enough_withdraw,
+              #parm1=iAmount);
 
          return;
       }
@@ -3629,16 +3626,16 @@ messages:
 
       if iCan_hold = 0
       {
-         Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_all_full,
-              #type=SAY_RESOURCE);
+         Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_player_all_full,
+              #what=who));
 
          return;
       }
 
       if iCan_hold < amount
       {
-         Post(who,@SomeoneSaid,#what=self,#string=Lm_bnkr_player_full,
-              #type=SAY_RESOURCE,#parm1=iCan_hold);
+         Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_player_full,
+              #parm1=iCan_hold);
          amount = iCan_hold;
       }
 
@@ -3654,8 +3651,8 @@ messages:
       }
 
       Send(oBank,@DepositAccount,#what=who,#amount=iAmount-amount);
-      Send(who,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-           #string=Lm_bnkr_did_withdraw,#parm1=amount);
+      Send(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_did_withdraw,
+           #parm1=amount);
 
       Send(self,@AffectMood,#why=MOODMOD_BANK_WITHDRAWAL);
 

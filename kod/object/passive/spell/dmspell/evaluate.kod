@@ -110,9 +110,9 @@ messages:
          if gainchance < 0
          {
             send(dmis,@msgsenduser,#message_rsc = evaluate_message_nochance,#parm1=send(who,@GetName),
-                 #parm2=(gainchance/2));
+                 #parm2=-(gainchance/200));
          } else {
-            total = bound(((gainchance*100)/highmark),1,100);
+            total = bound((gainchance/highmark),1,100);
             send(dmis,@msgsenduser,#message_rsc = evaluate_message,#parm1=send(who,@GetName),
                  #parm2=gainchance,#parm3=highmark,#parm4=total);
          }      

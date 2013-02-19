@@ -63,8 +63,8 @@ properties:
    %  secondary chance.
    piAdvancementRate = 100
 
-   % Multiplier for the amount of %s each mob you kill adds to your levelup chance.
-   piHPGainMultiplier = 1
+   % Modifier for the amount of %s each mob you kill adds to your levelup chance.
+   piHPGainRate = 100
    
    % How far up the food chain can basic players learn?  See player for more
    %  specific information on what this number means.
@@ -203,9 +203,11 @@ messages:
       return piAdvancementRate;
    }
 
-   GetHPGainMultitplier()
+   GetHPGainRate()
+   % Returns the rate at which a killed monster improves your chances of
+   % gaining a hitpoint, 50 = half, 100 = normal rate, 200 = double, etc.
    {
-      return piHPGainMultiplier;
+      return piHPGainRate;
    }
 
    GetKillKarmaSwingNeutral()

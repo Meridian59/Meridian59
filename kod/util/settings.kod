@@ -204,6 +204,8 @@ messages:
    }
 
    GetHPGainRate()
+   % Returns the rate at which a killed monster improves your chances of
+   % gaining a hitpoint, 50 = half, 100 = normal rate, 200 = double, etc.
    {
       return piHPGainRate;
    }

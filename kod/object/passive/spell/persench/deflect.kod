@@ -114,6 +114,7 @@ messages:
       if Send(oSpell,@IsHarmful)
          AND Send(oSpell,@GetNumSpellTargets) = 1
          AND IsClass(oSpell,&AttackSpell)
+         AND IsClass(oSpell,&WallSpell)
       {
          chance = Send(caster,@GetEnchantedState,#what=self);
          if Random(0,100) > chance

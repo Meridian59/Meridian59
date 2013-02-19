@@ -20,7 +20,7 @@ constants:
 resources:
 
    fire_arrow_name_rsc = "fire arrows"
-   fire_arrow_icon_rsc = arrow.bgf         %NEEDS A PICTURE
+   fire_arrow_icon_rsc = arrowfir.bgf
    fire_arrow_desc_rsc = "These arrows do excellent damage, burning "
       " brightly, they burn for extra damage."
 

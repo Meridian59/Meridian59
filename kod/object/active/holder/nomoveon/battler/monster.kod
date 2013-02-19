@@ -3459,7 +3459,7 @@ messages:
 
       oBank = Send(SYS,@FindBankByNum,#num=Send(self,@GetBankNum));
       Post(self,@SayToOne,#target=who,#message_rsc=Lm_bnkr_balance,
-                 #parm1=Send(oBank,@GetAccount,#what=who));
+           #parm1=Send(oBank,@GetAccount,#what=who));
 
       return;
    }

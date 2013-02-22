@@ -793,7 +793,8 @@ properties:
    piStaminaMod = 0
    piAgilityMod = 0
    piMysticismMod = 0
-   piAimMod = 0
+   pi
+Mod = 0
 
    %%% Variable character values.
 
@@ -4198,7 +4199,7 @@ messages:
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
+         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*8) + (piBase_Max_Health*3/2);
 
          if oWeapon <> $
          {
@@ -4260,7 +4261,7 @@ messages:
          iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
+         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*8) + (piBase_Max_Health*3/2);
       }
 
       for i in plDefense_modifiers

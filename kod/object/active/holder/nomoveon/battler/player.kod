@@ -488,8 +488,7 @@ resources:
 
    player_tutorial_mail = "Subject: You're doing well for yourself.\n"
       "It's nice to see that you seem to be doing well.  "
-      "I thought I 
-take this time to explain some finer points of "
+      "I thought I take this time to explain some finer points of "
       "the world of Meridian to you."
       "\n\n"
       "There are a variety of spells and skill schools that you can "

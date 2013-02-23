@@ -4230,7 +4230,7 @@ messages:
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
 
-      return bound(iOffense,1,1000);
+      return bound(iOffense,1,1500);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4273,7 +4273,7 @@ messages:
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
 
-      return bound(iDefense,1,1000);
+      return bound(iDefense,1,1500);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three

@@ -230,10 +230,8 @@ messages:
          {
             iLevel = Send(i,@GetLevel);
 
-            % Be sure the player deserves to be able to 'steer' to this monster
-            % But, always let player select monster if they have max spellpower.
-            if (iSpellPower <= (iLevel + random(0,10))
-                AND iSpellPower < SPELLPOWER_MAXIMUM)
+            % Be sure the player deserves to be able to 'steer' to this monster.
+            if iSpellPower <= (iLevel + random(0,10))
                AND NOT bDM
             {
                return;

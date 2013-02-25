@@ -30,6 +30,8 @@ resources:
 
    ringinvisibility_already_invisible_rsc = \
    "You can't use the ring of invisibility because you are already invisible."
+   
+   ringinvisibility_karma_needed = "You try to use the ring of invisibility, but it insistently slips off of your finger."
 
 classvars:
 
@@ -58,6 +60,13 @@ messages:
       {
 	      Send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_already_invisible_rsc);
 	      return False;
+      }
+      
+      if send(poOwner,@GetKarma) > -50  
+      { 
+         send(poOwner,@MsgSendUser,#message_rsc=ringinvisibility_karma_needed);
+         
+         return FALSE; 
       }
 
       propagate;

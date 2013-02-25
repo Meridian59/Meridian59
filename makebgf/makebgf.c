@@ -67,19 +67,19 @@ void ReadCommandLine(int argc, char **argv, Options *options)
    if (b.num_bitmaps < 1)
       Error("Number of bitmaps must be at least 1");
    arg++;
-
+   
    b.bitmaps = (PDIB *) SafeMalloc(b.num_bitmaps * sizeof(PDIB));
    b.offsets = (POINT *) SafeMalloc(b.num_bitmaps * sizeof(POINT));
    b.hotspots = (Hotspots *) SafeMalloc(b.num_bitmaps * sizeof(Hotspots));
    for (i=0; i < b.num_bitmaps; i++)
    {
       if (arg >= argc)
-	 Error("Not enough bitmap files given");
+         Error("Not enough bitmap files given");
       
       b.bitmaps[i] = DibOpenFile(argv[arg]);
       if (b.bitmaps[i] == NULL)
-	 Error("Unable to load bitmap file %s", argv[arg]);
-
+         Error("Unable to load bitmap file %s", argv[arg]);
+      
       arg++;
       
       // Read offsets, if present
@@ -87,38 +87,37 @@ void ReadCommandLine(int argc, char **argv, Options *options)
       b.offsets[i].y = 0;
       if (arg <= argc - 2 && argv[arg][0] == '[')
       {
-	 ReadPoint(argv[arg] + 1, argv[arg+1], &b.offsets[i]);
-	 arg += 2;  // Skip read arguments
+         ReadPoint(argv[arg] + 1, argv[arg+1], &b.offsets[i]);
+         arg += 2;  // Skip read arguments
       }
-	  
+      
       // Read hotspots, if present
       b.hotspots[i].num_hotspots = 0;
-
+      
       if (arg <= argc - 1 && argv[arg][0] == ':')
       {
-	 b.hotspots[i].num_hotspots = atoi(argv[arg] + 1);
-	 arg++;
-
-	 b.hotspots[i].positions = 
-	    (POINT *) SafeMalloc(b.hotspots[i].num_hotspots * sizeof(POINT));
-	 b.hotspots[i].numbers = (char *) SafeMalloc(b.hotspots[i].num_hotspots * sizeof(BYTE));
-	 for (j=0; j < b.hotspots[i].num_hotspots; j++)
-	 {
-	    if (arg > argc - 3)
-	       Error("Not enough hotspots for bitmap #%d", i);
-
-	    b.hotspots[i].numbers[j] = atoi(argv[arg]);
-	    if (b.hotspots[i].numbers[j] == 0)
-	       Error("Hotspot #%d for bitmap #%d must not be 0", j + 1, i + 1);
-	    arg++;
-
-	    ReadPoint(argv[arg] + 1, argv[arg+1], &b.hotspots[i].positions[j]);
-	    arg += 2;  // Skip read arguments
-	 }
-
+         b.hotspots[i].num_hotspots = atoi(argv[arg] + 1);
+         arg++;
+         
+         b.hotspots[i].positions = 
+            (POINT *) SafeMalloc(b.hotspots[i].num_hotspots * sizeof(POINT));
+         b.hotspots[i].numbers = (char *) SafeMalloc(b.hotspots[i].num_hotspots * sizeof(BYTE));
+         for (j=0; j < b.hotspots[i].num_hotspots; j++)
+         {
+            if (arg > argc - 3)
+               Error("Not enough hotspots for bitmap #%d", i);
+            
+            b.hotspots[i].numbers[j] = atoi(argv[arg]);
+            if (b.hotspots[i].numbers[j] == 0)
+               Error("Hotspot #%d for bitmap #%d must not be 0", j + 1, i + 1);
+            arg++;
+            
+            ReadPoint(argv[arg] + 1, argv[arg+1], &b.hotspots[i].positions[j]);
+            arg += 2;  // Skip read arguments
+         }
       }
    }
-
+   
    // Next, store indices into structure
    if (arg >= argc)
       Error("Missing number of index groups");
@@ -130,28 +129,28 @@ void ReadCommandLine(int argc, char **argv, Options *options)
    {
       Group *g = &b.groups[i];
       if (arg >= argc)
-	 Error("Missing number of indices in index group %d", i+1);
-
+         Error("Missing number of indices in index group %d", i+1);
+      
       g->num_indices = atoi(argv[arg]);
       if (g->num_indices < 1)
-	 Error("Number of indices in a group must be at least 1");
+         Error("Number of indices in a group must be at least 1");
       arg++;
-
+      
       g->indices = (int *) SafeMalloc(g->num_indices * sizeof(int));
-
+      
       // Read in the indices
       for (j=0; j < g->num_indices; j++)
       {
-	 if (arg >= argc)
-	    Error("Not enough indices in group %d", i+1);
-
-	 g->indices[j] = atoi(argv[arg]) - 1;  // Start counting from 0 in file
-	 if (g->indices[j] < -1)
-	    Error("Index must be at least 0");
-	 arg++;
+         if (arg >= argc)
+            Error("Not enough indices in group %d", i+1);
+         
+         g->indices[j] = atoi(argv[arg]) - 1;  // Start counting from 0 in file
+         if (g->indices[j] < -1)
+            Error("Index must be at least 0");
+         arg++;
       }
    }
-
+   
    if (arg != argc)
       printf("Extra command line arguments ignored\n");
 }
@@ -194,25 +193,25 @@ void CommandFileLoad(char *filename, int *argc, char ***argv, int pos)
    while (fgets(line, 500, file) != NULL) 
    {
       if (line[strlen(line) - 1] == '\n')
-	 line[strlen(line) - 1] = 0;       // Kill newline
+         line[strlen(line) - 1] = 0;       // Kill newline
       // Skip comments
       if (line[0] == '#')
-	 continue;       
-
+         continue;       
+      
       for (arg = strtok(line, " \t"); arg != NULL; arg = strtok(NULL, " \t"))	 
       {
-	 // Skip backslashes, since they are just line continuation chars
-	 if (!strcmp(arg, "\\"))
-	    continue;
-	 
-	 *argc = *argc + 1;
-	 (*argv)[*argc - 1] = strdup(arg);
-	 
-	 if (*argc == MAX_ARGS)
-	    Error("Too many command line arguments; max is %d.", MAX_ARGS);
+         // Skip backslashes, since they are just line continuation chars
+         if (!strcmp(arg, "\\"))
+            continue;
+         
+         *argc = *argc + 1;
+         (*argv)[*argc - 1] = strdup(arg);
+         
+         if (*argc == MAX_ARGS)
+            Error("Too many command line arguments; max is %d.", MAX_ARGS);
       }
    }
-
+   
    // Print out arguments for debugging
 #if 0
    for (i = 0; i < *argc; i++)

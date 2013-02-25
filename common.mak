@@ -123,6 +123,7 @@ LATEX = latex
 MAKENSIS = "c:\program files (x86)\nsis\makensis.exe"
 
 BC = $(BLAKBINDIR)\bc
+MAKEBGF = $(BLAKBINDIR)\makebgf
 
 # environment variables for compiler
 

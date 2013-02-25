@@ -4498,7 +4498,7 @@ messages:
 
    % Handles damage done to player
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
-              report = True, report_resistance = TRUE, absolute = FALSE, dont_kill = FALSE)
+              report = True, report_resistance = TRUE, absolute = FALSE, allowed_to_kill = TRUE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell,
             iLimit;
@@ -4577,8 +4577,8 @@ messages:
          }
       }
       
-      % This flag prevents the damage from killing the player, instead leaving them at 1 health
-      if dont_kill
+      % If the damage can't kill, leave player at 1 health
+      if NOT allowed_to_kill
       {
          damage = Bound(damage,0,Send(self,@GetHealth)-1);
       }

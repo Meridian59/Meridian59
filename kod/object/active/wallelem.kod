@@ -195,9 +195,13 @@ messages:
       plAffected = $;
 
       % Delete the active walls if the caster logs off
-      if NOT Send(poCaster,@IsLoggedOn)
+      if IsClass(poCaster,&Player)
       {
-         Send(self,@Delete);
+          if NOT Send(poCaster,@IsLoggedOn)
+          {
+             Send(self,@Delete);
+             return;
+          }
       }
 
       if vbPeriodic

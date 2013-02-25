@@ -203,7 +203,7 @@ messages:
       return piAdvancementRate;
    }
 
-   GetHPGainMultitplier()
+   GetHPGainMultiplier()
    {
       return piHPGainMultiplier;
    }

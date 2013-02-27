@@ -33,7 +33,7 @@ resources:
 
    room_name_cave3 = "The Underground Lake"
    room_cave3 = cave3.roo
-   cave3_music = ksong.mp3
+   cave3_music = ksong.mid
 
    cave3_key_disappears = "Your key disappears into thin air!"
    cave3_locked_door = "The door appears to be firmly locked."
@@ -122,8 +122,8 @@ messages:
          }
       }
 
-% Brax enterance
-      if isClass(what,&User)
+   % Brax enterance
+      if IsClass(what,&Player)
       {
          if row = 28 AND col=73
          {
@@ -136,10 +136,10 @@ messages:
                   send(each_obj,@Delete);
                   send(what,@MsgSendUser,#message_rsc=cave3_key_disappears);
                   Send(SYS,@UtilGoNearSquare,#what=what,
-#where=Send(SYS,@FindRoomByNum,#num=RID_NECROAREA1),
-#new_row=3,#new_col=43,#new_angle=ANGLE_WEST);
+                  #where=Send(SYS,@FindRoomByNum,#num=RID_NECROAREA1),
+                  #new_row=3,#new_col=43,#new_angle=ANGLE_WEST);
 
-                  return TRUE ;
+                  return TRUE;
                }
             }
 

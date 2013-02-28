@@ -58,9 +58,9 @@ messages:
 
       % some mugs
       
-      plObject_gen = Cons([ &Mug, GEN_ONE, 1, 7, 9, 48,  48 ],plObject_gen);      
-      plObject_gen = Cons([ &Mug, GEN_ONE, 1, 7, 9, 16,  0 ],plObject_gen);      
-      plObject_gen = Cons([ &Mug, GEN_ONE, 1, 5, 9, 32,  0 ],plObject_gen);
+      plObject_gen = Cons([ &Mug, GEN_ONE, 1, 7, 9, 48, 48 ],plObject_gen);
+      plObject_gen = Cons([ &Mug, GEN_ONE, 1, 7, 9, 16, 0 ],plObject_gen);
+      plObject_gen = Cons([ &Mug, GEN_ONE, 1, 5, 9, 32, 0 ],plObject_gen);
 
       propagate;
    }
@@ -69,10 +69,12 @@ messages:
    {
       plExits = $;
       plExits = Cons([ 1, 4, ROOM_LOCKED_DOOR, tosinn_no_rooms ],plExits);
-      plExits = Cons([ 1, 3, ROOM_LOCKED_DOOR, tosinn_locked_basement ],plExits);
       plExits = Cons([ 6, 10, ROOM_LOCKED_DOOR, tosinn_locked_cabinet ],plExits);
       plExits = Cons([ 7, 10, ROOM_LOCKED_DOOR, tosinn_locked_cabinet ],plExits);
       plExits = Cons([ 4, 4, ROOM_LOCKED_DOOR, tosinn_locked_confused ],plExits);
+
+      %% TO BASEMENT
+      plExits = Cons([ 1, 3, RID_TOS_INN_CELLAR, 2, 5, ROTATE_NONE ],plExits);
 
       %% TO TOWN
       plExits = Cons([ 3, 10, RID_TOS, 45, 31, ROTATE_NONE ],plExits);
@@ -90,8 +92,8 @@ messages:
       oNews = Send(SYS,@FindNewsByNum,#num=NID_ANNOUNCEMENTS);
       if oNews = $
       {
-         oNews = Create(&NewsAnnouncement,#nid=NID_ANNOUNCEMENTS,
-			               #name=tosnews_god_name,#desc=tosnews_god_desc);
+           oNews = Create(&NewsAnnouncement,#nid=NID_ANNOUNCEMENTS,
+           #name=tosnews_god_name,#desc=tosnews_god_desc);
       }
 
       Send(self,@NewHold,#what=oNews,#new_row=5,#new_col=11,#fine_row=56,#fine_col=16);

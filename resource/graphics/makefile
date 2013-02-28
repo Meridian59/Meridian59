@@ -8,13 +8,16 @@ SOURCEDIR = $(TOPDIR)\resource\graphics
 .SUFFIXES: .bbg
 
 BGFS = \
-	arrowfir.bgf \
-	arrowsil.bgf \
-	arrowner.bgf \
+	$(OUTDIR)\arrowfir.bgf \
+	$(OUTDIR)\arrowsil.bgf \
+	$(OUTDIR)\arrowner.bgf \
+	$(OUTDIR)\mystswd.bgf \
+	$(OUTDIR)\mystwdov.bgf \
+	$(OUTDIR)\povmystsw.bgf \
 
 all: makedirs $(BGFS)
 
 {$(SOURCEDIR)}.bbg.bgf:
-	$(MAKEBGF) -o $(OUTDIR)\$*.bgf @$(SOURCEDIR)\$*.bbg
+	$(MAKEBGF) -o $@ @$<
 
 !include $(TOPDIR)\rules.mak

@@ -18,7 +18,7 @@ resources:
 
    room_name_tos = "The Streets of Tos"
    room_tos = tos.roo
-   tos_music = tos.mp3
+   tos_music = tos.mid
 
    tos_locked_residence_doors = "The doors to this residence are locked."
    tos_locked_residence_door = "The door to this residence is locked."
@@ -43,7 +43,7 @@ properties:
    prRoom = room_tos
    piRoom_num = RID_TOS
 
-   piBaseLight = LIGHT_NICE
+   piBaseLight = ((LIGHT_MAX+LIGHT_NICE)/2)
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 

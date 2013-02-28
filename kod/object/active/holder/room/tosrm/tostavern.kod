@@ -18,7 +18,7 @@ resources:
 
    room_TosTavern = tostavern.roo
    room_name_TosTavern = "Abandoned Fountain Tavern"
-   TosTavern_music = tos.mp3
+   TosTavern_music = tos.mid
    
    news_game_name = "Game Discussion"
    news_game_desc = "A free-for-all about Meridian 59."
@@ -59,8 +59,8 @@ messages:
       oNews = Send(SYS,@FindNewsByNum,#num=NID_GAME);
       if oNews = $
       {
-oNews = Create(&News,#nid=NID_GAME,
-#name=news_game_name,#desc=news_game_desc);
+      oNews = Create(&News,#nid=NID_GAME,
+      #name=news_game_name,#desc=news_game_desc);
       }
       Send(self,@NewHold,#what=oNews,#new_row=7,#new_col=12);
 

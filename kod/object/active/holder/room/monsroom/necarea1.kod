@@ -21,6 +21,8 @@ resources:
 
    Necropolis1_music = nec01.mid
    Necropolis1_loop = necloop1.wav
+   
+   underground_lake_locked = "This door appears to be locked from the inside."
 
 classvars:
 
@@ -68,6 +70,10 @@ messages:
       plEdge_Exits = Cons([LEAVE_EAST, RID_NECROAREA2, 5, 2, ROTATE_NONE], plEdge_exits);
 %      plEdge_Exits = Cons([LEAVE_NORTH, RID_G8, 27, 49, ROTATE_NONE], plEdge_exits);
       plEdge_Exits = Cons([LEAVE_WEST, RID_G8, 27, 49, ROTATE_NONE], plEdge_exits);
+
+      plExits = $;
+      plExits = Cons([ 3, 44, ROOM_LOCKED_DOOR, underground_lake_locked ],plExits);
+      plExits = Cons([ 4, 44, ROOM_LOCKED_DOOR, underground_lake_locked ],plExits);
 
       propagate;
    }

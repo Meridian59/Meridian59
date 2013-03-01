@@ -22,11 +22,13 @@ resources:
 
    tos_locked_residence_doors = "The doors to this residence are locked."
    tos_locked_residence_door = "The door to this residence is locked."
+   
+   tos_locked_tavern_door = "The door to this tavern is locked."
 
 classvars:
 
    vrName = room_name_tos
-   viPermanent_flags = ROOM_GUILD_PK_ONLY | ROOM_LAMPS 
+   viPermanent_flags = ROOM_GUILD_PK_ONLY | ROOM_LAMPS
 
    viTeleport_Row = 60
    viTeleport_Col = 18
@@ -51,7 +53,7 @@ messages:
 
    CreateYellZoneList()
    {
-      plYell_Zone = [ RID_TOS_GRAVEYARD, RID_EAST_TOS, RID_DUKE1 ];
+      plYell_Zone = [ RID_TOS_GRAVEYARD, RID_EAST_TOS, RID_DUKE1, RID_TOS_OLD_TAVERN ];
 
       propagate;
    }
@@ -62,9 +64,9 @@ messages:
       plEdge_Exits = Cons([LEAVE_WEST, RID_TOS_GRAVEYARD, 28, 32, ROTATE_NONE], plEdge_exits);
       
       plExits = $;
-      plExits = Cons([ 50, 10, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
-      plExits = Cons([ 50, 11, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
-      plExits = Cons([ 49, 11, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
+      plExits = Cons([ 50, 10, ROOM_LOCKED_DOOR, tos_locked_tavern_door ],plExits);
+      plExits = Cons([ 50, 11, ROOM_LOCKED_DOOR, tos_locked_tavern_door ],plExits);
+      plExits = Cons([ 49, 11, ROOM_LOCKED_DOOR, tos_locked_tavern_door ],plExits);
 
       plExits = Cons([ 32, 23, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
       plExits = Cons([ 33, 23, ROOM_LOCKED_DOOR, tos_locked_residence_doors ],plExits);
@@ -101,8 +103,8 @@ messages:
 
       % Blacksmith
 
-      plExits = Cons([ 61, 12, RID_TOS_SMITHY,  3, 3, ROTATE_NONE ],plExits);
-      plExits = Cons([ 61, 13, RID_TOS_SMITHY,  3, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 61, 12, RID_TOS_SMITHY, 3, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 61, 13, RID_TOS_SMITHY, 3, 3, ROTATE_NONE ],plExits);
 
       % Abandoned buildings
 
@@ -115,8 +117,8 @@ messages:
       plExits = Cons([ 61, 7, RID_TOS_FORGOTTEN, 3, 3, ROTATE_NONE ],plExits);
       
 
-      plExits = Cons([ 25, 23, RID_TOS_APOTH,  7,  3, ROTATE_NONE ],plExits);
-      plExits = Cons([ 25, 24, RID_TOS_APOTH,  7,  3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 25, 23, RID_TOS_APOTH, 7, 3, ROTATE_NONE ],plExits);
+      plExits = Cons([ 25, 24, RID_TOS_APOTH, 7, 3, ROTATE_NONE ],plExits);
       
 
       propagate;
@@ -260,3 +262,5 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

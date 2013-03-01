@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosInnCellar is TosRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_TosInnCellar = "The Cellar"
+   room_TosInnCellar = toscellar.roo
+   TosInnCellar_music = bar.mid
+
+classvars:
+
+   vrName = room_name_TosInnCellar
+
+   viTerrain_type = TERRAIN_CITY
+
+properties:
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_TosInnCellar
+   piRoom_num = RID_TOS_INN_CELLAR
+   prMusic = TosInnCellar_music
+
+   viTeleport_Row = 9
+   viTeleport_Col = 9
+
+   piBaseLight = LIGHT_NICE
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 1, 4, RID_TOS_INN, 2, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 2, 4, RID_TOS_INN, 2, 2, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 4, 1, RID_TOS_SECRET_PASSAGE, 4, 9, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=5,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

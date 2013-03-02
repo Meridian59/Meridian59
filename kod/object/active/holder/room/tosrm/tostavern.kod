@@ -20,9 +20,6 @@ resources:
    room_name_TosTavern = "Abandoned Fountain Tavern"
    TosTavern_music = tos.mid
    
-   news_game_name = "Game Discussion"
-   news_game_desc = "A free-for-all about Meridian 59."
-
 classvars:
 
    vrName = room_name_TosTavern
@@ -46,8 +43,6 @@ messages:
 
    CreateStandardExits()
    {
-      local oNews;
-
       plExits = $;
 
       % exits back to tos
@@ -55,14 +50,6 @@ messages:
       plExits = Cons([ 9, 7, RID_TOS, 51, 12, ROTATE_NONE ],plExits);
 
       plExits = Cons([ 6, 12, RID_TOS_SECRET_PASSAGE, 4, 2, ROTATE_NONE ],plExits);
-
-      oNews = Send(SYS,@FindNewsByNum,#num=NID_GAME);
-      if oNews = $
-      {
-      oNews = Create(&News,#nid=NID_GAME,
-      #name=news_game_name,#desc=news_game_desc);
-      }
-      Send(self,@NewHold,#what=oNews,#new_row=7,#new_col=12);
 
       propagate;
    }

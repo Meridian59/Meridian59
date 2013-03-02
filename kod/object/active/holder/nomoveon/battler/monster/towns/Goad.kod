@@ -280,7 +280,7 @@ messages:
 
     AcceptingChampions()
     {
-       if length(plCombatants) < 1
+       if plCombatants = $ OR length(plCombatants) < 1
        { return TRUE; }
        return FALSE;
     }

@@ -1,0 +1,65 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosSecretPassage is TosRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_name_TosHidden = "Secret Passage"
+   room_TosHidden = toshidden.roo
+   TosHidden_music = ksong.mid
+
+classvars:
+
+   vrName = room_name_TosHidden
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_NECROPOLIS
+
+properties:
+
+   prRoom = room_TosHidden
+   piRoom_num = RID_TOS_SECRET_PASSAGE
+   prMusic = TosHidden_music
+
+   viTeleport_Row = 2
+   viTeleport_Col = 7
+
+   piBaseLight = LIGHT_NICE
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 4, 10, RID_TOS_INN_CELLAR, 4, 2, ROTATE_NONE ],plExits);
+      plExits = Cons([ 4, 1, RID_TOS_OLD_TAVERN, 6, 11, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+   
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=5,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=3,#new_col=9,
+           #fine_row=32,#fine_col=32,#angle=ANGLE_EAST);
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

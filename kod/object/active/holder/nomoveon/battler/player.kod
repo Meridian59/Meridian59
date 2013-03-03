@@ -118,6 +118,9 @@ constants:
    % What's the maximum stat we can have after modification?
    MAXIMUM_STAT = 70
 
+   % This is the length of the recent combat flag
+   RECENT_COMBAT_WAIT = 2 * 60
+   
 resources:
 
    player_cant_broadcast = \
@@ -953,6 +956,10 @@ properties:
    % Used to construct a string for their description.
    plDonationYears = $
 
+   % This flag is for keeping track of immediate combat. Default setting is 2 minutes in RECENT_COMBAT_WAIT
+   % Should be kept short-lived to accurately reflect whether a player is in or out of combat.
+   piRecentCombatFlag = 0
+   
 messages:
 
    Constructor()
@@ -12331,6 +12338,29 @@ messages:
       return;
    }
 
+	% Recent combat flag erased upon taking a penalty to prevent problems
+	EraseRecentCombatFlag()
+	{
+		piRecentCombatFlag = 0;
+		return;
+	}
+   
+	% Used to set the recent combat flag (often called for both attacker and victim)
+	SetRecentCombatFlag()
+	{
+		piRecentCombatFlag = GetTime();
+		return;
+	}
+   
+	GetRecentCombatFlag()
+	{
+      if (piRecentCombatFlag + RECENT_COMBAT_WAIT) > GetTime()
+         AND NOT Send(SYS,@GetChaosNight)
+      {
+         return TRUE;
+      }
 
+      return FALSE;
+	}
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -87,6 +87,16 @@ messages:
                 
          return FALSE;
       }
+      
+      % Only allow revealing of items held by the caster. Otherwise,
+      % revealing an item on the ground would force everyone present to reload the room.
+      if Send(oTarget,@GetOwner) <> who
+      {
+         send(who,@msgsenduser,#message_rsc=reveal_cant,
+              #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+                
+         return FALSE;
+      }
 
       propagate;
    }
@@ -118,6 +128,13 @@ messages:
       %% This way, you can't advance if you cast spell
       %% on something with no hope of revealing anything.
       piAdvance = send(oTarget,@RevealHiddenAttributes);
+      
+      % Reload inventory to show item's newly revealed colors
+      if piAdvance
+      {
+         Send(who,@ToCliInventory);
+         Send(who,@ToCliUseList);
+      }
       Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
 
       lData= send(oTarget,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);

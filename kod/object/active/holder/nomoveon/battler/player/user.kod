@@ -1651,10 +1651,9 @@ messages:
             Debug(self, "had guild name too short");
             return FALSE;
          }
-         if StringLength(Nth(client_msg, 2)) > MAX_GUILD_NAME_LEN OR
-            StringLength(Nth(client_msg, 13)) > MAX_GUILD_NAME_LEN 
+         if StringLength(Nth(client_msg, 2)) > MAX_GUILD_NAME_LEN
          {
-            Debug(self, "had guild name or password too long");
+            Debug(self, "had guild name too long");
             return FALSE;
          }
          i = 3;

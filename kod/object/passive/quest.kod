@@ -664,7 +664,7 @@ DeadlineExpired()
    }
    else
    {
-      DEBUG("Quest::DeadlineExpired: possible double-expiry going on...");
+%      DEBUG("Quest::DeadlineExpired: possible double-expiry going on...");
    }
 
 	Send( self, @Delete );

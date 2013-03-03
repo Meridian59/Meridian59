@@ -53,6 +53,12 @@ classvars:
    viValue_average = 70
 
    viVigorDrop = 400000
+   
+   % Peach inset when identified
+   viRevealedColor = 99999
+   
+   % Same as resistance rings
+   viUnrevealedColor = 99995
 
 properties:
 

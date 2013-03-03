@@ -41,6 +41,9 @@ classvars:
    
    viValue_average = 280
 
+   % Resistance rings change color once revealed
+   viUnrevealedColor = 99995
+
 properties:
 
    piResistanceType = 0

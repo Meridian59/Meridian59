@@ -34,6 +34,9 @@ classvars:
 
    vrUseMessage = ShockRing_use_rsc
    vrDeadMessage = ShockRing_dead_rsc
+   
+   % Light blue inset when identified
+   viRevealedColor = 99996
 
 properties:
 

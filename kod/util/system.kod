@@ -4640,6 +4640,9 @@ messages:
       plMonsterTemplates = cons(create(&DuskRat),plMonsterTemplates);
       plMonsterTemplates = cons(create(&Thrasher),plMonsterTemplates);
       plMonsterTemplates = cons(create(&EvilEnt),plMonsterTemplates);
+      
+      plMonsterTemplates = cons(create(&Beetle),plMonsterTemplates);
+      plMonsterTemplates = cons(create(&RedBeetle),plMonsterTemplates);
 
       return;
    }

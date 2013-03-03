@@ -1546,6 +1546,8 @@
    TID_DARK_ANGEL    = 51
    TID_MUMMY         = 52
    TID_THRASHER      = 53
+   TID_BEETLE        = 54
+   TID_RBEETLE       = 55
 
    %%% English articles
 

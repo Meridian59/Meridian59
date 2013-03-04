@@ -163,8 +163,8 @@ messages:
       send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who);
       
       % Refresh so DM can see the newly created itematt
-      Send(who,@ToCliInventory);
-      Send(who,@ToCliUseList);
+      Send(Send(oWeapon,@GetOwner),@SomethingChanged,#what=oWeapon);
+      
       return TRUE;
 
    }

@@ -88,16 +88,6 @@ messages:
          return FALSE;
       }
       
-      % Only allow revealing of items held by the caster. Otherwise,
-      % revealing an item on the ground would force everyone present to reload the room.
-      if Send(oTarget,@GetOwner) <> who
-      {
-         send(who,@msgsenduser,#message_rsc=reveal_cant,
-              #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
-                
-         return FALSE;
-      }
-
       propagate;
    }
 
@@ -129,11 +119,10 @@ messages:
       %% on something with no hope of revealing anything.
       piAdvance = send(oTarget,@RevealHiddenAttributes);
       
-      % Reload inventory to show item's newly revealed colors
+      % Reload item to show newly revealed colors
       if piAdvance
       {
-         Send(who,@ToCliInventory);
-         Send(who,@ToCliUseList);
+         Send(Send(oTarget,@GetOwner),@SomethingChanged,#what=oTarget);
       }
       Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
 

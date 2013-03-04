@@ -67,7 +67,10 @@ messages:
       {
          vrName = vrRealName;
          vrDesc = vrRealDesc;
-         piItem_flags = viRevealedColor;
+         if piItem_flags = viUnrevealedColor
+         {
+            piItem_flags = viRevealedColor;
+         }
          return TRUE;
       }
       

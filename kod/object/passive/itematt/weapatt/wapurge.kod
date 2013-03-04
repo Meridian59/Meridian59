@@ -45,6 +45,9 @@ classvars:
 
    vbAppears_in_Happyland = FALSE
 
+   % Purge weapons are yellow
+   viAttributeColor = 40
+   
 properties:
   
    piValue_modifier = 200   %% modify the object's price by 100%

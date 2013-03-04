@@ -43,6 +43,9 @@ classvars:
    viDifficulty = 9
    vrDM_trigger = Paralyzer_dm
 
+   % Hold weapons are purple
+   viAttributeColor = 15
+   
 properties:
   
    % modify the object's price by 100%

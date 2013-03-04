@@ -1656,7 +1656,24 @@ messages:
    {
       return FALSE;
    }
-
+      
+   AddAttributeColor(color=0)
+   {
+      if piItem_flags = 0
+      {
+         piItem_flags = color;
+      }
+      return;
+   }
+   
+   RemoveAttributeColor(color=0)
+   {
+      if piItem_flags = color
+      {
+         piItem_flags = 0;
+      }
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

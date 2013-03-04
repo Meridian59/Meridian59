@@ -48,6 +48,9 @@ classvars:
    vrDM_Trigger = $
    vbAppears_in_Happyland = TRUE
 
+   % Some attributes may alter an item's appearance
+   viAttributeColor = 0
+   
 properties:
 
    plItems_to_Attribute = $
@@ -159,6 +162,9 @@ messages:
       
       send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who);
       
+      % Refresh so DM can see the newly created itematt
+      Send(who,@ToCliInventory);
+      Send(who,@ToCliUseList);
       return TRUE;
 
    }
@@ -317,6 +323,11 @@ messages:
       iValue = send(self,@SetCompound,#random_gen=random_gen,#oItem=oItem,#iPower=iPower);
       lData = cons(iValue,lData);
           
+      if viAttributeColor
+      {
+         Send(oItem,@AddAttributeColor,#color=viAttributeColor);
+      }
+      
       send(self,@AddEffects,#oItem=oItem,#lData=lData,#state1=state1);              
       send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
       
@@ -329,6 +340,11 @@ messages:
    {
       local iValue, lData;
 
+      if viAttributeColor
+      {
+         Send(oItem,@RemoveAttributeColor,#color=viAttributeColor);
+      }
+      
       lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
       send(self,@RemoveEffects,#oItem=oItem,#lData=lData);              
       send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);

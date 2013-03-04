@@ -126,7 +126,10 @@ messages:
       
       if viUnrevealedColor
       {
-         piItem_flags = viUnrevealedColor;
+         if piItem_flags = 0
+         {
+            piItem_flags = viUnrevealedColor;
+         }
       }
       
       propagate;

@@ -138,47 +138,47 @@ messages:
 	  iNum = Random(iSpellPower/3,iSpellPower);
       
     if iNum < 20 
-    {
-		iLevel = Bound(iLevel,1,25);
-		oRisen = Create(&Mummy,#DropsTreasure=FALSE,#Level=iLevel);
-    }
-    else
-    {
-		if iNum < 40
-        {
-			iLevel = Bound(iLevel,1,50);
-			oRisen = Create(&Zombie,#DropsTreasure=FALSE,#Level=iLevel);
-        }
-        else
-        {
-            if iNum < 60
-            {
-				iLevel = Bound(iLevel,1,55);
-				oRisen = Create(&BatteredSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
-            }
-            else
-            {
-				if iNum < 75
-				{
-					iLevel = Bound(iLevel,25,75);
-					oRisen = Create(&Skeleton,#DropsTreasure=FALSE,#Level=iLevel);
-				}
-				else
-				{
-					if iNum < 90
-					{
-						iLevel = Bound(iLevel,50,85);
-						oRisen = Create(&TuskedSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
-					}
-					else
-					{
-						iLevel = Bound(iLevel,75,99);
-						oRisen = Create(&DaemonSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
-					}
-				}
-            }
-        }
-    }
+     {
+               iLevel = Bound(iLevel,1,25);
+	       oRisen = Create(&Mummy,#DropsTreasure=FALSE,#Level=iLevel);
+     }
+      else
+     {
+      if iNum < 40
+     {
+               iLevel = Bound(iLevel,1,50);
+               oRisen = Create(&Zombie,#DropsTreasure=FALSE,#Level=iLevel);
+     }
+      else
+     {
+      if iNum < 60
+     {
+               iLevel = Bound(iLevel,1,55);
+               oRisen = Create(&BatteredSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+     }
+      else
+     {
+      if iNum < 75
+     {
+               iLevel = Bound(iLevel,25,75);
+               oRisen = Create(&Skeleton,#DropsTreasure=FALSE,#Level=iLevel);
+     }
+      else
+     {
+      if iNum < 90
+     {
+               iLevel = Bound(iLevel,50,85);
+               oRisen = Create(&TuskedSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+     }
+      else
+     {
+               iLevel = Bound(iLevel,75,99);
+               oRisen = Create(&DaemonSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+     }
+     }
+     }
+     }
+     }
 
       iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );
       send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);

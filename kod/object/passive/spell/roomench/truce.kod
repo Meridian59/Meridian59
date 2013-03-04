@@ -49,13 +49,14 @@ classvars:
 
    viSpell_num = SID_TRUCE
    viSchool = SS_SHALILLE
-   viMana = 20
-   viSpellExertion = 10
+   viMana = 30
+   viSpellExertion = 20
    viSpell_level = 4
+   viCast_time = 1000
    viChance_To_Increase = 15
 
    % in seconds, since it works off GetTime()
-   viPostCast_time = 3
+   viPostCast_time = 4
 
    % Default animation speed for icon in ms
    viAnimationSpeed = 200
@@ -72,8 +73,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Emerald,1],plReagents);
-      plReagents = Cons([&Yrxlsap,1],plReagents);
+      plReagents = Cons([&Emerald,3],plReagents);
+      plReagents = Cons([&Yrxlsap,2],plReagents);
 
       return;
    }

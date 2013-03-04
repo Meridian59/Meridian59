@@ -29,7 +29,8 @@ resources:
    vampireWand_name_rsc = "wand of vampiric shock"
    vampireWand_icon_rsc = wand3.bgf
    vampireWand_desc_rsc = \
-   " This ancient wand is cold to the touch.  Its dark, smooth surface seems to draw in all of the life force around it."
+   "This ancient wand is cold to the touch.  Its dark, smooth surface seems to draw in all of the life force around it."
+   vampireWand_success_wav_rsc = vamp_wand.wav
 
    vampirewand_target_hit_rsc = \
    "You shiver uncontrollably as %s%s drains your life force away!"
@@ -119,74 +120,77 @@ messages:
    CastSpell(apply_on = $)
    "Do its thing on single target--target already checked to be valid"
    {
-      local iDamage, bGained, iKarma_change;
-
-    %% Give wand user chance to gain.
+      local iDamage, bGained, iKarma_change, oRoom;
+      
+      %% Give wand user chance to gain.
       send(poOwner, @setkilltarget, #target=apply_on);
       send(poOwner, @setplayerflag, #flag=PFLAG_DID_DAMAGE, #value = TRUE);
-
-    %% User moves towards a negative karma.  To be precise, using a vamp wand pushes you
-    %% towards evil (-80) karma.  Changed so that the push isn't as great.
+      
+      %% User moves towards a negative karma.  To be precise, using a vamp wand pushes you
+      %% towards evil (-80) karma.  Changed so that the push isn't as great.
       iKarma_change = send(poOwner,@CalculateKarmaChangeFromAct, #karma_act = -80, 
-	 #karma_doer = send(poOwner,@getKarma), #swing_factor = 6);
+                           #karma_doer = send(poOwner,@getKarma), #swing_factor = 6);
       send(poOwner,@AddKarma,#amount = iKarma_Change);
-
+      
       if random(1,100) < bound(send(poOwner,@getMysticism) + send(poOwner,@GetAim),10,90)
-       {
+      {
          % a hit!
          %
          %assign the damage, and all that goes with it
-
+         
          iDamage = Random(piDamage_min, piDamage_max);
          Send(poOwner, @MsgSendUser, #message_rsc = wand_used_rsc);
-
+         
          bGained = FALSE;
          if Send(poOwner, @GainHealthNormal, #amount = iDamage - 1) > 0
-           {
-              bGained = TRUE;  
-           }
-
+         {
+            bGained = TRUE;  
+         }
+         
          %% Messages all around
-
+         
          Send(apply_on, @MsgSendUser, #message_rsc = vampirewand_target_hit_rsc,
-             #parm1=send(poOwner,@getdef), #parm2=send(poOwner,@getname));
+              #parm1=send(poOwner,@getdef), #parm2=send(poOwner,@getname));
          Send(apply_on, @EffectSendUser, #what = self, #effect = EFFECT_SHAKE);
-
+         
          if Send(apply_on, @AssessDamage, #report = FALSE, #what = poOwner,
-            #damage = iDamage, #aspell = viAttack_spell_type) = $
-           {
-                 Send(poOwner, @KilledSomething, #what = apply_on, #use_weapon = self);
-           }
+                 #damage = iDamage, #aspell = viAttack_spell_type) = $
+         {
+            Send(poOwner, @KilledSomething, #what = apply_on, #use_weapon = self);
+         }
          else
-           {
-             if bGained
-               {
-                 Send(poOwner, @MsgSendUser, #message_rsc=vampirewand_hit_target_rsc,
-                   #parm1=send(apply_on,@getdef),#parm2=send(apply_on,@getname));
-               }
-             else
-               {
-                 Send(poOwner, @MsgSendUser, #message_rsc=vampirewand_hit_target_full_rsc,
-                   #parm1=send(apply_on,@getdef),#parm2=send(apply_on,@getname));
-               }
-           }
-       }
-     else
-       {
+         {
+            if bGained
+            {
+               Send(poOwner, @MsgSendUser, #message_rsc=vampirewand_hit_target_rsc,
+                    #parm1=send(apply_on,@getdef),#parm2=send(apply_on,@getname));
+            }
+            else
+            {
+               Send(poOwner, @MsgSendUser, #message_rsc=vampirewand_hit_target_full_rsc,
+                    #parm1=send(apply_on,@getdef),#parm2=send(apply_on,@getname));
+            }
+            oRoom = Send(poOwner, @GetOwner);
+            Send(oRoom, @SomethingWaveRoom, #what = poOwner, 
+                 #wave_rsc = vampireWand_success_wav_rsc);
+         }
+      }
+      else
+      {
          % miss!
          % send message to user and to target.
-
-           send(poOwner,@msgsenduser,#message_rsc = vampirewand_missed_target,
+         
+         send(poOwner,@msgsenduser,#message_rsc = vampirewand_missed_target,
               #parm1=send(apply_on,@getCapdef), #parm2=send(apply_on,@getname));
-           if isClass(apply_on,&user)
-              {
-                 send(apply_on,@msgsenduser,#message_rsc = vampirewand_missed_you,
-                     #parm1=send(poOwner,@getdef), #parm2=send(poOwner,@getname));
-              }
-       }
-
+         if isClass(apply_on,&user)
+         {
+            send(apply_on,@msgsenduser,#message_rsc = vampirewand_missed_you,
+                 #parm1=send(poOwner,@getdef), #parm2=send(poOwner,@getname));
+         }
+      }
+      
       send(send(poOwner,@getowner),@somethingattacked,#what=poOwner,
-         #victim=apply_on,#use_weapon=self);
+           #victim=apply_on,#use_weapon=self);
 
       return;
    }

@@ -1,0 +1,17 @@
+# mystic sword 
+# groups
+# 1 dropped
+# 2 broken
+# 3 inventory
+
+-s 4
+3
+mystswd_frame0.bmp
+mystswd_frame1.bmp
+mystswd_frame2.bmp
+
+3
+1 1
+1 2
+1 3
+

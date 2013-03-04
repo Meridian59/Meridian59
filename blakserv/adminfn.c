@@ -898,12 +898,12 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 				}
 				else if (LookupAdminConstant(parm_str,&num) == False)
 				{
-					BOOL negate = FALSE;
+					bool negate = false;
 					
 					// INT parameters may have a negative number and still be legal
 					if (blak_val.v.tag == TAG_INT && *parm_str == '-')
 					{
-						negate = TRUE;
+						negate = true;
 						parm_str++;
 					}
 					
@@ -960,7 +960,7 @@ Bool AdminIsValidBlakParm(val_type check_val)
 	case TAG_NIL :
 		return check_val.v.data == 0;
 	case TAG_TEMP_STRING :
-		return TRUE;		// "quote" type parm: Assume any (non-null) string is valid
+		return True;		// "quote" type parm: Assume any (non-null) string is valid
 	}      
 	
 	return True;
@@ -2328,14 +2328,14 @@ void AdminShowMatches(int session_id,admin_parm_type parms[],
 		return;
 	}
 	
-	if (LookupAdminConstant(data_str,&data_int) == FALSE)
+	if (LookupAdminConstant(data_str,&data_int) == False)
 	{
-		BOOL negate = FALSE;
+		bool negate = false;
 		
 		// INT properties may have a negative number and still be legal
 		if (tag_int == TAG_INT && *data_str == '-')
 		{
-			negate = TRUE;
+			negate = true;
 			data_str++;
 		}
 		
@@ -2530,14 +2530,14 @@ void AdminShowReferences(int session_id,admin_parm_type parms[],
 		return;
 	}
 	
-	if (LookupAdminConstant(admin_show_references_data_str,&data_int) == FALSE)
+	if (LookupAdminConstant(admin_show_references_data_str,&data_int) == False)
 	{
-		BOOL negate = FALSE;
+		bool negate = false;
 		
 		// INT properties may have a negative number and still be legal
 		if (tag_int == TAG_INT && *admin_show_references_data_str == '-')
 		{
-			negate = TRUE;
+			negate = true;
 			admin_show_references_data_str++;
 		}
 		
@@ -2705,14 +2705,14 @@ void AdminSetClass(int session_id,admin_parm_type parms[],
 		return;
 	}
 
-	if (LookupAdminConstant(data_str,&data_int) == FALSE)
+	if (LookupAdminConstant(data_str,&data_int) == False)
 	{
-		BOOL negate = FALSE;
+		bool negate = false;
 		
 		// INT properties may have a negative number and still be legal
 		if (tag_int == TAG_INT && *data_str == '-')
 		{
-			negate = TRUE;
+			negate = true;
 			data_str++;
 		}
 		
@@ -2778,14 +2778,14 @@ void AdminSetObject(int session_id,admin_parm_type parms[],
 		return;
 	}
 	
-	if (LookupAdminConstant(data_str,&data_int) == FALSE)
+	if (LookupAdminConstant(data_str,&data_int) == False)
 	{
-		BOOL negate = FALSE;
+		bool negate = false;
 		
 		// INT properties may have a negative number and still be legal
 		if (tag_int == TAG_INT && *data_str == '-')
 		{
-			negate = TRUE;
+			negate = true;
 			data_str++;
 		}
 		
@@ -4242,7 +4242,7 @@ void AdminBlockIP(int session_id,admin_parm_type parms[],
 	if( ( blocktoAdd.s_addr = inet_addr( arg_str ) ) != -1 ) {
 		if(FindBlock( &blocktoAdd ) == NULL )  {
 			AddBlock(-1, &blocktoAdd);
-			aprintf("IP %s bocked\n",inet_ntoa( blocktoAdd ) );
+			aprintf("IP %s blocked\n",inet_ntoa( blocktoAdd ) );
 		} else {
 			DeleteBlock( &blocktoAdd );
 			aprintf("IP %s has been unblocked\n" ,inet_ntoa( blocktoAdd ) );

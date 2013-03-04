@@ -122,7 +122,8 @@ messages:
       
          if send(who,@GetHealth) < 1
 	      {
-	         send(who,@GainHealthNormal,#amount=1);
+            % Don't die: too harsh; makes spell unusable.
+            send(who,@GainHealthNormal,#amount=1);
 	      }
       }
       

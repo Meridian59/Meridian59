@@ -88,26 +88,26 @@ void DeleteAllBlocks()
 	}
 }
 
-BOOL CheckBlockList(struct in_addr* piaPeer)
+bool CheckBlockList(struct in_addr* piaPeer)
 {
 	block_node* pBlock = FindBlock(piaPeer);
 
-	// TRUE means not blocked and can connect
-	// FALSE means block still in effect
+	// true means not blocked and can connect
+	// false means block still in effect
 
 	if (!pBlock)
-		return TRUE;
+		return true;
 
 	if (pBlock->iExpires < 0)
-		return FALSE;
+		return false;
 
 	if (pBlock->iExpires <= GetTime())
 	{
 		DeleteBlock(piaPeer);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 /*

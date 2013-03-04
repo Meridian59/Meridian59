@@ -512,7 +512,7 @@ messages:
    {
       % You get to goto the shrine if you kill someone with 10 more hps
       %  than you have.
-      if IsClass(victim,&User)
+      if IsClass(what,&User) AND IsClass(victim, &User)
       {
          if (Send(what,@GetBaseMaxHealth) + 10) < Send(victim,@GetBaseMaxHealth)
          {

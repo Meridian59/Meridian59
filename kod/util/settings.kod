@@ -63,6 +63,9 @@ properties:
    %  secondary chance.
    piAdvancementRate = 100
 
+   % Multiplier for the amount of %s each mob you kill adds to your levelup chance.
+   piHPGainMultiplier = 1
+   
    % How far up the food chain can basic players learn?  See player for more
    %  specific information on what this number means.
    piMaxLearnPoints = 16
@@ -119,6 +122,9 @@ properties:
    % Justicar
    piMinHPForJusticar = 100
 
+   % If enabled, unsafe penalties send the player to their hometown.
+   % This is intended to prevent being players 'kept offline' by enemies.
+   pbHometownPenaltiesEnable = FALSE
 
 messages:
 
@@ -195,6 +201,11 @@ messages:
    GetAdvancementRate()
    {
       return piAdvancementRate;
+   }
+
+   GetHPGainMultiplier()
+   {
+      return piHPGainMultiplier;
    }
 
    GetKillKarmaSwingNeutral()
@@ -288,6 +299,12 @@ messages:
    GetMinHPForJusticar()
    {
       return piMinHPForJusticar;
+   }
+   
+   % This returns whether players go to a room's blink spot or their hometown when they pen
+   HometownPenaltiesEnabled()
+   {
+      return pbHometownPenaltiesEnable;
    }
 
 end

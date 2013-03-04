@@ -58,6 +58,7 @@ OBJS = \
         $(OUTDIR)\cursor.obj \
         $(OUTDIR)\client3d.obj \
         $(OUTDIR)\md5.obj \
+	     $(OUTDIR)\crc.obj \
         $(OUTDIR)\xlat.obj \
         $(OUTDIR)\rops.obj \
         $(OUTDIR)\guest.obj \
@@ -125,6 +126,12 @@ $(OUTDIR)\trig.c $(OUTDIR)\trig.h: $(OUTDIR)\maketrig.exe
 
 $(OUTDIR)\pal.c: $(OUTDIR)\makepal.exe $(PALETTEFILE)
 	$(OUTDIR)\makepal $(PALETTEFILE) $(OUTDIR)
+
+$(OUTDIR)\crc.obj : $(TOPDIR)\util\crc.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
+
+$(OUTDIR)\md5.obj : $(TOPDIR)\util\md5.c
+	$(CC) -Fo$(OUTDIR)/ $(CFLAGS) /Fd$(OUTDIR)\vc90.pdb /FpCpch -c $**
 
 $(OUTDIR)\meridian.exe: $(OBJS) $(DEFFILE) $(OUTDIR)\client.res
 	$(LINK) $(LINKFLAGS) @<<

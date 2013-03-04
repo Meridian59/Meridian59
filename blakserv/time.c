@@ -23,9 +23,10 @@ void InitTime()
 {
 /* I use the multimedia timers (set to accuracy of 1ms here) because
 for millisecond timing because they are more accurate than 
-	GetTickCount(). */
+	GetTickCount().
 	
 	timeBeginPeriod(1);
+    */
 }
 
 int GetTime()
@@ -147,7 +148,7 @@ UINT64 GetMilliCount()
 
 	// force rollover for testing
 
-	static int first = TRUE;
+	static int first = true;
 	static unsigned int offset;
 	static unsigned int prev_time = 0;
 	unsigned int retval;
@@ -155,7 +156,7 @@ UINT64 GetMilliCount()
 
 	if (first)
 	{
-		first = FALSE;
+		first = false;
 		offset = ~current_time - 20000;
 	}
 

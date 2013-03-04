@@ -44,8 +44,6 @@ void MainServer()
 	
 	InitInterface(); /* starts a thread with the window */
 
-   WrapInit();
-	
 	InitMemory(); /* memory needs channels in general, but need to start before config,
 	so just be careful. */
 	
@@ -117,7 +115,6 @@ void MainServer()
 	/* returns if server termiated */
 	
 	MainExitServer();
-   WrapShutdown();
 }
 
 void MainExitServer()

@@ -174,6 +174,7 @@ resources:
       "~IYour aggression halts your attempt to escape from the current situation."
 
    player_improved = "~I~BYou have improved in the art of %s."
+   player_improved_wav_rsc = imp.wav
    player_aggressor = "Shal'ille frowns upon your unprovoked attack."
    player_safety_caught = \
       "Hey!  You almost hit %s%s!  Good thing your safety was on!"
@@ -702,6 +703,9 @@ resources:
    player_admin_added_skill = "Skill added."
    player_admin_modified_skill = "Skill modified."
    player_admin_removed_skill = "Skill removed."
+
+   player_logged_on_wav_rsc = player_login_or_out.wav
+   player_logged_off_wav_rsc = player_logout2.wav
 
 classvars:
 
@@ -1811,19 +1815,19 @@ messages:
 
       if plDonationYears <> $
       {
-        % Example: Benefactor of Meridian in 2010, 2011
-	AppendTempString(player_donation_title);
-	i = 0;
-        for year in plDonationYears
-        {
-	  if i <> 0
- 	  {
-	    AppendTempString(player_donation_separator);
-          }
-	  AppendTempString(year);
-	  i = i + 1;
-        }
-	AppendTempString(player_dot);
+         % Example: Benefactor of Meridian in 2010, 2011
+	      AppendTempString(player_donation_title);
+	      i = 0;
+         for year in plDonationYears
+         {
+	         if i <> 0
+ 	         {
+	            AppendTempString(player_donation_separator);
+            }
+	         AppendTempString(year);
+	         i = i + 1;
+         }
+	      AppendTempString(player_dot);
       }
 
       AddPacket(0,GetTempString());
@@ -1833,7 +1837,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oSnoop;
+      local i, oGame, oCaramo, oSnoop, oRoom;
       
       for i in plPassive
       {
@@ -1912,12 +1916,20 @@ messages:
       % over all players became far too expensive.
       Send(self,@ComputeMaxMana);
 
+      % Tell others that we're here
+      oRoom = Send(self, @GetOwner);
+      if oRoom <> $ AND NOT IsClass(self, &DM) 
+      {
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_logged_on_wav_rsc);
+      }
+
       return;
    }
 
    UserLogoffHook()
    {
-      local i, oSnoop;
+      local i, oSnoop, oRoom;
    
       oSnoop = Send(SYS,@GetInvestigator);
       if oSnoop <> $
@@ -1962,6 +1974,14 @@ messages:
       {
          DeleteTimer(ptRescue);
          ptRescue = $;
+      }
+
+      % Tell others that we're leaving
+      oRoom = Send(self, @GetOwner);
+      if oRoom <> $ AND NOT IsClass(self, &DM) 
+      {
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_logged_off_wav_rsc);
       }
       
       return;
@@ -6354,6 +6374,14 @@ messages:
          return 0;
       }
 
+      % Do not change karma if player is good, act is good, but not as good as player.
+      % I.e. only change karma if good player does bad stuff (or vice versa).
+      if (karma_doer > 0 AND karma_act > 0 AND karma_doer > karma_act)
+      OR (karma_doer < 0 AND karma_act < 0 AND karma_doer < karma_act)
+      {
+         return 0;
+      }
+
       iBase = karma_doer  - karma_act;
     
       iChange = - ((iBase*iBase*ibase)/2500 + (5*iBase));
@@ -6562,7 +6590,7 @@ messages:
                       refigureschools = TRUE)
    {
       local i, bFound, elemnum, iability, bUsed, spellname, iChange,
-            newability, oSpell;
+            newability, oSpell, oRoom;
 
       oSpell = Send(sys,@FindSpellByNum,#num=spell_num);
       if oSpell = $
@@ -6609,7 +6637,10 @@ messages:
       Send(self,@DrawStatSpell,#index=elemnum);
       if report AND iChange > 0
       {
+         oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_improved_wav_rsc);
       }
       
       if iChange > 0 
@@ -7121,7 +7152,8 @@ messages:
 
    ChangeSkillAbility(Skill_num = 0, amount = 0, report = FALSE, refigureschools = TRUE, bDM = FALSE)
    {
-      local i, bFound, elemnum, iability, bUsed, iChange, skillname, newability, oSkill;
+      local i, bFound, elemnum, iability, bUsed, iChange, skillname, 
+            newability, oSkill, oRoom;
  
       oSkill = Send(SYS,@FindSkillByNum,#num=skill_num);
       if oSkill = $
@@ -7174,7 +7206,10 @@ messages:
       Send(self,@DrawStatSkill,#index=elemnum);
       if report AND (iChange > 0)
       {
+         oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=skillName);
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_improved_wav_rsc);
       }
       
       if iChange > 0 
@@ -7540,7 +7575,7 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, roll, iNumber, oWeapon;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
             
       gain = 0;
       roll = FALSE;
@@ -7616,6 +7651,9 @@ messages:
             gain = gain / 2;
             roll = FALSE;
          }
+
+         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,100);
+         gain = gain * gainmult;
 
          piGain_chance = piGain_chance + gain;
 

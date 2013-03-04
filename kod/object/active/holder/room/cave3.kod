@@ -122,6 +122,33 @@ messages:
          }
       }
 
+   % Brax enterance
+      if IsClass(what,&Player)
+      {
+         if row = 28 AND col=73
+         {
+            lPassive = send(what,@GetHolderPassive);
+            for i in lPassive
+            {
+               each_obj = send(what,@HolderExtractObject,#data=i);
+               if isClass(each_obj,&SanctuaryKey)
+               {
+                  send(each_obj,@Delete);
+                  send(what,@MsgSendUser,#message_rsc=cave3_key_disappears);
+                  Send(SYS,@UtilGoNearSquare,#what=what,
+                  #where=Send(SYS,@FindRoomByNum,#num=RID_NECROAREA1),
+                  #new_row=3,#new_col=43,#new_angle=ANGLE_WEST);
+
+                  return TRUE;
+               }
+            }
+
+            send(what,@MsgSendUser,#message_rsc=cave3_locked_door);
+
+            return TRUE;
+         }
+      }
+
       propagate;
    }
 
@@ -132,7 +159,7 @@ messages:
       lPassive = send(self,@GetHolderPassive);
 
       for i in lPassive
-      { 
+      {
          each_obj = send(self,@HolderExtractObject,#data=i);
          if isClass(each_obj,&JewelOfFroz)
          {

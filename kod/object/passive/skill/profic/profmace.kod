@@ -31,7 +31,7 @@ classvars:
    vrSkill_intro = Maceprof_skill_intro
    viSchool = SKS_FENCING
    viSkill_num = SKID_PROFICIENCY_MACE
-   viSkill_Level = 1
+   viSkill_Level = 2
    viChance_to_increase = 40
 
 properties:

@@ -31,7 +31,7 @@ classvars:
    vrSkill_intro = Shortswordproficiency_skill_intro
    viSchool = SKS_FENCING
    viSkill_num = SKID_PROFICIENCY_SHORT_SWORD
-   viSkill_level = 2
+   viSkill_level = 1
    viChance_to_increase = 60
 
 properties:

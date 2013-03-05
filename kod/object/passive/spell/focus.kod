@@ -126,7 +126,7 @@ messages:
       local iTime;
 
       iTime = (time * (200-iSpellPower)) / 200;
-	  iTime = bound(iTime,500,60000);
+      iTime = bound(iTime,500,60000);
 
       return iTime;
    }

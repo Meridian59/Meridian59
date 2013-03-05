@@ -1,0 +1,84 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ambrosia, for supercharging administrators
+% dumbed down a bit to make suitable for quest prizes.
+
+chaosfd is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   chaosfd_name_rsc = "Frenzy Food"
+   chaosfd_name_plural_rsc = "Frenzy Food"
+   chaosfd_icon_rsc = mushroom.bgf
+   chaosfd_desc_rsc = \
+      "At first glance, these mushrooms appear common, but look at the psychedelic colors!  "
+      "This is actually Frenzy Food! No Stomache No Problem!"
+	  
+	chaosfd_NoEat = "You can't eat this potion when it is not a frenzy. DUMMY!"
+
+classvars:
+
+   vrName = chaosfd_name_rsc
+   vrName_plural = chaosfd_name_plural_rsc
+   vrIcon = chaosfd_icon_rsc
+   vrDesc = chaosfd_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 5000				% Increased weight dramatically to ensure no mortal is able to pick these up outside of a frenzy / global give.
+   viValue_average = 1
+
+properties:
+		
+   piItem_flags = 118			% Change the color appearance of the inkycap to differentiate.	
+   viFilling = 0                 % Ignore's the characters stomache to allow for constant frenzy killing...
+   viNutrition = 200               % Brings vigor to character max
+   piNumber = 1
+
+messages:
+
+   Constructor()
+   {
+      % NOTE: If you change these colors, change the xlat in OrnamentalObject.
+      %       Search for OO_MUSEUM_INKYCAP
+      piItem_flags = 118;
+      
+      propagate;
+   }
+   
+  NewApplied(what = $,apply_on = $)
+   {
+	if Send(SYS, @GetChaosNight)					% checks to see if ChaosNight is Active.
+		{
+			Send(self,@SendTaste,#what=what,#apply_on=apply_on);
+			Send(what,@WaveSendUser,#wave_rsc=vrEat_wav);
+			Send(apply_on,@EatSomething,#nutrition=viNutrition,#filling=viFilling);
+			Send(self,@SubtractNumber,#number=1);
+		}
+	else
+		{
+			Send(apply_on,@MsgSendUser,#message_rsc=chaosfd_NoEat);
+			Send(self,@Delete);											% deletes itslef if someone tries to use it outside frenzy.	
+
+		}
+		
+	return;
+	}
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

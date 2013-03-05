@@ -1,9 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 SummonEvilTwin is Spell
 
-% TODO: Fix it so that if someone actually KILLS the evil twin, the spell goes
-%  away.
-
 constants:
 
    include blakston.khd
@@ -21,7 +18,7 @@ resources:
    summonEvilTwin_cast_rsc = \
       "An evil twin mysteriously appears beside your target."
    summonEvilTwin_failed_rsc = \
-      "There is too much summoning magic focused here to summon an evil twin."
+      "There is already an evil twin lurking in this room."
    summonEvilTwin_bad_target = "You can't cast evil twin on %s%s"
    summonEvilTwin_no_self = \
       "You decide you really don't want to summon your evil against yourself."
@@ -37,12 +34,10 @@ classvars:
    viSpell_num = SID_EVIL_TWIN
    viSchool = SS_RIIJA
    viSpell_level = 5
-   viMana = 20
-   viManaDrain = 10
-   viDrainTime = 5000
+   viMana = 10
 
-   viSpellExertion = 15
-   viCast_time = 1000
+   viSpellExertion = 20
+   viCast_time = 500
    viHarmful = TRUE
    viNoNewbieOffense = TRUE
 
@@ -106,7 +101,7 @@ messages:
       oRoom = Send(SYS,@UtilGetRoom,#what=who);
 
       if Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
-         OR Send(oRoom,@CountHoldingHowMany,#class=&EvilTwin) > 10
+         OR Send(oRoom,@CountHoldingHowMany,#class=&EvilTwin) > 0
          OR Send(oRoom,@CountHoldingSummoned) > Send(SYS,@GetPlayerSummonedObjectLimit)
       {
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_failed_rsc);
@@ -139,9 +134,7 @@ messages:
       Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_cast_rsc);
 
       Send(SYS,@AddReflection,#who=oTarget,#oReflection=oTwin);
-
-      Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
-           #state=[oTwin,oRoom],#addicon=True,#lastcall=False);
+	  
 
       propagate;
    }
@@ -153,56 +146,7 @@ messages:
       return;
    }
 
-   StartPeriodicEnchantment( who = $, state = $ )
-   {
-      % If caster runs out of mana or loses trance, spell ends.
-      if Send(who,@GetMana) < viManaDrain * 2
-      {
-         Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
-              #state=state,#addicon=FALSE,#lastcall=TRUE);
-      }
-      else
-      {      
-         Send(who,@StartEnchantment,#what=self,#time=viDrainTime,
-              #state=state,#addicon=FALSE,#lastcall=FALSE);
-      }
-      
-      Send(who,@LoseMana,#amount=viManaDrain);
-      
-      return;
-   }
-
-   BreakTrance( who = $, state = $, event = $ )
-   {
-      % If caster runs out of mana or loses trance, spell ends.
-      if event = EVENT_NEWOWNER
-      {
-         if Send(First(state),@GetOwner) = Nth(state,2)
-         {
-            Send(First(state),@Delete);   
-            Send(who,@RemoveEnchantment,#what=self,#state=state);
-         }
-         else
-         {
-            SetNth(state,2,$);
-         }
-
-         propagate;
-      }
-
-      Post(First(state),@Delete);
-      Send(who,@RemoveEnchantment,#what=self,#state=state);
-      
-      propagate;
-   }
-
-   SetSpellPlayerFlag(who=$,state=$)
-   {
-      Send(who,@SetTranceFlag);
-      
-      return;
-   }
-
+ 
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

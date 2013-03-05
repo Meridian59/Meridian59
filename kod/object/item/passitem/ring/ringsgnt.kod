@@ -91,28 +91,13 @@ messages:
 
    RewardReturner(who = $)
    {
-      local iValue, oMoney;
-
-      % PAYOFF: newbie=10*value, oldbie=value
-      iValue = Send(self,@GetValue);
-
-      if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {
-         iValue = iValue * 10;
-      }
-
-      oMoney = Send(who,@GetMoneyObject);
-
-      if oMoney = $
-      {
-         oMoney = Create(&Money,#number=iValue);
-         Send(who,@NewHold,#what=oMoney);
-      }
-      else
-      {
-         Send(oMoney,@AddNumber,#number=iValue);
-      }
-
+		
+	
+      local oPotion;
+         oPotion = Create(&LoyaltyPotion);
+         Send(who,@NewHold,#what=oPotion);
+	  
+	  
       return;
    }
 

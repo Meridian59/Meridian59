@@ -5997,9 +5997,11 @@ messages:
          }
       }
       
-      % If the player is just logging on rather than actually changing rooms, don't destroy walls.
-      % piSafeEnterRadius in Settings controls the area of walls we eliminate. Set that to zero to turn this off.
+      % If the player is angeled, DM, unguilded, or just logging on, don't destroy walls.
       if GetTime() - piLastLoginTime > 0
+         AND Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND Send(Send(self,@GetOwner), @AllowGuildAttack,#what=self)
+         AND NOT IsClass(self,&DM)
       {
          Send(Send(self,@GetOwner),@DestroyWallsAtEntrance,#entering_obj=self);
       }

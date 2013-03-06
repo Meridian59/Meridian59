@@ -125,6 +125,10 @@ properties:
    % If enabled, unsafe penalties send the player to their hometown.
    % This is intended to prevent being players 'kept offline' by enemies.
    pbHometownPenaltiesEnable = FALSE
+   
+   % If this is enabled a player will lose half their mana and all buffs when they log off in a safe zone.
+   % This is to prevent 'character trains' with pre-buffed characters
+   pbLogSafePenaltyEnable = FALSE
 
 messages:
 
@@ -305,6 +309,12 @@ messages:
    HometownPenaltiesEnabled()
    {
       return pbHometownPenaltiesEnable;
+   }
+   
+   % Returns if a player should recive a 'penalty' for logging of in a safe zone
+   LogSafePenaltyEnable()
+   {
+      return pbLogSafePenaltyEnable;
    }
 
 end

@@ -49,12 +49,9 @@ classvars:
    viGoBadDamage = 0
 
 properties:
-
    
    piGoBadTime = 0
    piItem_flags = PT_GRAY_TO_RED
-   
-   
 
 messages:
 
@@ -63,12 +60,9 @@ messages:
       propagate;
    }
 
-
+   
    ApplyPotionEffects(apply_on = $)
-   {
-      
-	  
-	  
+   {	  
 		if Send(apply_on,@GetBaseMaxHealth) < 40								% check to make sure they are over 40 HP.
 		AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)				% check to make sure they are not an outlaw
 	    AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_MURDERER)			% check to make sure they are not a murderer
@@ -86,11 +80,8 @@ messages:
 			
       return;
     }
-  
-  
 
-   %%% Old Potion stuff
-
+   
    ReqNewApply(what = $,apply_on = $)
    {
       if what = apply_on
@@ -100,6 +91,7 @@ messages:
       
       return FALSE;
    }
+   
    
    NewApplied(what = $,apply_on = $)
    {
@@ -114,16 +106,19 @@ messages:
       return;
    }
 
+   
    IsBeverage()
    {
       return TRUE;
    }
 
+   
    CanIdentify()
    {
       return TRUE;
    }
 
+   
    RevealHiddenAttributes()
    {
       return FALSE;

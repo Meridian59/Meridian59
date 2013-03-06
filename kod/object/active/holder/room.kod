@@ -3873,5 +3873,73 @@ messages:
       return FALSE;
    }
 
+   DestroyWallsAtEntrance(entering_obj=$)  
+   {
+      local i, each_obj, safeEnterRadius;
+      
+      % Radius of wall deletion area.
+      safeEnterRadius = 2;
+      
+      if NOT IsClass(entering_obj,&User)
+      {
+         return;
+      }
+            
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&ActiveWallElement)
+         {
+            if Send(self,@ObjectsWithinDistance,#distance=safeEnterRadius,#obj_one=each_obj,#obj_two=entering_obj)
+            {
+               Post(each_obj,@Delete);
+            }
+         }
+      }
+      
+      % Separate check through plPassive for passive wall elements
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&PassiveWallofFire)
+            OR IsClass(each_obj,&SporeCloud)
+            OR IsClass(each_obj,&PassiveWallofLightning)
+         {
+            if Send(self,@ObjectsWithinDistance,#distance=safeEnterRadius,#obj_one=each_obj,#obj_two=entering_obj)
+            {
+               Post(each_obj,@Delete);
+            }
+         }
+      }
+      return;
+   }
+
+   % Compares the distance of two objects within a room
+   % Returns TRUE if they are within distance
+   ObjectsWithinDistance(distance=0,obj_one=$,obj_two=$)
+   {
+      local iRowDiff, iColDiff, iSquaredDistance;
+      
+      if obj_one=$ OR obj_two=$
+      {
+         return FALSE;
+      }
+      
+      % Don't compare objects in different rooms
+      if Send(obj_one,@GetOwner) <> Send(obj_two,@GetOwner)
+      {
+         return FALSE;
+      }
+      
+      iRowDiff = Send(obj_one,@GetRow) - Send(obj_two,@GetRow);
+      iColDiff = Send(obj_one,@GetCol) - Send(obj_two,@GetCol);
+      iSquaredDistance = (iRowDiff*iRowDiff) + (iColDiff*iColDiff);
+      
+      if iSquaredDistance <= (distance*distance)
+      {
+         return TRUE;
+      }      
+      return FALSE;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

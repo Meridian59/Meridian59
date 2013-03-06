@@ -5997,6 +5997,13 @@ messages:
          }
       }
       
+      % If the player is just logging on rather than actually changing rooms, don't destroy walls.
+      % piSafeEnterRadius in Settings controls the area of walls we eliminate. Set that to zero to turn this off.
+      if GetTime() - piLastLoginTime > 0
+      {
+         Send(Send(self,@GetOwner),@DestroyWallsAtEntrance,#entering_obj=self);
+      }
+      
       propagate;
    }
 

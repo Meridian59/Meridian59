@@ -218,6 +218,11 @@ messages:
       return;
    }
 
+      CanMorphTo()
+   {
+      % Is a boss mob, this is a nono
+      return FALSE;
+   }      
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

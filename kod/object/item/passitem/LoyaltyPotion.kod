@@ -36,8 +36,8 @@ classvars:
    vrName = LoyaltyPotion_name_rsc
    vrIcon = LoyaltyPotion_icon_rsc
    
-   viBulk = 780
-   viWeight = 780
+   viBulk = 1000
+   viWeight = 1000
    viValue_average = 0
 
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY

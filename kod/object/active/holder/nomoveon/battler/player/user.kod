@@ -645,11 +645,12 @@ messages:
 
    UserLogoff()
    {
-      local theTime, iPenaltyTime, i;
+      local theTime, iPenaltyTime, i, oSpell;
       
       piTimeLoggedIn = Send(self,@GetTimeLoggedIn);
       Send(self,@BreakTrance);
       pbLogged_on = FALSE;
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PURGE);
 
       Send(self,@CancelIfOffer);
       Send(self,@UserLogoffHook);
@@ -686,6 +687,13 @@ messages:
       {
          % Reset our logoff penalty time since we're logging safely.
          piLogoffPenaltyTime = 0;
+         
+         % If enabled and and a player logs off in a safe zone he will lose half his mana and all buffs
+         if Send(Send(SYS, @GetSettings), @LogSafePenaltyEnable)
+         {
+            Send(self,@LoseMana,#amount=(piMana/2));
+            Send(oSpell,@DoPurge,#who=self,#iChance=100);
+         }
       }
       
       if piLogoffPenaltyCount < 0

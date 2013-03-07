@@ -48,9 +48,9 @@ properties:
 
 messages:
 
-   GetDamage(who=$,target=$)
+   GetDamage(who=$,target=$,shatter_chance=10)
    {
-      if target <> $ AND random(1,100) <= 10
+      if target <> $ AND random(1,100) <= shatter_chance
       {
          send(who,@MsgSendUser,#message_rsc=nerudite_arrow_explodes);
          if isClass(target,&Player)

@@ -45,7 +45,11 @@ classvars:
    viHits_init_min = 100
    viHits_init_max = 150
 
-   viSpell_modifier = 0
+   % Same as battle bow
+   viSpell_modifier = -30
+   
+   % Increased chance to shatter nerudite arrows
+   viShatter_chance = 40
 
    % What's the basic color of the bow?
    viBaseXLAT = XLAT_TO_GREEN
@@ -54,6 +58,43 @@ properties:
 
 messages:
 
+   GetBaseDamage(who=$,target=$)
+   {
+      local iDamage, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+      ammotype = send(self,@GetAmmoType);
+      for i in send(poOwner,@GetPlayerUsing)
+      {
+         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         {
+            if (send(i,@GetAmmoType) = ammotype)
+            {
+               if IsClass(i,&NeruditeArrow)
+               {
+                   iDamage = send(i,@GetDamage,#who=who,#target=target,#shatter_chance=viShatterChance);
+                   break;
+               }
+               else
+               {
+                   iDamage = send(i,@GetDamage,#who=who,#target=target);
+                   break;
+               }
+            }
+         }
+      }
+	  
+	  iDamage = iDamage + viWeaponDamage;
+	  
+      return iDamage;
+   }
+   
    DoShatter()
    {
       send(self,@WeaponBroke);

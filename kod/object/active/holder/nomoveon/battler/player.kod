@@ -1570,8 +1570,7 @@ messages:
          if StringEqual(psHonor,player_newbie_honor_string)
          {
             Send(self,@SetHonorString);
-			Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);				% If character is 2 months old set their flag to PKKILL enable
-																						% to bring more danger to "mules"
+			Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);			% If character is over 2 months old, remove their guardian angel to make mules more dangerous.
          }
       }      
 

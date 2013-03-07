@@ -1578,6 +1578,7 @@ messages:
    }
    
    MuleCheck()
+   "Message sent to players to check if they are older than 2 months and have PKILL Enable set to true"
 	% Added to check current character's ages and if they are over 
 	% 2 months old confirm that their PKILL_ENABLE flag is set to true.
    {

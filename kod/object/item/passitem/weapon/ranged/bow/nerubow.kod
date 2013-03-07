@@ -78,7 +78,7 @@ messages:
             {
                if IsClass(i,&NeruditeArrow)
                {
-                   iDamage = send(i,@GetDamage,#who=who,#target=target,#shatter_chance=viShatterChance);
+                   iDamage = send(i,@GetDamage,#who=who,#target=target,#shatter_chance=viShatter_chance);
                    break;
                }
                else

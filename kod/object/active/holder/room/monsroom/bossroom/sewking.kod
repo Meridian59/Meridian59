@@ -154,7 +154,7 @@ messages:
       plBossTemplate = [ [&LupoggKing, 6, 32] ];
       plHenchmenTemplate = [ [&Lupogg, 14,32], [&Lupogg, 7,41], [&Lupogg, 13,26]];
 
-      plBossTreasureTemplate = [ [&OfferingKraanan, 11, 50, 29, 45], [&LongBow, 12, 52, 13, 23],
+      plBossTreasureTemplate = [ [&OfferingKraanan, 11, 50, 29, 45], [&NeruditeBow, 12, 52, 13, 23],
 				 [&MysticSword, 12, 53, 13, 32], [&DiscipleRobe, 11, 52, 20, 31]  ];
       
       return;

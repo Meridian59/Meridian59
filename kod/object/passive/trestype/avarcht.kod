@@ -34,8 +34,7 @@ messages:
                      [ &BattleBow, 15 ],
                      [ &Money, 10],
                      [ &Lute, 5],
-                     [ &PurifyWand, 2],
-                     [ &NeruditeBow, 1],
+                     [ &PurifyWand, 3],
                      [ &NeruditeArmor, 1],
                      [ &BrittleWand, 1],
                      [ &KillingFieldScroll, 1]

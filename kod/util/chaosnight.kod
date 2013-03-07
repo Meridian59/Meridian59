@@ -159,6 +159,7 @@ messages:
                               Create(&JewelOfFroz),
                               Create(&JewelOfFroz),
                               Create(&Gift),
+							  Create(&Gift),
 							  Create(&Helm),
 							  Create(&Neruditebow),
 							  Create(&Platearmor),

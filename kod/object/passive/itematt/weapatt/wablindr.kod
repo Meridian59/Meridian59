@@ -42,6 +42,9 @@ classvars:
    viDifficulty = 9
    vrDM_trigger = blinder_dm
 
+   % Blind weapons are black
+   viAttributeColor = 44
+   
 properties:
   
    piValue_modifier = 200   %% modify the object's price by 100%

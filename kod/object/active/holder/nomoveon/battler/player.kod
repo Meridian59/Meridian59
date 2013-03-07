@@ -1570,12 +1570,29 @@ messages:
          if StringEqual(psHonor,player_newbie_honor_string)
          {
             Send(self,@SetHonorString);
-			Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
+			Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);				% If character is 2 months old set their flag to PKKILL enable
+																						% to bring more danger to "mules"
          }
       }      
 
       return age;
    }
+   
+   MuleCheck()
+	% Added to check current character's ages and if they are over 
+	% 2 months old confirm that their PKILL_ENABLE flag is set to true.
+   {
+		local MuleAge;
+		
+		MuleAge = Send(self,@GetAge);
+		
+		if MuleAge >= 2
+			{
+				Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
+			}
+	
+		return;
+	}
 
    SetAge(age = 0)
    "Admin supported."

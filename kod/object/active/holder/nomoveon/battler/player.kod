@@ -1570,6 +1570,7 @@ messages:
          if StringEqual(psHonor,player_newbie_honor_string)
          {
             Send(self,@SetHonorString);
+			Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=TRUE);
          }
       }      
 

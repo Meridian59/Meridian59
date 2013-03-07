@@ -1584,7 +1584,7 @@ messages:
    {
 		local MuleAge;
 		
-		MuleAge = Send(self,@GetAge);
+		MuleAge = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
 		
 		if MuleAge >= 2
 			{

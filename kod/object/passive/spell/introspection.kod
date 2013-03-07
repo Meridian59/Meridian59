@@ -1,0 +1,108 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Introspection is Spell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   Introspection_name_rsc = "introspection"
+   Introspection_icon_rsc = punchico.bgf
+
+   caster_Introspection_msg = "You take some time to reflect upon your fighting techniques."
+   Introspection_desc_rsc = \
+   "Allows you to meditate for a moment to think about ways to improve your combat abilities."
+
+   Introspection_message_nochance = "You have no chance of gaining a hit point, but will in about %i kills."
+   Introspection_Message = "You have a %i out of %i chance (~B%i~B percent) of gaining a health point with each kill."
+   Introspection_combat = "~BCombat stats: ~BOffense is %i, Defense is %i"
+
+classvars:
+   vrName = Introspection_name_rsc
+   vrIcon = Introspection_icon_rsc
+   vrDesc = Introspection_desc_rsc
+
+   viCast_time = 0
+   
+   viSpell_num = SID_INTROSPECTION
+   viSpell_level = 1
+   viSchool = SS_KRAANAN
+   viMana = 5
+   viSpellExertion = 0
+   viChance_To_Increase = 35
+  
+properties:
+     
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local oRoom, lActive;
+
+      lTargets = Cons(who, lTargets);
+      oRoom = Send(who,@GetOwner);
+      lActive = Send(oRoom,@GetHolderActive);
+
+      Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
+    
+      Send(self,@ComputeEvaluateInfo,#who=First(lTargets),#dmis=who);
+      
+   propagate;
+   }
+
+   ComputeEvaluateInfo(who=$,dmis=$)
+   {
+      local highmark, gainchance, total, maxhealth;
+      if dmis=$ or who=$  { debug("Bad data!");  return FALSE; }
+      
+      if IsClass(who,&Player)
+      {
+         highmark = send(who,@GetHighMark);
+         gainchance = send(who,@GetGainChance);
+         maxhealth = send(who,@GetMaxHealth);
+         if gainchance < 0
+         {
+            send(dmis,@msgsenduser,#message_rsc = Introspection_message_nochance,
+                 #parm1=(gainchance/2));
+         } else {
+            total = bound(((gainchance*100)/highmark),1,100);
+            send(dmis,@msgsenduser,#message_rsc = Introspection_message,
+                 #parm1=gainchance,#parm2=highmark,#parm3=total);
+         }      
+
+      }
+
+      send(dmis,@msgsenduser,#message_rsc=Introspection_combat,#parm1=send(who,@GetOffense),
+           #parm2=send(who,@GetDefense));
+
+
+      return;
+   }      
+   
+   CanForget()
+   "Introspection will not be killed by a forget potion."
+   {
+      return FALSE;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

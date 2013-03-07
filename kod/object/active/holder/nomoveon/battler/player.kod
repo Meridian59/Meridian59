@@ -2410,6 +2410,7 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_INTROSPECTION,#initial=TRUE);
       
       return;
    }
@@ -10738,6 +10739,7 @@ messages:
          iLevel = Send(oSpellObj,@GetLevel);
 
          if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+            AND NOT IsClass (oSpellObj,&Introspection) % Also don't count Introspection.
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {

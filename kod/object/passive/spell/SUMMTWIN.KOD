@@ -102,7 +102,8 @@ messages:
 
       if Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
          OR Send(oRoom,@CountHoldingHowMany,#class=&EvilTwin) > 0
-         OR Send(oRoom,@CountHoldingSummoned) > Send(SYS,@GetPlayerSummonedObjectLimit)
+         OR Send(oRoom,@CountHoldingSummoned) > 
+            Send(Send(SYS,@GetSettings), @GetPlayerSummonedObjectLimit)
       {
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_failed_rsc);
          

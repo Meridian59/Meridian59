@@ -5575,7 +5575,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell;
 
       if piMana > piMax_mana
       {
@@ -5616,6 +5616,7 @@ messages:
          {
             iTime = Send(oSpell,@AdjustManaTime,#who=self,#time=iTime);
          }
+      }
 
       return iTime;
    }

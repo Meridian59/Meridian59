@@ -4862,7 +4862,7 @@ messages:
          % Overwrite init value with shop price.
          if Send(what,@GetShopPrice) > 0
          {
-                  x = Send(what,@GetShopPrice);
+            x = Send(what,@GetShopPrice);
          }
 		 
          y = Send(Send(SYS,@GetParliament),@GetFactionPriceBonus,#who=who,

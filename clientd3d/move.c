@@ -13,7 +13,7 @@
  * a move by telling us to move the user back to his original position.
  *
  * A user's move is divided into a sequence of equally sized small "steps".  At each step,
- * we check if the user has moved off the room, too close to a wall, or across a grid 
+ * we check if the user has moved off the room, too close to a wall, or across a grid
  * line.  This allows us to check walls and grid lines in a straightforward way, without
  * worrying about a large move that crosses multiple grid lines, etc.  On fast machines,
  * dividing a small move into many steps can result in roundoff errors, so the number of steps
@@ -38,7 +38,7 @@
  * the user cannot enter the square of such things such as monsters and other players.
  * We disallow these moves here to prevent the kod from having to reject them.  Teleporters
  * are a special case:  we are allowed to move onto them, but then the kod will move the
- * user to another square.  After moving onto a teleporter, we prevent any further user 
+ * user to another square.  After moving onto a teleporter, we prevent any further user
  * moves until the kod moves the user.
  */
 
@@ -96,11 +96,11 @@ static Bool pos_valid = FALSE;          // True when server_x and server_y are v
 static int  server_x = 0, server_y = 0; // Last position we've told server we are, in FINENESS units
 static int  server_angle = 0;           // Last angle we've told server we have, in server angle units
 static int  last_move_action = 0;       // Last movement action; used to determine speed of motion
-
+static int  motx = 0 , moty = 0;		// Total Accumulated directional movement along each axis between movement updates.
+static int  cumdt = 0;					// Total accumulated time between movement updates
 static int  min_distance = 48;          // Minimum distance player is allowed to get to wall
 static int  min_distance2 = 48*48;  	// Minimum distance squared
 static Bool blocked = FALSE;            // Set to true when a move hits a wall
-
 static WallData *worstWall = NULL;
 WallData *lastBlockingWall = NULL;
 static BSPnode *lastBlockingNode = NULL;
@@ -115,6 +115,18 @@ static WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, i
 static BSPnode *FindIntersection(BSPnode *node, int xOld, int yOld, int xNew, int yNew, int z, WallData **wallIntersect);
 static void SlideAlongWall(WallData *wall, int xOld, int yOld, int *xNew, int *yNew);
 
+//Dynamically update latency based on BP_PING response from server
+void UpdateLatency(DWORD dwLatency){
+	const int n = static_cast<int>(dwLatency);
+    const unsigned long int a2 = static_cast<unsigned long int>(n);
+
+	if (n > 200){
+		debug(("Updated latency for movement!"));
+		real_move_interval = a2;
+	}
+	else
+		real_move_interval = 200;
+}
 void ResetPlayerPosition(void)
 {
    lastBlockingWall = NULL;
@@ -170,7 +182,7 @@ void UserMovePlayer(int action)
       if (!(player.viewFlags & REMOTE_VIEW_MOVE))
 	 return;
    }
-   // Find out how far to move based on time elapsed:  always move at a rate of 
+   // Find out how far to move based on time elapsed:  always move at a rate of
    // constant rate per MOVE_DELAY milliseconds.
    switch (action)
    {
@@ -206,11 +218,12 @@ void UserMovePlayer(int action)
       return;
 
    dt = now - last_move_time;
-
+   if (last_move_time > 0)
+   		cumdt +=dt;
    // Watch for int wraparound in timeGetTime()
    if (dt <= 0)
       dt = 1;
-   
+
    if (dt < MOVE_DELAY && config.animate)
    {
       gravityAdjust = 1.0;
@@ -220,6 +233,7 @@ void UserMovePlayer(int action)
    {
       gravityAdjust = (double)MOVE_DELAY / (double)dt;
    }
+
    last_move_time = now;
 
    switch (action)
@@ -270,7 +284,9 @@ void UserMovePlayer(int action)
 //   yinc = dy;// / num_steps;
    xinc = dx / num_steps;
    yinc = dy / num_steps;
-
+   //debug(("Player xinc,yinc, num_steps: (%i,%i,%i,%i:%i)\n",xinc,yinc,num_steps,now));
+   motx +=xinc*num_steps;
+   moty +=yinc*num_steps;
    last_x = player_obj->motion.x;
    last_y = player_obj->motion.y;
    last_z = player_obj->motion.z;
@@ -340,12 +356,12 @@ void UserMovePlayer(int action)
 	    }
 	 }
       }
-      
+
       // Don't try to slide to current location
       if (x == last_x && y == last_y)
 		  x = x;
 //	 break;
-      
+
       // Get around integer divide yuckiness
       if (y < 0)
 	 row = -1;
@@ -378,7 +394,7 @@ void UserMovePlayer(int action)
       // Check next part of step with new floor height or current player height, whichever
       // is higher (works correctly when user is falling)
       z = max(z, player_obj->motion.z);
-      
+
       // See if an object prevents this move
       retval = MoveObjectAllowed(&current_room, last_x, last_y, &x, &y, z);
 
@@ -471,7 +487,7 @@ void SlideAlongWall(WallData *wall, int xOld, int yOld, int *xNew, int *yNew)
    double wall_dy = (double)(wall->y1 - wall->y0);
    double num = dx * wall_dx + dy * wall_dy;
    double denom = wall_dx * wall_dx + wall_dy * wall_dy;
-    
+
    *xNew = xOld + FloatToInt(wall_dx * num / denom);
    *yNew = yOld + FloatToInt(wall_dy * num / denom);
 }
@@ -512,12 +528,12 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
       return NULL;
 
    // Skip this node if we're too far away from its bounding box
-   if((node->bbox.x0 - new_x > min_distance) || 
+   if((node->bbox.x0 - new_x > min_distance) ||
       (new_x - node->bbox.x1 > min_distance) ||
-      (node->bbox.y0 - new_y > min_distance) || 
+      (node->bbox.y0 - new_y > min_distance) ||
       (new_y - node->bbox.y1 > min_distance))
       return NULL;
-       
+
    inode = &node->u.internal;
 
    // See if we're close to plane of this node--distance between point and line
@@ -540,7 +556,7 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
       int maxx = max(wall->x0, wall->x1) + min_distance;
       int miny = min(wall->y0, wall->y1) - min_distance;
       int maxy = max(wall->y0, wall->y1) + min_distance;
-	 
+
       // See if we are near the wall itself, and not just the wall's plane
       if ((new_x >= minx) && (new_x <= maxx) && (new_y >= miny) && (new_y <= maxy))
       {
@@ -564,12 +580,12 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
 	    below_height = sector_depths[SectorDepth(other_sector->flags)];
 
 	 // Can't step up too far; watch bumping your head; see if passable
-	 if ((sidedef->below_bmap == NULL || 
-		 (sidedef->below_bmap != NULL && 
+	 if ((sidedef->below_bmap == NULL ||
+		 (sidedef->below_bmap != NULL &&
 	       (wall->z1 - below_height - z) <= MAX_STEP_HEIGHT))
 		&&
-		(sidedef->above_bmap == NULL || 
-		 (sidedef->above_bmap != NULL && wall->z2 - z >= player.height)) 
+		(sidedef->above_bmap == NULL ||
+		 (sidedef->above_bmap != NULL && wall->z2 - z >= player.height))
 		&&
 		(sidedef->flags & WF_PASSABLE))
 	    continue;
@@ -626,7 +642,7 @@ WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_
  *   If player is moving to a square with a teleporter, set next_move_time.
  *
  *   Returns:
- * 
+ *
  *   MOVE_BLOCKED if move is illegal.
  *   MOVE_OK if move is legal.
  *   MOVE_CHANGED if a modified move is legal.
@@ -642,21 +658,21 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
    BYTE speed;
    BOOL moveReported = FALSE;
    int idObjNotify = -1;
-   
+
    for (l = room->contents; l != NULL; l = l->next)
    {
       room_contents_node *r = (room_contents_node *) (l->data);
-      
+
       if (r->obj.id == player.id)
       {
          if ((int)r->obj.id == idLastObjNotify)
             idLastObjNotify = -1;
          continue;
       }
-      
+
       dx = abs(r->motion.x - *new_x);
       dy = abs(r->motion.y - *new_y);
-      
+
       switch (ObjectMoveonType(r->obj))
       {
       case OF_MOVEON_NOTIFY:
@@ -687,20 +703,20 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
          if (dx > MIN_NOMOVEON || dy > MIN_NOMOVEON ||
              (dx * dx + dy * dy) > MIN_NOMOVEON * MIN_NOMOVEON)
             continue;
-         
+
          // Allowed to move away from object
          new_distance = dx * dx + dy * dy;
-         
+
          dx = abs(r->motion.x - player.x);
          dy = abs(r->motion.y - player.y);
          old_distance = dx * dx + dy * dy;
          if (new_distance > old_distance)
             break;
-         
+
          // Try to slide along object -- object represented by a square of side MIN_NOMOVEON
          dx = abs(r->motion.x - *new_x);
          dy = abs(r->motion.y - *new_y);
-         
+
          if (dx < MIN_NOMOVEON)
             if (r->motion.x > *new_x)
                *new_x = r->motion.x - MIN_NOMOVEON;
@@ -710,24 +726,24 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
                if (r->motion.y > *new_y)
                   *new_y = r->motion.y - MIN_NOMOVEON;
                else *new_y = r->motion.y + MIN_NOMOVEON;
-         
+
          // See if modified move is legal
          if (!FindIntersection(current_room.tree, old_x, old_y, *new_x, *new_y, z ,&wall))
             return MOVE_CHANGED;
-         
+
          return MOVE_BLOCKED;
          break;
-         
+
       case OF_MOVEON_TELEPORTER:
          if (dx > MIN_NOMOVEON || dy > MIN_NOMOVEON ||
              (dx * dx + dy * dy) > MIN_NOMOVEON * MIN_NOMOVEON)
             continue;
-         
+
          next_move_time = timeGetTime() + TELEPORT_DELAY;
          break;
       }
    }
-   
+
    return MOVE_OK;
 }
 
@@ -798,15 +814,17 @@ void ServerMovedPlayer(void)
 /************************************************************************/
 /*
  * MoveUpdateServer:  Update the server's knowledge of our position and angle, if necessary.
- */ 
+ */
 void MoveUpdateServer(void)
 {
    DWORD now = timeGetTime();
    int angle;
 
    // Inform server if necessary
-   if (now - server_time < MOVE_INTERVAL || !pos_valid)
-      return;
+   if (now - server_time < real_move_interval || !pos_valid)
+   		return;
+  // if (now - server_time < MOVE_INTERVAL || !pos_valid)
+  //    return;
 
    MoveUpdatePosition();
 
@@ -823,7 +841,7 @@ void MoveUpdateServer(void)
  * MoveUpdatePosition:  Update the server's knowledge of our position, if the user
  *   has moved a sufficient distance.  This procudure doesn't check if we've sent our
  *   position to the server recently.
- */ 
+ */
 void MoveUpdatePosition(void)
 {
    int x, y;
@@ -845,13 +863,17 @@ void MoveUpdatePosition(void)
       server_x = x;
       server_y = y;
       server_time = timeGetTime();
+      debug(("MoveUpdatePosition: motx,moty : cumdt (%d,  %d : %d)\n", motx, moty, cumdt));
+      motx = 0;
+      moty = 0;
+      cumdt =0;
    }
 }
 /************************************************************************/
 /*
  * MoveSetValidity:  valid tells whether our knowledge of the player's position
  *   is correct.  This should be False during initialization.
- */ 
+ */
 void MoveSetValidity(Bool valid)
 {
    room_contents_node *player_obj;
@@ -1019,12 +1041,12 @@ void UserFlipPlayer(void)
 
 
 // Move at most HEIGHT_INCREMENT per HEIGHT_DELAY milliseconds
-#define HEIGHT_INCREMENT (MAXY / 4)    
+#define HEIGHT_INCREMENT (MAXY / 4)
 #define HEIGHT_DELAY     100
 #define HEIGHT_MAX_OFFSET (3 * MAXY / 2)    // Farthest you can look up or down
 /************************************************************************/
-/* 
- * BounceUser:  Modify user's height a little to give appearance that 
+/*
+ * BounceUser:  Modify user's height a little to give appearance that
  *   he's bouncing a little as he walks.
  *   dt is # of milliseconds since last user motion
  */
@@ -1113,7 +1135,7 @@ int PlayerGetHeight(void)
 }
 /************************************************************************/
 /*
- * PlayerGetHeightOffset: 
+ * PlayerGetHeightOffset:
  */
 int PlayerGetHeightOffset(void)
 {

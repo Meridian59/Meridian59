@@ -80,17 +80,8 @@ client (meridian.exe) with command line flags, like this:
 meridian.exe /U:joe.smith /W:password /H:localhost /P:5959 
 
 
-CONTACT INFORMATION FOR CONTENT OWNERS
+CONTACT INFORMATION
 
 You can contact us at meridian59.email@gmail.com.  Our Web site is
 http://meridian59.com, where you can also read about the history of
 the game.
-
-CONTACT INFORMATION FOR HACKJOB
-
-And so, it begins.  This branch is a fork of the main Meridian59 open 
-source server.  We don't aim to break the spirit of the game, but
-things will certainly change.
-
-Send me a message or notification.  I will try to be dilligent about 
-responding.

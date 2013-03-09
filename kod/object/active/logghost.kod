@@ -79,6 +79,8 @@ resources:
 
    LogoffGhost_someone = "Someone"
 
+   LogoffGhost_poof_wav_rsc = logoffghost_poof.wav
+
 classvars:
 
 
@@ -211,9 +213,27 @@ messages:
          }
       }
 
-      % Send this person to the room's blink coordinates.  This helps get 
-      %  people out of continuous crash situations and mounting penalties.
-      Send(poGhostedPlayer,@AdminGoToBlink);
+      % Play a sound audible in the room
+      if poOwner <> $ 
+      {
+         Send(poOwner, @SomethingWaveRoom, #what=self,
+              #wave_rsc = LogoffGhost_poof_wav_rsc);
+      }
+
+      % Send this person to the room's blink coordinates, or to their hometown if
+	  %  the Hometown Penalties setting is on and the player is not angeled.
+	  %  This helps get people out of continuous crash situations and mounting penalties.
+	  %  Hometown Penalties is intended to keep PvP players from being 'kept offline' by opponents.
+      
+	  if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+		AND Send(Send(SYS, @GetSettings), @HometownPenaltiesEnabled)
+	  {
+	     Send(poGhostedPlayer,@AdminGoToSafety);
+	  }
+	  else
+	  {
+	     Send(poGhostedPlayer,@AdminGoToBlink);
+	  }
 
       Send(self,@Delete);
 

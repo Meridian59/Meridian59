@@ -28,7 +28,8 @@ resources:
    berserkerring_use_rsc = \
       "Your blood boils with lust for battle.  You yearn to strike down your "
       "enemies... you want only to ~B~rKILL~n!"
-  
+   berserkerring_use_wav_rsc = bezerker_ring.wav
+
    berserkerring_unuse_rsc = \
       "The battle fury from the berserker ring leaves you."
 
@@ -56,15 +57,21 @@ messages:
 
    NewUsed(what = $)
    {
+      local oRoom;
+
       if vrName = vrRealName
       {
          % Only give the message if it's identified.
          Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_use_rsc);
+
+         % Play sound
+         oRoom = Send(poOwner, @GetOwner);
+         Send(oRoom, @SomethingWaveRoom, #what = poOwner, 
+              #wave_rsc = berserkerring_use_wav_rsc);
       }
 
       Send(what,@AddAttackModifier,#what=self);
-      
-      
+            
       propagate;
    }
 

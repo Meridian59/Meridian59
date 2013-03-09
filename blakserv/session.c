@@ -924,7 +924,7 @@ unsigned short __inline GetCRC16BufferList(buffer_node *blist)
 	
 	while (blist != NULL)
 	{
-		crc32 = WrapCRC32Incremental(crc32,blist->buf,blist->len_buf);
+		crc32 = CRC32Incremental(crc32,blist->buf,blist->len_buf);
 		blist = blist->next;
 	}
 	

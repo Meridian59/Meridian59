@@ -152,8 +152,7 @@ messages:
          {
             % Be sure the player deserves to be able to 
             %  'steer' to this monster.
-            if (Send(i,@GetLevel) >= (iSpellPower - random(0,10))
-               AND iSpellPower < 99)
+            if Send(i,@GetLevel) >= (iSpellPower - random(0,10))
                AND NOT bDM
             {
                return;

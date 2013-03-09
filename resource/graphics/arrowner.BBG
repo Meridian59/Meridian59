@@ -6,17 +6,17 @@
 #* arrows
 -s 5
 11
-arn000.bmp     [0, -250] 
-arn315.bmp     [0, -200] 
-arn270.bmp     [0, -200] 
-arn225.bmp     [0, -200] 
-arn180.bmp     [0, -200] 
-arn135.bmp     [0, -200] 
-arn090.bmp     [0, -200] 
-arn045.bmp     [0, -200] 
-arrbro.bmp     [0, -200] 
-arrdis.bmp     [0, -200] 
-arrdis.bmp     [0, -200] 
+arrowner.bgf_frame0.bmp     [0, -200] 
+arrowner.bgf_frame1.bmp     [0, -200] 
+arrowner.bgf_frame2.bmp     [0, -200] 
+arrowner.bgf_frame3.bmp     [0, -200] 
+arrowner.bgf_frame4.bmp     [0, -200] 
+arrowner.bgf_frame5.bmp     [0, -200] 
+arrowner.bgf_frame6.bmp     [0, -200] 
+arrowner.bgf_frame7.bmp     [0, -200] 
+arrowner.bgf_frame8.bmp     [0, 0] 
+arrowner.bgf_frame9.bmp     [0, 0] 
+arrowner.bgf_frame10.bmp    [0, 0] 
 4
  8   1 2 3 4 5 6 7 8 
  1   9 

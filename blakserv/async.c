@@ -116,7 +116,7 @@ void AcceptSocketConnections(int socket_port,int connection_type)
 	if (!ConfigBool(SOCKET_NAGLE))
 	{
 		/* turn off Nagle algorithm--improve latency? */
-		xxx = TRUE;
+		xxx = true;
 		if (setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(char *)&xxx,sizeof xxx))
 		{
 			eprintf("AcceptSocketConnections error setting sock opts 3\n");
@@ -301,139 +301,6 @@ Bool CheckMaintenanceMask(SOCKADDR_IN *addr,int len_addr)
 	}
 	return False;
 }
-
-void AcceptSMTPSocketConnections(int socket_port)
-{
-	SOCKET sock;
-	SOCKADDR_IN sin;
-	struct linger xlinger;
-	int xxx;
-	
-	sock = socket(AF_INET,SOCK_STREAM,0);
-	if (sock == INVALID_SOCKET) 
-	{
-		eprintf("AcceptSMTPSocketConnections socket() failed WinSock code %i\n",
-			GetLastError());
-		closesocket(sock);
-		return;
-	}
-	
-	/* Set a couple socket options for niceness */
-	
-	xlinger.l_onoff=0;
-	if (setsockopt(sock,SOL_SOCKET,SO_LINGER,(char *)&xlinger,sizeof(xlinger)) < 0)
-	{
-		eprintf("AcceptSMTPSocketConnections error setting sock opts 1\n");
-		return;
-	}
-	
-	xxx=1;
-	if (setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,(char *)&xxx,sizeof xxx) < 0)
-	{
-		eprintf("AcceptSMTPSocketConnections error setting sock opts 2\n");
-		return;
-	}
-	
-	memset(&sin,sizeof sin,0);
-	sin.sin_family = AF_INET;
-	sin.sin_addr.s_addr = htonl(INADDR_ANY);
-	sin.sin_port = htons((short)socket_port);
-	
-	if (bind(sock,(struct sockaddr *) &sin,sizeof(sin)) == SOCKET_ERROR) 
-	{
-		eprintf("AcceptSMTPSocketConnections bind failed, WinSock error %i\n",
-			GetLastError());
-		closesocket(sock);
-		return;
-	}	  
-	
-	if (listen(sock,5) < 0) /* backlog of 5 connects by OS */
-	{
-		eprintf("AcceptSMTPSocketConnections listen failed, WinSock error %i\n",
-			GetLastError());
-		closesocket(sock);
-		return;
-	}
-	
-	StartAsyncSMTPSocketAccept(sock);
-	/* when we get a connection, it'll call AsyncSMTPSocketAccept */
-}
-
-void AsyncSMTPSocketAccept(SOCKET sock,int event,int error)
-{
-	SOCKET new_sock;
-	SOCKADDR_IN acc_sin;    /* Accept socket address - internet style */
-	int acc_sin_len;        /* Accept socket address length */
-	struct sockaddr peer_info;
-	int peer_len;
-	struct in_addr peer_addr;
-	unsigned long blocked;
-	smtp_node *smtp;
-	
-	
-	if (event != FD_ACCEPT)
-	{
-		eprintf("AsyncSMTPSocketAccept got non-accept %i\n",event);
-		return;
-	}
-	
-	if (error != 0)
-	{
-		eprintf("AsyncSMTPSocketAccept got error %i\n",error);
-		return;
-	}
-	
-	acc_sin_len = sizeof acc_sin; 
-	
-	new_sock = accept(sock,(struct sockaddr *) &acc_sin,&acc_sin_len);
-	if (new_sock == SOCKET_ERROR) 
-	{
-		eprintf("AcceptSMTPSocketConnections accept failed, error %i\n",
-			GetLastError());
-		return;
-	}
-	
-	peer_len = sizeof peer_info;
-	if (getpeername(new_sock,&peer_info,&peer_len) < 0)
-	{
-		eprintf("AcceptSMTPSocketConnections getpeername failed error %i\n",
-			GetLastError());
-		return;
-	}
-	
-	if (WSAAsyncSelect(new_sock,hwndMain,0,0) != 0)
-	{
-		eprintf("AcceptSMTPSocketConnection can't undo Async Select\n");
-		closesocket(new_sock);
-		return;
-	}
-	
-	blocked = 0;
-	if (ioctlsocket(new_sock,FIONBIO,&blocked) == SOCKET_ERROR)
-	{
-		eprintf("AcceptSMTPSocketConnection can't make socket blocking, %i\n",WSAGetLastError());
-		closesocket(new_sock);
-		return;
-	}
-	
-	smtp = (smtp_node *) AllocateMemory(MALLOC_ID_SMTP,sizeof(smtp_node));
-	
-	// this seems to be the right thing to do !
-	memcpy(&peer_addr,(long *)&(acc_sin.sin_addr),sizeof(struct in_addr));
-	
-	strcpy(smtp->source_name,inet_ntoa(peer_addr));
-	smtp->sock = new_sock;
-	smtp->forward_path = NULL;
-	smtp->reverse_path = NULL;
-	smtp->data = NULL;
-	smtp->len_buf = 0;
-	smtp->state = SMTP_READY;
-	
-	/* this kicks off a thread to handle everything */
-	HandleSMTPConnection(smtp);
-}
-
-
 
 static HANDLE name_lookup_handle;
 void AsyncNameLookup(HANDLE hLookup,int error)

@@ -1,0 +1,17 @@
+# mystic sword - first person
+# groups
+# 1-4 attacking
+# 5 carried
+
+5
+pomystsw_frame0.bmp    
+pomystsw_frame1.bmp   
+pomystsw_frame2.bmp  
+pomystsw_frame3.bmp 
+pomystsw_frame4.bmp
+5
+ 1      1
+ 1      2
+ 1      3
+ 1      4
+ 1      5

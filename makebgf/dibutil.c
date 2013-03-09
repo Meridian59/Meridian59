@@ -44,21 +44,21 @@ PDIB DibOpenFile(LPSTR szFile)
     pdib = DibReadBitmapInfo(fh);
 
     if (!pdib)
-        return NULL;
-
+       return NULL;
+    
     /* How much memory do we need to hold the DIB */
 
-    dwBits = pdib->biSizeImage;
+    dwBits = DibWidthBytes(pdib) * pdib->biHeight;
     dwLen  = pdib->biSize + DibPaletteSize(pdib) + dwBits;
 
     /* Can we get more memory? */
 
-    p = GlobalReAllocPtr(pdib,dwLen,0);
+    p = realloc(pdib,dwLen);
 
     if (!p)
     {
-        GlobalFreePtr(pdib);
-        pdib = NULL;
+       free(pdib);
+       pdib = NULL;
     }
     else
     {
@@ -74,16 +74,16 @@ PDIB DibOpenFile(LPSTR szFile)
        /* Flip the bits to make bitmap top-down */
        width = DibWidthBytes(pdib);
        height = DibHeight(pdib);
-       temp = (LPBYTE) GlobalAllocPtr(GMEM_MOVEABLE, width);
+       temp = (BYTE *) malloc(width);
        for (i=0; i < height / 2; i++)
        {
-	  row1 = bits + (height - i - 1) * width; 
-	  row2 = bits + i * width; 
-	  memcpy(temp, row1, (size_t) width);
-	  memcpy(row1, row2, (size_t) width);
-	  memcpy(row2, temp, (size_t) width);
+          row1 = bits + (height - i - 1) * width; 
+          row2 = bits + i * width; 
+          memcpy(temp, row1, (size_t) width);
+          memcpy(row1, row2, (size_t) width);
+          memcpy(row2, temp, (size_t) width);
        }
-       GlobalFreePtr(temp);
+       free(temp);
     }
 
     close(fh);
@@ -139,38 +139,38 @@ PDIB DibReadBitmapInfo(int fh)
      */
     switch (size = (int)bi.biSize)
     {
-        default:
-        case sizeof(BITMAPINFOHEADER):
-            break;
-
-        case sizeof(BITMAPCOREHEADER):
-            bc = *(BITMAPCOREHEADER*)&bi;
-            bi.biSize               = sizeof(BITMAPINFOHEADER);
-            bi.biWidth              = (DWORD)bc.bcWidth;
-            bi.biHeight             = (DWORD)bc.bcHeight;
-            bi.biPlanes             =  (UINT)bc.bcPlanes;
-            bi.biBitCount           =  (UINT)bc.bcBitCount;
-            bi.biCompression        = BI_RGB;
-            bi.biSizeImage          = 0;
-            bi.biXPelsPerMeter      = 0;
-            bi.biYPelsPerMeter      = 0;
-            bi.biClrUsed            = 0;
-            bi.biClrImportant       = 0;
-
-            lseek(fh,(LONG)sizeof(BITMAPCOREHEADER)-sizeof(BITMAPINFOHEADER),SEEK_CUR);
-
-            break;
+    default:
+    case sizeof(BITMAPINFOHEADER):
+       break;
+       
+    case sizeof(BITMAPCOREHEADER):
+       bc = *(BITMAPCOREHEADER*)&bi;
+       bi.biSize               = sizeof(BITMAPINFOHEADER);
+       bi.biWidth              = (DWORD)bc.bcWidth;
+       bi.biHeight             = (DWORD)bc.bcHeight;
+       bi.biPlanes             =  (UINT)bc.bcPlanes;
+       bi.biBitCount           =  (UINT)bc.bcBitCount;
+       bi.biCompression        = BI_RGB;
+       bi.biSizeImage          = 0;
+       bi.biXPelsPerMeter      = 0;
+       bi.biYPelsPerMeter      = 0;
+       bi.biClrUsed            = 0;
+       bi.biClrImportant       = 0;
+       
+       lseek(fh,(LONG)sizeof(BITMAPCOREHEADER)-sizeof(BITMAPINFOHEADER),SEEK_CUR);
+       
+       break;
     }
-
+    
     nNumColors = DibNumColors(&bi);
-
+    
     if (bi.biSizeImage == 0)
         bi.biSizeImage = DibSizeImage(&bi);
 
     if (bi.biClrUsed == 0)
         bi.biClrUsed = DibNumColors(&bi);
 
-    pdib = (PDIB)GlobalAllocPtr(GMEM_MOVEABLE,(LONG)bi.biSize + nNumColors * sizeof(RGBQUAD));
+    pdib = (PDIB) malloc((LONG)bi.biSize + nNumColors * sizeof(RGBQUAD));
 
     if (!pdib)
         return NULL;
@@ -194,21 +194,21 @@ PDIB DibReadBitmapInfo(int fh)
     if (size == sizeof(BITMAPCOREHEADER))
     {
        /*
-	* convert a old color table (3 byte entries) to a new
-	* color table (4 byte entries)
-	*/
+        * convert a old color table (3 byte entries) to a new
+        * color table (4 byte entries)
+        */
        read(fh,(LPVOID)pRgb,nNumColors * sizeof(RGBTRIPLE));
        
        for (i=nNumColors-1; i>=0; i--)
        {
-	  RGBQUAD rgb;
-	  
-	  rgb.rgbRed      = ((RGBTRIPLE FAR *)pRgb)[i].rgbtRed;
-	  rgb.rgbBlue     = ((RGBTRIPLE FAR *)pRgb)[i].rgbtBlue;
-	  rgb.rgbGreen    = ((RGBTRIPLE FAR *)pRgb)[i].rgbtGreen;
-	  rgb.rgbReserved = (BYTE)0;
-	  
-	  pRgb[i] = rgb;
+          RGBQUAD rgb;
+          
+          rgb.rgbRed      = ((RGBTRIPLE FAR *)pRgb)[i].rgbtRed;
+          rgb.rgbBlue     = ((RGBTRIPLE FAR *)pRgb)[i].rgbtBlue;
+          rgb.rgbGreen    = ((RGBTRIPLE FAR *)pRgb)[i].rgbtGreen;
+          rgb.rgbReserved = (BYTE)0;
+          
+          pRgb[i] = rgb;
        }
     }
     else

@@ -118,7 +118,7 @@ int CreateStringWithLen(char *buf,int len)
    return string_id;
 }
 
-Bool LoadBlakodString(char *new_str,int len_str,int string_id)
+Bool LoadBlakodString(FILE *f,int len_str,int string_id)
 {
    string_node *snod;
 
@@ -133,7 +133,8 @@ Bool LoadBlakodString(char *new_str,int len_str,int string_id)
    if (len_str != 0)
    {
       snod->data = (char *)AllocateMemory(MALLOC_ID_STRING,len_str+1);
-      memcpy(snod->data,new_str,len_str);
+      if (!fread(snod->data, 1, len_str, f))
+         return False;
       snod->data[len_str] = '\0';
    }
    else

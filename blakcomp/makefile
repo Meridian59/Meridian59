@@ -5,7 +5,7 @@ TOPDIR=..
 
 SOURCEDIR = $(BLAKCOMPDIR)
 
-LIBS = wrap.lib
+LIBS =
 
 OBJS = \
         $(OUTDIR)\lexyy.obj \

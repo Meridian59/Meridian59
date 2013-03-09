@@ -38,7 +38,7 @@ static Bool  ResourceCompare(void *r1, void *r2);
 static DWORD IdHash(void *idnum, DWORD tablesize);
 static Bool  IdResourceCompare(void *idnum, void *r1);
 static void  FreeRsc(void *entry);
-static BOOL  RscAddCallback(char *fname, int res, char *string);
+static bool  RscAddCallback(char *fname, int res, char *string);
 static Bool  LoadRscFiles(char *filespec);
 static Bool  LoadRscFilesSorted(char *filespec);
 /******************************************************************************/
@@ -240,7 +240,7 @@ void FreeResources(void)
 * RscAddCallback:  Called for each new resource that's loaded from a file.
 *   Add given resource to table.
 */
-BOOL RscAddCallback(char *fname, int res, char *string)
+bool RscAddCallback(char *fname, int res, char *string)
 {
 	resource_type entry, r;
 	
@@ -270,7 +270,7 @@ BOOL RscAddCallback(char *fname, int res, char *string)
 		}
 	}
 	
-	return TRUE;
+	return true;
 }
 /******************************************************************************/
 /*

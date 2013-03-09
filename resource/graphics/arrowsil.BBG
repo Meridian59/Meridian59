@@ -1,0 +1,24 @@
+# silver arrow
+#^Applied to Hotspot: 0
+#*Groups: 3
+#* arrows
+#* arrows
+#* arrows
+-s 5
+11
+arrowsil.bgf_frame0.bmp     [0, -200] 
+arrowsil.bgf_frame1.bmp     [0, -200] 
+arrowsil.bgf_frame2.bmp     [0, -200] 
+arrowsil.bgf_frame3.bmp     [0, -200] 
+arrowsil.bgf_frame4.bmp     [0, -200] 
+arrowsil.bgf_frame5.bmp     [0, -200] 
+arrowsil.bgf_frame6.bmp     [0, -200] 
+arrowsil.bgf_frame7.bmp     [0, -200] 
+arrowsil.bgf_frame8.bmp     [0, 0] 
+arrowsil.bgf_frame9.bmp     [0, 0] 
+arrowsil.bgf_frame10.bmp    [0, 0] 
+4
+ 8   1 2 3 4 5 6 7 8 
+ 1   9 
+ 1   10 
+ 1   11

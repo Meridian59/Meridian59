@@ -131,7 +131,6 @@ messages:
          if random_x < 1         %% we have a winner!
          {  
             oItem = create(first(i));
-            debug("Made item",send(oItem,@getname));
             send(self,@AddSelfToRandomItem,#oItem=oItem,#who=who);
             
             break;

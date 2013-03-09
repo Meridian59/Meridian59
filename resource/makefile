@@ -3,12 +3,12 @@
 TOPDIR=..
 !include $(TOPDIR)\common.mak
 
-SOURCEDIR = $(TOPDIR)\resource
-OUTDIR = $(SOURCEDIR)\bin
-
 all:
-	@for %i in (graphics modules music rooms sounds textures) do \
-		(echo Building %i... & \
+	@-for %i in (graphics textures) do \
+		@if EXIST %i (echo Building %i & \
 		cd %i & \
-	 	$(MAKE) & \
+	 	$(MAKE) /$(MAKEFLAGS) & \
 		cd .. )
+
+clean :
+	@-for %i in (graphics textures) do @if EXIST %i (cd %i & $(MAKE) /$(MAKEFLAGS) clean & cd .. )

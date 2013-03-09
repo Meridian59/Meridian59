@@ -123,8 +123,8 @@ config_table_type config_table[] =
 { CREDIT_ADMIN,           T, "Admin",         CONFIG_INT,   "25" },
 
 { SESSION_GROUP,          F, "[Session]",     CONFIG_GROUP, "" },
-{ SESSION_MAX_ACTIVE,     T, "MaxActive",     CONFIG_INT,   "10" },
-{ SESSION_MAX_CONNECT,    F, "MaxConnect",    CONFIG_INT,   "20" },
+{ SESSION_MAX_ACTIVE,     T, "MaxActive",     CONFIG_INT,   "300" },
+{ SESSION_MAX_CONNECT,    F, "MaxConnect",    CONFIG_INT,   "300" },
 { SESSION_BUSY,           F, "Busy",          CONFIG_STR,
      "Too many people are logged on right now; please try again later." },
 
@@ -194,7 +194,6 @@ config_table_type config_table[] =
 { ADVERTISE_URL2,         T, "Url2",          CONFIG_STR,   "http://meridian59.neardeathstudios.com" },
 
 { DEBUG_GROUP,            F, "[Debug]",       CONFIG_GROUP, "" },
-{ DEBUG_SMTP,             T, "SMTP",          CONFIG_BOOL,  "No" }, 
 { DEBUG_CANMOVEINROOM,    T, "CanMoveInRoom", CONFIG_BOOL,  "No" },
 { DEBUG_HEAP,             T, "Heap",          CONFIG_BOOL,  "No" },
 { DEBUG_TRANSMITTED_BYTES,T, "TransmittedBytes",CONFIG_BOOL,"No" },
@@ -321,7 +320,7 @@ char * AddConfig(int config_id,char *config_data,int config_type,int is_dynamic)
 	    fgets(s, sizeof(s)-1, f);
 	    strtok(s, "\r\n\x1A");
 	    fclose(f);
-	    c->is_dynamic = FALSE;
+	    c->is_dynamic = false;
 	 }
       }
       c->config_str_value = (char *)AllocateMemory(MALLOC_ID_CONFIG,strlen(s)+1);

@@ -121,15 +121,13 @@ enum
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winsock2.h>
-#include <windowsx.h>
-#include <mmsystem.h>
-#include <commctrl.h>
-#include <richedit.h>
 #include "resource.h"
 #include <crtdbg.h>
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
 #include <malloc.h>
 #include <process.h>
 #include <fcntl.h>
@@ -141,12 +139,11 @@ enum
 
 #include "btime.h"
 
-#include "wrap.h"
-
 #include "bool.h"
 #include "rscload.h"
 #include "roomtype.h"
 #include "bkod.h"
+#include "crc.h"
 #include "md5.h"
 typedef union 
 {
@@ -249,8 +246,6 @@ char * GetLastErrorStr();
 
 #include "adminfn.h"
 
-#include "smtpmail.h"
-#include "smtpserv.h"
 #include "async.h"
 #include "debug.h"
 

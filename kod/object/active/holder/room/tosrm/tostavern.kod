@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TosTavern is TosRoom
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_TosTavern = tostavern.roo
+   room_name_TosTavern = "Abandoned Fountain Tavern"
+   TosTavern_music = tos.mid
+   
+classvars:
+
+   vrName = room_name_TosTavern
+
+   viTerrain_type = TERRAIN_CITY | TERRAIN_RESIDENCE
+
+properties:
+   viPermanent_flags = ROOM_NO_COMBAT
+
+   prRoom = room_TosTavern
+   piRoom_num = RID_TOS_OLD_TAVERN
+   prMusic = TosTavern_music
+
+   viTeleport_Row = 6
+   viTeleport_Col = 4
+
+   piBaseLight = LIGHT_NICE
+   piOutside_factor = 0
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      % exits back to tos
+
+      plExits = Cons([ 9, 7, RID_TOS, 51, 12, ROTATE_NONE ],plExits);
+
+      plExits = Cons([ 6, 12, RID_TOS_SECRET_PASSAGE, 4, 2, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

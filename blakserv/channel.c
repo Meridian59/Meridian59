@@ -35,7 +35,7 @@ channel_node channel[NUM_CHANNELS];
 
 /* local function prototypes */
 void WriteStrChannel(int channel_id,char *s);
-HANDLE CreateFileChannel(int channel_id);
+FILE *CreateFileChannel(int channel_id);
 
 void OpenDefaultChannels()
 {
@@ -44,15 +44,14 @@ void OpenDefaultChannels()
    {
       if (ConfigBool(channel_table[i].disk_config_id))
       {
-	 channel[i].file = CreateFileChannel(i);
-	 if (channel[i].file == INVALID_HANDLE_VALUE)
-	    StartupPrintf("OpenDefaultChannels couldn't open file %s\n",
-			  channel_table[i].file_name);
+         channel[i].file = CreateFileChannel(i);
+         if (channel[i].file == NULL)
+            StartupPrintf("OpenDefaultChannels couldn't open file %s\n",
+                          channel_table[i].file_name);
       }
       else
-	 channel[i].file = INVALID_HANDLE_VALUE;
+         channel[i].file = NULL;
    }
-
 }
 
 void CloseDefaultChannels()
@@ -61,10 +60,10 @@ void CloseDefaultChannels()
 
    for (i=0;i<NUM_CHANNELS;i++)
    {
-      if (channel[i].file != INVALID_HANDLE_VALUE)
+      if (channel[i].file != NULL)
       {
-	 CloseHandle(channel[i].file); 
-	 channel[i].file = INVALID_HANDLE_VALUE;
+         fclose(channel[i].file);
+         channel[i].file = NULL;
       }
    }
 }
@@ -74,8 +73,8 @@ void FlushDefaultChannels()
    int i;
 
    for (i=0;i<NUM_CHANNELS;i++)
-      if (channel[i].file != INVALID_HANDLE_VALUE)
-	 FlushFileBuffers(channel[i].file);
+      if (channel[i].file != NULL)
+         fflush(channel[i].file);
 }
 
 void __cdecl dprintf(char *fmt,...)
@@ -150,27 +149,23 @@ void __cdecl lprintf(char *fmt,...)
 
 void WriteStrChannel(int channel_id,char *s)
 {
-   DWORD written;
-
-   if (channel[channel_id].file != INVALID_HANDLE_VALUE)
+   if (channel[channel_id].file != NULL)
    {
-      WriteFile(channel[channel_id].file,s,strlen(s),&written,NULL);
+      fwrite(s, 1, strlen(s), channel[channel_id].file);
       if (ConfigBool(CHANNEL_FLUSH))
-	 FlushFileBuffers(channel[channel_id].file);
+         fflush(channel[channel_id].file);
    }
 
    WriteChannelBuffer(channel_id,s);
 }
 
-HANDLE CreateFileChannel(int channel_id)
+FILE *CreateFileChannel(int channel_id)
 {
    char channel_file[MAX_PATH+FILENAME_MAX];
-   HANDLE hChannel;
+   FILE *pFile;
 
    sprintf(channel_file,"%s%s",ConfigStr(PATH_CHANNEL),channel_table[channel_id].file_name);
-   hChannel = CreateFile(channel_file,GENERIC_WRITE,FILE_SHARE_READ,NULL,OPEN_ALWAYS,0,NULL);
+   pFile = fopen(channel_file, "ab");
 
-   SetFilePointer(hChannel,0,NULL,FILE_END); /* move to end of channel file */
-
-   return hChannel;
+   return pFile;
 }

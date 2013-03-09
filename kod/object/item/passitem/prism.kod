@@ -48,6 +48,8 @@ resources:
    prism_chant_over = "The prism darkens and a blanket of silence seems to settle over you as the chant ceases."
    prism_desc_location_rsc = "  If you peer closely you can see a miniture landscape inside the prism, it appears to be "
 
+   prism_charged_wav_rsc = portal.wav
+
 classvars:
 
    vrName = prism_name_rsc
@@ -274,6 +276,10 @@ messages:
          }
 
          send(poOwner,@SomethingChanged,#what=self);
+
+         % Play a sound
+         Send(poOwner, @SomethingWaveRoom, #what = self,
+              #wave_rsc = prism_charged_wav_rsc);
       }
 
       if piSpellPowerSoFar >= piSpellPowerNeeded

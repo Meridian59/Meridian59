@@ -346,8 +346,7 @@ CAPTION "Meridian 59 Voreinstellungen"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     GROUPBOX        "Zielerfassung",IDC_STATIC,6,6,91,78,WS_GROUP
-    CONTROL         "Unbescholtene Spieler können angegriffen werden.",1153,
-                    "Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,14,17,73,25
+    CONTROL         "Spieler können angegriffen werden",1153,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_GROUP | WS_TABSTOP,14,17,73,25
     CONTROL         "Hebe Rot hervor",1180,"Button",BS_AUTORADIOBUTTON | WS_GROUP | WS_TABSTOP,14,45,70,10
     CONTROL         "Hebe Blau hervor",1181,"Button",BS_AUTORADIOBUTTON,14,56,70,10
     CONTROL         "Hebe Grün hervor",1182,"Button",BS_AUTORADIOBUTTON,14,67,70,10

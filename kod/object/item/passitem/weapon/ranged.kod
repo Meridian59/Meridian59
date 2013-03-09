@@ -172,7 +172,7 @@ messages:
       return hit_roll;
    }
 
-   GetDamage(who=$,target=$)
+   GetBaseDamage(who=$,target=$)
    {
       local iDamage, ammotype, i;
 
@@ -195,9 +195,9 @@ messages:
             }
          }
       }
-
-      iDamage = iDamage + viWeaponDamage;
-
+	  
+	  iDamage = iDamage + viWeaponDamage;
+	  
       return iDamage;
    }
 

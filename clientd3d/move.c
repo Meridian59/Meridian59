@@ -106,7 +106,7 @@ WallData *lastBlockingWall = NULL;
 static BSPnode *lastBlockingNode = NULL;
 
 static int worstDistance = 0;
-
+static DWORD real_move_interval = 200;  // Update the existing movement update rate to 5fps
 /* local function prototypes */
 static void CheckPlayerMove();
 static void BounceUser(int dt);
@@ -114,7 +114,20 @@ static int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, 
 static WallData *IntersectNode(BSPnode *node, int old_x, int old_y, int new_x, int new_y, int z);
 static BSPnode *FindIntersection(BSPnode *node, int xOld, int yOld, int xNew, int yNew, int z, WallData **wallIntersect);
 static void SlideAlongWall(WallData *wall, int xOld, int yOld, int *xNew, int *yNew);
+// Recast dwLatency as received from BP_PING and return values greater than 200
+// This sets a limit for update rate such that someone on a lan nearer the server
+// won't be updating at 30fps or so.
+void UpdateLatency(DWORD dwLatency){
+    const int n = static_cast<int>(dwLatency);
+    const unsigned long int a2 = static_cast<unsigned long int>(n);
 
+	if (n > 200){
+		debug(("Updated latency for movement!(%i ms)", a2));
+		real_move_interval = a2;
+	}
+	else
+		real_move_interval = 200;
+}
 void ResetPlayerPosition(void)
 {
    lastBlockingWall = NULL;
@@ -804,8 +817,8 @@ void MoveUpdateServer(void)
    DWORD now = timeGetTime();
    int angle;
 
-   // Inform server if necessary
-   if (now - server_time < MOVE_INTERVAL || !pos_valid)
+   // Inform server if within latency interval
+   if (now - server_time < real_move_interval || !pos_valid)
       return;
 
    MoveUpdatePosition();

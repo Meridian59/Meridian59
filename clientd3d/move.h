@@ -35,6 +35,8 @@ void ServerMovedPlayer(void);
 void MoveUpdateServer(void);
 void MoveSetValidity(Bool valid);
 void MoveUpdatePosition(void);
+//used to define the measured latency from BP_PING
+void UpdateLatency(DWORD dwLatency);
 
 void UserTurnPlayer(int action);
 void UserTurnPlayerMouse(int delta);

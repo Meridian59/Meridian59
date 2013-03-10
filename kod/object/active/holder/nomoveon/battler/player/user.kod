@@ -2868,7 +2868,7 @@ messages:
    {
       local iCurrentTime, iDelta, bFirstMove, iExertion, iHasteLevel,
             iSquaredDistance, iNewRow, iNewCol, iNewRoom, iChanceTurn, iAngle;
-
+            
       % NEW Speedhack detection!
       % How this works:
       %   Speedhack works by sending a LOT of little moves very, very quickly.
@@ -2895,17 +2895,6 @@ messages:
       %  Also make sure we don't go too far negative.
       piMovesCounter = (piMovesCounter + 1) - iDelta;
       piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
-
-      % Check for cheating by sending more move packets than allowed.
-      % Don't log too many cheat detections, because it'll fill up our logs.
-      if piMovesCounter > MOVEMENT_COUNT_THRESHOLD
-         AND piCheaterLogs < MAX_LOGGED_THRESHOLD
-      {
-         piCheaterLogs = piCheaterLogs + 1;
-         Debug("ALERT!",Send(self,@GetTrueName),self," is moving too fast.  "
-               "Has moves count of ",piMovesCounter," Possible speedhacker.");
-         piMovesCounter = 0;
-      }
 
       if speed > USER_WALKING_SPEED
       {
@@ -3020,7 +3009,7 @@ messages:
             {
                % This is a large movement distance with a very low movement
                %  delta, possibly cheat teleporting.
-               if iSquaredDistance >= 200
+               if iSquaredDistance >= 66
                   AND iDelta < 3
                {
                   Debug("ALERT! ",Send(self,@GetTrueName),self," moved ",

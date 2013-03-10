@@ -29,6 +29,7 @@ resources:
       "You cannot cast harmful spells here when someone else is present."
    room_no_pk_allowed = "You cannot attack another player here."
    room_guild_combat = "Only those in guilds may attack each other here."
+   room_no_mob_attack = "You cannot attack monsters here."
 
    room_no_magic_allowed = "You can't cast spells here."
    room_no_spell = "You can't cast spells here."
@@ -1218,6 +1219,17 @@ messages:
          % Anything else is legal in the Arena.
          return TRUE;
       }
+      
+      if (piRoom_flags & ROOM_NO_MOB_COMBAT)
+         AND (IsClass(what,&Monster)
+         OR IsClass(victim,&Monster))
+      {
+         if IsClass(what,&Player)
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_no_mob_attack);
+         }
+         return FALSE;
+      }
 
       if (piRoom_flags & ROOM_NO_COMBAT)
       {
@@ -1319,6 +1331,11 @@ messages:
       {
          Send(who,@MsgSendUser,#message_rsc=room_no_magic_allowed);
 
+         return FALSE;
+      }
+      
+      if (piRoom_flags & ROOM_NO_MOB_COMBAT) AND IsClass(who,&Monster)
+      {
          return FALSE;
       }
 

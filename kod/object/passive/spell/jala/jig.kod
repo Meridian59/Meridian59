@@ -83,7 +83,7 @@ messages:
 
       oRoom = Send(who,@GetOwner);
       Send(oRoom,@SetRoomFlag,#Flag=ROOM_JIG,#value=TRUE);
-      Send(oRoom,@SetRoomFlag,#Flag=ROOM_NO_COMBAT,#value=TRUE);
+      Send(oRoom,@SetRoomFlag,#Flag=ROOM_NO_MOB_COMBAT,#value=TRUE);
 
       propagate;
    }
@@ -94,16 +94,16 @@ messages:
       
       Post(where,@SetRoomFlag,#Flag=ROOM_JIG,#value=FALSE);
 
-      if Send(where,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      if Send(where,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
       {
-         Send(where,@SetRoomFlagtoDefault,#flag=ROOM_NO_COMBAT);
+         Send(where,@SetRoomFlagtoDefault,#flag=ROOM_NO_MOB_COMBAT);
       }
       
       for i in Send(where,@GetEnchantmentList)
       {
          if Send(Nth(i,2),@GetSpellNum) = SID_TRUCE
          {
-            Send(where,@SetRoomFlag,#flag=ROOM_NO_COMBAT,#value=TRUE);
+            Send(where,@SetRoomFlag,#flag=ROOM_NO_MOB_COMBAT,#value=TRUE);
          }
       }
       

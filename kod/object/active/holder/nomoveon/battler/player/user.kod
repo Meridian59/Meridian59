@@ -3010,7 +3010,6 @@ messages:
                % This is a large movement distance with a very low movement
                %  delta, possibly cheat teleporting.
                if iSquaredDistance >= 66
-                  AND iDelta < 3
                {
                   Debug("ALERT! ",Send(self,@GetTrueName),self," moved ",
                         iSquaredDistance," with only ",iDelta," seconds since "

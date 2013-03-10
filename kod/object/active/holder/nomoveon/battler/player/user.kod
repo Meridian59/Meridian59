@@ -686,6 +686,14 @@ messages:
       {
          % Reset our logoff penalty time since we're logging safely.
          piLogoffPenaltyTime = 0;
+         
+         % If enabled and and a player logs off in a safe zone he will lose half his mana and all buffs
+         if Send(Send(SYS, @GetSettings), @LogSafePenaltyEnable)
+            AND Send(SYS, @GetLogoffPenaltyEnable)
+         {
+            Send(self,@LoseMana,#amount=(piMana/2));
+            Send(Send(SYS,@FindSpellByNum,#num=SID_PURGE),@DoPurge,#who=self,#iChance=100);
+         }
       }
       
       if piLogoffPenaltyCount < 0

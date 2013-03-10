@@ -1,0 +1,118 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% Code written for this item by Phillip H.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+PKarmaPot is PassiveItem
+
+constants:
+
+   include blakston.khd
+   
+resources:
+
+   PKarmaPot_icon_rsc = potion01.bgf
+
+   PKarmaPot_name_rsc = "POSITIVE Karma Pot"
+   PKarmaPot_desc_rsc = "This potion is to facilitate positive karma during a Frenzy."
+   
+   PKarmaPot_drink = "You quaff the contents of the POSITIVE KARMA POT in a single gulp."
+   PKarmaPot_NOdrink = "You can't use this potion when it is not a frenzy. DUMMY!"
+
+classvars:
+   
+   vrDesc = PKarmaPot_desc_rsc
+   vrName = PKarmaPot_name_rsc
+   vrIcon = PKarmaPot_icon_rsc
+
+   viBulk = 20
+   viWeight = 5000						% weighs more than a mortal can normally hold - ensures can only be given out via admin globally
+
+   viValue_average = 60
+
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+
+   viPoisonPercent = 0
+   viGoBadDamage = 0
+
+properties:
+
+	piItem_flags = PT_MET_GREEN		% changes color to green to show difference for positive karma.
+
+
+messages:
+
+   Constructor()
+   {
+		
+      propagate;
+   }
+   
+   
+    ApplyPotionEffects(apply_on = $)
+    {
+     if Send(SYS, @GetChaosNight)					% checks to see if ChaosNight is Active.
+	 {	
+		Send(apply_on,@ChangeKarma,#amount=10000);
+	 }
+		
+	else
+	{
+		Send(apply_on,@MsgSendUser,#message_rsc=PKarmaPot_NOdrink);
+		Send(self,@Delete);												% deletes itslef if someone tries to use it outside frenzy.
+    }
+      return;
+   }
+
+   
+      ReqNewApply(what = $,apply_on = $)
+   {
+      if what = apply_on
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+   
+   NewApplied(what = $,apply_on = $)
+   {
+      local oSpell;
+      if isClass(apply_on,&User) 
+      {
+         Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
+      }
+
+      Send(apply_on,@MsgSendUser,#message_rsc=PKarmaPot_drink);
+      Send(self,@ApplyPotionEffects,#apply_on=apply_on);
+
+      Send(self,@Delete);
+
+      return;
+   }
+
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+   CanIdentify()
+   {
+      return TRUE;
+   }
+
+   RevealHiddenAttributes()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

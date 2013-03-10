@@ -6371,6 +6371,16 @@ messages:
 
       return;
    }
+   
+   
+   ChangeKarma( amount = 0) 								% Command added to change karma to a specific amount.
+   "Changes karma directly to amount, other arguments add or lose karma."
+   {
+		piKarma = amount;
+		Send(self,@NewKarma);
+		
+		return;
+	}
 
    CalculateKarmaChangeFromAct( karma_doer=$, karma_act=$, Swing_factor = 1)
    {

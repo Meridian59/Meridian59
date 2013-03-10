@@ -143,7 +143,10 @@ messages:
       % Reset the loot list if it's niled out.
       if plChaosNightLoot = $
       {
-         plChaosNightLoot = [ Create(&Inkycap,#number=50),
+         plChaosNightLoot = [ 
+							  Create(&PKarmaPot),
+							  Create(&NKarmaPot),
+							  Create(&chaosfd,#number=100),
                               Create(&Mint,#number=100),
                               Create(&Scimitar),
                               Create(&Longsword),
@@ -155,7 +158,14 @@ messages:
                               Create(&NeruditeArrow,#number=150),
                               Create(&JewelOfFroz),
                               Create(&JewelOfFroz),
-                              Create(&Gift)
+                              Create(&Gift),
+							  Create(&Gift),
+							  Create(&Helm),
+							  Create(&Neruditebow),
+							  Create(&Platearmor),
+							  Create(&Guildshield),
+							  Create(&Mysticsword),
+							  Create(&Scimitar)							  
                             ];
       }
 

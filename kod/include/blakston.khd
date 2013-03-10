@@ -1022,6 +1022,8 @@
    ROOM_TRIPLE_HEAL   = 0x2000
    % Jig (Jala spell) kills monster gen and disallows item use.
    ROOM_JIG           = 0x4000
+   % Prevents monsters from fighting, but doesn't stop players
+   ROOM_NO_MOB_COMBAT = 0x8000
 
    % Terrain constants, used to tell what type of terrain the room is.
    TERRAIN_GUILDHALL = 0x0000001

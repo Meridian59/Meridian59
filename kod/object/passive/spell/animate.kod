@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   MAX_ZOMBIE_CONTROL_SECS = 1200  % 20 minutes
+   MAX_RISEN_CONTROL_SECS = 1200  % 20 minutes
 
 resources:
 
@@ -117,7 +117,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 1)
    {
-      local oZombie, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget, iLevel, iDurationSecs;
+      local oRisen, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget, iLevel, iNum, iDurationSecs;
 
       oRoom = send(who,@GetOwner);
       oTarget = first(lTargets);
@@ -134,16 +134,58 @@ messages:
       iCol = send(oTarget,@GetCol);
       iFine_Row = send(oTarget,@GetFineRow);
       iFine_Col = send(oTarget,@GetFineCol);
-      iLevel = iSpellPower / 3 * 2;
-      iLevel = Bound(iLevel,1,50);
-      oZombie = Create(&Zombie,#DropsTreasure=FALSE,#Level=iLevel);
+      iLevel = iSpellPower;
+      iNum = Random(iSpellPower/3,iSpellPower);
+      
+      if iNum < 20 
+      {
+         iLevel = Bound(iLevel,1,25);
+         oRisen = Create(&Mummy,#DropsTreasure=FALSE,#Level=iLevel);
+      }
+      else
+      {
+         if iNum < 40
+         {
+            iLevel = Bound(iLevel,1,50);
+            oRisen = Create(&Zombie,#DropsTreasure=FALSE,#Level=iLevel);
+         }
+         else
+         {
+            if iNum < 60
+            {
+               iLevel = Bound(iLevel,1,55);
+               oRisen = Create(&BatteredSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+            }
+            else
+            {
+               if iNum < 75
+               {
+                  iLevel = Bound(iLevel,25,75);
+                  oRisen = Create(&Skeleton,#DropsTreasure=FALSE,#Level=iLevel);
+               }
+               else
+               {
+                  if iNum < 90
+                  {
+                     iLevel = Bound(iLevel,50,85);
+                     oRisen = Create(&TuskedSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+                  }
+                  else
+                  {
+                     iLevel = Bound(iLevel,75,99);
+                     oRisen = Create(&DaemonSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+                  }
+               }
+            }
+         }
+      }
 
-      iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_ZOMBIE_CONTROL_SECS/100 );
-      send(oZombie,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
-      send(oZombie,@SetSummoned,#value=TRUE);
-      Post(oZombie,@ResetBehaviorFlags);  
+      iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );
+      send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+      send(oRisen,@SetSummoned,#value=TRUE);
+      Post(oRisen,@ResetBehaviorFlags);  
 
-      send(oRoom,@NewHold,#what=oZombie,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
+      send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
 
       Send(who,@MsgSendUser,#message_rsc=Animate_cast_rsc,#parm1=send(oTarget,@GetCorpseName));
       

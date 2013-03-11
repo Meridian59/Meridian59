@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+chaosfood is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   chaosfd_name_rsc = "Frenzy Food"
+   chaosfd_name_plural_rsc = "Frenzy Food"
+   chaosfd_icon_rsc = mushroom.bgf
+   chaosfd_desc_rsc = \
+        "At first glance, these mushrooms appear common, but look at the psychedelic colors!  "
+        "This is actually Frenzy Food! No Stomach No Problem!"
+	  
+   chaosfd_NoEat = "You can't eat this potion when it is not a frenzy. DUMMY!"
+
+classvars:
+
+   vrName = chaosfd_name_rsc
+   vrName_plural = chaosfd_name_plural_rsc
+   vrIcon = chaosfd_icon_rsc
+   vrDesc = chaosfd_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 5000         % Increased weight to ensure no mortal is able to pick these up outside of a frenzy.
+   viValue_average = 1
+
+properties:
+		
+   piItem_flags = PT_FRST_WHT3
+   viFilling = 0          % Ignore's the characters stomach to allow for constant frenzy killing without being full...
+   viNutrition = 200
+   piNumber = 1
+
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+   
+   NewApplied(what = $,apply_on = $)
+   {
+      if Send(SYS, @GetChaosNight)					
+      {
+        Send(self,@SendTaste,#what=what,#apply_on=apply_on);
+        Send(what,@WaveSendUser,#wave_rsc=vrEat_wav);
+        Send(apply_on,@EatSomething,#nutrition=viNutrition,#filling=viFilling);
+        Send(self,@SubtractNumber,#number=1);
+      }
+      else
+      {
+        % We only want these used during a frenzy, so if eaten during a frenzy
+        % the food will delete itself.
+        Send(apply_on,@MsgSendUser,#message_rsc=chaosfd_NoEat);
+        Send(self,@Delete);
+      }
+		
+     return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

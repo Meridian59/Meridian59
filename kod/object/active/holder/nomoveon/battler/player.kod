@@ -6364,6 +6364,15 @@ messages:
 
       return;
    }
+   
+   SetKarma( value = 0)
+   "Changes karma to specified amount"
+   {
+      piKarma = value;
+      Send(self,@NewKarma);
+		
+      return;
+   }
 
    CalculateKarmaChangeFromAct( karma_doer=$, karma_act=$, Swing_factor = 1)
    {

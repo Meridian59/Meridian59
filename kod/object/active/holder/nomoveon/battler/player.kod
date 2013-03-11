@@ -148,7 +148,7 @@ resources:
    player_spits = "You spit on the corpse of your unworthy foe."
    player_regain_angel = \
       "Due to your weakness, your protective guardian angel returns."
-   player_no_angel = "You suddenly feel more vulnerable."
+   player_no_angel = "`BYou suddenly feel more vulnerable."
 
    player_join_faction = \
       "~IYour name is entered on the roll of membership for %s%s's political "
@@ -1837,7 +1837,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oSnoop, oRoom;
+      local i, oGame, oCaramo, oSnoop, oRoom, age;
       
       for i in plPassive
       {
@@ -1923,6 +1923,19 @@ messages:
          Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_logged_on_wav_rsc);
       }
+	  
+      % Check to see how old character is if atleast 2 months old
+      % Remove guardian angel, send vulnerable message and game mail.
+      age = Send(SYS,@GetYear) - Send(self,@GetBirthYear);
+	  
+      if age >= 2
+         AND NOT (piFlags & PFLAG_PKILL_ENABLE)
+         AND NOT (piFlags & PFLAG_OUTLAW)
+         AND NOT (piFlags & PFLAG_MURDERER)
+      {
+        send(self,@PkillEnable);
+        debug(send(self,@GetName)," over 2 months old sent PkillEnable message.");
+      }	  
 
       return;
    }

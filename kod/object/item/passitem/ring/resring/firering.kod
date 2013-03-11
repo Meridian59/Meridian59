@@ -36,7 +36,7 @@ classvars:
    vrDeadMessage = FireRing_dead_rsc
    
    % Red inset when identified
-   viRevealedColor = 99997
+   viRevealedColor = PT_ITEM_XLAT_BLUE_TO_RED
 
 properties:
 

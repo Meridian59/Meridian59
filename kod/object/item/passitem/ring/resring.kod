@@ -41,8 +41,8 @@ classvars:
    
    viValue_average = 280
 
-   % Resistance rings change color once revealed
-   viUnrevealedColor = 99995
+   % Resistance rings hide their color until revealed
+   viUnrevealedColor = PT_ITEM_XLAT_BLUE_TO_WHITE
 
 properties:
 

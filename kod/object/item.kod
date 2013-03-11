@@ -124,12 +124,10 @@ messages:
          }            
       }
       
-      if viUnrevealedColor
+      if viUnrevealedColor <> 0
+         AND Send(self,@GetPaletteTranslation) = (0 & ITEM_PALETTE_MASK)
       {
-         if piItem_flags = 0
-         {
-            piItem_flags = viUnrevealedColor;
-         }
+         Send(self,@SetPaletteTranslation,#translation=viUnrevealedColor);
       }
       
       propagate;
@@ -1677,6 +1675,18 @@ messages:
    GetRevealedColor()
    {
       return viRevealedColor;
+   }
+   
+   RevealHiddenColor()
+   {
+      if viRevealedColor <> 0
+         AND viUnrevealedColor <> 0
+         AND Send(self,@GetPaletteTranslation) = (viUnrevealedColor & ITEM_PALETTE_MASK)
+      {
+         Send(self,@SetPaletteTranslation,#translation=viRevealedColor);
+         return TRUE;
+      }
+      return FALSE;
    }
 
 end

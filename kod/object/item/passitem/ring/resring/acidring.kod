@@ -36,7 +36,7 @@ classvars:
    vrDeadMessage = AcidRing_dead_rsc
 
    % Green inset when identified
-   viRevealedColor = 99991
+   viRevealedColor = PT_ITEM_XLAT_BLUE_TO_GREEN
    
 properties:
 

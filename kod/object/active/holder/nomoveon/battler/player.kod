@@ -1923,6 +1923,38 @@ messages:
          Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_logged_on_wav_rsc);
       }
+      
+      % Remove guardian angel protection for skilled players
+      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+          for i in plSpells
+          {
+             oSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
+             oSchool = Send(oSpell,@GetSchool);
+             oLevel = Send(oSpell,@GetLevel);
+             
+             if oSchool = SS_RIIJA
+             {
+                 % Angeled Riija characters are the vast majority of mules,
+                 % and newbies don't just stumble into such a hard-to-acquire school.
+                 if oLevel >= 2
+                 {
+                    Send(self,@PkillEnable);
+                    Send(self,@PkillLock);
+                    break;
+                 }
+             }
+             else
+             {
+                 if oLevel >= 5
+                 {
+                    Send(self,@PkillEnable);
+                    Send(self,@PkillLock);
+                    break;
+                 }
+             }
+          }
+      }
 
       return;
    }

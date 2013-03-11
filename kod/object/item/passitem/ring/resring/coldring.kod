@@ -35,8 +35,8 @@ classvars:
    vrUseMessage = ColdRing_use_rsc
    vrDeadMessage = ColdRing_dead_rsc
    
-   % White inset when identified
-   viRevealedColor = 99992
+   % Blue inset when identified
+   viRevealedColor = PT_ITEM_XLAT_BLUE_TO_BLUE
 
 properties:
 

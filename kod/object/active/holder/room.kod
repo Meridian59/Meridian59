@@ -15,10 +15,10 @@ constants:
    include blakston.khd
    include protocol.khd
 
-   % This determines the size of the circle cleared by the DeleteWallsAroundPlayer function.
+   % This determines the size of the circle cleared by the DeleteWallsAroundBattler function.
    % This is typically called to protect entering players from stumbling into wall spells.
    % The units are based on the Object class measurements @GetRow and @GetCol.
-   viWALL_DELETE_RADIUS = 2
+   WALL_DELETE_RADIUS = 2
    
 resources:
 
@@ -181,7 +181,7 @@ classvars:
 
    viFlag_row = $
    viFlag_col = $
-   
+
 properties:
 
    piRoom_Flags = 0
@@ -3878,17 +3878,13 @@ messages:
       return FALSE;
    }
 
-   % This deletes walls in a circle around a player. This is intended to protect
-   % players from wall spells stacked on entrances. This will clear out a small space
-   % when they enter the zone, so that they don't appear in the middle of a wall spell.
-   DeleteWallsAroundPlayer(who=$)
-   "This function deletes walls in a radius around the target player."   
+   DeleteWallsAroundBattler(who=$)
+   "Deletes walls in a small radius around target battler."   
    {
       local i, each_obj;
 
-      % Relies on SquaredDistanceTo, a function descended from nomoveon -> battler -> player
-      % Wouldn't work with other objects
-      if NOT IsClass(who,&Player)
+      % Relies on SquaredDistanceTo, a function descended from nomoveon.
+      if NOT IsClass(who,&Battler)
       {
          return;
       }
@@ -3899,7 +3895,7 @@ messages:
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&ActiveWallElement)
          {
-            if Send(who,@SquaredDistanceTo,#what=each_obj) <= viWALL_DELETE_RADIUS
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= WALL_DELETE_RADIUS
             {
                Post(each_obj,@Delete);
             }
@@ -3914,7 +3910,7 @@ messages:
             OR IsClass(each_obj,&SporeCloud)
             OR IsClass(each_obj,&PassiveWallofLightning)
          {
-            if Send(who,@SquaredDistanceTo,#what=each_obj) <= viWALL_DELETE_RADIUS
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= WALL_DELETE_RADIUS
             {
                Post(each_obj,@Delete);
             }

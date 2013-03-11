@@ -156,7 +156,7 @@ messages:
       }
 
       % Strength varies from 15 to 90% chance to be right.
-      iPower = iSpellpower/2 + send(who,@GetKarma)/3 + 15;
+      iPower = iSpellpower/2 + send(who,@GetKarma)/3 + send(who,@getmaxhealth)/5;
       iPower = bound(iPower,15,90);
 
       return iPower;

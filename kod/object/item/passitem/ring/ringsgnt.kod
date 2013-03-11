@@ -90,14 +90,11 @@ messages:
    }
 
    RewardReturner(who = $)
-   {
-		
-	
+   {	
       local oPotion;
          oPotion = Create(&LoyaltyPotion);
          Send(who,@NewHold,#what=oPotion);
-	  
-	  
+		 
       return;
    }
 

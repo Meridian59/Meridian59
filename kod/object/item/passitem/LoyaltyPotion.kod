@@ -25,10 +25,10 @@ resources:
 
 
    LoyaltyPotion_worked = "You quaff down the potion in a single gulp and feel a rush of energy throughout your body.\n"						  
-						  "`B`IYou suddenly feel a little tougher."
+                          "`B`IYou suddenly feel a little tougher."
    
    LoyaltyPotion_NOdrink = "You quaff down the potion in a single gulp and feel `B`Iabsolutely nothing.\n"
-						   "`n`rAdvanced, Outlaws or Murderers may not use this potion."
+                           "`n`rAdvanced, Outlaws or Murderers may not use this potion."
 						   
 classvars:
    
@@ -60,27 +60,26 @@ messages:
       propagate;
    }
 
-   
    ApplyPotionEffects(apply_on = $)
    {	  
-		if Send(apply_on,@GetBaseMaxHealth) < 40								% check to make sure they are over 40 HP.
-		AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)				% check to make sure they are not an outlaw
-	    AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_MURDERER)			% check to make sure they are not a murderer
-			{		
-				Send(apply_on,@GainBaseMaxHealth,#amount=PotionHPBoost);
-				Send(apply_on,@MsgSendUser,#message_rsc=LoyaltyPotion_worked);
-				Send(self,@Delete);
-			}				
+     if Send(apply_on,@GetBaseMaxHealth) < 40
+        AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+        AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+     {		
+        Send(apply_on,@GainBaseMaxHealth,#amount=PotionHPBoost);
+        Send(apply_on,@MsgSendUser,#message_rsc=LoyaltyPotion_worked);
+        Send(self,@Delete);
+     }				
 					
-		else 
-			{
-						Send(apply_on,@MsgSendUser,#message_rsc=LoyaltyPotion_NOdrink);
-						Send(self,@Delete);												% deletes itslef if someone tries to use potion that is ineligble..
-			}					
+     else 
+     {
+	    % delete potion if ineligible player tries to use
+        Send(apply_on,@MsgSendUser,#message_rsc=LoyaltyPotion_NOdrink);
+        Send(self,@Delete);												
+     }					
 			
       return;
-    }
-
+   }
    
    ReqNewApply(what = $,apply_on = $)
    {
@@ -91,7 +90,6 @@ messages:
       
       return FALSE;
    }
-   
    
    NewApplied(what = $,apply_on = $)
    {
@@ -105,20 +103,17 @@ messages:
 
       return;
    }
-
    
    IsBeverage()
    {
       return TRUE;
    }
-
    
    CanIdentify()
    {
       return TRUE;
    }
 
-   
    RevealHiddenAttributes()
    {
       return FALSE;

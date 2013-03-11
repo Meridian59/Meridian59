@@ -169,7 +169,7 @@ messages:
            #new_row=43,#new_col=15,#fine_row=32,#fine_col=32,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
            #new_row=41,#new_col=15,#fine_row=17,#fine_col=30,#new_angle=ANGLE_EAST);
-	  send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
+      send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
            #new_row=21,#new_col=16,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);
       send(self,@NewHold,#what=Create(&OrnamentalObject,#type=OO_RAZA_SHRUB),
            #new_row=13,#new_col=16,#fine_row=0,#fine_col=0,#new_angle=ANGLE_EAST);

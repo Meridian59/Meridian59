@@ -15,6 +15,11 @@ constants:
    include blakston.khd
    include protocol.khd
 
+   % This determines the size of the circle cleared by the DeleteWallsAroundPlayer function.
+   % This is typically called to protect entering players from stumbling into wall spells.
+   % The units are based on the Object class measurements @GetRow and @GetCol.
+   viWALL_DELETE_RADIUS = 2
+   
 resources:
 
    room_name_rsc = "Room"
@@ -176,7 +181,7 @@ classvars:
 
    viFlag_row = $
    viFlag_col = $
-
+   
 properties:
 
    piRoom_Flags = 0
@@ -3873,24 +3878,28 @@ messages:
       return FALSE;
    }
 
-   DestroyWallsAtEntrance(entering_obj=$)  
+   % This deletes walls in a circle around a player. This is intended to protect
+   % players from wall spells stacked on entrances. This will clear out a small space
+   % when they enter the zone, so that they don't appear in the middle of a wall spell.
+   DeleteWallsAroundPlayer(who=$)
+   "This function deletes walls in a radius around the target player."   
    {
-      local i, each_obj, safeEnterRadius;
-      
-      % Radius of wall deletion area.
-      safeEnterRadius = 2;
-      
-      if NOT IsClass(entering_obj,&User)
+      local i, each_obj;
+
+      % Relies on SquaredDistanceTo, a function descended from nomoveon -> battler -> player
+      % Wouldn't work with other objects
+      if NOT IsClass(who,&Player)
       {
          return;
       }
-            
+
+      % Check each active element, tell the object to delete if it is a wall and too close
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&ActiveWallElement)
          {
-            if Send(self,@ObjectsWithinDistance,#distance=safeEnterRadius,#obj_one=each_obj,#obj_two=entering_obj)
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= viWALL_DELETE_RADIUS
             {
                Post(each_obj,@Delete);
             }
@@ -3905,7 +3914,7 @@ messages:
             OR IsClass(each_obj,&SporeCloud)
             OR IsClass(each_obj,&PassiveWallofLightning)
          {
-            if Send(self,@ObjectsWithinDistance,#distance=safeEnterRadius,#obj_one=each_obj,#obj_two=entering_obj)
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= viWALL_DELETE_RADIUS
             {
                Post(each_obj,@Delete);
             }
@@ -3914,32 +3923,5 @@ messages:
       return;
    }
 
-   % Compares the distance of two objects within a room
-   % Returns TRUE if they are within distance
-   ObjectsWithinDistance(distance=0,obj_one=$,obj_two=$)
-   {
-      local iRowDiff, iColDiff, iSquaredDistance;
-      
-      if obj_one=$ OR obj_two=$
-      {
-         return FALSE;
-      }
-      
-      % Don't compare objects in different rooms
-      if Send(obj_one,@GetOwner) <> Send(obj_two,@GetOwner)
-      {
-         return FALSE;
-      }
-      
-      iRowDiff = Send(obj_one,@GetRow) - Send(obj_two,@GetRow);
-      iColDiff = Send(obj_one,@GetCol) - Send(obj_two,@GetCol);
-      iSquaredDistance = (iRowDiff*iRowDiff) + (iColDiff*iColDiff);
-      
-      if iSquaredDistance <= (distance*distance)
-      {
-         return TRUE;
-      }      
-      return FALSE;
-   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

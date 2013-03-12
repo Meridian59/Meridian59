@@ -14,8 +14,6 @@ constants:
 
    include blakston.khd
 
-   % How much health does the caster get back?
-   DAMAGE_FACTOR_TO_HEAL = 2
 
 resources:
 
@@ -84,13 +82,12 @@ messages:
       % Take some of that damage and add it to our health!
       if damage <> $
       {
-         % Add half of the damage done.
-         iToHeal = bound(damage/DAMAGE_FACTOR_TO_HEAL,1,$);
+         iToHeal = damage;
       }
       else
       {
          % Ah!  We killed someone.  Give them a large bonus based on max damage.
-         iToHeal = bound(piDamageMax/DAMAGE_FACTOR_TO_HEAL,1,$);
+         iToHeal = piDamageMax
          Post(who,@MsgSendUser,#message_rsc=VampiricDrain_death,
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }

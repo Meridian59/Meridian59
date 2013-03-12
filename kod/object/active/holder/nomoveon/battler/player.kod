@@ -6365,7 +6365,7 @@ messages:
       return;
    }
    
-   SetKarma( value = 0)
+   SetKarma(value = 0)
    "Changes karma to specified amount"
    {
       piKarma = value;

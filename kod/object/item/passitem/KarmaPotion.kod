@@ -28,7 +28,7 @@ resources:
    KarmaPotion_neg_desc_rsc = "Drinking this potion during a Frenzy will change your karma to -100."
    
    KarmaPotion_drink = "You quaff the contents of the Karma Potion in a single gulp."
-   KarmaPotion_NOdrink = "You can't use this potion when it is not a frenzy. DUMMY!"
+   KarmaPotion_no_drink = "You can't use this potion when it is not a frenzy."
 
 classvars:
 
@@ -57,7 +57,7 @@ messages:
 
    Constructor(Karma=$)
    {
-      if karma = 10000
+      if karma > 0
       {
         vrName = KarmaPotion_pos_name_rsc;
         VrDesc = KarmaPotion_pos_desc_rsc;
@@ -65,13 +65,13 @@ messages:
         piKarma = 10000;
       }
 		
-     if karma = -10000
-      {
+     if karma < 0
+     {
         vrName = KarmaPotion_neg_name_rsc;
         vrDesc = KarmaPotion_neg_desc_rsc;
         piItem_Flags = PT_MET_RED;
         piKarma = -10000;
-      }
+     }
 		
      propagate;
    }
@@ -81,17 +81,15 @@ messages:
       if Send(SYS, @GetChaosNight)				
       {	
         Send(apply_on,@SetKarma,#value=piKarma);
+      }    
+	  else
+      {
+        Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_no_drink);
+        Send(self,@Delete);								% deletes it self if someone tries to use it outside frenzy.	
       }
-    
-	 else
-     {
-       Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_NOdrink);
-       Send(self,@Delete);								% deletes it self if someone tries to use it outside frenzy.	
-     }
 
      return;
    }
-
    
    ReqNewApply(what = $,apply_on = $)
    {
@@ -105,8 +103,7 @@ messages:
    
    NewApplied(what = $,apply_on = $)
    {
-      local oSpell;
-      if isClass(apply_on,&User) 
+      if isClass(apply_on,&Player) 
       {
          Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
       }

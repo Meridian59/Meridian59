@@ -185,13 +185,12 @@ messages:
                oGift = Create(GetClass(oItem),#karma=Send(oItem,@GetKarma));
             }
 			
-            if NOT IsClass(oItem,&NumberItem)
-            AND NOT IsClass(oItem,&KarmaPotion)
+            else if NOT IsClass(oItem,&NumberItem)
             {
                oGift = Create(GetClass(oItem));
             }
 
-        Send(oPlayer,@NewHold,#what=oGift);
+            Send(oPlayer,@NewHold,#what=oGift);
 
             if Send(oPlayer,@IsLoggedOn)
             {
@@ -203,7 +202,7 @@ messages:
          Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
       }
 
-       return Send(SYS, @GetSuccessRsc);
+      return Send(SYS, @GetSuccessRsc);
    }
 
    ChaosNightPeriodicLoot()

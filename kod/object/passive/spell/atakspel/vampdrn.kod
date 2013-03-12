@@ -72,7 +72,7 @@ messages:
    % The chance to do something in addition to normal damage.
    DoSideEffect(who=$,victim=$,damage=0)
    {
-      local iToHeal;
+      local iToHeal, iMaxHeal;
       
       if who = $ OR victim = $
       {
@@ -92,8 +92,10 @@ messages:
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }
 
-      Send(who,@GainHealth,#amount=iToHeal);
-
+      if send(who,@GetHealth) < send(who,@GetMaxHealth)+50 % Cap health gained for Vamp Drain at Max + 50
+      {   
+         Send(who,@GainHealth,#amount=iToHeal);
+      }
       propagate;
    }
 

@@ -24,7 +24,7 @@ resources:
         "At first glance, these mushrooms appear common, but look at the psychedelic colors!  "
         "This is actually Frenzy Food! No Stomach No Problem!"
 	  
-   chaosfd_NoEat = "You can't eat this potion when it is not a frenzy. DUMMY!"
+   chaosfd_no_eat = "You can't eat this potion when it is not a frenzy."
 
 classvars:
 
@@ -66,7 +66,7 @@ messages:
       {
         % We only want these used during a frenzy, so if eaten during a frenzy
         % the food will delete itself.
-        Send(apply_on,@MsgSendUser,#message_rsc=chaosfd_NoEat);
+        Send(apply_on,@MsgSendUser,#message_rsc=chaosfd_no_eat);
         Send(self,@Delete);
       }
 		

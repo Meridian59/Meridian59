@@ -30,7 +30,7 @@ void PlayerChangeHeightMouse(int dz);
 void PlayerResetHeight(void);
 int  PlayerGetHeight(void);
 int  PlayerGetHeightOffset(void);
-
+void UpdateLatency(DWORD dwLatency);
 void ServerMovedPlayer(void);
 void MoveUpdateServer(void);
 void MoveSetValidity(Bool valid);

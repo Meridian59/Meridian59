@@ -91,6 +91,7 @@ extern int sector_depths[];
 
 static DWORD server_time = 0;           // Last time we informed server of our position
 static DWORD last_splash = 0;           // Time of the last play of the splash wading sound
+static DWORD real_move_interval = 200;    // Minimum rate we update the server while moving in milliseconds
 
 static Bool pos_valid = FALSE;          // True when server_x and server_y are valid
 static int  server_x = 0, server_y = 0; // Last position we've told server we are, in FINENESS units
@@ -122,6 +123,26 @@ void ResetPlayerPosition(void)
    worstWall = NULL;
    min_distance = player.width / 2;
    min_distance2 = min_distance * min_distance;
+}
+
+//Dynamically update latency based on BP_PING response from server
+void UpdateLatency(DWORD dwLatency)
+{
+ //Recast the DWORD to an unsigned int long
+ const int n = static_cast<int>(dwLatency);
+ const unsigned long int a2 = static_cast<unsigned long int>(n);
+ 
+ if (n > 200)
+ {
+ debug(("Updated latency for movement!"));
+ real_move_interval = a2;
+ }
+ else
+ {
+ //Cap at 5fps if we get a response below 200
+ real_move_interval = 200;
+ }
+
 }
 
 BOOL	gbMouselook = FALSE;
@@ -805,7 +826,7 @@ void MoveUpdateServer(void)
    int angle;
 
    // Inform server if necessary
-   if (now - server_time < MOVE_INTERVAL || !pos_valid)
+   if (now - server_time < real_move_interval || !pos_valid)
       return;
 
    MoveUpdatePosition();

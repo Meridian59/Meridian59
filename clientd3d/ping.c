@@ -64,6 +64,8 @@ void PingGotReply(void)
    //XXX
    //REVIEW: Should send out a ModuleEvent so any module can notice a new value.
    Lagbox_Update(latency);
+   //Update and recast the move variable real_move_interval in move.c
+   UpdateLatency(latency);
 }
 /****************************************************************************/
 /*

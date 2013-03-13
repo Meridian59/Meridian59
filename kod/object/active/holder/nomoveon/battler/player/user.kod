@@ -2877,21 +2877,6 @@ messages:
       local iCurrentTime, iDelta, bFirstMove, iExertion, iHasteLevel,
             iSquaredDistance, iNewRow, iNewCol, iNewRoom, iChanceTurn, iAngle;
 
-      % NEW Speedhack detection!
-      % How this works:
-      %   Speedhack works by sending a LOT of little moves very, very quickly.
-      %   Normal players only send 1 movement packet per second, but 
-      %   speedhackers send more.  Even at low levels, speedhackers will send
-      %   more packets per second.  So, we keep track of the number of packets
-      %   sent and the number of seconds that happen.  Every movement packet
-      %   sent increases our piMovesCounter by one.  Every second that passes
-      %   decreases it by one.  (In actuality, we subtact the time difference
-      %   from when movement packets were sent.)  We have to average this over
-      %   time, because lag can cause packets to be delayed and all show up in
-      %   one second.
-      %
-      %   We currently allow for players to have up to 3 more moves than 
-      %   allowed over the duration due to rounding errors, etc.
 
       % Check the delta since the last time we moved.  Keep an upper bound on
       %  the delta, since people could just be moving from rest.
@@ -2903,17 +2888,6 @@ messages:
       %  Also make sure we don't go too far negative.
       piMovesCounter = (piMovesCounter + 1) - iDelta;
       piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
-
-      % Check for cheating by sending more move packets than allowed.
-      % Don't log too many cheat detections, because it'll fill up our logs.
-      if piMovesCounter > MOVEMENT_COUNT_THRESHOLD
-         AND piCheaterLogs < MAX_LOGGED_THRESHOLD
-      {
-         piCheaterLogs = piCheaterLogs + 1;
-         Debug("ALERT!",Send(self,@GetTrueName),self," is moving too fast.  "
-               "Has moves count of ",piMovesCounter," Possible speedhacker.");
-         piMovesCounter = 0;
-      }
 
       if speed > USER_WALKING_SPEED
       {
@@ -3001,14 +2975,6 @@ messages:
       if piCheaterLogs < MAX_LOGGED_THRESHOLD
          AND NOT IsClass(self,&DM)
       {
-         if piLastMoveUpdateTime = iCurrentTime
-         {
-            % Uh oh.  They've sent us more than one move per second.  Keep
-            %  track of 'em.
-            piNumberOfMovesPerSecond = piNumberOfMovesPerSecond + 1;
-         }
-         else
-         {
             % Okay, first see if we the person violated our movement
             %  limitations.
             iNewRow = Send(self,@GetRow);
@@ -3027,9 +2993,9 @@ messages:
                     AND iNewCol <> Send(poOwner,@GetTeleportCol))
             {
                % This is a large movement distance with a very low movement
-               %  delta, possibly cheat teleporting.
-               if iSquaredDistance >= 200
-                  AND iDelta < 3
+               %  delta, carmack's number was 66, so is ours.
+               if iSquaredDistance >= 66
+                  AND iDelta < 1
                {
                   Debug("ALERT! ",Send(self,@GetTrueName),self," moved ",
                         iSquaredDistance," with only ",iDelta," seconds since "
@@ -3039,10 +3005,21 @@ messages:
                         ") in RID ",iNewRoom," Possible speedhacker.");
                   piCheaterLogs = piCheaterLogs + 1;
 
-                  % A little extra penalty: Drain some vigor as we normally
-                  %  would.
-                  Send(self,@AddExertion,
-                       #amount=iSquaredDistance*EXERTION_PER_MOVE);
+                  % Throw the person to the blink spot
+                  % and hold them
+		 local owner, oRoom;
+      		 owner = Send(who,@GetOwner);
+      		 send(owner,@Teleport,#what=self);
+
+                 oHoldSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+                 if Send(who,@IsEnchanted,#what=oHoldSpell)
+                 {
+                 Send(who,@RemoveEnchantment,#what=oHoldSpell,#report=FALSE);
+                 }
+      
+                 10 = (Send(self,@GetDuration,#iSpellPower=state));
+                 Send(oHoldSpell,@DoHold,#what=self,#otarget=who,#iDuration=iDuration,#report=TRUE,#bAllowFreeAction=FALSE);  
+		 propagate;
                }
             }
 
@@ -3051,7 +3028,6 @@ messages:
             piMoveOldRow = Send(self,@GetRow);
             piMoveOldCol = Send(self,@GetCol);
             piMoveOldRoom = Send(poOwner,@GetRoomNum);
-         }
       }
 
       % Update this value for both speedhack detection AND movement detection.

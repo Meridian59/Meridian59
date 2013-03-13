@@ -4858,6 +4858,13 @@ messages:
       if IsClass(what,&Item) 
       {
          x = Send(what,@GetInitValue) * (100 + 20*viMerchant_markup) / 100;
+       
+         % Overwrite init value with shop price.
+         if Send(what,@GetShopPrice) > 0
+         {
+            x = Send(what,@GetShopPrice);
+         }
+		 
          y = Send(Send(SYS,@GetParliament),@GetFactionPriceBonus,#who=who,
                   #buying=TRUE);
          return Bound(x*y/100, 1, $);

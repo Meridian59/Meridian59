@@ -103,9 +103,11 @@ properties:
 
    piItem_flags = 0
 
+   piShopPrice = 0
+
 messages:
 
-   Constructor(corpse=$)
+   Constructor(corpse=$,price=$)
    {
       local iHits_average, oItemAtt;
 
@@ -119,6 +121,11 @@ messages:
             Send(oItemAtt,@AddToItem,#oItem=self,#state1=corpse);
          }            
       }
+	  
+	  if price <> $
+	  {
+		 piShopPrice = price;
+	  }
       
       propagate;
    }
@@ -1657,6 +1664,11 @@ messages:
       return FALSE;
    }
 
+   GetShopPrice()
+   "Override value of an item set by a seller."
+   {
+      return piShopPrice;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

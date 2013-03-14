@@ -156,7 +156,8 @@ messages:
       }
 
       % Strength varies from 15 to 99% chance to be right.
-      iPower = iSpellpower/2 + send(who,@GetKarma)/3 + Bound(send(who,@getmaxhealth),1,100)/4; % Added maxhealth to give an additional chance for built hunters but not mules.
+      % Maxhealth is added to spell power to give an additional chance for built hunters but not mules.
+      iPower = iSpellpower/2 + send(who,@GetKarma)/3 + Bound(send(who,@getmaxhealth),1,100)/4; 
       iPower = bound(iPower,15,99);
 
       return iPower;

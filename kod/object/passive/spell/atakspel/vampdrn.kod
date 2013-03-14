@@ -14,6 +14,8 @@ constants:
 
    include blakston.khd
 
+   MAX_HEAL = 50
+
 
 resources:
 
@@ -72,7 +74,7 @@ messages:
    % The chance to do something in addition to normal damage.
    DoSideEffect(who=$,victim=$,damage=0)
    {
-      local iToHeal, iMaxHeal;
+      local iToHeal;
       
       if who = $ OR victim = $
       {
@@ -92,7 +94,8 @@ messages:
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }
 
-      if send(who,@GetHealth) < send(who,@GetMaxHealth)+50 % Cap health gained for Vamp Drain at Max + 50
+      % Cap health after gain at max + 50
+      if send(who,@GetHealth) + iToHeal > send(who,@GetMaxHealth)+ MAX_HEAL 
       {   
          Send(who,@GainHealth,#amount=iToHeal);
       }

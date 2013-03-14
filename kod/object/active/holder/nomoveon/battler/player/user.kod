@@ -6005,6 +6005,16 @@ messages:
          }
       }
       
+      % This is intended to protect players from wall spells stacked on entrances. It will clear
+      % out a small space when they enter the zone, so that they don't appear in the middle of a wall spell.
+      if old <> $
+         AND Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND Send(Send(self,@GetOwner), @AllowGuildAttack,#what=self)
+         AND NOT IsClass(self,&DM)
+      {
+         Send(Send(self,@GetOwner),@DeleteWallsAroundBattler,#who=self);
+      }
+      
       propagate;
    }
 

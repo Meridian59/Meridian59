@@ -15,6 +15,11 @@ constants:
    include blakston.khd
    include protocol.khd
 
+   % This determines the size of the circle cleared by the DeleteWallsAroundBattler function.
+   % This is typically called to protect entering players from stumbling into wall spells.
+   % The units are based on the Object class measurements @GetRow and @GetCol.
+   WALL_DELETE_RADIUS = 2
+   
 resources:
 
    room_name_rsc = "Room"
@@ -3888,6 +3893,48 @@ messages:
       }
 
       return FALSE;
+   }
+
+   DeleteWallsAroundBattler(who=$)
+   "Deletes walls in a small radius around target battler."   
+   {
+      local i, each_obj;
+
+      % Relies on SquaredDistanceTo, a function descended from nomoveon.
+      if NOT IsClass(who,&Battler)
+      {
+         return;
+      }
+
+      % Check each active element, tell the object to delete if it is a wall and too close
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&ActiveWallElement)
+            or IsClass(each_obj,&Brambles)
+         {
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
+            {
+               Post(each_obj,@Delete);
+            }
+         }
+      }
+      
+      % Separate check through plPassive for passive wall elements
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&PassiveWallofFire)
+            OR IsClass(each_obj,&SporeCloud)
+            OR IsClass(each_obj,&PassiveWallofLightning)
+         {
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
+            {
+               Post(each_obj,@Delete);
+            }
+         }
+      }
+      return;
    }
 
 end

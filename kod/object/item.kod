@@ -93,6 +93,10 @@ classvars:
    vrCondition_med =   item_condition_med
    vrCondition_poor =  item_condition_poor
    vrCondition_broken = item_condition_broken
+   
+   % Items may have a different appearance once revealed. Values are zero if not applicable.
+   viUnrevealedColor = 0
+   viRevealedColor = 0
 
 properties:
 
@@ -118,6 +122,12 @@ messages:
          {
             Send(oItemAtt,@AddToItem,#oItem=self,#state1=corpse);
          }            
+      }
+      
+      if viUnrevealedColor <> 0
+         AND Send(self,@GetPaletteTranslation) = 0
+      {
+         Send(self,@SetPaletteTranslation,#translation=viUnrevealedColor);
       }
       
       propagate;
@@ -1657,6 +1667,30 @@ messages:
       return FALSE;
    }
 
+   GetUnrevealedColor()
+   "Returns the item's color before being revealed."
+   {
+      return viUnrevealedColor;
+   }
+   
+   GetRevealedColor()
+   "Returns the item's mystery revealed color."
+   {
+      return viRevealedColor;
+   }
+   
+   RevealHiddenColor()
+   "Shows the item's true color."
+   {
+      if viRevealedColor <> 0
+         AND viUnrevealedColor <> 0
+         AND Send(self,@GetPaletteTranslation) = (viUnrevealedColor & ITEM_PALETTE_MASK)
+      {
+         Send(self,@SetPaletteTranslation,#translation=viRevealedColor);
+         return TRUE;
+      }
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

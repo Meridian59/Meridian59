@@ -125,7 +125,7 @@ messages:
       }
       
       if viUnrevealedColor <> 0
-         AND Send(self,@GetPaletteTranslation) = (0 & ITEM_PALETTE_MASK)
+         AND Send(self,@GetPaletteTranslation) = 0
       {
          Send(self,@SetPaletteTranslation,#translation=viUnrevealedColor);
       }
@@ -1668,16 +1668,19 @@ messages:
    }
 
    GetUnrevealedColor()
+   "Returns the item's color before being revealed."
    {
       return viUnrevealedColor;
    }
    
    GetRevealedColor()
+   "Returns the item's mystery revealed color."
    {
       return viRevealedColor;
    }
    
    RevealHiddenColor()
+   "Shows the item's true color."
    {
       if viRevealedColor <> 0
          AND viUnrevealedColor <> 0

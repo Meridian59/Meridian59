@@ -35,6 +35,9 @@ classvars:
    vrUseMessage = AcidRing_use_rsc
    vrDeadMessage = AcidRing_dead_rsc
 
+   % Green inset when identified
+   viRevealedColor = PT_ITEM_XLAT_BLUE_TO_GREEN
+   
 properties:
 
    piResistanceType = -ATCK_SPELL_ACID

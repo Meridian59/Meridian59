@@ -2902,18 +2902,7 @@ messages:
       %  got a move packet, then adjust for last movement time.
       %  Also make sure we don't go too far negative.
       piMovesCounter = (piMovesCounter + 1) - iDelta;
-      piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
-
-      % Check for cheating by sending more move packets than allowed.
-      % Don't log too many cheat detections, because it'll fill up our logs.
-      if piMovesCounter > MOVEMENT_COUNT_THRESHOLD
-         AND piCheaterLogs < MAX_LOGGED_THRESHOLD
-      {
-         piCheaterLogs = piCheaterLogs + 1;
-         Debug("ALERT!",Send(self,@GetTrueName),self," is moving too fast.  "
-               "Has moves count of ",piMovesCounter," Possible speedhacker.");
-         piMovesCounter = 0;
-      }
+      piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);      
 
       if speed > USER_WALKING_SPEED
       {
@@ -4337,12 +4326,12 @@ messages:
          string = psPlayerDescription;
       }
       
-      if StringContain(psPlayerDescription,"¶")
+      if StringContain(psPlayerDescription,"ï¿½")
       {
          iCount = 0;
-         while StringContain(psPlayerDescription,"¶")
+         while StringContain(psPlayerDescription,"ï¿½")
          {
-            StringSubstitute(psPlayerDescription,"¶","");
+            StringSubstitute(psPlayerDescription,"ï¿½","");
             iCount = iCount + 1;
             if iCount > 10
             {

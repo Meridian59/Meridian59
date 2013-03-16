@@ -143,7 +143,10 @@ messages:
       % Reset the loot list if it's niled out.
       if plChaosNightLoot = $
       {
-         plChaosNightLoot = [ Create(&Inkycap,#number=50),
+         plChaosNightLoot = [
+                              Create(&KarmaPotion,#karma=10000),
+                              Create(&KarmaPotion,#karma=-10000),
+                              Create(&Chaosfood,#number=100),
                               Create(&Mint,#number=100),
                               Create(&Scimitar),
                               Create(&Longsword),
@@ -155,7 +158,14 @@ messages:
                               Create(&NeruditeArrow,#number=150),
                               Create(&JewelOfFroz),
                               Create(&JewelOfFroz),
-                              Create(&Gift)
+                              Create(&Gift),
+                              Create(&Gift),
+                              Create(&NeruditeBow),
+                              Create(&Platearmor),
+                              Create(&Guildshield),
+                              Create(&Mysticsword),
+                              Create(&Scimitar),
+                              Create(&Helm)
                             ];
       }
 
@@ -169,7 +179,13 @@ messages:
             {
                oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
             }
-            else
+			
+            if IsClass(oItem,&KarmaPotion)
+            {
+               oGift = Create(GetClass(oItem),#karma=Send(oItem,@GetKarma));
+            }
+			
+            else if NOT IsClass(oItem,&NumberItem)
             {
                oGift = Create(GetClass(oItem));
             }

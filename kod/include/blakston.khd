@@ -288,6 +288,21 @@
    PT_ALLWHITE       = 0x0079
    PT_ALLRED         = 0x004A
 
+   % Item single translations: blue to color. These won't work for double XLAT items
+   % that include skin colors. These will best be used to dynamically color parts of items
+   % specifically constructed to take advantage of these translations.
+   PT_ITEM_XLAT_BLUE_TO_ORANGE    = 0x96
+   PT_ITEM_XLAT_BLUE_TO_GREEN     = 0x97
+   PT_ITEM_XLAT_BLUE_TO_BLUE      = 0x98
+   PT_ITEM_XLAT_BLUE_TO_PURPLE    = 0x99
+   PT_ITEM_XLAT_BLUE_TO_YELLOW    = 0x9A
+   PT_ITEM_XLAT_BLUE_TO_WHITE     = 0x9B
+   PT_ITEM_XLAT_BLUE_TO_SKY       = 0x9C
+   PT_ITEM_XLAT_BLUE_TO_RED       = 0x9D
+   PT_ITEM_XLAT_BLUE_TO_SKIN1     = 0x9E
+   PT_ITEM_XLAT_BLUE_TO_SKIN2     = 0x9F
+   PT_ITEM_XLAT_BLUE_TO_SKIN4     = 0xA0
+
    %%% Sound constants
 
    SOUND_LOOP = 1

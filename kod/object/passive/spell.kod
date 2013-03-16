@@ -1179,6 +1179,16 @@ messages:
       {
          return TRUE;
       }
+      
+      % Check for Fury of Nature, which prevents fizzles
+      if IsClass(self,&AttackSpell)
+         AND viSchool = SS_FAREN
+      {         
+         if Send(who,@IsEnchanted,#what=Send(SYS,@FindSpellByNum,#NUM=SID_FURY_OF_NATURE))
+         {
+            return TRUE;
+         }
+      }
 
       iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
       num = ((100-iRequisiteStat)*iSpellpower/100) + iRequisiteStat;

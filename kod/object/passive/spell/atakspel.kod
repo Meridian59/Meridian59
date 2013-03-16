@@ -22,6 +22,8 @@ resources:
    attack_spell_no_self_rsc = "You can't cast %s on yourself."
    attack_spell_out_of_range = "%s%s is too far away to hit with %s."
 
+   furyofnature_spell_boost_rsc = "Your spell surges with elemental energies!"
+   
 classvars:
 
    viAttack_type = 0
@@ -150,6 +152,19 @@ messages:
                % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
                iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM) + 1;
             }
+         }
+         
+         % Check for Fury of Nature boost
+         if Send(who,@IsEnchanted,#what=Send(SYS,@FindSpellByNum,#NUM=SID_FURY_OF_NATURE))
+         {
+            % Inform caster the boost is working
+            Send(who,@MsgSendUser,#message_rsc=furyofnature_spell_boost_rsc);
+            
+            % Fury cost is 2 mana per cast
+            Send(who,@LoseMana,#amount=2);
+            
+            % Adds 2 damage
+            iDamage = iDamage + 2;
          }
       }
      

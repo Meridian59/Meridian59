@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FuryOfNature is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   furyofnature_name_rsc = "fury of nature"
+   furyofnature_icon_rsc = imanafoc.bgf
+   furyofnature_desc_rsc = \
+      "Draws from the raging elements themselves to empower the caster's attack spells.  "
+      "Requires purple mushrooms to cast."
+
+   furyofnature_on_rsc = "Your spirit surges with elemental energy."
+   furyofnature_off_rsc = "Nature's wrath departs, leaving your spirit bereft and weak."
+   
+classvars:
+
+   viSpell_num = SID_FURY_OF_NATURE
+   viSchool = SS_FAREN
+   viMana = 12
+   viSpell_Exertion = 12
+   viSpell_level = 6
+
+   viChance_To_Increase = 5
+
+   vrName = furyofnature_name_rsc
+   vrIcon = furyofnature_icon_rsc
+   vrDesc = furyofnature_desc_rsc
+
+   vrEnchantment_On = furyofnature_on_rsc
+   vrEnchantment_Off = furyofnature_off_rsc
+   
+   vbCanCastonOthers = FALSE
+
+properties:
+
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&PurpleMushroom,2],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower = 0)
+   {
+      local iDuration;
+
+      % Spellpower affects duration drastically
+      % All other effects are spellpower-independent
+      iDuration = 20 + (iSpellPower*3);
+      iDuration = iDuration * 1000;
+
+      return random(iDuration/2,iDuration);
+   }
+
+   GetStateValue(who = $, iSpellPower = 0)      
+   {
+      return iSpellPower;
+   }
+
+   SuccessChance(who=$)
+   "Designed to fight fizzles, should not fizzle itself."
+   {
+      return TRUE;
+   }
+   
+   CanBeRemovedByPlayer()
+   {
+      % Cannot be purged.
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1606,12 +1606,6 @@ messages:
          return FALSE;
       }
 
-      % No advancing if you've already gotten all your improves so far.
-      if NOT Send(who,@CheckAdvancementPoints)
-      {
-         Return FALSE;
-      }
-
       oOwner = Send(who,@GetOwner);
 
       % Can advance in real death arenas

@@ -23,13 +23,19 @@ resources:
       "Requires one diamond and an edible mushroom to cast."
 
    Invigorate_song = song11.mid
- 
+
+   invigorate_enter_rsc = "The nearby ballad seems to magically soothe your aching muscles."
+   invigorate_leave_rsc = "As the ballad fades, the magical invigoration ebbs."
+
 classvars:
 
    vrName = Invigorate_name_rsc
    vrIcon = Invigorate_icon_rsc
    vrDesc = Invigorate_desc_rsc
 
+   jala_song_enter = invigorate_enter_rsc
+   jala_song_leave = invigorate_leave_rsc
+   
    viSpell_num = SID_INVIGORATE
    viSchool = SS_JALA
    viSpell_level = 1
@@ -42,6 +48,8 @@ classvars:
    viChance_To_Increase = 20
 
    viHarmful = FALSE
+   
+   viBaseRange = 20
 
 properties:
 
@@ -58,12 +66,12 @@ messages:
       return;
    }
 
-   AdjustVigorTime(time=0, iSpellPower=0)
+   CalculateSongEffect(iVolume=0,modifiedVariable=0)
    "Reduces time passed in so that vigor regens faster.  Returns reduced time."
    {
       local iTime;
 
-      iTime = (time * (200-iSpellPower)) / 200;
+      iTime = (modifiedVariable * (200-iVolume)) / 200;
 
       return iTime;
    }

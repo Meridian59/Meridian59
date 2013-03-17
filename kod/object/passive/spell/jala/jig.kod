@@ -24,30 +24,34 @@ resources:
 
    jig_song = jala2.mid
  
+   jig_enter_rsc = "The nearby ditty compels you to begin dancing with yourself."
+   jig_leave_rsc = "As the ditty fades, you resume your wallflower status with a sigh of relief."
+
 classvars:
 
    vrName = jig_name_rsc
    vrIcon = jig_icon_rsc
    vrDesc = jig_desc_rsc
 
-   viMana = 10
+   jala_song_enter = jig_enter_rsc
+   jala_song_leave = jig_leave_rsc
+   
+   viMana = 18
    viManaDrain = 10
    viDrainTime = 5000
    viSpell_num = SID_JIG
-   viSpellExertion = 10      
+   viSpellExertion = 18      
    viChance_To_Increase = 40
 
    viSchool = SS_JALA
    viSpell_level = 4
 
-   viHarmful = FALSE
+   viHarmful = TRUE   
+   viBaseRange = 2
 
 properties:
 
    prMusic = jig_song
-   pbUserEffects = TRUE
-
-   piMinHitPoints = 30
       
 messages:
 
@@ -59,116 +63,19 @@ messages:
       return;
    }
 
-   CanPayCosts(who = $, lTargets = $)
-   {
-      % Stop unguilded casting of Jig in towns.
-      if NOT (IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
-         AND Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_GUILD_PK_ONLY)
-         AND (Send(who,@GetGuild) = $
-              OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-      {
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_location,
-              #parm1=Send(self,@GetName));
-
-         return FALSE;
-      }
-
-      propagate;
-   }
-
-   CastSpell(who = $,spellpower = 0)
-   "Called at beginning of spellcast"
-   {
-      local oRoom, each_obj, i;
-
-      oRoom = Send(who,@GetOwner);
-      Send(oRoom,@SetRoomFlag,#Flag=ROOM_JIG,#value=TRUE);
-      Send(oRoom,@SetRoomFlag,#Flag=ROOM_NO_COMBAT,#value=TRUE);
-
-      propagate;
-   }
-
-   EndSpell(where = $, state = $)
-   {
-      local i;
-      
-      Post(where,@SetRoomFlag,#Flag=ROOM_JIG,#value=FALSE);
-
-      if Send(where,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-      {
-         Send(where,@SetRoomFlagtoDefault,#flag=ROOM_NO_COMBAT);
-      }
-      
-      for i in Send(where,@GetEnchantmentList)
-      {
-         if Send(Nth(i,2),@GetSpellNum) = SID_TRUCE
-         {
-            Send(where,@SetRoomFlag,#flag=ROOM_NO_COMBAT,#value=TRUE);
-         }
-      }
-      
-      propagate;
-   }
-
-   StartEnchantment( who = $ )
-   "Starts enchantment effect on one player"
-   {
-      local lState;
-      
-      lState = Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self);
-      if lState = $ { DEBUG("Jig got $ state."); propagate; }
-      if Nth(lState,2) = who
-      {
-         Send(who,@ResetPlayerFlagList);
-
-         propagate;
-      }
-      
+   EnterSong(who=$,iVolume=0)
+   {   
       Send(who,@FreeHands);
       Send(who,@DoDance);
-      
       propagate;
    }
 
-   StartEnchantmentNewOccupant( who = $ )
-   "Called on new occupants of the enchanted room."
-   {
-      Send(self,@StartEnchantment,#who=who);
-
-      return;
-   }
-
-   EndRoomEnchantment(who = $, state = $)
-   "Called when user leaves the room."
-   {
-      Send(self,@RemoveEnchantment,#who=who);
+   LeaveSong(who=$,iVolume=0)
+   {   
+      Send(who,@StopDancing);
 
       propagate;
    }
-
-   RemoveEnchantment(who=$)
-   "Called instead of EndEnchantment when trance is broken"
-   {
-      if IsClass(who,&Player)
-      {
-         Post(who,@StopDancing);
-      }
-
-      propagate;
-   }
-
-   CheckDisruptWithNecklace()
-   "Checks the chance to disrupt the spell with a Necklace of Jala on. "
-   "Due to annoyance factor, this can always be disrupted."
-   {
-      return FALSE;
-   }
-
-   SpellBannedInArena()
-   {
-      return TRUE;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

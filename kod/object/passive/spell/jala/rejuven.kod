@@ -23,12 +23,18 @@ resources:
       "Requires one diamond and a raw, uncut seraphym to cast."
 
    Rejuvenate_song = song04.mid
- 
+
+   rejuvenate_enter_rsc = "The nearby ballad brings a refreshing energy, suffusing your spirit."
+   rejuvenate_leave_rsc = "As the ballad fades, the magical suffusion ebbs."
+
 classvars:
 
    vrName = Rejuvenate_name_rsc
    vrIcon = Rejuvenate_icon_rsc
    vrDesc = Rejuvenate_desc_rsc
+   
+   jala_song_enter = rejuvenate_enter_rsc
+   jala_song_leave = rejuvenate_leave_rsc
 
    viSpell_num = SID_REJUVENATE
    viSchool = SS_JALA
@@ -42,6 +48,7 @@ classvars:
    viChance_To_Increase = 20
 
    viHarmful = FALSE
+   viBaseRange = 10
 
 properties:
 
@@ -58,12 +65,12 @@ messages:
       return;
    }
 
-   AdjustManaTime(time=0, iSpellPower=0)
+   CalculateSongEffect(iVolume=0,modifiedVariable=0)
    "Reduces time passed in so that mana regens faster.  Returns reduced time."
    {
       local iTime;
 
-      iTime = (time * (200-iSpellPower)) / 200;
+      iTime = (modifiedVariable * (200-iVolume)) / 200;
 
       return iTime;
    }

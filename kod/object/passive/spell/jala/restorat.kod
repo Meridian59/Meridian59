@@ -20,16 +20,22 @@ resources:
    Restorate_icon_rsc = irestor.bgf
    Restorate_desc_rsc = \
       "This song allows all listeners to regain health at an accelerated rate.  "
-      "Requires one diamond and several herbs to cast."
+      "Requires one diamond and some herbs to cast."
 
    Restorate_song = song05.mid
  
+   restorate_enter_rsc = "The nearby ballad seems to help knit your battle wounds."
+   restorate_leave_rsc = "As the ballad fades, the magical restoration ebbs."
+
 classvars:
 
    vrName = Restorate_name_rsc
    vrIcon = Restorate_icon_rsc
    vrDesc = Restorate_desc_rsc
 
+   jala_song_enter = restorate_enter_rsc
+   jala_song_leave = restorate_leave_rsc
+   
    viSpell_num = SID_RESTORATE
    viSchool = SS_JALA
    viSpell_level = 3
@@ -42,6 +48,7 @@ classvars:
    viChance_To_Increase = 20
 
    viHarmful = FALSE
+   viBaseRange = 10
 
 properties:
 
@@ -53,17 +60,17 @@ messages:
    {
       plReagents = $;
       plReagents = Cons([&Diamond,1],plReagents);
-      plReagents = Cons([&Herbs,5],plReagents);
+      plReagents = Cons([&Herbs,2],plReagents);
 
       return;
    }
 
-   AdjustHealthTime(time=0, iSpellPower=0)
+   CalculateSongEffect(iVolume=0,modifiedVariable=0)
    "Reduces time passed in so that health regens faster.  Returns reduced time."
    {
       local iTime;
 
-      iTime = (time * (200-iSpellPower)) / 200;
+      iTime = (modifiedVariable * (200-iVolume)) / 200;
 
       return iTime;
    }

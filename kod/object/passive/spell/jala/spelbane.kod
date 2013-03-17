@@ -26,6 +26,9 @@ resources:
    Spellbane_no_towns = "You are prevented from singing this song currently."
 
    Spellbane_song = jala1.mid
+   
+   spellbane_enter_rsc = "The nearby psalm seems to weave the mana field together in a binding pattern."
+   spellbane_leave_rsc = "As the psalm departs, the mana field begins flowing once more."
  
 classvars:
 
@@ -33,6 +36,9 @@ classvars:
    vrIcon = Spellbane_icon_rsc
    vrDesc = Spellbane_desc_rsc
 
+   jala_song_enter = spellbane_enter_rsc
+   jala_song_leave = spellbane_leave_rsc
+   
    viSpell_num = SID_SPELLBANE
    viSchool = SS_JALA
    viSpell_level = 3
@@ -43,34 +49,14 @@ classvars:
 
    viSpell_Exertion = 6
 
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
    viHarmful = TRUE
+   viBaseRange = 2
 
 properties:
 
    prMusic = Spellbane_song
       
 messages:
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom, i, oActive;
-
-      oRoom = send(who,@GetOwner);
-
-      % Check to see if the room restricts guild attacks.
-      if NOT send(oRoom,@AllowGuildAttack,#what=who)
-         AND Send(SYS,@IsPKAllowed)
-         AND NOT IsClass(who,&DM)
-      {
-         % Tried to cast unguilded in town.  Denied!
-         Send(who,@MsgSendUser,#message_rsc=Spellbane_no_towns);
-
-         return FALSE;
-      }
-
-      propagate;
-   }
 
    ResetReagents()
    {
@@ -80,18 +66,17 @@ messages:
       return;
    }
 
-   StartEnchantment(who = $)
-   "Starts enchantment effect on one player"
+   % Returns false for spells with less spellpower than it
+   CalculateSongEffect(iVolume=0,modifiedVariable=0)
    {
-      propagate;
+      % modifiedVar is spellpower. Returns TRUE if successful at blocking spell
+      if iVolume >= modifiedVariable
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
    }
-
-   RemoveEnchantment()
-   "Called instead of EndEnchantment when trance is broken"
-   {
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

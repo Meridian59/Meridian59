@@ -872,6 +872,9 @@ properties:
    % Defense modifiers to defense roll & damage (includes items & spells)
    plDefense_modifiers = $
    
+   % Jala modifiers do a variety of things (all will be songs currently affecting the player)
+   plJala_modifiers = $
+   
    piGender = GENDER_MALE
 
    piVigor_rest_threshold = 80
@@ -3161,6 +3164,93 @@ messages:
       return;
    }
 
+   AddJalaModifier(what = $, iVolume = 0)
+   "Adds what and volume to plJala_modifiers, which carry out song effects."
+   {
+      plJala_modifiers = Cons([what,iVolume],plJala_modifiers);
+      Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
+      
+      return;
+   }
+   
+   RemoveJalaModifier(what = $, iVolume = 0)
+   "Removes <what> from plJala_modifiers."
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
+      for i in plJala_modifiers
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iVolume
+         {
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=ENCHANTMENT_ROOM);
+            plJala_modifiers = DelListElem(plJala_modifiers,i);
+            bFound = TRUE;
+         }
+      }
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove Jala modifier",what,"but not in list",
+               plJala_modifiers);
+      }
+
+      return;
+   }
+
+   IsAffectedByJalaModifier(what = $, byClass = &Spell)
+   "Returns whether or not currently enchanted by <what> song."
+   {
+      local i;
+
+      if what = $
+      {
+         for i in plJala_modifiers
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               return TRUE;
+            }
+         }
+      }
+      else
+      {
+         for i in plJala_modifiers
+         {
+            if Nth(i,1) = what
+            {
+               return TRUE;
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+
+   GetLoudestJalaModifierEffectByClass(byClass=&Spell,modifiedVariable=0)
+   {
+      local i, oLoudestVolume, oSong, iEffect;
+
+      oLoudestVolume = 0;
+      oSong = $;
+
+      for i in plJala_modifiers
+      {
+         if IsClass(Nth(i,1),byClass)
+         {
+            if Nth(i,2) > oLoudestVolume
+            {
+               oSong = Nth(i,1);
+               oLoudestVolume = Nth(i,2);
+            }
+         }
+      }
+      iEffect = Send(oSong,@CalculateSongEffect,#iVolume=oLoudestVolume,#modifiedVariable=modifiedVariable);
+
+      return iEffect;
+   }
+
    AddDefenseModifier(what = $)
    "Adds <what> to plDefense_modifiers, which can modify defense strength "
    "and damage."
@@ -3902,7 +3992,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
+      local iRange, oWinds, oSandstorm, iAttackTime;
 
       % Can't target self.
       if what = self
@@ -3911,10 +4001,18 @@ messages:
          
          return FALSE;
       }
-
+      
+      % Warp Time can double or triple attack delay
+      iAttackTime=1;
+      
+      if Send(self,@IsAffectedByJalaModifier,#byClass=&WarpTime)
+      {
+         iAttackTime = Send(self,@GetLoudestJalaModifierEffectByClass,#byClass=&WarpTime,#modifiedVariable=iAttackTime);
+      }
+      
       % Check attack time.
-      % IsOkayAttackTime defaults to 1 second
-      if NOT Send(self,@IsOkayAttackTime) 
+      % IsOkayAttackTime defaults to 1 second, can be warped up to 3 seconds
+      if NOT Send(self,@IsOkayAttackTime,#seconds=iAttackTime)
       {
          return FALSE;
       }  
@@ -5541,7 +5639,7 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, iMaxHealth;
       
       % Faster regen with higher vigor
       iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
@@ -5552,30 +5650,27 @@ messages:
 
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
-      
+
+      % Typical bound when not affected by Restorate
+      iTime = bound(iTime,1000,60000);
+
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
+         if Send(self,@IsAffectedByJalaModifier,#byClass=&Restorate)
          {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Restorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
-                            #iSpellPower=iJalaPower);
-            }
+            iTime = Send(self,@GetLoudestJalaModifierEffectByClass,#byClass=&Restorate,#modifiedVariable=iTime);
+            % Allow Restorate to bring health regen 'over max'
+            iTime = bound(iTime,500,60000);
          }
       }
 
-      return bound(iTime,1000,60000);
+      return iTime;
    }
 
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime;
 
       if piMana > piMax_mana
       {
@@ -5594,20 +5689,11 @@ messages:
 
          if poOwner <> $
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-            if lJalaInfo <> $
+            if Send(self,@IsAffectedByJalaModifier,#byClass=&Rejuvenate)
             {
-               oJalaSpell = Nth(lJalaInfo,2);
-               if IsClass(oJalaSpell,&Rejuvenate)
-               {
-                  iJalaPower = Nth(Nth(lJalaInfo,3),3);
-                  iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
-                               #iSpellPower=iJalaPower);
-               }
+               iTime = Send(self,@GetLoudestJalaModifierEffectByClass,#byClass=&Rejuvenate,#modifiedVariable=iTime);
+               iTime = bound(iTime,500,60000);
             }
-         
-            iTime = bound(iTime,500,60000);
          }
       }
 
@@ -9804,22 +9890,15 @@ messages:
 
    GetRestTime()
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime;
 
       iTime = 1000 + (30* (51-Send(self,@getStamina))); 
 
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
+         if Send(self,@IsAffectedByJalaModifier,#byClass=&Invigorate)
          {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Invigorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
-            }
+            iTime = Send(self,@GetLoudestJalaModifierEffectByClass,#byClass=&Invigorate,#modifiedVariable=iTime);
          }
       }
       
@@ -10144,6 +10223,17 @@ messages:
          }
          
          plDefense_modifiers = $;
+      }
+
+      if plJala_modifiers <> $
+      {
+         for i in plJala_modifiers
+         {
+            Debug("Recalibrating: player",Send(self,@GetTrueName),self,
+                  "still had jalamods",Send(i,@GetName));
+         }
+         
+         plJala_modifiers = $;
       }
       
       if plResistances <> $

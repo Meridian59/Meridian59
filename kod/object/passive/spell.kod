@@ -72,7 +72,7 @@ resources:
 
    spell_failed_by_chance = "You were unsuccessful in casting %s."
    spell_spellbane_stopped = \
-      "The notes of %s's song tangle with the words of your spell, unraveling "
+      "The notes of the song tangle with the words of your spell, unraveling "
       "it faster than your tongue can weave it."
 
    spell_advanced = "You advanced in %s!  Your ability is now at %s."
@@ -489,7 +489,7 @@ messages:
    CanCastHere(who = $, where = $, lTargets = $, iSpellPower = 0,
                bItemCast = FALSE, report = TRUE)
    {
-      local oSpell, lState, iJalaPower, oTarget;
+      local oSpell, lState, oTarget;
 
       if IsClass(who,&DM)
       {
@@ -504,26 +504,15 @@ messages:
 
       if NOT bItemCast
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=SID_SPELLBANE);
-         if (Send(where,@IsEnchanted,#what=oSpell))
-         {
-            % The spell's spellpower is the third element of the state, which
-            %  is the third element of Jala info stored by room.
-            iJalaPower = Nth(Nth(Send(where,@GetJalaInfo),3),3);
-
-            % Does Spellbane overpower the spell?
-            % Spellbane always works on monsters that can be silenced
-            if iJalaPower > iSpellPower
+         if Send(who,@IsAffectedByJalaModifier,#byClass=&Spellbane)
+         {            
+            if Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&Spellbane,#modifiedVariable=iSpellPower)
                OR (IsClass(who,&Monster) AND Send(who,@CanBeSilenced))
             {
                if report
                {
-                  % 2nd element in state is the original caster.
-                  lState = Send(where,@GetEnchantmentState,#what=oSpell);
-                  Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,
-                       #parm1=Send(Nth(lState,2),@GetName));
+                  Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped);
                }
-         
                return FALSE;
             }
          }
@@ -690,7 +679,7 @@ messages:
                bMade = FALSE)
    {
       local iLists, oUserObject, iNum, i, oOwner, oVictim, oRoom, iRand,
-            oSpell;
+            oSpell, viModified_PostCast_Time;
       
       if NOT IsClass(who,&Player)
       {
@@ -741,8 +730,16 @@ messages:
             return FALSE;
          }
       }
+
+      % Warp Time can double or triple postcast timers
+      viModified_PostCast_Time = viPostCast_Time;     
       
-      if NOT Send(who,@IsOkayAttackTime,#seconds=viPostCast_Time)
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&WarpTime)
+      {
+         viModified_PostCast_Time = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&WarpTime,#modifiedVariable=viModified_PostCast_Time);
+      }
+      
+      if NOT Send(who,@IsOkayAttackTime,#seconds=viModified_PostCast_Time)
       {
          return FALSE;
       }
@@ -1165,7 +1162,7 @@ messages:
    "This is always TRUE for touch attack spells, because touch attacks"
    "figure their success in player.kod."
    {
-      local num, iRequisiteStat, iability, lJalaInfo, oJalaSpell, lJalaState,
+      local num, iRequisiteStat, iability,
       iDistance, oTarget, oRing;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);
@@ -1182,22 +1179,6 @@ messages:
 
       iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
       num = ((100-iRequisiteStat)*iSpellpower/100) + iRequisiteStat;
-
-      % Modify chance to succeed due to Jala's hinder spells.
-      lJalaInfo = Send(Send(who,@GetOwner),@GetJalaInfo);
-
-      if lJalaInfo <> $
-      {
-         % lJalaInfo is of form: [room timer, spell object, state]
-         oJalaSpell = Nth(lJalaInfo,2);
-         if IsClass(oJalaSpell,&HinderSpell)
-         {
-            lJalaState = Nth(lJalaInfo,3);
-            % Jala State is of the form: [volume, caster, spellpower]
-            num = Send(oJalaSpell,@GetAlteredChance,#chance=num,#what=self,
-                       #iSpellPower=Nth(lJalaState,3));
-         }
-      }
 
       num = bound(num,5,95);
 
@@ -2178,15 +2159,57 @@ messages:
            
       if Send(oRoom,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
       {
-         oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_ANTIMAGIC_AURA);
-         iAbilityLoss = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
+         % Mana Convergence song not affected by AMA
+         if NOT IsClass(self,&ManaConvergence)
+         {
+            oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_ANTIMAGIC_AURA);
+            iAbilityLoss = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
 
-         oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_MANA_CONVERGENCE);
-         iAbilityGain = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
-
-         iSpellPower = (iSpellpower - iAbilityLoss + iAbilityGain);
+            iSpellPower = iSpellpower - iAbilityLoss;
+         }
       }
 
+      % Affected by the Dement spell?
+      oModifierSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
+      if Send(who,@IsEnchanted,#what=oModifierSpell)
+      {
+         iAbilityLoss = first(Send(who,@GetEnchantedState,#what=oModifierSpell));
+         iAbilityLoss = Random(iAbilityLoss, iAbilityLoss*2);
+         iSpellpower = iSpellpower - iAbilityLoss;
+      }
+
+      % Check for hinder songs
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&Civility) AND viSchool = SS_FAREN
+      {
+         iSpellPower = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&Civility,#modifiedVariable=iSpellPower);
+      }
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&Conciliation) AND viSchool = SS_KRAANAN
+      {
+         iSpellPower = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&Conciliation,#modifiedVariable=iSpellPower);
+      }
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&Disharmony) AND viSchool = SS_JALA
+      {
+         iSpellPower = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&Disharmony,#modifiedVariable=iSpellPower);
+      }
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&ProfaneResonance) AND viSchool = SS_SHALILLE
+      {
+         iSpellPower = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&ProfaneResonance,#modifiedVariable=iSpellPower);
+      }
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&SacredResonance) AND viSchool = SS_QOR
+      {
+         iSpellPower = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&SacredResonance,#modifiedVariable=iSpellPower);
+      }
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&Truth) AND viSchool = SS_RIIJA
+      {
+         iSpellPower = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&Truth,#modifiedVariable=iSpellPower);
+      }
+
+      % Check for Mana Convergence
+      if Send(who,@IsAffectedByJalaModifier,#byClass=&ManaConvergence)
+      {
+         iSpellPower = Send(who,@GetLoudestJalaModifierEffectByClass,#byClass=&ManaConvergence,#modifiedVariable=iSpellPower);
+      }
+      
       % Bound the lower end so that the stuff that follows is truly a bonus.
       iSpellPower = bound(iSpellPower,0,$);
 
@@ -2198,15 +2221,6 @@ messages:
 
       % Then, add bonus from the system object, set by admins
       iSpellPower = iSpellPower + Send(SYS,@GetBonusSpellpower,#school=viSchool);
-
-      % Affected by the Dement spell?
-      oModifierSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
-      if Send(who,@IsEnchanted,#what=oModifierSpell)
-      {
-         iAbilityLoss = first(Send(who,@GetEnchantedState,#what=oModifierSpell));
-         iAbilityLoss = Random(iAbilityLoss, iAbilityLoss*2);
-         iSpellpower = iSpellpower - iAbilityLoss;
-      }
 
       % The personal universal modifier.
       iSpellpower = iSpellpower

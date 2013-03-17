@@ -20,15 +20,21 @@ resources:
    ProfaneResonance_icon_rsc = iprofres.bgf
    ProfaneResonance_desc_rsc = \
       "The foreboding sound of this song hinders the casting the holy spells of Shal'ille.  "
-      "A ruby and some herbs are required to begin performing this song."
+      "An herb is required to begin performing this song."
 
    ProfaneResonance_song = nec02.mid
- 
+
+   profaneres_enter_rsc = "The nearby chant touches on the hypocrisy of those who purport to serve good."
+   profaneres_leave_rsc = "As the chant fades, your self-righteous sense of purity returns."
+
 classvars:
 
    vrName = ProfaneResonance_name_rsc
    vrIcon = ProfaneResonance_icon_rsc
    vrDesc = ProfaneResonance_desc_rsc
+   
+   jala_song_enter = profaneres_enter_rsc
+   jala_song_leave = profaneres_leave_rsc
 
    viMana = 5          % Mana is amount used upon inititiation
    viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
@@ -38,7 +44,6 @@ classvars:
    viSchool = SS_JALA
    viSpell_level = 3
 
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
    viHarmful = TRUE
 
    viHinderedSchool = SS_SHALILLE
@@ -52,7 +57,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Ruby,1],plReagents);
       plReagents = Cons([&Herbs,1],plReagents);
 
       return;

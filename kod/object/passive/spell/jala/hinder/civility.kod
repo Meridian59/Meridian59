@@ -20,15 +20,21 @@ resources:
    Civility_icon_rsc = icivilty.bgf
    Civility_desc_rsc = \
       "This song hinders the casting of the spells of the master of the elements, Faren.  "
-      "A ruby and a mushroom are required to begin performing this song."
+      "A mushroom is required to begin performing this song."
 
    Civility_song = jala3.mid
- 
+
+   civility_enter_rsc = "The nearby aria seems to bring a sense of civility to the area."
+   civility_leave_rsc = "As the aria fades, the living sounds of nature return."
+
 classvars:
 
    vrName = Civility_name_rsc
    vrIcon = Civility_icon_rsc
    vrDesc = Civility_desc_rsc
+   
+   jala_song_enter = civility_enter_rsc
+   jala_song_leave = civility_leave_rsc
 
    viMana = 5          % Mana is amount used upon inititiation
    viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
@@ -38,7 +44,6 @@ classvars:
    viSchool = SS_JALA
    viSpell_level = 2
 
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
    viHarmful = TRUE
 
    viHinderedSchool = SS_FAREN
@@ -52,7 +57,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Ruby,1],plReagents);
       plReagents = Cons([&Mushroom,1],plReagents);
 
       return;

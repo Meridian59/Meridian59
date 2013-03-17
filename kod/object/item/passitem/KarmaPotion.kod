@@ -56,6 +56,7 @@ properties:
 messages:
 
    Constructor(Karma=$)
+   "Creates the Karma Potion with a negative or positive karma value. INT above zero makes positive potion INT below zero makes a negative potion."
    {
       if karma > 0
       {

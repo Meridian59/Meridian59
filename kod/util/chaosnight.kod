@@ -179,13 +179,14 @@ messages:
             {
                oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
             }
-			
+           
             if IsClass(oItem,&KarmaPotion)
             {
                oGift = Create(GetClass(oItem),#karma=Send(oItem,@GetKarma));
             }
 			
-            else if NOT IsClass(oItem,&NumberItem)
+            if NOT IsClass(oItem,&NumberItem)
+            AND NOT IsClass(oItem,&KarmaPotion)
             {
                oGift = Create(GetClass(oItem));
             }

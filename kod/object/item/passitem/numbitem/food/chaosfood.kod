@@ -42,7 +42,7 @@ classvars:
 properties:
 		
    piItem_flags = PT_FRST_WHT3
-   viFilling = 0          % Ignore's the characters stomach to allow for constant frenzy killing without being full...
+   viFilling = 0          % Ignores the characters stomach to allow for constant frenzy killing without being full...
    viNutrition = 200
    piNumber = 1
 
@@ -64,7 +64,7 @@ messages:
       }
       else
       {
-        % We only want these used during a frenzy, so if eaten during a frenzy
+        % We only want these used during a frenzy, so if eaten outside of a frenzy
         % the food will delete itself.
         Send(apply_on,@MsgSendUser,#message_rsc=chaosfd_no_eat);
         Send(self,@Delete);

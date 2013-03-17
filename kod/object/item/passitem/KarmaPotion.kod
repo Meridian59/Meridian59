@@ -60,7 +60,7 @@ messages:
       if karma > 0
       {
         vrName = KarmaPotion_pos_name_rsc;
-        VrDesc = KarmaPotion_pos_desc_rsc;
+        vrDesc = KarmaPotion_pos_desc_rsc;
         piItem_Flags = PT_MET_GREEN;
         piKarma = 10000;
       }
@@ -82,7 +82,7 @@ messages:
       {	
         Send(apply_on,@SetKarma,#value=piKarma);
       }    
-	  else
+      else
       {
         Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_no_drink);
         Send(self,@Delete);								% deletes it self if someone tries to use it outside frenzy.	
@@ -93,12 +93,12 @@ messages:
    
    ReqNewApply(what = $,apply_on = $)
    {
-     if what = apply_on
-     {
-       return TRUE;
-     }
+   if what = apply_on
+    {
+      return TRUE;
+    }
       
-     return FALSE;
+   return FALSE;
    }
    
    NewApplied(what = $,apply_on = $)
@@ -108,32 +108,32 @@ messages:
          Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
       }
 
-     Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_drink);
-     Send(self,@ApplyPotionEffects,#apply_on=apply_on);
+      Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_drink);
+      Send(self,@ApplyPotionEffects,#apply_on=apply_on);
 
-     Send(self,@Delete);
+      Send(self,@Delete);
 
      return;
    }
 
    IsBeverage()
    {
-     return TRUE;
+   return TRUE;
    }
 
    CanIdentify()
    {
-     return TRUE;
+   return TRUE;
    }
 
    RevealHiddenAttributes()
    {
-     return FALSE;
+   return FALSE;
    }
    
    GetKarma()
    {
-     return piKarma;
+   return piKarma;
    }
    
 

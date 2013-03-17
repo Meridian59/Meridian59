@@ -106,8 +106,7 @@ messages:
 
          % Important note: FindListElem returns nil on a passed nil value, not zero.
          if IsClass(oUser,&User)
-            AND ((FindListElem(lEnchanted,oUser) = 0)
-            OR (FindListElem(lEnchanted,oUser) = $))
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
             AND Send(who,@SquaredDistanceTo,#what=oUser) <= (UMBRELLA_RANGE * UMBRELLA_RANGE)
          {
             send(self,@EnterUmbrella,#who=oUser,#iSpellpower=iSpellpower);
@@ -197,7 +196,7 @@ messages:
          oUser = Send(oRoom,@HolderExtractObject,#data=lActive);
 
          if IsClass(oUser,&User)
-            AND (FindListElem(lEnchanted,oUser) = 0)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
             AND Send(who,@SquaredDistanceTo,#what=oUser) <= (UMBRELLA_RANGE * UMBRELLA_RANGE)
          {
             % Then we have a new entry.

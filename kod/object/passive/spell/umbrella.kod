@@ -104,7 +104,6 @@ messages:
       {
          oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
 
-         % Important note: FindListElem returns nil on a passed nil value, not zero.
          if IsClass(oUser,&User)
             AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
             AND Send(who,@SquaredDistanceTo,#what=oUser) <= (UMBRELLA_RANGE * UMBRELLA_RANGE)

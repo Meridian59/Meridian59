@@ -105,8 +105,8 @@ messages:
          oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
 
          if IsClass(oUser,&User)
-            AND (FindListElem(lEnchanted,oUser) = 0)
-            AND NOT Send(self,@OutRange,#obj1=oUser,#obj2=who)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (UMBRELLA_RANGE * UMBRELLA_RANGE)
          {
             send(self,@EnterUmbrella,#who=oUser,#iSpellpower=iSpellpower);
             lEnchanted = cons(oUser,lEnchanted);
@@ -183,7 +183,7 @@ messages:
       % Do test.
       for oUser in lEnchanted
       {
-         if Send(self,@OutRange,#obj1=oUser,#obj2=who)
+         if Send(who,@SquaredDistanceTo,#what=oUser) > (UMBRELLA_RANGE * UMBRELLA_RANGE)
          {
             Send(oUser,@MsgSendUser,#message_rsc=umbrella_outside);
             Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
@@ -195,8 +195,8 @@ messages:
          oUser = Send(oRoom,@HolderExtractObject,#data=lActive);
 
          if IsClass(oUser,&User)
-            AND (FindListElem(lEnchanted,oUser) = 0)
-            AND not Send(self,@OutRange,#obj1=oUser,#obj2=who)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (UMBRELLA_RANGE * UMBRELLA_RANGE)
          {
             % Then we have a new entry.
             send(self,@EnterUmbrella,#who=oUser,#iSpellpower=iSpellpower);
@@ -214,27 +214,6 @@ messages:
    "Called instead of EndEnchantment when trance is broken"
    {
       return;
-   }
-
-   OutRange(obj1 = $, obj2 = $)
-   {
-      local iRange_squared, iRowDiff, iColDiff;
-
-      if Send(obj1,@GetOwner) <> Send(obj2,@GetOwner)
-      {
-         return TRUE;
-      }
-
-      iRange_squared = UMBRELLA_RANGE * UMBRELLA_RANGE ;
-      iRowDiff = Send(obj1,@GetRow) - Send(obj2,@GetRow);
-      iColDiff = Send(obj1,@GetCol) - Send(obj2,@GetCol);
-
-      if (iRowDiff*iRowDiff + iColDiff*iColDiff) < iRange_squared
-      {
-         return FALSE;
-      }
-
-      return TRUE;
    }
 
    BreakTrance( who = $, state = $ )

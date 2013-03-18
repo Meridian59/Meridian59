@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE></TITLE>
+   <META NAME="Author" CONTENT="">
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.03Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY>
+
+<P><B><FONT SIZE=+4>Necromancer Entrance Puzzle 
+<HR WIDTH="100%">Part 3 
+<HR WIDTH="100%"></FONT></B>So, you've solved it once by figuring it out
+yourself, right?</P>
+
+<P>And you didn't use any lightning walls this time, right?</P>
+
+<P>If not, do not read any further.</P>
+
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%">
+<HR WIDTH="100%"><B>Solution:</B></P>
+
+<P>Over the hundreds of years since the arena was last used, the enchantments
+on the levers have blended and crossed over with one another. They still
+work as designed, but each lever has additional side-effects:</P>
+
+<UL>
+<LI>The one lever on the south wall activates/deactivates the center spire,
+and raises/lowers all four outer spires.</LI>
+
+<LI>The four levers on the west wall activate/deactivate one outer spire
+(if it's raised) and raise/lower the three other outer spires.</LI>
+
+<LI>The four levers on the north wall raise/lower two outer spires.</LI>
+</UL>
+
+<P>There are three main keys to solving the puzzle:</P>
+
+<UL>
+<LI>first off, map out what lever does what.</LI>
+
+<LI>once you've got an outer spire lit, make sure you lower it to preserve
+its state before you switch a lever which might deactivate it.</LI>
+
+<LI>to raise a spire without affecting the state of any other spire:</LI>
+
+<UL>
+<LI>find the two north levers which raise/lower that spire (call them A
+and B).</LI>
+
+<LI>find the west lever which raises/lowers the same three spires as the
+two north levers you just found (call it C).</LI>
+
+<LI>if the spire which is activated by lever C is raised and lit, lower
+it using a north lever (call it D).</LI>
+
+<LI>pull levers A, B, and C.</LI>
+
+<LI>if you pulled lever D, pull it again.</LI>
+</UL>
+</UL>
+
+<P>Note also that you can cheat at any point by having a friend on the
+arena floor cast lightning wall to activate a spire for you. However, as
+with the purely lightning wall driven solution, that friend won't be able
+to make the jump if his/her lightning wall activates the final spire and
+solves the puzzle. As such, I'm not too concerned about circumventing the
+levers in this fashion, because you'd have to know a fair amount about
+the puzzle to set it up with lightning walls so that it would only require
+a few lever pulls to complete.</P>
+
+<P>In addition, if you're clever you can set up the spires with the levers
+so that you only need one player to get into the necropolis (using lightning
+walls, of course)!</P>
+
+<P><B>Things to test:</B></P>
+
+<UL>
+<LI>lever effects should randomize every time the lich is reborn or killed.</LI>
+
+<LI>rapid lever switching should be disabled (max of one lever pull every
+two seconds).</LI>
+
+<LI>all levers should be stuck until the puzzle has been solved once on
+the server. This should safeguard against guides teleporting up to the
+north ledge and letting in their friends with the levers before anyone
+has actually solved the puzzle legally. In addition, I will add a check
+which prevents guides/guardians from switching the levers at all.</LI>
+</UL>
+
+</BODY>
+</HTML>

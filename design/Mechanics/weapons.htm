@@ -1,0 +1,418 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>Weapons</title>
+  </head>
+  <body>
+    <h1>Weapons of Meridian</h1>
+    This document explains how weapons work in Dark Auspices. The
+    specifics will probably change in future releases, but the general
+    concept should remain the same.
+    <p> </p>
+    <h2>Motivation for changing Weapons</h2>
+    Weapons were changed due to the lack of variety of weapons that
+    people
+    used. This system encourages a wider variety of weapons to be used.
+    In
+    future iterations, monsters may become more resistant to certain
+    types
+    of weapon damage.
+    <p> </p>
+    <h3>The general information:</h3>
+    Weapons are separated into three types. Bludgeoning weapons are all
+    non-bladed weapons, like hammer. Thrusting weapons refer to various
+    types of swords. Slashing weapons are the heavier weapons like Axe
+    and
+    Scimitar. The general characteristics of the weapons are described
+    in
+    this table:
+    <p>
+      <table border="1">
+        <tbody>
+          <tr>
+            <th>Type</th>
+            <th>To-Hit Modifier</th>
+            <th>Range of Damage</th>
+            <th>Disarm Bonus</th>
+            <th>Spell "Penalty"</th>
+            <th>Reach of Weapon</th>
+          </tr>
+          <tr align="center">
+            <td>Bludgeon</td>
+            <td>Mid</td>
+            <td>Mid</td>
+            <td>Low</td>
+            <td>High</td>
+            <td>Low</td>
+          </tr>
+          <tr align="center">
+            <td>Thrust</td>
+            <td>High</td>
+            <td>Low</td>
+            <td>High</td>
+            <td>Mid</td>
+            <td>High</td>
+          </tr>
+          <tr align="center">
+            <td>Slash</td>
+            <td>Low</td>
+            <td>High</td>
+            <td>Mid</td>
+            <td>Low</td>
+            <td>Mid</td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> <strong>To-Hit modifier</strong> is the bonus a wielder has
+      with the
+      weapon. This helps compensate for low skill in a weapon, or helps
+      skilled players hit harder monsters. </p>
+    <p> <strong>Range of Damage</strong> indicates the general amount
+      of
+      damage a weapon will do. </p>
+    <p> <strong>Disarm Bonus</strong> indicates the bonus a player with
+      the
+      disarm skill receives to his or her disarm attempts. A higher
+      bonus
+      gives a better chance for the skill to work and a better chance to
+      make
+      the opponent drop his or her weapon. Note that this does not
+      affect
+      people without the disarm skill. </p>
+    <p> <strong>Spell "Penalty"</strong> refers to the amount a weapon
+      interferes with spellcasting. A high value in this category is
+      good,
+      meaning that it will interfere with spellcasting less. With a few
+      exceptions, wielding a weapon will decrease a player's
+      spellcasting
+      ability. </p>
+    <p> <strong>Reach of Weapon</strong> is how far the weapon can
+      reach.
+      This needs to be tweaked a bit due to the wierd way that Meridian
+      calculates "distance". </p>
+    <p> </p>
+    <h3>Values</h3>
+    These are the hard numbers behind the weapon characteristics:
+    <p>
+      <table border="1">
+        <tbody>
+          <tr>
+            <th>Value</th>
+            <th>To-Hit Modifier</th>
+            <th>Range of Damage</th>
+            <th>Disarm Bonus</th>
+            <th>Spell "Penalty"</th>
+            <th>Reach of Weapon</th>
+          </tr>
+          <tr align="center">
+            <td>Low</td>
+            <td>0</td>
+            <td>3-8</td>
+            <td>-5</td>
+            <td>-30</td>
+            <td>2</td>
+          </tr>
+          <tr align="center">
+            <td>Mid</td>
+            <td>75</td>
+            <td>4-8</td>
+            <td>0</td>
+            <td>-10</td>
+            <td>2</td>
+          </tr>
+          <tr align="center">
+            <td>High</td>
+            <td>175</td>
+            <td>4-9</td>
+            <td>20<br>
+            </td>
+            <td>0</td>
+            <td>3</td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> Ideally, these would be the only numbers we would have to tweak
+      in
+      order to balance weapons again. </p>
+    <p> Originally, the values for Reach were- Low: 3, Mid: 4, High: 5.
+      This
+      made the ranges for mid and high MUCH too long. These values will
+      be
+      tweaked in the future as the combat system is reworked. </p>
+    <p> </p>
+    <h3>Quality modifications</h3>
+    Weapons also come in different qualities. Higher quality weapons are
+    generally better, except for the spell "penalty". Better quality
+    weapons tend to lower spell power more, while low quality weapons
+    don't
+    hurt your casting ability as much.
+    <p>
+      <table border="1">
+        <tbody>
+          <tr>
+            <th>Quality</th>
+            <th>Hits (Durability)</th>
+            <th>To-Hit Modifier</th>
+            <th>Range of Damage</th>
+            <th>Disarm Bonus</th>
+            <th>Spell "Penalty"</th>
+            <th>Reach of Weapon</th>
+          </tr>
+          <tr align="center">
+            <td>Lower</td>
+            <td>-50</td>
+            <td>0</td>
+            <td>-1</td>
+            <td>-5</td>
+            <td>+5</td>
+            <td>0</td>
+          </tr>
+          <tr align="center">
+            <td>Normal</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+          </tr>
+          <tr align="center">
+            <td>Higher</td>
+            <td>+100</td>
+            <td>+50</td>
+            <td>+1</td>
+            <td>+5</td>
+            <td>-5</td>
+            <td>0</td>
+          </tr>
+          <tr align="center">
+            <td>Nerudite</td>
+            <td>+200</td>
+            <td>+5</td>
+            <td>+1</td>
+            <td>0</td>
+            <td>+5</td>
+            <td>0</td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> Base number of hits: 250-300 </p>
+    <p> Ideally, it would be nice to have lower quality weapons have a
+      -1 to
+      reach, but this would make the mace a weapon with a range of one.
+      It
+      sucks bad enough already.... </p>
+    <p> Normal quality is just that, "normal". It's the baseline for the
+      weapon type. </p>
+    <p> Note that nerudite can be considered a "quality" of weapon. This
+      way, we can add new material types which give bonuses and
+      penalties to
+      these areas. Examples are magic hating materials that give large
+      penalties to spell casting (and perhaps do extra damage vs.
+      spellcasters), magic-aiding weapons (that give bonuses to
+      spellpower,
+      extra to-hit to compensate for low weapon skills, etc). </p>
+    <p> </p>
+    <h3>Which weapons are under which category?</h3>
+    Here's a breakdown of the weapons and which category they fall
+    under.
+    <p>
+      <table border="1">
+        <tbody>
+          <tr>
+            <th>Type | Quality</th>
+            <th>Lower</th>
+            <th>Normal</th>
+            <th>Higher</th>
+            <th>Nerudite</th>
+          </tr>
+          <tr align="center">
+            <td>Bludgeon</td>
+            <td>Mace</td>
+            <td>Hammer</td>
+            <td>Spiritual Hammer</td>
+            <td><br>
+            </td>
+          </tr>
+          <tr align="center">
+            <td>Thrust</td>
+            <td>Short Sword</td>
+            <td>Long Sword</td>
+            <td>Mystic Sword</td>
+            <td>Nerudite Sword</td>
+          </tr>
+          <tr align="center">
+            <td>Slash</td>
+            <td><br>
+            </td>
+            <td>Axe</td>
+            <td>Scimitar</td>
+            <td><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </p>
+    <p> </p>
+    <h3>Other notes<br>
+    </h3>
+    Spiritual Hammer is a bit special, since it's summoned.&nbsp; It
+    cannot
+    be damaged, and it gives no penalty to spellcasting given it's
+    magical
+    nature.&nbsp; It also has Shal'ille and Kraanan ("magic") attributes
+    on
+    it by default.&nbsp; It cannot be swapped, shattered, or
+    enchanted.&nbsp; It also gives a slight bonus to-hit based on the
+    power
+    of the spell that summoned it.&nbsp; It lasts for a limited duration
+    and
+    disappears after that duration is up.<br>
+    <br>
+    Mystic swords have the Kraanan ("magic") attribute by default, and
+    are
+    not on the random magical weapon table.<br>
+    <h2>Touch Attacks</h2>
+    <table border="1">
+      <tbody>
+        <tr align="center">
+          <th>Name</th>
+          <th>Damage Type</th>
+          <th>Base Damage</th>
+          <th>To-Hit Bonus</th>
+          <th>Range</th>
+        </tr>
+        <tr align="center">
+          <td>Acid Touch</td>
+          <td>ATCK_SPELL_ACID</td>
+          <td>4-8</td>
+          <td>10</td>
+          <td>2</td>
+        </tr>
+        <tr align="center">
+          <td>Touch of Flame</td>
+          <td>ATCK_SPELL_FIRE</td>
+          <td>4-9</td>
+          <td>25</td>
+          <td style="text-align: center;">2</td>
+        </tr>
+        <tr align="center">
+          <td>Holy Touch</td>
+          <td>ATCK_SPELL_HOLY</td>
+          <td>3-6</td>
+          <td>15</td>
+          <td style="text-align: center;">2</td>
+        </tr>
+        <tr align="center">
+          <td>Icy Fingers</td>
+          <td>ATCK_SPELL_COLD</td>
+          <td>5-8</td>
+          <td>60</td>
+          <td style="text-align: center;">2</td>
+        </tr>
+        <tr align="center">
+          <td>Zap</td>
+          <td>ATCK_SPELL_SHOCK</td>
+          <td>3-8</td>
+          <td>50</td>
+          <td>3</td>
+        </tr>
+      </tbody>
+    </table>
+    <p> Touch attacks use the base damage above, picks a value between
+      the
+      two values, inclusive. The attack then does (50 + (Spell
+      Power/2))% of
+      that damage. Spell Power ranges from 0 to 100 and is determined
+      when
+      the spell is cast. </p>
+    <p> Note that Holy Touch does a bonus of -(Target's Karma)% in
+      damage.
+      So, a target with -100 Karma will suffer an extra 100% damage,
+      while
+      someone with a 50 Karma will take 50% less damage. It also does
+      50%
+      more damage to Undead (including Necromancers). </p>
+    <p> </p>
+    <h2>Ranged Weapons<br>
+    </h2>
+    <table style="text-align: left; width: 700px;" border="1"
+      cellpadding="2" cellspacing="2">
+      <tbody>
+        <tr align="center">
+          <th>Weapon</th>
+          <th>Hits (Durability)</th>
+          <th>To-Hit Modifier</th>
+          <th>Damage</th>
+          <th>Range</th>
+          <th>Disarm Bonus</th>
+          <th>Spell "Penalty"</th>
+        </tr>
+        <tr align="center">
+          <td>Longbow</td>
+          <td>200-250</td>
+          <td>100</td>
+          <td>0</td>
+          <td>100</td>
+          <td>-90</td>
+          <td>-20</td>
+        </tr>
+        <tr align="center">
+          <td>Battle bow</td>
+          <td>200-250</td>
+          <td>0</td>
+          <td>2<br>
+          </td>
+          <td>20</td>
+          <td>-90</td>
+          <td>-30</td>
+        </tr>
+        <tr align="center">
+          <td>Practice bow</td>
+          <td>400-500</td>
+          <td>200</td>
+          <td>-3</td>
+          <td>30</td>
+          <td>-90</td>
+          <td>-10</td>
+        </tr>
+        <tr align="center">
+          <td>Nerudite bow</td>
+          <td>100-150</td>
+          <td>0</td>
+          <td>2</td>
+          <td>20</td>
+          <td>-90</td>
+          <td>0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Arrows do 1-5 points of damage.<br>
+      Nerudite Arrows do 2-5 points of damage, 3-7 points of damage 10%
+      of
+      the time (the arrowhead "shatters");<br>
+      Silver Arrows do 2-5 points of damage, 5-10 points if the target
+      is
+      undead.<br>
+    </p>
+    <h2>Miscellaneous Notes</h2>
+    <p>Swords of the Hunt are high-quality thrusting weapons. </p>
+    <p> Riija swords are high-quality thrusting weapons but only require
+      Short Sword Fighting as a skill.&nbsp; They give a bonus to Riija
+      spells
+      (about +10, and only -10 to non-Riija spells instead of the normal
+      -15).
+      They are also MUCH more durable, having 600-650 hits instead of
+      the
+      normal amount. Reasonable for a quest item. </p>
+    <p> Gold swords are normal quality thrusting weapons, just like
+      longswords, except they only do 2-5 points of damage normally, but
+      do +7
+      extra points of damage in Arenas. </p>
+  </body>
+</html>

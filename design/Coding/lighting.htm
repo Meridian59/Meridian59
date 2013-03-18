@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Dynamic Lighting</title>
+</head>
+<body>
+<h1>Dynamic Lighting for Scripting<br>
+</h1>
+By: Brian
+Green&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Date: October 11, 2003
+<h2> Purpose:</h2>
+This document details how to work with dynamic lighting from the script
+point of view.<br>
+<h2>Basics</h2>
+Dynamic lighting information is defined in the message
+SendLightingInformation() in each class.&nbsp; This message is called
+in
+User::ToCliObject() when requesting the "normal" view.&nbsp; Lighting
+information works a lot like overlays, in that a 0 is sent if there is
+no dynamic lighting information, but a non-zero first value indicates
+that we have other information for the client's use.<br>
+<br>
+Dyanmic lighting consists of 3 parts.&nbsp; First is the flags for the
+light, indicating any special conditions or effects for the
+light.&nbsp;
+Next is the intensity, or how bright/large the light is.&nbsp; Finally,
+we have the color of the light which is sent in RGB form.&nbsp; This is
+all the client needs to render the light.<br>
+<h2>Details</h2>
+<h3>Data sizes</h3>
+The three piecess of data sent have specific sizes<br>
+<table style="text-align: left;" border="1" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Data</span><br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Size</span><br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Notes</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Flags<br>
+      </td>
+      <td style="vertical-align: top;">2 bytes (16 bits)<br>
+      </td>
+      <td style="vertical-align: top;">Flags defined in blakston.khd,
+detailed below.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Intensity<br>
+      </td>
+      <td style="vertical-align: top;">1 byte (8 bits)<br>
+      </td>
+      <td style="vertical-align: top;">Range from 0-255 in
+intensity.&nbsp; Note that only the low-order byte is sent, so a value
+of 256 will send a value of 0.<br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">Color<br>
+      </td>
+      <td style="vertical-align: top;">2 bytes (16 bits)<br>
+      </td>
+      <td style="vertical-align: top;">Send in RGB format, with each
+color having 5 bits each (1 bit extra).&nbsp; Bit format:
+XRRRRRGGGGGBBBBB, where X represents the "negative" bit.<br>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h3>Lighting flags</h3>
+The flags defined in blakston.khd are as follows:<br>
+<span style="font-weight: bold;"><br>
+LIGHT_FLAG_NONE = 0x0000<span style="font-weight: bold;"><span
+ style="font-weight: bold;"></span></span></span><br>
+This is the default flag for no lighting information.&nbsp; This should
+not be used with any other flag.<br>
+<br>
+<span style="font-weight: bold;">LIGHT_FLAG_ON&nbsp;&nbsp; = 0x0001<br>
+</span>This is the flag indicating that there is lighting
+information.&nbsp; This flag should always be used for dynamic
+information.<br>
+<span style="font-weight: bold;"><br style="font-weight: bold;">
+</span><span style="font-weight: bold;">LIGHT_FLAG_DYNAMIC = 0x0002<br>
+</span>This flag indicates that the light is "dynamic".&nbsp; This
+means the light source could move.&nbsp; This should be used for
+monsters, players, or any other object that can move on it's own
+accord.&nbsp; Objects that are <span style="font-weight: bold;">not</span>
+flagged as dynamic are cached on the client side for performance.<br>
+<span style="font-weight: bold;"><br style="font-weight: bold;">
+</span><span style="font-weight: bold;">LIGHT_FLAG_WAVERING = 0x0004</span><br
+ style="font-weight: bold;">
+This flag indicates that a light "wavers" like a natural fire
+source.&nbsp; Magical light should not have this flag set.<br>
+<h3>Helper functions</h3>
+The message GetRGB is defined in the system object.&nbsp; The prototype
+looks like this:<br>
+<span style="font-weight: bold;">GetRGB</span>(iRed = 0, iGreen = 0,
+iBlue = 0, bPercent = TRUE, bNegative = FALSE)<br>
+<br>
+iRed, iGreen, and iBlue are all values to be converted.&nbsp; bPercent
+indicates if the values are percents or raw values.&nbsp; If bPercent
+is
+TRUE, then the values should be from 0-100; if bPercent is FALSE, the
+values should be from 0-15.&nbsp; The color values are bound as a
+sanity check in the message.&nbsp; Finally, bNegative indicates if this
+is a "negative" light source (one that takes away color instead of
+adding to it).<br>
+<h3>Lighting constants</h3>
+To aid with lighting, we have defined some lighting constants.&nbsp;
+These are stanard RGB values that can be used in other files or in the
+admin window.<br>
+<span style="font-weight: bold;"><br>
+<span style="font-weight: bold;">Basic Colors<br>
+<span style="font-weight: bold;"><span style="font-weight: bold;"></span></span></span></span>The
+basic colors are: red, orange, yellow, green, blue, purple, and
+white.&nbsp; Each color comes in three varieties: bright (full
+saturation), normal (66% saturation), and dark (33% saturation).&nbsp;
+The constants for the basic colors are of the format
+LIGHT_(variety)(color), where bright is "B", dark is "D", and normal
+color has no letter.<br>
+<br>
+Example: LIGHT_BBLUE is a bright blue color (100% blue
+saturation).&nbsp; LIGHT_WHITE is a normal white color (66%
+saturation).&nbsp; LIGHT_DRED is a dark red color (33% saturation).<br>
+<br>
+<span style="font-weight: bold;">Extra Colors<br>
+<span style="font-weight: bold;"></span></span>We define other colors
+as needed.&nbsp; Current extra colors, their hex values, and a
+description are:<br>
+<br>
+<table style="text-align: left;" border="1" cellpadding="2"
+ cellspacing="2">
+  <tbody>
+    <tr>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Constant</span><br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Hex
+value</span><br>
+      </td>
+      <td style="vertical-align: top;"><span style="font-weight: bold;">Description</span><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LIGHT_LIGHTNING</td>
+      <td style="vertical-align: top;">0x3DFF</td>
+      <td style="vertical-align: top;">A bluish white for lightning
+effects.</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LIGHT_BLOOD</td>
+      <td style="vertical-align: top;">0x3C00</td>
+      <td style="vertical-align: top;">A deep (50%) red.</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LIGHT_FIRE</td>
+      <td style="vertical-align: top;">0x7F06</td>
+      <td style="vertical-align: top;">A yellow-orange fire color</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LIGHT_SPECTRAL</td>
+      <td style="vertical-align: top;">0x0D21</td>
+      <td style="vertical-align: top;">DGREEN with a bit more red.</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LIGHT_NEWSGLOBE</td>
+      <td style="vertical-align: top;">0x3DFF</td>
+      <td style="vertical-align: top;">Identical to LIGHT_LIGHTNING,
+but put here in case it needs to be changed later.</td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;">LIGHT_FOUNTAIN</td>
+      <td style="vertical-align: top;">0x0C6C</td>
+      <td style="vertical-align: top;">A very dim white, with blue
+tint, primarily for the Tos Fountain.</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+<h3>Example code</h3>
+This code snippet defines an object with a dynamic flag (object could
+move around the room), with about 20% intensity of 100% blue color.<br>
+<br>
+<span style="font-family: monospace;">&nbsp;&nbsp;
+SendLightingInformation()</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+ style="font-family: monospace;">% 50 out of 255 intensity of light</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+AddPacket(1,50);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+ style="font-family: monospace;">% Pure blue color</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+AddPacket(2,LIGHT_BBLUE);</span><br style="font-family: monospace;">
+<br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+return;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; }<br>
+<br>
+</span><span style="font-family: monospace;">This code snippet defines
+an object with a variable intensity a color that depends on another
+variable.<br>
+<br>
+<span style="font-family: monospace;">&nbsp;&nbsp;
+SendLightingInformation()</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; {</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+AddPacket(2,LIGHT_FLAG_ON);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
+ style="font-family: monospace;">% out of 255 intensity of light</span><br
+ style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+AddPacket(1,piLightIntensity);<br>
+</span></span><span style="font-family: monospace;"><span
+ style="font-family: monospace;"><span style="font-family: monospace;"><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+if bGood<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; % A 50% blue color<br>
+</span></span></span></span><span style="font-family: monospace;"><span
+ style="font-family: monospace;"></span><span
+ style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+AddPacket(2,send(SYS,@GetRGB,#blue=50));<br>
+&nbsp;&nbsp;&nbsp; &nbsp; }<br>
+&nbsp;&nbsp;&nbsp; &nbsp; else<br>
+&nbsp;&nbsp;&nbsp; &nbsp; {<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; % A dim white color<br>
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; AddPacket(2,LIGHT_DWHITE);<br>
+&nbsp;&nbsp;&nbsp; &nbsp; }<br style="font-family: monospace;">
+</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+return;</span><br style="font-family: monospace;">
+<span style="font-family: monospace;">&nbsp;&nbsp; }</span><br
+ style="font-family: monospace;">
+</span><span style="font-family: monospace;"></span>
+<h3>Future directions</h3>
+The intention was to use the "negative" color bit for removing
+color.&nbsp; So, making a light "negative blue" would remove a certain
+level of blue from the area.&nbsp; We could use this to make the
+Shadowbeasts have a negative white color, making the area around them a
+darker.<br>
+<br>
+This has not yet been implemented.<br>
+<br>
+<span style="font-family: monospace;"></span>
+</body>
+</html>

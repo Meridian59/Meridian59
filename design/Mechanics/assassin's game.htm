@@ -1,0 +1,154 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Assasin's Game</TITLE>
+</HEAD>
+<BODY>
+
+<H2>The Assassin's Game</H2>
+
+<H6>Damion Schubert/ 28 August 1996</H6>
+
+<P>Quite simply, the Assassin's Game is a competitive scenario run by an
+NPC named Roq. Each combatant is given a dagger with the name of another
+on it, and yet at the same time knows that someone has a dagger with his
+own name on it (he knows not whom). The goal is to be the last one alive.</P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><B>Game modes</B></P>
+
+<UL>
+<LI>There are three distinct modes to the Assassin's Game: <I>wait</I>
+mode, <I>accept</I> mode, and <I>game </I>mode. </LI>
+
+<UL>
+<LI>During wait mode, players may do nothing other than say 'advertise'
+or 'no advertise' to Roq, so that they get notified when a match should
+occur. Wait mode lasts between one and four days. Wait mode only occurs
+to put some amount of time between matches.</LI>
+
+<LI>At the beginning of <I>accept </I>mode, Roq notifies everyone on his
+advertise list that a match is starting. Each player then has between 6
+and 12 hours to join the match (by saying 'blade' to Roq). This is kept
+reasonably short, so combatants have a reasonable expectation of being
+on somewhat during the same hours. &nbsp;Players must be PKABLE to take
+part. If there are not enough people enrolled in the match when it begins,
+Roq sends the loop through accept mode again.</LI>
+
+<LI>During game mode is the only time that actual killing is allowed. This
+period lasts either until there's a winner, or until there has been three
+days without a kill (at which point, Roq calls the game on account that
+it's participants are a disgrace).</LI>
+</UL>
+
+<LI>Note #1: Players may quit the proceedings at any time by saying 'quit'.</LI>
+
+<LI>Note #2: DM actors (DMs with pbActor = 1) may artificially enter each
+of the modes by saying '<B>accept mode</B>', '<B>start game</B>', and '<B>reset
+game</B>'. This is for testing only.</LI>
+</UL>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><B>Combat and Combat Math</B></P>
+
+<P>The assassin's game was designed to put more emphasis on knowledge of
+the game, stealth, sneakiness and deception than combat stats - i.e. to
+give low level characters as good a chance as high level characters.</P>
+
+<UL>
+<LI>Each player gets a dagger. Set in each dagger's pommel are four gems
+which, if the wielder is fully healed, glow. If all four of these gems
+stop glowing at any time, that player 'dies' and is expelled from the game.</LI>
+
+<LI>Only two other combatants may attack someone with a black dagger: his
+'primary' target (the person whose name is on his dagger) and his 'secondary'
+target (the person on whose dagger his own name appears). Note that you
+CAN attack the person who is trying to kill you.</LI>
+
+<LI>A player swinging a dagger always has a 50%&nbsp;chance of hitting
+his target.</LI>
+
+<LI>If a player hits his primary or secondary target, then one of his target's
+gems stop glowing. If all four cease to glow, that player 'dies' and is
+expelled from the game.</LI>
+
+<LI>Gems flicker back to life after five minutes. If a player logs off
+while any of his gems are not glowing, </LI>
+
+<LI>If a player hits anyone other than his primary or secondary target
+with his dagger (whether they are part of the game or not), his dagger
+loses 1 hit point. &nbsp;Should his dagger lose 5 hit points, the dagger
+will shatter. Those hit points return back to life at a rate of 1 every
+8 hours.</LI>
+
+<LI>Safety flags are ignored by the daggers, as are outlaw, murderer and
+pkill-enable flags. Also, there are NO&nbsp;safe zones, except for the
+Underworld.</LI>
+
+<LI>Combat should have normal fighting sound and animations.</LI>
+</UL>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><B>The Long Haul</B></P>
+
+<P>A couple of additional quirks were put in to ensure that a couple of
+bad players couldn't hold up the whole thing for everyone.</P>
+
+<UL>
+<LI>If a player is spending less than three hours per day online at any
+given time, he will be kicked out. This check is performed once per day,
+and each player gets one warning.</LI>
+
+<LI>If the game goes three days without any kills at all, Roq calls off
+the entire game in disgust.</LI>
+
+<LI>When the game ends, Roq notifies everyone on the advertise list. He
+sends mail to those offline.</LI>
+
+<LI>If a player is not PKILL_ENABLED, he may not take part in the proceedings.
+If he loses his PKILL_ENABILITY, he will be kicked out of the proceedings.</LI>
+
+<LI>Players who suicide also are removed from the game, as well as the
+advertising list.</LI>
+</UL>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><B>The Daggers</B></P>
+
+<P>The daggers themselves have a handful of unique properties.</P>
+
+<UL>
+<LI>The black dagger shivers whenever your primary or secondary combatant
+has changed (remember, someone else is trying to kill them, too).</LI>
+
+<LI>The dagger 'shivers' when you log on, if either your primary or secondary
+combatant has changed.</LI>
+
+<LI>The dagger's description shows (a) how many gems you have left glowing,
+(b) how many notches are cut in the hilt (how many kills you have) and
+(c) the name of your current target. Before the match starts, the name
+of your current target is a bunch of runes that are indecipherable.</LI>
+
+<LI>Death at the hands of the dagger teleports one to the underworld, but
+with no loss of stuff or stats.</LI>
+
+<LI>The dagger can not be equipped until the game starts. The dagger is
+deleted as soon as you are expelled from the match, or the match is over
+(either you win or it's ended by tie).</LI>
+
+<LI>The black dagger can not be sold, offered, bought, or dropped.</LI>
+
+<LI>The black dagger can not be enchanted, mended, brittled, shattered
+or swapped.</LI>
+</UL>
+
+</BODY>
+</HTML>

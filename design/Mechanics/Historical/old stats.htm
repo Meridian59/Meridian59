@@ -1,0 +1,429 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Player Attributes</title>
+</head>
+<body>
+
+<h1>
+PlayerAttributes</h1>
+This document details how player stats are used in the game, as of August
+27, 1998.&nbsp; This is prior to the Liberation game update.
+<h2>
+MIGHT:</h2>
+
+<ul>
+<h3>
+Player</h3>
+
+<ul>
+<li>
+<b>TryAttack:</b> Base damage is calculated by sending FindDamage to the
+stroke object. One parameter is the character's might. Stroke objects are
+brawling, slash, or spells.</li>
+
+<li>
+<b>GetBulkMax:</b> Players can hold an additional 20 bulk for every point
+of might.</li>
+
+<li>
+<b>GetWeightMax:</b> Players can hold an additional 20 weight for every
+point of might.</li>
+</ul>
+
+<h3>
+skill/profic/brawling</h3>
+
+<ul>
+<li>
+Might is the <a href="#reqstat">requisite stat</a> and sets initial value
+of skill.</li>
+</ul>
+
+<h3>
+skill/profic/profhamr</h3>
+
+<ul>
+<li>
+Might is the <a href="#reqstat">requisite stat</a> and sets initial value
+of skill.</li>
+</ul>
+
+<h3>
+skill/profic/profmace</h3>
+
+<ul>
+<li>
+Might is the <a href="#reqstat">requisite stat</a> and sets initial value
+of skill.</li>
+</ul>
+
+<h3>
+skill/stroke</h3>
+
+<ul>
+<li>
+<b>DamageFactors:</b> Damage is increased by (2 * might) percent.</li>
+</ul>
+
+<h3>
+skill/stroke/unarmed</h3>
+
+<ul>
+<li>
+<b>FindDamage:</b> 1/12 of might is added to damage value.</li>
+
+<li>
+<b>DamageFactors:</b> Damage is multiplied by (might-20) before being divided
+by 20.</li>
+</ul>
+</ul>
+
+<h2>
+INTELLECT:</h2>
+
+<ul>
+<h3>
+Player</h3>
+
+<ul>
+<li>
+<b>ActivateSpellAtrophy:</b> Spells (and skills) have less chance of atrophy
+with higher intellect. The code gives a the player (50-Intellect)/20 advancement
+points when checking atrophy. More advancement points means a greater chance
+of atrophy.</li>
+
+<li>
+<b>PlayerCanLearn:</b> More intellect means faster spell learning.</li>
+
+<li>
+<b>GetInitialChance:</b> Player gets a bonus (intellect/50)*100% bonus
+to chance to increase skill for initial check for advancement.</li>
+</ul>
+
+<h3>
+spell</h3>
+
+<ul>
+<li>
+<b>GetDivisionReq:</b> Is the requisite stat for Jala and Riija.</li>
+
+<br><b>NOTE:</b> This function is not called anywhere else.</ul>
+
+<h3>
+spell/illwound</h3>
+
+<ul>
+<li>
+Take less damage with higher intellect.</li>
+</ul>
+</ul>
+
+<h2>
+STAMINA:</h2>
+
+<ul>
+<h3>
+Player</h3>
+
+<ul>
+<li>
+<b>CalculateHealthTime:</b> Modifies healing time by (25-stamina)% (+/-
+25%)</li>
+
+<li>
+<b>GainBaseMaxHealth:</b> Maximum hps = 100 + stamina</li>
+
+<li>
+<b>AdvancementCheck:</b> Higher stamina makes gaining hps more likely when
+checked. (see <a href="#hpadv">below</a>)</li>
+
+<li>
+<b>Killed:</b> Players have a stamina percent chance to avoid losing skill/spell
+points when killed.</li>
+
+<li>
+<b>GetRestTime:</b> A player's time between rest "checks" is 30 * (51-Stamina)
+milliseconds plus the current base of 1000.</li>
+</ul>
+
+<h3>
+active/logghost</h3>
+
+<ul>
+<li>
+<b>InflictPenalties:</b> Stamina percent less points lost due to logoff
+penalties.</li>
+</ul>
+</ul>
+
+<h2>
+AGILITY:</h2>
+
+<ul>
+<h3>
+Player</h3>
+
+<ul>
+<li>
+<b>GetDefense:</b> Provides 1/5 of the defense of a player (other 4/5ths:
+armor and 1/2 each of dodge/parry/block)</li>
+</ul>
+
+<h3>
+skill</h3>
+
+<ul>
+<li>
+Default <a href="#reqstat">requisite stat</a> for skills.</li>
+
+<br><b>NOTE:</b> Axe Wielding has this as its requisite stat; it should
+probably be might-based instead.</ul>
+
+<h3>
+spell</h3>
+
+<ul>
+<li>
+<b>GetDivisionReq:</b> Is the requisite stat for Kraanan and Weaponcraft.</li>
+
+<br><b>NOTE:</b> This function is not called anywhere else.</ul>
+</ul>
+
+<h2>
+MYSTICISM:</h2>
+
+<ul>
+<h3>
+Player</h3>
+
+<ul>
+<li>
+<b>TryAttack:</b> 4/5ths of Mysticism is part of attack power for spells
+which improves to-hit chance.</li>
+
+<li>
+<b>CalculateManaTime:</b> Mysticism modifies base mana regen time by [(25-mysticism)/10]
+seconds (+/- 2.5 sec) (This time is the time to regenerate all mana.)</li>
+
+<li>
+<b>InitialMaxMana:</b> Starting max mana is 15 + (mysticism/5)</li>
+</ul>
+
+<h3>
+active/corpnode (AKA underworld node)</h3>
+
+<ul>
+<li>
+<b>GetManaAdjust:</b> This node adds 6 + (mysticism/10) points of maximum
+mana.</li>
+</ul>
+
+<h3>
+item/passite/wand/vampwand</h3>
+
+<ul>
+<li>
+<b>CastSpell:</b> (Myst + Aim) bound to 10 to 90 is percent chance to hit
+with wand.</li>
+</ul>
+
+<h3>
+item/passite/wand/firewand</h3>
+
+<ul>
+<li>
+<b>CastSpell:</b> (Myst + Aim) bound to 10 to 90 is percent chance to hit
+with wand.</li>
+</ul>
+
+<h3>
+passive/mananode</h3>
+
+<ul>
+<li>
+<b>GetManaAdjust:</b> Nodes gives 6 + (mysticism/10) points of maximum
+mana.</li>
+</ul>
+
+<h3>
+spell</h3>
+
+<ul>
+<li>
+<b>GetRequisiteStat:</b> Default <a href="#reqstat">requisite stat</a>
+for spells.</li>
+
+<li>
+<b>GetDivisionReq:</b> Is the requisite stat for Qor, Shal'ille and Faren.</li>
+
+<br><b>NOTE:</b> This function is not called anywhere else.</ul>
+</ul>
+
+<h2>
+AIM:</h2>
+
+<ul>
+<h3>
+Player</h3>
+
+<ul>
+<li>
+<b>TryAttack:</b> Aim is about 1/4 of attack power for weapon attacks.
+Increases chance to hit.</li>
+</ul>
+
+<h3>
+item/passite/wand/vampwand</h3>
+
+<ul>
+<li>
+<b>CastSpell:</b> (Myst + Aim) bound to 10 to 90 is percent chance to hit
+with wand.</li>
+</ul>
+
+<h3>
+item/passite/wand/firewand</h3>
+
+<ul>
+<li>
+<b>CastSpell:</b> (Myst + Aim) bound to 10 to 90 is percent chance to hit
+with wand.</li>
+</ul>
+
+<h3>
+skill/profic/archery</h3>
+
+<ul>
+<li>
+Aim is the <a href="#reqstat">requisite stat</a> and sets initial value
+of skill.</li>
+</ul>
+
+<h3>
+skill/profic/profswrd</h3>
+
+<ul>
+<li>
+Aim is the <a href="#reqstat">requisite stat</a> and sets initial value
+of skill.</li>
+</ul>
+
+<h3>
+skill/stroke/fire</h3>
+
+<ul>
+<li>
+Aim is the <a href="#reqstat">requisite stat</a> and sets initial value
+of skill.</li>
+</ul>
+</ul>
+
+<h2>
+How spell/skill advancement works:</h2>
+To learn a level <i>x</i> spell, look at top 3 spells of level <i>x</i>
+- 1. Compare the sum of the ability in those three spells against: 105
+[base] + (50-intellect)*3/5 + for each spell/skill not in the same school:
+{[same division] 1 + skill/((int/2) + 25) [bound between 1,10] {[diff division]
+2 * (1 + skill/((int/2) + 25)) [bound between 1,10] <b>NOTE:</b> you can
+always learn a level <i>x</i> spell if you know a level <i>x</i> + 1 spell.
+<p><b>Example:</b> Take a player with a 30 intellect. This gives them (50-30)*3/5
+= 12 points of penalty, giving them a base of 117 points needed before
+calculating spells. Since the max points you can have is 297, this means
+you have 180 points to split between spells/skills. Since each other spell/skill
+at 99% in a different division gives you 6 points, this means you can have
+30 other spells that high in ability before learning a new spell becomes
+impossible.
+<p>Note that if we have our spells/skills at 89% or below, each spell only
+gives 4 points to work against, instead of 6. This means we can have 150%
+the number of spells outside the division, or about 45.
+<p>Suggestions: Have each spell be a constant number, modified by Intellect
+(IE, no longer dependant on level of ability). Also, have base be dependant
+on level you want to learn (EG, use (level-1) as multiplier for a base,
+so level 3 spells require twice as much for a base as a level 2 spell does).
+<h2>
+How hp advancement works:</h2>
+You gain points by killing creatures. The code uses the killed creature's
+level, which indicates their max hps.
+<p>Killing something with hps above yours gives you a chance to roll to
+gain an hp. Taking damange from it is worth 1 point, and doing the killing
+blow is worth one point. Being a newbie under 26 hps gives a (100/(max
+hps - 19))% chance for a bonus point.
+<p>Killing something with up to 5 less hps than you doesn't give you a
+chance, but gives a bonus point of you took damage and got the killing
+blow.
+<p>Killing something with fewer hps than that gives nothing (the "spit"
+message).
+<p>If you get an improvement roll, then it chooses a number based on your
+current hps and your&nbsp;<a NAME="hpadv"></a>stamina. It takes (100-stamina)%
+of your max hps (called the "index") and chooses a number between 1 and
+2*((index*index)+index) [((index+1)*(index/2))*2 in code]. It compares
+this random number to the number of points you've gained so far plus a
+one-time bonus of the difference between the monster's hps and your hps
+divided by 5, bound between 0 and 10. If the random number is greater,
+you get a hp. Your points are then reset to negative half your current
+maximum hps, less an additional (50-stamina)/2 (EG, a 50 hp person with
+a 30 stamina would be set to -35 points).
+<h2>
+How you hit with attacks:</h2>
+Attack power is your stroke proficiency level (0-99), + 2/5ths your weapon
+proficiency (0-100), + your aim (1-50). This gives your raw to-hit ability.
+Note that twice your Mysticism is your "weapon proficiency" for touch spells.
+Weapons and other items can add to the to-hit chance. This number is multiplied
+by 100 then divided by the quantity of itself plus the target's defense,
+to give the percent chance to hit.
+<p>A player's defense is determined by the sum of 1/2 of their block, parry,
+and dodge skills, plus agility, plus armor (which should have a max of
+50).
+<h2>
+How skills work:</h2>
+Your percent chance to succeed is figured by the following formula: ((100-requisite
+stat)*ability/100) +&nbsp;<a NAME="reqstat"></a>requisite stat Which means
+it takes 50%-99% (depending on your requisite stat) of your skill plus
+your requisite stat. So, people with high stats are naturals at the beginning,
+but are just as good as anyone else at higher levels..
+<p><b>Example:</b> A player with a 10, a 30 and a 50 in the requisite stat
+try using skills at 20%, 50%, and 90%. The first player has a 29%, 55%,
+and 91% chance, respectively. The second player has a 44%, 65%, and 93%
+chance, respectively. The last player has a 60%, 75%, and 95% chance, respectively.
+<h2>
+How spells work:</h2>
+Your percent chance is figured similar to skills, but with a much better
+chance. Your percent chance is 50 + half of your spell power, bound between
+1 and 95.
+<h2>
+How skills/spells improve:</h2>
+Initial check is against "chance to learn", with a bonus(intellect/50)*100%
+added on again. So, if you have 50 intellect, you have double the chance
+to learn. If this check fails, you can't advance.
+<p>Next, is the secondary check, which is figured as follows: 60 + requisite
+stat - (10 * level of skill) - (sum of ability points in other schools
+/ 50). This is modified by a "factor" which is figured from 2 * target's
+difficulty (or 60 if the target wasn't a monster) - ability in skill +
+(sum of ability points in school / 10). This is bound between 50 and 100,
+and determines what percent of the check's points to use. (IE, a factor
+of 80 means you get 80% of the check's percent). Finally, if your current
+ability is greater than or equal to twice the requisite stat, your total
+is divided by 5 (the infamous soft cap).
+<p>This secondary chance is divided by 20 if the room is "hard" to learn
+in. The final number is bound between 1 + (your requisite stat / 10) and
+99, then compared to a random number 0-100. If the random number is less,
+you gain a point.
+<p><b>Example:</b> if someone with a Might of 35 and an Intellect of 30
+killed a monster with a difficulty of 70 with a level 2 skill with ability
+60% and a chance to learn of 20 in a normal room. This player also has
+300 points in other schools and 200 points in this skill's school. First,
+we make a check for our chance to learn. We check vs. 20 + (30% of 20)
+= 26%. Assuming this check succeeds, we proceed on. Our base for the secondary
+check is 60 + 35 - (2 * 10) - (300 / 50) = 69%. Our factor is (2 * 70)
+- 60 + (200 / 10) = 100. This number is not affected by the bounding, so
+we take 100% of our 69%. Since we're not in a hard room, we take the full
+percent. If this check succeeds, we increase a point in our skill!
+<p>So, advancing in a skill depends on requisite stat, intellect, the skill's
+level, how many total ability points in other schools, the difficulty of
+what one killed to increase, their ability in the skill, and total ability
+points in the skill's school.
+</body>
+</html>

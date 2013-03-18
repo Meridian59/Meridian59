@@ -1,0 +1,324 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Patch Spell Revisions</TITLE>
+</HEAD>
+<BODY>
+
+<CENTER><P><B><FONT SIZE=+4>Patch Spell Revisions</FONT></B></P></CENTER>
+
+<P>Objectives of the redesign for spells:</P>
+
+<UL>
+<LI>Link the effectiveness of all spells to the spellpower with which the spell is cast.</LI>
+
+<LI>Make all personal enchantment spells targetable spells to encourage co-operation.</LI>
+
+<LI>Establish a consistant damage vs. cost/level ratio for attack spell groups (touch spells, wall spell, etc . . .).</LI>
+
+<LI>Make lame spells that nobody ever uses cool.</LI>
+</UL>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><A HREF="joe_changes.htm">The progress so far.</A></P>
+
+<P><A HREF="brian_changes.htm">What Brian's been upto.</A></P>
+
+<HR WIDTH="100%"><B>Notation:</B>
+<UL>
+<LI><I>text in itlaics</I> denotes a B-list change.  (Usually due to dependency on other game systems, i.e. An AI change.)</LI>
+<LI><font color="green">green text </font> denotes a new spell school and level.</LI>
+<LI><font color="red">red text</font> denotes a new value for the relevent field. (e.g. <font color="red">1 Elderberry</font> would indicate that the spell will now require 1 elderberry.)</LI>
+<LI>+ indicates an small increase in the current value, ++ indicates a great increase and +++ indicates more than double current value.</LI>
+<LI>- indicates an small decrease in the current value, -- indicates a great decrease and --- indicates less than half current value.</LI>
+</UL>
+All changes are open to discussion and spell school/level changes in particular are not final.
+<P>
+<HR WIDTH="100%"><B><I><FONT SIZE=+1>Faren</FONT></I></B></P>
+
+<P><B>Fog (1):</B> - mana/vigor.  <font color="red">1 Elderberry</font>.  <I>Make monsters avoid fog.</I></P>
+
+<P><B>Glow (1):</B> ++ mana/vigor cost.  +++ reagent cost.  Increase duration to (iSpellpower/2 + rand(1,iSpellpower/3)) hours (~ 10-200 hrs).  <I>Reuse distill labling infrastructure.</I></P>
+
+<P><B>Light (1):</B> <font color="red">1 Elderberry</font></P>
+
+<P><B>Mystic Touch (1):</B> TBD</P>
+
+<P><B>Sweep (1):</B> <font color="red">8 Mana</font> Moves (iSpellpower/6) loose items into the player's inventory; upto normal holding limits.</P>
+
+<P><B>Zap (1):</B> TBD.  Needs renaming.</P>
+
+<P><B>Bramble Wall (2):</B> TBD.</P>
+
+<P><B>Resist Cold (2):</B> Make a targetable spell.</P>
+
+<P><B>Touch of Flame (2):</B> TBD.</P>
+
+<P><B>Winds (2):</B> <font color="green">Faren (3)</font>.  Has a: num = iSpellpower/2 + 10; bound(num,25,80) percent chance to cause any ranged attack to miss.</P>
+
+<P><B>Dement (3):</B> In addition to intellect effect; lowers spellpower of all spells cast by the victim by iSpellpower/3.</P>
+
+<P><B>Heat (3):</B> -- duration.  Make into target spell, not room enchantment.</P>
+
+<P><B>Spider Web (3):</B> Make sure newbies are immune.</P>
+
+<P><B>Brittle (4):</B> + mana/vigor.  + reagents.  Adds itematt that increase weapon damage rate (3 - 5 hps/stroke) for 2 - 5 mins.</P>
+
+<P><B>Fireball (4):</B> TBD.</P>
+
+<P><B>Firewall (4):</B> TBD.</P>
+
+<P><B>Ring of Flames (4):</B> TBD.</P>
+
+<P><B>Earthquake (5):</B> Make do more damage to monsters.</P>
+
+<P><B>Lightning Bolt (5):</B> TBD.</P>
+
+<P><B>SandStorm (5):</B> Current effect, plus wind effect, plus does 3 - 5 hps damage.  Only the wind effect affects the caster. </P>
+
+<P><B>Shatter (5):</B> % chance to shatter target item.  Shatter % of number items.</P>
+
+<P><B>Lightning Wall (6):</B> TBD.</P>
+
+<P><B>Spore Burst (6):</B> Paralyzes everyone except the caster in spellpower/30 radius (bound(1,5)).  <I>Generate fog elements with one active elem. that watches radius and holds all who enter.</I> </P>
+
+<P>
+<HR WIDTH="100%"><B><I><FONT SIZE=+1>Jala</FONT></I></B></P>
+
+<P><B>Truth (1):</B> Chance to prevent Riija spells based on Truth spellpower vs. Riija spellpower.  Small chance to reveal existing illusions </P>
+
+<P><B>Warp Time (2):</B> Reverse?  Make casting times shorter. Not crazy about this.</P>
+
+<P><B>Distill (3):</B> I love this spell.  Add karma thingy to the desc.</P>
+
+<P><B>Spellbane (3):</B> <font color="green">Jala (4)</font>.  + mana, +++ Vigor.  Like truth do a spellpower vs. spellpower thingy.  Blocked by truce.</P>
+
+<P><B>Jig (4):</B> <font color="green">Jala (3)</font>.  people holding tokens are immune.</P>
+
+<P><B>Mana Convergence (5):</B> Cool spell, just needs better PR.</P>
+
+<P>
+<HR WIDTH="100%"><B><I><FONT SIZE=+1>Kraanan</FONT></I></B></P>
+
+<P><B>Wistand Fire (1):</B>  <font color="green">Faren (1)</font>.  Make a targetable spell.</P>
+
+<P><B>Relay (1):</B>  No changes.</P>
+
+<P><B>Bless (2):</B>  Make targetable.</P>
+
+<P><B>Enchant Weapon (2):</B>  +++ reagents.  +++ Duration. </P>
+
+<P><B>Icy Fingers (2):</B>  TBD.  </P>
+
+<P><B>resist poison (2):</B>  Make targetable.  Effectiveness proportional to iSpellpower.</P>
+
+<P><B>Create Mace (2):</B>  Change name to "Create Weapon".  Makes more powerful weapons based on iSpellpower.</P>
+
+<P><B>Super Strength (2):</B>  - might boost.  - Duration. ++ reagents.</P>
+
+<P><B>Detect Invisible (3):</B>  <font color = "red">2 solagh</font>.  <I>Clean up lingering bugs, look boxes, offer lists, etc . . .</I></P>  
+
+<P><B>Free Action (3):</B>  - Duration.  No effect on Gaze of the Baselisk.</P>
+
+<P><B>Haste (3):</B>  Rename "Endurance".  Reduce running cost by: 50 + iSpellpower/2.</P>
+
+<P><B>Magic Shield (3):</B>  Increases defense by 10% - 30%, depending on iSpellpower.</P>
+
+<P><B>Martyr's Battleground (3):</B>  ++ chance to get a rev.</P>
+
+<P><B>Night Vision (3):</B>  No changes.</P>
+
+<P><B>Resist Shock (3):</B> <font color="green">Faren (3).</font>  Put underscore in SID.</P>
+
+<P><B>Deflect (4):</B>  No changes.</P>
+
+<P><B>Discordance (4):</B>  <font color = "red">15 mana.  1 Sapphire</font>.  Chance to remove enchantment based on Discordance Spellpower vs. enchantment spellpower.</P>
+
+<P><B>Dispell Illusion (4):</B>  Chance to remove illusion based on Spellpower vs. illusion spellpower.  </P>
+
+<P><B>Eagle Eyes (4):</B>  Increase effect on archery.  </P>
+
+<P><B>Mana Bomb (4):</B>  Make effect monsters.</P>
+
+<P><B>Mend (4):</B>  No changes.</P>
+
+<P><B>Shroud (4):</B>  <font color = "red">10 mana. 10 vigor.  4 mushrooms, 4 Elderberry, 5 Herbs.  </font>  +++ Duration.  Change shroud itematt to decrease wear and tear.</P>
+
+<P><B>Anti-Magic Aura (5):</B>  No changes.</P>
+
+<P><B>Armor of Gort (5):</B>  <font color = "red">10 mana.  </font>  ++ Duration.  Instead of capping damage, increases Armor 30 - 60 % based on spellpower.</P>
+
+<P><B>Hunt (5):</B>  Change name to "Summon".  Acts as a "Getplayer".  Costs less for getting characters with high poKill_decay, if the justicar is involved in the casting, or if the target is on the "wanted list".</P>
+
+<P><B>Killing Fields (5):</B> <font color = "red">15 mana. 10 vigor. </font> Acts as a super-bless spell for all within range of 2 + iSpellpower/20.</P>
+
+<P><B>Resist Magic (5):</B>  Make targetable.  - effectiveness.  (Should be somewhat less effective than a more specific resistance spell.)</P>
+
+<P><B>Shatter Lock (6):</B>  Will now teleport all players with high pkill_decay values into the guild hall of the Guild with the most white named players, while simulanteously teleporting the contents of ALL guild hall chests into the vault of a randomly selected 30hp ToF Mule . . . Yeah thats it.  Cool, huh?  (Kill it.)</P>
+
+<P>
+<HR WIDTH="100%"><B><I><FONT SIZE=+1>Qor</FONT></I></B></P>
+
+<P><B>Cloak (1):</B>  Warns caster if someone is casting Hunt on them and increases the iSpellpower required for hunt by 20 - 100% based on Cloak spellpower.</P>
+
+<P><B>Darkness (1):</B>  Qor spells recieve (iSpellpower/25) bonus to spellpower when cast in dark room.</P>
+
+<P><B>Evesdrop (1):</B>  - Mana Drain.  if rand(1,iSpellpower) > 70 for a given message you get the person's name, not just "Someone says".</P>
+
+<P><B>Unholy Resolve (1):</B>  Make Targetable.  Make comprable to Resist Evil.</P>
+
+<P><B>Acid Touch (2):</B>  TBD.</P>
+
+<P><B>Detect Good (2):</B>  Make Targetable.  Will also show monsters if the monster's karma is higher than the caster's Karma * -1</P>
+
+<P><B>Kara'hol's Curse (2):</B>  +++ Duration (couple of minutes). </P>
+
+<P><B>Unholy Weapon (2):</B>  +++ Duration.  ++ Reagents</P>
+
+<P><B>Enfeeble (3):</B>  + mana. + Vigor. -- Duration.</P>
+
+<P><B>Fade (3):</B>  No changes.</P>
+
+<P><B>Hold (3):</B>  No changes.</P>
+
+<P><B>Silence (3):</B>  Chance to block spell use based on Silence iSpellpower vs. Spellpower of attempted spell.</P>
+
+<P><B>Hold (3):</B>  No changes.</P>
+
+<P><B>Animate (4):</B>  <I>  Add code in Monster's SomethingChanged() so that owned monsters will get their owners poTarget.  (Make it so that summoned, seduced, animated monsters will fight their owners enemies). </I></P>
+
+<P><B>Curse Weapon (4):</B>  Targeted.  places ItemAtt on target's weapon that lowers the weapons to hit and dam temporarily.</P>
+
+<P><B>Defile (4):</B>  Can cast on any corpse.  Lowers karma based on iSpellpower. </P>
+
+<P><B>Poison Fog (4):</B>  <I> Monsters avoid fog elems. </I></P>
+
+<P><B>Shadow Rift (4):</B>  Similar to Lloyd's Beacon.  When cast in one room it ties the prism used to that location.  Future castings w/ that prism create a portal to the target room.  -- spellpower needed.  No Ao3 requirement.  Maleval sells.</P>
+
+<P><B>Shal'ille Bane (4):</B>  Put underscore in SID.  Make comprable to Qor Bane. </P>
+
+<P><B>Swap (4):</B>  Kill.</P>
+
+<P><B>Vampiric touch (4):</B>  TBD.</P>
+
+<P><B>Blind (5):</B>  - Duration.</P>
+
+<P><B>Blood Inheritance (5):</B>  No changes.</P>
+
+<P><B>Death Link (5):</B>  Targeted spell.</P>
+
+<P><B>Invisiblity (5):</B>  No changes.</P>
+
+<P><B>Node Burst (3):</B>  Takes one random node.  ++ Effect. <I> bonus to magic damage.</I></P>
+
+<P><B>Gaze of the Basilisk (6):</B>  Holds anyone who attacks the caster, upto spellpower/25 people, for 1 - 3 seconds.</P>
+
+<P>
+<HR WIDTH="100%"><B><I><FONT SIZE=+1>Riija</FONT></I></B></P>
+
+<P><B>Anonymity (1):</B>  No changes.</P>
+
+<P><B>Blink (1):</B>  No changes.</P>
+
+<P><B>Feign Death (1):</B>  Don't drop items whose value exceeds  (X * iSpellpower/Y).</P>
+
+<P><B>Flash (1):</B>  ++ Mana.  -- Reagents.  Chance to disrupt based on iSpellpower.</P>
+
+<P><B>Shadow Form (1):</B>  Boost to dodge in combat.</P>
+
+<P><B>Bait (2):</B>  Targetable spell.  Outlaw spell if cast on other.  </P>
+
+<P><B>Foresight (2):</B>  Give better info.</P>
+
+<P><B>Forget (2):</B>  No Changes.</P>
+
+<P><B>Illusionary Firewall (3):</B>  No changes.</P>
+
+<P><B>Illusionary Form (3):</B>  No changes.</P>
+
+<P><B>Illusionary Wounds (3):</B>  No Changes.</P>
+
+<P><B>Reflection (3):</B>  Lower Drain rate.  Fix outlaw checking.</P>
+
+<P><B>Vertigo (3):</B>  No changes.</P>
+
+<P><B>Apparition (4):</B>  No changes.</P>
+
+<P><B>Denial (4):</B>  Remove drain - use timer instead.</P>
+
+<P><B>Artifice (5):</B>  Put on real attribute w/ one hour duration.  -- Cast Timer. </P>
+
+<P><B>Evil Twin (5):</B>  Link twin power to Spellpower.</P>
+
+<P><B>Morph (5):</B>  No changes.</P>
+
+<P><B>Summon Bovine (5):</B>  No comment.</P>
+
+<P><B>Seduce (6):</B>  reintroduce, with better mechanics, if we have time to improve owned monster AI.</P>
+
+<P>
+<HR WIDTH="100%"><B><I><FONT SIZE=+1>Shal'ille</FONT></I></B></P>
+
+<P><B>Breathe of Life (1):</B>  No Changes.</P>
+
+<P><B>Holy Weapon (1):</B>  ++ Duration.  +++ Reagents.  In line with new values for other enchantment spells.</P>
+
+<P><B>Minor Heal (1):</B>  No changes.</P>
+
+<P><B>Seance (1):</B>  No changes.</P>
+
+<P><B>Create Food (2):</B>  -- Mana.  More types of food at higher Spellpowers.  (Rand(1,iSpellpower) with food types at intervals of 20).</P>
+
+<P><B>Cure Poison (2):</B>  At low spellpower, reduces effect of the poison.  Chance to remove altogether.</P>
+
+<P><B>Detect Evil (2):</B>  As Detect Good.</P>
+
+<P><B>Holy Symbol (2):</B>  Holds undead monsters at bay (holds).  Can hold iSpellpower * 3 hps worth of monsters.</P>
+
+<P><B>Holy Touch (2):</B>  TBD.</P>
+
+<P><B>Remove Curse (2):</B>  Chance based on iSpellpower vs.  the Curse's spellpower to remove curse.</P>
+
+<P><B>Resist Acid (2):</B>  No changes.</P>
+
+<P><B>Cure Disease (3):</B>  As cure poison.</P>
+
+<P><B>Dazzle (3):</B>  ++ Mana.  + vigor. -- Duration.</P>
+
+<P><B>Identify (3):</B>  No changes.</P>
+
+<P><B>Rescue (3):</B>  +++ Cast Time.  <I>  Acts like town portal at higher skill levels.  Caster can name the destination. ? Targetable ?</I></P>
+
+<P><B>Forces of Light (4):</B>  Link Duration and effect to Spellpower.</P>
+
+<P><B>Hospice (4):</B>  Rename.  More Dependent on Spellpower.  Casting on High karma person raises karma.</P>
+
+<P><B>Mark of Dishonor (4):</B>  Powerful anti-Bless spell for - karma and red names.</P>
+
+<P><B>Qorbane (4):</B>  in line with Shal bane.</P>
+
+<P><B>Spiritual Hammer (4):</B>  +++ Duration.</P>
+
+<P><B>Truce (4):</B>  <font color="red"> 20 mana.  10 vigor.  1 Emerald.  1 Yrxl Sap.  </font></P>
+
+<P><B>Final Rites (5):</B>  targeted spell.  Range attack against undead and Necros</P>
+
+<P><B>Major Heal (5):</B>  Ranged spell.  Remove karma lowering when cast on evil people.</P>
+
+<P><B>Purify (5):</B>  Chance to remove based on spellpower vs. enchantment spellpower.</P>
+
+<P><B>Reveal (5):</B>  <font color="green">Kraanan 3.</font>  </P>
+
+<P><B>Umbrella (5):</B>  Something really cool.  TBD.  </P>
+
+<P><B>Bond (6):</B>  Places a soft white light on the object which links the object to one person.  The bond only works for that individual.  </P>
+
+<P><B>Portal of Life (6):</B>  Cast on the corpse of a player, limits the skill loss suffered based on time elasped since death and Spellpower.  </P>
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%"></P>
+
+</BODY>
+</HTML>

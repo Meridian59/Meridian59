@@ -27,12 +27,13 @@ classvars:
 
    viSchool = SS_JALA
 
-   viHarmful = TRUE
    viHinderedSchool = SS_JALA  % What school does this song hinder?
 
    vbCastable_in_HappyLand = FALSE
    
-   viBaseRange = 4
+   viHarmful = TRUE
+   viBaseRange = 8
+   viAffectsGuildmates = TRUE
 
 properties:
 

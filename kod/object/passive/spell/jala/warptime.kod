@@ -45,6 +45,7 @@ classvars:
 
    viHarmful = TRUE
    viBaseRange = 2
+   viAffectsGuildmates = TRUE
 
 properties:
 

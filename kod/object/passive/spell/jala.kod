@@ -58,10 +58,18 @@ classvars:
    % viPostCast_time is in seconds, since it works off GetTime()
    viPostCast_time = 1
 
+   % If harmful, don't affect people we can't hit
    viHarmful = FALSE
 
+   % Ranges goes up to double base, based on spellpower
    viBaseRange = 5
+   
+   % If FALSE, affects caster only
    viAffectsOthers = TRUE
+   
+   % If TRUE, a harmful spell will still affect guildmates
+   % Important for balance in guild war situations
+   viAffectsGuildmates = FALSE
 
 properties:
 
@@ -94,7 +102,7 @@ messages:
    CastSpell(who=$, iSpellPower=0)
    "Initiation point for the spell."
    {
-      local i, iSinging, iSongState, oObj, oUser, oRoom, iElapsed, lEnchanted, iVolume, iRange;
+      local i, iSinging, iSongState, oObj, oUser, oCasterGuild, oRoom, iElapsed, lEnchanted, iVolume, iRange;
 
       iElapsed = 0;
       lEnchanted = $;
@@ -113,6 +121,8 @@ messages:
 
       oRoom = Send(who,@GetOwner);
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_starts);
+      
+      oCasterGuild = Send(who,@GetGuild);
 
       for oObj in send(oRoom,@GetplActive)
       {
@@ -128,6 +138,9 @@ messages:
                OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
                   AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
                   AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+               OR (viAffectsGuildmates
+                  AND oCasterGuild <> $
+                  AND oCasterGuild = Send(oUser,@GetGuild))
             {
                if viAffectsOthers
                   OR (NOT viAffectsOthers AND oUser=who)
@@ -170,14 +183,15 @@ messages:
    EndEnchantment( who = $, state = $ )
    "Called only for caster. Refreshes itself to recalculate affected players."
    {
-      local iElapsed, lEnchanted, iVolume, iRange, oUser, oRoom, lActive;
+      local iElapsed, lEnchanted, iVolume, iRange, oUser, oCasterGuild, oRoom, lActive;
 
       iElapsed = Nth(state,1);
       lEnchanted = Nth(state,2);
       iVolume = Nth(state,3);
       iRange = Nth(state,4);
 
-      oRoom = send(who,@GetOwner);
+      oRoom = Send(who,@GetOwner);
+      oCasterGuild = Send(who,@GetGuild);
 
       % Do test.
       for oUser in lEnchanted
@@ -203,6 +217,9 @@ messages:
                OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
                   AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
                   AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+               OR (viAffectsGuildmates
+                  AND oCasterGuild <> $
+                  AND oCasterGuild = Send(oUser,@GetGuild))
             {
                if viAffectsOthers
                   OR (NOT viAffectsOthers AND oUser=who)

@@ -1,0 +1,3851 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>Brian's Changes List</title>
+  </head>
+  <body>
+    <h1>Brian's New Changes</h1>
+    This document is to chronicle the gameplay and other changes made to
+    the game.
+    <p>
+    </p>
+    <h2>Changes to the Game</h2>
+    <ul>
+      <li>10/26/06
+        <ul>
+          <li>Lowered the weapon chance to hit modifier for high-end
+            types (thrusting) from 175 to 150. </li>
+          <li>Increased the weapon damage range for high-end types
+            (slashing) from 4-9 to 5-11. </li>
+          <li>Lowered the weapon chance to disarm modifier for high-end
+            types (thrusting) from 20 to 10. </li>
+          <li>Lowered the weapon spell penalty modifier for low-end
+            types (slashing) from -30 to -15. That is, they will
+            penalize spellcasting less. </li>
+        </ul>
+      </li>
+      <li>7/28/06
+        <ul>
+          <li>Added MailingList object to game. It's an object
+            containing a list of player objects which can be sent as a
+            reference to the client when it parses mail names. This is
+            used for the new feature of sending a mail to
+            "guildofficer", which will send an email to all officers in
+            the guild. Upon parsing the name, the User object will
+            create a MailingList object and fill it with a list of the
+            guild officers. The MailingList object deletes itself after
+            the mail has been sent. It might be good to have an object
+            store the mailing list object to prevent oddities like
+            someone sending mail right before a save cycle. In theory,
+            you could use this object to send a mail to any list of
+            players (or admins). </li>
+          <li>Added message GetOfficers to Guild object. Returns a list
+            of objects for the officers of the guild. This is used by
+            MailingList to create a list for mailing the guild officers.
+          </li>
+          <li>Changed the function UserLookupEachName in User. If the
+            name is "guildofficer", it uses the MailingList object and
+            fills it with a list of the officers in the guild. </li>
+        </ul>
+      </li>
+      <li>3/6/06
+        <ul>
+          <li>Changed wall elements so that they won't affect a person
+            if they have not moved yet. This should reduce the instances
+            of newbies getting fried to a crisp by firewalls outside
+            town doors. </li>
+        </ul>
+      </li>
+      <li>11/11/04
+        <ul>
+          <li>Fixed major bug in Distill causing potions to have very
+            low spellpower. </li>
+        </ul>
+      </li>
+      <li>11/11/04
+        <ul>
+          <li>Changed multi-cast spells to be castable on Sacred Haven
+            by default. </li>
+          <li>Changed Hunt to be non-offensive in Sacred Haven. </li>
+        </ul>
+      </li>
+      <li>11/2/04
+        <ul>
+          <li>Fixed RID_MAR_CRYPT2 to have a simpler check for statues
+            remaining. Also got rid of unused boss statue code. </li>
+        </ul>
+      </li>
+      <li>10/31/04
+        <ul>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>10/17/04
+        <ul>
+          <li>Changed Jewel of Froz to use mana when boosting a spell's
+            damage. It takes 1 mana per jewel if only one is wielded, 2
+            mana per jewel if two are wielded (total of 4). Adds a
+            random(1,2) damage if the user has no mana (normally
+            random(3,5)). </li>
+        </ul>
+      </li>
+      <li>9/28/04
+        <ul>
+          <li>Added a 3 second post-cast timer to Truce. Should help
+            address the problem with Truce mules. </li>
+          <li>Fixed it so that Feign Death sends lighting information
+            properly. </li>
+        </ul>
+      </li>
+      <li>9/23/04
+        <ul>
+          <li>Sharpened the code for who Reflections will attack. They
+            will not attack other reflections of the same original or
+            the original. Decreased hatred to -100 (was -25). </li>
+          <li> <br>
+          </li>
+        </ul>
+      </li>
+      <li>9/13/04
+        <ul>
+          <li>Added in check for people offering duplicate objects. This
+            is a bug that causes dupe problems. </li>
+          <li>Changed FixMoney in System to call FixMoney in the Money
+            class, which caps the amount of each money object. This will
+            require less operations to cap the money supply. </li>
+        </ul>
+      </li>
+      <li>9/12/04
+        <ul>
+          <li>Made DM spells not checked when checking to see if a
+            helpful spell is being cast upon an outlaw/murderer. </li>
+          <li>Fixed bug with Distill not working. By default, spells
+            that can't be made into an item return $ instead of FALSE. </li>
+          <li>Made Foresight an outlaw/harmful spell. Fits better with
+            the new rules on helping outlaws/murderers. </li>
+        </ul>
+      </li>
+      <li>8/28/04
+        <ul>
+          <li><b>Patched the live servers!</b> </li>
+        </ul>
+      </li>
+      <li>8/24/04
+        <ul>
+          <li>Adjusted Battered Skeleton treasure table (skel2t) to
+            include less weapons, more light scrolls. </li>
+        </ul>
+      </li>
+      <li>8/16/04
+        <ul>
+          <li>Added a 600 ms casting time to Anti-Magic Aura. Prevents
+            the spell from being cast repeatedly by holding down the
+            hotkey. </li>
+        </ul>
+      </li>
+      <li>8/7/04
+        <ul>
+          <li>Changed it so that the Tos watcher will not give away a
+            blank admin that teleports into the arena. </li>
+        </ul>
+      </li>
+      <li>8/2/04
+        <ul>
+          <li>Changed spell so that Spellbane affects monster casting,
+            too. Always stops monster casting, unless monster cannot be
+            silenced. </li>
+        </ul>
+      </li>
+      <li>8/1/04
+        <ul>
+          <li>Made the Spider Queen a harder by mildly increasing level
+            (hit points) to 165 (was 150) and difficulty to 9 (was 5).
+            Also removed the vulnerability to non-magical weapons (!?!).
+            Should put a bit more challenge into the encounter, making
+            it more like a "boss" encounter. </li>
+        </ul>
+      </li>
+      <li>7/29/04
+        <ul>
+          <li>Doubled the rate of vigor regeneration that resting gives
+            you. This gives newbies a little boost in their killing,
+            since at higher levels players will still eat in order to
+            keep their regen high. </li>
+          <li>Changed it so that helpful casting spells on an outlaw or
+            murderer is an outlaw offense. The player's safety will
+            catch this and give a warning. Also made it so that angeled
+            characters cannot cast upon outlaws or murderers. </li>
+          <li>Changed it so that Dispel Illusion has a percentage chance
+            to dispel each illusion, instead of working 100% of the
+            time. Room illusions (such as the entrance to the Orc Caves)
+            will be dispelled 100% of the time. Immortal admins will
+            have the spell be 100% effective. </li>
+          <li>Changed it so that spells like Dement and Anti-Magic Aura
+            reduce chance for monsters to cast spells proportional to
+            base instead of by adding absolute values. </li>
+          <li>Changed Dark Angels and Xeochicatl to use the spell
+            casting infrastructure in Monster superclass. This means
+            they will be affected by dement, AMA, and mana bomb as are
+            other spellcasters. </li>
+          <li>Changed number of treasure items dropped and increased
+            maximum possible number of items dropped. Forumula is now
+            based on both level and difficulty (was level and a random
+            factor before). In general, low level monsters will drop a
+            more even number of items (usually 1), but higher level and
+            difficulty monsters have a greater chance of dropping more
+            items. </li>
+        </ul>
+      </li>
+      <li>7/28/04
+        <ul>
+          <li>Fixed it so that the rest threshold will not go above 10
+            if Second Wind is in effect, even if set externally (such as
+            by dropping a held token). </li>
+        </ul>
+      </li>
+      <li>7/26/04
+        <ul>
+          <li>Added new Jala level 6 spell, Crystalize Mana. Creates a
+            mana crystal which can be used later to replenish mana. </li>
+          <li>Created new "mana crystal" object to go along with the new
+            Crystalize Mana spell. </li>
+          <li>Adjusted Nodeburst to lowergain to double base increase
+            based on spellpower (was previously triple). Also made it so
+            that player gained mana based on gain instead of current
+            mana. </li>
+        </ul>
+      </li>
+      <li>7/25/04
+        <ul>
+          <li>Moved all the wall spells to be under a single superclass.
+          </li>
+          <li>Made wall spells double-check for maximum number of
+            summoned objects in room after trance as well as before
+            casting. </li>
+          <li>Reduced casting time on Poison Fog to 2 seconds (was 5
+            seconds). Now matches fog's casting time. </li>
+          <li>Elminated casting time on Ring of Flames (was 1 second). </li>
+          <li>Renamed wall element and wall spell files to be more
+            consistent with their class names. </li>
+          <li>Removed Line of Sight limitations for melee weapons. </li>
+          <li>Changed it so that Room will not reset a default NO_COMBAT
+            flag during a frenzy. This was happening with Truce in
+            Marion when the spell ended. </li>
+          <li>Changed Spell to exclude invalid targets in the Arena when
+            constructing the list of valid targets. </li>
+        </ul>
+      </li>
+      <li>7/17/04
+        <ul>
+          <li>Changed Evil Twin to be uncastable on someone who is
+            morphed. Reports were that Evil Twin conflicted with a Morph
+            spell enchantment on the target. </li>
+        </ul>
+      </li>
+      <li>7/15/04
+        <ul>
+          <li>Changed Mirth to act as an attack modifier. It gives a
+            small bonus (+100) to-hit and a moderate random bonus (1-5)
+            to damage vs. evil targets. </li>
+          <li>Changed Melancholy to act as an attack modifier. It gives
+            a small bonus (+100) to-hit and a moderate random bonus
+            (1-5) to damage vs. good targets. </li>
+        </ul>
+      </li>
+      <li>7/13/04
+        <ul>
+          <li>Added "dm hidden" command which allows Admins to remove
+            themselves from the "who" list of mortals. </li>
+        </ul>
+      </li>
+      <li>7/8/04
+        <ul>
+          <li>Edited the letter sent to players that have just lost
+            their guardian angel, giving a bit more information
+            including information about Justicar elections. </li>
+          <li>Removed ability to Morph into a Stone Troll, too many
+            exploits were caused by blending unblendable translations
+            and going completely invisible. </li>
+          <li>Fixed shrines. Removed the base +25 bonus spellpower they
+            automatically gave to all spells. Shrines now properly give
+            a bonus to spellpower based on their dedication. </li>
+          <li>Added in list of bonus spellpower for spells in System,
+            settable by admins for events, such as God's days, etc. </li>
+          <li>Added in message to mana nodes GetLocationName, to get the
+            name of the location where the node ususally is. This is
+            useful for nodes that disappear such as the fey node. </li>
+          <li>Increased an Apparition's hit points by double. It divides
+            the total hit points by 5 instead of by 10. </li>
+          <li>Fixed Island shrine to actually work properly! Was being
+            deleted previously, so the state change was not being saved.
+          </li>
+        </ul>
+      </li>
+      <li>7/7/04
+        <ul>
+          <li>Added notification system to Caramo for when Justicar
+            voting starts. It will notify people online when voting
+            starts, or it will notify people when they log on during a
+            vote. </li>
+          <li>Added sign to the Barloque court room with information
+            about voting and signing up or opting out of notifications.
+          </li>
+        </ul>
+      </li>
+      <li>7/5/04
+        <ul>
+          <li>Changed Caramo so that she will not start a new vote if
+            the current Justicar is removed from office (usually through
+            suicide or becoming an outlaw/murderer). This is to prevent
+            an abuse where people would make a mule become an outlaw
+            after using all the pardons in order to force a new vote to
+            get more pardons. </li>
+          <li>Changed Caramo so she will not allow a second pardon of a
+            murderer during a term. </li>
+          <li>Changed Mystic Touch to transfer at least 1 mana. Also
+            made the minimum amount of mana needed to cast the spell
+            equal to casting cost + 5. </li>
+          <li>Changed it so that logging off with negative
+            enchantment(s) will add 3 seconds to the total duration of
+            each enchantment. This will prevent players from "flashing"
+            (logging online and offline quickly) in order to wear down a
+            negative enchantment without presenting a viable attack
+            target. </li>
+          <li>Changed Lore object's sorting algorithm for lists. It is
+            now a bit more efficient, requiring only O(n) comparisons
+            when inserting an element instead of O(n^2). Also changed it
+            so that if someone advances and they are equal in score to
+            someone else, they'll be promoted ahead of someone else
+            withthe same score. This means that people that newly reach
+            the maximum number of points for a statue will replace
+            existing statue holders. This gives the new players
+            something to aim for. </li>
+          <li>Changed Purge spell to allow casting on self (without
+            outlaw status) on Sacred Haven. </li>
+        </ul>
+      </li>
+      <li>5/30/04
+        <ul>
+          <li>Added a defense bonus to Invisibility. Now gives (25 +
+            spellpower) bonus defense. </li>
+          <li>Increased Magic Shield's base defense to 50 (was 25). </li>
+        </ul>
+      </li>
+      <li>5/28/04
+        <ul>
+          <li>Changed it so that a player holding a token cannot attack.
+          </li>
+        </ul>
+      </li>
+      <li>5/23/04
+        <ul>
+          <li>Adjusted weights and bulks on weapons to fall in line with
+            their descriptions. Biggest changes were to make scimitars
+            heavier and Riija swords lighter. </li>
+        </ul>
+      </li>
+      <li>4/17/04
+        <ul>
+          <li>Removed randomized element to Fade's duration. Seems
+            reasonable given the concentration nature of the spell. </li>
+        </ul>
+      </li>
+      <li>4/8/04
+        <ul>
+          <li>Refined the code that makes flipping a guild hall shield
+            switch make you outlaw. Does not punish betrayal (an inside
+            job). This allows guild owners to flip their own switch
+            without penalty, also gives a way for more intrigue to
+            happen. </li>
+        </ul>
+      </li>
+      <li>4/7/04
+        <ul>
+          <li>Made Battered, Tusked, and Daemon skeletons subclasses of
+            Skeleton to reduce duplicated code. </li>
+          <li>Lowered dementia and palsy attacks of battered skeleton to
+            1 in 10 chance to go off (from 1 in 5). </li>
+          <li>Lowered difficulty of battered skeleton to 4 (was 5). </li>
+          <li>Changed Skeleton's Karma to -50 (from -70). </li>
+          <li>Raised Daemon Skeleton's speed to SPEED_FAST (was
+            SPEED_AVERAGE) </li>
+          <li>Made flipping a guild switch an outlaw offense. </li>
+        </ul>
+      </li>
+      <li>4/3/04
+        <ul>
+          <li>Reduced value of Knight Shield to 800 (was 1000). An
+            attempt to nerf Throne Room runs. </li>
+          <li>Adjusted Tusked Skeleton's drop rates. Drops less Hammers,
+            Inkies, drops more Money and Neru Arrows. </li>
+        </ul>
+      </li>
+      <li>2/27/04
+        <ul>
+          <li>Fixed problem with Holy Touch not doing extra damage.
+            Changed it so that it does 200% to undead, or 150%-50%
+            depending on non-undead opponent's karma. </li>
+        </ul>
+      </li>
+      <li>2/25/04
+        <ul>
+          <li>Changed deflect to do it's basic checks in the spell file.
+            Also changed it to reflect all AttackSpell class spells, not
+            just single-target Faren spells. </li>
+          <li>Changed Mark of Dishonor to not be castable on oneself. </li>
+        </ul>
+      </li>
+      <li>2/24/04
+        <ul>
+          <li>Fixed problem where glowed weapons weren't being
+            considered properly in light calculations. </li>
+        </ul>
+      </li>
+      <li>2/18/04
+        <ul>
+          <li>Fixed the DistributeBetaPotions code. Changed it to be
+            more suitable for what we want for current testing. Moved
+            out SortUsersByPlayTime message out from original function.
+            Moved the beta potions code to System instead of Util. </li>
+          <li>Changed it so that allies can log back into the interior
+            of a guild hall. Also changed it so that lowest ranking
+            guild members of guild (or allied guilds) cannot. </li>
+          <li>Changed it so that anyone that can enter a guild hall can
+            also log off safely in the guild hall. </li>
+        </ul>
+      </li>
+      <li>2/17/04
+        <ul>
+          <li>Changed it so that an item with the quest item attribute
+            cannot be shattered, swapped, etc. </li>
+        </ul>
+      </li>
+      <li>2/12/04
+        <ul>
+          <li>Added safety check to Shatterlock. Also added in
+            additional resources to notify players of this fact. </li>
+          <li>Made it so that token holders can be attacked in towns. </li>
+        </ul>
+      </li>
+      <li>2/5/04
+        <ul>
+          <li>Added back in the range bonus on attack spells and weapons
+            for a moving user target to account for lag drift. Set it to
+            a much lower value than perviously set to to account for the
+            client-side fix of lag drift prediction. </li>
+          <li>Changed Earthquake to do full damage to the caster if the
+            spell is cast from a scroll. This is to prevent people from
+            walking in and spamming scrolls to kill others. </li>
+        </ul>
+      </li>
+      <li>2/4/04
+        <ul>
+          <li>Fixed bug where some spell items (notably the Earthquake
+            scroll) weren't getting the proper targets. Spell items now
+            get the targets from the spell itself. </li>
+          <li>Added in parameter to Rumble in Room that allows you to
+            control chance of disruption in addition to the duration of
+            the rumble. Default is set to 0% disruption chance. Adjusted
+            Lupogg King and Yeti to use this function instead of having
+            their own functions. </li>
+          <li>Increased Earthquake's chance to disrupt spells to 100%.
+            This should avoid some of the problems with white characters
+            chain-casting Earthquake on enemies. </li>
+          <li>Changed Lupogg King's resistances to make him much less
+            suceptible to arrows. </li>
+        </ul>
+      </li>
+      <li>2/3/04
+        <ul>
+          <li>Changed it so that messages and duration/avoidance
+            calculations are handled in Eagle Eyes spell instead of
+            indivdually in Dazzle and Blind. Added message for caster
+            when person enchanted with Eagle Eyes resists a spell
+            completely. </li>
+        </ul>
+      </li>
+      <li>1/12/04
+        <ul>
+          <li>Changed it so that players can lighten and darken rentable
+            rooms through the decorator fairy. </li>
+        </ul>
+      </li>
+      <li>1/11/04
+        <ul>
+          <li>Moved portals to be a subclass of a portal superclass.
+            Eliminated lots of redundant code. </li>
+        </ul>
+      </li>
+      <li>12/20/03
+        <ul>
+          <li>Increased defense from Umbrella to 500 (was 100). </li>
+          <li>Changed it so that Izzio and Pacal no longer buy
+            shillings. :) </li>
+        </ul>
+      </li>
+      <li>12/17/03
+        <ul>
+          <li>Eliminated ability to mend torches. Prevents cheezy way of
+            working up mend by mending a torch that was used/unused
+            quickly. </li>
+          <li>Reduced bulk of torch to 10 (was 20). This brings it in
+            line with the weight, increasing the number players can
+            hold. </li>
+          <li>Changed items to display a different message if the item
+            has been repaired enough. The other message shows when the
+            max hits of the item are below the lowest starting maximum
+            number of hits. </li>
+          <li>Changed Seance to be less sucky. Now have better chance to
+            give real location at higher spellpower, up to 90% (was
+            65%). Now only enchants the caster if the information is
+            wrong, to prevent repeated casting attempts. </li>
+        </ul>
+      </li>
+      <li>12/15/03
+        <ul>
+          <li>Changed Feign Death to not drop items that shouldn't drop
+            on death. Also changed chance to drop items to decrease as
+            spellpower increases, 1-10% chance to drop each item (was
+            previously 5%). Also increased defense added to 3 *
+            spellpower (was 2 * spellpower). </li>
+          <li>Reduced spellpower bonus/penalty for Ivy Circlets. Is not
+            +/-15 for Shal'ille/Qor spells (was +/-25). This brings it
+            in line with the orc shield. </li>
+          <li>Lowered amount of healing Karma adds/subtracts in Minor
+            Heal. Currently Karma/20 (was Karma/10). </li>
+          <li>Increased amount of healing Karma adds/subtracts in
+            Hospice. Currently Karma/10 (was Karma/20). </li>
+          <li>Increased amount of healing spellpower adds in Major Heal.
+            Currently spellpower/5 (was spellpower/10). Also increased
+            maximum cap on amount healed to 50. </li>
+        </ul>
+      </li>
+      <li>12/13/03
+        <ul>
+          <li>Made it possible to "use" candelabras to turn them on and
+            off. </li>
+          <li>Changed faction insignia on herald shields to give a small
+            random bonus to spellpower for all spells. Bonus ranges from
+            3-7 points each cast. </li>
+        </ul>
+      </li>
+      <li>12/11/03
+        <ul>
+          <li>Made it so that Feign Death also removes Illusionary Form
+            to prevent strange side-effects of mixing and creating odd
+            effects. </li>
+        </ul>
+      </li>
+      <li>11/28/03
+        <ul>
+          <li>Halved the casting time on Portal of Life to a base of 10
+            seconds. </li>
+        </ul>
+      </li>
+      <li>11/14/03
+        <ul>
+          <li>Made Flash properly an Outlaw spell. </li>
+        </ul>
+      </li>
+      <li>11/8/03
+        <ul>
+          <li>Reduced Fungus Beast's level to 50 (was 60). This makes
+            them a bit weaker, more in line with their power. </li>
+          <li>Reduced Groundworm's difficulty to 5 (was 6). This makes
+            them a bit less harsh. </li>
+        </ul>
+      </li>
+      <li>11/2/03
+        <ul>
+          <li>Increased the range for most non-bolt attack spells. Most
+            increased by 1. Only major change was increasing Vampiric
+            Drain's range by double. </li>
+          <li>Increased the damage for most non-bolt attack spells. </li>
+          <li>Increased the top end of Vampiric Drain's damage. </li>
+          <li>Halved the reagent cost of Illusionary Wounds, but
+            increased the mana cost to 10 (was 5). </li>
+          <li>Increased duration on Resist Magic by about 50%. </li>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>10/30/03
+        <ul>
+          <li>Added in 5 mask objects. They use the circlet hotspot. </li>
+          <li>Added in "special gift", which is a gift which gives 1 of
+            the 5 mask types. </li>
+          <li>Changed it so that the kill count decay counter only has a
+            50% chance to decay each 6 hour cycle. This will make the
+            decay slower for murderers. This is an attempt to reduce the
+            strategy of some murderers to kill someone randomly then log
+            off for a while. </li>
+          <li>Changed it so all spells give the murmur message now. </li>
+        </ul>
+      </li>
+      <li>10/27/03
+        <ul>
+          <li>Fixed mixup where hammers gave a spellpower penalty
+            whereas scimitars did not. </li>
+          <li>Moved nerudite arrow sales from the island apothacary to
+            the island merchant at the trading post. </li>
+          <li>Reduced chance for nerudite arrows to drop from monsters.
+          </li>
+          <li>Reduced damage bonus from battle bows to 2 (was 3). Also
+            reduced range to 17 (was 20). </li>
+        </ul>
+      </li>
+      <li>10/27/03
+        <ul>
+          <li>Reduced focus time, mana cost, and duration for Lightning
+            Wall to 3 seconds, 20 mana, and 20 + 2 * spellpower,
+            respectively (was 5 seconds, 25 mana, and 20 + 4/3 *
+            spellpower). </li>
+          <li>Fixed problem with trance spells with selected targets
+            (like Earthquake) choosing the wrong targets (often in
+            distant rooms). Updated monsters to handle this. </li>
+        </ul>
+      </li>
+      <li>10/14/03
+        <ul>
+          <li>Added projectile lighting information. </li>
+          <li>Raised lower end of damage on fireball wands to 4 points
+            (was 2). </li>
+          <li>Added object lighting information. </li>
+        </ul>
+      </li>
+      <li>10/13/03
+        <ul>
+          <li>Made totems immune to the spell Sweep. </li>
+        </ul>
+      </li>
+      <li>10/9/03
+        <ul>
+          <li>Changed Armor of Gort to be less resistant to spell
+            damage. Now only absorbs 1/2 the damage from weapon + spell
+            damage types with max damage done of 20, and absorbs no
+            damage from pure spell damage with max damage done of 25
+            (was full absorb and max damage of 15, which is still the
+            default for weapon damage.) </li>
+          <li>Changed damage on arrows. Nerudite and Silver arrows now
+            do a base 2-6 points of damage, with additional damage done
+            due to special conditions. Silver arrowheads do extra damage
+            to undead (as before) and nerudite arrowheads do additional
+            damage, 3-8 points, if they "shatter" (10% of the time);
+            they now shatter on any target (was previously only on
+            insectoid targets). Overall, this slightly reduces the
+            damage done by arrows. </li>
+          <li>Made nerudite arrows come in stacks of 5 instead of 10.
+            This will cause less to be dropped by slain monsters. </li>
+          <li>Increased the thresholds for the damage messages. It now
+            takes a bit more damage to get the same old messages as
+            before. Thresholds are now 15 and 5 (was previously 10 and
+            3). </li>
+          <li>Changed silver and nerudite to weapon damage types (was
+            previously spell damage types, which caused confustion with
+            "all" type spell resistances). </li>
+        </ul>
+      </li>
+      <li>10/2/03
+        <ul>
+          <li>Changed it so that attacking will stop any rescue
+            attempts. This includes attemps by spell or by item. </li>
+        </ul>
+      </li>
+      <li>10/1/03
+        <ul>
+          <li>Adjusted weapon values a bit for balance. Increased the
+            upper damage on low damage weapons and decreased the
+            lower-end damage for high damage weapons. </li>
+        </ul>
+      </li>
+      <li>9/30/03
+        <ul>
+          <li>Fixed it so that there's a Karma check for spell items
+            (wands, etc) that aren't player made. </li>
+          <li>Increased MSH's durability. Initial durability is 400-500
+            (was 200-225). </li>
+        </ul>
+      </li>
+      <li>9/16/03
+        <ul>
+          <li>Added in values for reduction to base spellpower that bows
+            cause. (Previously just used the default values set in
+            weapon.kod.) </li>
+        </ul>
+      </li>
+      <li>8/21/03
+        <ul>
+          <li>Made it impossible to bond a prism. </li>
+        </ul>
+      </li>
+      <li>8/17/03
+        <ul>
+          <li>Changed resist messages slightly. Will now give the
+            anti-resist magic if resist is less than or equal to -20
+            (used to be strictly less than). Also gives the
+            (anti-)immunity message if resist is greater than (or equal
+            to for the anti-immunity) if immunity is greater (less) than
+            (-)60 (was previously (-)66). </li>
+        </ul>
+      </li>
+      <li>8/9/03
+        <ul>
+          <li>Lowered minimum death penalty from Portal of Life to 5%
+            (was 20%). Changed because you have to have a full death
+            penalty in order to eliminate outlaw status. </li>
+          <li>Made sporeburst allowed in arenas. </li>
+          <li>Fixed bug that made wall elements disappear in arenas and
+            remain in guild halls. </li>
+          <li>Fixed bug that allowed players with soldier shields to
+            wield bows, lutes, and soldier shields simultaneously. </li>
+          <li>Changed Necklace of Jala to resist disruptions 75% of the
+            time (was previously 50% of the time). </li>
+          <li>Changed it so a player can wear a necklace and hold a
+            lute. </li>
+          <li>Moved the instrument check from User to Player. </li>
+          <li>Made it so that the instrument check in player will return
+            the highest level instrument in the case of multiple
+            instruments being wielded. This should allow a player to
+            wear a necklace of Jala and hold a Lute, getting the
+            benefitof the lute. </li>
+          <li>Added in variable for who last edited an inscription item.
+          </li>
+        </ul>
+      </li>
+      <li>7/18/03
+        <ul>
+          <li>Fixed a problem with Truce and Spellbane working backwards
+            in towns (IE, allowing unguilded people to cast, instead of
+            allowing guilded people to do so). </li>
+        </ul>
+      </li>
+      <li>7/13/03
+        <ul>
+          <li>Changed it so that you have to take a full death penalty
+            before losing your outlaw status. Outlaw status now only
+            happens when you take death penalties, not when you die. </li>
+          <li>Changed it so that immortal DMs can explicitly hold
+            infinite items in their inventory according to GetMaxWeight
+            and GetMaxBulk. </li>
+          <li>Added Mystic swords as possible special magic items.
+            Reduced the probability of maces and short swords to be
+            selected to compensate. </li>
+          <li>Lowered the value of inky-cap mushrooms to 250 (was 350).
+            Vendors will now pay less for them. </li>
+          <li>Increased the chance for Create Food to create an inky-cap
+            mushroom. </li>
+          <li>Changed it so that a player with over 2x their base max
+            hps fighting a monster weaker than their base hps (IE, a
+            player in morphed form fighting a creature weaker than their
+            morphed form) will gain hit point advancement points at half
+            the rate and will not get a gain check. </li>
+          <li>Changed it so that someone getting a killing blow on a
+            tough monster without taking damage still gets a chance to
+            improve hit points. </li>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>7/11/03
+        <ul>
+          <li>Changed it so that Spellbane cannot be used in town
+            unguilded. </li>
+          <li>Changed Spellbane to only cancel spells weaker than it's
+            own spellpower. So, a Spellbane cast at 75 spell power will
+            only block spells cast with less than 75 spell power. </li>
+          <li>Changed it so that spell items work even if Spellbane and
+            Silence are active. </li>
+        </ul>
+      </li>
+      <li>7/9/03
+        <ul>
+          <li>Made it so that spells will recheck the final targets list
+            afterwards the trance to eliminate "bad" targets,
+            particularly those that go out of the room. </li>
+          <li>Changed it so that a multi-target spell with an invalid
+            NPC target will not cancel the casting of the spell
+            entirely. </li>
+        </ul>
+      </li>
+      <li>7/7/03
+        <ul>
+          <li>Changed it so that frenzies will recognize "safe" rooms
+            again. </li>
+          <li>Changed it so that players will start with half life and
+            mana in the underworld during a frenzy. </li>
+          <li>Changed it so that the second wind will simply not advance
+            if you're suspected of cheezing the skill, rather than not
+            firing. </li>
+          <li>Changed it so that Second Wind will actually give vigor
+            upon death now. </li>
+          <li>Changed it so that spell items sold to (or created by)
+            Pacal and Izzio will not expire while they hold it. Potions
+            bought from them will go bad after the normal time. </li>
+        </ul>
+      </li>
+      <li>7/5/03
+        <ul>
+          <li>Changed it so that knowing spells of a certain level will
+            always allow you to buy spells of a previous level. </li>
+          <li>Added another state to RecreateAll in the system object.
+            This is intended to prevent the server from killing the
+            RecreateAll, thinking it's an infinite loop with too many
+            function calls. </li>
+        </ul>
+      </li>
+      <li>7/3/03
+        <ul>
+          <li>Changed it so that you can use lutes with soldier shields
+            as well. </li>
+          <li>Renamed the resource for light spell sound. </li>
+          <li>Made spell items created by NPCs for in their sale list
+            not expire. This makes potions not appear bad if you look at
+            them in the sales list. </li>
+        </ul>
+      </li>
+      <li>7/2/03
+        <ul>
+          <li>Changed it so that faction soldiers are treated like
+            guilded players or murderers in towns. </li>
+          <li>Changed it so that we have a central function to check for
+            "guild only" restrictions in rooms. The message name is
+            AllowGuildAttack, and returns TRUE if the room does not
+            restrict guild attacks or if an attack (or any other
+            interaction) is allowed between two parties in a
+            guild-restricted attack room. Currently, guilded people,
+            murderers, and people with soldier shields are fair game in
+            towns. </li>
+          <li>Changed it so that unguilded murderers and people with
+            soldier shields can still cast Truce in town along with
+            guilded players. </li>
+          <li>Fixed it so that soldiers never have to do loyalty quests.
+          </li>
+        </ul>
+      </li>
+      <li>6/28/03
+        <ul>
+          <li>Eliminated the fire resistance from Orc Shields. </li>
+          <li>Eliminated Berzerker Ring's bonus to damage if weapon is a
+            ranged weapon. </li>
+          <li>Fixed bug that was preventing Brawling from adding to
+            punch damage appropriately. </li>
+          <li>Changed ranged weapons to use Aim for the damage bonus
+            instead of Might. </li>
+          <li>Changed it so that two Jewels of Froz can be used once
+            again. </li>
+          <li>Changed it so that Mana Convergence doesn't affect
+            Anti-Magic Aura and vice versa. </li>
+          <li>Changed it so that the calculations for determining the
+            affect of Mana Convergence and Anti-Magic Aura heppen in
+            individual spell files, not in spell.kod. </li>
+          <li>Eliminated the incorrect assumption that all rooms with
+            the SafeDeath flag are automatically arenas. </li>
+        </ul>
+      </li>
+      <li>6/24/03
+        <ul>
+          <li>Changed scrolls and wands to not expire by default. </li>
+          <li>Changed Morph to increase the base duration by about 20%.
+            Also changed final randomization to 80-120% of the final
+            time, isntead of being random half to full of the final
+            time. This increases the duration overall. </li>
+          <li>Set Obfal's Sepulchre (RID_ORC_CAVE5) to NOT be
+            TERRAIN_LAKE (?!?). </li>
+        </ul>
+      </li>
+      <li>6/23/03
+        <ul>
+          <li>Changed it so that admins can edit player descriptions and
+            URLs. </li>
+          <li>Added in a very simple profanity filter check for posts
+            and player descriptions. We keep a set of "naughty words" on
+            the server side, and do a simple replacement. </li>
+          <li>Added message to a player target of Glow for when their
+            weapon is enchanted. </li>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>6/21/03
+        <ul>
+          <li>Lowered the dispose timer in the Orc Pit Boss lair to 2
+            minutes. This will clear away items faster than before. </li>
+          <li>Added polished seraphym as a new reagent for Anti-Magic
+            Aura. Also increased the mana cost to 15 (was 20) and
+            decreased initial chance to improve to 10 (was 15). </li>
+          <li>Increased the base cost of polished seraphym to 100 (was
+            90). Should make them sell for a bit more to NPCs, as well
+            as be a bit more expensive to buy from NPCs. </li>
+          <li>Changed Izzio to be MERCHANT_DISCOUNT (was the default
+            MERCHANT_NORMAL previously). This should make him pay a bit
+            more to buy stuff, and cost a bit less to sell stuff. Also
+            moved Plate armor to the "really good" list, moved Scimitar
+            to the "pretty good" list, and replaced enfeeble wand with
+            BattleBow on the "really good" list of "junk" to sell. </li>
+          <li>Changed the default of pbActor in Admins to TRUE. </li>
+          <li>Added Dusk Rats as monster in the koc'catan sewers. More
+            spawn more frequently in the second sewer (that's only
+            accessible from Tepal's area). </li>
+          <li>Added book to Marion Adventurer's Hall explaining how the
+            territory game works. </li>
+          <li>Made it so that if either player cannot hold the objects
+            being swapped, the swap will fail. </li>
+          <li>Added a bunch of new songs to the Duke's ballroom. </li>
+          <li>Changed some Jala spell songs to include the new songs. </li>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>6/20/03
+        <ul>
+          <li>Fixed a bug that was making potions bought from the store
+            not expire. Bought potions now go bad in 24 hours. </li>
+          <li>Changed new rentable rooms to start off with 4 heartstone
+            "credits" of each type. Enough to do some decorating, but
+            not enough to get a chest. </li>
+        </ul>
+      </li>
+      <li>6/19/03
+        <ul>
+          <li>Added in some "Historical" old rooms. They're separate
+            rooms that are maps of towns before they were remodeled. The
+            RIDS are: RID_OLD_JASPER, RID_OLD_MARION, RID_OLD_BAR_NORTH,
+            RID_OLD_BAR_SOUTH. </li>
+        </ul>
+      </li>
+      <li>6/18/03
+        <ul>
+          <li>Changed it so that you cant take partial stacks of items
+            out of guildhall chests if you're not allowed to take the
+            objects according to the guild hall owner. </li>
+          <li>Added new food "Turkey Leg". Half as heavy, filling, and
+            nutritious as cheese, but at 60% of the price. A pretty good
+            food, but a bit expensive. </li>
+          <li>Added new turkey leg food to be sold by Pritchett, the
+            innkeeper in Barloque. It fits, because he is holding a tray
+            with some sort of roast bird on it. </li>
+          <li>Added new turkey leg food as a possible result of the
+            Create Food spell. Slightly adjusted other probabilities to
+            compensate for the addition. </li>
+          <li>Changed Rescue so that if you're in the Spring of
+            Vitality, you'll teleport to Ko'catan Inn; casting Rescue in
+            the orc caves will still take you to the Spring of Vitality.
+          </li>
+          <li>Changed Rescue so that if you're guilded with a guild
+            hall, you'll teleport to your guild hall if it's in the same
+            region you are now. If not, you'll go to the default
+            location for the region. If you cast rescue in your guild
+            hall, you'll go to the default location in the region. </li>
+        </ul>
+      </li>
+      <li>6/16/03
+        <ul>
+          <li>Added nerudite bow as a type of bow. Not terribly good,
+            but worth a good chunk of money. To be given out as a booby
+            prize for one of Moxal's quests. </li>
+          <li>Added new "magic" bow. You can set range on it, and also
+            easily set color. </li>
+          <li>Added piDamageBonus and piHitBonus properties to weapons.
+            These can be used by DMs to increase (or decrease) the
+            damage and to-hit bonuses of weapons. </li>
+        </ul>
+      </li>
+      <li>6/14/03
+        <ul>
+          <li>Made guildhall weapons work anywhere as long as wielder's
+            guild has the hall. Only gives half bonuses if you're not
+            actually inside the guild hall and using it, however. </li>
+        </ul>
+      </li>
+      <li>6/12/03
+        <ul>
+          <li>Added a hidden bonus: If a player casts Elusion with a
+            high enough spellpower, they can say the name of their
+            guild's guildhall and teleport to the foyer. Has no effect
+            on people not in guilds or in guilds without guildhalls. </li>
+        </ul>
+      </li>
+      <li>6/11/03
+        <ul>
+          <li>Added a feature so that if someone in the top three ranks
+            of a guild says the name of another guild member in front of
+            Frular, he will say if the guildmember is active or not (IE,
+            has logged on in the last 60 days). Uses the IsUserInactive,
+            the same as faction power does. </li>
+        </ul>
+      </li>
+      <li>6/10/03
+        <ul>
+          <li>Added the ability to give out objects during a frenzy to
+            the System object. The message is ChaosNightLoot. More
+            details in the event document. </li>
+          <li>Changed it so that Soldier Shields will try to delete
+            themselves if held by a user that isn't the right faction.
+            Exceptions made for DMs and above. </li>
+        </ul>
+      </li>
+      <li>6/8/03
+        <ul>
+          <li>Made Bar (Barking Monster) and hall (Hall of Heroes) in
+            Ko'catan safe to logoff at. </li>
+        </ul>
+      </li>
+      <li>6/7/03
+        <ul>
+          <li>Added a superclass Bow, from which new bow types can be
+            derived. </li>
+          <li>Moved Longbow class to subclass of Bow. Changed name to
+            "longbow", changed color, kept the original stats of the bow
+            (no damage increase, 100 range). Added a +100 to-hit
+            modifier. All existing bows in the game will become this
+            type. </li>
+          <li>Added BattleBow class weapon "battle bow". Gives +3 damage
+            per arrow but only has a 20 range. No to-hit bonus. A bit
+            more expensive than the longbow (3000 vs. 2500). </li>
+          <li>Added PracticeBow class weapon "practice bow". Gives a -3
+            penalty to damage, only has a range of 30, but has a +200 to
+            hit and is about twice as durable as a normal bow. Also
+            cheaper than the other bows. </li>
+        </ul>
+      </li>
+      <li>6/5/03
+        <ul>
+          <li>Doubled the number of non-chest items that heartstones
+            allow you to place in a room to 10 (was 5 previously). Still
+            takes one of each heartstone to place a chest. </li>
+        </ul>
+      </li>
+      <li>6/4/03
+        <ul>
+          <li>Renamed the Wooden Box object to "old wooden box" (class
+            Box). This will now only be available in rentable rooms if
+            they were placed before the change to rentable rooms. </li>
+          <li>Created new storage box type "personal chest" (class
+            SmallBox), which holds 75% of the bulk wooden boxes hold.
+            Also has a slightly smaller graphic (same image, higher
+            shrink factor). To be used in rentable rooms. </li>
+          <li>Created new storage box type "wooden box" (class
+            WoodenBox). This holds twice what the "old wooden box" will
+            hold. </li>
+          <li>Increased the storage capacty of the metal chest storage
+            box to triple previous. </li>
+          <li>Made sure checks to prevent items from being put into
+            chests and boxes were changed to check for the superclass
+            StorageBox instead. </li>
+          <li>Changed Rentable Rooms to use the new "personal chest"
+            object instead of the wooden boxes. This will not affect
+            boxes already placed. </li>
+        </ul>
+      </li>
+      <li>6/1/03
+        <ul>
+          <li>Added rebel faction special weapon attribute. Technically,
+            it already existed, but it would show up as Princess in
+            name. I added the resources needed to show the proper
+            description. </li>
+          <li>Changed it so that faction weapons will work against
+            monsters. Gives half bonuses against unfactioned players and
+            monsters, gives full bonuses against enemy factions, gives
+            no bonus against the same faction. </li>
+          <li>Changed it so that at max, Spore burst only uses 24
+            passive elements instead of 48 as previously. New formation
+            gives the illusion of a mass of clouds by intelligent
+            placement. Also looks a bit more circular. </li>
+          <li>Changed the max number of wall spells in a room to 2
+            instead of 3. This was done by setting the max number of
+            summoned items allowed in a room in the System object. </li>
+          <li>Changed it so that Spore Burst would never be cast if
+            there's already a wall spell in the room. Previously, you
+            could cast an infinite number of Spore Bursts. </li>
+        </ul>
+      </li>
+      <li>5/28/03
+        <ul>
+          <li>Added new message to Holder, CanCarryWeightAndBulk.
+            Returns TRUE if the holder can hold that much weight and
+            bulk. </li>
+          <li>Changed it so that if one person in an offer can't carry
+            all the items offered, the offer will fail and not be
+            completed. </li>
+        </ul>
+      </li>
+      <li>5/23/03
+        <ul>
+          <li>Changed it so that if a player hasn't moved yet (IE,
+            alerted monsters), it only ignores timer-regenerated health
+            increases. Previously, the player ignored all health
+            increases, making improving healing-related spells very easy
+            to do on an unmoving mule. </li>
+          <li>Fixed it so that AllowPlayerAttack checks for room
+            validity where the victim is. This should allow wall spells
+            to follow the proper rules based on location. EG, a wall
+            spell in town will only affect guilded/murderers/soldiers,
+            etc, regardless of caster location. </li>
+          <li>Changed it so that it uses the generic "X was killed by Y"
+            message during frenzies instead of turning everyone into a
+            murderer. This gives an accurage portrayal of who's killing
+            whom without altering the murderer status of people. </li>
+        </ul>
+      </li>
+      <li>5/9/03
+        <ul>
+          <li>Changed Avars, Avar Chieftains, and Avar Shamans to send
+            GetTrueName to the killer to mark the corpse. This prevents
+            the problem of morphed characters being unable to pick up
+            loot from these monsters that they kill. </li>
+          <li>Changed it so that the PK Pointer attribute (which does
+            not allow angeled characters to pick up or accept loot from
+            PK deaths) to penalty items dropped by logoff ghosts. This
+            should disallow mules from just grabbing items from the
+            ground from logoff penalties. </li>
+        </ul>
+      </li>
+      <li>5/8/03
+        <ul>
+          <li>Changed "Ghostly Items" to use color translations. Got rid
+            of the transparency effect (which didn't look too
+            transparent, really), which was interfering with the color
+            translations. Renamed it to "illusionary item" (but didn't
+            change class name). </li>
+        </ul>
+      </li>
+      <li>5/7/03
+        <ul>
+          <li>Reduced weight and bulk of edible mushrooms to 2 and 3
+            (was 5 and 10!!!). This reflects their relative uselessness
+            as items other than reagents. </li>
+          <li>Reduced the value of edible mushrooms to 20 (was 25). Make
+            them a bit less attractive to merchants given the weight
+            reduction. </li>
+          <li>Increased purple mushroom's value to 80 (was 60). This
+            increases the price paid for them by NPCs and also increases
+            the price NPCs charge. </li>
+          <li>Increased value of entroot berries to 60 (was 40). This
+            increases the price paid for them by NPCs. </li>
+        </ul>
+      </li>
+      <li>5/6/03
+        <ul>
+          <li>Added in faction vigor reduction. Bonus reduces all
+            exertion added (and thus vigor consumed) by a base of 30%.
+            Added this power to the Duke faction. </li>
+          <li>Moved faction bonus to mana regeneration to Princess
+            faction. </li>
+          <li>Added in function IsUserInactive in User. Returns True if
+            the player hasn't logged in in about 2 months (60 days). Can
+            be used to check to see if a player hasn't logged on in a
+            while. </li>
+        </ul>
+      </li>
+      <li>5/5/03
+        <ul>
+          <li>Changed around the sound system. Looping "ambient" sound
+            is determined by room type, but only one type will be
+            chosen. Periodic sounds are determined by room type as well,
+            but multiple types of sounds can be added to a single room
+            (IE, the King's Way (RID_G6) will have mountain, forest, and
+            ocean type periodic sounds). The more periodic sounds the
+            room can play, the more frequently sounds will be played.
+            This should allow for more "natural" sounds in different
+            areas. </li>
+          <li>Changed the light modification in the Barloque sewers. The
+            different of the sewer now use full, one half, and one
+            quarter the light value (was 1/2, 1/3, 1/5). This should
+            make the first layer a bit more friendly for newbies trying
+            to use "light" to see. </li>
+          <li>Changed the Firepit object to take a sound radius
+            parameter as the constructor. This determines how far the
+            fire sound can be heard. A radius of 0 means no sound. </li>
+          <li>Changed Fountain and FountainJet to work like Firepits do
+            for sound, only with the water sound. Added an additional
+            "intensity" parameter which determines how loud to play the
+            sound. Went through and removed all artifical fountain
+            sounds in rooms. </li>
+        </ul>
+      </li>
+      <li>5/4/03
+        <ul>
+          <li>Increased the "bonus" for casting Shal'ille spells in
+            Necropolis areas to 0 (was -15). </li>
+          <li>Defined the newbie/guest mausoleum, Tos crypt, and Marion
+            Crypt as "Necropolis" areas. </li>
+          <li>Set sewers to use the looping sounds defined in room.kod
+            instead of what they were individually set to. </li>
+        </ul>
+      </li>
+      <li>5/2/03
+        <ul>
+          <li>Changed it so that a guild can only declare enemies once
+            it is mature. </li>
+          <li>Changed it so that disbanding a guild will still reward an
+            enemy guild in a mutually declared war. </li>
+        </ul>
+      </li>
+      <li>5/1/03
+        <ul>
+          <li>Lowered the factor for spells improving over softcap to
+            1/4th normal improve chance (was 1/5th). </li>
+          <li>Changed it so that if a player drops an item, it will
+            reset the dispose timer to be at least 1 minute in duration.
+            This should eliminate the problem of dropped items
+            disappearing "immediately". </li>
+          <li>Changed Forces of Light spell to add a bonus to Shal'ille
+            spells cast. It adds 1/10th the spellpower of Forces of
+            Light to the spell power of the new spell cast. </li>
+          <li>Moved Forces of Light to under the subclass of
+            RoomEnchantment. </li>
+        </ul>
+      </li>
+      <li>4/30/03
+        <ul>
+          <li>Added AddLoopingSound to room.kod. Allows something to add
+            a looping sound to the room, such as a fire-based object
+            adding a looping fire sound. Also added
+            RemoveObjectLoopingSound to remove the looping sounds added
+            by an object (recorded as an optional last element in the
+            looping sound list). </li>
+          <li>Changed the firepit to add a crackling noise to the room
+            when added. This can be disabled with a parameter sent to
+            Constructor. </li>
+          <li>Moved the light source passive objects that were under
+            PassiveObject to under Flickerer. While not all of them
+            benefit from the infrastructure, it is conceptually nicer
+            and easier to find the light source objects. </li>
+        </ul>
+      </li>
+      <li>4/29/03
+        <ul>
+          <li>Added Jala statue to the Ko'catan Hall of Heroes. Added
+            appropriate things to Lore to make it work right. </li>
+        </ul>
+      </li>
+      <li>4/28/03
+        <ul>
+          <li>Changed it so that wielded torches give a 10 spellpoint
+            bonus to Faren spells (since Faren spells depend on fire
+            bonuses). </li>
+          <li>Changed Rescue to add in random(0,3000) millisecond delay
+            to the final delay of Rescue 50% of the time to add some
+            unpredictability. This additional time is not decreased by
+            spellpower. </li>
+        </ul>
+      </li>
+      <li>4/27/03
+        <ul>
+          <li>Fixed bug in Riija temple that made people drop
+            undroppable items when they "died". </li>
+          <li>Changed resist poison to be more effective and last
+            longer. Now has a good chance to completely resist poison at
+            higher levels, and will much longer (5-15 minute base time
+            compared to 2-4 minute base time previously). This should
+            make fighting poisonous enemies much more tolerable. </li>
+        </ul>
+      </li>
+      <li>4/24/03
+        <ul>
+          <li>Changed it so that the ghost spawns roughly once every two
+            hours in the throne room. This gives players the ability to
+            hunt the ghost, it also gives players a reason to let the
+            room reset on a regular basis to clear excess items on the
+            ground. Ghost will still appear normally if the room has
+            been properly cleared. </li>
+        </ul>
+      </li>
+      <li>4/23/03
+        <ul>
+          <li>Eliminated some of the sounds from the movable sector
+            objects in the Ancient Place (RID_G9). This means the noise
+            that plays when the puzzle is solved won't be quite so
+            obnoxious. </li>
+          <li>Changed Ancient Place (RID_G9) to randomize the levers 5%
+            of the time when they are solved. </li>
+        </ul>
+      </li>
+      <li>4/17/03
+        <ul>
+          <li>Fixed it so that if you are wearing a robe you can use
+            another robe to wear it. Formerly, if you tried to use
+            another robe it would simply unwear the first robe. </li>
+          <li>Changed LightRobe to be a subclass of Robe instead of
+            Armor. </li>
+          <li>Changed the newbie areas (Raza) to give a 50% increased
+            bonus to improve spells and skills. </li>
+        </ul>
+      </li>
+      <li>4/15/03
+        <ul>
+          <li>Put in the first pass of the new cheating detection. What
+            it does is check to see if a player is sending too many
+            packets per move. This will help spot speedhackers. Full
+            details to be put in the cheating documentation. </li>
+        </ul>
+      </li>
+      <li>4/11/03
+        <ul>
+          <li>Changed totems and relics to not show up when you hit
+            return. Makes them easier to hide. </li>
+        </ul>
+      </li>
+      <li>4/10/03
+        <ul>
+          <li>Added code so that non-harmful outlaw spells will still
+            turn you outlaw, even if it doesn't check against a list of
+            targets. This is needed to make sure spells like Shatterlock
+            still turn you into an outlaw. </li>
+          <li>Changed Resist Magic to tighten up the resist range. Now
+            resists 10-40% of damage depending on spellpower (was
+            1-50%). Also lowered total base duration by 1 minute to 40 +
+            spellpower * 2 seconds (was 100 + spellpower*2 seconds). </li>
+        </ul>
+      </li>
+      <li>4/9/03
+        <ul>
+          <li>Made bows fully color translatable. We can now use
+            different color translations for different types of bows. </li>
+        </ul>
+      </li>
+      <li>4/9/03
+        <ul>
+          <li>Added the projectile flag PROJ_FLAG_LIGHT_SOURCE. This is
+            used in the new 3D client to add dynamic lighting effects
+            for projectiles that require it. </li>
+        </ul>
+      </li>
+      <li>4/7/03
+        <ul>
+          <li>Changed bramble walls to act more like normal wall
+            elements with regards to safeties. That is, they now check
+            safeties before trying to affect a player. </li>
+          <li>Added messages for token deaths and deaths caused by
+            soldiers. These new deaths will not count as murders and
+            will not alter the readings from seance, etc. </li>
+        </ul>
+      </li>
+      <li>4/5/03
+        <ul>
+          <li>Changed it so that the base light level in the Vale areas
+            will raise/lower as the areas become more good/evil. </li>
+          <li>Added the FLICKERING_YES flag to the ghost and spectral
+            mummies. This should make them look lit in dark areas, and
+            give them sources of light in the new client. </li>
+          <li>Made blinded players unable to go through doors (or
+            anything else that uses SomethingTryGo). </li>
+          <li>Changed it so that spells that are not accessible or
+            enabled aren't offered to newbie characters at character
+            creation. </li>
+        </ul>
+      </li>
+      <li>4/4/03
+        <ul>
+          <li>Put in message throttling. The server will refuse to
+            accept certain classes of messages from the client after a
+            certain number of messages have been sent in one second.
+            Currently, this number is set at 5. Only certain messages
+            will be ignored; the type that will not put the client out
+            of sync with the server. This is intended to stop some of
+            the spamming techniques some players have developed. </li>
+          <li>If a player does not have a clear line of sight to a
+            target when attacking, their offense is reduced to one third
+            (making them miss three times as often). This should put a
+            dent in cheats that ignore walls on the client. It also has
+            the nice side effect of making "safe spots" less attractive.
+          </li>
+          <li>If a player does not have a clear line of sight to a
+            target when casting a spell, then the spell has 1/3 the
+            normal chance to cast successfully. This should put a dent
+            in cheats that ignore walls on the client. It also has the
+            nice side effect of making "safe spots" less attractive. </li>
+          <li>Changed wands to fail if there's no line of sight between
+            the player using the wand and the target of the wand. </li>
+          <li>Added FLICKERING_YES flag to most light-source type items.
+            This will be used by the new client to assign light sources
+            in the short term. </li>
+        </ul>
+      </li>
+      <li>4/3/03
+        <ul>
+          <li>Changed Kara'hol's Curse to give a message if caster is
+            already enchanted. </li>
+          <li>Fixed a bug in Personal Enchantment that caused it to not
+            print the proper message if the caster was already enchanted
+            if not overriden. </li>
+          <li>Added in server-side detection for attacks and spell
+            targets that are way outside the normal range of vision.
+            This is to combat a cheat that allows you to hit or cast
+            spells at anyone in the room without the normal visibility
+            checks. </li>
+        </ul>
+      </li>
+      <li>4/2/03
+        <ul>
+          <li>Changed Shatterlock to have a more reasonable time
+            requirement, to fit under the new spell system. </li>
+        </ul>
+      </li>
+      <li>4/1/03
+        <ul>
+          <li>Changed it so that immortal admins do not lose vigor and
+            will not have their mana reset by ComputeMaxMana. </li>
+          <li>Changed faction troops to optionally use the faction
+            shields instead of normal guild shields. Necromancers still
+            use the normal colored guild shield. </li>
+        </ul>
+      </li>
+      <li>3/31/03
+        <ul>
+          <li>All spells cast in a room are now properly reported to any
+            DMs in the room. Message includes caster's real name,
+            spell's name, and name of the target, if appropriate.
+            Removed old code that gave a message when the DM was a
+            target of the spell from spell.kod. </li>
+          <li>Added in SquelchPlayer message in player.kod. This toggles
+            the player's ability to broadcast. If set, this prevents the
+            player from broadcasting. </li>
+          <li>Added DM spell "Squelch" to call the SquelchPlayer message
+            described above. </li>
+          <li>Changed Pacal to only buy a limited number of number
+            items. This will prevent hundreds of thousands of rainbow
+            ferns from showing up on his inventory. </li>
+          <li>Changed Pacal so that he will lose 1/3 of stacked number
+            items and has a 1 in 3 chance to delete non-number items on
+            a regular basis of 12-24 hours. This was accomplished by
+            changing the timer that creates junk for him to hold. </li>
+          <li>Reduced resistance of robes of the disciple of
+            ATCK_SPELL_FIRE damage to -20% (was -10%). </li>
+          <li>Added resistance of robes of the disciple to all weapon
+            damage of -10%. This was recorded in the docs, but not put
+            into the robes properly. </li>
+        </ul>
+      </li>
+      <li>3/30/03
+        <ul>
+          <li>Changed it so that player will go to the rooms Blink
+            coordinates if they take a logoff penalty, including a free
+            penalty or no penalty for being a newbie. This is to prevent
+            people from getting continuous crashes. </li>
+        </ul>
+      </li>
+      <li>3/29/03
+        <ul>
+          <li>Fixed various sounds, including the fountain in South
+            Barloque, the waterfall in the God's room, doors and water
+            splashing in Guildhall 5 (Konima's Abandoned Dwelling), etc.
+          </li>
+          <li>Changed Vertigo so that it will not enchant monsters that
+            are already affected by palsy </li>
+        </ul>
+      </li>
+      <li>3/28/03
+        <ul>
+          <li>Changed Truce so that it will only be castable in towns by
+            an unguilded character if there is a monster in the room.
+            Spell is still castable by a DM, however. </li>
+          <li>Changed it so that a player leaving the underworld via a
+            portal of life or via the node portal is paralyzed
+            temporarily while the transition is made. This should fix
+            some of the exploits people have done where they try to
+            continue moving while moving through these portals, allowing
+            them to warp to other places in the target room. </li>
+          <li>Changed it so that angle changes (turns) while paralyzed
+            are ignored. </li>
+          <li>Changed it so that sending an action (pointing, smiling,
+            frowning, etc) hooks into the attack rate system. In other
+            words, if you do an action you have to wait 1 second before
+            you can make an attack or take another action. This is to
+            prevent the spammers who send multiple </li>
+          <li>Added server-side detection to check if a player is
+            running below the normal vigor threshold. This is the result
+            of a cheat on the client side. </li>
+        </ul>
+      </li>
+      <li>3/27/03
+        <ul>
+          <li>Changed it so that the spell superclass allows you to
+            target yourself with a harmful spell if the spell calls for
+            only a single target. Most single-target spells already
+            prevent people from targetting themselves if appropriate.
+            This allows players to use Purge on themselves with no
+            penalty. </li>
+        </ul>
+      </li>
+      <li>3/25/03
+        <ul>
+          <li>MASSIVE change to spell system. Spells can now build a
+            specific list of targets affected at casting time. This list
+            is pared down for offensive spells, taking status and safety
+            into consideration, and stored in plFinalTargets for use
+            during spell casting phase. This simplifies the casting,
+            since it allows that all targets in this list are valid, and
+            reduces duplicated checking. </li>
+          <li>Spells that affect a group of players, such as Mana Bomb
+            and Earthquake, will now fail to cast if there are not any
+            valid targets in the area. </li>
+        </ul>
+      </li>
+      <li>3/24/03
+        <ul>
+          <li>Changed Flash to have a chance to stun monsters in the
+            room for 1 second. Due to new monster effect, spell is now
+            allowed on Sacred Haven. </li>
+        </ul>
+      </li>
+      <li>3/23/03
+        <ul>
+          <li>Changed Staff of Jolting to have a 3 second pause after
+            use. User can take no other offensive action for 3 seconds
+            after use. </li>
+        </ul>
+      </li>
+      <li>3/21/03
+        <ul>
+          <li>Changed it so that immortal admins can always attack a
+            target of their choice. </li>
+        </ul>
+      </li>
+      <li>3/19/03
+        <ul>
+          <li>Removed the "newbie safe" flag from Xeochicatls. They'll
+            now attack angeled characters in the area. This was done to
+            prevent angeled loot mules from running free. </li>
+          <li>Changed wall spell elements to affect players as
+            determined by the normal safety rules for outlaws and
+            murderers. </li>
+        </ul>
+      </li>
+      <li>3/14/03
+        <ul>
+          <li>Increased the damage cap on bonus damage caused by Might.
+            This helps match the current reality of players having up to
+            70 might instead of the previous max of 50. </li>
+          <li>Changed newbie portal so that new players (IE, ones that
+            have PFLAG_TUTORIAL unset) must enter the Raza portal twice
+            before being sent to the mainland. This should prevent
+            "accidentally" leaving Raza early. </li>
+        </ul>
+      </li>
+      <li>3/13/03
+        <ul>
+          <li>Changed it so that DMs and above can have "unavailable"
+            spells in Sacred Haven. </li>
+          <li>Changed it so that soldier shields will be slung on the
+            back if the player tries to wield a bow. Bow image from the
+            third-person perspective also swaps to show the colored
+            bands. </li>
+          <li>Added dm command "dm item junk" to create a junk item. </li>
+        </ul>
+      </li>
+      <li>3/11/03
+        <ul>
+          <li>Added logging of when Potions of Forgetfulness are used. </li>
+          <li>Added logging for which hall is broken into when players
+            enter a guild hall after door is closed. </li>
+          <li>Added logging in the debug stream for when a hall's
+            defenses are flipped. Previously it just gmailed the server
+            guardian. </li>
+        </ul>
+      </li>
+      <li>2/20/03
+        <ul>
+          <li>Changed Mark of Dishonor to restrict players going over
+            max hps. This is intended to add a bit more depth to
+            Shal'ille's strategy, and allow people to knock down people
+            significantly over maximum hps (such as people recently
+            changed back from a Morphed form). Player now checks for
+            this in NewHealth, which should be called after most health
+            changes (IE, ones that could take the player over max
+            health.) </li>
+          <li>Changed Mark of Dishonor's duration to be dependent on
+            spell power. Now lasts 2-10 minutes based on spell power
+            (was a flat 10 minutes before). </li>
+          <li>Changed Morph to do a NewHealth after changing form. This
+            allows Mark of Dishonor to do it's new job. </li>
+          <li>Changed Breath of Life to allow up to 130 max hps total
+            (was 60). Also changed it to check for Mark of Dishonor
+            before granting additional life. </li>
+          <li>Changed amount of Breath of Life's effect. Caster now
+            sacrifices the target's Karma (bound 10 to 80)% of their hps
+            (won't go below 10 hps). Target gains 75 + spell power/2% of
+            the sacrifice, not to exceed 150% of max life or 130 hps
+            total. </li>
+          <li>Changed Minor Heal to cap between 1 and 10 points healed
+            (was 0-15). Now adds 2-5 points to amount healed if target
+            is a newbie. </li>
+        </ul>
+      </li>
+      <li>2/13/03
+        <ul>
+          <li>Modified Morph's duration dependant upon the difference
+            between the player's HPs and the Morphed form's level.
+            Players shifting into forms with a lower level increase the
+            duration while players shifting into forms with a higher
+            level will see lessened duration. </li>
+          <li>Changed it so that players that change forms with morph
+            will use the target's level as base hps, instead of the
+            targets actual hps. Player now shifts to +/-10% of
+            creature's hps. </li>
+          <li>Placed a 600 ms casting time on Hospice. </li>
+          <li>Placed a 600 ms casting time on Minor Heal </li>
+          <li>Increased maximum effect of Major Heal to 40 hps healed
+            (was 35). </li>
+        </ul>
+      </li>
+      <li>2/4/03
+        <ul>
+          <li>Changed it to give newbies (with the Tutorial flag) half
+            their mana upon death. Makes it easier for them to broadcast
+            with. </li>
+          <li>Added a debug log to record the piDeathCost of people who
+            take death penalties. Can be useful. </li>
+        </ul>
+      </li>
+      <li>1/19/03
+        <ul>
+          <li>Added .5 second casting time to Create Weapon and Create
+            Food. This should prevent people from macroing the spells by
+            holding down a hotkey. </li>
+          <li>Changed it so that key copies given to innkeepers that
+            rent rooms will be destroyed. </li>
+        </ul>
+      </li>
+      <li>1/16/03
+        <ul>
+          <li>Players in Raza will not get any penalty for death, beyond
+            having to rest up to regain vitals. </li>
+          <li>Player with the Tutorial flag set (new players that
+            haven't rerolled or gotten over 30) now get a gmail from
+            their guardian angel about death upon dying. These players
+            won't lose hps and will lose half the normal points. </li>
+          <li>Eliminated Stamina-based reduction for logoff penalties.
+            This means that logoff penalties are harsher now (about 2x
+            as harsh for someone with 50 Stamina). </li>
+          <li>Eliminated the percent of max hps damage cap for people
+            with 50+ hps over their max. This means that anyone who
+            morphs to get a high hp creature then gets dispelled will
+            take damage in accordance to their new hps, not their old
+            max. </li>
+        </ul>
+      </li>
+      <li>1/8/03
+        <ul>
+          <li>Lowered the initial improve chance for Morph to 35 (was
+            65). </li>
+        </ul>
+      </li>
+      <li>12/30/02
+        <ul>
+          <li>Changed Discordance to auto-remove even a single
+            enchantment in the room if the power is high enough. </li>
+          <li>Changed the Assassin's game to not kick people off who are
+            currently online. </li>
+          <li>Fixed problem with not being able to cast offensive spells
+            on faction enemies in town. </li>
+        </ul>
+      </li>
+      <li>12/19/02
+        <ul>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>12/18/02
+        <ul>
+          <li>Eliminated penalties for attacking and killing a token
+            holder. </li>
+          <li>Changed it so that players cannot rescue out of OOG
+            (either by chalice or spell). </li>
+        </ul>
+      </li>
+      <li>12/16/02
+        <ul>
+          <li>Changed rentable rooms to no longer try to dispose loose
+            items if a player is in the room. </li>
+          <li>Removed Sword of the Hunt restrictions for the Hunt spell.
+          </li>
+          <li>Changed it so that reflections change immediately when the
+            owner changes. </li>
+          <li>Reduced the values of Nerudite swords and Battle Bows.
+            This is an attempt to make elusion mules a bit less
+            profitable. </li>
+        </ul>
+      </li>
+      <li>12/15/02
+        <ul>
+          <li>Made Roq a more expensive merchant. He is now
+            MERCHANT_EXPENSIVE, where before he was MERCHANT_NORMAL (the
+            default). This means he will pay less for items you offer
+            him. This balanced with the fact that he buys everything. </li>
+          <li>Added in text to the disciple quests to "tell" the
+            priestess when done. This should help some of the confusion
+            these quests create. </li>
+          <li>Changed one target of the Shal'ille disciple quest to Duke
+            Akardius (was Faren priestess). There could have been a
+            conflict with the word "blessing" in the quest cargo and the
+            spell "bless" sold by the priestess. Akardius needs more
+            pardoning than the priestess did, anyway. ;) </li>
+        </ul>
+      </li>
+      <li>12/14/02
+        <ul>
+          <li>Added living statue monsters. About as difficult as
+            skeletons, unless it's declared as a "soldier" type, then
+            it's about as hard as an Avar. Statue does not give text
+            description of damage, instead damage is shown by missing
+            parts of the statue. Statue is inert and does not look like
+            a monster until its target gets close enough to make it
+            spring to life. </li>
+          <li>Took out all references to the animation configuration
+            from the client executable. This should eliminate the last
+            bit of the animation bug people abuse. </li>
+        </ul>
+      </li>
+      <li>12/13/02
+        <ul>
+          <li>Bound maximum possible hit points to 150. This is for
+            anyone with 50 or greater stamina. This needed to be done
+            since Stamina could go over 50 with various bonuses and
+            items. </li>
+          <li>Increased the time before you can rejoin a guild after
+            leaving to 4 hours (was 3 hours). Increased the time before
+            you can rejoin the same guild to 72 hours. </li>
+          <li>Added subject lines to the Assassin's Game gmails from
+            Roq. </li>
+          <li>Increased mule timer to 15 minutes (IE, after attacking
+            another player, you cannot be affected by "mules" for 15
+            minutes afterwards). Was 10 minutes. This is so the mule
+            timer is longer than the logoff ghost timer. </li>
+        </ul>
+      </li>
+      <li>12/12/02
+        <ul>
+          <li>Added hit point restrictions to quests. Quests can now
+            require a minimum hp level to begin. </li>
+          <li>Added not having an item as a restriction for a quest.
+            This works well for quests that given an item out, like the
+            Jala Necklace or soldier shield quests. Checks to make sure
+            the player does NOT have the item in question before giving
+            out the quest. </li>
+          <li>Added quest to get Jala necklace. Starts at Parrin and
+            involves lots of travel and the sacrifice of a Lute. </li>
+          <li>Added quests to get the soldier shields from the lieges.
+            Requires 70 hps to start, then requires killing 2 opposing
+            faction soldiers. </li>
+        </ul>
+      </li>
+      <li>12/11/02
+        <ul>
+          <li>Added Event Signs to the game. These are DM placable signs
+            to give a visual reminder of events. Using the admin window,
+            you can customize time/date information on the sign. </li>
+          <li>Active faction soldiers (with rank 5 or greater) will not
+            have to do loyalty quests for their liege. </li>
+          <li>Only faction soldiers can claim flagpoles or pick up flags
+            now. </li>
+        </ul>
+      </li>
+      <li>12/10/02
+        <ul>
+          <li>Reduced Light's cost to 5 mana (was 10). </li>
+          <li>Reduced Illusionary Wounds' cost to 5 mana (was 15).
+            Lowered vigor cost to 3 (was 15). </li>
+          <li>Reduced the cost of Shocking Fury, Blast of Fire, and
+            Explosive Frost to 8 mana (was 10). </li>
+          <li>Reduced Vampiric Drain's cost to 10 mana (was 12). Also
+            increased base damage range to 12-15 (was 9-12). </li>
+          <li>Increased Fireball's mana cost to 7 (was 5). </li>
+          <li>Slightly incresaed spellpower requirement for Elusion's
+            teleport options. Previously, you could teleport to all 6
+            locations with a 90 spellpower. Now requires at least a 96
+            spellpower. </li>
+          <li>Added in the message "Jumpstart" in the Quest engine. A
+            quick and dirty way to jumpstart everything if some quests
+            are not working. </li>
+          <li>Replaced individual strings for faction liege names in
+            Territory game with calls to Parliament to get centralized
+            strings. </li>
+          <li>Added Soldier Shields to the game. SoldierShield is the
+            superclass, under which are shields for specific factions
+            (PrincessShield, DukeShield, RebelShield). These shields
+            must be worn and cannot be gotten rid of in any of the usual
+            ways. They provide some shield defense (while not requiring
+            the block skill). Each shield gives a bonus to 2 specific
+            stats, determined by faction. Each shield also gives a
+            faction-specific bonus to the character. Users with the
+            shields can attack other faction members with these shields
+            without penalty (murderer, revenant, etc). Users gain rank
+            by killing faction enemies, lose rank by dying to faction
+            enemies or taking log penalties. </li>
+        </ul>
+      </li>
+      <li>12/8/02
+        <ul>
+          <li>Changed the client so that it queries the server for
+            updates after a player changes guild standing (declares or
+            undeclares and ally or enemy). This allows us to accept or
+            reject a change in guild standing and have that reflected on
+            the client. </li>
+          <li>Added in financial penalty for withdrawl from a mutual
+            guild war. A guild must have at least 50k shillings prepaid
+            rent in order to declare an enemy. If two guilds mutually
+            declare each other as an enemy, then they are at war. If one
+            guild undeclares the other as enemy, they lose 50k from
+            rent. The winner gest 60% of the positive amount lost by the
+            losing guild. So, if a guild had 30k prepaid rent and
+            undeclared from a mutual war, the guild would be at 20k owed
+            and the winner would get 18k added to their rent. </li>
+          <li>Added a 2 hour (1 Meridian day) delay when undeclaring a
+            guild as an enemy that has mutually declared your guild as
+            an enemy. The financial penalties mentioned above happen
+            when the enemy is first undeclared. During this delay, the
+            war continues as before. After this delay, the war ends and
+            the guild is removed as an enemy. Only one guild may be
+            undeclared an enemy at any one time. </li>
+          <li>Updated the maturity guild letter to include the rules
+            about war. </li>
+        </ul>
+      </li>
+      <li>12/7/02
+        <ul>
+          <li>Changed FreeHands to only free items from hands if there
+            are no restrictions. (IE, the items are not cursed). This
+            was called by Jig to remove all objects from hands,
+            including cursed weapons. </li>
+          <li>Added Soldiers' Shields for new Faction Soldiers scenario.
+          </li>
+          <li>Changed it so that the first binding on mana regeneration
+            time happens after the faction adjustment, not before. This
+            means that the Duke regeneration "bonus" is no longer quite
+            as potent. </li>
+          <li>Reduced the lower mana regeneration time to 1000 ms (was
+            1500 ms). This means that mana will be limited to 1 mana
+            point per second. The Jala spell of "Rejuvenate" which
+            increases mana regeneration can lower this down to 500 ms
+            per point regenerated (was 750). </li>
+          <li>Increased Distill's spellpower penalty for high level
+            spells to 15 * spell level (was 5 * spell level). However,
+            also added the caster's hit points as a determiner to offset
+            this. This penalty is reduced by the caster's (hps - 20), so
+            that the penalty can be 0 but never "positive". For example,
+            a caster is making a 4th level spell into a potion. The
+            penalty for this is 60 points. A 20 hp character gets no
+            bonus, a 50 hp character reduces the penalty to 30 (60 - (50
+            - 20)), and a 100 hp character has no penalty. This was
+            implemented to discourage mules from creating high level
+            potions. </li>
+          <li>Added in a new debug message for when characters get
+            suicided. </li>
+          <li>Added in newbie Honor string. This string will show up in
+            the bio of true newbies to the land. This string goes away
+            if you get the Tutorial flag set; this happens if you become
+            2 Meridian years old or if you become player-killable. This
+            is a slight change from before, where you got the Tutorial
+            flag set when you hit 25 hit points. This was added as a way
+            for people to recognize true newbies vs. those that reroll
+            characters. </li>
+        </ul>
+      </li>
+      <li>12/4/02
+        <ul>
+          <li>Armaggedon and Smite now work on groundworms. </li>
+          <li>Increased chance for battered skeletons and decreased
+            chance for Zombies in the Throne room. </li>
+        </ul>
+      </li>
+      <li>12/1/02
+        <ul>
+          <li>Made Jasper smith (Quintor) willing to buy weapons and
+            wearables. </li>
+          <li>Made Jasper merchant (Zhieu B'hob) willing to buy
+            reagents. Now sells Elderberries, Mushrooms, and Blue
+            Mushrooms in addition to what was sold before. Also sells
+            shirts of a similar color to the pants he sold previously. </li>
+          <li>Made the Tos apothecary (Frisconar) a Discount merchant
+            (was Bargain). This will make him a bit less favorable of a
+            merchant. </li>
+          <li>Made the Barloque apothecary (Joguer) a Discount merchant
+            (was Normal). This will make him a bit more favorable of a
+            merchant. Also added Elderberries as a purchasable reagent
+            from him. </li>
+          <li>Made the Marion healer (Lady Aftyn) a Normal merchant (was
+            Ripoff). This will make her a bit more favorable of a
+            merchant. </li>
+          <li>The Marion smith (Cohorr) willing to buy shields as well
+            as weapons. This should help newbies hunting in the Marion
+            Crypt. </li>
+          <li>Changed all god's gifts to give +5 to main stat and +2 to
+            secondary (was +3/+1). </li>
+          <li>Made Martyr's Battleground a semi-permanent enchantment in
+            the Marion Crypt. The enchantment has no expiration,
+            although it can be removed with Discordance. The enchantment
+            will try to reapply itself every time it tries to create a
+            monster. It also will appear if a player says a string with
+            the word "gods" in it. (Does not work on Sacred Haven
+            servers.) </li>
+        </ul>
+      </li>
+      <li>11/28/02
+        <ul>
+          <li>Decreated the casts per percent bonus for spellcasting to
+            7 (was 10). This means for every 7 casts of a spell, you
+            will gain a cumulative 1% bonus to improve on future
+            castings. An improve still resets this cumulative bonus. </li>
+          <li>Changed players to return base max health as their level
+            instead of the flat 50. Might want to use it in future
+            calculations. </li>
+          <li>Increased the default difficulty of a spell with no target
+            or a player target to 75 (was 60). For monster-targetted
+            spells, the difficulty represents the level (hit points). </li>
+        </ul>
+      </li>
+      <li>11/18/02
+        <ul>
+          <li>Morphed players now show up as red dots on the minimap.
+            They also do not show friend/foe colors. </li>
+          <li>Morphed players are now prevented from casting Illusionary
+            Form. </li>
+          <li>Casting Morph will remove an Illusionary Form. </li>
+          <li>Players are now prevented from casting Evil Twin on
+            themselves. </li>
+        </ul>
+      </li>
+      <li>11/17/02
+        <ul>
+          <li>Prevented Shadowform from affecting someone with
+            DRAWFX_SECONDTRANS effect. This is the effect used for
+            "stone" things (like stone trolls). Combining these spells
+            caused the player's icon to disappear. </li>
+          <li>Lowered the effectiveness of Glow. Now gives approximately
+            2/3rds the light it did before. This falls more in line with
+            the description of the spell, which says it allows the spell
+            to glow like a torch. Allows Night Vision to have a use
+            again. </li>
+          <li>Increased the duration of Night Vision to approximately
+            3-4x what it was before. </li>
+        </ul>
+      </li>
+      <li>11/16/02
+        <ul>
+          <li>Eliminated councilor scandals (shifts to neutral) from
+            happening during Frenzy. </li>
+          <li>Made it so that only one councilor at a time have a
+            scandal. </li>
+          <li>DM spell Deliverance now only clears a player's honor
+            string if it contains the string (resource) from the Damn
+            spell. </li>
+          <li>Added gems to Cave Orc treasure table. Matches monster's
+            description. </li>
+          <li>Raised player's stat cap to 70 (was 50). This allows stat
+            bonuses to give bonuses to people that go over 50 in a stat.
+          </li>
+          <li>Reduced the rate at which your karma changes for killing
+            monsters of the opposite Karma that move your Karma towards
+            neutral to 2/3 what it was before. (For example, if you're
+            at -50 Karma and you kill a monster with 30 Karma, the
+            change to -30 Karma will be slower). </li>
+        </ul>
+      </li>
+      <li>11/15/02
+        <ul>
+          <li>Made it so that shattering a Riija swords gives the victim
+            3 random components (only 1 component is shattered). Each
+            component is labelled with the quester of the original
+            sword. </li>
+          <li>Fixed it so that a player that forgets defensive skills
+            can't use them in combat. Also changed parry to not work
+            when a player cannot attack. </li>
+          <li>Slightly reduced overall chance to hit in combat. </li>
+        </ul>
+      </li>
+      <li>11/11/02
+        <ul>
+          <li>Fixed the Ukgoth puzzle to open Martyr's Battleground to
+            allow Truce to be cast instead of Martyr's Battleground on
+            Sacred Haven. </li>
+          <li>Server now sends information for the friend/foe color
+            options in the client for guilds. You can see guild mates,
+            mutual guild enemies, and mutual guild allies in the minimap
+            area. </li>
+          <li>Eliminated the ability to use a name like "a/an (monster
+            name)". </li>
+        </ul>
+      </li>
+      <li>11/9/02
+        <ul>
+          <li>Made wedding rings unshatterable and unswappable. </li>
+          <li>Added a small defense bonus to wedding rings. </li>
+          <li>Made it so that monsters with pbDontDispose set will not
+            affect the karma of a player that kills the monster. A
+            monster that does not affect Karma will return nil ($) when
+            queried with GetKarma. </li>
+          <li>Changed Evil Twin to not affect Karma. (Its base Karma is
+            set to $.) </li>
+          <li>Changed other objects to adjust to the new possibility of
+            getting nil Karma. </li>
+        </ul>
+      </li>
+      <li>10/22/02
+        <ul>
+          <li>Made Xeochicatl able to go through walls. Prevents them
+            from getting stuck into stupid locations and unable to get
+            out (thus easy to kill). </li>
+        </ul>
+      </li>
+      <li>10/28/02
+        <ul>
+          <li>Changed function name for the message that modifies
+            defense damage to ModifyDefenseDamage (was ModifyDamage).
+            Caused a conflict in guantlets which were also an attack
+            modifier that used ModifyDamage to add damage to a weapon. </li>
+          <li>Modified maximum defense bonus a shield can give in
+            conjunction with the Block skill. </li>
+          <li>Increased defense bonus Umbrella gives to 100 (was 50). </li>
+        </ul>
+      </li>
+      <li>10/26/02
+        <ul>
+          <li>Made non-illusionary fire and lightning wall elements add
+            a little light to the room they are cast in. </li>
+        </ul>
+      </li>
+      <li>10/19/02
+        <ul>
+          <li>Changed it so that the max advantage one side in an
+            unrestricted war can have is 25% (was 50%). </li>
+        </ul>
+      </li>
+      <li>10/17/02
+        <ul>
+          <li>Fixed problem with Artifice not cleaning up timers
+            correctly. </li>
+          <li>Changed string literals to resources for the teacher
+            strings in monster.kod. </li>
+          <li>Made the offering quests not available to newbies. </li>
+        </ul>
+      </li>
+      <li>10/13/02
+        <ul>
+          <li>Fixed problem with morphed players sending an article if
+            they are ignoring a person. </li>
+        </ul>
+      </li>
+      <li>10/11/02
+        <ul>
+          <li>Changed Mana Bomb to be castable on Sacred Haven servers.
+            Added in an additional check so it won't affect players when
+            cast by other players on SH servers. </li>
+          <li>Changed Xeochicatl to lose half their mana when affected
+            by Mana Bomb. Also eliminated their mana drain while
+            affected by mana bomb. </li>
+        </ul>
+      </li>
+      <li>10/9/02
+        <ul>
+          <li>Fixed problem of Cure Poison causing additional vigor loss
+            when repoisoned with a weaker poison. </li>
+          <li>Changed Dragonfly Queens and Kriipas so you cannot morph
+            to them. </li>
+          <li>Changed Morph to ignore monster restrictions for DMs that
+            name a monster. </li>
+        </ul>
+      </li>
+      <li>10/9/02
+        <ul>
+          <li>Removed mutant ants and scorpions as possible insects to
+            kill for the newbie disciple robe quest. </li>
+        </ul>
+      </li>
+      <li>10/5/02
+        <ul>
+          <li>Reflections and Evil twins now check AllowPlayerAttack
+            instead of CheckStatusAndSafety. A much more comprehensive
+            check, including arena checks and room checks. </li>
+          <li>Fixed Mana bomb to check for valid for individuals
+            affected instead of for the whole room. No longer makes you
+            an outlaw for merely casting the spell, but will make you an
+            outlaw for affecting an innocent with your safety off. </li>
+        </ul>
+      </li>
+      <li>10/4/02
+        <ul>
+          <li>Changed static strings in ladephen.kod and system.kod to
+            resources for localization. </li>
+          <li>Made it so that moving to a new room will ease the limits
+            on the "imp cap". Helps sort out botters from non-botters.
+            Also made it so that people at the "imp cap" don't gain
+            quite as much cumulative bonus to gain improves. </li>
+          <li>Reduced Distilled potion's duration to 1-7 days (used to
+            be 2-20 days). </li>
+          <li>Added a message to the winner of the Assassin's game if
+            they get a prize. </li>
+          <li>Lowered chance to improve for all spells and skills in
+            Spring of Vitality by 1/3. Tends to be a popular botting
+            spot. </li>
+          <li>Fixed it so that monsters no longer travel across zone
+            boundaries. If they normally would, they either stay where
+            they are or move to a spawn point in the room (if a monster
+            room). </li>
+        </ul>
+      </li>
+      <li>10/3/02
+        <ul>
+          <li>Made dm blank completely undetectable to other clients.
+            Server keeps track of blanked admin, but does not report any
+            blank admin movement updates to other clients. Server still
+            sends information to the admin, about room movement,
+            however, and can still interact with the room. </li>
+          <li>Added prStandardIcon to DMs. If not NIL, it will set the
+            admins' icon this this resource and set pbMorph. Allows
+            admins with non-standard icons to go blank and back easier.
+          </li>
+        </ul>
+      </li>
+      <li>10/3/02
+        <ul>
+          <li>Fixed incorrect sound resource file name in Artifice. </li>
+          <li>Fixed problem with storage boxes not recording number
+            items correctly. </li>
+          <li>Fixed problem with exotic tops not matching skin color
+            correctly. </li>
+          <li>Fixed problem with Free Action making certain types of
+            hold last forever. </li>
+          <li>Eliminated wall element message spam when not affecting a
+            player. Walls now count someone as "affected" if even if
+            something fails to affect them. </li>
+        </ul>
+      </li>
+      <li>10/2/02
+        <ul>
+          <li>Made wall spells harmful again. Will prevent casting in
+            "safe" areas. </li>
+          <li>Removed bug that caused scrolls to turn innocents into
+            outlaws if an unattackable person is in the room. </li>
+          <li>Removed vigor loss caused by running through detection
+            items like wall spells, guild hall detector plates, etc. </li>
+          <li>Changed Haste's state value to record spellpower instead
+            of 100-spellpower. Also changed the vigor calculations to
+            match this change in state. Is more logical this way. </li>
+        </ul>
+      </li>
+      <li>10/1/02
+        <ul>
+          <li>Made all unvaultable items unwrappable by Rycksher in the
+            Duke's Ballroom. </li>
+          <li>Made Riija sword vaultable if the owner and the questor
+            are the same person. </li>
+          <li>Made Riija sword not disposible when rooms clean up. </li>
+          <li>Made Riija swords practically never hit unless wielded by
+            original questor. </li>
+          <li>Made Riija swords wear down faster but not break in the
+            hands of someone besides the original owner. </li>
+        </ul>
+      </li>
+      <li>9/29/02
+        <ul>
+          <li>Fixed a problem with shadowform and targetting a
+            non-player (IE, monster). </li>
+          <li>Changed Chalice of Rain to be an item cast. No longer does
+            the animation or gives you a chance to improve. </li>
+          <li>Changed the spell casting weapon attribute to be an item
+            cast. No longer does the animation or gives user a chance to
+            improve in the spell. </li>
+        </ul>
+      </li>
+      <li>9/26/02
+        <ul>
+          <li>Added purple mushrooms to Orc Wizard treasure table.
+            (Reduced chance to drop disciple's robes). </li>
+          <li>Tokens dropped in rentable rooms now automatically
+            teleport out immediately. </li>
+          <li>Added node to Avar Village (RID_KE4). It appears by
+            dropping food in front of the statue (good), or killing
+            enough avars (evil). Node cannot be bonded by people of the
+            opposite alignment (IE, the node that shows up after
+            dropping food cannot be bonded by someone with negative
+            Karma, etc). </li>
+          <li>Dramatically increased the damage on Illusionary Firewall,
+            Firewall, Ring of Flames, and Lightning Wall. 100-150%
+            increase in damage for the various spells. </li>
+          <li>Increased damage on Illusionary Wounds. Against players,
+            now does spellpower% of 17 + ((50 - victim's intellect)/10).
+            (Previously, did 10 + ((60 - victim's intellect)/10).)
+            Against monsters, it now does about 7 more points of damage
+            each hit. </li>
+          <li>Reduced post-cast timer on Lightning Bolt to 2 seconds
+            (previously 3 seconds). </li>
+          <li>Reduced casting time for Discordance to 1 second.
+            (Previously, was 1.5 seconds.) </li>
+          <li>Fixed bug in Sandstorm that wasn't killing people. Changed
+            Sandstorm so it doesn't kill a player, it will only take
+            them down to 1 hit point. </li>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>9/25/02
+        <ul>
+          <li>Heartstones given to the designers in rentable rooms are
+            now stored in the room instead of the decorator. This means
+            that someone giving heartstones to the decorator can leave
+            and come back and still have the heartstone credit. </li>
+          <li>Replaced the literal strings from the Arena and Watcher in
+            Tos with resources that can be localized. </li>
+        </ul>
+      </li>
+      <li>9/24/02
+        <ul>
+          <li>Changed Frular's trigger word for rent to a string
+            resource. </li>
+          <li>Changed the innkeeper's trigger words for renting rooms
+            and copying keys to string resources. </li>
+          <li>Fixed an error with the ItemAttPKPointer not allowing NPCs
+            to buy items correctly. </li>
+          <li>Limited maximum rent time in a rentable room to 240
+            Meridan days (about 20 offline days.) </li>
+        </ul>
+      </li>
+      <li>9/23/02
+        <ul>
+          <li>Created War event. It's an event run during frenzies.
+            Players are divided into sides which can fight against each
+            other. Game keeps score, which is gmailed to a person at the
+            end of it all. </li>
+          <li>Created War join pendants. Using one of these will align
+            you with a side during war event. </li>
+        </ul>
+      </li>
+      <li>9/22/02
+        <ul>
+          <li>Reduced casting time on Mana Focus to 7 seconds (was 10
+            seconds). </li>
+          <li>Added the ability to set a prize in the Assassin's Game.
+            SetPrize(what=$) sets the prize for the assassin's game,
+            given to the last surivivor. </li>
+          <li>Set it so that immortals cast at full spellpower. </li>
+        </ul>
+      </li>
+      <li>9/20/02
+        <ul>
+          <li>Tanktops now fix themselves to be the correct skin color
+            when worn. </li>
+          <li>Removed string literals from the shrunken head. Also added
+            in a few easter eggs (now eat spider eyes if the owner has
+            some, will chat with other shrunken heads the owner has). </li>
+          <li>Made silence an aggressive spell (will turn you orange if
+            you cast it with innocents in the room.) This is to remove
+            the truce/silence exploit. </li>
+        </ul>
+      </li>
+      <li>9/18/02
+        <ul>
+          <li>Added arena checks to the AllowPlayerAttack check. </li>
+          <li>Lowered minimum duration of web's hold to 1 second (was 2
+            seconds). </li>
+          <li>Made Distill's potion power dependent on the Distill
+            percent instead of spellpower. The lack of requirement of an
+            instrument skewed the spellpower lower than necessary. </li>
+        </ul>
+      </li>
+      <li>9/17/02
+        <ul>
+          <li>Cleaned up wall spells. Made them check for valid attacks
+            and consider safeties when affecting other players. Active
+            wall elements were made a subclass of a new class
+            ActiveWallElement. </li>
+        </ul>
+      </li>
+      <li>9/16/02
+        <ul>
+          <li>Halved the possible penalty in hit points for taking a
+            Potion of Forgetfulness for Weaponcraft. </li>
+          <li>Made newsglobes unreadable from a distance. Now checks to
+            see if player is in the same room, if not it logs the event
+            and denies a view of the news. </li>
+        </ul>
+      </li>
+      <li>9/14/02
+        <ul>
+          <li>Added "Rescue" functionality when you use the Chalice of
+            Rain. Starts with 4-5 "hits" and is destroyed when used up.
+          </li>
+          <li>Reduced Chalice of Rain weight and bulk to 20 (was 40). </li>
+          <li>Made Chalice of Rain so that a player can only hold one.
+            Any others picked up are deleted (and the Chalice is
+            refilled. </li>
+          <li>Made Chalice of Rain so it is unvaultable. </li>
+          <li>In order to get the Chalice of Rain from the cave, you
+            must now dispell illusion in addition to killing all the
+            orcs in the cave. </li>
+          <li>Changed it so that neutral faction members can rip down
+            flags from anywhere. </li>
+        </ul>
+      </li>
+      <li>9/13/02
+        <ul>
+          <li>Made Box and Chest subclasses of new class StorageBox.
+            This helped eliminate some duplicate code. </li>
+          <li>Added in checks so that people cannot interact with chests
+            from a distance. </li>
+          <li>Added Rescue potions. Only available via creation by
+            Distill. </li>
+          <li>Added Eagle Eyes potion. Creatable from Distill. </li>
+          <li>Changed Eagle Eyes to give a 1 point damage bonus with
+            ranged weapons. </li>
+          <li>Lowered spellpower for found spell items to 30-60 (was
+            40-75). </li>
+        </ul>
+      </li>
+      <li>9/10/02
+        <ul>
+          <li>Changed Blood Inheritance to give perma-unholy damage
+            enchantments 70% of the time. There is a 10% chance each to
+            create a Paralyzer, Blinder, or Vamper weapon. </li>
+          <li>Made it so that you can not pick up another shadow amulet
+            if you already have one equipped. </li>
+          <li>Made is so that Amulets of Shadow will not try to unuse
+            themselves if someone tries to use another necklace. </li>
+          <li>Reduced the casting time on Earthquake to 5 seconds (was 7
+            seconds). </li>
+          <li>Increased the base damage range on Earthquake to 5-9 (was
+            2-6). </li>
+        </ul>
+      </li>
+      <li>9/5/02
+        <ul>
+          <li>Fixed error messages relating to the purging (Psychochild)
+            weapon attribute. </li>
+          <li>Fixed Living Trees to follow combat restrictions for their
+            lightning bolts (truce, inns, etc). Also fixed Xeochicatls
+            to follow same restrictions for their spells. </li>
+          <li>Added check for Anonymous or Morphed players in
+            CheckStatusAndSafety in Player class. Attacking a person
+            that is Anonymous or Morphed should not trigger any
+            penalties now. </li>
+          <li>Removed ability for unguilded players to cast spells on
+            guilded targets towns if the target has attacked another
+            player "recently". </li>
+          <li>Unguilded non-murderer casters can now no longer cast Jig
+            in towns. </li>
+          <li>Classified Evil Twin as a harmful spell so that it cannot
+            be cast on bad targets in towns. </li>
+          <li>Stopped Evil Twin from turning a player outlaw in the
+            arena. </li>
+        </ul>
+      </li>
+      <li>9/3/02
+        <ul>
+          <li>Changed Shatter. Amount of number items shattered now
+            varies a bit more widely, but can shatter the whole stack on
+            a good cast. Will always shatter at least one item in a
+            stack, this is to prevent the ability to infinitely cast
+            shatter on a single number item. </li>
+        </ul>
+      </li>
+      <li>8/27/02
+        <ul>
+          <li>Added resources in addition to string literals for the dm
+            commands. </li>
+          <li>Added resources in addition to string literals for the
+            admin commands. </li>
+          <li>Adjusted the probabilities for types of item created when
+            a special item is created. Made scimitars a bit rarer,
+            longswords a bit more common, etc. Falls in line with the
+            usefulness and desirability of the item. </li>
+        </ul>
+      </li>
+      <li>8/25/02
+        <ul>
+          <li>Increased the hps/mana that "dm boost stats" returns. </li>
+        </ul>
+      </li>
+      <li>8/15/02
+        <ul>
+          <li>Added Kriipa claws to the Dragonfly treasure table (the
+            same table the Kriipas use). </li>
+        </ul>
+      </li>
+      <li>8/14/02
+        <ul>
+          <li>Reduced base duration of Resist Magic to 1 2/3-5 minutes
+            (was 5-10 minutes). </li>
+          <li>Blind no longer affects immortal admins. </li>
+          <li>Fixed bonksticks, don't allow on non-users or self. </li>
+        </ul>
+      </li>
+      <li>7/22/02
+        <ul>
+          <li>Added parameter to DoHold in Hold so that it can choose to
+            check for free action or not. </li>
+        </ul>
+      </li>
+      <li>7/16/02
+        <ul>
+          <li>Fixed a problem with Free Action being passed in nil as a
+            duration. </li>
+          <li>Made the math a bit friendlier so that Eagle Eyes and Free
+            Action can resist Blind and Hold completely a bit more
+            often. </li>
+          <li>Increased Free Action's duration to 3-8 minutes (was 1-2
+            minutes). This is more in line with the damage resist spells
+            (Withstand Fire, etc). </li>
+          <li>Increased Eagle Eye's duration to 2-5.3 minutes (was 2-4
+            minutes). This is about half the duration of a damage resist
+            spell, since it also gives a bonus to-hit with bows. </li>
+        </ul>
+      </li>
+      <li>7/11/02
+        <ul>
+          <li>Cleaned up the text additions for player-enchanted
+            weapons. </li>
+          <li>Removed chests as possible items in rentable rooms if node
+            attacks are not activated. </li>
+          <li>Moved the room decorator's commands to resources instead
+            of text strings. </li>
+        </ul>
+      </li>
+      <li>6/20/02
+        <ul>
+          <li>Added in Jonas rumors to the political rumormongers. </li>
+        </ul>
+      </li>
+      <li>6/16/02
+        <ul>
+          <li>Made it so that Evil Twins are deleted when their target
+            is destroyed. The spell actually removes the trance spell
+            from the caster if the caster is a player. </li>
+          <li>Increased durability of clothing items by about 5x across
+            the board. Durability is now comparable to a robe. </li>
+          <li>Made Magic Spirit Helmets unshatterable. </li>
+          <li>Made room keys unshatterable. </li>
+          <li><b>Patched the live servers.</b> </li>
+        </ul>
+      </li>
+      <li>6/15/02
+        <ul>
+          <li>Eliminated the chance to spawn a revenant from an enemy in
+            a mutually declared guild war. </li>
+          <li>Reduced the chance for a gnarled staff to not disrupt a
+            player down to 12.5% [1 out of 8] (was 25%, [1 out of 4]). </li>
+          <li>Made revenants a bit weaker if they are fought when first
+            created (IE, before a player leaves the room). Initial
+            revenants will have 110% of the target's hps and have a
+            difficulty of the target's hps/12, bound between 4 and 9.
+            (Normal revenants have 150% of the target's hps and a
+            difficulty of the target's hps/10, bound 4 to 10). </li>
+          <li>Added clarifying text to the Assassin's Game description
+            signs. </li>
+          <li>Added the Necklace of Jala as a 1% drop to the Lupogg
+            King. Reduced the drop chance for a Fine Lute. </li>
+          <li>Added some new constants to blakston.hhd. RID_JAS_WEST =
+            RID_JASWEST, RID_JAS_EAST = RID_JASPER, and RID_BARLOQUE =
+            RID_BAR_SOUTH. </li>
+          <li> <br>
+          </li>
+        </ul>
+      </li>
+      <li>6/13/02
+        <ul>
+          <li>Fixed bug that allowed items set as undroppable from
+            dropping while casting Feign death. The spell wasn't sending
+            the correct parameters to one of the checks. </li>
+          <li>Made it so that Feign Death wouldn't cause you to drop
+            your Riija Sword. </li>
+          <li>Fixed a slight bug in RoomKey so that it won't allow the
+            key to be dropped without knowing where it will be dropped
+            into (IE, returns FALSE if it requests to be NewHeld into
+            $). </li>
+          <li>Added more event types for BreakTrance in spells. New
+            events are more precise about why the spell is being
+            stopped. </li>
+          <li>Added functionality in Jala spell class so that the
+            Necklace of Jala will stop disruptions based on getting hurt
+            or making an attack. Also gives a 50% chance to avoid
+            disruption (from the Flash spell or gnarled staff item). Jig
+            and Spellbane do not have the disruption protection due to
+            the nature of the spells. </li>
+          <li>Changed necklace of Jala to not be equipable with another
+            instrument. </li>
+          <li>Changed Silence to allow caster to attack others and
+            maintain spell. </li>
+        </ul>
+      </li>
+      <li>6/12/02
+        <ul>
+          <li>Fixed problem of wands not working correctly in towns if
+            both parties were guilded and/or a murderer. </li>
+          <li>Fixed problem of harmful room effect scrolls not turning
+            the user outlaw. </li>
+        </ul>
+      </li>
+      <li>6/11/02
+        <ul>
+          <li>Made Assassin's daggers automatically miss if the target
+            is held/blind/dazzled. </li>
+          <li>A successful assassin's attack will now remove
+            Invisibility and Shadow Form from the attacker. </li>
+          <li>Fixed the problem of people not going visible when
+            invisibility was removed from them via a spell (purge,
+            dispel illusion, etc). Players now send SomethingChanged
+            when they have their flags updated. </li>
+        </ul>
+      </li>
+      <li>6/10/02
+        <ul>
+          <li>Added in safety checks for Reflections. Works the same as
+            the checks with Evil Twin. </li>
+        </ul>
+      </li>
+      <li>6/9/02
+        <ul>
+          <li>Fixed an error causing Trance to try to "Deflect" itself
+            instead of the spell it is trying to cast. </li>
+          <li>Raised max number of cheating logs recorded to 25 (was
+            10). </li>
+          <li>Fixed problem of narthyl worms trying to drain vigor in
+            monster characters. </li>
+          <li>Fixed problem with NPC chatter triggering the music
+            changing routine in Duke5 (the ballroom). </li>
+          <li>Changed it so that you only need 1 spell/skill in a
+            particular level and school in order to automatically be
+            able to learn other spells/skills in that level/school IF
+            the level is 3rd or higher. Previously, it required 2 or
+            more spells/skills for any level. So, for example, if you
+            have 1 spell in 4th level Faren, you automatically qualify
+            to learn any other 4th level Faren spell. However, for 2nd
+            level Faren you need 2 or more spells to automatically
+            qualify, otherwise you must meet the requirements for
+            percents in level 1 Faren. </li>
+          <li>Lowered faction bonuses for to-hit, learning (improves),
+            and regen bonus. Raised the defense bonus. </li>
+          <li>Added a 20% bonus to improve in the Mender's shop in Tos.
+          </li>
+          <li>Made Dark Angels track (and properly delete) their
+            reflections and evil twins they cast. </li>
+        </ul>
+      </li>
+      <li>6/8/02
+        <ul>
+          <li>Fixed error in Lore object that caused statues to not
+            update correctly. </li>
+        </ul>
+      </li>
+      <li>6/6/02
+        <ul>
+          <li>Improved the initial chance for Bolt Spells (Fireball,
+            etc) to improve to 7% (was 5%). </li>
+          <li>Fixed grammar error for a "soldier of the Princess' army".
+          </li>
+        </ul>
+      </li>
+      <li>5/27/02
+        <ul>
+          <li>Changed Sweep so that immortals will now pick up all items
+            available. </li>
+          <li>Reduced the improve penalty for knowing spells outside the
+            school. Now calculates the penalty based on how many levels
+            you have, not how many percents you have. </li>
+          <li>Also eliminated the "bonus" you got for knowing spells in
+            the school. This bonus was meaningless and more or less
+            eliminated the penalty for getting higher in the school. </li>
+        </ul>
+      </li>
+      <li>5/25/02
+        <ul>
+          <li>Changed it so that anyone attacking anything during a
+            frenzy goes red (so that the killer messages show up
+            properly) and safeties are ignored to prevent problems with
+            after-frenzy safety checks. </li>
+          <li>Got rid of "mule timer" check during frenzies. </li>
+          <li>Changed Roq's commands to resources instead of strings.
+            Easier to localize. </li>
+        </ul>
+      </li>
+      <li>5/23/02
+        <ul>
+          <li>Lowered the max penalty for a portal of life target to 80%
+            (was 100%). This means that the spell will always at least
+            partially benefit the target. </li>
+        </ul>
+      </li>
+      <li>5/20/02
+        <ul>
+          <li>Lowered reagent cost of Cure Disease to 3 Herbs, 2
+            Elderberries (was 5 herbs, 3 elderberries). </li>
+        </ul>
+      </li>
+      <li>5/18/02
+        <ul>
+          <li>Fixed the damage type of Spiritual Hammer and gave it a
+            to-hit bonus passed in during creation. </li>
+        </ul>
+      </li>
+      <li>5/12/02
+        <ul>
+          <li>Improved the to-hit bonus for Forces of Light. Now adds
+            50+iSpellPower to hit (was iSpellPower/3 + 10). </li>
+          <li>Increased the base bulk and weight players can hold to
+            1700 (was 1500). Also moved values from User to Player
+            class. </li>
+        </ul>
+      </li>
+      <li>5/10/02
+        <ul>
+          <li>Fixed Evil Twin to not turn you orange upon casting. The
+            evil twin itself now checks for status when attacking. </li>
+        </ul>
+      </li>
+      <li>5/9/02
+        <ul>
+          <li>Made it so that the lore object (the object that controls
+            the statues on the island) can exclude certain people (EG
+            event characters). This prevents a buffed event character
+            from taking a statue. </li>
+          <li>Added the old Duke art to the art archive. Use "dm
+            disguise duke" or "dm disguise Kalior" to look like the old
+            Duke. </li>
+        </ul>
+      </li>
+      <li>5/7/02
+        <ul>
+          <li>Changed it so that the Spell superclass now checks the
+            returned value from GetTranceTime. This will return 0 for
+            admin characters. </li>
+          <li>Overrode GetTranceTime for spells that use the casting
+            time to catch things said. These spells include Morph,
+            Engrave, Elusion, and Distill. </li>
+          <li>Fixed problem of faction soldiers causing a problem when
+            playing their death sound. </li>
+          <li>Made it so that non-monster NPCs won't keep items that are
+            given (IE sold) to them. </li>
+          <li>Added a message "DeleteHolding" in class Holder that
+            deletes everything in the holder's inventory. Code was moved
+            from the Delete message (and replaced with a call to the new
+            message). As a precaution, it won't delete players, only
+            send them to a safe location. </li>
+        </ul>
+      </li>
+      <li>5/3/02
+        <ul>
+          <li>Made it so that black daggers (assassin's game weapons)
+            don't count as weapons in the Ko'catan town check for
+            "contraband". </li>
+          <li>Disabled logging of people "moving too fast" while not
+            running. Created too many false positives. </li>
+        </ul>
+      </li>
+      <li>4/30/02
+        <ul>
+          <li>Fixed a problem in the West Tower guild hall in Ko'catan
+            (RID_GUILDH12). It would not allow guild allies to enter the
+            hall. </li>
+        </ul>
+      </li>
+      <li>4/28/02
+        <ul>
+          <li>Made room keys unswappable. </li>
+        </ul>
+      </li>
+      <li>4/23/02
+        <ul>
+          <li>Fixed Cure Poison to work when it removes the poison. </li>
+          <li>Added Narthyl Worm as possible "prize" from the crate in
+            the basement of Castle Victoria. </li>
+          <li>Changed it so that the Kraanan, Shal'ille, Qor, and Riija
+            temples now give a slight bonus to improves in their
+            respective spell schools. </li>
+        </ul>
+      </li>
+      <li>4/21/02
+        <ul>
+          <li>Changed it so that calling DoHold in the Hold spell object
+            now takes iDuration as a parameter, which is expressed in
+            milliseconds. Before could only take duration in whole
+            seconds. </li>
+          <li>Changed duration on Gaze of the Basilisk to last a max of
+            2.5 seconds max (was 3 seconds). </li>
+        </ul>
+      </li>
+      <li>4/10/02
+        <ul>
+          <li>Fixed bug in rentable rooms where people with rooms at
+            multiple inns that paid rent to either innkeeper only
+            increased the rent for one room. </li>
+          <li>Changed the initial chance to improve Hold to 10 (was a
+            default value of 20). </li>
+          <li>Changed the initial chance to improve Gaze of the Basilisk
+            to 10 (was a default value of 20). </li>
+          <li>Changed the initial chance to improve Sporeburst to 15
+            (was a default value of 20). </li>
+          <li>Changed the initial chance to improve Swap to 10 (was a
+            default value of 20). </li>
+          <li>Changed reagents for Sporeburst to 1 shaman's blood, 2
+            purple mushrooms (was 1 shaman's bood, 2 blue mushrooms). </li>
+        </ul>
+      </li>
+      <li>4/8/02
+        <ul>
+          <li>Eliminated possibility for a weaker Anti-Magic Aura to
+            replace a stronger one. As unlikely to happen AND it was
+            causing too many redundant checks. </li>
+          <li>Made duration for Anti-Magic Aura more random. Duration is
+            random half to full of a base of 60 + spell power seconds
+            (was random 60 to 60 + spell power seconds). </li>
+          <li>Changed period on which Heat does damage to 10 seconds
+            (was 15 seconds). </li>
+          <li>Slightly altered how spell power is calculated. Items and
+            shrines now affect your spell power AFTER penalties are
+            assessed and bound to a lower value. Basically, you can make
+            up for some of the penalty caused by Anti-Magic Aura by
+            using appropriate items. </li>
+          <li>Player must now take a full penalty death to get rid of a
+            revenant. </li>
+          <li>Changed it so that only room enchantements improve slowly
+            in Seafarer's Peak (RID_A5) and the Dreaded Caves of Ice
+            (RID_ICE_CAVE1). Skills now get a 20% bonus to improve in
+            Seafarer's Peak. </li>
+        </ul>
+      </li>
+      <li>4/4/02
+        <ul>
+          <li>Fixed various problems with different item and weapon
+            attributes. Mostly had to do with changes in attributes
+            where those without a timer now carry a nil in the second
+            element in the attribute list on the item. Some of the
+            attributes still thought data was there and tried to read
+            off nil data. </li>
+        </ul>
+      </li>
+      <li>4/4/02
+        <ul>
+          <li>Fixed some error spam related to "made" items not having
+            an owner. </li>
+          <li>Made free action a bit more able to resist hold outright.
+            Currently takes 15% of Free Action's spellpower (was 10%)
+            for the check to resist outright. </li>
+          <li>Lowered max duration for Gaze of the Basilisk's hold
+            effect from 4 to 3 seconds. </li>
+          <li>Lowered the base disarm bonus for slashing weapons (axes
+            and scimitars) to 0 (was 5). </li>
+          <li>Fixed bug causing players to take "real" deaths during
+            assassin's game. </li>
+          <li>Changed it so that portal of life still gives a minimum
+            20% penalty (normal death is 100%, was minimum of 0%). </li>
+        </ul>
+      </li>
+      <li>4/2/02
+        <ul>
+          <li>Changed it so that you must be killable in order to get on
+            top of the crate and rummage around in the open crate in CV.
+            This should reduce the number of mules that clog up that
+            area. </li>
+          <li>Reduced chance to create inky-cap mushrooms on create
+            food. Was making the spell a bit too lucrative. </li>
+          <li>Capped improves in Raza to 25% for all skills and spells,
+            not just weapon skills. </li>
+        </ul>
+      </li>
+      <li>3/30/02
+        <ul>
+          <li>Fixed detect good/evil so that it doesn't flash enemies of
+            the same alignment of the viewer. In other words, detect
+            good will no longer show good players good targets. </li>
+          <li>Changed it so that each room can now determine what
+            spells/skills it penalizes instead of having a generic "hard
+            to learn in" flag. So, now auto-discordance rooms can choose
+            to only penalize room enchantments, etc. Also able to limit
+            all spells and skills to 25% in Raza. </li>
+        </ul>
+      </li>
+      <li>3/29/02
+        <ul>
+          <li>Fixed it so that the trading post on island is a safe
+            logoff point. </li>
+          <li>Fixed the system to disable logoff penalties if server
+            population drops too far. Was trying to set a timer using
+            the logoff delay in seconds, resulting in a VERY short
+            timer. </li>
+        </ul>
+      </li>
+      <li>3/28/02
+        <ul>
+          <li>Lowered initial chance to improve for Anti-Magic Aura to
+            15 (was 40). </li>
+          <li>Lowered initial chance to improve for touch spells to 10
+            (was 20). </li>
+          <li>Lowered initial chance to improve for Deflect to 20 (was
+            35). </li>
+          <li>Lowered initial chance to improve for Bless to 25 (was
+            40). </li>
+          <li>Raised initial chance to improve attack spells to 10 (was
+            5). </li>
+          <li>Set initial chance to improve for bolt spells to 5 (was 5,
+            but attack spells got raised to 10). </li>
+          <li>Lowered initial chance to improve for scimitar wielding to
+            15 (was 25). </li>
+          <li>Fixed Denial. It now does damage when the spell is over as
+            intended. Instead of being a constant drain, it now lasts
+            for a duration, taking back part of the damage it healed at
+            spell's end. </li>
+          <li>Raised mana cost for Denial to 15 (was 5). </li>
+        </ul>
+      </li>
+      <li>3/27/02
+        <ul>
+          <li>Fixed faction troops to use the proper insignia. </li>
+          <li>Item Attributes are now removed when an item breaks. This
+            allows cursed items to be removed by breaking them. </li>
+          <li>Removed casting focus time on spells for immortals. <b>KNOWN
+              BUG</b>: This disturbs spells such as Distill and Elusion
+            that require something to be said during the trance. If you
+            wish to cast these spells, go mortal first. </li>
+        </ul>
+      </li>
+      <li>3/26/02
+        <ul>
+          <li>Fixed spawning problem with monsters in RID_NECAREA3A.
+            Monsters were spawning behind walls, etc. </li>
+          <li>Made RID_NECAREA3B hard to learn in. It is a popular "save
+            spot" hangout in Brax. </li>
+        </ul>
+      </li>
+      <li>3/25/02
+        <ul>
+          <li>Reduced chance for Battered Skeletons to drop dispell
+            scrolls (they were much too common). </li>
+          <li>Moved code that checks for ways to "cheat" up Second Wind
+            from player to the actual skill. These ways to cheat are
+            using a token and using a Ring of Lethargy. </li>
+        </ul>
+      </li>
+      <li>3/17/02
+        <ul>
+          <li>Reduced disposal timer to 5 minute interval instead of 10.
+          </li>
+        </ul>
+      </li>
+      <li>3/15/02
+        <ul>
+          <li>Allowed rooms to be re-rentable. Giving the innkeeper
+            money now adds time to your room at that inn. </li>
+          <li>Fixed a bug that was causing people casting non-damaging
+            "antisocial" spells to go orange during declared guild wars.
+          </li>
+          <li>Prevent casting of enchantments on players if they are not
+            logged on after the focus period. This was causing a bug
+            where a personal enchantment could be cast on a logged off
+            player resulting in a perma-enchantment. </li>
+          <li>Included check for players to find distance offering
+            between players. Don't know if it happens, but figured it
+            would be a safe check. </li>
+          <li>Fixed minor error with touch attack spells so that the
+            correct maximum spellpower (99) is considered instead of
+            100. </li>
+          <li>Made rentable rooms keys only copyable at the inn where
+            you originally go the key. Also fixed rentable room object
+            to give proper error message when it fails to copy a key for
+            a player. </li>
+          <li><b>LAUNCHED THE GAME!</b> </li>
+        </ul>
+      </li>
+      <li>3/14/02
+        <ul>
+          <li>Fixed a problem with morphed players in combat. You can
+            actually hit when morphed now. </li>
+          <li>Increased Jewel of Froz damage done with spells to random
+            3-5 damage (was 1-3). </li>
+          <li>Fixed EvilTwin to use the caster's safety setting to
+            determine color changes. Basically calls
+            CheckStatusAndSafety() in the caster, which handles
+            outlaw/murder status, guild wars, etc. </li>
+          <li>Added ability to customize prices for each innkeeper for
+            rentable rooms. </li>
+          <li>Added ability to give money to the innkeeper to purchase
+            additional days for the rentable room. </li>
+        </ul>
+      </li>
+      <li>3/13/02
+        <ul>
+          <li>Made it so that Create Food only creates one item. No
+            longer puts the IA_MADE attribute on the food, so it won't
+            disappear. Would like to fix it in the future so that
+            IA_MADE can be used with number items like food. </li>
+          <li>Reduced cost of Create Food to 2 herbs and 2 elderberries
+            (was 3 each). </li>
+          <li>Fixed code in rentable rooms to be a bit less insane and
+            duplicated code-wise. </li>
+          <li>Fixed it so that you cannot advance Weaponcraft skills on
+            brambles. </li>
+          <li>Fixed some error spam relating to Qorbane/Shal'illebane
+            affecting spellcasting monsters. </li>
+        </ul>
+      </li>
+      <li>3/12/02
+        <ul>
+          <li>Changed Illusionary Wounds into a subclass of AttackSpell.
+            Works similar to how it always has, but now it more closely
+            looks like it duplicates the effect of another "random"
+            spell. Basically, it does elemental type damage without the
+            possibility of resists lessening damage. Eliminated casting
+            time and increased damage done by the spell. (Duplicated
+            spell isn't completely random, code is intended to clump
+            together so that it looks like someone casting a certain
+            type of spell.) </li>
+          <li>Fixed weapon to-hit bonuses to reflect the new combat
+            system. High to hit bonus is now 175 (was 10), and moderate
+            to-hit bonus is 75 (was 5). </li>
+          <li>Increased the range of punch from 1 to 2. </li>
+          <li>Added in a 5 unit "bonus" on the range of weapons, touch
+            attacks, and attack spells if targetting a moving player. A
+            moving player is one that is not flagged as unable to move
+            (IE, held) and has sent a move packet in the last 2 seconds
+            before the attack. </li>
+        </ul>
+      </li>
+      <li>3/11/02
+        <ul>
+          <li>Changed Silence into a concentration spell. Caster must
+            maintain focus while casting the spell for it to continue.
+            Drains 10 mana every drain period. Drain period is 1000 +
+            (spell power% of 1000) milliseconds. </li>
+          <li>Decreased Silence's initial chance to learn down to 10
+            (was 20). </li>
+          <li>Fixed it so that Beta potions will not give a player more
+            hps than allowed by Stamina. </li>
+          <li>Changed it so that you cannot add more spells or skills to
+            a player than their intellect allows via AddAllSpells or
+            AddAllSkills. These functions are called by Beta potions. </li>
+          <li>Changed it so that calling AddSpell or AddSkill on a
+            player will raise a skill up to the ability set if it is not
+            already past the ability level specified. </li>
+        </ul>
+      </li>
+      <li>3/10/02
+        <ul>
+          <li>Added a value, piServerNumber, in system (object 0) that
+            can be set to the server number. This must be set manually,
+            and is currenly only used for labelling mail. </li>
+          <li>Added a DM flag option so that mail can be labelled for
+            DMs and above. It adds [server: ###] to the end of the from
+            field, where ### is the server number set in the system
+            object. This cuts down on confusion when using one client on
+            multiple servers. You can turn on this option by sending the
+            message "SetLabelMail bValue int TRUE" to the admin object,
+            and can be turned off by sending FALSE instead of TRUE. This
+            option is set OFF by default. <b>KNOWN BUG</b>: If you hit
+            reply on a labelled mail, the additional tag stays with the
+            name and must be deleted before you send mail. </li>
+        </ul>
+      </li>
+      <li>3/9/02
+        <ul>
+          <li>Added code to disallow certain names. Players cannot pick
+            the name of NPCs, monsters, Meridian 59 gods, or "guild".
+            Also put in a quick and dirty check for swear words in the
+            name. </li>
+          <li>Added ability to send game-mail to your the guild you are
+            currently a member of by sending it to the name "guild". </li>
+          <li>Fixed some problems related to FindListElem in the script
+            files. </li>
+          <li>Made it so that players cannot pick the name of an
+            existing guild. </li>
+          <li>Made it so that guilds cannot have the name of an existing
+            player. </li>
+        </ul>
+      </li>
+      <li>3/8/02
+        <ul>
+          <li>Removed most of the spells the lich teaches and moved them
+            to other NPCs. The Qor priestess now teaches Poison Fog, the
+            island trade master (Wulfgang zax'Ak) teaches Blood
+            Inheritance, and the Riija priestess sells Evil Twin. Shadow
+            Rift was left on the Lich for now (mostly because it is
+            rumored to have a crash bug). </li>
+          <li>Moved Vampiric Drain from the Qor priestess to Maleval. </li>
+          <li>Fixed bug that prevented players from casting spells on
+            monsters in towns. </li>
+          <li>Fixed bug that prevented black daggers from attacking in
+            "no combat" areas. </li>
+        </ul>
+      </li>
+      <li>3/7/02
+        <ul>
+          <li>Increased the duration after a suicide you gotta wait to
+            get money (and now reagents!) to 5 hours (was 4 hours). </li>
+          <li>Fixed Tepal's (Ko'catan tailor) response when you ask for
+            mutant ant colors. </li>
+          <li>Made Detect Good and Detect Evil available at character
+            creation. </li>
+          <li>Fixed bug that made both good and evil creatures flash
+            when detecting either good or evil. </li>
+          <li>Improved descriptions for Detect Good and Detect Evil. </li>
+          <li>Raised base defense of Shadow form to 30 (was 10). </li>
+          <li>Changed bonus defense from Magic Shield to 25 + (2 * spell
+            power) (was 50 + spell power) </li>
+          <li>Increased room disposal timer to 10 minutes (was 2
+            minutes). This will hopefully help fix the problem of bodies
+            disappearing too quickly. </li>
+        </ul>
+      </li>
+      <li>3/6/02
+        <ul>
+          <li>Put in code to kill "flashing", where a player logs on and
+            off again quickly to reset the logoff ghost penalty timer.
+            The new system keeps track of your "penalty time" on the
+            User object. </li>
+          <li>Reduced bulk on rainbow ferns to 4 (from 5). </li>
+          <li>Reduced weight/bulk on solagh to 4/6 (was 6/10). </li>
+          <li>Added in code to prevent selling and buying from NPCs at a
+            distance. A cheat tool allowed you to treat a dropped item
+            like a NPC and offer items to them. See the <a
+              href="cheating.htm">Cheating Detection Document</a> for
+            more details. </li>
+          <li>Added 5 second post-cast timer on Shatter spell. Character
+            cannot attack or cast another spell for 5 seconds after
+            casting Shatter. </li>
+          <li>Rebalanced treasure drops for Tusked and Daemon skeletons.
+            Less scimitars, more variety magical items. </li>
+          <li>Reduced the reagent taken to make a potion with Distill.
+            Now requires from 4-8x the target spell's reagents (was
+            6-10x). </li>
+          <li>Changed it so that new players will spawn with the
+            reagents appropriate for their spells. Created characters
+            and characters that go through the newbie portal start with
+            5x the reagents they need to cast their spells if they
+            haven't suicided "recently". </li>
+        </ul>
+      </li>
+      <li>3/5/02
+        <ul>
+          <li>Changed it so that dropped items can no longer have the
+            "Made" (shimmers insubstantially) item attribute. </li>
+          <li>Fixed a few cases of error spam in system. </li>
+          <li>Changed Second Wind to not kick in if character is holding
+            a token. Prevents cheezy working of skill by standing
+            somewhere holding a token. </li>
+          <li>Lowered faction bonus for damage to 1 (was 2). </li>
+          <li>Made monster damage condition messages bold red. </li>
+          <li>Doubled the amount of space available in storage vaults. </li>
+        </ul>
+      </li>
+      <li>3/4/02
+        <ul>
+          <li>Put in universal modifiers. </li>
+          <li>Changed armor to reduce max/3 (was max/4) on the low end.
+            EG, if armor could block up to 6 points of damage, it would
+            now block at least 2 points of damage (6/3) instead of 1
+            (6/4). </li>
+          <li>Reduced leather's weapon damage resistance from 10 to 5. </li>
+          <li>Increased maximum damage absorbed by scale, plate, and
+            nerudite armors by 2. </li>
+          <li>Lowered reagent costs for many attack spells and bumped up
+            damage. </li>
+          <li>Bumped up the damage on Shal'illebane and Qorbane. </li>
+          <li>Added value piSpawnRate to system to control spawn rates.
+            Raise this value to increase the time between monster
+            spawnings and decrease this value to decrease the wait. </li>
+          <li>Reduced wait for monster spawns if there are multiple
+            players in the room, up to a maximum of 5 people. </li>
+        </ul>
+      </li>
+      <li>3/3/02
+        <ul>
+          <li>Set weaponcraft improves back up to one check per 70
+            swings due to the intellect improve bonus being added back.
+          </li>
+          <li>Raised absolute damage cap to 30 (was 25). </li>
+          <li>Fixed text descriptions for the news globes to be more
+            uniform. </li>
+          <li>Increased prizes awarded from tasks given by NPCs. </li>
+          <li>Adjusted treasure tables to balance things out and add in
+            new resist rings. </li>
+          <li>Made gauntlets mendable. </li>
+          <li>Made gauntlets able to take about 50% more damage than
+            before. Hits now range from 300-450 (was 200-300). </li>
+        </ul>
+      </li>
+      <li>3/2/02
+        <ul>
+          <li>Added designer's globe to Ko'catan inn. </li>
+          <li>Fixed problem of socket port not updating if you changed
+            the server number in the client. </li>
+          <li>Removed reference to "Guide" and "Guardian" from the who
+            dialog. </li>
+          <li>Doubled unsafe logoff penalties for people that have
+            attacked another player recently. </li>
+          <li>Fixed bug where Jonas was giving spellpower bonus to
+            Kraanan spells. </li>
+          <li>Fixed some minor error spam in object dealing with trying
+            to get an object's position when it has no poOwner. </li>
+        </ul>
+      </li>
+      <li>3/1/02
+        <ul>
+          <li>Intellect no longer gave a bonus to your initial chance to
+            improve in a skill. Added it so that a high intellect gives
+            up to a 50% chance to improve. </li>
+          <li>Changed factions in an attempt to balance them again.
+            Reduced the "out of power" penalty for factions to -10% (was
+            -50%). Gave each faction a bonus that is independent of
+            their power. </li>
+          <li>Added in speedhack check. Checks the number of move
+            updates sent and the (squared) distance the player traveled
+            in a 1 second period. If these values are too high, it
+            raises a notice in the debug log. Worked to eliminate as
+            many false positives as possible. See the <a
+              href="cheating.htm">Cheating Detection Document</a> for
+            more details. </li>
+        </ul>
+      </li>
+      <li>2/28/02
+        <ul>
+          <li>Capped damage done to the player in one hit to 1/3 of
+            their base max hps. This should allow us to increase damage
+            overall while not making newbies into one-hit-kill targets.
+          </li>
+          <li>Removed the 7 damage point cap on "bonus" forms of damage.
+          </li>
+          <li>Made orc wizards cast Purge instead of Purify. </li>
+        </ul>
+      </li>
+      <li>2/27/02
+        <ul>
+          <li>Decreased the default frequency of node attacks. Now
+            happen once every three day, in theory. </li>
+          <li>Added in a boolean flag to node attacks that determine if
+            Miriana will move or not. </li>
+        </ul>
+      </li>
+      <li>2/26/02
+        <ul>
+          <li>Mints now provide mana based on nutrition value (was a
+            flat 5 points). </li>
+          <li>Monsters can now be given items which will drop upon
+            death. </li>
+          <li>You can set the pbDontDestroy value to 1 on a monster and
+            it won't be disposed of. Useful for admin quest-type
+            monsters. </li>
+        </ul>
+      </li>
+      <li>2/25/02
+        <ul>
+          <li>Made it so that groundworm larva (only) can be attacked
+            with a mace (in addition to a hammer) while underground. </li>
+          <li>Increased weight and bulk of cheese to 30 (were both 20).
+            This brings them in line with other food. </li>
+          <li>Lowered the "filling" of a meat pie to 50 (was 55). This
+            means you won't get as full while eating them. Also
+            decreased average price to 80 (was 100), comparable to
+            cheese. </li>
+          <li>Lowered the number of swings before we check for
+            weaponcraft advancement to 65 (was 75). This should make
+            weapon skills advance a bit faster. </li>
+          <li>Changed the "improve timer" to be 10 improves every 15-22
+            minutes (was 4 improves every 9.5-12 minutes). This should
+            allow improves to come a bit more often and a bit more
+            randomly while still providing enough limitations to make
+            botting "not worth it". Overall, a general increase in the
+            speed of improvement. </li>
+          <li>Made the "booby prizes" you get for dying with positive
+            Karma have the "made" item attribute. This prevents them
+            from being sold, to avoid farming cash from high-karma mule
+            deaths. </li>
+          <li>Fixed it so that Elusion doesn't always give you a chance
+            to improve. Must actually succeed before you can improve,
+            just like with other spells. </li>
+          <li>Made Spectral Mummies a bit tougher. They are now
+            difficulty 5 and have 40 hps (was difficulty 3 and 35 hps).
+          </li>
+        </ul>
+      </li>
+      <li>2/24/02
+        <ul>
+          <li>Raised Anti-Magic Aura's level to 6 Kraanan (was 5). </li>
+          <li>Increased Discordance's chance to remove Anti-Magic aura
+            by 2x. </li>
+          <li>Tightened up the duration on Silence. It now lasts longer
+            at the low end and a bit less at the high end, but the
+            average time has decreased a bit. Now lasts from 5-20
+            seconds depending on spellpower (was previously 0-30
+            seconds). </li>
+          <li>Raised number of blue mushrooms dropped at a time to 2
+            (was 1). Also reduced base value to 50 (was 80). </li>
+          <li>Lowered number of purple mushrooms dropped at a time to 2
+            (was 3). Also increased base value to 60 (was 30). </li>
+          <li>Raised number of elderberries dropped at one time to 4
+            (was 3). </li>
+          <li>Fixed a bug where all weapon attributes were adding a
+            to-hit bonus to the weapon equal to at least the original to
+            hit bonus. This means that one attribute doubled the base
+            chance to-hit, two attributess tripled, it, etc. </li>
+        </ul>
+      </li>
+      <li>2/22/02
+        <ul>
+          <li>Changed the client to connect to a port on the server
+            that's determined by the server number entered at login.
+            This port number takes the form of 59##, where ## is the
+            last two digits of the server number, padded with initial
+            0's if necessary. </li>
+          <li>Added the ability to set the server's caption via the
+            config file back. </li>
+        </ul>
+      </li>
+      <li>2/19/02
+        <ul>
+          <li>Changed advancement so that overall you can learn a bit
+            less than you could before. In general, this translates to 2
+            less spell levels than before. At 1 intellect, you can now
+            learn 6/4 (was 6/6), and at 50 intellect you can learn
+            6/6/5/5 (was 6/6/6/6). Not that you can still learn any
+            combination of these, too, so that 6/6/5/5 can also be
+            6/6/6/4 or 5/5/5/5/3 etc. </li>
+          <li>Changed it so that you need a bit less to advance at lower
+            levels, but the curve gets steeper faster. </li>
+          <li>Added casting messages for the caster of Minor Heal,
+            Hospice, and Major Heal when the target is not the caster. </li>
+        </ul>
+      </li>
+      <li>2/18/02
+        <ul>
+          <li>Changed the .roo encryption password. The roocrypt utility
+            and client now use this new password. </li>
+          <li>Changed the .rsc and .rsb encryption password. Also
+            advanced the .rsc version to 3 (was 2). This provides all
+            sorts of incompatabilities, so that pirate servers can't use
+            our client executable. </li>
+        </ul>
+      </li>
+      <li>2/15/02
+        <ul>
+          <li>Added spectral mummies as a monster. They're newbie type
+            monsters, a bit below zombies in the hierarchy of monsters.
+            They're 50% translucent. </li>
+          <li>Changed the mummy treasure type (TID_MUMMY) into the
+            newbie area treasure type (TID_NEWBIE_AREA). Drop chances
+            were unchanged. </li>
+          <li>Changed mummy treasure to be more appropriate for the new
+            spectral mummies. Includes most reagents and most starting
+            weapon types. </li>
+          <li>Fixed reveal to work on spell items. </li>
+          <li>Rings must now be identified. Excpetions are wedding rings
+            and signet rings. </li>
+          <li>Raised resistance provided by rings of resistances to 50%
+            (was 30%). </li>
+          <li>Lowered reagent cost for reveal down to 3 orc teeth (was 5
+            orc teeth). </li>
+          <li>Added text to disciples robes description stating which
+            school they are dedicated to. </li>
+          <li>Eliminated the resistanc to weapon damage from disciples
+            robes. </li>
+          <li>Added new icons and text descriptions for the duke and
+            rebel insignias on the herald shields. Now uses original
+            art, instead of recycled art! </li>
+        </ul>
+      </li>
+      <li>2/12/02
+        <ul>
+          <li>Changed the fey (both good and evil) in Vale of Sorrows to
+            be less annoying. They now have 60 hps (as 45), allowing you
+            to gain more hps from them. They now wimpy (run) at 10% hps
+            (was 20%), making them less of a chore to hunt down. </li>
+          <li>Changed the default number of entroot berries created to 2
+            (was 1). This effectively doubles the amount of entroots
+            dropped in the game. </li>
+        </ul>
+      </li>
+      <li>2/11/02
+        <ul>
+          <li>Adjusted the treasure tables to make reagent drops a bit
+            different to compensate for spell changes. </li>
+          <li>Reduced the weight and bulk of orc teeth to 3 each (was
+            previously 4). </li>
+          <li>Added dragonfly eyes to Izzio as an initial sale item.
+            Also added them as an additional sale item he can add to his
+            pack. </li>
+        </ul>
+      </li>
+      <li>2/10/02
+        <ul>
+          <li>Changed the amount of time quest engine considers a
+            "recent" failure to 4 hours (was previously 8 hours). </li>
+          <li>Added firesand as a conditional sale item on Jogeur, the
+            Barloque Apothecary. </li>
+        </ul>
+      </li>
+      <li>2/9/02
+        <ul>
+          <li>Rebalanced reagents on spells to be more uniform and
+            understandable. Reagents now have "meanings". For example,
+            in Faren red mushrooms are for heat and cold, blue mushrooms
+            are for lightning, purple mushrooms are for PKing type
+            spells, etc. </li>
+          <li>Added Jala necklace. Doesn't work 100% yet, but it will
+            allow people to use it as an instrument and not take up
+            their hands. Eventually want to make it so that the caster
+            can keep Jala spells going while fighting. </li>
+        </ul>
+      </li>
+      <li>2/8/02
+        <ul>
+          <li>Changed it so that when teachers give you feedback about
+            spells, it includes the name of the spell. Fixes the problem
+            of someone saying "lightning" in front of the priestess of
+            Faren and her interpreting it as "light" and responding,
+            "Congratulations! You are currently qualified to learn
+            that!" Instead, she will respond "Congratulations! You are
+            currently qualified to learn light." Works for other
+            responses dealing with learning spells. </li>
+        </ul>
+      </li>
+      <li>2/7/02
+        <ul>
+          <li>Increased the effect that punisher weapons have against
+            murderers and outlaws. These weapons now have 1.5x the
+            standard magical weapon bonus against murderers (used to be
+            normal bonus) and standard bonus on outlaws (used to be half
+            the normal bonus). Weapons still give grave penalties
+            against innocents equal to the negative of the normal bonus.
+          </li>
+          <li>Added purger ("Psychochild") weapons attribute. About as
+            common as Blinder weapons. Has a 15% chance per hit to
+            trigger a random(25,75)% purge against target. Does not
+            appear in Sacred Haven. </li>
+          <li>Reduced anti-resistance of shock damage on plate armor to
+            20 (previously 25). </li>
+          <li>Changed a majority of the armor resistances of
+            ATCK_WEAP_THRUST (sword type damage) to ATCK_WEAP_PIERCE
+            (arrow damage) as was originally intended. </li>
+          <li>Gave chainmail an additional -5 anti-resistance to thrust
+            (sword) damage, and a 20 resistance to slash damage. </li>
+          <li>Reduced Lupoggs' anti-resistance to fire damage from -20
+            to -10. Fireballs were doing too much damage to the poor
+            bastards. </li>
+          <li>Gave skeletons a resistance to cold damage of 70 (used to
+            be 0) and gave them an anti-resistance to fire of 10 (used
+            to be a resistance of 70). For Daemon Skeletons, these
+            resistances are reverse (IE, resistant to fire, vulnerable
+            to cold). </li>
+          <li>Lowered Scimitar Wielding's chance to increase, given that
+            it's now a higher level skill. </li>
+          <li>Increased Fencing's chance to increase, given that it's
+            now a lower level skill. </li>
+        </ul>
+      </li>
+      <li>2/5/02
+        <ul>
+          <li>Added new Jala spell Invigorate. Decreases the wait
+            between Vigor heals. 1st level, costs 1 diamond and one
+            edible mushroom. </li>
+          <li>Added new Jala spell Restorate. Decreases the wait between
+            health heals. 3rd level, costs 1 diamond and 5 herbs. </li>
+          <li>Added new Jala spell Rejuvenate. Decreases the wait
+            between mana heals. 5th level, costs 1 diamond and one uncut
+            seraphym. </li>
+          <li>Added rubies as a conditional sale item from Zhieu B'hob,
+            the Jasper merchant. </li>
+        </ul>
+      </li>
+      <li>2/4/02
+        <ul>
+          <li>Added more songs to the Duke's Ballroom (duke5). </li>
+          <li>Changed it so that Jala songs can set a property to
+            indicate if they can be cast by newbies or not. Moved this
+            code from a special case in Spellbane up to the Jala
+            superclass. </li>
+          <li>Added 2 new types of lutes for a bit of variation in
+            spellpower. Normal lutes now give 20 bonus to spellpower
+            (previously 40), Fine Lutes give 30 bonus to spellpower, and
+            True Lutes give a full 40 bonus to spellpower. </li>
+          <li>Added the new "anti-school" songs for Jala. These spells
+            increase the chance for a fizzle when casting a spell from
+            that particular school. Newbies cannot cast these spells
+            (should probably make it so that a newbie cannot
+            accidentally learn Jala).
+            <ul>
+              <li>Truth hinders Riija spells. It's level 1 and costs 1
+                ruby and 2 rainbow ferns. </li>
+              <li>Conciliation hinders Kraanan spells. It's level 2 and
+                costs 1 ruby and 1 elderberry. </li>
+              <li>Civility hinders Faren spells. It's level 2 and costs
+                1 ruby and 1 mushroom. </li>
+              <li>Sacred Resonance hinders Qor spells. It's level 3 and
+                costs 1 ruby and 1 fairy wing. </li>
+              <li>Profane Resonance hinders Shal'ille spells. It's level
+                3 and costs 1 ruby and 1 herb. </li>
+              <li>Disharmony hinders Jala spells. It's level 4 and costs
+                1 ruby. </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>1/31/02
+        <ul>
+          <li>Added the mule timer. Mules cannot cast non-harmful spells
+            on a player if the target player has attacked another player
+            within the previous 10 minutes. </li>
+        </ul>
+      </li>
+      <li>1/30/02
+        <ul>
+          <li>Fixed newsglobe spamming. Users can now only post twice
+            every 30 minutes on any globe. This restriction does not
+            affect DMs or above. </li>
+        </ul>
+      </li>
+      <li>1/29/02
+        <ul>
+          <li>Changed Mana Focus to give a variable amount of bonus
+            damage, instead of a straight 25% bonus to damage. Mana
+            Focus now gives spellpower% of the bonus damage specified
+            per spell. Currently, the bonus damage for faren attacks
+            (the new spells) is 5 points, and the bonus for bolt spells
+            (fireball, etc) is 10 points. Qor attack spells get no
+            benefit from Mana Focus. </li>
+        </ul>
+      </li>
+      <li>1/27/02
+        <ul>
+          <li>Changed it so that you cannot cast any spells that have
+            another person (or no person) as a target. This prevents
+            people from using tokens to PK without penalty (IE, take a
+            safe death instead of a real one). </li>
+        </ul>
+      </li>
+      <li>1/26/02
+        <ul>
+          <li>Casting Feign Death now removes an existing Morph
+            enchantment. Casting Feign Death while Morph was active
+            confused the combat system, which tried to get combat stats
+            from the "dead body" illusion. As an added bonus, if you
+            cast feign death while morphed, you look like the corpse of
+            whatever creature you were previously. <b>KNOWN BUG</b>:
+            You flash back to your "normal" form before you take on the
+            appearance of a monster corpse. Not much we can do about
+            that. </li>
+          <li>Fixed Rescue to eliminate multiple simultaneous castings.
+            If you have a rescue timer active, you can't create another
+            one via the spell. Also eliminates continuous casting to
+            improve the spell. </li>
+          <li>Changed Feign Death to give you protection while feigned.
+            Gives the spell a use vs. monsters and vs. players that
+            don't let go of the attack key. </li>
+          <li>Increased the overall protection that Magic Shield gives
+            you. Gives you 50 extra points of defense (out of a max of
+            1000) to avoid incoming hits, reguardless of spell power. </li>
+          <li>Added IsMutualEnemy message to guild objects. Allows us to
+            expand the meaning of this in the future as relating to
+            guild wars. </li>
+        </ul>
+      </li>
+      <li>1/25/02
+        <ul>
+          <li>Added additional check for faction attack when you kill
+            something. Fixes the bug where you avoid faction loss if you
+            kill someone in one hit. <b>SUBTLE BUG</b>: This is only
+            checked for players, so it is possible to land the killing
+            blow on a factioned monster and not lose faction. Rare
+            enough that I think we can let it slide. </li>
+          <li>Changed Rescue to be more like it's former version. The
+            new version puts a delay after the casting of the spell.
+            After the delay, you are teleported to a safe spot. The
+            delay is reduced as spell power increases, and covers a
+            range from 15 seconds at the high end to damn near
+            instantaneous. </li>
+          <li>Removed the "S/he is holding a lute." message from a
+            player's description text. </li>
+        </ul>
+      </li>
+      <li>1/24/02
+        <ul>
+          <li>Fixed Frisconar to sell Solagh if triggered. Code was
+            there, but he didn't respond because the flag
+            MOB_COND_SELLER wasn't set. </li>
+          <li>Added variables to control the treasure drop rate. 3
+            variables control the amount of money dropped as treasure,
+            the amount of treasure that can be dropped, and finally
+            chance for magical items to be created. Each of these
+            figures is expressed as a percent of "normal", and default
+            to 100. For more information, see the <a
+              href="customize.htm">Customization Document</a>. </li>
+        </ul>
+      </li>
+      <li>1/23/02
+        <ul>
+          <li>Added mainland reagents as conditional sale items to
+            island merchants at bloated prices.
+            <ul>
+              <li>Tepal, the tailor, sells sapphires and emeralds. </li>
+              <li>Wulfgang, the trading post merchant, sells entroot
+                berries, fairy wings, and mushrooms. </li>
+              <li>Moxal, the innkeeper, sells purple mushrooms. </li>
+              <li>Zala, the apothecary, sells herbs, elderberries, red
+                and blue mushrooms. </li>
+              <li>Kochtal, the blind bow guy, sells orc teeth. </li>
+            </ul>
+          </li>
+          <li>Turned the interior of the trading post into an "inn" type
+            place. Healing rates are increased and allows safe logoffs
+            in the room. </li>
+        </ul>
+      </li>
+      <li>1/21/02
+        <ul>
+          <li>Removed the hold component from Holy Symbol, which didn't
+            quite work anyway. Seemed a bit overpowering for a spell
+            like that to hold every active object in the room, anyway. </li>
+          <li>Made it so that Blue Mushrooms are a bit more common and
+            Purple Mushrooms are a bit less common. </li>
+        </ul>
+      </li>
+      <li>1/21/02
+        <ul>
+          <li>Changed reagent for Elusion to 1 polished seraphym. Made
+            casting the spell take 50 vigor. </li>
+          <li>Added handy mnemonics for returning permissions on news
+            globes. Also added code to print a debug message if someone
+            tries to post on a globe without the proper permissions (IE,
+            cheats to get access to a greyed out button on the client
+            side.) </li>
+          <li>Connected island newsglobe with the newsglobes from the
+            mainland. </li>
+          <li>Added in prevention and detection code for people trying
+            to force offers. Prints a debug message if someone tries to
+            complete and offer without the second person in the offer
+            accepting. This can happen if someone cheats to get access
+            to the greyed out button on the client side. </li>
+        </ul>
+      </li>
+      <li>1/20/02
+        <ul>
+          <li>Made it so that purify only has a percentage chance to
+            remove enchantments. Works similar to discordance, including
+            the anti-clumpy provision. </li>
+          <li>Split purify into offensive and defensive versions of the
+            spell. The defensive version, which will remain named
+            "purify", removes "negative" personal enchantments (a
+            percentage chance per enchantment, as detailed above). The
+            offensive version, which is named "purge", removes
+            beneficial pesonal enchantments (again, a chance per
+            enchantment as specified above). Changes below assume that
+            both spells start with original stats. </li>
+          <li>Reduced Purify's level to 4 (was previously 5). Also
+            reduced mana cost to 10 mana (was previously 20). </li>
+          <li>Changed Purge to be an offensive spell. Increased Purge's
+            reagent cost to 5 emeralds (was previously 2). Reduced mana
+            cost to 15 mana (was previously 20). </li>
+          <li>Increased life gained from Vampiric Drain from 1/3 damage
+            done to 1/2. </li>
+          <li>Flagged Forget as a "harmful" spell. This is important for
+            Purify to remove it correctly. </li>
+          <li>Removed code in Swap which allows it to take the least
+            expensive of a group of random items from the inventory of
+            the caster. </li>
+          <li>Added spell Elusion (originally named "Escape") as 6th
+            level Riija. Works similar to the teleportation version of
+            Rescue. Allows players to teleport to various towns. Higher
+            spellpower means more towns randomly selected from a list.
+            High spellpower even allows teleportation to the Island.
+            Self-cast only. </li>
+        </ul>
+      </li>
+      <li>1/19/02
+        <ul>
+          <li>Moved Mace Fighting down to 1st level (from 2nd level). </li>
+          <li>Moved Fencing down to 3rd level (from 4th level). </li>
+          <li>Moved Scimitar Wielding up to 4th level (from 3rd level).
+          </li>
+          <li>Added rings of shock, acid, and cold resistance. </li>
+          <li>Increased the duration of resist rings to 15-30 minutes
+            (was 10-15 minutes). </li>
+          <li>Changed personal enchantments to prevent people from
+            casting them on others in "safe" spots such as inns. </li>
+        </ul>
+      </li>
+      <li>1/18/02
+        <ul>
+          <li>Changed defense modifiers (IE, armor) to have reduced
+            effectiveness. Moved the bottom end of the random damage
+            removed to modifier/4 (was previously modifier/2). That
+            means, if a piece of armor has a damage modifier of 4, it
+            will now only remove 1 to 4 points of damage instead of the
+            previous 2 to 4. </li>
+          <li>Changed damage modifiers (IE, armor) to not block spell
+            damage so effectively. If a source of damage does only
+            physical type damage, then it acts as normal. If a source
+            does both physical and spell type of damage, then it will
+            reduce only 2/3rds the normal amount of damage. If a source
+            does only spell type damage, the defense modifier will
+            reduce NO damage. </li>
+          <li>Reduced leather armor's initial hits to balance it out
+            against other types of armor. </li>
+          <li>Modified armor defense bonus and damage absorb values to
+            be a bit less effective overall. See the <a
+              href="armor.htm">armor document</a> for updated values. </li>
+          <li>Modified shield defense bonus and damage absorb values to
+            be a bit less effective overall. See the <a
+              href="armor.htm">armor document</a> for updated values. </li>
+          <li>Changed herald shields to give 10 spellpower bonus to
+            spells if they have the proper insignia. </li>
+          <li>Made the hit and miss sounds for touch spells more like
+            punch sounds instead of the previously annoying casting and
+            fizzle sounds. </li>
+        </ul>
+      </li>
+      <li>1/17/02
+        <ul>
+          <li>New attack spells are now sold by Maleval. </li>
+          <li>Changed "vampiric touch" to be an attack spell instead of
+            a touch spell. Renamed class to VampiricDrain (from
+            VampiricTouch), and renamed spell and spell ID (SID) as
+            appropriate. </li>
+        </ul>
+      </li>
+      <li>1/15/02
+        <ul>
+          <li>Altered the chance for a revenant. Made revenants a bit
+            more likely overall. Simplified most of the calculations. </li>
+          <li>Removed outlaw/murder status changes and faction loss from
+            attacking an enemy guild that has also declared your guild
+            as an enemy. </li>
+          <li>Reduced reagent cost of Discordance from 3 sapphires to 2.
+          </li>
+          <li>Eliminated mana cost for sending over guild channel. </li>
+        </ul>
+      </li>
+      <li>1/14/02
+        <ul>
+          <li>Added third person lute overlay for players holding a
+            lute. Infrastructure for displaying the lute is in the
+            Instrument superclass and can be applied to any new
+            instruments we introduce. Code was mostly taken from Shield
+            class. </li>
+        </ul>
+      </li>
+      <li>1/12/02
+        <ul>
+          <li>Renamed the message in Discordance that does the deed on a
+            room from DiscordEnchantments to the more standard
+            DoDiscordance. </li>
+          <li>Fixed the intro text on various spells. </li>
+          <li>Made a Resist Good/Evil and Fade unavailable at character
+            creation. </li>
+          <li>Changed the Attack Spell hierarchy to make way for the new
+            "attack" spells. The old spells, fireball, lightning bolt,
+            slitherbolt, and smite were moved to a subclass of
+            AttackSpell called BoltSpell. These spells have practically
+            infinite range and send out a projectile icon. The new
+            version of attack spells will not have the icon. </li>
+          <li>Moved the code that actually specified that a projectile
+            was fired up to BoltSpell superclass instead of the code
+            being duplicated in each individual bolt spell. Also
+            adjusted projectile speeds a bit. </li>
+          <li>Added the new attack spells: Shocking Fury, Explosive
+            Frost, Blast of Fire, and Splash of Acid. </li>
+        </ul>
+      </li>
+      <li>1/11/02
+        <ul>
+          <li>Changed Seafarer's Peak (RID_A5) to remove room
+            enchantments directly instead of inefficiently going through
+            the Discordance spell. </li>
+          <li>Cleaned up Hold and Free Action. Moved the resist code
+            from Hold to Free Action, so it's in one central location.
+            The code is now in its own message in Free Action named
+            DoFreeAction. </li>
+          <li>Changed Free Action to eliminate up to 75% of Hold's
+            duration instead of up to 100%. </li>
+        </ul>
+      </li>
+      <li>1/10/02
+        <ul>
+          <li>Changed Create Weapon to provide a bit more consistency in
+            which weapons it creates. Also gave it a bit better
+            distribution of weapons (added Axe as a possible weapon to
+            be created). Finally, allowed the created weapon to have
+            more than just half hitpoints, it now has
+            (iSpellPower+100)/200% of it's original hits. </li>
+          <li>Changed Discordance so that it has a spellpower% chance to
+            remove each room enchantment (previously automatically
+            removed every enchantment). Will automatically remove 1
+            enchantment if there are 2 or more enchantments in the room
+            and the chance to remove the spell is greater than 60%.
+            Chance is halved against Jala spells. Reduced initial
+            improve chance to 5 (was previously 10) and also halved the
+            mana cost since spell will require more casts to remove
+            effects. Finally, put a 1.5 second casting time on the
+            spell. </li>
+          <li>Changed Hold's duration. It now lasts a random amount from
+            half to full of (2000 + (40 * iSpellPower) ms. Also
+            increased level from 3 to 4 (got overlooked during the big
+            changes done previously.) </li>
+        </ul>
+      </li>
+      <li>1/9/02
+        <ul>
+          <li>Added a Short Sword Fighting proficiency. Used only for
+            the short sword, which is no longer governed by the
+            "fencing" ability. The idea is to give players more skills
+            to work up. </li>
+          <li>Changed Spiritual Hammer to be a bit more useful. Changed
+            duration to 10+((50*iSpellpower)/100) minutes (was
+            previously iSpellpower * 12 seconds). Also changed reagents
+            to 5 herbs and 1 orc tooth (was 1 solagh and 2 web moss). </li>
+          <li>Made spiritual hammers undamagable. Doesn't really affect
+            anything, just makes them seem cooler. :) Also can't be
+            swapped, shattered, or weakened. </li>
+        </ul>
+      </li>
+      <li>1/7/02
+        <ul>
+          <li>Changed Dement's reagents to island reagents, 1 rainbow
+            fern and 1 web moss (was 2 entroot berries). </li>
+          <li>Qor priestess now requires that the player have 4th level
+            Riija in order to learn Swap. </li>
+          <li>Swap now requires yrxl sap as a reagent. </li>
+          <li>Lowered Kraanan requirement for Spiritual Hammer from 5th
+            level to 3rd level. </li>
+          <li>Made Unholy and Holy Resolve island spells. Added solagh
+            as a reagent to the spells. Spells were moved from the
+            mainland priestesses to the bone priestess on the island. </li>
+          <li>Made Detect Good and Detect Evil more newbie appropriate.
+            Remove island reagent from the spells. Spells were moved
+            from the bone priestess on the island to the appropriate
+            priestess on the mainland. Reagent for Detect Good and
+            Detect Evil is 1 fairy wing. </li>
+          <li>Made duration on Killing Fields 50+spellpower seconds,
+            instead of the flat 2 minute duration of previously. Also
+            decreased reagent cost to 3 elderberries and 1 orc tooth
+            (previously 3 elderberries and 3 orc teeth) and increased
+            max damage bonus to 5 (was previously 4) </li>
+          <li>Increased base duration on Haste to
+            5+((15*spellpower)/100) minutes (was previously
+            2400*(100+spellpower ms). Also eliminated vigor cost for
+            casting the spell. </li>
+          <li>Fixed the bug with Create Food which assumed that 150 was
+            the max spellpower a spell could have. Made it so that food
+            is created determined by random half of spellpower to full
+            spellpower (was previously random between 1 and spellpower).
+            Also increased the number of items you can create from the
+            spell, generally based on either spellpower or a small
+            random interval and increased the duration of food to
+            spellpower minutes (was previously spellpower/7 minutes). </li>
+        </ul>
+      </li>
+      <li>1/6/02
+        <ul>
+          <li>Changed spells to their new level and schools, as
+            specified in the proposals on the forum. </li>
+          <li>Changed the reagents for Create Food from herbs to
+            elderberries. </li>
+          <li>Changed it so that you can mend items affected by the
+            shroud spell. </li>
+          <li>Changed Gaze of the Basilisk so that it no longer turns
+            you to an an outlaw for just casting it. </li>
+          <li>Added a post-cast delay of 5 seconds on swap. </li>
+        </ul>
+      </li>
+      <li>1/2/02
+        <ul>
+          <li>Made it so that Mana Focus checks for the casting of any
+            AttackSpell, not just Fireball or Lightning to see if it
+            breaks the trance. Allows room for adding other attack
+            spells in the future. </li>
+        </ul>
+      </li>
+      <li>12/23/01
+        <ul>
+          <li>Fixed Glow to properly add itself to random generated
+            weapons. </li>
+        </ul>
+      </li>
+      <li>12/21/01
+        <ul>
+          <li>Added a resource to player to tell the player which random
+            node is stripped when StripOneNode is called. </li>
+          <li>Limited mana to a max of 250 after casting the Nodeburst
+            spell. Should this be moved to player like it is with
+            health? </li>
+          <li>Removed code to reduce the ammo for failed ranged attacks
+            from Winds and Sandstorm. Now taken care of in Player. </li>
+        </ul>
+      </li>
+      <li>12/20/01
+        <ul>
+          <li>Moved the winds/sandstorm check for ranged attacks after
+            the "pay cost" check. This means that if the attack is
+            valid, the arrow will be already be removed at the skill.
+            Makes it easier to allow the arena to NOT remove arrows. </li>
+          <li>Fixed message StripOneNode in class Player to remove a
+            single random node. It will try to remove normal nodes
+            first, but if called with no normal nodes, it will try to
+            take one of the special nodes (Fey node or node in Martyr's
+            Battleground). </li>
+        </ul>
+      </li>
+      <li>12/19/01
+        <ul>
+          <li>Fixed Nodeburst to only be castable once per game day as
+            intendend. </li>
+          <li>Fixed Sandstorm and Winds to actually ruin ranged weapon
+            shots. The spells now have a chance, based on spellpower, to
+            disrupt shots. Gives a message and takes ammo from the
+            player. </li>
+          <li>Checked in a number of small formatting and capitalization
+            fixes. </li>
+        </ul>
+      </li>
+      <li>12/17/01
+        <ul>
+          <li>Renamed class DarkBerry to EntrootBerry. Updated all
+            references to DarkBerry in the kod. </li>
+          <li>Changed cure disease (again). Updated it so that it only
+            altered the state of the disease and gave back lost points.
+            A bit simpler, and doesn't reset the duration of the
+            disease. </li>
+          <li>Renamed Cannibalize spell class to Nodeburst. Changed the
+            spell references in system.kod and in the build.kod. Also
+            removed all references to depreciated SID_CANNIBALIZE
+            outside of blakston.khd. </li>
+          <li>Fixed Armor of Gort to not be quite so uber. Armor of Gort
+            now reduces damage done by random(0,iSpellPower/25), bound 1
+            to 4, points and limits maximum damage to 15 points for a
+            single blow for (1+iSpellPower/8) minutes. Also reduced
+            chance to increase from 50 to 20. </li>
+        </ul>
+      </li>
+      <li>12/16/01
+        <ul>
+          <li>Fixed the cure disease bug. The spell was putting the
+            enchantment back onto the player, but not penalizing the
+            stat points. So, when the enchantment expired, it replaced
+            the stat points which were never removed. This lead to the
+            increase in stats. Change could be made cleaner. </li>
+          <li>Renamed Reflect to Deflect. Changed the class name to
+            match the spell name. </li>
+        </ul>
+      </li>
+      <li>12/15/01
+        <ul>
+          <li>Checked in my changes for renaming most of the spell IDs
+            (SIDs). Most SIDs should be the name of the spell, with
+            underscores replacing spaces. So, Resist Shock should be
+            SID_RESIST_SHOCK. The only spells currently not following
+            this system are multicast spells and withstand fire (which
+            is currently SID_RESIST_FIRE). Depreciated SIDs are still
+            currently in blakston.khd. </li>
+          <li>Renamed CreateMace spell class to CreateWeapon. Part of
+            the change in global change in SIDs. Also renamed the file
+            to creaweap.kod. </li>
+        </ul>
+      </li>
+      <li>12/13/01
+        <ul>
+          <li>Changed the Barloque Guards' parent class to BarloqueTown
+            instead of TosTown. Heh. The princess' guards were on the
+            take? </li>
+        </ul>
+      </li>
+      <li>12/12/01
+        <ul>
+          <li>Changed "Bizman" to "Bazman" for the Councilor's Chambers
+            in the Princess's castle. Done at Tom BAZzano's request. :)
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </body>
+</html>

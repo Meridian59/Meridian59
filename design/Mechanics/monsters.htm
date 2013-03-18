@@ -1,0 +1,764 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <title>Monster Stats</title>
+</head>
+<body>
+This is a list of all the monsters and their attributes. Difficulty
+(Diff) is the combat prowess and rages from 0 to 9.&nbsp; Level
+indicates the number of hit points, and ranges from 25 to 200, with 100
+being the maximum for "normal" monsters. <br>
+&nbsp;
+<table border="1">
+  <tbody>
+    <tr>
+      <th>Name</th>
+      <th>Diff</th>
+      <th>Level</th>
+      <th>Karma</th>
+      <th>Behavior</th>
+      <th>Resistances</th>
+      <th>Special/Misc Info</th>
+      <th>Treasure Type</th>
+    </tr>
+    <tr>
+      <td><a name="ant"></a>ant</td>
+      <td>4</td>
+      <td>40</td>
+      <td>-10</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_WIZARD_KILLER</td>
+      <td>-WEAP_ALL:-20</td>
+      <td>SPEED_SLOW, ATCK_WEAP_BITE</td>
+      <td>TID_WIMPY_MEDIUM</td>
+    </tr>
+    <tr>
+      <td><a name="avar"></a>avar</td>
+      <td>7</td>
+      <td>120</td>
+      <td>40</td>
+      <td>AI_MOVE_REGROUP| AI_FIGHT_AGGRESSIVE| AI_FIGHT_MONSTERS</td>
+      <td>-SPELL_FIRE:20, WEAP_SLASH:10, -SPELL_COLD:-25,
+-WEAP_NERUDITE:-25</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_BLUDGEON, Wimpy=8, allied: all avars
+of same clan</td>
+      <td>TID_AVAR</td>
+    </tr>
+    <tr>
+      <td><a name="avarchief"></a>avar chief</td>
+      <td>9</td>
+      <td>135</td>
+      <td>80</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_OPTIMAL_RANGE|
+AI_FIGHT_WIZARD_KILLER| AI_FIGHT_MONSTERS</td>
+      <td>-SPELL_FIRE:40, WEAP_SLASH:10, -SPELL_SHOCK:20,
+-SPELL_ACID:-15, -SPELL_COLD:-20, -WEAP_NERUDITE:-15</td>
+      <td>SPEED_FAST, ATCK_WEAP_PIERCE, Bow Attack rng:~25, allied: all
+avars of same clan</td>
+      <td>TID_AVAR_CHIEF</td>
+    </tr>
+    <tr>
+      <td><a name="avarshaman"></a>avar shaman</td>
+      <td>8</td>
+      <td>100</td>
+      <td>80</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_OPTIMAL_RANGE| AI_FIGHT_MONSTERS</td>
+      <td>-SPELL_COLD:-20, WEAP_NONMAGIC:40, WEAP_SLASH:10,
+-SPELL_SHOCK:10, -SPELL_ACID:-15, -WEAP_NERUDITE:-20, WEAP_MAGIC:-10</td>
+      <td>SPEED_SLOW, ATCK_WEAP_PIERCE, (mana dependant spells)
+Hold:40%, Manabomb:30%, Sandstorm:15%, Shatter:5%, Earthquake:10%,
+allied: all avars of same clan</td>
+      <td>TID_AVAR_SHAMAN</td>
+    </tr>
+    <tr>
+      <td><a name="bossbody"></a>boss body</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>AI_NOMOVE| AI_NOFIGHT</td>
+      <td>none</td>
+      <td>SPEED_NONE, ATCK_WEAP_WHIP, creates pit boss head</td>
+      <td>TID_NONE</td>
+    </tr>
+    <tr>
+      <td><a name="bramble"></a>bramble</td>
+      <td>4</td>
+      <td>25</td>
+      <td>0</td>
+      <td>AI_NOFIGHT| AI_NOMOVE</td>
+      <td>none</td>
+      <td>ATCK_WEAP_SLASH</td>
+      <td>TID_NONE</td>
+    </tr>
+    <tr>
+      <td><a name="centipede"></a>centipede</td>
+      <td>5</td>
+      <td>30</td>
+      <td>15</td>
+      <td>(none)</td>
+      <td>-SPELL_FIRE:40, WEAP_SLASH:20, WEAP_MAGIC:-20,
+-SPELL_SHOCK:-20</td>
+      <td>SPEED_FAST, ATCK_WEAP_BITE, no allies</td>
+      <td>TID_WIMPY_MEDIUM</td>
+    </tr>
+    <tr>
+      <td><a name="cow"></a>cow</td>
+      <td>(0)</td>
+      <td>200</td>
+      <td>(default)</td>
+      <td>(none)</td>
+      <td>none</td>
+      <td>speed=8, creates dung if bonked</td>
+      <td>(none)</td>
+    </tr>
+    <tr>
+      <td><a name="blackspider"></a>black spider</td>
+      <td>5</td>
+      <td>75</td>
+      <td>-30</td>
+      <td>AI_MOVE_REGROUP| AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_ALL:75, WEAP_MAGIC:75, WEAP_NONMAGIC:-15</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_BITE, Wimpy=30, 10% chance poison
+attack</td>
+      <td>TID_BLACK_SPIDER</td>
+    </tr>
+    <tr>
+      <td><a name="dragonfly"></a>dragonfly</td>
+      <td>6</td>
+      <td>120</td>
+      <td>40</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_COLD:20, -SPELL_SHOCK:40, WEAP_THRUST:40,
+-WEAP_NERUDITE:25, -SPELL_FIRE:-20, WEAP_MAGIC:-10</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_PIERCE, Wimpy=5, ranged attack</td>
+      <td>TID_DRAGONFLY</td>
+    </tr>
+    <tr>
+      <td><a name="dragonflyqueen"></a>dragonfly queen</td>
+      <td>6</td>
+      <td>145</td>
+      <td>40</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_COLD:20, -SPELL_SHOCK:40, WEAP_THRUST:40,
+-WEAP_NERUDITE:25, -SPELL_FIRE:-20, WEAP_MAGIC:-10</td>
+      <td>SPEED_FAST, ATCK_WEAP_PIERCE, Wimpy=2</td>
+      <td>TID_DRAGONFLY</td>
+    </tr>
+    <tr>
+      <td><a name="livingtree"></a>living tree</td>
+      <td>4</td>
+      <td>50</td>
+      <td>40</td>
+      <td>AI_NOMOVE| AI_FIGHT_KARMA_AGGRESSIVE</td>
+      <td>-SPELL_COLD:50, WEAP_BLUDGEON:50, WEAP_SLASH:-10,
+-SPELL_FIRE:-10</td>
+      <td>SPEED_NONE, ATCK_WEAP_WHIP, 10% casts lightning; more freq if
+burned</td>
+      <td>TID_ENT</td>
+    </tr>
+    <tr>
+      <td><a name="feydirhai"></a>fey dirhai</td>
+      <td>5</td>
+      <td>60<br>
+      </td>
+      <td>-50</td>
+      <td>AI_MOVE_REGROUP| AI_FIGHT_MONSTERS| AI_FIGHT_KARMA_AGGRESSIVE</td>
+      <td>-SPELL_HOLY:-30, -SPELL_ALL:30, WEAP_MAGIC:30,
+-SPELL_UNHOLY:30</td>
+      <td>SPEED_VERY_FAST, ATCK_SPELL_SHOCK, ranged attack</td>
+      <td>TID_FAIRY</td>
+    </tr>
+    <tr>
+      <td><a name="feyelhai"></a>fey elhai</td>
+      <td>5<br>
+      </td>
+      <td>60<br>
+      </td>
+      <td>50<br>
+      </td>
+      <td>AI_MOVE_REGROUP | AI_FIGHT_MONSTERS |
+AI_FIGHT_KARMA_AGGRESSIVE</td>
+      <td>-SPELL_HOLY:30, -SPELL_ALL:30, WEAP_MAGIC:30,
+-SPELL_UNHOLY:-30</td>
+      <td>SPEED_VERY_FAST, ATCK_SPELL_SHOCK, ranged attack</td>
+      <td>TID_FAIRY</td>
+    </tr>
+    <tr>
+      <td><a name="eviltwin"></a>evil twin</td>
+      <td>4</td>
+      <td>45</td>
+      <td>0</td>
+      <td>AI_FIGHT_SINGLEMINDED| AI_FIGHT_MONSTERS|
+AI_FIGHT_NEWBIESAFE| AI_FIGHT_AGGRESSIVE</td>
+      <td>(none)</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_SLASH</td>
+      <td>TID_NONE</td>
+    </tr>
+    <tr>
+      <td><a name="maneatingplant"></a>Man-eating plant</td>
+      <td>5</td>
+      <td>60</td>
+      <td>-25</td>
+      <td>(none)</td>
+      <td>-SPELL_SHOCK:60, -SPELL_ACID:60, -WEAP_ALL:30</td>
+      <td>SPEED_VERY_SLOW, doesn't look finished</td>
+      <td>TID_LOW_HUMAN</td>
+    </tr>
+    <tr>
+      <td><a name="frogman"></a>frogman</td>
+      <td>5</td>
+      <td>70</td>
+      <td>80</td>
+      <td>AI_FIGHT_KARMA_AGGRESSIVE</td>
+      <td>WEAP_NONMAGIC:65, -SPELL_UNHOLY:-30, -SPELL_COLD:-30</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_PIERCE</td>
+      <td>TID_MEDIUM_HUMAN</td>
+    </tr>
+    <tr>
+      <td><a name="fungusbeast"></a>fungus beast</td>
+      <td>1</td>
+      <td>50</td>
+      <td>10</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_WIZARD_KILLER</td>
+      <td>-SPELL_COLD:60, WEAP_PIERCE:60, WEAP_THRUST:60</td>
+      <td>SPEED_VERY_SLOW, ranged attack</td>
+      <td>TID_MEDIUM</td>
+    </tr>
+    <tr>
+      <td><a name="ghost"></a>ghost</td>
+      <td>5</td>
+      <td>200</td>
+      <td>-100</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_WALKTHROUGH_WALLS|
+AI_FIGHT_WIZARD_KILLER| AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>-SPELL_FIRE:90, -SPELL_COLD:90, -SPELL_UNHOLY:90,
+-SPELL_ACID:90, WEAP_NONMAGIC:90, WEAP_MAGIC:-50, -SPELL_HOLY:-50</td>
+      <td>SPEED_FAST, 25% cast fireball, Undead</td>
+      <td>TID_GHOST</td>
+    </tr>
+    <tr>
+      <td><a name="giantrat"></a>giant rat</td>
+      <td>1</td>
+      <td>30</td>
+      <td>-20</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_SWITCHALOT, no allies</td>
+      <td>-SPELL_FIRE:-20, WEAP_BLUDGEON:-10, WEAP_SLASH:20</td>
+      <td>SPEED_FAST, ATCK_WEAP_CLAW</td>
+      <td>TID_RAT</td>
+    </tr>
+    <tr>
+      <td><a name="groundworm"></a>groundworm</td>
+      <td>6</td>
+      <td>100</td>
+      <td>30</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>WEAP_MAGIC:-20, WEAP_BLUDGEON:-30, -SPELL_ACID:70,
+-SPELL_QUAKE:50</td>
+      <td>SPEED_FAST, ATCK_WEAP_ACID, can't attack under ground</td>
+      <td>TID_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="groundwormlarva"></a>groundworm larva</td>
+      <td>3</td>
+      <td>35</td>
+      <td>-10</td>
+      <td>AI_FIGHT_KARMA_AGGRESSIVE</td>
+      <td>WEAP_MAGIC:-20, WEAP_BLUDGEON:-30, -SPELL_ACID:70,
+-SPELL_QUAKE:50</td>
+      <td>SPEED_SLOW, ATCK_WEAP_ACID, can't attack under ground</td>
+      <td>TID_WORM_LARVA</td>
+    </tr>
+    <tr>
+      <td><a name="groundwormqueen"></a>groundworm queen</td>
+      <td>7</td>
+      <td>130</td>
+      <td>-30</td>
+      <td>AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SINGLEMINDED</td>
+      <td>WEAP_MAGIC:-20, WEAP_BLUDGEON:-30, -SPELL_ACID:70,
+-SPELL_QUAKE:50</td>
+      <td>SPEED_SLOW, ATCK_WEAP_ACID, can't attack under ground</td>
+      <td>TID_WORM_QUEEN</td>
+    </tr>
+    <tr>
+      <td><a name="guardcow"></a>guard cow</td>
+      <td>5</td>
+      <td>100</td>
+      <td>100</td>
+      <td>AI_FIGHT_MURDERERS</td>
+      <td>none</td>
+      <td>SPEED_FAST, ATCK_WEAP_BITE</td>
+      <td><br>
+      </td>
+    </tr>
+    <tr>
+      <td><a name="icecreature"></a>ice creature</td>
+      <td>5</td>
+      <td>75</td>
+      <td>-70</td>
+      <td>(none)</td>
+      <td>-SPELL_FIRE:-99, -SPELL_COLD:99</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_THRUST</td>
+      <td>TID_NONE</td>
+    </tr>
+    <tr>
+      <td><a name="kriipa"></a>kriipa</td>
+      <td>9</td>
+      <td>160</td>
+      <td>-50</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_HYPERAGGRESSIVE</td>
+      <td>none</td>
+      <td>SPEED_FAST, ATCK_WEAP_SLASH, Wimpy=2, cannot attack if on
+ceiling</td>
+      <td>TID_DRAGONFLY</td>
+    </tr>
+    <tr>
+      <td><a name="lich"></a>lich</td>
+      <td>9</td>
+      <td>200</td>
+      <td>-100</td>
+      <td>AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER |
+AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS |
+AI_FIGHT_THROUGH_WALLS | AI_FIGHT_SWITCHALOT</td>
+      <td>-SPELL_ALL:60, WEAP_ALL:60, -SPELL_COLD:90, -SPELL_UNHOLY:90,
+-SPELL_ACID:30, -SPELL_SHOCK:-20, -SPELL_FIRE:-20, -WEAP_NERUDITE:-20,
+WEAP_BLUDGEON:-20, -SPELL_HOLY:-40, -WEAP_SILVER:-60,
+-SPELL_HUNTERSWORD:-90</td>
+      <td>SPEED_FAST, ATCK_SPELL_UNHOLY, negates truce, 6-14% counter
+with blind, ranged attack, Undead, allies: Necromancers</td>
+      <td>TID_LICH</td>
+    </tr>
+    <tr>
+      <td><a name="lupoggking"></a>lupogg king</td>
+      <td>9</td>
+      <td>200 (600)</td>
+      <td>0</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_WIZARD_KILLER|
+AI_FIGHT_HYPERAGGRESSIVE</td>
+      <td>WEAP_ALL:40, WEAP_PIERCE:90, -SPELL_COLD:90, -SPELL_SHOCK:90,
+-SPELL_ACID:-20, -SPELL_FIRE:-20, -WEAP_NERUDITE:-40<br>
+      </td>
+      <td>SPEED_SLOW, ATCK_WEAP_CLAW, 8-20% counter with hold, ranged
+attack</td>
+      <td>TID_LUPOGG_KING</td>
+    </tr>
+    <tr>
+      <td><a name="lupogg"></a>lupogg</td>
+      <td>9</td>
+      <td>105</td>
+      <td>75</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_WIZARD_KILLER</td>
+      <td>WEAP_ALL:70, -SPELL_COLD:90, -SPELL_SHOCK:90,
+-SPELL_ACID:-20, -SPELL_FIRE:-10, -WEAP_NERUDITE:-25, WEAP_SLASH:-10</td>
+      <td>Odd damage: 70%-125% of 8-11 points damage</td>
+      <td>TID_VERY_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="molluskcreature"></a>mollusk creature</td>
+      <td>7</td>
+      <td>150</td>
+      <td>90</td>
+      <td>(none)</td>
+      <td>-SPELL_SHOCK:110, -WEAP_NERUDITE:-20, WEAP_MAGIC:-10,
+-SPELL_QUAKE:100</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_BLUDGEON, throws rocks, rng:10</td>
+      <td>TID_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="mummy"></a>mummy</td>
+      <td>2</td>
+      <td>25</td>
+      <td>-20</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>-SPELL_UNHOLY:20, -SPELL_HOLY:-20, WEAP_ALL:-20</td>
+      <td>SPEED_VERY_SLOW, Undead</td>
+      <td>TID_NEWBIE_AREA</td>
+    </tr>
+    <tr>
+      <td><a name="shadowmummy"></a>shadow mummy</td>
+      <td>4</td>
+      <td>(25)</td>
+      <td>-20</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>-SPELL_UNHOLY:20, -SPELL_HOLY:-20, WEAP_ALL:-20</td>
+      <td>SPEED_VERY_SLOW, Undead</td>
+      <td>TID_NEWBIE_AREA</td>
+    </tr>
+    <tr>
+      <td><a name="mutantant"></a>mutant ant</td>
+      <td>8</td>
+      <td>65</td>
+      <td>-40</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_WIZARD_KILLER</td>
+      <td>-SPELL_FIRE:65, WEAP_BLUDGEON:65, -SPELL_NEURDITE:-10,
+WEAP_MAGIC:-10</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_BITE</td>
+      <td>TID_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="narthylworm"></a>narthyl worm</td>
+      <td>7</td>
+      <td>120</td>
+      <td>0</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_HYPERAGGRESSIVE</td>
+      <td>WEAP_PIERCE:70, WEAP_THRUST:70, -SPELL_UNHOLY:70,
+-SPELL_SHOCK:70, -SPELL_FIRE:70, -SPELL_HOLY:-20</td>
+      <td>SPEED_SLOW, ATCK_WEAP_PIERCE, saps 30k-70k exertion</td>
+      <td>TID_NARTHYL_WORM</td>
+    </tr>
+    <tr>
+      <td><a name="orc"></a>orc</td>
+      <td>7</td>
+      <td>45</td>
+      <td>-40</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_FLEE_FRIGHTENERS|
+AI_FIGHT_SWITCHALOT</td>
+      <td>-SPELL_UNHOLY:40, WEAP_PIERCE:40, WEAP_SLASH:20,
+-SPELL_HOLY:-25</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_SLASH, fears giant rats</td>
+      <td>TID_ORC</td>
+    </tr>
+    <tr>
+      <td><a name="orcpitboss"></a>orc pit boss</td>
+      <td>7</td>
+      <td>115</td>
+      <td>-90</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_HYPERAGGRESSIVE|
+AI_FIGHT_SWITCHALOT</td>
+      <td>-SPELL_ALL:40, -SPELL_UNHOLY:40, WEAPON_PIERCE:40,
+WEAP_SLASH:20, WEAP_MAGIC:-25, -SPELL_HOLY:-50</td>
+      <td>SPEED_FAST, ATCK_WEAP_SLASH</td>
+      <td>TID_ORC_CHIEF</td>
+    </tr>
+    <tr>
+      <td><a name="caveorc"></a>cave orc</td>
+      <td>7</td>
+      <td>80</td>
+      <td>-55</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_FLEE_FRIGHTENERS|
+AI_FIGHT_HYPERAGGRESSIVE| AI_FIGHT_SWITCHALOT</td>
+      <td>-SPELL_UNHOLY:40, WEAP_PIERCE:20, WEAP_SLASH:25,
+-SPELL_HOLY:-20</td>
+      <td>SPEED_FAST, ATCK_WEAP_SLASH, Wimpy=4, fears giant rats</td>
+      <td>TID_CAVE_ORC</td>
+    </tr>
+    <tr>
+      <td><a name="orcwizard"></a>orc wizard</td>
+      <td>7</td>
+      <td>80</td>
+      <td>-60</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_HYPERAGGRESSIVE|
+AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>-SPELL_UNHOLY:40, WEAP_PIERCE:40, WEAP_SLASH:40,
+-SPELL_HOLY:-25</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_BLUDGEON, (mana dependant spells)
+Slitherbolt:40%, Killing Fields:10%, Purge:35%, ManaBomb:5%,
+Forget:10%,
+fears shadow beast, allied: all orcs</td>
+      <td>TID_ORC_WIZARD</td>
+    </tr>
+    <tr>
+      <td><a name="reflection"></a>reflection</td>
+      <td>5</td>
+      <td>45</td>
+      <td>0</td>
+      <td>(none)</td>
+      <td>none</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_SLASH</td>
+      <td>TID_NONE</td>
+    </tr>
+    <tr>
+      <td><a name="revenant"></a>revenant</td>
+      <td>{5}</td>
+      <td>{55}</td>
+      <td>{20}</td>
+      <td>AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED |
+AI_MOVE_WALKTHROUGH_WALLS| AI_FIGHT_THROUGH_WALLS</td>
+      <td>none</td>
+      <td>SPEED_FAST, ATCK_WEAP_SLASH</td>
+      <td>TID_NONE</td>
+    </tr>
+    <tr>
+      <td><a name="scorpion"></a>scorpion</td>
+      <td>8</td>
+      <td>55</td>
+      <td>20</td>
+      <td>(none)</td>
+      <td>-SPELL_ACID:60, WEAP_SLASH:60, WEAP_BLUDGEON:-10</td>
+      <td>SPEED_FAST, ATCK_WEAP_STING, Wimpy=40, 20% chance palsy attack</td>
+      <td>TID_MEDIUM_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="shadowbeast"></a>shadowbeast</td>
+      <td>7</td>
+      <td>200</td>
+      <td>-100</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_COLD:20, WEAP_SLASH:60, -SPELL_FIRE:-15,
+-ATCK_SPELL_SHOCK:-15, <br>
+-ATCK_SPELL_HOLY:-25</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_SLASH, lowers base light by 15,
+allied to all avars</td>
+      <td>TID_VERY_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="skeleton"></a>skeleton</td>
+      <td>5</td>
+      <td>75</td>
+      <td>-50</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_SWITCHALOT|
+AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>WEAP_PIERCE:70, WEAP_THRUST:70, -SPELL_UNHOLY:70,
+-SPELL_SHOCK:70, -SPELL_COLD:70, -SPELL_FIRE:-10, -SPELL_HOLY:-20,
+WEAP_BLUDGEON:-20</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_THRUST, Undead, Treasure: worn
+longsword</td>
+      <td>TID_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="battered skeleton"></a>battered skeleton</td>
+      <td>4<br>
+      </td>
+      <td>60</td>
+      <td>-70</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_SWITCHALOT|
+AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>WEAP_PIERCE:70, WEAP_THRUST:70, -SPELL_UNHOLY:70,
+-SPELL_SHOCK:70, -SPELL_COLD:70, -SPELL_FIRE:-10, -SPELL_HOLY:-20,
+WEAP_BLUDGEON:-20</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_THRUST, 10% chance (each) palsy,
+dementia attack, Undead,<br>
+Treasure: worn
+longsword<br>
+      </td>
+      <td>TID_SKELETON2</td>
+    </tr>
+    <tr>
+      <td><a name="tuskedskeleton"></a>tusked skeleton</td>
+      <td>6</td>
+      <td>100</td>
+      <td>-70</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_SWITCHALOT|
+AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>WEAP_PIERCE:70, WEAP_THRUST:70, -SPELL_UNHOLY:70,
+-SPELL_SHOCK:70, -SPELL_COLD:70, -SPELL_FIRE:-10, -SPELL_HOLY:-20,
+WEAP_BLUDGEON:-20</td>
+      <td>SPEED_FAST, ATCK_WEAP_THRUST, Undead, Treasure: worn
+longsword</td>
+      <td>TID_SKELETON3</td>
+    </tr>
+    <tr>
+      <td><a name="daemonskeleton"></a>daemon skeleton</td>
+      <td>8</td>
+      <td>130</td>
+      <td>-90</td>
+      <td>AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT |
+AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>WEAP_PIERCE:70, WEAP_THRUST:70, -SPELL_UNHOLY:70,
+-SPELL_SHOCK:70, -SPELL_FIRE:70, -SPELL_COLD:-10, -SPELL_HOLY:-20,
+WEAP_BLUDGEON:-20</td>
+      <td>SPEED_FAST, ATCK_WEAP_THRUST, Undead, Treasure: worn
+longsword</td>
+      <td>TID_SKELETON4</td>
+    </tr>
+    <tr>
+      <td><a name="slime"></a>slime</td>
+      <td>4</td>
+      <td>35</td>
+      <td>0</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_FIGHT_SINGLEMINDED</td>
+      <td>-SPELL_SHOCK:45, -SPELL_UNHOLY:45, -SPELL_HOLY:45,
+-SPELL_ACID:35, WEAP_ALL:45, WEAP_BLUDGEON:10, -SPELL_COLD:-25</td>
+      <td>SPEED_SLOW, ATCK_SPELL_ACID,</td>
+      <td>TID_WIMPY_MEDIUM</td>
+    </tr>
+    <tr>
+      <td><a name="snowrat"></a>snowrat</td>
+      <td>4</td>
+      <td>60</td>
+      <td>-50</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_FIRE:-50, -SPELL_COLD:50</td>
+      <td>SPEED_FAST, ATCK_WEAP_CLAW, no allies</td>
+      <td>TID_RAT</td>
+    </tr>
+    <tr>
+      <td><a name="spectralmummy"></a>spectral mummy</td>
+      <td>5</td>
+      <td>40</td>
+      <td>-35</td>
+      <td>AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>-SPELL_UNHOLY:20, -SPELL_HOLY:-10, -SPELL_FIRE:-10,
+-SPELL_SHOCK:-15, WEAP_BLUDGEON:-15&nbsp;</td>
+      <td>SPEED_SLOW</td>
+      <td>TID_MUMMY</td>
+    </tr>
+    <tr>
+      <td><a name="spiderbaby"></a>spider baby</td>
+      <td>4</td>
+      <td>25</td>
+      <td>-10</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>WEAP_BLUDGEON:-15</td>
+      <td>SPEED_SLOW, ATCK_WEAP_BITE, no allies</td>
+      <td>TID_WIMPY</td>
+    </tr>
+    <tr>
+      <td><a name="spiderqueen"></a>spider queen</td>
+      <td>9</td>
+      <td>165</td>
+      <td>-90</td>
+      <td>AI_NOMOVE| AI_FIGHT_AGGRESSIVE| AI_FIGHT_SWITCHALOT</td>
+      <td>-SPELL_ALL:85, WEAP_MAGIC:85, WEAP_BLUDGEON:85,
+-SPELL_ACID:-40, WEAP_THRUST:-20</td>
+      <td>SPEED_NONE, ATCK_WEAP_BITE, 6.6% chance poison attack,
+allied: all spiders</td>
+      <td>TID_SPIDER_QUEEN</td>
+    </tr>
+    <tr>
+      <td><a name="spider"></a>spider</td>
+      <td>4</td>
+      <td>50</td>
+      <td>-30</td>
+      <td>AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_ALL:50, WEAP_MAGIC:50, WEAP_NONMAGIC:-15</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_BITE, Wimpy=30, 3.3% chance poison
+attack, allied: all spiders</td>
+      <td>TID_MEDIUM_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="stonetroll"></a>stone troll</td>
+      <td>8</td>
+      <td>120</td>
+      <td>-100</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_HOLY:80, -SPELL_ACID:80, -WEAP_NERUDITE:-80,
+WEAP_NONMAGIC:80</td>
+      <td>SPEED_FAST</td>
+      <td>TID_MEDIUM_HUMAN</td>
+    </tr>
+    <tr>
+      <td><a name="troll"></a>troll</td>
+      <td>8</td>
+      <td>90</td>
+      <td>-75</td>
+      <td>AI_FIGHT_AGGRESSIVE</td>
+      <td>-SPELL_HOLY:80, -SPELL_ACID:80, -WEAP_NERUDITE:-80,
+WEAP_NONMAGIC:80</td>
+      <td>SPEED_AVERAGE</td>
+      <td>TID_HIGH_HUMAN</td>
+    </tr>
+    <tr>
+      <td><a name="troop"></a>troop (all kinds)</td>
+      <td>4-9</td>
+      <td>80-175</td>
+      <td>-20-30</td>
+      <td>AI_FIGHT_NEWBIESAFE | AI_MOVE_REGROUP</td>
+      <td>none</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_SLASH, hates un-aligned faction
+members, allied with same faction</td>
+      <td>40% each item to drop equipment (except shield)</td>
+    </tr>
+    <tr>
+      <td><a name="yeti"></a>yeti</td>
+      <td>9</td>
+      <td>170</td>
+      <td>0</td>
+      <td>AI_FIGHT_AGGRESSIVE| AI_MOVE_OPTIMAL_RANGE|
+AI_FIGHT_SWITCHALOT</td>
+      <td>-SPELL_COLD:90, -SPELL_SHOCK:90, WEAP_THRUST:90,<br>
+WEAP_SLASH:90, WEAP_PIERCE:90, -SPELL_FIRE:-45</td>
+      <td>SPEED_SLOW, ATCK_WEAP_CLAW, 10% chance discordance</td>
+      <td>TID_VERY_TOUGH</td>
+    </tr>
+    <tr>
+      <td><a name="zombie"></a>zombie</td>
+      <td>4</td>
+      <td>55</td>
+      <td>-45</td>
+      <td>AI_FIGHT_KARMA_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS</td>
+      <td>-SPELL_UNHOLY:50, -SPELL_HOLY:-25</td>
+      <td>SPEED_VERY_SLOW, ATCK_WEAP_SLASH, 20% chance attack dementia,
+Undead</td>
+      <td>TID_ZOMTIE</td>
+    </tr>
+    <tr>
+      <td><a name="te'xeochicatl"></a>te'xeochicatl (brown)</td>
+      <td>9</td>
+      <td>200</td>
+      <td>0</td>
+      <td>AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE |
+AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP</td>
+      <td>-WEAP_NERUDITE:70, -SPELL_SHOCK:-15, WEAP_MAGIC:-10,
+-SPELL_QUAKE:110</td>
+      <td>SPEED_AVERAGE, ATCK_WEAP_MAGIC, attacks drain 5% max
+mana,(mana dependant spells) Earthquake:20%, Sandstorm:30%, Blind:40%,
+Brittle:20%, treasure:heartstone, resists any spell below 40 power,
+resists 50% of other spells, 80% of blind, hold, dazzle spells</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td><a name="ma'xeochicatl"></a>ma'xeochicatl (blue)</td>
+      <td>8</td>
+      <td>190</td>
+      <td>0</td>
+      <td>AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE |
+AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP</td>
+      <td>-SPELL_COLD:70, -SPELL_FIRE:-20, WEAP_MAGIC:-10,
+-SPELL_QUAKE:100</td>
+      <td>SPEED_FAST, ATCK_WEAP_MAGIC, attacks drain 10% max mana,(mana
+dependant spells) Enfeeble:30%, Hold:30%, Poison Fog:30%, Shatter:10%,
+treasure:heartstone, resists any spell below 40 power, resists 50% of
+other spells, 80% of blind, hold, dazzle spells</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td><a name="ro'xeochicatl"></a>ro'xeochicatl (red)</td>
+      <td>7</td>
+      <td>170</td>
+      <td>0</td>
+      <td>AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE |
+AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP</td>
+      <td>-SPELL_FIRE:110, -SPELL_COLD:-20, WEAP_MAGIC:-10,
+-SPELL_QUAKE:100</td>
+      <td>SPEED_FAST, ATCK_WEAP_MAGIC, attacks drain 5% max mana,(mana
+dependant spells) Fireball:60%, Firewall:10%, Dement:30%,
+treasure:heartstone, resists any spell below 40 power, resists 50% of
+other spells, 80% of blind, hold, dazzle spells</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td><a name="ve'xeochicatl"></a>ve'xeochicatl (sky blue)</td>
+      <td>7</td>
+      <td>150</td>
+      <td>0</td>
+      <td>AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE |
+AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP</td>
+      <td>-SPELL_SHOCK:110, -WEAP_NERUDITE:-20, WEAP_MAGIC:-10,
+-SPELL_QUAKE:100</td>
+      <td>SPEED_VERY_FAST, ATCK_WEAP_MAGIC, attacks drain 5% max
+mana,(mana dependant spells) Lightning Bolt:60%, Winds:10% Lightning
+Wall:10%, Flash:20%, treasure:heartstone, resists any spell below 40
+power, resists 50% of other spells, 80% of blind, hold, dazzle spells</td>
+      <td>none</td>
+    </tr>
+    <tr>
+      <td><a name="darkangel"></a>dark angel</td>
+      <td>9</td>
+      <td>200</td>
+      <td>-100</td>
+      <td>AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE |
+AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP | AI_MOVE_OPTIMAL_RANGE</td>
+      <td>-SPELL_SHOCK:50, -SPELL_FIRE:50, -SPELL_COLD:50,
+-WEAP_NERUDITE:70, WEAP_MAGIC:-5</td>
+      <td>SPEED_VERY_FAST, ATCK_SPELL_FIRE, fireball attack
+rng:7,spells: Blind:20%, Evil Twin:10%, Hold:10%, Reflection:20%,
+Discordance:10%, Enfeeble:10%, Forget:20%, Darkness every attack,
+resists any spell below 40 power, resists 50% of other spells, 80% of
+blind, hold, dazzle spells</td>
+      <td>TID_DARK_ANGEL</td>
+    </tr>
+  </tbody>
+</table>
+<p>Parentheses indicate that the default was used for this value. <br>
+Braces indicate default values that can be set </p>
+</body>
+</html>

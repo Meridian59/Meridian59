@@ -1,0 +1,180 @@
+from an April 1, 98 savegame:
+
+Apr  3 1998 12:55:41|  0 send o 0 dumpspellcastcounters
+
+Qor:
+----
+1: darkness, attempts:,5391, casts:,4066, success rate:,75, attempts at players:,0, rate:,0, average spellpower:,-5
+1: unholy weapon, attempts:,824, casts:,554, success rate:,67, attempts at players:,0, rate:,0, average spellpower:,50
+1: unholy resolve, attempts:,1179, casts:,765, success rate:,64, attempts at players:,0, rate:,0, average spellpower:,44
+2: Kara'hol's curse, attempts:,1688, casts:,1775, success rate:,105, attempts at players:,0, rate:,0, average spellpower:,58
+2: detect good, attempts:,602, casts:,389, success rate:,64, attempts at players:,0, rate:,0, average spellpower:,37
+2: acid touch, attempts:,5899, casts:,0, success rate:,0, attempts at players:,1091, rate:,18, average spellpower:,0
+3: enfeeble, attempts:,4762, casts:,3400, success rate:,71, attempts at players:,57, rate:,1, average spellpower:,-28
+3: fade, attempts:,890, casts:,637, success rate:,71, attempts at players:,0, rate:,0, average spellpower:,56
+3: hold, attempts:,5004, casts:,4021, success rate:,80, attempts at players:,940, rate:,18, average spellpower:,3
+3: animate, attempts:,147, casts:,83, success rate:,56, attempts at players:,0, rate:,0, average spellpower:,54
+4: defile, attempts:,275, casts:,178, success rate:,64, attempts at players:,0, rate:,0, average spellpower:,53
+4: curse weapon, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+4: poison fog, attempts:,139, casts:,95, success rate:,68, attempts at players:,0, rate:,0, average spellpower:,49
+4: swap, attempts:,265, casts:,195, success rate:,73, attempts at players:,265, rate:,100, average spellpower:,52
+4: shadow rift, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+4: Shal'illebane, attempts:,471, casts:,326, success rate:,69, attempts at players:,0, rate:,0, average spellpower:,56
+4: vampiric touch, attempts:,771, casts:,0, success rate:,0, attempts at players:,117, rate:,15, average spellpower:,0
+5: blind, attempts:,535, casts:,414, success rate:,77, attempts at players:,139, rate:,25, average spellpower:,69
+5: death link, attempts:,105, casts:,88, success rate:,83, attempts at players:,0, rate:,0, average spellpower:,87
+5: invisibility, attempts:,637, casts:,445, success rate:,69, attempts at players:,0, rate:,0, average spellpower:,54
+5: nodeburst, attempts:,1, casts:,45, success rate:,4500, attempts at players:,0, rate:,0, average spellpower:,54
+5: blood inheritance, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+6: gaze of the basilisk, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+
+Shal'ille:
+----------
+1: holy weapon, attempts:,1037, casts:,559, success rate:,53, attempts at players:,0, rate:,0, average spellpower:,35
+1: minor heal, attempts:,22016, casts:,14903, success rate:,67, attempts at players:,22016, rate:,100, average spellpower:,7
+2: create food, attempts:,2077, casts:,1434, success rate:,69, attempts at players:,0, rate:,0, average spellpower:,60
+2: cure poison, attempts:,652, casts:,407, success rate:,62, attempts at players:,652, rate:,100, average spellpower:,43
+2: holy symbol, attempts:,990, casts:,674, success rate:,68, attempts at players:,0, rate:,0, average spellpower:,50
+2: remove curse, attempts:,1156, casts:,741, success rate:,64, attempts at players:,1156, rate:,100, average spellpower:,47
+2: holy touch, attempts:,576, casts:,266, success rate:,46, attempts at players:,287, rate:,49, average spellpower:,0
+2: detect evil, attempts:,84, casts:,135, success rate:,160, attempts at players:,0, rate:,0, average spellpower:,42
+3: holy resolve, attempts:,1026, casts:,769, success rate:,74, attempts at players:,0, rate:,0, average spellpower:,64
+3: cure disease, attempts:,955, casts:,629, success rate:,65, attempts at players:,955, rate:,100, average spellpower:,44
+3: identify, attempts:,285, casts:,213, success rate:,74, attempts at players:,0, rate:,0, average spellpower:,64
+3: rescue, attempts:,4884, casts:,3751, success rate:,76, attempts at players:,0, rate:,0, average spellpower:,-3
+4: forces of light, attempts:,3280, casts:,2615, success rate:,79, attempts at players:,0, rate:,0, average spellpower:,-25
+4: hospice, attempts:,5963, casts:,4659, success rate:,78, attempts at players:,5963, rate:,100, average spellpower:,8
+4: mark of dishonor, attempts:,17, casts:,11, success rate:,64, attempts at players:,17, rate:,100, average spellpower:,57
+4: spirit hammer, attempts:,53, casts:,37, success rate:,69, attempts at players:,0, rate:,0, average spellpower:,80
+4: truce, attempts:,3673, casts:,2978, success rate:,81, attempts at players:,0, rate:,0, average spellpower:,-17
+4: Qorbane, attempts:,190, casts:,134, success rate:,70, attempts at players:,0, rate:,0, average spellpower:,55
+5: final rites, attempts:,5158, casts:,4058, success rate:,78, attempts at players:,0, rate:,0, average spellpower:,11
+5: major heal, attempts:,1779, casts:,1326, success rate:,74, attempts at players:,1779, rate:,100, average spellpower:,62
+5: purify, attempts:,2884, casts:,2364, success rate:,81, attempts at players:,2884, rate:,100, average spellpower:,-33
+5: reveal, attempts:,338, casts:,218, success rate:,64, attempts at players:,0, rate:,0, average spellpower:,56
+5: umbrella, attempts:,674, casts:,559, success rate:,82, attempts at players:,0, rate:,0, average spellpower:,73
+6: portal of life, attempts:,34, casts:,28, success rate:,82, attempts at players:,0, rate:,0, average spellpower:,86
+6: bond, attempts:,14, casts:,10, success rate:,71, attempts at players:,0, rate:,0, average spellpower:,52
+
+Faren:
+------
+1: light, attempts:,6729, casts:,4497, success rate:,66, attempts at players:,0, rate:,0, average spellpower:,-12
+1: zap, attempts:,4985, casts:,0, success rate:,0, attempts at players:,171, rate:,3, average spellpower:,0
+2: resist cold, attempts:,1647, casts:,1062, success rate:,64, attempts at players:,0, rate:,0, average spellpower:,42
+2: winds, attempts:,4199, casts:,2970, success rate:,70, attempts at players:,0, rate:,0, average spellpower:,-32
+2: touch of flame, attempts:,8229, casts:,0, success rate:,0, attempts at players:,596, rate:,7, average spellpower:,0
+2: bramble wall, attempts:,2114, casts:,1379, success rate:,65, attempts at players:,0, rate:,0, average spellpower:,48
+3: dement, attempts:,61, casts:,26, success rate:,42, attempts at players:,1, rate:,1, average spellpower:,13
+3: heat, attempts:,138, casts:,87, success rate:,63, attempts at players:,0, rate:,0, average spellpower:,54
+3: mana focus, attempts:,1437, casts:,1154, success rate:,80, attempts at players:,0, rate:,0, average spellpower:,68
+3: spider web, attempts:,869, casts:,552, success rate:,63, attempts at players:,0, rate:,0, average spellpower:,45
+4: brittle, attempts:,471, casts:,346, success rate:,73, attempts at players:,471, rate:,100, average spellpower:,57
+4: firewall, attempts:,250, casts:,165, success rate:,66, attempts at players:,0, rate:,0, average spellpower:,56
+4: fireball, attempts:,1989, casts:,1419, success rate:,71, attempts at players:,28, rate:,1, average spellpower:,0
+5: lightning bolt, attempts:,1154, casts:,713, success rate:,61, attempts at players:,21, rate:,1, average spellpower:,0
+5: earthquake, attempts:,1918, casts:,1652, success rate:,86, attempts at players:,0, rate:,0, average spellpower:,76
+5: sandstorm, attempts:,489, casts:,466, success rate:,95, attempts at players:,0, rate:,0, average spellpower:,66
+5: shatter, attempts:,272, casts:,229, success rate:,84, attempts at players:,272, rate:,100, average spellpower:,79
+6: spore burst, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+6: lightning wall, attempts:,79, casts:,45, success rate:,56, attempts at players:,0, rate:,0, average spellpower:,55
+
+Kraanan:
+--------
+1: create mace, attempts:,14992, casts:,11756, success rate:,78, attempts at players:,0, rate:,0, average spellpower:,4
+1: withstand fire, attempts:,3191, casts:,2470, success rate:,77, attempts at players:,0, rate:,0, average spellpower:,-52
+2: bless, attempts:,14790, casts:,11558, success rate:,78, attempts at players:,0, rate:,0, average spellpower:,0
+2: enchant weapon, attempts:,1550, casts:,1033, success rate:,66, attempts at players:,0, rate:,0, average spellpower:,49
+2: super strength, attempts:,21335, casts:,17638, success rate:,82, attempts at players:,0, rate:,0, average spellpower:,-6
+2: resist poison, attempts:,2017, casts:,1297, success rate:,64, attempts at players:,0, rate:,0, average spellpower:,41
+3: detect invisible, attempts:,250, casts:,233, success rate:,93, attempts at players:,0, rate:,0, average spellpower:,48
+3: haste, attempts:,1722, casts:,1156, success rate:,67, attempts at players:,0, rate:,0, average spellpower:,47
+3: magic shield, attempts:,5166, casts:,3981, success rate:,77, attempts at players:,0, rate:,0, average spellpower:,-5
+3: night vision, attempts:,8444, casts:,7176, success rate:,84, attempts at players:,0, rate:,0, average spellpower:,-11
+3: resist shock, attempts:,481, casts:,633, success rate:,131, attempts at players:,0, rate:,0, average spellpower:,48
+3: martyr's battleground, attempts:,1873, casts:,1389, success rate:,74, attempts at players:,0, rate:,0, average spellpower:,59
+3: icy fingers, attempts:,10566, casts:,0, success rate:,0, attempts at players:,838, rate:,7, average spellpower:,0
+4: mana bomb, attempts:,3414, casts:,3829, success rate:,112, attempts at players:,0, rate:,0, average spellpower:,3
+4: mend, attempts:,8014, casts:,6572, success rate:,82, attempts at players:,0, rate:,0, average spellpower:,-12
+4: deflect, attempts:,2780, casts:,2208, success rate:,79, attempts at players:,2271, rate:,81, average spellpower:,-57
+4: discordance, attempts:,4001, casts:,3098, success rate:,77, attempts at players:,0, rate:,0, average spellpower:,-16
+4: dispel illusion, attempts:,1294, casts:,866, success rate:,66, attempts at players:,0, rate:,0, average spellpower:,50
+4: shroud, attempts:,64, casts:,35, success rate:,54, attempts at players:,0, rate:,0, average spellpower:,50
+5: anti-magic aura, attempts:,2118, casts:,1676, success rate:,79, attempts at players:,0, rate:,0, average spellpower:,65
+5: armor of Gort, attempts:,1455, casts:,1047, success rate:,71, attempts at players:,0, rate:,0, average spellpower:,53
+5: killing fields, attempts:,266, casts:,1653, success rate:,621, attempts at players:,0, rate:,0, average spellpower:,71
+5: resist magic, attempts:,2576, casts:,2197, success rate:,85, attempts at players:,0, rate:,0, average spellpower:,52
+5: hunt, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+6: shatterlock, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+
+Riija:
+------
+1: anonymity, attempts:,1224, casts:,777, success rate:,63, attempts at players:,0, rate:,0, average spellpower:,49
+1: blink, attempts:,5043, casts:,4580, success rate:,90, attempts at players:,0, rate:,0, average spellpower:,-16
+1: feign death, attempts:,1301, casts:,1001, success rate:,76, attempts at players:,0, rate:,0, average spellpower:,47
+1: flash, attempts:,948, casts:,611, success rate:,64, attempts at players:,0, rate:,0, average spellpower:,52
+1: shadow form, attempts:,2807, casts:,1826, success rate:,65, attempts at players:,0, rate:,0, average spellpower:,43
+2: bait, attempts:,6363, casts:,2716, success rate:,42, attempts at players:,0, rate:,0, average spellpower:,-45
+2: foresight, attempts:,3727, casts:,2623, success rate:,70, attempts at players:,3699, rate:,99, average spellpower:,-45
+2: forget, attempts:,791, casts:,557, success rate:,70, attempts at players:,791, rate:,100, average spellpower:,50
+2: illusionary form, attempts:,169, casts:,103, success rate:,60, attempts at players:,0, rate:,0, average spellpower:,52
+3: illusionary wounds, attempts:,351, casts:,249, success rate:,70, attempts at players:,108, rate:,30, average spellpower:,58
+3: illusionary firewall, attempts:,82, casts:,58, success rate:,70, attempts at players:,0, rate:,0, average spellpower:,57
+3: reflection, attempts:,52, casts:,39, success rate:,75, attempts at players:,0, rate:,0, average spellpower:,48
+3: vertigo, attempts:,159, casts:,91, success rate:,57, attempts at players:,8, rate:,5, average spellpower:,27
+4: apparition, attempts:,667, casts:,488, success rate:,73, attempts at players:,58, rate:,8, average spellpower:,69
+4: denial, attempts:,102, casts:,84, success rate:,82, attempts at players:,0, rate:,0, average spellpower:,63
+5: artifice, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+5: evil twin, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+5; morph, attempts:,43, casts:,6, success rate:,13, attempts at players:,0, rate:,0, average spellpower:,55
+6: seduce, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+
+Jala:
+-----
+1: truth, attempts:,276, casts:,219, success rate:,79, attempts at players:,0, rate:,0, average spellpower:,72
+2: warp time, attempts:,580, casts:,515, success rate:,88, attempts at players:,0, rate:,0, average spellpower:,79
+3: spellbane, attempts:,721, casts:,624, success rate:,86, attempts at players:,0, rate:,0, average spellpower:,82
+4: jig, attempts:,109, casts:,97, success rate:,88, attempts at players:,0, rate:,0, average spellpower:,86
+5: mana convergence, attempts:,3, casts:,2, success rate:,66, attempts at players:,0, rate:,0, average spellpower:,36
+
+
+DM-only:
+--------
+summon bovine, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+superior hold, attempts:,1, casts:,1, success rate:,100, attempts at players:,1, rate:,100, average spellpower:,49
+mana effect, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+health effect, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+stamina effect, attempts:,11, casts:,0, success rate:,0, attempts at players:,11, rate:,100, average spellpower:,0
+aim effect, attempts:,16, casts:,0, success rate:,0, attempts at players:,16, rate:,100, average spellpower:,0
+mysticism effect, attempts:,7, casts:,0, success rate:,0, attempts at players:,7, rate:,100, average spellpower:,0
+intellect effect, attempts:,28, casts:,0, success rate:,0, attempts at players:,28, rate:,100, average spellpower:,0
+agility effect, attempts:,22, casts:,0, success rate:,0, attempts at players:,22, rate:,100, average spellpower:,0
+strength effect, attempts:,15, casts:,0, success rate:,0, attempts at players:,15, rate:,100, average spellpower:,0
+vilify, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+armageddon, attempts:,2, casts:,2, success rate:,100, attempts at players:,0, rate:,0, average spellpower:,69
+bonk, attempts:,20, casts:,98, success rate:,490, attempts at players:,20, rate:,100, average spellpower:,53
+page, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+pardon, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+engrave, attempts:,1, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+scry, attempts:,4, casts:,4, success rate:,100, attempts at players:,4, rate:,100, average spellpower:,66
+damn, attempts:,18, casts:,15, success rate:,83, attempts at players:,18, rate:,100, average spellpower:,67
+smite, attempts:,2, casts:,2, success rate:,100, attempts at players:,0, rate:,0, average spellpower:,0
+deliverance, attempts:,24, casts:,24, success rate:,100, attempts at players:,24, rate:,100, average spellpower:,65
+evaluate, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+insight, attempts:,1, casts:,1, success rate:,100, attempts at players:,0, rate:,0, average spellpower:,69
+slitherbolt, attempts:,0, casts:,0, success rate:,0, attempts at players:,0, rate:,0, average spellpower:,0
+
+Weaponcraft:
+------------
+1: punch
+1: slash
+2: dodge
+2: brawling
+2: mace fighting
+3: axe wielding
+3: hammer wielding
+3: scimitar wielding
+4: fencing
+4: fire
+4: parry
+5: archery
+

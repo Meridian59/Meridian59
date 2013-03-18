@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html;
+      charset=ISO-8859-1">
+    <title>Faction Bonuses</title>
+  </head>
+  <body>
+    <h1>Faction Bonuses</h1>
+    <h2>Current Bonuses:</h2>
+    <h3>Princess:</h3>
+    <ul>
+      <li>Spellpower bonus for Shal'ille, Faren, Jala (Base: 10
+        spellpower)</li>
+      <li>Learn bonus Shal'ille, Faren, Jala (Base: 10% bonus to
+        improve)</li>
+      <li>Defense bonus (Base: 200 points defense)</li>
+      <li>Regenerate mana (Base: 700 ms less per tick)</li>
+      <li><span style="text-decoration: underline;">Constant</span>:
+        Small price discount (5% discount on purchases).</li>
+    </ul>
+    <h3>Duke:</h3>
+    <ul>
+      <li>Spellpower bonus for Riija, Qor, Kraanan&nbsp;(Base: 10
+        spellpower)</li>
+      <li>Learn bonus for Riija, Qor, Kraanan&nbsp;(Base: 10% bonus to
+        improve)</li>
+      <li>Lessened vigor use (Base: 30% less exertion added)</li>
+      <li><span style="text-decoration: underline;">Constant</span>:
+        Able to buy in stores even if a murderer.</li>
+    </ul>
+    <h3>Rebel:</h3>
+    <ul>
+      <li>Learn bonus to Skills&nbsp;(Base: 10% bonus to improve)</li>
+      <li>Hitroll bonus (Base: 125 bonus offensive)</li>
+      <li>Regenerate health&nbsp;(Base: 700 ms less per tick)</li>
+      <li><span style="text-decoration: underline;">Constant</span>:
+        Damage bonus (2 points).</li>
+    </ul>
+    <h3>Unfactioned</h3>
+    Unfactioned get 25% of all non-constant bonuses, calculated with the
+    power and population of the unfactioned as a whole.<br>
+    <h3>Non-intriguing (below 40 hps)</h3>
+    Non-intriguing players get small bonuses in all non-constant powers,
+    without regard to size or power. &nbsp;These bonus are usually about
+    20-30% of the bases listed above.<br>
+    <h3>Comments about current bonuses: </h3>
+    Fairly balanced. Mana regen was moved to Princess from Duke, and the
+    vigor bonus was added to Duke. We&#8217;ll see how it survives contact
+    with the playerbase.<br>
+    <h2>How the bonuses work:</h2>
+    The code for faction bonuses is defined in
+    /blakston/util/parlia.kod. &nbsp;The code for the faction games are
+    found in the /blakston/util/factgame/ directory.<br>
+    <br>
+    Faction powers scale with faction power (tokens, territory, etc) and
+    faction membership. &nbsp;As power increases, power increases.
+    &nbsp;As membership increases, power decreases.<br>
+    <br>
+    To understand the equations behind these values, you have to
+    understand the concept of the "balance point". &nbsp;The balance
+    point is where the factions are all balanced against each other.
+    &nbsp;This isn't necessarily the point where the factions "should
+    be" or are most powerful, but rather the arbitrary point where
+    things are split equally. &nbsp;This point is defined in parlia.kod,
+    as the variable piBalanceFactor. &nbsp;It is currently set at 25%.
+    &nbsp;This means that each faction is expected to have about 25% of
+    the power and the intriguing population of the server. &nbsp;It's
+    important to note that the balance for the unfactioned is not set by
+    this balance varaible, but rather is <span style="font-style:
+      italic;">100 - (3 * piBalanceFactor)</span>. &nbsp;For the current
+    setting, this happens to also be 25%. &nbsp;The balance point is the
+    same numeric value for both power and membership, but has a
+    different impact on each part, as described below.<br>
+    <br>
+    Each variable faction bonus has a base value that it alters
+    according to a function of the power and membership. &nbsp;If
+    everything is at balance, the system will return 100% of this value.
+    &nbsp;As things change, the percent of this value returned is
+    altered.<br>
+    <span style="font-weight: bold;"><br>
+      <span style="text-decoration: underline;">Power</span>:</span>
+    Power is gained by the token and territory faction games. &nbsp;Each
+    game can provide up to 1000 points for a faction.<span
+      style="font-weight: bold;"></span><br>
+    <br>
+    If power is less than or equal to the balance point, then the
+    percent contributed is defined by the line between -10% at 0 power
+    and 100% at balance. &nbsp;In the code, this equation is defined as
+    <span style="font-style: italic;">((110 * iPower) / iBalance) - 10</span>,
+    where iPower is the faction's power points and iBalance is the
+    number of points at balance.. &nbsp;If power is greater than the
+    balance point, then the percent contributed is defined by the line
+    between 100% at balance and 150% at twice the balance point; in
+    other words, you can only get benefit up 50% of the points available
+    (at current settings). &nbsp;In the code, this equation is defined
+    as <span style="font-style: italic;">100 + ((50 * (iPower -
+      iBalance)) / iBalance)</span>. &nbsp;This value is bound to -10%
+    at the low end and 150% at the high end.<br>
+    <br>
+    The goal is that it should be quick to get full power at balance,
+    but pushing beyond the balance point gives diminishing returns.
+    &nbsp;But, it's still possible to gain a bit of power at the expense
+    of someone else's power. &nbsp;This encourages the loser faction to
+    fight back (in theory ;).<br>
+    <br>
+    <span style="font-weight: bold;"><span style="text-decoration:
+        underline;">Membership</span>:</span> Membership is a count of
+    all players in the faction who have been active (who have previous
+    logged on within a certain period of time).&nbsp; The balance point
+    for membership is determined by the total number of intriguing
+    players in the game. &nbsp;With the current setting of 25%, this
+    means that in a game with 500 intriguting players the balance point
+    is 125 members.<br>
+    <br>
+    If membership is less than or equal to the balance point, then the
+    percent is 100%. &nbsp;This means the underdog will always have
+    maximum power for whatever they gain. &nbsp;If membership is greater
+    than the balance point, then the percent contribute is defined by
+    the line between 100% at balance and 25% at 2.5 times balance.
+    &nbsp;In the code, this equation is defined as <span
+      style="font-style: italic;">((-50
+      * iMembers) / iBalance) + 150</span>, where iMembers is the number
+    of members in the faction and iBalance is the balance point in
+    members. &nbsp;This value is bound between 25% at the low end and
+    100% at the high end.<br>
+    <br>
+    <span style="font-weight: bold;"><span style="text-decoration:
+        underline;">Total</span>:</span> The total is the result of
+    these two factors. &nbsp;So, if power contributes 110% and
+    membership contributes 90%, then the final value will be 99% of the
+    base value.<br>
+    <h3><span style="font-weight: bold;">Constant bonuses:</span></h3>
+    <h3><span style="font-weight: bold;"></span></h3>
+    <span style="font-weight: bold;"></span><span style="font-weight:
+      bold;"></span> The lines labeled &#8220;Constant&#8221; above are constant
+    bonuses for the faction. For example, the Princess&#8217; followers get a
+    small constant discount when buying items. This power does not
+    fluctuate with faction power or membership as other bonuses do.<br>
+    <h2>Historical view:</h2>
+    Originally there were only Duke and Princess factions. Princess was
+    focused on spells; she gave you more improves per time period
+    (improves had a harder upper limit), she gave a bonus to all spell
+    power, and gave a bonus to defense. &nbsp;Duke focused on weapon
+    play, giving bonuses to hit, to damage, and to prices. &nbsp;The
+    faction powers only scaled by the number of councilors swayed to the
+    faction. &nbsp;The strategy was to have everyone join the same
+    faction and swing all the councilors that direction. &nbsp;Most
+    people chose Duke because it gave more bonuses for built characters;
+    the Princess' bonus for improves were not useful to a character that
+    was full built.<br>
+    <br>
+    During <span style="font-weight: bold;">Trinity</span>, lots of
+    things about factions changed. &nbsp;First, the Rebel faction was
+    added. &nbsp;The Rebel faction got most of the fighter-type bonuses
+    whereas magic was divided between the new Duke and the existing
+    Princess factions. &nbsp;The Rebel faction was simply too powerful
+    with the &#8220;pure fighter&#8221; theme of Weaponcraft and Kraanan bonuses.
+    &nbsp;The damage bonus could add up to 3 points of damage (I
+    believe) to melee weapons, the same as Duke could before, depending
+    on faction settings. It made the faction incredibly powerful and
+    vastly popular. Princess was a distant second, with Duke slightly
+    behind. &nbsp;<br>
+    <br>
+    Also during Trinity, the concept of a bonus to improve was added
+    during this time, instead of the Princess' old power of allowing
+    more imps per time period. &nbsp; We also gave the token game
+    another state for councilors to be, "dedicated" in addition to the
+    previous "strong" and "weak" states. &nbsp;The territory game was
+    also added during this time to add more depth to the faction
+    battles. &nbsp;Faction power also became a function of population in
+    addition to raw faction support by councilors and territory.<br>
+    <br>
+    Resurrection saw the rebalancing of the schools between factions.
+    &nbsp;Jonas lost Kraanan to focus much more on weaponcraft skills,
+    and the damage bonus was reduced. &nbsp;Spell bonuses were
+    distributed between the Duke and Princess more evenly. &nbsp;Soldier
+    shields were introduced as a high-powered optional PvP event.
+    &nbsp;We also restricted the territory game to only be fought
+    between faction soldiers. &nbsp;The mana regeneration was briefly
+    changed to be calculated AFTER the first lower bounding of the mana
+    regen time, meaning that the Duke's mana regeneration could
+    regenerate mana faster than otherwise possible without the 5th level
+    Jala spell Rejuvenate.<br>
+    <br>
+    Overall, the damage bonus is viewed as incredibly powerful by the
+    playerbase because it could be so large in the past. &nbsp;In
+    addition, mana regeneration is viewed as powerful because of the
+    faster-than-possible mechanics described above. &nbsp;Players
+    generally have long memories of when something is overpowered and
+    will stick with conventional wisdom even after it is no longer
+    correct.
+  </body>
+</html>

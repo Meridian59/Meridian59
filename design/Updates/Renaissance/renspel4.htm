@@ -1,0 +1,950 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE></TITLE>
+   <META NAME="Author" CONTENT="">
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.03Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY>
+
+<P><B><FONT SIZE=+4>New Spells for Renaissance:</FONT></B></P>
+
+<P><B><FONT SIZE=-1>[Draft 4: Oct 9, 97]</FONT></B></P>
+
+<P>This list is split into three levels of priority. A's get done before
+B's, C's are pretty much a wish-list and are likely to fall off the schedule.</P>
+
+<P>note: there is a new type of spell, summoning. This means any type of
+spell which creates objects in the room. This includes wall of fire, reflection,
+fog, web, etc. Any spell of this type must count other summoned objects
+in the room before allowing the spell to be cast. The max number should
+be roughly equivalent to two walls/minefields, three webs/fogs, x reflections.
+This has already been implemented in a nonstandard way with reflection
+and firewalls, but since this update contains a number of new spells of
+this type, it needs to be standardized.</P>
+
+<P>[Tim: this means it might be warranted to create a new kind of passive
+object which firewall, web, mine, and other objects will subclass. Dealing
+with reflections and attackable bramble objects will require additional
+handling, but most things would fit under that umbrella.]</P>
+
+<P>[Tim: mana, vigor, etc numbers here are first-pass estimates. If you
+think some need tweaking, I defer to your judgement. Let me know if you
+want to adjust them majorly though.]</P>
+
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%"><B><FONT SIZE=+2>A-list:</FONT></B></P>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Faren</FONT>: </I></P>
+
+<P><B>Web</B>: The floor is covered with a sticky substance, and any player
+or monster (except spiders) who walks through it may get stuck (3x3 square
+of hotplates). While stuck, player can turn, attack, cast spells, but cannot
+move. Web objects are visible on ground, and a stuck player has a graphical
+overlay of webbing on legs and feet. Chances of getting stuck and duration
+are proportional to spellpower.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 3</LI>
+
+<LI>mana: 15</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 3 seconds</LI>
+
+<LI>reagents: 1 web moss (of course)</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: tendrath (new ghost npc)</LI>
+
+<LI>duration: stuck players held for about 2/3 the duration of the hold
+spell. web objects stick around (ha!) for about 2/3 as long as firewall
+objects.</LI>
+</UL>
+</UL>
+
+<UL>
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+
+<LI>enchantment icon for stuck players (can be same as spell list icon).</LI>
+
+<LI>one-view object of webs on ground. Wide enough to occupy a little more
+than a room square (same width as firewall objects), not very tall (need
+to look like they're flat against the ground).</LI>
+
+<LI>one-view player overlay for stuck players (same for all six player
+views). Webbing extending from the ground up the player's legs to about
+knee-level.</LI>
+</UL>
+</UL>
+
+<P><B>Wall of lightning:</B> Similar to Wall of fire, but extremely damaging.
+Hurts players who walk through or stand in. Very damaging to players wearing/using
+metal objects.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 6</LI>
+
+<LI>mana: 25</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 5 seconds</LI>
+
+<LI>reagents: 1yrxl sap, 4 herbs</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: tendrath (new ghost npc)</LI>
+
+<LI>duration: lightning objects stick around 2/3 as long as firewall objects.</LI>
+
+<LI>damage: 150% that of a firewall, 200% if the player is holding anything
+metal.</LI>
+</UL>
+</UL>
+
+<UL>
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+
+<LI>one-view object of lightning wall elements. Same width as firewall
+objects, but a little taller than a player.</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><I><FONT SIZE=+1>Kraanan</FONT>:</I></P>
+
+<P><B>Reflect</B>: Personal enchantment (can target other players). Damage
+from any faren spell has a chance of reflecting onto that spell's caster
+(chance based on spellpower, and is never more than 75%, to prevent someone
+from casting it then standing in a firewall without fear of harm). [investigate
+- would be nice if multiple reflections were possible, i.e. if both mages
+have reflect cast on them the spell will ricochet between them until one
+of them fails the reflect chance.]</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 20</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 10 seconds</LI>
+
+<LI>reagents: 2 solagh, 1 kriipa claw</LI>
+
+<LI>type: Personal enchantment</LI>
+
+<LI>increase chance: 35</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: tendrath (new ghost npc)</LI>
+
+<LI>duration: 20 - 40 seconds</LI>
+
+<LI>damage: reflects 50%-75% of faren spell damage done to enchantee onto
+original faren caster. (and no damage is done to enchantee)</LI>
+</UL>
+</UL>
+
+<UL>
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+
+<LI>enchantment icon (can be same as spell list icon)</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Jala:</FONT></I></P>
+
+<P><B>Jig</B>: Forces all players in room to dance, preventing them from
+using items, running, casting spells, or attacking. Paralyzes all monsters
+while this silliness is going on.. Lasts as long as bard holds trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 10 with upkeep of 10</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 1 diamond (a miniature disco ball - what else?)</LI>
+
+<LI>type: Room enchantment</LI>
+
+<LI>increase chance: 40</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: parrin arrogone (minstrel)</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+
+<LI>room enchantment icon (can be same as spell list icon)</LI>
+</UL>
+</UL>
+
+<P><B>Mana Convergence:</B> All spellcasters in room receive a bonus to
+spellpower. High mana drain to upkeep the song.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 15 with upkeep of 15</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 1 cut seraphym</LI>
+
+<LI>type: Room enchantment</LI>
+
+<LI>increase chance: 40</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: parrin arrogone (minstrel)</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+
+<LI>spellpower bonus: 25% of mana convergence's spellpower is added to
+all casters' spellpowers.</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+
+<LI>room enchantment icon (can be same as spell list icon)</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Riija</FONT>:</I></P>
+
+<P><B>Feign Death</B>: Caster looks like a corpse (name disappears) as
+long as s/he holds trance. Also sends a fake death notice, but only to
+the yell-list. Player can walk, and is attackable (neither of these break
+the trance). Lowers viewpoint to just above the ground.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 1</LI>
+
+<LI>mana: 5 with upkeep of 5</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 2 solagh</LI>
+
+<LI>type: personal enchantment</LI>
+
+<LI>increase chance: 40</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: riija monk?</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+
+<LI>personal enchantment icon (can be same as spell list icon)</LI>
+</UL>
+</UL>
+
+<P><B>Evil Twin</B>: Creates a reflection of target player who will immediately
+attack his/her original. An evil twin is stronger than a reflection, but
+there can only be one twin of any given player in a room at a time. The
+evil twin cannot tell the difference between its original and any other
+reflections which may be present. Similarly, reflections cannot tell the
+evil twin apart from the original or other reflections (unless the twin
+attacks it). The caster must hold trance to keep the spell active.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 20 with upkeep of 20</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: perpetual</LI>
+
+<LI>reagents: 3 firesand, 3 rainbow fern, 3 uncut seraphym</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: same as reflection</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: lich queen venya'cyr</LI>
+
+<LI>duration: as long as caster holds trance</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Shal'ille</FONT></I></P>
+
+<P><B>Final Rites:</B> Damages all undead creatures in a room (including
+necromancer players). Requires a fairly lengthy trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 5</LI>
+
+<LI>mana: 20</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: 10 seconds</LI>
+
+<LI>reagents: 2 emeralds</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 20</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: shal'ille priestess or Miriana</LI>
+
+<LI>damage: 10-20 (scales by target's karma and spellpower)</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Qor:</FONT></I></P>
+
+<P><B>Poison Cloud</B>: Similar to fog, except moving through or standing
+in the cloudy area may poison player (no effect on monsters).</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 20</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: 5 seconds</LI>
+
+<LI>reagents: 2 shaman blood</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 20</LI>
+
+<LI>outlaw: <I>oh</I>, yeah.</LI>
+
+<LI>teacher: lich queen</LI>
+
+<LI>damage: poison.</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+
+<LI>one-view poison cloud object that hangs in the air, wide enough to
+cover a room square (same width as firewall objects) and just a bit taller
+than a player. There can be a small gap between the bottom of the cloud
+an the ground.</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%"><B><FONT SIZE=+1>B-List:</FONT></B></P>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Faren:</FONT></I></P>
+
+<P><B>Wall of Bramble:</B> Player/monster takes damage while walking through
+it, but not if standing stationary. </P>
+
+<UL>
+<P>kod details:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>level: 2</LI>
+
+<LI>mana: 10</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 4 seconds</LI>
+
+<LI>reagents: 1 kriipa claw</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: tendrath? miriana?</LI>
+
+<LI>damage: 1-5 points</LI>
+
+<LI>duration: lasts 150% as long as a firewall object, though is attackable,
+with 10-20 hp depending on spellpower.</LI>
+</UL>
+</UL>
+
+<UL>
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+
+<LI>one-view bramble object, wide enough to cover a room square (same width
+as firewall objects) and about half as tall as a player.</LI>
+</UL>
+</UL>
+
+<P><B>Fog: </B>Visual effect only, thick partially translucent clouds of
+fog, arranged in a 3x3 square.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 1</LI>
+
+<LI>mana: 5</LI>
+
+<LI>vigor: 5</LI>
+
+<LI>trance: 10 seconds</LI>
+
+<LI>reagents: 4 herbs</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 20</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: Miriana</LI>
+</UL>
+
+<P>art needs:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>spell list icon</LI>
+
+<LI>one-view fog cloud object that hangs in the air, wide enough to cover
+a room square (same width as firewall objects) and just a bit taller than
+a player. There can be a small gap between the bottom of the cloud an the
+ground. Should look very similar to poison cloud object.</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Kraanan:</FONT></I></P>
+
+<P><B>Assess: </B>Cast on a monster. Tells the caster how the monster toughness
+compares to his/her ability level. If misfires, delivers misinformation.
+Requires a medium-length trance.</P>
+
+<UL>
+<P>kod details:</P>
+</UL>
+
+<UL>
+<UL>
+<LI>level: 1</LI>
+
+<LI>mana: 5</LI>
+
+<LI>vigor: 5</LI>
+
+<LI>trance: none</LI>
+
+<LI>reagents: 2 herbs</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 10</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: jonas d'accor</LI>
+</UL>
+</UL>
+
+<UL>
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Riija:</FONT></I></P>
+
+<P><B>Clairvoyance: </B>Cast on an item. For the last three times it was
+looted from a player corpse, tells the caster who looted it and who it
+was looted from. Requires a lengthy trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 3</LI>
+
+<LI>mana: 15</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: 20 seconds</LI>
+
+<LI>reagents: 2 solagh, 1 yrxl sap</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 35</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: tendrath</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P><B>Divine:</B> Locates a token. Spell is always cast successfully, but
+if it fails it provides misinformation. Requires a lengthy trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 30</LI>
+
+<LI>vigor: 30</LI>
+
+<LI>trance: 20 seconds</LI>
+
+<LI>reagents: 2 solagh, 2 kriipa claws</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 35</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: jonas d'accor?</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Shal'ille:</FONT></I></P>
+
+<P><B>Holy Symbol:</B> Has a chance of frightening undead creatures, making
+them run away from the caster (each monster checks individually). If an
+undead monster is not frightened and has no target, it will aggressively
+pursue the caster (hatred=100).</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 2</LI>
+
+<LI>mana: 8</LI>
+
+<LI>vigor: 2</LI>
+
+<LI>trance: 2 seconds</LI>
+
+<LI>reagents: 2 herbs, 2 elderberry</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 15</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: shal'ille priestess</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P><B>Seek</B>: Cast on a player. Acts as a detect spell, highlighting
+any player who is carrying something that was looted from the seeker's
+corpse.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 2</LI>
+
+<LI>mana: 10</LI>
+
+<LI>vigor: 5</LI>
+
+<LI>trance: 3 seconds</LI>
+
+<LI>reagents: 1 solagh, 1 orc tooth</LI>
+
+<LI>type: personal enchantment</LI>
+
+<LI>increase chance: 15</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: bone priestess</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+
+<LI>personal enchantment icon (can be same as spell list icon).</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Qor:</FONT></I></P>
+
+<P><B>Infest</B>:&nbsp;Summons lots of rats. Requires a lengthy trance.
+[investigate - how to decide where to gen them? Normal monster gen points,
+spots adjacent to caster, spots adjacent to monster gen points?, spots
+adjacent to other players or monsters in the room?]</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 3</LI>
+
+<LI>mana: 10</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 4 seconds</LI>
+
+<LI>reagents: 2 shaman blood</LI>
+
+<LI>type: summoning</LI>
+
+<LI>increase chance: 25</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: lich queen</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P><B>Blood Inheritance</B>: Cast on an item. Erases all record of corpse
+looting. Requires a lengthy trance.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 4</LI>
+
+<LI>mana: 15</LI>
+
+<LI>vigor: 15</LI>
+
+<LI>trance: 20 seconds</LI>
+
+<LI>reagents: 1 solagh, 2 shaman blood</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 35</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: lich queen</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%"><B><FONT SIZE=+1>C-List:</FONT></B></P>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Kraanan:</FONT></I></P>
+
+<P><B>Shatterlock</B>: If caster holds trance in close proximity to guild-protected
+door, will eventually open it. Multiple casters decrease trance time.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 6</LI>
+
+<LI>mana: 50</LI>
+
+<LI>vigor: 50</LI>
+
+<LI>trance: 5 minutes</LI>
+
+<LI>reagents: 4 kriipa claws</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 50</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: Jonas</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Riija:</FONT></I></P>
+
+<P><B>Disguise Alignment</B>: Cast on a player. Fools detect evil/good
+spells (reverses effect).</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 3</LI>
+
+<LI>mana: 10</LI>
+
+<LI>vigor: 10</LI>
+
+<LI>trance: 20 seconds</LI>
+
+<LI>reagents: 1 solagh, 1 web moss</LI>
+
+<LI>type: personal enchantment</LI>
+
+<LI>increase chance: 35</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: Bone Priestess</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+
+<LI>personal enchantment icon (can be same as spell list icon)</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Shal'ille:</FONT></I></P>
+
+<P><B>Soothe</B>: Improves the mood of npcs, lessens monsters' hatred of
+their target.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 1</LI>
+
+<LI>mana: 5</LI>
+
+<LI>vigor: 5</LI>
+
+<LI>trance: 2 seconds</LI>
+
+<LI>reagents: 4 elderberry</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 10</LI>
+
+<LI>outlaw: no</LI>
+
+<LI>teacher: Miriana</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%"><I><FONT SIZE=+1>Qor:</FONT></I></P>
+
+<P><B>Grate</B>: Worsens the mood of npcs, increases monsters' hatred of
+their target.</P>
+
+<UL>
+<P>kod details:</P>
+
+<UL>
+<LI>level: 1</LI>
+
+<LI>mana: 5</LI>
+
+<LI>vigor: 5</LI>
+
+<LI>trance: 2 seconds</LI>
+
+<LI>reagents: 2 darkberry</LI>
+
+<LI>type: sorcery</LI>
+
+<LI>increase chance: 10</LI>
+
+<LI>outlaw: yes</LI>
+
+<LI>teacher: Maleval</LI>
+</UL>
+
+<P>art needs:</P>
+
+<UL>
+<LI>spell list icon</LI>
+</UL>
+</UL>
+
+<P>
+<HR WIDTH="100%">
+<HR WIDTH="100%"></P>
+
+</BODY>
+</HTML>

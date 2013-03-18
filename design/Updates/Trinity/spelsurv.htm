@@ -1,0 +1,830 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Spell Usage Survey</TITLE>
+</HEAD>
+<BODY>
+
+<P>This survey is based on a dump of spell usage done a server (I don't
+know which) on April 1, 98, one week after Renaissance went live. The dump
+is available <A HREF="spelluse.txt">here</A>, raw except for having been
+split into schools and labelled by level. The repot shows how often spells
+are attempted, how often the casting succeeds, and other potentially useful
+data. The average spellpower is new in Renaissance and looks kind of glitchy,
+so I haven't really relied on it as a measure of spell effectiveness.</P>
+
+<P>A 'cast' is defined as a successful cast (a cast which passed simple
+ability, eligibility, and targetting checks and thus used reagents). Touch
+attack spells use the physical attack code (note that the 'casts' field
+is always 0 since it doesn't run through that bit of code) and always use
+reagents, so for those spells a 'cast' is defined as an attempt.</P>
+
+<CENTER><P><B>Number of spells/skills</B></P></CENTER>
+
+<CENTER><TABLE BORDER=1 WIDTH="1%" >
+<TR>
+<TD></TD>
+
+<TD>Qor</TD>
+
+<TD>Shal'ille</TD>
+
+<TD>Faren</TD>
+
+<TD WIDTH="1%">Kraanan</TD>
+
+<TD>Riija</TD>
+
+<TD>Jala</TD>
+
+<TD>Weaponcraft</TD>
+</TR>
+
+<TR>
+<TD>all levels</TD>
+
+<TD>23</TD>
+
+<TD>25</TD>
+
+<TD>19</TD>
+
+<TD>25</TD>
+
+<TD>19</TD>
+
+<TD>5</TD>
+
+<TD>13</TD>
+</TR>
+
+<TR>
+<TD>level 1</TD>
+
+<TD>3</TD>
+
+<TD>2</TD>
+
+<TD>2</TD>
+
+<TD>2</TD>
+
+<TD>5</TD>
+
+<TD>1</TD>
+
+<TD>2</TD>
+</TR>
+
+<TR>
+<TD>level 2</TD>
+
+<TD>3</TD>
+
+<TD>6</TD>
+
+<TD>4</TD>
+
+<TD WIDTH="50">4</TD>
+
+<TD WIDTH="10%">4</TD>
+
+<TD WIDTH="10%">1</TD>
+
+<TD WIDTH="10%">3</TD>
+</TR>
+
+<TR>
+<TD>level 3</TD>
+
+<TD>4</TD>
+
+<TD>4</TD>
+
+<TD>4</TD>
+
+<TD WIDTH="100">7</TD>
+
+<TD>4</TD>
+
+<TD>1</TD>
+
+<TD>3</TD>
+</TR>
+
+<TR>
+<TD>level 4</TD>
+
+<TD>7</TD>
+
+<TD>6</TD>
+
+<TD>3</TD>
+
+<TD>6</TD>
+
+<TD>2</TD>
+
+<TD>1</TD>
+
+<TD>3</TD>
+</TR>
+
+<TR>
+<TD>level 5</TD>
+
+<TD>5</TD>
+
+<TD>5</TD>
+
+<TD>4</TD>
+
+<TD>5</TD>
+
+<TD>3</TD>
+
+<TD>1</TD>
+
+<TD>1</TD>
+</TR>
+
+<TR>
+<TD>level 6</TD>
+
+<TD>1</TD>
+
+<TD>2</TD>
+
+<TD>2</TD>
+
+<TD>1</TD>
+
+<TD>1</TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+</TR>
+</TABLE></CENTER>
+
+<CENTER><P><B>Level of Usage (the popularity factor)</B></P></CENTER>
+
+<CENTER><TABLE BORDER=1 >
+<TR>
+<TD></TD>
+
+<TD>Qor</TD>
+
+<TD>Shal'ille</TD>
+
+<TD>Faren</TD>
+
+<TD>Kraanan</TD>
+
+<TD>Riija</TD>
+
+<TD>Jala</TD>
+</TR>
+
+<TR>
+<TD>all levels</TD>
+
+<TD>24102 </TD>
+
+<TD>43478 </TD>
+
+<TD>29976 </TD>
+
+<TD>94551 </TD>
+
+<TD>15809 </TD>
+
+<TD>1457 </TD>
+</TR>
+
+<TR>
+<TD>level 1</TD>
+
+<TD>5385 </TD>
+
+<TD>15462 </TD>
+
+<TD>9482 </TD>
+
+<TD>14226 </TD>
+
+<TD>8795 </TD>
+
+<TD>219 </TD>
+</TR>
+
+<TR>
+<TD>level 2</TD>
+
+<TD>8063 </TD>
+
+<TD>3675 </TD>
+
+<TD>13640 </TD>
+
+<TD>31526 </TD>
+
+<TD>5999 </TD>
+
+<TD>515</TD>
+</TR>
+
+<TR>
+<TD>level 3</TD>
+
+<TD>8141 </TD>
+
+<TD>5362 </TD>
+
+<TD>1819 </TD>
+
+<TD>25134 </TD>
+
+<TD>437 </TD>
+
+<TD>624 </TD>
+</TR>
+
+<TR>
+<TD>level 4</TD>
+
+<TD>1565 </TD>
+
+<TD>10434 </TD>
+
+<TD>1930 </TD>
+
+<TD>16608 </TD>
+
+<TD>572 </TD>
+
+<TD>97</TD>
+</TR>
+
+<TR>
+<TD>level 5</TD>
+
+<TD>948 </TD>
+
+<TD>8525 </TD>
+
+<TD>3060 </TD>
+
+<TD>6573 </TD>
+
+<TD>6</TD>
+
+<TD>2</TD>
+</TR>
+
+<TR>
+<TD>level 6</TD>
+
+<TD>0</TD>
+
+<TD>38 </TD>
+
+<TD>45 </TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+</TR>
+</TABLE></CENTER>
+
+<CENTER><P><B>Average usage per spell (the 'dead weight' factor)</B></P></CENTER>
+
+<CENTER><TABLE BORDER=1 >
+<TR>
+<TD></TD>
+
+<TD>Qor</TD>
+
+<TD>Shal'ille</TD>
+
+<TD>Faren</TD>
+
+<TD>Kraanan</TD>
+
+<TD>Riija</TD>
+
+<TD>Jala</TD>
+</TR>
+
+<TR>
+<TD>all levels</TD>
+
+<TD>1048 </TD>
+
+<TD>1739</TD>
+
+<TD>1578</TD>
+
+<TD>3782</TD>
+
+<TD>832</TD>
+
+<TD>291</TD>
+</TR>
+
+<TR>
+<TD>level 1</TD>
+
+<TD>1795 </TD>
+
+<TD>7731 </TD>
+
+<TD>4741 </TD>
+
+<TD>7113 </TD>
+
+<TD>1759 </TD>
+
+<TD>219</TD>
+</TR>
+
+<TR>
+<TD>level 2</TD>
+
+<TD>2688 </TD>
+
+<TD>610 </TD>
+
+<TD>3410 </TD>
+
+<TD>7882 </TD>
+
+<TD>1500 </TD>
+
+<TD>515</TD>
+</TR>
+
+<TR>
+<TD>level 3</TD>
+
+<TD>2035 </TD>
+
+<TD>1341 </TD>
+
+<TD>455 </TD>
+
+<TD>3591 </TD>
+
+<TD>109 </TD>
+
+<TD>624</TD>
+</TR>
+
+<TR>
+<TD>level 4</TD>
+
+<TD>224 </TD>
+
+<TD>1739 </TD>
+
+<TD>643 </TD>
+
+<TD>2768 </TD>
+
+<TD>286 </TD>
+
+<TD>97</TD>
+</TR>
+
+<TR>
+<TD>level 5</TD>
+
+<TD>190 </TD>
+
+<TD>1739 </TD>
+
+<TD>765 </TD>
+
+<TD>1315 </TD>
+
+<TD>2</TD>
+
+<TD>2</TD>
+</TR>
+
+<TR>
+<TD>level 6</TD>
+
+<TD>0</TD>
+
+<TD>19 </TD>
+
+<TD>23 </TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+</TR>
+</TABLE></CENTER>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P><B><FONT SIZE=+2>Qor:</FONT></B></P>
+
+<P>24102 casts total. 23 spells. 1048 casts per spell (this number is something
+of a 'coolness rating' for the school).</P>
+
+<P>1: 5385 casts. 1795 per spell.</P>
+
+<P>2: 8063 casts. 2688 per spell.</P>
+
+<P>3: 8141 casts. 2035 per spell.</P>
+
+<P>4: 1565 casts. 224 per spell.</P>
+
+<P>5: 948 casts. 190 per spell.</P>
+
+<P><B><FONT SIZE=+2>Shal'ille:</FONT></B></P>
+
+<P>43478 casts total.</P>
+
+<P>1: 15462 casts. 7731 per spell.</P>
+
+<P>2: 3675 casts. 610 per spell.</P>
+
+<P>3: 5362 casts. 1341 per spell.</P>
+
+<P>4: 10434 casts. 1739 per spell.</P>
+
+<P>5: 8525 casts. 1705 per spell.</P>
+
+<P>6: 38 casts. 19 per spell.</P>
+
+<P><B><FONT SIZE=+2>Faren:</FONT></B></P>
+
+<P>29976 casts total.</P>
+
+<P>1: 9482 casts. 4741 per spell.</P>
+
+<P>2: 13640 casts. 3410 per spell.</P>
+
+<P>3: 1819 casts. 455 per spell.</P>
+
+<P>4: 1930 casts. 643 per spell.</P>
+
+<P>5: 3060 casts. 765 per spell.</P>
+
+<P>6: 45 casts. 23 per spell.</P>
+
+<P><B><FONT SIZE=+2>Kraanan:</FONT></B></P>
+
+<P>94551 casts total.</P>
+
+<P>1: 14226 casts. 7113 per spell.</P>
+
+<P>2: 31526 casts. 7882 per spell.</P>
+
+<P>3: 25134 casts. 3591 per spell.</P>
+
+<P>4: 16608 casts. 2768 per spell.</P>
+
+<P>5: 6573 casts. 1315 per spell.</P>
+
+<P>6: 0 casts. 0 per spell.</P>
+
+<P><B><FONT SIZE=+2>Riija:</FONT></B></P>
+
+<P>15809 casts total.</P>
+
+<P>1: 8795 casts. 1759 per spell.</P>
+
+<P>2: 5999 casts. 1500 per spell.</P>
+
+<P>3: 437 casts. 109 per spell.</P>
+
+<P>4: 572 casts. 286 per spell.</P>
+
+<P>5: 6 casts. 2 per spell.</P>
+
+<P>6: 0 casts. 0 per spell.</P>
+
+<P><B><FONT SIZE=+2>Jala:</FONT></B></P>
+
+<P>1457 casts total.</P>
+
+<P>1: 219 casts.</P>
+
+<P>2: 515 casts.</P>
+
+<P>3: 624 casts.</P>
+
+<P>4: 97 casts.</P>
+
+<P>5: 2 casts.</P>
+
+<P>
+<HR WIDTH="100%"></P>
+
+<P>A partial transcription of the raw dump into a more readable format:</P>
+
+<P>(I stopped when I realized that it was of limited use)</P>
+
+<P><B><FONT SIZE=+2>Qor:</FONT></B></P>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>level</TD>
+
+<TD>name</TD>
+
+<TD>casts</TD>
+
+<TD>average spellpower</TD>
+
+<TD>new</TD>
+</TR>
+
+<TR>
+<TD>1</TD>
+
+<TD>darkness</TD>
+
+<TD>4066</TD>
+
+<TD>-5</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>1</TD>
+
+<TD>unholy weapon</TD>
+
+<TD>554</TD>
+
+<TD>50</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>1</TD>
+
+<TD>unholy resolve</TD>
+
+<TD>765</TD>
+
+<TD>44</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>2</TD>
+
+<TD>Kara'hol's curse</TD>
+
+<TD>1775</TD>
+
+<TD>58</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>2</TD>
+
+<TD>detect good</TD>
+
+<TD>389</TD>
+
+<TD>37</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>2</TD>
+
+<TD>acid touch</TD>
+
+<TD>5899</TD>
+
+<TD>N/A</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>3</TD>
+
+<TD>enfeeble</TD>
+
+<TD>3400</TD>
+
+<TD>-28</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>3</TD>
+
+<TD>fade</TD>
+
+<TD>637</TD>
+
+<TD>56</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>3</TD>
+
+<TD>hold</TD>
+
+<TD>4021</TD>
+
+<TD>3</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>3</TD>
+
+<TD>animate</TD>
+
+<TD>83</TD>
+
+<TD>54</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+
+<TD>defile</TD>
+
+<TD>178</TD>
+
+<TD>53</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+
+<TD>curse weapon</TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+
+<TD>poison fog</TD>
+
+<TD>95</TD>
+
+<TD>49</TD>
+
+<TD>*</TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+
+<TD>swap</TD>
+
+<TD>195</TD>
+
+<TD>52</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+
+<TD>shadow rift</TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+
+<TD>*</TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+
+<TD>Shal'illebane</TD>
+
+<TD>326</TD>
+
+<TD>56</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>4</TD>
+
+<TD>vampiric touch</TD>
+
+<TD>771</TD>
+
+<TD>0</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>5</TD>
+
+<TD>blind</TD>
+
+<TD>414</TD>
+
+<TD>69</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>5</TD>
+
+<TD>death link</TD>
+
+<TD>88</TD>
+
+<TD>87</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>5</TD>
+
+<TD>invisibility</TD>
+
+<TD>445</TD>
+
+<TD>54</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>5</TD>
+
+<TD>nodeburst</TD>
+
+<TD>1</TD>
+
+<TD>54</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>5</TD>
+
+<TD>blood inheritance</TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+
+<TD>*</TD>
+</TR>
+
+<TR>
+<TD>6</TD>
+
+<TD>gaze of the basilisk</TD>
+
+<TD>0</TD>
+
+<TD>0</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+</BODY>
+</HTML>

@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Timetamps and Related Bugs</title>
+</head>
+<body>
+<h1>Timestamps and Related Bugs<br>
+</h1>
+By: Brian
+Green&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Date: May 27, 2006<br>
+<h2> Purpose:</h2>
+This document details an old bug in the system dealing with timestamps
+and variable overflows.<span style="font-weight: bold;"><br>
+</span>
+<h2>Basics</h2>
+The server provides timestamps to the scripting system which uses it
+for various aspects of the game.&nbsp; Unfortunately, due to Blakod's
+limitation on maximum integer size, this causes overflows on a regular
+basis and causes problems with the game.<br>
+<h2>Details</h2>
+<h3>Getting a timestamp</h3>
+The scripting system can get a timestamp from the server by calling the
+function <span style="font-style: italic;">GetTime()</span>.&nbsp;
+Originally, this returned the normal system time, which is the number
+of seconds since 1970.&nbsp; Unfortunately, due to the limitations on
+the <a href="Blakod%20notes.htm#maxint">maximum integer value</a> able
+to be stored by Blakod, the value of the timestamp is too large to
+store in a script variable.<br>
+<h3>The solution</h3>
+The temporary solution has been to adjust the values returned by the
+function to the script system.&nbsp; This is accomplished in the file <span
+ style="font-family: monospace;">\blakston\blakserv\ccode.c </span>on
+line 2045.&nbsp; Currently we subtract the long integer value of
+1148678128L, which puts timestamp 0 sometime in the month of May,
+2006.&nbsp; This fix will work until the new timestamp value overflows
+the maximum integer value, which will happen in approximiately 4 years
+and 3 months.<br>
+<br>
+Likewise, the client has to recalculate timestamps passed to it.&nbsp;
+Currently this only affecs globe posts and mail message
+timestamps.&nbsp; This value is set in file <span
+ style="font-family: monospace;">\blakston\module\mailnews\newsread.c</span>
+on line 372.&nbsp;&nbsp; The value should match the one set in the
+server above.&nbsp; This code goes into the mailnews.dll client file.<br>
+<h3>Systems affected by the bug</h3>
+Currently, there are a few systems that use timestamps and that will be
+affected by this bug.&nbsp; They include:<br>
+<ul>
+  <li>Globe spam timer: users will be unable to post on the globes.<br>
+  </li>
+  <li>Suicide timer: users will be unable to suicide characters.<br>
+  </li>
+  <li>Mule casting timer: unguilded innocents cannot cast on others.<br>
+  </li>
+  <li>Globe post and new mail message timestamps will show an incorrect
+date.</li>
+</ul>
+The following systems are also affected, but can be fixed by doing <span
+ style="font-family: monospace;">"send class user UpdateTimeValues</span>"
+at the server console or admin window.<br>
+<ul>
+  <li>Double death check in player: will prevent users from properly
+dying.<br>
+  </li>
+  <li>Guild rejoin time: will preventing users from rejoining a guild.</li>
+</ul>
+Adjusting the values above should fix all problems except for the
+timestamps on globe posts and mail messages.&nbsp; Unfortunately, these
+will always have incorrect dates when the times are adjusted.<br>
+<br>
+Note that existing mail messages on the client have their timestamps
+converted into dates when they are downloaded.<br>
+<h3>Future directions</h3>
+Unfortunately, it is easy to forget that we currently have a temporary
+fix.&nbsp; This means the bug will become active again and require the
+change of the variables mentioned above.&nbsp; It would be nice to have
+a solution that does not require recompiling the server and&nbsp; a
+client DLL.<br>
+<br>
+A proposed solution:<br>
+<ul>
+  <li>Have a configuration variable in blakserv.cfg that contains the
+offset required.&nbsp; This can be adjusted at server startup.&nbsp;
+Perhaps have the system give a warning if the current offset will
+expire within a few months.&nbsp; Alternatively: the server could
+calculate an offset every time it starts up; this seems like overkill
+since the bug only strikes once every 4 years or so.&nbsp; This
+alternative would also create problems with the time stamps on globe
+postings if they are older than the offset.</li>
+  <li>The scripting system would have to notified when the value is
+changed so that it can adjust stored timestamps appropriately.<br>
+  </li>
+  <li>As part of the login handshake, the server can pass the current
+offset to the client.&nbsp; The client stores this value and uses it to
+offset any timestamps sent to it.</li>
+  <li>Globe postings and mail messages could use strings for timestamps
+instead of integers.&nbsp; This would increase the amount of bandwidth
+required to send the information.&nbsp; This could cause problems,
+since a large amount of mail messages can knock a person offline; using
+strings would reduce the number of messages that could be passed at one
+time<br>
+  </li>
+</ul>
+<span style="font-family: monospace;"></span>
+</body>
+</html>

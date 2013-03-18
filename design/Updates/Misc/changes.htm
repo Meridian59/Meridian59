@@ -1,0 +1,738 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE>Changes</TITLE>
+</HEAD>
+<BODY>
+
+<H3>Changes made to Meridian 59 since 27 Nov 1996</H3>
+
+<P>To make changes to this document, check the file out in sourcesafe,
+and make your changes in whatever webpage-editing program you prefer (Netscape
+Gold has a reasonable one built in). Place all changes in chronological
+order, so that testers don't have to hunt to find new stuff. Only the development
+team should make changes to this document. Click here to know <A HREF="#addon">the
+easiest way to use this system.</A> </P>
+
+<P>Click here to see the <A HREF="oldchanges.htm">changes
+made before 20 Jan 1997.</A></P>
+
+<H4>Server and server-related kod changes</H4>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD>20 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>The <TT>show account</TT> command now works with account names that
+start with a number.</TD>
+
+<TD>High confidence</TD>
+</TR>
+</TABLE>
+
+<H4>Client Changes</H4>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD>20 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Moved ad files to the &quot;ads&quot; subdirectory of the client.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>22 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed character creation dialog to use palette translations on faces.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>22 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Fixed up the text input box's selection stuff, so that when you click
+on the box, the text isn't selected.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>22 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed the way names match in tells. The new way is: 
+<P>1) If the name exactly matches a player's name, tell to just that player.</P>
+
+<P>2) If the name exactly matches a group name, send to that group.</P>
+
+<P>3) If the name unambiguously matches a prefix of a single player's name,
+tell to that player.</P>
+
+<P>4) If the name unambiguously matches a prefix of a single group's name,
+send to that group.</P>
+
+<P>5) Otherwise, give an error.</P>
+</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>23 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added a control to the character creation dialog for changing hair
+color.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>24 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Changed the character creation dialog so that the &quot;spells&quot;
+and &quot;skills&quot; tabs don't appear if you log on as a guest.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>24 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Detect when you type your account name as &quot;guest&quot;, and treat
+it as a guest login.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>24 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Set directional lighting in all outdoor rooms. Walls facing the sun
+should be brighter than walls facing away from the sun.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>25 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Patched up tells a bit more. You should no longer need quotes around
+two word player names.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>25 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Documented <A HREF="../../coding/ads.htm">advertisement support</A> and 
+<A HREF="../../coding/guest.htm">guest
+logins</A>.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>Added new online help pages from Kevin O'Hara.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Added profanity filter. 
+<LI>Switch in Preferences Dialog turns it on or off. It defaults to ON.</LI>
+
+<LI>Profanity Options Dialog available by button in Preferences Dialog
+to configure it.</LI>
+
+<LI>Profanity Options Dialog sets either &quot;ignore whole messages&quot;
+or &quot;obscure with $#@!&quot;.</LI>
+
+<LI>Profanity Options Dialog allows new words to be added or removed, but
+you can't see the list of all profane words (by design).</LI>
+
+<LI>When active, all incoming messages are filtered, and all outgoing SAY,
+TELL, BROADCAST, YELL, EMOTE commands are subject to blocking.</LI>
+
+<LI>An ignored line with profanity appears as &quot;&lt;<I>profane message
+blocked</I>&gt;&quot; in red.</LI>
+
+<LI>An obscured line with profanity appears with offensive materials replaced
+with symbols.</LI>
+
+<LI>When sending a message with profanity, a message box pops up suggesting
+you rethink your message.</LI>
+
+<LI>No profanity is stopped in either direction if your Profanity Filter
+is off.</LI>
+
+<LI>If your filter is off, you can send profanity. It is up to the receiver
+to filter their input.</LI>
+</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>EHalley</TD>
+
+<TD>Added Command Aliases. 
+<LI>Options Menu has &quot;Hotkey Aliases&quot; and &quot;Command Aliases&quot;</LI>
+
+<LI>The old Hotkey Alias dialog has a button to go to the new Command Alias
+dialog.</LI>
+
+<LI>The new Command Alias dialog has a button to go to the old Hotkey Alias
+dialog.</LI>
+
+<LI>The Command Alias dialog has Define and Remove buttons, and Word and
+Command fields.</LI>
+
+<LI>Define will add or replace a definition to the list. The current contents
+of the Word and Command fields are cleared.</LI>
+
+<LI>Remove will remove a definition from the list (either the Word entered,
+or the definition selected in the list).</LI>
+
+<LI>Clicking on a definition in the list will fill the Word and Command
+fields to edit.</LI>
+
+<LI>Clicking OK will save the definitions.</LI>
+
+<LI>Typing any alias word defined will perform the associated command.</LI>
+
+<LI>All user-level commands are given priority ('get' can't be an alias).</LI>
+
+<LI>Error messages for invalid command in an alias, and ambiguous use of
+two similar aliases.</LI>
+</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Feb</TD>
+
+<TD>EHalley</TD>
+
+<TD>Made minor modifications to Profanity Filter. 
+<LI>Dialog box has new option &quot;search extra hard for profanity&quot;.
+The new option defaults to OFF.</LI>
+
+<LI>If checked, profanity is found even if it's hiding really well, and
+also in unintended places.</LI>
+
+<LI>If not checked, profanity is not found if it's buried in other words,
+or may be a part of regular speech.</LI>
+
+<P>For example, &quot;WHO REmembers&quot; or &quot;is thiS HIT legal&quot;
+are not found as profanity with the option OFF. The use of color codes
+or funny spacing should not confuse the filter. </P>
+</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Feb</TD>
+
+<TD>EHalley</TD>
+
+<TD>Made minor modifications to Command Aliases. 
+<LI>Hitting OK without hitting Define will now try to define any word and
+command in the edit boxes automatically.</LI>
+
+<LI>Making commands with <B><TT>cmdalias laugh=emote laughs.</TT></B> command
+line form are saved automatically.</LI>
+
+<LI>Bugs with re-defining or editing existing command aliases were fixed.</LI>
+</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+</TABLE>
+
+<H4>Gameplay Changes (new gameplay elements or bug fixes)</H4>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD>20 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Weapons with a low number of 'hit points' will no longer have the text
+message that says that they are worthless. Same with armor, shields, pants,
+helmets and gauntlets.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>21 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Added brown potion that performs illusionary form at 30% skill level
+upon the quaffer.</TD>
+
+<TD>Med Confidence</TD>
+</TR>
+
+<TR>
+<TD>21 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Assassin no longer sends out so much junk mail. Instead, he 'tells'
+you when you log on during accept mode.</TD>
+
+<TD>Mid confidence.</TD>
+</TR>
+
+<TR>
+<TD>21 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Fixed major bug with Faerie Forest. Faerie Forest can now go evil.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>21 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Doors in Barloque now both teleport you to similiar coordinates, instead
+of being wierdly mismatched.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>21 Jan </TD>
+
+<TD>DSchubert</TD>
+
+<TD>Poison, Dementia and Enfeeblement now have icons.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>21 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Poison, Dementia and Enfeeblement no longer give their 'fade' message
+when you die.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>21 Jan </TD>
+
+<TD>DSchubert</TD>
+
+<TD>Connections between Jasper and f8 (lake of Jala's Song) have been cleaned
+up. Connections between c4 and temple of shal'ille have been cleaned up.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>21 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>You can no longer spawn multiple ghosts in rid_throne1.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>22 Jan</TD>
+
+<TD>REllis</TD>
+
+<TD>Made the mana nodes translucent.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>All players (guests included) start the game with 2500 shillings, a
+mace, 20 herbs, and a pair of randomly colored pants, which should start
+worn by the player.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Guest area--guest players start in RID_GUEST1 and a tutorial is presented
+to them by signs throughout the guest area. In the mausoleum (RID_GUEST4),
+there are two levers, which when hit nearly simultaneously by two different
+players, open the door in between them which contains several mummies and
+a shadow mummy. When all of these are killed, the column in the middle
+of the room lowers, with a mana node on it in the guest area, money in
+the newbie area. When the column lowers, the door closes, and then when
+players leave the monsters are recreated.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Newbie area--new players start in RID_NEWB1, which is a copy of the
+guest area, with a couple sign differences, and a portal to their hometown
+in RID_NEWB2. When they go through this portal, they lose all of their
+material possessions, and get the old standard fare (700 shils if it's
+not a repeat suicide, mace, herbs, apple).</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Fairie forest--the tree objects are now faerie trees, which 90% of
+the time follow the texture forest, but 10% of the time are off by 1 karma
+level.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Faerie Node in C2. Has three distinct properties:<BR>
+* Appears as either good or evil. If it appears good, then when it appears,
+everyone evil will have it's link to it severed. Vise versa is also true.<BR>
+* Attempting to link with this node when you are of the opposing karma
+will result in you taking 10 points of damage. This can be fatal.<BR>
+* Node provides those who link with twice as much mana as they normally
+get.<BR>
+Faerie node appears when you solve the faerie puzzle (i.e. by either making
+the forest all Very Good or all&nbsp;Very Bad). A DM can replicate this
+event with the DM&nbsp;forest good command.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Light spells are nearly ineffective in the sewers now. Torches and
+nightvision are unaffected.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added 'Standings' sign to the Assassin's Game. Sign lists the winner
+of the most recent game, as well as the player with the most kills. Should
+either of those properties point to no one (i.e. because the champ suicides),
+the sign omits that particular line. Sign also tells if a game is in session
+and, if so, how many combatants remain.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added Lupogg and elhai/dirhai to Rook's library.</TD>
+
+<TD>High Confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Made a mini-speech library for the NPCs of Hazar/Raza. This speech
+is not shared by NPCs elsewhere in the world and is by and large aimed
+towards newbies. Keywords include buy, sell, quest, and help. One of these
+will lead into a hard-coded quest (entroot berries for the blacksmith).</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added a text message when a signet ring disappears from your inventory
+because another one appeared elsewhere.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>27 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Made Stamina more important for advancement of Health Points, particularly
+to get above the 25 HP&nbsp;line. Please have the testers test this hard.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Signet Rings are no longer created in Raza (guest area).</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Skivlat (Tos Banker) is no longer a 'quest node', meaning that quests
+will not involve him at all.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Every room now has music.</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Rook now knows about mummies.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>The store in Jasper now sells torches.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Made Seafarer's Peak and Ice Caves 'hard advance rooms', meaning that
+it is much harder to advance there than it is anywhere else in the world.</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Ravi now buys gems.</TD>
+
+<TD>High confidence</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Changed behavior with earthquake and safeties. Formerly, if your safety
+was on, earthquake would not harm anyone, regardless of their outlaw/murderer
+status. This obviously is not inline with the rest of the safety flag design.
+Check this hard, especially wierd cases (like in the arena).</TD>
+
+<TD>Test this to death</TD>
+</TR>
+
+<TR>
+<TD>13 Feb</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Removed connects from forest1 to the rest of the world, making it a
+safe place to test things with mortals.</TD>
+
+<TD>High confidence</TD>
+</TR>
+</TABLE>
+
+<P><B>Kod architecture and infrastructure.</B></P>
+
+<TABLE BORDER=2 WIDTH="100%" >
+<TR>
+<TD>20 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Spells are now accessed by a hash table in system.kod</TD>
+
+<TD>Low confidence.</TD>
+</TR>
+
+<TR>
+<TD>20 Jan</TD>
+
+<TD>CKirmse</TD>
+
+<TD>Added SetSectorLight to room.kod, which allows turning on/off of sector
+light flickering. Used in Tos, Barloque for the lamps, and in I9 at midnight
+for the heart of Zjiria.</TD>
+
+<TD>Low confidence.</TD>
+</TR>
+
+<TR>
+<TD>23 Jan</TD>
+
+<TD>AKirmse</TD>
+
+<TD>TESTERS:&nbsp;IMPORTANT!! 
+<P>Added a function to convert all users' faces and hair colors to the
+new palette translated system. Right after installing the next update,
+in admin mode, do</P>
+
+<P>send object 0 UpdateFaceParts</P>
+
+<P>Players' skin colors and hair colors should be similar to what they
+were before--in particular, please check all skin colors and as many hair
+types as possible. It is important that this work correctly so that paying
+customers don't have their characters messed up at the update.</P>
+</TD>
+
+<TD>Mid confidence</TD>
+</TR>
+
+<TR>
+<TD>23 Jan</TD>
+
+<TD>DSchubert</TD>
+
+<TD>Added a function called ComputeMaxMana to player, which will ask each
+node how much mana to give. This can be called, for example, after a node
+is stripped away from someone, or if a +Mysticism item is put on. 
+<P>To do this, we had to change the nature of the mana nodes which 'disappear'
+(Ukgoth, Underworld, Fey). Previously they were deleted, but now they need
+to stay in existence all the time. Should be a relatively straightforward
+change, but testers should hit the mana nodes hard, particularly the three
+disappearing ones.</P>
+</TD>
+
+<TD>Low confidence</TD>
+</TR>
+
+<TR>
+<TD>10 Feb</TD>
+
+<TD>EHalley</TD>
+
+<TD>Made minor fixes to deal with <TT>DM ANONYMOUS</TT> 
+<LI>Name appears in WHO list properly, even if logged out then logged in
+while anonymous.</LI>
+
+<LI>Can game mail to someone who is anonymous.</LI>
+
+<P><BR>
+<I>Note that there are still game messages that will look stupid if you're
+anonymous. Do not report game messages that look stupid with blank names
+as game bugs. The anonymity feature is not designed for heavy use.</I>
+</P>
+</TD>
+
+<TD>Medium confidence</TD>
+</TR>
+</TABLE>
+
+<H3>
+<HR WIDTH="100%"></H3>
+
+<H3><A NAME="addon"></A>To use this system with the Netscape Editor*</H3>
+
+<p>--Outdated, unnecessary.--</p>
+
+<P>* I use the Netscape editor instead of Frontpage because (a) it's easier to 
+get around in than Frontpage, (b) we all can get copies easily, and (c) it's far 
+easier to work with tables in Netscape than in frontpage.
+</P>
+
+</BODY>
+</HTML>

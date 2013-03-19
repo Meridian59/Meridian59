@@ -39,7 +39,7 @@ void InitMemory(void);
 memory_statistics * GetMemoryStats(void);
 int GetMemoryTotal(void);
 int GetNumMemoryStats(void);
-char * GetMemoryStatName(int malloc_id);
+const char * GetMemoryStatName(int malloc_id);
 void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linenumber);
 void FreeMemoryX(int malloc_id,void **ptr,int size);
 void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size);

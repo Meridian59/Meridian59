@@ -522,7 +522,7 @@ int C_GetClass(int object_id,local_var_type *local_vars,
 // to the string value and length respectively.  function_name is the C function
 // name used in reporting errors.
 // If the string isn't found (including if val corresponds to NIL), false is returned.
-bool LookupString(val_type val, char *function_name, char **str, int *len)
+bool LookupString(val_type val, const char *function_name, char **str, int *len)
 {
 	string_node *snod;
 	resource_node *r;

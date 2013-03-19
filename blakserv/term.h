@@ -13,7 +13,7 @@
 #ifndef _TERM_H
 #define _TERM_H
 
-void __cdecl cprintf(int session_id,char *fmt,...);
+void __cdecl cprintf(int session_id,const char *fmt,...);
 void TermConvertBuffer(char *s,int len_s);
 
 char * GetTagName(val_type val);

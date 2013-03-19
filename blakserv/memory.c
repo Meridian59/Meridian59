@@ -248,7 +248,7 @@ char * GetMemoryStatName(int malloc_id)
 }
 
 
-void * AllocateMemoryDebug(int malloc_id,int size,char *filename,int linenumber)
+void * AllocateMemoryDebug(int malloc_id,int size,const char *filename,int linenumber)
 {
 	void *ptr;
 	

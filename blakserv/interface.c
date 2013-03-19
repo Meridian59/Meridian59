@@ -397,7 +397,7 @@ void InterfaceAddList(int session_id)
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
 	
 	ListView_SetItemText(hwndLV,index,2,ShortTimeStr(s->connected_time));
-	ListView_SetItemText(hwndLV,index,3,GetStateName(s));
+	ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 	ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	
 	LeaveServerLock();
@@ -451,7 +451,7 @@ void InterfaceUpdateList(int session_id)
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
 		ListView_SetItemText(hwndLV,index,2,ShortTimeStr(s->connected_time));
-		ListView_SetItemText(hwndLV,index,3,GetStateName(s));
+		ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 		ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	}
 	LeaveServerLock();

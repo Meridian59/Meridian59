@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _STRING_H
-#define _STRING_H
+#ifndef _BSTRING_H
+#define _BSTRING_H
 
 #define INIT_STRING_NODES 50000
 

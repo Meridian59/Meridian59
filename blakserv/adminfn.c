@@ -641,7 +641,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 /* SendSessionAdminText
 This can be called from any module to asynchronously send
 admin text. Currently only used for trace info and say. */
-void __cdecl SendSessionAdminText(int session_id,char *fmt,...)
+void __cdecl SendSessionAdminText(int session_id,const char *fmt,...)
 {
 	int prev_admin_session_id;
 	

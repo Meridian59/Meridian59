@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _TIME_H
-#define _TIME_H
+#ifndef _BTIME_H
+#define _BTIME_H
 
 void InitTime();
 int GetTime();

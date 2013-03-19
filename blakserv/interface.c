@@ -1264,7 +1264,7 @@ void InterfaceUpdateAdmin()
 	InvalidateRect(hwnd,NULL,TRUE);
 }
 
-void FatalErrorShow(char *filename,int line,char *str)
+void FatalErrorShow(const char *filename,int line,char *str)
 {
 	char s[5000];
 	

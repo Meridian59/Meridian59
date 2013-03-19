@@ -186,7 +186,7 @@ void *ReallocCHK(int malloc_id, void *p,size_t size, size_t old_size )
 
 memory_statistics memory_stat;
 
-char *memory_stat_names[] = 
+const char *memory_stat_names[] = 
 {
 	"Timer", "String", "Kodbase", "Resource", 
 		"Session", "Account", "User", "Motd",
@@ -242,7 +242,7 @@ int GetNumMemoryStats(void)
 	return MALLOC_ID_NUM;
 }
 
-char * GetMemoryStatName(int malloc_id)
+const char * GetMemoryStatName(int malloc_id)
 {
 	return memory_stat_names[malloc_id];
 }

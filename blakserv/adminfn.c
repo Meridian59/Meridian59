@@ -1987,7 +1987,7 @@ void AdminShowSysTimers(int session_id,admin_parm_type parms[],
 
 void AdminShowEachSysTimer(systimer_node *st)
 {
-	char *s;
+  const char *s;
 	
 	switch (st->systimer_type)
 	{

@@ -217,9 +217,9 @@ int i,used;
 	  }
 */
 
-char * GetStateName(session_node *s)
+const char * GetStateName(session_node *s)
 {
-	char *str=NULL;
+	const char *str=NULL;
 	static char buf[50];
 	
 	/* static buffer for upload means that it shouldn't be used by

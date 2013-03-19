@@ -64,7 +64,7 @@ typedef struct admin_table_struct
 
 void AdminSendBufferList(void);
 
-void __cdecl aprintf(char *fmt,...);
+void __cdecl aprintf(const char *fmt,...);
 void AdminBufferSend(char *buf,int len_buf);
 void SendAdminBuffer(char *buf,int len_buf);
 
@@ -543,7 +543,7 @@ admin_table_type admin_main_table[] =
 int admin_session_id; /* set by TryAdminCommand each time */
 static buffer_node *blist; /* same */
 
-void __cdecl aprintf(char *fmt,...)
+void __cdecl aprintf(const char *fmt,...)
 {
 	char s[BUFFER_SIZE];
 	va_list marker;

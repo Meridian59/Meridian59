@@ -48,6 +48,7 @@ messages:
    {
       propagate;
    }
+
    GetNumSpellTargets()
    {
       return 0;
@@ -62,7 +63,6 @@ messages:
       lActive = Send(oRoom,@GetHolderActive);
 
       Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
-    
       Send(self,@ComputeEvaluateInfo,#who=First(lTargets),#dmis=who);
       
    propagate;
@@ -78,11 +78,15 @@ messages:
          highmark = send(who,@GetHighMark);
          gainchance = send(who,@GetGainChance);
          maxhealth = send(who,@GetMaxHealth);
+
          if gainchance < 0
          {
             send(dmis,@msgsenduser,#message_rsc = Introspection_message_nochance,
                  #parm1=(gainchance/2));
-         } else {
+         } 
+
+         else 
+         {
             total = bound(((gainchance*100)/highmark),1,100);
             send(dmis,@msgsenduser,#message_rsc = Introspection_message,
                  #parm1=gainchance,#parm2=highmark,#parm3=total);
@@ -94,7 +98,7 @@ messages:
            #parm2=send(who,@GetDefense));
 
 
-      return;
+   return;
    }      
    
    CanForget()

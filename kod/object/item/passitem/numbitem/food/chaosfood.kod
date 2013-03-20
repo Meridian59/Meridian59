@@ -9,7 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-chaosfood is Food
+ChaosFood is Food
 
 constants:
 
@@ -32,8 +32,6 @@ classvars:
    vrName_plural = chaosfd_name_plural_rsc
    vrIcon = chaosfd_icon_rsc
    vrDesc = chaosfd_desc_rsc
-
-   viIndefinite = ARTICLE_AN
 
    viBulk = 10
    viWeight = 5000         % Increased weight to ensure no mortal is able to pick these up outside of a frenzy.

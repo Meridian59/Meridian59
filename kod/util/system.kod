@@ -2005,7 +2005,7 @@ messages:
       % Tos stuff
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_FORGET,#class=&TosForgotten);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS,#class=&Tos);
-      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_INN,#class=&TosInn);  
+      Send(self,@CreateOneRoomIfNew,#num=RID_TOS_INN,#class=&TosInn);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_TAN,#class=&TosTan);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_GREY,#class=&TosGrey);
       Send(self,@CreateOneRoomIfNew,#num=RID_TOS_FORGOTTEN,#class=&TosForgottenLovers);

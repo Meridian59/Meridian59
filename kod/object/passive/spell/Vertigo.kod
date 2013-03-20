@@ -40,9 +40,9 @@ classvars:
    viSpell_num = SID_VERTIGO
    viSchool = SS_RIIJA
    viSpell_level = 3
-   viMana = 10
+   viMana = 12
    viSpellExertion = 10
-   viCast_time = 250
+   viCast_time = 0
 
    viOutlaw = TRUE
    viHarmful = TRUE

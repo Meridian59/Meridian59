@@ -220,7 +220,6 @@ messages:
       plResistances = [ ];
       
       send(self,@SetGender);
-      send(self,@SetKarma);
       send(self,@SetHair);
       send(self,@SetFace);
       send(self,@SetSkinColor);
@@ -251,12 +250,6 @@ messages:
          vrSound_death = FactionTroop_female_sound_death;
       }
 
-      return;
-   }
-
-   SetKarma()
-   {
-      viKarma = random(-20,30);
       return;
    }
 

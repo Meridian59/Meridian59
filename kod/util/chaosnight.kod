@@ -178,17 +178,19 @@ messages:
             if IsClass(oItem,&NumberItem)
             {
                oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
-            }
-           
+            }           
+            
             if IsClass(oItem,&KarmaPotion)
             {
                oGift = Create(GetClass(oItem),#karma=Send(oItem,@GetKarma));
-            }
-			
-            if NOT IsClass(oItem,&NumberItem)
-            AND NOT IsClass(oItem,&KarmaPotion)
+            }            
+            
+            else
             {
-               oGift = Create(GetClass(oItem));
+               if NOT IsClass(oItem,&NumberItem)
+               {
+                 oGift = Create(GetClass(oItem));
+               }
             }
 
             Send(oPlayer,@NewHold,#what=oGift);

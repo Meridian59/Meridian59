@@ -4326,12 +4326,12 @@ messages:
          string = psPlayerDescription;
       }
       
-      if StringContain(psPlayerDescription,"ï¿½")
+      if StringContain(psPlayerDescription,"¶")
       {
          iCount = 0;
-         while StringContain(psPlayerDescription,"ï¿½")
+         while StringContain(psPlayerDescription,"¶")
          {
-            StringSubstitute(psPlayerDescription,"ï¿½","");
+            StringSubstitute(psPlayerDescription,"¶","");
             iCount = iCount + 1;
             if iCount > 10
             {

@@ -58,23 +58,23 @@ messages:
    Constructor(Karma=$)
    "Creates the Karma Potion with a negative or positive karma value. INT above zero makes positive potion INT below zero makes a negative potion."
    {
-     if karma > 0
-     {
+      if karma > 0
+      {
         vrName = KarmaPotion_pos_name_rsc;
         vrDesc = KarmaPotion_pos_desc_rsc;
         piItem_Flags = PT_MET_GREEN;
         piKarma = 10000;
-     }
+      }
 		
-     if karma < 0
-     {
+      if karma < 0
+      {
         vrName = KarmaPotion_neg_name_rsc;
         vrDesc = KarmaPotion_neg_desc_rsc;
         piItem_Flags = PT_MET_RED;
         piKarma = -10000;
-     }
+      }
 		
-     propagate;
+      propagate;
    }
    
    ApplyPotionEffects(apply_on = $)
@@ -89,15 +89,15 @@ messages:
         Send(self,@Delete);								% deletes it self if someone tries to use it outside frenzy.	
       }
 
-     return;
+      return;
    }
    
    ReqNewApply(what = $,apply_on = $)
    {
       if what = apply_on
-       {
-         return TRUE;
-       }
+      {
+        return TRUE;
+      }
       
       return FALSE;
    }
@@ -106,7 +106,7 @@ messages:
    {
       if isClass(apply_on,&Player) 
       {
-         Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
+        Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
       }
 
       Send(apply_on,@MsgSendUser,#message_rsc=KarmaPotion_drink);

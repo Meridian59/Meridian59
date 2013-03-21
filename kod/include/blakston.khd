@@ -309,6 +309,7 @@
    NID_ANNOUNCEMENTS = 9
    NID_GUILD_CHARTER = 10
    NID_GODROOM = 14
+   NID_GWAR_KILLS = 15
 
    % NOTE: Guilds now use their RID_ numbers as their NIDs.  Do not assign them
    %  their own NID.

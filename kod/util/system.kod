@@ -59,6 +59,12 @@ resources:
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
       "### %q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
+      
+   guildwar_kill_title1 = " has slaughtered "
+   guildwar_kill_body1 = "Let it be known that "
+   guildwar_kill_body2 = " of the "
+   guildwar_kill_body3 = " has been slaughtered by "
+   guildwar_kill_body5 = " in guild combat.
 
    system_admin_message = "%q"
 
@@ -1460,7 +1466,8 @@ messages:
    UserKilled(what = $,killer = $)
    {
       local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
-            param2, param3, param4, param5, param6, param7, type5, type7;
+            param2, param3, param4, param5, param6, param7, type5, type7,
+            wString1, wString2, oBook, oMaster;
 
       if IsClass(what,&Guest)
          OR (killer = $)
@@ -1581,6 +1588,32 @@ messages:
                   param7 = Send(oKillerGuild,@GetName);
                   type5 = STRING_RESOURCE;
                   type7 = STRING_RESOURCE;
+                  
+                  % Post this death to the Guild War Standings book in Guildmasters.
+                  
+                  ClearTempString();
+                  AppendTempString(param5);
+                  AppendTempString(guildwar_kill_title1);
+                  AppendTempString(Send(what,@GetTrueName));
+                  wString1 = CreateString();
+                  setString(wString1,GetTempString());
+                  
+                  ClearTempString();
+                  AppendTempString(guildwar_kill_body1);
+                  AppendTempString(Send(what,@GetTrueName));
+                  AppendTempString(guildwar_kill_body2);
+                  AppendTempString(param3);
+                  AppendTempString(guildwar_kill_body3);
+                  AppendTempString(param5);
+                  AppendTempString(guildwar_kill_body2);
+                  AppendTempString(param7);
+                  AppendTempString(guildwar_kill_body5);
+                  wString2 = CreateString();
+                  setString(wString2,GetTempString());
+                  
+                  oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+                  oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
+                  Send(oBook,@PostNews,#what=oMaster,#title=wString1,#body=wString2);
                }
 
                % Notify who killed whom during frenzies.

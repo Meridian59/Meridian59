@@ -31,8 +31,8 @@ classvars:
    vrDesc = helm_desc_rsc
    vrIcon = helm_icon_male_rsc
 
-   viHits_init_min = 400
-   viHits_init_max = 500
+   viHits_init_min = 250
+   viHits_init_max = 350
 
    viValue_average = 1000
    viWeight = 30
@@ -40,14 +40,14 @@ classvars:
 
    viUse_type = ITEM_USE_HEAD
    viUse_amount = 1
-   viSpell_modifier = -5
+   viSpell_modifier = -8
 
    viGround_group = 2
    viInventory_group = 2
    viBroken_group = 3
 
-   viDefense_base = 25               % This is the default value for piDefense_bonus
-   viDamage_base = 1                % This is the default value for piDamage_reduce
+   viDefense_base = 50
+   viDamage_base = 2              
 
 properties:
 
@@ -69,7 +69,7 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_ALL,15]
+      return [ [-ATCK_SPELL_ALL,30]
              ];
    }
 

@@ -1583,7 +1583,7 @@ messages:
                   param2 = Send(oGuild,@GetDef);
                   param3 = Send(oGuild,@GetName);
                   param4 = Send(killer,@GetIndef);
-                  param5 = Send(killer,@GetName);
+                  param5 = Send(killer,@GetTrueName);
                   param6 = Send(oKillerGuild,@GetDef);
                   param7 = Send(oKillerGuild,@GetName);
                   type5 = STRING_RESOURCE;

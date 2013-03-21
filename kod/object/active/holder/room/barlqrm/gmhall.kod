@@ -24,6 +24,9 @@ resources:
 
    guild_charter_ball = "Guild Charters"
    guild_charter_desc = "Here, guildmasters may post information for potential members."
+   
+   gwarkills_name = "Guild War Standings"
+   gwarkills_desc = "Current list of kills in guild wars."
 
 classvars:
 

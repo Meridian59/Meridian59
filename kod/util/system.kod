@@ -64,7 +64,7 @@ resources:
    guildwar_kill_body1 = "Let it be known that "
    guildwar_kill_body2 = " of the "
    guildwar_kill_body3 = " has been slaughtered by "
-   guildwar_kill_body5 = " in guild combat.
+   guildwar_kill_body4 = " in guild combat."
 
    system_admin_message = "%q"
 
@@ -1607,7 +1607,7 @@ messages:
                   AppendTempString(param5);
                   AppendTempString(guildwar_kill_body2);
                   AppendTempString(param7);
-                  AppendTempString(guildwar_kill_body5);
+                  AppendTempString(guildwar_kill_body4);
                   wString2 = CreateString();
                   setString(wString2,GetTempString());
                   

@@ -44,6 +44,9 @@ properties:
    piOutside_factor = 3
 
    prMusic = GM_Hall_music
+   
+   oMaster = $
+   oBook = $
 
 messages:
 
@@ -68,7 +71,7 @@ CreateStandardObjects()
       Send(self,@NewHold,#what=Create(&GuildCreator),
            #new_row=5,#new_col=7,#fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH);
 
-%%%%%%%%%% charter newsball
+%%%%%%%%%% charter newsball & guild war book
 
       oNews = send(SYS,@FindNewsByNum,#num=NID_GUILD_CHARTER);
       if oNews = $
@@ -78,6 +81,15 @@ CreateStandardObjects()
         }
       Send(self,@NewHold,#what=oNews,
            #new_row=5,#new_col=12,#fine_row=32,#fine_col=56,#new_angle=ANGLE_SOUTH);
+           
+      oBook = send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      if oBook = $
+        {
+           oBook=Create(&GWarKills,#nid=NID_GWAR_KILLS,
+              #name=gwarkills_name,#desc=gwarkills_desc);
+        }
+      Send(self,@NewHold,#what=oBook,
+           #new_row=4,#new_col=1,#fine_row=0,#fine_col=31,#new_angle=ANGLE_SOUTH_EAST);
 
 %%%%%%%%%%  some braziers
 
@@ -110,6 +122,16 @@ CreateStandardObjects()
 
       propagate;
    }
+   
+   GetMaster()
+   {
+     return oMaster;
+   }
 
+   GetBook()
+   {
+     return oBook;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

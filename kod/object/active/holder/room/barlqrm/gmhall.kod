@@ -71,7 +71,8 @@ CreateStandardObjects()
 
 %%%%%%%%%% guild creator
 
-      Send(self,@NewHold,#what=Create(&GuildCreator),
+      oMaster = Create(&GuildCreator);
+      Send(self,@NewHold,#what=oMaster,
            #new_row=5,#new_col=7,#fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH);
 
 %%%%%%%%%% charter newsball & guild war book

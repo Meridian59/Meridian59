@@ -137,7 +137,7 @@ messages:
 
       if Send(Send(SYS, @GetLore), @BetaPotionsEnabled)
       {
-         return Send(SYS, @GetFailureRsc);
+        return Send(SYS, @GetFailureRsc);
       }
 
       % Reset the loot list if it's niled out.
@@ -173,36 +173,36 @@ messages:
 
       for oPlayer in lGiveList
       {
-         for oItem in plChaosNightLoot
-         {
-            if IsClass(oItem,&NumberItem)
-            {
-               oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
-            }           
+        for oItem in plChaosNightLoot
+        {
+          if IsClass(oItem,&NumberItem)
+          {
+            oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
+          }           
             
-            if IsClass(oItem,&KarmaPotion)
-            {
-               oGift = Create(GetClass(oItem),#karma=Send(oItem,@GetKarma));
-            }            
+          if IsClass(oItem,&KarmaPotion)
+          {
+            oGift = Create(GetClass(oItem),#karma=Send(oItem,@GetKarma));
+           }            
             
-            else
+          else
+          {
+            if NOT IsClass(oItem,&NumberItem)
             {
-               if NOT IsClass(oItem,&NumberItem)
-               {
-                 oGift = Create(GetClass(oItem));
-               }
+              oGift = Create(GetClass(oItem));
             }
+          }
 
-            Send(oPlayer,@NewHold,#what=oGift);
+          Send(oPlayer,@NewHold,#what=oGift);
 
-            if Send(oPlayer,@IsLoggedOn)
-            {
-               Send(oPlayer,@MsgSendUser,#Message_rsc=chaos_gift,
-                    #parm1=Send(oGift,@GetIndef),#parm2=Send(oGift,@GetName));
-            }
-         }
+          if Send(oPlayer,@IsLoggedOn)
+          {
+            Send(oPlayer,@MsgSendUser,#Message_rsc=chaos_gift,
+                 #parm1=Send(oGift,@GetIndef),#parm2=Send(oGift,@GetName));
+          }
+        }
 
-         Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
+        Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
       }
 
       return Send(SYS, @GetSuccessRsc);

@@ -27,34 +27,27 @@ classvars:
 
    viSchool = SS_JALA
 
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
-   viHarmful = TRUE
-
    viHinderedSchool = SS_JALA  % What school does this song hinder?
 
    vbCastable_in_HappyLand = FALSE
+   
+   viHarmful = TRUE
+   viBaseRange = 8
+   viAffectsGuildmates = TRUE
 
 properties:
 
-   pbUserEffects = TRUE
       
 messages:
 
-   GetAlteredChance(chance = 0, what = $, iSpellPower = 0)
+   ModifySpellPower(who=$,what=$,state=$,iSpellPower=0)
    {
-      local altChance;
-   
-      if what = $ OR send(what,@GetSchool) <> viHinderedSchool
+      if Send(what,@GetSchool) = viHinderedSchool
       {
-         return chance;
+         return (iSpellPower - Nth(state,2));
       }
-
-      altChance = chance - random(iSpellPower/2,(iSpellPower*2)/3);
-      
-      % Don't worry about bounding, that's done the level above us.
-      return altChance;
+      return iSpellPower;
    }
-
 
 end
 

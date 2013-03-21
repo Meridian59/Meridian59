@@ -33,11 +33,17 @@ resources:
       "You stop singing once you realize you won't be able to hold the mana "
       "crystal."
 
+   crystalizemana_enter_rsc = "You concentrate your spirit into a physical crystal structure."
+   crystalizemana_leave_rsc = "The crystallization process ends."
+
 classvars:
 
    vrName = CrystalizeMana_name_rsc
    vrIcon = CrystalizeMana_icon_rsc
    vrDesc = CrystalizeMana_desc_rsc
+   
+   jala_song_enter = crystalizemana_enter_rsc
+   jala_song_leave = crystalizemana_leave_rsc
 
    viSpell_num = SID_CRYSTALIZE_MANA
    viSchool = SS_JALA
@@ -51,11 +57,11 @@ classvars:
    viChance_To_Increase = 25
 
    viHarmful = FALSE
+   viAffectsOthers = FALSE
 
 properties:
 
    prMusic = CrystalizeMana_song
-   pbUserEffects = TRUE
       
 messages:
 
@@ -67,53 +73,47 @@ messages:
 
       return;
    }
-
-   StartPeriodicEnchantment(where=$, state=$)
+   
+   EndEnchantment(who=$,state=$)
    {
-      local oCaster, iSpellpower, oCrystal, iAmount;
+      local oCrystal, iVolume, iAmount;
 
-      % The caster is the second element of state.
-      oCaster = Nth(state,2);
-
-      % Our spellpower is in the third element of state.
-      iSpellpower = Nth(state,3);
-
-      % Find/create mana crystal.
-      oCrystal = Send(oCaster,@FindHolding,#class=&ManaCrystal);
+      iVolume = Nth(state,3);
+      
+      oCrystal = Send(who,@FindHolding,#class=&ManaCrystal);
 
       if oCrystal = $
       {
-         oCrystal = Create(&ManaCrystal,#oCaster=oCaster);
-         if Send(oCaster,@ReqNewHold,#what=oCrystal)
+         oCrystal = Create(&ManaCrystal,#oCaster=who);
+         if Send(who,@ReqNewHold,#what=oCrystal)
          {
-            Send(oCaster,@NewHold,#what=oCrystal);
+            Send(who,@NewHold,#what=oCrystal);
          }
          else
          {
             % We couldn't hold it for some reason.  Destroy crystal.
             Send(oCrystal,@Delete);
-            Send(oCaster,@MsgSendUser,#message_rsc=CrystalizeMana_no_room);
+            Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_no_room);
 
             % Stop the spell, use EVENT_STEER because we want it to break.
-            Post(oCaster,@BreakTrance,#event=EVENT_STEER);
+            Post(who,@BreakTrance,#event=EVENT_STEER);
          }
       }
-
+      
       % Increment mana amount in crystal.
       % Add at least 1 mana.
       iAmount = 1;
 
       % Add another one if we have enough spellpower.
-      if random(1,99) <= iSpellpower
+      if random(1,99) <= iVolume
       {
          iAmount = iAmount + 1;
       }
 
       Send(oCrystal,@IncreaseMana,#amount=iAmount);
-
+      
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

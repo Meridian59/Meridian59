@@ -25,7 +25,8 @@ resources:
       "to fight evil more effectively.  "
       "It requires 1 sapphire to cast."
 
-   Mirth_on = "%s%s's mirthful song lifts your spirits a bit."
+   mirth_enter_rsc = "The nearby shanty brings an undeniable cheer to the area."
+   mirth_leave_rsc = "The mirthful mood passes."
 
    Mirth_song = main.mid
  
@@ -35,6 +36,9 @@ classvars:
    vrIcon = Mirth_icon_rsc
    vrDesc = Mirth_desc_rsc
 
+   jala_song_enter = mirth_enter_rsc
+   jala_song_leave = mirth_leave_rsc
+   
    viSpell_num = SID_MIRTH
    viSchool = SS_JALA
    viSpell_level = 1
@@ -47,11 +51,11 @@ classvars:
    viChance_To_Increase = 25
 
    viHarmful = FALSE
+   viBaseRange = 5
 
 properties:
 
    prMusic = Mirth_song
-   pbUserEffects = TRUE
       
 messages:
 
@@ -63,26 +67,11 @@ messages:
       return;
    }
 
-   StartEnchantment(who = $)
-   "Starts enchantment effect on one player"
+   EnterSong(who=$,iVolume=0,singer=$)
    {
-      local lState, oCaster, iSpellpower;
-
-      lState = Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self);
-
-      % The caster is the second element of state.
-      oCaster = Nth(lState,2);
-
-      % Our spellpower is in the third element of state.
-      iSpellpower = Nth(lState,3);
-
-      if random(1,100) < iSpellPower
+      if random(1,100) < iVolume
       {
-         Send(who,@SetAction,#action=UA_HAPPY);
-         Send(who,@MsgSendUser,#message_rsc=Mirth_on,
-              #parm1=Send(oCaster,@GetCapDef),
-              #parm2=Send(oCaster,@GetName));
-         Send(who,@AddAttackModifier,#what=self);       
+         Send(who,@SetAction,#action=UA_HAPPY);    
       }
       else
       {
@@ -92,80 +81,27 @@ messages:
             Send(who,@SetAction,#action=UA_NORMAL);
          }
       }
-
-      propagate;
-   }
-
-   StartEnchantmentNewOccupant(who = $, state = $)
-   "Called on new occupants of the enchanted room."
-   {
-      Send(self,@StartEnchantment,#who=who,#state=state);
-
-      return;
-   }
-
-   EndRoomEnchantment(who = $, state = $)
-   "Called when user leaves the room."
-   {
-      Send(self,@RemoveEnchantment,#who=who);
-
-      propagate;
-   }
-
-   RemoveEnchantment(who=$)
-   "Called instead of EndEnchantment when trance is broken"
-   {
-      if IsClass(who,&Player)
-      {
-         % We try to remove ourselves from everyone, even though it's possible
-         %  that not everyone was enchanted.
-         Send(who,@RemoveAttackModifier,#what=self);
-      }
-
-      propagate;
-   }
-
-   StartPeriodicEnchantment(where=$, state=$)
-   {
-      local lActive, i, oObject;
-
-      lActive = Send(where,@GetHolderActive);
-      for i in lActive
-      {
-         oObject = Send(where,@HolderExtractObject,#data=i);
-
-         % Affect NPCs in room.
-         if IsClass(oObject,&Monster)
-            AND (Send(oObject,@GetBehavior) & AI_NPC)
-         {
-            Send(oObject,@ChangeMood,#amount=1);
-         }
-      }
       
       propagate;
    }
 
-   % Stuff we handle to be an attack modifier.
-
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   ModifyHitRoll(who = $,what = $,state = $,hit_roll = $,stroke_obj = $,originalValue = 0)
    {
-      % Only affect the evil ones...
+      % Only add hit against evil targets.
       if Send(what,@GetKarma,#detect=TRUE) < 0
       {
-         % Give a small bonus
-         return hit_roll + 100;
+         return bound(hit_roll + Nth(state,2),originalValue,originalValue+100);
       }
-
       return hit_roll;
    }
    
-   ModifyDamage(who = $,what = $,damage = $)
+   ModifyDamage(who = $,what = $,state = $,damage = $,stroke_obj = $,originalValue = 0)
    {
-      % Only affect the evil ones...
+      % Only add damage against evil targets.
       if Send(what,@GetKarma,#detect=TRUE) < 0
       {
          % Roughly equal to Killing Fields
-         return damage + Random(1,5);
+         return bound((damage + Random(1,((Nth(state,2)+1)/20))),originalValue,originalValue+5);
       }
 
       return damage;

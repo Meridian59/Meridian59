@@ -872,6 +872,9 @@ properties:
    % Defense modifiers to defense roll & damage (includes items & spells)
    plDefense_modifiers = $
    
+   % Jala modifiers do a variety of things (all will be songs currently affecting the player)
+   plJala_modifiers = $
+   
    piGender = GENDER_MALE
 
    piVigor_rest_threshold = 80
@@ -3161,6 +3164,102 @@ messages:
       return;
    }
 
+   AddJalaModifier(what = $, iVolume = 0, singer = $)
+   "Adds what and volume to plJala_modifiers, which carry out song effects."
+   {
+      plJala_modifiers = Cons([what,iVolume,singer],plJala_modifiers);
+      Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
+      
+      return;
+   }
+   
+   GetJalaModifiers()
+   {
+      return plJala_modifiers;
+   }
+   
+   RemoveJalaModifier(what = $, iVolume = 0, singer = $)
+   "Removes <what> from plJala_modifiers."
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
+      for i in plJala_modifiers
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iVolume
+            AND Nth(i,3) = singer
+         {
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=ENCHANTMENT_ROOM);
+            plJala_modifiers = DelListElem(plJala_modifiers,i);
+            bFound = TRUE;
+         }
+      }
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove Jala modifier",what,"but not in list",
+               plJala_modifiers);
+      }
+
+      return;
+   }
+
+   IsAffectedByJalaModifier(what = $, byClass = &Jala)
+   "Returns whether or not currently enchanted by <what> song."
+   {
+      local i;
+      
+      if plJala_modifiers = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plJala_modifiers
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               return TRUE;
+            }
+         }
+      }
+      else
+      {
+         for i in plJala_modifiers
+         {
+            if Nth(i,1) = what
+            {
+               return TRUE;
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+   
+   GetLoudestJalaModifierState(byClass=&Jala)
+   {
+      local i, oLoudestVolume, oLoudestState;
+
+      oLoudestVolume = 0;
+
+      for i in plJala_modifiers
+      {
+         if IsClass(Nth(i,1),byClass)
+         {
+            if Nth(i,2) > oLoudestVolume
+            {
+               oLoudestVolume = Nth(i,2);
+               oLoudestState = i;
+            }
+         }
+      }    
+
+      return oLoudestState;
+   }
+   
    AddDefenseModifier(what = $)
    "Adds <what> to plDefense_modifiers, which can modify defense strength "
    "and damage."
@@ -3902,7 +4001,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
+      local i, iRange, oWinds, oSandstorm, iAttackTime;
 
       % Can't target self.
       if what = self
@@ -3911,10 +4010,17 @@ messages:
          
          return FALSE;
       }
-
+      
+      % Check for Jala songs that may warp time
+      iAttackTime=1;
+      for i in Send(self,@GetJalaModifiers)
+      {
+         iAttackTime = Send(Nth(i,1),@ModifyAttackTime,#who=self,#state=i,#time=iAttackTime,#originalValue=1);
+      }
+      
       % Check attack time.
-      % IsOkayAttackTime defaults to 1 second
-      if NOT Send(self,@IsOkayAttackTime) 
+      % IsOkayAttackTime defaults to 1 second, can be warped up to 3 seconds
+      if NOT Send(self,@IsOkayAttackTime,#seconds=iAttackTime)
       {
          return FALSE;
       }  
@@ -4030,6 +4136,15 @@ messages:
 
          if Send(poOwner,@IsEnchanted,#what=oSandstorm)
             AND Send(oSandstorm,@WindsRuinShot,#who=self)
+         {
+            return FALSE;
+         }
+      }
+      
+      % Check for Jala songs that prevent attacks
+      for i in Send(self,@GetJalaModifiers)
+      {
+         if Send(Nth(i,1),@TryPreventAttack,#who=self,#state=i,#stroke_obj=stroke_obj)
          {
             return FALSE;
          }
@@ -4169,7 +4284,7 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, iModifiedOffense, oMonster;
 
       oWeapon = $;
 
@@ -4212,9 +4327,16 @@ messages:
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                          #hit_roll=iOffense,#stroke_obj=stroke_obj);
       }
+      
+      % Check for Jala songs that affect chance-to-hit
+      iModifiedOffense = iOffense;
+      for i in Send(self,@GetJalaModifiers)
+      {
+         iModifiedOffense = Send(Nth(i,1),@ModifyHitRoll,#who=self,#what=what,#state=i,
+                                 #hit_roll=iModifiedOffense,#stroke_obj=stroke_obj,#originalValue=iOffense);
+      }
 
-      iOffense = iOffense + Send(Send(SYS,@GetParliament),
-                                 @GetFactionHitrollBonus,#who=self);
+      iOffense = iModifiedOffense + Send(Send(SYS,@GetParliament),@GetFactionHitrollBonus,#who=self);
 
       % If we're using a ranged weapon and don't have a clear line of sight,
       %  then half our offense.
@@ -4236,7 +4358,7 @@ messages:
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
    GetDefense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, oShield, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
+      local i, oWeapon, oShield, iParry, iDodge, iBlock, iAgility, iDefense, iModifiedDefense, oMonster;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4268,7 +4390,15 @@ messages:
          iDefense = Send(i,@ModifyDefensePower,#who=self,#what=what,#defense_power=iDefense);
       }
 
-      iDefense = iDefense + Send(Send(SYS,@GetParliament),@GetFactionDefenseBonus,#who=self);
+      % Check for Jala songs that affect defense
+      iModifiedDefense = iDefense;
+      for i in Send(self,@GetJalaModifiers)
+      {
+         iModifiedDefense = Send(Nth(i,1),@ModifyDefense,#who=self,#what=what,#state=i,
+                                 #defense=iModifiedDefense,#stroke_obj=stroke_obj,#originalValue=iDefense);
+      }
+
+      iDefense = iModifiedDefense + Send(Send(SYS,@GetParliament),@GetFactionDefenseBonus,#who=self);
 
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
@@ -4351,7 +4481,7 @@ messages:
    % This returns the damage done to target "what" before resistances.
    GetDamage(what = $, stroke_obj=$)
    {
-      local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
+      local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus, iModifiedDamage,
             oSpell, oMonster;
 
       % Morphed?
@@ -4402,9 +4532,16 @@ messages:
 
          Send(i,@WeaponHitTarget);
       }
+      
+      % Check for Jala songs that modify damage
+      iModifiedDamage = iDamageBonus;
+      for i in Send(self,@GetJalaModifiers)
+      {
+         iModifiedDamage = Send(Nth(i,1),@ModifyDamage,#who=self,#what=what,#state=i,
+                                #damage=iModifiedDamage,#stroke_obj=oStroke,#originalValue=iDamageBonus);
+      }
                
-      iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),
-                                         @GetFactionDamageBonus,#who=self);
+      iDamageBonus = iModifiedDamage + Send(Send(SYS,@GetParliament),@GetFactionDamageBonus,#who=self);
 
       iDamage = iDamage + iDamageBonus;
 
@@ -4417,31 +4554,43 @@ messages:
    % This is the type of damage done.
    GetDamageType(what = $, use_weapon = $)
    {
-      local oWeapon, oMonster;
+      local i, oWeapon, oMonster, oAttackType;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
-         return Send(oMonster,@GetDamageType,#what=what);
-      } 
-
-      if use_weapon = $
-      {
-         oWeapon = Send(self,@GetWeapon);
+         oAttackType = Send(oMonster,@GetDamageType,#what=what);
       }
       else
       {
-         oWeapon = use_weapon;
+          if use_weapon = $
+          {
+             oWeapon = Send(self,@GetWeapon);
+          }
+          else
+          {
+             oWeapon = use_weapon;
+          }
+          
+          if oWeapon = $
+          {
+             % No weapon means we are punching
+             oAttackType = ATCK_WEAP_UNARMED+ATCK_WEAP_PUNCH;
+          }
+          else
+          {
+             oAttackType = Send(oWeapon,@GetAttackType);
+          }
       }
       
-      if oWeapon = $
+      % Check for Jala songs that affect damage type
+      for i in Send(self,@GetJalaModifiers)
       {
-         % No weapon means we are punching
-         return ATCK_WEAP_UNARMED+ATCK_WEAP_PUNCH;
+         oAttackType = Send(Nth(i,1),@ModifyAttackType,#who=self,#what=what,#state=i,#attack_type=oAttackType);
       }
 
-      return Send(oWeapon,@GetAttackType);
+      return oAttackType;
    }
 
    GetSpellType(what = $, use_weapon = $)
@@ -4501,7 +4650,7 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell,
-            iLimit;
+            iLimit, iModifiedDefenseDamage;
 
       color_rsc = player_hit_color_none;
       
@@ -4518,7 +4667,15 @@ messages:
                           #atype=atype,#aspell=aspell);
             Send(i,@DefendingHit,#who=self,#what=what);
          }
-      
+
+         iModifiedDefenseDamage = damage;
+         for i in Send(self,@GetJalaModifiers)
+         {
+            iModifiedDefenseDamage = Send(Nth(i,1),@ModifyDefenseDamage,#who=self,#what=what,#state=i,
+                                 #damage=iModifiedDefenseDamage,#atype=atype,#aspell=aspell,
+                                 #stroke_obj=stroke_obj,#originalValue=damage);
+         }
+
          iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);                             
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
 
@@ -5541,7 +5698,7 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower;
+      local i, iTime, iMaxHealth, oSongState;
       
       % Faster regen with higher vigor
       iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
@@ -5552,30 +5709,24 @@ messages:
 
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
-      
+
+      iTime = bound(iTime,1000,60000);
+
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
+         for i in Send(self,@GetJalaModifiers)
          {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Restorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
-                            #iSpellPower=iJalaPower);
-            }
+            iTime = Send(Nth(i,1),@ModifyHealthTime,#state=i,#time=iTime);
          }
       }
 
-      return bound(iTime,1000,60000);
+      return iTime;
    }
 
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell;
+      local i, iTime, oSongState;
 
       if piMana > piMax_mana
       {
@@ -5594,27 +5745,10 @@ messages:
 
          if poOwner <> $
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-            if lJalaInfo <> $
+            for i in Send(self,@GetJalaModifiers)
             {
-               oJalaSpell = Nth(lJalaInfo,2);
-               if IsClass(oJalaSpell,&Rejuvenate)
-               {
-                  iJalaPower = Nth(Nth(lJalaInfo,3),3);
-                  iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
-                               #iSpellPower=iJalaPower);
-               }
+               iTime = Send(Nth(i,1),@ModifyManaTime,#state=i,#time=iTime);
             }
-         
-            iTime = bound(iTime,500,60000);
-         }
-
-         % Mana Focus will adjust mana regen time based on its spellpower.
-         oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
-         if Send(self,@IsEnchanted,#what=oSpell)
-         {
-            iTime = Send(oSpell,@AdjustManaTime,#who=self,#time=iTime);
          }
       }
 
@@ -9811,22 +9945,15 @@ messages:
 
    GetRestTime()
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local i, iTime, oSongState;
 
       iTime = 1000 + (30* (51-Send(self,@getStamina))); 
 
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
+         for i in Send(self,@GetJalaModifiers)
          {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Invigorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
-            }
+            iTime = Send(Nth(i,1),@ModifyVigorTime,#state=i,#time=iTime);
          }
       }
       
@@ -10151,6 +10278,17 @@ messages:
          }
          
          plDefense_modifiers = $;
+      }
+
+      if plJala_modifiers <> $
+      {
+         for i in plJala_modifiers
+         {
+            Debug("Recalibrating: player",Send(self,@GetTrueName),self,
+                  "still had jalamods",Send(i,@GetName));
+         }
+         
+         plJala_modifiers = $;
       }
       
       if plResistances <> $

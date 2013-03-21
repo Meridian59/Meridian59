@@ -115,7 +115,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE)
    {
-      local iDamage, iManaFocus, oRoom, oTarget;
+      local i, iDamage, iManaFocus, oRoom, oTarget, iModifiedSpellType, iModifiedDamage, iModifiedAbsolute;
 
       oTarget = First(lTargets);
 
@@ -152,11 +152,22 @@ messages:
             }
          }
       }
-     
+      
+      % Check for Jala songs that modify attack spell statistics
+      iModifiedDamage=iDamage;
+      iModifiedSpellType=viAttack_type;
+      iModifiedAbsolute=pbAbsolute;
+      for i in Send(who,@GetJalaModifiers)
+      {
+         iModifiedDamage = Send(Nth(i,1),@ModifySpellDamage,#state=i,#iSpellPower=iSpellPower,#damage=iModifiedDamage,#originalValue=iDamage);
+         iModifiedSpellType = Send(Nth(i,1),@ModifySpellType,#state=i,#iSpellPower=iSpellPower,#spell_type=iModifiedSpellType,#originalValue=viAttack_type);
+         iModifiedAbsolute = Send(Nth(i,1),@ModifySpellAbsolute,#state=i,#iSpellPower=iSpellPower,#absolute=iModifiedAbsolute,#originalValue=pbAbsolute);
+      }
+      
       % After figuring damage, do an AssessDamage.  This will handle the necessary
       %  attack messages.
-      iDamage = Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,
-                     #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
+      iDamage = Send(oTarget,@AssessDamage,#what=who,#damage=iModifiedDamage,
+                     #atype=iModifiedSpellType,#aspell=Send(self,@GetAttackSpell),
                      #absolute=pbAbsolute);
 
       Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self);

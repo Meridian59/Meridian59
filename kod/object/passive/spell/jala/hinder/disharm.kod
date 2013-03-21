@@ -28,12 +28,18 @@ resources:
 
    Disharmony_song = bridge.mid
  
+   disharmony_enter_rsc = "Those discordant notes, that painful excuse for a tune! It's insufferable!"
+   disharmony_leave_rsc = "With that amateur bard out of the way, you feel as if you can finally put on your own show."
+
 classvars:
 
    vrName = Disharmony_name_rsc
    vrIcon = Disharmony_icon_rsc
    vrDesc = Disharmony_desc_rsc
 
+   jala_song_enter = disharmony_enter_rsc
+   jala_song_leave = disharmony_leave_rsc
+   
    viMana = 5
    viManaDrain = 3
    viDrainTime = 5000
@@ -41,9 +47,6 @@ classvars:
 
    viSchool = SS_JALA
    viSpell_level = 4
-
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
-   viHarmful = TRUE
 
    viHinderedSchool = SS_JALA
 

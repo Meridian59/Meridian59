@@ -6368,10 +6368,10 @@ messages:
    SetKarma(value = 0)
    "Changes karma to specified amount"
    {
-      piKarma = value;
-      Send(self,@NewKarma);
+     piKarma = value;
+     Send(self,@NewKarma);
 		
-      return;
+     return;
    }
 
    CalculateKarmaChangeFromAct( karma_doer=$, karma_act=$, Swing_factor = 1)

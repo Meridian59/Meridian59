@@ -48,27 +48,27 @@ messages:
 
    Constructor()
    {
-      propagate;
+     propagate;
    }
    
    NewApplied(what = $,apply_on = $)
    {
-      if Send(SYS, @GetChaosNight)					
-      {
-        Send(self,@SendTaste,#what=what,#apply_on=apply_on);
-        Send(what,@WaveSendUser,#wave_rsc=vrEat_wav);
-        Send(apply_on,@EatSomething,#nutrition=viNutrition,#filling=viFilling);
-        Send(self,@SubtractNumber,#number=1);
-      }
-      else
-      {
-        % We only want these used during a frenzy, so if eaten outside of a frenzy
-        % the food will delete itself.
-        Send(apply_on,@MsgSendUser,#message_rsc=chaosfd_no_eat);
-        Send(self,@Delete);
-      }
+     if Send(SYS, @GetChaosNight)					
+     {
+       Send(self,@SendTaste,#what=what,#apply_on=apply_on);
+       Send(what,@WaveSendUser,#wave_rsc=vrEat_wav);
+       Send(apply_on,@EatSomething,#nutrition=viNutrition,#filling=viFilling);
+       Send(self,@SubtractNumber,#number=1);
+     }
+     else
+     {
+       % We only want these used during a frenzy, so if eaten outside of a frenzy
+       % the food will delete itself.
+       Send(apply_on,@MsgSendUser,#message_rsc=chaosfd_no_eat);
+       Send(self,@Delete);
+     }
 		
-      return;
+     return;
    }
 
 

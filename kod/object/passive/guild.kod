@@ -2492,7 +2492,7 @@ messages:
                ptSuingForPeace = CreateTimer(self,@TimerEndEnemy,PEACE_DELAY);
                poGuildSuingForPeace = otherguild;
             }
-                    
+
             return TRUE;
          }
       }

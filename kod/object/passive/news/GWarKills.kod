@@ -26,6 +26,8 @@ classvars:
    vrIcon = gwarkills_icon_rsc
 
 properties:
+   
+   piMax_messages = 200
 
 messages:
 

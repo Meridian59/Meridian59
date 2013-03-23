@@ -387,7 +387,24 @@ resources:
    guild_left_another = "You have left another guild too recently to join "
    guild_left_another_2 = \
       " has left another guild too recently to join your guild."
+   
+   guild_war_title = " declares war."
+   guild_war_body1 = "Let it be known that on this day "
+   guild_war_body2 = " hath declared war upon "
+   guild_war_body3 = "."
+   guild_endwar_title = " have ended their quarrel."
+   guild_endwar_body2 = " have decided to end their qaurrel with "   
+   
+   
+   guild_peace_title = " declares peace."
+   guild_peace_body1 = "Let it be known that on this day "
+   guild_peace_body2 = " hath allied themselves with "
+   guild_peace_body3 = "."
+   guild_endpeace_title = " ends alliance."
+   guild_endpeace_body2 = " have decided to end their alliance with "   
 
+   
+   
 classvars:
 
    vrIcon = guild_icon_rsc
@@ -2111,7 +2128,7 @@ messages:
    NewAlly(otherguild = $)
    "Put the guild in question in the ally list."
    {
-      local i;
+      local i, oMaster, oBook, pString1, pString2;
 
       plAllies = cons(otherguild, plAllies);
       
@@ -2127,6 +2144,27 @@ messages:
       }
       
       Send(otherguild,@DeclareAlly,#otherguild=self);
+      
+      % Post this new ally/partnership to the globe in guildmasters.
+      
+      ClearTempString();
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_peace_title);
+      pString1 = CreateString();
+      setString(pString1,GetTempString());
+                  
+      ClearTempString();
+      AppendTempString(guild_peace_body1);
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_peace_body2);
+      AppendTempString(Send(otherguild,@GetName));
+      AppendTempString(guild_peace_body3);
+      pString2 = CreateString();
+      setString(pString2,GetTempString());
+                  
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
+      Send(oBook,@PostNews,#what=oMaster,#title=pString1,#body=pString2);
 
       return;
    }
@@ -2153,7 +2191,7 @@ messages:
    "Removes the guild in question from the ally list.  Tells the other guild "
    "to end it's alliance with you."
    {
-      local i, j;
+      local i, j, oMaster, oBook, pString1, pString2;
 
       for i in plAllies
       {
@@ -2171,7 +2209,30 @@ messages:
                Send(First(j),@ToCliRoomContents);
             }
             
-            Send(otherguild,@RemoveDeclaredAlly,#otherguild=self);
+      Send(otherguild,@RemoveDeclaredAlly,#otherguild=self);
+            
+      % Post this end of partnership to the globe in guildmasters.
+      
+      ClearTempString();
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_endpeace_title);
+      pString1 = CreateString();
+      setString(pString1,GetTempString());
+                  
+      ClearTempString();
+      AppendTempString(guild_peace_body1);
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_endpeace_body2);
+      AppendTempString(Send(otherguild,@GetName));
+      AppendTempString(guild_peace_body3);
+      pString2 = CreateString();
+      setString(pString2,GetTempString());
+                  
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
+      Send(oBook,@PostNews,#what=oMaster,#title=pString1,#body=pString2);
+
+      return;
             
             return TRUE;
          }
@@ -2260,7 +2321,7 @@ messages:
    NewEnemy(otherguild = $)
    "Put the guild in question in the enemy list."
    {
-      local i, rMessage;
+      local i, rMessage, oMaster, oBook, wString1, wString2;
 
       plEnemies = cons(otherguild, plEnemies);
 
@@ -2285,6 +2346,27 @@ messages:
       }
       
       Send(otherguild,@DeclaredEnemy,#otherguild=self);
+      
+      % Post this new war to the globe in guildmasters.
+      
+      ClearTempString();
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_war_title);
+      wString1 = CreateString();
+      setString(wString1,GetTempString());
+                  
+      ClearTempString();
+      AppendTempString(guild_war_body1);
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_war_body2);
+      AppendTempString(Send(otherguild,@GetName));
+      AppendTempString(guild_war_body3);
+      wString2 = CreateString();
+      setString(wString2,GetTempString());
+                  
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
+      Send(oBook,@PostNews,#what=oMaster,#title=wString1,#body=wString2);
       
       return;
    }
@@ -2347,8 +2429,29 @@ messages:
    EndEnemy(otherguild = $, bSetTimer = TRUE)
    "Removes the guild in question from your enemy list."
    {
-      local i, j, iSpoils;
+      local i, j, iSpoils, oBook, oMaster, wString1, wString2;
 
+      % Post this end of partnership to the globe in guildmasters.
+      
+      ClearTempString();
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_endwar_title);
+      wString1 = CreateString();
+      setString(wString1,GetTempString());
+               
+      ClearTempString();
+      AppendTempString(guild_war_body1);
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(guild_endwar_body2);
+      AppendTempString(Send(otherguild,@GetName));
+      AppendTempString(guild_peace_body3);
+      wString2 = CreateString();
+      setString(wString2,GetTempString());
+                  
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
+      Send(oBook,@PostNews,#what=oMaster,#title=wString1,#body=wString2);
+      
       if NOT Send(self,@IsMutualEnemy,#otherguild=otherguild)
       {
          Send(self,@FinalizeEndEnemy,#otherguild=otherguild);
@@ -2391,7 +2494,7 @@ messages:
                ptSuingForPeace = CreateTimer(self,@TimerEndEnemy,PEACE_DELAY);
                poGuildSuingForPeace = otherguild;
             }
-
+                    
             return TRUE;
          }
       }

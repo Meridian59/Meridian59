@@ -114,7 +114,7 @@ void LoadAdminConstants(void)
 	fclose(constantsfile);
 }
 
-Bool LookupAdminConstant(char *name,int *ret_ptr)
+Bool LookupAdminConstant(const char *name,int *ret_ptr)
 {
 	admin_constant_node *ac;
 	

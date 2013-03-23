@@ -19,8 +19,8 @@ void TermConvertBuffer(char *s,int len_s);
 const char * GetTagName(val_type val);
 const char * GetDataName(val_type val);
 
-int GetTagNum(char *tag_str);
-int GetDataNum(int tag_val,char *data_str);
+int GetTagNum(const char *tag_str);
+int GetDataNum(int tag_val,const char *data_str);
 
 Bool BlakMoveFile(char *source,char *dest);
 

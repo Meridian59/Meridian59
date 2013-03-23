@@ -77,7 +77,7 @@ void SetClassesSuperPtr(void);
 void SetClassVariables(void);
 void AddClassPropertyName(class_node *c,char *property_name,int property_id);
 void SetClassPropertyNames();
-class_node * GetClassByName(char *class_name);
+class_node * GetClassByName(const char *class_name);
 class_node * GetClassByID(int class_id);
 const char * GetPropertyNameByID(class_node *c,int property_id);
 int GetPropertyIDByName(class_node *c,char *property_name);

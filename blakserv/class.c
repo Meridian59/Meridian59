@@ -349,7 +349,7 @@ class_node * GetClassByID(int class_id)
 	return NULL;
 }
 
-class_node * GetClassByName(char *class_name)
+class_node * GetClassByName(const char *class_name)
 {
 	int class_id;
 	Bool found;

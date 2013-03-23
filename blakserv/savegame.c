@@ -81,7 +81,7 @@ void SaveUsers(void);
 void SaveEachUser(user_node *u);
 void SaveGameCountEachDynamicRsc(resource_node *r);
 
-char *GetTagShortName(val_type val);
+const char *GetTagShortName(val_type val);
 
 Bool SaveGame(char *filename)
 {
@@ -255,7 +255,7 @@ void SaveEachUser(user_node *u)
 }
 
 /* used in saved game to save space */
-char *GetTagShortName(val_type val)
+const char *GetTagShortName(val_type val)
 {
 	switch (val.v.tag)
 	{

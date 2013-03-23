@@ -137,7 +137,7 @@ const char * GetDataName(val_type val)
 }
 
 
-int GetTagNum(char *tag_str)
+int GetTagNum(const char *tag_str)
 {
    int retval;
    char ch;
@@ -182,7 +182,7 @@ int GetTagNum(char *tag_str)
    return retval;
 }
 
-int GetDataNum(int tag_val,char *data_str)
+int GetDataNum(int tag_val,const char *data_str)
 {
    resource_node *r;
    class_node *c;

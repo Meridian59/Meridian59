@@ -2506,8 +2506,8 @@ void AdminShowName(int session_id,admin_parm_type parms[],
 }
 
 static val_type admin_show_references_value;
-static char *admin_show_references_tag_str;
-static char *admin_show_references_data_str;
+static const char *admin_show_references_tag_str;
+static const char *admin_show_references_data_str;
 static int admin_show_references_count;
 void AdminShowReferences(int session_id,admin_parm_type parms[],
                          int num_blak_parm,parm_node blak_parm[])                         
@@ -3784,11 +3784,11 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 	val_type blak_val;
 	object_node *o;
 	message_node *m;
-	char* tag;
-	char* data;
+	const char* tag;
+	const char* data;
 	
 	int object_id;
-	char *message_name;
+	const char *message_name;
 	object_id = (int)parms[0];
 	message_name = (char *)parms[1];
 	

@@ -771,7 +771,7 @@ void UpdateSecurityRedbook()
    }
 }
 
-const char* GetSecurityRedbook()
+char* GetSecurityRedbook()
 {
    if (!_redbookstring)
       return "BLAKSTON: Unknown Redbook";

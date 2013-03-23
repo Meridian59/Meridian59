@@ -2209,28 +2209,28 @@ messages:
                Send(First(j),@ToCliRoomContents);
             }
             
-      Send(otherguild,@RemoveDeclaredAlly,#otherguild=self);
+            Send(otherguild,@RemoveDeclaredAlly,#otherguild=self);
             
-      % Post this end of partnership to the globe in guildmasters.
+            % Post this end of partnership to the globe in guildmasters.
       
-      ClearTempString();
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(guild_endpeace_title);
-      pString1 = CreateString();
-      setString(pString1,GetTempString());
-                  
-      ClearTempString();
-      AppendTempString(guild_peace_body1);
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(guild_endpeace_body2);
-      AppendTempString(Send(otherguild,@GetName));
-      AppendTempString(guild_peace_body3);
-      pString2 = CreateString();
-      setString(pString2,GetTempString());
-                  
-      oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
-      oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
-      Send(oBook,@PostNews,#what=oMaster,#title=pString1,#body=pString2);
+            ClearTempString();
+            AppendTempString(Send(self,@GetName));
+            AppendTempString(guild_endpeace_title);
+            pString1 = CreateString();
+            setString(pString1,GetTempString());
+
+            ClearTempString();
+            AppendTempString(guild_peace_body1);
+            AppendTempString(Send(self,@GetName));
+            AppendTempString(guild_endpeace_body2);
+            AppendTempString(Send(otherguild,@GetName));
+            AppendTempString(guild_peace_body3);
+            pString2 = CreateString();
+            setString(pString2,GetTempString());
+
+            oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
+            oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
+            Send(oBook,@PostNews,#what=oMaster,#title=pString1,#body=pString2);
             
             return TRUE;
          }

@@ -49,7 +49,7 @@ properties:
 
    piNext_num = 1
 
-   piMax_messages = 150          % the # of posts we keep
+   piMax_messages = 75         % the # of posts we keep
 
 messages:
 

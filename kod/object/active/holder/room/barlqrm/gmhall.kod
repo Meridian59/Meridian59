@@ -48,8 +48,8 @@ properties:
 
    prMusic = GM_Hall_music
    
-   oMaster = $
-   oBook = $
+   poMaster = $
+   poBook = $
 
 messages:
 
@@ -71,7 +71,7 @@ CreateStandardObjects()
 
 %%%%%%%%%% guild creator
 
-      oMaster = Create(&GuildCreator);
+      poMaster = Create(&GuildCreator);
       Send(self,@NewHold,#what=oMaster,
            #new_row=5,#new_col=7,#fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH);
 
@@ -86,12 +86,12 @@ CreateStandardObjects()
       Send(self,@NewHold,#what=oNews,
            #new_row=5,#new_col=12,#fine_row=32,#fine_col=56,#new_angle=ANGLE_SOUTH);
            
-      oBook = send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      poBook = send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
       if oBook = $
-        {
-           oBook=Create(&GWarKills,#nid=NID_GWAR_KILLS,
-              #name=gwarkills_name,#desc=gwarkills_desc);
-        }
+       {
+          oBook=Create(&GWarKills,#nid=NID_GUILD_NEWS,
+             #name=gwarkills_name,#desc=gwarkills_desc);
+       }
       Send(self,@NewHold,#what=oBook,
            #new_row=4,#new_col=1,#fine_row=0,#fine_col=31,#new_angle=ANGLE_SOUTH_EAST);
 
@@ -129,12 +129,12 @@ CreateStandardObjects()
    
    GetMaster()
    {
-     return oMaster;
+     return poMaster;
    }
 
    GetBook()
    {
-     return oBook;
+     return poBook;
    }
    
 end

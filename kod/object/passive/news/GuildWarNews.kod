@@ -8,10 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-GWarKills is News
-
-% A book in the guildmaster's hall that receives a post from system each time
-% a player kills an enemy from an opposing guild in guild war.
+GuildWarNews is News
 
 constants:
 
@@ -19,11 +16,11 @@ constants:
 
 resources:
 
-   gwarkills_icon_rsc = jbook.bgf
+   guildwarnews_icon_rsc = jbook.bgf
 
 classvars:
 
-   vrIcon = gwarkills_icon_rsc
+   vrIcon = guildwarnews_icon_rsc
 
 properties:
    
@@ -33,7 +30,7 @@ messages:
 
    GetNewsPermission(what = $)
    {
-   % We only want the GuildCreator to post to this book.
+     % We only want the GuildCreator to post to this book.
      if IsClass(what,&GuildCreator)
      {	 
   	   return NEWS_PERMISSION_READ_WRITE;

@@ -393,7 +393,7 @@ resources:
    guild_war_body2 = " hath declared war upon "
    guild_war_body3 = "."
    guild_endwar_title = " have ended their quarrel."
-   guild_endwar_body2 = " have decided to end their qaurrel with "   
+   guild_endwar_body2 = " have decided to end their quarrel with "   
    
    
    guild_peace_title = " declares peace."
@@ -2162,7 +2162,7 @@ messages:
       pString2 = CreateString();
       setString(pString2,GetTempString());
                   
-      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
       oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
       Send(oBook,@PostNews,#what=oMaster,#title=pString1,#body=pString2);
 
@@ -2228,11 +2228,9 @@ messages:
       pString2 = CreateString();
       setString(pString2,GetTempString());
                   
-      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
       oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
       Send(oBook,@PostNews,#what=oMaster,#title=pString1,#body=pString2);
-
-      return;
             
             return TRUE;
          }
@@ -2364,7 +2362,7 @@ messages:
       wString2 = CreateString();
       setString(wString2,GetTempString());
                   
-      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
       oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
       Send(oBook,@PostNews,#what=oMaster,#title=wString1,#body=wString2);
       
@@ -2448,7 +2446,7 @@ messages:
       wString2 = CreateString();
       setString(wString2,GetTempString());
                   
-      oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+      oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
       oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
       Send(oBook,@PostNews,#what=oMaster,#title=wString1,#body=wString2);
       

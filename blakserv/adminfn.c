@@ -81,7 +81,7 @@ void AdminSaveGame(int session_id,admin_parm_type parms[],
                    int num_blak_parm,parm_node blak_parm[]);
 void AdminSaveConfiguration(int session_id,admin_parm_type parms[],
                             int num_blak_parm,parm_node blak_parm[]);
-void AdminSaveOneConfigNode(config_node *c,char *config_name,char *default_str);
+void AdminSaveOneConfigNode(config_node *c,const char *config_name,const char *default_str);
 void AdminWho(int session_id,admin_parm_type parms[],
               int num_blak_parm,parm_node blak_parm[]);
 void AdminWhoEachSession(session_node *s);
@@ -139,7 +139,7 @@ void AdminShowTime(int session_id,admin_parm_type parms[],
 void AdminShowOneTimer(timer_node *t);
 void AdminShowConfiguration(int session_id,admin_parm_type parms[],
                             int num_blak_parm,parm_node blak_parm[]);
-void AdminShowOneConfigNode(config_node *c,char *config_name,char *default_str);
+void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *default_str);
 void AdminShowString(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
 void AdminShowSysTimers(int session_id,admin_parm_type parms[],
@@ -1095,7 +1095,7 @@ void AdminSaveConfiguration(int session_id,admin_parm_type parms[],
 	aprintf("Configuration saved.\n");
 }
 
-void AdminSaveOneConfigNode(config_node *c,char *config_name,char *default_str)
+void AdminSaveOneConfigNode(config_node *c,const char *config_name,const char *default_str)
 {
 	/* print out non-default config data */ 
 	switch (c->config_type)
@@ -1914,7 +1914,7 @@ void AdminShowConfiguration(int session_id,admin_parm_type parms[],
 	ForEachConfigNode(AdminShowOneConfigNode);
 }
 
-void AdminShowOneConfigNode(config_node *c,char *config_name,char *default_str)
+void AdminShowOneConfigNode(config_node *c,const char *config_name,const char *default_str)
 {
 	if (c->config_type == CONFIG_GROUP)
 		aprintf("\n");

@@ -46,9 +46,9 @@ typedef struct
 {
    int config_id;
    Bool is_dynamic;
-   char *config_name;
+   const char *config_name;
    int config_type;
-   char *default_str;
+   const char *default_str;
 } config_table_type;
 
 config_table_type config_table[] =
@@ -231,7 +231,7 @@ CRITICAL_SECTION csDynamic_config;
 
 
 /* local function prototypes */
-char * AddConfig(int config_id,char *config_data,int config_type,int is_dynamic);
+char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic);
 void LockDynamicConfig(void);
 void UnlockDynamicConfig(void);
 int LoadConfigLine(char *line,int lineno,char *filename,int current_group);
@@ -256,7 +256,7 @@ void ResetConfig(void)
 }
 
 /* returns error string, NULL if ok */
-char * AddConfig(int config_id,char *config_data,int config_type,int is_dynamic)
+char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic)
 {
    config_node *c;
    int len,num;
@@ -362,7 +362,7 @@ void UnlockDynamicConfig(void)
    LeaveCriticalSection(&csDynamic_config);
 }
 
-void ForEachConfigNode(void (*callback_func)(config_node *c,char *config_name,char *default_str))
+void ForEachConfigNode(void (*callback_func)(config_node *c,const char *config_name,const char *default_str))
 {
    int i,config_id;
 

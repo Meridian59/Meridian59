@@ -60,7 +60,7 @@
 
 
 #ifndef NDEBUG
-static void *MallocCHK(size_t size,char*filename,int linenumber)
+static void *MallocCHK(size_t size,const char*filename,int linenumber)
 #else
 static void *MallocCHK(size_t size)
 #endif

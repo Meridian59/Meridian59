@@ -117,23 +117,55 @@ enum
 #define PACKAGE_FILE "packages.txt"
 #define SPROCKET_FILE "sprocket.dll"
 
-
+#ifdef BLAK_PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <winsock2.h>
 #include "resource.h"
 #include <crtdbg.h>
+#include <io.h>
+#include <process.h>
+#endif  // BLAK_PLATFORM_WINDOWS
 
+#ifdef BLAK_PLATFORM_LINUX
+#define __cdecl
+#include <ctype.h>
+#include <limits.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#define MAX_PATH PATH_MAX
+#define O_BINARY 0
+#define O_TEXT 0
+#define stricmp strcasecmp
+
+#define VER_PLATFORM_WIN32_WINDOWS 1
+#define VER_PLATFORM_WIN32_NT 2
+#define PROCESSOR_INTEL_386 386
+#define PROCESSOR_INTEL_486 486
+#define PROCESSOR_INTEL_PENTIUM 586
+
+// XXX stuff below here is junk
+typedef int DWORD;
+typedef int SOCKET;
+typedef int HANDLE;
+typedef int HINSTANCE;
+typedef int HMODULE;
+typedef int HWND;
+typedef unsigned long long UINT64;
+#define MAXGETHOSTSTRUCT 64
+#endif  // BLAK_PLATFORM_LINUX
+
+#include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <malloc.h>
-#include <process.h>
 #include <fcntl.h>
-#include <sys\types.h>
-#include <sys\stat.h>
-#include <io.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <time.h>
 #include <math.h>
 

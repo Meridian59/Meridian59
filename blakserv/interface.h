@@ -22,7 +22,7 @@ void StoreInstanceData(HINSTANCE hInstance,int how_show);
 
 int GetUsedSessions(void);
  
-void __cdecl StartupPrintf(char *fmt,...);
+void __cdecl StartupPrintf(const char *fmt,...);
 void StartupComplete(void);
 
 void InterfaceUpdate(void);

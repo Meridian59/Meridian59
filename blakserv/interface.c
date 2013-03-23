@@ -955,7 +955,7 @@ void InterfaceCheckChannels()
 		if (num_items >= CHANNEL_INTERFACE_LINES)
 			ListBox_DeleteString(hwndList,0);
 		ListBox_AddString(hwndList,cb->buf);
-		ListBox_SetTopIndex(hwndList,max(0,num_items-1));
+		ListBox_SetTopIndex(hwndList,std::max(0,num_items-1));
 		SendMessage(hwndList,WM_SETREDRAW,TRUE,0);
 		
 		DoneChannelBuffer();
@@ -1065,8 +1065,8 @@ void CenterWindow(HWND hwnd, HWND hwndParent)
 	screen_width  = GetSystemMetrics(SM_CXSCREEN);
 	screen_height = GetSystemMetrics(SM_CYSCREEN);
 	
-	x = max(0, min(x, screen_width  - rcDlg.right));
-	y = max(0, min(y, screen_height - rcDlg.bottom));
+	x = std::max(0, std::min(x, (int) (screen_width  - rcDlg.right)));
+   y = std::max(0, std::min(y, (int) (screen_height - rcDlg.bottom)));
 	
 	SetWindowPos(hwnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOACTIVATE);
 }

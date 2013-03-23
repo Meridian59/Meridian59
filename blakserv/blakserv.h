@@ -119,6 +119,7 @@ enum
 
 #ifdef BLAK_PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
 #include <windows.h>
 #include <winsock2.h>
 #include "resource.h"

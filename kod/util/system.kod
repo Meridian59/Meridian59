@@ -1611,7 +1611,7 @@ messages:
                   wString2 = CreateString();
                   setString(wString2,GetTempString());
                   
-                  oBook = Send(SYS,@FindNewsByNum,#num=NID_GWAR_KILLS);
+                  oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
                   oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
                   Send(oBook,@PostNews,#what=oMaster,#title=wString1,#body=wString2);
                }

@@ -396,7 +396,7 @@ void InterfaceAddList(int session_id)
 	else   
 		ListView_SetItemText(hwndLV,index,1,s->account->name);
 	
-	ListView_SetItemText(hwndLV,index,2,ShortTimeStr(s->connected_time));
+	ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
 	ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 	ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	
@@ -450,7 +450,7 @@ void InterfaceUpdateList(int session_id)
 			ListView_SetItemText(hwndLV,index,0,buf);
 			ListView_SetItemText(hwndLV,index,1,s->account->name);
 		}      
-		ListView_SetItemText(hwndLV,index,2,ShortTimeStr(s->connected_time));
+		ListView_SetItemText(hwndLV,index,2,(char *) ShortTimeStr(s->connected_time));
 		ListView_SetItemText(hwndLV,index,3,(char *) GetStateName(s));
 		ListView_SetItemText(hwndLV,index,4,s->conn.name);
 	}

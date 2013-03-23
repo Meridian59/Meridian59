@@ -41,7 +41,7 @@ void SetString(string_node *snod,char *buf,int len);
 
 void SetTempString(char *buf,int len);
 void ClearTempString(void);
-void AppendTempString(char *buf, int len);
+void AppendTempString(const char *buf, int len);
 void AppendNumToTempString(int iNum);
 string_node * GetTempString(void);
 

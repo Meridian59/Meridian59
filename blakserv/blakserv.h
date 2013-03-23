@@ -136,10 +136,12 @@ enum
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "critical_section.h"
 #define MAX_PATH PATH_MAX
 #define O_BINARY 0
 #define O_TEXT 0
 #define stricmp strcasecmp
+#define strnicmp strncasecmp
 
 #define VER_PLATFORM_WIN32_WINDOWS 1
 #define VER_PLATFORM_WIN32_NT 2

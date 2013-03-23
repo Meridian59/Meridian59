@@ -68,10 +68,10 @@ static void *MallocCHK(size_t size)
 	unsigned long *p;
 	unsigned char *tmp;
 	
-#ifndef NDEBUG
+#if defined BLAK_PLATFORM_WINDOWS && !defined NDEBUG
 	tmp = (unsigned char*)_malloc_dbg( size + (sizeof(unsigned long)*3), _NORMAL_BLOCK,filename,linenumber );
 #else
-	tmp = malloc(size);
+	tmp = (unsigned char *) malloc(size);
 #endif
 	
 	

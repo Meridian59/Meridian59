@@ -22,7 +22,7 @@ void __cdecl cprintf(int session_id,const char *fmt,...)
    va_list marker;
 
    va_start(marker,fmt);
-   _vsnprintf(s,sizeof(s),fmt,marker);
+   vsnprintf(s,sizeof(s),fmt,marker);
    va_end(marker);
 
    TermConvertBuffer(s,sizeof(s));

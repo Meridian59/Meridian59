@@ -262,7 +262,7 @@ void ClearTempString(void)
    temp_str.len_data = 0;
 }
 
-void AppendTempString(char *buf, int len)
+void AppendTempString(const char *buf, int len)
 {
   len = std::min(len, LEN_TEMP_STRING-temp_str.len_data);
    if (len <= 0)

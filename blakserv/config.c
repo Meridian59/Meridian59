@@ -231,10 +231,10 @@ CRITICAL_SECTION csDynamic_config;
 
 
 /* local function prototypes */
-char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic);
+const char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic);
 void LockDynamicConfig(void);
 void UnlockDynamicConfig(void);
-int LoadConfigLine(char *line,int lineno,char *filename,int current_group);
+int LoadConfigLine(char *line,int lineno,const char *filename,int current_group);
 
 
 void InitConfig(void)
@@ -256,7 +256,7 @@ void ResetConfig(void)
 }
 
 /* returns error string, NULL if ok */
-char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic)
+const char * AddConfig(int config_id,const char *config_data,int config_type,int is_dynamic)
 {
    config_node *c;
    int len,num;
@@ -641,9 +641,9 @@ void LoadConfig(void)
    }
 }
 
-int LoadConfigLine(char *line,int lineno,char *filename,int current_group)
+int LoadConfigLine(char *line,int lineno,const char *filename,int current_group)
 {
-   char *first_str,*t1,*s;
+   char *first_str,*t1;
    int i;
 
    first_str = strtok(line,"= \t\n");
@@ -713,7 +713,7 @@ int LoadConfigLine(char *line,int lineno,char *filename,int current_group)
 
       if (!stricmp(first_str,config_table[i].config_name))
       {
-	 s = AddConfig(config_table[i].config_id,t1,config_table[i].config_type,
+         const char *s = AddConfig(config_table[i].config_id,t1,config_table[i].config_type,
 		       config_table[i].is_dynamic);
 	 if (s != NULL)
 	    StartupPrintf("LoadConfig error %s (%i): `%s' is %s\n",

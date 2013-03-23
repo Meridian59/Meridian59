@@ -549,7 +549,7 @@ void __cdecl aprintf(const char *fmt,...)
 	va_list marker;
 	
 	va_start(marker,fmt);
-	_vsnprintf(s,sizeof(s),fmt,marker);
+	vsnprintf(s,sizeof(s),fmt,marker);
 	va_end(marker);
 	
 	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
@@ -649,7 +649,7 @@ void __cdecl SendSessionAdminText(int session_id,const char *fmt,...)
 	va_list marker;
 	
 	va_start(marker,fmt);
-	_vsnprintf(s,sizeof(s),fmt,marker);
+	vsnprintf(s,sizeof(s),fmt,marker);
 	va_end(marker);
 	
 	prev_admin_session_id = admin_session_id;
@@ -1779,8 +1779,8 @@ void AdminShowAccountHeader()
 void AdminShowOneAccount(account_node *a)
 {
 	char ch = ' ';
-	static char* types = " ADG"; // see enum ACCOUNT_* in account.h
-    char buff[9];
+	static const char* types = " ADG"; // see enum ACCOUNT_* in account.h
+   char buff[9];
 	
 	if (a->type >= 0 && a->type <= (int)strlen(types))
 		ch = types[a->type];
@@ -4556,7 +4556,7 @@ void AdminSay(int session_id,admin_parm_type parms[],
 void AdminSayEachAdminSession(session_node *s)
 {
 	session_node *sender_session;
-	char* account;
+	const char* account;
 	
 	sender_session = GetSessionByID(say_admin_session_id);
 	if (sender_session == NULL)

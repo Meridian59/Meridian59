@@ -96,12 +96,12 @@ Bool IsStringByID(int string_id)
    return True;
 }
 
-int CreateString(char *new_str)
+int CreateString(const char *new_str)
 {
    return CreateStringWithLen(new_str,strlen(new_str));
 }
 
-int CreateStringWithLen(char *buf,int len)
+int CreateStringWithLen(const char *buf,int len)
 {
    int string_id;
    string_node *snod;
@@ -276,6 +276,6 @@ void AppendNumToTempString(int iNum)
 {
    char numbuf[20];
 
-   itoa(iNum, numbuf, 10);
+   sprintf(numbuf, "%d", iNum);
    AppendTempString(numbuf, strlen(numbuf));
 }

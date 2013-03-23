@@ -16,8 +16,8 @@
 void __cdecl cprintf(int session_id,const char *fmt,...);
 void TermConvertBuffer(char *s,int len_s);
 
-char * GetTagName(val_type val);
-char * GetDataName(val_type val);
+const char * GetTagName(val_type val);
+const char * GetDataName(val_type val);
 
 int GetTagNum(char *tag_str);
 int GetDataNum(int tag_val,char *data_str);

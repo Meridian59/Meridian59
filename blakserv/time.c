@@ -34,7 +34,7 @@ int GetTime()
 	return (int)time(NULL);
 }
 
-char * TimeStr(time_t time)
+const char * TimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
@@ -59,7 +59,7 @@ char * TimeStr(time_t time)
 	return s;
 }
 
-char * ShortTimeStr(time_t time)
+const char * ShortTimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
@@ -81,7 +81,7 @@ char * ShortTimeStr(time_t time)
 	return s;
 }
 
-char * FileTimeStr(time_t time)
+const char * FileTimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
@@ -97,7 +97,7 @@ char * FileTimeStr(time_t time)
 	return s;
 }
 
-char * RelativeTimeStr(int time)
+const char * RelativeTimeStr(int time)
 {
 	static char s[80];
 	int amount;

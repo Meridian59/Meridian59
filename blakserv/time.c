@@ -38,7 +38,7 @@ const char * TimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
-	char *time_format;
+	const char *time_format;
 	
 	if (time == 0)
 		return "Never";
@@ -63,7 +63,7 @@ const char * ShortTimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
-	char *time_format;
+	const char *time_format;
 	
 	if (time == 0)
 		return "Never";

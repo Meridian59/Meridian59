@@ -815,9 +815,9 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 			admin_parm[i] = (void *)parm_str;
 			break;
 		case I :
-			if (sscanf(parm_str,"%lu",&num) != 1)
+			if (sscanf(parm_str,"%d",&num) != 1)
 			{
-				aprintf("Parameter %lu should be an int, not '%s'.\n",
+				aprintf("Parameter %d should be an int, not '%s'.\n",
 					i+1,parm_str);
 				return;
 			}
@@ -1161,7 +1161,7 @@ void AdminWho(int session_id,admin_parm_type parms[],
 
 void AdminWhoEachSession(session_node *s)
 {
-	char *str;
+	const char *str;
 	
 	if (s->conn.type == CONN_CONSOLE)
 		return;
@@ -1271,7 +1271,7 @@ void AdminMail(int session_id,admin_parm_type parms[],
 	
 	sprintf(loadname, "%s%s",ConfigStr(PATH_FORMS),NOTE_FILE);
 	
-	if ((infile = open(loadname, _O_RDONLY | _O_TEXT)) == -1)
+	if ((infile = open(loadname, O_RDONLY | O_TEXT)) == -1)
 	{
 		aprintf("Couldn't open mail file.\n");
 		return;
@@ -1407,8 +1407,8 @@ void AdminShowCalled(int session_id,admin_parm_type parms[],
 	int num_show;
 	num_show = (int)parms[0];
 	
-	num_show = max(1,num_show);
-	num_show = min(500,num_show);
+	num_show = std::max(1,num_show);
+	num_show = std::min(500,num_show);
 	
 	aprintf("%4s %-22s %-22s %s\n","Rank","Class","Message","Count");
 	
@@ -3848,12 +3848,12 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 			int len;
 			if (snod && snod->len_data)
 			{
-				len = min(snod->len_data, 60);
-				aprintf(":   == \"");
-				AdminBufferSend(snod->data,len);
-				if (len < snod->len_data)
-					aprintf("...");
-				aprintf("\"\n");
+			  len = std::min(snod->len_data, 60);
+			  aprintf(":   == \"");
+			  AdminBufferSend(snod->data,len);
+			  if (len < snod->len_data)
+			    aprintf("...");
+			  aprintf("\"\n");
 			}
 		}
 		else if (blak_val.v.tag == TAG_RESOURCE)
@@ -3862,12 +3862,12 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 			int len;
 			if (rnod && rnod->resource_val && *rnod->resource_val)
 			{
-				len = min(strlen(rnod->resource_val), 60);
-				aprintf(":   == \"");
-				AdminBufferSend(rnod->resource_val, len);
-				if (len < (int)strlen(rnod->resource_val))
-					aprintf("...");
-				aprintf("\"\n");
+			  len = std::min(strlen(rnod->resource_val), 60);
+			  aprintf(":   == \"");
+			  AdminBufferSend(rnod->resource_val, len);
+			  if (len < (int)strlen(rnod->resource_val))
+			    aprintf("...");
+			  aprintf("\"\n");
 			}
 		}
 		else if (blak_val.v.tag == TAG_OBJECT)

@@ -245,7 +245,7 @@ void SetString(string_node *snod,char *buf,int len)
 
 void SetTempString(char *buf,int len)
 {
-   len = min(len, LEN_TEMP_STRING);
+  len = std::min(len, LEN_TEMP_STRING);
    memcpy(temp_str.data,buf,len);
    temp_str.len_data = len;
    temp_str.data[temp_str.len_data] = '\0';
@@ -264,7 +264,7 @@ void ClearTempString(void)
 
 void AppendTempString(char *buf, int len)
 {
-   len = min(len, LEN_TEMP_STRING-temp_str.len_data);
+  len = std::min(len, LEN_TEMP_STRING-temp_str.len_data);
    if (len <= 0)
       return;
    memcpy(temp_str.data + temp_str.len_data, buf, len);

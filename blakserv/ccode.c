@@ -1021,7 +1021,7 @@ int C_ParseString(int object_id,local_var_type *local_vars,
 	
 	snod = GetTempString();
 	/* null terminate it to do strtok */
-	snod->data[min(LEN_TEMP_STRING-1,snod->len_data)] = 0;
+	snod->data[std::min(LEN_TEMP_STRING-1,snod->len_data)] = 0;
 	
 	separator_str_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);

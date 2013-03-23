@@ -72,7 +72,7 @@ CreateStandardObjects()
 %%%%%%%%%% guild creator
 
       poMaster = Create(&GuildCreator);
-      Send(self,@NewHold,#what=oMaster,
+      Send(self,@NewHold,#what=poMaster,
            #new_row=5,#new_col=7,#fine_row=0,#fine_col=0,#new_angle=ANGLE_SOUTH);
 
 %%%%%%%%%% charter newsball & guild war book
@@ -87,12 +87,12 @@ CreateStandardObjects()
            #new_row=5,#new_col=12,#fine_row=32,#fine_col=56,#new_angle=ANGLE_SOUTH);
            
       poBook = send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
-      if oBook = $
+      if poBook = $
        {
-          oBook=Create(&GWarKills,#nid=NID_GUILD_NEWS,
+          poBook=Create(&GWarKills,#nid=NID_GUILD_NEWS,
              #name=gwarkills_name,#desc=gwarkills_desc);
        }
-      Send(self,@NewHold,#what=oBook,
+      Send(self,@NewHold,#what=poBook,
            #new_row=4,#new_col=1,#fine_row=0,#fine_col=31,#new_angle=ANGLE_SOUTH_EAST);
 
 %%%%%%%%%%  some braziers

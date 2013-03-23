@@ -65,7 +65,7 @@ void TermConvertBuffer(char *s,int len_s)
 }
 
 
-char * GetTagName(val_type val)
+const char * GetTagName(val_type val)
 {
    static char s[10];
 
@@ -92,7 +92,7 @@ char * GetTagName(val_type val)
    }
 }
 
-char * GetDataName(val_type val)
+const char * GetDataName(val_type val)
 {
    resource_node *r;
    class_node *c;

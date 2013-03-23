@@ -3862,7 +3862,7 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 			int len;
 			if (rnod && rnod->resource_val && *rnod->resource_val)
 			{
-			  len = std::min(strlen(rnod->resource_val), 60);
+            len = std::min(strlen(rnod->resource_val), (size_t) 60);
 			  aprintf(":   == \"");
 			  AdminBufferSend(rnod->resource_val, len);
 			  if (len < (int)strlen(rnod->resource_val))

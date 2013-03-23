@@ -14,11 +14,7 @@
 #define _BSTRING_H
 
 #define INIT_STRING_NODES 50000
-
-enum
-{
-   LEN_TEMP_STRING = LEN_MAX_CLIENT_MSG
-};
+#define LEN_TEMP_STRING LEN_MAX_CLIENT_MSG
 
 typedef struct
 {

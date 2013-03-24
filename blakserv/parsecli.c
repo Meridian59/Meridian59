@@ -93,24 +93,20 @@ void ResetParseClientTables(void)
 
 void TryUpdateParseClientTables()
 {
-	HANDLE hFindFile;
-	WIN32_FIND_DATA search_data;
 	char file_load_path[MAX_PATH+FILENAME_MAX];
 	char file_copy_path[MAX_PATH+FILENAME_MAX];
 	
 	sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF),SPROCKET_FILE);
-	hFindFile = FindFirstFile(file_load_path,&search_data);
-	if (hFindFile != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF),search_data.cFileName);
-			sprintf(file_copy_path,".\\%s",search_data.cFileName);
+   StringVector files;
+   if (FindMatchingFiles(file_load_path, &files))
+   {
+      for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
+      {
+			sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF), it->c_str());
+			sprintf(file_copy_path,".\\%s", it->c_str());
 			BlakMoveFile(file_load_path,file_copy_path);
-		} while (FindNextFile(hFindFile,&search_data));
-		FindClose(hFindFile);
+		}
 	}
-	
 }
 
 void AllocateParseClientListNodes()

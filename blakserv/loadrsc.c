@@ -23,35 +23,26 @@ Bool LoadDynamicRscName(char *filename);
 
 void LoadRsc(void)
 {
-	HANDLE hFindFile;
-	WIN32_FIND_DATA search_data;
-	int files_found;
-	int files_loaded;
 	char file_load_path[MAX_PATH+FILENAME_MAX];
 	
-	files_found = 0;
-	files_loaded = 0;
+	int files_loaded = 0;
 	sprintf(file_load_path,"%s%s",ConfigStr(PATH_RSC),ConfigStr(RESOURCE_RSC_SPEC));
-	hFindFile = FindFirstFile(file_load_path,&search_data);
-	if (hFindFile != INVALID_HANDLE_VALUE)
-	{
-		do
-		{
-			files_found++; 
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_RSC),search_data.cFileName);
+   StringVector files;
+   if (FindMatchingFiles(file_load_path, &files))
+   {
+      for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
+      {
+			sprintf(file_load_path,"%s%s",ConfigStr(PATH_RSC), it->c_str());
 
 			if (RscFileLoad(file_load_path,EachLoadRsc))
-			{
 				files_loaded++;
-			}
 			else
-				eprintf("LoadRsc error loading %s\n",search_data.cFileName);
-		} while (FindNextFile(hFindFile,&search_data));
-		FindClose(hFindFile);
+				eprintf("LoadRsc error loading %s\n", it->c_str());
+		}
 	}
 	
 	/*
-	dprintf("LoadRsc loaded %i of %i found .rsc files\n",files_loaded,files_found);
+	dprintf("LoadRsc loaded %i of %i found .rsc files\n",files_loaded,files.size());
 	*/
 }
 

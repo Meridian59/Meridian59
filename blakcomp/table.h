@@ -20,7 +20,7 @@ typedef struct {
    Entry *entries;
 } Table;
 
-typedef int (*HashProc)(void *, int);
+typedef int (*HashProc)(const void *, int);
 typedef int (*CompareProc)(void *, void *);
 
 Table table_create(int size);

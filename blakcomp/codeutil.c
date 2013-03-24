@@ -19,7 +19,7 @@ extern int outfile;
 /* 
  * codegen_error: Print an error message during code generation
  */
-void codegen_error(char *fmt, ...)
+void codegen_error(const char *fmt, ...)
 {
    va_list marker;
 
@@ -301,7 +301,6 @@ id_type make_temp_var(int idnum)
 int flatten_expr(expr_type e, id_type destvar, int maxlocal)
 {
    opcode_type opcode, sc_opcode;
-   constant_type const;
    expr_type tempexpr;
    int sourceval1, sourceval2, destval, our_maxlocal = maxlocal, templocals;
    int op, gotopos, exitpos;

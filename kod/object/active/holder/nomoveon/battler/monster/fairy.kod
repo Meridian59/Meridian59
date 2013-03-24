@@ -21,7 +21,7 @@ resources:
    good_fairy_icon_rsc = faerie-g.bgf
    good_fairy_desc_rsc = \
       "One of the noble woodland fairies, the fey elhai are most "
-      "reknown for their utter hatred of their dark brothers, the fey "
+      "renowned for their utter hatred of their dark brothers, the fey "
       "dirhai."
 
    fairy_dead_icon_rsc = faerieXG.bgf

@@ -27,26 +27,21 @@ static char buf1[LEN_MAX_CLIENT_MSG+1];
 /* just like strstr, except any case-insensitive match will be returned */
 const char* stristr(const char* pSource, const char* pSearch)
 {
-	char cSearch;
-	int nSearch;
+   if (!pSource || !pSearch || !*pSearch)
+      return NULL;
 	
-	if (!pSource || !pSearch || !*pSearch)
-		return NULL;
+   int nSearch = strlen(pSearch);
+   // Don't search past the end of pSource
+   const char *pEnd = pSource + strlen(pSource) - nSearch;
+   while (pSource <= pEnd)
+   {
+      if (0 == strnicmp(pSource, pSearch, nSearch))
+         return pSource;
+
+      pSource++;
+   }
 	
-	cSearch = toupper(*pSearch);
-	nSearch = strlen(pSearch);
-	while (*pSource)
-	{
-		if (toupper(*pSource) == cSearch)
-		{
-			if (0 == memicmp(pSource, pSearch, nSearch))
-				return pSource;
-		}
-		
-		pSource++;
-	}
-	
-	return NULL;
+   return NULL;
 }
 
 

@@ -129,14 +129,16 @@ enum
 #endif  // BLAK_PLATFORM_WINDOWS
 
 #ifdef BLAK_PLATFORM_LINUX
-#define __cdecl
 #include <ctype.h>
+#include <dirent.h>
+#include <errno.h>
 #include <limits.h>
 #include <unistd.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include "critical_section.h"
+#define __cdecl
 #define MAX_PATH PATH_MAX
 #define O_BINARY 0
 #define O_TEXT 0

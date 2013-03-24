@@ -14,7 +14,7 @@ extern int numbuiltins;
 
 /* local defines */
 
-static char *basefile = "kodbase.txt";
+static const char *basefile = "kodbase.txt";
 
 #define MAX_LINE 128
 
@@ -34,7 +34,7 @@ class_type current_class = NULL;
 message_header_type current_message = NULL;
 
 static int kodbase_line;
-void database_error(char *fmt, ...)
+void database_error(const char *fmt, ...)
 {
    va_list marker;
 

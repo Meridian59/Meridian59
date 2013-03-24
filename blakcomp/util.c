@@ -49,7 +49,7 @@ char *strtolower(char *s)
  * set_extension: Set newfile to filename with its extension set to the
  *    given string.
  */
-void set_extension(char *newfile, char *filename, char *extension)
+void set_extension(char *newfile, const char *filename, const char *extension)
 {
    char *ptr;
 
@@ -71,19 +71,16 @@ void set_extension(char *newfile, char *filename, char *extension)
  *      Max should be odd for best results.
  *  NOTE: It's case insensitive!!!
  */
-int string_hash(char *name, int max)
+int string_hash(const char *name, int max)
 {
-  register char *cp, ch;
-  register int k;
-
-  cp = name;
-  k = 0;
-  while (*cp++)
-  {
-     ch = tolower(*cp);
-     k = ((k << 1) ^ (ch)) & 0x3fff;
-  }
-
+   const char *cp = name;
+   int k = 0;
+   while (*cp++)
+   {
+      char ch = tolower(*cp);
+      k = ((k << 1) ^ (ch)) & 0x3fff;
+   }
+   
    return k % max;
 }
 /* List abstraction: use void pointers to point to data field. */

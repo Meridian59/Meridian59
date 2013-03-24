@@ -80,7 +80,7 @@ void initialize_parser(void)
 }
 /************************************************************************/
 /* Hash on an indentifier's name */
-int id_hash(void *info, int table_size)
+int id_hash(const void *info, int table_size)
 {
    id_type id = (id_type) info;
    
@@ -951,7 +951,7 @@ stmt_type make_call(id_type function_id, list_type args)
    stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
    call_stmt_type s = (call_stmt_type) SafeMalloc(sizeof(call_stmt_struct));
    int argnum = 0, argtype, continuation = ANONE, minargs = 0, i, index;
-   char *fname;
+   const char *fname;
    arg_type arg;
    id_type id, new_id;
 

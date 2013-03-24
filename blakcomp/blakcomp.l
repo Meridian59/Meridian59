@@ -154,7 +154,7 @@ void handle_error(void)
 }
 /************************************************************************/
 /* yyerror should be used for lexing & parsing errors. */
-void yyerror(char *s)
+void yyerror(const char *s)
 {
    /* If token is EOL, give useful error message */
    if (!strcmp(yytext, "\n"))
@@ -165,7 +165,7 @@ void yyerror(char *s)
 }
 /************************************************************************/
 /* action_error should be used for semantic errors. */
-void action_error(char *fmt, ...)
+void action_error(const char *fmt, ...)
 {
    int errline = lineno;
    va_list marker;
@@ -185,7 +185,7 @@ void action_error(char *fmt, ...)
 }
 /************************************************************************/
 /* simple_error should be used for other errors. */
-void simple_error(char *fmt, ...)
+void simple_error(const char *fmt, ...)
 {
    va_list marker;
 
@@ -199,7 +199,7 @@ void simple_error(char *fmt, ...)
 }
 /************************************************************************/
 /* simple_warning should be used for all warnings. */
-void simple_warning(char *fmt, ...)
+void simple_warning(const char *fmt, ...)
 {
 
    va_list marker;
@@ -286,7 +286,6 @@ char *assemble_string(char *str)
 void recompile_warnings(list_type l)
 {
    int column = 0;
-   char *name;
 
    if (l == NULL)
       return;
@@ -295,17 +294,17 @@ void recompile_warnings(list_type l)
 
    for (; l != NULL; l = l->next)
    {
-      name = ((recompile_type) (l->data))->class_id->name;
+      const char *name = ((recompile_type) (l->data))->class_id->name;
       
       if (column + strlen(name) >= 75)
       {
-	 printf("\n");
-	 column = 0;
+         printf("\n");
+         column = 0;
       }
       printf("%s  ", name);
       column += strlen(name) + 2;
-   
-       /* ((recompile_type) (l->data))->superclass->name); */
+      
+      /* ((recompile_type) (l->data))->superclass->name); */
    }
    printf("\n");
 }

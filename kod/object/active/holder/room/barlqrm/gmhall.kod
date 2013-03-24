@@ -79,10 +79,10 @@ CreateStandardObjects()
 
       oNews = send(SYS,@FindNewsByNum,#num=NID_GUILD_CHARTER);
       if oNews = $
-        {
-           oNews=Create(&NewsGuildCharter,#nid=NID_GUILD_CHARTER,
-              #name=guild_charter_ball,#desc=guild_charter_desc);
-        }
+      {
+         oNews=Create(&NewsGuildCharter,#nid=NID_GUILD_CHARTER,
+            #name=guild_charter_ball,#desc=guild_charter_desc);
+      }
       Send(self,@NewHold,#what=oNews,
            #new_row=5,#new_col=12,#fine_row=32,#fine_col=56,#new_angle=ANGLE_SOUTH);
            

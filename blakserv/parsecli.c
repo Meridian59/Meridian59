@@ -34,8 +34,6 @@ void InitParseClient(void)
 	AllocateParseClientListNodes();
 }
 
-typedef client_table_node * (WINAPI *GetParseClientTableFunc)(int); 
-
 void LoadParseClientTables(void)
 {
 	int i;

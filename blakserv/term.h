@@ -22,6 +22,4 @@ const char * GetDataName(val_type val);
 int GetTagNum(const char *tag_str);
 int GetDataNum(int tag_val,const char *data_str);
 
-Bool BlakMoveFile(char *source,char *dest);
-
 #endif

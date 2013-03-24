@@ -234,18 +234,3 @@ int GetDataNum(int tag_val,const char *data_str)
    return retval;
 }
 
-Bool BlakMoveFile(char *source,char *dest)
-{
-   if (!CopyFile(source,dest,FALSE))
-   {
-      eprintf("BlakMoveFile error moving %s to %s (%s)\n",source,dest,GetLastErrorStr());
-      return False;
-   }
-   if (!DeleteFile(source))
-   {
-      eprintf("BlakMoveFile error deleting %s (%s)\n",source,GetLastErrorStr());
-      return False;
-   }
-   return True;
-}
-

@@ -80,6 +80,7 @@ OBJS =  \
 	$(OUTDIR)\block.obj \
 	$(OUTDIR)\stringinthash.obj \
 	$(OUTDIR)\intstringhash.obj \
+	$(OUTDIR)\files.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe

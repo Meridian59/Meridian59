@@ -937,7 +937,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 		
 	}	// end if has blakparm
 	
-	if (strtok(NULL," \t\n") != NULL)
+	if (prev_tok != NULL && strtok(NULL," \t\n") != NULL)
 	{
 		aprintf("Too many parameters, command ignored.\n");
 		return;
@@ -4205,11 +4205,7 @@ void AdminBlockIP(int session_id,admin_parm_type parms[],
                   int num_blak_parm,parm_node blak_parm[])                  
 {
 	struct in_addr blocktoAdd;
-	char *arg_str;
-	char *starptr;
-	int i;
-
-	arg_str = (char *)parms[0];
+	char *arg_str = (char *)parms[0];
 	
 	aprintf("This command will only affect specified IPs until the server reboots\n");
 

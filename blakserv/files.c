@@ -15,6 +15,7 @@
 bool FindMatchingFiles(const char *path, std::vector<std::string> *files)
 {
  #ifdef BLAK_PLATFORM_WINDOWS
+   
 	HANDLE hFindFile;
 	WIN32_FIND_DATA search_data;
 
@@ -30,7 +31,26 @@ bool FindMatchingFiles(const char *path, std::vector<std::string> *files)
    FindClose(hFindFile);
 
    return true;
+   
  #elif BLAK_PLATFORM_LINUX
+
+   struct dirent *entry;
+   DIR *dir = opendir(path); // XXX Need to parse out path name
+   if (dir == NULL)
+      return false;
+
+   while (entry = readdir(dir))
+   {
+      std::string filename = entry->d_name;
+      if (filename != "." && filename != "..")
+         files->push_back(filename);
+   }
+   
+   closedir(dir);
+
+   // XXX Need to pattern match
+   
+   return true;
    
  #else
    #error No platform implementation of FindMatchingFiles
@@ -40,6 +60,7 @@ bool FindMatchingFiles(const char *path, std::vector<std::string> *files)
 bool BlakMoveFile(const char *source, const char *dest)
 {
  #ifdef BLAK_PLATFORM_WINDOWS
+   
    if (!CopyFile(source,dest,FALSE))
    {
       eprintf("BlakMoveFile error moving %s to %s (%s)\n",source,dest,GetLastErrorStr());
@@ -51,7 +72,11 @@ bool BlakMoveFile(const char *source, const char *dest)
       return false;
    }
    return true;
+   
  #elif BLAK_PLATFORM_LINUX
+
+   // Doesn't work across filesystems, but probably fine for our purposes.
+   return 0 == rename(source, dest);
    
  #else
    #error No platform implementation of BlakMoveFile

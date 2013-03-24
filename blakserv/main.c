@@ -27,6 +27,8 @@ void MainExitServer();
 
 DWORD main_thread_id;
 
+#ifdef BLAK_PLATFORM_WINDOWS
+
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_line,int how_show)
 {
 	main_thread_id = GetCurrentThreadId();
@@ -36,7 +38,17 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrev_instance,char *command_li
 	MainServer();
 
 	return 0;
-}   
+}
+
+#else
+
+int main(int argc, char **argv)
+{
+	MainServer();
+	return 0;
+}
+
+#endif
 
 void MainServer()
 {
@@ -152,7 +164,9 @@ void MainExitServer()
 }
 
 char * GetLastErrorStr()
-{ 
+{
+#ifdef BLAK_PLATFORM_WINDOWS
+
 	char *error_str;
 	
 	error_str = "No error string"; /* in case the call  fails */
@@ -161,4 +175,10 @@ char * GetLastErrorStr()
 		NULL,GetLastError(),MAKELANGID(LANG_ENGLISH,SUBLANG_ENGLISH_US),
 		(LPTSTR) &error_str,0,NULL);
 	return error_str;
+   
+#else
+
+   return strerror(errno);
+   
+#endif
 }

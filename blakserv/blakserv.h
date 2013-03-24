@@ -137,6 +137,7 @@ enum
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
+#include <sys/time.h>
 #include "critical_section.h"
 #define MAX_PATH PATH_MAX
 #define O_BINARY 0

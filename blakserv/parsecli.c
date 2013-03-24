@@ -21,9 +21,6 @@
 
 client_table_node *user_table,*system_table,*usercommand_table;
 
-
-static HMODULE hSprocket;
-
 /* stuff for client -> server */
 val_type cli_list_nodes[MAX_CLIENT_PARMS];
 
@@ -33,7 +30,6 @@ void ParseClientSendBlakod(int session_id,int msg_len,unsigned char *msg_data,in
 
 void InitParseClient(void)
 {
-   TryUpdateParseClientTables();
 	LoadParseClientTables();
 	AllocateParseClientListNodes();
 }
@@ -43,39 +39,24 @@ typedef client_table_node * (WINAPI *GetParseClientTableFunc)(int);
 void LoadParseClientTables(void)
 {
 	int i;
-	UINT old_mode;
-	FARPROC lpfn;
-   GetParseClientTableFunc gpct;
+
+   InitSprocket();
 	
-	old_mode = SetErrorMode(SEM_NOOPENFILEERRORBOX);
-	hSprocket = LoadLibrary(SPROCKET_FILE);
-	SetErrorMode(old_mode);
-	
-	if (hSprocket == NULL)
-		FatalError("ParseClientLoadTables unable to load sprocket.dll with protocol");
-	
-	lpfn = GetProcAddress(hSprocket,"InitSprocket");
-	(*lpfn)();
-	
-	gpct = (GetParseClientTableFunc) GetProcAddress(hSprocket,"GetParseClientTable");
-	if (lpfn == NULL)
-		FatalError("ParseClientLoadTables can't find GetParseClientTable in sprocket.dll");
-	
-	user_table = (*gpct)(SPROCKET_TABLE_USER);
+	user_table = GetParseClientTable(SPROCKET_TABLE_USER);
 	if (user_table == NULL)
 		FatalError("ParseClientLoadTables can't get user table");
 	
 	for (i=0;i<CLIENT_COMMANDS_PER_TABLE;i++)
 		user_table[i].call_count = 0;
 	
-	system_table = (*gpct)(SPROCKET_TABLE_SYSTEM);
+	system_table = GetParseClientTable(SPROCKET_TABLE_SYSTEM);
 	if (system_table == NULL)
 		FatalError("ParseClientLoadTables can't get system table");
 	
 	for (i=0;i<CLIENT_COMMANDS_PER_TABLE;i++)
 		system_table[i].call_count = 0;
 	
-	usercommand_table = (*gpct)(SPROCKET_TABLE_USERCOMMAND);
+	usercommand_table = GetParseClientTable(SPROCKET_TABLE_USERCOMMAND);
 	if (usercommand_table == NULL)
 		FatalError("ParseClientLoadTables can't get user command table");
 	
@@ -88,25 +69,6 @@ void ResetParseClientTables(void)
 	user_table = NULL;
 	system_table = NULL;
 	usercommand_table = NULL;
-	FreeLibrary(hSprocket);
-}
-
-void TryUpdateParseClientTables()
-{
-	char file_load_path[MAX_PATH+FILENAME_MAX];
-	char file_copy_path[MAX_PATH+FILENAME_MAX];
-	
-	sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF),SPROCKET_FILE);
-   StringVector files;
-   if (FindMatchingFiles(file_load_path, &files))
-   {
-      for (StringVector::iterator it = files.begin(); it != files.end(); ++it)
-      {
-			sprintf(file_load_path,"%s%s",ConfigStr(PATH_BOF), it->c_str());
-			sprintf(file_copy_path,".\\%s", it->c_str());
-			BlakMoveFile(file_load_path,file_copy_path);
-		}
-	}
 }
 
 void AllocateParseClientListNodes()

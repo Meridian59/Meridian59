@@ -251,6 +251,7 @@ char * GetLastErrorStr();
 #include "proto.h"
 #include "commcli.h"
 #include "parsecli.h"
+#include "sprocket.h"
 #include "bstring.h"
 #include "admin.h"
 #include "garbage.h"

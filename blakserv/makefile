@@ -81,6 +81,7 @@ OBJS =  \
 	$(OUTDIR)\stringinthash.obj \
 	$(OUTDIR)\intstringhash.obj \
 	$(OUTDIR)\files.obj \
+	$(OUTDIR)\sprocket.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe

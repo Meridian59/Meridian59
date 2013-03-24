@@ -275,8 +275,6 @@ void AdminReloadMotd(int session_id,admin_parm_type parms[],
                      int num_blak_parm,parm_node blak_parm[]);
 void AdminReloadPackages(int session_id,admin_parm_type parms[],
                          int num_blak_parm,parm_node blak_parm[]);
-void AdminReloadProtocol(int session_id,admin_parm_type parms[],
-                         int num_blak_parm,parm_node blak_parm[]);
 
 void AdminDisableSysTimer(int session_id,admin_parm_type parms[],
                           int num_blak_parm,parm_node blak_parm[]);
@@ -468,8 +466,6 @@ admin_table_type admin_reload_table[] =
 	{ AdminReloadGame,     {I,N}, F, A|M, NULL, 0, "game",   "Reload game from any save time (0 for last)" },
 	{ AdminReloadMotd,     {N},   F, A|M, NULL, 0, "motd",   "Reload message of the day from file" },
 	{ AdminReloadPackages, {N},   F, A|M, NULL, 0, "packages","Rescan upload directory for packages" },
-	{ AdminReloadProtocol, {N},   F, A, NULL, 0, "protocol",
-	"Rescan bof dir for sprocket.dll, and reload" },
 	{ AdminReloadSystem,   {N},   F, A|M, NULL, 0, "system", "Save game and reload all kod, motd" },
 };
 #define LEN_ADMIN_RELOAD_TABLE (sizeof(admin_reload_table)/sizeof(admin_table_type))
@@ -4494,18 +4490,6 @@ void AdminReloadPackages(int session_id,admin_parm_type parms[],
 	
 	ResetDLlist();
 	AddBuiltInDLlist();
-	aprintf("done.\n");
-}
-
-void AdminReloadProtocol(int session_id,admin_parm_type parms[],
-                         int num_blak_parm,parm_node blak_parm[])
-{
-	aprintf("Reloading protocol... ");
-	
-	ResetParseClientTables();
-	TryUpdateParseClientTables();
-	LoadParseClientTables();
-	
 	aprintf("done.\n");
 }
 

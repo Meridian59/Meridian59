@@ -169,7 +169,7 @@ property:
 	;
 
 message_handler_list:
-		/* empty */				{ $$ = NULL }
+      /* empty */				{ $$ = NULL; }
 	|	message_handler_list message_handler	{ $$ = list_add_item($1, $2); }
 	;
 

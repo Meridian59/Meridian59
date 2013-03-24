@@ -543,7 +543,7 @@ void StartAsyncSession(session_node *s)
 }
 
 /* this cannot be called from main thread, causes problems!!!!!! */
-void __cdecl StartupPrintf(const char *fmt,...)
+void StartupPrintf(const char *fmt,...)
 {
 	char s[200];
 	va_list marker;

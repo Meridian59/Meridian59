@@ -47,7 +47,7 @@ enum
 #define MAX_ADMIN_PARM 6
 #define MAX_ADMIN_BLAK_PARM 10
 
-typedef void * admin_parm_type;
+typedef UINT64 admin_parm_type;
 
 typedef struct admin_table_struct
 {
@@ -455,7 +455,7 @@ admin_table_type admin_hangup_table[] =
 {
 	{ AdminHangupAccount,  {R,N},  F, A|M, NULL, 0, "account", "Hangup one account" },
 	{ AdminHangupAll,      {N},    F, A|M, NULL, 0, "all", "Hangup all users" },
-	{ AdminBlockIP,        {R,N},  F, A|M, NULL, 0, "ip", "Block an IP address (temporarily) can use 192.0.0.* style" },
+	{ AdminBlockIP,        {R,N},  F, A|M, NULL, 0, "ip", "Block an IP address (temporarily)" },
 	{ AdminHangupSession,  {I,N},  F, A, NULL, 0, "session", "Hangup one session" },
 	{ AdminHangupUser,     {R,N},  F, A|M, NULL, 0, "user", "Hangup one user" },
 };
@@ -551,6 +551,13 @@ void aprintf(const char *fmt,...)
 	TermConvertBuffer(s,sizeof(s)); /* makes \n's into CR/LF pairs for edit boxes */
 	
 	AdminBufferSend(s,strlen(s));
+}
+
+char *to_lowercase(char *s)
+{
+   char* p = s;
+   while (*p = tolower(*p)) p++;
+   return s;
 }
 
 void AdminBufferSend(char *buf,int len_buf)
@@ -728,7 +735,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 	index = -1;
 	for (i=0;i<len_command_table;i++)
 	{
-		strlwr(command);
+		to_lowercase(command);
 		if (strstr(command_table[i].admin_cmd,command) 
 			== command_table[i].admin_cmd)
 		{
@@ -808,7 +815,7 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 		switch (command_table[index].parm_type[i])
 		{
 		case S : 
-			admin_parm[i] = (void *)parm_str;
+			admin_parm[i] = (admin_parm_type)parm_str;
 			break;
 		case I :
 			if (sscanf(parm_str,"%d",&num) != 1)
@@ -817,13 +824,13 @@ void AdminTable(int len_command_table,admin_table_type command_table[],int sessi
 					i+1,parm_str);
 				return;
 			}
-			admin_parm[i] = (void *)num;
+			admin_parm[i] = (admin_parm_type)num;
 			break;
 		case R :
 			/* remember how strtok works to see why this works */
-			admin_parm[i] = prev_tok + strlen(prev_tok) + 1;
+			admin_parm[i] = (admin_parm_type) (prev_tok + strlen(prev_tok) + 1);
 			/* now make sure no more params */
-			prev_tok = strtok("","");
+			prev_tok = NULL;
 			break;
 		}
 		i++;
@@ -1481,7 +1488,7 @@ void AdminShowObjects(int session_id,admin_parm_type parms[],
 					/* valid object, class and has poOwner property */
 					propObjId = atol( GetDataName(o->p[ propId ].val) );
 					if(propObjId == object_id ) {
-						lparm[0] = (void*)i ;
+						lparm[0] = (admin_parm_type) i;
 						AdminShowObject(session_id,lparm, 0, NULL);
 					}
 				}
@@ -3723,8 +3730,11 @@ void AdminDeleteAccount(int session_id,admin_parm_type parms[],
 	}
 	
 	aprintf("Account %i will be deleted.\n",a->account_id);
-	
+
+   // XXX Need a replacement for this on Linux
+#ifdef BLAK_PLATFORM_WINDOWS
 	PostThreadMessage(main_thread_id,WM_BLAK_MAIN_DELETE_ACCOUNT,0,a->account_id);
+#endif
 }
 
 void AdminDeleteEachUserObject(user_node *u)
@@ -4189,12 +4199,6 @@ extern block_node* FindBlock(struct in_addr* piaPeer);
 
 /*
  * AdminBlockIP - Block an IP address from accessing this server
- *
- * Input : 
- * Output :
- *
- * Author : Charlie
- *
  */
 
 void AdminBlockIP(int session_id,admin_parm_type parms[],
@@ -4209,32 +4213,6 @@ void AdminBlockIP(int session_id,admin_parm_type parms[],
 	
 	aprintf("This command will only affect specified IPs until the server reboots\n");
 
-	if((starptr = strstr(arg_str,"*")) != NULL ) {
-		/* admin wants to add a whole 0-255 range */
-		/* lets hope they know what they are doing */
-			
-		starptr[0] = '0' ;
-		
-		if( ( blocktoAdd.s_addr = inet_addr( arg_str ) ) == -1 ) {
-			aprintf("Couldn`t build IP address bad format %s\n",arg_str );
-			return ;
-		}
-
-		for(i=0;i<255;i++) {
-			/* if its already blocked delete it */
-			if(FindBlock( &blocktoAdd ) == NULL )  {
-				AddBlock( -1, &blocktoAdd ) ;
-				aprintf("IP %s blocked temporarily\n",inet_ntoa( blocktoAdd ) );
-			} else {
-				DeleteBlock( &blocktoAdd );
-				aprintf("IP %s has been unblocked\n" ,inet_ntoa( blocktoAdd ) );
-			}
-			blocktoAdd.S_un.S_un_b.s_b4 ++ ;
-		}	
-		
-		return ;
-	}
-	
 	if( ( blocktoAdd.s_addr = inet_addr( arg_str ) ) != -1 ) {
 		if(FindBlock( &blocktoAdd ) == NULL )  {
 			AddBlock(-1, &blocktoAdd);
@@ -4246,11 +4224,10 @@ void AdminBlockIP(int session_id,admin_parm_type parms[],
 	}  else {
 		aprintf("Couldn`t build IP address bad format %s\n",arg_str );
 	}
-	
 }
 
 void AdminHangupAccount(int session_id,admin_parm_type parms[],
-                        int num_blak_parm,parm_node blak_parm[])                        
+                        int num_blak_parm,parm_node blak_parm[])
 {
 	account_node *a;
 	session_node *hangup_session;

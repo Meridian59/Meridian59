@@ -1467,7 +1467,7 @@ messages:
    {
       local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
             param2, param3, param4, param5, param6, param7, type5, type7,
-            wString1, wString2, oBook, oMaster;
+            war_string1, war_string2, oBook, oMaster;
 
       if IsClass(what,&Guest)
          OR (killer = $)
@@ -1595,8 +1595,8 @@ messages:
                   AppendTempString(param5);
                   AppendTempString(guildwar_kill_title1);
                   AppendTempString(Send(what,@GetTrueName));
-                  wString1 = CreateString();
-                  setString(wString1,GetTempString());
+                  war_string1 = CreateString();
+                  setString(war_string1,GetTempString());
                   
                   ClearTempString();
                   AppendTempString(guildwar_kill_body1);
@@ -1608,12 +1608,12 @@ messages:
                   AppendTempString(guildwar_kill_body2);
                   AppendTempString(param7);
                   AppendTempString(guildwar_kill_body4);
-                  wString2 = CreateString();
-                  setString(wString2,GetTempString());
+                  war_string2 = CreateString();
+                  setString(war_string2,GetTempString());
                   
                   oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
                   oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
-                  Send(oBook,@PostNews,#what=oMaster,#title=wString1,#body=wString2);
+                  Send(oBook,@PostNews,#what=oMaster,#title=war_string1,#body=war_string2);
                }
 
                % Notify who killed whom during frenzies.

@@ -25,7 +25,7 @@ static char buf0[LEN_MAX_CLIENT_MSG+1];
 static char buf1[LEN_MAX_CLIENT_MSG+1];
 
 /* just like strstr, except any case-insensitive match will be returned */
-char* stristr(char* pSource, const char* pSearch)
+const char* stristr(const char* pSource, const char* pSearch)
 {
 	char cSearch;
 	int nSearch;

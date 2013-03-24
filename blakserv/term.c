@@ -16,7 +16,7 @@
 
 #include "blakserv.h"
 
-void __cdecl cprintf(int session_id,const char *fmt,...)
+void cprintf(int session_id,const char *fmt,...)
 {
    char s[8000];
    va_list marker;

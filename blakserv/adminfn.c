@@ -64,7 +64,7 @@ typedef struct admin_table_struct
 
 void AdminSendBufferList(void);
 
-void __cdecl aprintf(const char *fmt,...);
+void aprintf(const char *fmt,...);
 void AdminBufferSend(char *buf,int len_buf);
 void SendAdminBuffer(char *buf,int len_buf);
 
@@ -543,7 +543,7 @@ admin_table_type admin_main_table[] =
 int admin_session_id; /* set by TryAdminCommand each time */
 static buffer_node *blist; /* same */
 
-void __cdecl aprintf(const char *fmt,...)
+void aprintf(const char *fmt,...)
 {
 	char s[BUFFER_SIZE];
 	va_list marker;
@@ -641,7 +641,7 @@ void SendAdminBuffer(char *buf,int len_buf)
 /* SendSessionAdminText
 This can be called from any module to asynchronously send
 admin text. Currently only used for trace info and say. */
-void __cdecl SendSessionAdminText(int session_id,const char *fmt,...)
+void SendSessionAdminText(int session_id,const char *fmt,...)
 {
 	int prev_admin_session_id;
 	

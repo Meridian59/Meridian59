@@ -138,7 +138,6 @@ enum
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include "critical_section.h"
-#define __cdecl
 #define MAX_PATH PATH_MAX
 #define O_BINARY 0
 #define O_TEXT 0

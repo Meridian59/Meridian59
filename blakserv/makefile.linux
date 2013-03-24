@@ -1,0 +1,122 @@
+#
+# makefile for blakserv
+#
+
+TOPDIR=..
+
+#!include $(TOPDIR)/common.mak
+CP = cp
+RM = rm
+MKDIR = mkdir
+RMDIR = rmdir
+CC     = gcc
+OUTDIR=debug
+BLAKINCLUDEDIR = $(TOPDIR)/include
+
+CFLAGS = -I $(BLAKINCLUDEDIR) -x c++ -DBLAK_PLATFORM_LINUX
+
+
+
+BLAKSERVLINKFLAGS =
+
+SOURCEDIR = .
+
+LIBS =
+
+OBJS =  \
+	$(OUTDIR)/main.obj \
+	$(OUTDIR)/loadkod.obj \
+	$(OUTDIR)/class.obj \
+	$(OUTDIR)/message.obj \
+	$(OUTDIR)/object.obj \
+	$(OUTDIR)/sendmsg.obj \
+	$(OUTDIR)/roofile.obj \
+	$(OUTDIR)/bufpool.obj \
+	$(OUTDIR)/ccode.obj \
+	$(OUTDIR)/channel.obj \
+	$(OUTDIR)/list.obj \
+	$(OUTDIR)/timer.obj \
+	$(OUTDIR)/session.obj \
+	$(OUTDIR)/loadrsc.obj \
+	$(OUTDIR)/blakres.obj \
+	$(OUTDIR)/roomdata.obj \
+	$(OUTDIR)/commcli.obj \
+	$(OUTDIR)/string.obj \
+	$(OUTDIR)/async.obj \
+	$(OUTDIR)/loadgame.obj \
+	$(OUTDIR)/game.obj \
+	$(OUTDIR)/term.obj \
+	$(OUTDIR)/account.obj \
+	$(OUTDIR)/loadacco.obj \
+	$(OUTDIR)/saveacco.obj \
+	$(OUTDIR)/savestr.obj \
+	$(OUTDIR)/loadstr.obj \
+	$(OUTDIR)/nameid.obj \
+	$(OUTDIR)/time.obj \
+	$(OUTDIR)/dllist.obj \
+	$(OUTDIR)/trysync.obj \
+	$(OUTDIR)/saveall.obj \
+	$(OUTDIR)/loadall.obj \
+	$(OUTDIR)/synched.obj \
+	$(OUTDIR)/motd.obj \
+	$(OUTDIR)/admin.obj \
+	$(OUTDIR)/garbage.obj \
+	$(OUTDIR)/kodbase.obj \
+	$(OUTDIR)/savegame.obj \
+	$(OUTDIR)/user.obj \
+	$(OUTDIR)/system.obj \
+	$(OUTDIR)/resync.obj \
+	$(OUTDIR)/gamelock.obj \
+	$(OUTDIR)/config.obj \
+	$(OUTDIR)/apndfile.obj \
+	$(OUTDIR)/admincons.obj \
+	$(OUTDIR)/builtin.obj \
+	$(OUTDIR)/version.obj \
+	$(OUTDIR)/systimer.obj \
+	$(OUTDIR)/memory.obj \
+	$(OUTDIR)/interface.obj \
+	$(OUTDIR)/intrlock.obj \
+	$(OUTDIR)/chanbuf.obj \
+	$(OUTDIR)/debug.obj \
+	$(OUTDIR)/saversc.obj \
+	$(OUTDIR)/adminfn.obj \
+	$(OUTDIR)/table.obj \
+	$(OUTDIR)/parsecli.obj \
+	$(OUTDIR)/rscload.obj \
+	$(OUTDIR)/crc.obj \
+	$(OUTDIR)/md5.obj \
+	$(OUTDIR)/maintenance.obj \
+	$(OUTDIR)/block.obj \
+	$(OUTDIR)/stringinthash.obj \
+	$(OUTDIR)/intstringhash.obj \
+	$(OUTDIR)/files.obj \
+	$(OUTDIR)/critical_section.obj \
+
+
+all : makedirs $(OUTDIR)/blakserv
+
+$(OUTDIR)/rscload.obj : $(TOPDIR)/util/rscload.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(OUTDIR)/crc.obj : $(TOPDIR)/util/crc.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(OUTDIR)/md5.obj : $(TOPDIR)/util/md5.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+$(OUTDIR)/blakserv: $(OBJS)
+	$(CC) $(CFLAGS) -o $@ -c $(SOURCEDIR)/version.c
+	$(LINK)	$@ $(LIBS) $(BLAKSERVLINKFLAGS) $(LINKFLAGS)
+	$(CP) $@ $(BLAKSERVRUNDIR)
+
+
+#!include $(TOPDIR)/rules.mak
+makedirs:
+	-$(MKDIR) $(OUTDIR)
+
+$(OUTDIR)/%.obj : %.c
+	$(CC) $(CFLAGS) -o $@ -c $< 
+
+clean:
+	-$(RM) $(OUTDIR)/*
+	-$(RMDIR) $(OUTDIR)

@@ -34,6 +34,8 @@ resources:
    guildexile_necro_nak = "~BEvery member of The Order is bound by a blood oath.  The only way "
       "out is death."
 
+   guild_cannot_remove_while_ghosted = "You cannot exile a player while they are ghosted."
+
 classvars:
 
    vrName = guildexile_name_rsc
@@ -60,7 +62,7 @@ messages:
    DoCommand(who=$, otarget = $)
    "Kicks the target out of the guild!"
    {
-      local yourGuild,myguild,i,lmembers;
+      local yourGuild,myguild,i,lmembers,oGhost;
 
       if not isClass(oTarget,&player)
         {
@@ -104,6 +106,17 @@ messages:
 
       if isClass(myGuild,&NecromancerGuild) {
          Send(who,@MsgSendUser,#message_rsc=guildexile_necro_nak );
+         return FALSE;
+      }
+
+      oGhost = Send(oTarget,@GetGhost);
+      if oGhost <> $
+      {
+         if who <> $
+            AND IsClass(who,&User)
+         {
+            Send(who,@MsgSendUser,#message_rsc=guild_cannot_remove_while_ghosted);
+         }
          return FALSE;
       }
 

@@ -218,25 +218,6 @@ messages:
       return;
    }
 
-   BreakTrance( who = $, state = $ )
-   {
-      local oUser,lEnchanted,iSpellpower;
-   
-      iSpellpower = Nth(state,3);
-
-      % Clean up Trance.
-      Send(who,@ClearTranceFlag);
-      Send(who,@RemoveEnchantment,#what=self);
-      lEnchanted = Nth(state,2);
-      for oUser in lEnchanted
-      {
-         Send(oUser,@MsgSendUser,#message_rsc=Umbrella_break_trance);
-         Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
-      }
-      
-      return;
-   }
-
    RemoveEnchantmentEffects()
    "Need to override spell.kod's thing, since we do this ourselves specially."
    {
@@ -247,7 +228,7 @@ messages:
 
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      return defense_power + 500;
+      return iSpellPower*2;
    }
 
    ModifyDefenseDamage(who = $,what = $,damage = $)
@@ -271,7 +252,7 @@ messages:
 
    GetResistanceStrength(iSpellpower=$)
    {
-      return 50 + iSpellpower/2;
+      return iSpellpower/5;
    }
 
    AddResistances(who=$,value=$)

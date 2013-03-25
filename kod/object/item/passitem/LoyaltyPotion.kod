@@ -1,0 +1,115 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LoyaltyPotion is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   LoyaltyPotion_icon_rsc = potion01.bgf
+
+   LoyaltyPotion_name_rsc = "Loyalty Potion"
+   LoyaltyPotion_desc_rsc = "This potion is a reward for your dedication and loyalty to the Quest."
+
+
+   LoyaltyPotion_worked = "You quaff down the potion in a single gulp and feel a rush of energy throughout your body.\n"						  
+                          "`B`IYou suddenly feel a little tougher."
+   
+   LoyaltyPotion_NOdrink = "You quaff down the potion in a single gulp and feel `B`Iabsolutely nothing.\n"
+                           "`n`rAdvanced Players, Outlaws or Murderers may not use this potion."
+						   
+classvars:
+   
+   vrDesc = LoyaltyPotion_desc_rsc
+   vrName = LoyaltyPotion_name_rsc
+   vrIcon = LoyaltyPotion_icon_rsc
+   
+   viBulk = 1000
+   viWeight = 1000
+   viValue_average = 0
+   viFilling = 70
+
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+   viUse_type = ITEM_SINGLE_USE
+   
+   PotionHPBoost = 1
+
+properties:
+   
+messages:
+
+   Constructor()
+   {
+      propagate;
+   }
+
+   ApplyPotionEffects(apply_on = $)
+   {	  
+     if Send(apply_on,@GetBaseMaxHealth) < 40
+        AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+        AND NOT Send(apply_on,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+     {		
+        Send(apply_on,@GainBaseMaxHealth,#amount=PotionHPBoost);
+        Send(apply_on,@MsgSendUser,#message_rsc=LoyaltyPotion_worked);
+        Send(self,@Delete);
+     }				
+					
+     else 
+     {
+        % delete potion if ineligible player tries to use
+        Send(apply_on,@MsgSendUser,#message_rsc=LoyaltyPotion_NOdrink);
+        Send(self,@Delete);												
+     }					
+			
+      return;
+   }
+   
+   ReqNewApply(what = $,apply_on = $)
+   {
+     if not Send(apply_on,@ReqEatSomething,#filling=viFilling,#what=self)
+     {
+        return FALSE;
+     }
+      
+     return TRUE;;
+   }
+   
+   NewApplied(what = $,apply_on = $)
+   {
+      local oSpell;
+      
+      Send(apply_on,@EatSomething,#nutrition=0,#filling=viFilling);
+      
+      if isClass(apply_on,&User) 
+      {
+         Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
+      }
+
+      Send(self,@ApplyPotionEffects,#apply_on=apply_on);      
+
+      return;
+   }
+   
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+   RevealHiddenAttributes()
+   {
+      return FALSE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -45,6 +45,7 @@ messages:
       ptExpire = CreateTimer(self,@Expire,iDuration);
 
       poCaster = Caster;
+      Send(poCaster,@AddSummonedObject,#what=self);
      
       propagate;
    }
@@ -79,6 +80,8 @@ messages:
 
    Delete()
    {
+      Send(poCaster,@RemoveSummonedObject,#what=self);
+
       if ptExpire <> $
       {
          DeleteTimer(ptExpire);

@@ -112,6 +112,7 @@ messages:
       {
          poCaster = Caster;
          vbSummoned = isClass(Caster,&Player);
+         Send(caster,@AddSummonedObject,#what=self);
       }
       else
       {
@@ -415,6 +416,11 @@ messages:
       if (poCaster = self)
       {
          Send(poOwner,@BrambleKilled,#row=Send(self,@GetRow),#col=Send(self,@GetCol));
+      }
+
+      if IsClass(poCaster,&User)
+      {
+         Send(poCaster,@RemoveSummonedObject,#what=self);
       }
 
       poCaster = $;

@@ -872,6 +872,9 @@ properties:
    % Defense modifiers to defense roll & damage (includes items & spells)
    plDefense_modifiers = $
    
+   % Created objects that we own (walls, reflections, etc)
+   plSummoned_objects = $
+   
    piGender = GENDER_MALE
 
    piVigor_rest_threshold = 80
@@ -1948,6 +1951,8 @@ messages:
       {
          Send(i,@UserLogoff);
       }
+
+      Send(self,@DeleteSummonedObjects,#byClass=&Reflection);
 
       % client assumes not resting upon login
       Send(self,@StopResting); 
@@ -12338,6 +12343,35 @@ messages:
       return;
    }
 
+   AddSummonedObject(what = $)
+   {
+      plSummoned_objects = Cons(what,plSummoned_objects);
+      return;
+   }
+   
+   RemoveSummonedObject(what = $)
+   {
+      DelListElem(plSummoned_objects,what);
+      return;
+   }
 
+   GetSummonedObjects()
+   {
+      return plSummoned_objects;
+   }
+
+   DeleteSummonedObjects(byClass=&Object)
+   {
+      local i;
+
+      for i in plSummoned_objects
+      {
+         if IsClass(i,byClass)
+         {
+            Post(i,@Delete);
+         }
+      }
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

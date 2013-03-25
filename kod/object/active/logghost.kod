@@ -152,11 +152,14 @@ messages:
          }
       }
 
+      Send(poGhostedPlayer,@SetGhost,#what=self);
+
       propagate;
    }
 
    Delete()
    {
+      Send(poGhostedPlayer,@SetGhost,#what=$);
       poGhostedPlayer = $;
 
       if ptPenaltyTimer <> $

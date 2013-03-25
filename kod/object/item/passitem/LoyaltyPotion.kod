@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-LoyaltyPotion is PassiveItem
+LoyaltyPotion is Potion
 
 constants:
 
@@ -26,7 +26,7 @@ resources:
                           "`B`IYou suddenly feel a little tougher."
    
    LoyaltyPotion_NOdrink = "You quaff down the potion in a single gulp and feel `B`Iabsolutely nothing.\n"
-                           "`n`rAdvanced, Outlaws or Murderers may not use this potion."
+                           "`n`rAdvanced Players, Outlaws or Murderers may not use this potion."
 						   
 classvars:
    
@@ -37,20 +37,15 @@ classvars:
    viBulk = 1000
    viWeight = 1000
    viValue_average = 0
+   viFilling = 70
 
    viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
    viUse_type = ITEM_SINGLE_USE
    
    PotionHPBoost = 1
 
-   viPoisonPercent = 0
-   viGoBadDamage = 0
-
 properties:
    
-   piGoBadTime = 0
-   piItem_flags = PT_GRAY_TO_RED
-
 messages:
 
    Constructor()
@@ -81,17 +76,20 @@ messages:
    
    ReqNewApply(what = $,apply_on = $)
    {
-      if what = apply_on
-      {
-         return TRUE;
-      }
+     if not Send(apply_on,@ReqEatSomething,#filling=viFilling,#what=self)
+     {
+        return FALSE;
+     }
       
-      return FALSE;
+     return TRUE;;
    }
    
    NewApplied(what = $,apply_on = $)
    {
       local oSpell;
+      
+      Send(apply_on,@EatSomething,#nutrition=0,#filling=viFilling);
+      
       if isClass(apply_on,&User) 
       {
          Send(apply_on,@waveSenduser,#wave_rsc=BetaPotion_gulp_sound);
@@ -103,11 +101,6 @@ messages:
    }
    
    IsBeverage()
-   {
-      return TRUE;
-   }
-   
-   CanIdentify()
    {
       return TRUE;
    }

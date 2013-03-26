@@ -5030,6 +5030,71 @@ messages:
       return;
    }
 
+   RoomGive(classtype=$, number=-1, who=$, hp=30)
+   "Admin supported.\n"
+   "Give one of said item to everyone in the room. If num <> -1 and the object "
+   "is a number item, give that many of the item to each person.  RoomGive ignores all "
+   "reqnewhold requirements (such as bulk or weight restrictions)."
+   {
+      local i, lGiveList, oExample, oRoom, each_obj, numRewarded;
+
+      numRewarded = 0;
+
+      if who = $
+      {
+         return 0;
+      }
+      else
+      {
+         oRoom = Send(who,@GetOwner);
+      }
+
+      if classtype <> $
+      {
+         if number = -1
+         {
+            oExample = Create(classtype);
+         }
+         else
+         {
+            oExample = Create(classtype,#number=number);
+         }
+
+         if NOT isClass(oExample,&item)
+         {
+            Debug("Tried to RoomGive something that was not an item!");
+
+            return 0;
+         }
+
+         lGiveList = Send(oRoom,@GetHolderActive);
+
+         for i in lGiveList
+         {
+            each_obj = send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+               AND NOT IsClass(each_obj,&DM)
+               AND Send(each_obj,@GetBaseMaxHealth) >= hp
+            {
+               if number <> -1
+               {
+                  Send(each_obj,@newhold,#what=Create(Classtype,#number=number));
+               }
+               else
+               {
+                  Send(each_obj,@newhold,#what=Create(Classtype));
+               }
+               Send(each_obj,@MsgSendUser,#Message_rsc=system_gift,
+                    #parm1=Send(oExample,@GetIndef),
+                    #parm2=Send(oExample,@GetName));
+               numRewarded = numRewarded + 1;
+            }
+         }
+      }
+
+      return numRewarded;
+   }
+
    AddChestToList(oChest=$)
    "Adds chest objects or box objects to list of chests and boxes."
    {

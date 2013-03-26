@@ -61,6 +61,8 @@ classvars:
 
    vrSucceed_wav = FinalRites_sound
 
+   viReport = FALSE
+
 properties:
 
    viOutlaw = TRUE

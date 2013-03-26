@@ -51,7 +51,9 @@ classvars:
    viNoNewbieOffense = TRUE
 
    vrSucceed_wav = manabomb_sound
-   
+
+   viReport = FALSE
+
 properties:
 
 messages:

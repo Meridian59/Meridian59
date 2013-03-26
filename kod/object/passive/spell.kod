@@ -140,6 +140,8 @@ resources:
 
    Spell_too_few_hp_rsc = "You are not powerful enough to cast this spell."
 
+   guildhall_protected_rsc = "The guildhall's magical defenses prevent harmful area enchantments."
+
 classvars:
 
    vrName = spell_name_rsc
@@ -202,6 +204,10 @@ classvars:
    vrEnchantment_type = spell_Enchantment_type_default_rsc
 
    vrToo_few_hp = spell_too_few_hp_rsc
+
+   % Report CheckAttack messages. Set it to false for multiple-target spells
+   % to avoid listing every player in the room via safety messages.
+   viReport = TRUE
 
 properties:
 
@@ -749,6 +755,14 @@ messages:
 
       oRoom = Send(who,@GetOwner);
 
+      if IsClass(self,&RoomEnchantment)
+         AND IsClass(oRoom,&GuildHall)
+         AND viHarmful = TRUE
+      {
+         Send(who,@MsgSendUser,#message_rsc=guildhall_protected_rsc);
+         return FALSE;
+      }
+
       oVictim = $;
       % Only have a victim if we're not aiming at a group.
       if lTargets <> $
@@ -1001,8 +1015,9 @@ messages:
 
                if NOT Send(oRoom,@ReqSomethingAttack,#what=who,#victim=i,
                            #stroke_obj=self)
-                  OR NOT Send(who,@AllowPlayerAttack,#victim=i)
+                  OR NOT Send(who,@AllowPlayerAttack,#victim=i,#report=viReport)
                {
+                  Send(who,@MsgSendUser,#message_rsc=spell_safety_on);                  
                   return FALSE;
                }
             }
@@ -1010,7 +1025,7 @@ messages:
          else
          {
             lFinalTargets = Send(self,@GetAttackTargets,#who=who,
-                                 #lTargets=lTargets);
+                                 #lTargets=lTargets,#report=viReport);
 
             % Don't cast the spell if there's no valid targets.
             if lFinalTargets = $
@@ -1824,7 +1839,7 @@ messages:
       {
          % Double-check to get valid targets.
          lFinalTargets = Send(self,@GetGoodTargets,#who=who,
-                              #lTargets=lTargets);
+                              #lTargets=lTargets,#report=viReport);
 
          if lFinalTargets <> $ AND IsClass(First(lFinalTargets),&Battler)
             AND Send(First(lFinalTargets),@TryDeflect,#what=self,#caster=who)

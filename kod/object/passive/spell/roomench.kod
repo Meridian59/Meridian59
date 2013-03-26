@@ -27,6 +27,8 @@ classvars:
    vrIcon = RoomEnchantment_icon_rsc
    vrDesc = RoomEnchantment_desc_rsc
 
+   viReport = FALSE
+
 properties:
 
 messages:

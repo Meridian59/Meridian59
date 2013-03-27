@@ -14,6 +14,7 @@ constants:
 
    include blakston.khd
 
+   ANIMATE_MINHEALTH = 40
    MAX_RISEN_CONTROL_SECS = 1200  % 20 minutes
 
 resources:
@@ -27,6 +28,7 @@ resources:
    Animate_bad_target = "You can't cast animate on %s%s!"
    Animate_failed_rsc = "%s's corpse remains inanimate on the gound."
    Animate_cast_rsc = "%s's corpse pulls itself up off of the ground."
+   Animate_mule_rsc = "%s was too weak for you create a proper abomination."
 
    Animate_sound = qanimate.wav
 
@@ -62,14 +64,23 @@ messages:
 
    CanPayCosts(who = $,lTargets=$)
    {
-      local oRoom, oTarget;
+      local oRoom, oTarget, oDearlyDeparted;
 
       oRoom = send(who,@GetOwner);
       oTarget = First(lTargets);
+      oDearlyDeparted = send(oTarget,@GetDearlyDeparted); 
 
       if not isclass(oTarget,&DeadBody)
       {
          send(who,@MsgSendUser,#message_rsc=Animate_bad_target,#parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@Getname));
+
+         return FALSE;
+      }
+
+      % Don't let them farm mules.
+      if send(oDearlyDeparted,@GetBaseMaxHealth) <  ANIMATE_MINHEALTH
+      {
+         send(who,@MsgSendUser,#message_rsc=Animate_mule_rsc,#parm1=send(oTarget,@GetCorpseName));
 
          return FALSE;
       }

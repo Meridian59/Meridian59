@@ -103,6 +103,9 @@ resources:
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
 
+   dm_roomgive_command = "roomgive"
+   dm_gave_to_number = "%s players received reward!"
+
    dm_stealth_on = "You are now in stealth mode."
    dm_stealth_off = "You are no longer in stealth mode."
 
@@ -1397,6 +1400,79 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
          }
 
+         return;
+      }
+
+      if StringContain(string,dm_roomgive_command)
+         OR StringContain(string,"roomgive")
+      {
+         bFound = 0;
+         lTemplate = Send(SYS,@GetItemTemplates);
+
+         for i in lTemplate
+         {
+            if StringContain(string,"shillings")
+            {
+               bFound = Send(SYS,@RoomGive,#who=self,#classtype=&Money,#number=5000);
+               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+               return;
+            }
+            if StringContain(string,Send(i,@GetName))
+               AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+            {
+               if StringContain(string,"two")
+               {
+                  bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),#number=2);
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+                  return;
+               }
+               if StringContain(string,"three")
+               {
+                  bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),#number=3);
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+                  return;
+               }
+               if StringContain(string,"four")
+               {
+                  bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),#number=4);
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+                  return;
+               }
+               if StringContain(string,"five")
+               {
+                  bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),#number=5);
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+                  return;
+               }
+               if StringContain(string,"ten")
+               {
+                  bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),#number=10);
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+                  return;
+               }
+               if StringContain(string,"fifty")
+               {
+                  bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),#number=50);
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+                  return;
+               }
+               if StringContain(string,"hundred")
+               {
+                  bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),#number=100);
+                  Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+                  return;
+               }
+               bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i));
+               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+               return;
+            }
+         }
+
+         if NOT bFound
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+         }
+         
          return;
       }
 

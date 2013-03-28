@@ -156,6 +156,7 @@ messages:
          }
 
          if send(first(i),@BreakTrance,#event=EVENT_DISRUPT)
+            AND NOT isClass(first(i),&DM)
          {
             for j in send(oRoom,@GetHolderActive)
             {

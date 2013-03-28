@@ -2427,7 +2427,7 @@ messages:
    EndEnemy(otherguild = $, bSetTimer = TRUE)
    "Removes the guild in question from your enemy list."
    {
-      local i, j, iSpoils, oBook, oMaster, war_string1, wad_string2;
+      local i, j, iSpoils, oBook, oMaster, war_string1, war_string2;
 
       % Post this end of partnership to the globe in guildmasters.
       

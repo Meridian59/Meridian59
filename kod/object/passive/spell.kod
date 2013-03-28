@@ -1884,6 +1884,12 @@ messages:
 
    SpellMurmurMessage(caster=$,target=$,hearer=$)
    {
+      if isClass(caster,&DM)
+         AND Send(caster, @IsHidden)
+      {
+         return;     
+      }      
+      
       if caster = hearer
       {
          return;

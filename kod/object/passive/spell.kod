@@ -1402,13 +1402,13 @@ messages:
          if isClass(who,&Admin)
             AND Send(who, @IsHidden)
          {
-             if isClass(oTarget, &Player)
+             if oTarget = $
              {
-                 Debug("ADMIN:",Send(who,@GetTrueName),"cast ",Send(self,@GetName),"on",Send(oTarget,@GetTrueName),"while hidden.");
+                 Debug("ADMIN:",Send(who,@GetTrueName),"cast",Send(Self,@GetName),"while hidden.");
              }               
              else
              {
-                 Debug("ADMIN:",Send(who,@GetTrueName),"cast",Send(Self,@GetName),"while hidden.");
+                 Debug("ADMIN:",Send(who,@GetTrueName),"cast ",Send(self,@GetName),"on",Send(oTarget,@GetTrueName),"while hidden.");
              }
               
             return;

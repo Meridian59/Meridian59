@@ -37,12 +37,15 @@ properties:
    pbAnimate = TRUE
 
    ptClosePortal = $
+   
+   ptExpire = $
 
 messages:
 
-   Constructor(lLocation=$)
+   Constructor(lLocation=$, iTime=$)
    {
       Send(self, @SetTarget, #lTarget = lLocation);
+      ptExpire = CreateTimer(self,@ClosePortal,iTime);
       propagate;
    }
    

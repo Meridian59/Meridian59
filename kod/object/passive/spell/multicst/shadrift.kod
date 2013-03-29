@@ -92,7 +92,7 @@ messages:
    PrismCast(spellpower = 0, lCasters=$, lTargets=$, oPrism=$, lLocation=$) 
    {
       local oPortalLocation, oOwner, oCaster, oNecroPortal,lPortalLocation,lTargetLocation,
-        oTargetRoom;
+        oTargetRoom, iDuration;
       
       if oPrism = $
       {
@@ -140,7 +140,8 @@ messages:
 	         return;
 	      }
          
-         oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation);
+         iDuration = (viMultiCast_Spellpower * (random(8,12)*100));
+         oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation,#iTime=iDuration);
 	      Send(oNecroPortal, @SetTarget, #lTarget = lTargetLocation);
          
          send(Send(SYS, @FindRoomByNum, #num = first(lPortalLocation)),

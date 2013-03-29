@@ -106,6 +106,8 @@ messages:
             ptClosePortal = $;
          }
 
+         DeleteTimer(ptExpire);
+         ptExpire = $;
          ptClosePortal = createTimer(self,@ClosePortal,NECROPORTAL_CLOSE_TIME);
       }
 

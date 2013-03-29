@@ -1402,7 +1402,15 @@ messages:
          if isClass(who,&Admin)
             AND Send(who, @IsHidden)
          {
-            Debug("ADMIN:",Send(who,@GetTrueName),"cast ",Send(self,@GetName),"on",Send(oTarget,@GetName),"while hidden.");
+             if isClass(oTarget, &Player)
+             {
+                 Debug("ADMIN:",Send(who,@GetTrueName),"cast ",Send(self,@GetName),"on",Send(oTarget,@GetTrueName),"while hidden.");
+             }               
+             else
+             {
+                 Debug("ADMIN:",Send(who,@GetTrueName),"cast",Send(Self,@GetName),"while hidden.");
+             }
+              
             return;
          }     
       

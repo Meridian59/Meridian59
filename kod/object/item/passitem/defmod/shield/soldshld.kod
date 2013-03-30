@@ -20,10 +20,10 @@ constants:
    DEFENDING = 3
 
    % Max rank you can get from killing factioned NPCs
-   MAX_RANK_FROM_MONSTERS = 4
+   MAX_RANK_FROM_MONSTERS = 10
 
    % How many meridian days (approximate) before you lose a rank.
-   DAYS_PER_RANK_LOSS = 100
+   DAYS_PER_RANK_LOSS = 60
 
 resources:
 

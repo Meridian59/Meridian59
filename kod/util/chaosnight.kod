@@ -137,13 +137,16 @@ messages:
 
       if Send(Send(SYS, @GetLore), @BetaPotionsEnabled)
       {
-         return Send(SYS, @GetFailureRsc);
+        return Send(SYS, @GetFailureRsc);
       }
 
       % Reset the loot list if it's niled out.
       if plChaosNightLoot = $
       {
-         plChaosNightLoot = [ Create(&Inkycap,#number=50),
+         plChaosNightLoot = [
+                              Create(&KarmaPotion,#karma=10000),
+                              Create(&KarmaPotion,#karma=-10000),
+                              Create(&Chaosfood,#number=100),
                               Create(&Mint,#number=100),
                               Create(&Scimitar),
                               Create(&Longsword),
@@ -155,7 +158,14 @@ messages:
                               Create(&NeruditeArrow,#number=150),
                               Create(&JewelOfFroz),
                               Create(&JewelOfFroz),
-                              Create(&Gift)
+                              Create(&Gift),
+                              Create(&Gift),
+                              Create(&NeruditeBow),
+                              Create(&Platearmor),
+                              Create(&Guildshield),
+                              Create(&Mysticsword),
+                              Create(&Scimitar),
+                              Create(&Helm)
                             ];
       }
 
@@ -163,27 +173,36 @@ messages:
 
       for oPlayer in lGiveList
       {
-         for oItem in plChaosNightLoot
-         {
-            if IsClass(oItem,&NumberItem)
+        for oItem in plChaosNightLoot
+        {
+          if IsClass(oItem,&NumberItem)
+          {
+            oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
+          }           
+            
+          if IsClass(oItem,&KarmaPotion)
+          {
+            oGift = Create(GetClass(oItem),#karma=Send(oItem,@GetKarma));
+           }            
+            
+          else
+          {
+            if NOT IsClass(oItem,&NumberItem)
             {
-               oGift = Create(GetClass(oItem),#number=Send(oItem,@GetNumber));
+              oGift = Create(GetClass(oItem));
             }
-            else
-            {
-               oGift = Create(GetClass(oItem));
-            }
+          }
 
-            Send(oPlayer,@NewHold,#what=oGift);
+          Send(oPlayer,@NewHold,#what=oGift);
 
-            if Send(oPlayer,@IsLoggedOn)
-            {
-               Send(oPlayer,@MsgSendUser,#Message_rsc=chaos_gift,
-                    #parm1=Send(oGift,@GetIndef),#parm2=Send(oGift,@GetName));
-            }
-         }
+          if Send(oPlayer,@IsLoggedOn)
+          {
+            Send(oPlayer,@MsgSendUser,#Message_rsc=chaos_gift,
+                 #parm1=Send(oGift,@GetIndef),#parm2=Send(oGift,@GetName));
+          }
+        }
 
-         Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
+        Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
       }
 
       return Send(SYS, @GetSuccessRsc);

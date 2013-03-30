@@ -226,7 +226,7 @@ messages:
 
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      return iSpellPower*2;
+      return defense_power + 500;
    }
 
    ModifyDefenseDamage(who = $,what = $,damage = $)

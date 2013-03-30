@@ -303,6 +303,16 @@
    PT_ITEM_XLAT_BLUE_TO_SKIN2     = 0x9F
    PT_ITEM_XLAT_BLUE_TO_SKIN4     = 0xA0
 
+   % Metallic and other colors added for more flexibility
+   % with coloring items using constants
+   PT_MET_RED        = 0x004D       % metallic red #77
+   PT_MET_BLUE       = 0x004E       % metallic blue #78
+   PT_MET_GREEN      = 0x004F       % metallic green #79
+   PT_FRST_WHT1      = 0x0073		
+   PT_FRST_WHT2      = 0x0075		
+   PT_FRST_WHT3      = 0x0076       % Frosted White = Grading white from normal to PT_ALLWHITE
+   PT_FRST_WHT4      = 0x0077
+   
    %%% Sound constants
 
    SOUND_LOOP = 1

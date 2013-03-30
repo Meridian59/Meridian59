@@ -137,7 +137,7 @@ messages:
    GetDuration(iSpellPower=0)
    {
       local iDuration;
-      iDuration = (300 + 8*iSpellPower) * 1000;    %%% 3-15 minutes
+      iDuration = (300 + 16*iSpellPower) * 100;    %%% ~1-3 min
       
       return random(iDuration/2,iDuration);
    }

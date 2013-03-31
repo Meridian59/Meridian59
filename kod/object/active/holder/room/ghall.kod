@@ -603,16 +603,6 @@ messages:
             }
          }
 
-         % Check for safety for non-betrayers.
-         if (NOT pbBetrayed)
-            AND Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
-         {
-            % If safety is on, let them know they need to take it off.
-            Send(who,@MsgSendUser,#message=guildhall_conquer_safety_check);
-
-            return;
-         }
-
          piStatus = STATUS_RAIDED;
 
          if ptConquer <> $
@@ -688,14 +678,6 @@ messages:
                                     Random(60000,180000));
          }
 
-         % They conquered the guild hall....
-         if NOT (pbBetrayed OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         {
-            % Make them an outlaw!
-            Send(who,@MsgSendUser,#message=guildhall_conquer_outlaw);
-            Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
-         }
-
          return;
       }
     
@@ -746,15 +728,6 @@ messages:
 
       if (NOT Send(Send(SYS, @GetSettings), @GuildHallRaidsEnabled))
          OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {
-         return FALSE;
-      }
-
-      oRaidingGuild = Send(who,@GetGuild);
-      if oRaidingGuild = $
-         OR NOT Send(oRaidingGuild,@IsMature)
-         OR GetTime() < Send(oRaidingGuild,@GetLastGuildhallRaid) + 
-                        Send(Send(SYS, @GetSettings), @GetGuildhallRaidDelay)
       {
          return FALSE;
       }
@@ -1407,12 +1380,6 @@ messages:
             Send(self,@GetName),"illegally.");
 
       return FALSE;
-   }
-
-   CanHavePlayerPortal(who = $)
-   {
-      % Don't allow portals into guild halls
-      return false;
    }
 
 end

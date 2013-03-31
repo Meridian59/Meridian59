@@ -40,6 +40,7 @@ resources:
    DeathsDoor_succeeded = "A shimmering portal springs into being!"
    DeathsDoor_succeeded2 = "The prism hums and shudders."
    deathsDoor_necros_only = "Without an Amulet to summon the power of the Three, you cannot hope to summon a shadow rift."
+   DeathsDoor_guild_hall = "The guild hall's magic defenses prevent your attempt to bind the prism here."
 
 classvars:
 
@@ -91,8 +92,7 @@ messages:
 
    PrismCast(spellpower = 0, lCasters=$, lTargets=$, oPrism=$, lLocation=$) 
    {
-      local oPortalLocation, oOwner, oCaster, oNecroPortal,lPortalLocation,lTargetLocation,
-        oTargetRoom;
+      local oCaster,oNecroPortal,lPortalLocation,lTargetLocation,oTargetRoom;
       
       if oPrism = $
       {
@@ -156,8 +156,20 @@ messages:
       else
       {
          % First cast: prism records location where portal will lead after
-	      % the second cast.
-         send(oPrism,@LearnLocation,#lLocation=send(self,@GetPortalLocation,#what=oPrism));
+         % the second cast.
+
+         % No binding to halls
+         lPortalLocation = send(self,@GetPortalLocation,#what=oPrism);
+         if IsClass(send(SYS,@FindRoomByNum,#num=first(lPortalLocation)),&GuildHall)
+         {
+            for oCaster in lCasters
+            {
+               Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_guild_hall);
+            }         
+            return;
+         }
+
+         send(oPrism,@LearnLocation,#lLocation=lPortalLocation);
          
          for oCaster in lCasters
          {

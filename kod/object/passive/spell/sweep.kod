@@ -103,6 +103,7 @@ messages:
          if IsClass(oObj,&Item)
             AND send(who,@ReqNewHold,#what=oObj)
             AND NOT IsClass(oObj,&Totem)
+            AND NOT IsClass(oObj,&Prism)
          {
             lGoodItems = cons(oObj,lGoodItems);
          }                 

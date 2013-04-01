@@ -4555,7 +4555,11 @@ messages:
       if NOT absolute
       {
          % If we have more health than twice our max, no percent limit on damage.
+         % If we are outlaw or murderer, no percent limit on damage.
          if piHealth < (piBase_Max_Health * 2)
+            AND ((NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+               OR Send(Send(SYS, @GetSettings),@DamageCapProtectionMurderersEnabled))
          {
             % Cap damage to 1/3 of max health (+2 so we "round up")
             iLimit = (piBase_Max_Health + (MAX_HEALTH_DAMAGE_FRACTION-1)) / MAX_HEALTH_DAMAGE_FRACTION;

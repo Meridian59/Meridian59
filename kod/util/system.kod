@@ -5050,7 +5050,6 @@ messages:
       if classtype <> $
       {
          if number = -1
-            OR number = $
          {
             oExample = Create(classtype);
          }
@@ -5727,9 +5726,10 @@ messages:
    }
 
    GetNumberFromString(string = $)
-   "Gets the lowest number found in a string."
+   "Gets the lowest number found in a string. Returns -1 if no number is found. "
+   "Only finds values zero to twelve, then ten, twenty, thirty... up to a hundred."
    {
-      if string = $ {return $;}
+      if string = $ {return -1;}
       if (StringContain(string,system_cardinal_0)) {return 0;}
       if (StringContain(string,system_cardinal_1)) {return 1;}
       if (StringContain(string,system_cardinal_2)) {return 2;}
@@ -5753,7 +5753,7 @@ messages:
       if (StringContain(string,system_cardinal_90)) {return 90;}
       if (StringContain(string,system_cardinal_100)) {return 100;}
 
-      return $;
+      return -1;
    }
 
    GetLogoffPenaltyEnable()

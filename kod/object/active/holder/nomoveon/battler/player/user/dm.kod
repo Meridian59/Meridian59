@@ -613,7 +613,7 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject;
+      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject, iGiven;
 
       if type <> SAY_DM
       {
@@ -1406,28 +1406,22 @@ messages:
       if StringContain(string,dm_roomgive_command)
          OR StringContain(string,"roomgive")
       {
-         bFound = 0;
+         iGiven = 0;
          lTemplate = Send(SYS,@GetItemTemplates);
 
          for i in lTemplate
          {
-            if StringContain(string,"shillings")
-            {
-               bFound = Send(SYS,@RoomGive,#who=self,#classtype=&Money,#number=5000);
-               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
-               return;
-            }
             if StringContain(string,Send(i,@GetName))
                AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
             {
-               bFound = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
+               iGiven = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
                            #number=Send(SYS,@GetNumberFromString,#string=string));
-               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=bFound);
+               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=iGiven);
                return;
             }
          }
 
-         if NOT bFound
+         if NOT iGiven
          {
             Send(self,@MsgSendUser,#message_rsc=dm_no_item);
          }

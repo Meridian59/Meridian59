@@ -5030,28 +5030,27 @@ messages:
       return;
    }
 
-   RoomGive(classtype=$, number=-1, who=$, hp=30)
+   RoomGive(classtype=$, number=-1, who=$, min_hp=30)
    "Admin supported.\n"
    "Give one of said item to everyone in the room. If num <> -1 and the object "
    "is a number item, give that many of the item to each person.  RoomGive ignores all "
    "reqnewhold requirements (such as bulk or weight restrictions)."
    {
-      local i, lGiveList, oExample, oRoom, each_obj, numRewarded;
+      local i, lGiveList, oExample, oRoom, each_obj, num_rewarded;
 
-      numRewarded = 0;
+      num_rewarded = 0;
 
       if who = $
       {
          return 0;
       }
-      else
-      {
-         oRoom = Send(who,@GetOwner);
-      }
+
+      oRoom = Send(who,@GetOwner);
 
       if classtype <> $
       {
          if number = -1
+            OR number = $
          {
             oExample = Create(classtype);
          }
@@ -5074,7 +5073,7 @@ messages:
             each_obj = send(oRoom,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
                AND NOT IsClass(each_obj,&DM)
-               AND Send(each_obj,@GetBaseMaxHealth) >= hp
+               AND Send(each_obj,@GetBaseMaxHealth) >= min_hp
             {
                if number <> -1
                {
@@ -5087,12 +5086,12 @@ messages:
                Send(each_obj,@MsgSendUser,#Message_rsc=system_gift,
                     #parm1=Send(oExample,@GetIndef),
                     #parm2=Send(oExample,@GetName));
-               numRewarded = numRewarded + 1;
+               num_rewarded = num_rewarded + 1;
             }
          }
       }
 
-      return numRewarded;
+      return num_rewarded;
    }
 
    AddChestToList(oChest=$)
@@ -5725,6 +5724,36 @@ messages:
       AppendTempString(system_fuzzy_cardinal_deficit);
 
       return getTempString();
+   }
+
+   GetNumberFromString(string = $)
+   "Gets the lowest number found in a string."
+   {
+      if string = $ {return $;}
+      if (StringContain(string,system_cardinal_0)) {return 0;}
+      if (StringContain(string,system_cardinal_1)) {return 1;}
+      if (StringContain(string,system_cardinal_2)) {return 2;}
+      if (StringContain(string,system_cardinal_3)) {return 3;}
+      if (StringContain(string,system_cardinal_4)) {return 4;}
+      if (StringContain(string,system_cardinal_5)) {return 5;}
+      if (StringContain(string,system_cardinal_6)) {return 6;}
+      if (StringContain(string,system_cardinal_7)) {return 7;}
+      if (StringContain(string,system_cardinal_8)) {return 8;}
+      if (StringContain(string,system_cardinal_9)) {return 9;}
+      if (StringContain(string,system_cardinal_10)) {return 10;}
+      if (StringContain(string,system_cardinal_11)) {return 11;}
+      if (StringContain(string,system_cardinal_12)) {return 12;}
+      if (StringContain(string,system_cardinal_20)) {return 20;}
+      if (StringContain(string,system_cardinal_30)) {return 30;}
+      if (StringContain(string,system_cardinal_40)) {return 40;}
+      if (StringContain(string,system_cardinal_50)) {return 50;}
+      if (StringContain(string,system_cardinal_60)) {return 60;}
+      if (StringContain(string,system_cardinal_70)) {return 70;}
+      if (StringContain(string,system_cardinal_80)) {return 80;}
+      if (StringContain(string,system_cardinal_90)) {return 90;}
+      if (StringContain(string,system_cardinal_100)) {return 100;}
+
+      return $;
    }
 
    GetLogoffPenaltyEnable()

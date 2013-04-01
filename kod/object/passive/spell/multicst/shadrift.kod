@@ -131,18 +131,18 @@ messages:
 	      }
          
 	      % Fail if target room already has a portal, to prevent infinite loops
-	      if send(oTargetRoom, @FindHoldingActive, #class=&Portal) 
+          if send(oTargetRoom, @FindHoldingActive, #class=&Portal) 
 	      {
             for oCaster in lCasters
             {
                Send(oCaster,@MsgSendUser,#message_rsc=DeathsDoor_target_has_portal);
             }
 	         return;
-	      }
+            }
          
-         iDuration = (viMultiCast_Spellpower * (random(8,12)*100));
-         oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation,#iTime=iDuration);
-	     Send(oNecroPortal, @SetTarget, #lTarget = lTargetLocation);
+          iDuration = (viMultiCast_Spellpower * (random(80,110)*100));
+          oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation,#iLifetimeSeconds=iDuration);
+          Send(oNecroPortal, @SetTarget, #lTarget = lTargetLocation);
          
          send(Send(SYS, @FindRoomByNum, #num = first(lPortalLocation)),
          @NewHold,#what=oNecroPortal,

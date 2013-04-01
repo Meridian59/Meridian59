@@ -42,7 +42,7 @@ properties:
 
 messages:
 
-   Constructor(lLocation=$, iTime=$)
+   Constructor(lLocation=$, iLifetimetimeSeconds=$)
    {
       Send(self, @SetTarget, #lTarget = lLocation);
       ptExpire = CreateTimer(self,@ClosePortal,iTime);
@@ -106,7 +106,11 @@ messages:
             ptClosePortal = $;
          }
 
-         DeleteTimer(ptExpire);
+         if ptDeleteTimer <> $
+         {
+            DeleteTimer(ptExpire);
+         }
+
          ptExpire = $;
          ptClosePortal = createTimer(self,@ClosePortal,NECROPORTAL_CLOSE_TIME);
       }

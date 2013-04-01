@@ -141,7 +141,7 @@ messages:
             }
          
           iDuration = (viMultiCast_Spellpower * (random(80,110)*100));
-          oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation,#iLifetimeSeconds=iDuration);
+          oNecroPortal = Create(&NecropolisPortal,#lLocation=lTargetLocation,#iLifetimeSeconds=iDuration);
           Send(oNecroPortal, @SetTarget, #lTarget = lTargetLocation);
          
          send(Send(SYS, @FindRoomByNum, #num = first(lPortalLocation)),

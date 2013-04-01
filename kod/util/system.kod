@@ -5030,7 +5030,7 @@ messages:
       return;
    }
 
-   RoomGive(classtype=$, number=-1, who=$, min_hp=30)
+   RoomGive(classtype=$, number=-1, who=$)
    "Admin supported.\n"
    "Give one of said item to everyone in the room. If num <> -1 and the object "
    "is a number item, give that many of the item to each person.  RoomGive ignores all "
@@ -5073,7 +5073,7 @@ messages:
             each_obj = send(oRoom,@HolderExtractObject,#data=i);
             if IsClass(each_obj,&User)
                AND NOT IsClass(each_obj,&DM)
-               AND Send(each_obj,@GetBaseMaxHealth) >= min_hp
+               AND Send(each_obj,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
                if number <> -1
                {

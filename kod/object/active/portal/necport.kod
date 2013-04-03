@@ -42,10 +42,9 @@ properties:
 
 messages:
 
-   Constructor(lLocation=$, iLifetimetimeSeconds=$)
+   Constructor(lLocation=$)
    {
       Send(self, @SetTarget, #lTarget = lLocation);
-      ptExpire = CreateTimer(self,@ClosePortal,iTime);
       propagate;
    }
    
@@ -62,6 +61,19 @@ messages:
       piDest_fine_row = Nth(lTarget,4);
       piDest_fine_col = Nth(lTarget,5);
 
+      return;
+   }
+   
+   SetLifetime(iTime=$)
+   {
+      
+      if ptExpire <> $
+      {
+         ptExpire = $
+      }
+      
+      ptExpire = CreateTimer(self,@ClosePortal,iTime);
+      
       return;
    }
 
@@ -106,11 +118,7 @@ messages:
             ptClosePortal = $;
          }
 
-         if ptDeleteTimer <> $
-         {
-            DeleteTimer(ptExpire);
-         }
-
+         DeleteTimer(ptExpire);
          ptExpire = $;
          ptClosePortal = createTimer(self,@ClosePortal,NECROPORTAL_CLOSE_TIME);
       }

@@ -66,9 +66,9 @@ messages:
    
    SetLifetime(iTime=$)
    {
-      
       if ptExpire <> $
       {
+         DeleteTimer(ptExpire);
          ptExpire = $
       }
       

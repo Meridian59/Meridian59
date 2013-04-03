@@ -141,7 +141,6 @@ messages:
 	      }
          
          iDuration = (viMultiCast_Spellpower * (random(80,110)*100));
-         Debug("multi",viMultiCast_Spellpower);
          oNecroPortal = create(&NecropolisPortal,#lLocation=lTargetLocation,#iTime=iDuration);
          Send(oNecroPortal, @SetTarget, #lTarget = lTargetLocation);
          Send(oNecroPortal,@SetLifetime,#iTime=iDuration);

@@ -69,7 +69,7 @@ messages:
       if ptExpire <> $
       {
          DeleteTimer(ptExpire);
-         ptExpire = $
+         ptExpire = $;
       }
       
       ptExpire = CreateTimer(self,@ClosePortal,iTime);

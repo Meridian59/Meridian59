@@ -103,6 +103,9 @@ resources:
    dm_hidden_command = "hidden"
    dm_blank_command = "blank"
 
+   dm_roomgive_command = "roomgive"
+   dm_gave_to_number = "%s players received reward!"
+
    dm_stealth_on = "You are now in stealth mode."
    dm_stealth_off = "You are no longer in stealth mode."
 
@@ -610,7 +613,7 @@ messages:
 
    UserSay(string = $,type = $)
    {
-      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject;
+      local i, lObjects, iNum, lTemplate, bFound, bAllowed, temp, oBard, oObject, iGiven;
 
       if type <> SAY_DM
       {
@@ -1396,6 +1399,32 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=dm_MakeSignetFail);
          }
 
+         return;
+      }
+
+      if StringContain(string,dm_roomgive_command)
+         OR StringContain(string,"roomgive")
+      {
+         iGiven = 0;
+         lTemplate = Send(SYS,@GetItemTemplates);
+
+         for i in lTemplate
+         {
+            if StringContain(string,Send(i,@GetName))
+               AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+            {
+               iGiven = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
+                           #number=Send(SYS,@GetNumberFromString,#string=string));
+               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=iGiven);
+               return;
+            }
+         }
+
+         if NOT iGiven
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+         }
+         
          return;
       }
 

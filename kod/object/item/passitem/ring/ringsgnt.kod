@@ -21,6 +21,9 @@ resources:
    ringsignet_icon_rsc = signet.bgf
    ringsignet_desc_rsc = "This ring is worn and dirty, but you make out the family crest of "
    ringsignet_desc_rsc2 =". Surely, its return would be appreciated."
+   
+   ringsignet_reward1 = "You receive %q."
+   ringsignet_reward2 = "You receive %q and %s."
 
 classvars:
 
@@ -91,26 +94,156 @@ messages:
 
    RewardReturner(who = $)
    {
-      local iValue, oMoney;
-
-      % PAYOFF: newbie=10*value, oldbie=value
-      iValue = Send(self,@GetValue);
-
-      if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      local iChance1, iChance2, iMoney, oItem1, oItem2;
+      
+      iChance1 = Random (1,1000);
+      
+      Debug("iChance1 = ",iChance1);
+      
+      if iChance1 <= 400
       {
-         iValue = iValue * 10;
+         iMoney = (Random(20,40)*1000);
+         Debug("iMoney = ",iMoney);
+         
+         oItem1 = Send(who,@GetMoneyObject);
+         
+         if oItem1 = $
+         {
+            oItem1 = Create(&Money,#number=iMoney);
+            Send(who,@NewHold,#what=oItem1);
+         }
+         else
+         {
+            Send(oItem1,@AddNumber,#number=iMoney);
+         }
+         
+         return;
+      }
+      
+      if iChance1 <= 550
+          AND iChance1 > 400
+      {
+         oItem1 = Create(&RingInvisibility);
+         Send(who,@NewHold,#what=oItem1);
+         
+         iMoney = (Random(5,10)*1000);
+         Debug("iMoney = ",iMoney);
+         
+         oItem2 = Send(who,@GetMoneyObject);
+         
+         if oItem2 = $
+         {
+            oItem2 = Create(&Money,#number=iMoney);
+            Send(who,@NewHold,#what=oItem2);
+         }
+         else
+         {
+            Send(oItem2,@AddNumber,#number=iMoney);
+         }        
+        
+         return;
+      }   
+         
+      if iChance1 <= 700
+          AND iChance1 >550
+      {
+         iChance2 = Random(1,2);
+         
+         if iChance2 = 1
+         {
+            oItem1 = Create(&PurpleMushroom,#number=25);
+         }
+         if iChance2 = 2
+         {
+            oItem1 = Create(&EntrootBerry,#number=25);
+         }
+         
+         Send(who,@NewHold,#what=oItem1);
+         
+         iMoney = (Random(5,10)*1000);
+         Debug("iMoney = ",iMoney);
+         oItem2 = Send(who,@GetMoneyObject);
+         
+         if oItem2 = $
+         {
+            oItem2 = Create(&Money,#number=iMoney);
+            Send(who,@NewHold,#what=oItem2);
+         }
+         else
+         {
+            Send(oItem2,@AddNumber,#number=iMoney);
+         }
+
+         return;
+      }
+      
+      if iChance1 <= 800
+          AND iChance1 > 700
+      {
+         oItem1 = Create(&Rose);
+         Send(who,@NewHold,#what=oItem1);
+         
+         Send(who,@MsgSendUser,#message_rsc=ringsignet_reward1,
+                       #parm1=Send(oItem1,@GetName));
+
+         return;
+      }
+      
+      if iChance1 <= 900
+          AND iChance1 >800
+      {
+         iChance2 = Random(1,2);
+         
+         if iChance2 = 1
+         {
+            oItem1 = Create(&InkyCap,#number=25);            
+         }
+         if iChance2 = 2
+         {
+            oItem1 = Create(&Mint,#number=25);            
+         }
+         
+         Send(who,@NewHold,#what=oItem1);
+         
+         iMoney = (Random(5,10)*1000);
+         Debug("iMoney = ",iMoney);
+         oItem2 = Send(who,@GetMoneyObject);
+         
+         if oItem2 = $
+         {
+            oItem2 = Create(&Money,#number=iMoney);
+            Send(who,@NewHold,#what=oItem2);
+         }
+         else
+         {
+            Send(oItem2,@AddNumber,#number=iMoney);
+         }
+
+         return;
       }
 
-      oMoney = Send(who,@GetMoneyObject);
-
-      if oMoney = $
+      if iChance1 <= 950
+          AND iChance1 > 900
       {
-         oMoney = Create(&Money,#number=iValue);
-         Send(who,@NewHold,#what=oMoney);
+         oItem1 = Create(&Prism);
+         Send(who,@NewHold,#what=oItem1);
+
+         return;
       }
+      
+      if iChance1 <= 1000
+          AND iChance1 > 950
+      {
+         oItem1 = Create(&SpecialGift);
+         Send(who,@NewHold,#what=oItem1);
+
+         return;
+      }
+      
       else
       {
-         Send(oMoney,@AddNumber,#number=iValue);
+         Debug("Signet Ring Reward did not meet criteria for ",who);
+         return;
       }
 
       return;

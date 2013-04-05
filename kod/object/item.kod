@@ -1547,25 +1547,28 @@ messages:
    {
       local oRoom;
 
-      if vrIcon_male <> $
+      if (poOwner <> $)
       {
-         Send(poOwner,@ResetPlayerIcon,#alldone=FALSE);
-      }
-
-      if vrLeftArm_male <> $
-      {
-         Send(poOwner,@ResetPlayerArms,#alldone=FALSE);
-      }
-
-      if  vrLegs_male <> $
-      {
-         Send(poOwner,@ResetPlayerLegs,#alldone=FALSE);
-      }
-   
-      oRoom = Send(poOwner,@GetOwner);
-      if oRoom <> $
-      {         
-         Send(oRoom,@SomethingChanged,#what=poOwner);
+         if vrIcon_male <> $
+         {
+            Send(poOwner,@ResetPlayerIcon,#alldone=FALSE);
+         }
+         
+         if vrLeftArm_male <> $
+         {
+            Send(poOwner,@ResetPlayerArms,#alldone=FALSE);
+         }
+         
+         if  vrLegs_male <> $
+         {
+            Send(poOwner,@ResetPlayerLegs,#alldone=FALSE);
+         }
+         
+         oRoom = Send(poOwner,@GetOwner);
+         if oRoom <> $
+         {         
+            Send(oRoom,@SomethingChanged,#what=poOwner);
+         }
       }
       
       return;

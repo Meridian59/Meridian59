@@ -98,12 +98,9 @@ messages:
       
       iChance1 = Random (1,1000);
       
-      Debug("iChance1 = ",iChance1);
-      
       if iChance1 <= 400
       {
          iMoney = (Random(20,40)*1000);
-         Debug("iMoney = ",iMoney);
          
          oItem1 = Send(who,@GetMoneyObject);
          
@@ -127,7 +124,6 @@ messages:
          Send(who,@NewHold,#what=oItem1);
          
          iMoney = (Random(5,10)*1000);
-         Debug("iMoney = ",iMoney);
          
          oItem2 = Send(who,@GetMoneyObject);
          
@@ -161,7 +157,6 @@ messages:
          Send(who,@NewHold,#what=oItem1);
          
          iMoney = (Random(5,10)*1000);
-         Debug("iMoney = ",iMoney);
          oItem2 = Send(who,@GetMoneyObject);
          
          if oItem2 = $
@@ -206,7 +201,6 @@ messages:
          Send(who,@NewHold,#what=oItem1);
          
          iMoney = (Random(5,10)*1000);
-         Debug("iMoney = ",iMoney);
          oItem2 = Send(who,@GetMoneyObject);
          
          if oItem2 = $

@@ -131,13 +131,13 @@ messages:
       {
 	      Send(who,@NewHold,#what=oFood);
 	      Send(who,@MsgSendUser,#message_rsc=createfood_cast_rsc,
-	           #parm1=send(oFood,@GetCapDef),#parm2=send(oFood,@GetName));
+	           #parm1=send(oFood,@GetCapIndef),#parm2=send(oFood,@GetName));
       }
       else
       {
 	      Send(oFood,@Delete);
 	      Send(who,@MsgSendUser,#message_rsc=createfood_inv_full_rsc,
-	           #parm1=send(oFood,@GetCapDef),#parm2=send(oFood,@GetName));
+	           #parm1=send(oFood,@GetCapIndef),#parm2=send(oFood,@GetName));
       }
 
       propagate;

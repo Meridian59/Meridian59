@@ -110,19 +110,19 @@ messages:
          }
       }
 
-      % Weapon has half it's hits, + iSpellPower% of the other half.
+      % Weapon has half its hits, + iSpellPower% of the other half.
       Send(oWeapon,@SetHits,#number=(Send(oWeapon,@GetHits)*(iSpellPower+100))/200);
 
       if Send(who,@ReqNewHold,#what=oWeapon)
       {
 	      Send(who,@NewHold,#what=oWeapon);
 	      Send(who,@MsgSendUser,#message_rsc=createweapon_cast_rsc,
-	           #parm1=send(oWeapon,@GetCapDef),#parm2=send(oWeapon,@GetName));
+	           #parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
       }
       else
       {
 	      Send(oWeapon,@Delete);
-	      Send(who, @MsgSendUser, #message_rsc=createweapon_inv_full_rsc,#parm1=send(oWeapon,@GetCapDef),#parm2=send(oWeapon,@GetName));
+	      Send(who, @MsgSendUser, #message_rsc=createweapon_inv_full_rsc,#parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
       }
       
       oItemAtt = send(SYS,@FindItemAttByNum,#Num=IA_MADE);

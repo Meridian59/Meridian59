@@ -3647,6 +3647,7 @@ messages:
          }
          
          if NOT Send(oRoom,@CheckRoomFlag,#flag=ROOM_KILL_ZONE)
+            AND NOT Send(self,@CheckGuildHallAttack,#victim=victim,#attacker=self)
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
@@ -3758,6 +3759,7 @@ messages:
       % Check to see if we deserve to be an outlaw.
       if NOT Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          AND NOT Send(victim,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         AND NOT Send(self,@CheckGuildHallAttack,#victim=victim,#attacker=self)
       {
          if Send(self,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
          {
@@ -3805,6 +3807,31 @@ messages:
       return TRUE;
    }
 
+   CheckGuildHallAttack(victim=$,attacker=$)
+   {
+      local oRoom, oVictimGuild, oAttackerGuild;
+
+      oRoom = Send(victim,@GetOwner);
+      if NOT IsClass(oRoom,&GuildHall)
+      {
+         return FALSE;
+      }
+
+      oVictimGuild = Send(victim,@GetGuild);
+      if oVictimGuild = $
+      {
+         return TRUE;
+      }
+
+      oAttackerGuild = Send(attacker,@GetGuild);
+      if oAttackerGuild = oVictimGuild
+         OR Send(oAttackerGuild,@IsAlly,#otherguild=oVictimGuild)
+      {
+         return FALSE;
+      }
+      return TRUE;
+   }
+
    CheckFactionAttack(what=$,report=TRUE)
    "Checks if you are attacking something in the same faction as you are.  Boots you out"
    "of your faction if you attack an innocent or a monster.  Safety will catch a bad "
@@ -3819,6 +3846,7 @@ messages:
          OR what = self
          OR Send(poOwner,@IsArena)
          OR Send(SYS,@GetChaosNight)
+         OR Send(self,@CheckGuildHallAttack,#victim=what,#attacker=self)
       {
          return TRUE;
       }
@@ -4807,6 +4835,7 @@ messages:
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            AND NOT Send(self,@CheckGuildHallAttack,#victim=what,#attacker=self)
          {
             %Attacked an innocent!
 

@@ -1,0 +1,78 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Set is UtilitySpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   Set_cast = "You register your inventory preferences."
+
+   Set_name_rsc = "set"
+   Set_icon_rsc = imend.bgf
+   Set_desc_rsc = \
+     "Registers your personal battle gear preferences with Frular's office.  "
+	 "Requires nothing but a will to fight."
+
+classvars:
+
+   vrName = Set_name_rsc
+   vrIcon = Set_icon_rsc
+   vrDesc = Set_desc_rsc
+
+   viCast_time = 0
+
+   viSpell_num = SID_SET
+   viSpell_level = 1
+   viSchool = SS_KRAANAN
+   viMana = 0
+   viSpellExertion = 0
+   viChance_To_Increase = 5
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local each_obj, i, plPassive, plLocal_list;
+
+      plLocal_list = $;
+      plPassive = Send(who,@GetHolderPassive);
+      
+      for i in plPassive
+      {
+         each_obj = Send(who,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&NumberItem)
+         {
+            plLocal_list = Cons([GetClass(each_obj),Send(each_obj,@GetNumber),Send(each_obj,@GetIndef),Send(each_obj,@GetName)],plLocal_list);
+         }
+         else
+         {
+            plLocal_list = Cons([GetClass(each_obj),-1,Send(each_obj,@GetIndef),Send(each_obj,@GetName)],plLocal_list);
+         }
+      }
+
+      Send(who,@SetLoadoutList,#set_list=plLocal_list);
+      Send(who,@MsgSendUser,#message_rsc=Set_cast);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

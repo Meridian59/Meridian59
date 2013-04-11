@@ -103,9 +103,9 @@ constants:
    SWINGS_PER_IMPROVE_CHECK = 75    
 
    % What's the length after having a player attacked before we let "mules" 
-   %  cast on them again.  Currently set to 5 minutes.  Should be bigger 
-   %  than logoff ghost time (currently 3 mins)
-   ATTACKED_PLAYER_WAIT = 5 * 60
+   %  cast on them again.  Currently set to 15 minutes.  Should be bigger 
+   %  than logoff ghost time (currently 10 mins)
+   ATTACKED_PLAYER_WAIT = 15 * 60
 
    % Damage is capped at piBase_Max_Health divided by this number.  Reduces
    %  newbie slaughter.

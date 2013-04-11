@@ -340,11 +340,6 @@ properties:
    %  death.
    piLogoffPenaltyEquivDeath = 10
 
-   % How long do ghosts stick around, on average?
-   % If this changes, alter ATTACKED_PLAYER_WAIT in player.kod
-   % Time: Three minutes (in seconds)
-   piLogoffPenaltyGhostTime = 3 * 60
-
    ptLogoffPenaltyTempDisable = $
    ptServerPopulationMonitor = $
    piLastServerPopulation = 0
@@ -5817,7 +5812,7 @@ messages:
 
    GetLogoffPenaltyGhostTime()
    {
-      return piLogoffPenaltyGhostTime;
+      return Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime);
    }
 
    TempDisableLogoffPenalties()
@@ -5830,7 +5825,7 @@ messages:
          ptLogoffPenaltyTempDisable = $;
       }
 
-      iDisableDuration = (piLogoffPenaltyGhostTime*150)/100;
+      iDisableDuration = (Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime)*150)/100;
       iDisableDuration = iDisableDuration * 1000;   % convert to ms
 
       ptLogoffPenaltyTempDisable = createTimer(self,@LogoffPenaltyTempDisableTrigger,iDisableDuration);

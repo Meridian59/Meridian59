@@ -342,8 +342,8 @@ properties:
 
    % How long do ghosts stick around, on average?
    % If this changes, alter ATTACKED_PLAYER_WAIT in player.kod
-   % Time: Ten minutes (in seconds)
-   piLogoffPenaltyGhostTime = 10 * 60
+   % Time: Three minutes (in seconds)
+   piLogoffPenaltyGhostTime = 3 * 60
 
    ptLogoffPenaltyTempDisable = $
    ptServerPopulationMonitor = $

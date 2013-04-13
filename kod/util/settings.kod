@@ -89,6 +89,9 @@ properties:
 
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15
+   
+   % Time in seconds that ghosts will last before taking a penalty
+   piLogoffPenaltyGhostTime = 600
 
    %
    % Guild hall settings
@@ -325,6 +328,10 @@ messages:
       return pbDamageCapProtectionMurderersEnable;
    }
 
+   GetLogoffPenaltyGhostTime()
+   {
+      return piLogoffPenaltyGhostTime;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

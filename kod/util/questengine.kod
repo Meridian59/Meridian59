@@ -537,7 +537,7 @@ resources:
          "we'll have a little toast - ~ITo the foolish masses, who offer up their feeble bodies of blood and bone to "
          "be swallowed by silent stones or jigging delusory puppet-gods.~I"
 
-   polishquest_assign = "Excuse me.  I’ve been honing  my jewelling skills, and I was wondering if you have any "
+   polishquest_assign = "Excuse me.  I’ve been honing my jewelling skills, and I was wondering if you have any "
          "uncut gems of any sort.  If you do, I’d be happy to polish them and give you one of the result."
    polishquest_success = "Ah, thank you.  Allow me to reward you."
    polishquest_failure = "Subject:  Gem polishing\n"

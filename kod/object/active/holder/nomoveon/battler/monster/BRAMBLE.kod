@@ -418,10 +418,7 @@ messages:
          Send(poOwner,@BrambleKilled,#row=Send(self,@GetRow),#col=Send(self,@GetCol));
       }
 
-      if IsClass(poCaster,&User)
-      {
-         Send(poCaster,@RemoveSummonedObject,#what=self);
-      }
+      Send(poCaster,@RemoveSummonedObject,#what=self);
 
       poCaster = $;
       plAffected = $;

@@ -140,8 +140,6 @@ resources:
 
    Spell_too_few_hp_rsc = "You are not powerful enough to cast this spell."
 
-   guildhall_protected_rsc = "The guildhall's magical defenses prevent harmful area enchantments."
-
 classvars:
 
    vrName = spell_name_rsc
@@ -754,14 +752,6 @@ messages:
       }
 
       oRoom = Send(who,@GetOwner);
-
-      if IsClass(self,&RoomEnchantment)
-         AND IsClass(oRoom,&GuildHall)
-         AND viHarmful = TRUE
-      {
-         Send(who,@MsgSendUser,#message_rsc=guildhall_protected_rsc);
-         return FALSE;
-      }
 
       oVictim = $;
       % Only have a victim if we're not aiming at a group.

@@ -16,20 +16,19 @@ constants:
 
 resources:
 
-   blind_name_rsc = "blind"
+   blind_name_rsc = "bind"
    blind_icon_rsc = iblind.bgf
    blind_desc_rsc = \
-      "The magical force of Qor burns the target's eyes, "
-      "taking away all sight for a brief period.  "
+      "The magical force of Qor binds the target's muscles, "
+      "causing them to stumble and lose the ability to fight for an extended period.  "
       "Requires entroot berries and purple mushrooms to cast."
    
-   blind_caster = "%s%s is now blind."
-   blind_already_enchanted = "%s%s is already blind."
+   blind_caster = "%s%s is now bound."
+   blind_already_enchanted = "%s%s is already bound."
 
    blind_on = \
-      "Something burns in your eyes, causing excruciating pain and a loss "
-      "of vision."
-   blind_off = "Your eyes begin to function again."
+      "Something burns in your muscles, causing excruciating pain."
+   blind_off = "You regain control of your body."
 
    blind_sound = qblind.wav
 
@@ -170,7 +169,9 @@ messages:
          if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
          {
             Send(oTarget,@MsgSendUser,#message_rsc=blind_on);
-            Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_ON);
+            Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=1200);
+            Send(oTarget,@EffectSendUserXLat,#xlat=0);
+%           Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_ON);
          }
       }
       else  
@@ -199,7 +200,7 @@ messages:
    {
       if IsClass(who,&Player)
       {
-         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_OFF);
+%        Send(who,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_OFF);
          if report
          {
             Send(who,@MsgSendUser,#message_rsc=blind_off);
@@ -224,7 +225,7 @@ messages:
    RestartEnchantmentEffect(who=$,state=$)
    {
       Send(who,@MsgSendUser,#message_rsc=blind_on);
-      Send(who,@EffectSendUser, #what=self, #effect=EFFECT_BLIND_ON);
+%     Send(who,@EffectSendUser, #what=self, #effect=EFFECT_BLIND_ON);
       
       return;
    }

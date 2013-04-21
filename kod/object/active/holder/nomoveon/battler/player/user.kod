@@ -2965,7 +2965,7 @@ messages:
 
          iAngle = iAngle mod MAX_ANGLE;
 
-         if iChanceTurn < 30
+         if iChanceTurn < 70
          {
             Send(poOwner,@SomethingTurned,#what=self,#new_angle=iAngle);
          }

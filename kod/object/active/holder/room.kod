@@ -1745,6 +1745,19 @@ messages:
               #oRoom = self, #who = what);
       }
 
+      % Prevents stacking. Allows different walls to overlap.
+      if (IsClass(what,&ActiveWallElement)
+        OR IsClass(what,&Brambles)
+        OR IsClass(what,&PassiveWallofFire)
+        OR IsClass(what,&SporeCloud)
+        OR IsClass(what,&PassiveWallofLightning)
+        OR IsClass(what,&FogCloud))
+        AND Send(self,@PositionHasWallElementOfType,#what=what,#new_row=new_row,#new_col=new_col)
+      {
+         Send(what,@Delete);
+         return;
+      }
+
       Send(self,@NewHoldObject,#what=what,
            #new_pos=[new_angle,new_row,new_col,fine_row,fine_col,session]);
 
@@ -3937,5 +3950,37 @@ messages:
       return;
    }
 
+   PositionHasWallElementOfType(what=$,new_row=0,new_col=0)
+   "Returns true if a similar wall element already exists at the intended location."
+   {
+      local i, each_obj;
+
+      if what=$
+      {
+         return FALSE;
+      }
+
+      for i in Send(self,@GetHolderActive)
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(each_obj,@GetRow) = new_row
+            AND Send(each_obj,@GetCol) = new_col
+            AND GetClass(what) = GetClass(each_obj)
+         {
+            return TRUE;
+         }
+      }
+      for i in Send(self,@GetHolderPassive)
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if Send(each_obj,@GetRow) = new_row
+            AND Send(each_obj,@GetCol) = new_col
+            AND GetClass(what) = GetClass(each_obj)
+         {
+            return TRUE;
+         }
+      }
+      return FALSE;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

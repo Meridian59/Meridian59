@@ -23,7 +23,7 @@ constants:
    SOLDIER_PERCENT = 20
 
    % What percent of the time do we wake up when someone is near?
-   WAKEUP_CHANCE = 70
+   WAKEUP_CHANCE = 100
 
    % How long are we dormant when someone tries to wake us up?
    DORMANT_DURATION = 2 * 60 * 1000  % 2 minutes (in ms)

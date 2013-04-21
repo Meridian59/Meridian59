@@ -19,14 +19,14 @@ resources:
    Dazzle_name_rsc = "dazzle"
    Dazzle_icon_rsc = idazzle.bgf
    Dazzle_desc_rsc = \
-      "Dazzles the target with the blinding light of Shal'ille's goodness.  "
+      "Pacifies the target with the blinding light of Shal'ille's goodness.  "
       "Requires emeralds and purple mushrooms."
    
    Dazzle_caster = "%s%s is now dazzled."
    Dazzle_already_enchanted = "%s%s is already dazzled."
 
-   Dazzle_on = "The world is washed away in a flood of pure light."
-   Dazzle_off = "Your vision begins to clear."
+   Dazzle_on = "Your will is momentarily washed away in a flood of pure light."
+   Dazzle_off = "Your willpower returns."
 
    Dazzle_sound = sDazzle.wav
 
@@ -155,8 +155,7 @@ messages:
       if IsClass(oTarget,&Player)
       {
          Send(oTarget,@MsgSendUser,#message_rsc=Dazzle_on);
-         Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,
-              #duration=iDuration);
+         Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WHITEOUT,#duration=1000);
       }
       else
       {
@@ -203,8 +202,8 @@ messages:
             Send(who,@MsgSendUser,#message_rsc=Dazzle_off);
          }
 
-         Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=8000);
-         Send(who,@EffectSendUserXLat,#xlat=0);
+%         Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=8000);
+%         Send(who,@EffectSendUserXLat,#xlat=0);
       } 
       else  
       {

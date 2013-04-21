@@ -4950,6 +4950,8 @@ messages:
       plItemTemplates = cons(create(&SporeBurstScroll),plItemTemplates);
       plItemTemplates = cons(create(&TruceScroll),plItemTemplates);
       plItemTemplates = cons(create(&WindScroll),plItemTemplates);
+      plItemTemplates = cons(create(&SetScroll),plItemTemplates);
+      plItemTemplates = cons(create(&LoadoutScroll),plItemTemplates);
 
       plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
       plItemTemplates = cons(create(&SkullMask),plItemTemplates);

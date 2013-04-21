@@ -99,13 +99,14 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local i, n, each_obj, countHolding, countNeeded, findAmount, class, number, have_number, bFound, plLoadout_list, plPassive,
-            indef, name, plDoNotSearch, z, bDoNotSearch;
+      local i, n, z, each_obj, countHolding, countNeeded, findAmount, class, number, have_number, bFound, plLoadout_list, plPassive,
+            indef, name, plDoNotSearch, bDoNotSearch, school, plDoNotSearchSchool, bDoNotSearchSchool;
 
       plLoadout_list = Send(who,@GetLoadoutList);
       plPassive = Send(who,@GetHolderPassive);
       plDoNotSearch = $;
       plDoNotSearch = Cons(&Money,plDoNotSearch);
+      plDoNotSearchSchool = $;
       
       Send(who,@MsgSendUser,#message_rsc=Loadout_cast);
       
@@ -117,6 +118,7 @@ messages:
          name = Nth(i,4);
          bFound = FALSE;
          bDoNotSearch = FALSE;
+         bDoNotSearchSchool = FALSE;
          
          for z in plDoNotSearch
          {
@@ -128,6 +130,55 @@ messages:
          }
          if bDoNotSearch
          {
+            continue;
+         }
+
+         % Special case for Disciple Robes, which are implemented without separate classes
+         if class = &DiscipleRobe
+         {
+            school = number;
+
+            for z in plDoNotSearchSchool
+            {
+               if z = school
+               {
+                  bDoNotSearchSchool = TRUE;
+                  break;
+               }
+            }
+            if bDoNotSearchSchool
+            {
+               continue;
+            }
+            
+            countHolding = 0;
+            for i in plPassive
+            {
+               each_obj = Send(who,@HolderExtractObject,#data=i);
+               If IsClass(each_obj,&DiscipleRobe)
+                  AND Send(each_obj,@GetSchool) = school
+               {
+                  countHolding = countHolding + 1;
+               }
+            }
+            countNeeded = 0;
+            for n in plLoadout_list
+            {
+               if Nth(n,1) = class
+                  AND Nth(n,2) = school
+               {
+                  countNeeded = countNeeded + 1;
+               }
+            }
+            findAmount = countNeeded - countHolding;
+            if countNeeded > countHolding
+            {
+               bFound = Send(self,@GetDiscipleRobeFromHallChest,#who=who,#indef=indef,#name=name,#school=school);
+               if NOT bFound
+               {
+                  plDoNotSearchSchool = Cons(school,plDoNotSearchSchool);
+               }
+            }
             continue;
          }
          
@@ -181,7 +232,50 @@ messages:
 
       propagate;
    }
-   
+
+   GetDiscipleRobeFromHallChest(who=$,class=&DiscipleRobe,indef="an",name="item",school=SS_RIIJA)
+   {
+      local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound;
+      
+      oGuild = Send(who,@GetGuild);
+      oGuildHall = Send(oGuild,@GetGuildHall);
+      bFound = FALSE;
+      
+      for i in Send(oGuildHall,@GetHolderActive)
+      {
+         each_obj = Send(oGuildHall,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&StorageBox)
+         {
+            for n in Send(each_obj,@GetHolderPassive)
+            {
+               each_obj_in_chest = Send(each_obj,@HolderExtractObject,#data=n);
+               if IsClass(each_obj_in_chest,class)
+                  AND Send(each_obj_in_chest,@GetSchool) = school
+               {
+                  bFound = TRUE;
+                  if Send(who,@ReqNewHold,#what=each_obj_in_chest)
+                  {
+                     Send(who,@NewHold,#what=each_obj_in_chest);
+                     return TRUE;
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_one,
+                          #parm1=Send(each_obj_in_chest,@GetIndef),#parm2=Send(each_obj_in_chest,@GetTrueName));
+                     return FALSE;
+                  }
+               }
+            }
+         }
+      }
+
+      if NOT bFound
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_item_not_found,#parm1=indef,#parm2=name);
+      }
+      return FALSE;
+   }
+
    GetSingleItemFromHallChest(who=$,class=&Item,indef="an",name="item")
    {
       local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound;
@@ -209,7 +303,7 @@ messages:
                   else
                   {
                      Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_one,
-                          #parm1=Send(each_obj_in_chest,@GetIndef),#parm2=Send(each_obj_in_chest,@GetName));
+                          #parm1=Send(each_obj_in_chest,@GetIndef),#parm2=Send(each_obj_in_chest,@GetTrueName));
                      return FALSE;
                   }
                }
@@ -227,7 +321,7 @@ messages:
    GetNumberItemFromHallChest(who=$,class=&Item,number=-1,name="item")
    {
       local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound,
-            oSplit, iCanHold, iNumInChest, iGetNumber;
+            oSplit, iCanHold, iNumInChest, iGetNumber, bSentErrorMsg;
 
       if number < 1
       {
@@ -236,7 +330,8 @@ messages:
       oGuild = Send(who,@GetGuild);
       oGuildHall = Send(oGuild,@GetGuildHall);
       bFound = FALSE;
-      
+      bSentErrorMsg = FALSE;
+
       for i in Send(oGuildHall,@GetHolderActive)
       {
          iGetNumber = number;
@@ -261,13 +356,21 @@ messages:
                   {
                      if iCanHold > 0
                      {
-                        Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_all,
-                             #parm1=Send(each_obj_in_chest,@GetName));
+                        if NOT bSentErrorMsg
+                        {
+                           Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_all,
+                                #parm1=Send(each_obj_in_chest,@GetTrueName));
+                           bSentErrorMsg = TRUE;       
+                        }
                      }
                      else
                      {
-                        Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_any,
-                             #parm1=Send(each_obj_in_chest,@GetName));                          
+                        if NOT bSentErrorMsg
+                        {
+                           Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_any,
+                                #parm1=Send(each_obj_in_chest,@GetTrueName));    
+                           bSentErrorMsg = TRUE;       
+                        }                      
                         return;
                      }         
                      iGetNumber = iCanHold;

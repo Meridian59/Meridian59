@@ -59,13 +59,27 @@ messages:
       for i in plPassive
       {
          each_obj = Send(who,@HolderExtractObject,#data=i);
+
+         % Ignore scrolls of set
+         if IsClass(each_obj,&SetScroll)
+         {
+            continue;
+         }
+
+         % It's important to get disciple robes of the correct school
+         if IsClass(each_obj,&DiscipleRobe)
+         {
+            plLocal_list = Cons([GetClass(each_obj),Send(each_obj,@GetSchool),Send(each_obj,@GetIndef),Send(each_obj,@GetTrueName)],plLocal_list);
+            continue;
+         }
+
          if IsClass(each_obj,&NumberItem)
          {
-            plLocal_list = Cons([GetClass(each_obj),Send(each_obj,@GetNumber),Send(each_obj,@GetIndef),Send(each_obj,@GetName)],plLocal_list);
+            plLocal_list = Cons([GetClass(each_obj),Send(each_obj,@GetNumber),Send(each_obj,@GetIndef),Send(each_obj,@GetTrueName)],plLocal_list);
          }
          else
          {
-            plLocal_list = Cons([GetClass(each_obj),-1,Send(each_obj,@GetIndef),Send(each_obj,@GetName)],plLocal_list);
+            plLocal_list = Cons([GetClass(each_obj),-1,Send(each_obj,@GetIndef),Send(each_obj,@GetTrueName)],plLocal_list);
          }
       }
 

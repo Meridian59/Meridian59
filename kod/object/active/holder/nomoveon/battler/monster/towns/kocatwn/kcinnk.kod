@@ -117,7 +117,9 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [                       
+      plFor_sale = [ [         
+                       Create(&SetScroll,#labelled=TRUE),
+                       Create(&LoadoutScroll,#labelled=TRUE),              
                        Create(&Meatpie,#number=4),
                        Create(&Bread,#number=4),
                        Create(&Cheese,#number=6)

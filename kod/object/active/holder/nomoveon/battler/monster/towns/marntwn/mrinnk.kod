@@ -204,8 +204,10 @@ messages:
       plFor_sale=[[           
 		   Create(&PantsC,#translation=PT_GRAY_TO_LRED),
 		   Create(&PantsC,#translation=PT_GRAY_TO_KORANGE),
+           Create(&SetScroll,#labelled=TRUE),
+           Create(&LoadoutScroll,#labelled=TRUE),
 		   Create(&Herbs,#number=5),
-         Create(&Elderberry,#number=4),
+           Create(&Elderberry,#number=4),
 		   Create(&Torch)
 		  ],
 		  $,$];

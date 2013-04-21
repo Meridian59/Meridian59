@@ -1,0 +1,55 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SetScroll is Scroll
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SetScroll_label_name_rsc = "scroll of set"
+   SetScroll_icon_rsc = scr07.bgf
+   SetScroll_desc_rsc = \
+      "This scroll will register your inventory preferences with Frular's office, "
+      "allowing you to use scrolls of loadout to re-equip yourself from your "
+      "guild hall chests at a distance."
+
+classvars:
+
+   vrLabelName = SetScroll_label_name_rsc
+   vrIcon = SetScroll_icon_rsc
+   viSpellEffect = SID_SET
+   viColor = XLAT_TO_SKIN4
+
+   viValue_average = 500
+
+properties:
+
+   vrDesc = SetScroll_desc_rsc
+
+messages:
+
+
+   DoFailure(what = $)
+   {
+      piHits = 1;
+      return;
+   }
+
+   DropOnDeath()
+   {
+      % Don't want these cluttering up penalty loot.
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

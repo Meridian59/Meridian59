@@ -1746,12 +1746,7 @@ messages:
       }
 
       % Prevents stacking. Allows different walls to overlap.
-      if (IsClass(what,&ActiveWallElement)
-        OR IsClass(what,&Brambles)
-        OR IsClass(what,&PassiveWallofFire)
-        OR IsClass(what,&SporeCloud)
-        OR IsClass(what,&PassiveWallofLightning)
-        OR IsClass(what,&FogCloud))
+      if NOT Send(what,@IsStackableElement)
         AND Send(self,@PositionHasWallElementOfType,#what=what,#new_row=new_row,#new_col=new_col)
       {
          Send(what,@Delete);

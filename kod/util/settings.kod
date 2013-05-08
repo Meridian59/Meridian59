@@ -116,7 +116,7 @@ properties:
    piLOS = LOS_OLD
 
    % How many summoned objects can be in a room
-   piPlayerSummonedObjectLimit = 200
+   piPlayerSummonedObjectLimit = 18
 
    % Minimum number of HP you have to have to vote for or become
    % Justicar

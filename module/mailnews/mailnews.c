@@ -388,7 +388,7 @@ Bool WINAPI EventTextCommand(char *str)
 
 /***************************************************************************/
 /*
- * IsUserInIgnoreList checks ignore status by name, not by ID.
+ * IsNameInIgnoreList checks ignore status by name, not by ID.
  */
 /***************************************************************************/
 

@@ -139,6 +139,9 @@ BOOL CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       header = (MailHeader *) lParam;
 
       // Add message to list view
+      if (IsNameInIgnoreList(header->sender)) {}
+      else
+      {
       sprintf(str, "%d", msg_num);
       lvitem.mask = LVIF_TEXT | LVIF_PARAM;
       lvitem.iItem = 0;
@@ -158,6 +161,7 @@ BOOL CALLBACK ReadMailDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       lvitem.iSubItem = 3;
       lvitem.pszText = header->date;
       ListView_SetItem(hList, &lvitem);
+      }
 
       // Erase message in status area
       SetDlgItemText(hDlg, IDC_MAILINFO, "");

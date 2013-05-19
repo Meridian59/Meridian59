@@ -385,3 +385,22 @@ Bool WINAPI EventTextCommand(char *str)
 
    return True;
 }
+
+/***************************************************************************/
+/*
+ * IsUserInIgnoreList checks ignore status by name, not by ID.
+ */
+/***************************************************************************/
+
+Bool IsNameInIgnoreList(char *name)
+{
+  char *str = name;
+  if (str != NULL)
+  {
+    int i;
+    for (i = 0; i < MAX_IGNORE_LIST; ++i)
+      if (0 == strcmp(cinfo->config->ignore_list[i], str))
+        return True;
+  }
+  return False;
+}

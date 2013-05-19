@@ -204,6 +204,9 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
          article = (NewsArticle *) (l->data);
          
          // Add article to list view
+         if (IsNameInIgnoreList(article->poster)) {}
+         else
+         {
          lvitem.mask = LVIF_TEXT | LVIF_PARAM;
          lvitem.iItem = ListView_GetItemCount(hList);
          lvitem.iSubItem = 0;
@@ -221,6 +224,7 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
          lvitem.iSubItem = 2;
          lvitem.pszText = date;
          ListView_SetItem(hList, &lvitem);
+         }
       }
       
       /* Get first article by faking select message */

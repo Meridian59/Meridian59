@@ -3680,8 +3680,6 @@ messages:
    "Sent by client when they're blocking messages from a user, and that "
    "user Sends a message."
    {
-      % Send(what,@MsgSendUser,#message_rsc=user_blocked_send,
-      %      #parm1=Send(self,@GetTrueName));
 
       return;
    }

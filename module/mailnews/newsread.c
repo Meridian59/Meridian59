@@ -204,26 +204,25 @@ BOOL CALLBACK ReadNewsDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
          article = (NewsArticle *) (l->data);
          
          // Add article to list view
-         if (IsNameInIgnoreList(article->poster)) {}
-         else
+         if (!IsNameInIgnoreList(article->poster))
          {
-         lvitem.mask = LVIF_TEXT | LVIF_PARAM;
-         lvitem.iItem = ListView_GetItemCount(hList);
-         lvitem.iSubItem = 0;
-         lvitem.pszText = article->title;
-         lvitem.lParam = (LPARAM) article;
-         ListView_InsertItem(hList, &lvitem);
+            lvitem.mask = LVIF_TEXT | LVIF_PARAM;
+            lvitem.iItem = ListView_GetItemCount(hList);
+            lvitem.iSubItem = 0;
+            lvitem.pszText = article->title;
+            lvitem.lParam = (LPARAM) article;
+            ListView_InsertItem(hList, &lvitem);
          
-         // Add subitems
-         lvitem.mask = LVIF_TEXT;
-         lvitem.iSubItem = 1;
-         lvitem.pszText = article->poster;
-         ListView_SetItem(hList, &lvitem);
+            // Add subitems
+            lvitem.mask = LVIF_TEXT;
+            lvitem.iSubItem = 1;
+            lvitem.pszText = article->poster;
+            ListView_SetItem(hList, &lvitem);
          
-         DateFromSeconds(article->time, date);
-         lvitem.iSubItem = 2;
-         lvitem.pszText = date;
-         ListView_SetItem(hList, &lvitem);
+            DateFromSeconds(article->time, date);
+            lvitem.iSubItem = 2;
+            lvitem.pszText = date;
+            ListView_SetItem(hList, &lvitem);
          }
       }
       

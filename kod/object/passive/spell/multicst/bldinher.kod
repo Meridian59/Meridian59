@@ -27,7 +27,7 @@ resources:
    
    BloodInheritance_sound = qunbond.wav
 
-   BloodInheritance_bad_target = "You must target this spell at a weapon."
+   BloodInheritance_bad_target = "You must target this spell at a melee weapon."
    BloodInheritance_bad_target2 = "You cannot give Qor's gift to a weapon which is already enchanted."
    BloodInheritance_succeeded = "The evil force of your spell lashes out at %s%s, infusing it with Qor's power."
 
@@ -73,6 +73,7 @@ messages:
    {
       % Gotta be a weapon.
       if not isClass(first(lTargets),&Weapon)
+         OR isClass(first(lTargets),&RangedWeapon)
       {
          Send(who,@MsgSendUser,#message_rsc=BloodInheritance_bad_target);
          return;
@@ -81,7 +82,7 @@ messages:
       % Can't have any other enchantments.
       if send(first(lTargets),@HasAnyAttribute)
       {
-         Send(who,@MsgSendUser,#message_rsc=BloodInheritance_bad_target);
+         Send(who,@MsgSendUser,#message_rsc=BloodInheritance_bad_target2);
          return;
       }
       
@@ -92,16 +93,12 @@ messages:
    {
       local oCaster, iRandom, ItemAtt;
 
-%      for oCaster in lCasters
-%      {
-%         if oCaster <> oOwner
-%         {
-%            Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_succeeded,
-%                     #parm1=send(first(lTargets),@GetIndef),
-%                       #parm2=send(first(lTargets),@GetName));
-%         }
-%      }
-%
+      for oCaster in lCasters
+      {
+            Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_succeeded,
+                     #parm1=send(first(lTargets),@GetIndef),
+                       #parm2=send(first(lTargets),@GetName));
+      }
 
       iRandom = Random(1,10);
 
@@ -122,18 +119,10 @@ messages:
 
       if iRandom >= 4
       {
-         % This is the most common, a perma-unholy damage enchantment.
-         ItemAtt = WA_ATTACKSPELLTYPE;
-
-         % Specify the damage type
-         send(send(SYS,@FindItemAttByNum,#Num=ItemAtt),@AddToItem,#oItem=first(lTargets),#state1=ATCK_SPELL_UNHOLY);
-
-         % We're done here, return out.
-         return;
+         ItemAtt = WA_CURSED;
       }
 
-      % For the other types.
-      send(send(SYS,@FindItemAttByNum,#Num=ItemAtt),@AddToItem,#what=first(lTargets));
+      send(send(SYS,@FindItemAttByNum,#Num=ItemAtt),@AddToItem,#oItem=first(lTargets));
 
       return;
    }

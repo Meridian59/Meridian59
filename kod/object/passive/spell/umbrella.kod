@@ -228,7 +228,11 @@ messages:
 
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      return iSpellPower*2;
+      local iSpellPower;
+     
+      iSpellpower = (send(who,@GetEnchantedState,#what=self))*2;
+	  
+      return (defense_power + iSpellPower);
    }
 
    ModifyDefenseDamage(who = $,what = $,damage = $)

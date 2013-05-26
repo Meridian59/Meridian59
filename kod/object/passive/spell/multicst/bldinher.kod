@@ -71,7 +71,8 @@ messages:
    
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      % Gotta be a weapon.
+      % Gotta be a melee weapon. This spell will only create weapons that can
+      % normally be obtained, so don't allow ranged weapon procs.
       if not isClass(first(lTargets),&Weapon)
          OR isClass(first(lTargets),&RangedWeapon)
       {

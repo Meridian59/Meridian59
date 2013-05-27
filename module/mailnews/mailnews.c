@@ -394,12 +394,10 @@ Bool WINAPI EventTextCommand(char *str)
 
 bool IsNameInIgnoreList(char *name)
 {
-  char *str = name;
-  if (str != NULL)
+  if (name != NULL)
   {
-    int i;
-    for (i = 0; i < MAX_IGNORE_LIST; ++i)
-      if (0 == strcmp(cinfo->config->ignore_list[i], str))
+    for (int i = 0; i < MAX_IGNORE_LIST; ++i)
+      if (0 == strcmp(cinfo->config->ignore_list[i], name))
         return true;
   }
   return false;

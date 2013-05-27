@@ -11369,8 +11369,8 @@ messages:
 
       if what = $
          OR NOT ((IsClass(poOwner,&GuildHall)
-                 OR IsClass(poOwner,&OutofGrace))
-                 OR IsClass(poOwner,&TosArena)))
+                 OR IsClass(poOwner,&OutofGrace)
+                 OR Send(poOwner,@IsArena)))
       {
          return;
       }

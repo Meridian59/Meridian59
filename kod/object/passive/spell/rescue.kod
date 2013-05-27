@@ -71,7 +71,12 @@ messages:
       {
          Send(who, @MsgSendUser, #message_rsc = spell_too_soon_since_attacking);
          return FALSE;
-      }         
+      }
+      
+      if Send(who,@FindHolding,#class=&Token)
+      {
+        return FALSE;
+      }
 
       if NOT send(who,@CanRescue)
       {

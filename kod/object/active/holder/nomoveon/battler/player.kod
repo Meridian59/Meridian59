@@ -1430,6 +1430,17 @@ messages:
 
       return;
    }
+   
+   CancelRescue()
+   "Cancels the rescue timer if it exist and does not execute the rescue operation."
+   {
+      if ptRescue <> $
+      {
+         DeleteTimer(ptRescue);
+         ptRescue = $;
+      }
+      return;
+   }
 
    CanRescue()
    {

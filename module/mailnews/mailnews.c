@@ -392,7 +392,7 @@ Bool WINAPI EventTextCommand(char *str)
  */
 /***************************************************************************/
 
-bool IsNameInIgnoreList(char *name)
+bool IsNameInIgnoreList(const char *name)
 {
   if (name != NULL)
   {

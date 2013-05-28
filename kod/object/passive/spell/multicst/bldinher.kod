@@ -71,8 +71,8 @@ messages:
    
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      % Gotta be a melee weapon. This spell will only create weapons that can
-      % normally be obtained, so don't allow ranged weapon procs.
+      % Gotta be a melee weapon. This spell will only create magical weapons that
+      % can normally be obtained, so don't allow ranged weapon to be given procs.
       if not isClass(first(lTargets),&Weapon)
          OR isClass(first(lTargets),&RangedWeapon)
       {
@@ -96,9 +96,9 @@ messages:
 
       for oCaster in lCasters
       {
-            Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_succeeded,
-                     #parm1=send(first(lTargets),@GetIndef),
-                       #parm2=send(first(lTargets),@GetName));
+         Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_succeeded,
+                  #parm1=send(first(lTargets),@GetIndef),
+                    #parm2=send(first(lTargets),@GetName));
       }
 
       iRandom = Random(1,10);

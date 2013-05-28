@@ -139,7 +139,7 @@ messages:
       local iDuration;
 
       % 1-3 minutes
-      iDuration = (300 + 16*iSpellPower) * 10;
+      iDuration = (300 + 16*iSpellPower) * 100;
 
       return random(iDuration/2,iDuration);
    }

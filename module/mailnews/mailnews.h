@@ -39,4 +39,6 @@ extern Bool exiting;              // True when module is exiting and should be u
 
 extern HINSTANCE hInst;  // module handle
 
+bool IsNameInIgnoreList(const char *name);
+
 #endif /* #ifndef _MAILNEWS_H */

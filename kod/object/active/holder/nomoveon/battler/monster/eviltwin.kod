@@ -45,7 +45,7 @@ classvars:
 
    viTreasure_type = TID_NONE
 
-   viSpeed = SPEED_VERY_FAST
+   viSpeed = SPEED_AVERAGE
    viAttack_types = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 1

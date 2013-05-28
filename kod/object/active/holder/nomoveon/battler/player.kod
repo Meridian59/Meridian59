@@ -1003,11 +1003,7 @@ messages:
          ptSecondWind = $;
       }
 
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
 
       if ptAttackTimer <> $
       {
@@ -1416,11 +1412,7 @@ messages:
    EndRescue()
    "Deletes rescue timer if it exists and does the rescue operation."
    {
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
       
       if poOwner <> $
          AND Send(poOwner,@GetRoomNum) <> RID_OUTOFGRACE
@@ -1432,7 +1424,7 @@ messages:
    }
    
    CancelRescue()
-   "Cancels the rescue timer if it exist and does not execute the rescue operation."
+   "Cancels the rescue timer if it exists and does not execute the rescue operation."
    {
       if ptRescue <> $
       {
@@ -1981,11 +1973,7 @@ messages:
          ptMana = $;
       }
 
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
 
       % Tell others that we're leaving
       oRoom = Send(self, @GetOwner);
@@ -7771,11 +7759,7 @@ messages:
       }
 
       % Stop any rescue attempts that were going on.
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
       
       piLastDeathTime = getTime();
 

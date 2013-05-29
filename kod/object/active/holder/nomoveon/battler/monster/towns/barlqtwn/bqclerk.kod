@@ -804,8 +804,7 @@ messages:
 
    CitizenAsksTally(who=$)
    {
-      local i, j, lTallied, oHighest, iHighestCount, bTie, bFound, oBook,
-            sString, sString2;
+      local i, j, lTallied, oHighest, iHighestCount, bTie, bFound;
 
       if piJusticar_State <> STATE_ACCEPTING_VOTES
       {

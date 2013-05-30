@@ -268,13 +268,6 @@ messages:
          return;
       }
       
-      if Send(poOwner,@GetVigor) <= 1
-      {
-        ptTortureTimer=$;
-        Send(poOwner,@TryUnuseItem,#what=self);
-        return;
-      }
-      
       if ptTortureTimer<>$
       {
          ptTortureTimer=$;
@@ -287,6 +280,13 @@ messages:
       
       send(poOwner,@MsgSendUser,#message_rsc=token_use_rsc);
       send(poOwner,@AddExertion,#amount = viVigorDrop/2+Random(0,viVigorDrop/2));
+      
+      % Players will drop the token if vigor reaches 1
+      if Send(poOwner,@GetVigor) <= 1
+      {
+        Send(poOwner,@TryUnuseItem,#what=self);
+        return;
+      }
       
       ptTortureTimer = CreateTimer(self,@TortureHolder,TOKEN_FATIGUE_TIME);
       

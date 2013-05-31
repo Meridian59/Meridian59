@@ -281,7 +281,10 @@ messages:
       send(poOwner,@MsgSendUser,#message_rsc=token_use_rsc);
       send(poOwner,@AddExertion,#amount = viVigorDrop/2+Random(0,viVigorDrop/2));
       
-      % Players will drop the token if vigor reaches 1
+      % This prevents players from hoarding tokens in a safe zone,
+      % making other players unable to retrive the tokens.
+      % Players will drop the token when their vigor drops down to 1
+      
       if Send(poOwner,@GetVigor) <= 1
       {
         Send(poOwner,@TryUnuseItem,#what=self);

@@ -4790,6 +4790,7 @@ messages:
       plItemTemplates = cons(create(&OfferingQor),plItemTemplates);
       plItemTemplates = cons(create(&OfferingShalille),plItemTemplates);
       plItemTemplates = cons(create(&OfferingKraanan),plItemTemplates);
+      plItemTemplates = cons(create(&OfferingJala),plItemTemplates);
 
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);

@@ -75,7 +75,7 @@ resources:
       "\n\n"
       "--Caramo"
    barloque_clerk_tally_day = \
-      "The next Justicar will be sworn into office %i Meridian days henceforth."
+      "The next Justicar will be sworn into office %d Meridian days henceforth."
    barloque_clerk_tally_no_leader = \
       "Thus far, there are no votes tallied for the next Justicar election."
    barloque_clerk_tally_leader = \
@@ -810,7 +810,7 @@ messages:
       {
          Send(self,@SayToOne,#message_rsc=barloqueClerk_not_yet,#target=who);
          
-         return FALSE;
+         return;
       }
 
       lTallied = $;
@@ -846,7 +846,8 @@ messages:
          return;
       }
       
-      oHighest = $; iHighestCount = 0;      
+      oHighest = $;
+      iHighestCount = 0;      
       bTie = FALSE;
       
       for i in lTallied

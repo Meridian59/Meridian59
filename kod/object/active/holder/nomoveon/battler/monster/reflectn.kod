@@ -91,6 +91,7 @@ messages:
       if oMaster <> $
       {
          poMaster = oMaster;
+         Send(poMaster,@AddSummonedObject,#what=self);
       }
       
       piSpellpower = iSpellpower;
@@ -161,40 +162,6 @@ messages:
       return Send(poOriginal,@GetHimHer,#cap=cap);
    }
 
-   ReqSomethingEntered(what=$)
-   {
-      if poOriginal = $
-      {
-         Send(self,@Delete);
-      }
-      
-      if IsClass(poOriginal,&Player)
-         AND NOT Send(poOriginal,@IsLoggedOn)
-      {
-         Send(self,@Delete);
-      }
-      
-      propagate;
-   }
-
-   SomethingLeft(what=$)
-   {
-      if poOriginal = $
-      {
-         Send(self,@Delete);
-      }
-      else
-      {
-         if IsClass(poOriginal,&Player)
-            and not Send(poOriginal,@IsLoggedOn)
-         {
-            Send(self,@Delete);
-         }
-      }
-
-      propagate;
-   }
-
    SomethingKilled(what = $,victim = $,use_weapon = $)
    "Someone just died, perhaps we need to clear our target."
    {
@@ -244,6 +211,11 @@ messages:
 
    Delete(bMonsterReport=TRUE)
    {
+      if poMaster <> $
+      {         
+         Send(poMaster,@RemoveSummonedObject,#what=self);
+      }
+
       Send(SYS,@RemoveReflection,#oReflection=self);
 
       if poOriginal <> $

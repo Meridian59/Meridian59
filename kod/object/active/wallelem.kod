@@ -80,6 +80,7 @@ messages:
       if IsClass(caster,&User)
       {
          vbSummoned = TRUE;
+         Send(caster,@AddSummonedObject,#what=self);
       }
 
       propagate;
@@ -279,6 +280,7 @@ messages:
 
    Delete()
    {
+      Send(poCaster,@RemoveSummonedObject,#what=self);
       poCaster = $;
       plAffected = $;
 

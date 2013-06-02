@@ -872,6 +872,9 @@ properties:
    % Defense modifiers to defense roll & damage (includes items & spells)
    plDefense_modifiers = $
    
+   % Created objects that we own (walls, reflections, etc)
+   plSummoned_objects = $
+   
    piGender = GENDER_MALE
 
    piVigor_rest_threshold = 80
@@ -966,6 +969,11 @@ messages:
    Delete()
    {
       local i;
+
+      for i in plSummoned_objects
+      {
+         Send(i,@Delete);
+      }
 
       Send(self,@QuitGuild);
       for i in Send(SYS,@GetGuilds)
@@ -1952,6 +1960,11 @@ messages:
          Send(i,@UserLogoff);
       }
 
+      for i in plSummoned_objects
+      {
+         Send(i,@Delete);
+      }
+
       % client assumes not resting upon login
       Send(self,@StopResting); 
 
@@ -2310,6 +2323,11 @@ messages:
       local i;
 
       % first, kill all their items
+
+      for i in plSummoned_objects
+      {
+         Send(i,@Delete);
+      }
 
       for i in plActive
       {
@@ -7786,6 +7804,11 @@ messages:
       % Grab the location of the deceased.
       % Might need to grab the old location if logged off.
 
+      for i in plSummoned_objects
+      {
+         Send(i,@Delete);
+      }
+
       if pbLogged_on
       {
          oRoom = poOwner;
@@ -12347,6 +12370,21 @@ messages:
       return;
    }
 
+   AddSummonedObject(what = $)
+   {
+      if plSummoned_objects = $
+         OR NOT FindListElem(plSummoned_objects, what)
+      {
+         plSummoned_objects = Cons(what,plSummoned_objects);
+      }
+      return;
+   }
+   
+   RemoveSummonedObject(what = $)
+   {
+      DelListElem(plSummoned_objects,what);
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

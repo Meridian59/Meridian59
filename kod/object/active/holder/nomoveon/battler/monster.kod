@@ -5783,6 +5783,15 @@ messages:
       return;
    }
 
+   AddSummonedObject(what = $)
+   {
+      return;
+   }
+
+   RemoveSummonedObject(what = $)
+   {
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

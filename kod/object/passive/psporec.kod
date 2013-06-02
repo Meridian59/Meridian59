@@ -40,6 +40,7 @@ messages:
    Constructor(Caster=$,Duration=75,Active_elem=$,oRoom=$)
    {
       poCaster = Caster;
+      Send(poCaster,@AddSummonedObject,#what=self);
       poActive_Elem = Active_elem;
 
       vbSummoned = isClass(Caster,&User);
@@ -78,6 +79,8 @@ messages:
 
    Delete()
    {
+      Send(poCaster,@RemoveSummonedObject,#what=self);
+
       if ptExpire <> $
       {
          DeleteTimer(ptExpire);

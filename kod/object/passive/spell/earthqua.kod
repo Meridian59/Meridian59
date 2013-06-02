@@ -72,6 +72,8 @@ classvars:
    % Damage is 0 outside this distance 
    viZero_damage_distance = 20
 
+   viReport = FALSE
+
 properties:
 
 

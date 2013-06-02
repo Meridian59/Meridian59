@@ -203,6 +203,10 @@ classvars:
 
    vrToo_few_hp = spell_too_few_hp_rsc
 
+   % Report CheckAttack messages. Set it to false for multiple-target spells
+   % to avoid listing every player in the room via safety messages.
+   viReport = TRUE
+
 properties:
 
    % Format of reagents:  Each element of plReagents is a list, describing a
@@ -1001,8 +1005,9 @@ messages:
 
                if NOT Send(oRoom,@ReqSomethingAttack,#what=who,#victim=i,
                            #stroke_obj=self)
-                  OR NOT Send(who,@AllowPlayerAttack,#victim=i)
+                  OR NOT Send(who,@AllowPlayerAttack,#victim=i,#report=viReport)
                {
+                  Send(who,@MsgSendUser,#message_rsc=spell_safety_on);                  
                   return FALSE;
                }
             }
@@ -1010,7 +1015,7 @@ messages:
          else
          {
             lFinalTargets = Send(self,@GetAttackTargets,#who=who,
-                                 #lTargets=lTargets);
+                                 #lTargets=lTargets,#report=viReport);
 
             % Don't cast the spell if there's no valid targets.
             if lFinalTargets = $
@@ -1839,7 +1844,7 @@ messages:
       {
          % Double-check to get valid targets.
          lFinalTargets = Send(self,@GetGoodTargets,#who=who,
-                              #lTargets=lTargets);
+                              #lTargets=lTargets,#report=viReport);
 
          if lFinalTargets <> $ AND IsClass(First(lFinalTargets),&Battler)
             AND Send(First(lFinalTargets),@TryDeflect,#what=self,#caster=who)

@@ -908,6 +908,12 @@ messages:
       return FALSE;
    }
 
+   IsStackableElement()
+   "Returns TRUE if the object can have multiples of itself in the same spot without issue. "
+   "Typically FALSE for wall elements."
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

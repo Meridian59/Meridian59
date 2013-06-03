@@ -10,7 +10,7 @@ BOFS = heal.bof atakspel.bof rescue.bof earthqua.bof \
        remcurse.bof blink.bof \
        cdisease.bof cpoison.bof discord.bof hospice.bof \
        majheal.bof dishonor.bof \
-       blind.bof hold.bof defile.bof umbrella.bof \
+       blind.bof hold.bof defile.bof radiusench.bof \
        creaweap.bof enfeeble.bof shatter.bof swap.bof \
        brittle.bof creafood.bof dement.bof enchwp.bof fade.bof focus.bof \
        holywp.bof manabomb.bof unholywp.bof \

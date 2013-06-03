@@ -1,0 +1,364 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RadiusEnchantment is Spell
+
+% Radius Enchantments are spells that apply an effect to players within a certain distance of the caster.
+% Caster must typically maintain a trance, but requirements keep the trance are variable.
+%
+% Internally, the trance uses a state of the form [time elapsed, players enchanted, power, range].
+% This should not be altered. It is used to track the radius and who should be affected.
+% Power and Range have their own Calculate functions if they need to be modified.
+%
+% EnterRadius and LeaveRadius add or remove from a player's plRadiusEnchantments list.
+% Each element is of the form [spell object, spellpower, caster].
+% These states should be used when effects are actually being performed.
+%
+% Useful Radius enchantment functions to call (these are in Player.kod):
+% IsRadiusEnchanted(byClass=&RadiusEnchantment)              -- returns TRUE or FALSE
+% GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment) -- returns [spell object, power, caster] with highest power
+% GetRadiusEnchantments()                                           -- returns player's list of [spell object, power, caster]
+
+constants:
+
+   include blakston.khd
+   
+   RADIUS_CHECK_TIME = 500   %Time between checks for who is affected, no worse than an active object lag-wise
+
+resources:
+
+   radius_ench_default_ends = "The circle of magic maintained by %s collapses."
+   radius_ench_default_starts = "A circle of magic expands outward from %s."
+   radius_ench_default_enter = "You enter a circle of magical effect."
+   radius_ench_default_leave = "You leave a circle of magical effect."
+   radius_ench_no_newbie = \
+      "Your guardian angel tells you, \"You are not ready to cast spells "
+      "which may hinder other players.\""
+      
+   radius_ench_default_already_cast = "You are already maintaining that radius enchantment."
+
+   jala_need_instrument = "You need an instrument!"
+
+classvars:
+
+   radius_ench_already_cast = radius_ench_default_already_cast
+   
+   radius_ench_ends = radius_ench_default_ends
+   radius_ench_starts = radius_ench_default_starts
+   radius_ench_enter = radius_ench_default_enter
+   radius_ench_leave = radius_ench_default_leave
+
+   viSchool = SS_JALA
+   % viMana is amount used upon inititiation
+   viMana = 5
+   % viManaDrain is amount used every viDrainTime milliseconds
+   viManaDrain = 3       
+   viDrainTime = 5000
+
+   viChance_To_Increase = 8
+   % viPostCast_time is in seconds, since it works off GetTime()
+   viPostCast_time = 1
+
+   % If harmful, don't affect people we can't hit
+   viHarmful = FALSE
+
+   % Default: range goes up to double base based on spellpower
+   viBaseRange = 5
+   
+   % If set to false, spell will affect caster only
+   viAffectsOthers = TRUE
+   
+   % If set to true, a harmful spell will still affect guildmates
+   viAffectsGuildmates = FALSE
+
+properties:
+
+   ptDrainTimer = $
+   ptDrainNow = FALSE
+
+messages:
+
+   ResetReagents()
+   {
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      % Enchantment is applied by radius, not by target
+      return 0;
+   }
+
+   CanPayCosts(who=$, lTargets=$)  
+   {
+      if viSchool = SS_JALA
+      {
+          if Send(who,@GetInstrumentLevel) = 0
+          { 
+             Send(who,@MsgSendUser,#message_rsc=jala_need_instrument);
+             return FALSE; 
+          }
+      }
+
+      propagate;
+   }
+
+   CastSpell(who=$, iSpellPower=0)
+   "Initiation point for the spell."
+   {
+      local i, lMaintaining, iState, oObj, oUser, oCasterGuild, oRoom, iElapsed, lEnchanted, iPower, iRange;
+
+      iElapsed = 0;
+      lEnchanted = $;
+      iPower = Send(self,@CalculatePower,#iSpellPower=iSpellPower);
+      iRange = Send(self,@CalculateRange,#iSpellPower=iSpellPower);
+
+      % Cancel previous radius spell trance
+      if Send(who,@IsEnchanted,#byClass=&RadiusEnchantment)
+      {
+         lMaintaining = Send(who,@GetEnchantmentsByClass,#enchClass=&RadiusEnchantment);
+         for i in lMaintaining
+         {
+            iState = Send(who,@GetEnchantedState,#what=Nth(i,2));
+            Send(Nth(i,2),@BreakTrance,#who=who,#state=iState,#event=EVENT_STEER);
+         }
+      }
+
+      oRoom = Send(who,@GetOwner);
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=radius_ench_starts);
+      
+      oCasterGuild = Send(who,@GetGuild);
+
+      for oObj in Send(oRoom,@GetplActive)
+      {
+         oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
+
+         % Important note: FindListElem returns nil on a passed nil value, not zero.
+         if IsClass(oUser,&User)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+         {
+            if NOT viHarmful
+               OR oUser=who
+               OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
+                  AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
+                  AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+               OR (viAffectsGuildmates
+                  AND oCasterGuild <> $
+                  AND oCasterGuild = Send(oUser,@GetGuild))
+            {
+               if viAffectsOthers
+                  OR (NOT viAffectsOthers AND oUser=who)
+               {
+                  send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
+                  lEnchanted = cons(oUser,lEnchanted);
+               }
+            }
+         }
+      }
+
+      % Put spell maintenance info in casters enchantment list.
+      Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
+           #state=[iElapsed,lEnchanted,iPower,iRange]);      
+
+      % Set up mana drain
+      ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
+
+      propagate;
+   }
+
+   EnterRadius(who=$,iPower=0,caster=$)
+   {      
+      local i,each_obj;
+      
+      Send(who,@AddRadiusEnchantment,#what=self,#iPower=iPower,#caster=caster);
+      Send(who,@MsgSendUser,#message_rsc=radius_ench_enter);
+
+      return;
+   }
+   
+   LeaveRadius(who=$,iPower=0,caster=$)
+   {      
+      Send(who,@RemoveRadiusEnchantment,#what=self,#iPower=iPower,#caster=caster);
+      Send(who,@MsgSendUser,#message_rsc=radius_ench_leave);
+      
+      return;
+   }
+
+   EndEnchantment( who = $, state = $ )
+   "Called only for caster. Refreshes itself to recalculate affected players."
+   {
+      local iElapsed, lEnchanted, iPower, iRange, oUser, oCasterGuild, oRoom, lActive;
+
+      iElapsed = Nth(state,1);
+      lEnchanted = Nth(state,2);
+      iPower = Nth(state,3);
+      iRange = Nth(state,4);
+
+      oRoom = Send(who,@GetOwner);
+      oCasterGuild = Send(who,@GetGuild);
+
+      % Check for players that have left the radius of effect
+      for oUser in lEnchanted
+      {
+         if Send(who,@SquaredDistanceTo,#what=oUser) > (iRange * iRange)
+            OR Send(who,@GetOwner) <> Send(oUser,@GetOwner)
+         {
+            Send(self,@LeaveRadius,#who=oUser,#iPower=iPower,#caster=who);
+            lEnchanted = DelListElem(lEnchanted,oUser);
+         }
+      }
+      
+      % Check for players that have entered the radius of effect
+      for lActive in send(oRoom,@GetplActive)
+      {
+         oUser = Send(oRoom,@HolderExtractObject,#data=lActive);
+
+         if IsClass(oUser,&User)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+         {
+            if NOT viHarmful
+               OR oUser=who
+               OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
+                  AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
+                  AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+               OR (viAffectsGuildmates
+                  AND oCasterGuild <> $
+                  AND oCasterGuild = Send(oUser,@GetGuild))
+            {
+               if viAffectsOthers
+                  OR (NOT viAffectsOthers AND oUser=who)
+               {
+                  send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
+                  lEnchanted = cons(oUser,lEnchanted);
+               }
+            }
+         }
+      }
+
+      Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
+          #state=[iElapsed,lEnchanted,iPower,iRange],#Report=FALSE);
+              
+      if ptDrainNow = TRUE
+      {
+         if Send(who,@GetMana) >= viManaDrain
+         {
+            Send(who,@LoseMana,#amount=viManaDrain);
+            ptDrainNow = FALSE;
+         }
+         else
+         {
+            Send(self,@BreakTrance,#who=who,#state=state,#event=EVENT_STEER);
+         }
+      }
+
+      return;
+   }
+
+   RemoveEnchantment(who = $, state=$)
+   "Remove enchantment effects on this occupant"
+   {
+      return;
+   }
+   
+   BreakTrance(who=$, event=$, state=$, location=$, iPower=$)
+   "If caster runs out of mana or loses trance, spell ends."
+   {
+      local oUser, lEnchanted;
+            
+      % The spell keeps going if you get damaged, move, cast, or make an attack.
+      if event = EVENT_DAMAGE
+         OR event = EVENT_ATTACK
+         OR event = EVENT_RUN
+         OR event = EVENT_DISRUPT
+         OR event = EVENT_CAST
+      {
+         return FALSE;
+      }
+   
+      iPower = Nth(state,3);
+
+      % Clean up Trance.
+      Send(who,@ClearTranceFlag);
+      Send(who,@RemoveEnchantment,#what=self);
+      Send(Send(who,@GetOwner),@SomeoneSaid,#type=SAY_MESSAGE,#string=radius_ench_ends);
+      lEnchanted = Nth(state,2);
+      for oUser in lEnchanted
+      {
+         Send(self,@LeaveRadius,#who=oUser,#iPower=iPower);
+      }
+      DeleteTimer(ptDrainTimer);
+      ptDrainTimer=$;
+
+      propagate;
+   }
+   
+   DrainTimer(who=$)
+   {
+      ptDrainNow = TRUE;
+      ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
+      return;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetTranceFlag);
+      
+      return;
+   }
+   
+   RemoveEnchantmentEffects()
+   "Need to override spell.kod's thing, since we do this ourselves specially."
+   {
+      return;
+   }
+
+   % Replace this to modify power calculations - currently on 0 to 99 scale
+   CalculatePower(who=$, iSpellPower=25)
+   {
+      return iSpellPower;
+   }
+
+   % Replace this to modify range by spellpower calculations
+   CalculateRange(who=$, iSpellPower=25)
+   {
+      local iRange;
+
+      % Default is up to twice base range      
+      iRange = viBaseRange + ((viBaseRange*iSpellPower)/99);
+      
+      return iRange;
+   }
+      
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      return FALSE;
+   }
+
+   %%%%% Effect Functions
+   
+   AddResistances(who=$,value=$)
+   {
+      Send(who,@AddResistance,#what=-ATCK_SPELL_ALL,#value=value);
+
+      return;
+   }
+
+   RemoveResistances(who=$,value=$)
+   {
+      Send(who,@RemoveResistance,#what=-ATCK_SPELL_ALL,#value=value);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

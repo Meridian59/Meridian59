@@ -1,0 +1,272 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Umbrella is Spell
+% Termination conditions
+%  caster breaks trance 
+%  enchantee moves out of range
+%  total spell time elapses
+
+constants:
+
+   include blakston.khd
+
+   UMBRELLA_TIME = 180000       %  3 realtime minutes
+   UMBRELLA_RANGE = 5           %  max distance to enchantees 
+   UMBRELLA_CHECK_TIME = 1000   %Time between checks for who is inside, no worse than an active object lag-wise
+
+resources:
+
+   Umbrella_name_rsc = "umbrella"
+   Umbrella_icon_rsc = iumbrela.bgf
+   Umbrella_desc_rsc = \
+      "Creates a dome of magical energy that protects all "
+      "players near the caster for several minutes.  The spell "
+      "dissipates if caster breaks concentration by running or "
+      "combat.  Requires emeralds to cast."
+
+   Umbrella_already_enchanted = "You already have %s%s."
+
+   Umbrella_cast = "A mystic, shimmering dome of light emerges from %s%s's fingertips."
+   Umbrella_on = "You are encompassed by a dome of magical energy."
+   Umbrella_off = "The dome of magical energy dissipates."
+   Umbrella_outside = "You have passed outside the dome of magical energy."
+   Umbrella_break_trance = "Loss of concentration causes the dome of magical energy to implode!"
+
+   Umbrella_deflected = "%s%s's guardian angel deflects the brunt of the blast back at you!"
+   Umbrella_deflected_implosion = "A guardian angel sweeps down and deflects the blast back at %s%s!"
+
+classvars:
+
+   vrName = Umbrella_name_rsc
+   vrIcon = Umbrella_icon_rsc
+   vrDesc = Umbrella_desc_rsc
+
+   viSpell_num = SID_UMBRELLA
+   viMana = 15
+   viSchool = SS_SHALILLE
+   viSpell_level = 5
+
+   viIndefinite = ARTICLE_AN
+   viHarmful = FALSE
+   viChance_To_Increase = 35
+   viCast_Time = 10000
+
+properties:
+   
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Emerald,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $, lTargets = $)
+   {
+      % check for enchantment already applied
+      if Send(who,@IsEnchanted,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Umbrella_already_enchanted,
+              #parm1=Send(self,@GetIndef),#parm2=Send(self,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, iSpellpower = $)
+   {
+      local oRoom, lEnchanted, oObj, oUser,iDuration, iElapsed;
+
+      oRoom = Send(who,@GetOwner);
+      lEnchanted = $;
+
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=umbrella_cast,
+           #what=self,#parm1=Send(who,@GetIndef),#parm2=Send(who,@GetName));
+
+      for oObj in send(oRoom,@GetplActive)
+      {
+         oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
+
+         if IsClass(oUser,&User)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (UMBRELLA_RANGE * UMBRELLA_RANGE)
+         {
+            send(self,@EnterUmbrella,#who=oUser,#iSpellpower=iSpellpower);
+            lEnchanted = cons(oUser,lEnchanted);
+         }
+      }
+      
+      iElapsed = 0;
+
+      iDuration = iSpellpower * 2;  %%20 - 198
+      iDuration = iDuration + random(1,30);
+      iDuration = bound(iDuration,50,240);
+      iDuration = iDuration * 1000;
+
+      % Put spell maintenance info in casters enchantment list.
+      Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
+           #state=[iElapsed,lEnchanted,iSpellpower,iDuration]);      
+
+      propagate;
+   }
+
+   EnterUmbrella( who = $,iSpellpower = $ )
+   "Starts enchantment effect on one player"
+   {
+      local iValue;
+
+      Send(who,@MsgSendUser,#message_rsc=umbrella_on);
+      Send(who,@AddDefenseModifier,#what=self);
+      iValue = send(self,@GetResistanceStrength,#iSpellPower=iSpellPower);
+      send(self,@AddResistances,#who=who,#value=iValue);
+
+      return;
+   }
+
+   LeaveUmbrella(who = $,iSpellpower=$)
+   {
+      local iValue;
+
+      iValue = send(self,@GetResistanceStrength,#iSpellPower=iSpellPower);
+
+      Send(who,@RemoveDefenseModifier,#what=self);
+      send(self,@RemoveResistances,#who=who,#value=iValue);
+
+      return;
+   }
+
+   EndEnchantment( who = $, state = $ )
+   "Called only for caster. Do spell test and/or end spell."
+   {
+      local lEnchanted, iElapsed, oUser, iSpellpower, iDuration, oRoom, lActive;
+
+      iElapsed = Nth(state,1);
+      lEnchanted = Nth(state,2);
+      iSpellpower = Nth(state,3);
+      iDuration = Nth(state,4);
+
+      oRoom = send(who,@GetOwner);
+
+      if iElapsed >= iDuration  %% end spell
+      {
+         Send(who,@ClearTranceFlag);
+         for oUser in lEnchanted
+         {
+            Send(oUser,@MsgSendUser,#message_rsc=umbrella_off);
+            Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
+         }
+         return;
+      }
+      else
+      {
+         % Then increment it.
+         iElapsed = iElapsed + UMBRELLA_CHECK_TIME;
+      }
+
+      % Do test.
+      for oUser in lEnchanted
+      {
+         if Send(who,@SquaredDistanceTo,#what=oUser) > (UMBRELLA_RANGE * UMBRELLA_RANGE)
+         {
+            Send(oUser,@MsgSendUser,#message_rsc=umbrella_outside);
+            Send(self,@LeaveUmbrella,#who=oUser,#iSpellpower=iSpellpower);
+            lEnchanted = DelListElem(lEnchanted,oUser);
+         }
+      }
+      for lActive in send(oRoom,@GetplActive)
+      {
+         oUser = Send(oRoom,@HolderExtractObject,#data=lActive);
+
+         if IsClass(oUser,&User)
+            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (UMBRELLA_RANGE * UMBRELLA_RANGE)
+         {
+            % Then we have a new entry.
+            send(self,@EnterUmbrella,#who=oUser,#iSpellpower=iSpellpower);
+            lEnchanted = cons(oUser,lEnchanted);
+         }
+      }
+
+      Send(who,@StartEnchantment,#what=self,#time=UMBRELLA_CHECK_TIME,
+           #state=[iElapsed,lEnchanted,iSpellpower,iDuration],#Report=FALSE);
+
+      return;
+   }
+
+   RemoveEnchantment()
+   "Called instead of EndEnchantment when trance is broken"
+   {
+      return;
+   }
+
+   RemoveEnchantmentEffects()
+   "Need to override spell.kod's thing, since we do this ourselves specially."
+   {
+      return;
+   }
+
+   %%% Defense modifier stuff.
+
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      return defense_power + 500;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $)
+   {
+      return damage;
+   }
+
+   DefendingHit(who = $,what = $)
+   {
+      return;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetTranceFlag);
+
+      return;
+   }
+
+   %%% Resistance stuff:
+
+   GetResistanceStrength(iSpellpower=$)
+   {
+      return iSpellpower/5;
+   }
+
+   AddResistances(who=$,value=$)
+   {
+      Send(who,@AddResistance,#what=-ATCK_SPELL_ALL,#value=value);
+
+      return;
+   }
+
+   RemoveResistances(who=$,value=$)
+   {
+      Send(who,@RemoveResistance,#what=-ATCK_SPELL_ALL,#value=value);
+
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -865,6 +865,10 @@ properties:
    % List of enchantments.
    % Each element is [ timer, object of spell, [optional state] ].
    plEnchantments = $
+   
+   % List of enchantments applied by radius spells.
+   % Each element is [song object, spellpower, caster]
+   plRadiusEnchantments = $
 
    % Attack modifiers to attack roll & damage (includes items & spells)
    plAttack_modifiers = $
@@ -3129,6 +3133,51 @@ messages:
       }
       
       return;
+   }
+   
+   IsRadiusEnchanted(byClass=&RadiusEnchantment)
+   {
+      local i;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(i, byClass)
+         {
+            return true;
+         }
+      }
+      return false;
+   }
+   
+   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+   {
+      local i, oHighest;
+   
+      oHighest = $;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(i, byClass)
+         {
+            if oHighest = $
+            {
+               oHighest = i;
+            }
+            else
+            {
+               if Nth(i,3) > Nth(oHighest,3)
+               {
+                  oHighest = i;
+               }
+            }
+         }
+      }
+      return oHighest;
+   }
+   
+   GetRadiusEnchantments()
+   {
+      return plRadiusEnchantments;
    }
 
    AddAttackModifier(what = $)

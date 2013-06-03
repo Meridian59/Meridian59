@@ -22,7 +22,7 @@ RadiusEnchantment is Spell
 % These states should be used when effects are actually being performed.
 %
 % Useful Radius enchantment functions to call (these are in Player.kod):
-% IsRadiusEnchanted(byClass=&RadiusEnchantment)              -- returns TRUE or FALSE
+% IsAffectedByRadiusEnchantment(what=$,byClass=&RadiusEnchantment)  -- returns TRUE or FALSE
 % GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment) -- returns [spell object, power, caster] with highest power
 % GetRadiusEnchantments()                                           -- returns player's list of [spell object, power, caster]
 
@@ -59,7 +59,7 @@ classvars:
    % viMana is amount used upon inititiation
    viMana = 5
    % viManaDrain is amount used every viDrainTime milliseconds
-   viManaDrain = 3       
+   viManaDrain = 3
    viDrainTime = 5000
 
    viChance_To_Increase = 8
@@ -346,18 +346,14 @@ messages:
 
    %%%%% Effect Functions
    
-   AddResistances(who=$,value=$)
+   ModifyDefensePower(attacker=$,iPower=0,caster=$,defense_power=0)
    {
-      Send(who,@AddResistance,#what=-ATCK_SPELL_ALL,#value=value);
-
-      return;
+      return defense_power;
    }
 
-   RemoveResistances(who=$,value=$)
+   ModifyResistance(attacker=$,atype=-ATCK_SPELL_ALL,iPower=0,caster=$,resistance=$)
    {
-      Send(who,@RemoveResistance,#what=-ATCK_SPELL_ALL,#value=value);
-
-      return;
+      return resistance;
    }
 
 end

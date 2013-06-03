@@ -3133,20 +3133,76 @@ messages:
       }
       
       return;
-   }
+   }   
    
-   IsRadiusEnchanted(byClass=&RadiusEnchantment)
+   AddRadiusEnchantment(what = $, iPower = 0, caster = $)
+   "Adds what and power to plRadiusEnchantments, which carry out spell effects."
    {
-      local i;
-   
+      plRadiusEnchantments = Cons([what,iPower,caster],plRadiusEnchantments);
+      Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
+      
+      return;
+   }
+
+   RemoveRadiusEnchantment(what = $, iPower = 0, caster = $)
+   "Removes <what> from plRadiusEnchantments."
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
       for i in plRadiusEnchantments
       {
-         if IsClass(i, byClass)
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = caster
          {
-            return true;
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=ENCHANTMENT_ROOM);
+            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
+            bFound = TRUE;
          }
       }
-      return false;
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
+               plRadiusEnchantments);
+      }
+
+      return;
+   }
+   
+   IsAffectedByRadiusEnchantment(what = $, byClass = &RadiusEnchantment)
+   "Returns whether or not currently enchanted by <what> radius enchantment."
+   {
+      local i;
+      
+      if plRadiusEnchantments = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plRadiusEnchantments
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               return TRUE;
+            }
+         }
+      }
+      else
+      {
+         for i in plRadiusEnchantments
+         {
+            if Nth(i,1) = what
+            {
+               return TRUE;
+            }
+         }      
+      }
+      
+      return FALSE;
    }
    
    GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
@@ -3157,7 +3213,7 @@ messages:
    
       for i in plRadiusEnchantments
       {
-         if IsClass(i, byClass)
+         if IsClass(Nth(i,1), byClass)
          {
             if oHighest = $
             {
@@ -3165,7 +3221,7 @@ messages:
             }
             else
             {
-               if Nth(i,3) > Nth(oHighest,3)
+               if Nth(i,2) > Nth(oHighest,2)
                {
                   oHighest = i;
                }
@@ -4316,6 +4372,11 @@ messages:
       {
          iDefense = Send(i,@ModifyDefensePower,#who=self,#what=what,#defense_power=iDefense);
       }
+      
+      for i in plRadiusEnchantments
+      {
+         iDefense = Send(Nth(i,1),@ModifyDefensePower,#attacker=what,#iPower=Nth(i,2),#caster=Nth(i,3),#defense_power=iDefense);
+      }
 
       iDefense = iDefense + Send(Send(SYS,@GetParliament),@GetFactionDefenseBonus,#who=self);
 
@@ -4568,7 +4629,13 @@ messages:
             Send(i,@DefendingHit,#who=self,#what=what);
          }
       
-         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);                             
+         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);  
+
+         for i in RadiusEnchantments
+         {
+            Send(Nth(i,1),@ModifyResistance,#attacker=what,#atype=atype,#iPower=Nth(i,2),#caster=Nth(i,3),#resistance=iResistance);
+         }
+         
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
 
          % Add attmods AFTER resistance/suscep mods.    

@@ -44,7 +44,7 @@ resources:
       
    radius_ench_default_already_cast = "You are already maintaining that radius enchantment."
 
-   jala_need_instrument = "You need an instrument!"
+   radius_ench_need_instrument = "You need an instrument!"
 
 classvars:
 
@@ -56,27 +56,25 @@ classvars:
    radius_ench_leave = radius_ench_default_leave
 
    viSchool = SS_JALA
-   % viMana is amount used upon inititiation
+   viNeedInstrument = FALSE
+
    viMana = 5
-   % viManaDrain is amount used every viDrainTime milliseconds
    viManaDrain = 3
    viDrainTime = 5000
-
-   viChance_To_Increase = 8
-   % viPostCast_time is in seconds, since it works off GetTime()
    viPostCast_time = 1
-
-   % If harmful, don't affect people we can't hit
-   viHarmful = FALSE
-
-   % Default: range goes up to double base based on spellpower
    viBaseRange = 5
-   
-   % If set to false, spell will affect caster only
-   viAffectsOthers = TRUE
-   
-   % If set to true, a harmful spell will still affect guildmates
-   viAffectsGuildmates = FALSE
+
+   viChance_To_Increase = 15
+
+   viAffectsCasterOnly = FALSE  % Override for self-only spell
+   viAffectsEveryone = FALSE    % Override for affect all
+
+   viAffectsCaster = TRUE       % Caster is affected by the spell
+   viAffectsGuildmates = FALSE  % Guildmates of caster
+   viAffectsAllies = FALSE      % Members of guilds allied with caster's guild
+   viAffectsEnemies = FALSE     % Hostile, can cause outlaw status
+   viAffectsInnocents = FALSE   % Unaffiliated white characters
+   viAffectsNewbies = FALSE     % Angeled characters
 
 properties:
 
@@ -98,11 +96,11 @@ messages:
 
    CanPayCosts(who=$, lTargets=$)  
    {
-      if viSchool = SS_JALA
+      if viNeedInstrument
       {
           if Send(who,@GetInstrumentLevel) = 0
           { 
-             Send(who,@MsgSendUser,#message_rsc=jala_need_instrument);
+             Send(who,@MsgSendUser,#message_rsc=radius_ench_need_instrument);
              return FALSE; 
           }
       }
@@ -132,7 +130,7 @@ messages:
       }
 
       oRoom = Send(who,@GetOwner);
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=radius_ench_starts);
+      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=radius_ench_starts,#parm1=Send(who,@GetName));
       
       oCasterGuild = Send(who,@GetGuild);
 
@@ -145,21 +143,11 @@ messages:
             AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
             AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
          {
-            if NOT viHarmful
-               OR oUser=who
-               OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
-                  AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
-                  AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
-               OR (viAffectsGuildmates
-                  AND oCasterGuild <> $
-                  AND oCasterGuild = Send(oUser,@GetGuild))
+            if Send(self,@TargetIsValid,#target=oUser,#caster=who)
             {
-               if viAffectsOthers
-                  OR (NOT viAffectsOthers AND oUser=who)
-               {
-                  send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
-                  lEnchanted = cons(oUser,lEnchanted);
-               }
+               Send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
+               lEnchanted = cons(oUser,lEnchanted);
+               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_enter,#parm1=Send(who,@GetName));
             }
          }
       }
@@ -174,12 +162,77 @@ messages:
       propagate;
    }
 
+   TargetIsValid(target=$,caster=$)
+   {
+      if viAffectsCasterOnly
+      {
+         if target=caster
+         {
+            return TRUE;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      
+      if viAffectsEveryone
+      {
+         return TRUE;
+      }
+
+      if target = caster
+      {
+         if viAffectsCaster
+         {
+            return TRUE;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      
+      if viAffectsGuildmates
+         AND Send(target,@GetGuild) <> $
+         AND Send(target,@GetGuild) = Send(caster,@GetGuild)
+      {
+         return TRUE;
+      }
+      
+      if viAffectsAllies
+         AND Send(target,@GetGuild) <> $
+         AND Send(Send(target,@GetGuild),@IsAlly,#otherguild=Send(caster,@GetGuild))
+      {
+         return TRUE;
+      }
+
+      if viAffectsEnemies
+         AND Send(caster,@AllowPlayerAttack,#victim=target,#report=FALSE)
+      {
+         return TRUE;
+      }
+   
+      if viAffectsNewbies
+         AND NOT Send(target,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         return TRUE;
+      }
+
+      if viAffectsInnocents
+         AND Send(target,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND NOT Send(target,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         AND NOT Send(target,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
    EnterRadius(who=$,iPower=0,caster=$)
    {      
-      local i,each_obj;
-      
       Send(who,@AddRadiusEnchantment,#what=self,#iPower=iPower,#caster=caster);
-      Send(who,@MsgSendUser,#message_rsc=radius_ench_enter);
 
       return;
    }
@@ -187,7 +240,6 @@ messages:
    LeaveRadius(who=$,iPower=0,caster=$)
    {      
       Send(who,@RemoveRadiusEnchantment,#what=self,#iPower=iPower,#caster=caster);
-      Send(who,@MsgSendUser,#message_rsc=radius_ench_leave);
       
       return;
    }
@@ -210,9 +262,11 @@ messages:
       {
          if Send(who,@SquaredDistanceTo,#what=oUser) > (iRange * iRange)
             OR Send(who,@GetOwner) <> Send(oUser,@GetOwner)
+            OR NOT Send(self,@TargetIsValid,#target=oUser,#caster=who)
          {
             Send(self,@LeaveRadius,#who=oUser,#iPower=iPower,#caster=who);
             lEnchanted = DelListElem(lEnchanted,oUser);
+            Send(oUser,@MsgSendUser,#message_rsc=radius_ench_leave,#parm1=Send(who,@GetName));
          }
       }
       
@@ -225,21 +279,11 @@ messages:
             AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
             AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
          {
-            if NOT viHarmful
-               OR oUser=who
-               OR (Send(who,@CheckStatusAndSafety,#victim=oUser,#report=FALSE)
-                  AND Send(Send(who,@GetOwner),@AllowGuildAttack,#what=who,#victim=oUser)
-                  AND Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
-               OR (viAffectsGuildmates
-                  AND oCasterGuild <> $
-                  AND oCasterGuild = Send(oUser,@GetGuild))
+            if Send(self,@TargetIsValid,#target=oUser,#caster=who)
             {
-               if viAffectsOthers
-                  OR (NOT viAffectsOthers AND oUser=who)
-               {
-                  send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
-                  lEnchanted = cons(oUser,lEnchanted);
-               }
+               send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
+               lEnchanted = cons(oUser,lEnchanted);
+               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_enter,#parm1=Send(who,@GetName));
             }
          }
       }
@@ -289,11 +333,11 @@ messages:
       % Clean up Trance.
       Send(who,@ClearTranceFlag);
       Send(who,@RemoveEnchantment,#what=self);
-      Send(Send(who,@GetOwner),@SomeoneSaid,#type=SAY_MESSAGE,#string=radius_ench_ends);
       lEnchanted = Nth(state,2);
       for oUser in lEnchanted
       {
-         Send(self,@LeaveRadius,#who=oUser,#iPower=iPower);
+         Send(self,@LeaveRadius,#who=oUser,#iPower=iPower,#caster=who);
+         Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,#parm1=Send(who,@GetName));
       }
       DeleteTimer(ptDrainTimer);
       ptDrainTimer=$;

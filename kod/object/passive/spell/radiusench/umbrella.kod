@@ -27,9 +27,9 @@ resources:
       "near the caster for several minutes.  Requires emeralds to cast."
 
    Umbrella_starts = "A mystic, shimmering dome of light emerges from %s's fingertips."
-   Umbrella_ends = "The dome of magical energy dissipates."
-   Umbrella_enter = "You are encompassed by a dome of magical energy."
-   Umbrella_leave = "You have passed outside the dome of magical energy."
+   Umbrella_ends = "The dome of magical energy maintained by %s dissipates."
+   Umbrella_enter = "You are encompassed by a dome of magical energy emanating from %s."
+   Umbrella_leave = "You have passed outside the dome of magical energy emanating from %s."
 
    Umbrella_deflected = "%s's umbrella dampens the force of your attack."
 
@@ -53,13 +53,11 @@ classvars:
 
    viIndefinite = ARTICLE_AN
    viChance_To_Increase = 35
-   viBaseRange = 7
+   viBaseRange = 3
    viCast_Time = 2000
-   
-   % Helps both guildmates and enemies, but set to harmful
-   % so non-combatants can't interfere using the spell from the sidelines
-   viHarmful = TRUE
+
    viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
 
 properties:
    
@@ -77,20 +75,14 @@ messages:
    {
       if attacker <> $
       {
-         if Send(attacker,@IsAffectedByRadiusEnchantment,#what=self)
+         if Send(attacker,@IsAffectedByRadiusEnchantment,#what=self,#caster=caster)
          {
             % Umbrella can't help if the attacker is within its limits
             return defense_power;
          }
-         else
-         {
-            if caster <> $
-            {
-               Post(attacker,@MsgSendUser,#message_rsc=Umbrella_deflected,#parm1=Send(caster,@GetName));
-            }
-         }
       }
-      
+
+      % Adds up to 198 defense against attacks from outside the umbrella
       return defense_power + iPower*2;
    }
 
@@ -98,7 +90,7 @@ messages:
    {
       if attacker <> $
       {
-         if Send(attacker,@IsAffectedByRadiusEnchantment,#what=self)
+         if Send(attacker,@IsAffectedByRadiusEnchantment,#what=self,#caster=caster)
          {
             % Umbrella can't help if the attacker is within its limits
             return resistance;
@@ -112,6 +104,7 @@ messages:
          }
       }
 
+      % Resists up to 20% of all attacks from outside the umbrella.
       if resistance > 20
       {
          return resistance;
@@ -120,6 +113,7 @@ messages:
       {
          return bound(resistance + iPower/5,$,20);
       }
+      return resistance;
    }
 
 end

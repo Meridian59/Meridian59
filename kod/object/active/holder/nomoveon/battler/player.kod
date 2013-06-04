@@ -3135,7 +3135,7 @@ messages:
       return;
    }   
    
-   AddRadiusEnchantment(what = $, iPower = 0, caster = $)
+   AddRadiusEnchantment(what=$,iPower=0,caster=$)
    "Adds what and power to plRadiusEnchantments, which carry out spell effects."
    {
       plRadiusEnchantments = Cons([what,iPower,caster],plRadiusEnchantments);
@@ -3144,7 +3144,7 @@ messages:
       return;
    }
 
-   RemoveRadiusEnchantment(what = $, iPower = 0, caster = $)
+   RemoveRadiusEnchantment(what=$,iPower=0,caster=$)
    "Removes <what> from plRadiusEnchantments."
    {
       local i, bFound;
@@ -3171,7 +3171,7 @@ messages:
       return;
    }
    
-   IsAffectedByRadiusEnchantment(what = $, byClass = &RadiusEnchantment)
+   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
    "Returns whether or not currently enchanted by <what> radius enchantment."
    {
       local i;
@@ -3187,7 +3187,17 @@ messages:
          {
             if IsClass(Nth(i,1),byClass)
             {
-               return TRUE;
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
             }
          }
       }
@@ -3197,7 +3207,17 @@ messages:
          {
             if Nth(i,1) = what
             {
-               return TRUE;
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
             }
          }      
       }
@@ -3679,7 +3699,7 @@ messages:
 
       % Make sure room allows the attack. Check if room has special combat affects.
       if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
-                  #use_weapon=use_weapon,#stroke_obj=stroke_obj)
+                  #use_weapon=use_weapon,#stroke_obj=stroke_obj,#report=report)
       {
          return FALSE;
       }
@@ -4631,9 +4651,9 @@ messages:
       
          iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);  
 
-         for i in RadiusEnchantments
+         for i in plRadiusEnchantments
          {
-            Send(Nth(i,1),@ModifyResistance,#attacker=what,#atype=atype,#iPower=Nth(i,2),#caster=Nth(i,3),#resistance=iResistance);
+            iResistance = Send(Nth(i,1),@ModifyResistance,#attacker=what,#atype=atype,#iPower=Nth(i,2),#caster=Nth(i,3),#resistance=iResistance);
          }
          
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);

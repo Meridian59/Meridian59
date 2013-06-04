@@ -80,6 +80,7 @@ classvars:
    viTeleport_row = 13
    viTeleport_col = 2
 
+   viPermanent_flags = ROOM_NO_COMBAT | ROOM_MURDERER_HAVEN
    viTerrain_Type = TERRAIN_CAVES | TERRAIN_SHOP
 
 properties:

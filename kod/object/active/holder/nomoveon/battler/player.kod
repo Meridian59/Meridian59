@@ -3133,8 +3133,8 @@ messages:
       }
       
       return;
-   }   
-   
+   }
+
    AddRadiusEnchantment(what=$,iPower=0,caster=$)
    "Adds what and power to plRadiusEnchantments, which carry out spell effects."
    {
@@ -4649,7 +4649,7 @@ messages:
             Send(i,@DefendingHit,#who=self,#what=what);
          }
       
-         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);  
+         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
 
          for i in plRadiusEnchantments
          {

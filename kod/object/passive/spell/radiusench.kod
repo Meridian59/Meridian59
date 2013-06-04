@@ -11,7 +11,7 @@
 RadiusEnchantment is Spell
 
 % Radius Enchantments are spells that apply an effect to players within a certain distance of the caster.
-% Caster must typically maintain a trance, but requirements keep the trance are variable.
+% Caster must typically maintain a trance, but requirements to keep the trance are variable.
 %
 % Internally, the trance uses a state of the form [time elapsed, players enchanted, power, range].
 % This should not be altered. It is used to track the radius and who should be affected.
@@ -30,14 +30,14 @@ constants:
 
    include blakston.khd
    
-   RADIUS_CHECK_TIME = 500   %Time between checks for who is affected, no worse than an active object lag-wise
+   RADIUS_CHECK_TIME = 500   % Time between checks for who is affected, no worse than an active object lag-wise
 
 resources:
 
    radius_ench_default_ends = "The circle of magic maintained by %s collapses."
    radius_ench_default_starts = "A circle of magic expands outward from %s."
-   radius_ench_default_enter = "You enter a circle of magical effect."
-   radius_ench_default_leave = "You leave a circle of magical effect."
+   radius_ench_default_enter = "You enter a circle of magical effect maintained by %s."
+   radius_ench_default_leave = "You leave a circle of magical effect maintained by %s."
    radius_ench_no_newbie = \
       "Your guardian angel tells you, \"You are not ready to cast spells "
       "which may hinder other players.\""

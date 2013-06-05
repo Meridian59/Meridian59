@@ -34,8 +34,11 @@ constants:
 
 resources:
 
-   radius_ench_default_ends = "The circle of magic maintained by %s collapses."
+   radius_ench_default_cast = "A circle of magic expands outward from you."
    radius_ench_default_starts = "A circle of magic expands outward from %s."
+   radius_ench_default_ends = "The circle of magic maintained by %s collapses."
+   radius_ench_default_caster_ends = "Your circle of magic collapses."
+   radius_ench_default_caster_enter = "You feel your circle of magic having an effect."
    radius_ench_default_enter = "You enter a circle of magical effect maintained by %s."
    radius_ench_default_leave = "You leave a circle of magical effect maintained by %s."
    radius_ench_no_newbie = \
@@ -50,8 +53,11 @@ classvars:
 
    radius_ench_already_cast = radius_ench_default_already_cast
    
-   radius_ench_ends = radius_ench_default_ends
+   radius_ench_cast = radius_ench_default_cast
    radius_ench_starts = radius_ench_default_starts
+   radius_ench_ends = radius_ench_default_ends
+   radius_ench_caster_ends = radius_ench_default_caster_ends
+   radius_ench_caster_enter = radius_ench_default_caster_enter
    radius_ench_enter = radius_ench_default_enter
    radius_ench_leave = radius_ench_default_leave
 
@@ -130,24 +136,40 @@ messages:
       }
 
       oRoom = Send(who,@GetOwner);
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=radius_ench_starts,#parm1=Send(who,@GetName));
-      
       oCasterGuild = Send(who,@GetGuild);
 
       for oObj in Send(oRoom,@GetplActive)
       {
          oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
 
-         % Important note: FindListElem returns nil on a passed nil value, not zero.
          if IsClass(oUser,&User)
-            AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
-            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
          {
-            if Send(self,@TargetIsValid,#target=oUser,#caster=who)
+            if oUser = who
             {
-               Send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
-               lEnchanted = cons(oUser,lEnchanted);
-               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_enter,#parm1=Send(who,@GetName));
+               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_cast);
+            }
+            else
+            {
+               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_starts,#parm1=Send(who,@GetName));
+            }
+
+            % Important note: FindListElem returns nil on a passed nil value, not zero.
+            if (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
+               AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+            {
+               if Send(self,@TargetIsValid,#target=oUser,#caster=who)
+               {
+                  Send(self,@EnterRadius,#who=oUser,#iPower=iPower,#caster=who);
+                  lEnchanted = cons(oUser,lEnchanted);
+                  if oUser = who
+                  {
+                     Send(oUser,@MsgSendUser,#message_rsc=radius_ench_caster_enter);
+                  }
+                  else
+                  {
+                     Send(oUser,@MsgSendUser,#message_rsc=radius_ench_enter,#parm1=Send(who,@GetName));
+                  }
+               }
             }
          }
       }
@@ -316,7 +338,7 @@ messages:
    BreakTrance(who=$, event=$, state=$, location=$, iPower=$)
    "If caster runs out of mana or loses trance, spell ends."
    {
-      local oUser, lEnchanted;
+      local oUser, oObj, oRoom, lEnchanted;
             
       % The spell keeps going if you get damaged, move, cast, or make an attack.
       if event = EVENT_DAMAGE
@@ -337,8 +359,27 @@ messages:
       for oUser in lEnchanted
       {
          Send(self,@LeaveRadius,#who=oUser,#iPower=iPower,#caster=who);
-         Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,#parm1=Send(who,@GetName));
       }
+      
+      oRoom = Send(who,@GetOwner);
+      
+      for oObj in Send(oRoom,@GetplActive)
+      {
+         oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
+
+         if IsClass(oUser,&User)
+         {
+            if oUser = who
+            {
+               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_caster_ends,#parm1=Send(who,@GetName));
+            }
+            else
+            {
+               Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,#parm1=Send(who,@GetName));
+            }
+         }
+      }
+      
       DeleteTimer(ptDrainTimer);
       ptDrainTimer=$;
 

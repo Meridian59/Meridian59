@@ -26,8 +26,11 @@ resources:
       "Creates a dome of magical energy that protects those "
       "near the caster for several minutes.  Requires emeralds to cast."
 
+   Umbrella_cast = "You extend a mystic, shimmering dome of light out from your fingertips."
    Umbrella_starts = "A mystic, shimmering dome of light emerges from %s's fingertips."
    Umbrella_ends = "The dome of magical energy maintained by %s dissipates."
+   Umbrella_caster_ends = "Your dome of magical energy dissipates."
+   Umbrella_caster_enter = "You feel your umbrella's magic protecting you."
    Umbrella_enter = "You are encompassed by a dome of magical energy emanating from %s."
    Umbrella_leave = "You have passed outside the dome of magical energy emanating from %s."
 
@@ -35,8 +38,11 @@ resources:
 
 classvars:
 
-   radius_ench_ends = Umbrella_ends
+   radius_ench_cast = Umbrella_cast
    radius_ench_starts = Umbrella_starts
+   radius_ench_ends = Umbrella_ends
+   radius_ench_caster_ends = Umbrella_caster_ends
+   radius_ench_caster_enter = Umbrella_caster_enter
    radius_ench_enter = Umbrella_enter
    radius_ench_leave = Umbrella_leave
    

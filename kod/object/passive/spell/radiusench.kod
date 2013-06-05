@@ -70,6 +70,9 @@ classvars:
    viPostCast_time = 1
    viBaseRange = 5
 
+   viLightColor = LIGHT_SPECTRAL
+   viBaseLightIntensity = 60
+
    viChance_To_Increase = 15
 
    viAffectsCasterOnly = FALSE  % Override for self-only spell
@@ -86,6 +89,8 @@ properties:
 
    ptDrainTimer = $
    ptDrainNow = FALSE
+   
+   viLightIntensity = 60
 
 messages:
 
@@ -123,6 +128,8 @@ messages:
       lEnchanted = $;
       iPower = Send(self,@CalculatePower,#iSpellPower=iSpellPower);
       iRange = Send(self,@CalculateRange,#iSpellPower=iSpellPower);
+      
+      viLightIntensity = Send(self,@CalculateLightIntensity,#iSpellPower=iSpellPower);
 
       % Cancel previous radius spell trance
       if Send(who,@IsEnchanted,#byClass=&RadiusEnchantment)
@@ -425,11 +432,26 @@ messages:
       
       return iRange;
    }
-      
+
+   CalculateLightIntensity(iSpellPower=25)
+   {
+      return viBaseLightIntensity * ((iSpellpower*2) / 99);
+   }
+
    CanBeRemovedByPlayer()
    "Returns if a spell can be removed by normal Purge/Purify"
    {
       return FALSE;
+   }
+   
+   GetLightColor()
+   {
+      return viLightColor;
+   }
+   
+   GetLightIntensity()
+   {
+      return viLightIntensity;
    }
 
    %%%%% Effect Functions

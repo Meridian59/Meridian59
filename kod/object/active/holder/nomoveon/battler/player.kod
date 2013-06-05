@@ -12431,6 +12431,8 @@ messages:
 
    SendLightingInformation()
    {
+      local oLightObject, iColor, iIntensity;
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12445,6 +12447,26 @@ messages:
       {
          % A bit of a kludge.  Ideally, we should query the objects we are using
          %  to find out if any want to add lighting information to us.
+         if plRadiusEnchantments <> $
+         {
+            for oLightObject in plRadiusEnchantments
+            {
+               if Nth(oLightObject,3) = self
+               {
+                  if (piDrawFX & FLICKERING_YES)
+                  {
+                      iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
+                      iColor = Send(Nth(oLightObject,1),@GetLightColor);
+                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+                      AddPacket(1,iIntensity);
+                      AddPacket(2,iColor);
+
+                      return;
+                  }
+               }
+            }
+         }
+
          if (piDrawFX & FLICKERING_YES)
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));

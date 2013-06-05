@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Bounty is PassiveObject 
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   bounty_name_rsc = "bounty"
+   bounty_icon_rsc = light.bgf
+   bounty_desc_text_rsc = "This is a bounty."
+   
+   bounty_success_rsc = "You completed a bounty!"
+   bounty_fail_rsc = "You failed a bounty."
+
+classvars:
+
+   vrName = spell_name_rsc
+   vrIcon = spell_icon_rsc
+   vrDesc = spell_desc_text_rsc
+   vrSpell_intro = spell_intro_rsc
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+
+properties:
+
+   viBountyTime = 30 * 60
+   ptBountyTimer = $
+   
+   piMonsterTarget = $
+   piItemTarget = $
+   
+   piReward = $
+
+messages:      
+
+   Constructor()
+   {
+      CreateTimer(self,@EndBountyTimer,viBountyTime);
+
+      propagate;
+   }
+   
+   EndBountyTimer()
+   {
+      ptBountyTimer = $
+      
+      
+      propagate;
+   }
+   
+   Delete()
+   {
+      if ptBountyTimer <> $
+      {
+         DeleteTimer(ptBountyTimer);
+         ptBountyTimer = $;
+      }
+
+      propagate;
+   }
+   
+   CheckBountyKill(killed=$)
+   {
+      if IsClass(killed,&piMonsterTarget)
+      {
+         return TRUE;
+      }
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

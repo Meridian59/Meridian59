@@ -147,6 +147,7 @@ messages:
             if oUser = who
             {
                Send(oUser,@MsgSendUser,#message_rsc=radius_ench_cast);
+               Send(oUser,@SetFlickerFlag);
             }
             else
             {
@@ -372,6 +373,8 @@ messages:
             if oUser = who
             {
                Send(oUser,@MsgSendUser,#message_rsc=radius_ench_caster_ends,#parm1=Send(who,@GetName));
+               Send(oUser,@ClearFlickerFlag);
+               Send(oUser,@RecalcFlickerFlag);
             }
             else
             {

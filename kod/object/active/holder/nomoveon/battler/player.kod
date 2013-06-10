@@ -11524,6 +11524,7 @@ messages:
       }
       
       if IsClass(oRoom,&GuildHall)
+         OR Send(oRoom,@IsRestrictedToMules)
          AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
          Send(self,@MsgSendUser,#message_rsc=player_no_enter);

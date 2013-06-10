@@ -1158,6 +1158,13 @@ messages:
       % Don't allow portals into this room, bypassing puzzle
       return false;
    }
+   
+   IsRestrictedToMules()
+   "Returns if mules are allowed into a zone"
+   {
+      % Most zones are not restricted
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

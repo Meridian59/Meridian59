@@ -472,6 +472,13 @@ messages:
       }
       propagate;
    }
+   
+   IsRestrictedToMules()
+   "Returns if mules are allowed into a zone"
+   {
+      % Most zones are not restricted
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

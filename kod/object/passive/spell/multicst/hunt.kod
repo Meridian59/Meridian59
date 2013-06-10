@@ -122,6 +122,8 @@ messages:
          Send(i,@MsgSendUser,#message_rsc=hunt_is_on);
       }
 
+      Send(oTarget,@InformHunters);
+      
       return;
    }
 

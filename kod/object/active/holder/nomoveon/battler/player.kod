@@ -8263,7 +8263,6 @@ messages:
       {
          if (Send(i,@GetItemUseType) & ITEM_USE_HAND)
             AND Send(i,@ReqUnuse)
-            AND NOT IsClass(i,&Token)
          {
             Send(self,@UnuseItem,#what=i);
          }

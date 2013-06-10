@@ -474,7 +474,7 @@ messages:
    }
    
    IsRestrictedToMules()
-   "Returns if mules are allowed into a zone"
+   "Returns if a zone is restricted to mules"
    {
       % Most zones are not restricted
       return TRUE;

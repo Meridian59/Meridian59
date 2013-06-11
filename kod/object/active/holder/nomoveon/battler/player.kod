@@ -1916,6 +1916,15 @@ messages:
       % over all players became far too expensive.
       Send(self,@ComputeMaxMana);
 
+      % If player is a mule and log online in a boss zone
+      % we teleport them back to their hometown
+      oRoom = Send(self, @GetOwner);
+      if Send(oRoom,@IsRestrictedToMules)
+         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         Send(self,@AdminGoToSafety);
+      }
+      
       % Tell others that we're here
       oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND NOT IsClass(self, &DM) 

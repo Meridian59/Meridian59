@@ -91,7 +91,7 @@ messages:
 
    PrismCast(spellpower = 0, lCasters=$, lTargets=$, oPrism=$, lLocation=$) 
    {
-      local oPortalLocation, oOwner, oCaster, oNecroPortal,lPortalLocation,lTargetLocation,
+      local oCaster, oNecroPortal,lPortalLocation,lTargetLocation,
         oTargetRoom;
       
       if oPrism = $
@@ -104,8 +104,11 @@ messages:
       % guild halls are a bad idea.
       if (NOT send(send(oPrism, @GetOwner), @CanHavePlayerPortal, #who=oCaster))
       {
-         Send(oCaster,@MsgSendUser,#message_rsc=spell_bad_location, #parm1=vrName);
-         return;
+         for oCaster in lCasters
+         {
+            Send(oCaster,@MsgSendUser,#message_rsc=spell_bad_location, #parm1=vrName);
+            return;
+         }
       }
 
       if send(oPrism,@GetTeleportLocation)

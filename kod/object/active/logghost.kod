@@ -225,8 +225,8 @@ messages:
 	  %  This helps get people out of continuous crash situations and mounting penalties.
 	  %  Hometown Penalties is intended to keep PvP players from being 'kept offline' by opponents.
       
-	  if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-		AND Send(Send(SYS, @GetSettings), @HometownPenaltiesEnabled)
+	  if NOT Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+		OR Send(Send(SYS, @GetSettings), @HometownPenaltiesEnabled)
 	  {
 	     Send(poGhostedPlayer,@AdminGoToSafety);
 	  }

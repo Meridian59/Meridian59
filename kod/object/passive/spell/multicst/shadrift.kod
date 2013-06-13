@@ -107,8 +107,8 @@ messages:
          for oCaster in lCasters
          {
             Send(oCaster,@MsgSendUser,#message_rsc=spell_bad_location, #parm1=vrName);
-            return;
          }
+         return;
       }
 
       if send(oPrism,@GetTeleportLocation)

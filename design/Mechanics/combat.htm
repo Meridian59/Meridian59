@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+      charset=ISO-8859-1">
+    <meta name="GENERATOR" content="Mozilla/4.06 [en] (WinNT; I)
+      [Netscape]">
+    <title>How Combat Works in Meridian</title>
+  </head>
+  <body>
+    <h1>
+      How Combat Works in Meridian</h1>
+    <h2>
+      General Combat Equations</h2>
+    Combat is now more standardized in Meridian.&nbsp; Most of the
+    combat functionality
+    was moved to the Battler superclass instead of being separated in
+    the Monster
+    and Player subclasses.
+    <p>Combat revolves around the Offense and Defense values of every
+      battler.&nbsp;
+      For players, these values are bound between 1 and 1000, while
+      monsters
+      range from 1 to 1500 in almost all cases.
+    </p>
+    <p>To determine chance to hit, you take the attackers offense,
+      divide it
+      by the defender's defense, and multiply by the chance to hit if
+      the values
+      are equal (currently 60%).&nbsp; So, for example, if the attack's
+      offense
+      is half the defender's defense, the chance to hit is half of 60%,
+      or 30%.&nbsp;
+      The chance to hit is bound between 10 and 95.&nbsp; This means a
+      battler
+      is never unhittable or unmissable, no matter what the values
+      are.&nbsp;
+      It is important to note that this equation makes combat more
+      hit-centric,
+      where it is easier to get skill to hit someone then it is to get
+      the ability
+      to be missed all the time.
+    </p>
+    <p>Note that these values can be gathered in-game by use of the
+      "evaluate"
+      spell.&nbsp; This DM-only spell will give the combat abilities of
+      any target.&nbsp;
+      This spell should be used sparingly, however, because the
+      side-effects
+      of combat (such as wear and tear on equipment, etc) will happen
+      when the
+      target is evaluated.&nbsp; The effect should be small, but
+      repeated use
+      can cause unwanted effects.
+    </p>
+    <p>When an attack is made, we start in TryAttack.&nbsp; This is the
+      core
+      message used for combat.&nbsp; If we hit, we call AssessDamage to
+      the target
+      (so that it can record the damage) and AssessHit to self.&nbsp;
+      AssessHit
+      is used by battler for side-effects, like poisoning, etc.&nbsp; If
+      we kill
+      the target, we send KilledSomething to ourselves, otherwise we
+      send DidDamage
+      to ourselves.&nbsp; If we miss, we call AssessMiss to ourself (to
+      see if
+      any catastrophic side-effects happen).&nbsp; We always send
+      SomethingAttacked
+      to our owner for an attack.
+    </p>
+    <p>The attacker is responsible for miss messages in combat.&nbsp; If
+      the
+      attacker misses, the it queries the defender for the reason of the
+      miss.&nbsp;
+      Right now, defenders can block, parry, dodge or "avoid" (generic
+      catch-all)
+      an attack.&nbsp; The attacker is responsible for hit messages in
+      combat.&nbsp;
+      The defender gives the type of damage it suffered and amount of
+      damage,
+      which the attacker reports in a combat message.
+    </p>
+    <h2>
+      Combat Values for Players</h2>
+    <b>If a player is Morphed, they always use the values of the monster
+      they
+      have morphed into for all combat functions.</b>
+    <p>A player's offense is calculated from the following equation:
+      (Stroke*3)
+      + (Proficiency*2) + (Aim*4) + (Base Max Health*3/2).
+    </p>
+    <ul>
+      <li>
+        Stroke is the player's percent in the basic skill that governs a
+        weapon's
+        use.&nbsp; This would be slash, punch, or fire, depending on the
+        weapon.&nbsp;
+        This number ranges from 0 to 99.</li>
+      <li>
+        Proficiency is the player's percent in the advanced skill that
+        governs a
+        weapon's use.&nbsp; This would be scimitar wielding, archery,
+        brawling,
+        mace fighting, etc, depending on weapon.&nbsp; This number
+        ranges from
+        0 to 99.</li>
+      <li>
+        Base Max Health is the player's maximum amount of hit points
+        before any
+        modifications (such as from a circlet).&nbsp; This number ranges
+        from 20
+        to 150.</li>
+    </ul>
+    The attack modifiers a player has will affect this value as
+    well.&nbsp;
+    Spells such as bless, or items such as berzerker rings will increase
+    or
+    decrease this value.&nbsp; The faction bonus and bonuses from the
+    weapon
+    are also calculated in this figure.&nbsp; After all modifiers are
+    applied,
+    the result is bound between 1 and 1000.
+    <p>If we hit, we poll the stroke for the type of damage we do.&nbsp;
+      If
+      there is no stroke object, then we query the weapon for
+      damage.&nbsp; Note
+      that touch attacks are both stokes and weapons in this case.&nbsp;
+      Attack
+      modifiers and faction bonuses can modify the damage.&nbsp; The
+      base damage
+      never exceeds 10 damage, Might adds (Might-20)/10 damage (minimum
+      of 0),
+      Proficiency (for weapons) adds ((percent+1)/20) damage, and all
+      other bonuses
+      are limited to 7 points of bonus damage.&nbsp; This means that no
+      hit should do more than 25 points of damage.
+    </p>
+    <p>A player's defense is calculated from the following equation:
+      (Parry*2)
+      + (Block) + (Dodge*3) + (Agility*4) + (Base Max Health*3/2)
+    </p>
+    <ul>
+      <li>
+        Parry, Block, and Dodge are the player's percent in the
+        corresponding skills.&nbsp;
+        Weapons can affect parry (EG, bows return 0 for parry), and
+        shields can
+        affect block, and movement (IE not being held) can affect
+        dodging.&nbsp;
+        The type of blow we're defending against can determine the
+        values, too
+        (e.g., bows cannot be parried).&nbsp; These values range from 0
+        to 99.</li>
+      <li>
+        Base Max Health is the player's maximum amount of hit points
+        before any
+        modifications (such as from a circlet).&nbsp; This number ranges
+        from 20
+        to 150.</li>
+    </ul>
+    The defense modifiers a player has, such as armor, will affect this
+    value,
+    too.&nbsp; Parliament bonuses are also calculated into this
+    figure.&nbsp;
+    After all modifiers are applied, the result is bound between 1 and
+    1000.
+    <p>If we are hit, our defense modifiers can reduce damage.&nbsp;
+      Currently,
+      armor is designed to make the player easier to hit (it lowers the
+      Defense
+      value), but it absorbs damage from blows.&nbsp; Resistances also
+      reduce
+      damage depending on damage type.
+    </p>
+    <p>As a note: The message LookupPlayerWeapon will return the melee
+      weapon
+      the player wields (or $ if they have no melee weapon), where
+      GetWeapon
+      will return the weapon the player is using, including any touch
+      attack
+      spells, or it will return $ if they are using punch.
+      <br>
+      &nbsp;</p>
+    <h2>
+      Combat Values for Monsters</h2>
+    Monsters were changed to be able to define raw offense and defense
+    values,
+    as well as maximum and minimum damage.&nbsp; However, to save the
+    time
+    of retrofitting all the existing monsters, the monsters can use the
+    existing
+    viLevel and viDifficulty values to define the values.
+    <p>A monster's offense is piOffense, or (3*viLevel) +
+      (60*viDifficulty)
+      if that variable is $.
+      <br>
+      A monster's defense is piDefense, or (3*viLevel) +
+      (60*viDifficulty)
+      if that variable is $.
+      <br>
+      A monster's damage is random(piMinDamage,piMaxDamage), or 80-120%
+      of
+      viLevel/Random(10,15) if those values do not make sense (EG, are
+      $, or
+      Min is greater than Max, etc).
+    </p>
+    <p>The damage value code is a bit unsteady, so it is recommended you
+      do
+      NOT change the values if the monster is in combat.&nbsp; It is
+      also recommended
+      that you pay careful attention to the values, and make sure they
+      make sense
+      (IE, piMinDamage is less than piMaxDamage).
+    </p>
+    <p>In combat equations, monsters use themselves as stroke objects
+      and weapons.&nbsp;
+      Therefore, when a battler sees if it can dodge a stroke object, it
+      checks
+      that in the monster directly.
+    </p>
+    <p><b>Other numbers:</b>
+      <br>
+      Monsters can see (4 + viDifficulty/2) units away.
+      <br>
+      Monsters can attack (2 + viDifficulty/6) (either 2 or 3) units
+      away.
+      <br>
+      &nbsp;
+      <br>
+      &nbsp;
+    </p>
+  </body>
+</html>

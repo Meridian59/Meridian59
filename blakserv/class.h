@@ -77,15 +77,15 @@ void SetClassesSuperPtr(void);
 void SetClassVariables(void);
 void AddClassPropertyName(class_node *c,char *property_name,int property_id);
 void SetClassPropertyNames();
-class_node * GetClassByName(char *class_name);
+class_node * GetClassByName(const char *class_name);
 class_node * GetClassByID(int class_id);
 const char * GetPropertyNameByID(class_node *c,int property_id);
-int GetPropertyIDByName(class_node *c,char *property_name);
+int GetPropertyIDByName(class_node *c,const char *property_name);
 char *GetClassVarNameByID(class_node *c,int classvar_id);
-int GetClassVarIDByName(class_node *c,char *classvar_name);
+int GetClassVarIDByName(class_node *c,const char *classvar_name);
 
 void ForEachClass(void (*callback_func)(class_node *c));
-char * GetClassDebugStr(class_node *c,int dstr_id);
+const char * GetClassDebugStr(class_node *c,int dstr_id);
 int GetSourceLine(class_node *c,char *bkod_ptr);
 
 

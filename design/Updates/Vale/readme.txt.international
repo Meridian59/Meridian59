@@ -1,0 +1,89 @@
+Welcome to Meridian 59(TM)!
+Meridian 59 Version 1.0 Readme Version 8/22/96~i
+
+----------------------------------------------------------------------------
+Table of Contents
+----------------------------------------------------------------------------
+1. System Requirements
+2. Setup
+3. Audio Tracks
+4. Additional Information and Feedback
+
+----------------------------------------------------------------------------
+1.  System requirements
+----------------------------------------------------------------------------
+
+To play Meridian 59, you must have the following hardware and software:
+
+486/66 or better running Windows 95, or Windows NT 3.51 or later
+8MB or more of RAM 
+video mode of 640x480 with 256 colors, or better
+a SLIP/PPP Internet connection, or better
+a mouse
+
+A sound card is recommended.  The game will play fastest in a graphics
+mode with exactly 256 colors.
+
+----------------------------------------------------------------------------
+2. Setup
+----------------------------------------------------------------------------
+
+Meridian 59 is an autorun CD.  Meridian 59 setup and installation will 
+proceed automatically when then the CD is inserted under Windows 95.  If the 
+autorun option has been disabled, you will need to run setup.exe in the 
+Meridian 59 root directory on the CD.
+
+In order to play Meridian you will need to have a SLIP/PPP or better 
+Internet connection with an ISP or online service provider.  You will also 
+need a Web browser to set up your Meridian account.  Go to 
+http://meridian.3do.com/meridian to create your account.
+
+----------------------------------------------------------------------------
+3. Audio Tracks
+----------------------------------------------------------------------------
+
+Audio tracks containing a fully scored version of the Meridian 59 soundtrack 
+are included on your CD.  You can play this soundtrack on an audio CD deck 
+or in your CD-ROM drive using the CD-player utility included with Windows 
+95.
+
+When you insert the CD into your CD-ROM drive, it will attempt to install 
+Meridian again.  You should click cancel to abort the install.  You can then 
+use the Windows 95 CD-player utility to play the audio tracks.
+
+When playing audio tracks from the CD in an audio CD player or in your CD-
+ROM drive you should select track 2 and then hit play.  Track 1 contains the 
+Meridian game data.
+
+Playing track 1 on most CD devices will result in silence.  However, on some 
+older CD players it may produce unpleasant sounds which can damage your 
+speakers at high volume levels.  Do not play track 1 as an audio track.
+
+If you wish to play this music instead of the MIDI score built into Meridian 
+59, you can select the "Music Off" option and play the CD instead.  The CD 
+tracks will play in order (or in the custom order you designate) but will 
+not be synchronized to your location or actions in the game.
+
+----------------------------------------------------------------------------
+4. Additional Information and Feedback
+----------------------------------------------------------------------------
+
+You can obtain additional information about Meridian 59 at the 3DO Meridian 
+web site, http://www.3do.com/meridian.  Please look there for news about
+upgrades and troubleshooting.  If you encounter problems with the 
+installation or playing the game, please check the help file first by
+pressing F1 from Meridian.  If that does not answer your question, you can 
+e-mail Meridian 59 support at meridian59-support@3do.com.
+
+Meridian 59 is your game!  If you would like to suggest improvements, please 
+mail them to meridian59-support@3do.com.  We want you to enjoy the game--let 
+us know what you want!
+
+Thanks for playing, and happy adventuring.
+
+--- The Gods of Meridian 59
+    August 22, 1996
+
+NOTICE: Portions of this product are derived from the RSA Data Security, 
+Inc. MD5 Message-Digest Algorithm.  Copyright (C) 1991-2, RSA Data Security, 
+Inc.  Created 1991.  All rights reserved.

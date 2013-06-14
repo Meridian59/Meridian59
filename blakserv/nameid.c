@@ -64,7 +64,7 @@ void CreateNameID(char *name,int id)
    nameids = nid;
 }
 
-int GetIDByName(char *name)
+int GetIDByName(const char *name)
 {
    nameid_node *nid;
 

@@ -1,0 +1,317 @@
+<HTML>
+<HEAD>
+   <TITLE>Player Attributes</TITLE>
+</HEAD>
+<BODY>
+<H1>Player Attributes</H1>
+<P>
+This document details how player stats are used in the game, as of January 6, 1999.
+<P>
+<H2>MIGHT:</H2>
+<UL>
+<LI><h3>Player</h3>
+   <UL>
+   <LI><strong>TryAttack:</strong> Base damage is calculated by sending FindDamage 
+       to the stroke object.  One parameter is the character's might.  Stroke objects
+       are brawling, slash, or spells.
+   <LI><strong>GetBulkMax:</strong> Players can hold an additional 20 bulk for every
+       point of might.
+   <LI><strong>GetWeightMax:</strong> Players can hold an additional 20 weight for every
+       point of might.
+   </UL>
+<BR>
+<LI><h3>skill/profic/brawling</h3>
+   <UL>
+   <LI>Might is the <a href="#reqstat">requisite stat</a> and sets initial value of skill.
+   </UL>
+<BR>
+<LI><h3>skill/profic/profhamr</h3>
+   <UL>
+   <LI>Might is the <a href="#reqstat">requisite stat</a> and sets initial value of skill.
+   </UL>
+<BR>
+<LI><h3>skill/profic/profmace</h3>
+   <UL>
+   <LI>Might is the <a href="#reqstat">requisite stat</a> and sets initial value of skill.
+   </UL>
+<BR>
+<LI><h3>skill/profic/profaxe</h3>
+   <UL>
+   <LI>Might is the <a href="#reqstat">requisite stat</a> and sets initial value of skill.
+   </UL>
+<BR>
+<LI><h3>skill/stroke</h3>
+   <UL>
+   <LI><strong>DamageFactors:</strong> Damage is increased by (2 * might) percent.
+   </UL>
+<BR>
+<LI><h3>skill/stroke/unarmed</h3>
+   <UL>
+   <LI><strong>FindDamage:</strong> damage is random 0-2 plus 1/12 of might.
+   </UL>
+</UL>
+
+<P>
+<H2>INTELLECT:</H2>
+<UL>
+<LI><h3>Player</h3>
+   <UL>
+   <LI><strong>ActivateSpellAtrophy:</strong> Spells (and skills) have less chance of atrophy with
+       higher intellect.  The code gives a the player (50-Intellect)/20 advancement points when
+       checking atrophy.  More advancement points means a greater chance of atrophy.
+   <LI><strong>PlayerCanLearn:</strong> More intellect means the player will learn beginning skills faster, and can ultimately learn more.
+   </UL>
+<BR>
+<LI><h3>spell</h3>
+   <UL>
+   <LI><strong>GetDivisionReq:</strong> Is the requisite stat for Jala and Riija.
+   </UL>
+<BR>
+<LI><h3>spell/illwound</h3>
+   <UL>
+   <LI>Take less damage from illusionary damage with higher intellect.
+   </UL>
+</UL>
+
+<P>
+<H2>STAMINA:</H2>
+<UL>
+<LI><h3>Player</h3>
+   <UL>
+   <LI><strong>CalculateHealthTime:</strong> Modifies healing time by (25-stamina)% (+/- 25%)
+   <LI><strong>GainBaseMaxHealth:</strong> Maximum hps = 100 + stamina
+   <LI><strong>AdvancementCheck:</strong> Higher stamina makes gaining hps more likely when 
+       checked. (see <a href="#hpadv">below</a>)
+   <LI><strong>Killed:</strong> Players have a stamina percent chance to avoid losing skill/spell 
+       points when killed.
+   <LI><strong>GetRestTime:</strong> A player's time between rest "checks" is 30 * (51-Stamina) 
+       milliseconds plus the current base of 1000.
+   </UL>
+<BR>
+<LI><h3>spell</h3>
+   <UL>
+   <LI><strong>GetDivisionReq:</strong> Is the requisite stat for Kraanan. 
+   </UL>
+<BR>
+<LI><h3>active/logghost</h3>
+   <UL>
+   <LI><strong>InflictPenalties:</strong> Stamina percent less points lost due to logoff penalties.
+   </UL>
+</UL>
+
+<P>
+<H2>AGILITY:</H2>
+<UL>
+<LI><h3>Player</h3>
+   <UL>
+   <LI><strong>GetDefense:</strong> Provides 1/5 of the defense of a player (other 4/5ths:
+       armor and 1/2 each of dodge/parry/block)
+   </UL>
+<BR>
+<LI><h3>skill</h3>
+   <UL>
+   <LI>Default <a href="#reqstat">requisite stat</a> for skills.<BR> 
+   </UL>
+</UL>
+
+<P>
+<H2>MYSTICISM:</H2>
+<UL>
+<LI><h3>Player</h3>
+   <UL>
+   <LI><strong>TryAttack:</strong> 4/5ths of Mysticism is part of attack power for spells
+       which improves to-hit chance.
+   <LI><strong>CalculateManaTime:</strong> Mysticism modifies base mana regen time by 
+       [(25-mysticism)/10] seconds (+/- 2.5 sec) (This time is the time to regenerate all mana.)
+   <LI><strong>InitialMaxMana:</strong> Starting max mana is 15 + (mysticism/5)
+   </UL>
+<BR>
+<LI><h3>active/corpnode (AKA underworld node)</h3>
+   <UL>
+   <LI><strong>GetManaAdjust:</strong> This node adds (((5 + Mysticism) / 10) + 3) points of maximum mana.
+   </UL>
+<BR>
+<LI><h3>item/passite/wand/vampwand</h3>
+   <UL>
+   <LI><strong>CastSpell:</strong> (Myst + Aim) bound to 10 to 90 is percent chance to hit with wand.
+   </UL>
+<BR>
+<LI><h3>item/passite/wand/firewand</h3>
+   <UL>
+   <LI><strong>CastSpell:</strong> (Myst + Aim) bound to 10 to 90 is percent chance to hit with wand.
+   </UL>
+<BR>
+<LI><h3>passive/mananode</h3>
+   <UL>
+   <LI><strong>GetManaAdjust:</strong> Nodes gives (((5 + Mysticism) / 10) + 3) points of maximum mana.<BR>
+	 <strong>NOTE:</strong> The Vale of Sorrows node gives twice this amount.
+   </UL>
+<BR>
+<LI><h3>spell</h3>
+   <UL>
+   <LI><strong>GetRequisiteStat:</strong> Default <a href="#reqstat">requisite stat</a> for spells.
+   <LI><strong>GetDivisionReq:</strong> Is the requisite stat for Qor, Shal'ille and Faren.<BR> 
+   </UL>
+</UL>
+
+<P>
+<H2>AIM:</H2>
+<UL>
+<LI><h3>Player</h3>
+   <UL>
+   <LI><strong>TryAttack:</strong> Aim is about 1/2 of attack power for weapon attacks.  Increases
+       chance to hit.
+   </UL>
+<BR>
+<LI><h3>item/passite/wand/vampwand</h3>
+   <UL>
+   <LI><strong>CastSpell:</strong> (Myst + Aim) bound to 10 to 90 is percent chance to hit with wand.
+   </UL>
+<BR>
+<LI><h3>item/passite/wand/firewand</h3>
+   <UL>
+   <LI><strong>CastSpell:</strong> (Myst + Aim) bound to 10 to 90 is percent chance to hit with wand.
+   </UL>
+<BR>
+<LI><h3>skill/profic/archery</h3>
+   <UL>
+   <LI>Aim is the <a href="#reqstat">requisite stat</a> and sets initial value of skill.
+   </UL>
+<BR>
+<LI><h3>skill/profic/profswrd</h3>
+   <UL>
+   <LI>Aim is the <a href="#reqstat">requisite stat</a> and sets initial value of skill.
+   </UL>
+<BR>
+<LI><h3>skill/stroke/fire</h3>
+   <UL>
+   <LI>Aim is the <a href="#reqstat">requisite stat</a> and sets initial value of skill.
+   </UL>
+</UL>
+
+<P>
+<H2>How spell/skill advancement works:</H2>
+<strong>Note:</strong> When I refer to "spell schools", this also includes Weaponcraft; "spells" also includes "skills" in most cases.
+<P>
+This aspect has been changed from previous systems.  Under the current system, spell levels count against you instead of individual spells.  That means that knowing one level one Kraanan spell counts as much against you as knowing four level one Kraanan spells.  This prevents the need to "stagger" spell learning in order to get the maximum number of spells.
+<P>
+As a side note, knowing Blink alone does not mean a player has level one Riija.  Blink never counts in these calculations.  It does count when considering percents needed to learn Riija level two.  Knowing a second spell in level one Riija does count against you, however.
+<P>
+Conceptually, one can think of the levels of spells in each school as having a value.  Levels one and two have a value of 1, levels three through six have a value of 2.  So, knowing spells in a spell school has a value of the sum of the values of the levels you know.  So knowing first level spells gives you one point, knowing up to second level gives you two points, knowing up to third level gives you four points, etc, up to 6th level where you have 10 points.
+<P>
+The maximum number of points is customizable, but it is currently set to 20.  This means that an average person can learn up to 6th level spells in two spell schools.  Or, these points can be spread out more, so that one could learn up to third level spells in five spell schools (4 points x 5 schools = 20 total points).  It is important to note that if the player knows at least two spells in a level of a specific school, he or she can learn the rest of the spells in that level of that school.  The reason it is two spells is to prevent newbies that choose a second level spell from being able to buy second level spells immediately, they must work up to the point where they can earn the other spells.
+<P>
+Players can also get bonuses for high intellect.  You can get a bonus of 0 to 20 points depending on your intellect.  This means that a really smart person (with 50 intellect) could master two more schools than anyone else.  Or, they could get up to 5th level spells in five schools (8 points x 5 schools = 40 total points).
+<P>
+How does this work, in more specific terms?  Well, since we take the top three spells in the previous level, assume the maximum number of points you can have required 297 percent points.  So, trying to learn a spell level past the number you are allowed should equate to requiring more than 297 percent points.  Make each point worth a certain range of percents, and you have your learning curve.  The "bonus" points from Intellect actually reduce the amount of points needed per level, so even when you would "cap out" at the maximum, you still have the points represented by your intellect to go until you go over the maximum value needed.
+<P>
+So, this means that as you learn levels of spells, the amount of percentage points you need to get the next level will increase.  Smarter people will require less percentage points to learn the same number of skills, but all people will need to gain roughly the same number of percentage points for the last spell level they will be able to learn.
+<P>
+In concrete terms, to learn a level <i>x</i> spell, look at top 3 spells of level <i>x</i> - 1.  This number is compared to the equation (Points * POINTS_SLOPE) + (297 - (MaxPoints * POINTS_SLOPE)) - ((Intellect * 2 * POINTS_SLOPE) / 5), where Points is the number of level points accumulated so far (as decribed above), INCLUDING the level we want to advance to, MaxPoints is the maximum number of points a normal person can have (defined at 20, currently), and POINTS_SLOPE is the rate of increase in the number of percentage points needed.  Basically, the higher POINTS_SLOPE is, the less a player will need to advance in his or her first few spell levels, but the number of increased percentage points needed will go up faster; This means it's easier to learn initial skills, but gets harder faster, until the last spell level learned requires about 297 percentage points.  Currently, POINTS_SLOPE is defined as 6.
+<P>
+Example: If someone with a 25 intellect has fourth level Weaponcraft and third level Kraanan, how many percentage points in third level Kraanan does the player need to learn fourth level Kraanan spells?  Assume that MaxPoints is 20 and that POINTS_SLOPE is 6.
+<P>
+The player has 12 points so far (6 from Weaponcraft + 6 from Kraanan, including the new level we want to advance to).  Now, put it into the equation: (12 * 6) + (297 - (20 * 6)) - ((25 * 2 * 6) / 5) = 189.
+<P>
+Example: If someone with a 1 Intellect knows 6th level Weaponcraft, 5th level Kraanan, and 2nd level Shal'ille, how many percentage points in 5th level Kraanan to learn 6th level Kraanan?
+<P>
+The player has 22 points so far (10 from Weaponcraft + 10 from Kraanan, including the level we want to advance to + 2 from Shal'ille).  Now put it into the equation: (22 * 6) + (297 - (20 * 6)) - ((1 * 2 * 6) / 5) = 307.  Oops, looks like they can't learn that next level of Kraanan.
+<P>
+<H2>How hp advancement works:</h2>
+You gain points by killing creatures.  The code uses the killed creature's level, which indicates 
+their max hps.
+<P>
+Killing something with hps above yours gives you a chance to roll to gain an hp.  Taking damange 
+from it is worth 1 point, and doing the killing blow is worth one point.  Being a newbie under 
+26 hps gives a (100/(max hps - 19))% chance for a bonus point.
+<P>
+Killing something with up to 5 less hps than you doesn't give you a chance, but gives a bonus 
+point of you took damage and got the killing blow.
+<P>
+Killing something with fewer hps than that gives nothing (the "spit" message).
+<P>
+If you get an improvement roll, then it chooses a number based on your current hps and your 
+<a name="hpadv">stamina</a>.  It takes (100-stamina)% of your max hps (called the "index") and chooses 
+a number between 1 and ((index + 1) * index).  It compares this 
+random number to the number of points you've gained so far plus a one-time bonus of the difference 
+between the monster's hps and your hps divided by 5, bound between 0 and 10.  If the random number 
+is less than the current points, you get a hp.  Your points are then reset to negative half your current 
+maximum hps, less an additional (50-stamina)/2 (EG, a 50 hp person with a 30 stamina would be set to 
+-35 points).
+<P>
+<H2>How skills and spells work:</H2>
+Your percent chance to succeed is figured by the following formula:
+((100-requisite stat)*ability/100) + <a name="reqstat">requisite stat</a>
+Which means it takes 50%-99% (depending on your requisite stat) of your skill plus your requisite 
+stat.  So, people with high stats are naturals at the beginning, but are just as good as anyone 
+else at higher levels.
+<P>
+<strong>Example:</strong> A player with a 10, a 30 and a 50 in the requisite stat try using skills 
+at 20%, 50%, and 90%.  The first player has a 29%, 55%, and 91% chance, respectively.  
+The second player has a 44%, 65%, and 93% chance, respectively.  The last player has a 
+60%, 75%, and 95% chance, respectively.
+<P>
+<H2>How skills/spells improve:</H2>
+Initial check is against "chance to learn", with a bonus(intellect/100)*100% added on again.  So, 
+if you have 50 intellect, you have 150% the chance to learn.  If this check fails, you 
+can't advance.
+<P>
+Next, is the secondary check, which is figured as follows: 60 + requisite stat - (10 * level of skill) 
+- (sum of ability points in other schools / 50).  This is modified by a "factor" which is figured 
+from 2 * target's difficulty (or 60 if the target wasn't a monster) - ability in skill + 
+(sum of ability points in school / 10).  This is bound between 50 and 100, and determines what percent 
+of the check's points to use.  (IE, a factor of 80 means you get 80% of the check's percent).  
+Finally, if your current ability is greater than or equal to twice the requisite stat, your total 
+is divided by 5 (the infamous soft cap).
+<P>
+This secondary chance is divided by 20 if the room is "hard" to learn in.  The final number is 
+bound between 1 + (your requisite stat / 10) and 99, then compared to a random number 0-100.  
+If the random number is less, you gain a point.
+<P>
+<h3>Bonuses to improve spells</h3>
+In the "Liberation" patch, a running total of all spells cast is counted by school.  Casting an <i>x</i> level
+spell in a school added <i>x</i> points to that schools total.  When checking for improvement of a spell, the
+secondary chance is increased by the running total for the school, divided by the spells level, divided by the
+the number of casts needed to give a percent bonus (currently 5), rounded down..  If a spell improves, it 
+resets the casting bonus for that school back down to zero.
+<P>
+So, if someone casts 5 second level spells in the school of Kraanan, that means they have accumulated 10
+points toward their Kraanan bonus.  If they cast another second level spell, they'll get a (10/2)/5, or 1
+percent bonus on the secondary chance to improve.  If they cast a first level spell, they get a (10/1)/5,
+or 2 percent bonus.  If they cast a fourth level spell, they get a (10/4)/5, or 0 percent bonus.
+<P>
+This is designed so that someone casting a spells in a certain school will increase their chances to 
+improve, even if they have a lot of spells already.  This is to help the old, high-level characters 
+advance even though they seemed to have stalled.  As you can see, casting several lower level spells
+will not help advance higher level spells as much as casting spells of equal (or higher) level will
+help.  This will help higher-level characters advance lower-level skills while not allowing people
+to improve higher-level skills by casting multiple low-level spells.
+<P>
+<h3>Bonuses to improve skills</h3>
+In the "Liberation" patch, a running total of all weapon swings is recorded in the player object.  This
+allows us to give improves during combat, instead of merely after combat.  After a set amount of swings,
+(currently set at 75), an improvement check is made for each swing.  The monster the player is fighting 
+adds a bonus to the check.  For every set number of swings (the same as the number of swings before we 
+check for an improvement), the player gets a 1 percent bonus to the secondary improvment check.  If a
+skill improves, the number of swings is reset down to 0, requiring another 75 swings before a check is
+made and resetting the bonus.
+<P>
+This number of swings resets if the player wields a weapon of a different type.  For example, if a player
+wields a mace and the mace breaks, the player can keep his or her swing tally if he or she wields another 
+mace. Using another weapon (including punch) will reset the count back to 0, and start tallying swings 
+with the new type of weapon.
+<P>
+<strong>Example:</strong> if someone with a Might of 35 and an Intellect of 30 fights a monster with 
+a difficulty of 70 with a level 2 skill with ability 60% and a chance to learn of 20 in a normal 
+room.  This player also has 300 points in other schools and 200 points in this skill's school.  
+First, we make a check for our chance to learn.  We check vs. 20 + (30% of 20) = 26%.  
+Assuming this check succeeds, we proceed on.  Our base for the secondary check is 60 + 35 - (2 * 10) 
+- (300 / 50) = 69%.  Our factor is (2 * 70) - 60 + (200 / 10) = 100.  This number is not affected by 
+the bounding, so we take 100% of our 69%.  Since we're not in a hard room, we take the full percent.  
+Assume no bonus from weapon swings.  If this check succeeds, we increase a point in our skill!
+<P>
+So, advancing in a skill depends on requisite stat, intellect, the skill's level, how many total 
+ability points in other schools, the difficulty of what one killed to increase, their ability in 
+the skill, and total ability points in the skill's school.
+</BODY>
+</HTML>

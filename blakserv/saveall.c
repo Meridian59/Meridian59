@@ -21,26 +21,6 @@
 
 #include "blakserv.h"
 
-int CheckDiskSpace(char *rootname )
-{
-	ULARGE_INTEGER lpFreeBytesAvailableToCaller;
-    ULARGE_INTEGER lpTotalNumberOfBytes ; 
-    ULARGE_INTEGER lpTotalNumberOfFreeBytes ; 
-
-	if ( GetDiskFreeSpaceEx("C:\\", &lpFreeBytesAvailableToCaller,&lpTotalNumberOfBytes , &lpTotalNumberOfFreeBytes ) == ERROR_CALL_NOT_IMPLEMENTED ) {
-		eprintf("Why you running BlakServ on the wrong OS ?\n");
-		return 0;
-	}
-	/*  see if diskspace is less tham 20mb */
-	if( (__int64)lpFreeBytesAvailableToCaller.QuadPart < (__int64)20*1024*1024) {
-		char buf[200];
-		sprintf(buf,"machine only has %luK bytes free",(unsigned long)(lpFreeBytesAvailableToCaller.QuadPart/1024) );
-		eprintf("Low on disk space, not saving game!\n");
-		return 1;
-	}
-	/* all ok */
-	return 0 ;
-}
 int SaveAll(void)
 {
    Bool save_ok;
@@ -50,17 +30,6 @@ int SaveAll(void)
    
    /* Note:  You must call GarbageCollect() right before SaveAll() */
    
-/* 
-	charlie: we check for low disk space *before* saving game !duh!
-	and it pages someone, currently me, on a low disk space warning
-	and refuses to save until the problems is cleared ! !
-*/
-
-   if( CheckDiskSpace( ConfigStr(PATH_LOADSAVE) ) == 1 ) {
-	   eprintf("Cant save not enough diskspace, admin paged!!\\n");
-	   save_ok = False ;
-	   return 0;
-   }
 /*
 	 charlie: machine sets the local time from a time synch server
      its potentially dangerous, but only if the time has been changed

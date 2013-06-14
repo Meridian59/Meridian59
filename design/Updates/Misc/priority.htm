@@ -1,0 +1,1447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<HTML>
+<HEAD>
+   <TITLE></TITLE>
+   <META NAME="Author" CONTENT="Damion Schubert">
+   <META NAME="GENERATOR" CONTENT="Mozilla/3.0Gold (Win95; I) [Netscape]">
+</HEAD>
+<BODY>
+
+<H3>Monsters</H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Done</TD>
+
+<TD>Basic object avoidance.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Code generic monster code for new monsters: Avar, Avar Chieftain, Avar
+Shaman, Shatterlings, Dragonfly, Cave Orc, Orc Warlord, Orc Wizard, Shadowbeast,
+Ghoul.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Guard behavior (monster attacks anyone fitting a certain profile).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Wimp behavior (monster will flee when down to X% health).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Friend behavior (monster will defend any 'friend' PC or monster that
+is attacked).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Code special monster abilities for Avar Shaman (spellcasting), Shatterling
+(breaking into biglings and littlelings), Orc Wizard (spellcasting). Shadowbeast
+(darkening), Ghoul (raise dead), Lupogg King (blind) and Dragonfly (breathing).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Faux combat behavior (monsters pretend to attack each other, but in
+actuality are doing no damage). Add behavior to Fairies.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Pet behavior (monster follows either a PC or a monster around without
+attacking him).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>General pathwalker behavior (monster walks a predetermined path).</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3>Weapons</H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>New weapons (nerudite)? for Konima's Island</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Add penalty for 'mend'</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Finish off missile weapons: Game balance. Real damage numbers. Bow
+proficiency. New sounds. Add art and animation. </TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Fuzz generated weapon special abilities. Add special abilities. Make
+more easy to add.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Add poisoned weapons. Game balance issues.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Make weapons use XLATs depending on their special ability?</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Add short term weapon enchantments.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Add weapon bonding.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Add weapon inscribing.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3><B>NPCs and Quest Engine</B></H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Change 'item' quests so the NPC has a reason for wanting said item,
+which he states aloud. Make additional reasons easy to add.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Tedious</TD>
+
+<TD>Add additional generic NPCs: Healer, Blacksmith, Innkeeper, Tavernkeeper,
+Tailor of Island, Tailor, Repairer and Vaultman to Jasper, Banker, Vaultman,
+Healer, and Repairer to Barloque, Tailor to Cor Noth, Healer to Marion.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Tedious</TD>
+
+<TD>Add new backstory elements and more recent features to 'random chatter'
+in speech library. &nbsp;Remove outdated and inane stuff. Add more triggers.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Add Riija Monk.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Add vaultman NPC&nbsp;type.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Improve 'quest eggs'. Make a variety of item types (instead of signet
+rings) with additional types easy to add. Make them so they aren't newbie
+only.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Revisit factions scenario. Even out playing field. Remove modifiers
+from 'player' and put them in 'system'.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Add NPC gossip about PC history: Notable quest completion, guild shenanigans,
+princess/duke gossip, spell/skill school mastery, assassin game gossip,
+who killed the yeti, even unlikely couples. Make more easy to add.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Add 'courier' quests, where an NPC gives you an item of type X, which
+you must take somewhere. Additional reasons and/or item types should be
+easy to add.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Change message quests so that the players carry one of a variety of
+message types, all of which make sense somehow. Make additional message
+quest possibilities easy to add.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Add quest stacking, where an NPC will give someone who completed one
+quest another as a reward.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Add better maintenance and debug routines to the quest engine.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Make at least some quests 'personal', so they aren't given to everyone
+in the game (so everyone gets some quests, and they don't give certain
+quests to others).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Have NPCs put a bounty on the head of a PKer.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Add wandering NPCs: Minstrel, Adventurer, Drunk, Missionary of Shal'ille,
+Wizard.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Make prize value depend on quest difficulty.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Have NPCs give quests based on you (i.e. newbie only quests, experienced
+people only quests, good karma quests, etc).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>MId</TD>
+
+<TD>Mid</TD>
+
+<TD>Convert completed quest list to a bitvector in player.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Add 'Assembly Quests', where a player must get 2-7 pieces of an item
+and deliver the assembled whole to an NPC. Make additional assembly quests
+easy to add.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Add 'Quest Webbing', where 2 quests are needed to be done (in any order)
+to get a third.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Allow players to ask around for work.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Turn one NPC into a random number generator, for guide-run lotteries.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Add auto-generated hints about monster resistances and susceptibilities.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Add blacksmith NPC&nbsp;type.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Add healer NPC type.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Fix design flaw which prevents buyers of EQ from being quest nodes.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Add time element to quests ('You must do this before the clock in Cor
+Noth strikes 6&quot;).</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Make Rook less stupid.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>NPC&nbsp;personalities and mood changes (i.e. you can anger an NPC
+by spamming him). </TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>Have NPCs put a bounty on the head of a certain supermonster or 'rogue'
+monster.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>Have Quest Engine use alternative hints (i.e. &quot;tos blacksmith&quot;
+instead of &quot;colhorr&quot;.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3><B>UI</B></H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Improve targetting UI for spells and missile weapons.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>New 'vaultman' UI, for weapon storage.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Improve buy UI. Possibly combine with 'sell'.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Improve stats/advancement UI, so more information is available.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>UI for activatable skills, such as 'cutpurse'.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Add 'insignia' position on player look dialogue.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Allow a person to have multiple titles.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Add encumbrance gauge.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Seperate 'buy' from 'learn'.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>UI for inscribing weaponry, wedding rings or for guides to put messages
+on pieces of paper and signposts.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Add Blacksmith Repair UI.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>Room Rentals at inns, so players can go someplace and talk privately.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3><B>Armor, Clothing, Character poses</B></H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Add generic clothes (no special abilities): vest, robes, cape, dress,
+chain skirt, leather cap.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Put all new clothing (and clothing options) available somewhere in
+game.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Add new shield w/special ability: Bone Shield.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Add new armor w/special ability: Hide Armor.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Add new headgear w/ special ability: Ivy Circlet.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Add new headgear w/special ability:&nbsp;Leather Mask.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Fuzz generated armor special abilities. Make them use XLATs.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Build new character poses out of existing parts: dance, bow, curtsey.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>New character pose: sit.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3>Room code</H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Add generic code for Island Jungle.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Add generic code for Orc Warrens.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Add generic code for Island City.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Add generic code and two-man puzzle for Lupogg King room.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Add code for Illusion Monastery of Riija.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Add Hall of Heroes.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3>Reduce CS load</H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Put more backstory in game.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Automate Blood Frenzy.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Automate Orc Raids, so they don't overload the system.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Add Justicar system, allowing players to vote for a sheriff who can
+vote someone a clean criminal record.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Automate Day of Tranquility.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Add inscribable signs.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Automate Town curses, which groups of players must try to lift.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Add Feathered Totems.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Add Random Number generator to NPC.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Add inscribable paper.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Automate spider infestations.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3>Spells</H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Raise Dead. Teleports dead person from the underworld to his corpse.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Silence: speech is impossible inside the room.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Foresight. Returns a partial list of spells opponent has.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Resist Poison. Makes it more difficult for target player to be poisoned.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Apparition. Creates 1 HP&nbsp;version of common monster, which then
+chases down foe.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Forget: causes target to forget a random spell he knows for X long.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Detect Invisible, Detect Good, Detect Evil.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Counterfeit: Creates a fake token that looks real in all respects,
+but a councilor will not accept.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Truth: Dispels all illusions in room, and prevents more from being
+cast as long as spell is in effect.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Fog. Makes it difficult to see in room.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Polymorph: Player takes from of monster type, loses name, and gets
+some of that monster's special abilities.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Dispel Illusion. Gets rid of all illusions in room.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Blur. Use existing ROP.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Flash: Brightens everyone viewpoint momentarily, and cancels trances.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Haste- player can run without vigor loss.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Sporeburst: Paralyzes everyone in the room, including caster.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>QorBane: Anyone who casts a Qor spell loses X health points.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Deathlink. Caster gains some bonus, any time someone in the room dies.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Paralyze. Trance spell, player is 'held' until player takes damage
+or caster loses trance.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Animate. Turns corpse into a pet zombie.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Personal Apparition - Creates a monster that only the target player
+can see.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Illusionary Wounds and Poison. Player has X additional (or fewer) HP
+until enchantment goes away.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Martyr. Drastically increases the odds that target's death will create
+a revenant.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Spirit Hammer. Creates a shortlived pro-good mystic weapon.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Distract: causes monsters in room to chase target.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Fumble: forces target to unuse weapon.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Shal'illebane. Anyone who casts a shal'ille spell loses some serious
+vigor.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Warp Time. All Trance spells in room take considerably longer to go
+off.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>Anonymous Spell: removes name from player's head.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>Mirror Image. Makes monster version of caster who attacks anyone who
+comes close.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>Wall of Flame, Wall of Thorns, Illusion Wall.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3>Existing spells and Spell Mechanics</H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Make all spells use an 'effectiveness' value from 1-100. This 'effectiveness'
+value can be later derived from a multitude of factors, but for now should
+be limited to a player's spell ability.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Examine current spell advancement. &nbsp;Simplify, gentle the curve,
+and make more information available to the spellcaster.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Adjust formula so that adding a new spell or skill doesn't disrupt
+the learning balance.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Add trance to high-damage causing spells.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Make room effect spells ignore newbies instead of being blocked altogether
+by them.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Hard</TD>
+
+<TD>Have advancement formula better deal with rarely cast spells.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid </TD>
+
+<TD>Hard</TD>
+
+<TD>Toggle spell potencies, so more powerful spells are weakened and percieved
+worthless spells are strengthened.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Hard</TD>
+
+<TD>Add 'degrees of failure', so there are lessor failures (spells not
+lasting as long, etc) or major failures&nbsp;(blows up in face).</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+
+<H3>Other</H3>
+
+<TABLE BORDER=1 >
+<TR>
+<TD>High</TD>
+
+<TD>Easy</TD>
+
+<TD>Add insignia for duke/princess.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Mid</TD>
+
+<TD>Add blood spurts, other sparks.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>High</TD>
+
+<TD>Hard</TD>
+
+<TD>Revisit logoff penalty.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Easy</TD>
+
+<TD>Remove repetitive text.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Tedious</TD>
+
+<TD>Make yell go to surrounding zones.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Mid</TD>
+
+<TD>Mid</TD>
+
+<TD>Revisit karma</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Easy</TD>
+
+<TD>Make marriages official.</TD>
+
+<TD></TD>
+</TR>
+
+<TR>
+<TD>Low</TD>
+
+<TD>Mid</TD>
+
+<TD>Add compass item.</TD>
+
+<TD></TD>
+</TR>
+</TABLE>
+<B></B>
+</BODY>
+</HTML>

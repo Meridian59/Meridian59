@@ -142,7 +142,7 @@ typedef struct
 void InitConfig(void);
 void ResetConfig(void);
 config_node * GetConfigByID(int config_id);
-void ForEachConfigNode(void (*callback_func)(config_node *c,char *config_name,char *default_str));
+void ForEachConfigNode(void (*callback_func)(config_node *c,const char *config_name,const char *default_str));
 
 int ConfigInt(int config_id);
 char * ConfigStr(int config_id);

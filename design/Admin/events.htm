@@ -1,0 +1,305 @@
+<!DOCTYPE doctype PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+  <title>Meridian 59 Events</title>
+</head>
+<body>
+<h1>Admin Controlled Events</h1>
+By: Brian
+Green&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+Date: October 10, 2002
+<h2>Assassin's Game</h2>
+<a href="../Mechanics/assassin%27s%20game.htm">Original Design
+Information</a><br>
+<br>
+This is a PK minigame found in Meridian 59. &nbsp;The object is for
+players to "assassinate" the player they are assigned to while avoiding
+assassination by the player that has been assigned to them. &nbsp;The
+assassin's game is controlled by the NPC Roq. &nbsp;You can find Roq by
+going to RID_ASSHQ, which is a room in the Barloque sewers.<br>
+<h3>Admin controls</h3>
+This document is in English, but the commands can be localized through
+the resources found in <span style="text-decoration: underline;">assassin.rsc</span>.<br>
+<ul>
+  <li><span style="font-style: italic;">dm accept mode</span> - This
+makes the Assassin's Game accept new people for a new round of play
+before it would normally be scheduled.</li>
+  <li><span style="font-style: italic;">dm start game -&nbsp;</span>This
+makes the Assassin's game start the game. &nbsp;There must be at least
+2 combatants for the game to start properly</li>
+  <li><span style="font-style: italic;">dm reset game</span> - This
+ends
+the current game with no winner.</li>
+</ul>
+Admins can also set prizes for the winner of the admin game. &nbsp;To
+do this, you must find the admin game object by enter <span
+ style="font-style: italic;">send object 0 GetAssassinGame</span> in
+the
+admin window. &nbsp;Then you can <span style="font-style: italic;">send
+object (assassin's game) SetPrize what object (prize)</span>.
+&nbsp;Enter the appropriate object numbers instead of the words in
+parentheses. &nbsp;The assassin's game will move the prize out of the
+container or character that had the prize previously and will
+automatically add it to the inventory of the last player in the
+assassin's game.
+<h2>Reign of Blood Frenzy</h2>
+Also called simply "frenzy" is a free-for-all fight between all players
+with no consequences. &nbsp;Players take no penalties for attacking
+other players, and death carries none of the usual punishment (players
+keep all items and lose no skill or spell percents). &nbsp;The skies
+turn red to signfy this event in the game. &nbsp;Players enjoy frenzies
+because it is a chance to fight other people with no consequences.<br>
+<br>
+Frenzies are strictly admin controlled. &nbsp;Before starting the
+frenzy, you are advised to saved the game twice. &nbsp;Double-check
+that
+the files were saved properly before kicking off the frenzy because you
+must restore the saved game after the frenzy is over. &nbsp;Copy the <span
+ style="text-decoration: underline;">lastsave.txt</span> file from the
+server's <span style="text-decoration: underline;">game</span>
+directory
+to another location. &nbsp;At the end of the frenzy, you will copy this
+file back into the <span style="text-decoration: underline;">game</span>
+directory before restarting the server so that the game restores to the
+proper pre-frenzy save.<br>
+<br>
+In order to set off the frenzy, you must type <span
+ style="font-style: italic;">send object 0 StartChaosNight</span>.
+&nbsp;While the frenzy is going on, players will be free to kill each
+other practically anywhere. &nbsp;Normal restrictions for guild
+fighting
+in towns or angeled fighting no longer apply. &nbsp;Now would be a good
+time to give out items to the players so that they can have some extra
+fun!<br>
+<br>
+During testing, you can end the frenzy by typing <span
+ style="font-style: italic;">send object 0 EndChaosNight</span>. &nbsp;<span
+ style="font-weight: bold;">Please note that you should not end the
+frenzy this way on the commercial servers!<span
+ style="font-style: italic;"> &nbsp;</span></span>The only way to stop
+the frenzy properly is to shut down the server and copy the <span
+ style="text-decoration: underline;">lastsave.txt</span> file into the
+server's <span style="text-decoration: underline;">game</span>
+directory
+and then restart the server.<br>
+<h3>Giving out items during a frenzy:</h3>
+You can give out items to everyone during a Frenzy.&nbsp; (You can also
+do this when the server is set to "Beta" state.)&nbsp; To do this, you
+type <span style="font-style: italic;">send object 0 ChaosNightLoot</span>
+to give items to everyone.&nbsp; This will give a set number of items
+and reagents to all players.<br>
+<br>
+The items given out are controlled by the variable <span
+ style="font-style: italic;">plChaosNightLoot</span> located in the
+system object (object 0).&nbsp; This list contains basic objects that
+will be given out.&nbsp; So, if a scimitar is in the list, all players
+will get a scimitar.&nbsp; Note that any special abilities (item
+attributes) on the objects <span style="font-weight: bold;">will not</span>
+be carried over into the objects given to players.&nbsp; Any stackable
+items will note the number when giving out items, so a stack of 50
+inky-cap mushrooms in the list will result in every player being given
+50 inky-caps.&nbsp; In order to reset the list, set <span
+ style="font-style: italic;">plChaostNightLoot</span> to $ 0 (NIL), and
+the list will recreate itself from default when the message is called.<br>
+<br>
+At default, the list contains: 50 inky-cap mushrooms, 100 mints,
+scimitar, long sword, longbow, battle bow, 2 berzerker rings, 150
+normal arrows, 150 nerudite arrows, 2 jewels of froz, and 1 gift (which
+contains a random godsgift).<br>
+<br>
+Reagents are also given out based on a player's spells.&nbsp; Calling <span
+ style="font-style: italic;">ChaosNightLoot</span> also calls <span
+ style="font-style: italic;">AddReagentsForSpells</span> on each player.<br>
+<br>
+There are two parameters to this message.&nbsp; The first, <span
+ style="font-style: italic;">logged_on</span> defaults to TRUE.&nbsp;
+If
+TRUE, then only players logged on at the time get the items.&nbsp; (<span
+ style="font-weight: bold;">Known bug: </span>If you have too many
+player objects, the code will stop execution before all players have
+goten items if <span style="font-style: italic;">logged_on</span> is
+set to FALSE.)&nbsp; In addition, you can set the parameter iNumCasts,
+which defaults to 100.&nbsp; This determines how many times you can
+cast all your spells.&nbsp; A value of 100 means that a player has
+enough reagents to cast every spell they have 100 times.<br>
+<br>
+<span style="font-weight: bold;">Important note:</span>&nbsp; This will
+screw up the carrying capacity of all players it affects.&nbsp; <span
+ style="font-style: italic;">ChaosNightLoot</span> will add the items
+to
+a player's inventory without respect to their max carrying
+capacity.&nbsp; This means that if they drop item, they may not be able
+to pick up additional items, even if they drop all the items they got
+in this manner.<br>
+<h2>War Event</h2>
+The War event is a special event that can be run during &nbsp;a Frenzy.
+&nbsp;In basic terms, it allows players to divide into teams to fight
+against each other. &nbsp;Each kill scored against a member of an
+opposing team gives a point to the killer's team.<br>
+<br>
+There are 3 different ways to organize the war: by faction, by
+hometown, and by generic teams. &nbsp;There are also 2 types of wars:
+restricted and unrestricted. &nbsp;Restricted wars mean that a player
+must meet the qualifications to join a side and can only join that side
+(IE, they must be in the Duke faction to join the Duke side of the
+war).
+&nbsp;Unrestricted wars mean that anyone can join any side; by
+definition, generic team wars should be unrestricted. &nbsp;In
+unrestricted wars, teams are limited by number; no team may have a 25%
+advantage in numbers over any other team. &nbsp;If a player tries to
+join a team with such a large advantage, they are told to wait until
+later to join the team.<br>
+<br>
+During a war event, all players will automatically remove their shirts
+and robes. &nbsp;Every player's base shirt will change to grey to
+indicate neutrality. &nbsp;Each player will also receive a war pendant
+for each side they can join. &nbsp;Using the pendant will cause them to
+join that team and will force the player's basic shirt color to match
+that team's color. &nbsp;Players cannot wear any clothing that would
+cover their basic shirt; the only exception is disciple's robes, which
+will turn the color of the team the player has joined instead of the
+color indicating the player's proficiency at that school.<br>
+<br>
+<span style="font-weight: bold;">Note:</span> There are some issues
+with
+Invisibility, Shadow Form, Illusionary Form, and Morph. &nbsp;These
+spells will hide a player's side from other players.<br>
+<h3>Admin Commands</h3>
+To find the war event object, you can type in <span
+ style="font-style: italic;">send object 0 GetWarEvent</span>.
+&nbsp;This will return the current war object.<br>
+<br>
+To setup the war, there are 4 different commands to quickly set up a
+war..<br>
+<ul>
+  <li><span style="font-style: italic;">send object (war event)
+SetupFactionWar </span>&nbsp;- This sets up a restricted faction war
+with all three sides.</li>
+  <li><span style="font-style: italic;">send object (war event)
+SetupTownWar</span> - This sets up a restricted hometown war with all
+five towns.</li>
+  <li><span style="font-style: italic;">send object (war event)
+SetupTeamWar number int (sides) </span>- This sets up an unrestricted
+war with the specified number of sides. &nbsp;There can be from two to
+four sides.</li>
+  <li><span style="font-style: italic;">send object (war event) Reset</span>
+- This will reset the war to a neutral condition with no teams selected.<br>
+  </li>
+</ul>
+In addition, an administrator can set up a custom war.<br>
+<ul>
+  <li><span style="font-style: italic;"></span><span
+ style="font-style: italic;">send object (war event) AddSide side int
+(side constant)</span> - The "side constant" is either the faction
+constant (FACTION_PRINCESS, FACTION_DUKE, FACTION_REBEL), the hometown
+room ID (RID_BARLOQUE, RID_TOS, RID_CORNOTH, RID_MARION, RID_JASPER),
+or
+the generic team constant (WAR_TEAM_ALPHA, WAR_TEAM_BETA,WAR_
+TEAM_GAMMA, WAR_TEAM_DELTA). &nbsp;These sides do not have to match, so
+you could have the Duke faction invading Barloque and Cor Noth, etc.
+&nbsp;Note that using the team constants in addition to faction or
+hometown constants could cause duplicate colors to be used, creating
+confusion.</li>
+  <li>The variable <span style="font-style: italic;">pbRestricted</span>
+indicates if the war is restricted or not. &nbsp;True (1) means it is,
+False (0) means it is not. &nbsp;Once again, note that you cannot
+restrict people from joining a generic team.<br>
+  </li>
+</ul>
+To start the war, simply enter <span style="font-style: italic;">send
+object (war event) StartWar</span>. &nbsp;Note that there must be a
+frenzy active at the time for the war event to start properly.<br>
+<br>
+To end the war, type <span style="font-style: italic;">send object
+(war event) EndWar [</span><span style="font-style: italic;">reporter
+object (admin)]</span>. The optional paramter will specify an admin
+object to send a gmail to with final scores. &nbsp;This admin can
+download the gmail before restarting the servers to have a record of
+the
+scores to post afterwards. &nbsp;You can also specify an admin to
+report
+the final scores to by <span style="font-style: italic;">send object
+(war event) SetReporter who object (admin)</span>. &nbsp;This will set
+a
+default reporter to send the final score gmail to should the optional
+parameter for <span style="font-style: italic;">EndWar</span> not be
+supplied.<br>
+<br>
+During the event you can have the scores for the game printed to
+everyone by typing <span style="font-style: italic;">send object (war
+event) GetScores</span>. &nbsp;This will simply print out the current
+scores for each side for all to see.<br>
+<h2>Event Signs</h2>
+These are signs that can be placed around the game to notify players
+about events. &nbsp;A DM with pbActor set to 1 can place these signs
+with the command <span style="font-style: italic;">dm event sign</span>.
+&nbsp;Admins can customize the sign to give time/date information.<br>
+<ul>
+  <li><span style="font-style: italic;">piHour</span> is the hour of
+the
+event, in 24 hour format. &nbsp;This gets translated into an AM/PM time
+on the sign. &nbsp;For example, if piHour is 15, the time shown willl
+be
+3:00 PM.</li>
+  <li><span style="font-style: italic;">piDay</span> is the day of the
+week. &nbsp;1 is Sunday, 2 is Monday, etc.</li>
+</ul>
+These signs do not delete themselves. &nbsp;Sending the <span
+ style="font-style: italic;">Delete</span> message will clean them up
+properly.<br>
+<h2><span style="font-weight: bold;"></span>Monster Budget</h2>
+An admin (or DM with say commands) can set a "monster budget" for a
+DM-level character.&nbsp; This allows the DM to create a limited number
+of monsters without giving them the unlimited creation ability of an
+Admin.<br>
+<br>
+The DM is able to create a certain number of hit points worth of
+monsters as specified.&nbsp; This is determined by the base hit points
+of the monster defined in the game.&nbsp; For example, if a DM can make
+giant rats (base hit points of 30) and can make 210 hit points worth of
+monsters, he can make a total of 7 rats before his budget is used
+up.&nbsp; If the DM could also make ve'xeochicatl (150 base hit
+points), he could make one of those and have 60 points left to create 2
+giant rats (or he create the 7 giant rats mentioned before without
+creating the ve'xeochicatl).<br>
+<br>
+It is recommended that Admins give the DMs a small selection of monters
+appropriate to a pre-planned event since a high budget can allow the
+DMs to create a lot of high level monsters and create potential
+problems, especially those that are inexperienced.<br>
+<h3>Admin Commands</h3>
+Any DM level (or above) character with pbSay_commands and
+pbMonsterMaker set to TRUE can use these commands.&nbsp; These commands
+target any DM level (or higher) character who has the pbActor flag set
+to TRUE, even those offline.<br>
+<span style="font-style: italic;">dm monster authorize &lt;DM name&gt;</span>
+- This command shows the monsters that the DM specified can create and
+how many hit points are in the budget.<br>
+<span style="font-style: italic;">dm monster authorize &lt;DM name&gt;
+&lt;monster name&gt;</span> - This command authorizes the DM specified
+to create one monster of the indicated type, using the monster name
+resource.<br>
+<span style="font-style: italic;">dm monster authorize &lt;DM name&gt;</span>
+<span style="font-style: italic;">none</span> - This command clears the
+monster budget for the DM specified.<br>
+<h3>DM Commands</h3>
+The DM must have pbActor set to TRUE before these commands will work.<br>
+<span style="font-style: italic;">dm monster budget</span> - Shows the
+DM's available monster budget.&nbsp; As the note says, this shows the
+maximum number of monsters of that type that can be created with the
+budget.<br>
+<span style="font-style: italic;">dm monster &lt;monster name&gt;</span>
+- Works just like it does for admins, but it keeps track of monster
+created in the budget.<br>
+<h3>Details</h3>
+The monster budget works by storing the monster classes available to
+create in a list called <span style="font-style: italic;">plMonsterBudgetTypes</span>.&nbsp;
+The total hit point budget is stored in the variable <span
+ style="font-style: italic;">piMonsterBudgetTotalLevels</span>.<br>
+<br>
+As a suggestion: Admins can authorize the different types of monsters,
+then manually set the <span style="font-style: italic;">piMonsterBudgetTotalLevels</span>
+variable directly to save time and avoid repeated dm commands.<br>
+<br>
+</body>
+</html>

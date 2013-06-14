@@ -118,6 +118,13 @@ messages:
       %% This way, you can't advance if you cast spell
       %% on something with no hope of revealing anything.
       piAdvance = send(oTarget,@RevealHiddenAttributes);
+      
+      % Show newly revealed color
+      if piAdvance
+      {      
+         Send(oTarget,@RevealHiddenColor);
+         Send(Send(oTarget,@GetOwner),@SomethingChanged,#what=oTarget);
+      }
       Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
 
       lData= send(oTarget,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);

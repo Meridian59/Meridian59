@@ -23,7 +23,7 @@ typedef struct nameid_struct
 void InitNameID(void);
 void ResetNameID(void);
 void CreateNameID(char *parm_name,int parm_id);
-int GetIDByName(char *name);
+int GetIDByName(const char *name);
 char * GetNameByID(int id);
 
 #endif

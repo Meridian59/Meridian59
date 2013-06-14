@@ -96,12 +96,12 @@ Bool IsStringByID(int string_id)
    return True;
 }
 
-int CreateString(char *new_str)
+int CreateString(const char *new_str)
 {
    return CreateStringWithLen(new_str,strlen(new_str));
 }
 
-int CreateStringWithLen(char *buf,int len)
+int CreateStringWithLen(const char *buf,int len)
 {
    int string_id;
    string_node *snod;
@@ -245,7 +245,7 @@ void SetString(string_node *snod,char *buf,int len)
 
 void SetTempString(char *buf,int len)
 {
-   len = min(len, LEN_TEMP_STRING);
+  len = std::min(len, LEN_TEMP_STRING);
    memcpy(temp_str.data,buf,len);
    temp_str.len_data = len;
    temp_str.data[temp_str.len_data] = '\0';
@@ -262,9 +262,9 @@ void ClearTempString(void)
    temp_str.len_data = 0;
 }
 
-void AppendTempString(char *buf, int len)
+void AppendTempString(const char *buf, int len)
 {
-   len = min(len, LEN_TEMP_STRING-temp_str.len_data);
+  len = std::min(len, LEN_TEMP_STRING-temp_str.len_data);
    if (len <= 0)
       return;
    memcpy(temp_str.data + temp_str.len_data, buf, len);
@@ -276,6 +276,6 @@ void AppendNumToTempString(int iNum)
 {
    char numbuf[20];
 
-   itoa(iNum, numbuf, 10);
+   sprintf(numbuf, "%d", iNum);
    AppendTempString(numbuf, strlen(numbuf));
 }

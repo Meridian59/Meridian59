@@ -10,7 +10,7 @@ TOPDIR=.
 # make ignores targets if they match directory names
 all: Bserver Bclient Bmodules Bkod Bdeco Bupdater Bbbgun Bkeybind Bresource
 
-Bserver: Bsprocket
+Bserver:
 	echo Making in $(BLAKSERVDIR)
 	cd $(BLAKSERVDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
@@ -67,12 +67,6 @@ Bmakebgf:
 Butil:
 	echo Making $(COMMAND) in $(UTILDIR)
 	cd $(UTILDIR)
-	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
-	cd ..
-
-Bsprocket:
-	echo Making $(COMMAND) in $(SPROCKETDIR)
-	cd $(SPROCKETDIR)
 	$(MAKE) /$(MAKEFLAGS) $(COMMAND)
 	cd ..
 

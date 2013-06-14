@@ -21,7 +21,7 @@ typedef struct
 {
    int channel_id;
    int disk_config_id;
-   char *file_name;
+   const char *file_name;
 } channel_table_type;
 
 channel_table_type channel_table[] =
@@ -77,7 +77,7 @@ void FlushDefaultChannels()
          fflush(channel[i].file);
 }
 
-void __cdecl dprintf(char *fmt,...)
+void dprintf(const char *fmt,...)
 {
    char s[2000];
    va_list marker;
@@ -95,7 +95,7 @@ void __cdecl dprintf(char *fmt,...)
    WriteStrChannel(CHANNEL_D,s);
 }
 
-void __cdecl eprintf(char *fmt,...)
+void eprintf(const char *fmt,...)
 {
    char s[2000];
    va_list marker;
@@ -111,7 +111,7 @@ void __cdecl eprintf(char *fmt,...)
    WriteStrChannel(CHANNEL_E,s);
 }
 
-void __cdecl bprintf(char *fmt,...)
+void bprintf(const char *fmt,...)
 {
    char s[1000];
    va_list marker;
@@ -129,7 +129,7 @@ void __cdecl bprintf(char *fmt,...)
    WriteStrChannel(CHANNEL_E,s);
 }
 
-void __cdecl lprintf(char *fmt,...)
+void lprintf(const char *fmt,...)
 {
    char s[1000];
    va_list marker;

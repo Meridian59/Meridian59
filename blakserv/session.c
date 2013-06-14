@@ -217,9 +217,9 @@ int i,used;
 	  }
 */
 
-char * GetStateName(session_node *s)
+const char * GetStateName(session_node *s)
 {
-	char *str=NULL;
+	const char *str=NULL;
 	static char buf[50];
 	
 	/* static buffer for upload means that it shouldn't be used by
@@ -726,18 +726,18 @@ Bool ReadSessionBytes(session_node *s,int num_bytes,void *buf)
 	copy_bytes = 0; /* in case exactly read message, set receive_index right */
 	while (s->receive_list != NULL && copied < num_bytes)
 	{
-		copy_bytes = min(num_bytes-copied,s->receive_list->len_buf);
-		memcpy((char *)buf+copied,s->receive_list->buf,copy_bytes);
-		
-		copied += copy_bytes;
-		if (copy_bytes == s->receive_list->len_buf)
-		{
-			bn = s->receive_list->next;
-			DeleteBuffer(s->receive_list);
-			s->receive_list = bn;
-			copy_bytes = 0; /* if last copy ended with this buffer,
-			set receive_index right */
-		}
+	  copy_bytes = std::min(num_bytes-copied,s->receive_list->len_buf);
+	  memcpy((char *)buf+copied,s->receive_list->buf,copy_bytes);
+	  
+	  copied += copy_bytes;
+	  if (copy_bytes == s->receive_list->len_buf)
+	    {
+	      bn = s->receive_list->next;
+	      DeleteBuffer(s->receive_list);
+	      s->receive_list = bn;
+	      copy_bytes = 0; /* if last copy ended with this buffer,
+				 set receive_index right */
+	    }
 	}
 	s->receive_index = copy_bytes;
 	return True;
@@ -771,12 +771,12 @@ Bool PeekSessionBytes(session_node *s,int num_bytes,void *buf)
 	copied = copy_bytes;
 	while (bn != NULL && copied < num_bytes)
 	{
-		copy_bytes = min(num_bytes-copied,bn->len_buf);
-		memcpy((char *)buf+copied,bn->buf,copy_bytes);
-		
-		copied += copy_bytes;
-		if (copy_bytes == bn->len_buf)
-			bn = bn->next;
+	  copy_bytes = std::min(num_bytes-copied,bn->len_buf);
+	  memcpy((char *)buf+copied,bn->buf,copy_bytes);
+	  
+	  copied += copy_bytes;
+	  if (copy_bytes == bn->len_buf)
+	    bn = bn->next;
 	}
 	
 	return True;

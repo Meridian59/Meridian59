@@ -16,13 +16,13 @@
 
 #include "blakserv.h"
 
-void __cdecl cprintf(int session_id,char *fmt,...)
+void cprintf(int session_id,const char *fmt,...)
 {
    char s[8000];
    va_list marker;
 
    va_start(marker,fmt);
-   _vsnprintf(s,sizeof(s),fmt,marker);
+   vsnprintf(s,sizeof(s),fmt,marker);
    va_end(marker);
 
    TermConvertBuffer(s,sizeof(s));
@@ -65,7 +65,7 @@ void TermConvertBuffer(char *s,int len_s)
 }
 
 
-char * GetTagName(val_type val)
+const char * GetTagName(val_type val)
 {
    static char s[10];
 
@@ -92,7 +92,7 @@ char * GetTagName(val_type val)
    }
 }
 
-char * GetDataName(val_type val)
+const char * GetDataName(val_type val)
 {
    resource_node *r;
    class_node *c;
@@ -137,7 +137,7 @@ char * GetDataName(val_type val)
 }
 
 
-int GetTagNum(char *tag_str)
+int GetTagNum(const char *tag_str)
 {
    int retval;
    char ch;
@@ -182,7 +182,7 @@ int GetTagNum(char *tag_str)
    return retval;
 }
 
-int GetDataNum(int tag_val,char *data_str)
+int GetDataNum(int tag_val,const char *data_str)
 {
    resource_node *r;
    class_node *c;
@@ -232,20 +232,5 @@ int GetDataNum(int tag_val,char *data_str)
    }
 
    return retval;
-}
-
-Bool BlakMoveFile(char *source,char *dest)
-{
-   if (!CopyFile(source,dest,FALSE))
-   {
-      eprintf("BlakMoveFile error moving %s to %s (%s)\n",source,dest,GetLastErrorStr());
-      return False;
-   }
-   if (!DeleteFile(source))
-   {
-      eprintf("BlakMoveFile error deleting %s (%s)\n",source,GetLastErrorStr());
-      return False;
-   }
-   return True;
 }
 

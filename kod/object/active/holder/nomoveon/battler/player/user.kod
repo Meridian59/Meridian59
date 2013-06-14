@@ -686,6 +686,14 @@ messages:
       {
          % Reset our logoff penalty time since we're logging safely.
          piLogoffPenaltyTime = 0;
+         
+         % If enabled and and a player logs off in a safe zone he will lose half his mana and all buffs
+         if Send(Send(SYS, @GetSettings), @LogSafePenaltyEnable)
+            AND Send(SYS, @GetLogoffPenaltyEnable)
+         {
+            Send(self,@LoseMana,#amount=(piMana/2));
+            Send(Send(SYS,@FindSpellByNum,#num=SID_PURGE),@DoPurge,#who=self,#iChance=100);
+         }
       }
       
       if piLogoffPenaltyCount < 0
@@ -3672,8 +3680,6 @@ messages:
    "Sent by client when they're blocking messages from a user, and that "
    "user Sends a message."
    {
-      Send(what,@MsgSendUser,#message_rsc=user_blocked_send,
-           #parm1=Send(self,@GetTrueName));
 
       return;
    }
@@ -5995,6 +6001,16 @@ messages:
             Send(self,@ToCliPlayer);
             Send(self,@ToCliRoomContents);
          }
+      }
+      
+      % This is intended to protect players from wall spells stacked on entrances. It will clear
+      % out a small space when they enter the zone, so that they don't appear in the middle of a wall spell.
+      if old <> $
+         AND Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         AND Send(Send(self,@GetOwner), @AllowGuildAttack,#what=self)
+         AND NOT IsClass(self,&DM)
+      {
+         Send(Send(self,@GetOwner),@DeleteWallsAroundBattler,#who=self);
       }
       
       propagate;

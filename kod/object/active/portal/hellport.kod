@@ -27,7 +27,7 @@ resources:
    hellportal_tos = "the bustling bar of Familiars"
    hellportal_marion = "the laid-back atmosphere of the Limping Toad"
    hellportal_jasper = "the quiet Yonder Inn of Jasper"
-   hellportal_cornoth = "the lazy happenings in the Ciblo Creek Inn"
+   hellportal_cornoth = "the lazy happenings in the Cibilo Creek Inn"
    hellportal_barloque = "the fine Brownstone Inn in a bustling Barloque"
 
    hellportal_kocatan = "the sturdy, island fortress of Ko'catan"
@@ -87,7 +87,7 @@ messages:
 
       oRoom = send(SYS,@FindRoomByNum,#num=chosen);
 
-      % If room doesn't exist, dont' change anything.
+      % If room doesn't exist, don't change anything.
       if oRoom <> $
       {
          piDest_room = chosen;

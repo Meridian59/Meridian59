@@ -34,11 +34,11 @@ int GetTime()
 	return (int)time(NULL);
 }
 
-char * TimeStr(time_t time)
+const char * TimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
-	char *time_format;
+	const char *time_format;
 	
 	if (time == 0)
 		return "Never";
@@ -59,11 +59,11 @@ char * TimeStr(time_t time)
 	return s;
 }
 
-char * ShortTimeStr(time_t time)
+const char * ShortTimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
-	char *time_format;
+	const char *time_format;
 	
 	if (time == 0)
 		return "Never";
@@ -81,7 +81,7 @@ char * ShortTimeStr(time_t time)
 	return s;
 }
 
-char * FileTimeStr(time_t time)
+const char * FileTimeStr(time_t time)
 {
 	struct tm *tm_time;
 	static char s[80];
@@ -97,7 +97,7 @@ char * FileTimeStr(time_t time)
 	return s;
 }
 
-char * RelativeTimeStr(int time)
+const char * RelativeTimeStr(int time)
 {
 	static char s[80];
 	int amount;
@@ -127,6 +127,8 @@ char * RelativeTimeStr(int time)
 
 UINT64 GetMilliCount()
 {
+#ifdef BLAK_PLATFORM_WINDOWS
+   
 	static LARGE_INTEGER frequency;
 	LARGE_INTEGER now;
 
@@ -142,33 +144,15 @@ UINT64 GetMilliCount()
 	QueryPerformanceCounter(&now);
 	return (now.QuadPart*1000)/frequency.QuadPart;
 
-	/*
-	// old version - simple and normal
-	// return (int)timeGetTime();
+#else
 
-	// force rollover for testing
+   struct timeval tv;
+   gettimeofday(&tv, NULL);
+   
+   double time_in_ms = tv.tv_sec * 1000.0 + tv.tv_usec / 1000.0;
 
-	static int first = true;
-	static unsigned int offset;
-	static unsigned int prev_time = 0;
-	unsigned int retval;
-	unsigned int current_time = (int)timeGetTime();
-
-	if (first)
-	{
-		first = false;
-		offset = ~current_time - 20000;
-	}
-
-	retval = current_time + offset;
-
-	if (retval < prev_time)
-	{
-		dprintf("ROLLOVER IN TIME %u %u\n",prev_time,retval);
-	}
-	prev_time = retval;
-
-	return retval;
-	*/
+   return (UINT64) time_in_ms;
+   
+#endif
 }
 

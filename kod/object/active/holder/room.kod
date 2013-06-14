@@ -15,6 +15,11 @@ constants:
    include blakston.khd
    include protocol.khd
 
+   % This determines the size of the circle cleared by the DeleteWallsAroundBattler function.
+   % This is typically called to protect entering players from stumbling into wall spells.
+   % The units are based on the Object class measurements @GetRow and @GetCol.
+   WALL_DELETE_RADIUS = 2
+   
 resources:
 
    room_name_rsc = "Room"
@@ -29,6 +34,7 @@ resources:
       "You cannot cast harmful spells here when someone else is present."
    room_no_pk_allowed = "You cannot attack another player here."
    room_guild_combat = "Only those in guilds may attack each other here."
+   room_no_mob_attack = "You cannot attack monsters here."
 
    room_no_magic_allowed = "You can't cast spells here."
    room_no_spell = "You can't cast spells here."
@@ -1218,6 +1224,17 @@ messages:
          % Anything else is legal in the Arena.
          return TRUE;
       }
+      
+      if (piRoom_flags & ROOM_NO_MOB_COMBAT)
+         AND (IsClass(what,&Monster)
+         OR IsClass(victim,&Monster))
+      {
+         if IsClass(what,&Player)
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_no_mob_attack);
+         }
+         return FALSE;
+      }
 
       if (piRoom_flags & ROOM_NO_COMBAT)
       {
@@ -1319,6 +1336,11 @@ messages:
       {
          Send(who,@MsgSendUser,#message_rsc=room_no_magic_allowed);
 
+         return FALSE;
+      }
+      
+      if (piRoom_flags & ROOM_NO_MOB_COMBAT) AND IsClass(who,&Monster)
+      {
          return FALSE;
       }
 
@@ -3871,6 +3893,48 @@ messages:
       }
 
       return FALSE;
+   }
+
+   DeleteWallsAroundBattler(who=$)
+   "Deletes walls in a small radius around target battler."   
+   {
+      local i, each_obj;
+
+      % Relies on SquaredDistanceTo, a function descended from nomoveon.
+      if NOT IsClass(who,&Battler)
+      {
+         return;
+      }
+
+      % Check each active element, tell the object to delete if it is a wall and too close
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&ActiveWallElement)
+            or IsClass(each_obj,&Brambles)
+         {
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
+            {
+               Post(each_obj,@Delete);
+            }
+         }
+      }
+      
+      % Separate check through plPassive for passive wall elements
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&PassiveWallofFire)
+            OR IsClass(each_obj,&SporeCloud)
+            OR IsClass(each_obj,&PassiveWallofLightning)
+         {
+            if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
+            {
+               Post(each_obj,@Delete);
+            }
+         }
+      }
+      return;
    }
 
 end

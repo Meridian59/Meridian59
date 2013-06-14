@@ -862,7 +862,7 @@ void codegen(char *kod_fname, char *bof_fname)
    codegen_ok = True;
    debug_lines = NULL;
 
-   outfile = open(bof_fname, _O_TRUNC | _O_CREAT | _O_RDWR | _O_BINARY, _S_IWRITE | _S_IREAD);
+   outfile = open(bof_fname, O_TRUNC | O_CREAT | O_RDWR | O_BINARY, S_IWRITE | S_IREAD);
 
    if (outfile == -1)
    {

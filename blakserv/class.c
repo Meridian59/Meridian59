@@ -349,7 +349,7 @@ class_node * GetClassByID(int class_id)
 	return NULL;
 }
 
-class_node * GetClassByName(char *class_name)
+class_node * GetClassByName(const char *class_name)
 {
 	int class_id;
 	Bool found;
@@ -366,7 +366,7 @@ const char * GetPropertyNameByID(class_node *c,int property_id)
 	return SIHashFindByValue(c->property_names,property_id);
 }
 
-int GetPropertyIDByName(class_node *c,char *property_name)
+int GetPropertyIDByName(class_node *c,const char *property_name)
 {
 	int id;
 
@@ -383,7 +383,7 @@ int GetPropertyIDByName(class_node *c,char *property_name)
 	return INVALID_PROPERTY;
 }
 
-int GetClassVarIDByName(class_node *c, char *name)
+int GetClassVarIDByName(class_node *c, const char *name)
 {
 	classvar_name_node *cv;
 
@@ -442,7 +442,7 @@ void ForEachClass(void (*callback_func)(class_node *c))
 	}
 }
 
-char * GetClassDebugStr(class_node *c,int dstr_id)
+const char * GetClassDebugStr(class_node *c,int dstr_id)
 {
 	if (dstr_id > c->dstrs->num_strings)
 	{

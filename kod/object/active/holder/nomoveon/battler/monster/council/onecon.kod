@@ -19,7 +19,7 @@ resources:
 
    oneCouncilor_name_rsc = "Alzahakar"
    oneCouncilor_icon_rsc = onecon.bgf
-   oneCouncilor_desc_rsc = "Renown as the most powerful wizard in the Kingdom, Alzahakar stands proudly "
+   oneCouncilor_desc_rsc = "Renowned as the most powerful wizard in the Kingdom, Alzahakar stands proudly "
       "before you.  You can feel the conflicting will of four separate gods within him.  As one of the "
       "oldest friends of King Zarcos V, he has been counseling the princess since birth."
 

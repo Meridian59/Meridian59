@@ -10,14 +10,23 @@
 #ifndef _BLAKCOMP_H
 #define _BLAKCOMP_H
 
+#ifdef BLAK_PLATFORM_WINDOWS
+#include <io.h>
+#endif
+
+#ifdef BLAK_PLATFORM_LINUX
+#include <unistd.h>
+#define stricmp strcasecmp
+#define O_BINARY 0
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
 #include <fcntl.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <ctype.h>
-#include <io.h>
 #include "util.h"
 #include "table.h"
 
@@ -63,7 +72,7 @@ enum { I_UNDEFINED, I_RESOURCE, I_MESSAGE, I_CLASS, I_PARAMETER, I_LOCAL,
 enum { DBASE = 200, COMPILE = 201 };
 
 typedef struct {
-   char *name;
+   const char *name;
    int type;
    int idnum;
    int ownernum; /* Id # of thing that contains this identifier in its scope.  e.g. if
@@ -197,9 +206,9 @@ typedef struct _class {
 /* Function parameter types --see function.c */
 enum {ANONE=0, AEXPRESSION, AEXPRESSIONS, ASETTING, ASETTINGS};
 typedef struct {
-  char name[MAXFNAME];
-  int  opcode;
-  int  params[MAXARGS];
+   const char name[MAXFNAME];
+   int  opcode;
+   int  params[MAXARGS];
 } function_type;
 
 /* Class & superclass names for warning messages */
@@ -238,7 +247,7 @@ typedef struct {
 
 /*************************** Function prototypes *************************/
 /* utility functions in main.c */
-void yyerror(char *s);
+void yyerror(const char *s);
 char *assemble_string(char *str);
 
 void include_file(char *filename);   
@@ -298,12 +307,12 @@ class_type make_class(class_type c, list_type resources, list_type classvars,
 /* miscellaneous */
 void enter_loop(void);
 void leave_loop(void);
-void action_error(char *fmt, ...);
-void simple_error(char *fmt, ...);
-void simple_warning(char *fmt, ...);
+void action_error(const char *fmt, ...);
+void simple_error(const char *fmt, ...);
+void simple_warning(const char *fmt, ...);
 void initialize_parser(void);
 
-int id_hash(void *info, int table_size);
+int id_hash(const void *info, int table_size);
 int id_compare(void *info1, void *info2);
 int recompile_compare(void *info1, void *info2);
 int class_compare(void *info1, void *info2);

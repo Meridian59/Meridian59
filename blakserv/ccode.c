@@ -25,28 +25,23 @@ static char buf0[LEN_MAX_CLIENT_MSG+1];
 static char buf1[LEN_MAX_CLIENT_MSG+1];
 
 /* just like strstr, except any case-insensitive match will be returned */
-char* stristr(char* pSource, char* pSearch)
+const char* stristr(const char* pSource, const char* pSearch)
 {
-	char cSearch;
-	int nSearch;
+   if (!pSource || !pSearch || !*pSearch)
+      return NULL;
 	
-	if (!pSource || !pSearch || !*pSearch)
-		return NULL;
+   int nSearch = strlen(pSearch);
+   // Don't search past the end of pSource
+   const char *pEnd = pSource + strlen(pSource) - nSearch;
+   while (pSource <= pEnd)
+   {
+      if (0 == strnicmp(pSource, pSearch, nSearch))
+         return pSource;
+
+      pSource++;
+   }
 	
-	cSearch = toupper(*pSearch);
-	nSearch = strlen(pSearch);
-	while (*pSource)
-	{
-		if (toupper(*pSource) == cSearch)
-		{
-			if (0 == memicmp(pSource, pSearch, nSearch))
-				return pSource;
-		}
-		
-		pSource++;
-	}
-	
-	return NULL;
+   return NULL;
 }
 
 
@@ -522,7 +517,7 @@ int C_GetClass(int object_id,local_var_type *local_vars,
 // to the string value and length respectively.  function_name is the C function
 // name used in reporting errors.
 // If the string isn't found (including if val corresponds to NIL), false is returned.
-bool LookupString(val_type val, char *function_name, char **str, int *len)
+bool LookupString(val_type val, const char *function_name, const char **str, int *len)
 {
 	string_node *snod;
 	resource_node *r;
@@ -597,7 +592,7 @@ int C_StringEqual(int object_id,local_var_type *local_vars,
 				  int num_name_parms,parm_node name_parm_array[])
 {
 	val_type s1_val,s2_val,ret_val;
-	char *s1,*s2;
+	const char *s1,*s2;
 	int len1,len2;
 	
 	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -632,7 +627,7 @@ int C_StringEqual(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
-void FuzzyCollapseString(char* pTarget, char* pSource, int len)
+void FuzzyCollapseString(char* pTarget, const char* pSource, int len)
 {
 	if (!pTarget || !pSource || len <= 0)
 	{
@@ -654,7 +649,7 @@ void FuzzyCollapseString(char* pTarget, char* pSource, int len)
 	*pTarget = '\0';
 }
 
-bool FuzzyBufferEqual(char *s1,int len1,char *s2,int len2)
+bool FuzzyBufferEqual(const char *s1,int len1,const char *s2,int len2)
 {
 	if (!s1 || !s2 || len1 <= 0 || len2 <= 0)
 		return false;
@@ -694,7 +689,8 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 	val_type s0_val, s1_val, s2_val, r_val;
 	string_node *snod0, *snod1;
 	char buf0[LEN_MAX_CLIENT_MSG+1], buf1[LEN_MAX_CLIENT_MSG+1];
-	char *s0, *s1, *s2, *subspot, *copyspot;
+	char *s0, *copyspot;
+   const char *s1, *s2, *subspot;
 	int len1, len2, new_len;
 	resource_node *r;
 	
@@ -733,8 +729,8 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		
 		// make a zero-terminated scratch copy of string1
 		len1 = snod1->len_data;
-		memcpy( s1, snod1->data, len1 );
-		s1[len1+1] = 0x0;
+		memcpy( buf1, snod1->data, len1 );
+		buf1[len1+1] = 0x0;
 		break;
 		
 	case TAG_TEMP_STRING :
@@ -742,8 +738,8 @@ int C_StringSubstitute(int object_id,local_var_type *local_vars,
 		
 		// make a zero-terminated scratch copy of string1
 		len1 = snod1->len_data;
-		memcpy( s1, snod1->data, len1 );
-		s1[len1+1] = 0x0;
+		memcpy( buf1, snod1->data, len1 );
+		buf1[len1+1] = 0x0;
 		break;
 		
 	case TAG_RESOURCE :
@@ -862,7 +858,7 @@ int C_StringContain(int object_id,local_var_type *local_vars,
 					int num_name_parms,parm_node name_parm_array[])
 {
 	val_type s1_val,s2_val,ret_val;
-	char *s1,*s2;
+	const char *s1,*s2;
 	int len1,len2;
 	
 	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -905,7 +901,7 @@ int C_StringContain(int object_id,local_var_type *local_vars,
 
 // return true if s1 contains s2,
 //	first converting to uppercase and squashing tabs and spaces to a single space
-bool FuzzyBufferContain(char *s1,int len_s1,char *s2,int len_s2)
+bool FuzzyBufferContain(const char *s1,int len_s1,const char *s2,int len_s2)
 {
 	if (!s1 || !s2 || len_s1 <= 0 || len_s1 <= 0)
 		return false;
@@ -990,7 +986,7 @@ int C_ParseString(int object_id,local_var_type *local_vars,
 	val_type parse_str_val,separator_str_val,callback_val,string_val;
 	parm_node p[1];
 	string_node *snod;
-	char *separators;
+	const char *separators;
 	kod_statistics *kstat;
 	class_node *c;
 	char *each_str;
@@ -1021,7 +1017,7 @@ int C_ParseString(int object_id,local_var_type *local_vars,
 	
 	snod = GetTempString();
 	/* null terminate it to do strtok */
-	snod->data[min(LEN_TEMP_STRING-1,snod->len_data)] = 0;
+	snod->data[std::min(LEN_TEMP_STRING-1,snod->len_data)] = 0;
 	
 	separator_str_val = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
 		normal_parm_array[1].value);
@@ -1204,7 +1200,7 @@ int C_AppendTempString(int object_id,local_var_type *local_vars,
 		{
 			kod_statistics *kstat = GetKodStats();
 			class_node *c = GetClassByID(kstat->interpreting_class);
-			char *pStrConst;
+			const char *pStrConst;
 			int strLen = 0;
 			
 			if (c == NULL)
@@ -1255,7 +1251,7 @@ int C_StringLength(int object_id,local_var_type *local_vars,
 				   int num_name_parms,parm_node name_parm_array[])
 {
 	val_type s1_val,ret_val;
-	char *s1;
+	const char *s1;
 	int len;
 	
 	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
@@ -1274,7 +1270,7 @@ int C_StringConsistsOf(int object_id,local_var_type *local_vars,
                        int num_name_parms,parm_node name_parm_array[])
 {
 	val_type s1_val,s2_val,ret_val;
-	char *s1,*s2;
+	const char *s1,*s2;
 	int len1,len2;
 	
 	s1_val = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,

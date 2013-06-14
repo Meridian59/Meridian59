@@ -288,6 +288,31 @@
    PT_ALLWHITE       = 0x0079
    PT_ALLRED         = 0x004A
 
+   % Item single translations: blue to color. These won't work for double XLAT items
+   % that include skin colors. These will best be used to dynamically color parts of items
+   % specifically constructed to take advantage of these translations.
+   PT_ITEM_XLAT_BLUE_TO_ORANGE    = 0x96
+   PT_ITEM_XLAT_BLUE_TO_GREEN     = 0x97
+   PT_ITEM_XLAT_BLUE_TO_BLUE      = 0x98
+   PT_ITEM_XLAT_BLUE_TO_PURPLE    = 0x99
+   PT_ITEM_XLAT_BLUE_TO_YELLOW    = 0x9A
+   PT_ITEM_XLAT_BLUE_TO_WHITE     = 0x9B
+   PT_ITEM_XLAT_BLUE_TO_SKY       = 0x9C
+   PT_ITEM_XLAT_BLUE_TO_RED       = 0x9D
+   PT_ITEM_XLAT_BLUE_TO_SKIN1     = 0x9E
+   PT_ITEM_XLAT_BLUE_TO_SKIN2     = 0x9F
+   PT_ITEM_XLAT_BLUE_TO_SKIN4     = 0xA0
+
+   % Metallic and other colors added for more flexibility
+   % with coloring items using constants
+   PT_MET_RED        = 0x004D       % metallic red #77
+   PT_MET_BLUE       = 0x004E       % metallic blue #78
+   PT_MET_GREEN      = 0x004F       % metallic green #79
+   PT_FRST_WHT1      = 0x0073		
+   PT_FRST_WHT2      = 0x0075		
+   PT_FRST_WHT3      = 0x0076       % Frosted White = Grading white from normal to PT_ALLWHITE
+   PT_FRST_WHT4      = 0x0077
+   
    %%% Sound constants
 
    SOUND_LOOP = 1
@@ -309,6 +334,7 @@
    NID_ANNOUNCEMENTS = 9
    NID_GUILD_CHARTER = 10
    NID_GODROOM = 14
+   NID_GUILD_NEWS = 15
 
    % NOTE: Guilds now use their RID_ numbers as their NIDs.  Do not assign them
    %  their own NID.
@@ -1022,6 +1048,8 @@
    ROOM_TRIPLE_HEAL   = 0x2000
    % Jig (Jala spell) kills monster gen and disallows item use.
    ROOM_JIG           = 0x4000
+   % Prevents monsters from fighting, but doesn't stop players
+   ROOM_NO_MOB_COMBAT = 0x8000
 
    % Terrain constants, used to tell what type of terrain the room is.
    TERRAIN_GUILDHALL = 0x0000001

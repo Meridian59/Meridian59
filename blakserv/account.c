@@ -34,7 +34,8 @@ void InitAccount(void)
    console_account = &console_account_node;
    console_account->account_id = 0;
    console_account->name = ConfigStr(CONSOLE_ADMINISTRATOR);
-   console_account->password = "";
+   console_account->password = (char *)AllocateMemory(MALLOC_ID_ACCOUNT,1);
+   console_account->password[0] = 0;
 
    console_account->type = ACCOUNT_ADMIN;
    console_account->last_login_time = 0;
@@ -373,7 +374,7 @@ Bool SuspendAccountRelative(account_node *a, int hours)
     * if suspended, hours is relative to their current suspension.
     */
 
-   suspend_time = max(GetTime(), a->suspend_time) + hours*60*60;
+   suspend_time = std::max(GetTime(), a->suspend_time) + hours*60*60;
 
    return SuspendAccountAbsolute(a, suspend_time);
 }

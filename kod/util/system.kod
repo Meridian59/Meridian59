@@ -59,6 +59,12 @@ resources:
    system_user_killed_shield = "### %q was bested by faction rival %s%q."
    system_user_killed_guild = \
       "### %q of %s%q has been slaughtered by %s%q of %s%q in guild combat."
+      
+   guildwar_kill_title1 = " has slaughtered "
+   guildwar_kill_body1 = "Let it be known that "
+   guildwar_kill_body2 = " of the "
+   guildwar_kill_body3 = " has been slaughtered by "
+   guildwar_kill_body4 = " in guild combat."
 
    system_admin_message = "%q"
 
@@ -333,11 +339,6 @@ properties:
    % At this value of the player's penalty counter, penalties are as severe as
    %  death.
    piLogoffPenaltyEquivDeath = 10
-
-   % How long do ghosts stick around, on average?
-   % If this changes, alter ATTACKED_PLAYER_WAIT in player.kod
-   % Time: Ten minutes (in seconds)
-   piLogoffPenaltyGhostTime = 10 * 60
 
    ptLogoffPenaltyTempDisable = $
    ptServerPopulationMonitor = $
@@ -1460,7 +1461,8 @@ messages:
    UserKilled(what = $,killer = $)
    {
       local i, rMessage, bMurder, oSoldierShield, oToken, oGuild, oKillerGuild,
-            param2, param3, param4, param5, param6, param7, type5, type7;
+            param2, param3, param4, param5, param6, param7, type5, type7,
+            war_string1, war_string2, oBook, oMaster;
 
       if IsClass(what,&Guest)
          OR (killer = $)
@@ -1576,11 +1578,37 @@ messages:
                   param2 = Send(oGuild,@GetDef);
                   param3 = Send(oGuild,@GetName);
                   param4 = Send(killer,@GetIndef);
-                  param5 = Send(killer,@GetName);
+                  param5 = Send(killer,@GetTrueName);
                   param6 = Send(oKillerGuild,@GetDef);
                   param7 = Send(oKillerGuild,@GetName);
                   type5 = STRING_RESOURCE;
                   type7 = STRING_RESOURCE;
+                  
+                  % Post this death to the Guild War Standings book in Guildmasters.
+                  
+                  ClearTempString();
+                  AppendTempString(param5);
+                  AppendTempString(guildwar_kill_title1);
+                  AppendTempString(Send(what,@GetTrueName));
+                  war_string1 = CreateString();
+                  setString(war_string1,GetTempString());
+                  
+                  ClearTempString();
+                  AppendTempString(guildwar_kill_body1);
+                  AppendTempString(Send(what,@GetTrueName));
+                  AppendTempString(guildwar_kill_body2);
+                  AppendTempString(param3);
+                  AppendTempString(guildwar_kill_body3);
+                  AppendTempString(param5);
+                  AppendTempString(guildwar_kill_body2);
+                  AppendTempString(param7);
+                  AppendTempString(guildwar_kill_body4);
+                  war_string2 = CreateString();
+                  setString(war_string2,GetTempString());
+                  
+                  oBook = Send(SYS,@FindNewsByNum,#num=NID_GUILD_NEWS);
+                  oMaster = Send(Send(SYS,@FindRoomByNum, #num=RID_GMHALL),@GetMaster);
+                  Send(oBook,@PostNews,#what=oMaster,#title=war_string1,#body=war_string2);
                }
 
                % Notify who killed whom during frenzies.
@@ -4762,6 +4790,7 @@ messages:
       plItemTemplates = cons(create(&OfferingQor),plItemTemplates);
       plItemTemplates = cons(create(&OfferingShalille),plItemTemplates);
       plItemTemplates = cons(create(&OfferingKraanan),plItemTemplates);
+      plItemTemplates = cons(create(&OfferingJala),plItemTemplates);
 
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);
@@ -5028,6 +5057,69 @@ messages:
       }
 
       return;
+   }
+
+   RoomGive(classtype=$, number=-1, who=$)
+   "Admin supported.\n"
+   "Give one of said item to everyone in the room. If num <> -1 and the object "
+   "is a number item, give that many of the item to each person.  RoomGive ignores all "
+   "reqnewhold requirements (such as bulk or weight restrictions)."
+   {
+      local i, lGiveList, oExample, oRoom, each_obj, num_rewarded;
+
+      num_rewarded = 0;
+
+      if who = $
+      {
+         return 0;
+      }
+
+      oRoom = Send(who,@GetOwner);
+
+      if classtype <> $
+      {
+         if number = -1
+         {
+            oExample = Create(classtype);
+         }
+         else
+         {
+            oExample = Create(classtype,#number=number);
+         }
+
+         if NOT isClass(oExample,&item)
+         {
+            Debug("Tried to RoomGive something that was not an item!");
+
+            return 0;
+         }
+
+         lGiveList = Send(oRoom,@GetHolderActive);
+
+         for i in lGiveList
+         {
+            each_obj = send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+               AND NOT IsClass(each_obj,&DM)
+               AND Send(each_obj,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            {
+               if number <> -1
+               {
+                  Send(each_obj,@newhold,#what=Create(Classtype,#number=number));
+               }
+               else
+               {
+                  Send(each_obj,@newhold,#what=Create(Classtype));
+               }
+               Send(each_obj,@MsgSendUser,#Message_rsc=system_gift,
+                    #parm1=Send(oExample,@GetIndef),
+                    #parm2=Send(oExample,@GetName));
+               num_rewarded = num_rewarded + 1;
+            }
+         }
+      }
+
+      return num_rewarded;
    }
 
    AddChestToList(oChest=$)
@@ -5662,6 +5754,37 @@ messages:
       return getTempString();
    }
 
+   GetNumberFromString(string = $)
+   "Gets the lowest number found in a string. Returns -1 if no number is found. "
+   "Only finds values zero to twelve, then ten, twenty, thirty... up to a hundred."
+   {
+      if string = $ {return -1;}
+      if (StringContain(string,system_cardinal_0)) {return 0;}
+      if (StringContain(string,system_cardinal_1)) {return 1;}
+      if (StringContain(string,system_cardinal_2)) {return 2;}
+      if (StringContain(string,system_cardinal_3)) {return 3;}
+      if (StringContain(string,system_cardinal_4)) {return 4;}
+      if (StringContain(string,system_cardinal_5)) {return 5;}
+      if (StringContain(string,system_cardinal_6)) {return 6;}
+      if (StringContain(string,system_cardinal_7)) {return 7;}
+      if (StringContain(string,system_cardinal_8)) {return 8;}
+      if (StringContain(string,system_cardinal_9)) {return 9;}
+      if (StringContain(string,system_cardinal_10)) {return 10;}
+      if (StringContain(string,system_cardinal_11)) {return 11;}
+      if (StringContain(string,system_cardinal_12)) {return 12;}
+      if (StringContain(string,system_cardinal_20)) {return 20;}
+      if (StringContain(string,system_cardinal_30)) {return 30;}
+      if (StringContain(string,system_cardinal_40)) {return 40;}
+      if (StringContain(string,system_cardinal_50)) {return 50;}
+      if (StringContain(string,system_cardinal_60)) {return 60;}
+      if (StringContain(string,system_cardinal_70)) {return 70;}
+      if (StringContain(string,system_cardinal_80)) {return 80;}
+      if (StringContain(string,system_cardinal_90)) {return 90;}
+      if (StringContain(string,system_cardinal_100)) {return 100;}
+
+      return -1;
+   }
+
    GetLogoffPenaltyEnable()
    {
       if ptLogoffPenaltyTempDisable = $
@@ -5690,7 +5813,7 @@ messages:
 
    GetLogoffPenaltyGhostTime()
    {
-      return piLogoffPenaltyGhostTime;
+      return Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime);
    }
 
    TempDisableLogoffPenalties()
@@ -5703,7 +5826,7 @@ messages:
          ptLogoffPenaltyTempDisable = $;
       }
 
-      iDisableDuration = (piLogoffPenaltyGhostTime*150)/100;
+      iDisableDuration = (Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime)*150)/100;
       iDisableDuration = iDisableDuration * 1000;   % convert to ms
 
       ptLogoffPenaltyTempDisable = createTimer(self,@LogoffPenaltyTempDisableTrigger,iDisableDuration);

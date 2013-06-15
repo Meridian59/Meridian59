@@ -48,9 +48,9 @@ resources:
    DarkAngel_dead_icon_rsc = angelX.bgf
    DarkAngel_dead_name_rsc = "dead dark angel"
 
-   DarkAngel_sound_attack = dangatk.wav
-   DarkAngel_sound_death = dangdth.wav
-   DarkAngel_sound_aware = dangawr.wav
+   DarkAngel_sound_attack = df_atkm.wav
+   DarkAngel_sound_death = df_dth.wav
+   DarkAngel_sound_aware = df_awr.wav
 
    DarkAngel_fireball = fireball.bgf
 

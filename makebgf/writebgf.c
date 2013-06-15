@@ -10,8 +10,10 @@
  */
 
 #include "makebgf.h"
+#include "zlib.h"
 
-#define VERSION 9
+#define VERSION 10
+
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
 
 typedef struct
@@ -178,8 +180,12 @@ BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options)
 
    if (options->compress)
    {
-      len = WrapCompress((char *) buf, f->ptr + 5, width * height);
-      if (len > 0)
+	  // use approximately width*height also for destlen
+	  // like EstimateBGFFileSize does
+	  uLongf destlen = width * height;
+	  len = compress2((Bytef*)f->ptr, &destlen, buf, width * height, Z_BEST_SPEED);
+      
+	  if (len > 0)
       {
          byte = 1;
          // Save compressed length

@@ -85,6 +85,8 @@ properties:
    piRoom_num = RID_MARION
 
    prMusic = mar_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

@@ -51,6 +51,8 @@ properties:
    piOutside_factor = OUTDOORS_SOME
 
    prMusic = marinn_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

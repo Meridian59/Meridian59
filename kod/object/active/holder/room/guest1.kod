@@ -65,6 +65,8 @@ properties:
    viTerrain_type = TERRAIN_CITY | TERRAIN_SHOP
 
    prMusic = guest1_music
+   
+   pbAllowNewbies = TRUE
 
 messages:
 

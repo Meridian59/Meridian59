@@ -221,6 +221,8 @@ properties:
    piBlueHeartstone = 4
    piBrownHeartstone = 4
    piSkyHeartstone = 4
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

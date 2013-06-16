@@ -42,6 +42,8 @@ properties:
 
    plTombstones = $
    viTerrain_type = TERRAIN_CITY | TERRAIN_MYSTICAL
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

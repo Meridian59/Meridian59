@@ -45,6 +45,8 @@ properties:
 
    piGen_time = 80000
    piGen_percent = 80
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

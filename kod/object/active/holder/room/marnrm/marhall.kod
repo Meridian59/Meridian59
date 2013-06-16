@@ -138,6 +138,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = marhall_music
+   
+   pbAllowNewbies = TRUE
 
 messages:
 

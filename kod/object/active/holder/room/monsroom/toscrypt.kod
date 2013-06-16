@@ -36,6 +36,8 @@ properties:
    prMusic = music_toscrypt
 
    piBaseLight = LIGHT_VERY_DARK
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

@@ -39,6 +39,8 @@ properties:
    piRoom_num = RID_BADLAND2
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

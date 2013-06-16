@@ -43,6 +43,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = weaponsmaster_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

@@ -40,6 +40,8 @@ properties:
 
 
    prMusic = MarionElderHut_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

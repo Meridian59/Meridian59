@@ -44,6 +44,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = corhall_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

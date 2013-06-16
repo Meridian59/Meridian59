@@ -45,6 +45,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = tosbank_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

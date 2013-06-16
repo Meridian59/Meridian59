@@ -42,6 +42,8 @@ properties:
    piBaseLight = LIGHT_NICE
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+      
+   pbAllowNewbies = TRUE
 
 
 messages:

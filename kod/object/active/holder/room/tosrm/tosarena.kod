@@ -116,6 +116,8 @@ properties:
 
    pbLocked = FALSE
    pbRealdeath = FALSE
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

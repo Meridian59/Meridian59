@@ -48,6 +48,8 @@ properties:
 
    piInit_count_min = 1
    piInit_count_max = 5
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

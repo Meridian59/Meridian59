@@ -48,6 +48,8 @@ properties:
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
 
    prMusic = tos_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

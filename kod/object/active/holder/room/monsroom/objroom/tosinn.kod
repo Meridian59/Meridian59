@@ -49,6 +49,8 @@ properties:
    piOutside_factor = OUTDOORS_SOME
 
    prMusic = tosinn_music
+   
+   pbAllowNewbies = TRUE
 
 messages:
 

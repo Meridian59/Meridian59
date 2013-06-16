@@ -164,6 +164,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = tosapoth_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

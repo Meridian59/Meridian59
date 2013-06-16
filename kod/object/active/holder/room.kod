@@ -152,6 +152,9 @@ resources:
 
    no_use_jig = \
       "You can't wield that - it would interfere with your funky moves!"
+      
+   guardian_angel_returned_to_marion = \
+      "Your guardian angel intervenes, returning you to safety."
 
 classvars:
 
@@ -265,6 +268,8 @@ properties:
    % Don't set this.  It is set automatically.
    % Instead, override something in SetFarenBonus.
    piFaren_Bonus
+   
+   pbAllowNewbies = FALSE
 
 messages:
 
@@ -1699,7 +1704,7 @@ messages:
            fine_row = FINENESS/2, fine_col = FINENESS/2, session = $,
            merge = TRUE)
    {
-      local i,each_obj,bUser, lLoopSound;
+      local i,each_obj,bUser, lLoopSound, oTargetRoom;
 
       if what = $
       {
@@ -1743,6 +1748,19 @@ messages:
          
          Send(Send(SYS, @GetStatistics), @PlayerEnteredRoom,
               #oRoom = self, #who = what);
+      
+         % Newbies always go to Marion Inn if they somehow end up outside their bounds.
+         if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+            AND NOT Send(self,@AllowNewbies)
+            AND NOT (Send(self,@GetRegion) = RID_NEWB_BASE
+                     OR Send(self,@GetRegion) = RID_OUTOFGRACE
+                     OR Send(self,@GetRegion) = RID_GUEST_BASE)
+         {
+            oTargetRoom = send(SYS,@FindRoomByNum,#num=RID_MAR_INN);
+            post(oTargetRoom,@Teleport,#what=what);
+            post(what,@MsgSendUser,#message_rsc=guardian_angel_returned_to_marion);
+            return;
+         }
       }
 
       Send(self,@NewHoldObject,#what=what,
@@ -3935,6 +3953,12 @@ messages:
          }
       }
       return;
+   }
+   
+   AllowNewbies()
+   "Returns true if angeled characters are allowed within. Default false for most rooms."
+   {
+      return pbAllowNewbies;
    }
 
 end

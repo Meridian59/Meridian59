@@ -106,6 +106,9 @@ properties:
    plItem_attributes = $
 
    piItem_flags = 0
+   
+   % Tracks items created or dropped during admin events
+   pbEventItem = false
 
 messages:
 
@@ -1695,5 +1698,16 @@ messages:
       return FALSE;
    }
 
+   SetEventItem(value=false)
+   {
+      pbEventItem = value;
+      return;
+   }
+   
+   GetEventItem()
+   {
+      return pbEventItem;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

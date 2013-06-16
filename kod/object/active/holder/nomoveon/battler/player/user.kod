@@ -294,6 +294,8 @@ resources:
    user_guildofficer_rsc = "guildofficer"
 
    user_default_url = "http://www.Meridian59.com/"
+   
+   event_item_cant_get = "You're not strong enough to pick up event items."
 
 classvars:
 
@@ -3558,6 +3560,14 @@ messages:
               
          return;
       }
+      
+      % Prevent angeled characters from picking up event items
+      If Send(what,@GetEventItem)
+         AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         Send(self,@MsgSendUser,#message_rsc=event_item_cant_get);
+         return;
+      }      
 
       lItem_pos = Send(what,@GetPos);
       if lItem_pos = $
@@ -3671,6 +3681,9 @@ messages:
          }        
       }
 
+      % Remove event flag if user successfully picks up item
+      Send(what,@SetEventItem,#value=FALSE);
+         
       Send(self,@NewHold,#what=what);
       
       return;
@@ -3729,6 +3742,11 @@ messages:
          {
             Send(poOwner,@NewHold,#what=oNumber,#new_row=piRow,#new_col=piCol,
                  #fine_row=piFine_row,#fine_col=piFine_col);
+
+            if IsClass(self,&DM)
+            {
+               Send(oNumber,@SetEventItem,#value=TRUE);
+            }
          }
          else
          {
@@ -3746,6 +3764,11 @@ messages:
       {
          Send(poOwner,@NewHold,#what=what,#new_row=piRow,#new_col=piCol,
               #fine_row=piFine_row,#fine_col=piFine_col);
+              
+         if IsClass(self,&DM)
+         {
+            Send(what,@SetEventItem,#value=TRUE);
+         }
       }
       
       return;

@@ -102,7 +102,7 @@ messages:
 
       % Ask room if we're allowed to cast here.  For example, portals into 
       % guild halls are a bad idea.
-      if (NOT send(send(oPrism, @GetOwner), @CanHavePlayerPortal, #who=oCaster))
+      if (NOT send(send(oPrism, @GetOwner), @CanHavePlayerPortal))
       {
          for oCaster in lCasters
          {

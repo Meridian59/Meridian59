@@ -109,7 +109,7 @@ messages:
       return FALSE;
    }
 
-   CanHavePlayerPortal(who = $)
+   CanHavePlayerPortal()
    {
       return FALSE;
    }

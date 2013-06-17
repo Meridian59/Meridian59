@@ -7,6 +7,7 @@
 
 #include "dibutil.h"
 #include "wrap.h"
+#include "zlib.h"
 
 typedef struct
 {
@@ -18,7 +19,9 @@ typedef struct
 } file_node;
 
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
+
 #define BGF_VERSION 8
+#define BGF_VERSION_ZLIB 10
 
 static int version;   // Version of file being loaded
 
@@ -249,11 +252,23 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       break;
    case 1:
       if (MappedFileRead(f, &compressed_length, 4) != 4) return False;
-      if (!WrapDecompress(f->ptr, compressed_length, bits, length))
-      {
-         dprintf("DibReadBits error during decompression\n");
-         return False;
-      }
+      
+	  // old crusher compression
+	  if (version < BGF_VERSION_ZLIB)
+	  {
+		  if (!WrapDecompress(f->ptr, compressed_length, (char *) bits, length))
+		  {
+			 debug(("DibReadBits error during decompression\n"));
+			 return False;
+		  }		  
+	  }
+	  // zlib based compression
+	  else
+	  {
+		  uLongf len = length;
+		  uncompress((Bytef*)bits, &len, (const Bytef*)f->ptr, compressed_length);
+	  }
+
       f->ptr += compressed_length;
       break;
    default:

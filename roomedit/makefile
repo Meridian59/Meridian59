@@ -79,6 +79,7 @@ LIBS = \
 	owlwf.lib \
 	import32.lib \
 	cw32.lib \
+	$(TOPDIR)\lib\zdll.lib \
 	$(TOPDIR)\lib\wrap.lib
 
 windeu32.exe : makedirs $(OBJS) OBJ\windeapp.res

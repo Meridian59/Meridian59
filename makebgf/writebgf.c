@@ -182,7 +182,7 @@ BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options)
       // use approximately width*height also for destlen
       // like EstimateBGFFileSize does
       uLongf destlen = width * height;
-      len = compress2((Bytef*)f->ptr, &destlen, buf, width * height, Z_BEST_SPEED);
+      len = compress2((Bytef*)f->ptr, &destlen, buf, width * height, Z_BEST_COMPRESSION);
       
       if (len > 0) 
       {

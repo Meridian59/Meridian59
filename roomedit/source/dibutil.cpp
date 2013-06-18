@@ -6,7 +6,6 @@
 #pragma hdrstop
 
 #include "dibutil.h"
-#include "wrap.h"
 #include "zlib.h"
 
 typedef struct
@@ -254,11 +253,8 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       // old crusher compression
       if (version < BGF_VERSION_ZLIB)
       {
-        if (!WrapDecompress(f->ptr, compressed_length, (char *) bits, length))
-        {
-          dprintf(("DibReadBits error during decompression\n"));
-          return False;
-        }      
+        dprintf(("BGF version < 10 not supported anymore.\n"));
+        return False;         
       }
       // zlib based compression
       else

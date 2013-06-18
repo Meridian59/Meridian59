@@ -256,7 +256,7 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       {
         if (!WrapDecompress(f->ptr, compressed_length, (char *) bits, length))
         {
-          debug(("DibReadBits error during decompression\n"));
+          dprintf(("DibReadBits error during decompression\n"));
           return False;
         }      
       }

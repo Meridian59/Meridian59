@@ -18,8 +18,7 @@ typedef struct
 } file_node;
 
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
-#define BGF_VERSION 8
-#define BGF_VERSION_ZLIB 10
+#define BGF_VERSION 10
 
 static int version;   // Version of file being loaded
 
@@ -251,7 +250,7 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
    case 1:
       if (MappedFileRead(f, &compressed_length, 4) != 4) return False;
       // old crusher compression
-      if (version < BGF_VERSION_ZLIB)
+      if (version < BGF_VERSION)
       {
         dprintf(("BGF version < 10 not supported anymore.\n"));
         return False;         

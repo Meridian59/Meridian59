@@ -14,8 +14,7 @@
 
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
 
-#define BGF_VERSION 8
-#define BGF_VERSION_ZLIB 10
+#define BGF_VERSION 10
 
 static Bool DibOpenFileReal(char *szFile, Bitmaps *b);
 static Bool DibReadBits(file_node *f, PDIB pdib, int version);
@@ -254,13 +253,10 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       if (CliMappedFileRead(f, &compressed_length, 4) != 4) return False;
       
 	  // old crusher compression
-      if (version < BGF_VERSION_ZLIB)
+      if (version < BGF_VERSION)
       {
-        if (!WrapDecompress(f->ptr, compressed_length, (char *) bits, length))
-        {
-          debug(("DibReadBits error during decompression\n"));
-          return False;
-        }      
+		  debug(("BGF version < 10 not supported \n"));
+          return False;   
       }
       // zlib based compression
       else

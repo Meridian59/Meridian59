@@ -251,20 +251,10 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       break;
    case 1:
       if (CliMappedFileRead(f, &compressed_length, 4) != 4) return False;
-      
-	  // old crusher compression
-      if (version < BGF_VERSION)
-      {
-		  debug(("BGF version < 10 not supported \n"));
-          return False;   
-      }
-      // zlib based compression
-      else
-      {
-        uLongf len = length;
-        uncompress((Bytef*)bits, &len, (const Bytef*)f->ptr, compressed_length);
-      }
-	  
+        
+      uLongf len = length;
+      uncompress((Bytef*)bits, &len, (const Bytef*)f->ptr, compressed_length);
+      	  
 	  f->ptr += compressed_length;	  
       break;
    

@@ -37,12 +37,13 @@
 #define CM_PROGRESS   (WM_USER + 1006)
 
 #include "resource.h"
-
-#include "wrap.h"
-
 #include "archiveold.h"
 #include "util.h"
 #include "transfer.h"
+
+/* libarchive */
+#include "archive.h"
+#include "archive_entry.h"
 
 #define sprintf wsprintf
 

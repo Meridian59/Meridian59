@@ -13,6 +13,6 @@
 #define _ARCHIVE_H
 
 void Dearchive(char *dest_path, char *filename);
-bool UnarchiveProgressCallback(const char *filename, ExtractionStatus status);
+//bool UnarchiveProgressCallback(const char *filename, ExtractionStatus status);
 
 #endif _ARCHIVE_H

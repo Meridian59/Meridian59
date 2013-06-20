@@ -5121,6 +5121,65 @@ messages:
       return num_rewarded;
    }
 
+   GlobalTreasure(classtype=$, number=-1)
+   "Admin supported.\n"
+   "Give one of said item to every monster in the world. If num <> -1 and the object "
+   "is a number item, give that many of the item to each monster.  GlobalTreasure ignores all "
+   "reqnewhold requirements (such as bulk or weight restrictions)."
+   {
+      local i, n, lGiveList, oExample, oRoom, each_obj, num_rewarded;
+
+      num_rewarded = 0;
+
+      if classtype <> $
+      {
+         if number = -1
+         {
+            oExample = Create(classtype);
+         }
+         else
+         {
+            oExample = Create(classtype,#number=number);
+         }
+
+         if NOT isClass(oExample,&item)
+         {
+            Debug("Tried to GlobalTreasure something that was not an item!");
+
+            return 0;
+         }
+
+         for n in plRooms
+         {
+            if IsClass(n,&MonsterRoom)
+            {
+               Send(n,@TryCreateMonster);
+               Send(n,@TryCreateMonster);
+               Send(n,@TryCreateMonster);
+               
+               lGiveList = Send(n,@GetHolderActive);
+
+               for i in lGiveList
+               {
+                  each_obj = send(n,@HolderExtractObject,#data=i);
+                  if IsClass(each_obj,&Monster)
+                  {
+                     if number <> -1
+                     {
+                        Send(each_obj,@NewHold,#what=Create(Classtype,#number=number));
+                     }
+                     else
+                     {
+                        Send(each_obj,@NewHold,#what=Create(Classtype));
+                     }
+                  }
+               }
+            }
+         }
+      }
+      return 1;
+   }
+
    AddChestToList(oChest=$)
    "Adds chest objects or box objects to list of chests and boxes."
    {

@@ -40,7 +40,7 @@
 
 #include "wrap.h"
 
-#include "archive.h"
+#include "archiveold.h"
 #include "util.h"
 #include "transfer.h"
 

@@ -49,7 +49,7 @@ static void AbortDownloadDialog(void);
 static Bool DownloadDone(DownloadFileInfo *file_info);
 static Bool DownloadDeleteFile(char *filename);
 static Bool DownloadUncrushFile(char *zip_name, char *dir);
-static bool DownloadProgressCallback(const char *filename, ExtractionStatus status);
+//static bool DownloadProgressCallback(const char *filename, ExtractionStatus status);
 /*****************************************************************************/
 /*
  * DownloadFiles:  Bring up download dialog.
@@ -723,7 +723,7 @@ Bool DownloadUncrushFile(char *zip_name, char *dir)
 /*
  * DownloadProgressCallback:  Callback function for each file in an archive.
  */
-bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
+/*bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
 {
    switch (status)
    {
@@ -763,7 +763,7 @@ bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
       return false;
 
    return true;
-}
+}*/
 
 /*****************************************************************************/
 /*

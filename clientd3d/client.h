@@ -115,8 +115,6 @@ extern "C" {
 
 M59EXPORT void _cdecl dprintf(char *fmt,...);
 
-#include "wrap.h"
-
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>

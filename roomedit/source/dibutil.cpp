@@ -226,6 +226,7 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
 {
    BYTE *bits, type;
    int length, temp, compressed_length;
+   uLongf len;
 
    bits = DibPtr(pdib);
    length = DibWidth(pdib) * DibHeight(pdib);
@@ -250,7 +251,7 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
    case 1:
       if (MappedFileRead(f, &compressed_length, 4) != 4) return False;
       
-      uLongf len = length;
+      len = length;
       uncompress((Bytef*)bits, &len, (const Bytef*)f->ptr, compressed_length);
       	  
 	  f->ptr += compressed_length;	

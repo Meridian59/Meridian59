@@ -227,7 +227,7 @@ messages:
 
    SpellCast(who = $, oSpell = $, lItems = $)
    {
-      local i, bOne, bTwo, bThree, bFour, bFive;
+      local i, bToken;
 
       if not pbPuzzle
       {
@@ -239,50 +239,18 @@ messages:
               OR ((NOT Send(SYS,@IsPKAllowed))
                   AND Send(oSpell,@GetSpellNum) = SID_TRUCE))
       {      
-         bOne = FALSE;
-         bTwo = FALSE;
-         bThree = FALSE;
-         bFour = FALSE;
-         bFive = FALSE;
+         bToken = FALSE;
 
          for i in plPassive
          {
-            if IsClass(First(i),&OneToken)
+            if IsClass(First(i),&Token)
                AND Send(self,@IsInStoneHenge,#what=First(i))
             {
-               bOne = TRUE;
-            }
-
-            if IsClass(First(i),&TwoToken)
-               AND Send(self,@IsInStoneHenge,#what=First(i))
-            {
-               bTwo = TRUE;
-            }
-            
-            if IsClass(First(i),&ThreeToken)
-               AND Send(self,@IsInStoneHenge,#what=First(i))
-            {
-               bThree = TRUE;
-            }
-            
-            if IsClass(First(i),&FourToken)
-               AND Send(self,@IsInStoneHenge,#what=First(i))
-            {
-               bFour = TRUE;
-            }
-            
-            if IsClass(First(i),&FiveToken)
-               AND Send(self,@IsInStoneHenge,#what=First(i))
-            {
-               bFive = TRUE;
+               bToken = TRUE;
             }
          }
 
-         if NOT bOne
-            OR NOT bTwo
-            OR NOT bThree
-            OR NOT bFour
-            OR NOT bFive
+         if NOT bToken
          {
             propagate;
          }

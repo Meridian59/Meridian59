@@ -3849,9 +3849,8 @@ messages:
       return;
    }
 
-   CanHavePlayerPortal(who = $)
+   CanHavePlayerPortal()
    "Return whether it's permissible to have a player-created portal in this room. "
-   "who gives the player trying to create the portal."
    {
       % No portals into "historic" (i.e. inaccessible, dead) areas
       if Send(self, @GetRegion) = RID_HISTORIC

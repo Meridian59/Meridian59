@@ -179,7 +179,7 @@ messages:
       return FALSE;
    }
 
-   CanHavePlayerPortal(who = $)
+   CanHavePlayerPortal()
    {
       % Don't allow portals into this room, bypassing puzzle
       return false;

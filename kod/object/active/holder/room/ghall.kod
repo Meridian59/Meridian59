@@ -1409,7 +1409,7 @@ messages:
       return FALSE;
    }
 
-   CanHavePlayerPortal(who = $)
+   CanHavePlayerPortal()
    {
       % Don't allow portals into guild halls
       return false;

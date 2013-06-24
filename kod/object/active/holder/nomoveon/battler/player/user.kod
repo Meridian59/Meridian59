@@ -7269,9 +7269,7 @@ messages:
          AND oIllusion <> $
          AND IsClass(oIllusion,&Monster)
       {
-         iFlags = (iFlags & ~USER_YES & ~OFFER_YES & ~PLAYER_PK
-                   & ~PLAYER_OUTLAW);
-         iFlags = (iFlags & ~PLAYER_DM & ~PLAYER_CREATOR & ~PLAYER_SUPER);
+         iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
       }
 
       return iFlags;

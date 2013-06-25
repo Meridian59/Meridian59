@@ -345,6 +345,8 @@ static TypedCommand commands[] = {
 { "appeal",      CommandAppeal, },
 { "tellguild",   CommandTellGuild, },
 { "tguild",      CommandTellGuild, },
+{ "safetyon",    CommandSafetyOn, },
+{ "safetyoff",   CommandSafetyOff, },
 { NULL,          NULL},    // Must end table this way
 };
 

@@ -43,6 +43,8 @@ resources:
 
    hunt_lost_trackers = "You seem to have managed to lose your trackers!"
    hunt_gain_trackers = "You sense that someone knows where you are..."
+   
+   hunt_must_be_murderer = "Sensing that the target's soul is unmarred, the spell fails."
 
 classvars:
 
@@ -104,6 +106,15 @@ messages:
 
       oTarget = First(lTargets);
 
+      if NOT Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         for i in Send(oPrism,@GetCasters)
+         {
+            Send(i,@MsgSendUser,#message_rsc=hunt_must_be_murderer);
+         }
+         return;
+      }
+      
       for i in Send(oPrism,@GetCasters)
       {
          if i = oTarget

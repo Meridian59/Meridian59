@@ -83,6 +83,9 @@ properties:
    vbSummoned = TRUE
 
    ptSomethingChanged = $
+   
+   % This makes reflections not affect karma.
+   pbDontDispose = TRUE
 
 messages:
 

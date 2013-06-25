@@ -55,5 +55,7 @@ void CommandBalance(char *args);
 void CommandGroup(char *args);
 void CommandAppeal(char *args);
 void CommandTellGuild(char *args);
+void CommandSafetyOn(char *args);  // NEW BY TOKO
+void CommandSafetyOff(char *args);  // NEW BY TOKO
 
 #endif /* #ifndef _COMMAND_H */

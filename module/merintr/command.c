@@ -545,6 +545,25 @@ void CommandActivate(char *args)
 {
    PerformAction(A_ACTIVATE, NULL);
 }
+
+// NEW BY TOKO
+/************************************************************************/
+/*
+ * SendSafetyOn: "safetyOn" command
+ */
+void CommandSafetyOn(char *args)
+{
+   SendSafety(1);
+}
+/************************************************************************/
+/*
+ * SendSafetyOff: "safetyoff" command
+ */
+void CommandSafetyOff(char *args)
+{
+   SendSafety(0);
+}
+
 /************************************************************************/
 /*
  * CommandGuild: "guild" command

@@ -275,9 +275,7 @@ resources:
 
    user_appeal = "%s appeals: %q"
    user_first_time_appeal = "### %s has just logged on for the first time."
-   user_did_appeal = \
-      "If you do not get a timely response, please send game mail to Help for "
-      "further assistance."
+   user_did_appeal = "You appeal: %q"
 
    user_kill_zone = \
       "Your guardian angel whispers to you, \"I cannot defend you here.\""
@@ -3159,7 +3157,7 @@ messages:
          return;
       }
 
-      Send(self,@MsgSendUser,#message_rsc=user_did_appeal);
+      Send(self,@MsgSendUser,#message_rsc=user_did_appeal,#parm1=string);
       
       return;
    }

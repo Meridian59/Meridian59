@@ -273,9 +273,9 @@ resources:
    user_cant_deposit_items = "You can't deposit items here!"
    user_cant_balance = "You can't check any balance here!"
 
-   user_appeal = "%s appeals: %q"
+   user_appeal = "%s appeals, \"%q~n\""
    user_first_time_appeal = "### %s has just logged on for the first time."
-   user_did_appeal = "You appeal: %q"
+   user_did_appeal = "You appeal, \"%q~n\""
 
    user_kill_zone = \
       "Your guardian angel whispers to you, \"I cannot defend you here.\""

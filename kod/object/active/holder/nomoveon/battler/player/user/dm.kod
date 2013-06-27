@@ -105,6 +105,9 @@ resources:
 
    dm_roomgive_command = "roomgive"
    dm_gave_to_number = "%s players received reward!"
+   
+   dm_globaltreasure_command = "globaltreasure"
+   dm_gave_to_monsters = "Monsters are now holding a reward globally."
 
    dm_stealth_on = "You are now in stealth mode."
    dm_stealth_off = "You are no longer in stealth mode."
@@ -1416,6 +1419,32 @@ messages:
                iGiven = Send(SYS,@RoomGive,#who=self,#classtype=GetClass(i),
                            #number=Send(SYS,@GetNumberFromString,#string=string));
                Send(self,@MsgSendUser,#message_rsc=dm_gave_to_number,#parm1=iGiven);
+               return;
+            }
+         }
+
+         if NOT iGiven
+         {
+            Send(self,@MsgSendUser,#message_rsc=dm_no_item);
+         }
+         
+         return;
+      }
+
+      if StringContain(string,dm_globaltreasure_command)
+         OR StringContain(string,"globaltreasure")
+      {
+         iGiven = 0;
+         lTemplate = Send(SYS,@GetItemTemplates);
+
+         for i in lTemplate
+         {
+            if StringContain(string,Send(i,@GetName))
+               AND NOT Send(i,@IsItemType,#type=ITEMTYPE_SPECIAL)
+            {
+               iGiven = Send(SYS,@GlobalTreasure,#who=self,#classtype=GetClass(i),
+                           #number=Send(SYS,@GetNumberFromString,#string=string));
+               Send(self,@MsgSendUser,#message_rsc=dm_gave_to_monsters);
                return;
             }
          }

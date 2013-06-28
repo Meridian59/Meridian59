@@ -3091,7 +3091,7 @@ messages:
          Send(Send(SYS,@GetQuestEngine),@MonsterKilled,#dead_monster=self,
               #killing_player=what,#corpse=oBody );
          
-         Send(self,@CreateTreasure,#who=what,#corpse=oBody);
+         Send(self,@CreateTreasure,#who=what,#corpse=oBody,#admin_created=pbDontDispose);
 
          % Delete here so we don't accidentally "kill" then delete system
          %  template monsters.
@@ -4896,7 +4896,7 @@ messages:
       return viTreasure_type;
    }
 
-   CreateTreasure(who=$,corpse=$)
+   CreateTreasure(who=$,corpse=$,admin_created=false)
    {
       local i, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
             lTreasureItems;
@@ -4977,11 +4977,21 @@ messages:
       % Add in our inventory
       for i in plActive
       {
+         if admin_created
+         {
+            Send(i,@SetEventItem,#value=TRUE);
+         }
+         
          lTreasureItems = cons(i,lTreasureItems);
       }
 
       for i in plPassive
       {
+         if admin_created
+         {
+            Send(i,@SetEventItem,#value=TRUE);
+         }
+         
          lTreasureItems = cons(i,lTreasureItems);
       }
       

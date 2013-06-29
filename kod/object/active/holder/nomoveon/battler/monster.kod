@@ -4885,7 +4885,7 @@ messages:
       {
          % This means that the monster has no Karma.  This is used for event
          %  monsters like Xeos and admin-created beasties.
-         return $;
+         return 0;
       }
       
       return viKarma;

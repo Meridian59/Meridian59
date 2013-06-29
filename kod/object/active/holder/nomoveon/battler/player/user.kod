@@ -1519,6 +1519,7 @@ messages:
          }
 
          % Successful SUICIDE.
+
          Send(self,@PerformSuicide);
 
          return;

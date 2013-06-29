@@ -74,6 +74,9 @@ properties:
    poArrow = $
 
    vbSummoned = TRUE
+   
+   % This makes evil twins not affect karma.
+   pbDontDispose = TRUE
 
 messages:
 

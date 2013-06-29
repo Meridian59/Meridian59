@@ -211,6 +211,9 @@ properties:
    piBody_translations2 = 0
    poHair_Remove = $
 
+   % This makes the soldiers not affect karma.
+   pbDontDispose = TRUE
+      
 messages:
 
    Constructor()

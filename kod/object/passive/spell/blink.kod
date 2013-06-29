@@ -95,11 +95,12 @@ messages:
       return TRUE;
    }
 
-   CanForget()
-   "Blink will not be killed by a forget potion."
+   IsGivenFreeToNewPlayers()
+   "We need blink to solve stuck bugs"
    {
-      return FALSE;
+   return TRUE;
    }
+
 
 
 end

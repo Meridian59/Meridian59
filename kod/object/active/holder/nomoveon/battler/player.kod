@@ -1003,7 +1003,11 @@ messages:
          ptSecondWind = $;
       }
 
-      Send(self,@CancelRescue);
+      if ptRescue <> $
+      {
+         DeleteTimer(ptRescue);
+         ptRescue = $;
+      }
 
       if ptAttackTimer <> $
       {
@@ -1412,7 +1416,11 @@ messages:
    EndRescue()
    "Deletes rescue timer if it exists and does the rescue operation."
    {
-      Send(self,@CancelRescue);
+      if ptRescue <> $
+      {
+         DeleteTimer(ptRescue);
+         ptRescue = $;
+      }
       
       if poOwner <> $
          AND Send(poOwner,@GetRoomNum) <> RID_OUTOFGRACE
@@ -1420,17 +1428,6 @@ messages:
          Send(Send(SYS,@FindSpellByNum,#num=SID_RESCUE),@DoRescue,#who=self);
       }
 
-      return;
-   }
-   
-   CancelRescue()
-   "Cancels the rescue timer if it exists and does not execute the rescue operation."
-   {
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
       return;
    }
 
@@ -1973,7 +1970,11 @@ messages:
          ptMana = $;
       }
 
-      Send(self,@CancelRescue);
+      if ptRescue <> $
+      {
+         DeleteTimer(ptRescue);
+         ptRescue = $;
+      }
 
       % Tell others that we're leaving
       oRoom = Send(self, @GetOwner);
@@ -2405,11 +2406,17 @@ messages:
       return;
    }
 
-   AddDefaultSpells()
+    AddDefaultSpells()
    "Add the spells a player is given when creating a character"
    {
-      Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
-      
+      local i;
+      for i in send(SYS,@GetSpells) 
+      {
+        if send(i,@IsGivenFreeToNewPlayers)
+       {
+            Send(self,@AddSpell,#num=Send(i,@GetSpellNum),#initial=TRUE);
+        }  
+      }
       return;
    }
 
@@ -7779,7 +7786,11 @@ messages:
       }
 
       % Stop any rescue attempts that were going on.
-      Send(self,@CancelRescue);
+      if ptRescue <> $
+      {
+         DeleteTimer(ptRescue);
+         ptRescue = $;
+      }
       
       piLastDeathTime = getTime();
 
@@ -10513,7 +10524,7 @@ messages:
             }
          }
 
-         if NOT IsClass(nobj,&Blink)  % DON'T COUNT BLINK!
+         if NOT send(nobj,@IsGivenFreeToNewPlayers)  % DON'T COUNT DEFAULT SPELLS!
          {
             if nSchool = SS_KRAANAN
                AND nLevel > iKraanan
@@ -10752,7 +10763,7 @@ messages:
          iSchool = Send(oSpellObj,@GetSchool);
          iLevel = Send(oSpellObj,@GetLevel);
 
-         if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+         if NOT send(oSpellObj,@IsGivenFreeToNewPlayers)  % DON'T COUNT DEFAULT SPELLS!
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {
@@ -11384,8 +11395,7 @@ messages:
 
       if what = $
          OR NOT ((IsClass(poOwner,&GuildHall)
-                 OR IsClass(poOwner,&OutofGrace)
-                 OR Send(poOwner,@IsArena)))
+                 OR IsClass(poOwner,&OutofGrace)))
       {
          return;
       }

@@ -124,6 +124,11 @@ messages:
       return TRUE;
    }
 
+   IsGivenFreeToNewPlayers() 
+   "Sets spells to new players that don't count vs level cap"
+   {
+   return FALSE; 
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

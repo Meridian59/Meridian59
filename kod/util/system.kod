@@ -2995,6 +2995,8 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_MELANCHOLY,#class=&Melancholy);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
+	  
+	  Send(self,@CreateOneSpellIfNew,#num=SID_INTROSPECTION,#class=&Introspection);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -4790,7 +4792,6 @@ messages:
       plItemTemplates = cons(create(&OfferingQor),plItemTemplates);
       plItemTemplates = cons(create(&OfferingShalille),plItemTemplates);
       plItemTemplates = cons(create(&OfferingKraanan),plItemTemplates);
-      plItemTemplates = cons(create(&OfferingJala),plItemTemplates);
 
       plItemTemplates = cons(create(&Arrow),plItemTemplates);
       plItemTemplates = cons(create(&SilverArrow),plItemTemplates);

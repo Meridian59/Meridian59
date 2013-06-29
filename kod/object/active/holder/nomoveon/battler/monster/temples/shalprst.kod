@@ -213,25 +213,21 @@ messages:
 
    UserEntered(who = $)
    {
-      local iFlags;
-      
-      if send(who,@GetHomeRoom) = RID_MAR_INN
+      if Send(who,@GetHomeRoom) = RID_MAR_INN
       {
-         send(self,@SetMood,#new_mood=piMood + 2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
-      
-      iFlags = send(who, @GetObjectFlags);
-      
-      if iFlags & PLAYER_PK
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         send(self,@SetMood,#new_mood=piMood - 2);
+         Send(self,@SetMood,#new_mood=piMood-2);
          
          propagate;
       }
       
-      if iFlags & PLAYER_OUTLAW
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         send(self,@SetMood,#new_mood=piMood - 1 );
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
       
       propagate;

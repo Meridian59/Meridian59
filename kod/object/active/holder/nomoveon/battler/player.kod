@@ -11392,7 +11392,6 @@ messages:
          OR NOT ((IsClass(poOwner,&GuildHall)
                  OR IsClass(poOwner,&OutofGrace)
                  OR Send(poOwner,@IsArena)))
-                 OR IsClass(poOwner,&OutofGrace)))
       {
          return;
       }

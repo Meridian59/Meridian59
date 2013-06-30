@@ -98,7 +98,7 @@ messages:
    IsGivenFreeToNewPlayers()
    "We need blink to solve stuck bugs"
    {
-   return TRUE;
+      return TRUE;
    }
 
 

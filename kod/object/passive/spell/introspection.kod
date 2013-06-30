@@ -101,7 +101,7 @@ messages:
    IsGivenFreeToNewPlayers()
    "We need introspection to check stats and xp"
    {
-   return TRUE;
+      return TRUE;
    }
 
 end

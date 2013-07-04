@@ -10,10 +10,11 @@
  */
 
 #include "client.h"
+#include "zlib.h" 
 
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
 
-#define BGF_VERSION 8
+#define BGF_VERSION 10
 
 static Bool DibOpenFileReal(char *szFile, Bitmaps *b);
 static Bool DibReadBits(file_node *f, PDIB pdib, int version);
@@ -227,6 +228,7 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
 {
    BYTE *bits, type;
    int length, temp, compressed_length;
+   uLongf len;
 
    bits = DibPtr(pdib);
    length = DibWidth(pdib) * DibHeight(pdib);
@@ -250,13 +252,13 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       break;
    case 1:
       if (CliMappedFileRead(f, &compressed_length, 4) != 4) return False;
-      if (!WrapDecompress(f->ptr, compressed_length, (char *) bits, length))
-      {
-         debug(("DibReadBits error during decompression\n"));
-         return False;
-      }
-      f->ptr += compressed_length;
+        
+      len = length;
+      uncompress((Bytef*)bits, &len, (const Bytef*)f->ptr, compressed_length);
+      	  
+	  f->ptr += compressed_length;	  
       break;
+   
    default:
       debug(("DibReadBits got bad type byte %d\n", (int) type));
       return False;

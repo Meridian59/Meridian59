@@ -18,8 +18,6 @@
 #include <stdio.h>
 #include <sys/stat.h>
 
-#include "wrap.h"
-
 #include "dibutil.h"
 
 typedef unsigned char Bool;

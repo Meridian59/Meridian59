@@ -177,7 +177,6 @@ WinDEUApp::WinDEUApp (int _argc, char **_argv):
 	argv = _argv;
 
 	atexit(CleanupApp);
-   WrapInit();
 }
 
 
@@ -187,7 +186,7 @@ WinDEUApp::WinDEUApp (int _argc, char **_argv):
 //
 WinDEUApp::~WinDEUApp ()
 {
-   WrapShutdown();
+
 }
 
 

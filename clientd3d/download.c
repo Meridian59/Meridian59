@@ -10,6 +10,8 @@
  */
 
 #include "client.h"
+#include "archive.h"
+#include "archive_entry.h"
 
 static DownloadInfo *info;  // Info on download
 
@@ -47,7 +49,7 @@ static void AbortDownloadDialog(void);
 static Bool DownloadDone(DownloadFileInfo *file_info);
 static Bool DownloadDeleteFile(char *filename);
 static Bool DownloadUncrushFile(char *zip_name, char *dir);
-static bool DownloadProgressCallback(const char *filename, ExtractionStatus status);
+//static bool DownloadProgressCallback(const char *filename, ExtractionStatus status);
 /*****************************************************************************/
 /*
  * DownloadFiles:  Bring up download dialog.
@@ -127,6 +129,144 @@ void DownloadFiles(DownloadInfo *params)
    }
 #endif
 }
+
+/*****************************************************************************/
+/*
+ * copy_data:  Compress/Decompress content between libarchive structs.
+ *   ar is read from
+ *   aw is write to
+ */
+static int copy_data(struct archive *ar, struct archive *aw)
+{
+	int r;
+	const void *buff;
+	size_t size;
+	long long offset;
+
+	for (;;) 
+	{
+		r = archive_read_data_block(ar, &buff, &size, &offset);
+		
+		if (r == ARCHIVE_EOF)
+			return (ARCHIVE_OK);
+		
+		if (r != ARCHIVE_OK)
+			return (r);
+		
+		r = archive_write_data_block(aw, buff, size, offset);
+		
+		if (r != ARCHIVE_OK) 
+		{
+			fprintf(stderr, "%s\n", archive_error_string(aw));
+			return (r);
+		}
+	}
+}
+
+/*****************************************************************************/
+/*
+ * IsArchive:  Checks if archive is supported by libarchive (NOT IMPLEMENTED YET)
+ *   filename is archive to test
+ */
+bool IsArchive(char *filename)
+{
+	return true;
+}
+
+/*****************************************************************************/
+/*
+ * ExtractArchive:  Extracts archive suppoted by libarchive to destpath.
+ *   filename is full filename + path to archive
+ *   destpath is path to write to, always ending with /, i.e. c:/temp/
+ */
+bool ExtractArchive(char *filename, char* destpath)
+{
+	struct archive *a;
+	struct archive *ext;
+	struct archive_entry *entry;
+	int flags;
+	int r;
+	int pathlen = strlen(destpath);
+
+	/* Select which attributes we want to restore. */
+	flags = ARCHIVE_EXTRACT_TIME;
+	flags |= ARCHIVE_EXTRACT_PERM;
+	flags |= ARCHIVE_EXTRACT_ACL;
+	flags |= ARCHIVE_EXTRACT_FFLAGS;
+
+	// read from
+	a = archive_read_new();
+	archive_read_support_format_all(a);
+	archive_read_support_compression_all(a);
+
+	// write to
+	ext = archive_write_disk_new();
+	archive_write_disk_set_options(ext, flags);
+	archive_write_disk_set_standard_lookup(ext);
+	
+	// try open archive
+	if ((r = archive_read_open_filename(a, filename, 10240)))
+		return false;
+	
+	// iterate entries
+	for (;;) 
+	{
+		// next read entry
+		r = archive_read_next_header(a, &entry);
+		
+		// end of archive? -> done
+		if (r == ARCHIVE_EOF)
+			break;
+		
+		// check error
+		if (r != ARCHIVE_OK)
+			return false;
+		
+		// get filename of entry
+		const char* filename = archive_entry_pathname(entry);
+		int filenamelen = strlen(filename);
+		
+		// build full extractionpath
+		int size = filenamelen + pathlen + 1;
+		char* fullfilepath = (char*)calloc(size, 1);
+		strcpy_s(fullfilepath, size, destpath);
+		strcat_s(fullfilepath, size, filename);
+		
+		// apply extraction path
+		archive_entry_set_pathname(entry, fullfilepath);
+
+		// extract header
+		r = archive_write_header(ext, entry);
+		
+		if (r != ARCHIVE_OK)
+			return false;
+
+		else if (archive_entry_size(entry) > 0) 
+		{
+			// extract file data
+			copy_data(a, ext);
+			
+			if (r != ARCHIVE_OK)
+				return false;
+		}
+	
+		// finish this entry
+		r = archive_write_finish_entry(ext);
+		
+		// check for errors
+		if (r != ARCHIVE_OK)
+			return false;
+	}
+	
+	archive_read_close(a);
+	archive_read_free(a);
+	archive_write_close(ext);
+	archive_write_free(ext);
+
+	// successful
+	return true;
+}
+
 /*****************************************************************************/
 /*
  * DownloadCheckDirs:  Make sure that directories needed for downloading exist.
@@ -547,23 +687,24 @@ Bool DownloadUncrushFile(char *zip_name, char *dir)
       return False;
    }
 
-   if (!WrapIsArchive(zip_name))
+   if (!IsArchive(zip_name))
    {
       ClientError(hInst, hDownloadDialog, IDS_BADARCHIVE2, zip_name);
       return False;
    }
 
-   WrapSetExtractionCallback(DownloadProgressCallback);
+   //WrapSetExtractionCallback(DownloadProgressCallback);
 
    while (1)
    {
-      char temp_path[MAX_PATH];
+      //char temp_path[MAX_PATH];
       extraction_error = 0;
       TransferMessage(GetString(hInst, IDS_DECOMPRESSING));
 
-      GetTempPath(sizeof(temp_path), temp_path);
-      WrapExtractArchive(zip_name, dir, temp_path);
-      
+      //GetTempPath(sizeof(temp_path), temp_path);
+      //WrapExtractArchive(zip_name, dir, temp_path);
+      ExtractArchive(zip_name, dir);
+
       if (extraction_error == 0)
          break;
       
@@ -575,14 +716,14 @@ Bool DownloadUncrushFile(char *zip_name, char *dir)
       }
    }
 
-   WrapSetExtractionCallback(NULL);
+   //WrapSetExtractionCallback(NULL);
    return retval;
 }
 /*****************************************************************************/
 /*
  * DownloadProgressCallback:  Callback function for each file in an archive.
  */
-bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
+/*bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
 {
    switch (status)
    {
@@ -622,7 +763,7 @@ bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
       return false;
 
    return true;
-}
+}*/
 
 /*****************************************************************************/
 /*

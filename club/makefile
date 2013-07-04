@@ -3,13 +3,13 @@ TOPDIR=..
 
 SOURCEDIR = $(TOPDIR)\club
 
-CLUBLIBS = user32.lib gdi32.lib wrap.lib comctl32.lib wininet.lib
+CLUBLIBS = user32.lib gdi32.lib archive.lib comctl32.lib wininet.lib
 
 all: makedirs $(OUTDIR)\club.exe
 
 OBJS = \
         $(OUTDIR)\club.obj \
-        $(OUTDIR)\archive.obj \
+        $(OUTDIR)\archiveold.obj \
         $(OUTDIR)\util.obj \
         $(OUTDIR)\transfer.obj
 

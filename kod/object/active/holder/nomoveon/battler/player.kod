@@ -2411,10 +2411,10 @@ messages:
       local i;
       for i in send(SYS,@GetSpells) 
       {
-        if send(i,@IsGivenFreeToNewPlayers)
-       {
+         if send(i,@IsGivenFreeToNewPlayers)
+         {
             Send(self,@AddSpell,#num=Send(i,@GetSpellNum),#initial=TRUE);
-        }  
+         }  
       }
       return;
    }
@@ -5624,7 +5624,7 @@ messages:
          if Send(self,@IsEnchanted,#what=oSpell)
          {
             iTime = Send(oSpell,@AdjustManaTime,#who=self,#time=iTime);
-         }         
+         }
       }
 
       return iTime;
@@ -6386,7 +6386,7 @@ messages:
    {
      piKarma = value;
      Send(self,@NewKarma);
-    
+
      return;
    }
 

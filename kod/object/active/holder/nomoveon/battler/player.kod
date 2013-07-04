@@ -7853,8 +7853,7 @@ messages:
       % Don't drop anything or take any penalties.
       if Send(SYS,@GetChaosNight)
         OR (iRoom >= RID_NEWB_BASE AND iRoom <= RID_NEWB_MAX)
-        OR (piBase_Max_health < PKILL_ENABLE_HP
-            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+        OR StringEqual(psHonor,player_newbie_honor_string)
       {
          bNo_drop_death = TRUE;
          piDeathCost = FALSE;    

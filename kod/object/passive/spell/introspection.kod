@@ -56,19 +56,12 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      lTargets = Cons(who, lTargets);
-
-      Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
-      Send(self,@ComputeEvaluateInfo,#who=who);
-      
-      propagate;
-   }
-
-   ComputeEvaluateInfo(who=$) %Generate a report for the player.
-   {
       local highmark, gainchance, total, maxhealth;
-      
-      if IsClass(who,&Player)
+      lTargets = Cons(who, lTargets);
+     
+	  Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
+	  
+	  if IsClass(who,&Player)
       {
          highmark = Send(who,@GetHighMark); %Get the stats we need to the report.
          gainchance = Send(who,@GetGainChance);
@@ -89,14 +82,14 @@ messages:
 
       Send(who,@msgSenduser,#message_rsc=Introspection_combat,#parm1=Send(who,@GetOffense),
            #parm2=Send(who,@GetDefense));
-
-      return;
+      
+      propagate;
    }
-   
+
    IsGivenFreeToNewPlayers()
    "So players can check their xp and combat stats while they build."
    {
-   return TRUE;
+      return TRUE;
    }
 
 end

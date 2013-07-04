@@ -61,7 +61,7 @@ messages:
       lTargets = Cons(who, lTargets);
       oRoom = Send(who,@GetOwner);
       lActive = Send(oRoom,@GetHolderActive);
-
+      
       Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
       Send(self,@ComputeEvaluateInfo,#who=First(lTargets),#dmis=who);
       

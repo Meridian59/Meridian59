@@ -56,8 +56,6 @@ messages:
 
    CastSpell(who = $, lTargets = $)
    {
-      local oRoom, lActive;
-
       lTargets = Cons(who, lTargets);
 
       Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);

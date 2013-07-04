@@ -59,16 +59,14 @@ messages:
       local oRoom, lActive;
 
       lTargets = Cons(who, lTargets);
-      oRoom = Send(who,@GetOwner);
-      lActive = Send(oRoom,@GetHolderActive);
-      
+
       Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
-      Send(self,@ComputeEvaluateInfo,#who=First(lTargets),#dmis=who);
+      Send(self,@ComputeEvaluateInfo,#who=who);
       
-   propagate;
+      propagate;
    }
 
-   ComputeEvaluateInfo(who=$,dmis=$) %Generate a report for the player.
+   ComputeEvaluateInfo(who=$) %Generate a report for the player.
    {
       local highmark, gainchance, total, maxhealth;
       
@@ -80,28 +78,27 @@ messages:
 
          if gainchance < 0
          {
-            Send(dmis,@msgSenduser,#message_rsc = Introspection_message_nochance,
+            Send(who,@msgSenduser,#message_rsc = Introspection_message_nochance,
                 #parm1=(gainchance/2)); %Compute the stats for the report.
-         } 
+         }
          else 
          {
             total = bound(((gainchance*100)/highmark),1,100);
-            Send(dmis,@msgSenduser,#message_rsc = Introspection_message,
+            Send(who,@msgSenduser,#message_rsc = Introspection_message,
                 #parm1=gainchance,#parm2=highmark,#parm3=total); %Send the report to the player.
          }      
-
       }
 
-      Send(dmis,@msgSenduser,#message_rsc=Introspection_combat,#parm1=Send(who,@GetOffense),
+      Send(who,@msgSenduser,#message_rsc=Introspection_combat,#parm1=Send(who,@GetOffense),
            #parm2=Send(who,@GetDefense));
 
-   return;
+      return;
    }
    
    IsGivenFreeToNewPlayers()
-   "We need introspection to check stats and xp"
+   "So players can check their xp and combat stats while they build."
    {
-      return TRUE;
+   return TRUE;
    }
 
 end

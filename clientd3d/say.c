@@ -19,6 +19,8 @@
 #define MAX_CODERUN 4   // Max # of consecutive color codes you're allowed to say
 #define MAX_CODES  20   // Max # of color codes you're allowed to say through a message
 
+HWND hWhoDlg = NULL; /* Non-NULL if who dialog is up */
+
 /* Users who are currently logged on -- list of objects */
 list_type current_users = NULL;  
 
@@ -82,8 +84,17 @@ void FreeCurrentUsers(void)
 */
 void UserWho(void)
 {
-	CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
-		WhoDialogProc, (LPARAM) current_users);
+   if (!IsWindow(hWhoDlg))  /* If the who list window is not open */
+   {
+       	hWhoDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
+		WhoDialogProc, (LPARAM) current_users);  /*create the who list window and assign its window handle to hWhoDlg*/
+	}
+	else
+	{
+		ShowWindow(hWhoDlg, SW_SHOWNORMAL);  /*otherwise reference its windows handle, show the window, and activate it*/
+		SetFocus(hWhoDlg);
+		return;
+	}
 }
 
 /************************************************************************/

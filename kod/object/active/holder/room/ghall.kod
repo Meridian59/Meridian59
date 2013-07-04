@@ -1057,8 +1057,7 @@ messages:
 
       oGuild = Send(who,@GetGuild);
 
-      if (oGuild = poGuild_owner
-          OR Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
+      if oGuild = poGuild_owner
          AND Send(oGuild,@GetRank,#who=who) >= RANK_SIR
       {
          return TRUE;
@@ -1416,4 +1415,4 @@ messages:
    }
 
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

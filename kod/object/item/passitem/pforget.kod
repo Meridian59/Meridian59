@@ -136,7 +136,7 @@ messages:
 
          if send(oSpell,@GetSchool) = viForget_School
             AND NOT send(oSpell,@IsGivenFreeToNewPlayers)  %% Don't wipe default spells.
-			   AND send(oSpell,@CanForget) %%Don't wipe DM spells,etc
+               AND send(oSpell,@CanForget) %%Don't wipe DM spells,etc
          {
                send(poApply_target,@RemoveSpell,#num=iSpellNum);
                send(poApply_target,@MsgSendUser,#message_rsc=forgetpotion_forget_spell,

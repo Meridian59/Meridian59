@@ -77,36 +77,38 @@ messages:
       return viBank;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
-      iFlags = send( who, @GetObjectFlags );
-      if iFlags & PLAYER_OUTLAW
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-	 send( self, @SetMood, #new_mood = piMood + 3 );
+         Send(self,@SetMood,#new_mood=piMood+3);
       }
       else
       {
-         if( not (iFlags & PLAYER_PK) )
-	 {
-	    send( self, @SetMood, #new_mood = piMood - 3 );
-	 }
+         if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         {
+            Send(self,@SetMood,#new_mood=piMood-3);
+         }
       }
-      if( iFlags & PLAYER_PK )
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-	 send( self, @SetMood, #new_mood = piMood + 3 );
+         Send(self,@SetMood,#new_mood=piMood+3);
       }
-      if( send( who, @GetHomeRoom ) = RID_JAS_INN )
+
+      if Send(who,@GetHomeRoom)=RID_JAS_INN
       {
-	 send( self, @SetMood, #new_mood = piMood + 2 );
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
-      if( send( who, @GetFaction ) = FACTION_NEUTRAL )
+
+      if Send(who,@GetFaction)=FACTION_NEUTRAL
       {
-	 send( self, @SetMood, #new_mood = piMood + 3 );
+         Send(self,@SetMood,#new_mood=piMood+3);
       }
-      Post(poOwner,@SomeoneSaid,#what = self, #string=JasperBanker_entry_welcome,
-         #type = SAY_RESOURCE, 
+
+      Post(self,@SayToOne,#target=who,#message_rsc=JasperBanker_entry_welcome,
          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+
       return;
    }
 

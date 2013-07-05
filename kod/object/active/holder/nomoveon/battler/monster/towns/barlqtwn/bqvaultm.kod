@@ -99,40 +99,45 @@ messages:
       return;
    }
 
-   UserEntered( who = $ )
+   UserEntered(who=$)
    {
-      local iFlags;
       if Send(who,@GetAction)=UA_HAPPY
       {
-	 send( self, @SetMood, #new_mood = piMood + 1 );
+         Send(self,@SetMood,#new_mood=piMood+1);
       }
+
       if Send(who,@GetAction)=UA_SAD
       {
-	 send( self, @SetMood, #new_mood = piMood - 1 );
+         Send(self,@SetMood,#new_mood=piMood-1);
       }
-      iFlags = send( who, @GetObjectFlags );
+
       if Send(who,@GetFaction)=FACTION_PRINCESS
       {
-	 send( self, @SetMood, #new_mood = piMood + 2 );
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
+
       if Send(who,@GetFaction)=FACTION_DUKE
       {
-	 send( self, @SetMood, #new_mood = piMood - 2 );
+         Send(self,@SetMood,#new_mood=piMood-2);
       }
-      if iFlags & PLAYER_PK
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-	 send( self, @SetMood, #new_mood = piMood - 2 );
-	 % don't welcome these guys
-	 propagate;
+         Send(self,@SetMood,#new_mood=piMood-2);
+
+         % don't welcome these guys
+         propagate;
       }
-      if iFlags & PLAYER_OUTLAW
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-	 send( self, @SetMood, #new_mood = piMood - 1 );
-	 % don't welcome these guys
-	 propagate;
+         Send(self,@SetMood,#new_mood=piMood-1);
+
+         % don't welcome these guys
+         propagate;
       }
-      send(poOwner,@SomeoneSaid,#what=self,#string=barloquevaultman_entry_welcome,
-	 #type = SAY_RESOURCE);
+
+      Post(self,@SayToOne,#target=who,#message_rsc=barloquevaultman_entry_welcome);
   
       propagate;
    }

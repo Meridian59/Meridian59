@@ -94,42 +94,39 @@ messages:
       return;
    }
 
-   UserEntered(who = $)
+   UserEntered(who=$)
    {
-      local iFlags;
+      if Send(who,@GetHomeRoom)=RID_MAR_INN
+      {
+         Send(self,@SetMood,#new_mood=piMood+2);
+      }
 
-      if send(who, @GetHomeRoom) = RID_MAR_INN
+      if Send(who,@GetFaction)=FACTION_NEUTRAL
       {
-         send(self,@SetMood,#new_mood=piMood+2);
-      }
-      
-      if send(who, @GetFaction) = FACTION_NEUTRAL
-      {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
       else
       {
-         send(self,@SetMood,#new_mood=piMood-3);
+         Send(self,@SetMood,#new_mood=piMood-3);
       }
-      
-      iFlags = send(who,@GetObjectFlags);
-      if iFlags & PLAYER_PK
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
-      
-      if iFlags & PLAYER_OUTLAW
+
+      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
       {
-         send(self,@SetMood,#new_mood=piMood+2);
+         Send(self,@SetMood,#new_mood=piMood+2);
       }
       else
       {
-         if NOT (iFlags & PLAYER_PK)
+         if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
-            send(self,@SetMood,#new_mood=piMood-2);
+            Send(self,@SetMood,#new_mood=piMood-2);
          }
       }
-      
+
       propagate;
    }
 

@@ -60,7 +60,7 @@ messages:
 
       if IsClass(who,&Player)
       {	  
-	     Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
+         Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
 		 
          highmark = Send(who,@GetHighMark); %Get the stats we need to the report.
          gainchance = Send(who,@GetGainChance);
@@ -78,7 +78,7 @@ messages:
                 #parm1=gainchance,#parm2=highmark,#parm3=total); %Send the report to the player.
          }      
 		 
-		 Send(who,@msgSenduser,#message_rsc=Introspection_combat,#parm1=Send(who,@GetOffense),
+         Send(who,@msgSenduser,#message_rsc=Introspection_combat,#parm1=Send(who,@GetOffense),
              #parm2=Send(who,@GetDefense));	 
       }
       

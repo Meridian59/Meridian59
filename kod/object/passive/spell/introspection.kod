@@ -54,15 +54,14 @@ messages:
       return 0;
    }
 
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who = $)
    {
       local highmark, gainchance, total, maxhealth;
-      lTargets = Cons(who, lTargets);
-     
-	  Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
-	  
-	  if IsClass(who,&Player)
-      {
+
+      if IsClass(who,&Player)
+      {	  
+	     Send(who,@MsgSendUser,#message_rsc=caster_Introspection_msg);
+		 
          highmark = Send(who,@GetHighMark); %Get the stats we need to the report.
          gainchance = Send(who,@GetGainChance);
          maxhealth = Send(who,@GetMaxHealth);
@@ -78,10 +77,10 @@ messages:
             Send(who,@msgSenduser,#message_rsc = Introspection_message,
                 #parm1=gainchance,#parm2=highmark,#parm3=total); %Send the report to the player.
          }      
+		 
+		 Send(who,@msgSenduser,#message_rsc=Introspection_combat,#parm1=Send(who,@GetOffense),
+             #parm2=Send(who,@GetDefense));	 
       }
-
-      Send(who,@msgSenduser,#message_rsc=Introspection_combat,#parm1=Send(who,@GetOffense),
-           #parm2=Send(who,@GetDefense));
       
       propagate;
    }

@@ -5787,7 +5787,7 @@ messages:
 
    GetBonusXP()
    {
-       return piBossBonus;
+      return piBossBonus;
    }  
 
 end

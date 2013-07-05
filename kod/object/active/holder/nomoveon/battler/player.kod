@@ -661,6 +661,8 @@ resources:
    
    player_Debug_nokarma = "%s cannot learn %s due to karma restrictions."
    player_Debug_noway = "It is impossible for %s to ever get the %s spell."
+   
+   player_bonus = "~IYou have slain a mighty foe."
 
    player_sound_sword1 = sword1.wav
    player_sound_sword2 = sword2.wav
@@ -7626,6 +7628,13 @@ messages:
             {
                % Player took damage and landed killing blow
                gain = 2;
+               
+               if xpbonus > 0 % do the bonus XP here because this is as legit of a kill as you can get.
+               {
+                  gain = gain + xpbonus;
+                  Send(self,@MsgSendUser,#message_rsc=player_bonus);               
+               }
+               
                roll = TRUE;
             }
             else

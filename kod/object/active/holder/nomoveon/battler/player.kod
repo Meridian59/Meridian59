@@ -7596,10 +7596,11 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon, xpbonus;
             
       gain = 0;
       roll = FALSE;
+      xpbonus = send(what,@GetBonusXP); %Ask the Monster if it gives an XP bonus
 
       % Some things just never allow advancement.
       % Can advance in arena if realdeath is on in an arena.

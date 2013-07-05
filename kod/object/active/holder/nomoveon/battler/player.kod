@@ -7854,7 +7854,7 @@ messages:
       if Send(SYS,@GetChaosNight)
         OR (iRoom >= RID_NEWB_BASE AND iRoom <= RID_NEWB_MAX)
         OR psHonor <> $
-        AND StringEqual(psHonor,player_newbie_honor_string)
+           AND StringEqual(psHonor,player_newbie_honor_string)
       {
          bNo_drop_death = TRUE;
          piDeathCost = FALSE;    

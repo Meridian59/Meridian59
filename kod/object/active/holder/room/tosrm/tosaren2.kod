@@ -41,6 +41,8 @@ properties:
    prMusic = TosArena2_music
 
    piBaseLight = LIGHT_NICE
+      
+   pbAllowNewbies = TRUE
 
 
 messages:

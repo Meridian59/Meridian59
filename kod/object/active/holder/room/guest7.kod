@@ -61,6 +61,8 @@ properties:
    piOutside_factor = OUTDOORS_SOME
 
    prMusic = guest7_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

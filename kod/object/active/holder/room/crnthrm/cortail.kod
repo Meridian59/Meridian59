@@ -41,6 +41,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = cortail_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

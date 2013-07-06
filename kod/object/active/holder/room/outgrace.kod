@@ -39,6 +39,8 @@ properties:
 
    piBaseLight = LIGHT_NICE
    piOutside_factor = OUTDOORS_3
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

@@ -42,6 +42,8 @@ properties:
    piOutside_factor = 3
 
    prMusic = corinn_music
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

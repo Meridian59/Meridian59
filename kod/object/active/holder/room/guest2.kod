@@ -70,6 +70,8 @@ properties:
    prMusic = guest2_music
 
    piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

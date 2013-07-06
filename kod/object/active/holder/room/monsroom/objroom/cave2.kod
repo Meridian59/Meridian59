@@ -47,6 +47,8 @@ properties:
    piGen_Object_Time = 1200000
 
    ptIllusionResetTimer = $
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

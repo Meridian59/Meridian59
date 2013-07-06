@@ -52,6 +52,8 @@ properties:
    piGen_percent = 60
 
    ptQueen_gen = $
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

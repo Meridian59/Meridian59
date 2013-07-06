@@ -50,6 +50,8 @@ properties:
    piInit_count_max = 3
 
    piMonster_count_max = 6
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

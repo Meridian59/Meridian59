@@ -93,6 +93,8 @@ properties:
    ptNecroDoor = $
 
    pbDoorDownActive = TRUE
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

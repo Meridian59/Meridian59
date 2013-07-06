@@ -48,6 +48,8 @@ properties:
    % Give users a healthy mix of creatures when entering room.
    piInit_count_min = 5
    piInit_count_max = 10
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

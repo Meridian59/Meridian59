@@ -57,7 +57,8 @@ properties:
    piInit_count_max = 7  % maximum # of monsters loaded by initial load
 
    piMonster_count_max = 7 % temporarily reduced from 13
-
+      
+   pbAllowNewbies = TRUE
 
 messages:
 

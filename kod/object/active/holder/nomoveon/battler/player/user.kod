@@ -1532,8 +1532,8 @@ messages:
             Send(self,@SetPlayerFlag,#flag=PFLAG_SAFETY,#value=TRUE);
             if Send(SYS,@IsPKAllowed)
             {
-				Send(self,@MsgSendUser,#message_rsc=user_safety_on);
-				Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_on_wav_rsc);		  		   
+                Send(self,@MsgSendUser,#message_rsc=user_safety_on);
+                Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_on_wav_rsc);
             }
             
             return;
@@ -1543,8 +1543,8 @@ messages:
             Send(self,@SetPlayerFlag,#flag=PFLAG_SAFETY,#value=FALSE);
             if Send(SYS,@IsPKAllowed)
             {
-				Send(self,@MsgSendUser,#message_rsc=user_safety_off);
-				Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_off_wav_rsc);
+                Send(self,@MsgSendUser,#message_rsc=user_safety_off);
+                Send(self,@WaveSendUser, #what=self, #wave_rsc=user_safety_off_wav_rsc);
             }
             
             return;

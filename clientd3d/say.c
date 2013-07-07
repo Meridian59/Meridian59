@@ -19,7 +19,7 @@
 #define MAX_CODERUN 4   // Max # of consecutive color codes you're allowed to say
 #define MAX_CODES  20   // Max # of color codes you're allowed to say through a message
 
-HWND hWhoDlg = NULL; /* Non-NULL if who dialog is up */
+HWND hWhoDlg = NULL;
 
 /* Users who are currently logged on -- list of objects */
 list_type current_users = NULL;  
@@ -82,19 +82,20 @@ void FreeCurrentUsers(void)
 /*
 * UserWho:  Display a list of currently logged on users.
 */
-void UserWho(void)
+void UserWho(void) 
 {
-   if (!IsWindow(hWhoDlg))  /* If the who list window is not open */
+   /* If dialog is not open, create it; else raise it to top*/
+   if (hWhoDlg == NULL)
    {
-       	hWhoDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
-		WhoDialogProc, (LPARAM) current_users);  /*create the who list window and assign its window handle to hWhoDlg*/
-	}
-	else
-	{
-		ShowWindow(hWhoDlg, SW_SHOWNORMAL);  /*otherwise reference its windows handle, show the window, and activate it*/
-		SetFocus(hWhoDlg);
-		return;
-	}
+      hWhoDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
+      WhoDialogProc, (LPARAM) current_users);
+   }
+   else
+   {
+      ShowWindow(hWhoDlg, SW_SHOWNORMAL);
+      SetFocus(hWhoDlg);
+      return;
+   }
 }
 
 /************************************************************************/
@@ -184,4 +185,16 @@ BOOL FilterSayMessage(char *message)
 	*d = '\0';
 	
 	return TRUE;
+}
+
+
+
+/************************************************************************/
+/*
+* WhoClose:  Close the Who dialog box
+*/
+void WhoClose()
+{
+   DestroyWindow(hWhoDlg);
+   hWhoDlg = NULL;
 }

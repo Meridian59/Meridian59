@@ -82,7 +82,7 @@ void FreeCurrentUsers(void)
 /*
 * UserWho:  Display a list of currently logged on users.
 */
-void UserWho(void) 
+void UserWho(void)
 {
    /* If dialog is not open, create it; else raise it to top*/
    if (hWhoDlg == NULL)

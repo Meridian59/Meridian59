@@ -1274,6 +1274,8 @@ messages:
          AND what <> victim
       {
          if Send(what,@GetBaseMaxHealth) < piMinHpPK
+            AND NOT (Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+                    OR Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW))
          {
             Send(what,@MsgSendUser,#message_rsc=room_attacker_not_enough_hp_pk);
             return FALSE;

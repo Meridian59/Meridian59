@@ -94,6 +94,9 @@ properties:
 
    pbDoorDownActive = TRUE
 
+   % Minimum HP required for player combat in this room
+   piMinHpPK = 41
+   
 messages:
 
    Constructed()

@@ -113,6 +113,7 @@ Bool PerformEffect(WORD effect, char *ptr, int len)
 		duration = 10000;
 	  effects.pain = duration;
 	  RedrawAll();
+	  SetFocus(hMain);
 	  break;
 
    case EFFECT_WHITEOUT:

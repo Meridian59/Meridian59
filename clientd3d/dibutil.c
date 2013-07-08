@@ -13,7 +13,7 @@
 
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
 
-#define BGF_VERSION 8
+#define BGF_VERSION 10
 
 static Bool DibOpenFileReal(char *szFile, Bitmaps *b);
 static Bool DibReadBits(file_node *f, PDIB pdib, int version);
@@ -226,18 +226,11 @@ Bool DibOpenFileReal(char *szFile, Bitmaps *b)
 Bool DibReadBits(file_node *f, PDIB pdib, int version)
 {
    BYTE *bits, type;
-   int length, temp, compressed_length;
+   int length, temp, compressed_length, retval;
+   uLongf len;
 
    bits = DibPtr(pdib);
    length = DibWidth(pdib) * DibHeight(pdib);
-
-   // XXX Old graphics
-   if (version == 8)
-   {
-      if (CliMappedFileRead(f, bits, length) != length)
-	 return False;
-      return True;
-   }
 
    // See if image is compressed
    if (CliMappedFileRead(f, &type, 1) != 1) return False;
@@ -250,11 +243,15 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       break;
    case 1:
       if (CliMappedFileRead(f, &compressed_length, 4) != 4) return False;
-      if (!WrapDecompress(f->ptr, compressed_length, (char *) bits, length))
+
+      len = length;
+      retval = uncompress((Bytef *) bits, &len, (const Bytef *) f->ptr, compressed_length);
+      if (retval != Z_OK)
       {
-         debug(("DibReadBits error during decompression\n"));
+         debug(("DibReadBits error during decompression: %d\n", retval));
          return False;
       }
+
       f->ptr += compressed_length;
       break;
    default:

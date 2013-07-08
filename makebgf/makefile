@@ -10,7 +10,7 @@ OBJS = \
 
 SOURCEDIR = $(MAKEBGFDIR)
 
-LIBS = gdi32.lib wrap.lib setargv
+LIBS = gdi32.lib zdll.lib setargv
 
 all: makedirs $(OUTDIR)\makebgf.exe
 

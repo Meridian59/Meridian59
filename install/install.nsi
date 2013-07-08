@@ -123,7 +123,7 @@ Function InstallWithUserPrivilege
   update_ini_timestamp:
 
     ; Set download time to reflect new installer
-    WriteINIStr $OUTDIR\meridian.ini Miscellaneous Download 176
+    WriteINIStr $OUTDIR\meridian.ini Miscellaneous Download 186
 
   no_previous_install:
 

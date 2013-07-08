@@ -6,7 +6,7 @@
 #pragma hdrstop
 
 #include "dibutil.h"
-#include "wrap.h"
+#include "zlib.h"
 
 typedef struct
 {
@@ -225,19 +225,15 @@ Bool DibReadHeader(file_node *f, Bitmaps *b, BYTE *shrink)
 Bool DibReadBits(file_node *f, PDIB pdib, int version)
 {
    BYTE *bits, type;
-   int length, temp, compressed_length;
+   int length, temp, compressed_length, retval;
+   uLongf len;
 
    bits = DibPtr(pdib);
    length = DibWidth(pdib) * DibHeight(pdib);
 
-   // XXX Old graphics
-   if (version == 8)
-   {
-      if (MappedFileRead(f, bits, length) != length)
-	 return False;
-      return True;
-   }
-
+   if (version < 10)
+      return False;
+   
    // See if image is compressed
    if (MappedFileRead(f, &type, 1) != 1) return False;
 
@@ -249,11 +245,15 @@ Bool DibReadBits(file_node *f, PDIB pdib, int version)
       break;
    case 1:
       if (MappedFileRead(f, &compressed_length, 4) != 4) return False;
-      if (!WrapDecompress(f->ptr, compressed_length, bits, length))
+
+      len = length;
+      retval = uncompress((Bytef *) bits, &len, (const Bytef *) f->ptr, compressed_length);
+      if (retval != Z_OK)
       {
          dprintf("DibReadBits error during decompression\n");
          return False;
       }
+
       f->ptr += compressed_length;
       break;
    default:

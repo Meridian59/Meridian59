@@ -17,7 +17,7 @@ static char download_dir[]    = "download";
 static char resource_dir[]    = "resource";
 static char help_dir[]        = "help";
 static char mail_dir[]        = "mail";
-static char client_dir[]      = ".";
+static char run_dir[]         = ".";
 static char ad_dir[]          = "ads";
 
 static HWND hDownloadDialog = NULL;   /* Non-NULL if download dialog is up */
@@ -48,6 +48,12 @@ static Bool DownloadDone(DownloadFileInfo *file_info);
 static Bool DownloadDeleteFile(char *filename);
 static Bool DownloadUncrushFile(char *zip_name, char *dir);
 static bool DownloadProgressCallback(const char *filename, ExtractionStatus status);
+/*****************************************************************************/
+bool FileExists(const char *filename)
+{
+  struct stat buffer;   
+  return stat(filename, &buffer) == 0;
+}
 /*****************************************************************************/
 /*
  * DownloadFiles:  Bring up download dialog.
@@ -448,7 +454,7 @@ Bool DownloadDone(DownloadFileInfo *file_info)
       break;
 
    case DF_DIRCLIENT:
-      destination_dir = client_dir;
+      destination_dir = run_dir;
       break;
 
    case DF_DIRHELP:
@@ -467,7 +473,7 @@ Bool DownloadDone(DownloadFileInfo *file_info)
    case DF_DIRWINSYS:
       // XXX Unimplemented
       debug(("Windows dir file flags unimplemented\n"));
-      destination_dir = client_dir;
+      destination_dir = run_dir;
       break;
 
    default:
@@ -693,7 +699,14 @@ void DownloadNewClient(char *hostname, char *filename)
     if (ptr != NULL)
       *ptr = 0;
 
-    sprintf(update_program_path, "%s\\%s", client_directory, update_program);
+    // Due to UAC (and arguably a bad design decision), the club binary is
+    // in Program Files by default, where we can't necessarily update it.
+    // We can, however, update anything in the current directory (usually
+    // in the user's private directory).  So we first look for club.exe there,
+    // and only fall back to the one in Program files if it's not there.
+    sprintf(update_program_path, "%s\\%s", run_dir, update_program);
+    if (!FileExists(update_program_path))
+       sprintf(update_program_path, "%s\\%s", client_directory, update_program);
     
     sprintf(command_line, "\"%s\" UPDATE \"%s\" \"%s\" \"%s\\%s\" \"%s\"", 
             exe_name, hostname, filename, download_dir, update_filename,

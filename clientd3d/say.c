@@ -194,6 +194,9 @@ BOOL FilterSayMessage(char *message)
 */
 void WhoClose()
 {
-   DestroyWindow(hWhoDlg);
-   hWhoDlg = NULL;
+   if (hWhoDlg != NULL)
+      {
+      DestroyWindow(hWhoDlg);
+      hWhoDlg = NULL;
+      }
 }

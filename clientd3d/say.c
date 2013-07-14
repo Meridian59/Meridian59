@@ -94,7 +94,6 @@ void UserWho(void)
    {
       ShowWindow(hWhoDlg, SW_SHOWNORMAL);
       SetFocus(hWhoDlg);
-      return;
    }
 }
 

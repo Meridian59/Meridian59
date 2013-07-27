@@ -10,6 +10,8 @@
  */
 
 #include "client.h"
+#include "archive.h"
+#include "archive_entry.h"
 
 static DownloadInfo *info;  // Info on download
 
@@ -46,8 +48,7 @@ static void _cdecl TransferMessage(char *fmt, ...);
 static void AbortDownloadDialog(void);
 static Bool DownloadDone(DownloadFileInfo *file_info);
 static Bool DownloadDeleteFile(char *filename);
-static Bool DownloadUncrushFile(char *zip_name, char *dir);
-static bool DownloadProgressCallback(const char *filename, ExtractionStatus status);
+static Bool DownloadUnarchiveFile(char *zip_name, char *dir);
 /*****************************************************************************/
 bool FileExists(const char *filename)
 {
@@ -78,8 +79,8 @@ void DownloadFiles(DownloadInfo *params)
    for (i = 0; i < info->num_files; i++)
       if (DownloadLocation(info->files[i].flags) != DF_ADVERTISEMENT)
       {
-	 dialog = IDD_DOWNLOAD;
-	 break;
+         dialog = IDD_DOWNLOAD;
+         break;
       }
 
    advert = (IDD_DOWNLOADAD == dialog);
@@ -88,23 +89,23 @@ void DownloadFiles(DownloadInfo *params)
       retval = DialogBox(hInst, MAKEINTRESOURCE(IDD_ASKDOWNLOAD), NULL, AskDownloadDialogProc);
       switch (retval) {
       case 3: // do the demo button
-	 WebLaunchBrowser(info->demoPath);
-	 SendMessage(hMain,WM_SYSCOMMAND,SC_CLOSE,0);
-	 return;
+         WebLaunchBrowser(info->demoPath);
+         SendMessage(hMain,WM_SYSCOMMAND,SC_CLOSE,0);
+         return;
       case IDOK: // proceed with download
-	 retval = DialogBox(hInst, MAKEINTRESOURCE(dialog), NULL, DownloadDialogProc);
-	 advert = FALSE;
-	 if (retval == IDOK)
-	 {
-	    MainSetState(STATE_LOGIN);
-	    i = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
-	    RequestGame(config.download_time,i,config.comm.hostname);
-	    return;
-	 }
-	 break;
+         retval = DialogBox(hInst, MAKEINTRESOURCE(dialog), NULL, DownloadDialogProc);
+         advert = FALSE;
+         if (retval == IDOK)
+         {
+            MainSetState(STATE_LOGIN);
+            i = (((MAJOR_REV * 100) + MINOR_REV) * P_CATCH) + P_CATCH;
+            RequestGame(config.download_time,i,config.comm.hostname);
+            return;
+         }
+         break;
       case IDCANCEL: // cancel
       default:
-	 break;
+         break;
       }
    }
    abort_download = True;
@@ -186,61 +187,61 @@ BOOL CALLBACK AskDownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG l
       SetWindowText(GetDlgItem(hDlg,IDC_ASK_DOWNLOAD_REASON),info->reason);
       size = 0;
       for (i = 0; i < (int)info->num_files; i++)
-	 size += info->files[i].size;
-
+         size += info->files[i].size;
+      
       bytes = (double)size;
       kb = bytes / 1024;
       mb = kb / 1024;
       if ((int)info->num_files < 2)
-	 sprintf(buffer,"There is one file %d bytes in size.",size);
+         sprintf(buffer,"There is one file %d bytes in size.",size);
       else if (kb < 1.0)
-	 sprintf(buffer,"There are %d files totaling %d bytes in size.",(int)info->num_files,size);
+         sprintf(buffer,"There are %d files totaling %d bytes in size.",(int)info->num_files,size);
       else if (mb < 1.0)
-	 sprintf(buffer,"There are %d files totaling %.1f Kb in size.",(int)info->num_files,kb);
+         sprintf(buffer,"There are %d files totaling %.1f Kb in size.",(int)info->num_files,kb);
       else
-	 sprintf(buffer,"There are %d files totaling %.1f Mb in size.",(int)info->num_files,mb);
+         sprintf(buffer,"There are %d files totaling %.1f Mb in size.",(int)info->num_files,mb);
       SetWindowText(GetDlgItem(hDlg,IDC_SIZE_UPDATE),buffer);
-
+      
       seconds = floor(bytes / 5600.0 + 10.0);
       minutes = seconds / 60.0;
       hours = minutes / 60.0;
-
+      
       if (hours > 1.0)
-	 sprintf(buffer,"Estimating %.1f hours with a 56k modem.",hours);
+         sprintf(buffer,"Estimating %.1f hours with a 56k modem.",hours);
       else if (minutes > 1.0)
-	 sprintf(buffer,"Estimating %.1f minutes with a 56k modem.",minutes);
+         sprintf(buffer,"Estimating %.1f minutes with a 56k modem.",minutes);
       else 
-	 sprintf(buffer,"Estimating %.0f seconds with a 56k modem.",seconds);
+         sprintf(buffer,"Estimating %.0f seconds with a 56k modem.",seconds);
       SetWindowText(GetDlgItem(hDlg,IDC_TIME_UPDATE_566),buffer);
-
+      
       seconds = floor(bytes / 2800.0 + 10.0);
       minutes = seconds / 60.0;
       hours = minutes / 60.0;
-
+      
       if (hours > 1.0)
-	 sprintf(buffer,"Estimating %.1f hours with a 28k modem.",hours);
+         sprintf(buffer,"Estimating %.1f hours with a 28k modem.",hours);
       else if (minutes > 1.0)
-	 sprintf(buffer,"Estimating %.1f minutes with a 28k modem.",minutes);
+         sprintf(buffer,"Estimating %.1f minutes with a 28k modem.",minutes);
       else 
-	 sprintf(buffer,"Estimating %.0f seconds with a 28k modem.",seconds);
+         sprintf(buffer,"Estimating %.0f seconds with a 28k modem.",seconds);
       SetWindowText(GetDlgItem(hDlg,IDC_TIME_UPDATE_288),buffer);
-
+      
       //SetWindowText(GetDlgItem(hDlg,IDC_BTN_DEMO),info->demoPath);
-
+      
       break;
    case WM_COMMAND:
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDC_BTN_DEMO:
-	 EndDialog(hDlg, 3);
-	 return TRUE;
+         EndDialog(hDlg, 3);
+         return TRUE;
       case IDCANCEL:
          abort_download = True;
-	 EndDialog(hDlg, IDCANCEL);
-	 return TRUE;
+         EndDialog(hDlg, IDCANCEL);
+         return TRUE;
       case IDC_UPDATE:
-	 EndDialog(hDlg, IDOK);
-	 return TRUE;
+         EndDialog(hDlg, IDOK);
+         return TRUE;
       }
    }
    return FALSE;
@@ -262,7 +263,7 @@ BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       CenterWindow(hDlg, hMain);
       if (!advert)
       {
-	 ShowWindow(hMain, SW_HIDE);
+         ShowWindow(hMain, SW_HIDE);
       }
       hDownloadDialog = hDlg;
       
@@ -294,8 +295,8 @@ BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
    case WM_DESTROY:
       if (!advert)
       {
-	 ShowWindow(hMain, SW_SHOW);
-	 UpdateWindow(hMain);
+         ShowWindow(hMain, SW_SHOW);
+         UpdateWindow(hMain);
       }
       hDownloadDialog = NULL;
       return TRUE;
@@ -308,7 +309,7 @@ BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
 
    case BK_FILESIZE:  // wParam is file index, lParam is file size
       if (wParam == 0)
-	 TransferMessage(GetString(hInst, IDS_RETRIEVING));
+         TransferMessage(GetString(hInst, IDS_RETRIEVING));
 
       SetDlgItemText(hDlg, IDC_FILENAME, info->files[wParam].filename);
       total = lParam;
@@ -330,9 +331,9 @@ BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       // Compute the fraction for the overall graph.
       fraction = 0;
       if (total != 0)
-	 fraction = lParam * 100 / total;
+         fraction = lParam * 100 / total;
       fraction = (fraction + 100 * info->current_file) / info->num_files;
-
+      
       // Update overall progress indicator.
       SendDlgItemMessage(hDlg, IDC_FILEGRAPH, GRPH_POSSET, 0, fraction);
 
@@ -341,53 +342,53 @@ BOOL CALLBACK DownloadDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
    case BK_FILEDONE:  /* lParam is index of file in info */
       if (abort_download)
       {
-	 AbortDownloadDialog();
-	 return TRUE;
+         AbortDownloadDialog();
+         return TRUE;
       }
-
+      
       if (DownloadDone(&info->files[lParam]))
       {
-	 if (abort_download)
-	 {
-	    AbortDownloadDialog();
-	    return TRUE;
-	 }
-
-	 // Set download time
-	 DownloadSetTime(info->files[lParam].time);
-
-	 // If we're a guest, there may be additional files that we are supposed to skip.
-	 // If so, we should set our download time to the last file, so that we will skip
-	 // the download on the next entry into the game.
-	 if (config.guest)
-	    for (i = lParam + 1; i < info->num_files; i++)
-	    {
-	       if (info->files[i].flags & DF_GUEST)
-		  break;
-	       DownloadSetTime(info->files[i].time);
-	    }
-
-	 info->current_file++;
-
-	 // Tell transfer thread to continue
-	 TransferContinue();
-
-	 TransferMessage(GetString(hInst, IDS_RETRIEVING));
+         if (abort_download)
+         {
+            AbortDownloadDialog();
+            return TRUE;
+         }
+         
+         // Set download time
+         DownloadSetTime(info->files[lParam].time);
+         
+         // If we're a guest, there may be additional files that we are supposed to skip.
+         // If so, we should set our download time to the last file, so that we will skip
+         // the download on the next entry into the game.
+         if (config.guest)
+            for (i = lParam + 1; i < info->num_files; i++)
+            {
+               if (info->files[i].flags & DF_GUEST)
+                  break;
+               DownloadSetTime(info->files[i].time);
+            }
+         
+         info->current_file++;
+         
+         // Tell transfer thread to continue
+         TransferContinue();
+         
+         TransferMessage(GetString(hInst, IDS_RETRIEVING));
       }
       else AbortDownloadDialog();
       return TRUE;
-
+      
    case BK_TRANSFERDONE: 
       EndDialog(hDlg, IDOK);
       return TRUE;
-
+      
    case WM_COMMAND:
       switch(GET_WM_COMMAND_ID(wParam, lParam))
       {
       case IDCANCEL:
          abort_download = True;
-	 EndDialog(hDlg, IDCANCEL);
-	 return TRUE;
+         EndDialog(hDlg, IDCANCEL);
+         return TRUE;
       }
    }
    return FALSE;
@@ -489,14 +490,14 @@ Bool DownloadDone(DownloadFileInfo *file_info)
    case DF_DELETE:
       sprintf(zip_name, "%s\\%s", destination_dir, file_info->filename);
       if (!DownloadDeleteFile(zip_name))
-	 return False;
+         return False;
       break;
 
    case DF_RETRIEVE:
-      if (!DownloadUncrushFile(zip_name, destination_dir))
+      if (!DownloadUnarchiveFile(zip_name, destination_dir))
       {
-	 unlink(zip_name);
-	 return False;
+         unlink(zip_name);
+         return False;
       }
       unlink(zip_name);
       break;
@@ -529,19 +530,129 @@ Bool DownloadDeleteFile(char *filename)
    {
       if (!DeleteFile(filename))
       {
-	 if (!AreYouSure(hInst, hMain, YES_BUTTON, IDS_CANTDELETEFILE, filename))
-	    return False;
+         if (!AreYouSure(hInst, hMain, YES_BUTTON, IDS_CANTDELETEFILE, filename))
+            return False;
       }
       else done = True;
    }
    return True;
 }
 /*****************************************************************************/
+static int CopyArchiveData(struct archive *ar, struct archive *aw)
+{
+  const void *buff;
+  size_t size;
+  __int64 offset;
+
+  while (true)
+  {
+     int r = archive_read_data_block(ar, &buff, &size, &offset);
+     if (r == ARCHIVE_EOF)
+        return ARCHIVE_OK;
+     if (r != ARCHIVE_OK)
+        return r;
+     r = archive_write_data_block(aw, buff, size, offset);
+     if (r != ARCHIVE_OK)
+        return r;
+  }
+}
+/*****************************************************************************/
+bool ExtractArchive(const char *zip_file, const char *out_dir)
+{
+   struct archive *input = archive_read_new();
+   archive_read_support_format_all(input);
+   archive_read_support_compression_all(input);
+   struct archive *output = archive_write_disk_new();
+   archive_write_disk_set_options(output, ARCHIVE_EXTRACT_TIME);
+   archive_write_disk_set_standard_lookup(output);
+   const int BLOCK_SIZE = 65536;
+   int r = archive_read_open_filename(input, zip_file, BLOCK_SIZE);
+
+   if (r != ARCHIVE_OK)
+   {
+      debug(("Error opening archive %s: %s\n", zip_file, archive_error_string(input)));
+      extraction_error = IDS_BADARCHIVE;
+      return false;
+   }
+
+   // libarchive can only extract into the current directory, so we
+   // need to set it and restore it.
+   char original_dir[MAX_PATH];
+   getcwd(original_dir, sizeof(original_dir));
+   chdir(out_dir);
+   
+   bool retval = true;
+   while (true)
+   {
+      struct archive_entry *entry;
+      r = archive_read_next_header(input, &entry);
+      if (r == ARCHIVE_EOF)
+         break;
+      
+      if (r != ARCHIVE_OK)
+      {
+         debug(("Error reading archive header: %s\n", archive_error_string(input)));
+         extraction_error = IDS_BADARCHIVE;
+         retval = false;
+         break;
+      }
+      r = archive_write_header(output, entry);
+      if (r != ARCHIVE_OK)
+      {
+         debug(("Error writing archive header: %s\n", archive_error_string(input)));
+         extraction_error = IDS_UNKNOWNERROR;
+         retval = false;
+         break;
+      }
+
+      if (archive_entry_size(entry) > 0)
+      {
+         r = CopyArchiveData(input, output);
+         if (r != ARCHIVE_OK)
+         {
+            debug(("CopyArchiveData error: %s\n", archive_error_string(input)));
+            extraction_error = IDS_UNKNOWNERROR;
+            retval = false;
+            break;
+         }
+      }
+      r = archive_write_finish_entry(output);
+      if (r != ARCHIVE_OK)
+      {
+         debug(("write_finish_entry error: %s\n", archive_error_string(input)));
+         extraction_error = IDS_UNKNOWNERROR;
+         retval = false;
+         break;
+      }
+
+      debug(("Archive file %s extracted\n", archive_entry_pathname(entry)));
+      
+      // Extraction went OK; process Windows messages
+      ClearMessageQueue();  // Check for user hitting abort button
+
+      // Check for user abort
+      if (abort_download)
+      {
+         retval = false;
+         break;
+      }
+   }
+   archive_read_close(input);
+   archive_read_free(input);
+   archive_write_close(output);
+   archive_write_free(output);
+
+   // Go back to original working directory
+   chdir(original_dir);
+
+   return retval;
+}
+/*****************************************************************************/
 /*
- * DownloadUncrushFile:  Unarchive Crusher archive zip_name to given directory.
- *   Return True on success.
+ * DownloadUnarchiveFile: Unarchive archive zip_name to given
+ *   directory.  Return True on success.
  */
-Bool DownloadUncrushFile(char *zip_name, char *dir)
+Bool DownloadUnarchiveFile(char *zip_name, char *dir)
 {
    Bool retval = True;
 
@@ -553,24 +664,15 @@ Bool DownloadUncrushFile(char *zip_name, char *dir)
       return False;
    }
 
-   if (!WrapIsArchive(zip_name))
-   {
-      ClientError(hInst, hDownloadDialog, IDS_BADARCHIVE2, zip_name);
-      return False;
-   }
-
-   WrapSetExtractionCallback(DownloadProgressCallback);
-
    while (1)
    {
-      char temp_path[MAX_PATH];
       extraction_error = 0;
       TransferMessage(GetString(hInst, IDS_DECOMPRESSING));
 
-      GetTempPath(sizeof(temp_path), temp_path);
-      WrapExtractArchive(zip_name, dir, temp_path);
+      ExtractArchive(zip_name, dir);
       
       if (extraction_error == 0)
+         // This means the user hit the abort button
          break;
       
       if (!AreYouSure(hInst, hDownloadDialog, YES_BUTTON, IDS_CANTUNCOMPRESS, 
@@ -581,55 +683,8 @@ Bool DownloadUncrushFile(char *zip_name, char *dir)
       }
    }
 
-   WrapSetExtractionCallback(NULL);
    return retval;
 }
-/*****************************************************************************/
-/*
- * DownloadProgressCallback:  Callback function for each file in an archive.
- */
-bool DownloadProgressCallback(const char *filename, ExtractionStatus status)
-{
-   switch (status)
-   {
-   case EXTRACT_DONE:
-      ClearMessageQueue();  // Check for user hitting abort button
-      debug(("Crusher file %s extracted\n", filename));
-      break;
-
-   case EXTRACT_CANT_RENAME:
-      extraction_error = IDS_BADTEMPFILE;
-      break;
-
-   case EXTRACT_BAD_PERMISSIONS:
-      extraction_error = IDS_BADPERMISSION;
-      break;
-
-   case EXTRACT_OUT_OF_MEMORY:
-      extraction_error = IDS_BADMEM;
-      break;
-
-   case EXTRACT_BAD_CRC:
-   case EXTRACT_UNKNOWN:
-      extraction_error = IDS_BADARCHIVE;
-      break;
-
-   case EXTRACT_DISK_FULL:
-      extraction_error = IDS_DISKFULL;
-      break;
-   }
-
-   // Other errors
-   if (status != EXTRACT_OK && status != EXTRACT_DONE && extraction_error == 0)
-      extraction_error = IDS_UNKNOWNERROR;
-
-   // Check for user abort
-   if (abort_download)
-      return false;
-
-   return true;
-}
-
 /*****************************************************************************/
 /*
  * DownloadPingProc:  In response to a timer going off, send a ping message to the server.

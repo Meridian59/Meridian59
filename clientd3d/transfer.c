@@ -65,7 +65,7 @@ void __cdecl TransferStart(void *download_info)
    int outfile;                   // Handle to output file
    DWORD size;                      // Size of block we're reading
    int bytes_read;                // Total # of bytes we've read
-   const char *mime_types[2] = { "application/octet-stream" };
+   const char *mime_types[2] = { "application/x-zip-compressed" };
    DWORD file_size;
    DWORD file_size_buf_len;
    DWORD index = 0;

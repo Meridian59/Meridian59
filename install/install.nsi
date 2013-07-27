@@ -138,6 +138,7 @@ Section "Meridian 59 (required)"
   SetOutPath $INSTDIR
 
   ; Put executable files there
+  File "${SOURCEDIR}\archive.dll"
   File "${SOURCEDIR}\arq.exe"
   File "${SOURCEDIR}\club.exe"
   File "${SOURCEDIR}\heidelb1.ttf"

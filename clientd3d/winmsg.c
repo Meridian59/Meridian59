@@ -124,8 +124,6 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hPal = InitializePalette();
 	InitStandardXlats(hPal);
 	
-   WrapInit();
-	
 	LoadSettings();
 	MenuDisplaySettings(hwnd);
 	
@@ -161,8 +159,6 @@ void MainQuit(HWND hwnd)
 	
 	DeleteObject(hPal);
 
-   WrapShutdown();
-	
 	HookClose();
 	
 	FreeLibrary(hRichEditLib);

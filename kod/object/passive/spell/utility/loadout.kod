@@ -1,0 +1,416 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Loadout is UtilitySpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   Loadout_not_safe = "You must be in a safe area to cast loadout."
+   Loadout_not_guilded = "You must be guilded to cast loadout."
+   Loadout_rank_too_low = "You are not high enough rank to cast loadout."
+   Loadout_no_hall = "With no guild hall to link with, the loadout spell fails."
+
+   Loadout_items_not_found = "The chests did not contain %s."
+   Loadout_items_not_enough = "The chests did not contain enough %s."
+   Loadout_item_not_found = "The chests did not contain %s%s."
+   Loadout_cant_carry_all = "You can't carry all the %s."
+   Loadout_cant_carry_one = "You can't carry %s%s."
+   Loadout_cant_carry_any = "You can't carry any %s."
+   
+   Loadout_cast = "You activate your link with your guild hall's storage."
+   Loadout_not_set = "You currently have no inventory preferences set."
+   
+   Loadout_name_rsc = "loadout"
+   Loadout_icon_rsc = imend.bgf
+   Loadout_desc_rsc = \
+     "Attempts to translocate gear and reagents from your guild hall's storage, "
+     "according to preferences previously registered with Frular's office.  "
+
+classvars:
+
+   vrName = Loadout_name_rsc
+   vrIcon = Loadout_icon_rsc
+   vrDesc = Loadout_desc_rsc
+
+   viCast_time = 20000
+
+   viSpell_num = SID_LOADOUT
+   viSpell_level = 1
+   viSchool = SS_KRAANAN
+   viMana = 0
+   viSpellExertion = 0
+   viChance_To_Increase = 5
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+   
+   CanPayCosts(who = $)
+   {
+      if Send(who,@GetGuild) = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_not_guilded);
+         return FALSE;
+      }
+
+      if Send(Send(who,@GetGuild),@GetRank,#who=who) = RANK_APPRENTICE
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_rank_too_low);
+         return FALSE;
+      }
+
+      if Send(Send(who,@GetGuild),@GetGuildHall) = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_no_hall);
+         return FALSE;
+      }
+
+      if NOT Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_not_safe);
+         return FALSE;
+      }
+      
+      if Send(who,@GetLoadoutList) = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_not_set);
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local i, n, z, each_obj, countHolding, countNeeded, findAmount, class, number, have_number, bFound, plLoadout_list, plPassive,
+            indef, name, plDoNotSearch, bDoNotSearch, school, plDoNotSearchSchool, bDoNotSearchSchool;
+
+      plLoadout_list = Send(who,@GetLoadoutList);
+      plPassive = Send(who,@GetHolderPassive);
+      plDoNotSearch = $;
+      plDoNotSearch = Cons(&Money,plDoNotSearch);
+      plDoNotSearchSchool = $;
+      
+      Send(who,@MsgSendUser,#message_rsc=Loadout_cast);
+      
+      for i in plLoadout_list
+      {
+         class = Nth(i,1);
+         number = Nth(i,2);
+         indef = Nth(i,3);
+         name = Nth(i,4);
+         bFound = FALSE;
+         bDoNotSearch = FALSE;
+         bDoNotSearchSchool = FALSE;
+         
+         for z in plDoNotSearch
+         {
+            if z = class
+            {
+               bDoNotSearch = TRUE;
+               break;
+            }
+         }
+         if bDoNotSearch
+         {
+            continue;
+         }
+
+         % Special case for Disciple Robes, which are implemented without separate classes
+         if class = &DiscipleRobe
+         {
+            school = number;
+
+            for z in plDoNotSearchSchool
+            {
+               if z = school
+               {
+                  bDoNotSearchSchool = TRUE;
+                  break;
+               }
+            }
+            if bDoNotSearchSchool
+            {
+               continue;
+            }
+            
+            countHolding = 0;
+            for i in plPassive
+            {
+               each_obj = Send(who,@HolderExtractObject,#data=i);
+               If IsClass(each_obj,&DiscipleRobe)
+                  AND Send(each_obj,@GetSchool) = school
+               {
+                  countHolding = countHolding + 1;
+               }
+            }
+            countNeeded = 0;
+            for n in plLoadout_list
+            {
+               if Nth(n,1) = class
+                  AND Nth(n,2) = school
+               {
+                  countNeeded = countNeeded + 1;
+               }
+            }
+            findAmount = countNeeded - countHolding;
+            if countNeeded > countHolding
+            {
+               bFound = Send(self,@GetDiscipleRobeFromHallChest,#who=who,#indef=indef,#name=name,#school=school);
+               if NOT bFound
+               {
+                  plDoNotSearchSchool = Cons(school,plDoNotSearchSchool);
+               }
+            }
+            continue;
+         }
+         
+         if number = -1
+         {
+            % Look for singular item in inventory.
+            countHolding = Send(who,@CountHoldingHowMany,#class=class);
+            countNeeded = 0;
+            for n in plLoadout_list
+            {
+               if Nth(n,1) = class
+               {
+                  countNeeded = countNeeded + 1;
+               }
+            }
+            findAmount = countNeeded - countHolding;
+            if countNeeded > countHolding
+            {
+               bFound = Send(self,@GetSingleItemFromHallChest,#who=who,#class=class,#indef=indef,#name=name);
+               if NOT bFound
+               {
+                  plDoNotSearch = Cons(class,plDoNotSearch);
+               }
+            }
+         }
+         else
+         {
+            % Look for numbered item. If we find it, check how many of it we have.
+            % Get the remainder of (needed - have).
+            for n in plPassive
+            {
+               each_obj = Send(who,@HolderExtractObject,#data=n);
+               if isClass(each_obj, class)
+               {
+                  bFound = true;
+                  have_number = Send(each_obj,@GetNumber);
+
+                  if have_number < number
+                  {
+                     Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,#number=number-have_number,#name=name);
+                  }                  
+                  break;
+               }
+            }
+            if NOT bFound
+            {
+               Send(self,@GetNumberItemFromHallChest,#who=who,#class=class,#number=number,#name=name);
+            }
+         }
+      }
+
+      propagate;
+   }
+
+   GetDiscipleRobeFromHallChest(who=$,class=&DiscipleRobe,indef="an",name="item",school=SS_RIIJA)
+   {
+      local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound;
+      
+      oGuild = Send(who,@GetGuild);
+      oGuildHall = Send(oGuild,@GetGuildHall);
+      bFound = FALSE;
+      
+      for i in Send(oGuildHall,@GetHolderActive)
+      {
+         each_obj = Send(oGuildHall,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&StorageBox)
+         {
+            for n in Send(each_obj,@GetHolderPassive)
+            {
+               each_obj_in_chest = Send(each_obj,@HolderExtractObject,#data=n);
+               if IsClass(each_obj_in_chest,class)
+                  AND Send(each_obj_in_chest,@GetSchool) = school
+               {
+                  bFound = TRUE;
+                  if Send(who,@ReqNewHold,#what=each_obj_in_chest)
+                  {
+                     Send(who,@NewHold,#what=each_obj_in_chest);
+                     return TRUE;
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_one,
+                          #parm1=Send(each_obj_in_chest,@GetIndef),#parm2=Send(each_obj_in_chest,@GetTrueName));
+                     return FALSE;
+                  }
+               }
+            }
+         }
+      }
+
+      if NOT bFound
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_item_not_found,#parm1=indef,#parm2=name);
+      }
+      return FALSE;
+   }
+
+   GetSingleItemFromHallChest(who=$,class=&Item,indef="an",name="item")
+   {
+      local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound;
+      
+      oGuild = Send(who,@GetGuild);
+      oGuildHall = Send(oGuild,@GetGuildHall);
+      bFound = FALSE;
+      
+      for i in Send(oGuildHall,@GetHolderActive)
+      {
+         each_obj = Send(oGuildHall,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&StorageBox)
+         {
+            for n in Send(each_obj,@GetHolderPassive)
+            {
+               each_obj_in_chest = Send(each_obj,@HolderExtractObject,#data=n);
+               if IsClass(each_obj_in_chest,class)
+               {
+                  bFound = TRUE;
+                  if Send(who,@ReqNewHold,#what=each_obj_in_chest)
+                  {
+                     Send(who,@NewHold,#what=each_obj_in_chest);
+                     return TRUE;
+                  }
+                  else
+                  {
+                     Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_one,
+                          #parm1=Send(each_obj_in_chest,@GetIndef),#parm2=Send(each_obj_in_chest,@GetTrueName));
+                     return FALSE;
+                  }
+               }
+            }
+         }
+      }
+
+      if NOT bFound
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_item_not_found,#parm1=indef,#parm2=name);
+      }
+      return FALSE;
+   }
+
+   GetNumberItemFromHallChest(who=$,class=&Item,number=-1,name="item")
+   {
+      local i, n, each_obj, each_obj_in_chest, oGuild, oGuildHall, bFound,
+            oSplit, iCanHold, iNumInChest, iGetNumber, bSentErrorMsg;
+
+      if number < 1
+      {
+         return;
+      }
+      oGuild = Send(who,@GetGuild);
+      oGuildHall = Send(oGuild,@GetGuildHall);
+      bFound = FALSE;
+      bSentErrorMsg = FALSE;
+
+      for i in Send(oGuildHall,@GetHolderActive)
+      {
+         iGetNumber = number;
+         each_obj = Send(oGuildHall,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&StorageBox)
+         {
+            for n in Send(each_obj,@GetHolderPassive)
+            {
+               each_obj_in_chest = Send(each_obj,@HolderExtractObject,#data=n);
+               if IsClass(each_obj_in_chest,class)
+               {
+                  iCanHold = Send(who,@GetNumberCanHold,#what=each_obj_in_chest);
+                  iNumInChest = Send(each_obj_in_chest,@GetNumber);
+                  bFound = TRUE;
+
+                  if iGetNumber > iNumInChest
+                  {
+                     iGetNumber = iNumInChest;
+                  }
+
+                  if iGetNumber > iCanHold
+                  {
+                     if iCanHold > 0
+                     {
+                        if NOT bSentErrorMsg
+                        {
+                           Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_all,
+                                #parm1=Send(each_obj_in_chest,@GetTrueName));
+                           bSentErrorMsg = TRUE;       
+                        }
+                     }
+                     else
+                     {
+                        if NOT bSentErrorMsg
+                        {
+                           Send(who,@MsgSendUser,#message_rsc=Loadout_cant_carry_any,
+                                #parm1=Send(each_obj_in_chest,@GetTrueName));    
+                           bSentErrorMsg = TRUE;       
+                        }                      
+                        return;
+                     }         
+                     iGetNumber = iCanHold;
+                  }
+ 
+                  if iGetNumber > 0
+                  {
+                     oSplit = Send(each_obj_in_chest,@Split,#number=iGetNumber);
+                     if Send(each_obj_in_chest,@ReqNewOwner,#what=oSplit)
+                     {
+                        Send(who,@NewHold,#what=oSplit);
+                        number = number - iGetNumber;
+                        if number < 1
+                        {
+                           return;
+                        }
+                     }
+                     else
+                     {
+                        Send(each_obj_in_chest,@AddNumber,#number=iGetNumber);
+                     }
+                  }        
+               }
+            }
+         }
+      }
+      
+      if NOT bFound
+      {
+         Send(who,@MsgSendUser,#message_rsc=Loadout_items_not_found,#parm1=name);
+      }
+      else
+      {
+         if number > 0
+         {
+            Send(who,@MsgSendUser,#message_rsc=Loadout_items_not_enough,#parm1=name);
+         }
+      }
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

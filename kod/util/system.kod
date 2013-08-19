@@ -238,7 +238,15 @@ resources:
       "~IA strange wind blows across the land, killing all monsters.~I\n"
       "~b~BCongratulations!~B~k All the monsters have been slain!  You have "
       "won Meridian 59.  Hope you had fun, it's been a great game."
-   
+
+   admin_gave_bounty = \
+      "### To challenge any mortals that are up to the task, the gods have "
+      "given you a bounty quest!"
+      
+   admin_rewarded_bounties = \
+      "### In an act of whimsical generosity, the gods have granted you "
+      "immediate indulgence on all your bounty quests!"
+
 classvars:
 
    viGuild_price = 5000
@@ -263,6 +271,7 @@ properties:
    plGuild_halls = $
    plBrains = $
    plAbility_totals = $
+   plBounties = $
 
    plMonsterTemplates = $
    plItemTemplates = $
@@ -518,6 +527,7 @@ messages:
       Send(self,@RecreateSettings);
       Send(self,@RecreateNecromancerBalance);
       Send(self,@ClearAllQuests);
+      Send(self,@CleanBounties);
       Send(self,@CreateAllBanksIfNew);
       Send(self,@CreateAllVaultsIfNew);
       Send(self,@RecreateAllBrains);
@@ -6555,6 +6565,118 @@ messages:
       }
       return total;
    }
+   
+   AddBountyToGlobalList(bounty=$)
+   {
+      if bounty=$
+      {
+         return;
+      }
+      
+      plBounties = Cons(bounty,plBounties);
+
+      return;
+   }
+   
+   RemoveBountyFromGlobalList(bounty=$)
+   {
+      if bounty=$
+      {
+         return;
+      }
+      
+      plBounties = DelListElem(plBounties,bounty);
+
+      return;
+   }
+   
+   CleanBounties()
+   {
+      local b;
+
+      for b in plBounties
+      {
+         if NOT Send(b,@CheckValidBounty)
+         {
+            Send(b,@Delete);
+         }
+      }
+      return;
+   }
+   
+   RewardAllOnlineBounties()
+   "Immediately complete & reward all online player bounties."
+   {
+      local i, b;
+
+      for i in plUsers_logged_on
+      {
+         Send(i,@MsgSendUser,#message_rsc=admin_rewarded_bounties);
+      }
+
+      for b in plBounties
+      {
+         if Send(b,@CheckValidBounty)
+            AND Send(b,@OwnerIsOnline)
+         {
+            Send(b,@SetForceReward,#force_reward=TRUE);
+            Send(b,@ClaimBountyReward);
+         }
+      }
+      return;
+   }
+   
+   GiveAllInRoomBounty(oRoom=$,monster_target=$,item_target=$,time=7200,reward=&InkyCap,amount=5)
+   "Give everyone in the room a bounty to complete."
+   {
+      local oBounty, i, each_obj;
+      
+      if (monster_target=$
+         AND item_target=$)
+         OR oRoom=$
+      {
+         return FALSE;
+      }
+
+      for i in Send(oRoom,@GetHolderActive)
+      {
+         each_obj = send(oRoom,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+            AND NOT IsClass(each_obj,&DM)
+            AND Send(each_obj,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=admin_gave_bounty);
+            oBounty = Create(&Bounty,#owner=each_obj,#monster_target=monster_target,#item_target=item_target,#time=time,
+               #reward_class=reward,#reward_amount=amount,#force_reward=TRUE);
+         }
+      }
+      return TRUE;
+   }
+   
+   GiveAllOnlineBounty(monster_target=$,item_target=$,time=7200,reward=&InkyCap,amount=5)
+   "Give everyone online a bounty to complete."
+   {
+      local oBounty, i;
+      
+      if monster_target=$
+         AND item_target=$
+      {
+         return FALSE;
+      }
+
+      for i in plUsers_logged_on
+      {
+         if NOT IsClass(i,&DM)
+            AND Send(i,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(i,@MsgSendUser,#message_rsc=admin_gave_bounty);
+            oBounty = Create(&Bounty,#owner=i,#monster_target=monster_target,#item_target=item_target,#time=time,
+               #reward_class=reward,#reward_amount=amount,#force_reward=TRUE);
+         }
+      }
+      return TRUE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

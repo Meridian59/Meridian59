@@ -150,6 +150,7 @@ properties:
 
    piDamageBonus = 0
    piHitBonus = 0
+   piParryBonus = 0
 
    piUsed = UNUSED
 
@@ -483,10 +484,19 @@ messages:
    }
 
    % Return parry ability, include bonuses.
-   % TODO: Define standard bonuses for various weapon types.
+   % Note: all parry values are doubled in the player's defense equation.
    GetParryAbility(who=$)
    {
-      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
+      local iParry;
+      
+      iParry = send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
+      
+      if iParry = 0
+      {
+         return 0;
+      }
+
+      return iParry + piParryBonus;
    }
       
    % What is the weapon's name for use in the attack messages?

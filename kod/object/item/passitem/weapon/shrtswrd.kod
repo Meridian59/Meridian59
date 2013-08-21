@@ -51,9 +51,18 @@ classvars:
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
+   
+   % Adds 100 defense
+   % Light weapon, decent for parrying.
+   % Ignores your actual parry skill, acts as if 50% parry.
+   piParryBonus = 50
 
 messages:
 
+   GetParryAbility(who=$)
+   {
+      return piParryBonus;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -190,6 +190,18 @@ messages:
       return -10;
    }
 
+   % Riija sword cannot parry in the hands of someone other than the owner.
+   GetParryAbility(who=$)
+   {
+      if poOwner <> $
+         AND poQuester <> $
+         AND poOwner <> poQuester
+      {
+         return 0;
+      }
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

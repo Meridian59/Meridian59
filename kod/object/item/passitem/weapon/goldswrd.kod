@@ -51,6 +51,11 @@ classvars:
    viMin_damage = 2
    viMax_damage = 5
 
+   % Adds 150 defense
+   % No bonus outside of arena, or if player does not have parry.
+   % Gold sword is fantastic in the arena, but useless elsewhere.
+   viArenaParryBonus = 75
+
 properties:
 
    piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
@@ -72,6 +77,25 @@ messages:
       return iDamage;
    }
 
+   GetParryAbility(who=$)
+   {
+      local oOwner, iParry;
+
+      iParry = send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
+
+      if iParry = 0
+      {
+         return 0;
+      }
+      
+      oOwner = send(send(self,@GetOwner),@GetOwner);
+      if send(oOwner,@IsArena)
+      {
+         iParry = iParry + viArenaParryBonus;
+      }
+      
+      return iParry + piParryBonus;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

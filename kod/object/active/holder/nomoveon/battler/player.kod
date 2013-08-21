@@ -952,6 +952,9 @@ properties:
    % List of integer years in which the player has donated money to the game.
    % Used to construct a string for their description.
    plDonationYears = $
+   
+   % List of bounty quests player has running
+   plPlayerBounties = $
 
 messages:
 
@@ -4748,7 +4751,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local i, b, oSoldierShield, monstkarma, iChance, oEnemyGuild;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -4872,6 +4875,18 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
+         
+         if plPlayerBounties <> $
+         {
+            for b in plPlayerBounties
+            {
+               If Send(b,@CheckValidBounty)
+                  AND Send(b,@CheckBountyMonster,#monster_to_check=what)
+               {
+                  Send(b,@ClaimBountyReward);
+               }
+            }
+         }
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
@@ -12351,6 +12366,39 @@ messages:
       return;
    }
 
+   AddBountyToPlayerList(bounty=$)
+   {
+      if bounty <> $
+      {
+         plPlayerBounties = Cons(bounty,plPlayerBounties);
+      }
+      return;
+   }
 
+   RemoveBountyFromPlayerList(bounty=$)
+   {
+      if bounty <> $
+      {
+         plPlayerBounties = DelListElem(plPlayerBounties,bounty);
+      }
+      return;
+   }
+   
+   ReportAllBounties()
+   {
+      local b;
+      
+      if plPlayerBounties <> $
+      {
+         for b in plPlayerBounties
+         {
+            if Send(b,@CheckValidBounty)
+            {
+               Send(b,@BountyReport);
+            }
+         }
+      }
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

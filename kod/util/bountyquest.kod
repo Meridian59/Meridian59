@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-BountyQuest is PassiveObject 
+BountyQuest is UtilityFunctions 
 
 constants:
 
@@ -16,10 +16,6 @@ constants:
    include protocol.khd
 
 resources:
-
-   bounty_name_rsc = "bounty"
-   bounty_icon_rsc = light.bgf
-   bounty_desc_text_rsc = "This is a bounty."
    
    bounty_success_singular_rsc = "You completed a bounty and have received %s%s!"
    bounty_success_numbitem_rsc = "You completed a bounty and have received %i %s!"
@@ -36,15 +32,6 @@ resources:
 
 classvars:
 
-   vrName = spell_name_rsc
-   vrIcon = spell_icon_rsc
-   vrDesc = spell_desc_text_rsc
-   vrSpell_intro = spell_intro_rsc
-
-   viIndefinite = ARTICLE_NONE
-   viDefinite = ARTICLE_NONE
-
-
 properties:
 
    viBountyTime = 120 * 60
@@ -59,14 +46,20 @@ properties:
    
    % Give the reward even if the player can't carry it
    % Used for difficult or non-repeatable quests
-   bForceReward = FALSE
+   pbForceReward = FALSE
 
    % Link back to player who has the bounty
    piOwner = $
 
 messages:      
 
-   Constructor(owner=$,monster_target=$,item_target=$,time=7200,reward_class=$,reward_amount=1,force_reward=FALSE)
+   Constructor(owner=$,
+               monster_target=$,
+               item_target=$,
+               time=7200,
+               reward_class=$,
+               reward_amount=1,
+               force_reward=FALSE)
    {
       viCreationTime = GetTime();
       CreateTimer(self,@EndBountyTimer,time);
@@ -74,16 +67,23 @@ messages:
       
       Send(self,@SetBountyParameters,#owner=owner,#monster_target=monster_target,#item_target=item_target,#time=time,
             #reward_class=reward_class,#reward_amount=reward_amount,#force_reward=force_reward);
-
-      Send(self,@BountyReport);
       
       propagate;
    }
    
    SetBountyParameters(owner=$,monster_target=$,item_target=$,time=7200,reward_class=$,reward_amount=1,force_reward=FALSE)
    {
-      local oReward;
-   
+      local oReward, oMonster, oItem, i;
+      oReward = $;
+      oMonster = $;
+      oItem = $;
+      
+      if owner = $
+      {
+         Send(self,@Delete);
+         return;
+      }
+
       if reward_class = $
       {
          Send(self,@Delete);
@@ -91,50 +91,127 @@ messages:
       }
       else
       {
-         oReward = Create(reward_class);
-
-         if NOT IsClass(oReward,&NumberItem)
-            AND reward_amount > 1
+         for i in Send(SYS,@GetItemTemplates)
          {
-            reward_amount = 1;
+            if IsClass(i,reward_class)
+            {
+               oReward = i;
+            }
          }
-         Send(oReward,@Delete);
+         if oReward = $
+         {
+            Send(self,@Delete);
+            return;
+         }
+         else
+         {
+            if NOT IsClass(oReward,&NumberItem)
+               AND reward_amount > 1
+            {
+               reward_amount = 1;
+            }               
+         }
+      }
+      
+      if item_target <> $
+      {
+         for i in Send(SYS,@GetItemTemplates)
+         {
+            if IsClass(i,item_target)
+            {
+               oItem = i;
+            }
+         }
+      }
+      
+      if monster_target <> $
+      {
+         for i in Send(SYS,@GetMonsterTemplates)
+         {
+            if IsClass(i,monster_target)
+            {
+               oMonster = i;
+            }
+         }
+      }
+      
+      if oMonster = $
+         AND oItem = $
+      {
+         Send(self,@Delete);
+         return;
       }
 
       Send(self,@SetOwner,#owner=owner);
-      Send(self,@SetMonsterTargetClass,#class=monster_target);
-      Send(self,@SetItemTargetClass,#class=item_target);
+      
+      if oMonster <> $
+      {
+         Send(self,@SetMonsterTargetClass,#class=monster_target);
+      }
+      
+      if oItem <> $
+      {
+         Send(self,@SetItemTargetClass,#class=item_target);
+      }
+      
       Send(self,@SetBountyTime,#time=time);
       Send(self,@SetReward,#reward_class=reward_class,#reward_amount=reward_amount);
       Send(self,@SetForceReward,#force_reward=force_reward);
       
+      % MOVE THIS
+      Send(self,@BountyReport);
+
       if NOT Send(self,@CheckValidBounty)
       {
          Send(self,@Delete);
       }
+
 
       return;
    }
    
    SetOwner(owner=$)
    {
+      if piOwner <> $
+      {
+         Send(piOwner,@RemoveBountyFromPlayerList,#bounty=self);
+      }
+
       if owner <> $
          AND IsClass(owner,&User)
       {
          piOwner = owner;
+         Send(piOwner,@AddBountyToPlayerList,#bounty=self);
       }
       return;
    }
    
    SetMonsterTargetClass(class=$)
    {
-      piMonsterTargetClass = class;
+      local i;
+      
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         if IsClass(i,class)
+         {
+            piMonsterTargetClass = class;
+         }
+      }
       return;
    }
    
    SetItemTargetClass(class=$)
    {
-      piItemTargetClass = class;
+      local i;
+      
+      for i in Send(SYS,@GetItemTemplates)
+      {
+         if IsClass(i,class)
+         {
+            piItemTargetClass = class;
+         }
+      }
+      
       return;
    }
 
@@ -153,15 +230,30 @@ messages:
    
    SetReward(reward_class=$,reward_amount=1)
    {
-      piRewardClass = reward_class;
-      piRewardAmount = reward_amount;
+      local i;
+      
+      for i in Send(SYS,@GetItemTemplates)
+      {
+         if IsClass(i,reward_class)
+         {
+            piRewardClass = reward_class;
+            if IsClass(i,&NumberItem)
+            {
+               piRewardAmount = reward_amount;
+            }
+            else
+            {
+               piRewardAmount = 1;
+            }
+         }
+      }
 
       return;
    }
    
    SetForceReward(force_reward=FALSE)
    {
-      bForceReward = force_reward;
+      pbForceReward = force_reward;
 
       return;
    }
@@ -189,7 +281,7 @@ messages:
          }
          
          if Send(piOwner,@ReqNewHold,#what=oReward)
-            OR bForceReward
+            OR pbForceReward
          {
             if IsClass(oReward,&NumberItem)
             {
@@ -276,7 +368,7 @@ messages:
    
    BountyReport()
    {
-      local oReward,oTargetMonster,oTargetItem;
+      local oReward,oTargetMonster,oTargetItem, i;
 
       oReward = $;
       oTargetMonster = $;
@@ -291,13 +383,12 @@ messages:
       
       if piRewardClass <> $
       {
-         if piRewardAmount > 1
+         for i in Send(SYS,@GetItemTemplates)
          {
-            oReward = Create(piRewardClass,#number=piRewardAmount);
-         }
-         else
-         {
-            oReward = Create(piRewardClass);
+            if IsClass(i,piRewardClass)
+            {
+               oReward = i;
+            }
          }
       }
       else
@@ -309,12 +400,24 @@ messages:
       
       if piMonsterTargetClass <> $
       {
-         oTargetMonster = Create(piMonsterTargetClass);
+         for i in Send(SYS,@GetMonsterTemplates)
+         {
+            if IsClass(i,piMonsterTargetClass)
+            {
+               oTargetMonster = i;
+            }
+         }
       }
       
       if piItemTargetClass <> $
       {
-         oTargetItem = Create(piItemTargetClass);
+         for i in Send(SYS,@GetItemTemplates)
+         {
+            if IsClass(i,piItemTargetClass)
+            {
+               oTargetItem = i;
+            }
+         }
       }
 
       if IsClass(oReward,&NumberItem)
@@ -326,7 +429,7 @@ messages:
                #parm1=send(self,@GetRemainingMinutes),
                #parm2=send(oTargetMonster,@GetCapIndef),#parm3=send(oTargetMonster,@GetName),
                #parm4=send(oTargetItem,@GetCapIndef),#parm5=send(oTargetItem,@GetName),
-               #parm6=send(oReward,@GetNumber),#parm7=send(oReward,@GetName));
+               #parm6=piRewardAmount,#parm7=send(oReward,@GetName));
          }
          else
          {
@@ -335,14 +438,14 @@ messages:
                Send(piOwner,@MsgSendUser,#message_rsc=bounty_report_monster_numbitem_rsc,
                   #parm1=send(self,@GetRemainingMinutes),
                   #parm2=send(oTargetMonster,@GetCapIndef),#parm3=send(oTargetMonster,@GetName),
-                  #parm4=send(oReward,@GetNumber),#parm5=send(oReward,@GetName));
+                  #parm4=piRewardAmount,#parm5=send(oReward,@GetName));
             }
             else
             {
                Send(piOwner,@MsgSendUser,#message_rsc=bounty_report_item_numbitem_rsc,
                   #parm1=send(self,@GetRemainingMinutes),
                   #parm2=send(oTargetItem,@GetCapIndef),#parm3=send(oTargetItem,@GetName),
-                  #parm4=send(oReward,@GetNumber),#parm5=send(oReward,@GetName));
+                  #parm4=piRewardAmount,#parm5=send(oReward,@GetName));
             }
          }
       }
@@ -375,22 +478,6 @@ messages:
             }
          }
       }
-            
-      
-      if oReward <> $
-      {
-         Send(oReward,@Delete);
-      }
-      
-      if oTargetMonster <> $
-      {
-         Send(oTargetMonster,@Delete);
-      }
-      
-      if oTargetItem <> $
-      {
-         Send(oTargetItem,@Delete);
-      }
 
       return;
    }
@@ -410,7 +497,7 @@ messages:
       return ((iCurrentTime - viCreationTime)/60);
    }
    
-   % Used by self and SYS to eliminate bad bounties
+   % Used to eliminate bad bounties
    CheckValidBounty()
    {
       if piRewardClass = $

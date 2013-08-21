@@ -7,6 +7,6 @@
 DEPEND = ..\util.bof
 BOFS = system.bof library.bof parlia.bof assgame.bof questengine.bof lore.bof \
        aarchive.bof necbal.bof nodeattk.bof rntmaint.bof factgame.bof eventtxt.bof \
-       warevent.bof statistics.bof settings.bof chaosnight.bof
+       warevent.bof statistics.bof settings.bof chaosnight.bof bountyquest.bof
 
 !include $(KODDIR)\kod.mak

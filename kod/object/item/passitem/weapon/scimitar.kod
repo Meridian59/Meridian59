@@ -53,6 +53,21 @@ properties:
 
 messages:
 
+   % Scimitar is a great parrying weapon for those with natural talent.
+   GetParryAbility(who=$)
+   {
+      local iParry, iAgility;
+
+      iParry = send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
+      iAgility = send(who,@GetAgility);
+      
+      if iParry = 0
+      {
+         return 0;
+      }
+
+      return iParry + (iAgility * 2) + piParryBonus;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

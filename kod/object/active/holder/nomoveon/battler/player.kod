@@ -954,7 +954,7 @@ properties:
    plDonationYears = $
    
    % List of bounty quests player has running
-   plPlayerBounties = $
+   plPlayerBountyQuests = $
 
 messages:
 
@@ -1926,6 +1926,9 @@ messages:
          Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_logged_on_wav_rsc);
       }
+      
+      % Take a look at our current bounties
+      Send(self,@ReportAllBountyQuests);
 
       return;
    }
@@ -4876,14 +4879,13 @@ messages:
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
          
-         if plPlayerBounties <> $
+         if plPlayerBountyQuests <> $
          {
-            for b in plPlayerBounties
+            for b in plPlayerBountyQuests
             {
-               If Send(b,@CheckValidBounty)
-                  AND Send(b,@CheckBountyMonster,#monster_to_check=what)
+               If IsClass(b,&MonsterBounty)
                {
-                  Send(b,@ClaimBountyReward);
+                  Send(b,@CheckBountyQuestTarget,#target=what);
                }
             }
          }
@@ -12366,36 +12368,39 @@ messages:
       return;
    }
 
-   AddBountyToPlayerList(bounty=$)
+   AddBountyQuestToPlayerList(bounty_quest=$)
    {
-      if bounty <> $
+      if bounty_quest <> $
       {
-         plPlayerBounties = Cons(bounty,plPlayerBounties);
+         plPlayerBountyQuests = Cons(bounty_quest,plPlayerBountyQuests);
       }
       return;
    }
 
-   RemoveBountyFromPlayerList(bounty=$)
+   RemoveBountyQuestFromPlayerList(bounty_quest=$)
    {
-      if bounty <> $
+      if bounty_quest <> $
+         AND plPlayerBountyQuests <> $
       {
-         plPlayerBounties = DelListElem(plPlayerBounties,bounty);
+         plPlayerBountyQuests = DelListElem(plPlayerBountyQuests,bounty_quest);
       }
       return;
    }
    
-   ReportAllBounties()
+   GetPlayerBountyQuests()
+   {
+      return plPlayerBountyQuests;
+   }
+
+   ReportAllBountyQuests()
    {
       local b;
       
-      if plPlayerBounties <> $
+      if plPlayerBountyQuests <> $
       {
-         for b in plPlayerBounties
+         for b in plPlayerBountyQuests
          {
-            if Send(b,@CheckValidBounty)
-            {
-               Send(b,@BountyReport);
-            }
+            Send(b,@BountyQuestReport);
          }
       }
       return;

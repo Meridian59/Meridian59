@@ -1,0 +1,80 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemBounty is BountyQuest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   item_bounty_success_reward_singular_rsc = "Upon grasping the object of your bounty quest, arcane sendings deliver one %s!"
+   item_bounty_success_reward_numberitem_rsc = "Upon grasping the object of your bounty quest, arcane sendings deliver %i %s!"
+   item_bounty_inv_full_rsc = "You found the last object of your bounty quest, but you could not hold the reward. Drop some items and try again."
+   item_bounty_fail_rsc = "You have not found the proper objects in time, and have thus failed a bounty quest."
+   
+   item_bounty_report_singular_rsc = "You have %i minutes to acquire %i %s. If successful, you will receive one %s."
+   item_bounty_report_numberitem_rsc = "You have %i minutes to acquire %i %s. If successful, you will receive %i %s."
+
+classvars:
+
+   bounty_success_reward_singular_rsc = item_bounty_success_reward_singular_rsc
+   bounty_success_reward_numberitem_rsc = item_bounty_success_reward_numberitem_rsc
+   bounty_inv_full_rsc = item_bounty_inv_full_rsc
+   bounty_fail_rsc = item_bounty_fail_rsc
+   
+   bounty_report_singular_rsc = item_bounty_report_singular_rsc
+   bounty_report_numberitem_rsc = item_bounty_report_numberitem_rsc
+
+properties:
+
+messages:
+
+   % Check how many of the target item type we are carrying.
+   CheckBountyQuestTarget(target=$)
+   {
+      local i;
+
+      if piOwner <> $
+         AND isClass(piOwner,&User)
+         AND target <> $
+      {
+         for i in Send(piOwner,@GetHolderPassive)
+         {
+            if isClass(target,piTargetClass)
+            {
+               if isClass(target,&NumberItem)
+               {
+                  if Send(target,@GetNumber) >= piTargetNumberNeeded
+                  {
+                     % Number item, correct type, and at least enough of them. Success.
+                     Send(self,@ClaimBountyQuestReward);
+                     return;
+                  }
+               }
+               else
+               {
+                  % Singular item and correct type. Success.
+                  Send(self,@ClaimBountyQuestReward);
+                  return;
+               }
+            }
+         }
+      }
+
+      % It was the right type of a number item, but not enough of them. Keep questing.
+      Send(self,@BountyQuestReport);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

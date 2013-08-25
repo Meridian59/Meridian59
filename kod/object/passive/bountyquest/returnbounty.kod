@@ -1,0 +1,89 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ReturnBounty is BountyQuest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   return_bounty_success_reward_singular_rsc = "As you return the object of your bounty quest, arcane sendings deliver one %s!"
+   return_bounty_success_reward_numberitem_rsc = "As you return the object of your bounty quest, arcane sendings deliver %i %s!"
+   return_bounty_inv_full_rsc = "You returned the object of your bounty quest, but you could not hold the reward. Drop some items and try again."
+   return_bounty_fail_rsc = "You have not returned the proper objects in time, and have thus failed a bounty quest."
+
+   return_bounty_report_singular_rsc = "You have %i minutes to find and return %i %s to %s. If successful, you will receive one %s."
+   return_bounty_report_numberitem_rsc = "You have %i minutes to find and return %i %s to %s. If successful, you will receive %i %s."
+
+   return_default_name = "Paddock"
+
+classvars:
+
+   bounty_success_reward_singular_rsc = return_bounty_success_reward_singular_rsc
+   bounty_success_reward_numberitem_rsc = return_bounty_success_reward_numberitem_rsc
+   bounty_inv_full_rsc = return_bounty_inv_full_rsc
+   bounty_fail_rsc = return_bounty_fail_rsc
+   
+   bounty_report_singular_rsc = return_bounty_report_singular_rsc
+   bounty_report_numberitem_rsc = return_bounty_report_numberitem_rsc
+
+properties:
+
+   piReturnTargetName = return_default_name
+
+messages:
+
+   Constructor(target_npc="Paddock")
+   {
+      % Make sure the return NPC exists
+      if Send(SYS,@FindNPCByString,#string=target_npc) = $
+      {
+         Send(self,@Delete);
+         return;
+      }
+
+      propagate;
+   }
+
+   % Message includes NPC name, unlike other quest types.
+   BountyQuestReport()
+   {
+      if Send(self,@ValidateBountyQuest)
+      {
+         if NOT Send(piOwner,@IsOnline)
+         {
+            return;
+         }
+
+         if pbRewardIsNumberItem
+         {
+            Send(piOwner,@MsgSendUser,#message_rsc=bounty_report_numberitem_rsc,
+               #parm1=send(self,@GetRemainingMinutes),
+               #parm2=piTargetNumberNeeded,#parm3=piTargetName,
+               #parm4=piReturnTargetName,
+               #parm5=piRewardNumber,#parm6=piRewardName);
+         }
+         else
+         {
+            Send(piOwner,@MsgSendUser,#message_rsc=bounty_report_singular_rsc,
+               #parm1=send(self,@GetRemainingMinutes),
+               #parm2=piTargetNumberNeeded,#parm3=piTargetName,
+               #parm4=piReturnTargetName,
+               #parm5=piRewardName);
+         }
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

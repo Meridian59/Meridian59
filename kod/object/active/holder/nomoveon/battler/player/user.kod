@@ -5920,26 +5920,11 @@ messages:
 
    NewHoldObject(what = $)
    {
-      local b;
-   
       if pbLogged_on
       {
          AddPacket(1,BP_INVENTORY_ADD);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
          SendPacket(poSession);
-      }
-      
-         
-      if plPlayerBounties <> $
-      {
-         for b in plPlayerBounties
-         {
-            If Send(b,@CheckValidBounty)
-               AND Send(b,@CheckBountyItem,#item_to_check=what)
-            {
-               Send(b,@ClaimBountyReward);
-            }
-         }
       }
       
       propagate;

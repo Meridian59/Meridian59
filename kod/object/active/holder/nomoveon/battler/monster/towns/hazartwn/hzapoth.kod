@@ -43,7 +43,7 @@ messages:
                      Create(&Mushroom,#number=5),
                      Create(&Elderberry,#number=4),
                      Create(&BlueMushroom,#number=4),
-                     Create(&RedMushroom,#number=4),
+                     Create(&RedMushroom,#number=4)],
                      $,
                      $];
       return;

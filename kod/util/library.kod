@@ -168,7 +168,7 @@ resources:
    LT_mausoleum = "mausoleum"
    LT_mummy = "mummy"
    LT_mummies = "mummies"
-   LT_snack = "mushroom"
+   LT_snack = "mushrooms"
    
    LT_errand = "errand"
    LT_favor = "favor"
@@ -245,7 +245,7 @@ resources:
    LT_cheat = "cheat"
    LT_liar = "liar"
    LT_scam = "scam"
-   LT_balo = "Balo na�te Din"
+   LT_balo = "Balo nate Din
    LT_arm = "arm"
    LT_konima = "konima"
    LT_avar = "avar"

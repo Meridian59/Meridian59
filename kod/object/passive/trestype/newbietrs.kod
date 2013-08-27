@@ -29,7 +29,7 @@ messages:
    constructed()
    {
       plTreasure = [ [ &Snack, 20 ],
-                     [ &Money, 20 ],
+                     [ &Money, 19 ],
                      [ &InkyCap, 5 ],
                      [ &Emerald, 7 ],
                      [ &Sapphire, 7 ],
@@ -40,7 +40,8 @@ messages:
                      [ &SimpleHelm, 5 ],
                      [ &Mace, 5 ],
                      [ &ShortSword, 5 ],
-                     [ &PlateArmor, 1 ] ];
+                     [ &PlateArmor, 1 ] ],
+                     [ &BerserkerRing, 1 ] ];
 
       propagate;
    }

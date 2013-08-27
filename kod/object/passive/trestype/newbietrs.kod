@@ -40,7 +40,8 @@ messages:
                      [ &SimpleHelm, 5 ],
                      [ &Mace, 5 ],
                      [ &ShortSword, 5 ],
-                     [ &PlateArmor, 1 ] ],
+                     [ &LeatherArmor, 5 ] ],
+                     [ &JewelofFroz , 1 ] ],
                      [ &BerserkerRing, 1 ] ];
 
       propagate;

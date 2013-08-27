@@ -20,7 +20,7 @@ resources:
 
    HazarBlacksmith_name_rsc = "Tomas"
    HazarBlacksmith_icon_rsc = bqsmith.bgf
-   HazarBlacksmith_desc_rsc = "A maker of unremarkable but reliable weapons, Tomas earns his customers with good comradeship and low prices."
+   HazarBlacksmith_desc_rsc = "A maker of unremarkable but reliable weapons and armor, Tomas earns his customers with good comradeship and low prices."
    HzBla_entry_welcome = "Hello %s%s, and welcome."
 
 classvars:
@@ -36,9 +36,11 @@ messages:
 
    SetForSale()
    {
-      plFor_sale = [ [ Create(&Mace),Create(&ShortSword),
-                     Create(&LongSword),Create(&ScaleArmor),
-					 Create(&LeatherArmor)],$,$];
+      plFor_sale = [ [Create(&Mace),
+      			Create(&ShortSword),
+      			Create(&MetalShield),
+      			Create(&ChainArmor),
+      			Create(&Torch)],$,$];
       return;
    }
 

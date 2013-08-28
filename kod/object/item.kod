@@ -415,8 +415,8 @@ messages:
          Post(what,@TryUseItem,#what=self);
       }
       
-      if IsClass(what,&User)
-         AND (NOT Send(what,@PlayerIsImmortal))
+      if what <> $
+         AND IsClass(what,&User)
       {
          lPlayerBountyQuests = Send(what,@GetPlayerBountyQuests);
          if lPlayerBountyQuests <> $

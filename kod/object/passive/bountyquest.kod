@@ -166,8 +166,12 @@ messages:
 
    EndBountyQuestTimer()
    {
-      ptBountyQuestTimer = $;
-      
+      if ptBountyQuestTimer <> $
+      {
+         DeleteTimer(ptBountyQuestTimer);
+         ptBountyQuestTimer = $;
+      }
+
       if piOwner <> $
          AND isClass(piOwner,&User)
          AND Send(piOwner,@IsLoggedOn)

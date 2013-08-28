@@ -296,6 +296,8 @@ resources:
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
 
+   not_enough_health_to_post_rsc = "Posting is restricted to players of %i health and above."
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -5772,6 +5774,19 @@ messages:
       {
          Send(self, @MsgSendUser, #message_rsc=user_news_squelched);
          return;
+      }
+      
+      if NOT IsClass(self,&DM)
+      {
+         if Send(self,@GetBaseMaxHealth) < Send(Send(SYS,@GetSettings),@GetMinGlobePostHP)
+         {
+            if Send(self,@IsLoggedOn)
+            {
+               Send(self,@MsgSendUser,#message_rsc=not_enough_health_to_post_rsc,
+                       #parm1=Send(Send(SYS,@GetSettings),@GetMinGlobePostHP));
+            }
+            return;
+         }
       }
 
       oNews = Send(SYS,@FindNewsByNum,#num=nid);

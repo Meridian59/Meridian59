@@ -136,6 +136,10 @@ properties:
    % If disabled, outlaws & murderers will not be afforded the 1/3-hp damage cap protection.
    pbDamageCapProtectionMurderersEnable = FALSE
 
+   % The minimum HP required to post on the globe
+   % Intended to reduce the amount of toxic anonymous posting
+   piMinGlobePostHp = 110
+
 messages:
 
    Constructor(server_num = $)
@@ -331,6 +335,11 @@ messages:
    GetLogoffPenaltyGhostTime()
    {
       return piLogoffPenaltyGhostTime;
+   }
+   
+   GetMinGlobePostHP()
+   {
+      return piMinGlobePostHp;
    }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -42,7 +42,8 @@ messages:
                      [ &ShortSword, 5 ],
                      [ &LeatherArmor, 5 ] ],
                      [ &LightningWand , 3 ] ],
-                     [ &HealWand , 3 ] ],
+                     [ &HealWand , 2 ] ],
+                     [ &FireWand , 1 ] ],
                      [ &JewelofFroz , 1 ] ],
                      [ &BerserkerRing, 1 ] ];
 

@@ -29,8 +29,8 @@ messages:
    constructed()
    {
       plTreasure = [ [ &Snack, 20 ],
-                     [ &Money, 19 ],
-                     [ &InkyCap, 5 ],
+                     [ &Money, 14 ],
+                     [ &InkyCap, 4 ],
                      [ &Emerald, 7 ],
                      [ &Sapphire, 7 ],
                      [ &EntrootBerry, 5 ],
@@ -41,6 +41,8 @@ messages:
                      [ &Mace, 5 ],
                      [ &ShortSword, 5 ],
                      [ &LeatherArmor, 5 ] ],
+                     [ &LightningWand , 3 ] ],
+                     [ &HealWand , 3 ] ],
                      [ &JewelofFroz , 1 ] ],
                      [ &BerserkerRing, 1 ] ];
 

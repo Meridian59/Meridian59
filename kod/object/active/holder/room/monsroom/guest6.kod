@@ -121,8 +121,8 @@ resources:
       "Consider it more like falling at an angle.  There will be many places in the world "
       "that will require you to leap from one area to the next.  To cross these areas, "
       "like the one ahead, get a running start by holding down the SHIFT key while using "
-      "your arrow keys to guide your avatar.  Just aim where you�re trying to land and "
-      "run from one ledge to the next.  If you don�t make the jump on your first try, "
+      "your arrow keys to guide your avatar.  Just aim where you are trying to land and "
+      "run from one ledge to the next.  If you fail the jump on your first try, "
       "you can go around and try again."
    
    guest6_bones_name = "pile of bones"

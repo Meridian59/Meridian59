@@ -69,6 +69,7 @@ messages:
    {
       plResistances = [ [ 20, -ATCK_SPELL_UNHOLY],
                         [ -20, -ATCK_SPELL_HOLY],
+                        [ -60, -ATCK_SPELL_FIRE],
                         [-20, ATCK_WEAP_ALL ] ];
       propagate;
    }

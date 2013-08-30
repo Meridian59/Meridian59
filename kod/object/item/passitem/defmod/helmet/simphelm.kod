@@ -27,8 +27,8 @@ classvars:
    vrDesc = SimpleHelm_desc_rsc
    vrIcon = SimpleHelm_icon_rsc
 
-   viHits_init_min = 200
-   viHits_init_max = 225
+   viHits_init_min = 550
+   viHits_init_max = 650
 
    viValue_average = 100
    viWeight = 50
@@ -42,7 +42,7 @@ classvars:
    viInventory_group = 2
    viBroken_group = 4
 
-   viDefense_base = 20
+   viDefense_base = 50
    viDamage_base = 1
 
 properties:
@@ -66,7 +66,11 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_BLUDGEON,-10]
+      return [ [ATCK_WEAP_THRUST,5],
+               [ATCK_WEAP_PIERCE,5],
+               [ATCK_WEAP_BLUDGEON,5],
+               [ATCK_WEAP_SLASH,5],
+               [-ATCK_SPELL_SHOCK,-10]
              ];
    }
 

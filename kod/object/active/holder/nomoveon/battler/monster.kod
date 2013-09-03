@@ -935,6 +935,7 @@ messages:
       {         
          if (Send(self,@GetRow) - iRow) <= 3
             AND (Send(self,@GetCol) - iCol) <= 3
+            OR IsClass(self,&Reflection)
          {
             Post(self,@GotoMaster);
          }
@@ -963,8 +964,14 @@ messages:
          return;
       }
 
-      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 6)
+      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 20)
       {
+         if IsClass(self,&Reflection)
+            AND NOT Send(oNewRoom,@AllowGuildAttack,#what=poMaster)
+         {
+            return;
+         }
+
          Send(oNewRoom,@NewHold,#what=self,
               #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
               #new_angle=Send(poMaster,@GetAngle));

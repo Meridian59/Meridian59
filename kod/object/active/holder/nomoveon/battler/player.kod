@@ -952,6 +952,9 @@ properties:
    % List of integer years in which the player has donated money to the game.
    % Used to construct a string for their description.
    plDonationYears = $
+   
+   % List of bounty quests player has running
+   plPlayerBountyQuests = $
 
 messages:
 
@@ -1926,6 +1929,9 @@ messages:
          Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_logged_on_wav_rsc);
       }
+      
+      % Take a look at our current bounties
+      Send(self,@ReportAllBountyQuests);
 
       return;
    }
@@ -4747,7 +4753,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local i, b, oSoldierShield, monstkarma, iChance, oEnemyGuild;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -4871,6 +4877,17 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
+         
+         if plPlayerBountyQuests <> $
+         {
+            for b in plPlayerBountyQuests
+            {
+               If IsClass(b,&MonsterBounty)
+               {
+                  Send(b,@CheckBountyQuestTarget,#target=what);
+               }
+            }
+         }
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
@@ -12353,6 +12370,42 @@ messages:
       return;
    }
 
+   AddBountyQuestToPlayerList(bounty_quest=$)
+   {
+      if bounty_quest <> $
+      {
+         plPlayerBountyQuests = Cons(bounty_quest,plPlayerBountyQuests);
+      }
+      return;
+   }
 
+   RemoveBountyQuestFromPlayerList(bounty_quest=$)
+   {
+      if bounty_quest <> $
+         AND plPlayerBountyQuests <> $
+      {
+         plPlayerBountyQuests = DelListElem(plPlayerBountyQuests,bounty_quest);
+      }
+      return;
+   }
+   
+   GetPlayerBountyQuests()
+   {
+      return plPlayerBountyQuests;
+   }
+
+   ReportAllBountyQuests()
+   {
+      local b;
+      
+      if plPlayerBountyQuests <> $
+      {
+         for b in plPlayerBountyQuests
+         {
+            Send(b,@BountyQuestReport);
+         }
+      }
+      return;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

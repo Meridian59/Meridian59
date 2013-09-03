@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MonsterBounty is BountyQuest
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   monster_bounty_success_reward_singular_rsc = "Upon killing your last bounty quest target, arcane sendings deliver one %s!"
+   monster_bounty_success_reward_numberitem_rsc = "Upon killing your last bounty quest target, arcane sendings deliver %i %s!"
+   monster_bounty_inv_full_rsc = "You killed your last bounty quest target, but you could not hold the reward. Drop some items and try again."
+   monster_bounty_fail_rsc = "You have not killed your targets in time, and have thus failed a bounty quest."
+   
+   monster_bounty_report_singular_rsc = "You have %i minutes to kill %i %ss. If successful, you will receive one %s."
+   monster_bounty_report_numberitem_rsc = "You have %i minutes to kill %i %ss. If successful, you will receive %i %s."
+
+classvars:
+
+   bounty_success_reward_singular_rsc = monster_bounty_success_reward_singular_rsc
+   bounty_success_reward_numberitem_rsc = monster_bounty_success_reward_numberitem_rsc
+   bounty_inv_full_rsc = monster_bounty_inv_full_rsc
+   bounty_fail_rsc = monster_bounty_fail_rsc
+   
+   bounty_report_singular_rsc = monster_bounty_report_singular_rsc
+   bounty_report_numberitem_rsc = monster_bounty_report_numberitem_rsc
+
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,383 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BountyQuest is PassiveObject
+
+constants:
+
+   include blakston.khd
+   include protocol.khd
+
+resources:
+
+   default_bounty_success_reward_singular_rsc = "You completed a bounty and have received one %s!"
+   default_bounty_success_reward_numberitem_rsc = "You completed a bounty and have received %i %s!"
+   default_bounty_inv_full_rsc = "You completed a bounty, but you could not hold the reward. Drop some items and try again."
+   default_bounty_fail_rsc = "You failed a bounty."
+   
+   default_bounty_report_singular_rsc = "You have %i minutes to complete a bounty on %i %s, thereby receiving one %s."
+   default_bounty_report_numberitem_rsc = "You have %i minutes to complete a bounty on %i %s, thereby receiving %i %s."
+
+   default_target_name = "monster"
+   default_reward_name = "item"
+
+classvars:
+
+   bounty_success_reward_singular_rsc = default_bounty_success_reward_singular_rsc
+   bounty_success_reward_numberitem_rsc = default_bounty_success_reward_numberitem_rsc
+   bounty_inv_full_rsc = default_bounty_inv_full_rsc
+   bounty_fail_rsc = default_bounty_fail_rsc
+   
+   bounty_report_singular_rsc = default_bounty_report_singular_rsc
+   bounty_report_numberitem_rsc = default_bounty_report_numberitem_rsc
+
+
+properties:
+
+   piCreationTime = $
+   piEndTime = $
+   ptBountyQuestTimer = $
+
+   % Target is this class in this amount
+   piTargetClass = &Mummy
+   piTargetNumberNeeded = 10
+   piTargetName = default_target_name
+
+   % Success will reward this class and amount
+   piRewardClass = &Ruby
+   piRewardNumber = 5
+   pbRewardIsNumberItem = TRUE
+   piRewardName = default_reward_name
+
+   % If true, give the reward even if the player can't carry it
+   % Used for difficult or non-repeatable quests
+   pbForceReward = FALSE
+
+   % Link back to player who has the bounty
+   piOwner = $
+
+messages:
+
+   Constructor(owner=$,target_class=&Mummy,target_number_needed=10,time=1800000,
+                  reward_class=&Ruby,reward_number=5,force_reward=FALSE)
+   {
+      local i, bFoundTarget, bFoundReward;
+      bFoundTarget = FALSE;
+      bFoundReward = FALSE;
+
+      if owner <> $
+         AND IsClass(owner,&User)
+      {
+         piOwner = owner;
+         
+         % Make sure the target exists.
+         for i in Send(SYS,@GetMonsterTemplates)
+         {
+            if isClass(i,target_class)
+            {
+               bFoundTarget = TRUE;
+               piTargetName = Send(i,@GetName);
+               piTargetNumberNeeded = target_number_needed;
+            }
+         }
+
+         % If it's not a monster, maybe it's an item.
+         if NOT bFoundTarget
+         {
+            for i in Send(SYS,@GetItemTemplates)
+            {
+               if isClass(i,target_class)
+               {
+                  bFoundTarget = TRUE;
+                  piTargetName = Send(i,@GetName);
+                  if isClass(i,&NumberItem)
+                  {
+                     piTargetNumberNeeded = target_number_needed;
+                  }
+                  else
+                  {
+                     piTargetNumberNeeded = 1;
+                  }
+               }
+            }
+         }
+
+         if NOT bFoundTarget
+         {
+            Send(self,@Delete);
+            return;
+         }
+         else
+         {
+            piTargetClass = target_class;
+         }
+
+         % Make sure reward exists.
+         for i in Send(SYS,@GetItemTemplates)
+         {
+            if isClass(i,reward_class)
+            {
+               bFoundReward = TRUE;
+               pbRewardIsNumberItem = isClass(i,&NumberItem);
+               if pbRewardIsNumberItem
+               {
+                  piRewardNumber = reward_number;
+               }
+               else
+               {
+                  piRewardNumber = 1;
+               }
+               piRewardName = Send(i,@GetName);
+            }
+         }
+
+         if NOT bFoundReward
+         {
+            Send(self,@Delete);
+            return;
+         }
+         else
+         {
+            piRewardClass = reward_class;
+         }
+
+         pbForceReward = force_reward;
+         piCreationTime = GetTime();
+         piEndTime = piCreationTime + (time / 1000);
+         CreateTimer(self,@EndBountyQuestTimer,time);
+         Send(SYS,@AddBountyQuestToGlobalList,#bounty_quest=self);
+         Send(piOwner,@AddBountyQuestToPlayerList,#bounty_quest=self);
+      }
+      else
+      {
+         Send(self,@Delete);
+         return;
+      }
+
+      propagate;
+   }
+
+   EndBountyQuestTimer()
+   {
+      if ptBountyQuestTimer <> $
+      {
+         DeleteTimer(ptBountyQuestTimer);
+         ptBountyQuestTimer = $;
+      }
+
+      if piOwner <> $
+         AND isClass(piOwner,&User)
+         AND Send(piOwner,@IsLoggedOn)
+      {
+         Send(piOwner,@MsgSendUser,#message_rsc=bounty_fail_rsc);
+      }
+      
+      Send(self,@Delete);
+      
+      return;
+   }
+   
+   Delete()
+   {
+      if ptBountyQuestTimer <> $
+      {
+         DeleteTimer(ptBountyQuestTimer);
+         ptBountyQuestTimer = $;
+      }
+
+      Send(SYS,@RemoveBountyQuestFromGlobalList,#bounty_quest=self);
+
+      if piOwner <> $
+         AND isClass(piOwner,&User)
+      {
+         Send(piOwner,@RemoveBountyQuestFromPlayerList,#bounty_quest=self);
+      }
+
+      propagate;
+   }
+
+   CheckBountyQuestTarget(target=$)
+   {
+      if target <> $
+      {
+         if isClass(target,piTargetClass)
+         {
+            piTargetNumberNeeded = piTargetNumberNeeded - 1;
+            if piTargetNumberNeeded <= 0
+            {
+               Send(self,@ClaimBountyQuestReward);
+            }
+            else
+            {
+               Send(self,@BountyQuestReport);
+            }
+         }
+      }
+
+      return;
+   }
+
+   ClaimBountyQuestReward()
+   {
+      local oReward;
+
+      if Send(self,@ValidateBountyQuest)
+      {
+         if piRewardClass <> $
+         {
+            if pbRewardIsNumberItem
+            {
+               oReward = Create(piRewardClass,#number=piRewardNumber);
+            }
+            else
+            {
+               oReward = Create(piRewardClass);
+            }
+
+
+            if Send(piOwner,@ReqNewHold,#what=oReward)
+               OR pbForceReward
+            {
+               if IsClass(oReward,&NumberItem)
+               {
+                  Send(piOwner,@NewHold,#what=oReward);
+                  Send(piOwner,@MsgSendUser,#message_rsc=bounty_success_reward_numberitem_rsc,
+                     #parm1=Send(oReward,@GetNumber),#parm2=Send(oReward,@GetName));
+               }
+               else
+               {
+                  Send(piOwner,@NewHold,#what=oReward);
+                  Send(piOwner,@MsgSendUser,#message_rsc=bounty_success_reward_singular_rsc,
+                     #parm1=Send(oReward,@GetName));
+               }
+               Send(self,@Delete);
+            }
+            else
+            {
+               Send(piOwner,@MsgSendUser,#message_rsc=bounty_inv_full_rsc);
+               piTargetNumberNeeded = 1;
+            }
+         }
+         else
+         {
+            Send(self,@Delete);
+         }
+      }
+
+      return;
+   }
+
+   BountyQuestReport()
+   {
+      if Send(self,@ValidateBountyQuest)
+      {
+         if NOT Send(piOwner,@IsLoggedOn)
+         {
+            return;
+         }
+
+         if pbRewardIsNumberItem
+         {
+            Send(piOwner,@MsgSendUser,#message_rsc=bounty_report_numberitem_rsc,
+               #parm1=send(self,@GetRemainingMinutes),
+               #parm2=piTargetNumberNeeded,#parm3=piTargetName,
+               #parm4=piRewardNumber,#parm5=piRewardName);
+         }
+         else
+         {
+            Send(piOwner,@MsgSendUser,#message_rsc=bounty_report_singular_rsc,
+               #parm1=send(self,@GetRemainingMinutes),
+               #parm2=piTargetNumberNeeded,#parm3=piTargetName,
+               #parm4=piRewardName);
+         }
+      }
+
+      return;
+   }
+   
+   % Used to eliminate bad bounties
+   ValidateBountyQuest()
+   {
+      local i, bFoundTarget, bFoundReward;
+      bFoundTarget = FALSE;
+      bFoundReward = FALSE;
+
+      return TRUE;
+      
+      if piRewardClass = $
+         OR piOwner = $
+         OR NOT IsClass(piOwner,&User)
+         OR ptBountyQuestTimer = $
+         OR piTargetClass = $
+         OR piRewardClass = $
+         OR piCreationTime > GetTime()
+      {
+         Send(self,@Delete);
+         return FALSE;
+      }
+
+      for i in Send(SYS,@GetMonsterTemplates)
+      {
+         if isClass(i,piTargetClass)
+         {
+            bFoundTarget = TRUE;
+         }
+      }
+      
+      for i in Send(SYS,@GetItemTemplates)
+      {
+         if isClass(i,piTargetClass)
+         {
+            bFoundTarget = TRUE;
+         }
+      }
+      
+      for i in Send(SYS,@GetItemTemplates)
+      {
+         if isClass(i,piRewardClass)
+         {
+            bFoundReward = TRUE;
+         }
+      }
+      
+      if NOT bFoundTarget
+         OR NOT bFoundReward
+      {
+         Send(self,@Delete);
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+   
+   SetForceReward(force_reward=FALSE)
+   {
+      pbForceReward = force_reward;
+
+      return;
+   }
+
+   GetRemainingMinutes()
+   {
+      return ((piEndTime - GetTime())/60);
+   }
+   
+   GetTargetClass()
+   {
+      return piTargetClass;
+   }
+
+   GetOwner()
+   {
+      return piOwner;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -238,7 +238,15 @@ resources:
       "~IA strange wind blows across the land, killing all monsters.~I\n"
       "~b~BCongratulations!~B~k All the monsters have been slain!  You have "
       "won Meridian 59.  Hope you had fun, it's been a great game."
-   
+
+   admin_gave_bounty_quest = \
+      "### To challenge any mortals that are up to the task, the gods have "
+      "given you a bounty quest!"
+      
+   admin_rewarded_bounty_quests = \
+      "### In an act of whimsical generosity, the gods have granted you "
+      "immediate indulgence on all your bounty quests!"
+
 classvars:
 
    viGuild_price = 5000
@@ -263,6 +271,7 @@ properties:
    plGuild_halls = $
    plBrains = $
    plAbility_totals = $
+   plServerBountyQuests = $
 
    plMonsterTemplates = $
    plItemTemplates = $
@@ -518,6 +527,7 @@ messages:
       Send(self,@RecreateSettings);
       Send(self,@RecreateNecromancerBalance);
       Send(self,@ClearAllQuests);
+      Send(self,@ValidateAllBountyQuests);
       Send(self,@CreateAllBanksIfNew);
       Send(self,@CreateAllVaultsIfNew);
       Send(self,@RecreateAllBrains);
@@ -6556,6 +6566,128 @@ messages:
       }
       return total;
    }
+   
+   AddBountyQuestToGlobalList(bounty_quest=$)
+   {
+      if bounty_quest=$
+      {
+         return;
+      }
+      
+      plServerBountyQuests = Cons(bounty_quest,plServerBountyQuests);
+
+      return;
+   }
+   
+   RemoveBountyQuestFromGlobalList(bounty_quest=$)
+   {
+      if bounty_quest <> $
+         AND plServerBountyQuests <> $
+      {
+         plServerBountyQuests = DelListElem(plServerBountyQuests,bounty_quest);
+      }
+
+      return;
+   }
+   
+   ValidateAllBountyQuests()
+   {
+      local b;
+
+      for b in plServerBountyQuests
+      {
+         Send(b,@ValidateBountyQuest);
+      }
+
+      return;
+   }
+   
+   RewardAllOnlineBountyQuests()
+   "Immediately complete & reward all online player bounty quests."
+   {
+      local i, b;
+
+      for i in plUsers_logged_on
+      {
+         Send(i,@MsgSendUser,#message_rsc=admin_rewarded_bounty_quests);
+      }
+
+      for b in plServerBountyQuests
+      {
+         if Send(b,@ValidateBountyQuest)
+            AND Send(Send(b,@GetOwner),@IsLoggedOn)
+         {
+            Send(b,@SetForceReward,#force_reward=TRUE);
+            Send(b,@ClaimBountyQuestReward);
+         }
+      }
+      return;
+   }
+   
+   GivePlayersInRoomMonsterBountyQuest(target_room=$,monster_class=&DarkAngel,monster_number=1,reward_class=&Money,reward_number=5000)
+   "Give everyone in the room a kill task to complete."
+   {
+      local i, each_obj, oBountyQuest;
+
+      if target_room = $
+      {
+         return FALSE;
+      }
+
+      for i in Send(target_room,@GetHolderActive)
+      {
+         each_obj = send(target_room,@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+            AND NOT IsClass(each_obj,&DM)
+            AND Send(each_obj,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=admin_gave_bounty_quest);
+            oBountyQuest = Create(&MonsterBounty,#owner=each_obj,#target_class=monster_class,#target_number_needed=monster_number,
+                  #reward_class=reward_class,#reward_number=reward_number,#force_reward=TRUE);
+            Send(oBountyQuest,@BountyQuestReport);
+         }
+      }
+      return TRUE;
+   }
+
+   GivePlayersOnlineMonsterBountyQuest(monster_class=&GiantRat,monster_number=5,reward_class=&InkyCap,reward_number=10)
+   "Give everyone online a monster bounty quest to complete."
+   {
+      local i, oBountyQuest;
+
+      for i in plUsers_logged_on
+      {
+         if NOT IsClass(i,&DM)
+            AND Send(i,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(i,@MsgSendUser,#message_rsc=admin_gave_bounty_quest);
+            oBountyQuest = Create(&MonsterBounty,#owner=i,#target_class=monster_class,#target_number_needed=monster_number,
+                  #reward_class=reward_class,#reward_number=reward_number,#force_reward=TRUE);
+            Send(oBountyQuest,@BountyQuestReport);
+         }
+      }
+      return TRUE;
+   }
+
+   GivePlayersOnlineItemBountyQuest(item_class=&Herb,number_needed=20,reward_class=&InkyCap,reward_number=10)
+   "Give everyone online an item bounty quest to complete."
+   {
+      local i, oBountyQuest;
+
+      for i in plUsers_logged_on
+      {
+         if NOT IsClass(i,&DM)
+            AND Send(i,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(i,@MsgSendUser,#message_rsc=admin_gave_bounty_quest);
+            oBountyQuest = Create(&ItemBounty,#owner=i,#target_class=item_class,#target_number_needed=number_needed,
+                  #reward_class=reward_class,#reward_number=reward_number,#force_reward=TRUE);
+            Send(oBountyQuest,@BountyQuestReport);
+         }
+      }
+      return TRUE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

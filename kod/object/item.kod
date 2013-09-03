@@ -388,7 +388,7 @@ messages:
 
    NewOwner(what = $)
    {
-      local lData;
+      local lData, b, lPlayerBountyQuests;
 
       % If the person who is supposed to pick up an item picks up 
       %  the item, then remove the corpsepointer.
@@ -408,11 +408,28 @@ messages:
 
       if what <> $ 
          AND (IsClass(what,&User)) 
-         AND (Send(self,@IsCursed)) 
+         AND (Send(self,@IsCursed))
          AND (NOT Send(what,@PlayerIsImmortal))
       {
          Send(what,@MsgSendUser,#message_rsc=item_try_use_cursed_rsc);
          Post(what,@TryUseItem,#what=self);
+      }
+      
+      if what <> $
+         AND IsClass(what,&User)
+      {
+         lPlayerBountyQuests = Send(what,@GetPlayerBountyQuests);
+         if lPlayerBountyQuests <> $
+         {
+            for b in lPlayerBountyQuests
+            {
+               If IsClass(b,&ItemBounty)
+                  AND IsClass(self,Send(b,@GetTargetClass))
+               {
+                  Send(b,@CheckBountyQuestTarget,#target=self);
+               }
+            }
+         }
       }
 
       propagate;

@@ -21,7 +21,6 @@ resources:
    DetectEvil_desc_rsc = \
       "Allows you to see the vile defilers of her name.  Reveals all evil people and "
       "monsters that are more foul than you are pure.  "
-      "Requires a fairy wing to cast."
    
    DetectEvil_on_rsc = "You feel more attuned to the darkness of the hearts around you."
    DetectEvil_off_rsc = "Your eyesight returns to its former mundanity."
@@ -63,7 +62,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&FairyWing, 1],plReagents);
 
       return;
    }

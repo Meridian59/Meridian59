@@ -22,7 +22,7 @@ resources:
       "Attempts to dispel any illusions in your vicinity.  This powerful "
       "spell is the bane of the Riija school of magic, but at a significant "
       "cost in reagents.  "
-      "Requires dragonfly eyes, uncut seraphym, and solagh to cast."
+      "Requires solagh to cast."
 
    dispelillusion_castermsg_rsc = \
       "You cross your eyes momentarily to make the illusions in the area fade "
@@ -50,9 +50,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&DragonflyEye,1],plReagents);
-      plReagents = Cons([&UncutSeraphym,1],plReagents);
-      plReagents = Cons([&Solagh,2],plReagents);
+      plReagents = Cons([&Solagh,3],plReagents);
 
       return;
    }

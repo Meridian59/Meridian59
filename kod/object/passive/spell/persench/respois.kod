@@ -20,7 +20,6 @@ resources:
    ResistPoison_icon_rsc = irespois.bgf
    ResistPoison_desc_rsc = \
       "Stabilizes your immune system, protecting you from some poisons.  "
-      "Requires herbs and red mushrooms."
    
    ResistPoison_on_rsc = "Your body tingles for a moment, and you feel a little "
                          "strange."
@@ -57,7 +56,7 @@ messages:
 
    ResetReagents()
    {
-      plReagents = [ [&Herbs, 2], [&RedMushroom,1] ];
+      plReagents = $;
 
       return;
    }

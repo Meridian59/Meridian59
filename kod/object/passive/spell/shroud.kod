@@ -22,7 +22,7 @@ resources:
    shroud_name_rsc = "shroud"
    shroud_icon_rsc = ishroud.bgf
    shroud_desc_rsc = \
-	"Used to protect a warrior's tools against polluting magics.  Requires a large amount of inexpensive reagents."
+	"Used to protect a warrior's tools against polluting magics.  "
    shroud_lable_rsc = "Shrouder."
    
 
@@ -40,7 +40,7 @@ classvars:
    viSpell_level = 3
    viMana = 10
    viSpellExertion = 10
-   viCast_time = 30000
+   viCast_time = 0
 
    viChance_To_Increase = 25
 
@@ -51,9 +51,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Mushroom,3],plReagents);
-      plReagents = Cons([&Elderberry,3],plReagents);
-      plReagents = Cons([&Herbs,2],plReagents);
 
       return;
    }

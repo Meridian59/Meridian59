@@ -21,7 +21,6 @@ resources:
    mend_desc_rsc = \
       "Erases the wear of battle from a piece of equipment, restoring it to "
       "near new condition.  "
-      "Requires orc teeth and sapphire to cast."
 
    mend_not_weaponry = "You try to focus on %s%s, but nothing happens!"
    mend_beyond_hope = "%s%s is beyond salvage."
@@ -52,8 +51,6 @@ messages:
    {
       % Separate message so it can be changed, then set from admin mode.
       plReagents = $;
-      plReagents = Cons([&Sapphire,1],plReagents);
-      plReagents = Cons([&OrcTooth,1],plReagents);
 
       return;
    }

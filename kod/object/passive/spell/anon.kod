@@ -25,7 +25,6 @@ resources:
    anonymity_desc_rsc = \
       "Makes you indistinct, and unrecognizable to all but those who you'd like to know its you.  "
       "Note that Shal'ille can not punish transgressors against you when you are anonymous.  "
-      "Requires rainbow ferns and firesand to cast."
    anonymity_sound = ranonym.wav
    
 classvars:
@@ -54,8 +53,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&RainbowFern,2],plReagents);
-      plReagents = Cons([&FireSand,1],plReagents);
 
       return;
    }

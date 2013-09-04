@@ -21,7 +21,6 @@ resources:
    DetectGood_desc_rsc = \
       "Allows you to see the disgustingly pure of heart.  This spell will reveal all good "
       "people and monsters that are more good than you are corrupted.  "
-      "Requires a fairy wing to cast."
    
    DetectGood_on_rsc = "You can now sense all things good, merely waiting to be defiled."
    DetectGood_off_rsc = "Your eyesight returns to its former mundanity."
@@ -63,7 +62,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&FairyWing, 1],plReagents);
 
       return;
    }

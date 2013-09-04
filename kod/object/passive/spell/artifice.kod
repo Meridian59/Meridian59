@@ -52,8 +52,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&FireSand,3],plReagents);
-      plReagents = Cons([&UncutSeraphym,3],plReagents);
+      plReagents = Cons([&FireSand,1],plReagents);
+      plReagents = Cons([&UncutSeraphym,1],plReagents);
 
       return;
    }

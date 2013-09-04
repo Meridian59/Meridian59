@@ -28,7 +28,6 @@ resources:
    MysticTouch_desc_rsc = \
       "Draws upon the magic of Faren to transfer magical energy from caster to "
       "target.  "
-      "Requires mushrooms to cast."
    
    MysticTouch_cast_rsc = \
       "You feel the magical energies of another filling your body."
@@ -72,7 +71,6 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&Mushroom,1],plReagents);
 
       return;
    }

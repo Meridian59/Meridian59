@@ -68,7 +68,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = cons([&Mushroom,3],plReagents);
+      plReagents = cons([&Mushroom,1],plReagents);
       plReagents = cons([&PurpleMushroom,1],plReagents);
 
       return;

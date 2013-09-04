@@ -20,7 +20,6 @@ resources:
    nightvision_icon_rsc = nitvsico.bgf
    nightvision_desc_rsc = \
       "Magically enhances the vision of the target.  "
-	   "Requires elderberry to cast."
    
    nightvision_already_enchanted_rsc = "You already have night vision."
 
@@ -55,7 +54,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&ElderBerry,3],plReagents);
 
       return;
    }

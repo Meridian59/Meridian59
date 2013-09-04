@@ -20,7 +20,6 @@ resources:
    Sweep_icon_rsc = isweep.bgf
    Sweep_desc_rsc = \
       "The wild winds of Faren sweep through the area gathering loose items for you.  "
-      "Requires mushrooms to cast."
 
    Sweep_room_cast = "%s%s magically sweeps some of the items in the area into %s hands."
 
@@ -61,7 +60,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Mushroom,2],plReagents);
 
       return;
    }

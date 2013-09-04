@@ -20,7 +20,6 @@ resources:
    RemoveCurse_icon_rsc = iremcurs.bgf
    RemoveCurse_desc_rsc = \
       "Breaks the magical bond binding you to a cursed item.  "
-      "Requires emeralds to cast."
    
    RemoveCurse_on = "Shal'ille tears the cursed item from your body."
    RemoveCurse_bad_target = \
@@ -52,7 +51,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Emerald,1],plReagents);
 
       return;
    }

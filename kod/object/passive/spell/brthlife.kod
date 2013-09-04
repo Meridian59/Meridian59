@@ -26,7 +26,6 @@ resources:
    breathoflife_desc_rsc = \
       "The great power of Shal'ille takes part of the caster's life force "
       "and gives it to another person.  "
-      "Requires herbs to cast."
 
    breathoflife_unnecessary_rsc = "%s%s cannot handle additional life force from this spell."
    breathoflife_toohurt_rsc = "You do not have enough health to transfer to another!"
@@ -63,7 +62,6 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&Herbs,1],plReagents);
 
       return;
    }

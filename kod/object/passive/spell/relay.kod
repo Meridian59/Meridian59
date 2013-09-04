@@ -25,8 +25,6 @@ resources:
    Relay_icon_rsc = irelay.bgf
    Relay_desc_rsc = \
       "The might of Kraanan allows you to give part of your vigor to another person.  "
-      "Requires an edible mushroom to cast."
-
    Relay_unnecessary_rsc = "%s%s cannot handle additional vigor from this spell."
    Relay_toolow_rsc = "You do not have enough vigor to transfer to another!"
    Relay_notonself_rsc = "You cannot cast Relay on yourself."
@@ -62,7 +60,6 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&Snack,1],plReagents);
 
       return;
    }

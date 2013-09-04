@@ -61,7 +61,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&DragonflyEye,2],plReagents);
+      plReagents = Cons([&DragonflyEye,1],plReagents);
 
       return;
    }

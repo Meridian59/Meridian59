@@ -57,7 +57,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Mushroom,2],plReagents);
+      plReagents = Cons([&Mushroom,1],plReagents);
       plReagents = Cons([&OrcTooth,1],plReagents);
 
       return;

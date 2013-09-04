@@ -24,7 +24,6 @@ resources:
       "You tap all of your mana nodes to the maximum, giving you "
       "an instant burst of mana and health, but destroying your bonds.  "
       "May only be cast once per day.  "
-      "Requires fairy wings and entroot berries and is very tiring to cast."
 
    Nodeburst_fail = "You have no links to any mana nodes which you can burst."
    Nodeburst_success = \
@@ -60,8 +59,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&FairyWing,3],plReagents);
-      plReagents = Cons([&EntrootBerry,3],plReagents);
 
       return;
    }

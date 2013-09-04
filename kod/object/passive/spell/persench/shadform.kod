@@ -21,7 +21,7 @@ resources:
    shadowform_desc_rsc = \
      "Transforms the target into a silhouette of their former self, "
 	  "perfect for skulking in darker locales and making them more difficult to hit.  "
-	  "Requires a handful of rainbow fern."
+	  "Requires a rainbow fern."
 
    shadowform_already_enchanted = "You already have shadow form."
    shadowform_already_affected = "The shadows refuse to hide what you wish."
@@ -55,7 +55,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&RainbowFern,3],plReagents);      
+      plReagents = Cons([&RainbowFern,1],plReagents);      
 
       return;
    }

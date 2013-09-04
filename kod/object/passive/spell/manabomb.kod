@@ -25,7 +25,6 @@ resources:
       "Initiates a white hot explosion which burns all of the "
       "caster's mana and consumes half of that amount from all "
       "others in the room.  "
-      "Requires sapphires to cast."
 
    manabomb_cast = "%s%s's mana violently detonates!"
    manabomb_hit_some = \
@@ -59,7 +58,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Sapphire,2],plReagents);
 
       return;
    }

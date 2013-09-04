@@ -65,7 +65,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Herbs,2],plReagents);
+      plReagents = Cons([&Herbs,1],plReagents);
       plReagents = Cons([&EntrootBerry,1],plReagents);
 
       return;

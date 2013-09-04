@@ -20,7 +20,7 @@ resources:
    curepoison_icon_rsc = icurpoi.bgf
    curepoison_desc_rsc = \
       "Pure, healing energy fights the effects of poison in the target.  "
-	   "Requires herbs and elderberries to cast."
+	   "Requires herbs to cast."
    
    curepoison_on = "The power of Shal'ille fights the effects of poison in your blood."
 
@@ -52,7 +52,6 @@ messages:
    {
       plReagents = $;
       plReagents = Cons([&Herbs,2],plReagents);
-      plReagents = Cons([&Elderberry,1],plReagents);
 
       return;
    }

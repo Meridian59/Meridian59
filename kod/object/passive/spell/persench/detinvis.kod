@@ -52,7 +52,7 @@ messages:
 
    ResetReagents()
    {
-      plReagents = [ [&Solagh, 2] ];
+      plReagents = [ [&Solagh, 1] ];
 
       return;
    }

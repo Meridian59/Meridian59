@@ -60,7 +60,7 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&BlueMushroom,2],plReagents);
+      plReagents = Cons([&BlueMushroom,1],plReagents);
       plReagents = Cons([&Elderberry,1],plReagents);
 
       return;

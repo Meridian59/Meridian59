@@ -20,7 +20,6 @@ resources:
    Haste_icon_rsc = ihaste.bgf
    Haste_desc_rsc = \
       "Reduces the fatigue of running at full clip.  "
-      "Requires edible mushrooms to cast."
    
    Haste_on_rsc = "Your blood begins to tingle, cleansing your leg muscles of fatigue with every heartbeat."
    Haste_off_rsc = "Your feel the tide of energy in your blood recede, and running seems suddenly more taxing."
@@ -48,7 +47,7 @@ classvars:
    viMana = 10
    viSpellExertion = 0
 
-   viCast_time = 2000
+   viCast_time = 0
    viChance_To_Increase = 15
 
    vrSpell_intro = Haste_spell_intro
@@ -61,7 +60,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Snack,5],plReagents);
 
       return;
    }

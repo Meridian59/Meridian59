@@ -35,25 +35,25 @@ resources:
    battler_plain_text = ""
 
    % battler_attacker_hit - Your scimitar wounds Psychochild.
-   % battler_attacker_miss - Psychochild blocks your attack.
+   % battler_attacker_miss - Your attack is blocked by Psychochild.
    % battler_defender_hit - Psychochild wounds you with his scimitar.
-   % battler_defender_miss - You block Psychochild's attack.
+   % battler_defender_miss - Psychochild's attack is blocked by you.
 
-   battler_attacker_hit = "%sYour %s %s %s%s."       
-   battler_attacker_miss = "%s%s%s %s your attack."    
-   battler_defender_hit = "%s%s%s %s you with %s %s."  
-   battler_defender_miss = "%sYou %s %s%s's attack."   
+   battler_attacker_hit = "%sYour %s ~B%s~B %s%s."       
+   battler_attacker_miss = "%sYour attack is %s by %s%s."    
+   battler_defender_hit = "%s%s%s ~B%s~B you with %s %s."  
+   battler_defender_miss = "%s%s's attack is %s by you."   
 
    battler_punch = "punch"
    battler_attack = "attack"
-   battler_block  = "block" 
-   battler_blocks = "blocks"
-   battler_dodge  = "dodge"
-   battler_dodges = "dodges"
-   battler_parry  = "parry"
-   battler_parries  = "parries"
-   battler_avoid = "avoid"
-   battler_avoids = "avoids"
+   battler_block  = "blocked" 
+   battler_blocks = "blocked"
+   battler_dodge  = "dodged"
+   battler_dodges = "dodged"
+   battler_parry  = "parried"
+   battler_parries  = "parried"
+   battler_avoid = "avoided"
+   battler_avoids = "avoided"
 
    battler_fail = "fails to damage"
    battler_nick = "nicks"
@@ -992,9 +992,10 @@ messages:
 
          Send(self,@MsgSendUser,#message_rsc=battler_attacker_miss,
               #parm1=rColor,
-              #parm2=Send(what,@GetCapDef),#parm3=Send(what,@GetName),
-              #parm4=Send(what,@GetDefenseDesc,#singular=TRUE,
-                          #stroke_obj=stroke_obj));
+              #parm2=Send(what,@GetDefenseDesc,#singular=TRUE,
+                          #stroke_obj=stroke_obj),
+              #parm3=Send(what,@GetDef),
+              #parm4=Send(what,@GetName));
          Send(stroke_obj,@SendMissMessageToAttacker,#who=self,#victim=what,
               #color_rsc=rColor,#weapon_used=Send(self,@LookupPlayerWeapon),
               #bText=FALSE);
@@ -1004,9 +1005,10 @@ messages:
       {
          Send(what,@MsgSendUser,#message_rsc=battler_defender_miss,
               #parm1=rColor,
-              #parm2=Send(what,@GetDefenseDesc,#singular=FALSE,
-                          #stroke_obj=stroke_obj),
-              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+              #parm2=Send(self,@GetCapDef),
+              #parm3=Send(self,@GetName),
+              #parm4=Send(what,@GetDefenseDesc,#singular=FALSE,
+                          #stroke_obj=stroke_obj));
          % Flag them as "dodging", so they can potentially improve.
          Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);              
       }

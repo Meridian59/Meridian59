@@ -46,10 +46,10 @@ resources:
 
    battler_punch = "punch"
    battler_attack = "attack"
-   battler_blocked  = "is blocked by" 
-   battler_dodged  = "is dodged by"
-   battler_parried  = "is parried by"
-   battler_misses = "misses"
+   battler_blocked  = "is ~Bblocked~B by" 
+   battler_dodged  = "is ~Bdodged~B by"
+   battler_parried  = "is ~Bparried~B by"
+   battler_misses = "~Bmisses~B"
 
    battler_fail = "fails to damage"
    battler_nick = "nicks"

@@ -936,15 +936,16 @@ messages:
 
          Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),#parm6=damage);
+              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+              #parm6=damage);
       }
 
       if IsClass(what,&Player)
       {
          Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
               #parm1=rColor,#parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),#parm4=rWeaponName,#parm5=rDamageDesc,
-              #parm6=damage);
+              #parm3=Send(self,@GetName),#parm4=rWeaponName,
+              #parm5=rDamageDesc,#parm6=damage);
       }
 
       return;

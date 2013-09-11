@@ -39,9 +39,9 @@ resources:
    % battler_defender_hit - Psychochild's scimitar wounds you for (10) damage.
    % battler_defender_miss - Psychochild's attack is blocked by you.
 
-   battler_attacker_hit = "%sYour %s ~B%s~B %s%s for (%i) damage."       
+   battler_attacker_hit = "%sYour %s ~B%s~B %s%s for (~B%i~B) damage."       
    battler_attacker_miss = "%sYour attack %s %s%s."    
-   battler_defender_hit = "%s%s%s's %s ~B%s~B you for (%i) damage."  
+   battler_defender_hit = "%s%s%s's %s ~B%s~B you for (~B%i~B) damage."  
    battler_defender_miss = "%s%s's attack %s you."   
 
    battler_punch = "punch"

@@ -40,20 +40,16 @@ resources:
    % battler_defender_miss - Psychochild's attack is blocked by you.
 
    battler_attacker_hit = "%sYour %s ~B%s~B %s%s."       
-   battler_attacker_miss = "%sYour attack is %s by %s%s."    
+   battler_attacker_miss = "%sYour attack %s %s%s."    
    battler_defender_hit = "%s%s%s ~B%s~B you with %s %s."  
-   battler_defender_miss = "%s%s's attack is %s by you."   
+   battler_defender_miss = "%s%s's attack %s you."   
 
    battler_punch = "punch"
    battler_attack = "attack"
-   battler_block  = "blocked" 
-   battler_blocks = "blocked"
-   battler_dodge  = "dodged"
-   battler_dodges = "dodged"
-   battler_parry  = "parried"
-   battler_parries  = "parried"
-   battler_avoid = "avoided"
-   battler_avoids = "avoided"
+   battler_blocked  = "is blocked by" 
+   battler_dodged  = "is dodged by"
+   battler_parried  = "is parried by"
+   battler_misses = "misses"
 
    battler_fail = "fails to damage"
    battler_nick = "nicks"
@@ -827,39 +823,20 @@ messages:
 
       if iRandom < iParry
       {
-         if singular
-         {
-            return battler_parries;
-         }
-         return battler_parry;
+         return battler_parried;
       }
 
       if iRandom < (iParry + iBlock)
       {
-         if singular
-         {
-            return battler_blocks;
-         }
-
-         return battler_block;
+         return battler_blocked;
       }
 
       if iRandom < (iParry + iBlock + iDodge)
       {
-         if singular
-         {
-            return battler_dodges;
-         }
-
-         return battler_dodge;
+         return battler_dodged;
       }
-
-      if singular
-      {
-         return battler_avoids;
-      }
-
-      return battler_avoid;
+      
+      return battler_misses;
    }
 
    % The next three messages deal with the three defense skills.  These

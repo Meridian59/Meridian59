@@ -811,7 +811,7 @@ messages:
    }
 
    % This returns defense reason of why opponent missed this battler.
-   GetDefenseDesc(singular=TRUE, stroke_obj=$)
+   GetDefenseDesc(stroke_obj=$)
    {
       local iRandom, iParry, iBlock, iDodge;
       
@@ -970,8 +970,7 @@ messages:
 
          Send(self,@MsgSendUser,#message_rsc=battler_attacker_miss,
               #parm1=rColor,
-              #parm2=Send(what,@GetDefenseDesc,#singular=TRUE,
-                          #stroke_obj=stroke_obj),
+              #parm2=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj),
               #parm3=Send(what,@GetDef),
               #parm4=Send(what,@GetName));
          Send(stroke_obj,@SendMissMessageToAttacker,#who=self,#victim=what,
@@ -985,8 +984,7 @@ messages:
               #parm1=rColor,
               #parm2=Send(self,@GetCapDef),
               #parm3=Send(self,@GetName),
-              #parm4=Send(what,@GetDefenseDesc,#singular=FALSE,
-                          #stroke_obj=stroke_obj));
+              #parm4=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj));
          % Flag them as "dodging", so they can potentially improve.
          Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);              
       }

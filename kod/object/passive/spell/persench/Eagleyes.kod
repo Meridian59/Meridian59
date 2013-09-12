@@ -16,7 +16,7 @@ constants:
 
    % What percent of spellpower should we take in order to give the player a chance
    %  to completely resist a blinding spell?
-   SPELL_RESIST_PERCENT = 5
+   SPELL_RESIST_PERCENT = 15
 
 resources:
 
@@ -121,7 +121,7 @@ messages:
 
       oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
 
-      % Check if they repel the blinding spell outright 1-10% base chance,
+      % Check if they repel the blinding spell outright 1-15% base chance,
       %  modified by factor.
       iChance = (oEagleEyesStrength * (SPELL_RESIST_PERCENT * iFactor)) / 100;
       if Random(0,100) <= iChance
@@ -135,8 +135,8 @@ messages:
          return $;
       }
 
-      % Duration reduced 0-50%, depending on spellpower.
-      iNewDuration = iDuration - (iDuration * oEagleEyesStrength)/200;
+      % Duration reduced by up to 2.5 seconds, depending on spellpower.
+      iNewDuration = iDuration - (25 * oEagleEyesStrength);
       Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_resist);
       
       if IsClass(oCaster,&Player)

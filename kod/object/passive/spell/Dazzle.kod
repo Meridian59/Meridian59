@@ -57,7 +57,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Diamond,1],plReagents);
+      plReagents = Cons([&Diamond,2],plReagents);
 
       return;
    }

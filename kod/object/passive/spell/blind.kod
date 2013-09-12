@@ -42,10 +42,10 @@ classvars:
    viSpell_num = SID_BLIND
    viSchool = SS_QOR
    viSpell_level = 5
-   viMana = 15
+   viMana = 10
    viChance_To_Increase = 15
 
-   viSpellExertion = 6
+   viSpellExertion = 4
 
    viOutlaw = TRUE
    viHarmful = TRUE
@@ -61,9 +61,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&EntrootBerry,2],plReagents);
-      plReagents = Cons([&PurpleMushroom,1],plReagents);
-
+      plReagents = Cons([&EntrootBerry,1],plReagents);
+      
       return;
    }
 
@@ -162,8 +161,7 @@ messages:
       }
 
       % Bound and convert duration to milliseconds
-      iDuration = bound(iDuration,3,20);
-      iDuration = iDuration * 1000;
+      iDuration = bound(iDuration,2500,10000);
 
       if IsClass(oTarget,&Player)
       {
@@ -190,9 +188,9 @@ messages:
    {
       local iDuration;
 
-      iDuration = (5 + iSpellPower/6);
+      iDuration = (5000 + (iSpellPower + 1)*50);
 
-      return random(iDuration/2,iDuration);
+      return random(iDuration,iDuration);
    }
    
    EndEnchantment(who = $, report = TRUE)

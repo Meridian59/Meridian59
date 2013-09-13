@@ -193,7 +193,7 @@ messages:
 
       iDuration = (5000 + (iSpellPower + 1)*50);
       
-      iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100)
+      iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100);
 
       return iDuration;
    }

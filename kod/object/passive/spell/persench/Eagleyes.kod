@@ -119,7 +119,7 @@ messages:
       oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
       
       % minimum blind duration before returning an outright repel
-      iThreshold = 2000 + ((oEagleEyesStrength + 1) * 30 * iFactor);
+      iThreshold = 2500 + ((oEagleEyesStrength + 1) * 25 * iFactor);
 
       % Duration reduced by up to 2.5 seconds, depending on spellpower.
       iNewDuration = bound(iDuration - (25 * oEagleEyesStrength),iThreshold,15000);

@@ -186,7 +186,7 @@ messages:
 
    GetDuration(iSpellPower=0)
    {
-      local iDuration; local iDeviation;
+      local iDuration, iDeviation;
       
       % maximum random deviation from actual duration as a percentage of actual duration
       iDeviation = 10;

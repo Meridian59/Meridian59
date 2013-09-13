@@ -115,8 +115,8 @@ messages:
          AND Send(oSpell,@GetNumSpellTargets) = 1
          AND IsClass(oSpell,&AttackSpell)
       {
-         chance = Send(caster,@GetEnchantedState,#what=self);
-         if Random(0,100) > chance
+         chance = Send(victim,@GetEnchantedState,#what=self);
+         if Random(0,100) < chance
          {
             Send(self,@SendMessageTryDeflectSuccess,#victim=victim,#caster=caster);
 

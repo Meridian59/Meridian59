@@ -137,16 +137,16 @@ messages:
 
       % Spell effects
       Send(self,@DoBlind,#what=who,#oTarget=oTarget,
-           #iDurationSecs=Send(self,@GetDuration,#iSpellPower=iSpellPower));
+           #iDurationMSecs=Send(self,@GetDuration,#iSpellPower=iSpellPower));
       
       propagate;
    }
 
-   DoBlind(what=$,oTarget=$,iDurationSecs=0)
+   DoBlind(what=$,oTarget=$,iDurationMSecs=0)
    {
       local oSpell, iDuration;
 
-      iDuration = iDurationSecs;
+      iDuration = iDurationMSecs;
       
       oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
       if Send(oTarget,@IsEnchanted,#what=oSpell)

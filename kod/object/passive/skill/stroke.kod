@@ -336,7 +336,7 @@ messages:
    {
       local iDamage, might;
 
-      iDamage = 0;
+      iDamage = damage;
       % KLUDGEISH: this information should probably be in player.
       % Get weapon proficiency bonuses.
       if weapon_used <> $

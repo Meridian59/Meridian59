@@ -173,7 +173,7 @@ messages:
    {
       local iDamage, iAim;
 
-      iDamage = 0;
+      iDamage = damage;
       % Get weapon proficiency bonuses.
       if weapon_used <> $
       {

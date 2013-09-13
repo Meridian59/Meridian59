@@ -192,8 +192,9 @@ messages:
 
        % 0-10 seconds based on Karma difference. Sum bound to 2.5-15 seconds.
       iKarmaDif = (iKarma - Send(target,@GetKarma,#detect=TRUE))*50;
-      iKarmaDif = bound(iKarmaDif,0,10000);  
-      iDuration = bound(iDuration + iKarmaDif,2500,15000);  
+      iKarmaDif = bound(iKarmaDif,0,10000);
+      iDuration = iDuration + iKarmaDif + random(-1000,1000);
+      iDuration = bound(iDuration,2500,15000);  
 
       return iDuration;
    }

@@ -160,7 +160,7 @@ messages:
          }
       }
 
-      % Bound and convert duration to milliseconds
+      % Bound and already in milliseconds
       iDuration = bound(iDuration,2500,10000);
 
       if IsClass(oTarget,&Player)
@@ -186,11 +186,16 @@ messages:
 
    GetDuration(iSpellPower=0)
    {
-      local iDuration;
+      local iDuration; local iDeviation;
+      
+      % maximum random deviation from actual duration as a percentage of actual duration
+      iDeviation = 10;
 
       iDuration = (5000 + (iSpellPower + 1)*50);
+      
+      iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100)
 
-      return random(iDuration,iDuration);
+      return;
    }
    
    EndEnchantment(who = $, report = TRUE)

@@ -176,7 +176,10 @@ messages:
 
    GetDuration(iSpellPower=0,caster=$,target=$)
    {
-      local iDuration,iKarmaDif,iKarma;
+      local iDuration,iKarmaDif,iKarma,iDeviation;
+      
+      % Maximum deviation from actual duration as percentage of actual duration
+      iDeviation = 10;
 
       % 0-5 seconds based on spellpower.
       iDuration = ((iSpellPower + 1) * 50);
@@ -194,7 +197,8 @@ messages:
       iKarmaDif = (iKarma - Send(target,@GetKarma,#detect=TRUE))*50;
       iKarmaDif = bound(iKarmaDif,0,10000);
       iDuration = iDuration + iKarmaDif + random(-1000,1000);
-      iDuration = bound(iDuration,2500,15000);  
+      iDuration = bound(iDuration,2500,15000);
+      iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100) 
 
       return iDuration;
    }

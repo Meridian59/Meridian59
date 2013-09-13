@@ -136,7 +136,7 @@ messages:
       }
 
       % Duration reduced by up to 2.5 seconds, depending on spellpower.
-      iNewDuration = iDuration - (25 * oEagleEyesStrength);
+      iNewDuration = bound(iDuration - (25 * oEagleEyesStrength),0,15000);
       Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_resist);
       
       if IsClass(oCaster,&Player)

@@ -140,10 +140,6 @@ messages:
       {
          iDuration = Send(oSpell,@DoEagleEyes,#oCaster=what,#oTarget=oTarget,
                           #iDuration=iDuration,#iFactor=2);
-         if iDuration < 1000
-         {
-            iDuration = $
-         }
          
          if iDuration = $
          {
@@ -153,7 +149,7 @@ messages:
       }
 
       % Already converted to miliseconds
-      iDuration = bound(iDuration,1000,15000);
+      iDuration = bound(iDuration,2500,15000);
 
       if IsClass(oTarget,&Player)
       {

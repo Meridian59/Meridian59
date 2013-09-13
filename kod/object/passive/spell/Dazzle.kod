@@ -149,7 +149,7 @@ messages:
       }
 
       % Already converted to miliseconds
-      iDuration = bound(iDuration,2500,15000);
+      iDuration = bound(iDuration,2500,10000);
 
       if IsClass(oTarget,&Player)
       {

@@ -182,7 +182,7 @@ messages:
       
       % Get Aim damage bonus.
       iAim = send(who,@GetAim);
-      iDamage = iDamage + ((100+bound(iAim-25,0,40))*damage)/100;
+      iDamage = iDamage + ((100+bound(iAim-25,0,40))*iDamage)/100;
 
       return iDamage;
    }

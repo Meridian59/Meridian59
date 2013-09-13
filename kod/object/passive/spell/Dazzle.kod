@@ -139,7 +139,7 @@ messages:
       if Send(oTarget,@IsEnchanted,#what=oSpell)
       {
          iDuration = Send(oSpell,@DoEagleEyes,#oCaster=what,#oTarget=oTarget,
-                          #iDuration=iDuration,#iFactor=2);
+                          #iDuration=iDuration,#iFactor=1);
          
          if iDuration = $
          {

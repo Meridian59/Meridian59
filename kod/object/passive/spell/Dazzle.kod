@@ -194,7 +194,7 @@ messages:
       iKarmaDif = bound(iKarmaDif,0,10000);
       iDuration = iDuration + iKarmaDif;
       iDuration = bound(iDuration,2500,15000);
-      iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100) 
+      iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100); 
 
       return iDuration;
    }

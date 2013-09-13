@@ -195,7 +195,7 @@ messages:
       
       iDuration = iDuration * (100 - iDeviation) + random(0,iDuration*2*iDeviation/100)
 
-      return;
+      return iDuration;
    }
    
    EndEnchantment(who = $, report = TRUE)

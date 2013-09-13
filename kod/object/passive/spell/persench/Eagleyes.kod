@@ -38,6 +38,7 @@ resources:
    EagleEyes_evade_caster = "The magic of Krannan preserves the sight of your target."
 
    EagleEyes_sound = keagleye.wav
+   EagleEyes_evade_caster_sound = spelfail.wav
 
 classvars:
 
@@ -117,9 +118,12 @@ messages:
    "Calculates adjustment of blinding spell duration.  Returns $ if resisted "
    "completely.  iFactor is the factor by which we want to increase the effect."
    {
-      local iNewDuration, iChance, oEagleEyesStrength;
+      local iNewDuration, iChance, oEagleEyesStrength, iThreshold;
 
       oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
+      
+      % minimum blind duration before returning an outright repel
+      iThreshold = 2500
 
       % Check if they repel the blinding spell outright 1-15% base chance,
       %  modified by factor.
@@ -130,18 +134,35 @@ messages:
          if IsClass(oCaster,&Player)
          {
             Send(oCaster,@MsgSendUser,#message_rsc=EagleEyes_evade_caster);
+            Send(oCaster,@SomethingWaveRoom,#what=self,#wave_rsc=EagleEyes_evade_caster_sound);
          }
          
          return $;
       }
 
       % Duration reduced by up to 2.5 seconds, depending on spellpower.
-      iNewDuration = bound(iDuration - (25 * oEagleEyesStrength),0,15000);
-      Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_resist);
+      iNewDuration = bound(iDuration - (25 * oEagleEyesStrength),iThreshold,15000);
+      
+      if iNewDuration = iThreshold
+         {
+         Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_evade);
+         }
+         else
+         {
+         Post(oTarget,@MsgSendUser,#message_rsc=EagleEyes_resist);
+         }
       
       if IsClass(oCaster,&Player)
       {
-         Post(oCaster,@MsgSendUser,#message_rsc=EagleEyes_resist_caster);
+         if iNewDuration = iThreshold
+         {
+            Post(oCaster,@MsgSendUser,#message_rsc=EagleEyes_evade_caster);
+            Post(oCaster,@SomethingWaveRoom,#what=self,#wave_rsc=EagleEyes_evade_caster_sound);
+         }
+         else
+         {
+            Post(oCaster,@MsgSendUser,#message_rsc=EagleEyes_resist_caster);
+         }
       }
 
       return iNewDuration;

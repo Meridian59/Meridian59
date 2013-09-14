@@ -58,9 +58,6 @@ properties:
 
    piRange = 4
 
-   % No bonus from Mana Focus
-   piManaFocusBonus = 0
-
 messages:
 
    ResetReagents()

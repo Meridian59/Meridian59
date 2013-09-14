@@ -56,6 +56,8 @@ properties:
    
    piDamageMin = 8
    piDamageMax = 12
+   piManaFocusBonus = 5
+   piPostCast_adjustment = 1 
    prSpellHit = fireball_hit_rsc
 
 messages:

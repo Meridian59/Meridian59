@@ -21,7 +21,8 @@ resources:
    ShockingFury_icon_rsc = ishkfury.bgf
 
    ShockingFury_desc_rsc = \
-      "Releases Faren's fury as a large amount of electricity directed at a target at short range.  "
+      "Allows you to overcharge your magical energy into a devastating torrent of electrical destruction."
+      "While extremely powerful, this technique will leave you too drained to cast spells for a short while."
       "Requires blue mushrooms and elderberries to cast."
 
    ShockingFury_sound = fzap.wav
@@ -38,19 +39,19 @@ classvars:
 
    viSchool = SS_FAREN
    viSpell_level = 3
-   viMana = 8
+   viMana = 20
 
    vrSucceed_wav = ShockingFury_sound
 
    % In seconds, since it works off GetTime().
-   viPostCast_time = 2
+   viPostCast_time = 10
 
    viChance_To_Increase = 5
 
 properties:
 
-   piDamageMin = 12
-   piDamageMax = 20
+   piDamageMin = 25
+   piDamageMax = 30
    piRange = 5
 
 messages:

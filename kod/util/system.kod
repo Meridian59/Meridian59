@@ -2872,7 +2872,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_DEMENT,#class=&Dement);
       Send(self,@CreateOneSpellIfNew,#num=SID_FADE,#class=&Fade);
       Send(self,@CreateOneSpellIfNew,#num=SID_KARAHOLS_CURSE,#class=&KaraholsCurse);
-      Send(self,@CreateOneSpellIfNew,#num=SID_MANA_FOCUS,#class=&ManaFocus);
+      Send(self,@CreateOneSpellIfNew,#num=SID_RAGING_FLAMES,#class=&RagingFlames);
       Send(self,@CreateOneSpellIfNew,#num=SID_MANA_BOMB,#class=&ManaBomb);
       Send(self,@CreateOneSpellIfNew,#num=SID_DETECT_INVISIBLE,#class=&DetectInvisible);
       Send(self,@CreateOneSpellIfNew,#num=SID_DETECT_GOOD,#class=&DetectGood);

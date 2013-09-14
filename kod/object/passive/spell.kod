@@ -1199,7 +1199,7 @@ messages:
          }
       }
 
-      num = bound(num,5,95);
+      num = bound(num,5,99);
 
       if lTargets <> $
          AND Send(self,@GetNumSpellTargets) = 1

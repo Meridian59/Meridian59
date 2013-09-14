@@ -1,0 +1,86 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RagingFlames is PersonalEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RagingFlames_name_rsc = "raging flames"
+   RagingFlames_icon_rsc = iringfir.bgf
+   RagingFlames_desc_rsc = \
+      "Unlocks your inner rage to greatly increase your potency with fire magic."
+      "Costs nothing but will leave you very tired."
+   
+   RagingFlames_on_rsc = "You mind goes blank as you feel raging flames flaring within."
+   RagingFlames_off_rsc = "Your rage subsides."
+   RagingFlames_already_enchanted_rsc = "You are already consumed by rage."
+   
+   RagingFlames_spell_intro = "Faren Lv. 3: Taps your inner rage to boost your potency with fire magic."
+
+   RagingFlames_sound = frngfir.wav
+
+classvars:
+
+   vrName = RagingFlames_name_rsc
+   vrIcon = RagingFlames_icon_rsc
+   vrDesc = RagingFlames_desc_rsc
+
+   vrAlreadyEnchanted = RagingFlames_already_enchanted_rsc
+   vrEnchantment_On = RagingFlames_On_rsc
+   vrEnchantment_Off = RagingFlames_Off_rsc
+   vrSuccess = RagingFlames_Success_rsc
+
+   viSpell_num = SID_MANA_FOCUS
+   viSchool = SS_FAREN
+   viSpell_level = 3
+   viMana = 0
+   viSpellExertion = 30
+
+   viChance_To_Increase = 15
+
+   vrSpell_intro = RagingFlames_spell_intro
+   vrSucceed_wav = RagingFlames_sound
+   
+   vbCanCastonOthers = FALSE
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   GetStateValue(iSpellPower=0)
+   {
+      return iSpellPower;
+   }
+
+   SetSpellPlayerFlag(who=$)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG_MANA_FOCUS,#value=TRUE);
+      return;
+   }
+   
+   GetDuration(iSpellpower = 0)
+   {
+      local iDuration;
+      iDuration = 5000 + (iSpellPower + 1) * 50); % 5 - 10 seconds
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

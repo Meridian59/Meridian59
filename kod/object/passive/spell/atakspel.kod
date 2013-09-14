@@ -45,6 +45,7 @@ properties:
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
    piManaFocusBonus = 0
    piPostCast_adjustment = 0
+   piMana_adjustment = 0
 
    pbAbsolute = FALSE
 
@@ -139,6 +140,21 @@ messages:
 
             % Reduce damage based on spell power.
             iDamage = (iDamage * (50 + (iSpellPower / 2))) / SPELLPOWER_MAXIMUM;
+            if Send(who,@CheckPlayerFlag,#flag=PFLAG_MANA_FOCUS)
+            {
+               % Bonus if we have mana focus up.
+               iManaFocus = First(Send(who,@GetEnchantedState,
+                                  #what=Send(SYS,@FindSpellByNum,#num=SID_MANA_FOCUS)));
+
+               % This takes the spellpower of Mana Focus (iManaFocus), and uses
+               %  that to scale our "bonus" damage.
+               % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
+               iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM) + 1;
+               % Reduces the post cast delay of spells by piPostCast_adjustment
+               viPostCast_time = bound(viPostCast_time - piPostCast_adjustment,1,&);
+               % Reduces the mana cost of spells by up to piMana_adjustment
+               viMana = bound(viMana - (piMana_adjustment * (iManaFocus + 1)/100)),0,&)
+            }            
          }
       }
      

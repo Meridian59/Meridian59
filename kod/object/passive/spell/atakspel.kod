@@ -139,20 +139,6 @@ messages:
 
             % Reduce damage based on spell power.
             iDamage = (iDamage * (50 + (iSpellPower / 2))) / SPELLPOWER_MAXIMUM;
-
-            if Send(who,@CheckPlayerFlag,#flag=PFLAG_MANA_FOCUS)
-            {
-               % Bonus if we have mana focus up.
-               iManaFocus = First(Send(who,@GetEnchantedState,
-                                  #what=Send(SYS,@FindSpellByNum,#num=SID_MANA_FOCUS)));
-
-               % This takes the spellpower of Mana Focus (iManaFocus), and uses
-               %  that to scale our "bonus" damage.
-               % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
-               iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM) + 1;
-               % Reduce the post cast delay of fireball
-               viPostCast_time = viPostCast_time - piPostCast_adjustment;
-            }
          }
       }
      

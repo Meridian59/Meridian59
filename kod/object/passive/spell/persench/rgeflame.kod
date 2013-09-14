@@ -39,7 +39,6 @@ classvars:
    vrAlreadyEnchanted = RagingFlames_already_enchanted_rsc
    vrEnchantment_On = RagingFlames_On_rsc
    vrEnchantment_Off = RagingFlames_Off_rsc
-   vrSuccess = RagingFlames_Success_rsc
 
    viSpell_num = SID_RAGING_FLAMES
    viSchool = SS_FAREN

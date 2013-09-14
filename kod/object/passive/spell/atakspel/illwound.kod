@@ -50,8 +50,6 @@ properties:
 
    piRange = 4
 
-   piManaFocusBonus = 0
-
    % This is NOT affected by resistances, even though it has a damage type.
    pbAbsolute = TRUE
 

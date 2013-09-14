@@ -52,9 +52,6 @@ properties:
    piDamageMin = 16
    piDamageMax = 25
    piRange = 3
-   
-   % No bonus from Mana Focus
-   piManaFocusBonus = 0
 
 messages:
 

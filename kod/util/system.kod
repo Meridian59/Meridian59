@@ -5815,6 +5815,11 @@ messages:
    {
       return Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime);
    }
+   
+   GetOutlawMurdererLogoffPenaltyGhostTime()
+   {
+      return Send(Send(self,@GetSettings),@GetOutlawMurdererLogoffPenaltyGhostTime);
+   }
 
    TempDisableLogoffPenalties()
    {

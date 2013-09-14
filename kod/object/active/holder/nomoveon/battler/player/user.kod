@@ -667,7 +667,15 @@ messages:
                   AND NOT Send(poOwner,@InFoyer,#who=self))
       {
          theTime = GetTime();
-         iPenaltyTime = Send(SYS,@GetLogoffPenaltyGhostTime);
+         if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+            OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+         {
+            iPenaltyTime = Send(SYS,@GetOutlawMurdererLogoffPenaltyGhostTime);
+         }
+         else
+         {
+            iPenaltyTime = Send(SYS,@GetLogoffPenaltyGhostTime);
+         }
 
          % If we've already passed our penalty time OR we have been on for
          %  1/5 the penalty time, then set the logoff penalty time to 90-110%

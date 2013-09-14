@@ -41,7 +41,7 @@ classvars:
    vrEnchantment_Off = RagingFlames_Off_rsc
    vrSuccess = RagingFlames_Success_rsc
 
-   viSpell_num = SID_MANA_FOCUS
+   viSpell_num = SID_RAGING_FLAMES
    viSchool = SS_FAREN
    viSpell_level = 3
    viMana = 0
@@ -72,7 +72,7 @@ messages:
 
    SetSpellPlayerFlag(who=$)
    {
-      Send(who,@SetPlayerFlag,#flag=PFLAG_MANA_FOCUS,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_RAGING_FLAMES,#value=TRUE);
       return;
    }
    

@@ -44,6 +44,7 @@ properties:
 
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
    piManaFocusBonus = 5
+   piPostCast_adjustment = 0
 
    pbAbsolute = FALSE
 
@@ -149,6 +150,8 @@ messages:
                %  that to scale our "bonus" damage.
                % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
                iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM) + 1;
+               % Reduce the post cast delay of fireball
+               viPostCast_time = viPostCast_time - piPostCast_adjustment;
             }
          }
       }

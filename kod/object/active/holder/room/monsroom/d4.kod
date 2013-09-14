@@ -49,6 +49,9 @@ properties:
    piInit_count_min = 5
    piInit_count_max = 10
 
+   % Minimum HP required for player combat in this room
+   piMinHpPK = 51
+
 messages:
 
    constructed()

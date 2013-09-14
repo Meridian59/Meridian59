@@ -29,8 +29,6 @@ classvars:
 
    viTerrain_type = TERRAIN_CASTLE
 
-   viPermanent_Flags = ROOM_GUILD_PK_ONLY
-
 properties:
 
    prMusic = castle1b_music
@@ -41,6 +39,9 @@ properties:
 
    prRoom = room_castle1b
    piRoom_num = RID_CASTLE1B
+
+   % Minimum HP required for player combat in this room
+   piMinHpPK = 61
 
 messages:
 

@@ -35,6 +35,8 @@ resources:
    room_no_pk_allowed = "You cannot attack another player here."
    room_guild_combat = "Only those in guilds may attack each other here."
    room_no_mob_attack = "You cannot attack monsters here."
+   room_attacker_not_enough_hp_pk = "The magical currents here prevent you from attacking other players until you are stronger."
+   room_victim_not_enough_hp_pk = "The magical currents here prevent you from attacking the weak."
 
    room_no_magic_allowed = "You can't cast spells here."
    room_no_spell = "You can't cast spells here."
@@ -265,6 +267,9 @@ properties:
    % Don't set this.  It is set automatically.
    % Instead, override something in SetFarenBonus.
    piFaren_Bonus
+   
+   % Minimum HP required for player combat in this room
+   piMinHpPK = 30
 
 messages:
 
@@ -1259,6 +1264,27 @@ messages:
          {
             Send(what,@MsgSendUser,#message_rsc=room_guild_combat);
 
+            return FALSE;
+         }
+      }
+      
+      if victim <> $
+         AND IsClass(what,&Player)
+         AND IsClass(victim,&Player)
+         AND what <> victim
+      {
+         if Send(what,@GetBaseMaxHealth) < piMinHpPK
+            AND NOT (Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+                    OR Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW))
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_attacker_not_enough_hp_pk);
+            return FALSE;
+         }
+         if Send(victim,@GetBaseMaxHealth) < piMinHpPK
+            AND NOT (Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+                    OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_OUTLAW))
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_victim_not_enough_hp_pk);
             return FALSE;
          }
       }

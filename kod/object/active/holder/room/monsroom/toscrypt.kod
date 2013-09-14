@@ -37,6 +37,9 @@ properties:
 
    piBaseLight = LIGHT_VERY_DARK
 
+   % Minimum HP required for player combat in this room
+   piMinHpPK = 76
+
 messages:
 
    Constructed()

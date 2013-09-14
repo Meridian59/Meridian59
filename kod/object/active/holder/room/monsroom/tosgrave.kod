@@ -43,6 +43,9 @@ properties:
    plTombstones = $
    viTerrain_type = TERRAIN_CITY | TERRAIN_MYSTICAL
 
+   % Minimum HP required for player combat in this room
+   piMinHpPK = 76
+
 messages:
 
    Constructed()

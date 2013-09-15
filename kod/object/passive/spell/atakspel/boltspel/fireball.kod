@@ -68,7 +68,7 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&RedMushroom,2],plReagents);
+      plReagents = Cons([&RedMushroom,1],plReagents);
       plReagents = Cons([&OrcTooth,1],plReagents);
 
       return;

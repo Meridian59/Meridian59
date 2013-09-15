@@ -38,7 +38,7 @@ classvars:
 
    viSchool = SS_FAREN
    viSpell_level = 4
-   viMana = 6
+   viMana = 5
 
    vrSucceed_wav = BlastOfFire_sound
 
@@ -49,11 +49,11 @@ classvars:
 
 properties:
 
-   piDamageMin =  13
-   piDamageMax = 17
-   piRagingFlamesBonus = 5
+   piDamageMin =  12
+   piDamageMax = 18
+   piRagingFlamesBonus = 0
    piPostCast_adjustment = 1
-   piMana_adjustment = 3
+   piMana_adjustment = 5
    piRange = 4
 
 messages:

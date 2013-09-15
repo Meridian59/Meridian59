@@ -39,9 +39,6 @@ properties:
 
    piRange = $
 
-   % Maximum amount of bonus damage mana focus gives us for casting this spell.
-   piManaFocusBonus = 0
-
 messages:
 
    CastSpell(who = $, lTargets = $)

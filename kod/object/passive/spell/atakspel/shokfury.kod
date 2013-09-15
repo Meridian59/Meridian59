@@ -38,7 +38,7 @@ classvars:
 
    viSchool = SS_FAREN
    viSpell_level = 3
-   viMana = 25
+   viMana = 30
 
    vrSucceed_wav = ShockingFury_sound
 

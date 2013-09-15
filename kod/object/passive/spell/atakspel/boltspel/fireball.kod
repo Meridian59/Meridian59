@@ -37,7 +37,7 @@ classvars:
 
    viAttack_spell = ATCK_SPELL_ALL+ATCK_SPELL_FIRE
 
-   viMana = 7
+   viMana = 6
    viSchool = SS_FAREN
    viSpell_level = 4
 
@@ -58,7 +58,7 @@ properties:
    piDamageMax = 12
    piRagingFlamesBonus = 5
    piPostCast_adjustment = 1 
-   piMana_adjustment = 4
+   piMana_adjustment = 3
    prSpellHit = fireball_hit_rsc
 
 messages:

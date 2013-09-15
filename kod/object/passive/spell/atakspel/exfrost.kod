@@ -49,9 +49,9 @@ classvars:
 
 properties:
 
-   piDamageMin = 13
-   piDamageMax = 25
-   piRange = 4
+   piDamageMin = 20
+   piDamageMax = 23
+   piRange = 3
    
 messages:
 
@@ -60,8 +60,7 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = cons([&RedMushroom,2],plReagents);
-      plReagents = Cons([&Elderberry,1],plReagents);
+      plReagents = cons([&BlueMushroom,1],plReagents);
 
       return;
    }

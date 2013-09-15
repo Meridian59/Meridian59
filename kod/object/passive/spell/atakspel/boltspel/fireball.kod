@@ -56,7 +56,7 @@ properties:
    
    piDamageMin = 8
    piDamageMax = 12
-   piManaFocusBonus = 5
+   piRagingFlamesBonus = 5
    piPostCast_adjustment = 1 
    piMana_adjustment = 4
    prSpellHit = fireball_hit_rsc

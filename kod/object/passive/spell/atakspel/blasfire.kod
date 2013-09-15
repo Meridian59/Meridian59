@@ -53,7 +53,7 @@ properties:
    piDamageMax = 17
    piRagingFlamesBonus = 5
    piPostCast_adjustment = 1
-   piMana_adjustment = 4
+   piMana_adjustment = 3
    piRange = 4
 
 messages:

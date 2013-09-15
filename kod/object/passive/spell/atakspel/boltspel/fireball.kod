@@ -54,11 +54,11 @@ classvars:
 
 properties:
    
-   piDamageMin = 8
-   piDamageMax = 12
-   piRagingFlamesBonus = 5
+   piDamageMin = 12
+   piDamageMax = 14
+   piRagingFlamesBonus = 0
    piPostCast_adjustment = 1 
-   piMana_adjustment = 3
+   piMana_adjustment = 6
    prSpellHit = fireball_hit_rsc
 
 messages:

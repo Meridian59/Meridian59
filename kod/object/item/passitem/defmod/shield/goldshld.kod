@@ -31,13 +31,13 @@ classvars:
    vrIcon = goldshield_icon_rsc
    vrDesc = goldshield_desc_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 300
+   viHits_init_min = 550
+   viHits_init_max = 650
 
    % Being gold, it's worth much more than your average shield, but it's much heavier too
-   viValue_average = 500
-   viWeight = 225  
-   viBulk = 150
+   viValue_average = 2000
+   viWeight = 200  
+   viBulk = 200
 
    vrShield_window_overlay = goldshield_window_overlay_rsc
    vrShield_overlay = goldshield_icon_rsc
@@ -46,8 +46,8 @@ classvars:
    viInventory_group = 1
    viBroken_group = 4
 
-   viDefense_base = 10
-   viDamage_base = 1
+   viDefense_base = -50
+   viDamage_base = 2
 
 properties:
 
@@ -55,9 +55,10 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_SLASH,10],
-               [ATCK_WEAP_BLUDGEON,10],
-               [ATCK_WEAP_THRUST,10]
+      return [ [ATCK_WEAP_THRUST,20],
+               [ATCK_WEAP_BLUDGEON,20],
+               [ATCK_WEAP_SLASH,20],
+               [ATCK_SPELL_FIRE,-20]
              ];
    }
 

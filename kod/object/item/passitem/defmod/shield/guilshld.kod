@@ -106,9 +106,8 @@ classvars:
    vrName = guildshield_name_rsc
 
    viHits_init_min = 350
-   viHits_init_max = 400
+   viHits_init_max = 450
 
-   % Being custom and made from ore, it's heavier than your average shield.
    viValue_average = 1500
    viWeight = 125  
    viBulk = 125

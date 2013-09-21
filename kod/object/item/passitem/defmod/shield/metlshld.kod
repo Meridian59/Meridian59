@@ -19,9 +19,11 @@ resources:
    metalshield_name_rsc = "small round shield"
    metalshield_icon_rsc = metlshld.bgf
    metalshield_desc_rsc = \
-      "This small shield is made from a sheet of tin bent and "
-      "fitted to a wooden frame.  Although the workmanship is "
-      "poor, it offers some protection during battle."
+      "This small shield consists of a dual sheet of tin and bronze alloy, "
+      "fitted to a light wooden frame, offering some light protection in battle. "
+      "Its compact size makes it especially useful when blocking attacks made "
+      "in melee. It is light enough to not hinder spell casting, but you cannot "
+      "help but notice, that the material seems somewhat flammable."
 
    metalshield_window_overlay_rsc = povshldA.bgf
 

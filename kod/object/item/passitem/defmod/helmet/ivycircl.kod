@@ -59,7 +59,7 @@ messages:
    {
       local iKarma;
 
-      iKarma = bound(Send(poOwner,@GetKarma)/5,10,20);
+      iKarma = bound(Send(poOwner,@GetKarma)/5,0,20);
       piMana_change = Send(poOwner,@NewMaxMana,#amount=iKarma);
 
       propagate;

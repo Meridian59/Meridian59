@@ -64,7 +64,11 @@ resources:
    guildshield_window_overlay_rsc = povshldE.bgf
 
    guildshield_desc_rsc = \
-      "Heavy metal shields of this style are decorated in the standards of its owner guild. "
+      "Tall but light, this delicately crafted shield is decorated in the standards of its guild "
+      "and offers its proud owner some light protection in battle. While its notable size "
+      "makes it fairly effective at blocking projectiles, it is light enough to allow spellcasters "
+      "the unrestricted use of their magical powers. You can't help but notice, that the material "
+      "seems to be a great conductor."
 
    guildshield_heraldry_prefix = "The pattern on this shield is "
 

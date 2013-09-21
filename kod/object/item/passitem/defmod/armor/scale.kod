@@ -32,12 +32,12 @@ classvars:
    vrIcon = scalearmor_icon_rsc
    vrDesc = scalearmor_desc_rsc
 
-   viHits_init_min = 550
-   viHits_init_max = 650
+   viHits_init_min = 750
+   viHits_init_max = 850
 
    viValue_average = 1500
-   viWeight = 330
-   viBulk = 350
+   viWeight = 300
+   viBulk = 300
 
    viSpell_modifier = -20
 
@@ -58,7 +58,10 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_BLUDGEON,10]
+      return [ [ATCK_WEAP_THRUST,20],
+               [ATCK_WEAP_BLUDGEON,20],
+               [ATCK_WEAP_SLASH,20]
+               [ATCK_SPELL_FIRE,-20],
              ];
    }
 

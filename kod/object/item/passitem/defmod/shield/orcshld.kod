@@ -35,13 +35,12 @@ classvars:
    vrIcon = OrcShield_icon_rsc
    vrDesc = OrcShield_desc_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 300
+   viHits_init_min = 350
+   viHits_init_max = 450
 
-   viValue_average = 1000
-   viWeight = 250
-   viBulk = 200
-
+   viValue_average = 2000
+   viWeight = 100
+   viBulk = 100
 
    vrShield_window_overlay = OrcShield_window_overlay_rsc
    vrShield_overlay = OrcShield_icon_rsc
@@ -50,8 +49,8 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viDefense_base = 20
-   viDamage_base = 2
+   viDefense_base = 50
+   viDamage_base = 1
 
 properties:
 
@@ -86,7 +85,10 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_PIERCE,15],
+      return [ [ATCK_WEAP_PIERCE,10],
+               [ATCK_WEAP_THRUST,10],
+               [ATCK_WEAP_BLUDGEON,10],
+               [ATCK_WEAP_SLASH,10],
                [-ATCK_SPELL_HOLY,-20]
              ];
    }

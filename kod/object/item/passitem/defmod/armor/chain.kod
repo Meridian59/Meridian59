@@ -19,9 +19,11 @@ resources:
    chainarmor_name_rsc = "chain armor"
    chainarmor_icon_rsc = chainamr.bgf
    chainarmor_desc_rsc = \
-      "Thousands of tiny, steel links make up this chain "
-      "armor.  Although light and reasonably comfortable, it "
-      "provides a fair measure of protection."
+      "This chain armor consists of a myriad of tiny steel links, intricately "
+      "joined together to offer its wearer some protection in battle - especially "
+      "against incoming projectiles. Light and smooth, the chain armor does not "
+      "hinder spell casting in the least and allows for great mobility in battle. "
+      "You can't help but notice that the material seems to be a great conductor."
 
    chainarmor_male_icon_rsc = btk.bgf
    chainarmor_female_icon_rsc = btl.bgf

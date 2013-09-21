@@ -32,20 +32,20 @@ classvars:
    vrIcon = platearmor_icon_rsc
    vrDesc = platearmor_desc_rsc
 
-   viHits_init_min = 625
-   viHits_init_max = 725
+   viHits_init_min = 750
+   viHits_init_max = 850
 
-   viValue_average = 2000
-   viWeight = 600
-   viBulk = 600
+   viValue_average = 8000
+   viWeight = 400
+   viBulk = 400
 
-   viSpell_modifier = -30
+   viSpell_modifier = -20
 
    vrIcon_male = platearmor_male_icon_rsc
    vrIcon_female = platearmor_female_icon_rsc
 
-   viDefense_base = -200
-   viDamage_base = 6
+   viDefense_base = -100
+   viDamage_base = 4
 
 properties:
 
@@ -58,14 +58,14 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_FIRE,-10],
-               [-ATCK_SPELL_SHOCK,-15]
+      return [ [ATCK_WEAP_PIERCE,20],
+               [ATCK_SPELL_SHOCK,-20]
              ];
    }
 
    GetHeatDamage()
    {
-      return 4;
+      return 6;
    }
 
 

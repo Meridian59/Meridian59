@@ -19,10 +19,11 @@ resources:
    leatherarmor_name_rsc = "leather armor"
    leatherarmor_icon_rsc = leathamr.bgf
    leatherarmor_desc_rsc = \
-      "This armor is made from thick, cured troll hides "
-      "roughly stitched together.  Despite a smell reminiscent "
-      "of rotting troll meat, the armor provides some "
-      "protection."
+      "This armor is crafted from tough and resilient troll hides, cured and carefully stitched "
+      "together in order to provide some protection in battle - especially in close quarters "
+      "combat. Light and flexible, the leather armor does not hinder spell casting in the least "
+      "and allows for great mobility in battle. You can't help but notice that the material seems "
+      "to be a highly flammable."
 
    leatherarmor_male_icon_rsc = btg.bgf
    leatherarmor_female_icon_rsc = bth.bgf

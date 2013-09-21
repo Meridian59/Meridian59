@@ -44,7 +44,7 @@ classvars:
    viGround_group = 1
    viInventory_group = 1
 
-   viDefense_base = 5               % This is the default value for piDefense_bonus
+   viDefense_base = 0               % This is the default value for piDefense_bonus
 
 properties:
 
@@ -101,7 +101,13 @@ messages:
    {
       return TRUE;
    }
+   
+   GetBaseSpellModifier(oSpell=$)
+   {
+      
+      return bound(piHealth_change/2,0,10);
 
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

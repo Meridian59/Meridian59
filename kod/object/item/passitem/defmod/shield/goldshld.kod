@@ -34,10 +34,11 @@ classvars:
    viHits_init_min = 550
    viHits_init_max = 650
 
-   % Being gold, it's worth much more than your average shield, but it's much heavier too
    viValue_average = 2000
    viWeight = 200  
    viBulk = 200
+   
+   viSpell_modifier = -10
 
    vrShield_window_overlay = goldshield_window_overlay_rsc
    vrShield_overlay = goldshield_icon_rsc

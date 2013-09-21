@@ -149,8 +149,8 @@ messages:
 
                % This takes the spellpower of Raging Flames (iRagingFlames), and uses
                %  that to scale our "bonus" damage.
-               % Bonus damage is 1 to piRagingFlamesBonus, scaled by the power of iRagingFlames.
-               iDamage = iDamage + ((iRagingFlames * piRagingFlamesBonus) / SPELLPOWER_MAXIMUM) + 1;
+               % Bonus damage is 0 to piRagingFlamesBonus, scaled by the power of iRagingFlames.
+               iDamage = iDamage + ((iRagingFlames * piRagingFlamesBonus) / SPELLPOWER_MAXIMUM);
                % Reduces the post cast delay of spells by piPostCast_adjustment
                viPostCast_time = bound(viPostCast_time - piPostCast_adjustment,1,&);
                % Reduces the mana cost of spells by up to piMana_adjustment

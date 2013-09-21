@@ -19,10 +19,11 @@ resources:
    knightshield_name_rsc = "knight's shield"
    knightshield_icon_rsc = mtlshld.bgf
    knightshield_desc_rsc = \
-      "Nearly three feet from top to bottom, this glimmering "
-      "shield of polished steel is of the highest quality.  "
-      "You see the mark of Fehr'loi Qan inscribed on the "
-      "wooden handle."
+      "Nearly four feet from top to bottom, this glimmering shield of "
+      "polished steel offers heavy protection in battle, its impressive size "
+      "making it especially effective when blocking projectiles. Its substantial "
+      "weight might be getting in the way of your ability to cast spells though. "
+      "You can't help but notice, that the material seems to be a great conductor."
 
    knightshield_window_overlay_rsc = povshldE.bgf
 

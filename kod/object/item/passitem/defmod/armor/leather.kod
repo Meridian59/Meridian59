@@ -20,7 +20,7 @@ resources:
    leatherarmor_icon_rsc = leathamr.bgf
    leatherarmor_desc_rsc = \
       "This armor is made from thick, cured troll hides "
-      "roughly stitched together. Despite a smell reminiscent "
+      "roughly stitched together.  Despite a smell reminiscent "
       "of rotting troll meat, the armor provides some "
       "protection."
 

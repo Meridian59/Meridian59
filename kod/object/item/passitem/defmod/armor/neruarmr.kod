@@ -20,8 +20,12 @@ resources:
    neruditearmor_icon_rsc = nerudamr.bgf
    neruditearmor_desc_rsc = \
       "Forged from mighty Nerudite, this plate is lighter and more durable than "
-      "normal plate.  This chest piece exemplifies the remarkable skill of "
-      "Ixla cha'Totlak."
+      "one made of regular steel, while still offering reliable protection in any "
+      "confrontation. The armor made from Nerudite may be light enough to allow for normal "
+      "movement on the battlefield, but its rigid structure presents a significant "
+      "challenge to spellcasters. While Nerudite is neither flammable nor conductive, "
+      "it is extremely prone to shattering under excessive strain, often leading to "
+      "severe injury or death."
 
    neruditearmor_male_icon_rsc = btm.bgf
    neruditearmor_female_icon_rsc = btn.bgf

@@ -46,8 +46,8 @@ classvars:
    vrIcon_male = neruditearmor_male_icon_rsc
    vrIcon_female = neruditearmor_female_icon_rsc
 
-   viDefense_base = -100
-   viDamage_base = 3
+   viDefense_base = 0
+   viDamage_base = 2
 
 properties:
 

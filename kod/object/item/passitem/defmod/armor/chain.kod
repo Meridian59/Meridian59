@@ -35,7 +35,7 @@ classvars:
    viHits_init_max = 650
 
    viSpell_modifier = 0
-   viValue_average = 4000
+   viValue_average = 3000
    viWeight = 200
    viBulk = 200
 

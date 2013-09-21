@@ -19,8 +19,12 @@ resources:
    circlet_name_rsc = "circlet"
    circlet_icon_rsc = invcirc.bgf
    circlet_desc_rsc = \
-      "This pewter stranded circlet is hot to the touch.  "
-      "A message inscribed on the inside of this magical "
+      "This ornamented silver circlet is hot to the touch.  "
+      "Obviously not made for barbaric combat, the precious piece of "
+      "jewelery seems to have other benefits.  As you carefully "
+      "place the circlet on your head, you feel the pool of your mystical "
+      "energy deepen and your magical potency grow.  Power, however, "
+      "comes at a price: A message inscribed on the inside of this magical "
       "device reads \"Physical essence into magical power.\""
 
    circlet_overlay_rsc = circlet.bgf

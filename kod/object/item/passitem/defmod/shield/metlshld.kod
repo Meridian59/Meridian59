@@ -31,12 +31,14 @@ classvars:
    vrIcon = metalshield_icon_rsc
    vrDesc = metalshield_desc_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 300
+   viHits_init_min = 350
+   viHits_init_max = 450
 
-   viValue_average = 160
+   viValue_average = 1000
    viWeight = 100
-   viBulk = 125
+   viBulk = 100
+   
+   viSpell_modifier = 0
 
    vrShield_window_overlay = metalshield_window_overlay_rsc
    vrShield_overlay = metalshield_icon_rsc
@@ -44,7 +46,7 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viDefense_base = 5
+   viDefense_base = 50
    viDamage_base = 1
 
 properties:
@@ -53,7 +55,10 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_SLASH,10]
+      return [ [ATCK_WEAP_THRUST,10],
+               [ATCK_WEAP_BLUDGEON,10],
+               [ATCK_WEAP_SLASH,10]
+               [ATCK_SPELL_FIRE,-20],
              ];
    }
 

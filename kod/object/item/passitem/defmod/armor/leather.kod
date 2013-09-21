@@ -33,8 +33,8 @@ classvars:
    vrIcon = leatherarmor_icon_rsc
    vrDesc = leatherarmor_desc_rsc
 
-   viHits_init_min = 450
-   viHits_init_max = 550
+   viHits_init_min = 550
+   viHits_init_max = 650
 
    viValue_average = 400
    viWeight = 150

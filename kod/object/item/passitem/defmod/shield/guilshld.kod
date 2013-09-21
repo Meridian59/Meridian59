@@ -109,12 +109,14 @@ classvars:
    viHits_init_max = 400
 
    % Being custom and made from ore, it's heavier than your average shield.
-   viValue_average = 400
-   viWeight = 200  
-   viBulk = 150
+   viValue_average = 1500
+   viWeight = 125  
+   viBulk = 125
+   
+   viSpell_modifier = 0
 
-   viDefense_base = 20
-   viDamage_base = 2
+   viDefense_base = 50
+   viDamage_base = 1
 
 properties:
 
@@ -552,7 +554,9 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_PIERCE,10] ];
+      return [ [ATCK_WEAP_PIERCE,10],
+               [ATCK_SPELL_SHOCK,-20] 
+             ];
    }
 
    GetBaseSpellModifier(oSpell=$)

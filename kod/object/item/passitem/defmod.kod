@@ -105,8 +105,7 @@ messages:
       iDamageReduce = 0;
       if piDamage_reduce <> 0
       {
-         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
-         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+         iDamageReduce = bound(iDamageReduce,0,damage);
       }
 
       if aspell <> 0
@@ -114,9 +113,9 @@ messages:
          % Reduce damage if part of the damage is spell
          if atype <> 0
          {
-            % Only 2/3 of the damage reduction if we're doing both weapon
+            % Only half of the damage reduction if we're doing both weapon
             % and spell damage types.
-            iDamageReduce = iDamageReduce * 2 / 3;
+            iDamageReduce = iDamageReduce/2;
          }
          else
          {

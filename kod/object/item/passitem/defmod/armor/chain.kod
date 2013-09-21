@@ -34,12 +34,12 @@ classvars:
    viHits_init_min = 550
    viHits_init_max = 650
 
-   viSpell_modifier = -15
+   viSpell_modifier = 0
    viValue_average = 1000
    viWeight = 200
-   viBulk = 250
+   viBulk = 200
 
-   viDefense_base = -50               
+   viDefense_base = 100               
    viDamage_base = 2
 
 properties:
@@ -56,16 +56,14 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_THRUST,5],
-               [ATCK_WEAP_PIERCE,25],
-               [ATCK_WEAP_BLUDGEON,15],
-               [ATCK_WEAP_SLASH,20]
+      return [ [ATCK_WEAP_PIERCE,10],
+               [ATCK_SPELL_SHOCK,-20]
              ];
    }
 
    GetHeatDamage()
    {
-      return 2;
+      return 4;
    }
 
 

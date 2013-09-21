@@ -34,20 +34,20 @@ classvars:
    vrIcon = neruditearmor_icon_rsc
    vrDesc = neruditearmor_desc_rsc
 
-   viHits_init_min = 850
-   viHits_init_max = 900
+   viHits_init_min = 950
+   viHits_init_max = 1050
 
-   viValue_average = 3000
-   viWeight = 500
-   viBulk = 500
+   viValue_average = 5000
+   viWeight = 350
+   viBulk = 350
 
    viSpell_modifier = -20
 
    vrIcon_male = neruditearmor_male_icon_rsc
    vrIcon_female = neruditearmor_female_icon_rsc
 
-   viDefense_base = -150
-   viDamage_base = 5
+   viDefense_base = -100
+   viDamage_base = 3
 
 properties:
 
@@ -60,11 +60,10 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_FIRE,20],
-               [-ATCK_SPELL_SHOCK,20],
-               [-ATCK_SPELL_COLD,20],
-               [-ATCK_SPELL_ACID,20],
-               [-ATCK_SPELL_QUAKE,-20]
+      return [ [ATCK_WEAP_THRUST,10],
+               [ATCK_WEAP_BLUDGEON,10],
+               [ATCK_WEAP_SLASH,10]
+               [ATCK_WEAP_PIERCE,10],
              ];
    }
 

@@ -32,13 +32,14 @@ classvars:
    vrIcon = knightshield_icon_rsc
    vrDesc = knightshield_desc_rsc
 
-   viHits_init_min = 250
-   viHits_init_max = 300
+   viHits_init_min = 550
+   viHits_init_max = 650
 
-   viValue_average = 800
-   viWeight = 175
-   viBulk = 200
-
+   viValue_average = 3000
+   viWeight = 250
+   viBulk = 250
+   
+   viSpell_modifier = -10
 
    vrShield_window_overlay = knightshield_window_overlay_rsc
    vrShield_overlay = knightshield_icon_rsc
@@ -46,7 +47,7 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viDefense_base = 15
+   viDefense_base = -50
    viDamage_base = 2
 
 properties:
@@ -55,8 +56,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_ALL,-20],
-               [ATCK_WEAP_PIERCE,10]
+      return [ [ATCK_WEAP_PIERCE,20],
+               [ATCK_SPELL_SHOCK,-20]
              ];
    }
 

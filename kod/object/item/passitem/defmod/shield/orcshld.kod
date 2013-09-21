@@ -19,11 +19,12 @@ resources:
    OrcShield_name_rsc = "orc shield"
    OrcShield_icon_rsc = osh.bgf
    OrcShield_desc_rsc = \
-      "The skull that decorates the face of the shield offers a fair "
-      "amount of fear to potential opponents, but the shield seems to "
-      "be far more decorative than useful.  Still, there seems to be a "
-      "darker edge to the shield that you can't place your finger on, and "
-      "one wonders if this device has some hidden attribute."
+      "Fearsome to behold, the infamous orc shields strike terror the enemy's heart, "
+      "while also proving highly useful in combat. Remarkably light yet sturdy, this "
+      "particular one promises some light protection in any battle. As you hold the shield "
+      "in your hand, you are amazed to find that it does not obstruct your spellcasting in "
+      "the least - on the contrary, it almost feels as if the shield tried to feed your darker "
+      "arcane powers. Is it just you, or does the sun seem even more repulsive than usual?"
 
    orcshield_cant = "You try to grab the handle of the shield, but it insistently slips out of your fingers."
 

@@ -86,6 +86,11 @@ messages:
       return IvyCirclet_overlay_rsc;
    }
    
+   AdjustsMaxMana()
+   {
+      return TRUE;
+   }
+   
    GetResistanceModifiers()
    {
       return [ [ATCK_WEAP_THRUST,5],

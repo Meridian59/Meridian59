@@ -110,20 +110,10 @@ messages:
 
       if aspell <> 0
       {
-         % Reduce damage if part of the damage is spell
-         if atype <> 0
-         {
-            % Only half of the damage reduction if we're doing both weapon
-            % and spell damage types.
-            iDamageReduce = iDamageReduce/2;
-         }
-         else
-         {
-            % If we're doing pure spell damage, we get no reduction.
-            iDamageReduce = 0;
-         }
+         % If the weapon has a spell damage component, flat damage reduction
+         % is slashed entirely, but damage will still be reduced by resistance.
+         iDamageReduce = 0;
       }
-      
       return damage - iDamageReduce;
    }
 

@@ -21,11 +21,12 @@ resources:
    neruditearmor_desc_rsc = \
       "Forged from mighty Nerudite, this plate is lighter and more durable than "
       "one made of regular steel, while still offering reliable protection in any "
-      "confrontation. The armor made from Nerudite may be light enough to allow for normal "
-      "movement on the battlefield, but its rigid structure presents a significant "
-      "challenge to spellcasters. While Nerudite is neither flammable nor conductive, "
-      "it is extremely prone to shattering under excessive strain, often leading to "
-      "severe injury or death."
+      "confrontation.  Light enough to allow for normal movement on the battlefield, "
+      "the Nerudite armor's rigid structure still presents a significant challenge "
+      "to spellcasters.  You have heard that Nerudite is neither flammable nor conductive, "
+      "but it is also common knowledge that the material is extremely prone to bursting "
+      "in a violent explosion when subjected to excessive strain, often leading to severe "
+      "injury or death."
 
    neruditearmor_male_icon_rsc = btm.bgf
    neruditearmor_female_icon_rsc = btn.bgf

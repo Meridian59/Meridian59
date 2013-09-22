@@ -20,11 +20,11 @@ resources:
    OrcShield_icon_rsc = osh.bgf
    OrcShield_desc_rsc = \
       "Fearsome to behold, the infamous orc shields strike terror the enemy's heart, "
-      "while also proving highly useful in combat. Remarkably light yet sturdy, this "
-      "particular one promises some light protection in any battle. As you hold the shield "
+      "while also proving highly useful in combat.  Remarkably light yet sturdy, this "
+      "particular one promises some light protection in any battle.  As you hold the shield "
       "in your hand, you are amazed to find that it does not obstruct your spellcasting in "
-      "the least - on the contrary, it almost feels as if the shield tried to feed your darker "
-      "arcane powers. Is it just you, or does the sun seem even more repulsive than usual?"
+      "the least - on the contrary, it almost feels as if the shield tries to feed your darker "
+      "arcane powers.  Is it just you, or does the sun seem even more repulsive than usual?"
 
    orcshield_cant = "You try to grab the handle of the shield, but it insistently slips out of your fingers."
 

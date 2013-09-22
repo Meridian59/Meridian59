@@ -20,7 +20,12 @@ resources:
    IvyCirclet_icon_rsc = ivycircl.bgf
    IvyCirclet_desc_rsc = \
       "Healthy, green leaves of ivy are wrapped around a wooden wreath.  "
-      "This looks like it would be cool and refreshing against your brow."
+      "Curiously, the ivy circlet seems to have a life of its own as its leaves
+      "gently rustle in your hands.  As you put it on, a wave of compassion washes "
+      "over you and you feel as if your mind has become deeper.  With the ivy circlet "
+      "gracing your head, the day seems brighter and you feel as if nothing could "
+      "stop you from spreading good wherever you go!  However, evilness seems to really "
+      "be getting to you right now."
 
    ivycirclet_cant = "The ivy circlet stubbornly resists your attempts to place it on your brow."
 

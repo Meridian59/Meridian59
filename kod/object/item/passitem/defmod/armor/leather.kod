@@ -20,9 +20,9 @@ resources:
    leatherarmor_icon_rsc = leathamr.bgf
    leatherarmor_desc_rsc = \
       "This armor is crafted from tough and resilient troll hides, cured and carefully stitched "
-      "together in order to provide some protection in battle - especially in close quarters "
-      "combat. Light and flexible, the leather armor does not hinder spell casting in the least "
-      "and allows for great mobility in battle. You can't help but notice that the material seems "
+      "together in order to provide some light protection in battle - especially in close quarters "
+      "combat.  Light and flexible, the leather armor does not hinder spell casting in the least "
+      "and allows for great mobility in battle, yet you can't help but notice that the material seems "
       "to be a highly flammable."
 
    leatherarmor_male_icon_rsc = btg.bgf

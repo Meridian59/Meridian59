@@ -21,9 +21,9 @@ resources:
    scalearmor_desc_rsc = \
       "Thousands of overlapping scales, skillfully crafted onto a sturdy set "
       "of leather padding, give this armor its strength, offering heavy protection "
-      "in battle - especially against attacks made in melee. The armor is quite "
+      "in battle - especially against attacks made in melee.  The armor is quite "
       "cumbersome though, making it harder for its wearer to cast spells or avoid "
-      "incoming attacks. You can't help but notice that the material seems highly flammable."
+      "incoming attacks.  You can't help but notice that the material seems highly flammable."
 
    scalearmor_male_icon_rsc = bti.bgf
    scalearmor_female_icon_rsc = btj.bgf

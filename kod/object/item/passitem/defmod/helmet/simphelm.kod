@@ -21,8 +21,7 @@ resources:
    SimpleHelm_desc_rsc = \
       "Steel and chain links give some light protection to the wearer of this padded helmet "
       "- both against regular attacks and projectiles.  While useful in battle, the helmet is "
-      "fairly uncomfortable to wear, making it somewhat hard for its wearer to focus on "
-      "spellcasting."
+      "fairly uncomfortable to wear, making it harder for its wearer to focus on spellcasting."
 
 classvars:
 

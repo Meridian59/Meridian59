@@ -21,8 +21,8 @@ resources:
    platearmor_desc_rsc = \
       "Formed from solid sheets of hardened steel, this armor "
       "offers heavy protection in battle - especially against ranged "
-      "attacks. The armor is quite cumbersome though, making it harder "
-      "for its wearer to cast spells or avoid incoming attacks. You can't "
+      "attacks.  The heavy plate is quite cumbersome though, making it harder "
+      "for its wearer to cast spells or avoid incoming attacks.  You can't "
       "help but notice that the material seems to be a great conductor."
 
    platearmor_male_icon_rsc = bte.bgf

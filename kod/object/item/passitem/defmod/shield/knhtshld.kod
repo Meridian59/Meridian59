@@ -21,8 +21,8 @@ resources:
    knightshield_desc_rsc = \
       "Nearly four feet from top to bottom, this glimmering shield of "
       "polished steel offers heavy protection in battle, its impressive size "
-      "making it especially effective when blocking projectiles. Its substantial "
-      "weight might be getting in the way of your ability to cast spells though. "
+      "making it especially effective when blocking projectiles.  Its substantial "
+      "weight might be getting in the way of your ability to cast spells though.  "
       "You can't help but notice, that the material seems to be a great conductor."
 
    knightshield_window_overlay_rsc = povshldE.bgf

@@ -19,9 +19,9 @@ resources:
    goldshield_name_rsc = "gold round shield"
    goldshield_icon_rsc = rshield.bgf
    goldshield_desc_rsc = \
-      "Finely made, this hefty gold round shield offers heavy protection in battle. "
-      "Its compact form makes it especially suited to block strikes in melee. Unfortunately, "
-      "its weight might be hindering your ability to cast spells. You can't help but notice "
+      "Finely made, this hefty gold round shield offers heavy protection in battle.  "
+      "Its compact form makes it especially suited to block strikes in melee.  Unfortunately, "
+      "its weight might be hindering your ability to cast spells.  You can't help but notice "
       "that the material seems to be highly flammable."
 
    goldshield_window_overlay_rsc = povshldD.bgf

@@ -12,7 +12,7 @@ BOFS = heal.bof atakspel.bof rescue.bof earthqua.bof \
        majheal.bof dishonor.bof \
        blind.bof hold.bof defile.bof umbrella.bof \
        creaweap.bof enfeeble.bof shatter.bof swap.bof \
-       brittle.bof creafood.bof dement.bof enchwp.bof fade.bof focus.bof \
+       brittle.bof creafood.bof dement.bof enchwp.bof fade.bof \
        holywp.bof manabomb.bof unholywp.bof \
        purify.bof nodebrst.bof \
        illform.bof identify.bof reveal.bof shroud.bof engrave.bof \

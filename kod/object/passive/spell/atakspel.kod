@@ -43,7 +43,9 @@ properties:
    piRange = $
 
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
-   piManaFocusBonus = 5
+   piRagingFlamesBonus = 0
+   piPostCast_adjustment = 0
+   piMana_adjustment = 0
 
    pbAbsolute = FALSE
 
@@ -138,18 +140,22 @@ messages:
 
             % Reduce damage based on spell power.
             iDamage = (iDamage * (50 + (iSpellPower / 2))) / SPELLPOWER_MAXIMUM;
-
-            if Send(who,@CheckPlayerFlag,#flag=PFLAG_MANA_FOCUS)
+            
+            if Send(who,@CheckPlayerFlag,#flag=PFLAG_RAGING_FLAMES)
             {
-               % Bonus if we have mana focus up.
-               iManaFocus = First(Send(who,@GetEnchantedState,
-                                  #what=Send(SYS,@FindSpellByNum,#num=SID_MANA_FOCUS)));
+               % Bonus if we have raging flames up.
+               iRagingFlames = First(Send(who,@GetEnchantedState,
+                                  #what=Send(SYS,@FindSpellByNum,#num=SID_RAGING_FLAMES)));
 
-               % This takes the spellpower of Mana Focus (iManaFocus), and uses
+               % This takes the spellpower of Raging Flames (iRagingFlames), and uses
                %  that to scale our "bonus" damage.
-               % Bonus damage is 1 to piManaFocusBonus, scaled by the power of iManaFocus.
-               iDamage = iDamage + ((iManaFocus * piManaFocusBonus) / SPELLPOWER_MAXIMUM) + 1;
-            }
+               % Bonus damage is 0 to piRagingFlamesBonus, scaled by the power of iRagingFlames.
+               iDamage = iDamage + ((iRagingFlames * piRagingFlamesBonus) / SPELLPOWER_MAXIMUM);
+               % Reduces the post cast delay of spells by piPostCast_adjustment
+               viPostCast_time = bound(viPostCast_time - piPostCast_adjustment,1,&);
+               % Reduces the mana cost of spells by up to piMana_adjustment
+               viMana = bound(viMana - (piMana_adjustment * (iRagingFlames + 1)/100)),0,&)
+            }            
          }
       }
      

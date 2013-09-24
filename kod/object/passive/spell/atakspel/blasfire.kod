@@ -38,7 +38,7 @@ classvars:
 
    viSchool = SS_FAREN
    viSpell_level = 4
-   viMana = 8
+   viMana = 5
 
    vrSucceed_wav = BlastOfFire_sound
 
@@ -49,8 +49,11 @@ classvars:
 
 properties:
 
-   piDamageMin = 15
-   piDamageMax = 23
+   piDamageMin =  12
+   piDamageMax = 18
+   piRagingFlamesBonus = 0
+   piPostCast_adjustment = 1
+   piMana_adjustment = 5
    piRange = 4
 
 messages:
@@ -60,8 +63,7 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&RedMushroom,2],plReagents);
-      plReagents = Cons([&Elderberry,1],plReagents);
+      plReagents = Cons([&RedMushroom,1],plReagents);
  
       return;
    }

@@ -53,8 +53,8 @@ classvars:
 
 properties:
 
-   piDamageMin = 13
-   piDamageMax = 18
+   piDamageMin = 17
+   piDamageMax = 19
    prSpellHit = lightning_hit_rsc
 
 messages:

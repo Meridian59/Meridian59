@@ -37,7 +37,7 @@ classvars:
 
    viAttack_spell = ATCK_SPELL_ALL+ATCK_SPELL_FIRE
 
-   viMana = 7
+   viMana = 6
    viSchool = SS_FAREN
    viSpell_level = 4
 
@@ -54,8 +54,11 @@ classvars:
 
 properties:
    
-   piDamageMin = 8
-   piDamageMax = 12
+   piDamageMin = 12
+   piDamageMax = 14
+   piRagingFlamesBonus = 0
+   piPostCast_adjustment = 1 
+   piMana_adjustment = 6
    prSpellHit = fireball_hit_rsc
 
 messages:
@@ -65,7 +68,7 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&RedMushroom,2],plReagents);
+      plReagents = Cons([&RedMushroom,1],plReagents);
       plReagents = Cons([&OrcTooth,1],plReagents);
 
       return;

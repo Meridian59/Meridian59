@@ -23,6 +23,7 @@ resources:
    DetectInvisible_on_rsc = "You can feel your eyes tingle."
    DetectInvisible_off_rsc = "Your eyesight returns to its former mundanity."
    DetectInvisible_already_enchanted_rsc = "You can already see the invisible."
+   DetectInvisible_already_enchanted_generic_rsc = "You sense the presence of detection magic already in place and abort your spell."
    DetectInvisible_Success_rsc = "%s%s eyes pulse briefly."
 
 classvars:
@@ -55,6 +56,17 @@ messages:
       plReagents = [ [&Solagh, 2] ];
 
       return;
+   }
+   
+   CanPayCosts(who = $, lTargets = $)
+   {
+      if Send(first(lTargets),@CheckPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2)
+      {
+	      Send(who,@MsgSendUser,#message_rsc=DetectInvisible_already_enchanted_generic_rsc);
+	      return False;
+      }
+
+      propagate;
    }
 
    CastSpell(who = $,iSpellPower=0)

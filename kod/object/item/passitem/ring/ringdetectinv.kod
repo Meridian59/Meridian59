@@ -1,0 +1,172 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RingDetectInvisibility is Ring
+
+constants:
+
+   include blakston.khd
+
+   % use a charge every x milliseconds
+   RINGDETECTINVISIBILITY_CHARGE_RATE = 60000
+
+resources:
+
+   ringdetectinvisibility_name_rsc = "ring of perception"   
+   ringdetectinvisibility_icon_rsc = ring1.bgf
+   ringdetectinvisibility_desc_rsc = "This ring bears a series of mystic runes that seem to sharpen and focus as you study them."
+
+   ringdetectinvisibility_use = "Your feel your senses sharpen."
+   ringdetectinvisibility_use_wav_rsc = invis_ring.wav
+  
+   ringdetectinvisibility_dead_rsc = "Your ring of perception goes cold, having expended its magical energy."
+
+   ringdetectinvisibility_already_detectinvisible_rsc = \
+   "You can't use the ring of perception because your senses are already heightened."
+
+classvars:
+
+   vrRealName = ringdetectinvisibility_name_rsc
+   vrIcon = ringdetectinvisibility_icon_rsc
+   vrRealDesc = ringdetectinvisibility_desc_rsc
+
+   viHits_init_min = 4
+   viHits_init_max = 7
+
+   viBulk = 5
+   viWeight = 10
+   
+   viValue_average = 470
+
+properties:
+
+   pbIn_use = False
+   ptCharge = $
+
+messages:
+
+   ReqUse(what = $)
+   {
+      if Send(what,@CheckPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2)
+      {
+	      Send(poOwner,@MsgSendUser,#message_rsc=ringdetectinvisibility_already_detectinvisible_rsc);
+	      return False;
+      }
+
+      propagate;
+   }
+
+   NewUsed(what = $)
+   {
+      local oRoom;
+
+      if ptCharge <> $
+      {
+	      debug("Ring of detect invisibility",self,"got used when already has timer");
+	      DeleteTimer(ptCharge);
+      }
+      ptCharge = CreateTimer(self,@ChargeTimer,RINGDETECTINVISIBILITY_CHARGE_RATE);
+
+      % Give message and play sound
+      Send(poOwner,@MsgSendUser,#message_rsc=ringdetectinvisibility_use);
+      oRoom = Send(poOwner, @GetOwner);
+      Send(oRoom, @SomethingWaveRoom, #what = poOwner, 
+           #wave_rsc = ringdetectinvisibility_use_wav_rsc);
+      
+      pbIn_use = True;
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2,#value=True);
+
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      if ptCharge = $
+      {
+         %debug("Ringdetectinvisibility",self,"got unused when has no timer");
+      }
+      else
+      {
+         DeleteTimer(ptCharge);
+         ptCharge = $;
+      }
+
+      pbIn_use = False;
+
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2,#value=False);
+	  Post(poOwner,@ToCliRoomContents);
+
+      piHits = piHits - 1;
+      if piHits = 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=ringdetectinvisibility_dead_rsc);
+         Send(self,@Delete);
+         return;
+      }
+
+      propagate;
+   }
+
+   SetItemPlayerFlag()
+   {
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2,#value=True);
+	  Post(poOwner,@ToCliRoomContents);
+      propagate;
+   }
+
+   ChargeTimer()
+   "Called every minute to drain a hit, using up the ringdetectinvisibility."
+   {
+      ptCharge = $;
+
+      piHits = piHits - 1;
+      if piHits = 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=ringdetectinvisibility_dead_rsc);
+         Send(self,@Delete);
+         return;
+      }
+
+      ptCharge = CreateTimer(self,@ChargeTimer,RINGDETECTINVISIBILITY_CHARGE_RATE);
+      return;
+   }
+
+   UserLogoff()
+   {
+      Send(poOwner,@TryUnuseItem,#what=self);
+
+      propagate;
+   }
+
+   SendInventoryAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+      return;
+   }
+
+   delete()
+   {
+     if ptCharge <> $
+     {
+       DeleteTimer(ptCharge);
+       ptCharge = $;
+     }
+     propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

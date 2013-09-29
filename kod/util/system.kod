@@ -4820,6 +4820,7 @@ messages:
       plItemTemplates = cons(create(&RingOfLethargy),plItemTemplates);
       plItemTemplates = cons(create(&RingInvisibility),plItemTemplates);
       plItemTemplates = cons(create(&RingWedding),plItemTemplates);
+      plItemTemplates = cons(create(&RingDetectInvisibility),plItemTemplates);
 
       plItemTemplates = cons(create(&AcidRing),plItemTemplates);
       plItemTemplates = cons(create(&ColdRing),plItemTemplates);

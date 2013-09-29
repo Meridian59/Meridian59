@@ -1,0 +1,153 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RingVitality is Ring
+
+constants:
+
+   include blakston.khd
+
+   % use a charge every x milliseconds
+   RINGVITALITY_CHARGE_RATE = 60000
+
+resources:
+
+   ringvitality_name_rsc = "ring of vitality"   
+   ringvitality_icon_rsc = ring2.bgf
+   ringvitality_desc_rsc = "This ring glimmers with imbued life force, promising protection against poisons of all types."
+
+   ringvitality_use = "As you put the ring on, cleansing energies course through your blood."
+  
+   ringvitality_dead_rsc = "Your ring of vitality goes cold, having expended its cleansing energies."
+   ringvitality_already_resist_rsc = "You are already resistant to poison."
+
+
+classvars:
+
+   vrRealName = ringvitality_name_rsc
+   vrIcon = ringvitality_icon_rsc
+   vrRealDesc = ringvitality_desc_rsc
+
+   viHits_init_min = 50
+   viHits_init_max = 80
+
+   viBulk = 5
+   viWeight = 10
+   
+   viValue_average = 2500
+
+properties:
+
+   pbIn_use = False
+   ptCharge = $
+
+messages:
+
+   ReqUse(what = $)
+   {
+      if Send(what,@CheckPlayerFlag,#flag=PFLAG_RESIST_POISON)
+      {
+	      Send(poOwner,@MsgSendUser,#message_rsc=ringvitality_already_resist_rsc);
+	      return False;
+      }
+
+      propagate;
+   }
+
+   NewUsed(what = $)
+   {
+      local oRoom;
+
+      if ptCharge <> $
+      {
+	      debug("Ring of vitality",self,"got used when already has timer");
+	      DeleteTimer(ptCharge);
+      }
+      ptCharge = CreateTimer(self,@ChargeTimer,RINGVITALITY_CHARGE_RATE);
+
+      % Give message and play sound
+      Send(poOwner,@MsgSendUser,#message_rsc=ringvitality_use);
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_RESIST_POISON,#value=True);
+      
+      pbIn_use = True;
+
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      if ptCharge = $
+      {
+         %debug("RingVitality",self,"got unused when has no timer");
+      }
+      else
+      {
+         DeleteTimer(ptCharge);
+         ptCharge = $;
+      }
+
+      pbIn_use = False;
+
+      piHits = piHits - 1;
+      if piHits = 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=ringvitality_dead_rsc);
+         Send(self,@Delete);
+         return;
+      }
+
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_RESIST_POISON,#value=False);
+
+      propagate;
+   }
+
+   SetItemPlayerFlag()
+   {
+      Send(poOwner,@SetPlayerFlag,#flag=PFLAG_RESIST_POISON,#value=TRUE);
+      propagate;
+   }
+
+   ChargeTimer()
+   "Called every minute to drain a hit, using up the ringvitality."
+   {
+      ptCharge = $;
+
+      piHits = piHits - 1;
+      if piHits = 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=ringvitality_dead_rsc);
+         Send(self,@Delete);
+         return;
+      }
+
+      ptCharge = CreateTimer(self,@ChargeTimer,RINGVITALITY_CHARGE_RATE);
+      return;
+   }
+
+   UserLogoff()
+   {
+      Send(poOwner,@TryUnuseItem,#what=self);
+
+      propagate;
+   }
+
+   delete()
+   {
+     if ptCharge <> $
+     {
+       DeleteTimer(ptCharge);
+       ptCharge = $;
+     }
+     propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

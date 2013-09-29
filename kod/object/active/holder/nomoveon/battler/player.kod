@@ -9631,8 +9631,16 @@ messages:
 
       if bVigorLoss
       {
-         piVigor = piVigor - 20;
-         Send(self,@NewVigor);
+         if Send(self,@CheckPlayerFlag,#flag=PFLAG_RESIST_POISON)
+         {
+            piVigor = piVigor - 5;
+            Send(self,@NewVigor);
+         }
+         else
+         {
+            piVigor = piVigor - 20;
+            Send(self,@NewVigor);
+         }
       }
       
       return;
@@ -9670,7 +9678,15 @@ messages:
       if NOT Send(poOwner,@SafePlayerAttack) OR Send(poOwner,@IsValidTarget,#who=self)
       {
          % Poison only hurts you in the arena if you are a combatant.
-         piHealth = piHealth - piPoisonStrength / 1000;
+         If Send(self,@CheckPlayerFlag,#flag=PFLAG_RESIST_POISON)
+         {
+            piHealth = piHealth - piPoisonStrength / 1000 / 4;
+         }
+         else
+         {
+            piHealth = piHealth - piPoisonStrength / 1000;
+         }
+
          if piHealth < 1
          {
             piHealth = 1;

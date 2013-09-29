@@ -2139,6 +2139,7 @@
    PFLAG_MORPHED           = 0x200000
    % this player has moved since he's entered the room.
    PFLAG_MOVED_SINCE_ENTRY = 0x400000
+   PFLAG_RESIST_POISON     = 0x800000
 
    % Second set of player flags (in piFlags2)
    % A mask of flags that are unaffected by ResetPlayerFlagList

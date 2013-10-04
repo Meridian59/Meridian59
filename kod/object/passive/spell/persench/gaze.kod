@@ -39,7 +39,7 @@ classvars:
    viSpell_num = SID_GAZE_OF_THE_BASILISK
    viSchool = SS_QOR
    viMana = 15          
-   viCast_Time = 5000   
+   viCast_Time = 0
    viSpell_Exetion = 15
    viSpell_level = 6
 

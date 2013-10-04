@@ -64,7 +64,7 @@ classvars:
    vrSpell_intro = Deflect_spell_intro
 
    viMana = 20
-   viCast_time = 3000
+   viCast_time = 0
    viSpell_level = 4
    viSchool = SS_KRAANAN
 

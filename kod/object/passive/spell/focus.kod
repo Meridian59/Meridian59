@@ -43,7 +43,7 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 3
 
-   viCast_time = 7000            %% 7 seconds
+   viCast_time = 0
    viChance_To_Increase = 15
 
 properties:

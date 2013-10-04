@@ -42,7 +42,7 @@ classvars:
    viSchool = SS_RIIJA
    viMana = 5
    viSpellExertion = 5
-   viCast_time = 3000
+   viCast_time = 0
 
    vrSucceed_wav = shadowform_wave_rsc
    viChance_To_Increase = 30

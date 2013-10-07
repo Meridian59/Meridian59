@@ -940,6 +940,7 @@ messages:
          OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING_WALL)
          OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_BRAMBLE_WALL)
          OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FIREWALL)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE)
       {
          Send(who,@MsgSendUser,#message_rsc=cannot_cast_that_here);
          return FALSE;

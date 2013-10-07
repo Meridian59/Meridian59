@@ -830,6 +830,11 @@ messages:
       
       return;
    }
+   
+   UserEntered(what = $,new_row = $,new_col = $)
+   {
+      return;
+   }
 
    LastUserLeft(what = $)
    {
@@ -841,6 +846,11 @@ messages:
          Send(each_obj,@LastUserLeft,#what=what);
       }
       
+      return;
+   }
+   
+   UserLeft(what = $)
+   {
       return;
    }
 

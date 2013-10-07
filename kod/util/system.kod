@@ -2324,6 +2324,8 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_MARION,#class=&OldMarion);
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_BAR_NORTH,#class=&OldBarloqueNorth);
       Send(self,@CreateOneRoomIfNew,#num=RID_OLD_BAR_SOUTH,#class=&OldBarloqueSouth);
+      
+      Send(self,@CreateOneRoomIfNew,#num=RID_BATTLE_ARENA,#class=&BattleArena);
 
 
       if poRentableRoomMaintenance <> $  % After a clean build, for example.
@@ -4958,6 +4960,8 @@ messages:
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
 
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
+      
+      plItemTemplates = cons(create(&BattleFlag),plItemTemplates);
 
       return;
    }

@@ -516,6 +516,16 @@ messages:
    
    WeaponHitTarget()
    {
+      % No durability hits in No Cost Fighting rooms
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+      {
+         If Send(Send(poOwner,@GetOwner),@IsNoCostFightingRoom)
+         {
+            return;
+         }
+      }
+
       % 75% chance to be damaged, currently.
       if random(1,100) < WEAPON_TAKE_DAMAGE_PCT   
       {

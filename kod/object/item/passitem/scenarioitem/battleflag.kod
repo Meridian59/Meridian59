@@ -1,0 +1,88 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BattleFlag is ScenarioItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BattleFlag_name_rsc = "battle flag"
+   BattleFlag_icon_rsc = flagjinv.bgf
+   BattleFlag_desc_rsc = \
+      "Control all the flags for three minutes to win the Battle Arena. Any given player may only carry three. Teamwork is required!"
+
+   BattleFlag_vanishes = \
+      "Upon your defeat, the Battle Flag leaves you!"
+      
+   too_many_flags = "You are carrying too many flags to pick up more!"
+   cannot_drop_flag = "You can't drop the flag! You need it to win!"
+   
+classvars:
+
+   vrName = BattleFlag_name_rsc
+   vrIcon = BattleFlag_icon_rsc
+   vrDesc = BattleFlag_desc_rsc
+
+properties:
+
+messages:
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   DestroyDisposable()
+   {
+      return;
+   }
+
+   ReqLeaveOwner()
+   {
+      if IsClass(poOwner,&User)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=cannot_drop_flag);
+         return FALSE;
+      }
+      propagate;
+   }
+
+   ReqNewOwner(what=$)
+   {
+      If IsClass(what,&User)
+         AND Send(what,@CountHoldingHowMany,#class=&BattleFlag) >= 3
+      {
+         Send(what,@MsgSendUser,#message_rsc=too_many_flags);
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   NewOwner(what=$)
+   {
+      if IsClass(what,&User)
+      {
+         Post(Send(what,@GetOwner),@SomethingChanged,#what=what);
+      }
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -4223,6 +4223,7 @@ messages:
          AND IsClass(oWeapon,&RangedWeapon)
          AND NOT Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
          AND NOT (IsClass(self,&DM) AND Send(self,@PlayerIsImmortal))
+         AND NOT Send(Send(self,@GetOwner),@IsNoCostFightingRoom)
       {
          iOffense = iOffense / 2;
       }

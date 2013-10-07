@@ -163,7 +163,10 @@ messages:
       send(send(who,@GetOwner),@SomethingShot,#who=who,
         #target=send(who,@GetKillTarget), #projectile=oAmmo);
 
-      send(oAmmo,@SubtractNumber,#number=1);
+      if NOT Send(Send(who,@GetOwner),@IsNoCostFightingRoom)
+      {
+         send(oAmmo,@SubtractNumber,#number=1);
+      }
 
       propagate;
    }

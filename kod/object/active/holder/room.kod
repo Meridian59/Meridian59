@@ -1786,6 +1786,8 @@ messages:
             Send(self,@FirstUserEntered,#what=what,#new_row=First(new_pos),
                  #new_col=Nth(new_pos,2));
          }
+         
+         Send(self,@UserEntered,#what=what,#new_row=First(new_pos),#new_col=Nth(new_pos,2));
 
          % Now send music.
          Send(what,@SendRoomMusic,#music_rsc=prMusic);
@@ -1917,6 +1919,7 @@ messages:
          each_obj = First(i);   % optimized for room
          if IsClass(each_obj,&User) AND each_obj <> what
          {
+            Send(self,@UserLeft,#what=what);
             propagate;
          }
       }
@@ -2417,6 +2420,11 @@ messages:
 
       propagate;
    }
+   
+   UserEntered()
+   {
+      propagate;
+   }
 
    LastUserLeft()
    {
@@ -2428,6 +2436,11 @@ messages:
          ptPeriodic_sounds = $;
       }
 
+      propagate;
+   }
+   
+   UserLeft()
+   {
       propagate;
    }
 
@@ -3935,6 +3948,12 @@ messages:
          }
       }
       return;
+   }
+   
+   % No durability hits, no reagent costs, no ammo costs in this room
+   IsNoCostFightingRoom()
+   {
+      return FALSE;
    }
 
 end

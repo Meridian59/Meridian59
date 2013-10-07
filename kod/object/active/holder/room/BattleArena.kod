@@ -1,0 +1,1015 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BattleArena is Room
+
+constants:
+
+   include blakston.khd
+
+   SECTOR_DOOR_CRYPT3A = 5
+   FLAGS_TOTAL = 9
+   MINUTES_TO_WIN = 3
+
+   TEAM_SPECTATOR = 1
+   TEAM_ZANDRAMAS = 2
+   TEAM_ZAPHOD = 3
+   
+   JACKPOT_MAX = 999999
+   
+resources:
+
+   room_name_BattleArena = "Battle Arena of the Gods"
+   room_BattleArena = MarDun02.roo
+   BattleArena_music = pk_fm.mid
+
+   BattleArena_door_sound = stoneup2.wav
+
+   no_participation_spectators = "As a spectator, you may not attack or cast in any manner."
+   no_attack_teammate = "You can't attack a member of your own team!"
+   cannot_cast_that_here = "You can't cast that spell here."
+   
+   welcome_blurb = "### Welcome to the Battle Arena!"
+   info_blurb = "### You are a spectator. Say 'join' to enter the fray, or say 'leave the battle arena' to return to your last safe location. State 'jackpot' to see the current prize pool, 'flags' for control information, and 'time' for the time remaining until victory."
+
+   assigned_team_zandramas = "### You have been assigned to Team Zandramas! Say 'spectate' to return to spectating."
+   assigned_team_zaphod = "### You have been assigned to Team Zaphod! Say 'spectate' to return to spectating."
+   
+   report_team_spectator = "You are a spectator."
+   report_team_zandramas = "You are on Team Zandramas."
+   report_team_zaphod = "You are on Team Zaphod."
+   report_team_none = "You are not on any team, and are probably a cheater."
+   
+   kill_reward_jackpot = "### %s has slain %s, increasing the jackpot to %i!"
+   kill_reward_individual = "### For killing %s, you have been awarded %i shillings."
+   current_jackpot = "### The jackpot currently stands at %i shillings."
+   flags_info = "### Team Zandramas controls %i flags, Team Zaphod controls %i flags, and %i flags remain neutral."
+   flag_distributed = "### A flag has been randomly distributed."
+   time_info_no_control = "### Currently, neither team controls all the flags."
+   time_info_zandramas = "### %i seconds remain until Team Zandramas wins!"
+   time_info_zaphod = "### %i seconds remain until Team Zaphod wins!"
+   victory_aborted = "### Flag victory aborted due to loss of one or more flags."
+   victory_achieved_zandramas = "### Team Zandramas has won, receiving %i shillings each!"
+   victory_achieved_zaphod = "### Team Zaphod has won, receiving %i shillings each!"
+   loss_reward = "### You've been awarded %i consolation shillings for your team's Battle Arena loss."
+   
+   BattleArena_no_offer = "You can't trade items here!"
+
+   JOIN_COMMAND = "join"
+   SPECTATE_COMMAND = "spectate"
+   JACKPOT_COMMAND = "jackpot"
+   FLAGS_COMMAND = "flags"
+   TIME_COMMAND = "time"
+   
+   BattleArena_Fanfare_Sound = fanfare1.wav
+   BattleArena_Combat_Sound = arena1.wav
+   BattleArena_Huzzah_Sound = huzzah.wav
+   
+   BattleArena_Quiet_Huzzah = arena.wav
+   BattleArena_Ominous = assassin.wav
+   BattleArena_Dice = dice.wav
+   BattleArena_Choir = God2god.wav
+   BattleArena_Gong = gong.wav
+   BattleArena_Weird = Illus11m.wav
+
+classvars:
+
+   vrName = room_name_BattleArena
+
+   viTeleport_row = 9
+   viTeleport_col = 27
+   
+   viTeamZandramasBase_row = 3
+   viTeamZandramasBase_col = 27
+   viTeamZandramasBase_fine_row = 36
+   viTeamZandramasBase_fine_col = 3
+   viTeamZandramasBase_angle = 1025
+
+   viTeamSpectatorBase_row_min = 11
+   viTeamSpectatorBase_row_max = 18
+   viTeamSpectatorBase_col_min = 24
+   viTeamSpectatorBase_col_max = 29
+
+   viTeamZaphodBase_row = 38
+   viTeamZaphodBase_col = 27
+   viTeamZaphodBase_fine_row = 0
+   viTeamZaphodBase_fine_col = 1
+   viTeamZaphodBase_angle = 3075
+
+   viTerrain_type = TERRAIN_CITY
+   viPermanent_flags = ROOM_SAFE_DEATH | ROOM_SAFELOGOFF | ROOM_HARD_LEARN
+   
+   viDeathHoldSeconds = 6
+
+properties:
+
+   prRoom = room_BattleArena
+   piRoom_num = RID_BATTLE_ARENA
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_NONE
+
+   prMusic = BattleArena_music
+
+   % What locations do we want to spawn at?  Each element is a
+   %  [row, col] pair.
+   plFlagLocations = $
+   plBattleFlags = $
+   
+   % Team lists!
+   plTeamSpectator = $
+   plTeamZandramas = $
+   plTeamZaphod = $
+   
+   piJackpot = 0
+   
+   piVictoryTime = $
+   ptVictoryTimer = $
+
+messages:
+
+   Constructed()
+   {
+      % [row, col, angle]
+      plFlagLocations =   [ [25,  2], [37,  2],
+                            [37,  4], [19,  7],
+                            [20, 10], [21, 35],
+                            [21, 37], [27, 20],
+                            [37, 42], [37, 44],
+                            [ 8, 12], [31, 10],
+                            [33, 11], [35, 10],
+                            [11, 18], [16, 18],
+                            [20, 20], [22, 20],
+                            [28, 41], [17, 52],
+                            [ 8, 47], [ 2, 47],
+                            [28, 51], [26, 51],
+                            [12,  3], [23, 12],
+                            [ 2, 50], [24, 14],
+                            [32, 17], [32, 19],
+                            [10, 10], [ 7,  3], 
+                            [ 9,  3], [26, 33],
+                            [16, 40], [14, 40],  
+                            [17, 47]
+                         ];
+                         
+      plTeamSpectator = $;
+      plTeamZandramas = $;
+      plTeamZaphod = $;
+   
+      piJackpot = 0;
+
+      propagate;
+   }
+
+   FirstUserEntered(what = $)
+   {
+      Send(self,@PlaceFlags);
+      Send(self,@OpenSecondaryDoorDown);
+
+      propagate;
+   }
+   
+   UserEntered(what = $)
+   {
+      Send(self,@SetUserTeam,#what=what);
+      Send(what,@MsgSendUser,#message_rsc=welcome_blurb);
+
+      propagate;
+   }
+   
+   LastUserLeft()
+   {
+      Send(self,@Cleanup);
+
+      propagate;
+   }
+   
+   UserLeft(what = $)
+   {
+      Send(self,@RemoveUserFromAllTeams,#what=what);
+      
+      Send(self,@SeizeFlags,#what=what);
+      
+      propagate;
+   }
+   
+   NewHold(what = $)
+   {
+
+      propagate;
+   }
+
+   LeaveHold(what = $)
+   {
+      if IsClass(what,&BattleFlag)
+      {
+         Post(self,@InitiateVictoryCountdown);
+      }
+      propagate;
+   }
+
+   SetUserTeam(what=$,new_team=TEAM_SPECTATOR)
+   {
+      if what = $
+      {
+         return;
+      }
+      
+      Send(self,@RemoveUserFromAllTeams,#what=what);
+      
+      if new_team = TEAM_SPECTATOR
+      {
+         if plTeamSpectator = $
+            OR findListElem(plTeamSpectator,what) = 0
+         {
+            plTeamSpectator = Cons(what,plTeamSpectator);
+            Send(self,@TeleportUserToBase,#what=what);
+            Send(self,@SeizeFlags,#what=what);
+            Send(what,@ToCliRoomContents);
+            Send(self,@SomethingChanged,#what=what);
+            Post(what,@MsgSendUser,#message_rsc=info_blurb);
+         }
+      }
+      
+      if new_team = TEAM_ZANDRAMAS
+      {
+         if plTeamZandramas = $
+            OR findListElem(plTeamZandramas,what) = 0
+         {
+            plTeamZandramas = Cons(what,plTeamZandramas);
+            Send(self,@TeleportUserToBase,#what=what);
+            Send(self,@SeizeFlags,#what=what);
+            Send(what,@ToCliRoomContents);
+            Send(self,@SomethingChanged,#what=what);
+            Post(what,@MsgSendUser,#message_rsc=assigned_team_zandramas);
+         }
+      }
+      
+      if new_team = TEAM_ZAPHOD
+      {
+         if plTeamZaphod = $
+            OR findListElem(plTeamZaphod,what) = 0
+         {
+            plTeamZaphod = Cons(what,plTeamZaphod);
+            Send(self,@TeleportUserToBase,#what=what);
+            Send(self,@SeizeFlags,#what=what);
+            Send(what,@ToCliRoomContents);
+            Send(self,@SomethingChanged,#what=what);
+            Post(what,@MsgSendUser,#message_rsc=assigned_team_zaphod);
+         }
+      }
+      return;
+   }
+
+   GetUserTeam(what=$)
+   {
+      if plTeamZandramas <> $
+         AND findListElem(plTeamZandramas,what) <> 0
+      {
+         return TEAM_ZANDRAMAS;
+      }
+
+      if plTeamZaphod <> $
+         AND findListElem(plTeamZaphod,what) <> 0
+      {
+         return TEAM_ZAPHOD;
+      }
+   
+      return TEAM_SPECTATOR;
+   }
+   
+   IsUserCarryingFlag(what=$)
+   {
+      local i, each_object;
+      
+      if what <> $
+         AND IsClass(what,&User)
+      {
+         for i in Send(what,@GetHolderPassive)
+         {
+            each_object = Send(what,@HolderExtractObject,#data=i);
+            if IsClass(each_object,&BattleFlag)
+            {
+               return TRUE;
+            }
+         }
+      }
+      return FALSE;
+   }
+   
+   RemoveUserFromAllTeams(what = $)
+   {
+      if plTeamZandramas <> $
+         AND findListElem(plTeamZandramas,what) <> 0
+      {
+         plTeamZandramas = delListElem(plTeamZandramas,what);
+      }
+
+      if plTeamZaphod <> $
+         AND findListElem(plTeamZaphod,what) <> 0
+      {
+         plTeamZaphod = delListElem(plTeamZaphod,what);
+      }
+
+      if plTeamSpectator <> $
+         AND findListElem(plTeamSpectator,what) <> 0
+      {
+         plTeamSpectator = delListElem(plTeamSpectator,what);
+      }
+      return;
+   }
+   
+   UserJoinBattle(what=$)
+   {
+      if plTeamZandramas = $
+      {
+         Send(self,@SetUserTeam,#what=what,#new_team=TEAM_ZANDRAMAS);
+         return;
+      }
+      
+      if plTeamZaphod = $
+      {
+         Send(self,@SetUserTeam,#what=what,#new_team=TEAM_ZAPHOD);
+         return;
+      }
+      
+      if Length(plTeamZandramas) > Length(plTeamZaphod)
+      {
+         Send(self,@SetUserTeam,#what=what,#new_team=TEAM_ZAPHOD);
+      }
+      else
+      {
+         Send(self,@SetUserTeam,#what=what,#new_team=TEAM_ZANDRAMAS);
+      }
+
+      return;
+   }
+
+   SomeoneSaid(what = $,type = $,string = $,parm1 = $,parm2 = $,parm3 = $,
+               parm4 = $, parm5 = $,parm6 = $,parm7 = $,parm8 = $)
+   {
+      local iTeam;
+
+      if what = $
+      {
+         propagate;
+      }
+      
+      if IsClass(what,&User)
+         AND type = SAY_NORMAL
+      {
+         iTeam = send(self,@GetUserTeam,#what=what);
+
+         if StringEqual(string,SPECTATE_COMMAND)
+            AND iTeam <> TEAM_SPECTATOR
+         {
+            Send(self,@SetUserTeam,#what=what);
+         }
+
+         if StringEqual(string,JOIN_COMMAND)
+            AND iTeam = TEAM_SPECTATOR
+         {
+            Send(self,@UserJoinBattle,#what=what);
+         }
+         
+         if StringEqual(string,JACKPOT_COMMAND)
+         {
+            Post(what,@MsgSendUser,#message_rsc=current_jackpot,#parm1=piJackpot);
+            return;
+         }
+         
+         if StringEqual(string,FLAGS_COMMAND)
+         {
+            Post(what,@MsgSendUser,#message_rsc=flags_info,#parm1=Send(self,@GetTeamZandramasFlagCount),
+                         #parm2=Send(self,@GetTeamZaphodFlagCount),#parm3=Send(self,@GetNeutralFlagCount));
+            return;
+         }
+         
+         if StringEqual(string,TIME_COMMAND)
+         {
+            if Send(self,@GetNeutralFlagCount) > 0
+            {
+               Post(what,@MsgSendUser,#message_rsc=time_info_no_control);
+            }
+            else
+            {
+               if Send(self,@GetTeamZandramasFlagCount) = FLAGS_TOTAL
+               {
+                  Post(what,@MsgSendUser,#message_rsc=time_info_zandramas,#parm1=Send(self,@GetRemainingVictorySeconds));
+               }
+               else
+               {
+                  Post(what,@MsgSendUser,#message_rsc=time_info_zaphod,#parm1=Send(self,@GetRemainingVictorySeconds));
+               }
+            }
+            return;
+         }
+      }
+      
+      propagate;
+   }
+   
+   TeleportUserToBase(what=$)
+   {
+      local iTeam;
+
+      if IsClass(what,&User)
+      {
+         iTeam = Send(self,@GetUserTeam,#what=what);
+         if iTeam = TEAM_ZANDRAMAS
+         {
+            Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=viTeamZandramasBase_row,#new_col=viTeamZandramasBase_col,
+                        #new_angle=viTeamZandramasBase_angle,#fine_row=viTeamZandramasBase_fine_row,#fine_col=viTeamZandramasBase_fine_col);
+            return;
+         }
+      
+         if iTeam = TEAM_ZAPHOD
+         {
+            Send(SYS,@UtilGoNearSquare,#what=what,#where=self,#new_row=viTeamZaphodBase_row,#new_col=viTeamZaphodBase_col,
+                        #new_angle=viTeamZaphodBase_angle,#fine_row=viTeamZaphodBase_fine_row,#fine_col=viTeamZaphodBase_fine_col);
+            return;
+         }
+         
+         if iTeam = TEAM_SPECTATOR
+         {
+            Send(SYS,@UtilGoNearSquare,#what=what,#where=self,
+                     #new_row=random(viTeamSpectatorBase_row_min,viTeamSpectatorBase_row_max),
+                     #new_col=random(viTeamSpectatorBase_col_min,viTeamSpectatorBase_col_max),
+                     #fine_row=random(0,40),#fine_col=random(0,40),#new_angle=random(0,4099));
+            return;
+         }
+      }
+   
+      return;
+   }
+
+   PlaceFlags()
+   {
+      local oFlag, lRandomLocation;
+
+      % Don't do anything if there are already flags here.
+      if Send(self,@CountHoldingHowMany,#class=&BattleFlag) = 9
+      {
+         return;
+      }
+
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+
+      return;
+   }
+   
+   SeizeFlags(what=$)
+   {
+      local i, each_object;
+      
+      if what <> $
+         AND IsClass(what,&User)
+      {
+         for i in Send(what,@GetHolderPassive)
+         {
+            each_object = Send(what,@HolderExtractObject,#data=i);
+            if IsClass(each_object,&BattleFlag)
+            {
+               plBattleFlags = delListElem(plBattleFlags,each_object);
+               Send(each_object,@Delete);
+               Send(self,@RandomlyDistributeNewFlag);
+            }
+         }
+      }
+      return;
+   }
+
+   DropFlagsOnDeath(what=$)
+   {
+      local i, each_object;
+      
+      if what <> $
+         AND IsClass(what,&User)
+      {
+         for i in Send(what,@GetHolderPassive)
+         {
+            each_object = Send(what,@HolderExtractObject,#data=i);
+            if IsClass(each_object,&BattleFlag)
+            {
+               plBattleFlags = delListElem(plBattleFlags,each_object);
+               Send(each_object,@Delete);
+               Send(self,@RandomlyDistributeNewFlag);
+            }
+         }
+      }
+      return;
+   }
+   
+   RandomlyDistributeNewFlag()
+   {
+      local oFlag, lRandomLocation, i, each_object;
+      
+      lRandomLocation = Nth(plFlagLocations, random(1, Length(plFlagLocations)));
+      oFlag = Create(&BattleFlag);
+      plBattleFlags = Cons(oFlag,plBattleFlags);
+      Send(self,@NewHold,#what=oFlag,#new_row=Nth(lRandomLocation,1),#new_col=Nth(lRandomLocation,2));
+      
+      for i in Send(self,@GetHolderActive)
+      {
+         each_object = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_object,&User)
+         {
+            Send(each_object,@MsgSendUser,#message_rsc=flag_distributed);
+         }
+      }
+
+      Send(self,@CheckAbortVictoryTimer);
+      
+      return;
+   }
+   
+   CheckAbortVictoryTimer()
+   {
+      local i, each_object;
+
+      if ptVictoryTimer <> $
+      {
+         piVictoryTime = $;
+         DeleteTimer(ptVictoryTimer);
+         ptVictoryTimer = $;
+      
+         for i in Send(self,@GetHolderActive)
+         {
+            each_object = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_object,&User)
+            {
+               Post(each_object,@MsgSendUser,#message_rsc=victory_aborted);
+            }
+         }
+         Send(self,@SomethingWaveRoom,#wave_rsc=BattleArena_Quiet_Huzzah);
+      }
+
+      return;
+   }
+   
+   GetTeamZandramasFlagCount()
+   {
+      local i, iFlagsCount;
+      iFlagsCount = 0;
+      
+      if plTeamZandramas <> $
+      {
+         for i in plTeamZandramas
+         {
+            iFlagsCount = iFlagsCount + Send(i,@CountHoldingHowMany,#class=&BattleFlag);
+         }
+      }
+   
+      return iFlagsCount;
+   }
+   
+   GetTeamZaphodFlagCount()
+   {
+      local i, iFlagsCount;
+      iFlagsCount = 0;
+      
+      if plTeamZaphod <> $
+      {
+         for i in plTeamZaphod
+         {
+            iFlagsCount = iFlagsCount + Send(i,@CountHoldingHowMany,#class=&BattleFlag);
+         }
+      }
+   
+      return iFlagsCount;
+   }
+
+   GetNeutralFlagCount()
+   {  
+      return Send(self,@CountHoldingHowMany,#class=&BattleFlag);
+   }
+   
+   GetRemainingVictorySeconds()
+   {
+      if piVictoryTime <> $
+      {
+         return (piVictoryTime - GetTime());
+      }
+      return -1;
+   }
+   
+   InitiateVictoryCountdown()
+   {
+      local i, each_object;
+
+      for i in Send(self,@GetHolderActive)
+      {
+         each_object = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_object,&User)
+         {
+            if Send(self,@GetTeamZandramasFlagCount) = FLAGS_TOTAL
+            {
+               Send(each_object,@MsgSendUser,#message_rsc=time_info_zandramas,#parm1=(MINUTES_TO_WIN * 60));
+               piVictoryTime = GetTime() + (MINUTES_TO_WIN * 60);
+               ptVictoryTimer = CreateTimer(self,@VictoryAchieved,MINUTES_TO_WIN * 60 * 1000);
+               Send(self,@SomethingWaveRoom,#wave_rsc=BattleArena_Combat_Sound);
+            }
+            
+            if Send(self,@GetTeamZaphodFlagCount) = FLAGS_TOTAL
+            {
+               Send(each_object,@MsgSendUser,#message_rsc=time_info_zaphod,#parm1=(MINUTES_TO_WIN * 60));
+               piVictoryTime = GetTime() + (MINUTES_TO_WIN * 60);
+               ptVictoryTimer = CreateTimer(self,@VictoryAchieved,MINUTES_TO_WIN * 60 * 1000);
+               Send(self,@SomethingWaveRoom,#wave_rsc=BattleArena_Combat_Sound);
+            }
+         }
+      }
+      
+      return;
+   }
+   
+   VictoryAchieved()
+   {
+      local i, each_object, oReward;
+      
+      if piVictoryTime <> $
+      {
+         if piVictoryTime > GetTime() + 3
+         {
+            return;
+         }
+      }
+      
+      if ptVictoryTimer <> $
+      {
+         piVictoryTime = $;
+         DeleteTimer(ptVictoryTimer);
+         ptVictoryTimer = $;
+      }
+      
+      if Send(self,@GetTeamZandramasFlagCount) = FLAGS_TOTAL
+      {
+         for i in Send(self,@GetHolderActive)
+         {
+            each_object = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_object,&User)
+            {
+               Send(each_object,@MsgSendUser,#message_rsc=victory_achieved_zandramas,#parm1=piJackpot);
+            }
+         }
+         for i in plTeamZandramas
+         {
+            oReward = Create(&Money,#number=piJackpot);
+            Send(i,@NewHold,#what=oReward);
+         }
+         for i in plTeamZaphod
+         {
+            oReward = Create(&Money,#number=piJackpot/3);
+            Post(i,@MsgSendUser,#message_rsc=loss_reward,#parm1=piJackpot/3);
+            Send(i,@NewHold,#what=oReward);
+         }
+      
+         for i in plTeamZandramas
+         {
+            Send(self,@SetUserTeam,#what=i);
+         }
+      
+         for i in plTeamZaphod
+         {
+            Send(self,@SetUserTeam,#what=i);
+         }
+      
+         piJackpot = 0;
+         
+         Send(self,@SomethingWaveRoom,#wave_rsc=BattleArena_Huzzah_Sound);
+      }
+
+      if Send(self,@GetTeamZaphodFlagCount) = FLAGS_TOTAL
+      {
+         for i in Send(self,@GetHolderActive)
+         {
+            each_object = Send(self,@HolderExtractObject,#data=i);
+            if IsClass(each_object,&User)
+            {
+               Send(each_object,@MsgSendUser,#message_rsc=victory_achieved_zaphod,#parm1=piJackpot);
+            }
+         }
+         for i in plTeamZaphod
+         {
+            oReward = Create(&Money,#number=piJackpot);
+            Send(i,@NewHold,#what=oReward);
+         }
+         for i in plTeamZandramas
+         {
+            oReward = Create(&Money,#number=piJackpot/3);
+            Post(i,@MsgSendUser,#message_rsc=loss_reward,#parm1=Send(oReward,@GetNumber));
+            Send(i,@NewHold,#what=oReward);
+         }
+      
+         for i in plTeamZandramas
+         {
+            Send(self,@SetUserTeam,#what=i);
+         }
+      
+         for i in plTeamZaphod
+         {
+            Send(self,@SetUserTeam,#what=i);
+         }
+      
+         piJackpot = 0;
+         
+         Send(self,@SomethingWaveRoom,#wave_rsc=BattleArena_Huzzah_Sound);
+      }
+      
+      return;
+   }
+   
+   Cleanup()
+   {
+      local i;
+
+      plTeamSpectator = $;
+      plTeamZandramas = $;
+      plTeamZaphod = $;
+      
+      for i in plBattleFlags
+      {
+         Send(i,@Delete);
+      }
+      plBattleFlags = $;
+      piVictoryTime = $;
+      
+      if ptVictoryTimer <> $
+      {
+         DeleteTimer(ptVictoryTimer);
+         ptVictoryTimer = $;
+      }
+
+      return;
+   }
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      propagate;
+   }
+
+   CreateStandardObjects()
+   {
+
+      propagate;
+   }
+
+   SomethingKilled(what = $,victim = $)
+   {
+      local oReward, i, each_object, scream, oHoldSpell;
+      
+      if what = $
+         OR victim = $
+         OR NOT IsClass(what,&User)
+         OR NOT IsClass(victim,&User)
+      {
+         propagate;
+      }
+   
+      Send(self,@IncreaseJackpot,#amount = Send(victim,@GetBaseMaxHealth));
+      oReward = Create(&Money,#number=Send(victim,@GetBaseMaxHealth));
+      Post(what,@MsgSendUser,#message_rsc=kill_reward_individual,#parm1=Send(victim,@GetTrueName),#parm2=Send(oReward,@GetNumber));
+      Send(what,@NewHold,#what=oReward);
+
+      % Give out dying scream.
+      if Send(victim,@GetGender) = GENDER_FEMALE
+      {
+         scream = playerf_death_wav;
+      }
+      else
+      {
+         scream = playerm_death_wav;
+      }
+      Send(self,@SomethingWaveRoom,#what=victim,#wave_rsc=scream);
+      
+      Send(self,@DropFlagsOnDeath,#what=victim);
+      Send(self,@TeleportUserToBase,#what=victim);
+      Post(victim,@GainHealth,#amount=Send(victim,@GetMaxHealth));
+      Post(victim,@GainMana,#amount=Send(victim,@GetMaxMana),#bCapped=TRUE);
+      Post(victim,@AddExertion,#amount=-200000);
+      
+      oHoldSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      Send(oHoldSpell,@DoHold,#otarget=victim,#idurationsecs=viDeathHoldSeconds,#report=FALSE);
+
+      for i in Send(self,@GetHolderActive)
+      {
+         each_object = Send(self,@HolderExtractObject,#data=i);
+         if IsClass(each_object,&User)
+         {
+            Send(each_object,@MsgSendUser,#message_rsc=kill_reward_jackpot,#parm1=Send(what,@GetTrueName),#parm2=Send(victim,@GetTrueName),#parm3=piJackpot);
+         }
+      }
+      
+      propagate;
+   }
+   
+   IncreaseJackpot(amount=0)
+   "Admin supported."
+   {
+      piJackpot = piJackpot + amount;
+      
+      if piJackpot > JACKPOT_MAX
+      {
+         piJackpot = JACKPOT_MAX;
+      }
+      return;
+   }
+
+   OpenDoorDown()
+   {
+      return;
+   }
+
+   OpenSecondaryDoorDown()
+   {
+      Send(self,@SetSector,#sector=SECTOR_DOOR_CRYPT3A,
+           #animation=ANIMATE_CEILING_LIFT,#height=1098,#speed=8);
+       
+      return;
+   }
+
+   CloseSecondaryDoorDown()
+   {
+      Send(self,@SetSector,#sector=SECTOR_DOOR_CRYPT3A,
+           #animation=ANIMATE_CEILING_LIFT,#height=1098,#speed=8);
+              
+      return;
+   }
+   
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   "Opposite teams may attack each other. Spectators may not interfere."
+   {
+      local iAttackerTeam, iVictimTeam;
+   
+      if IsClass(what, &User)
+      {
+         iAttackerTeam = Send(self,@GetUserTeam,#what=what);
+         iVictimTeam = Send(self,@GetUserTeam,#what=victim);
+      
+         if iAttackerTeam = TEAM_SPECTATOR
+         {
+            Send(what,@MsgSendUser,#message_rsc=no_participation_spectators);
+            return FALSE;
+         }
+
+         if iAttackerTeam = iVictimTeam
+         {
+            Send(what,@MsgSendUser,#message_rsc=no_attack_teammate);
+            return FALSE;
+         }
+         
+         if iAttackerTeam <> iVictimTeam
+            AND iVictimTeam <> TEAM_SPECTATOR
+         {
+            return TRUE;
+         }
+      }
+
+      return TRUE;
+   }
+
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   "Spectators may not cast here."
+   {
+      if Send(self,@GetUserTeam,#what=who) = TEAM_SPECTATOR
+      {
+         Send(who,@MsgSendUser,#message_rsc=no_participation_spectators);
+         return FALSE;
+      }
+
+      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_SWEEP)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_SHATTER)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_SWAP)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_BRITTLE)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_TRUCE)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_JIG)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLINK)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_FIREWALL)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING_WALL)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_BRAMBLE_WALL)
+         OR oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FIREWALL)
+      {
+         Send(who,@MsgSendUser,#message_rsc=cannot_cast_that_here);
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   IsValidTarget(who=$)
+   {
+      if Send(self,@GetUserTeam,#what=who) = TEAM_ZANDRAMAS
+         OR Send(self,@GetUserTeam,#what=who) = TEAM_ZAPHOD
+      {
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+
+   % There are no consequences for killing in the arena.
+   SafePlayerAttack()
+   {
+      return true;
+   }
+
+   IsArena()
+   {
+      return TRUE;
+   }
+   
+   IsNoCostFightingRoom()
+   {
+      return TRUE;
+   }
+   
+   InPlay(what=$)
+   {
+      if IsClass(what,&User)
+         AND Send(self,@GetUserTeam,#what=what) = TEAM_SPECTATOR
+      {
+         return FALSE;
+      }
+      return TRUE;
+   }
+
+   CanOffer(who = $, target = $)
+   {
+      Send(who,@MsgSendUser,#message_rsc=BattleArena_no_offer);
+
+      return FALSE;
+   }
+   
+   Delete()
+   {
+      Send(self,@Cleanup);
+      propagate;
+   }
+
+   ArenaRealDeath()
+   {
+      return FALSE;
+   }
+   
+   CanHavePlayerPortal(who = $)
+   {
+      % Don't allow portals into this room, bypassing puzzle
+      return false;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

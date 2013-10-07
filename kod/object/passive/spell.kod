@@ -1210,19 +1210,23 @@ messages:
       {
          oTarget = first(lTargets);
          
-         iDistance = Send(who,@SquaredDistanceTo,#what=oTarget);
+         % No line of sight fizzles in No Cost Fighting Rooms
+         if NOT Send(Send(who,@GetOwner),@IsNoCostFightingRoom)
+         {
+            iDistance = Send(who,@SquaredDistanceTo,#what=oTarget);
 
-         iDistance = iDistance / 4;
+            iDistance = iDistance / 4;
          
-         if iDistance > num / 2
-         {
-            num = num / 2;
-         }
-         else
-         {
-            if iDistance < num / 2
+            if iDistance > num / 2
             {
-               num = num - iDistance;
+               num = num / 2;
+            }
+            else
+            {
+               if iDistance < num / 2
+               {
+                  num = num - iDistance;
+               }
             }
          }
       }
@@ -1272,6 +1276,12 @@ messages:
          % Spell casting requires exertion (which is in 10^-4 units)
          Send(who,@AddExertion,#amount=10000*viSpellExertion);
 
+         % No reagent costs in special rooms
+         if Send(Send(who,@GetOwner),@IsNoCostFightingRoom)
+         {
+            return TRUE;
+         }
+         
          % Use up reagents
          for lReagent in plReagents
          {
@@ -1630,8 +1640,9 @@ messages:
       oOwner = Send(who,@GetOwner);
 
       % Can advance in real death arenas
-      if Send(oOwner,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
-         OR (Send(oOwner,@IsArena) AND NOT Send(oOwner,@ArenaRealDeath))
+      if (Send(oOwner,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
+         OR (Send(oOwner,@IsArena) AND NOT Send(oOwner,@ArenaRealDeath)))
+         AND NOT IsClass(oOwner,&BattleArena)
       {
          return FALSE;
       }

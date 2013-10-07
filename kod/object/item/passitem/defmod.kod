@@ -132,6 +132,16 @@ messages:
    % This will reduce the damage that armor is taking in battle currently.
    DefendingHit(who = $,what = $)
    {
+      % No durability hits in No Cost Fighting rooms
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+      {
+         If Send(Send(poOwner,@GetOwner),@IsNoCostFightingRoom)
+         {
+            return;
+         }
+      }
+      
       % 50% chance to get damaged.
       if (random(1,100) < DAMAGE_CHANCE)
       {

@@ -217,6 +217,9 @@ resources:
    user_cant_suicide_token = \
       "You can't kill yourself now, not when you're the sacred guardian of a "
       "Meridian token!"
+      
+   user_cant_suicide_arena = \
+      "You try to kill yourself, but you realize you can't die in an arena!"
 
    user_cant_suicide_OOG = \
       "Somehow, even though you deserve it, you are unable to bear the "
@@ -1519,6 +1522,13 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_token);
             
             return;                 
+         }
+         
+         if Send(Send(self,@GetOwner),@IsArena)
+         {
+            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_arena);
+            
+            return;
          }
 
          % Successful SUICIDE.

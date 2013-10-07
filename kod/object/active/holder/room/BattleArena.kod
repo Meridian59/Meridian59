@@ -841,7 +841,7 @@ messages:
       Post(victim,@AddExertion,#amount=-200000);
       
       oHoldSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
-      Send(oHoldSpell,@DoHold,#otarget=victim,#idurationsecs=viDeathHoldSeconds,#report=FALSE);
+      Send(oHoldSpell,@DoHold,#otarget=victim,#idurationsecs=viDeathHoldSeconds,#report=FALSE,#bAllowFreeAction=FALSE);
 
       for i in Send(self,@GetHolderActive)
       {

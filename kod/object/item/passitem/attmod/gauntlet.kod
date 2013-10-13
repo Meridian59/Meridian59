@@ -322,6 +322,13 @@ messages:
          }   
       }
       
+         GetResistanceModifiers()
+   {
+      return [ 
+      		[-ATCK_SPELL_SHOCK,-5]
+             ];
+   }
+      
       return TRUE; 
    }
 

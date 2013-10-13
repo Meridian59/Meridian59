@@ -76,7 +76,7 @@ classvars:
    viMax_Damage = 6
 
    % Touch spell range can vary, but are typically good     
-   viRange = 3
+   viRange = 2
 
    % Touch spells are now linked to punch attacks, so make it do punch damage
    %  for default.

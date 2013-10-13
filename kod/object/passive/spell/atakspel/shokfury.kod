@@ -49,8 +49,8 @@ classvars:
 
 properties:
 
-   piDamageMin = 12
-   piDamageMax = 20
+   piDamageMin = 13
+   piDamageMax = 25
    piRange = 5
 
 messages:

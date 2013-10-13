@@ -71,7 +71,7 @@ classvars:
    viMin_Damage = 5         %% touch spells typically do good damage    
    viMax_Damage = 8         %% but are unaffected by weapon or strength bonuses
 
-   viRange = 2              %% touch spell range can vary, but are typically good     
+   viRange = 3              %% touch spell range can vary, but are typically good     
 
    viSpellType = ATCK_SPELL_COLD + ATCK_SPELL_ALL
    viStroke = STROKE_ICY_FINGERS

@@ -106,7 +106,7 @@ constants:
    %  cast on them again.  Currently set to 15 minutes.  Should be bigger 
    %  than logoff ghost time (currently 10 mins)
    ATTACKED_PLAYER_WAIT = 15 * 60
-
+   
    % Damage is capped at piBase_Max_Health divided by this number.  Reduces
    %  newbie slaughter.
    MAX_HEALTH_DAMAGE_FRACTION = 3
@@ -944,6 +944,10 @@ properties:
    %  This is used in conjunction with the constant ATTACKED_PLAYER_WAIT
    %  to disallow casting by angeled "mules".
    piTimeAttackedPlayer = 0 
+   
+   % piOptInCombatTime tracks the last time a player engaged in willful combat,
+   % which includes soldier shields, guild wars, and outlaws/murderers.
+   piOptInCombatTime = 0
 
    % piDeathcost is used to tell the underworld what percent of normal
    %  penalties to apply when the players leaves.  FALSE means no penalties.
@@ -3750,6 +3754,10 @@ messages:
       {
          % Okay, attack is against a player, so record the time
          piTimeAttackedPlayer = GetTime();
+         
+         % This attack is guild war or soldier shield, mutual record
+         Send(self,@RecordOptInCombatTime);
+         Send(victim,@RecordOptInCombatTime);
 
          return TRUE;
       }
@@ -3789,7 +3797,15 @@ messages:
                Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
                Send(self,@EvaluatePKStatus,#dbug=TRUE);
             }
+
+            % This attack is against an innocent, record self only
+            Send(self,@RecordOptInCombatTime);
          }
+      }
+      else
+      {
+         % This attack is against a murder or outlaw, record victim only
+         Send(victim,@RecordOptInCombatTime);
       }
 
       % Check for faction loss.  Handles appropriate conditions.
@@ -3885,6 +3901,23 @@ messages:
    "Returns the last time the player attacked another player."
    {
       return piTimeAttackedPlayer;
+   }
+
+   RecordOptInCombatTime()
+   {
+      piOptInCombatTime = GetTime();
+      return;
+   }
+   
+   GetOptInCombatTime()
+   "Returns the last time the player was involved in opt-in combat."
+   {
+      if piOptInCombatTime > GetTime()
+      {
+         piOptInCombatTime = 0;
+      }
+
+      return piOptInCombatTime;
    }
 
    CanHelpPlayer()

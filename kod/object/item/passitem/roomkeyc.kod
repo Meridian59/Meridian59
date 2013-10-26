@@ -34,6 +34,8 @@ resources:
    RoomKeyCopy_no_drop_room = "You cannot drop your key here."
 
    RoomKeyCopy_no_token = "You can't let go of your token to fit your key into the lock."
+   
+   RoomKeyCopy_no_murderer = "The key shivers in your hand, but refuses to allow a murderer refuge."
 
 classvars:
 
@@ -164,6 +166,12 @@ messages:
          if Send(what, @PossessesA, #class = &Token) 
          {
             Send(what, @MsgSendUser, #message_rsc = RoomKeyCopy_no_token);
+            return;
+         }
+         
+         if Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         {
+            Send(what,@MsgSendUser,#message_rsc = RoomKeyCopy_no_murderer);            
             return;
          }
 

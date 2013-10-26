@@ -1018,7 +1018,7 @@
    % Room flags (in piRoomFlags)
    % A room like the arena, where death has no consequences.
    ROOM_SAFE_DEATH    = 0x0001
-   % No fighting here.
+   % Innocents and outlaws may not be attacked here, but murderers are not safe.
    ROOM_NO_COMBAT     = 0x0002
    % No players may attack each other here.
    ROOM_NO_PK         = 0x0004
@@ -1050,6 +1050,8 @@
    ROOM_JIG           = 0x4000
    % Prevents monsters from fighting, but doesn't stop players
    ROOM_NO_MOB_COMBAT = 0x8000
+   % Murderers can not be attacked here, and may log off safely.
+   ROOM_MURDERER_HAVEN= 0x10000
 
    % Terrain constants, used to tell what type of terrain the room is.
    TERRAIN_GUILDHALL = 0x0000001

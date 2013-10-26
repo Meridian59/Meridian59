@@ -30,6 +30,7 @@ resources:
    room_move_req_no = "You're unable to change rooms."
 
    room_no_attack = "You can't fight here."
+   room_no_attack_singular = "You can't attack that person here."
    room_no_harmful = \
       "You cannot cast harmful spells here when someone else is present."
    room_no_pk_allowed = "You cannot attack another player here."
@@ -1236,9 +1237,12 @@ messages:
          return FALSE;
       }
 
-      if (piRoom_flags & ROOM_NO_COMBAT)
+      if ((piRoom_flags & ROOM_NO_COMBAT) AND IsClass(victim,&Player)
+         AND NOT Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         OR (piRoom_flags & ROOM_MURDERER_HAVEN) AND IsClass(victim,&Player)
+            AND Send(victim,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
       {
-         Send(what,@MsgSendUser,#message_rsc=room_no_attack);
+         Send(what,@MsgSendUser,#message_rsc=room_no_attack_singular);
 
          return FALSE;
       }

@@ -153,7 +153,7 @@ void UpdateSecurityRedbook(ID idRedbook)
 char* GetSecurityRedbook()
 {
    if (!_redbookstring)
-      return "BLAKSTON: Unknown Redbook";
+      return "BLAKSTON: Greenwich Q Zjiria";
 
    return _redbookstring;
 }

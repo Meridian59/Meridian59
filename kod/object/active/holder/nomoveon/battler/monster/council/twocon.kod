@@ -47,16 +47,17 @@ properties:
 
 messages:
 
-   UserEntered(who=$)
+   UserEntered( who = $ )
    {
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      local iFlags;
+      iFlags = send( who, @GetObjectFlags );
+      if iFlags & PLAYER_PK
       {
-	     Send(self,@SetMood,#new_mood=piMood-4);
+	 send( self, @SetMood, #new_mood = piMood - 4 );
       }
-
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      if iFlags & PLAYER_OUTLAW
       {
-	     Send(self,@SetMood,#new_mood=piMood-2);
+	 send( self, @SetMood, #new_mood = piMood - 2 );
       }
   
       propagate;

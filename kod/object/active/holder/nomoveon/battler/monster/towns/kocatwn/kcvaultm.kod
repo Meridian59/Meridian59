@@ -67,18 +67,19 @@ messages:
       return;
    }
 
-   UserEntered(who=$)
+   UserEntered(who = $)
    {
-      if Random(1,10)
+      local iFlags;
+      if random(1,10)
       {
-         Post(self,@SayToOne,#target=who,#message_rsc=Kocatanvaultman_entry_welcome);
+	 Post(poOwner,@SomeoneSaid,#what=self,#string=Kocatanvaultman_entry_welcome,
+             #type = SAY_RESOURCE);
       }
-
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      iFlags = send( who, @GetObjectFlags );
+      if iFlags & PLAYER_PK
       {
-         Send(self,@SetMood,#new_mood=piMood-1);
+	 send( self, @SetMood, #new_mood = piMood - 1 );
       }
-
       propagate;
    }
    

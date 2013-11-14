@@ -76,9 +76,10 @@ messages:
    }
 
 
-   UserEntered(who=$)
+   UserEntered(who = $)
    {
-      Post(self,@SayToOne,#target=who,#message_rsc=BQSmith_entry_welcome,
+      Post(poOwner,@SomeoneSaid,#what = self, #string=BQSmith_entry_welcome,
+         #type = SAY_RESOURCE, 
          #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
       return;
    }

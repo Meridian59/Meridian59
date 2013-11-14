@@ -125,20 +125,24 @@ messages:
       return;
    }
 
-   UserEntered(who=$)
+   UserEntered(who = $)
    {
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      local iFlags;
+
+      iFlags = send(who,@GetObjectFlags);
+
+      if iFlags & PLAYER_OUTLAW
       {
-         Send(self,@SetMood,#new_mood=piMood+2);
+         send(self,@SetMood,#new_mood=piMood+2);
       }
 
-      if Send(who,@GetHomeRoom)=RID_JAS_INN
+      if send(who,@GetHomeRoom) = RID_JAS_INN
       {
-         Send(self,@SetMood,#new_mood=piMood+1);
+         send(self,@SetMood,#new_mood=piMood+1);
       }
-
-      Post(self,@SayToOne,#target=who,#message_rsc=JsBla_entry_welcome,
-           #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+      
+      Post(poOwner,@SomeoneSaid,#what=self,#string=JsBla_entry_welcome,
+           #type=SAY_RESOURCE,#parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
 
       return;
    }

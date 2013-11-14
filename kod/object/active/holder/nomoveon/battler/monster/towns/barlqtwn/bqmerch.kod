@@ -42,28 +42,26 @@ properties:
    
 messages:
 
-   UserEntered(who=$)
+   UserEntered( who = $ )
    {
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      local iFlags;
+      iFlags = send( who, @GetObjectFlags );
+      if iFlags & PLAYER_PK
       {
-	     Send(self,@SetMood,#new_mood=piMood-3);
+	 send( self, @SetMood, #new_mood = piMood - 3 );
       }
-
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      if iFlags & PLAYER_OUTLAW
       {
-	     Send(self,@SetMood,#new_mood=piMood-2);
+	 send( self, @SetMood, #new_mood = piMood - 2 );
       }
-
-      if Send(who,@GetHomeRoom)=RID_BAR_INN
+      if( send( who, @GetHomeRoom ) = RID_BAR_INN )
       {
-	     Send(self,@SetMood,#new_mood=piMood+1);
+	 send( self, @SetMood, #new_mood = piMood + 1 );
       }
-
-      if Send(who,@GetHomeRoom)=RID_TOS_INN
+      if( send( who, @GetHomeRoom ) = RID_TOS_INN )
       {
-         Send(self,@SetMood,#new_mood=piMood-1);
+	 send( self, @SetMood, #new_mood = piMood - 1 );
       }
-
       propagate;
    }
 

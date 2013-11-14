@@ -52,18 +52,22 @@ properties:
 
 messages:
 
-   UserEntered(who=$)
+   UserEntered(who = $)
    {
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      local iFlags;
+      
+      iFlags = send(who,@GetObjectFlags);
+      
+      if iFlags & PLAYER_PK
       {
-         Send(self,@SetMood,#new_mood=piMood - 3);
-
+         send(self,@SetMood,#new_mood=piMood - 3);
+         
          propagate;
       }
-
-      if Send(who,@GetHomeRoom)=RID_MAR_INN
+      
+      if send( who, @GetHomeRoom ) = RID_MAR_INN
       {
-         Send(self,@SetMood,#new_mood=piMood+1);
+         send(self,@SetMood,#new_mood=piMood + 1);
       }
       
       propagate;

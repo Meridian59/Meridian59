@@ -88,14 +88,17 @@ messages:
       return;
    }
 
-   UserEntered(who=$)
+   UserEntered(who = $)
    {
-      if Send(who,@GetHomeRoom)=RID_MAR_INN 
+      local iFlags;
+      
+      if send(who,@GetHomeRoom) = RID_MAR_INN 
       {
-         Send(self,@SetMood,#new_mood=piMood+1);
+         send(self,@SetMood,#new_mood=piMood+1);
       }
-
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      
+      iFlags = send(who,@GetObjectFlags);
+      if iFlags & PLAYER_PK
       {
          send(self,@SetMood,#new_mood=piMood-2);
 
@@ -103,15 +106,16 @@ messages:
          propagate;
       }
 
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      if iFlags & PLAYER_OUTLAW
       {
          send(self,@SetMood,#new_mood=piMood-1);
          
          % don't say welcome to these guys
          propagate;
       }
-
-      Post(self,@SayToOne,#target=who,#message_rsc=BaBar_entry_welcome,
+      
+      Post(poOwner,@SomeoneSaid,#what = self, #string=BaBar_entry_welcome,
+           #type = SAY_RESOURCE, 
            #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
            
       propagate;

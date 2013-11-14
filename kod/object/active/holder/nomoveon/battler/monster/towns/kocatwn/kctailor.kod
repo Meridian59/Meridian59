@@ -130,20 +130,24 @@ messages:
       return;
    }
 
-   UserEntered(who=$)
+   UserEntered(who = $)
    {
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      local iFlags;
+      
+      iFlags = send(who, @GetObjectFlags);
+      if iFlags & PLAYER_PK
       {
-         Send(self,@SetMood,#new_mood=piMood+3);
+         send(self,@SetMood,#new_mood=piMood + 3 );
       }
 
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      if iFlags & PLAYER_OUTLAW
       {
-         Send(self,@SetMood,#new_mood=piMood+2);
+         send(self,@SetMood,#new_mood=piMood + 2 );
       }
       
-      Post(self,@SayToOne,#target=who,#message_rsc=KocatanTailor_entry_welcome);
-
+      Post(poOwner,@SomeoneSaid,#what = self, #string=KocatanTailor_entry_welcome,
+           #type = SAY_RESOURCE);
+         
       return;
    }
 

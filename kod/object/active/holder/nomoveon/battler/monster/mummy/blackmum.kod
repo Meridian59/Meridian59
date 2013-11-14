@@ -19,7 +19,7 @@ resources:
    blackmummy_koc_name_rsc = "teotnapleoc"
    blackmummy_name_rsc = "shadow mummy"
    blackmummy_desc_rsc = \
-   "This evil being has been brought to life by dark magics of unknown origin. "
+   "Pacing inside its tomb, this wretched soul awaits release from the confinements of its cursed body. "
    "Its flesh is putrid and soft, and its eyes ask for rest from its cursed unlife.\n\n"
    "This creature has been inflicted with a permanent shadow curse, "
    "which gives it great strength but also great misery."

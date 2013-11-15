@@ -134,7 +134,7 @@ messages:
    Constructor()
    {
       plMonsters = [ [&Lupogg, 100] ];
-      plGenerators = [ [19,19], [23,44], [23,31] ];
+      plGenerators = [ [11,37], [21,28], [23,31] ];
 
       poDoor1 = Create(&MovingSector,#sectorroom=self,#sectorID=SECTOR_DOOR1,
                         #upH=H_DOOR1_UP,#downH=H_DOOR1_DN,#upspeed=DOOR_UP_SPEED,

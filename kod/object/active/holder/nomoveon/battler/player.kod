@@ -3601,11 +3601,19 @@ messages:
       if IsClass(victim,&Monster)
       {
          if IsClass(victim,&Reflection)
+            OR IsClass(victim,&EvilTwin)
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
                Send(self,@MsgSendUser,#message_rsc=player_cant_hit_newbie);
          
+               return FALSE;
+            }
+            
+            % Check status and safety against the owner of the reflection.
+            if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=Send(victim,@GetCaster))
+               OR NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),#report=report)
+            {
                return FALSE;
             }
          }

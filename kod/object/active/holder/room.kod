@@ -3326,7 +3326,7 @@ messages:
       return;
    }
 
-   DispelIllusionEnchantments(report = TRUE, iChance = 100)
+   DispelIllusionEnchantments(who = $, report = TRUE, iChance = 100)
    {
       local i,pSpell,each_obj,oSpell;
 
@@ -3344,6 +3344,9 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Battler)
+            AND who <> $
+            AND Send(self,@ReqSomethingAttack,#what=who,#victim=each_obj)
+            AND Send(who,@AllowPlayerAttack,#victim=each_obj)
          {
             Send(each_obj,@DispelIllusionEnchantments,#report=report,
                  #iChance=iChance);
@@ -3353,7 +3356,7 @@ messages:
       return;
    }
 
-   DispelIllusions(what = $, iChance = 100, bAll = TRUE)
+   DispelIllusions(who = $, what = $, iChance = 100, bAll = TRUE)
    {
       local i, each_obj;
 
@@ -3369,8 +3372,23 @@ messages:
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(each_obj,@IsIllusion)
             AND Random(1,100) <= iChance
+            AND who <> $
          {
-            Send(each_obj,@Delete);
+            if (isClass(each_obj,&Reflection)
+               OR isClass(each_obj,&ActiveWallElement)
+               OR isClass(each_obj,&EvilTwin))
+            {
+               if Send(self,@ReqSomethingAttack,#what=who,#victim=Send(each_obj,@GetCaster))
+                  AND Send(who,@AllowPlayerAttack,#victim=Send(each_obj,@GetCaster))
+               {
+                  Send(each_obj,@Delete);
+               }
+            }
+            else
+            {
+               % Delete any unhandled illusions without a safety check
+               Send(each_obj,@Delete);
+            }
          }
       }
 
@@ -3380,7 +3398,19 @@ messages:
          if Send(each_obj,@IsIllusion)
             AND Random(1,100) <= iChance
          {
-            Send(each_obj,@Delete);
+            if isClass(each_obj,&PassiveWallofFire)
+            {
+               if Send(self,@ReqSomethingAttack,#what=who,#victim=Send(each_obj,@GetCaster))
+                  AND Send(who,@AllowPlayerAttack,#victim=Send(each_obj,@GetCaster))
+               {
+                  Send(each_obj,@Delete);
+               }
+            }
+            else
+            {
+               % Delete any unhandled illusions without a safety check
+               Send(each_obj,@Delete);
+            }
          }
       }
 

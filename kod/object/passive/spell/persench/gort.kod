@@ -84,12 +84,32 @@ messages:
       return iSpellPower;
    }
 
+   CapIncomingDamage(damage = $, atype = $, aspell = $)
+   {
+      local iMax;
+      
+      iMax = 15;
+      
+      if aspell <> 0
+      {
+         if atype <> 0
+         {
+            iMax = 20;
+         }
+         else
+         {
+            iMax = 25;
+         }
+      }
+   
+      return bound(damage,1,iMax);
+   }
+
    ModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
    {
-      local iSpellPower, iAbsorbed, iMax;
+      local iSpellPower, iAbsorbed;
 
       iSpellPower = Send(who,@GetEnchantedState,#what=self);
-      iMax = 15;
       iAbsorbed = random(0,iSpellPower/25);
       iAbsorbed = bound(iAbsorbed,1,4);
 
@@ -101,17 +121,15 @@ messages:
             % Only 1/2 of the damage reduction if we're doing both weapon
             %  and spell damage types.
             iAbsorbed = iAbsorbed / 2;
-            iMax = 20;
          }
          else
          {
             % If we're doing pure spell damage, we get no reduction.
             iAbsorbed = 0;
-            iMax = 25;
          }
       }
 
-      return bound(damage-iAbsorbed,1,iMax);
+      return bound(damage-iAbsorbed,1,$);
    }
 
    EndEnchantment(who = $, report = TRUE, state = 0)

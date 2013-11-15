@@ -40,14 +40,14 @@ messages:
                      [ &SimpleHelm, 5 ],
                      [ &Mace, 5 ],
                      [ &ShortSword, 5 ],
-                     [ &LeatherArmor, 5 ] ],
-                     [ &Flask , 3 ] ],
-                     [ &MagicShieldPotion , 3 ] ],
-                     [ &LightScroll , 3 ] ],
-                     [ &LightningWand , 3 ] ],
-                     [ &HealWand , 2 ] ],
-                     [ &FireWand , 1 ] ],
-                     [ &JewelofFroz , 1 ] ],
+                     [ &LeatherArmor, 5 ],
+                     [ &Flask , 3 ],
+                     [ &MagicShieldPotion , 3 ],
+                     [ &LightScroll , 3 ],
+                     [ &LightningWand , 3 ],
+                     [ &HealWand , 2 ],
+                     [ &FireWand , 1 ],
+                     [ &JewelofFroz , 1 ],
                      [ &BerserkerRing, 1 ] ];
 
       propagate;

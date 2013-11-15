@@ -96,7 +96,7 @@ messages:
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }
 
-      Send(who,@MsgSendUser,#message_rsc=VampiricDrain_health_gain,#parm1=iHeal);
+      Send(who,@MsgSendUser,#message_rsc=VampiricDrain_health_gain,#parm1=iToHeal);
       Send(who,@GainHealth,#amount=iToHeal);
 
       propagate;

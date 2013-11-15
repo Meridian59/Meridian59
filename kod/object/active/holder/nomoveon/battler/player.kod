@@ -872,6 +872,9 @@ properties:
    % Defense modifiers to defense roll & damage (includes items & spells)
    plDefense_modifiers = $
    
+   % Gear preferences for 'set' and 'loadout'
+   plLoadout_list = $
+
    piGender = GENDER_MALE
 
    piVigor_rest_threshold = 80
@@ -10528,6 +10531,7 @@ messages:
          }
 
          if NOT IsClass(nobj,&Blink)  % DON'T COUNT BLINK!
+            AND NOT IsClass(nobj,&UtilitySpell) % Don't count utility spells either
          {
             if nSchool = SS_KRAANAN
                AND nLevel > iKraanan
@@ -10767,6 +10771,7 @@ messages:
          iLevel = Send(oSpellObj,@GetLevel);
 
          if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+            AND NOT IsClass(oSpellObj,&UtilitySpell) % Don't count utility spells either
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {
@@ -12361,6 +12366,16 @@ messages:
       return;
    }
 
+   SetLoadoutList(set_list = $)
+   {
+      plLoadout_list = set_list;
+      return;
+   }
+
+   GetLoadoutList()
+   {
+      return plLoadout_list;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

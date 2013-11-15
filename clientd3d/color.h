@@ -52,6 +52,7 @@ void ColorsDestroy(void);
 M59EXPORT COLORREF GetColor(WORD color);
 M59EXPORT HBRUSH GetBrush(WORD color);
 COLORREF GetPlayerNameColor(int flags,char*name);
+COLORREF GetPlayerWhoNameColor(int flags,char*name);
 
 void UserSelectColor(WORD color);
 void UserSelectColors(WORD fg, WORD bg);

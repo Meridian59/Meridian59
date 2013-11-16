@@ -4516,7 +4516,8 @@ messages:
          oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
          if Send(self,@IsEnchanted,#what=oGort)
          {
-            damage = Send(oGort,@CapIncomingDamage,#damage=damage,#atype=atype,#aspell=aspell);
+            damage = Send(oGort,@PriorityModifyDefenseDamage,#who=self,#what=what,#damage=damage,
+                          #atype=atype,#aspell=aspell);
          }
          
          for i in plDefense_modifiers

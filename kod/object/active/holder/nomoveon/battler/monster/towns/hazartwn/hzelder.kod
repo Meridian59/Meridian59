@@ -20,8 +20,29 @@ resources:
 
    HazarElder_name_rsc = "Rodric d'Stane"
    HazarElder_icon_rsc = mrelder.bgf
-   HazarElder_desc_rsc = "The old man looks back at you with eyes that have seen beyond forever."
-   HzEl_entry_welcome = "Welcome, my son.  May the road of your life be the high one."
+   HazarElder_desc_rsc = "The old man looks back at you with eyes that have seen beyond forever. "
+      "He is famous for his knowledge of various magicks and seems quite willing to teach some of them "
+      "to aspiring adventurers. You may also ask him about a school of magic if you need help with freeing "
+      "your mind from its teachings, so that you may be more successful in learning others."
+      
+   HzEl_entry_welcome = "Welcome, my son. Have you come to learn some magicks?"
+   
+   Elder_potion_faren = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
+      "Faren. Don't you worry about side effects, this is perfectly safe! So, would you like to buy one?"
+      
+   Elder_potion_kraanan = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
+      "Kraanan. Don't you worry about side effects, this is perfectly safe! So, would you like to buy one?"
+      
+   Elder_potion_faren = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
+      "Qor. Don't you worry about side effects, this is perfectly safe! So, would you like to buy one?"
+      
+   Elder_potion_faren = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
+      "Shal'iile. Don't you worry about side effects, this is perfectly safe! So, would you like to buy one?"
+   
+   potion_faren = "Faren"
+   potion_kraanan = "Kraanan"
+   potion_qor = "Qor"
+   potion_shalille = "Shal'ille"
 
 classvars:
 
@@ -30,7 +51,7 @@ classvars:
    vrName = HazarElder_name_rsc
    vrIcon = HazarElder_icon_rsc
    vrDesc = HazarElder_desc_rsc
-   viAttributes = MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT | MOB_NOMOVE | MOB_NOQUEST
+   viAttributes = MOB_RANDOM | MOB_LISTEN | MOB_RECEIVE | MOB_NOFIGHT | MOB_NOMOVE | MOB_NOQUEST | MOB_TEACHER | MOB_COND_SELLER
    viOccupation = MOB_ROLE_ELDER
 
 messages:
@@ -41,7 +62,50 @@ messages:
           #type=SAY_RESOURCE);
       propagate;
    }
+   
+   InitCondSale()
+   {
+      local oObj, oObj2, oObj3, oObj4;
+      
+      oObj=Create(&ForgetPotionFaren);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[potion_faren],
+           #action=[LIBACT_CONDITIONAL,oObj,1000,Elder_potion_faren]);
+           
+      oObj2 = Create(&ForgetPotionKraanan);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[potion_kraanan],
+           #action=[LIBACT_CONDITIONAL,oObj2,1000,Elder_potion_kraanan]);
 
+      oObj3 = Create(&ForgetPotionQor);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[potion_qor],
+           #action=[LIBACT_CONDITIONAL,oObj3,1000,Elder_potion_qor]);
+
+      oObj4 = Create(&ForgetPotionShalille);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[potion_shalille],
+           #action=[LIBACT_CONDITIONAL,oObj4,1000,Elder_potion_shalille]);
+
+      return;
+
+   }
+   
+   SetForSale()
+   {
+      plFor_sale = [$,$,
+       [ SID_SUMMON_FOG, SID_LIGHT, SID_MYSTIC_TOUCH, SID_SWEEP, SID_ZAP,
+         SID_ICY_FINGERS, SID_TOUCH_OF_FLAME, SID_RESIST_COLD, SID_RESIST_FIRE,
+         SID_CREATE_FOOD, SID_CREATE_WEAPON, SID_GLOW, SID_RELAY,
+         SID_BLESS, SID_ENCHANT_WEAPON, SID_HASTE, SID_RESIST_POISON, SID_SUPERSTRENGTH,
+         SID_CLOAK, SID_DARKNESS, SID_DETECT_GOOD,
+         SID_ACID_TOUCH, SID_KARAHOLS_CURSE, SID_UNHOLY_WEAPON,
+         SID_BREATH_OF_LIFE, SID_DETECT_EVIL, SID_MINOR_HEAL, SID_HOLY_SYMBOL, SID_SEANCE,
+         SID_CURE_POISON, SID_HOLY_TOUCH, SID_HOLY_WEAPON, SID_REMOVE_CURSE, SID_RESIST_ACID
+          ],
+       $ ];
+      return;
+   }
    
 end
 

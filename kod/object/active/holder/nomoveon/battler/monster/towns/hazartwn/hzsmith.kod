@@ -66,8 +66,8 @@ messages:
       			Create(&MetalShield),
       			Create(&ChainArmor),
       			Create(&Torch)],
-      			[ SKID_BLOCK, SKID_PROFICIENCY_MACE, SKID_PUNCH, SKID_SLASH, 
-         		 SKID_BRAWLING, SKID_DODGE, SKID_PROFICIENCY_SHORTSWORD ],$,$];
+      			[ SKID_PROFICIENCY_SHORTSWORD, SKID_DODGE, SKID_BRAWLING, 
+      			SKID_SLASH, SKID_PUNCH, SKID_PROFICIENCY_MACE, SKID_BLOCK ],$,$];
       return;
    }
 

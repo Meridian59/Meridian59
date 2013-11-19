@@ -319,11 +319,6 @@ messages:
          return FALSE;
       }
 
-      if NOT Send(who,@CheckAdvancementPoints)
-      {
-         Return FALSE;
-      }
-
       % Can advance in real death arenas
       if Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
          AND NOT Send(Send(who,@GetOwner),@ArenaRealDeath)

@@ -103,7 +103,7 @@ messages:
 
      if random(1,100) > 60 or not send(who,@HasSkill,#num=prof)
      {
-        if send(who,@GetSkillAbility,#skill_num=viSkill_num) < target_level
+        if send(who,@GetSkillAbility,#skill_num=viSkill_num) < 100
           {
              % checking for stroke advancement
              send(self,@ImproveAbility,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
@@ -111,7 +111,7 @@ messages:
      }
      else
      {
-        if send(use_weapon,@getprof,#who=who) < target_level
+        if send(use_weapon,@getprof,#who=who) < 100
           {
              % checking for weapon proficiency advancement
              send(use_weapon,@ImproveProficiency,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));

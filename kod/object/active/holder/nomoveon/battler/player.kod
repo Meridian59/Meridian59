@@ -2430,12 +2430,13 @@ messages:
       % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Money,#number=500));
+      Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=2000));
-         Send(self,@AddReagentsForSpells);
+         Send(self,@NewHold,#what=Create(&Money,#number=500));
+         Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
       return;
@@ -2462,11 +2463,13 @@ messages:
    {
       local lItems,oItem,iSchool;
 
-      % If player hasn't suicided in last 5 hours, give them cash and prizes!
+      % If player hasn't suicided in last 5 hours, give them cash and fancy clothes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=1000));
-         Send(self,@AddReagentsForSpells);
+         Send(self,@NewHold,#what=create(&InkyCap,#number=5));
+         Send(self,@NewHold,#what=Create(&PantsC));
+         Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
       }
 
       if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) 

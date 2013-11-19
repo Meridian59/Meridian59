@@ -35,13 +35,17 @@ resources:
    battler_plain_text = ""
 
    % battler_attacker_hit - Your scimitar wounds Psychochild for (10) damage.
+   % battler_attacker_slay - Your scimitar slays Psychochild.
    % battler_attacker_miss - Your attack is blocked by Psychochild.
    % battler_defender_hit - Psychochild's scimitar wounds you for (10) damage.
+   % battler_defender_slay - Psychochild's scimitar slays you.
    % battler_defender_miss - Psychochild's attack is blocked by you.
 
    battler_attacker_hit = "%sYour %s ~B%s~B %s%s for (~B%i~B) damage."       
+   battler_attacker_slay = "%sYour %s ~B%s~B %s%s."   
    battler_attacker_miss = "%sYour attack %s %s%s."    
-   battler_defender_hit = "%s%s%s's %s ~B%s~B you for (~B%i~B) damage."  
+   battler_defender_hit = "%s%s%s's %s ~B%s~B you for (~B%i~B) damage."
+   battler_defender_slay = "%s%s%s's %s ~B%s~B you."  
    battler_defender_miss = "%s%s's attack %s you."   
 
    battler_punch = "punch"
@@ -933,19 +937,38 @@ messages:
                rColor = battler_plain_text;
             }
          }
-
-         Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+         
+         if damage = $
+         {
+            Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
+              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
               #parm6=damage);
+         }
       }
 
       if IsClass(what,&Player)
       {
-         Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+         if damage = $
+         {   
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_slay,
+              #parm1=rColor,#parm2=Send(self,@GetCapDef),
+              #parm3=Send(self,@GetName),#parm4=rWeaponName,
+              #parm5=rDamageDesc);
+         }
+         else
+         {
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
               #parm1=rColor,#parm2=Send(self,@GetCapDef),
               #parm3=Send(self,@GetName),#parm4=rWeaponName,
               #parm5=rDamageDesc,#parm6=damage);
+         }
       }
 
       return;

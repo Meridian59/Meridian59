@@ -84,7 +84,7 @@ messages:
       return iSpellPower;
    }
 
-   ModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
+   PriorityModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
    {
       local iSpellPower, iAbsorbed, iMax;
 
@@ -112,6 +112,11 @@ messages:
       }
 
       return bound(damage-iAbsorbed,1,iMax);
+   }
+
+   ModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
+   {
+      return damage;
    }
 
    EndEnchantment(who = $, report = TRUE, state = 0)

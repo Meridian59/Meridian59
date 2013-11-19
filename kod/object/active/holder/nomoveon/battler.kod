@@ -46,7 +46,7 @@ resources:
    battler_attacker_miss = "%sYour attack %s %s%s."    
    battler_defender_hit = "%s%s%s's %s ~B%s~B you for (~B%i~B) damage."
    battler_defender_slay = "%s%s%s's %s ~B%s~B you."  
-   battler_defender_miss = "%s%s's attack %s you."   
+   battler_defender_miss = "%s%s%s's attack %s you."   
 
    battler_punch = "punch"
    battler_attack = "attack"

@@ -904,8 +904,6 @@ properties:
    % Action, such as "smiling", that player is currently doing
    piAction = 1
 
-   piAdvancement_points = 0
-
    % piNodeList is a bitvector of all of the mana nodes that the player has
    %  successfully melded with.  List of available nodelists in the
    %  blakston.khd constants file.
@@ -1491,9 +1489,6 @@ messages:
          Send(self,@InformHunters);
       }
 
-      % Player moved to a new location, give them a break on the botting imp cap.
-      piAdvancement_points = bound((piAdvancement_points - 2),0,$);
-      
       return;
    }
 
@@ -2356,8 +2351,6 @@ messages:
       % percent stomach is full
       piStomach = 0;
       piTimeLastStomachUpdate = 0;
-
-      piAdvancement_points = 0;
 
       piKill_count = 0;
       piKill_count_decay = 0;
@@ -6182,12 +6175,6 @@ messages:
 
       iToAdd = amount;
 
-      % Give a penalty for sitting at the botting imp cap.
-      if NOT Send(self,@CheckAdvancementPoints)
-      {
-         iToAdd = iToAdd / 2;
-      }
-
       SetNth(plSchoolCasts,school,(Nth(plSchoolCasts,school)+iToAdd));
 
       return;
@@ -6686,12 +6673,7 @@ messages:
          Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_improved_wav_rsc);
       }
-      
-      if iChange > 0 
-      {
-         Send(self,@AddAdvancementPoints,#number=amount);
-      }
-      
+
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools
@@ -6936,9 +6918,7 @@ messages:
       if NOT bDM
          AND NOT initial
       {  
-          Send(self,@AddToSchools,#school=Send(oSpell,@GetSchool),\
-               #change=iBoundAbility);     
-          Send(self,@AddAdvancementPoints,#number=2);
+          Send(self,@AddToSchools,#school=Send(oSpell,@GetSchool),#change=iBoundAbility);
       }
 
       if poOwner <> $
@@ -7107,12 +7087,9 @@ messages:
       % Must get below highmark for atrophy to activate
       iAmount = -2;
 
-      highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))
-                 * piAdvancement_Points)/20; 
-
       for i in plSpells
       {
-         if i < 0 AND Random(1,200) < highmark               
+         if i < 0         
          {
             iAbility = Send(self,@DecodeSpellAbility,#compound=i);
             if iAbility > 2                                                         
@@ -7386,8 +7363,7 @@ messages:
       if NOT bDM and NOT initial
       {  
          Send(self,@AddToSchools,#school=Send(oSkill,@GetSchool),
-              #change=iBoundAbility);     
-         Send(self,@AddAdvancementPoints,#number=4);
+              #change=iBoundAbility);
       }
       
       return True;
@@ -7473,11 +7449,10 @@ messages:
       local i, j, iability, lSchoolsUsed, aSkill, bSkill, bFound, highmark, iAmount;
 
       iAmount = -2;
-      highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))*piAdvancement_Points)/20;
 
       for i in plSkills
       {
-         if i < 0 AND Random(1,200) < highmark           
+         if i < 0         
          {
             iAbility = Send(self,@decodeSkillability,#compound=i);
             if iAbility > 2                                                         
@@ -7530,42 +7505,13 @@ messages:
       return;
    }
 
-   AddAdvancementPoints(number=1)
-   "A player can only gain so many advancement points per hour, in spells"
-   "And skills combined."
-   {
-      local iTime;
-      
-      if ptAdvancement = $
-      {
-         iTime = random(ADVANCE_TIMER_MIN,ADVANCE_TIMER_MAX);
-         ptAdvancement = CreateTimer(self,@AdvancementTimer,iTime);
-      }
-      
-      piAdvancement_points = piAdvancement_points + number;
-      
-      return;
-   }
-
-   CheckAdvancementPoints()
-   "Checks to be sure a player isn't at the limit yet."
-   {
-      if piAdvancement_points < ADVANCEMENT_LIMIT
-      {
-         return TRUE;
-      }
-      
-      return FALSE;
-   }
-
    AdvancementTimer()
-   "This does a few things when it goes off.  It clears advancement points, "
-   "so people can learn again.  It also checks for spell or skill atrophy, "
+   "This checks for spell or skill atrophy, "
    "and resets the atrophy flags."
    {
       ptAdvancement = $;
 
-      if piAdvancement_points > 0 AND pbLogged_on
+      if pbLogged_on
       {
          if Send(Send(SYS, @GetSettings), @IsAtrophyOn)
          {
@@ -7575,8 +7521,6 @@ messages:
          
          Send(self,@ResetAtrophyFlags);
       }
-      
-      piAdvancement_Points = 0;
       
       return;
    }
@@ -7961,7 +7905,6 @@ messages:
          }
 
          % Atrophy of skills or learning progress.
-         piAdvancement_points = 0;
          piGain_chance = piGain_chance/2;
          Send(self,@ResetGainFlags);
          Send(self,@ResetAtrophyFlags);

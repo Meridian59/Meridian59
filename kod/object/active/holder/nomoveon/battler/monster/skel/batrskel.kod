@@ -14,9 +14,6 @@ constants:
 
    include blakston.khd
 
-   PALSY_CHANCE = 10
-   DEMENTIA_CHANCE = 10
-
 resources:
 
    BatteredSkeleton_koc_name_rsc = "cha'oleoc"
@@ -65,28 +62,6 @@ properties:
    piAnimation = ANIM_NONE
    
 messages:
-
-   HitSideEffect(what = $)
-   {
-      local oSpell;
-      
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
-      if NOT Send(what,@IsEnchanted,#what=oSpell) 
-         AND Random(1,PALSY_CHANCE) = 1
-      {
-         Send(oSpell,@MakeSick,#who=what);
-      }
-      
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
-      if NOT Send(what,@IsEnchanted,#what=oSpell) 
-         AND Random(1,DEMENTIA_CHANCE) = 1
-      {
-         Send(oSpell,@MakeSick,#who=what);
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

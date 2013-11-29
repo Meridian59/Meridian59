@@ -246,10 +246,19 @@ messages:
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local damage, mysticism, iAbility;
+      local i, damage, mysticism, iAbility;
 
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);
+
+      for i in send(who,@GetPlayerUsing)
+      {
+         if IsClass(i,&JewelOfFroz)
+         {
+            % Each jewel of Froz adds up to 3 to base damage depending on HPs.
+            damage = damage + bound(send(who,@GetBaseMaxHealth)-40,0,60)/20;
+         }
+      }
       
       % scale the basedamage with the caster's ability in the spell
       iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);

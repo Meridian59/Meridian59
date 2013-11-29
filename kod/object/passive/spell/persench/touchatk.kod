@@ -246,19 +246,21 @@ messages:
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local spell_ability, damage, iPower;
+      local damage, mysticism, iAbility;
 
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);
-
-      iPower = Send(who,@GetEnchantedState,#what=self);
       
-      % factor in the person's ability with the spell      
-      damage = damage/2 + ((damage/2)*iPower)/SPELLPOWER_MAXIMUM + 1;
+      % scale the basedamage with the caster's ability in the spell
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+      damage = damage * (iAbility + 1)/100;
       
-      % might affects damage from different weapons differently
-      damage = Send(self,@DamageFactors,#damage=damage,#who=who,
-                    #victim=victim);
+      % scale proficiency bonus with HPs instead of spell ability
+      damage = damage + bound(send(who,@GetBaseMaxHealth)-50,0,50)/10;
+      
+      % touchspells are boosted by mysticism instead of might
+      mysticism = send(who,@GetMysticism);
+      damage = damage + ((100+bound(mysticism-25,0,40))*damage)/100;
       
       return bound(damage,1,$);
    }

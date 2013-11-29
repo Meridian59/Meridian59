@@ -23,7 +23,9 @@ resources:
    frozjewel_desc_rsc = \
       "This gem was created by the great alchemist, Froz, in a secret process "
       "known only to him.  Rumor has it that it is a conduit for mystical "
-      "aggression, using raw mana to boost elemental touch spells.  "
+      "aggression, that allows its user to channel their magical energy into "
+      "devastating touch spells.  Obviously, this would hinder the caster when "
+      "trying to use said energy for less destructive purposes.  "
       "Your hand tingles when you hold it."
 
    frozjewel_desc_broken_rsc = "The jewel seems ordinary and dull."

@@ -400,12 +400,14 @@ messages:
 
    GetDuration(iSpellpower=$)
    {
-      local iDuration;
+      local iDuration, iAbility;
 
-      iDuration = Random(iSpellpower/3,iSpellpower/2);
-      % 1 to 7.5 minutes
-      iDuration =  bound(iDuration,10,75);
-      iDuration = iDuration * 6 * 1000;  
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+
+      iDuration = 5 + (iAbility + 1)/4
+      % 5 to 30 minutes depending on skill percent only
+      iDuration =  bound(iDuration,5,30);
+      iDuration = iDuration * 60 * 1000;  
 
       return iDuration;
    }  

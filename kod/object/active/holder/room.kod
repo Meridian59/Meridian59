@@ -1193,7 +1193,7 @@ messages:
       return n;
    }
 
-   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,report = TRUE)
    {
       local oWatcher;
 
@@ -1231,14 +1231,20 @@ messages:
       {
          if IsClass(what,&Player)
          {
-            Send(what,@MsgSendUser,#message_rsc=room_no_mob_attack);
+            if report
+            {
+               Send(what,@MsgSendUser,#message_rsc=room_no_mob_attack);
+            }
          }
          return FALSE;
       }
 
       if (piRoom_flags & ROOM_NO_COMBAT)
       {
-         Send(what,@MsgSendUser,#message_rsc=room_no_attack);
+         if report
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_no_attack);
+         }
 
          return FALSE;
       }
@@ -1246,7 +1252,10 @@ messages:
       if (piRoom_flags & ROOM_NO_PK) AND IsClass(what,&Player)
          AND (victim = $ OR IsClass(victim,&Player))
       {
-         Send(what,@MsgSendUser,#message_rsc=room_no_pk_allowed);
+         if report
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_no_pk_allowed);
+         }
 
          return FALSE;
       }
@@ -1254,10 +1263,13 @@ messages:
       if (piRoom_flags & ROOM_GUILD_PK_ONLY) AND IsClass(what,&Player)
          AND (victim = $ OR IsClass(victim,&Player))
       {
-         if (NOT Send(self,@AllowGuildAttack,#what=what,#victim=victim))
+         if (NOT Send(self,@AllowGuildAttack,#what=what,#victim=victim,#report=report))
             AND Send(SYS,@IsPKAllowed)
          {
-            Send(what,@MsgSendUser,#message_rsc=room_guild_combat);
+            if report
+            {
+               Send(what,@MsgSendUser,#message_rsc=room_guild_combat);
+            }
 
             return FALSE;
          }
@@ -1266,7 +1278,7 @@ messages:
       propagate;
    }
 
-   AllowGuildAttack(what = $, victim = $)
+   AllowGuildAttack(what = $, victim = $,report = TRUE)
    "Returns TRUE if you can attack in ROOM_GUILD_PK_ONLY locations."
    {
       local oSoldierShield, oOtherShield;
@@ -1813,6 +1825,15 @@ messages:
       {
          each_obj = Nth(i,2);
          Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
+      }
+      
+      if IsClass(what,&User)
+      {
+         for i in Send(what,@GetRadiusEnchantments)
+         {
+            each_obj = Nth(i,1);
+            Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
+         }
       }
 
       return;
@@ -3326,7 +3347,7 @@ messages:
       return;
    }
 
-   DispelIllusionEnchantments(report = TRUE, iChance = 100)
+   DispelIllusionEnchantments(who = $, report = TRUE, iChance = 100)
    {
       local i,pSpell,each_obj,oSpell;
 
@@ -3344,6 +3365,9 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&Battler)
+            AND who <> $
+            AND Send(self,@ReqSomethingAttack,#what=who,#victim=each_obj)
+            AND Send(who,@AllowPlayerAttack,#victim=each_obj)
          {
             Send(each_obj,@DispelIllusionEnchantments,#report=report,
                  #iChance=iChance);
@@ -3353,7 +3377,7 @@ messages:
       return;
    }
 
-   DispelIllusions(what = $, iChance = 100, bAll = TRUE)
+   DispelIllusions(who = $, what = $, iChance = 100, bAll = TRUE)
    {
       local i, each_obj;
 
@@ -3369,8 +3393,23 @@ messages:
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if Send(each_obj,@IsIllusion)
             AND Random(1,100) <= iChance
+            AND who <> $
          {
-            Send(each_obj,@Delete);
+            if (isClass(each_obj,&Reflection)
+               OR isClass(each_obj,&ActiveWallElement)
+               OR isClass(each_obj,&EvilTwin))
+            {
+               if Send(self,@ReqSomethingAttack,#what=who,#victim=Send(each_obj,@GetCaster))
+                  AND Send(who,@AllowPlayerAttack,#victim=Send(each_obj,@GetCaster))
+               {
+                  Send(each_obj,@Delete);
+               }
+            }
+            else
+            {
+               % Delete any unhandled illusions without a safety check
+               Send(each_obj,@Delete);
+            }
          }
       }
 
@@ -3380,7 +3419,19 @@ messages:
          if Send(each_obj,@IsIllusion)
             AND Random(1,100) <= iChance
          {
-            Send(each_obj,@Delete);
+            if isClass(each_obj,&PassiveWallofFire)
+            {
+               if Send(self,@ReqSomethingAttack,#what=who,#victim=Send(each_obj,@GetCaster))
+                  AND Send(who,@AllowPlayerAttack,#victim=Send(each_obj,@GetCaster))
+               {
+                  Send(each_obj,@Delete);
+               }
+            }
+            else
+            {
+               % Delete any unhandled illusions without a safety check
+               Send(each_obj,@Delete);
+            }
          }
       }
 
@@ -3909,8 +3960,10 @@ messages:
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
-         if IsClass(each_obj,&ActiveWallElement)
-            or IsClass(each_obj,&Brambles)
+         if (IsClass(each_obj,&ActiveWallElement)
+            or IsClass(each_obj,&Brambles))
+            AND NOT IsClass(each_obj,&ActiveSporeCloud)
+            AND NOT IsClass(each_obj,&Web)
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)
             {
@@ -3924,7 +3977,6 @@ messages:
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
          if IsClass(each_obj,&PassiveWallofFire)
-            OR IsClass(each_obj,&SporeCloud)
             OR IsClass(each_obj,&PassiveWallofLightning)
          {
             if Send(who,@SquaredDistanceTo,#what=each_obj) <= (WALL_DELETE_RADIUS * WALL_DELETE_RADIUS)

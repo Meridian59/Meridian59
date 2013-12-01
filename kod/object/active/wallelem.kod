@@ -184,6 +184,22 @@ messages:
          }
       }
 
+      if IsClass(what,&Reflection)
+         OR IsClass(what,&EvilTwin)
+      {
+         if NOT Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            return FALSE;
+         }
+   
+         % Check status and safety against the owner of the reflection.
+         if NOT Send(oRoom,@ReqSomethingAttack,#what=poCaster,#victim=Send(what,@GetCaster))
+            OR NOT Send(poCaster,@CheckStatusAndSafety,#victim=Send(what,@GetCaster))
+         {
+            return FALSE;
+         }
+      }
+
       Send(self,@DoEffect,#what=what,#new_row=new_row,#new_col=new_col);
 
       return TRUE;
@@ -329,6 +345,10 @@ messages:
       return;
    }
 
+   GetCaster()
+   {
+      return poCaster;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

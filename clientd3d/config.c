@@ -294,7 +294,7 @@ void ConfigLoad(void)
    config.maxFPS = FALSE;
    config.clearCache = FALSE;
 #endif // NODPRINTFS
-
+   config.debug = FALSE;
    TimeSettingsLoad();
 }
 /****************************************************************************/

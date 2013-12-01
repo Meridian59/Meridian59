@@ -83,19 +83,20 @@ resources:
    LM_haz_factions = "The Duke and the Princess are always squabbling over who is the rightful something-or-other.  Fortunately, we're far divorced from that here."
    LM_haz_towns = "The five towns are far away from here."
    LM_haz_help = "I'll be what help I can be, but you should really read the signs."
-   LM_haz_quest = "Ummm, I wouldn't know anything about that.  You should really ask the elder about such things."
+   LM_haz_quest = "Hmmm, I don't really need any help right now, but you know what?  The town's elder would probably have a good use for an adventurer like you!"
    LM_haz_quest_elder = "Yes, yes!  I need adventurers to clear out the mausoleum on the north side of town!"
    LM_haz_mausoleum = "Formerly a deeply sacred place for the townsfolk, it has since been defiled by the footsteps of the dead!"
    LM_haz_mummy = "Noble ancestors or restless wanderers?  Either way, the mummies are abominations and must be destroyed!"
-   LM_haz_quest_entroot = "Hmmm... I've heard that Eric is always looking for entroot berries.  Don't know why, though."
-   LM_haz_entroot_none = "Entroot berries?  I didn't think they grew around these parts."
-   LM_Haz_entroot_response = "The mummies use the magic of the entroot to keep the magic that animates them sustained.  Perhaps one of them carries entroot."
+   LM_haz_snack_quest = "Hmmm... I've heard that Eric is always looking for edible mushrooms.  He is an excellent cook, you should try his soup!"
+   LM_haz_snack_none = "Edible mushrooms?  All the mushrooms I've found around these parts were either extremely bitter or straight-out lethal."
+   LM_haz_snack_want = "If you happen to come across any edible mushrooms, I'd gladly take them off your hands! I can always use some fresh ingredients for my dishes!"
+   LM_Haz_snack_response = "Mushrooms? I saw one of the mummies in the mausoleum carry around some that looked edible.  No idea where it got them from.  Not sure I want to know either."
    LM_haz_smith_buy = "If you happen to come across a stray weapon or armor, I could probably scrounge enough to take it off your hands."
    LM_haz_smith_sell = "I've got a few weapons behind the counter I can show you.  Type BUY."
    LM_haz_elder_buy = "I have no need of worldly goods."
    LM_haz_elder_sell = "Do I look like a common peddler?  Nay!"
-   LM_haz_apoth_buy = "I'm running low on just about everything.  Should you find reagents, I'll happily take them off your hands."
-   LM_haz_apoth_sell = "My cupboards are nearly bare.  All I have at this time are red mushrooms."
+   LM_haz_apoth_buy = "Right now, the goods I sell are fairly basic, but I am always looking to expand my store. Should you find any magical reagents, I'll give you a good price for them."
+   LM_haz_apoth_sell = "I don't really have anything too fancy in stock, but if you need some basic ingredients, you have come to right place!"
    LM_haz_innk_buy = "I'm not in the market for anything that comes to mind."
    LM_haz_innk_sell = "I have no vacant rooms to rent."
    LM_haz_bar_buy = "I think my dealer would get mad if I was caught trading with ye!"
@@ -167,7 +168,7 @@ resources:
    LT_mausoleum = "mausoleum"
    LT_mummy = "mummy"
    LT_mummies = "mummies"
-   LT_entroot = "entroot"
+   LT_snack = "mushrooms"
    
    LT_errand = "errand"
    LT_favor = "favor"
@@ -244,7 +245,7 @@ resources:
    LT_cheat = "cheat"
    LT_liar = "liar"
    LT_scam = "scam"
-   LT_balo = "Balo na’te Din"
+   LT_balo = "Balo"
    LT_arm = "arm"
    LT_konima = "konima"
    LT_avar = "avar"
@@ -723,11 +724,11 @@ resources:
    LM_haz_rand16 = "Should you kill something, be sure to get the stuff that's been dropped.  Often, you can sell it for a few shillings."
    LM_haz_rand17 = "Be sure that you use your map to help you navigate around.  Type MAP to see it."
    
-   LM_haz_rand_apoth1 = "Ravi, the alchemist, is always looking for herbs and mushrooms.  Should you find some, he'll offer a good price."
+   LM_haz_rand_apoth1 = "Ravi, the alchemist, is always looking for magical reagents.  Should you find some, he'll offer a good price."
    LM_haz_rand_bar1 = "If you're weary or wounded, Eric's Tavern is a good place to stop and rest."
    LM_haz_rand_inn1 = "Be sure to read all of the signs.  If you've wandered off the path, the sign at the inn on the north side of town is the first."
    LM_haz_rand_elder1 = "Eventually, be sure to seek out the elder.  He has been seeking warriors to help fend off the mummies!"
-   LM_haz_rand_smith1 = "The blacksmith in the northwest part of town has excellent weapons for training adventurers."
+   LM_haz_rand_smith1 = "The blacksmith in the northwest part of town has excellent weapons and armor for training adventurers."
 
    lib_signet_lost = "You pat your pockets and check your pack, but you suddenly realize the signet ring you were carrying is gone!"
 
@@ -1248,20 +1249,20 @@ messages:
         [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]],
       [[LT_buy],0,[LIBACT_SAY,LM_haz_innk_buy]],
       [[LT_sell],0,[LIBACT_SAY,LM_haz_innk_sell]],
-      [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]]
+      [[LT_snack],0,[LIBACT_SAY,LM_haz_snack_none]]
      ]],plSpeechLib);
      plSpeechLib = Cons(
     [&hazarBartender,[
       [[LT_buy],0,[LIBACT_SAY,LM_haz_bar_buy]],
       [[LT_sell],0,[LIBACT_SAY,LM_haz_bar_sell]],
-       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]],
+       [[LT_snack],0,[LIBACT_SAY,LM_haz_snack_want]],
       [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]]
      ]],plSpeechLib);
      plSpeechLib = Cons(
     [&hazarElder,[
        [[LT_buy],0,[LIBACT_SAY,LM_haz_elder_buy]],
       [[LT_sell],0,[LIBACT_SAY,LM_haz_elder_sell]],
-       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]],
+       [[LT_snack],0,[LIBACT_SAY,LM_haz_snack_none]],
       [[LT_quest],0,[LIBACT_SAY,LM_haz_quest_elder]],
       [[LT_mausoleum],0,[LIBACT_SAY,LM_haz_mausoleum]],
       [[LT_mummy,LT_mummies],0,[LIBACT_SAY,LM_haz_mummy]],
@@ -1274,16 +1275,16 @@ messages:
     [&hazarApothecary,[
        [[LT_buy],0,[LIBACT_SAY,LM_haz_apoth_buy]],
       [[LT_sell],0,[LIBACT_SAY,LM_haz_apoth_sell]],
-       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_response]],
+       [[LT_snack],0,[LIBACT_SAY,LM_haz_snack_response]],
       [[LT_quest],0,[LIBACT_SAY,LM_haz_quest]],
       [[LT_rodric],0,[LIBACT_SAY,LM_haz_rodric]]
      ]],plSpeechLib);
      plSpeechLib = Cons(
     [&hazarBlacksmith,[
-       [[LT_quest],0,[LIBACT_SAY,LM_haz_quest_entroot]],
+       [[LT_quest],0,[LIBACT_SAY,LM_haz_snack_quest]],
       [[LT_buy],0,[LIBACT_SAY,LM_haz_smith_buy]],
       [[LT_sell],0,[LIBACT_SAY,LM_haz_smith_sell]],
-       [[LT_entroot],0,[LIBACT_SAY,LM_haz_entroot_none]],      
+       [[LT_snack],0,[LIBACT_SAY,LM_haz_snack_none]],      
       [[LT_rodric],0,[LIBACT_SAY,LM_haz_rodric]]   
      ]],plSpeechLib);
 

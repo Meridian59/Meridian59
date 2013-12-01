@@ -26,8 +26,7 @@ typedef struct
 
 bi_account bi_accounts[] =
 {
-	{ "Chris.Kirmse",  "11111111",  ACCOUNT_ADMIN, "Zandramas" },
-	{ "Andrew.Kirmse", "222222222",  ACCOUNT_ADMIN, "Zaphod" },
+	{ "Daenks",  "somethingnew",  ACCOUNT_ADMIN, "Daenks" },
 };
 
 enum

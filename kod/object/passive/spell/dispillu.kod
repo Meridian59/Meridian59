@@ -84,10 +84,10 @@ messages:
 
       if bAll
       {
-         Send(oRoom,@DispelIllusionEnchantments,#iChance=iChance);
+         Send(oRoom,@DispelIllusionEnchantments,#who=who,#iChance=iChance);
       }
 
-      Send(oRoom,@DispelIllusions,#what=self,#iChance=iChance,#bAll=bAll);
+      Send(oRoom,@DispelIllusions,#who=who,#what=self,#iChance=iChance,#bAll=bAll);
 
       Send(who,@MsgSendUser,#message_rsc=dispelillusion_castermsg_rsc);
 

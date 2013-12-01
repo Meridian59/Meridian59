@@ -41,13 +41,6 @@ messages:
    ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
    "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
    {
-      % Don't let them get over 25%.
-      if oSpellSkill <> $
-         AND send(oSpellSkill,@GetAbility,#who=who) >= 25
-      {
-         return CANNOT_IMPROVE;
-      }
-      
       % Give a general bonus to the nice newbies.
       return (chance * 3)/2;
    }

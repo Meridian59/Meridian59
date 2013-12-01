@@ -67,7 +67,7 @@ PALETTEFILE = $(TOPDIR)\blakston.pal
 # /EHsc- turns off exceptions
 
 CCOMMONFLAGS = -nologo -DBLAK_PLATFORM_WINDOWS -DWIN32 -D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_DEPRECATE \
-				 -TP -WX -GR- -EHsc-
+				 -TP -WX -GR- -EHsc- /MP
 
 CNORMALFLAGS = $(CCOMMONFLAGS) -W2 /Ox
 CDEBUGFLAGS = $(CCOMMONFLAGS) -Zi -W3 -DBLAKDEBUG
@@ -128,5 +128,5 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 
 # environment variables for compiler
 
-LIB = $(LIB);$(BLAKLIBDIR);$(TOPDIR)\miles\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(TOPDIR)\miles\include
+LIB = $(LIB);$(BLAKLIBDIR);C:\dx81sdk\DXF\DXSDK\lib
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);C:\dx81sdk\DXF\DXSDK\include

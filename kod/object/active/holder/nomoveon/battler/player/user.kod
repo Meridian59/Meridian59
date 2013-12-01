@@ -241,6 +241,7 @@ resources:
 
    user_logon = \
       "Welcome to the world of Meridian 59! (type \"help\" to see the manual)."
+   user_goto_lastsaferoom = "You have been sent to the last safe place you visited."
    user_goto_safety = "You have been sent to a safe place."
    user_goto_object = "You have been sent to %s%s."
    user_goto_jail = "You have been thrown in the Barloque Jail!"
@@ -307,6 +308,8 @@ properties:
    vrName = user_name_rsc
 
    piHomeroom
+   
+   piLastSafeRoom = $
 
    plNew_mail = $
 
@@ -5994,6 +5997,13 @@ messages:
             Send(self,@CheckLeavingNewbieOrGuest,#leaving=old);
             Send(self,@CheckTokenInNewRoom,#what=old);
          }
+         
+         % If room is no combat and safe logoff, record it as the player's last safe location
+         if Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+         {
+            piLastSafeRoom = Send(poOwner,@GetRoomNum);
+         }
 
          piRow = First(Send(poOwner,@GetRoomPos,#what=self));
          piCol = Nth(Send(poOwner,@GetRoomPos,#what=self),2);
@@ -6971,6 +6981,68 @@ messages:
          return Send(SYS,@GetSuccessRsc);
       }
       
+      return;
+   }
+   
+   AdminGoToLastSafeRoom()
+   "Admin supported\n"
+   "Sends the user to the last safe room they visited, whether they're logged in or not!\n"
+   {
+      local oCurrentRoom, iCurrentRegion, oLastSafeRoom, iLastSafeRegion, oTargetRoom;
+
+      if piLastSafeRoom <> $
+      {
+         oLastSafeRoom = Send(SYS,@FindRoomByNum,#num=piLastSafeRoom);
+         iLastSafeRegion = Send(oLastSafeRoom,@GetRegion);
+         
+         if pbLogged_on
+         {
+            oCurrentRoom = Send(self,@GetOwner);
+            iCurrentRegion = Send(oCurrentRoom,@GetRegion);
+            
+            if iCurrentRegion = iLastSafeRegion
+            {
+               Send(oLastSafeRoom,@Teleport,#what=self);
+               Send(self,@MsgSendUser,#message_rsc=user_goto_lastsaferoom);
+            }
+            else
+            {
+               % If the user is in a different region from their last safe room, use region default homeroom instead.
+               % This can happen if a player goes to a new region but never stops in at a safe room.
+
+               oTargetRoom = send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
+               Send(oTargetRoom,@Teleport,#what=self);
+               Send(self,@MsgSendUser,#message_rsc=user_goto_safety);
+            }
+         }
+         else
+         {
+            % If the user is logged off, we can't teleport.
+            % Instead, we update their saved logoff location.
+
+            oCurrentRoom = Send(SYS,@FindRoomByNum,#num=piSave_Room);
+            iCurrentRegion = Send(oCurrentRoom,@GetRegion);
+            
+            if iCurrentRegion = iLastSafeRegion
+            {
+               piSave_room = piLastSafeRoom;
+               piSave_row = Send(oLastSafeRoom,@GetTeleportRow);
+               piSave_col = Send(oLastSafeRoom,@GetTeleportCol);
+               piSave_fine_row = 32;
+               piSave_fine_col = 32;
+            }
+            else
+            {
+               oTargetRoom = send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
+               
+               piSave_room = Send(oTargetRoom,@GetRoomNum);
+               piSave_row = Send(oTargetRoom,@GetTeleportRow);
+               piSave_col = Send(oTargetRoom,@GetTeleportCol);
+               piSave_fine_row = 32;
+               piSave_fine_col = 32;
+            }
+         }
+      }
       return;
    }
 

@@ -227,9 +227,9 @@ messages:
       
       if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         if Send(Send(SYS, @GetSettings), @HometownPenaltiesEnabled)
+         if Send(Send(SYS, @GetSettings), @ReturnToSafetyPenaltiesEnabled)
          {
-	        Send(poGhostedPlayer,@AdminGoToSafety);
+	        Send(poGhostedPlayer,@AdminGoToLastSafeRoom);
          }
          else
          {
@@ -238,9 +238,9 @@ messages:
       }
       else
       {
-         if Send(Send(SYS, @GetSettings), @AngelHometownPenaltiesEnabled)
+         if Send(Send(SYS, @GetSettings), @AngelReturnToSafetyPenaltiesEnabled)
          {
-	        Send(poGhostedPlayer,@AdminGoToSafety);
+	        Send(poGhostedPlayer,@AdminGoToLastSafeRoom);
          }
          else
          {

@@ -913,6 +913,37 @@ messages:
       return RID_DEFAULT;
    }
 
+   GetCurrentRegionHomeroom()
+   "Returns the RID of the region's default safe location.\n"
+   "Regions without safe rooms will default to Cor Noth inn."
+   {
+      local iRegion;
+      
+      iRegion = Send(self,@GetRegion);
+      
+      if iRegion = RID_GUEST_BASE
+      {
+         return RID_GUEST1;
+      }
+
+      if iRegion = RID_OUTOFGRACE
+      {
+         return RID_OUTOFGRACE;
+      }
+
+      if iRegion = RID_NEWB_BASE
+      {
+         return RID_NEWB1;
+      }
+
+      if iRegion = RID_KOCATAN
+      {
+         return RID_KOC_INN;
+      }
+
+      return RID_COR_INN;
+   }
+
    CreateYellZoneList()
    "Creates a list of room ID numbers (RIDs) that yells are extended to.  Does "
    "this by traversing plExits and plEdge_exits. Additional exits hardcoded "

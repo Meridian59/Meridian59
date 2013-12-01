@@ -33,10 +33,10 @@ resources:
    Elder_potion_kraanan = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
       "Kraanan. Don't you worry about side effects, this is perfectly safe! So, would you like to buy one?"
       
-   Elder_potion_faren = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
+   Elder_potion_qor = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
       "Qor. Don't you worry about side effects, this is perfectly safe! So, would you like to buy one?"
       
-   Elder_potion_faren = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
+   Elder_potion_shalille = "I can sell you %s%s, so that you may forget all you might know about the teachings of "
       "Shal'iile. Don't you worry about side effects, this is perfectly safe! So, would you like to buy one?"
    
    potion_faren = "Faren"

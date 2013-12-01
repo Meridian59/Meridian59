@@ -47,7 +47,7 @@ constants:
    USER_RUNNING_SPEED = 36
 
    % How many packets incoming per second do we allow?
-   INCOMING_PACKET_THROTTLE = 5
+   INCOMING_PACKET_THROTTLE = 20
 
    % What's the lower threshold for being able to run?  Below this, we can't
    %  run.
@@ -858,13 +858,11 @@ messages:
       local liClient_cmd, oWhat, oWhere, oRoom, iRow, iCol, iSay_type,
             sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
             lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
-            lTargets, bSpam;
-
-      bSpam = FALSE;
+            lTargets;
 
       % This checks to see if the user is trying to Send too many packets
       %  per second.  If they are, then we mark them as a spammer and
-      %  disallow certain commands.
+      %  don't process the message
       if piLastPacketTime <> GetTime()
       {
          piLastPacketTime = GetTime();
@@ -876,14 +874,15 @@ messages:
          if piPacketsPerSecond > INCOMING_PACKET_THROTTLE
             AND NOT Send(self,@PlayerIsImmortal)
          {
-            bSpam = TRUE;
+			% Don't go on if marked as spammer
+            return;
          }
       }
 
       if type = 1
       {
          Send(self,@UserCommand,#client_msg=client_msg,
-              #number_stuff=number_stuff,#bSpam=bSpam);
+              #number_stuff=number_stuff);
 
          return;
       }
@@ -973,11 +972,6 @@ messages:
       
       if liClient_cmd = BP_REQ_DROP
       {
-         if bSpam AND NOT Send(self,@PlayerIsImmortal)
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
          
@@ -995,11 +989,6 @@ messages:
       
       if liClient_cmd = BP_SEND_OBJECT_CONTENTS
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserObjectContents,#what=oWhat);
          
@@ -1026,11 +1015,6 @@ messages:
       
       if liClient_cmd = BP_REQ_LOOK
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserLook,#what=oWhat);
          
@@ -1062,11 +1046,6 @@ messages:
       
       if liClient_cmd = BP_REQ_USE
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);     
          Send(self,@UserUseItem,#what=oWhat);
          
@@ -1075,11 +1054,6 @@ messages:
       
       if liClient_cmd = BP_REQ_UNUSE
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserUnuseItem,#what=oWhat);
 
@@ -1088,11 +1062,6 @@ messages:
       
       if liClient_cmd = BP_REQ_ATTACK
       {
-         if bSpam
-         {
-            return;
-         }
-
          iAttack_type = Nth(client_msg,2);
          oWhat = Nth(client_msg,3);
          Send(self,@UserAttack,#type=iAttack_type,#what=oWhat);
@@ -1110,11 +1079,6 @@ messages:
       
       if liClient_cmd = BP_REQ_OFFER
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          lItems = Nth(client_msg,3);
          Send(self,@UserOffer,#what=oWhat,#item_list=lItems,
@@ -1151,11 +1115,6 @@ messages:
          % This also Sends a movement packet.  Decrement our move counter.
          Send(self,@AdjustMoveCounter);
       
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGo);
          
          return;
@@ -1207,11 +1166,6 @@ messages:
       
       if liClient_cmd = BP_REQ_APPLY
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          oApply_on = Nth(client_msg,3);
          Send(self,@UserApply,#what=oWhat,#apply_on=oApply_on);
@@ -1235,11 +1189,6 @@ messages:
       
       if liClient_cmd = BP_REQ_CAST
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);  % Spell type
          lTargets = Nth(client_msg,3); % Targets of spell (if any)
          Send(self,@UserCast,#oSpell=oWhat,#lTargets=lTargets);
@@ -1276,11 +1225,6 @@ messages:
       
       if liClient_cmd = BP_ACTION
       {
-         if bSpam
-         {
-            return;
-         }
-
          iNum = Nth(client_msg, 2);
          Send(self,@UserAction,#action=iNum);
          
@@ -1312,11 +1256,6 @@ messages:
       
       if liClient_cmd = BP_CHANGE_DESCRIPTION
       {
-         if bSpam
-         {
-            return;
-         }
-
          % oWhat = who's editing.
          oWhat = Nth(client_msg,2);
          sBody = Nth(client_msg,3);
@@ -1356,11 +1295,6 @@ messages:
       
       if liClient_cmd = BP_REQ_ACTIVATE
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserTryActivate,#what=oWhat);
          
@@ -1381,13 +1315,10 @@ messages:
          
          return;
       }
-
-      if NOT bSpam
-      {
-         Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
-               liClient_cmd);
-      }
-      
+     
+      Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
+	      liClient_cmd);
+            
       return;
    }
 
@@ -1447,7 +1378,7 @@ messages:
       return Send(SYS,@GetSuccessRsc);
    }
 
-   UserCommand(client_msg=$, number_stuff=$, bSpam=FALSE)
+   UserCommand(client_msg=$, number_stuff=$)
    {
       local iClient_cmd, i, oMoney, cost, oGuild, oWhat;
 
@@ -1457,11 +1388,6 @@ messages:
 
       if iClient_cmd = UC_REST
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@StartResting);
          
          return;
@@ -1469,11 +1395,6 @@ messages:
       
       if iClient_cmd = UC_STAND
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@StopResting);
          
          return;
@@ -1553,11 +1474,6 @@ messages:
 
       if iClient_cmd = UC_REQ_GUILDINFO
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildSendInfo);
          
          return;
@@ -1565,11 +1481,6 @@ messages:
 
       if iClient_cmd = UC_INVITE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_INVITE,
               #oTarget=Nth(client_msg,2));
          
@@ -1601,11 +1512,6 @@ messages:
 
       if iClient_cmd = UC_VOTE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_VOTE,
               #oTarget=Nth(client_msg,2));
          
@@ -1702,11 +1608,6 @@ messages:
 
       if iClient_cmd = UC_MAKE_ALLIANCE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_FORGE_ALLIANCE,
               #oTarget=Nth(client_msg,2));
               
@@ -1715,11 +1616,6 @@ messages:
 
       if iClient_cmd = UC_END_ALLIANCE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_END_ALLIANCE,
               #oTarget=Nth(client_msg,2));
               
@@ -1728,11 +1624,6 @@ messages:
 
       if iClient_cmd = UC_MAKE_ENEMY
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_DECLARE_ENEMY,
               #oTarget=Nth(client_msg,2));
               
@@ -1741,11 +1632,6 @@ messages:
 
       if iClient_cmd = UC_END_ENEMY
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_PEACE,
               #oTarget=Nth(client_msg,2));
               
@@ -1841,11 +1727,6 @@ messages:
 
       if iClient_cmd = UC_CHANGE_URL
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
 
          if oWhat <> self
@@ -1902,11 +1783,6 @@ messages:
 
       if iClient_cmd = UC_APPEAL
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserAppeal,#string=Nth(client_msg,2));
          
          return;

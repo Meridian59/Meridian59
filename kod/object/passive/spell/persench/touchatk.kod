@@ -17,6 +17,8 @@ constants:
    include blakston.khd
 
    HITVALUE_MAX = 100
+   POISON_DURATION = 30000 %%% in milliseconds
+   POISON_LOSSRATE = 10000 %%% in health points * 10^-4 / second
 
 resources:
 
@@ -32,6 +34,14 @@ resources:
    TouchAttack_missed3_sound = swswish3.wav
    
    TouchAttack_hit_sound = patk.wav
+   
+   purger_worked_user = "Your violent blast of electricity disrupts the magic surrounding %s%s!"
+   purger_worked_target = "%s%s blasts you with electricity, disrupting the magic surrounding you!"
+   poison_worked_user = "Your acidic touch eats into %s%s's flesh, polluting %s blood!"
+   poison_worked_target = "%s%s's acidic touch eats into your flesh and pollutes your blood!"
+   blinder_worked = "%s%s stumbles away, screaming and clutching %s eyes!"
+   holder_worked = "%s%s is frozen solid, unable to move even a finger."
+   heal_worked = "Shal'ille aids you in battle, healing you for ~g~B%i~B~n damage."
 
 classvars:
 
@@ -93,7 +103,14 @@ properties:
 
    plPrerequisites = $
    plReagents = $
-
+   
+   % The following are chances to proc special effects
+   piBlind_chance = 5
+   piHold_chance = 5
+   piPurge_chance = 5
+   piPoison_chance = 5
+   piHeal_chance = 5
+   
 messages:
 
    ImproveStroke(who=$,target=$)
@@ -246,21 +263,138 @@ messages:
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local spell_ability, damage, iPower;
+      local i, damage, iMysticism, iAbility, iProcfactor;
 
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);
+      iProcfactor = 10;
 
-      iPower = Send(who,@GetEnchantedState,#what=self);
+      for i in send(who,@GetPlayerUsing)
+      {
+         if IsClass(i,&JewelOfFroz)
+         {
+            % Each jewel of Froz adds up to 3 to base damage depending on HPs.
+            damage = damage + bound(send(who,@GetBaseMaxHealth)-40,0,60)/20;
+            % Each equipped JoFincreases the chance to proc effects.
+            iProcfactor = iProcfactor + 10;
+         }
+      }
       
-      % factor in the person's ability with the spell      
-      damage = damage/2 + ((damage/2)*iPower)/SPELLPOWER_MAXIMUM + 1;
+      % scale the basedamage with the caster's ability in the spell
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+      damage = damage * (iAbility + 1)/100;
       
-      % might affects damage from different weapons differently
+      % scale proficiency bonus with HPs instead of spell ability
+      damage = damage + bound(send(who,@GetBaseMaxHealth)-50,0,50)/10;
+      
+      % touchspells are boosted by mysticism instead of might
+      iMysticism = send(who,@GetMysticism);
+      damage = damage + ((100+bound(iMysticism-25,0,40))*damage)/100;
+      
+      % allow individual adjustments by a specific spell
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,
-                    #victim=victim);
+                          #victim=victim);
+      
+      % check for a proc if we have a JoF equipped
+      if iProcfactor <> 0
+      {
+         Send(who,@DoTouchProc,#spell_num=viSpell_num,#procfactor=iProcfactor,#target=victim,#damage=damage);
+      }
       
       return bound(damage,1,$);
+   }
+
+   DoTouchProc(spell_num = $, procfactor = 0, target=$, damage=0)
+   "Here, we handle procs that JoFs unlock within touch spells."
+   {
+      local oSpell;
+      
+      procfactor = procfactor * bound(send(who,@GetBaseMaxHealth)-50,0,50)/50;
+      
+      if spell_num = SID_ZAP
+      {
+         oSpell = send(SYS,@FindSpellByNum,#num=SID_PURGE);
+         
+         if random(1,1000) <= piPurge_chance*procfactor
+         {
+            %% Gotta have something to try to remove....
+            if Send(target,@IsEnchanted)
+            {
+               % Try to purge off random(25,75)% of the enchantments.
+               if send(oSpell,@DoPurge,#who=target,#iChance=random(25,75))
+               {
+                  % Only tell our victim if they lost enchantments.
+                  send(target,@MsgSendUser,#message_rsc=purger_worked_target,
+                       #parm1=send(who,@GetCapDef),#parm2=send(who,@GetName));
+               }
+
+               % Tell the zapper.
+               send(who,@MsgSendUser,#message_rsc=purger_worked_user,
+                    #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+            }
+         }
+      }
+      
+      if spell_num = SID_TOUCH_OF_FLAME
+      {
+         oSpell = send(SYS,@FindSpellByNum,#num=SID_BLIND);
+         
+         if random(1,1000) <= piBlind_chance*procfactor
+         {
+            %% no duplicates
+            if not Send(target,@IsEnchanted,#what=oSpell)
+            {        
+               send(oSpell,@CastSpell,#who=self,#ltargets=[target],#iSpellPower=50);
+               send(who, @MsgSendUser, #message_rsc = blinder_worked,
+                     #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName),
+                     #parm3=send(target,@GetHisher));
+            }
+         }
+      }
+      
+      if spell_num = SID_ICY_FINGERS
+      {
+         oSpell = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+
+         if random(1,1000) <= piHold_chance*procfactor
+         {
+            %% no duplicates
+            if not Send(target,@IsEnchanted,#what=oSpell)
+            {        
+               send(oSpell,@CastSpell,#who=self,#ltargets=[target],#ispellpower=99);
+               send(who,@MsgSendUser,#message_rsc=holder_worked,
+                  #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+            }
+         }
+      }
+
+      if spell_num = SID_ACID_TOUCH
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+         
+         if random(1,1000) <= piPoison_chance*procfactor
+         {
+
+            send(oSpell,@MakePoisoned,#who=target,
+                #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+            send(who,@MsgSendUser,#message_rsc=poison_worked_user,
+                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName),
+                 #parm3=send(target,@GetHisher));
+            send(target,@MsgSendUser,#message_rsc=poison_worked_target,
+                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+         }
+      }
+
+      if spell_num = SID_HOLY_TOUCH
+      {
+         if random(1,1000) <= piHeal_chance*procfactor
+         {
+            send(who,@GainHealth,#amount = damage);
+            send(who,@MsgSendUser,#message_rsc=heal_worked,#parm1=damage);
+         }
+
+      }
+      return damage;
    }
 
    PlayerWasHitMsg(who=$,attacker=$,damage=$)
@@ -389,12 +523,14 @@ messages:
 
    GetDuration(iSpellpower=$)
    {
-      local iDuration;
+      local iDuration, iAbility;
 
-      iDuration = Random(iSpellpower/3,iSpellpower/2);
-      % 1 to 7.5 minutes
-      iDuration =  bound(iDuration,10,75);
-      iDuration = iDuration * 6 * 1000;  
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+
+      iDuration = 5 + (iAbility + 1)/4
+      % 5 to 30 minutes depending on skill percent only
+      iDuration =  bound(iDuration,5,30);
+      iDuration = iDuration * 60 * 1000;  
 
       return iDuration;
    }  

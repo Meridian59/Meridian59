@@ -53,13 +53,6 @@ constants:
    %  run.
    VIGOR_RUN_THRESHOLD = 10
 
-   % What's the greatest time between moves that we'll consider to be "lag"
-   %  (in seconds).
-   MOVEMENT_DELTA_LAG_THRESHOLD = 5
-
-   % If piMovesCount goes over this, we have a suspected speedhacker.
-   MOVEMENT_COUNT_THRESHOLD = 2
-
    % Speedhack/cheating detection:
    % What's the maximum number of times we should log a violation?
    MAX_LOGGED_THRESHOLD = 25
@@ -341,13 +334,9 @@ properties:
    piLastPacketTime = 0
    piPacketsPerSecond = 0
 
+   % The tick we received last position update from user
    piLastMoveUpdateTime = 0
-   piMovesCounter = 0
-   piNumberOfMovesPerSecond = 0
-   piMoveOldRow = 0
-   piMoveOldCol = 0
-   piMoveOldRoom = RID_TOS
-
+   
    piCheaterLogs = 0
 
 messages:
@@ -899,10 +888,6 @@ messages:
          iSpeed = Nth(client_msg,4);
          oRoom = Nth(client_msg,5);
 
-         % XORed with some magic numbers to throw off teleport hacks.
-         %iRow = Send(SYS,@BitWiseXOR,#value=iRow,#value2=12692257);
-         %iCol = Send(SYS,@BitWiseXOR,#value=iCol,#value2=11627532);
-
          % Check if it's an outdated message, from a person going off side of
          %  room multiple times before they got their new room.
          if oRoom <> poOwner 
@@ -1111,10 +1096,7 @@ messages:
       }
       
       if liClient_cmd = BP_REQ_GO
-      {
-         % This also Sends a movement packet.  Decrement our move counter.
-         Send(self,@AdjustMoveCounter);
-      
+      {        
          Send(self,@UserGo);
          
          return;
@@ -2089,8 +2071,7 @@ messages:
 
       % Count right now as the last time we moved.
       piLastMoveUpdateTime = GetTime();
-      piMovesCounter = 0;
-
+      
       propagate;
    }
 
@@ -2735,70 +2716,23 @@ messages:
       return;
    }
 
-   AdjustMoveCounter(amount=-1, bReset=FALSE)
-   {
-      if bReset
-      {
-         % Set it to max negative because wall spells don't properly remove
-         %  moves.
-         piMovesCounter = -MOVEMENT_DELTA_LAG_THRESHOLD;
-      }
-      
-      piMovesCounter = Bound((piMovesCounter + amount),
-                             -MOVEMENT_DELTA_LAG_THRESHOLD,$);
-
-      return;
-   }
-
    UserMove(new_row = 1, new_col = 1,
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
       local iCurrentTime, iDelta, bFirstMove, iExertion, iHasteLevel,
-            iSquaredDistance, iNewRow, iNewCol, iNewRoom, iChanceTurn, iAngle;
-
-      % NEW Speedhack detection!
-      % How this works:
-      %   Speedhack works by sending a LOT of little moves very, very quickly.
-      %   Normal players only send 1 movement packet per second, but 
-      %   speedhackers send more.  Even at low levels, speedhackers will send
-      %   more packets per second.  So, we keep track of the number of packets
-      %   sent and the number of seconds that happen.  Every movement packet
-      %   sent increases our piMovesCounter by one.  Every second that passes
-      %   decreases it by one.  (In actuality, we subtact the time difference
-      %   from when movement packets were sent.)  We have to average this over
-      %   time, because lag can cause packets to be delayed and all show up in
-      %   one second.
-      %
-      %   We currently allow for players to have up to 3 more moves than 
-      %   allowed over the duration due to rounding errors, etc.
-
-      % Check the delta since the last time we moved.  Keep an upper bound on
-      %  the delta, since people could just be moving from rest.
+            iSquaredDistance, iChanceTurn, iAngle;
+    
+      % Get the current tick and the delta since we processed last move
       iCurrentTime = GetTime();
       iDelta = iCurrentTime - piLastMoveUpdateTime;
-
-      %  Make sure this person is not lagging; increment our counter since we
-      %  got a move packet, then adjust for last movement time.
-      %  Also make sure we don't go too far negative.
-      piMovesCounter = (piMovesCounter + 1) - iDelta;
-      piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
-
-      % Check for cheating by sending more move packets than allowed.
-      % Don't log too many cheat detections, because it'll fill up our logs.
-      if piMovesCounter > MOVEMENT_COUNT_THRESHOLD
-         AND piCheaterLogs < MAX_LOGGED_THRESHOLD
-      {
-         piCheaterLogs = piCheaterLogs + 1;
-         Debug("ALERT!",Send(self,@GetTrueName),self," is moving too fast.  "
-               "Has moves count of ",piMovesCounter," Possible speedhacker.");
-         piMovesCounter = 0;
-      }
-
+     
+	  % A simple (temporary) check if sent speed is OK
       if speed > USER_WALKING_SPEED
       {
          if Send(self,@GetVigor) < VIGOR_RUN_THRESHOLD
          {
-            % This person is cheating!  Stop them from moving, make a log note.
+            % This person is sending a movement speed faster than allowed for his current vigor! 
+			%  Stop them from moving, make a log note.
             Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
                  #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
                  #fine_row=Send(self,@GetFineRow),
@@ -2850,10 +2784,9 @@ messages:
          }
       }
 
-      % Only drain vigor once per second, unless the moves counter indicates
-      %  we could be speedhacking.
+      % Only drain vigor once per second.
+	  % NOTE: This needs adjustement when we switch to "GetTickCount" because it's in ms then
       if piLastMoveUpdateTime <> iCurrentTime
-         AND piMovesCounter < 0
       {
          % Reduce speed value to old value, 5/6ths current value, then
          %  square it.
@@ -2872,81 +2805,21 @@ messages:
          Send(self,@AddExertion,#amount=iExertion);
       }
 
-      % Teleport detection!
-      % How this works:
-      %  We detect distances travelled.  If the distance seems too great and
-      %  the move counter delta isn't very high, then perhaps they are
-      %  teleporting.
-      if piCheaterLogs < MAX_LOGGED_THRESHOLD
-         AND NOT IsClass(self,&DM)
-      {
-         if piLastMoveUpdateTime = iCurrentTime
-         {
-            % Uh oh.  They've sent us more than one move per second.  Keep
-            %  track of 'em.
-            piNumberOfMovesPerSecond = piNumberOfMovesPerSecond + 1;
-         }
-         else
-         {
-            % Okay, first see if we the person violated our movement
-            %  limitations.
-            iNewRow = Send(self,@GetRow);
-            iNewCol = Send(self,@GetCol);
-            iNewRoom = Send(poOwner,@GetRoomNum);
-            iSquaredDistance = ((piMoveOldRow - iNewRow)
-                                 * (piMoveOldRow - iNewRow))
-                               + ((piMoveOldCol - iNewCol)
-                                 * (piMoveOldCol - iNewCol));
-
-            % See if they moved farther than they should have
-            % Only check if we're in the same room, and aren't in the blink
-            %  spot, (IE, just finished blinking).
-            if iNewRoom = piMoveOldRoom
-               AND (iNewRow <> Send(poOwner,@GetTeleportRow)
-                    AND iNewCol <> Send(poOwner,@GetTeleportCol))
-            {
-               % This is a large movement distance with a very low movement
-               %  delta, possibly cheat teleporting.
-               if iSquaredDistance >= 200
-                  AND iDelta < 3
-               {
-                  Debug("ALERT! ",Send(self,@GetTrueName),self," moved ",
-                        iSquaredDistance," with only ",iDelta," seconds since "
-                        "last movement update.");
-                  debug("Additional: ",Send(self,@GetTrueName)," went from (",
-                        piMoveOldRow,piMoveOldCol,") to (",iNewRow,iNewCol,
-                        ") in RID ",iNewRoom," Possible speedhacker.");
-                  piCheaterLogs = piCheaterLogs + 1;
-
-                  % A little extra penalty: Drain some vigor as we normally
-                  %  would.
-                  Send(self,@AddExertion,
-                       #amount=iSquaredDistance*EXERTION_PER_MOVE);
-               }
-            }
-
-            % Now, initialize values
-            piNumberOfMovesPerSecond = 1;
-            piMoveOldRow = Send(self,@GetRow);
-            piMoveOldCol = Send(self,@GetCol);
-            piMoveOldRoom = Send(poOwner,@GetRoomNum);
-         }
-      }
-
-      % Update this value for both speedhack detection AND movement detection.
-      piLastMoveUpdateTime = GetTime();
-
       % bitflag check instead of function for speed.
       if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }
 
+	  % save this tick for next execution to determine dt then
+      piLastMoveUpdateTime = iCurrentTime;
+
+	  % now we actually process the move (and propagate it)
       Send(poOwner,@SomethingMoved,#what=self,
            #new_row=new_row,#new_col=new_col,
            #fine_row=fine_row,#fine_col=fine_col,
            #cause=CAUSE_USER_INPUT,#speed=speed);
-
+		   
       return;
    }
 
@@ -5828,7 +5701,6 @@ messages:
 
       % Count right now as the last time we moved.
       piLastMoveUpdateTime = GetTime();
-      piMovesCounter = 0;
       
       % This is here because it has to be done before poOwner is changed.
 

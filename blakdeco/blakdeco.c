@@ -565,6 +565,7 @@ char * name_function(int fnum)
 
    case SENDMESSAGE : return "Send";
 
+   case GODLOG : return "GodLog";
    case DEBUG : return "Debug";  
    case ADDPACKET : return "AddPacket";
    case SENDPACKET : return "SendPacket";

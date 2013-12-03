@@ -685,10 +685,10 @@ void TryAdminCommand(int session_id,char *admin_command)
 	
 	if (s->account == NULL)
 	{
-		/* dprintf(" Maintenance %s\n",admin_command); */
+		gprintf("Session: M Command: %s\n",admin_command);
 	}
 	else
-		dprintf(" %2i %s\n",s->account->account_id,admin_command);
+		gprintf("Session: %i Command: %s\n",s->account->account_id,admin_command);
 	
 	DoAdminCommand(admin_command);
 }
@@ -2050,6 +2050,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case GETCLASS : strcpy(c_name, "GetClass"); break;
 		case SENDMESSAGE : strcpy(c_name, "Send"); break;
 		case POSTMESSAGE : strcpy(c_name, "Post"); break;
+		case GODLOG : strcpy(c_name, "GodLog"); break;
 		case DEBUG : strcpy(c_name, "Debug"); break;
 		case ADDPACKET : strcpy(c_name, "AddPacket"); break;
 		case SENDPACKET : strcpy(c_name, "SendPacket"); break;

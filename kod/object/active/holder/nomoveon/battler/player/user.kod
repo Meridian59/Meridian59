@@ -5979,6 +5979,14 @@ messages:
       % This is stuff that would be executed on propagation, but we gotta
       % execute this stuff before Sending new info to client
 
+      if Send(what,@GetRoomNum) = RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         % Deliverance people who somehow got to the Underworld already protected
+         % Usually it's because they logged off in the Underworld while Death Rifting
+         Post(self,@AdminGoToSafety);
+      }
+      
       if poOwner <> $
       {
         old = poOwner;
@@ -6013,6 +6021,13 @@ messages:
          AND NOT IsClass(self,&DM)
       {
          Send(Send(self,@GetOwner),@DeleteWallsAroundBattler,#who=self);
+      }
+      
+      % This removes Death Rift's protection when the user enters any non-Underworld room
+      if Send(poOwner,@GetRoomNum) <> RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         Send(self,@SetDeathRiftProtection,#value=FALSE);
       }
       
       propagate;

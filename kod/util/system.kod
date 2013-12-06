@@ -2995,6 +2995,8 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_MELANCHOLY,#class=&Melancholy);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
+      
+      Send(self,@CreateOneSpellIfNew,#num=SID_DEATH_RIFT,#class=&DeathRift);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

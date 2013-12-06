@@ -3350,7 +3350,7 @@ messages:
 
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
       {
-         iCost = Bound(piMax_mana/2+1,11,$);
+         iCost = Bound(piMax_mana/4+1,6,$);
          if piMana < iCost
          {
             Send(self,@MsgSendUser,#message_rsc=player_cant_broadcast);
@@ -3368,14 +3368,7 @@ messages:
    "Called when the user wants to say a string to a list of people.  Return True/False, "
    "and use some mana too."
    {
-      if piMana < Length(users)
-      {
-         Send(self,@MsgSendUser,#message_rsc=player_cant_send);
-         return FALSE;
-      }
-
-      Send(self,@LoseMana,#amount=Length(users));
-
+      Send(self,@LoseMana,#amount=1);
       return TRUE;
    }
 

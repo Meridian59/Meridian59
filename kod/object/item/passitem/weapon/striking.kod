@@ -23,6 +23,8 @@ resources:
 classvars:
 
    vrDesc = striking_desc_rsc
+   
+   viWeaponType = WEAPON_TYPE_STRIKING
 
 properties:
    

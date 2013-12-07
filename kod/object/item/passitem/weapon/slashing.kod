@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A slashing weapon is an edged weapon used for cutting.
+
+SlashingWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   slashing_desc_rsc = "This is a striking weapon."
+
+classvars:
+
+   vrDesc = slashing_desc_rsc
+
+properties:
+   
+   piAttack_Type = ATCK_WEAP_SLASH
+
+messages:
+
+   GetDefaultStrokeNumber()
+   {
+      return SKID_SLASH;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+

@@ -3733,6 +3733,12 @@ messages:
                iAmount = First(lNumbers);
 
                % Make sure requested number of items is within the limits
+			   
+			   if (iAmount = $)
+			   {
+			      iAmount = 1;
+			   }
+			   
                if (iAmount < MIN_BUY_AMOUNT)
                {
                   iAmount = MIN_BUY_AMOUNT;

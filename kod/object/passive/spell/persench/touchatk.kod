@@ -392,7 +392,7 @@ messages:
       damage = damage + bound(send(who,@GetBaseMaxHealth)-50,0,50)/10;
 
       % touchspells are boosted by mysticism instead of might
-      damage = ((100+bound(send(who,@GetMysticism)-25,0,40))*damage)/100;
+      damage = damage*(75 + send(who,@GetMysticism))/100;
        
       % allow for damage adjustments and procs
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,

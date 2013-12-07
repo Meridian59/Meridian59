@@ -28,10 +28,10 @@ messages:
    constructed()
    {
       plTreasure = [ [ &DragonflyEye, 30 ],
-                     [ &WebMoss, 20 ],
-                     [ &Meatpie, 20 ],
+                     [ &WebMoss, 10 ],
+                     [ &Snack, 10 ],
                      [ &RainbowFern, 15 ],
-                     [ &Money, 7 ],
+                     [ &Money, 27 ],
                      [ &KriipaClaw, 7 ],
                      [ &Yrxlsap, 1 ]
 		             ];

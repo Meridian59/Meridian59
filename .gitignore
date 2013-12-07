@@ -185,3 +185,4 @@ pip-log.txt
 .DS_Store
 /batch.bat
 /makefile
+/run/server/motd.txt

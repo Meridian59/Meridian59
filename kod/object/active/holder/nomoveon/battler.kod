@@ -139,7 +139,6 @@ resources:
    battler_pierce_wound = "pierces"
    battler_pierce_nick = "grazes"
 
-
 classvars:
 
    viObject_flags = MOVEON_NO | BATTLER_YES
@@ -336,7 +335,6 @@ messages:
       iChanceToHit = iChanceToHit * Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj);
       iChanceToHit = iChanceToHit / Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj);
       iChanceToHit = bound(iChanceToHit,125,2000);
-
       iMultiplier = 1;
 
       if iChanceToHit > 1000

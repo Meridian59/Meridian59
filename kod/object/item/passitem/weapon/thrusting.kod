@@ -23,6 +23,8 @@ resources:
 classvars:
 
    vrDesc = thrusting_desc_rsc
+   
+   viWeaponType = WEAPON_TYPE_THRUST
 
 properties:
    

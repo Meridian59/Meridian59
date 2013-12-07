@@ -32,9 +32,8 @@ classvars:
    vrIcon = mace_icon_rsc
    vrDesc = mace_desc_rsc
 
-   % Maces are low quality bludugeoning weapons
-   viWeaponType = WEAPON_TYPE_BLUDGEON
-   viWeaponQuality = WEAPON_QUALITY_LOW
+   % Maces are average quality striking weapons
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_MACE
 
@@ -52,7 +51,7 @@ classvars:
 
 properties:
 
-   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_BLUDGEON
+   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
 
 messages:
 

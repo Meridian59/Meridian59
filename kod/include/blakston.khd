@@ -1704,11 +1704,11 @@
    WEAPON_NERUDITE = 3
 
    % General types of weapons.
-   %  Bludgeon weapons are blunt weapons.
-   WEAPON_TYPE_BLUDGEON = 0
-   %  Thrust weapons are swords.
+   %  Bludgeon weapons are heavy weapons.
+   WEAPON_TYPE_STRIKE = 0
+   %  Thrust weapons are weapons with a sharp tip.
    WEAPON_TYPE_THRUST = 1
-   %  Slash weapons are the heavier weapons.
+   %  Slash weapons are weapons with a sharp edge.
    WEAPON_TYPE_SLASH = 2
 
    % How much range bonus do we get if a player target has moved recently?

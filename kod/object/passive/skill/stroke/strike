@@ -1,0 +1,69 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Slash is Stroke
+
+constants:
+
+   include blakston.khd
+
+resources:
+   strike_name_rsc = "strike"
+   strike_icon_rsc = slashico.bgf
+   strike_desc_rsc = "Strike allows you to hit better with heavy weapons."
+
+   strike_skill_intro = "Weaponcraft Lv. 1: A basic skill of armed combat. A must for those who live by the mace."
+
+classvars:
+
+   vrName = slash_name_rsc
+   vrIcon = slash_icon_rsc
+   vrDesc = slash_desc_rsc
+
+   vrSkill_intro = slash_skill_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SKS_FENCING
+   viSkill_Num = SKID_STRIKE
+   viSkill_level = 1
+   viChance_to_increase = 20
+
+   viskillExertion = 2
+   vbCheck_exertion = FALSE
+
+   viDamage_factor = 100
+
+properties:
+
+   plPrerequisites = $
+
+   piChanceToIncrease = 100
+
+messages:
+
+   GetAttackType(weapon_used=$)
+   {
+      local i;
+      
+      i= send(weapon_used,@GetAttackType);
+      
+      if (i & ATCK_WEAP_THRUST) AND NOT (i & ATCK_WEAP_SLASH)
+      {
+         i = i & (~ATCK_WEAP_THRUST);
+         i = (i | ATCK_WEAP_SLASH);
+      }
+      
+      return i;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

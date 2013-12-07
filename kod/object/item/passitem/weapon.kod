@@ -215,7 +215,7 @@ messages:
       iBaseHit = hit_roll;
 
       % Weapon type
-      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      if viWeaponType = WEAPON_TYPE_STRIKE
       {
          iBaseHit = iBaseHit + WEAPON_HITMOD_MID;
       }
@@ -269,7 +269,7 @@ messages:
       local iDamage;
       
       % Weapon type
-      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      if viWeaponType = WEAPON_TYPE_STRIKE
       {
          iDamage = random(WEAPON_DAMAGE_MID_MIN, WEAPON_DAMAGE_MID_MAX);
       }
@@ -335,7 +335,7 @@ messages:
       local iRange;
       
       % Weapon type
-      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      if viWeaponType = WEAPON_TYPE_STRIKE
       {
          iRange = WEAPON_RANGE_LOW;
       }
@@ -375,7 +375,7 @@ messages:
       local iDisarm;
       
       % Weapon type
-      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      if viWeaponType = WEAPON_TYPE_STRIKE
       {
          iDisarm = WEAPON_DISARM_LOW;
       }
@@ -414,7 +414,7 @@ messages:
       local iModifier;
 
       % Weapon type
-      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      if viWeaponType = WEAPON_TYPE_STRIKE
       {
          iModifier = WEAPON_SPELL_HIGH;
       }

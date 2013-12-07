@@ -33,7 +33,7 @@ classvars:
 
    viIndefinite = ARTICLE_AN
 
-   % Axes are normal quality slashing weapons.
+   % Axes are normal quality striking weapons.
    viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_AXE

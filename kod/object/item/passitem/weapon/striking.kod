@@ -24,7 +24,7 @@ classvars:
 
    vrDesc = striking_desc_rsc
    
-   viWeaponType = WEAPON_TYPE_STRIKING
+   viWeaponType = WEAPON_TYPE_STRIKE
 
 properties:
    

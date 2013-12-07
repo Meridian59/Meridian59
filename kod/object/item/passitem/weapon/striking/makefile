@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\striking.bof
-BOFS = hammer.bof axe.bof mace.bof
+BOFS = hammer.bof axe.bof mace.bof spirhamm.bof
 
 !include $(KODDIR)\kod.mak

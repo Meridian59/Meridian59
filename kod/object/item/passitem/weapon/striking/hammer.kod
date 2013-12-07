@@ -31,9 +31,8 @@ classvars:
    vrIcon = hammer_icon_rsc
    vrDesc = hammer_desc_rsc
 
-   % Hammers are average quality blunt weapons
-   viWeaponType = WEAPON_TYPE_BLUDGEON
-   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   % Hammers are low quality striking weapons
+   viWeaponQuality = WEAPON_QUALITY_LOW
 
    viProficiency_Needed = SKID_PROFICIENCY_HAMMER
 

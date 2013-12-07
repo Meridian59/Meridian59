@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Slash is Stroke
+Strike is Stroke
 
 constants:
 
@@ -23,11 +23,11 @@ resources:
 
 classvars:
 
-   vrName = slash_name_rsc
-   vrIcon = slash_icon_rsc
-   vrDesc = slash_desc_rsc
+   vrName = strike_name_rsc
+   vrIcon = strike_icon_rsc
+   vrDesc = strike_desc_rsc
 
-   vrSkill_intro = slash_skill_intro
+   vrSkill_intro = strike_skill_intro
 
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE

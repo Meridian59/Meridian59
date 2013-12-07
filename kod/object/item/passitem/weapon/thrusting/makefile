@@ -5,7 +5,7 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\thrusting.bof
-BOFS = bkdagger.bof ranged.bof huntsw.bof unique.bof \
-       striking.bof slashing.bof thrusting.bof
+BOFS = goldswrd.bof longswrd.bof mystswrd.bof neruswd.bof \
+        	riijaswd.bof shrtswrd.bof
 
 !include $(KODDIR)\kod.mak

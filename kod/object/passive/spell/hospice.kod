@@ -16,18 +16,16 @@ constants:
 
 resources:
 
-   hospice_name_rsc = "hospice"
+   hospice_name_rsc = "recuperate"
    hospice_icon_rsc = ihospice.bgf
    hospice_desc_rsc = \
-      "Rejuvenates the target of the spell with Shal'ille's healing energy.  "
-      "Shal'ille gives a small reward toward the karma of the mage who heals "
-      "another good soul.  "
-      "Requires herbs to cast."
+      "Shal'ille's healing energy washes over you, allowing you to recover "
+      "from serious injuries and resume battle once more! "
+      "Requires three herbs to cast."
 
-   hospice_cast_rsc = "%s%s's spell rejuvenates you, restoring (~B%i~B) hitpoints."
-   hospice_cast_self = "Shal'ille's holy magic rejuvenates you, restoring (~B%i~B) hitpoints."
-   hospice_cast_on_other = "You heal %s%s for (~B%i~B) hitpoints."
-   hospice_unnecessary_rsc = "%s%s is perfectly healthy."
+   hospice_cast_self = "Shal'ille's holy magic allows you to recuperate ~g~B%i~B~n hitpoints."
+
+   hospice_unnecessary_rsc = "You are already perfectly healthy."
 
 classvars:
 
@@ -41,11 +39,13 @@ classvars:
    viSpell_level = 3
    viChance_To_Increase = 15
 
-   viCast_time = 600
+   viCast_time = 0
 
    viFlash = FLASH_GOOD
 
 properties:
+
+   pbCan_cast_on_others = FALSE
 
 messages:
 
@@ -61,77 +61,31 @@ messages:
 
    GetNumSpellTargets()
    {
-      return 1;
+      return 0;
    }
 
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who = $)
    {
-      local target, i;
-      
-      % Can cast spell if the 1 target item is a user
-      if Length(lTargets) <> 1
+      if Send(who,@GetHealth) >= Send(who,@GetMaxHealth)
       {
-         return FALSE;
-      }
-
-      target = First(lTargets);
-      if not IsClass(target, &User)
-      {
-         if not bItemCast
-         {
-            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
-                 #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
-         }
-         
-         return FALSE;
-      }
-
-      if Send(target,@GetHealth) >= Send(target,@GetMaxHealth)
-      {
-         if NOT bItemCast
-         {
-            Send(who, @MsgSendUser, #message_rsc=hospice_unnecessary_rsc,
-              #parm1=Send(target,@GetCapDef), #parm2=Send(target,@GetName));
-         }
-         
+         Send(who, @MsgSendUser, #message_rsc=hospice_unnecessary_rsc);
+                
          return FALSE;
       }
 
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who = $,iSpellPower = 0)
    {
-      local iHeal, oTarget;
+      local iHeal;
+      
+      iHeal = random(-3,3) + (iSpellPower+1)/5 + Send(who,@GetKarma)/10;
+      iheal = bound(iHeal,0,30);  
 
-      oTarget = First(lTargets);
-          
-      iHeal = random(-3,3) + iSpellPower/5 + Send(oTarget,@GetKarma)/10;
-      iheal = bound(iHeal,0,25);
+      Send(who,@MsgSendUser,#message_rsc=hospice_cast_self,#parm1=iHeal);
 
-      if who <> oTarget 
-      {
-         Send(who,@MsgSendUser,#message_rsc=hospice_cast_on_other,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHeal);
-              
-         Send(oTarget,@MsgSendUser,#message_rsc=hospice_cast_rsc,
-              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=iHeal);
-
-         % Give them a little boost if they help someone of higher Karma.
-         if send(who,@GetKarma) < send(oTarget,@GetKarma)
-         {
-            send(who,@AddKarma,#amount = send(who,@CalculateKarmaChangeFromAct,
-                 #karma_doer=send(who,@GetKarma),#karma_act=send(oTarget,@GetKarma),
-                 #Swing_factor=2));
-         }
-      }       
-
-      else
-      {
-         Send(who,@MsgSendUser,#message_rsc=hospice_cast_self,#parm1=iHeal);
-      }
-
-      Send(oTarget,@GainHealthNormal,#amount=iHeal);
+      Send(who,@GainHealthNormal,#amount=iHeal);
 
       propagate;
    }

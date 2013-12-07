@@ -23,6 +23,8 @@ resources:
 classvars:
 
    vrDesc = slashing_desc_rsc
+   
+   viWeaponType = WEAPON_TYPE_SLASH
 
 properties:
    

@@ -33,7 +33,6 @@ classvars:
    vrDesc = longsword_desc_rsc
 
    % Longswords are normal quality thrusting weapons
-   viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_SWORD

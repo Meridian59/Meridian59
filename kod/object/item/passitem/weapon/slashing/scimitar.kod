@@ -31,7 +31,6 @@ classvars:
    vrDesc = scimitar_desc_rsc
 
    % Scimitars are high quality slashing weapons
-   viWeaponType = WEAPON_TYPE_SLASH
    viWeaponQuality = WEAPON_QUALITY_HIGH
 
    viProficiency_Needed = SKID_PROFICIENCY_SCIMITAR

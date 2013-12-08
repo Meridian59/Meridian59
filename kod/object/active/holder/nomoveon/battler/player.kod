@@ -706,6 +706,9 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
+   
+   report_offense_rating = "%i"
+   report_defense_rating = "%i"
 
 classvars:
 
@@ -4353,7 +4356,7 @@ messages:
                }
             }
             
-            if oWeapon = SID_ICY_FINGERS OR oWeapon = SID_TOUCH_OF_FLAME OR oWeapon = ZAP OR
+            if oWeapon = SID_ICY_FINGERS OR oWeapon = SID_TOUCH_OF_FLAME OR oWeapon = SID_ZAP OR
             oWeapon = SID_HOLY_TOUCH OR oWeapon = SID_ACID_TOUCH
             {
                iStat = Send(self,@GetAim);         
@@ -4398,6 +4401,8 @@ messages:
 
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
+      
+      Send(self,@MsgSendUser,#message_rsc=report_offense_rating,#parm1=iOffense);
 
       return bound(iOffense,1,3000);
    }
@@ -4446,6 +4451,8 @@ messages:
 
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
+      
+      Send(self,@MsgSendUser,#message_rsc=report_defense_rating,#parm1=iDefense);
 
       return bound(iDefense,1,3000);
    }

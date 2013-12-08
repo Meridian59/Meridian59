@@ -5028,6 +5028,7 @@ messages:
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
+	  Send(self,@DrawHPChance);
 
       return;
    }

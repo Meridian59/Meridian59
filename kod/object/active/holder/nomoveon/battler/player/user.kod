@@ -133,6 +133,7 @@ resources:
    user_stat_mysticism = "Mysticism"
    user_stat_aim = "Aim"
    user_stat_karma = "Karma"
+   user_stat_hpgainchance = "Tougher Chance"
 
    user_stat_health = heal.bgf
    user_stat_mana = ankh.bgf
@@ -2503,7 +2504,7 @@ messages:
 
       if group = 2
       {
-         AddPacket(1,BP_STAT_GROUP, 1,group, 1,7);
+         AddPacket(1,BP_STAT_GROUP, 1,group, 1,8);
 
          Send(self,@SendStatMight);
          Send(self,@SendStatIntellect);
@@ -2512,6 +2513,7 @@ messages:
          Send(self,@SendStatMysticism);
          Send(self,@SendStatAim);
          Send(self,@SendStatKarma);
+		 Send(self,@SendStatHPChance);
          SendPacket(poSession);
          
          return;
@@ -6490,6 +6492,42 @@ messages:
       
       AddPacket(1,7, 4,user_stat_karma, 1,STAT_VALUE, 1,STAT_INTEGER,
                 4,iKarma_Send, 4,-100, 4,100, 4,iKarma_Send);
+
+      return;
+   }
+   
+   SendStatHPChance()
+   {
+      local iHPChance_Send, highmark;
+	  
+	  highmark = Send(self,@GetHighMark);
+	  
+	 
+	  % (piGain_chance*100)/highmark = percent chance to gain HP
+	  
+	  if piGain_chance < 0
+      {
+        iHPChance_Send = piGain_chance;
+      } 
+	  else 
+	  {
+        iHPChance_Send = bound(((piGain_chance*100)/highmark),1,100);
+      }    
+      % user_stat_hpgainchance = "Tougher Chance"
+      AddPacket(1,8, 4,user_stat_hpgainchance, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,iHPChance_Send, 4,0, 4,100, 4,iHPChance_Send);
+
+      return;
+   }
+   
+   DrawHPChance()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT, 1,2);
+         Send(self,@SendStatHPChance);
+         SendPacket(poSession);
+      }
 
       return;
    }

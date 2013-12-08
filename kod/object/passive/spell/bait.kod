@@ -48,6 +48,8 @@ classvars:
 
 properties:
 
+   piBaitRange = 16
+
 messages:
 
    ResetReagents()
@@ -102,10 +104,13 @@ messages:
             {
 	            %% don't allow in happyland, unless the monster has no master.
 	            if send(SYS,@IsPKAllowed) or send(first(oMonster),@GetMaster) = $
-	            {			
-		            send(first(oMonster), @TargetSwitch, #what=who, #iHatred=100);
-		            send(first(oMonster), @EnterStateChase, #target=who, #actnow=True);
-	            }
+	            {
+                    if Send(who,@SquaredDistanceTo,#what=First(oMonster)) < (piBaitRange * piBaitRange)
+                    {
+                       send(first(oMonster), @TargetSwitch, #what=who, #iHatred=100);
+                       send(first(oMonster), @EnterStateChase, #target=who, #actnow=True);
+                    }
+                }
             }
          }
       }

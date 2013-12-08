@@ -1815,6 +1815,10 @@
    SKID_PROFICIENCY_SHORT_SWORD = 457
    % Duplicate, for the easily confused.
    SKID_PROFICIENCY_SHORTSWORD = 457
+   
+   % Newly added skills
+   SKID_STRIKE = 458
+   SKID_PROFICIENCY_FALCHION = 459
 
    %%% Unique spell constants
 

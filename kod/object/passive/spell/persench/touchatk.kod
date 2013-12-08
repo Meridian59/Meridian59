@@ -17,8 +17,6 @@ constants:
    include blakston.khd
 
    HITVALUE_MAX = 100
-   POISON_DURATION = 30000 %%% in milliseconds
-   POISON_LOSSRATE = 10000 %%% in health points * 10^-4 / second
 
 resources:
 
@@ -34,14 +32,6 @@ resources:
    TouchAttack_missed3_sound = swswish3.wav
    
    TouchAttack_hit_sound = patk.wav
-   
-   ta_purge_worked_user = "Your violent blast of electricity disrupts the magic surrounding %s%s!"
-   ta_purge_worked_target = "%s%s blasts you with electricity, disrupting the magic surrounding you!"
-   ta_poison_worked_user = "Your acidic touch eats into %s%s's flesh, polluting %s blood!"
-   ta_poison_worked_target = "%s%s's acidic touch eats into your flesh and pollutes your blood!"
-   ta_blind_worked = "%s%s stumbles away, screaming and clutching %s eyes!"
-   ta_hold_worked = "%s%s is frozen solid, unable to move even a finger."
-   ta_heal_worked = "Shal'ille aids you in battle, healing you for ~g~B%i~B~n damage."
 
 classvars:
 
@@ -103,14 +93,7 @@ properties:
 
    plPrerequisites = $
    plReagents = $
-   
-   % The following are chances to proc special effects
-   piBlind_chance = 10
-   piHold_chance = 10
-   piPurge_chance = 10
-   piPoison_chance = 10
-   piHeal_chance = 10
-   
+
 messages:
 
    ImproveStroke(who=$,target=$)
@@ -366,41 +349,23 @@ messages:
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local i, damage, iAbility, iProcfactor;
+
+      local spell_ability, damage, iPower;
 
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);
 
-      iProcfactor = 0;
-
-      for i in send(who,@GetPlayerUsing)
-      {
-         if IsClass(i,&JewelOfFroz)
-         {
-            % Each jewel of Froz adds up to 3 to base damage depending on HPs.
-            damage = damage + bound(send(who,@GetBaseMaxHealth)-50,0,50)/25;
-            % Each equipped JoFincreases the chance to proc effects.
-            iProcfactor = iProcfactor + 10;
-         }
-      }
-
-      % scale the basedamage with the caster's ability in the spell
-      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
-      damage = damage * (50 + ((iAbility + 1) / 2)) / 100;
-
-      % scale proficiency bonus with HPs instead of spell ability
-      damage = damage + bound(send(who,@GetBaseMaxHealth)-50,0,50)/10;
-
-      % touchspells are boosted by mysticism instead of might
-      damage = damage*(75 + send(who,@GetMysticism))/100;
-       
-      % allow for damage adjustments and procs
+      iPower = Send(who,@GetEnchantedState,#what=self);
+      
+      % factor in the person's ability with the spell      
+      damage = damage/2 + ((damage/2)*iPower)/SPELLPOWER_MAXIMUM + 1;
+      
+      % might affects damage from different weapons differently
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,
-                          #victim=victim,#procfactor=iProcfactor);
-          
+                    #victim=victim);
+      
       return bound(damage,1,$);
    }
-
 
    PlayerWasHitMsg(who=$,attacker=$,damage=$)
    "The stroke may choose it's own damage give or recieve message.  Otherwise "
@@ -530,9 +495,11 @@ messages:
    {
       local iDuration;
 
-      iDuration = 60;
-      % 60 minutes flat
-      iDuration = iDuration * 60 * 1000;  
+      iDuration = Random(iSpellpower/3,iSpellpower/2);
+      % 1 to 7.5 minutes
+      iDuration =  bound(iDuration,10,75);
+      iDuration = iDuration * 6 * 1000;  
+
 
       return iDuration;
    }  

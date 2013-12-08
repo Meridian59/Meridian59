@@ -108,7 +108,7 @@ messages:
       {
          damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage/100;
          stat = send(who,@GetMight);
-         damage = (75+stat)*iDamage/100;
+         damage = (75+stat)*damage/100;
       }
       
       return damage;

@@ -56,19 +56,33 @@ messages:
       return Send(who,@GetAim);
    }
 
-   GetAttackType(weapon_used=$)
+   DamageFactors(damage=0, who=$, weapon_used = $)
+   "Different skills/strokes are affected by different stats differently."
    {
-      local i;
-      
-      i= send(weapon_used,@GetAttackType);
-      
-      if (i & ATCK_WEAP_THRUST) AND NOT (i & ATCK_WEAP_SLASH)
+      local stat;
+
+      % Get weapon proficiency bonuses.
+      if weapon_used <> $
       {
-         i = i & (~ATCK_WEAP_THRUST);
-         i = (i | ATCK_WEAP_SLASH);
+         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      }
+      else
+      {
+         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage/100;
       }
       
-      return i;
+      % Get stat damage bonus.
+      if send(who,@GetMight) > send(who,@GetAim)
+      {
+         stat = send(who,@GetMight);
+      }
+      else
+      {
+         stat = send(who,@GetAim);
+      }
+      damage = (75+stat)*iDamage/100;
+
+      return damage;
    }
 
 end

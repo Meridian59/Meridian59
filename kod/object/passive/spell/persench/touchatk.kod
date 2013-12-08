@@ -141,119 +141,10 @@ messages:
       return Raw_hitroll; 
    }
 
-   DamageFactors(damage=0,who=$,victim=$,procfactor=0)
-    "Here, we handle procs as well as damage adjustments."
+   DamageFactors(damage = 0, who = $)
+   "Attack spells typically are unaffected by strength, although they may "
+   "be affected by other factors."
    {
-      local oSpell, iKarma;
-	    
-      procfactor = procfactor * bound(send(who,@GetBaseMaxHealth)-50,0,50)/50;
-      
-      if viSpell_num = SID_ZAP
-      {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_PURGE);
-         
-         if random(1,1000) <= piPurge_chance*procfactor
-         {
-            %% Gotta have something to try to remove....
-            if Send(victim,@IsEnchanted)
-            {
-               % Try to purge off random(25,75)% of the enchantments.
-               if send(oSpell,@DoPurge,#who=victim,#iChance=random(25,75))
-               {
-                  % Only tell our victim if they lost enchantments.
-                  send(victim,@MsgSendUser,#message_rsc=ta_purge_worked_target,
-                       #parm1=send(who,@GetCapDef),#parm2=send(who,@GetName));
-               }
-
-               % Tell the zapper.
-               send(who,@MsgSendUser,#message_rsc=ta_purge_worked_user,
-                    #parm1=send(victim,@GetDef),#parm2=send(victim,@GetName));
-            }
-         }
-      }
-      
-      if viSpell_num = SID_TOUCH_OF_FLAME
-      {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_BLIND);
-         
-         if random(1,1000) <= piBlind_chance*procfactor
-         {
-            %% no duplicates
-            if not Send(victim,@IsEnchanted,#what=oSpell)
-            {        
-               send(oSpell,@CastSpell,#who=self,#ltargets=[victim],#iSpellPower=50);
-               send(who,@MsgSendUser,#message_rsc=ta_blind_worked,
-                     #parm1=send(victim,@GetCapDef),#parm2=send(victim,@GetName),
-                     #parm3=send(victim,@GetHisher));
-            }
-         }
-      }
-      
-      if viSpell_num = SID_ICY_FINGERS
-      {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_HOLD);
-
-         if random(1,1000) <= piHold_chance*procfactor
-         {
-            %% no duplicates
-            if not Send(victim,@IsEnchanted,#what=oSpell)
-            {        
-               send(oSpell,@CastSpell,#who=self,#ltargets=[victim],#ispellpower=99);
-               send(who,@MsgSendUser,#message_rsc=ta_hold_worked,
-                  #parm1=send(victim,@GetCapDef),#parm2=send(victim,@GetName));
-            }
-         }
-      }
-
-      if viSpell_num = SID_ACID_TOUCH
-      {
-         oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
-         
-         if random(1,1000) <= piPoison_chance*procfactor
-         {
-
-            send(oSpell,@MakePoisoned,#who=victim,
-                #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
-            send(who,@MsgSendUser,#message_rsc=ta_poison_worked_user,
-                 #parm1=send(victim,@GetDef),#parm2=send(victim,@GetName),
-                 #parm3=send(victim,@GetHisher));
-            send(victim,@MsgSendUser,#message_rsc=ta_poison_worked_target,
-                 #parm1=send(victim,@GetCapDef),#parm2=send(victim,@GetName));
-         }
-      }
-
-      if viSpell_num = SID_HOLY_TOUCH
-      {
-
-         % Avoid the condition of checking damage on a nil victim (like when
-         %  just querying average damage).
-         if victim <> $
-         {
-            
-            iKarma = Send(victim,@GetKarma,#detect=TRUE);
-
-            if iKarma > 0
-            {
-               damage = 0;
-            }
-            else
-            {
-               damage = damage * bound(-(iKarma*2),0,100)/100;
-            }
-                   
-            if Send(victim,@IsUndead)
-            {
-               damage = damage+5;
-            }
-         }
-
-         if random(1,1000) <= piHeal_chance*procfactor
-         {
-            send(who,@GainHealth,#amount=damage);
-            send(who,@MsgSendUser,#message_rsc=ta_heal_worked,#parm1=damage);
-         }
-      }
-
       return damage;
    }
 
@@ -267,17 +158,24 @@ messages:
    %%% These are the weapon functions
 
    % What's the stroke number?
-   % This here is a pure backup. Different touch attacks use different
-   % factors to determine their secondary chance to hit. Check the
-   % individual spells for details.
+   % Touch attacks are "backwards", they use Punch as the proficiency, or the
+   %  secondary bonus to hit.  Added bonus for "pure" mages, can substitute
+   %  1.5 * Mysticism instead of punch.  This allows for a more focused
+   %  character, but you can reach higher levels if you learn punch.
    GetProf(who=$)
    {
-      local iProf;
+      local iProf, iMysticism;
 
+      iProf = Send(who,@GetSkillAbility,#skill_num=SKID_PUNCH);
       Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
       
-      iProf = Send(who,@GetMysticism);
+      iMysticism = (Send(who,@GetMysticism)*3)/2;
       
+      if iProf < iMysticism
+      {
+         iProf = iMysticism;
+      }
+
       return iProf;
    }
 
@@ -345,11 +243,9 @@ messages:
       return TRUE;
    }
 
-
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-
       local spell_ability, damage, iPower;
 
       % base weapon damage
@@ -499,7 +395,6 @@ messages:
       % 1 to 7.5 minutes
       iDuration =  bound(iDuration,10,75);
       iDuration = iDuration * 6 * 1000;  
-
 
       return iDuration;
    }  

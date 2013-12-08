@@ -4318,68 +4318,53 @@ messages:
             % Get weapon's numbers.
             iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
             iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
+
+            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
+            {
+               iStat = Send(self,@GetAim);         
+            }
+         
+            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_THRUST
+            {
+               iStat = Send(self,@GetAim);         
+            }
+         
+            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
+            {
+               if Send(self,@GetAim) > Send(self,@GetMight)
+               {
+                  iStat = Send(self,@GetAim);         
+               }
+               else
+               {
+                  iStat = Send(self,@GetMight);  
+               }
+            }
+         
+            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
+            {
+               if Send(self,@GetAim) > Send(self,@GetAgility)
+               {
+                  iStat = Send(self,@GetAim);         
+               }
+               else
+               {
+                  iStat = Send(self,@GetAgility);  
+               }
+            }
+            
+            if oWeapon = SID_ICY_FINGERS OR oWeapon = SID_TOUCH_OF_FLAME OR oWeapon = ZAP OR
+            oWeapon = SID_HOLY_TOUCH OR oWeapon = SID_ACID_TOUCH
+            {
+               iStat = Send(self,@GetAim);         
+            }
          }
          else
          {
             % Unarmed
             iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
             iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
-         }
-         
-         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
-         {
-         iStat = Send(self,@GetAim);         
-         }
-         
-         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_THRUST
-         {
-         iStat = Send(self,@GetAim);         
-         }
-         
-         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
-         {
-            if Send(self,@GetAim) > Send(self,@GetMight)
-            {
-               iStat = Send(self,@GetAim);         
-            }
-            else
-            {
-               iStat = Send(self,@GetMight);  
-            }
-         }
-         
-         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
-         {
-            if Send(self,@GetAim) > Send(self,@GetAgility)
-            {
-               iStat = Send(self,@GetAim);         
-            }
-            else
-            {
-               iStat = Send(self,@GetAgility);  
-            }
-         }
-         
-         % Punch might be a touchspell or brawling. 
-         % A touchspell's chance to hit is based on aim or myst.
-         % The chance to hit while brawling is based on might.
-         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_PUNCH
-         {
-            if oWeapon <> $
-            {
-               if Send(self,@GetAim) > Send(self,@GetMysticism)
-               {
-                  iStat = Send(self,@GetAim);         
-               }
-               else
-               {
-                  iStat = Send(self,@GetMysticism);  
-               }
-            }
-            else
-            {
-               iStat = Send(self,@GetMight);
-            }
+            iStat = Send(self,@GetMight);
          }
          
          iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iStat*20) + (piBase_Max_Health*2);

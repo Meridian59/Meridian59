@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
    % How much health does the caster get back?
-   DAMAGE_FACTOR_TO_HEAL = 2
+   DAMAGE_FACTOR_TO_HEAL = 3
 
 resources:
 
@@ -26,7 +26,7 @@ resources:
       "life for the caster.  Reagents unknown."
 
    VampiricDrain_death = "You drain the last bit of %s%s's life force."
-   VampiricDrain_health_gain = "You siphon your victim's life force, gaining (~B%i~B) health."
+   VampiricDrain_health_gain = "You siphon your victim's life force, gaining ~g~B%i~B~n health."
 
    VampiricDrain_sound = qvtouch.wav
 
@@ -54,10 +54,10 @@ classvars:
 
 properties:
 
-   piDamageMin = 12
-   piDamageMax = 18
+   piDamageMin = 6
+   piDamageMax = 9
 
-   piRange = 4
+   piRange = 10
 
    % No bonus from Mana Focus
    piManaFocusBonus = 0
@@ -86,12 +86,12 @@ messages:
       if damage <> $
       {
          % Add half of the damage done.
-         iToHeal = bound(damage/DAMAGE_FACTOR_TO_HEAL,1,$);
+         iToHeal = bound(damage*DAMAGE_FACTOR_TO_HEAL,1,$);
       }
       else
       {
          % Ah!  We killed someone.  Give them a large bonus based on max damage.
-         iToHeal = bound(piDamageMax/DAMAGE_FACTOR_TO_HEAL,1,$);
+         iToHeal = bound(piDamageMax*DAMAGE_FACTOR_TO_HEAL,1,$);
          Post(who,@MsgSendUser,#message_rsc=VampiricDrain_death,
               #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
       }

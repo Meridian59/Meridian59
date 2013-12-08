@@ -23,9 +23,7 @@ resources:
    frozjewel_desc_rsc = \
       "This gem was created by the great alchemist, Froz, in a secret process "
       "known only to him.  Rumor has it that it is a conduit for mystical "
-      "aggression, that allows its user to channel their magical energy into "
-      "devastating touch spells.  Obviously, this would hinder the caster when "
-      "trying to use said energy for less destructive purposes.  "
+      "aggression, using raw mana to boost elemental touch spells.  "
       "Your hand tingles when you hold it."
 
    frozjewel_desc_broken_rsc = "The jewel seems ordinary and dull."
@@ -40,8 +38,8 @@ classvars:
    viUse_type = ITEM_USE_HAND
    viUse_amount = 1
 
-   viHits_init_min = 750
-   viHits_init_max = 1250
+   viHits_init_min = 150
+   viHits_init_max = 250
 
    viValue_average = 400
    viBulk = 10
@@ -69,12 +67,42 @@ messages:
          return hit_roll;
       }
 
-      return hit_roll;
+      if IsClass(stroke_obj,&Spell)
+      {
+         Send(self,@DoFlash);
+      
+         return hit_roll + 150;
+      }
+      
+      return hit_roll + 50;
    }
    
    ModifyDamage(who = $, what = $, damage = $, stroke_obj=$)
    {
-      % all calculations are now done in touchatk.kod	
+      local i, iMana;
+      
+      if IsClass(stroke_obj,&Spell)
+      {
+         iMana = 0;
+         for i in send(who,@GetPlayerUsing)
+         {
+            if IsClass(i,&JewelOfFroz)
+            {
+               % First jewel = 1 mana cost.  Second = 2 mana each (4 total).
+               iMana = iMana + 1;
+            }
+         }
+
+         if Send(who,@LoseMana,#amount=iMana) <> 0
+         {
+            % Add big damage if we spent the mana.
+            return damage + Random(3,5);
+         }
+
+         % Add a small amount of damage.
+         return damage + Random(1,2);
+      }
+      
       return damage;
    }
 
@@ -118,16 +146,6 @@ messages:
       }
       
       return;
-   }
-
-   GetBaseSpellModifier(oSpell=$)
-   {
-      if oSpell <> $ AND send(oSpell,@GetSchool) = SS_FAREN
-      {
-         return 0;
-      }
-
-      return -20;
    }
 
 

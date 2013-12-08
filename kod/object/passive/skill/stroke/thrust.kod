@@ -15,11 +15,11 @@ constants:
    include blakston.khd
 
 resources:
-   thrust_name_rsc = "slash"
+   thrust_name_rsc = "thrust"
    thrust_icon_rsc = slashico.bgf
-   thrust_desc_rsc = "Slash is the most common weapon skill.  It helps you hit with melee weapons."
+   thrust_desc_rsc = "Thrusting is an essential skill for wielding a sword efficiently."
 
-   thrust_skill_intro = "Weaponcraft Lv. 1: The most basic skill of armed combat. A must for those who live by the blade."
+   thrust_skill_intro = "Weaponcraft Lv. 1: An advanced combat art that is employed when fighting with a sword."
 
 classvars:
 

@@ -4334,32 +4334,18 @@ messages:
          
             if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
             {
-               if Send(self,@GetAim) > Send(self,@GetMight)
-               {
-                  iStat = Send(self,@GetAim);         
-               }
-               else
-               {
-                  iStat = Send(self,@GetMight);  
-               }
+               iStat = (Send(self,@GetAim)+Send(self,@GetMight))/2;         
             }
          
             if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
             {
-               if Send(self,@GetAim) > Send(self,@GetAgility)
-               {
-                  iStat = Send(self,@GetAim);         
-               }
-               else
-               {
-                  iStat = Send(self,@GetAgility);  
-               }
+               iStat = (Send(self,@GetAim)+Send(self,@GetAgility))/2;         
             }
             
             if oWeapon = SID_ICY_FINGERS OR oWeapon = SID_TOUCH_OF_FLAME OR oWeapon = SID_ZAP OR
             oWeapon = SID_HOLY_TOUCH OR oWeapon = SID_ACID_TOUCH
             {
-               iStat = Send(self,@GetAim);         
+               iStat = Send(self,@GetMysticism);         
             }
          }
          else

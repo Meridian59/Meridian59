@@ -4390,7 +4390,7 @@ messages:
       
       Send(self,@MsgSendUser,#message_rsc=report_offense_rating,#parm1=iOffense);
 
-      return bound(iOffense,1,3000);
+      return bound(iOffense,1,4000);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4440,7 +4440,7 @@ messages:
       
       Send(self,@MsgSendUser,#message_rsc=report_defense_rating,#parm1=iDefense);
 
-      return bound(iDefense,1,3000);
+      return bound(iDefense,1,4000);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three

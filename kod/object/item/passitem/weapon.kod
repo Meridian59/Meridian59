@@ -24,59 +24,59 @@ constants:
    %  Edit these constants to tune weapon power
 
    % Hit modifiers
-   WEAPON_HITMOD_LOW  = 0
-   WEAPON_HITMOD_MID  = 75
-   WEAPON_HITMOD_HIGH = 125
+   WEAPON_HITMOD_STRIKE  = 0
+   WEAPON_HITMOD_THRUST  = 0
+   WEAPON_HITMOD_SLASH = 0
 
    % Damage, low to high range of damage.
-   WEAPON_DAMAGE_LOW_MIN  = 3
-   WEAPON_DAMAGE_LOW_MAX  = 8
+   WEAPON_DAMAGE_STRIKE_MIN  = 3
+   WEAPON_DAMAGE_STRIKE_MAX  = 8
 
-   WEAPON_DAMAGE_MID_MIN  = 4
-   WEAPON_DAMAGE_MID_MAX  = 8
+   WEAPON_DAMAGE_THRUST_MIN  = 3
+   WEAPON_DAMAGE_THRUST_MAX  = 8
 
-   WEAPON_DAMAGE_HIGH_MIN = 5
-   WEAPON_DAMAGE_HIGH_MAX = 11
+   WEAPON_DAMAGE_SLASH_MIN = 3
+   WEAPON_DAMAGE_SLASH_MAX = 8
 
    % Disarm bonus
-   WEAPON_DISARM_LOW  = -5
-   WEAPON_DISARM_MID  = 0
-   WEAPON_DISARM_HIGH = 10
+   WEAPON_DISARM_STRIKE  = 0
+   WEAPON_DISARM_THRUST  = 0
+   WEAPON_DISARM_SLASH = 0
 
    % Spell modifier, large negatives are bad.
-   WEAPON_SPELL_LOW  = -15
-   WEAPON_SPELL_MID  = -10
-   WEAPON_SPELL_HIGH = 0
+   WEAPON_SPELL_STRIKE  = 0
+   WEAPON_SPELL_THRUST  = 0
+   WEAPON_SPELL_SLASH = 0
 
    % Range of reach
-   WEAPON_RANGE_LOW  = 2
-   WEAPON_RANGE_MID  = 2
-   WEAPON_RANGE_HIGH = 3
+   WEAPON_RANGE_STRIKE  = 3
+   WEAPON_RANGE_THRUST  = 3
+   WEAPON_RANGE_SLASH = 3
 
    % Quality mods to number of hits
-   WEAPON_LOW_QUALITY_HITS  = -50
-   WEAPON_HIGH_QUALITY_HITS = 100
+   WEAPON_LOW_QUALITY_HITS  = 0
+   WEAPON_HIGH_QUALITY_HITS = 200
    WEAPON_NERUDITE_HITS = 200
 
    % Quality mods to hit modifier
    WEAPON_LOW_QUALITY_HITMOD  = 0
-   WEAPON_HIGH_QUALITY_HITMOD = 50
-   WEAPON_NERUDITE_HITMOD = 25
+   WEAPON_HIGH_QUALITY_HITMOD = 200
+   WEAPON_NERUDITE_HITMOD = 200
 
    % Quality mods to damage
-   WEAPON_LOW_QUALITY_DAMAGE  = -1
-   WEAPON_HIGH_QUALITY_DAMAGE = 1
-   WEAPON_NERUDITE_DAMAGE = 1
+   WEAPON_LOW_QUALITY_DAMAGE  = 0
+   WEAPON_HIGH_QUALITY_DAMAGE = 4
+   WEAPON_NERUDITE_DAMAGE = 4
 
    % Quality mods to disarming
-   WEAPON_LOW_QUALITY_DISARM  = -5
-   WEAPON_HIGH_QUALITY_DISARM = 5
-   WEAPON_NERUDITE_DISARM = 0
+   WEAPON_LOW_QUALITY_DISARM  = 0
+   WEAPON_HIGH_QUALITY_DISARM = 10
+   WEAPON_NERUDITE_DISARM = 10
 
    % Quality mods to spell modifier
-   WEAPON_LOW_QUALITY_SPELL  = 5
-   WEAPON_HIGH_QUALITY_SPELL = -5
-   WEAPON_NERUDITE_SPELL =  5
+   WEAPON_LOW_QUALITY_SPELL  = 0
+   WEAPON_HIGH_QUALITY_SPELL = -20
+   WEAPON_NERUDITE_SPELL =  -20
 
    % Quality mod to range
    WEAPON_LOW_QUALITY_RANGE  = 0
@@ -187,9 +187,9 @@ messages:
 
    % Type      Hit Mod     Damage     Disarm     Spell    Range
    % ----------------------------------------------------------
-   % Bludgeon   Mid         Mid        Low        High     Low
-   % Thrust     High        Low        High       Mid      High
-   % Slash      Low         High       Mid        Low      Mid
+   % Strike     Mid         Mid        Mid        Mid      Mid
+   % Thrust     Mid         Mid        Mid        Mid      Mid
+   % Slash      Mid         Mid        Mid        Mid      Mid
 
    % These aspects are defined with the appropriate constants in Blakston.khd
    % In general, High is desirable and Low is not.  So, a thrusting weapons hits
@@ -217,17 +217,17 @@ messages:
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iBaseHit = iBaseHit + WEAPON_HITMOD_MID;
+         iBaseHit = iBaseHit + WEAPON_HITMOD_STRIKE;
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iBaseHit = iBaseHit + WEAPON_HITMOD_HIGH;
+         iBaseHit = iBaseHit + WEAPON_HITMOD_THRUST;
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iBaseHit = iBaseHit + WEAPON_HITMOD_LOW;
+         iBaseHit = iBaseHit + WEAPON_HITMOD_SLASH;
       }
 
       % Weapon quality modifiers
@@ -271,17 +271,17 @@ messages:
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iDamage = random(WEAPON_DAMAGE_MID_MIN, WEAPON_DAMAGE_MID_MAX);
+         iDamage = random(WEAPON_DAMAGE_STRIKE_MIN, WEAPON_DAMAGE_STRIKE_MAX);
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iDamage = random(WEAPON_DAMAGE_LOW_MIN, WEAPON_DAMAGE_LOW_MAX);
+         iDamage = random(WEAPON_DAMAGE_THRUST_MIN, WEAPON_DAMAGE_THRUST_MAX);
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iDamage = random(WEAPON_DAMAGE_HIGH_MIN, WEAPON_DAMAGE_HIGH_MAX);
+         iDamage = random(WEAPON_DAMAGE_SLASH_MIN, WEAPON_DAMAGE_SLASH_MAX);
       }
 
       % Weapon quality modifiers
@@ -337,17 +337,17 @@ messages:
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iRange = WEAPON_RANGE_LOW;
+         iRange = WEAPON_RANGE_STRIKE;
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iRange = WEAPON_RANGE_HIGH;
+         iRange = WEAPON_RANGE_THRUST;
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iRange = WEAPON_RANGE_MID;
+         iRange = WEAPON_RANGE_SLASH;
       }
 
       % Weapon quality modifiers
@@ -377,17 +377,17 @@ messages:
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iDisarm = WEAPON_DISARM_LOW;
+         iDisarm = WEAPON_DISARM_STRIKE;
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iDisarm = WEAPON_DISARM_HIGH;
+         iDisarm = WEAPON_DISARM_THRUST;
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iDisarm = WEAPON_DISARM_MID;
+         iDisarm = WEAPON_DISARM_SLASH;
       }
 
       % Weapon quality modifiers
@@ -416,17 +416,17 @@ messages:
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iModifier = WEAPON_SPELL_HIGH;
+         iModifier = WEAPON_SPELL_STRIKE;
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iModifier = WEAPON_SPELL_MID;
+         iModifier = WEAPON_SPELL_THRUST;
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iModifier = WEAPON_SPELL_LOW;
+         iModifier = WEAPON_SPELL_SLASH;
       }
 
       % Weapon quality modifiers

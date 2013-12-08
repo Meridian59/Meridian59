@@ -32,10 +32,8 @@ messages:
    {
     plTreasure = [ [ &RedMushroom, 25 ],
                    [ &BlueMushroom, 20 ],
-                   [ &Snack, 16],
-                   [ &Emerald, 10 ],
-                   [ &Sapphire, 8 ],
-                   [ &Diamond,  6 ],
+                   [ &Snack, 15],
+                   [ &Money, 25 ],
                    [ &BlueDragonScale, 6],
                    [ &Ruby, 4],
                    [ &InkyCap, 4],

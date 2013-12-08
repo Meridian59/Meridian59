@@ -39,8 +39,8 @@ classvars:
    viWeight = 50
    viBulk = 40
 
-   vrWeapon_window_overlay = scimitar_window_overlay_rsc
-   vrWeapon_overlay = scimitar_player_overlay
+   vrWeapon_window_overlay = falchion_window_overlay_rsc
+   vrWeapon_overlay = falchion_player_overlay
 
    viGround_group = 1
    viInventory_group = 3

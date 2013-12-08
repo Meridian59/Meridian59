@@ -41,17 +41,17 @@ constants:
    % Disarm bonus
    WEAPON_DISARM_STRIKE  = 0
    WEAPON_DISARM_THRUST  = 0
-   WEAPON_DISARM_SLASH = 0
+   WEAPON_DISARM_SLASH = 5
 
    % Spell modifier, large negatives are bad.
-   WEAPON_SPELL_STRIKE  = 0
+   WEAPON_SPELL_STRIKE  = 10
    WEAPON_SPELL_THRUST  = 0
    WEAPON_SPELL_SLASH = 0
 
    % Range of reach
    WEAPON_RANGE_STRIKE  = 3
-   WEAPON_RANGE_THRUST  = 3
-   WEAPON_RANGE_SLASH = 3
+   WEAPON_RANGE_THRUST  = 2
+   WEAPON_RANGE_SLASH = 2
 
    % Quality mods to number of hits
    WEAPON_LOW_QUALITY_HITS  = 0
@@ -70,8 +70,8 @@ constants:
 
    % Quality mods to disarming
    WEAPON_LOW_QUALITY_DISARM  = 0
-   WEAPON_HIGH_QUALITY_DISARM = 10
-   WEAPON_NERUDITE_DISARM = 10
+   WEAPON_HIGH_QUALITY_DISARM = 5
+   WEAPON_NERUDITE_DISARM = 5
 
    % Quality mods to spell modifier
    WEAPON_LOW_QUALITY_SPELL  = 0
@@ -187,9 +187,9 @@ messages:
 
    % Type      Hit Mod     Damage     Disarm     Spell    Range
    % ----------------------------------------------------------
-   % Strike     Mid         Mid        Mid        Mid      Mid
-   % Thrust     Mid         Mid        Mid        Mid      Mid
-   % Slash      Mid         Mid        Mid        Mid      Mid
+   % Strike     0           0          0          10       2
+   % Thrust     0           0          0          0        3
+   % Slash      200         2          5          0        2
 
    % These aspects are defined with the appropriate constants in Blakston.khd
    % In general, High is desirable and Low is not.  So, a thrusting weapons hits

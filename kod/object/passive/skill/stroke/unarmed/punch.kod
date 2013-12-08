@@ -67,6 +67,12 @@ properties:
 
 messages:
 
+   GetRequisiteStat(who=$)
+   "Varies from skill to skill and spell to spell."
+   {
+      return Send(who,@GetMight);
+   }
+
    PlayerWasHitMsg(who=$,attacker=$,damage=$)
    "The stroke may choose it's own damage give or recieve message.  Otherwise"
    "player.kod will just choose a default."

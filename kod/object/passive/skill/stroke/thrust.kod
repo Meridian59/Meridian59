@@ -53,7 +53,7 @@ messages:
    GetRequisiteStat(who=$)
    "Varies from skill to skill and spell to spell."
    {
-      return Send(who,@GetAgility);
+      return Send(who,@GetAim);
    }
 
    GetAttackType(weapon_used=$)

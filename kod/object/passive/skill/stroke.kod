@@ -203,10 +203,14 @@ messages:
    FindDamage(weapon_used=$, who=$, victim=$)
    "We put this here so that we can vary a stroke's damage per weapon."
    {
-      local skill_ability, damage;
+      local iAbility, damage;
       
       % base weapon damage
       damage = send(weapon_used,@GetDamage,#who=who,#target=victim);
+      
+      % scale the basedamage with the attacker's ability in the stroke
+      iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
+      damage = damage * (50 + ((iAbility + 1) / 2)) / 100;
       
       % put in the individual skills factor
       damage = (damage*viDamage_factor)/100;
@@ -334,25 +338,23 @@ messages:
    DamageFactors(damage=0, who=$, weapon_used = $)
    "Different skills/strokes are affected by strength differently."
    {
-      local iDamage, might;
+      local might;
 
-      iDamage = damage;
-      % KLUDGEISH: this information should probably be in player.
       % Get weapon proficiency bonuses.
       if weapon_used <> $
       {
-         iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
       }
       else
       {
-         iDamage = iDamage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING))*viMaxProficiencyDamage/100;
+         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage/100;
       }
       
       % Get might damage bonus.
       might = send(who,@GetMight);
-      iDamage = (75+might)*iDamage/100;
+      damage = (75+might)*iDamage/100;
 
-      return iDamage;
+      return damage;
    }
 
    GetHitSound()

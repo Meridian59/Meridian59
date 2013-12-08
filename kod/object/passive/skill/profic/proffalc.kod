@@ -37,6 +37,11 @@ properties:
 
 messages:
 
+   GetRequisiteStat(who=$)
+   {
+      return send(who,@GetAgility);
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

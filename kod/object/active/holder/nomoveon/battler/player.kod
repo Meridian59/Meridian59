@@ -4321,31 +4321,33 @@ messages:
             % Get weapon's numbers.
             iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
             iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
-
-            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
-            {
-               iStat = Send(self,@GetAim);         
-            }
-         
-            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_THRUST
-            {
-               iStat = Send(self,@GetAim);         
-            }
-         
-            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
-            {
-               iStat = (Send(self,@GetAim)+Send(self,@GetMight))/2;         
-            }
-         
-            if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
-            {
-               iStat = (Send(self,@GetAim)+Send(self,@GetAgility))/2;         
-            }
             
             if oWeapon = SID_ICY_FINGERS OR oWeapon = SID_TOUCH_OF_FLAME OR oWeapon = SID_ZAP OR
             oWeapon = SID_HOLY_TOUCH OR oWeapon = SID_ACID_TOUCH
             {
-               iStat = Send(self,@GetMysticism);         
+               iStat = Send(self,@GetMysticism);
+            }   
+            else
+            {
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
+               {
+                  iStat = Send(self,@GetAim);         
+               }
+         
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_THRUST
+               {
+                  iStat = Send(self,@GetAim);         
+               }
+         
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
+               {
+                  iStat = (Send(self,@GetAim)+Send(self,@GetMight))/2;         
+               }
+         
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
+               {
+                  iStat = (Send(self,@GetAim)+Send(self,@GetAgility))/2;         
+               }
             }
          }
          else

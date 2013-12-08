@@ -34,7 +34,7 @@ classvars:
 
    viSchool = SKS_FENCING
    viSkill_Num = SKID_THRUST
-   viSkill_level = 3
+   viSkill_level = 1
    viChance_to_increase = 20
 
    viskillExertion = 2

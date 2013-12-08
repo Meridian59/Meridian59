@@ -78,6 +78,7 @@ config_table_type config_table[] =
 { CHANNEL_ERROR_DISK,     F, "ErrorDisk",     CONFIG_BOOL,  "No" },
 { CHANNEL_LOG_DISK,       F, "LogDisk",       CONFIG_BOOL,  "No" },
 { CHANNEL_FLUSH,          T, "Flush",         CONFIG_BOOL,  "No" },
+{ CHANNEL_GOD_DISK,       T, "GodDisk",       CONFIG_BOOL,  "Yes" },
 
 { GUEST_GROUP,            F, "[Guest]",       CONFIG_GROUP, "" },
 { GUEST_ACCOUNT,          F, "Account",       CONFIG_STR,   "GUEST" },

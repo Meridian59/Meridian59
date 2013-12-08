@@ -114,6 +114,7 @@ enum
    SENDMESSAGE = 11,
    POSTMESSAGE = 12,
 
+   GODLOG = 21,
    DEBUG = 22,
    ADDPACKET = 23,
    SENDPACKET = 24,

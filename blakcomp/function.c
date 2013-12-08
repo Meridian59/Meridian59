@@ -43,6 +43,7 @@ function_type Functions[] = {
 {"SendPacket",          SENDPACKET,      AEXPRESSION,   ANONE},
 {"SendCopyPacket",      SENDCOPYPACKET,  AEXPRESSION,   ANONE},
 {"ClearPacket",         CLEARPACKET,     ANONE},
+{"GodLog",		GODLOG,		 AEXPRESSIONS,	ANONE},
 {"Debug",		DEBUG,		 AEXPRESSIONS,	ANONE},
 {"GetInactiveTime",     GETINACTIVETIME, AEXPRESSION,   ANONE},
 {"DumpStack", DUMPSTACK, ANONE},

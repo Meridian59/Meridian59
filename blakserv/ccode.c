@@ -131,6 +131,29 @@ int C_ClearPacket(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
+int C_GodLog(int object_id,
+			 local_var_type *local_vars,
+			 int num_normal_parms,
+			 parm_node normal_parm_array[],
+			 int num_name_parms,
+			 parm_node name_parm_array[])
+{
+	char buf[2000];
+	val_type parameter1;
+	kod_statistics *kstat;
+	class_node *c;
+	kstat = GetKodStats();
+	c = GetClassByID(kstat->interpreting_class);
+
+	parameter1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+			normal_parm_array[1].value);
+
+	sprintf(buf,"Object %i (CLASS %s) Reports: %s\n"
+		,object_id,c->fname,GetClassDebugStr(c,parameter1.v.data));
+	gprintf(buf);
+	return NIL;
+}
+
 int C_Debug(int object_id,local_var_type *local_vars,
 			int num_normal_parms,parm_node normal_parm_array[],
 			int num_name_parms,parm_node name_parm_array[])

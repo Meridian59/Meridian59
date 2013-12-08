@@ -4322,12 +4322,7 @@ messages:
             iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
             iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
             
-            if oWeapon = SID_ICY_FINGERS OR oWeapon = SID_TOUCH_OF_FLAME OR oWeapon = SID_ZAP OR
-            oWeapon = SID_HOLY_TOUCH OR oWeapon = SID_ACID_TOUCH
-            {
-               iStat = Send(self,@GetMysticism);
-            }   
-            else
+            if IsClass(oWeapon,&Weapon)
             {
                if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
                {
@@ -4349,6 +4344,10 @@ messages:
                   iStat = (Send(self,@GetAim)+Send(self,@GetAgility))/2;         
                }
             }
+            else
+            {
+               iStat = Send(self,@GetMysticism);
+            }   
          }
          else
          {

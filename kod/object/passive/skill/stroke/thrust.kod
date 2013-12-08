@@ -62,15 +62,9 @@ messages:
       local stat;
 
       % Get weapon proficiency bonuses.
-      if weapon_used <> $
-      {
-         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
-      }
-      else
-      {
-         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage/100;
-      }
-      
+
+      damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+
       % Get stat damage bonus.
       if send(who,@GetMight) > send(who,@GetAim)
       {

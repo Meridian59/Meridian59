@@ -4847,6 +4847,7 @@ messages:
       plItemTemplates = cons(create(&RiijaSword),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeSword),plItemTemplates);
       plItemTemplates = cons(create(&Mace),plItemTemplates);
+      plItemTemplates = cons(create(&Falchion),plItemTemplates);
       plItemTemplates = cons(create(&Scimitar),plItemTemplates);
       plItemTemplates = cons(create(&Hammer),plItemTemplates);
       plItemTemplates = cons(create(&Axe),plItemTemplates);

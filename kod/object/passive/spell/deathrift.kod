@@ -1,0 +1,160 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DeathRift is Spell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DeathRift_name_rsc = "death rift"
+   DeathRift_icon_rsc = ideadoor.bgf
+   DeathRift_desc_rsc = \
+      "By calling upon a pact with the most ancient of dark forces, "
+      "the truest disciples of Qor may traverse the fiery pits of the "
+      "Underworld while still retaining life. The interdimensional "
+      "pathways can lead Qor's favored to many locations, including "
+      "one dedicated destination of their choosing."
+      "Requires a large number of dark angel feathers to cast."
+
+   DeathRift_sound = qdthdoor.wav
+
+   DeathRift_no_angeled = "You cannot call upon such an evil pact while your guardian angel watches over you."
+   DeathRift_bind = "You leave a smattering of blood at the ground beneath your feet, binding a small part of your soul to this location."
+   DeathRift_travel = "A vast passage of flames opens, and you find yourself pulled to the Underworld!"
+   DeathRift_generic_fail = "The evil pact's magic fails. Something seems amiss."
+   DeathRift_warning = "~BYou sense a nearby connection forming between dimensions!"
+   
+classvars:
+
+   vrName = DeathRift_name_rsc
+   vrIcon = DeathRift_icon_rsc
+   vrDesc = DeathRift_desc_rsc
+   
+   viSpell_num = SID_DEATH_RIFT
+   viSchool = SS_QOR
+   viSpell_level = 6
+   viMana = 20
+   viSpellExertion = 50
+   viCast_time = 60000
+
+   viChance_To_Increase = 10
+
+   vrSucceed_wav = DeathRift_sound
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&DarkAngelFeather,6],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local oRoom;
+
+      if who = $
+      {
+         return false;
+      }
+      
+      if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         Send(who,@MsgSendUser,#message_rsc = DeathRift_no_angeled);
+         return false;
+      }
+      
+      oRoom = Send(who,@GetOwner);
+      
+      if oRoom = $
+         OR NOT Send(oRoom,@CanHavePlayerPortal)
+         OR Send(oRoom, @GetRegion) = RID_NEWB_BASE
+         OR Send(oRoom, @GetRegion) = RID_GUEST_BASE
+      {
+         Send(who,@MsgSendUser,#message_rsc = DeathRift_generic_fail);
+         return false;
+      }
+      
+      propagate;
+   }
+
+   GetTranceTime(iSpellpower=0,who=$)
+   {
+      return bound(viCast_time-(iSpellpower*500),10000,60000);
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+      local poOwner, oTargetRoom, i, each_active;
+
+      poOwner = Send(who,@GetOwner);
+      
+      if poOwner = $
+      {
+         return;
+      }
+      
+      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+         AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+      {
+         Send(who,@MsgSendUser,#message_rsc=DeathRift_travel);
+         
+         oTargetRoom = Send(SYS,@FindRoomByNum,#num=Send(who,@GetBoundLocationRoomNum));
+         if oTargetRoom <> $
+         {
+            for i in Send(oTargetRoom,@GetHolderActive)
+            {
+               each_active = Send(oTargetRoom,@HolderExtractObject,#data=i);
+               if IsClass(each_active,&Player)
+               {
+                  Send(each_active,@MsgSendUser,#message_rsc=DeathRift_warning);
+                  Send(each_active,@WaveSendUser,#row=Send(who,@GetBoundLocationRow),
+                       #col=Send(who,@GetBoundLocationCol),#wave_rsc=DeathRift_sound);
+               }
+            }
+         }
+         
+         Post(who,@UserGotoDeadRoom);
+         Post(who,@SetDeathRiftProtection,#value=TRUE);
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=DeathRift_bind);
+         Send(who,@BindPlayerToCurrentLocation);
+      }
+
+      propagate;
+   }
+
+   SuccessChance(who=$)
+   {
+      return true;
+   }
+
+   SpellBannedInArena()
+   {
+      return true;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

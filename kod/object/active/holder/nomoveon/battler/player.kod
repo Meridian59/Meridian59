@@ -1,4 +1,5 @@
 % Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -953,6 +954,17 @@ properties:
    % List of integer years in which the player has donated money to the game.
    % Used to construct a string for their description.
    plDonationYears = $
+
+   % Some spells let players choose teleport destinations by binding a location.
+   piBound_Room = $
+   piBound_row = 0
+   piBound_col = 0
+   piBound_fine_row = 0
+   piBound_fine_col = 0
+   piBound_angle = ANGLE_SOUTH
+   
+   % Is the player currently using a Death Rift spell?
+   pbDeath_rift = FALSE
 
 messages:
 
@@ -8029,6 +8041,13 @@ messages:
    {
       local iAmount, bLostHealth, i;
       
+      if Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         % Leaving the Underworld while protected, no penalties
+         % Protection is removed in NewOwner to allow them to log off without penalties.
+         return;
+      }
+      
       if Send(SYS,@GetChaosNight)
       {
          % Remove any revenants.
@@ -8075,6 +8094,10 @@ messages:
                bLostHealth = TRUE;
             }
          }
+      }
+      else
+      {
+         return;
       }
 
       if Send(self,@CheckLog) 
@@ -12326,6 +12349,99 @@ messages:
    GetLoadoutList()
    {
       return plLoadout_list;
+   }
+   
+   BindPlayerToCurrentLocation()
+   "Saves the player's current location as a special teleport destination."
+   {
+      local poOwner;
+      
+      poOwner = Send(self,@GetOwner);
+      
+      if poOwner = $
+      {
+         return;
+      }
+
+      piBound_Room = Send(poOwner,@GetRoomNum);
+      piBound_row = Send(self,@GetRow);
+      piBound_col = Send(self,@GetCol);
+      piBound_fine_row = Send(self,@GetFineRow);
+      piBound_fine_col = Send(self,@GetFineCol);
+      piBound_angle = Send(self,@GetAngle);
+
+      return;
+   }
+
+   SendPlayerToBoundLocation()
+   "Sends the player to their saved teleport destination."
+   {
+      local poOwner;
+      
+      poOwner = Send(self,@GetOwner);
+      
+      if poOwner = $
+         OR piBound_Room = $
+         OR NOT Send(self,@IsLoggedOn)
+      {
+         return;
+      }
+
+      Send(SYS,@UtilGoNearSquare,#what=self,
+           #where=Send(SYS,@FindRoomByNum,#num=piBound_room),
+           #new_row=piBound_row,#new_col=piBound_col,
+           #fine_row=piBound_fine_row,#fine_col=piBound_fine_col,
+           #new_angle=piBound_angle, #max_distance=3);
+      
+      return;
+   }
+
+   GetBoundLocationName()
+   {
+      if piBound_room <> $
+      {
+         return Send(Send(SYS,@FindRoomByNum,#num=piBound_room),@GetName);
+      }
+      return $;
+   }
+   
+   GetBoundLocationRoomNum()
+   {
+      return piBound_room;
+   }
+
+   GetBoundLocationRow()
+   {
+      return piBound_row;
+   }
+
+   GetBoundLocationCol()
+   {
+      return piBound_col;
+   }
+   
+   SetDeathRiftProtection(value=FALSE)
+   {
+      if value=TRUE
+         AND Send(self,@GetOwner) <> $
+         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      {
+         % Only allow Death Rift Protection for those already logged on and in the Underworld
+         pbDeath_rift = TRUE;
+         return;
+      }
+
+      if value=FALSE
+      {
+         pbDeath_rift = FALSE;
+      }
+
+      return;
+   }
+   
+   GetDeathRiftProtection()
+   {
+      return pbDeath_rift;
    }
 
 end

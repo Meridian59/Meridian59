@@ -24,6 +24,6 @@ BOFS = heal.bof atakspel.bof rescue.bof earthqua.bof \
        holysymb.bof finlrite.bof fdeath.bof multicst.bof \
        summtwin.bof brthlife.bof glow.bof seance.bof \
        sweep.bof mysttch.bof relay.bof distill.bof \
-       dazzle.bof purge.bof elusion.bof walspell.bof utility.bof
+       dazzle.bof purge.bof elusion.bof walspell.bof deathrift.bof
 
 !include $(KODDIR)\kod.mak

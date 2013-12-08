@@ -166,6 +166,28 @@ messages:
    {
       return TRUE;
    }
+   
+   DamageFactors(damage=0, who=$, weapon_used = $)
+   "Different skills/strokes are affected by strength differently."
+   {
+      local stat;
+
+      % Get weapon proficiency bonuses.
+      if weapon_used <> $
+      {
+         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      }
+      else
+      {
+         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage/100;
+      }
+      
+      % Get stat damage bonus.
+      stat = send(who,@GetAim);
+      damage = (75+stat)*iDamage/100;
+
+      return damage;
+   }
 
 
 end

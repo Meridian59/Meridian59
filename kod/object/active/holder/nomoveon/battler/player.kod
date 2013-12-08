@@ -866,6 +866,10 @@ properties:
    % List of enchantments.
    % Each element is [ timer, object of spell, [optional state] ].
    plEnchantments = $
+   
+   % List of enchantments applied by radius spells.
+   % Each element is [song object, spellpower, caster]
+   plRadiusEnchantments = $
 
    % Attack modifiers to attack roll & damage (includes items & spells)
    plAttack_modifiers = $
@@ -2432,15 +2436,15 @@ messages:
    {
       local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
 
-      % Give the poor newbie an weapon and a bit of cash.
+      % Give the poor newbie a weapon, some reagents and a bit of food.
       Send(self,@NewHold,#what=Create(&Mace));
-      Send(self,@NewHold,#what=Create(&Money,#number=500));
+      Send(self,@AddReagentsForSpells,#iNumCasts=10);
+      Send(self,@NewHold,#what=Create(&Apple,#number=5));
 
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=2000));
-         Send(self,@AddReagentsForSpells);
+         Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
       return;
@@ -2467,11 +2471,12 @@ messages:
    {
       local lItems,oItem,iSchool;
 
-      % If player hasn't suicided in last 5 hours, give them cash and prizes!
+      % If player hasn't suicided in last 5 hours, give them cash and fancy clothes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=1000));
-         Send(self,@AddReagentsForSpells);
+         Send(self,@NewHold,#what=create(&InkyCap,#number=5));
+         Send(self,@NewHold,#what=Create(&PantsC));
+         Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
       }
 
       if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) 
@@ -3138,6 +3143,127 @@ messages:
       return;
    }
 
+   AddRadiusEnchantment(what=$,iPower=0,caster=$)
+   "Adds what and power to plRadiusEnchantments, which carry out spell effects."
+   {
+      plRadiusEnchantments = Cons([what,iPower,caster],plRadiusEnchantments);
+      Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
+      
+      return;
+   }
+
+   RemoveRadiusEnchantment(what=$,iPower=0,caster=$)
+   "Removes <what> from plRadiusEnchantments."
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = caster
+         {
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=ENCHANTMENT_ROOM);
+            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
+            bFound = TRUE;
+         }
+      }
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
+               plRadiusEnchantments);
+      }
+
+      return;
+   }
+   
+   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
+   "Returns whether or not currently enchanted by <what> radius enchantment."
+   {
+      local i;
+      
+      if plRadiusEnchantments = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plRadiusEnchantments
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         for i in plRadiusEnchantments
+         {
+            if Nth(i,1) = what
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+   
+   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+   {
+      local i, oHighest;
+   
+      oHighest = $;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(Nth(i,1), byClass)
+         {
+            if oHighest = $
+            {
+               oHighest = i;
+            }
+            else
+            {
+               if Nth(i,2) > Nth(oHighest,2)
+               {
+                  oHighest = i;
+               }
+            }
+         }
+      }
+      return oHighest;
+   }
+   
+   GetRadiusEnchantments()
+   {
+      return plRadiusEnchantments;
+   }
+
    AddAttackModifier(what = $)
    "Adds <what> to plAttack_modifiers, which can modify attack strength and damage."
    {
@@ -3581,7 +3707,7 @@ messages:
 
       % Make sure room allows the attack. Check if room has special combat affects.
       if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
-                  #use_weapon=use_weapon,#stroke_obj=stroke_obj)
+                  #use_weapon=use_weapon,#stroke_obj=stroke_obj,#report=report)
       {
          return FALSE;
       }
@@ -4202,18 +4328,18 @@ messages:
          if oWeapon <> $
          {
             % Get weapon's numbers.
-            iStroke = Send(oWeapon,@GetStroke,#who=self);
-            iProficiency = Send(oWeapon,@GetProf,#who=self);
+            iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
+            iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
          }
          else
          {
             % Unarmed
-            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH);
-            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING);
+            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
+            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
+         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iAim*20) + (piBase_Max_Health*2);
 
          if oWeapon <> $
          {
@@ -4245,7 +4371,7 @@ messages:
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
 
-      return bound(iOffense,1,1000);
+      return bound(iOffense,1,3000);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4267,20 +4393,25 @@ messages:
          iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
-         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
+         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj) + 1;
          
          % Ask the shield, it might give a bonus to block.
-         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
+         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) + 1;
          
-         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
+         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj) + 1;
 
          iAgility = Send(self,@GetAgility);
-         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
+         iDefense = 200 + (iParry*5) + (iBlock*2) + (iDodge*3) + (iAgility*20) + (piBase_Max_Health*2);
       }
 
       for i in plDefense_modifiers
       {
          iDefense = Send(i,@ModifyDefensePower,#who=self,#what=what,#defense_power=iDefense);
+      }
+      
+      for i in plRadiusEnchantments
+      {
+         iDefense = Send(Nth(i,1),@ModifyDefensePower,#attacker=what,#iPower=Nth(i,2),#caster=Nth(i,3),#defense_power=iDefense);
       }
 
       iDefense = iDefense + Send(Send(SYS,@GetParliament),@GetFactionDefenseBonus,#who=self);
@@ -4288,7 +4419,7 @@ messages:
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
 
-      return bound(iDefense,1,1000);
+      return bound(iDefense,1,3000);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three
@@ -4542,7 +4673,13 @@ messages:
             Send(i,@DefendingHit,#who=self,#what=what);
          }
       
-         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);                             
+         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
+
+         for i in plRadiusEnchantments
+         {
+            iResistance = Send(Nth(i,1),@ModifyResistance,#attacker=what,#atype=atype,#iPower=Nth(i,2),#caster=Nth(i,3),#resistance=iResistance);
+         }
+         
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
 
          % Add attmods AFTER resistance/suscep mods.    
@@ -7245,11 +7382,6 @@ messages:
               #wave_rsc=player_improved_wav_rsc);
       }
       
-      if iChange > 0 
-      {
-         Send(self,@AddAdvancementPoints,#number=amount);
-      }
-      
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools
@@ -7606,14 +7738,14 @@ messages:
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 2;
+               gain = 3;
                roll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 1;
+               gain = 2;
                roll = TRUE;
             }
          }
@@ -7638,7 +7770,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health < 26 and random(20,bound(piBase_Max_health,20,25)) = 20
+         if piBase_Max_health = PKILL_ENABLE_HP
          {
             gain = gain + 1;
          }
@@ -7652,7 +7784,7 @@ messages:
             roll = FALSE;
          }
 
-         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,100);
+         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,500);
          gain = gain * gainmult;
 
          piGain_chance = piGain_chance + gain;
@@ -12284,6 +12416,8 @@ messages:
 
    SendLightingInformation()
    {
+      local oLightObject, iColor, iIntensity;
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12298,6 +12432,26 @@ messages:
       {
          % A bit of a kludge.  Ideally, we should query the objects we are using
          %  to find out if any want to add lighting information to us.
+         if plRadiusEnchantments <> $
+         {
+            for oLightObject in plRadiusEnchantments
+            {
+               if Nth(oLightObject,3) = self
+               {
+                  if (piDrawFX & FLICKERING_YES)
+                  {
+                      iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
+                      iColor = Send(Nth(oLightObject,1),@GetLightColor);
+                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+                      AddPacket(1,iIntensity);
+                      AddPacket(2,iColor);
+
+                      return;
+                  }
+               }
+            }
+         }
+
          if (piDrawFX & FLICKERING_YES)
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));

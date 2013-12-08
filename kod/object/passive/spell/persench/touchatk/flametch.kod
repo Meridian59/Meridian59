@@ -71,10 +71,10 @@ classvars:
 
    viHit_Factor = 25
 
-   viMin_Damage = 4
-   viMax_Damage = 9
+   viMin_Damage = 3
+   viMax_Damage = 8
 
-   viRange = 2
+   viRange = 3
 
    viSpellType = ATCK_SPELL_FIRE + ATCK_SPELL_ALL
    viStroke = STROKE_TOUCH_OF_FLAME
@@ -98,6 +98,15 @@ messages:
       return;
    }
 
+  GetProf(who=$)
+  {
+     local iProf;
+      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
+     
+     iProf = Send(who,@GetSpellAbility,#spell_num=SID_MANA_FOCUS);
+     
+     return iProf;
+  }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -594,6 +594,7 @@ char * name_function(int fnum)
    case DELLISTELEM : return "DelListElem";
 
    case GETTIME : return "GetTime";
+   case GETTICKCOUNT : return "GetTickCount";
 
    case RANDOM  : return "Random";
    default : sprintf(s,"Unknown function %i",fnum); return s;

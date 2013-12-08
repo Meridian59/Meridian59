@@ -13,7 +13,6 @@ Zombie is Monster
 constants:
 
    include blakston.khd
-   DEMENTIA_CHANCE = 5
 
 resources:
 
@@ -129,18 +128,6 @@ messages:
       % if no body animation
       
       propagate;
-   }
-
-   HitSideEffect( what = $ )
-   {
-      local oSpell;
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
-      if not Send(what,@IsEnchanted,#what=oSpell) 
-      and Random(1,DEMENTIA_CHANCE) = 1
-      {
-	 Send(oSpell,@MakeSick,#who=what);
-      }
-      return;
    }
 
    IsUndead()

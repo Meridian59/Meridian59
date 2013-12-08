@@ -160,6 +160,7 @@ enum
    FINDLISTELEM = 111,
 
    GETTIME = 120,
+   GETTICKCOUNT = 121,
 
    ABS = 131,
    BOUND = 132,

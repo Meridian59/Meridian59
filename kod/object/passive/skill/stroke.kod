@@ -350,7 +350,7 @@ messages:
       
       % Get might damage bonus.
       might = send(who,@GetMight);
-      iDamage = ((100+bound(might-25,0,40))*iDamage)/100;
+      iDamage = (75+might)*iDamage/100;
 
       return iDamage;
    }

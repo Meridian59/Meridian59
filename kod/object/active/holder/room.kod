@@ -913,6 +913,37 @@ messages:
       return RID_DEFAULT;
    }
 
+   GetCurrentRegionHomeroom()
+   "Returns the RID of the region's default safe location.\n"
+   "Regions without safe rooms will default to Cor Noth inn."
+   {
+      local iRegion;
+      
+      iRegion = Send(self,@GetRegion);
+      
+      if iRegion = RID_GUEST_BASE
+      {
+         return RID_GUEST1;
+      }
+
+      if iRegion = RID_OUTOFGRACE
+      {
+         return RID_OUTOFGRACE;
+      }
+
+      if iRegion = RID_NEWB_BASE
+      {
+         return RID_NEWB1;
+      }
+
+      if iRegion = RID_KOCATAN
+      {
+         return RID_KOC_INN;
+      }
+
+      return RID_COR_INN;
+   }
+
    CreateYellZoneList()
    "Creates a list of room ID numbers (RIDs) that yells are extended to.  Does "
    "this by traversing plExits and plEdge_exits. Additional exits hardcoded "
@@ -1193,7 +1224,7 @@ messages:
       return n;
    }
 
-   ReqSomethingAttack(what = $,victim = $,use_weapon = $)
+   ReqSomethingAttack(what = $,victim = $,use_weapon = $,report = TRUE)
    {
       local oWatcher;
 
@@ -1231,14 +1262,20 @@ messages:
       {
          if IsClass(what,&Player)
          {
-            Send(what,@MsgSendUser,#message_rsc=room_no_mob_attack);
+            if report
+            {
+               Send(what,@MsgSendUser,#message_rsc=room_no_mob_attack);
+            }
          }
          return FALSE;
       }
 
       if (piRoom_flags & ROOM_NO_COMBAT)
       {
-         Send(what,@MsgSendUser,#message_rsc=room_no_attack);
+         if report
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_no_attack);
+         }
 
          return FALSE;
       }
@@ -1246,7 +1283,10 @@ messages:
       if (piRoom_flags & ROOM_NO_PK) AND IsClass(what,&Player)
          AND (victim = $ OR IsClass(victim,&Player))
       {
-         Send(what,@MsgSendUser,#message_rsc=room_no_pk_allowed);
+         if report
+         {
+            Send(what,@MsgSendUser,#message_rsc=room_no_pk_allowed);
+         }
 
          return FALSE;
       }
@@ -1254,10 +1294,13 @@ messages:
       if (piRoom_flags & ROOM_GUILD_PK_ONLY) AND IsClass(what,&Player)
          AND (victim = $ OR IsClass(victim,&Player))
       {
-         if (NOT Send(self,@AllowGuildAttack,#what=what,#victim=victim))
+         if (NOT Send(self,@AllowGuildAttack,#what=what,#victim=victim,#report=report))
             AND Send(SYS,@IsPKAllowed)
          {
-            Send(what,@MsgSendUser,#message_rsc=room_guild_combat);
+            if report
+            {
+               Send(what,@MsgSendUser,#message_rsc=room_guild_combat);
+            }
 
             return FALSE;
          }
@@ -1266,7 +1309,7 @@ messages:
       propagate;
    }
 
-   AllowGuildAttack(what = $, victim = $)
+   AllowGuildAttack(what = $, victim = $,report = TRUE)
    "Returns TRUE if you can attack in ROOM_GUILD_PK_ONLY locations."
    {
       local oSoldierShield, oOtherShield;
@@ -1813,6 +1856,15 @@ messages:
       {
          each_obj = Nth(i,2);
          Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
+      }
+      
+      if IsClass(what,&User)
+      {
+         for i in Send(what,@GetRadiusEnchantments)
+         {
+            each_obj = Nth(i,1);
+            Send(what,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_ROOM);
+         }
       }
 
       return;

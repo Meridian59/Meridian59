@@ -2089,6 +2089,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case DELLISTELEM : strcpy(c_name, "DelListElem"); break;
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
+		case GETTICKCOUNT : strcpy(c_name, "GetTickCount"); break;
 		case ABS : strcpy(c_name, "Abs"); break;
 		case BOUND : strcpy(c_name, "Bound"); break;
 		case SQRT : strcpy(c_name, "Sqrt"); break;

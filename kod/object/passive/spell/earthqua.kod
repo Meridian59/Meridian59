@@ -326,7 +326,17 @@ messages:
        % viZero_damage_distance, and an amount that falls off with distance
        % between the two.
        iPercent = 100;
-       iDistance_squared = Send(who, @SquaredDistanceTo, #what=target);
+       
+       if who <> $
+       {
+          iDistance_squared = Send(who, @SquaredDistanceTo, #what=target);
+       }
+       else
+       {
+          % Full damage for earthquakes without a caster
+          iDistance_squared = 0;
+       }
+       
        iMax_distance_squared = viMax_damage_distance * viMax_damage_distance;
        iZero_distance_squared = viZero_damage_distance * viZero_damage_distance;
        if iDistance_squared > iMax_distance_squared

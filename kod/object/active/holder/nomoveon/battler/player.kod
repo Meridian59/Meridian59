@@ -4298,7 +4298,7 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iStat, iOffense, oMonster;
 
       oWeapon = $;
 
@@ -4325,9 +4325,64 @@ messages:
             iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
             iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
          }
-
-         iAim = Send(self,@GetAim);
-         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iAim*20) + (piBase_Max_Health*2);
+         
+         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
+         {
+         iStat = Send(self,@GetAim);         
+         }
+         
+         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_THRUST
+         {
+         iStat = Send(self,@GetAim);         
+         }
+         
+         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
+         {
+            if Send(self,@GetAim) > Send(self,@GetMight)
+            {
+               iStat = Send(self,@GetAim);         
+            }
+            else
+            {
+               iStat = Send(self,@GetMight);  
+            }
+         }
+         
+         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
+         {
+            if Send(self,@GetAim) > Send(self,@GetAgility)
+            {
+               iStat = Send(self,@GetAim);         
+            }
+            else
+            {
+               iStat = Send(self,@GetAgility);  
+            }
+         }
+         
+         % Punch might be a touchspell or brawling. 
+         % A touchspell's chance to hit is based on aim or myst.
+         % The chance to hit while brawling is based on might.
+         if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_PUNCH
+         {
+            if oWeapon <> $
+            {
+               if Send(self,@GetAim) > Send(self,@GetMysticism)
+               {
+                  iStat = Send(self,@GetAim);         
+               }
+               else
+               {
+                  iStat = Send(self,@GetMysticism);  
+               }
+            }
+            else
+            {
+               iStat = Send(self,@GetMight);
+            }
+         }
+         
+         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iStat*20) + (piBase_Max_Health*2);
 
          if oWeapon <> $
          {

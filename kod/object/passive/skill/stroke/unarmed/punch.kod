@@ -97,6 +97,22 @@ messages:
            #parm1=send(victim,@getCapdef),#parm2=send(victim,@getname));
       return TRUE;
    }
+   
+   DamageFactors(damage=0, who=$, weapon_used = $)
+   "Different skills/strokes are affected by different stats differently."
+   {
+      local stat;
+
+      % Get proficiency and might bonus if no weapon or touchspell is used.
+      if weapon_used = $
+      {
+         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage/100;
+         stat = send(who,@GetMight);
+         damage = (75+stat)*iDamage/100;
+      }
+      
+      return damage;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

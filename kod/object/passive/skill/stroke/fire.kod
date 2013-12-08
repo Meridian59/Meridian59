@@ -178,7 +178,7 @@ messages:
       
       % Get stat damage bonus.
       stat = send(who,@GetAim);
-      damage = (75+stat)*iDamage/100;
+      damage = (75+stat)*damage/100;
 
       return damage;
    }

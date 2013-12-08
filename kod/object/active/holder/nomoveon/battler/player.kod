@@ -7370,11 +7370,6 @@ messages:
               #wave_rsc=player_improved_wav_rsc);
       }
       
-      if iChange > 0 
-      {
-         Send(self,@AddAdvancementPoints,#number=amount);
-      }
-      
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools

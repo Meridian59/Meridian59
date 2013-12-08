@@ -50,6 +50,12 @@ properties:
 
 messages:
 
+   GetRequisiteStat(who=$)
+   "Varies from skill to skill and spell to spell."
+   {
+      return Send(who,@GetAgility);
+   }
+
    GetAttackType(weapon_used=$)
    {
       local i;

@@ -74,7 +74,7 @@ messages:
       {
          stat = send(who,@GetAgility);
       }
-      damage = (75+stat)*iDamage/100;
+      damage = (75+stat)*damage/100;
 
       return damage;
    }

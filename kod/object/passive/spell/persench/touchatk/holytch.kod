@@ -70,8 +70,8 @@ classvars:
 
    viHit_Factor = 15
 
-   viMin_Damage = 3
-   viMax_Damage = 6
+   viMin_Damage = 2
+   viMax_Damage = 7
 
    viRange = 2
 
@@ -99,34 +99,15 @@ messages:
       return;
    }
 
-   DamageFactors(damage=0, who=$, victim=$)
-   "Damage for attack spells is determined largely by expertise in the spell."
-   {
-      local iDamage, iKarma;
-
-      iDamage = damage;
-
-      % Avoid the condition of checking damage on a nil victim (like when
-      %  just querying average damage).
-      if victim <> $
-      {
-         if Send(victim,@IsUndead)
-         {
-            % Automatically do extra 100% damage to undead.
-            iDamage = 2*iDamage;
-         }
-         else
-         {
-            % Reduce/increase damage by 50% depending on opponent's Karma.
-            % Use the detect option in case we're hitting an event monster.
-            iKarma = Send(victim,@GetKarma,#detect=TRUE);
-            iDamage = iDamage + ((-iKarma)*iDamage/200);
-         }
-      }
-
-      return iDamage;
-   }
-
+  GetProf(who=$)
+  {
+     local iProf;
+      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
+     
+     iProf = bound(Send(who,@GetKarma),1,99);
+     
+     return iProf;
+  }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

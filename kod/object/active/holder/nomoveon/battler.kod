@@ -16,7 +16,7 @@ constants:
 
    % What's the percent chance to hit if offense and defense are equal?
    % The higher this number is, the easier it is to hit in combat.
-   EQUAL_CHANCE_HIT = 500      
+   EQUAL_CHANCE_HIT = 55      
                               
    % Raise or lower this number to raise or lower the chance the 'avoids 
    %  your attack' message comes up.
@@ -40,9 +40,6 @@ resources:
    % battler_defender_hit - Psychochild's scimitar wounds you for (10) damage.
    % battler_defender_slay - Psychochild's scimitar slays you.
    % battler_defender_miss - Psychochild's attack is blocked by you.
-
-   battler_attacker_crit = "~k~IYou dealt a critical strike!"  
-   battler_defender_crit = "~r~IYou suffered a critical strike!"  
 
    battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage."       
    battler_attacker_slay = "%sYour %s %s %s%s."   
@@ -321,7 +318,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iDamage, oWeapon, iMultiplier;
+      local iChanceToHit, iDamage, oWeapon;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -334,35 +331,15 @@ messages:
                       * EQUAL_CHANCE_HIT)
                      / Send(what,@GetDefense,#what=self,
                             #stroke_obj=stroke_obj);
-      iChanceToHit = bound(iChanceToHit,125,2000);
-      iMultiplier = 1;
-
-      if iChanceToHit > 1000
+      iChanceToHit = bound(iChanceToHit,10,95);
+      if iChanceToHit >= random(1,100)
       {
-         if iChanceToHit >= random(1001,2000)
-         {
-            % We do double damage!
-            iMultiplier = 2;
-            
-            % Let us tell them the good news.
-            if IsClass(self,&Player)
-            {
-               Send(self,@MsgSendUser,#message_rsc=battler_attacker_crit);
-            }
-            
-            if IsClass(what,&Player)
-            {
-               Send(what,@MsgSendUser,#message_rsc=battler_defender_crit);
-            }
-         }
-         
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
                         #damage=Send(self,@GetDamage,#what=what,
                                      #stroke_obj=stroke_obj) * iMultiplier,
                         #atype=Send(self,@GetDamageType),
                         #aspell=Send(self,@GetSpellType));
-
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $
@@ -377,32 +354,8 @@ messages:
       }
       else
       {
-         if iChanceToHit >= random(1,1000)
-         {
-            % We hit!
-            iDamage = Send(what,@AssessDamage,#what=self,
-                           #damage=Send(self,@GetDamage,#what=what,
-                                        #stroke_obj=stroke_obj),
-                           #atype=Send(self,@GetDamageType),
-                           #aspell=Send(self,@GetSpellType));
-
-            Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
-                 #damage=iDamage);
-            if iDamage = $
-            {
-               Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
-                    #stroke_obj=stroke_obj);
-            }
-            else
-            {
-               Send(self,@DidDamage,#amount=iDamage,#what=what);
-            }
-         }
-         else
-         {
-            % Oops, a miss.  See if something happens.
-            Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
-         }
+         % Oops, a miss.  See if something happens.
+         Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
       }
 
       if poOwner <> $

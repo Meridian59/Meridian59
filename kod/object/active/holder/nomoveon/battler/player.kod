@@ -2436,14 +2436,15 @@ messages:
    {
       local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
 
-      % Give the poor newbie a weapon, some reagents and a bit of food.
+      % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
+      Send(self,@NewHold,#what=Create(&Money,#number=500));
       Send(self,@AddReagentsForSpells,#iNumCasts=10);
-      Send(self,@NewHold,#what=Create(&Apple,#number=5));
 
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
+         Send(self,@NewHold,#what=Create(&Money,#number=500));
          Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
@@ -2474,6 +2475,7 @@ messages:
       % If player hasn't suicided in last 5 hours, give them cash and fancy clothes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
+         Send(self,@NewHold,#what=Create(&Money,#number=1000));
          Send(self,@NewHold,#what=create(&InkyCap,#number=5));
          Send(self,@NewHold,#what=Create(&PantsC));
          Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));

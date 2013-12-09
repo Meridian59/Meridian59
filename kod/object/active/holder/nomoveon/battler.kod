@@ -330,10 +330,10 @@ messages:
 
       % This is the generic checks and the calculation of chance to hit and
       %  damage.
-
-      iChanceToHit = 500;
-      iChanceToHit = iChanceToHit * Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj);
-      iChanceToHit = iChanceToHit / Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj);
+      iChanceToHit = (Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj)
+                      * EQUAL_CHANCE_HIT)
+                     / Send(what,@GetDefense,#what=self,
+                            #stroke_obj=stroke_obj);
       iChanceToHit = bound(iChanceToHit,125,2000);
       iMultiplier = 1;
 
@@ -359,10 +359,10 @@ messages:
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
                         #damage=Send(self,@GetDamage,#what=what,
-                                     #stroke_obj=stroke_obj) * iMultiplier,
+                                     #stroke_obj=stroke_obj),
                         #atype=Send(self,@GetDamageType),
                         #aspell=Send(self,@GetSpellType));
-
+         iDamage = iDamage * iMultiplier;
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $
@@ -382,10 +382,10 @@ messages:
             % We hit!
             iDamage = Send(what,@AssessDamage,#what=self,
                            #damage=Send(self,@GetDamage,#what=what,
-                                        #stroke_obj=stroke_obj) * iMultiplier,
+                                        #stroke_obj=stroke_obj),
                            #atype=Send(self,@GetDamageType),
                            #aspell=Send(self,@GetSpellType));
-
+            iDamage = iDamage * iMultiplier;
             Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
                  #damage=iDamage);
             if iDamage = $
@@ -420,13 +420,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "Returns the battler's ability to-hit.  Ranges from 1 to 3000."
+   "Returns the battler's ability to-hit.  Ranges from 1 to 1000."
    {
       return 1;
    }
 
    GetDefense(what = $, stroke_obj=$)
-   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 3000."
+   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 1000."
    {
       return 1;
    }

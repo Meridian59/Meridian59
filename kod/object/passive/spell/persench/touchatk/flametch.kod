@@ -71,8 +71,8 @@ classvars:
 
    viHit_Factor = 25
 
-   viMin_Damage = 3
-   viMax_Damage = 8
+   viMin_Damage = 4
+   viMax_Damage = 9
 
    viRange = 3
 
@@ -98,15 +98,6 @@ messages:
       return;
    }
 
-  GetProf(who=$)
-  {
-     local iProf;
-      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
-     
-     iProf = Send(who,@GetSpellAbility,#spell_num=SID_MANA_FOCUS);
-     
-     return iProf;
-  }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

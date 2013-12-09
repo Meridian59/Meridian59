@@ -353,6 +353,16 @@ messages:
       propagate;
    }
 
+   GetDefense(what=$)
+   {
+      if pbImmortal
+      {
+         return 1000;
+      }
+      
+      propagate;
+   }
+
    AssessDamage(what = $,damage = $,stroke_obj=$)
    {
       if pbImmortal

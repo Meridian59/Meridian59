@@ -55,6 +55,7 @@
 #define MAX_STEP_HEIGHT (HeightKodToClient(24)) // Max vertical step size (FINENESS units)
 
 #define MOVE_INTERVAL  250            // Inform server once per this many milliseconds
+#define MOVE_THRESHOLD (FINENESS / 4)  // Inform server only of moves at least this large
 
 #define MIN_NOMOVEON (FINENESS / 4)   // Closest we can get to a nomoveon object
 #define MIN_HOTPLATE_DIST (FINENESS ) // Closest we can get to a hotplate before notification
@@ -818,7 +819,8 @@ void MoveUpdateServer(void)
 /************************************************************************/
 /*
  * MoveUpdatePosition:  Update the server's knowledge of our position.
- *   This procudure does not care about elapsed interval.
+ *   This procudure does not care about elapsed interval, but  
+ *   sends the update only when the position has changed at least a bit.
  */ 
 void MoveUpdatePosition(void)
 {
@@ -828,23 +830,27 @@ void MoveUpdatePosition(void)
    x = player.x;
    y = player.y;
 
-   // debug output
-   debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
+   // don't send update if we didn't move
+   if ((server_x - x) * (server_x - x) + (server_y - y) * (server_y - y) > MOVE_THRESHOLD)
+   {
+	   // debug output
+	   debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
    
-   // base walkspeed
-   speed = 18;
+	   // base walkspeed
+	   speed = 18;
    
-   // doubled on run
-   if (IsMoveFastAction(last_move_action))
-     speed *= 2;
+	   // doubled on run
+	   if (IsMoveFastAction(last_move_action))
+		 speed *= 2;
 
-   // send update
-   RequestMove(y, x, speed, player.room_id);
+	   // send update
+	   RequestMove(y, x, speed, player.room_id);
    
-   // save last sent position and tick
-   server_x = x;
-   server_y = y;
-   server_time = timeGetTime();
+	   // save last sent position and tick
+	   server_x = x;
+	   server_y = y;
+	   server_time = timeGetTime();
+   }
 }
 /************************************************************************/
 /*

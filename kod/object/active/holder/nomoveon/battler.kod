@@ -139,8 +139,11 @@ resources:
    battler_pierce_wound = "pierces"
    battler_pierce_nick = "grazes"
    
-   battle_summary = "~IIn this battle, you had a ~B%i~B percent chance to hit your enemy and a "
-                    "~B%i~B percent chance to avoid your enemy's attack!"
+   battle_summary = "~IIn this battle, you had a ~B%i~n~I percent chance to %s your enemy and a "
+                    "~B%i~n~I percent chance to get %s by your enemy's attack!"
+                    
+   summary_string_hit = "hit"
+   summary_string_crit = "crit"
 
 classvars:
 
@@ -324,7 +327,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iChanceToGetHit, iDamage, oWeapon, iMultiplier;
+      local iChanceToHit, iChanceToGetHit, iDamage, oWeapon, iMultiplier, iHitPercent, iGetHitPercent;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -339,10 +342,29 @@ messages:
                             #stroke_obj=stroke_obj);
       iChanceToHit = bound(iChanceToHit,125,2000);
       
+      if iChanceToHit > 1000
+      {
+         iHitpercent = (iChanceToHit/10)-100;
+      }
+      else
+      {
+         iHitpercent = (iChanceToHit/10);
+      }   
+         
       iChanceToGetHit = (Send(what,@GetOffense,#what=what,#stroke_obj=stroke_obj)
                       * EQUAL_CHANCE_HIT)
                      / Send(self,@GetDefense,#what=self,
                             #stroke_obj=stroke_obj);
+      iChanceToGetHit = bound(iChanceToGetHit,125,2000);
+      
+      if iChanceToGetHit > 1000
+      {
+         iGetHitpercent = (iChanceToGetHit/10)-100;
+      }
+      else
+      {
+         iGetHitpercent = (iChanceToGetHit/10);
+      }
       
       
       iMultiplier = 1;
@@ -379,9 +401,17 @@ messages:
          {
             Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
                  #stroke_obj=stroke_obj);
-             
-            Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                 #parm1=iChanceToHit,#parm2=iChanceToGetHit);
+            
+            if iChanceToGetHit > 1000
+            {
+               Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=iGetHitPercent,#parm4=summary_string_crit);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=iGetHitPercent,#parm4=summary_string_hit);
+            }
          }
          else
          {
@@ -406,8 +436,16 @@ messages:
                Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
                     #stroke_obj=stroke_obj);
                     
-               Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                    #parm1=iChanceToHit,#parm2=iChanceToGetHit);
+               if iChanceToGetHit > 1000
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=iGetHitPercent,#parm4=summary_string_crit);
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=iGetHitPercent,#parm4=summary_string_hit);
+               }
             }
             else
             {

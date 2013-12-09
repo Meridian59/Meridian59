@@ -707,6 +707,9 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
+   
+   report_offense_rating = "%i"
+   report_defense_rating = "%i"
 
 classvars:
 
@@ -4305,7 +4308,7 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iStat, iOffense, oMonster;
 
       oWeapon = $;
 
@@ -4325,16 +4328,43 @@ messages:
             % Get weapon's numbers.
             iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
             iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
+            
+            if IsClass(oWeapon,&Weapon)
+            {
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
+               {
+                  iStat = Send(self,@GetAim);         
+               }
+         
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_THRUST
+               {
+                  iStat = Send(self,@GetAim);         
+               }
+         
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
+               {
+                  iStat = (Send(self,@GetAim)+Send(self,@GetMight))/2;         
+               }
+         
+               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
+               {
+                  iStat = (Send(self,@GetAim)+Send(self,@GetAgility))/2;         
+               }
+            }
+            else
+            {
+               iStat = Send(self,@GetMysticism);
+            }   
          }
          else
          {
             % Unarmed
             iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
             iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
+            iStat = Send(self,@GetMight);
          }
-
-         iAim = Send(self,@GetAim);
-         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iAim*20) + (piBase_Max_Health*2);
+         
+         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iStat*20) + (piBase_Max_Health*2);
 
          if oWeapon <> $
          {
@@ -4365,8 +4395,10 @@ messages:
 
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
+      
+      Send(self,@MsgSendUser,#message_rsc=report_offense_rating,#parm1=iOffense);
 
-      return bound(iOffense,1,3000);
+      return bound(iOffense,1,4000);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4413,8 +4445,10 @@ messages:
 
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
+      
+      Send(self,@MsgSendUser,#message_rsc=report_defense_rating,#parm1=iDefense);
 
-      return bound(iDefense,1,3000);
+      return bound(iDefense,1,4000);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three

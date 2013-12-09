@@ -4092,12 +4092,12 @@ messages:
          string = psPlayerDescription;
       }
       
-      if StringContain(psPlayerDescription,"¶")
+      if StringContain(psPlayerDescription,"ï¿½")
       {
          iCount = 0;
-         while StringContain(psPlayerDescription,"¶")
+         while StringContain(psPlayerDescription,"ï¿½")
          {
-            StringSubstitute(psPlayerDescription,"¶","");
+            StringSubstitute(psPlayerDescription,"ï¿½","");
             iCount = iCount + 1;
             if iCount > 10
             {
@@ -4374,6 +4374,8 @@ messages:
       % doesn't have.  This in to prevent hacking.
       if stroke_id <> SKID_PUNCH
          AND stroke_ID <> SKID_SLASH
+         AND stroke_ID <> SKID_STRIKE
+         AND stroke_ID <> SKID_THRUST         
          AND stroke_ID <> SKID_FIRE 
       {
          if NOT Send(self,@HasSkill,#num=stroke_id)

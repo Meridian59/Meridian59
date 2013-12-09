@@ -3199,6 +3199,7 @@ messages:
        Send(self,@CreateOneSKillIfNew,#num=SKID_SLASH,#class=&Slash);
        Send(self,@CreateOneSKillIfNew,#num=SKID_PUNCH,#class=&Punch);
        Send(self,@CreateOneSKillIfNew,#num=SKID_THRUST,#class=&Thrust);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_STRIKE,#class=&Strike);
        Send(self,@CreateOneSKillIfNew,#num=SKID_KICK,#class=&Kick);
 
        Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_SWORD,#class=&SwordProficiency);
@@ -3207,6 +3208,7 @@ messages:
        Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_HAMMER,#class=&HammerProficiency);
        Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_AXE,#class=&AxeProficiency);
        Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_SHORT_SWORD,#class=&ShortSwordProficiency);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_FALCHION,#class=&FalchionProficiency);
 
        Send(self,@CreateOneSKillIfNew,#num=SKID_BRAWLING,#class=&Brawling);
        Send(self,@CreateOneSKillIfNew,#num=SKID_ASSESS,#class=&Assess);
@@ -4848,6 +4850,7 @@ messages:
       plItemTemplates = cons(create(&RiijaSword),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeSword),plItemTemplates);
       plItemTemplates = cons(create(&Mace),plItemTemplates);
+      plItemTemplates = cons(create(&Falchion),plItemTemplates);
       plItemTemplates = cons(create(&Scimitar),plItemTemplates);
       plItemTemplates = cons(create(&Hammer),plItemTemplates);
       plItemTemplates = cons(create(&Axe),plItemTemplates);

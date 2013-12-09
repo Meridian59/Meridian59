@@ -1,0 +1,48 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A striking weapon is a heavy weapon used for striking.
+
+StrikingWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   striking_desc_rsc = "This is a striking weapon."
+
+classvars:
+
+   vrDesc = striking_desc_rsc
+   
+   viWeaponType = WEAPON_TYPE_STRIKE
+
+properties:
+   
+   piAttack_Type = ATCK_WEAP_BLUDGEON
+
+messages:
+
+   GetDefaultStrokeNumber()
+   {
+      return SKID_STRIKE;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+

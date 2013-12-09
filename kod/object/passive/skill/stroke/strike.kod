@@ -8,32 +8,32 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Slash is Stroke
+Strike is Stroke
 
 constants:
 
    include blakston.khd
 
 resources:
-   slash_name_rsc = "slash"
-   slash_icon_rsc = slashico.bgf
-   slash_desc_rsc = "Slash is the most common weapon skill.  It helps you hit with melee weapons."
+   strike_name_rsc = "strike"
+   strike_icon_rsc = slashico.bgf
+   strike_desc_rsc = "Strike allows you to hit better with heavy weapons."
 
-   slash_skill_intro = "Weaponcraft Lv. 1: The most basic skill of armed combat. A must for those who live by the blade."
+   strike_skill_intro = "Weaponcraft Lv. 1: A basic skill of armed combat. A must for those who live by the mace."
 
 classvars:
 
-   vrName = slash_name_rsc
-   vrIcon = slash_icon_rsc
-   vrDesc = slash_desc_rsc
+   vrName = strike_name_rsc
+   vrIcon = strike_icon_rsc
+   vrDesc = strike_desc_rsc
 
-   vrSkill_intro = slash_skill_intro
+   vrSkill_intro = strike_skill_intro
 
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE
 
    viSchool = SKS_FENCING
-   viSkill_Num = SKID_SLASH
+   viSkill_Num = SKID_STRIKE
    viSkill_level = 1
    viChance_to_increase = 20
 
@@ -53,9 +53,9 @@ messages:
    GetRequisiteStat(who=$)
    "Varies from skill to skill and spell to spell."
    {
-      return Send(who,@GetAgility);
+      return Send(who,@GetMight);
    }
-
+   
    DamageFactors(damage=0, who=$, weapon_used = $)
    "Different skills/strokes are affected by different stats differently."
    {
@@ -63,10 +63,9 @@ messages:
 
       % Get weapon proficiency bonuses.
       damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
-
-      % Get stat damage bonus.
-      stat = (send(who,@GetMight) + send(who,@GetAgility))/2;
       
+      % Get stat damage bonus.
+      stat = send(who,@GetMight);
       damage = (75+stat)*damage/100;
 
       return damage;

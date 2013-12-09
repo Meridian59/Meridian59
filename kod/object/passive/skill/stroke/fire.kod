@@ -185,6 +185,21 @@ messages:
    {
       return TRUE;
    }
+   
+   DamageFactors(damage=0, who=$, weapon_used = $)
+   "Different skills/strokes are affected by different stats differently."
+   {
+      local stat;
+
+      % Get weapon proficiency bonuses.
+      damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      
+      % Get stat damage bonus.
+      stat = send(who,@GetAim);
+      damage = (75+stat)*damage/100;
+
+      return damage;
+   }
 
 
 end

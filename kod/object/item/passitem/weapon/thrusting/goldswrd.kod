@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-GoldSword is Weapon
+GoldSword is ThrustingWeapon
 
 constants:
 
@@ -36,8 +36,7 @@ classvars:
    viBulk = 60
 
    % Gold swords are average quality thrusting weapons
-   viWeaponType = WEAPON_TYPE_THRUST
-   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   viWeaponQuality = WEAPON_QUALITY_HIGH
 
    viProficiency_Needed = SKID_PROFICIENCY_SWORD
 

@@ -337,7 +337,7 @@ messages:
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
                         #damage=Send(self,@GetDamage,#what=what,
-                                     #stroke_obj=stroke_obj) * iMultiplier,
+                                     #stroke_obj=stroke_obj),
                         #atype=Send(self,@GetDamageType),
                         #aspell=Send(self,@GetSpellType));
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,

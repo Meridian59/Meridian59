@@ -143,6 +143,9 @@ properties:
    % Number of reflections allowed per caster.
    piPlayerReflectionLimit = 2
 
+   % Minimum swings needed for a chance to improve a weaponcraft skill.
+   piWeaponcraftImprovementMinimumSwings = 75
+
 messages:
 
    Constructor(server_num = $)
@@ -346,9 +349,15 @@ messages:
       return piLogoffPenaltyGhostTime;
    }
    
+
    GetPlayerReflectionLimit()
    {
       return piPlayerReflectionLimit;
+   }
+
+   GetSwingsPerImproveCheck()
+   {
+      return piWeaponcraftImprovementMinimumSwings;
    }
 
 end

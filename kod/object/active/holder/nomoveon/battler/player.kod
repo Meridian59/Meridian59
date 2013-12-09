@@ -4864,7 +4864,7 @@ messages:
       }
       
       piWeaponSwings = piWeaponSwings + times;
-      if (piWeaponSwings mod SWINGS_PER_IMPROVE_CHECK) = 0
+      if (piWeaponSwings mod Send(Send(SYS,@GetSettings),@GetSwingsPerImproveCheck)) = 0
       {
          % Increase this number.  Allows us to advance, and get bonuses for advancement.
          piWeaponInfo = piWeaponInfo + 1000;

@@ -113,7 +113,7 @@ config_table_type config_table[] =
 { INACTIVE_OVERRIDE,      T, "Override",      CONFIG_BOOL,  "Yes" },
 
 { MOTD_GROUP,             F, "[MessageOfTheDay]", CONFIG_GROUP, "" },
-{ MOTD_DEFAULT,           F, "Default",       CONFIG_STR,   "" },
+{ MOTD_DEFAULT,           F, "Default",       CONFIG_STR,   "<Default>" },
 
 { CREDIT_GROUP,           F, "[Credit]",      CONFIG_GROUP, "" },
 { CREDIT_DRAIN_AMOUNT,    F, "DrainAmount",   CONFIG_INT,   "-1" },

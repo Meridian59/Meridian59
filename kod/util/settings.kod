@@ -135,6 +135,9 @@ properties:
 
    % If disabled, outlaws & murderers will not be afforded the 1/3-hp damage cap protection.
    pbDamageCapProtectionMurderersEnable = FALSE
+   
+   % Minimum swings needed for a chance to improve a weaponcraft skill.
+   piWeaponcraftImprovementMinimumSwings = 75
 
 messages:
 
@@ -332,6 +335,12 @@ messages:
    {
       return piLogoffPenaltyGhostTime;
    }
+   
+   GetSwingsPerImproveCheck()
+   {
+      return piWeaponcraftImprovementMinimumSwings;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

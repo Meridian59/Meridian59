@@ -233,6 +233,10 @@ classvars:
 
    viWimpy = 0          
 
+   % If true, items that are sold actually come out of the monster's inventory.  If false,
+   % the items in the inventory are inexhastible templates, and copies are sold.
+   vbSellFromInventory = FALSE
+
    vrCondition_good = Lm_condition_good
    vrCondition_fair = Lm_condition_fair
    vrCondition_poor = Lm_condition_poor
@@ -274,6 +278,7 @@ properties:
    % List of items offered to the player by buyer.
    plOffer_items = $
    % List of items offered to the player by seller.
+   % [item list, skill list, spell list, conditional items (?)]
    plFor_sale = $
 
    ptCancelOffer = $
@@ -3668,13 +3673,13 @@ messages:
    }
 
    Buy(what = $,item_list = $,number_list = $)
-   "Handle things having to do with mobs who have stuff to sell"
+   "Handle things having to do with mobs who have stuff to sell. "
    "This is used for both teachers and sellers"
    {
-      local i, j, bFound, oBuy, oMoney, iPrice, lNumbers, iDefaultAmount,
+      local i, j, bFound, oBuy, oMoney, iPrice, lNumbers,
             iAmount, oItemAtt; 
 
-      % Check for if in the same room.
+      % Ensure that buyer and seller are in the same room
       if Send(what,@GetOwner) <> poOwner
       {
          Debug("ALERT! ",Send(what,@GetTrueName),what," tried to buy items "
@@ -3719,39 +3724,38 @@ messages:
             % If the item is an item (not a skill)
             if IsClass(i,&NumberItem)  
             {
-               % If the player can specify an amount
-               % First get the item default amount and how many the player
-               %  wants
-               iDefaultAmount = Send(i,@GetNumber);
+               % See how many the player wants.
                iAmount = First(lNumbers);
-
-               % Make sure requested number of items is within the limits
-               if (iAmount < MIN_BUY_AMOUNT)
+               if iAmount = $
                {
-                  iAmount = MIN_BUY_AMOUNT;
+                  iAmount = 1;
                }
 
-               if (iAmount > MAX_BUY_AMOUNT)
+               % Make sure requested number of items is within the
+               % limits.  If buying from inventory, we can only sell
+               % as many as we have.
+               if (vbSellFromInventory) 
                {
-                  iAmount = MAX_BUY_AMOUNT;
+                  iAmount = Bound(iAmount, 1, Send(i, @GetNumber));
+               } 
+               else 
+               {
+                  iAmount = Bound(iAmount, 1, MAX_BUY_AMOUNT);
                }
               
                % Now figure price
                iPrice = iPrice * iAmount;
 
                % Make sure we have a price of at least one gold coin
-               if (iPrice < 1)
-               {
-                  iPrice = 1;
-               }
+               iPrice = Bound(iPrice, 1, $);
 
-               % Lastly, update lNumbers to point to the next number in the
-               %  list.
+               % Move to the next number in the list
                lNumbers = Rest(lNumbers);
             }
          }
-
-         if oMoney=$ OR Send(oMoney,@GetValue) < iPrice
+         
+         % Does player have enough money to buy it?
+         if oMoney = $ OR Send(oMoney,@GetValue) < iPrice
          {
             Post(poOwner,@SomeoneSaid,#what=self,#string=vrMrcnt_too_costly,
                  #type=SAY_RESOURCE,#parm1=Send(i,@GetDef),
@@ -3760,7 +3764,7 @@ messages:
             continue;
          }
 
-         % make sure the item is really for sale from this mob
+         % Make sure the item is really for sale from this mob
          bFound = FALSE;
          for j in Send(self,@GetForSale,#who=what)
          {
@@ -3786,12 +3790,46 @@ messages:
             }
             else
             {
-               oBuy = Create(GetClass(i),#model=i);
+               % Selling the item itself, or a copy?
+               if vbSellFromInventory
+               {
+                  oBuy = i;
+               }
+               else
+               {
+                  oBuy = Create(GetClass(i),#model=i);
+               }
             }
 
             if Send(what,@ReqNewHold,#what=oBuy)
                AND Send(oBuy,@ReqNewOwner,#what=what)
             {
+               % Get rid of the item from our inventory?
+               if vbSellFromInventory
+               {
+                  if IsClass(i,&NumberItem)
+                  {
+                     % Sold all of the item?
+                     if Send(i,@GetNumber) = iAmount
+                     {
+                        SetNth(plFor_Sale, 1, DelListElem(First(plFor_Sale), i));
+                     }
+                     
+                     Send(i,@SubtractNumber,#Number=iAmount);
+                  }
+                  else
+                  {
+                     % Start the go bad timer.
+                     if IsClass(i,&SpellItem)
+                     {
+                        Send(i,@StartGoBadTimer);
+                     }
+                     
+                     SetNth(plFor_Sale, 1, DelListElem(First(plFor_Sale), i));
+                  }
+               }
+
+               % Add item to buyer's inventory
                Send(what,@NewHold,#what=oBuy);
                Send(oMoney,@SubtractNumber,#number=iPrice);
                Send(self,@RemoveFromConditionalList,
@@ -3810,31 +3848,39 @@ messages:
             }
             else
             {
+               % Buyer can't accept the item for some reason
                Post(poOwner,@SomeoneSaid,#what=self,#string=Lm_mrcnt_cant_give,
                     #type=SAY_RESOURCE,#parm1=Send(oBuy,@GetDef),
                     #parm2=Send(oBuy,@GetName));
-               Send(oBuy,@Delete);
             }
          }
          else 
          {
-            % Its a skill or spell which we know to be legal to "sell"
+            % It's a skill or spell which we know to be legal to "sell"
             % so go ahead and add it....
             if IsClass(i,&Skill)
             {
                Send(what,@AddSkill,#num=Send(i,@GetSkillNum));
-               Send(oMoney,@SubtractNumber,#number=iPrice);
             }
             else
             {
                Send(what,@AddSpell,#num=Send(i,@GetSpellNum));
-               Send(oMoney,@SubtractNumber,#number=iPrice);
             }
+            Send(oMoney,@SubtractNumber,#number=iPrice);
          }
       }
 
+      Send(self, @ItemBoughtHook, #buyer = what);
+
       return;
    }
+
+   ItemBoughtHook(buyer = $)
+   "Hook called after someone has bought something from us"
+   {
+      return;
+   }
+
 
    %%% Utility messages
 

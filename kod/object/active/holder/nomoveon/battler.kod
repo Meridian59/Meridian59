@@ -359,10 +359,10 @@ messages:
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
                         #damage=Send(self,@GetDamage,#what=what,
-                                     #stroke_obj=stroke_obj),
+                                     #stroke_obj=stroke_obj) * iMultiplier,
                         #atype=Send(self,@GetDamageType),
                         #aspell=Send(self,@GetSpellType));
-         iDamage = iDamage * iMultiplier;
+
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $
@@ -385,7 +385,7 @@ messages:
                                         #stroke_obj=stroke_obj),
                            #atype=Send(self,@GetDamageType),
                            #aspell=Send(self,@GetSpellType));
-            iDamage = iDamage * iMultiplier;
+
             Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
                  #damage=iDamage);
             if iDamage = $
@@ -420,13 +420,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "Returns the battler's ability to-hit.  Ranges from 1 to 1000."
+   "Returns the battler's ability to-hit.  Ranges from 1 to 3000."
    {
       return 1;
    }
 
    GetDefense(what = $, stroke_obj=$)
-   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 1000."
+   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 3000."
    {
       return 1;
    }

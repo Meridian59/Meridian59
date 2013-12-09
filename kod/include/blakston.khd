@@ -1990,6 +1990,7 @@
    SID_CRYSTALIZE_MANA = 181
    SID_SET = 182
    SID_LOADOUT = 183
+   SID_CONVEYANCE = 184
    SID_DEATH_RIFT = 185
 
    % Depreciated spell IDs

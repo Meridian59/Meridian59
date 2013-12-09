@@ -139,8 +139,8 @@ resources:
    battler_pierce_wound = "pierces"
    battler_pierce_nick = "grazes"
    
-   battle_summary = "~IIn this battle, you had a ~B%i~n~I percent chance to %s your enemy and a "
-                    "~B%i~n~I percent chance to get %s by your enemy's attack!"
+   battle_summary = "~IYou had a %i percent chance to %s %s%s and a "
+                    "%i percent chance to get %s by %s!"
                     
    summary_string_hit = "hit"
    summary_string_crit = "crit"
@@ -405,12 +405,14 @@ messages:
             if iChanceToGetHit > 1000
             {
                Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=iGetHitPercent,#parm4=summary_string_crit);
+                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                 #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
             }
             else
             {
                Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=iGetHitPercent,#parm4=summary_string_hit);
+                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                 #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
             }
          }
          else
@@ -439,12 +441,14 @@ messages:
                if iChanceToGetHit > 1000
                {
                   Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=iGetHitPercent,#parm4=summary_string_crit);
+                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                    #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
                }
                else
                {
                   Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=iGetHitPercent,#parm4=summary_string_hit);
+                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                    #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
                }
             }
             else

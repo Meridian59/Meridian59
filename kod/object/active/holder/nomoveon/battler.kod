@@ -402,18 +402,21 @@ messages:
             Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
                  #stroke_obj=stroke_obj);
             
-            if iChanceToGetHit > 1000
+            if IsClass(self,&Player)
             {
-               Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                 #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
-            }
-            else
-            {
-               Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                 #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                 #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
-            }
+               if iChanceToGetHit > 1000
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                    #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                    #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                    #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                    #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
+               }
+            }   
          }
          else
          {
@@ -437,19 +440,22 @@ messages:
             {
                Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
                     #stroke_obj=stroke_obj);
-                    
-               if iChanceToGetHit > 1000
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                    #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                    #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                    #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
-               }
+               
+               if IsClass(self,&Player)
+               {     
+                  if iChanceToGetHit > 1000
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                       #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                       #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
+                  }
+                  else
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=battle_summary,
+                       #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                       #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
+                  }
+               }   
             }
             else
             {

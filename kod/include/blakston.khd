@@ -2493,7 +2493,6 @@
    MAX_ARTICLES_PER_PART = 60
 
    % Number of a single item you can buy at one time
-   MIN_BUY_AMOUNT = 1
    MAX_BUY_AMOUNT = 500
 
    %%% Ornamental Objects

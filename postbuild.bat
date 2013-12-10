@@ -2,9 +2,12 @@
 echo Post-Build started.
 echo Clearing client RSC files... 
 del .\run\localclient\resource\*.rsc 
+echo Clearing client RSB files... 
+del .\run\localclient\resource\*.rsb
 echo Copying kodbase to server
 copy /y .\kod\kodbase.txt .\run\server\kodbase.txt
 echo Copying rooms to server
+mkdir .\run\server\rooms\
 copy /y .\resource\rooms\*.roo .\run\server\rooms\
 echo Copying RSC files.... 
 for /R .\kod\ %%f in (*.rsc) do copy "%%f" .\run\server\rsc\ 

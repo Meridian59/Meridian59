@@ -7882,6 +7882,12 @@ messages:
       %  for Portal of Life to reduce penalties.  We get the default value of
       %  piDeathCost from SYS, so that we can adjust global death penalties.
 
+      if Send(self,@GetOwner) <> $
+         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      {
+         return;
+      }
+
       % "Normal" value is 100.
       piDeathCost = Send(Send(SYS, @GetSettings), @GetDefaultDeathCost);  
 

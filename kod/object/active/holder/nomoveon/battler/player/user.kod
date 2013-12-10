@@ -709,6 +709,13 @@ messages:
       piSave_fine_col = piFine_col;
       
       Send(poOwner,@LeaveHold,#what=self);
+      if poOwner <> $
+         AND Send(poOwner,@GetRoomNum) = RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection)
+      {
+         % Don't let players stay in the Underworld with Death Rift
+         Post(self,@AdminGoToSafety);
+      }
       poOwner = $;
 
       % Have to put here so room enchantments are removed first.

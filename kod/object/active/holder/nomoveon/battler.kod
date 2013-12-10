@@ -138,12 +138,6 @@ resources:
    battler_pierce_damage = "lacerates"
    battler_pierce_wound = "pierces"
    battler_pierce_nick = "grazes"
-   
-   battle_summary = "~IYou had a %i percent chance to %s %s%s and a "
-                    "%i percent chance to get %s by %s!"
-                    
-   summary_string_hit = "hit"
-   summary_string_crit = "crit"
 
 classvars:
 
@@ -327,7 +321,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iChanceToGetHit, iDamage, oWeapon, iMultiplier, iHitPercent, iGetHitPercent;
+      local iChanceToHit, iDamage, oWeapon, iMultiplier;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -341,32 +335,6 @@ messages:
                      / Send(what,@GetDefense,#what=self,
                             #stroke_obj=stroke_obj);
       iChanceToHit = bound(iChanceToHit,125,2000);
-      
-      if iChanceToHit > 1000
-      {
-         iHitpercent = (iChanceToHit/10)-100;
-      }
-      else
-      {
-         iHitpercent = (iChanceToHit/10);
-      }   
-         
-      iChanceToGetHit = (Send(what,@GetOffense,#what=what,#stroke_obj=stroke_obj)
-                      * EQUAL_CHANCE_HIT)
-                     / Send(self,@GetDefense,#what=self,
-                            #stroke_obj=stroke_obj);
-      iChanceToGetHit = bound(iChanceToGetHit,125,2000);
-      
-      if iChanceToGetHit > 1000
-      {
-         iGetHitpercent = (iChanceToGetHit/10)-100;
-      }
-      else
-      {
-         iGetHitpercent = (iChanceToGetHit/10);
-      }
-      
-      
       iMultiplier = 1;
 
       if iChanceToHit > 1000
@@ -391,32 +359,16 @@ messages:
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
                         #damage=Send(self,@GetDamage,#what=what,
-                                     #stroke_obj=stroke_obj) * iMultiplier,
+                                     #stroke_obj=stroke_obj),
                         #atype=Send(self,@GetDamageType),
                         #aspell=Send(self,@GetSpellType));
-
+         iDamage = iDamage * iMultiplier;
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $
          {
             Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
                  #stroke_obj=stroke_obj);
-            
-            if IsClass(self,&Player)
-            {
-               if iChanceToGetHit > 1000
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                    #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                    #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                    #parm1=iHitPercent,#parm2=summary_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                    #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
-               }
-            }   
          }
          else
          {
@@ -433,29 +385,13 @@ messages:
                                         #stroke_obj=stroke_obj),
                            #atype=Send(self,@GetDamageType),
                            #aspell=Send(self,@GetSpellType));
-
+            iDamage = iDamage * iMultiplier;
             Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
                  #damage=iDamage);
             if iDamage = $
             {
                Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
                     #stroke_obj=stroke_obj);
-               
-               if IsClass(self,&Player)
-               {     
-                  if iChanceToGetHit > 1000
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                       #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                       #parm5=iGetHitPercent,#parm6=summary_string_crit,#parm7=Send(what,@GetHimHer));
-                  }
-                  else
-                  {
-                     Send(self,@MsgSendUser,#message_rsc=battle_summary,
-                       #parm1=iHitPercent,#parm2=summary_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                       #parm5=iGetHitPercent,#parm6=summary_string_hit,#parm7=Send(what,@GetHimHer));
-                  }
-               }   
             }
             else
             {
@@ -484,13 +420,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "Returns the battler's ability to-hit.  Ranges from 1 to 3000."
+   "Returns the battler's ability to-hit.  Ranges from 1 to 1000."
    {
       return 1;
    }
 
    GetDefense(what = $, stroke_obj=$)
-   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 3000."
+   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 1000."
    {
       return 1;
    }

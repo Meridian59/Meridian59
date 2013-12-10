@@ -23,7 +23,7 @@ resources:
    consider_no_self_target = "You believe you know yourself fairly well already.  Smart, strong, beautiful... "
                              "and humble of course!"
 
-   consider_succeed = "After careful considertation, you come to the following conclusions:"
+   consider_succeed = "After careful consideration, you come to some conclusions..."
    consider_chance_to_hit = "Considering your current setup, you should have about a "
                     "%i percent chance to %s %s%s and a %i percent chance to get %s by %s!"
    consider_stats = ""
@@ -74,6 +74,8 @@ messages:
       {
          return FALSE;
       }
+      
+      target = First(lTargets);
 
       if target = who
       {

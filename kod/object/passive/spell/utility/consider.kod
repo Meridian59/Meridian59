@@ -1,0 +1,173 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Consider is Utility
+
+constants:
+   include blakston.khd
+
+resources:
+
+   consider_name_rsc = "consider"
+   consider_icon_rsc = iblink.bgf
+   consider_desc_rsc = \
+      "Carefully consider your opponent, telling you about your odds in combat. "
+      
+   consider_no_self_target = "You believe you know yourself fairly well already.  Smart, strong, beautiful... "
+                             "and humble of course!"
+
+   consider_succeed = "After careful considertation, you come to the following conclusions:"
+   consider_chance_to_hit = "Considering your current setup, you should have about a "
+                    "%i percent chance to %s %s%s and a %i percent chance to get %s by %s!"
+   consider_stats = ""
+   consider_level = ""
+   consider_schools = ""
+   
+   consider_string_hit = "hit"
+   consider_string_crit = "crit"
+
+classvars:
+
+   vrName = consider_name_rsc
+   vrIcon = consider_icon_rsc
+   vrDesc = consider_desc_rsc
+   
+   viCast_time = 4000
+
+   viSpell_num = SID_CONSIDER
+   viSchool = SS_KRAANAN
+   viSpell_level = 1
+   viMana = 0
+   viSpellExertion = 0
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i, oWeapon;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=consider_no_self_target,
+	           #parm1=vrName);
+         }
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local oTarget, oTargetWeapon, oWeapon, iChanceToHit, iChanceToGetHit, iHitpercent, iGetHitpercent ;
+      
+      Send(self,@MsgSendUser,#message_rsc=consider_succeed);
+
+      oTarget = First(lTargets);
+      
+      oWeapon = Send(self,@GetWeapon);
+
+      if IsClass(oTarget,&Player)
+      {
+         oTargetWeapon = Send(oTarget,@GetWeapon);
+      }
+      else
+      {
+         oTargetWeapon = oTarget;
+      }
+         
+      iChanceToHit = (Send(self,@GetOffense,#what=what,#stroke_obj=oWeapon)
+                      * 500)
+                     / Send(what,@GetDefense,#what=self,
+                            #stroke_obj=oWeapon);
+      iChanceToHit = bound(iChanceToHit,125,2000);
+      
+      if iChanceToHit > 1000
+      {
+         iHitpercent = (iChanceToHit/10)-100;
+      }
+      else
+      {
+         iHitpercent = (iChanceToHit/10);
+      }
+         
+      iChanceToGetHit = (Send(what,@GetOffense,#what=what,#stroke_obj=oTargetWeapon)
+                      * 500)
+                     / Send(self,@GetDefense,#what=self,
+                            #stroke_obj=oTargetWeapon);
+      iChanceToGetHit = bound(iChanceToGetHit,125,2000);
+      
+      if iChanceToGetHit > 1000
+      {
+         iGetHitpercent = (iChanceToGetHit/10)-100;
+      }
+      else
+      {
+         iGetHitpercent = (iChanceToGetHit/10);
+      }
+            if iChanceToHit > 1000
+            {
+               if iChanceToGetHit > 1000
+               {
+                  Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                    #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(what,@GetHimHer));
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(what,@GetHimHer));
+               }
+            }
+            else
+            {
+               if iChanceToGetHit > 1000
+               {
+                   Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+                     #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                     #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(what,@GetHimHer));
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+                    #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
+                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(what,@GetHimHer));
+               }
+      propagate;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

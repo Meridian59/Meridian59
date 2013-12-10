@@ -1,0 +1,507 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Consider is UtilitySpell
+
+constants:
+   include blakston.khd
+
+resources:
+
+   consider_name_rsc = "consider"
+   consider_icon_rsc = iblink.bgf
+   consider_desc_rsc = \
+      "Carefully consider your opponent, telling you about your odds in combat. "
+      
+   consider_no_self_target = "You believe you know yourself fairly well already.  Smart, strong, beautiful... "
+                             "and humble of course!"
+
+   consider_succeed = "After careful consideration, you come to some conclusions..."
+   consider_chance_to_hit = "Considering your current setup, you should have about a "
+                    "%i percent chance to %s %s%s and a %i percent chance to get %s by %s."
+   consider_stats = "Comparing %s to yourself, you notice that %s seems %s muscular, %s "
+                    "agile, %s accurate, %s enduring, %s thoughtful and %s spiritual."
+   consider_level = "You have to say, that at least at first glance, %s seems %s you and %s."
+   
+   consider_string_hit = "hit"
+   consider_string_crit = "crit"
+   
+   consider_less = "less"
+   consider_much_less = "way less"
+   consider_more = "more"
+   consider_much_more = "way more"
+   consider_same = "about as"
+   
+   consider_very_good = "very friendly"
+   consider_good = "fairly friendly"
+   consider_neutral = "neither too evil nor particularly friendly"
+   consider_evil = "fairly evil"
+   consider_very_evil = "very evil"
+
+   consider_very_strong = "way more powerful than"
+   consider_strong = "more powerful than"
+   consider_average = "about as powerful as"
+   consider_weak = "weaker than"
+   consider_very_weak = "a lot weaker than"
+
+classvars:
+
+   vrName = consider_name_rsc
+   vrIcon = consider_icon_rsc
+   vrDesc = consider_desc_rsc
+   
+   viCast_time = 4000
+
+   viSpell_num = SID_CONSIDER
+   viSchool = SS_KRAANAN
+   viSpell_level = 1
+   viMana = 0
+   viSpellExertion = 0
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % separate message so can change, then set from admin mode
+
+      plReagents = $;
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local target, i, oWeapon;
+      
+      % Can cast spell if the 1 target item is a user
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+      
+      target = First(lTargets);
+
+      if target = who
+      {
+         if not bItemCast
+         {
+            Send(who, @MsgSendUser, #message_rsc=consider_no_self_target,
+	           #parm1=vrName);
+         }
+         return FALSE;
+      }
+      
+      propagate;
+   }
+
+   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   {
+      local iMig, iAgi, iAim, iMys, iInt, iSta, iKarma, iLevel, oTarget, oTargetWeapon, oWeapon, 
+      iChanceToHit, iChanceToGetHit, iHitpercent, iGetHitpercent,
+      sMig, sAgi, sAim, sMys, sInt, sSta, sKarma, sLevel;
+      
+      Send(who,@MsgSendUser,#message_rsc=consider_succeed);
+
+      oTarget = First(lTargets);
+      
+      oWeapon = Send(who,@GetWeapon);
+
+      if IsClass(oTarget,&Player)
+      {
+         oTargetWeapon = Send(oTarget,@GetWeapon);
+      }
+      else
+      {
+         oTargetWeapon = oTarget;
+      }
+         
+      iChanceToHit = (Send(who,@GetOffense,#what=oTarget,#stroke_obj=oWeapon)
+                      * 500)
+                     / Send(oTarget,@GetDefense,#what=who,
+                            #stroke_obj=oWeapon);
+      iChanceToHit = bound(iChanceToHit,125,2000);
+      
+      if iChanceToHit > 1000
+      {
+         iHitpercent = (iChanceToHit/10)-100;
+      }
+      else
+      {
+         iHitpercent = (iChanceToHit/10);
+      }
+         
+      iChanceToGetHit = (Send(oTarget,@GetOffense,#what=who,#stroke_obj=oTargetWeapon)
+                      * 500)
+                     / Send(who,@GetDefense,#what=oTarget,
+                            #stroke_obj=oTargetWeapon);
+      iChanceToGetHit = bound(iChanceToGetHit,125,2000);
+      
+      if iChanceToGetHit > 1000
+      {
+         iGetHitpercent = (iChanceToGetHit/10)-100;
+      }
+      else
+      {
+         iGetHitpercent = (iChanceToGetHit/10);
+      }
+      
+      if iChanceToHit > 1000
+      {
+         if iChanceToGetHit > 1000
+         {
+            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send
+
+(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send
+
+(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
+         }
+      }
+      else
+      {
+         if iChanceToGetHit > 1000
+         {
+            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send
+
+(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send
+
+(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
+         }
+      }
+      
+      if IsClass(oTarget,&Player)
+      {  
+      
+         iMig = send(who,@GetMight) - send(oTarget,@GetMight);
+         if iMig >= 30
+         {
+            sMig = consider_much_less;
+         }
+         else
+         {
+            if iMig >= 10
+            {
+               sMig = consider_less;
+            }
+            else
+            {
+               if iMig > -10
+               {
+                  sMig = consider_same;
+               }
+               else
+               {
+                  if iMig > -30
+                  {
+                     sMig = consider_more;
+                  }
+                  else
+                  {
+                     sMig = consider_much_more;
+                  }
+               }
+            }
+         }
+      
+         iSta = send(who,@GetStamina) - send(oTarget,@GetStamina);
+         if iSta >= 30
+         {
+            sSta = consider_much_less;
+         }
+         else
+         {
+            if iSta >= 10
+            {
+               sSta = consider_less;
+            }
+            else
+            {
+               if iSta > -10
+               {
+                  sSta = consider_same;
+               }
+               else
+               {
+                  if iSta > -30
+                  {
+                     sSta = consider_more;
+                  }
+                  else
+                  {
+                     sSta = consider_much_more;
+                  }
+               }
+            }
+         }
+         
+         iAgi = send(who,@GetAgility) - send(oTarget,@GetAgility);
+         if iAgi >= 30
+         {
+            sAgi = consider_much_less;
+         }
+         else
+         {
+            if iAgi >= 10
+            {
+               sAgi = consider_less;
+            }
+            else
+            {
+               if iAgi > -10
+               {
+                  sAgi = consider_same;
+               }
+               else
+               {
+                  if iAgi > -30
+                  {
+                     sAgi = consider_more;
+                  }
+                  else
+                  {
+                     sAgi = consider_much_more;
+                  }
+               }
+            }
+         }
+         
+         iAim = send(who,@GetAim) - send(oTarget,@GetAim);
+         if iAim >= 30
+         {
+            sAim = consider_much_less;
+         }
+         else
+         {
+            if iAim >= 10
+            {
+               sAim = consider_less;
+            }
+            else
+            {
+               if iAim > -10
+               {
+                  sAim = consider_same;
+               }
+               else
+               {
+                  if iAim > -30
+                  {
+                     sAim = consider_more;
+                  }
+                  else
+                  {
+                     sAim = consider_much_more;
+                  }
+               }
+            }
+         }
+         
+         iInt = send(who,@GetIntellect) - send(oTarget,@GetIntellect);
+         if iInt >= 30
+         {
+            sInt = consider_much_less;
+         }
+         else
+         {
+            if iInt >= 10
+            {
+               sInt = consider_less;
+            }
+            else
+            {
+               if iInt > -10
+               {
+                  sInt = consider_same;
+               }
+               else
+               {
+                  if iInt > -30
+                  {
+                     sInt = consider_more;
+                  }
+                  else
+                  {
+                     sInt = consider_much_more;
+                  }
+               }
+            }
+         }
+         
+         iMys = send(who,@GetMysticism) - send(oTarget,@GetMysticism);
+         if iMys >= 30
+         {
+            sMys = consider_much_less;
+         }
+         else
+         {
+            if iMys >= 10
+            {
+               sMys = consider_less;
+            }
+            else
+            {
+               if iMys > -10
+               {
+                  sMys = consider_same;
+               }
+               else
+               {
+                  if iMys > -30
+                  {
+                     sMys = consider_more;
+                  }
+                  else
+                  {
+                     sMys = consider_much_more;
+                  }
+               }
+            }
+         }
+         
+         Send(who,@MsgSendUser,#message_rsc=consider_stats,
+              #parm1=Send(oTarget,@GetHimHer),#parm2=Send(oTarget,@GetHeShe),
+              #parm3=sMig,#parm4=sAgi,#parm5=sAim,#parm6=sSta,#parm7=sInt,#parm8=sMys);
+      }
+        
+      iKarma = send(oTarget,@GetKarma);
+      if iKarma >= 60
+      {
+         sKarma = consider_very_good;
+      }
+      else
+      {
+         if iKarma >= 20
+         {
+            sKarma = consider_good;
+         }
+         else
+         {
+            if iKarma > -20
+            {
+               sKarma = consider_neutral;
+            }
+            else
+            {
+               if iKarma > -60
+               {
+                  sKarma = consider_evil;
+               }
+               else
+               {
+                  sKarma = consider_very_evil;
+               }
+            }
+         }
+      }
+         
+      iLevel = send(who,@GetLevel) - send(oTarget,@GetLevel);
+            
+      if IsClass(oTarget,&Player)
+      {
+         if iLevel >= 78
+         {
+            sLevel = consider_very_weak;
+         }
+         else
+         {
+            if iLevel >= 26
+            {
+               sLevel = consider_weak;
+            }
+            else
+            {
+               if iLevel > -26
+               {
+                  sLevel = consider_average;
+               }
+               else
+               {
+                  if iLevel > -78
+                  {
+                     sLevel = consider_strong;
+                  }
+                  else
+                  {
+                  sLevel = consider_very_strong;
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         if iLevel >= 50
+         {
+            sLevel = consider_very_weak;
+         }
+         else
+         {
+            if iLevel >= 0
+            {
+               sLevel = consider_weak;
+            }
+            else
+            {
+               if iLevel >= -20
+               {
+                  sLevel = consider_average;
+               }
+               else
+               {
+                  if iLevel >= -50
+                  {
+                     sLevel = consider_strong;
+                  }
+                  else
+                  {
+                  sLevel = consider_very_strong;
+                  }
+               }
+            }
+         }
+      }   
+    
+      Send(who,@MsgSendUser,#message_rsc=consider_level,
+           #parm1=Send(oTarget,@GetHeShe),#parm2=sLevel,#parm3=sKarma);              
+
+      propagate;
+   }
+   
+   SuccessChance(who=$)
+   "Starter spell will always work."
+   {
+      return TRUE;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

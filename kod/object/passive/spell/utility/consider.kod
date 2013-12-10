@@ -107,7 +107,7 @@ messages:
          oTargetWeapon = oTarget;
       }
          
-      iChanceToHit = (Send(self,@GetOffense,#what=what,#stroke_obj=oWeapon)
+      iChanceToHit = (Send(self,@GetOffense,#what=oTarget,#stroke_obj=oWeapon)
                       * 500)
                      / Send(what,@GetDefense,#what=self,
                             #stroke_obj=oWeapon);
@@ -122,9 +122,9 @@ messages:
          iHitpercent = (iChanceToHit/10);
       }
          
-      iChanceToGetHit = (Send(what,@GetOffense,#what=what,#stroke_obj=oTargetWeapon)
+      iChanceToGetHit = (Send(what,@GetOffense,#what=self,#stroke_obj=oTargetWeapon)
                       * 500)
-                     / Send(self,@GetDefense,#what=self,
+                     / Send(self,@GetDefense,#what=oTarget,
                             #stroke_obj=oTargetWeapon);
       iChanceToGetHit = bound(iChanceToGetHit,125,2000);
       

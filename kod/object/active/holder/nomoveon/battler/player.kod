@@ -18,7 +18,10 @@ constants:
    include protocol.khd
 
    % Three minutes
-   BOND_REPORT_INTERVAL = 1000 * 60 * 3   
+   BOND_REPORT_INTERVAL = 1000 * 60 * 3
+   
+   % One minute
+   DEATH_RIFT_INTERVAL = 1000 * 60  
 
    KARMA_TUNE_A_INVERSE = 20
    KARMA_TUNE_B_INVERSE = 5
@@ -706,6 +709,8 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
+   
+   death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
 
 classvars:
 
@@ -963,6 +968,7 @@ properties:
    
    % Is the player currently using a Death Rift spell?
    pbDeath_rift = FALSE
+   ptDeathRiftTimer = $
 
 messages:
 
@@ -12455,6 +12461,11 @@ messages:
 
       if value=FALSE
       {
+         if ptDeathRiftTimer <> $
+         {
+            DeleteTimer(ptDeathRiftTimer);
+            ptDeathRiftTimer = $;
+         }
          pbDeath_rift = FALSE;
       }
 
@@ -12464,6 +12475,36 @@ messages:
    GetDeathRiftProtection()
    {
       return pbDeath_rift;
+   }
+   
+   StartDeathRiftTimer()
+   {
+      ptDeathRiftTimer = CreateTimer(self,@DeathRiftBoot,DEATH_RIFT_INTERVAL);
+      return;
+   }
+   
+   DeathRiftBoot()
+   "Players that linger too long will find themselves cast out of the Underworld."
+   {
+      local oRoom;
+
+      ptDeathRiftTimer = $;
+      
+      oRoom = Send(self,@GetOwner);
+      
+      if oRoom <> $
+         AND Send(oRoom,@GetRoomNum) = RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         Send(self,@AdminGoToSafety);
+         
+         if Send(self,@IsLoggedOn)
+         {
+            Send(self,@MsgSendUser,#message_rsc=death_rift_stayed_too_long);
+         }
+      }
+      
+      return;
    }
 
 end

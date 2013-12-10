@@ -109,7 +109,7 @@ messages:
          
       iChanceToHit = (Send(self,@GetOffense,#what=oTarget,#stroke_obj=oWeapon)
                       * 500)
-                     / Send(what,@GetDefense,#what=self,
+                     / Send(oTarget,@GetDefense,#what=self,
                             #stroke_obj=oWeapon);
       iChanceToHit = bound(iChanceToHit,125,2000);
       
@@ -122,7 +122,7 @@ messages:
          iHitpercent = (iChanceToHit/10);
       }
          
-      iChanceToGetHit = (Send(what,@GetOffense,#what=self,#stroke_obj=oTargetWeapon)
+      iChanceToGetHit = (Send(oTarget,@GetOffense,#what=self,#stroke_obj=oTargetWeapon)
                       * 500)
                      / Send(self,@GetDefense,#what=oTarget,
                             #stroke_obj=oTargetWeapon);
@@ -141,14 +141,14 @@ messages:
                if iChanceToGetHit > 1000
                {
                   Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                    #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(what,@GetHimHer));
+                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+                    #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
                }
                else
                {
                   Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(what,@GetHimHer));
+                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
                }
             }
             else
@@ -156,14 +156,14 @@ messages:
                if iChanceToGetHit > 1000
                {
                    Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                     #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                     #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(what,@GetHimHer));
+                     #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+                     #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
                }
                else
                {
                   Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                    #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(what,@GetDef),#parm4=Send(what,@GetName),
-                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(what,@GetHimHer));
+                    #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
                }
       propagate;
    }

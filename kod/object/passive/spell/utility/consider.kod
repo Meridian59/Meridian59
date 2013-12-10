@@ -136,35 +136,37 @@ messages:
       {
          iGetHitpercent = (iChanceToGetHit/10);
       }
-            if iChanceToHit > 1000
-            {
-               if iChanceToGetHit > 1000
-               {
-                  Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
-                    #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                    #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
-                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
-               }
-            }
-            else
-            {
-               if iChanceToGetHit > 1000
-               {
-                   Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                     #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
-                     #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
-               }
-               else
-               {
-                  Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-                    #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
-                    #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
-               }
+      
+      if iChanceToHit > 1000
+      {
+         if iChanceToGetHit > 1000
+         {
+            Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
+         }
+      }
+      else
+      {
+         if iChanceToGetHit > 1000
+         {
+            Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=consider_chance_to_hit,
+              #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+              #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
+         }
+      }
       propagate;
    }
    

@@ -90,7 +90,17 @@ messages:
    GetMonsterGenTime()
    {
       local iWaitTime, iNumberOfPlayers, iMaxPlayers;
-      
+      % GetSpawnRate =  100
+	  % iWaitTime = (20000 * (100 / 100));
+	  % iWaitTime = 20000
+	  
+	  % GetSpawnRate =  300
+	  % iWaitTime = (20000 * (300 / 100));
+	  % iWaitTime = 60000
+	  
+	  % GetSpawnRate =  1
+	  % iWaitTime = (20000 * (300 / 100));
+	  % iWaitTime = 200
       iWaitTime = (piGen_Time * Send(Send(SYS, @GetSettings), @GetSpawnRate)) / 100;
 
       % Reduce spawn time for up to 5 people.

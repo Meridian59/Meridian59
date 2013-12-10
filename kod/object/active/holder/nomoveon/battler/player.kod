@@ -4323,18 +4323,18 @@ messages:
          if oWeapon <> $
          {
             % Get weapon's numbers.
-            iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
-            iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
+            iStroke = Send(oWeapon,@GetStroke,#who=self);
+            iProficiency = Send(oWeapon,@GetProf,#who=self);
          }
          else
          {
             % Unarmed
-            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
-            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
+            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH);
+            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING);
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iAim*20) + (piBase_Max_Health*2);
+         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
 
          if oWeapon <> $
          {
@@ -4366,7 +4366,7 @@ messages:
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
 
-      return bound(iOffense,1,3000);
+      return bound(iOffense,1,1000);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4388,15 +4388,15 @@ messages:
          iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
-         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj) + 1;
+         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
          
          % Ask the shield, it might give a bonus to block.
-         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) + 1;
+         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
          
-         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj) + 1;
+         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = 200 + (iParry*5) + (iBlock*2) + (iDodge*3) + (iAgility*20) + (piBase_Max_Health*2);
+         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
       }
 
       for i in plDefense_modifiers
@@ -4414,7 +4414,7 @@ messages:
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
 
-      return bound(iDefense,1,3000);
+      return bound(iDefense,1,1000);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three

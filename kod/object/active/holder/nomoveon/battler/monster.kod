@@ -1429,13 +1429,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "This returns the battler's ability to-hit.  Ranges from 1 to 4500."
+   "This returns the battler's ability to-hit.  Ranges from 1 to 1500."
    {
       local iAttack;
 
       if piOffense = $
       {
-         iAttack = ((3*viLevel) + (60*viDifficulty))*3;
+         iAttack = (3*viLevel) + (60*viDifficulty);
       }
       else
       {
@@ -1447,25 +1447,25 @@ messages:
          iAttack = iAttack * 3 / 4;
       }
       
-      return Bound(iAttack,1,4500);
+      return Bound(iAttack,1,1500);
    }
 
    GetDefense(what = $, stroke_obj=$)
    "This returns the battler's ability to avoid being hit.  Ranges from "
-   "1 to 4500."
+   "1 to 1500."
    {
       local iDefense;
 
       if piDefense = $
       {
-         iDefense = ((3*viLevel) + (60*viDifficulty))*3;
+         iDefense = (3*viLevel) + (60*viDifficulty);
       }
       else
       {
          iDefense = piDefense;
       }
      
-      return Bound(iDefense,1,4500);
+      return Bound(iDefense,1,1500);
    }
 
    % The next message deals with the three defense skills.  These messages

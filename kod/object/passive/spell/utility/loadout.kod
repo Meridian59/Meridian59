@@ -352,7 +352,8 @@ messages:
                      iGetNumber = iNumInChest;
                   }
 
-                  if iGetNumber > iCanHold
+                  if iCanhold <> $
+                     AND iGetNumber > iCanHold
                   {
                      if iCanHold > 0
                      {

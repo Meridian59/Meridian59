@@ -31,11 +31,11 @@ messages:
       plTreasure = [ [ &NeruditeArrow, 25 ],
                      [ &ShortSword, 1 ],
                      [ &InkyCap, 19 ],
-                     [ &Money, 49 ],
-                     [ &Hammer, 1 ],
-                     [ &KnightShield, 1 ],
-                     [ &Scimitar, 1 ],
-                     [ &ScaleArmor, 1 ],
+                     [ &Money, 41 ],
+                     [ &Hammer, 3 ],
+                     [ &KnightShield, 3 ],
+                     [ &Scimitar, 3 ],
+                     [ &ScaleArmor, 3 ],
                      [ &EnfeebleWand, 1 ],
                      [ &ForgetWand, 1 ]
                    ];

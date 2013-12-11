@@ -30,17 +30,11 @@ messages:
    {
       plTreasure = [ [ &BlueDragonScale, 15 ],
                      [ &DarkAngelFeather, 15 ],
-                     [ &NightVisionPotion, 10 ],
-                     [ &KaraholsCursePotion, 10 ],
-                     [ &CloakPotion, 10 ],
-                     [ &FireRing, 5 ],
-                     [ &ColdRing, 5 ],
-                     [ &ShockRing, 5 ],
-                     [ &BerserkerRing, 5 ],
-                     [ &ResistShockPotion, 5 ],
-                     [ &FeignDeathPotion, 5 ],
-                     [ &ResistMagicPotion, 5 ],
-                     [ &BaitPotion, 5 ]
+                     [ &NightVisionPotion, 5 ],
+                     [ &Money, 62 ],
+                     [ &FireRing, 1 ],
+                     [ &ColdRing, 1 ],
+                     [ &ShockRing, 1 ]
                    ];
 
       propagate;

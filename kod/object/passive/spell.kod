@@ -509,7 +509,7 @@ messages:
          {
             % The spell's spellpower is the third element of the state, which
             %  is the third element of Jala info stored by room.
-            iJalaPower = Nth(Nth(Send(where,@GetJalaInfo),3),3);
+            iJalaPower = Nth(Nth(Send(where,@GetJalaInfo,#class=&Spellbane),3),3);
 
             % Does Spellbane overpower the spell?
             % Spellbane always works on monsters that can be silenced
@@ -1184,7 +1184,7 @@ messages:
       num = ((100-iRequisiteStat)*iSpellpower/100) + iRequisiteStat;
 
       % Modify chance to succeed due to Jala's hinder spells.
-      lJalaInfo = Send(Send(who,@GetOwner),@GetJalaInfo);
+      lJalaInfo = Send(Send(who,@GetOwner),@GetJalaInfo,#class=&HinderSpell);
 
       if lJalaInfo <> $
       {

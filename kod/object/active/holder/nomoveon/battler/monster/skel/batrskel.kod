@@ -87,6 +87,12 @@ messages:
       return;
    }
 
+   Constructed()
+   {
+      plKilledBuffs = Cons(SID_HASTE,plKilledBuffs);
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

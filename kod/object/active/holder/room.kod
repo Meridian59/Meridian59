@@ -3387,7 +3387,7 @@ messages:
       return;
    }
 
-   GetJalaInfo()
+   GetJalaInfo(class=$)
    "Returns all the info about the current Jala spell.  Returns a list of "
    "[timer, spell object, state]."
    {
@@ -3396,9 +3396,19 @@ messages:
       for i in plEnchantments
       {
          oSpell = Nth(i,2);
-         if Send(oSpell,@GetSchool) = SS_JALA
+         if class = $
          {
-            return i;
+            if Send(oSpell,@GetSchool) = SS_JALA
+            {
+               return i;
+            }
+         }
+         else
+         {
+            if IsClass(oSpell,class)
+            {
+               return i;
+            }
          }
       }
 

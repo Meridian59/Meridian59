@@ -135,6 +135,7 @@ messages:
          
          Post(who,@UserGotoDeadRoom);
          Post(who,@SetDeathRiftProtection,#value=TRUE);
+         Post(who,@StartDeathRiftTimer);
       }
       else
       {

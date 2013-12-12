@@ -21,7 +21,7 @@ properties:
    
    piTreasure_num = TID_AVAR
    piItem_att_chance = 4
-   piDiff_seed = 2
+   piDiff_seed = 6
 
 messages:
    

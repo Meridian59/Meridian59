@@ -6515,7 +6515,7 @@ messages:
       }    
       % user_stat_hpgainchance = "Tougher Chance"
       AddPacket(1,8, 4,user_stat_hpgainchance, 1,STAT_VALUE, 1,STAT_INTEGER,
-                4,iHPChance_Send, 4,0, 4,100, 4,iHPChance_Send);
+                4,iHPChance_Send, 4,-(piBase_Max_health/2), 4,30, 4,iHPChance_Send);
 
       return;
    }

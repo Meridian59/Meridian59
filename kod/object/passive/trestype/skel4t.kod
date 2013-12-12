@@ -33,16 +33,16 @@ messages:
    {
       plTreasure = [ [ &Scimitar, 1 ],
                      [ &BlueDragonScale, 10 ],
-                     [ &SilverArrow, 10 ],
+                     [ &SilverArrow, 5 ],
                      [ &DarkAngelFeather, 10 ],
                      [ &Circlet, 1 ],
-                     [ &Money, 55 ],
+                     [ &Money, 50 ],
                      [ &Gauntlet, 1 ],
                      [ &SimpleHelm, 1 ],
-                     [ &InkyCap, 5 ],
+                     [ &InkyCap, 17 ],
                      [ &IdentifyWand, 1 ],
-                     [ &WindScroll, 2 ],
-                     [ &KillingFieldScroll, 2 ],
+                     [ &WindScroll, 1 ],
+                     [ &KillingFieldScroll, 1 ],
                      [ &DementWand, 1 ]
                   ];
 

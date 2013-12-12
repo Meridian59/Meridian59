@@ -531,6 +531,8 @@ messages:
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateWarEvent);
+	  Send(self,@CreateAllSpellsIfNew);
+	  Send(self,@CreateAllRoomsIfNew);
       piRecreate_state = RECREATE_WAITING;
       ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,3000);
 

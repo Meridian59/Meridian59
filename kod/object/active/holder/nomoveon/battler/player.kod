@@ -19,7 +19,10 @@ constants:
    include protocol.khd
 
    % Three minutes
-   BOND_REPORT_INTERVAL = 1000 * 60 * 3   
+   BOND_REPORT_INTERVAL = 1000 * 60 * 3
+   
+   % One minute
+   DEATH_RIFT_INTERVAL = 1000 * 60  
 
    KARMA_TUNE_A_INVERSE = 20
    KARMA_TUNE_B_INVERSE = 5
@@ -707,6 +710,8 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
+   
+   death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
 
 classvars:
 
@@ -969,6 +974,7 @@ properties:
    
    % Is the player currently using a Death Rift spell?
    pbDeath_rift = FALSE
+   ptDeathRiftTimer = $
 
 messages:
 
@@ -4323,18 +4329,18 @@ messages:
          if oWeapon <> $
          {
             % Get weapon's numbers.
-            iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
-            iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
+            iStroke = Send(oWeapon,@GetStroke,#who=self);
+            iProficiency = Send(oWeapon,@GetProf,#who=self);
          }
          else
          {
             % Unarmed
-            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
-            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
+            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH);
+            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING);
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iAim*20) + (piBase_Max_Health*2);
+         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
 
          if oWeapon <> $
          {
@@ -4366,7 +4372,7 @@ messages:
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
 
-      return bound(iOffense,1,3000);
+      return bound(iOffense,1,1000);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4388,15 +4394,15 @@ messages:
          iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
-         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj) + 1;
+         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
          
          % Ask the shield, it might give a bonus to block.
-         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) + 1;
+         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
          
-         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj) + 1;
+         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = 200 + (iParry*5) + (iBlock*2) + (iDodge*3) + (iAgility*20) + (piBase_Max_Health*2);
+         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
       }
 
       for i in plDefense_modifiers
@@ -4414,7 +4420,7 @@ messages:
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
 
-      return bound(iDefense,1,3000);
+      return bound(iDefense,1,1000);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three
@@ -7734,14 +7740,14 @@ messages:
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 3;
+               gain = 2;
                roll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 2;
+               gain = 1;
                roll = TRUE;
             }
          }
@@ -7875,6 +7881,12 @@ messages:
       %  is called from LeaveHold() in the Underworld.  This is to allow time
       %  for Portal of Life to reduce penalties.  We get the default value of
       %  piDeathCost from SYS, so that we can adjust global death penalties.
+
+      if Send(self,@GetOwner) <> $
+         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      {
+         return;
+      }
 
       % "Normal" value is 100.
       piDeathCost = Send(Send(SYS, @GetSettings), @GetDefaultDeathCost);  
@@ -12583,6 +12595,11 @@ messages:
 
       if value=FALSE
       {
+         if ptDeathRiftTimer <> $
+         {
+            DeleteTimer(ptDeathRiftTimer);
+            ptDeathRiftTimer = $;
+         }
          pbDeath_rift = FALSE;
       }
 
@@ -12592,6 +12609,36 @@ messages:
    GetDeathRiftProtection()
    {
       return pbDeath_rift;
+   }
+   
+   StartDeathRiftTimer()
+   {
+      ptDeathRiftTimer = CreateTimer(self,@DeathRiftBoot,DEATH_RIFT_INTERVAL);
+      return;
+   }
+   
+   DeathRiftBoot()
+   "Players that linger too long will find themselves cast out of the Underworld."
+   {
+      local oRoom;
+
+      ptDeathRiftTimer = $;
+      
+      oRoom = Send(self,@GetOwner);
+      
+      if oRoom <> $
+         AND Send(oRoom,@GetRoomNum) = RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         Send(self,@AdminGoToSafety);
+         
+         if Send(self,@IsLoggedOn)
+         {
+            Send(self,@MsgSendUser,#message_rsc=death_rift_stayed_too_long);
+         }
+      }
+      
+      return;
    }
 
 end

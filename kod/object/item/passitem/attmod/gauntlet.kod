@@ -322,9 +322,16 @@ messages:
          }   
       }
       
+      
       return TRUE; 
    }
 
+   GetResistanceModifiers()
+   {
+      return [ 
+      		[-ATCK_SPELL_SHOCK,-5]
+             ];
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

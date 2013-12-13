@@ -2111,7 +2111,7 @@
 
    %%% Player flags
 
-   PKILL_ENABLE_HP = 30
+   PKILL_ENABLE_HP = 50
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList

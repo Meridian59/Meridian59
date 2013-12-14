@@ -118,6 +118,11 @@ enum
 #define PACKAGE_FILE "packages.txt"
 #define SPROCKET_FILE "sprocket.dll"
 
+#include <my_global.h>
+#undef min
+#undef max
+#include <mysql.h>
+
 #ifdef BLAK_PLATFORM_WINDOWS
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
@@ -174,7 +179,6 @@ typedef unsigned long long UINT64;
 #include <sys/stat.h>
 #include <time.h>
 #include <math.h>
-#include <mysql.h>
 
 #include "btime.h"
 
@@ -296,6 +300,7 @@ char * GetLastErrorStr();
 
 #include "maintenance.h"
 #include "block.h"
+#include "database.h"
 
 #endif
 

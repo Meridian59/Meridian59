@@ -216,6 +216,12 @@ config_table_type config_table[] =
 { SERVICE_USERNAME,       T, "Username",      CONFIG_STR,   "m59ftp" },
 { SERVICE_PASSWORD,       T, "Password",      CONFIG_STR,   "b58Iz3xp" },
 
+{ MYSQL_GROUP,            T, "[MySQL]",       CONFIG_GROUP, "" },
+{ MYSQL_USERNAME,         T, "Username",      CONFIG_STR, "root" },
+{ MYSQL_PASSWORD,         T, "Password",      CONFIG_STR, "somethingiswronghere" },
+{ MYSQL_HOST,             T, "Host",          CONFIG_STR, "localhost" },
+{ MYSQL_PORT,             T, "Port",          CONFIG_INT, "3306" },
+
 { BLAKOD_GROUP,           F, "[Blakod]",      CONFIG_GROUP, "" },
 { BLAKOD_MAX_STATEMENTS,  T, "MaxStatements", CONFIG_INT,   "20000000" },
 

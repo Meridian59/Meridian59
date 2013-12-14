@@ -21,6 +21,14 @@ resources:
    statfood_name_plural_rsc = "stat food"
    statfood_icon_rsc = mushroom.bgf
    statfood_desc_rsc = "This is some stat food!"
+   statfood_bless = "Bless"
+   statfood_magicshield= "Magic Shield"
+   statfood_superstrength= "Super Strength"
+   statfood_nightvision= "Nightvision"
+   statfood_haste= "Haste"
+   
+   statfood_extended_desc = "Consumption will restore %i vigor and decrease your hunger by %i.  You will "
+                           "also be granted the buff %s."
 
 classvars:
 
@@ -44,6 +52,18 @@ properties:
    piNumber = 1
 
 messages:
+
+   AppendDesc()
+   {
+      % Tell the player about what this does.
+      if pbCheckKarma
+      {
+         AppendTempString("\n\n");
+         AppendTempString(statfood_extended_desc);
+      }
+
+      propagate;
+   }
 
    CastSpell(what = $, apply_on = $)
    "Casts the spell set by the spell object"

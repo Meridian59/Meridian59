@@ -9,7 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-LowFood is Food
+Alcohol is Food
 
 constants:
 
@@ -17,31 +17,41 @@ constants:
 
 resources:
 
-   lowfood_name_rsc = "bad food"
-   lowfood_name_plural_rsc = "bad food"
-   lowfood_icon_rsc = mushroom.bgf
-   lowfood_desc_rsc = "This is some bad food!"
+   alcohol_name_rsc = "alcohol"
+   alcohol_name_plural_rsc = "alcohol"
+   alcohol_icon_rsc = goblet.bgf
+   alcohol_desc_rsc = "This is some alcohol!"
 
 classvars:
 
-   vrName = lowfood_name_rsc
-   vrName_plural = lowfood_name_plural_rsc
-   vrIcon = lowfood_icon_rsc
-   vrDesc = lowfood_desc_rsc
+   vrName = alcohol_name_rsc
+   vrName_plural = alcohol_name_plural_rsc
+   vrIcon = alcohol_icon_rsc
+   vrDesc = alcohol_desc_rsc
 
    viIndefinite = ARTICLE_AN
 
-   viBulk = 5
-   viWeight = 5
-   viValue_average = 50
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 40
 
 properties:
 
-   viFilling = 50                
-   viNutrition = 25              
+   viFilling = 10                
+   viNutrition = 5              
    piNumber = 1
 
 messages:
+
+   IsAlcohol()
+   {        
+      return TRUE;
+   }
+   
+   IsBeverage()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

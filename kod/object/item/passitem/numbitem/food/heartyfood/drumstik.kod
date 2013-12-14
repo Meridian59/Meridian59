@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Drumstick is Food
+Drumstick is HeartyFood
 
 constants:
 
@@ -45,16 +45,17 @@ classvars:
 
    vrName_plural = drumstick_name_plural_rsc
 
-   viBulk = 15
-   viWeight = 9
+   viBulk = 20
+   viWeight = 20
 
-   viValue_average = 0
+   viValue_average = 80
 
 properties:
 
-   viFilling = 30   
-   viNutrition = 9
+   viFilling = 40   
+   viNutrition = 20
    piNumber = 1
+   viHealing = 40
 
 messages:
 

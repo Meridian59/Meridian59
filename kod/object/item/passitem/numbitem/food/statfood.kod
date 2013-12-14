@@ -43,5 +43,49 @@ properties:
 
 messages:
 
+   CastSpell(what = $, apply_on = $)
+   "Casts the spell set by the spell object"
+   {
+      local oSpell, iSpellPower, lTargets;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
+
+      % Get proper targets according to spell, assume that apply_on is our basic target.
+      lTargets = Send(oSpell,@GetTargets,#who=what,#lTargets=[apply_on]);
+
+      iSpellPower = 50;
+      
+      Send(oSpell,@CastSpell,#who=poOwner,#lTargets=lTargets,
+              #iSpellPower=iSpellPower,#bItemCast=TRUE);
+
+      return;
+   }
+
+   SendTaste(what = $,apply_on = $)
+   {
+      Send(apply_on,@MsgSendUser,#message_rsc=food_use);
+         return;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      Send(self,@SendTaste,#what=what,#apply_on=apply_on);
+      Send(what,@WaveSendUser,#wave_rsc=vrEat_wav);
+      Send(apply_on,@EatSomething,#nutrition=viNutrition,#filling=viFilling);
+      Send(self,@SubtractNumber,#number=1);
+      Send(self,@CastSpell,#what=what,#apply_on=apply_on);
+      return;
+   }
+
+   IsAlcohol()
+   {        
+      return FALSE;
+   }
+
+   IsBeverage()
+   {
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

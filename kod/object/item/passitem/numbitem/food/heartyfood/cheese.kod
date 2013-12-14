@@ -33,17 +33,17 @@ classvars:
 
    vrName_plural = Cheese_name_plural_rsc
 
-   viBulk = 20
-   viWeight = 20
+   viBulk = 25
+   viWeight = 25
 
-   viValue_average = 80
+   viValue_average = 100
 
 properties:
 
-   viNutrition = 20
-   viFilling = 40
+   viNutrition = 25
+   viFilling = 50
    piNumber = 1
-   viHealing = 40
+   viHealing = 50
 
 messages:
 

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Cheese is Food
+Cheese is HeartyFood
 
 constants:
 
@@ -33,16 +33,17 @@ classvars:
 
    vrName_plural = Cheese_name_plural_rsc
 
-   viBulk = 30
-   viWeight = 30
+   viBulk = 20
+   viWeight = 20
 
    viValue_average = 80
 
 properties:
 
-   viNutrition = 30
+   viNutrition = 20
    viFilling = 40
-   piNumber = 2
+   piNumber = 1
+   viHealing = 40
 
 messages:
 

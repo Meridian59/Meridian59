@@ -16,13 +16,13 @@ constants:
 
 resources:
 
-   aged_cheese_name_rsc = "piece of aged cheese"
-   aged_cheese_icon_rsc = cheese.bgf
+   aged_cheese_name_rsc = "small wheel of aged cheese"
+   aged_cheese_icon_rsc = qo09.bgf
    aged_cheese_desc_rsc = \
-   "This aged cheese came at a hefty price.  Supposedly,it is equally delicious as the famed inky-cap "
-   "mushroom, yet the thick layers of mold make it look less than appealing."
+   "This aged cheese came at a hefty price.  It bears the stamp of the royal Barloquian cheesery "
+   "and supposedly, it is equally delicious as the famed inky-cap mushroom ."
 
-   aged_cheese_name_plural_rsc = "pieces of aged cheese"
+   aged_cheese_name_plural_rsc = "small wheels of aged cheese"
 
 classvars:
 

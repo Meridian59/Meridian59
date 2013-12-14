@@ -17,5 +17,7 @@
 #define _DATABASE_H
 
 void MySQLTest();
+void MySQLInit();
+void MySQLEnd();
 
 #endif

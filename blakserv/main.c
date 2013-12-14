@@ -68,7 +68,7 @@ void MainServer()
 	
 	OpenDefaultChannels();
 
-	MySQLTest();
+	MySQLInit();
 	
 	lprintf("Starting %s\n",BlakServLongVersionString());
 	
@@ -159,6 +159,7 @@ void MainExitServer()
 	ResetObject();
 	ResetMessage();
 	ResetClass();
+	MySQLEnd();
 	
 	ResetConfig();
 	

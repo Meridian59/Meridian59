@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+LowFood is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   lowfood_name_rsc = "bad food"
+   lowfood_name_plural_rsc = "bad food"
+   lowfood_icon_rsc = mushroom.bgf
+   lowfood_desc_rsc = "This is some bad food!"
+
+classvars:
+
+   vrName = lowfood_name_rsc
+   vrName_plural = lowfood_name_plural_rsc
+   vrIcon = lowfood_icon_rsc
+   vrDesc = lowfood_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 5
+   viWeight = 5
+   viValue_average = 50
+
+properties:
+
+   viFilling = 50                
+   viNutrition = 25              
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

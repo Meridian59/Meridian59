@@ -44,7 +44,7 @@ classvars:
 
    vrName_plural = grapes_name_plural_rsc
    
-   viSpellEffect = SID_MAGICSHIELD
+   viSpellEffect = SID_BLESS
 
 properties:
 

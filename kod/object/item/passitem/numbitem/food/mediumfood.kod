@@ -9,7 +9,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-MediumFood is Food
+StandardFood is Food
 
 constants:
 
@@ -17,28 +17,28 @@ constants:
 
 resources:
 
-   mediumfood_name_rsc = "average food"
-   mediumfood_name_plural_rsc = "average food"
-   mediumfood_icon_rsc = mushroom.bgf
-   mediumfood_desc_rsc = "This is some average food!"
+   standardfood_name_rsc = "standard food"
+   standardfood_name_plural_rsc = "standard food"
+   standardfood_icon_rsc = mushroom.bgf
+   standardfood_desc_rsc = "This is some standard food!"
 
 classvars:
 
-   vrName = mediumfood_name_rsc
-   vrName_plural = mediumfood_name_plural_rsc
-   vrIcon = mediumfood_icon_rsc
-   vrDesc = mediumfood_desc_rsc
+   vrName = standardfood_name_rsc
+   vrName_plural = standardfood_name_plural_rsc
+   vrIcon = standardfood_icon_rsc
+   vrDesc = standardfood_desc_rsc
 
    viIndefinite = ARTICLE_AN
 
    viBulk = 10
    viWeight = 10
-   viValue_average = 250
+   viValue_average = 40
 
 properties:
 
-   viFilling = 25                
-   viNutrition = 25            
+   viFilling = 10                
+   viNutrition = 10            
    piNumber = 1
 
 messages:

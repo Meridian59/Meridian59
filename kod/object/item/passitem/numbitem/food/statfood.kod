@@ -30,6 +30,8 @@ classvars:
    vrDesc = statfood_desc_rsc
 
    viIndefinite = ARTICLE_AN
+   
+   viSpellEffect = SID_BLESS
 
    viBulk = 5
    viWeight = 5

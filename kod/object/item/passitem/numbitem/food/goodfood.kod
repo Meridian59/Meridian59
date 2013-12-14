@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+GoodFood is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   goodfood_name_rsc = "Good Food"
+   goodfood_name_plural_rsc = "Good Food"
+   goodfood_icon_rsc = mushroom.bgf
+   goodfood_desc_rsc = "This is some good food!"
+
+classvars:
+
+   vrName = goodfood_name_rsc
+   vrName_plural = goodfood_name_plural_rsc
+   vrIcon = goodfood_icon_rsc
+   vrDesc = goodfood_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 250
+
+properties:
+
+   viFilling = 25                
+   viNutrition = 50              
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

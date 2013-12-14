@@ -43,14 +43,14 @@ classvars:
    
    viSpellEffect = SID_BLESS
 
-   viBulk = 5
-   viWeight = 5
+   viBulk = 10
+   viWeight = 10
    viValue_average = 50
 
 properties:
 
-   viFilling = 20                
-   viNutrition = 10              
+   viFilling = 10                
+   viNutrition = 5              
    piNumber = 1
 
 messages:

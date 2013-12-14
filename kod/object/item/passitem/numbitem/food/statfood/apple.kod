@@ -35,7 +35,7 @@ classvars:
 
    viIndefinite = ARTICLE_AN
 
-   viSpellEffect = SID_MAGICSHIELD
+   viSpellEffect = SID_MAGIC_SHIELD
 
 properties:
 

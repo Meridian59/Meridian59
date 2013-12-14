@@ -17,8 +17,8 @@ constants:
 
 resources:
 
-   goodfood_name_rsc = "Good Food"
-   goodfood_name_plural_rsc = "Good Food"
+   goodfood_name_rsc = "good food"
+   goodfood_name_plural_rsc = "good food"
    goodfood_icon_rsc = mushroom.bgf
    goodfood_desc_rsc = "This is some good food!"
 

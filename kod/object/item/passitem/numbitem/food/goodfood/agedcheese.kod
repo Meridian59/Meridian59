@@ -20,7 +20,7 @@ resources:
    aged_cheese_icon_rsc = cheese.bgf
    aged_cheese_desc_rsc = \
    "This aged cheese came at a hefty price.  Supposedly,it is equally delicious as the famed inky-cap "
-   "mushroom, yet the thick layers of mold make it look less than appealing.
+   "mushroom, yet the thick layers of mold make it look less than appealing."
 
    aged_cheese_name_plural_rsc = "pieces of aged cheese"
 

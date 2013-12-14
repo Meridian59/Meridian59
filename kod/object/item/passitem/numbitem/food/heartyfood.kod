@@ -24,6 +24,11 @@ resources:
    
    heartyfood_health_restored = "You take a big bite and your life force is restored by ~g~B%i~B~n!"
    
+   heartyfood_extended_desc_one = "Consumption will increase your vigor by "
+   heartyfood_extended_desc_two = " and decrease your hunger by "
+   heartyfood_extended_desc_three = ".  This food will also restore "
+   heartyfood_extended_desc_four = " hit points." 
+   
 
 classvars:
 
@@ -47,6 +52,20 @@ properties:
    viHealing = 50
 
 messages:
+
+   AppendDesc()
+   {
+      AppendTempString("\n\n");
+      AppendTempString(heartyfood_extended_desc_one);
+      AppendTempString(viNutrition);
+      AppendTempString(heartyhfood_extended_desc_two);
+      AppendTempString(viFilling);
+      AppendTempString(heartyfood_extended_desc_three);
+      AppendTempString(viHealing);
+      AppendTempString(heartyfood_extended_desc_four);
+      
+      propagate;
+   }
 
    NewApplied(what = $,apply_on = $)
    {

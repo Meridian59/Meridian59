@@ -65,12 +65,8 @@ messages:
 
    NewApplied(what = $,apply_on = $)
    {
-      Send(self,@SendTaste,#what=what,#apply_on=apply_on);
-      Send(what,@WaveSendUser,#wave_rsc=vrEat_wav);
-      Send(apply_on,@EatSomething,#nutrition=viNutrition,#filling=viFilling);
-      Send(self,@SubtractNumber,#number=1);
       Send(self,@CastSpell,#what=what,#apply_on=apply_on);
-      return;
+      propagate;
    }
 
 end

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Pork is Food
+Pork is HeartyFood
 
 constants:
 
@@ -43,16 +43,17 @@ classvars:
 
    vrName_plural = pork_name_plural_rsc
 
-   viBulk = 9
-   viWeight = 9
+   viBulk = 10
+   viWeight = 10
 
    viValue_average = 0
 
 properties:
 
    viFilling = 20   
-   viNutrition = 9
-   piNumber = 2
+   viNutrition = 10
+   piNumber = 1
+   viHealing = 20
 
 messages:
 

@@ -95,16 +95,13 @@ messages:
    CastSpell(what = $, apply_on = $)
    "Casts the spell set by the spell object"
    {
-      local oSpell, iSpellPower, lTargets;
+      local oSpell, iSpellPower;
 
       oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
 
-      % Get proper targets according to spell, assume that apply_on is our basic target.
-      lTargets = Send(oSpell,@GetTargets,#who=what,#lTargets=[apply_on]);
-
       iSpellPower = 50;
       
-      Send(oSpell,@CastSpell,#who=poOwner,#lTargets=lTargets,
+      Send(oSpell,@CastSpell,#who=apply_on,#lTargets=[apply_on],
               #iSpellPower=iSpellPower,#bItemCast=TRUE);
 
       return;

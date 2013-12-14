@@ -27,8 +27,10 @@ resources:
    statfood_nightvision= "Nightvision"
    statfood_haste= "Haste"
    
-   statfood_extended_desc = "Consumption will restore %i vigor and decrease your hunger by %i.  You will "
-                           "also be granted the buff %s."
+   statfood_extended_desc_one = "Consumption will increase your vigor by "
+   statfood_extended_desc_two = " and decrease your hunger by "
+   statfood_extended_desc_three = ".  This food will also grant you the buff "
+   statfood_extended_desc_four = "." 
 
 classvars:
 
@@ -55,13 +57,38 @@ messages:
 
    AppendDesc()
    {
-      % Tell the player about what this does.
-      if pbCheckKarma
+      local sBuff;
+      
+      if viSpellEffect = SID_BLESS
       {
-         AppendTempString("\n\n");
-         AppendTempString(statfood_extended_desc);
+         sBuff = statfood_bless;
       }
-
+      if viSpellEffect = SID_MAGIC_SHIELD
+      {
+         sBuff = statfood_magicshield;
+      }
+      if viSpellEffect = SID_HASTE
+      {
+         sBuff = statfood_haste;
+      }
+      if viSpellEffect = SID_SUPER_STRENGTH
+      {
+         sBuff = statfood_superstrength;
+      }
+      if viSpellEffect = SID_NIGHTVISION
+      {
+         sBuff = statfood_nightvision;
+      }
+      
+      AppendTempString("\n\n");
+      AppendTempString(statfood_extended_desc_one);
+      AppendTempString(viNutrition);
+      AppendTempString(statfood_extended_desc_two);
+      AppendTempString(viFilling);
+      AppendTempString(statfood_extended_desc_three);
+      AppendTempString(sBuff);
+      AppendTempString(statfood_extended_desc_four);
+      
       propagate;
    }
 

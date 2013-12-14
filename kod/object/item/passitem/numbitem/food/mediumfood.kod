@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+MediumFood is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   mediumfood_name_rsc = "average food"
+   mediumfood_name_plural_rsc = "average food"
+   mediumfood_icon_rsc = mushroom.bgf
+   mediumfood_desc_rsc = "This is some average food!"
+
+classvars:
+
+   vrName = mediumfood_name_rsc
+   vrName_plural = mediumfood_name_plural_rsc
+   vrIcon = mediumfood_icon_rsc
+   vrDesc = mediumfood_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 250
+
+properties:
+
+   viFilling = 30                
+   viNutrition = 30              
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

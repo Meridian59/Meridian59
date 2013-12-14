@@ -63,12 +63,6 @@ messages:
       return;
    }
 
-   SendTaste(what = $,apply_on = $)
-   {
-      Send(apply_on,@MsgSendUser,#message_rsc=food_use);
-         return;
-   }
-
    NewApplied(what = $,apply_on = $)
    {
       Send(self,@SendTaste,#what=what,#apply_on=apply_on);
@@ -77,16 +71,6 @@ messages:
       Send(self,@SubtractNumber,#number=1);
       Send(self,@CastSpell,#what=what,#apply_on=apply_on);
       return;
-   }
-
-   IsAlcohol()
-   {        
-      return FALSE;
-   }
-
-   IsBeverage()
-   {
-      return FALSE;
    }
 
 end

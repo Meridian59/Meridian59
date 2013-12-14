@@ -35,7 +35,7 @@ classvars:
 
    vrName_plural = stew_name_plural_rsc
    
-   viSpellEffect = SID_SUPERSTRENGTH
+   viSpellEffect = SID_SUPER_STRENGTH
 
    vrEat_wav = stew_eat_wav
 

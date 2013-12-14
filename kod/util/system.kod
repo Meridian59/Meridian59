@@ -4810,6 +4810,7 @@ messages:
       plItemTemplates = cons(create(&Apple),plItemTemplates);
       plItemTemplates = cons(create(&Bread),plItemTemplates);
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
+      plItemTemplates = cons(create(&AgedCheese),plItemTemplates);
       plItemTemplates = cons(create(&Meatpie),plItemTemplates);
       plItemTemplates = cons(create(&Mug),plItemTemplates);
       plItemTemplates = cons(create(&KocatanMug),plItemTemplates);

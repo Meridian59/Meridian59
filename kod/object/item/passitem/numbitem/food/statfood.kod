@@ -24,7 +24,7 @@ resources:
    statfood_bless = "Bless"
    statfood_magicshield= "Magic Shield"
    statfood_superstrength= "Super Strength"
-   statfood_nightvision= "Nightvision"
+   statfood_nightvision= "Night Vision"
    statfood_haste= "Haste"
    
    statfood_extended_desc_one = "Consumption will increase your vigor by "
@@ -75,7 +75,7 @@ messages:
       {
          sBuff = statfood_superstrength;
       }
-      if viSpellEffect = SID_NIGHTVISION
+      if viSpellEffect = SID_NIGHT_VISION
       {
          sBuff = statfood_nightvision;
       }

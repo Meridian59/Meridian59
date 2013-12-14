@@ -48,7 +48,7 @@ classvars:
 
    vrName_plural = spideye_name_plural_rsc
 
-   viSpellEffect = SID_NIGHTVISION
+   viSpellEffect = SID_NIGHT_VISION
 
 properties:
 

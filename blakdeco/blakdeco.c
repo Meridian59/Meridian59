@@ -588,7 +588,7 @@ char * name_function(int fnum)
    case REST  : return "Rest";
    case LENGTH  : return "Length";
    case NTH  : return "Nth";
-   case LIST  : return "List";
+   case MLIST  : return "List";
    case ISLIST : return "IsList";
    case SETFIRST : return "SetFirst";
    case SETNTH : return "SetNth";

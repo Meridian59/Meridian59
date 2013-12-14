@@ -32,7 +32,7 @@ function_type Functions[] = {
 {"First",		FIRST,		 AEXPRESSION,	ANONE},
 {"Rest",		REST,		 AEXPRESSION,	ANONE},
 {"Length", 		LENGTH,		 AEXPRESSION,	ANONE},
-{"List", 		LIST,		 AEXPRESSIONS,	ANONE},
+{"List", 		MLIST,		 AEXPRESSIONS,	ANONE},
 {"Nth",			NTH,		 AEXPRESSION,	AEXPRESSION,	ANONE},
 {"SetFirst",            SETFIRST,        AEXPRESSION,   AEXPRESSION,    ANONE},
 {"SetNth",              SETNTH,          AEXPRESSION,   AEXPRESSION,    AEXPRESSION, ANONE},

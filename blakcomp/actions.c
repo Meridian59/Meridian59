@@ -935,7 +935,7 @@ stmt_type make_list_call(list_type l)
    stmt_type stmt = (stmt_type) SafeMalloc(sizeof(stmt_struct));
    call_stmt_type s = (call_stmt_type) SafeMalloc(sizeof(call_stmt_struct));
    
-   s->function = LIST;
+   s->function = MLIST;
    s->args = NULL;
    
    for ( ; l != NULL; l = l->next)

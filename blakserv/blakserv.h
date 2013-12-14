@@ -174,6 +174,7 @@ typedef unsigned long long UINT64;
 #include <sys/stat.h>
 #include <time.h>
 #include <math.h>
+#include <mysql.h>
 
 #include "btime.h"
 

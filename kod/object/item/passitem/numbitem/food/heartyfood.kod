@@ -60,7 +60,7 @@ messages:
       AppendTempString("\n\n");
       AppendTempString(heartyfood_extended_desc_one);
       AppendTempString(viNutrition);
-      AppendTempString(heartyhfood_extended_desc_two);
+      AppendTempString(heartyfood_extended_desc_two);
       AppendTempString(viFilling);
       AppendTempString(heartyfood_extended_desc_three);
       AppendTempString(viHealing);

@@ -35,15 +35,13 @@ classvars:
 
    viIndefinite = ARTICLE_AN
 
-   viBulk = 6
-   viWeight = 6
-   viValue_average = 25
+   viSpellEffect = SID_MAGICSHIELD
 
 properties:
 
-   viNutrition = 10
-   viFilling = 24   
-   piNumber = 2
+   viNutrition = 5
+   viFilling = 10   
+   piNumber = 1
 
 messages:
 

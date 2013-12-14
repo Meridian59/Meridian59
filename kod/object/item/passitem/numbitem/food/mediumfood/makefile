@@ -4,7 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\mediumfood.bof
+DEPEND = ..\standardfood.bof
 BOFS = snack.bof watrskin.bof meatpie.bof bread.bof soup.bof 
 
 !include $(KODDIR)\kod.mak

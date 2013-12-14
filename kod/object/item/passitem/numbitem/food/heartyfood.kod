@@ -17,8 +17,8 @@ constants:
 
 resources:
 
-   heartyfood_name_rsc = "Hearty Food"
-   heartyfood_name_plural_rsc = "Hearty Food"
+   heartyfood_name_rsc = "hearty food"
+   heartyfood_name_plural_rsc = "hearty food"
    heartyfood_icon_rsc = mushroom.bgf
    heartyfood_desc_rsc = "This is some hearty food!"
 
@@ -37,8 +37,8 @@ classvars:
 
 properties:
 
-   viFilling = 30                
-   viNutrition = 20              
+   viFilling = 50                
+   viNutrition = 25              
    piNumber = 1
 
 messages:

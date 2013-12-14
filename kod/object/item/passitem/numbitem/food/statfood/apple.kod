@@ -21,8 +21,8 @@ resources:
    apple_desc_rsc = \
    "This bright red apple, a favorite food of the country folk of Marion, "
    "is enormous and free of blemishes.  It was probably "
-   "grown in the deep forest of Farol."
-
+   "grown in the deep forest of Farol and looks extremely healthy!  "
+   
    apple_name_plural_rsc = "apples"
 
 classvars:

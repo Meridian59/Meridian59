@@ -148,6 +148,9 @@ properties:
    
    % Replaces old constant
    piPKillEnableHP = 50
+   
+   % Replaces old constant
+   piIntrigueEnableHP = 50
 
 messages:
 
@@ -186,6 +189,11 @@ messages:
    GetPKillEnableHP()
    {
       return piPKillEnableHP;
+   }
+   
+   GetIntrigueEnableHP()
+   {
+      return piIntrigueEnableHP;
    }
 
    %

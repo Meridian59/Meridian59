@@ -31,13 +31,13 @@ messages:
    
    constructed()
    {
-      plTreasure = [ [ &Scimitar, 1 ],
+      plTreasure = [ [ &Scimitar, 3 ],
                      [ &BlueDragonScale, 10 ],
                      [ &SilverArrow, 5 ],
                      [ &DarkAngelFeather, 10 ],
                      [ &Circlet, 1 ],
-                     [ &Money, 50 ],
-                     [ &Gauntlet, 1 ],
+                     [ &Money, 46 ],
+                     [ &Gauntlet, 3 ],
                      [ &SimpleHelm, 1 ],
                      [ &InkyCap, 17 ],
                      [ &IdentifyWand, 1 ],

@@ -30,8 +30,8 @@ messages:
    
    constructed()
    {
-    plTreasure = [ [ &RedMushroom, 25 ],
-                   [ &BlueMushroom, 20 ],
+    plTreasure = [ [ &Sapphire, 25 ],
+                   [ &Emerald, 20 ],
                    [ &Snack, 15],
                    [ &Money, 25 ],
                    [ &BlueDragonScale, 6],

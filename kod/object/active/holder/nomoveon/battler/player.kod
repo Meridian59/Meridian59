@@ -2427,6 +2427,7 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       
       return;
    }

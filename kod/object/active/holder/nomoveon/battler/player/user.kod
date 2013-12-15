@@ -133,7 +133,7 @@ resources:
    user_stat_mysticism = "Mysticism"
    user_stat_aim = "Aim"
    user_stat_karma = "Karma"
-   user_stat_hpgainchance = heal.bgf
+   user_stat_hpgainchance = istreng.bgf
 
    user_stat_health = heal.bgf
    user_stat_mana = ankh.bgf

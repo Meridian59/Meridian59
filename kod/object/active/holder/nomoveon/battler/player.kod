@@ -11494,7 +11494,7 @@ messages:
    PlayerIsHPIntrigue()
    "If player has over 40hp base."
    {
-      return (piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetIntrigueEnableHP);
+      return (piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetIntrigueEnableHP));
    }
 
    PlayerIsAdept()

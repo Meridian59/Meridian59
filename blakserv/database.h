@@ -18,6 +18,8 @@
 
 void MySQLTest();
 void MySQLInit();
+int MySQLCheckSchema()
+void MySQLCreateSchema();
 void MySQLEnd();
 
 #endif

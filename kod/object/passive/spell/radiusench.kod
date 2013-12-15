@@ -49,6 +49,8 @@ resources:
 
    radius_ench_need_instrument = "You need an instrument!"
 
+   radius_ench_old_style_aleady_cast = "You are already under the effects of that magic."
+   
 classvars:
 
    radius_ench_already_cast = radius_ench_default_already_cast
@@ -84,13 +86,16 @@ classvars:
    viAffectsEnemies = FALSE     % Hostile, can cause outlaw status
    viAffectsInnocents = FALSE   % Unaffiliated white characters
    viAffectsNewbies = FALSE     % Angeled characters
+   
+   viOldAreaEnchStyle = FALSE   % If true, spell functions as an old-style Area Enchantment
+                                % No trance required, and will remain in initial room for duration
+                                
+   viCasterPersist = FALSE      % If true, spell will 'follow' caster between rooms
 
 properties:
 
    ptDrainTimer = $
    ptDrainNow = FALSE
-   
-   viLightIntensity = 60
 
 messages:
 
@@ -115,6 +120,13 @@ messages:
              return FALSE; 
           }
       }
+      
+      if viOldAreaEnchStyle
+         AND Send(who,@IsAffectedByRadiusEnchantment,#what=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=radius_ench_old_style_aleady_cast);
+         return FALSE;
+      }
 
       propagate;
    }
@@ -124,15 +136,25 @@ messages:
    {
       local i, lMaintaining, iState, oObj, oUser, oCasterGuild, oRoom, iElapsed, lEnchanted, iPower, iRange;
 
+      % Old style Area Enchantments use a RadiusEnchantmentTotem as the center of the spell.
+      % This creates a timed invisible object that perpetuates the spell regardless of what the player does.
+      % The totem is linked to the caster for all characteristics (flags and affiliations).
+      if viOldAreaEnchStyle
+         AND IsClass(who,&User)
+      {
+         Create(&RadiusEnchantmentTotem,#totem_spell=self,#totem_caster=who,#totem_power=iSpellPower);
+         propagate;
+      }
+
       iElapsed = 0;
       lEnchanted = $;
       iPower = Send(self,@CalculatePower,#iSpellPower=iSpellPower);
       iRange = Send(self,@CalculateRange,#iSpellPower=iSpellPower);
-      
-      viLightIntensity = Send(self,@CalculateLightIntensity,#iSpellPower=iSpellPower);
 
-      % Cancel previous radius spell trance
-      if Send(who,@IsEnchanted,#byClass=&RadiusEnchantment)
+      % Cancel previous trance if this spell requires one as well
+      if NOT viOldAreaEnchStyle
+         AND IsClass(who,&User)
+         AND Send(who,@IsEnchanted,#byClass=&RadiusEnchantment)
       {
          lMaintaining = Send(who,@GetEnchantmentsByClass,#enchClass=&RadiusEnchantment);
          for i in lMaintaining
@@ -163,7 +185,8 @@ messages:
 
             % Important note: FindListElem returns nil on a passed nil value, not zero.
             if (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
-               AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+               AND (Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+                   OR viOldAreaEnchStyle)
             {
                if Send(self,@TargetIsValid,#target=oUser,#caster=who)
                {
@@ -182,12 +205,15 @@ messages:
          }
       }
 
-      % Put spell maintenance info in casters enchantment list.
+      % Put spell maintenance info in caster's enchantment list.
       Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
            #state=[iElapsed,lEnchanted,iPower,iRange]);      
 
       % Set up mana drain
-      ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
+      if IsClass(who,&User)
+      {
+         ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
+      }
 
       propagate;
    }
@@ -290,7 +316,8 @@ messages:
       % Check for players that have left the radius of effect
       for oUser in lEnchanted
       {
-         if Send(who,@SquaredDistanceTo,#what=oUser) > (iRange * iRange)
+         if (Send(who,@SquaredDistanceTo,#what=oUser) > (iRange * iRange)
+            AND NOT viOldAreaEnchStyle)
             OR Send(who,@GetOwner) <> Send(oUser,@GetOwner)
             OR NOT Send(self,@TargetIsValid,#target=oUser,#caster=who)
          {
@@ -307,7 +334,8 @@ messages:
 
          if IsClass(oUser,&User)
             AND (lEnchanted = $ OR FindListElem(lEnchanted,oUser) = 0)
-            AND Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+            AND (Send(who,@SquaredDistanceTo,#what=oUser) <= (iRange * iRange)
+                OR viOldAreaEnchStyle)
          {
             if Send(self,@TargetIsValid,#target=oUser,#caster=who)
             {
@@ -321,7 +349,8 @@ messages:
       Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
           #state=[iElapsed,lEnchanted,iPower,iRange],#Report=FALSE);
               
-      if ptDrainNow = TRUE
+      if IsClass(who,&User)
+         AND ptDrainNow = TRUE
       {
          if Send(who,@GetMana) >= viManaDrain
          {
@@ -361,21 +390,17 @@ messages:
       iPower = Nth(state,3);
 
       % Clean up Trance.
-      Send(who,@ClearTranceFlag);
-      Send(who,@RemoveEnchantment,#what=self);
+      if IsClass(who,&User)
+      {
+         Send(who,@ClearTranceFlag);
+         Send(who,@RemoveEnchantment,#what=self);
+      }
       lEnchanted = Nth(state,2);
       for oUser in lEnchanted
       {
          Send(self,@LeaveRadius,#who=oUser,#iPower=iPower,#caster=who);
-      }
-      
-      oRoom = Send(who,@GetOwner);
-      
-      for oObj in Send(oRoom,@GetplActive)
-      {
-         oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
-
-         if IsClass(oUser,&User)
+         
+         if viOldAreaEnchStyle
          {
             if oUser = who
             {
@@ -390,8 +415,35 @@ messages:
          }
       }
       
-      DeleteTimer(ptDrainTimer);
-      ptDrainTimer=$;
+      oRoom = Send(who,@GetOwner);
+      
+      if NOT viOldAreaEnchStyle
+      {
+         for oObj in Send(oRoom,@GetplActive)
+         {
+            oUser = Send(oRoom,@HolderExtractObject,#data=oObj);
+
+            if IsClass(oUser,&User)
+            {
+               if oUser = who
+               {
+                  Send(oUser,@MsgSendUser,#message_rsc=radius_ench_caster_ends,#parm1=Send(who,@GetName));
+                  Send(oUser,@ClearFlickerFlag);
+                  Send(oUser,@RecalcFlickerFlag);
+               }
+               else
+               {
+                  Send(oUser,@MsgSendUser,#message_rsc=radius_ench_ends,#parm1=Send(who,@GetName));
+               }
+            }
+         }
+      }
+      
+      if IsClass(who,&User)
+      {
+         DeleteTimer(ptDrainTimer);
+         ptDrainTimer=$;
+      }
 
       propagate;
    }
@@ -451,9 +503,15 @@ messages:
    
    GetLightIntensity()
    {
-      return viLightIntensity;
+      return viBaseLightIntensity;
    }
 
+   % Radius spells that use totems need to naturally time out.
+   GetDuration(iSpellPower=0)
+   {
+      return ((50 + iSpellpower)*1000);
+   }
+   
    %%%%% Effect Functions
    
    ModifyDefensePower(attacker=$,iPower=0,caster=$,defense_power=0)
@@ -464,6 +522,21 @@ messages:
    ModifyResistance(attacker=$,atype=-ATCK_SPELL_ALL,iPower=0,caster=$,resistance=$)
    {
       return resistance;
+   }
+
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {
+      return hit_roll;
+   }
+   
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      return damage;
+   }
+
+   ModifySpellPower(who=$,state=$,oSpell=$,iSpellPower=0)
+   {
+      return iSpellPower;
    }
 
 end

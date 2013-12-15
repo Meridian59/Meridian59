@@ -5,6 +5,6 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\radiusench.bof
-BOFS = umbrella.bof
+BOFS = umbrella.bof killing.bof antimag.bof truce.bof
 
 !include $(KODDIR)\kod.mak

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AntiMagicAura is RoomEnchantment
+AntiMagicAura is RadiusEnchantment
 
 constants:
 
@@ -33,9 +33,25 @@ resources:
    AntiMagicAura_off = "The mana field returns to normal."
    AntiMagicAura_new_occupant = "The mana field is fluctuating here."
 
+   AntiMagicAura_cast = "The mana field begins to fluctuate."
+   AntiMagicAura_starts = "%s throws a shockwave of magical energy through the area!"
+   AntiMagicAura_ends = "The mana field returns to normal."
+   AntiMagicAura_caster_ends = "The mana field returns to normal."
+   AntiMagicAura_caster_enter = "The mana field is fluctuating here."
+   AntiMagicAura_enter = "The mana field around you begins to fluctuate."
+   AntiMagicAura_leave = "The mana field around you returns to normal."
+
    AntiMagicAura_sound = kantimag.wav
 
 classvars:
+
+   radius_ench_cast = AntiMagicAura_cast
+   radius_ench_starts = AntiMagicAura_starts
+   radius_ench_ends = AntiMagicAura_ends
+   radius_ench_caster_ends = AntiMagicAura_caster_ends
+   radius_ench_caster_enter = AntiMagicAura_caster_enter
+   radius_ench_enter = AntiMagicAura_enter
+   radius_ench_leave = AntiMagicAura_leave
 
    vrIcon = AntiMagicAura_icon_rsc
    vrDesc = AntiMagicAura_desc_rsc
@@ -51,6 +67,10 @@ classvars:
    vrSucceed_wav = AntiMagicAura_sound
 
    viChance_To_Increase = 10
+   
+   viOldAreaEnchStyle = TRUE
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
 
 properties:
 
@@ -63,71 +83,6 @@ messages:
       plReagents = Cons([&PolishedSeraphym,1],plReagents);
 
       return;
-   }
-
-   GetNumSpellTargets()
-   {
-      return 0;
-   }
-
-   CanPayCosts(who = $, lTargets = $, iSpellPower=0)
-   {
-      local oRoom, iAbility_loss, iAbility;
-
-      oRoom = Send(who,@GetOwner);
-
-      % Check if an anti-magic field already exists
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=AntiMagicAura_unnecessary);
-         
-         return FALSE;
-      }
-
-      propagate;
-   }
-
-   CastSpell(who = $, iSpellPower = 0)
-   "Initiation point for the spell."
-   {
-      local oRoom, iAbility;
-
-      oRoom = Send(who,@GetOwner);
-      
-      % Global effects of the enchantment.
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=AntiMagicAura_on,
-           #what=self);
-      Send(oRoom,@RoomStartEnchantment,#what=self,#state=((iSpellPower/2)+25),
-           #time=send(self,@GetDuration,#iSpellPower=iSpellpower));
-        
-      propagate;
-   }
-
-   StartEnchantmentNewOccupant(who = $)
-   "Called on new occupants of the enchanted room."
-   {
-      Send(who,@MsgSendUser,#message_rsc=AntiMagicAura_new_occupant);
-      
-      return;
-   }
-
-   RemoveEnchantment()
-   "Sent to each user as they leave the room.  Since we didn't enchant them, "
-   "nothing to undo."
-   {
-      return;
-   }
-
-   EndSpell(where = $, state = $, report = TRUE)
-   "Called when spell expires."
-   {
-      if report
-      {
-         Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=AntiMagicAura_off,
-              #what=self);
-      }
-      
-      propagate;
    }
 
    GetDuration(iSpellPower=0)
@@ -143,34 +98,21 @@ messages:
       return iDuration;
    }
 
-   AffectsSpellPower()
+   ModifySpellPower(who=$,oSpell=$,state=$,iSpellPower=0)
    {
-      return TRUE;
-   }
-
-   ModifySpellPower(oRoom = $, oSpell = $)
-   {
-      local iChange;
-
-      iChange = 0;
-
-      if oRoom <> $
+      if IsClass(oSpell,&ManaConvergence)
       {
-         iChange = send(oRoom,@GetEnchantedState,#what=self);
+         return iSpellPower;
+      }
+      
+      if state = $
+      {
+         return iSpellPower;
       }
 
-      % Spell won't affect Mana Convergence.
-      % Allows for an effective counter-spell to AMA.
-      if iChange = $
-         OR IsClass(oSpell,&ManaConvergence)
-      {
-         iChange = 0;
-      }
-
-      % This is subtracted from spell power in spell.kod
-      return iChange;
+      % Subtract AMA's spellpower from the power of the spell being cast.
+      return iSpellPower - Nth(state,2);
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

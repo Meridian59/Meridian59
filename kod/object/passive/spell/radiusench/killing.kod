@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+KillingFields is RadiusEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   killingfields_name_rsc = "killing fields"
+   killingfields_icon_rsc = ikillfel.bgf
+   killingfields_desc_rsc = \
+      "Induces magical blood-lust, increasing the damage of all attacks in the area.  "
+	   "Requires elderberries and orc teeth to cast."
+   
+   killingfields_already_enchanted = "This place is already a killing field."
+
+   killingfields_on = "Kraanan smiles and battle fury fills your heart.  The very earth thirsts for freshly shed blood."
+   killingfields_off = "The spirit of Kraanan departs from this place."
+   killingfields_on_new_entrant = "Battle fury fills your heart.  The very earth thirsts for freshly shed blood."
+   
+   KillingFields_cast = "Kraanan smiles and battle fury fills your heart.  The very earth thirsts for freshly shed blood."
+   KillingFields_starts = "%s shouts a hymn to the god of battle!"
+   KillingFields_ends = "The spirit of Kraanan departs from this place."
+   KillingFields_caster_ends = "The spirit of Kraanan departs from this place."
+   KillingFields_caster_enter = "Battle fury fills your heart.  The very earth thirsts for freshly shed blood."
+   KillingFields_enter = "Battle fury fills your heart.  The very earth thirsts for freshly shed blood."
+   KillingFields_leave = "The spirit of Kraanan departs from you."
+   
+classvars:
+
+   radius_ench_cast = KillingFields_cast
+   radius_ench_starts = KillingFields_starts
+   radius_ench_ends = KillingFields_ends
+   radius_ench_caster_ends = KillingFields_caster_ends
+   radius_ench_caster_enter = KillingFields_caster_enter
+   radius_ench_enter = KillingFields_enter
+   radius_ench_leave = KillingFields_leave
+   
+   vrName = killingfields_name_rsc
+   vrIcon = killingfields_icon_rsc
+   vrDesc = killingfields_desc_rsc
+
+   viSpell_num = SID_KILLING_FIELDS
+   viMana = 9
+   viSchool = SS_KRAANAN
+   viSpell_level = 5
+   viMana = 9
+
+   viIndefinite = ARTICLE_AN
+   viChance_To_Increase = 35
+
+   viOldAreaEnchStyle = TRUE
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
+
+properties:
+  
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Elderberry,3],plReagents);
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   % Radius spells that use totems need to naturally time out.
+   GetDuration(iSpellPower=0)
+   {
+      return ((50 + iSpellpower)*1000);
+   }
+
+   ModifyDamage(who = $,what = $,damage=$)
+   {
+      return damage + Random(2,5);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1238,6 +1238,13 @@ messages:
          }
          return FALSE;
       }
+      
+      if IsClass(what,&Monster)
+         AND (IsClass(victim,&User)
+              AND Send(victim,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
+      {
+         return FALSE;
+      }
 
       if (piRoom_flags & ROOM_NO_COMBAT)
       {

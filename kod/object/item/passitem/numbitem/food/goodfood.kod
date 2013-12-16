@@ -21,6 +21,10 @@ resources:
    goodfood_name_plural_rsc = "good food"
    goodfood_icon_rsc = mushroom.bgf
    goodfood_desc_rsc = "This is some good food!"
+   
+   goodfood_extended_desc_one = "Consumption will increase your vigor by "
+   goodfood_extended_desc_two = " and decrease your hunger by "
+   goodfood_extended_desc_three = "."
 
 classvars:
 
@@ -42,6 +46,18 @@ properties:
    piNumber = 1
 
 messages:
+
+   AppendDesc()
+   {
+      AppendTempString("\n\n");
+      AppendTempString(goodfood_extended_desc_one);
+      AppendTempString(viNutrition);
+      AppendTempString(goodfood_extended_desc_two);
+      AppendTempString(viFilling);
+      AppendTempString(goodfood_extended_desc_three);
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,261 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+% New Sword of the Hunt, designed to promote active building, not botting
+% Cannot rest to regain vigor
+% Cannot eat to regain vigor, except Spider Eyes, a sub-par food
+% Gain vigor on kills
+% +10 Might and +10 Aim
+% Double health regeneration, half attack costs
+% Eternal battle with Necromancers
+
+NewHunterSword is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   NewHunterSword_name_rsc = "Sword of the Hunt"
+   NewHunterSword_icon_rsc = huntswrd.bgf
+   NewHunterSword_desc_rsc = \
+      "This weapon is truly a fine piece of workmanship.  Intricate organic carvings "
+      "intertwine along the hilt, enclosing an exquisitely beautiful gem, almost as "
+      "if it were an eye gazing calmly back at you.  Indeed, every now and then out "
+      "of the corner of your eye you almost catch it blinking."
+
+   NewHunterSword_window_overlay_rsc = povhunts.bgf
+   NewHunterSword_player_overlay = huntswov.bgf
+
+   NewHunterSword_used_rsc = \
+      "You steel your nerve and bravely pick up the Sword of the Hunt.  The hilt "
+      "immediately comes alive, writhing against the palm of your hand.  You gasp "
+      "as you feel invisible roots snaking into your chest and wrapping themselves "
+      "around your heart.  Strangely, you feel no pain throughout this process, "
+      "only a greatly pleasurable feeling of power and a nagging sense of hunger."
+
+   NewHunterSword_try_unuse_rsc = \
+      "As you try to drop the sword, you feel it tug painfully on the roots that have "
+      "snaked their way inside your body.  This is not likely to be a productive exercise."
+
+   NewHunterSword_hunger_assuaged = "Your sword drinks in %s%s's impure blood.  You can feel it course along its roots "
+      "into your body, filling you with energy."
+
+   NewHunterSword_lose_sword = "Writhing violently in your hands for a few moments, the sword suddenly springs up and away out of sight."
+
+classvars:
+
+   viIndefinite = ARTICLE_A
+
+   vrName = NewHunterSword_name_rsc
+   vrIcon = NewHunterSword_icon_rsc
+   vrDesc = NewHunterSword_desc_rsc
+
+   vrWeapon_window_overlay = NewHunterSword_window_overlay_rsc
+   vrWeapon_overlay = NewHunterSword_player_overlay
+
+   % Hunter swords are high quality thrusting weapons
+   viWeaponType = WEAPON_TYPE_THRUST
+   viWeaponQuality = WEAPON_QUALITY_HIGH
+
+   viProficiency_needed = SKID_PROFICIENCY_SWORD
+
+   viGround_group = 1
+   viInventory_group = 4
+   viBroken_group = 2
+
+   viValue_average = 4000
+   viBulk = 50
+   viWeight = 70
+
+   viHits_init_min = 500
+   viHits_init_max = 500
+
+   viItem_type = ITEMTYPE_WEAPON
+
+properties:
+
+   piAttack_type = ATCK_WEAP_SLASH
+   piAttack_Spell = ATCK_SPELL_HUNTERSWORD
+   
+   piMightBonus = 10
+   piAimBonus = 10
+
+messages:
+   
+   NewOwner(what = $)
+   {
+      if IsClass(what,&User)
+      {
+        Post(what,@TryUseItem,#what=self);
+      }
+
+      propagate;
+   }
+
+   NewUsed(what = $)
+   "Affect permanent stat changes here."
+   {
+      Send(what,@AddMight,#points=piMightBonus);
+      Send(what,@AddAim,#points=piAimBonus);
+      Send(what,@MsgSendUser,#message_rsc=NewHunterSword_used_rsc);
+      propagate;
+   }
+   
+   ReqUnuse()
+   {
+      If Send(poOwner,@PlayerIsImmortal)
+      {
+         return TRUE;
+      }
+
+      Send(poOwner,@MsgSendUser,#message_rsc=NewHunterSword_try_unuse_rsc);
+
+      return FALSE;
+   }
+
+   NewUnused(what = $)
+   {
+      Send(what,@AddMight,#points=-piMightBonus);
+      Send(what,@AddAim,#points=-piAimBonus);
+      Send(what,@MsgSendUser,#message_rsc=NewHunterSword_lose_sword);
+      propagate;
+   }
+
+   SomethingKilled(what=$,victim=$,use_weapon=$)
+   {
+      local iGain;
+
+      % No reward for Arena deaths. 
+      if Send(Send(poOwner,@GetOwner),@SafePlayerAttack)
+         AND Send(Send(poOwner,@GetOwner),@InPlay,#what=poOwner)
+      {
+         return;
+      }
+      
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
+         AND victim <> poOwner
+         AND what = poOwner
+         AND IsClass(victim,&Monster)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=NewHunterSword_hunger_assuaged,
+               #parm1=send(victim,@GetDef),#parm2=send(victim,@GetName));
+         
+         iGain = Send(victim,@GetLevel) / 10;
+
+         Send(poOwner,@AddExertion,#amount=-iGain*10000);
+      }
+
+      return;
+   }
+   
+   OwnerKilled()
+   {
+      Send(self,@NewUnused,#what=poOwner);
+      Post(self,@Delete);
+      return;
+   }
+
+   SendAnimation()
+   {
+      local iXLAT;
+      if ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+      {
+         % the artists made the gem red in the inv/dropped views (blue in the look view), so we have to juggle this a little (ugh).
+         iXLAT = send(SYS,@DecodeSecondaryColor,#xlat=(piItem_flags & ITEM_PALETTE_MASK));
+         iXLAT = send(SYS,@EncodeTwoColorXLAT,#color1=iXLAT);
+         AddPacket(1,ANIMATE_TRANSLATION,1,iXLAT);
+      }
+      AddPacket(1,ANIMATE_NONE,2,viGround_group);
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      local iXLAT;
+      if ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+      {
+         % the artists made the gem red in the inv/dropped views (blue in the look view), so we have to juggle this a little (ugh).
+         iXLAT = send(SYS,@DecodeSecondaryColor,#xlat=(piItem_flags & ITEM_PALETTE_MASK));
+         iXLAT = send(SYS,@EncodeTwoColorXLAT,#color1=iXLAT);
+         AddPacket(1,ANIMATE_TRANSLATION,1,iXLAT);
+      }
+      AddPacket(1,ANIMATE_NONE,2,viInventory_group);
+      return;
+   }
+   
+   SendLookAnimation()
+   {
+      if ((piItem_flags & ITEM_PALETTE_MASK) <> 0)
+      {
+         AddPacket(1,ANIMATE_TRANSLATION,1,piItem_flags & ITEM_PALETTE_MASK);
+      }
+      AddPacket(1,ANIMATE_NONE,2,3);
+      return;
+   }
+
+   WeaponHitTarget()
+   {
+      %the hunter sword never takes damage normally
+      return;
+   }
+
+   SetMaxHits(number = $)
+   {
+      % this cannot be modified externally.
+      return;	
+   }
+
+   SetHits(number = $)
+   {
+      % this cannot be modified externally.
+      return;
+   }
+
+   CanMend()
+   {
+      return FALSE;
+   }
+
+   CanWeaken()
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   CanEnchant()
+   {
+      return FALSE;
+   }
+   
+   CanBeGivenToNPC()
+   "NPCs will refuse to take this item if offered to them."
+   {
+      return FALSE;
+   }
+
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+

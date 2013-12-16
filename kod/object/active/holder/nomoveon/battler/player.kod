@@ -2688,7 +2688,14 @@ messages:
       {
          if piHealth < piMax_Health
          {
-            Send(self,@GainHealth,#amount=1);
+            if Send(self,@IsUsingA,#class=&NewHunterSword)
+            {
+               Send(self,@GainHealth,#amount=2);
+            }
+            else
+            {
+               Send(self,@GainHealth,#amount=1);
+            }
          }
          else
          {
@@ -2709,7 +2716,14 @@ messages:
 
       if piMana < piMax_mana
       {
-         Send(self,@GainMana,#amount=1);
+         if Send(self,@IsUsingA,#class=&NewNecromancerAmulet)
+         {
+            Send(self,@GainMana,#amount=2);
+         }
+         else
+         {
+            Send(self,@GainMana,#amount=1);
+         }
       }
       else
       {
@@ -3332,6 +3346,22 @@ messages:
          return FALSE;
       }
 
+      % make sure not already using or something using disallows
+      for i in plUsing
+      {
+         if i = what
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_using_already);
+            
+            return FALSE;
+         }
+    
+         if NOT Send(i,@ReqUseSomething,#what=what)
+         {
+            return FALSE;
+         }
+      }
+
       iUse_type = Send(what,@GetItemUseType);
 
       if iUse_type & ITEM_SINGLE_USE
@@ -3363,22 +3393,6 @@ messages:
       if poOwner <> $ AND NOT Send(poOwner,@ReqSomethingUse,#what=self,#use_item=what)
       {
          return FALSE;
-      }
-
-      % make sure not already using or something using disallows
-      for i in plUsing
-      {
-         if i = what
-         {
-            Send(self,@MsgSendUser,#message_rsc=player_using_already);
-            
-            return FALSE;
-         }
-    
-         if NOT Send(i,@ReqUseSomething,#what=what)
-         {
-            return FALSE;
-         }
       }
       
       if (iUse_type & ITEM_USE_HAND)
@@ -3752,6 +3766,17 @@ messages:
          % Okay, attack is against a player, so record the time
          piTimeAttackedPlayer = GetTime();
 
+         return TRUE;
+      }
+      
+      if Send(self,@IsNecromancer)
+         AND Send(victim,@IsHunter)
+      {
+         return TRUE;
+      }
+      if Send(self,@IsHunter)
+         AND Send(victim,@IsNecromancer)
+      {
          return TRUE;
       }
 
@@ -7561,6 +7586,26 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
+      local oAmulet, oSword;
+
+      if Send(self,@IsUsingA,#class=&NewNecromancerAmulet)
+      {
+         oAmulet = Send(self,@FindUsing,#class=&NewNecromancerAmulet);
+         if oAmulet <> $
+         {
+            Send(oAmulet,@SomethingKilled,#what=what,#victim=victim,#use_weapon=use_weapon);
+         }
+      }
+
+      if Send(self,@IsUsingA,#class=&NewHunterSword)
+      {
+         oSword = Send(self,@FindUsing,#class=&NewHunterSword);
+         if oSword <> $
+         {
+            Send(oSword,@SomethingKilled,#what=what,#victim=victim,#use_weapon=use_weapon);
+         }
+      }
+
       if victim = poKill_target AND IsClass(victim,&Battler)
       {
          if what = self
@@ -7886,9 +7931,13 @@ messages:
             piDeathCost = FALSE;
             Send(self,@MsgSendUser,#message_rsc=player_token_death);
             Send(i,@NewUnused,#what=self,#where=oRoom);
-            
-            break;
-         }       
+         }
+         
+         if IsClass(i,&NewNecromancerAmulet)
+            OR IsClass(i,&NewHunterSword)
+         {
+            Send(i,@OwnerKilled);
+         }
       }
 
       if Send(SYS,@GetInvestigator)
@@ -9851,6 +9900,8 @@ messages:
       ptRest = $;
       
       if piVigor < piVigor_rest_threshold
+         AND NOT Send(self,@IsUsingA,#class=&NewNecromancerAmulet)
+         AND NOT Send(self,@IsUsingA,#class=&NewHunterSword)
       {
          Send(self,@RestAddExertion,#amount=-10000);
       }
@@ -12351,6 +12402,15 @@ messages:
       return;
    }
 
+   IsNecromancer()
+   {
+      return Send(self,@IsUsingA,#class=&NewNecromancerAmulet);
+   }
+   
+   IsHunter()
+   {
+      return Send(self,@IsUsingA,#class=&NewHunterSword);
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

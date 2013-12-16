@@ -64,7 +64,7 @@ messages:
 	 AppendTempString(waterskin_desc_amount_plural2);
       }
     
-      return;
+      propagate;
    }
 
    SendAnimation()

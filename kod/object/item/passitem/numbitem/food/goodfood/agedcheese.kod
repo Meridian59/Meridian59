@@ -19,8 +19,8 @@ resources:
    aged_cheese_name_rsc = "small wheel of aged cheese"
    aged_cheese_icon_rsc = qo09.bgf
    aged_cheese_desc_rsc = \
-   "This aged cheese came at a hefty price.  It bears the stamp of the royal Barloquian cheesery "
-   "and supposedly, it is equally delicious as the famed inky-cap mushroom ."
+   "This aged cheese is as delicious as it is pricey.  It bears the stamp of the royal Barloquian cheesery "
+   "and supposedly, it is equally nutritious as the famed inky-cap mushroom."
 
    aged_cheese_name_plural_rsc = "small wheels of aged cheese"
 

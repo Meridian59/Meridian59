@@ -2736,7 +2736,7 @@ messages:
 	  
 	  % TODO: measure and estimate RTT and adjust dynamically
 	  
-      return 100000;
+      return 100;
    }
    
    GetMoveAmountTolerance()
@@ -2844,24 +2844,23 @@ messages:
 	  }
 
 	  % 4.1 Get move-deltas	  
-	  iDy = (new_row * FINENESS + fine_row) - (iRow * FINENESS + iFineRow);
-	  iDx = (new_col * FINENESS + fine_col) - (iCol * FINENESS + iFineCol);
+	  iDy = ((new_row * FINENESS) + fine_row) - ((iRow * FINENESS) + iFineRow);
+	  iDx = ((new_col * FINENESS) + fine_col) - ((iCol * FINENESS) + iFineCol);
 	  	 	  
 	  % 4.2 Get move-vector length.
-	  % We upscale the length by 1000 to work around missing floatingpoint,
-	  % which otherwise would be required in some following calculations in ms.
-	  iMoveLength = 1000 * sqrt((iDy * iDy) + (iDx * iDx));
-	  		      
-	  % 4.3 Calculate maximum allowed movesize for running in this dt
-	  % This is another reason for the *1000 upscale above,
-	  % because neither speed nor delta can be divided by 1000.
-	  iMaxMoveRun = (8 * USER_RUNNING_SPEED * iDelta) + Send(self,@GetMoveStepTolerance);
-	  	
+	  % This is the squared move-vector length
+	  iMoveLength = (iDy * iDy) + (iDx * iDx);
+	  
+	  % 4.3 Calculate maximum allowed
+	  % squared movesize for running in this dt
+	  iMaxMoveRun = ((8 * USER_RUNNING_SPEED * iDelta) / 1000) + Send(self,@GetMoveStepTolerance);
+	  iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
+	  
       % DEBUG		
       % Debug(
-	  %  "iDelta:",iDelta,
-	  %  "iMaxMoveRun:",iMaxMoveRun,
-	  %  "iMoveLength:",iMoveLength);
+	  % "iDelta:",iDelta,
+	  % "iMaxMoveRun:",iMaxMoveRun,
+	  % "iMoveLength:",iMoveLength);
 	  
 	  % 5.1 This move is bigger than running allows (speedhack).
 	  if (iMoveLength > iMaxMoveRun)

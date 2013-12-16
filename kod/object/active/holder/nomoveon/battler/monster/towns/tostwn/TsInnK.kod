@@ -28,7 +28,8 @@ resources:
 
    TsIK_purplemushroom_sale = "Yeah, I got %s%s here. Let's see what kind of deal I can make with you for these little rarities."
    TsIK_orcteeth_sale = "Another customer in the market for %s%s?  I should shut down the bar and just sell these things."
-   TsIK_agedcheese_sale = "Some aged cheese? Hah! That's about the only good thing coming from that town of clowns!"
+   TsIK_agedcheese_sale = "You want some aged cheese? Hah! That's about the only good thing coming from that town of clowns "
+      "that calls itself Barloque!"
 
    TsIK_watch_head = "Hey, %s%s!  Watch your head!"
    

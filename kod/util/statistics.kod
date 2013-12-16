@@ -30,6 +30,12 @@ properties:
 
    % List of [room id, times entered by player] elements, one for each room
    plRoom_entered_counts = $
+   
+   % List of [class item, times dropped] elements, one for each non-stackable item
+   plSingle_item_drop_counts = $
+   
+   % List of [class item, number dropped] elements, one for each stackable item
+   plStack_item_drop_count = $
 
 messages:
 

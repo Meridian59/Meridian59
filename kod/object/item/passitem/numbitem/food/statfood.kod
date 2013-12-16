@@ -59,6 +59,8 @@ messages:
    {
       local sBuff;
       
+      sBuff = statfood_bless;
+      
       if viSpellEffect = SID_BLESS
       {
          sBuff = statfood_bless;

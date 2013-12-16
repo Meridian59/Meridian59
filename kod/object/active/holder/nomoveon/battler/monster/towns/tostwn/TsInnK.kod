@@ -108,7 +108,7 @@ messages:
 
    InitCondSale()
    {
-      local oObj,oObj2,oObj3.oObj4;
+      local oObj,oObj2,oObj3,oObj4;
       
       oObj=Create(&PurpleMushroom,#number=4);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,

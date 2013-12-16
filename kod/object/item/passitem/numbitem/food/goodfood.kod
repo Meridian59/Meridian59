@@ -28,6 +28,8 @@ resources:
 
 classvars:
 
+   viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY | ITEMTYPE_GOODFOOD
+
    vrName = goodfood_name_rsc
    vrName_plural = goodfood_name_plural_rsc
    vrIcon = goodfood_icon_rsc

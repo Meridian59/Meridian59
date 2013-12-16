@@ -30,6 +30,8 @@ resources:
    TsIK_orcteeth_sale = "Another customer in the market for %s%s?  I should shut down the bar and just sell these things."
    TsIK_agedcheese_sale = "You want some aged cheese? Hah! That's about the only good thing coming from that town of clowns "
       "that calls itself Barloque!"
+   TsIK_spidereyes_sale = "Did you know that spider eyes improve your sight? Usually, you can only get them at one "
+      "of the Duke's fancy parties, but you're in luck! I got some for you right here!"
 
    TsIK_watch_head = "Hey, %s%s!  Watch your head!"
    
@@ -106,7 +108,7 @@ messages:
 
    InitCondSale()
    {
-      local oObj,oObj2,oObj3;
+      local oObj,oObj2,oObj3.oObj4;
       
       oObj=Create(&PurpleMushroom,#number=4);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
@@ -122,6 +124,11 @@ messages:
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
            #triggers=[TsIK_agedcheese_trigger],
            #action=[LIBACT_CONDITIONAL,oObj3,1000,TsIK_agedcheese_sale]);
+           
+      oObj4=Create(&Spideye,#number=4);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[Send(oObj4,@GetName)],
+           #action=[LIBACT_CONDITIONAL,oObj4,50,TsIK_spidereyes_sale]);
            
       return;
    }

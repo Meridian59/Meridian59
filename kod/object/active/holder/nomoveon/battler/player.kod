@@ -1463,6 +1463,8 @@ messages:
 
    NewOwner(what = $)
    {
+      local i;
+   
       Send(self,@ResetGainFlags);
       
       % Are we moving somewhere "safe" or in a frenzy??
@@ -4054,7 +4056,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
+      local iRange, lWindsState, lSandstormState;
 
       % Can't target self.
       if what = self
@@ -4171,17 +4173,17 @@ messages:
       %  Do this after paying the costs so that the arrow is used.
       if use_weapon <> $ AND IsClass(use_weapon,&RangedWeapon)
       {
-         oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
-         oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
+         lWindsState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Winds);
+         lSandStormState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&SandStorm);
          
-         if Send(poOwner,@IsEnchanted,#what=oWinds)
-            AND Send(oWinds,@WindsRuinShot,#who=self)
+         if lWindsState <> $
+            AND Send(Nth(lWindsState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lWindsState,2))
          {
             return FALSE;
          }
-
-         if Send(poOwner,@IsEnchanted,#what=oSandstorm)
-            AND Send(oSandstorm,@WindsRuinShot,#who=self)
+         
+         if lSandStormState <> $
+            AND Send(Nth(lSandStormState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lSandStormState,2))
          {
             return FALSE;
          }
@@ -12541,7 +12543,6 @@ messages:
       plDonationYears = DelListElem(plDonationYears, year);
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

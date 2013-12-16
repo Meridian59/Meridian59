@@ -57,6 +57,8 @@ messages:
          Post(self,@Delete);
          return;
       }
+
+      Send(SYS,@AddSpellTotemToServerList,#oTotem=self);
       
       piRow = Send(poCaster,@GetRow);
       piCol = Send(poCaster,@GetCol);
@@ -70,7 +72,7 @@ messages:
       {
          ptExpirationTimer = CreateTimer(self,@TotemExpire,iTime);
       }
-         
+
       propagate;
    }
    
@@ -79,17 +81,44 @@ messages:
       local i;
 
       ptExpirationTimer = $;
+      
+      Send(self,@Delete);
+      return;
+   }
+
+   Delete()
+   {
+      local i;
+
+      if ptExpirationTimer <> $
+      {
+         DeleteTimer(ptExpirationTimer);
+         ptExpirationTimer = $;
+      }
 
       for i in plEnchantments
       {
          Send(Nth(i,2),@BreakTrance,#who=self,#state=Nth(i,3),#event=EVENT_STEER);
          DeleteTimer(Nth(i,1));
       }
-      
+
+      poCaster = $;
+      poSpell = $;
       plEnchantments = $;
 
-      Send(self,@Delete);
-      return;
+      Send(SYS,@DeleteSpellTotemFromMasterList,#oTotem=self);
+
+      propagate;
+   }
+   
+   GetCaster()
+   {
+      return poCaster;
+   }
+   
+   GetSpell()
+   {
+      return poSpell;
    }
 
    GetName()
@@ -104,11 +133,21 @@ messages:
    
    GetGuild()
    {
+      if IsClass(poCaster,&Monster)
+      {
+         return $;
+      }
+
       return Send(poCaster,@GetGuild);
    }
    
    AllowPlayerAttack(victim=$,report=FALSE)
    {
+      if IsClass(poCaster,&Monster)
+      {
+         return TRUE;
+      }
+
       if victim = poCaster
       {
          return TRUE;
@@ -119,6 +158,11 @@ messages:
    
    CheckPlayerFlag(flag=$)
    {
+      if IsClass(poCaster,&Monster)
+      {
+         return $;
+      }
+
       return Send(poCaster,@CheckPlayerFlag,#flag=flag);
    }
 

@@ -61,18 +61,22 @@ classvars:
    viSchool = SS_KRAANAN
    viMana = 15
    viSpell_level = 6
+   viBaseRange = 10
 
    viCast_time = 600
 
    vrSucceed_wav = AntiMagicAura_sound
 
    viChance_To_Increase = 10
-   
-   viOldAreaEnchStyle = TRUE
+
    viAffectsGuildmates = TRUE
    viAffectsEnemies = TRUE
 
+   viCasterPersist = TRUE
+
 properties:
+
+   piOldAreaEnchStyle = TRUE
 
 messages:
 

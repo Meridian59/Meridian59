@@ -55,15 +55,17 @@ classvars:
    viSchool = SS_KRAANAN
    viSpell_level = 5
    viMana = 9
+   viBaseRange = 20
 
    viIndefinite = ARTICLE_AN
    viChance_To_Increase = 35
 
-   viOldAreaEnchStyle = TRUE
    viAffectsGuildmates = TRUE
    viAffectsEnemies = TRUE
 
 properties:
+
+   piOldAreaEnchStyle = TRUE
   
 messages:
 

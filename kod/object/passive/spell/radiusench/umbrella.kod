@@ -65,6 +65,8 @@ classvars:
    viAffectsGuildmates = TRUE
    viAffectsEnemies = TRUE
 
+   viCasterPersist = TRUE
+
 properties:
    
 messages:

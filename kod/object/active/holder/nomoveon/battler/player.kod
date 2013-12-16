@@ -3769,15 +3769,21 @@ messages:
          return TRUE;
       }
       
-      if Send(self,@IsNecromancer)
-         AND Send(victim,@IsHunter)
+      if poGuild = $
+         OR oEnemyGuild = $
+         OR (poGuild <> oEnemyGuild
+         AND NOT Send(poGuild,@IsAlly,#otherguild=oEnemyGuild))
       {
-         return TRUE;
-      }
-      if Send(self,@IsHunter)
-         AND Send(victim,@IsNecromancer)
-      {
-         return TRUE;
+         if Send(self,@IsNecromancer)
+            AND Send(victim,@IsHunter)
+         {
+            return TRUE;
+         }
+         if Send(self,@IsHunter)
+            AND Send(victim,@IsNecromancer)
+         {
+            return TRUE;
+         }
       }
 
       % Check to see if we deserve to be an outlaw.

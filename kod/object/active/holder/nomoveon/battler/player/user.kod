@@ -2392,13 +2392,19 @@ messages:
                      iFlags = (iFlags | PLAYER_IS_ENEMY);
                   }
                }
-      
-               if (Send(what,@IsNecromancer)
-                     AND Send(self,@IsHunter))
-                  OR (Send(what,@IsHunter)
-                     AND Send(self,@IsNecromancer))
+
+               if poGuild = $
+                  OR oOtherGuild = $
+                  OR (poGuild <> oOtherGuild
+                      AND NOT Send(poGuild,@IsAlly,#otherguild=oOtherGuild))
                {
-                  iFlags = (iFlags | PLAYER_IS_ENEMY);
+                  if (Send(what,@IsNecromancer)
+                        AND Send(self,@IsHunter))
+                     OR (Send(what,@IsHunter)
+                        AND Send(self,@IsNecromancer))
+                  {
+                     iFlags = (iFlags | PLAYER_IS_ENEMY);
+                  }
                }
             }
          }

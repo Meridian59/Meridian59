@@ -1,0 +1,72 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StoutGoblet is Alcohol
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   StoutGoblet_name_rsc = "mug of brew"
+   StoutGoblet_icon_rsc = mug.bgf
+   StoutGoblet_desc_rsc = \
+      "The pewter and wood mug is roughly formed.  "
+      "A logo stamped onto its silver lip reads \"Pietro's "
+      "Wicked Brew.\""
+   StoutGoblet_name_plural_rsc = "mugs of brew"
+
+   StoutGoblet_eat_wav = drink.wav
+   StoutGoblet_use = "Refreshing to sip, and quite a kick!"
+
+classvars:
+
+   vrName = StoutGoblet_name_rsc
+   vrIcon = StoutGoblet_icon_rsc
+   vrDesc = StoutGoblet_desc_rsc
+
+   vrName_plural = StoutGoblet_name_plural_rsc
+   viBulk = 15
+   viWeight = 10
+   viValue_average = 25
+
+   vrEat_wav = StoutGoblet_eat_wav   
+
+properties:
+
+   viFilling = 10
+   viNutrition = 3
+   piNumber = 1
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      Send(apply_on,@MsgSendUser,#message_rsc=StoutGoblet_use);
+      Send(apply_on,@EffectSendUserDuration,#effect=EFFECT_BLUR,#duration=5000);
+
+      return;
+   }
+
+
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+
+   IsAlcohol()
+   {	 
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

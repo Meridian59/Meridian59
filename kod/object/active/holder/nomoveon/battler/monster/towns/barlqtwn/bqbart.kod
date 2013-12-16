@@ -26,8 +26,8 @@ resources:
 
    BaBar_entry_welcome = "Hail %s%s, and welcome to my humble tavern!  Praise Shal'ille!"
    BaBar_unwanted_keep = "~k%s%s tells you, \"I thank thee for thy offering.  I shall distribute it to the poor and needy.~n~k\""
-
-
+   
+   
 classvars:
 
    vrName = BarloqueBartender_name_rsc
@@ -130,7 +130,8 @@ messages:
                      Create(&Chess),
                      Create(&Bread,#number=4),
                      Create(&MeatPie,#number=4),
-                     Create(&Cheese,#number=2)],$,$];
+                     Create(&Cheese,#number=2),
+                     Create(&AgedCheese,#number=1)],$,$];
                   
       return;
    }

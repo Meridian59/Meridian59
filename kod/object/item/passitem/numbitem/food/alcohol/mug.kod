@@ -1,0 +1,87 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Mug is Alcohol
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   mug_name_rsc = "mug of stout"
+   mug_icon_rsc = mug.bgf
+   mug_desc_rsc = \
+      "A dark hazelnut stout with a thick head of foam."
+
+   mug_name_plural_rsc = "mugs of stout"
+
+   mug_disp_name = "pitcher of stout"
+   mug_disp_icon = pitcher.bgf
+   mug_disp_desc = \
+     "A heavy brass pitcher, filled to the rim with dark, delicious stout.  "
+	 "It needs to be poured slowly to preserve the perfect foamy head."
+   mug_got_one = "You slowly pour your mug full of frothy stout from the pitcher."
+
+   mug_eat_wav = drink.wav
+   mug_use = "Strong and absolutely delicious!  The smokey taste will linger in your mouth for some time."
+
+classvars:
+
+   vrName = mug_name_rsc
+   vrIcon = mug_icon_rsc
+   vrDesc = mug_desc_rsc
+
+   vrDisp_name = mug_disp_name
+   vrDisp_icon = mug_disp_icon
+   vrDisp_desc = mug_disp_desc
+
+   vrName_plural = mug_name_plural_rsc
+   viBulk = 10
+   viWeight = 7
+   viValue_average = 30
+
+   vrEat_wav = mug_eat_wav
+
+properties:
+
+   viFilling = 8
+   viNutrition = 6
+   piNumber = 1
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      Send(apply_on,@MsgSendUser,#message_rsc=mug_use);
+      Send(apply_on,@EffectSendUserDuration,#effect=EFFECT_BLUR,#duration=5500);
+
+	  return;
+   }
+
+   NewHoldMessage(who=$,disp=$)
+   "Called whenever a number item is created from a dispenser."
+   {
+      send(who,@msgsenduser,#message_rsc=mug_got_one);
+      return;
+   }
+
+   IsAlcohol()
+   {	 
+      return TRUE;
+   }
+
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

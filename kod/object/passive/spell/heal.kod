@@ -24,8 +24,9 @@ resources:
       "good soul.  "
       "Requires herbs to cast."
 
-   heal_cast_rsc = "You are amazed to see your wounds close up and begin to heal, as if by magic."
-   heal_cast_on_other = "You heal %s%s."
+   heal_cast_rsc = "%s%s's spell heals some minor injuries, restoring (~B%i~B) hitpoints."
+   heal_cast_self = "Shal'ille's holy magic heals some minor injuries, restoring (~B%i~B) hitpoints."
+   heal_cast_on_other = "You heal %s%s for (~B%i~B) hitpoints."
    heal_unnecessary_rsc = "%s%s is perfectly healthy."
 
    heal_spell_intro = "Shal'ille Lv. 1: Bestows the healing touch of Shal'ille, restoring points of health."
@@ -114,7 +115,10 @@ messages:
       if who <> oTarget
       {
          Send(who,@MsgSendUser,#message_rsc=heal_cast_on_other,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHeal);
+              
+         Send(oTarget,@MsgSendUser,#message_rsc=heal_cast_rsc,
+              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=iHeal);
 
          % Give them a little boost if they help someone of higher Karma.
          if send(who,@GetKarma) < send(oTarget,@GetKarma)
@@ -125,7 +129,11 @@ messages:
          }
       }
 
-      Send(oTarget,@MsgSendUser,#message_rsc=heal_cast_rsc);
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=heal_cast_self,#parm1=iHeal);
+      }
+           
       Send(oTarget,@GainHealthNormal,#amount=iHeal);
 
       propagate;

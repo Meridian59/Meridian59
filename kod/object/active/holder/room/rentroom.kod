@@ -1440,6 +1440,11 @@ messages:
       propagate;
    }
 
+   CanHavePlayerPortal(who = $)
+   {
+      % Don't allow portals in private rooms
+      return false;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

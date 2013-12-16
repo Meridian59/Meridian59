@@ -1066,6 +1066,11 @@ messages:
 
       return;
    }
+   
+   GetReflectionsList()
+   {
+      return plReflections;
+   }
 
    CleanReflectionList()
    {
@@ -2995,6 +3000,12 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_MELANCHOLY,#class=&Melancholy);
 
       Send(self,@CreateOneSpellIfNew,#num=SID_CRYSTALIZE_MANA,#class=&CrystalizeMana);
+      
+      Send(self,@CreateOneSpellIfNew,#num=SID_DEATH_RIFT,#class=&DeathRift);
+
+      Send(self,@CreateOneSpellIfNew,#num=SID_SET,#class=&Set);
+      Send(self,@CreateOneSpellIfNew,#num=SID_LOADOUT,#class=&Loadout);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -4799,7 +4810,9 @@ messages:
       plItemTemplates = cons(create(&Apple),plItemTemplates);
       plItemTemplates = cons(create(&Bread),plItemTemplates);
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
+      plItemTemplates = cons(create(&AgedCheese),plItemTemplates);
       plItemTemplates = cons(create(&Meatpie),plItemTemplates);
+      plItemTemplates = cons(create(&TurkeyLeg),plItemTemplates);
       plItemTemplates = cons(create(&Mug),plItemTemplates);
       plItemTemplates = cons(create(&KocatanMug),plItemTemplates);
       plItemTemplates = cons(create(&Goblet),plItemTemplates);
@@ -4943,6 +4956,8 @@ messages:
       plItemTemplates = cons(create(&SporeBurstScroll),plItemTemplates);
       plItemTemplates = cons(create(&TruceScroll),plItemTemplates);
       plItemTemplates = cons(create(&WindScroll),plItemTemplates);
+      plItemTemplates = cons(create(&SetScroll),plItemTemplates);
+      plItemTemplates = cons(create(&LoadoutScroll),plItemTemplates);
 
       plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
       plItemTemplates = cons(create(&SkullMask),plItemTemplates);

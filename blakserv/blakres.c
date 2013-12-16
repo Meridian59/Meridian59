@@ -82,7 +82,7 @@ void AddResource(int id,char *str_value)
 	
 	if (GetResourceByID(id) != NULL)
 	{
-		eprintf("AddResource can't add resource num %i because it already exists!\n",id);
+		eprintf("AddResource can't add resource num %i because it already exists! (%s)\n",id,str_value);
 		return;
 	}
 	

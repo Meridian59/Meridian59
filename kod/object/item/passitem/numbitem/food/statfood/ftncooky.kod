@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FortuneCookie is StatFood
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   fortunecookie_name_rsc = "fortune cookie"
+   fortunecookie_icon_rsc = ftncooky.bgf
+   fortunecookie_desc_rsc = \
+     "The desire for a sweet future balances with the desire for a sweet cookie. "
+	 "Until you actually break the cookie and read your message, "
+	 "you will fulfill neither."
+
+   fortunecookie_name_plural_rsc = "fortune cookies"
+
+   fortunecookie_disp_name = "basket of fortune cookies"
+   fortunecookie_disp_icon = ftnbaskt.bgf
+   fortunecookie_disp_desc = \
+     "The mystics believe that choosing your destiny among the paths of "
+	 "your friends is the greatest way to ensure that it shall come true. "
+	 "Every cookie may hold the secret to success, but it will be your hand "
+	 "which selects your fortune."
+   fortunecookie_got_one = "You select a fortune cookie at random."
+
+   fortunecookie_format = "You read your fortune: \"~k%s~n\""
+
+classvars:
+
+   vrName = fortunecookie_name_rsc
+   vrIcon = fortunecookie_icon_rsc
+   vrDesc = fortunecookie_desc_rsc
+
+   vrDisp_name = fortunecookie_disp_name
+   vrDisp_icon = fortunecookie_disp_icon
+   vrDisp_desc = fortunecookie_disp_desc
+
+   vrName_plural = fortunecookie_name_plural_rsc
+
+   viBulk = 2
+   viWeight = 2
+
+   viValue_average = 0
+   
+   viSpellEffect = SID_BLESS
+
+properties:
+
+   viFilling = 2   
+   viNutrition = 1
+   piNumber = 1
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      Send(apply_on,@MsgSendUser,#message_rsc=fortunecookie_format,
+           #parm1=Send(Send(SYS,@GetLibrary),@PickFortune));
+	  propagate;  %% also do Yum-Yum!
+   }
+
+   NewHoldMessage(who=$,disp=$)
+   "Called whenever a number item is created from a dispenser."
+   {
+      send(who,@msgsenduser,#message_rsc=fortunecookie_got_one);
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

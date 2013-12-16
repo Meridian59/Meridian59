@@ -1,0 +1,80 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+HeartyFood is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   heartyfood_name_rsc = "hearty food"
+   heartyfood_name_plural_rsc = "hearty food"
+   heartyfood_icon_rsc = mushroom.bgf
+   heartyfood_desc_rsc = "This is some hearty food!"
+   
+   heartyfood_eat_wav = eat.wav
+   
+   heartyfood_health_restored = "You take a big bite and your life force is restored by ~g~B%i~B~n!"
+   
+   heartyfood_extended_desc_one = "Consumption will increase your vigor by "
+   heartyfood_extended_desc_two = " and decrease your hunger by "
+   heartyfood_extended_desc_three = ".  This food will also restore "
+   heartyfood_extended_desc_four = " hit points." 
+   
+
+classvars:
+
+   vrName = heartyfood_name_rsc
+   vrName_plural = heartyfood_name_plural_rsc
+   vrIcon = heartyfood_icon_rsc
+   vrDesc = heartyfood_desc_rsc
+   vrEat_wav = heartyfood_eat_wav
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 250
+
+properties:
+
+   viFilling = 50                
+   viNutrition = 25              
+   piNumber = 1
+   viHealing = 50
+
+messages:
+
+   AppendDesc()
+   {
+      AppendTempString("\n\n");
+      AppendTempString(heartyfood_extended_desc_one);
+      AppendTempString(viNutrition);
+      AppendTempString(heartyfood_extended_desc_two);
+      AppendTempString(viFilling);
+      AppendTempString(heartyfood_extended_desc_three);
+      AppendTempString(viHealing);
+      AppendTempString(heartyfood_extended_desc_four);
+      
+      propagate;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      Send(apply_on,@GainHealthNormal,#amount=viHealing);
+      Send(apply_on,@MsgSendUser,#message_rsc=heartyfood_health_restored,#parm1=viHealing);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

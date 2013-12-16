@@ -28,12 +28,12 @@ messages:
    
    Constructed()
    {
-      plTreasure = [ [ &MetalShield, 50 ],
-                     [ &Knightshield, 15 ],
-                     [ &Money, 15 ],
-                     [ &Scimitar, 10 ],
+      plTreasure = [ [ &MetalShield, 5 ],
                      [ &NeruditeArrow, 5 ],
                      [ &InkyCap, 4 ],
+                     [ &Knightshield, 1 ],
+                     [ &Money, 78 ],
+                     [ &Scimitar, 1 ],
                      [ &DiscordScroll, 1 ]
                    ];
 

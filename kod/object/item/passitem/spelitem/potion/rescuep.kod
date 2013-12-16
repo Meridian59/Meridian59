@@ -43,9 +43,6 @@ classvars:
 
 properties:
 
-   % Letting everyone have rescue turned out to be too powerful
-   pbCheckKarma = TRUE
-
 messages:
 
 end

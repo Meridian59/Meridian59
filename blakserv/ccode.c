@@ -131,6 +131,29 @@ int C_ClearPacket(int object_id,local_var_type *local_vars,
 	return NIL;
 }
 
+int C_GodLog(int object_id,
+			 local_var_type *local_vars,
+			 int num_normal_parms,
+			 parm_node normal_parm_array[],
+			 int num_name_parms,
+			 parm_node name_parm_array[])
+{
+	char buf[2000];
+	val_type parameter1;
+	kod_statistics *kstat;
+	class_node *c;
+	kstat = GetKodStats();
+	c = GetClassByID(kstat->interpreting_class);
+
+	parameter1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
+			normal_parm_array[1].value);
+
+	sprintf(buf,"Object %i (CLASS %s) Reports: %s\n"
+		,object_id,c->fname,GetClassDebugStr(c,parameter1.v.data));
+	gprintf(buf);
+	return NIL;
+}
+
 int C_Debug(int object_id,local_var_type *local_vars,
 			int num_normal_parms,parm_node normal_parm_array[],
 			int num_name_parms,parm_node name_parm_array[])
@@ -1906,6 +1929,28 @@ int C_GetTime(int object_id,local_var_type *local_vars,
 	
 	return ret_val.int_val;
 }
+
+int C_GetTickCount(int object_id,local_var_type *local_vars,
+			  int num_normal_parms,parm_node normal_parm_array[],
+			  int num_name_parms,parm_node name_parm_array[])
+{
+	val_type ret_val;
+	
+	ret_val.v.tag = TAG_INT;
+
+    /*  We must subtract a number from the system time due to size
+        limitations within the blakod.  Blakod uses 32 bit values,
+        -4 bits for type and -1 bit for sign.  This leaves us with
+        27 bits for value,  This only allows us to have 134M or so
+        as a positive value.  Current system time is a bit larger
+        than that.  So, we subtract off time to compensate.
+    */
+
+	ret_val.v.data = GetTickCount();    // W32API 10ms-16ms precision call
+	
+	return ret_val.int_val;
+}
+
 
 int C_Random(int object_id,local_var_type *local_vars,
 			 int num_normal_parms,parm_node normal_parm_array[],

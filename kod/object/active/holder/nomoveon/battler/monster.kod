@@ -940,6 +940,7 @@ messages:
       {         
          if (Send(self,@GetRow) - iRow) <= 3
             AND (Send(self,@GetCol) - iCol) <= 3
+            OR IsClass(self,&Reflection)
          {
             Post(self,@GotoMaster);
          }
@@ -968,8 +969,14 @@ messages:
          return;
       }
 
-      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 6)
+      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 20)
       {
+         if IsClass(self,&Reflection)
+            AND NOT Send(oNewRoom,@AllowGuildAttack,#what=poMaster)
+         {
+            return;
+         }
+
          Send(oNewRoom,@NewHold,#what=self,
               #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
               #new_angle=Send(poMaster,@GetAngle));
@@ -1427,13 +1434,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "This returns the battler's ability to-hit.  Ranges from 1 to 1500."
+   "This returns the battler's ability to-hit.  Ranges from 1 to 4500."
    {
       local iAttack;
 
       if piOffense = $
       {
-         iAttack = (3*viLevel) + (60*viDifficulty);
+         iAttack = ((3*viLevel) + (60*viDifficulty))*3;
       }
       else
       {
@@ -1445,25 +1452,25 @@ messages:
          iAttack = iAttack * 3 / 4;
       }
       
-      return Bound(iAttack,1,1500);
+      return Bound(iAttack,1,4500);
    }
 
    GetDefense(what = $, stroke_obj=$)
    "This returns the battler's ability to avoid being hit.  Ranges from "
-   "1 to 1500."
+   "1 to 4500."
    {
       local iDefense;
 
       if piDefense = $
       {
-         iDefense = (3*viLevel) + (60*viDifficulty);
+         iDefense = ((3*viLevel) + (60*viDifficulty))*3;
       }
       else
       {
          iDefense = piDefense;
       }
      
-      return Bound(iDefense,1,1500);
+      return Bound(iDefense,1,4500);
    }
 
    % The next message deals with the three defense skills.  These messages

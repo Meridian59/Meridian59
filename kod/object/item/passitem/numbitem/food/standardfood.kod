@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+StandardFood is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   standardfood_name_rsc = "standard food"
+   standardfood_name_plural_rsc = "standard food"
+   standardfood_icon_rsc = mushroom.bgf
+   standardfood_desc_rsc = "This is some standard food!"
+   
+   standardfood_extended_desc_one = "Consumption will increase your vigor by "
+   standardfood_extended_desc_two = " and decrease your hunger by "
+   standardfood_extended_desc_three = "."
+
+classvars:
+
+   vrName = standardfood_name_rsc
+   vrName_plural = standardfood_name_plural_rsc
+   vrIcon = standardfood_icon_rsc
+   vrDesc = standardfood_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 40
+
+properties:
+
+   viFilling = 10                
+   viNutrition = 10            
+   piNumber = 1
+
+messages:
+
+   AppendDesc()
+   {
+      AppendTempString("\n\n");
+      AppendTempString(standardfood_extended_desc_one);
+      AppendTempString(viNutrition);
+      AppendTempString(standardfood_extended_desc_two);
+      AppendTempString(viFilling);
+      AppendTempString(standardfood_extended_desc_three);
+      
+      if IsClass(self,&Waterskin)
+      {
+         return;
+      }
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

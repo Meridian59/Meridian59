@@ -1,0 +1,52 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TurkeyLeg is HeartyFood
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   TurkeyLeg_name_rsc = "turkey leg"
+   TurkeyLeg_icon_rsc = drumstik.bgf
+   TurkeyLeg_desc_rsc = \
+      "This is a scrumptious roasted turkey leg.  The turkey is native to "
+      "the jungles of Ko'catan and imported to the mainland by traders.  "
+      "Some people believe that the avars attack trading caravans to free "
+      "the captured birds."
+
+   TurkeyLeg_name_plural_rsc = "turkey legs"
+
+classvars:
+
+   vrName = TurkeyLeg_name_rsc
+   vrIcon = TurkeyLeg_icon_rsc
+   vrDesc = TurkeyLeg_desc_rsc
+
+   vrName_plural = TurkeyLeg_name_plural_rsc
+
+   viBulk = 15
+   viWeight = 15
+
+   viValue_average = 60
+
+properties:
+
+   viFilling = 30   
+   viNutrition = 15
+   piNumber = 1
+   viHealing = 30
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

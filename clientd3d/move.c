@@ -54,15 +54,13 @@
 
 #define MAX_STEP_HEIGHT (HeightKodToClient(24)) // Max vertical step size (FINENESS units)
 
-#define MOVE_INTERVAL  1000            // Inform server at most once per this many milliseconds
+#define MOVE_INTERVAL  250            // Inform server once per this many milliseconds
 #define MOVE_THRESHOLD (FINENESS / 4)  // Inform server only of moves at least this large
-#define MOVE_THRESHOLD2 (MOVE_THRESHOLD * MOVE_THRESHOLD)
-#define TIME_THRESHOLD 1000
 
-#define MIN_NOMOVEON (FINENESS / 4)      // Closest we can get to a nomoveon object
+#define MIN_NOMOVEON (FINENESS / 4)   // Closest we can get to a nomoveon object
 #define MIN_HOTPLATE_DIST (FINENESS ) // Closest we can get to a hotplate before notification
 
-#define TELEPORT_DELAY 5000              // # of milliseconds to wait for server to teleport us
+#define TELEPORT_DELAY 5000           // # of milliseconds to wait for server to teleport us
 
 #define MIN_SIDE_MOVE (MOVEUNITS / 4)
 
@@ -820,9 +818,9 @@ void MoveUpdateServer(void)
 }
 /************************************************************************/
 /*
- * MoveUpdatePosition:  Update the server's knowledge of our position, if the user
- *   has moved a sufficient distance.  This procudure doesn't check if we've sent our
- *   position to the server recently.
+ * MoveUpdatePosition:  Update the server's knowledge of our position.
+ *   This procudure does not care about elapsed interval, but  
+ *   sends the update only when the position has changed at least a bit.
  */ 
 void MoveUpdatePosition(void)
 {
@@ -832,19 +830,26 @@ void MoveUpdatePosition(void)
    x = player.x;
    y = player.y;
 
+   // don't send update if we didn't move
    if ((server_x - x) * (server_x - x) + (server_y - y) * (server_y - y) > MOVE_THRESHOLD)
    {
-      debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
-//      speed = 10;
-	  speed = 18;
-//      if (last_move_action == A_FORWARDFAST || last_move_action == A_BACKWARDFAST)
-	  if (IsMoveFastAction(last_move_action))
-	 speed *= 2;
+	   // debug output
+	   debug(("MoveUpdatePosition: x (%d -> %d), y (%d -> %d)\n", server_x, x, server_y, y));
+   
+	   // base walkspeed
+	   speed = 18;
+   
+	   // doubled on run
+	   if (IsMoveFastAction(last_move_action))
+		 speed *= 2;
 
-      RequestMove(y, x, speed, player.room_id);
-      server_x = x;
-      server_y = y;
-      server_time = timeGetTime();
+	   // send update
+	   RequestMove(y, x, speed, player.room_id);
+   
+	   // save last sent position and tick
+	   server_x = x;
+	   server_y = y;
+	   server_time = timeGetTime();
    }
 }
 /************************************************************************/

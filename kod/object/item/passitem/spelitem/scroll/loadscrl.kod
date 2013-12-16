@@ -1,0 +1,55 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+LoadoutScroll is Scroll
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   LoadoutScroll_label_name_rsc = "scroll of loadout"
+   LoadoutScroll_icon_rsc = scr07.bgf
+   LoadoutScroll_desc_rsc = \
+      "This scroll will activate your link with your guildhall chests, "
+      "magically acquiring gear according to your preferences registered "
+      "with Frular's office. The magic will only function in a safe environment, "
+      "and then only for guild members rank two or above."
+
+classvars:
+
+   vrLabelName = LoadoutScroll_label_name_rsc
+   vrIcon = LoadoutScroll_icon_rsc
+   viSpellEffect = SID_LOADOUT
+   viColor = XLAT_TO_SKY
+
+   viValue_average = 500
+
+properties:
+
+   vrDesc = LoadoutScroll_desc_rsc
+
+messages:
+
+   DoFailure(what = $)
+   {
+      piHits = 1;
+      return;
+   }
+
+   DropOnDeath()
+   {
+      % Don't want these cluttering up penalty loot.
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,76 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+wineGoblet is Alcohol
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   wineGoblet_name_rsc = "goblet of wine"
+   wineGoblet_icon_rsc = Goblet.bgf
+   wineGoblet_desc_rsc = \
+      "A fine and exquisite drink.  Only the commoners would find this distasteful."
+   wineGoblet_name_plural_rsc = "goblets of wine"
+
+   wineGoblet_eat_wav = drink.wav
+   wineGoblet_use_rich = "A full and flavorful drink, obviously from a very good year."
+   wineGoblet_use_poor = "Ugh!  What is this swill?"
+
+classvars:
+
+   vrName = wineGoblet_name_rsc
+   vrIcon = wineGoblet_icon_rsc
+   vrDesc = wineGoblet_desc_rsc
+
+   vrName_plural = wineGoblet_name_plural_rsc
+   viBulk = 12
+   viWeight = 10
+   viValue_average = 50
+
+   vrEat_wav = wineGoblet_eat_wav   
+
+properties:
+
+   viFilling = 8
+   viNutrition = 6
+   piNumber = 1
+
+messages:
+
+   SendTaste(what = $,apply_on = $)
+   {
+      local oMoney;
+      oMoney = send(apply_on, @getMoneyObject);
+      if oMoney = $ or send(oMoney,@GetNumber) < 5000
+      {  Send(apply_on,@MsgSendUser,#message_rsc=wineGoblet_use_poor);  }
+      else
+      {  Send(apply_on,@MsgSendUser,#message_rsc=wineGoblet_use_rich);  }
+      
+      Send(apply_on,@EffectSendUserDuration,#effect=EFFECT_BLUR,#duration=5000);
+
+      return;
+   }
+
+
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+
+   IsAlcohol()
+   {	 
+      return TRUE;
+   }
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

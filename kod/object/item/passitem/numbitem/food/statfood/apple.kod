@@ -1,0 +1,49 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Apple is StatFood
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   apple_name_rsc = "apple"
+   apple_icon_rsc = apple.bgf
+   apple_desc_rsc = \
+   "This bright red apple, a favorite food of the country folk of Marion, "
+   "is enormous and free of blemishes.  It was probably "
+   "grown in the deep forest of Farol and looks extremely healthy!  "
+   
+   apple_name_plural_rsc = "apples"
+
+classvars:
+
+   vrName = apple_name_rsc
+   vrIcon = apple_icon_rsc
+   vrDesc = apple_desc_rsc
+
+   vrName_plural = apple_name_plural_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viSpellEffect = SID_MAGIC_SHIELD
+
+properties:
+
+   viNutrition = 5
+   viFilling = 10   
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

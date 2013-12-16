@@ -33,6 +33,10 @@ int C_ClearPacket(int object_id,local_var_type *local_vars,
 		  int num_normal_parms,parm_node normal_parm_array[],
 		  int num_name_parms,parm_node name_parm_array[]);
 
+int C_GodLog(int object_id, local_var_type *local_vars,
+			int num_normal_parms,parm_node normal_parm_array[],
+			int num_name_parms,parm_node name_parm_array[]);
+
 int C_Debug(int object_id,local_var_type *local_vars,
 	    int num_normal_parms,parm_node normal_parm_array[],
 	    int num_name_parms,parm_node name_parm_array[]);
@@ -186,6 +190,10 @@ int C_DelListElem(int object_id,local_var_type *local_vars,
 		  int num_name_parms,parm_node name_parm_array[]);
 
 int C_GetTime(int object_id,local_var_type *local_vars,
+	      int num_normal_parms,parm_node normal_parm_array[],
+	      int num_name_parms,parm_node name_parm_array[]);
+
+int C_GetTickCount(int object_id,local_var_type *local_vars,
 	      int num_normal_parms,parm_node normal_parm_array[],
 	      int num_name_parms,parm_node name_parm_array[]);
 

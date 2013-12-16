@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Grapes is StatFood
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   grapes_name_rsc = "bunch of grapes"
+   grapes_icon_rsc = grapes.bgf
+   grapes_desc_rsc = \
+   "Pietro's secret recipes usually involve spicy wine grapes from the west. "
+   "These particular grapes are extra plump and succulent."
+
+   grapes_name_plural_rsc = "bunches of grapes"
+
+   grapes_disp_name = "platter of grapes"
+   grapes_disp_icon = grapepla.bgf
+   grapes_disp_desc = \
+   "These succulent grapes come from the vineyards of Marion, "
+   "and are renowned for their remarkable flavor. "
+	"Their taste is such a favorite that few actually "
+	"manage to survive to become wine."
+
+classvars:
+
+   vrName = grapes_name_rsc
+   vrIcon = grapes_icon_rsc
+   vrDesc = grapes_desc_rsc
+
+   vrDisp_name = grapes_disp_name
+   vrDisp_desc = grapes_disp_desc
+   vrDisp_icon = grapes_disp_icon
+
+   vrName_plural = grapes_name_plural_rsc
+   
+   viSpellEffect = SID_HASTE
+
+properties:
+
+   viFilling = 10
+   viNutrition = 5
+   piNumber = 1
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

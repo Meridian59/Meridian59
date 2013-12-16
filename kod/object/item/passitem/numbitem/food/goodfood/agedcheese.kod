@@ -1,0 +1,58 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AgedCheese is GoodFood
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   aged_cheese_name_rsc = "small wheel of aged cheese"
+   aged_cheese_icon_rsc = qo09.bgf
+   aged_cheese_desc_rsc = \
+   "This aged cheese is as delicious as it is pricey.  It bears the stamp of the royal Barloquian cheesery "
+   "and supposedly, it is equally nutritious as the famed inky-cap mushroom."
+
+   aged_cheese_name_plural_rsc = "small wheels of aged cheese"
+
+classvars:
+
+   vrName = aged_cheese_name_rsc
+   vrIcon = aged_cheese_icon_rsc
+   vrDesc = aged_cheese_desc_rsc
+
+   vrName_plural = aged_cheese_name_plural_rsc
+
+   viBulk = 10
+   viWeight = 10
+
+   viValue_average = 500
+
+properties:
+
+   viNutrition = 50
+   viFilling = 25
+   piNumber = 1
+
+messages:
+
+   Constructor()
+   {
+      % NOTE: If you change these colors, change the xlat in OrnamentalObject.
+      % Search for OO_MUSEUM_INKYCAP
+      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_GREEN,#color2=XLAT_TO_SKIN4);
+      
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

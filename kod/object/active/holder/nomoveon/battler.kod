@@ -16,7 +16,7 @@ constants:
 
    % What's the percent chance to hit if offense and defense are equal?
    % The higher this number is, the easier it is to hit in combat.
-   EQUAL_CHANCE_HIT = 55      
+   EQUAL_CHANCE_HIT = 500      
                               
    % Raise or lower this number to raise or lower the chance the 'avoids 
    %  your attack' message comes up.
@@ -32,28 +32,31 @@ resources:
    %  will comment out the next line.
 
    battler_blue_text = "~b"
-   battler_plain_text = ""
+   battler_plain_text = "~n"
 
-   % battler_attacker_hit - Your scimitar wounds Psychochild.
-   % battler_attacker_miss - Psychochild blocks your attack.
-   % battler_defender_hit - Psychochild wounds you with his scimitar.
-   % battler_defender_miss - You block Psychochild's attack.
+   % battler_attacker_hit - Your scimitar wounds Psychochild for (10) damage.
+   % battler_attacker_slay - Your scimitar slays Psychochild.
+   % battler_attacker_miss - Your attack is blocked by Psychochild.
+   % battler_defender_hit - Psychochild's scimitar wounds you for (10) damage.
+   % battler_defender_slay - Psychochild's scimitar slays you.
+   % battler_defender_miss - Psychochild's attack is blocked by you.
 
-   battler_attacker_hit = "%sYour %s %s %s%s."       
-   battler_attacker_miss = "%s%s%s %s your attack."    
-   battler_defender_hit = "%s%s%s %s you with %s %s."  
-   battler_defender_miss = "%sYou %s %s%s's attack."   
+   battler_attacker_crit = "~k~IYou dealt a critical strike!"  
+   battler_defender_crit = "~r~IYou suffered a critical strike!"  
+
+   battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage."       
+   battler_attacker_slay = "%sYour %s %s %s%s."   
+   battler_attacker_miss = "%sYour attack %s %s%s."    
+   battler_defender_hit = "%s%s%s's %s %s you for ~r~B%i~B%s damage."
+   battler_defender_slay = "%s%s%s's %s %s you."  
+   battler_defender_miss = "%s%s%s's attack %s you."   
 
    battler_punch = "punch"
    battler_attack = "attack"
-   battler_block  = "block" 
-   battler_blocks = "blocks"
-   battler_dodge  = "dodge"
-   battler_dodges = "dodges"
-   battler_parry  = "parry"
-   battler_parries  = "parries"
-   battler_avoid = "avoid"
-   battler_avoids = "avoids"
+   battler_blocked  = "is blocked by" 
+   battler_dodged  = "is dodged by"
+   battler_parried  = "is parried by"
+   battler_misses = "misses"
 
    battler_fail = "fails to damage"
    battler_nick = "nicks"
@@ -318,7 +321,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iDamage, oWeapon;
+      local iChanceToHit, iDamage, oWeapon, iMultiplier;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -331,15 +334,35 @@ messages:
                       * EQUAL_CHANCE_HIT)
                      / Send(what,@GetDefense,#what=self,
                             #stroke_obj=stroke_obj);
-      iChanceToHit = bound(iChanceToHit,10,95);
-      if iChanceToHit >= random(1,100)
+      iChanceToHit = bound(iChanceToHit,125,2000);
+      iMultiplier = 1;
+
+      if iChanceToHit > 1000
       {
+         if iChanceToHit >= random(1001,2000)
+         {
+            % We do double damage!
+            iMultiplier = 2;
+            
+            % Let us tell them the good news.
+            if IsClass(self,&Player)
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_crit);
+            }
+            
+            if IsClass(what,&Player)
+            {
+               Send(what,@MsgSendUser,#message_rsc=battler_defender_crit);
+            }
+         }
+         
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
                         #damage=Send(self,@GetDamage,#what=what,
                                      #stroke_obj=stroke_obj),
                         #atype=Send(self,@GetDamageType),
                         #aspell=Send(self,@GetSpellType));
+         iDamage = iDamage * iMultiplier;
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $
@@ -354,8 +377,32 @@ messages:
       }
       else
       {
-         % Oops, a miss.  See if something happens.
-         Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
+         if iChanceToHit >= random(1,1000)
+         {
+            % We hit!
+            iDamage = Send(what,@AssessDamage,#what=self,
+                           #damage=Send(self,@GetDamage,#what=what,
+                                        #stroke_obj=stroke_obj),
+                           #atype=Send(self,@GetDamageType),
+                           #aspell=Send(self,@GetSpellType));
+            iDamage = iDamage * iMultiplier;
+            Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
+                 #damage=iDamage);
+            if iDamage = $
+            {
+               Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
+                    #stroke_obj=stroke_obj);
+            }
+            else
+            {
+               Send(self,@DidDamage,#amount=iDamage,#what=what);
+            }
+         }
+         else
+         {
+            % Oops, a miss.  See if something happens.
+            Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
+         }
       }
 
       if poOwner <> $
@@ -815,7 +862,7 @@ messages:
    }
 
    % This returns defense reason of why opponent missed this battler.
-   GetDefenseDesc(singular=TRUE, stroke_obj=$)
+   GetDefenseDesc(stroke_obj=$)
    {
       local iRandom, iParry, iBlock, iDodge;
       
@@ -827,39 +874,20 @@ messages:
 
       if iRandom < iParry
       {
-         if singular
-         {
-            return battler_parries;
-         }
-         return battler_parry;
+         return battler_parried;
       }
 
       if iRandom < (iParry + iBlock)
       {
-         if singular
-         {
-            return battler_blocks;
-         }
-
-         return battler_block;
+         return battler_blocked;
       }
 
       if iRandom < (iParry + iBlock + iDodge)
       {
-         if singular
-         {
-            return battler_dodges;
-         }
-
-         return battler_dodge;
+         return battler_dodged;
       }
-
-      if singular
-      {
-         return battler_avoids;
-      }
-
-      return battler_avoid;
+      
+      return battler_misses;
    }
 
    % The next three messages deal with the three defense skills.  These
@@ -956,18 +984,38 @@ messages:
                rColor = battler_plain_text;
             }
          }
-
-         Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+         
+         if damage = $
+         {
+            Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+         }
+         else
+         {
+            Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+              #parm6=damage,#parm7=rColor);
+         }
       }
 
       if IsClass(what,&Player)
       {
-         Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+         if damage = $
+         {   
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_slay,
               #parm1=rColor,#parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),#parm4=rDamageDesc,
-              #parm5=Send(self,@GetHisHer),#parm6=rWeaponName);
+              #parm3=Send(self,@GetName),#parm4=rWeaponName,
+              #parm5=rDamageDesc);
+         }
+         else
+         {
+            Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+              #parm1=rColor,#parm2=Send(self,@GetCapDef),
+              #parm3=Send(self,@GetName),#parm4=rWeaponName,
+              #parm5=rDamageDesc,#parm6=damage,#parm7=rColor);
+         }
       }
 
       return;
@@ -992,9 +1040,9 @@ messages:
 
          Send(self,@MsgSendUser,#message_rsc=battler_attacker_miss,
               #parm1=rColor,
-              #parm2=Send(what,@GetCapDef),#parm3=Send(what,@GetName),
-              #parm4=Send(what,@GetDefenseDesc,#singular=TRUE,
-                          #stroke_obj=stroke_obj));
+              #parm2=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj),
+              #parm3=Send(what,@GetDef),
+              #parm4=Send(what,@GetName));
          Send(stroke_obj,@SendMissMessageToAttacker,#who=self,#victim=what,
               #color_rsc=rColor,#weapon_used=Send(self,@LookupPlayerWeapon),
               #bText=FALSE);
@@ -1004,9 +1052,9 @@ messages:
       {
          Send(what,@MsgSendUser,#message_rsc=battler_defender_miss,
               #parm1=rColor,
-              #parm2=Send(what,@GetDefenseDesc,#singular=FALSE,
-                          #stroke_obj=stroke_obj),
-              #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+              #parm2=Send(self,@GetCapDef),
+              #parm3=Send(self,@GetName),
+              #parm4=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj));
          % Flag them as "dodging", so they can potentially improve.
          Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);              
       }

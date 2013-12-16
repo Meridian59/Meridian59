@@ -47,18 +47,11 @@ constants:
    USER_RUNNING_SPEED = 36
 
    % How many packets incoming per second do we allow?
-   INCOMING_PACKET_THROTTLE = 5
+   INCOMING_PACKET_THROTTLE = 20
 
    % What's the lower threshold for being able to run?  Below this, we can't
    %  run.
    VIGOR_RUN_THRESHOLD = 10
-
-   % What's the greatest time between moves that we'll consider to be "lag"
-   %  (in seconds).
-   MOVEMENT_DELTA_LAG_THRESHOLD = 5
-
-   % If piMovesCount goes over this, we have a suspected speedhacker.
-   MOVEMENT_COUNT_THRESHOLD = 2
 
    % Speedhack/cheating detection:
    % What's the maximum number of times we should log a violation?
@@ -140,6 +133,7 @@ resources:
    user_stat_mysticism = "Mysticism"
    user_stat_aim = "Aim"
    user_stat_karma = "Karma"
+   user_stat_hpgainchance = "Tougher Chance"
 
    user_stat_health = heal.bgf
    user_stat_mana = ankh.bgf
@@ -241,6 +235,7 @@ resources:
 
    user_logon = \
       "Welcome to the world of Meridian 59! (type \"help\" to see the manual)."
+   user_goto_lastsaferoom = "You have been sent to the last safe place you visited."
    user_goto_safety = "You have been sent to a safe place."
    user_goto_object = "You have been sent to %s%s."
    user_goto_jail = "You have been thrown in the Barloque Jail!"
@@ -308,6 +303,8 @@ properties:
    vrName = user_name_rsc
 
    piHomeroom
+   
+   piLastSafeRoom = $
 
    plNew_mail = $
 
@@ -341,13 +338,9 @@ properties:
    piLastPacketTime = 0
    piPacketsPerSecond = 0
 
+   % The tick we received last position update from user
    piLastMoveUpdateTime = 0
-   piMovesCounter = 0
-   piNumberOfMovesPerSecond = 0
-   piMoveOldRow = 0
-   piMoveOldCol = 0
-   piMoveOldRoom = RID_TOS
-
+   
    piCheaterLogs = 0
 
 messages:
@@ -858,13 +851,11 @@ messages:
       local liClient_cmd, oWhat, oWhere, oRoom, iRow, iCol, iSay_type,
             sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
             lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
-            lTargets, bSpam;
-
-      bSpam = FALSE;
+            lTargets;
 
       % This checks to see if the user is trying to Send too many packets
       %  per second.  If they are, then we mark them as a spammer and
-      %  disallow certain commands.
+      %  don't process the message
       if piLastPacketTime <> GetTime()
       {
          piLastPacketTime = GetTime();
@@ -876,14 +867,15 @@ messages:
          if piPacketsPerSecond > INCOMING_PACKET_THROTTLE
             AND NOT Send(self,@PlayerIsImmortal)
          {
-            bSpam = TRUE;
+			% Don't go on if marked as spammer
+            return;
          }
       }
 
       if type = 1
       {
          Send(self,@UserCommand,#client_msg=client_msg,
-              #number_stuff=number_stuff,#bSpam=bSpam);
+              #number_stuff=number_stuff);
 
          return;
       }
@@ -899,10 +891,6 @@ messages:
          iCol = Nth(client_msg,3);
          iSpeed = Nth(client_msg,4);
          oRoom = Nth(client_msg,5);
-
-         % XORed with some magic numbers to throw off teleport hacks.
-         %iRow = Send(SYS,@BitWiseXOR,#value=iRow,#value2=12692257);
-         %iCol = Send(SYS,@BitWiseXOR,#value=iCol,#value2=11627532);
 
          % Check if it's an outdated message, from a person going off side of
          %  room multiple times before they got their new room.
@@ -973,11 +961,6 @@ messages:
       
       if liClient_cmd = BP_REQ_DROP
       {
-         if bSpam AND NOT Send(self,@PlayerIsImmortal)
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserDrop,#what=oWhat,#number=number_stuff);
          
@@ -995,11 +978,6 @@ messages:
       
       if liClient_cmd = BP_SEND_OBJECT_CONTENTS
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserObjectContents,#what=oWhat);
          
@@ -1026,11 +1004,6 @@ messages:
       
       if liClient_cmd = BP_REQ_LOOK
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserLook,#what=oWhat);
          
@@ -1062,11 +1035,6 @@ messages:
       
       if liClient_cmd = BP_REQ_USE
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);     
          Send(self,@UserUseItem,#what=oWhat);
          
@@ -1075,11 +1043,6 @@ messages:
       
       if liClient_cmd = BP_REQ_UNUSE
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserUnuseItem,#what=oWhat);
 
@@ -1088,11 +1051,6 @@ messages:
       
       if liClient_cmd = BP_REQ_ATTACK
       {
-         if bSpam
-         {
-            return;
-         }
-
          iAttack_type = Nth(client_msg,2);
          oWhat = Nth(client_msg,3);
          Send(self,@UserAttack,#type=iAttack_type,#what=oWhat);
@@ -1110,11 +1068,6 @@ messages:
       
       if liClient_cmd = BP_REQ_OFFER
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          lItems = Nth(client_msg,3);
          Send(self,@UserOffer,#what=oWhat,#item_list=lItems,
@@ -1147,15 +1100,7 @@ messages:
       }
       
       if liClient_cmd = BP_REQ_GO
-      {
-         % This also Sends a movement packet.  Decrement our move counter.
-         Send(self,@AdjustMoveCounter);
-      
-         if bSpam
-         {
-            return;
-         }
-
+      {        
          Send(self,@UserGo);
          
          return;
@@ -1207,11 +1152,6 @@ messages:
       
       if liClient_cmd = BP_REQ_APPLY
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          oApply_on = Nth(client_msg,3);
          Send(self,@UserApply,#what=oWhat,#apply_on=oApply_on);
@@ -1235,11 +1175,6 @@ messages:
       
       if liClient_cmd = BP_REQ_CAST
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);  % Spell type
          lTargets = Nth(client_msg,3); % Targets of spell (if any)
          Send(self,@UserCast,#oSpell=oWhat,#lTargets=lTargets);
@@ -1276,11 +1211,6 @@ messages:
       
       if liClient_cmd = BP_ACTION
       {
-         if bSpam
-         {
-            return;
-         }
-
          iNum = Nth(client_msg, 2);
          Send(self,@UserAction,#action=iNum);
          
@@ -1312,11 +1242,6 @@ messages:
       
       if liClient_cmd = BP_CHANGE_DESCRIPTION
       {
-         if bSpam
-         {
-            return;
-         }
-
          % oWhat = who's editing.
          oWhat = Nth(client_msg,2);
          sBody = Nth(client_msg,3);
@@ -1356,11 +1281,6 @@ messages:
       
       if liClient_cmd = BP_REQ_ACTIVATE
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
          Send(self,@UserTryActivate,#what=oWhat);
          
@@ -1381,13 +1301,10 @@ messages:
          
          return;
       }
-
-      if NOT bSpam
-      {
-         Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
-               liClient_cmd);
-      }
-      
+     
+      Debug(Send(self,@GetTrueName),self,"sent unknown command from client",
+	      liClient_cmd);
+            
       return;
    }
 
@@ -1447,7 +1364,7 @@ messages:
       return Send(SYS,@GetSuccessRsc);
    }
 
-   UserCommand(client_msg=$, number_stuff=$, bSpam=FALSE)
+   UserCommand(client_msg=$, number_stuff=$)
    {
       local iClient_cmd, i, oMoney, cost, oGuild, oWhat;
 
@@ -1457,11 +1374,6 @@ messages:
 
       if iClient_cmd = UC_REST
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@StartResting);
          
          return;
@@ -1469,11 +1381,6 @@ messages:
       
       if iClient_cmd = UC_STAND
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@StopResting);
          
          return;
@@ -1553,11 +1460,6 @@ messages:
 
       if iClient_cmd = UC_REQ_GUILDINFO
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildSendInfo);
          
          return;
@@ -1565,11 +1467,6 @@ messages:
 
       if iClient_cmd = UC_INVITE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_INVITE,
               #oTarget=Nth(client_msg,2));
          
@@ -1601,11 +1498,6 @@ messages:
 
       if iClient_cmd = UC_VOTE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_VOTE,
               #oTarget=Nth(client_msg,2));
          
@@ -1702,11 +1594,6 @@ messages:
 
       if iClient_cmd = UC_MAKE_ALLIANCE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_FORGE_ALLIANCE,
               #oTarget=Nth(client_msg,2));
               
@@ -1715,11 +1602,6 @@ messages:
 
       if iClient_cmd = UC_END_ALLIANCE
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_END_ALLIANCE,
               #oTarget=Nth(client_msg,2));
               
@@ -1728,11 +1610,6 @@ messages:
 
       if iClient_cmd = UC_MAKE_ENEMY
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_DECLARE_ENEMY,
               #oTarget=Nth(client_msg,2));
               
@@ -1741,11 +1618,6 @@ messages:
 
       if iClient_cmd = UC_END_ENEMY
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserGuildCommand,#command_num=GCID_PEACE,
               #oTarget=Nth(client_msg,2));
               
@@ -1841,11 +1713,6 @@ messages:
 
       if iClient_cmd = UC_CHANGE_URL
       {
-         if bSpam
-         {
-            return;
-         }
-
          oWhat = Nth(client_msg,2);
 
          if oWhat <> self
@@ -1902,11 +1769,6 @@ messages:
 
       if iClient_cmd = UC_APPEAL
       {
-         if bSpam
-         {
-            return;
-         }
-
          Send(self,@UserAppeal,#string=Nth(client_msg,2));
          
          return;
@@ -2213,8 +2075,7 @@ messages:
 
       % Count right now as the last time we moved.
       piLastMoveUpdateTime = GetTime();
-      piMovesCounter = 0;
-
+      
       propagate;
    }
 
@@ -2643,7 +2504,7 @@ messages:
 
       if group = 2
       {
-         AddPacket(1,BP_STAT_GROUP, 1,group, 1,7);
+         AddPacket(1,BP_STAT_GROUP, 1,group, 1,8);
 
          Send(self,@SendStatMight);
          Send(self,@SendStatIntellect);
@@ -2652,6 +2513,7 @@ messages:
          Send(self,@SendStatMysticism);
          Send(self,@SendStatAim);
          Send(self,@SendStatKarma);
+		 Send(self,@SendStatHPChance);
          SendPacket(poSession);
          
          return;
@@ -2859,70 +2721,23 @@ messages:
       return;
    }
 
-   AdjustMoveCounter(amount=-1, bReset=FALSE)
-   {
-      if bReset
-      {
-         % Set it to max negative because wall spells don't properly remove
-         %  moves.
-         piMovesCounter = -MOVEMENT_DELTA_LAG_THRESHOLD;
-      }
-      
-      piMovesCounter = Bound((piMovesCounter + amount),
-                             -MOVEMENT_DELTA_LAG_THRESHOLD,$);
-
-      return;
-   }
-
    UserMove(new_row = 1, new_col = 1,
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
       local iCurrentTime, iDelta, bFirstMove, iExertion, iHasteLevel,
-            iSquaredDistance, iNewRow, iNewCol, iNewRoom, iChanceTurn, iAngle;
-
-      % NEW Speedhack detection!
-      % How this works:
-      %   Speedhack works by sending a LOT of little moves very, very quickly.
-      %   Normal players only send 1 movement packet per second, but 
-      %   speedhackers send more.  Even at low levels, speedhackers will send
-      %   more packets per second.  So, we keep track of the number of packets
-      %   sent and the number of seconds that happen.  Every movement packet
-      %   sent increases our piMovesCounter by one.  Every second that passes
-      %   decreases it by one.  (In actuality, we subtact the time difference
-      %   from when movement packets were sent.)  We have to average this over
-      %   time, because lag can cause packets to be delayed and all show up in
-      %   one second.
-      %
-      %   We currently allow for players to have up to 3 more moves than 
-      %   allowed over the duration due to rounding errors, etc.
-
-      % Check the delta since the last time we moved.  Keep an upper bound on
-      %  the delta, since people could just be moving from rest.
+            iSquaredDistance, iChanceTurn, iAngle;
+    
+      % Get the current tick and the delta since we processed last move
       iCurrentTime = GetTime();
       iDelta = iCurrentTime - piLastMoveUpdateTime;
-
-      %  Make sure this person is not lagging; increment our counter since we
-      %  got a move packet, then adjust for last movement time.
-      %  Also make sure we don't go too far negative.
-      piMovesCounter = (piMovesCounter + 1) - iDelta;
-      piMovesCounter = bound(piMovesCounter,-MOVEMENT_DELTA_LAG_THRESHOLD,$);
-
-      % Check for cheating by sending more move packets than allowed.
-      % Don't log too many cheat detections, because it'll fill up our logs.
-      if piMovesCounter > MOVEMENT_COUNT_THRESHOLD
-         AND piCheaterLogs < MAX_LOGGED_THRESHOLD
-      {
-         piCheaterLogs = piCheaterLogs + 1;
-         Debug("ALERT!",Send(self,@GetTrueName),self," is moving too fast.  "
-               "Has moves count of ",piMovesCounter," Possible speedhacker.");
-         piMovesCounter = 0;
-      }
-
+     
+	  % A simple (temporary) check if sent speed is OK
       if speed > USER_WALKING_SPEED
       {
          if Send(self,@GetVigor) < VIGOR_RUN_THRESHOLD
          {
-            % This person is cheating!  Stop them from moving, make a log note.
+            % This person is sending a movement speed faster than allowed for his current vigor! 
+			%  Stop them from moving, make a log note.
             Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
                  #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
                  #fine_row=Send(self,@GetFineRow),
@@ -2974,10 +2789,9 @@ messages:
          }
       }
 
-      % Only drain vigor once per second, unless the moves counter indicates
-      %  we could be speedhacking.
+      % Only drain vigor once per second.
+	  % NOTE: This needs adjustement when we switch to "GetTickCount" because it's in ms then
       if piLastMoveUpdateTime <> iCurrentTime
-         AND piMovesCounter < 0
       {
          % Reduce speed value to old value, 5/6ths current value, then
          %  square it.
@@ -2996,81 +2810,21 @@ messages:
          Send(self,@AddExertion,#amount=iExertion);
       }
 
-      % Teleport detection!
-      % How this works:
-      %  We detect distances travelled.  If the distance seems too great and
-      %  the move counter delta isn't very high, then perhaps they are
-      %  teleporting.
-      if piCheaterLogs < MAX_LOGGED_THRESHOLD
-         AND NOT IsClass(self,&DM)
-      {
-         if piLastMoveUpdateTime = iCurrentTime
-         {
-            % Uh oh.  They've sent us more than one move per second.  Keep
-            %  track of 'em.
-            piNumberOfMovesPerSecond = piNumberOfMovesPerSecond + 1;
-         }
-         else
-         {
-            % Okay, first see if we the person violated our movement
-            %  limitations.
-            iNewRow = Send(self,@GetRow);
-            iNewCol = Send(self,@GetCol);
-            iNewRoom = Send(poOwner,@GetRoomNum);
-            iSquaredDistance = ((piMoveOldRow - iNewRow)
-                                 * (piMoveOldRow - iNewRow))
-                               + ((piMoveOldCol - iNewCol)
-                                 * (piMoveOldCol - iNewCol));
-
-            % See if they moved farther than they should have
-            % Only check if we're in the same room, and aren't in the blink
-            %  spot, (IE, just finished blinking).
-            if iNewRoom = piMoveOldRoom
-               AND (iNewRow <> Send(poOwner,@GetTeleportRow)
-                    AND iNewCol <> Send(poOwner,@GetTeleportCol))
-            {
-               % This is a large movement distance with a very low movement
-               %  delta, possibly cheat teleporting.
-               if iSquaredDistance >= 200
-                  AND iDelta < 3
-               {
-                  Debug("ALERT! ",Send(self,@GetTrueName),self," moved ",
-                        iSquaredDistance," with only ",iDelta," seconds since "
-                        "last movement update.");
-                  debug("Additional: ",Send(self,@GetTrueName)," went from (",
-                        piMoveOldRow,piMoveOldCol,") to (",iNewRow,iNewCol,
-                        ") in RID ",iNewRoom," Possible speedhacker.");
-                  piCheaterLogs = piCheaterLogs + 1;
-
-                  % A little extra penalty: Drain some vigor as we normally
-                  %  would.
-                  Send(self,@AddExertion,
-                       #amount=iSquaredDistance*EXERTION_PER_MOVE);
-               }
-            }
-
-            % Now, initialize values
-            piNumberOfMovesPerSecond = 1;
-            piMoveOldRow = Send(self,@GetRow);
-            piMoveOldCol = Send(self,@GetCol);
-            piMoveOldRoom = Send(poOwner,@GetRoomNum);
-         }
-      }
-
-      % Update this value for both speedhack detection AND movement detection.
-      piLastMoveUpdateTime = GetTime();
-
       % bitflag check instead of function for speed.
       if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }
 
+	  % save this tick for next execution to determine dt then
+      piLastMoveUpdateTime = iCurrentTime;
+
+	  % now we actually process the move (and propagate it)
       Send(poOwner,@SomethingMoved,#what=self,
            #new_row=new_row,#new_col=new_col,
            #fine_row=fine_row,#fine_col=fine_col,
            #cause=CAUSE_USER_INPUT,#speed=speed);
-
+		   
       return;
    }
 
@@ -5952,7 +5706,6 @@ messages:
 
       % Count right now as the last time we moved.
       piLastMoveUpdateTime = GetTime();
-      piMovesCounter = 0;
       
       % This is here because it has to be done before poOwner is changed.
 
@@ -5980,6 +5733,14 @@ messages:
       % This is stuff that would be executed on propagation, but we gotta
       % execute this stuff before Sending new info to client
 
+      if Send(what,@GetRoomNum) = RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         % Deliverance people who somehow got to the Underworld already protected
+         % Usually it's because they logged off in the Underworld while Death Rifting
+         Post(self,@AdminGoToSafety);
+      }
+      
       if poOwner <> $
       {
         old = poOwner;
@@ -5994,6 +5755,13 @@ messages:
          {
             Send(self,@CheckLeavingNewbieOrGuest,#leaving=old);
             Send(self,@CheckTokenInNewRoom,#what=old);
+         }
+         
+         % If room is no combat and safe logoff, record it as the player's last safe location
+         if Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+            AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
+         {
+            piLastSafeRoom = Send(poOwner,@GetRoomNum);
          }
 
          piRow = First(Send(poOwner,@GetRoomPos,#what=self));
@@ -6014,6 +5782,13 @@ messages:
          AND NOT IsClass(self,&DM)
       {
          Send(Send(self,@GetOwner),@DeleteWallsAroundBattler,#who=self);
+      }
+      
+      % This removes Death Rift's protection when the user enters any non-Underworld room
+      if Send(poOwner,@GetRoomNum) <> RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         Send(self,@SetDeathRiftProtection,#value=FALSE);
       }
       
       propagate;
@@ -6720,6 +6495,42 @@ messages:
 
       return;
    }
+   
+   SendStatHPChance()
+   {
+      local iHPChance_Send, highmark;
+	  
+	  highmark = Send(self,@GetHighMark);
+	  
+	 
+	  % (piGain_chance*100)/highmark = percent chance to gain HP
+	  
+	  if piGain_chance < 0
+      {
+        iHPChance_Send = piGain_chance;
+      } 
+	  else 
+	  {
+        iHPChance_Send = bound(((piGain_chance*100)/highmark),1,100);
+      }    
+      % user_stat_hpgainchance = "Tougher Chance"
+      AddPacket(1,8, 4,user_stat_hpgainchance, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,iHPChance_Send, 4,0, 4,100, 4,iHPChance_Send);
+
+      return;
+   }
+   
+   DrawHPChance()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT, 1,2);
+         Send(self,@SendStatHPChance);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
 
    DrawVigor()
    {
@@ -6972,6 +6783,68 @@ messages:
          return Send(SYS,@GetSuccessRsc);
       }
       
+      return;
+   }
+   
+   AdminGoToLastSafeRoom()
+   "Admin supported\n"
+   "Sends the user to the last safe room they visited, whether they're logged in or not!\n"
+   {
+      local oCurrentRoom, iCurrentRegion, oLastSafeRoom, iLastSafeRegion, oTargetRoom;
+
+      if piLastSafeRoom <> $
+      {
+         oLastSafeRoom = Send(SYS,@FindRoomByNum,#num=piLastSafeRoom);
+         iLastSafeRegion = Send(oLastSafeRoom,@GetRegion);
+         
+         if pbLogged_on
+         {
+            oCurrentRoom = Send(self,@GetOwner);
+            iCurrentRegion = Send(oCurrentRoom,@GetRegion);
+            
+            if iCurrentRegion = iLastSafeRegion
+            {
+               Send(oLastSafeRoom,@Teleport,#what=self);
+               Send(self,@MsgSendUser,#message_rsc=user_goto_lastsaferoom);
+            }
+            else
+            {
+               % If the user is in a different region from their last safe room, use region default homeroom instead.
+               % This can happen if a player goes to a new region but never stops in at a safe room.
+
+               oTargetRoom = send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
+               Send(oTargetRoom,@Teleport,#what=self);
+               Send(self,@MsgSendUser,#message_rsc=user_goto_safety);
+            }
+         }
+         else
+         {
+            % If the user is logged off, we can't teleport.
+            % Instead, we update their saved logoff location.
+
+            oCurrentRoom = Send(SYS,@FindRoomByNum,#num=piSave_Room);
+            iCurrentRegion = Send(oCurrentRoom,@GetRegion);
+            
+            if iCurrentRegion = iLastSafeRegion
+            {
+               piSave_room = piLastSafeRoom;
+               piSave_row = Send(oLastSafeRoom,@GetTeleportRow);
+               piSave_col = Send(oLastSafeRoom,@GetTeleportCol);
+               piSave_fine_row = 32;
+               piSave_fine_col = 32;
+            }
+            else
+            {
+               oTargetRoom = send(SYS,@FindRoomByNum,#num=Send(oCurrentRoom,@GetCurrentRegionHomeroom));
+               
+               piSave_room = Send(oTargetRoom,@GetRoomNum);
+               piSave_row = Send(oTargetRoom,@GetTeleportRow);
+               piSave_col = Send(oTargetRoom,@GetTeleportCol);
+               piSave_fine_row = 32;
+               piSave_fine_col = 32;
+            }
+         }
+      }
       return;
    }
 
@@ -7270,9 +7143,7 @@ messages:
          AND oIllusion <> $
          AND IsClass(oIllusion,&Monster)
       {
-         iFlags = (iFlags & ~USER_YES & ~OFFER_YES & ~PLAYER_PK
-                   & ~PLAYER_OUTLAW);
-         iFlags = (iFlags & ~PLAYER_DM & ~PLAYER_CREATOR & ~PLAYER_SUPER);
+         iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
       }
 
       return iFlags;

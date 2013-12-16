@@ -111,6 +111,7 @@ enum
 #define DEBUG_FILE "debug.txt"
 #define ERROR_FILE "error.txt"
 #define LOG_FILE "log.txt"
+#define GOD_FILE "god.txt"
 
 #define KODBASE_FILE "kodbase.txt"
 

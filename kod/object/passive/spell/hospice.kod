@@ -24,8 +24,9 @@ resources:
       "another good soul.  "
       "Requires herbs to cast."
 
-   hospice_cast_rsc = "The spirit of Shal'ille enters your body and rejuvenates it."
-   hospice_cast_on_other = "You heal %s%s."
+   hospice_cast_rsc = "%s%s's spell rejuvenates you, restoring (~B%i~B) hitpoints."
+   hospice_cast_self = "Shal'ille's holy magic rejuvenates you, restoring (~B%i~B) hitpoints."
+   hospice_cast_on_other = "You heal %s%s for (~B%i~B) hitpoints."
    hospice_unnecessary_rsc = "%s%s is perfectly healthy."
 
 classvars:
@@ -110,9 +111,11 @@ messages:
 
       if who <> oTarget 
       {
-         Send(who, @MsgSendUser, #message_rsc=hospice_cast_on_other,
-              #parm1=Send(oTarget,@GetDef),
-              #parm2=Send(oTarget,@GetName));
+         Send(who,@MsgSendUser,#message_rsc=hospice_cast_on_other,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName),#parm3=iHeal);
+              
+         Send(oTarget,@MsgSendUser,#message_rsc=hospice_cast_rsc,
+              #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),#parm3=iHeal);
 
          % Give them a little boost if they help someone of higher Karma.
          if send(who,@GetKarma) < send(oTarget,@GetKarma)
@@ -123,7 +126,11 @@ messages:
          }
       }       
 
-      Send(oTarget,@MsgSendUser,#message_rsc=hospice_cast_rsc);
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=hospice_cast_self,#parm1=iHeal);
+      }
+
       Send(oTarget,@GainHealthNormal,#amount=iHeal);
 
       propagate;

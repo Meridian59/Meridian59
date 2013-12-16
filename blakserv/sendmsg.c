@@ -117,6 +117,7 @@ void InitBkodInterpret(void)
 	ccall_table[SENDPACKET] = C_SendPacket;
 	ccall_table[SENDCOPYPACKET] = C_SendCopyPacket;
 	ccall_table[CLEARPACKET] = C_ClearPacket;
+	ccall_table[GODLOG] = C_GodLog;
 	ccall_table[DEBUG] = C_Debug;
 	ccall_table[GETINACTIVETIME] = C_GetInactiveTime;
 	ccall_table[DUMPSTACK] = C_DumpStack;
@@ -156,6 +157,8 @@ void InitBkodInterpret(void)
 	ccall_table[FINDLISTELEM] = C_FindListElem;
 	
 	ccall_table[GETTIME] = C_GetTime;
+	ccall_table[GETTICKCOUNT] = C_GetTickCount;
+	
 	
 	ccall_table[CREATETABLE] = C_CreateTable;
 	ccall_table[ADDTABLEENTRY] = C_AddTableEntry;

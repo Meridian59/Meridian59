@@ -22,7 +22,9 @@ resources:
       "He is a weaponsmaster, and makes a living passing his skills on to students of the "
       "warriors' path.  His feats with the sword are famous and unparalleled as is his love for a good drink."
 
-   CnSer_forget_potion_sale = "Good, no self-respecting warrior shares company with those mana-crazed buffoons. I will most gladly sell %s%s that strips all dependency on the so-called Warrior god from thy memory."
+   CnSer_forget_potion_sale = "Good, no self-respecting warrior shares company with those mana-crazed buffoons. I will most 
+
+gladly sell %s%s that strips all dependency on the so-called Warrior god from thy memory."
    
    CnSer_Alcohol_taken = "Ohhh, thank you! Here, have some of my leftover training swords!"
 
@@ -34,16 +36,19 @@ classvars:
 
    viMerchant_markup = MERCHANT_RIPOFF
 
-   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_TEACHER | MOB_RECEIVE | MOB_NOMOVE | MOB_SELLER | MOB_COND_SELLER
+   viAttributes = MOB_NOFIGHT | MOB_RANDOM | MOB_LISTEN | MOB_TEACHER | MOB_RECEIVE | MOB_NOMOVE | MOB_SELLER | 
+
+MOB_COND_SELLER
    viOccupation = MOB_ROLE_SERGEANT
 
 properties:
    
 messages:
 
-   ObjectDesired(what=$)
+   Constructed()
    {
-      return TRUE;
+      plWantedItems = [ &Mug ];
+      propagate;
    }
 
    UserEntered(who = $)
@@ -84,38 +89,46 @@ messages:
            #action=[LIBACT_CONDITIONAL,oObj,2500,CnSer_forget_potion_sale]);
       return;
    }
-      
-   CheckWhyWanted(obj=$,who=$)
+
+   GotWantedItem(obj=$,who=$)
    {
-      local oWeapon, i, iHits;
-      
-      if isClass(obj,&Alcohol)
+      local oWeapon, i, iHits, lNumber;
+
+      if not isClass(obj,&Mug)
       {
-         Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-             #string=CnSer_Alcohol_taken);
+         propagate;
+      }
+
+      lNumber = [ ];
+
+      SetNth(lNumber,send(obj,@GetNumber),0);
+
+      send(self,@SayToOne,#target=who,#message_rsc=CnSer_Alcohol_taken);
+
+      Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);
              
-         for i in send(obj,@GetNumber)
-         {   
+      for i in lNumber
+      {
+         if Nth(lNumber,i) <> 0
+         {
             iHits = random(1,10);
             oWeapon = Create(&LongSword);
             Send(oWeapon,@SetHits,#number=iHits);
-            
+         
             if send(who,@ReqNewHold,#what=oWeapon)
             {
                Send(who,@NewHold,#what=oWeapon);
             }
-            else
-            {
-               Send(oWeapon,@Delete);
-            }
+            Send(oWeapon,@Delete);
          }
-
-         return TRUE;
+         else
+         {
+            return;
+         }
       }
-
-      propagate;
+      
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -55,6 +55,11 @@ messages:
       AppendTempString(standardfood_extended_desc_two);
       AppendTempString(viFilling);
       AppendTempString(standardfood_extended_desc_three);
+      
+      if IsClass(self,&Waterskin)
+      {
+         return;
+      }
 
       propagate;
    }

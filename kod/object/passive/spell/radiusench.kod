@@ -96,9 +96,6 @@ properties:
    piOldAreaEnchStyle = FALSE   % If true, spell functions as an old-style Area Enchantment
                                 % No trance required, and will remain in initial room for duration
 
-   ptDrainTimer = $
-   ptDrainNow = FALSE
-
 messages:
 
    ResetReagents()
@@ -172,7 +169,7 @@ messages:
    CastSpell(who=$, iSpellPower=0)
    "Initiation point for the spell."
    {
-      local i, lMaintaining, iState, oObj, oUser, oCasterGuild, oRoom, iElapsed, lEnchanted, iPower, iRange;
+      local i, lMaintaining, iState, oObj, oUser, oCasterGuild, oRoom, iDrain, lEnchanted, iPower, iRange;
 
       % Old style Area Enchantments use a RadiusEnchantmentTotem as the center of the spell.
       % This creates a timed invisible object that perpetuates the spell regardless of what the player does.
@@ -185,7 +182,7 @@ messages:
          propagate;
       }
 
-      iElapsed = 0;
+      iDrain = 0;
       lEnchanted = $;
       iPower = Send(self,@CalculatePower,#iSpellPower=iSpellPower);
       iRange = Send(self,@CalculateRange,#iSpellPower=iSpellPower);
@@ -246,13 +243,7 @@ messages:
 
       % Put spell maintenance info in caster's enchantment list.
       Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
-           #state=[iElapsed,lEnchanted,iPower,iRange]);      
-
-      % Set up mana drain
-      if IsClass(who,&User)
-      {
-         ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
-      }
+           #state=[iDrain,lEnchanted,iPower,iRange]);      
 
       propagate;
    }
@@ -354,9 +345,9 @@ messages:
    EndEnchantment( who = $, state = $ )
    "Called only for caster. Refreshes itself to recalculate affected players."
    {
-      local iElapsed, lEnchanted, iPower, iRange, oUser, oCasterGuild, oRoom, lActive;
+      local iDrain, lEnchanted, iPower, iRange, oUser, oCasterGuild, oRoom, lActive;
 
-      iElapsed = Nth(state,1);
+      iDrain = Nth(state,1);
       lEnchanted = Nth(state,2);
       iPower = Nth(state,3);
       iRange = Nth(state,4);
@@ -397,22 +388,22 @@ messages:
          }
       }
 
-      Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
-          #state=[iElapsed,lEnchanted,iPower,iRange],#Report=FALSE);
-              
       if IsClass(who,&User)
-         AND ptDrainNow = TRUE
+         AND iDrain > 1000
       {
-         if Send(who,@GetMana) >= viManaDrain
+         if Send(who,@GetMana) >= 1
          {
-            Send(who,@LoseMana,#amount=viManaDrain);
-            ptDrainNow = FALSE;
+            Send(who,@LoseMana,#amount=1);
+            iDrain = iDrain - 1000;
          }
          else
          {
-            Send(self,@BreakTrance,#who=who,#state=state,#event=EVENT_STEER);
+            Post(self,@BreakTrance,#who=who,#state=state,#event=EVENT_STEER);
          }
       }
+
+      Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
+          #state=[iDrain + ((viManaDrain*1000) / (viDrainTime / RADIUS_CHECK_TIME)),lEnchanted,iPower,iRange],#Report=FALSE);
 
       return;
    }
@@ -503,21 +494,8 @@ messages:
             }
          }
       }
-      
-      if IsClass(who,&User)
-      {
-         DeleteTimer(ptDrainTimer);
-         ptDrainTimer=$;
-      }
 
       propagate;
-   }
-   
-   DrainTimer(who=$)
-   {
-      ptDrainNow = TRUE;
-      ptDrainTimer = CreateTimer(self,@DrainTimer,viDrainTime);
-      return;
    }
 
    SetSpellPlayerFlag(who=$)

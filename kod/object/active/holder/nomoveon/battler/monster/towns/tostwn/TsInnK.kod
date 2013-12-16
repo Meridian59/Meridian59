@@ -120,7 +120,7 @@ messages:
       oObj3=Create(&AgedCheese,#number=1);
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
            #triggers=[TsIK_agedcheese_trigger],
-           #action=[LIBACT_CONDITIONAL,oObj2,1000,TsIK_agedcheese_sale]);
+           #action=[LIBACT_CONDITIONAL,oObj3,1000,TsIK_agedcheese_sale]);
            
       return;
    }

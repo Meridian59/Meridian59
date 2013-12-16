@@ -427,7 +427,7 @@ messages:
    "If caster runs out of mana or loses trance, spell ends."
    {
       local oUser, oObj, oRoom, lEnchanted;
-            
+
       % The spell keeps going if you get damaged, move, cast, use an item, or make an attack.
       % Players must rest to end radius spells.
       if event = EVENT_DAMAGE

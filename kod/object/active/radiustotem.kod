@@ -283,6 +283,23 @@ messages:
 
       return;
    }
+
+   GetEnchantedState(what = $)
+   "If enchanted by <what>, returns the state data (which MUST exist, or it's an error.  "
+   "In other words, the caller must know that <what> adds state data).  Returns $ otherwise."
+   {
+      local i;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            return Nth(i,3);
+         }
+      }
+      
+      return $;
+   }
    
    SquaredDistanceTo(what = $)
    "Computes squared distance to <what>.  Assumes they are in same room!"

@@ -4323,7 +4323,7 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster, lMirthState, lMelancholyState;
 
       oWeapon = $;
 
@@ -4365,6 +4365,18 @@ messages:
       {
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                          #hit_roll=iOffense,#stroke_obj=stroke_obj);
+      }
+
+      lMirthState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+      if lMirthState <> $
+      {
+         iOffense = Send(Nth(lMirthState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
+      }
+
+      lMelancholyState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+      if lMelancholyState <> $
+      {
+         iOffense = Send(Nth(lMelancholyState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
       }
 
       iOffense = iOffense + Send(Send(SYS,@GetParliament),
@@ -4511,7 +4523,7 @@ messages:
    GetDamage(what = $, stroke_obj=$)
    {
       local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
-            oSpell, oMonster, lRadiusState;
+            oSpell, oMonster, lKillingFieldsState, lMirthState, lMelancholyState;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4562,10 +4574,22 @@ messages:
          Send(i,@WeaponHitTarget);
       }
 
-      lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&KillingFields);
-      if lRadiusState <> $
+      lKillingFieldsState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&KillingFields);
+      if lKillingFieldsState <> $
       {
-         iDamageBonus = Send(Nth(lRadiusState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+         iDamageBonus = Send(Nth(lKillingFieldsState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+
+      lMirthState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+      if lMirthState <> $
+      {
+         iDamageBonus = Send(Nth(lMirthState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+
+      lMelancholyState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+      if lMelancholyState <> $
+      {
+         iDamageBonus = Send(Nth(lMelancholyState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
       }
       
       iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),

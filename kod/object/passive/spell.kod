@@ -99,6 +99,7 @@ resources:
    spell_school_jala = "Jala"
    spell_intro_rsc = "One of the many mystical spells."
 
+   spell_sound_jala = lute_eqip.wav
    spell_sound_shalille = shalille.wav
    spell_sound_qor = qor.wav
    spell_sound_kraanan = kraanan.wav
@@ -1499,6 +1500,11 @@ messages:
          return vrSucceed_wav;
       }
       
+      if viSchool = SS_JALA
+      {
+         return spell_sound_jala;
+      }
+
       if viSchool = SS_SHALILLE
       {
          return spell_sound_shalille;
@@ -2208,7 +2214,7 @@ messages:
          oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_MANA_CONVERGENCE);
          iAbilityGain = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
 
-         iSpellPower = (iSpellpower - iAbilityLoss + iAbilityGain);
+         iSpellPower = (iSpellpower + iAbilityGain);
       }
 
       % Bound the lower end so that the stuff that follows is truly a bonus.

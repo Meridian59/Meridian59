@@ -21,6 +21,10 @@ resources:
    standardfood_name_plural_rsc = "standard food"
    standardfood_icon_rsc = mushroom.bgf
    standardfood_desc_rsc = "This is some standard food!"
+   
+   standardfood_extended_desc_one = "Consumption will increase your vigor by "
+   standardfood_extended_desc_two = " and decrease your hunger by "
+   standardfood_extended_desc_three = "."
 
 classvars:
 
@@ -42,6 +46,18 @@ properties:
    piNumber = 1
 
 messages:
+
+   AppendDesc()
+   {
+      AppendTempString("\n\n");
+      AppendTempString(standardfood_extended_desc_one);
+      AppendTempString(viNutrition);
+      AppendTempString(standardfood_extended_desc_two);
+      AppendTempString(viFilling);
+      AppendTempString(standardfood_extended_desc_three);
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

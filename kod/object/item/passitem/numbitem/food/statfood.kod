@@ -22,10 +22,10 @@ resources:
    statfood_icon_rsc = mushroom.bgf
    statfood_desc_rsc = "This is some stat food!"
    statfood_bless = "Bless"
-   statfood_magicshield= "Magic Shield"
-   statfood_superstrength= "Super Strength"
-   statfood_nightvision= "Night Vision"
-   statfood_haste= "Haste"
+   statfood_magicshield = "Magic Shield"
+   statfood_superstrength = "Super Strength"
+   statfood_nightvision = "Night Vision"
+   statfood_haste = "Haste"
    
    statfood_extended_desc_one = "Consumption will increase your vigor by "
    statfood_extended_desc_two = " and decrease your hunger by "

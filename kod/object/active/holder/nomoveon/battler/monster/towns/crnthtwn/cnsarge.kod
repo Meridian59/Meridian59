@@ -94,7 +94,7 @@ messages:
          Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
              #string=CnSer_Alcohol_taken);
              
-         for i in send(obj,@GetNumber);
+         for i in send(obj,@GetNumber)
          {   
             iHits = random(1,10);
             oWeapon = Create(&LongSword);

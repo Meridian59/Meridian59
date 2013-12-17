@@ -260,7 +260,14 @@ messages:
          return FALSE;
       }
 
-      Send(who,@AddExertion,#amount=1000*viSkillExertion);
+      if Send(who,@IsUsingA,#class=&NewHunterSword)
+      {
+         Send(who,@AddExertion,#amount=1000*(viSkillExertion/2));
+      }
+      else
+      {
+         Send(who,@AddExertion,#amount=1000*viSkillExertion);
+      }
 
       return TRUE;
    }

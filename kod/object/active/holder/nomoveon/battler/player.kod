@@ -4767,8 +4767,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, lKilledBuffs, oKilledBuff, iRandomBuff,
-               lKilledAreaEnchantments, oKilledAreaEnchantment, iRandomAreaEnchantment, iAreaEnchantTime;
+      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, lKilledBuffs, oKilledBuff, iRandomBuff;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -4892,89 +4891,22 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
-
-         % Gift a player either a buff blessing or area enchantment blessing
-         if Random(1,2) = 1
+              
+         lKilledBuffs = Send(what,@GetKilledBuffs);
+         if lKilledBuffs <> $
          {
-            lKilledBuffs = Send(what,@GetKilledBuffs);
-            if lKilledBuffs <> $
+            iRandomBuff = Random(1,Length(lKilledBuffs));
+            iRandomBuff = Nth(lKilledBuffs,iRandomBuff);
+            oKilledBuff = Send(SYS,@FindSpellByNum,#num=iRandomBuff);
+            if oKilledBuff <> $
             {
-               iRandomBuff = Random(1,Length(lKilledBuffs));
-               iRandomBuff = Nth(lKilledBuffs,iRandomBuff);
-               oKilledBuff = Send(SYS,@FindSpellByNum,#num=iRandomBuff);
-               if oKilledBuff <> $
-               {
-                  if NOT Send(self,@IsEnchanted,#what=oKilledBuff)
-                  {
-                     if Send(self,@IsLoggedOn)
-                     {
-                        Send(self,@MsgSendUser,#message_rsc=player_receive_killed_kraanan_buff,#parm1=Send(what,@GetName));
-                     }
-                     Send(oKilledBuff,@CastSpell,#who=what,#lTargets=[self],#iSpellPower=Random(25,75),#bItemCast=TRUE);
-                  }
-               }
-            }
-         }
-         else
-         {
-            lKilledAreaEnchantments = Send(what,@GetKilledAreaEnchantments);
-            if lKilledAreaEnchantments <> $
-            {
-               iRandomAreaEnchantment = Random(1,Length(lKilledAreaEnchantments));
-               iRandomAreaEnchantment = Nth(lKilledAreaEnchantments,iRandomAreaEnchantment);
-               oKilledAreaEnchantment = Send(SYS,@FindSpellByNum,#num=iRandomAreaEnchantment);
-
-               % Make sure players can't somehow get 'stuck' with a broken timer
-               if pbCanReceiveKilledAreaEnchantment = FALSE
-                  AND ptKilledAreaEnchantmentTimer = $
-               {
-                  pbCanReceiveKilledAreaEnchantment = TRUE;
-               }
-
-               if poOwner <> $
-                  AND NOT Send(poOwner,@IsEnchanted,#what=oKilledAreaEnchantment)
-                  AND pbCanReceiveKilledAreaEnchantment = TRUE
+               if NOT Send(self,@IsEnchanted,#what=oKilledBuff)
                {
                   if Send(self,@IsLoggedOn)
                   {
-                     iAreaEnchantTime = Random(35000,65000);
-                     if Send(oKilledAreaEnchantment,@GetSchool) = SS_JALA
-                     {
-                        Send(self,@MsgSendUser,#message_rsc=player_receive_killed_jala_enchantment,#parm1=Send(what,@GetName));
-                        Send(poOwner,@RoomStartEnchantment,#what=oKilledAreaEnchantment,
-                                     #state=[Send(oKilledAreaEnchantment,@CalculateVolume,#iSpellPower=Random(65,99)),poOwner,Random(65,99)],
-                                     #time=iAreaEnchantTime);
-                     }
-
-                     if Send(oKilledAreaEnchantment,@GetSchool) = SS_KRAANAN
-                     {
-                        Send(self,@MsgSendUser,#message_rsc=player_receive_killed_kraanan_enchantment,#parm1=Send(what,@GetName));
-                        Send(poOwner,@RoomStartEnchantment,#what=oKilledAreaEnchantment,#state=Random(65,99),#time=iAreaEnchantTime);
-                     }
-                  
-                     if Send(oKilledAreaEnchantment,@GetSchool) = SS_SHALILLE
-                     {
-                        Send(self,@MsgSendUser,#message_rsc=player_receive_killed_shalille_enchantment,#parm1=Send(what,@GetName));
-                        Send(poOwner,@RoomStartEnchantment,#what=oKilledAreaEnchantment,#state=Random(65,99),#time=iAreaEnchantTime);
-                     }
-
-                     if Send(oKilledAreaEnchantment,@GetSchool) = SS_QOR
-                     {
-                        Send(self,@MsgSendUser,#message_rsc=player_receive_killed_qor_enchantment,#parm1=Send(what,@GetName));
-                        Send(poOwner,@RoomStartEnchantment,#what=oKilledAreaEnchantment,#state=Random(65,99),#time=iAreaEnchantTime);
-                     }
-                  
-                     if Send(oKilledAreaEnchantment,@GetSchool) = SS_FAREN
-                     {
-                        Send(self,@MsgSendUser,#message_rsc=player_receive_killed_qor_enchantment,#parm1=Send(what,@GetName));
-                        Send(poOwner,@RoomStartEnchantment,#what=oKilledAreaEnchantment,#state=Random(65,99),#time=iAreaEnchantTime);
-                     }
-                  
-                     Send(poOwner,@EnchantAllOccupants,#what=oKilledAreaEnchantment);
-
-                     pbCanReceiveKilledAreaEnchantment = FALSE;
-                     ptKilledAreaEnchantmentTimer = CreateTimer(self,@KilledAreaEnchantmentCooldownTimer,iAreaEnchantTime);
+                     Send(self,@MsgSendUser,#message_rsc=player_receive_killed_kraanan_buff,#parm1=Send(what,@GetName));
                   }
+                  Send(oKilledBuff,@CastSpell,#who=what,#lTargets=[self],#iSpellPower=Random(25,75),#bItemCast=TRUE);
                }
             }
          }

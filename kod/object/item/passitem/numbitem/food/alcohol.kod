@@ -1,0 +1,57 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Alcohol is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   alcohol_name_rsc = "alcohol"
+   alcohol_name_plural_rsc = "alcohol"
+   alcohol_icon_rsc = goblet.bgf
+   alcohol_desc_rsc = "This is some alcohol!"
+
+classvars:
+
+   vrName = alcohol_name_rsc
+   vrName_plural = alcohol_name_plural_rsc
+   vrIcon = alcohol_icon_rsc
+   vrDesc = alcohol_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 40
+
+properties:
+
+   viFilling = 10                
+   viNutrition = 5              
+   piNumber = 1
+
+messages:
+
+   IsAlcohol()
+   {        
+      return TRUE;
+   }
+   
+   IsBeverage()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

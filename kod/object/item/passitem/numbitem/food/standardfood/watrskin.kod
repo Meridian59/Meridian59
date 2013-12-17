@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Waterskin is Food
+Waterskin is StandardFood
 
 constants:
 
@@ -24,8 +24,8 @@ resources:
 
    waterskin_desc_amount_singular = "\n\nThere is "
    waterskin_desc_amount_plural = "\n\nThere are "
-   waterskin_desc_amount_singular2 = " drink remaining."
-   waterskin_desc_amount_plural2 = " drinks remaining."
+   waterskin_desc_amount_singular2 = " sip remaining."
+   waterskin_desc_amount_plural2 = " sips remaining."
 
    waterskin_eat_wav = drink.wav
 
@@ -35,16 +35,16 @@ classvars:
    vrIcon = waterskin_icon_rsc
    vrDesc = waterskin_desc_rsc
 
-   viBulk = 15
-   viWeight = 30
+   viBulk = 2
+   viWeight = 2
    viValue_average = 10
 
    vrEat_wav = waterskin_eat_wav
 
 properties:
 
-   viFilling = 6
-   viNutrition = 3
+   viFilling = 2
+   viNutrition = 2
    piNumber = 20
 
 messages:
@@ -64,7 +64,7 @@ messages:
 	 AppendTempString(waterskin_desc_amount_plural2);
       }
     
-      return;
+      propagate;
    }
 
    SendAnimation()

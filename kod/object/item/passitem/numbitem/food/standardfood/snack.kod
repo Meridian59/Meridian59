@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Snack is Food
+Snack is StandardFood
 
 constants:
 
@@ -20,8 +20,8 @@ resources:
    snack_icon_rsc = mushroom.bgf
    snack_desc_rsc = \
       "These large, brownish mushrooms are an edible cousin of "
-      "the more magical variety.  They provide some sustenance "
-      "although their nutritional value is questionable."
+      "the more magical variety.  They provide quite a bit of sustenance "
+      "to the hungry adventurer out in the wilds."
 
    snack_name_plural_rsc = "edible mushrooms"
 
@@ -32,8 +32,8 @@ classvars:
    vrDesc = snack_desc_rsc
    vrName_plural = snack_name_plural_rsc
 
-   viWeight = 2
-   viBulk = 3
+   viWeight = 5
+   viBulk = 5
 
    viValue_average = 20
 

@@ -1,0 +1,51 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Cheese is HeartyFood
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Cheese_name_rsc = "wheel of cheese"
+   Cheese_icon_rsc = cheese.bgf
+   Cheese_desc_rsc = \
+   "This delicious cheese is made from the sweet milk of the pygmy cow.  "
+   "As the pygmy cow is rarely seen in Meridian proper, a cheese as fine as "
+   "this is a delicacy indeed."
+
+   Cheese_name_plural_rsc = "wheels of cheese"
+
+classvars:
+
+   vrName = Cheese_name_rsc
+   vrIcon = Cheese_icon_rsc
+   vrDesc = Cheese_desc_rsc
+
+   vrName_plural = Cheese_name_plural_rsc
+
+   viBulk = 25
+   viWeight = 25
+
+   viValue_average = 100
+
+properties:
+
+   viNutrition = 25
+   viFilling = 50
+   piNumber = 1
+   viHealing = 50
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

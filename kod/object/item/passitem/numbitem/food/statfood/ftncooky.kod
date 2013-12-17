@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-FortuneCookie is Food
+FortuneCookie is StatFood
 
 constants:
 
@@ -52,6 +52,8 @@ classvars:
    viWeight = 2
 
    viValue_average = 0
+   
+   viSpellEffect = SID_BLESS
 
 properties:
 

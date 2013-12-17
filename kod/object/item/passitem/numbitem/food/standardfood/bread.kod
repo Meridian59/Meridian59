@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Bread is Food
+Bread is StandardFood
 
 constants:
 
@@ -37,13 +37,13 @@ classvars:
    viBulk = 20
    viWeight = 20
 
-   viValue_average = 60
+   viValue_average = 80
 
 properties:
 
    viNutrition = 20
-   viFilling = 40
-   piNumber = 2
+   viFilling = 20
+   piNumber = 1
 
 messages:
 

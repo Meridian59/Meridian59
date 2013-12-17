@@ -24,8 +24,6 @@ resources:
 
 classvars:
 
-   viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY | ITEMTYPE_ALCOHOL
-
    vrName = alcohol_name_rsc
    vrName_plural = alcohol_name_plural_rsc
    vrIcon = alcohol_icon_rsc

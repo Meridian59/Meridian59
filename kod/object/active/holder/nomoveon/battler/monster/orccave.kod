@@ -70,6 +70,9 @@ messages:
                         [ 20, ATCK_WEAP_PIERCE ],
                         [ 25, ATCK_WEAP_SLASH ],
                         [-20, -ATCK_SPELL_HOLY ] ];
+
+      plKilledBuffs = Cons(SID_NIGHT_VISION,plKilledBuffs);
+
       propagate;
    }
 

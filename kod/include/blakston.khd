@@ -1992,6 +1992,7 @@
    SID_LOADOUT = 183
    SID_CONVEYANCE = 184
    SID_DEATH_RIFT = 185
+   SID_CONSIDER = 186
 
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT

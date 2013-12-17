@@ -3008,6 +3008,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SET,#class=&Set);
       Send(self,@CreateOneSpellIfNew,#num=SID_LOADOUT,#class=&Loadout);
       Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CONSIDER,#class=&Consider);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);

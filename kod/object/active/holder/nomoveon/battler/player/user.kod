@@ -2732,11 +2732,10 @@ messages:
    GetMoveStepTolerance()
    {
       % Explanation:
-	  % This tolerance is added to the maximum allowed stepsize
-	  
+	  % This tolerance is added to the maximum allowed stepsize	  
 	  % TODO: measure and estimate RTT and adjust dynamically
-	  
-      return MOVE_STEP_TOLERANCE;
+	  	 	  
+      return Send(Send(SYS, @GetSettings), @GetMoveStepTolerance);
    }
    
    GetMoveAmountTolerance()
@@ -2756,7 +2755,7 @@ messages:
 	  
 	  % TODO: use estimated RTT to adjust dynamically.
 	  
-      return MOVE_MAX_SIMUL_REQUESTS;
+      return Send(Send(SYS, @GetSettings), @GetMoveMaxSimulReq);
    }
    
    UserMove(new_row = 1, new_col = 1,
@@ -2765,7 +2764,7 @@ messages:
       local iCurrentTime, iDelta, iDeltaVigor, iExertion, iHasteLevel, 
 			iChanceTurn, iAngle, iRow, iCol, iFineRow, iFineCol,
 			iDx, iDy, iMoveLength, iMaxMoveRun;
-    
+    		  
 	  % 1. Get current position values
 	  iRow = Send(self,@GetRow);
       iCol = Send(self,@GetCol);
@@ -2796,7 +2795,7 @@ messages:
 	  
 	  % 3.3 Bound time-deltas
 	  % Prevents long teleports after stops and negative numbers
-	  iDelta = bound(iDelta,0,MOVE_MAX_LAG);
+	  iDelta = bound(iDelta,0,Send(Send(SYS, @GetSettings), @GetMoveMaxLag));
 	  iDeltaVigor = bound(iDeltaVigor,0,3000);
 	  
 	  % 3.4 TCP workaround
@@ -2812,7 +2811,7 @@ messages:
 		if piMovesInTick < Send(self,@GetMoveAmountTolerance)
 		{
 		  % fallback to default dt expected from client
-		  iDelta = MOVE_DEFAULT_INTERVAL;
+		  iDelta = Send(Send(SYS, @GetSettings), @GetMoveDefaultInterval);
 		  
 	      piMovesInTick = piMovesInTick + 1;
 		}

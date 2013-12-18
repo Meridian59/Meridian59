@@ -2979,13 +2979,3 @@
    MAX_GUILD_NAME_LEN = 30
    MAX_GUILD_RANK_LEN = 20
    MAX_URL_LEN = 200
-   
-   %%% Speedhack protection
-   
-   % These are teleport and speedhack tolerances
-   % The first 3 of these values are linked to each other:
-   %  2000 / 250 = 8
-   MOVE_MAX_LAG = 2000
-   MOVE_MAX_SIMUL_REQUESTS = 8
-   MOVE_DEFAULT_INTERVAL = 250
-   MOVE_STEP_TOLERANCE = 100

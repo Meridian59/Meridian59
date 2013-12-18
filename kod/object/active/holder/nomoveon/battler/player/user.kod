@@ -2736,7 +2736,7 @@ messages:
 	  
 	  % TODO: measure and estimate RTT and adjust dynamically
 	  
-      return 100;
+      return MOVE_STEP_TOLERANCE;
    }
    
    GetMoveAmountTolerance()
@@ -2756,7 +2756,7 @@ messages:
 	  
 	  % TODO: use estimated RTT to adjust dynamically.
 	  
-      return 8;
+      return MOVE_MAX_SIMUL_REQUESTS;
    }
    
    UserMove(new_row = 1, new_col = 1,
@@ -2796,8 +2796,8 @@ messages:
 	  
 	  % 3.3 Bound time-deltas
 	  % Prevents long teleports after stops and negative numbers
-	  iDelta = bound(iDelta,0,2000);
-	  iDeltaVigor = bound(iDeltaVigor,0,2000);
+	  iDelta = bound(iDelta,0,MOVE_MAX_LAG);
+	  iDeltaVigor = bound(iDeltaVigor,0,3000);
 	  
 	  % 3.4 TCP workaround
 	  % iDelta can be 0 (~16 within ms resolution for +- 1 tick) in case
@@ -2812,7 +2812,7 @@ messages:
 		if piMovesInTick < Send(self,@GetMoveAmountTolerance)
 		{
 		  % fallback to default dt expected from client
-		  iDelta = 250;
+		  iDelta = MOVE_DEFAULT_INTERVAL;
 		  
 	      piMovesInTick = piMovesInTick + 1;
 		}

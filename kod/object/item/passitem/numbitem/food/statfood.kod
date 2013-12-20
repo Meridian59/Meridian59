@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+StatFood is Food
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   statfood_name_rsc = "stat food"
+   statfood_name_plural_rsc = "stat food"
+   statfood_icon_rsc = mushroom.bgf
+   statfood_desc_rsc = "This is some stat food!"
+   statfood_bless = "Bless"
+   statfood_magicshield = "Magic Shield"
+   statfood_superstrength = "Super Strength"
+   statfood_nightvision = "Night Vision"
+   statfood_haste = "Haste"
+   
+   statfood_extended_desc_one = "Consumption will increase your vigor by "
+   statfood_extended_desc_two = " and decrease your hunger by "
+   statfood_extended_desc_three = ".  This food will also grant you the buff "
+   statfood_extended_desc_four = "." 
+
+classvars:
+
+   vrName = statfood_name_rsc
+   vrName_plural = statfood_name_plural_rsc
+   vrIcon = statfood_icon_rsc
+   vrDesc = statfood_desc_rsc
+
+   viIndefinite = ARTICLE_AN
+   
+   viSpellEffect = SID_BLESS
+
+   viBulk = 10
+   viWeight = 10
+   viValue_average = 50
+
+properties:
+
+   viFilling = 10                
+   viNutrition = 5              
+   piNumber = 1
+
+messages:
+
+   AppendDesc()
+   {
+      local sBuff;
+      
+      sBuff = statfood_bless;
+      
+      if viSpellEffect = SID_BLESS
+      {
+         sBuff = statfood_bless;
+      }
+      if viSpellEffect = SID_MAGIC_SHIELD
+      {
+         sBuff = statfood_magicshield;
+      }
+      if viSpellEffect = SID_HASTE
+      {
+         sBuff = statfood_haste;
+      }
+      if viSpellEffect = SID_SUPER_STRENGTH
+      {
+         sBuff = statfood_superstrength;
+      }
+      if viSpellEffect = SID_NIGHT_VISION
+      {
+         sBuff = statfood_nightvision;
+      }
+      
+      AppendTempString("\n\n");
+      AppendTempString(statfood_extended_desc_one);
+      AppendTempString(viNutrition);
+      AppendTempString(statfood_extended_desc_two);
+      AppendTempString(viFilling);
+      AppendTempString(statfood_extended_desc_three);
+      AppendTempString(sBuff);
+      AppendTempString(statfood_extended_desc_four);
+      
+      propagate;
+   }
+
+   CastSpell(what = $, apply_on = $)
+   "Casts the spell set by the spell object"
+   {
+      local oSpell, iSpellPower;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=viSpellEffect);
+
+      iSpellPower = 50;
+      
+      Send(oSpell,@CastSpell,#who=apply_on,#lTargets=[apply_on],
+              #iSpellPower=iSpellPower,#bItemCast=TRUE);
+
+      return;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      Send(self,@CastSpell,#what=what,#apply_on=apply_on);
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -385,6 +385,12 @@ messages:
                iAmount = First(lNumbers);
 
                % Make sure requested number of items is within MIN_BUY_AMOUNT - MAX_BUY_AMOUNT
+			   
+			   if (iAmount = $)
+			   {
+			      iAmount = 1;
+			   }
+			   
                if iAmount < MIN_BUY_AMOUNT
                {
                   iAmount = MIN_BUY_AMOUNT;

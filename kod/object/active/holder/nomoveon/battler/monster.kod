@@ -275,6 +275,10 @@ properties:
    plOffer_items = $
    % List of items offered to the player by seller.
    plFor_sale = $
+   % List of buffs the monster may give when killed.
+   plKilledBuffs = $
+   % List of area enchantments monsters may give when killed.
+   plKilledAreaEnchantments = $
 
    ptCancelOffer = $
    ptRandom = $
@@ -379,6 +383,25 @@ messages:
       Send(self,@ResetBehaviorFlags);
 
       piMood = 0;
+
+      plKilledBuffs = Cons(SID_BLESS,plKilledBuffs);
+      plKilledBuffs = Cons(SID_MAGIC_SHIELD,plKilledBuffs);
+      plKilledBuffs = Cons(SID_SUPER_STRENGTH,plKilledBuffs);
+
+      plKilledAreaEnchantments = Cons(SID_RESTORATE,plKilledAreaEnchantments);
+      plKilledAreaEnchantments = Cons(SID_KILLING_FIELDS,plKilledAreaEnchantments);
+      
+      if viKarma < 0
+      {
+         plKilledAreaEnchantments = Cons(SID_MIRTH,plKilledAreaEnchantments);
+         plKilledAreaEnchantments = Cons(SID_FORCES_OF_LIGHT,plKilledAreaEnchantments);
+      }
+
+      if viKarma > 0
+      {
+         plKilledAreaEnchantments = Cons(SID_MELANCHOLY,plKilledAreaEnchantments);
+         plKilledAreaEnchantments = Cons(SID_REJUVENATE,plKilledAreaEnchantments);
+      }
 
       propagate;
    }
@@ -1429,13 +1452,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "This returns the battler's ability to-hit.  Ranges from 1 to 4500."
+   "This returns the battler's ability to-hit.  Ranges from 1 to 1500."
    {
       local iAttack;
 
       if piOffense = $
       {
-         iAttack = ((3*viLevel) + (60*viDifficulty))*3;
+         iAttack = (3*viLevel) + (60*viDifficulty);
       }
       else
       {
@@ -1447,25 +1470,25 @@ messages:
          iAttack = iAttack * 3 / 4;
       }
       
-      return Bound(iAttack,1,4500);
+      return Bound(iAttack,1,1500);
    }
 
    GetDefense(what = $, stroke_obj=$)
    "This returns the battler's ability to avoid being hit.  Ranges from "
-   "1 to 4500."
+   "1 to 1500."
    {
       local iDefense;
 
       if piDefense = $
       {
-         iDefense = ((3*viLevel) + (60*viDifficulty))*3;
+         iDefense = (3*viLevel) + (60*viDifficulty);
       }
       else
       {
          iDefense = piDefense;
       }
      
-      return Bound(iDefense,1,4500);
+      return Bound(iDefense,1,1500);
    }
 
    % The next message deals with the three defense skills.  These messages
@@ -3733,6 +3756,12 @@ messages:
                iAmount = First(lNumbers);
 
                % Make sure requested number of items is within the limits
+			   
+			   if (iAmount = $)
+			   {
+			      iAmount = 1;
+			   }
+			   
                if (iAmount < MIN_BUY_AMOUNT)
                {
                   iAmount = MIN_BUY_AMOUNT;
@@ -5790,6 +5819,15 @@ messages:
       return;
    }
 
+   GetKilledBuffs()
+   {
+      return plKilledBuffs;
+   }
+   
+   GetKilledAreaEnchantments()
+   {
+      return plKilledAreaEnchantments;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

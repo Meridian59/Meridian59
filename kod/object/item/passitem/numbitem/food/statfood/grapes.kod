@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Grapes is Food
+Grapes is StatFood
 
 constants:
 
@@ -43,15 +43,13 @@ classvars:
    vrDisp_icon = grapes_disp_icon
 
    vrName_plural = grapes_name_plural_rsc
-
-   viBulk = 7
-   viWeight = 7
-   viValue_average = 0
+   
+   viSpellEffect = SID_HASTE
 
 properties:
 
-   viFilling = 16
-   viNutrition = 7
+   viFilling = 10
+   viNutrition = 5
    piNumber = 1
 
 messages:

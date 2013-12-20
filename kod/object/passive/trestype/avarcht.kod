@@ -28,15 +28,11 @@ messages:
    
    constructed()
    {
-      plTreasure = [ [ &Longbow, 30 ],
-                     [ &Arrow, 19],
-                     [ &NeruditeArrow, 15],
-                     [ &BattleBow, 15 ],
-                     [ &Money, 10],
-                     [ &Lute, 5],
-                     [ &PurifyWand, 3],
+      plTreasure = [ [ &Longbow, 5 ],
+                     [ &NeruditeArrow, 40],
+                     [ &BattleBow, 5 ],
+                     [ &Money, 48],
                      [ &NeruditeArmor, 1],
-                     [ &BrittleWand, 1],
                      [ &KillingFieldScroll, 1]
                    ];
 

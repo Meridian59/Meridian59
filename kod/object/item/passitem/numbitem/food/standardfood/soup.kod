@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Soup is Food
+Soup is StandardFood
 
 constants:
 
@@ -40,14 +40,14 @@ classvars:
 
    vrName_plural = soup_name_plural_rsc
 
-   viBulk = 9
-   viWeight = 9
+   viBulk = 10
+   viWeight = 10
    viValue_average = 0
 
 properties:
 
-   viFilling = 20
-   viNutrition = 9
+   viFilling = 10
+   viNutrition = 10
    piNumber = 1
 
 messages:

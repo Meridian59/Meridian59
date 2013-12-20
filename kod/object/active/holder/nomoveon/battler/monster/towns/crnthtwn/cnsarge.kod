@@ -20,9 +20,13 @@ resources:
    cornothsergeant_icon_rsc = cnsarge.bgf
    cornothsergeant_desc_rsc = "A nobleman and former military officer, Rook carries himself with a stiff dignity.  "
       "He is a weaponsmaster, and makes a living passing his skills on to students of the "
-      "warriors' path.  His feats with the sword are famous and unparalleled."
+      "warriors' path.  His feats with the sword are famous and unparalleled as is his love for a good drink."
 
-   CnSer_forget_potion_sale = "Good, no self-respecting warrior shares company with those mana-crazed buffoons. I will most gladly sell %s%s that strips all dependency on the so-called Warrior god from thy memory."
+   CnSer_forget_potion_sale = "Good, no self-respecting warrior shares company with those mana-crazed buffoons.  "
+      "I will most gladly sell %s%s that strips all dependency on the so-called Warrior god from thy memory."
+   
+   CnSer_Alcohol_taken = "Ohhh, thank you! Here, have some of my old training swords! They won't last much longer, "
+      "but maybe you can fix them up?"
 
 classvars:
 
@@ -38,6 +42,12 @@ classvars:
 properties:
    
 messages:
+
+   Constructed()
+   {
+      plWantedItems = [ &Mug, &StoutGoblet, &wineGoblet, &KocatanMug, &Goblet ];
+      propagate;
+   }
 
    UserEntered(who = $)
    {
@@ -75,6 +85,40 @@ messages:
       Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
            #triggers=[Send(oObj,@GetName)],
            #action=[LIBACT_CONDITIONAL,oObj,2500,CnSer_forget_potion_sale]);
+      return;
+   }
+
+   GotWantedItem(obj=$,who=$)
+   {
+      local oWeapon, iAmount, iHits;
+
+      iAmount = send(obj,@GetNumber);
+
+      if not send(obj,@IsBeverage)
+      {
+         propagate;
+      }
+
+      send(self,@SayToOne,#target=who,#message_rsc=CnSer_Alcohol_taken);
+
+      Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);
+             
+      while (iAmount > 0)
+      {
+         iHits = random(1,10);
+         oWeapon = Create(&LongSword);
+         Send(oWeapon,@SetHits,#number=iHits);
+         
+         if send(who,@ReqNewHold,#what=oWeapon)
+         {
+            Send(who,@NewHold,#what=oWeapon);
+         }
+
+         Send(obj,@Delete);
+
+         iAmount = iAmount - 1;
+      }
+      
       return;
    }
 

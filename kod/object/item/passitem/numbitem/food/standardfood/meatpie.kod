@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Cheese is Food
+Meatpie is StandardFood
 
 constants:
 
@@ -16,33 +16,33 @@ constants:
 
 resources:
 
-   Cheese_name_rsc = "wheel of cheese"
-   Cheese_icon_rsc = cheese.bgf
-   Cheese_desc_rsc = \
-   "This delicious cheese is made from the sweet milk of the pygmy cow.  "
-   "As the pygmy cow is rarely seen in Meridian proper, a cheese as fine as "
-   "this is a delicacy indeed."
+   meatpie_name_rsc = "meat pie"
+   meatpie_icon_rsc = meatpie.bgf
+   meatpie_desc_rsc = \
+   "A golden brown crust tops this pie.  "
+   "It is filled with stewed troll meat, cheese, and spices from far "
+   "lands."
 
-   Cheese_name_plural_rsc = "wheels of cheese"
+   meatpie_name_plural_rsc = "meat pies"
 
 classvars:
 
-   vrName = Cheese_name_rsc
-   vrIcon = Cheese_icon_rsc
-   vrDesc = Cheese_desc_rsc
+   vrName = meatpie_name_rsc
+   vrIcon = meatpie_icon_rsc
+   vrDesc = meatpie_desc_rsc
 
-   vrName_plural = Cheese_name_plural_rsc
-
+   vrName_plural = meatpie_name_plural_rsc
+   
    viBulk = 30
    viWeight = 30
 
-   viValue_average = 80
+   viValue_average = 120
 
 properties:
 
    viNutrition = 30
-   viFilling = 40
-   piNumber = 2
+   viFilling = 30
+   piNumber = 1
 
 messages:
 

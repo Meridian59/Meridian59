@@ -29,15 +29,15 @@ messages:
    Constructed()
    {
       plTreasure = [ [ &NeruditeArrow, 25 ],
-                     [ &ShortSword, 5 ],
-                     [ &InkyCap, 13 ],
-                     [ &Money, 49 ],
-                     [ &Hammer, 1 ],
-                     [ &KnightShield, 1 ],
-                     [ &Scimitar, 1 ],
-                     [ &ScaleArmor, 1 ],
-                     [ &EnfeebleWand, 2 ],
-                     [ &ForgetWand, 2 ]
+                     [ &ShortSword, 1 ],
+                     [ &InkyCap, 19 ],
+                     [ &Money, 41 ],
+                     [ &Hammer, 3 ],
+                     [ &KnightShield, 3 ],
+                     [ &Scimitar, 3 ],
+                     [ &ScaleArmor, 3 ],
+                     [ &EnfeebleWand, 1 ],
+                     [ &ForgetWand, 1 ]
                    ];
 
       propagate;

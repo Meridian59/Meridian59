@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-TurkeyLeg is Food
+TurkeyLeg is HeartyFood
 
 constants:
 
@@ -34,16 +34,17 @@ classvars:
 
    vrName_plural = TurkeyLeg_name_plural_rsc
 
-   viBulk = 10
-   viWeight = 9
+   viBulk = 15
+   viWeight = 15
 
-   viValue_average = 50
+   viValue_average = 60
 
 properties:
 
-   viFilling = 20   
+   viFilling = 30   
    viNutrition = 15
-   piNumber = 2
+   piNumber = 1
+   viHealing = 30
 
 messages:
 

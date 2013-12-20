@@ -30,7 +30,7 @@ constants:
 
    include blakston.khd
    
-   RADIUS_CHECK_TIME = 500   % Time between checks for who is affected, no worse than an active object lag-wise
+   RADIUS_CHECK_TIME = 250   % Time between checks for who is affected, no worse than an active object lag-wise
 
 resources:
 

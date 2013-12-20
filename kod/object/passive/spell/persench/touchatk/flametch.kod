@@ -74,7 +74,7 @@ classvars:
    viMin_Damage = 4
    viMax_Damage = 9
 
-   viRange = 3
+   viRange = 2
 
    viSpellType = ATCK_SPELL_FIRE + ATCK_SPELL_ALL
    viStroke = STROKE_TOUCH_OF_FLAME

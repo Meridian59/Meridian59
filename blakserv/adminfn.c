@@ -3645,6 +3645,9 @@ void AdminCreateListNode(int session_id,admin_parm_type parms[],
 	
 	list_id = Cons(first_val,rest_val);
 	aprintf("Created list node %i.\n",list_id);
+	aprintf(":<\n");
+	AdminShowListParen(session_id,list_id,True);
+	aprintf(":>\n");
 	
 }
 

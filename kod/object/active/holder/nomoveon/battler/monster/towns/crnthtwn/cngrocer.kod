@@ -95,7 +95,8 @@ messages:
 			Create(&RedMushroom,#number=4),
 			Create(&Waterskin,#number=4),
 			Create(&Bread,#number=4),
-			Create(&Apple,#number=4) ],
+			Create(&Apple,#number=4),
+			Create(&AgedCheese,#number=1)],
                       $, $ ];
       return;
    }

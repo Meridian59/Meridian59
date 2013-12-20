@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Stew is Food
+Stew is StatFood
 
 constants:
 
@@ -34,16 +34,15 @@ classvars:
    vrDesc = stew_desc_rsc
 
    vrName_plural = stew_name_plural_rsc
-   viBulk = 20
-   viWeight = 15
-   viValue_average = 40
+   
+   viSpellEffect = SID_SUPER_STRENGTH
 
    vrEat_wav = stew_eat_wav
 
 properties:
 
-   viFilling = 25
-   viNutrition = 15
+   viFilling = 10
+   viNutrition = 5
    piNumber = 1
 
 messages:

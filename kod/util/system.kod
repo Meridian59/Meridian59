@@ -531,6 +531,8 @@ messages:
       Send(self,@RecreateNodeAttack);
       Send(self,@RecreateRentableRoomMaintenance);
       Send(self,@RecreateWarEvent);
+	  Send(self,@CreateAllSpellsIfNew);
+	  Send(self,@CreateAllRoomsIfNew);
       piRecreate_state = RECREATE_WAITING;
       ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,3000);
 
@@ -3006,6 +3008,7 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_SET,#class=&Set);
       Send(self,@CreateOneSpellIfNew,#num=SID_LOADOUT,#class=&Loadout);
       Send(self,@CreateOneSpellIfNew,#num=SID_CONVEYANCE,#class=&Conveyance);
+      Send(self,@CreateOneSpellIfNew,#num=SID_CONSIDER,#class=&Consider);
 
       % Trance may be searched for frequently, leave at end of list
       Send(self,@CreateOneSpellIfNew,#num=SID_TRANCE,#class=&Trance);
@@ -4810,7 +4813,9 @@ messages:
       plItemTemplates = cons(create(&Apple),plItemTemplates);
       plItemTemplates = cons(create(&Bread),plItemTemplates);
       plItemTemplates = cons(create(&InkyCap),plItemTemplates);
+      plItemTemplates = cons(create(&AgedCheese),plItemTemplates);
       plItemTemplates = cons(create(&Meatpie),plItemTemplates);
+      plItemTemplates = cons(create(&TurkeyLeg),plItemTemplates);
       plItemTemplates = cons(create(&Mug),plItemTemplates);
       plItemTemplates = cons(create(&KocatanMug),plItemTemplates);
       plItemTemplates = cons(create(&Goblet),plItemTemplates);
@@ -4872,6 +4877,7 @@ messages:
       plItemTemplates = cons(create(&KraananCharm),plItemTemplates);
       plItemTemplates = cons(create(&ShalilleCharm),plItemTemplates);
       plItemTemplates = cons(create(&QorCharm),plItemTemplates);
+      plItemTemplates = cons(create(&NewNecromancerAmulet),plItemTemplates);
 
       plItemTemplates = cons(create(&Gift),plItemTemplates);
 
@@ -4972,7 +4978,9 @@ messages:
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
 
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
-
+      
+      plItemTemplates = cons(create(&NewHunterSword),plItemTemplates);
+      
       return;
    }
 

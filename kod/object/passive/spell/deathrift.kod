@@ -31,6 +31,8 @@ resources:
    DeathRift_no_angeled = "You cannot call upon such an evil pact while your guardian angel watches over you."
    DeathRift_bind = "You leave a smattering of blood at the ground beneath your feet, binding a small part of your soul to this location."
    DeathRift_travel = "A vast passage of flames opens, and you find yourself pulled to the Underworld!"
+   DeathRift_travel_notify = "A fiery portal flares open briefly, dragging %s to the Underworld!"
+   DeathRift_travel_notify_with_dest = "A fiery portal flares open briefly, dragging %s through the Underworld and toward %s!"
    DeathRift_generic_fail = "The evil pact's magic fails. Something seems amiss."
    DeathRift_warning = "~BYou sense a nearby connection forming between dimensions!"
    
@@ -124,7 +126,7 @@ messages:
             for i in Send(oTargetRoom,@GetHolderActive)
             {
                each_active = Send(oTargetRoom,@HolderExtractObject,#data=i);
-               if IsClass(each_active,&Player)
+               if IsClass(each_active,&User)
                {
                   Send(each_active,@MsgSendUser,#message_rsc=DeathRift_warning);
                   Send(each_active,@WaveSendUser,#row=Send(who,@GetBoundLocationRow),
@@ -133,8 +135,28 @@ messages:
             }
          }
          
+         for i in Send(poOwner,@GetHolderActive)
+         {
+            each_active = Send(poOwner,@HolderExtractObject,#data=i);
+            If IsClass(each_active,&User)
+               AND each_active <> who
+            {
+               if oTargetRoom <> $
+               {
+                  Send(each_active,@MsgSendUser,#message_rsc=DeathRift_travel_notify_with_dest,
+                       #parm1=Send(who,@GetName),#parm2=Send(oTargetRoom,@GetName));
+               }
+               else
+               {
+                  Send(each_active,@MsgSendUser,#message_rsc=DeathRift_travel_notify,
+                       #parm1=Send(who,@GetName));
+               }
+            }
+         }
+         
          Post(who,@UserGotoDeadRoom);
          Post(who,@SetDeathRiftProtection,#value=TRUE);
+         Post(who,@StartDeathRiftTimer);
       }
       else
       {

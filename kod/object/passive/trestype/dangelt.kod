@@ -23,7 +23,7 @@ properties:
 
    %% Reagents, both rare and Qor-related.
 
-   piDiff_seed = 5
+   piDiff_seed = 10
    piItem_att_chance = 2
 
 messages:

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Spideye is Food
+Spideye is StatFood
 
 constants:
 
@@ -48,15 +48,13 @@ classvars:
 
    vrName_plural = spideye_name_plural_rsc
 
-   viBulk = 9
-   viWeight = 9
-   viValue_average = 0
+   viSpellEffect = SID_NIGHT_VISION
 
 properties:
 
-   viFilling = 20   
-   viNutrition = 9
-   piNumber = 2
+   viFilling = 10   
+   viNutrition = 5
+   piNumber = 1
 
 messages:
 

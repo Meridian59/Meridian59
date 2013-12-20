@@ -19,7 +19,10 @@ constants:
    include protocol.khd
 
    % Three minutes
-   BOND_REPORT_INTERVAL = 1000 * 60 * 3   
+   BOND_REPORT_INTERVAL = 1000 * 60 * 3
+   
+   % One minute
+   DEATH_RIFT_INTERVAL = 1000 * 60  
 
    KARMA_TUNE_A_INVERSE = 20
    KARMA_TUNE_B_INVERSE = 5
@@ -707,6 +710,17 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
+   
+   death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
+
+   player_receive_killed_kraanan_buff = "You pray over the corpse of the %s, and Kraanan grants you a blessing!"
+   player_receive_killed_qor_buff = "You pray over the corpse of the %s, and Qor responds to your sacrifice with a dark gift."
+ 
+   player_receive_killed_jala_enchantment = "You pray over the corpse of the %s, and Jala graces you with a gift."
+   player_receive_killed_kraanan_enchantment = "As you pray over the corpse of the %s, you sense Kraanan turn his attention toward the area."
+   player_receive_killed_shalille_enchantment = "As you pray over the corpse of the %s, you feel Shal'ille's support warm you."
+   player_receive_killed_qor_enchantment = "As you pray over the corpse of the %s, you feel Qor's dark smile chill you."
+   player_receive_killed_faren_enchantment = "As you pray over the corpse of the %s, the very air surges with Faren's offered energies."
 
 classvars:
 
@@ -969,6 +983,11 @@ properties:
    
    % Is the player currently using a Death Rift spell?
    pbDeath_rift = FALSE
+   ptDeathRiftTimer = $
+
+   % Limit each player to one AE blessing at a time
+   pbCanReceiveKilledAreaEnchantment = TRUE
+   ptKilledAreaEnchantmentTimer = $
 
 messages:
 
@@ -1026,6 +1045,12 @@ messages:
       {
          DeleteTimer(ptAttackTimer);
          ptAttackTimer = $;
+      }
+      
+      if ptKilledAreaEnchantmentTimer <> $
+      {
+         DeleteTimer(ptKilledAreaEnchantmentTimer);
+         ptKilledAreaEnchantmentTimer = $;
       }
 
       Send(self,@RemoveAllEnchantments,#report=FALSE);
@@ -2421,6 +2446,8 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CONSIDER,#initial=TRUE);
       
       return;
    }
@@ -2702,7 +2729,14 @@ messages:
       {
          if piHealth < piMax_Health
          {
-            Send(self,@GainHealth,#amount=1);
+            if Send(self,@IsUsingA,#class=&NewHunterSword)
+            {
+               Send(self,@GainHealth,#amount=2);
+            }
+            else
+            {
+               Send(self,@GainHealth,#amount=1);
+            }
          }
          else
          {
@@ -2723,7 +2757,14 @@ messages:
 
       if piMana < piMax_mana
       {
-         Send(self,@GainMana,#amount=1);
+         if Send(self,@IsUsingA,#class=&NewNecromancerAmulet)
+         {
+            Send(self,@GainMana,#amount=2);
+         }
+         else
+         {
+            Send(self,@GainMana,#amount=1);
+         }
       }
       else
       {
@@ -3460,6 +3501,22 @@ messages:
          return FALSE;
       }
 
+      % make sure not already using or something using disallows
+      for i in plUsing
+      {
+         if i = what
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_using_already);
+            
+            return FALSE;
+         }
+    
+         if NOT Send(i,@ReqUseSomething,#what=what)
+         {
+            return FALSE;
+         }
+      }
+
       iUse_type = Send(what,@GetItemUseType);
 
       if iUse_type & ITEM_SINGLE_USE
@@ -3491,22 +3548,6 @@ messages:
       if poOwner <> $ AND NOT Send(poOwner,@ReqSomethingUse,#what=self,#use_item=what)
       {
          return FALSE;
-      }
-
-      % make sure not already using or something using disallows
-      for i in plUsing
-      {
-         if i = what
-         {
-            Send(self,@MsgSendUser,#message_rsc=player_using_already);
-            
-            return FALSE;
-         }
-    
-         if NOT Send(i,@ReqUseSomething,#what=what)
-         {
-            return FALSE;
-         }
       }
       
       if (iUse_type & ITEM_USE_HAND)
@@ -3786,7 +3827,7 @@ messages:
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
-               % A newbie (someone below pkill_enable_hp) tried to attack
+               % A newbie (someone below GetPKillEnableHP) tried to attack
                % another player! note that this does not affect murderers
                % who have been knocked below this level by angry retributers.
 
@@ -3889,6 +3930,23 @@ messages:
          piTimeAttackedPlayer = GetTime();
 
          return TRUE;
+      }
+      
+      if poGuild = $
+         OR oEnemyGuild = $
+         OR (poGuild <> oEnemyGuild
+         AND NOT Send(poGuild,@IsAlly,#otherguild=oEnemyGuild))
+      {
+         if Send(self,@IsNecromancer)
+            AND Send(victim,@IsHunter)
+         {
+            return TRUE;
+         }
+         if Send(self,@IsHunter)
+            AND Send(victim,@IsNecromancer)
+         {
+            return TRUE;
+         }
       }
 
       % Check to see if we deserve to be an outlaw.
@@ -4323,18 +4381,18 @@ messages:
          if oWeapon <> $
          {
             % Get weapon's numbers.
-            iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
-            iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
+            iStroke = Send(oWeapon,@GetStroke,#who=self);
+            iProficiency = Send(oWeapon,@GetProf,#who=self);
          }
          else
          {
             % Unarmed
-            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
-            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
+            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH);
+            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING);
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = 200 + (iStroke*5) + (iProficiency*5) + (iAim*20) + (piBase_Max_Health*2);
+         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
 
          if oWeapon <> $
          {
@@ -4366,7 +4424,7 @@ messages:
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
 
-      return bound(iOffense,1,3000);
+      return bound(iOffense,1,1000);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4388,15 +4446,15 @@ messages:
          iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
-         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj) + 1;
+         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
          
          % Ask the shield, it might give a bonus to block.
-         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) + 1;
+         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
          
-         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj) + 1;
+         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = 200 + (iParry*5) + (iBlock*2) + (iDodge*3) + (iAgility*20) + (piBase_Max_Health*2);
+         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
       }
 
       for i in plDefense_modifiers
@@ -4414,7 +4472,7 @@ messages:
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
 
-      return bound(iDefense,1,3000);
+      return bound(iDefense,1,1000);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three
@@ -4903,7 +4961,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, lKilledBuffs, oKilledBuff, iRandomBuff;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -5027,6 +5085,25 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
+              
+         lKilledBuffs = Send(what,@GetKilledBuffs);
+         if lKilledBuffs <> $
+         {
+            iRandomBuff = Random(1,Length(lKilledBuffs));
+            iRandomBuff = Nth(lKilledBuffs,iRandomBuff);
+            oKilledBuff = Send(SYS,@FindSpellByNum,#num=iRandomBuff);
+            if oKilledBuff <> $
+            {
+               if NOT Send(self,@IsEnchanted,#what=oKilledBuff)
+               {
+                  if Send(self,@IsLoggedOn)
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=player_receive_killed_kraanan_buff,#parm1=Send(what,@GetName));
+                  }
+                  Send(oKilledBuff,@CastSpell,#who=what,#lTargets=[self],#iSpellPower=Random(25,75),#bItemCast=TRUE);
+               }
+            }
+         }
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
@@ -5034,6 +5111,15 @@ messages:
 
       return;
    }
+   
+   KilledAreaEnchantmentCooldownTimer()
+   {
+      ptKilledAreaEnchantmentTimer = $;
+      pbCanReceiveKilledAreaEnchantment = TRUE;
+      
+      return;
+   }
+   
 
    GetSomethingMissedYouSound(what = $,weapon_used = $)
    {
@@ -5715,7 +5801,7 @@ messages:
       
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         lJalaInfo = Send(poOwner,@GetJalaInfo,#class=&Restorate);
 
          if lJalaInfo <> $
          {
@@ -5754,7 +5840,7 @@ messages:
 
          if poOwner <> $
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
+            lJalaInfo = Send(poOwner,@GetJalaInfo,#class=&Rejuvenate);
 
             if lJalaInfo <> $
             {
@@ -7669,6 +7755,26 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
+      local oAmulet, oSword;
+
+      if Send(self,@IsUsingA,#class=&NewNecromancerAmulet)
+      {
+         oAmulet = Send(self,@FindUsing,#class=&NewNecromancerAmulet);
+         if oAmulet <> $
+         {
+            Send(oAmulet,@SomethingKilled,#what=what,#victim=victim,#use_weapon=use_weapon);
+         }
+      }
+
+      if Send(self,@IsUsingA,#class=&NewHunterSword)
+      {
+         oSword = Send(self,@FindUsing,#class=&NewHunterSword);
+         if oSword <> $
+         {
+            Send(oSword,@SomethingKilled,#what=what,#victim=victim,#use_weapon=use_weapon);
+         }
+      }
+
       if victim = poKill_target AND IsClass(victim,&Battler)
       {
          if what = self
@@ -7734,14 +7840,14 @@ messages:
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                % Player took damage and landed killing blow
-               gain = 3;
+               gain = 2;
                roll = TRUE;
             }
             else
             {
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow.
-               gain = 2;
+               gain = 1;
                roll = TRUE;
             }
          }
@@ -7758,7 +7864,7 @@ messages:
             else
             {
                % Monster was too easy for player to kill!
-               if random(1,100) < 10 AND killing_blow
+               if random(1,100) < 30 AND killing_blow
                {
                   Send(self,@MsgSendUser,#message_rsc=player_spits);
                }
@@ -7766,7 +7872,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health = PKILL_ENABLE_HP
+         if piBase_Max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
          {
             gain = gain + 1;
          }
@@ -7810,6 +7916,11 @@ messages:
                
                if piBase_max_health > 30
                {
+			      %stam = 50
+				  %pigain = pigain - ((50-50)/2) =  pigain - 0
+				  %stam = 25 
+				  %pigain = pigain - ((50-25)/2) = pigain - 12.5
+				  % so, after 30 hps, any stamina less thatn 50 penalizes you by about 0.5 piGain points
                   piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
                }
 
@@ -7875,6 +7986,12 @@ messages:
       %  is called from LeaveHold() in the Underworld.  This is to allow time
       %  for Portal of Life to reduce penalties.  We get the default value of
       %  piDeathCost from SYS, so that we can adjust global death penalties.
+
+      if Send(self,@GetOwner) <> $
+         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      {
+         return;
+      }
 
       % "Normal" value is 100.
       piDeathCost = Send(Send(SYS, @GetSettings), @GetDefaultDeathCost);  
@@ -7990,9 +8107,13 @@ messages:
             piDeathCost = FALSE;
             Send(self,@MsgSendUser,#message_rsc=player_token_death);
             Send(i,@NewUnused,#what=self,#where=oRoom);
-            
-            break;
-         }       
+         }
+         
+         if IsClass(i,&NewNecromancerAmulet)
+            OR IsClass(i,&NewHunterSword)
+         {
+            Send(i,@OwnerKilled);
+         }
       }
 
       if Send(SYS,@GetInvestigator)
@@ -8243,7 +8364,7 @@ messages:
       }
 
       % Remove from guild if now under min HP
-      if piBase_max_health < PKILL_ENABLE_HP
+      if piBase_max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
       {
          Send(self, @QuitGuild);
       }
@@ -9944,7 +10065,7 @@ messages:
 
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         lJalaInfo = Send(poOwner,@GetJalaInfo,#class=&Invigorate);
 
          if lJalaInfo <> $
          {
@@ -9965,6 +10086,8 @@ messages:
       ptRest = $;
       
       if piVigor < piVigor_rest_threshold
+         AND NOT Send(self,@IsUsingA,#class=&NewNecromancerAmulet)
+         AND NOT Send(self,@IsUsingA,#class=&NewHunterSword)
       {
          Send(self,@RestAddExertion,#amount=-10000);
       }
@@ -10957,7 +11080,7 @@ messages:
       
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         if poGuild = $ AND piBase_Max_health < PKILL_ENABLE_HP
+         if poGuild = $ AND piBase_Max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
@@ -10975,7 +11098,7 @@ messages:
       }
       else
       {
-         if poGuild <> $ OR piBase_Max_health >= PKILL_ENABLE_HP
+         if poGuild <> $ OR piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
             OR Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
@@ -11476,7 +11599,7 @@ messages:
    PlayerIsHPIntrigue()
    "If player has over 40hp base."
    {
-      return (piBase_Max_health >= INTRIGUE_ENABLE_HP);
+      return (piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetIntrigueEnableHP));
    }
 
    PlayerIsAdept()
@@ -12583,6 +12706,11 @@ messages:
 
       if value=FALSE
       {
+         if ptDeathRiftTimer <> $
+         {
+            DeleteTimer(ptDeathRiftTimer);
+            ptDeathRiftTimer = $;
+         }
          pbDeath_rift = FALSE;
       }
 
@@ -12592,6 +12720,46 @@ messages:
    GetDeathRiftProtection()
    {
       return pbDeath_rift;
+   }
+   
+   StartDeathRiftTimer()
+   {
+      ptDeathRiftTimer = CreateTimer(self,@DeathRiftBoot,DEATH_RIFT_INTERVAL);
+      return;
+   }
+   
+   DeathRiftBoot()
+   "Players that linger too long will find themselves cast out of the Underworld."
+   {
+      local oRoom;
+
+      ptDeathRiftTimer = $;
+      
+      oRoom = Send(self,@GetOwner);
+      
+      if oRoom <> $
+         AND Send(oRoom,@GetRoomNum) = RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         Send(self,@AdminGoToSafety);
+         
+         if Send(self,@IsLoggedOn)
+         {
+            Send(self,@MsgSendUser,#message_rsc=death_rift_stayed_too_long);
+         }
+      }
+      
+      return;
+   }
+
+   IsNecromancer()
+   {
+      return Send(self,@IsUsingA,#class=&NewNecromancerAmulet);
+   }
+   
+   IsHunter()
+   {
+      return Send(self,@IsUsingA,#class=&NewHunterSword);
    }
 
 end

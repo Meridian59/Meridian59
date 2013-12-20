@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Apple is Food
+Apple is StatFood
 
 constants:
 
@@ -21,8 +21,8 @@ resources:
    apple_desc_rsc = \
    "This bright red apple, a favorite food of the country folk of Marion, "
    "is enormous and free of blemishes.  It was probably "
-   "grown in the deep forest of Farol."
-
+   "grown in the deep forest of Farol and looks extremely healthy!  "
+   
    apple_name_plural_rsc = "apples"
 
 classvars:
@@ -35,15 +35,13 @@ classvars:
 
    viIndefinite = ARTICLE_AN
 
-   viBulk = 6
-   viWeight = 6
-   viValue_average = 25
+   viSpellEffect = SID_MAGIC_SHIELD
 
 properties:
 
-   viNutrition = 10
-   viFilling = 24   
-   piNumber = 2
+   viNutrition = 5
+   viFilling = 10   
+   piNumber = 1
 
 messages:
 

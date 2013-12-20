@@ -91,6 +91,16 @@ messages:
      return;
   }
 
+  GetProf(who=$)
+  {
+     local iProf;
+      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
+     
+     iProf = Send(who,@GetSpellAbility,#spell_num=SID_MANA_FOCUS);
+     
+     return iProf;
+  }
+
    PlayerWasHitMsg(who=$,attacker=$,damage=$)
    "The stroke may choose it's own damage give or recieve message.  Otherwise"
    "player.kod will just choose a default - which is true for most weapon-based"
@@ -103,7 +113,6 @@ messages:
 
       return TRUE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

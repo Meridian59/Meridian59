@@ -340,6 +340,10 @@ messages:
                                      #stroke_obj=stroke_obj),
                         #atype=Send(self,@GetDamageType),
                         #aspell=Send(self,@GetSpellType));
+<<<<<<< HEAD
+=======
+         iDamage = iDamage * iMultiplier;
+>>>>>>> remotes/origin/Revised-Weapon-System
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $
@@ -354,8 +358,37 @@ messages:
       }
       else
       {
+<<<<<<< HEAD
          % Oops, a miss.  See if something happens.
          Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
+=======
+         if iChanceToHit >= random(1,1000)
+         {
+            % We hit!
+            iDamage = Send(what,@AssessDamage,#what=self,
+                           #damage=Send(self,@GetDamage,#what=what,
+                                        #stroke_obj=stroke_obj),
+                           #atype=Send(self,@GetDamageType),
+                           #aspell=Send(self,@GetSpellType));
+            iDamage = iDamage * iMultiplier;
+            Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
+                 #damage=iDamage);
+            if iDamage = $
+            {
+               Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
+                    #stroke_obj=stroke_obj);
+            }
+            else
+            {
+               Send(self,@DidDamage,#amount=iDamage,#what=what);
+            }
+         }
+         else
+         {
+            % Oops, a miss.  See if something happens.
+            Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
+         }
+>>>>>>> remotes/origin/Revised-Weapon-System
       }
 
       if poOwner <> $
@@ -373,13 +406,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "Returns the battler's ability to-hit.  Ranges from 1 to 3000."
+   "Returns the battler's ability to-hit.  Ranges from 1 to 1000."
    {
       return 1;
    }
 
    GetDefense(what = $, stroke_obj=$)
-   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 3000."
+   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 1000."
    {
       return 1;
    }

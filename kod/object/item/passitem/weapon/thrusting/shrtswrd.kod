@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ShortSword is Weapon
+ShortSword is ThrustingWeapon
 
 constants:
 
@@ -32,7 +32,6 @@ classvars:
    vrDesc = shortsword_desc_rsc
 
    % Short Swords are low quality thrusting weapons
-   viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_LOW
 
    viProficiency_Needed = SKID_PROFICIENCY_SHORTSWORD

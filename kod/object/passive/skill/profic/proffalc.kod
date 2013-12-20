@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ScimitarProficiency is Proficiency
+FalchionProficiency is Proficiency
 
 constants:
 
@@ -16,19 +16,19 @@ constants:
 
 resources:
 
-   scimitarproficiency_name_rsc = "scimitar wielding"
-   scimitarproficiency_icon_rsc = scimico.bgf
-   scimitarproficiency_desc_rsc = "Allows for growth and strength in Meridian's most exotic weapon."
+   falchionproficiency_name_rsc = "falchion wielding"
+   falchionproficiency_icon_rsc = scimico.bgf
+   falchionproficiency_desc_rsc = "Increases your performance with the trusty falchion."
 
 classvars:
 
-   vrName = scimitarproficiency_name_rsc
-   vrIcon = scimitarproficiency_icon_rsc
-   vrDesc = scimitarproficiency_desc_rsc
+   vrName = falchionproficiency_name_rsc
+   vrIcon = falchionproficiency_icon_rsc
+   vrDesc = falchionproficiency_desc_rsc
 
    viSchool = SKS_FENCING
-   viSkill_num = SKID_PROFICIENCY_SCIMITAR
-   viSkill_level = 4
+   viSkill_num = SKID_PROFICIENCY_FALCHION
+   viSkill_level = 2
    viChance_to_increase = 20
 
 properties:

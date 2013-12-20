@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 % Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
@@ -97,3 +98,114 @@ messages:
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+=======
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IcyFingers is TouchAttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   IcyFingers_name_rsc = "icy fingers"
+   IcyFingers_icon_rsc = iicyfing.bgf
+   IcyFingers_desc_rsc = \
+         "Coats your fingers with ice which can freeze a patch of flesh "
+         "on your target, painfully destroying the outer layer of tissue.  "
+         "Requires a red mushroom."
+
+   IcyFingers_already_enchanted_rsc = "Your hands are already shrouded in frost."
+   IcyFingers_On_rsc = "A frost of absolute cold shrouds your hands."
+   IcyFingers_Off_rsc = "Your hands are no longer shrouded in frost."
+
+   IcyFingers_player_was_hit = "%s%s touches you, freezing your flesh and leaving a patch of black, lifeless tissue."
+   IcyFingers_player_hit_something = "%sYour icy touch freezes a patch of  %s%s's flesh, leaving it black and lifeless."
+
+   IcyFingers_player_killed_something = "%s%s finds a cold unsurpassed by any other death."
+   IcyFingers_player_was_killed = "At the icy touch of %s%s, you shiver and fall into the coldness of death."
+
+   IcyFingers_spell_intro = "Faren Lv. 2: Turns your touch to coldest ice, allowing for a damaging attack."
+
+   IcyFingers_sound = ficefing.wav
+
+classvars:
+
+   vrName = IcyFingers_name_rsc
+   vrIcon = IcyFingers_icon_rsc
+   vrDesc = IcyFingers_desc_rsc
+
+   vrAlreadyEnchanted = IcyFingers_already_enchanted_rsc
+   vrEnchantment_On = IcyFingers_On_rsc
+   vrEnchantment_Off = IcyFingers_Off_rsc
+
+   vrPlayer_was_hit = IcyFingers_player_was_hit
+   vrPlayer_hit_something = IcyFingers_player_hit_something
+
+   vrPlayer_was_killed = icyfingers_player_was_killed
+   vrPlayer_killed_something = icyfingers_player_killed_something
+
+   vrSpell_intro = IcyFingers_spell_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SS_FAREN
+   viSpell_num = SID_ICY_FINGERS
+   viSpellExertion = 2
+   viSpell_level = 2
+   viMana = 6
+
+   viHit_Factor = 60        %% typically, spells have hit probs
+                            %% that are high, provided you're good at the skill
+
+
+   viMin_Damage = 3         %% touch spells typically do good damage    
+   viMax_Damage = 8         %% but are unaffected by weapon or strength bonuses
+
+   viRange = 3              %% touch spell range can vary, but are typically good     
+
+   viSpellType = ATCK_SPELL_COLD + ATCK_SPELL_ALL
+   viStroke = STROKE_ICY_FINGERS
+
+   vbAutomatic = FALSE
+
+   vrSucceed_wav = icyfingers_sound
+
+properties:
+
+   plPrerequisites = $
+   plReagents = $
+
+messages:
+
+  ResetReagents()
+  {
+     plReagents = $;
+     plReagents = cons([&RedMushroom,1],plReagents);
+     
+     return;
+  }
+
+  GetProf(who=$)
+  {
+     local iProf;
+      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
+     
+     iProf = Send(who,@GetSpellAbility,#spell_num=SID_MANA_FOCUS);
+     
+     return iProf;
+  }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>>>>> remotes/origin/Revised-Weapon-System

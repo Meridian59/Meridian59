@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-NeruditeSword is Weapon
+NeruditeSword is ThrustingWeapon
 
 constants:
 
@@ -35,7 +35,6 @@ classvars:
    vrWeaponBroke = nerusword_shatters
 
    % Nerudite swords are nerudite quality thrusting weapons
-   viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_NERUDITE
 
    viProficiency_needed = SKID_PROFICIENCY_SWORD

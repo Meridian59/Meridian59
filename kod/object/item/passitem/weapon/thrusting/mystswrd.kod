@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MysticSword is Weapon
+MysticSword is ThrustingWeapon
 
 constants:
 
@@ -32,7 +32,6 @@ classvars:
    vrDesc = mysticsword_desc_rsc
 
    % Mystic swords are high quality thrusting weapons
-   viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_HIGH
 
    viProficiency_needed = SKID_PROFICIENCY_SWORD

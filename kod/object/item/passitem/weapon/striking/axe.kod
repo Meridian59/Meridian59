@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Axe is Weapon
+Axe is StrikingWeapon
 
 constants:
 
@@ -33,9 +33,8 @@ classvars:
 
    viIndefinite = ARTICLE_AN
 
-   % Axes are normal quality slashing weapons.
-   viWeaponType = WEAPON_TYPE_SLASH
-   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   % Axes are normal quality striking weapons.
+   viWeaponQuality = WEAPON_QUALITY_HIGH
 
    viProficiency_Needed = SKID_PROFICIENCY_AXE
    

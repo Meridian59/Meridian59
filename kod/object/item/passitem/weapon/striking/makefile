@@ -4,7 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\stroke.bof
-BOFS = slash.bof unarmed.bof thrust.bof fire.bof strike.bof
+DEPEND = ..\striking.bof
+BOFS = hammer.bof axe.bof mace.bof spirhamm.bof
 
 !include $(KODDIR)\kod.mak

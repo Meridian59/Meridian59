@@ -112,27 +112,6 @@ messages:
       return;
    }
 
-   ModifyHitRoll(hit_roll = 0, target = $)
-   {
-      local iBaseHit, oWeapAtt, i, iWeapHit;
-
-      iBaseHit = hit_roll;
-
-      iBaseHit = iBaseHit + piHitBonus;
-
-      for i in plItem_Attributes
-      {
-         oWeapAtt = send(SYS,@FindItemAttByNum, #num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if isClass(oWeapAtt,&WeaponAttribute)
-         {
-            iBaseHit = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
-	                         #target=target,#lData=i);
-         }
-      }     
-
-      return iBaseHit;
-   }
-
    CanEnchant()
    {
       return FALSE;
@@ -158,10 +137,15 @@ messages:
       return FALSE;
    }
 
-   GetBaseSpellModifier()
+   % Gives a bonus to Shal'ille spells since it's holy! Apart from that, same malus as other HQWs.
+   GetBaseSpellModifier(oSpell=$)
    {
-      % It's mystically created and temporary.  No penalties.
-      return 0;
+      if oSpell <> $ AND send(oSpell,@GetSchool) = SS_SHALILLE
+      {
+         return 10;
+      }
+
+      return -20;
    }
 
 

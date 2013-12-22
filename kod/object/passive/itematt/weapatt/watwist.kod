@@ -70,7 +70,7 @@ messages:
 	 }
       }
 
-      return damage;
+      return 0;
    }
 
 end

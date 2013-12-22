@@ -96,7 +96,7 @@ messages:
          }
       }
 
-      return damage;
+      return 0;
    }
 
 

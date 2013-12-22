@@ -23,15 +23,16 @@ resources:
    FreeAction_name_rsc = "free action"
    FreeAction_icon_rsc = ifreeact.bgf
    FreeAction_desc_rsc = \
-      "Kraanan's love of battle helps repel magic which might hinder "
-      "your movements, and thus the liberal dispensation of lusty blows.  "
+      "Kraanan's love of furious battle grants you haste, increasing your resistance to "
+	  "magic which might hinder your movements, reducing the strain of running and "
+	  "allowing you to avoid attacks better. "
       "Requires red mushrooms and purple mushrooms to cast."
    
    FreeAction_on_rsc = \
       "You feel a rush of energy and fluid motion throughout your body."
    FreeAction_off_rsc= "Your strange feeling of freedom subsides."
-   FreeAction_already_enchanted_rsc = "You already have free action."
-   FreeAction_succeed_rsc = "You grant free action to %s%s."
+   FreeAction_already_enchanted_rsc = "You are already hasted."
+   FreeAction_succeed_rsc = "You grant haste to %s%s."
 
    FreeAction_resist = "You can feel Kraanan's magic working to free you."
    FreeAction_evade = "You evade an attempt to restrict your movement."
@@ -77,21 +78,37 @@ messages:
       return;
    }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(who = $, iSpellPower = 0, Target = $)
    {
-      local iFactor;
+      local iAgilityChange;
+      iAgilityChange = iSpellPower/5+1;
 
-      iFactor = bound(iSpellPower/2+5,10,50);      
+      send(Target,@AddAgility,#points=iAgilityChange);
 
-      return iFactor;
+      return iAgilityChange;
+   }
+   EndEnchantment( who = $, state = 0, report = TRUE )
+   {
+      send(who,@AddAgility,#points=-state);
+     
+      propagate;
+   }
+   
+   SetSpellPlayerFlag(who=$)
+   {
+      if Send(who,@IsEnchanted,#what=Send(SYS,@FindSpellByNum,#num=SID_HASTE)) 
+      {
+         Send(who,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_HASTE),#report=FALSE);
+      } 
+   
+      Send(who,@SetPlayerFlag,#flag=PFLAG2_HASTED,#flagset=2,#value=True);
+      return;
    }
   
-   GetDuration(iSpellpower=0)
+   GetDuration(iSpellPower = 0)
    {
       local iDuration;
-
-      % 3 - 8 minutes max, converted to ms.
-      iDuration = 180 + (3 * iSpellPower);   
+      iDuration = 300 + (iSpellpower * 6);
       iDuration = iDuration * 1000;
       
       return random(iDuration/2,iDuration);
@@ -102,7 +119,7 @@ messages:
    {
       local iNewDuration, oFreeActionStrength;
 
-      oFreeActionStrength = Send(oTarget,@GetEnchantedState,#what=self);
+      oFreeActionStrength = Send(oTarget,@GetEnchantedState,#what=self)*5/2;
 
       % Check if they repel hold outright 1 - 15% chance.
       if Random(0,100) <= ((oFreeActionStrength * SPELL_RESIST_PERCENT) / 100)

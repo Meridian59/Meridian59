@@ -166,7 +166,7 @@ messages:
       return defense_power + viDefense_bonus;
    }
 
-   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
    "Increase or decrease damage done to defender."
    {
       return damage;

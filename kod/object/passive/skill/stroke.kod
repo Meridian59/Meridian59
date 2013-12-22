@@ -64,7 +64,7 @@ classvars:
 
    vbAutomatic = FALSE
 
-   viMaxProficiencyDamage = 5     % What's the max damage the proficiency can add for this stroke?
+   viMaxProficiencyDamage = 10     % What's the max damage the proficiency can add for this stroke?
 
 properties:
 
@@ -212,12 +212,9 @@ messages:
       iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
       damage = damage * (50 + ((iAbility + 1) / 2)) / 100;
       
-      % put in the individual skills factor
-      damage = (damage*viDamage_factor)/100;
-      
       damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=weapon_used);
-
-      return bound(damage,1,$);
+	  
+	  return damage;
    }
 
    SendMissMessageToAttacker(who=$,victim=$,weapon_used = $,color_rsc = $,bText = TRUE)
@@ -343,16 +340,16 @@ messages:
       % Get weapon proficiency bonuses.
       if weapon_used <> $
       {
-         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage;
       }
       else
       {
-         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage/100;
+         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage;
       }
       
       % Get stat damage bonus.
       stat = send(who,@GetMight);
-      damage = (75+stat)*damage/100;
+      damage = (50+stat)*damage/100;
 
       return damage;
    }

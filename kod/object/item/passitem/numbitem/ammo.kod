@@ -87,7 +87,7 @@ messages:
 
    GetDamage()
    {
-      return Random(1,5);
+      return 6;
    }
 
    GetAmmoType()

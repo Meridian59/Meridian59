@@ -33,19 +33,18 @@ classvars:
 
    vrWeaponBroke = NeruditeBow_shatters
 
-   viWeaponDamage = 3
-   viRange = 20
+   viWeaponDamage = 8
+   viRange = 17
    viHit_roll_modifier = 0
    
    viValue_average = 3500
-   viBulk = 100
-   viWeight = 100
+   viBulk = 70
+   viWeight = 70
 
-   % This is about 50% normal durability.
-   viHits_init_min = 100
-   viHits_init_max = 150
+   viHits_init_min = 200
+   viHits_init_max = 300
 
-   viSpell_modifier = -30
+   viSpell_modifier = -40
 
    % What's the basic color of the bow?
    viBaseXLAT = XLAT_TO_GREEN
@@ -82,7 +81,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

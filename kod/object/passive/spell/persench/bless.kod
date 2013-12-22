@@ -104,12 +104,12 @@ messages:
 
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
-      return hit_roll + Send(who,@GetEnchantedState,#what=self);
+      return (Send(who,@GetEnchantedState,#what=self)+1)/10;
    }
    
    ModifyDamage(who = $,what = $,damage = $)
    {
-      return damage + Random(0,send(who,@GetEnchantedState,#what=self)/33);
+      return (Send(who,@GetEnchantedState,#what=self)+1)/10;
    }
 
 

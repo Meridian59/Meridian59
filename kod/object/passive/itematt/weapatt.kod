@@ -219,7 +219,7 @@ messages:
    ModifyHitRoll(hitroll = 0, target = $, wielder = $)
    "Item Attributes, in general, should only + or - damage."
    {
-      return hitroll;
+      return 0;
    }
    
    

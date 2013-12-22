@@ -28,19 +28,19 @@ classvars:
    vrName = PracticeBow_name_rsc
    vrDesc = PracticeBow_desc_rsc
 
-   viWeaponDamage = -3
+   viWeaponDamage = -2
    viRange = 30
-   viHit_roll_modifier = 200
+   viHit_roll_modifier = 20
    
-   viValue_average = 1750
+   viValue_average = 1500
    viBulk = 60
    viWeight = 50
 
    % This is about twice normal durability.
    viHits_init_min = 400
-   viHits_init_max = 500
+   viHits_init_max = 600
 
-   viSpell_modifier = -10
+   viSpell_modifier = -40
 
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN1
@@ -48,7 +48,6 @@ classvars:
 properties:
 
 messages:
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

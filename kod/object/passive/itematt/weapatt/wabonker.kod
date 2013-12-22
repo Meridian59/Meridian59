@@ -62,7 +62,7 @@ messages:
 	 oSpell = send(SYS,@FindSpellByNum,#num=SID_BONK);
 	 send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=50);
       }
-      return Damage;
+      return 0;
    }
 
 end

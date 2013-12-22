@@ -72,7 +72,7 @@ messages:
          }
       }
 
-      return damage;
+      return 0;
    }
 
    ItemReqUse(oItem=$,oPlayer=$)

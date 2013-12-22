@@ -55,9 +55,48 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&ElderBerry,3],plReagents);
+      plReagents = Cons([&ElderBerry,1],plReagents);
 
       return;
+   }
+   
+   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   {
+      local otarget, i;
+
+      if lTargets = $
+      {
+         lTargets = [who];
+      }
+   
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      otarget = First(lTargets);
+      
+      % check for eagle eyes already applied
+      if Send(otarget,@IsEnchanted,#what=Send(SYS,@FindSpellByNum,#num=SID_EAGLE_EYES))
+      {
+         % Casting on self.
+         if who = otarget
+         {   
+            Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted);
+         }
+         else
+         {
+            % Casting on someone else.
+            Send(who,@MsgSendUser,#message_rsc=vrOtherAlreadyEnchanted,
+            #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+            Send(oTarget,@MsgSendUser,#Message_rsc=vrTargetAlreadyEnchanted,
+            #parm1=send(who,@GetCapDef),#parm2=send(who,@GetName),
+            #Parm3=send(self,@GetCapDef),#Parm4=send(self,@GetName));
+         }
+        
+         return FALSE;
+      }
+	  propagate;
    }
 
    GetStateValue(who = $, iSpellPower = 0,target=$)

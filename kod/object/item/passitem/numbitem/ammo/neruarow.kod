@@ -38,8 +38,8 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
-   viBulk = 4
-   viWeight = 5
+   viBulk = 3
+   viWeight = 3
 
 properties:
 
@@ -50,7 +50,7 @@ messages:
 
    GetDamage(who=$,target=$)
    {
-      if target <> $ AND random(1,100) <= 10
+      if target <> $ AND random(1,100) <= 20
       {
          send(who,@MsgSendUser,#message_rsc=nerudite_arrow_explodes);
          if isClass(target,&Player)
@@ -58,10 +58,10 @@ messages:
             send(target,@MsgSendUser,#message_rsc=nerudite_arrow_explodes);
          }
 
-         return random(3,8);
+         return 10;
       }
 
-      return random(2,6);
+      return 6;
    }
 
    SendProjectileAnimation()

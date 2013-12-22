@@ -81,12 +81,6 @@ messages:
       return random(viMin_damage,viMax_damage);
    }
 
-   ModifyHitRoll()
-   {
-      % Return a good bonus
-      return 20;
-   }
-
    CheckNewlyCreated()
    {
       if pbNewlyCreated = 0

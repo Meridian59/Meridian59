@@ -72,15 +72,17 @@ classvars:
    vrCondition_poor = gauntlet_condition_poor 
    vrCondition_broken = gauntlet_condition_broken
 
-   viDefense_base = 15
-   viAttack_base = 20
-   viDamage_base = 1
+   viDefense_base = -5              
+   viDamage_flat_base = 1
+   viDamage_percent_base = 5
+   viAttack_base = 5
+   viDamage_base = 5
 
 properties:
 
-   piDefense_bonus = 15
-   piAttack_bonus = 20
-   piDamage_bonus = 1
+   piDefense_bonus = 5
+   piAttack_bonus = 5
+   piDamage_bonus = 5
 
 messages:
 
@@ -267,13 +269,12 @@ messages:
       local oWeapon;
 
       oWeapon = Send(who,@GetWeapon);
-      if (oWeapon = $)
-         or (not IsClass(oWeapon,&RangedWeapon))
+      if IsClass(oWeapon,&RangedWeapon)
       {
-         return hit_roll + piAttack_bonus;
+         return 0;
       }
 
-      return hit_roll;
+      return piAttack_bonus;
    }
    
    ModifyDamage(who = $,what = $,damage = $)
@@ -282,23 +283,22 @@ messages:
       
       % Add damage to non-ranged weapons (and punch)
       oWeapon = Send(who,@GetWeapon);
-      if oWeapon = $
-         OR NOT IsClass(oWeapon,&RangedWeapon)
+      if IsClass(oWeapon,&RangedWeapon)
       {
-         return damage + piDamage_bonus;
+         return 0;
       }
 
-      return damage;
+      return piDamage_bonus;
    }
 
    ModifyDefensePower(defense_power=$)
    {
-      return defense_power + piDefense_bonus;
+      return piDefense_bonus;
    }
 
-   ModifyDefenseDamage(who = $,what = $,damage = $)
+   ModifyDefenseDamageFlat(who = $,what = $,damage = $)
    {
-      return damage;
+      return viDamage_flat_base;
    }
 
    CanMend()

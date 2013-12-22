@@ -63,7 +63,6 @@ messages:
       return;
    }
 
-
    GetStateValue(who = $, iSpellPower = 0, Target = $)
    {
       local iMightChange;

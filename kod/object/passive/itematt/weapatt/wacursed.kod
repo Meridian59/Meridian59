@@ -80,7 +80,7 @@ messages:
       iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
       iPower = send(self,@DecipherDamageFromPower,#iPower=iPower);
 
-      return (damage - (2*iPower));
+      return (-20*iPower);
    }
 
    ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
@@ -91,7 +91,7 @@ messages:
       iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
       iPower = send(self,@DecipherHitrollFromPower,#iPower=iPower);
 
-      return (hitroll - (2*iPower));
+      return (-iPower)/5;
    }
 
    ItemReqUnuse(oItem=$)

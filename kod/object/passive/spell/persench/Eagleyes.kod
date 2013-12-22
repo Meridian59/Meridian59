@@ -57,7 +57,7 @@ classvars:
    viMana = 5
    viSpellExertion = 10
 
-   viCast_time = 2000
+   viCast_time = 0
    viChance_To_Increase = 20
 
 properties:
@@ -74,34 +74,39 @@ messages:
       return;
    }
 
-   GetStateValue(who=$,iSpellpower=$,target = $)
+   GetStateValue(who = $, iSpellPower = 0, Target = $)
    {
-      local iFactor;
-      
-      Send(target,@AddAttackModifier,#what=self);
-      iFactor = bound(iSpellPower+1,10,100);
-      
-      return iFactor;
-   }  
+      local iAimChange;
+      iAimChange = iSpellPower/5+1;
+	  
+      if Send(Target,@IsEnchanted,#what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION)) 
+      {
+         Send(Target,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_NIGHT_VISION),#report=FALSE);
+      } 
+	   
+      send(Target,@AddAim,#points=iAimChange);
+	  
+      Send(Target,@GainLight,#amount=iAimChange*15/2);
 
-   EndEnchantment(who=$,report=TRUE,state=$)
+      return iAimChange;
+   }
+   
+   EndEnchantment( who = $, state = 0, report = TRUE )
    {
-      Send(who,@RemoveAttackModifier,#what=self);
-      
+      send(who,@AddAim,#points=-state);
+      send(who,@LoseLight,#amount=state*15/2);
+     
       propagate;
    }
 
-   GetDuration(iSpellpower = 0)
+   GetDuration(iSpellPower = 0)
    {
       local iDuration;
-
-      % 2 - 5.3 minutes max.
-      iDuration = 120 + (2 * iSpellPower);
-      % Convert to ms.
+      iDuration = 300 + (iSpellpower * 6);
       iDuration = iDuration * 1000;
       
       return random(iDuration/2,iDuration);
-   }   
+   }  
 
    OfferToNewCharacters()
    {
@@ -119,7 +124,7 @@ messages:
    {
       local iNewDuration, iChance, oEagleEyesStrength;
 
-      oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
+      oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self)*5;
 
       % Check if they repel the blinding spell outright 1-10% base chance,
       %  modified by factor.
@@ -146,41 +151,6 @@ messages:
 
       return iNewDuration;
    }
-
-   %%% Attack Modifier stuff
-
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
-   {
-      local iFactor, oWeapon;
-
-      iFactor = Send(who,@GetEnchantedState,#what=self);
-
-      oWeapon = Send(who,@LookupPlayerWeapon);
-
-      if oWeapon <> $ AND IsClass(oWeapon,&RangedWeapon)
-      {
-         return hit_roll + iFactor;
-      }
-
-      return hit_roll;
-   }
-
-   ModifyDamage(who = $,what = $,damage = $)
-   {
-      local iFactor, oWeapon;
-
-      iFactor = Send(who,@GetEnchantedState,#what=self);
-
-      oWeapon = Send(who,@LookupPlayerWeapon);
-
-      if oWeapon <> $ AND IsClass(oWeapon,&RangedWeapon)
-      {
-         return damage + 1;
-      }
-
-      return damage;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

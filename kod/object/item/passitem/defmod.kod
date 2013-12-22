@@ -29,19 +29,22 @@ classvars:
    vrItem_broken = defmod_broken
 
    viDefense_base = 0               % This is the default value for piDefense_bonus
-   viDamage_base = 0                % This is the default value for piDamage_reduce
+   viDamage_percent_base = 0        % This is the default value for piDamage_percent_reduce
+   viDamage_flat_base = 0           % This is the default value for piDamage_flat_reduce
 
 properties:
 
-   piDefense_bonus = 0              %% piDefense_bonus adds to player's defense. Ranges from 1 to 50
-   piDamage_reduce = 0              %% piDamage_reduce is the maximum amount of damage that will be reduced.
+   piDefense_bonus = 0              %% This gives a player a percentage boost to his avoidance
+   piDamage_percent_reduce = 0      %% This reduces damage by a percentage
+   piDamage_flat_reduce = 0         %% This reduces damage by a flat amount
 
 messages:
 
    DefaultValues()
    {
       piDefense_bonus = viDefense_base;
-      piDamage_reduce = viDamage_base;
+      piDamage_percent_reduce = viDamage_percent_base;
+	  piDamage_flat_reduce = viDamage_flat_base;
 
       propagate;
    }
@@ -94,29 +97,24 @@ messages:
 
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      return defense_power + piDefense_bonus;
+      return piDefense_bonus;
    }
 
-   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
-   "Increase or decrease damage done to defender."
+   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Increase or decrease damage done to defender by a flat amount."
    {
       local iDamageReduce;
 
-      iDamageReduce = 0;
-      if piDamage_reduce <> 0
-      {
-         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
-         iDamageReduce = bound(iDamageReduce,0,(damage-1));
-      }
+      iDamageReduce = piDamage_flat_reduce;
 
       if aspell <> 0
       {
          % Reduce damage if part of the damage is spell
          if atype <> 0
          {
-            % Only 2/3 of the damage reduction if we're doing both weapon
+            % Half of the damage reduction if we're doing both weapon
             % and spell damage types.
-            iDamageReduce = iDamageReduce * 2 / 3;
+            iDamageReduce = iDamageReduce / 2;
          }
          else
          {
@@ -125,7 +123,33 @@ messages:
          }
       }
       
-      return damage - iDamageReduce;
+      return iDamageReduce;
+   }
+   
+   ModifyDefenseDamagePercent(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Increase or decrease damage done to defender by a percentage."
+   {
+      local iDamageReduce;
+
+      iDamageReduce = piDamage_percent_reduce;
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Half of the damage reduction if we're doing both weapon
+            % and spell damage types.
+            iDamageReduce = iDamageReduce / 2;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iDamageReduce = 0;
+         }
+      }
+      
+      return iDamageReduce;
    }
 
    % This assumes that none of the superclasses define a message for "defending hit" to do anything special.

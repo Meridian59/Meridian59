@@ -49,7 +49,7 @@ classvars:
    viSkillExertion = 2
    vbCheck_exertion = FALSE
 
-   viDamage_factor = 100
+   viDamage_factor = 70
 
 properties:
 
@@ -166,13 +166,16 @@ messages:
    "Different skills/strokes are affected by different stats differently."
    {
       local stat;
-
-      % Get weapon proficiency bonuses.
-      damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+	  
+	  % Get proficiency bonus.
+	  damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage;
       
       % Get stat damage bonus.
       stat = send(who,@GetAim);
-      damage = (75+stat)*damage/100;
+      damage = (50+stat)*damage/100;
+
+	  % Adjust bow damage to a factor of melee damage
+	  damage = damage*viDamage_factor/100;
 
       return damage;
    }

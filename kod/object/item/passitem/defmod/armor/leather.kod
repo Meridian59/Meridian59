@@ -40,14 +40,15 @@ classvars:
    viWeight = 100
    viBulk = 150
 
-   viSpell_modifier = 0
+   viSpell_modifier = 10
 
 
    vrIcon_male = Leatherarmor_male_icon_rsc
    vrIcon_female = Leatherarmor_female_icon_rsc
 
-   viDefense_base = 50
-   viDamage_base = 0
+   viDefense_base = -10              
+   viDamage_flat_base = 2
+   viDamage_percent_base = 10
 
 properties:
    

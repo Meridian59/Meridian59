@@ -44,8 +44,9 @@ classvars:
    vrIcon_male = platearmor_male_icon_rsc
    vrIcon_female = platearmor_female_icon_rsc
 
-   viDefense_base = -200
-   viDamage_base = 6
+   viDefense_base = -30
+   viDamage_flat_base = 6
+   viDamage_percent_base = 30
 
 properties:
 

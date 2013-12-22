@@ -97,10 +97,10 @@ messages:
          Send(poOwner,@TryUnuseItem,#what=self);
          Send(self,@Delete);
 
-         return hit_roll;
+         return 0;
       }
       
-      return hit_roll - (Random(15,25) * 10);
+      return -20;
    }
 
    ModifyDamage(who = $, what = $, damage = $)
@@ -111,10 +111,10 @@ messages:
 
       if oWeapon = $ OR NOT IsClass(oWeapon,&RangedWeapon)
       {
-         return damage + random(1,4);
+         return 20;
       }
 
-      return damage;
+      return 0;
    }
 
    WeaponHitTarget()

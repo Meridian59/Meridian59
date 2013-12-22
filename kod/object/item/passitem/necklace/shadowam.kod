@@ -100,7 +100,7 @@ messages:
       return defense_power + viDefense_change;
    }
 
-   ModifyDefenseDamage(who = $,what = $,damage = $)
+   ModifyDefenseDamageFlat(who = $,what = $,damage = $)
    {
       return damage;
    }

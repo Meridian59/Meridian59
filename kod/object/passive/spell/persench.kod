@@ -227,12 +227,12 @@ messages:
 
    ModifyDamage(damage = $)
    {
-      return damage;
+      return 0;
    }
 
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
-      return hit_roll;
+      return 0;
    }
 
    DefendingHit()
@@ -240,14 +240,14 @@ messages:
       return;
    }
 
-   ModifyDefenseDamage(damage = $)
+   ModifyDefenseDamageFlat(damage = $)
    {
-      return damage;
+      return 0;
    }
 
    ModifyDefensePower(who = $, what = $,defense_power = $)
    {
-      return defense_power;
+      return 0;
    }
 
 

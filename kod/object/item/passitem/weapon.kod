@@ -26,17 +26,12 @@ constants:
    % Hit modifiers
    WEAPON_HITMOD_STRIKE  = 0
    WEAPON_HITMOD_THRUST  = 0
-   WEAPON_HITMOD_SLASH = 200
+   WEAPON_HITMOD_SLASH = 10
 
-   % Damage, low to high range of damage.
-   WEAPON_DAMAGE_STRIKE_MIN  = 2
-   WEAPON_DAMAGE_STRIKE_MAX  = 7
-
-   WEAPON_DAMAGE_THRUST_MIN  = 2
-   WEAPON_DAMAGE_THRUST_MAX  = 7
-
-   WEAPON_DAMAGE_SLASH_MIN = 4
-   WEAPON_DAMAGE_SLASH_MAX = 9
+   % Base damage of different types
+   WEAPON_DAMAGE_STRIKE_BASE  = 6
+   WEAPON_DAMAGE_THRUST_BASE  = 6
+   WEAPON_DAMAGE_SLASH_BASE = 10
 
    % Disarm bonus
    WEAPON_DISARM_STRIKE  = 0
@@ -60,13 +55,13 @@ constants:
 
    % Quality mods to hit modifier
    WEAPON_LOW_QUALITY_HITMOD  = 0
-   WEAPON_HIGH_QUALITY_HITMOD = 300
-   WEAPON_NERUDITE_HITMOD = 300
+   WEAPON_HIGH_QUALITY_HITMOD = 10
+   WEAPON_NERUDITE_HITMOD = 10
 
    % Quality mods to damage
    WEAPON_LOW_QUALITY_DAMAGE  = 0
-   WEAPON_HIGH_QUALITY_DAMAGE = 3
-   WEAPON_NERUDITE_DAMAGE = 3
+   WEAPON_HIGH_QUALITY_DAMAGE = 4
+   WEAPON_NERUDITE_DAMAGE = 4
 
    % Quality mods to disarming
    WEAPON_LOW_QUALITY_DISARM  = 0
@@ -94,9 +89,6 @@ resources:
    weapon_condition_med = " is notched and stained with blood but is still an effective weapon."
    weapon_condition_poor = " is well worn and may not last much longer."
    weapon_condition_broken = " has been shattered by a powerful blow."
-
-   weapon_do_damage = "I just did %i points of damage! (%i)"
-   weapon_to_hit = "I have a %i chance to hit! (%i/%i)"
 
    % These are used by weapon enchantments to tell where some symbol
    %  happens to be on the blade.
@@ -210,58 +202,45 @@ messages:
    "When someone attacks with this weapon, they send us their attack value "
    "and we change it based on quality of weapon"
    {
-      local iBaseHit, oWeapAtt, i, iWeapHit;
+      local iBonus;
 
-      iBaseHit = hit_roll;
+      iBonus = 0;
 
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iBaseHit = iBaseHit + WEAPON_HITMOD_STRIKE;
+         iBonus = WEAPON_HITMOD_STRIKE;
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iBaseHit = iBaseHit + WEAPON_HITMOD_THRUST;
+         iBonus = WEAPON_HITMOD_THRUST;
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iBaseHit = iBaseHit + WEAPON_HITMOD_SLASH;
+         iBonus = WEAPON_HITMOD_SLASH;
       }
 
       % Weapon quality modifiers
       if viWeaponQuality = WEAPON_QUALITY_LOW
       {
-         iBaseHit = iBaseHit + WEAPON_LOW_QUALITY_HITMOD;
+         iBonus = iBonus + WEAPON_LOW_QUALITY_HITMOD;
       }
 
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
-         iBaseHit = iBaseHit + WEAPON_HIGH_QUALITY_HITMOD;
+         iBonus = iBonus + WEAPON_HIGH_QUALITY_HITMOD;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
       {
-         iBaseHit = iBaseHit + WEAPON_NERUDITE_HITMOD;
+         iBonus = iBonus + WEAPON_NERUDITE_HITMOD;
       }
 
-      for i in plItem_Attributes
-      {
-         oWeapAtt = send(SYS,@FindItemAttByNum, #num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if isClass(oWeapAtt,&WeaponAttribute)
-         {
-            iBaseHit = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
-                            #target=target,#lData=i);
-         }
-      }     
+      iBonus = iBonus + piHitBonus;
 
-      iBaseHit = iBaseHit + piHitBonus;
-
-      % send(send(poOwner,@getOwner),@someonesaid,#what=self,#type=SAY_RESOURCE,
-      %    #string=weapon_to_hit,#parm1=hit_roll,#parm2=iBaseHit,#parm3=iWeapHit);
-
-      return iBaseHit;
+      return iBonus;
    }
 
    GetBaseDamage(who=$,target=$)
@@ -271,17 +250,17 @@ messages:
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iDamage = random(WEAPON_DAMAGE_STRIKE_MIN, WEAPON_DAMAGE_STRIKE_MAX);
+         iDamage = WEAPON_DAMAGE_STRIKE_BASE;
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iDamage = random(WEAPON_DAMAGE_THRUST_MIN, WEAPON_DAMAGE_THRUST_MAX);
+         iDamage = WEAPON_DAMAGE_THRUST_BASE;
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iDamage = random(WEAPON_DAMAGE_SLASH_MIN, WEAPON_DAMAGE_SLASH_MAX);
+         iDamage = WEAPON_DAMAGE_SLASH_BASE;
       }
 
       % Weapon quality modifiers
@@ -305,27 +284,14 @@ messages:
 
    GetDamage(target=$)
    {
-      local iDamage, i, oWeapAtt;
+      local iDamage;
 
       % First, get base damage.
-      iDamage = send(self,@GetBaseDamage);
-
-      % Then check weapon attributes
-      %  Weapon Attributes in general should only + or - damage - no multipliers!
-      for i in plItem_Attributes
-      {
-         oWeapAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if isClass(oWeapAtt,&WeaponAttribute)
-         {
-            iDamage = send(oWeapAtt,@ModifyDamage,#damage=iDamage,#wielder=poOwner,
-                           #target=target,#lData=i);
-         }
-      }
+      iDamage = send(self,@GetBaseDamage,#who=poOwner,#target=target);
 
       iDamage = iDamage + piDamageBonus;
-
-      % send(send(poOwner,@getOwner),@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
-      %      #string=weapon_do_damage,#parm1=iDamage,#parm2=baseDamage);
+  
+      iDamage = iDamage * 100;
 
       return iDamage;
    }

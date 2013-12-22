@@ -81,9 +81,9 @@ messages:
       oRoom = send(wielder,@getowner);
       if send(oRoom,@checkroomflag,#flag=ROOM_SAFE_DEATH)
       {  
-      	 return (hitroll + iPower);  
+      	 return iPower/10;  
       }
-      return (hitroll - iPower);
+      return (-iPower)/10;
    }
 
    ModifyDamage(damage = 0, target = $, wielder = $, lData=$)
@@ -97,9 +97,9 @@ messages:
       oRoom = send(wielder,@getowner);
       if send(oRoom,@checkroomflag,#flag=ROOM_SAFE_DEATH)
       {  
-      	 return (damage + iPower);  
+      	 return iPower*10;  
       }
-      return (damage - iPower);
+      return (-iPower)*10;
    }
 
 end

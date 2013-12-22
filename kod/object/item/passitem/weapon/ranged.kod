@@ -140,36 +140,9 @@ messages:
    }
 
    ModifyHitRoll(hit_roll = 0, target = $)
-   "When someone attacks with this weapon, they send us their attack value "
-   "and we change it based on quality of weapon"
+   "Returns the hit roll modifier stored in the individual ranged weapon."
    {
-      local iBaseHit, oWeapAtt, i, iWeapHit;
-
-      iBaseHit = hit_roll;
-
-      if viHit_roll_modifier < 0
-      {
-         hit_roll = hit_roll + (-viHit_Roll_modifier);
-      }
-      else
-      {
-         hit_roll = hit_roll + ((viHit_roll_modifier*piHits)/piHits_Init);
-      }
-      
-      iWeapHit = hit_roll;
-
-      for i in plItem_Attributes
-      {
-         oWeapAtt = send(SYS,@FindItemAttByNum,
-                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if isClass(oWeapAtt,&WeaponAttribute)
-         {
-            hit_roll = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
-                            #target=target,#lData=i);
-         }
-      }     
-      
-      return hit_roll;
+       return viHit_roll_modifier;
    }
 
    GetBaseDamage(who=$,target=$)

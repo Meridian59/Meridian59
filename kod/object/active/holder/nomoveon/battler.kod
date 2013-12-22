@@ -16,7 +16,7 @@ constants:
 
    % What's the percent chance to hit if offense and defense are equal?
    % The higher this number is, the easier it is to hit in combat.
-   EQUAL_CHANCE_HIT = 55      
+   EQUAL_CHANCE_HIT = 500      
                               
    % Raise or lower this number to raise or lower the chance the 'avoids 
    %  your attack' message comes up.
@@ -40,6 +40,9 @@ resources:
    % battler_defender_hit - Psychochild's scimitar wounds you for (10) damage.
    % battler_defender_slay - Psychochild's scimitar slays you.
    % battler_defender_miss - Psychochild's attack is blocked by you.
+
+   battler_attacker_crit = "~k~IYou dealt a critical strike!"  
+   battler_defender_crit = "~r~IYou suffered a critical strike!"  
 
    battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage."       
    battler_attacker_slay = "%sYour %s %s %s%s."   
@@ -318,7 +321,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iDamage, oWeapon;
+      local iChanceToHit, iPreliminary, iDamage, oWeapon, iMultiplier;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -331,21 +334,43 @@ messages:
                       * EQUAL_CHANCE_HIT)
                      / Send(what,@GetDefense,#what=self,
                             #stroke_obj=stroke_obj);
-      iChanceToHit = bound(iChanceToHit,10,95);
-      if iChanceToHit >= random(1,100)
-      {
+      iChanceToHit = bound(iChanceToHit,125,2000);
+      iMultiplier = 1;
+
+      if iChanceToHit < random(1,1000)
+	  {
+	     % Oops, a miss.  See if something happens.
+         Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
+	  }
+	  else
+	  {
+         if iChanceToHit >= random(1001,2000)
+         {
+            % We deal double damage!
+            iMultiplier = 2;
+            % Let us tell them the good news.
+            if IsClass(self,&Player)
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_crit);
+            }
+            
+            if IsClass(what,&Player)
+            {
+               Send(what,@MsgSendUser,#message_rsc=battler_defender_crit);
+            }
+		 }
+
          % We hit!
-         iDamage = Send(what,@AssessDamage,#what=self,
-                        #damage=Send(self,@GetDamage,#what=what,
-                                     #stroke_obj=stroke_obj),
-                        #atype=Send(self,@GetDamageType),
-                        #aspell=Send(self,@GetSpellType));
-<<<<<<< HEAD
-=======
-         iDamage = iDamage * iMultiplier;
->>>>>>> remotes/origin/Revised-Weapon-System
-         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
-              #damage=iDamage);
+		 iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj) * iMultiplier;
+		 % iPreliminary = random(iPreliminary/2,iPreliminary);
+		 iPreliminary = iPreliminary/100;
+		 iPreliminary = bound(iPreliminary,1,$);
+         iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,
+		      #atype=Send(self,@GetDamageType),
+              #aspell=Send(self,@GetSpellType));
+
+         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
+	  
          if iDamage = $
          {
             Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
@@ -355,40 +380,6 @@ messages:
          {
             Send(self,@DidDamage,#amount=iDamage,#what=what);
          }
-      }
-      else
-      {
-<<<<<<< HEAD
-         % Oops, a miss.  See if something happens.
-         Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
-=======
-         if iChanceToHit >= random(1,1000)
-         {
-            % We hit!
-            iDamage = Send(what,@AssessDamage,#what=self,
-                           #damage=Send(self,@GetDamage,#what=what,
-                                        #stroke_obj=stroke_obj),
-                           #atype=Send(self,@GetDamageType),
-                           #aspell=Send(self,@GetSpellType));
-            iDamage = iDamage * iMultiplier;
-            Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
-                 #damage=iDamage);
-            if iDamage = $
-            {
-               Send(self,@KilledSomething,#what=what,#use_weapon=oWeapon,
-                    #stroke_obj=stroke_obj);
-            }
-            else
-            {
-               Send(self,@DidDamage,#amount=iDamage,#what=what);
-            }
-         }
-         else
-         {
-            % Oops, a miss.  See if something happens.
-            Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
-         }
->>>>>>> remotes/origin/Revised-Weapon-System
       }
 
       if poOwner <> $
@@ -406,13 +397,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "Returns the battler's ability to-hit.  Ranges from 1 to 1000."
+   "Returns the battler's ability to-hit.  Ranges from 1 to 3000."
    {
       return 1;
    }
 
    GetDefense(what = $, stroke_obj=$)
-   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 1000."
+   "Returns the battler's ability to avoid being hit.  Ranges from 1 to 3000."
    {
       return 1;
    }

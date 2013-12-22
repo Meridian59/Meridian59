@@ -28,11 +28,14 @@ classvars:
 
    viWeaponDamage = 0
    viRange = 100
-   viHit_roll_modifier = 100
+   viHit_roll_modifier = 10
 
    viValue_average = 2500
-   viBulk = 80
+   viBulk = 70
    viWeight = 70
+   
+   viHits_init_min = 200
+   viHits_init_max = 300
 
    viSpell_modifier = -20
 
@@ -42,7 +45,6 @@ classvars:
 properties:
 
 messages:
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

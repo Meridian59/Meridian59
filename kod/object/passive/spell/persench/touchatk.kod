@@ -82,10 +82,9 @@ classvars:
 
    % Touch spells typically do good damage but are unaffected by typical weapon
    %  bonuses.
-   viMin_Damage = 3
-   viMax_Damage = 6
+   viBase_Damage = 6
 
-   % Touch spell range can vary, but are typically good     
+   % Touch spell range can vary, but is typically good.     
    viRange = 2
 
    % Touch spells are now linked to punch attacks, so make it do punch damage
@@ -260,7 +259,7 @@ messages:
                    
             if Send(victim,@IsUndead)
             {
-               damage = damage+5;
+               damage = damage+500;
             }
          }
 
@@ -369,36 +368,37 @@ messages:
       local i, damage, iAbility, iProcfactor;
 
       % base weapon damage
-      damage = random(viMin_Damage,viMax_damage);
-
+      damage = viBase_damage;
+ 
       iProcfactor = 0;
 
       for i in send(who,@GetPlayerUsing)
       {
          if IsClass(i,&JewelOfFroz)
          {
-            % Each jewel of Froz adds up to 3 to base damage depending on HPs.
-            damage = damage + bound(send(who,@GetBaseMaxHealth)-50,0,50)/25;
+            % Each jewel of Froz adds up to 4 to base damage depending on HPs.
+            damage = damage + bound(send(who,@GetBaseMaxHealth)-60,0,40)/10;
             % Each equipped JoFincreases the chance to proc effects.
             iProcfactor = iProcfactor + 10;
          }
       }
 
+	  damage = damage*100;
+	  
       % scale the basedamage with the caster's ability in the spell
       iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
       damage = damage * (50 + ((iAbility + 1) / 2)) / 100;
 
       % scale proficiency bonus with HPs instead of spell ability
-      damage = damage + bound(send(who,@GetBaseMaxHealth)-50,0,50)/10;
+      damage = damage + bound(send(who,@GetBaseMaxHealth),0,100)*10;
 
       % touchspells are boosted by mysticism instead of might
-      damage = damage*(75 + send(who,@GetMysticism))/100;
+      damage = damage*(50 + send(who,@GetMysticism))/100;
        
       % allow for damage adjustments and procs
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,
                           #victim=victim,#procfactor=iProcfactor);
-          
-      return bound(damage,1,$);
+      return damage;
    }
 
 

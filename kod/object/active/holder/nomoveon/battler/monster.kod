@@ -1458,7 +1458,7 @@ messages:
 
       if piOffense = $
       {
-         iAttack = (3*viLevel) + (60*viDifficulty);
+         iAttack = (9*viLevel) + (180*viDifficulty);
       }
       else
       {
@@ -1470,7 +1470,7 @@ messages:
          iAttack = iAttack * 3 / 4;
       }
       
-      return Bound(iAttack,1,1500);
+      return Bound(iAttack,1,4500);
    }
 
    GetDefense(what = $, stroke_obj=$)
@@ -1481,14 +1481,14 @@ messages:
 
       if piDefense = $
       {
-         iDefense = (3*viLevel) + (60*viDifficulty);
+         iDefense = (9*viLevel) + (180*viDifficulty);
       }
       else
       {
          iDefense = piDefense;
       }
      
-      return Bound(iDefense,1,1500);
+      return Bound(iDefense,1,4500);
    }
 
    % The next message deals with the three defense skills.  These messages
@@ -1532,7 +1532,9 @@ messages:
          iDamage = iDamage * 3 / 4 ;
       }
       
-      return Bound(iDamage,1,$);
+	  iDamage = iDamage * 100;
+	  
+      return iDamage;
    }
 
    % This is the type of damage done.

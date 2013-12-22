@@ -152,8 +152,7 @@ messages:
       % Only affect the evil ones...
       if Send(what,@GetKarma,#detect=TRUE) < 0
       {
-         % Give a small bonus
-         return hit_roll + 100;
+         return (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
       }
 
       return hit_roll;
@@ -164,8 +163,7 @@ messages:
       % Only affect the evil ones...
       if Send(what,@GetKarma,#detect=TRUE) < 0
       {
-         % Roughly equal to Killing Fields
-         return damage + Random(1,5);
+         return (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
       }
 
       return damage;

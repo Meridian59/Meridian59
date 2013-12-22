@@ -104,14 +104,10 @@ messages:
 
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      local iSpellpower;
-
-      iSpellpower = send(who,@GetEnchantedState,#what=self);
-      
-      return (defense_power + 50 + (2 * iSpellpower));
+      return send(who,@GetEnchantedState,#what=self)/5;
    }
 
-   ModifyDefenseDamage(who = $,what = $,damage = $)
+   ModifyDefenseDamageFlat(who = $,what = $,damage = $)
    {
       return damage;
    }

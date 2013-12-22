@@ -139,17 +139,12 @@ messages:
 
    ModifyHitRoll(who = $, what = $, hit_roll = $)
    {
-      local iSpellpower,iHitMod;
-
-      iSpellpower = send(send(who,@GetOwner),@GetEnchantmentState,#what=self);
-      iHitMod = iSpellpower + 50;  %% 50 - 150
-      
-      return hit_roll + iHitMod;
+      return (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
    }
    
    ModifyDamage(who = $, what = $, damage = $)
    {
-      return damage;
+      return (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
    }
 
    GetDuration(iSpellpower = $)

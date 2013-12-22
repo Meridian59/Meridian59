@@ -73,7 +73,7 @@ messages:
 
 
       }
-      return Damage;
+      return 0;
    }
 
 

@@ -320,7 +320,7 @@ messages:
       return (defense_power + (3 * iSpellpower));
    }
 
-   ModifyDefenseDamage(who = $, what = $, damage = $)
+   ModifyDefenseDamageFlat(who = $, what = $, damage = $)
    {
       return damage;
    }

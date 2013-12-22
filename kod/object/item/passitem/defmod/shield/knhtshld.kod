@@ -47,7 +47,7 @@ classvars:
    viInventory_group = 1
 
    viDefense_base = 15
-   viDamage_base = 2
+   viDamage_flat_base = 2
 
 properties:
 

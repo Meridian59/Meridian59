@@ -213,10 +213,10 @@ messages:
             iPower = iPower / 2;
          }
 
-         return (damage + iPower); 
+         return iPower*10; 
       }
       
-      return damage;
+      return 0;
    }
 
    ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData = $)
@@ -248,10 +248,10 @@ messages:
             iPower = iPower / 2;
          }
             
-         return (hitroll + iPower); 
+         return iPower/10; 
       }
       
-      return hitroll;
+      return 0;
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

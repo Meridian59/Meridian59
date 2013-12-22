@@ -47,7 +47,7 @@ classvars:
    viBroken_group = 4
 
    viDefense_base = 10
-   viDamage_base = 1
+   viDamage_flat_base = 1
 
 properties:
 

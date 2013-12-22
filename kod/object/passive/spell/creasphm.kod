@@ -79,7 +79,7 @@ messages:
       local oSpiritualHammer, iLongevity, iToHitBonus;
 
       iLongevity = send(self,@GetLongevity,#iSpellPower=iSpellPower);
-      iToHitBonus = (iSpellPower * 3) / 2;
+      iToHitBonus = 0;
       oSpiritualHammer = Create(&SpiritualHammer,#iLongevity=iLongevity,#iToHitBonus=iToHitBonus);
 
       if Send(who,@ReqNewHold,#what=oSpiritualHammer)

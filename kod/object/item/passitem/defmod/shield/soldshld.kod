@@ -71,7 +71,7 @@ classvars:
    viBulk = 0
 
    viDefense_base = 20
-   viDamage_base = 2
+   viDamage_flat_base = 2
 
    viFaction = FACTION_NEUTRAL
    viColor = XLAT_TO_GRAY
@@ -591,15 +591,15 @@ messages:
 
    % Copied from DefenseModifier superclass, ignores shield's Block
    %  requirement.
-   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
    "Affects damage done to owner."
    {
       local iDamageReduce;
 
       iDamageReduce = 0;
-      if piDamage_reduce <> 0
+      if piDamage_flat_reduce <> 0
       {
-         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
+         iDamageReduce = random(piDamage_flat_reduce/3,piDamage_flat_reduce);
          iDamageReduce = bound(iDamageReduce,0,(damage-1));
       }
 

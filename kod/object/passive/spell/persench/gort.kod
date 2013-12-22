@@ -114,7 +114,7 @@ messages:
       return bound(damage-iAbsorbed,1,iMax);
    }
 
-   ModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
+   ModifyDefenseDamageFlat(who = $, what = $, damage = $, atype = 0, aspell = 0)
    {
       return damage;
    }

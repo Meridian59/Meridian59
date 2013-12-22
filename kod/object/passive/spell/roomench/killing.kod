@@ -145,12 +145,12 @@ messages:
 
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
-      return hit_roll;
+      return 0;
    }
    
    ModifyDamage(who = $,what = $,damage = $)
    {
-      return damage + Random(2,5);
+         return (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/5;
    }
 
 

@@ -119,12 +119,12 @@ messages:
    % stuff we handle to be an attack modifier
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {      
-      return hit_roll + 100 + (send(who,@GetEnchantedState,#what=self)*2);
+      return (send(who,@GetEnchantedState,#what=self)+1)/5;
    }
    
    ModifyDamage(who = $,what = $,damage = $)
    {
-      return (damage + 1 + Random(0,send(who,@GetEnchantedState,#what=self)/20));
+      return (send(who,@GetEnchantedState,#what=self)+1)/5;
    }
 
    GetPotionClass()

@@ -95,10 +95,10 @@ messages:
       % One and one half effect on outlaws.
       if send(target,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
       {
-         return (damage + iPower);
+         return iPower*10;
       }
 
-      return (damage - iPower);    %% player is fighting a white named target.
+      return (-iPower)*10;    %% player is fighting a white named target.
    }
 
    ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
@@ -113,22 +113,22 @@ messages:
       %% no special effects for monsters
       if isClass(target,&monster)
       {
-         return hitroll;
+         return 0;
       }
 
       % Double standard effect on murderers.
       if send(target,@CheckPlayerFlag,#flag = PFLAG_MURDERER)
       {
-         return (hitroll + ((iPower*3)/2));
+         return (((iPower*3)/20));
       }
 
       % One and one half effect on outlaws.
       if send(target,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
       {
-         return (hitroll + iPower);
+         return iPower/10;
       }
 
-      return (hitroll - iPower);    %% player is fighting a white named target.
+      return (-iPower/10);    %% player is fighting a white named target.
    }
 
    ItemReqUse(oItem=$,oPlayer=$)

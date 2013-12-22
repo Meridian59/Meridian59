@@ -25,29 +25,25 @@ classvars:
    vrName = MagicBow_name_rsc
    vrDesc = MagicBow_desc_rsc
 
-   viValue_average = 3000
+   viValue_average = 3500
    viBulk = 70
    viWeight = 70
+   
+   viHits_init_min = 200
+   viHits_init_max = 300   
+
+   viSpell_modifier = -40
+
+   viWeaponDamage = 4
+   viRange = 100
+   viHit_roll_modifier = 10
+
+   % What's the basic color of the wood?
+   viBaseXLAT = XLAT_TO_GRAY
 
 properties:
 
-   viWeaponDamage = 1
-   viRange = 100
-   viHit_roll_modifier = 100
-
-   % What's the basic color of the wood?
-   viBaseXLAT = XLAT_TO_SKIN4
-
 messages:
-
-   SetColor(iColor=XLAT_TO_SKIN4)
-   {
-      viBaseXLAT = iColor;
-      send(self,@UpdateColor);
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

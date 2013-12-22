@@ -160,7 +160,7 @@ messages:
    DamageFactors(damage=0,who=$,victim=$,procfactor=0)
     "Here, we handle procs as well as damage adjustments."
    {
-      local oSpell, iKarma;
+      local oSpell, iKarma, iHeal;
 	    
       procfactor = procfactor * bound(send(who,@GetBaseMaxHealth)-50,0,50)/50;
       
@@ -265,8 +265,9 @@ messages:
 
          if random(1,1000) <= piHeal_chance*procfactor
          {
-            send(who,@GainHealth,#amount=damage);
-            send(who,@MsgSendUser,#message_rsc=ta_heal_worked,#parm1=damage);
+		    iHeal = random(damage/200,damage/100);
+            send(who,@GainHealth,#amount=iHeal);
+            send(who,@MsgSendUser,#message_rsc=ta_heal_worked,#parm1=iHeal);
          }
       }
 

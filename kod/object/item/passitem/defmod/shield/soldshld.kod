@@ -71,7 +71,7 @@ classvars:
    viBulk = 0
 
    viDefense_base = 20
-   viDamage_flat_base = 2
+   viDamage_flat_base = 5
 
    viFaction = FACTION_NEUTRAL
    viColor = XLAT_TO_GRAY

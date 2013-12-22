@@ -17,10 +17,6 @@ constants:
    % What's the percent chance to hit if offense and defense are equal?
    % The higher this number is, the easier it is to hit in combat.
    EQUAL_CHANCE_HIT = 500      
-                              
-   % Raise or lower this number to raise or lower the chance the 'avoids 
-   %  your attack' message comes up.
-   BATTLER_AVOID_CHANCE = 50  
 
    % Threshold for the "wound" and "damage" levels of feedback.
    DAMAGE_THRESHOLD_WOUND = 5
@@ -362,7 +358,7 @@ messages:
 
          % We hit!
 		 iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj) * iMultiplier;
-		 % iPreliminary = random(iPreliminary/2,iPreliminary);
+		 iPreliminary = random(iPreliminary/2,iPreliminary);
 		 iPreliminary = iPreliminary/100;
 		 iPreliminary = bound(iPreliminary,1,$);
          iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,
@@ -841,21 +837,37 @@ messages:
    % This returns defense reason of why opponent missed this battler.
    GetDefenseDesc(stroke_obj=$)
    {
-      local iRandom, iParry, iBlock, iDodge;
+      local iRandom, iParry, iBlock, iDodge, iAvoid;
       
       iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
       iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
       iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
-      iRandom = iParry + iBlock + iDodge + BATTLER_AVOID_CHANCE;
+	  if IsClass(self,&Player)
+	  {
+	     iAvoid = Send(self,@GetAgility)*8+100;
+	  }
+	  else
+	  {
+	  iAvoid = 50;
+	  }
+      iRandom = iParry + iBlock + iDodge + iAvoid;
       iRandom = random(0,iRandom);
 
       if iRandom < iParry
       {
+	     if IsClass(self,&Player)
+		 {
+	        send(send(self,@LookupPlayerWeapon),@DoParryAnimation);
+		 }
          return battler_parried;
       }
 
       if iRandom < (iParry + iBlock)
       {
+	     if IsClass(self,&Player)
+		 {
+	        send(send(self,@LookupPlayerShield),@DoBlockAnimation);
+		 }
          return battler_blocked;
       }
 

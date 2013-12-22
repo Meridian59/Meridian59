@@ -45,6 +45,9 @@ classvars:
    vrCondition_med = shield_condition_med 
    vrCondition_poor = shield_condition_poor 
    vrCondition_broken = shield_condition_broken
+   
+   viDefense_base = 0
+   viDamage_flat_base = 0
 
 properties:
    
@@ -55,18 +58,24 @@ properties:
 
 messages:
 
+   DefaultValues()
+   {
+      piBlockBonus = viDefense_base;
+      propagate;
+   }
+
    % General Combat messages:
 
    % Called here, different shields can give different bonuses.
    GetBlockAbility(who = $)
    {
-      return bound(send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) + piDefense_bonus,1,120);
+      return bound(send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) * piBlockBonus,1,120);
    }
 
    % Shields use the defense bonus as a bonus to block instead.
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      return defense_power;
+      return 0;
    }
 
    % Shields only reduce damage if you make your block check.
@@ -76,16 +85,30 @@ messages:
 
       oBlock = Send(SYS,@FindSkillByNum,#num=SKID_BLOCK);
       
-      % If shield gives a damage reduction, and if the user has block, give them a skill check
-      %  with the defense bonus as a positive modifier.
-      if (send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) > 0)
-         AND Send(oBlock,@SuccessChance,#who=who,#modifier=piDefense_bonus)
+      if Send(oBlock,@SuccessChance,#who=who,#modifier=piBlockBonus)
       {
-         % We succeeded!  Propagate up and reduce damage.
+         % We succeeded!  Do a block animation and propagate up to reduce damage.
+		 send(self,@DoBlockAnimation);
          propagate;
       }
       
-      return damage;
+      return 0;
+   }
+   
+   DoBlockAnimation()
+   {
+	  piUsed = DEFENDING;
+	  
+      if vrShield_window_overlay <> $
+      {
+         Send(poOwner,@ChangeWindowOverlay,#what=self);
+      }
+         
+      if vrShield_overlay <> $
+      {
+         piUsed = USED;
+      }
+	  return;
    }
 
    % General unsorted messages:
@@ -132,22 +155,6 @@ messages:
 
       Send(poOwner,@RemoveOverlay,#what=self);
 
-      propagate;
-   }
-
-   DefendingHit()
-   {
-      piUsed = DEFENDING;
-      if vrShield_window_overlay <> $
-      {
-         Send(poOwner,@ChangeWindowOverlay,#what=self);
-      }
-      
-      if vrShield_overlay <> $
-      {
-         piUsed = USED;
-      }
-      
       propagate;
    }
 

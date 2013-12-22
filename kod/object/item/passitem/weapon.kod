@@ -37,6 +37,11 @@ constants:
    WEAPON_DISARM_STRIKE  = 0
    WEAPON_DISARM_THRUST  = 0
    WEAPON_DISARM_SLASH = 5
+   
+   % Parry bonus
+   WEAPON_PARRY_STRIKE  = 0
+   WEAPON_PARRY_THRUST  = 10
+   WEAPON_PARRY_SLASH = 20
 
    % Spell modifier, large negatives are bad.
    WEAPON_SPELL_STRIKE  = 10
@@ -374,6 +379,29 @@ messages:
 
       return iDisarm;
    }
+   
+   % Return parry ability, include bonuses.
+   GetParryAbility(who=$)
+   {
+      local iParry;
+      
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_STRIKE
+      {
+         iParry = WEAPON_PARRY_STRIKE;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iParry = WEAPON_PARRY_THRUST;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iParry = WEAPON_PARRY_SLASH;
+      }
+      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY)*(100+iParry)/100;
+   }
 
    GetBaseSpellModifier()
    {
@@ -448,13 +476,6 @@ messages:
       return;
    }
 
-   % Return parry ability, include bonuses.
-   % TODO: Define standard bonuses for various weapon types.
-   GetParryAbility(who=$)
-   {
-      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
-   }
-      
    % What is the weapon's name for use in the attack messages?
    GetAttackName()
    {
@@ -545,6 +566,25 @@ messages:
 
    WeaponAttack(what = $)
    "Called by ReqWeaponAttack when the weapon is actually used in an attack."
+   {
+      piUsed = ATTACKING;
+      
+      if vrWeapon_window_overlay <> $
+      {
+         Send(poOwner,@ChangeWindowOverlay,#what=self);
+      }
+      
+      if vrWeapon_overlay <> $
+      {
+         Send(poOwner,@DoAttackSwing);
+      }
+      
+      piUsed = USED;
+
+      return;
+   }
+
+   DoParryAnimation()
    {
       piUsed = ATTACKING;
       

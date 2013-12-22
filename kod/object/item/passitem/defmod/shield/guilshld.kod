@@ -114,7 +114,7 @@ classvars:
    viBulk = 150
 
    viDefense_base = 20
-   viDamage_flat_base = 2
+   viDamage_flat_base = 5
 
 properties:
 

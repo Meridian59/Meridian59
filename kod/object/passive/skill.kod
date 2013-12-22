@@ -229,8 +229,8 @@ messages:
 
       iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
       iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
-      num = ((100-iRequisiteStat)*iAbility/100) + iRequisiteStat;
-      num = num + modifier;
+      num = (iAbility+1)/4 + iRequisiteStat/2;
+      num = num *(100+modifier)/100;
 
       if random(1,100) > num
       {

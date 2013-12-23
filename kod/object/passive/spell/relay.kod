@@ -31,8 +31,6 @@ resources:
    Relay_toolow_rsc = "You do not have enough vigor to transfer to another!"
    Relay_notonself_rsc = "You cannot cast Relay on yourself."
 
-   Relay_no_ao3_soth = "Your spell fails. Despite what your target ~Iappears~I to be, it is not actually human..."
-
    Relay_spell_intro = "Kraanan Lv. 1: Gives part of caster's vigor to another person."
 
    Relay_sound = krelay.wav
@@ -105,13 +103,6 @@ messages:
       {
          Send(who,@MsgSendUser,#message_rsc=Relay_toolow_rsc);
 
-         return FALSE;
-      }
-      
-      if Send(target,@IsNecromancer)
-         OR Send(target,@IsHunter)
-      {
-         Send(who,@MsgSendUser,#message_rsc=Relay_no_ao3_soth);
          return FALSE;
       }
 

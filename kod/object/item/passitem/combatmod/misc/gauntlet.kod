@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Gauntlet is AttackModifier
+Gauntlet is Misc
 
 constants:
 
@@ -79,10 +79,6 @@ classvars:
    viDamage_base = 5
 
 properties:
-
-   piDefense_bonus = 5
-   piAttack_bonus = 5
-   piDamage_bonus = 5
 
 messages:
 
@@ -269,11 +265,14 @@ messages:
       local oWeapon;
 
       oWeapon = Send(who,@GetWeapon);
-      if IsClass(oWeapon,&RangedWeapon)
-      {
-         return 0;
+	  
+	  if oWeapon <> $
+	  {
+         if IsClass(oWeapon,&RangedWeapon)
+         {
+            return 0;
+         }
       }
-
       return piAttack_bonus;
    }
    
@@ -281,11 +280,14 @@ messages:
    {
       local oWeapon;
       
-      % Add damage to non-ranged weapons (and punch)
       oWeapon = Send(who,@GetWeapon);
-      if IsClass(oWeapon,&RangedWeapon)
-      {
-         return 0;
+	  
+	  if oWeapon <> $
+	  {
+         if IsClass(oWeapon,&RangedWeapon)
+         {
+            return 0;
+         }
       }
 
       return piDamage_bonus;

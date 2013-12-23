@@ -139,11 +139,11 @@ messages:
       }
 
       % Give bonuses if we're in a darker room.
-      iShadowBonus = 30 + (LIGHT_NICE - iLight);
+      iShadowBonus = (LIGHT_NICE - iLight)/10;
 
-      iShadowBonus = bound(iShadowBonus,10,150); 
+      iShadowBonus = bound(iShadowBonus,0,10); 
 
-      return defense_power + iShadowBonus;
+      return iShadowBonus;
    }
 
 

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-AttackModifier is PassiveItem
+Misc is CombatModifier
 
 constants:
 
@@ -18,40 +18,9 @@ resources:
 
 classvars:
 
-
-
 properties:
 
 messages:
 
-   NewUsed(what = $)
-   {
-      Send(what,@AddAttackModifier,#what=self);
-
-      propagate;
-   }
-
-   NewUnused(what = $)
-   {
-      Send(what,@RemoveAttackModifier,#what=self);
-
-      propagate;
-   }
-
-   WeaponHitTarget()
-   {
-      return;
-   }
-
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
-   {
-      return 0;
-   }
-   
-   ModifyDamage(who = $,what = $,damage = $)
-   {
-      return 0;
-   }
-   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

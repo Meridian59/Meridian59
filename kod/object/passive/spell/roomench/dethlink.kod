@@ -182,18 +182,5 @@ messages:
       return;
    }
 
-   % Stuff we handle to be an attack modifier.
-
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
-   {
-      return 0;
-   }
-   
-   ModifyDamage(who = $,what = $,damage = $)
-   {
-      return 0;
-   }
-
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

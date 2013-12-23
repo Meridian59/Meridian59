@@ -57,6 +57,12 @@ classvars:
 
 properties:
 
+   piDamage_percent_reduce = 0
+   piDamage_flat_reduce = 0
+   piDefense_bonus = 0
+   piAttack_bonus = 0
+   piDamage_bonus = 0
+
 messages:
 
    GetNumSpellTargets()
@@ -225,31 +231,88 @@ messages:
 
    %%% Defense and attack modifier stuff.
 
-   ModifyDamage(damage = $)
-   {
-      return 0;
-   }
-
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
-      return 0;
+      local iAttackbonus;
+
+      iAttackbonus = piAttack_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+	  
+	  return iAttackbonus;
+   }
+   
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      local iDamagebonus;
+
+      iDamagebonus = piDamage_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+	  
+	  return iDamagebonus;
    }
 
-   DefendingHit()
+   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Increase or decrease damage done to defender by a flat amount."
+   {
+      local iDamageflatreduce;
+
+      iDamageflatreduce = piDamage_flat_reduce * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Half of the damage reduction if we're doing both weapon
+            % and spell damage types.
+            iDamageflatreduce = iDamageflatreduce / 2;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iDamageflatreduce = 0;
+         }
+      }
+      
+      return iDamageflatreduce;
+   }
+   
+   ModifyDefenseDamagePercent(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "Increase or decrease damage done to defender by a percentage."
+   {
+      local iDamagepercentreduce;
+
+      iDamagepercentreduce = piDamage_percent_reduce * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Half of the damage reduction if we're doing both weapon
+            % and spell damage types.
+            iDamagepercentreduce = iDamagepercentreduce / 2;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iDamagepercentreduce = 0;
+         }
+      }
+      
+      return iDamagepercentreduce;
+   }
+
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      local iDefensebonus;
+	  
+      iDefensebonus = piDefense_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+	  return iDefensebonus;
+   }
+
+   DefendingHit(who = $,what = $)
    {
       return;
    }
-
-   ModifyDefenseDamageFlat(damage = $)
-   {
-      return 0;
-   }
-
-   ModifyDefensePower(who = $, what = $,defense_power = $)
-   {
-      return 0;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

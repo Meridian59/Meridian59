@@ -64,6 +64,12 @@ classvars:
    vbCanCastOnOthers = FALSE  
 
 properties:
+
+   piDamage_percent_reduce = -30
+   piDamage_flat_reduce = 0
+   piDefense_bonus = -30
+   piAttack_bonus = 30
+   piDamage_bonus = 30
    
 messages:
 
@@ -78,6 +84,7 @@ messages:
    CastSpell(who = $,iSpellPower= 0, ltargets = $)
    {
       Send(who,@AddAttackModifier,#what=self);
+      Send(who,@AddDefenseModifier,#what=self);
      
       propagate;
    }
@@ -98,33 +105,11 @@ messages:
 
    EndEnchantment(who=$, report=TRUE, state=0)
    {
-      local oHoldSpell, iDuration;
 
       Send(who,@RemoveAttackModifier,#what=self);
-
-      % Now, for the side effect.  Hold 'em!
-      oHoldSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
-      if Send(who,@IsEnchanted,#what=oHoldSpell)
-      {
-         Send(who,@RemoveEnchantment,#what=oHoldSpell,#report=FALSE);
-      }
-      
-      % Hold duration is measured in seconds, not milliseconds.  Lasts 1/6 the time of the bonus.
-      iDuration = (Send(self,@GetDuration,#iSpellPower=state))/6;
-      Send(oHoldSpell,@DoHold,#what=self,#otarget=who,#iDuration=iDuration,#report=TRUE,#bAllowFreeAction=FALSE);
-      
-      propagate;
-   }
-
-   % stuff we handle to be an attack modifier
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
-   {      
-      return (send(who,@GetEnchantedState,#what=self)+1)/5;
-   }
+      Send(who,@RemoveDefenseModifier,#what=self);
    
-   ModifyDamage(who = $,what = $,damage = $)
-   {
-      return (send(who,@GetEnchantedState,#what=self)+1)/5;
+      propagate;
    }
 
    GetPotionClass()

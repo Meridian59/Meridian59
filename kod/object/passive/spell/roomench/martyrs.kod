@@ -35,7 +35,9 @@ resources:
       "in the area."
 
    martyrsbg_new_entrant = \
-      "You imagine you can feel the presence of the gods watching you."
+      "You imagine you can feel the presence of the gods watching you and bolstering your defenses."
+	  
+   martyrsbg_leave = "The strange feeling of divine guidance subsides."
 
    martrysbg_sound = smatbat.wav
 
@@ -56,6 +58,9 @@ classvars:
    vbCastable_in_HappyLand = FALSE
 
 properties:
+
+   piDamage_percent_reduce = 5
+   piDefense_bonus = 5
 
 messages:
 
@@ -78,6 +83,7 @@ messages:
       local oRoom;
 
       oRoom = Send(who,@GetOwner);
+	  
       % check if room already has martyrsbg
       if Send(oRoom,@IsEnchanted,#what=self)
       {
@@ -89,29 +95,55 @@ messages:
       propagate;
    }
 
-
    CastSpell(who = $, iSpellPower = 0)
-   "Initiation point for the spell."
    {
       local oRoom;
 
       oRoom = Send(who,@GetOwner);
 
-      if Send(oRoom,@IsEnchanted,#what=self)
-      {
-         Send(who,@MsgSendUser,#message_rsc=martyrsbg_unnecessary);
-
-         return;
-      }
-
       % global effects of the enchantment
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=martyrsbg_on,#what=self);
-      Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellPower+50,
-           #time=send(self,@GetDuration,#iSpellPower=iSpellPower));
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellPower*2,#time=send(self,@GetDuration,#iSpellPower=iSpellPower));
+      Send(oRoom,@EnchantAllOccupants,#what=self);
       
       propagate;
    }
 
+   StartEnchantmentNewOccupant(who = $)
+   "Called on new occupants of the enchanted room."
+   {
+      Send(self,@StartEnchantment,#who=who);
+
+      return;
+   }
+   
+   StartEnchantment(who = $)
+   "Starts enchantment effect on one player"
+   {
+      Send(who,@AddDefenseModifier,#what=self);
+      Send(who,@MsgSendUser,#message_rsc=martyrsbg_new_entrant);
+      
+      return;
+   }
+
+   EndSpell( where = $, state = $ )
+   "Called when spell expires."
+   {
+      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=martyrsbg_off,#what=self);
+      Send(where,@UnenchantAllOccupants,#what=self,#state=state);
+
+      return;
+   }
+   
+   EndRoomEnchantment(who = $, state = $)
+   "Remove enchantment effects on this occupant"
+   {
+      Send(who,@RemoveDefenseModifier,#what=self);
+      Send(who,@MsgSendUser,#message_rsc=martyrsbg_leave);
+      
+      return;
+   }
+   
    GetDuration(iSpellPower=0)
    {
       local iDuration;
@@ -121,23 +153,6 @@ messages:
 
       return random(iDuration/2,iDuration);
    }
-
-   StartEnchantmentNewOccupant( who = $ )
-   "Called on new occupants of the enchanted room."
-   {
-      Send(who,@MsgSendUser,#message_rsc=martyrsbg_new_entrant);
-
-      return;
-   }
-
-   EndSpell( where = $, state = $ )
-   "Called when spell expires."
-   {
-      Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=martyrsbg_off,#what=self);
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -4370,9 +4370,9 @@ messages:
          
          iOffense = 250 + (iStroke*25/10) + (iProficiency*5) + (iStat*20);
 
-         if oWeapon <> $
+         if IsClass(oWeapon,&Weapon)
          {
-		    iBonus = Send(oWeapon,@ModifyHitRoll,#target=what,#hit_roll=iOffense);
+            iBonus = Send(oWeapon,@ModifyHitRoll,#target=what,#hit_roll=iOffense);
             iOffense = iOffense * (100 + iBonus)/100;
          }
       }

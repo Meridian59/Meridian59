@@ -49,6 +49,9 @@ classvars:
 
 properties:
 
+   piAttack_bonus = 10
+   piDamage_bonus = 10
+
 messages:
 
    ResetReagents()
@@ -90,7 +93,6 @@ messages:
 
       % global effects of the enchantment
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=forcesoflight_on,#what=self);
-
       Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellpower,#time=send(self,@GetDuration,#iSpellpower=iSpellpower),#state=$);
       Send(oRoom,@EnchantAllOccupants,#what=self);
 
@@ -135,18 +137,6 @@ messages:
       return;
    }
 
-   % stuff we handle to be an attack modifier
-
-   ModifyHitRoll(who = $, what = $, hit_roll = $)
-   {
-      return (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
-   }
-   
-   ModifyDamage(who = $, what = $, damage = $)
-   {
-      return (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
-   }
-
    GetDuration(iSpellpower = $)
    {
       local iDuration;
@@ -158,7 +148,6 @@ messages:
 
       return iDuration;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

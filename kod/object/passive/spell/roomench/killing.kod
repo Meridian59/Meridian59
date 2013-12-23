@@ -45,6 +45,12 @@ classvars:
    viChance_To_Increase = 35
 
 properties:
+
+   piDamage_percent_reduce = 0
+   piDamage_flat_reduce = 0
+   piDefense_bonus = 0
+   piAttack_bonus = 0
+   piDamage_bonus = 20
   
 messages:
 
@@ -140,19 +146,6 @@ messages:
 
       return duration;
    }
-
-   % Stuff we handle to be an attack modifier.
-
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
-   {
-      return 0;
-   }
-   
-   ModifyDamage(who = $,what = $,damage = $)
-   {
-         return (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/5;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

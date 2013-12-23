@@ -59,6 +59,8 @@ classvars:
 
 properties:
 
+   piDefense_bonus = 10
+
 messages:
 
    ResetReagents()
@@ -111,27 +113,6 @@ messages:
       send(who,@RemoveDefenseModifier,#what=self);
       
       propagate;
-   }
-
-   % Stuff we handle to be a defense modifier.
-
-   ModifyDefensePower(who = $,what = $,defense_power = 0)
-   {
-      local iSpellpower;
-
-      iSpellpower = send(who,@GetEnchantedState,#what=self);
-      
-      return (defense_power + 25 + iSpellpower);
-   }
-
-   ModifyDefenseDamageFlat(who = $,what = $,damage = $)
-   {
-      return damage;
-   }
-
-   DefendingHit(who = $,what = $)
-   {
-      return;
    }
 
    IsIllusion()

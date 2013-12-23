@@ -4,7 +4,6 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\attmod.bof
+DEPEND = ..\misc.bof
 BOFS = frozjewl.bof gauntlet.bof
-
 !include $(KODDIR)\kod.mak

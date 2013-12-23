@@ -53,6 +53,8 @@ classvars:
 
 properties:
 
+      piDefense_bonus = 20
+	  
 messages:
 
    ResetReagents()
@@ -98,23 +100,6 @@ messages:
    GetPotionClass()
    {
       RETURN &MagicShieldPotion;
-   }
-
-   % Stuff we handle to be a defense modifier.
-
-   ModifyDefensePower(who = $,what = $,defense_power = 0)
-   {
-      return send(who,@GetEnchantedState,#what=self)/5;
-   }
-
-   ModifyDefenseDamageFlat(who = $,what = $,damage = $)
-   {
-      return damage;
-   }
-
-   DefendingHit(who = $,what = $)
-   {
-      return;
    }
 
    

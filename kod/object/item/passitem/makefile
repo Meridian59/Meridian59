@@ -5,7 +5,7 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\passitem.bof
-BOFS = attmod.bof defmod.bof healer.bof key.bof \
+BOFS = combatmod.bof healer.bof key.bof \
 	numbitem.bof scepter.bof weapon.bof chalice.bof \
 	spdregg.bof spdreggX.bof \
 	arsenic.bof necklace.bof ring.bof pforget.bof token.bof \

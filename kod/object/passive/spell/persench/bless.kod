@@ -59,6 +59,9 @@ classvars:
    viFlash = FLASH_GOOD_SELF
 
 properties:
+
+   piAttack_bonus = 10
+   piDamage_bonus = 10
    
 messages:
 
@@ -99,19 +102,6 @@ messages:
       
       propagate;
    }
-
-   % stuff we handle to be an attack modifier
-
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
-   {
-      return (Send(who,@GetEnchantedState,#what=self)+1)/10;
-   }
-   
-   ModifyDamage(who = $,what = $,damage = $)
-   {
-      return (Send(who,@GetEnchantedState,#what=self)+1)/10;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

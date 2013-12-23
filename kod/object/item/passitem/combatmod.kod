@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DefenseModifier is PassiveItem
+CombatModifier is PassiveItem
 
 constants:
 
@@ -31,12 +31,16 @@ classvars:
    viDefense_base = 0               % This is the default value for piDefense_bonus
    viDamage_percent_base = 0        % This is the default value for piDamage_percent_reduce
    viDamage_flat_base = 0           % This is the default value for piDamage_flat_reduce
+   viAttack_base = 0               %% This increases offense by a percentage
+   viDamage_base = 0               %% This increases damage by a percentage
 
 properties:
 
    piDefense_bonus = 0              %% This gives a player a percentage boost to his avoidance
    piDamage_percent_reduce = 0      %% This reduces damage by a percentage
    piDamage_flat_reduce = 0         %% This reduces damage by a flat amount
+   piAttack_bonus = 0               %% This increases offense by a percentage
+   piDamage_bonus = 0               %% This increases damage by a percentage
 
 messages:
 
@@ -45,13 +49,16 @@ messages:
       piDefense_bonus = viDefense_base;
       piDamage_percent_reduce = viDamage_percent_base;
 	  piDamage_flat_reduce = viDamage_flat_base;
-
+	  piAttack_bonus = viAttack_base;
+      piDamage_bonus = viDamage_base;
       propagate;
    }
 
    NewUsed(what = $)
    {
-      Send(what,@AddDefenseModifier,#what=self);
+
+      send(what,@AddAttackModifier,#what=self);
+      send(what,@AddDefenseModifier,#what=self);
       send(self,@AddResistances);
 
       propagate;
@@ -59,10 +66,16 @@ messages:
 
    NewUnused(what = $)
    {
-      Send(what,@RemoveDefenseModifier,#what=self);
+      send(what,@RemoveAttackModifier,#what=self);   
+      send(what,@RemoveDefenseModifier,#what=self);
       send(self,@RemoveResistances);
 
       propagate;
+   }
+   
+   WeaponHitTarget()
+   {
+      return;
    }
 
    AddResistances()
@@ -93,6 +106,16 @@ messages:
    {
       % format is [ [TYPE,resistance], [ATCK_WEAP_BLUDGEON,-20], ...]
       return [];
+   }
+   
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {
+      return piAttack_bonus;
+   }
+   
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      return piDamage_bonus;
    }
 
    ModifyDefensePower(who = $,what = $,defense_power = 0)

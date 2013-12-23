@@ -124,8 +124,6 @@ messages:
                         [ 10, ATCK_WEAP_SLASH ],
                         [-15, ATCK_WEAP_NERUDITE ]
                       ];
-      
-      plKilledBuffs = Cons(SID_EAGLE_EYES,plKilledBuffs);
 
       propagate;
    }

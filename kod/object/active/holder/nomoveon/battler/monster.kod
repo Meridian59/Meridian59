@@ -175,13 +175,6 @@ resources:
 
    monster_say_to_one = "~k%s%s tells you, \"%s~n~k\""
 
-   monster_refuse_service = \
-      "I'm a law abiding tradesman.  I refuse to serve bandits and thugs!"
-   monster_secret_service = \
-      "~IIt just doesn't look good for someone of my reputation.  Come back "
-      "later, alone, and maybe I'll help you out."
-   monster_illicit_service = \
-      "~IOkay, but be quiet about it, I have a reputation to keep."
    monster_iteach = "I teach "
    monster_atthatlevel = " at that level."
    monster_teachnothing = "I teach no abilities at that level."
@@ -5035,38 +5028,7 @@ messages:
 
    IsCustomerOkay(who=$)
    {
-      % Don't do business with a murderer in front of other customers.
-
-      if NOT (viAttributes & MOB_LAWFUL)
-      {
-         return TRUE;
-      }
-      
-      if IsClass(who,&Player)
-         AND Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-      {
-         if Send(Send(SYS,@GetParliament),@GetFactionSellToMurderer,
-                 #who=who,#seller=self)
-         {
-            return TRUE;
-         }
-      
-         if Send(poOwner,@CountHoldingHowMany,#class=&Player) > 1
-         {
-            Send(self,@Say,#message_rsc=monster_refuse_service);
-            Send(self,@SayToOne,#target=who,
-                 #message_rsc=monster_secret_service);
-            
-            return FALSE;
-         }
-         else
-         {
-            Send(self,@SayToOne,#target=who,
-                 #message_rsc=monster_illicit_service);
-            
-            return TRUE;
-         }
-      }
+      % Do business with everyone.
 
       return TRUE;
    }

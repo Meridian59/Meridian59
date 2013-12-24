@@ -33,7 +33,7 @@ classvars:
    vrDesc = mace_desc_rsc
 
    % Maces are average quality striking weapons
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_LOW
 
    viProficiency_Needed = SKID_PROFICIENCY_MACE
 
@@ -51,7 +51,7 @@ classvars:
 
 properties:
 
-   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
+   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_STRIKE
 
 messages:
 

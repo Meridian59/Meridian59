@@ -74,7 +74,7 @@ classvars:
 
    viTreasure_type = TID_TOUGH
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_BLUDGEON
+   viAttack_types = ATCK_WEAP_STRIKE
    viAttributes = 0
    viLevel = 150
    viDifficulty = 7
@@ -94,7 +94,7 @@ messages:
    Constructed()
    {
       plResistances = [ [ -10, ATCK_WEAP_MAGIC ],
-                        [  30, ATCK_WEAP_BLUDGEON ],
+                        [  30, ATCK_WEAP_STRIKE ],
                         [  50, -ATCK_SPELL_QUAKE ]
                       ];
 

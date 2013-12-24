@@ -148,7 +148,7 @@ messages:
       plResistances = [ [ 60, -ATCK_SPELL_ALL],
                         [ 60,  ATCK_WEAP_ALL],
                         [-20,  ATCK_WEAP_NERUDITE ],
-                        [-20,  ATCK_WEAP_BLUDGEON ],
+                        [-20,  ATCK_WEAP_STRIKE ],
                         [-60,  ATCK_WEAP_SILVER ],
                         [ 90, -ATCK_SPELL_COLD],
                         [ 90, -ATCK_SPELL_UNHOLY ],

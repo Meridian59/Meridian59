@@ -28,7 +28,7 @@ classvars:
 
 properties:
    
-   piAttack_Type = ATCK_WEAP_BLUDGEON
+   piAttack_Type = ATCK_WEAP_STRIKE
 
 messages:
 

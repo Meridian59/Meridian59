@@ -1730,7 +1730,7 @@
    % ATCK_WEAP_HIT means no weapon wielded (default value)
    ATCK_WEAP_HIT         = 0x00008
    % bludgeon/pierce/thrust/slash are mundane weapon types
-   ATCK_WEAP_BLUDGEON    = 0x00010
+   ATCK_WEAP_STRIKE    = 0x00010
    ATCK_WEAP_PIERCE      = 0x00020
    ATCK_WEAP_THRUST      = 0x00040
    ATCK_WEAP_SLASH       = 0x00080
@@ -1997,6 +1997,7 @@
    SID_CONVEYANCE = 184
    SID_DEATH_RIFT = 185
    SID_CONSIDER = 186
+   SID_BERSERKER_AXE = 187
 
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT

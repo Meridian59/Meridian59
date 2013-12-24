@@ -64,7 +64,7 @@ messages:
    Constructed()
    {
       plResistances = [ [ 65, -ATCK_SPELL_FIRE ],
-                        [ 65, ATCK_WEAP_BLUDGEON ],
+                        [ 65, ATCK_WEAP_STRIKE ],
                         [ -10, ATCK_WEAP_NERUDITE ],
                         [ -10, ATCK_WEAP_MAGIC] ];
 

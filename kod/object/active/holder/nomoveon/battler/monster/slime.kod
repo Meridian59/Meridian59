@@ -70,7 +70,7 @@ messages:
                         [ 45, -ATCK_SPELL_HOLY ],
                         [ 45, -ATCK_SPELL_ACID ],
                         [ 45, ATCK_WEAP_ALL ],
-			[ 10, ATCK_WEAP_BLUDGEON ],
+			[ 10, ATCK_WEAP_STRIKE ],
                         [-25, -ATCK_SPELL_COLD ] ];
       propagate;
    }

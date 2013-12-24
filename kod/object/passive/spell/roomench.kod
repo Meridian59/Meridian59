@@ -68,18 +68,24 @@ messages:
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
       local iAttackbonus;
-
-      iAttackbonus = piAttack_bonus * (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
 	  
+	  iAttackbonus = 0;
+	  if piAttack_bonus <> 0
+	  {
+         iAttackbonus = piAttack_bonus * (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
+	  }
 	  return iAttackbonus;
    }
    
    ModifyDamage(who = $,what = $,damage = $)
    {
       local iDamagebonus;
-
-      iDamagebonus = piDamage_bonus * (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
 	  
+	  iDamagebonus = 0;
+	  if piDamage_bonus <> 0
+	  {
+         iDamagebonus = piDamage_bonus * (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
+	  }
 	  return iDamagebonus;
    }
 
@@ -88,8 +94,11 @@ messages:
    {
       local iDamageflatreduce;
 
-      iDamageflatreduce = piDamage_flat_reduce * (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
-
+      iDamageflatreduce = 0;
+	  if piDamage_flat_reduce <> 0
+	  {
+         iDamageflatreduce = piDamage_flat_reduce * (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
+      }
       if aspell <> 0
       {
          % Reduce damage if part of the damage is spell
@@ -114,8 +123,11 @@ messages:
    {
       local iDamagepercentreduce;
 
-      iDamagepercentreduce = piDamage_percent_reduce * (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
-
+      iDamagepercentreduce = 0;
+	  if piDamage_percent_reduce <> 0
+	  {
+         iDamagepercentreduce = piDamage_percent_reduce * (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
+      }
       if aspell <> 0
       {
          % Reduce damage if part of the damage is spell
@@ -139,7 +151,12 @@ messages:
    {
       local iDefensebonus;
 	  
-      iDefensebonus = piDefense_bonus * (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
+      iDefensebonus = 0;
+	  if piDefense_bonus <> 0
+	  {
+         iDefensebonus = piDefense_bonus * (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
+      }
+	  
 	  return iDefensebonus;
    }
 

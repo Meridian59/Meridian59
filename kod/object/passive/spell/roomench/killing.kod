@@ -77,25 +77,23 @@ messages:
       % check for enchantment already applied
       if Send(oRoom,@IsEnchanted,#what=self)
       {
-         Send(who,@MsgSendUser,#message_rsc=killingfields_already_enchanted);
-         
-         return FALSE;
+	      Send(who,@MsgSendUser,#message_rsc=killingfields_already_enchanted);
+	      
+	      return FALSE;
       }
 
       propagate;
    }
 
-   CastSpell(who = $,iSpellPower = 0)
+   CastSpell(who = $, iSpellpower = $)
    {
       local oRoom;
 
       oRoom = Send(who,@GetOwner);
 
-      % Global effects of the enchantment.
+      % global effects of the enchantment
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=killingfields_on,#what=self);
-
-      Send(oRoom,@RoomStartEnchantment,#what=self,#state=$,
-           #time=send(self,@GetDuration,#iSpellPower=iSpellPower));
+      Send(oRoom,@RoomStartEnchantment,#what=self,#state=iSpellpower,#time=send(self,@GetDuration,#iSpellpower=iSpellpower),#state=$);
       Send(oRoom,@EnchantAllOccupants,#what=self);
 
       propagate;
@@ -106,7 +104,7 @@ messages:
    {
       Send(who,@MsgSendUser,#message_rsc=killingfields_on_new_entrant);
       Send(self,@StartEnchantment,#who=who);
-
+      
       return;
    }
 
@@ -114,24 +112,24 @@ messages:
    "Starts enchantment effect on one player"
    {
       Send(who,@AddAttackModifier,#what=self);
-
+      
       return;
    }
 
-   EndSpell(where = $,state = $)
+   EndSpell(where = $, state = $)
    "Called when spell expires."
    {
       Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=killingfields_off,#what=self);
       Send(where,@UnenchantAllOccupants,#what=self,#state=state);
-
+      
       return;
    }
 
-   EndRoomEnchantment(who = $,state = $)
+   EndRoomEnchantment(who = $, state = $)
    "Remove enchantment effects on this occupant"
    {
       Send(who,@RemoveAttackModifier,#what=self);
-
+      
       return;
    }
 

@@ -74,7 +74,7 @@ messages:
                         [ 70, -ATCK_SPELL_FIRE ],
                         [ -10, -ATCK_SPELL_COLD ],
                         [ -20, -ATCK_SPELL_HOLY ],
-                        [ -20, ATCK_WEAP_BLUDGEON ]
+                        [ -20, ATCK_WEAP_STRIKE ]
                       ];
 
       return;

@@ -8,39 +8,39 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CreateSpiritualHammer is Spell
+CreateBerserkerAxe is Spell
 
 constants:
    include blakston.khd
 
 resources:
 
-   createspiritualhammer_cast_rsc = "A spiritual hammer appears."
-   createspiritualhammer_inv_full_rsc = "A spiritual hammer appears in the air before you, "
+   createberserkeraxe_cast_rsc = "A berserker axe appears."
+   createberserkeraxe_inv_full_rsc = "A berserker axe appears in the air before you, "
       "but before you can drop something and grab it, it vanishes."
 
-   createspiritualhammer_name_rsc = "spiritual hammer"
-   createspiritualhammer_icon_rsc = ispirith.bgf
-   createspiritualhammer_desc_rsc = \
-      "Materializes a spiritual hammer.  "
-      "Requires emeralds and orc teeth to cast."
+   createberserkeraxe_name_rsc = "berserker axe"
+   createberserkeraxe_icon_rsc = axeico.bgf
+   createberserkeraxe_desc_rsc = \
+      "Materializes a berserker axe.  "
+      "Requires entroot berries and orc teeth to cast."
 
-   createspiritualhammer_sound = sspham.wav
+   createberserkeraxe_sound = qcurweap.wav
 
 classvars:
 
-   vrName = createspiritualhammer_name_rsc
-   vrIcon = createspiritualhammer_icon_rsc
-   vrDesc = createspiritualhammer_desc_rsc
+   vrName = createberserkeraxe_name_rsc
+   vrIcon = createberserkeraxe_icon_rsc
+   vrDesc = createberserkeraxe_desc_rsc
    
-   viSpell_num = SID_SPIRITUAL_HAMMER
-   viSchool = SS_SHALILLE
+   viSpell_num = SID_BERSERKER_AXE
+   viSchool = SS_QOR
    viSpell_level = 3
    viMana = 15
    viSpellExertion = 5
    viCast_time = 5000
 
-   vrSucceed_wav = createspiritualhammer_sound
+   vrSucceed_wav = createberserkeraxe_sound
 
 properties:
 
@@ -52,7 +52,7 @@ messages:
       % separate message so can change, then set from admin mode
 
       plReagents = $;
-      plReagents = Cons([&Emerald,2],plReagents);
+      plReagents = Cons([&EntrootBerry,2],plReagents);
       plReagents = Cons([&OrcTooth,1],plReagents);
 
       return;
@@ -76,21 +76,21 @@ messages:
 
    CastSpell(who = $, lTargets = $,iSpellPower = $)
    {
-      local oSpiritualHammer, iLongevity, iToHitBonus;
+      local oBerserkerAxe, iLongevity, iToHitBonus;
 
       iLongevity = send(self,@GetLongevity,#iSpellPower=iSpellPower);
       iToHitBonus = iSpellPower/5;
-      oSpiritualHammer = Create(&SpiritualHammer,#iLongevity=iLongevity,#iToHitBonus=iToHitBonus);
+      oBerserkerAxe = Create(&BerserkerAxe,#iLongevity=iLongevity,#iToHitBonus=iToHitBonus);
 
-      if Send(who,@ReqNewHold,#what=oSpiritualHammer)
+      if Send(who,@ReqNewHold,#what=oBerserkerAxe)
       {
-         Send(who,@NewHold,#what=oSpiritualHammer);
-         Send(who,@MsgSendUser,#message_rsc=createspiritualhammer_cast_rsc);
+         Send(who,@NewHold,#what=oBerserkerAxe);
+         Send(who,@MsgSendUser,#message_rsc=createberserkeraxe_cast_rsc);
       }
       else
       {
-         Send(oSpiritualHammer,@Delete);
-         Send(who,@MsgSendUser,#message_rsc=createspiritualhammer_inv_full_rsc);
+         Send(oBerserkerAxe,@Delete);
+         Send(who,@MsgSendUser,#message_rsc=createberserkeraxe_inv_full_rsc);
       }
 
       propagate;

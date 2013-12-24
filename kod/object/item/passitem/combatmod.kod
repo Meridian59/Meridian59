@@ -104,7 +104,7 @@ messages:
 
    GetResistanceModifiers()
    {
-      % format is [ [TYPE,resistance], [ATCK_WEAP_BLUDGEON,-20], ...]
+      % format is [ [TYPE,resistance], [ATCK_WEAP_STRIKE,-20], ...]
       return [];
    }
    

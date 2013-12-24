@@ -234,8 +234,12 @@ messages:
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
       local iAttackbonus;
-
-      iAttackbonus = piAttack_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+	  
+      iAttackbonus = 0;
+	  if piAttack_bonus <> 0
+	  {
+         iAttackbonus = piAttack_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+	  }
 	  
 	  return iAttackbonus;
    }
@@ -243,8 +247,12 @@ messages:
    ModifyDamage(who = $,what = $,damage = $)
    {
       local iDamagebonus;
-
-      iDamagebonus = piDamage_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+	  
+      iDamagebonus = 0;
+	  if piDamage_bonus <> 0
+	  {
+         iDamagebonus = piDamage_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+	  }
 	  
 	  return iDamagebonus;
    }
@@ -253,9 +261,13 @@ messages:
    "Increase or decrease damage done to defender by a flat amount."
    {
       local iDamageflatreduce;
-
-      iDamageflatreduce = piDamage_flat_reduce * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
-
+	  
+      iDamageflatreduce = 0;
+	  if piDamage_flat_reduce <> 0
+	  {
+         iDamageflatreduce = piDamage_flat_reduce * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+      }
+	  
       if aspell <> 0
       {
          % Reduce damage if part of the damage is spell
@@ -279,9 +291,13 @@ messages:
    "Increase or decrease damage done to defender by a percentage."
    {
       local iDamagepercentreduce;
-
-      iDamagepercentreduce = piDamage_percent_reduce * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
-
+	  
+      iDamagepercentreduce = 0;
+	  if piDamage_percent_reduce <> 0
+	  {
+         iDamagepercentreduce = piDamage_percent_reduce * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+      }
+	  
       if aspell <> 0
       {
          % Reduce damage if part of the damage is spell
@@ -305,7 +321,12 @@ messages:
    {
       local iDefensebonus;
 	  
-      iDefensebonus = piDefense_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+      iDefensebonus = 0;
+	  if piDefense_bonus <> 0
+	  {
+         iDefensebonus = piDefense_bonus * (send(who,@GetEnchantedState,#what=self) + 1) / 100;
+      }
+	  
 	  return iDefensebonus;
    }
 

@@ -34,7 +34,7 @@ classvars:
    viIndefinite = ARTICLE_AN
 
    % Axes are normal quality striking weapons.
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_AXE
    
@@ -51,7 +51,7 @@ classvars:
 
 properties:
 
-   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_SLASH
+   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_STRIKE
 
 messages:
 

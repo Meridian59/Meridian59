@@ -32,7 +32,7 @@ classvars:
    vrDesc = hammer_desc_rsc
 
    % Hammers are low quality striking weapons
-   viWeaponQuality = WEAPON_QUALITY_LOW
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_HAMMER
 
@@ -49,7 +49,7 @@ classvars:
 
 properties:
 
-   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_BLUDGEON
+   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_STRIKE
 
 messages:
 

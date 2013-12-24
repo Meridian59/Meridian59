@@ -115,15 +115,15 @@ resources:
    battler_punch_wound = "pummels"
    battler_punch_nick = "slaps"
 
-   battler_slash_slay = "cleaves"
-   battler_slash_damage = "maims"
+   battler_slash_slay = "dispatches"
+   battler_slash_damage = "slices through"
    battler_slash_wound = "slashes"
    battler_slash_nick = "cuts"
 
-   battler_bludgeon_slay = "brutalizes"
-   battler_bludgeon_damage = "smashes"
-   battler_bludgeon_wound = "crushes"
-   battler_bludgeon_nick = "bashes"
+   battler_strike_slay = "massacres"
+   battler_strike_damage = "maims"
+   battler_strike_wound = "strikes"
+   battler_strike_nick = "smacks"
 
    battler_thrust_slay = "runs through"
    battler_thrust_damage = "impales"
@@ -740,26 +740,26 @@ messages:
             }
          }
 
-         if (type & ATCK_WEAP_BLUDGEON)
+         if (type & ATCK_WEAP_STRIKE)
          {
             if damage = $
             {
-               return battler_bludgeon_slay;
+               return battler_strike_slay;
             }
 
             if damage > DAMAGE_THRESHOLD_DAMAGE
             {
-               return battler_bludgeon_damage;
+               return battler_strike_damage;
             }
 
             if damage > DAMAGE_THRESHOLD_WOUND
             {
-               return battler_bludgeon_wound;
+               return battler_strike_wound;
             }
 
             if damage > 0
             {
-               return battler_bludgeon_nick;
+               return battler_strike_nick;
             }         
          }
 

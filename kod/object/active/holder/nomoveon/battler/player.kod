@@ -227,7 +227,7 @@ resources:
    player_was_missed = "%s%s%s misses you."
    player_was_hit = "%s%s%s hits you."
    player_was_slashed = "%s%s%s slashes your side, leaving a nasty cut."
-   player_was_bludgeoned = "%s%s%s bludgeons you, causing a large bruise."
+   player_was_struck = "%s%s%s strikes you to the ground."
    player_was_pierced = "%s%s%s slyly pierces you while you were distracted."
    player_was_thrusted = "%s%s%s skewers you with a deft thrust. Sluish!"
    player_was_burned = "%s%s%s's fire flares brightly, leaving you charred."
@@ -9758,7 +9758,7 @@ messages:
          if (atype&ATCK_WEAP_CLAW) > 0 { return player_was_clawed;}
          if (atype&ATCK_WEAP_STING) > 0 { return player_was_stung;}
          if (atype&ATCK_WEAP_SLASH) > 0 { return player_was_slashed;}
-         if (atype&ATCK_WEAP_BLUDGEON) > 0 { return player_was_bludgeoned;}
+         if (atype&ATCK_WEAP_STRIKE) > 0 { return player_was_struck;}
          if (atype&ATCK_WEAP_PIERCE) > 0 { return player_was_pierced;}
          if (atype&ATCK_WEAP_THRUST) > 0 { return player_was_thrusted;}
 

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-SpiritualHammer is StrikingWeapon
+BerserkerAxe is StrikingWeapon
 
 constants:
 
@@ -16,34 +16,33 @@ constants:
 
 resources:
 
-   spirithammer_name_rsc = "spiritual hammer"
-   spirithammer_icon_rsc = hammer.bgf
-   spirithammer_desc_rsc = \
-      "Inherently having holy blessings, this hammer is even more powerful "
-      "than the standard variation."
+   berserkeraxe_name_rsc = "berserker axe"
+   berserkeraxe_icon_rsc = axe.bgf
+   berserkeraxe_desc_rsc = \
+      "This axe is clearly possessed by an evil spirit, granting the wielder great power, but at what price?"
 
-   spirithammer_expires = "Your spiritual hammer disappears in a puff of smoke!"
+   berserkeraxe_expires = "Your berserker axe disappears in a puff of smoke!"
 
-   spirithammer_window_overlay_rsc = povhamr.bgf
-   spirithammer_player_overlay = hamrov.bgf
+   berserkeraxe_window_overlay_rsc = povaxe.bgf
+   berserkeraxe_player_overlay = axeov.bgf
 
 classvars:
-   vrName = spirithammer_name_rsc
-   vrIcon = spirithammer_icon_rsc
-   vrDesc = spirithammer_desc_rsc
+   vrName = berserkeraxe_name_rsc
+   vrIcon = berserkeraxe_icon_rsc
+   vrDesc = berserkeraxe_desc_rsc
 
-   % Spiritual Hammers are high quality striking weapons
+   % Berserker Axes are high quality striking weapons
    viWeaponQuality = WEAPON_QUALITY_HIGH
 
-   viProficiency_Needed = SKID_PROFICIENCY_HAMMER
+   viProficiency_Needed = SKID_PROFICIENCY_AXE
 
    viValue_average = 0
    % Light because it's magical.
    viWeight = 15
    viBulk = 60
 
-   vrWeapon_window_overlay = spirithammer_window_overlay_rsc
-   vrWeapon_overlay = spirithammer_player_overlay
+   vrWeapon_window_overlay = berserkeraxe_window_overlay_rsc
+   vrWeapon_overlay = berserkeraxe_player_overlay
 
    viGround_group = 1
    viInventory_group = 3
@@ -76,7 +75,7 @@ messages:
 
       ptLongevity = CreateTimer(self,@WeaponExpires,ilongevity);
  
-      send(self,@SetSpellFlag,#flag=ATCK_SPELL_HOLY,#value=TRUE);
+      send(self,@SetSpellFlag,#flag=ATCK_SPELL_UNHOLY,#value=TRUE);
 
       propagate;
    }
@@ -87,7 +86,7 @@ messages:
       
       if isclass(poOwner,&Player)
       {
-         send(poOwner,@MsgSendUser,#message_rsc=spirithammer_expires);
+         send(poOwner,@MsgSendUser,#message_rsc=berserkeraxe_expires);
       }
       
       send(self,@Delete);
@@ -108,7 +107,7 @@ messages:
 
    WeaponHitTarget()
    {
-      % Return here so that spiritual hammers don't get damaged.
+      % Return here so that berserker axes don't get damaged.
       return;
    }
 
@@ -137,10 +136,10 @@ messages:
       return FALSE;
    }
 
-   % Gives a bonus to Shal'ille spells since it's holy! Apart from that, same malus as other HQWs.
+   % Gives a bonus to Qor spells since it's holy! Apart from that, same malus as other HQWs.
    GetBaseSpellModifier(oSpell=$)
    {
-      if oSpell <> $ AND send(oSpell,@GetSchool) = SS_SHALILLE
+      if oSpell <> $ AND send(oSpell,@GetSchool) = SS_QOR
       {
          return 10;
       }

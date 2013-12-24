@@ -89,7 +89,7 @@ messages:
    Constructed()
    {
       plResistances = [ [ -20, ATCK_WEAP_MAGIC ],
-                        [ -30, ATCK_WEAP_BLUDGEON ],
+                        [ -30, ATCK_WEAP_STRIKE ],
                         [  70, -ATCK_SPELL_ACID ],
                         [  50, -ATCK_SPELL_QUAKE ]
                       ];

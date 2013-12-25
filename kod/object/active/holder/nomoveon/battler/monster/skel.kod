@@ -170,28 +170,6 @@ messages:
       return;
    }
 
-   CreateTreasure(who=$,corpse=$)
-   {
-      local oTreasure, iHits;
-      
-      oTreasure = Create(&LongSword,#corpse=corpse);
-      iHits = Bound(Send(oTreasure,@GetHits)/Random(2,4),1,$);
-      Send(oTreasure,@SetHits,#number=iHits);
-              
-      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,
-                  #new_row=piRow,#new_col=piCol)
-      {
-         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
-      }
-      else
-      {
-         Send(oTreasure,@Delete);
-      }
-      
-      propagate;
-   }
-
    CreateDeadBody(killer=$)
    {
       local oBody;

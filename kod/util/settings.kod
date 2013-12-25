@@ -145,6 +145,12 @@ properties:
 
    % Minimum swings needed for a chance to improve a weaponcraft skill.
    piWeaponcraftImprovementMinimumSwings = 75
+   
+   % Replaces old constant
+   piPKillEnableHP = 50
+   
+   % Replaces old constant
+   piIntrigueEnableHP = 50
 
 messages:
 
@@ -178,6 +184,16 @@ messages:
          } 
       }
       return;
+   }
+   
+   GetPKillEnableHP()
+   {
+      return piPKillEnableHP;
+   }
+   
+   GetIntrigueEnableHP()
+   {
+      return piIntrigueEnableHP;
    }
 
    %

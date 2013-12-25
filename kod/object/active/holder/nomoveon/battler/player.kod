@@ -2427,6 +2427,7 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       
       return;
    }
@@ -3792,7 +3793,7 @@ messages:
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
-               % A newbie (someone below pkill_enable_hp) tried to attack
+               % A newbie (someone below GetPKillEnableHP) tried to attack
                % another player! note that this does not affect murderers
                % who have been knocked below this level by angry retributers.
 
@@ -7772,7 +7773,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health < PKILL_ENABLE_HP
+         if piBase_Max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
          {
             gain = gain + 1;
          }
@@ -8260,7 +8261,7 @@ messages:
       }
 
       % Remove from guild if now under min HP
-      if piBase_max_health < PKILL_ENABLE_HP
+      if piBase_max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
       {
          Send(self, @QuitGuild);
       }
@@ -10974,7 +10975,7 @@ messages:
       
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         if poGuild = $ AND piBase_Max_health < PKILL_ENABLE_HP
+         if poGuild = $ AND piBase_Max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
@@ -10992,7 +10993,7 @@ messages:
       }
       else
       {
-         if poGuild <> $ OR piBase_Max_health >= PKILL_ENABLE_HP
+         if poGuild <> $ OR piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
             OR Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
@@ -11493,7 +11494,7 @@ messages:
    PlayerIsHPIntrigue()
    "If player has over 40hp base."
    {
-      return (piBase_Max_health >= INTRIGUE_ENABLE_HP);
+      return (piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetIntrigueEnableHP));
    }
 
    PlayerIsAdept()

@@ -675,7 +675,7 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
                if (IsMoveFastAction(last_move_action))
                   speed *= 2;
                MoveUpdateServer();
-			   moveReported = TRUE;
+               moveReported = TRUE;
                idLastObjNotify = idObjNotify;
             }
          }

@@ -5000,6 +5000,7 @@ messages:
                AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
                AND Send(oTreasure,@GetPos) <> $
                AND IsClass(who,&User)
+               AND Send(who,@IsAutolooting)
             {
                Send(who,@UserGet,#what=oTreasure);
             }

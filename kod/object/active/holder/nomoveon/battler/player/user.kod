@@ -294,6 +294,9 @@ resources:
    user_guildofficer_rsc = "guildofficer"
 
    user_default_url = "http://www.Meridian59.com/"
+   
+   autoloot_on_msg = "You decide to pick up treasure as it drops."
+   autoloot_off_msg = "You stop picking up treasure as it drops."
 
 classvars:
 
@@ -348,6 +351,8 @@ properties:
    piMoveOldRoom = RID_TOS
 
    piCheaterLogs = 0
+
+   pbAutoloot = TRUE
 
 messages:
 
@@ -3905,6 +3910,25 @@ messages:
       if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  
       {
          Send(self,@NotifyMonstersOfPresence);
+      }
+      
+      if type = SAY_NORMAL
+      {
+         If StringContain(String,"autoloot on")
+            AND NOT Send(self,@IsAutolooting)
+         {
+            Send(self,@SetAutoloot,#value=TRUE);
+            Send(self,@MsgSendUser,#message_rsc=autoloot_on_msg);
+            return;
+         }
+
+         If StringContain(String,"autoloot off")
+            AND Send(self,@IsAutolooting)
+         {
+            Send(self,@SetAutoloot,#value=FALSE);
+            Send(self,@MsgSendUser,#message_rsc=autoloot_off_msg);
+            return;
+         }
       }
 
       if NOT Send(poOwner,@RoomReqCommunication,#type=type,#string=string,
@@ -7826,6 +7850,17 @@ messages:
 	 i = i + 1;
       }
       return 0;
+   }
+   
+   SetAutoloot(value=TRUE)
+   {
+      pbAutoloot = value;
+      return;
+   }
+   
+   IsAutolooting()
+   {
+      return pbAutoloot;
    }
 
 end

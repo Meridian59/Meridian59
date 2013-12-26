@@ -3449,6 +3449,7 @@ messages:
       Create(&StatueTreasure);
       Create(&KriipaTreasure);
       Create(&MolluskTreasure);
+      Create(&ShadowbeastTreasure);
       
       return;
    }

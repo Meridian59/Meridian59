@@ -1581,6 +1581,7 @@
    TID_STATUE        = 54
    TID_KRIIPA        = 55
    TID_MOLLUSK       = 56
+   TID_SHADOWBEAST   = 57
 
    %%% English articles
 

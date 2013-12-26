@@ -1578,6 +1578,10 @@
    TID_MUMMY         = 52
    TID_THRASHER      = 53
 
+   TID_STATUE        = 54
+   TID_KRIIPA        = 55
+   TID_MOLLUSK       = 56
+
    %%% English articles
 
    ARTICLE_NONE = 0

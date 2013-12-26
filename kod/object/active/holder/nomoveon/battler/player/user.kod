@@ -2855,11 +2855,19 @@ messages:
 	  iMaxMoveRun = ((8 * USER_RUNNING_SPEED * iDelta) / 1000) + Send(self,@GetMoveStepTolerance);
 	  iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
 	  
-      % DEBUG		
-      % Debug(
-	  % "iDelta:",iDelta,
-	  % "iMaxMoveRun:",iMaxMoveRun,
-	  % "iMoveLength:",iMoveLength);
+      % DEBUG output		
+      %Debug(
+      %  "iDelta:",iDelta,
+      %  "iMaxMoveRun:",iMaxMoveRun,
+      %  "iMoveLength:",iMoveLength,
+      %  "iRow:",iRow,
+      %  "iCol:",iCol,
+      %  "iFineRow:",iFineRow,
+      %  "iFineCol:",iFineCol,
+      %  "new_row:",new_row,
+      %  "new_col:",new_col,
+      %  "fine_row:",fine_row,
+      %  "fine_col:",fine_col);
 	  
 	  % 5.1 This move is bigger than running allows (speedhack).
 	  if (iMoveLength > iMaxMoveRun)

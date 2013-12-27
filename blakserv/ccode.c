@@ -2362,4 +2362,21 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {
+	char buf[4000];
+	val_type stat_type;//, each_stat;
+
+	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+
+	switch (stat_type.v.data)
+	{
+		case STAT_TOTALMONEY:
+			sprintf(buf,"STAT_TOTALMONEY in C_RecordStat");
+			break;
+
+		default:
+			sprintf(buf,"ERROR: Unknown stat_type in C_RecordStat");
+			break;
+	}
+	dprintf("%s\n",buf);
+	return NIL;
 }

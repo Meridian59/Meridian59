@@ -79,6 +79,12 @@ enum
    // it reads any KODBASE.TXT.
 };
 
+//Possible statistics that can be passed from blakod
+enum
+{
+  STAT_TOTALMONEY
+};
+
 #define MAX_PROC_TIME 5000
 #define TIMER_DELAY_WARN 2000
 

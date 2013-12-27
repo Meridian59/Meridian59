@@ -178,6 +178,8 @@ enum
    ISOBJECT = 161,
 
    RANDOM = 201,
+   
+   RECORDSTAT = 301,
 };
 
 enum

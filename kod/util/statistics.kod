@@ -46,6 +46,7 @@ messages:
    GarbageCollecting()
    {
       Send(self,@CalculateTotalMoney);
+	  return $;
    }
 
    CalculateTotalMoney()

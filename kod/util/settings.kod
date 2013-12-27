@@ -89,9 +89,12 @@ properties:
 
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15
-   
+
    % Time in seconds that ghosts will last before taking a penalty
    piLogoffPenaltyGhostTime = 600
+
+   % Time in seconds that outlaw / murderer ghosts will last before taking a penalty
+   piOutlawMurdererLogoffPenaltyGhostTime = 60
 
    %
    % Guild hall settings
@@ -135,6 +138,9 @@ properties:
 
    % If disabled, outlaws & murderers will not be afforded the 1/3-hp damage cap protection.
    pbDamageCapProtectionMurderersEnable = FALSE
+
+   % If enabled, logoff penalties do not rise exponentially, and instead remain flat
+   pbFlatPenalties = TRUE
 
 messages:
 
@@ -332,6 +338,17 @@ messages:
    {
       return piLogoffPenaltyGhostTime;
    }
+   
+   GetFlatPenaltiesEnable()
+   {
+      return pbFlatPenalties;
+   }
+   
+   GetOutlawMurdererLogoffPenaltyGhostTime()
+   {
+      return piOutlawMurdererLogoffPenaltyGhostTime;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

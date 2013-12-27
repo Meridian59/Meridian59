@@ -707,6 +707,9 @@ resources:
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
 
+   cannot_attack_ally = "You can't attack %s, %s's your ally!"
+   cannot_attack_guildmate = "You can't attack %s, %s's your guildmate!"
+
 classvars:
 
    viHand_space = 2
@@ -3555,12 +3558,12 @@ messages:
       return TRUE;
    }
 
-   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
+   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE, actual=TRUE)
    "Will not let a person attack someone who isnt pkill_enabled."
    "Wll not let a person who isnt pkill_enabled attack another person."
    {
-      local oRoom;
-      
+      local oRoom, oGuild, oVictimGuild;
+
       % Default location to check is where we are.
       oRoom = poOwner;
 
@@ -3573,8 +3576,9 @@ messages:
       }
 
       % Make sure room allows the attack. Check if room has special combat affects.
-      if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
-                  #use_weapon=use_weapon,#stroke_obj=stroke_obj)
+      if actual = TRUE
+         AND NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
+                  #use_weapon=use_weapon,#stroke_obj=stroke_obj,#actual=actual)
       {
          return FALSE;
       }
@@ -3589,6 +3593,31 @@ messages:
       if Send(SYS,@GetChaosNight)
       {
          return TRUE;
+      }
+
+      % Check for guildmates and allies
+      if IsClass(victim,&Player)
+      {
+         oVictimGuild = Send(victim,@GetGuild);
+         oGuild = Send(self,@GetGuild);
+         if oVictimGuild <> $
+            AND oGuild <> $
+            AND (oGuild = oVictimGuild
+               OR Send(oGuild,@IsAlly,#otherguild=oVictimGuild))
+         {
+            if report
+            {
+               if oGuild = oVictimGuild
+               {
+                  Send(self,@MsgSendUser,#message_rsc=cannot_attack_guildmate,#parm1=Send(victim,@GetName),#parm2=Send(victim,@GetHeShe));
+               }
+               if Send(oGuild,@IsAlly,#otherguild=oVictimGuild)
+               {
+                  Send(self,@MsgSendUser,#message_rsc=cannot_attack_ally,#parm1=Send(victim,@GetName),#parm2=Send(victim,@GetHeShe));
+               }
+            }
+            return FALSE;
+         }
       }
 
       % Can always attack mortal event characters.
@@ -3691,13 +3720,14 @@ messages:
       }
 
       % Finally, check status and safety.
-      if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report)
+      if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report,#actual=actual)
       {
          return FALSE;
       }
 
       % Stop any rescue attempts if the user makes an attack.
       if ptRescue <> $
+         AND actual = TRUE
       {
          Send(self,@MsgSendUser,#message_rsc=player_cancel_rescue);
          DeleteTimer(ptRescue);
@@ -3707,7 +3737,7 @@ messages:
       return TRUE;
    }
    
-   CheckStatusAndSafety(victim=$,report=TRUE)
+   CheckStatusAndSafety(victim=$,report=TRUE,actual=TRUE)
    "PFLAG_SAFETY prevents accidental attacks. You can always successfully "
    "hit a murderer or outlaw, though."     
    {
@@ -3783,6 +3813,7 @@ messages:
          {         
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
                AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               AND actual = TRUE
             {
                % attacking someone who is without fault is cause to
                % gain the outlaw flag.
@@ -3794,12 +3825,14 @@ messages:
       }
 
       % Check for faction loss.  Handles appropriate conditions.
-      if NOT Send(self,@CheckFactionAttack,#what=victim)
+      if actual = TRUE
+         AND NOT Send(self,@CheckFactionAttack,#what=victim)
       {
          return FALSE;
       }
 
       % Okay, attack is against a player, so record the time
+      % Record this even if actual = false, to count encounters as combat
       piTimeAttackedPlayer = GetTime();
       
       return TRUE;

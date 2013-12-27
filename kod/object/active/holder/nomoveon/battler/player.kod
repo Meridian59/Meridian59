@@ -3780,7 +3780,10 @@ messages:
              AND Send(oSoldierShield,@IsEnemyAttack,#what=victim))
       {
          % Okay, attack is against a player, so record the time
-         piTimeAttackedPlayer = GetTime();
+         if actual = TRUE
+         {
+            piTimeAttackedPlayer = GetTime();
+         }
 
          return TRUE;
       }
@@ -3832,8 +3835,10 @@ messages:
       }
 
       % Okay, attack is against a player, so record the time
-      % Record this even if actual = false, to count encounters as combat
-      piTimeAttackedPlayer = GetTime();
+      if actual = TRUE
+      {
+         piTimeAttackedPlayer = GetTime();
+      }
       
       return TRUE;
    }

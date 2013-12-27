@@ -172,6 +172,8 @@ void InitBkodInterpret(void)
 	
 	ccall_table[RANDOM] = C_Random;
 	
+	ccall_table[RECORDSTAT] = C_RecordStat;
+	
 	ccall_table[ABS] = C_Abs;
 	ccall_table[BOUND] = C_Bound;
 	ccall_table[SQRT] = C_Sqrt;

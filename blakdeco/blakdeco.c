@@ -598,6 +598,7 @@ char * name_function(int fnum)
    case GETTICKCOUNT : return "GetTickCount";
 
    case RANDOM  : return "Random";
+   case RECORDSTAT : return "RecordStat";
    default : sprintf(s,"Unknown function %i",fnum); return s;
    }
 

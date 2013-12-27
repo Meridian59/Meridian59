@@ -2374,7 +2374,7 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 			break;
 
 		default:
-			sprintf(buf,"ERROR: Unknown stat_type in C_RecordStat");
+			sprintf(buf,"ERROR: Unknown stat_type (%d) in C_RecordStat",stat_type.v.data);
 			break;
 	}
 	dprintf("%s\n",buf);

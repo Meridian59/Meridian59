@@ -179,7 +179,7 @@ enum
 
    RANDOM = 201,
    
-   RECORDSTAT = 301,
+   RECORDSTAT = 210,
 };
 
 enum

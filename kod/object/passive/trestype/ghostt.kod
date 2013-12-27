@@ -41,7 +41,8 @@ messages:
                      [ &VampireWand, 4],
                      [ &DiscipleRobe, 4],
                      [ &Diamond, 5],
-                     [ &Ruby, 24]
+                     [ &FineLute, 5],
+                     [ &Ruby, 20]
                    ];
 
       propagate;

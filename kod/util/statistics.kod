@@ -36,8 +36,59 @@ properties:
    
    % List of [class item, number dropped] elements, one for each stackable item
    plStack_item_drop_count = $
+    
+   % A current sum of all money in all player bank accounts and held on player characters.
+   piPlayerMoneyTotal = $
+   
 
 messages:
+
+   GarbageCollecting()
+   {
+      Send(self,@CalculateTotalMoney);
+   }
+
+   CalculateTotalMoney()
+   {
+      local TotalMoney;
+	  TotalMoney = 0;
+	  TotalMoney = TotalMoney + Send(self,@CalculateTotalBankMoney);
+	  TotalMoney = TotalMoney + Send(self,@CalculateTotalPlayerMoney);
+	  piPlayerMoneyTotal = TotalMoney;
+      return $;
+   }
+   
+   CalculateTotalBankMoney()
+   {
+      local TotalBankMoney,plBanks,i;
+	  
+	  TotalBankMoney = 0;
+	  plBanks = Send(SYS,@GetBanks);
+	  
+      for i in plBanks
+      {
+         TotalBankMoney = TotalBankMoney + Send(i,@GetPlayerMoneyTotal);
+      }
+	  return TotalBankMoney;
+   }
+   
+   CalculateTotalPlayerMoney()
+   {
+      local plUsers,u,oPlayerMoney,TotalPlayerMoney;
+	  plUsers = Send(SYS,@GetUsers);
+	  TotalPlayerMoney = 0;
+	  
+	  for u in plUsers
+	  {
+	     oPlayerMoney = Send(u,@GetMoneyObject);
+		 
+		 if oPlayerMoney <> $
+		 {
+		    TotalPlayerMoney = TotalPlayerMoney + Send(oPlayerMoney,@GetNumber);
+	     }
+	  }
+	  return TotalPlayerMoney;
+   }
 
    Constructor()
    {

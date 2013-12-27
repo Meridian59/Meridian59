@@ -77,3 +77,8 @@ void MySQLCreateSchema()
 		return;
 	}
 }
+
+MySQLRecordStatistic(int stat_type)
+{
+
+}

@@ -16,9 +16,15 @@
 #ifndef _DATABASE_H
 #define _DATABASE_H
 
+//Possible statistics that can be passed from blakod
+enum
+{
+  STAT_TOTALMONEY;
+};
+
 void MySQLTest();
 void MySQLInit();
-int MySQLCheckSchema()
+int MySQLCheckSchema();
 void MySQLCreateSchema();
 void MySQLEnd();
 

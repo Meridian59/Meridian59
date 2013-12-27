@@ -841,6 +841,8 @@ messages:
       {
          Send(i,@GarbageCollecting);
       }
+	  
+	  Send(poStatistics,@GarbageCollecting);
 
       return;
    }
@@ -6570,6 +6572,11 @@ messages:
          total = total + Send(i,@CleanBadMail);
       }
       return total;
+   }
+   
+   GetBanks()
+   {
+      return plBanks;
    }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

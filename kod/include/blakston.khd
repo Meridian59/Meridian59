@@ -485,6 +485,9 @@
    RID_SEWER_KING = 380
    RID_JASWEST = 382
    RID_JAS_WEST = 382
+   
+   % New areas as extensions of old areas
+   RID_THRONE2 = 383
 
    % Outside world works as follows:
    % Name of roo and RID is grid coordinates, in form letter-number.

@@ -713,6 +713,15 @@ resources:
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
 
+   player_receive_killed_kraanan_buff = "You pray over the corpse of the %s, and Kraanan grants you a blessing!"
+   player_receive_killed_qor_buff = "You pray over the corpse of the %s, and Qor responds to your sacrifice with a dark gift."
+ 
+   player_receive_killed_jala_enchantment = "You pray over the corpse of the %s, and Jala graces you with a gift."
+   player_receive_killed_kraanan_enchantment = "As you pray over the corpse of the %s, you sense Kraanan turn his attention toward the area."
+   player_receive_killed_shalille_enchantment = "As you pray over the corpse of the %s, you feel Shal'ille's support warm you."
+   player_receive_killed_qor_enchantment = "As you pray over the corpse of the %s, you feel Qor's dark smile chill you."
+   player_receive_killed_faren_enchantment = "As you pray over the corpse of the %s, the very air surges with Faren's offered energies."
+
 classvars:
 
    viHand_space = 2
@@ -976,6 +985,10 @@ properties:
    pbDeath_rift = FALSE
    ptDeathRiftTimer = $
 
+   % Limit each player to one AE blessing at a time
+   pbCanReceiveKilledAreaEnchantment = TRUE
+   ptKilledAreaEnchantmentTimer = $
+
 messages:
 
    Constructor()
@@ -1032,6 +1045,12 @@ messages:
       {
          DeleteTimer(ptAttackTimer);
          ptAttackTimer = $;
+      }
+      
+      if ptKilledAreaEnchantmentTimer <> $
+      {
+         DeleteTimer(ptKilledAreaEnchantmentTimer);
+         ptKilledAreaEnchantmentTimer = $;
       }
 
       Send(self,@RemoveAllEnchantments,#report=FALSE);
@@ -4910,7 +4929,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, lKilledBuffs, oKilledBuff, iRandomBuff;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -5034,6 +5053,25 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
+              
+         lKilledBuffs = Send(what,@GetKilledBuffs);
+         if lKilledBuffs <> $
+         {
+            iRandomBuff = Random(1,Length(lKilledBuffs));
+            iRandomBuff = Nth(lKilledBuffs,iRandomBuff);
+            oKilledBuff = Send(SYS,@FindSpellByNum,#num=iRandomBuff);
+            if oKilledBuff <> $
+            {
+               if NOT Send(self,@IsEnchanted,#what=oKilledBuff)
+               {
+                  if Send(self,@IsLoggedOn)
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=player_receive_killed_kraanan_buff,#parm1=Send(what,@GetName));
+                  }
+                  Send(oKilledBuff,@CastSpell,#who=what,#lTargets=[self],#iSpellPower=Random(25,75),#bItemCast=TRUE);
+               }
+            }
+         }
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
@@ -5041,6 +5079,15 @@ messages:
 
       return;
    }
+   
+   KilledAreaEnchantmentCooldownTimer()
+   {
+      ptKilledAreaEnchantmentTimer = $;
+      pbCanReceiveKilledAreaEnchantment = TRUE;
+      
+      return;
+   }
+   
 
    GetSomethingMissedYouSound(what = $,weapon_used = $)
    {
@@ -5722,7 +5769,7 @@ messages:
       
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         lJalaInfo = Send(poOwner,@GetJalaInfo,#class=&Restorate);
 
          if lJalaInfo <> $
          {
@@ -5761,7 +5808,7 @@ messages:
 
          if poOwner <> $
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
+            lJalaInfo = Send(poOwner,@GetJalaInfo,#class=&Rejuvenate);
 
             if lJalaInfo <> $
             {
@@ -9962,7 +10009,7 @@ messages:
 
       if poOwner <> $
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
+         lJalaInfo = Send(poOwner,@GetJalaInfo,#class=&Invigorate);
 
          if lJalaInfo <> $
          {

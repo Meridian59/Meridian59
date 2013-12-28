@@ -275,6 +275,10 @@ properties:
    plOffer_items = $
    % List of items offered to the player by seller.
    plFor_sale = $
+   % List of buffs the monster may give when killed.
+   plKilledBuffs = $
+   % List of area enchantments monsters may give when killed.
+   plKilledAreaEnchantments = $
 
    ptCancelOffer = $
    ptRandom = $
@@ -379,6 +383,25 @@ messages:
       Send(self,@ResetBehaviorFlags);
 
       piMood = 0;
+
+      plKilledBuffs = Cons(SID_BLESS,plKilledBuffs);
+      plKilledBuffs = Cons(SID_MAGIC_SHIELD,plKilledBuffs);
+      plKilledBuffs = Cons(SID_SUPER_STRENGTH,plKilledBuffs);
+
+      plKilledAreaEnchantments = Cons(SID_RESTORATE,plKilledAreaEnchantments);
+      plKilledAreaEnchantments = Cons(SID_KILLING_FIELDS,plKilledAreaEnchantments);
+      
+      if viKarma < 0
+      {
+         plKilledAreaEnchantments = Cons(SID_MIRTH,plKilledAreaEnchantments);
+         plKilledAreaEnchantments = Cons(SID_FORCES_OF_LIGHT,plKilledAreaEnchantments);
+      }
+
+      if viKarma > 0
+      {
+         plKilledAreaEnchantments = Cons(SID_MELANCHOLY,plKilledAreaEnchantments);
+         plKilledAreaEnchantments = Cons(SID_REJUVENATE,plKilledAreaEnchantments);
+      }
 
       propagate;
    }
@@ -5796,6 +5819,15 @@ messages:
       return;
    }
 
+   GetKilledBuffs()
+   {
+      return plKilledBuffs;
+   }
+   
+   GetKilledAreaEnchantments()
+   {
+      return plKilledAreaEnchantments;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

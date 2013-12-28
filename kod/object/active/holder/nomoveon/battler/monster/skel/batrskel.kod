@@ -63,5 +63,33 @@ properties:
    
 messages:
 
+   HitSideEffect(what = $)
+   {
+      local oSpell;
+      
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
+      if NOT Send(what,@IsEnchanted,#what=oSpell) 
+         AND Random(1,PALSY_CHANCE) = 1
+      {
+         Send(oSpell,@MakeSick,#who=what);
+      }
+      
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
+      if NOT Send(what,@IsEnchanted,#what=oSpell) 
+         AND Random(1,DEMENTIA_CHANCE) = 1
+      {
+         Send(oSpell,@MakeSick,#who=what);
+      }
+
+      return;
+   }
+
+   Constructed()
+   {
+      plKilledBuffs = Cons(SID_HASTE,plKilledBuffs);
+
+      propagate;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

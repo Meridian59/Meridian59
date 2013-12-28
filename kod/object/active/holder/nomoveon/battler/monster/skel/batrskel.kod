@@ -70,5 +70,19 @@ messages:
       propagate;
    }
 
+   SetResistances()
+   {
+      plResistances = [ [ 70, ATCK_WEAP_PIERCE ],
+                        [ 70, -ATCK_SPELL_UNHOLY ],
+                        [ 70, -ATCK_SPELL_SHOCK ],
+                        [ 70, -ATCK_SPELL_COLD ],
+                        [ -10, -ATCK_SPELL_FIRE ],
+                        [ -20, -ATCK_SPELL_HOLY ],
+                        [ -20, ATCK_WEAP_BLUDGEON ]
+                      ];
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

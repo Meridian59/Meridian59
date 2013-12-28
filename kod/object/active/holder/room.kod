@@ -1826,8 +1826,8 @@ messages:
       {
          if NOT pbUser_in_room
          {
-            Send(self,@FirstUserEntered,#what=what,#new_row=First(new_pos),
-                 #new_col=Nth(new_pos,2));
+            Send(self,@FirstUserEntered,#what=what,#new_row=Nth(new_pos,2),
+                 #new_col=Nth(new_pos,3));
          }
 
          % Now send music.

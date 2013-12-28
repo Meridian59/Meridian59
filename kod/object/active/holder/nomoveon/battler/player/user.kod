@@ -338,8 +338,15 @@ properties:
    piLastPacketTime = 0
    piPacketsPerSecond = 0
 
-   % The tick we received last position update from user
+   % The ms tick we received last position update from user
    piLastMoveUpdateTime = 0
+   
+   % The ms tick we last drained vigor
+   piLastVigorDrainTime = 0
+   
+   % Count the move requests we received in same tick
+   % mostly due to buffered up TCP segments.
+   piMovesInTick = 0
    
    piCheaterLogs = 0
 
@@ -2081,7 +2088,7 @@ messages:
       Send(self,@LoadMailNews);
 
       % Count right now as the last time we moved.
-      piLastMoveUpdateTime = GetTime();
+      piLastMoveUpdateTime = GetTickCount();
       
       propagate;
    }
@@ -2729,77 +2736,208 @@ messages:
       return;
    }
 
+   GetMoveStepTolerance()
+   {
+      % Explanation:
+	  % This tolerance is added to the maximum allowed stepsize	  
+	  % TODO: measure and estimate RTT and adjust dynamically
+	  	 	  
+      return Send(Send(SYS, @GetSettings), @GetMoveStepTolerance);
+   }
+   
+   GetMoveAmountTolerance()
+   {
+      % Explanation:
+      % This is the amount of move requests that are allowed 
+	  % when processing several ones in one tick.	  
+	  % This is required because of TCP retransmits,
+	  % which can cause this to happen.
+	  % But this is also exploitable by a speedhacker!	  
+	  
+	  % Example:
+	  % At an update interval of 250ms you probably want to 
+	  % keep this in between 2 and 12.
+	  % At 8 the server will still accept a buffered-up movement
+	  % processed at once, but legally created in steps within a 2s "lagspike".
+	  
+	  % TODO: use estimated RTT to adjust dynamically.
+	  
+      return Send(Send(SYS, @GetSettings), @GetMoveMaxSimulReq);
+   }
+   
    UserMove(new_row = 1, new_col = 1,
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
-      local iCurrentTime, iDelta, bFirstMove, iExertion, iHasteLevel,
-            iSquaredDistance, iChanceTurn, iAngle;
-    
-      % Get the current tick and the delta since we processed last move
-      iCurrentTime = GetTime();
-      iDelta = iCurrentTime - piLastMoveUpdateTime;
-     
-	  % A simple (temporary) check if sent speed is OK
-      if speed > USER_WALKING_SPEED
+      local iCurrentTime, iDelta, iDeltaVigor, iExertion, iHasteLevel, 
+			iChanceTurn, iAngle, iRow, iCol, iFineRow, iFineCol,
+			iDx, iDy, iMoveLength, iMaxMoveRun;
+    		  
+	  % 1. Get current position values
+	  iRow = Send(self,@GetRow);
+      iCol = Send(self,@GetCol);
+      iFineRow = Send(self,@GetFineRow);
+      iFineCol = Send(self,@GetFineCol);
+	  iAngle = Send(self,@GetAngle);
+	  
+	  % 2. Do not allow any moves if player is marked as not allowed to move
+      if Send(self,@CheckPlayerflag,#flag=PFLAG_NO_MOVE)
       {
+		 % reset position
+         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+              #new_row=iRow,
+			  #new_col=iCol,
+              #fine_row=iFineRow,
+              #fine_col=iFineCol,
+              #new_angle=iAngle);
+
+         return;
+      }
+	  
+	  % 3.1 Get current tick (ms resolution)    
+	  iCurrentTime = GetTickCount();
+      
+	  % 3.2 Get time-deltas
+	  iDelta = iCurrentTime - piLastMoveUpdateTime;
+      iDeltaVigor = iCurrentTime - piLastVigorDrainTime;
+	  
+	  % 3.3 Bound time-deltas
+	  % Prevents long teleports after stops and negative numbers
+	  iDelta = bound(iDelta,0,Send(Send(SYS, @GetSettings), @GetMoveMaxLag));
+	  iDeltaVigor = bound(iDeltaVigor,0,3000);
+	  
+	  % 3.4 TCP workaround
+	  % iDelta can be 0 (~16 within ms resolution for +- 1 tick) in case
+      % we're processing buffered up TCP segments with several requests at once.
+	  % This can either happen because of IP packetloss and retransmits (legal)
+	  % or because someone is sending multiple positions at once by purpose (illegal).
+	  % So we must allow up to a certain amount of such buffered up requests,
+	  % but limit it so no one can exploit it too much.
+	  if iDelta <= 16
+	  {
+	    % if within the limits of allowed multiple requests
+		if piMovesInTick < Send(self,@GetMoveAmountTolerance)
+		{
+		  % fallback to default dt expected from client
+		  iDelta = Send(Send(SYS, @GetSettings), @GetMoveDefaultInterval);
+		  
+	      piMovesInTick = piMovesInTick + 1;
+		}
+		else
+		{
+		  % this is too many buffered up requests
+		  % reset position for this and any following in this tick
+          Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+              #new_row=iRow,
+			  #new_col=iCol,
+              #fine_row=iFineRow,
+              #fine_col=iFineCol,
+              #new_angle=iAngle);
+
+		  % make a logentry
+          if piCheaterLogs < MAX_LOGGED_THRESHOLD
+          {
+            piCheaterLogs = piCheaterLogs + 1;
+            Debug("ALERT!",Send(self,@GetTrueName),self,"exceeded multiple reqmove limit");
+          }
+		 
+          return;
+		}
+	  }
+	  else
+	  {
+	    % reset moves in tick counter
+	    piMovesInTick = 1;
+	  }
+
+	  % 4.1 Get move-deltas	  
+	  iDy = ((new_row * FINENESS) + fine_row) - ((iRow * FINENESS) + iFineRow);
+	  iDx = ((new_col * FINENESS) + fine_col) - ((iCol * FINENESS) + iFineCol);
+	  	 	  
+	  % 4.2 Get move-vector length.
+	  % This is the squared move-vector length
+	  iMoveLength = (iDy * iDy) + (iDx * iDx);
+	  
+	  % 4.3 Calculate maximum allowed
+	  % squared movesize for running in this dt
+	  iMaxMoveRun = ((8 * USER_RUNNING_SPEED * iDelta) / 1000) + Send(self,@GetMoveStepTolerance);
+	  iMaxMoveRun = (iMaxMoveRun * iMaxMoveRun);
+	  
+      % DEBUG output		
+      %Debug(
+      %  "iDelta:",iDelta,
+      %  "iMaxMoveRun:",iMaxMoveRun,
+      %  "iMoveLength:",iMoveLength,
+      %  "iRow:",iRow,
+      %  "iCol:",iCol,
+      %  "iFineRow:",iFineRow,
+      %  "iFineCol:",iFineCol,
+      %  "new_row:",new_row,
+      %  "new_col:",new_col,
+      %  "fine_row:",fine_row,
+      %  "fine_col:",fine_col);
+	  
+	  % 5.1 This move is bigger than running allows (speedhack).
+	  if (iMoveLength > iMaxMoveRun)
+	  {
+		 % reset position
+         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+              #new_row=iRow,
+			  #new_col=iCol,
+              #fine_row=iFineRow,
+              #fine_col=iFineCol,
+              #new_angle=iAngle);
+	
+		 % make a logentry
+         if piCheaterLogs < MAX_LOGGED_THRESHOLD
+         {
+            piCheaterLogs = piCheaterLogs + 1;
+            Debug("ALERT!",Send(self,@GetTrueName),self,"was moving too fast");
+         }
+		  
+		 return;
+	  }
+	  
+	  % 5.2 This move is bigger than walking allows.
+	  % Right now: Still use the transmitted speed
+      if (speed > USER_WALKING_SPEED)
+      {
+		 % disallow run with low vigor
          if Send(self,@GetVigor) < VIGOR_RUN_THRESHOLD
          {
-            % This person is sending a movement speed faster than allowed for his current vigor! 
-			%  Stop them from moving, make a log note.
-            Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
-                 #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
-                 #fine_row=Send(self,@GetFineRow),
-                 #fine_col=Send(self,@GetFineCol),
-                 #new_angle=Send(self,@GetAngle));
-
+            % reset position
+			Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+				 #new_row=iRow,
+				 #new_col=iCol,
+				 #fine_row=iFineRow,
+				 #fine_col=iFineCol,
+				 #new_angle=iAngle);
+				 
+			% make a logentry		    
             if piCheaterLogs < MAX_LOGGED_THRESHOLD
             {
                piCheaterLogs = piCheaterLogs + 1;
                Debug("ALERT!",Send(self,@GetTrueName),self,"was running with "
                      "no vigor.");
             }
+			
+			return;
          }
 
+		 % break trance
          if (piFlags & PFLAG_TRANCE)
          { 
             Send(self,@BreakTrance,#event=EVENT_RUN); 
          }
 
+		 % stop dance
          if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DANCING,#flagset=2)
          { 
             Send(self,@StopDancing);
          }
       }
-
-      if Send(self,@CheckPlayerflag,#flag=PFLAG_NO_MOVE)
-      {
-         Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
-              #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
-              #fine_row=Send(self,@GetFineRow),
-              #fine_col=Send(self,@GetFineCol),
-              #new_angle=Send(self,@GetAngle));
-
-         return;
-      }
-
-      % Code to annoy would be map memorizers and see-through-blinders.
-      if Send(self,@IsEnchanted,#byClass=&Blind)
-      {
-         iAngle = Send(self,@GetAngle);
-         iAngle = iAngle + Random(-256,256);
-         iChanceTurn = Random(1,100);
-
-         iAngle = iAngle mod MAX_ANGLE;
-
-         if iChanceTurn < 30
-         {
-            Send(poOwner,@SomethingTurned,#what=self,#new_angle=iAngle);
-         }
-      }
-
-      % Only drain vigor once per second.
-	  % NOTE: This needs adjustement when we switch to "GetTickCount" because it's in ms then
-      if piLastMoveUpdateTime <> iCurrentTime
+	  
+      % 8. Drain vigor once per 1000 ms.
+      if iDeltaVigor >= 1000
       {
          % Reduce speed value to old value, 5/6ths current value, then
          %  square it.
@@ -2816,18 +2954,34 @@ messages:
          }
 
          Send(self,@AddExertion,#amount=iExertion);
+		 
+		 % save vigor drain tick
+		 piLastVigorDrainTime = iCurrentTime;
       }
 
-      % bitflag check instead of function for speed.
+      % 9. Notify monsters about presence (bitflag check instead of function)
       if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }
+  
+      % 10. Mess-up orientation of blinded players.
+      if Send(self,@IsEnchanted,#byClass=&Blind)
+      {
+         iAngle = iAngle + Random(-256,256);
+         iChanceTurn = Random(1,100);
+         iAngle = iAngle mod MAX_ANGLE;
 
-	  % save this tick for next execution to determine dt then
+         if iChanceTurn < 30
+         {
+            Send(poOwner,@SomethingTurned,#what=self,#new_angle=iAngle);
+         }
+      }
+
+	  % 11. Save this move tick for next execution
       piLastMoveUpdateTime = iCurrentTime;
 
-	  % now we actually process the move (and propagate it)
+	  % 12. Process the move
       Send(poOwner,@SomethingMoved,#what=self,
            #new_row=new_row,#new_col=new_col,
            #fine_row=fine_row,#fine_col=fine_col,
@@ -5713,7 +5867,7 @@ messages:
       Send(self,@CancelIfOffer);
 
       % Count right now as the last time we moved.
-      piLastMoveUpdateTime = GetTime();
+      piLastMoveUpdateTime = GetTickCount();
       
       % This is here because it has to be done before poOwner is changed.
 
@@ -7493,7 +7647,7 @@ messages:
       % Don't set piTimeNewsPosted to current time.  That'd potentially make
       %  people unable to post for a while.
       piTimeNewsPosted = 0;
-      piLastMoveUpdateTime = GetTime();
+      piLastMoveUpdateTime = GetTickCount();
 
       % Eliminate logoff penalty time.  Just easier this way.
       piLogoffPenaltyTime = 0;

@@ -112,6 +112,22 @@ properties:
    pbReportHotPlates = FALSE
 
    %
+   % Speedhack & Teleport protection
+   %
+   
+   % Worst lagspike
+   piMoveMaxLag = 2000
+   
+   % Limit for processing simultaneous move requests (due to TCP)
+   piMoveMaxSimulReq = 8
+   
+   % The default interval the server expects from the client
+   piMoveDefaultInterval = 250
+   
+   % A tolerance that is given on each move step
+   piMoveStepTolerance = 100
+   
+   %
    % Miscellaneous
    %
 
@@ -317,7 +333,30 @@ messages:
       return pbReportHotPlates;
    }
 
+   %
+   % Speedhack & teleport protection
+   %
 
+   GetMoveMaxLag()
+   {
+	  return piMoveMaxLag;
+   }
+   
+   GetMoveMaxSimulReq()
+   {
+      return piMoveMaxSimulReq;
+   }
+   
+   GetMoveDefaultInterval()
+   {
+      return piMoveDefaultInterval;
+   }
+   
+   GetMoveStepTolerance()
+   {
+      return piMoveStepTolerance;
+   }
+   
    %
    % Miscellaneous
    %

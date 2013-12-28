@@ -129,6 +129,11 @@ messages:
       
       propagate;
    }
+
+   DefendingHit(who = $,what = $)
+   {
+      return;
+   }
       
    ReqRepair()
    {

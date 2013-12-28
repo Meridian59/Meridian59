@@ -5024,6 +5024,15 @@ messages:
          {
             Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol);
+
+            if IsClass(oTreasure,&NumberItem)
+               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
+               AND Send(oTreasure,@GetPos) <> $
+               AND IsClass(who,&User)
+               AND Send(who,@IsAutolooting)
+            {
+               Send(who,@UserGet,#what=oTreasure);
+            }
          }
          else
          {

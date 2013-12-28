@@ -3459,6 +3459,11 @@ messages:
 
       Create(&ThrasherTreasure);
 
+      Create(&StatueTreasure);
+      Create(&KriipaTreasure);
+      Create(&MolluskTreasure);
+      Create(&ShadowbeastTreasure);
+      
       return;
    }
 
@@ -4758,6 +4763,10 @@ messages:
       plItemTemplates = cons(create(&BlueMushroom),plItemTemplates);
       plItemTemplates = cons(create(&PurpleMushroom),plItemTemplates);
       plItemTemplates = cons(create(&RedMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&GreenMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&YellowMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&GrayMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&CyanMushroom),plItemTemplates);
       plItemTemplates = cons(create(&Mushroom),plItemTemplates);
       plItemTemplates = cons(create(&OrcTooth),plItemTemplates);
       plItemTemplates = cons(create(&Ruby),plItemTemplates);

@@ -72,7 +72,7 @@ classvars:
    vrDead_icon = MolluskMonster_dead_icon_rsc
    vrDead_name = MolluskMonster_dead_name_rsc
 
-   viTreasure_type = TID_TOUGH
+   viTreasure_type = TID_MOLLUSK
    viSpeed = SPEED_AVERAGE
    viAttack_types = ATCK_WEAP_BLUDGEON
    viAttributes = 0

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DragonflyTreasure is TreasureType
+KriipaTreasure is TreasureType
 
 constants:
    
@@ -19,20 +19,17 @@ classvars:
 
 properties:
    
-   piTreasure_num = TID_DRAGONFLY
-   piItem_att_chance = 3
-   piDiff_seed = 3
+   piTreasure_num = TID_KRIIPA
+   piItem_att_chance = 6
+   piDiff_seed = 6
 
 messages:
    
    constructed()
    {
-      plTreasure = [ [ &DragonflyEye, 30 ],
-                     [ &WebMoss, 10 ],
-                     [ &Snack, 10 ],
-                     [ &Money, 42 ],
-                     [ &KriipaClaw, 7 ],
-                     [ &Yrxlsap, 1 ]
+      plTreasure = [ [ &KriipaClaw, 30 ],
+                     [ &Money, 60 ],
+                     [ &Yrxlsap, 10 ]
 		             ];
 
       propagate;

@@ -1,0 +1,47 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ShadowbeastTreasure is TreasureType
+
+constants:
+   
+   include blakston.khd
+   
+classvars:
+
+
+properties:
+   
+   piTreasure_num = TID_SHADOWBEAST
+   
+   %% low chance of getting an outstanding item
+   piItem_att_chance = 2
+   piDIff_seed = 9
+
+messages:
+   
+   constructed()
+   {
+      plTreasure = [ [ &Money, 30],
+                     [ &InkyCap, 14],
+                     [ &PurpleMushroom, 8 ],
+                     [ &GrayMushroom, 29 ],
+                     [ &BlueDragonScale, 7],
+                     [ &DarkAngelFeather, 5],
+                     [ &MysticSword, 1 ],
+                     [ &PlateArmor, 1 ],
+                     [ &Key, 5 ]
+                   ];
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -25,7 +25,7 @@ messages:
    "Places <what> up to <max_distance> squares away from <new_row>,<new_col>."
    "If <new_angle> = $ and moving in a room, old angle is preserved."
    {
-      local distance,i,j,row,col,calc_max_dist,room_rows,room_cols;
+      local distance,i,j,row,col,room_rows,room_cols;
 
       if what = $ OR where = $ OR new_row = $ OR new_col = $
       {
@@ -41,20 +41,9 @@ messages:
          return FALSE;
       }
 
-      % calculate max distance that's still in room (could be tighter)
-      calc_max_dist = max_distance;
+      % get room boundaries
       room_rows = Send(where,@GetRoomRows);
       room_cols = Send(where,@GetRoomCols);
-
-      if calc_max_dist > room_rows
-      {
-         calc_max_dist = room_rows;
-      }
-
-      if calc_max_dist > room_cols
-      {
-         calc_max_dist = room_cols;
-      }
 
       distance = 0;
       while distance <= max_distance
@@ -124,6 +113,7 @@ messages:
    "otherwise the room move could go to adjacent rooms!! blah."
    "If <new_angle> = $, then no angle is passed to rooms (will leave old one if in room)."
    {
+      % MOVE in same room
       if Send(what,@GetOwner) = where
       {
          if IsClass(what,&User)
@@ -143,6 +133,7 @@ messages:
             return TRUE;
          }
       }
+      % MOVE into other room
       else
       {
          if Send(where,@ReqNewHold,#what=what,#new_row=new_row,#new_col=new_col)
@@ -163,6 +154,10 @@ messages:
                   Send(where,@NewHold,#what=what,#new_row=new_row,#new_col=new_col,
                        #fine_row=fine_row,#fine_col=fine_col);
                }
+			   
+			   % make sure the position is updated
+			   Send(where,@SomethingMoved,#what=what,#new_row=new_row,#new_col=new_col,
+                    #fine_row=fine_row,#fine_col=fine_col);
             }
 
             return TRUE;

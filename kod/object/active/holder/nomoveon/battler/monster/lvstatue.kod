@@ -139,7 +139,7 @@ classvars:
    vrDesc = LivingStatue_desc_rsc
    vrDead_name = LivingStatue_dead_name_rsc
 
-   viTreasure_type = TID_MEDIUM_TOUGH
+   viTreasure_type = TID_STATUE
 
    viAttack_types = ATCK_WEAP_SLASH
 

@@ -2981,4 +2981,5 @@
 	MAX_URL_LEN = 200
    
    %Statistics Constants, matches enum in blakserv.h
-   STAT_TOTALMONEY = 0
+   STAT_BLANK = 0
+   STAT_TOTALMONEY = 1

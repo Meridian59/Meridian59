@@ -82,6 +82,7 @@ enum
 //Possible statistics that can be passed from blakod
 enum
 {
+  STAT_BLANK,
   STAT_TOTALMONEY
 };
 

@@ -46,8 +46,7 @@ messages:
    GarbageCollecting()
    {
       Send(self,@CalculateTotalMoney);
-	  RecordStat("test");
-	  RecordStat(STAT_TOTALMONEY,"test");
+	  RecordStat(STAT_TOTALMONEY,piPlayerMoneyTotal); 
 	  return $;
    }
 

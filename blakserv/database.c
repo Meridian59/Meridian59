@@ -78,7 +78,15 @@ void MySQLCreateSchema()
 	}
 }
 
-void MySQLRecordStatistic(int stat_type)
+void MySQLRecordStatTotalMoney(int total_money)
 {
-
+	char buf[200];
+	sprintf(buf,"INSERT INTO `meridian`.`playermoneytotal` \
+				SET PlayerMoneyTotalAmount = %d, PlayerMoneyTotalTime = NOW()");
+	if(mysql_query(mysqlcon, buf))
+	{
+		dprintf("Unable to record StatTotalMoney");
+		return;
+	}
+	dprintf("Recorded StatTotalMoney");
 }

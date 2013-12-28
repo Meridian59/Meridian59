@@ -21,5 +21,6 @@ void MySQLInit();
 int MySQLCheckSchema();
 void MySQLCreateSchema();
 void MySQLEnd();
+void MySQLRecordStatTotalMoney(int total_money);
 
 #endif

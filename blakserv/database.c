@@ -64,18 +64,17 @@ void MySQLEnd()
 
 void MySQLCreateSchema()
 {
-	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`player_strength` ( \
-                              `idplayer_strength` int(11) NOT NULL AUTO_INCREMENT, \
-                              `timestamp` timestamp NULL DEFAULT NULL, \
-                              `player_name` varchar(45) DEFAULT NULL, \
-                              `player_basemaxhp` varchar(45) DEFAULT NULL, \
-                              `player_maxmana` varchar(45) DEFAULT NULL, \
-                              PRIMARY KEY (`idplayer_strength`) \
-                            ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
+	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`playermoneytotal` ( \
+							 `idPlayerMoneyTotal` int(11) NOT NULL AUTO_INCREMENT, \
+							 `PlayerMoneyTotalTime` datetime NOT NULL, \
+							 `PlayerMoneyTotalAmount` int(11) NOT NULL, \PRIMARY KEY (`idPlayerMoneyTotal`) \
+							 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;"))
 	{
-		dprintf("unable to create table player_strength");
+
+		dprintf("unable to create table playermoneytotal");
 		return;
 	}
+
 }
 
 void MySQLRecordStatTotalMoney(int total_money)

@@ -1057,8 +1057,7 @@ messages:
 
       oGuild = Send(who,@GetGuild);
 
-      if (oGuild = poGuild_owner
-          OR Send(poGuild_owner,@IsAlly,#otherguild=oGuild))
+      if oGuild = poGuild_owner
          AND Send(oGuild,@GetRank,#who=who) >= RANK_SIR
       {
          return TRUE;
@@ -1409,11 +1408,11 @@ messages:
       return FALSE;
    }
 
-   CanHavePlayerPortal(who = $)
+   CanHavePlayerPortal()
    {
       % Don't allow portals into guild halls
       return false;
    }
 
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

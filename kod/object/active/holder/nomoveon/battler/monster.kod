@@ -935,6 +935,7 @@ messages:
       {         
          if (Send(self,@GetRow) - iRow) <= 3
             AND (Send(self,@GetCol) - iCol) <= 3
+            OR IsClass(self,&Reflection)
          {
             Post(self,@GotoMaster);
          }
@@ -963,8 +964,14 @@ messages:
          return;
       }
 
-      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 6)
+      if (Send(oNewRoom,@CountMonsters,#mastered=TRUE) < 20)
       {
+         if IsClass(self,&Reflection)
+            AND NOT Send(oNewRoom,@AllowGuildAttack,#what=poMaster)
+         {
+            return;
+         }
+
          Send(oNewRoom,@NewHold,#what=self,
               #new_row=Send(poMaster,@GetRow),#new_col=Send(poMaster,@GetCol),
               #new_angle=Send(poMaster,@GetAngle));
@@ -3726,6 +3733,12 @@ messages:
                iAmount = First(lNumbers);
 
                % Make sure requested number of items is within the limits
+			   
+			   if (iAmount = $)
+			   {
+			      iAmount = 1;
+			   }
+			   
                if (iAmount < MIN_BUY_AMOUNT)
                {
                   iAmount = MIN_BUY_AMOUNT;
@@ -4885,7 +4898,7 @@ messages:
       {
          % This means that the monster has no Karma.  This is used for event
          %  monsters like Xeos and admin-created beasties.
-         return $;
+         return 0;
       }
       
       return viKarma;

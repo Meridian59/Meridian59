@@ -103,7 +103,7 @@ messages:
 
      if random(1,100) > 60 or not send(who,@HasSkill,#num=prof)
      {
-        if send(who,@GetSkillAbility,#skill_num=viSkill_num) < target_level
+        if send(who,@GetSkillAbility,#skill_num=viSkill_num) < 100
           {
              % checking for stroke advancement
              send(self,@ImproveAbility,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
@@ -111,7 +111,7 @@ messages:
      }
      else
      {
-        if send(use_weapon,@getprof,#who=who) < target_level
+        if send(use_weapon,@getprof,#who=who) < 100
           {
              % checking for weapon proficiency advancement
              send(use_weapon,@ImproveProficiency,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
@@ -336,7 +336,7 @@ messages:
    {
       local iDamage, might;
 
-      iDamage = 0;
+      iDamage = damage;
       % KLUDGEISH: this information should probably be in player.
       % Get weapon proficiency bonuses.
       if weapon_used <> $
@@ -350,7 +350,7 @@ messages:
       
       % Get might damage bonus.
       might = send(who,@GetMight);
-      iDamage = iDamage + ((100+bound(might-25,0,40))*damage)/100;
+      iDamage = ((100+bound(might-25,0,40))*iDamage)/100;
 
       return iDamage;
    }

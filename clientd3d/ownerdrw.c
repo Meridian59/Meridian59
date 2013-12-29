@@ -424,7 +424,7 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    if (style & OD_COLORTEXT)
    {
    	// get the color we'd prefer for this particular obj
-   	crColorText = GetPlayerNameColor(obj->flags,NULL);
+   	crColorText = GetPlayerWhoNameColor(obj->flags,NULL);
    	
 	// draw a black halo around the text just to ensure it is visible
 	SetTextColor(lpdis->hDC, RGB(0, 0, 0));

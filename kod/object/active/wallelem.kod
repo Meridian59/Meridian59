@@ -184,6 +184,22 @@ messages:
          }
       }
 
+      if IsClass(what,&Reflection)
+         OR IsClass(what,&EvilTwin)
+      {
+         if NOT Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            return FALSE;
+         }
+   
+         % Check status and safety against the owner of the reflection.
+         if NOT Send(oRoom,@ReqSomethingAttack,#what=poCaster,#victim=Send(what,@GetCaster))
+            OR NOT Send(poCaster,@CheckStatusAndSafety,#victim=Send(what,@GetCaster))
+         {
+            return FALSE;
+         }
+      }
+
       Send(self,@DoEffect,#what=what,#new_row=new_row,#new_col=new_col);
 
       return TRUE;
@@ -248,16 +264,7 @@ messages:
       }
 
       if iDistanceSquared <= (iLongRange * iLongRange)
-      {
-         if IsClass(what,&User)
-         {
-            % This resets the move counter, since we had additional (legal) 
-            %  moves request from this object.
-            % We have to reset the moves counter, because it seems wall elements
-            %  generate more requests than they handle.
-            send(what,@AdjustMoveCounter,#bReset=TRUE);
-         }
-
+      {        
          if (iLongRange = piRange
              OR iDistanceSquared <= (piRange * piRange))
             AND send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
@@ -329,6 +336,10 @@ messages:
       return;
    }
 
+   GetCaster()
+   {
+      return poCaster;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

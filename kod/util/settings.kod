@@ -125,9 +125,13 @@ properties:
    % Justicar
    piMinHPForJusticar = 100
 
-   % If enabled, unsafe penalties send the player to their hometown.
+   % If enabled, unsafe penalties send the player to their last safe place.
    % This is intended to prevent being players 'kept offline' by enemies.
-   pbHometownPenaltiesEnable = FALSE
+   pbReturnToSafetyPenaltiesEnable = FALSE
+   
+   % If enabled, unsafe penalties send angeled players to their last safe place.
+   % This is intended to prevent being players 'scouting' with mules.
+   pbAngelReturnToSafetyPenaltiesEnable = FALSE
    
    % If this is enabled a player will lose half their mana and all buffs when they log off in a safe zone.
    % This is to prevent 'character trains' with pre-buffed characters
@@ -135,6 +139,18 @@ properties:
 
    % If disabled, outlaws & murderers will not be afforded the 1/3-hp damage cap protection.
    pbDamageCapProtectionMurderersEnable = FALSE
+   
+   % Number of reflections allowed per caster.
+   piPlayerReflectionLimit = 2
+
+   % Minimum swings needed for a chance to improve a weaponcraft skill.
+   piWeaponcraftImprovementMinimumSwings = 75
+   
+   % Replaces old constant
+   piPKillEnableHP = 50
+   
+   % Replaces old constant
+   piIntrigueEnableHP = 50
 
 messages:
 
@@ -168,6 +184,16 @@ messages:
          } 
       }
       return;
+   }
+   
+   GetPKillEnableHP()
+   {
+      return piPKillEnableHP;
+   }
+   
+   GetIntrigueEnableHP()
+   {
+      return piIntrigueEnableHP;
    }
 
    %
@@ -311,10 +337,16 @@ messages:
       return piMinHPForJusticar;
    }
    
-   % This returns whether players go to a room's blink spot or their hometown when they pen
-   HometownPenaltiesEnabled()
+   % This returns whether players go to a room's blink spot or their last safe place when they pen
+   ReturnToSafetyPenaltiesEnabled()
    {
-      return pbHometownPenaltiesEnable;
+      return pbReturnToSafetyPenaltiesEnable;
+   }
+
+   % This returns whether angeled players go to a room's blink spot or their last safe place when they pen
+   AngelReturnToSafetyPenaltiesEnabled()
+   {
+      return pbAngelReturnToSafetyPenaltiesEnable;
    }
    
    % Returns if a player should recive a 'penalty' for logging of in a safe zone
@@ -332,6 +364,18 @@ messages:
    {
       return piLogoffPenaltyGhostTime;
    }
+   
+
+   GetPlayerReflectionLimit()
+   {
+      return piPlayerReflectionLimit;
+   }
+
+   GetSwingsPerImproveCheck()
+   {
+      return piWeaponcraftImprovementMinimumSwings;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

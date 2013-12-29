@@ -48,8 +48,8 @@
 typedef unsigned char Bool;
 enum {False = 0, True = 1};
 
-#define MAJOR_REV 7   /* Major version of client program */
-#define MINOR_REV 12  /* Minor version of client program; must be in [0, 99] */
+#define MAJOR_REV 50   /* Major version of client program */
+#define MINOR_REV 1  /* Minor version of client program; must be in [0, 99] */
 
 #define MAXAMOUNT 9     /* Max # of digits in a server integer */
 #define MAXSTRINGLEN 255 /* Max length of a string loaded from string table */
@@ -114,8 +114,6 @@ extern "C" {
 #endif
 
 M59EXPORT void _cdecl dprintf(char *fmt,...);
-
-#include "wrap.h"
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>

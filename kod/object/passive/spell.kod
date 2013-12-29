@@ -1199,7 +1199,7 @@ messages:
          }
       }
 
-      num = bound(num,5,95);
+      num = bound(num,5,99);
 
       if lTargets <> $
          AND Send(self,@GetNumSpellTargets) = 1
@@ -1619,12 +1619,6 @@ messages:
       if NOT Send(who,@HasSpell,#num=vispell_num)
       {
          return FALSE;
-      }
-
-      % No advancing if you've already gotten all your improves so far.
-      if NOT Send(who,@CheckAdvancementPoints)
-      {
-         Return FALSE;
       }
 
       oOwner = Send(who,@GetOwner);

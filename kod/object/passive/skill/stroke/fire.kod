@@ -49,7 +49,7 @@ classvars:
    viSkillExertion = 2
    vbCheck_exertion = FALSE
 
-   viDamage_factor = 90
+   viDamage_factor = 100
 
 properties:
 
@@ -60,12 +60,6 @@ properties:
 messages:
 
    % General combat messages:
-
-   % Overriden from superclass.  Can't parry arrows.
-   CanParry()
-   {
-      return FALSE;
-   }
 
    % Finds ammo and uses it if not used.
    FindLikelyAmmo(who=$,report=FALSE)
@@ -173,7 +167,7 @@ messages:
    {
       local iDamage, iAim;
 
-      iDamage = 0;
+      iDamage = damage;
       % Get weapon proficiency bonuses.
       if weapon_used <> $
       {
@@ -182,7 +176,7 @@ messages:
       
       % Get Aim damage bonus.
       iAim = send(who,@GetAim);
-      iDamage = iDamage + ((100+bound(iAim-25,0,40))*damage)/100;
+      iDamage = ((100+bound(iAim-25,0,40))*iDamage)/100;
 
       return iDamage;
    }

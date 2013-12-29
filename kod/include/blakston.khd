@@ -1988,6 +1988,10 @@
    SID_MIRTH = 179
    SID_MELANCHOLY = 180
    SID_CRYSTALIZE_MANA = 181
+   SID_SET = 182
+   SID_LOADOUT = 183
+   SID_CONVEYANCE = 184
+   SID_DEATH_RIFT = 185
 
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT
@@ -2107,7 +2111,7 @@
 
    %%% Player flags
 
-   PKILL_ENABLE_HP = 30
+   PKILL_ENABLE_HP = 50
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
@@ -2332,8 +2336,8 @@
 
    %%% Factions
    SERVICE_GOLD_REWARD = 2500
-   INTRIGUE_ENABLE_HP = 40
-   INTRIGUE_ENABLE_SPELL = 40
+   INTRIGUE_ENABLE_HP = 50
+   INTRIGUE_ENABLE_SPELL = 40 
 
    % Four hours, in seconds.
    FACTION_MIN_REVISIT_TIME   = 14400

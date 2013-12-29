@@ -1,4 +1,26 @@
 #################
+## Meridian Intermediate files
+#################
+*.bof
+*.rsc
+kodbase.txt
+run/*
+palcomp.exe
+paldump.exe
+porttest.exe
+rscmerge.exe
+rscprint.exe
+meridian.lib
+rscload.lib
+bc.exe
+blakdeco.exe
+blakdiff.exe
+bmpdump.exe
+makebgf.exe
+makepal.exe
+maketrig.exe
+
+#################
 ## Eclipse
 #################
 

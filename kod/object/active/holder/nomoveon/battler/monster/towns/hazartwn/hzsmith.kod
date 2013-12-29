@@ -20,25 +20,54 @@ resources:
 
    HazarBlacksmith_name_rsc = "Tomas"
    HazarBlacksmith_icon_rsc = bqsmith.bgf
-   HazarBlacksmith_desc_rsc = "A maker of unremarkable but reliable weapons, Tomas earns his customers with good comradeship and low prices."
-   HzBla_entry_welcome = "Hello %s%s, and welcome."
+   HazarBlacksmith_desc_rsc = "As a maker of unremarkable but reliable weapons and armor, Tomas earns his customers "
+   	"with good comradeship and low prices.  A fine warrior in his days, Tomas is known to gladly share his "
+   	"knowledge in the art of battle with any young adventurer who would be interested in picking up a "
+   	"blade to defend the land.  He may also be of help, should you wish to forget what you have learned of "
+   	"weaponcraft, so that you may fully dedicate yourself to the study of magicks.  Most people agree, however, "
+   	"that even a mage would do good knowing how to dodge a blow."
+   	
+   HzBla_entry_welcome = "Hello %s%s, and welcome.  Have you come to trade blades?  Or to hone your skills perhaps?"
+   
+   Smith_potion_skills = "I can sell you %s%s, so that you may forget all you might know about the art of "
+      "weaponcraft.  Do not worry about the label, you have my word that the potion has no side effects.  "
+      "So, do you want to buy one?"
+   
+   potion_skills = "Weaponcraft"
 
 classvars:
 
    vrName = HazarBlacksmith_name_rsc
    vrIcon = HazarBlacksmith_icon_rsc
    vrDesc = HazarBlacksmith_desc_rsc
-   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_NOQUEST
+   viAttributes = MOB_NOFIGHT | MOB_SELLER | MOB_RANDOM | MOB_NOMOVE | MOB_LISTEN | MOB_BUYER | MOB_NOQUEST | MOB_TEACHER | MOB_COND_SELLER 
    viOccupation = MOB_ROLE_BLACKSMITH
    viMerchant_markup = MERCHANT_BARGAIN   
 
 messages:
 
+   InitCondSale()
+   {
+      local oObj;
+      
+      oObj = Create(&ForgetPotionSkills);
+      Send(Send(SYS,@GetLibrary),@AddToMobLib,#mob=self,
+           #triggers=[potion_skills],
+           #action=[LIBACT_CONDITIONAL,oObj,1000,Smith_potion_skills]);
+
+      return;
+
+   }
+
    SetForSale()
    {
-      plFor_sale = [ [ Create(&Mace),Create(&ShortSword),
-                     Create(&LongSword),Create(&ScaleArmor),
-					 Create(&LeatherArmor)],$,$];
+      plFor_sale = [ [Create(&Mace),
+      			Create(&ShortSword),
+      			Create(&MetalShield),
+      			Create(&ChainArmor),
+      			Create(&Torch)],
+      			[ SKID_PROFICIENCY_SHORTSWORD, SKID_DODGE, SKID_BRAWLING, 
+      			SKID_SLASH, SKID_PUNCH, SKID_PROFICIENCY_MACE, SKID_BLOCK ],$,$];
       return;
    }
 

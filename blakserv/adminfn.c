@@ -301,20 +301,20 @@ admin_table_type admin_show_table[] =
 {
 	{ AdminShowAccount,       {R,N}, F, A|M, NULL, 0, "account", 
 	"Show one account by account id or name" },
-	{ AdminShowAccounts,      {N},   F, A, NULL, 0, "accounts",      "Show all accounts" },
+	{ AdminShowAccounts,      {N},   F, A|M, NULL, 0, "accounts",      "Show all accounts" },
 	{ AdminShowObjects,       {I,N}, F, A|M, NULL, 0, "belong",       "Show objects belonging to id" },
-	{ AdminShowCalled,        {I,N}, F, A, NULL, 0, "called",
+	{ AdminShowCalled,        {I,N}, F, A|M, NULL, 0, "called",
      "Show top (int) called messages" },
-	{ AdminShowCalls,         {I,N}, F, A, NULL, 0, "calls",         "Show top (int) C call counts" },
+	{ AdminShowCalls,         {I,N}, F, A|M, NULL, 0, "calls",         "Show top (int) C call counts" },
 	{ AdminShowClass,         {S,N}, F,A|M, NULL, 0, "class",          "Show info about class" },
 	{ AdminShowTime,          {N},   F, A|M, NULL, 0, "clock",        "Show current server time" },
 	{ AdminShowConfiguration, {N},   F, A|M, NULL, 0, "configuration", "Show configuration values" },
 	{ AdminShowConstant,      {S,N}, F,A|M, NULL, 0, "constant",       "Show value of admin constant" },
-	{ AdminShowDynamicResources,{N}, F, A, NULL, 0, "dynamic",       "Show all dynamic resources" },
-	{ AdminShowInstances,     {S,N}, F, A, NULL, 0, "instances",     "Show all instances of class" },
+	{ AdminShowDynamicResources,{N}, F, A|M, NULL, 0, "dynamic",       "Show all dynamic resources" },
+	{ AdminShowInstances,     {S,N}, F, A|M, NULL, 0, "instances",     "Show all instances of class" },
 	{ AdminShowList,          {I,N}, F, A|M, NULL, 0, "list",          "Traverse & show a list" },
 	{ AdminShowListNode,      {I,N}, F, A|M, NULL, 0, "listnode",      "Show one list node by id" },
-	{ AdminShowMatches,       {S,S,S,S,S,N}, F, A, NULL, 0, "matches",     "Show all instances of class which match criteria" },
+	{ AdminShowMatches,       {S,S,S,S,S,N}, F, A|M, NULL, 0, "matches",     "Show all instances of class which match criteria" },
 	{ AdminShowMemory,        {N},   F, A|M, NULL, 0, "memory",        "Show system memory use" },
 	{ AdminShowMessage,       {S,S,N},F,A|M, NULL, 0, "message",       
 	"Show info about class & message" },
@@ -322,27 +322,27 @@ admin_table_type admin_show_table[] =
 	{ AdminShowObject,        {I,N}, F, A|M, NULL, 0, "object",        "Show one object by id" },
 	{ AdminShowPackages,      {N},   F,A, NULL, 0, "packages",       "Show all packages loaded" },
 	{ AdminShowProtocol,      {N},   F, A|M, NULL, 0, "protocol",      "Show protocol message counts" },
-	{ AdminShowReferences,    {S,S,N}, F, A, NULL, 0, "references",  
+	{ AdminShowReferences,    {S,S,N}, F, A|M, NULL, 0, "references",  
 	"Show what objects or lists reference a particular data value" },
 	{ AdminShowResource,      {S,N}, F, A|M, NULL, 0, "resource",      
 	"Show a resource by resource name" },
 	{ AdminShowStatus,        {N},   F, A|M, NULL, 0, "status",        "Show system status" },
 	{ AdminShowString,        {I,N}, F, A|M, NULL, 0, "string",        "Show one string by string id" },
-	{ AdminShowSysTimers,     {N},   F, A, NULL, 0, "systimers",     "Show system timers" },
+	{ AdminShowSysTimers,     {N},   F, A|M, NULL, 0, "systimers",     "Show system timers" },
 	{ AdminShowTable,         {I,N}, F, A|M, NULL, 0, "table",         "Show a hash table" },
 	{ AdminShowTimer,         {I},   F, A|M, NULL, 0, "timer",        "Show one timer by id" },
-	{ AdminShowTimers,        {N},   F, A, NULL, 0, "timers",        "Show all timers" },
+	{ AdminShowTimers,        {N},   F, A|M, NULL, 0, "timers",        "Show all timers" },
 	{ AdminShowTransmitted,   {N},   F,A, NULL, 0, "transmitted",
 	"Show # of bytes transmitted in last minute" },
 	{ AdminShowUsage,         {N},   F,A|M,NULL, 0, "usage",         "Show current usage" },
 	{ AdminShowUser,          {R,N}, F, A|M, NULL, 0, "user",          "Show one user by name or object id" },
-	{ AdminShowUsers,         {N},   F, A, NULL, 0, "users",         "Show all users" },
+	{ AdminShowUsers,         {N},   F, A|M, NULL, 0, "users",         "Show all users" },
 };
 #define LEN_ADMIN_SHOW_TABLE (sizeof(admin_show_table)/sizeof(admin_table_type))
 
 admin_table_type admin_setacco_table[] =
 {
-	{ AdminSetAccountCredits,  {I,I,N}, F, A, NULL, 0, "credits", 
+	{ AdminSetAccountCredits,  {I,I,N}, F, A|M, NULL, 0, "credits", 
 	"Set an account's number of credits--use Add Account Credit instead" },
 	{ AdminSetAccountName,     {I,R,N}, F, A|M, NULL, 0, "name", 
 		"Set account name by account number and password" },
@@ -385,13 +385,13 @@ admin_table_type admin_setcfg_table[] =
 admin_table_type admin_set_table[] =
 {
 	/*
-	{ AdminSetResource,   {I,R,N},     F, A, NULL, 0, "resource", 
+	{ AdminSetResource,   {I,R,N},     F, A|M, NULL, 0, "resource", 
 	"Set a dynamic resource to have a different string/filename" },
 	*/
-	{ NULL, {N}, F, A, admin_setacco_table,  LEN_ADMIN_SETACCO_TABLE, "account",  
+	{ NULL, {N}, F, A|M, admin_setacco_table,  LEN_ADMIN_SETACCO_TABLE, "account",  
 	"Account subcommand" },
 	{ AdminSetClass,      {S,S,S,S,N}, F, A|M, NULL, 0, "class", "Set classvar by name of class, name of var, and value" },
-	{ NULL, {N}, F, A, admin_setcfg_table,   LEN_ADMIN_SETCFG_TABLE,  "config",   
+	{ NULL, {N}, F, A|M, admin_setcfg_table,   LEN_ADMIN_SETCFG_TABLE,  "config",   
 	"Config subcommand" },
 	{ AdminSetObject,     {I,S,S,S,N}, F, A|M, NULL, 0, "object", "Set object by id single property" },
 };
@@ -399,24 +399,24 @@ admin_table_type admin_set_table[] =
 
 admin_table_type admin_create_table[] =
 {
-	{ AdminCreateAccount, {S,S,S,N}, F,A,NULL, 0, "account", 
+	{ AdminCreateAccount, {S,S,S,N}, F,A|M,NULL, 0, "account", 
 		"Create account by type (user/admin/dm/guest), name, password" },
-	{ AdminCreateAdmin,   {I,N},   F, A, NULL, 0, "admin",   "Create admin object by account id" },
-	{ AdminCreateAutomated,{S,S,N},F,A|M,NULL, 0, "automated",
+	{ AdminCreateAdmin,   {I,N},   F, A|M, NULL, 0, "admin",   "Create admin object by account id" },
+	{ AdminCreateAutomated,{S,S,N},F, A|M,NULL, 0, "automated",
 	"Create account and user by name, password" },
 	{ AdminCreateDM,      {I,N},   F, A|M, NULL, 0, "dm",      "Create DM object by account id" },
-	{ AdminCreateListNode,{S,S,S,S,N},F, A, NULL, 0, "listnode","Create list node" },
-	{ AdminCreateObject,  {S,N},   T, A, NULL, 0, "object",  "Create object by class name and parms" },
-	{ AdminCreateResource,{R,N},   F, A, NULL, 0, "resource","Create resource string" },
-	{ AdminCreateTimer,   {I,S,I,N},F,A, NULL, 0, "timer","Create timer for obj id, message, milli" },
+	{ AdminCreateListNode,{S,S,S,S,N},F, A|M, NULL, 0, "listnode","Create list node" },
+	{ AdminCreateObject,  {S,N},   T, A|M, NULL, 0, "object",  "Create object by class name and parms" },
+	{ AdminCreateResource,{R,N},   F, A|M, NULL, 0, "resource","Create resource string" },
+	{ AdminCreateTimer,   {I,S,I,N},F,A|M, NULL, 0, "timer","Create timer for obj id, message, milli" },
 	{ AdminCreateUser,    {I,N},   F, A|M, NULL, 0, "user",    "Create user object by account id" },
 };
 #define LEN_ADMIN_CREATE_TABLE (sizeof(admin_create_table)/sizeof(admin_table_type))
 
 admin_table_type admin_delete_table[] =
 {
-	{ AdminDeleteAccount, {I,N}, F,A|M,NULL, 0, "account","Delete account & user by ID" },
-	{ AdminDeleteTimer,   {I,N}, F, A, NULL, 0, "timer",  "Delete timer by ID" },
+	{ AdminDeleteAccount, {I,N}, F, A|M,NULL, 0, "account","Delete account & user by ID" },
+	{ AdminDeleteTimer,   {I,N}, F, A|M, NULL, 0, "timer",  "Delete timer by ID" },
 	{ AdminDeleteUser,    {I,N}, F, A|M, NULL, 0, "user",   "Delete user by object ID" },
 };
 #define LEN_ADMIN_DELETE_TABLE (sizeof(admin_delete_table)/sizeof(admin_table_type))
@@ -431,23 +431,23 @@ admin_table_type admin_send_table[] =
 
 admin_table_type admin_trace_table[] =
 {
-	{ AdminTraceOffMessage, {S,S,N}, F, A, NULL, 0, "off", 
+	{ AdminTraceOffMessage, {S,S,N}, F, A|M, NULL, 0, "off", 
 	"Stop tracing message by class & msg names " },
-	{ AdminTraceOnMessage,  {S,S,N}, F, A, NULL, 0, "on",  "Trace message by class & message names " },
+	{ AdminTraceOnMessage,  {S,S,N}, F, A|M, NULL, 0, "on",  "Trace message by class & message names " },
 };
 #define LEN_ADMIN_TRACE_TABLE (sizeof(admin_trace_table)/sizeof(admin_table_type))
 
 admin_table_type admin_add_table[] =
 {
-	{ AdminAddCredits,   {I,I,N}, F, A, NULL, 0, "credits", 
+	{ AdminAddCredits,   {I,I,N}, F, A|M, NULL, 0, "credits", 
 		"Add credits by account number and credits" },
 };
 #define LEN_ADMIN_ADD_TABLE (sizeof(admin_add_table)/sizeof(admin_table_type))
 
 admin_table_type admin_kickoff_table[] =
 {
-	{ AdminKickoffAccount, {I,N},  F, A, NULL, 0, "account", "Kick one account out of the game" },
-	{ AdminKickoffAll,     {N},    F, A, NULL, 0, "all", "Kick all users out of the game" },
+	{ AdminKickoffAccount, {I,N},  F, A|M, NULL, 0, "account", "Kick one account out of the game" },
+	{ AdminKickoffAll,     {N},    F, A|M, NULL, 0, "all", "Kick all users out of the game" },
 };
 #define LEN_ADMIN_KICKOFF_TABLE (sizeof(admin_kickoff_table)/sizeof(admin_table_type))
 
@@ -456,7 +456,7 @@ admin_table_type admin_hangup_table[] =
 	{ AdminHangupAccount,  {R,N},  F, A|M, NULL, 0, "account", "Hangup one account" },
 	{ AdminHangupAll,      {N},    F, A|M, NULL, 0, "all", "Hangup all users" },
 	{ AdminBlockIP,        {R,N},  F, A|M, NULL, 0, "ip", "Block an IP address (temporarily)" },
-	{ AdminHangupSession,  {I,N},  F, A, NULL, 0, "session", "Hangup one session" },
+	{ AdminHangupSession,  {I,N},  F, A|M, NULL, 0, "session", "Hangup one session" },
 	{ AdminHangupUser,     {R,N},  F, A|M, NULL, 0, "user", "Hangup one user" },
 };
 #define LEN_ADMIN_HANGUP_TABLE (sizeof(admin_hangup_table)/sizeof(admin_table_type))
@@ -479,13 +479,13 @@ admin_table_type admin_recreate_table[] =
 
 admin_table_type admin_disable_table[] =
 {
-	{ AdminDisableSysTimer,{I,N}, F, A, NULL, 0, "systimer","Disable a system timer" },
+	{ AdminDisableSysTimer,{I,N}, F, A|M, NULL, 0, "systimer","Disable a system timer" },
 };
 #define LEN_ADMIN_DISABLE_TABLE (sizeof(admin_disable_table)/sizeof(admin_table_type))
 
 admin_table_type admin_enable_table[] =
 {
-	{ AdminEnableSysTimer,{I,N}, F, A, NULL, 0, "systimer","Enable a system timer" },
+	{ AdminEnableSysTimer,{I,N}, F, A|M, NULL, 0, "systimer","Enable a system timer" },
 };
 #define LEN_ADMIN_ENABLE_TABLE (sizeof(admin_enable_table)/sizeof(admin_table_type))
 
@@ -505,33 +505,33 @@ admin_table_type admin_save_table[] =
 
 admin_table_type admin_main_table[] = 
 { 
-	{ NULL, {N}, F, A, admin_add_table,    LEN_ADMIN_ADD_TABLE,    "add",    "Add subcommand" },
-	{ NULL, {N}, F, A, admin_create_table, LEN_ADMIN_CREATE_TABLE, "create", "Create subcommand" },
-	{ NULL, {N}, F, A, admin_delete_table, LEN_ADMIN_DELETE_TABLE, "delete", "Delete subcommand" },
-	{ NULL, {N}, F, A, admin_disable_table,LEN_ADMIN_DISABLE_TABLE,"disable", "Disable subcommand" },
-	{ NULL, {N}, F, A, admin_enable_table, LEN_ADMIN_ENABLE_TABLE, "enable", "Enable subcommand" },
-	{ AdminGarbage,       {N},   F, A, NULL, 0, "garbage",   "Garbage collect" },
-	{ NULL, {N}, F, A, admin_hangup_table, LEN_ADMIN_HANGUP_TABLE, "hangup", "Hangup subcommand" },
-	{ AdminLock,          {R,N}, F, A, NULL, 0, "lock",      "Lock the game" },
-	{ NULL, {N}, F, A, admin_kickoff_table,LEN_ADMIN_KICKOFF_TABLE,"kickoff","Kickoff subcommand" },
-	{ AdminMail,          {N},   F, A, NULL, 0, "mail",      "Read administrator mail" },
+	{ NULL, {N}, F, A|M, admin_add_table,    LEN_ADMIN_ADD_TABLE,    "add",    "Add subcommand" },
+	{ NULL, {N}, F, A|M, admin_create_table, LEN_ADMIN_CREATE_TABLE, "create", "Create subcommand" },
+	{ NULL, {N}, F, A|M, admin_delete_table, LEN_ADMIN_DELETE_TABLE, "delete", "Delete subcommand" },
+	{ NULL, {N}, F, A|M, admin_disable_table,LEN_ADMIN_DISABLE_TABLE,"disable", "Disable subcommand" },
+	{ NULL, {N}, F, A|M, admin_enable_table, LEN_ADMIN_ENABLE_TABLE, "enable", "Enable subcommand" },
+	{ AdminGarbage,       {N},   F, A|M, NULL, 0, "garbage",   "Garbage collect" },
+	{ NULL, {N}, F, A|M, admin_hangup_table, LEN_ADMIN_HANGUP_TABLE, "hangup", "Hangup subcommand" },
+	{ AdminLock,          {R,N}, F, A|M, NULL, 0, "lock",      "Lock the game" },
+	{ NULL, {N}, F, A|M, admin_kickoff_table,LEN_ADMIN_KICKOFF_TABLE,"kickoff","Kickoff subcommand" },
+	{ AdminMail,          {N},   F, A|M, NULL, 0, "mail",      "Read administrator mail" },
 	{ AdminMark,          {N},   F, A|M, NULL, 0, "mark",      "Mark all channel logs with a dashed line" },
-	{ AdminPage,          {N},   F, A, NULL, 0, "page",      "Page the console" },
+	{ AdminPage,          {N},   F, A|M, NULL, 0, "page",      "Page the console" },
 	{ AdminRead,          {S,N}, F, A|M, NULL, 0, "read",      "Read admin commands from a file, echoes everything" },
-	{ NULL, {N}, F, A, admin_recreate_table,LEN_ADMIN_RECREATE_TABLE, "recreate", "Recreate subcommand" },
-	{ NULL, {N}, F, A, admin_reload_table, LEN_ADMIN_RELOAD_TABLE, "reload", "Reload subcommand" },
-	{ NULL, {N}, F, A, admin_save_table,   LEN_ADMIN_SAVE_TABLE,   "save",   "Save subcommand" },
+	{ NULL, {N}, F, A|M, admin_recreate_table,LEN_ADMIN_RECREATE_TABLE, "recreate", "Recreate subcommand" },
+	{ NULL, {N}, F, A|M, admin_reload_table, LEN_ADMIN_RELOAD_TABLE, "reload", "Reload subcommand" },
+	{ NULL, {N}, F, A|M, admin_save_table,   LEN_ADMIN_SAVE_TABLE,   "save",   "Save subcommand" },
 	{ AdminSay,           {R,N}, F, A|M, NULL, 0, "say",       "Say text to all admins logged in" },
-	{ NULL, {N}, F, A, admin_send_table,   LEN_ADMIN_SEND_TABLE,   "send",   "Send subcommand" },
-	{ NULL, {N}, F, A, admin_set_table,    LEN_ADMIN_SET_TABLE,    "set",    "Set subcommand" },
-	{ NULL, {N}, F, A, admin_show_table,   LEN_ADMIN_SHOW_TABLE,   "show",   "Show subcommand" },
-	{ NULL, {N}, F, A, admin_suspend_table, LEN_ADMIN_SUSPEND_TABLE,"suspend", "Suspend subcommand" },
-	{ NULL, {N}, F, A, admin_terminate_table,LEN_ADMIN_TERMINATE_TABLE,"terminate",
+	{ NULL, {N}, F, A|M, admin_send_table,   LEN_ADMIN_SEND_TABLE,   "send",   "Send subcommand" },
+	{ NULL, {N}, F, A|M, admin_set_table,    LEN_ADMIN_SET_TABLE,    "set",    "Set subcommand" },
+	{ NULL, {N}, F, A|M, admin_show_table,   LEN_ADMIN_SHOW_TABLE,   "show",   "Show subcommand" },
+	{ NULL, {N}, F, A|M, admin_suspend_table, LEN_ADMIN_SUSPEND_TABLE,"suspend", "Suspend subcommand" },
+	{ NULL, {N}, F, A|M, admin_terminate_table,LEN_ADMIN_TERMINATE_TABLE,"terminate",
 	"Terminate subcommand" },
-	{ NULL, {N}, F, A, admin_trace_table,  LEN_ADMIN_TRACE_TABLE,  "trace",  "Trace subcommand" },
-	{ AdminUnlock,        {N},   F, A, NULL, 0, "unlock",    "Unlock the game" },
-	{ NULL, {N}, F, A, admin_unsuspend_table, LEN_ADMIN_UNSUSPEND_TABLE,"unsuspend", "Unsuspend subcommand" },
-	{ AdminWho,           {N},   F, A, NULL, 0, "who",       "Show every account logged on" },
+	{ NULL, {N}, F, A|M, admin_trace_table,  LEN_ADMIN_TRACE_TABLE,  "trace",  "Trace subcommand" },
+	{ AdminUnlock,        {N},   F, A|M, NULL, 0, "unlock",    "Unlock the game" },
+	{ NULL, {N}, F, A|M, admin_unsuspend_table, LEN_ADMIN_UNSUSPEND_TABLE,"unsuspend", "Unsuspend subcommand" },
+	{ AdminWho,           {N},   F, A|M, NULL, 0, "who",       "Show every account logged on" },
 };
 
 #define LEN_ADMIN_MAIN_TABLE (sizeof(admin_main_table)/sizeof(admin_table_type))
@@ -685,10 +685,10 @@ void TryAdminCommand(int session_id,char *admin_command)
 	
 	if (s->account == NULL)
 	{
-		/* dprintf(" Maintenance %s\n",admin_command); */
+		gprintf("Session: M Command: %s\n",admin_command);
 	}
 	else
-		dprintf(" %2i %s\n",s->account->account_id,admin_command);
+		gprintf("Session: %i Command: %s\n",s->account->account_id,admin_command);
 	
 	DoAdminCommand(admin_command);
 }
@@ -2050,6 +2050,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case GETCLASS : strcpy(c_name, "GetClass"); break;
 		case SENDMESSAGE : strcpy(c_name, "Send"); break;
 		case POSTMESSAGE : strcpy(c_name, "Post"); break;
+		case GODLOG : strcpy(c_name, "GodLog"); break;
 		case DEBUG : strcpy(c_name, "Debug"); break;
 		case ADDPACKET : strcpy(c_name, "AddPacket"); break;
 		case SENDPACKET : strcpy(c_name, "SendPacket"); break;
@@ -2089,6 +2090,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case DELLISTELEM : strcpy(c_name, "DelListElem"); break;
 		case FINDLISTELEM : strcpy(c_name, "FindListElem"); break;
 		case GETTIME : strcpy(c_name, "GetTime"); break;
+		case GETTICKCOUNT : strcpy(c_name, "GetTickCount"); break;
 		case ABS : strcpy(c_name, "Abs"); break;
 		case BOUND : strcpy(c_name, "Bound"); break;
 		case SQRT : strcpy(c_name, "Sqrt"); break;
@@ -3643,6 +3645,9 @@ void AdminCreateListNode(int session_id,admin_parm_type parms[],
 	
 	list_id = Cons(first_val,rest_val);
 	aprintf("Created list node %i.\n",list_id);
+	aprintf(":<\n");
+	AdminShowListParen(session_id,list_id,True);
+	aprintf(":>\n");
 	
 }
 

@@ -45,7 +45,6 @@ compiling, but unfortunately it doesn't yet link, probably because of
 an incompatibility with Visual Studio's lib format.  We've included a
 prebuilt version of the room editor.
 
-
 RUN INSTRUCTIONS
 
 After building the code, a server install is available in the
@@ -78,6 +77,16 @@ You can point your local client at your local server by running the
 client (meridian.exe) with command line flags, like this:
 
 meridian.exe /U:joe.smith /W:password /H:localhost /P:5959 
+
+
+THIRD-PARTY CODE
+
+Meridian uses zlib and libarchive.  zlib was installed from binaries.
+libarchive was built from source, with the following cmake environment
+variables set to use zlib:
+
+ZLIB_INCLUDE_DIR points to the include directory
+ZLIB_LIBRARY points to lib/zdll.lib
 
 
 CONTACT INFORMATION

@@ -99,7 +99,7 @@ messages:
    }
 
    ShowDesc(who=$)
-   "Okay, if you're from Ko'catan, you can only see the island."
+   "Ko'catan deaths see the island, Death Rift users see their teleport destination."
    {
       local rLocation;
 
@@ -133,6 +133,12 @@ messages:
             rLocation = hellportal_barloque;
          }
       }
+      
+      if Send(who,@GetDeathRiftProtection) = TRUE
+         AND Send(who,@GetBoundLocationName) <> $
+      {
+         rLocation = Send(who,@GetBoundLocationName);
+      }
 
       AddPacket(4,vrDesc,4,rLocation);
 
@@ -143,6 +149,16 @@ messages:
    "Called when something walks on top of us."
    {
       local oRoom;
+      
+      % Check for Death Rifters.
+      if poOwner <> $ and isClass(poOwner,&Underworld)
+         AND IsClass(what,&Player)
+         AND Send(what,@GetDeathRiftProtection) = TRUE
+         AND Send(what,@GetBoundLocationName) <> $
+      {
+         Send(what,@SendPlayerToBoundLocation);
+         return;
+      }
 
       % Check for Ko'catanites.
       if poOwner <> $ and isClass(poOwner,&Underworld)

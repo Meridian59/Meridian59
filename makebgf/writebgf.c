@@ -11,7 +11,7 @@
 
 #include "makebgf.h"
 
-#define VERSION 9
+static const int BGF_VERSION = 10;
 static BYTE magic[] = {0x42, 0x47, 0x46, 0x11};
 
 typedef struct
@@ -52,7 +52,7 @@ BOOL WriteBGFFile(Bitmaps *b, Options *opts, char *filename)
       if (MappedFileWrite(&f, &magic[i], 1) < 0) return FALSE;
 
    // Write version
-   temp = VERSION;
+   temp = BGF_VERSION;
    if (MappedFileWrite(&f, &temp, 4) < 0) return FALSE;
 
    // Write bitmap name
@@ -176,16 +176,19 @@ BOOL WriteBitmap(file_node *f, PDIB pdib, Options *options)
 
    // Leave space for # of bytes
 
-   if (options->compress)
+   if (options->compress) 
    {
-      len = WrapCompress((char *) buf, f->ptr + 5, width * height);
-      if (len > 0)
+      int len = compressBound(width * height);
+      int retval = compress2((Bytef *) (f->ptr + 5), (uLongf *) &len, buf, width * height, Z_BEST_COMPRESSION);
+      if (retval == Z_OK)
       {
          byte = 1;
          // Save compressed length
          MappedFileWrite(f, &byte, 1);
          MappedFileWrite(f, &len, 4);
          f->ptr += len;
+      } else {
+         return False;
       }
    }
    else len = -1;

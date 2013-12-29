@@ -1,0 +1,38 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+OfferingJala is Offering
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   OfferingJala_name_rsc = "mystic perfume"
+   OfferingJala_icon_rsc = solagh.bgf
+   OfferingJala_desc_rsc = \
+	"This bottle of liquid holds some ominous purpose you can only guess at."
+
+classvars:
+
+   vrName = OfferingJala_name_rsc
+   vrIcon = OfferingJala_icon_rsc
+   vrDesc = OfferingJala_desc_rsc
+
+   vrAllegiance = SS_JALA
+   
+properties:
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

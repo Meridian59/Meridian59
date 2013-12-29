@@ -9,7 +9,7 @@ all: makedirs $(OUTDIR)\club.exe
 
 OBJS = \
         $(OUTDIR)\club.obj \
-        $(OUTDIR)\archive.obj \
+        $(OUTDIR)\clubarchive.obj \
         $(OUTDIR)\util.obj \
         $(OUTDIR)\transfer.obj
 

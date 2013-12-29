@@ -114,6 +114,7 @@ enum
    SENDMESSAGE = 11,
    POSTMESSAGE = 12,
 
+   GODLOG = 21,
    DEBUG = 22,
    ADDPACKET = 23,
    SENDPACKET = 24,
@@ -160,6 +161,7 @@ enum
    FINDLISTELEM = 111,
 
    GETTIME = 120,
+   GETTICKCOUNT = 121,
 
    ABS = 131,
    BOUND = 132,

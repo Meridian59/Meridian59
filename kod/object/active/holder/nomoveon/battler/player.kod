@@ -1,4 +1,5 @@
 % Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -18,7 +19,10 @@ constants:
    include protocol.khd
 
    % Three minutes
-   BOND_REPORT_INTERVAL = 1000 * 60 * 3   
+   BOND_REPORT_INTERVAL = 1000 * 60 * 3
+   
+   % One minute
+   DEATH_RIFT_INTERVAL = 1000 * 60  
 
    KARMA_TUNE_A_INVERSE = 20
    KARMA_TUNE_B_INVERSE = 5
@@ -706,6 +710,8 @@ resources:
 
    player_logged_on_wav_rsc = player_login_or_out.wav
    player_logged_off_wav_rsc = player_logout2.wav
+   
+   death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
 
 classvars:
 
@@ -865,6 +871,10 @@ properties:
    % List of enchantments.
    % Each element is [ timer, object of spell, [optional state] ].
    plEnchantments = $
+   
+   % List of enchantments applied by radius spells.
+   % Each element is [song object, spellpower, caster]
+   plRadiusEnchantments = $
 
    % Attack modifiers to attack roll & damage (includes items & spells)
    plAttack_modifiers = $
@@ -872,6 +882,9 @@ properties:
    % Defense modifiers to defense roll & damage (includes items & spells)
    plDefense_modifiers = $
    
+   % Gear preferences for 'set' and 'loadout'
+   plLoadout_list = $
+
    piGender = GENDER_MALE
 
    piVigor_rest_threshold = 80
@@ -900,8 +913,6 @@ properties:
 
    % Action, such as "smiling", that player is currently doing
    piAction = 1
-
-   piAdvancement_points = 0
 
    % piNodeList is a bitvector of all of the mana nodes that the player has
    %  successfully melded with.  List of available nodelists in the
@@ -953,6 +964,18 @@ properties:
    % Used to construct a string for their description.
    plDonationYears = $
 
+   % Some spells let players choose teleport destinations by binding a location.
+   piBound_Room = $
+   piBound_row = 0
+   piBound_col = 0
+   piBound_fine_row = 0
+   piBound_fine_col = 0
+   piBound_angle = ANGLE_SOUTH
+   
+   % Is the player currently using a Death Rift spell?
+   pbDeath_rift = FALSE
+   ptDeathRiftTimer = $
+
 messages:
 
    Constructor()
@@ -1003,11 +1026,7 @@ messages:
          ptSecondWind = $;
       }
 
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
 
       if ptAttackTimer <> $
       {
@@ -1416,11 +1435,7 @@ messages:
    EndRescue()
    "Deletes rescue timer if it exists and does the rescue operation."
    {
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
       
       if poOwner <> $
          AND Send(poOwner,@GetRoomNum) <> RID_OUTOFGRACE
@@ -1428,6 +1443,17 @@ messages:
          Send(Send(SYS,@FindSpellByNum,#num=SID_RESCUE),@DoRescue,#who=self);
       }
 
+      return;
+   }
+   
+   CancelRescue()
+   "Cancels the rescue timer if it exists and does not execute the rescue operation."
+   {
+      if ptRescue <> $
+      {
+         DeleteTimer(ptRescue);
+         ptRescue = $;
+      }
       return;
    }
 
@@ -1485,9 +1511,6 @@ messages:
          Send(self,@InformHunters);
       }
 
-      % Player moved to a new location, give them a break on the botting imp cap.
-      piAdvancement_points = bound((piAdvancement_points - 2),0,$);
-      
       return;
    }
 
@@ -1970,11 +1993,7 @@ messages:
          ptMana = $;
       }
 
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
 
       % Tell others that we're leaving
       oRoom = Send(self, @GetOwner);
@@ -2355,8 +2374,6 @@ messages:
       piStomach = 0;
       piTimeLastStomachUpdate = 0;
 
-      piAdvancement_points = 0;
-
       piKill_count = 0;
       piKill_count_decay = 0;
       piJustified_kill_count = 0;
@@ -2410,6 +2427,7 @@ messages:
    "Add the spells a player is given when creating a character"
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       
       return;
    }
@@ -2428,12 +2446,13 @@ messages:
       % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Money,#number=500));
+      Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
-         Send(self,@NewHold,#what=Create(&Money,#number=2000));
-         Send(self,@AddReagentsForSpells);
+         Send(self,@NewHold,#what=Create(&Money,#number=500));
+         Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
       return;
@@ -2460,11 +2479,13 @@ messages:
    {
       local lItems,oItem,iSchool;
 
-      % If player hasn't suicided in last 5 hours, give them cash and prizes!
+      % If player hasn't suicided in last 5 hours, give them cash and fancy clothes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=1000));
-         Send(self,@AddReagentsForSpells);
+         Send(self,@NewHold,#what=create(&InkyCap,#number=5));
+         Send(self,@NewHold,#what=Create(&PantsC));
+         Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
       }
 
       if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) 
@@ -3131,6 +3152,127 @@ messages:
       return;
    }
 
+   AddRadiusEnchantment(what=$,iPower=0,caster=$)
+   "Adds what and power to plRadiusEnchantments, which carry out spell effects."
+   {
+      plRadiusEnchantments = Cons([what,iPower,caster],plRadiusEnchantments);
+      Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
+      
+      return;
+   }
+
+   RemoveRadiusEnchantment(what=$,iPower=0,caster=$)
+   "Removes <what> from plRadiusEnchantments."
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = caster
+         {
+            Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=ENCHANTMENT_ROOM);
+            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
+            bFound = TRUE;
+         }
+      }
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
+               plRadiusEnchantments);
+      }
+
+      return;
+   }
+   
+   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
+   "Returns whether or not currently enchanted by <what> radius enchantment."
+   {
+      local i;
+      
+      if plRadiusEnchantments = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plRadiusEnchantments
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         for i in plRadiusEnchantments
+         {
+            if Nth(i,1) = what
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+   
+   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+   {
+      local i, oHighest;
+   
+      oHighest = $;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(Nth(i,1), byClass)
+         {
+            if oHighest = $
+            {
+               oHighest = i;
+            }
+            else
+            {
+               if Nth(i,2) > Nth(oHighest,2)
+               {
+                  oHighest = i;
+               }
+            }
+         }
+      }
+      return oHighest;
+   }
+   
+   GetRadiusEnchantments()
+   {
+      return plRadiusEnchantments;
+   }
+
    AddAttackModifier(what = $)
    "Adds <what> to plAttack_modifiers, which can modify attack strength and damage."
    {
@@ -3227,7 +3369,7 @@ messages:
 
       if NOT Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
       {
-         iCost = Bound(piMax_mana/2+1,11,$);
+         iCost = Bound(piMax_mana/4+1,6,$);
          if piMana < iCost
          {
             Send(self,@MsgSendUser,#message_rsc=player_cant_broadcast);
@@ -3245,14 +3387,7 @@ messages:
    "Called when the user wants to say a string to a list of people.  Return True/False, "
    "and use some mana too."
    {
-      if piMana < Length(users)
-      {
-         Send(self,@MsgSendUser,#message_rsc=player_cant_send);
-         return FALSE;
-      }
-
-      Send(self,@LoseMana,#amount=Length(users));
-
+      Send(self,@LoseMana,#amount=1);
       return TRUE;
    }
 
@@ -3574,7 +3709,7 @@ messages:
 
       % Make sure room allows the attack. Check if room has special combat affects.
       if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
-                  #use_weapon=use_weapon,#stroke_obj=stroke_obj)
+                  #use_weapon=use_weapon,#stroke_obj=stroke_obj,#report=report)
       {
          return FALSE;
       }
@@ -3602,11 +3737,19 @@ messages:
       if IsClass(victim,&Monster)
       {
          if IsClass(victim,&Reflection)
+            OR IsClass(victim,&EvilTwin)
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
                Send(self,@MsgSendUser,#message_rsc=player_cant_hit_newbie);
          
+               return FALSE;
+            }
+            
+            % Check status and safety against the owner of the reflection.
+            if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=Send(victim,@GetCaster))
+               OR NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),#report=report)
+            {
                return FALSE;
             }
          }
@@ -3650,7 +3793,7 @@ messages:
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
-               % A newbie (someone below pkill_enable_hp) tried to attack
+               % A newbie (someone below GetPKillEnableHP) tried to attack
                % another player! note that this does not affect murderers
                % who have been knocked below this level by angry retributers.
 
@@ -4267,6 +4410,11 @@ messages:
       {
          iDefense = Send(i,@ModifyDefensePower,#who=self,#what=what,#defense_power=iDefense);
       }
+      
+      for i in plRadiusEnchantments
+      {
+         iDefense = Send(Nth(i,1),@ModifyDefensePower,#attacker=what,#iPower=Nth(i,2),#caster=Nth(i,3),#defense_power=iDefense);
+      }
 
       iDefense = iDefense + Send(Send(SYS,@GetParliament),@GetFactionDefenseBonus,#who=self);
 
@@ -4500,7 +4648,7 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell,
+      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
             iLimit;
 
       color_rsc = player_hit_color_none;
@@ -4512,6 +4660,14 @@ messages:
 
       if NOT absolute
       {
+         % Armor of Gort has a special effect that must go first
+         oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
+         if Send(self,@IsEnchanted,#what=oGort)
+         {
+            damage = Send(oGort,@PriorityModifyDefenseDamage,#who=self,#what=what,#damage=damage,
+                          #atype=atype,#aspell=aspell);
+         }
+         
          for i in plDefense_modifiers
          {
             damage = Send(i,@ModifyDefenseDamage,#who=self,#what=what,#damage=damage,
@@ -4519,7 +4675,13 @@ messages:
             Send(i,@DefendingHit,#who=self,#what=what);
          }
       
-         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);                             
+         iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
+
+         for i in plRadiusEnchantments
+         {
+            iResistance = Send(Nth(i,1),@ModifyResistance,#attacker=what,#atype=atype,#iPower=Nth(i,2),#caster=Nth(i,3),#resistance=iResistance);
+         }
+         
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
 
          % Add attmods AFTER resistance/suscep mods.    
@@ -4557,8 +4719,8 @@ messages:
          % If we have more health than twice our max, no percent limit on damage.
          % If we are outlaw or murderer, no percent limit on damage.
          if piHealth < (piBase_Max_Health * 2)
-            AND ((NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-               AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+            AND ((NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
                OR Send(Send(SYS, @GetSettings),@DamageCapProtectionMurderersEnabled))
          {
             % Cap damage to 1/3 of max health (+2 so we "round up")
@@ -4709,7 +4871,7 @@ messages:
       }
       
       piWeaponSwings = piWeaponSwings + times;
-      if (piWeaponSwings mod SWINGS_PER_IMPROVE_CHECK) = 0
+      if (piWeaponSwings mod Send(Send(SYS,@GetSettings),@GetSwingsPerImproveCheck)) = 0
       {
          % Increase this number.  Allows us to advance, and get bonuses for advancement.
          piWeaponInfo = piWeaponInfo + 1000;
@@ -4875,6 +5037,7 @@ messages:
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
+	  Send(self,@DrawHPChance);
 
       return;
    }
@@ -6164,12 +6327,6 @@ messages:
 
       iToAdd = amount;
 
-      % Give a penalty for sitting at the botting imp cap.
-      if NOT Send(self,@CheckAdvancementPoints)
-      {
-         iToAdd = iToAdd / 2;
-      }
-
       SetNth(plSchoolCasts,school,(Nth(plSchoolCasts,school)+iToAdd));
 
       return;
@@ -6390,6 +6547,12 @@ messages:
       local iBase, iChange;
 
       if karma_doer = $ OR karma_act = $
+      {
+         return 0;
+      }
+
+      % Neutral mobs and event mobs do not change karma
+      if karma_act = 0
       {
          return 0;
       }
@@ -6662,12 +6825,7 @@ messages:
          Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_improved_wav_rsc);
       }
-      
-      if iChange > 0 
-      {
-         Send(self,@AddAdvancementPoints,#number=amount);
-      }
-      
+
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools
@@ -6912,9 +7070,7 @@ messages:
       if NOT bDM
          AND NOT initial
       {  
-          Send(self,@AddToSchools,#school=Send(oSpell,@GetSchool),\
-               #change=iBoundAbility);     
-          Send(self,@AddAdvancementPoints,#number=2);
+          Send(self,@AddToSchools,#school=Send(oSpell,@GetSchool),#change=iBoundAbility);
       }
 
       if poOwner <> $
@@ -7083,12 +7239,9 @@ messages:
       % Must get below highmark for atrophy to activate
       iAmount = -2;
 
-      highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))
-                 * piAdvancement_Points)/20; 
-
       for i in plSpells
       {
-         if i < 0 AND Random(1,200) < highmark               
+         if i < 0         
          {
             iAbility = Send(self,@DecodeSpellAbility,#compound=i);
             if iAbility > 2                                                         
@@ -7232,11 +7385,6 @@ messages:
               #wave_rsc=player_improved_wav_rsc);
       }
       
-      if iChange > 0 
-      {
-         Send(self,@AddAdvancementPoints,#number=amount);
-      }
-      
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools
@@ -7362,8 +7510,7 @@ messages:
       if NOT bDM and NOT initial
       {  
          Send(self,@AddToSchools,#school=Send(oSkill,@GetSchool),
-              #change=iBoundAbility);     
-         Send(self,@AddAdvancementPoints,#number=4);
+              #change=iBoundAbility);
       }
       
       return True;
@@ -7449,11 +7596,10 @@ messages:
       local i, j, iability, lSchoolsUsed, aSkill, bSkill, bFound, highmark, iAmount;
 
       iAmount = -2;
-      highmark = piAdvancement_points + ((50-bound(Send(self,@GetIntellect),1,50))*piAdvancement_Points)/20;
 
       for i in plSkills
       {
-         if i < 0 AND Random(1,200) < highmark           
+         if i < 0         
          {
             iAbility = Send(self,@decodeSkillability,#compound=i);
             if iAbility > 2                                                         
@@ -7506,42 +7652,13 @@ messages:
       return;
    }
 
-   AddAdvancementPoints(number=1)
-   "A player can only gain so many advancement points per hour, in spells"
-   "And skills combined."
-   {
-      local iTime;
-      
-      if ptAdvancement = $
-      {
-         iTime = random(ADVANCE_TIMER_MIN,ADVANCE_TIMER_MAX);
-         ptAdvancement = CreateTimer(self,@AdvancementTimer,iTime);
-      }
-      
-      piAdvancement_points = piAdvancement_points + number;
-      
-      return;
-   }
-
-   CheckAdvancementPoints()
-   "Checks to be sure a player isn't at the limit yet."
-   {
-      if piAdvancement_points < ADVANCEMENT_LIMIT
-      {
-         return TRUE;
-      }
-      
-      return FALSE;
-   }
-
    AdvancementTimer()
-   "This does a few things when it goes off.  It clears advancement points, "
-   "so people can learn again.  It also checks for spell or skill atrophy, "
+   "This checks for spell or skill atrophy, "
    "and resets the atrophy flags."
    {
       ptAdvancement = $;
 
-      if piAdvancement_points > 0 AND pbLogged_on
+      if pbLogged_on
       {
          if Send(Send(SYS, @GetSettings), @IsAtrophyOn)
          {
@@ -7551,8 +7668,6 @@ messages:
          
          Send(self,@ResetAtrophyFlags);
       }
-      
-      piAdvancement_Points = 0;
       
       return;
    }
@@ -7650,7 +7765,7 @@ messages:
             else
             {
                % Monster was too easy for player to kill!
-               if random(1,100) < 10 AND killing_blow
+               if random(1,100) < 30 AND killing_blow
                {
                   Send(self,@MsgSendUser,#message_rsc=player_spits);
                }
@@ -7658,7 +7773,7 @@ messages:
          }
 
          % Give newbies a little bonus.
-         if piBase_Max_health < 26 and random(20,bound(piBase_Max_health,20,25)) = 20
+         if piBase_Max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
          {
             gain = gain + 1;
          }
@@ -7672,7 +7787,7 @@ messages:
             roll = FALSE;
          }
 
-         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,100);
+         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,500);
          gain = gain * gainmult;
 
          piGain_chance = piGain_chance + gain;
@@ -7702,6 +7817,11 @@ messages:
                
                if piBase_max_health > 30
                {
+			      %stam = 50
+				  %pigain = pigain - ((50-50)/2) =  pigain - 0
+				  %stam = 25 
+				  %pigain = pigain - ((50-25)/2) = pigain - 12.5
+				  % so, after 30 hps, any stamina less thatn 50 penalizes you by about 0.5 piGain points
                   piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
                }
 
@@ -7768,6 +7888,12 @@ messages:
       %  for Portal of Life to reduce penalties.  We get the default value of
       %  piDeathCost from SYS, so that we can adjust global death penalties.
 
+      if Send(self,@GetOwner) <> $
+         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      {
+         return;
+      }
+
       % "Normal" value is 100.
       piDeathCost = Send(Send(SYS, @GetSettings), @GetDefaultDeathCost);  
 
@@ -7780,11 +7906,7 @@ messages:
       }
 
       % Stop any rescue attempts that were going on.
-      if ptRescue <> $
-      {
-         DeleteTimer(ptRescue);
-         ptRescue = $;
-      }
+      Send(self,@CancelRescue);
       
       piLastDeathTime = getTime();
 
@@ -7852,8 +7974,8 @@ messages:
       % Don't drop anything or take any penalties.
       if Send(SYS,@GetChaosNight)
         OR (iRoom >= RID_NEWB_BASE AND iRoom <= RID_NEWB_MAX)
-        OR (piBase_Max_health < PKILL_ENABLE_HP
-            AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+        OR psHonor <> $
+           AND StringEqual(psHonor,player_newbie_honor_string)
       {
          bNo_drop_death = TRUE;
          piDeathCost = FALSE;    
@@ -7941,7 +8063,6 @@ messages:
          }
 
          % Atrophy of skills or learning progress.
-         piAdvancement_points = 0;
          piGain_chance = piGain_chance/2;
          Send(self,@ResetGainFlags);
          Send(self,@ResetAtrophyFlags);
@@ -8066,6 +8187,13 @@ messages:
    {
       local iAmount, bLostHealth, i;
       
+      if Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         % Leaving the Underworld while protected, no penalties
+         % Protection is removed in NewOwner to allow them to log off without penalties.
+         return;
+      }
+      
       if Send(SYS,@GetChaosNight)
       {
          % Remove any revenants.
@@ -8113,6 +8241,10 @@ messages:
             }
          }
       }
+      else
+      {
+         return;
+      }
 
       if Send(self,@CheckLog) 
       {
@@ -8129,7 +8261,7 @@ messages:
       }
 
       % Remove from guild if now under min HP
-      if piBase_max_health < PKILL_ENABLE_HP
+      if piBase_max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
       {
          Send(self, @QuitGuild);
       }
@@ -10519,6 +10651,7 @@ messages:
          }
 
          if NOT IsClass(nobj,&Blink)  % DON'T COUNT BLINK!
+            AND NOT IsClass(nobj,&UtilitySpell) % Don't count utility spells either
          {
             if nSchool = SS_KRAANAN
                AND nLevel > iKraanan
@@ -10758,6 +10891,7 @@ messages:
          iLevel = Send(oSpellObj,@GetLevel);
 
          if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
+            AND NOT IsClass(oSpellObj,&UtilitySpell) % Don't count utility spells either
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
          {
@@ -10841,7 +10975,7 @@ messages:
       
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         if poGuild = $ AND piBase_Max_health < PKILL_ENABLE_HP
+         if poGuild = $ AND piBase_Max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
@@ -10859,7 +10993,7 @@ messages:
       }
       else
       {
-         if poGuild <> $ OR piBase_Max_health >= PKILL_ENABLE_HP
+         if poGuild <> $ OR piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
             OR Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
          {
@@ -11360,7 +11494,7 @@ messages:
    PlayerIsHPIntrigue()
    "If player has over 40hp base."
    {
-      return (piBase_Max_health >= INTRIGUE_ENABLE_HP);
+      return (piBase_Max_health >= Send(Send(SYS, @GetSettings), @GetIntrigueEnableHP));
    }
 
    PlayerIsAdept()
@@ -11389,7 +11523,8 @@ messages:
 
       if what = $
          OR NOT ((IsClass(poOwner,&GuildHall)
-                 OR IsClass(poOwner,&OutofGrace)))
+                 OR IsClass(poOwner,&OutofGrace)
+                 OR Send(poOwner,@IsArena)))
       {
          return;
       }
@@ -12295,6 +12430,8 @@ messages:
 
    SendLightingInformation()
    {
+      local oLightObject, iColor, iIntensity;
+
       if poIllusion_set <> $
       {
          if NOT Send(poIllusion_set,@IllusionGetLightingInformation,#who=self)
@@ -12309,6 +12446,26 @@ messages:
       {
          % A bit of a kludge.  Ideally, we should query the objects we are using
          %  to find out if any want to add lighting information to us.
+         if plRadiusEnchantments <> $
+         {
+            for oLightObject in plRadiusEnchantments
+            {
+               if Nth(oLightObject,3) = self
+               {
+                  if (piDrawFX & FLICKERING_YES)
+                  {
+                      iIntensity = Send(Nth(oLightObject,1),@GetLightIntensity);
+                      iColor = Send(Nth(oLightObject,1),@GetLightColor);
+                      AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
+                      AddPacket(1,iIntensity);
+                      AddPacket(2,iColor);
+
+                      return;
+                  }
+               }
+            }
+         }
+
          if (piDrawFX & FLICKERING_YES)
          {
             AddPacket(2,(LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC));
@@ -12351,6 +12508,144 @@ messages:
       return;
    }
 
+   SetLoadoutList(set_list = $)
+   {
+      plLoadout_list = set_list;
+      return;
+   }
+
+   GetLoadoutList()
+   {
+      return plLoadout_list;
+   }
+   
+   BindPlayerToCurrentLocation()
+   "Saves the player's current location as a special teleport destination."
+   {
+      local poOwner;
+      
+      poOwner = Send(self,@GetOwner);
+      
+      if poOwner = $
+      {
+         return;
+      }
+
+      piBound_Room = Send(poOwner,@GetRoomNum);
+      piBound_row = Send(self,@GetRow);
+      piBound_col = Send(self,@GetCol);
+      piBound_fine_row = Send(self,@GetFineRow);
+      piBound_fine_col = Send(self,@GetFineCol);
+      piBound_angle = Send(self,@GetAngle);
+
+      return;
+   }
+
+   SendPlayerToBoundLocation()
+   "Sends the player to their saved teleport destination."
+   {
+      local poOwner;
+      
+      poOwner = Send(self,@GetOwner);
+      
+      if poOwner = $
+         OR piBound_Room = $
+         OR NOT Send(self,@IsLoggedOn)
+      {
+         return;
+      }
+
+      Send(SYS,@UtilGoNearSquare,#what=self,
+           #where=Send(SYS,@FindRoomByNum,#num=piBound_room),
+           #new_row=piBound_row,#new_col=piBound_col,
+           #fine_row=piBound_fine_row,#fine_col=piBound_fine_col,
+           #new_angle=piBound_angle, #max_distance=3);
+      
+      return;
+   }
+
+   GetBoundLocationName()
+   {
+      if piBound_room <> $
+      {
+         return Send(Send(SYS,@FindRoomByNum,#num=piBound_room),@GetName);
+      }
+      return $;
+   }
+   
+   GetBoundLocationRoomNum()
+   {
+      return piBound_room;
+   }
+
+   GetBoundLocationRow()
+   {
+      return piBound_row;
+   }
+
+   GetBoundLocationCol()
+   {
+      return piBound_col;
+   }
+   
+   SetDeathRiftProtection(value=FALSE)
+   {
+      if value=TRUE
+         AND Send(self,@GetOwner) <> $
+         AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
+      {
+         % Only allow Death Rift Protection for those already logged on and in the Underworld
+         pbDeath_rift = TRUE;
+         return;
+      }
+
+      if value=FALSE
+      {
+         if ptDeathRiftTimer <> $
+         {
+            DeleteTimer(ptDeathRiftTimer);
+            ptDeathRiftTimer = $;
+         }
+         pbDeath_rift = FALSE;
+      }
+
+      return;
+   }
+   
+   GetDeathRiftProtection()
+   {
+      return pbDeath_rift;
+   }
+   
+   StartDeathRiftTimer()
+   {
+      ptDeathRiftTimer = CreateTimer(self,@DeathRiftBoot,DEATH_RIFT_INTERVAL);
+      return;
+   }
+   
+   DeathRiftBoot()
+   "Players that linger too long will find themselves cast out of the Underworld."
+   {
+      local oRoom;
+
+      ptDeathRiftTimer = $;
+      
+      oRoom = Send(self,@GetOwner);
+      
+      if oRoom <> $
+         AND Send(oRoom,@GetRoomNum) = RID_UNDERWORLD
+         AND Send(self,@GetDeathRiftProtection) = TRUE
+      {
+         Send(self,@AdminGoToSafety);
+         
+         if Send(self,@IsLoggedOn)
+         {
+            Send(self,@MsgSendUser,#message_rsc=death_rift_stayed_too_long);
+         }
+      }
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

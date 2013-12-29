@@ -24,7 +24,10 @@ resources:
 
    summonreflection_failed_rsc = "There is too much summoning magic focused here to summon a reflection."
    
-   summonreflection_limit_rsc = "You have too many reflections here."
+   summonreflection_limit_rsc = "You are already maintaining the maximum number of reflections."
+
+   reflection_cannot_cast_here = \
+      "You are not allowed to create a reflection here."
 
    summonreflection_sound = rmirrimg.wav
 
@@ -45,11 +48,6 @@ classvars:
    vrSucceed_wav = summonreflection_sound
 
 properties:
-
-   % How many reflections one player can cast in a room
-   % Setting this to zero will disable the limit.
-   piPlayerReflectionLimit = 0
-
 
 messages:
 
@@ -75,21 +73,17 @@ messages:
          
          return FALSE;
       }
-
-      if send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
-         OR send(oRoom,@CountHoldingHowMany,#class=&Reflection) > 10
-         OR send(oRoom,@CountHoldingSummoned) > 
-            send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
+      
+      if NOT Send(oRoom,@AllowGuildAttack,#what=who)
       {
-         send(who,@MsgSendUser,#message_rsc=summonreflection_failed_rsc);
-         
+         Send(who,@MsgSendUser,#message_rsc=reflection_cannot_cast_here);
+
          return FALSE;
       }
      
       % limit reflections
-      if send(self,@CountPlayerReflections,#who=who) >= piPlayerReflectionLimit
+      if send(self,@CountPlayerReflections,#who=who) >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit)
          AND NOT send(who,@PlayerIsImmortal)
-         AND NOT piPlayerReflectionLimit = 0
       {
          send(who,@MsgSendUser,#message_rsc=summonreflection_limit_rsc);
          
@@ -130,27 +124,19 @@ messages:
    }
    
    CountPlayerReflections(who = $)
-   "Count number of reflections in a room created by the caster."
+   "Count number of reflections being maintained by the caster."
    {
-      local i, each_obj, count, oRoom;
+      local i;
       
-      count = 0;
-      oRoom = Send(who,@GetOwner);
-      
-      for i in send(oRoom,@GetHolderActive)
+      for i in Send(SYS,@GetReflectionsList)
       {
-           each_obj = send(oRoom,@HolderExtractObject,#data=i);
-
-           if isClass(each_obj,&Reflection)
-           {
-                if send(each_obj,@GetOriginal) = who
-                {
-                     count = count + 1;
-                }
-           }
+         if first(i) = who
+         {
+            return length(Nth(i,2));
+         }
       }
-	  
-      return count;
+      
+      return 0;
    }
 
 end

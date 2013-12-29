@@ -20,7 +20,7 @@ resources:
    OrcPitBossBody_live_name = "orc pit boss"
    OrcPitBossBody_icon_rsc = OrcPitbX.bgf
    OrcPitBossBody_desc_rsc = \
-      "This is the body of the orc pit boss.  It's head is almost completely "
+      "This is the body of the orc pit boss.  Its head is almost completely "
       "severed."
 
    OrcPitBossBody_dead_icon_rsc = OrcPitbX.bgf

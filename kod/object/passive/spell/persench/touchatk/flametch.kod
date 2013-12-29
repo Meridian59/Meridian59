@@ -69,10 +69,11 @@ classvars:
    viSpellExertion = 2
    viMana = 9
 
-   viHit_Factor = 25
-
    viMin_Damage = 4
    viMax_Damage = 9
+
+   % Max amount of damage that punch or 2*myst can add
+   viMaxProficiencyDamage = 4
 
    viRange = 2
 

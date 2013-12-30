@@ -3861,6 +3861,13 @@ messages:
          return;
       }
 
+      % Make sure object is in the same room as player
+      if NOT Send(self, @IsInSameRoom, #what = what)
+      {
+         Debug("User ", self, "tried to look at object in another room");
+         return;
+      }
+
       if IsClass(what,&Player)
       {
          lHolding1 = Send(what,@GetPlayerUsing);
@@ -4246,8 +4253,6 @@ messages:
 
    TryLook(what = $)
    {
-      local what_owner, found;
-
       if (piFlags & PFLAG_INVISIBLE)
          AND what <> self
          AND NOT Send(self,@PlayerIsImmortal)
@@ -4255,20 +4260,7 @@ messages:
          return;
       }
 
-      % Should be in the same room
-      found = FALSE;
-      what_owner = Send(what, @GetOwner);
-      while what_owner <> $
-      {
-         if what_owner = poOwner
-         {
-            found = TRUE;
-            break;
-         }
-         what_owner = Send(what_owner, @GetOwner);
-      }
-
-      if NOT found
+      if NOT Send(self, @IsInSameRoom, #what = what)
       {
          Debug("User ", self, "tried to look at object in another room");
          return;

@@ -19,19 +19,18 @@ resources:
    KaraholsCurse_name_rsc = "Kara'hol's curse"
    KaraholsCurse_icon_rsc = ikarahol.bgf
    KaraholsCurse_desc_rsc = \
-      "Your body is possessed by the spirit of the warrior "
-      "Kara'hol for a brief period, enhancing the ferocity of "
-      "your attacks.  When the spirit departs, your body "
-      "is temporarily paralyzed from shock.  "
+      "Your body is possessed by the raging spirit of "
+      "Kara'hol for a brief period, greatly enhancing the ferocity of "
+      "your attacks while drastically lowering your defenses.  "
       "Requires the sacrifice of a few entroot berries to cast."
    
    KaraholsCurse_on = \
       "The spirit of Kara'hol descends upon you making your "
       "blood boil and your muscles twitch with newfound vigor."
-   KaraholsCurse_off = "Your body freezes as total exhaustion grips your limbs."
+   KaraholsCurse_off = "Your blind rage fades."
    KaraholsCurse_already_enchanted_rsc = "Your blood already boils with Kara'hol's spirit!"
 
-   Karahols_spell_intro = "Qor Lv. 2: Temporarily gives you berserker combat abilities, but with a price to pay later."
+   Karahols_spell_intro = "Qor Lv. 2: Temporarily gives you berserker combat abilities, but at a price."
 
    KaraholsCurse_sound = qkcurse.wav
 

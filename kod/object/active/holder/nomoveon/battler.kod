@@ -358,7 +358,12 @@ messages:
          % We hit!
 		 iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj)/100;
 		 iPreliminary = bound(iPreliminary,0,$);
-         iDamage = Send(what,@AssessDamage,#what=self,#damage=random(iPreliminary/2,iPreliminary),
+         if IsClass(self,&Player)
+         {
+		    iPreliminary = random(iPreliminary/2,iPreliminary);
+         }
+
+         iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,#stroke_obj=stroke_obj,
 		                #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
 
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
@@ -397,7 +402,7 @@ messages:
 	  extra_hits = extra_hits - 1;
 	  
       iDamage = Send(what,@AssessDamage,#what=self,#damage=random(preliminary/2,preliminary),
-		   #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType),
+		   #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType),#stroke_obj=stroke_obj,
 		   #report_resistance=FALSE);
 		   
       Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);

@@ -44,9 +44,9 @@ classvars:
    vrIcon_male = scalearmor_male_icon_rsc
    vrIcon_female = scalearmor_female_icon_rsc
 
-   viDodge_base = -50               
-   viDamage_flat_base = 4
-   viDamage_percent_base = 20
+   viDodge_base = 0               
+   viDamage_flat_base = 2
+   viDamage_percent_base = 10
 
 properties:
 

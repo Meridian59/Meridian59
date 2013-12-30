@@ -66,6 +66,10 @@ classvars:
    viSpell_level = 1
    viMana = 0
    viSpellExertion = 0
+   
+   viHarmful = TRUE
+
+   viNoNewbieOffense = TRUE
 
 properties:
 
@@ -96,17 +100,19 @@ messages:
       }
       
       target = First(lTargets);
+	  
+      if target = $
+	  {
+	     return FALSE;
+	  }
 
       if target = who
       {
-         if not bItemCast
-         {
-            Send(who, @MsgSendUser, #message_rsc=consider_no_self_target,
-	           #parm1=vrName);
-         }
+         Send(who, @MsgSendUser, #message_rsc=consider_no_self_target,#parm1=vrName);
+         
          return FALSE;
       }
-      
+	  
       propagate;
    }
 

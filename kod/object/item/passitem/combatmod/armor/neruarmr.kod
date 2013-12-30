@@ -41,14 +41,14 @@ classvars:
    viWeight = 500
    viBulk = 500
 
-   viSpell_modifier = -25
+   viSpell_modifier = -30
 
    vrIcon_male = neruditearmor_male_icon_rsc
    vrIcon_female = neruditearmor_female_icon_rsc
 
-   viDodge_base = -75           
-   viDamage_flat_base = 5
-   viDamage_percent_base = 25
+   viDodge_base = -50           
+   viDamage_flat_base = 3
+   viDamage_percent_base = 15
 
 properties:
 

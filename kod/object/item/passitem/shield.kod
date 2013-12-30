@@ -57,7 +57,7 @@ classvars:
    viAttack_Type = ATCK_WEAP_STRIKE
    viAttack_spell = 0
    viBlock_chance = 0
-   viBlock_damage = 0
+   viBlock_damage = 6
    
 properties:
    
@@ -97,7 +97,7 @@ messages:
    {
       local iDamage;
 	  
-	  iDamage = random(1,viBlock_damage);
+	   iDamage = random(1,viBlock_damage);
 	  
       Send(who,@SetKillTarget,#target=what);
       Send(who,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);

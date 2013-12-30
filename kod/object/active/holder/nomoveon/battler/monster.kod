@@ -1621,7 +1621,7 @@ messages:
          if (IsClass(what,&Player))
          {
             Send(poOwner,@SomethingWaveRoom,#what=what,
-                 #wave_rsc=Send(what,@GetOuchSound),#flags=SOUND_RANDOM_PITCH);
+                 #wave_rsc=Send(what,@GetOuchSound,#damage=damage),#flags=SOUND_RANDOM_PITCH);
          }
       }
 

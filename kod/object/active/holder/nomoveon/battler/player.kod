@@ -4508,7 +4508,7 @@ messages:
 	  
 	  iDodge = 0;
       
-      if stroke_obj <> $ AND NOT Send(stroke_obj,@CanDodge)
+      if (stroke_obj <> $ AND NOT Send(stroke_obj,@CanDodge))
       {
          return 0;
       }
@@ -4739,7 +4739,7 @@ messages:
          }
       }
 	  
-		 if IsClass(send(what,@GetWeapon),&RangedWeapon)
+		 if stroke_obj = Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
 		 {
             if Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) - Send(send(what,@GetWeapon),@GetStrikethrough) > random(1,200)
 		    {
@@ -5144,11 +5144,11 @@ messages:
    GetOuchSound(damage=0)
    {
       local iHealthFraction;
-
-      if damage = 0
-      {
-         return $;
-      }
+		
+		if damage = 0
+		{
+		   return $;
+		}
 
       if piMax_health > 0
       {

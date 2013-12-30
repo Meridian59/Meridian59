@@ -325,7 +325,7 @@ messages:
       return damage;
    }
 
-   DefendingHit(who = $, what = $)
+   DamageGear(who = $, what = $)
    {
       return;
    }

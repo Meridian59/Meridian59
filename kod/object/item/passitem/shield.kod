@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Shield is CombatModifier
+Shield is PassiveItem
 
 constants:
 
@@ -17,8 +17,12 @@ constants:
    USED = 1
    UNUSED = 2
    DEFENDING = 3
+   
+   SHIELD_DAMAGE_CHANCE = 25
 
 resources:
+
+   shield_broken = "Your %s falls to pieces."   
 
    shield_condition_exc = " shines with smooth perfection."
    shield_condition_exc_mended = " is in great condition, but has been patched before."
@@ -28,6 +32,9 @@ resources:
    shield_condition_broken = " has been shattered by a forceful blow, leaving it useless."
 
 classvars:
+
+   viItem_type = ITEMTYPE_ARMOR
+   vrItem_broken = shield_broken
 
    viUse_type = ITEM_USE_HAND
    viUse_amount = 1
@@ -46,55 +53,79 @@ classvars:
    vrCondition_poor = shield_condition_poor 
    vrCondition_broken = shield_condition_broken
    
-   viDefense_base = 0
-   viDamage_flat_base = 0
-
+   viWeaponType = WEAPON_TYPE_STRIKE
+   viAttack_Type = ATCK_WEAP_STRIKE
+   viAttack_spell = 0
+   viBlock_chance = 0
+   viBlock_damage = 0
+   
 properties:
    
    piUsed = UNUSED
 
-   % The bonus to block afforded by the shield.
-   piBlockBonus = 0
-
 messages:
 
-   DefaultValues()
+   GetStroke(who=$)
    {
-      piBlockBonus = viDefense_base;
-      propagate;
+      return send(who,@GetSkillAbility,#skill_num=Send(self,@GetDefaultStrokeNumber));
+   }
+
+   GetAttackName()
+   {
+      return vrName;
+   }
+
+   GetDefaultStrokeNumber()
+   {
+      return SKID_SLASH;
+   }
+   
+   DamageGear(who = $,what = $)
+   {
+      % 25% chance to get damaged.
+      if (random(1,100) < SHIELD_DAMAGE_CHANCE)
+      {
+         propagate;
+      }
+      
+      return;
    }
 
    % General Combat messages:
+   
+   DoBlockAttack(who=$,what=$)
+   {
+      local iDamage;
+	  
+	  iDamage = random(1,viBlock_damage);
+	  
+      Send(who,@SetKillTarget,#target=what);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+
+      % After figuring damage, do an AssessDamage.  This will handle the necessary
+      %  attack messages.
+      iDamage = Send(what,@AssessDamage,#what=who,#damage=iDamage,
+                     #atype=Send(self,@GetAttackType),#aspell=Send(self,@GetAttackSpell),
+                     #absolute=FALSE);
+
+      Send(who,@AssessHit,#what=what,#damage=iDamage,#use_weapon=self);
+
+      if iDamage = $
+      {
+         Send(who,@KilledSomething,#what=what,#use_weapon=self,#stroke_obj=Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber)));
+      } 
+
+      Send(send(who,@GetOwner),@SomethingAttacked,#what=who,#victim=what,#use_weapon=self);
+	  
+	  return;
+   }
 
    % Called here, different shields can give different bonuses.
    GetBlockAbility(who = $)
    {
-      return bound(send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) * piBlockBonus,1,120);
+      return send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) + 1 + viBlock_chance + send(who,@GetMight);
    }
 
-   % Shields use the defense bonus as a bonus to block instead.
-   ModifyDefensePower(who = $,what = $,defense_power = 0)
-   {
-      return 0;
-   }
-
-   % Shields only reduce damage if you make your block check.
-   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
-   {
-      local oBlock;
-
-      oBlock = Send(SYS,@FindSkillByNum,#num=SKID_BLOCK);
-      
-      if Send(oBlock,@SuccessChance,#who=who,#modifier=piBlockBonus)
-      {
-         % We succeeded!  Do a block animation and propagate up to reduce damage.
-		 send(self,@DoBlockAnimation);
-         propagate;
-      }
-      
-      return 0;
-   }
-   
    DoBlockAnimation()
    {
 	  piUsed = DEFENDING;
@@ -233,7 +264,19 @@ messages:
       
       return;
    }
+   
+   %%% Attack Type Functions for Block Damage
+   
 
+   GetAttackSpell()
+   {
+      return viAttack_spell;
+   }
+
+   GetAttackType()
+   {
+      return viAttack_type;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

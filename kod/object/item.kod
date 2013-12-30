@@ -15,7 +15,7 @@ constants:
    include blakston.khd
    include protocol.khd
 
-   ARMOR_TAKE_DAMAGE_PCT = 75
+   DAMAGE_CHANCE = 100
    
 resources:
 
@@ -639,10 +639,10 @@ messages:
       return defense_power;            
    }
 
-   DefendingHit(who = $,what = $)
+   DamageGear(who = $,what = $)
    {
-      % Set to 75% currently
-      if random(1,100) < ARMOR_TAKE_DAMAGE_PCT   
+      % Set to 25% currently
+      if random(1,100) < DAMAGE_CHANCE   
       {
          piHits = piHits - 1;
       }

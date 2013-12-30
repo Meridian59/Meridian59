@@ -39,6 +39,7 @@ classvars:
    viHits_init_max = 300
 
    viSpell_modifier = -20
+   viStrikethrough = 50
 
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN4

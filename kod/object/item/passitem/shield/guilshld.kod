@@ -113,8 +113,7 @@ classvars:
    viWeight = 200  
    viBulk = 150
 
-   viDefense_base = 20
-   viDamage_flat_base = 5
+   viBlock_chance = 0
 
 properties:
 
@@ -548,11 +547,6 @@ messages:
       Send(self,@SendLookOverlays);
       
       return;
-   }
-
-   GetResistanceModifiers()
-   {
-      return [ [ATCK_WEAP_PIERCE,10] ];
    }
 
    GetBaseSpellModifier(oSpell=$)

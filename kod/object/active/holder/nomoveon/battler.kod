@@ -37,13 +37,15 @@ resources:
    % battler_defender_slay - Psychochild's scimitar slays you.
    % battler_defender_miss - Psychochild's attack is blocked by you.
 
-   battler_attacker_crit = "~k~IYou dealt a critical strike!"  
-   battler_defender_crit = "~r~IYou suffered a critical strike!"  
+   battler_attacker_crit = "~k~IYou exploit a flaw in %s%s's defenses to unleash a flurry of attacks!"  
+   battler_defender_crit = "~r~I%s%s exploits a flaw in your defenses to unleash a flurry of attacks!"  
 
-   battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage."       
+   battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage." 
+   battler_attacker_fail = "%sYour %s fails to damage %s%s." 
    battler_attacker_slay = "%sYour %s %s %s%s."   
    battler_attacker_miss = "%sYour attack %s %s%s."    
    battler_defender_hit = "%s%s%s's %s %s you for ~r~B%i~B%s damage."
+   battler_defender_fail = "%s%s%s's %s fails to damage you."
    battler_defender_slay = "%s%s%s's %s %s you."  
    battler_defender_miss = "%s%s%s's attack %s you."   
 
@@ -54,7 +56,6 @@ resources:
    battler_parried  = "is parried by"
    battler_misses = "misses"
 
-   battler_fail = "fails to damage"
    battler_nick = "nicks"
    battler_wound = "wounds"
    battler_damage = "damages"
@@ -317,7 +318,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iPreliminary, iDamage, oWeapon, iMultiplier;
+      local iChanceToHit, iPreliminary, iDamage, oWeapon, iExtraHits;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -327,11 +328,9 @@ messages:
       % This is the generic checks and the calculation of chance to hit and
       %  damage.
       iChanceToHit = (Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj)
-                      * EQUAL_CHANCE_HIT)
-                     / Send(what,@GetDefense,#what=self,
-                            #stroke_obj=stroke_obj);
+                      * EQUAL_CHANCE_HIT) / Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj);
       iChanceToHit = bound(iChanceToHit,125,2000);
-      iMultiplier = 1;
+      iExtraHits = 0;
 
       if iChanceToHit < random(1,1000)
 	  {
@@ -342,28 +341,25 @@ messages:
 	  {
          if iChanceToHit >= random(1001,2000)
          {
-            % We deal double damage!
-            iMultiplier = 2;
+            % We generate an extra hit!
+            iExtraHits = iExtraHits + 1;
             % Let us tell them the good news.
             if IsClass(self,&Player)
             {
-               Send(self,@MsgSendUser,#message_rsc=battler_attacker_crit);
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_crit,#parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
             }
             
             if IsClass(what,&Player)
             {
-               Send(what,@MsgSendUser,#message_rsc=battler_defender_crit);
+               Send(what,@MsgSendUser,#message_rsc=battler_defender_crit,#parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
             }
 		 }
 
          % We hit!
-		 iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj) * iMultiplier;
-		 iPreliminary = random(iPreliminary/2,iPreliminary);
-		 iPreliminary = iPreliminary/100;
-		 iPreliminary = bound(iPreliminary,1,$);
-         iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,
-		      #atype=Send(self,@GetDamageType),
-              #aspell=Send(self,@GetSpellType));
+		 iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj)/100;
+		 iPreliminary = bound(iPreliminary,0,$);
+         iDamage = Send(what,@AssessDamage,#what=self,#damage=random(iPreliminary/2,iPreliminary),
+		                #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
 
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
 	  
@@ -374,19 +370,57 @@ messages:
          }
          else
          {
-            Send(self,@DidDamage,#amount=iDamage,#what=what);
+		    if iDamage > 0
+			{   
+               Send(self,@DidDamage,#amount=iDamage,#what=what);
+			}
          }
+		 
+		 if iExtraHits > 0 AND iDamage <> $
+		 {
+            Post(self,@DoExtraHit,#preliminary=iPreliminary,#what=what,#stroke_obj=stroke_obj,#use_weapon=oWeapon,#extra_hits=iExtraHits);
+		 }
       }
-
+      
       if poOwner <> $
       {
-         Send(poOwner,@SomethingAttacked,#what=self,#victim=what,
-              #use_weapon=oWeapon);
+         Send(poOwner,@SomethingAttacked,#what=self,#victim=what,#use_weapon=oWeapon);
       }
          
       return TRUE;
    }
    
+   DoExtraHit(preliminary=0,what=$,stroke_obj=$,use_weapon=$,extra_hits=0)
+   {
+      local iDamage;
+	  
+	  extra_hits = extra_hits - 1;
+	  
+      iDamage = Send(what,@AssessDamage,#what=self,#damage=random(preliminary/2,preliminary),
+		   #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType),
+		   #report_resistance=FALSE);
+		   
+      Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
+
+      if iDamage = $
+      {
+         Send(self,@KilledSomething,#what=what,#use_weapon=use_weapon,#stroke_obj=stroke_obj);
+      }
+      else
+      {
+		 if iDamage > 0
+		 {   
+            Send(self,@DidDamage,#amount=iDamage,#what=what);
+		 }
+
+		 if extra_hits > 0 
+		 {
+            Post(self,@DoExtraHit,#preliminary=preliminary,#what=what,#stroke_obj=stroke_obj,#use_weapon=use_weapon,#extra_hits=extra_hits);
+		 }
+      }
+	  return;
+   }
+       
    GetLevel()
    {
       return 65;
@@ -826,22 +860,17 @@ messages:
          return battler_wound;
       }
 
-      if damage > 0
-      {
-         return battler_nick;
-      }
-
-      return battler_fail;
+      return battler_nick;
    }
 
    % This returns defense reason of why opponent missed this battler.
-   GetDefenseDesc(stroke_obj=$)
+   GetDefenseDesc(stroke_obj=$,what=$)
    {
       local iRandom, iParry, iBlock, iDodge, iAvoid;
       
       iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
       iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
-      iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
+      iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj)*2;
 	  if IsClass(self,&Player)
 	  {
 	     iAvoid = Send(self,@GetAgility)*8+100;
@@ -857,7 +886,15 @@ messages:
       {
 	     if IsClass(self,&Player)
 		 {
-	        send(send(self,@LookupPlayerWeapon),@DoParryAnimation);
+	        send(send(self,@LookupPlayerWeapon),@DamageGear);
+			if NOT IsClass(send(what,@GetWeapon),&RangedWeapon)
+			{
+	           post(send(self,@LookupPlayerWeapon),@DoRiposte,#who=self,#what=what);
+			}
+			else
+			{
+	           send(send(self,@LookupPlayerWeapon),@DoParryAnimation);
+			}
 		 }
          return battler_parried;
       }
@@ -867,6 +904,11 @@ messages:
 	     if IsClass(self,&Player)
 		 {
 	        send(send(self,@LookupPlayerShield),@DoBlockAnimation);
+		    send(send(self,@LookupPlayerShield),@DamageGear);
+			if NOT IsClass(send(what,@GetWeapon),&RangedWeapon)
+			{
+	           post(send(self,@LookupPlayerShield),@DoBlockAttack,#who=self,#what=what);
+			}
 		 }
          return battler_blocked;
       }
@@ -982,10 +1024,19 @@ messages:
          }
          else
          {
-            Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-              #parm6=damage,#parm7=rColor);
+		    if damage = 0
+			{
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_fail,
+                 #parm1=rColor,#parm2=rWeaponName,#parm3=Send(what,@GetDef),
+				 #parm5=Send(what,@GetName));
+			}	 
+			else
+			{
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+                 #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+                 #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+                 #parm6=damage,#parm7=rColor);
+			}	 
          }
       }
 
@@ -1000,10 +1051,19 @@ messages:
          }
          else
          {
-            Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
-              #parm1=rColor,#parm2=Send(self,@GetCapDef),
-              #parm3=Send(self,@GetName),#parm4=rWeaponName,
-              #parm5=rDamageDesc,#parm6=damage,#parm7=rColor);
+		    if damage = 0
+			{
+               Send(what,@MsgSendUser,#message_rsc=battler_defender_fail,
+                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                 #parm3=Send(self,@GetName),#parm4=rWeaponName);
+			}	 
+			else
+			{
+               Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
+                 #parm1=rColor,#parm2=Send(self,@GetCapDef),
+                 #parm3=Send(self,@GetName),#parm4=rWeaponName,
+                 #parm5=rDamageDesc,#parm6=damage,#parm7=rColor);
+			}	 
          }
       }
 
@@ -1014,9 +1074,10 @@ messages:
    "This does the fallout of a miss, gives appropriate message, etc. "
    "Called on self when missing."
    {
-      local rColor;
+      local rColor, rDescriptor;
 
       rColor = battler_blue_text;
+	  rDescriptor = Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj,#what=self);
 
       % This is kinda kludgy, should call messages in subclasses instead.
       if IsClass(self,&Player)
@@ -1029,7 +1090,7 @@ messages:
 
          Send(self,@MsgSendUser,#message_rsc=battler_attacker_miss,
               #parm1=rColor,
-              #parm2=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj),
+              #parm2=rDescriptor,
               #parm3=Send(what,@GetDef),
               #parm4=Send(what,@GetName));
          Send(stroke_obj,@SendMissMessageToAttacker,#who=self,#victim=what,
@@ -1043,7 +1104,7 @@ messages:
               #parm1=rColor,
               #parm2=Send(self,@GetCapDef),
               #parm3=Send(self,@GetName),
-              #parm4=Send(what,@GetDefenseDesc,#stroke_obj=stroke_obj));
+              #parm4=rDescriptor);
          % Flag them as "dodging", so they can potentially improve.
          Send(what,@SetPlayerFlag,#flag=PFLAG_DODGED,#value=TRUE);              
       }

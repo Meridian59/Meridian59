@@ -45,8 +45,6 @@ classvars:
    viGround_group = 1
    viInventory_group = 2
 
-   viDefense_base = 10               % This is the default value for piDefense_bonus
-
 properties:
 
    piMana_change = 0

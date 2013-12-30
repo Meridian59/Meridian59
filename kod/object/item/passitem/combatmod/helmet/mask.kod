@@ -42,7 +42,7 @@ properties:
 
 messages:
 
-   DefendingHit(who = $,what = $)
+   DamageGear(who = $,what = $)
    {
       % Return here to avoid damage.
       return;

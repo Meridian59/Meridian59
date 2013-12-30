@@ -44,19 +44,11 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viDefense_base = -20
-   viDamage_flat_base = 5
+   viBlock_chance = -50
 
 properties:
 
 messages:
-
-   GetResistanceModifiers()
-   {
-      return [ [ATCK_WEAP_SLASH,10]
-             ];
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

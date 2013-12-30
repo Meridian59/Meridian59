@@ -64,7 +64,6 @@ classvars:
    viBroken_group = 3
 
    viSpell_modifier = 10
-   viDefense_base = 20
 
    viUse_type = ITEM_USE_BODY | ITEM_USE_LEGS
 

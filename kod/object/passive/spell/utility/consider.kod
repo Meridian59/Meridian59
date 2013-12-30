@@ -25,13 +25,15 @@ resources:
 
    consider_succeed = "After careful consideration, you come to some conclusions..."
    consider_chance_to_hit = "Considering your current setup, you should have about a "
-                    "%i percent chance to %s %s%s and a %i percent chance to get %s by %s."
+                    "%i percent chance to %s %s%s and a %i percent chance to %s %s."
    consider_stats = "Comparing %s to yourself, you notice that %s seems %s muscular, %s "
                     "agile, %s accurate, %s enduring, %s thoughtful and %s spiritual."
    consider_level = "You have to say, that at least at first glance, %s seems %s you and %s."
    
-   consider_string_hit = "hit"
-   consider_string_crit = "crit"
+   consider_string_self_hit = "hit"
+   consider_string_self_double = "execute an extra attack against"
+   consider_string_enemy_hit = "get hit by"
+   consider_string_enemy_double = "suffer an additional attack from"
    
    consider_less = "less"
    consider_much_less = "way less"
@@ -111,28 +113,58 @@ messages:
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
       local iMig, iAgi, iAim, iMys, iInt, iSta, iKarma, iLevel, oTarget, oTargetWeapon, oWeapon, 
-      iChanceToHit, iChanceToGetHit, iHitpercent, iGetHitpercent,
+      iChanceToHit, iChanceToGetHit, iHitpercent, iGetHitpercent, oStroke, oTargetStroke,
       sMig, sAgi, sAim, sMys, sInt, sSta, sKarma, sLevel;
       
       Send(who,@MsgSendUser,#message_rsc=consider_succeed);
 
-      oTarget = First(lTargets);
-      
       oWeapon = Send(who,@GetWeapon);
+	  
+      if oWeapon = $
+      {
+         oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
+      }
+      else
+      {
+         if IsClass(oWeapon,&Weapon)
+         {
+            oStroke=Send(SYS,@FindSkillByNum,#num=Send(oWeapon,@GetDefaultStrokeNumber));
+         }
+         else
+         {
+            oStroke = oWeapon;
+         }
+      }
 
+      oTarget = First(lTargets);
+	  
+      oTargetWeapon = Send(oTarget,@GetWeapon);
+	  
       if IsClass(oTarget,&Player)
       {
-         oTargetWeapon = Send(oTarget,@GetWeapon);
-      }
+         if oTargetWeapon = $
+         {
+            oTargetStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
+         }
+         else
+         {
+            if IsClass(oTargetWeapon,&Weapon)
+            {
+               oTargetStroke=Send(SYS,@FindSkillByNum,#num=Send(oTargetWeapon,@GetDefaultStrokeNumber));
+            }
+            else
+            {
+               oTargetStroke = oTargetWeapon;
+            }
+          }
+	  }
       else
       {
          oTargetWeapon = oTarget;
       }
          
-      iChanceToHit = (Send(who,@GetOffense,#what=oTarget,#stroke_obj=oWeapon)
-                      * 500)
-                     / Send(oTarget,@GetDefense,#what=who,
-                            #stroke_obj=oWeapon);
+      iChanceToHit = (Send(who,@GetOffense,#what=oTarget,#stroke_obj=oStroke)* 500)
+                     / Send(oTarget,@GetDefense,#what=who,#stroke_obj=oStroke);
       iChanceToHit = bound(iChanceToHit,125,2000);
       
       if iChanceToHit > 1000
@@ -144,10 +176,8 @@ messages:
          iHitpercent = (iChanceToHit/10);
       }
          
-      iChanceToGetHit = (Send(oTarget,@GetOffense,#what=who,#stroke_obj=oTargetWeapon)
-                      * 500)
-                     / Send(who,@GetDefense,#what=oTarget,
-                            #stroke_obj=oTargetWeapon);
+      iChanceToGetHit = (Send(oTarget,@GetOffense,#what=who,#stroke_obj=oTargetStroke)* 500)
+                     / Send(who,@GetDefense,#what=oTarget,#stroke_obj=oTargetStroke);
       iChanceToGetHit = bound(iChanceToGetHit,125,2000);
       
       if iChanceToGetHit > 1000
@@ -163,19 +193,15 @@ messages:
       {
          if iChanceToGetHit > 1000
          {
-            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-              #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send
-
-(oTarget,@GetName),
-              #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
+            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,#parm1=iHitPercent,
+			   #parm2=consider_string_self_double,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+               #parm5=iGetHitPercent,#parm6=consider_string_enemy_double,#parm7=Send(oTarget,@GetHimHer));
          }
          else
          {
-            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-              #parm1=iHitPercent,#parm2=consider_string_crit,#parm3=Send(oTarget,@GetDef),#parm4=Send
-
-(oTarget,@GetName),
-              #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
+            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,#parm1=iHitPercent,
+			   #parm2=consider_string_self_double,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+               #parm5=iGetHitPercent,#parm6=consider_string_enemy_hit,#parm7=Send(oTarget,@GetHimHer));
          }
       }
       else
@@ -183,18 +209,14 @@ messages:
          if iChanceToGetHit > 1000
          {
             Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-              #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send
-
-(oTarget,@GetName),
-              #parm5=iGetHitPercent,#parm6=consider_string_crit,#parm7=Send(oTarget,@GetHimHer));
+              #parm1=iHitPercent,#parm2=consider_string_self_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),
+			  #parm5=iGetHitPercent,#parm6=consider_string_enemy_double,#parm7=Send(oTarget,@GetHimHer));
          }
          else
          {
-            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,
-              #parm1=iHitPercent,#parm2=consider_string_hit,#parm3=Send(oTarget,@GetDef),#parm4=Send
-
-(oTarget,@GetName),
-              #parm5=iGetHitPercent,#parm6=consider_string_hit,#parm7=Send(oTarget,@GetHimHer));
+            Send(who,@MsgSendUser,#message_rsc=consider_chance_to_hit,#parm1=iHitPercent,#parm2=consider_string_self_hit,
+			   #parm3=Send(oTarget,@GetDef),#parm4=Send(oTarget,@GetName),#parm5=iGetHitPercent,
+			   #parm6=consider_string_enemy_hit,#parm7=Send(oTarget,@GetHimHer));
          }
       }
       
@@ -387,9 +409,9 @@ messages:
             }
          }
          
-         Send(who,@MsgSendUser,#message_rsc=consider_stats,
-              #parm1=Send(oTarget,@GetHimHer),#parm2=Send(oTarget,@GetHeShe),
-              #parm3=sMig,#parm4=sAgi,#parm5=sAim,#parm6=sSta,#parm7=sInt,#parm8=sMys);
+         Send(who,@MsgSendUser,#message_rsc=consider_stats,#parm1=Send(oTarget,@GetHimHer),
+		    #parm2=Send(oTarget,@GetHeShe),#parm3=sMig,#parm4=sAgi,#parm5=sAim,#parm6=sSta,
+			#parm7=sInt,#parm8=sMys);
       }
         
       iKarma = send(oTarget,@GetKarma);
@@ -490,8 +512,7 @@ messages:
          }
       }   
     
-      Send(who,@MsgSendUser,#message_rsc=consider_level,
-           #parm1=Send(oTarget,@GetHeShe),#parm2=sLevel,#parm3=sKarma);              
+      Send(who,@MsgSendUser,#message_rsc=consider_level,#parm1=Send(oTarget,@GetHeShe),#parm2=sLevel,#parm3=sKarma);              
 
       propagate;
    }

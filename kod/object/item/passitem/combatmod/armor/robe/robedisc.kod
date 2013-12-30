@@ -52,7 +52,6 @@ classvars:
    viInventory_group = 2
    viBroken_group = 3
 
-   viSpell_modifier = 10
    viBulk = 160
    viWeight = 130
    viValue_average = 2000

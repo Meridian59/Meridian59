@@ -128,7 +128,7 @@ messages:
       return FALSE;
    }
 
-   DefendingHit()
+   DamageGear()
    "Called when the item provides defense."
    {
       % Return here so we don't damage the ring!

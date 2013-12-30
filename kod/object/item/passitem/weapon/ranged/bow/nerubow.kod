@@ -45,6 +45,7 @@ classvars:
    viHits_init_max = 300
 
    viSpell_modifier = -40
+   viStrikethrough = -50
 
    % What's the basic color of the bow?
    viBaseXLAT = XLAT_TO_GREEN

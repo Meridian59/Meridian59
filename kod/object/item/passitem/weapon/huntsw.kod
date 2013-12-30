@@ -744,7 +744,7 @@ messages:
       return;
    }
 
-   WeaponHitTarget()
+   DamageGear()
    {
       %the hunter sword never takes damage normally
       return;

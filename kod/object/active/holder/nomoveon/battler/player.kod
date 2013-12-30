@@ -712,6 +712,9 @@ resources:
    player_logged_off_wav_rsc = player_logout2.wav
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
+   
+   player_defender_arrow_blocked = "~I~rWith a loud >thud<, %s%s's %s hits your %s." 
+   player_attacker_arrow_blocked = "~I~kWith a loud >thud<, your %s hits %s%s's %s."
 
 classvars:
 
@@ -4370,11 +4373,14 @@ messages:
          
          iOffense = 250 + (iStroke*25/10) + (iProficiency*5) + (iStat*20);
 
-         if IsClass(oWeapon,&Weapon)
+         if oWeapon <> $
          {
-            iBonus = Send(oWeapon,@ModifyHitRoll,#target=what,#hit_roll=iOffense);
-            iOffense = iOffense * (100 + iBonus)/100;
-         }
+            if IsClass(oWeapon,&Weapon)
+            {
+               iBonus = Send(oWeapon,@ModifyHitRoll,#target=what,#hit_roll=iOffense);
+               iOffense = iOffense * (100 + iBonus)/100;
+            }
+	     }
       }
 
       % List of items and spells that affect chance-to-hit
@@ -4420,22 +4426,22 @@ messages:
          iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
-         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj) + 1;
+         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
          
          % Ask the shield, it might give a bonus to block.
-         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) + 1;
-         
-         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj) + 1;
+         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
+
+         % Ask armor, it might give a penalty or bonus to dodge.         
+         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = 250 + (iParry + iBlock + iDodge)*25/10 + (iAgility*20);
+         iDefense = (iParry + iBlock)*25/10 + iDodge*5 + (iAgility*20);
       }
 
       for i in plDefense_modifiers
       {
          iBonus = Send(i,@ModifyDefensePower,#who=self,#what=what,#defense_power=iDefense);
          iDefense = iDefense * (100 + iBonus)/100;
-		 
       }
       
       for i in plRadiusEnchantments
@@ -4470,7 +4476,7 @@ messages:
          return 0;
       }
       
-      return Send(oWeapon,@GetParryAbility,#who=self);
+      return bound(Send(oWeapon,@GetParryAbility,#who=self),0,$);
    }
 
    GetBlockAbility(stroke_obj=$)
@@ -4493,12 +4499,14 @@ messages:
          return 0;
       }
       
-      return Send(oShield,@GetBlockAbility,#who=self);
+      return bound(Send(oShield,@GetBlockAbility,#who=self),0,$);
    }
 
    GetDodgeAbility(stroke_obj=$)
    {
-      local oMonster;
+      local oMonster, iDodge, iBonus, i;
+	  
+	  iDodge = 0;
       
       if stroke_obj <> $ AND NOT Send(stroke_obj,@CanDodge)
       {
@@ -4515,7 +4523,12 @@ messages:
 
       if Send(Send(sys,@FindSkillByNum,#num=SKID_DODGE),@CanPayCosts,#who=self)
       {
-         return Send(self,@GetSkillAbility,#skill_num=SKID_DODGE);
+         for i in plDefense_modifiers
+         {
+            iBonus = Send(i,@ModifyDodgeAbility,#who=self);
+            iDodge = iDodge + iBonus;
+         }
+         return bound(Send(self,@GetSkillAbility,#skill_num=SKID_DODGE) + 1 + iDodge + send(self,@GetAgility),0,$);
       }
 
       return 0;
@@ -4548,6 +4561,7 @@ messages:
                if IsClass(oWeapon,&Weapon)
                {
                   oStroke=Send(SYS,@FindSkillByNum,#num=Send(oWeapon,@GetDefaultStrokeNumber));
+				  Send(oWeapon,@DamageGear);
                }
                else
                {
@@ -4571,7 +4585,7 @@ messages:
                           #stroke_obj=oStroke);
          iDamageBonus = iDamageBonus + iModBonus;
 
-         Send(i,@WeaponHitTarget);
+         Send(i,@DamageGear);
       }
                
       % iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),@GetFactionDamageBonus,#who=self);
@@ -4653,10 +4667,17 @@ messages:
 
       % Morphed? As a bonus, people in illusionary form get the hit side effect. :)
       oMonster = Send(self,@GetIllusionForm);
-      if (oMonster <> $)
-      {
-         Send(oMonster,@HitSideEffect,#what=what);
-      }
+	  
+	  if damage <> $	  
+	  {
+	     if damage > 0
+		 {
+            if (oMonster <> $)
+            {
+               Send(oMonster,@HitSideEffect,#what=what);
+            }
+	     }
+	  }
 
       Send(self,@DoHitMessageSound,#what=what,#damage=damage,#stroke_obj=stroke_obj);
       
@@ -4668,7 +4689,10 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit, iBonus;
+            iLimit, iFlat, iFlatBonus, iPercent, iPercentBonus;
+			
+      iFlatBonus = 0;	
+      iPercentBonus = 0;	  
 
       color_rsc = player_hit_color_none;
       
@@ -4681,13 +4705,21 @@ messages:
       {
          for i in plDefense_modifiers
          {
-            iBonus = Send(i,@ModifyDefenseDamagePercent,#who=self,#what=what,#damage=damage,
+            iPercent = Send(i,@ModifyDefenseDamagePercent,#who=self,#what=what,#damage=damage,
                           #atype=atype,#aspell=aspell);
 
-			damage = damage*(100-iBonus)/100;
+			iPercentBonus = iPercentBonus + iPercent;
+
+            iFlat = Send(i,@ModifyDefenseDamageFlat,#who=self,#what=what,#damage=damage,
+                          #atype=atype,#aspell=aspell);
+
+			iFlatBonus = iFlatBonus + iFlat;
 			
-            Send(i,@DefendingHit,#who=self,#what=what);
+			% Handles damage done to protective gear.
+			Send(i,@DamageGear,#who=self,#what=what);
          }
+		 
+		 damage = (damage * (100-iPercentBonus)/100) - iFlatBonus;
       
          iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
 
@@ -4698,16 +4730,6 @@ messages:
          
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
 		 
-         for i in plDefense_modifiers
-         {
-            iBonus = Send(i,@ModifyDefenseDamageFlat,#who=self,#what=what,#damage=damage,
-                          #atype=atype,#aspell=aspell);
-
-			damage = damage -iBonus;
-			
-            Send(i,@DefendingHit,#who=self,#what=what);
-         }
-		 
          % Armor of Gort has a special effect that must go absolutely last
          oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
          if Send(self,@IsEnchanted,#what=oGort)
@@ -4716,7 +4738,25 @@ messages:
                           #atype=atype,#aspell=aspell);
          }
       }
-      
+	  
+		 if IsClass(send(what,@GetWeapon),&RangedWeapon)
+		 {
+            if Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) - Send(send(what,@GetWeapon),@GetStrikethrough) > random(1,200)
+		    {
+               Send(self,@MsgSendUser,#message_rsc=player_defender_arrow_blocked,
+                    #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+					#parm3=Send(Send(what,@GetWeapon),@GetAttackName),
+					#parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
+               Send(what,@MsgSendUser,#message_rsc=player_attacker_arrow_blocked,
+                    #parm1=Send(Send(what,@GetWeapon),@GetAttackName),
+					#parm2=Send(self,@GetDef),#parm3=Send(self,@GetName),
+					#parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
+		       send(send(self,@LookupPlayerShield),@DamageGear);
+	           post(send(self,@LookupPlayerShield),@DoBlockAnimation);
+			   damage = 0; 
+			}
+	     }
+		 
       iDuration = 800;
       if damage <= 6
       {
@@ -4729,11 +4769,6 @@ messages:
       }
       
       Send(self,@EffectSendUserDuration,#what=self,#effect=EFFECT_PAIN,#duration=iDuration);
-
-      if NOT absolute and damage <= 0
-      {
-         damage = 1;
-      }
 
       if damage > 0
       {
@@ -4771,6 +4806,8 @@ messages:
             damage = (damage * 115)/100;
          }
       }
+	  
+	  damage = bound(damage,0,$);
 
       Send(self,@LoseHealth,#amount=damage);
 
@@ -4824,16 +4861,6 @@ messages:
 
       oWeapon = Send(self,@GetWeapon);
       
-      if oWeapon <> $
-      {
-         Send(oWeapon,@WeaponHitTarget);
-      }
-      
-      for i in plAttack_modifiers
-      {
-         Send(i,@WeaponHitTarget);
-      }
-
       if Send(self,@GetSkillAbility,#Skill_num=SKID_DISARM) > 0
       {
          if oWeapon <> $ AND IsClass(oWeapon,&Spell)
@@ -4845,10 +4872,7 @@ messages:
               #oTarget=what,#oWeapon=oWeapon);
       }
 
-      if amount > 0
-      {
-         Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
-      }
+      Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
 
       return;
    }
@@ -5117,9 +5141,14 @@ messages:
       return $;
    }
 
-   GetOuchSound()
+   GetOuchSound(damage=0)
    {
       local iHealthFraction;
+
+      if damage = 0
+      {
+         return $;
+      }
 
       if piMax_health > 0
       {
@@ -5275,7 +5304,7 @@ messages:
          Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=rSound);
          if IsClass(what,&Player)
          {
-            Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound));
+            Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound,#damage=damage));
          }
 
          return;
@@ -5381,7 +5410,7 @@ messages:
             
             if IsClass(what,&Player)
             {
-               Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound));
+               Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound,#damage=damage));
             }
             
             return;
@@ -5410,7 +5439,7 @@ messages:
             
             if IsClass(what,&Player)
             {
-               Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound));
+               Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound,#damage=damage));
             }
             
             return;
@@ -5438,7 +5467,7 @@ messages:
       
       if IsClass(what,&Player)
       {
-         Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound));
+         Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound,#damage=damage));
       }
 
       return;
@@ -5529,7 +5558,7 @@ messages:
 
       for i in plUsing
       {
-         if IsClass(i,&Weapon)
+         if IsClass(i,&Weapon) AND NOT IsClass(i,&Shield) 
          {
             return i;
          }
@@ -5639,96 +5668,6 @@ messages:
          {
             return i;
          }
-      }
-      
-      return $;
-   }
-
-   ChooseArmorPosition()
-   "Defense now chooses a body place at random, and checks to see if the "
-   "defender has any defense value there. Much better than rendom pattern "
-   "of previous combat."
-   {
-      local rand, armor_pos;
-
-      rand = random(1,12);
-      armor_pos = 0;
-
-      if rand < 6
-      {
-         return ITEM_USE_BODY;
-      }
-           
-      if rand < 8
-      {
-         return ITEM_USE_LEGS;
-      }
-           
-      if rand < 9
-      {
-         return ITEM_USE_HEAD;
-      }
-                   
-      if rand < 10
-      {
-         return ITEM_USE_GAUNTLET;
-      }
-
-      % Default position: shield
-      return -1;
-   }
-
-   GetDefenseModifier()
-   "Returns a number from 0-100."
-   {
-      local armor_mod, armor_pos, i, shirt;
-
-      armor_mod = 0;
-      armor_pos = Send(self,@ChooseArmorPosition);
-      
-      if armor_pos = -1
-      {
-         for i in plUsing
-         {
-            if IsClass(i,&Shield)
-            {
-               return i;
-            }
-         }
-         
-         return $;
-      }
-      else
-      {
-         if armor_pos & ITEM_USE_BODY
-         {
-            shirt = $;
-            for i in plUsing
-            {
-               if Send(i,@GetItemUseType) & armor_pos
-               {
-                  return i;
-               }
-               if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
-               {
-                  shirt = i;
-               }
-            }
-
-            return shirt;
-         }
-         else
-         {
-            for i in plUsing
-            {
-               if Send(i,@GetItemUseType) = armor_pos
-               {
-                  return i;
-               }
-            }
-         }
-         
-         return $;
       }
       
       return $;

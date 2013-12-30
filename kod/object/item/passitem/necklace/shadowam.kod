@@ -105,7 +105,7 @@ messages:
       return damage;
    }
 
-   DefendingHit(who = $, what = $)
+   DamageGear(who = $, what = $)
    "Also for the player's GetDefense procedure"
    {
       return;

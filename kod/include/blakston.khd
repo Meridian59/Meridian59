@@ -1729,7 +1729,7 @@
    ATCK_WEAP_MAGIC       = 0x00004
    % ATCK_WEAP_HIT means no weapon wielded (default value)
    ATCK_WEAP_HIT         = 0x00008
-   % bludgeon/pierce/thrust/slash are mundane weapon types
+   % strike/pierce/thrust/slash are mundane weapon types
    ATCK_WEAP_STRIKE    = 0x00010
    ATCK_WEAP_PIERCE      = 0x00020
    ATCK_WEAP_THRUST      = 0x00040

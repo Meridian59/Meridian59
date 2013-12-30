@@ -17,6 +17,6 @@ BOFS = combatmod.bof healer.bof key.bof \
 	prism.bof orecheap.bof neclettr.bof taxlettr.bof ncwrnlet.bof potaphro.bof \
 	warlettr.bof factflag.bof bardnote.bof mystpot.bof mystwand.bof lablpot.bof \
 	lablwand.bof roomkeyc.bof hstone.bof spelitem.bof specwand.bof warjoin.bof \
-	betap.bof specgift.bof manacrys.bof spcgift2.bof karmapotion.bof
+	betap.bof specgift.bof manacrys.bof spcgift2.bof karmapotion.bof shield.bof
 
 !include $(KODDIR)\kod.mak

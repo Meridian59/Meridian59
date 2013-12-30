@@ -41,6 +41,7 @@ classvars:
    vrRealName = berserkerring_name_rsc
    vrIcon = berserkerring_icon_rsc
    vrRealDesc = berserkerring_desc_rsc
+   vrItem_broken = berserkerring_break_rsc
 
    viHits_init_min = 80
    viHits_init_max = 120
@@ -90,16 +91,6 @@ messages:
 
    ModifyHitRoll(who = $, what = $, hit_roll = $)
    {
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_break_rsc); 
-         Send(poOwner,@TryUnuseItem,#what=self);
-         Send(self,@Delete);
-
-         return 0;
-      }
-      
       return -20;
    }
 
@@ -116,12 +107,6 @@ messages:
 
       return 0;
    }
-
-   WeaponHitTarget()
-   {
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

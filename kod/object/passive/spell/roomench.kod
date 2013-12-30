@@ -32,6 +32,7 @@ properties:
    piDamage_percent_reduce = 0
    piDamage_flat_reduce = 0
    piDefense_bonus = 0
+   piDodge_bonus = 0
    piAttack_bonus = 0
    piDamage_bonus = 0
 
@@ -160,7 +161,20 @@ messages:
 	  return iDefensebonus;
    }
 
-   DefendingHit(who = $,what = $)
+   ModifyDodgeAbility(who = $,defense_power = 0)
+   {
+      local iDodgebonus;
+	  
+      iDodgebonus = 0;
+	  if piDodge_bonus <> 0
+	  {
+         iDodgebonus = piDodge_bonus * (send(send(who,@GetOwner),@GetEnchantmentState,#what=self)+1) / 100;
+      }
+	  
+	  return iDodgebonus;
+   }
+
+   DamageGear(who = $,what = $)
    {
       return;
    }

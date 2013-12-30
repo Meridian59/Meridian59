@@ -31,6 +31,7 @@ classvars:
    viWeaponDamage = -2
    viRange = 30
    viHit_roll_modifier = 20
+   viStrikethrough = -50
    
    viValue_average = 1500
    viBulk = 60

@@ -13,9 +13,8 @@ CombatModifier is PassiveItem
 constants:
 
    include blakston.khd
-
-   % Percent chance that an item gets damaged when defending.
-   DAMAGE_CHANCE = 50
+   
+   ARMOR_DAMAGE_CHANCE = 25
 
 resources:
 
@@ -28,25 +27,28 @@ classvars:
    viItem_type = ITEMTYPE_ARMOR
    vrItem_broken = defmod_broken
 
-   viDefense_base = 0               % This is the default value for piDefense_bonus
-   viDamage_percent_base = 0        % This is the default value for piDamage_percent_reduce
-   viDamage_flat_base = 0           % This is the default value for piDamage_flat_reduce
-   viAttack_base = 0               %% This increases offense by a percentage
-   viDamage_base = 0               %% This increases damage by a percentage
+   viDefense_base = 0              %% This is the default value for piDefense_bonus
+   viDodge_base = 0                %% This is the default value for piDodge_bonus
+   viDamage_percent_base = 0       %% This is the default value for piDamage_percent_reduce
+   viDamage_flat_base = 0          %% This is the default value for piDamage_flat_reduce
+   viAttack_base = 0               %% This is the default value for piAttack_bonus
+   viDamage_base = 0               %% This is the default value for piDamage_bonus
 
 properties:
 
    piDefense_bonus = 0              %% This gives a player a percentage boost to his avoidance
-   piDamage_percent_reduce = 0      %% This reduces damage by a percentage
-   piDamage_flat_reduce = 0         %% This reduces damage by a flat amount
+   piDodge_bonus = 0                %% This modifies the ability to dodge, similar to how weapons modify parry and shields modify block
+   piDamage_percent_reduce = 0      %% This reduces damage taken by a percentage
+   piDamage_flat_reduce = 0         %% This reduces damage taken by a flat amount
    piAttack_bonus = 0               %% This increases offense by a percentage
-   piDamage_bonus = 0               %% This increases damage by a percentage
+   piDamage_bonus = 0               %% This increases damage done by a percentage
 
 messages:
 
    DefaultValues()
    {
       piDefense_bonus = viDefense_base;
+      piDodge_bonus = viDodge_base;
       piDamage_percent_reduce = viDamage_percent_base;
 	  piDamage_flat_reduce = viDamage_flat_base;
 	  piAttack_bonus = viAttack_base;
@@ -56,9 +58,14 @@ messages:
 
    NewUsed(what = $)
    {
-
-      send(what,@AddAttackModifier,#what=self);
-      send(what,@AddDefenseModifier,#what=self);
+      if viDefense_base <> 0 OR viDamage_percent_base <> 0 OR viDamage_flat_base <> 0 OR viDodge_base <> 0
+	  {
+         send(what,@AddDefenseModifier,#what=self);
+	  }
+	  if viAttack_base <> 0 OR viDamage_base <> 0
+	  {
+         send(what,@AddAttackModifier,#what=self);
+	  }
       send(self,@AddResistances);
 
       propagate;
@@ -66,15 +73,27 @@ messages:
 
    NewUnused(what = $)
    {
-      send(what,@RemoveAttackModifier,#what=self);   
-      send(what,@RemoveDefenseModifier,#what=self);
+      if viDefense_base <> 0 OR viDamage_percent_base <> 0 OR viDamage_flat_base <> 0 OR viDodge_base <> 0
+	  {
+         send(what,@RemoveDefenseModifier,#what=self);
+	  }
+	  if viAttack_base <> 0 OR viDamage_base <> 0
+	  {
+         send(what,@RemoveAttackModifier,#what=self);
+	  }
       send(self,@RemoveResistances);
 
       propagate;
    }
    
-   WeaponHitTarget()
+   DamageGear(who = $,what = $)
    {
+      % 25% chance to get damaged.
+      if (random(1,100) < ARMOR_DAMAGE_CHANCE)
+      {
+         propagate;
+      }
+      
       return;
    }
 
@@ -121,6 +140,11 @@ messages:
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
       return piDefense_bonus;
+   }
+   
+   ModifyDodgeAbility(who = $)
+   {
+      return piDodge_bonus;
    }
 
    ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
@@ -173,19 +197,6 @@ messages:
       }
       
       return iDamageReduce;
-   }
-
-   % This assumes that none of the superclasses define a message for "defending hit" to do anything special.
-   % This will reduce the damage that armor is taking in battle currently.
-   DefendingHit(who = $,what = $)
-   {
-      % 50% chance to get damaged.
-      if (random(1,100) < DAMAGE_CHANCE)
-      {
-         propagate;
-      }
-      
-      return;
    }
 
    CanMend()

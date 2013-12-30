@@ -58,7 +58,7 @@ classvars:
 
    vrItem_broken = defmod_broken_plural_clothes
 
-   viDefense_base = 5
+   viDamage_percent_base = 3
 
 properties:
 

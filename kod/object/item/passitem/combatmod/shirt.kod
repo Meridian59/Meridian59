@@ -76,7 +76,7 @@ classvars:
 
    vbShow_Condition = TRUE
 
-   viDefense_base = 5               % This is the default value for piDefense_bonus
+   viDamage_percent_base = 2
 
 properties:
 

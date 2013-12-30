@@ -105,7 +105,7 @@ messages:
       propagate;
    }
 
-   WeaponHitTarget()
+   DamageGear()
    {
       % Return here so that berserker axes don't get damaged.
       return;

@@ -70,8 +70,7 @@ classvars:
    viWeight = 0
    viBulk = 0
 
-   viDefense_base = 20
-   viDamage_flat_base = 5
+   viBlock_chance = 0
 
    viFaction = FACTION_NEUTRAL
    viColor = XLAT_TO_GRAY
@@ -560,7 +559,7 @@ messages:
    }
 
    % Copied from Shield superclass so we don't take damage.
-   DefendingHit()
+   DamageGear()
    "Called when the item provides defense."
    {
       piUsed = DEFENDING;
@@ -587,39 +586,6 @@ messages:
       }
 
       propagate;
-   }
-
-   % Copied from DefenseModifier superclass, ignores shield's Block
-   %  requirement.
-   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
-   "Affects damage done to owner."
-   {
-      local iDamageReduce;
-
-      iDamageReduce = 0;
-      if piDamage_flat_reduce <> 0
-      {
-         iDamageReduce = random(piDamage_flat_reduce/3,piDamage_flat_reduce);
-         iDamageReduce = bound(iDamageReduce,0,(damage-1));
-      }
-
-      if aspell <> 0
-      {
-         % Reduce damage if part of the damage is spell
-         if atype <> 0
-         {
-            % Lose 1/3 of the damage reduction if we're doing both weapon
-            %  and spell damage types.
-            iDamageReduce = iDamageReduce * 2 / 3;
-         }
-         else
-         {
-            % If we're doing pure spell damage, we get no reduction.
-            iDamageReduce = 0;
-         }
-      }
-
-      return damage - iDamageReduce;
    }
 
    GetBaseSpellModifier(oSpell=$)

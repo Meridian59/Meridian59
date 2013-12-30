@@ -33,8 +33,6 @@ classvars:
 
    vrName = royalshirt_name_rsc
 
-   viDefense_base = 10               % This is the default value for piDefense_bonus
-
 properties:
 
 messages:

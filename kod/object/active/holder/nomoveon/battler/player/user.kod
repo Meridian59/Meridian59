@@ -2940,8 +2940,11 @@ messages:
          
          if Send(self,@CheckPlayerFlag,#flag=PFLAG2_HASTED,#flagset=2)
          {
-            iHasteLevel = Send(self,@GetEnchantedState,
-                               #what=Send(SYS,@FindSpellByNum,#num=SID_HASTE));
+            iHasteLevel = Send(self,@GetEnchantedState,#what=Send(SYS,@FindSpellByNum,#num=SID_HASTE));
+			if iHasteLevel = $
+			{
+			   iHasteLevel = Send(self,@GetEnchantedState,#what=Send(SYS,@FindSpellByNum,#num=SID_FREE_ACTION));
+			}   
 
             iExertion = (iExertion * (100 - iHasteLevel)) / 100;
          }

@@ -73,8 +73,6 @@ classvars:
    prShield_emblem_drop = RebelShield_emblem_drop
    prShield_emblem_back = RebelShield_emblem_back
 
-   viDamage_flat_base = 2                % This is the default value for piDamage_flat_reduce
-
    viFaction = FACTION_REBEL
    viColor = XLAT_TO_RED
 
@@ -82,6 +80,9 @@ classvars:
    vrArmyName = RebelShield_ArmyName
 
    vrWelcomeMessage = RebelShield_welcome_mail
+   
+   viBlock_chance_base = 50
+   viBlock_damage_base = 20
 
 properties:
 
@@ -149,16 +150,6 @@ messages:
 
       return;
    }
-
-   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
-   "Sets piDamage_flat_reduce for damage reduction in the superclass."
-   {
-      % This ranges from 2-4.  At low end, we absorb 0-2 damage.  At high end, 1-4.
-      piDamage_flat_reduce = viDamage_flat_base + ((piFactionRank/3) - 1);
-
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

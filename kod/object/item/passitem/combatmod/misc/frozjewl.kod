@@ -34,18 +34,22 @@ resources:
 
 classvars:
 
+   vrItem_broken = frozjewel_broken
+
    vrName = frozjewel_name_rsc
    vrIcon = frozjewel_icon_rsc
    
    viUse_type = ITEM_USE_HAND
    viUse_amount = 1
 
-   viHits_init_min = 750
-   viHits_init_max = 1250
+   viHits_init_min = 400
+   viHits_init_max = 600
 
    viValue_average = 400
    viBulk = 10
    viWeight = 15
+   
+   viAttack_base = 10
 
 properties:
 
@@ -56,33 +60,6 @@ properties:
 
 messages:
 
-   ModifyHitRoll(who = $, what = $, hit_roll = $, stroke_obj = $)
-   {
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=frozjewel_broken,
-	           #parm1=Send(self,@GetCapDef),#parm2=vrName);
-         Send(poOwner,@TryUnuseItem,#what=self);
-         vrDesc = frozjewel_desc_broken_rsc;
-      
-         return 0;
-      }
-
-      return 10;
-   }
-   
-   ModifyDamage(who = $, what = $, damage = $, stroke_obj=$)
-   {
-      % all calculations are now done in touchatk.kod	
-      return 0;
-   }
-
-   WeaponHitTarget()
-   {
-      return;
-   }
-   
    DoFlash()
    {
       piAnimation = ANIM_FLASH;

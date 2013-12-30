@@ -36,12 +36,14 @@ classvars:
 
    viHits_init_min = 200
    viHits_init_max = 250
-
-
+   
    viProficiency_Needed = SKID_PROFICIENCY_BOW
    viAmmo_type = AMMO_ARROW
+   
    viHit_roll_modifier = 0
    viSpell_modifier = -25
+   viStrikethrough = 0
+   
    viUse_Amount = 2
 
    vrDesc = ranged_desc_rsc
@@ -67,6 +69,16 @@ messages:
       return 0;
    }
 
+   GetStrikethrough()
+   {
+      local iStrikethrough;
+	  
+	  iStrikethrough = viStrikethrough + send(send(self,@GetOwner),@GetAim) + 
+	                   send(send(self,@GetOwner),@GetSkillAbility,#skill_num=viProficiency_needed);
+	  	  
+	  return iStrikethrough;
+   }
+   
    % General unsorted messages:
 
    GetDefaultStrokeNumber()

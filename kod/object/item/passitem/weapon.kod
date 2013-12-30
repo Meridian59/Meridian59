@@ -18,7 +18,7 @@ constants:
    UNUSED = 2
    ATTACKING = 3
 
-   WEAPON_TAKE_DAMAGE_PCT = 75
+   WEAPON_DAMAGE_CHANCE = 25
 
    % Weapon tuning factors
    %  Edit these constants to tune weapon power
@@ -39,9 +39,9 @@ constants:
    WEAPON_DISARM_SLASH = 5
    
    % Parry bonus
-   WEAPON_PARRY_STRIKE  = 0
-   WEAPON_PARRY_THRUST  = 10
-   WEAPON_PARRY_SLASH = 20
+   WEAPON_PARRY_STRIKE  = -10
+   WEAPON_PARRY_THRUST  = 0
+   WEAPON_PARRY_SLASH = 10
 
    % Spell modifier, large negatives are bad.
    WEAPON_SPELL_STRIKE  = 0
@@ -72,6 +72,11 @@ constants:
    WEAPON_LOW_QUALITY_DISARM  = -5
    WEAPON_HIGH_QUALITY_DISARM = 5
    WEAPON_NERUDITE_DISARM = 5
+
+   % Quality mods to parrying
+   WEAPON_LOW_QUALITY_PARRY  = -10
+   WEAPON_HIGH_QUALITY_PARRY = 10
+   WEAPON_NERUDITE_PARRY = 10
 
    % Quality mods to spell modifier
    WEAPON_LOW_QUALITY_SPELL  = 10
@@ -121,8 +126,9 @@ classvars:
 
    % if it's set to a number, it's always used
    viBroken_group = $
+   
    % Message when the weapon breaks.
-   vrWeaponBroke = weapon_broken
+   vrItem_broken = weapon_broken
    
    viWeaponType = WEAPON_TYPE_THRUST
    viWeaponQuality = WEAPON_QUALITY_NORMAL
@@ -139,12 +145,14 @@ classvars:
    vrCondition_med = weapon_condition_med 
    vrCondition_poor = weapon_condition_poor 
    vrCondition_broken = weapon_condition_broken
+   
+   viParry_chance = 0
 
 properties:
 
    piAttack_type = 0
    piAttack_spell = 0
-
+   
    piDamageBonus = 0
    piHitBonus = 0
 
@@ -172,6 +180,18 @@ messages:
       }
 
       propagate;
+   }
+   
+   DoRiposte(who=$,what=$)
+   {
+      local iPreliminary, iStroke, extra_hits;
+	  
+	  iStroke = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+	  % This will trigger a free regular weapon attack on a successful parry.	  
+	  % Using TryAttack instead of DoExtraAttack since we want to factor in chance to hit.
+      Send(who,@TryAttack,#what=what,#stroke_obj=iStroke,#use_weapon=self);
+
+	  return;
    }
 
    %%% Hard Stats Functions
@@ -400,7 +420,24 @@ messages:
       {
          iParry = WEAPON_PARRY_SLASH;
       }
-      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY)*(100+iParry)/100;
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iParry = iParry + WEAPON_LOW_QUALITY_PARRY;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iParry = iParry + WEAPON_HIGH_QUALITY_PARRY;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iParry = iParry + WEAPON_NERUDITE_PARRY;
+      }
+	  
+      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY) + 1 + iParry + viParry_chance + send(who,@GetAim);
    }
 
    GetBaseSpellModifier()
@@ -501,17 +538,12 @@ messages:
       propagate;
    }
    
-   WeaponHitTarget()
+   DamageGear(who = $,what = $)
    {
-      % 75% chance to be damaged, currently.
-      if random(1,100) < WEAPON_TAKE_DAMAGE_PCT   
+      % 25% chance to get damaged.
+      if (random(1,100) < WEAPON_DAMAGE_CHANCE)
       {
-         piHits = piHits - 1;
-      }
-
-      if piHits <= 0
-      {
-         send(self,@WeaponBroke);
+         propagate;
       }
       
       return;
@@ -541,27 +573,6 @@ messages:
       debug("A non-ranged weapon called @ReqUseAmmo!");
       
       return TRUE;
-   }
-
-   WeaponBroke()
-   {
-      local i, oItemAtt;
-
-      % Remove itematts from us, since we're not gonna use 'em anymore.
-      % This also lets cursed items finally remove themselves from us.
-      for i in plItem_Attributes
-      {
-         oItemAtt = send(SYS,@FindItemAttByNum,
-                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
-         send(oItemAtt,@RemoveFromItem,#oItem=self);
-      }
-
-      Send(poOwner,@SomethingChanged,#what=self);
-      Send(poOwner,@MsgSendUser,#message_rsc=vrWeaponBroke,
-           #parm1=Send(self,@GetCapDef),#parm2=vrName);
-      Send(poOwner,@TryUnuseItem,#what=self);
-
-      return;
    }
 
    WeaponAttack(what = $)

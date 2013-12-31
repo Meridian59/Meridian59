@@ -40,8 +40,17 @@ properties:
    % A current sum of all money in all player bank accounts and held on player characters.
    piPlayerMoneyTotal = $
    
+   % Money Created this save period
+   piMoneyCreated = 0
+   
 
 messages:
+
+   MoneyCreated(amount = 0)
+   {
+      piMoneyCreated = piMoneyCreated + amount;
+	  return;
+   }
 
    GarbageCollecting()
    {

@@ -150,6 +150,7 @@ messages:
          if send(who,@ReqNewHold,#what=oMoney)
          {
              Send(who,@NewHold,#what=oMoney);
+			 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=iValue);
              Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
                   #string=TBank_gems_traded,#parm1=Send(obj,@GetName));
              return True;

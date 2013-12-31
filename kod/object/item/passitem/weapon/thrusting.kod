@@ -18,11 +18,11 @@ constants:
 
 resources:
 
-   thrusting_desc_rsc = "This is a thrusting weapon."
+   thrusting_desc_rsc = "Thrusting weapons like these require keen aim to be truly effective."
 
 classvars:
 
-   vrDesc = thrusting_desc_rsc
+	vrExtendedDescription = thrusting_desc_rsc
    
    viWeaponType = WEAPON_TYPE_THRUST
 
@@ -36,7 +36,7 @@ messages:
    {
       return SKID_THRUST;
    }
-   
+	
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

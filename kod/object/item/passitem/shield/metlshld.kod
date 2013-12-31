@@ -20,8 +20,9 @@ resources:
    metalshield_icon_rsc = metlshld.bgf
    metalshield_desc_rsc = \
       "This small shield is made from a sheet of tin bent and "
-      "fitted to a wooden frame.  Although the workmanship is "
-      "poor, it offers some protection during battle."
+      "fitted to a wooden frame.  It is light enough not to hinder spell "
+		"casting and its compact size makes it well suited for blocking attacks "
+      "in close quarters combat."
 
    metalshield_window_overlay_rsc = povshldA.bgf
 
@@ -36,7 +37,7 @@ classvars:
 
    viValue_average = 160
    viWeight = 100
-   viBulk = 125
+   viBulk = 100
 
    vrShield_window_overlay = metalshield_window_overlay_rsc
    vrShield_overlay = metalshield_icon_rsc
@@ -44,7 +45,8 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viBlock_chance = -50
+   viBlock_chance = 50
+   viBlock_damage = 10
 
 properties:
 

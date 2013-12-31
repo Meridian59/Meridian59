@@ -19,9 +19,10 @@ resources:
    chainarmor_name_rsc = "chain armor"
    chainarmor_icon_rsc = chainamr.bgf
    chainarmor_desc_rsc = \
-      "Thousands of tiny, steel links make up this chain "
-      "armor.  Although light and reasonably comfortable, it "
-      "provides a fair measure of protection."
+      "Thousands of tiny, tightly packed steel links make up this surprisingly "
+		"light chain armor.  It provides decent protection against projectiles "
+		"and thrusting weapons, without hindering your ability to move or cast in "
+		"battle one bit."
 
    chainarmor_male_icon_rsc = btk.bgf
    chainarmor_female_icon_rsc = btl.bgf
@@ -34,13 +35,13 @@ classvars:
    viHits_init_min = 550
    viHits_init_max = 650
 
-   viSpell_modifier = -15
+   viSpell_modifier = 0
    viValue_average = 1000
    viWeight = 200
    viBulk = 250
 
-   viDodge_base = -10             
-   viDamage_flat_base = 1
+   viDodge_base = 50             
+   viDamage_flat_base = 2
    viDamage_percent_base = 5
 
 properties:
@@ -57,10 +58,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_THRUST,5],
-               [ATCK_WEAP_PIERCE,25],
-               [ATCK_WEAP_STRIKE,15],
-               [ATCK_WEAP_SLASH,20]
+      return [ [ATCK_WEAP_THRUST,10],
+		         [ATCK_WEAP_PIERCE,10]
              ];
    }
 

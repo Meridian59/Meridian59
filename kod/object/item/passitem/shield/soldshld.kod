@@ -70,7 +70,9 @@ classvars:
    viWeight = 0
    viBulk = 0
 
-   viBlock_chance = 0
+   viBlock_chance = 50
+   viRangedBlock_chance = 50
+   viBlock_damage = 10
 
    viFaction = FACTION_NEUTRAL
    viColor = XLAT_TO_GRAY

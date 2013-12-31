@@ -18,8 +18,10 @@ resources:
 
    NeruditeBow_name_rsc = "nerudite bow"
    NeruditeBow_desc_rsc = \
-      "They DO exist!  This bow was forged from the notoriously brittle nerudite "
-      "instead of carved from wood.  The bow doesn't look very flexible."
+      "This bow is crafted from the notoriously brittle nerudite, allowing a skillful archer to "
+		"fire powerful shots, striking through even the heaviest of shields. Unfortunately, this bow "
+		"is fairly difficult to handle and less precise than others.  "
+		"Wielding this weapon will severely hinder your spell casting."
 
    NeruditeBow_shatters = "The nerudite bow shatters into a flurry of splinters!"
 
@@ -38,14 +40,9 @@ classvars:
    viHit_roll_modifier = 0
    
    viValue_average = 3500
-   viBulk = 70
-   viWeight = 70
-
-   viHits_init_min = 200
-   viHits_init_max = 300
 
    viSpell_modifier = -40
-   viStrikethrough = -50
+   viStrikethrough = 100
 
    % What's the basic color of the bow?
    viBaseXLAT = XLAT_TO_GREEN

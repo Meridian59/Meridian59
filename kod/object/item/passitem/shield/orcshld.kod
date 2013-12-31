@@ -20,10 +20,11 @@ resources:
    OrcShield_icon_rsc = osh.bgf
    OrcShield_desc_rsc = \
       "The skull that decorates the face of the shield offers a fair "
-      "amount of fear to potential opponents, but the shield seems to "
-      "be far more decorative than useful.  Still, there seems to be a "
+      "amount of fear to potential opponents. There seems to be a "
       "darker edge to the shield that you can't place your finger on, and "
-      "one wonders if this device has some hidden attribute."
+      "one wonders if this device has some hidden attribute.  Despite its bizarre "
+		"decorations, this shield can be effectively handled in the defense against "
+		"attacks made both in range and in melee."
 
    orcshield_cant = "You try to grab the handle of the shield, but it insistently slips out of your fingers."
 
@@ -39,8 +40,8 @@ classvars:
    viHits_init_max = 300
 
    viValue_average = 1000
-   viWeight = 250
-   viBulk = 200
+   viWeight = 100
+   viBulk = 100
 
 
    vrShield_window_overlay = OrcShield_window_overlay_rsc
@@ -50,7 +51,9 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viBlock_chance = 0
+   viBlock_chance = 50
+   viRangedBlock_chance = 50
+   viBlock_damage = 10
 
 properties:
 
@@ -68,6 +71,12 @@ messages:
       propagate;
    }
 
+   GetResistanceModifiers()
+   {
+      return [ [-ATCK_SPELL_HOLY,-20]
+             ];
+   }
+	
    GetBaseSpellModifier(oSpell=$)
    {
       if send(oSpell,@GetSchool) = SS_SHALILLE

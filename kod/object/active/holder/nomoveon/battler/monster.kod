@@ -1547,12 +1547,20 @@ messages:
          iResist = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
          iDamage = Send(self,@GetDamageFromResistance,#what=damage,
                         #value=iResist);
+			
+			% All player damage is multiplied by 100 when base damage is determined
+			% in order to avoid cumulative losses to truncation. Before final damage 
+			% is applied, we divide by 100 again.
+			if IsClass(what,&Player)
+			{
+					iDamage = random(iDamage/2,iDamage)/100;
+			}
       }
       else
       {
          iDamage = damage;
       }
-      
+
       iDamage = iDamage + bonus;
 
       % Set a predamage mark... we'll compare to it to see if threshold crossed.

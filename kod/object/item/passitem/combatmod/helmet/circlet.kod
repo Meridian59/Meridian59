@@ -43,6 +43,8 @@ classvars:
 
    viGround_group = 1
    viInventory_group = 1
+	
+   viDamage_flat_base = -1
 
 properties:
 

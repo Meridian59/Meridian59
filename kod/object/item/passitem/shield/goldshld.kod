@@ -19,9 +19,9 @@ resources:
    goldshield_name_rsc = "gold round shield"
    goldshield_icon_rsc = rshield.bgf
    goldshield_desc_rsc = \
-      "Finely made, this hefty gold shield offers a fair "
-      "measure of protection.  Delicate engravings, the mark "
-      "of Quintor, adorn its circumference."
+      "Finely made, this hefty gold shield bears delicate engravings around its circumference.  "
+		"The mark of Quintor adorns its handle.  The shield is quite compact yet heavy, which may "
+		"hinder your spell casting but also makes it a deadly weapon in close quarters combat."
 
    goldshield_window_overlay_rsc = povshldD.bgf
 
@@ -36,8 +36,8 @@ classvars:
 
    % Being gold, it's worth much more than your average shield, but it's much heavier too
    viValue_average = 500
-   viWeight = 225  
-   viBulk = 150
+   viWeight = 200  
+   viBulk = 200
 
    vrShield_window_overlay = goldshield_window_overlay_rsc
    vrShield_overlay = goldshield_icon_rsc
@@ -46,7 +46,9 @@ classvars:
    viInventory_group = 1
    viBroken_group = 4
 
-   viBlock_chance = 0
+   viBlock_chance = 100
+   viBlock_damage = 20
+   viSpell_modifier = -10
 
 properties:
 

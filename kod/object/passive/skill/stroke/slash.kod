@@ -17,9 +17,11 @@ constants:
 resources:
    slash_name_rsc = "slash"
    slash_icon_rsc = slashico.bgf
-   slash_desc_rsc = "Slash is the most common weapon skill.  It helps you hit with melee weapons."
+   slash_desc_rsc = "Slashing allows you to wield edged weapons like the scimitar and the falchion more effectively.  "
+	                 "While these weapons are highly potent in combat, only the most agile warriors will be "
+						  "able to wield these weapons to their full effect."
 
-   slash_skill_intro = "Weaponcraft Lv. 1: The most basic skill of armed combat. A must for those who live by the blade."
+   slash_skill_intro = "Weaponcraft Lv. 1: The attack of choice when wielding falchions or scimitars."
 
 classvars:
 

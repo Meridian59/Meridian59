@@ -37,8 +37,8 @@ resources:
    % battler_defender_slay - Psychochild's scimitar slays you.
    % battler_defender_miss - Psychochild's attack is blocked by you.
 
-   battler_attacker_crit = "~k~IYou exploit a flaw in %s%s's defenses to unleash a flurry of attacks!"  
-   battler_defender_crit = "~r~I%s%s exploits a flaw in your defenses to unleash a flurry of attacks!"  
+   battler_attacker_crit = "~k~IYou exploit a flaw in %s%s's defenses to ready another attack!"  
+   battler_defender_crit = "~r~I%s%s exploits a flaw in your defenses to ready another attack!"  
 
    battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage." 
    battler_attacker_fail = "%sYour %s fails to damage %s%s." 
@@ -356,12 +356,8 @@ messages:
 		   }
 
          % We hit!
-		   iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj)/100;
+		   iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj);
 		   iPreliminary = bound(iPreliminary,0,$);
-         if IsClass(self,&Player)
-         {
-		      iPreliminary = random(iPreliminary/2,iPreliminary);
-         }
 
          iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,#stroke_obj=stroke_obj,
 		                  #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
@@ -876,45 +872,45 @@ messages:
       iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
       iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
       iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj)*2;
-	  if IsClass(self,&Player)
-	  {
-	     iAvoid = Send(self,@GetAgility)*8+100;
-	  }
-	  else
-	  {
-	  iAvoid = 50;
-	  }
+	   if IsClass(self,&Player)
+	   {
+	      iAvoid = Send(self,@GetAgility)*8+100;
+	   }
+	   else
+	   {
+	   iAvoid = 50;
+	   }
       iRandom = iParry + iBlock + iDodge + iAvoid;
       iRandom = random(0,iRandom);
 
       if iRandom < iParry
       {
-	     if IsClass(self,&Player)
-		 {
-	        send(send(self,@LookupPlayerWeapon),@DamageGear);
-			if NOT IsClass(send(what,@GetWeapon),&RangedWeapon)
-			{
-	           post(send(self,@LookupPlayerWeapon),@DoRiposte,#who=self,#what=what);
-			}
-			else
-			{
-	           send(send(self,@LookupPlayerWeapon),@DoParryAnimation);
-			}
-		 }
+	      if (IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
+		   {
+	         send(send(self,@LookupPlayerWeapon),@DamageGear);
+			   if stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
+			   {
+	            post(send(self,@LookupPlayerWeapon),@DoRiposte,#who=self,#what=what);
+		   	}
+			   else
+			   {
+	            send(send(self,@LookupPlayerWeapon),@DoParryAnimation);
+			   }
+		   }
          return battler_parried;
       }
 
       if iRandom < (iParry + iBlock)
       {
-	     if IsClass(self,&Player)
-		 {
-	        send(send(self,@LookupPlayerShield),@DoBlockAnimation);
-		    send(send(self,@LookupPlayerShield),@DamageGear);
-			if NOT IsClass(send(what,@GetWeapon),&RangedWeapon)
-			{
-	           post(send(self,@LookupPlayerShield),@DoBlockAttack,#who=self,#what=what);
-			}
-		 }
+	      if (IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
+		   {
+	         send(send(self,@LookupPlayerShield),@DoBlockAnimation);
+		      send(send(self,@LookupPlayerShield),@DamageGear);
+			   if stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
+			   {
+	            post(send(self,@LookupPlayerShield),@DoBlockAttack,#who=self,#what=what);
+			   }
+		   }
          return battler_blocked;
       }
 

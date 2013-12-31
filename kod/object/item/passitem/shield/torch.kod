@@ -54,6 +54,11 @@ classvars:
    viGround_group = 14
    viBroken_group = 14
    viInventory_group = 7
+	
+   viAttack_Type = ATCK_WEAP_STRIKE
+   viAttack_spell = ATCK_SPELL_FIRE
+   viRangedBlock_chance = -100
+   viBlock_damage = 10
 
 properties:
 
@@ -159,12 +164,6 @@ messages:
       Send(poOwner,@TryUnuseItem,#what=self);
 
       propagate;
-   }
-
-   % Torches don't allow you to use block.
-   GetBlockAbility(who = $)
-   {
-      return 0;
    }
 
    GetOverlayHotspot()

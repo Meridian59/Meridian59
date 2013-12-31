@@ -17,9 +17,10 @@ constants:
 resources:
    Block_name_rsc = "block"
    Block_icon_rsc = iblock.bgf
-   Block_desc_rsc = "Block is a basic skill, allowing people in combat to block blows with a shield.  "
-         "A successfully blocked blow will be more damaging to the attacking weapon and to the "
-         "defending shield."
+   Block_desc_rsc = "Block is a basic skill, allowing a warrior to block blows with a shield.  "
+         "A successfully blocked blow may not only damage weapon and defending shield, but also "
+			"the attacker. This, experienced warriors will know how to use blocking both as a defensive "
+			"technique and a powerful attack. A strong arm is required for effective blocking!"
 
    Block_skill_intro = "Weaponcraft Lv. 1: The ability to block blows in combat, and thus stay alive longer."
 

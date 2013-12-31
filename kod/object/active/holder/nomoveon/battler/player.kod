@@ -4471,10 +4471,21 @@ messages:
       oWeapon = Send(self,@GetWeapon);
       if oWeapon = $
          OR NOT Send(Send(sys,@FindSkillByNum,#num=SKID_PARRY),@CanPayCosts,#who=self)
-         OR (stroke_obj <> $ AND NOT Send(stroke_obj,@CanParry))
       {
          return 0;
       }
+
+		if stroke_obj = $
+		{
+			return 0;
+		}
+		else
+		{
+			if NOT Send(stroke_obj,@CanParry)
+			{
+				return 0;
+			}
+		}
       
       return bound(Send(oWeapon,@GetParryAbility,#who=self),0,$);
    }
@@ -4494,12 +4505,57 @@ messages:
       oShield = Send(self,@LookupPlayerShield);
       if oShield = $
          OR NOT Send(Send(sys,@FindSkillByNum,#num=SKID_BLOCK),@CanPayCosts,#who=self)
-         OR ((stroke_obj <> $) AND NOT Send(stroke_obj,@CanBlock))
       {
          return 0;
       }
-      
+		
+		if stroke_obj = $
+		{
+			return 0;
+		}
+		else
+		{
+			if NOT Send(stroke_obj,@CanBlock)
+			{
+				return 0;
+			}
+		}
+		
       return bound(Send(oShield,@GetBlockAbility,#who=self),0,$);
+   }
+
+   GetRangedBlockAbility(stroke_obj=$)
+   {
+      local oShield, oMonster;
+
+      % Morphed?
+      oMonster = Send(self,@GetIllusionForm);
+      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      {
+         % Should only be one morph enchantment on the player.
+         return 0;
+      }
+
+      oShield = Send(self,@LookupPlayerShield);
+      if oShield = $
+         OR NOT Send(Send(sys,@FindSkillByNum,#num=SKID_BLOCK),@CanPayCosts,#who=self)
+      {
+         return 0;
+      }
+		
+		if stroke_obj = $
+		{
+			return 0;
+		}
+		else
+		{
+			if NOT Send(stroke_obj,@CanBlock)
+			{
+				return 0;
+			}
+		}
+      
+      return bound(Send(oShield,@GetRangedBlockAbility,#who=self),0,$);
    }
 
    GetDodgeAbility(stroke_obj=$)
@@ -4508,10 +4564,17 @@ messages:
 	  
 	  iDodge = 0;
       
-      if (stroke_obj <> $ AND NOT Send(stroke_obj,@CanDodge))
-      {
-         return 0;
-      }
+		if stroke_obj = $
+		{
+			return 0;
+		}
+		else
+		{
+			if NOT Send(stroke_obj,@CanBlock)
+			{
+				return 0;
+			}
+		}
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4719,8 +4782,6 @@ messages:
 			Send(i,@DamageGear,#who=self,#what=what);
          }
 		 
-		 damage = (damage * (100-iPercentBonus)/100) - iFlatBonus;
-      
          iResistance = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
 
          for i in plRadiusEnchantments
@@ -4728,7 +4789,11 @@ messages:
             iResistance = Send(Nth(i,1),@ModifyResistance,#attacker=what,#atype=atype,#iPower=Nth(i,2),#caster=Nth(i,3),#resistance=iResistance);
          }
          
-         damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
+			% All player damage is multiplied by 100 when base damage is determined
+			% in order to avoid cumulative losses to truncation. Before final damage 
+			% is applied, we divide by 100 again.
+		   damage = (damage * (100-(iPercentBonus + iResistance))/100)/100;
+			damage = damage - iFlatBonus;
 		 
          % Armor of Gort has a special effect that must go absolutely last
          oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
@@ -4737,26 +4802,32 @@ messages:
             damage = Send(oGort,@PriorityModifyDefenseDamage,#who=self,#what=what,#damage=damage,
                           #atype=atype,#aspell=aspell);
          }
+			
+			% A successful shield check will reduce damage from an arrow to zero.
+			if stroke_obj = Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
+			{
+				if Send(self,@GetRangedBlockAbility,#stroke_obj=stroke_obj) - Send(send(what,@GetWeapon),@GetStrikethrough) > random(-100,100)
+				{
+					Send(self,@MsgSendUser,#message_rsc=player_defender_arrow_blocked,
+						  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
+						  #parm3=Send(Send(what,@GetWeapon),@GetAttackName),
+						  #parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
+					Send(what,@MsgSendUser,#message_rsc=player_attacker_arrow_blocked,
+						  #parm1=Send(Send(what,@GetWeapon),@GetAttackName),
+						  #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName),
+						  #parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
+					Send(send(self,@LookupPlayerShield),@DamageGear);
+					Post(send(self,@LookupPlayerShield),@DoBlockAnimation);
+					damage = 0; 
+				}
+			}
       }
 	  
-		 if stroke_obj = Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
-		 {
-            if Send(self,@GetBlockAbility,#stroke_obj=stroke_obj) - Send(send(what,@GetWeapon),@GetStrikethrough) > random(1,200)
-		    {
-               Send(self,@MsgSendUser,#message_rsc=player_defender_arrow_blocked,
-                    #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
-					#parm3=Send(Send(what,@GetWeapon),@GetAttackName),
-					#parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
-               Send(what,@MsgSendUser,#message_rsc=player_attacker_arrow_blocked,
-                    #parm1=Send(Send(what,@GetWeapon),@GetAttackName),
-					#parm2=Send(self,@GetDef),#parm3=Send(self,@GetName),
-					#parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
-		       send(send(self,@LookupPlayerShield),@DamageGear);
-	           post(send(self,@LookupPlayerShield),@DoBlockAnimation);
-			   damage = 0; 
-			}
-	     }
-		 
+      if IsClass(what,&Player)
+      {
+            damage = random(damage/2,damage);
+      }
+	  
       iDuration = 800;
       if damage <= 6
       {
@@ -4807,8 +4878,8 @@ messages:
          }
       }
 	  
-	  damage = bound(damage,0,$);
-
+	   damage = bound(damage,0,$);
+		
       Send(self,@LoseHealth,#amount=damage);
 
       if piHealth <= 0
@@ -5300,8 +5371,11 @@ messages:
       
       if IsClass(stroke_obj,&Spell)
       {
-         rSound = Send(stroke_obj,@GetHitSound);
-         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=rSound);
+			if IsClass(stroke_obj,&TouchAttackSpell)
+			{
+				rSound = Send(stroke_obj,@GetHitSound);
+				Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=rSound);
+			}	
          if IsClass(what,&Player)
          {
             Send(poOwner,@SomethingWaveRoom,#what=what,#wave_rsc=Send(what,@GetOuchSound,#damage=damage));

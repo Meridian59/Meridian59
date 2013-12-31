@@ -56,8 +56,8 @@ classvars:
 
 properties:    
 
-   piDamage_percent_reduce = 20
-   piDamage_flat_reduce = 4
+   piDamage_percent_reduce = 10
+   piDamage_flat_reduce = 2
 
 messages:
 

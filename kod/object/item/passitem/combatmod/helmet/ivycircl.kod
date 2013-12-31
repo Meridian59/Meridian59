@@ -44,7 +44,7 @@ classvars:
 
    viGround_group = 1
    viInventory_group = 2
-
+	
 properties:
 
    piMana_change = 0
@@ -60,9 +60,7 @@ messages:
    
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_FIRE,-10],
-               [-ATCK_SPELL_SHOCK,20],
-               [-ATCK_SPELL_UNHOLY,20]
+      return [ [-ATCK_SPELL_UNHOLY,-20]
              ];
    }
 

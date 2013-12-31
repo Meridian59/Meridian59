@@ -19,6 +19,7 @@ resources:
    falchionproficiency_name_rsc = "falchion wielding"
    falchionproficiency_icon_rsc = scimico.bgf
    falchionproficiency_desc_rsc = "Increases your performance with the trusty falchion."
+   Falcprof_skill_intro = "Weaponcraft Lv. 2: Allows for further progress with Meridian's most common edged weapon."
 
 classvars:
 
@@ -26,10 +27,11 @@ classvars:
    vrIcon = falchionproficiency_icon_rsc
    vrDesc = falchionproficiency_desc_rsc
 
+   vrSkill_intro = Falcprof_skill_intro
    viSchool = SKS_FENCING
    viSkill_num = SKID_PROFICIENCY_FALCHION
-   viSkill_level = 1
-   viChance_to_increase = 20
+   viSkill_level = 2
+   viChance_to_increase = 60
 
 properties:
 

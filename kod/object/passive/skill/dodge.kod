@@ -17,7 +17,8 @@ constants:
 resources:
    dodge_name_rsc = "dodge"
    dodge_icon_rsc = dodgeico.bgf
-   dodge_desc_rsc = "Dodge is a basic skill, allowing people to avoid blows in combat."
+   dodge_desc_rsc = "Dodge is a basic skill, allowing people to avoid blows in combat.  A combatant's "
+	                 "ability to dodge an attack primarily relies on their agility and the armor they wear."
 
    dodge_skill_intro = "Weaponcraft Lv. 2: The ability to avoid blows in combat, and thus stay alive longer."
 

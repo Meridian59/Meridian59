@@ -19,11 +19,12 @@ resources:
    leatherarmor_name_rsc = "leather armor"
    leatherarmor_icon_rsc = leathamr.bgf
    leatherarmor_desc_rsc = \
-      "This armor is made from thick, cured troll hides "
-      "roughly stitched together.  Despite a smell reminiscent "
-      "of rotting troll meat, the armor provides some "
-      "protection."
-
+      "This armor is made from thick, cured troll hides, "
+      "carefully stitched together. The armor feels light and supple "
+		"to the touch, promising great agility and unrestricted spell "
+		"casting in combat, while still offering a fair amount of "
+		"protection against striking and slashing weapons."
+		
    leatherarmor_male_icon_rsc = btg.bgf
    leatherarmor_female_icon_rsc = bth.bgf
 
@@ -46,8 +47,8 @@ classvars:
    vrIcon_male = Leatherarmor_male_icon_rsc
    vrIcon_female = Leatherarmor_female_icon_rsc
 
-   viDodge_base = 100              
-   viDamage_flat_base = 0
+   viDodge_base = 50              
+   viDamage_flat_base = 2
    viDamage_percent_base = 0
 
 properties:
@@ -61,7 +62,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_ALL,5]
+      return [ [ATCK_WEAP_STRIKE,10],
+		         [ATCK_WEAP_SLASH,10]
              ];
    }
 

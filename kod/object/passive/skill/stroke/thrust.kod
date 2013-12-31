@@ -17,9 +17,11 @@ constants:
 resources:
    thrust_name_rsc = "thrust"
    thrust_icon_rsc = slashico.bgf
-   thrust_desc_rsc = "Thrusting is an essential skill for wielding a sword efficiently."
-
-   thrust_skill_intro = "Weaponcraft Lv. 1: An advanced combat art that is employed when fighting with a sword."
+   thrust_desc_rsc = "Mastering the art of thrusting enables you to use all kinds of swords "
+	                  "to greater effect.  This combat art heavily relies on a warrior's precision "
+							"and will only be effective for those with a keen eye and a steady hand."
+							
+   thrust_skill_intro = "Weaponcraft Lv. 1: An essential skill for those who live by the sword."
 
 classvars:
 
@@ -34,7 +36,7 @@ classvars:
 
    viSchool = SKS_FENCING
    viSkill_Num = SKID_THRUST
-   viSkill_level = 2
+   viSkill_level = 1
    viChance_to_increase = 20
 
    viskillExertion = 2

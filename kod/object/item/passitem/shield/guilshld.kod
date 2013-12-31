@@ -64,7 +64,10 @@ resources:
    guildshield_window_overlay_rsc = povshldE.bgf
 
    guildshield_desc_rsc = \
-      "Heavy metal shields of this style are decorated in the standards of its owner guild. "
+      "Large metal shields of this style are decorated in the standards of its owner guild.  "
+		"Despite its enormous size, the shield is remarkably light and won't hinder your spell casting.  "
+		"While its size helps with blocking projectiles, it is too unwieldy to be an effective tool in melee "
+		"combat."
 
    guildshield_heraldry_prefix = "The pattern on this shield is "
 
@@ -110,10 +113,10 @@ classvars:
 
    % Being custom and made from ore, it's heavier than your average shield.
    viValue_average = 400
-   viWeight = 200  
-   viBulk = 150
+   viWeight = 100  
+   viBulk = 100
 
-   viBlock_chance = 0
+   viRangedBlock_chance = 50
 
 properties:
 

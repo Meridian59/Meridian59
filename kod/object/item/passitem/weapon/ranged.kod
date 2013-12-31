@@ -26,7 +26,7 @@ constants:
 
 resources:
 
-   ranged_desc_rsc = "This is a ranged weapon."
+   ranged_desc_rsc = "Nothing but the wielder's precision will determine the effectiveness of this weapon."
    ranged_wrong_ammo_rsc = "You have not equipped the proper missile to attack."
 
    % This is the name for the type of ammo used.  Used in combat messages.
@@ -34,19 +34,22 @@ resources:
 
 classvars:
 
-   viHits_init_min = 200
-   viHits_init_max = 250
+   viHits_init_min = 400
+   viHits_init_max = 500
    
    viProficiency_Needed = SKID_PROFICIENCY_BOW
    viAmmo_type = AMMO_ARROW
+	
+   viBulk = 70
+   viWeight = 70
    
    viHit_roll_modifier = 0
-   viSpell_modifier = -25
+   viSpell_modifier = -20
    viStrikethrough = 0
    
    viUse_Amount = 2
 
-   vrDesc = ranged_desc_rsc
+   vrExtendedDescription = ranged_desc_rsc
 
    viWeaponDamage = 0   % Mostly, damage is a factor of ammo, the random factor is 
                         % in them.  viWeaponDamage is the bow's contribution to that,

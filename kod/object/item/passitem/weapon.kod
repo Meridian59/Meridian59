@@ -39,9 +39,9 @@ constants:
    WEAPON_DISARM_SLASH = 5
    
    % Parry bonus
-   WEAPON_PARRY_STRIKE  = -10
-   WEAPON_PARRY_THRUST  = 0
-   WEAPON_PARRY_SLASH = 10
+   WEAPON_PARRY_STRIKE  = -50
+   WEAPON_PARRY_THRUST  = 50
+   WEAPON_PARRY_SLASH = 50
 
    % Spell modifier, large negatives are bad.
    WEAPON_SPELL_STRIKE  = 0
@@ -74,9 +74,9 @@ constants:
    WEAPON_NERUDITE_DISARM = 5
 
    % Quality mods to parrying
-   WEAPON_LOW_QUALITY_PARRY  = -10
-   WEAPON_HIGH_QUALITY_PARRY = 10
-   WEAPON_NERUDITE_PARRY = 10
+   WEAPON_LOW_QUALITY_PARRY  = -50
+   WEAPON_HIGH_QUALITY_PARRY = 50
+   WEAPON_NERUDITE_PARRY = 50
 
    % Quality mods to spell modifier
    WEAPON_LOW_QUALITY_SPELL  = 10
@@ -104,6 +104,8 @@ resources:
    %  happens to be on the blade.
    weapon_head = "on the head"
    weapon_grip = "on the grip"
+	
+	extended_description = ""
 
 classvars:
 
@@ -145,6 +147,8 @@ classvars:
    vrCondition_med = weapon_condition_med 
    vrCondition_poor = weapon_condition_poor 
    vrCondition_broken = weapon_condition_broken
+	
+	vrExtendedDescription = extended_description
    
    viParry_chance = 0
 
@@ -179,6 +183,13 @@ messages:
          piHits = piHits + WEAPON_NERUDITE_HITS;
       }
 
+      propagate;
+   }
+	
+   AppendDesc()
+   {
+      AppendTempString("\n\n");
+      AppendTempString(vrExtendedDescription);
       propagate;
    }
    

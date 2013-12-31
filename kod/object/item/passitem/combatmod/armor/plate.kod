@@ -20,9 +20,10 @@ resources:
    platearmor_icon_rsc = plateamr.bgf
    platearmor_desc_rsc = \
       "Formed from solid sheets of hardened steel, this armor "
-      "offers protection from all but the most ferocious "
-      "assault.  It bears the mark of Fehr'loi Qan, a "
-      "sign of fine workmanship and first rate materials."
+      "offers excellent protection against ranged attacks and thrusting weapons.  "
+		"It bears the mark of Fehr'loi Qan, a sign of fine workmanship and first "
+		"rate materials.  Heavy as it is, this armor will slow you down in "
+		"battle and make spell casting quite a bit harder."
 
    platearmor_male_icon_rsc = bte.bgf
    platearmor_female_icon_rsc = btf.bgf
@@ -39,14 +40,14 @@ classvars:
    viWeight = 600
    viBulk = 600
 
-   viSpell_modifier = -40
+   viSpell_modifier = -20
 
    vrIcon_male = platearmor_male_icon_rsc
    vrIcon_female = platearmor_female_icon_rsc
 
-   viDodge_base = -100  
+   viDodge_base = -50  
    viDamage_flat_base = 4
-   viDamage_percent_base = 20
+   viDamage_percent_base = 10
 
 properties:
 
@@ -59,8 +60,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_FIRE,-10],
-               [-ATCK_SPELL_SHOCK,-15]
+      return [ [ATCK_WEAP_THRUST,10],
+		         [ATCK_WEAP_PIERCE,10]
              ];
    }
 

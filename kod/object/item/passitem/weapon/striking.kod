@@ -18,11 +18,11 @@ constants:
 
 resources:
 
-   striking_desc_rsc = "This is a striking weapon."
+   striking_desc_rsc = "Striking weapons like these are most effective in the hands of a mighty warrior."
 
 classvars:
 
-   vrDesc = striking_desc_rsc
+   vrExtendedDescription = striking_desc_rsc
    
    viWeaponType = WEAPON_TYPE_STRIKE
 

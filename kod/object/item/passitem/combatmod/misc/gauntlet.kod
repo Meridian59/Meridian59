@@ -74,7 +74,6 @@ classvars:
    vrCondition_poor = gauntlet_condition_poor 
    vrCondition_broken = gauntlet_condition_broken
    
-   viDamage_percent_base = 5
    viAttack_base = 5
    viDamage_base = 5
 

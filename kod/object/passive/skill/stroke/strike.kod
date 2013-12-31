@@ -17,9 +17,10 @@ constants:
 resources:
    strike_name_rsc = "strike"
    strike_icon_rsc = slashico.bgf
-   strike_desc_rsc = "Strike allows you to hit better with heavy weapons."
+   strike_desc_rsc = "Striking is the most common combat technique when wielding maces, hammers and axes.  Heavy as they are, "
+	                  "these weapons require a strong warrior to reach their full potential."
 
-   strike_skill_intro = "Weaponcraft Lv. 1: A basic skill of armed combat. A must for those who live by the mace."
+   strike_skill_intro = "Weaponcraft Lv. 1: The attack of choice for heavy weapons, such as maces, hammers and axes."
 
 classvars:
 

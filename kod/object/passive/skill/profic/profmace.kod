@@ -20,7 +20,7 @@ resources:
    Maceproficiency_icon_rsc = maceico.bgf
    Maceproficiency_desc_rsc = "Allows one to become more proficient at Meridian's most common weapon."
 
-   Maceprof_skill_intro = "Weaponcraft Lv. 1: Skills in the land's most common, but least powerful, weapon."
+   Maceprof_skill_intro = "Weaponcraft Lv. 2: Allows you to make better use of the land's most common, but least powerful weapon."
 
 classvars:
 
@@ -31,8 +31,8 @@ classvars:
    vrSkill_intro = Maceprof_skill_intro
    viSchool = SKS_FENCING
    viSkill_num = SKID_PROFICIENCY_MACE
-   viSkill_Level = 1
-   viChance_to_increase = 40
+   viSkill_Level = 2
+   viChance_to_increase = 60
 
 properties:
 

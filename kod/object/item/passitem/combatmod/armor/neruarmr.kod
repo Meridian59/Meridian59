@@ -19,9 +19,11 @@ resources:
    neruditearmor_name_rsc = "nerudite armor"
    neruditearmor_icon_rsc = nerudamr.bgf
    neruditearmor_desc_rsc = \
-      "Forged from mighty Nerudite, this plate is lighter and more durable than "
-      "normal plate.  This chest piece exemplifies the remarkable skill of "
-      "Ixla cha'Totlak."
+      "Ixla cha'Totlak has forged this piece of remarkable craftsmanship from "
+		"mighty Nerudite, making this plate more durable, light and resistant to magic "
+		"than regular plate. Nerudite armor offers reliable protection against "
+		"all forms of physical attacks but its rigid construction restricts its "
+		"wearer's ability to move and cast in battle quite a bit."
 
    neruditearmor_male_icon_rsc = btm.bgf
    neruditearmor_female_icon_rsc = btn.bgf
@@ -41,14 +43,14 @@ classvars:
    viWeight = 500
    viBulk = 500
 
-   viSpell_modifier = -30
+   viSpell_modifier = -20
 
    vrIcon_male = neruditearmor_male_icon_rsc
    vrIcon_female = neruditearmor_female_icon_rsc
 
    viDodge_base = -50           
-   viDamage_flat_base = 3
-   viDamage_percent_base = 15
+   viDamage_flat_base = 2
+   viDamage_percent_base = 10
 
 properties:
 
@@ -61,11 +63,7 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [-ATCK_SPELL_FIRE,20],
-               [-ATCK_SPELL_SHOCK,20],
-               [-ATCK_SPELL_COLD,20],
-               [-ATCK_SPELL_ACID,20],
-               [-ATCK_SPELL_QUAKE,-20]
+      return [ [-ATCK_SPELL_ALL,20]
              ];
    }
 

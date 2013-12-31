@@ -18,7 +18,10 @@ resources:
 
    MagicBow_name_rsc = "magic bow"
    MagicBow_desc_rsc = \
-      "Crafted by the gods, this bow hums with magical power."
+      "This magic bow has been delicately carved from one of the boughs of a yew tree and "
+      "enhanced with powerful enchantments. It grants an expert archer excellent range and accuracy "
+		"but may lack the power to strike through heavy shields.  "
+		"Wielding this weapon will severely hinder your spell casting."
 
 classvars:
 
@@ -26,17 +29,12 @@ classvars:
    vrDesc = MagicBow_desc_rsc
 
    viValue_average = 3500
-   viBulk = 70
-   viWeight = 70
-   
-   viHits_init_min = 200
-   viHits_init_max = 300   
 
    viSpell_modifier = -40
 
    viWeaponDamage = 4
    viRange = 100
-   viHit_roll_modifier = 10
+   viHit_roll_modifier = 20
 
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_GRAY

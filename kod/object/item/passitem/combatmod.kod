@@ -50,8 +50,8 @@ messages:
       piDefense_bonus = viDefense_base;
       piDodge_bonus = viDodge_base;
       piDamage_percent_reduce = viDamage_percent_base;
-	  piDamage_flat_reduce = viDamage_flat_base;
-	  piAttack_bonus = viAttack_base;
+	   piDamage_flat_reduce = viDamage_flat_base;
+	   piAttack_bonus = viAttack_base;
       piDamage_bonus = viDamage_base;
       propagate;
    }

@@ -58,7 +58,9 @@ classvars:
 	viProficiency_needed = SKID_BASH
    viAttack_spell = 0
    viBlock_chance = 0
-   viBlock_damage = 6
+   viRangedBlock_chance = 0
+   viBlock_damage = 0
+   viSpell_modifier = 0
    
 properties:
    
@@ -118,7 +120,6 @@ messages:
 	   iDamage = Send(oStroke,@FindDamage,#weapon_used=self,#who=who,#victim=what);
 
 		% Handle damage modifications that are usually handled in TryAttack here, since we bypass chance to hit.
-		iDamage = random(iDamage/2,iDamage)/100;
 		iDamage = bound(iDamage,0,$);
 		
       % After figuring damage, call AssessDamage and AssessHit. These will apply damage and handle various other stuff.
@@ -126,7 +127,7 @@ messages:
                      #atype=Send(self,@GetAttackType),#aspell=Send(self,@GetAttackSpell),
                      #absolute=FALSE);
 
-      Send(who,@AssessHit,#what=what,#damage=iDamage,#use_weapon=self);
+      Send(who,@AssessHit,#what=what,#damage=iDamage,#use_weapon=self,#stroke_obj=oStroke);
 		
 		% Bashing doesn't interfere with other weapon skills, and doesn't user the weaponswingtimer,
 		% so we have to call ImproveStroke here instead.
@@ -146,6 +147,11 @@ messages:
    GetBlockAbility(who = $)
    {
       return send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) + 1 + viBlock_chance + send(who,@GetMight);
+   }
+	
+   GetRangedBlockAbility(who = $)
+   {
+      return send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) + 1 + viRangedBlock_chance + send(who,@GetMight);
    }
 
    DoBlockAnimation()

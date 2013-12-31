@@ -18,7 +18,9 @@ resources:
 
    parry_name_rsc = "parry"
    parry_icon_rsc = parryico.bgf
-   parry_desc_rsc = "Parrying allows people with a weapon to turn aside a blow, thus avoiding being hit."
+   parry_desc_rsc = "Parrying allows an armed warrior to turn aside a blow, thus avoiding being hit.  "
+	                 "A parried attack opens up the opportunity for a counter attack.  True aim and a swift weapon "
+						  "are required, both to effectively parry a blow and to execute a successful counter attack."
 
 classvars:
 

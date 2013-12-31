@@ -22,7 +22,10 @@ resources:
       "Thousands of overlapping steel scales give this armor "
       "its strength.  This armor is stronger than chain mail "
       "and lighter than plate.  Markings suggest it was made "
-      "by Quintor, master armor maker."
+      "by Quintor, master armor maker.  This heavy armor will "
+		"hinder your spell casting and make you less nimble in "
+		"combat, but offers great protection against striking and "
+		"slashing weapons."
 
    scalearmor_male_icon_rsc = bti.bgf
    scalearmor_female_icon_rsc = btj.bgf
@@ -44,8 +47,8 @@ classvars:
    vrIcon_male = scalearmor_male_icon_rsc
    vrIcon_female = scalearmor_female_icon_rsc
 
-   viDodge_base = 0               
-   viDamage_flat_base = 2
+   viDodge_base = -50               
+   viDamage_flat_base = 4
    viDamage_percent_base = 10
 
 properties:
@@ -59,7 +62,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_STRIKE,10]
+      return [ [ATCK_WEAP_STRIKE,10],
+		         [ATCK_WEAP_SLASH,10]
              ];
    }
 

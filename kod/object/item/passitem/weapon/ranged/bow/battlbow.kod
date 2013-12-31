@@ -19,8 +19,9 @@ resources:
    BattleBow_name_rsc = "battle bow"
    BattleBow_desc_rsc = \
       "Expertly carved for power, this bow gives you the envious advantage of "
-      "a stronger attack at a sacrifice of accuracy at long ranges.  You should "
-      "only use this bow at closer ranges."
+      "a stronger attack at a sacrifice of accuracy at long ranges.  While its "
+		"precision may be lacking, it has enough power to strike through most shields.  "
+		"Wielding this weapon will hinder your spell casting."
 
 classvars:
 
@@ -32,11 +33,6 @@ classvars:
    viHit_roll_modifier = 0
    
    viValue_average = 2500
-   viBulk = 70
-   viWeight = 70
-   
-   viHits_init_min = 200
-   viHits_init_max = 300
 
    viSpell_modifier = -20
    viStrikethrough = 50

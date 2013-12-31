@@ -45,8 +45,8 @@ classvars:
    viSpeed = SPEED_SLOW
    viAttack_types = ATCK_WEAP_BITE
    viAttributes = MOB_SPASM
-   viLevel = 25
-   viDifficulty = 4
+   viLevel = 30
+   viDifficulty = 3
    viKarma = -10
 
    vrSound_hit = spiderbaby_sound_hit

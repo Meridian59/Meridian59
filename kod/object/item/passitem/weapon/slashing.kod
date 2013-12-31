@@ -18,11 +18,12 @@ constants:
 
 resources:
 
-   slashing_desc_rsc = "This is a striking weapon."
+   slashing_desc_rsc = "Only those that are agile in combat will be able to use weapons like these "
+	                    "to their full effect. "
 
 classvars:
 
-   vrDesc = slashing_desc_rsc
+   vrExtendedDescription = slashing_desc_rsc
    
    viWeaponType = WEAPON_TYPE_SLASH
 

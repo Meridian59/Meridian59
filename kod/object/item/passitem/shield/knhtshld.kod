@@ -22,7 +22,9 @@ resources:
       "Nearly three feet from top to bottom, this glimmering "
       "shield of polished steel is of the highest quality.  "
       "You see the mark of Fehr'loi Qan inscribed on the "
-      "wooden handle."
+      "wooden handle.  Large and heavy, this shield offers excellent "
+		"protection from projectiles, but is too unwieldy to be an effective "
+		"tool in melee combat or to allow unrestricted spell casting. "
 
    knightshield_window_overlay_rsc = povshldE.bgf
 
@@ -36,7 +38,7 @@ classvars:
    viHits_init_max = 300
 
    viValue_average = 800
-   viWeight = 175
+   viWeight = 200
    viBulk = 200
 
 
@@ -46,7 +48,8 @@ classvars:
    viGround_group = 3
    viInventory_group = 1
 
-   viBlock_chance = 50
+   viRangedBlock_chance = 100
+   viSpell_modifier = -10
 
 properties:
 

@@ -17,8 +17,6 @@
 
 MYSQL *mysqlcon;
 
-//MYSQL *mysqlcon;
-
 void MySQLTest()
 {
 	dprintf("MySQL client version: %s\n", mysql_get_client_info());
@@ -64,14 +62,29 @@ void MySQLEnd()
 
 void MySQLCreateSchema()
 {
+	//void MySQLRecordStatTotalMoney(int total_money):
 	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`playermoneytotal` ( \
 							 `idPlayerMoneyTotal` int(11) NOT NULL AUTO_INCREMENT, \
 							 `PlayerMoneyTotalTime` datetime NOT NULL, \
-							 `PlayerMoneyTotalAmount` int(11) NOT NULL, \PRIMARY KEY (`idPlayerMoneyTotal`) \
+							 `PlayerMoneyTotalAmount` int(11) NOT NULL, \
+							 PRIMARY KEY (`idPlayerMoneyTotal`) \
 							 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;"))
 	{
 
 		dprintf("unable to create table playermoneytotal");
+		return;
+	}
+	
+	//MySQLRecordPlayerLogin(session_node *s)
+	if(mysql_query(mysqlcon, "CREATE TABLE `player_logins` ( \
+							 `idplayer_logins` int(11) NOT NULL AUTO_INCREMENT, \
+							 `player_logins_account_name` varchar(45) NOT NULL, \
+							 `player_logins_character_name` varchar(45) NOT NULL, \
+							 `player_logins_IP` varchar(45) NOT NULL, \
+							 PRIMARY KEY (`idplayer_logins`) \
+							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1; "))
+	{
+		dprintf("unable to create table player_logins");
 		return;
 	}
 
@@ -81,11 +94,34 @@ void MySQLRecordStatTotalMoney(int total_money)
 {
 	char buf[200];
 	sprintf(buf,"INSERT INTO `meridian`.`playermoneytotal` \
-				SET PlayerMoneyTotalAmount = %d, PlayerMoneyTotalTime = NOW()");
+				SET PlayerMoneyTotalAmount = %d, \
+				PlayerMoneyTotalTime = NOW()",total_money);
 	if(mysql_query(mysqlcon, buf))
 	{
 		dprintf("Unable to record StatTotalMoney");
 		return;
 	}
 	dprintf("Recorded StatTotalMoney");
+}
+
+void MySQLRecordPlayerLogin(session_node *s)
+{
+	//Log of characters, accounts, ips
+	val_type name_val;
+    resource_node *r;
+	char buf[1000];
+   
+    name_val.int_val = SendTopLevelBlakodMessage(s->game->object_id,USER_NAME_MSG,0,NULL);
+    r = GetResourceByID(name_val.v.data);
+    //dprintf("Account %s (%d) logged in with character %s (%d) from ip %s",s->account->name,s->account->account_id,r->resource_val,s->game->object_id,s->conn.name);
+
+	sprintf(buf,"INSERT INTO `meridian`.`player_logins` \
+				SET player_logins_account_name = '%s', \
+				player_logins_character_name = '%s', \
+				player_logins_IP = '%s'",s->account->name,r->resource_val,s->conn.name);
+	if(mysql_query(mysqlcon, buf))
+	{
+		dprintf("Unable to record StatPlayerLogin");
+		return;
+	}
 }

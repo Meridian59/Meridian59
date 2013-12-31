@@ -22,5 +22,6 @@ int MySQLCheckSchema();
 void MySQLCreateSchema();
 void MySQLEnd();
 void MySQLRecordStatTotalMoney(int total_money);
+void MySQLRecordPlayerLogin(session_node *s);
 
 #endif

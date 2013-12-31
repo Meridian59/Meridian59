@@ -63,10 +63,10 @@ void MySQLEnd()
 void MySQLCreateSchema()
 {
 	//void MySQLRecordStatTotalMoney(int total_money):
-	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`playermoneytotal` ( \
-							 `idPlayerMoneyTotal` int(11) NOT NULL AUTO_INCREMENT, \
-							 `PlayerMoneyTotalTime` datetime NOT NULL, \
-							 `PlayerMoneyTotalAmount` int(11) NOT NULL, \
+	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`player_money_total` ( \
+							 `idplayer_money_total` int(11) NOT NULL AUTO_INCREMENT, \
+							 `player_money_total_time` datetime NOT NULL, \
+							 `player_money_total_amount` int(11) NOT NULL, \
 							 PRIMARY KEY (`idPlayerMoneyTotal`) \
 							 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;"))
 	{
@@ -103,9 +103,9 @@ void MySQLCreateSchema()
 void MySQLRecordStatTotalMoney(int total_money)
 {
 	char buf[200];
-	sprintf(buf,"INSERT INTO `meridian`.`playermoneytotal` \
-				SET PlayerMoneyTotalAmount = %d, \
-				PlayerMoneyTotalTime = NOW()",total_money);
+	sprintf(buf,"INSERT INTO `meridian`.`player_money_total` \
+				SET player_money_total_amount = %d, \
+				player_money_total_time = NOW()",total_money);
 	if(mysql_query(mysqlcon, buf))
 	{
 		dprintf("Unable to record StatTotalMoney");

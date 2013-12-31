@@ -23,5 +23,6 @@ void MySQLCreateSchema();
 void MySQLEnd();
 void MySQLRecordStatTotalMoney(int total_money);
 void MySQLRecordPlayerLogin(session_node *s);
+void MySQLRecordStatMoneyCreated(int money_created);
 
 #endif

@@ -2379,7 +2379,11 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 		case STAT_TOTALMONEY:
 			each_stat = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
 			MySQLRecordStatTotalMoney(each_stat.v.data);
-			//sprintf(buf,"STAT_TOTALMONEY in C_RecordStat");
+			break;
+
+		case STAT_MONEYCREATED:
+			each_stat = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			MySQLRecordStatMoneyCreated(each_stat.v.data);
 			break;
 
 		case STAT_BLANK:

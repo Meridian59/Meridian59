@@ -88,6 +88,16 @@ void MySQLCreateSchema()
 		return;
 	}
 
+	if(mysql_query(mysqlcon, "CREATE TABLE `money_created` ( \
+							 `idmoney_created` int(11) NOT NULL AUTO_INCREMENT, \
+							 `money_created_amount` int(11) NOT NULL, \
+							 `money_created_time` datetime NOT NULL, \
+							 PRIMARY KEY (`idmoney_created`) \
+							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
+	{
+		dprintf("unable to create table money_created");
+		return;
+	}
 }
 
 void MySQLRecordStatTotalMoney(int total_money)
@@ -101,7 +111,20 @@ void MySQLRecordStatTotalMoney(int total_money)
 		dprintf("Unable to record StatTotalMoney");
 		return;
 	}
-	dprintf("Recorded StatTotalMoney");
+}
+
+void MySQLRecordStatMoneyCreated(int money_created)
+{
+	char buf[200];
+	sprintf(buf,"INSERT INTO `meridian`.`money_created` \
+				SET money_created_amount = %d, \
+				money_created_time = NOW()",money_created);
+	if(mysql_query(mysqlcon, buf))
+	{
+		dprintf("Unable to record StatMoneyCreated");
+		return;
+	}
+	dprintf("Recorded StatMoneyCreated");
 }
 
 void MySQLRecordPlayerLogin(session_node *s)

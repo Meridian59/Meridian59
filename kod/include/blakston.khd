@@ -2983,3 +2983,4 @@
    %Statistics Constants, matches enum in blakserv.h
    STAT_BLANK = 0
    STAT_TOTALMONEY = 1
+   STAT_MONEYCREATED = 2

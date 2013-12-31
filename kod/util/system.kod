@@ -365,6 +365,9 @@ properties:
 
    plShrines = $
    plShrine_Powers = $
+   
+   % Save over recreations
+   plShrine_Allegiances = $
 
    % Bonus spellpower set by admins for events.
    plBonusSpellpower = $
@@ -2346,7 +2349,7 @@ messages:
    "CreateAllRoomsIfNew.\nUNSAFE to call from admin mode, as items"
    "in rooms lose state.  Use RecreateAll instead."
    {
-      local i, bFeast_Hall_Locked, oFeast_Hall;
+      local i, n, bFeast_Hall_Locked, oFeast_Hall;
 
       if plUsers_logged_on <> $
       {
@@ -2364,6 +2367,13 @@ messages:
       if poParliament <> $
       {
          Send(poParliament,@SetDeleting,#value=TRUE);
+      }
+      
+      % Save shrine powers.
+      plShrine_Allegiances = $;
+      for n in plShrines
+      {
+         plShrine_Allegiances = Cons(Send(n,@GetAllegiance),plShrine_Allegiances);
       }
 
       % During a clean build, for example.
@@ -2729,7 +2739,7 @@ messages:
 
    RecomputeShrineTotals()
    {
-      local i, allegiance, power, count;
+      local i, n, allegiance, power, count, power_count;
 
       if plShrine_Powers = $
       {
@@ -2744,6 +2754,16 @@ messages:
          {
             SetNth(plShrine_Powers,count,0);
             count = count + 1;
+         }
+      }
+      
+      if plShrine_Allegiances <> $
+      {
+         power_count = 1;
+         for n in plShrines
+         {
+            Send(n,@SetAllegiance,#allegiance=Nth(plShrine_Allegiances,power_count));
+            power_count = power_count + 1;
          }
       }
 

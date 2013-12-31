@@ -1819,6 +1819,7 @@
    % Newly added skills
    SKID_STRIKE = 458
    SKID_PROFICIENCY_FALCHION = 459
+	SKID_BASH = 460
 
    %%% Unique spell constants
 

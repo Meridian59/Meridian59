@@ -333,13 +333,13 @@ messages:
       iExtraHits = 0;
 
       if iChanceToHit < random(1,1000)
-	  {
-	     % Oops, a miss.  See if something happens.
+	   {
+	      % Oops, a miss.  See if something happens.
          Send(self,@AssessMiss,#what=what,#stroke_obj=stroke_obj);
-	  }
-	  else
-	  {
-         if iChanceToHit >= random(1001,2000)
+	   }
+	   else
+	   {
+		   if iChanceToHit >= random(1001,2000)
          {
             % We generate an extra hit!
             iExtraHits = iExtraHits + 1;
@@ -353,18 +353,18 @@ messages:
             {
                Send(what,@MsgSendUser,#message_rsc=battler_defender_crit,#parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
             }
-		 }
+		   }
 
          % We hit!
-		 iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj)/100;
-		 iPreliminary = bound(iPreliminary,0,$);
+		   iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj)/100;
+		   iPreliminary = bound(iPreliminary,0,$);
          if IsClass(self,&Player)
          {
-		    iPreliminary = random(iPreliminary/2,iPreliminary);
+		      iPreliminary = random(iPreliminary/2,iPreliminary);
          }
 
          iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,#stroke_obj=stroke_obj,
-		                #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
+		                  #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
 
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
 	  
@@ -375,16 +375,16 @@ messages:
          }
          else
          {
-		    if iDamage > 0
-			{   
+			   if iDamage > 0
+			   {   
                Send(self,@DidDamage,#amount=iDamage,#what=what);
-			}
+			   }
          }
 		 
-		 if iExtraHits > 0 AND iDamage <> $
-		 {
+		   if iExtraHits > 0 AND iDamage <> $
+		   {
             Post(self,@DoExtraHit,#preliminary=iPreliminary,#what=what,#stroke_obj=stroke_obj,#use_weapon=oWeapon,#extra_hits=iExtraHits);
-		 }
+		   }
       }
       
       if poOwner <> $

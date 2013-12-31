@@ -3220,6 +3220,7 @@ messages:
        Send(self,@CreateOneSKillIfNew,#num=SKID_PROFICIENCY_BOW,#class=&Archery);
 
        Send(self,@CreateOneSKillIfNew,#num=SKID_BLOCK,#class=&Block);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_BASH,#class=&Bash);
 
        Send(self,@CreateOneSKillIfNew,#num=SKID_SECOND_WIND,#class=&SecondWind);
        Send(self,@CreateOneSKillIfNew,#num=SKID_DISARM,#class=&Disarm);

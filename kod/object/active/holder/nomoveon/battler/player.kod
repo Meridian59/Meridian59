@@ -4658,7 +4658,7 @@ messages:
    {
       local oMonster;
       
-      if stroke_obj <> $
+      if (stroke_obj <> $ AND stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_BASH))
          AND Send(self,@GetWeaponSwingBonus) > 0
       {
          Send(stroke_obj,@ImproveStroke,#who=self,#target=what,

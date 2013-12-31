@@ -55,6 +55,7 @@ classvars:
    
    viWeaponType = WEAPON_TYPE_STRIKE
    viAttack_Type = ATCK_WEAP_STRIKE
+	viProficiency_needed = SKID_BASH
    viAttack_spell = 0
    viBlock_chance = 0
    viBlock_damage = 6
@@ -64,6 +65,16 @@ properties:
    piUsed = UNUSED
 
 messages:
+
+   GetProf(who=$)
+   {
+      return send(who,@GetSkillAbility,#skill_num=viProficiency_needed);
+   }
+
+   GetProfNumber()
+   {
+      return viProficiency_needed;
+   }
 
    GetStroke(who=$)
    {
@@ -77,7 +88,12 @@ messages:
 
    GetDefaultStrokeNumber()
    {
-      return SKID_SLASH;
+      return SKID_BASH;
+   }
+	
+   GetDamage(target=$)
+   {
+      return viBlock_damage*100;
    }
    
    DamageGear(who = $,what = $)
@@ -95,20 +111,26 @@ messages:
    
    DoBlockAttack(who=$,what=$)
    {
-      local iDamage;
+      local iDamage,oStroke;
+		
+		oStroke = Send(SYS,@FindSkillByNum,#num=SKID_BASH);
 	  
-	   iDamage = random(1,viBlock_damage);
-	  
-      Send(who,@SetKillTarget,#target=what);
-      Send(who,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+	   iDamage = Send(oStroke,@FindDamage,#weapon_used=self,#who=who,#victim=what);
 
-      % After figuring damage, do an AssessDamage.  This will handle the necessary
-      %  attack messages.
+		% Handle damage modifications that are usually handled in TryAttack here, since we bypass chance to hit.
+		iDamage = random(iDamage/2,iDamage)/100;
+		iDamage = bound(iDamage,0,$);
+		
+      % After figuring damage, call AssessDamage and AssessHit. These will apply damage and handle various other stuff.
       iDamage = Send(what,@AssessDamage,#what=who,#damage=iDamage,
                      #atype=Send(self,@GetAttackType),#aspell=Send(self,@GetAttackSpell),
                      #absolute=FALSE);
 
       Send(who,@AssessHit,#what=what,#damage=iDamage,#use_weapon=self);
+		
+		% Bashing doesn't interfere with other weapon skills, and doesn't user the weaponswingtimer,
+		% so we have to call ImproveStroke here instead.
+      Send(oStroke,@ImproveStroke,#who=who,#target=what,#use_weapon=self);
 
       if iDamage = $
       {

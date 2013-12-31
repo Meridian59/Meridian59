@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Bash is Stroke
+
+constants:
+
+   include blakston.khd
+
+resources:
+   bash_name_rsc = "bash"
+   bash_icon_rsc = armorico.bgf
+   bash_desc_rsc = "Bashing allows you to do better damage with your shield."
+
+   bash_skill_intro = "Weaponcraft Lv. 3: An advanced technique for dealing more damage when blocking an attack."
+
+classvars:
+
+   vrName = bash_name_rsc
+   vrIcon = bash_icon_rsc
+   vrDesc = bash_desc_rsc
+
+   vrSkill_intro = bash_skill_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SKS_FENCING
+   viSkill_Num = SKID_BASH
+   viSkill_level = 3
+   viChance_to_increase = 20
+
+   viskillExertion = 0
+   vbCheck_exertion = FALSE
+
+   viDamage_factor = 100
+
+properties:
+
+   plPrerequisites = $
+
+   piChanceToIncrease = 20
+
+messages:
+
+   GetRequisiteStat(who=$)
+   "Varies from skill to skill and spell to spell."
+   {
+      return Send(who,@GetMight);
+   }
+   
+   DamageFactors(damage=0, who=$, weapon_used = $)
+   "Different skills/strokes are affected by different stats differently."
+   {
+      local stat;
+	  
+	  % Get proficiency bonus.
+	  damage = damage + (Send(who,@GetSkillAbility,#Skill_num=SKID_BASH)+1)*viMaxProficiencyDamage;
+	  
+      % Get stat damage bonus.
+      stat = send(who,@GetMight);
+      damage = (50+stat)*damage/100;
+
+      return damage;
+   }
+	
+   ImproveStroke(who=$,use_weapon=$,target=$)
+   {
+     local target_level;
+
+     target_level = send(target,@GetLevel);
+
+     if send(who,@HasSkill,#num=viSkill_num)
+     {
+        if send(who,@GetSkillAbility,#skill_num=viSkill_num) < 100
+          {
+             % checking for stroke advancement
+             send(self,@ImproveAbility,#who=who,#target=target,#bonus=0);
+          }
+     }
+     return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

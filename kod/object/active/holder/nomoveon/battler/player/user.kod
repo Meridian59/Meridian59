@@ -4528,13 +4528,14 @@ messages:
          return FALSE;
       }
      
-      % except for punch and slash, a player cannot use an attack type he
+      % except for pretty much everything, a player cannot use an attack type he
       % doesn't have.  This in to prevent hacking.
       if stroke_id <> SKID_PUNCH
          AND stroke_ID <> SKID_SLASH
          AND stroke_ID <> SKID_STRIKE
          AND stroke_ID <> SKID_THRUST         
          AND stroke_ID <> SKID_FIRE 
+         AND stroke_ID <> SKID_BASH 
       {
          if NOT Send(self,@HasSkill,#num=stroke_id)
          {

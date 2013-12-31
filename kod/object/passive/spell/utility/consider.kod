@@ -16,7 +16,7 @@ constants:
 resources:
 
    consider_name_rsc = "consider"
-   consider_icon_rsc = iblink.bgf
+   consider_icon_rsc = iartific.bgf
    consider_desc_rsc = \
       "Carefully consider your opponent, telling you about your odds in combat. "
       

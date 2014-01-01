@@ -4761,8 +4761,6 @@ messages:
 	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
 	  }
 
-	  
-
       if piHealth <= 0
       {
          if stroke_obj = $

@@ -4748,6 +4748,8 @@ messages:
 
       Send(self,@LoseHealth,#amount=damage);
 
+	  RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage);
+
       if piHealth <= 0
       {
          if stroke_obj = $

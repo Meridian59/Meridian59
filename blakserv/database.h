@@ -24,5 +24,6 @@ void MySQLEnd();
 void MySQLRecordStatTotalMoney(int total_money);
 void MySQLRecordPlayerLogin(session_node *s);
 void MySQLRecordStatMoneyCreated(int money_created);
+void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, int aspell, int atype, int damage);
 
 #endif

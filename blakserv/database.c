@@ -72,11 +72,10 @@ void MySQLCreateSchema()
 	{
 
 		dprintf("unable to create table playermoneytotal");
-		return;
 	}
 	
 	//MySQLRecordPlayerLogin(session_node *s)
-	if(mysql_query(mysqlcon, "CREATE TABLE `player_logins` ( \
+	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`player_logins` ( \
 							 `idplayer_logins` int(11) NOT NULL AUTO_INCREMENT, \
 							 `player_logins_account_name` varchar(45) NOT NULL, \
 							 `player_logins_character_name` varchar(45) NOT NULL, \
@@ -85,10 +84,9 @@ void MySQLCreateSchema()
 							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1; "))
 	{
 		dprintf("unable to create table player_logins");
-		return;
 	}
 
-	if(mysql_query(mysqlcon, "CREATE TABLE `money_created` ( \
+	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`money_created` ( \
 							 `idmoney_created` int(11) NOT NULL AUTO_INCREMENT, \
 							 `money_created_amount` int(11) NOT NULL, \
 							 `money_created_time` datetime NOT NULL, \
@@ -96,8 +94,21 @@ void MySQLCreateSchema()
 							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
 	{
 		dprintf("unable to create table money_created");
-		return;
 	}
+
+	if(mysql_query(mysqlcon, "CREATE TABLE `player_damaged` ( \
+							 `idplayer_damaged` int(11) NOT NULL AUTO_INCREMENT, \
+							 `player_damaged_who` varchar(45) NOT NULL, \
+							 `player_damaged_attacker` varchar(45) NOT NULL, \
+							 `player_damaged_aspell` int(11) NOT NULL, \
+							 `player_damaged_atype` int(11) NOT NULL, \
+							 `player_damaged_damage` int(11) NOT NULL, \
+							 PRIMARY KEY (`idplayer_damaged`) \
+							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
+	{
+		dprintf("unable to create table player_damaged");
+	}
+
 }
 
 void MySQLRecordStatTotalMoney(int total_money)
@@ -145,6 +156,22 @@ void MySQLRecordPlayerLogin(session_node *s)
 	if(mysql_query(mysqlcon, buf))
 	{
 		dprintf("Unable to record StatPlayerLogin");
+		return;
+	}
+}
+
+void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, int aspell, int atype, int damage)
+{
+	char buf[1000];
+	resource_node *r_who_damaged, *r_who_attacker;
+
+	r_who_damaged = GetResourceByID(res_who_damaged);
+	r_who_attacker = GetResourceByID(res_who_attacker);
+
+	sprintf(buf,"INSERT INTO `meridian`.`player_damaged` SET player_damaged_who = '%s', player_damaged_attacker = '%s', player_damaged_aspell = %d, player_damaged_atype = %d, player_damaged_damage = %d",r_who_damaged->resource_val, r_who_attacker->resource_val, aspell, atype, damage);
+	if(mysql_query(mysqlcon,buf))
+	{
+		dprintf("Unable to record StatPlayerAssessDamage");
 		return;
 	}
 }

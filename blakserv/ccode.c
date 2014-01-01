@@ -2364,7 +2364,7 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_name_parms,parm_node name_parm_array[])
 {
 	char buf[4000];
-	val_type stat_type, each_stat;
+	val_type stat_type, stat1, stat2, stat3, stat4, stat5;
 
 	//The first paramenter to RecordStat() should alwasy be a STAT_TYPE
 	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[0].type, normal_parm_array[0].value);
@@ -2377,13 +2377,22 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 	switch (stat_type.v.data)
 	{
 		case STAT_TOTALMONEY:
-			each_stat = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
-			MySQLRecordStatTotalMoney(each_stat.v.data);
+			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			MySQLRecordStatTotalMoney(stat1.v.data);
 			break;
 
 		case STAT_MONEYCREATED:
-			each_stat = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
-			MySQLRecordStatMoneyCreated(each_stat.v.data);
+			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			MySQLRecordStatMoneyCreated(stat1.v.data);
+			break;
+
+		case STAT_ASSESS_DAM:
+			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			stat2 = RetrieveValue(object_id,local_vars,normal_parm_array[2].type, normal_parm_array[2].value);
+			stat3 = RetrieveValue(object_id,local_vars,normal_parm_array[3].type, normal_parm_array[3].value);
+			stat4 = RetrieveValue(object_id,local_vars,normal_parm_array[4].type, normal_parm_array[4].value);
+			stat5 = RetrieveValue(object_id,local_vars,normal_parm_array[5].type, normal_parm_array[5].value);
+			MySQLRecordPlayerAssessDamage(stat1.v.data, stat2.v.data, stat3.v.data, stat4.v.data, stat5.v.data);
 			break;
 
 		case STAT_BLANK:

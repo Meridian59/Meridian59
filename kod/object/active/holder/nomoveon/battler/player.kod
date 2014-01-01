@@ -712,6 +712,8 @@ resources:
    player_logged_off_wav_rsc = player_logout2.wav
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
+   
+   player_empty_weapon_string = "monster attack"
 
 classvars:
 
@@ -4652,8 +4654,10 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit;
-
+            iLimit, origdamage;
+			
+	  origdamage = damage;
+	  
       color_rsc = player_hit_color_none;
       
       if what <> $ AND IsClass(what,&monster)
@@ -4747,8 +4751,17 @@ messages:
       }
 
       Send(self,@LoseHealth,#amount=damage);
+	  	  
+	  if IsClass(what,&Monster)
+	  {
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_empty_weapon_string);
+	  }
+	  else
+	  {
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
+	  }
 
-	  RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage);
+	  
 
       if piHealth <= 0
       {

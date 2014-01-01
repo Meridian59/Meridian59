@@ -2364,7 +2364,7 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_name_parms,parm_node name_parm_array[])
 {
 	char buf[4000];
-	val_type stat_type, stat1, stat2, stat3, stat4, stat5;
+	val_type stat_type, stat1, stat2, stat3, stat4, stat5, stat6, stat7;
 
 	//The first paramenter to RecordStat() should alwasy be a STAT_TYPE
 	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[0].type, normal_parm_array[0].value);
@@ -2392,7 +2392,9 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 			stat3 = RetrieveValue(object_id,local_vars,normal_parm_array[3].type, normal_parm_array[3].value);
 			stat4 = RetrieveValue(object_id,local_vars,normal_parm_array[4].type, normal_parm_array[4].value);
 			stat5 = RetrieveValue(object_id,local_vars,normal_parm_array[5].type, normal_parm_array[5].value);
-			MySQLRecordPlayerAssessDamage(stat1.v.data, stat2.v.data, stat3.v.data, stat4.v.data, stat5.v.data);
+			stat6 = RetrieveValue(object_id,local_vars,normal_parm_array[6].type, normal_parm_array[6].value);
+			stat7 = RetrieveValue(object_id,local_vars,normal_parm_array[7].type, normal_parm_array[7].value);
+			MySQLRecordPlayerAssessDamage(stat1.v.data, stat2.v.data, stat3.v.data, stat4.v.data, stat5.v.data, stat6.v.data, stat7.v.data);
 			break;
 
 		case STAT_BLANK:

@@ -110,18 +110,6 @@ void MySQLCreateSchema()
 	{
 		dprintf("unable to create table player_damaged");
 	}
-/*CREATE TABLE `player_damaged` (
-  `idplayer_damaged` int(11) NOT NULL AUTO_INCREMENT,
-  `player_damaged_who` varchar(45) NOT NULL,
-  `player_damaged_attacker` varchar(45) NOT NULL,
-  `player_damaged_aspell` int(11) NOT NULL,
-  `player_damaged_atype` int(11) NOT NULL,
-  `player_damaged_applied` int(11) NOT NULL,
-  `player_damaged_original` int(11) NOT NULL,
-  `player_damaged_weapon` varchar(45) NOT NULL,
-  PRIMARY KEY (`idplayer_damaged`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
-*/
 }
 
 void MySQLRecordStatTotalMoney(int total_money)
@@ -148,7 +136,6 @@ void MySQLRecordStatMoneyCreated(int money_created)
 		dprintf("Unable to record StatMoneyCreated");
 		return;
 	}
-	dprintf("Recorded StatMoneyCreated");
 }
 
 void MySQLRecordPlayerLogin(session_node *s)

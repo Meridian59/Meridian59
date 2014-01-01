@@ -63,12 +63,12 @@ classvars:
    viSpell_level = 2
    viMana = 10
 
-   viHit_Factor = 10       %% typically, spells have hit probs
-                           %% that are high, provided you're good at the skill
-
-
    viMin_Damage = 4        %% touch spells typically do good damage    
    viMax_Damage = 8       %% but are unaffected by weapon or strength bonuses
+
+   % Max amount of damage that punch or 2*myst can add
+   % Acid touch is slightly weaker than Faren touch spells
+   viMaxProficiencyDamage = 3
 
    viRange = 2             %% touch spell range can vary, but are typically good     
 

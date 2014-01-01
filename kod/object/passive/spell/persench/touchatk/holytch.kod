@@ -68,10 +68,10 @@ classvars:
    viSpell_level = 2
    viMana = 12
 
-   viHit_Factor = 15
-
-   viMin_Damage = 3
-   viMax_Damage = 6
+   % It's alright if Holy Touch has high base damage.
+   % It gets no intrinsic proficiency damage, instead doing double base against undead.
+   viMin_Damage = 6
+   viMax_Damage = 10
 
    viRange = 2
 
@@ -100,7 +100,8 @@ messages:
    }
 
    DamageFactors(damage=0, who=$, victim=$)
-   "Damage for attack spells is determined largely by expertise in the spell."
+   "Holy Touch gets no punch or mysticism proficiency damage. Instead, "
+   "it is intrinsically effective versus undead."
    {
       local iDamage, iKarma;
 

@@ -66,14 +66,14 @@ classvars:
 
    viChance_To_Increase = 10
 
-   % typically, spells have hit probs that are high, provided you're good at
-   %  the skill.
-   viHit_Factor = 80
-
    % Touch spells typically do good damage but are unaffected by typical weapon
-   %  bonuses.
-   viMin_Damage = 3
-   viMax_Damage = 6
+   %  bonuses. These base damages will have proficiency added to them,
+   %  and will then be increased by up to 40% depending on the caster's Mysticism.
+   viMin_Damage = 4
+   viMax_Damage = 8
+   
+   % Max amount of damage that Punch or 2*Myst can add
+   viMaxProficiencyDamage = 5
 
    % Touch spell range can vary, but are typically good     
    viRange = 2
@@ -145,7 +145,15 @@ messages:
    "Attack spells typically are unaffected by strength, although they may "
    "be affected by other factors."
    {
-      return damage;
+      local iDamage, iMysticism;
+
+      iDamage = damage + (Send(self,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      
+      % Get myst damage bonus.
+      iMysticism = Send(who,@GetMysticism);
+      iDamage = ((100+bound(iMysticism-25,0,40))*iDamage)/100;
+
+      return iDamage;
    }
 
    GetHitsound()
@@ -160,8 +168,7 @@ messages:
    % What's the stroke number?
    % Touch attacks are "backwards", they use Punch as the proficiency, or the
    %  secondary bonus to hit.  Added bonus for "pure" mages, can substitute
-   %  1.5 * Mysticism instead of punch.  This allows for a more focused
-   %  character, but you can reach higher levels if you learn punch.
+   %  2 * Mysticism instead of punch. 
    GetProf(who=$)
    {
       local iProf, iMysticism;
@@ -169,14 +176,14 @@ messages:
       iProf = Send(who,@GetSkillAbility,#skill_num=SKID_PUNCH);
       Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
       
-      iMysticism = (Send(who,@GetMysticism)*3)/2;
+      iMysticism = (Send(who,@GetMysticism)*2);
       
       if iProf < iMysticism
       {
          iProf = iMysticism;
       }
 
-      return iProf;
+      return bound(iProf,1,99);
    }
 
    GetStroke(who=$)
@@ -251,12 +258,17 @@ messages:
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);
 
-      iPower = Send(who,@GetEnchantedState,#what=self);
+      % Rather than an active spellpower check, use the player's
+      % ability in the spell. This makes touch spells function
+      % more like a stroke, and gives them immunity to anti-magic effects.
+      iPower = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
       
-      % factor in the person's ability with the spell      
-      damage = damage/2 + ((damage/2)*iPower)/SPELLPOWER_MAXIMUM + 1;
+      % Factor in the person's ability with the spell
+      % It's alright if damage here is extremely low.
+      % Most players will get proficiency damage from punch or 2*Mysticism.
+      damage = damage * ((iPower+1)/(SPELLPOWER_MAXIMUM+1));
       
-      % might affects damage from different weapons differently
+      % myst affects damage
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,
                     #victim=victim);
       
@@ -391,12 +403,11 @@ messages:
    {
       local iDuration;
 
-      iDuration = Random(iSpellpower/3,iSpellpower/2);
-      % 1 to 7.5 minutes
-      iDuration =  bound(iDuration,10,75);
-      iDuration = iDuration * 6 * 1000;  
+      % Up to 16.5 minutes
+      iDuration = iSpellPower * 10 * 1000; 
 
-      return iDuration;
+      % Min 2 minutes
+      return Bound(iDuration,120000,$);
    }  
 
    GetStateValue(iSpellpower=$)
@@ -404,6 +415,11 @@ messages:
       Return iSpellpower;
    }
 
+   SuccessChance(who=$)
+   "Allow mages to switch elements despite antagonistic conditions."
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

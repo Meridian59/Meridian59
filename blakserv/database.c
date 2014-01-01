@@ -34,15 +34,27 @@ void MySQLInit()
 
 	if (mysql_real_connect(mysqlcon, ConfigStr(MYSQL_HOST), ConfigStr(MYSQL_USERNAME), ConfigStr(MYSQL_PASSWORD), NULL, 0, NULL, 0) == NULL) 
     {
-      dprintf("%s\n", mysql_error(mysqlcon));
-	  dprintf("host: %s user: %s pass: %s", ConfigStr(MYSQL_HOST), ConfigStr(MYSQL_USERNAME), ConfigStr(MYSQL_PASSWORD));
-      mysql_close(mysqlcon);
-      return;
+		dprintf("Error connecting: %s\n", mysql_error(mysqlcon));
+		dprintf("host: %s user: %s pass: %s", ConfigStr(MYSQL_HOST), ConfigStr(MYSQL_USERNAME), ConfigStr(MYSQL_PASSWORD));
+		mysql_close(mysqlcon);
+		return;
     } 
 	else
 	{
 		dprintf("connected to mysql host: %s user: %s", ConfigStr(MYSQL_HOST),ConfigStr(MYSQL_USERNAME) );
 	}
+	char buf[100];
+	sprintf(buf, "USE %s", ConfigStr(MYSQL_DB));
+	if(mysql_query(mysqlcon, buf))
+	{
+		dprintf("Error selecting databsae: %s\n", mysql_error(mysqlcon));
+		return;
+	}
+	else
+	{
+		dprintf("connected to mysql database: %s", ConfigStr(MYSQL_DB));
+	}
+
     return;
 }
 
@@ -63,7 +75,7 @@ void MySQLEnd()
 void MySQLCreateSchema()
 {
 	//void MySQLRecordStatTotalMoney(int total_money):
-	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`player_money_total` ( \
+	if(mysql_query(mysqlcon, "CREATE TABLE `player_money_total` ( \
 							 `idplayer_money_total` int(11) NOT NULL AUTO_INCREMENT, \
 							 `player_money_total_time` datetime NOT NULL, \
 							 `player_money_total_amount` int(11) NOT NULL, \
@@ -75,7 +87,7 @@ void MySQLCreateSchema()
 	}
 	
 	//MySQLRecordPlayerLogin(session_node *s)
-	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`player_logins` ( \
+	if(mysql_query(mysqlcon, "CREATE TABLE `player_logins` ( \
 							 `idplayer_logins` int(11) NOT NULL AUTO_INCREMENT, \
 							 `player_logins_account_name` varchar(45) NOT NULL, \
 							 `player_logins_character_name` varchar(45) NOT NULL, \
@@ -86,7 +98,7 @@ void MySQLCreateSchema()
 		dprintf("unable to create table player_logins");
 	}
 
-	if(mysql_query(mysqlcon, "CREATE TABLE `meridian`.`money_created` ( \
+	if(mysql_query(mysqlcon, "CREATE TABLE `money_created` ( \
 							 `idmoney_created` int(11) NOT NULL AUTO_INCREMENT, \
 							 `money_created_amount` int(11) NOT NULL, \
 							 `money_created_time` datetime NOT NULL, \
@@ -115,7 +127,7 @@ void MySQLCreateSchema()
 void MySQLRecordStatTotalMoney(int total_money)
 {
 	char buf[200];
-	sprintf(buf,"INSERT INTO `meridian`.`player_money_total` \
+	sprintf(buf,"INSERT INTO `player_money_total` \
 				SET player_money_total_amount = %d, \
 				player_money_total_time = NOW()",total_money);
 	if(mysql_query(mysqlcon, buf))
@@ -128,7 +140,7 @@ void MySQLRecordStatTotalMoney(int total_money)
 void MySQLRecordStatMoneyCreated(int money_created)
 {
 	char buf[200];
-	sprintf(buf,"INSERT INTO `meridian`.`money_created` \
+	sprintf(buf,"INSERT INTO `money_created` \
 				SET money_created_amount = %d, \
 				money_created_time = NOW()",money_created);
 	if(mysql_query(mysqlcon, buf))
@@ -149,7 +161,7 @@ void MySQLRecordPlayerLogin(session_node *s)
     r = GetResourceByID(name_val.v.data);
     //dprintf("Account %s (%d) logged in with character %s (%d) from ip %s",s->account->name,s->account->account_id,r->resource_val,s->game->object_id,s->conn.name);
 
-	sprintf(buf,"INSERT INTO `meridian`.`player_logins` \
+	sprintf(buf,"INSERT INTO `player_logins` \
 				SET player_logins_account_name = '%s', \
 				player_logins_character_name = '%s', \
 				player_logins_IP = '%s'",s->account->name,r->resource_val,s->conn.name);
@@ -169,7 +181,7 @@ void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, in
 	r_who_attacker = GetResourceByID(res_who_attacker);
 	r_weapon = GetResourceByID(res_weapon);
 
-	sprintf(buf,"INSERT INTO `meridian`.`player_damaged` SET player_damaged_who = '%s', player_damaged_attacker = '%s', player_damaged_aspell = %d, player_damaged_atype = %d, player_damaged_applied = %d, player_damaged_original = %d, player_damaged_weapon = '%s'",
+	sprintf(buf,"INSERT INTO `player_damaged` SET player_damaged_who = '%s', player_damaged_attacker = '%s', player_damaged_aspell = %d, player_damaged_atype = %d, player_damaged_applied = %d, player_damaged_original = %d, player_damaged_weapon = '%s'",
 		r_who_damaged->resource_val, r_who_attacker->resource_val, aspell, atype, damage_applied, damage_original, r_weapon->resource_val);
 	if(mysql_query(mysqlcon,buf))
 	{

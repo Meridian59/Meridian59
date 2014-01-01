@@ -220,6 +220,7 @@ config_table_type config_table[] =
 { MYSQL_USERNAME,         F, "Username",      CONFIG_STR, "root" },
 { MYSQL_PASSWORD,         F, "Password",      CONFIG_STR, "somethingiswronghere" },
 { MYSQL_HOST,             F, "Host",          CONFIG_STR, "localhost" },
+{ MYSQL_DB,               F, "Database",      CONFIG_STR, "meridian" },
 
 { BLAKOD_GROUP,           F, "[Blakod]",      CONFIG_GROUP, "" },
 { BLAKOD_MAX_STATEMENTS,  T, "MaxStatements", CONFIG_INT,   "20000000" },

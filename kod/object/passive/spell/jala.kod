@@ -154,8 +154,7 @@ messages:
       local oRoom;
       
       % Check for Necklace of Jala first
-      if IsClass(who,&User)
-         AND Send(who,@IsUsingA,#class=&JalaNecklace)
+      if Send(who,@IsUsingA,#class=&JalaNecklace)
       {
          % The song keeps going if you get damaged, move, cast, or make an attack.
          if event = EVENT_DAMAGE
@@ -181,11 +180,6 @@ messages:
       else
       {
          oRoom = location;
-      }
-      
-      if IsClass(who,&Room)
-      {
-         location = who;
       }
       
       Send(oRoom,@RemoveEnchantment,#what=self,#state=state);
@@ -224,12 +218,7 @@ messages:
       local oCaster;
       
       oCaster = Nth(state,2);
-
-      if IsClass(oCaster,&Room)
-      {
-         return;
-      }
-
+   
       % If caster runs out of mana or loses trance, spell ends.
       if Send(oCaster,@GetMana) < viManaDrain * 2
       {
@@ -272,12 +261,6 @@ messages:
    {
       local oCaster, lActive, each_obj, oRoom, i;
       oCaster = Nth(state,2);
-      
-      if IsClass(oCaster,&Room)
-         AND where = $
-      {
-         where = oCaster;
-      }
 
       if pbUserEffects
       {
@@ -301,12 +284,8 @@ messages:
       Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=jala_song_ends,
            #what=self);
       % Send $ as midi_rsc to end music and resume default.
-      
-      if IsClass(oCaster,&User)
-      {
-         Send(self,@StartMusic,#oCaster=oCaster,#rMusic=$);
-         Send(oCaster,@ClearTranceFlag);
-      }
+      Send(self,@StartMusic,#oCaster=oCaster,#rMusic=$);
+      Send(oCaster,@ClearTranceFlag);
       
       return;
    }
@@ -320,11 +299,6 @@ messages:
          debug("BAD MUSIC SETUP, MAN!");
 
          return FALSE;
-      }
-      
-      if IsClass(oCaster,&Room)
-      {
-         return;
       }
 
       oRoom = Send(oCaster,@GetOwner);

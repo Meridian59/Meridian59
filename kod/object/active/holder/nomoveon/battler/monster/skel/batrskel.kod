@@ -63,13 +63,6 @@ properties:
    
 messages:
 
-   Constructed()
-   {
-      plKilledBuffs = Cons(SID_HASTE,plKilledBuffs);
-
-      propagate;
-   }
-
    SetResistances()
    {
       plResistances = [ [ 70, ATCK_WEAP_PIERCE ],

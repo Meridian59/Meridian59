@@ -222,6 +222,12 @@ messages:
    {
       return piAllegiance;
    }
+   
+   SetAllegiance(allegiance = $)
+   {
+      piAllegiance = allegiance;
+      return;
+   }
 
    GetPower()
    {

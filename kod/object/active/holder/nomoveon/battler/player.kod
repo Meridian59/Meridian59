@@ -12485,6 +12485,30 @@ messages:
 
       propagate;
    }
+   
+   IsInSameRoom(what = $)
+   "Determine if given object is in same room as we are."
+   {
+      local what_owner, found;
+
+      if poOwner = $ OR what = $
+      {
+         return FALSE;
+      }
+
+      found = FALSE;
+      what_owner = Send(what, @GetOwner);
+      while what_owner <> $
+      {
+         if what_owner = poOwner
+         {
+            found = TRUE;
+            break;
+         }
+         what_owner = Send(what_owner, @GetOwner);
+      }
+      return found;
+   }
 
    AddDonationYear(year = $)
    "Add to the list of years the player has donated to the game. "

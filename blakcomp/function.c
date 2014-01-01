@@ -32,7 +32,7 @@ function_type Functions[] = {
 {"First",		FIRST,		 AEXPRESSION,	ANONE},
 {"Rest",		REST,		 AEXPRESSION,	ANONE},
 {"Length", 		LENGTH,		 AEXPRESSION,	ANONE},
-{"List", 		LIST,		 AEXPRESSIONS,	ANONE},
+{"List", 		MLIST,		 AEXPRESSIONS,	ANONE},
 {"Nth",			NTH,		 AEXPRESSION,	AEXPRESSION,	ANONE},
 {"SetFirst",            SETFIRST,        AEXPRESSION,   AEXPRESSION,    ANONE},
 {"SetNth",              SETNTH,          AEXPRESSION,   AEXPRESSION,    AEXPRESSION, ANONE},
@@ -86,6 +86,7 @@ function_type Functions[] = {
 {"RecycleUser",         RECYCLEUSER,     AEXPRESSION,   ANONE},
 {"MinigameNumberToString", MINIGAMENUMBERTOSTRING,     AEXPRESSION,   AEXPRESSION,   ANONE},
 {"MinigameStringToNumber", MINIGAMESTRINGTONUMBER,     AEXPRESSION,   ANONE},
+{"RecordStat",		RECORDSTAT,		 AEXPRESSIONS,	ANONE},
    };
 
 int numfuncs = (sizeof(Functions)/sizeof(function_type));

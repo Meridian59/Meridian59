@@ -107,6 +107,7 @@ messages:
       {
          oMoney = Create(&Money,#number=iValue);
          Send(who,@NewHold,#what=oMoney);
+		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
       }
       else
       {

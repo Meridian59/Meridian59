@@ -149,7 +149,7 @@ void InitBkodInterpret(void)
 	ccall_table[REST] = C_Rest;
 	ccall_table[LENGTH] = C_Length;
 	ccall_table[NTH] = C_Nth;
-	ccall_table[LIST] = C_List;
+	ccall_table[MLIST] = C_List;
 	ccall_table[ISLIST] = C_IsList;
 	ccall_table[SETFIRST] = C_SetFirst;
 	ccall_table[SETNTH] = C_SetNth;
@@ -171,6 +171,8 @@ void InitBkodInterpret(void)
 	ccall_table[RECYCLEUSER] = C_RecycleUser;
 	
 	ccall_table[RANDOM] = C_Random;
+	
+	ccall_table[RECORDSTAT] = C_RecordStat;
 	
 	ccall_table[ABS] = C_Abs;
 	ccall_table[BOUND] = C_Bound;

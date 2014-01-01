@@ -3174,6 +3174,10 @@ messages:
       for i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
+		 if IsClass(i,&Money)
+		 {
+		    Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
+		 }
       }
 
       % take stuff the user put there
@@ -5754,6 +5758,7 @@ messages:
          if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
+			Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          }
       }
       

@@ -713,6 +713,8 @@ resources:
    player_logged_off_wav_rsc = player_logout2.wav
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
+   
+   player_empty_weapon_string = "monster attack"
 
 classvars:
 
@@ -2447,12 +2449,14 @@ messages:
       % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Money,#number=500));
+	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
       Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=500));
+		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
          Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
@@ -2484,6 +2488,7 @@ messages:
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=1000));
+		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1000);
          Send(self,@NewHold,#what=create(&InkyCap,#number=5));
          Send(self,@NewHold,#what=Create(&PantsC));
          Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
@@ -4650,8 +4655,10 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit;
-
+            iLimit, origdamage;
+			
+	  origdamage = damage;
+	  
       color_rsc = player_hit_color_none;
       
       if what <> $ AND IsClass(what,&monster)
@@ -4745,6 +4752,15 @@ messages:
       }
 
       Send(self,@LoseHealth,#amount=damage);
+	  	  
+	  if IsClass(what,&Monster)
+	  {
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_empty_weapon_string);
+	  }
+	  else
+	  {
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
+	  }
 
       if piHealth <= 0
       {

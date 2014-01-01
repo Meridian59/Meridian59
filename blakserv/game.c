@@ -59,7 +59,6 @@ void GameInit(session_node *s)
    s->game->game_state = GAME_NORMAL;
 
    s->game->game_last_message_time = GetTime();
-
    GameSendSystemEnter(s);
 }
 
@@ -565,6 +564,8 @@ void GameStartUser(session_node *s,user_node *u)
    p.value = session_id_const.int_val;
    p.name_id = SESSION_ID_PARM;
    SendTopLevelBlakodMessage(s->game->object_id,USER_ENTER_GAME_MSG,1,&p);
+
+   MySQLRecordPlayerLogin(s);
 
    SetSessionTimer(s,ConfigInt(CREDIT_DRAIN_TIME));
 }

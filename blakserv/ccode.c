@@ -2363,8 +2363,9 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {
-	char buf[4000];
 	val_type stat_type, stat1, stat2, stat3, stat4, stat5, stat6, stat7;
+	int success = 0;
+
 
 	//The first paramenter to RecordStat() should alwasy be a STAT_TYPE
 	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[0].type, normal_parm_array[0].value);
@@ -2377,16 +2378,41 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 	switch (stat_type.v.data)
 	{
 		case STAT_TOTALMONEY:
+			if (num_normal_parms != 2)
+			{
+				dprintf("Wrong Number of Paramenters in C_RecordStat() STAT_TOTALMONEY");
+				break;
+			}
 			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			if (stat1.v.tag != TAG_INT)
+			{
+				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
+				break;
+			}
 			MySQLRecordStatTotalMoney(stat1.v.data);
 			break;
 
 		case STAT_MONEYCREATED:
+			if (num_normal_parms != 2)
+			{
+				dprintf("Wrong Number of Paramenters in C_RecordStat() STAT_MONEYCREATED");
+				break;
+			}
 			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
+			if (stat1.v.tag != TAG_INT)
+			{
+				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
+				break;
+			}
 			MySQLRecordStatMoneyCreated(stat1.v.data);
 			break;
 
 		case STAT_ASSESS_DAM:
+			if (num_normal_parms == !8) 
+			{
+				dprintf("Wrong Number of Paramenters in C_RecordStat() STAT_ASSESS_DAM");
+				break;
+			}
 			stat1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type, normal_parm_array[1].value);
 			stat2 = RetrieveValue(object_id,local_vars,normal_parm_array[2].type, normal_parm_array[2].value);
 			stat3 = RetrieveValue(object_id,local_vars,normal_parm_array[3].type, normal_parm_array[3].value);
@@ -2394,14 +2420,25 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 			stat5 = RetrieveValue(object_id,local_vars,normal_parm_array[5].type, normal_parm_array[5].value);
 			stat6 = RetrieveValue(object_id,local_vars,normal_parm_array[6].type, normal_parm_array[6].value);
 			stat7 = RetrieveValue(object_id,local_vars,normal_parm_array[7].type, normal_parm_array[7].value);
+			if (stat1.v.tag != TAG_RESOURCE || 
+				stat2.v.tag != TAG_RESOURCE ||
+				stat3.v.tag != TAG_INT ||
+				stat4.v.tag != TAG_INT ||
+				stat5.v.tag != TAG_INT ||
+				stat6.v.tag != TAG_INT ||
+				stat7.v.tag != TAG_RESOURCE)
+			{
+				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_ASSESS_DAM");
+				break;
+			}
 			MySQLRecordPlayerAssessDamage(stat1.v.data, stat2.v.data, stat3.v.data, stat4.v.data, stat5.v.data, stat6.v.data, stat7.v.data);
 			break;
 
 		case STAT_BLANK:
 		default:
-			sprintf(buf,"ERROR: Unknown stat_type (%d) in C_RecordStat",stat_type.v.data);
+			dprintf("ERROR: Unknown stat_type (%d) in C_RecordStat",stat_type.v.data);
+			success = 1;
 			break;
 	}
-	dprintf("%s\n",buf);
 	return NIL;
 }

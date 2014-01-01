@@ -128,5 +128,5 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 
 # environment variables for compiler
 
-LIB = $(LIB);$(BLAKLIBDIR);C:\dx81sdk\DXF\DXSDK\lib;C:\Program Files (x86)\MySQL\MySQL Connector C 6.0.2\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);C:\dx81sdk\DXF\DXSDK\include;C:\Program Files (x86)\MySQL\MySQL Connector C 6.0.2\include
+LIB = $(LIB);$(BLAKLIBDIR);C:\dx81sdk\DXF\DXSDK\lib
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);C:\dx81sdk\DXF\DXSDK\include

@@ -12,7 +12,7 @@ BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug /subsystem:windows
 
 SOURCEDIR = .
 
-LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib "C:\Program Files (x86)\MySQL\MySQL Connector C 6.0.2\lib\debug\*.lib"
+LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib libmysql.lib
 
 OBJS =  \
 	$(OUTDIR)\main.obj \

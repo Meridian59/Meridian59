@@ -119,7 +119,6 @@ publish
 
 # Others
 [Oo]bj
-sql
 TestResults
 *.Cache
 ClientBin

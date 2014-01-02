@@ -40,11 +40,11 @@ resources:
    battler_attacker_crit = "~k~IYou exploit a flaw in %s%s's defenses to ready another attack!"  
    battler_defender_crit = "~r~I%s%s exploits a flaw in your defenses to ready another attack!"  
 
-   battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i~B%s damage." 
+   battler_attacker_hit = "%sYour %s %s %s%s for ~k~B%i%s~B%s damage." 
    battler_attacker_fail = "%sYour %s fails to damage %s%s." 
    battler_attacker_slay = "%sYour %s %s %s%s."   
    battler_attacker_miss = "%sYour attack %s %s%s."    
-   battler_defender_hit = "%s%s%s's %s %s you for ~r~B%i~B%s damage."
+   battler_defender_hit = "%s%s%s's %s %s you for ~r~B%i%s~B%s damage."
    battler_defender_fail = "%s%s%s's %s fails to damage you."
    battler_defender_slay = "%s%s%s's %s %s you."  
    battler_defender_miss = "%s%s%s's attack %s you."   
@@ -135,6 +135,9 @@ resources:
    battler_pierce_damage = "lacerates"
    battler_pierce_wound = "pierces"
    battler_pierce_nick = "grazes"
+	
+   battler_backstab = "!"
+	battler_no_backstab = ""
 
 classvars:
 
@@ -945,9 +948,11 @@ messages:
    "This does the fallout of a hit, gives appropriate message, etc.  "
    "Called on self when hit opponent."
    {
-      local rColor, oWeapon, rWeaponName, iDmg, rDamageDesc, iType;
+      local rColor, oWeapon, rWeaponName, iDmg, rDamageDesc, iType, rBackstab;
 
-      if use_weapon = $
+      rBackstab = battler_no_backstab;
+		
+		if use_weapon = $
       {
          oWeapon = Send(self,@GetWeapon);
       }
@@ -965,6 +970,13 @@ messages:
          % This returns the name of a melee weapon, the ammo of a ranged
          %  weapon, or the attack name for a monster.
          rWeaponName = Send(oWeapon,@GetAttackName);
+			if IsClass(oWeapon,&ShortSword)
+			{
+				if Send(oWeapon,@IsBackstab,#attacker=self,#victim=what)
+				{
+					rBackstab = battler_backstab;
+				}
+			}
       }
 
       % Spell types are usually represented by negative values, to
@@ -1036,7 +1048,7 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
                  #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
                  #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-                 #parm6=damage,#parm7=rColor);
+                 #parm6=damage,#parm7=rBackstab,#parm8=rColor);
 			}	 
          }
       }
@@ -1063,7 +1075,7 @@ messages:
                Send(what,@MsgSendUser,#message_rsc=battler_defender_hit,
                  #parm1=rColor,#parm2=Send(self,@GetCapDef),
                  #parm3=Send(self,@GetName),#parm4=rWeaponName,
-                 #parm5=rDamageDesc,#parm6=damage,#parm7=rColor);
+                 #parm5=rDamageDesc,#parm6=damage,#parm7=rBackstab,#parm8=rColor);
 			}	 
          }
       }

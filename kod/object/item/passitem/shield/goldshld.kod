@@ -47,7 +47,7 @@ classvars:
    viBroken_group = 4
 
    viBlock_chance = 100
-   viBlock_damage = 20
+   viBlock_damage = 15
    viSpell_modifier = -10
 
 properties:

@@ -50,6 +50,7 @@ classvars:
 
    viRangedBlock_chance = 100
    viSpell_modifier = -10
+   viBlock_damage = 6
 
 properties:
 

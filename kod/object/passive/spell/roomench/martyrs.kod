@@ -20,7 +20,8 @@ resources:
    martyrsbg_icon_rsc = imartyrs.bgf
 
    martyrsbg_desc_rsc = \
-      "Calls the attention of the gods to the area, increasing "
+      "Calls the attention of the gods to the area, bolstering the defenses of "
+		"all warrior as well as increasing "
       "the likelihood they will give those who die here a chance "
       "at vengeance with a revenant.  "
       "Requires elderberry and mushroom to cast."

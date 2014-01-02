@@ -64,7 +64,7 @@ messages:
       local stat;
 	  
 	  % Get proficiency bonus.
-	  damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage;
+	  damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*damage/100;
 
       % Get stat damage bonus.
       stat = (send(who,@GetMight) + send(who,@GetAgility))/2;

@@ -103,7 +103,10 @@ properties:
    plPrerequisites = $
    plReagents = $
    
-   % The following are chances to proc special effects
+   % The following are chances to proc special effects on a successful touch attack.
+	% To get the proc chance, the procfactor (0 to 15) is multiplied by this value
+	% and divided by 1000. Thus, a value of 10 results in a procchance of 15 percent,
+	% while a value of 20 will result in a 30 percent chance to proc.
    piBlind_chance = 10
    piHold_chance = 10
    piPurge_chance = 10
@@ -371,16 +374,16 @@ messages:
       % base weapon damage
       damage = viBase_damage;
  
-      iProcfactor = 0;
+      iProcfactor = 5;
 
       for i in send(who,@GetPlayerUsing)
       {
          if IsClass(i,&JewelOfFroz)
          {
-            % Each jewel of Froz adds up to 4 to base damage depending on HPs.
-            damage = damage + bound(send(who,@GetBaseMaxHealth)-60,0,40)/10;
+            % Each jewel of Froz adds up to 3 to base damage depending on HPs.
+            damage = damage + bound(send(who,@GetBaseMaxHealth)-40,0,60)/20;
             % Each equipped JoFincreases the chance to proc effects.
-            iProcfactor = iProcfactor + 10;
+            iProcfactor = iProcfactor + 5;
          }
       }
 
@@ -391,7 +394,7 @@ messages:
       damage = damage * (50 + ((iAbility + 1) / 2)) / 100;
 
       % scale proficiency bonus with HPs instead of spell ability
-      damage = damage + bound(send(who,@GetBaseMaxHealth),0,100)*10;
+      damage = damage + bound(send(who,@GetBaseMaxHealth),0,100)*damage/100;
 
       % touchspells are boosted by mysticism instead of might
       damage = damage*(50 + send(who,@GetMysticism))/100;
@@ -514,7 +517,7 @@ messages:
    "The stroke may choose it's own damage give or recieve message.  Otherwise"
    "player.kod will just choose a default - as it does for most strokes."
    {
-       if vrPlayer_was_hit = $
+       if vrPlayer_was_killed = $
        {
          return FALSE ;
        }

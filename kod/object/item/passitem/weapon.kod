@@ -31,7 +31,7 @@ constants:
    % Base damage of different types
    WEAPON_DAMAGE_STRIKE_BASE  = 8
    WEAPON_DAMAGE_THRUST_BASE  = 8
-   WEAPON_DAMAGE_SLASH_BASE = 12
+   WEAPON_DAMAGE_SLASH_BASE = 10
 
    % Disarm bonus
    WEAPON_DISARM_STRIKE  = 0

@@ -64,8 +64,6 @@ classvars:
 
    vbAutomatic = FALSE
 
-   viMaxProficiencyDamage = 10     % What's the max damage the proficiency can add for this stroke?
-
 properties:
 
    plPrerequisites = $
@@ -340,11 +338,11 @@ messages:
       % Get weapon proficiency bonuses.
       if weapon_used <> $
       {
-         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage;
+         damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*damage/100;
       }
       else
       {
-         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*viMaxProficiencyDamage;
+         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*damage;
       }
       
       % Get stat damage bonus.

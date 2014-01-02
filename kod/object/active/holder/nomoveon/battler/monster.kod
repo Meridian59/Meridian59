@@ -264,6 +264,8 @@ classvars:
    viDead_drawfx = 0
 
    viFaction = FACTION_NEUTRAL
+	
+   vrPlayer_was_killed = $
 
 properties:
 
@@ -5804,6 +5806,21 @@ messages:
    GetProjectileIcon()
    {
       return;
+   }
+	
+   PlayerWasKilledMsg(who=$,attacker=$,damage=$)
+   "The stroke may choose it's own damage give or recieve message.  Otherwise"
+   "player.kod will just choose a default - as it does for most strokes."
+   {
+       if vrPlayer_was_killed = $
+       {
+         return FALSE ;
+       }
+       
+       Send(who,@MsgSendUser,#message_rsc=vrPlayer_was_killed,
+            #parm1=Send(attacker,@GetDef),#parm2=Send(attacker,@GetName));
+            
+       return TRUE;
    }
 
 end

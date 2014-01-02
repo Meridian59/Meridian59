@@ -19,9 +19,10 @@ resources:
    shortsword_name_rsc = "short sword"
    shortsword_icon_rsc = shswd.bgf
    shortsword_desc_rsc = \
-      "Plain in appearance, the blade of this short sword is sharp enough "
-      "to be dangerous.  It can be effective when wielded against small "
-      "beasts."
+      "Plain in appearance, the tip of this short sword is sharp enough "
+      "to be dangerous.  While it lacks the reach and damaging potential of the "
+		"long sword, it can be extremely lethal if placed between the victim's "
+		"shoulder blades."
 
    shortsword_window_overlay_rsc = povshswd.bgf
    shortsword_player_overlay = shswdov.bgf
@@ -53,6 +54,52 @@ properties:
 
 messages:
 
+   GetDamage(target=$)
+   {
+      local iDamage, iVictimAngle, iVictimRow, iVictimCol, iAttackerRow, iAttackerCol, iDist, iBackstab;
+
+		% This is a slightly modified version of the in-sight-check in player.kod,
+		% just this time, we check if the target can see us instead.
+		iVictimAngle = Send(target,@GetAngle);
+		iVictimRow = Send(target,@GetRow);
+		iVictimCol = Send(target,@GetCol);
+		iAttackerRow = Send(Send(self,@GetOwner),@GetRow);
+		iAttackerCol = Send(Send(self,@GetOwner),@GetCol);
+      iDist = Send(Send(self,@GetOwner),@SquaredDistanceTo,#what=target);
+		iBackstab = 0;
+		
+		if iDist > 1
+			AND ( ((iVictimAngle > ANGLE_ENE OR iVictimAngle <= ANGLE_ESE)
+					  AND iAttackerCol < iVictimCol)
+				  OR (iVictimAngle > ANGLE_ESE AND iVictimAngle <= ANGLE_SSE
+					  AND (iAttackerRow - iVictimRow) < (iVictimCol - iAttackerCol))
+				  OR (iVictimAngle > ANGLE_SSE AND iVictimAngle <= ANGLE_SSW
+					  AND iAttackerRow < iVictimRow)
+				  OR (iVictimAngle > ANGLE_SSW AND iVictimAngle <= ANGLE_WSW
+					  AND (iAttackerRow - iVictimRow) < (iAttackerCol - iVictimCol))
+				  OR (iVictimAngle > ANGLE_WSW AND iVictimAngle <= ANGLE_WNW
+					  AND iAttackerCol > iVictimCol)
+				  OR (iVictimAngle > ANGLE_WNW AND iVictimAngle <= ANGLE_NNW
+					  AND (iAttackerRow - iVictimRow) > (iVictimCol - iAttackerCol))
+				  OR (iVictimAngle > ANGLE_NNW AND iVictimAngle <= ANGLE_NNE
+					  AND iAttackerRow > iVictimRow)
+				  OR (iVictimAngle > ANGLE_NNE AND iVictimAngle <= ANGLE_ENE
+					  AND (iAttackerRow - iVictimRow) > (iAttackerCol - iVictimCol))
+				 )
+		{
+			iBackstab = 1;
+      }
+
+      % First, get base damage.
+      iDamage = send(self,@GetBaseDamage,#who=poOwner,#target=target);
+
+		%Now add the bonus damage from backstabbing.		
+      iDamage = iDamage + (iDamage * iBackstab);
+  
+      iDamage = iDamage * 100;
+
+      return iDamage;
+	}
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

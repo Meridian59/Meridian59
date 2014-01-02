@@ -713,7 +713,8 @@ resources:
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
    
-   player_empty_weapon_string = "monster attack"
+   player_monster_attack_string = "monster attack"
+   player_no_weapon_string = "no weapon"
 
 classvars:
 
@@ -4654,7 +4655,7 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit, origdamage;
+            iLimit, origdamage, oWeapon;
 			
 	  origdamage = damage;
 	  
@@ -4751,14 +4752,20 @@ messages:
       }
 
       Send(self,@LoseHealth,#amount=damage);
-	  	  
+	  
+	  oWeapon = Send(what,@GetWeapon);
+	     
 	  if IsClass(what,&Monster)
 	  {
-	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_empty_weapon_string);
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
+	  }
+	  if oWeapon <> $
+	  {
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
 	  }
 	  else
 	  {
-	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_no_weapon_string);
 	  }
 
       if piHealth <= 0

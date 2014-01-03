@@ -32,7 +32,7 @@ properties:
    % Timer makes 'em wait before new batch loads.
    
    % This is how long they have to wait before room resets, in ms.
-   piReload_Wait_Time = 180000
+   piReload_Wait_Time = 90000
    
    % Only loads the first monster in list plMonsters if set to true.
    pbLoad_first_monster_only = FALSE

@@ -2369,6 +2369,11 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 
 	//The first paramenter to RecordStat() should alwasy be a STAT_TYPE
 	stat_type = RetrieveValue(object_id,local_vars,normal_parm_array[0].type, normal_parm_array[0].value);
+	if (stat_type.v.tag != TAG_INT)
+	{
+		dprinf("STAT_TYPE expected in C_RecordStat() as first parameter");
+		return NIL;
+	}
 
 	/*
 	STAT_TYPE enum located in blakserv.h, Also defined in blakston.khd to match between C code and Kod code.

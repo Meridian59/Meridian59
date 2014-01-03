@@ -143,11 +143,11 @@ properties:
 
    % If enabled, unsafe penalties send the player to their last safe place.
    % This is intended to prevent being players 'kept offline' by enemies.
-   pbReturnToSafetyPenaltiesEnable = FALSE
+   pbReturnToSafetyPenaltiesEnable = TRUE
    
    % If enabled, unsafe penalties send angeled players to their last safe place.
    % This is intended to prevent being players 'scouting' with mules.
-   pbAngelReturnToSafetyPenaltiesEnable = FALSE
+   pbAngelReturnToSafetyPenaltiesEnable = TRUE
    
    % If this is enabled a player will lose half their mana and all buffs when they log off in a safe zone.
    % This is to prevent 'character trains' with pre-buffed characters
@@ -160,7 +160,7 @@ properties:
    piPlayerReflectionLimit = 2
 
    % Minimum swings needed for a chance to improve a weaponcraft skill.
-   piWeaponcraftImprovementMinimumSwings = 75
+   piWeaponcraftImprovementMinimumSwings = 50
    
    % Replaces old constant
    piPKillEnableHP = 50

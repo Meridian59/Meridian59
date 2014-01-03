@@ -253,7 +253,7 @@ messages:
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local spell_ability, damage, iPower;
+      local spell_ability, damage, iAbility;
 
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);
@@ -261,14 +261,25 @@ messages:
       % Rather than an active spellpower check, use the player's
       % ability in the spell. This makes touch spells function
       % more like a stroke, and gives them immunity to anti-magic effects.
-      iPower = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
       
       % Factor in the person's ability with the spell
-      % It's alright if damage here is extremely low.
+      % It's alright if damage here is low.
       % Most players will get proficiency damage from punch or 2*Mysticism.
-      damage = damage * ((iPower+1)/(SPELLPOWER_MAXIMUM+1));
-      
-      % myst affects damage
+      if iAbility < 25
+      {
+         damage = bound(damage,viMin_Damage-3,viMax_damage-3);
+      }
+      if iAbility < 50
+      {
+         damage = bound(damage,viMin_Damage-2,viMax_damage-2);
+      }
+      if iAbility < 75
+      {
+         damage = bound(damage,viMin_Damage-1,viMax_damage-1);
+      }
+
+      % Myst boosts base damage
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,
                     #victim=victim);
       

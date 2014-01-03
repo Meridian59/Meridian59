@@ -6871,12 +6871,11 @@ messages:
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);
          Send(oRoom, @SomethingWaveRoom, #what=self,#wave_rsc=player_improved_wav_rsc);
 		 
-		shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-		if shrunken <> $
-		{
+		 shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+		 if shrunken <> $
+		 {
 			Send(shrunken,@Improvement,#spellName=spellName);
-		}		
-		
+		 }				
       }
 
       Send(self,@PlayerIsIntriguing);
@@ -7873,7 +7872,7 @@ messages:
 			   shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
 			   if shrunken <> $
 			   {
-				Send(shrunken,@Tougher,#hp=pibase_max_health);
+				  Send(shrunken,@Tougher,#hp=pibase_max_health);
 			   }
 
                piGain_chance = -(piBase_Max_health/2);

@@ -149,6 +149,7 @@ resources:
       "Feel free to take the %s%s by your feet as payment for returning the "
       "token."
    player_improve_maxhealth = "~I~BYou suddenly feel a little tougher."
+   player_improve_health_invigorate = "~I~BYou feel invigorated by your success."
    player_spits = "You spit on the corpse of your unworthy foe."
    player_regain_angel = \
       "Due to your weakness, your protective guardian angel returns."
@@ -712,6 +713,9 @@ resources:
    player_logged_off_wav_rsc = player_logout2.wav
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
+   
+   player_monster_attack_string = "monster attack"
+   player_no_weapon_string = "no weapon"
 
 classvars:
 
@@ -2446,12 +2450,14 @@ messages:
       % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Money,#number=500));
+	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
       Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=500));
+		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
          Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
@@ -2483,6 +2489,7 @@ messages:
       if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=1000));
+		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1000);
          Send(self,@NewHold,#what=create(&InkyCap,#number=5));
          Send(self,@NewHold,#what=Create(&PantsC));
          Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
@@ -4649,7 +4656,9 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit, shrunken;
+      iLimit, origdamage, oWeapon, shrunken;
+			
+	  origdamage = damage;	  
 
       color_rsc = player_hit_color_none;
       
@@ -4744,6 +4753,24 @@ messages:
       }
 
       Send(self,@LoseHealth,#amount=damage);
+	  
+	  oWeapon = Send(what,@GetWeapon);
+	     
+	  if IsClass(what,&Monster)
+	  {
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
+	  }
+	  else
+	  {
+	     if oWeapon <> $
+	     {
+            RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
+	     }
+	     else
+	     {
+            RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_no_weapon_string);
+	     }
+      }
 
       if piHealth <= 0
       {
@@ -7837,13 +7864,17 @@ messages:
                Send(self,@evaluatepkstatus);
 
                Send(self,@MsgSendUser,#message_rsc=player_improve_maxhealth);
-               Send(self,@WaveSendUser, #what=self, #wave_rsc=player_tougher_wav_rsc);			   
-			   	  
+               Send(self,@WaveSendUser, #what=self, #wave_rsc=player_tougher_wav_rsc);
+               Send(self,@MsgSendUser,#message_rsc=player_improve_health_invigorate);
+               piHealth = piMax_Health;
+               Send(self,@DrawHealth);
+               Send(self,@EatSomething,#nutrition=200);
+			   
 			   shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
 			   if shrunken <> $
 			   {
 				Send(shrunken,@Tougher,#hp=pibase_max_health);
-			   }	
+			   }
 
                piGain_chance = -(piBase_Max_health/2);
                
@@ -12517,6 +12548,30 @@ messages:
       }
 
       propagate;
+   }
+   
+   IsInSameRoom(what = $)
+   "Determine if given object is in same room as we are."
+   {
+      local what_owner, found;
+
+      if poOwner = $ OR what = $
+      {
+         return FALSE;
+      }
+
+      found = FALSE;
+      what_owner = Send(what, @GetOwner);
+      while what_owner <> $
+      {
+         if what_owner = poOwner
+         {
+            found = TRUE;
+            break;
+         }
+         what_owner = Send(what_owner, @GetOwner);
+      }
+      return found;
    }
 
    AddDonationYear(year = $)

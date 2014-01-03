@@ -95,7 +95,7 @@ void MySQLCreateSchema()
 							 PRIMARY KEY (`idplayer_logins`) \
 							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1; "))
 	{
-		dprintf("unable to create table player_logins");
+		dprintf("unable to create table player_logins", mysql_error(mysqlcon));
 	}
 
 	if(mysql_query(mysqlcon, "CREATE TABLE `money_created` ( \
@@ -105,7 +105,7 @@ void MySQLCreateSchema()
 							 PRIMARY KEY (`idmoney_created`) \
 							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
 	{
-		dprintf("unable to create table money_created");
+		dprintf("unable to create table money_created", mysql_error(mysqlcon));
 	}
 
 	if(mysql_query(mysqlcon, "CREATE TABLE `player_damaged` ( \
@@ -120,7 +120,7 @@ void MySQLCreateSchema()
 							 PRIMARY KEY (`idplayer_damaged`) \
 							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
 	{
-		dprintf("unable to create table player_damaged");
+		dprintf("unable to create table player_damaged", mysql_error(mysqlcon));
 	}
 }
 
@@ -145,7 +145,7 @@ void MySQLRecordStatMoneyCreated(int money_created)
 				money_created_time = NOW()",money_created);
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatMoneyCreated");
+		dprintf("Unable to record StatMoneyCreated", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -167,7 +167,7 @@ void MySQLRecordPlayerLogin(session_node *s)
 				player_logins_IP = '%s'",s->account->name,r->resource_val,s->conn.name);
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatPlayerLogin");
+		dprintf("Unable to record StatPlayerLogin", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -185,7 +185,7 @@ void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, in
 		r_who_damaged->resource_val, r_who_attacker->resource_val, aspell, atype, damage_applied, damage_original, r_weapon->resource_val);
 	if(mysql_query(mysqlcon,buf))
 	{
-		dprintf("Unable to record StatPlayerAssessDamage");
+		dprintf("Unable to record StatPlayerAssessDamage", mysql_error(mysqlcon));
 		return;
 	}
 }

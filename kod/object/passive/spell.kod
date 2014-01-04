@@ -603,6 +603,7 @@ messages:
          iCrystalizeManaAbility = Send(who,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
          if iCrystalizeManaAbility > 0
             AND NOT Send(who,@IsCrystalizeManaSurging)
+            AND NOT IsClass(self,&CrystalizeMana)
          {
             oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
             Send(oCrystalizeMana,@DoManaSurge,#who=who,#triggered=TRUE);

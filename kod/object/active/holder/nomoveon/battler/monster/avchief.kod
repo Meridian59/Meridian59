@@ -350,6 +350,27 @@ messages:
 
       return viTreasure_type;
    }
+   
+   CreateTreasure(who=$,corpse=$)
+   {
+      local oTreasure, iNumber;
+
+      oTreasure = Create(&NeruditeArrow,#corpse=corpse);
+      iNumber = Random(25,45);
+      Send(oTreasure,@AddNumber,#number=iNumber);
+      
+      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+      {
+         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+      }
+      else
+      {
+         Send(oTreasure,@Delete);
+      }
+   
+      propagate;
+   }
 
    CreateDeadBody(killer=$)
    {

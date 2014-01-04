@@ -975,6 +975,10 @@ properties:
    % Is the player currently using a Death Rift spell?
    pbDeath_rift = FALSE
    ptDeathRiftTimer = $
+   
+   % Crystalize Mana Surge data
+   ptCrystalizeManaSurgeTimer = $
+   piCrystalizeManaSurging = FALSE
 
 messages:
 
@@ -1024,6 +1028,13 @@ messages:
       {
          DeleteTimer(ptSecondWind);
          ptSecondWind = $;
+      }
+      
+      if ptCrystalizeManaSurgeTimer <> $
+      {
+         DeleteTimer(ptCrystalizeManaSurgeTimer);
+         ptCrystalizeManaSurgeTimer = $;
+         piCrystalizeManaSurging = FALSE;
       }
 
       Send(self,@CancelRescue);
@@ -2726,11 +2737,24 @@ messages:
 
    ManaTimer()
    {
+      local iCrystalizeManaAbility, oCrystalizeMana;
+   
       ptMana = $;
 
       if piMana < piMax_mana
       {
          Send(self,@GainMana,#amount=1);
+         
+         if piMana < 10
+         {
+            iCrystalizeManaAbility = Send(self,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
+            if iCrystalizeManaAbility > 0
+               AND NOT Send(self,@IsCrystalizeManaSurging)
+            {
+               oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
+               Send(oCrystalizeMana,@DoManaSurge,#who=self,#triggered=TRUE);
+            }
+         }
       }
       else
       {
@@ -6167,14 +6191,14 @@ messages:
       
       piMax_Mana = piMax_mana+amount;      
 
-      Send(self,@NewMana);
+      Post(self,@ComputeMaxMana);
       
       return (piMax_mana - iPrev_max);
    }
 
    ComputeMaxMana()
    {
-      local index, iNodeList, oNode, i;
+      local index, iNodeList, oNode, i, oCrystalizeMana, iCrystalizeManaAbility;
 
       index = 1;
       iNodelist = piNodelist;
@@ -6208,6 +6232,20 @@ messages:
          {
             piMax_mana = piMax_mana + Send(Nth(i,2),@getManaBonus,#state=Nth(i,3));
          }
+      }
+      
+      oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
+      iCrystalizeManaAbility = Send(self,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
+      
+      if oCrystalizeMana <> $
+         AND iCrystalizeManaAbility <> 0
+      {
+         piMax_mana = piMax_mana + Send(oCrystalizeMana,@GetManaBonus,#spell_ability = iCrystalizeManaAbility);
+      }
+      
+      if Send(self,@IsCrystalizeManaSurging)
+      {
+         piMax_mana = Send(self, @GetInitialMaxMana);
       }
       
       Send(self,@NewMana);
@@ -10272,6 +10310,8 @@ messages:
 
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
       Send(self,@SetVigorRestThreshold,#amount=iAmount);
+      
+      Send(self,@EndCrystalizeManaSurge);
 
       % All attack modifiers should be a room enchantment, a personal enchantment
       %  or something they are wearing.  If one still exists, bug.  This is also
@@ -12644,6 +12684,48 @@ messages:
          }
       }
       
+      return;
+   }
+
+   IsCrystalizeManaSurging()
+   {
+      return piCrystalizeManaSurging;
+   }
+   
+   StartCrystalizeManaSurge(surge_time=1000)
+   {
+      if ptCrystalizeManaSurgeTimer = $
+      {
+         ptCrystalizeManaSurgeTimer = CreateTimer(self,@EndCrystalizeManaSurgeTimer,surge_time);
+         piCrystalizeManaSurging = TRUE;
+         Send(self,@ComputeMaxMana);
+      }
+      return;
+   }
+   
+   EndCrystalizeManaSurgeTimer()
+   {
+      if ptCrystalizeManaSurgeTimer <> $
+      {
+         ptCrystalizeManaSurgeTimer = $;
+      }
+      
+      Send(self,@EndCrystalizeManaSurge);
+      
+      return;
+   }
+
+   EndCrystalizeManaSurge()
+   {
+      if ptCrystalizeManaSurgeTimer <> $
+      {
+         DeleteTimer(ptCrystalizeManaSurgeTimer);
+         ptCrystalizeManaSurgeTimer = $;
+      }
+
+      piCrystalizeManaSurging = FALSE;
+      Send(self,@ComputeMaxMana);
+
       return;
    }
 

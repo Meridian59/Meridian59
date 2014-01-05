@@ -4838,6 +4838,8 @@ messages:
       plItemTemplates = cons(create(&ColdRing),plItemTemplates);
       plItemTemplates = cons(create(&FireRing),plItemTemplates);
       plItemTemplates = cons(create(&ShockRing),plItemTemplates);
+      
+      plItemTemplates = cons(create(&RingDefense),plItemTemplates);
 
       plItemTemplates = cons(create(&FireWand),plItemTemplates);
       plItemTemplates = cons(create(&HealWand),plItemTemplates);

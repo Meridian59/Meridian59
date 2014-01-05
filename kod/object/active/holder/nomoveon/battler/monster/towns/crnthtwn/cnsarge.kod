@@ -58,6 +58,7 @@ messages:
    {
       plFor_sale = [
        [ Create(&LongSword),
+         Create(&RingDefense),
          Create(&ShortSword),	
          Create(&Mace),
          Create(&LeatherArmor)],

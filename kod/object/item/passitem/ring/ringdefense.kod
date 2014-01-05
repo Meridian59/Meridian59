@@ -1,0 +1,89 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RingDefense is Ring
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ringdefense_name_rsc = "ring of defense"
+   ringdefense_icon_rsc = ring1.bgf
+   ringdefense_desc_rsc = "This is an elegant gold band imbued with protective magics."
+   
+   ringdefense_add_rsc = "As you don the ring, you feel protected by radiant energies."
+   ringdefense_rem_rsc = "As the ring leaves your finger, you feel more vulnerable..."
+
+classvars:
+
+   vrRealName = ringdefense_name_rsc
+   vrIcon = ringdefense_icon_rsc
+   vrRealDesc = ringdefense_desc_rsc
+
+   viHits_init_min = 3
+   viHits_init_max = 7
+
+   viBulk = 2
+   viWeight = 3
+   
+   viValue_average = 550
+
+   viDefense_bonus = 100
+
+properties:
+
+   vrName = ringdefense_name_rsc
+   vrDesc = ringdefense_desc_rsc
+
+messages:
+
+   NewUsed(what=$)
+   {
+      if IsClass(what,&User)
+      {
+         Send(what,@AddDefenseModifier,#what=self);
+         Send(what,@MsgSendUser,#message_rsc=ringdefense_add_rsc);
+      }
+
+      propagate;
+   }
+
+   NewUnused(what = $)
+   {
+      if IsClass(what,&User)
+      {
+         Send(what,@RemoveDefenseModifier,#what=self);
+         Send(what,@MsgSendUser,#message_rsc=ringdefense_rem_rsc);
+      }
+
+      propagate;
+   }
+
+   DefendingHit()
+   {
+      % Return here so we don't damage the ring!
+      return;
+   }
+
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      return defense_power + viDefense_bonus;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   {
+      return damage;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

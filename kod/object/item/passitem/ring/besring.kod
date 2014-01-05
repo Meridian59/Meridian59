@@ -57,18 +57,13 @@ messages:
 
    NewUsed(what = $)
    {
-      local oRoom;
-
-      if vrName = vrRealName
+      if vrName <> vrRealName
       {
-         % Only give the message if it's identified.
-         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_use_rsc);
-
-         % Play sound
-         oRoom = Send(poOwner, @GetOwner);
-         Send(oRoom, @SomethingWaveRoom, #what = poOwner, 
-              #wave_rsc = berserkerring_use_wav_rsc);
+         % Identify upon equip, 'testing out' the ring
+         Send(self,@RevealHiddenAttributes);
       }
+      
+      Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_use_rsc);
 
       Send(what,@AddAttackModifier,#what=self);
             
@@ -77,11 +72,7 @@ messages:
 
    NewUnused(what = $)
    {
-      if vrName = vrRealName
-      {
-         % Only give the message if it's identified.
-         Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_unuse_rsc);
-      }
+      Send(poOwner,@MsgSendUser,#message_rsc=berserkerring_unuse_rsc);
 
       Send(what,@RemoveAttackModifier,#what=self);
       

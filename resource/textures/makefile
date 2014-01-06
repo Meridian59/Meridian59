@@ -17,6 +17,36 @@ BGFS = \
 	$(OUTDIR)\grd20128.bgf \
 	$(OUTDIR)\grd20129.bgf \
 	$(OUTDIR)\grd20130.bgf \
+	$(OUTDIR)\grd20200.bgf \
+	$(OUTDIR)\grd20201.bgf \
+	$(OUTDIR)\grd20202.bgf \
+	$(OUTDIR)\grd20203.bgf \
+	$(OUTDIR)\grd20204.bgf \
+	$(OUTDIR)\grd20205.bgf \
+	$(OUTDIR)\grd20206.bgf \
+	$(OUTDIR)\grd20207.bgf \
+	$(OUTDIR)\grd20208.bgf \
+	$(OUTDIR)\grd20209.bgf \
+	$(OUTDIR)\grd20210.bgf \
+	$(OUTDIR)\grd20211.bgf \
+	$(OUTDIR)\grd20212.bgf \
+	$(OUTDIR)\grd20213.bgf \
+	$(OUTDIR)\grd20214.bgf \
+	$(OUTDIR)\grd20215.bgf \
+	$(OUTDIR)\grd20216.bgf \
+	$(OUTDIR)\grd20217.bgf \
+	$(OUTDIR)\grd20218.bgf \
+	$(OUTDIR)\grd20219.bgf \
+	$(OUTDIR)\grd20220.bgf \
+	$(OUTDIR)\grd20221.bgf \
+	$(OUTDIR)\grd20222.bgf \
+	$(OUTDIR)\grd20223.bgf \
+	$(OUTDIR)\grd20224.bgf \
+	$(OUTDIR)\grd20225.bgf \
+	$(OUTDIR)\grd20226.bgf \
+	$(OUTDIR)\grd20227.bgf \
+	$(OUTDIR)\grd20228.bgf \
+	$(OUTDIR)\grd20229.bgf \
 
 all: makedirs $(BGFS)
 
@@ -51,6 +81,96 @@ $(OUTDIR)\grd20129.bgf:
 
 $(OUTDIR)\grd20130.bgf:
 	$(MAKEBGF) -o $@ -n "mudroot" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20200.bgf:
+	$(MAKEBGF) -o $@ -n "east-wall-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20201.bgf:
+	$(MAKEBGF) -o $@ -n "east-grass-1" -s 1 1 $** 1 1 1
+	
+$(OUTDIR)\grd20202.bgf:
+	$(MAKEBGF) -o $@ -n "east-base-gravel" -s 1 1 $** 1 1 1
+	
+$(OUTDIR)\grd20203.bgf:
+	$(MAKEBGF) -o $@ -n "east-woodgrass" -s 2 1 $** 1 1 1
+	
+$(OUTDIR)\grd20204.bgf:
+	$(MAKEBGF) -o $@ -n "east-base-wood" -s 1 1 $** 1 1 1
+	
+$(OUTDIR)\grd20205.bgf:
+	$(MAKEBGF) -o $@ -n "east-woodstone-1" -s 3 1 $** 1 1 1
+	
+$(OUTDIR)\grd20206.bgf:
+	$(MAKEBGF) -o $@ -n "east-doorsymbol-1" -s 2 1 $** 1 1 1
+	
+$(OUTDIR)\grd20207.bgf:
+	$(MAKEBGF) -o $@ -n "east-firepit-1" -s 4 1 $** 1 1 1
 
+$(OUTDIR)\grd20208.bgf:
+	$(MAKEBGF) -o $@ -n "east-mural-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20209.bgf:
+	$(MAKEBGF) -o $@ -n "east-woodbark-1" -s 2 1 $** 1 1 1
+	
+$(OUTDIR)\grd20210.bgf:
+	$(MAKEBGF) -o $@ -n "east-door-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20211.bgf:
+	$(MAKEBGF) -o $@ -n "east-mural-2" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20212.bgf:
+	$(MAKEBGF) -o $@ -n "east-wall-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20213.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20214.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20215.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20216.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20217.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20218.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20219.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 2 1 $** 1 1 1
+	
+$(OUTDIR)\grd20220.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20221.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20222.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 8 1 $** 1 1 1
+	
+$(OUTDIR)\grd20223.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 1 1 $** 1 1 1
+	
+$(OUTDIR)\grd20224.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20225.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 1 1 $** 1 1 1	
+	
+$(OUTDIR)\grd20226.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1
+	
+$(OUTDIR)\grd20227.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 4 1 $** 1 1 1	
 
+$(OUTDIR)\grd20228.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 1 1 $** 1 1 1
+	
+$(OUTDIR)\grd20229.bgf:
+	$(MAKEBGF) -o $@ -n "east-what-1" -s 8 1 $** 1 1 1
+
+	
 !include $(TOPDIR)\rules.mak

@@ -1,0 +1,46 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+East5 is Room
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   room_east5 = east5.roo
+   name_east5 = "East5"
+   east5_music = walk5.mid
+
+classvars:
+
+   vrName = name_east5
+
+   viTeleport_row = 8
+   viTeleport_col = 20
+
+   viTerrain_Type = TERRAIN_BADLANDS | TERRAIN_FOREST | TERRAIN_MOUNTAIN
+
+properties:
+
+   piBaseLight = LIGHT_DARK
+   piOutside_factor = OUTDOORS_5 
+   prMusic = east5_music
+
+   prRoom = room_east5
+   piRoom_num = RID_EAST5
+
+   piDirectional_percent = DIRECTIONAL_PERCENT_OUTDOORS
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

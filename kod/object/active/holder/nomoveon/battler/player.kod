@@ -7837,21 +7837,17 @@ messages:
          if oWeapon <> $
             AND (not IsClass(oWeapon,&RangedWeapon))
             AND Send(self,@HasSkill,#num=SKID_PARRY)
+            AND Send(self,@GetSkillAbility,#skill_num=SKID_PARRY) < 99
          {
-            if random(1,100) < 30
-            {
-               dodgeskill=SKID_PARRY;
-            }
+            dodgeskill=SKID_PARRY;
          }
          
          if dodgeskill = SKID_DODGE
             AND (Send(self,@LookupPlayerShield) <> $)
             AND Send(self,@HasSkill,#num=SKID_BLOCK)
+            AND Send(self,@GetSkillAbility,#skill_num=SKID_BLOCK) < 99
          {
-            if random(1,100) < 30
-            {
-               dodgeskill=SKID_BLOCK;
-            }
+            dodgeskill=SKID_BLOCK;
          }
          
          oSkill=Send(sys,@FindSkillByNum,#num=dodgeskill);

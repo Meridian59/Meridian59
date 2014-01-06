@@ -97,7 +97,7 @@ messages:
          return FALSE;
       }
 
-      return TRUE;
+      propagate;
    }
    
    CastSpell(who = $)

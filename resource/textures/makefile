@@ -83,25 +83,25 @@ $(OUTDIR)\grd20130.bgf:
 	$(MAKEBGF) -o $@ -n "mudroot" -s 4 1 $** 1 1 1
 	
 $(OUTDIR)\grd20200.bgf:
-	$(MAKEBGF) -o $@ -n "east-wall-1" -s 4 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "east-stonewall" -s 4 1 $** 1 1 1
 	
 $(OUTDIR)\grd20201.bgf:
-	$(MAKEBGF) -o $@ -n "east-grass-1" -s 1 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "east-grass" -s 1 1 $** 1 1 1
 	
 $(OUTDIR)\grd20202.bgf:
-	$(MAKEBGF) -o $@ -n "east-base-gravel" -s 1 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "east-jixa-gravel" -s 1 1 $** 1 1 1
 	
 $(OUTDIR)\grd20203.bgf:
-	$(MAKEBGF) -o $@ -n "east-woodgrass" -s 2 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "east-jixa-bench-sides" -s 2 1 $** 1 1 1
 	
 $(OUTDIR)\grd20204.bgf:
-	$(MAKEBGF) -o $@ -n "east-base-wood" -s 1 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "east-jixa-bench-top" -s 1 1 $** 1 1 1
 	
 $(OUTDIR)\grd20205.bgf:
-	$(MAKEBGF) -o $@ -n "east-woodstone-1" -s 3 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "east-jixa-fountain" -s 3 1 $** 1 1 1
 	
 $(OUTDIR)\grd20206.bgf:
-	$(MAKEBGF) -o $@ -n "east-doorsymbol-1" -s 2 1 $** 1 1 1
+	$(MAKEBGF) -o $@ -n "east-doorsymbol-1" -s 8 1 $** 1 1 1
 	
 $(OUTDIR)\grd20207.bgf:
 	$(MAKEBGF) -o $@ -n "east-firepit-1" -s 4 1 $** 1 1 1

@@ -70,6 +70,8 @@ messages:
       {
          % Identify upon equip, 'testing out' the ring
          Send(self,@RevealHiddenAttributes);
+         Send(self,@RevealHiddenColor);
+         Send(Send(self,@GetOwner),@SomethingChanged,#what=self);
       }
 
       Send(poOwner, @MsgSendUser, #message_rsc=vrUseMessage);

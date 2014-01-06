@@ -125,17 +125,20 @@ messages:
 	      return;
       }
 
-      if abs(send(who,@GetKarma)) < (iSpellpower + 1)
+      if Send(who,@GetKarma) <> $
       {
-         iKarmaAct = bound(iKarmaAct,abs(send(who,@GetKarma)),iSpellpower+1);
-      }
-      else
-      {
-         iKarmaAct = abs(send(who,@GetKarma));
-      }
+         if abs(send(who,@GetKarma)) < (iSpellpower + 1)
+         {
+            iKarmaAct = bound(iKarmaAct,abs(send(who,@GetKarma)),iSpellpower+1);
+         }
+         else
+         {
+            iKarmaAct = abs(send(who,@GetKarma));
+         }
 
-	  send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
-          #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
+         Send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
+                            #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
+      }
 
       Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
       Send(who,@GainMana,#amount=(viMana_bonus+(iSpellPower/3)));

@@ -2175,7 +2175,7 @@ messages:
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
-      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild;
+      local iFlags, iEnemyKarma, iSelfKarma, oIllusion, oOtherGuild, oRoom;
 
       % Send given object's id number, name, icon, and animation info
 
@@ -2264,6 +2264,15 @@ messages:
                   }
                }
             }
+         }
+      }
+      
+      oRoom = Send(self,@GetOwner);
+      if oRoom <> $
+      {
+         if Send(Send(self,@GetOwner),@AreGroupedHere,#who=self,#what=what)
+         {
+            iFlags = (iFlags | PLAYER_IS_FRIEND);
          }
       }
 

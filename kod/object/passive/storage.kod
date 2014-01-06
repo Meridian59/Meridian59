@@ -13,6 +13,8 @@ Storage is PassiveObject
 constants:
 
    include blakston.khd
+   
+   VAULT_ITEMS_MAX = 600
 
 resources:
    msg_not_enough_items_on_deposit = "%s%s does not have that many on deposit."
@@ -83,19 +85,19 @@ messages:
 
    CanDepositItems(lItems = $, who = $)
    {
-      local iBulk, i;
-      iBulk = 0;
+      local plItemsStored;
 
       if who = $     { debug("CanDepositItems passed with who=$!"); return FALSE; }
       if lItems = $  { debug("Cannot deposit a null set!"); return FALSE; }
-
-      iBulk = send(self,@GetCurrentBulkStored,#who=who);
-      for i in lItems
-      {	 
-	 iBulk = iBulk + send(i,@GetBulk);
+      
+      plItemsStored = Send(self,@GetItemsStored,#who=who);
+      if plItemsStored <> $
+         AND (Length(plItemsStored) + Length(lItems)) > VAULT_ITEMS_MAX
+         AND NOT (Length(lItems) = 1
+                  AND IsClass(First(lItems),&NumberItem))
+      {
+         return FALSE;
       }
-      if iBulk > piCapacity
-      { return FALSE; }
 
       return TRUE;
    }

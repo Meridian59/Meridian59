@@ -124,9 +124,10 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hPal = InitializePalette();
 	InitStandardXlats(hPal);
 	
-	LoadSettings();
-	MenuDisplaySettings(hwnd);
+	WrapInit();
 	
+	MenuDisplaySettings(hwnd);
+
 	// Load rich edit control DLL and common controls
 	hRichEditLib = LoadLibrary("riched32.dll");
 	InitCommonControls();
@@ -159,6 +160,8 @@ void MainQuit(HWND hwnd)
 	
 	DeleteObject(hPal);
 
+   WrapShutdown();
+	
 	HookClose();
 	
 	FreeLibrary(hRichEditLib);

@@ -124,10 +124,8 @@ BOOL MainInit(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
 	hPal = InitializePalette();
 	InitStandardXlats(hPal);
 	
-	WrapInit();
-	
 	MenuDisplaySettings(hwnd);
-
+	
 	// Load rich edit control DLL and common controls
 	hRichEditLib = LoadLibrary("riched32.dll");
 	InitCommonControls();

@@ -132,7 +132,7 @@ BEGIN
     LTEXT           "(geschätzte Zeit 28.8kbps)",1195,44,85,188,8
     DEFPUSHBUTTON   "&Bestätigen",1192,138,94,93,14
     GROUPBOX        "Vorschau",-1,36,116,205,58
-    LTEXT           "Wenn Du nicht das gesamte Update haben möchtest, findest du auf www.meridian59.com eine kleiner Vorschauversion.",-1,44,128,188,34
+    LTEXT           "Wenn Du nicht das gesamte Update haben möchtest, findest du auf openmeridian.org eine kleiner Vorschauversion.",-1,44,128,188,34
     PUSHBUTTON      "Angebot...",1189,138,167,93,14
 END
 
@@ -261,7 +261,7 @@ BEGIN
     EDITTEXT        1150,93,114,143,13,ES_AUTOHSCROLL
     DEFPUSHBUTTON   "Einloggen",1080,137,131,100,14
     ICON            IDI_ICON,-1,6,6,20,20
-    LTEXT           "Solltest Du noch kein Meridian59-Account haben, so kannst Du Dich auf www.meridian59.com kostenfrei anmelden.",-1,36,6,206,18
+    LTEXT           "Solltest Du noch kein Meridian59-Account haben, so kannst Du Dich auf http://openmeridian.org/ kostenfrei anmelden.",-1,36,6,206,18
     GROUPBOX        "Neu in Meridian",1196,37,33,207,35
     LTEXT           "Wenn Du bisher keinen Account hast, klicke hier.",-1,45,47,87,18
     LTEXT           "Benutzername:",-1,43,88,50,10
@@ -727,7 +727,7 @@ END
 
 STRINGTABLE 
 BEGIN
-    160                     "http://meridian59.com/serverstatus/"
+    160                     "http://openmeridian.org/"
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
@@ -1518,7 +1518,7 @@ BEGIN
     IDS_MISSINGRESOURCE     "The game has changed since you logged in.\nSelecting ""Yes"" will automatically download the changed files.\nSelecting ""No"" will continue the game with your outdated files.\n\nAutomatically download new game files?"
     IDS_NOROOMFILE          "There is a problem with your file %s.  Please contact a system administrator to get the correct version."
     IDS_DUPRESOURCE         "Duplicate resource #%d in file %s."
-    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at http://meridian59.com/serverstatus/."
+    IDS_SOCKETOPEN          "Unable to connect to server (port #%d on %s).\n\nThe server might be down; please check its status at http://openmeridian.org/ ."
     IDS_LOSTSERVER          "Lost server connection!"
     IDS_SOCKETMESSAGE       "Unexpected socket message type."
 END
@@ -1657,11 +1657,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_LAGBOXURL           "http://meridian59.com/serverstatus/"
+    IDS_LAGBOXURL           "http://openmeridian.org/"
     IDS_LAGBOXDESC          "Sending information between computers always takes some amount of time. This time-delay is called latency. Your connection quality may vary, depending on many factors. This meter shows your current approximate latency while you play."
     IDS_PROFANITYREMOVED    "~r< ~Iprofane message blocked~I >"
     IDS_PROFANITYWARNING    "The message was blocked.\n\nIt used language listed as profanity.  Review your profanity filter options and/or reconsider your message."
-    IDS_HOMEPAGEURL         "http://meridian59.com/"
+    IDS_HOMEPAGEURL         "http://openmeridian.org/"
 END
 
 STRINGTABLE 

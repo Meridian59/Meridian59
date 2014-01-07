@@ -17,6 +17,8 @@
 
 MYSQL *mysqlcon;
 
+bool connected = false;
+
 void MySQLTest()
 {
 	dprintf("MySQL client version: %s\n", mysql_get_client_info());
@@ -42,6 +44,7 @@ void MySQLInit()
 	else
 	{
 		dprintf("connected to mysql host: %s user: %s", ConfigStr(MYSQL_HOST),ConfigStr(MYSQL_USERNAME) );
+		connected = true;
 	}
 	char buf[100];
 	sprintf(buf, "USE %s", ConfigStr(MYSQL_DB));
@@ -130,6 +133,10 @@ void MySQLRecordStatTotalMoney(int total_money)
 	sprintf(buf,"INSERT INTO `player_money_total` \
 				SET player_money_total_amount = %d, \
 				player_money_total_time = NOW()",total_money);
+
+	if (!connected)
+		return;
+
 	if(mysql_query(mysqlcon, buf))
 	{
 		dprintf("Unable to record StatTotalMoney");
@@ -143,6 +150,9 @@ void MySQLRecordStatMoneyCreated(int money_created)
 	sprintf(buf,"INSERT INTO `money_created` \
 				SET money_created_amount = %d, \
 				money_created_time = NOW()",money_created);
+	if (!connected)
+		return;
+
 	if(mysql_query(mysqlcon, buf))
 	{
 		dprintf("Unable to record StatMoneyCreated", mysql_error(mysqlcon));
@@ -156,6 +166,9 @@ void MySQLRecordPlayerLogin(session_node *s)
 	val_type name_val;
     resource_node *r;
 	char buf[1000];
+	
+	if (!connected)
+		return;
    
     name_val.int_val = SendTopLevelBlakodMessage(s->game->object_id,USER_NAME_MSG,0,NULL);
     r = GetResourceByID(name_val.v.data);
@@ -176,6 +189,9 @@ void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, in
 {
 	char buf[1200];
 	resource_node *r_who_damaged, *r_who_attacker, *r_weapon;
+
+	if (!connected)
+		return;
 
 	r_who_damaged = GetResourceByID(res_who_damaged);
 	r_who_attacker = GetResourceByID(res_who_attacker);

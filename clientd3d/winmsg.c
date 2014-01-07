@@ -160,8 +160,6 @@ void MainQuit(HWND hwnd)
 	
 	DeleteObject(hPal);
 
-   WrapShutdown();
-	
 	HookClose();
 	
 	FreeLibrary(hRichEditLib);

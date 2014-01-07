@@ -2774,7 +2774,7 @@ messages:
             fine_row = FINENESS/2, fine_col = FINENESS/2, speed = 0)
    {
       local iCurrentTime, iDelta, iDeltaVigor, iExertion, iHasteLevel, 
-			iChanceTurn, iAngle, iRow, iCol, iFineRow, iFineCol,
+			iAngle, iRow, iCol, iFineRow, iFineCol,
 			iDx, iDy, iMoveLength, iMaxMoveRun;
     		  
 	  % 1. Get current position values
@@ -2941,7 +2941,7 @@ messages:
          }
       }
 	  
-      % 8. Drain vigor once per 1000 ms.
+      % 6. Drain vigor once per 1000 ms.
       if iDeltaVigor >= 1000
       {
          % Reduce speed value to old value, 5/6ths current value, then
@@ -2964,29 +2964,16 @@ messages:
 		 piLastVigorDrainTime = iCurrentTime;
       }
 
-      % 9. Notify monsters about presence (bitflag check instead of function)
+      % 7. Notify monsters about presence (bitflag check instead of function)
       if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }
   
-      % 10. Mess-up orientation of blinded players.
-      if Send(self,@IsEnchanted,#byClass=&Blind)
-      {
-         iAngle = iAngle + Random(-256,256);
-         iChanceTurn = Random(1,100);
-         iAngle = iAngle mod MAX_ANGLE;
-
-         if iChanceTurn < 30
-         {
-            Send(poOwner,@SomethingTurned,#what=self,#new_angle=iAngle);
-         }
-      }
-
-	  % 11. Save this move tick for next execution
+      % 8. Save this move tick for next execution
       piLastMoveUpdateTime = iCurrentTime;
 
-	  % 12. Process the move
+	  % 9. Process the move
       Send(poOwner,@SomethingMoved,#what=self,
            #new_row=new_row,#new_col=new_col,
            #fine_row=fine_row,#fine_col=fine_col,

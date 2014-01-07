@@ -1,0 +1,1220 @@
+This is part 1 of the NEWS file for PHPlot, with previous release documentation
+through Release 5.5.0 on 2011-07-30. For current news, see NEWS.txt.
+
+The project web site is http://sourceforge.net/projects/phplot/
+The project home page is http://phplot.sourceforge.net/
+Refer the the ChangeLog file for detailed source changes.
+-----------------------------------------------------------------------------
+
+2011-07-30 Release 5.5.0
+
+Overview:
+
+This is the current stable release of PHPlot. This release includes some
+bug fixes and new features. A significant new feature is the ability to
+embed a plot image inside an HTML file. Using this new feature, you can now
+write a single script which produces an HTML page with a PHPlot plot image,
+and avoid having to write separate scripts for the page and plot image.
+
+There is also a new 'bubbles' plot type.
+
+The PHPlot reference manual has been updated to match this release.
+
+
+Cautions, Important Notes, and Compatibility Issues:
+
+Starting in this release, PHPlot more thoroughly checks data arrays for
+validity. Your data array must conform to the requirements in the PHPlot
+Reference Manual, including: the outer array must use only 0-based sequential
+integer indexes, the array values for rows must be arrays, and each row
+array must have a number of elements which is compatible with the data type
+and plot type. PHPlot will now produce an error image if given an invalid
+data array. In previous releases, PHPlot sometimes produced an error image,
+sometimes ignored the invalid entries, but most often it would produce PHP
+warnings or notices about invalid indexes or variable types.
+
+Read the notes and warnings in the PHPlot Reference Manual page documenting
+EncodeImage() before using the new 'data URL' feature for embedding PHPlot
+images in HTML files.
+
+
+Bugs Fixed in 5.5.0:
+
+#3312134 Allow missing points in OHLC plots:
+  Like other plot types, the three OHLC plot types (ohlc, candlesticks, and
+  candlesticks2) now allow missing points. Specify all 4 values in the array
+  (open, high, low, close) as an empty string (for example) and that point
+  will not be plotted.
+
+#3312064 PHP errors with invalid data arrays:
+  See Compatibility Issues above.  PHPlot now checks the data array more
+  carefully and rejects invalid arrays without PHP warnings or notices.
+
+#3370548 Reverse legend line order for stackedbars:
+  A new function SetLegendReverse() was added to control the order of
+  text lines (and color boxes) in the legend: top-down (by default),
+  or bottom-up. The bottom-up order is more appropriate for stackedbars
+  and stackedarea plots, so the legend line order matches the plot.
+
+
+New features in 5.5.0:
+
+#3374495 Data URL encoding:
+  A New function EncodeImage() was added. It returns the plot image as a
+  string, with 3 available encodings: raw, base64, and dataurl.
+  The dataurl encoding implements RFC2397 embedding of image data in a URL,
+  and allows a single PHP script to produce an HTML page with the plot image
+  embedded within. See the PHPlot Reference Manual for details and examples.
+
+  Also, a new function SetFailureImage() was added. This allows you to
+  prevent PHPlot from creating an image with an error message if a fatal
+  error occurs. This is meant for use when EncodeImage (rather than
+  PrintImage) will be used to produce the plot, but it may be useful in
+  other cases too.
+
+#3352301 Bubble plots:
+  A new plot type 'bubbles' was added, along with a new data type
+  'data-data-xyz' for use with this type. A bubble plot is a scatter-plot
+  with a Z value at each point controlling the bubble diameter.
+
+-----------------------------------------------------------------------------
+
+2011-05-27 Release 5.4.0
+
+Overview
+
+This is the current stable release of PHPlot. This release includes some
+bug fixes and new features.  New features include new legend positioning
+modes, legends using point shapes instead of color boxes, and the ability
+to 'anchor' tick marks at a specific value. PHPlot now includes a class
+constant containing the release version as PHPlot::version.
+
+The PHPlot reference manual has been updated to match this release.
+
+
+Cautions, Important Notes, and Compatibility Issues:
+
+This release changes legend text positioning. Legend text is now vertically
+centered rather than bottom aligned. This can change the appearance of some
+plots, but the difference is usually not significant.  See "Center vertical
+alignment for legend text" below.
+
+This release changes how stackedbars plots handle segments of size zero.
+This will change the appearance of some plots, especially if the axis is
+moved from 0. See "Undefined variables with stackedbars" below.
+
+
+Bugs Fixed in 5.4.0:
+
+#3292529 Legend doesn't use data color callback:
+  This was determined to be the correct behavior, but undocumented. It has
+  now been documented in the reference manual.
+
+#3294604 Center vertical alignment for legend text:
+  Legend text lines are now centered vertically to the color boxes (or
+  point shapes) rather than being bottom aligned. The difference is not
+  noticeable with the default font size and line spacing, because there was
+  no extra vertical space anyway. But with bigger fonts, and especially with
+  additional line spacing, the text now looks better because of the center
+  alignment.
+
+#3296884 Undefined variable with stackedbars:
+  PHPlot will no longer report an undefined variable warning if a stackedbars
+  plot starts with a stack containing all zero segments. (This was actually
+  fixed in PHPlot-5.3.2.) Furthermore, PHPlot now handles zero segments in
+  stackedbars plots differently.  Zero values are no longer ignored. An
+  initial zero segment will be drawn as a bar segment if the axis is moved in
+  the opposite direction to the bar stack direction. A zero at the end will be
+  drawn as a cap with the data color, if shading is on.
+
+
+New features in 5.4.0:
+
+#3303654 Force tick mark at specific value:
+  New functions SetXTickAnchor() and SetYTickAnchor() were added. These tell
+  PHPlot to adjust the first tick mark value so that the specified anchor
+  position will coincide with a tick mark and grid position (or it would, if
+  the data range were extended to include it). Documentation has been
+  updated, including new examples.
+
+#3292825 Use point shape markers in legend box:
+  New function SetLegendUseShapes() will enable use of point shapes in the
+  legend, rather than color boxes. The default is color boxes, so existing
+  plots will not change. This only works for points and linepoints plots.
+  Documentation has been updated.
+
+#3291155 More flexible legend positioning:
+  New function SetLegendPosition() allows new ways to position the legend:
+  relative to the image, plot area, title, or using world coordinates, with
+  an optional pixel offset. There is another new function GetLegendSize() to
+  get the legend box size; this can be used to adjust the plot margins if you
+  want the legend outside the plot area and inside the margins. Documentation
+  has been updated.
+
+-----------------------------------------------------------------------------
+
+2011-05-06 Release 5.3.2
+
+Overview
+
+This is the current stable release of PHPlot. This release was produced to
+address a single bug (see below), using a branch off of PHPlot-5.3.1.
+(This is because the current development version, which will become
+PHPlot-5.4.0, already has half of a big two-part change to legend
+processing committed.  So the bug fix was released without waiting for the
+new work to be completed.)
+
+
+Bugs Fixed in 5.3.2:
+
+#3296884 "Undefined variable with stackedbars":
+  A temporary fix was made against phplot-5.3.1 to avoid an undefined
+  variable error when the first stack in a stackedbars plot has all zero
+  values. The fix avoids the error message, and the plots are OK in most
+  cases. There are still issues with label position, and if the axis
+  is moved. These will be addressed in a future fix.
+
+
+-----------------------------------------------------------------------------
+
+2011-01-15 Release 5.3.1
+
+Overview:
+
+This is the current stable release of PHPlot. This release focuses on
+providing better support and documentation for creating multiple plots on a
+single image.
+
+The PHPlot reference manual has been updated to match this release. Some
+new material has been added, including a new section on multiple plots per
+image, and a new example of overlay plots.
+
+
+Bugs Fixed in 5.3.1:
+
+#3143586 "Multiple plots per image - fixes & docs":
+  The reference manual now contains a section on multiple plots, and a
+  new example. A bug was fixed with SetLegendWorld and multiple plots.
+  Image border will now be drawn at most once. It is now possible to
+  restore the default 'automatic' behavior for axis positioning. Other
+  functions were changed to make arguments optional, so when called with
+  no arguments they reset to the default. The reference manual has been
+  updated with these changes too.
+
+#3147397 "Data colors missing with multiple plots":
+  The fix for bug #3049726 "Optimize color allocation" caused a problem
+  with multiple plots. This has been fixed. PHPlot will no longer truncate
+  the data color table at each plot. It will still only allocate data colors
+  as needed, but all of the pre-set or configured data colors will be
+  available for each plot.
+
+
+-----------------------------------------------------------------------------
+
+2010-12-04 Release 5.3.0
+
+Overview:
+
+This is the current stable release of PHPlot. This release includes new
+plot types and some new features.
+
+The PHPlot reference manual has been updated to match this release. Some of
+the sections have been moved, there are new examples for the new plot types,
+and a new section on tunable parameters has been added.
+
+
+New features in 5.3.0:
+
+#3093483 "Investing support chart types":
+  Added 3 new plot types: Basic OHLC (Open/High/Low/Close), Candlesticks,
+  and Filled Candlesticks. These are variations of plots that show the
+  performance of a stock or other financial security.
+
+#3111166 "Control legend colorbox width":
+  It is now possible to control the width of the color boxes in the
+  legend, using a class variable which is documented in the manual.
+
+#3117873 "Data value labels in more plot types":
+  Data value labels, which show the dependent variable values near the
+  data points, are now available for more plot types: lines, linepoints,
+  points, and squared. (These were previously available only for bars and
+  stackedbars plots.)
+
+#3127005 "Ability to suppress X/Y axis lines":
+  New functions SetDrawXAxis() and SetDrawYAxis() were added to control
+  display of the X and Y axis lines. (These lines were probably the only
+  PHPlot elements that could not be turned off.) In special cases, these
+  can be used to produce a "bare" plot image.
+
+
+-----------------------------------------------------------------------------
+
+2010-10-03 Release 5.2.0
+
+Overview:
+
+This is the current stable release of PHPlot. This release includes some
+bug fixes and new features, described below, and a reimplementation of
+internal processing of colors.
+
+The PHPlot reference manual has been updated to match this release.
+Horizontal plots are now documented in the manual, and the interim
+documentation in the source release (HorizontalBars.txt) has been removed.
+The manual is available in HTML format as a separate download from
+Sourceforge.  The manual is also available for on-line viewing from the
+project home page.  Starting with this release, the manual is also
+available in PDF format from the project home page.
+
+
+Cautions, Important Notes, and Compatibility Issues:
+
+Due to changes in color allocation (see bug #3049726 below), image files
+produced with PHPlot-5.2.0 will differ when compared byte-for-byte with
+those created by earlier releases, even when the images are identical (as
+they nearly always are).
+
+If you are creating a horizontal plot with any negative X values, and not
+setting the Y axis position, your plot will change (see bug #3074402 below)
+because PHPlot no longer leaves the Y axis on the left for horizontal plots.
+
+Some internal methods that used to have 'public' visibility are now protected.
+This will generally prevent you from using them. The list of changed functions
+can be found in the release ChangeLog. Avoid using any internal methods.
+
+If you are making a stackedbar plot with any negative values, PHPlot-5.1.3
+and earlier took the absolute value of each data value (which was not
+documented), but PHPlot-5.2.0 does not. See Feature Request #3073679 below.
+
+If your plot fills the 256 available color map slots in a palette image,
+your image may look different with PHPlot-5.2.0 due to changes in color
+allocation order.  This was seen on two of the tests in the PHPlot test
+suite. These tests tiled a JPEG image into the plot area or image
+background.  Being a truecolor image, the JPEG had a huge number of colors,
+which filled all available slots in the color map. Additional colors for
+plot elements had to be approximated, and different colors resulted with
+PHPlot-5.2.0 versus previous releases. To avoid this problem, either use a
+truecolor PHPlot object (PHPlot_truecolor constructor), or reduce the
+number of colors in the background image and convert it to PNG or GIF.
+
+This release contains significant changes to PHPlot internals. In particular,
+variables and functions related to element colors and color handling have
+changed. Refer to the PHPlot release ChangeLog for more details.  Remember,
+if you rely on accessing any member variable, or on using any non-public
+function or any function not documented in the reference section of the manual,
+your code is at risk of breaking with each new release.
+
+
+New features in 5.2.0:
+
+#3077554 "Finer control over plot element colors" (partial):
+  The X, Y, and main titles can now have different colors. See the PHPlot
+  Reference Manual entries for SetXTitleColor and SetYTitleColor.
+
+#3073679 "Stacked bar plots with negative values":
+  A stacked bar plot can now include negative values, and stacks of negative
+  values will be drawn downwards (or leftwards). See the PHPlot Reference
+  Manual under "Plot Type: stackedbars" for details.
+
+
+Bugs Fixed in 5.2.0:
+
+#3045131 "SetTransparentColor problems":
+  Setting a transparent color now works whether before or after setting
+  the background color (for example), and also now works with a data color.
+
+#3049726 "Optimize color allocation"
+  PHPlot now defers allocating colors until drawing time, and tries to allocate
+  only the colors which are actually needed. For palette images, this results
+  in use of fewer color slots and slightly smaller image files.
+
+#3074402 "Fix Y axis default for horizontal plots":
+  When horizontal plots were introduced, an asymmetry with the X and Y axis
+  position defaults was known but left. This behavior was later determined
+  to be unhelpful. So now the Y axis on horizontal plots will default to X=0,
+  or the X value closest to zero within the plot area range. This is the same
+  behavior as for the X axis in vertical plots.
+
+#3056991 "Internal methods should be 'protected'":
+  More of the internal PHPlot functions were changed to 'protected' visibility,
+  as the test suite was fixed to not call them directly.
+
+#3057000 "Review 'deprecated' methods":
+  One broken deprecated method (SetColor) was removed and one changed.
+  Note that deprecated methods are not documented and not tested.
+
+-----------------------------------------------------------------------------
+
+2010-08-30 Release 5.1.3
+
+Overview:
+
+This is the current stable release of PHPlot. Additional horizontal plot
+types and features have been added, however horizontal plots are still
+considered 'experimental'. A new callback has been added which allows
+greater control over the data colors. An improved method for accessing
+TrueType Font (TTF) files means that on many systems TTF text can be used
+without specifying font paths.
+
+
+Cautions and Important Notes:
+
+Since the previous PHPlot release, PHP-5.3.3 and PHP-5.2.14 have been
+released, and these include a fix for the TrueType Font (TTF) rendering
+problem. Use of these releases is now recommended.
+
+There has been extensive cleanup of the PHPlot code. If you have a
+customized version of PHPlot, you may find it difficult to update.
+
+The "additional data support" script phplot_data.php has been removed from
+this release. The script has not been developed or tested in a long time,
+and was found to have numerous problems. The script can still be found in
+the CVS repository.
+
+The changes in this release (horizontal plots, custom data color callback,
+and TrueType Font handling) should not result in any compatibility issues.
+
+
+New features in 5.1.3:
+
+#3049703 "Additional horizontal plots and features":
+  + Implemented data values labels in horizontal bar charts.
+    Use: SetXDataLabelPos('plotin').
+  + Add horizontal stacked bar charts, with data value labels.
+  + Add horizontal thinbarline plots.
+  Horizontal plots are still considered 'experimental', and documentation is
+  in the HorizontalBars.txt text file rather than the PHPlot Reference Manual.
+
+#3034164 "Extended control of data colors":
+  New callback 'data_color' can be used to customize selection of the color
+  of each bar, line segment, point marker, etc. This is documented in the
+  PHPlot Reference Manual section "Custom Data Color Selection", with new
+  examples in the Examples chapter.
+
+
+Bugs Fixed in 5.1.3:
+
+#3051906 "Better choice for default TT font":
+  Rather than always using the unlikely 'benjamingothic.ttf' as its default
+  TrueType font name, PHPlot now has a short list of sans-serif fonts, and
+  tries to find one that works if a default TT font is needed.  On many
+  systems, this will provide a high-quality default font without help.
+
+#3051832 "Let PHP/GD find the font file":
+  Instead of using file existence to validate a TT font file, PHPlot now
+  just tries to use the font. This allows PHP/GD to use its own rules to
+  try to find the font, without needing a pathname.  This works on Windows
+  and at least some Linux systems.
+
+#3048267 "phplot_data add-on is still broken"
+  Not fixed. phplot_data.php has been removed from the release.
+
+-----------------------------------------------------------------------------
+
+2010-06-29 Release 5.1.2
+
+Overview:
+
+This is the current stable release of PHPlot. Truecolor image support is no
+longer considered 'experimental', and is now documented in the reference
+manual. There is a new experimental feature for horizontal bar charts. This
+release also contains a bug fix and new feature.
+
+
+Cautions and Important Notes:
+
+The advisory against using PHP-5.3.2 or PHP-5.2.13 with PHPlot if you use
+TrueType fonts (TTF) continues. See the item below for PHPlot-5.1.1. The
+good news is that this has been fixed by the PHP Team and will be in the
+next releases.
+
+Compatibility of data type and plot type are now checked completely.  If
+you used an incorrect data type with certain plot types, your script may no
+longer work until you fix the data type. Specifically, the area, squared,
+and thinbarline plot types failed to check the data type they received, and
+treated anything other than 'data-data' as 'text-data'.  If you have a
+squared plot with data type 'data-data-error', for example (which is not
+supposed to work), it did produce a plot, but will now result in an error.
+
+The addition of horizontal bar charts should not impact any existing plot,
+with one small exception. The function SetYDataLabelPos() used to accept
+some additional, undocumented options (plotleft, plotright, both, yaxis)
+and pass these through to SetYTickLabelPos() "for compatibility". It no
+longer does so, as some of those are now used for horizontal bar chart
+labels. To position Y tick labels, use only SetYTickLabelPos().
+
+
+New features in 5.1.2:
+
+#3002606 "Add to plot and image border options":
+  SetPlotBorderType() now accepts 'right', 'top', and 'bottom', as well
+      as an array of options. So you can now control exactly which of the 4
+      border sides will be drawn.
+  SetImageBorderType() now accepts 'solid' as a choice. This will use the
+      actual color set with SetImageBorderColor(), rather than the darker
+      shade as type 'plain' does (which may have been a bug).
+  SetImageBorderWidth() is a new function that sets the width of the image
+      border. The defaults are the same as the fixed values used before: 1
+      pixel for plain, 2 pixels for raised.  The image border width is now
+      accounted for in margin calculations, if it is greater than 2 (to make
+      sure existing plots will not change).
+
+#2885930 "Horizontal Bars":
+  Horizontal bar charts are implemented, as an experimental feature.
+  'Experimental' means they are not yet documented in the reference manual,
+  and subject to change or removal.
+  Refer to the text file HorizontalBars.txt for details.
+
+#2947679 (follow-up) "Support for alpha blending/Truecolor":
+  Truecolor support is now documented in the Reference Manual. The interim
+  documentation file Truecolor.txt has been removed. Alpha channel
+  specification now works with both constructors and both image types.  This
+  fixes an issue if the base constructor was used with a truecolor background
+  image. (In PHPlot-5.1.1, the result would be a truecolor image, but the
+  alpha channel features were not available.)
+
+
+Bug Fixed in 5.1.2:
+
+#3010116 "Bad rendering of title in multi-plot image when using TTF":
+  Make sure the main title is drawn only once, to avoid bad rendering of
+  TTF titles with multiple plots due to anti-aliasing.
+
+-----------------------------------------------------------------------------
+
+2010-04-04 Release 5.1.1
+
+Overview:
+
+This is the current stable release of PHPlot. This release adds truecolor
+image support as an experimental feature, fixes a number of bugs and adds
+a few new features.
+
+The PHPlot reference manual has been updated to match this release.  The
+manual is available as a separate download from Sourceforge. The manual is
+also available for on-line viewing from the project home page.
+
+See the ChangeLog file in the release for more about changes and bug fixes.
+
+
+Cautions and Important Notes:
+
+Avoid using PHP-5.3.2 or PHP-5.2.13 with PHPlot if you use TrueType fonts
+(TTF). Some new bugs were introduced in those releases that adversely
+affects accurate positioning and rendering of TrueType font text.
+
+
+New features in 5.1.1:
+
+#2947679 "Support for alpha blending/Truecolor":
+  PHPlot can now produce truecolor images, with alpha blending of colors and
+  other effects. This is considered an experimental feature, meaning it is
+  not yet documented in the PHPlot Reference Manual, and subject to change.
+  Refer to the text file Truecolor.txt included in the PHPlot release for
+  information on using truecolor.
+  Two drawing changes were made to improve plot appearance with Truecolor:
+  + Filled dots (in points & linepoints plots) are now drawn better. This
+    also makes them look rounder with regular (non-Truecolor) plots.
+  + Area plots have the areas filled without overlapping each area down to
+    the Y axis. This was needed to fix problems with alpha blending, and
+    should have no effect on non-Truecolor plots.
+
+#2973995 "Add y-Data to Stackedbars":
+  You can now have Y Data Labels with 'stackedbars' plots. These label the Y
+  values (incremental and total) for each bar. Refer to the reference manual
+  page for SetYDataLabelPos().
+
+
+Bug Fixes in 5.1.1:
+
+#2976735 "Improvements and fixes for 'area' plots":
+  Moving X axis works; handle Y<0 better; new 'stackedarea' plot type is a
+  variation on 'area' with the data represented differently.
+
+#2974639 "Stacked bars plot breaks with X axis != 0":
+  Moving X axis works.
+
+#2963757 "point_counts undefined error in 5.1.0":
+  Fixed an error introduced in PHPlot-5.1.0 when point size and shape arrays
+  were set to the same size.
+
+#2938219 "Bars go in wrong direction":
+  For bar charts with all Y<0, bars will still be drawn down even if Y=0 is
+  not in range.
+
+-----------------------------------------------------------------------------
+
+2009-12-24 Release 5.1.0
+
+Overview:
+
+This is the current stable release of PHPlot. This release fixes a number of
+bugs and adds some new features. Some of the changes in this release can
+alter the appearance of plots, so be sure to review the information in this
+NEWS file and test this release with your application.
+
+The PHPlot reference manual has been updated to match this release.  The
+manual is available as a separate download from Sourceforge. The manual is
+also available for on-line viewing from the project home page.
+
+See the ChangeLog file in the release for more about changes and bug fixes.
+
+
+New features in 5.1.0:
+
++ A new "contrib" directory has been added for useful add-ons.
+  This currently contains:
+    * prune_labels : Control data label density on X axis.
+    * color_range : Define a gradient map for data colors.
+
++ Feature Request 2899921 "Allow different format for data and tick labels"
+  Text angle and format can now be controlled separately for data labels.
+
++ Locale loading override
+  New variable locale_override stops PHPlot from getting locale from system.
+
++ Translating Coordinates
+  New function GetDeviceXY() to translate world to device coordinates.
+
++ New drawing callback
+  New callback 'draw_all', called after all drawing is done.
+  The manual now contains an example of using this new callback and
+  the new GetDeviceXY() function to annotate a plot.
+
+
+Bug Fixes in 5.1.0:
+
+#2914403 "Pie + X/Y titles: Undefined property error"
+  X/Y titles are now properly ignored for pie charts.
+
+#2908256 "Error: array_sum() should be an array" (drupal)
+#2916864 "Should at least print legend on pie charts with empty data"
+  Pie charts with invalid data (no Y values > 0) now make an empty plot.
+
+#2906436 "Fixes for X Tick Labels vs X Data Labels"
+  Smarter determination of whether to do Tick labels, Data labels, or both.
+
+#2900914 "Problem with display of 0 on Y axis"
+  Fixed rounding error that could produce something like Y=8.12345E-16.
+
+#2886365 "PHP 5 patch" (Declare all functions and variables in PHP5 style)
+  Most internal PHPlot member functions now have "protected" visibility.
+
+#2839547 "SetImageBorderType('none')
+  You can use SetImageBorderType('none') to turn the image border back off.
+
+#1795972 "Fix default point shapes"
+  We now have 20 (vs 10) point shapes, with 10 (vs 1) used by default.
+
+#1795971 "Fix default data colors"
+  We now have 16 (vs 8) default data colors, no duplicates, all visible.
+
+
+Visible Changes and Possible Incompatibilities:
+
++ PHP5 visibility changes (Bug #2886365)
+Details: Most internal PHPlot member functions now have visibility
+    'protected', rather than all being public. All member variables are
+    still 'public'.
+
+Reason for the change: Use the recommended PHP5 syntax, better OO style.
+
+Compatibility: If you were calling a PHPlot internal function that got
+    changed to 'protected', this will break. Please report this.
+
+
++ Fix default point shapes (Bug 1795972)
+Details: We now have 20 (vs 10) point shapes available, and by default we
+    have 10 (vs 1) different shapes in use. The default size is now 6 pixels
+    for all point shapes.
+
+Reason for the changes: Using different shapes helps distinguish the data
+    sets. The existing 10 defined shapes were not enough, since some of them
+    are not centered over the points, too small, or otherwise hard to see.
+    The code to synchronize the point shape and size arrays was broken, and
+    some dubious code to adjust sizes to even numbers needed to be fixed.
+
+Compatibility (1): If you have a points or linepoints plot with more than
+    one dataset, and you did not use SetPointShapes() to configure the
+    shapes, them your plot will change from using a diamond for all data
+    sets to using different shapes for up to 10 data sets.
+
+Compatibility (2): Fixing the point size/point shape array size bug may
+    slightly change the size of some shapes, but it now works the way it
+    was documented and supposed to work.
+
++ Fix default data colors (Bug 1795971)
+Details: Defined a new set of 16 default data colors. The colors are
+    different and contrast well against the default white background.
+    The first 4 colors were not changed.
+
+Reason for the change: The default 8 data colors included two instances
+    of orange, and one color which was invisible on a white background.
+
+Compatibility: Colors will change on any plot with more than 4 data sets
+    where you did not use SetDataColors() to set your own data colors.
+
++ Re-used old function SetXDataLabelAngle()
+Details: SetXDataLabelAngle() now does something different.
+
+Reason for the change: This name was needed for a new function, to set the
+    angle for the X Data Labels. The old use of this function was not
+    documented, and marked "deprecated" in the code since around 2003-12-07.
+
+Compatibility: If you are still using SetXDataLabelAngle() to set both Tick
+    and Data label angles, you need to use SetXLabelAngle() instead.
+
++ Separate controls for tick and data labels (Feature Request 2899921)
+Details: New functions SetXDataLabelAngle(), SetYDataLabelAngle(),
+    SetXDataLabelType(), and SetYDataLabelType() to allow separate control
+    over the angle and format of data labels, versus tick labels.
+
+Reason for the change: Allow Data Labels to use different formatting and
+    angle compared to Tick Labels.
+
+Compatibility: The default behavior has been set up such that there should
+    be no compatibility issues. For example:
+    Old behavior: SetXLabelType() sets the type for both tick and data labels.
+    New behavior: SetXLabelType() sets the type for tick labels and the
+        default type for data labels.  SetXDataLabelType() sets the type for
+        data labels (overrides SetXLabelType).
+
++ X Tick Labels vs X Data Labels (Bug 2906436)
+Details: Regarding SetXTickLabelPos() and SetXDataLabelPos(): If only one
+    of them is called, the behavior is unchanged (only that label type will
+    be displayed). If both are called: Do exactly what was requested. If
+    neither was called: display only data labels if any data labels are
+    non-empty, else display only tick labels.
+
+Reason for the change: 1) Fix the long-standing problem behavior that by
+    default PHPlot overlays tick and data labels below the X axis. 2) Fix
+    order dependency between setting the position of tick and data labels.
+    3) Prepare for future extension of data labels, and allow both tick
+    and data labels to be on if the programmer enables both.
+
+Compatibility: There are some cases where your plot will change.
+    (a) Calls neither SetXDataLabelPos() nor SetXTickLabelPos():
+      Old behavior: Both tick and data labels displayed, possibly overlaid.
+      New behavior: If there are any non-blank data labels, then show only
+          the data labels, not the tick labels. Otherwise, show tick labels.
+
+   (b) Calls both SetXDataLabelPos() and SetXTickLabelPos(), with other than
+       'none' for each position:
+     Old behavior: The latter call was effective; earlier one ignored.
+     New behavior: Independent of order, both calls are effective.
+
+-----------------------------------------------------------------------------
+
+2009-06-14 Release 5.0.7
+
+Overview:
+
+This is the current stable release of PHPlot. The release adds one new
+feature, fixes a few bugs, and changes the license under which PHPlot
+is released.
+
+The PHPlot reference manual has been updated to match this release.  The
+manual is available as a separate download from Sourceforge. The manual is
+also now available for on-line viewing at http://phplot.sourceforge.net
+
+See the ChangeLog file for more about changes and bug fixes.
+
+
+Licensing:
+
+PHPlot is now released on the terms of the GNU Lesser General Public
+License, version 2.1. (Previous versions of PHPlot were released under
+a dual "PHP/GPL" license.) The licensing change was authorized by the
+original author and copyright holder of PHPlot.
+
+
+New feature in 5.0.7:
+
++ Plot area margins can now be partially specified, using either
+  SetMarginsPixels or SetPlotAreaPixels. In previous releases of
+  PHPlot you had to either specify all 4 margins or none.
+  Credit to adoll for this feature.
+
+
+Visible Changes and Possible Incompatibilities:
+
++ Y data range can change:
+  As a result of the bug fixes in this release, automatically-calculated
+  Y data ranges can change. If you have missing Y values in your data,
+  and you let PHPlot calculate the Y data range (that is, you do not
+  call SetPlotAreaWorld with a Ymin value), then the lower limit for Y
+  can change. If you have a plot with data-data-error data type, different
+  error values for different points, and let PHPlot calculate the Y data
+  range, then either Y limit can change.
+
+
+Bug Fixes in 5.0.7:
+
+
++ Fix for bug 2803900: SetRGBArray('large') does not work:
+  Corrected an array name usage problem. You can now select the large
+  color map. Also PHPlot no longer overrides use of the PHP include
+  path when loading the large color map, and now reports an error if the
+  file is needed and not found.
+
++ Fix for bug 2791502 "Error plots treat missing Y values as 0":
+  Missing Y values now with with data-data-error plots.
+
++ Fix for bug 2792860 "Wrong DataLabelLines with missing Y":
+  Data label lines are now suppressed at missing Y values.
+
++ Fix for bug 2786350 "Missing Y data results in bad auto-range":
+  Missing Y values are now ignored when calculating the Y data range.
+  Bug report and analysis by mrten.
+
++ Fix for bug 2786354 "Incorrect auto-range for data-data-error":
+  The Y data range is now correctly calculated for data-data-error plots
+  when the error values differ from point to point.
+
+
+-----------------------------------------------------------------------------
+
+2009-01-20 Release 5.0.6
+
+Overview:
+
+This is the current stable release of PHPlot. The purpose of this release
+is to fix additional problems with text spacing and positioning, and
+introduce some minor new features.
+
+The PHPlot reference manual has been updated to match this release.  The
+manual is available as a separate download from Sourceforge. The manual is
+also now available for on-line viewing at http://phplot.sourceforge.net
+
+
+New features in 5.0.6:
+
++ Allow mixing GD and TrueType font text on the same plot
+  You can use the new method functions SetFontGD() and SetFontTTF() to
+  select a font and font type for text element (labels, titles, etc.) For
+  example, you can have TrueType plot titles, and GD-fixed font labels.
+  SetUseTTF() now sets the default text type, TTF or GD. This is fully
+  backward compatible.
+
++ Extended label formatting
+  See the reference manual for more information on these.
+
+  New label formatting types are added: 'printf' (using a user-defined
+  format), and 'custom' (using a callback function).
+
+  For 'data' type formatting, a prefix and suffix can be added. (PHPlot
+  previously had an undocumented suffix for 'data' type, which still
+  works.)
+
+  For 'time' formatting, the format can now be specified in the same function
+  call rather than using SetXTimeFormat and SetYTimeFormat.
+
+  For 'data' formatting, the precision can now be specified in the same
+  function call, rather than using SetPrecisionX and SetPrecisionY.
+
++ Better control over line spacing in multi-line labels
+
+  Line spacing can now be set separately for each text element using an
+  additional argument to SetFont, SetFontGD, and SetFontTTF.  The overall
+  SetLineSpacing() value is the default for each text element that does not
+  have a specific line spacing set.
+
+  PHPlot now interprets the value set for line spacing as the number of
+  pixels only for GD text. For TrueType text, it is a scale factor for the
+  font's built-in line spacing for TrueType text. The equation used is:
+      interline_spacing = line_spacing * font_natural_spacing / 6
+  where line_spacing is either the global value set with SetLineSpacing
+  or a more specific value set with SetFont(), and font_natural_spacing
+  is the amount of space between lines built-in to the TrueType font. The
+  factor 6 should really be 4 (since PHPlot always used 4 as the default
+  line_spacing, this would give the natural font spacing by default). But
+  the text is too widely spaced with this value, and 6 was chosen to be
+  more compatible for typical font sizes.
+
+Visible Changes and Possible Incompatibilities:
+
++ Line spacing
+  Multi-line TrueType titles and labels will have different inter-line
+  spacing. Since the text size affects the margin and plot area sizes,
+  this results in slightly different sized features on any plot with
+  multi-line TrueType text.
+  Previous versions of PHPlot used a default 4 pixels for inter-line
+  spacing of multi-line TrueType text, regardless of the font size.
+  PHPlot now uses the 'natural' font inter-line spacing, adjusted by a line
+  spacing parameter (per text type, with a global default).
+
+  The same change can also increase the size of the legend box slightly.
+
++ Internal changes were made to the way font information is stored. Anything
+  that directly references PHPlot internals regarding fonts will break. Usage
+  also changed for the internal functions to size and draw text (ProcessText*,
+  SizeText*) due to font data storage changes.
+
++ Changes were made to internal class variables used to store label
+  formatting information. Anything relying on these internals may break.
+
+
+Bug Fixes in 5.0.6:
+
+#1932571: Data-Data Plot fails with same X values
+  PHPlot will no longer hang if all X values are the same. But this is
+  interim fix to force the X range to 1 to prevent the hang. Eventually,
+  smarter automatic range code will handle this better.
+  Credit to andyl for finding this.
+
+#1891636: Misaligned TTF X Labels
+  PHPlot will now correctly line-up TrueType labels along the X axis. There
+  were small but very noticeable errors before, when the text had descenders
+  or lines with all short letters.
+
+
+-----------------------------------------------------------------------------
+
+2008-01-13 Released 5.0.5
+
+Overview:
+
+This is the current stable release of PHPlot. The emphasis of this release
+is to improve text positioning, margin calculation, and error handling.
+
+Although this is considered a stable release, it has a large amount
+of changed code compared to the previous release 5.0.4. Two of the more
+complex components of PHPlot - text and margin calculations - were mostly
+re-written in this release. You are advised to carefully test your own
+applications with PHPlot-5.0.5 to see how your plots look. Refer to the
+README.txt file included in the release for information on reporting problems.
+
+Starting with this release, PHPlot no longer supports PHP4, since the PHP
+group officially declared end-of-life for PHP4 as of 31 December 2007.
+PHPlot-5.0.5 was tested only with PHP-5.2.5 and we are unlikely to address
+any issues using PHPlot with older versions of PHP.
+
+The PHPlot reference manual has been updated to match this release.  The
+manual is available as a separate download from Sourceforge. The manual is
+now also now available for on-line viewing at http://phplot.sourceforge.net
+
+The callback feature added in 5.0.4 is now documented in the reference
+manual. It is still considered experimental and subject to change, however.
+
+
+
+Visible Changes and Possible Incompatibilities:
+
++ Dropped support for PHP4.
+
++ Eliminated remaining order-dependent behavior related to margins and
+text. PHPlot should now do nothing at all, except record parameters, until
+you draw the graph with DrawGraph. I believe this was always the intended
+behavior of PHPlot, but over time perhaps various pre-calculations and
+dependencies crept in. Fixing this simplifies processing and should lead to
+more consistent behavior.
+
++ The rewritten margin calculation code now uses actual sizes of all tick
+and data labels and tick marks, rather than guesses. Margins collapse to
+remove unused elements, but a minimum margin (currently fixed at 15 pixels)
+is applied so the plot edges don't get to close to the image edges. The
+result is that most graphs with auto-calculated margins will change in
+appearance. It most cases, the margins get slightly smaller. In other
+cases, earlier releases mis-calculated the margins, so this release will
+produce much neater margins.
+
++ The X and Y titles are now offset out from the plot area, not in from the
+image area.  For auto-calculated margins this should not make any
+difference, but if you use SetMarginsPixels or SetPlotAreaPixels to set
+larger margins, the axis titles will move in closer to the plot with this
+release.
+
++ Changes were made to PHPlot internals, including removal of some class
+variables and functions, and addition of new variables and functions.
+These are documented in the ChangeLog. Relying on any internal variables
+or functions in an application using PHPlot is unwise. The following
+internal functions were removed:
+     SetImageArea() DrawDotSeries() DrawLineSeries() CalcXHeights()
+     CalcYWidths() DrawLabels() InitImage() DrawDashedLine()
+         These were marked 'deprecated', were undocumented and unmaintained.
+     TTFBBoxSize()
+         This was replaced with SizeText().
+
++ Line spacing set with SetLineSpacing() now affects TTF text as well as
+GD text. Previously, it only affected GD text. The default line spacing
+happens to be usable for TTF text.
+
++ Changes were made to error handling. PHPlot will now trigger a user-level
+error after producing an error image, instead of exiting.  If no error
+handler has been set, it will exit, as before. But now the error message
+should also get logged, or written to the standard error stream, depending
+on the SAPI in use.  You can now establish an error handler to catch most
+PHPlot errors and do some cleanup before exit.
+
++ PHPlot no longer accepts some invalid option values (such as a substring
+of a valid value, or empty strings) passed to functions. If your
+application aborts in CheckOption with PHPlot-5.0.5 but 'worked' with
+previous releases, them you were probably using an invalid option value.
+
+
+
+Bug Fixes in 5.0.5:
+
+#945439: x_tick_label_height not set correctly
+  Exact sizes of labels are now used to calculate margins.
+
+#1813070: Bad position for multi-line TrueType text
+  Fixed as part of text functions rewrite. Use correct basepoint
+  (lower left of each line) when positioning text lines.
+
+#1813071: Wrong title height for multi-line TTF text
+  Fixed as part of text functions rewrite: calculate height of
+  multi-line text correctly. Also now uses the line-spacing setting.
+
+#1813474: DrawText alignment arguments wrong
+  Fixed so 'top' and 'bottom' now have the usual meaning: top means
+  align top of text with reference, bottom means align bottom of text.
+  This was switched before. Changed every internal caller to compensate.
+
+#1816844: Fix order dependency for setting titles
+  Defer processing of title strings until DrawGraph(),
+  so it doesn't matter if fonts, etc. are set before or after.
+
+#1819668: Horiz. align multi-line text: GD vs TTF
+  The text functions were rewritten to draw TTF text line-by-line,
+  like GD text, and correctly align each line.
+
+#1823774: Default Font Path and Error Message
+  Error handling has been improved to make sure a message is logged, in
+  addition to the error image, and use error_trigger rather than exit.
+
+#1826513: FIXME in DrawLegend: Max label length
+  The actual size needed for legend text is now used.
+
+#1827263: Spoiled up pie-chart if $val is close to zero
+  Fixed by skipping over any segment that rounds to 0 degrees of
+  arc. (The GD function uses integer angles only, and 0 degrees
+  means draw a complete circle.)
+
+#1836528: Insufficient checking of parameter values
+  Rewrote validator function to reject improper parameter values.
+
+#1843012: Make margins, drawing consistent
+  Margin code logic was rewritten and checked for consistency.
+
+#1856207: Margin error with 'xaxis'/'yaxis' position
+  Margin space is now allocated for ticks and labels if their position
+  is 'xaxis' or 'yaxis' and the axis is at the plot edge. This is not
+  a perfect fix (the axis could be close but not at the edge).
+
+
+-----------------------------------------------------------------------------
+
+2007-10-20 Released 5.0.4
+
+Overview:
+
+This is the latest stable release of PHPlot. We are abandoning the 'rc'
+version naming style, because we don't consider these last releases
+'release candidate' versions. As we continue to make changes to PHPlot,
+we are not converging toward a final "5.0" release, however we do consider
+these releases stable and complete enough for production use.
+
+This release fixes a number of problems and introduces a few new features.
+
+The PHPlot reference manual has also been updated to match this release.
+New material has been added documenting some of the PHPlot internals.
+The manual is available as a separate download from Sourceforge.
+
+
+Code Cleanup:
+
+Some code cleanup is going in to this release. It is hoped that these
+changes will not impact any existing scripts using PHPlot, but will make
+the PHPlot code itself easier to understand and maintain.
+
+PHPlot now avoids making changes outside its own class definition. There
+are no longer any functions defined outside the class, nor any constants.
+Three constants (MINY MAXY TOTY) were removed, and 2 functions were removed
+(see Visible Changes below).  Also PHPlot no longer sets the PHP error
+reporting level to E_ALL. Although we highly recommend setting error
+reporting to E_ALL in your php.ini file or scripts, it is not right for
+PHPlot to assume that you want it.
+
+
+Visible Changes and Possible Incompatibilities:
+
+Arrays containing color and style information are used with several PHPlot
+functions to control the plot style array. These functions are:
+    SetPointShapes, SetPointSizes, SetLineWidths, SetLineStyles,
+    SetDataColors, SetDataBorderColors, and SetErrorBarColors.
+The arrays passed to these functions MUST used sequential integer 0-based
+indexes. This is what the PHP manual calls "Usual integer indices (starting
+from zero, increasing by one)". This is the type of array you get in PHP by
+default if you use array() without specifying key values, or use the
+empty-bracket assignment operator to add values onto an array.  In previous
+versions of PHPlot, some of these functions would also work with
+string-indexed or non-sequentially-indexed arrays, but this was not clearly
+defined. Starting with PHPlot-5.0.4, only arrays with "usual integer
+indices" work, and other array indexes will cause errors.
+
+Some internal-use-only functions have had their usage changed or been removed.
+If you are using functions that are not documented in the PHPlot Function
+Reference in the manual, your code may have to be changed.
+
+As part of the code cleanup, two functions which were defined outside the
+PHPlot class were removed: array_pad_array(), and array_merge_php4().
+If your code used these, you need to fix your code.
+
+The routines which accept a color name, value, or array now check for a valid
+color name. If you specify a color name which is not in your current color
+table, PHPlot will draw an error and exit. Previously, PHP would report an
+index error, continue, and get a 'headers already sent' message.
+
+
+Bug Fixes in 5.0.4:
+
+#1813021: Miss-positioned right-justified vertical GD text.
+  Fixed DrawText() to correctly position 90 degree right-justified text
+  drawn in a fixed GD font. This could be seen with 90 degree Y tick labels.
+
+#1790441 Removed destructor/shutdown function, and no longer recommend
+  using reference assignment when creating a PHPlot object. This was
+  interfering with memory usage.
+  Credit to annajilly for analysis.
+
+#1779115 SetLegendWorld() failed because of undefined variables. The
+  required order dependency was too hard to meet. This is now fixed.
+  You can now use SetLegendWorld anywhere before DrawGraph.
+
+#1726810 (feature request, but actually a bug fix) Ignore empty strings
+  as data labels when doing time or data label formatting. These would
+  previously produce errors or bad formatting. Now you can omit labels
+  as needed even with time and data formatting.
+  Credit to exgerhardr for finding this.
+
+#1605555 Y data labels used wrong font and not formatted (bar charts only).
+
+#1208054 Localization of number formatting in 'data' format type. PHPlot
+  will attempt to format the numbers in a way appropriate to your locale.
+  You can also force the formatting with the new function SetNumberFormat.
+  Credit to David Hernández Sanz.
+
+#937944 X/Y Tick counts: PHPlot could draw one two few Y tick counts, and
+  one too many X tick counts. This is not a perfect fix, and more work is
+  needed here, but this fixes an error case in both X and Y values.
+
+
+New Features in 5.0.4:
+
+New function SetLegendStyle allows control of the alignment of text and
+  color boxes within the legend.  Also allows removing the color boxes.
+  Based on bug #1208054.
+  Credit to David Hernández Sanz.
+
+New function SetNumberFormat. See bug report #1208054 above.
+
+Callbacks are added. PHPlot can call back your functions while generating the
+  plot. This is experimental, and documented only in the file "Callbacks".
+  Credit to annajilly for the idea and design.
+
+-----------------------------------------------------------------------------
+
+2006-11-13 Released 5.0rc3
+
+Overview:
+
+This is an interim release. It has been a long time since the previous
+release 5.0rc2, and there have been a lot of changes. There are still more
+changes likely to go in before we have "5.0", but there are enough for now.
+
+The PHPlot Reference Manual has also been released, and is available as a
+separate download from Sourceforge. PHPlot users and developers are
+strongly encouraged to read the manual.
+
+This release does not include the "doc/" and "examples/" directories of
+previous releases. The Reference Manual contains more complete and
+up-to-date information and examples, and I am unable to maintain the doc/
+and examples/ files while also maintaining the Reference Manual. If you
+need those files, they can be accessed with the Sourceforge web CVS
+browser.
+
+
+New Features:
+
+The emphasis for this release is bug fixing, so there are few new features.
+
++ You can now suppress lines or points on individual plots in a linepoints
+  graph. This feature was added because I needed a graph with several
+  linepoints lines, but also with a solid line showing an "80% goal".
+  Use SetPointShapes with the value 'none' in the array to suppress the
+    point markers for that plot (and only draw the line).
+  Use SetLineStyles with the value 'none' in the array to suppress the
+    line for that plot (and only draw the point markers).
+  [Bug # 1594458]
+
++ Bar charts can have data labels above the bar with the value. Turn
+  these on with SetYDataLabelPos('plotin'). This is somewhat experimental,
+  since there isn't a lot of room for labels on top of the bars and you
+  may find the results are not useful.
+
+
+Visible Changes:
+
+Here are the more significant changes in this release. These are changes
+which may affect existing scripts and output from PHPlot.  See the
+ChangeLog file for information about all changes and bug fixes.
+
++ A bug fix on bar chart bar borders results in black borders around the
+  bars if shading is turned off. The border was previously covered up,
+  but was supposed to be there. If you need borderless, unshaded bars,
+  you need to use SetDataBorderColors to make the borders the same colors
+  as the bars. [Bug # 1096197]
+
++ TrueType font pathname handling was fixed. You no longer need to use
+  SetUseTTF(True). You can either use full paths to the font files with
+  SetDefaultTTFont() and SetFont(), or you can call SetTTFPath() to point
+  to a directory of font files, and then use simple font filenames without
+  paths in SetDefaultTTFont() and SetFont().
+  [Bug # 1144644 plus several others]
+
++ There have been several fixes regarding automatically calculated ranges
+  and scales. The result is that you may see less extra space and fewer
+  tick marks in some cases.
+
++ A fix was made to bar and stackedbar graph bar widths in order to get
+  the X axis labels to properly center. As part of the fix, the bar widths
+  now match between the two graph types. (Before this fix, the bars were
+  narrower in bar graphs compared to the same data plotted as a stacked
+  bar.) As a result, bar graph bars will now be drawn with wider bars, and
+  stackedbar graph bars will be narrower. You can adjust this with the new
+  class variable bar_extra_space.     [Bug # 1437912]
+
++ Dot shapes and sizes were off by 1 or 2 slots in the array of shapes or
+  sizes. After the fix, you may get different dot shapes or sizes per
+  plot line. [Bug # 1096194]
+
+
+Testing:
+ 
+Since its output is visual (graphics), and it has so many interconnected
+modes and options, PHPlot is difficult to test. But at least we are now
+trying. I have a collection of PHPlot scripts (currently about 60) and a
+script to run through them. The script automatically checks that:
+    1) Nothing was written to the standard error stream;
+    2) An image file of size greater than 0 was written;
+    3) Neither the test script nor PHPlot did exit(). This catches cases
+       where PHPlot aborts with DrawError().
+
+The automated test is an easy way to check for serious regression, but you
+really need to inspect the output files to validate PHPlot. This takes a
+little time, and it is easy to overlook problems.
+
+The real issue is test coverage. Just as we can be sure that future
+PHPlot releases will pass the test collection, we can also be sure that
+future bug reports will be written against untested cases.
+
+--------------------
+
+2006-11-08 PHPlot on Sourceforge has a new maintainer: lbayuk
+
+--------------------
+
+2004-10-24 Released 5.0rc2
+
+--------------------
+

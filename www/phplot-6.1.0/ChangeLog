@@ -1,0 +1,2311 @@
+This is the Change Log for PHPlot.
+The project home page is http://sourceforge.net/projects/phplot/
+-----------------------------------------------------------------------------
+
+2013-05-11 ===== Released as 6.1.0 =====
+    * phplot.php: Updated version comment and version constant
+    * README.txt: Updated for new release, fix copyright year
+    * NEWS.txt: Add text for new release
+
+2013-04-22
+    * Feature request #52 "Box Plots":
+      + New plot type 'boxes'.
+      + New internal method DrawBoxes() draws a box plot.
+      + Added 4 new tuning variables for box plot feature size tuning.
+
+2013-04-16
+    * Mark as pre-release 6.1.0
+
+    * Feature Request #47 "Extend horizontal plots to more types":
+      Implemented horizontal error plots. (This is the remaining,
+      unimplemented part the feature request.)
+      + Added new datatype 'data-data-yx-error' for horizontal error plots.
+      + Added new internal static array $datatypes to hold information
+        about the available data types.
+      + Added new internal static array $datatypes_map to handle the old
+        data type names, and also a new alias 'data-data-error-yx'.
+      + Rewrote internal DecodeDataType() to use the new array instead
+        of code to set the datatype flags from the data type.
+      + Changed SetDataType() to use the 2 new arrays to map and validate
+        the data type.
+      + Replaced internal function DrawYErrorBar() - draw one error bar
+        for vertical plots - with DrawYErrorBars() and DrawXErrorBars(),
+        each of which draws both parts of an error bar pair.
+      + Changed DrawDots() and DrawLines() to support both vertical and
+        horizontal error plots.
+
+2013-04-03 ===== Released as 6.0.0 =====
+    * README.txt: Fix PHP versions used for testing - should be 5.4.13 on
+      both Linux and XP.
+
+2013-04-02
+    * phplot.php: Fixed 2 comment errors. No code changes.
+    * NEWS.txt: Add 4 missing items: 2 more compatibility issues, and 2
+      changes that were made along side feature requests but were not
+      directly described in those requests.
+
+2013-04-01
+    Preparing for 6.0.0 release on 2013-04-03
+    * phplot.php: Updated version comment and version constants
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2013-03-27
+    * Merged /branches/Rel6 changes back into trunk. Changes recorded below
+      with "(/branches/Rel6)" were made on the branch. Note: Subversion
+      change history for those changes is only available by looking at
+      revision 1558 on the branch, for example: 
+         svn log ^/branches/Rel6/phplot/phplot.php@1558
+      The /branches/Rel6 tree has not been deleted, but may be in the future
+      (as recommended in Subversion documentation).
+
+2013-03-22 (/branches/Rel6)
+    * Changed default minimum number of ticks intervals (min_ticks) for both
+      X and Y from 5 to 8. Considering PHPlot previously used 10 intervals
+      by default, 5 is just too low.
+
+    * Numeric change to CalcStep125() - slight tweak to make the tick steps
+      come out right for exact powers of 2.
+
+2013-03-19 (/branches/Rel6)
+    * Fixed bug #166 "Legend, UsePointShapes, and shape='none'":
+      Added argument to DrawShape() to disallow using 'none' as a shape.  This
+      is used when drawing markers in the legend. DrawShape will draw the
+      'line' shape instead of 'none' in this case.
+
+    * Code cleanup: minor cleanup in CalcMaxDataLabelSize() and
+      CalcMaxTickLabelSize() in selecting 'x' vs 'y' cases.
+    * Code cleanup: minor cleanup in GetDataColor().
+
+2013-03-18 (/branches/Rel6)
+    * Added adjustment factor in CalcStepBinary() to avoid round-off errors
+      for a few values where log2(2^N) < N.
+    * Fixed CalcPlotRange() to prevent the plot range ends from crossing
+      to the wrong side of 0 when there is a tick anchor. Instead, the
+      range will clip to zero, and there won't be a tick mark at that end.
+    * Fixed local variable names in CalcTicks(): data_min/data_max corrected
+      to plot_min/plot_max which is more descriptive.
+
+    * Fixed bug #167 "Fails to find a default font on Ubuntu":
+      Debian changed the install location for the LiberationSans fonts,
+      which also affects Ubuntu and related distributions. Added a new
+      entry to the default font search list in GetDefaultTTFont() so the
+      font will be found at the new location.
+
+2013-03-11 (/branches/Rel6)
+    * Expanded the two modes for calculating a tick increment to three:
+      decimal (1,2,5 * 10^N), date, and binary (2^N).
+      + Changed member array $tickctl[] key 'datetime_interval' (boolean) to
+        'tick_mode' (3 valued string).
+      + New internal function CalcStepBinary() for binary mode.
+      + Changed CalcStep() to select from 3 modes now, using tick_mode.
+      + Changed internal function TuneAutoTicks() and public functions
+        TuneXAutoTicks() and TuneYAutoTicks() parameter 'datetime_interval'
+        to 'tick_mode', checked for validity.
+
+    * Account for tick anchor when adjusting the plot range to start and
+      end at a tick mark. After this change, the range will start and end
+      at a tick mark (when in the default mode) even when a non-zero tick
+      anchor has been set.
+      + Change CalcPlotRange() so that when adjusting the range endpoints
+        to the next tick mark, it uses tick_anchor in the equation. It will
+        not adjust through zero, though. (Example: Range 0-10, tick anchor
+        at 1, resulting range will start at 0, not -9, so the range in this
+        case will not start at a tick mark.)
+
+    * Code cleanup: Avoid use of variable property names such as
+      '$this->{"num_$which" . "_ticks"}' to refer to either num_x_ticks or
+       num_y_ticks, depending on $which. Although these work and are more
+       compact, they make debugging harder (e.g. trying to find everywhere
+       num_x_ticks is used can overlook these).
+
+
+2013-03-01 (/branches/Rel6)
+    * Changes to range and tick calculations, still trying to get more
+      cases to come out right.
+      + Add per-plot-type tuning variable plots[]['adjust_type']. This is
+        to address the issue that some plot types need extra room around
+        the data points, and some do not.
+      + Moved the 6 class variables for tuning range and tick calculations
+        into 2 arrays $rangectl[] and $tickctl[], to make it easier to
+        access especially for new tuning functions.
+      + Added 2 new public functions for tuning plot range:
+        TuneXAutoRange() and TuneYAutoRange().
+        These are implemented by a new internal function TuneAutoRange().
+      + Added 2 new public functions for tuning tick calculations:
+        TuneXAutoTicks() and TuneYAutoTicks().
+        These are implemented by a new internal function TuneAutoTicks().
+      + New internal function GetRangeEndAdjust() which implements the new
+        per-plot-type default for range end adjustment.
+      + Changed usage of internal CalcStep(), which now gets parameters
+        directly from the new class variable arrays.
+      + Rewrote CalcPlotRange() - use the new class variable arrays, and
+        now implements 3 methods for adjusting the range endpoints.
+    Note: This is almost done. There is one known issue with tick anchors.
+
+2013-01-19 (/branches/Rel6)
+    * Minor changes related to range and tick calculations.
+      + Changed FindDataLimits() results for 'implied' range case to include
+        the margins, so CalcRangeInit() does not have to adjust them now.
+      + Simplified usage of internal CalcRangeInit().
+      + Moved debug_scale callbacks from CalcStep() and CalcPlotRange() to
+        caller CalcPlotAreaWorld(), to make it more consistent with 5.8.0.
+
+2013-01-17 (/branches/Rel6)
+    * More changes for feature request #29 "Finer control over plot element
+      colors":
+      + Added new method SetLegendBgColor() to set the legend background
+        color, overriding the image background color.
+      + Added new method SetLegendTextColor() to set the legend text color,
+        overriding the general text color.
+      + Added new class variables for above: legend_bg_color, legend_text_color,
+        ndx_legend_bg_color, ndx_legend_text_color.
+      + Changed SetColorIndexes() to allocate and default the new colors.
+      + Changed DrawLegend() to use the new colors.
+
+2013-01-02 (/branches/Rel6)
+    * Extend copyright years to 2013.
+    * Changed the static plots[] class variable element 'draw_axes' (default
+      if absent is True) to 'suppress_axes' (default if absent is False).
+    * In DrawGraph(), don't use extract() on the whole static plots[] array
+      entry when only 3 variables are used. Access each needed variable.
+
+2012-12-27 (/branches/Rel6)
+    * Added constant PHPlot::version_id which is an integer (vs
+      PHPlot::version which is a string). This is for the test suite so it
+      can check for a minimum version. For PHPlot-6.0.0 the value is 60000.
+
+2012-12-23 (/branches/Rel6)
+    * Feature request #50 "Control legend colorbox borders":
+
+      + Added new method SetLegendColorboxBorders($mode) to control the color
+        and presence of legend color box borders. The default behavior is
+        backward compatible (color box borders use Text color).
+        + Added new class variable: legend_colorbox_borders.
+        + Changed DrawLegend() to add new controls for color box borders.
+
+      + Added new method SetDrawDataBorders() to enable or disable data
+        borders on bars and stackedbars plots. This makes it possible to have
+        the same appearance for the legend color boxes and the data bars, for
+        both shaded and unshaded plots. The default behavior is backward
+        compatible (borders for unshaded, no borders if shaded).
+        + Added new class variable: draw_data_borders
+        + Changed usage of internal GetBarColors() to return both shade and
+          border colors (they were never both needed before).
+        + Change usage of internal DrawBars() to take both shade and border
+          colors, and to control border drawing using the new flag.
+        + Changed 4 bar-chart drawing functions to get both shade and border
+          color and pass both to DrawBar().
+
+    * Feature request #51 "Lines instead of colorboxes in legend":
+
+      Extended the use of SetLegendUseShapes() to apply to more plot types.
+      For lines and squared plots, this will replace the color boxes in the
+      legend with short line segments, with color, style, and width. The new
+      behavior is backward compatible, as SetLegendUseShapes(True) only
+      worked with points and linepoints plots before.
+
+      + Added a new optional key to the internal static $plots array called
+        'legend_alt_marker' to indicate the type of alternate marker that
+        can be used in the legend for this plot type, if any.
+
+      + Changed description of SetLegendUseShapes(), which applies to more
+        plot types now.
+
+      + Changed return variables from internal GetLegendSizeParams() to
+        replace do_colorbox with the more general colorbox_mode. Also, this
+        function implements the 4x scale-up on the color box width for 'line'
+        mode.
+
+      + Changed usage of internal SetDashedStyle() to streamline all the
+        places where line styles are available.
+
+      + Changed functions using styled lines per new SetDashedStyle() usage:
+        Draw[XY]Ticks(), Draw[XY]DataLine(), DrawLines(), DrawSquared().
+
+      + Changed DrawLegend() code for shape vs color box. Don't use
+        point_counts to determine if point shapes should be used - use the
+        new key in $plots[].  Implement line shape markers, including color,
+        width and style.
+
+    * Unrelated fix, found when testing above changes:
+      + Added a work-around in DrawBar() when drawing a bar with height 0.
+        The GD function for drawing unfilled rectangles puts "whiskers" at the
+        ends when height is 0 (see PHP bug #53154), so draw a line instead.
+
+
+2012-09-23 (/branches/Rel6)
+    * Bug #164 (old #3557510) "Calculated defaults applied to subsequent
+      plots":
+      Fixed for X and Y data label formats.
+      + CheckLabels(): Don't copy X or Y entries to XD or YD as defaults,
+        because these will stick for additional plots.
+      + FormatLabel(): Use the X or Y entries when XD or YD are needed
+        but found to be empty.
+
+2012-09-18 (/branches/Rel6)
+    * Feature request #47 "Extend horizontal plots to more types":
+
+      Implemented horizontal form of lines, points, and linepoints plots
+      (using data types data-data-yx and text-data-yx). Merged error plot
+      cases into drawing functions for lines and points.  As a side effect,
+      data value labels now work with error plots.  (Note: Horizontal error
+      plots are not available, but could be added without much work.)
+      + Rewrote internal DrawDots() to draw error bars and horizontal plots
+        too.  Removed internal DrawDotsError() which is now unused.
+      + Rewrite internal DrawLines() to draw error bars and horizontal plots
+        too.  Removed internal DrawLinesError() which is now unused.
+      + Changed usage of internal DrawYErrorBar(): removed error_bar_type
+        argument because this is always the class variable error_bar_shape.
+
+      Implemented Y data label lines, for horizontal plots.
+      + New public function SetDrawYDataLabelLines()
+      + New internal function DrawYDataLine()
+      + Added argument to internal DrawYDataLabel() for plot types that
+        support data label lines, and call DrawYDataLine() if enabled.
+      + Changed DrawDots() and DrawLines() to request data label lines
+        for horizontal plots too.
+
+2012-09-12 (/branches/Rel6)
+    * Feature request #46 "Control pie chart borders":
+      Added a separate color control for pie chart segment borders (vs
+      over-used Grid color), and a flag to enable or disable the borders.
+      Borders now work with shaded pie charts too. The defaults are
+      compatible: no borders for shaded pie charts, borders using grid
+      color for unshaded pie charts.
+      + New function SetPieBorderColor($color)
+      + New function SetDrawPieBorders($draw)
+      + Added separate color index value for pie chart borders, defaulting
+        to the grid color index.
+      + Changed DrawPieChart() to use the new controls, including
+        new ability to have borders with shaded pie charts.
+
+2012-09-10 (/branches/Rel6)
+    * Fixed bug #165 "Missing axis labels on some empty plots":
+      Don't skip the body of DrawLines(), DrawLinesError(), DrawSquared(),
+      or DrawBubbles() when the data column count is zero. Even though there
+      are no points to plot, the outer loops need to run in order to get
+      the X axis data labels drawn.
+
+    Note: Bug and Feature Request numbers above this point refer to the
+    new "Sourceforge2" trackers (low numbers). Below this point, the older
+    tracker numbers (large numbers, unique across all trackers) are used.
+
+2012-08-27 (/branches/Rel6)
+    Ongoing effort to provide 'reset to default' options where missing:
+    * Fixed SetTransparentColor() to accept NULL (or no argument) to mean
+      reset to default - no transparency.
+    * Allow missing argument to SetDefaultTTFont() to mean the same thing
+      as NULL - reset to default TrueType font name.
+
+2012-08-20 (/branches/Rel6)
+    * Declare all class variables at top, initialize where valid, and make
+      most PHPlot class variables 'protected' rather than 'public' visibility.
+      This is a significant change, and undoes the change of 2012-06-14
+      below ("Code cleanup: Avoid static initialization of class member
+      variables that can just as well be unset by default").
+
+      All variables listed in the "Tuning Parameters" section of the manual
+      remain public. In addition, the $img and $fonts member variables
+      remain public, although use in scripts is discouraged. (These are
+      public due to historical use, including use in the PHPlot Test Suite.)
+
+      Compatibility warning: This will break any script that accesses PHPlot
+      member variables other than those listed above as remaining public.
+
+      Code changes were made (mostly undoing changes from 2012-06-14) to
+      account for variable initialization, in many places. For example,
+      we can now test $this->use_ttf directly, rather than using empty() on it.
+      Replace unset() with assignment to NULL where variables have a special
+      state of "unspecified default".
+
+    * Bug #3557510 "Calculated defaults applied to subsequent plots":
+      Use two variables for X Data Label Angle: one for user-set value, and
+      one for the effective value. This fixes a problem with multiple plots,
+      where the X Data Label angle was calculated for the first plot, then
+      applied to subsequent plots as if it was user-set (rather than being
+      recalculated).
+
+    * Renamed variables: x_tick_inc to x_tick_inc_u, and tick_step to
+      x_tick_inc (similar for y_tick) for consistency with above X Data
+      Label Angle variables. The _u suffix is set by the user; the other
+      is the effective value.
+
+    * Changed return from internal GetLegendSizeParams() - removed text_align
+      and colorbox_align from the array. These were the same as the two
+      class variables (with defaults applied), but now the defaults are
+      initialized so there is no need to return them separately.
+
+
+2012-08-14 (/branches/Rel6)
+    * Code cleanup: Use 'self::' to access static properties and constants,
+      rather than the actual class name.
+    * Cleanup SetDefaultFonts(); no functional change.
+
+2012-08-09 (/branches/Rel6)
+    * Fixed problem with grid defaults and multiple plots. The default
+      setting, to draw the grid or not, was being stored back to the class
+      variables, and then this was used for the next plot rather than a new
+      default being calculated. This was wrong when mixing vertical and
+      horizontal plots. Removed internal CalcGridSettings() and added new
+      internal GetGridSetting(), so the default is not stored back into the
+      class variables.
+      Also changed DrawXGrid() and DrawYGrid() to allow NULL or omitted
+      argument to mean restore the default behavior.
+
+2012-08-03 (/branches/Rel6)
+    * Fixed problem with multiple plots and calculated tick increments.
+      The calculated values were stored back into the object, using the same
+      class variables as SetXTickIncrement() and SetYTickIncrement(). With
+      subsequent plots using the same object, the calculated values were seen
+      as user-provided, so new values were not calculated even if the data
+      range changed. This differs from the 5.x behavior and the manual.
+      Now, new class variables x_tick_step y_tick_step are used to store
+      the effective values for the tick increments. If not user-set, the
+      values will be recalculated for each plot.
+
+2012-07-09 (/branches/Rel6)
+    * Feature request #3541471 "Control pie chart start angle":
+      Added SetPieStartAngle() and SetPieDirection(), and changed
+      DrawPieChart() to work with any start angle and either direction.
+
+2012-07-07 (/branches/Rel6)
+    * Changed internal DrawText() and SizeText() to take a text element
+      name (e.g. 'x_title') rather than a font name. This is actually
+      implemented in the lower-level ProcessText().  For compatibility,
+      however, ProcessText() still does accept a font array.  The reason for
+      the change is that when using a drawing annotation callback with a pie
+      chart, this makes it much easier for the callback to draw text using a
+      different font than the one used for the pie chart labels.
+      Changed all internal callers of DrawText() and SizeText() to pass the
+      text element name rather than the $fonts[] array entry.
+
+2012-06-26 (/branches/Rel6)
+    * Fixed conflict between setting number of ticks (SetNum[XY]Ticks) and the
+      new range calculations. (The range was adjusted after calculating the
+      tick increment, but the tick increment depended on the range here. So if
+      you asked for N tick intervals, you probably got N+1.) Moved code to
+      handle pre-specified tick increment or number of ticks from CalcStep()
+      to CalcPlotRange(), and let CalcPlotRange() do special handling for the
+      case with number of ticks set.
+
+2012-06-25 (/branches/Rel6)
+    * Removed TuneAutoRange(). The tuning parameters will be documented as
+      class variables that can be set directly, like other existing variables
+      that tune things. (The problem with TuneAutoRange is that it is a new,
+      3rd way to change plot settings - Set*() functions and directly changing
+      a class variable being the other two. We don't need another interface.)
+
+2012-06-20 (/branches/Rel6)
+    * Fix validation in SetPlotAreaWorld(). Enforce min<max rather than
+      min<=max. Allowing min==max was pointless, as it just produced an
+      error later in CheckPlotRange rather than sooner in SetPlotAreaWorld.
+      (Found while doing documentation updates)
+
+2012-06-14 (/branches/Rel6)
+    * Code cleanup: Avoid static initialization of class member variables
+      that can just as well be unset by default. (Some variables had been
+      removed in prior releases, when they needed dynamic initialization.
+      So the top of the class declaration was no longer useful as
+      documentation of all the class variables.) A comment was added to
+      direct the reader to the Reference Manual, which documents all member
+      class variables. The following class variables no longer get
+      declared and initialized:
+          $bar_extra_space, $bar_width_adjust, $browser_cache,
+          $color_array, $draw_broken_lines, $draw_plot_area_background,
+          $draw_x_data_label_lines, $grid_at_foreground,
+          $group_frac_width, $is_inline, $legend, $output_file, $use_ttf,
+          $x_axis_position, $x_label_angle, $y_axis_position,
+          $y_data_label_angle, $y_label_angle
+
+      Except for the minor differences noted below, there are no changes
+      in behavior (provided one does not access the internal variables):
+      + SetRGBArray(): Report an error if an invalid color map name is used,
+        rather than just using a black and white array with no error reported.
+      + Removed unneeded class variable: $color_array
+      + GetLegendSize() now returns FALSE if there is no legend.
+
+    * Code cleanup: In CalcMargins(), don't make unnecessary local copies
+      of member variables.
+
+2012-06-09 (/branches/Rel6)
+    * Minor fixes for incorrect use of empty(). (Need to remember that
+      empty("0") and empty(0) are true, so this cannot be used on string
+      or number variables that could be "0" or 0.)
+      + Fixed handling of output_file and input_file.
+      + Fixed DrawMessage() - don't use empty() on color index (could be 0).
+      Checked and found no other misuses of empty().
+
+2012-06-06 (/branches/Rel6)
+    * Remove obsolete file: Imagemaps.txt - This feature is now documented
+      in the Reference Manual and no longer 'experimental'.
+      Makefile: Remove Imagemaps.txt from release.
+
+2012-06-01 (/branches/Rel6)
+    More changes for automatic range and tick increment calculations:
+
+    + CalcPlotRange() - renamed "top_adjust" to "end_adjust", since it
+      now potentially applies to both ends of the plot range.
+
+      Added more comments explaining some of the more opaque expressions.
+
+      Redid adjustment of max (for positive) and min (if negative) ends
+      of the plot range.  The plot range will now always begin and end at a
+      tick mark. (PHPlot-5.8.0 does this, but previous changes on this
+      branch made it stop ending on a tick mark.)
+
+      Also, it will now leave more space at the ends away from zero - by
+      default, at least 0.3 * tick increment (since it ends at a tick, you
+      get between 0.3 and 1.3 tick increments of space). This also means
+      data value labels are much less likely to run off the plot area.
+
+    + TuneAutoRange() - renamed "top_adjust" to "end_adjust".
+      Added top comments explaining the parameters in more detail.
+
+    Note: Range ends are much better now, and as a result the PHPlot
+    Test Suite results are greatly improved.
+    There are still issues with tick anchors and date/time ranges.
+
+2012-05-28 (/branches/Rel6)
+    More changes for automatic range and tick increment calculations:
+
+    + Changed internal CalcStep() usage - pass the range, not the min and
+      max.  This is possible because the range checking was moved
+      to CheckPlotRange().
+
+    + New internal CheckPlotRange() makes sure the plot range is positive,
+      after defaults are applied. This expands on code moved from
+      CalcStep().  Called by CalcPlotRange().
+
+    + CalcPlotRange() - renamed "zero affinity" to "zero magnet". Call
+      new CheckPlotRange() to validate and adjust (if necessary) the range.
+
+      Changed the zero magnet algorithm. This is based on some experiments
+      with Libreoffice Calc charting. First, greatly increased the default
+      value for zero_magnet from 0.1 (which gives 11% range expansion) to
+      0.857 (or 6/7, which gives 600% range expansion). This means PHPlot
+      will now expand the range up to 6 times if that would result in
+      including 0 in the range.  Second, the tests were corrected, so now
+      it compares the range with zero versus the original range when
+      deciding whether to extend the range to include zero.
+
+    + TuneAutoRange() - renamed "zero affinity" to "zero magnet".
+
+    + CalcPlotAreaWorld() - pass back any error return from CalcPlotRange().
+
+    Note: There is still work to be done on how it automatically adjusts the
+    end of the range away from zero.  Currently, it tends to leave too
+    little space, which is a problem with data value labels.
+
+
+2012-05-09 (/branches/Rel6)
+    * Incorporate in-progress changes for bug #2919086 "Improve tick
+      interval calculations" and bug #1795969 "Fix automatic Y range
+      calculations". This is planned for PHPlot-6.0.0.
+      NOTE: This is not complete, stable, or  ready for use!
+
+      + Remove initialization of 8 class variables: num_[xy]_ticks,
+        [xy]_tick_inc, skip_*_tick. "Unset" is now the default value.
+
+      + New internal function CalcStep125(), which calculates a tick
+        increment of the form TI = K * 10 ** I, where K = 1, 2, or 5.
+
+      + New internal function CalcStepDateTime(), which calculates a tick
+        increment for date/time scales.
+
+      + New internal function CalcStep(), which calculates a good tick
+        increment given the data range and scale type, among other factors.
+
+      + New internal function CalcRangeInit(), which provides the initial
+        guesses at the plot area range limits.
+
+      + New internal function CalcPlotRange(), which calculates the limits
+        of the plot area range for either X or Y (if not user-provided).
+        It also calculates the tick increment, if necessary.
+
+      + Rewrote internal function CalcPlotAreaWorld(). This now just calls
+        CalcPlotRange() twice - once for X, and once for Y.
+
+      + Changed SetPlotAreaWorld() to validate any provided values, making
+        sure the range is non-negative (which would break the later
+        calculations). It now throws an error on invalid range.
+
+      + Rewrote internal function CalcTicks(). This no longer calculates
+        the tick increment, which was calculated by CalcPlotRange() because
+        the range adjustment is tied to the tick increment now.
+
+      + Remove an unneeded error check in protected function
+        CalcMaxTickLabelSize().
+
+      + Changed public functions SetXTickIncrement() and SetYTickIncrement()
+        to not reset the number of tick marks.  Changed public functions
+        SetNumXTicks() and SetNumYTicks() to not reset the tick increments.
+        These changes are part of fixing an order-dependency problem with
+        these function pairs (different result from calling SetXTickIncrement()
+        then SetNumXTicks(), versus calling them in the other order).
+
+      + New public function TuneAutoRange(). This allows setting (currently)
+        5 parameters for either X or Y axis that are used to adjust the range
+        and tick increment calculations. For example, one parameter sets the
+        minimum number of tick intervals when the tick increment is
+        automatically calculated.
+
+2012-05-07 (/branches/Rel6)
+    * Branch for Release 6.0.0. Mark as unreleased version.
+
+2012-04-06       ===== Released as 5.8.0 =====
+    * Feature request #3515519 "Support object serialize/unserialize":
+      Add __sleep() and __wakeup() magic methods to support serialize
+      and unserialize.
+
+    * phplot.php: Updated version comment and version constant
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2012-03-31
+    * Feature request #3501500 "Looping plot section":
+      Implemented streaming plots (motion-JPEG).
+      + New public functions StartStream(), EndStream(), PrintImageFrame().
+      + New protected function DisableCaching(), code from PrintImage().
+
+2012-03-26
+    * Code cleanup: Don't format tick labels unless they are on.
+      + Pass the actual tick value, not an already-formatted label, from
+        Draw[XY]Ticks() to Draw[XY]Tick(), so they can format it if needed.
+      + Clean up loop in DrawXTicks(), DrawYTicks(). No functional changes.
+
+2012-03-24
+    * Feature request #3488042 "Display only some data value labels":
+      A custom formatting callback function for Data Value Labels will now
+      receive 2 extra arguments: the data array row and column indexes for the
+      point. A custom formatting callback function for Axis Data Labels will
+      now receive 1 extra argument: the data array row index. This allows
+      selective formatting (or skipping) of labels based on their position
+      in the data array. For example, you can skip data value labels
+      for some data sets, and label others.
+      + Changed usage of internal CheckDataValueLabels() to combine 4
+        arguments into an array. This is to correspond to the new usage of
+        DrawDataValueLabel().
+      + In CalcMaxDataLabelSize(), when calculating the maximum axis data
+        label size, pass the row to the formatting function.
+      + Changed internal FormatLabel() to pass any additional arguments to a
+        custom label formatting function.
+      + Changed usage of internal DrawDataValueLabel(). Added arguments for
+        row and column, and combined 6 arguments into an array (because the
+        argument list was already too long). Pass the row and column to
+        FormatLabel() so they are available for custom label formatting.
+      + Changed usage of internal DrawXDataLabel(). The row argument is now
+        required, and used for custom label formatting and data label lines.
+        There is a new argument $do_lines to control drawing of data label
+        lines. (Previously, one argument served both purposes.)
+      + Changed usage of internal DrawYDataLabel(). Add a row argument to
+        pass to FormatLabel() for use in custom label formatting.
+      + Changed all plotting functions that call DrawXDataLabel() or
+        DrawYDataLabel() to include the new row argument.
+      + Changed all functions that call CheckDataValueLabels() and
+        DrawDataValueLabel() per new usage.
+
+2012-03-16
+    * Mark as unreleased version, and change minimum requirement to PHP-5.3.
+      (Since PHP-5.4 is released, PHP-5.2.x will no longer be tested.)
+
+    * Fixed bug #3506408 "Data Label Lines vs new plot types":
+      Bubble plots do work with data label lines. No code change.
+      OHLC plots do not work well with data label lines, so don't draw them.
+
+2012-02-25       ===== Released as 5.7.0 =====
+    * phplot.php: Updated version comment and version constant
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2012-02-19
+    * Feature request #3442041 "Provide data for generating image maps":
+      Note: This is being added as an experimental feature, subject to change
+      or removal. It will not be documented in the PHPlot Reference Manual
+      unless and until this becomes an accepted part of PHPlot.
+
+      + Added a new callback 'data_points', called after each data point is
+        plotted (for supported plot types). It passes information to a handler
+        which can generate an <area> tag in an HTML image map.
+
+      + Changed usage of internal function DrawDot(). Added 2 arguments, $row
+        and $column, to support the data_points callback. However, the
+        existing $record arg was the same as $column, so it was removed.
+            Old usage: DrawDot($x_word, $y_world, $record, $color)
+            Now usage: DrawDot($row, $col, $x_world, $y_world, $color)
+
+      + Change usage of internal function DrawBar(). Added 2 arguments, $row
+        and $column, to support the data_points callback.
+            Old usage: DrawBar($x1, $y1, $x2, $y2, ...)
+            New usage: DrawBar($row, $col, $x1, $y1, $x2, $y2, ...)
+
+      + Changed the logic in DrawPieChart() to accommodate the data_points
+        callback, which needs to happen on the last (or only) pass.
+
+      + Changed internal functions DrawDot(), DrawBar(), DrawPieChart(),
+        DrawBubbles(), and DrawOHLC() to call the data_points callback,
+        sending it the coordinates it needs for each plotted point or shape.
+
+    * New file: Imagemaps.txt - documentation for new feature
+
+2012-02-18
+    * Fixed bug #3486834 "Wrong color for data value labels":
+      Use 'text' color, not 'title' color, for data value labels.
+      Compatibility warning: This will change the appearance of plots that
+      use SetTitleColor or SetTextColor and data value labels.
+
+      Also includes changes for feature request #3077554 "Finer control
+      over plot element colors":
+      Add new controls to independently set label color types.
+
+      + New public function: SetDataLabelColor()
+      + New public function: SetDataValueLabelColor()
+      + New public function: SetTickLabelColor()
+      + New public function: SetPieLabelColor()
+      + Add default_color_index argument to internal GetColorIndex()
+      + Add code to SetColorIndexes() to default the tick label color
+        and data label color to the text color, default the data value
+        label color to the data label color, and default the pie label
+        color to the grid color. This is backwards-compatible, except that
+        the data value labels used to use the title color.
+      + Use separate color index values for ticks, axis data labels, 
+        data value labels, and pie labels. Use title color only for titles.
+
+2012-02-17
+    * Fixed bug #3488064 "Pie label failures in locales with comma decimal":
+      This contains 2 work-arounds which together should avoid the problem.
+      + Changed internal method number_format() to restore the previous
+        locale settings that were in place after it gets the decimal and
+        thousands separators. Also, use LC_NUMERIC rather than LC_ALL to
+        limit the scope of locale loading.
+      + Changed internal method FormatPieLabel() to avoid a number-to-string
+        conversion if there is a single label source (the most common case).
+        This conversion was resulting in use of a locale-specific decimal
+        point, which PHP then fails to convert back to a number when it
+        tries to format it.
+
+2012-02-05
+    * Feature request #3481195 "Custom message image":
+      + New public function DrawMessage() to create an image with a message.
+      + Changed protected function PrintError() to now use DrawMessage().
+      + New protected function SetBgColorIndexes(), split off from
+        SetColorIndexes() so that DrawMessage() can set just the colors it
+        needs.
+      + Added optional argument $overwrite to protected functions
+        DrawBackground() and DrawImageBorder(), to force drawing even if it
+        seems it was already done. This is needed for DrawMessage().
+      + Moved protected function DrawError() to deprecated section.
+
+2012-01-16
+    * Added missing 'return TRUE' in SetFailureImage() and 2 internal
+      functions. Return values are unused, but fixed to be more consistent.
+
+    * Fixed bug #3396931 "Top dropshadow of stacked bars is always the
+      same color":
+      This is a follow-on to the fix for bug #3296884, which resulted in
+      drawing (not skipping) segments of size 0 in stacked bar plots. A
+      side-effect of the change was that a color 'cap' was drawn at the top of
+      a stack if the last value in the row was 0.  This was considered to be
+      the correct behavior at the time. But based on this new bug report, and
+      looking at how LibreOffice handles this case, it was decided to change
+      the way PHPlot handles this.
+
+      + Changed DrawStackedBars() and DrawHorizStackedBars() to ignore
+        segments that do not increase the stack's current size. (This is
+        not the same as ignoring segments of size 0, because a row can have
+        both positive and negative values. Also, if the axis was moved, an
+        initial 0 value will be drawn from the axis to 0.)
+
+        Resulting changes:
+        + A trailing zero value in a row will no longer result in a color cap
+          on shaded bar charts (that is, the top color of the stack would
+          differ from the last segment color).
+        + A row with all zero values will not be drawn at all (if the axis
+          remains at 0).
+
+2012-01-15
+    * Mark as unreleased version.
+    * Code cleanup: combine an assign and a test when processing data array
+      (11 cases), and remove 5 cases of casting the data value to double.
+      (The cast was in 4 of the plot drawing functions and FindDataLimits.
+      The other plot drawing functions did not do this, so it was removed for
+      consistency. Removal should have no impact, although there is an odd
+      case (hex value in a string) where the explicit cast would not work,
+      but the new code without casting will work.)
+
+2012-01-02       ===== Released as 5.6.0 =====
+    * phplot.php: Updated version comment and version constant
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release; new file.
+    * NEWS_part1.txt: Moved text for prior releases from NEWS.txt
+
+2012-01-01
+    * Extend copyright years to 2012.
+
+2011-12-30
+    * Fixed bug #3403297 "Pie chart sizing and label issues":
+      Most of the pie chart label and sizing code has been rewritten.
+      (Note: This documents changes in the code.  See other documentation
+      for a higher-level view and user-visible changes.)
+
+      Compatibility warning: This changes the appearance of pie charts.
+      See the NEWS file with the release for more information.
+
+    + $label_format['p'] is now used for pie label formatting
+    + Removed $plot_border_type static initialization
+    + New public SetPieLabelType() controls pie label source and formatting
+    + $label_scale_position = 0 or False now means no pie labels
+    + New internal GetTextAlignment() moves code from CheckDataValueLabels()
+    + New public SetPieAutoSize() to control use of labels in sizing pies
+    + CalcMargins() changed to not calculate unused title sizes for pies
+    + Added arg to  internal DrawPlotBorder(), now handles pie charts too
+    + New internal FormatPieLabel() to format pie chart labels
+    + New internal DrawPieLabel() to draw each pie chart label
+    + New internal CheckPieLabels() to apply dynamic default values
+    + Rewrote much of internal DrawPieChart() to:
+    ++ Can suppress labels using SetLabelScalePosition
+    ++ Fix use of label_scale_position, remove 1.2x factor
+    ++ Use new $pie_diam_factor controls aspect ratio of shaded pies
+    ++ Fix pie size calculation, use actual aspect ratio
+    ++ Pre-calculate label strings to get their sizes, if needed
+    ++ Use new $pie_full_size from SetPieAutoSize() to control autosizing
+    ++ Pie size accounts for largest label (if labels are outside the pie) 
+    ++ Leave safe_margin between labels and pie/plot area edges
+    + Changed DrawGraph() to:
+    ++ Skip irrelevant data and scale calculations for pie charts
+    ++ Call DrawPlotBorder() even for pie charts
+
+2011-12-10
+    * Comment typo fixes (found during work on upcoming change).
+
+2011-11-13
+    * Moved duplicated code from the 2 constructors into a new function.
+
+2011-07-30 (lbayuk)     ===== Released as 5.5.0 =====
+    * phplot.php: Updated version comment and version constant
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2011-07-28
+    * Fixed problem found in testing with bubbles plot: data array
+      with no Y,Z values at all got undefined property warnings.
+
+    * Feature request #3352301 "Bubble plots":
+      + Added new data type 'data-data-xyz', which includes a Z value
+        for each Y.
+      + Extended CheckDataArray(), DecodeDataType() and
+        FindDataLimits() to understand new data type.
+      + Added new plot type 'bubbles' for bubble plots, using data
+        type 'data-data-xyz'. The Z value controls the bubble size.
+      + New internal function DrawBubbles() to draw bubble plot.
+      + New tunable parameters bubbles_min_size and bubbles_max_size.
+
+2011-07-25
+    * Feature request #3374495 "Data URL encoding":
+      + New function EncodeImage() returns the plot image as a string,
+        with 3 available encodings: raw, base64, and dataurl. The dataurl
+        encoding implements RFC2397 embedding of image data in a URL,
+        and allows a single PHP script to produce an HTML page with the
+        plot image embedded within.
+      + New internal function GetImageType() for code shared between
+        PrintImage() and EncodeImage().
+      + New function SetFailureImage() disables the normal behavior
+        where PHPlot produces an image containing an error message in
+        case of a fatal error. Suppressing this is necessary when using
+        the new EncodeImage(), to avoid unexpected image data on stdout.
+      + New member variable suppress_error_image, set by
+        SetFailureImage(), checked by PrintError() to not make an image.
+
+2011-07-22
+    Preparing for move from CVS to Subversion.
+    * Makefile: Remove 'tag' target. This was unused (and CVS-specific).
+    * phplot.php: Remove reference to CVS in comment and version const.
+
+2011-07-21
+    * Fixed bug #3370548 "Reverse legend line order for stackedbars":
+      New function SetLegendReverse(True) to draw lines in the legend
+      in order from the bottom up, rather than top down. This is
+      mostly intended for stackedbars and stackedarea plots.
+
+2011-07-04
+    * Code cleanup: Removed extra loop variable $cnt from plot drawing
+      functions, where it was either unused or redundant.
+
+2011-06-12
+    * Fixed bug 3312064 "PHP errors with invalid data arrays":
+      PHPlot now checks the data array more carefully, to reject invalid
+      arrays and prevent PHP warning or notice errors with bad data arrays.
+      + SetDataValues() checks the data array argument to make sure it uses
+        0-based, sequential integer indexes, and that each element is an array.
+      + CheckDataArray() (called early by DrawGraph()) uses the data type for
+        more specific checking.  It makes sure each row has the right number of
+        entries. (E.g. text-data >=1, data-data >=2, data-data-error =2+3N.)
+      + DrawArea() ('area' and 'stackedarea' plots) returns without drawing
+        anything if there are < 2 rows, to avoid a PHP warning from
+        ImageFilledPolygon(). The 2-row minimum requirement is now documented.
+      + DrawLines(), DrawLinesError(), and DrawSquared() return without
+        drawing anything if there are no data values at all, to avoid a PHP
+        warning from array_fill().
+      + DrawOHLC() ('ohlc', 'candlesticks', and 'candlesticks2' plots) now
+        checks early that there are 4 data columns, and fails if not.  This
+        is to avoid a PHP warning when assigning line thicknesses.
+
+2011-06-05
+    * Fixed bug 3312134 "Allow missing points in OHLC plots":
+      You can now skip points in the 3 OHLC plot types by using empty strings
+      ('') for the 4 values in the row. All rows must still have 4 values, but
+      if any is non-numeric the row will be skipped.
+
+2011-05-27 (lbayuk)     ===== Released as 5.4.0 =====
+    * phplot.php: Updated version comment and version constant
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2011-05-25
+    * Added class constant PHPlot::version with the PHPlot release version.
+
+2011-05-23
+    * Fix bug 3296884 "Undefined variable with stackedbars":
+      This is part 2 of the fix. (Part 1 fixed the undefined variable error
+      when the first stack was all zeros, but did not fix related problems.)
+
+      Changed DrawStackedBars() and DrawHorizStackedBars():
+      + Do not ignore zero values. A leading zero value is significant if the
+        axis is moved in the direction opposite to the stack direction.  Now
+        PHPlot will draw a bar segment from the axis to zero in this case.
+        Also a trailing zero value will produce a color cap on shaded bars.
+      + Determine each stack direction before drawing it.  This is necessary
+        to be able to draw the leading 0 segment case correctly.
+
+2011-05-21
+    * Feature request #3303654 "Force tick mark at specific value":
+      + New functions SetXTickAnchor and SetYTickAnchor.
+      + CalcTicks() adjusts the starting tick point so that an anchor
+        point, if set, will coincide with a tick mark (or would, if the
+        data range were extended).
+
+2011-05-15
+    * Feature request #3291155 "More flexible legend positioning":
+      You can now position the legend by specifying that any point on the
+      legend box be placed at any point on the image, plot area, or relative
+      to the main title.  You can get the legend box size from PHPlot, and
+      use it (for example) to adjust the plot area margins.
+      + Added new public function SetLegendPosition() which provides
+        much move flexible control over the legend position.
+      + Re-implemented SetLegendPixels() and SetLegendWorld() by
+        just having them call SetLegendPosition().
+      + Added new public function GetLegendSize() which returns the
+        height and width of the legend box.
+      + New internal function GetLegendSizeParams() with code split
+        off from DrawLegend() and used by GetLegendSize() too.
+      + New internal function GetLegendPosition() calculates the legend
+        position. This implements all the new position modes.
+      + Removed internal class variables legend_x_pos, legend_y_pos,
+        and legend_xy_world. Replaced with an array: legend_pos, which
+        holds the legend position parameters set by SetLegendPosition().
+
+2011-05-08
+    * Merged 5.3.2 release changes. (The two entries below this, 2011-05-01
+      and 2011-04-26, came before 5.3.2, but 5.3.2 was a single patch applied
+      against 5.3.1 and not against current CVS.)
+
+2011-05-01
+    * Feature request #3292825 "Use point shape markers in legend box":
+      + Implement optional use of point shapes instead of color boxes in the
+        legend, for use with points and linepoints plots.
+      + Add new function SetLegendUseShapes() to enable use of point shapes
+        in the legend.
+      + New internal class variable legend_use_shapes.
+      + Removed optional never-used 3rd argument to SetLegendStyle().
+      + Add new internal function DrawShape() which now implements DrawDot()
+        but takes device coordinates, for use by DrawLegend().
+
+    * Fix bug #3294604 "Center vertical alignment for legend text":
+      + Legend text lines are now vertically centered on the middle of
+        the color box or marker shape, rather than using bottom alignment.
+
+2011-04-26
+    * Moved legend functions together into one section, and removed
+      commented-out public variable declarations for legend variables.
+      No functionality changes are introduced.
+      (This is being done in anticipation of two upcoming changes to
+      legend code. I dislike moving functions around because it makes it
+      hard to use 'diff' to check changes, but it is helpful to have
+      functions that work together placed together in the script. As
+      a compromise, do the re-arrangement in its own change.)
+
+2011-05-06 (lbayuk)     ===== Released as 5.3.2 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+   Note: This release was built off of the CVS branch tagged
+   rel5_3_1_patches, not HEAD.
+
+2011-05-06
+    * For bug 3296884 "Undefined variable with stackedbars":
+      A temporary fix was made against phplot-5.3.1 to avoid an undefined
+      variable error when the first stack in a stackedbars plot has all zero
+      values. The fix avoids the error message, and the plots are OK in most
+      cases. There are still issues with label position, and if the axis
+      is moved. These will be addressed in a future fix.
+
+2011-01-15 (lbayuk)     ===== Released as 5.3.1 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2011-01-09
+    * Fixed some style / indent errors, and 1 redundant test.
+
+2011-01-03
+    * For bug 3143586 "Multiple plots per image - fixes & docs":
+      Make sure there is a documented way to reset PHPlot feature
+      settings, especially those for which the default settings result
+      in automatic calculated values. Where possible, calling a Set*()
+      function with no arguments should reset the feature to defaults.
+
+      + Changed SetLegendPixels() arguments to be optional with default
+        NULL meaning reset to automatic positioning.
+
+      + Fixed SetXAxisPosition() and SetYAxisPosition() to accept empty
+        string '' to mean reset to default automatic positioning.
+        Make arguments optional, defaulting to empty string.
+
+      + Changed SetNumXTicks() and SetNumYTicks() arguments to be
+        optional with default empty string '' meaning reset to
+        of automatic calculation.
+
+    * Changed SetPointShapes() to use CheckOptionArray(). This
+      simplifies the function with no change in operation.
+
+    * Extend copyright years to 2011.
+
+2010-12-30
+    * Fix for bug 3147397 "Data colors missing with multiple plots":
+      + Do not truncate the data_colors and related arrays, so the full
+        set of colors will be available for subsequent plots on the image.
+        (Color indexes are still allocated in the image only as needed.)
+      + New internal functions GetColorIndexArray() and
+        GetDarkColorIndexArray(), replacing previous use of array_map().
+      + Removed internal function truncate_array() - no longer used.
+      + Changed SetColorIndexes(), NeedDataDarkColors(), and
+        NeedErrorBarColors() to only allocate the color indexes that will
+        be needed (instead of allocating all colors in the truncated color
+        descriptor arrays).
+
+2010-12-28
+    * Instead of throwing an error, SetLegend(NULL) now clears the legend
+      array. This can be useful with multiple plots on an image. Before
+      this change, only SetLegend(array()) did that (possibly by accident).
+
+2010-12-27
+    * Do not have SetDefaultStyles() call deprecated SetLabelColor().
+
+    * Fixes for bug 3143586 "Multiple plots per image - fixes & docs":
+      + Fix DrawLegend so it doesn't forget that the legend position
+        was specified in world coordinates. This fixes the legend
+        position for plots after the first.
+      + Don't draw the image border more than once (although this would
+        probably have no impact on the resulting image). This parallels
+        the behavior for the main plot title and the image background.
+        Replaced member variables background_done and title_done with a new
+        member array done[] which will track when these elements were done.
+
+2010-12-06
+    * Fix comments above CalcPlotAreaWorld(). Deleted incorrect information
+      from before data-data-yx existed, and before DecodeDataType rewrite.
+
+2010-12-04 (lbayuk)     ===== Released as 5.3.0 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2010-12-03
+    * Feature request 3127005 "Ability to suppress X/Y axis lines":
+      Added SetDrawXAxis() and SetDrawYAxis() to control flags which
+      will suppress drawing the X or Y axis lines. (These lines were
+      probably the only PHPlot elements that could not be turned off.)
+      Changed DrawXAxis() and DrawYAxis() to conditionally draw the
+      axis lines.
+
+2010-11-28
+    * Feature request 3117873 "Data value labels in more plot types":
+      Implemented Data Value Labels for plot types points, lines,
+      linepoints, and squared.  Added 2 class variables which can be
+      set to control the distance and angle of the labels from points.
+      New internal function CheckDataValueLabels() calculates position
+      and text alignment for these labels.
+
+    * Updated comments for Set[XY]DataLabelPos to match the text in
+      the manual, which was rewritten to clarify label types.
+
+2010-11-23
+    * Code cleanup. Moved some functions around to group "plot drawing
+      helpers" separately from "plot drawing". No changes to operation.
+
+2010-11-21
+    * Feature request 3111166 "Control legend colorbox width":
+      Added a class variable legend_colorbox_width which can be changed
+      to make the colorboxes wider or narrower.
+
+2010-11-16
+    * Feature request 3093483 "Investing support chart types":
+      Added 3 new plot types: Basic OHLC (Open/High/Low/Close), Candlesticks,
+      and Filled Candlesticks. Implemented with one new function to handle the
+      3 new plot types: ohlc, candlesticks, and candlesticks2.
+
+2010-11-11
+    * Moved information about plot types into a new static member array
+      plots[]. (This is an internal change with no impact on usage, but will
+      make it easier to add new plot types.) SetPlotType() no longer needs a
+      list of plot types to check, FindDataLimits() does not need to check for
+      specific plot types to to process the data array, and DrawGraph() uses
+      data from the array rather than knowing about all the plot types.
+
+2010-10-31
+    * Changed internal CalcBarWidths() to take two arguments which indicate
+      how it should calculate bar widths, rather than having it check the
+      plot_type directly. (Taken from another, experimental change. This
+      minimizes places where plot_type is directly used.)
+
+2010-10-03 (lbayuk)     ===== Released as 5.2.0 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+    * Makefile: Removed HorizontalBars.txt from release. This is now all
+          documented in the reference manual.
+
+2010-10-01
+    * Rewrite color handling. Default and specified colors are now validated,
+      converted to RGBA arrays, and saved. The colors indexes are not
+      allocated until graph drawing time. Unneeded colors are not allocated.
+
+      Fix bug 3045131 "SetTransparentColor problems": Transparency setup is
+      deferred to graph drawing time, after most other colors are allocated.
+      Fixes SetTransparentColor order dependency, and works with data colors.
+
+      Fix bug 3049726 "Optimize color allocation": Colors allocation is
+      deferred to graph drawing time, and colors for most elements are only
+      allocated if needed. In particular, the data colors and dark colors,
+      which used 32 slots, now only get defined as needed.
+
+      Feature request (partial) 3077554 "Finer control over plot element
+      colors": The colors of the main, X, and Y titles can now be controlled
+      separately.
+
+      Change details:
+      New internal functions:
+          GetColorIndex(), GetDarkColorIndex()
+              Allocate pre-parsed colors for elements.
+          SetColorIndexes()
+              Does the deferred color allocation and defaults.
+          NeedDataDarkColors(), NeedErrorBarColors()
+              Called by graph drawing functions if those colors are needed.
+          GetDataColor(), GetDataErrorColors(), GetBarColors()
+              Custom or standard data color assignment for most plot types.
+          truncate_array()
+             Shorten an array. Used to limit data color allocation.
+
+      Removed internal functions:
+          SetIndexColor(), SetIndexDarkColor()
+              Unneeded. Color handling is now in two separate phases.
+
+      Removed internal member variable:
+          data_colors_alpha
+              PHPlot no longer calls SetDataColors before plotting, so this
+              variable is not needed to preserve the default alpha.
+
+      New internal member variables:
+          transparent_color
+              Saves color value from SetTransparentColor. For bug 3045131.
+          x_title_color, y_title_color, ndx_x_title_color, ndx_y_title_color
+              For title colors. DrawXTitle and DrawYTitle use them now.
+
+      Changed internal member variables:
+          i_border, plot_bg_color, bg_color, label_color, text_color, etc.
+              All variables for colors now always hold a parsed 4-component
+              (RGBA) color specification as an array, and are no longer
+              statically initialized to a color name.
+
+      New public functions:
+          SetXTitleColor(), SetYTitleColor()
+              These can be used to make the 3 titles have different colors.
+
+2010-09-26
+    * Don't let SetXDataLabelPos() accept 'xaxis' or 'all' as valid.
+      Don't let SetXTickLabelPos(), SetYTickLabelPos() accept 'all' as valid.
+      These were never implemented and never documented.
+
+
+    * Feature request #3073679 "Stacked bar plots with negative values":
+      Allow stacked bar plots (vertical and horizontal) to work with negative
+      values.  Changed FindDataLimits() to not take abs() values for
+      stackedbar when calculating the data range.  Changed DrawStackedBars()
+      and DrawHorizStackedBars() to handle negative values, including proper
+      label positions.  The first non-zero value in a row sets the direction
+      of the bar. Mixing positive and negative values within a row works but
+      the results are not useful.
+
+    * New internal DrawBar() moves common code from 4 bars and stackedbars
+      drawing functions and makes it easier to deal with shading vs bar
+      direction.
+
+2010-09-24
+    * Fix bug 3074402 "Fix Y axis default for horizontal plots":
+      Make the default axis positions symmetrical for vertical plots
+      (X and Y) and horizontal plots (Y and X). This fixes the problem
+      with horizontal bar/thinbarline plots that have negative data,
+      where the Y axis stayed on the left and the bars went rightward.
+
+2010-09-01
+    * Fix bug 3056991 "Internal methods should be 'protected'":
+      Changed CheckDataArray(), number_format(), FindDataLimits(), and
+      DrawBackground() to be 'protected'. The test suite no longer calls
+      these directly. For SetIndexColor(), SetRGBColor(), DrawText(),
+      SizeText(), xtr(), and ytr(), left these as public with a comment
+      indicating they should be treated as protected.
+
+    * Fix bug 3057000 "Review 'deprecated' methods":
+      + Changed deprecated method SetNewPlotAreaPixels() to just call
+      SetPlotAreaPixels(). It was suspicious as coded, and was found
+      to be equivalent to SetPlotAreaPixels().
+      +  Removed SetColor(), which didn't do anything. It was calling
+      SetRGBColor and discarding the result. After reviewing the
+      history of this in all CVS versions, it does not seem to have
+      ever been coded correctly, so there is no harm in removing it.
+      + All other deprecated methods seem OK and are left as is.
+
+2010-08-30 (lbayuk)     ===== Released as 5.1.3 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2010-08-27
+    * Fix bug 3051832 "Let PHP/GD find the font file":
+      Instead of checking for file existence, PHPlot now uses a non-drawing GD
+      operation to validate a TrueType font in SetFontTTF(). This allows GD to
+      use its internal search path, making it likely that fonts can be found
+      without needing a platform-dependent path in your script.  Full paths
+      will still work, so there is no compatibility issue.
+
+    * Fix bug 3051906 "Better choice for default TT font":
+      Removed "benjamingothic.ttf" as the default TT font setting. This has
+      not been included in PHPlot since 2004. Changed SetFontTTF() to call
+      new GetDefaultFontTTF(), which will try a number of sans-serif font
+      names the first time it needs a default TT font. Considering the above
+      fix to finding fonts, this has a good chance of finding a working
+      font. It is known to work on Windows and some Linux distributions.
+
+2010-08-19
+    * Makefile: Removed phplot_data.php from list of files to release.
+      Reference bug report 3048267. This file has not been maintained or
+      tested, and has bugs.  It will remain in CVS, but not be included
+      in PHPlot releases.
+
+2010-08-17
+    * Change new DrawLinePoints(). It does not have to check and
+      handle error bar plots, as DrawDots and DrawLines will do that.
+
+2010-08-16
+    * Rewrote DecodeDataType(). Previous implementation was hard to
+      extend and inefficient. Now it uses new class variables (not a
+      returned array) and is only called once, by DrawGraph. Changed all
+      users of data_type to use the new variables.
+
+      In CheckDataArray(), calculate data_columns properly for
+      text-data-single data type (pie chart) too. Simplify DrawPie
+      to use this, and merge 2 of the 3 cases.
+
+      Have a single function handle each plot type, so it can properly
+      check the data type and report a correct error message showing
+      all supported types. For example, DrawBars is now the entry point
+      for both bars and horizontal bars; DrawGraph does not directly
+      call DrawHorizBars. Similar for DrawStackedBars and
+      DrawHorizStackedBars.  Lines, Points, and Linepoints also now
+      have a single function each, dispatching to others as needed.
+      (These changes were split off from an upcoming, larger change.)
+
+2010-08-14
+    * Fixes to SetDataValues: need to clear out the 2 arrays before
+      setting values in a loop, else if the function is used more than
+      once then old values will remain.
+      Move records_per_group calculation outside the loop.
+      (These were split off from upcoming, larger changes.)
+
+    * Part 4 of horizontal plots: implement horizontal thinbarline plots.
+      Added new data type 'data-data-yx' (label, Y, X1, X2, ...).
+      DrawThinBarLines() now draws either vertical or horizontal plots, and
+      supports data types text-data, data-data, text-data-yx, data-data-yx.
+
+      Fixed DecodeDataType() to handle text-data-single too, for completeness.
+
+    * Fix for over-padding style and color arrays. These were padded to
+      records_per_group, but that is the maximum data array row size.
+      The number of actual data sets is less, and depends on the data type.
+      Calculate the correct number as data_columns at the top of DrawGraph,
+      and use that to pad the arrays. Also moved early error checking in
+      DrawGraph() into new CheckDataArray().
+
+2010-08-09
+    * Code cleanup. This is a large change to unify the comment and
+      coding stye used in PHPlot. The PEAR style guide is being used
+      as a reference, but PHPlot will never be 100% compliant.
+      This patch introduces no functional changes at all.
+        - Limit line length to 110.
+        - Remove obsolete, partially implemented Doxygen comments.
+        - Add descriptive comment above functions where missing.
+        - Use consistent comment markers and control structure spacing.
+        - Remove ctags-confusing end of function comments.
+        - Rewrote a few if/else blocks for cleaner logic.
+        - Re-order some functions for consistency (X, then Y).
+
+2010-08-04
+    * Implemented horizontal stacked bar plots:
+      Use the same data type introduced for horizontal bars, 'text-data-yx',
+      and the same plot type 'stackedbars', to make a horizontal stacked bar
+      plot.  Data value labels, both at the ends of the bars and within the
+      bars ('plotstack' labels) are available with horizontal stacked bars.
+
+    * Internal function DrawDataLabel() is replaced by DrawDataValueLabel(),
+      with different usage. The new function can also check to see if a label
+      fits in the allocated space.
+
+    * Fixed the text size check in stacked bar plots for data value labels
+      within the bars. The check only worked correctly for 0 degree labels. It
+      now works with any text angle. It suppresses the label if it is too high
+      (for vertical stacked bar plots) or too wide (for horizontal stacked bar
+      plots) to fit in the bar segment to which it belongs. Note that it only
+      checks in the bar direction. If the text is too wide (for vertical bars),
+      or too high (for horizontal bars), it will still be plotted, but will
+      cross the sides of the bar.
+
+2010-07-28
+    * Allow callbacks to return a value (to support new data_color callback).
+    * Feature request 3034164 "Extended control of data colors":
+      Define new callback 'data_color' for picking the data color.
+      Changed internal plot drawing functions DrawDots, DrawLines, DrawSquared,
+      DrawBars, DrawStackedBars, DrawDotsError, DrawThinBarLines,
+      DrawLinesError, and DrawHorizBars to use the data_color callback
+      (if defined) to select the data colors.
+    * SetRGBArray code cleanup (no functional changes).
+
+2010-07-27
+    * Fixes for error bars:
+      Code cleanup in DrawYErrorBar(), with no functional change.
+      Suppress duplicate drawing of error bars with 'linepoints' error plots.
+      This was already fixed for data labels. Now error bars will only be
+      drawn by the 'points' part, not the 'lines' part. There should be no
+      visible changes to plots. (This is needed for a future change).
+
+2010-07-26
+    * Horizontal bar charts (still an experimental feature) can now have data
+      value labels.
+    * HorizontalBars.txt: Fix incorrect description of bar direction. Add
+      text explaining the new data value labels.
+
+2010-06-29 (lbayuk)     ===== Released as 5.1.2 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2010-06-26
+   * Feature request 2885930 "Horizontal Bars":
+     Horizontal bar charts are implemented, as an experimental feature.
+     A new data type 'text-data-yx' was added, which works with
+     'bars' plot type to produce a horizontal bar chart from a data
+     array with X values for each Y value. Changes were made to
+     FindDataLimits, CalcMargins, CalcPlotAreaWorld, CalcBarWidths,
+     and CalcMaxDataLabelSize to handle the new data type. Other
+     changes were made to handle label position defaults and grid
+     defaults. New drawing functions were added for horizontal bars.
+
+   * HorizontalBars.txt: new documentation file for experimental feature.
+   * Makefile: List new documentation file.
+
+2010-06-25
+   * Each plot-type drawing function now checks that it is getting a data
+     type that it knows how to handle. A new internal function unifies the
+     checking and error message. (This is associated with an upcoming,
+     bigger change.)
+
+     Compatibility: If you were using an invalid data type for a plot type
+     whose function did not check, will now get an error.
+     
+   * Removed some dubious code from DrawLines() and DrawSquared() and
+     rewrote comments there. The code initialized lastx[0] and lasty[0],
+     but lasty was mapped using the X (rather than Y) function.  This was
+     obviously wrong, but closer inspection showed that the values were
+     never, used so the code was removed.
+
+2010-06-13
+   * Truecolor.txt: removed
+   * Makefile, README.txt: Removed reference to Truecolor.txt. Full
+     documentation for truecolor images is now in the Reference Manual.
+     
+2010-06-02
+   * Fix bug 3010116 "Bad rendering of title in multi-plot image
+     when using TTF":
+     Make sure the main title is drawn only once. (If drawn multiple
+     times with TrueType font text, the anti-aliasing effects result
+     in poor quality text.)
+
+2010-05-31
+   * Improvements to truecolor support (from feature request 2947679):
+     Truecolor support is now better integrated. The derived class only
+     has the constructor now, and the base class itself provides the alpha
+     color component support through the internal functions SetIndexColor(),
+     SetIndexDarkColor(), and SetRGBColor(). This means alpha channel
+     works with palette images too (in so far as GD supports this).
+
+   * Truecolor.txt: Updated per changes to truecolor support.
+
+   * Image tiling with mode 'scale' in tile_img(), used with image and
+     plot area backgrounds, now uses imagecopyresampled() rather than
+     imagecopyresized(). They are the same with palette images, but the
+     resampled copy gets better results with truecolor images.
+
+2010-05-29
+    * Feature request 3002606 "Add to plot and image border options":
+        Added options 'right', 'top', and 'bottom' to SetPlotBorderType()
+      (existing options are 'left', 'sides', 'none', and 'full'). This
+      now also accepts an array of the above options, giving complete
+      control over which sides to draw.
+        Added option 'solid' to SetImageBorderType() to use the actual
+      color set with SetImageBorderColor(), rather than the darker
+      shade as type 'plain' does (for some reason).
+        New function SetImageBorderWidth() sets the width of the image
+      border. The image border width is now accounted for in margin
+      calculations, although existing plots will not change.
+
+2010-04-04 (lbayuk)     ===== Released as 5.1.1 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2010-04-01
+    * Remove & from argument in SetDataValues(). The data array is not
+      modified and does not need to be passed by reference. (There is
+      no performance advantage, either.)
+
+2010-03-29
+    * Feature request 2947679 "Support for alpha blending/Truecolor":
+      Implemented truecolor image support with a new class
+      PHPlot_truecolor, extended color specifications to allow
+      specification of an alpha value, and added a new optional parameter
+      to SetDataColors for a default alpha value for all data colors.
+      This feature is *EXPERIMENTAL* (see next item).
+
+    * Truecolor.txt: New file, documentation for the new truecolor capability.
+      (The Truecolor feature is experimental, which means it is subject to
+      change in incompatible ways and the documentation has not yet been
+      incorporated into the PHPlot Reference Manual.)
+
+    * Makefile: Include new documentation file in release.
+
+2010-03-26
+    Fixed bug 2976735 "Improvements and fixes for 'area' plots":
+    Rewrote DrawArea() function which handles 'area' plot.
+        Part 1: This is related to feature request 2947679, Truecolor support
+    with transparency. The area plot function was filling each area from the X
+    axis up to the Y value, resulting in area overlaps. This wasn't a problem
+    with opaque colors, but with transparency, the overlapping areas resulted
+    in changed colors. The rewritten function fills the area between each line
+    instead of from each line down to the X axis. Plots with opaque colors
+    will not change.
+        Part 2: Area plots now work when the X axis is moved up with
+    SetXAxisPosition().
+        Part 3: Fixed FindDataLimits() for area (and stackedbars too) to
+    take absolute values of Y values. The drawing function was doing this,
+    but not FindDataLimits, resulting in incorrect limits if any Y<0.
+        Part 4: The rewritten DrawArea() also handles a new plot type
+    'stackedarea'.  This is an area plot where the Y values are stacked,
+    similar to 'stackedbars'.
+        Note: As part of the changes, it is now an error to try an area plot
+    with an unequal number of Y points for each X.
+
+2010-03-23
+    * Feature request 2973995 "Add y-Data to Stackedbars":
+      Implemented Y Data Labels for Stacked Bar charts (stackedbars).
+      The labels are enabled with SetYDataLabelPos, same as with bar charts.
+      There are two types of labels: above the stack with the total, and
+      within the bars at each segment. 'plotin' turns on the upper ones, and
+      'plotstack' turns both on.
+
+    * Other changes:
+      + Removed unimplemented second argument to SetYDataLabelPos.
+      + Fixed questionable logic in SetYDataLabelPos when given an argument
+        that belongs with SetYTickLabelPos.
+      + Fix comments at top of plot-type Draw functions.
+
+    * Fix for bug 2974639 "Stacked bars plot breaks with X axis != 0":
+      Stacked bar plots with non-zero X axis position no longer break apart
+      into segments with gaps. The bars are drawn up from the X axis, and
+      any segments or partial segments below the X axis are not drawn.
+
+2010-03-22
+    * Change related to feature request 2947679 - Fix 'dot' point shape:
+      Use imagefilledellipse(), not imagefilledarc(), when drawing the 'dot'
+      point shape. The fix was needed for future support of truecolor images
+      with transparency, but filled dots from imagefilledellipse() look
+      better (rounder) with regular images and opaque colors.
+      Credit to mvaldez for identifying the problem and providing the fix.
+
+2010-03-04
+    * Fix for bug 2963757 "point_counts undefined error in 5.1.0":
+      Fixed CheckPointParams so it sets point_counts even when the point shape
+      and point size arrays are already the same size and do not need padding.
+
+2010-01-26
+    * Fix for bug 2938219 "Bars go in wrong direction":
+      Fixed CalcAxisPositions() to be consistent in positioning the X axis.
+      When all Y values are <0 and the Y=0 line is not part of the plot range,
+      PHPlot will now default the X axis to the top of the plot, not the
+      bottom.  This fixes the problem with bars to negative Y values being
+      drawn downward if Y=0 is visible, but upward if Y=0 is not visible.
+      This also affects thinbarline plots.
+      Credit to lauryn1298 for finding the bug.
+
+2009-12-24 (lbayuk)     ===== Released as 5.1.0 =====
+
+2009-12-18
+    * Change for bug 1795971 "Fix default data colors":
+      The default Data Color and Error Bar Color arrays now have 16
+      different colors, no duplicates, and nothing so light that it
+      is invisible.
+      Using '' or False as the argument to SetDataColors, SetErrorBarColors,
+      and SetDataBorderColors now re-initializes the map to the defaults.
+      This was previously undocumented, and in some cases set the map to
+      something different from the default.
+
+2009-12-15
+    * Cleanup: Remove DrawAxisLegend() - empty function marked TODO,
+      not really clear what it was meant to do.
+
+2009-12-14
+    * Fix for bug 2914403 "Pie + X/Y titles: Undefined property error":
+      In DrawGraph(), don't try to draw X or Y titles for pie charts.
+
+    * Feature request 2899921: "allow different format for data and tick
+      labels"; Bug 2906436: "Fixes for X Tick Labels vs X Data Labels",
+      and partial implementation of changes from user 'adoll' regarding
+      tick vs data labels:
+
+      New public functions:
+      + SetXDataLabelType() : Sets formatting for X Data Labels
+      + SetYDataLabelType() : Sets formatting for Y Data Labels (bar charts)
+      + SetXDataLabelAngle() : Sets text angle for X Data Labels
+      + SetYDataLabelAngle() : Sets text angle for Y Data Label (bar charts)
+      The defaults for these are set up to be fully backward compatible
+      with previous releases of PHPlot (except see the next item).
+
+      Re-used function name SetXDataLabelAngle():
+      + This has been deprecated and undocumented since 2003-12-07, and
+        used to just call SetXLabelAngle(). For new behavior, see above.
+
+      Changes to public functions:
+      + SetXDataLabelPos() and SetXTickLabelPos() no longer cancel each
+        other out (set the other control variable to 'none'). Instead,
+        they are both considered before plot drawing.
+
+      Changes to internal functions:
+      + DrawDataLabel() now uses the font, angle, and color arguments as
+        provided, and does not substitute values if they are empty.
+      + SetLabelType() now takes mode='xd' and 'yd' for X Data and Y Data
+        label formatting; 'x' and 'y' are for tick labels only now.
+      + Functions that work on Data labels now call FormatLabel() with the
+        new mode parameter value 'xd' or 'yd, and use the new
+        data_label_angle variables.
+      + New CheckLabels(), used by DrawGraph to process label parameters.
+      + CalcMargins() - Rewritten to handle changes to Tick and Data labels.
+
+      Changes to internal class variables:
+      + New: x_data_label_angle, y_data_label_angle
+      + Do not initialize x_tick_label_pos or x_data_label_pos, so that
+        CheckLabels() can tell if they were set or not and apply defaults.
+      + Initialize y_data_label_pos to 'none', not 'plotleft'.
+      + Add 2 more indexes to label_format[] array: 'xd' and 'yd'.
+
+    * Cleanup:
+      + Delete unused internal class variable: draw_y_data_label_lines
+      + Delete unused function SetDrawYDataLabelLines()
+
+2009-12-07
+    * Fix bug 1795972 "Fix default point shapes":
+      +  Added 10 new point shapes to the existing 10 shapes.
+      +  Changed the default point shape from all 'diamond' to a
+         selection of up to 10 different shapes.
+      +  Fixed bug in the code that tried to set the point shapes
+         and sizes arrays to be the same size. This was not working,
+         resulting in unexpected point sizes.
+      +  Changed default point size to 6 for all shapes. It was trying
+         to be "5, 5, 3" but due to several bugs this was not working.
+      +  Do not adjust shape sizes to even numbers (was done for only two
+         shapes).  Instead, consistently truncate size/2 when needed.
+      NOTE: These may change the look of 'points' and 'linepoints' plots.
+
+    * Changed startup initialization code:
+      +  SetDefaultStyles() was doing some odd things using a variable
+         called "session_set", with comments referring to non-existent
+         session support code. This has been removed. There should be
+         no visible changes from this. PHPlot does not use PHP sessions.
+
+2009-12-04
+    * Fix for bug 2908256, errors in pie charts with bad data array:
+      (From a Drupal contrib module report by thekevinday.)
+      With pie charts only, a data array with no valid Y values resulted
+      in PHP error messages. All other plot types handle this by producing
+      an image without a graph.
+      Fixed DrawPieChart to behave this way too. If there are no valid Y
+      values, or if the sum of all Y values is 0, do not error out, but
+      don't draw a pie chart either.
+      Also, pie charts now ignore non-numeric Y values, like other plot types.
+
+2009-11-20 (lbayuk)
+    * Fix for bug 2900914 "Problem with display of 0 on Y axis":
+      Changed how X and Y values are stepped by tick intervals, to avoid
+      cumulative round-off error. This fixes the problem when Y crosses 0 with
+      a tick step such as 0.1 resulting in a long label for a very small but
+      non-zero number. Fixed DrawXTicks, DrawYTicks, and CalcMaxTickLabelSize.
+      (Originally reported by cncnet)
+
+2009-11-19 (lbayuk)
+    * Improve support for using callbacks to annotate plots:
+      Added new callback 'draw_all', called after all drawing.
+      Supply plot_area[] as argument to some drawing callbacks.
+      Added new method GetDeviceXY() to translate from world coordinates.
+      Allow NULL or '' for $font in DrawText() internal method, meaning to
+          use the generic font. If callbacks want to use DrawText, this
+          avoids them having to reference the internal fonts[] array.
+
+2009-11-01 (lbayuk)
+    * Address bug report 2886365 "Declare all functions and variables in
+      PHP5 style"
+      PHP5 deprecates the use of 'var' to declare a class member variable.
+      All initialized class member variables are now declared 'public'.
+      (It was tempting to make most or all 'protected' or 'private', but
+      that would likely break too much, including the PHPlot Test Suite.)
+
+      Most class member functions which are meant for internal use only are
+      now declared 'protected', so they cannot be called from scripts
+      (except in child classes). (Note PHP5 does not deprecate the use of
+      just 'function' to mean public, so public functions were not changed.)
+      Internal functions are those documented in the manual under Developer's
+      Guide, Internal Functions. If your code breaks because you are using
+      a method which is now protected, please post the details on the help
+      forum.
+
+      Some member variables which were set in the constructor are now
+      initialized with the class instead. (No impact.)
+
+      Removed commented-out, FIXME-noted code for interim labels.
+
+2009-10-12 (lbayuk)
+    * Bug report 2839547, allow SetImageBorderType('none') to reset the image
+      border type.  Also checked for other cases where there is no reset;
+      found one that exists (Set[XY]LabelType) but needs to be documented.
+
+2009-07-09 (lbayuk)
+    * Added a hook $plot->locale_override which can be set to True to prevent
+      PHPlot from loading locale settings from the environment with
+      setlocale(LC_ALL, ''). This is necessary for testing PHPlot on Windows,
+      where you cannot force a locale with an environment variable. It might
+      also be needed for people who want PHPlot's locale to differ from the
+      web server's locale.
+
+2009-06-12 (lbayuk)     ===== Released as 5.0.7 =====
+
+2009-06-11 (lbayuk)
+    * Change PHPlot license to LGPL, per Afan.
+        phplot.php, phplot_data.php - Change license notice.
+        rgb.inc.php - Change top comments and remove bottom marker.
+        COPYING - new file, text of LGPL.
+        LICENSE.* - removed files - old licenses.
+        Makefile - change list of distributed files.
+
+    * Fix for bug 2803900: SetRGBArray('large') does not work. The include
+      file defined a different array name than the main script expected.
+      (This bug seems to have happened over 8 years ago.) Fixed the array
+      names to match. Also removed the ./ prefix from the included filename
+      so it will be found if on the include path but not in the script
+      directory.  Also added error check if the rgb.inc.php include file
+      is needed and not found.
+
+2009-05-25 (lbayuk)
+    * Added new feature to allow partial margin or plot area specification.
+      You can omit, or specify as NULL, any of the 4 arguments to
+      SetMarginsPixels() or SetPlotAreaPixels(), and this means PHPlot
+      should use the automatically calculated margin on that side.
+      Credit to adoll for this feature.
+
+2009-05-17 (lbayuk)
+    * Fix for bug 2791502 "Error plots treat missing Y values as 0":
+      Plots with data type data-data-error now support missing Y values,
+      instead of treating them as 0. This works with lines, points,
+      and linepoints plot types, and also honors SetDrawBrokenLines.
+
+
+    * Fix for bug 2792860 "Wrong DataLabelLines with missing Y":
+      Do not draw X Data Label Lines at points with missing Y values.
+
+
+    * Fix for bug 2786350 "Missing Y data results in bad auto-range":
+      Rewrote FindDataLimits to ignore missing Y values, rather than
+      treating them as if 0, for calculating range.
+      Bug report and analysis by mrten.
+
+    * Fix for bug 2786354 "Incorrect auto-range for data-data-error":
+      For data-data-error data type, apply the positive and negative error
+      amounts for each Y point to that point only, rather than applying the
+      largest errors to the overall minimum and maximum Y value for the row.
+
+    Note: The two fixes above can change existing plots which rely on
+      automatic Y range calculation. The first fix affects plots with
+      missing Y values and min(Y)>0. The second fix can affect plots using
+      data-data-error data type and different error values for different
+      points. In both cases the new Y range can be smaller than before.
+
+2009-01-20 (lbayuk)     ===== Released as 5.0.6 =====
+
+2009-01-18 (lbayuk)
+    * Fix for bug 1891636 "Misaligned TTF X Labels":
+	  PHPlot was using the actual bounding box of each line of text
+      to allocate space and set the text positioning, but was ignoring the
+      fact that the text baseline is not the same as the bottom of the
+      bounding box. This resulted in uneven alignment of the X labels if
+      they had different heights (for example, month names Jul and Aug).
+
+      PHPlot now calculates the size of text for allocation (SizeText) using
+      the descenders on the last line, and calculates the size for drawing
+      (DrawText) only to the baseline. PHPlot also now uses a fixed line
+      spacing for each line of text in a font, rather than the actual text
+      height. This allows separately drawn multi-line labels to align.
+
+    * Changes to line spacing when using multi-line labels:
+	  PHPlot was using the class variable line_spacing to mean the
+      number of pixels between lines of multi-line labels. This made the
+      spacing too small for larger fonts, and it was not possible to adjust
+      line spacing for different types of text.
+
+	  PHPlot now interprets line_spacing as the number of pixels only
+      for GD text, and as a scale factor for the font's built-in line
+      spacing for TrueType text. In addition, a new optional argument is
+      added to SetFont, SetFontGD, and SetFontTTF to set a line spacing
+      specific to that type of text.
+
+    * Changes had to be made to the legend drawing code to accommodate the
+      changes to font handling.
+
+      Note: The line spacing change results in slightly looser spacing on
+      multi-line TrueType text labels, and slightly taller legends, compared
+      to version 5.0.5.
+
+2008-09-21 (lbayuk)
+    * Interim fix for bug 1932571 "Data-Data Plot fails with same X values".
+      PHPlot will no longer hang when the range of X values is 0 (that is, when
+      x_min == x_max). It will arbitrarily set an X range of 1, so the
+      calculated tick step is not 0. This is a temporary fix. Work on a smarter
+      X and Y range calculation is in progress, which will handle edge cases
+      like this better, but it isn't ready and this bug has been open too long.
+      Credit to andyl for finding the bug.
+
+    * Fix font path: Use DIRECTORY_SEPARATOR constant not '/'.
+
+    Extended the label formatting capabilities, adding 'printf' and 'custom'
+    types, added a prefix and suffix for 'data' type, and allow format controls
+    to be included in SetXLabelType and SetYLabelType.
+
+    External changes:
+    * Added 'printf' label type. The caller specifies the print format as the
+      2nd argument to SetXLabelType or SetYLabelType (default '%e').
+             $plot->SetXLabelType('printf', '%5.2f');
+
+    * Added 'custom' label type. The caller supplies a callback (typically a
+      function name) and optional pass-through argument as the 2nd and 3rd
+      arguments to Set[XY]LabelType.  The function is called as $f($value, $arg)
+      to return the formatted $value.
+             $plot->SetXLabelType('custom', 'myfunction', $arg_value);
+
+    * In addition to Set[XY]TimeFormat, the format string for type 'time' can
+      now be set as the 2nd argument to Set[XY]LabelType.
+             $plot->SetXLabelType('time', '%H:%M');
+
+    * In addition to SetPrecision[XY], the precision for type 'data' can now be
+      set as the 2nd argument to Set[XY]LabelType. A 3rd and 4th argument
+      can supply a prefix and suffix for 'data' formatting. (All optional)
+             $plot->SetXLabelType('data', 2, '$', 'US');
+
+    Internal changes:
+    * Class variables x_precision, y_precision, x_label_type, y_label_type,
+      x_time_format, and y_time_format have been removed.
+
+    * New class array variable label_format[], with elements 'x' and 'y' which
+      are arrays for label formatting. Elements in the sub-arrays are not
+      initialized until needed.
+
+    * New function SetLabelType, which implements Set[XY]LabelType now.
+
+    * FormatLabel() was rewritten to support the new label formatting.
+
+    Compatibility:
+    * Any code that directly references class variables related to label
+      formatting will break, except for data_units_text. Use the documented
+      function methods instead.  Setting data_units_text as a suffix is
+      deprecated but still works.
+
+    * The 'data' type precision for 'Y' is still used for pie chart labels.
+
+2008-07-12 (lbayuk)
+    Multiple comment spelling error fixes. No functional changes.
+
+2008-07-06 (lbayuk)
+    Changes to allow mixing GD fixed-font text and TrueType Font (TTF) text
+    on the same plot.
+    (This change came from work done trying to fix TTF text positioning,
+    where it looks like additional information needs to be stored for TrueType
+    fonts. The old font data structure was awkward to extend, and allowing
+    mixed GD/TTF text was on the to-do list anyway.)
+
+    External changes:
+    * SetFontGD(), SetFontTTF(): New functions to set a font, with type.
+    * SetFont(): Now calls SetFontGD or SetFontTTF depending on $use_ttf.
+    These changes should be fully compatible with existing programs.
+
+    Internal changes:
+    * Updated comments explaining SetUseTTF() now sets the default type
+      (not the only type) of text used.
+    * Put all the font data into a class array. (Replaces $this->generic_font
+      with $this->fonts['generic'], etc.)
+    * ProcessTextGD() and ProcessTextTTF() now take the font array as one
+      argument, rather than separate arguments for font path and size.
+
+2008-01-13 (lbayuk)     ===== Released as 5.0.5 =====
+    * phplot.php: Updated version
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+    * Makefile: Remove 'Callbacks' from release target, as this material is
+      now in the reference manual.
+
+2008-01-07 (lbayuk)
+    Copyright updated to 2008 and PHP4 no longer listed as supported.
+
+    Major rewrite of the margin calculation functions to address multiple
+    problems.  Fixes for bugs 1856207 "Margin error with 'xaxis'/'yaxis'
+    position, 1843012 "Make margins, drawing consistent", and 945439
+    "x_tick_label_height not set correctly".
+
+    Note: These changes are inter-dependent and cannot be split up.
+
+    * Defer all calculations to DrawGraph time, to eliminate order dependencies.
+      These functions now just store their arguments in the object, and all
+      calculations happen later:
+    + SetXAxisPosition, SetYAxisPosition
+    + SetMarginsPixels
+    + SetPlotAreaPixels (Stores margins, not area, now.)
+    + SetPlotAreaWorld
+    + SetXTickIncrement, SetYTickIncrement
+
+    * A new callback 'debug_scale' was added to trace the margin and scale
+      calculations.
+
+    * CalcMargins was rewritten. Actual sizes of tick and data labels are now
+      used, rather than guesses like "use size of biggest Y value". A minimum
+      value (3 x safe_margin, or 15 pixels) applies to each margin.
+
+    * FindDataLimits no longer needs to find the longest data label, since
+      CalcMargins now does that more precisely.
+
+    * DrawXTitle and DrawYTitle now use position offsets calculated by
+      CalcMargins. Note: These titles are now offset from the plot area,
+      not the image area. The titles will move if you had set the plot area
+      or margins.
+
+    * DrawYTick, DrawXTick rewritten to use pre-calculated offsets, and common
+      code moved to new CalcTicks().
+
+    * DrawXDataLabel: Use pre-calculated offsets for text.
+
+    * DrawGraph: Rewrote top section (before drawing anything) to do the
+      calculations in the proper order, unconditionally.
+
+    * Class variables removed:
+      x_label_inc, y_label_inc, _x_label_cnt : These were never used.
+      title_height, x_title_height, y_title_width : Now internal to CalcMargins.
+      data_limits_done : No more need to remember if FindDataLimits called.
+
+    * New class variables added:
+      plot_margins_set : Keeps track of user-set plot area or automatic.
+      x_label_top_offset, x_label_bot_offset, x_offset_axis_offset,
+          y_label_left_offset, y_label_right_offset, y_label_axis_offset,
+          x_title_top_offset, x_title_bot_offset,
+          y_title_left_offset, y_title_left_offset : Label offsets
+      
+    * New internal functions:
+      CalcPlotAreaPixels : Deferred calculations taken out of SetPlotAreaPixels
+        and SetMarginsPixels.
+      CalcPlotAreaWorld : Deferred calculations taken out of SetPlotAreaWorld.
+      CalcAxisPositions : Calculate axis positions, moved from CalcTranslation.
+      CalcTicks : Calculate X and Y tick interval. This still uses the
+        same simple method (basically range/10), but now we could drop in a new
+        algorithm much more easily. This is now also used by CalcMargins.
+        Code taken out of DrawXTicks and DrawYTicks.
+      CalcMaxTickLabelSize : So CalcMargins can use the exact tick label sizes.
+      CalcMaxDataLabelSize : So CalcMargins can use the exact data label sizes.
+      DrawXTick : Code split out from DrawXTicks for symmetry with DrawYTick.
+
+
+2007-12-13 (lbayuk)
+    * Changed ProcessTextTTF() so SizeText() will return integers. It rounds
+      the calculated values up, so the bounding box really contains the text.
+      This also prevents unneeded float calculations in derived values.
+
+2007-12-09 (lbayuk)
+    Major rewrite of the text drawing functions to address multiple problems.
+    Note: These changes are inter-dependent and cannot be split up.
+
+    * Fixed bug 1813070 "Bad position for multi-line TrueType text":
+      TTF text is now drawn line-by-line, not as a block, for proper
+      alignment and positioning.
+
+    * Fixed bug 1813071 "Wrong title height for multi-line TTF text":
+      Corrected miscalculation of overall height of multi-line TTF titles.
+      This bug resulted in over-sized margins.
+      The height is now computed line-by-line, including the inter-line spacing.
+
+    * Fixed bug 1813474 "DrawText alignment arguments wrong":
+      Corrected meaning of 'top' vs 'bottom' alignment. PHPlot now follows
+      the usual conventions: 'top' alignment means top of text to reference.
+      DrawText default for vertical alignment is still 'bottom', but the
+      meaning was corrected.  All callers of DrawText were fixed.
+
+    * Fixed bug 1816844 "Fix order dependency for setting titles":
+      Defer processing titles strings until DrawGraph(), so there is no
+      more order dependency (no need to set font before setting title strings).
+
+    * Fixed bug 1819668 "Horiz. align multi-line text: GD vs TTF":
+      The new text routines draw TTF text line-by-line and correctly do
+      right-, center-, and left- alignment of each line within a text block.
+
+    * Fixed bug 1826513 "FIXME in DrawLegend: Max label length":
+      Use actual width of widest legend line to calculate legend box size.
+
+    * Partial fix for bug 945439 "x_tick_label_height not set correctly":
+      In FindDataLimits(), save the longest data label, not just its length,
+      and use the actual rendered size of that string in CalcMargins() for
+      the margin calculations.
+      Also take into account which of the tick or data labels are visible.
+      This is not a complete fix, but is a significant improvement.
+
+    The following changes were made related to the above fixes:
+
+    + Replaced internal function TTFBBoxSize(), which didn't work right, with
+      SizeText(). It returns the orthogonal bounding box of a block of text,
+      and works with both GD and TTF text.
+
+    + DrawText() and SizeText() call a single function ProcessText(), which is
+      the only place GD text and TTF text are distinguished. (So eventually
+      we will be able to mix GD and TTF text on a plot.)
+
+    + New internal functions ProcessTextGD() and ProcessTextTTF() draw (or size)
+      GD and TTF text respectively. These are only called by ProcessText().
+      These are re-implementations which properly position and align text.
+
+    + Removed class variables title_angle, x_title_angle, and y_title_angle. The
+      titles only work at their fixed angles anyway (0, 0, and 90 respectively).
+
+    + Line spacing set with SetLineSpacing() now affects TTF text as well as
+      GD text. Previously, it only affected GD text. The default line spacing
+      happens to be usable for TTF text.
+
+    + Added new callback hook 'debug_textbox' for developing, testing, and
+      documenting. It provides access to the text area bounding box.
+
+    + Removed unneeded class variables x_tick_label_height, y_tick_label_width,
+      x_tot_margin, y_tot_margin.
+
+2007-11-25
+    * Improve error handling:
+      Internal functions PrintError() and DrawError() are now the same. Both
+      will draw the error message into the image and output it, and then
+      trigger a user-level error. If no error handler has been set, it will
+      exit, as before. But now the error message should also get logged, or
+      written to the standard error stream, depending on the SAPI in use.
+      You can now establish an error handler to catch most PHPlot errors and
+      do some cleanup before exit.
+
+      This fix also covers bug #1823774 "Default Font Path and Error Message
+      Output".
+
+      Fixed the return value of most PHPlot functions, to return False on
+      error, else True. Since uncaught errors are fatal anyway, this only
+      affects code with an error handler that returns, which is not
+      recommended and unsupported at this time. These changes are for
+      possible future error handling options.
+
+2007-11-22
+    * Fix bug 1836528 "Insufficient checking of parameter values":
+      Rewrote CheckOption to correctly validate option choices.
+      (It previously accepted substrings and other incorrect values.)
+      PHPlot methods that use CheckOption now must be called with valid option
+      values. Empty strings are also no longer accepted.
+
+2007-11-17 (lbayuk)
+    * Change to callbacks to support extra arguments.
+      The PHPlot class can now pass extra arguments to a callback function.
+      Callback functions now take the following form:
+          my_callback($img, $passthru_arg, ...)
+      Where '...' is zero or more additional arguments supplied by PHPlot to
+      the callback. Each implemented callback reason will define any
+      additional arguments it uses. The existing defined callbacks have not
+      changed and do not currently pass any extra arguments.
+
+2007-11-10 (lbayuk)
+    * Fix bug 1827263 "Spoiled up pie-chart if $val is close to zero":
+      Skip pie slices which would result in an integer angle of zero
+      degrees, because the GD arc filling function will draw a complete
+      circle for that case.
+      Credit to Viacheslav <webdeveloper.ua at gmail.com> for finding this.
+
+    * Removed 8 of the functions (class methods) marked 'deprecated'.  Only
+      deprecated functions which seem to have been for internal use have
+      been removed. Even old scripts shouldn't be using them, and they are
+      becoming a problem to maintain.
+      Removed: SetImageArea() DrawDotSeries() DrawLineSeries() CalcXHeights()
+      CalcYWidths() DrawLabels() InitImage() DrawDashedLine().
+
+2007-10-20 (lbayuk)     ===== Released as 5.0.4 =====
+    * phplot.php: Updated copyright, version, and authors comments at top.
+    * README.txt: Updated for new release
+    * NEWS.txt: Add text for new release
+
+2007-10-18 (lbayuk)
+    * Add callbacks - experimental feature:
+      New functions SetCallback, GetCallback, RemoveCallback.
+      New internal function DoCallback.
+      Added callback hooks to DrawGraph.
+
+      Re-arranged code in DrawGraph to bring pie chart drawing into the main
+      switch on plot type, rather than a special case in its own block. This
+      makes it easier to follow and easier to add callback hooks.
+
+    * Callbacks: New file, documentation for the new callbacks feature.
+      (This won't be in the manual while it is an experimental feature.)
+
+2007-10-15 (lbayuk)
+    * Fix for bug 1813021: Miss-positioned right-justified vertical GD text.
+      Fixed DrawText() to correctly position 90 degree right-justified text
+      drawn in a fixed GD font. This could be seen with 90 degree Y tick
+      labels. (Found by accident while working on TrueType text problems.)
+      Also some code cleanup in DrawText: use elseif where appropriate.
+
+2007-10-09 (lbayuk)
+    * Code cleanup: Simplify SetIndexColor() and SetIndexDarkColor().
+      There is no need to first try ImageColorExact, then ImageColorResolve
+      if that fails. ImageColorResolve does all that for us.
+
+      Code cleanup: Rewrite SetRGBColor(). It now detects if an unrecognized
+      color name or color value form is used, and draws an error message.
+      Before this it would get a PHP index error and "headers already sent"
+      condition.
+
+    * Code cleanup: Remove duplicated code for loading image files.
+      Added new class-private function GetImage() which loads an image based
+      on the image type, and also returns the image size. This replaces
+      duplicated code in tile_img() and SetInputFile().
+      Also fixed comment at top of SetImageFile which said it was deprecated.
+      It isn't - it is used by the constructor. Moved the function out of the
+      'deprecated' area up to below where it is used.
+
+    * Code cleanup: PHPlot should not define or affect anything outside its
+      own class.
+      - Removed the check for __FUNCTION__ (PHP 4.3 and up). This is obsolete.
+      - Do not set error_reporting to E_ALL. Although it is recommended that
+      scripts do this, it is not the place of loaded classes to do it.
+      - Remove unused global constant TOTY.
+      - Removed constants MAXY and MINY. Global constants like this are bad.
+      These were used as magic index values into data[] to hold min and max Y
+      values for the row. Instead, put them in separate arrays which are
+      named data_miny[] and data_maxy[]. (This seems to be only used by the
+      data line drawing function.)
+
+      Comment cleanup: Remove one commented-out partial function DrawPlotLabel,
+      and fix another commented-out code fragment in DrawYErrorBar. Both of
+      these had unmatched braces in them which caused a balance-braces check
+      to fail.
+
+    * Code cleanup, array padding: Get rid of functions outside the class
+      and remove the interim fix for PHP 5 (which changed the behavior of
+      array_merge).  Rewrote external function array_pad_array() as a new
+      class function pad_array().  It does not need access to the class,
+      but I don't think PHPlot should add to the global namespace more
+      than necessary.  The third argument (array to use for padding) was
+      never used, so it was removed. It always pads the array with itself.
+      It now only works on 'usual integer indexed' arrays (0-based
+      sequential integer index). The was previously required but
+      undocumented for some of the arrays (like line_widths); now it is
+      required for all style arrays and will be documented. Now we can pad
+      the array to the required length, not just N times its previous
+      length, and we don't need array_merge.  Deleted external function
+      array_merge_php4() as it is no longer used.
+
+      Deleted PHP end marker ?>. You don't need this and it can cause
+      problems with extra whitespace in your output.
+
+2007-09-24 (lbayuk)
+    * Code cleanup: Fix ternary operator misuse.  This doesn't change
+      behavior, but it was annoying me so I fixed it.
+      Replaced all cases of code like this: $a = ($a > $b) ? $b : $a
+      With just: if ($a > $b) $a = $b
+
+    * Fix Makefile 'release' target to set owner/group when creating
+      the tar file. This avoids having to run it as root, but it needs
+      GNU tar to work.
+
+2007-09-08 (lbayuk)
+    * Fix for bug 1790441: Removed the PHPlot quasi-destructor function and
+      the register_shutdown_function() call which arranged for it to be used.
+      This was preventing release of memory when a PHPlot object was unset,
+      because the registered shutdown function held a reference to it.
+      So rather than improving memory use, it had the opposite effect.
+        Note: It is no longer necessary or recommended to use reference
+        assignment ($plot =& new PHPlot) for PHPlot object creation.
+      Thanks to annajilly for the thorough analysis, bug report, and fix.
+
+2007-09-05 (lbayuk)
+    * Rewrote FormatLabel() to ignore blank label values. Adapted from a
+      patch and feature request submitted by Gerhard Reithofer (exgerhardr).
+      Blank labels used to produce an error if the LabelType was set to
+      'time', and zero if set to 'data'. Now they are just ignored. This
+      provides a simple way to have labels only at selected intervals when
+      using time or data formats. For example, you can have a date/time
+      label at every 10th data point by setting the labels for the other 9
+      to be empty strings. Also: Removed $which_pos values 'plotx' and
+      'ploty'.  These were unused by PHPlot and this is an internal-only
+      function so there is no compatibility issue. Removed error checking on
+      $which_pos for the same reason; the error message used an undefined
+      variable anyway so it wouldn't have worked.
+
+2007-08-26 (lbayuk)
+    * Allow SetLegendStyle colorbox_align argument to be 'none', to suppress
+      the colorboxes in the legend.
+
+      Fix comment on $legend_text_align: empty means right, not left.
+
+      Rewrote DrawLegend layout code to make it easier to understand. The
+      result should be within 1 or 2 pixels of the previous size and position.
+
+    * Fixes for bug 1779115: SetLegendWorld() fails on undefined vars
+      Store the given coordinates and remember that they need to be converted
+      from world to pixel coordinates, but defer trying to actually convert
+      them until it is time to draw the legend. This way, there are no
+      problems with the scale having to being set up first (which is nearly
+      impossible to do).  Made the following changes:
+
+        Changed legend class variables to be uninitialized, and unset (rather
+        than empty string) means use the defaults. Added a new variable:
+        $legend_xy_world. If it is set, (legend_x_pos, legend_y_pos) need to
+        be converted to pixel coords. If it is unset, they are already pixel
+        coords (or undefined, meaning defaults).
+
+        Changed usage of internal function DrawLegend(): removed all arguments.
+        X and Y were always the class variables anyway, and now it needs to
+        also use the new flag to tell it if X and Y are world or pixel coords.
+        The third argument was unused.
+
+        Removed third, unused, default NULL argument from SetLegendPixels and
+        SetLegendWorld.
+ 
+        Changes to DrawLegend to convert x, y coords to pixel coordinates
+        if they came from SetLegendWorld. Also account for new usage of
+        the class variables: Test for unset to mean use default.
+
+2007-08-04 (lbayuk)
+    * New feature: control legend text and color box alignment.
+      Adds a new function SetLegendStyle to adjust the alignment of the
+      text and the color boxes inside the legend.
+      Based on part of bug 1208054, contributed by David Hernández Sanz.
+
+2006-12-02 (lbayuk)
+    * Fixes for bug 1605555: Y Data Labels use wrong font and not formatted.
+      Use y_label_font (not x_label_font) for Y Data Labels.
+      Use the formatted value for the label, not the original text.
+      (This applies to bar charts only, with the new Y data labels.)
+
+    * One fix for bug 1208054: Localization of number format.
+      If number formatting is enabled with 'data' format type, PHPlot previously
+      used dot for decimal point and comma for thousands separator, and there
+      was no way to change it.
+      
+      This fix adds a new function:
+               SetNumberFormat($decimal_point, $thousands_separator)
+      to set the separators.  In addition, if that function is not used,
+      PHPlot will now try to use locale-dependent separators. If locale
+      information is not available, it will fall back to the old defaults
+      of dot and comma.
+
+      Note: This change may have some negative effects. 1) If your locale is
+      "C" or "Posix", you might not get a thousands separator now by default.
+      You should be using a more specific locale. 2) If your PHP script is
+      forcing a specific locale with setlocale(), PHPlot will probably undo
+      that because it uses setlocale(LC_ALL, '') to import locale information
+      from the environment.  We have to do that, or a locale set through
+      the environment is ignored. But it will override a manually set locale.
+
+    * Fix for bug 937944: X/Y Tick Counts
+      PHPlot could draw one too few Y tick marks, and one too many X tick marks.
+
+      Changed the code to stop drawing X (Y) tick marks when the current X (Y)
+      value exceeds the maximum X (Y) value plus a small fudge factor. The fudge
+      factor accounts for cumulative error when repeatedly adding a delta to
+      the X (Y) value.
+
+      Notes: The bug report was writing about Y tick counts only, but X tick
+      counts can also be wrong. The proposed fix in the bug report does not
+      work in all cases.
+
+      This fix changes the appearance of many plots which were missing the
+      top-most Y tick mark. The extra X-tick mark problem is less common.
+
+===== Released as 5.0rc3 =====
+
+2006-11-13 (lbayuk)
+    * Fix for bug 1437912: x-axis label misalignment [bar charts]
+      The calculations were redone from scratch.
+      New control variable 'bar_extra_space', which works in addition to
+      'group_frac_width' to control how much extra space is around the bars.
+      Made bar widths match for 'stackedbars' and 1-bar-per-group 'bars'.
+
+      NOTE: This changes the appearance of charts. bars in 'stackedbars'
+      will now be thinner, and bars in 'bars' graphs will be thicker. I
+      saw no reason for them being different before.
+
+      This fix required fixing the positioning on the new bar data labels,
+      which was off before.  The bar data labels will now be centered.
+      Additional fixes to bar chart data labels:
+         For negative values, the label will center under the bar.
+         Fixed X-adjustment to account for shading.
+         Fixed to not suppress the data label if the value is 0.
+
+
+2006-11-10 (lbayuk)
+    * Fix for bug 1594457: DrawError text wrap and background fix
+      Do error image white background correctly, and word-wrap the text.
+
+    * Fix for bug 1594458: Suppress lines or points in 'linepoints' 
+      Don't draw X data labels twice for 'linepoints'.
+      Allow SetPointShapes value 'none' to suppress points, and allow
+      SetLineStyles value 'none' to suppress lines. This allows a 'linepoints'
+      graph to mix lines only, points only, and both on the same graph.
+
+
+2006-11-09 (lbayuk)
+    * Fixes for bug 1446523:
+      + Wrong variable name in deprecated SetAxisFontSize()
+      + Fails to properly handle error if SetDataValues() was never
+        called, or not called with a data array.
+
+    * Fix for bug 1117122: Pie Chart ignores SetPlotAreaPixels
+      Don't let DrawGraph recalculate the plot area for pie charts if the
+      user already set it with SetPlotAreaPixels.
+
+      NOTE: This fix may slightly change the appearance of some pie charts,
+      whether or not they use SetPlotAreaPixels.
+
+    * Fix for bug 1103992: Wrong max Y calculated for stackedbars
+      Changes FindDataLimits to calculate max Y correctly. It was counting
+      the first Y value in each record twice, which is always wrong but
+      only affected stackedbars because the Y values are summed.
+
+    * Fix for bug 1096199: Wrong error bar colors in DrawDotsError.
+      Rewrites DrawDotsError to make it work like DrawLinesError to
+      correctly increment the record and color indexes.
+      Also fixes uninitialized x_now_pixels.
+
+    * Fix for bug 1096197: No borders on unshaded Draw[Stacked]Bars
+      Unshaded Bars and StackedBars covered the border with the rectangle.
+      The fix is to draw the rectangle, then the border.
+
+      NOTE: This fix changes chart appearance. Bars and Stacked Bars
+      will now get a black border around each bar by default, if you
+      turn off the 3D-shading. If you want borderless, unshaded bars
+      you need to use SetDataBorderColors to set the data border colors
+      to be the same as the data colors.
+
+    * Fix for bug 1333164: Negative data values, if string variables, result
+      in unfilled bars. The problem was a string-to-string compare of a
+      negative number with the empty string x_axis_position. Fixed by
+      initializing x_axis_y_pixels to 0 if SetXAxisPosition was not used.
+
+
+2005-04-17 (afan)
+    * Fix for bug [ 1161072 ] SetInputFile warning, background overwrite
+
+    * Bug 1182672 fixed
+
+2005-04-15 (afan)
+    * fix for bug: [ 1182666 ] Y Auto-scale rounds in wrong direction
+
+    * Fix for bugs 1144644 TrueType font path problems and 1106328 TTF
+      path/filename inconsistency
+
+    * Fix Bug: [ 1117120 ] X Title sizing uses Y Title font height
+
+2005-04-13 (afan)
+    * Error in SetLineStyles() - does not accept an array argument
+
+
+2005-03-29 (afan)
+    * Small typo fixed in SetYDataLabelPos
+
+    * Update SetDataLabelPos: For past compatibility we accept plotleft,
+      ...but pass it to SetTickLabelPos
+
+2005-03-26 (afan)
+    * Change to line 3802: data lables now work with multiple bars with *$idx
+
+2005-03-25 (afan)
+    * Added Function DrawDataLabels to put data labels in world coords,
+      added call from DrawBars and modified SetYDataLabelPos to flag
+      whether or not to call DrawDataLabels.
+
+2005-01-20 (migueldb)
+    * Many bugfixes reported and solved by L. J. Bayuk. Thanks!
+      + fixed bug #1096190
+      + FindDataLimits(): fixed bug #1096192
+      + CalcTranslation(): fixed bug #1101317
+      + DrawImageBorder(): fixed bug 1096200
+      + DrawXDataLabel(): fixed bug 1099879
+      + DrawDots(): fixed bug #1096194
+
+===== Released as 5.0rc2 =====
+
+2004-10-24 (migueldb)
+    * array_merge_php4(): added to cope with the bug introduced by
+        the change in array_merge() from PHP4 to PHP5 (I haven't verified this)
+    * Fixed some divisions by zero, thanks to an old bug report.
+
+2004-09-09 (migueldb)
+    * SetPointSize(): deprecated
+    * SetPointSizes(): added as replacement for SetPointSize().
+      Now able to set point sizes on a per line basis.
+    * SetPointShape(): deprecated.
+    * SetPointShapes(): added as replacement for SetPointShape().
+      Now able to set point shape on a per line basis.
+    * DrawDot(): now needs record number to decide which dot shape and
+      size to draw.
+    * CalcMargins(): dirty fix for x data label placing.
+    * tile_img(): fixed tile placement.
+
+2004-06-14 (migueldb)
+    * SetXTickLabelPos() and others: more on the bug reported by Jo Demol.
+    * Fixed bug reported by Jo Demol.
+
+2004-05-11 (migueldb)
+    * SetBgImage(): added.
+    * SetPlotAreaBgImage(): added.
+    * SetInputFile(): deprecated.
+    * DrawBackground(): now accepts images as backgrounds.
+    * DrawPlotAreaBackground(): now accepts images as backgrounds.
+    * tile_img(): internal method added.
+
+..........
+Editor's Note: For older changes to PHPlot, please see the CVS logs.

@@ -284,7 +284,20 @@ int PASCAL WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpszCmdPa
 
 	// Find location of configuration file
 	ConfigInit();
+	LoadSettings();
 
+	// Check for language override
+	// en = 0
+	// de = 1
+	if (config.language == 0)
+	{
+		SetThreadUILanguage(MAKELANGID(LANG_ENGLISH, SUBLANG_DEFAULT));
+	}
+	else if (config.language == 1)
+	{
+		SetThreadUILanguage(MAKELANGID(LANG_GERMAN, SUBLANG_DEFAULT));
+	}
+	
 	/* Register our custom classes */
 	RegisterWindowClasses();
 

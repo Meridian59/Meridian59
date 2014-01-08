@@ -19,9 +19,31 @@ MYSQL *mysqlcon;
 
 bool connected = false;
 
+
 void MySQLTest()
 {
 	dprintf("MySQL client version: %s\n", mysql_get_client_info());
+}
+
+void MySQLCheckConnection()
+{
+	if (connected)
+	{
+		if (mysql_ping(mysqlcon) == 0)
+		{
+			connected = true;
+			return;
+		}
+		else
+		{
+			connected = false;
+			dprintf("MySQL connection dropped. Attempting Reconnect.");
+			MySQLInit();
+		}
+	}
+	else
+		MySQLInit();
+
 }
 
 void MySQLInit()
@@ -44,7 +66,6 @@ void MySQLInit()
 	else
 	{
 		dprintf("connected to mysql host: %s user: %s", ConfigStr(MYSQL_HOST),ConfigStr(MYSQL_USERNAME) );
-		connected = true;
 	}
 	char buf[100];
 	sprintf(buf, "USE %s", ConfigStr(MYSQL_DB));
@@ -57,7 +78,7 @@ void MySQLInit()
 	{
 		dprintf("connected to mysql database: %s", ConfigStr(MYSQL_DB));
 	}
-
+	connected = true;
     return;
 }
 
@@ -129,13 +150,16 @@ void MySQLCreateSchema()
 
 void MySQLRecordStatTotalMoney(int total_money)
 {
+	MySQLCheckConnection();
+	if (!connected)
+		return;
+
 	char buf[200];
 	sprintf(buf,"INSERT INTO `player_money_total` \
 				SET player_money_total_amount = %d, \
 				player_money_total_time = NOW()",total_money);
 
-	if (!connected)
-		return;
+	
 
 	if(mysql_query(mysqlcon, buf))
 	{
@@ -146,12 +170,14 @@ void MySQLRecordStatTotalMoney(int total_money)
 
 void MySQLRecordStatMoneyCreated(int money_created)
 {
+	MySQLCheckConnection();
+	if (!connected)
+		return;
+
 	char buf[200];
 	sprintf(buf,"INSERT INTO `money_created` \
 				SET money_created_amount = %d, \
 				money_created_time = NOW()",money_created);
-	if (!connected)
-		return;
 
 	if(mysql_query(mysqlcon, buf))
 	{
@@ -162,14 +188,15 @@ void MySQLRecordStatMoneyCreated(int money_created)
 
 void MySQLRecordPlayerLogin(session_node *s)
 {
+	MySQLCheckConnection();
+	if (!connected)
+		return;
+
 	//Log of characters, accounts, ips
 	val_type name_val;
     resource_node *r;
 	char buf[1000];
 	
-	if (!connected)
-		return;
-   
     name_val.int_val = SendTopLevelBlakodMessage(s->game->object_id,USER_NAME_MSG,0,NULL);
     r = GetResourceByID(name_val.v.data);
     //dprintf("Account %s (%d) logged in with character %s (%d) from ip %s",s->account->name,s->account->account_id,r->resource_val,s->game->object_id,s->conn.name);
@@ -187,11 +214,13 @@ void MySQLRecordPlayerLogin(session_node *s)
 
 void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, int aspell, int atype, int damage_applied, int damage_original, int res_weapon)
 {
+	MySQLCheckConnection();
+	if (!connected)
+		return;
+
 	char buf[1200];
 	resource_node *r_who_damaged, *r_who_attacker, *r_weapon;
 
-	if (!connected)
-		return;
 
 	r_who_damaged = GetResourceByID(res_who_damaged);
 	r_who_attacker = GetResourceByID(res_who_attacker);

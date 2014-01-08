@@ -2363,6 +2363,9 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				int num_normal_parms,parm_node normal_parm_array[],
 				int num_name_parms,parm_node name_parm_array[])
 {
+	if (ConfigBool(MYSQL_ENABLED) == False)
+		return -1;
+
 	val_type stat_type, stat1, stat2, stat3, stat4, stat5, stat6, stat7;
 	int success = 0;
 

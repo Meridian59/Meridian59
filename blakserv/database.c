@@ -18,6 +18,7 @@
 MYSQL *mysqlcon;
 
 bool connected = false;
+bool enabled = false;
 
 
 void MySQLTest()
@@ -27,6 +28,9 @@ void MySQLTest()
 
 void MySQLCheckConnection()
 {
+	if (!enabled)
+		return;
+
 	if (connected)
 	{
 		if (mysql_ping(mysqlcon) == 0)
@@ -48,6 +52,10 @@ void MySQLCheckConnection()
 
 void MySQLInit()
 {
+	if (ConfigBool(MYSQL_ENABLED) == False)
+		return;
+	enabled = true;
+
 	mysqlcon = mysql_init(NULL);
 
 	if (mysqlcon == NULL)
@@ -67,6 +75,9 @@ void MySQLInit()
 	{
 		dprintf("connected to mysql host: %s user: %s", ConfigStr(MYSQL_HOST),ConfigStr(MYSQL_USERNAME) );
 	}
+
+	//Check for valid schema here...
+
 	char buf[100];
 	sprintf(buf, "USE %s", ConfigStr(MYSQL_DB));
 	if(mysql_query(mysqlcon, buf))
@@ -151,7 +162,7 @@ void MySQLCreateSchema()
 void MySQLRecordStatTotalMoney(int total_money)
 {
 	MySQLCheckConnection();
-	if (!connected)
+	if (!connected | !enabled)
 		return;
 
 	char buf[200];
@@ -171,7 +182,7 @@ void MySQLRecordStatTotalMoney(int total_money)
 void MySQLRecordStatMoneyCreated(int money_created)
 {
 	MySQLCheckConnection();
-	if (!connected)
+	if (!connected | !enabled)
 		return;
 
 	char buf[200];
@@ -189,7 +200,7 @@ void MySQLRecordStatMoneyCreated(int money_created)
 void MySQLRecordPlayerLogin(session_node *s)
 {
 	MySQLCheckConnection();
-	if (!connected)
+	if (!connected | !enabled)
 		return;
 
 	//Log of characters, accounts, ips
@@ -215,7 +226,7 @@ void MySQLRecordPlayerLogin(session_node *s)
 void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, int aspell, int atype, int damage_applied, int damage_original, int res_weapon)
 {
 	MySQLCheckConnection();
-	if (!connected)
+	if (!connected | !enabled)
 		return;
 
 	char buf[1200];

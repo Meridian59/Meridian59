@@ -286,7 +286,7 @@ resources:
    user_guild_rsc = "guild"
    user_guildofficer_rsc = "guildofficer"
 
-   user_default_url = "http://www.Meridian59.com/"
+   user_default_url = "http://openmeridian.org/"
    
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav

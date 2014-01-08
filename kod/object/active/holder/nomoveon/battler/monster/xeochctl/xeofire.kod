@@ -36,7 +36,7 @@ resources:
    vrName = XeoFire_name_rsc
    vrKocName = XeoFire_koc_name_rsc
    
-   viAttack_types = ATCK_WEAP_MAGIC
+   viAttack_type = ATCK_WEAP_MAGIC
    viLevel = 170
    viDifficulty = 7
    viSpeed = SPEED_FAST

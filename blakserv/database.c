@@ -127,6 +127,7 @@ void MySQLCreateSchema()
 							 `player_logins_account_name` varchar(45) NOT NULL, \
 							 `player_logins_character_name` varchar(45) NOT NULL, \
 							 `player_logins_IP` varchar(45) NOT NULL, \
+							 `player_logins_time` datetime NOT NULL, \
 							 PRIMARY KEY (`idplayer_logins`) \
 							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1; "))
 	{
@@ -152,6 +153,7 @@ void MySQLCreateSchema()
 							 `player_damaged_applied` int(11) NOT NULL, \
 							 `player_damaged_original` int(11) NOT NULL, \
 							 `player_damaged_weapon` varchar(45) NOT NULL, \
+							 `player_damaged_time` datetime NOT NULL, \
 							 PRIMARY KEY (`idplayer_damaged`) \
 							 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;"))
 	{
@@ -215,7 +217,8 @@ void MySQLRecordPlayerLogin(session_node *s)
 	sprintf(buf,"INSERT INTO `player_logins` \
 				SET player_logins_account_name = '%s', \
 				player_logins_character_name = '%s', \
-				player_logins_IP = '%s'",s->account->name,r->resource_val,s->conn.name);
+				player_logins_IP = '%s', \
+				player_logins_time = NOW()",s->account->name,r->resource_val,s->conn.name);
 	if(mysql_query(mysqlcon, buf))
 	{
 		dprintf("Unable to record StatPlayerLogin", mysql_error(mysqlcon));
@@ -237,7 +240,7 @@ void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, in
 	r_who_attacker = GetResourceByID(res_who_attacker);
 	r_weapon = GetResourceByID(res_weapon);
 
-	sprintf(buf,"INSERT INTO `player_damaged` SET player_damaged_who = '%s', player_damaged_attacker = '%s', player_damaged_aspell = %d, player_damaged_atype = %d, player_damaged_applied = %d, player_damaged_original = %d, player_damaged_weapon = '%s'",
+	sprintf(buf,"INSERT INTO `player_damaged` SET player_damaged_who = '%s', player_damaged_attacker = '%s', player_damaged_aspell = %d, player_damaged_atype = %d, player_damaged_applied = %d, player_damaged_original = %d, player_damaged_weapon = '%s', player_damaged_time = NOW()",
 		r_who_damaged->resource_val, r_who_attacker->resource_val, aspell, atype, damage_applied, damage_original, r_weapon->resource_val);
 	if(mysql_query(mysqlcon,buf))
 	{

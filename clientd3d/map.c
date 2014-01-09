@@ -281,42 +281,29 @@ void MapDrawMiniMapWalls(HDC hdc, int x, int y, room_type *room)
    for (i = 0; i < mapNumCacheWalls; i++,pMap++,wall++)
    {
       Sidedef *sidedef = wall->pos_sidedef;
-      if (sidedef == NULL)
-	 sidedef = wall->neg_sidedef;
-      if (sidedef == NULL)
-	 continue;
+	
+	  // try other side if null
+	  if (sidedef == NULL)
+        sidedef = wall->neg_sidedef;
+      
+	  // skip if still null or flagged to never show up
+	  if (sidedef == NULL || sidedef->flags & WF_MAP_NEVER)
+        continue;
 
-      if(((sidedef->flags & WF_MAP_ALWAYS) || wall->seen) && 
-	 !(sidedef->flags & WF_MAP_NEVER))
+      // draw highlighted
+	  if ((config.showMapBlocking && lastBlockingWall == wall) ||
+		  (config.showUnseenWalls && !wall->seen))
       {
-	 if (config.showMapBlocking)
-	 {
-	    if (lastBlockingWall == wall)
-	    {
-	       SelectObject(hdc, GetStockObject(WHITE_PEN));
-	       MoveToEx(hdc, x + pMap->p0.x, y + pMap->p0.y, NULL);
-	       LineTo(hdc, x + pMap->p1.x, y + pMap->p1.y);
-	       SelectObject(hdc, hWallPen);
-	    }
-	    else
-	    {
-	       MoveToEx(hdc, x + pMap->p0.x, y + pMap->p0.y, NULL);
-	       LineTo(hdc, x + pMap->p1.x, y + pMap->p1.y);
-	    }
-	 }
-	 else
-	 {
+        SelectObject(hdc, GetStockObject(WHITE_PEN));
 	    MoveToEx(hdc, x + pMap->p0.x, y + pMap->p0.y, NULL);
-	    LineTo(hdc, x + pMap->p1.x, y + pMap->p1.y);
-	 }
-      }
-      else if (config.showUnseenWalls && !wall->seen && !(sidedef->flags & WF_MAP_NEVER))
-      {
-	 SelectObject(hdc, GetStockObject(WHITE_PEN));
-	 MoveToEx(hdc, x + pMap->p0.x, y + pMap->p0.y, NULL);
-	 LineTo(hdc, x + pMap->p1.x, y + pMap->p1.y);
-	 SelectObject(hdc, hWallPen);
-      }
+        LineTo(hdc, x + pMap->p1.x, y + pMap->p1.y);
+        SelectObject(hdc, hWallPen);
+	  }
+	  else
+	  {
+        MoveToEx(hdc, x + pMap->p0.x, y + pMap->p0.y, NULL);
+        LineTo(hdc, x + pMap->p1.x, y + pMap->p1.y);
+	  }
    }
 }
 
@@ -335,17 +322,15 @@ void MapDrawWalls(HDC hdc, int x, int y, float scale, room_type *room)
    for (i = 0; i < room->num_walls; i++)
    {
       wall = &room->walls[i];
-
       sidedef = wall->pos_sidedef;
+      
       if (sidedef == NULL)
-	 sidedef = wall->neg_sidedef;
-      if (sidedef == NULL)
-	 continue;
+        sidedef = wall->neg_sidedef;
+      
+	  if (sidedef == NULL || sidedef->flags & WF_MAP_NEVER)
+        continue;
 
-      if (((sidedef->flags & WF_MAP_ALWAYS) || wall->seen) && !(sidedef->flags & WF_MAP_NEVER))
-      {
-	 MapDrawWall(hdc, x, y, scale, wall);
-      }
+      MapDrawWall(hdc, x, y, scale, wall);
    }
 }
 /*****************************************************************************/

@@ -217,10 +217,11 @@ config_table_type config_table[] =
 { SERVICE_PASSWORD,       T, "Password",      CONFIG_STR,   "b58Iz3xp" },
 
 { MYSQL_GROUP,            F, "[MySQL]",       CONFIG_GROUP, "" },
-{ MYSQL_USERNAME,         F, "Username",      CONFIG_STR, "root" },
-{ MYSQL_PASSWORD,         F, "Password",      CONFIG_STR, "somethingiswronghere" },
-{ MYSQL_HOST,             F, "Host",          CONFIG_STR, "localhost" },
-{ MYSQL_DB,               F, "Database",      CONFIG_STR, "meridian" },
+{ MYSQL_ENABLED,          F, "Enabled",       CONFIG_BOOL,  "No" },
+{ MYSQL_USERNAME,         F, "Username",      CONFIG_STR,   "root" },
+{ MYSQL_PASSWORD,         F, "Password",      CONFIG_STR,   "" },
+{ MYSQL_HOST,             F, "Host",          CONFIG_STR,   "localhost" },
+{ MYSQL_DB,               F, "Database",      CONFIG_STR,   "meridian" },
 
 { BLAKOD_GROUP,           F, "[Blakod]",      CONFIG_GROUP, "" },
 { BLAKOD_MAX_STATEMENTS,  T, "MaxStatements", CONFIG_INT,   "20000000" },

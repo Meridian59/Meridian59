@@ -146,28 +146,21 @@ messages:
 	  
       oTargetWeapon = Send(oTarget,@GetWeapon);
 	  
-      if IsClass(oTarget,&Player)
-      {
-         if oTargetWeapon = $
-         {
-            oTargetStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
-         }
-         else
-         {
-            if IsClass(oTargetWeapon,&Weapon)
-            {
-               oTargetStroke=Send(SYS,@FindSkillByNum,#num=Send(oTargetWeapon,@GetDefaultStrokeNumber));
-            }
-            else
-            {
-               oTargetStroke = oTargetWeapon;
-            }
-          }
-	  }
-      else
-      {
-         oTargetWeapon = oTarget;
-      }
+		if oTargetWeapon = $
+		{
+			oTargetStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
+		}
+		else
+		{
+			if IsClass(oTargetWeapon,&Weapon)
+			{
+				oTargetStroke=Send(SYS,@FindSkillByNum,#num=Send(oTargetWeapon,@GetDefaultStrokeNumber));
+			}
+			else
+			{
+				oTargetStroke = oTargetWeapon;
+			}
+		}
          
       iChanceToHit = (Send(who,@GetOffense,#what=oTarget,#stroke_obj=oStroke)* 500)
                      / Send(oTarget,@GetDefense,#what=who,#stroke_obj=oStroke);

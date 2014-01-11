@@ -202,7 +202,14 @@ messages:
       {
          if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
          {
-            Send(self,@InflictPenalties);
+            if Send(Send(SYS,@GetSettings),@GetFlatPenaltiesEnable)
+            {
+               Send(self,@InflictFlatPenalties);
+            }
+            else
+            {
+               Send(self,@InflictPenalties);
+            }
          }
          else
          {
@@ -252,11 +259,262 @@ messages:
 
       return;
    }
+   
+   InflictFlatPenalties()
+   {
+      local i, bLooped, LossCounter, BaseLossAmount, iHealth,
+            LossAmount, iNumItemsInventory, numItemsLost, iLoops,
+            iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
+            lSkills, iSkillAbility, numSkillPointsLost;
+
+      % Sanity check: Are they logged on?
+      If Send(poGhostedPlayer,@IsLoggedOn)
+      {
+         % No logoff penalty if you are logged on.
+         return;
+      }
+
+      numItemsLost = 0;
+      numSpellPointsLost = 0;
+      numSkillPointsLost = 0;
+
+      % drop items
+      numItemsLost = Send(poGhostedPlayer,@GetNumItemsInInventory);
+
+      if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         LossCounter = 2;
+      }
+      else
+      {
+         LossCounter = 1;
+      }
+
+      iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+      if LossCounter >= iNumItemsInventory
+      {
+         % just drop everything
+         i = 1;
+         while i <= iNumItemsInventory
+         {
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            {
+               % Don't need to increment unless the item stayed in the
+               %  inventory.
+               i = i + 1;
+            }
+         }
+      }
+      else
+      {
+         while LossCounter > 0 AND iNumItemsInventory > 0
+         {
+            % try to drop a Random item
+            iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+            i = Random(1,iNumItemsInventory);
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=self)
+            {
+               % If the Random drop fails, scan through and drop the first one
+               %  we can.
+               i = 1;
+               while i <= iNumItemsInventory
+                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,
+                                  #targetGhost=self)
+               {
+                  i = i + 1;
+               }
+
+               % If we got all the way through the inventory without dropping
+               %  anything, bail.
+               if i > Send(poGhostedPlayer,@GetNumItemsInInventory)
+               {
+                  LossCounter = 1;
+               }
+            }
+
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Correct the number of items lost by subtracting out the items left in
+      %  inventory.  (Is this right?)
+      iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+      numItemsLost = numItemsLost - iNumItemsInventory;
+
+      % Lose spell ability
+      lSpells = Send(poGhostedPlayer,@GetSpellList);
+      if lSpells <> $
+      {
+         LossCounter = 2;
+
+         if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         {
+            BaseLossAmount = -2;
+         }
+         else
+         {
+            BaseLossAmount = -1;
+         }
+
+         % Loop through once to reduce LossCounter below Length(lSpells), and
+         %  keep iterations down for large penalties
+         if (LossCounter > Length(lSpells))
+         {
+            i = 0;
+            % iLoops = number of complete loops we're collapsing to one
+            iLoops = LossCounter / Length(lSpells);
+            while i < Length(lSpells)
+            {
+               i = i + 1;
+               iSpellAbility = Send(poGhostedPlayer,@DecodeSpellAbility,
+                                    #compound=Nth(lSpells,i));
+               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+               iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
+                                  #compound=Nth(lSpells,i));
+               Send(poGhostedPlayer,@ChangeSpellAbility,
+                    #spell_num=iAbilityNum,#amount=LossAmount);
+               numSpellPointsLost = (numSpellPointsLost - LossAmount);
+            }
+         }
+
+         iLoops = 0;
+         LossCounter = LossCounter - (numSpellPointsLost/BaseLossAmount);
+         while (LossCounter > 0) and (iLoops < 200)
+         {
+            iLoops = iLoops + 1;
+            % This tells us if we've looped back to one yet.
+            bLooped = FALSE;
+            % Try to lower a Random spell.
+            i = Random(1,Length(lSpells));
+
+            iStart = i;
+            % If the Random lower fails, scan through and lower the first one
+            %  we can.
+            while (i <> iStart OR NOT bLooped)
+                  AND (Send(poGhostedPlayer,@DecodeSpellAbility,
+                            #compound=Nth(lSpells,i)) < 6)
+            {
+               i = i + 1;
+               if i > Length(lSpells) AND NOT bLooped
+               {
+                  % We get one free reset (since we started in the middle
+                  %  somewhere)
+                  i = 1;
+                  bLooped = TRUE;
+               }
+            }
+
+            % If we got all the way through the spell list without lowering
+            %  anything, bail.
+            if i = iStart AND bLooped
+            {
+               LossCounter = 0;
+
+               break;
+            }
+
+            iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
+                               #compound=Nth(lSpells,i));
+            Send(poGhostedPlayer,@ChangeSpellAbility,
+                 #spell_num=iAbilityNum,#amount=BaseLossAmount);
+            numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Lose skill ability.
+      lSkills = Send(poGhostedPlayer,@GetSkillList);
+      if (lSkills <> $)
+      {
+         LossCounter = 2;
+
+         % Loop through once to reduce LossCounter below Length(lSkills),
+         %  and keep iterations down for large penalties
+         if LossCounter > Length(lSkills)
+         {
+            i = 0;
+            % Number of complete loops we're collapsing to one.
+            iLoops = LossCounter/Length(lSkills);
+            while i < Length(lSkills)
+            {
+               i = i + 1;
+               iSkillAbility = Send(poGhostedPlayer,@DecodeSkillAbility,
+                                    #compound=Nth(lSkills,i));
+               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+               iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
+                                  #compound=Nth(lSkills,i));
+               Send(poGhostedPlayer,@ChangeSkillAbility,
+                    #skill_num=iAbilityNum,#amount=LossAmount);
+               numSkillPointsLost = numSkillPointsLost - LossAmount;
+            }
+         }
+
+         iLoops = 0;
+         LossCounter = LossCounter - (numSkillPointsLost/BaseLossAmount);
+         while LossCounter > 0 AND iLoops < 100
+         {
+            iLoops = iLoops + 1;
+            % This tells us if we've looped back to one yet.
+            bLooped = FALSE;
+            % Try to lower a Random skill.
+            i = Random(1,Length(lSkills));
+            iStart = i;
+
+            % If the random lower fails, scan through and lower the first one
+            %  we can.
+            while (i <> iStart OR NOT bLooped)
+                  AND (Send(poGhostedPlayer,@DecodeSkillAbility,
+                            #compound=Nth(lSkills,i)) < 6)
+            {
+               i = i + 1;
+               if i > Length(lSkills) AND NOT bLooped
+               {
+                  % We get one free reset since we started in the middle
+                  %  somewhere
+                  i = 1;
+                  bLooped = TRUE;
+               }
+            }
+            % If we got all the way through the skill list without lowering
+            %  anything, bail.
+            if i = iStart AND bLooped
+            {
+               LossCounter = 0;
+
+               break;
+            }
+
+            iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
+                               #compound=Nth(lSkills,i));
+            Send(poGhostedPlayer,@ChangeSkillAbility,
+                 #skill_num=iAbilityNum,#amount=BaseLossAmount);
+            numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Send mail notifying user of penalties incurred
+      prItemsLost = Send(SYS,@IntToString,#num=numItemsLost);
+      prSpellPointsLost = Send(SYS,@IntToString,#num=numSpellPointsLost);
+      prSkillPointsLost = Send(SYS,@IntToString,#num=numSkillPointsLost);
+
+      Send(poGhostedPlayer,@ReceiveNestedMail,
+           #from=LogoffGhost_penalty_mail_Sender,
+           #dest_list=[poGhostedPlayer],
+           #nest_list=[4,LogoffGhost_penalty_mail, 4,prItemsLost,
+                       4,prSpellPointsLost, 4,prSkillPointsLost]);
+
+      % Reset the time to avoid any funny business like potential double
+      %  penalties.
+      Send(poGhostedPlayer,@ResetLogoffPenaltyTime);
+
+      return;
+   }
 
    InflictPenalties()
    {
       local i, bLooped, penaltyCounter, LossCounter, BaseLossAmount, 
-            LossAmount, iNumItemsInventory, numItemsLost, iLoops, iStamina,
+            LossAmount, iNumItemsInventory, numItemsLost, iLoops,
             iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
             lSkills, iSkillAbility, numSkillPointsLost, iEquivDeath,
             oSoldierShield;
@@ -271,7 +529,6 @@ messages:
       numItemsLost = 0;
       numSpellPointsLost = 0;
       numSkillPointsLost = 0;
-      iStamina = Send(poGhostedPlayer,@GetStamina);
       penaltyCounter = (Send(poGhostedPlayer,@GetLogoffPenaltyCount)
                        + Send(poGhostedPlayer,@GetDecayedUnjustifiedKills));
       iEquivDeath = (Send(SYS,@GetLogoffPenaltyEquivDeath));

@@ -293,8 +293,7 @@ void ConfigLoad(void)
    config.avoidDownloadAskDialog = FALSE;
    config.maxFPS = FALSE;
    config.clearCache = FALSE;
-#endif // NODPRINTFS
-   config.debug = FALSE;
+#endif // NODPRINTFS   
    TimeSettingsLoad();
 }
 /****************************************************************************/

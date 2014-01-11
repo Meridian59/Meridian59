@@ -2765,9 +2765,13 @@ messages:
          power_count = 1;
          for n in plShrines
          {
-            Send(n,@SetAllegiance,#allegiance=Nth(plShrine_Allegiances,power_count));
-            power_count = power_count + 1;
+            if Nth(plShrine_Allegiances,power_count) <> 0
+            {
+               Send(n,@SetAllegiance,#allegiance=Nth(plShrine_Allegiances,power_count));
+               power_count = power_count + 1;
+            }
          }
+         plShrine_Allegiances = $;
       }
 
       for i in plShrines

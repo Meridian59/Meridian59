@@ -141,7 +141,7 @@ classvars:
 
    viTreasure_type = TID_STATUE
 
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
 
    vrSound_hit = LivingStatue_sound_attack
    vrSound_miss = LivingStatue_sound_attack

@@ -49,8 +49,8 @@ classvars:
    viTreasure_type = TID_FAIRY
 
    viSpeed = SPEED_VERY_FAST
-   viAttack_types = 0
-   viAttack_spells = ATCK_SPELL_SHOCK
+   viAttack_type = 0
+   viAttack_spell = ATCK_SPELL_SHOCK
     
    viLevel = 60
    viDifficulty = 5

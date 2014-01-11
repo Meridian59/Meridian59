@@ -51,6 +51,7 @@ classvars:
  
    viTreasure_type = TID_SHADOWBEAST
    viAttack_types = ATCK_WEAP_SLASH
+
    viSpeed = SPEED_AVERAGE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
    viLevel = 200

@@ -3684,6 +3684,11 @@ messages:
       {
          Send(poOwner,@NewHold,#what=what,#new_row=piRow,#new_col=piCol,
               #fine_row=piFine_row,#fine_col=piFine_col);
+
+		  if isClass(what, &ShrunkenHead)
+		  {
+			 Send(what,@Dropped,#by=self,#where=poOwner);
+		  }
       }
       
       return;

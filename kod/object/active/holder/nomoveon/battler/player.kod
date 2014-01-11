@@ -22,7 +22,7 @@ constants:
    BOND_REPORT_INTERVAL = 1000 * 60 * 3
    
    % One minute
-   DEATH_RIFT_INTERVAL = 1000 * 60  
+   DEATH_RIFT_INTERVAL = 1000 * 60
 
    KARMA_TUNE_A_INVERSE = 20
    KARMA_TUNE_B_INVERSE = 5
@@ -721,6 +721,8 @@ resources:
    cannot_attack_ally = "You can't attack %s, %s's your ally!"
    cannot_attack_guildmate = "You can't attack %s, %s's your guildmate!"
 
+   group_experience_rsc = "You absorb a small amount of the energy released from %s's slaying of the %s."
+
 classvars:
 
    viHand_space = 2
@@ -987,6 +989,9 @@ properties:
    % Crystalize Mana Surge data
    ptCrystalizeManaSurgeTimer = $
    piCrystalizeManaSurging = FALSE
+
+   % Players will naturally fall out of groups if they aren't getting kills
+   ptLeaveBuilderGroupTimer = $
 
 messages:
 
@@ -5147,6 +5152,8 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
+         
+         Send(self,@JoinBuilderGroup);
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
@@ -5684,7 +5691,7 @@ messages:
             break;
          }
       }
-      
+
       propagate;
    }
 
@@ -7814,7 +7821,12 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
-      if victim = poKill_target AND IsClass(victim,&Battler)
+      if NOT IsClass(victim,&Battler)
+      {
+         propagate;
+      }
+
+      if victim = poKill_target
       {
          if what = self
          {
@@ -7827,6 +7839,15 @@ messages:
          
          poKill_target=$;
          Send(self,@ResetGainFlags);
+      }
+      else
+      {
+         % Let players share XP if they're grouped, even if they're not fighting the same mob.
+         if Send(Send(self,@GetOwner),@AreGroupedHere,#who=self,#what=what)
+         {
+            Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(what,@GetName),#parm2=Send(victim,@GetName));
+            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member_kill=TRUE);
+         }
       }
       
       propagate;
@@ -7843,7 +7864,7 @@ messages:
    }
 
 
-   AdvancementCheck(what=$,killing_blow=TRUE)
+   AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE)
    "A player will need, on average, to kill a number of monsters equal to"
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
@@ -7862,6 +7883,8 @@ messages:
          return FALSE;  
       }
 
+	  Post(self,@DrawHPChance);
+
       if IsClass(what,&User)
       {
          monster_level = Send(what,@GetBaseMaxHealth);
@@ -7871,8 +7894,9 @@ messages:
          monster_level = Send(what,@GetLevel);
       }
 
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_DID_DAMAGE)
-         AND poKill_target = what
+      if (Send(self,@CheckPlayerFlag,#flag=PFLAG_DID_DAMAGE)
+         AND poKill_target = what)
+         OR group_member_kill
       {
          if monster_level > piBase_Max_health
          {
@@ -7885,7 +7909,8 @@ messages:
             else
             {
                % Player either did not take damage, but did killing blow (mage),
-               %  or did take damage, did not land killing blow.
+               %  or did take damage, did not land killing blow, or
+               %  it's a group member kill.
                gain = 1;
                roll = TRUE;
             }
@@ -7979,6 +8004,7 @@ messages:
       }
       
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
+         AND NOT group_member_kill
       {
          dodgeskill = SKID_DODGE;
          oWeapon = Send(self,@LookupPlayerWeapon);
@@ -12820,6 +12846,78 @@ messages:
          }
       }
       
+      return;
+   }
+   
+   LeaveBuilderGroupTimer()
+   {
+      ptLeaveBuilderGroupTimer = $;
+      
+      Send(self,@LeaveBuilderGroup);
+      return;
+   }
+   
+   LeaveBuilderGroup()
+   {
+      local oRoom, i, each_obj;
+      oRoom = Send(self,@GetOwner);
+      
+      if ptLeaveBuilderGroupTimer <> $
+      {
+         DeleteTimer(ptLeaveBuilderGroupTimer);
+         ptLeaveBuilderGroupTimer = $;
+      }
+      
+      if oRoom <> $
+      {
+         Send(oRoom,@RemoveFromBuilderGroup,#who=self);
+         Send(oRoom,@SomethingChanged,#what=self);
+
+         % Let's see that we left the group
+         for i in Send(oRoom,@GetPlActive)
+         {
+            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+               AND Send(oRoom,@AreGroupedHere,#who=self,#what=each_obj)
+            {
+               Send(self,@SomethingChanged,#what=each_obj);
+            }
+         }
+      }
+      
+      return;
+   }
+   
+   JoinBuilderGroup()
+   {
+      local oRoom, i, each_obj;
+      oRoom = Send(self,@GetOwner);
+      
+      % Refresh an active group membership
+      if ptLeaveBuilderGroupTimer <> $
+      {
+         DeleteTimer(ptLeaveBuilderGroupTimer);
+         ptLeaveBuilderGroupTimer = CreateTimer(self,@LeaveBuilderGroupTimer,Send(Send(self,@GetOwner),@GetGroupTime));
+         return;
+      }
+
+      if oRoom <> $
+      {
+         Send(oRoom,@AddToBuilderGroup,#who=self);
+         Send(oRoom,@SomethingChanged,#what=self);
+         ptLeaveBuilderGroupTimer = CreateTimer(self,@LeaveBuilderGroupTimer,Send(Send(self,@GetOwner),@GetGroupTime));
+
+         % Let's see our new group
+         for i in Send(oRoom,@GetPlActive)
+         {
+            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+               AND Send(oRoom,@AreGroupedHere,#who=self,#what=each_obj)
+            {
+               Send(self,@SomethingChanged,#what=each_obj);
+            }
+         }
+      }
       return;
    }
 

@@ -754,14 +754,6 @@
    RID_RAZA_MUSEUM      = 1018
 
    RID_NEWB_MAX = 1018
-   
-   %East Expansion starts at 1200
-   RID_JIXA             = 1200
-   RID_EAST1            = 1201
-   RID_EAST2            = 1202
-   RID_EAST3            = 1203
-   RID_EAST4            = 1204
-   RID_EAST5            = 1205
 
    % Settlement and Island 2000-2499
    % Needs to be seperate so it counts as a different 'zone'

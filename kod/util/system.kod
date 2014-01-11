@@ -2125,14 +2125,6 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_BAR_JAIL,#class=&BarloqueJail);
       Send(self,@CreateOneRoomIfNew,#num=RID_BAR_SMITHY,#class=&BarloqueSmithy);
       Send(self,@CreateOneRoomIfNew,#num=RID_BAR_VAULT,#class=&BarVault);
-	  
-	  % East Expansion
-	  Send(self,@CreateOneRoomIfNew,#num=RID_JIXA,#class=&Jixa);
-	  Send(self,@CreateOneRoomIfNew,#num=RID_EAST1,#class=&East1);
-	  Send(self,@CreateOneRoomIfNew,#num=RID_EAST2,#class=&East2);
-	  Send(self,@CreateOneRoomIfNew,#num=RID_EAST3,#class=&East3);
-	  Send(self,@CreateOneRoomIfNew,#num=RID_EAST4,#class=&East4);
-	  Send(self,@CreateOneRoomIfNew,#num=RID_EAST5,#class=&East5);
 
       % Kocatan
       Send(self,@CreateOneRoomIfNew,#num=RID_KOCATAN,#class=&Kocatan);

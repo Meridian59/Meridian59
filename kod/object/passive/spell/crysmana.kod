@@ -1,0 +1,196 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+CrystalizeMana is Spell
+
+constants:
+
+   include blakston.khd
+
+   MAX_SURGE_MANA = 250
+
+resources:
+
+   CrystalizeMana_name_rsc = "crystalize mana"
+   CrystalizeMana_icon_rsc = icrysman.bgf
+   CrystalizeMana_desc_rsc = \
+      "This spell taps directly into the energies of sound and vibration "
+      "itself, harnessing the laws of the universe themselves to summon "
+      "a surge of magical energy. The surge is exhausting, but experienced "
+      "bards will recover from their spiritual fatigue faster. "
+      "May be cast for 1 sapphire and 1 uncut seraphym, but exhausted mages "
+      "can also instinctively call upon these forces in desperate situations."
+
+   CrystalizeMana_song = song06.mid
+
+   CrystalizeMana_no_room = \
+      "You stop singing once you realize you won't be able to hold the mana "
+      "crystal."
+   
+   CrystalizeMana_already_surging = \
+      "Your spirit is too weak to summon another surge of energy at this time."
+   CrystalizeMana_cast = \
+      "You magically crush two gems, and use their crystalline vibrational energies to tap into deeper forces."
+   CrystalizeMana_triggered = \
+      "With your spiritual energy depleted and your soul quiet, you find yourself able to hear a vast and distant song..."
+   CrystalizeMana_surge = \
+      "Incredible energies roar through you!"
+      
+   Surge_sound = wscndwnd.wav
+
+classvars:
+
+   vrName = CrystalizeMana_name_rsc
+   vrIcon = CrystalizeMana_icon_rsc
+   vrDesc = CrystalizeMana_desc_rsc
+
+   viSpell_num = SID_CRYSTALIZE_MANA
+   viSchool = SS_JALA
+   viSpell_level = 6
+
+   viMana = 20
+
+   viSpellExertion = 30
+   viChance_To_Increase = 25
+
+   vrSucceed_wav = Surge_sound
+   viFlash = FLASH_GOOD
+
+properties:
+
+   prMusic = CrystalizeMana_song
+      
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Sapphire,1],plReagents);
+      plReagents = Cons([&UncutSeraphym,1],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   CanPayCosts(who = $)
+   {
+      if who = $
+         OR NOT IsClass(who,&User)
+      {
+         return FALSE;
+      }
+
+      If Send(who,@IsCrystalizeManaSurging)
+      {
+         Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_already_surging);
+         return FALSE;
+      }
+
+      propagate;
+   }
+   
+   CastSpell(who = $)
+   {
+      if who = $
+         OR NOT IsClass(who,&User)
+      {
+         return;
+      }
+
+      Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_cast);
+      Send(self,@DoManaSurge,#who=who);
+
+      propagate;
+   }
+
+   DoManaSurge(who=$,triggered=FALSE)
+   {
+      local iManaSurge, iMaxMana, oCirclet;
+
+      if who=$
+         OR NOT IsClass(who,&User)
+      {
+         return;
+      }
+      
+      iMaxMana = Send(who,@GetMaxMana);
+      
+      % Remove the benefit of any worn circlet.
+      oCirclet = Send(who,@FindUsing,#class=&Circlet);
+      if oCirclet <> $
+      {
+         iMaxMana = iMaxMana - Send(oCirclet,@GetManaChange);
+      }
+
+      % Now give the full circlet bonus to every caster,
+      % so that they aren't required to wear one to get the proper mana.
+      iManaSurge = iMaxMana + 40;
+
+      % Cap the actual mana given to keep actual mana totals reasonable
+      iManaSurge = Bound(iManaSurge,$,MAX_SURGE_MANA-Send(who,@GetMana)); 
+     
+      Send(who,@GainMana,#amount=iManaSurge);
+      Send(who,@StartCrystalizeManaSurge,#surge_time=Send(self,@GetWaitTime,#who=who));
+      
+      if triggered
+      {
+         Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_triggered);
+         Send(who,@WaveSendUser,#wave_rsc=Surge_sound);
+         
+         % Chance to improve upon triggered activation
+         Send(self,@ImproveAbility,#who=who);
+      }
+      
+      Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_surge);
+      
+      return;
+   }
+   
+   GetManaBonus(spell_ability=0)
+   "Mastery of crystalline energy can provide up to 20 maximum mana."
+   {
+      return bound((spell_ability+1)/5,0,20);
+   }
+   
+   GetWaitTime(who=$)
+   {
+      local iWaitTime, iIntellect;
+      
+      if who = $
+         OR NOT IsClass(who,&User)
+      {
+         return 0;
+      }
+      
+      iIntellect = Send(self,@GetRequisiteStat,#who=who);
+      
+      % 6.6 minutes to 3.3 minutes based on spell ability
+      iWaitTime = 396 - (Send(who,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA) * 2);
+
+      return iWaitTime * 1000;
+   }
+
+   SuccessChance(who=$)
+   "Crystalize Mana cannot fizzle."
+   {
+      return TRUE;
+   }
+
+   CanForget()
+   {
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

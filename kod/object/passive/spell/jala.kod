@@ -215,9 +215,20 @@ messages:
    "Sends enchantment message to room like CastSpell for most room "
    "enchantments, but silent, and done as often as necessary."
    {
-      local oCaster;
+      local oCaster, iCrystalizeManaAbility, oCrystalizeMana;
       
       oCaster = Nth(state,2);
+      
+      if Send(oCaster,@GetMana) < viManaDrain * 2
+      {
+         iCrystalizeManaAbility = Send(oCaster,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
+         if iCrystalizeManaAbility > 0
+            AND NOT Send(oCaster,@IsCrystalizeManaSurging)
+         {
+            oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
+            Send(oCrystalizeMana,@DoManaSurge,#who=oCaster,#triggered=TRUE);
+         }
+      }
    
       % If caster runs out of mana or loses trance, spell ends.
       if Send(oCaster,@GetMana) < viManaDrain * 2

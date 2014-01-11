@@ -7985,6 +7985,12 @@ messages:
 			   {
 				  Send(shrunken,@Tougher,#hp=pibase_max_health);
 			   }
+               
+               if Send(self,@GetOwner) <> $
+               {
+                  Send(Send(self,@GetOwner),@SomethingWaveRoom,#what=self,
+                       #wave_rsc=player_tougher_wav_rsc);
+               }
 
                piGain_chance = -(piBase_Max_health/2);
                

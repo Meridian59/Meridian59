@@ -292,6 +292,7 @@ resources:
    player_is_justicar = "Elected Royal Justicar of the Meridian."
 
    player_is_holding = " is holding "
+   player_is_wearing = " is wearing "
 
    player_known_for_mastery = "Known far and wide for mastery of "
    player_and = " and "
@@ -1784,7 +1785,16 @@ messages:
          if obj <> $
          {
             AppendTempString(Send(self,@GetHeShe,#cap=True));
-            AppendTempString(player_is_holding);
+            
+            if IsClass(obj,&Ring)
+            {
+               AppendTempString(player_is_wearing);
+            }
+            else
+            {
+               AppendTempString(player_is_holding);
+            }
+
             AppendTempString(Send(obj,@GetIndef));
             AppendTempString(Send(obj,@GetName));
             AppendTempString(player_dot);

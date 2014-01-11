@@ -208,7 +208,7 @@ properties:
    prBackground = $
 
    % Default length: five minutes (in ms)
-   piDispose_delay = 300000
+   piDispose_delay = 180000
    ptDispose = $
 
    % Exits list: each member is a list of row in this room, col in this room

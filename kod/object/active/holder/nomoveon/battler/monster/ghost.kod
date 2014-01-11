@@ -56,9 +56,8 @@ classvars:
 
    viTreasure_type = TID_GHOST
    viSpeed = SPEED_FAST
-   viAttributes = MOB_ONE_TREASURE
    viLevel = 200
-   viDifficulty = 5
+   viDifficulty = 10
    viKarma = -100
 
    vrSound_hit = ghost_sound_hit
@@ -175,7 +174,7 @@ messages:
    GetName()
    {
       % there's only one Far'nohl, and he's in the castle.
-      if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_THRONE1
+      if poOwner <> $ AND send(poOwner,@GetRoomNum) = RID_THRONE2
       {
          return ghost_name_rsc;
       }
@@ -190,7 +189,7 @@ messages:
 
    ShowDesc()
    {
-      if poOwner <> $ and send(poOwner,@GetRoomNum) = RID_THRONE1
+      if poOwner <> $ and send(poOwner,@GetRoomNum) = RID_THRONE2
       {
          vrDesc = ghost_desc_rsc;
       }

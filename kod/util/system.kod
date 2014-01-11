@@ -2240,6 +2240,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_CASTLE1,#class=&Castle1);
       Send(self,@CreateOneRoomIfNew,#num=RID_CASTLE1B,#class=&Castle1B);
       Send(self,@CreateOneRoomIfNew,#num=RID_THRONE1,#class=&Throne1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_THRONE2,#class=&Throne2);
       Send(self,@CreateOneRoomIfNew,#num=RID_DUNGEON,#class=&DungeonVictoria);
       Send(self,@CreateOneRoomIfNew,#num=RID_BADLAND1,#class=&BadLand1);
       Send(self,@CreateOneRoomIfNew,#num=RID_CANYON2,#class=&Canyon2);

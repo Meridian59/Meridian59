@@ -24,28 +24,25 @@ properties:
    %% overall, your best value.  Of course, you have to kill a 
    %% ghost =)
 
-   piDiff_seed = 6
+   piDiff_seed = 9
    piItem_att_chance = 7
 
 messages:
    
    constructed()
    {
-      plTreasure = [ [ &MysticSword, 10 ],
-                     [ &RingInvisibility, 10],
-                     [ &Gauntlet, 10 ],
-                     [ &PlateArmor, 10 ],
-                     [ &KnightShield, 10 ],
-                     [ &FineLute, 9 ],
-                     [ &Scimitar, 7],                     
-                     [ &VampireWand, 7],
-                     [ &DiscipleRobe, 5],
+      plTreasure = [ [ &MysticSword, 3 ],
+                     [ &Money, 45],
+                     [ &RingInvisibility, 4],
+                     [ &Gauntlet, 3 ],
+                     [ &PlateArmor, 3 ],
+                     [ &KnightShield, 3 ],
+                     [ &Scimitar, 2],                     
+                     [ &VampireWand, 4],
+                     [ &DiscipleRobe, 4],
                      [ &Diamond, 5],
-                     [ &Ruby, 5],
-                     [ &LightningWand, 5 ],
-                     [ &FireWand, 4],
-                     [ &HoldWand, 2],
-                     [ &TruceScroll, 1]
+                     [ &FineLute, 5],
+                     [ &Ruby, 20]
                    ];
 
       propagate;

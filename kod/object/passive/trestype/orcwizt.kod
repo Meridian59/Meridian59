@@ -35,10 +35,11 @@ messages:
                      [ &PurpleMushroom, 6 ],
                      [ &Torch, 5 ],
                      [ &DiscipleRobe, 4 ],
+                     [ &LightDiscipleRobe, 1 ],
                      [ &Gauntlet, 4 ],
                      [ &Flask, 4 ],
                      [ &Lute, 3 ],
-                     [ &PolishedSeraphym, 3 ],
+                     [ &PolishedSeraphym, 2 ],
                      [ &Money, 2 ],
                      [ &StaffOfJolting, 2 ],
                      [ &DispellIllusionScroll, 2 ]

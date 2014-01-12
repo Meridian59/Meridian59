@@ -8940,7 +8940,7 @@ messages:
 
    SetDefaultClothes(pants_color = -1,shirt_color = -1, rand=FALSE, increment = TRUE)
    {   
-      local shirt_color_xlat, pants_color_xlat, skin_color, i, bShirt, bLegs, bArms;
+      local shirt_color_xlat, pants_color_xlat, skin_color, i, bShirt, bLegs, bArms, oShirt, oRobes;
 
       skin_color = Send(self,@GetSkinColor);      
       skin_color = Send(self,@convertskincolortoXLAT,#skin_color = skin_color);
@@ -9018,6 +9018,13 @@ messages:
       if not bLegs
       {
          Send(self,@ResetPlayerLegs);
+      }
+
+      oRobes = Send(self,@FindUsing,#class=&Robe);
+      if oRobes <> $
+         AND Send(oRobes,@ItemChangesArms)
+      {
+         Post(oRobes,@SetArms);
       }
 
       if poOwner <> $

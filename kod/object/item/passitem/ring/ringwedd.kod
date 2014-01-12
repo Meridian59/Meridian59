@@ -97,13 +97,20 @@ messages:
             }
          }
       }
+      Send(what,@AddDefenseModifier,#what=self);
       
       propagate;
    }
 
    NewUnused(what = $)
    {
+      Send(what,@RemoveDefenseModifier,#what=self);
       propagate;
+   }
+   
+   DefendingHit()
+   {
+      return;
    }
 
    DropOnDeath()
@@ -132,6 +139,16 @@ messages:
    DestroyDisposable()
    {
       return FALSE;
+   }
+
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   {
+      return defense_power;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   {
+      return damage;
    }
 
 end

@@ -1545,7 +1545,7 @@ messages:
 
    UndoPlayerArt()
    {
-      local oRoom;
+      local oRoom, oShirt;
 
       if (poOwner <> $)
       {
@@ -1564,10 +1564,16 @@ messages:
             Send(poOwner,@ResetPlayerLegs,#alldone=FALSE);
          }
          
+         oShirt = Send(poOwner,@FindUsing,#class=&Shirt);
+         if oShirt <> $
+         {
+            Post(oShirt,@SetArms);
+         }
+         
          oRoom = Send(poOwner,@GetOwner);
          if oRoom <> $
          {         
-            Send(oRoom,@SomethingChanged,#what=poOwner);
+            Post(oRoom,@SomethingChanged,#what=poOwner);
          }
       }
       

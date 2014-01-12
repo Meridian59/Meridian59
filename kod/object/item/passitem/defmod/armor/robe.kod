@@ -66,7 +66,7 @@ classvars:
    viSpell_modifier = 10
    viDefense_base = 20
 
-   viUse_type = ITEM_USE_BODY | ITEM_USE_LEGS
+   viUse_type = ITEM_USE_BODY
 
    vrIcon_male = robe_male_icon_rsc
    vrIcon_female = robe_female_icon_rsc
@@ -122,24 +122,6 @@ messages:
    ReqUse()
    {
       return (NOT send(send(SYS,@GetWarEvent),@IsActive));
-   }
-
-   ReqUseSomething(what = $)
-   {
-      if send(what,@GetItemUseType) & ITEM_USE_LEGS
-         AND NOT IsClass(what,&Robe)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-
-      propagate;
    }
 
    HasSkinTones()

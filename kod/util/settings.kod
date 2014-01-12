@@ -151,6 +151,9 @@ properties:
    
    % Replaces old constant
    piIntrigueEnableHP = 50
+   
+   % If set to true, Resist Rings will lose durability upon taking an appropriate elemental hit.
+   piResistRingLoseDurability = FALSE
 
 messages:
 
@@ -374,6 +377,11 @@ messages:
    GetSwingsPerImproveCheck()
    {
       return piWeaponcraftImprovementMinimumSwings;
+   }
+   
+   GetResistRingLoseDurability()
+   {
+      return piResistRingLoseDurability;
    }
 
 end

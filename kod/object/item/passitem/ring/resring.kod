@@ -139,7 +139,10 @@ messages:
 
       if (aspell & iResType) <> 0
       {
-         piHits = piHits - 1;
+         if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability) = TRUE
+         {
+            piHits = piHits - 1;
+         }
          Send(poOwner,@MsgSendUser,#message_rsc=resistring_working_rsc);
          
          If IsClass(what,&User)

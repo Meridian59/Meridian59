@@ -56,10 +56,13 @@ messages:
 
    AppendDesc()
    {
-      AppendTempString("\n\n");   
-      AppendTempString(resistring_chargeslefta_rsc);      
-      Send(SYS,@AppendCardinalToTempString,#number=piHits);
-      AppendTempString(resistring_chargesleftb_rsc);
+      if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability) = TRUE
+      {
+         AppendTempString("\n\n");   
+         AppendTempString(resistring_chargeslefta_rsc);      
+         Send(SYS,@AppendCardinalToTempString,#number=piHits);
+         AppendTempString(resistring_chargesleftb_rsc);
+      }
       
       return;
    }

@@ -4755,6 +4755,7 @@ messages:
       plItemTemplates = cons(create(&Robe),plItemTemplates);
       plItemTemplates = cons(create(&LightRobe),plItemTemplates);
       plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
+      plItemTemplates = cons(create(&LightDiscipleRobe),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeArmor),plItemTemplates);
 
       plItemTemplates = cons(create(&Helm),plItemTemplates);

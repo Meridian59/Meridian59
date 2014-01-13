@@ -117,8 +117,6 @@ typedef struct {
 
    int sound_volume;           // 0 - 100
    int music_volume;           // 0 - 100
-
-   int language;
 } Config;
 
 void ConfigInit(void);

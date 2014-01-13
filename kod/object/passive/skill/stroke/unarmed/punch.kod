@@ -47,15 +47,9 @@ classvars:
    viskillExertion = 2
    vbCheck_exertion = FALSE
 
-   viChance_to_increase = 60
-
-   viHit_Factor = 30
    viSkill_level = 1
 
    viSkill_Num = SKID_PUNCH
-
-   viMin_Damage = 3         % Damage_min here replaces a weapon    
-   viMax_Damage = 8         % Damage_max replaces the weapon's stats.
 
    VbAutomatic = FALSE  %  If this is set to TRUE, then the effects of this
                         %  skill happen automatically, and are not accessible

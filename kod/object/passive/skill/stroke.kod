@@ -58,11 +58,12 @@ classvars:
    viSkill_num = SKID_DEFAULT
    viSkill_Exertion = 2
 
-   viHit_Factor = 100
    viDamage_Factor = 100
    viRange_Factor = 0
 
    vbAutomatic = FALSE
+	
+   viChance_to_Increase = 3
 
 properties:
 
@@ -94,27 +95,8 @@ messages:
 
    ImproveStroke(who=$,use_weapon=$,target=$)
    {
-     local prof, target_level;
-
-     target_level = send(target,@GetLevel);
-     prof=send(use_weapon,@GetProfNumber);
-
-     if random(1,100) > 60 or not send(who,@HasSkill,#num=prof)
-     {
-        if send(who,@GetSkillAbility,#skill_num=viSkill_num) < 100
-          {
-             % checking for stroke advancement
-             send(self,@ImproveAbility,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
-          }
-     }
-     else
-     {
-        if send(use_weapon,@getprof,#who=who) < 100
-          {
-             % checking for weapon proficiency advancement
-             send(use_weapon,@ImproveProficiency,#who=who,#target=target,#bonus=Send(who,@GetWeaponSwingBonus));
-          }
-     }
+		send(self,@ImproveAbility,#who=who,#target=target);
+		send(use_weapon,@ImproveProficiency,#who=who,#target=target);
      
      return;
    }

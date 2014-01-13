@@ -48,8 +48,8 @@ classvars:
    vrIcon_female = scalearmor_female_icon_rsc
 
    viDodge_base = -50               
-   viDamage_flat_base = 4
-   viDamage_percent_base = 20
+   viDamage_flat_base = 2
+   viDamage_percent_base = 30
 
 properties:
 
@@ -62,8 +62,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_THRUST,-10],
-		         [ATCK_WEAP_PIERCE,-10]
+      return [ [ATCK_WEAP_THRUST,-15],
+		         [ATCK_WEAP_PIERCE,-15]
              ];
    }
 

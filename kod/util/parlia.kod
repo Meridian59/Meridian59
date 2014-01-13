@@ -1230,9 +1230,9 @@ messages:
       local iBonus, iFaction, iSchool;
 
       % Rationale behind the numbers:
-      % This number is added right into initial learn chance.
-      % Non-intriguing mortals get a small bonus of 3.
-      % Maximum normal power is 10.
+      % This number is a multiplicative bonus to the initial learn chance.
+      % Non-intriguing mortals get a small bonus of 10 percent.
+      % Maximum normal power is 50 percent.
 
       if who = $
       {
@@ -1268,10 +1268,10 @@ messages:
       % Player is under 40
       if not Send(who,@PlayerIsIntriguing)
       {
-         return 2;
+         return 10;
       }			  
  
-      iBonus = Send(self,@CalcFactionBonus,#base=10,#faction=iFaction);
+      iBonus = Send(self,@CalcFactionBonus,#base=50,#faction=iFaction);
       
       if Random(0,100) = 0 AND iFaction <> FACTION_NEUTRAL
       {

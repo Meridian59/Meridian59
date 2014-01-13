@@ -8,33 +8,33 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Bash is Stroke
+Riposte is Stroke
 
 constants:
 
    include blakston.khd
 
 resources:
-   bash_name_rsc = "bash"
-   bash_icon_rsc = armorico.bgf
-   bash_desc_rsc = "Bashing allows you to do better damage with your shield."
+   riposte_name_rsc = "riposte"
+   riposte_icon_rsc = parryico.bgf
+   riposte_desc_rsc = "Riposting allows you to retaliate after successfully parrying an attack."
 
-   bash_skill_intro = "Weaponcraft Lv. 3: An advanced technique for dealing more damage when blocking an attack."
+   riposte_skill_intro = "Weaponcraft Lv. 5: Retaliate after parrying."
 
 classvars:
 
-   vrName = bash_name_rsc
-   vrIcon = bash_icon_rsc
-   vrDesc = bash_desc_rsc
+   vrName = riposte_name_rsc
+   vrIcon = riposte_icon_rsc
+   vrDesc = riposte_desc_rsc
 
-   vrSkill_intro = bash_skill_intro
+   vrSkill_intro = riposte_skill_intro
 
    viIndefinite = ARTICLE_NONE
    viDefinite = ARTICLE_NONE
 
    viSchool = SKS_FENCING
-   viSkill_Num = SKID_BASH
-   viSkill_level = 3
+   viSkill_Num = SKID_RIPOSTE
+   viSkill_level = 5
    viChance_to_increase = 20
 
    viskillExertion = 0
@@ -51,7 +51,7 @@ messages:
    GetRequisiteStat(who=$)
    "Varies from skill to skill and spell to spell."
    {
-      return Send(who,@GetMight);
+      return Send(who,@GetAim);
    }
 	
    FindDamage(weapon_used=$, who=$, victim=$)
@@ -59,7 +59,7 @@ messages:
    {
       local iAbility, damage;
       
-		weapon_used = send(who,@LookupPlayerShield);
+		weapon_used = send(who,@LookupPlayerWeapon);
 		
       % base weapon damage
       damage = send(weapon_used,@GetDamage,#who=who,#target=victim);
@@ -82,7 +82,7 @@ messages:
 	  damage = damage + (Send(who,@GetSkillAbility,#Skill_num=SKID_BASH)+1)*damage/100;
 	  
       % Get stat damage bonus.
-      stat = send(who,@GetMight);
+      stat = send(who,@GetAim);
       damage = (50+stat)*damage/100;
 
       return damage;
@@ -91,6 +91,7 @@ messages:
    ImproveStroke(who=$,use_weapon=$,target=$)
    {
 		send(self,@ImproveAbility,#who=who,#target=target);
+		send(use_weapon,@ImproveProficiency,#who=who,#target=target);
 		
 		return;
    }

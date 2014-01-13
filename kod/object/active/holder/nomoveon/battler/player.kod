@@ -103,9 +103,6 @@ constants:
    % advance to the next level of spells/skills.
    MIN_NEEDED_TO_ADVANCE = 75
                                     
-   % How many weapon swings until we get an improve check?
-   SWINGS_PER_IMPROVE_CHECK = 75
-
    % What's the length after having a player attacked before we let "mules"
    % cast on them again. Currently set to 15 minutes. Should be bigger
    % than logoff ghost time (currently 10 mins)
@@ -774,14 +771,6 @@ properties:
    % the total. Used to give bonuses to improving spells.
    % See spell.kod for details.
    plSchoolCasts = $
-
-   % The number of swings with the current weapon
-   piWeaponSwings = 0
-
-   % A compound of if the player can advance and the WC proficiency needed
-   % to use the weapon. The proficiency number is the number / 1000, while
-   % the bonus to advance is the number mod 1000.
-   piWeaponInfo = 0
 
    % converted guild commands list to a bitvector.
    piGuild_commands = 0
@@ -4184,18 +4173,6 @@ messages:
       Send(poOwner,@SomethingAttacked,#what=self,#victim=what,
            #use_weapon=use_weapon,#stroke_obj=stroke_obj);
 
-      % Record the swing for potential advancement.
-      % Only recorded if the player can advance on the monster, and if they
-      % are within line of sight of the target. (If they aren't in line of sight,
-      % then only advance 1 out of 5 swings. Allow the random, since sometimes
-      % not being in line of sight is an accident.
-      if Send(what,@CanPlayerAdvanceOnMe)
-         AND (Send(poOwner,@LineOfSight,#obj1=self,#obj2=what) OR random(1,25) = 1)
-      {
-         % We got another swing in, so increment that.
-         Send(self,@SwingWeapon,#times=1);
-      }
-
       propagate;
    }
 
@@ -4721,12 +4698,7 @@ messages:
    {
       local oMonster;
       
-      if (stroke_obj <> $ AND stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_BASH))
-         AND Send(self,@GetWeaponSwingBonus) > 0
-      {
-         Send(stroke_obj,@ImproveStroke,#who=self,#target=what,
-              #use_weapon=Send(self,@GetWeapon));
-      }
+		Send(stroke_obj,@ImproveStroke,#who=self,#target=what,#use_weapon=Send(self,@GetWeapon));
 
       % Morphed? As a bonus, people in illusionary form get the hit side effect. :)
       oMonster = Send(self,@GetIllusionForm);
@@ -4967,68 +4939,6 @@ messages:
       }
 
       return oWeapon;
-   }
-
-   % The next three functions deal with weapon improvement.
-
-   % This keeps track of the weapon swings.
-   SwingWeapon(times=1)
-   {
-      local oWeapon, iProfNum;
-
-      oWeapon = Send(self,@LookupPlayerWeapon);
-
-      if oWeapon <> $
-      {
-         % Get weapon's numbers.
-         iProfNum = Send(oWeapon,@GetProfNumber,#who=self);
-      }
-      else
-      {
-         % Unarmed or touch attacks.
-         iProfNum = SKID_BRAWLING;
-      }
-      
-      if iProfNum <> (piWeaponInfo mod 1000)
-      {
-         Send(self,@ResetWeaponSwings,#prof=iProfNum);
-      }
-      
-      piWeaponSwings = piWeaponSwings + times;
-      if (piWeaponSwings mod Send(Send(SYS,@GetSettings),@GetSwingsPerImproveCheck)) = 0
-      {
-         % Increase this number. Allows us to advance, and get bonuses for advancement.
-         piWeaponInfo = piWeaponInfo + 1000;
-      }
-      
-      return;
-   }
-
-   % This resets the weapon swings, for example, after an improvement or a
-   % weapon type change.
-   ResetWeaponSwings(prof=$)
-   {
-      local iProf;
-
-      if prof <> $
-      {
-         iProf = prof;
-      }
-      else
-      {
-         iProf = piWeaponInfo mod 1000;
-      }
-      
-      piWeaponSwings = 0;
-      piWeaponInfo = iProf;
-      
-      return;
-   }
-
-   GetWeaponSwingBonus()
-   {
-      % Separate out the number of groups of swings (the bonus) fromt he proficiency number.
-      return piWeaponInfo/1000;
    }
 
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
@@ -7364,7 +7274,7 @@ messages:
       % this Skill is not in the player's Skill list. return 0 ability.
       return 0;
    }
-
+	
    ChangeSkillAbility(Skill_num = 0, amount = 0, report = FALSE, refigureschools = TRUE, bDM = FALSE)
    {
       local i, bFound, elemnum, iability, bUsed, iChange, skillname,
@@ -7410,12 +7320,6 @@ messages:
       iability = Send(self,@DecodeSkillAbility,#compound=i);
       newability = bound(iability+amount,1,99);
       iChange = newability - iability;
-
-      % If we advance a stroke or a proficiency, then reset our stroke count (and bonuses)
-      if IsClass(oSkill,&Stroke) OR IsClass(oSkill,&Proficiency)
-      {
-         Send(self,@ResetWeaponSwings);
-      }
 
       SetNth(plSkills, elemnum, Send(self,@EncodeSpell,#num=skill_num,#iability=newability));
       Send(self,@DrawStatSkill,#index=elemnum);
@@ -7867,34 +7771,6 @@ messages:
          }
       }
       
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
-      {
-         dodgeskill = SKID_DODGE;
-         oWeapon = Send(self,@LookupPlayerWeapon);
-         if oWeapon <> $
-            AND (not IsClass(oWeapon,&RangedWeapon))
-            AND Send(self,@HasSkill,#num=SKID_PARRY)
-         {
-            if random(1,100) < 30
-            {
-               dodgeskill=SKID_PARRY;
-            }
-         }
-         
-         if dodgeskill = SKID_DODGE
-            AND (Send(self,@LookupPlayerShield) <> $)
-            AND Send(self,@HasSkill,#num=SKID_BLOCK)
-         {
-            if random(1,100) < 30
-            {
-               dodgeskill=SKID_BLOCK;
-            }
-         }
-         
-         oSkill=Send(sys,@FindSkillByNum,#num=dodgeskill);
-         Send(oSkill,@ImproveAbility,#who=self,#target=poKill_Target);
-      }
-
       return FALSE;
    }
 

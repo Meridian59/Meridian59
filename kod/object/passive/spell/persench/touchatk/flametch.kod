@@ -69,11 +69,6 @@ classvars:
    viSpellExertion = 2
    viMana = 9
 
-   viHit_Factor = 25
-
-   viMin_Damage = 3
-   viMax_Damage = 8
-
    viRange = 3
 
    viSpellType = ATCK_SPELL_FIRE + ATCK_SPELL_ALL

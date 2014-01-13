@@ -74,11 +74,7 @@ classvars:
 
    viSpellExertion = 2
 
-   viChance_To_Increase = 10
-
-   % typically, spells have hit probs that are high, provided you're good at
-   %  the skill.
-   viHit_Factor = 80
+   viChance_To_Increase = 5
 
    % Touch spells typically do good damage but are unaffected by typical weapon
    %  bonuses.

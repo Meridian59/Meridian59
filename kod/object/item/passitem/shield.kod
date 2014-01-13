@@ -113,33 +113,13 @@ messages:
    
    DoBlockAttack(who=$,what=$)
    {
-      local iDamage,oStroke;
-		
+      local oStroke;
+	  
 		oStroke = Send(SYS,@FindSkillByNum,#num=SKID_BASH);
-	  
-	   iDamage = Send(oStroke,@FindDamage,#weapon_used=self,#who=who,#victim=what);
+	   % This will trigger a free regular weapon attack on a successful parry.	  
+	   % Using TryAttack instead of DoExtraAttack since we want to factor in chance to hit.
+      Send(who,@TryAttack,#what=what,#stroke_obj=oStroke,#use_weapon=self);
 
-		% Handle damage modifications that are usually handled in TryAttack here, since we bypass chance to hit.
-		iDamage = bound(iDamage,0,$);
-		
-      % After figuring damage, call AssessDamage and AssessHit. These will apply damage and handle various other stuff.
-      iDamage = Send(what,@AssessDamage,#what=who,#damage=iDamage,
-                     #atype=Send(self,@GetAttackType),#aspell=Send(self,@GetAttackSpell),
-                     #absolute=FALSE);
-
-      Send(who,@AssessHit,#what=what,#damage=iDamage,#use_weapon=self,#stroke_obj=oStroke);
-		
-		% Bashing doesn't interfere with other weapon skills, and doesn't user the weaponswingtimer,
-		% so we have to call ImproveStroke here instead.
-      Send(oStroke,@ImproveStroke,#who=who,#target=what,#use_weapon=self);
-
-      if iDamage = $
-      {
-         Send(who,@KilledSomething,#what=what,#use_weapon=self,#stroke_obj=Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber)));
-      } 
-
-      Send(send(who,@GetOwner),@SomethingAttacked,#what=who,#victim=what,#use_weapon=self);
-	  
 	  return;
    }
 
@@ -306,5 +286,15 @@ messages:
       return viAttack_type;
    }
 
+   GetRange()
+   {
+      return 2;
+   }
+	
+   ReqWeaponAttack(what = $)
+   {
+      return TRUE;
+   }
+	
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

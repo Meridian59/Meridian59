@@ -195,13 +195,13 @@ messages:
    
    DoRiposte(who=$,what=$)
    {
-      local iPreliminary, iStroke, extra_hits;
+      local oStroke;
 	  
-	  iStroke = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-	  % This will trigger a free regular weapon attack on a successful parry.	  
-	  % Using TryAttack instead of DoExtraAttack since we want to factor in chance to hit.
-      Send(who,@TryAttack,#what=what,#stroke_obj=iStroke,#use_weapon=self);
-
+	   oStroke = Send(sys,@FindSkillByNum,#num=SKID_RIPOSTE);
+	   % This will trigger a free regular weapon attack on a successful parry.	  
+	   % Using TryAttack instead of DoExtraAttack since we want to factor in chance to hit.
+      Send(who,@TryAttack,#what=what,#stroke_obj=oStroke,#use_weapon=self);
+	
 	  return;
    }
 
@@ -516,10 +516,9 @@ messages:
       return SKID_SLASH;
    }
 
-   ImproveProficiency(who=$,target=$,bonus=0)
+   ImproveProficiency(who=$,target=$)
    {      
-      send(send(SYS,@findSkillbynum,#num=viProficiency_needed),@ImproveAbility,
-           #who=who,#target=target,#bonus=bonus);
+      send(send(SYS,@findSkillbynum,#num=viProficiency_needed),@ImproveAbility,#who=who,#target=target);
              
       return;
    }

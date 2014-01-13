@@ -3200,6 +3200,7 @@ messages:
    {
        Send(self,@CreateOneSkillIfNew,#num=SKID_DODGE,#class=&Dodge);
        Send(self,@CreateOneSkillIfNew,#num=SKID_PARRY,#class=&Parry);
+       Send(self,@CreateOneSKillIfNew,#num=SKID_RIPOSTE,#class=&Riposte);
        Send(self,@CreateOneSKillIfNew,#num=SKID_SLASH,#class=&Slash);
        Send(self,@CreateOneSKillIfNew,#num=SKID_PUNCH,#class=&Punch);
        Send(self,@CreateOneSKillIfNew,#num=SKID_THRUST,#class=&Thrust);

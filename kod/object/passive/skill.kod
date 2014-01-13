@@ -374,15 +374,12 @@ messages:
       local iBonus, iFaction, iFinal;
 
       % Give up to a 50% bonus to the initial chance to learn for high intellect.
-      iBonus = (viChance_to_increase * Send(who,@GetIntellect)) / 100;
-
-      iBonus = iBonus + Send(Send(SYS,@GetParliament),@GetFactionLearnBonus,
-                             #who=who,#theskill=self);
-
-      iFinal = (viChance_to_increase + iBonus);
-
-      % The personal universal modifier.
-      iFinal = iFinal + ((iFinal * Send(who,@CheckPlayerFlag,#flagset=3)) / 100);
+      
+		iBonus = Send(who,@GetIntellect);
+		iFaction = Send(Send(SYS,@GetParliament),@GetFactionLearnBonus,#who=who,#theskill=self);
+      iBonus = iBonus + iFaction + 100;
+      
+      iFinal = viChance_to_increase * iBonus / 100;
 
       return iFinal;
    }
@@ -427,9 +424,6 @@ messages:
 
       % The global modifier from system.
       final = (final * Send(Send(SYS, @GetSettings), @GetAdvancementRate)) / 100;
-
-      % The individual universal modifier.
-      final = final + ((final * Send(who,@CheckPlayerFlag,#flagset=3)) / 100);
 
       return final;
    }

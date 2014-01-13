@@ -4535,7 +4535,6 @@ messages:
          AND stroke_ID <> SKID_STRIKE
          AND stroke_ID <> SKID_THRUST         
          AND stroke_ID <> SKID_FIRE 
-         AND stroke_ID <> SKID_BASH 
       {
          if NOT Send(self,@HasSkill,#num=stroke_id)
          {

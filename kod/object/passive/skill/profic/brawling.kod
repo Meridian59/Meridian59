@@ -33,14 +33,11 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_num = SKID_BRAWLING
    viSkill_level = 2
-   viChance_to_increase = 25
 
 properties:
 
    plPrerequisites = $
    piSchool = 0
-
-   piChanceToIncrease = 100
 
 messages:
 

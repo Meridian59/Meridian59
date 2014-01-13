@@ -319,12 +319,19 @@ messages:
 
    % This does one attack by the battler.
    % For a monster, the stroke_obj is itself.
-   TryAttack(what = $,stroke_obj=$)
+   TryAttack(what=$,stroke_obj=$,use_weapon=$)
    {
       local iChanceToHit, iPreliminary, iDamage, oWeapon, iExtraHits;
 
-      oWeapon = Send(self,@GetWeapon);
-
+      if use_weapon <> $
+		{
+			oWeapon = use_weapon;
+		}
+		else
+		{
+			oWeapon = Send(self,@GetWeapon);
+		}
+		
       % Derived class should have checked all specific restrictions by this
       %  point.
 
@@ -363,9 +370,9 @@ messages:
 		   iPreliminary = bound(iPreliminary,0,$);
 
          iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,#stroke_obj=stroke_obj,
-		                  #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
+		                  #atype=Send(self,@GetDamageType,#use_weapon=use_weapon),#aspell=Send(self,@GetSpellType,#use_weapon=use_weapon));
 
-         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
+         Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage,#use_weapon=oWeapon);
 	  
          if iDamage = $
          {
@@ -400,11 +407,11 @@ messages:
 	  
 	  extra_hits = extra_hits - 1;
 	  
-      iDamage = Send(what,@AssessDamage,#what=self,#damage=random(preliminary/2,preliminary),
-		   #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType),#stroke_obj=stroke_obj,
+      iDamage = Send(what,@AssessDamage,#what=self,#damage=preliminary,#stroke_obj=stroke_obj,
+		   #atype=Send(self,@GetDamageType,#use_weapon=use_weapon),#aspell=Send(self,@GetSpellType,#use_weapon=use_weapon),
 		   #report_resistance=FALSE);
 		   
-      Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage);
+      Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,#damage=iDamage,#use_weapon=use_weapon);
 
       if iDamage = $
       {
@@ -870,7 +877,7 @@ messages:
    % This returns defense reason of why opponent missed this battler.
    GetDefenseDesc(stroke_obj=$,what=$)
    {
-      local iRandom, iParry, iBlock, iDodge, iAvoid;
+      local iRandom, iParry, iBlock, iDodge, iAvoid, oSkill;
       
       iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
       iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
@@ -892,6 +899,8 @@ messages:
 		   {
 	         send(send(self,@LookupPlayerWeapon),@DamageGear);
 			   if stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
+				AND Send(self,@HasSkill,#num=SKID_RIPOSTE) 
+				AND (101 + Send(self,@GetSkillAbility,#skill_num=SKID_RIPOSTE)) > random(0,199)
 			   {
 	            post(send(self,@LookupPlayerWeapon),@DoRiposte,#who=self,#what=what);
 		   	}
@@ -899,7 +908,10 @@ messages:
 			   {
 	            send(send(self,@LookupPlayerWeapon),@DoParryAnimation);
 			   }
+				oSkill=Send(sys,@FindSkillByNum,#num=SKID_PARRY);
+				Send(oSkill,@ImproveAbility,#who=self,#target=what);
 		   }
+
          return battler_parried;
       }
 
@@ -910,15 +922,26 @@ messages:
 	         send(send(self,@LookupPlayerShield),@DoBlockAnimation);
 		      send(send(self,@LookupPlayerShield),@DamageGear);
 			   if stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
+				AND Send(self,@HasSkill,#num=SKID_BASH) 
+				AND (101 + Send(self,@GetSkillAbility,#skill_num=SKID_BASH)) > random(0,199)
 			   {
 	            post(send(self,@LookupPlayerShield),@DoBlockAttack,#who=self,#what=what);
-			   }
+			   }			
+				oSkill=Send(sys,@FindSkillByNum,#num=SKID_BLOCK);
+				Send(oSkill,@ImproveAbility,#who=self,#target=what);
 		   }
+			
          return battler_blocked;
       }
 
       if iRandom < (iParry + iBlock + iDodge)
       {
+	      if (IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
+			{
+				oSkill=Send(sys,@FindSkillByNum,#num=SKID_DODGE);
+				Send(oSkill,@ImproveAbility,#who=self,#target=what);
+			}
+		
          return battler_dodged;
       }
       

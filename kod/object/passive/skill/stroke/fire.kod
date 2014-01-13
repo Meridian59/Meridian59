@@ -44,7 +44,6 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_Num = SKID_FIRE
    viSkill_level = 4
-   viChance_to_increase = 50
 
    viSkillExertion = 2
    vbCheck_exertion = FALSE
@@ -54,8 +53,6 @@ classvars:
 properties:
 
    plPrerequisites = $
-
-   piChanceToIncrease = 100
 
 messages:
 

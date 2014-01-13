@@ -44,10 +44,6 @@ classvars:
    viSkill_level = 50
 
    viskillExertion = 2000
-   viHit_Factor = 30
-
-   viDamage_Min = 3         % Damage_min here replaces a weapon    
-   viDamage_Max = 9         % Damage_max replaces the weapon's stats.
 
    VbAutomatic = FALSE  %  If this is set to TRUE, then the effects of this
                         %  skill happen automatically, and are not accessible
@@ -58,8 +54,6 @@ classvars:
 properties:
 
    plPrerequisites = $
-
-   piChanceToIncrease = 100
 
 messages:
 

@@ -31,7 +31,6 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_num = SKID_PROFICIENCY_FALCHION
    viSkill_level = 2
-   viChance_to_increase = 60
 
 properties:
 

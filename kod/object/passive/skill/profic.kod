@@ -33,6 +33,8 @@ classvars:
    viSkill_num = 0
 
    vbAutomatic = TRUE    % does not show up in pull-down menu
+	
+   viChance_to_Increase = 3
 
 properties:
 
@@ -40,8 +42,6 @@ properties:
    % First elem of this list is class of reagent; second is # of reagent required for skill.
    plPrerequisites = $
    piSchool = 0
-
-   piChanceToIncrease = 100
 
 messages:
 

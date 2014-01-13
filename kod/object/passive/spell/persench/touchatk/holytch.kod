@@ -68,11 +68,6 @@ classvars:
    viSpell_level = 2
    viMana = 12
 
-   viHit_Factor = 15
-
-   viMin_Damage = 2
-   viMax_Damage = 7
-
    viRange = 2
 
    viSpellType = ATCK_SPELL_HOLY+ATCK_SPELL_ALL

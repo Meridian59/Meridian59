@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   name_throne1 = "The Throne Room of Victoria Castle" 
+   name_throne1 = "The Antechamber of Victoria Castle" 
    room_throne1 = throne1.roo
 
    throne1_music = castle2.mid

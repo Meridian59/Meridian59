@@ -2737,24 +2737,11 @@ messages:
 
    ManaTimer()
    {
-      local iCrystalizeManaAbility, oCrystalizeMana;
-   
       ptMana = $;
 
       if piMana < piMax_mana
       {
          Send(self,@GainMana,#amount=1);
-         
-         if piMana < 10
-         {
-            iCrystalizeManaAbility = Send(self,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
-            if iCrystalizeManaAbility > 0
-               AND NOT Send(self,@IsCrystalizeManaSurging)
-            {
-               oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
-               Send(oCrystalizeMana,@DoManaSurge,#who=self,#triggered=TRUE);
-            }
-         }
       }
       else
       {

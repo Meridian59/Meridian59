@@ -16,11 +16,6 @@ constants:
 
    BABBLE_MINIMUM = 10000
    BABBLE_MAXIMUM = 100000
-   
-   % percentage to speak on hit/kill
-   KILL_CHAT_PROB_HIT = 5
-   KILL_CHAT_PROB_KIL = 10
-   KILL_CHAT_PROB_IMP = 20
 
 resources:
 
@@ -55,32 +50,7 @@ resources:
    ShrunkenHead_random_not_lonely_2 = "Sure!  You'll be my bestest friend!"
    ShrunkenHead_see_players = "I see "
    ShrunkenHead_and = "and"
-   ShrunkenHead_inventory_has = " has "   
-   
-   ShrunkenHead_win1 = "Good form"
-   ShrunkenHead_win2 = "Have it! You pathetic "
-   ShrunkenHead_win3 = "Doooshh!"
-   ShrunkenHead_win4 = "ka-powza!"
-   
-   ShrunkenHead_dealt1 = "Ouch! ~gLeave master alone!"
-   ShrunkenHead_dealt2 = "I'm ~Bwarning~n you!!"
-   ShrunkenHead_dealt3 = "Run Away!! Retreat!! ~INo hope!!"
-   ShrunkenHead_dealt4 = "HA! Master laughs off your weak and terrible blow! HA!"
-   
-   ShrunkenHead_hit1 = "Strong and True!"
-   ShrunkenHead_hit2 = "Just and Powerful!"
-   ShrunkenHead_hit3 = "For the alliance!"
-   ShrunkenHead_hit4 = "You're done for "
-
-   ShrunkenHead_cheer1 = "Well Done!"
-   ShrunkenHead_cheer2 = "Your patients really paid off..."
-   
-   ShrunkenHead_tougher1 = "Woooooooooooot!!!"
-   ShrunkenHead_tougher2 = "Master is sooooo strong!!!"
-   ShrunkenHead_tougher3 = "Oh Master!!! Congratulations!!!!"   
-      
-   ShrunkenHead_check = "Shrunken head, status report!"
-   ShrunkenHead_reset = "Shrunken head, reset!"
+   ShrunkenHead_inventory_has = " has "
 
 classvars:
    
@@ -94,249 +64,14 @@ classvars:
 
    viGround_group = 1
 
-
 properties:  
 
    psOverheard = $
    poOverheard = $
    piSilenced = 0
    ptBabble = $
-   
-      
-   % what kind of shrunken head did you get? :D
-   personality = 1
-   
-   % shrunken head works like a walking journal... 
-   statKills = 0
-   statImprovements = 0
-   statToughers = 0   
-   statDealt = 0
-   statReceived = 0
 
 messages:   
-
-   Dropped(by = $, where = $)
-   "The poor shrunken head has been dropped!"
-   {
-   	local s, choice;		
-		
-		s = createString();
-		clearTempString();
-
-		appendTempString("Please master ");
-		appendTempString(send(by,@GetName));
-		appendTempString(" don't leave me here like this!!");
-
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }   
-
-   Tougher(hp = $)
-   "Master gained a tougher!"
-   {		
-		local s, choice, divulgeHp;
-		statToughers=statToughers+1;
-		
-		if poOwner = $ { return; }   		
-
-		s = createString();
-		clearTempString();		
-
-		choice = random(1,3);
-		divulgeHp = random(0, 100);
-		
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_tougher1);
-		}
-		if choice = 2
-		{
-			appendTempString(ShrunkenHead_tougher2);
-		}
-		if choice = 3
-		{
-			appendTempString(ShrunkenHead_tougher3);
-		}		
-		if(divulgeHp<10) 
-		{
-			% 10 percentage chance to divulge current hp :D
-			appendTempString("Master now has ");
-			appendTempString(hp);
-			appendTempString(" hitpoints! hee hee hee");
-		}
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }
-
-   DamageTaken(what = $, amount = 0) 
-   "Master is being hit! Oww"
-   {
-		local s, choice;
-		
-		statReceived=statReceived+amount;
-
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_HIT { return; }
-		
-		s = createString();
-		clearTempString();		
-		
-		choice = random(1,2);
-		
-		if amount>18 
-		{
-			% owww
-			appendTempString(ShrunkenHead_dealt3);
-			choice = 3;
-		}		
-		if(amount = 1) 
-		{
-			% weak opponent
-			appendTempString(ShrunkenHead_dealt4);
-			choice = 3;
-		}		
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_dealt1);
-		}
-		if choice = 2 
-		{
-			appendTempString(ShrunkenHead_dealt2);
-		}	
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }
-   
-   DamageDealt(what = $, amount = 0) 
-   "Master is hitting something... good"
-   {
-		local s, choice;
-		statDealt=statDealt+amount;
-		
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_HIT { return; }
-		
-		s = createString();
-		clearTempString();		
-		
-		choice = random(1,3);
-		
-		if amount > 18
-		{	
-			% powerful blow
-			appendTempString(ShrunkenHead_hit4);
-			appendTempString(send(what,@GetName));
-			choice = 4;
-		}	
-	
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_hit1);
-		}
-		if choice = 2 
-		{
-			appendTempString(ShrunkenHead_hit2);
-		}	
-		if choice = 3 
-		{
-			appendTempString(ShrunkenHead_hit3);
-		}	
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }   
-   
-   Improvement(spellName=$) 
-   "Master gained an improvement :-)"
-   {   
-		local s, choice;
-		statImprovements=statImprovements+1;
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_IMP { return; }
-		
-		s = createString();
-		clearTempString();		
-		
-		choice = random(1,2);
-		
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_cheer1);
-		}
-		if choice = 2 
-		{
-			appendTempString(ShrunkenHead_cheer2);
-		}	
-		
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;		
-   }
-   
-   OpponentKilled(what=$,stroke_obj=$) 
-   "Our master killed something..."
-   {
-      	local s, choice;		
-		statKills=statKills+1;
-		if poOwner = $ { return; }   		
-		if random(1,100) > KILL_CHAT_PROB_KIL { return; }
-
-		s = createString();
-		clearTempString();
-		
-		choice = random(1,4);
-
-		if choice = 1 
-		{
-			appendTempString(ShrunkenHead_win1);
-			appendTempString(" ~B");
-			appendTempString(send(poOwner,@GetName));
-			appendTempString("~n.");
-		}
-		if choice = 2
-		{
-			appendTempString(ShrunkenHead_win2);
-			appendTempString(send(what,@GetName));
-			appendTempString("!");
-		}
-		if choice = 3
-		{
-			appendTempString(ShrunkenHead_win3);
-		}
-		if choice = 4
-		{
-			appendTempString(ShrunkenHead_win4);
-		}
-		if choice = 5 
-		{
-			appendTempString("Hail! Another ");
-			appendTempString(send(what,@GetName));
-			appendTempString(" bites the dust!");
-		}
-
-		setString(s,getTempString());
-        clearTempString();		
-		
-		send(self,@DoBabbleString,#string=s);
-		return;
-   }  
-
 
    Delete()
    {
@@ -367,61 +102,10 @@ messages:
 
    SomeoneOverheard(from=$,string=$)
    {
-	  local s;
-	  
-      % Keyword to get the thing to shut up.	
+      % Keyword to get the thing to shut up.
+
       if poOwner = $ { return; }
 
-	  % check for stat request from master
-	  if from = poOwner AND stringContain(string,ShrunkenHead_check)
-	  {
-		s = createString();
-		clearTempString();
-		appendTempString("Master has killed ");
-		appendTempString(statKills);
-		appendTempString(" foes, improved ");
-		appendTempString(statImprovements);
-		appendTempString(" times and gained ");
-		appendTempString(statToughers);
-		appendTempString(" toughers! Master has also");
-		appendTempString(" dealt ");
-		appendTempString(statDealt);
-		appendTempString(" and hurt for ");
-		appendTempString(statReceived);
-		appendTempString(" damage.");
-		setString(s,getTempString());
-		clearTempString();
-		send(self,@DoBabbleString,#string=s);
-		return;			
-	  }
-	  
-	  % reset stats
-	  if from = poOwner AND stringContain(string,ShrunkenHead_reset)
-	  {
-		s = createString();
-		clearTempString();
-		appendTempString("OK boss!");
-		setString(s,getTempString());
-		clearTempString();
-		send(self,@DoBabbleString,#string=s);
-		
-		% and reset....
-		statKills = 0;
-		statToughers = 0;
-		statDealt = 0;
-		statReceived = 0;
-		statImprovements = 0;
-		
-		return;			
-	  }	  
-	  
-	  
-	  if from = poOwner
-	  {
-	    % don't record the master
-		return;
-	  }  
-	  
       if stringContain(string,ShrunkenHead_name_rsc)
          AND stringContain(string,ShrunkenHead_shut_up)
       {

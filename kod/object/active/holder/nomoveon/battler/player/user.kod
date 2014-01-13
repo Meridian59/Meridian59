@@ -2967,6 +2967,7 @@ messages:
       }
 	  
       % 6. Drain vigor once per 1000 ms.
+
       if iDeltaVigor >= 1000
       {
          % Reduce speed value to old value, 5/6ths current value, then
@@ -2999,6 +3000,7 @@ messages:
       piLastMoveUpdateTime = iCurrentTime;
 
 	  % 9. Process the move
+
       Send(poOwner,@SomethingMoved,#what=self,
            #new_row=new_row,#new_col=new_col,
            #fine_row=fine_row,#fine_col=fine_col,
@@ -3680,11 +3682,6 @@ messages:
       {
          Send(poOwner,@NewHold,#what=what,#new_row=piRow,#new_col=piCol,
               #fine_row=piFine_row,#fine_col=piFine_col);
-
-		  if isClass(what, &ShrunkenHead)
-		  {
-			 Send(what,@Dropped,#by=self,#where=poOwner);
-		  }
       }
       
       return;

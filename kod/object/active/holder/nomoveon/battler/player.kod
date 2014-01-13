@@ -2573,7 +2573,7 @@ messages:
             index=$, merge=TRUE)
    {
       local oItem, oDropRoom, iDropRow, iDropCol, oItemAtt;
-	  
+      
       if droppedItem <> $
       {
          oItem = droppedItem;
@@ -2628,12 +2628,12 @@ messages:
                }
 
                Send(oDropRoom,@NewHold,#what=oItem,#new_row=iDropRow,#new_col=iDropCol,#merge=merge);
-			   
+
                return TRUE;
             }
          }
       }
-
+      
       return FALSE;
    }
 
@@ -4720,10 +4720,10 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-      iLimit, origdamage, oWeapon, shrunken;
+            iLimit, origdamage, oWeapon;
 			
-	  origdamage = damage;	  
-
+	  origdamage = damage;
+	  
       color_rsc = player_hit_color_none;
       
       if what <> $ AND IsClass(what,&monster)
@@ -4876,20 +4876,13 @@ messages:
               #color_rsc=color_rsc);
       }
       
-	  
-	  shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-	  if damage > 0 AND shrunken <> $
-	  {
-		Send(shrunken,@DamageDealt,#what=what,#amount=damage);
-	  }	
-	  
       return damage;
    }
 
    % This function handles when is damage done to opponent.
    DidDamage(what = $, amount = 0)
    {
-      local oWeapon, i, shrunken;
+      local oWeapon, i;
 
       oWeapon = Send(self,@GetWeapon);
       
@@ -4917,13 +4910,6 @@ messages:
       if amount > 0
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
-		 
-		shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-		if shrunken <> $
-		{
-			Send(shrunken,@DamageDealt,#what=what,#amount=amount);
-		}		
- 
       }
 
       return;
@@ -5015,7 +5001,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, shrunken;
+      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -5145,12 +5131,6 @@ messages:
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
 	  Send(self,@DrawHPChance);
-	  
-	  shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-      if shrunken <> $
-      {
-		Send(shrunken,@OpponentKilled,#what=what,#stroke_obj=stroke_obj);
-      }
 
       return;
    }
@@ -6900,7 +6880,7 @@ messages:
                       refigureschools = TRUE)
    {
       local i, bFound, elemnum, iability, bUsed, spellname, iChange,
-            newability, oSpell, oRoom, shrunken;
+            newability, oSpell, oRoom;
 
       oSpell = Send(sys,@FindSpellByNum,#num=spell_num);
       if oSpell = $
@@ -6949,13 +6929,8 @@ messages:
       {
          oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);
-         Send(oRoom, @SomethingWaveRoom, #what=self,#wave_rsc=player_improved_wav_rsc);
-		 
-		 shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-		 if shrunken <> $
-		 {
-			Send(shrunken,@Improvement,#spellName=spellName);
-		 }				
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
+              #wave_rsc=player_improved_wav_rsc);
       }
 
       Send(self,@PlayerIsIntriguing);
@@ -7856,7 +7831,7 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon, shrunken;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
             
       gain = 0;
       roll = FALSE;
@@ -7966,18 +7941,6 @@ messages:
                piHealth = piMax_Health;
                Send(self,@DrawHealth);
                Send(self,@EatSomething,#nutrition=200);
-			   
-			   shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-			   if shrunken <> $
-			   {
-				  Send(shrunken,@Tougher,#hp=pibase_max_health);
-			   }
-               
-               if Send(self,@GetOwner) <> $
-               {
-                  Send(Send(self,@GetOwner),@SomethingWaveRoom,#what=self,
-                       #wave_rsc=player_tougher_wav_rsc);
-               }
 
                piGain_chance = -(piBase_Max_health/2);
                
@@ -12334,9 +12297,8 @@ messages:
    {
       local oSnoop;
 
-      if type = SAY_NORMAL AND IsClass(what,&Player)
+      if type = SAY_NORMAL and what <> self and IsClass(what,&Player)
       {
-		 % si: removed (and what <> self) to allow communication between shrunken head and owner.
          oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
          if oSnoop <> $
          {
@@ -12432,11 +12394,6 @@ messages:
    SomeoneOverheard(from=$,to=$,type=$,string=$)
    {
       return;
-   }
-   
-   OpponentKilled(what=$,stroke_obj=$) 
-   {
-		return;
    }
 
    RemoveInaccessibleSpells()

@@ -200,8 +200,7 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool 
       DrawWindowBackgroundMem(&map_bkgnd, bits, &rect, width, (int)( player.x * scaleMiniMap ), (int)( player.y * scaleMiniMap ) );
 
 
-   if (!effects.blind)
-   {
+   
       if (config.drawmap)
       {
 	 HPEN hOldPen = (HPEN) SelectObject(hdc, hWallPen);
@@ -260,7 +259,6 @@ void MapDraw( HDC hdc, BYTE *bits, AREA *area, room_type *room, int width, Bool 
 	 }
 	 SelectObject(hdc, hOldPen);
 	 SelectObject(hdc, hOldBrush);
-      }
    }
    GdiFlush();
 }

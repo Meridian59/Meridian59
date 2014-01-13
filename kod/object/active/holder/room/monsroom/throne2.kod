@@ -14,8 +14,8 @@ constants:
 
    include blakston.khd
 
-   % Delay before ghost pops again automatically.  About two hours (in seconds).
-   GHOST_CYCLE = 7200 
+   % Delay before ghost pops again automatically.  About two minutes (in seconds).
+   GHOST_CYCLE = 120 
 
 resources:
 
@@ -82,10 +82,19 @@ messages:
 
    FirstUserEntered()
    {
-      % This is set in superclass, is set when it's okay to spawn monsters again.
-      if pbOkay_To_Load
+      Send(self,@SpawnGhost);
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      local i;
+
+      if ptGhost <> $
       {
-         Send(self,@SpawnGhost);
+         DeleteTimer(ptGhost);
+         ptGhost = $;
       }
 
       propagate;
@@ -112,18 +121,13 @@ messages:
          ptGhost = CreateTimer(self,@GhostTimer,iTime);
       }
 
-      if NOT pbGenerateMonsters
-      {
-         return;
-      }
-
       for i in plActive
       {
          if IsClass(Send(self,@HolderExtractObject,#data=i),&Ghost)
          {
             return FALSE;
          }
-		}       
+      }       
 		
       oGhost = Create(&Ghost);
       Send(self,@NewHold,#what=oGhost,#new_row=2,#new_col=5,#new_angle=ANGLE_SOUTH);

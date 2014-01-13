@@ -170,6 +170,9 @@ properties:
    
    % Replaces old constant
    piIntrigueEnableHP = 50
+   
+   % If set to true, Resist Rings will lose durability upon taking an appropriate elemental hit.
+   piResistRingLoseDurability = FALSE
 
    % If enabled, logoff penalties do not rise exponentially, and instead remain flat
    pbFlatPenalties = TRUE
@@ -428,6 +431,11 @@ messages:
    GetOutlawMurdererLogoffPenaltyGhostTime()
    {
       return piOutlawMurdererLogoffPenaltyGhostTime;
+   }
+   
+   GetResistRingLoseDurability()
+   {
+      return piResistRingLoseDurability;
    }
 
 end

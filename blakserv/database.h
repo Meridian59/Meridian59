@@ -16,9 +16,9 @@
 #ifndef _DATABASE_H
 #define _DATABASE_H
 
-#define MAX_RECORD_QUEUE 100
-#define RECORD_ENQUEUE_TIMEOUT 500
-#define RECORD_DEQUEUE_TIMEOUT 500
+#define MAX_RECORD_QUEUE 1000
+#define RECORD_ENQUEUE_TIMEOUT 60
+#define RECORD_DEQUEUE_TIMEOUT 60
 
 typedef struct record_node record_node;
 

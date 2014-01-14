@@ -17,9 +17,42 @@
 
 MYSQL *mysqlcon;
 
+HANDLE hConsumer;
+
+record_queue_type record_q;
+
 bool connected = false;
 bool enabled = false;
 
+void __cdecl ConsumerThread(void *unused)
+{
+	dprintf("ConsumerThread()");
+	while (record_q.last != 0)
+	{
+		dprintf("Do things to enqueued objects");
+	}
+	_endthread();
+}
+
+void CreateRecordQueue()
+{
+	record_q.next = 0;
+	record_q.last = 0;
+}
+
+void EnqueueRecord(record_node record)
+{
+	int new_next = (record_q.next + 1);
+	if (new_next == record_q.last)
+	{
+		dprintf("EnqueueRecord cant enqueue!");
+		return;
+	}
+	record_q.data[record_q.next].type = record.type;
+	record_q.data[record_q.next].data = record.data;
+	record_q.next = new_next;
+	return;
+}
 
 void MySQLTest()
 {
@@ -52,6 +85,9 @@ void MySQLCheckConnection()
 
 void MySQLInit()
 {
+	CreateRecordQueue();
+	hConsumer = (HANDLE) _beginthread(ConsumerThread,0,0);
+
 	if (ConfigBool(MYSQL_ENABLED) == False)
 		return;
 	enabled = true;

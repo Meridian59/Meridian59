@@ -159,7 +159,7 @@ messages:
                      #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
                      #absolute=pbAbsolute);
 
-      Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self,#stroke_obj=self);
+      Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self,#stroke_obj=self,#improve=FALSE);
 
       if iDamage = $
       {

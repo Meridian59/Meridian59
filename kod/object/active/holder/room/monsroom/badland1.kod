@@ -71,8 +71,19 @@ messages:
       plEdge_Exits = Cons([LEAVE_EAST, RID_K5, 17, 1, ROTATE_NONE], plEdge_exits);
 
       return;
-   }         
+   }
+	
+   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
+   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   {
+      if IsClass(oSpellSkill,&Spell)
+         AND send(oSpellSkill,@GetSchool) = SS_FAREN
+      {
+         return 20;
+      }
 
-
+      return chance;
+   }
+	
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

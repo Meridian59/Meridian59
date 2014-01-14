@@ -35,6 +35,8 @@ classvars:
 
    viTerrain_type = TERRAIN_MOUNTAIN | TERRAIN_BEACH
 
+	viRoom_Learn_Bonus = 20
+	
 properties:
 
    prRoom = room_OutdoorsA5
@@ -137,16 +139,7 @@ messages:
       % Hinder learning room enchants because of the auto-discordance
       if IsClass(oSpellSkill,&RoomEnchantment)
       {
-         return (chance / 10);
-      }
-
-      % Help skill learning by 20% because it's out of the way
-      if IsClass(oSpellSkill,&Skill)
-      {
-         iBonus = (chance * 2)/10;
-         iBonus = bound(iBonus,1,10);
-
-         return (chance + iBonus);
+         return -1000;
       }
 
       propagate;

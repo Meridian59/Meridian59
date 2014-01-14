@@ -127,7 +127,7 @@ messages:
       iDamage = Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,#atype=viAttack_type,
                      #aspell=viAttack_spell,#absolute=pbAbsolute);
 
-      Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self);
+      Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self,#improve=FALSE);
 
       if iDamage = $
       {

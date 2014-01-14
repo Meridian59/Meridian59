@@ -93,7 +93,7 @@ messages:
    "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
    {
       % Return a reduced chance.  This is a popular botting spot.
-      return (chance / 3);
+      return -50;
    }
 
    CreateStandardObjects()

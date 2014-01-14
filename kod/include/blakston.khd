@@ -1039,7 +1039,7 @@
    ROOM_KILL_ZONE     = 0x0200
    % This is one of the RID_GUEST rooms.
    ROOM_GUEST_AREA    = 0x0400
-   % Advancing in spells is 10 times harder here.
+   % Advancing in spells is almost impossible here.
    %  Depreciated: Override ModifyChanceToImprove() instead.
    ROOM_HARD_LEARN    = 0x0800
    % Logging off here incurs no penalties.

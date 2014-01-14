@@ -607,7 +607,7 @@ messages:
       % Hinder learning Discordance due to the automatic room enchantment
       if IsClass(oSpellSkill,&Discordance)
       {
-         return (chance / 10);
+         return -1000;
       }
 
       propagate;

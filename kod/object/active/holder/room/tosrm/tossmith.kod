@@ -96,8 +96,7 @@ messages:
    {
       if IsClass(oSpellSkill,&Mend)
       {
-         % Give a 20% bonus.
-         return ((chance * 12)/10);
+         return 20;
       }
 
       return chance;

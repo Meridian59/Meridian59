@@ -125,7 +125,7 @@ messages:
       if oSpellSkill <> $
          AND IsClass(oSpellSkill,&Skill)
       {
-         return (chance / 10);
+         return -1000;
       }
       
       return chance;

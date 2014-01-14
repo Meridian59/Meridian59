@@ -204,7 +204,7 @@ messages:
       % Hinder learning room enchants because of the Yeti's discordance
       if IsClass(oSpellSkill,&RoomEnchantment)
       {
-         return (chance / 10);
+         return -1000;
       }
       
       propagate;

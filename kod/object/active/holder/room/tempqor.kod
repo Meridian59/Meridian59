@@ -212,8 +212,7 @@ messages:
       if IsClass(oSpellSkill,&Spell)
          AND send(oSpellSkill,@GetSchool) = SS_QOR
       {
-         % Give a 10% bonus.
-         return ((chance * 11)/10);
+         return 20;
       }
 
       return chance;

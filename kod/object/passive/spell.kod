@@ -17,13 +17,6 @@ constants:
 
    SPELL_MURMUR_SQUARED = 64
 
-   % The number to divide by when over our softcap of 2 * Requisite Stat.
-   SOFTCAP_PENALTY = 4
-
-   % How many castings of the same level of spell count toward a 1%
-   %  bonus to improve the spell?
-   CASTS_PER_PERCENT_BONUS = 7
-
 resources:
 
    spell_name_rsc = "spell"
@@ -1593,79 +1586,90 @@ messages:
    }
 
    ImproveAbility(who=$,target=$)
-   "Made a seperate area by Damion, 3/24."
-   "Put initial random check first to reduce server load."
-   "ImproveAbility depends on four factors:  a player's intellect, the"
-   "player's primerequisite stat for this spell, the level of the spell"
-   "and the level the player has already acquired."
+   "Improving depends on the player's intellect and requisite stat, his progress in the ability "
+	"he is trying to improve as well as its rank, the player's faction and the room he is in."
    {
-      local difficulty, iability, intellect, requisitestat, increase_chance,
-            iRandom, iInitialChance, oOwner;
+      local oOwner, iIntellect, iFaction, iAbility, iRequisiteStat, iSpellrank, iRoombonus, iBonus, iFinal;
 
-      % Monsters can cast spells, can't improve in them.
-      if NOT IsClass(who,&Player)    
+		% This is the room we are in.
+		oOwner = Send(who,@GetOwner);
+				
+		% This block checks if it is possible to improve at all.
+      % Monsters cannot improve.
+      if NOT IsClass(who,&Player)
       {
          return FALSE;
-      }
+      }  
 
-      % Players can't advance on anything they can choose to generate:
-      %  revenants and illusions
+      % Cannot improve against some targets e.g. revenants and illusions
       if target <> $ AND NOT Send(target,@CanPlayerAdvanceOnMe)
       {
          return FALSE;
       }
 
-      % No advancing a spell you don't have.
+		% Cannot improve if you do not have the spell.
       if NOT Send(who,@HasSpell,#num=vispell_num)
       {
          return FALSE;
       }
 
-      oOwner = Send(who,@GetOwner);
-
-      % Can advance in real death arenas
+      % Can only advance in real death arenas.
       if Send(oOwner,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
          OR (Send(oOwner,@IsArena) AND NOT Send(oOwner,@ArenaRealDeath))
       {
          return FALSE;
       }
 
-      iInitialChance = Send(self,@GetInitialChance,#who=who);
-      iRandom = random(1,100);
-      if iRandom > iInitialChance
-      {
-         return FALSE;
-      }
-
-      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
-      if iAbility >= 99 or iAbility < 1
-      {
-         return FALSE;
-      }
- 
-      % Start with the secondary chance to advance.
-      increase_chance = Send(self,@GetSecondaryChance,#who=who,#target=target);
-
+		% This block calculates the actual chance to improve now that it has been established you are eligible.
+      % Some rooms will give a slight bonus of up to 20 percent, others will make it almost or entirely impossible to improve.
       if oOwner <> $
       {
-         increase_chance = Send(oOwner,@ModifyChanceToImprove,#who=who,
-                                #oSpellSkill=self,#chance=increase_chance);
+         iRoombonus = Send(oOwner,@ModifyChanceToImprove,#who=who,#oSpellSkill=self);
+			
+			if iRoombonus = CANNOT_IMPROVE
+			{
+				return FALSE;
+			}
       }
+		else
+		{
+			iRoombonus = 0;
+		}
+		
+		% Intellect and requisite stat will give a bonus of up to 100 percent that is offset by your progress in the ability you try to improve.
+		iIntellect = Send(who,@GetIntellect);
+      iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
+		
+		% An ability will get progressively harder to improve the better you get. This penalty is offset by intellect and requisite stat.
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num)+1;
+		% Cannot improve if your ability is maxed.
+		if iAbility > 99 
+		{
+			return FALSE;
+		}
+		
+		% Faction will give you up to a 50 percent bonus to improvement.
+		iFaction = Send(Send(SYS,@GetParliament),@GetFactionLearnBonus,#who=who,#theskill=self);
+		
+		% Higher ranked spells are harder to improve. A rank 6 spell has a 50 percent penalty to improvement.
+      iSpellrank =  (Send(self,@GetLevel) - 1) * 10;
+		
+		iBonus = bound(100 + iIntellect + iRequisiteStat - iAbility + iFaction - iSpellrank + iRoombonus,10,$);
+		
+      iFinal = viChance_to_increase * iBonus / 10;
 
-      % For times when it's simply impossible to improve.
-      if increase_chance = CANNOT_IMPROVE
-      {
-         return FALSE;
-      }
+      % Admins can set a bonus to the general advancement rate.
+      iFinal = (iFinal * Send(Send(SYS, @GetSettings), @GetAdvancementRate)) / 100;
+		
+		% To help unlucky fellows with horrible stats and chances to improve, we increase
+		% their chance to improve by one percent per cast.
+		iFinal = iFinal + (Send(who,@GetSchoolCast,#school=viSchool)/viSpell_Level)*10;
 
-      RequisiteStat = Send(self,@GetRequisiteStat,#who=who);
-      increase_chance = bound(increase_chance,(1+RequisiteStat/10),99);
-      
-      iRandom = random(0,100);      
-      if iRandom < increase_chance
-      {      
-         Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,
-              #report=TRUE);
+		% Finally, we do the random check to see if we actually improved.
+      if random(0,999) < iFinal
+      {         
+         Send(who,@ChangeSpellAbility,#spell_num=vispell_Num,#amount=1,#report=TRUE);
+			
          % Since we advanced, reset our school cast improvement bonus.
          Send(who,@ResetSchoolCast,#school=viSchool);
          
@@ -1674,75 +1678,6 @@ messages:
       
       return FALSE;
    }
-
-   GetInitialChance(who=$)
-   {
-      local iBonus, iFaction, iFinal;
-
-      % Give up to a 50% bonus to the initial chance to learn for high intellect.
-      
-		iBonus = Send(who,@GetIntellect);
-		iFaction = Send(Send(SYS,@GetParliament),@GetFactionLearnBonus,#who=who,#theskill=self);
-      iBonus = iBonus + iFaction + 100;
-      
-      iFinal = viChance_to_increase * iBonus / 100;
-
-      return iFinal;
-   }
-
-   GetSecondaryChance(who=$,target=$)
-   {
-      local difficulty, iAbility, requisitestat, increase_chance, factor, final;
-      
-      requisitestat = Send(self,@GetRequisiteStat,#who=who);
-
-      % 110% chance at 1st level for 50 requisite stat
-      increase_chance = 60 + requisitestat;            
-      increase_chance = increase_chance - (Send(self,@GetLevel) * 10);
-
-      % This is the penalty for generalization
-      increase_chance = increase_chance - Send(who,@GetTotalLearnPoints,
-                                               #except=Send(self,@GetSchool));
-
-      difficulty = 75;
-      if target <> $ AND IsClass(target,&Monster)
-      {
-         difficulty = bound(Send(target,@GetLevel),1,150);
-      }    
-
-      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
-
-      % This decreases the imp chance as we go up in level.  It also gives
-      %  a better chance to imp on harder monsters.  Adding 10 to compensate
-      %  for losing the "knowing more in the school" bonus.
-      factor = ((2*difficulty) - (iAbility) + 10);
-      factor = bound(factor,50,100);
-
-      final = (increase_chance * factor)/100;
-      final = bound(final,5,$);
-      
-      % Now, add the spell cast improvement bonuses.  Divide it by spell level,
-      %  so that high level spells don't get quite as big a benefit from the
-      %  casting. (This balances out, because higher level spells give a bigger
-      %  casting bonus.) Then, divide the number by CASTS_PER_PERCENT_BONUS to
-      %  give final bonus.
-      final = final + ((Send(who,@GetSchoolCast,#school=viSchool)
-                       / viSpell_Level) / CASTS_PER_PERCENT_BONUS);
-
-      % Are we above the spells requisite stat?  Apply the "soft cap".
-      if iability > ((2*requisitestat)-1)
-      {
-         final = final / SOFTCAP_PENALTY;
-      }     
-
-      final = bound(final,1,$);
-
-      % The global modifier from system.
-      final = (final * Send(Send(SYS, @GetSettings), @GetAdvancementRate)) / 100;
-
-      return final;
-   }
-
 
    GetExertion()
    {

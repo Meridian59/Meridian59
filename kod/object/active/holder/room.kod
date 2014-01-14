@@ -182,6 +182,8 @@ classvars:
 
    viFlag_row = $
    viFlag_col = $
+	
+	viRoom_Learn_Bonus = 0
 
 properties:
 
@@ -1431,17 +1433,17 @@ messages:
       propagate;
    }
 
-   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
-   "This takes a spell/skill that who is trying to advance and modifies the "
-   "improve_chance.  This supercedes (but still supports) the ROOM_HARD_LEARN "
+   ModifyChanceToImprove(who=$,oSpellSkill=$)
+   "This allows a room to hinder or help improvement.  "
+	"This supercedes (but still supports) the ROOM_HARD_LEARN "
    "flag."
    {
       if Send(self,@CheckRoomFlag,#flag=ROOM_HARD_LEARN)
       {
-         return (chance / 10);
+         return -1000;
       }
 
-      return chance;
+      return viRoom_Learn_Bonus;
    }
 
    GetOutsideFactor()

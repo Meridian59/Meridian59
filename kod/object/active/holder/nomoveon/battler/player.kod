@@ -4694,11 +4694,14 @@ messages:
       return Send(oWeapon,@GetAttackSpell);
    }
 
-   AssessHit(what = $, stroke_obj = $, damage = $)
+   AssessHit(what = $, stroke_obj = $, damage = $, improve = TRUE)
    {
       local oMonster;
       
-		Send(stroke_obj,@ImproveStroke,#who=self,#target=what,#use_weapon=Send(self,@GetWeapon));
+		if improve = TRUE
+		{
+			Send(stroke_obj,@ImproveStroke,#who=self,#target=what,#use_weapon=Send(self,@GetWeapon));
+		}
 
       % Morphed? As a bonus, people in illusionary form get the hit side effect. :)
       oMonster = Send(self,@GetIllusionForm);

@@ -19,40 +19,155 @@ MYSQL *mysqlcon;
 
 HANDLE hConsumer;
 
-record_queue_type record_q;
+record_queue_type * record_q;
 
 bool connected = false;
 bool enabled = false;
 
+
+void CreateRecordQueue()
+{
+	record_q = (record_queue_type*)malloc(sizeof(record_queue_type));
+	record_q->count = 0;
+	record_q->first = NULL;
+	record_q->last = NULL;
+
+	record_q->mutex = CreateMutex(NULL,FALSE,NULL);
+
+	if (record_q->mutex == NULL)
+	{
+		dprintf("Mutex poop");
+	}
+}
+
+bool EnqueueRecord(record_node * data)
+{
+	bool wasQueued = false;
+
+	DWORD dwWaitResult = WaitForSingleObject(record_q->mutex,RECORD_ENQUEUE_TIMEOUT);
+
+	if (dwWaitResult == WAIT_OBJECT_0)
+	{
+		__try
+		{
+			if (record_q->count < MAX_RECORD_QUEUE)
+			{
+				if (record_q->count == 0 ||
+					record_q->first == NULL ||
+					record_q->last == NULL)
+				{
+					record_q->first = data;
+					record_q->last = data;
+					record_q->count = 1;
+					wasQueued = true;
+				}
+				else
+				{
+					record_q->last->next = data;
+					record_q->last = data;
+					record_q->count++;
+					wasQueued = true;
+				}
+			}
+		}
+		__finally
+		{
+			ReleaseMutex(record_q->mutex);
+		}
+	}
+	return wasQueued;
+}
+
+
+bool DequeueRecord(record_node * data)
+{
+	bool wasDequeued = false;
+
+	DWORD dwWaitResult = WaitForSingleObject(record_q->mutex,RECORD_DEQUEUE_TIMEOUT);
+
+	if (dwWaitResult == WAIT_OBJECT_0)
+	{
+		__try 
+		{
+			// dequeue from the beginning (FIFO)
+			if (record_q->count > 0 && record_q->first != NULL)
+			{
+				wasDequeued = true;
+
+				// set data values
+				data->type = record_q->first->type;
+				data->data = record_q->first->data;
+
+				// save pointer to old element for cleanup
+				record_node* old = record_q->first;
+
+				// set first item to the next one
+				record_q->first = old->next;
+				record_q->count--;
+
+				// free memory of queueitem
+				free(old);
+			}
+		}
+		__finally 
+		{
+			// unlock
+			ReleaseMutex(record_q->mutex);
+		}
+	}
+
+	// return
+	return wasDequeued; 
+}
+
+
 void __cdecl ConsumerThread(void *unused)
 {
 	dprintf("ConsumerThread()");
-	while (record_q.last != 0)
+	// holds the one we're processing per step
+	record_node* node = (record_node*)malloc(sizeof(record_node));
+	node->type = 0;
+	node->data = NULL;
+	node->next = NULL;
+
+	// this needs a proper shutdown condition when blakserv also ends
+	// to shut down the consumer thread also
+	while (true)
 	{
-		dprintf("Do things to enqueued objects");
+		// handle all pending
+		while (DequeueRecord(node))
+		{
+			// cast depending on type
+			switch(node->type)
+			{
+			case STAT_ASSESS_DAM:
+				//exampledata* data = (exampledata*)node->data;
+				PlayerAssessDamageRecord* data = (PlayerAssessDamageRecord*)node->data;
+
+				// write to db (just debug)
+				//dprintf("Consumer: Processing item - VALUE1:%d VALUE2:%d\n", data->value1, data->value2);
+				MySQLRecordPlayerAssessDamage(
+					data->res_who_damaged,
+					data->res_who_attacker,
+					data->aspell,
+					data->atype,
+					data->damage_applied,
+					data->damage_original,
+					data->res_weapon
+					);
+
+				// cleanup memory once written to db
+				free(data);
+				break;
+			}			
+		}
+		
+		// sleep
+		Sleep(1);
 	}
 	_endthread();
 }
 
-void CreateRecordQueue()
-{
-	record_q.next = 0;
-	record_q.last = 0;
-}
-
-void EnqueueRecord(record_node record)
-{
-	int new_next = (record_q.next + 1);
-	if (new_next == record_q.last)
-	{
-		dprintf("EnqueueRecord cant enqueue!");
-		return;
-	}
-	record_q.data[record_q.next].type = record.type;
-	record_q.data[record_q.next].data = record.data;
-	record_q.next = new_next;
-	return;
-}
 
 void MySQLTest()
 {

@@ -213,12 +213,12 @@ void MySQLCheckConnection()
 
 void MySQLInit()
 {
-	CreateRecordQueue();
-	hConsumer = (HANDLE) _beginthread(ConsumerThread,0,0);
-
 	if (ConfigBool(MYSQL_ENABLED) == False)
 		return;
 	enabled = true;
+
+	CreateRecordQueue();
+	hConsumer = (HANDLE) _beginthread(ConsumerThread,0,0);
 
 	mysqlcon = mysql_init(NULL);
 
@@ -246,7 +246,7 @@ void MySQLInit()
 	sprintf(buf, "USE %s", ConfigStr(MYSQL_DB));
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Error selecting databsae: %s\n", mysql_error(mysqlcon));
+		dprintf("Error selecting database: %s\n", mysql_error(mysqlcon));
 		return;
 	}
 	else

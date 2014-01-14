@@ -3597,6 +3597,7 @@ messages:
 
       % Check for guildmates and allies
       if IsClass(victim,&Player)
+         AND victim <> self
       {
          oVictimGuild = Send(victim,@GetGuild);
          oGuild = Send(self,@GetGuild);

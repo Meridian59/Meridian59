@@ -91,10 +91,10 @@ properties:
    piRescueBaseDelaySec = 15
 
    % Time in seconds that ghosts will last before taking a penalty
-   piLogoffPenaltyGhostTime = 600
+   piLogoffPenaltyGhostTime = 480
 
    % Time in seconds that outlaw / murderer ghosts will last before taking a penalty
-   piOutlawMurdererLogoffPenaltyGhostTime = 60
+   piOutlawMurdererLogoffPenaltyGhostTime = 180
 
    %
    % Guild hall settings

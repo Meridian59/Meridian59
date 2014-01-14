@@ -714,6 +714,7 @@ resources:
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
    
    group_experience_rsc = "You absorb a small amount of the energy released from %s's slaying of the %s."
+   non_group_still_shared_xp_rsc = "You absorb a small amount of the energy released from the slaying of your opponent."
 
 classvars:
 
@@ -5039,8 +5040,6 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
-         
-         Send(self,@JoinBuilderGroup);
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
@@ -7688,6 +7687,12 @@ messages:
          propagate;
       }
 
+      if what=self
+         AND IsClass(victim,&Monster)
+      {
+         Send(self,@JoinBuilderGroup);
+      }
+         
       if victim = poKill_target
       {
          if what = self
@@ -7707,8 +7712,7 @@ messages:
          % Let players share XP if they're grouped, even if they're not fighting the same mob.
          if Send(Send(self,@GetOwner),@AreGroupedHere,#who=self,#what=what)
          {
-            Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(what,@GetName),#parm2=Send(victim,@GetName));
-            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member_kill=TRUE);
+            Post(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member_kill=TRUE,#group_member=what);
          }
       }
       
@@ -7726,7 +7730,7 @@ messages:
    }
 
 
-   AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE)
+   AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE,group_member=$)
    "A player will need, on average, to kill a number of monsters equal to"
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
@@ -7775,6 +7779,22 @@ messages:
                %  it's a group member kill.
                gain = 1;
                roll = TRUE;
+               
+               % Inform the player that a group kill successfully garnered XP.
+               if group_member_kill
+                  AND group_member <> $
+               {
+                  Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(group_member,@GetName),
+                                         #parm2=Send(what,@GetName));
+               }
+               
+               % Give an informative message about non-group kills that are still shared
+               % Somebody else killed a mob the player was fighting, but that somebody was not grouped with us
+               if NOT killing_blow
+                  AND NOT group_member_kill
+               {
+                  Send(self,@MsgSendUser,#message_rsc=non_group_still_shared_xp_rsc);
+               }
             }
          }
          else

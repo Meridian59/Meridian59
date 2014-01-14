@@ -50,6 +50,21 @@ typedef struct
 	int res_weapon;
 }PlayerAssessDamageRecord;
 
+typedef struct
+{
+	session_node *s;
+}PlayerLoginRecord;
+
+typedef struct
+{
+	int money_created;
+}MoneyCreatedRecord;
+
+typedef struct
+{
+	int total_money;
+}TotalMoneyRecord;
+
 void MySQLTest();
 void MySQLInit();
 int MySQLCheckSchema();
@@ -62,6 +77,6 @@ void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, in
 
 
 //Queue a record
-bool EnqueueRecord(record_node * data)
+bool EnqueueRecord(record_node * data);
 
 #endif

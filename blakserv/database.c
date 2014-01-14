@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 /*
-* database.h
+* database.c
 *
 
   MySQL!
@@ -23,6 +23,7 @@ record_queue_type * record_q;
 
 bool connected = false;
 bool enabled = false;
+bool consume = true;
 
 
 void CreateRecordQueue()
@@ -132,7 +133,7 @@ void __cdecl ConsumerThread(void *unused)
 
 	// this needs a proper shutdown condition when blakserv also ends
 	// to shut down the consumer thread also
-	while (true)
+	while (consume)
 	{
 		// handle all pending
 		while (DequeueRecord(node))
@@ -141,23 +142,35 @@ void __cdecl ConsumerThread(void *unused)
 			switch(node->type)
 			{
 			case STAT_ASSESS_DAM:
-				//exampledata* data = (exampledata*)node->data;
-				PlayerAssessDamageRecord* data = (PlayerAssessDamageRecord*)node->data;
+				{
+					PlayerAssessDamageRecord* data = (PlayerAssessDamageRecord*)node->data;
+					MySQLRecordPlayerAssessDamage(
+						data->res_who_damaged,
+						data->res_who_attacker,
+						data->aspell,
+						data->atype,
+						data->damage_applied,
+						data->damage_original,
+						data->res_weapon
+						);
+					free(data);
+				}
+				break;
 
-				// write to db (just debug)
-				//dprintf("Consumer: Processing item - VALUE1:%d VALUE2:%d\n", data->value1, data->value2);
-				MySQLRecordPlayerAssessDamage(
-					data->res_who_damaged,
-					data->res_who_attacker,
-					data->aspell,
-					data->atype,
-					data->damage_applied,
-					data->damage_original,
-					data->res_weapon
-					);
-
-				// cleanup memory once written to db
-				free(data);
+			case STAT_MONEYCREATED:
+				{
+					MoneyCreatedRecord* data = (MoneyCreatedRecord*)node->data;
+					MySQLRecordStatMoneyCreated(data->money_created);
+					free(data);
+				}
+				break;
+				
+			case STAT_TOTALMONEY:
+				{
+					TotalMoneyRecord* data = (TotalMoneyRecord*)node->data;
+					MySQLRecordStatTotalMoney(data->total_money);
+					free(data);
+				}
 				break;
 			}			
 		}
@@ -165,7 +178,7 @@ void __cdecl ConsumerThread(void *unused)
 		// sleep
 		Sleep(1);
 	}
-	_endthread();
+	_endthread(); //Only reached after MySQLEnd()
 }
 
 
@@ -244,7 +257,7 @@ void MySQLInit()
     return;
 }
 
-int MySQLCheckSchema()
+int  MySQLCheckSchema()
 {
 	//SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'DBName'
 	//CREATE DATABASE IF NOT EXISTS DBName;
@@ -256,6 +269,8 @@ void MySQLEnd()
 {
 	//mysql_close(mysqlcon);
 	//return;
+	consume = false;
+	return;
 }
 
 void MySQLCreateSchema()
@@ -327,7 +342,7 @@ void MySQLRecordStatTotalMoney(int total_money)
 
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatTotalMoney");
+		dprintf("Unable to record StatTotalMoney (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -345,7 +360,7 @@ void MySQLRecordStatMoneyCreated(int money_created)
 
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatMoneyCreated", mysql_error(mysqlcon));
+		dprintf("Unable to record StatMoneyCreated (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -372,7 +387,7 @@ void MySQLRecordPlayerLogin(session_node *s)
 				player_logins_time = NOW()",s->account->name,r->resource_val,s->conn.name);
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatPlayerLogin", mysql_error(mysqlcon));
+		dprintf("Unable to record StatPlayerLogin (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -395,7 +410,7 @@ void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, in
 		r_who_damaged->resource_val, r_who_attacker->resource_val, aspell, atype, damage_applied, damage_original, r_weapon->resource_val);
 	if(mysql_query(mysqlcon,buf))
 	{
-		dprintf("Unable to record StatPlayerAssessDamage", mysql_error(mysqlcon));
+		dprintf("Unable to record StatPlayerAssessDamage (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }

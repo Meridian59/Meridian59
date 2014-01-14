@@ -90,19 +90,6 @@ messages:
 
    % General unsorted messages:
 
-   ReqUseSomething(what = $)
-   {
-      if isClass(what,&Shield)
-      {
-         if not send(poOwner,@TryUnuseItem,#what=self)
-         {
-            return FALSE;
-         }
-      }
-      
-      propagate;
-   }
-
    NewUsed()
    {
       piUsed = USED;

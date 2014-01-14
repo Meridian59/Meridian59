@@ -47,6 +47,8 @@ classvars:
 
    viDefense_base = 10               % This is the default value for piDefense_bonus
 
+   viLayer = 1
+
 properties:
 
    piMana_change = 0

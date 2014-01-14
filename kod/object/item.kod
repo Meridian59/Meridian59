@@ -424,9 +424,16 @@ messages:
    }
 
    NewUsed()
-   {      
+   {
       Send(self,@DoPlayerArt);
-      
+      if IsClass(self,&DefenseModifier)
+      {
+         If IsClass(poOwner,&Player)
+         {
+            Post(poOwner,@RefreshPlayerVisualGear);
+         }
+      }
+
       return;
    }
 
@@ -1564,11 +1571,7 @@ messages:
             Send(poOwner,@ResetPlayerLegs,#alldone=FALSE);
          }
          
-         oShirt = Send(poOwner,@FindUsing,#class=&Shirt);
-         if oShirt <> $
-         {
-            Post(oShirt,@SetArms);
-         }
+         Send(poOwner,@RefreshPlayerVisualGear);
          
          oRoom = Send(poOwner,@GetOwner);
          if oRoom <> $

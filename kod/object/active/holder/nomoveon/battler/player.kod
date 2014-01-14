@@ -3432,6 +3432,12 @@ messages:
                return TRUE;
             }
          }
+         
+         % These unequip amongst themselves automatically.
+         if IsClass(what,&DefenseModifier)
+         {
+            return TRUE;
+         }
 
          if type = ITEM_USE_HAND
          {
@@ -9020,12 +9026,7 @@ messages:
          Send(self,@ResetPlayerLegs);
       }
 
-      oRobes = Send(self,@FindUsing,#class=&Robe);
-      if oRobes <> $
-         AND Send(oRobes,@ItemChangesArms)
-      {
-         Post(oRobes,@SetArms);
-      }
+      Send(self,@RefreshPlayerVisualGear);
 
       if poOwner <> $
       {
@@ -9033,6 +9034,61 @@ messages:
       }
 
       return;      
+   }
+   
+   RefreshPlayerVisualGear()
+   {
+      local n, plRefreshItemTypes, i, iHighestLayer, oHighestGear, iLowestLayer, oLowestGear;
+
+      plRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
+      
+      for n in plRefreshItemTypes
+      {
+         iHighestLayer = 0;
+         oHighestGear = $;
+         for i in plUsing
+         {
+            if IsClass(i,&DefenseModifier)
+               AND Send(i,@GetItemUseType) & n
+            {
+               if Send(i,@GetLayer) >= iHighestLayer
+               {
+                  iHighestLayer = Send(i,@GetLayer);
+                  oHighestGear = i;
+               }
+            }
+         }
+      
+         if oHighestGear <> $
+         {
+            Send(oHighestGear,@DoPlayerArt);
+         }
+      }
+
+      % Check for headgear, which has special overlays
+      % In this case, we actually refresh the lowest layer to put it underneath
+      iLowestLayer = 100000;
+      oLowestGear = $;
+      for i in plUsing
+      {
+         if IsClass(i,&DefenseModifier)
+            AND Send(i,@GetItemUseType) & ITEM_USE_HEAD
+         {
+            if Send(i,@GetLayer) <= iLowestLayer
+            {
+               iLowestLayer = Send(i,@GetLayer);
+               oLowestGear = i;
+            }
+         }
+         
+         if oLowestGear <> $
+         {
+            Send(oLowestGear,@UndoPlayerArt);
+            Send(oLowestGear,@DoPlayerArt);
+         }
+      }
+   
+      return;
    }
 
    ConvertskincolortoXLAT(Skin_color = 0)

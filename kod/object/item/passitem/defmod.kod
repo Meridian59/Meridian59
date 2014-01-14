@@ -30,6 +30,9 @@ classvars:
 
    viDefense_base = 0               % This is the default value for piDefense_bonus
    viDamage_base = 0                % This is the default value for piDamage_reduce
+   
+   viLayer = 0                      % Layer represents clothing and gear that may override visually
+                                    % Higher numbers override lower numbers
 
 properties:
 
@@ -37,6 +40,26 @@ properties:
    piDamage_reduce = 0              %% piDamage_reduce is the maximum amount of damage that will be reduced.
 
 messages:
+
+   ReqUseSomething(what = $)
+   {
+      if IsClass(what,&DefenseModifier)
+         AND (Send(what,@GetItemUseType) & Send(self,@GetItemUseType)
+              OR Send(self,@GetItemUseType) & Send(what,@GetItemUseType))
+         AND Send(what,@GetLayer) = Send(self,@GetLayer)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
 
    DefaultValues()
    {
@@ -166,6 +189,10 @@ messages:
       return TRUE; 
    }
 
+   GetLayer()
+   {
+      return viLayer;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -45,6 +45,9 @@ classvars:
    vrCondition_med = shield_condition_med 
    vrCondition_poor = shield_condition_poor 
    vrCondition_broken = shield_condition_broken
+   
+   % Shields are layer 1, so that layer 0 soldier shields will be slung on use
+   viLayer = 1
 
 properties:
    
@@ -118,6 +121,26 @@ messages:
       }
 
       Send(poOwner,@RemoveOverlay,#what=self);
+
+      propagate;
+   }
+   
+   ReqUseSomething(what = $)
+   {
+      % All defmods check for eachother in the defmod superclass. Here we are concerned with 2h non-armors.
+      if NOT IsClass(self,&SoldierShield)
+         AND (IsClass(what,&Bow)
+         OR IsClass(what,&Lute))
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
 
       propagate;
    }

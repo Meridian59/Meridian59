@@ -95,6 +95,9 @@ classvars:
    vrRank3 = SoldierShield_rank_name3
    vrRank4 = SoldierShield_rank_name4
    vrRank5 = SoldierShield_rank_name5
+   
+   % Layer 0 soldier shields will be slung on use
+   viLayer = 0
 
 properties:
 
@@ -450,19 +453,35 @@ messages:
    {
       return FALSE;
    }
+   
+   ReqUseSomething(what = $)
+   {
+      if (IsClass(what,&Shield)
+         AND Send(what,@GetLayer) > Send(self,@GetLayer))
+         OR IsClass(what,&Bow)
+         OR IsClass(what,&Lute)
+      {
+         Send(self,@SlingOnBack,#report=FALSE);
+         return TRUE;
+      }
+      propagate;
+   }
 
    %%% For putting the shield on our back
 
    % This is used for Bows and Lutes, currently.
 
-   SlingOnBack()
+   SlingOnBack(report=TRUE)
    {
       if piOverlayHotspot <> HS_SHIELD_BACK
       {
          piOverlayHotspot = HS_SHIELD_BACK;
 
          % Do text message
-         Send(poOwner,@MsgSendUser,#message_rsc=SoldierShield_sling_on_back);
+         if report
+         {
+            Send(poOwner,@MsgSendUser,#message_rsc=SoldierShield_sling_on_back);
+         }
 
          % Remove the shield window overlay
          %  NOTE: This doesn't actually remove the overlay, just make it appear
@@ -479,15 +498,18 @@ messages:
       return;
    }
 
-   RemoveFromBack()
+   RemoveFromBack(report=TRUE)
    {
       if piOverlayHotspot <> HS_LEFT_WEAPON
       {
          piOverlayHotspot = HS_LEFT_WEAPON;
 
          % Do text message
-         Send(poOwner,@MsgSendUser,
-              #message_rsc=SoldierShield_remove_from_back);
+         if report
+         {
+            Send(poOwner,@MsgSendUser,
+                 #message_rsc=SoldierShield_remove_from_back);
+         }
 
          % Restore the shield window overlay
          vrShield_window_overlay = SoldierShield_window_overlay_rsc;

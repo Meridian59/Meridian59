@@ -3415,23 +3415,6 @@ messages:
          {
             return FALSE;
          }
-
-         % Soldier Shields allow bows or lutes to be wielded even if they
-         %  are taking up all the hand spaces.  But, you can't use a shield, bow,
-         %  lute, and book all simlutaneously!
-         if (IsClass(what,&Bow) OR IsClass(what,&Lute))
-            AND Send(self,@FindUsing,#class=&SoldierShield) <> $
-            AND Send(self,@FindUsing,#class=&Lute) = $
-            AND Send(self,@FindUsing,#class=&Book) = $
-         {
-            % Don't allow them to wield a lute if we already have a bow.
-            % Trying to wield a second bow will unwield the first bow automatically.
-            if NOT IsClass(what,&Lute)
-               OR (Send(self,@FindUsing,#class=&Bow) = $)
-            {
-               return TRUE;
-            }
-         }
          
          % These unequip amongst themselves automatically.
          if IsClass(what,&DefenseModifier)
@@ -5522,6 +5505,7 @@ messages:
       for i in plUsing
       {
          if IsClass(i,&Shield)
+            AND Send(i,@GetBlockAbility,#who=self) > 0
          {
             return i;
          }      
@@ -9038,7 +9022,8 @@ messages:
    
    RefreshPlayerVisualGear()
    {
-      local n, plRefreshItemTypes, i, iHighestLayer, oHighestGear, iLowestLayer, oLowestGear;
+      local n, plRefreshItemTypes, i, iHighestLayer, oHighestGear, iLowestLayer, oLowestGear,
+            oSoldierShield, bSoldierShieldSlung;
 
       plRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
       
@@ -9085,6 +9070,39 @@ messages:
          {
             Send(oLowestGear,@UndoPlayerArt);
             Send(oLowestGear,@DoPlayerArt);
+         }
+      }
+      
+      % Check for Soldier Shield sling
+      bSoldierShieldSlung = FALSE;
+      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+      {
+         for i in plUsing
+         {
+            if (IsClass(i,&Shield)
+               AND NOT IsClass(i,&SoldierShield))
+               OR IsClass(i,&Bow)
+               OR IsClass(i,&Lute)
+            {
+               Send(oSoldierShield,@SlingOnBack,#report=FALSE);
+               bSoldierShieldSlung = TRUE;
+               
+               % Now restore the first-person view of other shield if we're using one
+               for n in plUsing
+               {
+                  if (IsClass(n,&Shield)
+                     AND NOT IsClass(n,&SoldierShield))
+                  {
+                     Send(self,@SetWindowOverlay,#what=n);
+                  }
+               }
+            }
+         }
+         
+         if bSoldierShieldSlung = FALSE
+         {
+            Send(oSoldierShield,@RemoveFromBack,#report=FALSE);
          }
       }
    

@@ -426,12 +426,9 @@ messages:
    NewUsed()
    {
       Send(self,@DoPlayerArt);
-      if IsClass(self,&DefenseModifier)
+      If IsClass(poOwner,&Player)
       {
-         If IsClass(poOwner,&Player)
-         {
-            Post(poOwner,@RefreshPlayerVisualGear);
-         }
+         Post(poOwner,@RefreshPlayerVisualGear);
       }
 
       return;

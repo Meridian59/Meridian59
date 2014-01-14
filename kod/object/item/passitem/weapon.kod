@@ -500,6 +500,7 @@ messages:
    ReqUseSomething(what = $)
    {
       if IsClass(what,&Weapon)
+         OR IsClass(what,&Lute)
       {
          if Send(poOwner,@TryUnuseItem,#what=self)
          {

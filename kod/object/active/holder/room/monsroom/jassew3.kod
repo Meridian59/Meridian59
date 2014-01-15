@@ -21,7 +21,7 @@ resources:
 
    room_name_jassew3 = "The Sewers of Jasper"
    room_jassew3 = jassew3.roo
-   jassew3_music = cave.mid
+   jassew3_music = cave.mp3
 
    waterfall_soundjsew3 = wfall2.wav
 

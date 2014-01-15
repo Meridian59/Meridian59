@@ -22,7 +22,7 @@ resources:
       "The words of this song form an enchantment which increases the effectiveness "
       "of all spells cast.  Requires one perfect polished seraphym."
 
-   ManaConvergence_song = jala5.mid
+   ManaConvergence_song = jala5.mp3
 
    ManaConvergence_on = "The flow of magic in this place suddenly becomes stronger."
    ManaConvergence_new_occupant = "You can feel a strong flow of magic in this place."

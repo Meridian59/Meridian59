@@ -47,7 +47,7 @@ resources:
 
    room_name_guest6 = "Mausoleum"
    room_guest6 = guest6.roo
-   guest6_music = nec03.mid
+   guest6_music = nec03.mp3
 
    guest6_signname = "spells"
    guest6_sign = \

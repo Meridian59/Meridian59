@@ -35,7 +35,7 @@ resources:
    room_OrcPitB = ocpb.roo
    room_name_OrcPitB = "Brog's Antechamber"
 
-   OrcPitB_music = orcpit.mid
+   OrcPitB_music = orcpit.mp3
 
 classvars:
 

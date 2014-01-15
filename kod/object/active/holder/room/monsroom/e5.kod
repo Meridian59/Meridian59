@@ -37,7 +37,7 @@ resources:
 
    room_OutdoorsE5 = E5.roo
    room_name_OutdoorsE5 ="The Forest Shrine"
-   OutdoorsE5_music = walk5.mid
+   OutdoorsE5_music = walk5.mp3
 
    e5_second_runner = "A mysterious force prevents you from entering the gas field."
 

@@ -18,7 +18,7 @@ resources:
   
    room_name_kocbank = "The Hungry Vaults"
    room_kocbank = kocbank.roo
-   kocbank_music = song12.mid
+   kocbank_music = song12.mp3
 
    kocbank_locked1 = \
       "~kThe sentry barks, \"Just where do you think you are going?\""

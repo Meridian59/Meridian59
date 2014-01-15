@@ -24,7 +24,7 @@ resources:
 
    room_name_OutdoorsF8 ="Lake of Jala's Song"
    room_OutdoorsF8 = F8.roo
-   OutdoorsF8_music = walk7.mid
+   OutdoorsF8_music = walk7.mp3
 
    waterfall_soundF8 = wfall2.wav
 

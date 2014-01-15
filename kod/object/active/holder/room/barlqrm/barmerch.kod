@@ -20,7 +20,7 @@ resources:
    room_barmerch = barmerch.roo
    room_name_barmerch = "The Sparkling Stone Shop"
 
-   barmerch_music = smithy.mid
+   barmerch_music = smithy.mp3
 
 classvars:
 

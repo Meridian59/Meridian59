@@ -19,7 +19,7 @@ resources:
    room_orccave3 = oc03.roo
    room_name_orccave3 = "The Archaic Hollows"
 
-   orccave3_music = orc1.mid
+   orccave3_music = orc1.mp3
 
 classvars:
 

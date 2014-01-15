@@ -19,7 +19,7 @@ resources:
    room_koctail = koctail.roo
    room_name_koctail = "The Crooked Hem Garment Shop"
 
-   koctail_music = song12.mid
+   koctail_music = song12.mp3
 
    koctail_locked_1 = "Tailor Tepal ix'Zonak's living quarters are locked."
    koctail_locked_2 = "This door is locked fast."

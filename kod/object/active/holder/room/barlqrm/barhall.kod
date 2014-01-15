@@ -20,7 +20,7 @@ resources:
    room_barhall = barhall.roo
    room_name_barhall = "Adventurer's Hall of Barloque"
 
-   barhall_music = main.mid
+   barhall_music = main.mp3
 
    news_bar_hall = "General News"
    News_bar_hall_desc = "Find out the latest gossip around Meridian."

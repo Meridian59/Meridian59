@@ -22,7 +22,7 @@ resources:
       "This song allows all listeners to regain health at an accelerated rate.  "
       "Requires one diamond and several herbs to cast."
 
-   Restorate_song = song05.mid
+   Restorate_song = song05.mp3
  
 classvars:
 

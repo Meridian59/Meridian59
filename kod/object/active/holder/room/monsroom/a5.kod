@@ -21,7 +21,7 @@ resources:
 
    room_OutdoorsA5 = A5.roo
    room_name_OutdoorsA5 ="Seafarer's Peak"
-   OutdoorsA5_music = forest.mid
+   OutdoorsA5_music = forest.mp3
 
    cliff_msg1a5 = "You MUST be kidding!"
    room_discord_message = "A strange wind blows in from the sea which clears away the spells affecting this area."

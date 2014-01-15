@@ -20,7 +20,7 @@ resources:
 
    room_ForgottenToo = bizmans.roo
    room_name_ForgottenToo = "Chamber of the Forgotten Heroes"
-   ForgottenToo_music = extra01.mid
+   ForgottenToo_music = extra01.mp3
 
    name_psycho   = "Psychochild"
    name_aythya   = "Aythya"

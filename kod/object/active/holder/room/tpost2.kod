@@ -19,7 +19,7 @@ resources:
    room_TradingPostCellar = tpost2.roo
    room_name_TradingPostCellar = "The Cellar Rooms"
 
-   TradingPostCellar_music = boneprst.mid
+   TradingPostCellar_music = boneprst.mp3
 
    TradingPostCellar_locked_1 = "Room One is locked."
    TradingPostCellar_locked_2 = "Room Two is locked."

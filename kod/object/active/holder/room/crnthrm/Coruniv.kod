@@ -20,7 +20,7 @@ resources:
    room_coruniv = coruniv.roo
    room_name_coruniv = "The Hall of Genealogy"
 
-   coruniv_music = main.mid
+   coruniv_music = main.mp3
    coruniv_room_changed = "Your hometown has been changed."
    coruniv_no_change = "You cannot change your hometown - it has already been chosen."
 

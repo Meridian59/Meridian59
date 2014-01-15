@@ -19,7 +19,7 @@ resources:
    room_barlbar1 = barlbar1.roo
    room_name_barlbar1 = "The Bhrama & Falcon"
 
-   barlbar1_music = bar2.mid
+   barlbar1_music = bar2.mp3
 
    bar_leave_w1 = "~kMeidei yells at you, \"Thou dost not have my permission to use those stairs!\""
    bar_leave_w2 = "~kMeidei tells you, \"Pray thee, good fellow, do not ascend those stairs.\""

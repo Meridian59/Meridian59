@@ -22,7 +22,7 @@ resources:
       "This song hinders the casting of the spells the warrior god Kraanan the Fist.  "
       "A ruby and some elderberries are required to begin performing this song."
 
-   Conciliation_song = neutfor.mid
+   Conciliation_song = neutfor.mp3
  
 classvars:
 

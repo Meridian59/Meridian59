@@ -19,7 +19,7 @@ resources:
    room_marhall = marhall.roo
    room_name_marhall = "The Adventurer's Hall of Marion"
 
-   marhall_music = main.mid
+   marhall_music = main.mp3
 
    news_mar_hall = "General News"
    News_mar_hall_desc = "See what people are saying around Meridian."

@@ -22,7 +22,7 @@ resources:
       "This song allows all listeners to regain mana at an accelerated rate.  "
       "Requires one diamond and a raw, uncut seraphym to cast."
 
-   Rejuvenate_song = song04.mid
+   Rejuvenate_song = song04.mp3
  
 classvars:
 

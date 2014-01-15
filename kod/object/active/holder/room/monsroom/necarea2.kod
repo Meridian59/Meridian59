@@ -18,7 +18,7 @@ resources:
 
    room_name_Necropolis2 = "Ancient Graveyard of Brax"
    room_Necropolis2 = necarea2.roo
-   Necropolis2_music = nec01.mid
+   Necropolis2_music = nec01.mp3
 
    Necropolis2_loop = necloop1.wav
 

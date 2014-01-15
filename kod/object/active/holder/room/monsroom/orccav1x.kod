@@ -19,7 +19,7 @@ resources:
    room_OrcCave1Ext  = oc1a.roo
    room_name_OrcCave1Ext = "A Tranquil Place"
 
-   OrcCave1Ext_music = orcpit.mid
+   OrcCave1Ext_music = orcpit.mp3
 
 classvars:
 

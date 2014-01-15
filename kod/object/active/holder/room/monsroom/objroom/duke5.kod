@@ -23,89 +23,89 @@ resources:
    room_name_duke5 = "The Duke's Grand Ballroom"
    room_duke5 = duke5.roo
 
-   duke5_music = bar.mid
+   duke5_music = bar.mp3
 
    duke5_party_on_command = "party on"
    duke5_party_off_command = "party off"
    duke5_party_random_command = "party random"
 
-   DJ1 = main.mid
-   DJ2 = tos.mid
-   DJ3 = area01.mid
-   DJ4 = badfor.mid
-   DJ5 = bank.mid
-   DJ6 = Bar.mid
-   DJ7 = bar2.mid
-   DJ8 = city02.mid
-   DJ9 = city03.mid
-   DJ10 = city04.mid
-   DJ11 = corloth.mid
-   DJ12 = goodfor.mid
-   DJ13 = Ksong.mid
-   DJ14 = LogIn.MID
-   DJ15 = marion.mid
-   DJ16 = neutfor.mid
-   DJ17 = smithy.mid
-   DJ18 = Song.mid
-   DJ19 = song02.mid
-   DJ20 = test01.mid
-   DJ21 = walk5.mid
-   DJ22 = TownTrl.MID
+   DJ1 = main.mp3
+   DJ2 = tos.mp3
+   DJ3 = area01.mp3
+   DJ4 = badfor.mp3
+   DJ5 = bank.mp3
+   DJ6 = Bar.mp3
+   DJ7 = bar2.mp3
+   DJ8 = city02.mp3
+   DJ9 = city03.mp3
+   DJ10 = city04.mp3
+   DJ11 = corloth.mp3
+   DJ12 = goodfor.mp3
+   DJ13 = Ksong.mp3
+   DJ14 = LogIn.mp3
+   DJ15 = marion.mp3
+   DJ16 = neutfor.mp3
+   DJ17 = smithy.mp3
+   DJ18 = Song.mp3
+   DJ19 = song02.mp3
+   DJ20 = test01.mp3
+   DJ21 = walk5.mp3
+   DJ22 = TownTrl.mp3
 
-   DJ23 = castle.mid
-   DJ24 = dance1.mid
-   DJ25 = Fight.mid
-   DJ26 = forest.mid
-   DJ27 = or01fm.mid
-   DJ28 = pk_fm.mid
-   DJ29 = Walk1.mid
-   DJ30 = Walk7.mid
-   DJ31 = walk4.mid
+   DJ23 = castle.mp3
+   DJ24 = dance1.mp3
+   DJ25 = Fight.mp3
+   DJ26 = forest.mp3
+   DJ27 = or01fm.mp3
+   DJ28 = pk_fm.mp3
+   DJ29 = Walk1.mp3
+   DJ30 = Walk7.mp3
+   DJ31 = walk4.mp3
 
-   DJ32 = ltlgirl.mid
-   DJ33 = castle2.mid
-   DJ34 = cave.mid
-   DJ35 = undrwrld.mid
-   DJ36 = quorwar.mid
+   DJ32 = ltlgirl.mp3
+   DJ33 = castle2.mp3
+   DJ34 = cave.mp3
+   DJ35 = undrwrld.mp3
+   DJ36 = quorwar.mp3
 
-   DJ37 = avarwar.mid
-   DJ38 = boneprst.mid
-   DJ39 = bridge.mid
-   DJ40 = drgnfly.mid
-   DJ41 = extra01.mid
-   DJ42 = madsci.mid
+   DJ37 = avarwar.mp3
+   DJ38 = boneprst.mp3
+   DJ39 = bridge.mp3
+   DJ40 = drgnfly.mp3
+   DJ41 = extra01.mp3
+   DJ42 = madsci.mp3
 
-   DJ43 = orcbeg.mid
-   DJ44 = orcpit.mid
-   DJ45 = orc1.mid
-   DJ46 = orc2.mid
+   DJ43 = orcbeg.mp3
+   DJ44 = orcpit.mp3
+   DJ45 = orc1.mp3
+   DJ46 = orc2.mp3
 
-   DJ47 = nec01.mid
-   DJ48 = nec02.mid
-   DJ49 = nec03.mid
+   DJ47 = nec01.mp3
+   DJ48 = nec02.mp3
+   DJ49 = nec03.mp3
 
-   DJ50 = KILLED.MID
+   DJ50 = KILLED.mp3
 
-   DJ51 = jala1.mid
-   DJ52 = jala2.mid
-   DJ53 = jala3.mid
-   DJ54 = jala4.mid
-   DJ55 = jala5.mid
+   DJ51 = jala1.mp3
+   DJ52 = jala2.mp3
+   DJ53 = jala3.mp3
+   DJ54 = jala4.mp3
+   DJ55 = jala5.mp3
 
-   DJ56 = temple.mid
+   DJ56 = temple.mp3
 
-   DJ57 = walk2.mid
-   DJ58 = song00.mid
-   DJ59 = song01.mid
-   DJ60 = song03.mid
-   DJ61 = song04.mid
-   DJ62 = song05.mid
-   DJ63 = song06.mid
-   DJ64 = song07.mid
-   DJ65 = song08.mid
-   DJ66 = song10.mid
-   DJ67 = song11.mid
-   DJ68 = song12.mid
+   DJ57 = walk2.mp3
+   DJ58 = song00.mp3
+   DJ59 = song01.mp3
+   DJ60 = song03.mp3
+   DJ61 = song04.mp3
+   DJ62 = song05.mp3
+   DJ63 = song06.mp3
+   DJ64 = song07.mp3
+   DJ65 = song08.mp3
+   DJ66 = song10.mp3
+   DJ67 = song11.mp3
+   DJ68 = song12.mp3
 
 classvars:
 

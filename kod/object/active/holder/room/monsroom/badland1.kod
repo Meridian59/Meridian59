@@ -42,7 +42,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Ant, 60], [&Groundworm, 40] ];
+      plMonsters = [ [&Groundworm, 100] ];
 
       plGenerators = [ [22, 24], [61, 20], [47, 68], [15, 37], [12,61],
                        [31, 52], [64, 46], [33, 34], [35, 18] ];

@@ -84,13 +84,6 @@ messages:
 	      return FALSE;
       }
 
-      if send(who,@GetMana) >= (send(who,@GetMaxMana))
-      {
-	      Send(who,@MsgSendUser,#message_rsc=defile_max);
-
-	      return FALSE; 
-      }
-
       target = First(lTargets);
       if NOT IsClass(target, &DeadBody)
       {
@@ -142,6 +135,13 @@ messages:
 
       Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
       Send(who,@GainMana,#amount=(viMana_bonus+(iSpellPower/3)));
+      
+      % Don't let them defile to over-max
+      if Send(who,@GetMana) > Send(who,@GetMaxMana)
+      {
+         Send(who,@LoseMana,#amount=(Send(who,@GetMana)-Send(who,@GetMaxMana)));
+      }
+      
       Send(oTarget,@Delete);
 
       propagate;

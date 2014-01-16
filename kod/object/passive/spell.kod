@@ -1184,6 +1184,12 @@ messages:
       iDistance, oTarget, oRing;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);
+	  
+	  % Concentration in no combat areas is increased allowing a user to focus on spell casting eliminating failure.
+	  if Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+	  {
+		return TRUE;
+	  }
 
       if iSpellpower = 0
       {

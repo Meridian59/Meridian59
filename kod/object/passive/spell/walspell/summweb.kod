@@ -44,7 +44,9 @@ classvars:
    viCast_time = 3000
 
    vrSucceed_wav = SummonWeb_sound
-   viChance_To_Increase = 25
+	
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 4
 
    viHarmful = TRUE
 

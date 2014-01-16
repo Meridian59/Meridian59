@@ -35,7 +35,9 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_Num = SKID_RIPOSTE
    viSkill_level = 5
-   viChance_to_increase = 20
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 5
 
    viskillExertion = 0
    vbCheck_exertion = FALSE

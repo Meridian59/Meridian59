@@ -52,8 +52,6 @@ classvars:
    viSpellExertion = 8
    viCast_time = 10000
 
-   viChance_To_Increase = 20
-
 properties:
 
 messages:

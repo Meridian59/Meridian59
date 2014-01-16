@@ -46,7 +46,6 @@ classvars:
    viSpellExertion = 10
    viCast_time = 5000
 
-   viChance_To_Increase = 20
    vrSucceed_wav = deathlink_sound
 
 properties:

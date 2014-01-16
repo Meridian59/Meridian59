@@ -73,7 +73,8 @@ classvars:
    viLightColor = LIGHT_SPECTRAL
    viBaseLightIntensity = 60
 
-   viChance_To_Increase = 15
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
    viAffectsCasterOnly = FALSE  % Override for self-only spell
    viAffectsEveryone = FALSE    % Override for affect all

@@ -56,7 +56,9 @@ classvars:
    viMana = 20
    viSpellExertion = 10
    viCast_time = 20000
-   viChance_to_increase = 35
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
 properties:
 

@@ -45,7 +45,9 @@ classvars:
    viFlash = FLASH_BAD
 
    vrSucceed_wav = enfeeble_sound
-   viChance_To_Increase = 30
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
 properties:
    

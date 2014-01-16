@@ -42,7 +42,9 @@ classvars:
 
    viSpellExertion = 10
    viCast_time = 20000
-   viChance_To_Increase = 15
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
    viManaDrain = 1       % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds

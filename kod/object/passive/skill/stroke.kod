@@ -62,8 +62,9 @@ classvars:
    viRange_Factor = 0
 
    vbAutomatic = FALSE
-	
-   viChance_to_Increase = 3
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 60
 
 properties:
 

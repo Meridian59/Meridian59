@@ -58,7 +58,10 @@ classvars:
    viSpell_level = 5
 
    viIndefinite = ARTICLE_AN
-   viChance_To_Increase = 35
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
+	
    viBaseRange = 3
    viCast_Time = 2000
 

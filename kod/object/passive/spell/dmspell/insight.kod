@@ -31,7 +31,7 @@ resources:
    "when casting an offensive spell or using a combat skill, your odds go up if you fight tougher monsters."
 
 
-   Insight_Message = "%s (%i):  %i total, %i initial/%i secondary chance."
+   Insight_Message = "%s (%i):  %i percent chance to improve.  (%i in %i)"
 
 classvars:
    vrName = Insight_name_rsc
@@ -105,19 +105,19 @@ messages:
 
    ComputeInsightInfo(who=$,dmis=$)
    {
-      local iInitialchance, total_chance, increase_chance, i, num, obj;
+      local draw, total_chance, poolsize, i, num, obj;
       if dmis=$ or who=$  { debug("Bad data!");  return FALSE; }
       
       for i in send(who,@GetSpellList)
       {
          num = send(who,@DecodeSpellNum,#compound=i);
          obj = send(SYS,@FindSpellByNum,#num=num);
-         iInitialChance = send(obj,@GetInitialChance,#who=who);
-         increase_chance = send(obj,@GetSecondaryChance,#who=who,#target=$);
-         total_chance = bound((iInitialChance*increase_chance)/100,1,100);
+         draw = 10 * Send(Send(SYS,@GetSettings),@GetAdvancementRate)/100;
+         poolsize = send(obj,@GetImproveChance,#who=who,#target=$);
+         total_chance = 100 * draw / poolsize;
          send(dmis,@msgsenduser,#message_rsc=insight_message,
               #parm1=send(obj,@GetName),#parm2=send(who,@GetSpellAbility,#spell_num=num),
-              #parm3=total_chance,#parm4=iInitialChance,#parm5=increase_chance);
+              #parm3=total_chance,#parm4=draw,#parm5=poolsize);
       }
       
       for i in send(who,@GetSkillList)
@@ -125,12 +125,12 @@ messages:
          num = send(who,@DecodeSkillNum,#compound=i);
          obj = send(SYS,@FindSkillByNum,#num=num);
          send(obj,@GetName);
-         iInitialChance = send(obj,@GetInitialChance,#who=who);
-         increase_chance = send(obj,@GetSecondaryChance,#who=who,#target=$);
-         total_chance = bound((iInitialChance*increase_chance)/100,1,100);
+         draw = 10 * Send(Send(SYS,@GetSettings),@GetAdvancementRate)/100;
+         poolsize = send(obj,@GetImproveChance,#who=who,#target=$);
+         total_chance = 100 * draw / poolsize;
          send(dmis,@msgsenduser,#message_rsc=insight_message,
               #parm1=send(obj,@GetName),#parm2=send(who,@GetSkillAbility,#skill_num=num),
-              #parm3=total_chance,#parm4=iInitialChance,#parm5=increase_chance);
+              #parm3=total_chance,#parm4=draw,#parm5=poolsize);
       }
 
       return;

@@ -51,7 +51,6 @@ classvars:
    viSpell_level = 5
    viSchool = SS_KRAANAN
 
-   viChance_To_Increase = 20
    viFlash = FLASH_GOOD_SELF
 
 properties:    

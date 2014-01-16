@@ -1506,13 +1506,13 @@ messages:
          iDamage = random(piMinDamage,piMaxDamage);
       }
 
+		iDamage = iDamage * 100;
+
       if piEnch_flags & ENCH_PALSY
       {
          iDamage = iDamage * 3 / 4 ;
       }
       
-	  iDamage = iDamage * 100;
-	  
       return iDamage;
    }
 
@@ -1550,12 +1550,10 @@ messages:
          iDamage = Send(self,@GetDamageFromResistance,#what=damage,
                         #value=iResist);
 			
-			% All player damage is multiplied by 100 when base damage is determined
-			% in order to avoid cumulative losses to truncation. Before final damage 
-			% is applied, we divide by 100 again.
+			% Damage done by players is randomized at the very end to create a smooth damage spectrum.
 			if IsClass(what,&Player)
 			{
-					iDamage = random(iDamage/2,iDamage)/100;
+					iDamage = random(iDamage/2,iDamage);
 			}
       }
       else
@@ -1563,6 +1561,11 @@ messages:
          iDamage = damage;
       }
 
+		% All damage is multiplied by 100 when base damage is determined
+		% in order to avoid cumulative losses to truncation. Before final damage 
+		% is applied, we divide by 100 again.
+		iDamage = iDamage / 100;
+		
       iDamage = iDamage + bonus;
 
       % Set a predamage mark... we'll compare to it to see if threshold crossed.

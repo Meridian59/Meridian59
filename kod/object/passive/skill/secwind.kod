@@ -42,7 +42,9 @@ classvars:
    viSkill_num = SKID_SECOND_WIND
    viSchool = SKS_FENCING
    viSkill_Level = 4
-   viChance_to_Increase = 50
+	
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 2
 
    viSkillExertion = 0
    vbCheck_exertion = FALSE
@@ -110,7 +112,7 @@ messages:
    }
 
    % This is the initial chance to advance.
-   GetInitialChance(who = $)
+	GetBaseChance(who=$)
    {
       % No easy-cheezing it.  No advancement if you have an "easy" way to trigger
       %  the skill.  This includes tokens, cursed rings, or (token) deaths.

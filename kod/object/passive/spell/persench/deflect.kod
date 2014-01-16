@@ -68,8 +68,6 @@ classvars:
    viSpell_level = 4
    viSchool = SS_KRAANAN
 
-   viChance_To_Increase = 20
-
    viFlash = FLASH_GOOD_SELF
 
    vrSucceed_wav = Deflect_sound

@@ -62,7 +62,9 @@ classvars:
    viNoNewbieOffense = TRUE
 
    vrSucceed_wav = heat_sound
-   viChance_To_Increase = 35
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
    vbCastable_in_HappyLand = FALSE
 

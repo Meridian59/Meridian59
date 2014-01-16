@@ -42,7 +42,9 @@ classvars:
    viSpell_level = 6
    viMana = 30
    viCast_time = 10000
-   viChance_To_Increase = 25
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 4
 
    vrSucceed_wav = portaloflife_sound
 

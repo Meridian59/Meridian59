@@ -43,7 +43,9 @@ classvars:
    viMana = 15
    viSpellExertion = 20
    viCast_time = 6000
-   viChance_to_increase = 40
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 2
 
    viFlash = FLASH_GOOD_SELF
 

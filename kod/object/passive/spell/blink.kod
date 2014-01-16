@@ -38,7 +38,9 @@ classvars:
    viSchool = SS_RIIJA
    viMana = 15
    viSpellExertion = 20
-   viChance_To_Increase = 15
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
 properties:
 

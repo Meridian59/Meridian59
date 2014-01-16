@@ -57,7 +57,9 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 5
    viMana = 14
-   viChance_To_Increase = 35
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
    viOutlaw = TRUE
    viHarmful = TRUE

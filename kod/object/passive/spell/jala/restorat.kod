@@ -39,7 +39,9 @@ classvars:
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
    
    viSpellExertion = 10      
-   viChance_To_Increase = 20
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 5
 
    viHarmful = FALSE
 

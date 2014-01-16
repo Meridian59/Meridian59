@@ -42,7 +42,9 @@ classvars:
    viMana = 10 
    viSpellExertion = 0
    viCast_time = 500
-   viChance_To_Increase = 15
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
    vrSucceed_wav = createfood_sound
 

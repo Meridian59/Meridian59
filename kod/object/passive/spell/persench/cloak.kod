@@ -46,7 +46,7 @@ classvars:
    viMana = 5
 
    viCast_time = 2000
-   viChance_To_Increase = 20
+
    vrSucceed_wav = Cloak_sound
 
 properties:

@@ -51,7 +51,9 @@ classvars:
    viSchool = SS_QOR
 
    vrSucceed_wav = KaraholsCurse_sound
-   viChance_To_Increase = 45
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 2
 
    vrAlreadyEnchanted = KaraholsCurse_already_enchanted_rsc
    vrEnchantment_On = KaraholsCurse_on

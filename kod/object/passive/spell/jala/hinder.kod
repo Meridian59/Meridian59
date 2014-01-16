@@ -23,6 +23,8 @@ classvars:
    viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
 
+
+	% Chance to increase is one in viChance_To_Increase.
    viChance_To_Increase = 10
 
    viSchool = SS_JALA

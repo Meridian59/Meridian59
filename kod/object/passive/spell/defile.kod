@@ -52,7 +52,9 @@ classvars:
    viMana_bonus = 10
 
    viCast_time = 10000
-   viChance_to_Increase = 100
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 1
 
    vrSucceed_wav = defile_sound
    vbCastable_in_HappyLand = FALSE

@@ -48,7 +48,6 @@ classvars:
    viSpellExertion = 4
    viCast_time = 2000
    vrSucceed_wav = SummonFog_sound
-   viChance_To_Increase = 20
    vbCastable_in_HappyLand = TRUE
 
    viHarmful = FALSE

@@ -50,6 +50,8 @@ classvars:
 
    vrSucceed_wav = AntiMagicAura_sound
 
+
+	% Chance to increase is one in viChance_To_Increase.
    viChance_To_Increase = 10
 
 properties:

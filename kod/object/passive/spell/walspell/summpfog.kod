@@ -43,7 +43,6 @@ classvars:
 
    viCast_time = 2000
    vrSucceed_wav = SummonPoisonFog_sound
-   viChance_To_Increase = 20
 
    vbCastable_in_HappyLand = FALSE
 

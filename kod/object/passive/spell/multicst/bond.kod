@@ -58,7 +58,9 @@ classvars:
 
    viSpellExertion = 50
    viCast_time = 20000
-   viChance_To_Increase = 66
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 2
 
    % Drain is amount used every viDrainTime milliseconds
    viManaDrain = 1

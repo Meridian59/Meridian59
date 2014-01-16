@@ -43,7 +43,8 @@ classvars:
    viSpellExertion = 30
    viCast_time = 5000
 
-   viChance_To_Increase = 15
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
    vrSucceed_wav = SporeBurst_sound
 

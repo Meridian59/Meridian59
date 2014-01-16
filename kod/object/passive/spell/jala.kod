@@ -42,7 +42,10 @@ classvars:
    viDrainTime = 5000
 
    prMusic = jala_default
-   viChance_To_Increase = 8
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 12
+	
    % viPostCast_time is in seconds, since it works off GetTime()
    viPostCast_time = 1
 

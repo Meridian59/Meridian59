@@ -42,6 +42,8 @@ classvars:
    viMana = 16
 
    vrSucceed_wav = rescue_sound
+
+	% Chance to increase is one in viChance_To_Increase.
    viChance_To_Increase = 10
 
    viFlash = FLASH_GOOD

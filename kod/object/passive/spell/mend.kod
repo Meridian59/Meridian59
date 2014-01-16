@@ -40,6 +40,8 @@ classvars:
    viSchool = SS_KRAANAN
    viSpell_level = 4
    viMana = 9
+
+	% Chance to increase is one in viChance_To_Increase.
    viChance_To_Increase = 10
 
    vrSucceed_wav = mend_sound

@@ -42,7 +42,9 @@ classvars:
    viSpellExertion = 2
 
    viCast_time = 2000
-   viChance_To_Increase = 15
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
    vrSucceed_wav = Bait_sound
 

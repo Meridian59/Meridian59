@@ -33,7 +33,8 @@ classvars:
    % Default color is lightning.
    viProjectileLightColor = LIGHT_LIGHTNING
 
-   viChance_To_Increase = 7
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 8
 
 properties:
 

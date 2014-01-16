@@ -31,7 +31,8 @@ classvars:
    viMultiCast_Spellpower = 1000   
 
    % Give a little better than usual since its a pain to get many casters.
-   viChance_To_Increase = 30 
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
    % Mana is amount used upon inititiation
    viMana = 10

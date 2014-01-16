@@ -48,7 +48,9 @@ classvars:
    viDrainTime = 1000
 
    viSpellExertion = 30
-   viChance_To_Increase = 25
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 4
 
    viHarmful = FALSE
 

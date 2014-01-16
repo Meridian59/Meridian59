@@ -52,8 +52,10 @@ classvars:
    viSchool = SS_KRAANAN
    viMana = 10
    viSpell_level = 3
-   
-   viChance_To_Increase = 15
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
+	
    vrSucceed_wav = martrysbg_sound
 
    vbCastable_in_HappyLand = FALSE

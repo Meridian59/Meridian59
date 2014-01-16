@@ -49,7 +49,9 @@ classvars:
    viSpellExertion = 0
 
    viCast_time = 2000
-   viChance_To_Increase = 15
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
    vrSpell_intro = Haste_spell_intro
    vrSucceed_wav = Haste_sound

@@ -56,7 +56,9 @@ classvars:
    viMana = 12
 
    viCast_time = 5000
-   viChance_to_increase = 10
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 10
 
    viAttack_spell = ATCK_SPELL_ALL | ATCK_SPELL_QUAKE
    viOutlaw = TRUE

@@ -43,7 +43,9 @@ classvars:
    viMana = 6
    viSchool = SS_FAREN
    viSpell_level = 3
-   viChance_To_Increase = 30
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
    viFlash = FLASH_GOOD_SELF
 

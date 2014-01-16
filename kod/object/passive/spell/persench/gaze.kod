@@ -43,6 +43,8 @@ classvars:
    viSpell_Exetion = 15
    viSpell_level = 6
 
+
+	% Chance to increase is one in viChance_To_Increase.
    viChance_To_Increase = 10
 
    vrName = paralyze_name_rsc

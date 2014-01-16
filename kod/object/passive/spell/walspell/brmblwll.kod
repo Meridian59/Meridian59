@@ -42,7 +42,9 @@ classvars:
    viSpell_level = 2
    viMana = 10
 
-   viChance_To_Increase = 25
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 4
+	
    viSpellExertion = 10
    viCast_time = 4000
    vrSucceed_wav = BrambleWall_sound

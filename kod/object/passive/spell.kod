@@ -132,6 +132,8 @@ resources:
    spell_Enchantment_type_default_rsc = "enchanter."
 
    Spell_too_few_hp_rsc = "You are not powerful enough to cast this spell."
+	
+	imp_debug_spell = "Chance to improve: 10 out of %i"
 
 classvars:
 
@@ -153,7 +155,8 @@ classvars:
 
    viMana = 1
 
-   viChance_To_Increase = 20
+	% Chance to increase is one in viChance_To_Increase. The standard rate is one in five.
+   viChance_To_Increase = 5
 
    viShow_enchantment_icon = ENCHANTMENT_SHOW_ALL
 
@@ -1584,18 +1587,32 @@ messages:
    {
       return;
    }
+	
+	GetBaseChance(who=$)
+	{
+		return viChance_to_increase;
+	}
 
    ImproveAbility(who=$,target=$)
    "Improving depends on the player's intellect and requisite stat, his progress in the ability "
 	"he is trying to improve as well as its rank, the player's faction and the room he is in."
    {
-      local oOwner, iIntellect, iFaction, iAbility, iRequisiteStat, iSpellrank, iRoombonus, iBonus, iFinal;
+      local oOwner, iAbility, iRoombonus, iFinal, iBasechance;
 
 		% This is the room we are in.
 		oOwner = Send(who,@GetOwner);
+		
+		% This is the unmodified poolsize. The chance to improve is one in iBasechance.
+		iBasechance = Send(self,@GetBaseChance,#who=who);
 				
 		% This block checks if it is possible to improve at all.
-      % Monsters cannot improve.
+		% Cannot improve when the ability does not want you to.
+		if iBasechance = 0
+      {
+         return FALSE;
+      }  
+
+      % Monsters cannot improve.		
       if NOT IsClass(who,&Player)
       {
          return FALSE;
@@ -1620,8 +1637,7 @@ messages:
          return FALSE;
       }
 
-		% This block calculates the actual chance to improve now that it has been established you are eligible.
-      % Some rooms will give a slight bonus of up to 20 percent, others will make it almost or entirely impossible to improve.
+		% Check if the room allows improvement.
       if oOwner <> $
       {
          iRoombonus = Send(oOwner,@ModifyChanceToImprove,#who=who,#oSpellSkill=self);
@@ -1631,45 +1647,23 @@ messages:
 				return FALSE;
 			}
       }
-		else
-		{
-			iRoombonus = 0;
-		}
 		
-		% Intellect and requisite stat will give a bonus of up to 100 percent that is offset by your progress in the ability you try to improve.
-		iIntellect = Send(who,@GetIntellect);
-      iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
-		
-		% An ability will get progressively harder to improve the better you get. This penalty is offset by intellect and requisite stat.
-      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num)+1;
-		% Cannot improve if your ability is maxed.
-		if iAbility > 99 
+		% Cannot improve if your ability is maxed or below 1.
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+		if iAbility > 98 OR iAbility < 1
 		{
 			return FALSE;
 		}
-		
-		% Faction will give you up to a 50 percent bonus to improvement.
-		iFaction = Send(Send(SYS,@GetParliament),@GetFactionLearnBonus,#who=who,#theskill=self);
-		
-		% Higher ranked spells are harder to improve. A rank 6 spell has a 50 percent penalty to improvement.
-      iSpellrank =  (Send(self,@GetLevel) - 1) * 10;
-		
-		iBonus = bound(100 + iIntellect + iRequisiteStat - iAbility + iFaction - iSpellrank + iRoombonus,10,$);
-		
-      iFinal = viChance_to_increase * iBonus / 10;
 
-      % Admins can set a bonus to the general advancement rate.
-      iFinal = (iFinal * Send(Send(SYS, @GetSettings), @GetAdvancementRate)) / 100;
+		% We are basically eligible for improvement. Let's check our odds.
+		% Get the size of the random pool.
+		iFinal = Send(self,@GetImproveChance,#who=who,#target=target,#oRoom=oOwner);
 		
-		% To help unlucky fellows with horrible stats and chances to improve, we increase
-		% their chance to improve by one percent per cast.
-		iFinal = iFinal + (Send(who,@GetSchoolCast,#school=viSchool)/viSpell_Level)*10;
-
-		% Finally, we do the random check to see if we actually improved.
-      if random(0,999) < iFinal
+      % Admins can adjust the general advancement rate.
+      if random(1,iFinal) <= 10 * Send(Send(SYS, @GetSettings), @GetAdvancementRate)/100
       {         
          Send(who,@ChangeSpellAbility,#spell_num=vispell_Num,#amount=1,#report=TRUE);
-			
+         
          % Since we advanced, reset our school cast improvement bonus.
          Send(who,@ResetSchoolCast,#school=viSchool);
          
@@ -1677,6 +1671,56 @@ messages:
       }
       
       return FALSE;
+   }
+	
+   GetImproveChance(who=$,target=$,oRoom=$)
+   {
+      local iIntellect, iFaction, iAbility, iRequisiteStat, iSpellrank, iRoombonus, iBonus, iPenalty, iFinal, iBasechance;
+		
+		% This is the unmodified poolsize. The chance to improve is one in iBasechance.
+		iBasechance = Send(self,@GetBaseChance,#who=who);
+		
+		% An ability will get progressively harder to improve the better you get. This penalty is offset by intellect and requisite stat.
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num)+1;
+
+		% Higher ranked spells are harder to improve. A rank 6 spell has a 50 percent penalty to improvement.
+      iSpellrank =  (Send(self,@GetLevel) - 1) * 10;
+		
+		% Effects that hinder improve rate are added together.
+		iPenalty = 100 + iAbility + iSpellrank;
+
+		% Intellect and requisite stat will give a bonus of up to 100 percent that is offset by your progress in the ability you try to improve.
+		iIntellect = Send(who,@GetIntellect);
+      iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
+		
+		% Faction will give you up to a 50 percent bonus to improvement.
+		iFaction = Send(Send(SYS,@GetParliament),@GetFactionLearnBonus,#who=who,#theskill=self);
+		
+		% Effects that increase improve rate are added together.
+		iBonus = 100 + iIntellect + iRequisiteStat + iFaction;
+		
+		% Factor 10 to increase tweaking accuracy.
+      iFinal = iBasechance * 10 * iPenalty / iBonus;
+		
+		% Binding between half and double the base chance.
+		iFinal = bound(iFinal,iBasechance*5,iBasechance*20);
+		
+		% The room can further boost or hinder advancement, ranging from twice as fast to
+		% ten times slower advancement.
+      if oRoom <> $
+      {
+         iRoombonus = Send(oRoom,@ModifyChanceToImprove,#who=who,#oSpellSkill=self);
+      }
+		else
+		{
+			iRoombonus = 0;
+		}
+		iFinal = iFinal * bound(100 - iRoombonus,50,1000)/100;
+		
+		% To help unlucky fellows, we remove one blank from the pool with every cast.
+		iFinal = bound(iFinal - (Send(who,@GetSchoolCast,#school=viSchool)/viSpell_Level),1,$);
+		
+      return iFinal;
    }
 
    GetExertion()

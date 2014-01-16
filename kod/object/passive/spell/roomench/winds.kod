@@ -50,7 +50,9 @@ classvars:
    viMana = 10
    viSpell_level = 3
    viSchool = SS_FAREN
-   viChance_To_Increase = 35
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
    viShow_enchantment_icon = ENCHANTMENT_SHOW_ROOM
 

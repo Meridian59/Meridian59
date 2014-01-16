@@ -47,7 +47,9 @@ classvars:
    viOutlaw = TRUE
    viHarmful = TRUE
    viNoNewbieOffense = TRUE
-   viChance_to_increase = 15
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 6
 
    vrSucceed_wav = Vertigo_sound
 

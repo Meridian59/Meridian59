@@ -49,7 +49,9 @@ classvars:
    viSchool = SS_KRAANAN
    viMana = 0
    viSpellExertion = 0
-   viChance_To_Increase = 5
+
+	% Chance to increase is one in viChance_To_Increase. 0 means no improvement possible.
+   viChance_To_Increase = 0
 
 properties:
 

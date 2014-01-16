@@ -74,7 +74,8 @@ classvars:
 
    viSpellExertion = 2
 
-   viChance_To_Increase = 5
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 60
 
    % Touch spells typically do good damage but are unaffected by typical weapon
    %  bonuses.

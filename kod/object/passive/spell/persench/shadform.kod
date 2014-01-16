@@ -45,7 +45,10 @@ classvars:
    viCast_time = 3000
 
    vrSucceed_wav = shadowform_wave_rsc
-   viChance_To_Increase = 30
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
+	
    viFlash = FLASH_GOOD_SELF
 
 properties:

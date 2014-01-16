@@ -38,7 +38,9 @@ classvars:
    viSchool = SS_RIIJA
    viSpell_level = 4
    viMana = 6
-   viChance_To_Increase = 30
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
    viOutlaw = TRUE
    viHarmful = TRUE

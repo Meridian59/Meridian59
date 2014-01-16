@@ -50,6 +50,8 @@ classvars:
    viMana = 20
    viSpellExertion = 50
 
+
+	% Chance to increase is one in viChance_To_Increase.
    viChance_To_Increase = 10
 
    vrSucceed_wav = Elusion_sound

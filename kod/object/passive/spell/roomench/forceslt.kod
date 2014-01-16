@@ -45,7 +45,9 @@ classvars:
 
    vrSucceed_wav = forcesoflight_sound
 
-   viChance_To_Increase = 40
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 3
 
 properties:
 

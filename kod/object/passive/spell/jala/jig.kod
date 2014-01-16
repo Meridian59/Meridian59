@@ -35,7 +35,9 @@ classvars:
    viDrainTime = 5000
    viSpell_num = SID_JIG
    viSpellExertion = 10      
-   viChance_To_Increase = 40
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 2
 
    viSchool = SS_JALA
    viSpell_level = 4

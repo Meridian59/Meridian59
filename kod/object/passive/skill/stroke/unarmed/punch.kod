@@ -98,7 +98,7 @@ messages:
       local stat;
 	  
 	  % Get proficiency bonus.
-         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*damage/100;
+		damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*damage/100;
 
       % Get stat damage bonus.
       stat = (send(who,@GetMight));

@@ -317,7 +317,8 @@ messages:
    "Different skills/strokes are affected by different stats differently."
    {
       local stat;
-
+		
+		% This is handled by the individual strokes. The code below is merely a template.
       % Get weapon proficiency bonuses.
       if weapon_used <> $
       {
@@ -325,7 +326,7 @@ messages:
       }
       else
       {
-         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*damage;
+         damage = damage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1)*damage/100;
       }
       
       % Get stat damage bonus.

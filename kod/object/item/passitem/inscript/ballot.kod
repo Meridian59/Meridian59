@@ -46,5 +46,11 @@ messages:
 	  return;
    }
 
+   DropOnDeath()
+   {
+      % No drop so that people can't load up on these and avoid real penalties
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -41,8 +41,8 @@ classvars:
    viBulk = 250
 
    viDodge_base = 50             
-   viDamage_flat_base = 0
-   viDamage_percent_base = 20
+   viDamage_flat_base = 1
+   viDamage_percent_base = 10
 
 properties:
    
@@ -58,8 +58,8 @@ messages:
 
    GetResistanceModifiers()
    {
-      return [ [ATCK_WEAP_STRIKE,-10],
-		         [ATCK_WEAP_SLASH,-10]
+      return [ [ATCK_WEAP_STRIKE,-5],
+		         [ATCK_WEAP_SLASH,-5]
              ];
    }
 

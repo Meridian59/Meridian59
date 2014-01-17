@@ -39,8 +39,8 @@ constants:
    WEAPON_DISARM_SLASH = 5
    
    % Parry bonus
-   WEAPON_PARRY_STRIKE  = -50
-   WEAPON_PARRY_THRUST  = 50
+   WEAPON_PARRY_STRIKE  = 0
+   WEAPON_PARRY_THRUST  = 0
    WEAPON_PARRY_SLASH = 50
 
    % Spell modifier, large negatives are bad.
@@ -49,8 +49,8 @@ constants:
    WEAPON_SPELL_SLASH = -10
 
    % Range of reach
-   WEAPON_RANGE_STRIKE  = 3
-   WEAPON_RANGE_THRUST  = 2
+   WEAPON_RANGE_STRIKE  = 2
+   WEAPON_RANGE_THRUST  = 3
    WEAPON_RANGE_SLASH = 2
 
    % Quality mods to number of hits

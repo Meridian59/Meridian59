@@ -12,7 +12,9 @@ my $build;
 
 GetOptions ("change=s" => \@changelists,
             "build=s" => \$build);
-	
+
+system("git checkout master");
+
 system("git checkout -b $build master");
 	
 foreach my $changelist (@changelists)

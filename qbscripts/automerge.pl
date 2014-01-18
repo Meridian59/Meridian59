@@ -6,8 +6,10 @@ use Getopt::Long;
 my $outdir="C:/patchfiles";
 #my $changelist=124;
 my @changelists;
+my $build;
 
-GetOptions ("change=s" => \@changelists);
+GetOptions ("change=s" => \@changelists,
+            "build=s" => \$build);
 
 foreach my $changelist (@changelists)
 {
@@ -16,7 +18,7 @@ foreach my $changelist (@changelists)
 	my $content = get $baseurl;
 	die "Couldn't get $baseurl" unless defined $content;
 
-	my $patchfilename=$outdir."/1.0.1_$changelist.patch";
+	my $patchfilename=$outdir."/$build\_$changelist.patch";
 	open my $OUT,">",$patchfilename;
 	print $OUT $content;
 	close $OUT;

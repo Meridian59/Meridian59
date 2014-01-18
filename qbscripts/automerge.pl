@@ -20,6 +20,6 @@ foreach my $changelist (@changelists)
 	my $RC = system("git merge $changelist");	
 	if ($RC != 0)
 	{
-		die "Merge of branch $branch failed";
+		die "Merge of branch $changelist failed";
 	}
 }

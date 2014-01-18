@@ -4720,7 +4720,7 @@ messages:
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit, origdamage, oWeapon;
+            iLimit, origdamage, oWeapon, shrunken;
 			
 	  origdamage = damage;
 	  
@@ -4876,13 +4876,20 @@ messages:
               #color_rsc=color_rsc);
       }
       
+	  % report to shrunken head
+	  shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+	  if damage > 0 AND shrunken <> $
+	  {
+		Send(shrunken,@DamageTaken,#what=what,#amount=damage);
+	  }		  
+	  
       return damage;
    }
 
    % This function handles when is damage done to opponent.
    DidDamage(what = $, amount = 0)
    {
-      local oWeapon, i;
+      local oWeapon, i, shrunken;
 
       oWeapon = Send(self,@GetWeapon);
       
@@ -4911,6 +4918,19 @@ messages:
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
       }
+	  
+	  % report to shrunken head
+	  if amount > 0
+      {
+        Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+		 
+		shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+		if shrunken <> $
+		{
+			Send(shrunken,@DamageDealt,#what=what,#amount=amount);
+		}		
+ 
+      }	  
 
       return;
    }
@@ -5001,7 +5021,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, shrunken;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -5132,6 +5152,14 @@ messages:
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
 	  Send(self,@DrawHPChance);
 
+	  % report to shrunken head
+	  shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+      if shrunken <> $
+      {
+		Send(shrunken,@OpponentKilled,#what=what,#stroke_obj=stroke_obj);
+      }
+	  
+	  
       return;
    }
 
@@ -6880,7 +6908,7 @@ messages:
                       refigureschools = TRUE)
    {
       local i, bFound, elemnum, iability, bUsed, spellname, iChange,
-            newability, oSpell, oRoom;
+            newability, oSpell, oRoom, shrunken;
 
       oSpell = Send(sys,@FindSpellByNum,#num=spell_num);
       if oSpell = $
@@ -6931,6 +6959,13 @@ messages:
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);
          Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_improved_wav_rsc);
+			
+		 % report to shrunken head
+		 shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+		 if shrunken <> $
+		 {
+			Send(shrunken,@Improvement,#spellName=spellName);
+		 }				  
       }
 
       Send(self,@PlayerIsIntriguing);
@@ -7831,7 +7866,7 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon, shrunken;
             
       gain = 0;
       roll = FALSE;
@@ -7914,7 +7949,7 @@ messages:
 
          gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,500);
          gain = gain * gainmult;
-
+		 
          piGain_chance = piGain_chance + gain;
 
          if roll
@@ -7941,7 +7976,14 @@ messages:
                piHealth = piMax_Health;
                Send(self,@DrawHealth);
                Send(self,@EatSomething,#nutrition=200);
-
+			   
+			   % report to shrunken head
+			   shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+			   if shrunken <> $
+			   {
+				  send(shrunken,@Tougher,#hp=pibase_max_health);
+			   }		 	
+			   
                piGain_chance = -(piBase_Max_health/2);
                
                if piBase_max_health > 30
@@ -12297,8 +12339,9 @@ messages:
    {
       local oSnoop;
 
-      if type = SAY_NORMAL and what <> self and IsClass(what,&Player)
+      if type = SAY_NORMAL AND IsClass(what,&Player)
       {
+		 % si: removed (and what <> self) to allow communication between shrunken head and owner.
          oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
          if oSnoop <> $
          {

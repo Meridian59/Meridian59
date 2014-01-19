@@ -136,7 +136,8 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
 							  info->characters[i].name != NULL && info->characters[i+1].name != NULL 
 							  && strcmpi(info->characters[i].name, info->characters[i+1].name) > 0 ) )                        
 					{        
-					// bubble all new character slots to the end of the list and non-alphabetical character positions.                        
+					 // bubble all new character slots to the end of the list and non-alphabetical character positions.   
+				     // limitation: Using bubblesort here because it's simpler and there won't be more than 10 entries
 					 tmpCharacter = info->characters[i];
 					 info->characters[i] = info->characters[i+1];
 					 info->characters[i+1] = tmpCharacter;

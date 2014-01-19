@@ -45,6 +45,12 @@ messages:
       AddPacket(4, ballot_desc_rsc);
 	  return;
    }
+   
+   CanSwap()
+   {
+      % No more using these for swap mules
+      return FALSE;
+   }
 
    DropOnDeath()
    {

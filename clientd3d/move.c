@@ -54,7 +54,7 @@
 
 #define MAX_STEP_HEIGHT (HeightKodToClient(24)) // Max vertical step size (FINENESS units)
 
-#define MOVE_INTERVAL  1000            // Inform server at most once per this many milliseconds
+#define MOVE_INTERVAL 500              // Inform server at most once per this many milliseconds
 #define MOVE_THRESHOLD (FINENESS / 4)  // Inform server only of moves at least this large
 #define MOVE_THRESHOLD2 (MOVE_THRESHOLD * MOVE_THRESHOLD)
 #define TIME_THRESHOLD 1000

@@ -24,7 +24,6 @@ foreach my $changelist (@changelists)
 	close $OUT;
 
 	my $output =`git checkout -b $build-$changelist 2>&1`;
-
 	if ($output !~ /Switched to a new branch/)
 	{
 		die "Couldn't create branch: $output";

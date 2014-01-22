@@ -31,6 +31,7 @@ constants:
 
    STATE_ACCEPTING_VOTES = 1
    STATE_TERM_IN_OFFICE  = 2
+   STATE_NO_ELECTIONS = 3
 
 resources:
 
@@ -42,55 +43,6 @@ resources:
       "Caramo has spent years counting the Duke's money, "
       "filing the former Queen's taxation scrolls, and more recently, "
       "serving as clerk for the Office of the Justicar."
-
-   barloqueclerk_for_shame = \
-      "For shame, %s!  Because of your unlawful status, I am forced to strip you "
-      "of your office!"
-
-   % Basic stuff
-
-   barloque_clerk_hail_justicar = \
-      "All hail, the honorable Justicar %s hath arrived!"
-   barloque_clerk_bye_justicar = \
-      "The honorable Justicar %q hath just left the Office."
-   barloque_clerk_refuse_service = \
-      "I would not even ~Bconsider~B the loathsome idea of dealing with the likes of "
-      "thee, %s!  Remove thyself, or the guard will provide escort!"
-
-   % Voting
-
-   barloque_clerk_election_no_justicar_subject = "Office Hath Been Vacated"
-   barloque_clerk_election_no_justicar = \
-      "The Office of the Justicar is now empty. "
-      "Until a new election hath been held and a new Justicar thus chosen, "
-      "there are no pardons from the Crown."
-      "\n\n"
-      "--Caramo"
-   barloque_clerk_election_open_subject = "The Election Campaign Hath Begun"
-   barloque_clerk_election_open = \
-      "The election for Justicar hath begun.  Thou mayest now buy a ballot from me. "
-      "Write the name of the candidate of thy preference and return it for official"
-      " tally.  Do remember, under current Meridian law, neither new citizens nor "
-      "outlaws can vote or hold office."
-      "\n\n"
-      "--Caramo"
-   barloque_clerk_tally_day = \
-      "The next Justicar will be sworn into office %d Meridian days henceforth."
-   barloque_clerk_tally_no_leader = \
-      "Thus far, there are no votes tallied for the next Justicar election."
-   barloque_clerk_tally_leader = \
-      "Thus far, the leader in the next Justicar election is %q, with %i votes."
-   barloque_clerk_tally_tied = \
-      "Thus far, it appears there is a tie."
-   barloque_clerk_announce_winner_subject = "Newly Elected Justicar"
-   barloque_clerk_announce_winner1 = \
-      "Please congratulate "
-   barloque_clerk_announce_winner2 = \
-      ", thy new Justicar."
-      "\n\n"
-      "--Caramo"
-   barloqueClerk_not_yet = "I am not accepting votes at this time."
-   barloqueClerk_blank_ballot = "Really, waste not my time with blank ballots."
 
    % Accountability
 
@@ -110,160 +62,36 @@ resources:
    barloque_clerk_pardons_served2 = \
       "Of those, %i %s to %s, and %i to %s."
 
-   % Commands
-
-   barloque_clerk_pardon_phrase = "As Justicar, I pardon "
-   barloque_clerk_remand_phrase = "As Justicar, I remand "
-   barloque_clerk_report_phrase = "Justicar Report"
-   barloque_clerk_tally_phrase = "count the votes"
-
    % Problems
 
    barloque_clerk_no_justicar = \
       "In faith, there is no one serving as Justicar currently."
-   barloque_clerk_in_absentia = \
-      "Your Honor, that person is present not.  They must be in thy company."
-   barloque_clerk_step_forward = \
-      "Your Honor, that person is in the gallery.  "
-      "In faith, they must step forward into hither court area first."
-   barloque_clerk_already_pardoned = \
-      "Your Honor, that person hath already been pardoned for murder.  "
-      "The Crown doth not look kindly upon unrepetant murderers and will "
-      "allow not another pardon this term."
-   barloque_clerk_citizen_unknown = \
-      "Your Honor, there is no record of a citizen by such name."
-   barloque_clerk_no_more = \
-      "Your Honor, by Royal Law, thou hath reached thy limit on pardons this term."
-
+      
    % Intelligence
 
    barloque_clerk_summary_lawful = \
-      "Your Honor, according to records, "
+      "According to records, "
       "%q is a lawful citizen in keeping with the Royal Establishment."
    barloque_clerk_summary_outlaw = \
-      "Your Honor, according to records, "
+      "According to records, "
       "%q is an outlaw for having caused injury upon lawful citizens, "
       "or for breaking other laws of the land."
    barloque_clerk_summary_murderer1 = \
-      "Your Honor, according to records, "
+      "According to records, "
       "%q hath killed %i %s."
    barloque_clerk_summary_murderer2 = \
       "Of those, %i being %s, and %i %s justifiable by law."
    barloque_clerk_was = "was"
    barloque_clerk_were = "were"
-
-   % Announcements
-
-   barloque_clerk_granted = \
-      "Justicar %s hath granted a pardon to %s, %s, who shall now have the "
-      "status of %s!"
-
-   barloqueclerk_accepting_votes = \
-      "I am now accepting nominations and votes for the office of the Justicar."
-   barloqueclerk_votes_tallied = "The votes have been tallied."
-   barloqueclerk_new_justicar= "Please congratulate %q, thy new Justicar."
-   barloqueclerk_no_can_vote = "I do not have a record of any person with that name."
-   barloqueclerk_vote_noted = "Your vote for %q has been noted."
-   barloqueclerk_vote_switched = "I have modified your vote to be for %q."
-   barloqueclerk_vote_already = "You already were supporting %q with your vote."
-
-   barloqueclerk_hands_back = "~bCaramo hands back the ballot."
-   barloqueclerk_bad_candidate = "%q is ineligible for the office of Justicar."
-   barloqueclerk_no_newbie_voter = "You are not yet eligible to vote."
-   barloqueclerk_no_outlaw_voter = "Criminals have no voting rights.  Begone."
-
-   barloque_clerk_notify_ad = \
-      "~kCaramo tells you, \"~I~bThere is a vote to elect a new Justicar "
-      "currently.~I~k\""
-   barloque_clerk_start_ad = \
-      "I shall let you know when the new voting starts should you remain a "
-      "lawful citizen."
-   barloque_clerk_start_ad_outlaw = \
-      "A new vote will make little difference to thee.  Criminals such as thyself "
-      "are not allowed to vote.  Should thou provest thyself a lawful citizen, I "
-      "shall notify you of new votes."
-   barloque_clerk_no_start_ad = \
-      "You are already being notified when the new voting starts."
-   barloque_clerk_no_start_ad_angel = \
-      "Only experienced veterans may participe in voting. "
-      "Ask again when you are worthy."
-   barloque_clerk_stop_ad = \
-      "You will no longer be notified when new voting starts."
-   barloque_clerk_stop_ad_outlaw = \
-      "Reform seems beyond thy grasp, I see.  I will not bother thee with my "
-      "notifications, then."
-   barloque_clerk_no_stop_ad = \
-      "You are not currently being notified when new voting starts."
-
-   barloque_clerk_advertise = "advertise"
-   barloque_clerk_no_advertise = "no advertise"
-
-   % Initiation
-
-   barloque_clerk_mail = \
-      "Subject: Congratulations on thy Election.\n"
-      "From the Desk of Caramo, Clerk of the Office of the Justicar\n"
-      "\n"
-      "This message is to formally notify thee that thou hath been selected "
-      "by the lawful citizens of Meridian to hold the office of the Justicar.\n"
-      "\n"
-      "As the Justicar of Meridian, thou art able to decide cases of justice, "
-      "and thou may make pronouncements of people's guilt or innocence according "
-      "to thy own sense of righteousness. Thou have been elected by thy peers, "
-      "and it is thy duty to uphold their ideals as well as thy own, or thou "
-      "likely will be invited not to retain the office for another term.\n"
-      "\n"
-      "Thou may only pardon eight individuals in a term.  A pardon will change "
-      "the legal status of a murderer to an outlaw, or an outlaw to a free citizen. "
-      "Thus, a full pardon for a murderer takes two separate acts."
-      "\n"
-      "For all official business, thou must use the Office of the Justicar in "
-      "the north end of Barloque. I am at thy disposal to supply thee information "
-      "on the scofflaws and murderers in the land, and I will avail myself to "
-      "keep the paperwork as required by the Royal Government of Meridian.\n"
-      "\n"
-      "When upon your official bench here, merely sayest the name of a citizen, and "
-      "I shall tell you their standing in the Royal Law. Then to grant your pardon, "
-      "mayhaps to Zaphod for example, sayest thou from the bench, "
-      "\"As Justicar, I pardon Zaphod\". And knowest thou that any lawful citizen can "
-      "know your record if they merely ask me for a Justicar Report.\n"
-      "\n"
-      "Again, congratulations, and I look forward to helping thee serve justice.\n"
-      "Ask me for help if thou should have need of it.\n"
-      "\n"
-      "On Jala's Truth,\n"
-      "    Caramo, Office of the Justicar\n"
-      "\n"
-      "(duplicate to the Duke of Blackstone Keep)\n"
-      "(duplicate to the Princess Kateriina of Bourgeois Castle)\n"
-   barloque_clerk_help1 = \
-      "Hail, Justicar %s.  I'm Caramo, thy assistant during thy term."
-   barloque_clerk_help2 = \
-      "Thou may hear as many cases as thou like in this office, but thou art limited "
-      "by Royal law to pardon only %i citizens in the remainder of thy term. "
-
-   % Dealing with the Disorderly
-
-   barloque_clerk_warn = \
-      "I do beseech thee, if thou cannot be orderly, %s, thou should leave the Office."
-   barloque_clerk_warn_outside = \
-      "Your commotion is disrupting the proceedings of the Court of the Justicar, "
-      "%s.  Please desist."
-   barloque_clerk_dismiss = \
-      "Don't return, %s, until thou can conduct thyself properly."
-   barloque_clerk_glare = \
-      "Try to conduct thyself in a civilized manner, %s."
-   barloqueclerk_votes_tied = \
-      "The votes for justicar are tied, and therefore the voting has not been closed."
-
-   barloque_clerk_pardon_1 = "Let it be known that "
-   barloque_clerk_pardon_2 = " has been granted reprieve.  Formerly "
-   barloque_clerk_pardon_3 = ", "
-   barloque_clerk_pardon_4 = " now walks among us as "
-   barloque_clerk_pardon_5 = ", by the order of "
-   barloque_clerk_pardon_6 = ", thy Justicar.  So it has been spoken, so shall it be done.\n\n-- Caramo"
-   % This string must be < 20 chars long to fit in the subject line with a player name
-   barloque_clerk_pardon_7 = " granted reprieve"
+   
+   indulgence_not_enough_money = "You think the law will forgive you for partial measures? Pay the full amount or get out of my sight."
+   indulgence_success = "Thank you for paying your debt to society. You will no longer be considered a murderer in the eyes of the law."
+   indulgence_not_a_murderer = "Only murderers may buy indulgences."
+   barloque_clerk_indulgence_1 = "Let it be known that "
+   barloque_clerk_indulgence_2 = " has been granted an indulgence and pardoned.  So it has been spoken, so it shall be done.\n\n-- Caramo"
+   barloque_clerk_indulgence_3 = " granted indulgence"
+   
+   no_more_ballots = "According to the Royal Paperwork Reduction Act, ballots are no longer used in this office."
 
 classvars:
 
@@ -278,221 +106,108 @@ properties:
 
    piAnimation = ANIM_NONE
 
-   piDayCounter = 0
-   piJusticar_State = STATE_ACCEPTING_VOTES
-
-   poJusticar = $
-   poDisorderly = $
+   piJusticar_State = STATE_NO_ELECTIONS
 
    piCommand = COMMAND_NONE
-
-   piPardoned = 0
-   piPardonedMurderers = 0
-   piPardonedOutlaws = 0
-
-   % A list of pardoned murderers, so that serial killers can't get
-   %  multiple pardons in one justicar term.
-   plPardons = $
-
-   % A list of people that want advertising about when voting happens.
-   plAdvertise = $
    
-   % plVotes is a list of two element lists.  The first element is the 
-   % player who voted, and the second element is the player who is being voted for.
-   % Note that a player can only have one vote at a time.
-   plVotes = $
-   psJunkString = $   
-
-   % Duration of the voting period.  24*12 game hours is one earth day.
-   piVotingDuration = 288
-   % Duration Justicar is in office.  A little over six earth days.
-   piOfficeDuration = 1790
-   % Duration of the tiebreaker voting period.  It's one earth day.
-   piTiebreakerDuration = 288
-
 messages:
 
    Constructor()
    {
-      plWantedItems = [ &BallotItem ];
-      psJunkString = CreateString();
+      plWantedItems = [ &BallotItem, &Money ];
       Send(SYS,@SetCaramo,#oCaramo=self);
-
-      % Start out in voting state.
-      piDayCounter = piVotingDuration;
-      piJusticar_State = STATE_ACCEPTING_VOTES;
+      
+      piJusticar_State = STATE_NO_ELECTIONS;
 
       propagate;
    }
 
-   %%% Selling and accepting Ballots
-
-   IsCustomerOkay(who=$)
-   {
-      % Don't even stoop to the impropriety of dealing with scofflaws and worse.
-      if isClass(who,&Player) AND Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_refuse_service,
-              #parm1=Send(who,@GetName));
-              
-         return FALSE;
-      }
-
-      return TRUE;
-   }
 
    GotWantedItem(obj = $, who = $)
    {
-      if isClass(obj,&BallotItem)
+      if isClass(obj, &BallotItem)
       {
-         if Send(obj,@GetOwner) <> who
-         {
-            propagate;
-         }
+         Post(poOwner,@SomeoneSaid,#what=self,#string=no_more_ballots,#type=SAY_RESOURCE);
+         return;
+      }
 
-         if Send(self,@VoteFor,#voter=who,#who_string=Send(obj,@GetInscription))
-         {
-            Send(obj,@Delete);
-         }
-         
+      if send(self,@CheckForIndulgence,#who=who,#obj=obj)
+      {
          return;
       }
       
       propagate;
    }
 
-   SetForSale()
+   CheckForIndulgence(who=$, obj = 0)
    {
-      plFor_sale = [ [ Create(&BallotItem) ],
-                     $,$];
+      local oMoney, oBank, amount;
+
+      if not isClass(obj,&Money)
+      {
+         return false;
+      }
+      
+      amount = send(obj,@GetNumber);
+      if amount <= 0
+      {
+         return false;
+      }
+
+      % Check for hacked offers
+      oMoney = Send(who,@GetMoneyObject);
+      if oMoney = $ 
+      {
+	     return false;
+      }
+      if send(oMoney,@GetValue) < amount
+      {
+	     return false;
+      }
+      
+      if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         Post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_not_a_murderer,#type=SAY_RESOURCE);
+         return true;
+      }
+
+      if amount < Send(Send(SYS,@GetSettings),@GetPardonIndulgenceCost)
+      {
+         Post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_not_enough_money,
+	                  #type=SAY_RESOURCE);
+       
+	     return true;      
+      }
+      send(oMoney,@SubtractNumber,#number=amount);
+      send(self,@PerformIndulgencePardonMurderer,#who=who);
+      post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_success,#type=SAY_RESOURCE);
+      return true;
+   }
+
+   PerformIndulgencePardonMurderer(who=$)
+   {
+      Send(self,@RecordIndulgencePardonBookOfJala,#who=who);
+
+      Send(who,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=FALSE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
+
       return;
    }
 
-   %%% Handling people and disordery conduct.
-
-   DismissDisorderly(who = $)
-   {
-      local oNewRoom;
-
-      Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_dismiss,
-           #parm1=Send(who,@GetTrueName));
-
-      oNewRoom = Send(SYS,@FindRoomByNum,#num=RID_BAR_NORTH);
-      Send(SYS,@UtilGoNearSquare,#what=who,#where=oNewRoom,#new_row=35,#new_col=48);
-
-      % don't erase poDisorderly, in case they just run back in
-
-      return;
-   }
-
-   WarnDisorderly(who = $)
-   {
-      if Send(who,@GetOwner) = poOwner
-      {
-         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_warn,
-              #parm1=Send(who,@GetTrueName));
-      }
-      else
-      {
-         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_warn_outside,
-              #parm1=Send(who,@GetTrueName));
-      }
-      
-      poDisorderly = who;
-      
-      return;
-   }
-
-   SomethingEntered(what=$,where=$)
-   {
-      if not isClass(what,&Player)
-      {
-         propagate;
-      }
-
-      if what = poDisorderly
-      {
-         Send(self,@SayToOne,#target=what,#message_rsc=barloque_clerk_glare,
-              #parm1=Send(what,@GetTrueName));
-         
-         propagate;
-      }
-
-      if poJusticar <> $ and what = poJusticar
-      {
-         if NOT Send(self,@AuthenticateJusticar)
-         {
-            propagate;
-         }
-
-         Send(self,@Say,#message_rsc=barloque_clerk_hail_justicar,
-              #parm1=Send(poJusticar,@GetTrueName));
-      }
-
-      propagate;
-   }
-
-   AuthenticateJusticar()
-   {
-      local sString, sString2, oBook;
-      
-      if poJusticar <> $
-         AND (Send(poJusticar,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-              OR Send(poJusticar,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-      {
-         % Scold them as they enter.
-         post(self,@Say,#message_rsc=barloqueclerk_for_shame,
-              #parm1=Send(poJusticar,@GetTrueName));
-
-         % Strip Justicar of power.
-         Send(self,@SetJusticar,#who=$);
-
-         return FALSE;
-      }
-
-      return TRUE;
-   }
-
-   SomethingLeft(what=$,where=$)
-   {
-      if NOT isClass(what,&Player)
-      {
-         propagate;
-      }
-
-      if what = poJusticar
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_bye_justicar,
-              #parm1=Send(poJusticar,@GetTrueName),#type1=STRING_RESOURCE);
-      }
-
-      propagate;
-   }
-
-   %%% Pardoning and recordkeeping
-
-   RecordPardonBookOfJala(who=$, parm1=$, parm2=$)
+   RecordIndulgencePardonBookOfJala(who=$, parm1=$, parm2=$)
    {
       local sString, sString2, oBook;
 
       ClearTempString();
-      AppendTempString(barloque_clerk_pardon_1);
+      AppendTempString(barloque_clerk_indulgence_1);
       AppendTempString(Send(who,@GetTrueName));
-      AppendTempString(barloque_clerk_pardon_2);
-      AppendTempString(parm1);
-      AppendTempString(barloque_clerk_pardon_3);
-      AppendTempString(Send(who,@GetHeShe));
-      AppendTempString(barloque_clerk_pardon_4);
-      AppendTempString(parm2);
-      AppendTempString(barloque_clerk_pardon_5);
-      AppendTempString(Send(poJusticar,@GetTrueName));
-      AppendTempString(barloque_clerk_pardon_6);
+      AppendTempString(barloque_clerk_indulgence_2);
       sString = CreateString();
       setString(sString,GetTempString());
 
       ClearTempString();
       AppendTempString(Send(who,@GetTrueName));
-      AppendTempString(barloque_clerk_pardon_7);
+      AppendTempString(barloque_clerk_indulgence_3);
       sString2 = CreateString();
       setString(sString2,GetTempString());
       
@@ -502,410 +217,60 @@ messages:
       return;
    }
 
-   RecordPardon(who=$, parm1=$, parm2=$)
-   {
-      piPardoned = piPardoned + 1;
-
-      debug("Justicar",Send(poJusticar,@GetTrueName),
-            "granted pardon to ",Send(who,@GetTrueName),
-            "from",parm1,"to",parm2);
-
-      Send(self,@Say,#message_rsc=barloque_clerk_granted,
-            #parm1=Send(poJusticar,@GetTrueName),
-            #parm2=Send(who,@GetTrueName),
-            #parm3=parm1,#parm4=parm2);
-
-      Send(self,@RecordPardonBookOfJala,#who=who,#parm1=parm1,#parm2=parm2);
-
-      return;
-   }
-
-   PerformPardonMurderer(who=$)
-   {
-      Send(self,@RecordPardon,#who=who,#parm1=barloque_clerk_amurderer,
-           #parm2=barloque_clerk_anoutlaw);
-
-      Send(who,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=FALSE);
-      Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
-
-      piPardonedMurderers = piPardonedMurderers + 1;
-
-      plPardons = cons(who, plPardons);
-
-      return;
-   }
-
-   PerformPardonOutlaw(who=$)
-   {
-      Send(self,@RecordPardon,#who=who,#parm1=barloque_clerk_anoutlaw,
-           #parm2=barloque_clerk_alawful);
-
-      Send(who,@SetPlayerFlag,#flag=PFLAG_MURDERER,#value=FALSE);
-      Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
-
-      piPardonedOutlaws = piPardonedOutlaws + 1;
-
-      return;
-   }
-
-   %%% Handling says, routing them appropriately.
+   %%% Handling citizen commands.
 
    SomeoneSaid(what = $,type = $,string = $)
    {
-      local iRow, iCol;
+      local iRow, iCol, oTarget;
 
       if what = $ OR NOT IsClass(what,&Player)
       {
          propagate;
       }
 
-      % For getting advertising or not.
-      if StringEqual(string,barloque_clerk_advertise)
+      % Public Commands
+      if isClass(what,&User)
       {
-         Send(self,@UserStartAdvertise,#who=what);
-
-         return;
-      }
-
-      if StringEqual(string,barloque_clerk_no_advertise)
-      {
-         Send(self,@UserStopAdvertise,#who=what);
-
-         return;
-      }
-
-      % The Boss's Commands?
-      if poJusticar <> $ and what = poJusticar
-      {
-         iRow = Send(what,@GetRow);
-         iCol = Send(what,@GetCol);
-         if iRow >= BOOTH_NORTH
-            AND iRow <= BOOTH_SOUTH
-            AND iCol >= BOOTH_WEST
-            AND iCol <= BOOTH_EAST
-            AND Send(self,@JusticarSaid,#string=string)
+         oTarget = Send(SYS,@FindUserByString,#string=string);      
+         if oTarget <> $
          {
+            Send(self,@CitizenRequestsPlayerRecord,#citizen=what,#who=oTarget);
             return;
          }
-      }
-
-      % Disorderly conduct?
-      if poJusticar = $
-      {
-         poDisorderly = $;
-      }
-      else
-      {
-         if Send(poJusticar, @GetOwner) <> poOwner
-         {
-            poDisorderly = $;
-         }
-      }
-      
-      if type = SAY_YELL
-      {
-         if poJusticar <> $ AND what <> poJusticar
-         {
-            if what = poDisorderly AND Send(what,@GetOwner) = poOwner
-            {
-               Send(self,@DismissDisorderly,#who=what);
-               
-               return;
-            }
-            
-            post(self,@WarnDisorderly,#who=what);
-            
-            return;
-         }
-      }
-
-      % Public Commands?
-      if isClass(what,&User) AND Send(self,@CitizenSaid,#who=what,#string=string)
-      {
-         return;
       }
 
       propagate;
    }
 
-   %%% Handling Justicar commands.
-
-   JusticarRequestsPardon(who=$)
-   {
-      if who = $
-      {
-         return;
-      }
-
-      %  MANY REASONS WHY A JUSTICAR CANNOT PARDON
-
-      if piPardoned >= PARDON_LIMIT
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_no_more);
-         
-         return;
-      }
-
-      if Send(who,@GetOwner) <> poOwner
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_in_absentia);
-         
-         return;
-      }
-
-      % Check to see if the person is a murderer and has already been
-      %  pardoned for murder this term.
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-         AND plPardons <> $ AND FindListElem(plPardons,who) <> 0
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_already_pardoned);
-         
-         return;
-      }
-
-      if NOT Send(poOwner,@ReqInSpecialArea,#obj=who)
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_step_forward);
-         
-         return;
-      }
-
-      % Go through with it.
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-      {
-         Send(self,@PerformPardonMurderer,#who=who);
-         
-         return;
-      }
-
-      if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-      {
-         Send(self,@PerformPardonOutlaw,#who=who);
-         
-         return;
-      }
-
-      % After all that, the target wasn't in need of a pardon.
-      Send(self,@Say,#message_rsc=barloque_clerk_summary_lawful,
-           #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE);
-
-      return;
-   }
-
-   JusticarRequestsRecord(who=$)
+   CitizenRequestsPlayerRecord(citizen=$,who=$)
    {
       local iTotal, iJust, iUnjust, bMurderer, bOutlaw;
 
       if who = $
+         OR citizen = $
       {
-         return;
-      }
-
-      bMurderer = Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER);
-
-      if bMurderer
-      {
-         iJust = Send(who,@GetJustifiedKills);
-         iUnjust = Send(who,@GetUnjustifiedKills);
-         iTotal = iJust + iUnjust;
-
-         Send(self,@SayToOne,#target=poJusticar,
-              #message_rsc=barloque_clerk_summary_murderer1,
-              #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE,
-              #parm2=iTotal,
-              #parm3=Send(self,@SingPlur,#num=iTotal,#sing=barloque_clerk_person,
-                          #plur=barloque_clerk_people));
-
-         Send(self,@SayToOne,#target=poJusticar,
-              #message_rsc=barloque_clerk_summary_murderer2,
-              #parm1=iUnjust,
-              #parm2=Send(self,@SingPlur,#num=iUnjust,#sing=barloque_clerk_alawful,
-                          #plur=barloque_clerk_lawfuls),
-              #parm3=iJust,
-              #parm4=Send(self,@SingPlur,#num=iJust,#sing=barloque_clerk_was,
-                          #plur=barloque_clerk_were));
-
-         return;
-      }
-
-      bOutlaw = Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW);
-
-      if bOutlaw
-      {
-         Send(self,@SayToOne,#target=poJusticar,
-              #message_rsc=barloque_clerk_summary_outlaw,
-              #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE);
-
-         return;
-      }
-
-      Send(self,@SayToOne,#target=poJusticar,
-           #message_rsc=barloque_clerk_summary_lawful,
-           #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE);
-
-      return;
-   }
-
-   JusticarSaid(string = $)
-   {
-      local oTarget;
-
-      oTarget = $;
-
-      piCommand = COMMAND_NONE;
-
-      % as justicar, i pardon <player name>
-      if (stringContain(string, barloque_clerk_pardon_phrase))
-      {
-         piCommand = COMMAND_PARDON;
-         stringSubstitute(string,barloque_clerk_pardon_phrase," ");
-      }
-
-      oTarget = Send(SYS,@FindUserByString,#string=string);      
-      
-      % who is to be pardoned?
-      if piCommand = COMMAND_PARDON
-      {
-         if oTarget = $
-         {
-            Send(self,@SayToOne,#target=poJusticar,
-                 #message_rsc=barloque_clerk_citizen_unknown);
-         }
-         else
-         {
-            if Send(oTarget,@GetOwner) <> poOwner
-            {
-               Send(self,@SayToOne,#target=poJusticar,
-                    #message_rsc=barloque_clerk_in_absentia);
-            }
-            else
-            {
-               Send(self,@JusticarRequestsPardon,#who=oTarget);
-            }
-         }
-         
-         piCommand = COMMAND_NONE;
-         
-         return TRUE;
-      }
-
-      piCommand = COMMAND_NONE;
-
-      % player's record (name exactly)
-      if oTarget <> $
-      {
-         Send(self,@JusticarRequestsRecord,#who=oTarget);
-      }
-
-      return FALSE;
-   }
-
-   %%% Handling citizen commands.
-
-   CitizenAsksTally(who=$)
-   {
-      local i, j, lTallied, oHighest, iHighestCount, bTie, bFound;
-
-      if piJusticar_State <> STATE_ACCEPTING_VOTES
-      {
-         Send(self,@SayToOne,#message_rsc=barloqueClerk_not_yet,#target=who);
-         
-         return;
-      }
-
-      lTallied = $;
-      
-      for i in plVotes
-      {
-         if NOT Send(self,@IsLegalJusticar,#candidate=Nth(i,2))
-         {
-            continue; 
-         }
-         
-         bFound = FALSE;
-         
-         for j in lTallied
-         {
-            if nth(i,2) = first(j)          
-            {
-               setnth(j,2,(nth(j,2)+1));
-               bFound = TRUE;
-            }            
-         }
-         
-         if not bFound
-         {
-            lTallied = cons([nth(i,2),1],lTallied);
-         }
-      }
-      
-      if lTallied = $
-      {
-         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_tally_tied,#type1=STRING_RESOURCE);
-         
          return;
       }
       
-      oHighest = $;
-      iHighestCount = 0;      
-      bTie = FALSE;
-      
-      for i in lTallied
-      {
-         if Nth(i,2) = iHighestCount
-         {
-            bTie = TRUE;
-         }
-         
-         if Nth(i,2) > iHighestCount
-         {
-            oHighest = first(i);
-            iHighestCount = nth(i,2);
-            bTie = FALSE;
-         }         
-      }
-      
-      if bTie
-      {
-         Send(self,@SayToOne,#target=who,#message_rsc=barloque_clerk_tally_tied,#type1=STRING_RESOURCE);
-         return;
-      }
+     iJust = Send(who,@GetJustifiedKills);
+     iUnjust = Send(who,@GetUnjustifiedKills);
+     iTotal = iJust + iUnjust;
+                           
+     Send(self,@SayToOne,#target=citizen,
+          #message_rsc=barloque_clerk_summary_murderer1,
+          #parm1=Send(who,@GetTrueName),#type1=STRING_RESOURCE,
+          #parm2=iTotal,
+          #parm3=Send(self,@SingPlur,#num=iTotal,#sing=barloque_clerk_person,
+                      #plur=barloque_clerk_people));
 
-      Send(self,@SayToOne,#target=who,
-           #message_rsc=barloque_clerk_tally_leader,
-           #parm1=Send(oHighest,@GetTrueName),#type1=STRING_RESOURCE,
-           #parm2=iHighestCount);
-
-      return;
-   }
-
-   CitizenAsksRecord(who=$)
-   {
-      if poJusticar = $
-      {
-         Send(self,@SayToOne,#target=who,
-              #message_rsc=barloque_clerk_no_justicar);
-              
-         return;
-      }
-
-      Send(self,@SayToOne,#target=who,
-           #message_rsc=barloque_clerk_pardons_served1,
-           #parm1=Send(poJusticar,@GetTrueName),#type1=STRING_RESOURCE,
-           #parm2=piPardoned,
-           #parm3=Send(self,@SingPlur,#num=piPardoned,#sing=barloque_clerk_pardon,
-                       #plur=barloque_clerk_pardons));
-
-      Send(self,@SayToOne,#target=who,
-           #message_rsc=barloque_clerk_pardons_served2,
-           #parm1=piPardonedOutlaws,
-           #parm2=Send(self,@SingPlur,#num=piPardonedOutlaws,#sing=barloque_clerk_pardon,
-                       #plur=barloque_clerk_pardons),
-           #parm3=Send(self,@SingPlur,#num=piPardonedOutlaws,#sing=barloque_clerk_anoutlaw,
-                       #plur=barloque_clerk_outlaws),
-           #parm4=piPardonedMurderers,
-           #parm5=Send(self,@SingPlur,#num=piPardonedMurderers,#sing=barloque_clerk_amurderer,
-                       #plur=barloque_clerk_murderers));
+     Send(self,@SayToOne,#target=citizen,
+          #message_rsc=barloque_clerk_summary_murderer2,
+          #parm1=iUnjust,
+          #parm2=Send(self,@SingPlur,#num=iUnjust,#sing=barloque_clerk_alawful,
+                      #plur=barloque_clerk_lawfuls),
+          #parm3=iJust,
+          #parm4=Send(self,@SingPlur,#num=iJust,#sing=barloque_clerk_was,
+                      #plur=barloque_clerk_were));
 
       return;
    }
@@ -920,473 +285,6 @@ messages:
       return plur;
    }
 
-   CitizenSaid(who = $, string = $)
-   {
-      % justicar report
-      if (stringContain(string, barloque_clerk_report_phrase))
-      {
-         Send(self,@CitizenAsksRecord,#who=who);
-         
-         return TRUE;
-      }
-
-      % justicar voting tally
-      if (stringContain(string, barloque_clerk_tally_phrase))
-      {
-         Send(self,@CitizenAsksTally,#who=who);
-         
-         return TRUE;
-      }
-
-      return FALSE;
-   }
-
-   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-   %%% Handling notification
-
-   UserStartAdvertise(who=$)
-   "Adds user to the advertising list."
-   {
-      if NOT Send(self, @IsPlayerSeniorEnough, #who = who)
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_no_start_ad_angel);
-
-         return;
-      }
-
-      if plAdvertise = $
-         OR FindListElem(plAdvertise,who) = 0
-      {
-         if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-            OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-         {
-            Send(self,@Say,#message_rsc=barloque_clerk_start_ad_outlaw);
-         }
-         else
-         {
-            Send(self,@Say,#message_rsc=barloque_clerk_start_ad);
-         }
-
-         plAdvertise = cons(who,plAdvertise);
-      }
-      else
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_no_start_ad);
-      }
-
-      return;
-   }
-
-   UserStopAdvertise(who=$)
-   "Removes a user from the advertise list."
-   {
-      if plAdvertise = $
-         OR FindListElem(plAdvertise,who) = 0
-      {
-         Send(self,@Say,#message_rsc=barloque_clerk_no_stop_ad);
-      }
-      else
-      {
-         if Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-            OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-         {
-            Send(self,@Say,#message_rsc=barloque_clerk_stop_ad_outlaw);
-         }
-         else
-         {
-            Send(self,@Say,#message_rsc=barloque_clerk_stop_ad);
-         }
-
-         plAdvertise = DelListElem(plAdvertise,who);
-      }
-
-      return;
-   }
-
-   UserLogon(who = $)
-   "We are notified when a user logs on so we can tell them when there's a vote."
-   {
-      if piJusticar_State = STATE_ACCEPTING_VOTES
-         AND plAdvertise <> $
-         AND FindListElem(plAdvertise,who) <> 0
-      {
-         Send(self,@NotifyUserIfWorthy,#who=who);
-      }
-
-      return;
-   }
-
-   NotifyUserIfWorthy(who = $)
-   "Sends a user to 'who' if not an outlaw/murderer."
-   {
-      if NOT (Send(who,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-              OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         AND Send(self, @IsPlayerSeniorEnough, #who = who)
-      {
-         Send(who,@MsgSendUser,#message_rsc=barloque_clerk_notify_ad);
-      }
-
-      return;
-   }
-
-   %%% Handling voting.
-
-   NewHour()
-   {
-      local oBook, sString, sString2, oPlayer;
-
-      piDayCounter = piDayCounter - 1;
-      
-      if piDayCounter <= 0
-      {
-         % Okay, we've just left the old state.  See what the old state is
-         %  and enter the new state.
-         if piJusticar_State = STATE_ACCEPTING_VOTES
-         {
-            piJusticar_State = STATE_TERM_IN_OFFICE;
-            piDayCounter = piOfficeDuration;
-            Send(self,@CountVotes);
-            
-            return;
-         }
-         
-         if piJusticar_State = STATE_TERM_IN_OFFICE
-         {
-            piJusticar_State = STATE_ACCEPTING_VOTES;
-            piDayCounter = piVotingDuration;
-
-            ClearTempString();
-            AppendTempString(barloque_clerk_election_open_subject);
-            sString2=CreateString();
-            setString(sString2,GetTempString());
-
-            ClearTempString();
-            AppendTempString(barloque_clerk_election_open);
-            sString=CreateString();
-            setString(sString,GetTempString());
-              
-            oBook = Send(poOwner,@GetBook);
-            Send(oBook,@PostNews,#what=self,#title=sString2,#body=sString);
-
-            Send(self,@Say,#message_rsc=barloqueclerk_accepting_votes);
-
-            % Send notification to all those logged on.
-            for oPlayer in plAdvertise
-            {
-               if Send(oPlayer,@IsLoggedOn)
-               {
-                  Send(self,@NotifyUserIfWorthy,#who=oPlayer);
-               }
-            }
-
-            return;
-         }
-      }
-
-      return;      
-   }   
-     
-   VoteFor(who_string = $,voter = $)
-   {
-      local i, oVote, bFound;
-      
-      if who_string = $
-      {
-         Send(self,@SayToOne,#message_rsc=barloqueClerk_blank_ballot,#target=voter);
-         Send(voter,@MsgSendUser,#message_rsc=barloqueclerk_hands_back);
-         
-         return FALSE;
-      }
-
-      if piJusticar_State <> STATE_ACCEPTING_VOTES
-      {
-         Send(self,@SayToOne,#message_rsc=barloqueClerk_not_yet,#target=voter);
-         Send(voter,@MsgSendUser,#message_rsc=barloqueclerk_hands_back);
-         
-         return FALSE;
-      }
-      
-      oVote = $;
-      i = Send(SYS,@FindUserByString,#string=who_string);
-      
-      if i <> $
-      {
-         if NOT Send(self,@IsLegalVoter,#voter=voter)
-         {
-            % There are two reasons, let that function tell why.
-            Send(voter,@MsgSendUser,#message_rsc=barloqueclerk_hands_back);
-            
-            return FALSE;               
-         }
-         
-         if NOT Send(self,@IsLegalJusticar,#candidate=i)
-         {
-            Send(self,@SayToOne,#target=voter,#message_rsc=barloqueclerk_bad_candidate,
-                 #parm1=Send(i,@GetTrueName),#type1=STRING_RESOURCE);
-            Send(voter,@MsgSendUser,#message_rsc=barloqueclerk_hands_back);
-            
-            return FALSE;
-         }
-         
-         oVote = i;
-      }
-      
-      if oVote = $
-      {
-         Send(self,@SayToOne,#target=voter,#message_rsc=barloqueclerk_no_can_vote);
-         Send(voter,@MsgSendUser,#message_rsc=barloqueclerk_hands_back);
-         
-         return FALSE;
-      }
-      
-      bFound = FALSE;
-      
-      for i in plVotes
-      {
-         if first(i) = voter
-         {
-            if nth(i,2) = oVote
-            {
-               % Already supporting this person.
-               Send(self,@SayToOne,#target=voter,#message_rsc=barloqueclerk_vote_already, 
-                    #parm1=Send(oVote,@GetTrueName),#type1=STRING_RESOURCE);
-                    
-               return TRUE;
-            }
-            
-            Send(self,@SayToOne,#target=voter,#message_rsc=barloqueclerk_vote_switched, 
-                 #parm1=Send(oVote,@GetTrueName),#type1=STRING_RESOURCE);
-                 
-            SetNth(i,2,oVote);
-            
-            bFound = TRUE;
-         }
-      }
-      
-      if NOT bFound
-      {
-         Send(self,@SayToOne,#message_rsc=barloqueclerk_vote_noted,#target=voter,
-              #parm1=Send(oVote,@getTrueName),#type1=STRING_RESOURCE);
-         plVotes = Cons([voter,oVote],plVotes);         
-      }
-      
-      return TRUE;
-   }
-
-   IsLegalVoter(voter=$)
-   {
-      if NOT Send(self, @IsPlayerSeniorEnough, #who = voter)
-      {
-         Send(self,@SayToOne,#message_rsc=barloqueclerk_no_newbie_voter,#target=voter);
-         
-         return FALSE;
-      }
-      
-      if Send(voter,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-         OR Send(voter,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-      {
-         Send(self,@SayToOne,#message_rsc=barloqueclerk_no_outlaw_voter,#target=voter);
-         
-         return FALSE;
-      }
-      
-      return TRUE;
-   }
-
-   IsLegalJusticar(candidate=$)
-   {
-      if NOT Send(candidate,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {         
-         return FALSE;
-      }
-      
-      if Send(candidate,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-         OR Send(candidate,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-      {
-         return FALSE;
-      }
-      
-      return TRUE;
-   }
-
-   CountVotes()
-   {
-      local i, j, lTallied, oHighest, iHighestCount, bTie, bFound, oBook,
-            sString, sString2;
-
-      lTallied = $;
-      
-      % Okay, first lets count the votes.  lTallied is a list of two element
-      %  lists,where the first element is the person being voted for, and the
-      %  second is how many votes he currently has.
-      for i in plVotes
-      {
-         if NOT Send(self,@IsLegalJusticar,#candidate=Nth(i,2))
-         {
-            continue; 
-         }
-         
-         bFound = FALSE;
-         
-         for j in lTallied
-         {
-            if nth(i,2) = first(j)          
-            {
-               setnth(j,2,(nth(j,2)+1));
-               bFound = TRUE;
-            }            
-         }
-         
-         if not bFound
-         {
-            lTallied = cons([nth(i,2),1],lTallied);
-         }
-      }
-      
-      if lTallied = $
-      {
-         Send(self,@Tied);
-         
-         return;
-      }
-      
-      oHighest = $; iHighestCount = 0;      
-      bTie = FALSE;
-      
-      for i in lTallied
-      {
-         if Nth(i,2) = iHighestCount
-         {
-            bTie = TRUE;
-         }
-         
-         if Nth(i,2) > iHighestCount
-         {
-            oHighest = first(i);
-            iHighestCount = nth(i,2);
-            bTie = FALSE;
-         }         
-      }
-      
-      if bTie
-      {
-         Send(self,@Tied);
-         return;
-      }
-
-      %% Okay, we should have a clear justicar chosen now.
-      plVotes = $;
-
-      Send(self,@SetJusticar,#who=oHighest);
-
-      return;
-   }
-   
-   Tied()
-   {
-      Send(self,@Say,#message_rsc=barloqueclerk_votes_tied);         
-      piJusticar_State = STATE_ACCEPTING_VOTES;
-      piDayCounter = piTiebreakerDuration;
-      
-      return;
-   }
-
-   GetJusticar()
-   {
-      return poJusticar;
-   }
-
-   SetJusticar(who = $, bNewVote = FALSE)
-   "Sets the Justicar.  Set who = NIL and bNewVote = TRUE to start a new vote."
-   {
-      local oBook, sString, sString2;
-
-      poJusticar = who;
-
-      % reinitialize the votes.
-      piPardoned = 0;
-      piPardonedMurderers = 0;
-      piPardonedOutlaws = 0;
-      plPardons = $;
-
-      if poJusticar <> $
-      {
-         Send(self,@Say,#message_rsc=barloqueclerk_votes_tallied);
-         Send(self,@Say,#message_rsc=barloqueclerk_new_justicar,
-              #parm1=Send(poJusticar,@GetTrueName),#type1=STRING_RESOURCE);
-    
-         if poOwner <> $
-         {
-            oBook = Send(poOwner,@GetBook);
-
-            ClearTempString();
-            AppendTempString(barloque_clerk_announce_winner_subject);
-            sString2 = CreateString();
-            setString(sString2,GetTempstring());
-
-            ClearTempString();
-            AppendTempString(barloque_clerk_announce_winner1);
-            AppendTempString(Send(poJusticar,@GetTrueName));
-            AppendTempString(barloque_clerk_announce_winner2);
-            sString = CreateString();
-            setString(sString,GetTempString());
-
-            Send(oBook,@PostNews,#what=self,#title=sString2,#body=sString);
-         }
-         
-         Send(poJusticar,@ReceiveNestedMail,#nest_list = [4,barloque_clerk_mail],
-                 #from=vrName,#dest_list=[poJusticar]);
-
-         % Set the proper status if it's not already set.
-         if piJusticar_State <> STATE_TERM_IN_OFFICE
-         {
-            piJusticar_State = STATE_TERM_IN_OFFICE;
-            piDayCounter = piOfficeDuration;
-         }
-      }
-      else
-      {
-         if poOwner <> $
-         {
-            oBook = Send(poOwner,@GetBook);
-
-            ClearTempString();
-            AppendTempString(barloque_clerk_election_no_justicar_subject);
-            sString2 = CreateString();
-            setString(sString2,GetTempstring());
-
-            ClearTempString();
-            AppendTempString(barloque_clerk_election_no_justicar);
-            sString = CreateString();
-            setString(sString,GetTempString());
-
-            Send(oBook,@PostNews,#what=self,#title=sString2,#body=sString);
-         }
-
-         if bNewVote
-         {
-            % Don't automatically restart the voting.  Players were exploiting
-            %  this to get more pardons by making a Justicar mule go outlaw when
-            %  the pardons were used up.
-            % This is kept for admin override reasons.
-            piJusticar_State = STATE_ACCEPTING_VOTES;
-            piDayCounter = piVotingDuration;
-         }
-
-      }
-
-      return poJusticar;
-   }
-
-   IsPlayerSeniorEnough(who = $)
-   "Determine whether the given player is senior enough to partipate in Justicar voting. "
-   "This is to prevent mules from swamping the voting."
-   {
-      return Send(who, @GetBaseMaxHealth) >= 
-             Send(Send(SYS, @GetSettings), @GetMinHPForJusticar);
-   }
-
    ResetBrain()
    {
       poBrain = Send(SYS,@FindBrainByNum,#num=viBrain_type);
@@ -1396,7 +294,6 @@ messages:
 
    Delete()
    {
-      psJunkString = $;
       Send(SYS,@DeleteCaramo);
       
       propagate;

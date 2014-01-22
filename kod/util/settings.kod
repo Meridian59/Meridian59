@@ -152,6 +152,10 @@ properties:
    % Replaces old constant
    piIntrigueEnableHP = 50
 
+   % Alternate Justicar system - buying a pardon with an indulgence
+   % is now possible for a flat fee (initially 1 million).
+   piPardonIndulgenceCost = 1000000
+
 messages:
 
    Constructor(server_num = $)
@@ -374,6 +378,11 @@ messages:
    GetSwingsPerImproveCheck()
    {
       return piWeaponcraftImprovementMinimumSwings;
+   }
+
+   GetPardonIndulgenceCost()
+   {
+      return piPardonIndulgenceCost;
    }
 
 end

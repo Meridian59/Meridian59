@@ -3750,6 +3750,14 @@ messages:
       {
          return FALSE;
       }
+      
+      % Don't halo non-attackables in guild_pk_only zones (typically an unguilded outlaw)
+      % Necessary because it just looks confusing
+      if actual = FALSE
+         AND Send(oRoom,@AllowGuildAttack,#what=self,#victim=victim) = FALSE
+      {
+         return FALSE;
+      }
 
       % If we're in an arena and it let us attack, then it's a legal attack.
       if Send(oRoom,@IsArena)
@@ -3765,6 +3773,7 @@ messages:
 
       % Check for guildmates and allies
       if IsClass(victim,&Player)
+         AND victim <> self
       {
          oVictimGuild = Send(victim,@GetGuild);
          oGuild = Send(self,@GetGuild);

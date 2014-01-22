@@ -164,13 +164,6 @@ messages:
       propagate;
    }
 
-   RecalcLightAndWeather()
-   {
-      Send(poCaramo,@NewHour);
-      
-      propagate;
-   }
-
    GetClerk()
    {
       return poCaramo;

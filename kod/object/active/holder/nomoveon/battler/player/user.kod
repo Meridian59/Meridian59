@@ -1346,12 +1346,6 @@ messages:
          Send(self,@PerformGuildDisband);
       }
 
-      if Send(Send(SYS,@GetCaramo),@GetJusticar) = self
-      {
-         % justicar must give up office
-         Send(Send(SYS,@GetCaramo),@SetJusticar,#who=$);
-      }
-
       piLast_Restart_time = getTime();
       piLastLoginTime = 0;
       psUrl = $;
@@ -1407,13 +1401,6 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_OOG);
             
             return;            
-         }
-         
-         if Send(Send(SYS,@GetCaramo),@GetJusticar) = self
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_justicar);
-            
-            return;
          }
          
          if getTime() < piLast_restart_time + SUICIDE_REPEAT_TIME

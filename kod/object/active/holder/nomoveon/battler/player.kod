@@ -3726,7 +3726,7 @@ messages:
       return TRUE;
    }
 
-   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE, actual=TRUE)
+   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE, actual=TRUE, spell_obj=$)
    "Will not let a person attack someone who isnt pkill_enabled."
    "Wll not let a person who isnt pkill_enabled attack another person."
    {

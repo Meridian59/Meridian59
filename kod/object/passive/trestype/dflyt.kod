@@ -30,8 +30,7 @@ messages:
       plTreasure = [ [ &DragonflyEye, 30 ],
                      [ &WebMoss, 10 ],
                      [ &Snack, 10 ],
-                     [ &RainbowFern, 15 ],
-                     [ &Money, 27 ],
+                     [ &Money, 42 ],
                      [ &KriipaClaw, 7 ],
                      [ &Yrxlsap, 1 ]
 		             ];

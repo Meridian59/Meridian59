@@ -153,7 +153,7 @@ enum
    REST = 103,
    LENGTH = 104,
    NTH = 105,
-   LIST = 106,
+   MLIST = 106,
    ISLIST = 107,
    SETFIRST = 108,
    SETNTH = 109,
@@ -178,6 +178,8 @@ enum
    ISOBJECT = 161,
 
    RANDOM = 201,
+   
+   RECORDSTAT = 210,
 };
 
 enum

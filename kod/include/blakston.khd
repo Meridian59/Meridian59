@@ -485,6 +485,9 @@
    RID_SEWER_KING = 380
    RID_JASWEST = 382
    RID_JAS_WEST = 382
+   
+   % New areas as extensions of old areas
+   RID_THRONE2 = 383
 
    % Outside world works as follows:
    % Name of roo and RID is grid coordinates, in form letter-number.
@@ -1577,6 +1580,11 @@
    TID_DARK_ANGEL    = 51
    TID_MUMMY         = 52
    TID_THRASHER      = 53
+
+   TID_STATUE        = 54
+   TID_KRIIPA        = 55
+   TID_MOLLUSK       = 56
+   TID_SHADOWBEAST   = 57
 
    %%% English articles
 
@@ -2972,10 +2980,16 @@
    LOS_NEW_PLAYER = 2
    LOS_NEW_BOTH = 3
 
-	% String limits
-	MIN_CHAR_NAME_LEN = 3
-	MAX_CHAR_NAME_LEN = 30
-	MAX_CHAR_DESCRIPTION_LEN = 1000
-	MAX_GUILD_NAME_LEN = 30
-	MAX_GUILD_RANK_LEN = 20
-	MAX_URL_LEN = 200
+   % String limits
+   MIN_CHAR_NAME_LEN = 3
+   MAX_CHAR_NAME_LEN = 30
+   MAX_CHAR_DESCRIPTION_LEN = 1000
+   MAX_GUILD_NAME_LEN = 30
+   MAX_GUILD_RANK_LEN = 20
+   MAX_URL_LEN = 200
+   
+   %Statistics Constants, matches enum in blakserv.h
+   STAT_BLANK = 0
+   STAT_TOTALMONEY = 1
+   STAT_MONEYCREATED = 2
+   STAT_ASSESS_DAM = 3

@@ -13,15 +13,13 @@ Defile is Spell
 constants:
    include blakston.khd
 
-   DEFILE_RECENT_LIST = 5
-
 resources:
 
    defile_name_rsc = "defile"
    defile_icon_rsc = idefile.bgf
    defile_desc_rsc = \
       "In this darkest of rituals, the very spirit of Qor is "
-      "summoned to defile the corpse of a murdered innocent, "
+      "summoned to defile a corpse, "
       "transforming flesh and blood into magical energy for "
       "the caster.  "
       "Requires fairy wings and the slain."
@@ -59,8 +57,6 @@ classvars:
 
 properties:
 
-   plRecent = $
-
 messages:
 
    ResetReagents()
@@ -88,7 +84,7 @@ messages:
 	      return FALSE;
       }
 
-      if send(who,@GetMana) >= (send(who,@GetMaxMana) * 3)
+      if send(who,@GetMana) >= (send(who,@GetMaxMana))
       {
 	      Send(who,@MsgSendUser,#message_rsc=defile_max);
 
@@ -117,7 +113,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower = 0)
    {
-      local oTarget, oRoom, rRecent, bRecent, iKarmaAct;
+      local oTarget, oRoom, iKarmaAct;
 
       oTarget = First(lTargets);
       oRoom = Send(who,@GetOwner);
@@ -129,18 +125,7 @@ messages:
 	      return;
       }
 
-      bRecent = FALSE;
-      for rRecent in plRecent
-      {
-	      if send(oTarget,@GetCorpseName) = rRecent
-	      {
-	         bRecent = TRUE;
-
-	         break;
-	      }
-      }
-
-      if NOT bRecent
+      if Send(who,@GetKarma) <> $
       {
          if abs(send(who,@GetKarma)) < (iSpellpower + 1)
          {
@@ -151,8 +136,8 @@ messages:
             iKarmaAct = abs(send(who,@GetKarma));
          }
 
-	      send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
-              #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
+         Send(who,@AddKarma,#amount=send(who,@CalculateKarmaChangeFromAct,
+                            #karma_act=-iKarmaAct,#karma_doer=send(who,@GetKarma),#swing_factor=4));
       }
 
       Send(who,@MsgSendUser,#message_rsc=defile_cast_rsc);
@@ -161,36 +146,6 @@ messages:
 
       propagate;
    }
-
-   ImproveAbility(who=$,target=$)
-   {
-      local rRecent, rTarget;
-
-      rTarget = send(target,@GetCorpseName);
-
-      % plRecent is names of corpses defiled across whole server
-
-      for rRecent in plRecent
-      {
-	      if rRecent = rTarget
-	      {
-	         % no advancement if same body name was defiled recently
-	         return;
-	      }
-      }
-
-      % Chop tail if recent is too long, then add new name to head
-      if length(plRecent) >= DEFILE_RECENT_LIST
-      {
-	      rRecent = Nth(plRecent,DEFILE_RECENT_LIST);
-	      plRecent = DelListElem(plRecent,rRecent);
-      }
-
-      plRecent = cons(rTarget, plRecent);
-
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

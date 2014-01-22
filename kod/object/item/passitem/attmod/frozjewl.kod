@@ -38,8 +38,8 @@ classvars:
    viUse_type = ITEM_USE_HAND
    viUse_amount = 1
 
-   viHits_init_min = 150
-   viHits_init_max = 250
+   viHits_init_min = 350
+   viHits_init_max = 550
 
    viValue_average = 400
    viBulk = 10
@@ -71,7 +71,9 @@ messages:
       {
          Send(self,@DoFlash);
       
-         return hit_roll + 150;
+         % Adjust bonus by how strong the wielder is relative to their maximum potential.
+         % Throwaway characters will get very little benefit.
+         return hit_roll + (30 * Send(self,@GetHealthBonus,#who=who));
       }
       
       return hit_roll + 50;
@@ -96,7 +98,9 @@ messages:
          if Send(who,@LoseMana,#amount=iMana) <> 0
          {
             % Add big damage if we spent the mana.
-            return damage + Random(3,5);
+            % Adjust it by how strong the wielder is relative to their maximum potential.
+            % Throwaway characters will get very little benefit.
+            return damage + Send(self,@GetHealthBonus,#who=who);
          }
 
          % Add a small amount of damage.
@@ -104,6 +108,31 @@ messages:
       }
       
       return damage;
+   }
+   
+   GetHealthBonus(who = $)
+   {
+      local hp;
+
+      hp = Send(who,@GetBaseMaxHealth);
+      if hp < 50
+      {
+         return 1;
+      }
+      if hp < 75
+      {
+         return Random(1,2);
+      }
+      if hp < 100
+      {
+         return Random(1,3);
+      }
+      if hp < 125
+      {
+         return Random(2,3);
+      }
+
+      return Random(3,5);
    }
 
    WeaponHitTarget()

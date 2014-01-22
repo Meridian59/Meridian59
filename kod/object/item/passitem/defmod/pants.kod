@@ -129,6 +129,24 @@ messages:
       
       propagate;
    }
+
+   DefendingHit(who = $,what = $)
+   {
+      return;
+   }
+   
+   DoPlayerArt()
+   {
+      local oRobes;
+
+      oRobes = Send(poOwner,@FindUsing,#class=&Robe);
+      if oRobes <> $
+      {
+         Post(oRobes,@SetLegs);
+      }
+
+      propagate;
+   }
       
    ReqRepair()
    {

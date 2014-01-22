@@ -1,0 +1,54 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GrayMushroom is NumberItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   graymushroom_name_rsc = "gray mushroom"
+   graymushroom_icon_rsc = mushroom.bgf
+   graymushroom_desc_rsc = \
+      "These magical mushrooms reek of rot and death."
+
+   graymushroom_name_plural_rsc = "gray mushrooms"
+
+classvars:
+
+   vrName = graymushroom_name_rsc
+   vrIcon = graymushroom_icon_rsc
+   vrDesc = graymushroom_desc_rsc
+
+   vrName_plural = graymushroom_name_plural_rsc
+
+   viValue_average = 450
+   viWeight = 2
+   viBulk = 5
+
+
+properties:
+
+   piNumber = 1
+
+messages:
+
+   Constructor()
+   {
+      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_GRAY,#color2=XLAT_TO_GRAY);
+      
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

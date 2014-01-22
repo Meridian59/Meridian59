@@ -29,11 +29,14 @@ messages:
    constructed()
    {
       plTreasure = [ [ &Longbow, 5 ],
-                     [ &NeruditeArrow, 40],
                      [ &BattleBow, 5 ],
-                     [ &Money, 48],
-                     [ &NeruditeArmor, 1],
-                     [ &KillingFieldScroll, 1]
+                     [ &CyanMushroom, 40],
+                     [ &Money, 14],
+                     [ &PolishedSeraphym, 10],
+                     [ &FireSand, 10],
+                     [ &Yrxlsap, 8],
+                     [ &NeruditeArmor, 4],
+                     [ &KillingFieldScroll, 4]
                    ];
 
       propagate;

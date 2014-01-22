@@ -1,0 +1,196 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Throne2 is MonsterRoom
+
+constants:
+
+   include blakston.khd
+
+   % Delay before ghost pops again automatically.  About two minutes (in seconds).
+   GHOST_CYCLE = 120 
+
+resources:
+
+   name_throne2 = "The Throne Room of Victoria Castle" 
+   room_throne2 = throne2.roo
+
+   throne2_music = castle2.mid
+
+   throne2_ghost_spawn = \
+      "~kA raspy voice moans, \"~r~IWitness my revenge, tresspasser!~I~k\""
+   ghost_spawn_wav_rsc = ghost_respawn.wav
+   
+   no_walls_here = "Dark magics interfere with the casting of your wall spell."
+
+classvars:
+
+   vrName = name_throne2
+
+   viTeleport_row = 10
+   viTeleport_col = 5
+
+   viTerrain_type = TERRAIN_LAIR | TERRAIN_CASTLE
+
+properties:
+
+   piBaseLight = LIGHT_VERY_DARK / 2
+   prRoom = room_throne2
+   piRoom_num = RID_THRONE2
+
+   prMusic = throne2_music
+
+   piOutside_factor = OUTDOORS_NONE
+
+   % two minutes (in ms)
+   piDispose_delay = 2 * 60 * 1000
+
+   ptGhost = $
+
+messages:
+
+   CreateStandardExits()
+   {
+      plExits = $;
+
+      plExits = Cons([ 23, 4, RID_THRONE1, 2, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 23, 5, RID_THRONE1, 2, 5, ROTATE_NONE ],plExits);
+
+      propagate;
+   }
+   
+   ReqSpellCast(who = $, oSpell = $, lItems = $)
+   {
+      if IsClass(who, &User)
+      {
+         if IsClass(oSpell,&WallSpell)
+         {
+            Send(who,@MsgSendUser,#message_rsc=no_walls_here);
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   FirstUserEntered()
+   {
+      Send(self,@SpawnGhost);
+
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      local i;
+
+      if ptGhost <> $
+      {
+         DeleteTimer(ptGhost);
+         ptGhost = $;
+      }
+
+      propagate;
+   }
+   
+   GhostTimer()
+   {
+      ptGhost = $;
+      Send(self,@SpawnGhost);
+
+      return;
+   }
+
+   SpawnGhost()
+   {
+      local iTime, i, oGhost;
+
+      if ptGhost = $
+      {
+         % Randomize the time by 10%
+         iTime = (GHOST_CYCLE * random(90,110)) / 100;
+         % Convert to ms (numbers get too big if you do it above)
+         iTime = iTime * 1000;
+         ptGhost = CreateTimer(self,@GhostTimer,iTime);
+      }
+
+      for i in plActive
+      {
+         if IsClass(Send(self,@HolderExtractObject,#data=i),&Ghost)
+         {
+            return FALSE;
+         }
+      }       
+		
+      oGhost = Create(&Ghost);
+      Send(self,@NewHold,#what=oGhost,#new_row=2,#new_col=5,#new_angle=ANGLE_SOUTH);
+
+      if pbUser_in_room
+      {
+         Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=throne2_ghost_spawn,
+              #what=self);
+         Send(self, @SomethingWaveRoom, #what=oGhost, 
+              #wave_rsc=ghost_spawn_wav_rsc);
+      }
+
+      return TRUE;
+   }
+
+   CreateStandardObjects()
+   {
+      % throne
+      Send(self,@NewHold,#what=Create(&Throne),
+	   #new_row=1,#new_col=5,#new_angle=ANGLE_SOUTH);
+
+      % left row of pillars 
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=16,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=13,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=10,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=7,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=4,#new_col=3,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=1,#new_col=3,#fine_col=56);
+
+      % right row of pillars
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=16,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=13,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=10,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=7,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=4,#new_col=7,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Pillar),#new_row=1,#new_col=7,#fine_col=8);
+
+      % left row of braziers
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=11,#new_col=3,
+           #fine_row=56,#fine_col=56);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=5,#new_col=3,
+           #fine_row=56,#fine_col=56);
+
+      % right row of braziers
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=11,#new_col=7,
+           #fine_row=56,#fine_col=8);
+      Send(self,@NewHold,#what=Create(&Brazier),#new_row=5,#new_col=7,
+           #fine_row=56,#fine_col=8);
+
+      return;
+   }
+
+   Delete()
+   {
+      if ptGhost <> $
+      {
+         DeleteTimer(ptGhost);
+         ptGhost = $;
+      }
+
+      propagate;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -14,19 +14,12 @@ constants:
 
    include blakston.khd
 
-   % Delay before ghost pops again automatically.  About two hours (in seconds).
-   GHOST_CYCLE = 7200 
-
 resources:
 
-   name_throne1 = "The Throne Room of Victoria Castle" 
+   name_throne1 = "The Antechamber of Victoria Castle" 
    room_throne1 = throne1.roo
 
    throne1_music = castle2.mid
-
-   throne1_ghost_spawn = \
-      "~kA raspy voice moans, \"~r~IWitness my revenge, tresspasser!~I~k\""
-   ghost_spawn_wav_rsc = ghost_respawn.wav
 
 classvars:
 
@@ -50,8 +43,6 @@ properties:
    % two minutes (in ms)
    piDispose_delay = 2 * 60 * 1000
 
-   ptGhost = $
-
 messages:
 
    Constructed()
@@ -69,75 +60,15 @@ messages:
 
       plExits = Cons([ 23, 4, RID_CASTLE1, 7, 18, ROTATE_NONE ],plExits);
       plExits = Cons([ 23, 5, RID_CASTLE1, 7, 19, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 4, RID_THRONE2, 22, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 5, RID_THRONE2, 22, 5, ROTATE_NONE ],plExits);
+      plExits = Cons([ 1, 6, RID_THRONE2, 22, 5, ROTATE_NONE ],plExits);
 
       propagate;
-   }
-
-   FirstUserEntered()
-   {
-      % This is set in superclass, is set when it's okay to spawn monsters again.
-      if pbOkay_To_Load
-      {
-         Send(self,@SpawnGhost);
-      }
-
-      propagate;
-   }
-   
-   GhostTimer()
-   {
-      ptGhost = $;
-      Send(self,@SpawnGhost);
-
-      return;
-   }
-
-   SpawnGhost()
-   {
-      local iTime, i, oGhost;
-
-      if ptGhost = $
-      {
-         % Randomize the time by 10%
-         iTime = (GHOST_CYCLE * random(90,110)) / 100;
-         % Convert to ms (numbers get too big if you do it above)
-         iTime = iTime * 1000;
-         ptGhost = CreateTimer(self,@GhostTimer,iTime);
-      }
-
-      if NOT pbGenerateMonsters
-      {
-         return;
-      }
-
-      for i in plActive
-      {
-         if IsClass(Send(self,@HolderExtractObject,#data=i),&Ghost)
-         {
-            return FALSE;
-         }
-		}       
-		
-      oGhost = Create(&Ghost);
-      Send(self,@NewHold,#what=oGhost,#new_row=2,#new_col=5,#new_angle=ANGLE_SOUTH);
-
-      if pbUser_in_room
-      {
-         Send(self,@SomeoneSaid,#type=SAY_MESSAGE,#string=throne1_ghost_spawn,
-              #what=self);
-         Send(self, @SomethingWaveRoom, #what=oGhost, 
-              #wave_rsc=ghost_spawn_wav_rsc);
-      }
-
-      return TRUE;
    }
 
    CreateStandardObjects()
    {
-      % throne
-      Send(self,@NewHold,#what=Create(&Throne),
-	   #new_row=1,#new_col=5,#new_angle=ANGLE_SOUTH);
-
       % left row of pillars 
       Send(self,@NewHold,#what=Create(&Pillar),#new_row=16,#new_col=3,#fine_col=56);
       Send(self,@NewHold,#what=Create(&Pillar),#new_row=13,#new_col=3,#fine_col=56);
@@ -168,18 +99,6 @@ messages:
 
       return;
    }
-
-   Delete()
-   {
-      if ptGhost <> $
-      {
-         DeleteTimer(ptGhost);
-         ptGhost = $;
-      }
-
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

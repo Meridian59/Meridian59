@@ -23,6 +23,12 @@ resources:
    resistring_use_rsc = "You put the ring on."
    resistring_dead_rsc = "The ring crumbles!"
 
+   resistring_chargeslefta_rsc = "There are "
+   resistring_chargesleftb_rsc = " charges left in this ring."
+   
+   resistring_working_rsc = "Your resistance ring offers a surge of elemental protection!"
+   resistring_attacker_rsc = "A flare of energy from %s's resistance ring counteracts your attack!"
+
 classvars:
 
    vrIcon = resistring_icon_rsc
@@ -30,18 +36,15 @@ classvars:
    vrUseMessage = resistring_use_rsc
    vrDeadMessage = resistring_dead_rsc
 
-   % rate at which a charge will deplete from the ring--same as invisibility ring
-   viChargeRate = 60000
-
-   viHits_init_min = 15
-   viHits_init_max = 30
+   viHits_init_min = 8
+   viHits_init_max = 12
 
    viBulk = 5
    viWeight = 10
    
    viValue_average = 280
 
-   % Resistance rings hide their color until revealed
+   % Resistance rings hide their color until revealed or worn
    viUnrevealedColor = PT_ITEM_XLAT_BLUE_TO_WHITE
 
 properties:
@@ -49,58 +52,43 @@ properties:
    piResistanceType = 0
    piResistanceChange = 50
 
-   ptCharge = $
-
 messages:
 
-   Delete()
+   AppendDesc()
    {
-      if ptCharge <> $
+      if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability) = TRUE
       {
-         DeleteTimer(ptCharge);
-         ptCharge = $;
+         AppendTempString("\n\n");   
+         AppendTempString(resistring_chargeslefta_rsc);      
+         Send(SYS,@AppendCardinalToTempString,#number=piHits);
+         AppendTempString(resistring_chargesleftb_rsc);
       }
       
-      propagate;
+      return;
    }
 
    NewUsed(what = $)
    {
+      if vrName <> vrRealName
+      {
+         % Identify upon equip, 'testing out' the ring
+         Send(self,@RevealHiddenAttributes);
+         Send(self,@RevealHiddenColor);
+         Send(Send(self,@GetOwner),@SomethingChanged,#what=self);
+      }
 
-      if vrName = vrRealName
-      {
-         % Only give the message if it's identified.
-         Send(poOwner, @MsgSendUser, #message_rsc=vrUseMessage);
-      }
+      Send(poOwner, @MsgSendUser, #message_rsc=vrUseMessage);
       
-      send(self,@AddResistances);
-      
-      if ptCharge <> $
-      {
-         DeleteTimer(ptCharge);
-      }
-      
-      ptCharge = CreateTimer(self,@ChargeTimer,viChargeRate);
-      
+      Send(self,@AddResistances);
+      Send(what,@AddDefenseModifier,#what=self);
+
       propagate;
    }
 
    NewUnused(what = $)
    {
       send(self,@RemoveResistances);
-      
-      if ptCharge <> $ 
-      {
-         DeleteTimer(ptCharge);
-         ptCharge = $;
-      }
-      
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=vrDeadMessage);
-         Send(self,@Delete);
-      }
+      Send(what,@RemoveDefenseModifier,#what=self);
       
       propagate;
    }
@@ -134,29 +122,45 @@ messages:
       return [[piResistanceType,piResistanceChange]];
    }
 
-   ChargeTimer()
-   "Called each minute to drain a hit."
+   DefendingHit()
    {
-      ptCharge = $;
-      piHits = piHits - 1;
-
-      if piHits = 0
-      {
-         Send(poOwner, @TryUnuseItem, #what = self);
-         
-         return;
-      }
-      
-      ptCharge = CreateTimer(self, @ChargeTimer, viChargeRate);
-      
       return;
    }
 
-   UserLogoff()
+   ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      Send(poOwner,@TryUnuseItem,#what=self);
+      return defense_power;
+   }
+
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
+   "This ring loses durability when an attack of the appropriate element is taken. "
+   "No damage is actually subtracted here - the ring adds base resistances instead."
+   {
+      local iResType;
       
-      propagate;
+      iResType = -piResistanceType;
+
+      if (aspell & iResType) <> 0
+      {
+         if Send(Send(SYS,@GetSettings),@GetResistRingLoseDurability) = TRUE
+         {
+            piHits = piHits - 1;
+         }
+         Send(poOwner,@MsgSendUser,#message_rsc=resistring_working_rsc);
+         
+         If IsClass(what,&User)
+         {
+            Send(what,@MsgSendUser,#message_rsc=resistring_attacker_rsc,#parm1=Send(who,@GetName));
+         }
+      }
+
+      if piHits <= 0
+      {
+         Post(poOwner,@MsgSendUser,#message_rsc=vrDeadMessage);
+         Post(self,@Delete);
+      }
+
+      return damage;
    }
 
 end

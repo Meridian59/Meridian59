@@ -12,7 +12,7 @@ BLAKSERVLINKFLAGS = /STACK:0x180000 /map /debug /subsystem:windows
 
 SOURCEDIR = .
 
-LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib
+LIBS = gdi32.lib user32.lib wsock32.lib winmm.lib comctl32.lib libmysql.lib
 
 OBJS =  \
 	$(OUTDIR)\main.obj \
@@ -82,6 +82,7 @@ OBJS =  \
 	$(OUTDIR)\intstringhash.obj \
 	$(OUTDIR)\files.obj \
 	$(OUTDIR)\sprocket.obj \
+	$(OUTDIR)\database.obj \
 
 
 all : makedirs $(OUTDIR)\blakserv.exe
@@ -99,6 +100,7 @@ $(OUTDIR)\blakserv.exe: $(OBJS) $(OUTDIR)\blakserv.res
 	$(CC) $(CFLAGS) -Fo$(OUTDIR)/ /FpCpch /Fd$(OUTDIR)\vc90.pdb -c $(SOURCEDIR)\version.c
 	$(LINK)	$** $(LIBS) -OUT:$@ $(BLAKSERVLINKFLAGS) $(LINKFLAGS)
 	$(CP) $@ $(BLAKSERVRUNDIR)
+	$(CP) $(BLAKLIBDIR)\libmysql.dll $(BLAKSERVRUNDIR)
 
 
 !include $(TOPDIR)\rules.mak

@@ -175,13 +175,6 @@ resources:
 
    monster_say_to_one = "~k%s%s tells you, \"%s~n~k\""
 
-   monster_refuse_service = \
-      "I'm a law abiding tradesman.  I refuse to serve bandits and thugs!"
-   monster_secret_service = \
-      "~IIt just doesn't look good for someone of my reputation.  Come back "
-      "later, alone, and maybe I'll help you out."
-   monster_illicit_service = \
-      "~IOkay, but be quiet about it, I have a reputation to keep."
    monster_iteach = "I teach "
    monster_atthatlevel = " at that level."
    monster_teachnothing = "I teach no abilities at that level."
@@ -194,6 +187,10 @@ resources:
       "Hmm... that looks a bit cleaner.  Here, take this as payment, %s%s."
 
    monster_default_attack = "attack"
+   
+   autolooted_all = "You loot the corpse clean."
+   autolooted_some = "You loot some of the items from your fallen kill."
+   autolooted_none = "You find nothing easily lootable on your slain enemy."
 
 classvars:
 
@@ -3181,6 +3178,10 @@ messages:
       for i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
+		 if IsClass(i,&Money)
+		 {
+		    Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
+		 }
       }
 
       % take stuff the user put there
@@ -4912,7 +4913,7 @@ messages:
    CreateTreasure(who=$,corpse=$)
    {
       local i, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
-            lTreasureItems;
+            lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted;
 
       % Apparitions, etc, provide no treasure
       if pbIllusion
@@ -4998,6 +4999,9 @@ messages:
          lTreasureItems = cons(i,lTreasureItems);
       }
       
+      iNumberOfItemsDropped = 0;
+      iNumberOfItemsLooted = 0;
+      
       % Now drop all the treasure.
       for oTreasure in lTreasureItems
       {
@@ -5008,10 +5012,43 @@ messages:
          {
             Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol);
+            
+            iNumberOfItemsDropped = iNumberOfItemsDropped + 1;
+
+            if IsClass(oTreasure,&NumberItem)
+               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
+               AND Send(oTreasure,@GetPos) <> $
+               AND IsClass(who,&User)
+               AND Send(who,@IsAutolooting)
+            {
+               iNumberOfItemsLooted = iNumberOfItemsLooted + 1;
+               Send(who,@UserGet,#what=oTreasure);
+            }
          }
          else
          {
             Send(oTreasure,@Delete);
+         }
+      }
+      
+      if iNumberOfItemsDropped <> 0
+         AND IsClass(who,&User)
+         AND Send(who,@IsAutolooting)
+      {
+         if iNumberOfItemsLooted = iNumberOfItemsDropped
+         {
+            Send(who,@MsgSendUser,#message_rsc=autolooted_all);
+         }
+         
+         if iNumberOfItemsLooted > 0
+            AND iNumberOfItemsLooted < iNumberOfItemsDropped
+         {
+            Send(who,@MsgSendUser,#message_rsc=autolooted_some);
+         }
+         
+         if iNumberOfItemsLooted = 0
+         {
+            Send(who,@MsgSendUser,#message_rsc=autolooted_none);
          }
       }
 
@@ -5035,38 +5072,7 @@ messages:
 
    IsCustomerOkay(who=$)
    {
-      % Don't do business with a murderer in front of other customers.
-
-      if NOT (viAttributes & MOB_LAWFUL)
-      {
-         return TRUE;
-      }
-      
-      if IsClass(who,&Player)
-         AND Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-      {
-         if Send(Send(SYS,@GetParliament),@GetFactionSellToMurderer,
-                 #who=who,#seller=self)
-         {
-            return TRUE;
-         }
-      
-         if Send(poOwner,@CountHoldingHowMany,#class=&Player) > 1
-         {
-            Send(self,@Say,#message_rsc=monster_refuse_service);
-            Send(self,@SayToOne,#target=who,
-                 #message_rsc=monster_secret_service);
-            
-            return FALSE;
-         }
-         else
-         {
-            Send(self,@SayToOne,#target=who,
-                 #message_rsc=monster_illicit_service);
-            
-            return TRUE;
-         }
-      }
+      % Do business with everyone.
 
       return TRUE;
    }
@@ -5783,6 +5789,7 @@ messages:
          if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
+			Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          }
       }
       

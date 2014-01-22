@@ -45,7 +45,7 @@ resources:
    LivingStatue_elder = "elder"
    LivingStatue_soldier = "soldier"
 
-   LivingStatue_damage = "~B~r%s%s is noticably more damaged."
+   LivingStatue_damage = "~B~r%s%s is noticeably more damaged."
    LivingStatue_severe_damage = "~B~r%s%s is severely damaged."
 
    LivingStatue_rose_drop = "My... beloved...!"
@@ -139,9 +139,9 @@ classvars:
    vrDesc = LivingStatue_desc_rsc
    vrDead_name = LivingStatue_dead_name_rsc
 
-   viTreasure_type = TID_MEDIUM_TOUGH
+   viTreasure_type = TID_STATUE
 
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
 
    vrSound_hit = LivingStatue_sound_attack
    vrSound_miss = LivingStatue_sound_attack

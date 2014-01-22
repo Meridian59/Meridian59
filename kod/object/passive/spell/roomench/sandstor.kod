@@ -267,6 +267,11 @@ messages:
       return FALSE;
    }
    
+   GetWeapon()
+   {
+      return self;
+   }
+   
 
 end
 

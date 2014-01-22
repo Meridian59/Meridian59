@@ -1,0 +1,64 @@
+<NotepadPlus>
+    <UserLang name="KOD" ext="kod" udlVersion="2.1">
+        <Settings>
+            <Global caseIgnored="yes" allowFoldOfComments="no" foldCompact="no" forcePureLC="2" decimalSeparator="0" />
+            <Prefix Keywords1="no" Keywords2="no" Keywords3="no" Keywords4="no" Keywords5="yes" Keywords6="yes" Keywords7="no" Keywords8="no" />
+        </Settings>
+        <KeywordLists>
+            <Keywords name="Comments">00% 01 02 03 04</Keywords>
+            <Keywords name="Numbers, prefix1"></Keywords>
+            <Keywords name="Numbers, prefix2"></Keywords>
+            <Keywords name="Numbers, extras1"></Keywords>
+            <Keywords name="Numbers, extras2"></Keywords>
+            <Keywords name="Numbers, suffix1"></Keywords>
+            <Keywords name="Numbers, suffix2"></Keywords>
+            <Keywords name="Numbers, range"></Keywords>
+            <Keywords name="Operators1">= + / * - &gt;= &lt;= | , ~ ; &amp; &lt; &gt; &lt;&gt; ( )</Keywords>
+            <Keywords name="Operators2">NOT AND OR</Keywords>
+            <Keywords name="Folders in code1, open">{</Keywords>
+            <Keywords name="Folders in code1, middle"></Keywords>
+            <Keywords name="Folders in code1, close">}</Keywords>
+            <Keywords name="Folders in code2, open"></Keywords>
+            <Keywords name="Folders in code2, middle"></Keywords>
+            <Keywords name="Folders in code2, close"></Keywords>
+            <Keywords name="Folders in comment, open"></Keywords>
+            <Keywords name="Folders in comment, middle"></Keywords>
+            <Keywords name="Folders in comment, close"></Keywords>
+            <Keywords name="Keywords1">if&#x000D;&#x000A;else&#x000D;&#x000A;for&#x000D;&#x000A;in&#x000D;&#x000A;is&#x000D;&#x000A;return&#x000D;&#x000A;propagate&#x000D;&#x000A;include&#x000D;&#x000A;local&#x000D;&#x000A;self&#x000D;&#x000A;SYS</Keywords>
+            <Keywords name="Keywords2">messages:&#x000D;&#x000A;classvars:&#x000D;&#x000A;properties:&#x000D;&#x000A;resources:&#x000D;&#x000A;constants:</Keywords>
+            <Keywords name="Keywords3">$&#x000D;&#x000A;TRUE&#x000D;&#x000A;FALSE</Keywords>
+            <Keywords name="Keywords4">Send&#x000D;&#x000A;Create&#x000D;&#x000A;Cons&#x000D;&#x000A;First&#x000D;&#x000A;Last&#x000D;&#x000A;Nth&#x000D;&#x000A;SetFirst&#x000D;&#x000A;SetNth&#x000D;&#x000A;DelListElem&#x000D;&#x000A;FindListElem&#x000D;&#x000A;Random&#x000D;&#x000A;AddPacket&#x000D;&#x000A;SendPacket&#x000D;&#x000A;SendCopyPacket&#x000D;&#x000A;ClearPacket&#x000D;&#x000A;GodLog&#x000D;&#x000A;Debug&#x000D;&#x000A;GetInactiveTime&#x000D;&#x000A;DumpStack&#x000D;&#x000A;StringEqual&#x000D;&#x000A;StringContain&#x000D;&#x000A;StringSubstitute&#x000D;&#x000A;StringLength&#x000D;&#x000A;StringConsistsOf&#x000D;&#x000A;CreateTimer&#x000D;&#x000A;DeleteTimer&#x000D;&#x000A;IsList&#x000D;&#x000A;IsClass&#x000D;&#x000A;RoomData&#x000D;&#x000A;LoadRoom&#x000D;&#x000A;GetClass&#x000D;&#x000A;GetTime&#x000D;&#x000A;GetTickCount&#x000D;&#x000A;CanMoveInRoom&#x000D;&#x000A;CanMoveInRoomFine&#x000D;&#x000A;SetResource&#x000D;&#x000A;Post&#x000D;&#x000A;Abs&#x000D;&#x000A;Sqrt&#x000D;&#x000A;ParseString&#x000D;&#x000A;CreateTable&#x000D;&#x000A;AddTableEntry&#x000D;&#x000A;GetTableEntry&#x000D;&#x000A;DeleteTableEntry&#x000D;&#x000A;DeleteTable&#x000D;&#x000A;Bound&#x000D;&#x000A;GetTimeRemaining&#x000D;&#x000A;SetString&#x000D;&#x000A;AppendTempString&#x000D;&#x000A;ClearTempString&#x000D;&#x000A;CreateString&#x000D;&#x000A;IsObject&#x000D;&#x000A;RecycleUser&#x000D;&#x000A;MinigameNumberToString&#x000D;&#x000A;MinigameStringToNumber&#x000D;&#x000A;RecordStat&#x000D;&#x000A;Length</Keywords>
+            <Keywords name="Keywords5">@&#x000D;&#x000A;</Keywords>
+            <Keywords name="Keywords6">#</Keywords>
+            <Keywords name="Keywords7"></Keywords>
+            <Keywords name="Keywords8"></Keywords>
+            <Keywords name="Delimiters">00&quot; 01\ 02&quot; 03 04 05 06[ 07 08] 09 10 11 12 13 14 15 16 17 18 19 20 21 22 23</Keywords>
+        </KeywordLists>
+        <Styles>
+            <WordsStyle name="DEFAULT" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="COMMENTS" fgColor="FF0000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="LINE COMMENTS" fgColor="418200" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="NUMBERS" fgColor="FF0000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS1" fgColor="0000FF" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS2" fgColor="0000FF" bgColor="FFFFFF" fontName="" fontStyle="4" nesting="0" />
+            <WordsStyle name="KEYWORDS3" fgColor="FF0000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS4" fgColor="FF00FF" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS5" fgColor="800000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS6" fgColor="804040" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS7" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="KEYWORDS8" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="OPERATORS" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="1" nesting="0" />
+            <WordsStyle name="FOLDER IN CODE1" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="FOLDER IN CODE2" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="FOLDER IN COMMENT" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS1" fgColor="9F0000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="16384" />
+            <WordsStyle name="DELIMITERS2" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS3" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="2" nesting="16777220" />
+            <WordsStyle name="DELIMITERS4" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS5" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS6" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS7" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+            <WordsStyle name="DELIMITERS8" fgColor="000000" bgColor="FFFFFF" fontName="" fontStyle="0" nesting="0" />
+        </Styles>
+    </UserLang>
+</NotepadPlus>

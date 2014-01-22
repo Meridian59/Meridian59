@@ -186,6 +186,11 @@ messages:
 
    WasGoodPlayer()
    {
+      if pbMob
+      {
+         return TRUE;
+      }
+
       return pbWas_good_player;
    }
 
@@ -196,11 +201,6 @@ messages:
 
    GetObjectFlags()
    {
-      if pbMob
-      {
-         return LOOK_NO | piDrawfx;
-      }
-      
       return viObject_flags | piDrawfx;
    }
    

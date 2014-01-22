@@ -208,7 +208,7 @@ properties:
    prBackground = $
 
    % Default length: five minutes (in ms)
-   piDispose_delay = 300000
+   piDispose_delay = 180000
    ptDispose = $
 
    % Exits list: each member is a list of row in this room, col in this room
@@ -265,6 +265,13 @@ properties:
    % Don't set this.  It is set automatically.
    % Instead, override something in SetFarenBonus.
    piFaren_Bonus
+   
+   % The amount of time a player has before being booted from a group
+   % provided they don't get a monster kill
+   piGroupTime = 60000
+   
+   % A list of players building together
+   plBuilderGroup = $
 
 messages:
 
@@ -387,6 +394,7 @@ messages:
       plExits = $;
       plEdge_exits = $;
       plYell_zone = $;
+      plBuilderGroup = $;
       Send(self,@CreateStandardExits);
       Send(self,@CreateYellZoneList);
 
@@ -1826,8 +1834,8 @@ messages:
       {
          if NOT pbUser_in_room
          {
-            Send(self,@FirstUserEntered,#what=what,#new_row=First(new_pos),
-                 #new_col=Nth(new_pos,2));
+            Send(self,@FirstUserEntered,#what=what,#new_row=Nth(new_pos,2),
+                 #new_col=Nth(new_pos,3));
          }
 
          % Now send music.
@@ -1957,6 +1965,8 @@ messages:
       {
          propagate;
       }
+
+      Send(what,@LeaveBuilderGroup);
 
       % unenchant this one occupant
       for i in plEnchantments
@@ -4017,6 +4027,66 @@ messages:
          }
       }
       return;
+   }
+   
+   AddToBuilderGroup(who=$)
+   {
+      if who = $
+         OR NOT IsClass(who,&User)
+         OR Send(who,@GetOwner) <> self
+      {
+         return;
+      }
+      
+      If plBuilderGroup = $
+         OR FindListElem(plBuilderGroup, who) = 0
+      {
+         plBuilderGroup = Cons(who,plBuilderGroup);
+      }
+      
+      return;
+   }
+   
+   RemoveFromBuilderGroup(who=$)
+   {
+      if plBuilderGroup = $
+         OR who = $
+      {
+         return;
+      }
+      
+      if FindListElem(plBuilderGroup,who) <> 0
+      {
+         plBuilderGroup = DelListElem(plBuilderGroup,who);
+      }
+      
+      return;
+   }
+   
+   GetBuilderGroup()
+   {
+      return plBuilderGroup;
+   }
+   
+   AreGroupedHere(who=$,what=$)
+   {
+      if who <> $
+         AND what <> $
+         AND IsClass(who,&User)
+         AND IsClass(what,&User)
+         AND plBuilderGroup <> $
+         AND FindListElem(plBuilderGroup,who) <> 0
+         AND FindListElem(plBuilderGroup,what) <> 0
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   GetGroupTime()
+   {
+      return piGroupTime;
    }
 
 end

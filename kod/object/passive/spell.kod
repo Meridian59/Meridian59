@@ -580,6 +580,8 @@ messages:
 
    CanPayManaVigor(who = $, lTargets = $, iSpellPower = 0)
    {
+      local iCrystalizeManaAbility, oCrystalizeMana;
+
       if Send(who,@PlayerIsImmortal)
       {
          return TRUE;
@@ -598,6 +600,19 @@ messages:
       if Send(who,@GetMana)
          < Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
       {
+         iCrystalizeManaAbility = Send(who,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
+         if iCrystalizeManaAbility > 0
+            AND NOT Send(who,@IsCrystalizeManaSurging)
+            AND NOT IsClass(self,&CrystalizeMana)
+         {
+            oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
+            Send(oCrystalizeMana,@DoManaSurge,#who=who,#triggered=TRUE);
+            if Send(who,@GetMana) > Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
+            {
+               return TRUE;
+            }
+         }
+         
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
          Send(who,@MsgSendUser,#message_rsc=spell_insufficient_magic,#parm1=vrName);
 

@@ -75,7 +75,20 @@ messages:
    {
      local oTarget;
 	  
+	  if lTargets = $
+	  {
+	     Debug("Ring of Flames cast will nil target list");
+	     return;
+	  }
+	  
 	  oTarget = First(lTargets);
+	  
+	  if oTarget = $
+	  {
+	     Debug("Ring of Flames cast will nil target");
+	     return;
+	  }
+	  
       Send(oTarget,@MsgSendUser,#message_rsc=RingOfFlames_target,
 		    #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 	  

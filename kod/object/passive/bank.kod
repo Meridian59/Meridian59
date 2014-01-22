@@ -173,6 +173,21 @@ messages:
 
       return first(best);
    }
+   
+   GetPlayerMoneyTotal()
+   {
+      local i,l2,PlayerMoneyTotal;
+	  
+	  PlayerMoneyTotal = 0;
+	  
+      for i in plAccounts
+	  {
+		 l2 = Nth(i,2);
+	     PlayerMoneyTotal = PlayerMoneyTotal + l2;
+	  }
+	  
+	  return PlayerMoneyTotal;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

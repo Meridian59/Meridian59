@@ -18,7 +18,7 @@ BOFS =  badland1.bof a5.bof a6.bof c4.bof c6.bof castle1b.bof d4.bof \
          kcforest.bof orccav1x.bof orccav5x.bof lichmaze.bof necarea1.bof necarea2.bof \
          necarea3.bof necare3a.bof necare3b.bof necarea4.bof necarea5.bof \
          marcryp1.bof marcryp2.bof oldjas.bof oldmar.bof oldbarln.bof oldbarls.bof \
-         marcry3a.bof castle2b.bof castle2c.bof 
+         marcry3a.bof castle2b.bof castle2c.bof throne2.bof
 
 
 #       g7.bof h8.bof i2.bof i4.bof i5.bof \

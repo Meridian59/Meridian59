@@ -12,6 +12,7 @@ BOFS = wimptres.bof notres.bof spquent.bof med-tght.bof wmp-medt.bof \
 	caveorct.bof orcwizt.bof orcpitt.bof avart.bof avarsht.bof \
 	avarcht.bof lupkingt.bof dflyt.bof licht.bof \
 	dethspdt.bof skel2t.bof skel3t.bof skel4t.bof narthylt.bof \
-	wrmlarvt.bof wrmquent.bof dangelt.bof newbietrs.bof thrasht.bof
+    wrmlarvt.bof wrmquent.bof dangelt.bof newbietrs.bof thrasht.bof \
+    statuet.bof kriipat.bof molluskt.bof shadowbeastt.bof
 
 !include $(KODDIR)\kod.mak

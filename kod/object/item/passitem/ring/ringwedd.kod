@@ -39,8 +39,6 @@ classvars:
    
    viValue_average = 100
 
-   viDefense_bonus = 100
-
 properties:
 
    vrName = ringwedding_name_rsc
@@ -98,41 +96,27 @@ messages:
                poSecondHeld = what;
             }
          }
-         else
-         {
-            if what = poFirstHeld
-               OR what = poSecondHeld
-            {
-               send(what,@AddDefenseModifier,#what=self);
-            }
-         }
       }
+      Send(what,@AddDefenseModifier,#what=self);
       
       propagate;
    }
 
    NewUnused(what = $)
    {
-      if what = poFirstHeld
-         OR what = poSecondHeld
-      {
-         Send(what,@RemoveDefenseModifier,#what=self);
-      }
-
+      Send(what,@RemoveDefenseModifier,#what=self);
       propagate;
+   }
+   
+   DefendingHit()
+   {
+      return;
    }
 
    DropOnDeath()
    {
       % Who was the stupid fuck that let these be dropped on death?
       return FALSE;
-   }
-
-   DefendingHit()
-   "Called when the item provides defense."
-   {
-      % Return here so we don't damage the ring!
-      return;
    }
 
    % No taking the rings from people in rude ways.
@@ -157,17 +141,12 @@ messages:
       return FALSE;
    }
 
-   % Things we handle to be a defense modifier:
    ModifyDefensePower(who = $,what = $,defense_power = 0)
-   "Increase or decrease the defense of the defender."
    {
-      % Add a small amount of defense.  Only added as a defmod if the user is
-      %  One of the original 2 users, and both user slots are filled.
-      return defense_power + viDefense_bonus;
+      return defense_power;
    }
 
    ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
-   "Increase or decrease damage done to defender."
    {
       return damage;
    }

@@ -365,6 +365,9 @@ properties:
 
    plShrines = $
    plShrine_Powers = $
+   
+   % Save over recreations
+   plShrine_Allegiances = $
 
    % Bonus spellpower set by admins for events.
    plBonusSpellpower = $
@@ -841,6 +844,8 @@ messages:
       {
          Send(i,@GarbageCollecting);
       }
+	  
+	  Send(poStatistics,@GarbageCollecting);
 
       return;
    }
@@ -2227,6 +2232,7 @@ messages:
       Send(self,@CreateOneRoomIfNew,#num=RID_CASTLE1,#class=&Castle1);
       Send(self,@CreateOneRoomIfNew,#num=RID_CASTLE1B,#class=&Castle1B);
       Send(self,@CreateOneRoomIfNew,#num=RID_THRONE1,#class=&Throne1);
+      Send(self,@CreateOneRoomIfNew,#num=RID_THRONE2,#class=&Throne2);
       Send(self,@CreateOneRoomIfNew,#num=RID_DUNGEON,#class=&DungeonVictoria);
       Send(self,@CreateOneRoomIfNew,#num=RID_BADLAND1,#class=&BadLand1);
       Send(self,@CreateOneRoomIfNew,#num=RID_CANYON2,#class=&Canyon2);
@@ -2346,7 +2352,7 @@ messages:
    "CreateAllRoomsIfNew.\nUNSAFE to call from admin mode, as items"
    "in rooms lose state.  Use RecreateAll instead."
    {
-      local i, bFeast_Hall_Locked, oFeast_Hall;
+      local i, n, bFeast_Hall_Locked, oFeast_Hall;
 
       if plUsers_logged_on <> $
       {
@@ -2364,6 +2370,13 @@ messages:
       if poParliament <> $
       {
          Send(poParliament,@SetDeleting,#value=TRUE);
+      }
+      
+      % Save shrine powers.
+      plShrine_Allegiances = $;
+      for n in plShrines
+      {
+         plShrine_Allegiances = Cons(Send(n,@GetAllegiance),plShrine_Allegiances);
       }
 
       % During a clean build, for example.
@@ -2729,7 +2742,7 @@ messages:
 
    RecomputeShrineTotals()
    {
-      local i, allegiance, power, count;
+      local i, n, allegiance, power, count, power_count;
 
       if plShrine_Powers = $
       {
@@ -2745,6 +2758,20 @@ messages:
             SetNth(plShrine_Powers,count,0);
             count = count + 1;
          }
+      }
+      
+      if plShrine_Allegiances <> $
+      {
+         power_count = 1;
+         for n in plShrines
+         {
+            if Nth(plShrine_Allegiances,power_count) <> 0
+            {
+               Send(n,@SetAllegiance,#allegiance=Nth(plShrine_Allegiances,power_count));
+               power_count = power_count + 1;
+            }
+         }
+         plShrine_Allegiances = $;
       }
 
       for i in plShrines
@@ -3459,6 +3486,11 @@ messages:
 
       Create(&ThrasherTreasure);
 
+      Create(&StatueTreasure);
+      Create(&KriipaTreasure);
+      Create(&MolluskTreasure);
+      Create(&ShadowbeastTreasure);
+      
       return;
    }
 
@@ -4723,6 +4755,7 @@ messages:
       plItemTemplates = cons(create(&Robe),plItemTemplates);
       plItemTemplates = cons(create(&LightRobe),plItemTemplates);
       plItemTemplates = cons(create(&DiscipleRobe),plItemTemplates);
+      plItemTemplates = cons(create(&LightDiscipleRobe),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeArmor),plItemTemplates);
 
       plItemTemplates = cons(create(&Helm),plItemTemplates);
@@ -4758,6 +4791,10 @@ messages:
       plItemTemplates = cons(create(&BlueMushroom),plItemTemplates);
       plItemTemplates = cons(create(&PurpleMushroom),plItemTemplates);
       plItemTemplates = cons(create(&RedMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&GreenMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&YellowMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&GrayMushroom),plItemTemplates);
+      plItemTemplates = cons(create(&CyanMushroom),plItemTemplates);
       plItemTemplates = cons(create(&Mushroom),plItemTemplates);
       plItemTemplates = cons(create(&OrcTooth),plItemTemplates);
       plItemTemplates = cons(create(&Ruby),plItemTemplates);
@@ -4838,6 +4875,8 @@ messages:
       plItemTemplates = cons(create(&ColdRing),plItemTemplates);
       plItemTemplates = cons(create(&FireRing),plItemTemplates);
       plItemTemplates = cons(create(&ShockRing),plItemTemplates);
+      
+      plItemTemplates = cons(create(&RingDefense),plItemTemplates);
 
       plItemTemplates = cons(create(&FireWand),plItemTemplates);
       plItemTemplates = cons(create(&HealWand),plItemTemplates);
@@ -6570,6 +6609,11 @@ messages:
          total = total + Send(i,@CleanBadMail);
       }
       return total;
+   }
+   
+   GetBanks()
+   {
+      return plBanks;
    }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

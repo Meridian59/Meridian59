@@ -4942,6 +4942,13 @@ messages:
          }
       }
       
+      if IsClass(what,&Monster)
+         AND (use_weapon = $
+              OR NOT IsClass(use_weapon,&ActiveWallElement))
+      {
+         Send(self,@JoinBuilderGroup);
+      }
+      
       Send(poOwner,@SomethingKilled,#what=self,#victim=what);
 
       % Let our shield know we killed something.
@@ -7684,12 +7691,6 @@ messages:
       if NOT IsClass(victim,&Battler)
       {
          propagate;
-      }
-
-      if what=self
-         AND IsClass(victim,&Monster)
-      {
-         Send(self,@JoinBuilderGroup);
       }
          
       if victim = poKill_target

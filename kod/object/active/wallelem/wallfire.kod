@@ -109,7 +109,7 @@ messages:
 
       if iDamage = $
       {
-         Send(poCaster,@KilledSomething,#what=what);
+         Send(poCaster,@KilledSomething,#what=what,#use_weapon=self);
       }
 
       if IsClass(poCaster,&Player)

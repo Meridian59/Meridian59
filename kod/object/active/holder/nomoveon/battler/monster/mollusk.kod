@@ -36,7 +36,7 @@ constants:
    ANIMATION_POPUP_SPEED = 200
 
    % Percent chance to throw a rock at someone.
-   THROW_CHANCE = 50
+   THROW_CHANCE = 25
    % Distance, squared, we can throw a rock.  It's 10 squares for now.
    ROCK_RANGE_SQUARED = 100
    % Time from creation to "popping up"
@@ -73,8 +73,10 @@ classvars:
    vrDead_name = MolluskMonster_dead_name_rsc
 
    viTreasure_type = TID_MOLLUSK
-   viSpeed = SPEED_AVERAGE
-   viAttack_type = ATCK_WEAP_BLUDGEON
+   viSpeed = SPEED_VERY_FAST
+   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_DEFENDER | AI_FIGHT_THROUGH_WALLS | AI_MOVE_REGROUP | AI_FIGHT_NEWBIESAFE
+   viAttack_types = ATCK_WEAP_BLUDGEON
+
    viAttributes = 0
    viLevel = 150
    viDifficulty = 7
@@ -277,6 +279,20 @@ messages:
       return LIGHT_FLAG_NONE;
    }
 
+   GetOptimalRange()
+   {
+      return random(6,10);
+   }
+   
+   IsAlly(target = $)
+   {
+      if IsClass(target,&MolluskMonster)
+      {
+         return TRUE;
+      }
+   
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

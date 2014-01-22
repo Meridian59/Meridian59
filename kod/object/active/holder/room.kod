@@ -267,8 +267,10 @@ properties:
    piFaren_Bonus
    
    % The amount of time a player has before being booted from a group
-   % provided they don't get a monster kill
-   piGroupTime = 60000
+   % provided they don't get a monster kill. This adjusts automatically
+   % based on the strength of monsters killed in the zone. That implementation
+   % will allow us to dynamically change monsters without worrying about additional changes.
+   piGroupTime = 30000
    
    % A list of players building together
    plBuilderGroup = $
@@ -716,6 +718,8 @@ messages:
          oCaster = Send(self,@GetEnchantmentState,#what=oSpell);
          Send(oSpell,@GiveKilledBenefits,#Caster=oCaster,#Victim=victim);
       }
+      
+      Send(self,@SetGroupTime,#victim=victim);
 
       propagate;
    }
@@ -4087,6 +4091,37 @@ messages:
    GetGroupTime()
    {
       return piGroupTime;
+   }
+   
+   SetGroupTime(victim=$)
+   {
+      if victim <> $
+         AND IsClass(victim,&Monster)
+      {
+         % Tusked Skeletons are our base case.
+         % With level 100 and difficulty 6, they are the last mob that dies quickly.
+         % We'll give them and everything below 30 second group times.
+         % Everything above them needs drastically more time as players progress.
+         % Special case made for Thrashers, due to the extreme nature of their room.
+         
+         piGroupTime = 30000;
+         
+         % 2 additional seconds per mob level point above 100
+         % Max +100 seconds for 150 hp mobs
+         piGroupTime = piGroupTime + bound(((Send(victim,@GetLevel)-100) * 1000 * 2),0,$);
+         
+         % 10 additional seconds per difficulty point above 6
+         % Max +30 seconds for difficulty 9 mobs
+         piGroupTime = piGroupTime + bound(((Send(victim,@GetDifficulty)-6) * 1000 * 10),0,$);
+         
+         % Special cases
+         % Extra 2 minutes for thrashers (for 4 minutes 20 seconds total - nobody is muling thrashers)
+         If IsClass(victim,&Thrasher)
+         {
+            piGroupTime = piGroupTime + bound((60 * 1000 * 2),0,$);
+         }
+      }
+      return;
    }
 
 end

@@ -80,7 +80,7 @@ messages:
                                 {
                                         return;
                                 }
-                                oWeapon = i;
+                                oWeapon = Create(getClass(i));
                                 isWeaponCreateable = true;                                
                                 break;
                         }                        

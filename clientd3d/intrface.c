@@ -59,6 +59,9 @@ void InterfaceClose(void)
    /* Close offer dialogs, if they're up */
    OfferClose();
 
+   /* Close who dialog if it's up */
+   WhoClose();
+ 
    /* Close modal dialogs */
    AbortLookList();
    AbortGameDialogs();

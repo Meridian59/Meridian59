@@ -7779,8 +7779,11 @@ messages:
                %  it's a group member kill.
                
                % Diminishing returns for group kills and group size.
+               % Player will always get 1 xp from a kill target he took damage from.
+               % This may happen if fighting the same mob, or when fighting thrashers for example.
                if group_member_kill
                   AND Send(self,@GetOwner) <> $
+                  AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
                {
                   lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
                   if lBuilderGroup <> $

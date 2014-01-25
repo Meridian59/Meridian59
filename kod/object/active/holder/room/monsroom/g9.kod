@@ -236,7 +236,6 @@ messages:
       plOuterSpires = cons(oMovingSpire, plOuterSpires);
 
       post(self,@ResetLightningPuzzle);
-      post(self,@DeactivateLevers);
       post(self,@RandomizeLeverEffects);
 
       propagate;

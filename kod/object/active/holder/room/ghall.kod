@@ -791,6 +791,7 @@ messages:
                   Send(First(i),@MsgSendUser,#message_rsc=guildhall_conquered,
                        #parm1=vrName,#parm2=Send(poGuild_owner,@GetDef),
                        #parm3=Send(poGuild_owner,@GetName));
+                  Send(self,@OpenSecretDoor);
                }
             }
          }

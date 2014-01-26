@@ -53,6 +53,8 @@ PackageFile          .\\
 DebugDisk            Yes
 ErrorDisk            Yes
 LogDisk              Yes
+Flush                Yes
+GodDisk              Yes
 
 [Constants]          
 Enabled   Yes

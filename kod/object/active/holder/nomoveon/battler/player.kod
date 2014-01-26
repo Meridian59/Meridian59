@@ -4780,8 +4780,18 @@ messages:
       {
          iDuration = 400;
       }
-      
-      Send(self,@EffectSendUserDuration,#what=self,#effect=EFFECT_PAIN,#duration=iDuration);
+
+      % Spell damage types do different flashes to inform the victim. If it's just physical damage, do pain instead.
+      % Notably: spell damage type flashes cannot be turned off by unchecking the Show Pain option in client config.
+      if aspell <> 0
+      {
+         iDuration = iDuration / 2;
+         Send(self,@DamageTypeFlashEffect,#aspell=aspell,#duration=iDuration);
+      }
+      else
+      {
+         Send(self,@EffectSendUserDuration,#what=self,#effect=EFFECT_PAIN,#duration=iDuration);
+      }
 
       if NOT absolute and damage <= 0
       {

@@ -40,9 +40,12 @@ messages:
                      [ &Scimitar, 2],                     
                      [ &VampireWand, 4],
                      [ &DiscipleRobe, 4],
-                     [ &Diamond, 5],
                      [ &FineLute, 5],
-                     [ &Ruby, 20]
+					 [ &SanctuaryKey, 8],
+                     [ &Key, 9 ],
+                     [ &FireWand, 4],
+                     [ &HoldWand, 2],
+                     [ &TruceScroll, 1]
                    ];
 
       propagate;

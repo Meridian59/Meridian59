@@ -20,7 +20,7 @@ resources:
 
    room_name_OutdoorsKC5 ="Outside the Mad Scientist's Hut"
    room_OutdoorsKC5 = KC5.roo
-   OutdoorsKC5_music = madsci.mid
+   OutdoorsKC5_music = madsci.mp3
 
 classvars:
 

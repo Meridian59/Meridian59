@@ -30,7 +30,7 @@ resources:
       "Your guardian angel tells you, \"You are not ready to cast spells "
       "which may hinder other players.\""
 
-   jala_default = jala1.mid
+   jala_default = jala1.mp3
 
 classvars:
 

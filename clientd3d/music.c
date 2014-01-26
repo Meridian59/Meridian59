@@ -144,9 +144,9 @@ DWORD OpenMidiFile(LPSTR lpszMIDIFileName)
    debug(("music filename = %s\n", filename));
 
    memset(&mciOpenParms, 0, sizeof(MCI_OPEN_PARMS));
-   mciOpenParms.lpstrDeviceType = "sequencer";
+   mciOpenParms.lpstrDeviceType = "MPEGVideo";
    mciOpenParms.lpstrElementName = filename;
-   if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT,
+   if (dwReturn = mciSendCommand(0, MCI_OPEN, MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
                                  (DWORD)(LPVOID) &mciOpenParms)) 
       return dwReturn;
 

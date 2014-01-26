@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsKA1 = "Cliff Hive"
    room_OutdoorsKA1 = KA1.roo
-   OutdoorsKA1_music = drgnfly.mid
+   OutdoorsKA1_music = drgnfly.mp3
 
    KA1_GO_KA0 = "You step into the dark, humid cavern."
 

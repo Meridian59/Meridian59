@@ -259,7 +259,7 @@ resources:
    
    player_wave_hit = hit.wav
    
-   player_level_music = perc2.mid
+   player_level_music = perc2.mp3
    
    % These are now old resources..... here in case we want to de-hack...
    player_desc_guild = "%q of %s%q."

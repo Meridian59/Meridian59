@@ -19,7 +19,7 @@ resources:
    room_hermithut = hermhut.roo
    room_name_hermithut = "The Hermit's Hut"
 
-   hermithut_music = bar2.mid
+   hermithut_music = bar2.mp3
    hermhut_book_name = "Legend of the Vale of Sorrows"
    hermhut_book_text = "   Recently, humans have begun to expand their travels back "
    	"into the Quilicia Woods, ignoring ancient superstitions of the faerie folk.  "

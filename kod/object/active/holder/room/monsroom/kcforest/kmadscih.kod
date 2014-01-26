@@ -17,7 +17,7 @@ constants:
 resources:
    room_name_MadScientistHut ="Hut of the Mad Scientist"
    room_MadScientistHut = KC5a.roo
-   MadScientistHut_music = madsci.mid
+   MadScientistHut_music = madsci.mp3
 
    fire_sound_madscientist = fireplac.wav
 

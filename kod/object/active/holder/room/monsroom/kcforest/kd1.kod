@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsKD1 ="Lair of the Bone Priestess"
    room_OutdoorsKD1 = KD1.roo
-   OutdoorsKD1_music = boneprst.mid
+   OutdoorsKD1_music = boneprst.mp3
 
 classvars:
 

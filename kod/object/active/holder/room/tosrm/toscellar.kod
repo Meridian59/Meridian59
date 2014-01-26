@@ -18,7 +18,7 @@ resources:
 
    room_name_TosInnCellar = "The Cellar"
    room_TosInnCellar = toscellar.roo
-   TosInnCellar_music = bar.mid
+   TosInnCellar_music = bar.mp3
 
 classvars:
 

@@ -18,7 +18,7 @@ resources:
 
    room_name_Necropolis3a = "Ancient Building"
    room_Necropolis3a = nec3a.roo
-   Necropolis3a_music = nec02.mid
+   Necropolis3a_music = nec02.mp3
 
    Necropolis3a_loop = necloop4.wav
 

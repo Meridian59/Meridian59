@@ -18,7 +18,7 @@ resources:
 
    room_TosTavern = tostavern.roo
    room_name_TosTavern = "Abandoned Fountain Tavern"
-   TosTavern_music = tos.mid
+   TosTavern_music = tos.mp3
    
 classvars:
 

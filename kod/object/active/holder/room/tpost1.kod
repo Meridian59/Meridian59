@@ -18,7 +18,7 @@ resources:
   
    room_name_TradingPost = "The Remote Trading Post of Wulfgang zax'Ak"
    room_TradingPost = tpost1.roo
-   TradingPost_music = boneprst.mid
+   TradingPost_music = boneprst.mp3
 
    TradingPost_locked_1 = "The storeroom is locked."
    TradingPost_locked_2 = "Wulfgang keeps his quarters locked."

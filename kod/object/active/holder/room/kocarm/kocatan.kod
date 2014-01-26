@@ -18,7 +18,7 @@ resources:
 
    room_name_kocatan = "Ko'catan, the Island Settlement"
    room_kocatan = settle1.roo
-   kocatan_music = song08.mid
+   kocatan_music = song08.mp3
 
    kocatan_military = "No non-military personnel are allowed in the guard barracks."
    kocatan_locked = "This door is firmly bolted shut."

@@ -22,7 +22,7 @@ resources:
    news_jas_hall = "General News"
    news_jas_hall_desc = "Find out what's going on around Meridian."
 
-   jashall_music = main.mid
+   jashall_music = main.mp3
 
 classvars:
 

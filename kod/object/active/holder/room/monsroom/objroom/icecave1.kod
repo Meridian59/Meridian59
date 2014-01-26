@@ -28,7 +28,7 @@ resources:
 
    room_Icecave1 = icecave1.roo
    room_name_Icecave1 ="The Dreaded Caves of Ice"
-   Icecave1_music = castle.mid
+   Icecave1_music = castle.mp3
 
 classvars:
 

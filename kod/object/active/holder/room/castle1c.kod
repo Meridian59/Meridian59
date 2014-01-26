@@ -19,7 +19,7 @@ resources:
    room_castle1c = castle1c.roo
    
    castle1c_name = "Outside Castle Victoria"
-   castle1c_music = castle.mid
+   castle1c_music = castle.mp3
 
 classvars:
 

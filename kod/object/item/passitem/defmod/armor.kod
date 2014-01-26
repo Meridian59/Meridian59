@@ -42,26 +42,12 @@ classvars:
    vrCondition_poor = armor_condition_poor 
    vrCondition_broken = armor_condition_broken
 
+   % Armor goes over layer 0 items such as shirts
+   viLayer = 1
+
 properties:
 
-messages:   
-
-   ReqUseSomething(what = $)
-   {
-      if IsClass(what,&Armor)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-
-      propagate;
-   }
+messages:
    
    ReqRepair()
    {

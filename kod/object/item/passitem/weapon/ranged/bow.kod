@@ -98,7 +98,29 @@ messages:
       piUsed = USED;
 
       return;
-   }   
+   }
+
+   ReqUseSomething(what = $)
+   {
+      % Checks for using other weapons in weapon superclass.
+      % Here we are just concerned with shields and lutes.
+      if (IsClass(what,&Shield)
+         AND NOT IsClass(what,&SoldierShield))
+         OR IsClass(what,&JewelOfFroz)
+         OR IsClass(what,&Book)
+      {
+         if Send(poOwner,@TryUnuseItem,#what=self)
+         {
+            propagate;
+         }
+         else
+         {
+            return FALSE;
+         }
+      }
+      
+      propagate;
+   }
 
    NewUsed()
    {
@@ -156,21 +178,6 @@ messages:
 
       vrWeapon_window_overlay = prBowOverlay;
       vrWeapon_overlay = prBowBottom;
-
-      propagate;
-   }
-
-   NewUnused()
-   {
-      local oSoldierShield;
-      
-      % Take shield off back.
-      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
-
-      if oSoldierShield <> $
-      {
-         send(oSoldierShield,@RemoveFromBack);
-      }
 
       propagate;
    }

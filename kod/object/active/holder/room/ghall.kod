@@ -55,12 +55,6 @@ resources:
       "enter the guild hall.  If you do not reactivate the shield, the guild "
       "hall may be declared conquered!"
 
-   guildhall_conquer_safety_check = \
-      "Flipping a guild switch is an outlaw action.  You must have your "
-      "safety OFF in order to continue with this action!"
-   guildhall_conquer_outlaw = \
-      "You have been branded an outlaw for attempting to conquer a guild hall!"
-
    guildhall_uneasiness = \
       "~BYou experience a vague feeling of uneasiness, as if your hall may "
       "not be safe."
@@ -603,16 +597,6 @@ messages:
             }
          }
 
-         % Check for safety for non-betrayers.
-         if (NOT pbBetrayed)
-            AND Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
-         {
-            % If safety is on, let them know they need to take it off.
-            Send(who,@MsgSendUser,#message=guildhall_conquer_safety_check);
-
-            return;
-         }
-
          piStatus = STATUS_RAIDED;
 
          if ptConquer <> $
@@ -686,14 +670,6 @@ messages:
             % Delay the warning for non-enemy conquering guilds.
             ptWarning = CreateTimer(self,@WarnGuildMembers,
                                     Random(60000,180000));
-         }
-
-         % They conquered the guild hall....
-         if NOT (pbBetrayed OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         {
-            % Make them an outlaw!
-            Send(who,@MsgSendUser,#message=guildhall_conquer_outlaw);
-            Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
          }
 
          return;

@@ -2397,7 +2397,16 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
 				break;
 			}
-			MySQLRecordStatTotalMoney(stat1.v.data);
+			else
+			{
+				TotalMoneyRecord * record = (TotalMoneyRecord*)malloc(sizeof(TotalMoneyRecord));
+				record->total_money = stat1.v.data;
+
+				record_node * recordnode = (record_node*)malloc(sizeof(record_node));
+				recordnode->type=stat_type.v.data;
+				recordnode->data=record;
+				EnqueueRecord(recordnode);
+			}
 			break;
 
 		case STAT_MONEYCREATED:
@@ -2412,7 +2421,16 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_TOTALMONEY");
 				break;
 			}
-			MySQLRecordStatMoneyCreated(stat1.v.data);
+			else
+			{
+				MoneyCreatedRecord * record = (MoneyCreatedRecord*)malloc(sizeof(MoneyCreatedRecord));
+				record->money_created = stat1.v.data;
+
+				record_node * recordnode = (record_node*)malloc(sizeof(record_node));
+				recordnode->type=stat_type.v.data;
+				recordnode->data=record;
+				EnqueueRecord(recordnode);
+			}
 			break;
 
 		case STAT_ASSESS_DAM:
@@ -2439,7 +2457,17 @@ int C_RecordStat(int object_id,local_var_type *local_vars,
 				dprintf("Wrong Type of Parameter in C_RecordStat() STAT_ASSESS_DAM");
 				break;
 			}
-			MySQLRecordPlayerAssessDamage(stat1.v.data, stat2.v.data, stat3.v.data, stat4.v.data, stat5.v.data, stat6.v.data, stat7.v.data);
+			else
+			{
+				PlayerAssessDamageRecord * record = (PlayerAssessDamageRecord*)malloc(sizeof(PlayerAssessDamageRecord));
+				record->res_who_damaged = stat1.v.data; record->res_who_attacker = stat2.v.data; record->aspell = stat3.v.data; record->atype = stat4.v.data;
+				record->damage_applied = stat5.v.data; record->damage_original = stat6.v.data; record->res_weapon = stat7.v.data;
+				
+				record_node * recordnode = (record_node*)malloc(sizeof(record_node));
+				recordnode->type=stat_type.v.data;
+				recordnode->data=record;
+				EnqueueRecord(recordnode);
+			}
 			break;
 
 		case STAT_BLANK:

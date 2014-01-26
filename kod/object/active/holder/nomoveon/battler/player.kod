@@ -5081,6 +5081,7 @@ messages:
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            AND NOT IsClass(poOwner,&GuildHall)
          {
             %Attacked an innocent!
 

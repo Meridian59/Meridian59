@@ -496,7 +496,7 @@ messages:
 
    RecreateAll()
    {
-      local i;
+      local i, plSavedFlagStates, plSavedSenate;
 
       % Reset our level points.
       vlLevelPoints = [1,2,4,6,8,10];
@@ -517,6 +517,9 @@ messages:
 
       piRecreate_State = RECREATE_PHASE_ONE;
       Debug("Starting: Recreate phase ONE");
+      
+      plSavedFlagStates = Send(self,@ListCopy,#source=Send(Send(self,@GetTerritoryGame),@SaveFlagStates));
+      plSavedSenate = Send(self,@ListCopy,#source=Send(Send(self,@GetTokenGame),@GetSenate));
 
       Send(self,@RecreateSettings);
       Send(self,@RecreateNecromancerBalance);
@@ -536,6 +539,19 @@ messages:
       Send(self,@RecreateWarEvent);
 	  Send(self,@CreateAllSpellsIfNew);
 	  Send(self,@CreateAllRoomsIfNew);
+
+      if plSavedFlagStates <> $
+      {
+         Send(Send(self,@GetTerritoryGame),@SetFlagStates,#lFlagStates=plSavedFlagStates);
+         plSavedFlagStates = $;
+      }
+      
+      if plSavedSenate <> $
+      {
+         Send(Send(self,@GetTokenGame),@SetSenate,#lSenate=plSavedSenate);
+         plSavedSenate = $;
+      }
+      
       piRecreate_state = RECREATE_WAITING;
       ptRecreateTimer = CreateTimer(self,@RecreateTimerPhaseTwo,3000);
 

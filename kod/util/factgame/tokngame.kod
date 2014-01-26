@@ -1004,8 +1004,36 @@ messages:
       pbDeleting = FALSE;
       
       return;
-   }      
+   }
+   
+   GetSenate()
+   {
+      return plSenate;
+   }
 
+   SetSenate(lSenate = $)
+   "Used after recreate to maintain proper power levels."
+   {
+      local lCouncilor, i;
+
+      if lSenate <> $
+         AND IsList(lSenate)
+         AND Length(lSenate) = Length(plSenate)
+      {
+         for lCouncilor in plSenate
+         {
+            for i in lSenate
+            {
+               if Nth(lCouncilor,1) = Nth(i,1)
+               {
+                  SetNth(lCouncilor,3,Nth(i,3));
+               }
+            }
+         }
+      }
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

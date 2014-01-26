@@ -58,11 +58,11 @@ properties:
    piRebelFlagItemCount = 0
 
    % Time in minutes, originally defaults to 6 hours.
-   piFlagItemGenTime = 360
+   piFlagItemGenTime = 1440
 
    piClaimTroopGenTime = 8000
    piClaimTroopCap = 15
-   piNonclaimTroopGenTime = 300000
+   piNonclaimTroopGenTime = 30000
    piNonclaimTroopCap = 4
 
    % Number of minutes to wait before a flag claim is done.
@@ -75,7 +75,7 @@ properties:
    piMinUsers = 20
    
    % Minimum number of allies you must have in the same room to make a claim
-   piMinAllies = 3
+   piMinAllies = 2
 
    plFlagStates = $
 

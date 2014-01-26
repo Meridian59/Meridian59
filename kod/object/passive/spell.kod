@@ -99,6 +99,7 @@ resources:
    spell_school_jala = "Jala"
    spell_intro_rsc = "One of the many mystical spells."
 
+   spell_sound_jala = lute_equip.wav
    spell_sound_shalille = shalille.wav
    spell_sound_qor = qor.wav
    spell_sound_kraanan = kraanan.wav
@@ -1513,7 +1514,12 @@ messages:
       {
          return vrSucceed_wav;
       }
-      
+
+      if viSchool = SS_JALA
+      {
+         return spell_sound_jala;
+      }
+
       if viSchool = SS_SHALILLE
       {
          return spell_sound_shalille;

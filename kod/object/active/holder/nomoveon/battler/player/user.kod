@@ -290,6 +290,9 @@ resources:
    
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
+   
+   guild_motd_command = "set motd "
+   guild_clear_motd_command = "clear motd"
 
    autoloot_on_msg = "You decide to pick up treasure as it drops."
    autoloot_off_msg = "You stop picking up treasure as it drops."
@@ -3877,6 +3880,24 @@ messages:
 
       if type = SAY_GUILD
       {
+         if StringContain(string,guild_motd_command)
+            AND Send(self,@GetGuild) <> $
+            AND (Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_MASTER
+                OR Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_LIEUTENANT)
+         {
+            Send(Send(self,@GetGuild),@SetGuildMOTD,#who=self,#string=string);
+            return;
+         }
+         if StringContain(string,guild_clear_motd_command)
+            AND Send(self,@GetGuild) <> $
+            AND Send(Send(self,@GetGuild),@GetGuildMaster) = self
+            AND (Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_MASTER
+                OR Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_LIEUTENANT)
+         {
+            Send(Send(self,@GetGuild),@SetGuildMOTD,#who=self,#string=$);
+            return;
+         }
+
          Send(self,@UserSayGuild,#string=string);
          
          return;

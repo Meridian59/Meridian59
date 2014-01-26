@@ -406,6 +406,7 @@ resources:
    guild_motd_set_msg = "The Guild Message of the Day has been set."
    guild_motd_cleared_msg = "The Guild Message of the Day has been cleared."
    guild_motd_too_long = "Good leaders do not let their diatribes wax overlong. Perhaps the message could be shorter."
+   guild_motd_too_short = "Your members expect a bit more eloquence from their leaders. Perhaps the message could be longer."
    guild_motd_test = "MOTD: %q"
    guild_motd_message = "The Guild Message of the Day from your esteemed %q, %q:\n\"%q~n\""
 
@@ -2875,6 +2876,12 @@ messages:
       if StringLength(string) > 300
       {
          Send(who,@MsgSendUser,#message_rsc=guild_motd_too_long);
+         return;
+      }
+
+      if StringLength(string) < 15
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_motd_too_short);
          return;
       }
       

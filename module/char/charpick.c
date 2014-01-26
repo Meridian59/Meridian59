@@ -118,62 +118,63 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
    switch (message)
    {
    case WM_INITDIALOG:
-      CenterWindow(hDlg, GetParent(hDlg));
-      hList = GetDlgItem(hDlg, IDC_CHARLIST);
-      info = (PickCharStruct *) lParam;
-	  
-	  // Sort thy account owned characters by their god given names alphabetically with new character slots *always* appearing last.
-	  // No more shall we suffer having to press down to select our only character!
-	  bool bSorted = false;
-	  Character tmpCharacter;          
-	  while (false == bSorted) 
 	  {
-			bSorted = true;
-			for (i = 0; i < info->num_characters-1; i++)
-			{                
-					if        ( (info->characters[i].flags == 1 && info->characters[i+1].flags != 1) 
-					||  ( info->characters[i].flags != 1 && info->characters[i+1].flags != 1 && 
-							  info->characters[i].name != NULL && info->characters[i+1].name != NULL 
-							  && strcmpi(info->characters[i].name, info->characters[i+1].name) > 0 ) )                        
-					{        
-					 // bubble all new character slots to the end of the list and non-alphabetical character positions.
-					 // limitation: Using bubblesort here because it's simpler and there won't be more than 10 entries
-					 tmpCharacter = info->characters[i];
-					 info->characters[i] = info->characters[i+1];
-					 info->characters[i+1] = tmpCharacter;
-					 bSorted = false;
-					}
-			}
-	  }        // end while          
+		  CenterWindow(hDlg, GetParent(hDlg));
+		  hList = GetDlgItem(hDlg, IDC_CHARLIST);
+		  info = (PickCharStruct *) lParam;
+		  
+		  // Sort thy account owned characters by their god given names alphabetically with new character slots *always* appearing last.
+		  // No more shall we suffer having to press down to select our only character!
+		  bool bSorted = false;
+		  Character tmpCharacter;          
+		  while (false == bSorted) 
+		  {
+				bSorted = true;
+				for (i = 0; i < info->num_characters-1; i++)
+				{                
+						if        ( (info->characters[i].flags == 1 && info->characters[i+1].flags != 1) 
+						||  ( info->characters[i].flags != 1 && info->characters[i+1].flags != 1 && 
+								  info->characters[i].name != NULL && info->characters[i+1].name != NULL 
+								  && strcmpi(info->characters[i].name, info->characters[i+1].name) > 0 ) )                        
+						{        
+						 // bubble all new character slots to the end of the list and non-alphabetical character positions.
+						 // limitation: Using bubblesort here because it's simpler and there won't be more than 10 entries
+						 tmpCharacter = info->characters[i];
+						 info->characters[i] = info->characters[i+1];
+						 info->characters[i+1] = tmpCharacter;
+						 bSorted = false;
+						}
+				}
+		  }        // end while          
 
-      /* Display characters in list */
-      for (i=0; i < info->num_characters; i++)
-      {
-                // For new characters, show a special string (<New Character>)
-                if (info->characters[i].flags == 1)
-                        index = ListBox_AddString(hList, GetString(hInst, IDS_NEWCHARACTER));
-            else index = ListBox_AddString(hList, info->characters[i].name);
-                ListBox_SetItemData(hList, index, i);
-      }
-	  
+		  /* Display characters in list */
+		  for (i=0; i < info->num_characters; i++)
+		  {
+					// For new characters, show a special string (<New Character>)
+					if (info->characters[i].flags == 1)
+							index = ListBox_AddString(hList, GetString(hInst, IDS_NEWCHARACTER));
+				else index = ListBox_AddString(hList, info->characters[i].name);
+					ListBox_SetItemData(hList, index, i);
+		  }
+		  
 
-      /* Select first char */
-      ListBox_SetCurSel(hList, 0);
+		  /* Select first char */
+		  ListBox_SetCurSel(hList, 0);
 
-      // Show message of the day
-      Edit_SetText(GetDlgItem(hDlg, IDC_MOTD), info->motd);  
+		  // Show message of the day
+		  Edit_SetText(GetDlgItem(hDlg, IDC_MOTD), info->motd);  
 
-      // Display advertisements
-      for (i=0; i < info->num_ads; i++)
-      {
-	 char filename[MAX_PATH + FILENAME_MAX];
-	 sprintf(filename, "%s\\%s", ad_directory, info->ads[i].filename);
-	 Animate_Open(GetDlgItem(hDlg, animation_controls[i]), filename);
-      }
+		  // Display advertisements
+		  for (i=0; i < info->num_ads; i++)
+		  {
+		 char filename[MAX_PATH + FILENAME_MAX];
+		 sprintf(filename, "%s\\%s", ad_directory, info->ads[i].filename);
+		 Animate_Open(GetDlgItem(hDlg, animation_controls[i]), filename);
+		  }
 
-      hPickCharDialog = hDlg;
-      return TRUE;
-
+		  hPickCharDialog = hDlg;
+		  return TRUE;
+	  }
    case WM_COMPAREITEM:
       return ItemListCompareItem(hDlg, (const COMPAREITEMSTRUCT *) lParam);
    case WM_MEASUREITEM:

@@ -50,7 +50,7 @@ classvars:
    viSpell_level = 4
 
    viCast_time = 1000
-   viChance_To_Increase = 5
+   viChance_To_Increase = 15
 
 properties:
 
@@ -72,6 +72,7 @@ messages:
    CanPayCosts(who=$)
    {
       if send(send(who,@GetOwner),@GetEnchantmentList) = $
+         AND send(who,@GetRadiusEnchantments) = $
       {
          Send(who, @MsgSendUser, #message_rsc=spell_bad_location, #parm1=vrName);
          return FALSE;
@@ -81,7 +82,7 @@ messages:
 
    CastSpell(who = $,lTargets = $,iSpellPower = $)
    {
-      local oRoom;
+      local oRoom, i, lState;
 
       if isClass(who,&Room)
       {
@@ -111,6 +112,23 @@ messages:
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=discordance_on,#what=self);
       Send(self,@DoDiscordance,#oRoom=oRoom,#iChance=iSpellPower);
 
+      for i in Send(who,@GetRadiusEnchantments)
+      {
+         if iSpellPower = $
+            OR Random(1,100) < iSpellPower
+         {
+            if IsClass(Nth(i,3),&RadiusEnchantmentTotem)
+            {
+               Send(Nth(i,3),@Delete);
+            }
+            else
+            {
+               lState = Send(Nth(i,3),@GetEnchantedState,#what=Nth(i,1));
+               Send(Nth(i,1),@BreakTrance,#who=Nth(i,3),#state=lState,#event=EVENT_STEER);
+            }
+         }
+      }
+      
       if not IsClass(who,&Player)
       {
          return;

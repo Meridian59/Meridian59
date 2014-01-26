@@ -6,7 +6,7 @@
 //
 // Meridian is a registered trademark.
 /*
-* database.h
+* database.c
 *
 
   MySQL!
@@ -17,8 +17,169 @@
 
 MYSQL *mysqlcon;
 
+HANDLE hConsumer;
+
+record_queue_type * record_q;
+
 bool connected = false;
 bool enabled = false;
+bool consume = true;
+
+
+void CreateRecordQueue()
+{
+	record_q = (record_queue_type*)malloc(sizeof(record_queue_type));
+	record_q->count = 0;
+	record_q->first = NULL;
+	record_q->last = NULL;
+
+	record_q->mutex = CreateMutex(NULL,FALSE,NULL);
+
+	if (record_q->mutex == NULL)
+	{
+		dprintf("Mutex poop");
+	}
+}
+
+bool EnqueueRecord(record_node * data)
+{
+	bool wasQueued = false;
+
+	DWORD dwWaitResult = WaitForSingleObject(record_q->mutex,RECORD_ENQUEUE_TIMEOUT);
+
+	if (dwWaitResult == WAIT_OBJECT_0)
+	{
+		__try
+		{
+			if (record_q->count < MAX_RECORD_QUEUE)
+			{
+				if (record_q->count == 0 ||
+					record_q->first == NULL ||
+					record_q->last == NULL)
+				{
+					record_q->first = data;
+					record_q->last = data;
+					record_q->count = 1;
+					wasQueued = true;
+				}
+				else
+				{
+					record_q->last->next = data;
+					record_q->last = data;
+					record_q->count++;
+					wasQueued = true;
+				}
+			}
+		}
+		__finally
+		{
+			ReleaseMutex(record_q->mutex);
+		}
+	}
+	return wasQueued;
+}
+
+
+bool DequeueRecord(record_node * data)
+{
+	bool wasDequeued = false;
+
+	DWORD dwWaitResult = WaitForSingleObject(record_q->mutex,RECORD_DEQUEUE_TIMEOUT);
+
+	if (dwWaitResult == WAIT_OBJECT_0)
+	{
+		__try 
+		{
+			// dequeue from the beginning (FIFO)
+			if (record_q->count > 0 && record_q->first != NULL)
+			{
+				wasDequeued = true;
+
+				// set data values
+				data->type = record_q->first->type;
+				data->data = record_q->first->data;
+
+				// save pointer to old element for cleanup
+				record_node* old = record_q->first;
+
+				// set first item to the next one
+				record_q->first = old->next;
+				record_q->count--;
+
+				// free memory of queueitem
+				free(old);
+			}
+		}
+		__finally 
+		{
+			// unlock
+			ReleaseMutex(record_q->mutex);
+		}
+	}
+
+	// return
+	return wasDequeued; 
+}
+
+
+void __cdecl ConsumerThread(void *unused)
+{
+	dprintf("ConsumerThread()");
+	// holds the one we're processing per step
+	record_node* node = (record_node*)malloc(sizeof(record_node));
+	node->type = 0;
+	node->data = NULL;
+	node->next = NULL;
+
+	// this needs a proper shutdown condition when blakserv also ends
+	// to shut down the consumer thread also
+	while (consume)
+	{
+		// handle all pending
+		while (DequeueRecord(node))
+		{
+			// cast depending on type
+			switch(node->type)
+			{
+			case STAT_ASSESS_DAM:
+				{
+					PlayerAssessDamageRecord* data = (PlayerAssessDamageRecord*)node->data;
+					MySQLRecordPlayerAssessDamage(
+						data->res_who_damaged,
+						data->res_who_attacker,
+						data->aspell,
+						data->atype,
+						data->damage_applied,
+						data->damage_original,
+						data->res_weapon
+						);
+					free(data);
+				}
+				break;
+
+			case STAT_MONEYCREATED:
+				{
+					MoneyCreatedRecord* data = (MoneyCreatedRecord*)node->data;
+					MySQLRecordStatMoneyCreated(data->money_created);
+					free(data);
+				}
+				break;
+				
+			case STAT_TOTALMONEY:
+				{
+					TotalMoneyRecord* data = (TotalMoneyRecord*)node->data;
+					MySQLRecordStatTotalMoney(data->total_money);
+					free(data);
+				}
+				break;
+			}			
+		}
+		
+		// sleep
+		Sleep(1);
+	}
+	_endthread(); //Only reached after MySQLEnd()
+}
 
 
 void MySQLTest()
@@ -56,6 +217,9 @@ void MySQLInit()
 		return;
 	enabled = true;
 
+	CreateRecordQueue();
+	hConsumer = (HANDLE) _beginthread(ConsumerThread,0,0);
+
 	mysqlcon = mysql_init(NULL);
 
 	if (mysqlcon == NULL)
@@ -82,7 +246,7 @@ void MySQLInit()
 	sprintf(buf, "USE %s", ConfigStr(MYSQL_DB));
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Error selecting databsae: %s\n", mysql_error(mysqlcon));
+		dprintf("Error selecting database: %s\n", mysql_error(mysqlcon));
 		return;
 	}
 	else
@@ -93,7 +257,7 @@ void MySQLInit()
     return;
 }
 
-int MySQLCheckSchema()
+int  MySQLCheckSchema()
 {
 	//SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = 'DBName'
 	//CREATE DATABASE IF NOT EXISTS DBName;
@@ -105,6 +269,8 @@ void MySQLEnd()
 {
 	//mysql_close(mysqlcon);
 	//return;
+	consume = false;
+	return;
 }
 
 void MySQLCreateSchema()
@@ -176,7 +342,7 @@ void MySQLRecordStatTotalMoney(int total_money)
 
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatTotalMoney");
+		dprintf("Unable to record StatTotalMoney (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -194,7 +360,7 @@ void MySQLRecordStatMoneyCreated(int money_created)
 
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatMoneyCreated", mysql_error(mysqlcon));
+		dprintf("Unable to record StatMoneyCreated (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -221,7 +387,7 @@ void MySQLRecordPlayerLogin(session_node *s)
 				player_logins_time = NOW()",s->account->name,r->resource_val,s->conn.name);
 	if(mysql_query(mysqlcon, buf))
 	{
-		dprintf("Unable to record StatPlayerLogin", mysql_error(mysqlcon));
+		dprintf("Unable to record StatPlayerLogin (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }
@@ -244,7 +410,7 @@ void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, in
 		r_who_damaged->resource_val, r_who_attacker->resource_val, aspell, atype, damage_applied, damage_original, r_weapon->resource_val);
 	if(mysql_query(mysqlcon,buf))
 	{
-		dprintf("Unable to record StatPlayerAssessDamage", mysql_error(mysqlcon));
+		dprintf("Unable to record StatPlayerAssessDamage (%s)", mysql_error(mysqlcon));
 		return;
 	}
 }

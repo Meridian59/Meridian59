@@ -52,7 +52,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&Ent, 40],[&GroundwormLarva, 60] ];
+      plMonsters = [ [&MolluskMonster, 100] ];
 
       plGenerators = [ [6, 5], [13, 7], [17, 12], [33, 10], [42, 14],
 		      [45, 8], [41, 23], [40, 39], [6, 21], [11, 27], 

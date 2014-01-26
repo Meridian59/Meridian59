@@ -3903,6 +3903,11 @@ messages:
             }
          }
       }
+      
+      if IsClass(oRoom,&GuildHall)
+      {
+         return TRUE;
+      }
 
       % Finally, check status and safety.
       if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report,#actual=actual)

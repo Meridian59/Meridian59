@@ -45,6 +45,18 @@ messages:
       AddPacket(4, ballot_desc_rsc);
 	  return;
    }
+   
+   CanSwap()
+   {
+      % No more using these for swap mules
+      return FALSE;
+   }
+
+   DropOnDeath()
+   {
+      % No drop so that people can't load up on these and avoid real penalties
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

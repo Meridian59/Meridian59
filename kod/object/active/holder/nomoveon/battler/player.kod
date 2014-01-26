@@ -3750,6 +3750,14 @@ messages:
       {
          return FALSE;
       }
+      
+      % Don't halo non-attackables in guild_pk_only zones (typically an unguilded outlaw)
+      % Necessary because it just looks confusing
+      if actual = FALSE
+         AND Send(oRoom,@AllowGuildAttack,#what=self,#victim=victim) = FALSE
+      {
+         return FALSE;
+      }
 
       % If we're in an arena and it let us attack, then it's a legal attack.
       if Send(oRoom,@IsArena)
@@ -3765,6 +3773,7 @@ messages:
 
       % Check for guildmates and allies
       if IsClass(victim,&Player)
+         AND victim <> self
       {
          oVictimGuild = Send(victim,@GetGuild);
          oGuild = Send(self,@GetGuild);
@@ -5028,6 +5037,13 @@ messages:
          }
       }
       
+      if IsClass(what,&Monster)
+         AND (use_weapon = $
+              OR NOT IsClass(use_weapon,&ActiveWallElement))
+      {
+         Send(self,@JoinBuilderGroup);
+      }
+      
       Send(poOwner,@SomethingKilled,#what=self,#victim=what);
 
       % Let our shield know we killed something.
@@ -5125,8 +5141,6 @@ messages:
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
-         
-         Send(self,@JoinBuilderGroup);
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
@@ -7787,7 +7801,7 @@ messages:
       {
          propagate;
       }
-
+         
       if victim = poKill_target
       {
          if what = self
@@ -7796,7 +7810,7 @@ messages:
          }
          else
          {
-            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE);
+            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member=what);
          }
          
          poKill_target=$;
@@ -7807,8 +7821,7 @@ messages:
          % Let players share XP if they're grouped, even if they're not fighting the same mob.
          if Send(Send(self,@GetOwner),@AreGroupedHere,#who=self,#what=what)
          {
-            Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(what,@GetName),#parm2=Send(victim,@GetName));
-            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member_kill=TRUE);
+            Post(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member_kill=TRUE,#group_member=what);
          }
       }
       
@@ -7826,12 +7839,12 @@ messages:
    }
 
 
-   AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE)
+   AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE,group_member=$)
    "A player will need, on average, to kill a number of monsters equal to"
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon, lBuilderGroup;
             
       gain = 0;
       roll = FALSE;
@@ -7873,8 +7886,49 @@ messages:
                % Player either did not take damage, but did killing blow (mage),
                %  or did take damage, did not land killing blow, or
                %  it's a group member kill.
-               gain = 1;
-               roll = TRUE;
+               
+               % Diminishing returns for group kills and group size.
+               if group_member_kill
+                  AND Send(self,@GetOwner) <> $
+               {
+                  lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
+                  if lBuilderGroup <> $
+                     AND Length(lBuilderGroup) >= 1
+                  {
+                     if Random(1,Length(lBuilderGroup)) = 1
+                     {
+                        gain = 1;
+                     }
+                  }
+               }
+               else
+               {
+                  gain = 1;
+               }
+
+               % No roll for kills by others
+               if NOT group_member_kill
+               {
+                  roll = TRUE;
+               }
+               
+               % Inform the player that a group kill successfully garnered XP.
+               if group_member_kill
+                  AND group_member <> $
+                  AND gain = 1
+               {
+                  Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(group_member,@GetName),
+                                         #parm2=Send(what,@GetName));
+               }
+               
+               % Give an informative message about non-group kills that are still shared
+               if NOT killing_blow
+                  AND NOT group_member_kill
+                  AND group_member <> $
+               {
+                  Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(group_member,@GetName),
+                                         #parm2=Send(what,@GetName));
+               }
             }
          }
          else

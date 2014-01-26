@@ -356,9 +356,10 @@ messages:
    "This is used for both teachers and sellers"
    {
       local i,j,bFound,oBuy,oMoney,iPrice,lForSale,
-            lNumbers,iDefaultAmount,iAmount; % New vars for player specified amounts in buying
+            lNumbers,iDefaultAmount,iAmount,iCount; % New vars for player specified amounts in buying
 
       lForSale = First(plFor_Sale);
+	  iCount = 0;
       if not send(self,@IsCustomerOkay,#who=what)
       {
 	      return;
@@ -411,6 +412,7 @@ messages:
             }
          }
          % This is the end of the added code to handle player specified amounts in buying
+		 
 
    	   if oMoney = $
    	      OR Send(oMoney,@GetValue) < iPrice
@@ -481,6 +483,7 @@ messages:
                      #string=nth(send(oBuy,@GetAttributeData,#ItemAtt=IA_SELL_INFO),2),
                      #type=SAY_RESOURCE);
                }
+			   iCount = iCount + 1;
             }
             else
             {
@@ -505,8 +508,12 @@ messages:
             }
          }
       }
-
-      Post(poOwner,@SomeoneSaid,#what=self,#string=Izzio_sold_rsc,#type=SAY_RESOURCE);
+	  % if you were able to afford and carry the items Izzio will thank you
+	  if iCount > 0
+	  {
+	  
+		Post(poOwner,@SomeoneSaid,#what=self,#string=Izzio_sold_rsc,#type=SAY_RESOURCE);
+	  }
       SetNth(plFor_Sale,1,lForSale);
 
       return;

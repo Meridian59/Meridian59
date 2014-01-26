@@ -113,23 +113,6 @@ messages:
       return;
    }
 
-   ReqUseSomething(what = $)
-   {
-      if send(what,@getitemusetype) & ITEM_USE_LEGS
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-      
-      propagate;
-   }
-
    DefendingHit(who = $,what = $)
    {
       return;

@@ -7794,10 +7794,18 @@ messages:
                      }
                      else
                      {
-                        % Diminishing returns for distant group kills based on group size.
-                        if Random(1,Length(lBuilderGroup)) = 1
+                        % Less gains for groups that are too large.
+                        if Length(lBuilderGroup) < 5
                         {
                            gain = 1;
+                        }
+                        else
+                        {
+                           % Starting at 5 people, we have a 50% chance to miss group experience.
+                           if Random(1,2) = 1
+                           {
+                              gain = 1;
+                           }
                         }
                      }
                   }

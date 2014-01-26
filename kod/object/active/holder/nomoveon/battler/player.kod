@@ -3451,22 +3451,11 @@ messages:
          {
             return FALSE;
          }
-
-         % Soldier Shields allow bows or lutes to be wielded even if they
-         %  are taking up all the hand spaces.  But, you can't use a shield, bow,
-         %  lute, and book all simlutaneously!
-         if (IsClass(what,&Bow) OR IsClass(what,&Lute))
-            AND Send(self,@FindUsing,#class=&SoldierShield) <> $
-            AND Send(self,@FindUsing,#class=&Lute) = $
-            AND Send(self,@FindUsing,#class=&Book) = $
+         
+         % These unequip amongst themselves automatically.
+         if IsClass(what,&DefenseModifier)
          {
-            % Don't allow them to wield a lute if we already have a bow.
-            % Trying to wield a second bow will unwield the first bow automatically.
-            if NOT IsClass(what,&Lute)
-               OR (Send(self,@FindUsing,#class=&Bow) = $)
-            {
-               return TRUE;
-            }
+            return TRUE;
          }
 
          if type = ITEM_USE_HAND
@@ -5623,6 +5612,7 @@ messages:
       for i in plUsing
       {
          if IsClass(i,&Shield)
+            AND Send(i,@GetBlockAbility,#who=self) > 0
          {
             return i;
          }      
@@ -9200,12 +9190,7 @@ messages:
          Send(self,@ResetPlayerLegs);
       }
 
-      oRobes = Send(self,@FindUsing,#class=&Robe);
-      if oRobes <> $
-         AND Send(oRobes,@ItemChangesArms)
-      {
-         Post(oRobes,@SetArms);
-      }
+      Send(self,@RefreshPlayerVisualGear);
 
       if poOwner <> $
       {
@@ -9213,6 +9198,95 @@ messages:
       }
 
       return;      
+   }
+   
+   RefreshPlayerVisualGear()
+   {
+      local n, plRefreshItemTypes, i, iHighestLayer, oHighestGear, iLowestLayer, oLowestGear,
+            oSoldierShield, bSoldierShieldSlung;
+
+      plRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
+      
+      for n in plRefreshItemTypes
+      {
+         iHighestLayer = 0;
+         oHighestGear = $;
+         for i in plUsing
+         {
+            if IsClass(i,&DefenseModifier)
+               AND Send(i,@GetItemUseType) & n
+            {
+               if Send(i,@GetLayer) >= iHighestLayer
+               {
+                  iHighestLayer = Send(i,@GetLayer);
+                  oHighestGear = i;
+               }
+            }
+         }
+      
+         if oHighestGear <> $
+         {
+            Send(oHighestGear,@DoPlayerArt);
+         }
+      }
+
+      % Check for headgear, which has special overlays
+      % In this case, we actually refresh the lowest layer to put it underneath
+      iLowestLayer = 100000;
+      oLowestGear = $;
+      for i in plUsing
+      {
+         if IsClass(i,&DefenseModifier)
+            AND Send(i,@GetItemUseType) & ITEM_USE_HEAD
+         {
+            if Send(i,@GetLayer) <= iLowestLayer
+            {
+               iLowestLayer = Send(i,@GetLayer);
+               oLowestGear = i;
+            }
+         }
+         
+         if oLowestGear <> $
+         {
+            Send(oLowestGear,@UndoPlayerArt);
+            Send(oLowestGear,@DoPlayerArt);
+         }
+      }
+      
+      % Check for Soldier Shield sling
+      bSoldierShieldSlung = FALSE;
+      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+      {
+         for i in plUsing
+         {
+            if (IsClass(i,&Shield)
+               AND NOT IsClass(i,&SoldierShield))
+               OR IsClass(i,&Bow)
+               OR IsClass(i,&Lute)
+            {
+               Send(oSoldierShield,@SlingOnBack,#report=FALSE);
+               bSoldierShieldSlung = TRUE;
+               
+               % Now restore the first-person view of other shield if we're using one
+               for n in plUsing
+               {
+                  if (IsClass(n,&Shield)
+                     AND NOT IsClass(n,&SoldierShield))
+                  {
+                     Send(self,@SetWindowOverlay,#what=n);
+                  }
+               }
+            }
+         }
+         
+         if bSoldierShieldSlung = FALSE
+         {
+            Send(oSoldierShield,@RemoveFromBack,#report=FALSE);
+         }
+      }
+   
+      return;
    }
 
    ConvertskincolortoXLAT(Skin_color = 0)

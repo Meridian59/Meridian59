@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+BlessRod is SpellRod
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   BlessRod_name_rsc = "rod of bless"
+   BlessRod_icon_rsc = wand4.bgf
+
+classvars:
+
+   vrName = BlessRod_name_rsc
+   vrIcon = BlessRod_icon_rsc
+
+   viGround_group = 2
+   viInventory_group = 1
+
+   viConsumesHits = 3
+
+properties:
+
+   piSpellNum = SID_BLESS
+   piSpellpower = 60
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

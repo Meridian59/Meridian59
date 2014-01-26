@@ -1,0 +1,68 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+StaffOfJolting is Rod
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   staffofjolting_name_rsc = "gnarled staff"
+   staffofjolting_icon_rsc = joltstaf.bgf
+   staffofjolting_desc_rsc = \
+      "You look at this rather non-descript hunk of wood, and you can find no "
+      "reason why anyone would be interested in such a dismal-looking device."
+
+   staffofjolting_jolt = "You tap the staff on the ground three times."
+   staffofjolting_used = "You tap the staff against the ground, but nothing happens."
+
+   staffofjolting_sound = woodstaf.wav
+
+classvars:
+
+   vrName = staffofjolting_name_rsc
+   vrIcon = staffofjolting_icon_rsc
+
+   viBulk = 40
+   viWeight = 40
+   viValue_average = 200
+   viInventory_group = 2
+   
+   viStartMaxHits = 3
+   
+   use_fail_wav = staffofjolting_sound
+   use_fail_msg = staffofjolting_used
+   use_success_msg = staffofjolting_jolt
+   use_success_wav = staffofjolting_sound
+
+properties:
+   
+   vrDesc = staffofjolting_desc_rsc
+   
+   piSpellpower = 60
+
+messages:
+
+   CastSpell()
+   "Casts the spell Flash, possibly disrupting enemy trances in the room."
+   {
+      local oFlash, lGoodTargets;
+
+      oFlash = Send(SYS,@FindSpellByNum,#num=SID_FLASH);
+      lGoodTargets = Send(oFlash,@GetGoodTargets,#who=poOwner,#report=FALSE);
+      Send(oFlash,@CastSpell,#who=poOwner,#lTargets=lGoodTargets,#iSpellPower=piSpellpower,#bItemCast=TRUE);
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

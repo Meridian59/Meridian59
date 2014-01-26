@@ -16,7 +16,7 @@ BOFS = attmod.bof defmod.bof healer.bof key.bof \
 	junk.bof dresspat.bof scamscrl.bof shruhead.bof cncllttr.bof lovelttr.bof \
 	prism.bof orecheap.bof neclettr.bof taxlettr.bof ncwrnlet.bof potaphro.bof \
 	warlettr.bof factflag.bof bardnote.bof mystpot.bof mystwand.bof lablpot.bof \
-	lablwand.bof roomkeyc.bof hstone.bof spelitem.bof specwand.bof warjoin.bof \
+	lablwand.bof roomkeyc.bof hstone.bof spelitem.bof rod.bof warjoin.bof \
 	betap.bof specgift.bof manacrys.bof spcgift2.bof karmapotion.bof
 
 !include $(KODDIR)\kod.mak

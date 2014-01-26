@@ -1,0 +1,188 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Rod is PassiveItem
+
+constants:
+
+   include blakston.khd
+   
+   ROD_HOLD_MAX = 5
+
+resources:
+
+   Rod_desc_rsc = "You can feel magical energy pulsing through the rod."
+   Rod_broken = "%s%s goes dark, having expended its last charge!"
+   Rod_useless = "The rod must be recharged before it can be used again."
+   Rod_desc_broken_rsc = "This once pristine rod is dull and dark, and must be recharged."
+   Rod_success_msg = "The rod pulses in your hand."
+   
+   rod_consumes_charges_a_rsc = " Unleashing the magic within will consume "
+   rod_consumes_charges_b_rsc = " charges."
+   
+   rod_charges_left_a_rsc = "This rod has "
+   rod_charges_left_b_rsc = " charges remaining, and can hold a maximum of "
+   rod_charges_left_c_rsc = " charges."
+
+   rod_success_wav_default_rsc = healwand.wav
+   rod_fail_wav_default_rsc = spelfail.wav
+   
+   rod_cannot_hold_more_rsc = "If you held another rod, their competing magics would all conflict and explode!"
+
+classvars:
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_ROD
+   
+   viStartHits = 0
+   viStartMaxHits = 5
+   viConsumesHits = 1
+
+   use_fail_msg = Rod_useless
+   use_fail_wav = rod_fail_wav_default_rsc
+   use_success_msg = Rod_success_msg
+   use_success_wav = rod_success_wav_default_rsc
+
+properties:
+
+   vrDesc = Rod_desc_rsc
+
+messages:
+
+   Constructed()
+   {
+      Send(self,@SetHits,#number=viStartHits);
+      Send(self,@SetMaxHits,#number=viStartMaxHits);
+
+      propagate;
+   }
+   
+   NewOwner()
+   {
+      Send(self,@SetHits,#number=0);
+
+      propagate;
+   }
+   
+   ReqNewOwner(what = $)
+   {
+      local i, iRodCount;
+
+      iRodCount = 0;
+      if IsClass(what,&User)
+      {
+         for i in Send(what,@GetHolderPassive)
+         {
+            if IsClass(i,&Rod)
+            {
+               iRodCount = iRodCount + 1;
+            }
+         }
+         if iRodCount >= ROD_HOLD_MAX
+         {
+            Send(what,@MsgSendUser,#message_rsc=rod_cannot_hold_more_rsc);
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   GetItemUseType()
+   {
+      return viUse_type;
+   }
+
+   ReqNewApply(what = $, apply_on = $)
+   {
+      If NOT IsClass(poOwner,&User)
+      {
+         return FALSE;
+      }
+
+      If Send(self,@GetHits) < viConsumesHits
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=use_fail_msg);
+         Send(poOwner,@WaveSendUser,#wave_rsc=use_fail_wav);
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      Send(self,@SetHits,#number=Send(self,@GetHits)-viConsumesHits);
+      Send(self,@CastSpell,#what=what,#apply_on=apply_on);
+
+      if Send(self,@GetHits) <= 0
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=Rod_broken,
+           #parm1=Send(self,@GetCapDef),#parm2=Send(self,@GetName));
+         vrDesc = Rod_desc_broken_rsc;
+      }
+      
+      return;
+   }
+
+   CastSpell(what = $, apply_on = $)
+   {
+      Send(poOwner,@MsgSendUser,#message_rsc=use_success_msg);
+      Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,#wave_rsc=use_success_wav);
+      return;
+   }
+   
+   SomethingKilled(what = $, victim = $)
+   {
+      % Gain a charge upon our owner killing a monster.
+      if what = poOwner
+         AND IsClass(victim,&Monster)
+         AND Send(self,@GetHits) < Send(self,@GetMaxHits)
+      {
+         Send(self,@SetHits,#number=Send(self,@GetHits)+1);
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   FullyRecharge()
+   {
+      if Send(self,@GetHits) < Send(self,@GetMaxHits)
+      {
+         Send(self,@SetHits,#number=Send(self,@GetMaxHits));
+         return TRUE;
+      }
+      
+      return FALSE;
+   }
+   
+   AppendDesc()
+   {
+      if viConsumesHits <> 1
+      {
+         AppendTempString(rod_consumes_charges_a_rsc);
+         Send(SYS,@AppendCardinalToTempString,#number=viConsumesHits);
+         AppendTempString(rod_consumes_charges_b_rsc);
+      }
+
+      AppendTempString("\n\n");   
+      AppendTempString(rod_charges_left_a_rsc);
+      Send(SYS,@AppendCardinalToTempString,#number=piHits);
+      AppendTempString(rod_charges_left_b_rsc);
+      Send(SYS,@AppendCardinalToTempString,#number=viStartMaxHits);
+      AppendTempString(rod_charges_left_c_rsc);
+
+      return;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

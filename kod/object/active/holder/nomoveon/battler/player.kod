@@ -722,6 +722,9 @@ resources:
    cannot_attack_guildmate = "You can't attack %s, %s's your guildmate!"
 
    group_experience_rsc = "You absorb a small amount of the energy released from %s's slaying of the %s."
+   
+   rod_gained_charge_msg = "You sense that at least one of your magic items gained a charge from the released energy of your kill."
+   rods_fully_recharged_by_safe_place_msg = "This place of safety has recharged your magical rods."
 
 classvars:
 
@@ -7797,9 +7800,36 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
+      local i, bGained, bGainedCharge;
+
       if NOT IsClass(victim,&Battler)
       {
          propagate;
+      }
+
+      % Let our recharging rods know we killed something.
+      if what = self
+      {
+         bGainedCharge = FALSE;
+
+         for i in plPassive
+         {
+            if IsClass(i,&Rod)
+            {
+               bGained = Send(i,@SomethingKilled,#what=what,#victim=victim);
+               
+               if bGained
+               {
+                  bGainedCharge = TRUE;
+               }
+            }
+         }
+
+         % Notify the player if he gained a charge on any recharging wand (just one message for all of them)
+         if bGainedCharge
+         {
+            Send(self,@MsgSendUser,#message_rsc=rod_gained_charge_msg);
+         }
       }
          
       if victim = poKill_target
@@ -12970,6 +13000,32 @@ messages:
 
       piCrystalizeManaSurging = FALSE;
       Send(self,@ComputeMaxMana);
+
+      return;
+   }
+   
+   RechargeAllRods()
+   {
+      local i, bResult, bGainedCharges;
+
+      bGainedCharges = FALSE;
+      for i in Send(self,@GetHolderPassive)
+      {
+         if IsClass(i,&Rod)
+         {
+            bResult = Send(i,@FullyRecharge);
+         }
+         
+         if bResult
+         {
+            bGainedCharges = TRUE;
+         }
+      }
+      
+      if bGainedCharges
+      {
+         Send(self,@MsgSendUser,#message_rsc=rods_fully_recharged_by_safe_place_msg);
+      }
 
       return;
    }

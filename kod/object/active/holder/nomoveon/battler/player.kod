@@ -1940,6 +1940,11 @@ messages:
       {
          Send(oCaramo,@UserLogon,#who=self);
       }
+      
+      if Send(self,@GetGuild) <> $
+      {
+         Send(Send(self,@GetGuild),@SendUserMOTD,#who=self);
+      }
 
       if piPoisonStrength > 0
       {

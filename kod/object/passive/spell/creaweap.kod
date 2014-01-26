@@ -21,9 +21,9 @@ resources:
    createweapon_name_rsc = "create weapon"
    createweapon_icon_rsc = icremace.bgf
    createweapon_desc_rsc = \
-      "Materializes a weapon.  Requires nothing but a violent will."
+      "Materializes a weapon. Requires nothing but a violent will."
 
-   createweapon_spell_intro = "Kraanan Lv. 1: Creates a variety of weapons for use in defeating your foes." 
+   createweapon_spell_intro = "Kraanan Lv. 1: Creates a variety of weapons for use in defeating your foes."
 
    createweapon_sound = kraanan.wav
 
@@ -39,7 +39,8 @@ classvars:
    viSchool = SS_KRAANAN
    viSpell_level = 1
    viMana = 15
-   viCast_time = 500
+   viCast_time = 5000
+   
 
    vrSucceed_wav = createweapon_sound
 
@@ -58,15 +59,98 @@ messages:
    {
       return 0;
    }
+        
+   SomethingSaidDuringTrance(who=$,string=$)
+   {
+         local i, iSpellPower, iCount,isWeaponCreateable, oWeapon, oItemAtt,iSpellPercent;
+         iCount = 0;        
+         isWeaponCreateable = false;
+        
+         iSpellPower = Send(self,@GetSpellPower,#who=who);
+         iSpellPercent = Send(who,@GetSpellAbility,#spell_num=SID_CREATE_WEAPON);
+         for i in Send(SYS,@GetItemTemplates)
+                {
+                        if(StringEqual(string,Send(i,@GetName)))
+                        {
+                                if(NOT isClass(i,&weapon))
+                                {
+                                        return;
+                                }
+                                if(NOT Send(self,@CanCreateWeapon,#sWeapon=Send(i,@GetName),#iSpellPower=iSpellPower,#iSpellPercent=iSpellPercent))
+                                {
+                                        return;
+                                }
+                                oWeapon = Create(getClass(i));
+                                isWeaponCreateable = true;                                
+                                break;
+                        }                        
+                }
+                
+                if(isWeaponCreateable = true)
+                {
+                         Send(who,@BreakTrance,#event=EVENT_STEER);
+                         % Weapon has half its hits, + iSpellPower% of the other half.
+                        Send(oWeapon,@SetHits,#number=(Send(oWeapon,@GetHits)*(iSpellPower+100))/200);
 
+                 if Send(who,@ReqNewHold,#what=oWeapon)
+                 {
+                         Send(who,@NewHold,#what=oWeapon);
+                         Send(who,@MsgSendUser,#message_rsc=createweapon_cast_rsc,
+                                 #parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
+                 }
+                 else
+                 {
+                         Send(oWeapon,@Delete);
+                         Send(who, @MsgSendUser, #message_rsc=createweapon_inv_full_rsc,#parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
+                 }                
+                 oItemAtt = send(SYS,@FindItemAttByNum,#Num=IA_MADE);
+                 send(oItemAtt,@AddtoItem,#oitem=oWeapon,#timer_duration=send(self,@getduration,#iSpellpower=iSpellpower));
+                        
+                }
+                return;
+   }
+   CanCreateWeapon(sWeapon=$,iSpellPower=$,iSpellPercent=$)
+   {                
+        
+         if(StringEqual("Mace",sWeapon) AND iSpellPercent > 0)
+         {
+                return true;
+         }
+         if(StringEqual("Short Sword",sWeapon) AND iSpellPercent >= 30)
+         {
+                return true;
+         }
+         if(StringEqual("Hammer",sWeapon) AND iSpellPercent >= 45)
+         {
+                return true;
+         }
+         if(StringEqual("Long Sword",sWeapon) AND iSpellPercent >=50)
+         {
+                return true;
+         }
+         if(StringEqual("Scimitar",sWeapon) AND iSpellPercent >= 55)
+         {
+                return true;
+         }
+         if(StringEqual("Mystic Sword",sWeapon) AND iSpellPercent >= 95)
+         {
+                return true;
+         }
+         if(StringEqual("Battle Bow",sWeapon) AND iSpellPercent >= 99)
+         {
+                return true;
+         }
+         return false;
+   }
+   
    CastSpell(who = $,lTargets = $,iSpellPower=$)
    {
-      local oWeapon,iNum, oItemAtt;
-
+      local oWeapon,iNum, oItemAtt;        
+        
       % Keep the bottom end a bit low because the player might want a lower weapon.
       iNum = Random(iSpellPower/3,iSpellPower);
       
-      if iNum < 20 
+      if iNum < 20
       {
          oWeapon = Create(&Mace);
       }
@@ -108,27 +192,25 @@ messages:
                }
             }
          }
-      }
+      }        
 
       % Weapon has half its hits, + iSpellPower% of the other half.
       Send(oWeapon,@SetHits,#number=(Send(oWeapon,@GetHits)*(iSpellPower+100))/200);
 
       if Send(who,@ReqNewHold,#what=oWeapon)
       {
-	      Send(who,@NewHold,#what=oWeapon);
-	      Send(who,@MsgSendUser,#message_rsc=createweapon_cast_rsc,
-	           #parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
+         Send(who,@NewHold,#what=oWeapon);
+         Send(who,@MsgSendUser,#message_rsc=createweapon_cast_rsc,
+         #parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
       }
       else
       {
-	      Send(oWeapon,@Delete);
-	      Send(who, @MsgSendUser, #message_rsc=createweapon_inv_full_rsc,#parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
+         Send(oWeapon,@Delete);
+         Send(who, @MsgSendUser, #message_rsc=createweapon_inv_full_rsc,#parm1=send(oWeapon,@GetCapIndef),#parm2=send(oWeapon,@GetName));
       }
       
       oItemAtt = send(SYS,@FindItemAttByNum,#Num=IA_MADE);
-
       send(oItemAtt,@AddtoItem,#oitem=oWeapon,#timer_duration=send(self,@getduration,#iSpellpower=iSpellpower));
-
       propagate;
    }
 
@@ -136,7 +218,7 @@ messages:
    {
       local iDuration;
 
-      iDuration = iSpellpower * 2;  %%In minutes
+      iDuration = iSpellpower * 2; %%In minutes
       iDuration = iDuration * 60 * 1000;
 
       return iDuration;

@@ -7927,7 +7927,6 @@ messages:
                %  or did take damage, did not land killing blow, or
                %  it's a group member kill.
                
-               % Diminishing returns for group kills and group size.
                if group_member_kill
                   AND Send(self,@GetOwner) <> $
                {
@@ -7935,9 +7934,20 @@ messages:
                   if lBuilderGroup <> $
                      AND Length(lBuilderGroup) >= 1
                   {
-                     if Random(1,Length(lBuilderGroup)) = 1
+                     % Player will always get 1 xp from a kill target he took damage from.
+                     % This may happen if fighting the same mob, or when fighting thrashers for example.
+                     if poKill_target = what
+                        AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
                      {
                         gain = 1;
+                     }
+                     else
+                     {
+                        % Diminishing returns for distant group kills based on group size.
+                        if Random(1,Length(lBuilderGroup)) = 1
+                        {
+                           gain = 1;
+                        }
                      }
                   }
                }

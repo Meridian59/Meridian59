@@ -3495,8 +3495,8 @@ messages:
          Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
          return;
-      }
-
+      }	  
+	  
       lItem_pos = Send(what,@GetPos);
       if lItem_pos = $
       {
@@ -3607,7 +3607,13 @@ messages:
             
             return;                      
          }        
-      }
+      }	  
+	  		 
+	  % shrunken head picked up
+	  if isClass(what, &ShrunkenHead)
+	  {
+		 send(what,@PickedUp,#by=self);
+	  }	  		
 
       Send(self,@NewHold,#what=what);
       
@@ -3682,6 +3688,12 @@ messages:
       {
          Send(poOwner,@NewHold,#what=what,#new_row=piRow,#new_col=piCol,
               #fine_row=piFine_row,#fine_col=piFine_col);
+		 % shrunken head dropped by owner
+		 if isClass(what, &ShrunkenHead)
+		 {
+			Send(what,@Dropped,#by=self,#where=poOwner);
+	     }			  
+			  
       }
       
       return;
@@ -5868,10 +5880,11 @@ messages:
    NewHoldObject(what = $)
    {
       if pbLogged_on
-      {
+      {	  
          AddPacket(1,BP_INVENTORY_ADD);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
-         SendPacket(poSession);
+         SendPacket(poSession);		 
+
       }
       
       propagate;

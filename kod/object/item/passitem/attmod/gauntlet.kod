@@ -30,7 +30,7 @@ resources:
    gauntlet_condition_med = " have been harshly dented in several places."
    gauntlet_condition_poor = " are in danger of falling apart.  Large plates of metal have been torn away during battle."
    gauntlet_condition_broken = " are ruined and offer no benefit."
-   gauntlet_broken = "Your gauntlets are a tangled mess of metal."
+   gauntlet_broken = "Your %s are a tangled mess of metal."
 
    standardshirt_rightarm_gauntlet_male = bre.bgf
    standardshirt_rightarm_gauntlet_female =brf.bgf
@@ -48,6 +48,8 @@ classvars:
    vrIcon = gauntlet_icon_rsc
    vrDesc = gauntlet_desc_rsc
    vrPoss_article = object_article_cap_these_rsc
+   
+   vrItem_broken = gauntlet_broken
    
    viUse_type = ITEM_USE_GAUNTLET
    viItem_type = ITEMTYPE_ARMOR
@@ -245,20 +247,6 @@ messages:
    % No alterations when we hit the target....
    WeaponHitTarget()
    {
-      return;
-   }
-
-   % We took a hit, take some damage off....
-   DefendingHit()
-   {
-      piHits = piHits - 1;
-      if piHits <= 0
-      {
-         Send(poOwner,@MsgSendUser,#message_rsc=gauntlet_broken,
-              #parm1=Send(self,@GetCapDef),#parm2=vrName);
-         Send(poOwner,@TryUnuseItem,#what=self);
-      }
-      
       return;
    }
 

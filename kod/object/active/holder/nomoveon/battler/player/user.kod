@@ -816,7 +816,7 @@ messages:
          AddPacket(1,BP_PLAYER_ADD);
          AddPacket(4,what,4,rName);
          AddPacket(STRING_RESOURCE,rName);
-         AddPacket(4,Send(what,@GetObjectFlags));
+         AddPacket(4,Send(what,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
          SendPacket(poSession);
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
@@ -2410,7 +2410,7 @@ messages:
          rName = Send(i,@GetTrueName);
 
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
-         AddPacket(4,Send(i,@GetObjectFlags));
+         AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
       }
       
       SendPacket(poSession);

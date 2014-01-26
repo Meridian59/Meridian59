@@ -19,7 +19,7 @@ resources:
    room_canyons = canyons.roo
    room_name_canyons = "The Berdonne Canyons"
 
-   canyons1_music = walk1.mid
+   canyons1_music = walk1.mp3
 
 classvars:
 

@@ -19,7 +19,7 @@ resources:
 
    room_name_weaponsmaster = "The Weapon Master's Abode"
    room_weaponsmaster = weaponsm.roo
-   weaponsmaster_music = smithy.mid
+   weaponsmaster_music = smithy.mp3
 
    weaponsmaster_locked_door = "Rook doesn't allow you to enter his private quarters."
 

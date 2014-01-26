@@ -25,7 +25,7 @@ resources:
    room_TosArena = tosarena.roo
    name_TosArena = "The Arena of Kraanan"
 
-   TosArena_music = pk_fm.mid
+   TosArena_music = pk_fm.mp3
 
    TosArena_commence_wav = forest.wav
    wind_sound_tosarena = ambcntry.wav

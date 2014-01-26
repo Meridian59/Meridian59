@@ -257,7 +257,7 @@ resources:
    user_wave_welcome = welcome.wav
    user_wave_killed = killed.wav
 
-   user_midi_killed = killed.mid
+   user_midi_killed = killed.mp3
 
    user_interface_module = merintr.dll
    user_mailnews_module = mailnews.dll

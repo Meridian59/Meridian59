@@ -227,7 +227,7 @@ resources:
    TosWatcher_fight_command  = "fight"
    TosWatcher_clear_all_command  = "clear all"
 
-   TosWatcher_battle_midi_rsc = pk_sb16.mid
+   TosWatcher_battle_midi_rsc = pk_sb16.mp3
 
 classvars:
 

@@ -26,7 +26,7 @@ resources:
       "This words of this song hinder the performance of other Jala songs.  "
       "A single ruby is required to begin performing this song."
 
-   Disharmony_song = bridge.mid
+   Disharmony_song = bridge.mp3
  
 classvars:
 

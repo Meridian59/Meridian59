@@ -18,7 +18,7 @@ resources:
 
    room_tostan = tostan.roo
    room_name_tostan = "Abandoned Building"
-   tostan_music = tos.mid
+   tostan_music = tos.mp3
 
 classvars:
 

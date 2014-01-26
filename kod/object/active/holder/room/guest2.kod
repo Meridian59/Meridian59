@@ -20,7 +20,7 @@ resources:
 
    room_name_guest2 = "Hazar"
    room_guest2 = guest2.roo
-   guest2_music = login.mid
+   guest2_music = login.mp3
 
    guest2_wading_sound = weatstp1.wav
 

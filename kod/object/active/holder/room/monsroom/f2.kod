@@ -20,7 +20,7 @@ resources:
    room_name_OutdoorsF2 ="The sandy shores of the Great Ocean"
    waterfall_soundF2 = wfall2.wav
 
-   OutdoorsF2_music = walk7.mid
+   OutdoorsF2_music = walk7.mp3
 
    F2_oceanwalk = "You're already up to your ankles in saltwater, and you decide that's quite enough."
    ocean_soundF2 = "ocean.wav"

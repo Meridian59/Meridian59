@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsK5 = K5.roo
    room_name_OutdoorsK5 ="The Badlands"
-   OutdoorsK5_music = walk5.mid
+   OutdoorsK5_music = walk5.mp3
 
 classvars:
 

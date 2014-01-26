@@ -27,7 +27,7 @@ resources:
 
    Mirth_on = "%s%s's mirthful song lifts your spirits a bit."
 
-   Mirth_song = main.mid
+   Mirth_song = main.mp3
  
 classvars:
 

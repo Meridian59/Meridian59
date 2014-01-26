@@ -12,7 +12,7 @@ JasperRoom is Room
 
 resources:
 
-   JasperRoom_music = city03.mid
+   JasperRoom_music = city03.mp3
 
 properties:
 

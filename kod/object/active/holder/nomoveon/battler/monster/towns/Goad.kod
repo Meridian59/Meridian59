@@ -106,7 +106,7 @@ resources:
    Goad_Draw = "`rFight is a draw.  This is a bug.  Please report it and specify combat type and all actions which led to this message."
    Goad_wont_fight = "`kApparently %s%s is too cowardly to fight.  Cowards should die . . . slowly."
 
-   Goad_battle_midi_rsc = pk_sb16.mid
+   Goad_battle_midi_rsc = pk_sb16.mp3
 
 classvars:
 

@@ -18,7 +18,7 @@ resources:
 
    room_name_toscrypt = "The Crypt"
    room_toscrypt = toscrypt.roo
-   music_toscrypt = ksong.mid
+   music_toscrypt = ksong.mp3
 
 classvars:
 

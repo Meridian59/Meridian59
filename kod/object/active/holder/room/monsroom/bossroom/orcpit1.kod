@@ -43,7 +43,7 @@ resources:
 
    room_name_Orcpit1 = "Lair of the Orc Pit Boss"
    room_Orcpit1 = ocp1.roo
-   Orcpit1_music = orcpit.mid
+   Orcpit1_music = orcpit.mp3
 
    Orcpit1_door_sound = doorrsup.wav
    Orcpit1_door_down_sound = arr_metl.wav

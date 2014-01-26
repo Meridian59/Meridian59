@@ -18,7 +18,7 @@ resources:
 
    room_name_tosapoth = "Frisconar's Mysticals"
    room_tosapoth = tosapoth.roo
-   tosapoth_music = song02.mid
+   tosapoth_music = song02.mp3
 
    tosapoth_book_name = "The Legacy of Konima"
    tosapoth_book_text = \

@@ -33,7 +33,7 @@ resources:
 
    room_name_cave3 = "The Underground Lake"
    room_cave3 = cave3.roo
-   cave3_music = ksong.mid
+   cave3_music = ksong.mp3
 
    cave3_key_disappears = "Your key disappears into thin air!"
    cave3_locked_door = "The door appears to be firmly locked."

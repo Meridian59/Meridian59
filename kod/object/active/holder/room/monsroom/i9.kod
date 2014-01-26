@@ -23,7 +23,7 @@ resources:
 
    room_name_i9 = "Ukgoth, Holy Land of Trolls"
    room_i9 = i9.roo
-   i9_music = walk4.mid
+   i9_music = walk4.mp3
 
    i9_qor="Qor the Vile"
 

@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsKE2 ="Headquarters of the Noble Avars"
    room_OutdoorsKE2 = KE2.roo
-   OutdoorsKE2_music = avarwar.mid
+   OutdoorsKE2_music = avarwar.mp3
 
 classvars:
 

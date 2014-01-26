@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsKB3 ="Camp of the Warrior Avars"
    room_OutdoorsKB3 = KB3.roo
-   OutdoorsKB3_music = avarwar.mid
+   OutdoorsKB3_music = avarwar.mp3
 
 classvars:
 

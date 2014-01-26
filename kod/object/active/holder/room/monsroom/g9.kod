@@ -64,7 +64,7 @@ resources:
 
    room_name_OutdoorsG9 ="An ancient place, its origin forgotten"
    room_OutdoorsG9 = G9.roo
-   OutdoorsG9_music = walk4.mid
+   OutdoorsG9_music = walk4.mp3
 
    G9_door_sound = down2.wav
 

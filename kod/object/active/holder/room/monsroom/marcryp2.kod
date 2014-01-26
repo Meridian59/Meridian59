@@ -27,7 +27,7 @@ resources:
 
    room_name_MarionCrypt2 = "Resting place of Marion's ancestors"
    room_MarionCrypt2 = MarDun02.roo
-   MarionCrypt2_music = Song.mid
+   MarionCrypt2_music = Song.mp3
 
    MarionCrypt2_boss_message = \
       "~kAn eerie voice echos, \"~IYou may not pass yet!~I\""

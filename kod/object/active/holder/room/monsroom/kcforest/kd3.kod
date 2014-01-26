@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsKD3 ="Deep in the Jungle"
    room_OutdoorsKD3 = KD3.roo
-   OutdoorsKD3_music = boneprst.mid
+   OutdoorsKD3_music = boneprst.mp3
 
 classvars:
 

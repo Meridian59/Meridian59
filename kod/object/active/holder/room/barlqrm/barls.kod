@@ -18,7 +18,7 @@ resources:
 
    room_name_barloquesouth = "South Barloque"
    room_barls = barls.roo
-   barloquesouth_music = corloth.mid
+   barloquesouth_music = corloth.mp3
 
 classvars:
 

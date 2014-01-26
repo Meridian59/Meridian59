@@ -18,7 +18,7 @@ resources:
   
    room_name_KocatanSmithy = "The Chimney House"
    room_KocatanSmithy = kocblack.roo
-   KocatanSmithy_music = song12.mid
+   KocatanSmithy_music = song12.mp3
 
    KocatanSmithy_locked_1 = "The gate is securely locked."
    KocatanSmithy_locked_2 = "The door is locked tight."

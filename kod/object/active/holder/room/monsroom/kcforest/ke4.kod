@@ -52,7 +52,7 @@ resources:
 
    room_name_OutdoorsKE4 = "Avar Village"
    room_OutdoorsKE4 = KE4.roo
-   OutdoorsKE4_music = avarwar.mid
+   OutdoorsKE4_music = avarwar.mp3
 
    KE4_good = \
       "~IThe ground shakes and the air seems a bit sweeter.  You have pleased "

@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsKD4 ="The Clearing of the Trading Post"
    room_OutdoorsKD4 = KD4.roo
-   OutdoorsKD4_music = boneprst.mid
+   OutdoorsKD4_music = boneprst.mp3
 
    OutdoorsKD4_outbuilding_locked = "You may not enter the outbuilding."
    OutdoorsKD4_smokehouse_locked = "The smokehouse is locked."

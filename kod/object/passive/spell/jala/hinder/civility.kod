@@ -22,7 +22,7 @@ resources:
       "This song hinders the casting of the spells of the master of the elements, Faren.  "
       "A ruby and a mushroom are required to begin performing this song."
 
-   Civility_song = jala3.mid
+   Civility_song = jala3.mp3
  
 classvars:
 

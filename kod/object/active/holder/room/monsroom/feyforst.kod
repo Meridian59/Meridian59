@@ -22,9 +22,9 @@ constants:
    
 resources:
 
-   feyforest_music_neutral = neutfor.mid
-   feyforest_music_evil = badfor.mid
-   feyforest_music_good = goodfor.mid
+   feyforest_music_neutral = neutfor.mp3
+   feyforest_music_evil = badfor.mp3
+   feyforest_music_good = goodfor.mp3
    
 classvars:
    

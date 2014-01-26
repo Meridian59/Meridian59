@@ -580,8 +580,6 @@ messages:
       {
          % Someone is raiding the guildhall!
 
-         % If the guild is too young then that guild may not conquer another
-         %  guild.
          poConquerer = Send(who,@GetGuild);
 
          if poConquerer = $
@@ -722,15 +720,6 @@ messages:
 
       if (NOT Send(Send(SYS, @GetSettings), @GuildHallRaidsEnabled))
          OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {
-         return FALSE;
-      }
-
-      oRaidingGuild = Send(who,@GetGuild);
-      if oRaidingGuild = $
-         OR NOT Send(oRaidingGuild,@IsMature)
-         OR GetTime() < Send(oRaidingGuild,@GetLastGuildhallRaid) + 
-                        Send(Send(SYS, @GetSettings), @GetGuildhallRaidDelay)
       {
          return FALSE;
       }

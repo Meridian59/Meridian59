@@ -1280,7 +1280,7 @@ messages:
       for i in plMembers
 	  {
 	     AppendTempString(Send(First(i),@GetTrueName));
-		 AppendTempString(",");
+		 AppendTempString(",\n");
 	  }
 	  return GetTempString();
    }

@@ -1272,6 +1272,18 @@ messages:
    {
       return plMembers;
    }
+   
+   GetMemberNames()
+   {
+      local i,MemberString;
+      ClearTempString();
+      for i in plMembers
+	  {
+	     AppendTempString(Send(First(i),@GetTrueName));
+		 AppendTempString(",");
+	  }
+	  return GetTempString();
+   }
 
    GetGuildMaster()
    {

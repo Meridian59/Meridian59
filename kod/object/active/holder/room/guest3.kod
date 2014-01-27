@@ -18,7 +18,7 @@ resources:
 
    room_name_guest3 = "The Blacksmith of Hazar"
    room_guest3 = guest3.roo
-   guest3_music = smithy.mid
+   guest3_music = smithy.mp3
 
    fire_sound_guest3 = fireplac.wav
 

@@ -20,7 +20,7 @@ resources:
    room_KocatanHallA = Kochoha.roo
    room_name_KocatanHallA = "The Hall of Heroes West"
 
-   KocatanHallA_music = extra01.mid
+   KocatanHallA_music = extra01.mp3
 
 classvars:
 

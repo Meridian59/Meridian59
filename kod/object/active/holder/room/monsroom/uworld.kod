@@ -21,7 +21,7 @@ resources:
 
    room_name_underworld = "The Underworld"
    room_underworld = uworld.roo
-   underworld_music = undrwrld.mid
+   underworld_music = undrwrld.mp3
 
    hell_projectile_icon_rsc = lightnin.bgf
    portal_zap_sound = fbolt.wav

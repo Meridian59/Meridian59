@@ -19,7 +19,7 @@ resources:
    room_name_marinn = "The Limping Toad Inn and Tavern"
    room_marinn = marinn.roo
 
-   marinn_music = bar.mid
+   marinn_music = bar.mp3
 
    news_marinn_name = "Events in Marion"
    news_marinn_desc = "Find out what people are saying about Marion."

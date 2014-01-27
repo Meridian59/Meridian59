@@ -3859,7 +3859,7 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 			int len;
 			if (snod && snod->len_data)
 			{
-			  len = std::min(snod->len_data, 60);
+			  len = std::min(snod->len_data, 1024);
 			  aprintf(":   == \"");
 			  AdminBufferSend(snod->data,len);
 			  if (len < snod->len_data)

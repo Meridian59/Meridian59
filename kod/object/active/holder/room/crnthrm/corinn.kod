@@ -18,7 +18,7 @@ resources:
 
    room_name_corinn = "Cibilo Creek Inn"
    room_corinn = corinn.roo
-   corinn_music = bar2.mid
+   corinn_music = bar2.mp3
 
    cornews_god_name = "Designers' News"
    cornews_god_desc = "Check here for information from the game administrators."

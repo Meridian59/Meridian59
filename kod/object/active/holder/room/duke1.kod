@@ -21,7 +21,7 @@ resources:
 
    room_name_Duke1 = "The Courtyard of Blackstone Keep"
    room_Duke1 = Duke1.roo
-   Duke1_music = area01.mid
+   Duke1_music = area01.mp3
 
    fountain_soundDuke1 = fountain.wav
 

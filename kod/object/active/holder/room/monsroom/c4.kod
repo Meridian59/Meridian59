@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsC4 = C4.roo
    room_name_OutdoorsC4 ="Deep Woods of Ileria"
-   OutdoorsC4_music = walk7.mid
+   OutdoorsC4_music = walk7.mp3
 
 classvars:
 

@@ -257,7 +257,7 @@ resources:
    user_wave_welcome = welcome.wav
    user_wave_killed = killed.wav
 
-   user_midi_killed = killed.mid
+   user_midi_killed = killed.mp3
 
    user_interface_module = merintr.dll
    user_mailnews_module = mailnews.dll
@@ -290,6 +290,9 @@ resources:
    
    user_safety_on_wav_rsc = safety_on.wav
    user_safety_off_wav_rsc = safety_off.wav
+   
+   guild_motd_command = "set motd "
+   guild_clear_motd_command = "clear motd"
 
    autoloot_on_msg = "You decide to pick up treasure as it drops."
    autoloot_off_msg = "You stop picking up treasure as it drops."
@@ -816,7 +819,7 @@ messages:
          AddPacket(1,BP_PLAYER_ADD);
          AddPacket(4,what,4,rName);
          AddPacket(STRING_RESOURCE,rName);
-         AddPacket(4,Send(what,@GetObjectFlags));
+         AddPacket(4,Send(what,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
          SendPacket(poSession);
 
          if IsClass(self,&Admin) AND IsClass(what,&Admin)
@@ -2410,7 +2413,7 @@ messages:
          rName = Send(i,@GetTrueName);
 
          AddPacket(4,i, 4,rName, STRING_RESOURCE,rName);
-         AddPacket(4,Send(i,@GetObjectFlags));
+         AddPacket(4,Send(i,@GetObjectFlags) & ~DRAWFX_INVISIBLE);
       }
       
       SendPacket(poSession);
@@ -3288,6 +3291,39 @@ messages:
       
       return;
    }
+   
+   DamageTypeFlashEffect(aspell=0, duration=800)
+   {
+      if aspell & ATCK_SPELL_QUAKE
+      {
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=27);
+      }
+      if aspell & ATCK_SPELL_HOLY
+      {
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=116);
+      }
+      if aspell & ATCK_SPELL_UNHOLY
+      {
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=56);
+      }
+      if aspell & ATCK_SPELL_ACID
+      {
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=79);
+      }
+      if aspell & ATCK_SPELL_COLD
+      {
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=85);
+      }
+      if aspell & ATCK_SPELL_SHOCK
+      {
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=82);
+      }
+      if aspell & ATCK_SPELL_FIRE
+      {
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=81);
+      }
+      return;
+   }
 
    SendEffectData()
    {
@@ -3495,8 +3531,8 @@ messages:
          Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
          return;
-      }
-
+      }	  
+	  
       lItem_pos = Send(what,@GetPos);
       if lItem_pos = $
       {
@@ -3607,7 +3643,13 @@ messages:
             
             return;                      
          }        
-      }
+      }	  
+	  		 
+	  % shrunken head picked up
+	  if isClass(what, &ShrunkenHead)
+	  {
+		 send(what,@PickedUp,#by=self);
+	  }	  		
 
       Send(self,@NewHold,#what=what);
       
@@ -3682,6 +3724,12 @@ messages:
       {
          Send(poOwner,@NewHold,#what=what,#new_row=piRow,#new_col=piCol,
               #fine_row=piFine_row,#fine_col=piFine_col);
+		 % shrunken head dropped by owner
+		 if isClass(what, &ShrunkenHead)
+		 {
+			Send(what,@Dropped,#by=self,#where=poOwner);
+	     }			  
+			  
       }
       
       return;
@@ -3877,6 +3925,24 @@ messages:
 
       if type = SAY_GUILD
       {
+         if StringContain(string,guild_motd_command)
+            AND Send(self,@GetGuild) <> $
+            AND (Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_MASTER
+                OR Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_LIEUTENANT)
+         {
+            Send(Send(self,@GetGuild),@SetGuildMOTD,#who=self,#string=string);
+            return;
+         }
+         if StringContain(string,guild_clear_motd_command)
+            AND Send(self,@GetGuild) <> $
+            AND Send(Send(self,@GetGuild),@GetGuildMaster) = self
+            AND (Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_MASTER
+                OR Send(Send(self,@GetGuild),@GetRank,#who=self) = RANK_LIEUTENANT)
+         {
+            Send(Send(self,@GetGuild),@SetGuildMOTD,#who=self,#string=$);
+            return;
+         }
+
          Send(self,@UserSayGuild,#string=string);
          
          return;
@@ -5868,10 +5934,11 @@ messages:
    NewHoldObject(what = $)
    {
       if pbLogged_on
-      {
+      {	  
          AddPacket(1,BP_INVENTORY_ADD);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_INVENTORY);
-         SendPacket(poSession);
+         SendPacket(poSession);		 
+
       }
       
       propagate;

@@ -19,7 +19,7 @@ resources:
    room_OutdoorsJ3 = J3.roo
    room_name_OutdoorsJ3 ="The Queen's Way"
 
-   OutdoorsJ3_music = forest.mid
+   OutdoorsJ3_music = forest.mp3
 
 
 classvars:

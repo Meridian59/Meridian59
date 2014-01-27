@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsC6 = C6.roo
    room_name_OutdoorsC6 ="Forest of Farol"
-   OutdoorsC6_music = walk5.mid
+   OutdoorsC6_music = walk5.mp3
 
 classvars:
 

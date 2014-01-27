@@ -58,11 +58,11 @@ properties:
    piRebelFlagItemCount = 0
 
    % Time in minutes, originally defaults to 6 hours.
-   piFlagItemGenTime = 360
+   piFlagItemGenTime = 1440
 
    piClaimTroopGenTime = 8000
    piClaimTroopCap = 15
-   piNonclaimTroopGenTime = 300000
+   piNonclaimTroopGenTime = 30000
    piNonclaimTroopCap = 4
 
    % Number of minutes to wait before a flag claim is done.
@@ -75,7 +75,7 @@ properties:
    piMinUsers = 20
    
    % Minimum number of allies you must have in the same room to make a claim
-   piMinAllies = 3
+   piMinAllies = 2
 
    plFlagStates = $
 
@@ -473,6 +473,48 @@ messages:
       {
          DEBUG("ReloadSavedFlagStates:: encountered errors during save; not replacing older save.");
       }
+
+      return plFlagStates;
+   }
+   
+   SetFlagStates(lFlagStates = $)
+   "Used during recreates to save flag states."
+   {
+      local i, iRID, oRoom, oFlag;
+
+      if lFlagStates = $
+         OR NOT IsList(lFlagStates)
+      {
+         DEBUG("SetFlagStates:: nothing saved, nothing reloaded");
+      }
+
+      if length(lFlagStates) <> length(plFlagRIDs)
+      {
+         DEBUG("SetFlagStates:: error in saved flag states - length mismatch");
+      }
+
+      i = length(plFlagRIDs);
+      while i > 0
+      {
+         i = i - 1;
+         iRID = nth(plFlagRIDs,(i+1));
+         oRoom = send(SYS,@FindRoomByNum,#num=iRID);
+         if oRoom = $
+         {
+            DEBUG("SetFlagStates:: got nil room for RID=",iRID);
+            continue;
+         }
+         oFlag = send(oRoom,@FindHoldingActive,#class=&Flagpole);
+         if oFlag = $
+         {
+            DEBUG("SetFlagStates:: got nil flag in",send(oRoom,@GetName));
+            continue;
+         }
+         send(oFlag,@SystemSetFaction,#faction=nth(lFlagStates,(i+1)));
+      }
+      
+      Send(self,@SaveFlagStates);
+      Send(self,@CountFlags);
 
       return;
    }

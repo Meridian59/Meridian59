@@ -694,6 +694,23 @@ messages:
    {
       return poClaimer;
    }
+   
+   SystemSetFaction(faction=FACTION_NEUTRAL)
+   "For when the pole needs to simply be set to a state directly. Used during recreates."
+   {
+      piFaction = faction;
+      if poOwner <> $
+      {
+         send(poOwner,@SomethingChanged,#what=self);
+         if piFaction <> FACTION_NEUTRAL AND ptGenerateTroops = $
+            AND isClass(poOwner,&MonsterRoom)
+         {
+            ptGenerateTroops = createtimer(self,@GenerateTroops,piGen_time);
+         }
+      }
+
+      return;
+   }
 
    SetFaction(faction=FACTION_NEUTRAL)
    "for admin use"

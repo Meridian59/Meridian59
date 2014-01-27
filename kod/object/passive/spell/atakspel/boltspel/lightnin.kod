@@ -71,23 +71,6 @@ messages:
       return;
    }
 
-   CastSpell(who = $, lTargets = $)
-   {
-      % Do the invert effect
-      Send(who,@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
-      Send(First(lTargets),@EffectSendUser,#what=self,#effect=EFFECT_INVERT);
-
-      propagate;
-   }
-
-   SendEffectData()
-   {
-      % for EFFECT_INVERT, 4 bytes of time to be inverted
-      AddPacket(4,500);
-      
-      return;
-   }
-
    GetProjectileSpeed()
    {
       return 12;

@@ -18,7 +18,7 @@ resources:
 
    room_name_castle1b = "Upstairs in Castle Victoria"
    room_castle1b = castle1b.roo
-   castle1b_music = castle.mid
+   castle1b_music = castle.mp3
 
 classvars:
 

@@ -28,7 +28,7 @@ resources:
       "May be cast for 1 sapphire and 1 uncut seraphym, but exhausted mages "
       "can also instinctively call upon these forces in desperate situations."
 
-   CrystalizeMana_song = song06.mid
+   CrystalizeMana_song = song06.mp3
 
    CrystalizeMana_no_room = \
       "You stop singing once you realize you won't be able to hold the mana "

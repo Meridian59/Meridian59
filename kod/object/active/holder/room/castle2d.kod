@@ -26,7 +26,7 @@ resources:
    mockers_doorlocked = "It seems the door to Mocker's chamber is locked."
    
 
-   castle2d_music = castle.mid
+   castle2d_music = castle.mp3
    
    castle2d_book_name = "The Timeline of Meridian"
    castle2d_book_text = \

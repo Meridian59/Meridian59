@@ -29,7 +29,7 @@ resources:
    kocnews_god_name = "Designers' News"
    kocnews_god_desc = "Check here for information from the game administrators."
 
-   kocinn_music = song12.mid
+   kocinn_music = song12.mp3
 
 classvars:
 

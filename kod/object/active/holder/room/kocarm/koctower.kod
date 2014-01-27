@@ -18,7 +18,7 @@ resources:
 
    room_koctower = koctower.roo
    room_name_koctower = "The East Tower"
-   koctower_music = song12.mid
+   koctower_music = song12.mp3
 
    koctowereast_guarddoor1 = "~kThe soldier says, \"You there, get away from that door.\""
    koctowereast_barracks = "The barracks are off limits to non-military personnel."

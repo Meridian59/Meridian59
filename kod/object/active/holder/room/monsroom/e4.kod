@@ -18,7 +18,7 @@ resources:
    waterfall_sounde4 = wfall2.wav
    room_OutdoorsE4 = E4.roo
    room_name_OutdoorsE4 ="East Merchant Way through Ilerian Woods"
-   OutdoorsE4_music = forest.mid
+   OutdoorsE4_music = forest.mp3
 
 classvars:
 

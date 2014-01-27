@@ -1,0 +1,333 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RadiusEnchantmentTotem is ActiveObject
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   RadiusEnchantmentTotem_icon_rsc = blank.bgf
+   
+classvars:
+
+   viObject_flags = LOOK_NO
+   vrIcon = RadiusEnchantmentTotem_icon_rsc
+
+properties:
+
+   poSpell = $            %% The radius spell we're supporting
+   poCaster = $           %% The caster of the original spell
+
+   piSpellpower = $
+   ptExpirationTimer = $
+   
+   plEnchantments = $     %% The spell info we are using
+
+   piRow = 0
+   piCol = 0
+
+messages:
+
+   Constructor(totem_spell=$,totem_caster=$,totem_power=0)
+   {
+      local oRoom, iTime;
+      
+      poSpell = totem_spell;
+      poCaster = totem_caster;
+      piSpellpower = totem_power;
+      
+      oRoom = Send(poCaster,@GetOwner);
+      
+      If oRoom = $
+         OR poCaster = $
+         OR poSpell = $
+         OR piSpellpower = 0
+         OR NOT IsClass(oRoom,&Room)
+      {
+         Post(self,@Delete);
+         return;
+      }
+
+      Send(SYS,@AddSpellTotemToServerList,#oTotem=self);
+      
+      piRow = Send(poCaster,@GetRow);
+      piCol = Send(poCaster,@GetCol);
+
+      Send(oRoom,@NewHold,#what=self,#new_row=piRow,#new_col=piCol);
+
+      Send(poSpell,@CastSpell,#who=self,#iSpellPower=piSpellpower);
+
+      iTime = Send(poSpell,@GetDuration,#iSpellPower=piSpellpower);
+      if iTime <> $
+      {
+         ptExpirationTimer = CreateTimer(self,@TotemExpire,iTime);
+      }
+
+      propagate;
+   }
+   
+   TotemExpire()
+   {
+      local i;
+
+      ptExpirationTimer = $;
+      
+      Send(self,@Delete);
+      return;
+   }
+
+   Delete()
+   {
+      local i;
+
+      if ptExpirationTimer <> $
+      {
+         DeleteTimer(ptExpirationTimer);
+         ptExpirationTimer = $;
+      }
+
+      for i in plEnchantments
+      {
+         Send(Nth(i,2),@BreakTrance,#who=self,#state=Nth(i,3),#event=EVENT_STEER);
+         DeleteTimer(Nth(i,1));
+      }
+
+      poCaster = $;
+      poSpell = $;
+      plEnchantments = $;
+
+      Send(SYS,@DeleteSpellTotemFromMasterList,#oTotem=self);
+
+      propagate;
+   }
+   
+   GetCaster()
+   {
+      return poCaster;
+   }
+   
+   GetSpell()
+   {
+      return poSpell;
+   }
+
+   GetName()
+   {
+      return Send(poCaster,@GetName);
+   }
+   
+   GetTrueName()
+   {
+      return Send(poCaster,@GetTrueName);
+   }
+   
+   GetGuild()
+   {
+      if IsClass(poCaster,&Monster)
+      {
+         return $;
+      }
+
+      return Send(poCaster,@GetGuild);
+   }
+   
+   AllowPlayerAttack(victim=$,report=FALSE)
+   {
+      if IsClass(poCaster,&Monster)
+      {
+         return TRUE;
+      }
+
+      if victim = poCaster
+      {
+         return TRUE;
+      }
+
+      return Send(poCaster,@AllowPlayerAttack,#victim=victim,#report=FALSE,#spell_obj=poSpell);
+   }
+   
+   CheckPlayerFlag(flag=$)
+   {
+      if IsClass(poCaster,&Monster)
+      {
+         return $;
+      }
+
+      return Send(poCaster,@CheckPlayerFlag,#flag=flag);
+   }
+
+   SomethingEntered(where = $,what = $)
+   {
+      return;
+   }
+   
+   SomethingLeft(where = $,what = $)
+   {
+      return;
+   }
+   
+   SomethingMoved(what = $,new_row = $,new_col = $)
+   {
+      propagate;
+   }
+
+   LastUserLeft()
+   {
+      propagate;
+   }
+
+   DestroyDisposable()
+   {
+      % These naturally time out. They are never actively deleted.
+      return;
+   }
+   
+   StartEnchantment(what = $,time = $,state = $,lastcall=TRUE,addicon=TRUE)
+   "Adds <what> to our enchantments, and creates a timer that will cause it "
+   "to end."
+   {
+      local oTimer, lNew_enchantment;
+
+      if time = $ OR time = SPELL_INDEFINITE_DURATION 
+      {
+         oTimer = $;
+      }
+      else 
+      {
+         if lastcall
+         {
+            oTimer = CreateTimer(self,@EnchantmentTimer,time);
+         }
+         else
+         {
+            oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
+         }
+      }
+
+      if state = $
+      {
+         lNew_enchantment = [oTimer, what];
+      }
+      else
+      {
+         lNew_enchantment = [oTimer, what, state];
+      }
+
+      plEnchantments = Cons(lNew_enchantment,plEnchantments);
+
+      return;
+   }
+
+   EnchantmentTimer(timer = $)
+   {
+      local i,oEnchanter;
+ 
+      for i in plEnchantments
+      {
+         if First(i) = timer
+         {
+            if Length(i) >= 3
+            {
+               Send(Nth(i,2),@EndEnchantment,#who=self,#state=Nth(i,3));
+            }
+            else
+            {
+               Send(Nth(i,2),@EndEnchantment,#who=self);
+            }
+            
+            plEnchantments = DelListElem(plEnchantments,i);
+
+            return;
+         }
+      }
+
+      Debug("Enchantment timer went off with no enchantment",timer);
+
+      return;
+   }
+
+   PeriodicEnchantmentTimer(timer = $)
+   {
+      local i ;
+ 
+      for i in plEnchantments
+      {
+         if First(i) = timer
+         {
+            plEnchantments = DelListElem(plEnchantments,i);
+            
+            if Length(i) >= 3
+            {
+               Send(Nth(i,2),@StartPeriodicEnchantment,#who=self,#state=Nth(i,3));
+            }
+            else
+            {
+               Send(Nth(i,2),@StartPeriodicEnchantment,#who=self,#state=$);
+            }
+
+            return;
+         }
+      }
+
+      Debug("Enchantment timer went off with no enchantment",timer);
+
+      return;
+   }
+
+   GetEnchantedState(what = $)
+   "If enchanted by <what>, returns the state data (which MUST exist, or it's an error.  "
+   "In other words, the caller must know that <what> adds state data).  Returns $ otherwise."
+   {
+      local i;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            return Nth(i,3);
+         }
+      }
+      
+      return $;
+   }
+   
+   SquaredDistanceTo(what = $)
+   "Computes squared distance to <what>.  Assumes they are in same room!"
+   {
+      local iRow, iCol;
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      % Sanity checking
+      if iRow = $ OR iCol = $
+      {
+         return $;
+      }
+
+      return send(self,@SquaredDistanceToLocation,#row=iRow,#col=iCol);
+   }
+
+   SquaredDistanceToLocation(row = $, col = $)
+   "Computes squared distance to (row,col)"
+   {
+      local iRow_diff, iCol_diff;
+
+      iRow_diff = piRow - row;
+      iCol_diff = piCol - col;
+
+      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

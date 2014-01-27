@@ -21,7 +21,7 @@ resources:
 
    room_OutdoorsA5 = A5.roo
    room_name_OutdoorsA5 ="Seafarer's Peak"
-   OutdoorsA5_music = forest.mid
+   OutdoorsA5_music = forest.mp3
 
    cliff_msg1a5 = "You MUST be kidding!"
    room_discord_message = "A strange wind blows in from the sea which clears away the spells affecting this area."
@@ -59,7 +59,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&RedAnt, 60], [&Frogman, 40] ];
+      plMonsters = [ [&RedAnt, 60], [&Troll, 40] ];
 
       plGenerators = [ [38, 39], [41, 29], [44, 7], [42, 20], [28, 40],
 		      [13, 44], [11, 45], [12, 33], [19, 14], [20, 19], 

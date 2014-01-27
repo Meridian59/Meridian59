@@ -73,12 +73,12 @@ classvars:
    vrDead_name = MolluskMonster_dead_name_rsc
 
    viTreasure_type = TID_MOLLUSK
-   viSpeed = SPEED_VERY_FAST
-   viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_DEFENDER | AI_FIGHT_THROUGH_WALLS | AI_MOVE_REGROUP | AI_FIGHT_NEWBIESAFE
+   viSpeed = SPEED_FAST
+   viDefault_behavior = AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_NEWBIESAFE
    viAttack_types = ATCK_WEAP_BLUDGEON
 
    viAttributes = 0
-   viLevel = 150
+   viLevel = 140
    viDifficulty = 7
    viKarma = 90
 

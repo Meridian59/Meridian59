@@ -19,7 +19,7 @@ resources:
 
    room_name_castle2b = "Bourgeois Castle"
    room_castle2b = castle2b.roo
-   castle2b_music = castle.mid
+   castle2b_music = castle.mp3
 
    fountain_soundcastle2b = fountain.wav
 

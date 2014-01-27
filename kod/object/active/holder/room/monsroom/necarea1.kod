@@ -19,7 +19,7 @@ resources:
    room_Necropolis1 = necarea1.roo
    room_name_Necropolis1 = "Winding Caverns"
 
-   Necropolis1_music = nec01.mid
+   Necropolis1_music = nec01.mp3
    Necropolis1_loop = necloop1.wav
    
    underground_lake_locked = "This door appears to be locked from the inside."

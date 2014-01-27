@@ -19,7 +19,7 @@ resources:
    room_TosGraveyard = tosgrave.roo
    room_name_TosGraveyard = "The Graveyard of Tos"
 
-   tosgraveyard_music = marion.mid
+   tosgraveyard_music = marion.mp3
    wind_sound_tosgrave = ambcntry.wav
    wind1_sound_tosgrave = rs_wind.wav
 

@@ -22,7 +22,7 @@ resources:
    room_tosinn = tosinn.roo
    room_name_tosinn = "Familiars"
 
-   tosinn_music = bar.mid
+   tosinn_music = bar.mp3
 
    tosinn_no_rooms = "~kPaddock calls out, \"Sorry, we don't have any vacant rooms right now.\""
    tosinn_locked_basement = "The basement door is locked."

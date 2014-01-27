@@ -18,7 +18,7 @@ resources:
 
    room_name_guest7 = "Eric's Stout Spirits"
    room_guest7 = guest7.roo
-   guest7_music = login.mid
+   guest7_music = login.mp3
 
    guest7_signname = "health, mana and vigor"
    guest7_sign = \

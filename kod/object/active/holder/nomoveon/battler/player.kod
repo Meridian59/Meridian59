@@ -723,6 +723,8 @@ resources:
 
    group_experience_rsc = "You absorb a small amount of the energy released from %s's slaying of the %s."
 
+   player_truced = "Shal'ille's magic compels you to respect the truce."
+   
 classvars:
 
    viHand_space = 2
@@ -3898,6 +3900,33 @@ messages:
          }
       }
 
+      % Truce itself returns TRUE, not counting as an attack.
+      % RadiusTotems send their inherent spell as a spell_obj for AllowPlayerAttack.
+      % Truce will only block actual attacks between two players who are both Truced.
+      if spell_obj <> $
+         AND IsClass(spell_obj,&Truce)
+      {
+         return TRUE;
+      }
+      else
+      {
+         if (Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
+         {
+            if (IsClass(victim,&Monster)
+               OR (IsClass(victim,&User)
+                   AND Send(victim,@IsAffectedByRadiusEnchantment,#byClass=&Truce)))
+               AND actual
+            {
+               if spell_obj = $
+                  AND report
+               {
+                  Send(self,@MsgSendUser,#message_rsc=player_truced);
+               }
+               return FALSE;
+            }
+         }
+      }
+
       % Finally, check status and safety.
       if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report,#actual=actual)
       {
@@ -4119,7 +4148,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
+      local iRange, lWindsState, lSandstormState;
 
       % Can't target self.
       if what = self
@@ -4236,17 +4265,17 @@ messages:
       %  Do this after paying the costs so that the arrow is used.
       if use_weapon <> $ AND IsClass(use_weapon,&RangedWeapon)
       {
-         oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
-         oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
+         lWindsState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Winds);
+         lSandStormState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&SandStorm);
          
-         if Send(poOwner,@IsEnchanted,#what=oWinds)
-            AND Send(oWinds,@WindsRuinShot,#who=self)
+         if lWindsState <> $
+            AND Send(Nth(lWindsState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lWindsState,2))
          {
             return FALSE;
          }
-
-         if Send(poOwner,@IsEnchanted,#what=oSandstorm)
-            AND Send(oSandstorm,@WindsRuinShot,#who=self)
+         
+         if lSandStormState <> $
+            AND Send(Nth(lSandStormState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lSandStormState,2))
          {
             return FALSE;
          }

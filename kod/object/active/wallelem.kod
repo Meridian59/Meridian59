@@ -149,6 +149,8 @@ messages:
          AND IsClass(what,&Player))
          OR (Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MOB_COMBAT)
          AND IsClass(what,&Monster))
+         OR (IsClass(what,&Player)
+             AND Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
       {
          return FALSE;
       }

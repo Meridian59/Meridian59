@@ -761,6 +761,9 @@ properties:
    %  Intended for use to curb overagressive players or to give a boost to
    %  nicer players. Named something unusual to deter experimentation.
    piFlags3 = 0
+   
+   % store minions
+   plControlledMinions = $
 
    % player starts unguilded--doesn't do much yet
    poGuild = $
@@ -4722,13 +4725,20 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit, origdamage, oWeapon, shrunken;
+      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
 			
 	  origdamage = damage;
 	  
       color_rsc = player_hit_color_none;
-      
+	  
+	  % Attacks against a minion master will cause minions to defend the master
+      if length(plControlledMinions) > 0
+	  {	    
+	     for oMinion in plControlledMinions
+		 {
+		    Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+		 }
+	  }
       if what <> $ AND IsClass(what,&monster)
       {
          color_rsc = player_hit_color_blue;
@@ -13122,6 +13132,20 @@ messages:
       Send(self,@ComputeMaxMana);
 
       return;
+   }
+   NewControlledMinion(minion = $)
+   {	   
+      plControlledMinions = cons(minion,plControlledMinions);
+      return;
+   }
+   RemoveControlledMinion(minion = $)
+   {	  
+      plControlledMinions = DelListElem(plControlledMinions,minion);	
+      return;	   
+   }
+   GetControlledMinions()
+   {	   
+      return plControlledMinions;
    }
 
 end

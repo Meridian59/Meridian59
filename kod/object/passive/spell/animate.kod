@@ -180,22 +180,31 @@ messages:
          }
       }
 
-      iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );
-      send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
-      send(oRisen,@SetSummoned,#value=TRUE);
-      Post(oRisen,@ResetBehaviorFlags);  
+      iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );	  	  	  
+	  
+	% Add this creature to your minion list
+	Send(who,@NewControlledMinion,#minion=oRisen);
+  
+	
+	Send(oRisen,@ResetBehaviorFlags);	
+  
+	send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+	send(oRisen,@SetSummoned,#value=TRUE);
 
-      send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
+	% Add this creature to your minion list
+	Send(who,@NewControlledMinion,#minion=oRisen);		
+	Send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+	Send(oRisen,@SetSummoned,#value=TRUE);	  	  
+	Send(self,@ModifyMonsterBehavior,#mob=oRisen);
 
-      Send(who,@MsgSendUser,#message_rsc=Animate_cast_rsc,#parm1=send(oTarget,@GetCorpseName));
-      
-      post(oTarget,@Delete);
-
-      propagate;
+	send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
+	Send(who,@MsgSendUser,#message_rsc=Animate_cast_rsc,#parm1=send(oTarget,@GetCorpseName));      
+	post(oTarget,@Delete);
+	propagate;
    }
 
    ModifyMonsterBehavior(mob = $)
-   {
+   {  
       send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
       send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
       send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);

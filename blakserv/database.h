@@ -66,6 +66,7 @@ typedef struct
 }TotalMoneyRecord;
 
 void MySQLTest();
+void MySQLCheckConnection(bool restart = false);
 void MySQLInit();
 int MySQLCheckSchema();
 void MySQLCreateSchema();

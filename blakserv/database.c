@@ -23,7 +23,7 @@ record_queue_type * record_q;
 
 bool connected = false;
 bool enabled = false;
-bool consume = true;
+bool consume = false;
 
 
 void CreateRecordQueue()
@@ -38,7 +38,9 @@ void CreateRecordQueue()
 	if (record_q->mutex == NULL)
 	{
 		dprintf("Mutex poop");
+		return;
 	}
+	consume = true;
 }
 
 bool EnqueueRecord(record_node * data)
@@ -187,7 +189,7 @@ void MySQLTest()
 	dprintf("MySQL client version: %s\n", mysql_get_client_info());
 }
 
-void MySQLCheckConnection()
+void MySQLCheckConnection(bool restart)
 {
 	if (!enabled)
 		return;
@@ -197,17 +199,30 @@ void MySQLCheckConnection()
 		if (mysql_ping(mysqlcon) == 0)
 		{
 			connected = true;
+			consume = true;
 			return;
 		}
 		else
 		{
 			connected = false;
-			dprintf("MySQL connection dropped. Attempting Reconnect.");
-			MySQLInit();
+			consume = false;
+			dprintf("MySQL connection dropped.");
+			if (restart)
+			{
+				dprintf("Attempting Reconnect.");
+				mysql_close(mysqlcon);
+				MySQLInit();
+			}
 		}
 	}
 	else
-		MySQLInit();
+	{
+		if (restart)
+		{
+			mysql_close(mysqlcon);
+			MySQLInit();
+		}
+	}
 
 }
 
@@ -329,7 +344,7 @@ void MySQLCreateSchema()
 
 void MySQLRecordStatTotalMoney(int total_money)
 {
-	MySQLCheckConnection();
+	MySQLCheckConnection(false);
 	if (!connected | !enabled)
 		return;
 
@@ -349,7 +364,7 @@ void MySQLRecordStatTotalMoney(int total_money)
 
 void MySQLRecordStatMoneyCreated(int money_created)
 {
-	MySQLCheckConnection();
+	MySQLCheckConnection(false);
 	if (!connected | !enabled)
 		return;
 
@@ -367,7 +382,7 @@ void MySQLRecordStatMoneyCreated(int money_created)
 
 void MySQLRecordPlayerLogin(session_node *s)
 {
-	MySQLCheckConnection();
+	MySQLCheckConnection(false);
 	if (!connected | !enabled)
 		return;
 
@@ -394,7 +409,7 @@ void MySQLRecordPlayerLogin(session_node *s)
 
 void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, int aspell, int atype, int damage_applied, int damage_original, int res_weapon)
 {
-	MySQLCheckConnection();
+	MySQLCheckConnection(false);
 	if (!connected | !enabled)
 		return;
 

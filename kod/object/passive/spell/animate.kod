@@ -180,24 +180,18 @@ messages:
          }
       }
 
-      iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );	  	  	  
+	iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );	  	  	  
 	  
 	% Add this creature to your minion list
 	Send(who,@NewControlledMinion,#minion=oRisen);
-  
 	
 	Send(oRisen,@ResetBehaviorFlags);	
   
-	send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
-	send(oRisen,@SetSummoned,#value=TRUE);
-
-	% Add this creature to your minion list
-	Send(who,@NewControlledMinion,#minion=oRisen);		
 	Send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
-	Send(oRisen,@SetSummoned,#value=TRUE);	  	  
+	Send(oRisen,@SetSummoned,#value=TRUE);
 	Send(self,@ModifyMonsterBehavior,#mob=oRisen);
 
-	send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
+	Send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
 	Send(who,@MsgSendUser,#message_rsc=Animate_cast_rsc,#parm1=send(oTarget,@GetCorpseName));      
 	post(oTarget,@Delete);
 	propagate;

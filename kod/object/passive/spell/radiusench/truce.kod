@@ -69,7 +69,6 @@ classvars:
    viAffectsGuildmates = TRUE
    viAffectsEnemies = TRUE
    viAffectsNewbies = TRUE
-   viAffectsAllies = TRUE
 
    viCasterPersist = TRUE
 

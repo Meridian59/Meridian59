@@ -46,7 +46,8 @@ classvars:
    viInventory_group = 1
 
    viBlock_chance = 50
-   viBlock_damage = 10
+   viBlock_damage = 8
+	viProf_bonus = 50
 
 properties:
 

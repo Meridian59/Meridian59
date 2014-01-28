@@ -159,24 +159,6 @@ messages:
       propagate;
    }
 
-   DamageFactors(damage=0, who=$, weapon_used = $)
-   "Different skills/strokes are affected by different stats differently."
-   {
-      local stat;
-	  
-		% Get proficiency bonus.
-		damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*damage/100;
-      
-      % Get stat damage bonus.
-      stat = send(who,@GetAim);
-      damage = (50+stat)*damage/100;
-
-		% Adjust bow damage to a factor of melee damage
-		damage = damage*viDamage_factor/100;
-
-      return damage;
-   }
-
    IsRangedAttack()
    {
       return TRUE;

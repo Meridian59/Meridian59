@@ -55,21 +55,5 @@ messages:
       return Send(who,@GetAim);
    }
 
-   DamageFactors(damage=0, who=$, weapon_used = $)
-   "Different skills/strokes are affected by different stats differently."
-   {
-      local stat;
-
-		% Get proficiency bonus.
-		damage = damage + (Send(weapon_used,@GetProf,#who=who)+1)*damage/100;
-
-      % Get stat damage bonus.
-      stat = (send(who,@GetMight) + send(who,@GetAim))/2;
-
-      damage = (50+stat)*damage/100;
-
-      return damage;
-   }
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

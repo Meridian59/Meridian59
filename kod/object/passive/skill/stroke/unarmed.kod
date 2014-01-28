@@ -56,12 +56,12 @@ messages:
      return;
    }
 
-   GetAttackType(weapon_used=$)
+   GetAttackType(use_weapon=$)
    {
      return viAttack_Type;
    }
 
-   GetAttackSpell(weapon_used=$)
+   GetAttackSpell(use_weapon=$)
    {
      return viSpell_type;
    }
@@ -90,7 +90,7 @@ messages:
       damage = 800;
 
       % Take various damage factors into consideration.
-      damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=$);
+      damage = send(self,@DamageFactors,#damage=damage,#who=who,#use_weapon=$);
 
       return damage;
    }

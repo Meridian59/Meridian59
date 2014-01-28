@@ -58,7 +58,8 @@ classvars:
    viAttack_Type = ATCK_WEAP_STRIKE
    viAttack_spell = ATCK_SPELL_FIRE
    viRangedBlock_chance = -100
-   viBlock_damage = 10
+   viBlock_damage = 8
+	viProf_bonus = 200
 
 properties:
 

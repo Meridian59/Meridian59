@@ -60,6 +60,7 @@ classvars:
    viBlock_chance = 0
    viRangedBlock_chance = 0
    viBlock_damage = 0
+	viProf_bonus = 0
    viSpell_modifier = 0
    
 properties:
@@ -70,7 +71,7 @@ messages:
 
    GetProf(who=$)
    {
-      return send(who,@GetSkillAbility,#skill_num=viProficiency_needed);
+      return send(who,@GetAbility,#num=viProficiency_needed) * (100 + viProf_bonus) / 100;
    }
 
    GetProfNumber()
@@ -80,7 +81,9 @@ messages:
 
    GetStroke(who=$)
    {
-      return send(who,@GetSkillAbility,#skill_num=Send(self,@GetDefaultStrokeNumber));
+      send(who,@FlipSkillAtrophyFlag,#SKID=Send(self,@GetDefaultStrokeNumber));
+	
+		return send(who,@GetAbility,#num=Send(self,@GetDefaultStrokeNumber));
    }
 
    GetAttackName()
@@ -126,12 +129,12 @@ messages:
    % Called here, different shields can give different bonuses.
    GetBlockAbility(who = $)
    {
-      return send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) + 1 + viBlock_chance + send(who,@GetMight);
+      return send(who,@GetAbility,#num=SKID_BLOCK) * (100 + viBlock_chance) / 100;
    }
 	
    GetRangedBlockAbility(who = $)
    {
-      return send(who,@GetSkillAbility,#skill_num=SKID_BLOCK) + 1 + viRangedBlock_chance + send(who,@GetMight);
+      return send(who,@GetAbility,#num=SKID_BLOCK) * (100 + viRangedBlock_chance) / 100;
    }
 
    DoBlockAnimation()

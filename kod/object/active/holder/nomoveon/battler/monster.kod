@@ -284,6 +284,8 @@ properties:
 
    piHit_points = 1
    piMax_hit_points = 1
+	
+	piCombat_stance = 0
 
    % Who we are dealing with.
    poCustomer = $
@@ -347,6 +349,7 @@ messages:
    {
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints));
       piHit_points = piMax_hit_points;
+		piCombat_stance =  random(-5,5);
 
       if Send(self,@MobIsSeller)
       {
@@ -1064,11 +1067,16 @@ messages:
       }
 
       % Carry out attack
-      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+      Send(self,@TryAttack,#what=poTarget,#stroke_obj=send(self,@GetMonsterStroke));
       Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
 
       return;
    }
+	
+	GetMonsterStroke()
+	{
+		return self;
+	}
  
    ChaseTimer( timer = $ )
    "We're in Hot pursuit, so either we keep chasing, or we attack."
@@ -1431,13 +1439,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "This returns the battler's ability to-hit.  Ranges from 1 to 1500."
+   "This returns the battler's ability to-hit.  Capped at 10000."
    {
       local iAttack;
 
       if piOffense = $
       {
-         iAttack = (9*viLevel) + (180*viDifficulty);
+         iAttack = 1000 + 10*viLevel + 200*(viDifficulty + piCombat_stance);
       }
       else
       {
@@ -1449,25 +1457,24 @@ messages:
          iAttack = iAttack * 3 / 4;
       }
       
-      return Bound(iAttack,1,4500);
+      return Bound(iAttack,1,10000);
    }
 
    GetDefense(what = $, stroke_obj=$)
-   "This returns the battler's ability to avoid being hit.  Ranges from "
-   "1 to 1500."
+   "This returns the battler's ability to avoid being hit.  Capped at 10000."
    {
       local iDefense;
 
       if piDefense = $
       {
-         iDefense = (9*viLevel) + (180*viDifficulty);
+         iDefense = 1000 + 10*viLevel + 200*(viDifficulty - piCombat_stance);
       }
       else
       {
          iDefense = piDefense;
       }
      
-      return Bound(iDefense,1,4500);
+      return Bound(iDefense,1,10000);
    }
 
    % The next message deals with the three defense skills.  These messages
@@ -1551,7 +1558,7 @@ messages:
                         #value=iResist);
 			
 			% Damage done by players is randomized at the very end to create a smooth damage spectrum.
-			if IsClass(what,&Player)
+			if IsClass(what,&Player) OR IsClass(what,&Reflection) 
 			{
 					iDamage = random(iDamage/2,iDamage);
 			}

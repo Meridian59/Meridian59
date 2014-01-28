@@ -282,8 +282,7 @@ messages:
       propagate;
    }
 
-   ModifyChanceToImprove(who=$,oSpellSkill=$,chance=0)
-   "This takes a spell/skill that who is trying to advance and modifies the improve_chance."
+   ModifyChanceToImprove(who=$,oSpellSkill=$)
    {
       if IsClass(oSpellSkill,&Spell)
          AND send(oSpellSkill,@GetSchool) = SS_KRAANAN
@@ -291,7 +290,7 @@ messages:
          return 20;
       }
 
-      return chance;
+      return 0;
    }
 
 

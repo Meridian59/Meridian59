@@ -62,12 +62,5 @@ messages:
       propagate;
    }
 
-   GetResistanceModifiers()
-   {
-      return [ [ATCK_WEAP_STRIKE,-10]
-             ];
-   }
-
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

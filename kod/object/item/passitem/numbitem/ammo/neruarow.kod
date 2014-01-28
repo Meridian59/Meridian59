@@ -50,7 +50,7 @@ messages:
 
    GetDamage(who=$,target=$)
    {
-      if target <> $ AND random(1,100) <= 20
+      if target <> $ AND random(1,100) <= 10
       {
          send(who,@MsgSendUser,#message_rsc=nerudite_arrow_explodes);
          if isClass(target,&Player)
@@ -58,10 +58,10 @@ messages:
             send(target,@MsgSendUser,#message_rsc=nerudite_arrow_explodes);
          }
 
-         return 10;
+         return 12;
       }
 
-      return 6;
+      return 8;
    }
 
    SendProjectileAnimation()

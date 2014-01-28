@@ -86,6 +86,8 @@ classvars:
    vrCondition_med = robe_condition_med 
    vrCondition_poor = robe_condition_poor 
    vrCondition_broken = robe_condition_broken 
+	
+	viDodge_base = 0
 
 properties:   
 

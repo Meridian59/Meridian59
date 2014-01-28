@@ -40,7 +40,7 @@ classvars:
    viWeight = 200
    viBulk = 250
 
-   viDodge_base = 50             
+   viDodge_base = 0             
    viDamage_flat_base = 1
    viDamage_percent_base = 10
 

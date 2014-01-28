@@ -4074,7 +4074,7 @@ messages:
       }
 
       % Send to the STROKE to get the range, so unarmed attacks have ranges, too
-      iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
+      iRange = Send(stroke_obj,@GetRange,#use_weapon=use_weapon);
 
       % A little fudge factor to account for lag drift, etc.
       % Don't fudge for ranged weapons.
@@ -4130,7 +4130,7 @@ messages:
 
       % Okay, checking is done, attack is okay. Do the animation thing.
       if NOT Send(stroke_obj,@CheckWeaponAndDoAnimation,#who=self,
-                  #weapon_used=use_weapon,#victim=what)
+                  #use_weapon=use_weapon,#victim=what)
       {
          return FALSE;
       }
@@ -4292,7 +4292,7 @@ messages:
    % This returns the battler's ability to-hit. Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iStat, iOffense, iBonus, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iOffense, iBonus, oMonster;
 
       oWeapon = $;
 
@@ -4310,51 +4310,23 @@ messages:
          if oWeapon <> $
          {
             % Get weapon's numbers.
-            iStroke = Send(oWeapon,@GetStroke,#who=self) + 1;
-            iProficiency = Send(oWeapon,@GetProf,#who=self) + 1;
-            
-            if IsClass(oWeapon,&Weapon)
-            {
-               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_FIRE
-               {
-                  iStat = Send(self,@GetAim);
-               }
-         
-               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_THRUST
-               {
-                  iStat = Send(self,@GetAim);
-               }
-         
-               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_STRIKE
-               {
-                  iStat = (Send(self,@GetAim)+Send(self,@GetMight))/2;
-               }
-         
-               if Send(oWeapon,@GetDefaultStrokeNumber) = SKID_SLASH
-               {
-                  iStat = (Send(self,@GetAim)+Send(self,@GetAgility))/2;
-               }
-            }
-            else
-            {
-               iStat = Send(self,@GetMysticism);
-            }
+            iStroke = Send(oWeapon,@GetStroke,#who=self);
+            iProficiency = Send(oWeapon,@GetProf,#who=self);
          }
          else
          {
             % Unarmed
-            iStroke = Send(self,@GetSkillAbility,#skill_num=SKID_PUNCH) + 1;
-            iProficiency = Send(self,@GetSkillAbility,#skill_num=SKID_BRAWLING) + 1;
-            iStat = Send(self,@GetMight);
+            iStroke = Send(self,@GetAbility,#num=SKID_PUNCH);
+            iProficiency = Send(self,@GetAbility,#num=SKID_BRAWLING);
          }
          
-         iOffense = 250 + (iStroke*25/10) + (iProficiency*5) + (iStat*20);
+         iOffense = 1000 + iStroke*10 + iProficiency*10;
 
          if oWeapon <> $
          {
             if IsClass(oWeapon,&Weapon)
             {
-               iBonus = Send(oWeapon,@ModifyHitRoll,#target=what,#hit_roll=iOffense);
+               iBonus = Send(oWeapon,@ModifyHitRoll,#who=self,#target=what,#hit_roll=iOffense);
                iOffense = iOffense * (100 + iBonus)/100;
             }
 	     }
@@ -4381,7 +4353,7 @@ messages:
          iOffense = iOffense / 2;
       }
 
-      return bound(iOffense,1,4000);
+      return bound(iOffense,1,10000);
    }
 
    % This returns the battler's ability to avoid being hit. Ranges from 1 to 1000.
@@ -4412,7 +4384,7 @@ messages:
          iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = (iParry + iBlock)*25/10 + iDodge*5 + (iAgility*20);
+         iDefense = 1000 + iParry*5 + iBlock*5 + iDodge*10;
       }
 
       for i in plDefense_modifiers
@@ -4429,7 +4401,7 @@ messages:
 
       % iDefense = iDefense + Send(Send(SYS,@GetParliament),@GetFactionDefenseBonus,#who=self);
     
-      return bound(iDefense,1,4000);
+      return bound(iDefense,1,10000);
    }
 
    % The next three messages deal with the three defense skills. These messages return the relative values of the three
@@ -4563,32 +4535,79 @@ messages:
 
       if Send(Send(sys,@FindSkillByNum,#num=SKID_DODGE),@CanPayCosts,#who=self)
       {
-         for i in plDefense_modifiers
-         {
-            iBonus = Send(i,@ModifyDodgeAbility,#who=self);
-            iDodge = iDodge + iBonus;
-         }
-         return bound(Send(self,@GetSkillAbility,#skill_num=SKID_DODGE) + 1 + iDodge + send(self,@GetAgility),0,$);
+			% If no armor is equipped, we don't get a modification to our dodge rating.
+			iDodge = 0;
+			
+			for i in send(self,@GetPlayerUsing)
+			{
+				if IsClass(i,&Armor)
+				{
+					% If we have armor equipped, we may incur a dodge penalty.
+					iDodge = Send(i,@ModifyDodgeAbility,#who=self);
+				}
+			}
+
+         return bound(Send(self,@GetAbility,#num=SKID_DODGE) * (100 + iDodge) / 100,0,$);
       }
 
       return 0;
    }
 
    % This returns the damage done to target "what" before resistances.
-   GetDamage(what = $, stroke_obj=$)
+   GetDamage(what = $, stroke_obj=$, use_weapon=$, durabilityhit=TRUE)
    {
-      local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
-            oSpell, oMonster;
-
-      % Morphed?
-      oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      local i, iDamage, oStroke, iModBonus, iDamageBonus,
+            oSpell;
+		
+		oStroke = Send(self,@GetPlayerStroke,#stroke_obj=stroke_obj,#durabilityhit=durabilityhit);
+		
+		if IsClass(oStroke,&Monster)
       {
-         iDamage = Send(oMonster,@GetDamage,#what=what,#stroke_obj=stroke_obj);
+         iDamage = Send(oStroke,@GetDamage,#what=what,#stroke_obj=stroke_obj);
       }
       else
       {
+         % Asks stroke for damage done, based on weapon, req stat, and skill percentages
+         iDamage = Send(oStroke,@FindDamage,#use_weapon=use_weapon,#who=self,#victim=what); 
+      }
+
+      % Spells and attmods that modify damage
+      iDamageBonus = 0;
+      for i in plAttack_modifiers
+      {
+         % Attack modifiers return a percentage gain.
+         iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
+                          #stroke_obj=oStroke);
+         iDamageBonus = iDamageBonus + iModBonus;
+			if durabilityhit
+			{
+				Send(i,@DamageGear);
+			}
+      }
+               
+      % iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),@GetFactionDamageBonus,#who=self);
+
+      iDamage = iDamage * (100 + iDamageBonus)/100;
+
+      return iDamage;
+   }
+	
+	GetPlayerStroke(stroke_obj=$, durabilityhit=TRUE)
+	{
+		local oMonster, oWeapon, oStroke;
+		
+      % Morphed? If so, the monster itself is the stroke_obj.
+      oMonster = Send(self,@GetIllusionForm);
+      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      {
+         oStroke = oMonster;
+      }
+      else
+      {
+			% Maybe we want to pass on a specific stroke_obj to TryAttack, such as bash or riposte.
          oStroke = stroke_obj;
+			
+			% If no stroke_obj was passed on to TryAttack, we determine one here.
          if stroke_obj = $
          {
             oWeapon = Send(self,@GetWeapon);
@@ -4601,7 +4620,11 @@ messages:
                if IsClass(oWeapon,&Weapon)
                {
                   oStroke=Send(SYS,@FindSkillByNum,#num=Send(oWeapon,@GetDefaultStrokeNumber));
-				  Send(oWeapon,@DamageGear);
+						
+						if durabilityhit
+						{
+							Send(oWeapon,@DamageGear);
+						}
                }
                else
                {
@@ -4610,30 +4633,10 @@ messages:
                }
             }
          }
-
-         % Asks stroke for damage done, based on weapon, req stat, and skill percentages
-         iDamage = Send(oStroke,@FindDamage,#weapon_used=Send(self,@GetWeapon),
-                        #who=self,#victim=what); 
       }
-
-      % Spells and attmods that modify damage
-      iDamageBonus = 0;
-      for i in plAttack_modifiers
-      {
-         % Attack modifiers return a percentage gain.
-         iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
-                          #stroke_obj=oStroke);
-         iDamageBonus = iDamageBonus + iModBonus;
-
-         Send(i,@DamageGear);
-      }
-               
-      % iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),@GetFactionDamageBonus,#who=self);
-
-      iDamage = iDamage * (100 + iDamageBonus)/100;
-
-      return iDamage;
-   }
+		return oStroke;
+	}
+	
 
    % This is the type of damage done.
    GetDamageType(what = $, use_weapon = $)
@@ -4766,9 +4769,11 @@ messages:
          
 			% All player damage is multiplied by 100 when base damage is determined
 			% in order to avoid cumulative losses to truncation. Before final damage 
-			% is applied, we divide by 100 again.
+			% is applied, we divide by 100 again. At the end of calculations, let's make
+			% sure we don't have negative damage values.
 		   damage = (damage * (100-(iPercentBonus + iResistance))/100)/100;
 			damage = damage - iFlatBonus;
+			damage = bound(damage,0,$);
 		 
          % Armor of Gort has a special effect that must go absolutely last
          oGort = Send(SYS,@FindSpellByNum,#Num=SID_ARMOR_OF_GORT);
@@ -4787,10 +4792,13 @@ messages:
 						  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
 						  #parm3=Send(Send(what,@GetWeapon),@GetAttackName),
 						  #parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
-					Send(what,@MsgSendUser,#message_rsc=player_attacker_arrow_blocked,
-						  #parm1=Send(Send(what,@GetWeapon),@GetAttackName),
-						  #parm2=Send(self,@GetDef),#parm3=Send(self,@GetName),
-						  #parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
+					if IsClass(what,&Player)
+					{
+						Send(what,@MsgSendUser,#message_rsc=player_attacker_arrow_blocked,
+							#parm1=Send(Send(what,@GetWeapon),@GetAttackName),
+							#parm2=Send(self,@GetDef),#parm3=Send(self,@GetName),
+							#parm4=Send(Send(self,@LookupPlayerShield),@GetAttackName));
+					}
 					Send(send(self,@LookupPlayerShield),@DamageGear);
 					Post(send(self,@LookupPlayerShield),@DoBlockAnimation);
 					damage = 0; 
@@ -4798,7 +4806,7 @@ messages:
 			}
       }
 	  
-      if IsClass(what,&Player)
+      if IsClass(what,&Player) OR IsClass(what,&Reflection) OR IsClass(what,&EvilTwin)
       {
             damage = random(damage/2,damage);
       }
@@ -5079,7 +5087,7 @@ messages:
       return;
    }
 
-   GetSomethingMissedYouSound(what = $,weapon_used = $)
+   GetSomethingMissedYouSound(what = $,use_weapon = $)
    {
       local i,iRoll;
 
@@ -7262,6 +7270,21 @@ messages:
        return abs(compound) mod 100;
     }
 
+   GetAbility(num = 0)
+	"This is the weighted ability, a compound of requisite stat and ability percentage."
+   {
+		local oAbility;
+		
+		oAbility = Send(SYS,@FindSkillByNum,#num=num);
+		
+		if oAbility = $
+		{
+			oAbility = Send(SYS,@FindSpellByNum,#num=num);
+		}
+		
+      return Send(oAbility,@GetAbility,#who=self);
+   }
+	 
    GetSkillAbility(Skill_num = 0, absolute=FALSE)
    {
       local i;
@@ -9296,16 +9319,16 @@ messages:
 
       % Don't send information about face elements if we're wearing the
       % shrunken head mask. See shrnkmsk.kod for details.
-% if prHead <> ShrunkenHeadMask_icon_male_rsc
-% AND prHead <> ShrunkenHeadMask_icon_female_rsc
-% {
+		% if prHead <> ShrunkenHeadMask_icon_male_rsc
+		% AND prHead <> ShrunkenHeadMask_icon_female_rsc
+		% {
          AddPacket(4,prMouth, 1,HS_MOUTH, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prEyes,1, HS_EYES, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,1);
-% }
+		% }
 
       if poHair_remove = $
       {
@@ -9516,16 +9539,16 @@ messages:
                 1,ANIMATE_NONE, 2,1);
       % Don't send information about face elements if we're wearing the
       % shrunken head mask. See shrnkmsk.kod for details.
-% if prHead <> ShrunkenHeadMask_icon_male_rsc
-% AND prHead <> ShrunkenHeadMask_icon_female_rsc
-% {
+		% if prHead <> ShrunkenHeadMask_icon_male_rsc
+		% AND prHead <> ShrunkenHeadMask_icon_female_rsc
+		%	{
          AddPacket(4,prMouth, 1,HS_MOUTH, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prEyes, 1,HS_EYES, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,1);
-% }
+		%	}
       
       if poHair_remove = $
       {

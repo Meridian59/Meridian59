@@ -48,7 +48,7 @@ classvars:
    vrIcon_male = neruditearmor_male_icon_rsc
    vrIcon_female = neruditearmor_female_icon_rsc
 
-   viDodge_base = -50           
+   viDodge_base = -25           
    viDamage_flat_base = 1
    viDamage_percent_base = 10
 

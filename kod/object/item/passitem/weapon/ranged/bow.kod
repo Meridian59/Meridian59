@@ -49,15 +49,9 @@ classvars:
    viInventory_group = 3
    viBroken_group = 2
 
-   % Base damage determined by ammo, but this can add to the bow's strength.
-   viWeaponDamage = 0
-   viRange = 100
-
    viValue_average = 2500
    viBulk = 80
    viWeight = 70
-
-   viSpell_modifier = -25
 
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN4
@@ -98,7 +92,7 @@ messages:
       piUsed = USED;
 
       return;
-   }   
+   }
 
    NewUsed()
    {

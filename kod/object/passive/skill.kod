@@ -164,8 +164,14 @@ messages:
    }
 
    GetAbility(who=$)
+	"This is the weighted ability, a compound of requisite stat and ability percentage."
    {
-      return Send(who,@GetSkillAbility,#skill_num=viSkill_num);
+		local iStat, iAbility;
+		
+		iStat = send(self,@GetRequisiteStat,#who=who);
+		iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num) + 1;
+		
+      return iStat + (iAbility / 2);
    }
 
    GetPrerequisites()
@@ -222,11 +228,9 @@ messages:
    "other procedures of player kod."
    "Modifier indicates the plusses (or minuses, if negative) to apply to the chance"
    {
-      local iRequisiteStat,iAbility,num;
+      local num;
 
-      iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
-      iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
-      num = (iAbility+1)/4 + iRequisiteStat/2;
+      num = Send(who,@GetAbility,#num=viSkill_num)/2;
       num = num *(100+modifier)/100;
 
       if random(1,100) > num

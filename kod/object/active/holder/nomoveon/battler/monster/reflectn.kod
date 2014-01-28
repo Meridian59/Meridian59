@@ -125,6 +125,11 @@ messages:
    {
       return Send(poOriginal,@GetName,#cap=cap);
    }
+	
+   GetWeapon()
+   {
+      return Send(poOriginal,@GetWeapon);
+   }
    
    GetDef(cap=FALSE)
    {
@@ -377,16 +382,18 @@ messages:
 
    GetDamage(what = $, stroke_obj=$)
    {
-      local oStroke;
-
-      oStroke = stroke_obj;
+      return Send(poOriginal,@GetDamage,#what=what,#use_weapon=Send(poOriginal,@GetWeapon),#durabilityhit=FALSE);
+   }
+	
+	GetMonsterStroke()
+	{
       if IsClass(poOriginal,&Player)
       {
-         oStroke = $;
+         return Send(poOriginal,@GetPlayerStroke,#durabilityhit=FALSE);
       }
-      
-      return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
-   }
+		
+		propagate;
+	}
 
    SomethingChanged(what=$)
    {
@@ -506,18 +513,18 @@ messages:
 
    DoAttack()
    {
-      local Weapon, ammotype, i;
+      local Weapon, AmmoType, i;
 
       Send(self,@GetOriginalInfo);
 
       if IsClass(poOriginal,&Player)
       {
          Weapon = Send(poOriginal,@LookupPlayerWeapon);
-         ammotype = poArrow;
+         AmmoType = poArrow;
 
          if Weapon <> $
          {
-            if IsClass(Weapon,&Longbow)
+            if IsClass(Weapon,&Bow)
             {
                piAnimation = PANM_BOW_FIRE;
 
@@ -604,9 +611,9 @@ messages:
       return Send(poOriginal,@GetURL);
    }
 
-   SendMoveAnimation()
+   SendOverlays()
    {
-      return Send(poOriginal,@SendMoveAnimation);
+      return Send(poOriginal,@SendOverlays,#iAnimation=piAnimation);
    }
 
    SendMoveOverlays()
@@ -619,9 +626,9 @@ messages:
        return Send(poOriginal,@SendAnimation,#iAnimation=piAnimation);
    }
 
-   SendOverlays()
+   SendMoveAnimation()
    {
-      return Send(poOriginal,@SendOverlays,#iAnimation=piAnimation);
+      return Send(poOriginal,@SendMoveAnimation);
    }
 
    GetIllusionForm()

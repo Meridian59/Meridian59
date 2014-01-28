@@ -14,9 +14,6 @@ constants:
 
    include blakston.khd
 
-   BRAWL_THRESHOLD = 40          % Base brawl needed to attempt to disarm someone while unarmed
-   DISARM_FACTOR = 10            % Divide raw success total by this number before taking percent chance.
-
 resources:
    Disarm_name_rsc = "disarm"
    Disarm_icon_rsc = idisarm.bgf
@@ -79,14 +76,12 @@ messages:
    SuccessChance(who=$,modifier=0)
    "Modifier indicates the plusses (or minuses, if negative) to apply to the chance"
    {
-       local reqstat,iAbility,num;
+       local num;
 
-       reqstat=send(self,@GetRequisiteStat,#who=who);
-       iAbility=send(who,@GetSkillAbility,#skill_num=viSkill_num);
-       num = ((100-reqstat)*iAbility/100) + reqstat;
-       num = (num + 1 + modifier) / DISARM_FACTOR;
+       num = send(who,@GetAbility,#num=viSkill_num);
+       num = num * (100 + modifier) / 100;
        
-       if random(1,100) < num
+       if random(1,1000) <= num
        {
          return TRUE;
        }
@@ -96,7 +91,7 @@ messages:
 
    DoSkill(who=$,oTarget=$,oWeapon=$)
    {
-      local iAbil,iModifier,oOppWeapon, oHoldSpell;
+      local iAbility,iModifier,oOppWeapon, oHoldSpell;
    
       if (who=$)
       {
@@ -107,13 +102,8 @@ messages:
       if oWeapon=$
       {
          % Talented people can disarm even bare-handed.
-         iAbil = Send(who,@GetSkillAbility,#Skill_num=SKID_BRAWLING);
-         if iAbil < BRAWL_THRESHOLD
-         {
-            return FALSE;
-         }
-         
-         iModifier = iAbil - 100;
+         iAbility = Send(who,@GetAbility,#num=SKID_BRAWLING);
+         iModifier = iAbility - 100;
       }
       else
       {
@@ -126,7 +116,7 @@ messages:
       }
 
       % Get player's ability in this skill.
-      iAbil = Send(who,@GetSkillAbility,#Skill_num=viSkill_num);
+      iAbility = Send(who,@GetAbility,#num=viSkill_num)*(100+iModifier)/100;
 
       if (IsClass(oTarget,&Player)) and (Send(SYS,@IsPKAllowed) or Send(Send(who,@GetOwner),@IsArena))
       {
@@ -140,9 +130,8 @@ messages:
 
          if Send(oTarget,@TryUnuseItem,#what=oOppWeapon)
          {
-            % Currently, have 1/5th your percent plus your modifier chance to make opponent drop weapon.
-            iAbil = (iAbil + 1 + iModifier) / DISARM_FACTOR;
-            if (random(1,100) < iAbil) and (not Send(Send(oTarget,@GetOwner),@IsArena))
+            % Currently, have up to a 10 percent chance modified by your weapon.
+            if (random(1,1000) <= iAbility) and (not Send(Send(oTarget,@GetOwner),@IsArena))
             {
                % Success!  They dropped it!
                Send(oTarget,@DropItem,#droppedItem=oOppWeapon);
@@ -179,10 +168,10 @@ messages:
               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
               
          % The better you are, the better your weapon, the longer your stun is.
-         % The bigger the monster is, the shorter the stun is.
-         % Stun between 2 and 6 seconds.
-         iAbil = bound((iAbil + iModifier - Send(oTarget,@GetLevel)/2)/10,2,6);
-         Send(oHoldSpell,@DoHold,#what=who,#otarget=oTarget,#idurationsecs=iAbil,#report=FALSE);
+         % The more difficult the monster is, the shorter the stun is.
+         % Stun between 2 and 8 seconds.
+         iAbility = bound((iAbility/20) - Send(oTarget,@GetDifficulty),2,8);
+         Send(oHoldSpell,@DoHold,#what=who,#otarget=oTarget,#idurationsecs=iAbility,#report=FALSE);
       }
 
       propagate;

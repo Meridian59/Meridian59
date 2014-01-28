@@ -56,40 +56,6 @@ messages:
       return Send(who,@GetMight);
    }
 	
-   FindDamage(weapon_used=$, who=$, victim=$)
-   "We put this here so that we can vary a stroke's damage per weapon."
-   {
-      local iAbility, damage;
-      
-		weapon_used = send(who,@LookupPlayerShield);
-		
-      % base weapon damage
-      damage = send(weapon_used,@GetDamage,#who=who,#target=victim);
-      
-      % Scale the basedamage with the attacker's ability in the stroke
-      iAbility = Send(who,@GetSkillAbility,#skill_num=viSkill_num);
-      damage = damage * (50 + (iAbility + 1)/2) / 100;
-      
-      damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=weapon_used);
-	  
-	  return damage;
-   }
-   
-   DamageFactors(damage=0, who=$, weapon_used = $)
-   "Different skills/strokes are affected by different stats differently."
-   {
-      local stat;
-	  
-		% Get proficiency bonus.
-		damage = damage + (Send(who,@GetSkillAbility,#Skill_num=SKID_BASH)+1)*damage/100;
-	  
-      % Get stat damage bonus.
-      stat = send(who,@GetMight);
-      damage = (50+stat)*damage/100;
-
-      return damage;
-   }
-	
    ImproveStroke(who=$,use_weapon=$,target=$)
    {
 		send(self,@ImproveAbility,#who=who,#target=target);

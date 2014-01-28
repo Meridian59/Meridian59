@@ -26,15 +26,17 @@ classvars:
 
    vrName = Longbow_name_rsc
    vrDesc = Longbow_desc_rsc
-
-   viWeaponDamage = 0
+	
    viRange = 100
-   viHit_roll_modifier = 10
-
-   viValue_average = 2500
-  
+   viWeaponDamage = 0
+   viHit_roll_modifier = 0
+	viRangedAccuracy = 60
+   viStrikethrough = 0
+   viProf_bonus = 0
    viSpell_modifier = -20
 
+   viValue_average = 2500
+	
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN2
 

@@ -185,6 +185,11 @@ messages:
    {
       return send(poOriginal,@GetName,#cap=cap);
    }
+	
+   GetWeapon()
+   {
+      return Send(poOriginal,@GetWeapon);
+   }
    
    GetDef(cap=FALSE)
    {
@@ -315,13 +320,13 @@ messages:
       return 1;
    }
 
-   % This returns the battler's ability to-hit.  Ranges from 1 to 1000
+   % This returns the battler's ability to-hit.  Ranges from 1 to 10000
    GetOffense(what = $, stroke_obj=$)
    {
       return Send(poOriginal,@GetOffense,#what=what,#stroke_obj=stroke_obj);
    }
 
-   % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
+   % This returns the battler's ability to avoid being hit.  Ranges from 1 to 10000.
    GetDefense(what = $, stroke_obj=$)
    {
       return Send(poOriginal,@GetDefense,#what=what,#stroke_obj=stroke_obj);
@@ -329,16 +334,18 @@ messages:
 
    GetDamage(what = $, stroke_obj=$)
    {
-      local oStroke;
+      return Send(poOriginal,@GetDamage,#what=what,#use_weapon=Send(poOriginal,@GetWeapon),#durabilityhit=FALSE);
+   }
 
-      oStroke = stroke_obj;
+	GetMonsterStroke()
+	{
       if IsClass(poOriginal,&Player)
       {
-         oStroke = $;
+         return Send(poOriginal,@GetPlayerStroke,#durabilityhit=FALSE);
       }
-      
-      return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
-   }
+		
+		propagate;
+	}
 
    GetKarma(detect=FALSE)
    {
@@ -489,7 +496,7 @@ messages:
 
       if Weapon <> $   %IsClass(Weapon,&Weapon)
       {
-         if IsClass(Weapon,&Longbow)
+         if IsClass(Weapon,&Bow)
          {
             piAnimation = PANM_BOW_FIRE;
 

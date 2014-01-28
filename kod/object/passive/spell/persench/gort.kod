@@ -55,8 +55,7 @@ classvars:
 
 properties:    
 
-   piDamage_percent_reduce = 10
-   piDamage_flat_reduce = 2
+   piDamage_percent_reduce = 20
 
 messages:
 
@@ -106,7 +105,7 @@ messages:
          }
       }
 
-      return bound(damage,1,iMax);
+      return bound(damage,1,$);
    }
 
    EndEnchantment(who = $, report = TRUE, state = 0)

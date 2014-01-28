@@ -414,10 +414,16 @@ messages:
    }
 
    GetAbility(who=$)
+	"This is the weighted ability, a compound of requisite stat and ability percentage."
    {
-      return Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+		local iStat, iAbility;
+		
+		iStat = send(self,@GetDivisionReq,#who=who);
+		iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num) + 1;
+		
+      return iStat + (iAbility / 2);
    }
-
+	
    GetSpellNum()
    {
       return viSpell_Num;
@@ -2052,7 +2058,8 @@ messages:
       }
 
       % Spell power starts out as half the player's spell ability.
-      iBase = Send(who,@GetSpellAbility,#spell_num=viSpell_num)/2;      
+		% Spell ability is a compound of spell percentage and requisite stat.
+      iBase = Send(who,@GetAbility,#num=viSpell_num)/2;      
 
       % Check the player's in use items to see if they affect anything.
       % Note that this also checks itematts.

@@ -117,7 +117,8 @@ classvars:
    viBulk = 100
 
    viRangedBlock_chance = 50
-   viBlock_damage = 4
+   viBlock_damage = 8	
+	
 properties:
 
    vrDesc = guildshield_desc_rsc

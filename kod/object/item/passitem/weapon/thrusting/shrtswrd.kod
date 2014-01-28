@@ -62,14 +62,14 @@ messages:
 
 		if Send(self,@IsBackstab,#attacker=Send(self,@GetOwner),#victim=target)
 		{
-			iBackstab = 1;
+			iBackstab = 100;
 		}
 
       % First, get base damage.
       iDamage = send(self,@GetBaseDamage,#who=poOwner,#target=target);
 
 		%Now add the bonus damage from backstabbing.		
-      iDamage = iDamage + (iDamage * iBackstab);
+      iDamage = iDamage + (iDamage * iBackstab)/100;
   
       iDamage = iDamage * 100;
 

@@ -89,7 +89,7 @@ messages:
      local iProf;
       Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
      
-     iProf = Send(who,@GetSpellAbility,#spell_num=SID_MANA_FOCUS);
+     iProf = Send(who,@GetAbility,#num=SID_MANA_FOCUS) * (100 + send(self,@GetJewelFactor,#who=who)) / 100;
      
      return iProf;
   }

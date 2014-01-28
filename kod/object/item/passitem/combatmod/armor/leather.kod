@@ -47,7 +47,7 @@ classvars:
    vrIcon_male = Leatherarmor_male_icon_rsc
    vrIcon_female = Leatherarmor_female_icon_rsc
 
-   viDodge_base = 50              
+   viDodge_base = 0              
    viDamage_flat_base = 1
    viDamage_percent_base = 10
 

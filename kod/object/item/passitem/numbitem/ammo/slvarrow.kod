@@ -62,7 +62,7 @@ messages:
          return 10;
       }
 
-      return 6;
+      return 8;
    }
 
    SendProjectileAnimation()

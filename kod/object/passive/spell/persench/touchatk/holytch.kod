@@ -73,8 +73,6 @@ classvars:
    viSpellType = ATCK_SPELL_HOLY+ATCK_SPELL_ALL
    viStroke = STROKE_HOLY_TOUCH
 
-   viDifficulty = 1
-
    vbAutomatic = FALSE
 
    vrSucceed_wav = holytouch_sound
@@ -99,7 +97,7 @@ messages:
      local iProf;
       Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
      
-     iProf = bound(Send(who,@GetKarma),1,99);
+     iProf = (bound(Send(who,@GetKarma)/2,0,50) + send(who,@GetMysticism)) * (100 + send(self,@GetJewelFactor,#who=who)) / 100;
      
      return iProf;
   }

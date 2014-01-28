@@ -40,22 +40,20 @@ classvars:
    viProficiency_Needed = SKID_PROFICIENCY_BOW
    viAmmo_type = AMMO_ARROW
 	
+   viRange = 100
+   viWeaponDamage = 0
+   viHit_roll_modifier = 0
+	viRangedAccuracy = 15
+   viStrikethrough = 0
+   viProf_bonus = 0
+   viSpell_modifier = -40
+	
    viBulk = 70
    viWeight = 70
-   
-   viHit_roll_modifier = 0
-   viSpell_modifier = -20
-   viStrikethrough = 0
    
    viUse_Amount = 2
 
    vrExtendedDescription = ranged_desc_rsc
-
-   viWeaponDamage = 0   % Mostly, damage is a factor of ammo, the random factor is 
-                        % in them.  viWeaponDamage is the bow's contribution to that,
-                        % due to things like stiffer bowstrings, harder wood, whatever.
-
-   viRange = 100
 
 properties:
    
@@ -76,11 +74,28 @@ messages:
    {
       local iStrikethrough;
 	  
-	  iStrikethrough = viStrikethrough + send(send(self,@GetOwner),@GetAim) + 
-	                   send(send(self,@GetOwner),@GetSkillAbility,#skill_num=viProficiency_needed);
+	  iStrikethrough = send(send(self,@GetOwner),@GetAbility,#num=viProficiency_needed) * (100 + viStrikethrough) / 100;
 	  	  
 	  return iStrikethrough;
    }
+
+   ModifyHitRoll(who=$,target=$)
+	{
+		local iDistance, iMalus;
+		
+		iDistance = send(who,@SquaredDistanceTo,#what=target);
+		
+		if iDistance > 0
+		{
+			iMalus = bound(-100 + 100 * viRangedAccuracy * viRangedAccuracy / send(who,@SquaredDistanceTo,#what=target),-100,0);
+		}
+		else
+		{
+			iMalus = 0;
+		}
+		
+		return iMalus;
+	}
    
    % General unsorted messages:
 
@@ -152,12 +167,6 @@ messages:
       iAttackType = iAttackType | piAttack_Spell;
 
       return iAttackType;
-   }
-
-   ModifyHitRoll(hit_roll = 0, target = $)
-   "Returns the hit roll modifier stored in the individual ranged weapon."
-   {
-       return viHit_roll_modifier;
    }
 
    GetBaseDamage(who=$,target=$)

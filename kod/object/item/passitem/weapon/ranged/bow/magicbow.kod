@@ -28,14 +28,16 @@ classvars:
    vrName = MagicBow_name_rsc
    vrDesc = MagicBow_desc_rsc
 
-   viValue_average = 3500
-
+   viRange = 100
+   viWeaponDamage = 0
+   viHit_roll_modifier = 0
+	viRangedAccuracy = 60
+   viStrikethrough = 0
+   viProf_bonus = 50
    viSpell_modifier = -40
 
-   viWeaponDamage = 4
-   viRange = 100
-   viHit_roll_modifier = 20
-
+	viValue_average = 3500
+	
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_GRAY
 

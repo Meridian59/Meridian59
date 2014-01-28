@@ -131,8 +131,7 @@ messages:
          AND poQuester <> $
          AND poOwner <> poQuester
       {
-         % Return a big number, since normally chance to-hit goes up to 1000.
-         return -10000;
+         return -100;
       }
 
       propagate;

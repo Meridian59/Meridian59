@@ -26,31 +26,36 @@ constants:
    % Hit modifiers
    WEAPON_HITMOD_STRIKE  = 0
    WEAPON_HITMOD_THRUST  = 0
-   WEAPON_HITMOD_SLASH = 10
+   WEAPON_HITMOD_SLASH = 0
 
    % Base damage of different types
    WEAPON_DAMAGE_STRIKE_BASE  = 8
    WEAPON_DAMAGE_THRUST_BASE  = 8
-   WEAPON_DAMAGE_SLASH_BASE = 10
+   WEAPON_DAMAGE_SLASH_BASE = 8
+
+   % Proficiency bonus
+   WEAPON_PROF_STRIKE  = 0
+   WEAPON_PROF_THRUST  = 0
+   WEAPON_PROF_SLASH = 0
 
    % Disarm bonus
    WEAPON_DISARM_STRIKE  = 0
    WEAPON_DISARM_THRUST  = 0
-   WEAPON_DISARM_SLASH = 5
+   WEAPON_DISARM_SLASH = 50
    
    % Parry bonus
    WEAPON_PARRY_STRIKE  = 0
-   WEAPON_PARRY_THRUST  = 0
-   WEAPON_PARRY_SLASH = 50
+   WEAPON_PARRY_THRUST  = 50
+   WEAPON_PARRY_SLASH = 0
 
    % Spell modifier, large negatives are bad.
-   WEAPON_SPELL_STRIKE  = 0
+   WEAPON_SPELL_STRIKE  = 10
    WEAPON_SPELL_THRUST  = -10
    WEAPON_SPELL_SLASH = -10
 
    % Range of reach
    WEAPON_RANGE_STRIKE  = 2
-   WEAPON_RANGE_THRUST  = 3
+   WEAPON_RANGE_THRUST  = 2
    WEAPON_RANGE_SLASH = 2
 
    % Quality mods to number of hits
@@ -59,19 +64,24 @@ constants:
    WEAPON_NERUDITE_HITS = 100
 
    % Quality mods to hit modifier
-   WEAPON_LOW_QUALITY_HITMOD  = -10
-   WEAPON_HIGH_QUALITY_HITMOD = 10
-   WEAPON_NERUDITE_HITMOD = 10
+   WEAPON_LOW_QUALITY_HITMOD  = 0
+   WEAPON_HIGH_QUALITY_HITMOD = 0
+   WEAPON_NERUDITE_HITMOD = 0
 
    % Quality mods to damage
-   WEAPON_LOW_QUALITY_DAMAGE  = -2
-   WEAPON_HIGH_QUALITY_DAMAGE = 2
-   WEAPON_NERUDITE_DAMAGE = 2
+   WEAPON_LOW_QUALITY_DAMAGE  = 0
+   WEAPON_HIGH_QUALITY_DAMAGE = 0
+   WEAPON_NERUDITE_DAMAGE = 0
+   
+   % Quality mods to proficiency
+   WEAPON_LOW_QUALITY_PROF  = -50
+   WEAPON_HIGH_QUALITY_PROF = 50
+   WEAPON_NERUDITE_PROF = 50
 
    % Quality mods to disarming
-   WEAPON_LOW_QUALITY_DISARM  = -5
-   WEAPON_HIGH_QUALITY_DISARM = 5
-   WEAPON_NERUDITE_DISARM = 5
+   WEAPON_LOW_QUALITY_DISARM  = -50
+   WEAPON_HIGH_QUALITY_DISARM = 50
+   WEAPON_NERUDITE_DISARM = 50
 
    % Quality mods to parrying
    WEAPON_LOW_QUALITY_PARRY  = -50
@@ -85,8 +95,8 @@ constants:
 
    % Quality mod to range
    WEAPON_LOW_QUALITY_RANGE  = 0
-   WEAPON_HIGH_QUALITY_RANGE = 0
-   WEAPON_NERUDITE_RANGE = 0
+   WEAPON_HIGH_QUALITY_RANGE = 1
+   WEAPON_NERUDITE_RANGE = 1
 
 resources:
 
@@ -151,6 +161,7 @@ classvars:
 	vrExtendedDescription = extended_description
    
    viParry_chance = 0
+	viProf_bonus = 0
 
 properties:
 
@@ -317,7 +328,7 @@ messages:
 
       return iDamage;
    }
-
+   
    GetDamage(target=$)
    {
       local iDamage;
@@ -448,7 +459,7 @@ messages:
          iParry = iParry + WEAPON_NERUDITE_PARRY;
       }
 	  
-      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY) + 1 + iParry + viParry_chance + send(who,@GetAim);
+      return send(who,@GetAbility,#num=SKID_PARRY) * (100 + viParry_chance) / 100;
    }
 
    GetBaseSpellModifier()
@@ -494,9 +505,47 @@ messages:
 
    GetProf(who=$)
    {
-      send(who,@FlipSkillAtrophyFlag,#SKID=viProficiency_needed);
-      
-      return send(who,@GetSkillAbility,#skill_num=viProficiency_needed);
+		local iProf, iBonus;   
+		
+		iBonus = viProf_bonus;
+
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_STRIKE
+      {
+         iBonus = iBonus + WEAPON_PROF_STRIKE;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iBonus = iBonus + WEAPON_PROF_THRUST;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iBonus = iBonus + WEAPON_PROF_SLASH;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iBonus = iBonus + WEAPON_LOW_QUALITY_PROF;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iBonus = iBonus + WEAPON_HIGH_QUALITY_PROF;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iBonus = iBonus + WEAPON_NERUDITE_PROF;
+      }
+
+		send(who,@FlipSkillAtrophyFlag,#SKID=viProficiency_needed);
+
+		iProf = send(who,@GetAbility,#num=viProficiency_needed) * (100 + iBonus) / 100;
+		
+      return iProf;
    }
 
    GetProfNumber()
@@ -508,7 +557,7 @@ messages:
    {
       send(who,@FlipSkillAtrophyFlag,#SKID=Send(self,@GetDefaultStrokeNumber));
       
-      return send(who,@GetSkillAbility,#skill_num=Send(self,@GetDefaultStrokeNumber));
+      return send(who,@GetAbility,#num=Send(self,@GetDefaultStrokeNumber));
    }
 
    GetDefaultStrokeNumber()

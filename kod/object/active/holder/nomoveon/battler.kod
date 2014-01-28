@@ -322,11 +322,13 @@ messages:
    TryAttack(what=$,stroke_obj=$,use_weapon=$)
    {
       local iChanceToHit, iPreliminary, iDamage, oWeapon, iExtraHits;
-
+		
+		% We may use our shield as a weapon. Allow bash to pass the shield on as our use_weapon.
       if use_weapon <> $
 		{
 			oWeapon = use_weapon;
 		}
+		% No weapon has been passed on, let's get that weapon here.
 		else
 		{
 			oWeapon = Send(self,@GetWeapon);
@@ -336,7 +338,7 @@ messages:
       %  point.
 
       % This is the generic checks and the calculation of chance to hit and
-      %  damage.
+      % damage.
       iChanceToHit = (Send(self,@GetOffense,#what=what,#stroke_obj=stroke_obj)
                       * EQUAL_CHANCE_HIT) / Send(what,@GetDefense,#what=self,#stroke_obj=stroke_obj);
       iChanceToHit = bound(iChanceToHit,125,2000);
@@ -366,7 +368,7 @@ messages:
 		   }
 
          % We hit!
-		   iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj);
+		   iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj,#use_weapon=use_weapon);
 		   iPreliminary = bound(iPreliminary,0,$);
 
          iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,#stroke_obj=stroke_obj,
@@ -877,30 +879,23 @@ messages:
    % This returns defense reason of why opponent missed this battler.
    GetDefenseDesc(stroke_obj=$,what=$)
    {
-      local iRandom, iParry, iBlock, iDodge, iAvoid, oSkill;
+      local iRandom, iParry, iBlock, iDodge, oSkill;
       
       iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
       iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
       iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj)*2;
-	   if IsClass(self,&Player)
-	   {
-	      iAvoid = Send(self,@GetAgility)*8+100;
-	   }
-	   else
-	   {
-	   iAvoid = 50;
-	   }
-      iRandom = iParry + iBlock + iDodge + iAvoid;
+
+      iRandom = 1000 + iParry + iBlock + iDodge;
       iRandom = random(0,iRandom);
 
-      if iRandom < iParry
+      if iRandom <= iParry
       {
 	      if (IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
 		   {
 	         send(send(self,@LookupPlayerWeapon),@DamageGear);
 			   if stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
 				AND Send(self,@HasSkill,#num=SKID_RIPOSTE) 
-				AND (101 + Send(self,@GetSkillAbility,#skill_num=SKID_RIPOSTE)) > random(0,199)
+				AND (100 + Send(self,@GetAbility,#num=SKID_RIPOSTE)) > random(0,199)
 			   {
 	            post(send(self,@LookupPlayerWeapon),@DoRiposte,#who=self,#what=what);
 		   	}
@@ -915,7 +910,7 @@ messages:
          return battler_parried;
       }
 
-      if iRandom < (iParry + iBlock)
+      if iRandom <= (iParry + iBlock)
       {
 	      if (IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
 		   {
@@ -923,7 +918,7 @@ messages:
 		      send(send(self,@LookupPlayerShield),@DamageGear);
 			   if stroke_obj <> Send(SYS,@FindSkillByNum,#num=SKID_FIRE)
 				AND Send(self,@HasSkill,#num=SKID_BASH) 
-				AND (101 + Send(self,@GetSkillAbility,#skill_num=SKID_BASH)) > random(0,199)
+				AND (100 + Send(self,@GetAbility,#num=SKID_BASH)) > random(0,199)
 			   {
 	            post(send(self,@LookupPlayerShield),@DoBlockAttack,#who=self,#what=what);
 			   }			
@@ -934,7 +929,7 @@ messages:
          return battler_blocked;
       }
 
-      if iRandom < (iParry + iBlock + iDodge)
+      if iRandom <= (iParry + iBlock + iDodge)
       {
 	      if (IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED))
 			{
@@ -1130,7 +1125,7 @@ messages:
               #parm3=Send(what,@GetDef),
               #parm4=Send(what,@GetName));
          Send(stroke_obj,@SendMissMessageToAttacker,#who=self,#victim=what,
-              #color_rsc=rColor,#weapon_used=Send(self,@LookupPlayerWeapon),
+              #color_rsc=rColor,#use_weapon=Send(self,@LookupPlayerWeapon),
               #bText=FALSE);
       }
 

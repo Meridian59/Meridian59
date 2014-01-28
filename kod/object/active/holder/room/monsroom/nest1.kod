@@ -48,7 +48,7 @@ properties:
    piBaseLight = LIGHT_DARK
    
    piMonster_Count_Max = 20
-   piGen_time = 2000
+   piGen_time = 10000
    piGen_percent = 60
 
    ptQueen_gen = $

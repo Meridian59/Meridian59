@@ -189,7 +189,10 @@ messages:
          iMaxHPs = Send(victim,@ReturnMaxHitPoints);
       }
 
-      iHPLoss = (iBaseDamage * iSpellPower) / 100;
+      % Intellect boosts base damage
+      iBaseDamage = Send(self,@DamageFactors,#damage=iBaseDamage,#who=who,#victim=victim);
+
+      iHPLoss = (iBaseDamage * (iSpellPower+1)) / 100;
 
       % Always leaves 1 HP behind, no more than 1/3 damage.
       iHPLoss = bound(iHPLoss,0,(iMaxHps/3));
@@ -201,6 +204,17 @@ messages:
       }
       
       return iHPLoss;
+   }
+
+   DamageFactors(damage = 0, who = $)
+   {
+      local iDamage, iIntellect;
+
+      % Get int damage bonus.
+      iIntellect = Send(who,@GetIntellect);
+      iDamage = ((100+bound(iIntellect-25,0,40))*damage)/100;
+
+      return iDamage;
    }
 
    GetDuration(iSpellPower = 0)

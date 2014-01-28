@@ -122,13 +122,19 @@ messages:
 
    HitSideEffect( what = $ )
    {
-      local oSpell;
+      local oSpell, oSpell2;
 
       if Random(1,POISON_CHANCE) = 1
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,#lossrate=POISON_LOSSRATE,
               #duration=POISON_DURATION);
+      }
+      
+      if Random(1,2) = 2
+      {
+         oSpell2 = Send(SYS,@FindSpellByNum,#num=SID_SPIDER_WEB);
+         Send(oSpell2,@CastSpell,#who=self,#ltargets=[poTarget], #ispellpower=100);
       }
 
       return;

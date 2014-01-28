@@ -80,7 +80,7 @@ messages:
       iMaxDamage = piMaxDamage;
       
       iDamage = Send(what,@AssessDamage,#what=poCaster,#damage=Random(0,iMaxDamage),
-                     #aspell=ATCK_SPELL_SHOCK,#report=FALSE,#report_resistance=FALSE);
+                     #aspell=ATCK_SPELL_ALL+ATCK_SPELL_SHOCK,#report=FALSE,#report_resistance=FALSE);
 
       if iDamage = $
       {

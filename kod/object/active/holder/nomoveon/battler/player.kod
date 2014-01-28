@@ -1,4 +1,5 @@
 % Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
 % All rights reserved.
 %
 % This software is distributed under a license that is described in
@@ -28,26 +29,26 @@ constants:
 
    %%% COMBAT PACING PARAMETERS
    % These parameters control how often it is possible to have combat
-   % assuming readily available opponents. Xian 4/3/96
+   % assuming readily available opponents.   Xian 4/3/96
    %
    % Parameter: Base Regeneration Time (sec)
-   % Meaning: Time needed for a nearly-killed player of stamina 25
-   % to rest fully or player of intelligence 25 to recover mana
-   % Formula: BASE_REGEN_TIME / 1000
+   % Meaning:   Time needed for a nearly-killed player of stamina 25 
+   %             to rest fully or player of intelligence 25 to recover mana
+   % Formula:   BASE_REGEN_TIME / 1000
    % Currently: 150 sec = 2.5 min
-   % Note: The fastest time scale
+   % Note:      The fastest time scale
    %
    % Parameter: Vigor Recovery Time (sec)
-   % Meaning: Time needed to fully rest after complete vigor depletion
-   % Formula: REST_THRESHOLD * REST_TIME / 1000
+   % Meaning:   Time needed to fully rest after complete vigor depletion
+   % Formula:   REST_THRESHOLD * REST_TIME / 1000
    % Currently: 200 sec = 3.3 min
-   % Note: Should be slower than health and mana refresh
-   %
+   % Note:      Should be slower than health and mana refresh
+   % 
    % Parameter: Food Digestion Time (sec)
-   % Meaning: Time needed to completely empty a full stomach
-   % Formula: 10000 / FOOD_USE_RATE
+   % Meaning:   Time needed to completely empty a full stomach
+   % Formula:   10000 / FOOD_USE_RATE
    % Currently: 833 sec = 13.9 min
-   % Note: Need empty stomach to get vigor boost from food
+   % Note:      Need empty stomach to get vigor boost from food
    BASE_REGEN_TIME = 150000
 
    % Rate at which stomach empties.
@@ -60,15 +61,15 @@ constants:
    ATTACK_EXERTION = 5000
 
    % Number of ms required to gain one vigor point
-   REST_TIME = 2500
+   REST_TIME = 2500          
 
    % Number of ms to lose one boosted health or mana point.
-   BOOST_DECAY_TIME = 30000
+   BOOST_DECAY_TIME = 30000 
 
    % Currently: 10 improves every 15-22 minutes.
-   ADVANCE_TIMER_MIN = 900000
-   ADVANCE_TIMER_MAX = 1320000
-   ADVANCEMENT_LIMIT = 10
+   ADVANCE_TIMER_MIN =   900000
+   ADVANCE_TIMER_MAX =   1320000
+   ADVANCEMENT_LIMIT =   10
 
    PKPOINTER_TIME = 10*60*1000
 
@@ -85,9 +86,9 @@ constants:
    PLAYER_TRANSLATION2_ARMS_MUL = 0x100
 
    SHIRT_MASK = 0x00ff
-   SHIRT_MUL = 0x0001
+   SHIRT_MUL  = 0x0001
    PANTS_MASK = 0xff00
-   PANTS_MUL = 0x0100
+   PANTS_MUL  = 0x0100
    
    BASE_NEED = 105
 
@@ -95,27 +96,27 @@ constants:
    SECONDWIND_THRESHOLD = 25
    
    % How steep is the curve for learning new levels of spells?
-   % A higher number means a greater slope (less points at low levels)
-   POINTS_SLOPE = 7
+   %  A higher number means a greater slope (less points at low levels)
+   POINTS_SLOPE = 7                 
 
    % Sets a reasonable lower level on the number of percents needed to
-   % advance to the next level of spells/skills.
-   MIN_NEEDED_TO_ADVANCE = 75
+   %  advance to the next level of spells/skills.
+   MIN_NEEDED_TO_ADVANCE = 75       
                                     
    % How many weapon swings until we get an improve check?
-   SWINGS_PER_IMPROVE_CHECK = 75
+   SWINGS_PER_IMPROVE_CHECK = 75    
 
-   % What's the length after having a player attacked before we let "mules"
-   % cast on them again. Currently set to 15 minutes. Should be bigger
-   % than logoff ghost time (currently 10 mins)
+   % What's the length after having a player attacked before we let "mules" 
+   %  cast on them again.  Currently set to 15 minutes.  Should be bigger 
+   %  than logoff ghost time (currently 10 mins)
    ATTACKED_PLAYER_WAIT = 15 * 60
 
-   % Damage is capped at piBase_Max_Health divided by this number. Reduces
-   % newbie slaughter.
+   % Damage is capped at piBase_Max_Health divided by this number.  Reduces
+   %  newbie slaughter.
    MAX_HEALTH_DAMAGE_FRACTION = 3
 
-   % Damage is overall capped to this number. Gives a slight edge to people
-   % with higher hps.
+   % Damage is overall capped to this number.  Gives a slight edge to people
+   %  with higher hps.
    MAX_DAMAGE_PER_HIT = 30
 
    % What's the maximum stat we can have after modification?
@@ -158,7 +159,7 @@ resources:
       "~IYour name is entered on the roll of membership for %s%s's political "
       "faction."
    player_lost_token = \
-      "The token refuses to enter the guild hall and writhes in your hands. "
+      "The token refuses to enter the guild hall and writhes in your hands.  "
       "You cannot hold it."
    player_intrigue_shut = "~IThe Royal Court no longer needs your services."
    player_lost_intriguing = \
@@ -172,7 +173,7 @@ resources:
       "~BYou have displeased your liege by attacking a potential future ally!"
    player_unfactioned = \
       "~IYour liege has no use for one such as you, lacking in prowess or "
-      "devotion. Your name has been stricken from the roll of membership.~n"
+      "devotion.  Your name has been stricken from the roll of membership.~n"
 
    player_cancel_rescue = \
       "~IYour aggression halts your attempt to escape from the current situation."
@@ -181,7 +182,7 @@ resources:
    player_improved_wav_rsc = imp.wav
    player_aggressor = "Shal'ille frowns upon your unprovoked attack."
    player_safety_caught = \
-      "Hey! You almost hit %s%s! Good thing your safety was on!"
+      "Hey!  You almost hit %s%s!  Good thing your safety was on!"
 
    player_safe_server = \
       "You are not allowed to attack other players in this world."
@@ -211,7 +212,7 @@ resources:
    player_angel_rejoins = "Your guardian angel rejoins you."
    player_lose_node = "You lose your connection to the mana node in %s."
 
-   player_hit_immunity = "%s%s%s laughs off your pitiful blow."
+   player_hit_immunity =  "%s%s%s laughs off your pitiful blow."
    player_hit_resisted = "%s%s%s shrugs off your attack."
    player_hit_anti_resisted = "%s%s%s staggers backwards from the blow."
    player_hit_anti_immunity = \
@@ -229,7 +230,7 @@ resources:
    player_was_slashed = "%s%s%s slashes your side, leaving a nasty cut."
    player_was_bludgeoned = "%s%s%s bludgeons you, causing a large bruise."
    player_was_pierced = "%s%s%s slyly pierces you while you were distracted."
-   player_was_thrusted = "%s%s%s skewers you with a deft thrust. Sluish!"
+   player_was_thrusted = "%s%s%s skewers you with a deft thrust.  Sluish!"
    player_was_burned = "%s%s%s's fire flares brightly, leaving you charred."
    player_was_shocked = "%s%s%s grins as a jolt of electricity hits you."
    player_was_frozen = "%s%s%s stings you with a jolt of cold."
@@ -258,7 +259,7 @@ resources:
    
    player_wave_hit = hit.wav
    
-   player_level_music = perc2.mid
+   player_level_music = perc2.mp3
    
    % These are now old resources..... here in case we want to de-hack...
    player_desc_guild = "%q of %s%q."
@@ -300,14 +301,14 @@ resources:
 
    % Here's the new extended resources....
    player_desc_guild_faction_neutral = \
-      "%q of %s%q. Not associated with any faction, yet concerned with the "
+      "%q of %s%q.  Not associated with any faction, yet concerned with the "
       "intrigue of the Royal Court."
    player_desc_guild_faction_duke = \
-      "%q of %s%q. A devoted servant of Duke Akardius."
+      "%q of %s%q.  A devoted servant of Duke Akardius."
    player_desc_guild_faction_princess = \
-      "%q of %s%q. Firmly loyal to Princess Kateriina."
+      "%q of %s%q.  Firmly loyal to Princess Kateriina."
    player_desc_guild_not_intriguing = \
-      "%q of %s%q. Not yet concerned with affairs at the Royal Court."
+      "%q of %s%q.  Not yet concerned with affairs at the Royal Court."
 
    player_no_guild_faction_neutral = \
       "No known guild affiliation. Not associated with any faction, yet "
@@ -352,10 +353,10 @@ resources:
    player_cant_dance = \
       "You can't dance, all the stuff in your hands is cramping your style!"
    player_cant_dance_resting = \
-      "You're sitting right now. Let's not take this \'getting down\' stuff "
+      "You're sitting right now.  Let's not take this \'getting down\' stuff "
       "too literally, ok?"
    player_stop_dance = "\
-      You lose your rhythm and settle out of your dancing frenzy."
+      You lose your rhythm and settle out of your dancing frenzy." 
 
    player_wave = "You wave your hand."
    player_point = "You point."
@@ -371,7 +372,7 @@ resources:
    player_window_overlay_glow = povglow.bgf
 
    player_male_icon_rsc = bta.bgf
-   player_female_icon_rsc = btb.bgf
+   player_female_icon_rsc = btb.bgf  
    
    player_legs_a_rsc = bfa.bgf
    player_legs_b_rsc = bfb.bgf
@@ -397,12 +398,12 @@ resources:
    player_newbie_commands = \
       "\n~BBasic Commands for Meridian 59:~B\n"
       "~IUse these mouse and keyboard commands to interact with the world.\n"
-      "These are the default commands. You can change the keyboard commands "
+      "These are the default commands.  You can change the keyboard commands "
       "by going to the menu item~I ~wGame > Configuration.\n"
       "~rright-click on an object ~b- examines an object, letting you see "
-      "more detail. Right-click on the sign in this area to learn more.\n"
+      "more detail.  Right-click on the sign in this area to learn more.\n"
       "~rspace bar ~b- go through doors, like the blue door to the north.\n"
-      "~rE key ~b- attack monsters. You may want to wield a weapon first!\n"
+      "~rE key ~b- attack monsters.  You may want to wield a weapon first!\n"
       "~n~IType the following commands (red text) into the text bar below. "
       "You can press the RETURN key to move to the chat window.~I\n"
       "~rsay (message) ~b- send a message to everyone in the same room.\n"
@@ -412,215 +413,215 @@ resources:
       "on.\n"
       "~rwho ~b- shows a list of all the people logged into the game right "
       "now.\n"
-      "~rmail ~b- opens up your mail folder. Read the messages from your "
+      "~rmail ~b- opens up your mail folder.  Read the messages from your "
       "guardian angel!\n"
-      "~rhelp ~b- opens our web-based help pages. It will take a few "
+      "~rhelp ~b- opens our web-based help pages.  It will take a few "
       "seconds to load.\n"
 
    player_safety_on_mail = \
       "Your safety is currently on, meaning you cannot cast hostile spells or "
       "attack innocent players."
    player_safety_off_mail = \
-      "Your safety is currently off. If you do not wish to attack innocent "
+      "Your safety is currently off.  If you do not wish to attack innocent "
       "players, I heartily recommend that you turn it on."
 
    player_ready_to_kill = "Subject: Congratulations!\n"
       "Your character has been deemed ready to take on the world without "
       "my protection, meaning that you may now raise your sword against other "
-      "players if you so desire. It is with a heavy heart that I take my "
+      "players if you so desire.  It is with a heavy heart that I take my "
       "leave of you, but I trust that you will do fine without me."
       "\n\n"
       "You also have many other rights and responsibilities available to "
-      "you. You can now join a guild with other friends. Guilds are a good "
-      "way to gain protection from those that would do you harm. Joining a "
+      "you.  You can now join a guild with other friends.  Guilds are a good "
+      "way to gain protection from those that would do you harm.  Joining a "
       "good guild will make the difference between merely surviving or "
-      "thriving in the world. Guilds can also get into wars with other "
+      "thriving in the world.  Guilds can also get into wars with other "
       "guilds, so be careful that you don't make too many enemies."
       "\n\n"
-      "You can also participate in the politics of Meridian. In the royal "
+      "You can also participate in the politics of Meridian.  In the royal "
       "city of Barloque there is a clerk named Caramo which handles the "
-      "election of the position of Justicar. The Justicar pardons those that "
-      "have been flagged as outlaws and murderers. Unless you wish to see "
+      "election of the position of Justicar.  The Justicar pardons those that "
+      "have been flagged as outlaws and murderers.  Unless you wish to see "
       "such villians get pardons, it is important to be active in voting."
       "\n\n"
       "I must warn you that engaging in lethal combat against other players "
-      "may soil your good name. If you strike an innocent, or cast "
+      "may soil your good name.  If you strike an innocent, or cast "
       "a spell which harms him, you may be branded an outlaw, an onus which "
-      "only fades upon your death. If you slay an innocent in cold blood, "
+      "only fades upon your death.  If you slay an innocent in cold blood, "
       "you will be blacklisted as a murderer, and this is a weight upon your "
-      "soul which does not easily depart. This puts you at risk: since "
+      "soul which does not easily depart.  This puts you at risk:  since "
       "murderers and outlaws are not innocents, one may attack them without "
       "being named a murderer or an outlaw."
       "\n\n"
       "Also note that assisting an outlaw or murder by casting helpful spells "
-      "upon them will brand you an outlaw in the eyes of society. You must "
+      "upon them will brand you an outlaw in the eyes of society.  You must "
       "choose your friends and your enemies well!"
       "\n\n"
       "If you do not wish to engage in the unsavory practice of attacking "
       "innocents or assisting the unlawful, it is heartily recommended that "
-      "you do not enable attacking innocents in your game preferences. This "
+      "you do not enable attacking innocents in your game preferences.  This "
       "is also called your \"safety\" since it keeps you safe from being "
-      "outcast as an unlawful outlaw or murderer. While your safety is on, "
+      "outcast as an unlawful outlaw or murderer.  While your safety is on, "
       "you are not permitted to either attack innocents or cast spells that "
-      "are hostile to them. This can be crucial when one stray sword blow "
-      "can make you an outlaw. However, rest assured that you will always be "
+      "are hostile to them.  This can be crucial when one stray sword blow "
+      "can make you an outlaw.  However, rest assured that you will always be "
       "permitted to strike outlaws and murderers, since it is crucial that "
       "you always have the option of defending yourself from their "
       "treacherous ways."
       "\n\n"
       "%s"
       "\n\n"
-      "Finally, some last bits of advice as I depart. Do not dispair if "
+      "Finally, some last bits of advice as I depart.  Do not dispair if "
       "you are sent to the underworld by some monster or even another "
-      "player. Death is part of the cycle, and learning to recover from "
-      "death is important. Put some items away in the vault in Barloque for "
+      "player.  Death is part of the cycle, and learning to recover from "
+      "death is important.  Put some items away in the vault in Barloque for "
       "times when you find yourself killed and unable to get items from your "
-      "corpse. Also, ask politely for assistance and you will often find "
-      "someone willing to lend a helping hand. Make some friends and you "
+      "corpse.  Also, ask politely for assistance and you will often find "
+      "someone willing to lend a helping hand.  Make some friends and you "
       "will find that nothing is truly beyond your reach."
       "\n\n"
       "Have fun in Meridian!"
       "\n\n"
-      " -- Your guardian angel"
+      "  -- Your guardian angel"
 
    player_ready_to_guild = "Subject: Congratulations!\n"
       "Your character has been deemed ready to take on the world without "
       "my protection, meaning that you may now raise your sword with fellow "
-      "players and engage in guild politics. It is with a heavy heart that I "
+      "players and engage in guild politics.  It is with a heavy heart that I "
       "take my leave of you, but I trust that you will do fine without me.\n\n"
       "%s\n\n"
-      " -- Your guardian angel"
+      "  -- Your guardian angel"
 
    player_tutorial_mail = "Subject: You're doing well for yourself.\n"
-      "It's nice to see that you seem to be doing well. "
+      "It's nice to see that you seem to be doing well.  "
       "I thought I might take this time to explain some finer points of "
       "the world of Meridian to you."
       "\n\n"
       "There are a variety of spells and skill schools that you can "
-      "advance in. However, learning from all spell and skill schools "
-      "dilutes your focus, and slows down your learning. The more you "
+      "advance in.  However, learning from all spell and skill schools "
+      "dilutes your focus, and slows down your learning.  The more you "
       "narrow your focus onto one or two particular spell schools, the "
       "quicker you will advance in that spell school, and the sooner you "
-      "will be offered new spells in that school. Stray from the path, "
+      "will be offered new spells in that school.  Stray from the path, "
       "however, and you will find that teachers may not offer you spells that "
-      "they had previously offered you. Thus, you must choose very early on "
+      "they had previously offered you.  Thus, you must choose very early on "
       "whether or not you prefer the versatility of being able to pull from a "
       "multitude of low level spells and skills, or the power of excelling in "
-      "one or two. Therefore, be sure that you examine any potential ability "
+      "one or two.  Therefore, be sure that you examine any potential ability "
       "before you acquire it!"
       "\n\n"
       "No advancement is more prized than increasing your endurance by "
-      "gaining health points. Note you that those who go toe to toe with "
+      "gaining health points.  Note you that those who go toe to toe with "
       "monsters are more likely to advance in health than those who stay "
-      "safely out of harm's way, slinging fireballs. Also, attacking "
+      "safely out of harm's way, slinging fireballs.  Also, attacking "
       "insignificant foes earns you no points for valor, and offers no hope "
       "of advancement."
       "\n\n"
       "Your vigor is crucial - it helps determine how fast your health and "
       "mana returns to you - a tired warrior will find these resources "
-      "fleeting. Vigor can be restored either through needed rest or a "
+      "fleeting.  Vigor can be restored either through needed rest or a "
       "hearty meal."
       "\n\n"
-      "I congratulate you on your recent success. I know the bards will sing "
+      "I congratulate you on your recent success.  I know the bards will sing "
       "of your future exploits."
       "\n\n"
-      " -- Your guardian angel"
+      "  -- Your guardian angel"
 
    player_first_mail = "Subject: Welcome!\n"
-      "Welcome to Meridian 59! I hope you enjoy the exciting world waiting "
+      "Welcome to Meridian 59!  I hope you enjoy the exciting world waiting "
       "for you!"
       "\n\n"
       "You have entered an on-line community, meaning that you may well be "
-      "playing with several other players at a time. Making allies and "
+      "playing with several other players at a time.  Making allies and "
       "dealing with potential enemy players is as much a part of Meridian 59 "
-      "as killing monsters. We hope you feel at home in your new online "
+      "as killing monsters.  We hope you feel at home in your new online "
       "community."
       "\n\n"
       "I am your guardian angel, and thus I shall protect you from the spells "
-      "and swords of other players for a short time. Use this time to "
-      "acquaint yourself with the world, and to gather your resources. Know "
+      "and swords of other players for a short time.  Use this time to "
+      "acquaint yourself with the world, and to gather your resources.  Know "
       "you that the shops of the land are always safe zones, and the inns are "
       "good places to rest and recover your strength."
       "\n\n"
-      "Spells and skills will almost certainly be crucial to your success. "
+      "Spells and skills will almost certainly be crucial to your success.  "
       "Note that a young warrior's skills are stronger than a inexperienced "
       "wizard's spells, but at the higher end, the sorcerer is far more "
-      "formidable to deal with given his variety of options. The apprentice "
+      "formidable to deal with given his variety of options.  The apprentice "
       "will almost always need the steady sword of the mercenary by his side "
       "to get that far, so find comrades who complement your abilities."
       "\n\n"
       "You can learn a lot by talking to the little people: the shopkeepers, "
-      "the bankers, the innkeepers. Ask them for help. Sometimes, they "
+      "the bankers, the innkeepers.  Ask them for help.  Sometimes, they "
       "may even wish for you to run an errand for them if you ask."
       "\n\n"
       "For your first quest, you may wish to research which hometown you were "
-      "born in. You can ask any of the towns' people you meet for their "
-      "opinions about the different towns. To permanently select a hometown, "
+      "born in.  You can ask any of the towns' people you meet for their "
+      "opinions about the different towns.  To permanently select a hometown, "
       "you need to adventure to the Hall of Genealogy in the town of Cor Noth "
-      "and look through the books there. Take your time selecting your "
+      "and look through the books there.  Take your time selecting your "
       "hometown, as it may determine how other people interact with you."
       "\n\n"
-      "Death is unkind to you - avoid it! A death can make you weaker, and "
+      "Death is unkind to you - avoid it!  A death can make you weaker, and "
       "all of your possessions are left where you met your demise, where any "
-      "scavenger, human or otherwise, may take it as they please. Best that "
+      "scavenger, human or otherwise, may take it as they please.  Best that "
       "you join an ally on your travels that they may gather your valuables "
       "should you meet such an unfortunate fate."
       "\n\n"
-      "Lastly, if you wish to leave this land for a bit, merely log off. "
-      "When you log on, you will reappear where you left. However for "
+      "Lastly, if you wish to leave this land for a bit, merely log off.  "
+      "When you log on, you will reappear where you left.  However for "
       "reasons of saftey, it is highly recommended that you do so in a safe "
-      "place, such as an inn. If you log off outside an inn, you may take "
+      "place, such as an inn.  If you log off outside an inn, you may take "
       "losses similar to death as your soul did not leave the land "
       "completely when you logged off."
       "\n\n"
       "We hope that you enjoy your stay in our land."
       "\n\n"
-      " -- Your guardian angel"
+      "  -- Your guardian angel"
 
    player_death_mail = "Subject: Death\n"
-      "It saddens me that you fell in combat and into the underworld. It is "
+      "It saddens me that you fell in combat and into the underworld.  It is "
       "a dangerous life as an adventurer, as you have undoubtedly learned."
       "\n\n"
       "Since you are so young, I have pleaded to the gods that you should be "
-      "spared some of the penalty for death. Normally, the shock of leaving "
+      "spared some of the penalty for death.  Normally, the shock of leaving "
       "the underworld would reduce your maximum health and penalize you a "
-      "small part of the spells and skills you have learned so far. I will "
+      "small part of the spells and skills you have learned so far.  I will "
       "spare you the cost of your health, and only a few of your spells and "
       "skill will be reduced after you leave the underworld."
       "\n\n"
-      "You will also notice that your possessions are gone. They were left "
-      "behind at your corpse where you died. The items will only remain "
+      "You will also notice that your possessions are gone.  They were left "
+      "behind at your corpse where you died.  The items will only remain "
       "there a limited amount of time, so you must act quickly."
       "\n\n"
-      "If you don't know where you died, then you should broadcast for help. "
+      "If you don't know where you died, then you should broadcast for help.  "
       "Type \"broadcast Can someone help me find my items?\" right now and "
-      "watch for someone to respond to you. Tell that person what you can "
-      "remember about where you were fighting. Often you will find someone "
+      "watch for someone to respond to you.  Tell that person what you can "
+      "remember about where you were fighting.  Often you will find someone "
       "kind to help you, or they might even help you get better equipment "
-      "than you had before. There are many kind souls in this land"
+      "than you had before.  There are many kind souls in this land"
       "\n\n"
       "If you know where you died, the portal archways in the underworld will "
-      "take you directly to the inns of the cities of the mainland. The "
+      "take you directly to the inns of the cities of the mainland.  The "
       "large rip in space in the western side of the underworld is often the "
-      "quickest way back. It randomly switches between the different inns. "
-      "Look (right-click by default) the portal to see where it leads. If it "
-      "leads to the place you want to go, enter it quickly! It will not lead "
+      "quickest way back.  It randomly switches between the different inns.  "
+      "Look (right-click by default) the portal to see where it leads.  If it "
+      "leads to the place you want to go, enter it quickly!  It will not lead "
       "there for very long."
       "\n\n"
-      "Do not be discouraged! Many powerful warriors have stumbled into the "
-      "fires of the underworld. What makes them powerful is that they "
+      "Do not be discouraged!  Many powerful warriors have stumbled into the "
+      "fires of the underworld.  What makes them powerful is that they "
       "decided to fight on, gaining power and ability to vanquish the "
       "terrible monsters that felled them before!"
       "\n\n"
-      " -- Your guardian angel"
+      "  -- Your guardian angel"
 
    player_death_mail_notice = \
       "Your guardian angel has sent you a special game mail on how to cope "
-      "with death. Type ~Imail~I and read the last game mail from your "
+      "with death.  Type ~Imail~I and read the last game mail from your "
       "guardian angel."
 
    player_intrigue_mail = "Subject: Invitation to visit the Royal Court\n"
-      "Oh, most worthy adventurer. Tales of your exploits have been oft told "
+      "Oh, most worthy adventurer.  Tales of your exploits have been oft told "
       "here at the Court, and recently, the Meridian Council itself declared "
       "you to possess considerable promise. Perhaps someday you will be "
       "given the honor of studying and guarding one of the Five Tokens."
@@ -637,10 +638,10 @@ resources:
       "path is the way to reduce the plague of monsters which terrify the "
       "land these days."
       "\n\n"
-      "There are also boorish tales of a third faction of rebels. They "
+      "There are also boorish tales of a third faction of rebels.  They "
       "are dissatisfied with the current political climate and seek to "
-      "bring their leader to rule our lands. I do not know much about "
-      "these rebels, nor do I care to learn anything. You are on your own "
+      "bring their leader to rule our lands.  I do not know much about "
+      "these rebels, nor do I care to learn anything.  You are on your own "
       "if you wish to learn about them."
       "\n\n"
       "Should you desire to join any of these factions, seek the Liege. "
@@ -655,9 +656,9 @@ resources:
       "----Baron of Cor Noth Township, Gerah Springer."
 
    player_Debug_playercanlearn = \
-      "Do the math for %s to learn a %i level spell from the %s school. "
-      "%i points from spells already known (%i from this school). Intellect "
-      "reduces the needed by %i for a total of %i percent needed. Currently "
+      "Do the math for %s to learn a %i level spell from the %s school.  "
+      "%i points from spells already known (%i from this school).  Intellect "
+      "reduces the needed by %i for a total of %i percent needed.  Currently "
       "possesses %i percent to compensate for the need."
 
    player_Debug_playercanlearn_scarcity = \
@@ -688,7 +689,7 @@ resources:
    player_sound_hit_monster_metal3 = mhit3b.wav
 
    % in increasing order of agony
-   player_sound_male_ouch1 = ouchm1.wav        
+   player_sound_male_ouch1 = ouchm1.wav	  
    player_sound_male_ouch2 = ouchm2.wav
    player_sound_male_ouch3 = ouchm3.wav
    player_sound_male_ouch4 = ouchm4.wav
@@ -756,10 +757,13 @@ properties:
    piFlags = 0
    piFlags2 = 0
 
-   % A generic modifier. Setting this value can help or hinder a character.
-   % Intended for use to curb overagressive players or to give a boost to
-   % nicer players. Named something unusual to deter experimentation.
+   % A generic modifier.  Setting this value can help or hinder a character.
+   %  Intended for use to curb overagressive players or to give a boost to
+   %  nicer players. Named something unusual to deter experimentation.
    piFlags3 = 0
+   
+   % store minions
+   plControlledMinions = $
 
    % player starts unguilded--doesn't do much yet
    poGuild = $
@@ -777,21 +781,21 @@ properties:
    plSkills = $
 
    % A list of the total percentage points the player has in the various
-   % spell and skill schools.
+   %  spell and skill schools.
    plSchools = $
 
    % A list of the weighted casts the player has made in various schools.
-   % Weighted because higher level spells will contribute more points to
-   % the total. Used to give bonuses to improving spells.
-   % See spell.kod for details.
+   %  Weighted because higher level spells will contribute more points to
+   %  the total.  Used to give bonuses to improving spells.
+   %  See spell.kod for details.
    plSchoolCasts = $
 
    % The number of swings with the current weapon
    piWeaponSwings = 0
 
    % A compound of if the player can advance and the WC proficiency needed
-   % to use the weapon. The proficiency number is the number / 1000, while
-   % the bonus to advance is the number mod 1000.
+   %  to use the weapon.  The proficiency number is the number / 1000, while
+   %  the bonus to advance is the number mod 1000.
    piWeaponInfo = 0
 
    % converted guild commands list to a bitvector.
@@ -843,7 +847,7 @@ properties:
    % stuff in use
    plUsing = $
 
-   % Timers
+   % Timers 
    ptHealth = $
    ptMana = $
    ptAdvancement = $
@@ -880,7 +884,7 @@ properties:
 
    % Light source at player.
    % Default strength of light source at player is 5
-   piLight = 5
+   piLight = 5       
 
    % List of enchantments.
    % Each element is [ timer, object of spell, [optional state] ].
@@ -921,16 +925,16 @@ properties:
    prNose = $
    prToupee = $
 
-   % Animation type. If none, then use piAction
+   % Animation type.  If none, then use piAction
    % piAnimation should be PANM_NONE in between KOD calls.
-   piAnimation = PANM_NONE
+   piAnimation = PANM_NONE 
 
    % Action, such as "smiling", that player is currently doing
    piAction = 1
 
    % piNodeList is a bitvector of all of the mana nodes that the player has
-   % successfully melded with. List of available nodelists in the
-   % blakston.khd constants file.
+   %  successfully melded with.  List of available nodelists in the
+   %  blakston.khd constants file.
    piNodeList = 0
 
    piBorn_year = 0
@@ -966,12 +970,12 @@ properties:
    ptRescue = $
 
    % piTimeAttackedPlayer records the last time we attacked a player.
-   % This is used in conjunction with the constant ATTACKED_PLAYER_WAIT
-   % to disallow casting by angeled "mules".
-   piTimeAttackedPlayer = 0
+   %  This is used in conjunction with the constant ATTACKED_PLAYER_WAIT
+   %  to disallow casting by angeled "mules".
+   piTimeAttackedPlayer = 0 
 
    % piDeathcost is used to tell the underworld what percent of normal
-   % penalties to apply when the players leaves. FALSE means no penalties.
+   %  penalties to apply when the players leaves.  FALSE means no penalties.
    piDeathCost = 100
 
    % List of integer years in which the player has donated money to the game.
@@ -1185,7 +1189,7 @@ messages:
    ResetPlayerFlagList()
    {
       local i;
-        
+	  
       Send(self,@ResetPlayerDrawfx,#SendSomethingChanged=FALSE);
       
       piFlags = (piFlags & PFLAG_MASK);
@@ -1196,7 +1200,7 @@ messages:
          piFlags = piFlags | PFLAG_NO_FIGHT;
          piFlags = piFlags | PFLAG_NO_MAGIC;
       }
-        
+	  
       for i in plEnchantments
       {
          Send(Nth(i,2),@SetSpellPlayerFlag,#who=self);
@@ -1219,7 +1223,7 @@ messages:
       {
          Send(poOwner,@SomethingChanged,#what=self);
       }
-        
+	  
       return;
    }
    
@@ -1243,7 +1247,7 @@ messages:
    %%% Vigor
 
    NewVigor()
-   "Ensures vigor stays in bounds. Also checks for second wind skill"
+   "Ensures vigor stays in bounds.  Also checks for second wind skill"
    "NOTE: Do not modify vigor below SECONDWIND_THRESHOLD if you do not want the skill to kick in."
    "Vigor display will be driven from here."
    {
@@ -1336,7 +1340,7 @@ messages:
       local iExertionAdded, iPercentReduced, iVigorLost;
       
       % If we cannot gain vigor due to Second Wind, return out if trying
-      % to take away exertion
+      %  to take away exertion
       if ptSecondWind <> $ AND amount < 0
       {
          return;
@@ -1346,7 +1350,7 @@ messages:
 
       if iExertionAdded > 0
       {
-         % Parliament adjustment for exertion reduction. Remove a % from the amount added.
+         % Parliament adjustment for exertion reduction.  Remove a % from the amount added.
          iPercentReduced = Send(Send(SYS,@GetParliament),@GetFactionVigorBonus,#who=self);
          iExertionAdded = (iExertionAdded * (100 - iPercentReduced))/100;
       }
@@ -1375,7 +1379,7 @@ messages:
 
    RestAddExertion(amount = 0)
    "Gives inns a bonus as resting places."
-   {
+   {        
       local iAmount;
 
       % If we cannot gain vigor (probably due to Second Wind), return out if trying to take away exertion
@@ -1398,11 +1402,11 @@ messages:
       if Send(poOwner,@CheckRoomFlag,#flag=ROOM_TRIPLE_HEAL) AND amount < 0
       {
          iAmount = 3 * Amount;
-      }
+      }    
             
       piExertion = piExertion + iAmount;
       if abs(piExertion) > MIN_VIGOR_CHANGE
-      {
+      {    
          piVigor = piVigor - piExertion / 10000;
          if piVigor > piVigor_rest_threshold
          {
@@ -1613,7 +1617,7 @@ messages:
       % No more tutorial messages and bonuses if you've been around for about 2 months.
       % Clear the newbie string, too.
       % Do a bit flag check instead of a function call since this is called EVERY time
-      % someone gets looked at.
+      %  someone gets looked at.
       if age >= 2
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
@@ -1622,7 +1626,7 @@ messages:
          {
             Send(self,@SetHonorString);
          }
-      }
+      }      
 
       return age;
    }
@@ -1812,54 +1816,54 @@ messages:
       }
 
 %%% option turned off for review
-% if not Send(self,@PlayerIsImmortal)
-% {
-% % (example) Known far and wide for mastery of Jala and Kraanan magics and weaponcraft skills.
+%      if not Send(self,@PlayerIsImmortal) 
+%      {
+%         % (example) Known far and wide for mastery of Jala and Kraanan magics and weaponcraft skills.
 %
-% j = FALSE;
+%         j = FALSE;
 %
-% % magic school masteries first
-% obj = Send(SYS,@FindSpellByNum,#num=SID_BONK); % any real spell will do
-% for i in [SS_JALA,SS_RIIJA,SS_QOR,SS_SHALILLE,SS_KRAANAN,SS_FAREN]
-% {
-% if Send(self,@CountKnownAtLevel,#school=i,#level=6) >= 1
-% {
-% if not j
-% {
-% AppendTempString(player_known_for_mastery);
-% j = TRUE;
-% }
-% else
-% {
-% AppendTempString(player_and);
-% }
-% AppendTempString(Send(obj,@GetSchoolStr,#ischool=i));
-% }
-% }
+%         % magic school masteries first
+%         obj = Send(SYS,@FindSpellByNum,#num=SID_BONK); % any real spell will do
+%         for i in [SS_JALA,SS_RIIJA,SS_QOR,SS_SHALILLE,SS_KRAANAN,SS_FAREN]
+%         {
+%            if Send(self,@CountKnownAtLevel,#school=i,#level=6) >= 1
+%            {
+%               if not j
+%               {
+%                  AppendTempString(player_known_for_mastery);
+%                  j = TRUE;
+%               }
+%               else
+%               {
+%                  AppendTempString(player_and);
+%               }
+%               AppendTempString(Send(obj,@GetSchoolStr,#ischool=i));
+%            }
+%         }
+%         
+%         if j
+%         {
+%            AppendTempString(player_magics);
+%         }
 %
-% if j
-% {
-% AppendTempString(player_magics);
-% }
+%         % weaponcraft
+%         if Send(self,@CountKnownAtLevel,#school=SKS_FENCING,#level=5) >= 1
+%         {
+%            if not j
+%            {
+%               AppendTempString(player_known_for_mastery);
+%               j = TRUE;
+%            }
+%            else
+%            {
+%               AppendTempString(player_and);
+%            }
+%            AppendTempString(player_skills);
+%         }
 %
-% % weaponcraft
-% if Send(self,@CountKnownAtLevel,#school=SKS_FENCING,#level=5) >= 1
-% {
-% if not j
-% {
-% AppendTempString(player_known_for_mastery);
-% j = TRUE;
-% }
-% else
-% {
-% AppendTempString(player_and);
-% }
-% AppendTempString(player_skills);
-% }
-%
-% AppendTempString(player_dot);
-% AppendTempString(player_nl);
-% }
+%         AppendTempString(player_dot);
+%         AppendTempString(player_nl);
+%      }
 
       if psHonor <> $
       {
@@ -1876,18 +1880,18 @@ messages:
       if plDonationYears <> $
       {
          % Example: Benefactor of Meridian in 2010, 2011
-         AppendTempString(player_donation_title);
-         i = 0;
+	      AppendTempString(player_donation_title);
+	      i = 0;
          for year in plDonationYears
          {
-         if i <> 0
-          {
-         AppendTempString(player_donation_separator);
+	         if i <> 0
+ 	         {
+	            AppendTempString(player_donation_separator);
             }
-         AppendTempString(year);
-         i = i + 1;
+	         AppendTempString(year);
+	         i = i + 1;
          }
-         AppendTempString(player_dot);
+	      AppendTempString(player_dot);
       }
 
       AddPacket(0,GetTempString());
@@ -1917,7 +1921,7 @@ messages:
 
       if Send(SYS,@GetParliament)<>$
       {
-         if piFaction <> FACTION_NEUTRAL
+         if piFaction <> FACTION_NEUTRAL 
             AND (not Send(Send(SYS,@GetParliament),@IsShutdown))
          {
             piFactionTimeUpdated=GetTime();
@@ -1926,7 +1930,7 @@ messages:
 
          if Send(self,@PlayerIsIntriguing)
          {
-            Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self);
+            Send(Send(SYS,@GetParliament),@UpdateEffects,#who=self); 
          }
       }
 
@@ -1943,6 +1947,11 @@ messages:
       if oCaramo <> $
       {
          Send(oCaramo,@UserLogon,#who=self);
+      }
+      
+      if Send(self,@GetGuild) <> $
+      {
+         Send(Send(self,@GetGuild),@SendUserMOTD,#who=self);
       }
 
       if piPoisonStrength > 0
@@ -1963,7 +1972,7 @@ messages:
       Send(self,@SetPlayerFlag,#flag=PFLAG_MOVED_SINCE_ENTRY,#value=FALSE);
 
       % If we log into the Raza/Hazar inn and aren't past the tutorial,
-      % then give us a commands list.
+      %   then give us a commands list.
       if IsClass(poOwner,&Guest1)
          OR (IsClass(poOwner,&Newb1)
              AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL))
@@ -1978,9 +1987,9 @@ messages:
 
       % Tell others that we're here
       oRoom = Send(self, @GetOwner);
-      if oRoom <> $ AND NOT IsClass(self, &DM)
+      if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
-         Send(oRoom, @SomethingWaveRoom, #what=self,
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_logged_on_wav_rsc);
       }
 
@@ -2010,7 +2019,7 @@ messages:
       }
 
       % client assumes not resting upon login
-      Send(self,@StopResting);
+      Send(self,@StopResting); 
 
       if piFaction <> FACTION_NEUTRAL
       {
@@ -2034,9 +2043,9 @@ messages:
 
       % Tell others that we're leaving
       oRoom = Send(self, @GetOwner);
-      if oRoom <> $ AND NOT IsClass(self, &DM)
+      if oRoom <> $ AND NOT IsClass(self, &DM) 
       {
-         Send(oRoom, @SomethingWaveRoom, #what=self,
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_logged_off_wav_rsc);
       }
       
@@ -2044,7 +2053,7 @@ messages:
    }
 
    SendUserAllWindowOverlays()
-   "Send the user any overlays that they might have. Called when they logon "
+   "Send the user any overlays that they might have.  Called when they logon "
    "or when garbage collected."
    {
       local i;
@@ -2058,7 +2067,7 @@ messages:
    }
 
    RestrictToResourceList(res = $, res_list = $)
-   "If res is in res_list, return it. Otherwise return the first element "
+   "If res is in res_list, return it.  Otherwise return the first element "
    "of res_list."
    {
       if FindListElem(res_list, res)
@@ -2071,7 +2080,7 @@ messages:
    PlayerNewCharInfo(desc = $,charinfo = $,gender = $)
    "This message is received when the user (re)started a character.\n"
    "<desc> contains a string with the description, charinfo is a list "
-   "of values selected. See system.kod, SendCharInfo(), for what these "
+   "of values selected.  See system.kod, SendCharInfo(), for what these "
    "values mean."
    {
       local i,lFaceparts,lStats,lSpells,lSkills,iPoints,iLevel,iHair_translation,
@@ -2100,24 +2109,24 @@ messages:
       {
          % Hacking the protocol -> default char
          gender = GENDER_MALE;
-         lFaceparts = [charinfo_head_ax_icon, charinfo_hair_ac_icon, charinfo_eyes_ax_icon,
+         lFaceparts = [charinfo_head_ax_icon, charinfo_hair_ac_icon, charinfo_eyes_ax_icon, 
                        charinfo_nose_ax_icon, charinfo_mouth_ax_icon];
       }
 
       % Validate that all face parts were in the list of choices
-      prHead = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,1),
+      prHead = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,1), 
           #res_list = Send(SYS, @GetAllowedHeadIcons, #iGender = gender));
 
-      prToupee = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,2),
+      prToupee = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,2), 
           #res_list = Send(SYS, @GetAllowedHairIcons, #iGender = gender));
 
-      prEyes = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,3),
+      prEyes = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,3), 
           #res_list = Send(SYS, @GetAllowedEyeIcons, #iGender = gender));
 
-      prNose = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,4),
+      prNose = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,4), 
           #res_list = Send(SYS, @GetAllowedNoseIcons, #iGender = gender));
 
-      prMouth = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,5),
+      prMouth = Send(self, @RestrictToResourceList, #res = Nth(lFaceparts,5), 
           #res_list = Send(SYS, @GetAllowedMouthIcons, #iGender = gender));
 
       iHair_translation = Nth(charinfo,2);
@@ -2206,7 +2215,7 @@ messages:
       
       if Send(self,@CheckLog)
       {
-         Debug("LOG: ",vrName," restarted character: ",piMax_health,
+         Debug("LOG:  ",vrName," restarted character: ",piMax_health,
                pibase_max_health);
       }
 
@@ -2217,15 +2226,15 @@ messages:
       if gender = GENDER_MALE
       {
          piGender = GENDER_MALE;
-         vrIcon = player_male_icon_rsc;
+         vrIcon = player_male_icon_rsc; 
          prLegs = player_legs_a_rsc;
          prRight_arm = player_rightarm_a_rsc;
          prLeft_arm = player_leftarm_a_rsc;
       }
       else
-      {
+      { 
          piGender = GENDER_FEMALE;
-         vrIcon = player_female_icon_rsc;
+         vrIcon = player_female_icon_rsc; 
          prLegs = player_legs_b_rsc;
          prRight_arm = player_rightarm_b_rsc;
          prLeft_arm = player_leftarm_b_rsc;
@@ -2275,14 +2284,14 @@ messages:
          % they hacked their char.dll
       }
       else
-      {
+      {        
          if not IsClass(self,&Guest)
          {
             for i in lSpells
             {
                oSpell = Send(SYS, @FindSpellByNum, #num=i);
                % Not offered to new characters -> cheating, skip spell
-               if (oSpell <> $ AND Send(oSpell, @OfferToNewCharacters))
+               if (oSpell <> $ AND Send(oSpell, @OfferToNewCharacters)) 
                {
                   iLevel = Send(oSpell,@GetLevel);
                   if (iLevel <= 2)
@@ -2320,9 +2329,9 @@ messages:
       % Do this after we add spells so that we can give reagents if appropriate.
       Send(self,@AddDefaultObjects);
 
-      % If the player chose either a Qor spell or a Shalille spell to start,
-      % give him a favorable karma to start from. However, if he chose both,
-      % or if he chose neither, do nothing.
+      % If the player chose either a Qor spell or a Shalille spell to start, 
+      %  give him a favorable karma to start from.  However, if he chose both, 
+      %  or if he chose neither, do nothing. 
       
       piKarma = 0;
       if bQor AND NOT bShalille
@@ -2342,7 +2351,7 @@ messages:
 
       % Send first mail the first time player plays.
       % Set their honor strong if this is a truly new character (max 1 reroll)
-      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL)
+      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL) 
       {
          Send(self,@ReceiveNestedMail,#from=player_angel,
               #dest_list=[self],#nest_list=[4,player_first_mail]);
@@ -2483,14 +2492,14 @@ messages:
       % Give the poor newbie an weapon and a bit of cash.
       Send(self,@NewHold,#what=Create(&Mace));
       Send(self,@NewHold,#what=Create(&Money,#number=500));
-         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
+	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
       Send(self,@AddReagentsForSpells,#iNumCasts=10);
 
       % If player hasn't suicided in last 5 hours, give them cash and prizes!
-      if (GetTime() - piLast_restart_time) > (5*60*60)
+      if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=500));
-                 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
+		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=500);
          Send(self,@AddReagentsForSpells,#iNumCasts=10);
       }
 
@@ -2519,16 +2528,16 @@ messages:
       local lItems,oItem,iSchool;
 
       % If player hasn't suicided in last 5 hours, give them cash and fancy clothes!
-      if (GetTime() - piLast_restart_time) > (5*60*60)
+      if (GetTime() - piLast_restart_time) > (5*60*60)   
       {
          Send(self,@NewHold,#what=Create(&Money,#number=1000));
-                 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1000);
+		 Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=1000);
          Send(self,@NewHold,#what=create(&InkyCap,#number=5));
          Send(self,@NewHold,#what=Create(&PantsC));
          Send(self,@NewHold,#what=Create(&Shirt,#color=XLAT_TO_GRAY));
       }
 
-      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled)
+      if Send(Send(SYS,@GetLore),@BetaPotionsEnabled) 
          AND Send(Send(SYS,@GetParliament),@BetaPotionsEnabled)
       {
          Send(self,@NewHold,#what=create(&MysticSword));
@@ -2547,7 +2556,7 @@ messages:
    }
 
    AddReagentsForSpells(iNumCasts=5)
-   "Add reagents to the player for the spells they have. Enough reagents for iNumCasts casts."
+   "Add reagents to the player for the spells they have.  Enough reagents for iNumCasts casts."
    {
       local iInfo, oSpell, lReagents, lItems, cReagent, iNumber;
 
@@ -2625,7 +2634,7 @@ messages:
                if targetGhost <> $
                {
                   % Put the PK pointer attribute on the item to prevent mules from
-                  % grabbing penalty drops from ghosts.
+                  %  grabbing penalty drops from ghosts.
                   oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
                   Send(oItemAtt,@AddToItem,#oItem=oItem,#timer_duration=PKPOINTER_TIME,
                        #state1=self);
@@ -2745,7 +2754,7 @@ messages:
       ptHealth = $;
 
       % Only gain health if we've moved since entry.
-      if (piFlags & PFLAG_MOVED_SINCE_ENTRY)
+      if (piFlags & PFLAG_MOVED_SINCE_ENTRY) 
       {
          if piHealth < piMax_Health
          {
@@ -2759,7 +2768,7 @@ messages:
       else
       {
          Send(self,@NewHealth);
-      }
+      }         
 
       return;
    }
@@ -2800,7 +2809,7 @@ messages:
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
                  #type=ENCHANTMENT_PLAYER);
 
-            % TODO: i no longer exists at this point? EndEnchantment removing it?
+            % TODO: i no longer exists at this point?  EndEnchantment removing it?
             plEnchantments = DelListElem(plEnchantments,i);
             Send(self,@ResetPlayerFlagList,#who=self);
             if poOwner <> $
@@ -2851,11 +2860,11 @@ messages:
    {
       local oTimer, lNew_enchantment;
 
-      if time = $ OR time = SPELL_INDEFINITE_DURATION
+      if time = $ OR time = SPELL_INDEFINITE_DURATION 
       {
          oTimer = $;
       }
-      else
+      else 
       {
          if lastcall
          {
@@ -2931,15 +2940,15 @@ messages:
             {
                return TRUE;
             }
-         }
+         }      
       }
       
       return FALSE;
    }
 
    GetEnchantedState(what = $)
-   "If enchanted by <what>, returns the state data (which MUST exist, or it's an error. "
-   "In other words, the caller must know that <what> adds state data). Returns $ otherwise."
+   "If enchanted by <what>, returns the state data (which MUST exist, or it's an error.  "
+   "In other words, the caller must know that <what> adds state data).  Returns $ otherwise."
    {
       local i;
 
@@ -2986,7 +2995,7 @@ messages:
       }
       
       % Just to be sure, reset the player's flag list.
-      % this should remove any excess flags like invis or shadowform.
+      %  this should remove any excess flags like invis or shadowform.
       Send(self,@ResetPlayerFlagList);
       Send(self,@ResetPlayerDrawfx,#SendSomethingChanged=TRUE);
       
@@ -3006,8 +3015,8 @@ messages:
             DeleteTimer(First(i));
 
             % If it's a negative enchantment, add a bit to the time in
-            % order to prevent people from just "flashing" on and off
-            % to wait out an enchantment and be relatively unhittable.
+            %  order to prevent people from just "flashing" on and off
+            %  to wait out an enchantment and be relatively unhittable.
             if Send(Nth(i,2),@IsHarmful)
             {
                % Time is measured in milliseconds, 3000 = 3 seconds.
@@ -3063,8 +3072,8 @@ messages:
    {
       local i, oSpell, each_obj;
 
-      for i in plEnchantments
-      {
+      for i in plEnchantments 
+      {                       
          oSpell = Nth(i,2);
          if Send(oSpell,@IsIllusion)
             AND Random(1,100) <= iChance
@@ -3073,8 +3082,8 @@ messages:
          }
       }
       
-      % Kludgy, but oh well. Not like any other code from this era is
-      % exactly well-engineered or even "good", really.
+      % Kludgy, but oh well.  Not like any other code from this era is
+      %  exactly well-engineered or even "good", really.
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
@@ -3091,8 +3100,8 @@ messages:
    {
       local i, oSpell, each_obj;
 
-      for i in plEnchantments
-      {
+      for i in plEnchantments 
+      {                       
          oSpell = Nth(i,2);
          if Send(oSpell,@GetSchool) = school
          {
@@ -3132,7 +3141,7 @@ messages:
        
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),#type=ENCHANTMENT_PLAYER);
 
-            plEnchantments = DelListElem(plEnchantments,i);
+            plEnchantments = DelListElem(plEnchantments,i); 
             Send(self,@ResetPlayerFlagList,#who=self);
          }
       }
@@ -3167,7 +3176,7 @@ messages:
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),
                    #type=ENCHANTMENT_PLAYER);
 
-            plEnchantments = DelListElem(plEnchantments,i);
+            plEnchantments = DelListElem(plEnchantments,i); 
             Send(self,@ResetPlayerFlagList,#who=self);
          }
       }
@@ -3276,7 +3285,7 @@ messages:
                   }
                }
             }
-         }
+         }      
       }
       
       return FALSE;
@@ -3337,8 +3346,8 @@ messages:
       }
       
       % Karahol's Curse can get here, because it has to remove itself when
-      % done, because it doesn't know if it was a normal ending or a
-      % user-quit ending.
+      %  done, because it doesn't know if it was a normal ending or a
+      %  user-quit ending.
 
       return;
    }
@@ -3377,7 +3386,7 @@ messages:
    }
 
    SquelchPlayer(value=$)
-   "Sets if a player can broadcast or not. Toggles condition by default."
+   "Sets if a player can broadcast or not.  Toggles condition by default."
    {
       local bSquelched;
 
@@ -3395,7 +3404,7 @@ messages:
    }
 
    TryBroadcast()
-   "Called when the user wants to broadcast a string. Return True/False, "
+   "Called when the user wants to broadcast a string.  Return True/False, "
    "and use some mana too."
    {
       local iCost;
@@ -3424,7 +3433,7 @@ messages:
    }
 
    TrySayGroup(users = $)
-   "Called when the user wants to say a string to a list of people. Return True/False, "
+   "Called when the user wants to say a string to a list of people.  Return True/False, "
    "and use some mana too."
    {
       Send(self,@LoseMana,#amount=1);
@@ -3455,22 +3464,11 @@ messages:
          {
             return FALSE;
          }
-
-         % Soldier Shields allow bows or lutes to be wielded even if they
-         % are taking up all the hand spaces. But, you can't use a shield, bow,
-         % lute, and book all simlutaneously!
-         if (IsClass(what,&Bow) OR IsClass(what,&Lute))
-            AND Send(self,@FindUsing,#class=&SoldierShield) <> $
-            AND Send(self,@FindUsing,#class=&Lute) = $
-            AND Send(self,@FindUsing,#class=&Book) = $
+         
+         % These unequip amongst themselves automatically.
+         if IsClass(what,&DefenseModifier)
          {
-            % Don't allow them to wield a lute if we already have a bow.
-            % Trying to wield a second bow will unwield the first bow automatically.
-            if NOT IsClass(what,&Lute)
-               OR (Send(self,@FindUsing,#class=&Bow) = $)
-            {
-               return TRUE;
-            }
+            return TRUE;
          }
 
          if type = ITEM_USE_HAND
@@ -3482,7 +3480,7 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=player_use_full);
          }
          
-         return FALSE;
+         return FALSE;  
       }
       
       return TRUE;
@@ -3636,7 +3634,7 @@ messages:
       if NOT bFound
       {
          % This can happen if TryUnuseItem is called in, for example,
-         % a ring of invisibility when you log off.
+         %  a ring of invisibility when you log off.
          return FALSE;
       }
       
@@ -3730,7 +3728,7 @@ messages:
       return TRUE;
    }
 
-   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE, actual=TRUE)
+   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE, actual=TRUE, spell_obj=$)
    "Will not let a person attack someone who isnt pkill_enabled."
    "Wll not let a person who isnt pkill_enabled attack another person."
    {
@@ -3739,8 +3737,8 @@ messages:
       % Default location to check is where we are.
       oRoom = poOwner;
 
-      % If the victim is in a room, then check that location instead. This allows
-      % distance attacks (like wall spells) to work properly.
+      % If the victim is in a room, then check that location instead.  This allows
+      %  distance attacks (like wall spells) to work properly.
       if victim <> $
          AND Send(victim,@GetOwner) <> poOwner
       {
@@ -3754,6 +3752,14 @@ messages:
       {
          return FALSE;
       }
+      
+      % Don't halo non-attackables in guild_pk_only zones (typically an unguilded outlaw)
+      % Necessary because it just looks confusing
+      if actual = FALSE
+         AND Send(oRoom,@AllowGuildAttack,#what=self,#victim=victim) = FALSE
+      {
+         return FALSE;
+      }
 
       % If we're in an arena and it let us attack, then it's a legal attack.
       if Send(oRoom,@IsArena)
@@ -3761,7 +3767,7 @@ messages:
          return TRUE;
       }
 
-      % Frenzies! Anything goes if allowed by the room!
+      % Frenzies!  Anything goes if allowed by the room!
       if Send(SYS,@GetChaosNight)
       {
          return TRUE;
@@ -3769,6 +3775,7 @@ messages:
 
       % Check for guildmates and allies
       if IsClass(victim,&Player)
+         AND victim <> self
       {
          oVictimGuild = Send(victim,@GetGuild);
          oGuild = Send(self,@GetGuild);
@@ -3822,7 +3829,7 @@ messages:
             
          % No attacking pets on Sacred Haven
          if NOT Send(SYS,@IsPKAllowed)
-            AND Send(victim,@GetMaster) <> $
+            AND Send(victim,@GetMaster) <> $ 
          {
             if report
             {
@@ -3880,13 +3887,13 @@ messages:
                      
             if NOT Send(victim,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
-               % The target is a newbie. Murderers are perfectly attackable
+               % The target is a newbie.  Murderers are perfectly attackable
                if report
                {
                   if Send(SYS,@IsPKAllowed)
-                  {
+                  {   
                      Send(self,@MsgSendUser,#message_rsc=player_guardian_angel,
-                          #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+                          #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));        
                   }
                   else
                   {
@@ -3919,7 +3926,7 @@ messages:
    
    CheckStatusAndSafety(victim=$,report=TRUE,actual=TRUE)
    "PFLAG_SAFETY prevents accidental attacks. You can always successfully "
-   "hit a murderer or outlaw, though."
+   "hit a murderer or outlaw, though."     
    {
       local oEnemyGuild, oSoldierShield;
 
@@ -3951,8 +3958,8 @@ messages:
       oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
 
       % Check for enemy guild or faction soldier fighting - If attacking a (mutual)
-      % enemy, then they can whack on each other freely, without outlaw penalty
-      % or faction loss.
+      %  enemy, then they can whack on each other freely, without outlaw penalty
+      %  or faction loss.
       if (poGuild <> $
           AND oEnemyGuild <> $
           AND Send(poGuild,@IsMutualEnemy,#otherguild=oEnemyGuild))
@@ -3993,7 +4000,7 @@ messages:
             return FALSE;
          }
          else
-         {
+         {         
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
                AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
                AND actual = TRUE
@@ -4007,7 +4014,7 @@ messages:
          }
       }
 
-      % Check for faction loss. Handles appropriate conditions.
+      % Check for faction loss.  Handles appropriate conditions.
       if actual = TRUE
          AND NOT Send(self,@CheckFactionAttack,#what=victim)
       {
@@ -4024,14 +4031,14 @@ messages:
    }
 
    CheckFactionAttack(what=$,report=TRUE)
-   "Checks if you are attacking something in the same faction as you are. Boots you out"
-   "of your faction if you attack an innocent or a monster. Safety will catch a bad "
+   "Checks if you are attacking something in the same faction as you are.  Boots you out"
+   "of your faction if you attack an innocent or a monster.  Safety will catch a bad "
    "attack, however."
    {
       local bBooted, rMessage;
 
       % If attacking nothing, or faction is neutral, or attacking self
-      % or in the Arena, or during a Frenzy, don't go any further.
+      %   or in the Arena, or during a Frenzy, don't go any further.
       if what = $
          OR piFaction = FACTION_NEUTRAL
          OR what = self
@@ -4045,17 +4052,17 @@ messages:
 
       % If faction loss is disabled, then attacking a user never boots you
       if Send(SYS, @GetServerFlag, #flag = SERVER_FLAG_DISABLE_FACTION_LOSS)
-         AND IsClass(what, &User)
-      {        
+         AND IsClass(what, &User) 
+      {	 
          return TRUE;
-      }
+      }     
 
-      % Checking for faction alignment. If you attack something of your own faction, you get busted!
+      % Checking for faction alignment.  If you attack something of your own faction, you get busted!
       if (Send(what,@GetFaction) = piFaction)
       {
          % Attacks vs. Outlaws, Murderers are not punishable by booting, so just return.
          % Also, attacks vs. anonymous or morphed people are not punishable.
-         if (IsClass(what,&User))
+         if (IsClass(what,&User)) 
             AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
                  OR Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
                  OR Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
@@ -4132,24 +4139,24 @@ messages:
 
       % Check attack time.
       % IsOkayAttackTime defaults to 1 second
-      if NOT Send(self,@IsOkayAttackTime)
+      if NOT Send(self,@IsOkayAttackTime) 
       {
          return FALSE;
-      }
+      }  
 
       % Is it in the same room?
-      if poOwner <> Send(what,@GetOwner)
+      if poOwner <> Send(what,@GetOwner) 
       {
          return FALSE;
       }
 
-      % Holding a token? Then don't let them attack
+      % Holding a token?  Then don't let them attack
       if send(self,@FindHolding,#class=&Token) <> $
       {
          return FALSE;
       }
 
-      % Can pay costs? Only check for skills, spells have already been cast.
+      % Can pay costs?  Only check for skills, spells have already been cast.
       if IsClass(stroke_obj,&Skill)
          AND NOT Send(stroke_obj,@CanPayCosts,#who=self,#oTarget=what)
       {
@@ -4160,7 +4167,7 @@ messages:
       iRange = Send(stroke_obj,@GetRange,#weapon_used=use_weapon);
 
       % A little fudge factor to account for lag drift, etc.
-      % Don't fudge for ranged weapons.
+      %  Don't fudge for ranged weapons.
       if IsClass(what,&User) AND Send(what,@HasMovedRecently)
          AND (use_weapon <> $ AND NOT IsClass(use_weapon,&RangedWeapon))
       {
@@ -4180,7 +4187,7 @@ messages:
       {
          % Let the assassin's game handle it
          return Send(Send(SYS,@GetAssassinGame),@TryAssassinAttack,#attacker=self,
-                     #target=what,#dagger_obj=use_weapon);
+                     #target=what,#dagger_obj=use_weapon);  
       }
 
       if IsClass(what,&Monster)
@@ -4205,13 +4212,13 @@ messages:
          return FALSE;
       }
 
-      % Special stroke stuff
+      % Special stroke stuff 
       if NOT Send(stroke_obj,@CheckSpecial,#who=self,#victim=what)
       {
          return FALSE;
       }
 
-      % Okay, checking is done, attack is okay. Do the animation thing.
+      % Okay, checking is done, attack is okay.  Do the animation thing.
       if NOT Send(stroke_obj,@CheckWeaponAndDoAnimation,#who=self,
                   #weapon_used=use_weapon,#victim=what)
       {
@@ -4219,22 +4226,22 @@ messages:
       }
 
       % Switching targets?
-      % Do this before paying skill costs, otherwise projectiles will try to find our
-      % "kill target" and fail.
+      % Do this before paying skill costs, otherwise projectiles will try to find our 
+      %  "kill target" and fail.
       if poKill_target <> what
       {
          Send(self,@ResetGainFlags);
          poKill_target = what;
       }
 
-      % Pay costs here. Only check skills, because spells are already cast.
+      % Pay costs here.  Only check skills, because spells are already cast.
       if IsClass(stroke_obj,&Skill)
       {
          Send(stroke_obj,@PayCosts,#who=self);
       }
 
-      % Special case: Ranged weapons in windy room.
-      % Do this after paying the costs so that the arrow is used.
+      % Special case:  Ranged weapons in windy room.
+      %  Do this after paying the costs so that the arrow is used.
       if use_weapon <> $ AND IsClass(use_weapon,&RangedWeapon)
       {
          oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
@@ -4257,10 +4264,10 @@ messages:
            #use_weapon=use_weapon,#stroke_obj=stroke_obj);
 
       % Record the swing for potential advancement.
-      % Only recorded if the player can advance on the monster, and if they
-      % are within line of sight of the target. (If they aren't in line of sight,
-      % then only advance 1 out of 5 swings. Allow the random, since sometimes
-      % not being in line of sight is an accident.
+      %  Only recorded if the player can advance on the monster, and if they
+      %  are within line of sight of the target.  (If they aren't in line of sight,
+      %  then only advance 1 out of 5 swings.  Allow the random, since sometimes
+      %  not being in line of sight is an accident.
       if Send(what,@CanPlayerAdvanceOnMe)
          AND (Send(poOwner,@LineOfSight,#obj1=self,#obj2=what) OR random(1,25) = 1)
       {
@@ -4272,7 +4279,7 @@ messages:
    }
 
    % Determines if target is within attacking range, and within sight.
-   % iRange=$ means there's no range check.
+   %  iRange=$ means there's no range check.
    TargetWithinSightAndRange(oTarget=$,iRange=$,use_weapon=$,stroke_obj=$)
    {
       local iSquareRange, iDist, oTargetOwner, oFinalTarget, iAngle, iRow, iCol,
@@ -4290,7 +4297,7 @@ messages:
       oFinalTarget = oTarget;
 
       % Strange case of us targetting something that someone else is holding.
-      % This cannot be owned by us, since we already checked that.
+      %  This cannot be owned by us, since we already checked that.
       if oTargetOwner <> $
          AND IsClass(oTargetOwner,&Battler)
       {
@@ -4322,7 +4329,7 @@ messages:
       }
 
       % See if target is in a reasonable viewing area.
-      % Only applies to weapon strokes and single-target spells.
+      %  Only applies to weapon strokes and single-target spells.
       if IsClass(oFinalTarget,&Battler)
          AND stroke_obj <> $
          AND (IsClass(stroke_obj,&Stroke)
@@ -4336,18 +4343,18 @@ messages:
 
          % What this does:
          % Basically, it finds your direction and makes sure you aren't trying to target
-         % something behind you. "Behind you" is defined as behind the line defined
-         % by the cardinal directions that are the closest to being perpendicular to the
-         % player's direction vector. For example, if you're facing mostly east, then
-         % the cardinal direction direction line runs north/south; in essense, anything
-         % that is further west than you is "behind" you. The more interesting cases
-         % are when the player is facing one of the corner directions. We calculate
-         % the equation of the line using the point-slope formula and determine which
-         % side of the line the target is.
-         % Equation of the SW-NE line: iTargetRow - iRow = iCol - iTargetRow
-         % Equation of the SE-NW line: iTargetRow - iRow = iTargetCol - iCol
+         %  something behind you.  "Behind you" is defined as behind the line defined
+         %  by the cardinal directions that are the closest to being perpendicular to the
+         %  player's direction vector.  For example, if you're facing mostly east, then
+         %  the cardinal direction direction line runs north/south; in essense, anything
+         %  that is further west than you is "behind" you.  The more interesting cases
+         %  are when the player is facing one of the corner directions.  We calculate
+         %  the equation of the line using the point-slope formula and determine which
+         %  side of the line the target is.
+         %    Equation of the SW-NE line: iTargetRow - iRow = iCol - iTargetRow
+         %    Equation of the SE-NW line: iTargetRow - iRow = iTargetCol - iCol
          if iDist > 1
-            AND ( ((iAngle > ANGLE_ENE OR iAngle <= ANGLE_ESE)
+            AND (   ((iAngle > ANGLE_ENE OR iAngle <= ANGLE_ESE)
                     AND iTargetCol < iCol)
                  OR (iAngle > ANGLE_ESE AND iAngle <= ANGLE_SSE
                     AND (iTargetRow - iRow) < (iCol - iTargetCol))
@@ -4384,7 +4391,7 @@ messages:
       return TRUE;
    }
 
-   % This returns the battler's ability to-hit. Ranges from 1 to 1000
+   % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
       local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
@@ -4435,7 +4442,7 @@ messages:
                                  @GetFactionHitrollBonus,#who=self);
 
       % If we're using a ranged weapon and don't have a clear line of sight,
-      % then half our offense.
+      %  then half our offense.
       if what <> $
          AND oWeapon <> $
          AND IsClass(oWeapon,&RangedWeapon)
@@ -4451,7 +4458,7 @@ messages:
       return bound(iOffense,1,1000);
    }
 
-   % This returns the battler's ability to avoid being hit. Ranges from 1 to 1000.
+   % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
    GetDefense(what = $, stroke_obj=$)
    {
       local i, oWeapon, oShield, iParry, iDodge, iBlock, iAgility, iDefense, oMonster;
@@ -4499,8 +4506,8 @@ messages:
       return bound(iDefense,1,1000);
    }
 
-   % The next three messages deal with the three defense skills. These messages return the relative values of the three
-   % skills. Used in player for defense, used in battler for defense messages.
+   % The next three messages deal with the three defense skills.  These messages return the relative values of the three
+   % skills.  Used in player for defense, used in battler for defense messages.
    GetParryAbility(stroke_obj=$)
    {
       local oWeapon, oMonster;
@@ -4610,7 +4617,7 @@ messages:
          % Currently considers the damage of the weapon and player's might.
          % Stroke sets damage
          iDamage = Send(oStroke,@FindDamage,#weapon_used=Send(self,@GetWeapon),
-                        #who=self,#victim=what);
+                        #who=self,#victim=what); 
       }
 
       % Spells and attmods that modify damage
@@ -4618,7 +4625,7 @@ messages:
       for i in plAttack_modifiers
       {
          % Attack modifiers return the total damage, subtract out the original
-         % damage to get the damage bonus.
+         %  damage to get the damage bonus.
          iModBonus = Send(i,@ModifyDamage,#who=self,#what=what,#damage=iDamage,
                           #stroke_obj=oStroke);
          iDamageBonus = iDamageBonus + (iModBonus - iDamage);
@@ -4647,7 +4654,7 @@ messages:
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetDamageType,#what=what);
-      }
+      } 
 
       if use_weapon = $
       {
@@ -4676,7 +4683,7 @@ messages:
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
          return Send(oMonster,@GetSpellType,#what=what);
-      }
+      } 
 
       if use_weapon = $
       {
@@ -4694,7 +4701,7 @@ messages:
       }
 
       return Send(oWeapon,@GetAttackSpell);
-   }
+   }   
 
    AssessHit(what = $, stroke_obj = $, damage = $)
    {
@@ -4705,9 +4712,9 @@ messages:
       {
          Send(stroke_obj,@ImproveStroke,#who=self,#target=what,
               #use_weapon=Send(self,@GetWeapon));
-      }
+      }      
 
-      % Morphed? As a bonus, people in illusionary form get the hit side effect. :)
+      % Morphed?  As a bonus, people in illusionary form get the hit side effect.  :)
       oMonster = Send(self,@GetIllusionForm);
       if (oMonster <> $)
       {
@@ -4723,13 +4730,20 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,
-            iLimit, origdamage, oWeapon;
-                        
-         origdamage = damage;
-        
+      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
+			
+	  origdamage = damage;
+	  
       color_rsc = player_hit_color_none;
-      
+	  
+	  % Attacks against a minion master will cause minions to defend the master
+      if length(plControlledMinions) > 0
+	  {	    
+	     for oMinion in plControlledMinions
+		 {
+		    Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+		 }
+	  }
       if what <> $ AND IsClass(what,&monster)
       {
          color_rsc = player_hit_color_blue;
@@ -4761,8 +4775,8 @@ messages:
          
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
 
-         % Add attmods AFTER resistance/suscep mods.
-         damage = damage + bonus;
+         % Add attmods AFTER resistance/suscep mods.    
+         damage = damage + bonus;               
       }
       
       iDuration = 800;
@@ -4775,8 +4789,18 @@ messages:
       {
          iDuration = 400;
       }
-      
-      Send(self,@EffectSendUserDuration,#what=self,#effect=EFFECT_PAIN,#duration=iDuration);
+
+      % Spell damage types do different flashes to inform the victim. If it's just physical damage, do pain instead.
+      % Notably: spell damage type flashes cannot be turned off by unchecking the Show Pain option in client config.
+      if aspell <> 0
+      {
+         iDuration = iDuration / 2;
+         Send(self,@DamageTypeFlashEffect,#aspell=aspell,#duration=iDuration);
+      }
+      else
+      {
+         Send(self,@EffectSendUserDuration,#what=self,#effect=EFFECT_PAIN,#duration=iDuration);
+      }
 
       if NOT absolute and damage <= 0
       {
@@ -4821,23 +4845,23 @@ messages:
       }
 
       Send(self,@LoseHealth,#amount=damage);
-        
-         oWeapon = Send(what,@GetWeapon);
-        
-         if IsClass(what,&Monster)
-         {
-         RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
-         }
-         else
-         {
-         if oWeapon <> $
-         {
+	  
+	  oWeapon = Send(what,@GetWeapon);
+	     
+	  if IsClass(what,&Monster)
+	  {
+	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
+	  }
+	  else
+	  {
+	     if oWeapon <> $
+	     {
             RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
-         }
-         else
-         {
+	     }
+	     else
+	     {
             RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_no_weapon_string);
-         }
+	     }
       }
 
       if piHealth <= 0
@@ -4880,13 +4904,20 @@ messages:
               #color_rsc=color_rsc);
       }
       
+	  % report to shrunken head
+	  shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+	  if damage > 0 AND shrunken <> $
+	  {
+		Send(shrunken,@DamageTaken,#what=what,#amount=damage);
+	  }		  
+	  
       return damage;
    }
 
    % This function handles when is damage done to opponent.
    DidDamage(what = $, amount = 0)
    {
-      local oWeapon, i;
+      local oWeapon, i, shrunken;
 
       oWeapon = Send(self,@GetWeapon);
       
@@ -4915,6 +4946,19 @@ messages:
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
       }
+	  
+	  % report to shrunken head
+	  if amount > 0
+      {
+        Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+		 
+		shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+		if shrunken <> $
+		{
+			Send(shrunken,@DamageDealt,#what=what,#amount=amount);
+		}		
+ 
+      }	  
 
       return;
    }
@@ -4932,7 +4976,7 @@ messages:
          oWeapon = Send(self,@GetEnchantmentsByClass,#EnchClass=&TouchAttackSpell);
          if oWeapon <> $
          {
-            % The spell object is the second element of the list. Get that.
+            % The spell object is the second element of the list.  Get that.
             oWeapon = Nth(first(oWeapon),2);
          }
       }
@@ -4968,7 +5012,7 @@ messages:
       piWeaponSwings = piWeaponSwings + times;
       if (piWeaponSwings mod Send(Send(SYS,@GetSettings),@GetSwingsPerImproveCheck)) = 0
       {
-         % Increase this number. Allows us to advance, and get bonuses for advancement.
+         % Increase this number.  Allows us to advance, and get bonuses for advancement.
          piWeaponInfo = piWeaponInfo + 1000;
       }
       
@@ -4976,7 +5020,7 @@ messages:
    }
 
    % This resets the weapon swings, for example, after an improvement or a
-   % weapon type change.
+   %  weapon type change.
    ResetWeaponSwings(prof=$)
    {
       local iProf;
@@ -5005,7 +5049,7 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild;
+      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, shrunken;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
@@ -5028,8 +5072,15 @@ messages:
             {
                Send(self,@MsgSendUser,#message_rsc=player_killed_something,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-            }
+            }          
          }
+      }
+      
+      if IsClass(what,&Monster)
+         AND (use_weapon = $
+              OR NOT IsClass(use_weapon,&ActiveWallElement))
+      {
+         Send(self,@JoinBuilderGroup);
       }
       
       Send(poOwner,@SomethingKilled,#what=self,#victim=what);
@@ -5054,7 +5105,7 @@ messages:
          else
          {
             piKill_count = piKill_count + 1;
-            piKill_count_decay = piKill_count_decay + 1;
+            piKill_count_decay = piKill_count_decay + 1;              
          }
          
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
@@ -5068,12 +5119,12 @@ messages:
             %Attacked an innocent!
 
             % Check for enemy guild - If both guilds are enemies, then they can whack on each other
-            % freely, without murderer or faction penalty.
+            %   freely, without murderer or faction penalty.
             oEnemyGuild = Send(what,@GetGuild);
 
             % Check for various murderer things if any are true:
-            % We're not in a guild, opponent wasn't in a guild, we're not in a mutual war
-            % AND if we're not a faction soldier, the opponent isn't an opposing faction soldier
+            %  We're not in a guild, opponent wasn't in a guild, we're not in a mutual war
+            %  AND if we're not a faction soldier, the opponent isn't an opposing faction soldier
             if (poGuild = $
                 OR oEnemyGuild = $
                 OR NOT Send(poGuild,@IsMutualEnemy,#otherguild=oEnemyGuild))
@@ -5081,9 +5132,9 @@ messages:
                     OR NOT Send(oSoldierShield,@IsEnemyAttack,#what=what,#damage=TRUE))
             {
                % SUBTLE BUG: Somehow, the faction check is missed when you kill something.
-               % We check it here, but only for players. This means that if you score
-               % just the killing blow on a factioned monster, you won't get checked for
-               % faction loss. It's a bug, but currently not that vital.
+               %   We check it here, but only for players.  This means that if you score
+               %   just the killing blow on a factioned monster, you won't get checked for
+               %   faction loss.  It's a bug, but currently not that vital.
                
                % Check to see if the attack was faction-based.
                Send(self,@CheckFactionAttack,#what=what);
@@ -5111,7 +5162,7 @@ messages:
                   % If the victim was good, we get haunted.
                   iChance = Send(self,@RevenantChance,#target=what);
                   if (random(1,100) < iChance) AND NOT Send(SYS,@GetChaosNight)
-                  {
+                  {       
                      Send(self,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=TRUE);
                      Send(self,@MsgSendUser,#message_rsc=player_haunted_on,
                           #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName,#Cap=TRUE));
@@ -5125,17 +5176,23 @@ messages:
       }
 
       if IsClass(what,&Monster)
-      {
+      {         
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);
-         
-         Send(self,@JoinBuilderGroup);
       }
 
       Send(what,@Killed,#what=self,#stroke_obj=stroke_obj);
-         Send(self,@DrawHPChance);
+	  Send(self,@DrawHPChance);
 
+	  % report to shrunken head
+	  shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+      if shrunken <> $
+      {
+		Send(shrunken,@OpponentKilled,#what=what,#stroke_obj=stroke_obj);
+      }
+	  
+	  
       return;
    }
 
@@ -5257,7 +5314,7 @@ messages:
       oChance = 10;
       oGuild = Send(target,@GetGuild);
       
-      if poGuild <> $ AND oGuild <> $
+      if poGuild <> $ AND oGuild <> $ 
       {
          if poGuild = oGuild
          {
@@ -5309,8 +5366,8 @@ messages:
       % Punish them more if they beat up someone weaker than they are.
       oChance = oChance + ((10*piBase_Max_Health)/Send(target,@GetBaseMaxHealth));
 
-      % People with greater absolute Karma have a greater chance to produce a revenant. Being a good
-      % person, in general, decreases your chance. Even if you are murderous scum.
+      % People with greater absolute Karma have a greater chance to produce a revenant.  Being a good
+      %  person, in general, decreases your chance.  Even if you are murderous scum.
       oChance = oChance + (abs(Send(target,@GetKarma)-piKarma/100))/20;
 
       % Punish them more if they walked away with more health.
@@ -5419,7 +5476,7 @@ messages:
             rSound = player_sound_hit_monster_metal3;
          }
          
-         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=rSound);
+         Send(poOwner,@SomethingWaveRoom,#what=self,#wave_rsc=rSound); 
          
          return;
       }
@@ -5513,7 +5570,7 @@ messages:
    }
 
    IsOkayAttackTime(time = 1000, seconds = $)
-   "Have we waited long enough since the last attack/spell? Sets new valid attack time."
+   "Have we waited long enough since the last attack/spell?  Sets new valid attack time."
    "(time in msec, default 1 second)"
    {
       local i;
@@ -5600,8 +5657,8 @@ messages:
          if IsClass(i,&Weapon)
          {
             return i;
-         }
-      }
+         }      
+      } 
 
       return $;
    }
@@ -5613,10 +5670,11 @@ messages:
       for i in plUsing
       {
          if IsClass(i,&Shield)
+            AND Send(i,@GetBlockAbility,#who=self) > 0
          {
             return i;
-         }
-      }
+         }      
+      } 
 
       return $;
    }
@@ -5625,7 +5683,7 @@ messages:
    {
       local i;
 
-      % in case it's on the list of window overlays
+      % in case it's on the list of window overlays 
       Send(self,@RemoveWindowOverlayObject,#what=what);
 
       % in case it set our icon
@@ -5692,7 +5750,7 @@ messages:
    }
 
    FindUsing(class=$)
-   "Find the first instance of 'class' that player has equipped. Returns $ if nothing is found."
+   "Find the first instance of 'class' that player has equipped.  Returns $ if nothing is found."
    {
       local i;
       
@@ -5714,7 +5772,7 @@ messages:
 
    ChooseArmorPosition()
    "Defense now chooses a body place at random, and checks to see if the "
-   "defender has any defense value there. Much better than rendom pattern "
+   "defender has any defense value there.  Much better than rendom pattern "
    "of previous combat."
    {
       local rand, armor_pos;
@@ -5917,7 +5975,7 @@ messages:
 
    LoseHealth(amount = $, decay = FALSE)
    "decay = TRUE if you lose a HP over time because you are boosted over max "
-   "by some sort of vamp effect. If this is true, you shouldn't break a trance."
+   "by some sort of vamp effect.  If this is true, you shouldn't break a trance."
    {
       if piFlags & PFLAG_TRANCE AND NOT decay
       {
@@ -6015,7 +6073,7 @@ messages:
    
    GainLight(amount = $)
    "Adds <amount> to player source light."
-   {
+   {      
       if (amount = $)
       {
          return 0;
@@ -6045,7 +6103,7 @@ messages:
 
    NewLight()
    "Call this everytime player light is changed."
-   {
+   {      
       Send(self,@SourceLightChanged);
       
       return;
@@ -6068,7 +6126,7 @@ messages:
          AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_TUTORIAL)
       {
          Send(self,@ReceiveNestedMail,#from=player_angel,
-              #dest_list=[self],#nest_list=[4,player_tutorial_mail]);
+              #dest_list=[self],#nest_list=[4,player_tutorial_mail]);           
       }
       
       Send(self,@PlayerIsIntriguing);
@@ -6079,38 +6137,38 @@ messages:
 
    GainMaxHealth(amount = 0)
    "Call this any time you modify piMax_health, to set stuff on the user's display, "
-   "and make sure the value doesn't get too high. Returns actual amount changed"
+   "and make sure the value doesn't get too high.  Returns actual amount changed"
    {
       local iPrev_max;
 
       iPrev_max = piMax_health;
       piMax_health = bound(piMax_health + amount, 20, $);
 
-      % no longer reset health to max - will need to test for abusability
-      % the motivation for this originated in using a circlet with health > max_health,
-      % which would erase hp boons or vamptouch gains - kinda mean.
-      % thought about preserving (health - max_health):
-      % OOOOOOOOOOOOOOOOOOOOoooooo (o is health above max)
-      % --> OOOOOOOOOOOOOOOOoooooo
-      % but in parallel with this scheme, we should also do:
-      % OOOOOOOOOOOOOO...... (. is space to max)
-      % --> OOOOOOOOOO......
-      % which could result in death!
-      % the behavior could be made assymetrical,
-      % OOOOOOOOOOOOOO......
-      % --> OOOOOOOOOOOOOO..
-      % but what about this case?
-      % OOOOOOOOOOOOOOOOO... or OOOOOOOOOOOOOOOOO...
-      % --> OOOOOOOOOOOOOOOOo OOOOOOOOOOOOOOOO
-      % the left is obviously abusable - compound it with the first gain above,
-      % and by putting on and removing a circlet we gain health!
-      % the right might be ok, and is closest to the current scheme,
-      % but this introduces even more assymmetry and thus makes me nervous.
-      % so my first pass is to do nothing to health here:
+      %  no longer reset health to max - will need to test for abusability
+      %     the motivation for this originated in using a circlet with health > max_health,
+      %     which would erase hp boons or vamptouch gains - kinda mean.
+      %     thought about preserving (health - max_health):
+      %           OOOOOOOOOOOOOOOOOOOOoooooo       (o is health above max)
+      %     -->   OOOOOOOOOOOOOOOOoooooo
+      %     but in parallel with this scheme, we should also do:
+      %           OOOOOOOOOOOOOO......             (. is space to max)
+      %     -->   OOOOOOOOOO......
+      %     which could result in death!
+      %     the behavior could be made assymetrical,
+      %           OOOOOOOOOOOOOO......
+      %     -->   OOOOOOOOOOOOOO..
+      %     but what about this case?
+      %           OOOOOOOOOOOOOOOOO...    or    OOOOOOOOOOOOOOOOO...
+      %     -->   OOOOOOOOOOOOOOOOo             OOOOOOOOOOOOOOOO
+      %     the left is obviously abusable - compound it with the first gain above,
+      %     and by putting on and removing a circlet we gain health!
+      %     the right might be ok, and is closest to the current scheme,
+      %     but this introduces even more assymmetry and thus makes me nervous.
+      %     so my first pass is to do nothing to health here:
       %
       %if piHealth > piMax_health { piHealth = piMax_health; }
       %
-      % if this becomes undesirable, use this new code:
+      %     if this becomes undesirable, use this new code:
       %if piHealth > iPrev_max { piHealth = piMax_health + (piHealth - iPrev_max); }
       %else { piHealth = bound(piHealth, $, piMax_health); }
 
@@ -6139,7 +6197,7 @@ messages:
 
       while nodelist >=1
       {
-         if ((nodelist/2)*2) <> nodelist %we do an "# was odd" operator
+         if ((nodelist/2)*2) <> nodelist  %we do an "# was odd" operator
          {
             Send(Send(SYS,@FindNodeByNum,#num=count),@UnMeld,#who=self);
          }
@@ -6239,8 +6297,8 @@ messages:
    }
 
    NewMaxMana(amount=0,node_num=-1)
-   "This is called from the mana node. Unlike newMaxHealth, the amount is "
-   "checked here. Returns actual amount changed"
+   "This is called from the mana node.  Unlike newMaxHealth, the amount is "
+   "checked here.  Returns actual amount changed"
    {
       local iPrev_max;
 
@@ -6262,7 +6320,7 @@ messages:
          }
       }
       
-      piMax_Mana = piMax_mana+amount;
+      piMax_Mana = piMax_mana+amount;      
 
       Post(self,@ComputeMaxMana);
       
@@ -6279,10 +6337,10 @@ messages:
       piMax_mana = Send(self, @GetInitialMaxMana);
       
       while iNodeList > 0 AND index <= NODE_MAX_VALUE
-      {
-         if (iNodeList & index)
-         {
-            oNode = Send(SYS,@FindNodeByNum,#num=index);
+      {          
+         if (iNodeList & index)   
+         {      
+            oNode = Send(SYS,@FindNodeByNum,#num=index);      
             piMax_mana = piMax_mana + Send(oNode,@GetManaAdjust,#who=self);
             iNodelist = iNodelist & ~index;
          }
@@ -6425,7 +6483,7 @@ messages:
       if plSchoolCasts = $
       {
          % 11 elements for now
-         plSchoolCasts = [ 0,0,0,0,0,0,0,0,0,0,0 ];
+         plSchoolCasts = [ 0,0,0,0,0,0,0,0,0,0,0 ]; 
       }
       
       if school = $
@@ -6449,7 +6507,7 @@ messages:
       if plSchoolCasts = $
       {
          % 11 elements for now
-         plSchoolCasts = [ 0,0,0,0,0,0,0,0,0,0,0 ];
+         plSchoolCasts = [ 0,0,0,0,0,0,0,0,0,0,0 ]; 
       }
       
       if school = $
@@ -6468,7 +6526,7 @@ messages:
       if plSchoolCasts = $
       {
          % 11 elements for now
-         plSchoolCasts = [ 0,0,0,0,0,0,0,0,0,0,0 ];
+         plSchoolCasts = [ 0,0,0,0,0,0,0,0,0,0,0 ]; 
       }
       
       if school = $
@@ -6496,7 +6554,7 @@ messages:
       }
       
       return Nth(plSchools,school);
-   }
+   }   
 
    GetNumSpellsInSchool(school = 0)
    "Used by the advancement checker to see the odds of a player advancing."
@@ -6649,7 +6707,7 @@ messages:
    {
      piKarma = value;
      Send(self,@NewKarma);
-                
+		
      return;
    }
 
@@ -6676,7 +6734,7 @@ messages:
          return 0;
       }
 
-      iBase = karma_doer - karma_act;
+      iBase = karma_doer  - karma_act;
     
       iChange = - ((iBase*iBase*ibase)/2500 + (5*iBase));
     
@@ -6698,7 +6756,7 @@ messages:
          return 0;
       }
 
-      % No karma changes in the newbie area. Otherwise e.g. killing a negative
+      % No karma changes in the newbie area.  Otherwise e.g. killing a negative
       % karma monster may make your spell inoperable.
       oRoom = Send(self, @GetOwner);
       if oRoom <> $ AND Send(oRoom, @GetRegion) = RID_NEWB_BASE
@@ -6713,9 +6771,9 @@ messages:
       }
 
       % A kill is merely an act, like all other acts, with the
-      % strongest swing factor possible. The karma of a kill
-      % is equal to the negative karma of the person who died -
-      % thus, killing someone with 100 karma is a -100 karma act.
+      %  strongest swing factor possible.  The karma of a kill
+      %  is equal to the negative karma of the person who died -
+      %  thus, killing someone with 100 karma is a -100 karma act.
       if bIsMob
       {
          iSwing = Send(Send(SYS, @GetSettings), @GetKillKarmaSwingMonster);
@@ -6726,11 +6784,11 @@ messages:
       }
  
       % Okay, let's give them a break if they are moving towards
-      % neutrality, and they've just killed a monster. This happens,
-      % for example, if a player with 20 karma kills a monster with
-      % -10. It moves the player towards 10, but at a slower pace.
+      %  neutrality, and they've just killed a monster.  This happens,
+      %  for example, if a player with 20 karma kills a monster with
+      %  -10.  It moves the player towards 10, but at a slower pace.
 
-      if bIsMob
+      if bIsMob 
       {
          if (karma_killer > 0) <> (karma_victim > 0)
             AND (abs(karma_killer) > abs(karma_victim))
@@ -6742,12 +6800,12 @@ messages:
       iChange = Send(self,@CalculateKarmaChangeFromAct,#karma_doer = karma_killer,
                      #karma_act = -(karma_victim),#swing_factor = iSwing);
         
-      if bIsMob
+      if bIsMob 
       {
          iChange = Bound(iChange,-150,150);
       }
 
-      return iChange;
+      return iChange;    
    }
 
    %%% Guild Command Stuff
@@ -6767,7 +6825,7 @@ messages:
    }
    
    AddGuildCommand(command_num = 0)
-   "Adds a guildcommand to player's arsenal. Usually called by resetpowers"
+   "Adds a guildcommand to player's arsenal.  Usually called by resetpowers"
    "in guild.kod."
    {
       local oCommand;
@@ -6813,7 +6871,7 @@ messages:
 
    ResetGuildStuff()
    "This should never be called directly, except from 'RemoveFromGuild' in"
-   "guild.kod! Otherwise, the guild lists may not match with player's poGuild!"
+   "guild.kod!  Otherwise, the guild lists may not match with player's poGuild!"
    {
       poGuild = $;
       piGuild_commands = 0;
@@ -6825,7 +6883,7 @@ messages:
       return;
    }
 
-   %%% Spells Stuff
+   %%%  Spells Stuff
    
    HasSpell(num = 0)
    "Returns TRUE if a spell is in a player's spell list,"
@@ -6846,7 +6904,7 @@ messages:
 
    EncodeSpell(num = 0, iability = 0, Has_Been_Used=TRUE)
    {
-      if Has_been_used=TRUE
+      if Has_been_used=TRUE 
       {
          return num*100 + iability;
       }
@@ -6876,7 +6934,7 @@ messages:
          }
       }
       
-      % this spell is not in the player's spell list. return 0 ability.
+      % this spell is not in the player's spell list.  return 0 ability.
       return 0;
    }
 
@@ -6884,7 +6942,7 @@ messages:
                       refigureschools = TRUE)
    {
       local i, bFound, elemnum, iability, bUsed, spellname, iChange,
-            newability, oSpell, oRoom;
+            newability, oSpell, oRoom, shrunken;
 
       oSpell = Send(sys,@FindSpellByNum,#num=spell_num);
       if oSpell = $
@@ -6898,7 +6956,7 @@ messages:
       spellname = Send(oSpell,@GetName);
       iChange = 0;
 
-      % Do _not_ replace with HasSpell.
+      % Do _not_ replace with HasSpell.  
       % This also finds the spell/ability pair and puts it in 'i' for later use.
       for i in plSpells
       {
@@ -6933,20 +6991,27 @@ messages:
       {
          oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=spellName);
-         Send(oRoom, @SomethingWaveRoom, #what=self,
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_improved_wav_rsc);
+			
+		 % report to shrunken head
+		 shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+		 if shrunken <> $
+		 {
+			Send(shrunken,@Improvement,#spellName=spellName);
+		 }				  
       }
 
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools
-      {
+      {    
          Send(self,@AddToSchools,#school=Send(oSpell,@GetSchool),#change=iChange);
       }
 
       if Send(self,@CheckLog)
       {
-         Debug("LOG: ",vrName," changed in spell ability of ",spellname,
+         Debug("LOG:  ",vrName," changed in spell ability of ",spellname,
                " by ",iChange," to ",abs(i));
       }
 
@@ -6968,7 +7033,7 @@ messages:
       if plSchools = $
       {
          % 11 elements right now.
-         plSchools = [ 0,0,0,0,0,0,0,0,0,0,0 ];
+         plSchools = [ 0,0,0,0,0,0,0,0,0,0,0 ];  
       }
       
       while length(plSchools) < school
@@ -6983,7 +7048,7 @@ messages:
       Send(oLore,@PlayerAdvanced,#who=self,#school = school);
 
       return TRUE;
-   }
+   } 
 
    RefigureSchoolsLists(informlore=FALSE)
    {
@@ -6993,16 +7058,16 @@ messages:
       lOldList = plSchools;
 
       % 11 elements right now.
-      plSchools = [ 0,0,0,0,0,0,0,0,0,0,0 ];
+      plSchools = [ 0,0,0,0,0,0,0,0,0,0,0 ];  
 
       for i in plSpells
       {
          iAbility = Send(self,@DecodeSpellAbility,#compound=i);
          iNum = Send(self,@DecodeSpellNum,#compound=i);
-         oAbility=Send(SYS,@FindSpellByNum,#num=iNum);
+         oAbility=Send(SYS,@FindSpellByNum,#num=iNum);    
          if IsClass(oAbility,&spell)
          {
-            iSchool = Send(oAbility,@GetSchool);
+            iSchool = Send(oAbility,@GetSchool);    
             iValue = Nth(plSchools,iSchool);
             SetNth(plSchools,iSchool,(iValue+iAbility));
          }
@@ -7018,7 +7083,7 @@ messages:
       }
       
       if informlore OR lOldList = $
-      {
+      { 
          % Assume that something has changed
          oLore = Send(SYS,@GetLore);
          Send(oLore,@PlayerAdvanced,#who=self,#school = iSchool);
@@ -7124,20 +7189,20 @@ messages:
          }
          
          return FALSE;
-      }
+      } 
 
-% When I re-enabled the shadow rift spell, it was only sold by the lich,
-% and the Ao3/SotH quest that was needed to get the spell was broken and unfixable,
-% so I made the spell sold by a different NPC. I had to remove this check
-% (which clearly doesn't belong in player; should be in the spell itself) to
-% make it buyable. - ARK 10/26/2010
+%  When I re-enabled the shadow rift spell, it was only sold by the lich,
+%  and the Ao3/SotH quest that was needed to get the spell was broken and unfixable,
+%  so I made the spell sold by a different NPC.  I had to remove this check
+%  (which clearly doesn't belong in player; should be in the spell itself) to
+%  make it buyable.  - ARK 10/26/2010
 %
-% if num = SID_DEATHS_DOOR
-% AND ((NOT Send(self, @IsUsingA,#class=&NecromancerAmulet))
-% AND (NOT IsClass(self,&Admin)))
-% {
-% return FALSE;
-% }
+%      if num = SID_DEATHS_DOOR
+%          AND ((NOT Send(self, @IsUsingA,#class=&NecromancerAmulet))
+%               AND (NOT IsClass(self,&Admin)))
+%      {
+%         return FALSE;
+%      }
       
       oSpell = Send(SYS,@FindSpellByNum,#num=num);
       if oSpell = $
@@ -7170,8 +7235,8 @@ messages:
 
       if Send(self,@CheckLog)
       {
-         Debug("LOG: ",vrName," added spell ",Send(oSpell,@GetName));
-      }
+         Debug("LOG:  ",vrName," added spell ",Send(oSpell,@GetName));
+      }           
 
       if dontSend = FALSE
       {
@@ -7180,7 +7245,7 @@ messages:
       
       if NOT bDM
          AND NOT initial
-      {
+      {  
           Send(self,@AddToSchools,#school=Send(oSpell,@GetSchool),#change=iBoundAbility);
       }
 
@@ -7212,7 +7277,7 @@ messages:
       plSpells=$;
       if Send(self,@CheckLog)
       {
-         Debug("LOG: ",vrName," lost all spells.");
+         Debug("LOG:  ",vrName," lost all spells.");
       }
 
       Send(self,@PlayerIsIntriguing);
@@ -7252,7 +7317,7 @@ messages:
             plSpells = DelListElem(plSpells,i);
             if Send(self,@CheckLog)
             {
-               Debug("LOG: ",vrName," removed spell ",Send(oSpell,@GetName));
+               Debug("LOG:  ",vrName," removed spell ",Send(oSpell,@GetName));
             }
 
             Send(self,@ToCliRemoveSpell,#oSpell=oSpell);
@@ -7267,7 +7332,7 @@ messages:
                }
             }
             
-            if NOT isDM
+            if NOT isDM  
             {
                % DMs get it all figured out at once.
                Send(self,@RefigureSchoolsLists);
@@ -7290,7 +7355,7 @@ messages:
       }
       
       return FALSE;
-   }
+   } 
    
    % In case player has been enchanted with the forget spell, this checks
    % to see if they have forgotten the skill/spell (what)
@@ -7330,8 +7395,8 @@ messages:
       
       elemnum = 0;
       for i in plSpells
-      {
-         elemnum = elemnum + 1;
+      {       
+         elemnum = elemnum + 1;      
          if Send(self,@DecodeSpellNum,#compound=i) = SID
          {
             SetNth(plspells,elemnum,abs(i));
@@ -7352,10 +7417,10 @@ messages:
 
       for i in plSpells
       {
-         if i < 0
+         if i < 0         
          {
             iAbility = Send(self,@DecodeSpellAbility,#compound=i);
-            if iAbility > 2
+            if iAbility > 2                                                         
             {
                aSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
                bFound = FALSE;
@@ -7368,7 +7433,7 @@ messages:
                      iAmount = -1;
                      
                      break;
-                  }
+                  }                                 
                }
                Send(self,@ChangeSpellAbility,#spell_num=Send(aSpell,@GetSpellNum),
                     #amount=iamount);
@@ -7379,7 +7444,7 @@ messages:
       return;
    }
 
-   %%% Skills Stuff
+   %%%  Skills Stuff
 
    HasSkill(num = $)
    "Returns TRUE if a Skill is in a player's Skill list,"
@@ -7430,13 +7495,13 @@ messages:
          }
       }
       
-      % this Skill is not in the player's Skill list. return 0 ability.
+      % this Skill is not in the player's Skill list.  return 0 ability.
       return 0;
    }
 
    ChangeSkillAbility(Skill_num = 0, amount = 0, report = FALSE, refigureschools = TRUE, bDM = FALSE)
    {
-      local i, bFound, elemnum, iability, bUsed, iChange, skillname,
+      local i, bFound, elemnum, iability, bUsed, iChange, skillname, 
             newability, oSkill, oRoom;
  
       oSkill = Send(SYS,@FindSkillByNum,#num=skill_num);
@@ -7451,7 +7516,7 @@ messages:
       skillname = Send(oSkill,@GetName);
       iChange = 0;
  
-      % Do _not_ replace with HasSkill.
+      % Do _not_ replace with HasSkill.  
       % This also finds the Skill/ability pair and puts it in 'i' for later use.
       for i in plSkills
       {
@@ -7492,21 +7557,21 @@ messages:
       {
          oRoom = Send(self, @GetOwner);
          Post(self,@MsgSendUser,#message_rsc=player_improved,#parm1=skillName);
-         Send(oRoom, @SomethingWaveRoom, #what=self,
+         Send(oRoom, @SomethingWaveRoom, #what=self, 
               #wave_rsc=player_improved_wav_rsc);
       }
       
       Send(self,@PlayerIsIntriguing);
 
       if refigureschools
-      {
+      {    
          Send(self,@AddToSchools,#school=Send(oSkill,@GetSchool),#change=iChange);
       }
    
       if Send(self,@CheckLog)
-      {
-         Debug("LOG: ",vrName," changed skill ",skillname,"by ",iChange,
-               " to ",abs(i));
+      {           
+         Debug("LOG:  ",vrName," changed skill ",skillname,"by ",iChange,
+               " to ",abs(i)); 
       }
 
       return TRUE;
@@ -7578,7 +7643,7 @@ messages:
    {
       local i,j,oSkill, lSkill_info, lPrereqs, bFound, iBoundAbility;
       
-      if Send(self,@HasSkill,#num=num)
+      if Send(self,@HasSkill,#num=num)              
       {
          % Already has it.
          if Send(self,@GetSkillAbility,#skill_num=num) < iAbility
@@ -7591,7 +7656,7 @@ messages:
          return FALSE;
       }
       
-      oSkill = Send(SYS,@FindSkillByNum,#num=num); % system has no info on this skill.
+      oSkill = Send(SYS,@FindSkillByNum,#num=num);    % system has no info on this skill.
       if (oSkill = $)
       {
          return False;
@@ -7610,16 +7675,16 @@ messages:
                       
       if Send(self,@checklog)
       {
-         Debug("LOG: ",vrName," added skill ",Send(oSkill,@GetName));
+         Debug("LOG:  ",vrName," added skill ",Send(oSkill,@GetName));
       }
 
       if NOT dontSend
       {
-         Send(self,@ToCliAddSkill,#oSkill=oSkill);
+         Send(self,@ToCliAddSkill,#oSkill=oSkill); 
       }
       
       if NOT bDM and NOT initial
-      {
+      {  
          Send(self,@AddToSchools,#school=Send(oSkill,@GetSchool),
               #change=iBoundAbility);
       }
@@ -7633,7 +7698,7 @@ messages:
 
       if Send(self,@checklog)
       {
-         Debug("LOG: ",vrName," loses all skills.");
+         Debug("LOG:  ",vrName," loses all skills.");
       }
 
       Send(self,@ToCliStats,#group=4);
@@ -7662,7 +7727,7 @@ messages:
             plSkills = DelListElem(plSkills,i);
             if Send(self,@CheckLog)
             {
-               Debug("LOG: ",vrName," lost skill ",Send(oSkill,@GetName));
+               Debug("LOG:  ",vrName," lost skill ",Send(oSkill,@GetName));
             }
 
             Send(self,@ToCliRemoveSkill,#oSkill=oSkill);
@@ -7689,8 +7754,8 @@ messages:
 
       elemnum = 0;
       for i in plSkills
-      {
-         elemnum = elemnum + 1;
+      {       
+         elemnum = elemnum + 1;      
          if Send(self,@decodeSkillNum,#compound=i) = SKID
          {
             SetNth(plSkills,elemnum,abs(i));
@@ -7710,10 +7775,10 @@ messages:
 
       for i in plSkills
       {
-         if i < 0
+         if i < 0         
          {
             iAbility = Send(self,@decodeSkillability,#compound=i);
-            if iAbility > 2
+            if iAbility > 2                                                         
             {
                aSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=i));
                bFound = FALSE;
@@ -7725,7 +7790,7 @@ messages:
                   {
                      iAmount=-1;
                      break;
-                  }
+                  }                                 
                }
                
                Send(self,@ChangeSkillAbility,#skill_num=Send(aSkill,@GetSkillNum),
@@ -7737,7 +7802,7 @@ messages:
       return;
    }
 
-   %%% Advancement
+   %%%  Advancement
 
    ResetAtrophyFlags()
    "This sets all of a player's spell values to negative."
@@ -7791,7 +7856,7 @@ messages:
       {
          propagate;
       }
-
+         
       if victim = poKill_target
       {
          if what = self
@@ -7800,7 +7865,7 @@ messages:
          }
          else
          {
-            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE);
+            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member=what);
          }
          
          poKill_target=$;
@@ -7811,8 +7876,7 @@ messages:
          % Let players share XP if they're grouped, even if they're not fighting the same mob.
          if Send(Send(self,@GetOwner),@AreGroupedHere,#who=self,#what=what)
          {
-            Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(what,@GetName),#parm2=Send(victim,@GetName));
-            Send(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member_kill=TRUE);
+            Post(self,@AdvancementCheck,#what=victim,#killing_blow=FALSE,#group_member_kill=TRUE,#group_member=what);
          }
       }
       
@@ -7830,12 +7894,12 @@ messages:
    }
 
 
-   AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE)
+   AdvancementCheck(what=$,killing_blow=TRUE,group_member_kill=FALSE,group_member=$)
    "A player will need, on average, to kill a number of monsters equal to"
-   "their maxhealth to gain a HP. This number is reduced by the player's"
+   "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon;
+      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon, shrunken, lBuilderGroup;
             
       gain = 0;
       roll = FALSE;
@@ -7846,10 +7910,10 @@ messages:
          OR Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
          OR (Send(poOwner,@IsArena) AND NOT Send(poOwner,@ArenaRealDeath))
       {
-         return FALSE;
+         return FALSE;  
       }
 
-         Post(self,@DrawHPChance);
+	  Post(self,@DrawHPChance);
 
       if IsClass(what,&User)
       {
@@ -7875,18 +7939,77 @@ messages:
             else
             {
                % Player either did not take damage, but did killing blow (mage),
-               % or did take damage, did not land killing blow, or
-               % it's a group member kill.
-               gain = 1;
-               roll = TRUE;
+               %  or did take damage, did not land killing blow, or
+               %  it's a group member kill.
+               
+               if group_member_kill
+                  AND Send(self,@GetOwner) <> $
+               {
+                  lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
+                  if lBuilderGroup <> $
+                     AND Length(lBuilderGroup) >= 1
+                  {
+                     % Player will always get 1 xp from a kill target he took damage from.
+                     % This may happen if fighting the same mob, or when fighting thrashers for example.
+                     if poKill_target = what
+                        AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+                     {
+                        gain = 1;
+                     }
+                     else
+                     {
+                        % Less gains for groups that are too large.
+                        if Length(lBuilderGroup) < 5
+                        {
+                           gain = 1;
+                        }
+                        else
+                        {
+                           % Starting at 5 people, we have a 50% chance to miss group experience.
+                           if Random(1,2) = 1
+                           {
+                              gain = 1;
+                           }
+                        }
+                     }
+                  }
+               }
+               else
+               {
+                  gain = 1;
+               }
+
+               % No roll for kills by others
+               if NOT group_member_kill
+               {
+                  roll = TRUE;
+               }
+               
+               % Inform the player that a group kill successfully garnered XP.
+               if group_member_kill
+                  AND group_member <> $
+                  AND gain = 1
+               {
+                  Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(group_member,@GetName),
+                                         #parm2=Send(what,@GetName));
+               }
+               
+               % Give an informative message about non-group kills that are still shared
+               if NOT killing_blow
+                  AND NOT group_member_kill
+                  AND group_member <> $
+               {
+                  Send(self,@MsgSendUser,#message_rsc=group_experience_rsc,#parm1=Send(group_member,@GetName),
+                                         #parm2=Send(what,@GetName));
+               }
             }
          }
          else
          {
-            % Monster was equal or close to player level. Small bonus,
-            % no roll chance.
+            % Monster was equal or close to player level.  Small bonus,
+            %  no roll chance.
             if (monster_level + 5) > piBase_Max_health
-               AND IsClass(what,&monster) AND killing_blow
+               AND IsClass(what,&monster) AND killing_blow 
                AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                gain = 1;
@@ -7908,7 +8031,7 @@ messages:
          }
 
          % If they're cheesing the situation by fighting wussy monsters in an altered form,
-         % penalize the gain amount.
+         %  penalize the gain amount.
          if piMax_health > piBase_Max_health * 2
             AND monster_level < piMax_health
          {
@@ -7918,12 +8041,7 @@ messages:
 
          gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,500);
          gain = gain * gainmult;
-         
-         If IsClass(Send(self,@GetOwner),&InstanceRoom)
-         {
-            gain = gain * Send(Send(self,@GetOwner),@GetExperienceMod);
-         }
-
+		 
          piGain_chance = piGain_chance + gain;
 
          if roll
@@ -7938,7 +8056,7 @@ messages:
                Send(self,@GainBaseMaxHealth,#amount = 1);
                if Send(self,@CheckLog)
                {
-                  Debug("LOG: ",vrName," gained a health point: ",
+                  Debug("LOG:  ",vrName," gained a health point: ",
                         piMax_health,pibase_max_health);
                }
 
@@ -7950,16 +8068,23 @@ messages:
                piHealth = piMax_Health;
                Send(self,@DrawHealth);
                Send(self,@EatSomething,#nutrition=200);
-
+			   
+			   % report to shrunken head
+			   shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+			   if shrunken <> $
+			   {
+				  send(shrunken,@Tougher,#hp=pibase_max_health);
+			   }		 	
+			   
                piGain_chance = -(piBase_Max_health/2);
                
                if piBase_max_health > 30
                {
-                         %stam = 50
-                                 %pigain = pigain - ((50-50)/2) = pigain - 0
-                                 %stam = 25
-                                 %pigain = pigain - ((50-25)/2) = pigain - 12.5
-                                 % so, after 30 hps, any stamina less thatn 50 penalizes you by about 0.5 piGain points
+			      %stam = 50
+				  %pigain = pigain - ((50-50)/2) =  pigain - 0
+				  %stam = 25 
+				  %pigain = pigain - ((50-25)/2) = pigain - 12.5
+				  % so, after 30 hps, any stamina less thatn 50 penalizes you by about 0.5 piGain points
                   piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
                }
 
@@ -8019,9 +8144,9 @@ messages:
             oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
-      % is called from LeaveHold() in the Underworld. This is to allow time
-      % for Portal of Life to reduce penalties. We get the default value of
-      % piDeathCost from SYS, so that we can adjust global death penalties.
+      %  is called from LeaveHold() in the Underworld.  This is to allow time
+      %  for Portal of Life to reduce penalties.  We get the default value of
+      %  piDeathCost from SYS, so that we can adjust global death penalties.
 
       if Send(self,@GetOwner) <> $
          AND Send(Send(self,@GetOwner),@GetRoomNum) = RID_UNDERWORLD
@@ -8030,7 +8155,7 @@ messages:
       }
 
       % "Normal" value is 100.
-      piDeathCost = Send(Send(SYS, @GetSettings), @GetDefaultDeathCost);
+      piDeathCost = Send(Send(SYS, @GetSettings), @GetDefaultDeathCost);  
 
       % A player (probably) cannot die twice in two seconds in any valid way.
       if GetTime() < (piLastDeathTime + 2)
@@ -8105,7 +8230,7 @@ messages:
 
       iRoom = Send(poOwner,@GetRoomNum);
 
-      % Reign of Blood Frenzy death? Newbie death?
+      % Reign of Blood Frenzy death?  Newbie death?
       % Don't drop anything or take any penalties.
       if Send(SYS,@GetChaosNight)
         OR (iRoom >= RID_NEWB_BASE AND iRoom <= RID_NEWB_MAX)
@@ -8113,7 +8238,7 @@ messages:
            AND StringEqual(psHonor,player_newbie_honor_string)
       {
          bNo_drop_death = TRUE;
-         piDeathCost = FALSE;
+         piDeathCost = FALSE;    
       }
 
       % Currently, the following block is only for Necromancer Amulets and Hunter Swords.
@@ -8130,7 +8255,7 @@ messages:
          }
       }
 
-      % Record-keeping. Keep this before the token check, so we can give proper message.
+      % Record-keeping.  Keep this before the token check, so we can give proper message.
       Send(SYS,@UserKilled,#what=self,#killer=what);
       Send(Send(SYS, @GetStatistics), @PlayerDiedCounter);
 
@@ -8145,7 +8270,7 @@ messages:
             Send(i,@NewUnused,#what=self,#where=oRoom);
             
             break;
-         }
+         }       
       }
 
       if Send(SYS,@GetInvestigator)
@@ -8166,12 +8291,12 @@ messages:
             ptHealth = $;
          }
 
-         % Lose the inventory. It falls onto the corpse.
+         % Lose the inventory.  It falls onto the corpse.
          if (what = $) OR (NOT IsClass(what,&user))
          {
             oItemAtt = $;
-         }
-         else
+         } 
+         else 
          {
             oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
          }
@@ -8180,20 +8305,20 @@ messages:
          {
             for i in lItems
             {
-               if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol)
+               if Send(oRoom,@ReqNewHold,#what=i,#new_row=iRow,#new_col=iCol) 
                   AND Send(oRoom,@ReqSomethingMoved,#what=i,#new_row=iRow,#new_col=iCol)
                   AND Send(i,@DropOnDeath)
                {
-                  if oItemAtt <> $
+                  if oItemAtt <> $    
                   {
-                     % We know this was a pk. Only let PKillables pick up the loot.
-                     % Put the appropriate item attribute on it.
+                     % We know this was a pk.  Only let PKillables pick up the loot.
+                     %  Put the appropriate item attribute on it.
                      Send(oItemAtt,@AddToItem,#oItem=i,#timer_duration=PKPOINTER_TIME,
                           #state1=self);
                   }
                   
                   Send(oRoom,@NewHold,#what=i,#new_row=iRow,#new_col=iCol,#merge=FALSE);
-               }
+               } 
             }
          }
 
@@ -8209,7 +8334,7 @@ messages:
 
          Post(self,@EvaluatePKStatus);
 
-         % Let SoldierShields know we died. It handles itself as apropriate.
+         % Let SoldierShields know we died.  It handles itself as apropriate.
          oSoldierShield = Send(self,@FindUsing,#what=&SoldierShield);
          if oSoldierShield <> $
          {
@@ -8219,20 +8344,20 @@ messages:
          % Positive karma makes us eligible for a booby prize.
          if piKarma > 5000 AND (Send(self,@GetHomeRoom) <> RID_NEWB1)
          {
-            % To prevent mule money abuse, make the hammer "created". This makes it
-            % worthless to try to sell. It lasts for 5 hours.
+            % To prevent mule money abuse, make the hammer "created".  This makes it
+            %  worthless to try to sell.  It lasts for 5 hours.
             
             oItem = create(&Hammer);
             oItemAtt = Send(SYS,@FindItemAttByNum,#Num=IA_MADE);
             Send(oItemAtt,@AddtoItem,#oitem=oItem,#timer_duration=18000000);
             Send(self,@NewHold,#what=oItem);
          }
-         else
+         else 
          {
             if piKarma >= 0
             {
-               % To prevent mule money abuse, make the mace "created". This makes it
-               % worthless to try to sell. It lasts for 5 hours.
+               % To prevent mule money abuse, make the mace "created".  This makes it
+               %  worthless to try to sell.  It lasts for 5 hours.
                
                oItem = create(&Mace);
                oItemAtt = Send(SYS,@FindItemAttByNum,#Num=IA_MADE);
@@ -8264,17 +8389,17 @@ messages:
       % Change health, mana, vigor.
       if Send(SYS,@GetChaosNight)
       {
-         % It's a frenzy! Give us a leg up.
+         % It's a frenzy!  Give us a leg up.
          piHealth = piMax_Health / 2;
          piMana = piMax_Mana / 2;
          piVigor = 100;
       }
       else
       {
-         % We're not in a frenzy. Give us the bare minimums.
+         % We're not in a frenzy.  Give us the bare minimums.
          piMana = 1;
          piHealth = 1;
-         piVigor = bound(piVigor/4,0,50);
+         piVigor = bound(piVigor/4,0,50);   
       }
       
       Send(self,@NewHealth);
@@ -8302,7 +8427,7 @@ messages:
       {
          % Give an encouraging gmail and some mana to broadcast.
          Send(self,@ReceiveNestedMail,#from=player_angel,
-              #dest_list=[self],#nest_list=[4,player_death_mail]);
+              #dest_list=[self],#nest_list=[4,player_death_mail]);           
          Send(self,@MsgSendUser,#message_rsc=player_death_mail_notice);
 
          % Give them half their mana to broadcast for help with.
@@ -8334,7 +8459,7 @@ messages:
          % Remove any revenants.
          Send(self,@SetPlayerFlag,#flag=PFLAG_HAUNTED,#value=FALSE);
 
-         % Return out. Don't apply death penalties during frenzies.
+         % Return out.  Don't apply death penalties during frenzies.
          return;
       }
 
@@ -8343,7 +8468,7 @@ messages:
       % Lose your revenant, satisfied if you took a real death.
       if piDeathCost >= Send(Send(SYS, @GetSettings), @GetDefaultDeathCost)
       {
-         % As an outlaw, justice was met by dying. But, not if it's a cheap death!
+         % As an outlaw, justice was met by dying.  But, not if it's a cheap death!
          Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
          Post(self,@EvaluatePKStatus);
 
@@ -8381,16 +8506,16 @@ messages:
          return;
       }
 
-      if Send(self,@CheckLog)
+      if Send(self,@CheckLog) 
       {
          if bLostHealth
-         {
-            Debug("LOG: ",vrName," died, lost a health point: ",
+         {   
+            Debug("LOG:  ",vrName," died, lost a health point: ",
                   piMax_health,pibase_max_health,"Death Cost = ",piDeathCost);
          }
          else
          {
-            Debug("LOG: ",vrName," died, but made death cost check: ",
+            Debug("LOG:  ",vrName," died, but made death cost check: ",
                   piDeathCost);
          }
       }
@@ -8408,8 +8533,8 @@ messages:
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
       {
          iAmount = -2;
-      }
-      else
+      } 
+      else 
       {
          iAmount = -1;
       }
@@ -8473,8 +8598,8 @@ messages:
    {
       local inKocatan;
 
-      % Send current pant/shirt color to body only if they both use the new two-color xlats
-      % otherwise, Send default colors
+      %  Send current pant/shirt color to body only if they both use the new two-color xlats
+      %        otherwise, Send default colors
       inKocatan = FALSE;
       if pbLogged_on
       {
@@ -8597,7 +8722,7 @@ messages:
       }
       
       Send(self,@MsgSendUser,#message_rsc=player_stop_dance);
-      Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);
+      Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);      
       Send(poOwner,@SomethingChanged,#what=self);
       
       return;
@@ -8672,7 +8797,7 @@ messages:
          AddPacket(1,ANIMATE_ONCE, 4,175, 2,1, 2,3, 2,0);
          AddPacket(1,0);
     
-         SendPacket(poSession);
+         SendPacket(poSession);    
       }
       
       return;
@@ -8688,9 +8813,9 @@ messages:
          for i in plWindow_overlays
          {
             if Send(i,@GetWindowOverlayID) = PWO_RIGHT_HAND
-            {
+            {  
                % Of right hand overlay already exists, we can't restore it correctly
-               % yet, so just don't change it
+               %  yet, so just don't change it
                return;
             }
          }
@@ -8705,7 +8830,7 @@ messages:
          AddPacket(4,player_window_overlay_glow, 1,HS_RIGHT_HAND,
                    1,ANIMATE_ONCE, 4,300, 2,1, 2,3, 2,0);
 
-         SendPacket(poSession);
+         SendPacket(poSession);    
       }
       
       return;
@@ -8724,7 +8849,7 @@ messages:
 
    ChangeWindowOverlay(what = $)
    "Things can call this when they have a current window overlay and want "
-   "to change it, such as for an attack. Note--it's NOT verified that it's "
+   "to change it, such as for an attack.  Note--it's NOT verified that it's "
    "in plWindow_overlays."
    {
       if pbLogged_on
@@ -8733,12 +8858,12 @@ messages:
          AddPacket(1,Send(what,@GetWindowOverlayHotspot));
          AddPacket(4,Send(what,@GetWindowOverlayID)); % supposedly "object id" in client
          AddPacket(4,Send(what,@GetWindowOverlay));
-         AddPacket(4,Send(what,@GetName)); % useless field, used to make client parsing easier
+         AddPacket(4,Send(what,@GetName)); % useless field, used to make client parsing easier 
          AddPacket(4,0);
          Send(what,@SendWindowOverlayAnimation);
          Send(what,@SendWindowOverlayOverlays);
     
-         SendPacket(poSession);
+         SendPacket(poSession);    
       }
       
       return;
@@ -8866,7 +8991,7 @@ messages:
       poHair_remove = $;
 
       if poOwner
-      {
+      {      
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
@@ -8877,7 +9002,7 @@ messages:
    {
       piDrawfx = piDrawfx | drawfx;
       if poOwner <> $ AND SendSomethingChanged
-      {
+      {      
          Send(poOwner,@SomethingChanged,#what=self);
       }
       
@@ -8895,7 +9020,7 @@ messages:
       piDrawfx = piDrawfx | drawfx;
       
       if poOwner <> $ AND SendSomethingChanged
-      {
+      {      
          Send(poOwner,@SomethingChanged,#what=self);
       }
       
@@ -8903,7 +9028,7 @@ messages:
    }
 
    SetPlayerIcon(what = $,new_icon = $,translation = $, alldone = TRUE)
-   "Sets our icon to <new_icon>, and keeps track of <what> to undo when necessary. "
+   "Sets our icon to <new_icon>, and keeps track of <what> to undo when necessary.  "
    "Tells everyone we changed."
    {
       poIcon_set = what;
@@ -8954,11 +9079,11 @@ messages:
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_BODY_MASK;
-      piBody_translations = piBody_translations |
-                            (Send(self,@GetDefaultShirtTranslation)*PLAYER_TRANSLATION_BODY_MUL);
+      piBody_translations = piBody_translations | 
+                            (Send(self,@GetDefaultShirtTranslation)*PLAYER_TRANSLATION_BODY_MUL);      
 
       if poOwner <> $ AND alldone
-      {
+      {      
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
@@ -8966,7 +9091,7 @@ messages:
    }
 
    SetPlayerArms(what = $,new_left_arm = $, new_right_arm = $, translation = $, alldone = TRUE)
-   "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary. "
+   "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary.  "
    "Tells everyone we changed."
    {
       poArms_set = what;
@@ -8992,14 +9117,14 @@ messages:
 
       bFound = FALSE;
       for i in plUsing
-      {
+      { 
          if Send(i,@OverrideArms)
          {
             % Gauntlets, probably.
             prRight_arm = Send(i,@GetOverrideRightArm,#who=self);
             prleft_arm = Send(i,@GetOverrideleftArm,#who=self);
             bFound = TRUE;
-         }
+         }    
       }
       
       if NOT bFound
@@ -9016,12 +9141,12 @@ messages:
          }
       }
       
-      iShirt_xlat = Send(self,@GetDefaultShirtTranslation);
+      iShirt_xlat = Send(self,@GetDefaultShirtTranslation);         
       piBody_translations2 = piBody_translations2 & ~PLAYER_TRANSLATION2_ARMS_MASK;
       piBody_translations2 = piBody_translations2 | (iShirt_xlat * PLAYER_TRANSLATION2_ARMS_MUL);
 
       if poOwner <> $ AND alldone
-      {
+      {      
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
@@ -9030,7 +9155,7 @@ messages:
 
 
    SetPlayerLegs(what = $,new_legs = $,translation = $)
-   "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary. "
+   "Sets our legs to <new_legs>, and keeps track of <what> to undo when necessary.  "
    "Tells everyone we changed."
    {
       poLegs_set = what;
@@ -9062,11 +9187,11 @@ messages:
       }
 
       piBody_translations = piBody_translations & ~PLAYER_TRANSLATION_LEGS_MASK;
-      piBody_translations = piBody_translations |
-                            (Send(self,@GetDefaultPantsTranslation) * PLAYER_TRANSLATION_LEGS_MUL);
+      piBody_translations = piBody_translations | 
+                            (Send(self,@GetDefaultPantsTranslation) * PLAYER_TRANSLATION_LEGS_MUL); 
 
       if poOwner <> $
-      {
+      {      
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
@@ -9074,10 +9199,10 @@ messages:
    }
 
    SetDefaultClothes(pants_color = -1,shirt_color = -1, rand=FALSE, increment = TRUE)
-   {
+   {   
       local shirt_color_xlat, pants_color_xlat, skin_color, i, bShirt, bLegs, bArms, oShirt, oRobes;
 
-      skin_color = Send(self,@GetSkinColor);
+      skin_color = Send(self,@GetSkinColor);      
       skin_color = Send(self,@convertskincolortoXLAT,#skin_color = skin_color);
 
       if rand
@@ -9098,7 +9223,7 @@ messages:
          if shirt_color = -1
          {
             shirt_color_xlat = Send(self,@GetDefaultShirtTranslation);
-         }
+         } 
          else
          {
             shirt_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=shirt_color,#color2=skin_color);
@@ -9107,7 +9232,7 @@ messages:
          if pants_color = -1
          {
             pants_color_xlat = Send(self,@GetDefaultPantsTranslation);
-         }
+         } 
          else
          {
             pants_color_xlat = Send(SYS,@EncodeTwoColorXLAT,#color1=pants_color,#color2=skin_color);
@@ -9121,11 +9246,11 @@ messages:
       bArms = FALSE;
       
       for i in plUsing
-      {
+      {     
          if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
          {
             bArms = TRUE;
-         }
+         } 
 
          if Send(i,@GetItemUseType) & ITEM_USE_SHIRT
             OR Send(i,@GetItemUseType) & ITEM_USE_BODY
@@ -9155,26 +9280,110 @@ messages:
          Send(self,@ResetPlayerLegs);
       }
 
-      oRobes = Send(self,@FindUsing,#class=&Robe);
-      if oRobes <> $
-         AND Send(oRobes,@ItemChangesArms)
-      {
-         Post(oRobes,@SetArms);
-      }
+      Send(self,@RefreshPlayerVisualGear);
 
       if poOwner <> $
       {
          Send(poOwner,@SomethingChanged,#what=self);
       }
 
+      return;      
+   }
+   
+   RefreshPlayerVisualGear()
+   {
+      local n, plRefreshItemTypes, i, iHighestLayer, oHighestGear, iLowestLayer, oLowestGear,
+            oSoldierShield, bSoldierShieldSlung;
+
+      plRefreshItemTypes = [ITEM_USE_SHIRT,ITEM_USE_BODY,ITEM_USE_LEGS];
+      
+      for n in plRefreshItemTypes
+      {
+         iHighestLayer = 0;
+         oHighestGear = $;
+         for i in plUsing
+         {
+            if IsClass(i,&DefenseModifier)
+               AND Send(i,@GetItemUseType) & n
+            {
+               if Send(i,@GetLayer) >= iHighestLayer
+               {
+                  iHighestLayer = Send(i,@GetLayer);
+                  oHighestGear = i;
+               }
+            }
+         }
+      
+         if oHighestGear <> $
+         {
+            Send(oHighestGear,@DoPlayerArt);
+         }
+      }
+
+      % Check for headgear, which has special overlays
+      % In this case, we actually refresh the lowest layer to put it underneath
+      iLowestLayer = 100000;
+      oLowestGear = $;
+      for i in plUsing
+      {
+         if IsClass(i,&DefenseModifier)
+            AND Send(i,@GetItemUseType) & ITEM_USE_HEAD
+         {
+            if Send(i,@GetLayer) <= iLowestLayer
+            {
+               iLowestLayer = Send(i,@GetLayer);
+               oLowestGear = i;
+            }
+         }
+         
+         if oLowestGear <> $
+         {
+            Send(oLowestGear,@UndoPlayerArt);
+            Send(oLowestGear,@DoPlayerArt);
+         }
+      }
+      
+      % Check for Soldier Shield sling
+      bSoldierShieldSlung = FALSE;
+      oSoldierShield = Send(self,@FindUsing,#class=&SoldierShield);
+      if oSoldierShield <> $
+      {
+         for i in plUsing
+         {
+            if (IsClass(i,&Shield)
+               AND NOT IsClass(i,&SoldierShield))
+               OR IsClass(i,&Bow)
+               OR IsClass(i,&Lute)
+            {
+               Send(oSoldierShield,@SlingOnBack,#report=FALSE);
+               bSoldierShieldSlung = TRUE;
+               
+               % Now restore the first-person view of other shield if we're using one
+               for n in plUsing
+               {
+                  if (IsClass(n,&Shield)
+                     AND NOT IsClass(n,&SoldierShield))
+                  {
+                     Send(self,@SetWindowOverlay,#what=n);
+                  }
+               }
+            }
+         }
+         
+         if bSoldierShieldSlung = FALSE
+         {
+            Send(oSoldierShield,@RemoveFromBack,#report=FALSE);
+         }
+      }
+   
       return;
    }
 
    ConvertskincolortoXLAT(Skin_color = 0)
    {
       % since the face translates use a single translate and the body uses
-      % a double translate which has less color values available,
-      % here we map the face translate to a similar body translate.
+      %  a double translate which has less color values available,
+      %  here we map the face translate to a similar body translate.
       if skin_color = PT_BLUE_TO_SKIN1
          OR skin_color = PT_BLUE_TO_SKIN2
       {
@@ -9219,7 +9428,7 @@ messages:
          return Send(SYS,@DecodeSecondaryColor,#Xlat=skin_color);
       }
 
-      return XLAT_TO_SKIN1;
+      return XLAT_TO_SKIN1;   
    }
 
    SetSkinTranslation(translation = $)
@@ -9278,14 +9487,14 @@ messages:
       % Recalculate the flicker flag.
       Send(self,@RecalcFlickerFlag);
 
-      % Reset our drawFX. Also does the SomethingChanged bit if appropriate.
+      % Reset our drawFX.  Also does the SomethingChanged bit if appropriate.
       Send(self,@ResetPlayerDrawFX);
 
       return;
    }
 
    DoAttackSwing()
-   {
+   {  
       piAnimation = PANM_WEAPON_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = PANM_NONE;
@@ -9296,7 +9505,7 @@ messages:
    GetIcon(trueicon=FALSE)
    {
       % trueicon is set to true anytime you want to know what
-      % a person really looks like. Good example: statues.
+      %  a person really looks like.  Good example: statues.
 
       if poIllusion_set <> $ AND NOT trueicon
       {
@@ -9371,7 +9580,7 @@ messages:
          {
             iAnimation = PANM_DANCE;
          }
-         else
+         else 
          {
             iAnimation = piAnimation;
          }
@@ -9390,7 +9599,7 @@ messages:
       }
 
       if iAnimation = PANM_DANCE
-      {
+      {    
          AddPacket(1,ANIMATE_CYCLE, 4,150, 2,6, 2,22);
          
          return;
@@ -9419,7 +9628,7 @@ messages:
          }
       }
 
-      if poIllusion_set <> $
+      if poIllusion_set <> $ 
       {
          Send(poIllusion_set,@IllusionSendMoveOverlays,#who=self);
          
@@ -9427,7 +9636,7 @@ messages:
       }
 
       % Player has 7 standard overlays:
-      % right arm, left arm, legs, head, eyes, mouth, nose
+      %  right arm, left arm, legs, head, eyes, mouth, nose      
       iOverlays = 7;
       
       if poHair_remove = $
@@ -9450,7 +9659,7 @@ messages:
          else
          {
             % Bend the arm if we have a shield, a bow, or a token.
-            if hotspot = HS_LEFT_WEAPON
+            if hotspot = HS_LEFT_WEAPON 
                OR hotspot = HS_BOTTOM_BOW
                OR IsClass(i,&Token)
             {
@@ -9473,7 +9682,7 @@ messages:
          if iAnimation = PANM_DANCE
          {
             AddPacket(1,ANIMATE_CYCLE, 4,150, 2,10, 2,26);
-         }
+         }  
          else
          {
             AddPacket(1,ANIMATE_CYCLE, 4,200, 2,2, 2,3);
@@ -9481,13 +9690,13 @@ messages:
       }
       else
       {
-         AddPacket(1,ANIMATE_NONE, 2,iLeft_group);
+         AddPacket(1,ANIMATE_NONE, 2,iLeft_group); 
       }
 
       AddPacket(4,prRight_arm, 1,HS_RIGHT_HAND);
       if iArms_xlat <> 0
       {
-         AddPacket(1,ANIMATE_TRANSLATION, 1,iArms_xlat);
+         AddPacket(1,ANIMATE_TRANSLATION, 1,iArms_xlat);       
       }
 
       if iRight_group = 1
@@ -9495,7 +9704,7 @@ messages:
          if iAnimation = PANM_DANCE
          {
             AddPacket(1,ANIMATE_CYCLE, 4,150, 2,18, 2,34);
-         }
+         }  
          else
          {
             AddPacket(1,ANIMATE_CYCLE, 4,200, 2,2, 2,3);
@@ -9503,7 +9712,7 @@ messages:
       }
       else
       {
-         AddPacket(1,ANIMATE_NONE, 2,iRight_group);
+         AddPacket(1,ANIMATE_NONE, 2,iRight_group); 
       }
 
       AddPacket(4,prLegs, 1,HS_LEGS);
@@ -9515,7 +9724,7 @@ messages:
       if iAnimation = PANM_DANCE
       {
          AddPacket(1,ANIMATE_CYCLE, 4,150, 2,8, 2,24);
-      }
+      }  
       else
       {
          AddPacket(1,ANIMATE_CYCLE, 4,100, 2,2, 2,5);
@@ -9527,28 +9736,28 @@ messages:
                 1,ANIMATE_NONE, 2,1);
 
       % Don't send information about face elements if we're wearing the
-      % shrunken head mask. See shrnkmsk.kod for details.
-% if prHead <> ShrunkenHeadMask_icon_male_rsc
-% AND prHead <> ShrunkenHeadMask_icon_female_rsc
-% {
+      %  shrunken head mask.  See shrnkmsk.kod for details.
+%      if prHead <> ShrunkenHeadMask_icon_male_rsc
+%         AND prHead <> ShrunkenHeadMask_icon_female_rsc
+%      {
          AddPacket(4,prMouth, 1,HS_MOUTH, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prEyes,1, HS_EYES, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,1);
-% }
+%      }
 
       if poHair_remove = $
-      {
+      {  
          AddPacket(4,prToupee, 1,HS_TOUPEE, 1,ANIMATE_TRANSLATION,
-                   1,Send(self,@GetHairColor), 1,ANIMATE_NONE, 2,1);
+                   1,Send(self,@GetHairColor), 1,ANIMATE_NONE, 2,1); 
       }
 
       for i in plOverlays
       {
          % Moved all of this to the item kod, since items may now
-         % have more than one overlay.
+         %  have more than one overlay.
          Send(i,@SendOverlayInformation,#iAnimation = $);
       }
       
@@ -9581,10 +9790,10 @@ messages:
       }
 
 
-      % Send overlay bitmap info to user.
+      % Send overlay bitmap info to user.  
 
       % Player has 7 standard overlays:
-      % right arm, left arm, legs, head, eyes, mouth, nose
+      %  right arm, left arm, legs, head, eyes, mouth, nose
       iOverlays = 7;
       
       if poHair_remove = $
@@ -9645,13 +9854,13 @@ messages:
                if iAnimation = PANM_WEAPON_ATTACK
                {
                   AddPacket(1,ANIMATE_ONCE, 4,300, 2,4, 2,6, 2,iLeft_group);
-               }
+               }  
                else
                {
                   if iAnimation = PANM_DANCE
                   {
                      AddPacket(1,ANIMATE_CYCLE, 4,150, 2,10, 2,26);
-                  }
+                  }  
                   else
                   {
                      AddPacket(1,ANIMATE_NONE,2,iLeft_group);
@@ -9668,8 +9877,8 @@ messages:
       }
       
       if iAnimation = PANM_NONE
-      {
-         AddPacket(1,ANIMATE_NONE, 2,iRight_group);
+      {    
+         AddPacket(1,ANIMATE_NONE, 2,iRight_group); 
       }
 
       if iAnimation = PANM_WAVE
@@ -9747,22 +9956,22 @@ messages:
       AddPacket(4,prHead, 1,HS_HEAD, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                 1,ANIMATE_NONE, 2,1);
       % Don't send information about face elements if we're wearing the
-      % shrunken head mask. See shrnkmsk.kod for details.
-% if prHead <> ShrunkenHeadMask_icon_male_rsc
-% AND prHead <> ShrunkenHeadMask_icon_female_rsc
-% {
+      %  shrunken head mask.  See shrnkmsk.kod for details.
+%      if prHead <> ShrunkenHeadMask_icon_male_rsc
+%         AND prHead <> ShrunkenHeadMask_icon_female_rsc
+%      {
          AddPacket(4,prMouth, 1,HS_MOUTH, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prEyes, 1,HS_EYES, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,piAction);
          AddPacket(4,prNose, 1,HS_NOSE, 1,ANIMATE_TRANSLATION, 1,iSkin_xlat,
                    1,ANIMATE_NONE, 2,1);
-% }
+%      }
       
       if poHair_remove = $
-      {
+      {  
          AddPacket(4,prToupee, 1,HS_TOUPEE, 1,ANIMATE_TRANSLATION,
-                   1,Send(self,@GetHairColor), 1,ANIMATE_NONE, 2,1);
+                   1,Send(self,@GetHairColor), 1,ANIMATE_NONE, 2,1); 
       }
       
       for i in plOverlays
@@ -9831,11 +10040,11 @@ messages:
 
       rMessage = $;
 
-      if resistance > (MAX_RESISTANCE/5)
+      if resistance > (MAX_RESISTANCE/5) 
       {
          if resistance > (2*MAX_RESISTANCE/3)
          {
-            rMessage = player_immune_to_hit;
+            rMessage = player_immune_to_hit; 
          }
          else
          {
@@ -9849,7 +10058,7 @@ messages:
          {
             rMessage = player_anti_immune_to_hit;
          }
-         else
+         else 
          {
             rMessage = player_anti_resists_hit;
          }
@@ -9876,7 +10085,7 @@ messages:
          if (aspell&ATCK_SPELL_QUAKE) > 0 { return player_was_quaked;}
       }
 
-      if atype > 0 % do weapon attacks (odd ones first).
+      if atype > 0   % do weapon attacks (odd ones first).
       {
          if (atype&ATCK_WEAP_BITE) > 0 { return player_was_bitten;}
          if (atype&ATCK_WEAP_CLAW) > 0 { return player_was_clawed;}
@@ -9897,7 +10106,7 @@ messages:
    AddPoison(strength = 0, bVigorLoss = TRUE)
    {
       if ptPoison = $
-      {
+      {    
          ptPoison = CreateTimer(self,@PoisonTimer,10000);
       }
       
@@ -9932,7 +10141,7 @@ messages:
       }
       
       if poOwner <> $
-      {
+      {  
          ptPoison = CreateTimer( self, @PoisonTimer, 10000 );
       }
 
@@ -10072,7 +10281,7 @@ messages:
    }
 
    StartResting()
-   {
+   {      
       if ptRest <> $
       {
          return;
@@ -10100,7 +10309,7 @@ messages:
    {
       local iTime, lJalaInfo, oJalaSpell, iJalaPower;
 
-      iTime = 1000 + (30* (51-Send(self,@getStamina)));
+      iTime = 1000 + (30* (51-Send(self,@getStamina))); 
 
       if poOwner <> $
       {
@@ -10200,10 +10409,10 @@ messages:
    IsDead()
    {
       return (piHealth <= 0);
-   }
+   }  
 
    SetTranceFlag()
-   {
+   {      
       piFlags = piFlags | PFLAG_TRANCE;
       
       return;
@@ -10231,7 +10440,7 @@ messages:
    }
 
    RecalcFlickerFlag()
-   {
+   { 
       local i;
       
       piDrawfx = piDrawfx & (~FLICKERING_YES);
@@ -10321,7 +10530,7 @@ messages:
       % TODO: Make this into a general check.
 
       % Default base value
-      iLight = 5;
+      iLight = 5;       
 
       % Torch, Amulet
       for i in plUsing
@@ -10358,7 +10567,7 @@ messages:
       if piLight <> iLight
       {
          Debug("Player ",Send(self,@GetName)," had wrong light value ",piLight,
-               ". Setting it to ",iLight);
+               ".  Setting it to ",iLight);
          piLight = iLight;
          Send(self,@NewLight);
       }
@@ -10418,8 +10627,8 @@ messages:
       Send(self,@EndCrystalizeManaSurge);
 
       % All attack modifiers should be a room enchantment, a personal enchantment
-      % or something they are wearing. If one still exists, bug. This is also
-      % true for defense modifiers and resistances.
+      %  or something they are wearing.  If one still exists, bug.  This is also
+      %  true for defense modifiers and resistances.
       if plAttack_modifiers <> $
       {
          for i in plAttack_modifiers
@@ -10480,7 +10689,7 @@ messages:
          Debug("Recalibrating: player",Send(self,@GetTrueName),self,
                "with max health",piMax_health,"did not match Base Max Health",
                piBase_max_health);
-         piMax_health = piBase_max_health;
+         piMax_health = piBase_max_health;      
       }
       
       Send(self,@ComputeMaxMana);
@@ -10579,26 +10788,26 @@ messages:
    }
 
    PlayerCanLearn(spell_num=0,skill_num=0,scryer=$)
-   "New routine as of 14 June 97. Intended to allow for more schools, odd numbers of spells at "
+   "New routine as of 14 June 97.  Intended to allow for more schools, odd numbers of spells at "
    "a spell level and easier understanding."
-   "The proverbial trick is that players have to know WHY they aren't learning. For example, "
-   "if a player can't learn because he has too many competing schools, he needs to know that."
-   {
+   "The proverbial trick is that players have to know WHY they aren't learning.  For example, "
+   "if a player can't learn because he has too many competing schools, he needs to know that."    
+   {      
       local bSkill, obj, level, school, division, iHave, prev_level,
             iSamediv, iOtherdiv, aHigh, bHigh, cHigh, iBase, i, temp,
             nObj, nSID, index, iNeed, nSchool, nLevel, msg, bKnowOne,
             iWeapon, iKraanan, iShalille, iQor, iFaren, iRiija, iJala, iPoints;
 
-      % Phase one. Assert our data. Be sure we have been fed a valid spell
-      % and skill num for a spell item that actually exists.
+      % Phase one.  Assert our data.  Be sure we have been fed a valid spell
+      %  and skill num for a spell item that actually exists.
       if spell_num = 0
-      {
-         if skill_num = 0
+      {    
+         if skill_num = 0   
          {
             Debug("No data given to playercanlearn!");
             return PLAYER_LEARN_ERROR;
-         }
-         else
+         }  
+         else 
          {
             bSkill = TRUE;
             obj = Send(SYS,@FindSkillByNum,#num=skill_num);
@@ -10606,11 +10815,11 @@ messages:
       }
       else
       {
-         if skill_num <> 0
+         if skill_num <> 0  
          {
             Debug("Too much data given to playercanlearn!");
             return PLAYER_LEARN_ERROR;
-         }
+         }  
          else
          {
             bSkill = FALSE;
@@ -10618,39 +10827,39 @@ messages:
          }
       }
       if obj = $
-      {
+      {  
          Debug("Fed a spell number for a spell that does not exist in the "
                "system.");
 
-         return PLAYER_LEARN_ERROR;
+         return PLAYER_LEARN_ERROR; 
       }
       
-      if NOT Send(obj,@IsAccessible)
+      if NOT Send(obj,@IsAccessible)      
       {
          % Sacred Haven server.
-         return PLAYER_LEARN_ERROR;
+         return PLAYER_LEARN_ERROR;     
       }
       
       if IsClass(obj,&Spell) AND NOT Send(obj,@IsEnabled)
       {
          % Spell is temporarily disabled.
-         return PLAYER_LEARN_ERROR;
+         return PLAYER_LEARN_ERROR;     
       }
 
-      % Phase two: get the hard data.
+      % Phase two:  get the hard data.
       level = Send(obj,@GetLevel);
       school = Send(obj,@GetSchool);
-      division = Send(obj,@GetDivision);
+      division = Send(obj,@GetDivision);      
                   
-      % Phase three. We begin to find our need. Start by finding out how many
-      % spells exist at ALL at that level. While we are going through the spell
-      % skill list, count the spells/skills that count towards our total. Note
-      % that we only want the top three spells/skills at that school and level.
+      % Phase three.  We begin to find our need.  Start by finding out how many
+      %  spells exist at ALL at that level.  While we are going through the spell
+      %  skill list, count the spells/skills that count towards our total.  Note
+      %  that we only want the top three spells/skills at that school and level.
 
       bKnowOne = FALSE;
 
       % Check to see if they have any spells of the next level.
-      % If so, let them buy any spells they want.
+      %  If so, let them buy any spells they want.
       iHave = Send(self,@CountKnownAtLevel,#school=school,#level=level+1);
       if iHave > 0
       {
@@ -10699,7 +10908,7 @@ messages:
          nSID=Send(self,@DecodeSkillNum,#compound=i);
          nobj=Send(SYS,@FindSkillByNum,#num=nSID);
          
-         if nobj = $
+         if nobj = $ 
          {
             Debug("bad data in spell list!");
 
@@ -10748,7 +10957,7 @@ messages:
          nSID=Send(self,@DecodeSpellNum,#compound=i);
          nobj=Send(SYS,@FindSpellByNum,#num=nSID);
          
-         if nobj = $
+         if nobj = $ 
          {
             Debug("bad data in spell list!");
 
@@ -10794,7 +11003,7 @@ messages:
             }
          }
 
-         if NOT IsClass(nobj,&Blink) % DON'T COUNT BLINK!
+         if NOT IsClass(nobj,&Blink)  % DON'T COUNT BLINK!
             AND NOT IsClass(nobj,&UtilitySpell) % Don't count utility spells either
          {
             if nSchool = SS_KRAANAN
@@ -10846,31 +11055,31 @@ messages:
          iHave = (3 * 99);
       }
 
-      % Do easy checks to prevent unnecessary math.
+      % Do easy checks to prevent unnecessary math.  
       % Keep these checks here so they are of lower precedence than
-      % the 'you already have this spell' check.
+      %   the 'you already have this spell' check.
       
-      if NOT Send(obj,@KarmaCheck,#who=self)
-      {
+      if NOT Send(obj,@KarmaCheck,#who=self)   
+      { 
          if scryer <> $
          {
             Send(scryer,@MsgSendUser,#message_rsc=player_Debug_noKarma,
                  #parm1=Send(self,@GetTrueName),#parm2=Send(obj,@GetName));
          }
          
-         return PLAYER_LEARN_KARMA;
-      }
+         return PLAYER_LEARN_KARMA; 
+      }      
 
       % Player can't learn level this because he knows nothing of
-      % previous level.
+      %  previous level.
       if iHave = 0
       {
          return PLAYER_LEARN_NOBASE;
-      }
+      }      
 
       % We have done all the information gathering, so now, lets compute:
 
-      iPoints = Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
+      iPoints =  Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
                + Send(SYS,@GetLevelLearnPoints,#level=iKraanan)
                + Send(SYS,@GetLevelLearnPoints,#level=iShalille)
                + Send(SYS,@GetLevelLearnPoints,#level=iQor)
@@ -10879,8 +11088,8 @@ messages:
                + Send(SYS,@GetLevelLearnPoints,#level=iJala);
 
       % Okay, we're going into new territory if we don't already know one
-      % spell in the school, so we're increasing the level of our
-      % knowledge. Add points.
+      %  spell in the school, so we're increasing the level of our
+      %  knowledge.  Add points.
       if not bKnowOne
       {
          iPoints = iPoints + Send(SYS,@GetLevelLearnPoints,#level=level)
@@ -10888,21 +11097,21 @@ messages:
       }
 
       % How this oddball equation works: You have a POINTS_SLOPE that determines
-      % how steep the advancement slope is. A higher slope results in lower
-      % levels requiring less points, but each school level gained counts more
-      % against future learning. You hit your max when you get to 297 points
-      % (3*99), so when your points equals max points, you've maxxed out.
-      % Intellect gives you a bonus to learning, currently about 20 points
-      % for 50 Intellect (approximately mastering 2 extra schools)
-      iNeed = (iPoints * POINTS_SLOPE)
+      %  how steep the advancement slope is.  A higher slope results in lower
+      %  levels requiring less points, but each school level gained counts more
+      %  against future learning.  You hit your max when you get to 297 points
+      %  (3*99), so when your points equals max points, you've maxxed out.  
+      %  Intellect gives you a bonus to learning, currently about 20 points
+      %  for 50 Intellect (approximately mastering 2 extra schools)
+      iNeed =   (iPoints * POINTS_SLOPE)
               + (297 - (Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) * POINTS_SLOPE))
               - ((Send(self,@GetRawIntellect) * 2 * POINTS_SLOPE) / 5);
 
       % NOTE: if you modify the above equation, also modify GivePlayerAllSkills
-      % and GivePlayerAllSpells as needed
+      %  and GivePlayerAllSpells as needed
 
       % Bound iNeed to a reasonable low level so people can't just rush in and
-      % get high level with very little work.
+      %  get high level with very little work.
       iNeed = bound(iNeed,MIN_NEEDED_TO_ADVANCE,$);
       
       if scryer <> $
@@ -10961,7 +11170,7 @@ messages:
 
       % If the previous level has fewer than three spells, help them out.
       if prev_level = 1
-      {
+      {  
          iNeed= iNeed / 3;
          if scryer <> $
          {
@@ -10972,13 +11181,13 @@ messages:
       }
       
       if prev_level = 2
-      {
-         iNeed = (iNeed*2)/3;
+      {  
+         iNeed = (iNeed*2)/3;  
          if scryer <> $
          {
             Send(scryer,@MsgSendUser,
                  #message_rsc=player_Debug_playercanlearn_scarcity,
-                 #parm1=iNeed);
+                 #parm1=iNeed);    
          }
       }
 
@@ -10987,15 +11196,15 @@ messages:
          return PLAYER_LEARN_SUCCESS;
       }
 
-      % Okay, at this point, we know that they didn't pass the test. Now give
-      % them a good reason why. Essentially, if they know a lot of other
-      % divisions and it's slowing them down, tell them that. Otherwise,
-      % be more generic.
+      % Okay, at this point, we know that they didn't pass the test.  Now give 
+      %  them a good reason why.  Essentially, if they know a lot of other
+      %  divisions and it's slowing them down, tell them that.  Otherwise,
+      %  be more generic.
       
-      % Is it now impossible to actually learn this spell level? This would
-      % mean that the need is greater than 99% in three of the previous
-      % level's spells, or 297 (most of the time). Levels with fewer than
-      % three spells are a special instance.
+      % Is it now impossible to actually learn this spell level?  This would
+      %  mean that the need is greater than 99% in three of the previous
+      %  level's spells, or 297 (most of the time).  Levels with fewer than
+      %  three spells are a special instance.
       if iNeed > (99*(bound(prev_level,1,3)))
       {
          if scryer <> $
@@ -11007,9 +11216,9 @@ messages:
          return PLAYER_LEARN_IMPOSSIBLE;
       }
 
-      % Return info in this format (base 10): xxxy, where xxx is the number
-      % of spell or skill points they need, and y is the reason why they
-      % failed. Only condition is "not enough points".
+      % Return info in this format (base 10):  xxxy, where xxx is the number
+      %  of spell or skill points they need, and y is the reason why they
+      %  failed.  Only condition is "not enough points".
       return ((10*(iNeed-iHave))+PLAYER_LEARN_BASE);
    }
 
@@ -11034,7 +11243,7 @@ messages:
          iSchool = Send(oSpellObj,@GetSchool);
          iLevel = Send(oSpellObj,@GetLevel);
 
-         if NOT IsClass(oSpellObj,&Blink) % DON'T COUNT BLINK!
+         if NOT IsClass(oSpellObj,&Blink)  % DON'T COUNT BLINK!
             AND NOT IsClass(oSpellObj,&UtilitySpell) % Don't count utility spells either
             AND iSchool <> SS_DM_COMMAND
             AND except <> iSchool
@@ -11087,14 +11296,14 @@ messages:
             iLevel = Send(oSpellObj,@GetLevel);
 
             if iLevel > iWeapon
-               AND iLevel < 50 % Catch DM only skills
+               AND iLevel < 50       % Catch DM only skills
             {
                iWeapon = iLevel;
             }
          }
       }
 
-      iTotalLearnPoints = Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
+      iTotalLearnPoints =  Send(SYS,@GetLevelLearnPoints,#level=iWeapon)
                          + Send(SYS,@GetLevelLearnPoints,#level=iKraanan)
                          + Send(SYS,@GetLevelLearnPoints,#level=iShalille)
                          + Send(SYS,@GetLevelLearnPoints,#level=iQor)
@@ -11107,7 +11316,7 @@ messages:
 
    EvaluatePKStatus(dbug=FALSE)
    "This should always be run AFTER the player undergoes whatever changes "
-   "(i.e. quits a guild or drops below 30 health). Also, take steps to ensure "
+   "(i.e. quits a guild or drops below 30 health).  Also, take steps to ensure "
    "it is not run immediately prior to death."
    {
       local i, ass_game;
@@ -11148,7 +11357,7 @@ messages:
             }
 
             % Once you've become killable, you no longer get tutorial messages
-            % and bonuses. You also lose your newbie string.
+            %  and bonuses.  You also lose your newbie string.
             Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
             if psHonor <> $ AND StringEqual(psHonor,player_newbie_honor_string)
             {
@@ -11190,10 +11399,10 @@ messages:
       return Send(SYS,@GetSuccessRsc);
    }
 
-   % Note: a player with PKILL_ENABLE set will have it reset at will if
-   % an event naturally causes it to. If you want to not have this change,
-   % then call PkillLock below. This will ensure that the status of
-   % PKILL_ENABLE will never change, with the exception of a suicide.
+   % Note: a player with PKILL_ENABLE set will have it reset at will if 
+   %  an event naturally causes it to.  If you want to not have this change,
+   %  then call PkillLock below.  This will ensure that the status of
+   %  PKILL_ENABLE will never change, with the exception of a suicide.
 
    PkillLock()
    {
@@ -11238,7 +11447,7 @@ messages:
 
    % Need to be able to keep track of their service...
    % When players join, and subsequently log on, the updated time gets set and
-   % the timer gets started.
+   % the timer gets started. 
    
    UpdateFactionService(full=False, middle=False, front=False, adjust=True)
    {
@@ -11278,7 +11487,7 @@ messages:
       {
          piFactionServiceUpdate = 0;
       }
-      else
+      else 
       {
          if middle
          {
@@ -11336,7 +11545,7 @@ messages:
       {
          Send(self,@MsgSendUser,#message_rsc=player_faction_time);
          %This should be unnecessary (since loyalty quests reschedule themselves at completion),
-         % but is included nonetheless to ensure that if you've been warned, there's a quest waiting for you.
+         %     but is included nonetheless to ensure that if you've been warned, there's a quest waiting for you.
          
          if piFaction = FACTION_PRINCESS
          {
@@ -11367,7 +11576,7 @@ messages:
                Send(self,@ClearOneQuestHistory,#index=QST_ID_REBEL_SERVICE);
             }
          }
-      }
+      } 
 
       if renew AND Send(SYS,@GetParliament) <> $
          AND (NOT Send(Send(SYS,@GetParliament),@IsShutdown))
@@ -11385,7 +11594,7 @@ messages:
       
       bIntrigue=0;
 
-      oParl=Send(SYS,@GetParliament);
+      oParl=Send(SYS,@GetParliament); 
       if oParl = $
       {
          return FALSE;
@@ -11395,7 +11604,7 @@ messages:
 
       if wasint AND Send(oParl,@IsShutdown)
       {
-         Send(self,@MsgSendUser,#message_rsc=player_intrigue_shut);
+         Send(self,@MsgSendUser,#message_rsc=player_intrigue_shut); 
          Send(self,@SetPlayerFlag,#flag=PFLAG_INTRIGUING,#value=False);
          Send(oParl,@UpdateEffects,#who=self);
          if ptFactionTimer<>$
@@ -11618,13 +11827,13 @@ messages:
       piFactionTimeUpdated = 0;
       piFactionServiceUpdate = 0;
       
-      if Send(SYS,@GetParliament) <> $
+      if Send(SYS,@GetParliament) <> $ 
       {
          if Send(self,@PlayerIsIntriguing)
          {
             Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=piFaction);
          }
-         else
+         else 
          {
             Send(Send(SYS,@GetParliament),@MoveToFaction,#who=self,#faction=(-1));
          }
@@ -11661,7 +11870,7 @@ messages:
    }
 
    CheckTokenInNewRoom(what=$)
-   "If we are carrying a token, lets drop it"
+   "If we are carrying a token, lets drop it"   
    {
       local i;
 
@@ -11678,7 +11887,7 @@ messages:
          if IsClass(i,&Token)
          {
             Send(self,@MsgSendUser,#message_rsc=player_lost_token);
-            Send(i,@NewUnused,#where=what);
+            Send(i,@NewUnused,#where=what); 
          }
       }
       
@@ -11723,7 +11932,7 @@ messages:
             Post(poOwner,@SomeoneSaid,#what=mob,#type=SAY_RESOURCE,
                  #string=player_token_reward,#parm1=Send(tobj,@GetDef),
                  #parm2=Send(tobj,@GetName));
-         }
+         } 
          else
          {
             Send(poOwner,@NewHold,#what=tobj,#new_row=piRow,#new_col=piCol);
@@ -11744,8 +11953,8 @@ messages:
       iPower = 0;
 
       % Search through for the instrument of the highest power.
-      % We could have a necklace and a lute. Let the lute contribute
-      % its power, rather than the necklace.
+      %  We could have a necklace and a lute.  Let the lute contribute
+      %  its power, rather than the necklace.
       for i in plUsing
       {
          if IsClass(i,&Instrument)
@@ -11780,15 +11989,15 @@ messages:
 
    DecayPKillCount()
    {
-      % 50% chance to reduce the kill count. This is to eliminate the people
-      % who attempt to exploit this system for gain.
+      % 50% chance to reduce the kill count.  This is to eliminate the people
+      %  who attempt to exploit this system for gain.
       if random(1,100) > 50
       {
          piKill_count_decay = piKill_count_decay - 1;
          piKill_count_decay = bound(piKill_count_decay,0,$);
       }
      
-      return;
+      return;     
    }
 
    GetUnjustifiedKills()
@@ -11849,7 +12058,7 @@ messages:
       if NOT (IsClass(self,&DM) OR override)
       {
          iMaxLevel = 0;
-         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) +
+         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
             (Send(self,@GetRawIntellect) * 2) / 5;
 
          iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
@@ -11862,7 +12071,7 @@ messages:
 
             if iTotalLearnPoints > iMaxLearnPoints
             {
-               % Oops! Trying to learn too much!
+               % Oops!  Trying to learn too much!
                iMaxLevel = iMaxLevel - 1;
                
                break;
@@ -11899,13 +12108,13 @@ messages:
       % Set Karma enough for them to cast their highest level spell.
       if school = SS_SHALILLE
       {
-         % Need 10 Karma per spell level (+10 for fudge).
+         %  Need 10 Karma per spell level (+10 for fudge).
          piKarma = level * 1000;
       }
 
       if school = SS_QOR
       {
-         % Need -10 Karma per spell level (-10 for fudge).
+         %  Need -10 Karma per spell level (-10 for fudge).
          piKarma = level * -1000;
       }
       
@@ -11927,7 +12136,7 @@ messages:
       if NOT (IsClass(self,&DM) OR override)
       {
          iMaxLevel = 0;
-         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) +
+         iMaxLearnPoints = Send(Send(SYS, @GetSettings), @GetMaxLearnPoints) + 
             (Send(self,@GetRawIntellect) * 2) / 5;
 
          iStartingLearnPoints = Send(self,@GetTotalLearnPoints,#except=school);
@@ -11940,7 +12149,7 @@ messages:
 
             if iTotalLearnPoints > iMaxLearnPoints
             {
-               % Oops! Trying to learn too much!
+               % Oops!  Trying to learn too much!
                iMaxLevel = iMaxLevel - 1;
                
                break;
@@ -11989,7 +12198,7 @@ messages:
          }
       }
       
-      return;
+      return;      
    }
 
    IsWizard()
@@ -12005,7 +12214,7 @@ messages:
          }
       }
       
-      return FALSE;
+      return FALSE;     
    }
     
    ClearSpellList()
@@ -12059,8 +12268,8 @@ messages:
    
    GetBodyTranslation()
    {
-      % This returns the armor/shirt torso (not arms) color. note that skin is
-      % included in this, in the case of a low-cut dress, for example.
+      % This returns the armor/shirt torso (not arms) color.  note that skin is
+      %  included in this, in the case of a low-cut dress, for example.
       return (piBody_translations & PLAYER_TRANSLATION_BODY_MASK)/PLAYER_TRANSLATION_BODY_MUL;
    }
 
@@ -12116,8 +12325,8 @@ messages:
       local iColor, i, oRoom;
 
       % Arms (hands) and face are the only default things that need to
-      % have skin colors associated with it. Other items in use
-      % may need to, though (low cut dress).
+      %  have skin colors associated with it.  Other items in use
+      %  may need to, though (low cut dress).
       
       Send(self,@SetSkinTranslation,#translation=color);
       iColor = Send(self,@GetDefaultShirtColor);
@@ -12129,7 +12338,7 @@ messages:
 
       oRoom = Send(self,@GetOwner);
       if oRoom <> $
-      {
+      {    
          Send(oRoom,@SomethingChanged,#what=self);
       }
       
@@ -12230,7 +12439,7 @@ messages:
    }
 
    GetShieldRsc()
-   {
+   {  
       local i;
       
       for i in plOverlays
@@ -12245,7 +12454,7 @@ messages:
    }
    
    GetShieldTranslation()
-   {
+   {  
       local i;
       
       for i in plOverlays
@@ -12279,7 +12488,7 @@ messages:
    }
 
    AddToMonsterChasers(level=0)
-   {
+   {      
       piMonsterChasers = piMonsterChasers + level;
       
       return;
@@ -12306,8 +12515,9 @@ messages:
    {
       local oSnoop;
 
-      if type = SAY_NORMAL and what <> self and IsClass(what,&Player)
+      if type = SAY_NORMAL AND IsClass(what,&Player)
       {
+		 % si: removed (and what <> self) to allow communication between shrunken head and owner.
          oSnoop = Send(self,@FindHolding,#class=&ShrunkenHead);
          if oSnoop <> $
          {
@@ -12450,7 +12660,7 @@ messages:
       return;
    }
 
-   % Removes the shirt. Used by the WarEvent event.
+   % Removes the shirt.  Used by the WarEvent event.
    RemoveShirt()
    {
       local i;
@@ -12477,7 +12687,7 @@ messages:
 
       if Send(what,@HasAttribute,#ItemAtt=IA_BONDED)
       {
-         % this should only be possible through Admin fiddling
+         %  this should only be possible through Admin fiddling
          return Send(SYS,@GetFailureRsc);
       }
 
@@ -12549,13 +12759,13 @@ messages:
    }
 
    UpdateTimeValues()
-   "Sets all time variables to the current time. Useful for when changing "
+   "Sets all time variables to the current time.  Useful for when changing "
    "server time."
    {
       local time;
 
       % Reset our attack timer, a traditional use of this function when attack
-      % time was a timestamp instead of a timer.
+      %  time was a timestamp instead of a timer.
       if ptAttackTimer <> $
       {
          DeleteTimer(ptAttackTimer);
@@ -12588,8 +12798,8 @@ messages:
       }
       else
       {
-         % A bit of a kludge. Ideally, we should query the objects we are using
-         % to find out if any want to add lighting information to us.
+         % A bit of a kludge.  Ideally, we should query the objects we are using
+         %  to find out if any want to add lighting information to us.
          if plRadiusEnchantments <> $
          {
             for oLightObject in plRadiusEnchantments

@@ -196,11 +196,11 @@ messages:
 	Send(self,@ModifyMonsterBehavior,#mob=oRisen);
 
 	Send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);		
-	if isClass(oTarget,&DeadBody) AND Send(oTarget,@WasPlayer) = TRUE
+	if Send(oTarget,@WasPlayer)
 	{
 	   Send(who,@MsgSendUser,#message_rsc=Animate_human_cast_rsc,#parm1=send(oTarget,@GetCorpseName));      
 	}
-	if isClass(oTarget,&DeadBody) AND Send(oTarget,@WasPlayer) = FALSE
+	else
 	{	   
 	   send(who,@MsgSendUser,#message_rsc=Animate_mob_cast_rsc,#parm1=send(oTarget,@GetName));
 	}

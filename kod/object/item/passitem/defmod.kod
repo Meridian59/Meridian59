@@ -122,14 +122,35 @@ messages:
 
    ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
    "Increase or decrease damage done to defender."
-   {
-      local iDamageReduce;
-
+    {
+      local iDamageReduce, iLevel, iCappedReduce;
       iDamageReduce = 0;
+	  iLevel = Send(who,@GetLevel);
       if piDamage_reduce <> 0
       {
-         iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
-         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+        iDamageReduce = random(piDamage_reduce/3,piDamage_reduce);
+		iDamageReduce = bound(iDamageReduce,0,(damage-1));	  
+	    
+		if IsClass(what,&monster)
+		{
+		    iCappedReduce = piDamage_reduce;
+			if iLevel < 80
+			{
+				if piDamage_reduce > 4
+				{
+					iCappedReduce = 4;
+				}
+			}
+			if iLevel < 55
+			{
+				if piDamage_reduce > 2
+				{
+					iCappedReduce = 2;
+				}
+			}
+			iDamageReduce = random(iCappedReduce/3,iCappedReduce);
+			iDamageReduce = bound(iDamageReduce,0,(damage-1));
+		}
       }
 
       if aspell <> 0

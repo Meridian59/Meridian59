@@ -15,6 +15,10 @@ constants:
    include blakston.khd
    include protocol.khd
    
+properties:
+
+   plTemp = $
+   
 messages:
 
    UtilGoNearSquare(what = $,where = $,new_row = $,new_col = $,do_move = TRUE,
@@ -373,6 +377,64 @@ messages:
 
       return lCopy;
    }
+   
+   ListClass(lSource = $)
+   {
+      local i, lObjects;
+	  lObjects = Send(self,@ListCopy,#source=lSource);
+      for i in lSource
+	  {
+		Debug("create object", GetClass(i));
+		if (isClass(i,&NumberItem))
+		{
+		   %Debug(GetClass(i),Send(i,@GetNumber));
+		   Debug("create object",GetClass(i),"number int",Send(i,@GetNumber),"tl = %");
+		}
+	  }
+	  return;
+   }
+   
+   CreateTempList()
+   {
+      plTemp = Cons(1,[ ]);
+	  return;
+   }
+   
+   AddTempList(oItem = $)
+   {
+      if oItem <> $ AND
+	     plTemp <> $
+	  {
+	     plTemp = Cons(oItem,plTemp);
+	  }
+	  return;
+   }
+   
+   DecodeSpellNum(compound = 0)
+   {
+      return abs(compound) / 100;
+   }
+   
+   DecodeSpellAbility(compound = 0)
+   {
+      return abs(compound) mod 100;
+   }
+   
+   GetSpellCommands(plSpells = $)
+   {
+      local i,lSpells;
+	  lSpells = Send(self,@ListCopy,#source=plSpells);
+	  for i in lSpells
+	  { %AdminSetSpell(num = 0, ability = 0, add = 0)
+	     Debug("send o % AdminSetSpell num int",
+		 Send(self,@DecodeSpellNum,#compound=i),"ability int",
+		 Send(self,@DecodeSpellAbility,#compound=i));
+	  }
+	  return;
+   }
+   
+   
+   
 
    SortUsersByPlayTime()
    {

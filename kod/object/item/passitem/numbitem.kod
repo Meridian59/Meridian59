@@ -47,13 +47,16 @@ messages:
 
    % remember, split number items don't have owners.
 
-   Constructor(number = $)
+   Constructor(number = $, tl =$)
    {
       if number <> $
       {
          piNumber = number;
       }
-
+	  if tl <> $
+	  {
+	     Send(SYS,@AddTempList,#oItem=self);
+	  }
       Send(self,@NewNumber);
       
       propagate;

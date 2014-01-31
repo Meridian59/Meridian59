@@ -36,7 +36,7 @@ classvars:
    viItem_type = ITEMTYPE_ARMOR
    vrItem_broken = shield_broken
 
-   viUse_type = ITEM_USE_HAND
+   viUse_type = ITEM_USE_OFF_HAND
    viUse_amount = 1
 
    vrposs_article = object_article_cap_this_rsc
@@ -63,6 +63,9 @@ classvars:
 	viProf_bonus = 0
    viSpell_modifier = 0
    
+   % Shields are layer 1, so that layer 0 soldier shields will be slung on use.
+	% Also, they fight for a spot with instruments.
+   viLayer = 1
 properties:
    
    piUsed = UNUSED
@@ -155,19 +158,6 @@ messages:
 
    % General unsorted messages:
 
-   ReqUseSomething(what = $)
-   {
-      if isClass(what,&Shield)
-      {
-         if not send(poOwner,@TryUnuseItem,#what=self)
-         {
-            return FALSE;
-         }
-      }
-      
-      propagate;
-   }
-
    NewUsed()
    {
       piUsed = USED;
@@ -199,7 +189,7 @@ messages:
 
       propagate;
    }
-
+   
    ReqRepair()
    {
       return TRUE;

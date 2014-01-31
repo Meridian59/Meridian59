@@ -1,0 +1,119 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A touching weapon is a weapon that enhances touchattacks.
+
+TouchingWeapon is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   spellstone_broken = "%s%s pulses once before growing cold in your hands. You have drained the last of its energy."
+
+   spellstone_condition_exc = " is practically bursting with magical energy."
+   spellstone_condition_exc_mended = " is practically bursting with magical energy but seems to have lost some of its former luster."
+   spellstone_condition_good = " is buzzing with barely tapped power."
+   spellstone_condition_med = " is happily humming in your hand. "
+   spellstone_condition_poor = " is humming faintly. Its power has almost been depleted."
+   spellstone_condition_broken = " looks no different than a regular gem. It feels unnaturally cold and lifeless to the touch."
+
+classvars:
+
+   viWeaponType = WEAPON_TYPE_TOUCH
+	
+   vrCondition_exc = spellstone_condition_exc 
+   vrCondition_exc_mended = spellstone_condition_exc_mended 
+   vrCondition_good = spellstone_condition_good 
+   vrCondition_med = spellstone_condition_med 
+   vrCondition_poor = spellstone_condition_poor 
+   vrCondition_broken = spellstone_condition_broken
+   vrItem_broken = spellstone_broken
+	
+properties:
+
+messages:
+
+   CanEnchant(oSpell = $)
+   "Cannot enchant magical conduits. They are already magical!"
+   {
+		return FALSE;
+	}
+
+   DoFlash()
+   {      
+      return;
+   }
+
+   GetDefaultStrokeNumber()
+   {
+      return SKID_PUNCH;
+   }
+	
+   GetProf(who=$)
+   {
+		local iBonus;   
+		
+		iBonus = viProf_bonus;
+
+		iBonus = iBonus + 50;
+		
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iBonus = iBonus - 50;
+      }
+		
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iBonus = iBonus + 50;
+      }
+
+      return iBonus;
+   }
+	
+   GetBaseSpellModifier(oSpell=$)
+   {
+      local iModifier;
+		
+		if oSpell <> $ AND send(oSpell,@GetSchool) = SS_FAREN
+      {
+         return 0;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iModifier = 0;
+      }
+		
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
+      {
+         iModifier = -20;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iModifier = -40;
+      }
+
+      return iModifier;
+   }
+	
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+

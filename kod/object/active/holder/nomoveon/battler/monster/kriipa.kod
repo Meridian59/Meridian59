@@ -63,8 +63,9 @@ classvars:
    vrDead_icon = Kriipa_dead_icon_rsc
    vrDead_name = Kriipa_dead_name_rsc
  
-   viTreasure_type = TID_DRAGONFLY
-   viAttack_types = ATCK_WEAP_SLASH
+   viTreasure_type = TID_KRIIPA
+   viAttack_type = ATCK_WEAP_SLASH
+
    viSpeed = SPEED_FAST
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE
    viLevel = 160

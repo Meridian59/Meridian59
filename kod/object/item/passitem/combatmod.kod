@@ -16,6 +16,9 @@ constants:
    
    ARMOR_DAMAGE_CHANCE = 25
 
+   % Percent chance that an item gets damaged when defending.
+   DAMAGE_CHANCE = 50
+
 resources:
 
    defmod_broken = "Your %s falls to pieces."   
@@ -223,7 +226,6 @@ messages:
       
       return TRUE; 
    }
-
-
+	
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

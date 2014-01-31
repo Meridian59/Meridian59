@@ -38,41 +38,27 @@ classvars:
    vrCondition_poor = helmet_condition_poor 
    vrCondition_broken = helmet_condition_broken
 
+   % Circlets and Ivy Circlets are layer 1, to be worn over helmets and masks.
+   viLayer = 0
+
 properties:
 
 
 messages:
-
-   ReqUseSomething(what = $)
-   {
-      if IsClass(what,&Helmet)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-
-      propagate;
-   }
-
-   NewUsed()
+   
+   DoPlayerArt()
    {
       Send(poOwner,@SetOverlay,#what=self);
-
-      propagate;
+   
+      return;
    }
-
-   NewUnused()
+   
+   UndoPlayerArt()
    {
       Send(poOwner,@RemoveOverlay,#what=self);
 
-      propagate;
-   }   
+      return;
+   }
 
    % These 3 called by player, for normal 3rd-person overlays on user.
 

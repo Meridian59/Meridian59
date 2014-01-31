@@ -41,19 +41,10 @@ classvars:
 properties:
 
 messages:
-
+   
    NewUsed()
    {
-      local oSoldierShield, oRoom;
-      
-      % Check for shield
-      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
-
-      % Sling it on the back if it's there.
-      if oSoldierShield <> $
-      {
-         send(oSoldierShield,@SlingOnBack);
-      }
+      local oRoom;
 
       % Play a sound
       oRoom = Send(poOwner, @GetOwner);
@@ -61,21 +52,6 @@ messages:
       {
          Send(oRoom, @SomethingWaveRoom, #what = poOwner,
               #wave_rsc = lute_used_wav_rsc);
-      }
-
-      propagate;
-   }
-
-   NewUnused()
-   {
-      local oSoldierShield;
-      
-      % Take shield off back.
-      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
-
-      if oSoldierShield <> $
-      {
-         send(oSoldierShield,@RemoveFromBack);
       }
 
       propagate;

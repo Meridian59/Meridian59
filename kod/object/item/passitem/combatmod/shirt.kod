@@ -136,23 +136,6 @@ messages:
       return (NOT send(send(SYS,@GetWarEvent),@IsActive));
    }
 
-   ReqUseSomething(what = $)
-   {
-      if send(what,@getitemusetype) & ITEM_USE_SHIRT
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-      
-      propagate;
-   }
-
    HasSkinTones()
    {
       return TRUE;
@@ -205,6 +188,11 @@ messages:
    OverrideArmsForGauntlets()
    {
       return TRUE;
+   }
+   
+   DefendingHit(who = $,what = $)
+   {
+      return;
    }
 
 end

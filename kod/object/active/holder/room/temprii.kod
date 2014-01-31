@@ -22,7 +22,7 @@ resources:
 
    room_name_RiijaTemple = "The Temple of Riija"
    room_RiijaTemple = ke1.roo
-   riijatemple_music = bridge.mid
+   riijatemple_music = bridge.mp3
 
    riijatemple_door1 = "~kThe Monk of Riija says, \"~BNo ~rone ~B~bmay ~Ienter ~kmy ~g~Badytum~n~k.\""
    riijatemple_door2 = "~kThe Monk of Riija says, \"~BCease.  ~I~bYour ~rsanity ~gwould not remain ~B~kintact ~B~bif you were to enter ~I~rthe Library of the ~BGibbering Maelstrom.\""

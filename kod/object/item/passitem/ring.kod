@@ -39,21 +39,6 @@ properties:
 
 messages:
 
-   ReqUseSomething(what = $)
-   {
-      if IsClass(what, &Ring)
-      {
-         if Send(poOwner, @TryUnuseItem, #what = self)
-         {
-            propagate;
-         }
-         
-         return FALSE;
-      }
-      
-      propagate;
-   }
-
    %%% Infrastructure for identification
 
    CanIdentify()

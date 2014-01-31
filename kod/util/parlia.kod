@@ -39,8 +39,6 @@ resources:
    parliament_regen_down = "~IPerhaps if %s were more favored, you could recuperate faster."
    parliament_vigor_down = "~IPerhaps if %s were more favored, you use your vigor slower."
 
-   parliament_sell_to_murderer = "I normally don't sell to ~Iyour~n type, but since you are on business from %s I guess I have no choice."
-
    parliament_Duke_name = "Duke Akardius"
    parliament_Princess_name = "Princess Kateriina"
    parliament_Rebel_name = "Jonas D'Accor"
@@ -1463,38 +1461,6 @@ messages:
       }
 
       return iBonus;
-   }
-
-   GetFactionSellToMurderer(who=$,seller=$)
-   {
-      local iFaction;
-
-      % Rationale (no numbers here!):
-      % This allows murderers to buy stuff from "lawful" merchants because of faction pressure.
-
-      if who = $
-      {
-         debug("bad who!");
-         return FALSE;
-      }
-
-      iFaction = send(who,@GetFaction);
-      if (iFaction <> FACTION_DUKE)
-      {
-         return FALSE;
-      }
-
-      if seller <> $
-      {
-         send(seller,@Say,#message_rsc=parliament_sell_to_murderer,
-              #parm1=Send(self,@GetFactionLiege,#faction=iFaction));
-      }
-      else
-      {
-         debug("GetFactionSellToMurderer called with no seller.  This better be because of testing!");
-      }
-
-      return TRUE;
    }
 
    BetaPotionsEnabled()

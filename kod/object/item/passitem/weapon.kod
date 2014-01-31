@@ -37,6 +37,9 @@ constants:
    WEAPON_PROF_STRIKE  = 0
    WEAPON_PROF_THRUST  = 0
    WEAPON_PROF_SLASH = 0
+	
+	% This is the easiest way to consider not wearing a Jewel a low quality weapon.
+   WEAPON_PROF_TOUCH = 50
 
    % Disarm bonus
    WEAPON_DISARM_STRIKE  = 0
@@ -119,7 +122,7 @@ resources:
 
 classvars:
 
-   viUse_type = ITEM_USE_HAND
+   viUse_type = ITEM_USE_MAIN_HAND
    viItem_Type = ITEMTYPE_WEAPON
    viUse_amount = 1
 
@@ -162,6 +165,9 @@ classvars:
    
    viParry_chance = 0
 	viProf_bonus = 0
+	
+   % Weapons fight for a spot with instruments.
+	viLayer = 1
 
 properties:
 
@@ -580,23 +586,6 @@ messages:
 
    %%%  Infrastructure
 
-   ReqUseSomething(what = $)
-   {
-      if IsClass(what,&Weapon)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-      
-      propagate;
-   }
-   
    DamageGear(who = $,what = $)
    {
       % 25% chance to get damaged.

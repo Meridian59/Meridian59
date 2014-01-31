@@ -25,7 +25,7 @@ resources:
 
    room_name_templekra = "The Temple of Kraanan"
    room_templekra = tempkra.roo
-   templekra_music = temple.mid
+   templekra_music = temple.mp3
 
    templekra_sound = down2.wav
 

@@ -18,7 +18,7 @@ resources:
 
    room_name_orccave5 = "Obfal's Sepulchre"
    room_orccave5 = oc05.roo
-   orccave5_music = orc2.mid
+   orccave5_music = orc2.mp3
 
 classvars:
 

@@ -88,9 +88,12 @@ properties:
 
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15
-   
+
    % Time in seconds that ghosts will last before taking a penalty
-   piLogoffPenaltyGhostTime = 600
+   piLogoffPenaltyGhostTime = 480
+
+   % Time in seconds that outlaw / murderer ghosts will last before taking a penalty
+   piOutlawMurdererLogoffPenaltyGhostTime = 180
 
    %
    % Guild hall settings
@@ -111,6 +114,22 @@ properties:
    pbReportHotPlates = FALSE
 
    %
+   % Speedhack & Teleport protection
+   %
+   
+   % Worst lagspike
+   piMoveMaxLag = 2000
+   
+   % Limit for processing simultaneous move requests (due to TCP)
+   piMoveMaxSimulReq = 8
+   
+   % The default interval the server expects from the client
+   piMoveDefaultInterval = 250
+   
+   % A tolerance that is given on each move step
+   piMoveStepTolerance = 100
+   
+   %
    % Miscellaneous
    %
 
@@ -126,11 +145,11 @@ properties:
 
    % If enabled, unsafe penalties send the player to their last safe place.
    % This is intended to prevent being players 'kept offline' by enemies.
-   pbReturnToSafetyPenaltiesEnable = FALSE
+   pbReturnToSafetyPenaltiesEnable = TRUE
    
    % If enabled, unsafe penalties send angeled players to their last safe place.
    % This is intended to prevent being players 'scouting' with mules.
-   pbAngelReturnToSafetyPenaltiesEnable = FALSE
+   pbAngelReturnToSafetyPenaltiesEnable = TRUE
    
    % If this is enabled a player will lose half their mana and all buffs when they log off in a safe zone.
    % This is to prevent 'character trains' with pre-buffed characters
@@ -143,13 +162,19 @@ properties:
    piPlayerReflectionLimit = 2
 
    % Minimum swings needed for a chance to improve a weaponcraft skill.
-   piWeaponcraftImprovementMinimumSwings = 75
+   piWeaponcraftImprovementMinimumSwings = 50
    
    % Replaces old constant
    piPKillEnableHP = 50
    
    % Replaces old constant
    piIntrigueEnableHP = 50
+   
+   % If set to true, Resist Rings will lose durability upon taking an appropriate elemental hit.
+   piResistRingLoseDurability = FALSE
+
+   % If enabled, logoff penalties do not rise exponentially, and instead remain flat
+   pbFlatPenalties = TRUE
 
 messages:
 
@@ -316,7 +341,30 @@ messages:
       return pbReportHotPlates;
    }
 
+   %
+   % Speedhack & teleport protection
+   %
 
+   GetMoveMaxLag()
+   {
+	  return piMoveMaxLag;
+   }
+   
+   GetMoveMaxSimulReq()
+   {
+      return piMoveMaxSimulReq;
+   }
+   
+   GetMoveDefaultInterval()
+   {
+      return piMoveDefaultInterval;
+   }
+   
+   GetMoveStepTolerance()
+   {
+      return piMoveStepTolerance;
+   }
+   
    %
    % Miscellaneous
    %
@@ -364,7 +412,6 @@ messages:
       return piLogoffPenaltyGhostTime;
    }
    
-
    GetPlayerReflectionLimit()
    {
       return piPlayerReflectionLimit;
@@ -373,6 +420,21 @@ messages:
    GetSwingsPerImproveCheck()
    {
       return piWeaponcraftImprovementMinimumSwings;
+   }
+   
+   GetFlatPenaltiesEnable()
+   {
+      return pbFlatPenalties;
+   }
+   
+   GetOutlawMurdererLogoffPenaltyGhostTime()
+   {
+      return piOutlawMurdererLogoffPenaltyGhostTime;
+   }
+   
+   GetResistRingLoseDurability()
+   {
+      return piResistRingLoseDurability;
    }
 
 end

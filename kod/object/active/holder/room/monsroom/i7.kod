@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsI7 = I7.roo
    room_name_OutdoorsI7 ="The Twisted Wood"
-   OutdoorsI7_music = walk7.mid
+   OutdoorsI7_music = walk7.mp3
 
 classvars:
 

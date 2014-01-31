@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsD2 = D2.roo
    room_name_OutdoorsD2 ="Lower Dirhadrim"
-   OutdoorsD2_music = walk7.mid
+   OutdoorsD2_music = walk7.mp3
 
 classvars:
 

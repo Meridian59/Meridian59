@@ -19,7 +19,7 @@ resources:
 
    room_university = univ.roo
    room_name_university = "Meridian University"
-   univ_music = main.mid
+   univ_music = main.mp3
 
 classvars:
 

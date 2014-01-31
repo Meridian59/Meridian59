@@ -18,7 +18,7 @@ resources:
 
    room_name_TosForgottenLovers = "Forgotten Lover's Tryst"
    room_TosForgottenLovers = tosforgt.roo
-   TosForgottenLovers_music = goodfor.mid
+   TosForgottenLovers_music = goodfor.mp3
 
 classvars:
 

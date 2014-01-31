@@ -94,6 +94,8 @@ void CreateInitialSysTimers()
 		  60*ConfigInt(AUTO_KOD_PERIOD));
    CreateSysTimer(SYST_SAVE,60*ConfigInt(AUTO_SAVE_TIME),
 		  60*ConfigInt(AUTO_SAVE_PERIOD));
+   //Checks MySQL Connection every 5 minutes
+   CreateSysTimer(SYST_MYSQL_CONNECT,0,5*60);
 	/*
 	  no garbage collection now
    CreateSysTimer(SYST_GARBAGE,60*ConfigInt(AUTO_GARBAGE_TIME),
@@ -164,6 +166,11 @@ void ProcessOneSysTimer(systimer_node *st)
    case SYST_RESET_POOL :
       ResetBufferPool();
       break;
+
+   case SYST_MYSQL_CONNECT :
+	   dprintf("Checking MySQL Connection\n");
+	   MySQLCheckConnection(true);
+	   break;
 
    }
 }

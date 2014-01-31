@@ -24,7 +24,7 @@ resources:
    room_name_marion = "Marion"
    room_marion = marion.roo
 
-   mar_music = city02.mid
+   mar_music = city02.mp3
 
    wind_sound_marion = rs_wind.wav
 

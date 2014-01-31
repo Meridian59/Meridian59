@@ -19,7 +19,7 @@ resources:
 
    room_name_Necropolis3 = "Decaying City of Brax"
    room_Necropolis3 = necarea3.roo
-   Necropolis3_music = nec02.mid
+   Necropolis3_music = nec02.mp3
 
    Necropolis3_locked_gate = \
       "The gate has no visible means of opening, and the spikes atop it serve as a "

@@ -21,7 +21,7 @@ resources:
 
    room_name_tosforgot = "Hall of the Forgotten Heroes"
    room_tosforgot = kochoh.roo
-   tosforgot_music = extra01.mid
+   tosforgot_music = extra01.mp3
 
    name_zj = "Zjiria"
    name_zp = "Zaphod"

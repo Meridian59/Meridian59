@@ -51,7 +51,8 @@ classvars:
    viBulk = 70
    viWeight = 70
    
-   viUse_Amount = 2
+   viUse_Amount = 1
+   viUse_type = ITEM_USE_MAIN_HAND | ITEM_USE_OFF_HAND
 
    vrExtendedDescription = ranged_desc_rsc
 

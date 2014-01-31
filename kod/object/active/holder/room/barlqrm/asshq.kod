@@ -18,7 +18,7 @@ resources:
 
    room_name_asshq = "A shadowy corner"
    room_asshq = asshq.roo
-   asshq_music = cave.mid
+   asshq_music = cave.mp3
 
    asshq_rules_name = "rules of the game"
    asshq_sign = sign.bgf

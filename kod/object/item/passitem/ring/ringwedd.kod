@@ -31,12 +31,13 @@ classvars:
    vrIcon = ringwedding_icon_rsc
    vrRealDesc = ringwedding_desc_rsc
 
+   viHits_init_min = 3
+   viHits_init_max = 7
+
    viBulk = 2
    viWeight = 3
    
    viValue_average = 100
-
-   viDefense_bonus = 10
 
 properties:
 
@@ -96,30 +97,26 @@ messages:
             }
          }
       }
-
-		Send(what,@AddDefenseModifier,#what=self);
-		
+      Send(what,@AddDefenseModifier,#what=self);
+      
       propagate;
    }
-	
+
    NewUnused(what = $)
    {
       Send(what,@RemoveDefenseModifier,#what=self);
-      
       propagate;
+   }
+   
+   DefendingHit()
+   {
+      return;
    }
 
    DropOnDeath()
    {
       % Who was the stupid fuck that let these be dropped on death?
       return FALSE;
-   }
-
-   DamageGear()
-   "Called when the item provides defense."
-   {
-      % Return here so we don't damage the ring!
-      return;
    }
 
    % No taking the rings from people in rude ways.
@@ -143,27 +140,15 @@ messages:
    {
       return FALSE;
    }
-	
+
    ModifyDefensePower(who = $,what = $,defense_power = 0)
    {
-      return viDefense_bonus;
-   }
-   
-   ModifyDodgeAbility(who = $)
-   {
-      return 0;
+      return defense_power;
    }
 
-   ModifyDefenseDamageFlat(who = $,what = $,damage = $,atype = 0,aspell = 0)
-   "Increase or decrease damage done to defender by a flat amount."
+   ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
    {
-      return 0;
-   }
-   
-   ModifyDefenseDamagePercent(who = $,what = $,damage = $,atype = 0,aspell = 0)
-   "Increase or decrease damage done to defender by a percentage."
-   {
-      return 0;
+      return damage;
    }
 
 end

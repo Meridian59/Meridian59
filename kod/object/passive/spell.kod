@@ -92,6 +92,7 @@ resources:
    spell_school_jala = "Jala"
    spell_intro_rsc = "One of the many mystical spells."
 
+   spell_sound_jala = lute_equip.wav
    spell_sound_shalille = shalille.wav
    spell_sound_qor = qor.wav
    spell_sound_kraanan = kraanan.wav
@@ -582,6 +583,8 @@ messages:
 
    CanPayManaVigor(who = $, lTargets = $, iSpellPower = 0)
    {
+      local iCrystalizeManaAbility, oCrystalizeMana;
+
       if Send(who,@PlayerIsImmortal)
       {
          return TRUE;
@@ -600,6 +603,19 @@ messages:
       if Send(who,@GetMana)
          < Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
       {
+         iCrystalizeManaAbility = Send(who,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
+         if iCrystalizeManaAbility > 0
+            AND NOT Send(who,@IsCrystalizeManaSurging)
+            AND NOT IsClass(self,&CrystalizeMana)
+         {
+            oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
+            Send(oCrystalizeMana,@DoManaSurge,#who=who,#triggered=TRUE);
+            if Send(who,@GetMana) > Send(self,@GetManaCost,#who=who,#iSpellpower=iSpellpower)
+            {
+               return TRUE;
+            }
+         }
+         
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
          Send(who,@MsgSendUser,#message_rsc=spell_insufficient_magic,#parm1=vrName);
 
@@ -1171,6 +1187,12 @@ messages:
       iDistance, oTarget, oRing;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);
+	  
+	  % Concentration in no combat areas is increased allowing a user to focus on spell casting eliminating failure.
+	  if Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+	  {
+		return TRUE;
+	  }
 
       if iSpellpower = 0
       {
@@ -1500,7 +1522,12 @@ messages:
       {
          return vrSucceed_wav;
       }
-      
+
+      if viSchool = SS_JALA
+      {
+         return spell_sound_jala;
+      }
+
       if viSchool = SS_SHALILLE
       {
          return spell_sound_shalille;

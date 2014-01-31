@@ -18,7 +18,7 @@ resources:
 
    room_name_guest4 = "Ravi's Magicks of Hazar's Crossing"
    room_guest4 = guest4.roo
-   guest4_music = login.mid
+   guest4_music = login.mp3
 
    guest4_signname = "selling items"
    guest4_sign = \

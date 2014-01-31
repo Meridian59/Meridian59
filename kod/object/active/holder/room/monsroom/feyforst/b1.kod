@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsB1 = B1.roo
    room_name_OutdoorsB1 ="Elhadrim"
-   OutdoorsB1_music = walk7.mid
+   OutdoorsB1_music = walk7.mp3
 
 classvars:
 

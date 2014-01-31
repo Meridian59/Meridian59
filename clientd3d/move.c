@@ -674,7 +674,7 @@ int MoveObjectAllowed(room_type *room, int old_x, int old_y, int *new_x, int *ne
                //if (last_move_action == A_FORWARDFAST || last_move_action == A_BACKWARDFAST)
                if (IsMoveFastAction(last_move_action))
                   speed *= 2;
-               RequestMove(*new_y, *new_x, speed, player.room_id);
+               MoveUpdateServer();
                moveReported = TRUE;
                idLastObjNotify = idObjNotify;
             }

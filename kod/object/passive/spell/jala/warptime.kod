@@ -28,7 +28,7 @@ resources:
       "A rushing sensation passes through your head, speeding your mental spell preparations "
       "back to normal."
 
-   Warptime_song = jala4.mid
+   Warptime_song = jala4.mp3
  
 classvars:
 

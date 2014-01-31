@@ -18,7 +18,7 @@ resources:
 
    room_name_OutdoorsC2 = "The Vale of Sorrows"
    room_OutdoorsC2 = C2.roo
-   OutdoorsC2_music = walk7.mid
+   OutdoorsC2_music = walk7.mp3
 
    c2_elhai_win = \
       "~IVictorious, the elhai invite all of those pure of heart to drink "

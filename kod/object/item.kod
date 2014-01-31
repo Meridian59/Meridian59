@@ -97,6 +97,10 @@ classvars:
    % Items may have a different appearance once revealed. Values are zero if not applicable.
    viUnrevealedColor = 0
    viRevealedColor = 0
+	
+   % Layer represents clothing and gear that may override visually
+	% Higher numbers override lower numbers
+	viLayer = 0                      
 
 properties:
 
@@ -424,9 +428,13 @@ messages:
    }
 
    NewUsed()
-   {      
+   {
       Send(self,@DoPlayerArt);
-      
+      If IsClass(poOwner,&Player)
+      {
+         Post(poOwner,@RefreshPlayerVisualGear);
+      }
+
       return;
    }
 
@@ -1545,7 +1553,7 @@ messages:
 
    UndoPlayerArt()
    {
-      local oRoom;
+      local oRoom, oShirt;
 
       if (poOwner <> $)
       {
@@ -1564,10 +1572,12 @@ messages:
             Send(poOwner,@ResetPlayerLegs,#alldone=FALSE);
          }
          
+         Send(poOwner,@RefreshPlayerVisualGear);
+         
          oRoom = Send(poOwner,@GetOwner);
          if oRoom <> $
          {         
-            Send(oRoom,@SomethingChanged,#what=poOwner);
+            Post(oRoom,@SomethingChanged,#what=poOwner);
          }
       }
       
@@ -1693,6 +1703,11 @@ messages:
          return TRUE;
       }
       return FALSE;
+   }
+	
+   GetLayer()
+   {
+      return viLayer;
    }
 
 end

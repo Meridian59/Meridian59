@@ -551,8 +551,8 @@ int save_kodbase()
    external_list = table_get_all(st.missingvars);
    numexternals = save_externals(kodbase, external_list);
    
-   if (numexternals != 0)
-      simple_warning("%d unresolved externals", numexternals);
+   /*if (numexternals != 0)
+      simple_warning("%d unresolved externals", numexternals);*/
 
    fclose(kodbase);
    return True;

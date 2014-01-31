@@ -297,8 +297,7 @@ messages:
 		
       Send(who,@FlipSpellAtrophyFlag,#SID=viSpell_num);
 
-		iStroke = Send(who,@GetSpellAbility,#spell_num=viSpell_num) + 1;
-		iStroke = iStroke + (iStroke * Send(who,@GetMysticism) / 50);
+		iStroke = Send(who,@GetAbility,#num=viSpell_num);
 		
       return iStroke;
    }
@@ -358,49 +357,55 @@ messages:
       return TRUE;
    }
 
-	GetJewelFactor(who=$)
+	FindProf(who=$)
 	{
-		local i, iFactor;
+		local i, iProf;
 		
-		iFactor = 0;
+		iProf = -50;
 		
 		for i in send(who,@GetPlayerUsing)
       {
-         if IsClass(i,&JewelOfFroz)
+         if IsClass(i,&TouchingWeapon)
          {
-            % Each jewel of Froz boost the performance of touchattacks based on MaxHPs.
-            iFactor = iFactor + bound(send(who,@GetBaseMaxHealth)-50,0,50);
+            % A touch enhancer boosts attackspell performance. Not wearing one is the equivalent to a low quality weapon.
+            iProf = iProf + send(i,@GetProf,#who=who);
          }
       }
 		
-		return iFactor;
+		return iProf;
 	}
    
    FindDamage(use_weapon=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local i, damage, iAbility, iFactor, iProcfactor, iProffactor;
+      local i, damage, iAbility, iProf, iProcfactor;
 
-      % base weapon damage
+		iProf = Send(self,@GetProf,#who=who);
+      iProcfactor = 5 + iProf/10;
+
+      % base weapon damage - coming up with it here, since the touchattack doubles as stroke and weapon.
       damage = viBase_damage;
- 
-		iFactor = Send(self,@GetJewelFactor,#who=who);
- 
-      iProcfactor = 5 + iFactor/10;
-	   iProffactor = iFactor;
-
 		damage = damage*100;
 	  
-      % scale the basedamage with the caster's ability in the spell
+      % scale the basedamage with the stroke, i.e. the spell ability,
       iAbility = Send(who,@GetAbility,#num=viSpell_num);
-      damage = damage * (50 + ((iAbility + 1) / 2)) / 100;
+      damage = damage * (50 + (iAbility / 2)) / 100;
 
-      % scale proficiency bonus with HPs instead of spell ability
-      damage = damage + damage * (bound(send(who,@GetBaseMaxHealth)-50,0,50) + send(who,@GetMysticism)) * (100 + iProffactor) / 10000;
+      % scale damage with the proficiency. See the individual touchattack spell for more info.
+		damage = damage + damage * send(self,@GetProf,#who=who) / 100;
 
-      % allow for damage adjustments and procs
-      damage = Send(self,@DamageFactors,#damage=damage,#who=who,
-                          #victim=victim,#procfactor=iProcfactor);
+      % allow for damage adjustments and procs,
+      damage = Send(self,@DamageFactors,#damage=damage,#who=who,#victim=victim,#procfactor=iProcfactor);
+		
+		% and make it do a pretty flash.
+		for i in send(who,@GetPlayerUsing)
+      {
+         if IsClass(i,&TouchingWeapon)
+         {
+				Send(i,@DoFlash);
+         }
+      }
+		
       return damage;
    }
 
@@ -531,6 +536,11 @@ messages:
       Return iSpellpower;
    }
 
+   SuccessChance(who=$)
+   "Allow mages to switch elements despite antagonistic conditions."
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

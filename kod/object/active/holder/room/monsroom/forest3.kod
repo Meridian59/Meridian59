@@ -21,7 +21,7 @@ resources:
    room_forest3 = forest3.roo
    room_name_forest3 = "The Forests of Meridian"
    
-   forest3_music = forest.mid
+   forest3_music = forest.mp3
 
 classvars:
 

@@ -19,11 +19,14 @@ resources:
 
 classvars:
 
-   viUse_type = ITEM_USE_HAND
-   viUse_amount = 2
+   viUse_type = ITEM_USE_MAIN_HAND | ITEM_USE_OFF_HAND
+   viUse_amount = 1
 
    viInstrument_strength = 25
    vrInstrument_overlay = $
+
+	% Instruments fight for a spot with weapons and shields.
+	viLayer = 1  
    
 properties:
 

@@ -3696,6 +3696,7 @@ messages:
     {
        oTmp = Create(&Money,#number=bound(SERVICE_GOLD_REWARD-iServ,1,$));
        Send(who,@NewHold,#what=oTmp);
+	   Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTmp,@GetNumber));
     }
     else
     {

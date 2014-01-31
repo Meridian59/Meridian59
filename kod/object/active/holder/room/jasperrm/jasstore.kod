@@ -19,7 +19,7 @@ resources:
    room_jasperStore = jasstore.roo
    room_name_JasperStore = "General Store of Jasper"
 
-   jasstore_music = bank.mid
+   jasstore_music = bank.mp3
 
 classvars:
 

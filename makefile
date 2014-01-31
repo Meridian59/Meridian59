@@ -91,3 +91,6 @@ Bkeybind:
 clean:
         set COMMAND=clean
         $(MAKE) /$(MAKEFLAGS)
+		$(RM) $(BLAKSERVRUNDIR)\rsc\*.rsc
+		$(RM) $(BLAKSERVRUNDIR)\loadkod\*.bof
+		$(RM) $(BLAKSERVRUNDIR)\memmap\*.bof

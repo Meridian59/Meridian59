@@ -117,10 +117,10 @@ static char INIQuickStart[]   = "QuickStart";
 
 static int   DefaultRedialDelay   = 60;
 static char  DefaultHostname[]    = "cheater";
-static char  DefaultDomainFormat[] = "meridian%d.meridian59.com"; // MUST have a %d in it somewhere.
+static char  DefaultDomainFormat[] = "meridian%d.daenks.org"; // MUST have a %d in it somewhere.
 static char  DefaultSockPortFormat[] = "59%.2d";
 static int   DefaultServerNum     = -1;
-static int   DefaultTimeout       = 20;
+static int   DefaultTimeout       = 1440; // 1 day in minutes (60*24)
 
 /************************************************************************/
 /* 
@@ -265,27 +265,6 @@ void ConfigLoad(void)
 #ifdef NODPRINTFS
    config.debug    = False;
    config.security = True;
-   config.timeout  = DefaultTimeout;
-#else
-   config.debug = 
-      GetConfigInt(special_section, INIDebug, False, ini_file);
-   config.security = 
-      GetConfigInt(special_section, INISecurity, True, ini_file);
-   config.timeout = GetConfigInt(misc_section, INITimeout, DefaultTimeout, ini_file);
-#endif
-
-   config.technical = GetConfigInt(special_section, INITechnical, False, ini_file);
-
-#ifndef NODPRINTFS
-   config.showMapBlocking = GetConfigInt(special_section, INIShowMapBlocking, 0, ini_file);
-   config.showFPS      = GetConfigInt(special_section, INIShowFPS, 0, ini_file);
-   config.showUnseenWalls = GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);
-   config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
-   config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);
-   config.maxFPS = GetConfigInt(special_section, INIMaxFPS, 70, ini_file);
-   config.clearCache = GetConfigInt(special_section, INIClearCache, False, ini_file);
-   //config.quickstart = GetConfigInt(special_section, INIQuickStart, 0, ini_file);
-#else
    config.showMapBlocking = FALSE;
    config.showFPS = FALSE;
    config.showUnseenWalls = FALSE;
@@ -293,8 +272,22 @@ void ConfigLoad(void)
    config.avoidDownloadAskDialog = FALSE;
    config.maxFPS = FALSE;
    config.clearCache = FALSE;
-#endif // NODPRINTFS
-   config.debug = FALSE;
+#else
+   config.debug				= GetConfigInt(special_section, INIDebug, False, ini_file);
+   config.security			= GetConfigInt(special_section, INISecurity, True, ini_file);
+   config.showMapBlocking	= GetConfigInt(special_section, INIShowMapBlocking, 0, ini_file);
+   config.showFPS			= GetConfigInt(special_section, INIShowFPS, 0, ini_file);
+   config.showUnseenWalls	= GetConfigInt(special_section, INIShowUnseenWalls, 0, ini_file);
+   config.showUnseenMonsters = GetConfigInt(special_section, INIShowUnseenMonsters, 0, ini_file);
+   config.avoidDownloadAskDialog = GetConfigInt(special_section, INIAvoidDownloadAskDialog, 0, ini_file);
+   config.maxFPS			= GetConfigInt(special_section, INIMaxFPS, 70, ini_file);
+   config.clearCache		= GetConfigInt(special_section, INIClearCache, False, ini_file);
+   //config.quickstart = GetConfigInt(special_section, INIQuickStart, 0, ini_file);
+#endif
+
+   config.timeout	= GetConfigInt(misc_section, INITimeout, DefaultTimeout, ini_file);
+   config.technical = GetConfigInt(special_section, INITechnical, False, ini_file);
+
    TimeSettingsLoad();
 }
 /****************************************************************************/

@@ -25,7 +25,7 @@ resources:
    room_name_castle2c = "The Assembly Chamber"
 
 
-   castle2c_music = castle.mid
+   castle2c_music = castle.mp3
 
 classvars:
 

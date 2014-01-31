@@ -18,7 +18,7 @@ resources:
 
    room_name_guest8 = "The Grand Museum of Hazar"
    room_guest8 = guest8.roo
-   guest8_music = login.mid
+   guest8_music = login.mp3
 
    guest8_signname_1 = "Welcome"
    guest8_sign_1 = \

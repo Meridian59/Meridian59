@@ -22,7 +22,7 @@ resources:
       "The foreboding sound of this song hinders the casting the holy spells of Shal'ille.  "
       "A ruby and some herbs are required to begin performing this song."
 
-   ProfaneResonance_song = nec02.mid
+   ProfaneResonance_song = nec02.mp3
  
 classvars:
 

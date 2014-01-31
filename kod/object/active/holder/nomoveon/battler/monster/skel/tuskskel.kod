@@ -44,7 +44,7 @@ classvars:
 
    viTreasure_type = TID_SKELETON3
    viSpeed = SPEED_FAST
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 100
    viDifficulty = 6
@@ -63,15 +63,18 @@ properties:
    
 messages:
 
-   HitSideEffect( what = $ )
+   SetResistances()
    {
-      local oSpell;
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
-      if not Send(what,@IsEnchanted,#what=oSpell) 
-      and Random(1,DEMENTIA_CHANCE) = 1
-      {
-	 Send(oSpell,@MakeSick,#who=what);
-      }
+      plResistances = [ [ 70, ATCK_WEAP_PIERCE ],
+                        [ 40, ATCK_WEAP_THRUST ],
+                        [ 70, -ATCK_SPELL_UNHOLY ],
+                        [ 70, -ATCK_SPELL_SHOCK ],
+                        [ 70, -ATCK_SPELL_COLD ],
+                        [ -10, -ATCK_SPELL_FIRE ],
+                        [ -20, -ATCK_SPELL_HOLY ],
+                        [ -20, ATCK_WEAP_STRIKE ]
+                      ];
+
       return;
    }
 

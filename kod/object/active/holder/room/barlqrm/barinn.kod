@@ -23,7 +23,7 @@ resources:
    room_barinn = barinn.roo
    room_name_barinn = "Brownestone Inn"
 
-   barinn_music = bar.mid
+   barinn_music = bar.mp3
 
    barinn_rentableroom_door = "The door won't budge.  Strangely, it doesn't look like it opens at all.  "
          "There is a small keyhole in the door, however.  Perhaps if you used a key in it, something "

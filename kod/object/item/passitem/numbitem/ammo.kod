@@ -45,23 +45,6 @@ properties:
 
 messages:
 
-   ReqUseSomething(what = $)
-   {
-      if IsClass(what, &Ammo)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-             return FALSE;
-         }
-      }
-      
-      propagate;
-   }
-
    GetProjectileIcon()
    {
       return vrIcon;

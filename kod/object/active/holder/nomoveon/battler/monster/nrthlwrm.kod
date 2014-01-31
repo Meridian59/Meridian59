@@ -49,7 +49,7 @@ classvars:
 
    viTreasure_type = TID_NARTHYL_WORM
    viSpeed = SPEED_SLOW
-   viAttack_types = ATCK_WEAP_PIERCE
+   viAttack_type = ATCK_WEAP_PIERCE
    viAttributes = 0
    viLevel = 120
    viDifficulty = 7

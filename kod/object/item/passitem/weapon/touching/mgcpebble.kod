@@ -1,0 +1,92 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+MagicalPebble is TouchingWeapon
+
+constants:
+
+   include blakston.khd
+
+   ANIM_FLASH = 2
+
+resources:
+
+   mgcpebble_name_rsc = "Magical Pebble"
+   mgcpebble_icon_rsc = spdregg.bgf
+   mgcpebble_desc_rsc = \
+      "Something tells you that this pebble carries some hidden power. It feels warm to the touch."
+		
+		
+classvars:
+
+   vrName = mgcpebble_name_rsc
+   vrIcon = mgcpebble_icon_rsc
+   
+   viUse_type = ITEM_USE_MAIN_HAND
+   viUse_amount = 1
+
+   viHits_init_min = 400
+   viHits_init_max = 600
+
+   viValue_average = 200
+   viBulk = 10
+   viWeight = 15
+	
+   % A Magical Pebble is a normal quality touch weapon.
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
+	
+properties:
+
+
+   piAttackType = ATCK_WEAP_UNARMED+ATCK_WEAP_PUNCH
+   vrDesc = mgcpebble_desc_rsc
+   viItem_type = ITEMTYPE_WEAPON
+
+   piAnimation = ANIM_NONE
+
+messages:
+
+   Constructor()
+   {
+      piItem_flags = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKY,#color2=XLAT_TO_SKY);
+      
+      propagate;
+   }
+
+   SendAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,2);
+
+      return;
+   }
+
+   SendLookAnimation()
+   {
+      AddPacket(1,ANIMATE_NONE,2,1);
+
+      return;
+   }
+
+   SendInventoryAnimation()
+   {
+      if piAnimation = ANIM_FLASH
+      {
+         AddPacket(1,ANIMATE_ONCE,4,300,2,3,2,3,2,1);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE,2,1);
+      }
+      
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -57,8 +57,8 @@ classvars:
    viWeight = 500
    viValue_average = 2500
    
-   viUse_type = ITEM_USE_HAND
-   viUse_Amount = 2
+   viUse_type = ITEM_USE_MAIN_HAND | ITEM_USE_OFF_HAND
+   viUse_Amount = 1
 
    viVigorDrop = 120000
    viInitialTimeval = 10000

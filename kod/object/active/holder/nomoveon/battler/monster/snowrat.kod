@@ -43,7 +43,7 @@ classvars:
    viTreasure_type = TID_RAT
 
    viSpeed = SPEED_FAST
-   viAttack_types = ATCK_WEAP_CLAW
+   viAttack_type = ATCK_WEAP_CLAW
    viAttributes = 0
    viLevel = 60
    viDifficulty = 4

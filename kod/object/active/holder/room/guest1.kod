@@ -18,7 +18,7 @@ resources:
 
    room_name_guest1 = "The Inn of Hazar"
    room_guest1 = guest1.roo
-   guest1_music = login.mid
+   guest1_music = login.mp3
 
    Guest1_Back_Door = "The back door is locked."
 

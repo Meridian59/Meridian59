@@ -776,25 +776,6 @@ messages:
       return;
    }
    
-   ReqUseSomething(what = $)
-   {
-      if IsClass(what, &Necklace) or IsClass(what, &NecromancerAmulet)
-      {
-         if Send(poOwner, @TryUnuseItem, #what = self)
-         {
-            propagate;
-         }
-         return False;
-      }
-      if IsClass(what, &Food) and not IsClass(what, &Spideye)
-      {
-         send( poOwner, @MsgSendUser, #message_rsc = NecromancerAmulet_cant_eat,
-               #parm1=send(what,@GetDef),#parm2=send(what,@GetName) );
-         return FALSE;
-      }
-      propagate;
-   }
-
    ReqUse(what=$)
    {
       if not send(what,@CanAdvance)

@@ -485,6 +485,9 @@
    RID_SEWER_KING = 380
    RID_JASWEST = 382
    RID_JAS_WEST = 382
+   
+   % New areas as extensions of old areas
+   RID_THRONE2 = 383
 
    % Outside world works as follows:
    % Name of roo and RID is grid coordinates, in form letter-number.
@@ -1578,6 +1581,11 @@
    TID_MUMMY         = 52
    TID_THRASHER      = 53
 
+   TID_STATUE        = 54
+   TID_KRIIPA        = 55
+   TID_MOLLUSK       = 56
+   TID_SHADOWBEAST   = 57
+
    %%% English articles
 
    ARTICLE_NONE = 0
@@ -1594,7 +1602,7 @@
    ITEM_CANT_USE = 0x0001
    ITEM_SINGLE_USE = 0x0002
    ITEM_BROKEN = 0x0004
-   ITEM_USE_HAND = 0x0008
+   ITEM_USE_MAIN_HAND = 0x0008
    ITEM_USE_BODY = 0x0010
    ITEM_USE_QUIVER = 0x0020
    ITEM_USE_NECK = 0x0040
@@ -1606,6 +1614,8 @@
    ITEM_USE_SHIRT = 0x0800
    % In theory, used for masks.
    ITEM_USE_FACE = 0x1000
+	% New and improved.
+	ITEM_USE_OFF_HAND = 0x2000
 
    ITEMTYPE_MISC =     0
    ITEMTYPE_WEAPON =   0x000001
@@ -1710,6 +1720,8 @@
    WEAPON_TYPE_THRUST = 1
    %  Slash weapons are weapons with a sharp edge.
    WEAPON_TYPE_SLASH = 2
+   %  Touch weapons boost touchattacks.
+   WEAPON_TYPE_TOUCH = 3
 
    % How much range bonus do we get if a player target has moved recently?
    RANGE_MOVEMENT_BONUS = 1
@@ -2980,10 +2992,16 @@
    LOS_NEW_PLAYER = 2
    LOS_NEW_BOTH = 3
 
-	% String limits
-	MIN_CHAR_NAME_LEN = 3
-	MAX_CHAR_NAME_LEN = 30
-	MAX_CHAR_DESCRIPTION_LEN = 1000
-	MAX_GUILD_NAME_LEN = 30
-	MAX_GUILD_RANK_LEN = 20
-	MAX_URL_LEN = 200
+   % String limits
+   MIN_CHAR_NAME_LEN = 3
+   MAX_CHAR_NAME_LEN = 30
+   MAX_CHAR_DESCRIPTION_LEN = 1000
+   MAX_GUILD_NAME_LEN = 30
+   MAX_GUILD_RANK_LEN = 20
+   MAX_URL_LEN = 200
+   
+   %Statistics Constants, matches enum in blakserv.h
+   STAT_BLANK = 0
+   STAT_TOTALMONEY = 1
+   STAT_MONEYCREATED = 2
+   STAT_ASSESS_DAM = 3

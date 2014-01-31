@@ -116,7 +116,7 @@ messages:
 
          for i in send(who,@GetPlayerUsing)
          {
-            if (send(i,@GetItemUseType) & (ITEM_USE_HAND | ITEM_USE_HEAD))
+            if (send(i,@GetItemUseType) & (ITEM_USE_MAIN_HAND | ITEM_USE_OFF_HAND | ITEM_USE_HEAD))
                AND (NOT send(i,@IsItemType,#type=ITEMTYPE_SPECIAL))
                AND send(oRoom,@ReqNewHold,#what=i,#new_row=Row,#new_col=Col)
                AND send(i,@ReqUnUse)

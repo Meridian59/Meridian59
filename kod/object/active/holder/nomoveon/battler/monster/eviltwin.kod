@@ -46,7 +46,6 @@ classvars:
    viTreasure_type = TID_NONE
 
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 1
    viDifficulty = 9
@@ -239,8 +238,10 @@ messages:
    SomethingLeft(what=$)
    {
       if poOriginal = $
-	   {
-	      Send(self,@Delete);
+      {
+         Send(self,@Delete);
+			
+			return;
       }
 
       if IsClass(poOriginal,&Player)
@@ -299,6 +300,13 @@ messages:
    GetObjectFlags()
    {
       local iFlags;
+
+		iFlags = $;
+		
+      if poOriginal = $
+      {
+			return iFlags;
+      }
       
       iFlags = send(poOriginal,@GetObjectFlags);
       if (iFlags & USER_YES) {  iFlags = (iFlags | FALSEPLAYER_YES);  }
@@ -310,6 +318,11 @@ messages:
    GetAttackRange()
    {
       local iWeapon;
+		
+      if poOriginal = $
+      {
+			return 1;
+      }
       
       iWeapon = send(poOriginal,@LookupPlayerWeapon);
       if iWeapon <> $
@@ -320,13 +333,11 @@ messages:
       return 1;
    }
 
-   % This returns the battler's ability to-hit.  Ranges from 1 to 10000
    GetOffense(what = $, stroke_obj=$)
    {
       return Send(poOriginal,@GetOffense,#what=what,#stroke_obj=stroke_obj);
    }
 
-   % This returns the battler's ability to avoid being hit.  Ranges from 1 to 10000.
    GetDefense(what = $, stroke_obj=$)
    {
       return Send(poOriginal,@GetDefense,#what=what,#stroke_obj=stroke_obj);
@@ -337,6 +348,16 @@ messages:
       return Send(poOriginal,@GetDamage,#what=what,#use_weapon=Send(poOriginal,@GetWeapon),#durabilityhit=FALSE);
    }
 
+   GetDamageType(what=$)
+	{
+      return Send(poOriginal,@GetDamageType,#what=what,#use_weapon=Send(poOriginal,@GetWeapon));
+	}
+	
+   GetSpellType(what=$)
+	{
+      return Send(poOriginal,@GetSpellType,#what=what,#use_weapon=Send(poOriginal,@GetWeapon));
+	}
+
 	GetMonsterStroke()
 	{
       if IsClass(poOriginal,&Player)
@@ -346,7 +367,7 @@ messages:
 		
 		propagate;
 	}
-
+	
    GetKarma(detect=FALSE)
    {
       if detect

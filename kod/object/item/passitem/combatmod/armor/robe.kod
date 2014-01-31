@@ -85,7 +85,10 @@ classvars:
    vrCondition_good = robe_condition_good 
    vrCondition_med = robe_condition_med 
    vrCondition_poor = robe_condition_poor 
-   vrCondition_broken = robe_condition_broken 
+   vrCondition_broken = robe_condition_broken
+   
+   % Robes go over layer 0 items, such as shirts and pants
+   viLayer = 1
 	
 	viDodge_base = 0
 
@@ -125,24 +128,6 @@ messages:
       return (NOT send(send(SYS,@GetWarEvent),@IsActive));
    }
 
-   ReqUseSomething(what = $)
-   {
-      if send(what,@GetItemUseType) & ITEM_USE_LEGS
-         AND NOT IsClass(what,&Robe)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
-      }
-
-      propagate;
-   }
-
    HasSkinTones()
    {
       return TRUE;
@@ -152,43 +137,6 @@ messages:
    {
       return 2;
    }
-   
-   DoPlayerArt()
-   {
-      local oRoom;
-      
-      send(self,@ResetSkinColor);   %% make the player's hands match his sleeves.      
-      if send(self,@ShowShirt)
-      {
-         send(self,@ResetXLATsToShirt);
-      }
-
-      %  post this since robe arms always go on top.
-      if vrLeftArm_male <> $
-      {
-         post(self,@SetArms,#alldone=FALSE);
-      }
-      
-      if vrIcon_male <> $
-      {
-         send(self,@SetIcon,#alldone=FALSE);
-      }
-      
-      if  vrLegs_male <> $
-      {
-         send(self,@SetLegs,#alldone=FALSE);
-      }
-      
-      oRoom = send(poOwner,@GetOwner);
-      if oRoom <> $
-      {
-         %  post this to fix the arms after we change them.
-         post(oRoom,@SomethingChanged,#what=poOwner);
-      }
-
-      return;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

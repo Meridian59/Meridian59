@@ -1998,8 +1998,9 @@ void AdminShowEachSysTimer(systimer_node *st)
 	case SYST_SAVE : s = "Save game"; break;
 	case SYST_BLAKOD_HOUR : s = "New Blakod hour"; break;
 	case SYST_INTERFACE_UPDATE : s = "Update interface"; break;
-	case SYST_RESET_TRANSMITTED : s = "Reset transmit count"; break;
+	case SYST_RESET_TRANSMITTED : s = "Reset TX count"; break;
 	case SYST_RESET_POOL : s = "Reset buffer pool"; break;
+	case SYST_MYSQL_CONNECT : s = "Check MySQL conn"; break;
 	default : s = "Unknown"; break;
 	}
 	aprintf("%i %-18s %-15s ",st->systimer_type,s,RelativeTimeStr(st->period));
@@ -2083,7 +2084,7 @@ void AdminShowCalls(int session_id,admin_parm_type parms[],
 		case REST : strcpy(c_name, "Rest"); break;
 		case LENGTH : strcpy(c_name, "Length"); break;
 		case NTH : strcpy(c_name, "Nth"); break;
-		case LIST : strcpy(c_name, "List"); break;
+		case MLIST : strcpy(c_name, "List"); break;
 		case ISLIST : strcpy(c_name, "IsList"); break;
 		case SETFIRST : strcpy(c_name, "SetFirst"); break;
 		case SETNTH : strcpy(c_name, "SetNth"); break;
@@ -3859,7 +3860,7 @@ void AdminSendObject(int session_id,admin_parm_type parms[],
 			int len;
 			if (snod && snod->len_data)
 			{
-			  len = std::min(snod->len_data, 60);
+			  len = std::min(snod->len_data, 1024);
 			  aprintf(":   == \"");
 			  AdminBufferSend(snod->data,len);
 			  if (len < snod->len_data)

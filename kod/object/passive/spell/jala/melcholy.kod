@@ -27,7 +27,7 @@ resources:
 
    Melancholy_on = "%s%s's melancholy song makes your heart feel heavy."
 
-   Melancholy_song = ksong.mid
+   Melancholy_song = ksong.mp3
  
 classvars:
 

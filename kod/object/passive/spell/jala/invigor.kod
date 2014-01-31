@@ -22,7 +22,7 @@ resources:
       "This song allows all listeners to regain vigor at an accelerated rate.  "
       "Requires one diamond and an edible mushroom to cast."
 
-   Invigorate_song = song11.mid
+   Invigorate_song = song11.mp3
  
 classvars:
 

@@ -286,7 +286,7 @@ classvars:
    vrName = WarLetter_name_rsc
    vrIcon = WarLetter_icon_rsc
 
-   viUse_type = ITEM_USE_HAND
+   viUse_type = ITEM_USE_OFF_HAND
    viValue_average = 40
    viWeight = 3
    viBulk = 10

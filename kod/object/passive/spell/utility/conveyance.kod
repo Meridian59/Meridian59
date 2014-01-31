@@ -43,7 +43,7 @@ classvars:
    viSpellExertion = 0
 	
 	% Chance to increase is one in viChance_To_Increase. 0 means no improvement possible.
-   viChance_To_Increase = 20
+   viChance_To_Increase = 5
 
 properties:
 

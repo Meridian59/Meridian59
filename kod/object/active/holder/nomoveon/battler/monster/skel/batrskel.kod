@@ -44,7 +44,7 @@ classvars:
 
    viTreasure_type = TID_SKELETON2
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_THRUST
+   viAttack_type = ATCK_WEAP_THRUST
    viAttributes = 0
    viLevel = 60
    viDifficulty = 4
@@ -62,6 +62,20 @@ properties:
    piAnimation = ANIM_NONE
    
 messages:
+
+   SetResistances()
+   {
+      plResistances = [ [ 70, ATCK_WEAP_PIERCE ],
+                        [ 70, -ATCK_SPELL_UNHOLY ],
+                        [ 70, -ATCK_SPELL_SHOCK ],
+                        [ 70, -ATCK_SPELL_COLD ],
+                        [ -10, -ATCK_SPELL_FIRE ],
+                        [ -20, -ATCK_SPELL_HOLY ],
+                        [ -20, ATCK_WEAP_STRIKE ]
+                      ];
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

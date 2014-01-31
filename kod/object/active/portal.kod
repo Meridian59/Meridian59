@@ -123,17 +123,19 @@ messages:
    TeleportSomething(what=$)
    "Called when something walks on top of us."
    {
+      % Test if the move is OK first (do_move=FALSE)
       if NOT Send(SYS,@UtilGoNearSquare,#what=what,
                   #where=Send(SYS,@FindRoomByNum,#num=piDest_room),
                   #new_row=piDest_row,#new_col=piDest_col,
                   #fine_row=piDest_fine_row,#fine_col=piDest_fine_col,
                   #new_angle=piDest_angle, #max_distance=viMaxDistance,
-                  #do_Move=FALSE)
+                  #do_move=FALSE)
       {
          debug("Portal",self,"unable to move",what);
       }
       else
       {
+         % Now actually do the move		 
          Send(SYS,@UtilGoNearSquare,#what=what,
               #where=Send(SYS,@FindRoomByNum,#num=piDest_room),
               #new_row=piDest_row,#new_col=piDest_col,

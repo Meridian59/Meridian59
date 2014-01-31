@@ -18,7 +18,7 @@ resources:
 
    room_forest4 = forest4.roo
    name_forest4 = "The Deep Dark Woods of Tos"
-   forest4_music = forest.mid
+   forest4_music = forest.mp3
 
 classvars:
 

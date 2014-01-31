@@ -22,7 +22,7 @@ resources:
    room_name_kocsew2 = "Up Chuk Creek without a paddle"
    room_kocsew2 = kocsew2.roo
 
-   kocsew2_music = cave.mid
+   kocsew2_music = cave.mp3
 
    kocsew2_locked_1 = \
       "Alternately wading and swimming in digusting filth, you rattle "

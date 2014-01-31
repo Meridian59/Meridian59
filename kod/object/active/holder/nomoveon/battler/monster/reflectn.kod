@@ -51,7 +51,6 @@ classvars:
    viTreasure_type = TID_NONE
 
    viSpeed = SPEED_AVERAGE
-   viAttack_types = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 45
    viDifficulty = 4
@@ -171,6 +170,8 @@ messages:
       if poOriginal = $
       {
          Send(self,@Delete);
+			
+			return;
       }
       
       if IsClass(poOriginal,&Player)
@@ -187,6 +188,8 @@ messages:
       if poOriginal = $
       {
          Send(self,@Delete);
+			
+			return;
       }
       else
       {
@@ -218,6 +221,8 @@ messages:
       if poOriginal = $
       {
          Send(self,@Delete);
+			
+			return;
       }
 
       % Ignore mana drain for non-players.
@@ -300,6 +305,8 @@ messages:
       if poOriginal = $
       {
          Send(self,@Delete);
+			
+			return;
       }
 
       if IsClass(poOriginal,&Player)
@@ -324,9 +331,13 @@ messages:
    {
       local iFlags;
 
+		iFlags = $;
+		
       if poOriginal = $
       {
          post(self,@Delete);
+			
+			return iFlags;
       }
 
       iFlags = Send(poOriginal,@GetObjectFlags);
@@ -346,6 +357,8 @@ messages:
       if poOriginal = $
       {
          post(self,@Delete);
+			
+			return 1;
       }
 
       if IsClass(poOriginal,&Player)
@@ -365,11 +378,6 @@ messages:
       return 1;
    }
 
-   GetKarma(detect=FALSE)
-   {
-      return Send(poOriginal,@GetKarma);
-   }
-
    GetOffense(what = $, stroke_obj=$)
    {
       return Send(poOriginal,@GetOffense,#what=what,#stroke_obj=stroke_obj);
@@ -385,6 +393,16 @@ messages:
       return Send(poOriginal,@GetDamage,#what=what,#use_weapon=Send(poOriginal,@GetWeapon),#durabilityhit=FALSE);
    }
 	
+   GetDamageType(what=$)
+	{
+      return Send(poOriginal,@GetDamageType,#what=what,#use_weapon=Send(poOriginal,@GetWeapon));
+	}
+	
+   GetSpellType(what=$)
+	{
+      return Send(poOriginal,@GetSpellType,#what=what,#use_weapon=Send(poOriginal,@GetWeapon));
+	}
+
 	GetMonsterStroke()
 	{
       if IsClass(poOriginal,&Player)
@@ -394,12 +412,14 @@ messages:
 		
 		propagate;
 	}
-
+	
    SomethingChanged(what=$)
    {
       if poOriginal = $
       {
          post(self,@Delete);
+			
+			return;
       }
 
       % Our source object changed; tell everyone that we've changed, too.

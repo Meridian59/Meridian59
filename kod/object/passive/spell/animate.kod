@@ -21,7 +21,7 @@ resources:
    Animate_name_rsc = "animate"
    Animate_icon_rsc = ianimate.bgf
    Animate_desc_rsc = \
-      "Animates the corpse of another human, that they may do your bidding.  "
+      "Animates a corpse, that it may do your bidding.  "
       "Requires the blood of a shaman to cast."
    
    Animate_bad_target = "You can't cast animate on %s%s!"
@@ -139,41 +139,41 @@ messages:
       
       if iNum < 20 
       {
-         iLevel = Bound(iLevel,1,25);
-         oRisen = Create(&Mummy,#DropsTreasure=FALSE,#Level=iLevel);
+         oRisen = Create(&Mummy);
+         Send(oRisen,@SetIllusion,#value=TRUE);
       }
       else
       {
          if iNum < 40
          {
-            iLevel = Bound(iLevel,1,50);
-            oRisen = Create(&Zombie,#DropsTreasure=FALSE,#Level=iLevel);
+            oRisen = Create(&Zombie);
+            Send(oRisen,@SetIllusion,#value=TRUE);
          }
          else
          {
             if iNum < 60
             {
-               iLevel = Bound(iLevel,1,55);
-               oRisen = Create(&BatteredSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+               oRisen = Create(&BatteredSkeleton);
+               Send(oRisen,@SetIllusion,#value=TRUE);
             }
             else
             {
                if iNum < 75
                {
-                  iLevel = Bound(iLevel,25,75);
-                  oRisen = Create(&Skeleton,#DropsTreasure=FALSE,#Level=iLevel);
+                  oRisen = Create(&Skeleton);
+                  Send(oRisen,@SetIllusion,#value=TRUE);
                }
                else
                {
                   if iNum < 90
                   {
-                     iLevel = Bound(iLevel,50,85);
-                     oRisen = Create(&TuskedSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+                     oRisen = Create(&TuskedSkeleton);
+                     Send(oRisen,@SetIllusion,#value=TRUE);
                   }
                   else
                   {
-                     iLevel = Bound(iLevel,75,99);
-                     oRisen = Create(&DaemonSkeleton,#DropsTreasure=FALSE,#Level=iLevel);
+                     oRisen = Create(&DaemonSkeleton);
+                     Send(oRisen,@SetIllusion,#value=TRUE);
                   }
                }
             }

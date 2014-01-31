@@ -102,7 +102,7 @@ classvars:
 
    viTreasure_type = TID_LICH
    viSpeed = SPEED_FAST
-   viAttack_types = ATCK_SPELL_UNHOLY
+   viAttack_spell = ATCK_SPELL_UNHOLY
    viLevel = 200
    viDifficulty = 9
    viKarma = -100

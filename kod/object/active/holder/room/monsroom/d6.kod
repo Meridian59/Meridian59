@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsD6 = D6.roo
    room_name_OutdoorsD6 ="Deep in the Forest of Farol"
-   OutdoorsD6_music = walk7.mid
+   OutdoorsD6_music = walk7.mp3
 
 classvars:
 
@@ -55,7 +55,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&MolluskMonster, 30], [&Ent, 70] ];
+      plMonsters = [ [&Ent, 100] ];
 
       plGenerators = [ [8, 4], [15, 11], [24, 5], [27, 13], [36, 9],
 		      [5, 14], [9, 22], [6, 30], [19, 19], [17, 35], 

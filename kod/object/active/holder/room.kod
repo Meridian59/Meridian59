@@ -210,7 +210,7 @@ properties:
    prBackground = $
 
    % Default length: five minutes (in ms)
-   piDispose_delay = 300000
+   piDispose_delay = 180000
    ptDispose = $
 
    % Exits list: each member is a list of row in this room, col in this room
@@ -267,6 +267,15 @@ properties:
    % Don't set this.  It is set automatically.
    % Instead, override something in SetFarenBonus.
    piFaren_Bonus
+   
+   % The amount of time a player has before being booted from a group
+   % provided they don't get a monster kill. This adjusts automatically
+   % based on the strength of monsters killed in the zone. That implementation
+   % will allow us to dynamically change monsters without worrying about additional changes.
+   piGroupTime = 60000
+   
+   % A list of players building together
+   plBuilderGroup = $
 
 messages:
 
@@ -389,6 +398,7 @@ messages:
       plExits = $;
       plEdge_exits = $;
       plYell_zone = $;
+      plBuilderGroup = $;
       Send(self,@CreateStandardExits);
       Send(self,@CreateYellZoneList);
 
@@ -710,6 +720,8 @@ messages:
          oCaster = Send(self,@GetEnchantmentState,#what=oSpell);
          Send(oSpell,@GiveKilledBenefits,#Caster=oCaster,#Victim=victim);
       }
+      
+      Send(self,@SetGroupTime,#victim=victim);
 
       propagate;
    }
@@ -1828,8 +1840,8 @@ messages:
       {
          if NOT pbUser_in_room
          {
-            Send(self,@FirstUserEntered,#what=what,#new_row=First(new_pos),
-                 #new_col=Nth(new_pos,2));
+            Send(self,@FirstUserEntered,#what=what,#new_row=Nth(new_pos,2),
+                 #new_col=Nth(new_pos,3));
          }
 
          % Now send music.
@@ -1959,6 +1971,8 @@ messages:
       {
          propagate;
       }
+
+      Send(what,@LeaveBuilderGroup);
 
       % unenchant this one occupant
       for i in plEnchantments
@@ -4016,6 +4030,97 @@ messages:
             {
                Post(each_obj,@Delete);
             }
+         }
+      }
+      return;
+   }
+   
+   AddToBuilderGroup(who=$)
+   {
+      if who = $
+         OR NOT IsClass(who,&User)
+         OR Send(who,@GetOwner) <> self
+      {
+         return;
+      }
+      
+      If plBuilderGroup = $
+         OR FindListElem(plBuilderGroup, who) = 0
+      {
+         plBuilderGroup = Cons(who,plBuilderGroup);
+      }
+      
+      return;
+   }
+   
+   RemoveFromBuilderGroup(who=$)
+   {
+      if plBuilderGroup = $
+         OR who = $
+      {
+         return;
+      }
+      
+      if FindListElem(plBuilderGroup,who) <> 0
+      {
+         plBuilderGroup = DelListElem(plBuilderGroup,who);
+      }
+      
+      return;
+   }
+   
+   GetBuilderGroup()
+   {
+      return plBuilderGroup;
+   }
+   
+   AreGroupedHere(who=$,what=$)
+   {
+      if who <> $
+         AND what <> $
+         AND IsClass(who,&User)
+         AND IsClass(what,&User)
+         AND plBuilderGroup <> $
+         AND FindListElem(plBuilderGroup,who) <> 0
+         AND FindListElem(plBuilderGroup,what) <> 0
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   GetGroupTime()
+   {
+      return piGroupTime;
+   }
+   
+   SetGroupTime(victim=$)
+   {
+      if victim <> $
+         AND IsClass(victim,&Monster)
+      {
+         % Tusked Skeletons are our base case.
+         % With level 100 and difficulty 6, they are the last mob that dies quickly.
+         % We'll give them and everything below 60 second group times.
+         % Everything above them needs drastically more time as players progress.
+         % Special case made for Thrashers, due to the extreme nature of their room.
+         
+         piGroupTime = 60000;
+         
+         % 2 additional seconds per mob level point above 100
+         % Max +100 seconds for 150 hp mobs
+         piGroupTime = piGroupTime + bound(((Send(victim,@GetLevel)-100) * 1000 * 2),0,$);
+         
+         % 10 additional seconds per difficulty point above 6
+         % Max +30 seconds for difficulty 9 mobs
+         piGroupTime = piGroupTime + bound(((Send(victim,@GetDifficulty)-6) * 1000 * 10),0,$);
+         
+         % Special cases
+         % Extra 2 minutes for thrashers (for 4 minutes 50 seconds total - nobody is muling thrashers)
+         If IsClass(victim,&Thrasher)
+         {
+            piGroupTime = piGroupTime + bound((60 * 1000 * 2),0,$);
          }
       }
       return;

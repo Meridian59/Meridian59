@@ -63,7 +63,9 @@ classvars:
    viSpell_level = 2
    viMana = 10
 
-   viRange = 2             %% touch spell range can vary, but are typically good     
+   % Max amount of damage that punch or 2*myst can add
+   % Acid touch is slightly weaker than Faren touch spells
+   viMaxProficiencyDamage = 3
 
    viSpellType = ATCK_SPELL_ACID + ATCK_SPELL_ALL
    viStroke = STROKE_ACID_TOUCH
@@ -91,7 +93,7 @@ messages:
      local iProf;
       Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
      
-     iProf = (bound(-Send(who,@GetKarma)/2,0,50) + send(who,@GetMysticism)) * (100 + send(self,@GetJewelFactor,#who=who)) / 100;
+     iProf = (bound(-Send(who,@GetKarma)/2,0,50) + send(who,@GetMysticism)) * (100 + send(self,@FindProf,#who=who)) / 100;
      
      return iProf;
   }

@@ -40,7 +40,7 @@ resources:
    Guildh15_lever_icon = neclever.bgf
 
    Guildhall15_loop = necloop3.wav
-   Guildhall15_music = nec03.mid
+   Guildhall15_music = nec03.mp3
 
    guildh15_guildwarning = "Your amulet vibrates vigorously for a moment.  Something is amiss."
 

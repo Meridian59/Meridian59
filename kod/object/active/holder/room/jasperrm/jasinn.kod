@@ -18,7 +18,7 @@ resources:
 
    room_name_JasperInn = "Yonder Inn of Jasper"
    room_jasperInn = jasinn.roo
-   jasinn_music = bar2.mid
+   jasinn_music = bar2.mp3
 
    jasnews_god_name = "Designers' News"
    jasnews_god_desc = "Check here for information from the game administrators."

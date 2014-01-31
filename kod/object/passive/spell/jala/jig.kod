@@ -22,7 +22,7 @@ resources:
       "This spell causes everyone in the room to break out into dance "
       "and is lots of fun at parties.  Requires one diamond to cast."
 
-   jig_song = jala2.mid
+   jig_song = jala2.mp3
  
 classvars:
 

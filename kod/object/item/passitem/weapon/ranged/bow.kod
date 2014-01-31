@@ -154,21 +154,6 @@ messages:
       propagate;
    }
 
-   NewUnused()
-   {
-      local oSoldierShield;
-      
-      % Take shield off back.
-      oSoldierShield = send(poOwner,@FindUsing,#class=&SoldierShield);
-
-      if oSoldierShield <> $
-      {
-         send(oSoldierShield,@RemoveFromBack);
-      }
-
-      propagate;
-   }
-
    GetOverlayHotspot(animation = $)
    {
       return HS_BOTTOM_BOW;

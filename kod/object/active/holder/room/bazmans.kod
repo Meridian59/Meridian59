@@ -20,7 +20,7 @@ resources:
    room_name_bazmans = "The Councilors' Chamber"
 
 
-   bazmans_music = castle.mid
+   bazmans_music = castle.mp3
 
    bazmans_lockdoor = "You lock the door, barring others from entry."
    bazmans_unlockdoor = "You unlock the door."

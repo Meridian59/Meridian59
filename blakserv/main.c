@@ -61,12 +61,14 @@ void MainServer()
 	
 	InitConfig();
 	LoadConfig();		/* must be nearly first since channels use it */
-	
+
 	InitDebug();
 	
 	InitChannelBuffer();
 	
 	OpenDefaultChannels();
+
+	MySQLInit();
 	
 	lprintf("Starting %s\n",BlakServLongVersionString());
 	
@@ -157,6 +159,7 @@ void MainExitServer()
 	ResetObject();
 	ResetMessage();
 	ResetClass();
+	MySQLEnd();
 	
 	ResetConfig();
 	

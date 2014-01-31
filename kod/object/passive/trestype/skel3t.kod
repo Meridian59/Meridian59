@@ -34,8 +34,10 @@ messages:
                      [ &Money, 41 ],
                      [ &Hammer, 3 ],
                      [ &KnightShield, 3 ],
-                     [ &Scimitar, 3 ],
-                     [ &ScaleArmor, 3 ],
+                     [ &Scimitar, 2 ],
+                     [ &ScaleArmor, 2 ],
+                     [ &SanctuaryKey, 1],
+                     [ &Key,  1],
                      [ &EnfeebleWand, 1 ],
                      [ &ForgetWand, 1 ]
                    ];

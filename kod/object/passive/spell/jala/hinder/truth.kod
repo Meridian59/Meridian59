@@ -22,7 +22,7 @@ resources:
       "This song hinders the spells of the master of the illusionary arts, Riija.  "
       "A ruby and some rainbow ferns are required to begin performing this song."
 
-   truth_song = song.mid
+   truth_song = song.mp3
  
 classvars:
 

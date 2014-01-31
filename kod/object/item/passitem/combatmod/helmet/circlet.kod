@@ -46,6 +46,8 @@ classvars:
 	
    viDamage_flat_base = -1
 
+   viLayer = 1
+
 properties:
 
    piMana_change = 0

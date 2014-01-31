@@ -64,8 +64,6 @@ classvars:
    viSpell_level = 2
    viMana = 6
 
-   viRange = 3              %% touch spell range can vary, but are typically good     
-
    viSpellType = ATCK_SPELL_COLD + ATCK_SPELL_ALL
    viStroke = STROKE_ICY_FINGERS
 
@@ -93,7 +91,7 @@ messages:
      local iProf;
       Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
      
-     iProf = Send(who,@GetAbility,#num=SID_MANA_FOCUS) * (100 + send(self,@GetJewelFactor,#who=who)) / 100;
+     iProf = Send(who,@GetAbility,#num=SID_MANA_FOCUS) * (100 + send(self,@FindProf,#who=who)) / 100;
      
      return iProf;
   }

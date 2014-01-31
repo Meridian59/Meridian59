@@ -113,20 +113,21 @@ messages:
       return;
    }
 
-   ReqUseSomething(what = $)
+   DefendingHit(who = $,what = $)
    {
-      if send(what,@getitemusetype) & ITEM_USE_LEGS
+      return;
+   }
+   
+   DoPlayerArt()
+   {
+      local oRobes;
+
+      oRobes = Send(poOwner,@FindUsing,#class=&Robe);
+      if oRobes <> $
       {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         else
-         {
-            return FALSE;
-         }
+         Post(oRobes,@SetLegs);
       }
-      
+
       propagate;
    }
       

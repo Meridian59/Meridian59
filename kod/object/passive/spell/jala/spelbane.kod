@@ -25,7 +25,7 @@ resources:
 
    Spellbane_no_towns = "You are prevented from singing this song currently."
 
-   Spellbane_song = jala1.mid
+   Spellbane_song = jala1.mp3
  
 classvars:
 

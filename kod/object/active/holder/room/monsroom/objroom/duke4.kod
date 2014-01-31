@@ -18,7 +18,7 @@ resources:
 
    room_name_duke4 = "The Duke's Feast Hall"
    room_duke4 = duke4.roo
-   duke4_music = bar.mid
+   duke4_music = bar.mp3
 
 classvars:
 

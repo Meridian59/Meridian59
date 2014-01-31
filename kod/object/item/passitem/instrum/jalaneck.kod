@@ -53,21 +53,6 @@ properties:
 
 messages:
 
-   ReqUseSomething(what = $)
-   {
-      if IsClass(what,&Necklace)
-      {
-         if Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         
-         return FALSE;
-      }
-      
-      propagate;
-   }
-
    NewUsed(what=$)
    {
       if what <> $

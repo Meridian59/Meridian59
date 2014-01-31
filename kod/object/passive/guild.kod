@@ -255,7 +255,7 @@ resources:
       "  +++ %q:  may vote, invite new members in, kick unruly members out, "
       "promote or demote people of lower ranks than themselves, and form or "
       "shatter alliances.  They may also rent a guild hall if their guild "
-      "is mature.\n"
+      "is mature, and set the Guild Message of the Day by guild-sending 'set motd' or 'clear motd'.\n"
       "  +++ %q:  has all powers associated with guilding, including the "
       "right to disband the guild.\n\n"
       "RENT:  It costs me time and money to keep up the paperwork involved "
@@ -403,8 +403,13 @@ resources:
    guild_endpeace_title = " ends alliance."
    guild_endpeace_body2 = " have decided to end their alliance with "   
 
-   
-   
+   guild_motd_set_msg = "The Guild Message of the Day has been set."
+   guild_motd_cleared_msg = "The Guild Message of the Day has been cleared."
+   guild_motd_too_long = "Good leaders do not let their diatribes wax overlong. Perhaps the message could be shorter."
+   guild_motd_too_short = "Your members expect a bit more eloquence from their leaders. Perhaps the message could be longer."
+   guild_motd_test = "MOTD: %q"
+   guild_motd_message = "The Guild Message of the Day from your esteemed %q, %q:\n\"%q~n\""
+
 classvars:
 
    vrIcon = guild_icon_rsc
@@ -486,6 +491,11 @@ properties:
    % Information for suing for peace from a mutual guild war.
    ptSuingForPeace = $
    poGuildSuingForPeace = $
+   
+   % Guild message of the day, seen upon logon
+   psGuildMOTDstring = $
+   prSetMOTDname = $
+   prSetMOTDrank = $
 
 messages:
 
@@ -1261,6 +1271,18 @@ messages:
    GetMemberList()
    {
       return plMembers;
+   }
+   
+   GetMemberNames()
+   {
+      local i,MemberString;
+      ClearTempString();
+      for i in plMembers
+	  {
+	     AppendTempString(Send(First(i),@GetTrueName));
+		 AppendTempString(",\n");
+	  }
+	  return GetTempString();
    }
 
    GetGuildMaster()
@@ -2629,6 +2651,9 @@ messages:
       
       piGuild_hall = $;
       psPassword = $;
+      psGuildMOTDstring = $;
+      prSetMOTDrank = $;
+      prSetMOTDname = $;
 
       for i in plEnemies
       {
@@ -2843,7 +2868,65 @@ messages:
 
       return;
    }
+   
+   SetGuildMOTD(who=$, string=$)
+   {
+      if who = $
+      {
+         return;
+      }
 
+      if string = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_motd_cleared_msg);
+         psGuildMOTDstring = $;
+         prSetMOTDname = $;
+         prSetMOTDrank = $;
+         return;
+      }
+
+      if StringLength(string) > 300
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_motd_too_long);
+         return;
+      }
+
+      if StringLength(string) < 15
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_motd_too_short);
+         return;
+      }
+      
+      Send(who,@MsgSendUser,#message_rsc=guild_motd_set_msg);
+
+      psGuildMOTDstring = CreateString();
+      setString(psGuildMOTDstring,string);
+      if StringContain(psGuildMOTDstring,"set motd ")
+      {
+         StringSubstitute(psGuildMOTDstring,"set motd ","");
+      }
+      
+      prSetMOTDname = Send(who,@GetTrueName);
+      prSetMOTDrank = Send(self,@GetRankName,#rank=Send(self,@GetRank,#who=who),#sex=Send(who,@GetGender));
+                      
+      Send(who,@MsgSendUser,#message_rsc=guild_motd_test,
+                            #parm1=psGuildMOTDstring,#type1=STRING_RESOURCE);
+
+      return;
+   }
+   
+   SendUserMOTD(who=$)
+   {
+      if Send(self,@IsMember,#who=who)
+         AND psGuildMOTDstring <> $
+      {
+         Send(who,@MsgSendUser,#message_rsc=guild_motd_message,#type1=STRING_RESOURCE,#type2=STRING_RESOURCE,#type3=STRING_RESOURCE,
+                                #parm1=prSetMOTDrank,
+                                #parm2=prSetMOTDname,
+                                #parm3=psGuildMOTDstring);
+      }
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

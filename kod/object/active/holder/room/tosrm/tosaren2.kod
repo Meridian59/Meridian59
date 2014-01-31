@@ -22,7 +22,7 @@ resources:
    room_TosArena2 = tosaren2.roo
    name_TosArena2 = "The Arena of Kraanan"
 
-   TosArena2_music = tos.mid
+   TosArena2_music = tos.mp3
    wind_sound_tosarena2 = ambcntry.wav
    wind1_sound_tosarena2 = rs_wind.wav
 

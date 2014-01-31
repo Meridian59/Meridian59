@@ -18,7 +18,7 @@ resources:
 
    room_name_jasbank = "The Royal Bank of Jasper"
    room_jasbank = jasbank.roo
-   jasbank_music = bank.mid
+   jasbank_music = bank.mp3
 
    jasbank_sign = \
       "Use the deposit, withdraw (amount), and balance commands to access "

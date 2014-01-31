@@ -30,8 +30,78 @@ properties:
 
    % List of [room id, times entered by player] elements, one for each room
    plRoom_entered_counts = $
+   
+   % List of [class item, times dropped] elements, one for each non-stackable item
+   plSingle_item_drop_counts = $
+   
+   % List of [class item, number dropped] elements, one for each stackable item
+   plStack_item_drop_count = $
+    
+   % A current sum of all money in all player bank accounts and held on player characters.
+   piPlayerMoneyTotal = $
+   
+   % Money Created this save period
+   piMoneyCreated = 0
+   
 
 messages:
+
+   MoneyCreated(amount = 0)
+   {
+      piMoneyCreated = piMoneyCreated + amount;
+	  return;
+   }
+
+   GarbageCollecting()
+   {
+      Send(self,@CalculateTotalMoney);
+	  RecordStat(STAT_TOTALMONEY,piPlayerMoneyTotal); 
+	  RecordStat(STAT_MONEYCREATED,piMoneyCreated);
+	  piMoneyCreated = 0;
+	  return $;
+   }
+
+   CalculateTotalMoney()
+   {
+      local TotalMoney;
+	  TotalMoney = 0;
+	  TotalMoney = TotalMoney + Send(self,@CalculateTotalBankMoney);
+	  TotalMoney = TotalMoney + Send(self,@CalculateTotalPlayerMoney);
+	  piPlayerMoneyTotal = TotalMoney;
+      return $;
+   }
+   
+   CalculateTotalBankMoney()
+   {
+      local TotalBankMoney,plBanks,i;
+	  
+	  TotalBankMoney = 0;
+	  plBanks = Send(SYS,@GetBanks);
+	  
+      for i in plBanks
+      {
+         TotalBankMoney = TotalBankMoney + Send(i,@GetPlayerMoneyTotal);
+      }
+	  return TotalBankMoney;
+   }
+   
+   CalculateTotalPlayerMoney()
+   {
+      local plUsers,u,oPlayerMoney,TotalPlayerMoney;
+	  plUsers = Send(SYS,@GetUsers);
+	  TotalPlayerMoney = 0;
+	  
+	  for u in plUsers
+	  {
+	     oPlayerMoney = Send(u,@GetMoneyObject);
+		 
+		 if oPlayerMoney <> $
+		 {
+		    TotalPlayerMoney = TotalPlayerMoney + Send(oPlayerMoney,@GetNumber);
+	     }
+	  }
+	  return TotalPlayerMoney;
+   }
 
    Constructor()
    {

@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsF7 = F7.roo
    room_name_OutdoorsF7 ="Off the beaten path"
-   OutdoorsF7_music = walk1.mid
+   OutdoorsF7_music = walk1.mp3
 
 classvars:
 

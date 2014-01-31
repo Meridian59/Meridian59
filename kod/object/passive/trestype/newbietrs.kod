@@ -30,7 +30,7 @@ messages:
    {
       plTreasure = [ [ &Snack, 15 ],
                      [ &Money, 10 ],
-                     [ &InkyCap, 4 ],
+                     [ &InkyCap, 5 ],
                      [ &Emerald, 7 ],
                      [ &Sapphire, 7 ],
                      [ &EntrootBerry, 5 ],
@@ -47,7 +47,6 @@ messages:
                      [ &LightningWand , 3 ],
                      [ &HealWand , 2 ],
                      [ &FireWand , 1 ],
-                     [ &JewelofFroz , 1 ],
                      [ &BerserkerRing, 1 ] ];
 
       propagate;

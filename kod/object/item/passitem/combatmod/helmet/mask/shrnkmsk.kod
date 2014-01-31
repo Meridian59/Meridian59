@@ -42,6 +42,25 @@ properties:
 
 messages:
 
+   ReqUse()
+   {
+      local i;
+      
+      if IsClass(poOwner,&Player)
+      {
+         for i in Send(poOwner,@GetPlayerUsing)
+         {
+            if IsClass(i,&CombatModifier)
+               AND Send(i,@GetItemUseType) & ITEM_USE_HEAD
+            {
+               Send(poOwner,@TryUnuseItem,#what=i);
+            }
+         }
+      }
+
+      propagate;
+   }
+
    NewUsed()
    {
       % Get face info, put it on the mask.

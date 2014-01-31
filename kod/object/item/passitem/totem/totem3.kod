@@ -30,7 +30,7 @@ classvars:
    vrName = TotemThree_name_rsc
    vrIcon = TotemThree_icon_rsc
    vrDesc = TotemThree_desc_rsc
-   viUse_type = ITEM_USE_HAND
+   viUse_type = ITEM_USE_OFF_HAND
    viUse_amount = 1
 
    vrposs_article = object_article_cap_this_rsc

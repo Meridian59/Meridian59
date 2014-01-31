@@ -249,12 +249,6 @@ messages:
 
    ObjectDesired(what=$)
    {
-      if IsClass(what,&NumberItem) and
-         Send(what,@GetNumber) > 100
-      {
-         return FALSE;
-      }
-
       if Send(self,@IsObjectGem,#what=what) or
          Send(self,@IsObjectSundry,#what=what)
       {

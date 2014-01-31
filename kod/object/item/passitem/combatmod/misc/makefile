@@ -5,5 +5,5 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\misc.bof
-BOFS = frozjewl.bof gauntlet.bof
+BOFS = gauntlet.bof
 !include $(KODDIR)\kod.mak

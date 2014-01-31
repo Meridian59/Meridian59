@@ -18,7 +18,7 @@ resources:
 
    room_OutdoorsH7 = H7.roo
    room_name_OutdoorsH7 ="Western border of the Twisted Wood"
-   OutdoorsH7_music = walk7.mid
+   OutdoorsH7_music = walk7.mp3
 
 classvars:
 

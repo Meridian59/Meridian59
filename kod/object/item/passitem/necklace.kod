@@ -27,25 +27,5 @@ properties:
 
 messages:
 
-   ReqUseSomething(what = $)
-   {
-      % Check for necklaces or Jala necklace.  The Jala necklace is an "instrument".
-      if IsClass(what,&Necklace)
-         OR IsClass (what,&JalaNecklace)
-      {
-         % Try to remove ourselves, unless we're cursed.
-         % This is to avoid problems with the Amulets of Shadow exploits.
-         if NOT send(self,@IsCursed)
-            AND Send(poOwner,@TryUnuseItem,#what=self)
-         {
-            propagate;
-         }
-         
-         return FALSE;
-      }
-      
-      propagate;
-   }
-   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

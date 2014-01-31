@@ -1391,7 +1391,6 @@ messages:
                {
                   Send(oTarget,@BadSpellFlashEffect);
                }
-               Send(oTarget,@DrawOffense);
             }
          }
       }

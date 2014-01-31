@@ -136,8 +136,7 @@ messages:
       if what = mob { return; }
       
       %% There are so many move messages, don't do anything most of the time.
-      %% This is fucking stupid. Removing.
-	  %% if (ignoreWait = FALSE) and random(1,10) <> 8 { return; }      
+      if (ignoreWait = FALSE) and random(1,10) <> 8 { return; }      
  
       if state & STATE_LIMBO
       { debug("Unreachable. In state LIMBO."); }

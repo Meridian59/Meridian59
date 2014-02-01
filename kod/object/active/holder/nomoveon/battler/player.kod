@@ -7927,44 +7927,12 @@ messages:
                %  or did take damage, did not land killing blow, or
                %  it's a group member kill.
                
-               if group_member_kill
-                  AND Send(self,@GetOwner) <> $
-               {
-                  lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
-                  if lBuilderGroup <> $
-                     AND Length(lBuilderGroup) >= 1
-                  {
-                     % Player will always get 1 xp from a kill target he took damage from.
-                     % This may happen if fighting the same mob, or when fighting thrashers for example.
-                     if poKill_target = what
-                        AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
-                     {
-                        gain = 1;
-                     }
-                     else
-                     {
-                        % Less gains for groups that are too large.
-                        if Length(lBuilderGroup) < 5
-                        {
-                           gain = 1;
-                        }
-                        else
-                        {
-                           % Starting at 5 people, we have a 50% chance to miss group experience.
-                           if Random(1,2) = 1
-                           {
-                              gain = 1;
-                           }
-                        }
-                     }
-                  }
-               }
-               else
-               {
-                  gain = 1;
-               }
+               gain = 1;
 
-               % No roll for kills by others
+               % No roll for kills by others. This puts tension on group size.
+               % As group sizes increase, getting kills oneself becomes difficult.
+               % Groups that are too large create their own advancement problems organically.
+               % Also, this keeps advancement based on the player himself. His own kill rate matters the most.
                if NOT group_member_kill
                {
                   roll = TRUE;
@@ -8013,6 +7981,21 @@ messages:
          if piBase_Max_health < Send(Send(SYS, @GetSettings), @GetPKillEnableHP)
          {
             gain = gain + 1;
+         }
+         else
+         {
+            % Give solo pkill-enabled builders a little bonus.
+            % This will roughly equal building with one other player in the room.
+            % Bonus requires that the player is fighting normally (no firewalls / distance killing)
+            lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
+            if lBuilderGroup <> $
+               AND Length(lBuilderGroup) = 1
+               AND NOT group_member_kill
+               AND killing_blow
+               AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
+            {
+               gain = gain + 1;
+            }
          }
 
          % If they're cheesing the situation by fighting wussy monsters in an altered form,

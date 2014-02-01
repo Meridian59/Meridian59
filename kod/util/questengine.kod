@@ -2946,8 +2946,8 @@ RecreateQuestNodes()
    }
    % template #36 is trading post quest (good)
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_ITEMFINDCLASS,
-         #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &Meatpie, 50 ], [ QN_PRIZETYPE_ITEMCLASS, &Waterskin, 70 ],
-                        [ QN_PRIZETYPE_ITEMCLASS, &Apple, 150 ], [ QN_PRIZETYPE_ITEMCLASS, &Grapes, 200 ], 
+         #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &Meatpie, 50 ], [ QN_PRIZETYPE_ITEMCLASS, &Waterskin, 60 ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &Apple, 150 ], [ QN_PRIZETYPE_ITEMCLASS, &Chess, 1 ], 
                         [ QN_PRIZETYPE_ITEMCLASS, &ElderBerry, 350 ], [ QN_PRIZETYPE_ITEMCLASS, &Herbs, 250 ],
                         [ QN_PRIZETYPE_ITEMCLASS, &Mushroom, 200 ], [ QN_PRIZETYPE_ITEMCLASS, &JewelofFroz, 1 ] ],
          #prizelist = [ [ QN_PRIZETYPE_ITEMCLASS, &SwordShardC, 1 ] ] )
@@ -2966,7 +2966,7 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_ITEMFINDCLASS,
          #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &MysticSword, 1 ], [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],
                         [ QN_PRIZETYPE_ITEMCLASS, &StoutGoblet, 100 ], [ QN_PRIZETYPE_ITEMCLASS, &NeruditeOreChunk, 1 ],
-                        [ QN_PRIZETYPE_ITEMCLASS, &WineGoblet, 70 ], [ QN_PRIZETYPE_ITEMCLASS, &Goblet, 70 ] ],
+                        [ QN_PRIZETYPE_ITEMCLASS, &WineGoblet, 70 ], [ QN_PRIZETYPE_ITEMCLASS, &SpiderEgg, 1 ] ],
          #prizelist = [ [ QN_PRIZETYPE_ITEMCLASS, &SwordShardC, 1 ] ] )
    {
       send( self, @SetQuestNodeNPCModifier, #index = 37, #new_mod = QN_NPCMOD_SAME );

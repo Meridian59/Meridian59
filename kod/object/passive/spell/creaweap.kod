@@ -135,11 +135,7 @@ messages:
          if(StringEqual("Scimitar",sWeapon) AND iSpellPercent >= 55)
          {
                 return true;
-         }
-         if(StringEqual("Nerudite Sword",sWeapon) AND iSpellPercent >= 80)
-         {
-                return true;
-         }
+         }     
 		 if(StringEqual("Mystic Sword",sWeapon) AND iSpellPercent >= 95)
          {
                 return true;

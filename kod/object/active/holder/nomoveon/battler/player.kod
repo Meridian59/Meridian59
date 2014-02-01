@@ -8081,26 +8081,30 @@ messages:
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
          AND NOT group_member_kill
       {
-         dodgeskill = SKID_DODGE;
          oWeapon = Send(self,@LookupPlayerWeapon);
          if oWeapon <> $
             AND (not IsClass(oWeapon,&RangedWeapon))
             AND Send(self,@HasSkill,#num=SKID_PARRY)
             AND Send(self,@GetSkillAbility,#skill_num=SKID_PARRY) < 99
          {
-            dodgeskill=SKID_PARRY;
+            oSkill=Send(SYS,@FindSkillByNum,#num=SKID_PARRY);
+            Send(oSkill,@ImproveAbility,#who=self,#target=poKill_Target);
          }
          
-         if dodgeskill = SKID_DODGE
-            AND (Send(self,@LookupPlayerShield) <> $)
+         if (Send(self,@LookupPlayerShield) <> $)
             AND Send(self,@HasSkill,#num=SKID_BLOCK)
             AND Send(self,@GetSkillAbility,#skill_num=SKID_BLOCK) < 99
          {
-            dodgeskill=SKID_BLOCK;
+            oSkill=Send(SYS,@FindSkillByNum,#num=SKID_BLOCK);
+            Send(oSkill,@ImproveAbility,#who=self,#target=poKill_Target);
          }
          
-         oSkill=Send(sys,@FindSkillByNum,#num=dodgeskill);
-         Send(oSkill,@ImproveAbility,#who=self,#target=poKill_Target);
+         if Send(self,@HasSkill,#num=SKID_DODGE)
+            AND Send(self,@GetSkillAbility,#skill_num=SKID_DODGE) < 99
+         {
+            oSkill=Send(SYS,@FindSkillByNum,#num=SKID_DODGE);
+            Send(oSkill,@ImproveAbility,#who=self,#target=poKill_Target);
+         }
       }
 
       return FALSE;

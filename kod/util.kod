@@ -396,16 +396,19 @@ messages:
    
    CreateTempList()
    {
-      plTemp = Cons(1,[ ]);
+      plTemp = [ ];
 	  return;
    }
    
    AddTempList(oItem = $)
    {
-      if oItem <> $ AND
-	     plTemp <> $
+	  if plTemp <> $
 	  {
 	     plTemp = Cons(oItem,plTemp);
+	  }
+	  else
+	  {
+	     plTemp = Cons(oItem,[ ]);
 	  }
 	  return;
    }

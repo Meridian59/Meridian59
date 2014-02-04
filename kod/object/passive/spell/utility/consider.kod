@@ -134,7 +134,7 @@ messages:
       {
          if IsClass(oWeapon,&Weapon)
          {
-            oStroke=Send(SYS,@FindSkillByNum,#num=Send(oWeapon,@GetDefaultStrokeNumber));
+            oStroke=Send(SYS,@FindSkillByNum,#num=Send(oWeapon,@GetStrokeNumber));
          }
          else
          {
@@ -154,7 +154,7 @@ messages:
 		{
 			if IsClass(oTargetWeapon,&Weapon)
 			{
-				oTargetStroke=Send(SYS,@FindSkillByNum,#num=Send(oTargetWeapon,@GetDefaultStrokeNumber));
+				oTargetStroke=Send(SYS,@FindSkillByNum,#num=Send(oTargetWeapon,@GetStrokeNumber));
 			}
 			else
 			{

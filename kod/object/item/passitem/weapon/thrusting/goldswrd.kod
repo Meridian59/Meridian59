@@ -36,7 +36,7 @@ classvars:
    viBulk = 60
 
    % Gold swords are average quality thrusting weapons
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_SUPREME
 
    viProficiency_Needed = SKID_PROFICIENCY_SWORD
 

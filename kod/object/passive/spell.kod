@@ -935,12 +935,6 @@ messages:
          return FALSE;
       }
 
-      % Spell can be cast successfully.
-      if NOT bItemCast
-      {
-         Send(who,@FlipSpellAtrophyFlag,#SID=viSpell_num);
-      }
-
       return TRUE;
    }
 

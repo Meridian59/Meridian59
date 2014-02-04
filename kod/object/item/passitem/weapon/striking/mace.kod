@@ -33,7 +33,7 @@ classvars:
    vrDesc = mace_desc_rsc
 
    % Maces are average quality striking weapons
-   viWeaponQuality = WEAPON_QUALITY_LOW
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_MACE
 

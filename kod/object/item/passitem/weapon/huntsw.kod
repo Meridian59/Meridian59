@@ -93,7 +93,7 @@ classvars:
 
    % Hunter swords are high quality thrusting weapons
    viWeaponType = WEAPON_TYPE_THRUST
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_SUPREME
 
    viProficiency_needed = SKID_PROFICIENCY_SWORD
 

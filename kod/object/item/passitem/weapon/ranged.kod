@@ -100,7 +100,7 @@ messages:
    
    % General unsorted messages:
 
-   GetDefaultStrokeNumber()
+   GetStrokeNumber()
    {
       return SKID_FIRE;
    }

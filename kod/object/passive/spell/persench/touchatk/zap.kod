@@ -34,7 +34,9 @@ resources:
    
    zap_sound = fzap.wav
 
-
+   ta_purge_worked_user = "The violent blast of electricity disrupts the magic surrounding %s%s!"
+   ta_purge_worked_target = "%s%s blasts you with electricity, disrupting the magic surrounding you!"
+	
 classvars:
 
    vrName = Zap_name_rsc
@@ -61,9 +63,7 @@ classvars:
    viSpell_level = 1
    viMana = 6
 
-
    viSpellType = ATCK_SPELL_SHOCK + ATCK_SPELL_ALL
-   viStroke = STROKE_ZAP
 
    vbAutomatic = FALSE
 
@@ -85,12 +85,7 @@ messages:
 
   GetProf(who=$)
   {
-     local iProf;
-      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
-     
-     iProf = Send(who,@GetAbility,#num=SID_MANA_FOCUS) * (100 + send(self,@FindProf,#who=who)) / 100;
-     
-     return iProf;
+     return Send(who,@GetAbility,#num=SID_MANA_FOCUS) * bound(Send(who,@GetBaseMaxHealth),0,100) / 100;
   }
 
    PlayerWasHitMsg(who=$,attacker=$,damage=$)
@@ -106,5 +101,34 @@ messages:
       return TRUE;
    }
 
+	DoSpellProc(damage=0,who=$,victim=$,prof=0)
+	{
+		local oSpell;
+	
+		% Purge the victim.
+		oSpell = send(SYS,@FindSpellByNum,#num=SID_PURGE);
+
+		if random(1,1000) <= prof*viSpell_proc_chance/100
+		{
+			%% Gotta have something to try to remove....
+			if Send(victim,@IsEnchanted)
+			{
+				% Try to purge off random(25,75)% of the enchantments.
+				if send(oSpell,@DoPurge,#who=victim,#iChance=random(25,75))
+				{
+					% Only tell our victim if they lost enchantments.
+					send(victim,@MsgSendUser,#message_rsc=ta_purge_worked_target,
+						  #parm1=send(who,@GetCapDef),#parm2=send(who,@GetName));
+				}
+
+				% Tell the zapper.
+				send(who,@MsgSendUser,#message_rsc=ta_purge_worked_user,
+					  #parm1=send(victim,@GetDef),#parm2=send(victim,@GetName));
+			}
+		}
+
+		return;
+	}
+	
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

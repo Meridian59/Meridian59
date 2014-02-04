@@ -32,7 +32,7 @@ classvars:
    vrDesc = mysticsword_desc_rsc
 
    % Mystic swords are high quality thrusting weapons
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_SUPREME
 
    viProficiency_needed = SKID_PROFICIENCY_SWORD
 

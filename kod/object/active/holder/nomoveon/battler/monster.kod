@@ -1575,9 +1575,6 @@ messages:
       % Set a predamage mark... we'll compare to it to see if threshold crossed.
       iPercentClass = piHit_points*5/piMax_hit_points;
 
-      % Always do a minimum of one point of damage.
-      iDamage = Bound(iDamage,1,$);
-      
       % I hate my target more if he hits me.
       if what = poTarget
       {

@@ -1708,9 +1708,9 @@
    %%% Weapons
 
    % Classes of weapon quality.
-   WEAPON_QUALITY_LOW = 0
-   WEAPON_QUALITY_NORMAL = 1
-   WEAPON_QUALITY_HIGH = 2
+   WEAPON_QUALITY_NORMAL = 0
+   WEAPON_QUALITY_HIGH = 1
+   WEAPON_QUALITY_SUPREME = 2
    WEAPON_NERUDITE = 3
 
    % General types of weapons.
@@ -1720,8 +1720,10 @@
    WEAPON_TYPE_THRUST = 1
    %  Slash weapons are weapons with a sharp edge.
    WEAPON_TYPE_SLASH = 2
-   %  Touch weapons boost touchattacks.
-   WEAPON_TYPE_TOUCH = 3
+   %  Spell weapons are objects that are held to boost touchattacks.
+   WEAPON_TYPE_SPELL = 3	
+   %  Fist weapons are wrapped around the hands and help with punching.
+   WEAPON_TYPE_FIST = 4
 
    % How much range bonus do we get if a player target has moved recently?
    RANGE_MOVEMENT_BONUS = 1
@@ -1778,22 +1780,6 @@
    % For hunter swords
    ATCK_SPELL_HUNTERSWORD= 0x0100
 
-   % These are the ATTACK types sent by client.
-   STROKE_NORMAL = 1
-   STROKE_PUNCH = 2
-   STROKE_SLASH = 3
-   STROKE_THRUST = 4
-   STROKE_KICK = 5
-   STROKE_FIRE = 6
-
-   % Touch attack spells
-   STROKE_TOUCH_OF_FLAME = 20
-   STROKE_HOLY_TOUCH = 21
-   STROKE_VAMPIRIC_TOUCH = 22
-   STROKE_ZAP = 23
-   STROKE_ICY_FINGERS = 24
-   STROKE_ACID_TOUCH = 25
-
    %%% Unique skill constants
 
    SKID_DODGE = 401
@@ -1833,6 +1819,8 @@
    SKID_PROFICIENCY_FALCHION = 459
 	SKID_BASH = 460
 	SKID_RIPOSTE = 461
+	SKID_PROFICIENCY_SPELL = 462
+	SKID_TOUCH = 463
 
    %%% Unique spell constants
 

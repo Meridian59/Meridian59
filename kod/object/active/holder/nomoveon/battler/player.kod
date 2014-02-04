@@ -835,7 +835,6 @@ properties:
    % Timers
    ptHealth = $
    ptMana = $
-   ptAdvancement = $
    ptRest = $
 
    % Poison info
@@ -986,6 +985,9 @@ properties:
    % Players will naturally fall out of groups if they aren't getting kills
    ptLeaveBuilderGroupTimer = $
 
+	% The currently active touchspell
+	poTouchSpell = $
+
 messages:
 
    Constructor()
@@ -1022,12 +1024,6 @@ messages:
       {
          DeleteTimer(ptPoison);
          ptPoison = $;
-      }
-      
-      if ptAdvancement <> $
-      {
-         DeleteTimer(ptAdvancement);
-         ptAdvancement = $;
       }
       
       if ptSecondWind <> $
@@ -4564,7 +4560,7 @@ messages:
       oMonster = Send(self,@GetIllusionForm);
       if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
-         % Should only be one morph enchantment on the player.
+         % No ranged blocking as a monster.
          return 0;
       }
 
@@ -4644,15 +4640,8 @@ messages:
 		
 		oStroke = Send(self,@GetPlayerStroke,#stroke_obj=stroke_obj,#durabilityhit=durabilityhit);
 		
-		if IsClass(oStroke,&Monster)
-      {
-         iDamage = Send(oStroke,@GetDamage,#what=what,#stroke_obj=stroke_obj);
-      }
-      else
-      {
-         % Asks stroke for damage done, based on weapon, req stat, and skill percentages
-         iDamage = Send(oStroke,@FindDamage,#use_weapon=use_weapon,#who=self,#victim=what); 
-      }
+		% Asks stroke for damage done, based on weapon, req stat, and skill percentages
+		iDamage = Send(oStroke,@FindDamage,#use_weapon=use_weapon,#who=self,#victim=what); 
 
       % Spells and attmods that modify damage
       iDamageBonus = 0;
@@ -4677,60 +4666,65 @@ messages:
 	
 	GetPlayerStroke(stroke_obj=$, durabilityhit=TRUE)
 	{
-		local oMonster, oWeapon, oStroke, i;
+		local oWeapon, oStroke;
 		
-      % Morphed? If so, the monster itself is the stroke_obj.
-      oMonster = Send(self,@GetIllusionForm);
-      if oMonster <> $ AND Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-      {
-         oStroke = oMonster;
-      }
-      else
-      {
-			% Maybe we want to pass on a specific stroke_obj to TryAttack, such as bash or riposte.
-         oStroke = stroke_obj;
+		% Maybe we want to pass on a specific stroke_obj to TryAttack, such as bash or riposte.
+		oStroke = stroke_obj;
+		
+		% If no stroke_obj was passed on to TryAttack, we determine one here.
+		if stroke_obj = $
+		{
+			oWeapon = Send(self,@GetWeapon);
 			
-			% If no stroke_obj was passed on to TryAttack, we determine one here.
-         if stroke_obj = $
-         {
-            oWeapon = Send(self,@GetWeapon);
-            if oWeapon = $
-            {
-               oStroke=Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
-            }
-            else
-            {
-               if IsClass(oWeapon,&Weapon)
-               {
-                  oStroke=Send(SYS,@FindSkillByNum,#num=Send(oWeapon,@GetDefaultStrokeNumber));
-						
-						if durabilityhit
-						{
-							Send(oWeapon,@DamageGear);
-						}
-               }
-               else
-               {				
-						% It's a spell, damage a used touch enhanced and use the spell as the stroke object.
-						for i in send(self,@GetPlayerUsing)
-						{
-							if IsClass(i,&TouchingWeapon)
-							{
-								if durabilityhit
-								{
-									Send(i,@DamageGear);
-								}
-							}
-						}
-                  oStroke = oWeapon;
-               }
-            }
-         }
-      }
+			if oWeapon = $
+			{
+				% Unarmed combat - used punch as a stroke.
+				oStroke = Send(SYS,@FindSkillByNum,#num=SKID_PUNCH);
+			}
+			else
+			{
+				if IsClass(oWeapon,&Weapon)
+				{
+					% Armed combat - the weapon decides the stroke. 
+					oStroke = Send(SYS,@FindSkillByNum,#num=Send(oWeapon,@GetStrokeNumber));
+					
+					if durabilityhit
+					{
+						Send(oWeapon,@DamageGear);
+					}
+				}
+				else
+				{
+					% It's a spell. Use touch as a stroke.
+					oStroke = Send(SYS,@FindSkillByNum,#num=SKID_TOUCH);
+				}
+			}
+		}
+		
 		return oStroke;
 	}
 	
+   % Returns weapon used.
+   GetWeapon()
+   {
+      local oWeapon;
+      
+      oWeapon = Send(self,@LookupPlayerWeapon);
+      % If there is no wielded weapon, then see if we have a touch attack active.
+      if oWeapon = $
+      {
+         % This will return $ if there's no Touch Attacks enchanting player.
+         oWeapon = Send(self,@GetEnchantmentsByClass,#EnchClass=&TouchAttackSpell);
+         if oWeapon <> $
+         {
+            % The spell object is the second element of the list. Get that.
+            oWeapon = Nth(first(oWeapon),2);
+         }
+      }
 
+      return oWeapon;
+   }
+	
    % This is the type of damage done.
    GetDamageType(what = $, use_weapon = $)
    {
@@ -5063,41 +5057,14 @@ messages:
 
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
 	  
-	  % report to shrunken head
-	  if amount > 0
-      {
-        Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
-		 
+		% report to shrunken head
 		shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
 		if shrunken <> $
 		{
 			Send(shrunken,@DamageDealt,#what=what,#amount=amount);
 		}		
  
-      }	  
-
       return;
-   }
-
-   % Returns weapon used.
-   GetWeapon()
-   {
-      local oWeapon;
-      
-      oWeapon = Send(self,@LookupPlayerWeapon);
-      % If there is no wielded melee weapon, then see if we have a touch attack active.
-      if oWeapon = $ OR IsClass(oWeapon,&TouchingWeapon)
-      {
-         % This will return $ if there's no Touch Attacks enchanting player.
-         oWeapon = Send(self,@GetEnchantmentsByClass,#EnchClass=&TouchAttackSpell);
-         if oWeapon <> $
-         {
-            % The spell object is the second element of the list. Get that.
-            oWeapon = Nth(first(oWeapon),2);
-         }
-      }
-
-      return oWeapon;
    }
 
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
@@ -7360,62 +7327,6 @@ messages:
       return FALSE;
    }
 
-   FlipSpellAtrophyFlag(SID=0)
-   "This spell was used recently, meaning it will NOT atrophy."
-   {
-      local i, elemnum, spellnum;
-      
-      elemnum = 0;
-      for i in plSpells
-      {
-         elemnum = elemnum + 1;
-         if Send(self,@DecodeSpellNum,#compound=i) = SID
-         {
-            SetNth(plspells,elemnum,abs(i));
-            
-            break;
-         }
-      }
-      
-      return;
-   }
-
-   ActivateSpellAtrophy()
-   {
-      local i, j, iability, lSchoolsUsed, aSpell, bSpell, bFound, highmark, iAmount;
-
-      % Must get below highmark for atrophy to activate
-      iAmount = -2;
-
-      for i in plSpells
-      {
-         if i < 0
-         {
-            iAbility = Send(self,@DecodeSpellAbility,#compound=i);
-            if iAbility > 2
-            {
-               aSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=i));
-               bFound = FALSE;
-               
-               for j in plSpells
-               {
-                  bSpell = Send(SYS,@FindSpellByNum,#num=Send(self,@DecodeSpellNum,#compound=j));
-                  if j > 0 AND Send(aSpell,@GetSchool) = Send(bSpell,@GetSchool)
-                  {
-                     iAmount = -1;
-                     
-                     break;
-                  }
-               }
-               Send(self,@ChangeSpellAbility,#spell_num=Send(aSpell,@GetSpellNum),
-                    #amount=iamount);
-            }
-         }
-      }
-      
-      return;
-   }
-
    %%% Skills Stuff
 
    HasSkill(num = $)
@@ -7728,107 +7639,6 @@ messages:
       return FALSE;
    }
    
-   FlipSkillAtrophyFlag(SKID=0)
-   "This Skill was used recently, meaning it will NOT atrophy."
-   {
-      local i, elemnum, Skillnum;
-
-      elemnum = 0;
-      for i in plSkills
-      {
-         elemnum = elemnum + 1;
-         if Send(self,@decodeSkillNum,#compound=i) = SKID
-         {
-            SetNth(plSkills,elemnum,abs(i));
-            
-            break;
-         }
-      }
-      
-      return;
-   }
-
-   ActivateSkillAtrophy()
-   {
-      local i, j, iability, lSchoolsUsed, aSkill, bSkill, bFound, highmark, iAmount;
-
-      iAmount = -2;
-
-      for i in plSkills
-      {
-         if i < 0
-         {
-            iAbility = Send(self,@decodeSkillability,#compound=i);
-            if iAbility > 2
-            {
-               aSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=i));
-               bFound = FALSE;
-               for j in plSkills
-               {
-                  bSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@DecodeSkillNum,#compound=j));
-                  if j > 0 AND Send(aSkill,@GetSchool) = Send(bSkill,@GetSchool)
-                     AND aSkill <> bSkill
-                  {
-                     iAmount=-1;
-                     break;
-                  }
-               }
-               
-               Send(self,@ChangeSkillAbility,#skill_num=Send(aSkill,@GetSkillNum),
-                    #amount=iAmount);
-            }
-         }
-      }
-      
-      return;
-   }
-
-   %%% Advancement
-
-   ResetAtrophyFlags()
-   "This sets all of a player's spell values to negative."
-   "This means that the player has not used these spells in a while."
-   "Meaning they have a chance to atrophy when ptAdvancement goes off."
-   {
-      local i, elemnum;
-
-      elemnum = 0;
-      for i in plSpells
-      {
-         elemnum = elemnum+1;
-         SetNth(plSpells,elemnum,-(abs(i)));
-      }
-      
-      elemnum = 0;
-      for i in plSkills
-      {
-         elemnum = elemnum+1;
-         SetNth(plSkills,elemnum,-(abs(i)));
-      }
-      
-      return;
-   }
-
-   AdvancementTimer()
-   "This checks for spell or skill atrophy, "
-   "and resets the atrophy flags."
-   {
-      ptAdvancement = $;
-
-      if pbLogged_on
-      {
-         if Send(Send(SYS, @GetSettings), @IsAtrophyOn)
-         {
-            Send(self,@ActivateSpellAtrophy);
-            Send(self,@ActivateSkillAtrophy);
-         }
-         
-         Send(self,@ResetAtrophyFlags);
-      }
-      
-      return;
-   }
-
    %%% Advancement in combat
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
@@ -8068,31 +7878,6 @@ messages:
             }
          }
       }
-      
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
-         AND NOT group_member_kill
-      {
-         dodgeskill = SKID_DODGE;
-         oWeapon = Send(self,@LookupPlayerWeapon);
-         if oWeapon <> $
-            AND (not IsClass(oWeapon,&RangedWeapon))
-            AND Send(self,@HasSkill,#num=SKID_PARRY)
-            AND Send(self,@GetSkillAbility,#skill_num=SKID_PARRY) < 99
-         {
-            dodgeskill=SKID_PARRY;
-         }
-         
-         if dodgeskill = SKID_DODGE
-            AND (Send(self,@LookupPlayerShield) <> $)
-            AND Send(self,@HasSkill,#num=SKID_BLOCK)
-            AND Send(self,@GetSkillAbility,#skill_num=SKID_BLOCK) < 99
-         {
-            dodgeskill=SKID_BLOCK;
-         }
-         
-         oSkill=Send(sys,@FindSkillByNum,#num=dodgeskill);
-         Send(oSkill,@ImproveAbility,#who=self,#target=poKill_Target);
-      }
 
       return FALSE;
    }
@@ -8292,15 +8077,7 @@ messages:
             }
          }
 
-         % Atrophy of skills or learning progress.
-         piGain_chance = piGain_chance/2;
          Send(self,@ResetGainFlags);
-         Send(self,@ResetAtrophyFlags);
-         if ptAdvancement <> $
-         {
-            DeleteTimer(ptAdvancement);
-            ptAdvancement = $;
-         }
 
          Post(self,@EvaluatePKStatus);
 
@@ -13107,6 +12884,18 @@ messages:
 
       return;
    }
+	
+	SetTouchSpell(activetouchspell=$)
+	{
+		poTouchSpell = activetouchspell;
+		
+		return;
+	}
+	
+	GetTouchSpell()
+	{
+		return poTouchSpell;
+	}
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

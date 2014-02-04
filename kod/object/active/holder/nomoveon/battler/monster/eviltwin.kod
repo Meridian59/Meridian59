@@ -484,8 +484,16 @@ messages:
 
    MonsterAttack(what=$)
    {
-      % Do the animation!
-      send(self,@DoAttack);
+      % Do a casting animation if we are using touch as a stroke.
+		if IsClass(Send(self,@GetMonsterStroke),&Touch)
+		{
+			Send(self,@DoCast);
+		}
+		% Do a standard attack animation if we are not.
+		else
+		{
+			Send(self,@DoAttack);
+		}
 
       return;
    }
@@ -506,6 +514,16 @@ messages:
    {
       return Send(poOriginal,@GetDodgeAbility,#stroke_obj=stroke_obj);
    }
+	
+   DoCast()
+   "Causes the user to do spell casting arm, 1st & 3rd person"
+   {
+      piAnimation = PANM_CAST;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+
+      return;
+   }
 
    DoAttack()
    {
@@ -515,31 +533,39 @@ messages:
       ammotype = poArrow;
       Send(self,@GetOriginalInfo);
 
-      if Weapon <> $   %IsClass(Weapon,&Weapon)
-      {
-         if IsClass(Weapon,&Bow)
-         {
-            piAnimation = PANM_BOW_FIRE;
+		if Weapon <> $
+		{
+			if IsClass(Weapon,&Bow)
+			{
+				piAnimation = PANM_BOW_FIRE;
 
-            for i in send(poOriginal,@GetPlayerUsing)
-            {
-               if send(i,@GetItemUseType) = ITEM_USE_QUIVER
-               {
-                  AmmoType = i;
-               }
-            }
-            
-            send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = AmmoType);
-         }
-         else
-         {
-            piAnimation = PANM_WEAPON_ATTACK;
-         }
-      }
-      else
-      {
-         piAnimation = PANM_FIST_ATTACK;
-      }
+				for i in Send(poOriginal,@GetPlayerUsing)
+				{
+					if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
+					{
+						AmmoType = i;
+					}
+				}
+				
+				Send(poOwner,@SomethingShot,#who=self,#target=poTarget,
+					  #projectile=AmmoType);
+			}
+			else
+			{
+				if IsClass(Weapon,&SpellStone)
+				{
+					piAnimation = PANM_FIST_ATTACK;
+				}
+				else
+				{
+					piAnimation = PANM_WEAPON_ATTACK;
+				}
+			}
+		}
+		else
+		{
+			piAnimation = PANM_FIST_ATTACK;
+		}
       
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = PANM_NONE;

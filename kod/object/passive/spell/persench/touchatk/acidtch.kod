@@ -14,6 +14,9 @@ constants:
 
    include blakston.khd
 
+   POISON_DURATION = 30000 %%% in milliseconds
+   POISON_LOSSRATE = 10000 %%% in health points * 10^-4 / second
+	
 resources:
 
    AcidTouch_name_rsc = "acid touch"
@@ -36,6 +39,9 @@ resources:
    acidtouch_spell_intro = "Qor Lv. 2: Covers caster's hands a powerful acid which penetrates armor, clothing, and flesh."
 
    acidtouch_sound = qacid.wav
+	
+   ta_poison_worked_user = "Your acidic touch eats into %s%s's flesh, polluting %s blood!"
+   ta_poison_worked_target = "%s%s's acidic touch eats into your flesh and pollutes your blood!"
   
 classvars:
 
@@ -63,12 +69,7 @@ classvars:
    viSpell_level = 2
    viMana = 10
 
-   % Max amount of damage that punch or 2*myst can add
-   % Acid touch is slightly weaker than Faren touch spells
-   viMaxProficiencyDamage = 3
-
    viSpellType = ATCK_SPELL_ACID + ATCK_SPELL_ALL
-   viStroke = STROKE_ACID_TOUCH
 
    vbAutomatic = FALSE
 
@@ -88,15 +89,38 @@ messages:
      return;
   }
 
-  GetProf(who=$)
-  {
-     local iProf;
-      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
-     
-     iProf = (bound(-Send(who,@GetKarma)/2,0,50) + send(who,@GetMysticism)) * (100 + send(self,@FindProf,#who=who)) / 100;
-     
-     return iProf;
-  }
+	GetProf(who=$)
+	{
+		local iProf;
+
+		iProf = bound(-Send(who,@GetKarma)/2,0,50) + send(who,@GetMysticism);
+		
+		iProf = iProf * bound(Send(who,@GetBaseMaxHealth),0,100) / 100;
+
+		return iProf;
+	}
+  
+	DoSpellProc(damage=0,who=$,victim=$,prof=0)
+	{
+		local oSpell;
+		
+		% Poison the victim.
+		oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+
+		if random(1,1000) <= prof*viSpell_proc_chance/100
+		{
+
+			send(oSpell,@MakePoisoned,#who=victim,
+				 #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
+			send(who,@MsgSendUser,#message_rsc=ta_poison_worked_user,
+				  #parm1=send(victim,@GetDef),#parm2=send(victim,@GetName),
+				  #parm3=send(victim,@GetHisher));
+			send(victim,@MsgSendUser,#message_rsc=ta_poison_worked_target,
+				  #parm1=send(victim,@GetCapDef),#parm2=send(victim,@GetName));
+		}
+
+		return;
+	}
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

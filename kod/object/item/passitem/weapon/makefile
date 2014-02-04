@@ -6,6 +6,6 @@
 
 DEPEND = ..\weapon.bof
 BOFS = bkdagger.bof ranged.bof huntsw.bof unique.bof \
-       striking.bof slashing.bof thrusting.bof touching.bof
+       striking.bof slashing.bof thrusting.bof spellstone.bof
 
 !include $(KODDIR)\kod.mak

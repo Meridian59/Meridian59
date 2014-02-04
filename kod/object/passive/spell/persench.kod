@@ -124,6 +124,11 @@ messages:
       % check for enchantment already applied
       if Send(otarget,@IsEnchanted,#what=self)
       {
+			if IsClass(self,&TouchAttackSpell)
+			{
+				Send(who,@RemoveEnchantmentClass,#class=&TouchAttackSpell);
+				return FALSE;
+			}
          % Can you override an existing enchantment on yourself?
          if who = oTarget AND
             Send(Send(SYS, @GetSettings), @CanRecastSelfEnchantment)

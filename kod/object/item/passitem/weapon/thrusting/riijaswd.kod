@@ -38,7 +38,7 @@ classvars:
    viHits_init_max = 650
 
    % Riija Swords are high quality thrusting weapons
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_SUPREME
 
    viProficiency_needed = SKID_PROFICIENCY_SHORT_SWORD
 

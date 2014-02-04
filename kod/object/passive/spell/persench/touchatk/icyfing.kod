@@ -36,6 +36,8 @@ resources:
    IcyFingers_spell_intro = "Faren Lv. 2: Turns your touch to coldest ice, allowing for a damaging attack."
 
    IcyFingers_sound = ficefing.wav
+	
+   ta_hold_worked = "%s%s is frozen solid, unable to move even a finger."
 
 classvars:
 
@@ -65,7 +67,6 @@ classvars:
    viMana = 6
 
    viSpellType = ATCK_SPELL_COLD + ATCK_SPELL_ALL
-   viStroke = STROKE_ICY_FINGERS
 
    vbAutomatic = FALSE
 
@@ -88,13 +89,29 @@ messages:
 
   GetProf(who=$)
   {
-     local iProf;
-      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
-     
-     iProf = Send(who,@GetAbility,#num=SID_MANA_FOCUS) * (100 + send(self,@FindProf,#who=who)) / 100;
-     
-     return iProf;
+     return Send(who,@GetAbility,#num=SID_MANA_FOCUS) * bound(Send(who,@GetBaseMaxHealth),0,100) / 100;
   }
 
+	DoSpellProc(damage=0,who=$,victim=$,prof=0)
+	{
+		local oSpell;
+		
+		% Hold the victim.
+		oSpell = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+
+		if random(1,1000) <= prof*viSpell_proc_chance/100
+		{
+			%% no duplicates
+			if not Send(victim,@IsEnchanted,#what=oSpell)
+			{        
+				send(oSpell,@CastSpell,#who=self,#ltargets=[victim],#ispellpower=99);
+				send(who,@MsgSendUser,#message_rsc=ta_hold_worked,
+					#parm1=send(victim,@GetCapDef),#parm2=send(victim,@GetName));
+			}
+		}
+
+		return;
+	}
+  
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

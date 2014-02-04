@@ -40,7 +40,7 @@ classvars:
    % The Assassin's dagger is a low quality thrusting weapon, making it
    %  shortsword like.
    viWeaponType = WEAPON_TYPE_THRUST
-   viWeaponQuality = WEAPON_QUALITY_LOW
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viMin_damage = 8
    viMax_damage = 12

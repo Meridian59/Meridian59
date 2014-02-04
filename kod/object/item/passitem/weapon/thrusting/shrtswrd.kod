@@ -33,7 +33,7 @@ classvars:
    vrDesc = shortsword_desc_rsc
 
    % Short Swords are low quality thrusting weapons
-   viWeaponQuality = WEAPON_QUALITY_LOW
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_SHORTSWORD
 

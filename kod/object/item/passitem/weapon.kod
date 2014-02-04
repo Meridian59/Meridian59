@@ -21,84 +21,103 @@ constants:
    WEAPON_DAMAGE_CHANCE = 25
 
    % Weapon tuning factors
-   %  Edit these constants to tune weapon power
+   % Edit these constants to tune weapon power
 
    % Hit modifiers
    WEAPON_HITMOD_STRIKE  = 0
    WEAPON_HITMOD_THRUST  = 0
    WEAPON_HITMOD_SLASH = 0
+   WEAPON_HITMOD_SPELL = 0
+   WEAPON_HITMOD_FIST = 0
 
    % Base damage of different types
-   WEAPON_DAMAGE_STRIKE_BASE  = 8
-   WEAPON_DAMAGE_THRUST_BASE  = 8
-   WEAPON_DAMAGE_SLASH_BASE = 8
+   WEAPON_DAMAGE_STRIKE  = 8
+   WEAPON_DAMAGE_THRUST  = 8
+   WEAPON_DAMAGE_SLASH = 8
+   WEAPON_DAMAGE_SPELL = 8
+   WEAPON_DAMAGE_FIST = 8
 
    % Proficiency bonus
    WEAPON_PROF_STRIKE  = 0
    WEAPON_PROF_THRUST  = 0
    WEAPON_PROF_SLASH = 0
+   WEAPON_PROF_SPELL = 0
+   WEAPON_PROF_FIST = 0
 	
-	% This is the easiest way to consider not wearing a Jewel a low quality weapon.
-   WEAPON_PROF_TOUCH = 50
-
    % Disarm bonus
    WEAPON_DISARM_STRIKE  = 0
    WEAPON_DISARM_THRUST  = 0
    WEAPON_DISARM_SLASH = 50
+   WEAPON_DISARM_SPELL = 0
+   WEAPON_DISARM_FIST = 0
    
    % Parry bonus
    WEAPON_PARRY_STRIKE  = 0
    WEAPON_PARRY_THRUST  = 50
    WEAPON_PARRY_SLASH = 0
+   WEAPON_PARRY_SPELL = -100
+   WEAPON_PARRY_FIST = 0
 
    % Spell modifier, large negatives are bad.
-   WEAPON_SPELL_STRIKE  = 10
-   WEAPON_SPELL_THRUST  = -10
-   WEAPON_SPELL_SLASH = -10
+   WEAPON_SPELL_STRIKE  = 20
+   WEAPON_SPELL_THRUST  = -20
+   WEAPON_SPELL_SLASH = -20
+   WEAPON_SPELL_SPELL = -20
+   WEAPON_SPELL_FIST = -20
 
    % Range of reach
    WEAPON_RANGE_STRIKE  = 2
    WEAPON_RANGE_THRUST  = 2
    WEAPON_RANGE_SLASH = 2
+   WEAPON_RANGE_SPELL = 2
+   WEAPON_RANGE_FIST = 2
 
    % Quality mods to number of hits
-   WEAPON_LOW_QUALITY_HITS  = -100
-   WEAPON_HIGH_QUALITY_HITS = 100
-   WEAPON_NERUDITE_HITS = 100
+   WEAPON_NORMAL_QUALITY_HITS  = 0
+   WEAPON_HIGH_QUALITY_HITS  = 100
+	WEAPON_SUPREME_QUALITY_HITS = 200
+   WEAPON_NERUDITE_HITS = 200
 
    % Quality mods to hit modifier
-   WEAPON_LOW_QUALITY_HITMOD  = 0
-   WEAPON_HIGH_QUALITY_HITMOD = 0
+   WEAPON_NORMAL_QUALITY_HITMOD  = 0
+   WEAPON_HIGH_QUALITY_HITMOD  = 0
+   WEAPON_SUPREME_QUALITY_HITMOD = 0
    WEAPON_NERUDITE_HITMOD = 0
 
    % Quality mods to damage
-   WEAPON_LOW_QUALITY_DAMAGE  = 0
-   WEAPON_HIGH_QUALITY_DAMAGE = 0
+   WEAPON_NORMAL_QUALITY_DAMAGE  = 0
+   WEAPON_HIGH_QUALITY_DAMAGE  = 0
+   WEAPON_SUPREME_QUALITY_DAMAGE = 0
    WEAPON_NERUDITE_DAMAGE = 0
    
    % Quality mods to proficiency
-   WEAPON_LOW_QUALITY_PROF  = -50
+   WEAPON_NORMAL_QUALITY_PROF  = 0
    WEAPON_HIGH_QUALITY_PROF = 50
-   WEAPON_NERUDITE_PROF = 50
+   WEAPON_SUPREME_QUALITY_PROF = 100
+   WEAPON_NERUDITE_PROF = 100
 
    % Quality mods to disarming
-   WEAPON_LOW_QUALITY_DISARM  = -50
-   WEAPON_HIGH_QUALITY_DISARM = 50
-   WEAPON_NERUDITE_DISARM = 50
+   WEAPON_NORMAL_QUALITY_DISARM  = 0
+   WEAPON_HIGH_QUALITY_DISARM  = 50
+   WEAPON_SUPREME_QUALITY_DISARM = 100
+   WEAPON_NERUDITE_DISARM = 100
 
    % Quality mods to parrying
-   WEAPON_LOW_QUALITY_PARRY  = -50
-   WEAPON_HIGH_QUALITY_PARRY = 50
-   WEAPON_NERUDITE_PARRY = 50
+   WEAPON_NORMAL_QUALITY_PARRY  = 0
+   WEAPON_HIGH_QUALITY_PARRY  = 50
+   WEAPON_SUPREME_QUALITY_PARRY = 100
+   WEAPON_NERUDITE_PARRY = 100
 
    % Quality mods to spell modifier
-   WEAPON_LOW_QUALITY_SPELL  = 10
-   WEAPON_HIGH_QUALITY_SPELL = -10
-   WEAPON_NERUDITE_SPELL =  -10
+   WEAPON_NORMAL_QUALITY_SPELL  = 0
+   WEAPON_HIGH_QUALITY_SPELL  = -10
+   WEAPON_SUPREME_QUALITY_SPELL = -20
+   WEAPON_NERUDITE_SPELL =  -20
 
    % Quality mod to range
-   WEAPON_LOW_QUALITY_RANGE  = 0
-   WEAPON_HIGH_QUALITY_RANGE = 1
+   WEAPON_NORMAL_QUALITY_RANGE  = 0
+   WEAPON_HIGH_QUALITY_RANGE = 0
+   WEAPON_SUPREME_QUALITY_RANGE = 1
    WEAPON_NERUDITE_RANGE = 1
 
 resources:
@@ -146,7 +165,7 @@ classvars:
    vrItem_broken = weapon_broken
    
    viWeaponType = WEAPON_TYPE_THRUST
-   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   viWeaponQuality = WEAPON_QUALITY_HIGH
 
    viProficiency_needed = SKID_PROFICIENCY_SWORD
 
@@ -184,15 +203,20 @@ messages:
    Constructed()
    {
       % Modify the hits depending on the weapon's quality.
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
       {
-         piHits_init = piHits_init + WEAPON_LOW_QUALITY_HITS;
-         piHits = piHits + WEAPON_LOW_QUALITY_HITS;
+         piHits_init = piHits_init + WEAPON_NORMAL_QUALITY_HITS;
+         piHits = piHits + WEAPON_NORMAL_QUALITY_HITS;
       }
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          piHits_init = piHits_init + WEAPON_HIGH_QUALITY_HITS;
          piHits = piHits + WEAPON_HIGH_QUALITY_HITS;
+      }
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         piHits_init = piHits_init + WEAPON_SUPREME_QUALITY_HITS;
+         piHits = piHits + WEAPON_SUPREME_QUALITY_HITS;
       }
       if viWeaponQuality = WEAPON_NERUDITE
       {
@@ -217,7 +241,7 @@ messages:
 	   oStroke = Send(sys,@FindSkillByNum,#num=SKID_RIPOSTE);
 	   % This will trigger a free regular weapon attack on a successful parry.	  
 	   % Using TryAttack instead of DoExtraAttack since we want to factor in chance to hit.
-      Send(who,@TryAttack,#what=what,#stroke_obj=oStroke,#use_weapon=self);
+      Send(who,@TryAttack,#what=what,#stroke_obj=oStroke,#use_weapon=self,#activeuser=FALSE);
 	
 	  return;
    }
@@ -275,15 +299,30 @@ messages:
          iBonus = WEAPON_HITMOD_SLASH;
       }
 
-      % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+      if viWeaponType = WEAPON_TYPE_SPELL
       {
-         iBonus = iBonus + WEAPON_LOW_QUALITY_HITMOD;
+         iBonus = WEAPON_HITMOD_SPELL;
+      }
+		
+      if viWeaponType = WEAPON_TYPE_FIST
+      {
+         iBonus = WEAPON_HITMOD_FIST;
       }
 
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
+      {
+         iBonus = iBonus + WEAPON_NORMAL_QUALITY_HITMOD;
+      }
+		
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          iBonus = iBonus + WEAPON_HIGH_QUALITY_HITMOD;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         iBonus = iBonus + WEAPON_SUPREME_QUALITY_HITMOD;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
@@ -303,28 +342,44 @@ messages:
       % Weapon type
       if viWeaponType = WEAPON_TYPE_STRIKE
       {
-         iDamage = WEAPON_DAMAGE_STRIKE_BASE;
+         iDamage = WEAPON_DAMAGE_STRIKE;
       }
 
       if viWeaponType = WEAPON_TYPE_THRUST
       {
-         iDamage = WEAPON_DAMAGE_THRUST_BASE;
+         iDamage = WEAPON_DAMAGE_THRUST;
       }
 
       if viWeaponType = WEAPON_TYPE_SLASH
       {
-         iDamage = WEAPON_DAMAGE_SLASH_BASE;
+         iDamage = WEAPON_DAMAGE_SLASH;
+      }
+		
+      if viWeaponType = WEAPON_TYPE_SPELL
+      {
+         iDamage = WEAPON_DAMAGE_SPELL;
+      }
+		
+      if viWeaponType = WEAPON_TYPE_FIST
+      {
+         iDamage = WEAPON_DAMAGE_FIST;
       }
 
       % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
       {
-         iDamage = iDamage + WEAPON_LOW_QUALITY_DAMAGE;
+         iDamage = iDamage + WEAPON_NORMAL_QUALITY_DAMAGE;
       }
 
+      % Weapon quality modifiers
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          iDamage = iDamage + WEAPON_HIGH_QUALITY_DAMAGE;
+      }
+		
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         iDamage = iDamage + WEAPON_SUPREME_QUALITY_DAMAGE;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
@@ -368,16 +423,31 @@ messages:
       {
          iRange = WEAPON_RANGE_SLASH;
       }
+		
+      if viWeaponType = WEAPON_TYPE_SPELL
+      {
+         iRange = WEAPON_RANGE_SPELL;
+      }
+		
+      if viWeaponType = WEAPON_TYPE_FIST
+      {
+         iRange = WEAPON_RANGE_FIST;
+      }
 
       % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
       {
-         iRange = iRange + WEAPON_LOW_QUALITY_RANGE;
+         iRange = iRange + WEAPON_NORMAL_QUALITY_RANGE;
       }
 
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          iRange = iRange + WEAPON_HIGH_QUALITY_RANGE;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         iRange = iRange + WEAPON_SUPREME_QUALITY_RANGE;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
@@ -408,16 +478,31 @@ messages:
       {
          iDisarm = WEAPON_DISARM_SLASH;
       }
-
-      % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+		
+      if viWeaponType = WEAPON_TYPE_SPELL
       {
-         iDisarm = iDisarm + WEAPON_LOW_QUALITY_DISARM;
+         iDisarm = WEAPON_DISARM_SPELL;
+      }
+		
+      if viWeaponType = WEAPON_TYPE_FIST
+      {
+         iDisarm = WEAPON_DISARM_FIST;
       }
 
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
+      {
+         iDisarm = iDisarm + WEAPON_NORMAL_QUALITY_DISARM;
+      }
+		
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          iDisarm = iDisarm + WEAPON_HIGH_QUALITY_DISARM;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         iDisarm = iDisarm + WEAPON_SUPREME_QUALITY_DISARM;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
@@ -449,15 +534,30 @@ messages:
          iParry = WEAPON_PARRY_SLASH;
       }
 
-      % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+      if viWeaponType = WEAPON_TYPE_SPELL
       {
-         iParry = iParry + WEAPON_LOW_QUALITY_PARRY;
+         iParry = WEAPON_PARRY_SPELL;
       }
-
+		
+      if viWeaponType = WEAPON_TYPE_FIST
+      {
+         iParry = WEAPON_PARRY_FIST;
+      }
+		
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
+      {
+         iParry = iParry + WEAPON_NORMAL_QUALITY_PARRY;
+      }
+		
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          iParry = iParry + WEAPON_HIGH_QUALITY_PARRY;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         iParry = iParry + WEAPON_SUPREME_QUALITY_PARRY;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
@@ -488,15 +588,30 @@ messages:
          iModifier = WEAPON_SPELL_SLASH;
       }
 
-      % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+      if viWeaponType = WEAPON_TYPE_SPELL
       {
-         iModifier = iModifier + WEAPON_LOW_QUALITY_SPELL;
+         iModifier = WEAPON_SPELL_SPELL;
+      }
+		
+      if viWeaponType = WEAPON_TYPE_FIST
+      {
+         iModifier = WEAPON_SPELL_FIST;
+      }
+		
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
+      {
+         iModifier = iModifier + WEAPON_NORMAL_QUALITY_SPELL;
       }
 
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          iModifier = iModifier + WEAPON_HIGH_QUALITY_SPELL;
+      }
+		
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         iModifier = iModifier + WEAPON_SUPREME_QUALITY_SPELL;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
@@ -530,16 +645,31 @@ messages:
       {
          iBonus = iBonus + WEAPON_PROF_SLASH;
       }
-
-      % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
+		
+      if viWeaponType = WEAPON_TYPE_SPELL
       {
-         iBonus = iBonus + WEAPON_LOW_QUALITY_PROF;
+         iBonus = iBonus + WEAPON_PROF_SPELL;
+      }
+		
+      if viWeaponType = WEAPON_TYPE_FIST
+      {
+         iBonus = iBonus + WEAPON_PROF_FIST;
       }
 
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_NORMAL
+      {
+         iBonus = iBonus + WEAPON_NORMAL_QUALITY_PROF;
+      }
+		
       if viWeaponQuality = WEAPON_QUALITY_HIGH
       {
          iBonus = iBonus + WEAPON_HIGH_QUALITY_PROF;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_SUPREME
+      {
+         iBonus = iBonus + WEAPON_SUPREME_QUALITY_PROF;
       }
 
       if viWeaponQuality = WEAPON_NERUDITE
@@ -547,9 +677,7 @@ messages:
          iBonus = iBonus + WEAPON_NERUDITE_PROF;
       }
 
-		send(who,@FlipSkillAtrophyFlag,#SKID=viProficiency_needed);
-
-		iProf = send(who,@GetAbility,#num=viProficiency_needed) * (100 + iBonus) / 100;
+		iProf = send(who,@GetAbility,#num=send(self,@GetProfNumber)) * (100 + iBonus) / 100;
 		
       return iProf;
    }
@@ -561,12 +689,10 @@ messages:
 
    GetStroke(who=$)
    {
-      send(who,@FlipSkillAtrophyFlag,#SKID=Send(self,@GetDefaultStrokeNumber));
-      
-      return send(who,@GetAbility,#num=Send(self,@GetDefaultStrokeNumber));
+      return send(who,@GetAbility,#num=Send(self,@GetStrokeNumber));
    }
 
-   GetDefaultStrokeNumber()
+   GetStrokeNumber()
    {
       return SKID_SLASH;
    }

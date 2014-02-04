@@ -84,9 +84,7 @@ messages:
 
    GetStroke(who=$)
    {
-      send(who,@FlipSkillAtrophyFlag,#SKID=Send(self,@GetDefaultStrokeNumber));
-	
-		return send(who,@GetAbility,#num=Send(self,@GetDefaultStrokeNumber));
+		return send(who,@GetAbility,#num=Send(self,@GetStrokeNumber));
    }
 
    GetAttackName()
@@ -94,7 +92,7 @@ messages:
       return vrName;
    }
 
-   GetDefaultStrokeNumber()
+   GetStrokeNumber()
    {
       return SKID_BASH;
    }
@@ -124,7 +122,7 @@ messages:
 		oStroke = Send(SYS,@FindSkillByNum,#num=SKID_BASH);
 	   % This will trigger a free regular weapon attack on a successful parry.	  
 	   % Using TryAttack instead of DoExtraAttack since we want to factor in chance to hit.
-      Send(who,@TryAttack,#what=what,#stroke_obj=oStroke,#use_weapon=self);
+      Send(who,@TryAttack,#what=what,#stroke_obj=oStroke,#use_weapon=self,#activeuser=FALSE);
 
 	  return;
    }

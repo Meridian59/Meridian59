@@ -32,7 +32,7 @@ classvars:
    vrDesc = hammer_desc_rsc
 
    % Hammers are low quality striking weapons
-   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   viWeaponQuality = WEAPON_QUALITY_HIGH
 
    viProficiency_Needed = SKID_PROFICIENCY_HAMMER
 

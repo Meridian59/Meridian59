@@ -8,9 +8,9 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% A touching weapon is a weapon that enhances touchattacks.
+% A spellstone is a weapon that enhances touchattacks.
 
-TouchingWeapon is Weapon
+SpellStone is Weapon
 
 constants:
 
@@ -29,7 +29,7 @@ resources:
 
 classvars:
 
-   viWeaponType = WEAPON_TYPE_TOUCH
+   viWeaponType = WEAPON_TYPE_SPELL
 	
    vrCondition_exc = spellstone_condition_exc 
    vrCondition_exc_mended = spellstone_condition_exc_mended 
@@ -38,6 +38,8 @@ classvars:
    vrCondition_poor = spellstone_condition_poor 
    vrCondition_broken = spellstone_condition_broken
    vrItem_broken = spellstone_broken
+	
+   viProficiency_Needed = SKID_PROFICIENCY_SPELL
 	
 properties:
 
@@ -54,58 +56,60 @@ messages:
       return;
    }
 
-   GetDefaultStrokeNumber()
+   GetStrokeNumber()
    {
+		local oSpell;
+		
+		% This will return $ if there's no Touch Attacks enchanting player.
+		oSpell = Send(poOwner,@GetEnchantmentsByClass,#EnchClass=&TouchAttackSpell);
+		if oSpell <> $
+		{
+			return SKID_TOUCH;
+		}
+	
       return SKID_PUNCH;
    }
 	
-   GetProf(who=$)
+   GetProfNumber()
    {
-		local iBonus;   
+		local oSpell;
 		
-		iBonus = viProf_bonus;
-
-		iBonus = iBonus + 50;
-		
-      if viWeaponQuality = WEAPON_QUALITY_LOW
-      {
-         iBonus = iBonus - 50;
-      }
-		
-      if viWeaponQuality = WEAPON_QUALITY_HIGH
-      {
-         iBonus = iBonus + 50;
-      }
-
-      return iBonus;
+		% This will return $ if there's no Touch Attacks enchanting player.
+		oSpell = Send(poOwner,@GetEnchantmentsByClass,#EnchClass=&TouchAttackSpell);
+		if oSpell <> $
+		{
+			return SKID_PROFICIENCY_SPELL;
+		}
+	
+		return SKID_BRAWLING;
    }
 	
-   GetBaseSpellModifier(oSpell=$)
+	% The spell decides the attack type.
+   GetAttackType(use_weapon=$)
    {
-      local iModifier;
+		local oSpell;
 		
-		if oSpell <> $ AND send(oSpell,@GetSchool) = SS_FAREN
-      {
-         return 0;
-      }
-
-      % Weapon quality modifiers
-      if viWeaponQuality = WEAPON_QUALITY_LOW
-      {
-         iModifier = 0;
-      }
+		oSpell = send(poOwner,@GetTouchSpell);
+		if oSpell <> $
+		{
+			return Send(oSpell,@GetAttackType,#use_weapon=use_weapon);
+		}
 		
-      if viWeaponQuality = WEAPON_QUALITY_NORMAL
-      {
-         iModifier = -20;
-      }
+		propagate;
+   }
 
-      if viWeaponQuality = WEAPON_QUALITY_HIGH
-      {
-         iModifier = -40;
-      }
-
-      return iModifier;
+	% The spell decides the spell type.
+   GetAttackSpell(use_weapon=$)
+   {
+		local oSpell;
+		
+		oSpell = send(poOwner,@GetTouchSpell);
+		if oSpell <> $
+		{
+			return Send(oSpell,@GetAttackSpell,#use_weapon=use_weapon);
+		}
+		
+		propagate;
    }
 	
 end

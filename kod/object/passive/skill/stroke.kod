@@ -14,8 +14,6 @@ constants:
 
    include blakston.khd
 
-   HITVALUE_MAX = 100
-
 resources:
    stroke_name_rsc = "Weapon stroke"
    stroke_icon_rsc = light.bgf
@@ -195,6 +193,25 @@ messages:
 	  
 	  return damage;
    }
+	
+   DamageFactors(damage=0, who=$, use_weapon = $)
+   "Different skills/strokes are affected by different stats differently."
+   {
+		% This scales damage with proficiency in the weapon. Stats are already calculated into the proficiency.
+      if use_weapon <> $
+      {
+         damage = damage + damage * send(use_weapon,@GetProf,#who=who) / 100;
+      }
+      else
+      {
+         damage = damage + damage * send(who,@GetAbility,#num=SKID_BRAWLING) / 100;
+      }
+
+		% allow tuning through the class variable		
+		damage = damage*viDamage_factor/100;
+      
+      return damage;
+   }
 
    SendMissMessageToAttacker(who=$,victim=$,use_weapon = $,color_rsc = $,bText = TRUE)
    {
@@ -301,24 +318,6 @@ messages:
            #parm1=send(attacker,@GetDef),#parm2=send(attacker,@GetName));
            
       return TRUE;
-   }
-
-   DamageFactors(damage=0, who=$, use_weapon = $)
-   "Different skills/strokes are affected by different stats differently."
-   {
-		% This scales damage with proficiency in the weapon. Stats are already calculated into the proficiency.
-      if use_weapon <> $
-      {
-         damage = damage + damage * send(use_weapon,@GetProf,#who=who) / 100;
-      }
-      else
-      {
-         damage = damage + damage * send(who,@GetAbility,#num=SKID_BRAWLING) / 100;
-      }
-		
-		damage = damage*viDamage_factor/100;
-      
-      return damage;
    }
 
    GetHitSound()

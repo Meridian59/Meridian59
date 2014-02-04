@@ -1,0 +1,155 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Touch is Stroke
+
+constants:
+
+   include blakston.khd
+
+resources:
+   touch_name_rsc = "touch"
+   touch_icon_rsc = light.bgf
+   touch_desc_rsc = "Bashing allows you to do better damage with your shield."
+
+   touch_skill_intro = "Just a stroke dummy for touch spells."
+
+classvars:
+
+   vrName = touch_name_rsc
+   vrIcon = touch_icon_rsc
+   vrDesc = touch_desc_rsc
+
+   vrSkill_intro = touch_skill_intro
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   viSchool = SKS_BRAWLING
+   viSkill_Num = SKID_TOUCH
+   viSkill_level = 50
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 0
+
+   viDamage_factor = 100
+
+properties:
+
+   plPrerequisites = $
+
+messages:
+
+   GetRequisiteStat(who=$)
+   "Varies from skill to skill and spell to spell."
+   {
+      return Send(who,@GetMysticism);
+   }
+	
+   GetAbility(who=$)
+	"This substitutes our skill in the touchspell for our skill in the stroke."
+   {
+		local oSpell, iStroke;
+		
+		oSpell = send(who,@GetTouchSpell);
+		
+		% If we are enchanted by a touch spell, ask the spell for the proficiency, if not, return 0.
+		if oSpell = $
+		{
+			return 0;
+		}
+		
+		iStroke = send(oSpell,@GetStroke,#who=who);
+		
+      return iStroke;
+   }
+
+   % General combat messages:
+
+   % Can player dodge this type of attack?
+   CanDodge()
+   {
+      return TRUE;
+   }
+
+   % Can player block this type of attack?
+   CanBlock()
+   {
+      return TRUE;
+   }
+
+   %Can player parry this type of attack?
+   CanParry()
+   {
+      return TRUE;
+   }
+
+   % The unsorted messages:
+	
+	% Allow the spell to improve instead of the stroke.
+   ImproveStroke(who=$,target=$)
+   {
+      Send(send(who,@GetTouchSpell),@ImproveAbility,#who=who,#target=target);
+      
+      return;
+   }
+
+   SuccessChance()
+   "Always returns TRUE for combat strokes.  Combat strokes are figured"
+   "differently than other skills - are figured in player.kod."
+   {
+      return TRUE;
+   }
+	
+   CheckWeaponAndDoAnimation(who=$,use_weapon=$,victim=$)
+   "Do a casting animation instead of a weaponswing."
+   {
+      Send(who,@DoCast);
+      
+      return TRUE;
+   }
+	
+   FindDamage(use_weapon=$, who=$, victim=$)
+   "Gains all damage calculations from the touch spell."
+   {
+	  return send(send(who,@GetTouchSpell),@FindDamage,#use_weapon=use_weapon,#who=who,#victim=victim);
+   }
+	
+   PlayerWasHitMsg(who=$,attacker=$,damage=$)
+   {
+	  return send(send(who,@GetTouchSpell),@PlayerWasHitMsg,#who=who,#attacker=attacker,#damage=damage);
+   }
+
+   PlayerHitSomethingMsg(who=$,victim=$,damage=$,color_rsc=$)
+   "Gains all information from the touch spell."
+   {
+	  return send(send(who,@GetTouchSpell),@PlayerHitSomethingMsg,#who=who,#victim=victim,#damage=damage,#color_rsc=color_rsc);
+   }
+	
+   SendMissMessageToAttacker(who=$,victim=$,color_rsc=$)
+   "Gains all information from the touch spell."
+   {
+	  return send(send(who,@GetTouchSpell),@SendMissMessageToAttacker,#who=who,#victim=victim,#color_rsc=color_rsc);
+   }
+
+   PlayerKilledSomethingMsg(who=$,victim=$,damage=$)
+   "Gains all information from the touch spell."
+   {
+	  return send(send(who,@GetTouchSpell),@PlayerKilledSomethingMsg,#who=who,#victim=victim,#damage=damage);
+   }
+
+   PlayerWasKilledMsg(who=$,attacker=$,damage=$)
+   "Gains all information from the touch spell."
+   {
+	  return send(send(who,@GetTouchSpell),@PlayerWasKilledMsg,#who=who,#attacker=attacker,#damage=damage);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

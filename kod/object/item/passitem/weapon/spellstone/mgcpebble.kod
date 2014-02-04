@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MagicalPebble is TouchingWeapon
+MagicalPebble is SpellStone
 
 constants:
 
@@ -40,7 +40,7 @@ classvars:
    viWeight = 15
 	
    % A Magical Pebble is a normal quality touch weapon.
-   viWeaponQuality = WEAPON_QUALITY_NORMAL
+   viWeaponQuality = WEAPON_QUALITY_HIGH
 	
 properties:
 

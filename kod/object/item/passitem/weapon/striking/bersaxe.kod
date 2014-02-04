@@ -32,7 +32,7 @@ classvars:
    vrDesc = berserkeraxe_desc_rsc
 
    % Berserker Axes are high quality striking weapons
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_SUPREME
 
    viProficiency_Needed = SKID_PROFICIENCY_AXE
 

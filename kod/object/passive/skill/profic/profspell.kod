@@ -1,0 +1,70 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SpellProficiency is Proficiency
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   spellproficiency_name_rsc = "spell flinging"
+   spellproficiency_icon_rsc = light.bgf
+   spellproficiency_desc_rsc = "Serves as a dummy for touch spell masteries."
+
+classvars:
+
+   vrName = spellproficiency_name_rsc
+   vrIcon = spellproficiency_icon_rsc
+   vrDesc = spellproficiency_desc_rsc
+
+   viSchool = SKS_BRAWLING
+   viSkill_num = SKID_PROFICIENCY_SPELL
+   viSkill_level = 50
+
+	% Chance to increase is one in viChance_To_Increase.
+   viChance_To_Increase = 0
+	
+properties:
+
+   plPrerequisites = $
+
+messages:
+
+   GetRequisiteStat(who=$)
+   {
+      return send(who,@GetMysticism);
+   }
+	
+   GetAbility(who=$)
+	"This emulates spell proficiencies. The actual calculation takes place in the according touchspell."
+   {
+		local oSpell, iProf;
+		
+		% If we are enchanted by a touch spell, ask the spell for the proficiency, if not, return 0.
+		oSpell = Send(who,@GetEnchantmentsByClass,#EnchClass=&TouchAttackSpell);
+		if oSpell <> $
+		{
+			% The spell object is the second element of the list. Get that.
+			oSpell = Nth(first(oSpell),2);
+		}
+		else
+		{
+			return 0;
+		}
+		
+		iProf = send(oSpell,@GetProf,#who=who);
+		
+      return iProf;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

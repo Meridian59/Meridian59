@@ -82,15 +82,34 @@ messages:
       return viRange;      
    }
 
-   FindDamage(who=$)
-   "No weapon means we come up with the damage here, not modify a weapon's damage."
+   FindDamage(use_weapon=$, who=$, victim=$)
+   "If we aren't using a fist weapon, come up with the damage here."
    {
-      local damage, might;
-
-      damage = 800;
-
+      local oMonster, damage, might, iAbility;
+		
+      % Morphed? If so, get the damage from the monster we are morphed into.
+      oMonster = Send(who,@GetIllusionForm);
+      if oMonster <> $ AND Send(who,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+      {
+			return Send(oMonster,@GetDamage);
+      }
+		
+      % base weapon damage
+		if use_weapon <> $
+		{
+			damage = send(use_weapon,@GetDamage,#who=who,#target=victim);
+		}
+		else		
+		{
+			damage = 800;
+		}
+		
+      % scale the basedamage with the attacker's ability in the stroke
+      iAbility = Send(who,@GetAbility,#num=viSkill_num);
+      damage = damage * iAbility / 100;
+      
       % Take various damage factors into consideration.
-      damage = send(self,@DamageFactors,#damage=damage,#who=who,#use_weapon=$);
+      damage = send(self,@DamageFactors,#damage=damage,#who=who,#use_weapon=use_weapon);
 
       return damage;
    }

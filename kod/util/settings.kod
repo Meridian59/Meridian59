@@ -51,8 +51,6 @@ properties:
    piKillKarmaSwingMonster = 6
    piKillKarmaSwingPlayer = 10
 
-   pbAtrophyOn = FALSE
-
    % DefaultDeathCost:  Should always be a value between 1 and 100.  Lowering
    %  this will lower the odds of a dead player losing health and skill/spell
    %  percents.
@@ -281,11 +279,6 @@ messages:
    GetKillKarmaSwingPlayer()
    {
       return piKillKarmaSwingPlayer;
-   }
-
-   IsAtrophyOn()
-   {
-      return pbAtrophyOn;
    }
 
    GetMaxLearnPoints()

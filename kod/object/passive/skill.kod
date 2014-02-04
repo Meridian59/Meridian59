@@ -217,9 +217,6 @@ messages:
          return FALSE;
       }
 
-      % Used skill flips atrophy flag
-      Send(who,@FlipSkillAtrophyFlag,#SKID=viSkill_num);
-
       return TRUE;
    }
 

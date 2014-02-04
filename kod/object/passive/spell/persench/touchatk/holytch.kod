@@ -42,6 +42,8 @@ resources:
 
    holytouch_sound = sholytch.wav
 
+   ta_heal_worked = "Shal'ille aids you in battle, healing you for ~g~B%i~B~n damage."
+	
 classvars:
 
    vrName = HolyTouch_name_rsc
@@ -71,7 +73,6 @@ classvars:
    viRange = 2
 
    viSpellType = ATCK_SPELL_HOLY+ATCK_SPELL_ALL
-   viStroke = STROKE_HOLY_TOUCH
 
    vbAutomatic = FALSE
 
@@ -92,15 +93,78 @@ messages:
       return;
    }
 
-  GetProf(who=$)
-  {
-     local iProf;
-      Send(who,@FlipSkillAtrophyFlag,#SKID=SKID_PUNCH);
-     
-     iProf = (bound(Send(who,@GetKarma)/2,0,50) + send(who,@GetMysticism)) * (100 + send(self,@FindProf,#who=who)) / 100;
-     
-     return iProf;
-  }
+	GetProf(who=$)
+	{
+		local iProf;
+
+		iProf = bound(Send(who,@GetKarma)/2,0,50) + send(who,@GetMysticism);
+
+		iProf = iProf * bound(Send(who,@GetBaseMaxHealth),0,100) / 100;
+
+		return iProf;
+	}
+  
+   DamageFactors(damage=0,who=$,victim=$)
+    "Here, we handle damage adjustments."
+   {
+		local iKarma, iProf, oWeapon;
+		
+		%Holy touch won't damage good creatures but deal extra damage to the undead.
+		if victim <> $
+		{
+			iKarma = Send(victim,@GetKarma,#detect=TRUE);
+
+			if iKarma > 0
+			{
+				damage = 0;
+			}
+			else
+			{
+				damage = damage * bound(-(iKarma*2),0,100)/100;
+			}
+					 
+			if Send(victim,@IsUndead)
+			{
+				damage = damage + damage/2;
+			}
+		}
+		
+      oWeapon = Send(who,@LookupPlayerWeapon);
+		
+		if oWeapon <> $
+		{
+			iProf = send(oWeapon,@GetProf,#who=who);
+		}
+		else
+		{
+			iProf = send(self,@GetProf,#who=who);
+		}
+		
+      % scale damage with the proficiency. See the individual touchattack spell for more info.
+		damage = damage + damage * iProf / 100;
+		
+		% allow tuning through the class variable
+		damage = damage*viDamage_factor/100;
+
+		% check for possible procs
+		Send(self,@DoSpellProc,#damage=damage,#who=who,#victim=victim,#prof=iProf);
+		
+      return damage;
+   }
+  
+	DoSpellProc(damage=0,who=$,victim=$,prof=0)
+	{
+      local iHeal;
+		
+		if random(1,1000) <= prof*viSpell_proc_chance/100
+		{
+		 iHeal = random(damage/200,damage/100);
+			send(who,@GainHealth,#amount=iHeal);
+			send(who,@MsgSendUser,#message_rsc=ta_heal_worked,#parm1=iHeal);
+		}
+
+		return;
+	}
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

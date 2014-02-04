@@ -4,7 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\touching.bof
+DEPEND = ..\spellstone.bof
 BOFS = frozjewl.bof mgcpebble.bof
 
 !include $(KODDIR)\kod.mak

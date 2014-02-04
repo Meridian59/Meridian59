@@ -91,6 +91,6 @@ messages:
            #parm1=send(victim,@getCapdef),#parm2=send(victim,@getname));
       return TRUE;
    }
-   
+	
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -33,7 +33,7 @@ properties:
 
 messages:
 
-   GetDefaultStrokeNumber()
+   GetStrokeNumber()
    {
       return SKID_SLASH;
    }

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-JewelofFroz is TouchingWeapon
+JewelofFroz is SpellStone
 
 constants:
 
@@ -44,7 +44,7 @@ classvars:
    viWeight = 15
 	
    % The Jewel of Froz is a high quality touch weapon.
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_SUPREME
 
 properties:
 

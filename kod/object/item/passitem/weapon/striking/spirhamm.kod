@@ -33,7 +33,7 @@ classvars:
    vrDesc = spirithammer_desc_rsc
 
    % Spiritual Hammers are high quality striking weapons
-   viWeaponQuality = WEAPON_QUALITY_HIGH
+   viWeaponQuality = WEAPON_QUALITY_SUPREME
 
    viProficiency_Needed = SKID_PROFICIENCY_HAMMER
 

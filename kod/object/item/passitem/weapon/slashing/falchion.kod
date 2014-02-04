@@ -31,7 +31,7 @@ classvars:
    vrDesc = falchion_desc_rsc
 
    % Falchions are low quality slashing weapons
-   viWeaponQuality = WEAPON_QUALITY_LOW
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
 
    viProficiency_Needed = SKID_PROFICIENCY_FALCHION
 

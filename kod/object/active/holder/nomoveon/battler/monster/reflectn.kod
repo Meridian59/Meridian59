@@ -507,8 +507,16 @@ messages:
 
    MonsterAttack(what=$)
    {
-      % Do the animation!
-      Send(self,@DoAttack);
+      % Do a casting animation if we are using touch as a stroke.
+		if IsClass(Send(self,@GetMonsterStroke),&Touch)
+		{
+			Send(self,@DoCast);
+		}
+		% Do a standard attack animation if we are not.
+		else
+		{
+			Send(self,@DoAttack);
+		}
 
       return;
    }
@@ -531,6 +539,16 @@ messages:
       return Send(poOriginal,@GetDodgeAbility,#stroke_obj=stroke_obj);
    }
 
+   DoCast()
+   "Causes the user to do spell casting arm, 1st & 3rd person"
+   {
+      piAnimation = PANM_CAST;
+      Send(poOwner,@SomethingChanged,#what=self);
+      piAnimation = PANM_NONE;
+
+      return;
+   }
+	
    DoAttack()
    {
       local Weapon, AmmoType, i;
@@ -561,7 +579,14 @@ messages:
             }
             else
             {
-               piAnimation = PANM_WEAPON_ATTACK;
+					if IsClass(Weapon,&SpellStone)
+					{
+						piAnimation = PANM_FIST_ATTACK;
+					}
+					else
+					{
+						piAnimation = PANM_WEAPON_ATTACK;
+					}
             }
          }
          else

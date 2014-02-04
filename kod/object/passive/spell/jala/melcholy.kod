@@ -147,15 +147,20 @@ messages:
       propagate;
    }
 
-   % Stuff we handle to be an attack modifier.
-
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
-      % Only affect the good ones...
+		local iPower, lState;
+		
+		% Unlike normal Enchantment States, songs have a list.
+		lState = Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self);
+		
+		% Power is the 3rd element of that list. Get that.
+		iPower = Nth(lState,3);
+		
+      % Only works against good enemies...
       if Send(what,@GetKarma,#detect=TRUE) > 0
       {
-         % Give a small bonus
-         return (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
+         return (iPower+1)/10;
       }
 
       return 0;
@@ -163,13 +168,21 @@ messages:
    
    ModifyDamage(who = $,what = $,damage = $)
    {
-      % Only affect the good ones...
+		local iPower, lState;
+		
+		% Unlike normal Enchantment States, songs have a list.
+		lState = Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self);
+		
+		% Power is the 3rd element of that list. Get that.
+		iPower = Nth(lState,3);
+		
+      % Only works against good enemies...
       if Send(what,@GetKarma,#detect=TRUE) > 0
       {
-         return (Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self)+1)/10;
+         return (iPower+1)/10;
       }
 
-      return damage;
+      return 0;
    }
 
 

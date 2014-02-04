@@ -5695,7 +5695,7 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate,\
             #NPC_modifier = QN_NPCMOD_SAME,\
             #questnode_type = QN_TYPE_ITEMFINDCLASS,\
-            #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &PlateArmor, 1 ],\
+            #cargolist = [ [ QN_PRIZETYPE_ITEMCLASS, &ScaleArmor, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &SimpleHelm, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Knightshield, 1 ],\
 		           [ QN_PRIZETYPE_ITEMCLASS, &Gauntlet, 1 ],\

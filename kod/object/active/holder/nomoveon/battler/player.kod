@@ -4425,7 +4425,7 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster, lRadiusState;
 
       oWeapon = $;
 
@@ -4467,6 +4467,18 @@ messages:
       {
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                          #hit_roll=iOffense,#stroke_obj=stroke_obj);
+      }
+      
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
+      }
+      
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Mirth)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
       }
 
       iOffense = iOffense + Send(Send(SYS,@GetParliament),
@@ -4613,7 +4625,7 @@ messages:
    GetDamage(what = $, stroke_obj=$)
    {
       local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
-            oSpell, oMonster;
+            oSpell, oMonster, lRadiusState;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4663,7 +4675,19 @@ messages:
 
          Send(i,@WeaponHitTarget);
       }
-               
+
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+         iDamageBonus = Send(Nth(lRadiusState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+      
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Mirth)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+         iDamageBonus = Send(Nth(lRadiusState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+ 
       iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),
                                          @GetFactionDamageBonus,#who=self);
 

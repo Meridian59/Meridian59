@@ -26,8 +26,24 @@ resources:
    Spellbane_no_towns = "You are prevented from singing this song currently."
 
    Spellbane_song = jala1.mp3
- 
+
+   Spellbane_cast = "You begin to play a song full of clicks and layered mechanical sounds."
+   Spellbane_starts = "%s begins to play a song full of clicks and layered mechanical sounds."
+   Spellbane_ends = "The strangely mechanical song played by %s fades away."
+   Spellbane_caster_ends = "Your strangely mechanical song fades."
+   Spellbane_caster_enter = "Your mechanical song creates a maze of magical energies in the area around you."
+   Spellbane_enter = "The song sung by %s fills the air with strange clicks and mechanical sounds."
+   Spellbane_leave = "You can no longer hear the strange mechanical noises of %s's song."
+
 classvars:
+
+   radius_ench_cast = Spellbane_cast
+   radius_ench_starts = Spellbane_starts
+   radius_ench_ends = Spellbane_ends
+   radius_ench_caster_ends = Spellbane_caster_ends
+   radius_ench_caster_enter = Spellbane_caster_enter
+   radius_ench_enter = Spellbane_enter
+   radius_ench_leave = Spellbane_leave
 
    vrName = Spellbane_name_rsc
    vrIcon = Spellbane_icon_rsc
@@ -36,6 +52,7 @@ classvars:
    viSpell_num = SID_SPELLBANE
    viSchool = SS_JALA
    viSpell_level = 3
+   viBaseRange = 2
 
    viMana = 12          % Mana is amount used upon inititiation
    viManaDrain = 8      % Drain is amount used every viDrainTime milliseconds
@@ -43,34 +60,14 @@ classvars:
 
    viSpell_Exertion = 6
 
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
-   viHarmful = TRUE
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
 
 properties:
 
    prMusic = Spellbane_song
       
 messages:
-
-   CanPayCosts(who = $, lTargets = $)
-   {
-      local oRoom, i, oActive;
-
-      oRoom = send(who,@GetOwner);
-
-      % Check to see if the room restricts guild attacks.
-      if NOT send(oRoom,@AllowGuildAttack,#what=who)
-         AND Send(SYS,@IsPKAllowed)
-         AND NOT IsClass(who,&DM)
-      {
-         % Tried to cast unguilded in town.  Denied!
-         Send(who,@MsgSendUser,#message_rsc=Spellbane_no_towns);
-
-         return FALSE;
-      }
-
-      propagate;
-   }
 
    ResetReagents()
    {
@@ -79,19 +76,6 @@ messages:
 
       return;
    }
-
-   StartEnchantment(who = $)
-   "Starts enchantment effect on one player"
-   {
-      propagate;
-   }
-
-   RemoveEnchantment()
-   "Called instead of EndEnchantment when trance is broken"
-   {
-      propagate;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

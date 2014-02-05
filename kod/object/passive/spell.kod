@@ -490,7 +490,7 @@ messages:
    CanCastHere(who = $, where = $, lTargets = $, iSpellPower = 0,
                bItemCast = FALSE, report = TRUE)
    {
-      local oSpell, lState, iJalaPower, oTarget;
+      local oSpell, lState, lRadiusState, oTarget;
 
       if IsClass(who,&DM)
       {
@@ -505,28 +505,15 @@ messages:
 
       if NOT bItemCast
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=SID_SPELLBANE);
-         if (Send(where,@IsEnchanted,#what=oSpell))
+         if IsClass(who,&Player)
+            AND Send(who,@IsAffectedByRadiusEnchantment,#byClass=&Spellbane)
          {
-            % The spell's spellpower is the third element of the state, which
-            %  is the third element of Jala info stored by room.
-            iJalaPower = Nth(Nth(Send(where,@GetJalaInfo),3),3);
-
-            % Does Spellbane overpower the spell?
-            % Spellbane always works on monsters that can be silenced
-            if iJalaPower > iSpellPower
-               OR (IsClass(who,&Monster) AND Send(who,@CanBeSilenced))
+            lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Spellbane);
+            if report
             {
-               if report
-               {
-                  % 2nd element in state is the original caster.
-                  lState = Send(where,@GetEnchantmentState,#what=oSpell);
-                  Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,
-                       #parm1=Send(Nth(lState,2),@GetName));
-               }
-         
-               return FALSE;
+               Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,#parm1=Send(Nth(lRadiusState,3),@GetName));
             }
+            return FALSE;
          }
 
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_SILENCE);

@@ -30,7 +30,7 @@ resources:
    Melancholy_song = ksong.mp3
 
    Melancholy_cast = "You begin to play a melancholy song."
-   Melancholy_starts = "%s begins to play a a melancholy song."
+   Melancholy_starts = "%s begins to play a melancholy song."
    Melancholy_ends = "The melancholy song played by %s fades away."
    Melancholy_caster_ends = "Your melancholy song fades."
    Melancholy_caster_enter = "Your heart feels heavy."

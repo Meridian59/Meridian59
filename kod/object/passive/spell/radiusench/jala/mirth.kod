@@ -30,7 +30,7 @@ resources:
    Mirth_song = main.mp3
 
    Mirth_cast = "You begin to play a mirthful song."
-   Mirth_starts = "%s begins to play a a mirthful song."
+   Mirth_starts = "%s begins to play a mirthful song."
    Mirth_ends = "The mirthful song played by %s fades away."
    Mirth_caster_ends = "Your mirthful song fades."
    Mirth_caster_enter = "Your spirits lift a bit."

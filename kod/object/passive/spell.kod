@@ -2205,12 +2205,10 @@ messages:
          iSpellPower = Send(Nth(lRadiusState,1),@ModifySpellpower,#who=who,#oSpell=self,#state=lRadiusState,#iSpellPower=iSpellPower);
       }
 
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
+      lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,#byClass=&ManaConvergence);
+      if lRadiusState <> $
       {
-         oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_MANA_CONVERGENCE);
-         iAbilityGain = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
-
-         iSpellPower = iSpellpower +iAbilityGain;
+         iSpellPower = Send(Nth(lRadiusState,1),@ModifySpellpower,#who=who,#oSpell=self,#state=lRadiusState,#iSpellPower=iSpellPower);
       }
 
       % Bound the lower end so that the stuff that follows is truly a bonus.

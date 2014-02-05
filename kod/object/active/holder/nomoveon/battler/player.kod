@@ -725,6 +725,8 @@ resources:
 
    player_truced = "Shal'ille's magic compels you to respect the truce."
    
+   Jig_cannot_attack = "It wouldn't feel right to attack the %s while you two are dancing so well together!"
+   
 classvars:
 
    viHand_space = 2
@@ -4221,8 +4223,16 @@ messages:
          }
          else
          {
-            % Tell the monster this is a valid attack.
-            Send(what,@ValidAttack,#who=self);
+            if NOT Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+            {
+               % Tell the monster this is a valid attack.
+               Send(what,@ValidAttack,#who=self);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,#parm1=Send(what,@GetName));
+               return FALSE;
+            }
          }
       }
 
@@ -8730,11 +8740,6 @@ messages:
 
    StopDancing()
    {
-      if Send(poOwner,@CheckRoomFlag,#Flag=ROOM_JIG)
-      {
-         return;
-      }
-      
       Send(self,@MsgSendUser,#message_rsc=player_stop_dance);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);      
       Send(poOwner,@SomethingChanged,#what=self);

@@ -1746,12 +1746,6 @@ messages:
          {
             return FALSE;
          }
-
-         if IsClass(what,&Monster)
-            AND piRoom_Flags & ROOM_JIG
-         {
-            return FALSE;
-         }
       }
 
       return TRUE;
@@ -2049,23 +2043,11 @@ messages:
 
    ReqSomethingUse(what = $, use_item = $)
    {
-      if piRoom_Flags & ROOM_JIG
-      {
-         Send(what,@MsgSendUser,#message_rsc=no_use_jig);
-
-         return FALSE;
-      }
-
       propagate;
    }
 
    ReqSomethingApply(what = $, use_item = $,apply_on=$)
    {
-      if piRoom_Flags & ROOM_JIG
-      {
-         return FALSE;
-      }
-
       propagate;
    }
 

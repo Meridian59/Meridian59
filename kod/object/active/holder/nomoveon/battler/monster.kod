@@ -1414,6 +1414,13 @@ messages:
          % Check if room has special combat affects.
          return FALSE;
       }
+      
+      % Jig prevents combat between players and monsters.
+      if IsClass(what,&Player)
+         AND Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+      {
+         return FALSE;
+      }
 
       % Face the target.      
       Send(self,@MonsterOrient,#new_row=Send(what,@GetRow),

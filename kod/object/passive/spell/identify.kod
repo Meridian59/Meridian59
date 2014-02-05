@@ -20,7 +20,7 @@ resources:
    identify_icon_rsc = iidentif.bgf
    identify_desc_rsc = \
      "Reveals any special properties of an item to the caster.  "
-     "Requires orc teeth to cast."
+     "Requires three emeralds to cast."
 
    identify_cant = "You can't seem to gain a proper focus on %s%s."
    identify_working = "You concentrate on %s%s and see..."
@@ -38,7 +38,7 @@ classvars:
    viSpell_level = 3
    viMana = 10
    viSpellExertion = 15
-   viCast_time = 15000
+   viCast_time = 10000
    vrSucceed_wav = identify_sound
    viChance_To_Increase = 15
 
@@ -48,7 +48,7 @@ messages:
 
    ResetReagents()
    {
-      plReagents = Cons([&OrcTooth,1],plReagents);
+      plReagents = Cons([&Emerald,3],plReagents);
       
       return;
    }

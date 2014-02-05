@@ -26,6 +26,14 @@ resources:
    
 classvars:
 
+   radius_ench_cast = hinder_cast
+   radius_ench_starts = hinder_starts
+   radius_ench_ends = hinder_ends
+   radius_ench_caster_ends = hinder_caster_ends
+   radius_ench_caster_enter = hinder_caster_enter
+   radius_ench_enter = hinder_enter
+   radius_ench_leave = hinder_leave
+   
    viMana = 5          % Mana is amount used upon inititiation
    viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
@@ -42,7 +50,7 @@ properties:
       
 messages:
 
-   GetAlteredChance(chance = 0, what = $, iSongState = 0)
+   GetAlteredChance(chance = 0, what = $, lRadiusState = 0)
    {
       local altChance, iSongSpellpower;
    
@@ -51,7 +59,7 @@ messages:
          return chance;
       }
       
-      iSongSpellpower = Nth(iSongState,2);
+      iSongSpellpower = Nth(lRadiusState,2);
 
       altChance = chance - random(iSongSpellpower/2,(iSongSpellpower*2)/3);
       

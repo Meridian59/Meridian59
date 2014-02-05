@@ -5887,7 +5887,7 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, iMaxHealth, lRadiusState;
       
       % Faster regen with higher vigor
       iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
@@ -5899,20 +5899,11 @@ messages:
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
       
-      if poOwner <> $
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Restorate)
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
-         {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Restorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
-                            #iSpellPower=iJalaPower);
-            }
-         }
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Restorate);
+         iTime = Send(Nth(lRadiusState,1),@AdjustHealthTime,#time=iTime,#lRadiusState=lRadiusState);
+         return bound(iTime,500,60000);
       }
 
       return bound(iTime,1000,60000);
@@ -5921,7 +5912,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell;
+      local iTime, lRadiusState, oSpell;
 
       if piMana > piMax_mana
       {
@@ -5938,21 +5929,10 @@ messages:
 
          iTime = bound(iTime,1000,60000);
 
-         if poOwner <> $
+         if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Rejuvenate)
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-            if lJalaInfo <> $
-            {
-               oJalaSpell = Nth(lJalaInfo,2);
-               if IsClass(oJalaSpell,&Rejuvenate)
-               {
-                  iJalaPower = Nth(Nth(lJalaInfo,3),3);
-                  iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
-                               #iSpellPower=iJalaPower);
-               }
-            }
-         
+            lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Rejuvenate);
+            iTime = Send(Nth(lRadiusState,1),@AdjustManaTime,#time=iTime,#lRadiusState=lRadiusState);
             iTime = bound(iTime,500,60000);
          }
 
@@ -10326,23 +10306,14 @@ messages:
 
    GetRestTime()
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, lRadiusState;
 
       iTime = 1000 + (30* (51-Send(self,@getStamina))); 
 
-      if poOwner <> $
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Invigorate)
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
-         {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Invigorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
-            }
-         }
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Invigorate);
+         iTime = Send(Nth(lRadiusState,1),@AdjustVigorTime,#time=iTime,#lRadiusState=lRadiusState);
       }
       
       return iTime;

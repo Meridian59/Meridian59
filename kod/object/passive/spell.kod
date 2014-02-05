@@ -1211,7 +1211,7 @@ messages:
       {
          for i in Send(who,@GetRadiusEnchantments)
          {
-            num = Send(Nth(i,1),@GetAlteredChance,#chance=num,#what=self,#iSongState=i);
+            num = Send(Nth(i,1),@GetAlteredChance,#chance=num,#what=self,#lRadiusState=i);
          }
       }
 

@@ -1182,7 +1182,7 @@ messages:
    "figure their success in player.kod."
    {
       local num, iRequisiteStat, iability, lJalaInfo, oJalaSpell, lJalaState,
-      iDistance, oTarget, oRing;
+      iDistance, oTarget, oRing, i;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);
 	  
@@ -1206,18 +1206,12 @@ messages:
       num = ((100-iRequisiteStat)*iSpellpower/100) + iRequisiteStat;
 
       % Modify chance to succeed due to Jala's hinder spells.
-      lJalaInfo = Send(Send(who,@GetOwner),@GetJalaInfo);
-
-      if lJalaInfo <> $
+      % Hinder spell effects stack.
+      if Send(who,@IsAffectedByRadiusEnchantment,#byClass=&HinderSpell)
       {
-         % lJalaInfo is of form: [room timer, spell object, state]
-         oJalaSpell = Nth(lJalaInfo,2);
-         if IsClass(oJalaSpell,&HinderSpell)
+         for i in Send(who,@GetRadiusEnchantments)
          {
-            lJalaState = Nth(lJalaInfo,3);
-            % Jala State is of the form: [volume, caster, spellpower]
-            num = Send(oJalaSpell,@GetAlteredChance,#chance=num,#what=self,
-                       #iSpellPower=Nth(lJalaState,3));
+            num = Send(Nth(i,1),@GetAlteredChance,#chance=num,#what=self,#iSongState=i);
          }
       }
 

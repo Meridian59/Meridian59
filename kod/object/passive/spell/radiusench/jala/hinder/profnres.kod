@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Truth is HinderSpell
+ProfaneResonance is HinderSpell
 
 constants:
 
@@ -16,36 +16,33 @@ constants:
 
 resources:
 
-   truth_name_rsc = "truth"
-   truth_icon_rsc = itruth.bgf
-   truth_desc_rsc = \
-      "This song hinders the spells of the master of the illusionary arts, Riija.  "
-      "A ruby and some rainbow ferns are required to begin performing this song."
+   ProfaneResonance_name_rsc = "profane resonance"
+   ProfaneResonance_icon_rsc = iprofres.bgf
+   ProfaneResonance_desc_rsc = \
+      "The foreboding sound of this song hinders the casting the holy spells of Shal'ille.  "
+      "A ruby and some herbs are required to begin performing this song."
 
-   truth_song = song.mp3
+   ProfaneResonance_song = nec02.mp3
  
 classvars:
 
-   vrName = truth_name_rsc
-   vrIcon = truth_icon_rsc
-   vrDesc = truth_desc_rsc
+   vrName = ProfaneResonance_name_rsc
+   vrIcon = ProfaneResonance_icon_rsc
+   vrDesc = ProfaneResonance_desc_rsc
 
    viMana = 5          % Mana is amount used upon inititiation
    viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
-   viSpell_num = SID_TRUTH
+   viSpell_num = SID_PROFANE_RESONANCE
 
    viSchool = SS_JALA
-   viSpell_level = 1
+   viSpell_level = 3
 
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
-   viHarmful = TRUE
-
-   viHinderedSchool = SS_RIIJA
+   viHinderedSchool = SS_SHALILLE
 
 properties:
 
-   prMusic = truth_song
+   prMusic = ProfaneResonance_song
 
 messages:
 
@@ -53,7 +50,7 @@ messages:
    {
       plReagents = $;
       plReagents = Cons([&Ruby,1],plReagents);
-      plReagents = Cons([&RainbowFern,2],plReagents);
+      plReagents = Cons([&Herbs,1],plReagents);
 
       return;
    }

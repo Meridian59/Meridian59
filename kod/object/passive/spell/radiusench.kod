@@ -586,6 +586,11 @@ messages:
    {
       return FALSE;
    }
+   
+   GetAlteredChance(chance=0,what=$,iSongState=0)
+   {
+      return chance;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -10,10 +10,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Disharmony is HinderSpell
 
-% Note: This spell not only reduced the chance for success for other Jala spells,
-%       but also has a volume that other Jala spells have to overcome (typical
-%       mechanics for all Jala spells).
-
 constants:
 
 	include blakston.khd
@@ -41,9 +37,6 @@ classvars:
 
    viSchool = SS_JALA
    viSpell_level = 4
-
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
-   viHarmful = TRUE
 
    viHinderedSchool = SS_JALA
 

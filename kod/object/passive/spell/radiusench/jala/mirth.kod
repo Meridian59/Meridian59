@@ -68,7 +68,6 @@ classvars:
 properties:
 
    prMusic = Mirth_song
-   pbUserEffects = TRUE
       
 messages:
 

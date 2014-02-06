@@ -48,6 +48,7 @@ messages:
 
    ResetReagents()
    {
+      plReagents = $;
       plReagents = Cons([&Emerald,3],plReagents);
       
       return;

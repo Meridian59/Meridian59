@@ -100,7 +100,7 @@ classvars:
 
    viTerrain_type = TERRAIN_SEWERS | TERRAIN_LAIR
 
-   viBossResetTime = 30 * 60 * 1000
+   viBossResetTime = 1 * 60 * 1000
 
 
 properties:

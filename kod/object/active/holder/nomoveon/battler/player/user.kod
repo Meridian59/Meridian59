@@ -7405,6 +7405,12 @@ messages:
       {
          iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
       }
+      
+      % Angeled characters cannot block other players
+      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         iFlags = (iFlags & ~MOVEON_NO);
+      }
 
       return iFlags;
    }

@@ -1774,13 +1774,6 @@ messages:
          AppendTempString(player_nl);
       }
 
-      obj = Send(SYS,@GetCaramo);
-      if obj <> $ and Send(obj,@GetJusticar) = self
-      {
-         AppendTempString(player_is_justicar);
-         AppendTempString(player_nl);
-      }
-
       j = Send(SYS,@GetVisibleCargoTypes);
       for i in j
       {
@@ -1893,7 +1886,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oCaramo, oSnoop, oRoom;
+      local i, oGame, oSnoop, oRoom;
       
       for i in plPassive
       {

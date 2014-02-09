@@ -87,7 +87,6 @@ messages:
                        &ForgetPotion,
                        &JewelofFroz,
                        &Gauntlet,
-                       &Helm,
                        &IvyCirclet,
                        &OrcShield,
                        &ChickenSoup,
@@ -127,7 +126,6 @@ messages:
                      &Grapes,
                      &WineGoblet,
                      &Cheese,
-                     &RingofLethargy,
                      &ShortSword,
                      &Scimitar,
                      &NeruditeSword,
@@ -146,15 +144,6 @@ messages:
                    ];
 
       plHardVentItems = [ &SpiderEgg,
-                          &OrcPitBossHead,
-                          &OneToken,
-                          &TwoToken,
-                          &ThreeToken,
-                          &FourToken,
-                          &FiveToken,
-                          &DukeFlag,
-                          &PrincessFlag,
-                          &RebelFlag,
                           &OrcPitBossHead,
                           &FineLute
                         ];

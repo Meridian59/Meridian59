@@ -140,6 +140,10 @@ messages:
          {
                 return true;
          }
+		 if(StringEqual("Long Bow",sWeapon) AND iSpellPercent >= 98)
+         {
+                return true;
+         }
          if(StringEqual("Battle Bow",sWeapon) AND iSpellPercent >= 98)
          {
                 return true;

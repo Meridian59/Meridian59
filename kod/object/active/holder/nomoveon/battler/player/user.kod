@@ -4592,24 +4592,27 @@ messages:
 	   }
 	   return FALSE;
    }
-   CommandMinionAttack(oMaster = $, oTarget = $)
+  CommandMinionAttack(oMaster = $, oTarget = $)
    {
-                local oRoom,oActive;
-                oRoom = Send(oMaster,@GetOwner);
-                for oActive in Send(self,@GetControlledMinions)
-                {   
-                        if isClass(oActive,&Monster)
-                        {                                					
-                                if Send(oActive,@GetMaster) = self
-                                {   
-                                        if Send(oActive,@GetTarget) <> oTarget
-                                        {										
-                                                Send(oActive, @TargetSwitch, #what=oTarget, #iHatred=100);
-                                                Send(oActive, @EnterStateChase, #target=oTarget, #actnow=True);
-                                        }
-                                }
-                        }
-                }        
+		local oRoom,oActive;
+		oRoom = Send(oMaster,@GetOwner);				
+	   if send(self,@AllowPlayerAttack,#victim=oTarget)
+	   {
+		   for oActive in Send(self,@GetControlledMinions)
+		   {   
+				if isClass(oActive,&Monster)
+				{                                					
+						if Send(oActive,@GetMaster) = self
+						{   
+								if Send(oActive,@GetTarget) <> oTarget
+								{		
+										Send(oActive, @TargetSwitch, #what=oTarget, #iHatred=100);
+										Send(oActive, @EnterStateChase, #target=oTarget, #actnow=TRUE);
+								}
+						}
+				}
+		   }
+	   }				
         return;                
                 
    }		

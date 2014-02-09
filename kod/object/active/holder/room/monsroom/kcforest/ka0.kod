@@ -84,8 +84,6 @@ messages:
    Constructed()
    {
       plVentItems1 = [ &Mace,
-                       &RoomKeyCopy,
-                       &Rose,
                        &ForgetPotion,
                        &JewelofFroz,
                        &Gauntlet,
@@ -136,7 +134,6 @@ messages:
                      &MysticSword,
                      &LongSword,
                      &Hammer,
-                     &GoldSword,
                      &Axe,
                      &Longbow,
                      &PlateArmor,

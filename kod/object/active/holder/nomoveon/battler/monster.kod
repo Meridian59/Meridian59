@@ -472,6 +472,14 @@ messages:
    "End of monster. Clean up any quests it might have spawned."
    {
       local i, j;
+	   % Minion Management - upon dieing they should leave your control list        
+		if Send(self,@GetMaster) <> $
+		{
+			if isClass(Send(self,@GetMaster),&User)
+			{
+				Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
+			}
+         }
       
       % Under rare conditions delete is called twice in succession
       if poBrain <> $

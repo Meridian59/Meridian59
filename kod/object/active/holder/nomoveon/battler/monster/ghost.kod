@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   SPELL_CHANCE = 4
+   SPELL_CHANCE = 3
 
 resources:
 
@@ -55,11 +55,11 @@ classvars:
    vrDead_name = ghost_dead_name_rsc
 
    viTreasure_type = TID_GHOST
-   viSpeed = SPEED_FAST
+   viSpeed = 11
    viLevel = 200
-   viDifficulty = 10
+   viDifficulty = 9
    viKarma = -100
-
+   
    vrSound_hit = ghost_sound_hit
    vrSound_miss = ghost_sound_miss
    vrSound_aware = ghost_sound_aware
@@ -73,6 +73,8 @@ properties:
    piAnimation = ANIM_NONE
    piGroup = 1
    piDrawfx = DRAWFX_TRANSLUCENT_75 | FLICKERING_YES
+   piMinDamage = 10
+   piMaxDamage = 16
    vrDesc = ghost_desc_rsc
 
 messages:

@@ -79,6 +79,7 @@ classvars:
 
    viAttributes = 0
    viLevel = 140
+   viCash = 9000
    viDifficulty = 7
    viKarma = 90
 

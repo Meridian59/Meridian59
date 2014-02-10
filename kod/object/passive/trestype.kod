@@ -220,7 +220,7 @@ messages:
       return piTreasure_num;
    }
 
-   GenerateTreasure(level=1,who=$,mob=$,tokengen=TRUE,corpse=$)
+   GenerateTreasure(level=1,cash=1,who=$,mob=$,tokengen=TRUE,corpse=$)
    {
       local i, lItem_info, iRnd, iCount, oObj, iNumber;
 
@@ -300,7 +300,7 @@ messages:
             if isClass(oObj,&Money)
             {
                iNumber = (Send(Send(SYS, @GetSettings), @GetMoneyFactor) * 2 *
-                  Bound(Random(level/2,3*level/2),1,$))/100;
+                  Bound(Random(cash/2,3*cash/2),1,$))/100;
             
                Send(oObj,@AddNumber,#number=iNumber);
 			   Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oObj,@GetNumber));

@@ -3897,6 +3897,11 @@ messages:
             }
          }
       }
+      
+      if IsClass(oRoom,&GuildHall)
+      {
+         return TRUE;
+      }
 
       % Finally, check status and safety.
       if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report,#actual=actual)
@@ -5100,6 +5105,7 @@ messages:
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            AND NOT IsClass(poOwner,&GuildHall)
          {
             %Attacked an innocent!
 

@@ -55,12 +55,6 @@ resources:
       "enter the guild hall.  If you do not reactivate the shield, the guild "
       "hall may be declared conquered!"
 
-   guildhall_conquer_safety_check = \
-      "Flipping a guild switch is an outlaw action.  You must have your "
-      "safety OFF in order to continue with this action!"
-   guildhall_conquer_outlaw = \
-      "You have been branded an outlaw for attempting to conquer a guild hall!"
-
    guildhall_uneasiness = \
       "~BYou experience a vague feeling of uneasiness, as if your hall may "
       "not be safe."
@@ -586,8 +580,6 @@ messages:
       {
          % Someone is raiding the guildhall!
 
-         % If the guild is too young then that guild may not conquer another
-         %  guild.
          poConquerer = Send(who,@GetGuild);
 
          if poConquerer = $
@@ -601,16 +593,6 @@ messages:
             {
                pbBetrayed = TRUE;
             }
-         }
-
-         % Check for safety for non-betrayers.
-         if (NOT pbBetrayed)
-            AND Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
-         {
-            % If safety is on, let them know they need to take it off.
-            Send(who,@MsgSendUser,#message=guildhall_conquer_safety_check);
-
-            return;
          }
 
          piStatus = STATUS_RAIDED;
@@ -688,14 +670,6 @@ messages:
                                     Random(60000,180000));
          }
 
-         % They conquered the guild hall....
-         if NOT (pbBetrayed OR Send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
-         {
-            % Make them an outlaw!
-            Send(who,@MsgSendUser,#message=guildhall_conquer_outlaw);
-            Send(who,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
-         }
-
          return;
       }
     
@@ -746,15 +720,6 @@ messages:
 
       if (NOT Send(Send(SYS, @GetSettings), @GuildHallRaidsEnabled))
          OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {
-         return FALSE;
-      }
-
-      oRaidingGuild = Send(who,@GetGuild);
-      if oRaidingGuild = $
-         OR NOT Send(oRaidingGuild,@IsMature)
-         OR GetTime() < Send(oRaidingGuild,@GetLastGuildhallRaid) + 
-                        Send(Send(SYS, @GetSettings), @GetGuildhallRaidDelay)
       {
          return FALSE;
       }
@@ -815,6 +780,7 @@ messages:
                   Send(First(i),@MsgSendUser,#message_rsc=guildhall_conquered,
                        #parm1=vrName,#parm2=Send(poGuild_owner,@GetDef),
                        #parm3=Send(poGuild_owner,@GetName));
+                  Send(self,@OpenSecretDoor);
                }
             }
          }

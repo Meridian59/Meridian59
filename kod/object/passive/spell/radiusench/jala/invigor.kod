@@ -23,8 +23,24 @@ resources:
       "Requires one diamond and an edible mushroom to cast."
 
    Invigorate_song = song11.mp3
- 
+
+   Invigorate_cast = "You begin to play an invigorating song."
+   Invigorate_starts = "%s begins to play an invigorating song."
+   Invigorate_ends = "The invigorating song played by %s fades away."
+   Invigorate_caster_ends = "Your invigorating song fades."
+   Invigorate_caster_enter = "You feel the tiredness of your muscles diminish."
+   Invigorate_enter = "%s's invigorating song eases the tiredness of your muscles."
+   Invigorate_leave = "You can no longer hear the invigorating notes of %s's song."
+   
 classvars:
+
+   radius_ench_cast = Invigorate_cast
+   radius_ench_starts = Invigorate_starts
+   radius_ench_ends = Invigorate_ends
+   radius_ench_caster_ends = Invigorate_caster_ends
+   radius_ench_caster_enter = Invigorate_caster_enter
+   radius_ench_enter = Invigorate_enter
+   radius_ench_leave = Invigorate_leave
 
    vrName = Invigorate_name_rsc
    vrIcon = Invigorate_icon_rsc
@@ -37,11 +53,12 @@ classvars:
    viMana = 5           % Mana is amount used upon inititiation
    viManaDrain = 1      % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
+   viBaseRange = 12
    
    viSpellExertion = 10      
    viChance_To_Increase = 20
 
-   viHarmful = FALSE
+   viAffectsEveryone = TRUE
 
 properties:
 
@@ -58,12 +75,12 @@ messages:
       return;
    }
 
-   AdjustVigorTime(time=0, iSpellPower=0)
+   AdjustVigorTime(time=0, lRadiusState=0)
    "Reduces time passed in so that vigor regens faster.  Returns reduced time."
    {
       local iTime;
 
-      iTime = (time * (200-iSpellPower)) / 200;
+      iTime = (time * (200-Nth(lRadiusState,2))) / 200;
 
       return iTime;
    }

@@ -1,0 +1,138 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Winds is RadiusEnchantment
+
+%% April 20, 1997 - DSchubert
+%% Reduces aim by Spellpower/2
+%% lasts 60 to 60+spellpower minutes
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   winds_name_rsc = "winds"
+   winds_icon_rsc = iwinds.bgf
+   winds_desc_rsc = \
+      "Summons powerful winds which render ranged attacks more difficult "
+      "for several minutes.  "
+      "Requires elderberries and purple mushrooms to cast."
+   
+   winds_already_enchanted = "Magical winds are already present."
+
+   winds_on = "Violent winds suddenly sweep the area and buffet your limbs."
+   winds_off = "The winds slow and then cease."
+   winds_new_entrant = "Violent winds sweep the area and buffet your limbs."
+   winds_miss_rsc = "The powerful winds snatch your shot away."
+
+   winds_spell_intro = "Faren Level 3: Summons violent winds, which make ranged combat less effective."
+
+   Winds_cast = "Violent winds sweep the area and buffet your limbs."
+   Winds_starts = "%s calls upon the gales of Faren!"
+   Winds_ends = "The winds slow and then cease."
+   Winds_caster_ends = "The winds slow and then cease."
+   Winds_caster_enter = "Violent winds begin to buffet your limbs."
+   Winds_enter = "Violent winds sweep the area and buffet your limbs."
+   Winds_leave = "The winds slow and then cease."
+   
+   winds_sound = fwinds.wav
+
+classvars:
+
+   radius_ench_cast = Winds_cast
+   radius_ench_starts = Winds_starts
+   radius_ench_ends = Winds_ends
+   radius_ench_caster_ends = Winds_caster_ends
+   radius_ench_caster_enter = Winds_caster_enter
+   radius_ench_enter = Winds_enter
+   radius_ench_leave = Winds_leave
+   
+   vrName = winds_name_rsc
+   vrIcon = winds_icon_rsc
+   vrDesc = winds_desc_rsc
+
+   vrSpell_intro = winds_spell_intro
+   
+   viSpell_num = SID_WINDS
+   viMana = 10
+   viSpell_level = 3
+   viSchool = SS_FAREN
+   viChance_To_Increase = 35
+   viBaseRange = 6
+
+   vrSucceed_wav = winds_sound
+
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
+
+   viCasterPersist = TRUE
+   
+properties:
+
+   piOldAreaEnchStyle = TRUE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Elderberry,3],plReagents);
+      plReagents = Cons([&PurpleMushroom,1],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      return random(60000,60000+(iSpellPower*1000));
+   }
+
+   StartSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      If IsClass(who,&User)
+         AND iPower <> 0
+      {
+         Send(who,@AddAim,#points=-(iPower/3));
+      }
+
+      return;
+   }
+   
+   EndSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      If IsClass(who,&User)
+         AND iPower <> 0
+      {
+         Send(who,@AddAim,#points=(iPower/3));
+      }
+      return;
+   }
+
+   TryRuinShot(who=$,iSpellPower=0)
+   "Returns TRUE if it manages to knock down a shot."
+   {
+      local iMissChance;
+      
+      iMissChance = iSpellpower/2 + 10; 
+      iMissChance = bound(iMissChance,25,60);
+      if Random(1,100) < iMissChance
+      {
+         send(who,@MsgSendUser,#message_rsc=winds_miss_rsc);
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

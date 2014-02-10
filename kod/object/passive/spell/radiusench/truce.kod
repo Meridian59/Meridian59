@@ -1,0 +1,110 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Truce is RadiusEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   truce_name_rsc = "truce"
+   truce_icon_rsc = itruce.bgf
+   truce_desc_rsc = \
+      "The spirit of Shal'ille descends upon the area and calms the minds of all present, "
+      "preventing combat for several minutes. Requires emerald and yrxl sap to cast.  "
+      "Requires emerald and yrxl sap to cast."
+
+   truce_unnecessary = "Combat with monsters is already impossible here."
+
+   truce_on = \
+      "A numbing calm settles upon your mind. You find yourself unable to lift a weapon against nature."
+   truce_off = \
+      "The calm that had gripped your mind departs.  You feel ready for battle once more."
+
+   Truce_cast = "A numbing calm settles upon your mind. You find yourself unable to lift a weapon."
+   Truce_starts = "%s calls upon Shal'ille to bring peace to the area."
+   Truce_ends = "The calm that had gripped your mind departs.  You feel ready for battle once more."
+   Truce_caster_ends = "The calm that had gripped your mind departs.  You feel ready for battle once more."
+   Truce_caster_enter = "A numbing calm settles upon your mind. You find yourself unable to lift a weapon."
+   Truce_enter = "A numbing calm settles upon your mind. You find yourself unable to lift a weapon."
+   Truce_leave = "The calm that had gripped your mind departs.  You feel ready for battle once more."
+
+   truce_sound = shalille.wav
+
+classvars:
+
+   radius_ench_cast = Truce_cast
+   radius_ench_starts = Truce_starts
+   radius_ench_ends = Truce_ends
+   radius_ench_caster_ends = Truce_caster_ends
+   radius_ench_caster_enter = Truce_caster_enter
+   radius_ench_enter = Truce_enter
+   radius_ench_leave = Truce_leave
+   
+   vrIcon = truce_icon_rsc
+   vrDesc = truce_desc_rsc
+   vrName = truce_name_rsc
+   vrSucceed_wav = truce_sound
+
+   viSpell_num = SID_TRUCE
+   viSchool = SS_SHALILLE
+   viMana = 20
+   viSpellExertion = 10
+   viSpell_level = 4
+   viChance_To_Increase = 15
+   viBaseRange = 10
+
+   % in seconds, since it works off GetTime()
+   viPostCast_time = 3
+   
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
+   viAffectsNewbies = TRUE
+
+   viCasterPersist = TRUE
+
+properties:
+
+   % Truce does not yet have support for new style.
+   piOldAreaEnchStyle = TRUE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Emerald,1],plReagents);
+      plReagents = Cons([&Yrxlsap,1],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDur;
+
+      % 10-20 seconds at 1 spellpower
+      % 60-120 seconds at 99 spellpower.
+      iDur = (20 + iSpellPower) * 1000;
+      iDur = random(iDur/2, iDur);
+
+      return iDur;
+   }
+
+   SpellBannedInArena()
+   {
+      return TRUE;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

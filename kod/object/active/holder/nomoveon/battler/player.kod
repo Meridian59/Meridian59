@@ -723,6 +723,10 @@ resources:
 
    group_experience_rsc = "You absorb a small amount of the energy released from %s's slaying of the %s."
 
+   player_truced = "Shal'ille's magic compels you to respect the truce."
+   
+   Jig_cannot_attack = "It wouldn't feel right to attack the %s while you two are dancing so well together!"
+   
 classvars:
 
    viHand_space = 2
@@ -3898,6 +3902,33 @@ messages:
          }
       }
 
+      % Truce itself returns TRUE, not counting as an attack.
+      % RadiusTotems send their inherent spell as a spell_obj for AllowPlayerAttack.
+      % Truce will only block actual attacks between two players who are both Truced.
+      if spell_obj <> $
+         AND IsClass(spell_obj,&Truce)
+      {
+         return TRUE;
+      }
+      else
+      {
+         if (Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
+         {
+            if (IsClass(victim,&Monster)
+               OR (IsClass(victim,&User)
+                   AND Send(victim,@IsAffectedByRadiusEnchantment,#byClass=&Truce)))
+               AND actual
+            {
+               if spell_obj = $
+                  AND report
+               {
+                  Send(self,@MsgSendUser,#message_rsc=player_truced);
+               }
+               return FALSE;
+            }
+         }
+      }
+
       % Finally, check status and safety.
       if NOT Send(self,@CheckStatusAndSafety,#victim=victim,#report=report,#actual=actual)
       {
@@ -4119,7 +4150,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, oWinds, oSandstorm;
+      local iRange, lWindsState, lSandstormState;
 
       % Can't target self.
       if what = self
@@ -4192,8 +4223,16 @@ messages:
          }
          else
          {
-            % Tell the monster this is a valid attack.
-            Send(what,@ValidAttack,#who=self);
+            if NOT Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
+            {
+               % Tell the monster this is a valid attack.
+               Send(what,@ValidAttack,#who=self);
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=Jig_cannot_attack,#parm1=Send(what,@GetName));
+               return FALSE;
+            }
          }
       }
 
@@ -4236,17 +4275,17 @@ messages:
       %  Do this after paying the costs so that the arrow is used.
       if use_weapon <> $ AND IsClass(use_weapon,&RangedWeapon)
       {
-         oWinds = Send(SYS,@FindSpellByNum,#num=SID_WINDS);
-         oSandstorm = Send(SYS,@FindSpellByNum,#num=SID_SANDSTORM);
+         lWindsState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Winds);
+         lSandStormState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&SandStorm);
          
-         if Send(poOwner,@IsEnchanted,#what=oWinds)
-            AND Send(oWinds,@WindsRuinShot,#who=self)
+         if lWindsState <> $
+            AND Send(Nth(lWindsState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lWindsState,2))
          {
             return FALSE;
          }
-
-         if Send(poOwner,@IsEnchanted,#what=oSandstorm)
-            AND Send(oSandstorm,@WindsRuinShot,#who=self)
+         
+         if lSandStormState <> $
+            AND Send(Nth(lSandStormState,1),@TryRuinShot,#who=self,#iSpellPower=Nth(lSandStormState,2))
          {
             return FALSE;
          }
@@ -4386,7 +4425,7 @@ messages:
    % This returns the battler's ability to-hit.  Ranges from 1 to 1000
    GetOffense(what = $, stroke_obj=$)
    {
-      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster;
+      local i, oWeapon, iStroke, iProficiency, iAim, iOffense, oMonster, lRadiusState;
 
       oWeapon = $;
 
@@ -4428,6 +4467,18 @@ messages:
       {
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                          #hit_roll=iOffense,#stroke_obj=stroke_obj);
+      }
+      
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
+      }
+      
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Mirth)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
       }
 
       iOffense = iOffense + Send(Send(SYS,@GetParliament),
@@ -4574,7 +4625,7 @@ messages:
    GetDamage(what = $, stroke_obj=$)
    {
       local i, iDamage, oStroke, oWeapon, iStrokeNum, iModBonus, iDamageBonus,
-            oSpell, oMonster;
+            oSpell, oMonster, lRadiusState;
 
       % Morphed?
       oMonster = Send(self,@GetIllusionForm);
@@ -4624,7 +4675,19 @@ messages:
 
          Send(i,@WeaponHitTarget);
       }
-               
+
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+         iDamageBonus = Send(Nth(lRadiusState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+      
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Mirth)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
+         iDamageBonus = Send(Nth(lRadiusState,1),@ModifyDamage,#who=self,#what=what,#damage=iDamageBonus);
+      }
+ 
       iDamageBonus = iDamageBonus + Send(Send(SYS,@GetParliament),
                                          @GetFactionDamageBonus,#who=self);
 
@@ -5848,7 +5911,7 @@ messages:
    CalculateHealthTime()
    "Calculate # of milliseconds until user will gain a health point"
    {
-      local iTime, iMaxHealth, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, iMaxHealth, lRadiusState;
       
       % Faster regen with higher vigor
       iTime = ((200-piVigor)*(200-piVigor))/6 + 1000;
@@ -5860,20 +5923,11 @@ messages:
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
       
-      if poOwner <> $
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Restorate)
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
-         {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Restorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustHealthTime,#time=iTime,
-                            #iSpellPower=iJalaPower);
-            }
-         }
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Restorate);
+         iTime = Send(Nth(lRadiusState,1),@AdjustHealthTime,#time=iTime,#lRadiusState=lRadiusState);
+         return bound(iTime,500,60000);
       }
 
       return bound(iTime,1000,60000);
@@ -5882,7 +5936,7 @@ messages:
    CalculateManaTime()
    "Calculate # of milliseconds until user will gain a mana point"
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower, oSpell;
+      local iTime, lRadiusState, oSpell;
 
       if piMana > piMax_mana
       {
@@ -5899,21 +5953,10 @@ messages:
 
          iTime = bound(iTime,1000,60000);
 
-         if poOwner <> $
+         if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Rejuvenate)
          {
-            lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-            if lJalaInfo <> $
-            {
-               oJalaSpell = Nth(lJalaInfo,2);
-               if IsClass(oJalaSpell,&Rejuvenate)
-               {
-                  iJalaPower = Nth(Nth(lJalaInfo,3),3);
-                  iTime = Send(oJalaSpell,@AdjustManaTime,#time=iTime,
-                               #iSpellPower=iJalaPower);
-               }
-            }
-         
+            lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Rejuvenate);
+            iTime = Send(Nth(lRadiusState,1),@AdjustManaTime,#time=iTime,#lRadiusState=lRadiusState);
             iTime = bound(iTime,500,60000);
          }
 
@@ -8701,11 +8744,6 @@ messages:
 
    StopDancing()
    {
-      if Send(poOwner,@CheckRoomFlag,#Flag=ROOM_JIG)
-      {
-         return;
-      }
-      
       Send(self,@MsgSendUser,#message_rsc=player_stop_dance);
       Send(self,@SetPlayerFlag,#flag=PFLAG2_DANCING,#value=FALSE,#flagset=2);      
       Send(poOwner,@SomethingChanged,#what=self);
@@ -10292,23 +10330,14 @@ messages:
 
    GetRestTime()
    {
-      local iTime, lJalaInfo, oJalaSpell, iJalaPower;
+      local iTime, lRadiusState;
 
       iTime = 1000 + (30* (51-Send(self,@getStamina))); 
 
-      if poOwner <> $
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Invigorate)
       {
-         lJalaInfo = Send(poOwner,@GetJalaInfo);
-
-         if lJalaInfo <> $
-         {
-            oJalaSpell = Nth(lJalaInfo,2);
-            if IsClass(oJalaSpell,&Invigorate)
-            {
-               iJalaPower = Nth(Nth(lJalaInfo,3),3);
-               iTime = Send(oJalaSpell,@AdjustVigorTime,#time=iTime,#iSpellPower=iJalaPower);
-            }
-         }
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Invigorate);
+         iTime = Send(Nth(lRadiusState,1),@AdjustVigorTime,#time=iTime,#lRadiusState=lRadiusState);
       }
       
       return iTime;

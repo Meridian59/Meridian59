@@ -28,9 +28,25 @@ resources:
    Mirth_on = "%s%s's mirthful song lifts your spirits a bit."
 
    Mirth_song = main.mp3
- 
+
+   Mirth_cast = "You begin to play a mirthful song."
+   Mirth_starts = "%s begins to play a mirthful song."
+   Mirth_ends = "The mirthful song played by %s fades away."
+   Mirth_caster_ends = "Your mirthful song fades."
+   Mirth_caster_enter = "Your spirits lift a bit."
+   Mirth_enter = "%s's mirthful song lifts your spirits a bit."
+   Mirth_leave = "You can no longer hear the mirthful notes of %s's song."
+   
 classvars:
 
+   radius_ench_cast = Mirth_cast
+   radius_ench_starts = Mirth_starts
+   radius_ench_ends = Mirth_ends
+   radius_ench_caster_ends = Mirth_caster_ends
+   radius_ench_caster_enter = Mirth_caster_enter
+   radius_ench_enter = Mirth_enter
+   radius_ench_leave = Mirth_leave
+   
    vrName = Mirth_name_rsc
    vrIcon = Mirth_icon_rsc
    vrDesc = Mirth_desc_rsc
@@ -42,16 +58,16 @@ classvars:
    viMana = 2
    viManaDrain = 2
    viDrainTime = 5000
+   viBaseRange = 3
 
    viSpellExertion = 2      
    viChance_To_Increase = 25
 
-   viHarmful = FALSE
+   viAffectsEveryone = TRUE
 
 properties:
 
    prMusic = Mirth_song
-   pbUserEffects = TRUE
       
 messages:
 
@@ -63,85 +79,18 @@ messages:
       return;
    }
 
-   StartEnchantment(who = $)
-   "Starts enchantment effect on one player"
+   StartSpecialEffect(who=$,iPower=0,caster=$)
    {
-      local lState, oCaster, iSpellpower;
-
-      lState = Send(Send(who,@GetOwner),@GetEnchantmentState,#what=self);
-
-      % The caster is the second element of state.
-      oCaster = Nth(lState,2);
-
-      % Our spellpower is in the third element of state.
-      iSpellpower = Nth(lState,3);
-
-      if random(1,100) < iSpellPower
-      {
-         Send(who,@SetAction,#action=UA_HAPPY);
-         Send(who,@MsgSendUser,#message_rsc=Mirth_on,
-              #parm1=Send(oCaster,@GetCapDef),
-              #parm2=Send(oCaster,@GetName));
-         Send(who,@AddAttackModifier,#what=self);       
-      }
-      else
-      {
-         % No frowning during the happy song.
-         if Send(who,@GetAction) = UA_SAD
-         {
-            Send(who,@SetAction,#action=UA_NORMAL);
-         }
-      }
-
+      Send(who,@SetAction,#action=UA_HAPPY);
       propagate;
    }
-
-   StartEnchantmentNewOccupant(who = $, state = $)
-   "Called on new occupants of the enchanted room."
+   
+   EndSpecialEffect(who=$,iPower=0,caster=$)
    {
-      Send(self,@StartEnchantment,#who=who,#state=state);
-
-      return;
-   }
-
-   EndRoomEnchantment(who = $, state = $)
-   "Called when user leaves the room."
-   {
-      Send(self,@RemoveEnchantment,#who=who);
-
-      propagate;
-   }
-
-   RemoveEnchantment(who=$)
-   "Called instead of EndEnchantment when trance is broken"
-   {
-      if IsClass(who,&Player)
+      if Send(who,@GetAction) = UA_HAPPY
       {
-         % We try to remove ourselves from everyone, even though it's possible
-         %  that not everyone was enchanted.
-         Send(who,@RemoveAttackModifier,#what=self);
+         Send(who,@SetAction,#action=UA_NORMAL);
       }
-
-      propagate;
-   }
-
-   StartPeriodicEnchantment(where=$, state=$)
-   {
-      local lActive, i, oObject;
-
-      lActive = Send(where,@GetHolderActive);
-      for i in lActive
-      {
-         oObject = Send(where,@HolderExtractObject,#data=i);
-
-         % Affect NPCs in room.
-         if IsClass(oObject,&Monster)
-            AND (Send(oObject,@GetBehavior) & AI_NPC)
-         {
-            Send(oObject,@ChangeMood,#amount=1);
-         }
-      }
-      
       propagate;
    }
 

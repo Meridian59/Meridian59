@@ -23,9 +23,25 @@ resources:
       "Requires one diamond and a raw, uncut seraphym to cast."
 
    Rejuvenate_song = song04.mp3
- 
+
+   Rejuvenate_cast = "You begin to play an energizing song."
+   Rejuvenate_starts = "%s begins to play an energizing song."
+   Rejuvenate_ends = "The energizing song played by %s fades away."
+   Rejuvenate_caster_ends = "Your energizing song fades."
+   Rejuvenate_caster_enter = "You feel the weariness of your soul diminish."
+   Rejuvenate_enter = "%s's energizing song eases the weariness of your soul."
+   Rejuvenate_leave = "You can no longer hear the energizing notes of %s's song."
+   
 classvars:
 
+   radius_ench_cast = Rejuvenate_cast
+   radius_ench_starts = Rejuvenate_starts
+   radius_ench_ends = Rejuvenate_ends
+   radius_ench_caster_ends = Rejuvenate_caster_ends
+   radius_ench_caster_enter = Rejuvenate_caster_enter
+   radius_ench_enter = Rejuvenate_enter
+   radius_ench_leave = Rejuvenate_leave
+   
    vrName = Rejuvenate_name_rsc
    vrIcon = Rejuvenate_icon_rsc
    vrDesc = Rejuvenate_desc_rsc
@@ -41,7 +57,7 @@ classvars:
    viSpellExertion = 10      
    viChance_To_Increase = 20
 
-   viHarmful = FALSE
+   viAffectsEveryone = TRUE
 
 properties:
 
@@ -58,12 +74,12 @@ messages:
       return;
    }
 
-   AdjustManaTime(time=0, iSpellPower=0)
+   AdjustManaTime(time=0, lRadiusState=0)
    "Reduces time passed in so that mana regens faster.  Returns reduced time."
    {
       local iTime;
 
-      iTime = (time * (200-iSpellPower)) / 200;
+      iTime = (time * (200-Nth(lRadiusState,2))) / 200;
 
       return iTime;
    }

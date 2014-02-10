@@ -490,7 +490,7 @@ messages:
    CanCastHere(who = $, where = $, lTargets = $, iSpellPower = 0,
                bItemCast = FALSE, report = TRUE)
    {
-      local oSpell, lState, iJalaPower, oTarget;
+      local oSpell, lState, lRadiusState, oTarget;
 
       if IsClass(who,&DM)
       {
@@ -505,28 +505,15 @@ messages:
 
       if NOT bItemCast
       {
-         oSpell = Send(SYS,@FindSpellByNum,#num=SID_SPELLBANE);
-         if (Send(where,@IsEnchanted,#what=oSpell))
+         if IsClass(who,&Player)
+            AND Send(who,@IsAffectedByRadiusEnchantment,#byClass=&Spellbane)
          {
-            % The spell's spellpower is the third element of the state, which
-            %  is the third element of Jala info stored by room.
-            iJalaPower = Nth(Nth(Send(where,@GetJalaInfo),3),3);
-
-            % Does Spellbane overpower the spell?
-            % Spellbane always works on monsters that can be silenced
-            if iJalaPower > iSpellPower
-               OR (IsClass(who,&Monster) AND Send(who,@CanBeSilenced))
+            lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Spellbane);
+            if report
             {
-               if report
-               {
-                  % 2nd element in state is the original caster.
-                  lState = Send(where,@GetEnchantmentState,#what=oSpell);
-                  Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,
-                       #parm1=Send(Nth(lState,2),@GetName));
-               }
-         
-               return FALSE;
+               Send(who,@MsgSendUser,#message_rsc=spell_spellbane_stopped,#parm1=Send(Nth(lRadiusState,3),@GetName));
             }
+            return FALSE;
          }
 
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_SILENCE);
@@ -1182,7 +1169,7 @@ messages:
    "figure their success in player.kod."
    {
       local num, iRequisiteStat, iability, lJalaInfo, oJalaSpell, lJalaState,
-      iDistance, oTarget, oRing;
+      iDistance, oTarget, oRing, i;
 
       oRing = Send(who,@FindHolding,#class=&ReagentRing);
 	  
@@ -1206,18 +1193,12 @@ messages:
       num = ((100-iRequisiteStat)*iSpellpower/100) + iRequisiteStat;
 
       % Modify chance to succeed due to Jala's hinder spells.
-      lJalaInfo = Send(Send(who,@GetOwner),@GetJalaInfo);
-
-      if lJalaInfo <> $
+      % Hinder spell effects stack.
+      if Send(who,@IsAffectedByRadiusEnchantment,#byClass=&HinderSpell)
       {
-         % lJalaInfo is of form: [room timer, spell object, state]
-         oJalaSpell = Nth(lJalaInfo,2);
-         if IsClass(oJalaSpell,&HinderSpell)
+         for i in Send(who,@GetRadiusEnchantments)
          {
-            lJalaState = Nth(lJalaInfo,3);
-            % Jala State is of the form: [volume, caster, spellpower]
-            num = Send(oJalaSpell,@GetAlteredChance,#chance=num,#what=self,
-                       #iSpellPower=Nth(lJalaState,3));
+            num = Send(Nth(i,1),@GetAlteredChance,#chance=num,#what=self,#lRadiusState=i);
          }
       }
 
@@ -2081,7 +2062,7 @@ messages:
    {
       local iSpellPower, i, iTerrain, oRoom, oModifierSpell, iAbilityLoss,
             iAbilityGain, iItemModifier, iBase, iPrimaryBonus, iSecondaryBonus,
-            iPowerBonus, iShrines;
+            iPowerBonus, iShrines, lRadiusState;
 
       oRoom = Send(who,@GetOwner);
 
@@ -2217,16 +2198,17 @@ messages:
       iSecondaryBonus = bound(iSecondaryBonus,0,10);
 
       iSpellPower = iPrimaryBonus + iSecondaryBonus + iPowerBonus + iBase;
-           
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_ANTI_MAGIC)
+
+      lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,#byClass=&AntiMagicAura);
+      if lRadiusState <> $
       {
-         oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_ANTIMAGIC_AURA);
-         iAbilityLoss = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
+         iSpellPower = Send(Nth(lRadiusState,1),@ModifySpellpower,#who=who,#oSpell=self,#state=lRadiusState,#iSpellPower=iSpellPower);
+      }
 
-         oModifierSpell = Send(SYS,@FindspellByNum,#num=SID_MANA_CONVERGENCE);
-         iAbilityGain = Send(oModifierSpell,@ModifySpellPower,#oRoom=oRoom,#oSpell=self);
-
-         iSpellPower = (iSpellpower - iAbilityLoss + iAbilityGain);
+      lRadiusState = Send(who,@GetMostPowerfulRadiusEnchantmentState,#byClass=&ManaConvergence);
+      if lRadiusState <> $
+      {
+         iSpellPower = Send(Nth(lRadiusState,1),@ModifySpellpower,#who=who,#oSpell=self,#state=lRadiusState,#iSpellPower=iSpellPower);
       }
 
       % Bound the lower end so that the stuff that follows is truly a bonus.

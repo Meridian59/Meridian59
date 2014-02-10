@@ -6021,6 +6021,7 @@ messages:
             AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
          {
             piLastSafeRoom = Send(poOwner,@GetRoomNum);
+            Send(self,@RechargeAllRods);
          }
 
          piRow = First(Send(poOwner,@GetRoomPos,#what=self));

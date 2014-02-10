@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DetectInvisibleRod is SpellRod
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   DetectInvisibleRod_name_rsc = "rod of detect invisible"
+   DetectInvisibleRod_icon_rsc = wand5.bgf
+
+classvars:
+
+   vrName = DetectInvisibleRod_name_rsc
+   vrIcon = DetectInvisibleRod_icon_rsc
+
+   viGround_group = 2
+   viInventory_group = 1
+
+   viConsumesHits = 3
+
+properties:
+
+   piSpellNum = SID_DETECT_INVISIBLE
+   piSpellpower = 60
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

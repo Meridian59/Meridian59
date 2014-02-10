@@ -223,7 +223,7 @@ classvars:
    % viLevel ranges from 25 to 200 (150 and above is for "boss" mobs)
    %  determines hit points.
    viLevel        = 25
-   viCash         = 0
+   
    % viDifficulty ranges from 1 to 9, increases combat prowess
    viDifficulty   = 0
    viBrain_type   = BRAIN_ORIGINAL
@@ -4092,10 +4092,6 @@ messages:
       return viLevel;
    }
 
-   GetCash()
-   {
-      return viCash;
-   }
    
    GetDifficulty()
    {
@@ -4962,7 +4958,7 @@ messages:
       
          while i <= iNumberItems
          {
-            oTreasure = Send(oTreasure_type,@GenerateTreasure,#level=viLevel,#cash=viCash,
+            oTreasure = Send(oTreasure_type,@GenerateTreasure,#level=viLevel,
                              #who=who,#mob=self,#tokengen=tokengen,
                              #corpse=corpse);
 
@@ -4976,7 +4972,7 @@ messages:
                         AND iSafetyCntr < 5
                   {
                      oTreasure = Send(oTreasure_type,@GenerateTreasure,
-                                      #level=viLevel,#cash=viCash,#who=who,#mob=self,
+                                      #level=viLevel,#who=who,#mob=self,
                                       #tokengen=tokengen,#corpse=corpse);
                      iSafetyCntr = iSafetyCntr + 1;
                   }

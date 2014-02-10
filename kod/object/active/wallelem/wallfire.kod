@@ -104,7 +104,7 @@ messages:
       else
       {
          iDamage = Send(what,@AssessDamage,#what=poCaster,#damage=Random(0,piMaxDamage),
-                        #aspell=ATCK_SPELL_FIRE,#report=FALSE,#report_resistance=FALSE);
+                        #aspell=ATCK_SPELL_ALL+ATCK_SPELL_FIRE,#report=FALSE,#report_resistance=FALSE);
       }
 
       if iDamage = $

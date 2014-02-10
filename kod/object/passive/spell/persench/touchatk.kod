@@ -266,18 +266,7 @@ messages:
       % Factor in the person's ability with the spell
       % It's alright if damage here is low.
       % Most players will get proficiency damage from punch or 2*Mysticism.
-      if iAbility < 25
-      {
-         damage = bound(damage,viMin_Damage-3,viMax_damage-3);
-      }
-      if iAbility < 50
-      {
-         damage = bound(damage,viMin_Damage-2,viMax_damage-2);
-      }
-      if iAbility < 75
-      {
-         damage = bound(damage,viMin_Damage-1,viMax_damage-1);
-      }
+      damage = (damage * (iAbility+1)) / 100;
 
       % Myst boosts base damage
       damage = Send(self,@DamageFactors,#damage=damage,#who=who,

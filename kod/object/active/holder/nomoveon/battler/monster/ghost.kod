@@ -14,7 +14,7 @@ constants:
 
    include blakston.khd
 
-   SPELL_CHANCE = 3
+   SPELL_CHANCE = 4
 
 resources:
 
@@ -73,7 +73,7 @@ properties:
    piAnimation = ANIM_NONE
    piGroup = 1
    piDrawfx = DRAWFX_TRANSLUCENT_75 | FLICKERING_YES
-   piMinDamage = 10
+   piMinDamage = 6
    piMaxDamage = 16
    vrDesc = ghost_desc_rsc
 
@@ -158,7 +158,7 @@ messages:
 
       if Random(1,iBase) = 1
          AND send(poOwner,@ReqSomethingAttack,#what=self,#victim=poTarget)
-         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=75)
+         AND send(oSpell,@CanPayMonsterCosts,#who=self,#ltargets=[poTarget],#iSpellPower=60)
          AND send(poowner,@ReqSpellCast,#who=self,#ospell=oSpell,#litems=[poTarget])
          AND send(poOwner,@LineOfSight,#obj1=self,#obj2=poTarget)
       {

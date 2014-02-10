@@ -296,7 +296,20 @@ messages:
             {
                oObj = Create(First(lItem_info),#corpse=corpse);
             }
+            
+			if isClass(oObj,&Money)
 
+            {
+
+               iNumber = 0;
+
+            
+
+               Send(oObj,@AddNumber,#number=iNumber);
+
+			   Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oObj,@GetNumber));
+
+            }
            
             return oObj;
          }

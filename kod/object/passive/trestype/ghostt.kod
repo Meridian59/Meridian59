@@ -31,19 +31,18 @@ messages:
    
    constructed()
    {
-      plTreasure = [ [ &MysticSword, 3 ],
-                     [ &Money, 45],
+      plTreasure = [ [ &MysticSword, 13 ],
                      [ &RingInvisibility, 4],
                      [ &Gauntlet, 3 ],
                      [ &PlateArmor, 3 ],
-                     [ &KnightShield, 3 ],
-                     [ &Scimitar, 2],                     
+                     [ &KnightShield, 13 ],
+                     [ &Scimitar, 17],                     
                      [ &VampireWand, 4],
                      [ &DiscipleRobe, 4],
                      [ &FineLute, 5],
 					 [ &SanctuaryKey, 8],
                      [ &Key, 9 ],
-                     [ &FireWand, 4],
+                     [ &FireWand, 14],
                      [ &HoldWand, 2],
                      [ &TruceScroll, 1]
                    ];

@@ -74,10 +74,10 @@ messages:
    {
       local iDuration;
       
-      iDuration = 1500 + 25 * iSpellPower;
+      iDuration = 1500 + 10 * iSpellPower;
       iDuration = iDuration * 1000;
       
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }
 
 

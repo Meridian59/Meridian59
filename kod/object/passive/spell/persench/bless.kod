@@ -90,7 +90,7 @@ messages:
       % Base duration is 40-640 seconds.
       iDuration = (40 + (iSpellPower*6)) * 1000;
 
-      return Random(iDuration/2,iDuration);
+      return iDuration;
    }
 
    EndEnchantment(who=$, report=TRUE, state=0)

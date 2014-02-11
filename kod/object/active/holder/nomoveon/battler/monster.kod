@@ -5814,6 +5814,7 @@ messages:
       oTreasure = Create(&Money,#corpse=corpse);
       iNumber = Random(viCashmin,viCashmax);
       Send(oTreasure,@AddNumber,#number=iNumber);
+	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTreasure,@GetNumber));
       
       if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
          AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)

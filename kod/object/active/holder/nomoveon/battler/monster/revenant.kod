@@ -50,7 +50,7 @@ classvars:
    vrIcon = revenant_icon_rsc
    vrDesc = revenant_desc_rsc
 
-   viSpeed = SPEED_FAST
+   viSpeed = SPEED_VERY_FAST
    viAttack_type = ATCK_WEAP_SLASH
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
 
@@ -100,8 +100,8 @@ messages:
          viKarma = karmic;
       }
 
-      %% place near target in 3-12 seconds
-      ptPlace = CreateTimer(self,@Place,Random(3000,12000));
+      %% place near target in 3-8 seconds
+      ptPlace = CreateTimer(self,@Place,Random(3000,8000));
       
       propagate;
    }

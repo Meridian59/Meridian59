@@ -68,7 +68,7 @@ resources:
 
    G9_door_sound = down2.wav
 
-   g9_lever_activated = "~BYou feel a sense of forboding as you hear stone gears grinding in the distance."
+   g9_lever_activated = "~BYou feel a sense of foreboding as you hear stone gears grinding in the distance."
    G9_center_lever_desc = "Clearly of ancient design, you somehow doubt that this lever still does what it "
       "was originally enchanted to do, if it does anything at all.  A label along the handle, written in an "
       "archaic but still legible variant of modern Meridian script, reads "

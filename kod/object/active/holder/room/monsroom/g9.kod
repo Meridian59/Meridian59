@@ -68,6 +68,7 @@ resources:
 
    G9_door_sound = down2.wav
 
+   g9_lever_activated = "~BYou feel a sense of forboding as you hear stone gears grinding in the distance."
    G9_center_lever_desc = "Clearly of ancient design, you somehow doubt that this lever still does what it "
       "was originally enchanted to do, if it does anything at all.  A label along the handle, written in an "
       "archaic but still legible variant of modern Meridian script, reads "
@@ -160,9 +161,17 @@ properties:
    ptReactivateLevers = $
 
    plSkellyGenPoints = $
+   plNec_Area = $
 
 messages:
 
+   Constructor()
+   {
+      plNec_Area = [RID_G8, RID_G9, RID_LICH_MAZE, RID_NECROAREA3a, RID_NECROAREA3b, RID_NECROAREA1, RID_NECROAREA2, RID_NECROAREA3, RID_NECROAREA4, RID_NECROAREA5, RID_guildh15];
+	  
+      propagate;
+   }
+   
    Constructed()
    {
       local oMovingSpire;
@@ -558,6 +567,8 @@ messages:
 
    LightningPuzzleSolved()
    {
+      local i, oRoom;
+	  
       if ptResetLightningPuzzle <> $
       {
          DeleteTimer(ptResetLightningPuzzle);
@@ -601,8 +612,24 @@ messages:
 
       Send(poPlatform,@MoveUp);
       Send(poLedgeN,@MoveDown);
-	  
 	  % South ledge no longer moves, as levers activated here - players need time to jump
+	  
+	  for i in plNec_Area
+      {
+         oRoom = Send(SYS,@FindRoomByNum,#num=i);
+
+         if oRoom = $
+         {
+            continue;
+         }
+         
+         Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,#string=g9_lever_activated);
+         
+      }
+      
+	  
+	  
+	  
       
       Send(self,@GenerateSkellies);
 

@@ -5296,7 +5296,7 @@ messages:
          return 0;
       }
 
-      oChance = 10;
+      oChance = 40;
       oGuild = Send(target,@GetGuild);
       
       if poGuild <> $ AND oGuild <> $ 
@@ -5359,14 +5359,14 @@ messages:
       oChance = oChance + bound(20*piHealth/piBase_Max_health,0,20);
 
       % Bind the number to a reasonable amount, then add in the penalty for being a repeat killer.
-      oChance = (bound(oChance,2,30) + (5*piKill_count_decay));
+      oChance = (bound(oChance,40,100) + (5*piKill_count_decay));
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
       if Send(poOwner,@IsEnchanted,#what=oSpell)
       {
          oChance = oChance + (oChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
       }
-      
+      oChance = bound(oChance,40,100);
       return oChance;
    }
 

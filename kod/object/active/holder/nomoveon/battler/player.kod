@@ -1523,7 +1523,7 @@ messages:
          {
             Create(&Revenant,#target=self,#location=poOwner,
                    #level=(((piBase_Max_health*150)/100)+(5*piKill_Count_decay)),
-                   #diff=bound(piBase_Max_health/10,4,10),
+                   #diff=bound(piBase_Max_health/10,4,9),
                    #karmic=-piKarma/100);
          }
       }

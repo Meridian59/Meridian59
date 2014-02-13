@@ -4606,6 +4606,7 @@ messages:
 						{   
 								if Send(oActive,@GetTarget) <> oTarget
 								{		
+										Send(oActive,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
 										Send(oActive, @TargetSwitch, #what=oTarget, #iHatred=100);
 										Send(oActive, @EnterStateChase, #target=oTarget, #actnow=TRUE);
 								}

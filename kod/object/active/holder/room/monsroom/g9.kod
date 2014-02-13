@@ -68,6 +68,7 @@ resources:
 
    G9_door_sound = down2.wav
 
+   g9_lever_activated = "~BYou feel a sense of foreboding as you hear stone gears grinding in the distance."
    G9_center_lever_desc = "Clearly of ancient design, you somehow doubt that this lever still does what it "
       "was originally enchanted to do, if it does anything at all.  A label along the handle, written in an "
       "archaic but still legible variant of modern Meridian script, reads "
@@ -160,9 +161,17 @@ properties:
    ptReactivateLevers = $
 
    plSkellyGenPoints = $
+   plNec_Area = $
 
 messages:
 
+   Constructor()
+   {
+      plNec_Area = [RID_G8, RID_G9, RID_LICH_MAZE, RID_NECROAREA3a, RID_NECROAREA3b, RID_NECROAREA1, RID_NECROAREA2, RID_NECROAREA3, RID_NECROAREA4, RID_NECROAREA5, RID_guildh15];
+	  
+      propagate;
+   }
+   
    Constructed()
    {
       local oMovingSpire;
@@ -270,61 +279,61 @@ messages:
       }
 
       oBook = Create(&BookPedestal,#Name=G9_tome_name,#Text=G9_tome_text);
-      Send(self,@NewHold,#what=oBook,#new_row=1,#new_col=60,
-           #fine_row=48,#fine_col=16,#new_angle=ANGLE_SOUTH_EAST);
+      Send(self,@NewHold,#what=oBook,#new_row=37,#new_col=58,
+           #fine_row=39,#fine_col=2,#new_angle=ANGLE_NORTH_WEST);
 
       poCenterLever = Create(&Lever,#description=G9_center_lever_desc,
                       #icon=G9_lever_icon,#range=2);
-      Send(self,@NewHold,#what=poCenterLever,#new_row=3,#new_col=60,
-           #fine_row=16,#fine_col=16,#new_angle=ANGLE_NORTH);
+      Send(self,@NewHold,#what=poCenterLever,#new_row=35,#new_col=57,
+           #fine_row=1,#fine_col=38,#new_angle=ANGLE_SOUTH);
            
       oLever = Create(&Lever,#description=G9_outer1_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers1 = cons(oLever,plOuterLevers1);
-      Send(self,@NewHold,#what=oLever,#new_row=3,#new_col=59,
-           #fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=oLever,#new_row=35,#new_col=58,
+           #fine_row=46,#fine_col=28,#new_angle=ANGLE_WEST);
 
       oLever = Create(&Lever,#description=G9_outer1_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers1 = cons(oLever,plOuterLevers1);
-      Send(self,@NewHold,#what=oLever,#new_row=2,#new_col=59,
-           #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=oLever,#new_row=36,#new_col=58,
+           #fine_row=14,#fine_col=28,#new_angle=ANGLE_WEST);
 
       oLever = Create(&Lever,#description=G9_outer1_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers1 = cons(oLever,plOuterLevers1);
-      Send(self,@NewHold,#what=oLever,#new_row=2,#new_col=59,
-           #fine_row=0,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=oLever,#new_row=36,#new_col=58,
+           #fine_row=46,#fine_col=28,#new_angle=ANGLE_WEST);
 
       oLever = Create(&Lever,#description=G9_outer1_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers1 = cons(oLever,plOuterLevers1);
-      Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=59,
-           #fine_row=32,#fine_col=48,#new_angle=ANGLE_EAST);
+      Send(self,@NewHold,#what=oLever,#new_row=37,#new_col=58,
+           #fine_row=14,#fine_col=28,#new_angle=ANGLE_WEST);
            
       oLever = Create(&Lever,#description=G9_outer2_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers2 = cons(oLever,plOuterLevers2);
-      Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=60,
-           #fine_row=16,#fine_col=0,#new_angle=ANGLE_SOUTH);           
+      Send(self,@NewHold,#what=oLever,#new_row=38,#new_col=57,
+           #fine_row=3,#fine_col=45,#new_angle=ANGLE_NORTH);           
 
       oLever = Create(&Lever,#description=G9_outer2_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers2 = cons(oLever,plOuterLevers2);
-      Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=60,
-           #fine_row=16,#fine_col=32,#new_angle=ANGLE_SOUTH);           
+      Send(self,@NewHold,#what=oLever,#new_row=38,#new_col=57,
+           #fine_row=3,#fine_col=13,#new_angle=ANGLE_NORTH);           
 
       oLever = Create(&Lever,#description=G9_outer2_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers2 = cons(oLever,plOuterLevers2);
-      Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=61,
-           #fine_row=16,#fine_col=0,#new_angle=ANGLE_SOUTH);           
+      Send(self,@NewHold,#what=oLever,#new_row=38,#new_col=56,
+           #fine_row=3,#fine_col=45,#new_angle=ANGLE_NORTH);           
 
       oLever = Create(&Lever,#description=G9_outer2_lever_desc,
                       #icon=G9_lever_icon,#range=2);
       plOuterLevers2 = cons(oLever,plOuterLevers2);
-      Send(self,@NewHold,#what=oLever,#new_row=1,#new_col=61,
-           #fine_row=16,#fine_col=32,#new_angle=ANGLE_SOUTH);
+      Send(self,@NewHold,#what=oLever,#new_row=38,#new_col=56,
+           #fine_row=3,#fine_col=13,#new_angle=ANGLE_NORTH);
       
       propagate;
    }
@@ -541,8 +550,9 @@ messages:
       Send(Nth(plOuterSpires,4),@MoveDown);
       Send(poPlatform,@MoveDown);
       Send(poLedgeN,@MoveUp);
-      Send(poLedgeS,@MoveDown);
-
+      
+	  % South ledge no longer moves, as levers activated here - players need time to jump
+	  
       if ptReactivateLevers <> $
       {
          DeleteTimer(ptReactivateLevers);
@@ -557,6 +567,8 @@ messages:
 
    LightningPuzzleSolved()
    {
+      local i, oRoom;
+	  
       if ptResetLightningPuzzle <> $
       {
          DeleteTimer(ptResetLightningPuzzle);
@@ -600,8 +612,25 @@ messages:
 
       Send(poPlatform,@MoveUp);
       Send(poLedgeN,@MoveDown);
-      Send(poLedgeS,@MoveUp);
+	  % South ledge no longer moves, as levers activated here - players need time to jump
+	  
+	  for i in plNec_Area
+      {
+         oRoom = Send(SYS,@FindRoomByNum,#num=i);
 
+         if oRoom = $
+         {
+            continue;
+         }
+         
+         Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#what=self,#string=g9_lever_activated);
+         
+      }
+      
+	  
+	  
+	  
+      
       Send(self,@GenerateSkellies);
 
       % 1 out of 100 chance to randomize the levers after the puzzle is solved.

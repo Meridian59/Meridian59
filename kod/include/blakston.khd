@@ -1499,6 +1499,7 @@
    SPEED_SLOW          = 8
    SPEED_AVERAGE       = 12
    SPEED_FAST          = 16
+   SPEED_FASTER        = 18
    SPEED_VERY_FAST     = 20
 
    % Flags indicating enchantments

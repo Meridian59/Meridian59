@@ -95,12 +95,12 @@ messages:
    {
       local iDuration;
 
-      % 2 - 5.3 minutes max.
-      iDuration = 120 + (2 * iSpellPower);
+      % 2 - 8.6 minutes max.
+      iDuration = 120 + (4 * iSpellPower);
       % Convert to ms.
       iDuration = iDuration * 1000;
       
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }   
 
    OfferToNewCharacters()

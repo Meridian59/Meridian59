@@ -62,7 +62,7 @@ messages:
       return;
    }
 
-   GetStateValue(iSpellpower=$)
+   GetStateValue(iSpellPower=$)
    {
       local ifactor;    
 
@@ -71,17 +71,16 @@ messages:
       return iFactor;
    }
   
-   GetDuration(iSpellpower = 0)
+   GetDuration(iSpellPower = 0)
    {
       local iDuration;
 
       % 5 - 15 minutes max
-      iDuration = 300 + (100 * 6);
+      iDuration = 300 + (6 * iSpellPower);
       % Convert to ms.
       iDuration = iDuration * 1000;
 
-      % randomly choose between max and half-max
-      return random(iDuration/2,iDuration);     
+      return iDuration;     
    }
 
    OfferToNewCharacters()

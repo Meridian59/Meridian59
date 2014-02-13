@@ -80,7 +80,7 @@ messages:
       iDuration = 300 + (iSpellpower * 6);
       iDuration = iDuration * 1000;
       
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }
 
    EndEnchantment( who = $, state = 0, report = TRUE )

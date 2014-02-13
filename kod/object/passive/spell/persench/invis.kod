@@ -98,7 +98,7 @@ messages:
       iDuration = 20 + (iSpellPower*2);
       iDuration = iDuration * 1000;
 
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }
 
    GetStateValue(iSpellpower=$)

@@ -102,8 +102,8 @@ messages:
    GetDuration(iSpellpower = 0)
    {
       local iDuration;
-      iDuration = (300 + 33*iSpellPower) * 1000;    %%% 5-20 minutes
-      return random(iDuration/2,iDuration);
+      iDuration = (116 + 4*iSpellPower) * 1000;    %%% 2-8.5 minutes
+      return iDuration;
    }
    
 

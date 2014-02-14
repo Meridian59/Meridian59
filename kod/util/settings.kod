@@ -176,6 +176,9 @@ properties:
 
    % If enabled, logoff penalties do not rise exponentially, and instead remain flat
    pbFlatPenalties = TRUE
+   
+   % Revenant speed setting
+   piRevSpeed = 18
 
 messages:
 
@@ -436,6 +439,11 @@ messages:
    GetResistRingLoseDurability()
    {
       return piResistRingLoseDurability;
+   }
+
+   GetRevenantSpeed()
+   {
+      return piRevSpeed;
    }
 
 end

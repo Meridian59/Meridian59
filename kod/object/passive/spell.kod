@@ -626,9 +626,11 @@ messages:
    CanPayReagents(who = $, lTargets = $, iSpellPower = 0)
    {
       local lReagent, cReagentClass, iNumNeeded, bFound, lItems, lLists,
-            oUserObject, iNum, oOwner, oSpell, oRing;
-
+            oUserObject, iNum, oOwner, oSpell, oRing, oRoom;
+      
+      oRoom = Send(who,@GetOwner);
       if Send(who,@PlayerIsImmortal)
+         OR Send(oRoom,@NoReagents)
       {
          return TRUE;
       }

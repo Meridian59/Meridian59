@@ -275,6 +275,9 @@ properties:
    % A list of players building together
    plBuilderGroup = $
 
+   % Flag for reagent use. If set to true, no reagent use in room
+   pbNoreagents = FALSE
+   
 messages:
 
    Constructor()
@@ -4124,5 +4127,10 @@ messages:
       return;
    }
 
+   NoReagents()
+   {
+      return pbNoReagents;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

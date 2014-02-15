@@ -19,8 +19,6 @@
 #define MAX_CODERUN 4   // Max # of consecutive color codes you're allowed to say
 #define MAX_CODES  20   // Max # of color codes you're allowed to say through a message
 
-HWND hWhoDlg = NULL;
-
 /* Users who are currently logged on -- list of objects */
 list_type current_users = NULL;  
 
@@ -84,17 +82,8 @@ void FreeCurrentUsers(void)
 */
 void UserWho(void)
 {
-   /* If dialog is not open, create it; else raise it to top*/
-   if (hWhoDlg == NULL)
-   {
-      hWhoDlg = CreateDialogParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
-      WhoDialogProc, (LPARAM) current_users);
-   }
-   else
-   {
-      ShowWindow(hWhoDlg, SW_SHOWNORMAL);
-      SetFocus(hWhoDlg);
-   }
+	DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_WHO), hMain,
+		WhoDialogProc, (LPARAM) current_users);
 }
 
 /************************************************************************/
@@ -184,17 +173,4 @@ BOOL FilterSayMessage(char *message)
 	*d = '\0';
 	
 	return TRUE;
-}
-
-/************************************************************************/
-/*
-* WhoClose:  Close the Who dialog box
-*/
-void WhoClose()
-{
-   if (hWhoDlg != NULL)
-      {
-      DestroyWindow(hWhoDlg);
-      hWhoDlg = NULL;
-      }
 }

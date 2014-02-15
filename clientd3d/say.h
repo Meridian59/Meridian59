@@ -18,7 +18,6 @@ void RemoveCurrentUser(ID user_id);
 void FreeCurrentUsers(void);
 void UserYell(void);
 void UserWho(void);
-void WhoClose(void);
 
 M59EXPORT BOOL FilterSayMessage(char *message);
 

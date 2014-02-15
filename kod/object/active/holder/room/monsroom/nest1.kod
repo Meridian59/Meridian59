@@ -47,8 +47,8 @@ properties:
 
    piBaseLight = LIGHT_DARK
    
-   piMonster_Count_Max = 10
-   piGen_time = 20000
+   piMonster_Count_Max = 20
+   piGen_time = 10000
    piGen_percent = 60
 
    ptQueen_gen = $
@@ -57,7 +57,7 @@ messages:
 
    Constructed()
    {
-      plMonsters = [ [&SpiderBaby, 80], [&Spider, 20] ];
+      plMonsters = [ [&SpiderBaby, 20], [&Spider, 80] ];
 
       plGenerators = [ [8, 22], [27, 22], [22, 19], [19, 20], [31, 15],
                        [36, 11], [30, 2], [35, 19], [19, 25], [15, 24],

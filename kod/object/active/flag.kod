@@ -825,8 +825,6 @@ messages:
          return;
       }
 
-      if not send(poOwner,@IsMonsterCountBelowMax) { return; }
-
       oTroop = create(oTroop);
 
       iGenRow = (send(self,@GetRow) + random(-1,1));

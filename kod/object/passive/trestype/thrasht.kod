@@ -31,9 +31,8 @@ messages:
       plTreasure = [ [ &BlueDragonScale, 18],
                      [ &DarkAngelFeather, 18],
                      [ &PurpleMushroom, 16],
-                     [ &InkyCap, 11],
-                     [ &NightVisionPotion, 5],
-                     [ &Money, 23],
+                     [ &InkyCap, 14],
+                     [ &NightVisionPotion, 25],
                      [ &BerserkerRing, 5],
                      [ &MysticSword, 4]
                    ];

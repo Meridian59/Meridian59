@@ -29,9 +29,8 @@ messages:
    constructed()
    {
       plTreasure = [ [ &Longbow, 5 ],
-                     [ &BattleBow, 5 ],
-                     [ &CyanMushroom, 40],
-                     [ &Money, 14],
+                     [ &BattleBow, 15 ],
+                     [ &CyanMushroom, 44],
                      [ &PolishedSeraphym, 10],
                      [ &FireSand, 10],
                      [ &Yrxlsap, 8],

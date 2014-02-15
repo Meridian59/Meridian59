@@ -223,6 +223,8 @@ classvars:
    % viLevel ranges from 25 to 200 (150 and above is for "boss" mobs)
    %  determines hit points.
    viLevel        = 25
+   viCashmin = 1
+   viCashmax = 10
    % viDifficulty ranges from 1 to 9, increases combat prowess
    viDifficulty   = 0
    viBrain_type   = BRAIN_ORIGINAL
@@ -3096,8 +3098,9 @@ messages:
               #killing_player=what,#corpse=oBody );
          
          Send(self,@CreateTreasure,#who=what,#corpse=oBody);
-
-         % Delete here so we don't accidentally "kill" then delete system
+         Send(self,@CreateCash,#who=what,#corpse=oBody);
+         
+		 % Delete here so we don't accidentally "kill" then delete system
          %  template monsters.
          Send(self,@Delete);
       }
@@ -4091,6 +4094,7 @@ messages:
       return viLevel;
    }
 
+   
    GetDifficulty()
    {
       return viDifficulty;
@@ -5801,6 +5805,28 @@ messages:
    GetProjectileIcon()
    {
       return;
+   }
+   
+   CreateCash(who=$,corpse=$)
+   {
+      local oTreasure, iNumber;
+
+      oTreasure = Create(&Money,#corpse=corpse);
+      iNumber = Random(viCashmin,viCashmax);
+      Send(oTreasure,@AddNumber,#number=iNumber);
+	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTreasure,@GetNumber));
+      
+      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+      {
+         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+      }
+      else
+      {
+         Send(oTreasure,@Delete);
+      }
+   
+      propagate;
    }
 
 

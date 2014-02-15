@@ -1282,6 +1282,14 @@ messages:
          return FALSE;
       }
 
+      if IsClass(what,&Monster)
+         AND NOT IsClass(what,&HunterTroop)
+         AND (IsClass(victim,&User)
+              AND Send(victim,@IsAffectedByRadiusEnchantment,#byClass=&Truce))
+      {
+         return FALSE;
+      }
+
       if (piRoom_flags & ROOM_NO_COMBAT)
       {
          if report
@@ -1739,12 +1747,6 @@ messages:
          {
             return FALSE;
          }
-
-         if IsClass(what,&Monster)
-            AND piRoom_Flags & ROOM_JIG
-         {
-            return FALSE;
-         }
       }
 
       return TRUE;
@@ -2042,23 +2044,11 @@ messages:
 
    ReqSomethingUse(what = $, use_item = $)
    {
-      if piRoom_Flags & ROOM_JIG
-      {
-         Send(what,@MsgSendUser,#message_rsc=no_use_jig);
-
-         return FALSE;
-      }
-
       propagate;
    }
 
    ReqSomethingApply(what = $, use_item = $,apply_on=$)
    {
-      if piRoom_Flags & ROOM_JIG
-      {
-         return FALSE;
-      }
-
       propagate;
    }
 

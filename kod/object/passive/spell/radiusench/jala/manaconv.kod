@@ -26,9 +26,25 @@ resources:
 
    ManaConvergence_on = "The flow of magic in this place suddenly becomes stronger."
    ManaConvergence_new_occupant = "You can feel a strong flow of magic in this place."
- 
+
+   Mana_Convergence_cast = "You begin to play a charged song of empowerment."
+   Mana_Convergence_starts = "%s begins to play a charged song of empowerment."
+   Mana_Convergence_ends = "The charged song played by %s fades away."
+   Mana_Convergence_caster_ends = "Your song of empowerment fades."
+   Mana_Convergence_caster_enter = "The flow of magic in this place suddenly becomes stronger."
+   Mana_Convergence_enter = "The flow of magic in this place suddenly becomes stronger."
+   Mana_Convergence_leave = "The empowered crackling of energy in the air around you fades."
+
 classvars:
 
+   radius_ench_cast = Mana_Convergence_cast
+   radius_ench_starts = Mana_Convergence_starts
+   radius_ench_ends = Mana_Convergence_ends
+   radius_ench_caster_ends = Mana_Convergence_caster_ends
+   radius_ench_caster_enter = Mana_Convergence_caster_enter
+   radius_ench_enter = Mana_Convergence_enter
+   radius_ench_leave = Mana_Convergence_leave
+   
    vrName = ManaConvergence_name_rsc
    vrIcon = ManaConvergence_icon_rsc
    vrDesc = ManaConvergence_desc_rsc
@@ -41,11 +57,14 @@ classvars:
    viSchool = SS_JALA
    viSpell_level = 5
 
-   viHarmful = FALSE
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
 
 properties:
 
    prMusic = ManaConvergence_song
+
+   piOldAreaEnchStyle = TRUE
       
 messages:
 
@@ -57,61 +76,20 @@ messages:
       return;
    }
 
-   CastSpell( who = $, iSpellPower = 0 )
-   "Initiation point for the spell."
+   ModifySpellPower(who=$,oSpell=$,state=$,iSpellPower=0)
    {
-      local oRoom;
-
-      oRoom = Send(who,@GetOwner);
-      
-      % global effects of the enchantment
-      Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=ManaConvergence_on,#what=self);
-      
-      propagate;
-   }
-
-   BuildState(thisVolume=0,who=$,iSpellPower=0)
-   {
-      return [thisVolume,who,((iSpellPower/2)+25)];
-   }
-
-   StartEnchantmentNewOccupant( who = $ )
-   "Called on new occupants of the enchanted room."
-   {
-      Send(who,@MsgSendUser,#message_rsc=ManaConvergence_new_occupant);
-
-      return;
-   }
-
-   AffectsSpellPower()
-   {
-      return TRUE;
-   }
-
-   ModifySpellPower(oRoom = $, oSpell = $)
-   {
-      local iChange;
-
-      iChange = 0;
-
-      if oRoom <> $
+      if IsClass(oSpell,&AntiMagicAura)
       {
-         iChange = send(oRoom,@GetEnchantedState,#what=self);
-         if iChange <> $
-         {
-            iChange = nth(iChange,3);
-         }
+         return iSpellPower;
+      }
+      
+      if state = $
+      {
+         return iSpellPower;
       }
 
-      % Spell won't affect Anti-Magic Aura
-      if iChange = $
-         OR IsClass(oSpell,&AntiMagicAura)
-      {
-         iChange = 0;
-      }
-
-      % This is added to spell power in spell.kod
-      return iChange;
+      % Add Mana Convergence's power to spells
+      return iSpellPower + Nth(state,2);
    }
 
 

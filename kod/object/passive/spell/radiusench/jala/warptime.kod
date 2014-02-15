@@ -1,0 +1,81 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WarpTime is Jala
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   WarpTime_name_rsc = "warp time"
+   WarpTime_icon_rsc = iwarptim.bgf
+   WarpTime_desc_rsc = \
+      "The words of this song form an enchantment which increases the time "
+      "that a spellcaster must hold trance to cast a spell."
+   WarpTime_StartEnchantment = \
+      "A woozy feeling passes through your head, slowing your mental spell preparations, "
+      "your thoughts dripping like honey through your brain."
+   WarpTime_RemoveEnchantment = \
+      "A rushing sensation passes through your head, speeding your mental spell preparations "
+      "back to normal."
+
+   Warptime_song = jala4.mp3
+
+   Warp_Time_cast = "You begin to play a woozy, drawn out song."
+   Warp_Time_starts = "%s begins to play a woozy, drawn out song."
+   Warp_Time_ends = "The woozy, drawn out song played by %s fades away."
+   Warp_Time_caster_ends = "Your woozy, drawn out song fades."
+   Warp_Time_caster_enter = "Your woozy song seems to slow time around you."
+   Warp_Time_enter = "The song sung by %s fills your head with a woozy feeling."
+   Warp_Time_leave = "You can no longer hear the eerily slow notes of %s's song."
+
+classvars:
+
+   radius_ench_cast = Warp_Time_cast
+   radius_ench_starts = Warp_Time_starts
+   radius_ench_ends = Warp_Time_ends
+   radius_ench_caster_ends = Warp_Time_caster_ends
+   radius_ench_caster_enter = Warp_Time_caster_enter
+   radius_ench_enter = Warp_Time_enter
+   radius_ench_leave = Warp_Time_leave
+   
+   vrName = WarpTime_name_rsc
+   vrIcon = WarpTime_icon_rsc
+   vrDesc = WarpTime_desc_rsc
+
+   viMana = 5          % Mana is amount used upon inititiation
+   viManaDrain = 5     % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
+   viSpell_Exertion = 0
+   viSpell_num = SID_WARP_TIME
+   viBaseRange = 20
+
+   viSchool = SS_JALA
+   viSpell_level = 2
+
+   viAffectsEveryone = TRUE
+
+properties:
+
+   prMusic= warptime_song
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

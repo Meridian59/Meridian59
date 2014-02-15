@@ -8,53 +8,52 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-HinderSpell is Jala
+Conciliation is HinderSpell
 
 constants:
 
 	include blakston.khd
 
-
 resources:
 
+   Conciliation_name_rsc = "conciliation"
+   Conciliation_icon_rsc = iconcil.bgf
+   Conciliation_desc_rsc = \
+      "This song hinders the casting of the spells the warrior god Kraanan the Fist.  "
+      "A ruby and some elderberries are required to begin performing this song."
+
+   Conciliation_song = neutfor.mp3
+ 
 classvars:
+
+   vrName = Conciliation_name_rsc
+   vrIcon = Conciliation_icon_rsc
+   vrDesc = Conciliation_desc_rsc
 
    viMana = 5          % Mana is amount used upon inititiation
    viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
    viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
-
-   viChance_To_Increase = 10
+   viSpell_num = SID_CONCILIATION
 
    viSchool = SS_JALA
+   viSpell_level = 2
 
-   vbCanNewbieSing = FALSE     % Newbies cannot use this song
-   viHarmful = TRUE
-
-   viHinderedSchool = SS_JALA  % What school does this song hinder?
-
-   vbCastable_in_HappyLand = FALSE
+   viHinderedSchool = SS_KRAANAN
 
 properties:
 
-   pbUserEffects = TRUE
-      
+   prMusic = Conciliation_song
+
 messages:
 
-   GetAlteredChance(chance = 0, what = $, iSpellPower = 0)
+   ResetReagents()
    {
-      local altChance;
-   
-      if what = $ OR send(what,@GetSchool) <> viHinderedSchool
-      {
-         return chance;
-      }
+      plReagents = $;
+      plReagents = Cons([&Ruby,1],plReagents);
+      plReagents = Cons([&Elderberry,1],plReagents);
 
-      altChance = chance - random(iSpellPower/2,(iSpellPower*2)/3);
-      
-      % Don't worry about bounding, that's done the level above us.
-      return altChance;
+      return;
    }
-
 
 end
 

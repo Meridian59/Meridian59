@@ -124,19 +124,27 @@ messages:
          {
                 return true;
          }
-         if(StringEqual("Long Sword",sWeapon) AND iSpellPercent >=50)
+		 if(StringEqual("Axe",sWeapon) AND iSpellPercent >= 45)
+         {
+                return true;
+         }
+         if(StringEqual("Long Sword",sWeapon) AND iSpellPercent >=45)
          {
                 return true;
          }
          if(StringEqual("Scimitar",sWeapon) AND iSpellPercent >= 55)
          {
                 return true;
-         }
-         if(StringEqual("Mystic Sword",sWeapon) AND iSpellPercent >= 95)
+         }     
+		 if(StringEqual("Mystic Sword",sWeapon) AND iSpellPercent >= 95)
          {
                 return true;
          }
-         if(StringEqual("Battle Bow",sWeapon) AND iSpellPercent >= 99)
+		 if(StringEqual("Long Bow",sWeapon) AND iSpellPercent >= 98)
+         {
+                return true;
+         }
+         if(StringEqual("Battle Bow",sWeapon) AND iSpellPercent >= 98)
          {
                 return true;
          }

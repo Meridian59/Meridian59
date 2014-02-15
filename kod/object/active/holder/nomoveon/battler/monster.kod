@@ -1418,10 +1418,8 @@ messages:
       }
       
       % Jig prevents combat between players and monsters.
-      % Royal hunters are not stopped by this.
       if IsClass(what,&Player)
          AND Send(what,@IsAffectedByRadiusEnchantment,#byClass=&Jig)
-         AND NOT IsClass(self,&HunterTroop)
       {
          return FALSE;
       }

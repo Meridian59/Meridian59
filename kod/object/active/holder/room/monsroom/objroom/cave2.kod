@@ -41,7 +41,7 @@ properties:
 
    piOutside_factor = OUTDOORS_2
 
-   piGen_time = 45000
+   piGen_time = 35000
    piGen_percent = 80
 
    piGen_Object_Time = 1200000

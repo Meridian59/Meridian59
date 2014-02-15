@@ -21,7 +21,7 @@ resources:
    reveal_desc_rsc = \
       "Strips away all hidden properties of an item, allowing "
       "anyone to see its special abilities.  "
-      "Requires a number of perfect orc teeth to cast."
+      "Requires ten emeralds to cast."
 
    reveal_cant = "You can't seem to focus on %s%s."
    reveal_working = "You concentrate on %s%s, and gradually its secrets become plain for all to see!"
@@ -40,7 +40,7 @@ classvars:
    viMana = 30
    viSpellExertion = 20
    viChance_to_increase = 30
-   viCast_time = 30000
+   viCast_time = 15000
 
    vrSucceed_wav = reveal_sound
 
@@ -52,7 +52,8 @@ messages:
 
    ResetReagents()
    {
-      plReagents = Cons([&OrcTooth,3],plReagents);
+      plReagents = $;
+      plReagents = Cons([&Emerald,10],plReagents);
       
       return;
    }

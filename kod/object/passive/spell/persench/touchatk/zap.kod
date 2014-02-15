@@ -90,19 +90,5 @@ messages:
      return;
   }
 
-   PlayerWasHitMsg(who=$,attacker=$,damage=$)
-   "The stroke may choose it's own damage give or recieve message.  Otherwise"
-   "player.kod will just choose a default - which is true for most weapon-based"
-   "combat strokes (but not true for most punch strokes or touch spells."
-   {
-      if vrPlayer_was_hit = $
-        { return FALSE; }
-      send(who,@msgsenduser,#message_rsc=vrPlayer_was_hit,
-           #parm1=send(attacker,@getdef),#parm2=send(attacker,@getname));
-
-      return TRUE;
-   }
-
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

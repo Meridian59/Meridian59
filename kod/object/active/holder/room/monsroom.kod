@@ -23,7 +23,7 @@ classvars:
    
 properties:
 
-   piGen_Time = 20000
+   piGen_Time = 15000
    ptGen = $
 
    ptOkay_To_Load = $

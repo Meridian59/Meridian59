@@ -77,7 +77,8 @@ classvars:
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
    viAttributes = MOB_RECEIVE
    viGender = GENDER_FEMALE
-
+   viCashmin = 725
+   viCashmax = 2000
    viWimpy = 2
 
    vrSound_hit = DragonFlyQueen_sound_hit

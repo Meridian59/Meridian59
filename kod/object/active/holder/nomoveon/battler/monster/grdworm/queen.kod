@@ -49,7 +49,8 @@ classvars:
    viKarma = -50
    viDefault_behavior = AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SINGLEMINDED
    viGender = GENDER_FEMALE
-
+   viCashmin = 650
+   viCashmax = 2000
    viTrailLength = 4
    vbTrailLarge = TRUE
 

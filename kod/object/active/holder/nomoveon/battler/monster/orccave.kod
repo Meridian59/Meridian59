@@ -50,7 +50,8 @@ classvars:
    viDifficulty = 7
    viKarma = -55
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
-
+   viCashmin = 400
+   viCashmax = 1200
    viWimpy = 4
 
    vrSound_hit = CaveOrc_sound_hit

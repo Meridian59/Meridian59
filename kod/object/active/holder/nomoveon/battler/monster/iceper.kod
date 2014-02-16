@@ -54,7 +54,8 @@ classvars:
    viLevel = 75
    viDifficulty = 5
    viKarma = -70
-
+   viCashmin = 0
+   viCashmax = 0
    vrSound_hit = iceperson_sound_hit
    vrSound_miss = iceperson_sound_miss
    vrSound_aware = iceperson_sound_aware

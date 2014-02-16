@@ -51,7 +51,8 @@ classvars:
    viLevel = 1
    viDifficulty = 9
    viKarma = 0
-
+   viCashmin = 0
+   viCashmax = 0
    vrSound_hit = EvilTwin_sound_hit
    vrSound_miss = EvilTwin_sound_miss
    vrSound_aware = EvilTwin_sound_aware

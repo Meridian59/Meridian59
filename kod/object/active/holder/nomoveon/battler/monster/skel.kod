@@ -40,7 +40,9 @@ classvars:
    vrDesc = skeleton_desc_rsc
    vrDead_icon = skeleton_dead_icon_rsc
    vrDead_name = skeleton_dead_name_rsc
-
+   
+   viCashmin = 375
+   viCashmax = 1100
    viTreasure_type = TID_TOUGH
    viSpeed = SPEED_AVERAGE
    viAttack_type = ATCK_WEAP_THRUST

@@ -44,7 +44,8 @@ classvars:
    viLevel = 60
    viDifficulty = 5
    viKarma = -25
-
+   viCashmin = 0
+   viCashmax = 0
 properties:
 
    piAnimation = ANIM_NONE

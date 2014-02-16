@@ -71,7 +71,8 @@ classvars:
    viDifficulty = 7
    viKarma = -60
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
-
+   viCashmin = 400
+   viCashmax = 1200
    viWimpy = 3
 
    vrSound_hit = orc_sound_hit

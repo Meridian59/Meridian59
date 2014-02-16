@@ -12961,7 +12961,11 @@ messages:
 			  if Send(i,@GetTarget) = $
 			  {			     
 				 Send(i,@ResetBehaviorFlags);
-			     Send(i,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+				 send(i,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+			     Send(i,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
+				 Send(i,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
+			     Send(i,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
+				 debug("RETURN");
 			  }
 		   }
 		   CreateTimer(self,@MinionControlCheck,2000);

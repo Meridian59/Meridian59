@@ -21,7 +21,7 @@ resources:
    healWand_desc_rsc = "This rod is almost comically decorated by obviously fake gems.   "
        "Still, the rod hums nearly inaudibly, and when you put your hand on it, it is "
        "warm to the touch."
-   healWand_success_rsc = "The rod pulses once in your hand, and you feel better."
+   healWand_success_rsc = "The rod pulses once in your hand, restoring ~B~g%d~n health."
 
 classvars:
 
@@ -47,9 +47,15 @@ messages:
    CastSpell()
    "Heals the owner."
    {
-      Send(poOwner,@GainHealthNormal,#amount=Random(piHeal_min, piHeal_max));
+      local amount, amount_healed;
+      
+      amount = Random(piHeal_min, piHeal_max);
+      
+      amount_healed = Send(poOwner,@GainHealthNormal,#amount=amount);
+      Send(poOwner,@MsgSendUser,#message_rsc=healWand_success_rsc,#parm1=amount_healed);
+      Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,#wave_rsc=use_success_wav);
 
-      propagate;
+      return;
    }
 
 end

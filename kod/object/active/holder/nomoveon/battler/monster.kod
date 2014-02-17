@@ -191,7 +191,9 @@ resources:
    autolooted_all = "You loot the corpse clean."
    autolooted_some = "You loot some of the items from your fallen kill."
    autolooted_none = "You find nothing easily lootable on your slain enemy."
-
+   
+   extra_gold = "You have found some extra gold!"
+   
 classvars:
 
    vrKocName = monster_koc_name
@@ -5808,10 +5810,15 @@ messages:
    }
    
    CreateCash(who=$,corpse=$)
-   {
-      local oTreasure, iNumber;
+  {
+      local oTreasure, iNumber, idrop;
 
-      oTreasure = Create(&Money,#corpse=corpse);
+     idrop = Random(1,100);
+
+       
+	 if idrop > 55 
+    { 
+	  oTreasure = Create(&Money,#corpse=corpse);
       iNumber = Random(viCashmin,viCashmax);
       Send(oTreasure,@AddNumber,#number=iNumber);
 	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTreasure,@GetNumber));
@@ -5820,14 +5827,58 @@ messages:
          AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
       {
          Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+		 
+		 
+		 if IsClass(oTreasure,&NumberItem)
+               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
+               AND Send(oTreasure,@GetPos) <> $
+               AND IsClass(who,&User)
+               AND Send(who,@IsAutolooting)
+            {
+               Send(who,@UserGet,#what=oTreasure);
+            }
       }
-      else
+    } 
+    else
+  {	 
+	  if idrop > 85 
+    { 
+	  oTreasure = Create(&Money,#corpse=corpse);
+      iNumber = Random(viCashmin,viCashmax);
+      Send(oTreasure,@AddNumber,#number=iNumber*2);
+	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTreasure,@GetNumber));
+      
+      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
       {
-         Send(oTreasure,@Delete);
-      }
-   
-      propagate;
+         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+		 
+		 
+		 if IsClass(oTreasure,&NumberItem)
+               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
+               AND Send(oTreasure,@GetPos) <> $
+               AND IsClass(who,&User)
+               AND Send(who,@IsAutolooting)
+            {
+               
+			   Send(who,@UserGet,#what=oTreasure);
+            }
+      } 
+	   
+    }
+  	
+    
+	  
    }
+      if idrop > 85
+         AND IsClass(who,&User)
+         AND Send(who,@IsAutolooting)
+	  {
+	  Send(who,@MsgSendUser,#message_rsc=extra_gold);
+	  }
+	  
+	  return;
+  }
 
 
 end

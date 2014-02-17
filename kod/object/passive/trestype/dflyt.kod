@@ -28,9 +28,9 @@ messages:
    constructed()
    {
       plTreasure = [ [ &DragonflyEye, 40 ],
-                     [ &WebMoss, 20 ],
-                     [ &Snack, 10 ],
-                     [ &KriipaClaw, 29 ],
+                     [ &WebMoss, 24 ],
+                     [ &Snack, 1 ],
+                     [ &KriipaClaw, 34 ],
                      [ &Yrxlsap, 1 ]
 		             ];
 

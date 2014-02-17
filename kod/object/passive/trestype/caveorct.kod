@@ -27,7 +27,7 @@ messages:
    
    constructed()
    {
-      plTreasure = [ [ &OrcTooth, 34 ],
+      plTreasure = [ [ &OrcTooth, 39 ],
                      [ &OreChunk, 5 ],
                      [ &Scimitar, 1 ],
                      [ &GoldShield, 1 ],
@@ -35,7 +35,7 @@ messages:
                      [ &Emerald, 10 ],
                      [ &Sapphire, 12 ],
                      [ &Diamond, 12 ],
-                     [ &Ruby, 10 ],
+                     [ &Ruby, 5 ],
                      [ &NeruditeOreChunk, 1 ],
                      [ &FireRing, 3 ],
                      [ &ColdRing, 3 ],

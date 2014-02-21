@@ -25,8 +25,12 @@ resources:
       "Requires the blood of a shaman to cast."
    
    Animate_bad_target = "You can't cast animate on %s%s!"
-   Animate_failed_rsc = "%s's corpse remains inanimate on the gound."
-   Animate_cast_rsc = "%s's corpse pulls itself up off of the ground."
+   Animate_human_cast_rsc ="%s's corpse pulls itself up off the ground."
+   Animate_human_failed_rsc ="%s's corpse remains inanimate on the ground."
+   Animate_mob_failed_rsc = "The %s's remains still lay lifeless and inanimate."
+   Animate_mob_cast_rsc = "The %s's remains come alive and rise up from the ground."
+   Animate_failed_rsc = "The remains are unable to be animated."
+   
 
    Animate_sound = qanimate.wav
 
@@ -76,7 +80,7 @@ messages:
 
       if send(send(first(lTargets),@GetOwner),@SafePlayerAttack)
       {
-         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
+         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc);
 
          return FALSE;
       }
@@ -85,7 +89,7 @@ messages:
          or (send(oRoom,@CountHoldingSummoned) > 
              Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
       {
-         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc,#parm1=send(oTarget,@GetCorpseName));
+         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc);
 
          return FALSE;
       }
@@ -180,22 +184,33 @@ messages:
          }
       }
 
-      iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );
-      send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
-      send(oRisen,@SetSummoned,#value=TRUE);
-      Post(oRisen,@ResetBehaviorFlags);  
+	iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );	  	  	  
+	  
+	% Add this creature to your minion list
+	Send(who,@NewControlledMinion,#minion=oRisen);
+	
+	Send(oRisen,@ResetBehaviorFlags);	
+  
+	Send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+	Send(oRisen,@SetSummoned,#value=TRUE);
+	Send(self,@ModifyMonsterBehavior,#mob=oRisen);
 
-      send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);
-
-      Send(who,@MsgSendUser,#message_rsc=Animate_cast_rsc,#parm1=send(oTarget,@GetCorpseName));
-      
-      post(oTarget,@Delete);
-
-      propagate;
+	Send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);		
+	if Send(oTarget,@WasPlayer)
+	{
+	   Send(who,@MsgSendUser,#message_rsc=Animate_human_cast_rsc,#parm1=send(oTarget,@GetCorpseName));      
+	}
+	else
+	{	   
+	   send(who,@MsgSendUser,#message_rsc=Animate_mob_cast_rsc,#parm1=send(oTarget,@GetName));
+	}
+	
+	post(oTarget,@Delete);
+	propagate;
    }
 
    ModifyMonsterBehavior(mob = $)
-   {
+   {  
       send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
       send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
       send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);

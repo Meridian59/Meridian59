@@ -29,20 +29,6 @@ messages:
 
    GetNewsPermission(what = $)
    {
-      local oCaramo;
-      
-      if poOwner = $
-      {
-         return NEWS_PERMISSION_READ;
-      }
-      
-      oCaramo = send(SYS,@GetCaramo);
-
-      if (what = oCaramo) or (what = send(oCaramo,@GetJusticar) or IsClass(what,&DM))
-      {	 
-   	   return NEWS_PERMISSION_READ_WRITE;
-      }
-
       return NEWS_PERMISSION_READ;
    }
 

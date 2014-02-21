@@ -136,6 +136,9 @@ messages:
             piCast_successes = piCast_successes + 1 ;
             Send(who,@DoCast);      %% window overlay
 
+            % Myst and Int boost base damage
+            iDamage = Send(self,@DamageFactors,#damage=iDamage,#who=who);
+
             % Reduce damage based on spell power.
             iDamage = (iDamage * (50 + (iSpellPower / 2))) / SPELLPOWER_MAXIMUM;
 
@@ -179,6 +182,20 @@ messages:
       %  order.
 
       return;
+   }
+
+   DamageFactors(damage = 0, who = $)
+   {
+      local iDamage, iMysticism, iIntellect;
+
+      % Get dual stats damage bonus.
+      % These difficult to master attack spells require both high mysticism and high intellect
+      %    to reach their full potential.
+      iMysticism = Send(who,@GetMysticism);
+      iIntellect = Send(who,@GetIntellect);
+      iDamage = ((100+bound(((iMysticism+iIntellect)/2)-25,0,40))*damage)/100;
+
+      return iDamage;
    }
 
    GetAttackSpell()

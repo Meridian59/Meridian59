@@ -47,8 +47,8 @@ classvars:
    viSpell_num = SID_SEANCE
    viSchool = SS_SHALILLE
    viSpell_level = 1
-   viMana = 10
-   viSpellExertion = 20
+   viMana = 12
+   viSpellExertion = 5
   
    viFlash = FLASH_GOOD
 

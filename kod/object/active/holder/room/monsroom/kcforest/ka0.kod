@@ -84,12 +84,9 @@ messages:
    Constructed()
    {
       plVentItems1 = [ &Mace,
-                       &RoomKeyCopy,
-                       &Rose,
                        &ForgetPotion,
                        &JewelofFroz,
                        &Gauntlet,
-                       &Helm,
                        &IvyCirclet,
                        &OrcShield,
                        &ChickenSoup,
@@ -129,14 +126,12 @@ messages:
                      &Grapes,
                      &WineGoblet,
                      &Cheese,
-                     &RingofLethargy,
                      &ShortSword,
                      &Scimitar,
                      &NeruditeSword,
                      &MysticSword,
                      &LongSword,
                      &Hammer,
-                     &GoldSword,
                      &Axe,
                      &Longbow,
                      &PlateArmor,
@@ -149,15 +144,6 @@ messages:
                    ];
 
       plHardVentItems = [ &SpiderEgg,
-                          &OrcPitBossHead,
-                          &OneToken,
-                          &TwoToken,
-                          &ThreeToken,
-                          &FourToken,
-                          &FiveToken,
-                          &DukeFlag,
-                          &PrincessFlag,
-                          &RebelFlag,
                           &OrcPitBossHead,
                           &FineLute
                         ];

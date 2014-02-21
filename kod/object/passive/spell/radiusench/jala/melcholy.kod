@@ -1,0 +1,125 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Melancholy is Jala
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Melancholy_name_rsc = "melancholy"
+   Melancholy_icon_rsc = imlnchly.bgf
+   Melancholy_desc_rsc = \
+      "This is a sad song, invoking feelings of loss and sorrow.  It causes "
+      "most people hearing it to experience overwhemling sadness, often "
+      "leading to foul moods.  This music is appropriate for funerals and "
+      "fighting against the forces of good.  "
+      "It requires 1 sapphire to cast."
+
+   Melancholy_on = "%s%s's melancholy song makes your heart feel heavy."
+
+   Melancholy_song = ksong.mp3
+
+   Melancholy_cast = "You begin to play a melancholy song."
+   Melancholy_starts = "%s begins to play a melancholy song."
+   Melancholy_ends = "The melancholy song played by %s fades away."
+   Melancholy_caster_ends = "Your melancholy song fades."
+   Melancholy_caster_enter = "Your heart feels heavy."
+   Melancholy_enter = "%s's melancholy song makes your heart feel heavy."
+   Melancholy_leave = "You can no longer hear the melancholy notes of %s's song."
+   
+classvars:
+
+   radius_ench_cast = Melancholy_cast
+   radius_ench_starts = Melancholy_starts
+   radius_ench_ends = Melancholy_ends
+   radius_ench_caster_ends = Melancholy_caster_ends
+   radius_ench_caster_enter = Melancholy_caster_enter
+   radius_ench_enter = Melancholy_enter
+   radius_ench_leave = Melancholy_leave
+   
+   vrName = Melancholy_name_rsc
+   vrIcon = Melancholy_icon_rsc
+   vrDesc = Melancholy_desc_rsc
+
+   viSpell_num = SID_MELANCHOLY
+   viSchool = SS_JALA
+   viSpell_level = 1
+
+   viMana = 2
+   viManaDrain = 2
+   viDrainTime = 5000
+   viBaseRange = 3
+
+   viSpellExertion = 2      
+   viChance_To_Increase = 25
+
+   viAffectsEveryone = TRUE
+
+properties:
+
+   prMusic = Melancholy_song
+      
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Sapphire,1],plReagents);
+
+      return;
+   }
+
+   StartSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      Send(who,@SetAction,#action=UA_SAD);
+      propagate;
+   }
+   
+   EndSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      if Send(who,@GetAction) = UA_SAD
+      {
+         Send(who,@SetAction,#action=UA_NORMAL);
+      }
+      propagate;
+   }
+
+   % Stuff we handle to be an attack modifier.
+
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {
+      % Only affect the good ones...
+      if Send(what,@GetKarma,#detect=TRUE) > 0
+      {
+         % Give a small bonus
+         return hit_roll + 100;
+      }
+
+      return hit_roll;
+   }
+   
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      % Only affect the good ones...
+      if Send(what,@GetKarma,#detect=TRUE) > 0
+      {
+         % Roughly equal to Killing Fields
+         return damage + Random(1,5);
+      }
+
+      return damage;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

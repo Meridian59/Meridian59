@@ -32,15 +32,14 @@ messages:
    constructed()
    {
       plTreasure = [ [ &Scimitar, 1 ],
-                     [ &BlueDragonScale, 10 ],
+                     [ &BlueDragonScale, 55 ],
                      [ &SilverArrow, 5 ],
                      [ &DarkAngelFeather, 10 ],
                      [ &Circlet, 1 ],
-                     [ &Money, 45 ],
                      [ &Gauntlet, 2 ],
                      [ &SimpleHelm, 1 ],
-                     [ &SanctuaryKey, 5 ],
-                     [ &Key, 5 ],
+                     [ &SanctuaryKey, 1 ],
+                     [ &Key, 1 ],
                      [ &InkyCap, 11 ],
                      [ &IdentifyWand, 1 ],
                      [ &WindScroll, 1 ],

@@ -28,25 +28,20 @@ resources:
 
    BarloqueCourt_sign_desc = \
       "Etched into the sign is the following text:\n\n"
-      "The office of Justicar is very important.  It is the duty of the "
-      "Justicar to give pardons to those who no longer deserve the scorn "
-      "of being an outlaw or a murderer.  The Justicar is elected by the "
-      "people of the land."
+      "By decree of the Council and Princess Kateriina, the position of "
+      "the Justicar has been eliminated due to a long history of excessive corruption. "
       "\n\n"
-      "To vote, buy a ballot from Caramo the royal clerk.  Write the name of "
-      "the person that you wish to vote for on the ballot and hand it back to "
-      "her.  Note that outlaws, murderers, and individuals still under "
-      "Shal'ille's protection are not able to vote for or hold the office of "
-      "Justicar."
+      "However, the office of the Justicar will continue to adjudicate legal "
+      "matters throughout the land, serving the citizens of Meridian in a variety "
+      "of capacities."
       "\n\n"
-      "If elected Justicar, Caramo will send you a mail with details about "
-      "the abilities and responsibilities of the office."
+      "Any citizen may now request another citizen's legal record by "
+      "stating the person's name aloud."
       "\n\n"
-      "Caramo announces when there is a new vote for Justicar.  If you wish "
-      "to be told when there is a new vote, say 'advertise' to Caramo.  If "
-      "you no longer wish to be notified, say 'no advertise' to her instead.  "
-      "Outlaws and murderers will not be notified of the vote, since they "
-      "cannot properly participate."
+      "Also, given the curious and temporary nature of death in our world, "
+      "pardons will now be issued as reward for generous indulgences to the "
+      "state. Any murderer seeking reduction to outlaw status need only make "
+      "a generous donation, and immediate reprieve shall be theirs."
 
 classvars:
 
@@ -166,13 +161,6 @@ messages:
       plExits = Cons([ 6, 11, RID_BAR_COURT, 8, 11, ROTATE_NONE ],plExits); %% to court
       plExits = Cons([ 7, 11, RID_BAR_COURT,  5, 11, ROTATE_NONE ],plExits); %% to gallery
 
-      propagate;
-   }
-
-   RecalcLightAndWeather()
-   {
-      Send(poCaramo,@NewHour);
-      
       propagate;
    }
 

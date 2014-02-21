@@ -76,7 +76,7 @@ messages:
       % translate to milliseconds
       iDuration = iDuration * 1000;	  
       
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }
 
    GetPotionClass()

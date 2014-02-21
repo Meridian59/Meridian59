@@ -95,7 +95,7 @@ messages:
       % 4 - 8 minutes max,
       iDuration = 2400 * (100 + iSpellPower);   
 
-      return Random(iDuration/2,iDuration);
+      return iDuration;
    }
    
    EndEnchantment(who = $, report = TRUE, state = 0)

@@ -1,0 +1,125 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Mirth is Jala
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Mirth_name_rsc = "mirth"
+   Mirth_icon_rsc = imirth.bgf
+   Mirth_desc_rsc = \
+      "This song makes people happy!  It is a lively tune, which makes people "
+      "feel as if they have a new start on life.  The song causes some people "
+      "to smile, often resulting in better moods.  A good mood allows others "
+      "to fight evil more effectively.  "
+      "It requires 1 sapphire to cast."
+
+   Mirth_on = "%s%s's mirthful song lifts your spirits a bit."
+
+   Mirth_song = main.mp3
+
+   Mirth_cast = "You begin to play a mirthful song."
+   Mirth_starts = "%s begins to play a mirthful song."
+   Mirth_ends = "The mirthful song played by %s fades away."
+   Mirth_caster_ends = "Your mirthful song fades."
+   Mirth_caster_enter = "Your spirits lift a bit."
+   Mirth_enter = "%s's mirthful song lifts your spirits a bit."
+   Mirth_leave = "You can no longer hear the mirthful notes of %s's song."
+   
+classvars:
+
+   radius_ench_cast = Mirth_cast
+   radius_ench_starts = Mirth_starts
+   radius_ench_ends = Mirth_ends
+   radius_ench_caster_ends = Mirth_caster_ends
+   radius_ench_caster_enter = Mirth_caster_enter
+   radius_ench_enter = Mirth_enter
+   radius_ench_leave = Mirth_leave
+   
+   vrName = Mirth_name_rsc
+   vrIcon = Mirth_icon_rsc
+   vrDesc = Mirth_desc_rsc
+
+   viSpell_num = SID_MIRTH
+   viSchool = SS_JALA
+   viSpell_level = 1
+
+   viMana = 2
+   viManaDrain = 2
+   viDrainTime = 5000
+   viBaseRange = 3
+
+   viSpellExertion = 2      
+   viChance_To_Increase = 25
+
+   viAffectsEveryone = TRUE
+
+properties:
+
+   prMusic = Mirth_song
+      
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Sapphire,1],plReagents);
+
+      return;
+   }
+
+   StartSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      Send(who,@SetAction,#action=UA_HAPPY);
+      propagate;
+   }
+   
+   EndSpecialEffect(who=$,iPower=0,caster=$)
+   {
+      if Send(who,@GetAction) = UA_HAPPY
+      {
+         Send(who,@SetAction,#action=UA_NORMAL);
+      }
+      propagate;
+   }
+
+   % Stuff we handle to be an attack modifier.
+
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   {
+      % Only affect the evil ones...
+      if Send(what,@GetKarma,#detect=TRUE) < 0
+      {
+         % Give a small bonus
+         return hit_roll + 100;
+      }
+
+      return hit_roll;
+   }
+   
+   ModifyDamage(who = $,what = $,damage = $)
+   {
+      % Only affect the evil ones...
+      if Send(what,@GetKarma,#detect=TRUE) < 0
+      {
+         % Roughly equal to Killing Fields
+         return damage + Random(1,5);
+      }
+
+      return damage;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

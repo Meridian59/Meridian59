@@ -77,7 +77,7 @@ messages:
       local iDuration;	   %%% 3 to 8 minutes
       iDuration = 180 + iSpellPower * 3;
       iDuration = iDuration * 1000;	  %% translate to milliseconds
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }
 
    GetPotionClass()

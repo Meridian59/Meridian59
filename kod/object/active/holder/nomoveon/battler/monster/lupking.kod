@@ -49,7 +49,9 @@ resources:
    lupoggking_double_killer = "The lupogg king is dead, thanks to you and your comrade!"
    lupoggking_helper_killer = "The lupogg king is dead, thanks to you and your comrades!"
    lupoggking_no_truce      = "The evil in this place eliminates the possibility of any truce."
-
+   lupoggking_no_illusion   = "Your illusions have no effect on the mighty lupogg king!"
+   lupoggking_no_firewall   = "You cannot place a wall of fire here."
+   lupoggking_no_lwall      = "You cannot place a wall of lightning here."
    lupoggking_spit = gob.bgf
 
 classvars:
@@ -245,6 +247,27 @@ messages:
          return FALSE; 
       }
 
+      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_FIREWALL)
+      {
+         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_illusion);
+		 
+         return FALSE;
+      }
+	  
+      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_FIREWALL)
+      {
+         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_firewall);
+		 
+         return FALSE;
+      }
+	  
+      if oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHTNING_WALL)
+      {
+         Send(who,@MsgSendUser,#message_rsc=lupoggking_no_lwall);
+		 
+         return FALSE;
+      }
+	  
       if Random(1,piHoldCounterChance) = 1 AND Send(self,@CanSee,#what=who)
       {
          Send(self,@MonsterCastAttackSpell,#what=who);
@@ -478,6 +501,27 @@ messages:
       propagate;
    }
 
+   CreateTreasure(who=$,corpse=$)
+   {
+      local oTreasure, iNumber;
+
+      oTreasure = Create(&BlueDragonScale,#corpse=corpse);
+      iNumber = Random(3,8);
+      Send(oTreasure,@AddNumber,#number=iNumber);
+      
+      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
+      {
+         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
+      }
+      else
+      {
+         Send(oTreasure,@Delete);
+      }
+   
+      propagate;
+   }
+   
    CanMorphTo()
    {
       return FALSE;

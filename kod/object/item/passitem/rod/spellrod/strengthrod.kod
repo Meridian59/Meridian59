@@ -1,0 +1,40 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SuperStrengthRod is SpellRod
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SuperStrengthRod_name_rsc = "rod of super strength"
+   SuperStrengthRod_icon_rsc = wand2.bgf
+
+classvars:
+
+   vrName = SuperStrengthRod_name_rsc
+   vrIcon = SuperStrengthRod_icon_rsc
+
+   viGround_group = 2
+   viInventory_group = 1
+   
+   viConsumesHits = 2
+
+properties:
+
+   piSpellNum = SID_SUPER_STRENGTH
+   piSpellpower = 60
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

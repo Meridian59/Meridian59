@@ -16,7 +16,7 @@ constants:
 
 resources:
 
-   Longbow_name_rsc = "longbow"
+   Longbow_name_rsc = "long bow"
    Longbow_desc_rsc = \
       "Expertly carved for flexibility and range, this bow gives you the "
       "envious advantage of a long ranged attack." 

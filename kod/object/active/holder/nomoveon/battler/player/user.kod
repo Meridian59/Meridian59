@@ -1370,12 +1370,6 @@ messages:
          Send(self,@PerformGuildDisband);
       }
 
-      if Send(Send(SYS,@GetCaramo),@GetJusticar) = self
-      {
-         % justicar must give up office
-         Send(Send(SYS,@GetCaramo),@SetJusticar,#who=$);
-      }
-
       piLast_Restart_time = getTime();
       piLastLoginTime = 0;
       psUrl = $;
@@ -1431,13 +1425,6 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_OOG);
             
             return;            
-         }
-         
-         if Send(Send(SYS,@GetCaramo),@GetJusticar) = self
-         {
-            Send(self,@MsgSendUser,#message_rsc=user_cant_suicide_justicar);
-            
-            return;
          }
          
          if getTime() < piLast_restart_time + SUICIDE_REPEAT_TIME
@@ -4580,10 +4567,51 @@ messages:
 
       return;
    }
-
+ % Can the user have controllable units
+   CanUserHaveMinions(who = $)
+	{        
+	   if isClass(who,&user)
+	   {                        
+	      if Send(who,@GetSpellAbility,#spell_num=SID_ANIMATE) > 0
+	      {                                
+		     return TRUE;
+	      }
+	   }
+	   return FALSE;
+   }
+  CommandMinionAttack(oMaster = $, oTarget = $)
+   {
+		local oRoom,oActive;
+		oRoom = Send(oMaster,@GetOwner);				
+	   if send(self,@AllowPlayerAttack,#victim=oTarget)
+	   {
+		   for oActive in Send(self,@GetControlledMinions)
+		   {   
+				if isClass(oActive,&Monster)
+				{                                					
+						if Send(oActive,@GetMaster) = self
+						{   
+								if Send(oActive,@GetTarget) <> oTarget
+								{		
+										send(oActive,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
+										Send(oActive, @TargetSwitch, #what=oTarget, #iHatred=100);
+										Send(oActive, @EnterStateChase, #target=oTarget, #actnow=TRUE);
+								}
+						}
+				}
+		   }
+	   }				
+        return;                
+                
+   }		
    UserAttack(type = STROKE_NORMAL,what = $)
    {
       local i, use_weapon, stroke_id, stroke_obj, is_spell;
+	  % Command minions to aid in combat
+	  if length(Send(self,@GetControlledMinions)) > 0
+      {
+         Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);                        
+      }      
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -4679,6 +4707,14 @@ messages:
    UserCast(oSpell = $, lTargets = $)
    {
       local i, bFound, iSpell, iSpellNum, iSpellPower, lFinalTargets;
+	  % Command minions to aid in combat
+	  if NOT isClass(oSpell,&PersonalEnchantment) 
+	  {
+	     if length(Send(self,@GetControlledMinions)) > 0
+         {
+            Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=first(lTargets));                        
+         }
+	  }
       
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -6021,6 +6057,7 @@ messages:
             AND Send(poOwner,@CheckRoomFlag,#flag=ROOM_SAFELOGOFF)
          {
             piLastSafeRoom = Send(poOwner,@GetRoomNum);
+            Send(self,@RechargeAllRods);
          }
 
          piRow = First(Send(poOwner,@GetRoomPos,#what=self));
@@ -7404,6 +7441,12 @@ messages:
          AND IsClass(oIllusion,&Monster)
       {
          iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
+      }
+      
+      % Angeled characters cannot block other players
+      if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      {
+         iFlags = (iFlags & ~MOVEON_NO);
       }
 
       return iFlags;

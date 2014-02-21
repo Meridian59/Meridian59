@@ -1787,6 +1787,13 @@ messages:
 
          return;
       }
+      
+      if StringEqual(string,"get rods")
+      {
+         Send(self,@GetOneOfEach,#type=ITEMTYPE_ROD);
+
+         return;
+      }
 
       if StringEqual(string,dm_get_rings_command)
          OR StringEqual(string,"get rings")

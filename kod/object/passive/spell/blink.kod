@@ -36,8 +36,8 @@ classvars:
    viSpell_num = SID_BLINK
    viSpell_level = 1
    viSchool = SS_RIIJA
-   viMana = 15
-   viSpellExertion = 20
+   viMana = 8
+   viSpellExertion = 10
    viChance_To_Increase = 15
 
 properties:

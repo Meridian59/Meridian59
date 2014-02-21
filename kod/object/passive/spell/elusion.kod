@@ -197,8 +197,8 @@ messages:
                     
       lAvailable = $;
 
-      % By dividing by 16, this means we need 96+ spellpower to get the Kocatan option.
-      iNumLocations = bound(iSpellPower/16,1,6);
+      % Originally divided by 16 for 96 spellpower, this has been dropped to 84 spellpower for Island (divide by 14)
+      iNumLocations = bound(iSpellPower/14,1,6);
 
       if send(send(target,@GetOwner),@GetRegion) = RID_KOCATAN
          OR iNumLocations = 6

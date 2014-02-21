@@ -94,7 +94,7 @@ messages:
       iDuration = 180 + (3 * iSpellPower);   
       iDuration = iDuration * 1000;
       
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }
 
    DoFreeAction(oHoldCaster=$, oTarget=$, iDuration=0)

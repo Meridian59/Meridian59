@@ -1,0 +1,122 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+AntiMagicAura is RadiusEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   AntiMagicAura_name_rsc = "anti-magic aura"
+   AntiMagicAura_icon_rsc = iantimag.bgf
+   AntiMagicAura_desc_rsc = \
+      "Sends a shock wave of magical energy coursing through the room which "
+      "reduces the spellpower of other spells cast for several minutes.  "
+      "More powerful mages are more effective at casting this spell.  "
+      "Requires sapphires and polished seraphym to cast."
+   
+   AntiMagicAura_unnecessary = \
+      "You cannot overcome the anti-magic field in effect."
+   AntiMagicAura_reinforced = \
+      "The mana field around you is fluctuating more wildly than it was before."
+
+   AntiMagicAura_on = "The mana field begins to fluctuate."
+   AntiMagicAura_off = "The mana field returns to normal."
+   AntiMagicAura_new_occupant = "The mana field is fluctuating here."
+
+   AntiMagicAura_cast = "The mana field begins to fluctuate."
+   AntiMagicAura_starts = "%s throws a shockwave of magical energy through the area!"
+   AntiMagicAura_ends = "The mana field returns to normal."
+   AntiMagicAura_caster_ends = "The mana field returns to normal."
+   AntiMagicAura_caster_enter = "The mana field is fluctuating here."
+   AntiMagicAura_enter = "The mana field around you begins to fluctuate."
+   AntiMagicAura_leave = "The mana field around you returns to normal."
+
+   AntiMagicAura_sound = kantimag.wav
+
+classvars:
+
+   radius_ench_cast = AntiMagicAura_cast
+   radius_ench_starts = AntiMagicAura_starts
+   radius_ench_ends = AntiMagicAura_ends
+   radius_ench_caster_ends = AntiMagicAura_caster_ends
+   radius_ench_caster_enter = AntiMagicAura_caster_enter
+   radius_ench_enter = AntiMagicAura_enter
+   radius_ench_leave = AntiMagicAura_leave
+
+   vrIcon = AntiMagicAura_icon_rsc
+   vrDesc = AntiMagicAura_desc_rsc
+   vrName = AntiMagicAura_name_rsc   
+
+   viSpell_num = SID_ANTIMAGIC_AURA
+   viSchool = SS_KRAANAN
+   viMana = 15
+   viSpell_level = 6
+   viBaseRange = 10
+
+   viCast_time = 600
+
+   vrSucceed_wav = AntiMagicAura_sound
+
+   viChance_To_Increase = 10
+
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
+
+   viCasterPersist = TRUE
+
+properties:
+
+   piOldAreaEnchStyle = TRUE
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Sapphire,2],plReagents);
+      plReagents = Cons([&PolishedSeraphym,1],plReagents);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      iDuration = 60 + iSpellPower;
+      iDuration = random(iDuration/2,iDuration);
+
+      % Convert to ms.
+      iDuration = iDuration * 1000;
+
+      return iDuration;
+   }
+
+   ModifySpellPower(who=$,oSpell=$,state=$,iSpellPower=0)
+   {
+      if IsClass(oSpell,&ManaConvergence)
+      {
+         return iSpellPower;
+      }
+      
+      if state = $
+      {
+         return iSpellPower;
+      }
+
+      % Subtract AMA's spellpower from the power of the spell being cast.
+      return iSpellPower - Nth(state,2);
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

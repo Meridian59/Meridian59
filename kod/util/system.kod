@@ -4900,10 +4900,13 @@ messages:
       
       plItemTemplates = cons(create(&RingDefense),plItemTemplates);
 
-      plItemTemplates = cons(create(&FireWand),plItemTemplates);
       plItemTemplates = cons(create(&HealWand),plItemTemplates);
       plItemTemplates = cons(create(&VampireWand),plItemTemplates);
       plItemTemplates = cons(create(&StaffOfJolting),plItemTemplates);
+      plItemTemplates = cons(create(&BlessRod),plItemTemplates);
+      plItemTemplates = cons(create(&ArmorOfGortRod),plItemTemplates);
+      plItemTemplates = cons(create(&SuperStrengthRod),plItemTemplates);
+      plItemTemplates = cons(create(&DetectInvisibleRod),plItemTemplates);
 
       plItemTemplates = cons(create(&ShortSword),plItemTemplates);
       plItemTemplates = cons(create(&LongSword),plItemTemplates);

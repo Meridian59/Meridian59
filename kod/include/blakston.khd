@@ -1499,6 +1499,7 @@
    SPEED_SLOW          = 8
    SPEED_AVERAGE       = 12
    SPEED_FAST          = 16
+   SPEED_FASTER        = 18
    SPEED_VERY_FAST     = 20
 
    % Flags indicating enchantments
@@ -1635,6 +1636,7 @@
    ITEMTYPE_SPECIAL =  0x004000
    ITEMTYPE_SCROLL =   0x008000
    ITEMTYPE_MASK =     0x010000
+   ITEMTYPE_ROD =      0x020000
 
    % Item Attributes.  See the end of item.kod for details
    IA_DEFAULT              = 0

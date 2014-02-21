@@ -296,16 +296,21 @@ messages:
             {
                oObj = Create(First(lItem_info),#corpse=corpse);
             }
+            
+			if isClass(oObj,&Money)
 
-            if isClass(oObj,&Money)
             {
-               iNumber = (Send(Send(SYS, @GetSettings), @GetMoneyFactor) * 2 *
-                  Bound(Random(level/2,3*level/2),1,$))/100;
+
+               iNumber = 0;
+
             
+
                Send(oObj,@AddNumber,#number=iNumber);
+
 			   Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oObj,@GetNumber));
+
             }
-            
+           
             return oObj;
          }
       }

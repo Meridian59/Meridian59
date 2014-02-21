@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HinderSpell is Jala
+
+constants:
+
+	include blakston.khd
+
+resources:
+
+   hinder_cast = "You begin playing a discordant tune."
+   hinder_starts = "%s begins playing a discordant tune!"
+   hinder_ends = "The discordant tune maintained by %s fades."
+   hinder_caster_ends = "Your discordant tune fades."
+   hinder_caster_enter = "You feel the words of your song weaving together to interfere with specific other magics."
+   hinder_enter = "A discordant tune sung by %s fills your mind."
+   hinder_leave = "You can no longer hear the discordant tune sung by %s."
+   
+classvars:
+
+   radius_ench_cast = hinder_cast
+   radius_ench_starts = hinder_starts
+   radius_ench_ends = hinder_ends
+   radius_ench_caster_ends = hinder_caster_ends
+   radius_ench_caster_enter = hinder_caster_enter
+   radius_ench_enter = hinder_enter
+   radius_ench_leave = hinder_leave
+   
+   viMana = 5          % Mana is amount used upon inititiation
+   viManaDrain = 3     % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
+   viChance_To_Increase = 10
+   viBaseRange = 4
+
+   viHinderedSchool = SS_JALA  % What school does this song hinder?
+
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
+
+properties:
+
+      
+messages:
+
+   GetAlteredChance(chance = 0, what = $, lRadiusState = 0)
+   {
+      local altChance, iSongSpellpower;
+   
+      if what = $ OR send(what,@GetSchool) <> viHinderedSchool
+      {
+         return chance;
+      }
+      
+      iSongSpellpower = Nth(lRadiusState,2);
+
+      altChance = chance - random(iSongSpellpower/2,(iSongSpellpower*2)/3);
+      
+      % Don't worry about bounding, that's done the level above us.
+      return altChance;
+   }
+
+
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

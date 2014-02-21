@@ -1,0 +1,90 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Invigorate is Jala
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Invigorate_name_rsc = "invigorate"
+   Invigorate_icon_rsc = iinvigor.bgf
+   Invigorate_desc_rsc = \
+      "This song allows all listeners to regain vigor at an accelerated rate.  "
+      "Requires one diamond and an edible mushroom to cast."
+
+   Invigorate_song = song11.mp3
+
+   Invigorate_cast = "You begin to play an invigorating song."
+   Invigorate_starts = "%s begins to play an invigorating song."
+   Invigorate_ends = "The invigorating song played by %s fades away."
+   Invigorate_caster_ends = "Your invigorating song fades."
+   Invigorate_caster_enter = "You feel the tiredness of your muscles diminish."
+   Invigorate_enter = "%s's invigorating song eases the tiredness of your muscles."
+   Invigorate_leave = "You can no longer hear the invigorating notes of %s's song."
+   
+classvars:
+
+   radius_ench_cast = Invigorate_cast
+   radius_ench_starts = Invigorate_starts
+   radius_ench_ends = Invigorate_ends
+   radius_ench_caster_ends = Invigorate_caster_ends
+   radius_ench_caster_enter = Invigorate_caster_enter
+   radius_ench_enter = Invigorate_enter
+   radius_ench_leave = Invigorate_leave
+
+   vrName = Invigorate_name_rsc
+   vrIcon = Invigorate_icon_rsc
+   vrDesc = Invigorate_desc_rsc
+
+   viSpell_num = SID_INVIGORATE
+   viSchool = SS_JALA
+   viSpell_level = 1
+
+   viMana = 5           % Mana is amount used upon inititiation
+   viManaDrain = 1      % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
+   viBaseRange = 12
+   
+   viSpellExertion = 10      
+   viChance_To_Increase = 20
+
+   viAffectsEveryone = TRUE
+
+properties:
+
+   prMusic = Invigorate_song
+      
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Diamond,1],plReagents);
+      plReagents = Cons([&Snack,1],plReagents);
+
+      return;
+   }
+
+   AdjustVigorTime(time=0, lRadiusState=0)
+   "Reduces time passed in so that vigor regens faster.  Returns reduced time."
+   {
+      local iTime;
+
+      iTime = (time * (200-Nth(lRadiusState,2))) / 200;
+
+      return iTime;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

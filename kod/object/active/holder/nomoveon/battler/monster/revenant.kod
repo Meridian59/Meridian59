@@ -50,12 +50,12 @@ classvars:
    vrIcon = revenant_icon_rsc
    vrDesc = revenant_desc_rsc
 
-   viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_SLASH
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED | AI_MOVE_WALKTHROUGH_WALLS | AI_FIGHT_THROUGH_WALLS
 
 properties:
 
+   viSpeed = SPEED_FASTER
    viLevel = 55                 %% These are reset in constructor
    viDifficulty = 5
    viKarma = 20
@@ -70,7 +70,7 @@ properties:
 
 messages:
 
-   Constructor(target = $, location = $, diff = 0, level = 0, karmic = 0)
+   Constructor(target = $, location = $, diff = 0, level = 0, karmic = 0, speed = 0)
    {
       if target = $ 
          OR location = $  
@@ -85,6 +85,12 @@ messages:
       poHauntee = target;
       poTarget = poHauntee;
       
+      if speed <> $
+      {
+         speed = Send(Send(SYS,@GetSettings),@GetRevenantSpeed);
+         viSpeed = speed;
+      }
+	  
       if diff <> $
       {
          viDifficulty = diff;
@@ -100,8 +106,8 @@ messages:
          viKarma = karmic;
       }
 
-      %% place near target in 3-12 seconds
-      ptPlace = CreateTimer(self,@Place,Random(3000,12000));
+      %% place near target in 3-8 seconds
+      ptPlace = CreateTimer(self,@Place,Random(3000,8000));
       
       propagate;
    }
@@ -109,7 +115,8 @@ messages:
    Constructed()
    {
       plResistances = [ [ 40, -ATCK_SPELL_ALL ],
-                        [ 40, ATCK_WEAP_MAGIC ] ];
+                        [ 40, ATCK_WEAP_MAGIC ],
+                        [ 25, ATCK_WEAP_PIERCE] ];
       propagate;
    }
 

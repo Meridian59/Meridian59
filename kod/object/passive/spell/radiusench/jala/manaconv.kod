@@ -1,0 +1,97 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ManaConvergence is Jala
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ManaConvergence_name_rsc = "mana convergence"
+   ManaConvergence_icon_rsc = imanacon.bgf
+   ManaConvergence_desc_rsc = \
+      "The words of this song form an enchantment which increases the effectiveness "
+      "of all spells cast.  Requires one perfect polished seraphym."
+
+   ManaConvergence_song = jala5.mp3
+
+   ManaConvergence_on = "The flow of magic in this place suddenly becomes stronger."
+   ManaConvergence_new_occupant = "You can feel a strong flow of magic in this place."
+
+   Mana_Convergence_cast = "You begin to play a charged song of empowerment."
+   Mana_Convergence_starts = "%s begins to play a charged song of empowerment."
+   Mana_Convergence_ends = "The charged song played by %s fades away."
+   Mana_Convergence_caster_ends = "Your song of empowerment fades."
+   Mana_Convergence_caster_enter = "The flow of magic in this place suddenly becomes stronger."
+   Mana_Convergence_enter = "The flow of magic in this place suddenly becomes stronger."
+   Mana_Convergence_leave = "The empowered crackling of energy in the air around you fades."
+
+classvars:
+
+   radius_ench_cast = Mana_Convergence_cast
+   radius_ench_starts = Mana_Convergence_starts
+   radius_ench_ends = Mana_Convergence_ends
+   radius_ench_caster_ends = Mana_Convergence_caster_ends
+   radius_ench_caster_enter = Mana_Convergence_caster_enter
+   radius_ench_enter = Mana_Convergence_enter
+   radius_ench_leave = Mana_Convergence_leave
+   
+   vrName = ManaConvergence_name_rsc
+   vrIcon = ManaConvergence_icon_rsc
+   vrDesc = ManaConvergence_desc_rsc
+
+   viMana = 10          % Mana is amount used upon inititiation
+   viManaDrain = 9      % Drain is amount used every viDrainTime milliseconds
+   viDrainTime = 5000    % Drain some mana every viDrainTime milliseconds
+   viSpell_num = SID_MANA_CONVERGENCE
+
+   viSchool = SS_JALA
+   viSpell_level = 5
+
+   viAffectsGuildmates = TRUE
+   viAffectsEnemies = TRUE
+
+properties:
+
+   prMusic = ManaConvergence_song
+
+   piOldAreaEnchStyle = TRUE
+      
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&PolishedSeraphym,1],plReagents);
+
+      return;
+   }
+
+   ModifySpellPower(who=$,oSpell=$,state=$,iSpellPower=0)
+   {
+      if IsClass(oSpell,&AntiMagicAura)
+      {
+         return iSpellPower;
+      }
+      
+      if state = $
+      {
+         return iSpellPower;
+      }
+
+      % Add Mana Convergence's power to spells
+      return iSpellPower + Nth(state,2);
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

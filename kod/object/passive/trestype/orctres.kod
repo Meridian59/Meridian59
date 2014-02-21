@@ -31,12 +31,11 @@ messages:
    {
       plTreasure = [ [ &OrcTooth, 40 ],
                      [ &PurpleMushroom, 20],
-                     [ &Scimitar, 16 ],
+                     [ &Scimitar, 18 ],
                      [ &MetalShield, 10 ],
                      [ &LeatherArmor, 5],
                      [ &ShadowAmulet, 3],
                      [ &RingofLethargy, 3], 
-                     [ &Money, 2],
                      [ &DarknessScroll,1]
                    ];
       propagate;

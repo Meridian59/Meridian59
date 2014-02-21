@@ -103,7 +103,7 @@ messages:
       % 21-119 seconds
       iDuration = (20 + iSpellPower) * 1000;
 
-      return random(iDuration/2,iDuration);
+      return iDuration;
    }
 
    TryDeflect(caster = $, victim = $, oSpell = $)

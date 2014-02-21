@@ -58,7 +58,8 @@ classvars:
    viDifficulty = 7
    viKarma = -100
    viWimpy = 10
-
+   viCashmin = 1000
+   viCashmax = 2500
    vrSound_hit = Shadowbeast_sound_hit
    vrSound_miss = Shadowbeast_sound_miss
    vrSound_aware = Shadowbeast_sound_aware

@@ -55,11 +55,12 @@ classvars:
    vrDead_name = ghost_dead_name_rsc
 
    viTreasure_type = TID_GHOST
-   viSpeed = 11
+   viSpeed = SPEED_FAST
    viLevel = 200
-   viDifficulty = 9
+   viDifficulty = 10
    viKarma = -100
-   
+   viCashmin = 500
+   viCashmax = 1000
    vrSound_hit = ghost_sound_hit
    vrSound_miss = ghost_sound_miss
    vrSound_aware = ghost_sound_aware

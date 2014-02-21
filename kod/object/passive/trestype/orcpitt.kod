@@ -34,7 +34,7 @@ messages:
                      [ &NeruditeArmor, 9],
                      [ &NeruditeSword, 9],
                      [ &OreChunk, 4],
-		              [ &UncutSeraphym, 3],
+		             [ &UncutSeraphym, 3],
                      [ &Flask, 2],
                      [ &OrcShield, 2],
                      [ &PlateArmor, 2],

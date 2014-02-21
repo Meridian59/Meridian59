@@ -71,7 +71,8 @@ classvars:
    viDifficulty = 6
    viKarma = 40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_NEWBIESAFE
-
+   viCashmin = 0
+   viCashmax = 0
    viWimpy = 5
 
    vrSound_hit = DragonFlyPet_sound_hit

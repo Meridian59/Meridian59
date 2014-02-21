@@ -48,7 +48,8 @@ classvars:
    viDifficulty = 1
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS
-
+   viCashmin = 1
+   viCashmax = 20
    vrSound_hit = mummy_sound_hit
    vrSound_miss = mummy_sound_miss
    vrSound_aware = mummy_sound_aware

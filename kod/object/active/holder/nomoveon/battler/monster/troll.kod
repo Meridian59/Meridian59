@@ -47,7 +47,8 @@ classvars:
    viDifficulty = 8
    viKarma = -75
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
-
+   viCashmin = 500
+   viCashmax = 1500
    vrSound_hit = troll_sound_hit
    vrSound_miss = troll_sound_miss
    vrSound_aware = troll_sound_aware

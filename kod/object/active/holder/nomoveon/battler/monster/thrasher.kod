@@ -55,7 +55,8 @@ classvars:
    vrDead_name = thrasher_dead_name_rsc
 
    viTreasure_type = TID_THRASHER
-
+   viCashmin = 750
+   viCashmax = 2800
    viNormalSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_BLUDGEON
    viAttributes = 0

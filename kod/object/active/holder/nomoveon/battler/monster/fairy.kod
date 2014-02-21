@@ -54,7 +54,8 @@ classvars:
 
    viLevel = 60
    viDifficulty = 5
-   
+   viCashmin = 300
+   viCashmax = 900
    vrSound_hit = fairy_sound_hit
    vrSound_miss = fairy_sound_miss
    vrSound_aware = fairy_sound_aware

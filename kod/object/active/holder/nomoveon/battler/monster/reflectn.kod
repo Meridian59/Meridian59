@@ -56,7 +56,8 @@ classvars:
    viLevel = 45
    viDifficulty = 4
    viKarma = 0
-
+   viCashmin = 0
+   viCashmax = 0
    vrSound_hit = reflection_sound_hit
    vrSound_miss = reflection_sound_miss
    vrSound_aware = reflection_sound_aware

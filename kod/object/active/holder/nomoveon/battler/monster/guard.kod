@@ -45,7 +45,8 @@ classvars:
    viDefault_behavior = AI_FIGHT_MURDERERS
 
    viGender = GENDER_FEMALE   
-
+   viCashmin = 100
+   viCashmax = 200
 
 properties:
 

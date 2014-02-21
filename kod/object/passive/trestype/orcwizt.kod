@@ -29,19 +29,19 @@ messages:
    {
       plTreasure = [ [ &OrcTooth, 35 ],
                      [ &UncutSeraphym, 10],
-                     [ &SlitherWand, 8],
+                     [ &SlitherWand, 1],
                      [ &DragonflyEye, 6 ],
                      [ &Solagh, 6 ],
-                     [ &PurpleMushroom, 6 ],
+                     [ &PurpleMushroom, 1 ],
                      [ &Torch, 5 ],
-                     [ &DiscipleRobe, 4 ],
+                     [ &DiscipleRobe, 11 ],
                      [ &LightDiscipleRobe, 3 ],
                      [ &Gauntlet, 4 ],
                      [ &Flask, 4 ],
                      [ &Lute, 3 ],
                      [ &PolishedSeraphym, 2 ],
                      [ &StaffOfJolting, 2 ],
-                     [ &DispellIllusionScroll, 2 ]
+                     [ &DispellIllusionScroll, 7 ]
                    ];
 
       propagate;

@@ -28,14 +28,14 @@ messages:
    
    constructed()
    {
-      plTreasure = [ [ &MeatPie, 10],
+      plTreasure = [ [ &MeatPie, 1],
                      [ &GoldShield, 8 ],
                      [ &Gauntlet, 7 ],
-                     [ &Longsword, 9],
+                     [ &Longsword, 1],
                      [ &HealWand, 7 ],
                      [ &Sapphire, 6],
                      [ &Diamond, 6],
-                     [ &BlueMushroom, 5 ],
+                     [ &BlueMushroom, 15 ],
                      [ &RingofLethargy, 5],
                      [ &AcidRing, 5],
                      [ &FireRing, 4],
@@ -45,7 +45,7 @@ messages:
                      [ &VampireWand, 3 ],
                      [ &Scepter, 3 ],
                      [ &DarkAngelFeather, 3 ],
-                     [ &BlueDragonScale, 3 ],
+                     [ &BlueDragonScale, 10 ],
                      [ &FreeActionPotion, 3]
                    ];
       propagate;

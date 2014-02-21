@@ -156,7 +156,8 @@ classvars:
 
    % Our normal speed when active
    viNormalSpeed = SPEED_AVERAGE
-
+   viCashmin = 200
+   viCashmax = 800
 properties:
 
    % Put these as properties so they can be set

@@ -84,7 +84,8 @@ classvars:
    viLevel = 100
    viDifficulty = 8
    viKarma = 80
-
+   viCashmin = 500
+   viCashmax = 1500
    vrSound_hit = avarshaman_sound_hit
    vrSound_miss = avarshaman_sound_miss
    vrSound_aware = avarshaman_sound_aware

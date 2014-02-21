@@ -28,10 +28,10 @@ messages:
    
    constructed()
    {
-    plTreasure = [ [ &GreenMushroom, 25 ],
-                   [ &BlueDragonScale, 67],
-                   [ &Ruby, 4],
-                   [ &InkyCap, 4]
+    plTreasure = [ [ &GreenMushroom, 1 ],
+                   [ &BlueDragonScale, 37],
+                   [ &Ruby, 28],
+                   [ &InkyCap, 34]
                  ];
 
       propagate;

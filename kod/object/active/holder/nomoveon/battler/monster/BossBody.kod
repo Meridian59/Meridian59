@@ -51,7 +51,8 @@ classvars:
    viLevel = 1
    viDifficulty = 1
    viKarma = 0
-
+   viCashmin = 1
+   viCashmax = 1
    vrSound_hit = OrcPitBossBody_sound_hit
    vrSound_miss = OrcPitBossBody_sound_miss
    vrSound_aware = OrcPitBossBody_sound_aware

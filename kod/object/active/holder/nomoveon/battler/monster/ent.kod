@@ -56,7 +56,9 @@ classvars:
    viLevel = 50
    viDifficulty = 4
    viKarma = 40
-
+   viCashmin = 250
+   viCashmax = 750
+   
    vrSound_hit = ent_sound_hit
    vrSound_miss = ent_sound_miss
    vrSound_aware = ent_sound_aware

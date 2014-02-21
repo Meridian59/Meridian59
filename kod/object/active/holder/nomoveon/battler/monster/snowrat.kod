@@ -49,7 +49,8 @@ classvars:
    viDifficulty = 4
    viKarma = -50
    viDefault_behavior = AI_FIGHT_AGGRESSIVE 
-
+   viCashmin = 300
+   viCashmax = 900
    vrSound_hit = SnowRat_sound_hit
    vrSound_miss = SnowRat_sound_miss
    vrSound_aware = SnowRat_sound_aware

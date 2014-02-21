@@ -52,7 +52,8 @@ classvars:
    viDifficulty = 8
    viKarma = -100
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
-
+   viCashmin = 600
+   viCashmax = 2000
    vrSound_hit = StoneTroll_sound_hit
    vrSound_miss = StoneTroll_sound_miss
    vrSound_aware = StoneTroll_sound_aware

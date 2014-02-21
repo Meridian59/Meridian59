@@ -54,7 +54,8 @@ classvars:
    viDifficulty = 9
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_SWITCHALOT
-
+   viCashmin = 200
+   viCashmax = 800
    vrSound_hit = yeti_sound_hit
    vrSound_miss = yeti_sound_miss
    vrSound_aware = yeti_sound_aware

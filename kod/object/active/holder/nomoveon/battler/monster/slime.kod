@@ -49,7 +49,8 @@ classvars:
    viDifficulty = 4
    viKarma = 0
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SINGLEMINDED
-
+   viCashmin = 175
+   viCashmax = 400
    vrSound_hit = slime_sound_hit
    vrSound_miss = slime_sound_miss
    vrSound_aware = slime_sound_aware

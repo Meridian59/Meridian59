@@ -30,9 +30,9 @@ messages:
    {
       plTreasure = [ [ &Longbow, 5 ],
                      [ &BattleBow, 15 ],
-                     [ &CyanMushroom, 44],
-                     [ &PolishedSeraphym, 10],
-                     [ &FireSand, 10],
+                     [ &CyanMushroom, 24],
+                     [ &PolishedSeraphym, 20],
+                     [ &FireSand, 20],
                      [ &Yrxlsap, 8],
                      [ &NeruditeArmor, 4],
                      [ &KillingFieldScroll, 4]

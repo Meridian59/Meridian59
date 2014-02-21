@@ -61,7 +61,8 @@ classvars:
    viKarma = 0
    viDefault_behavior = AI_NOFIGHT | AI_NOMOVE
    viObject_flags = BATTLER_YES
-
+   viCashmin = 0
+   viCashmax = 0
    vrSound_hit = $
    vrSound_miss = $
    vrSound_aware = $

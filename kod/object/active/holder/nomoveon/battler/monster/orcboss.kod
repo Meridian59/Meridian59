@@ -61,7 +61,8 @@ classvars:
    viDifficulty = 7
    viKarma = -90
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE | AI_FIGHT_SWITCHALOT
-
+   viCashmin = 200
+   viCashmax = 800
 
    viWimpy = 0
 

@@ -50,7 +50,8 @@ classvars:
    viDifficulty = 6
    viKarma = -70
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT | AI_MOVE_FLEE_FRIGHTENERS
-
+   viCashmin = 500
+   viCashmax = 1500
    vrSound_miss = TuskedSkeleton_sound_miss
    vrSound_aware = TuskedSkeleton_sound_aware
    vrSound_death = TuskedSkeleton_sound_death

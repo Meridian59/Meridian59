@@ -48,7 +48,8 @@ classvars:
 
    viDifficulty = 4
    viKarma = -45
-
+   viCashmin = 275
+   viCashmax = 975
    vrSound_hit = zombie_sound_hit
    vrSound_miss = zombie_sound_miss
    vrSound_aware = zombie_sound_aware

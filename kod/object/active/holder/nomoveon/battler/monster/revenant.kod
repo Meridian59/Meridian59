@@ -59,7 +59,8 @@ properties:
    viLevel = 55                 %% These are reset in constructor
    viDifficulty = 5
    viKarma = 20
-
+   viCashmin = 0
+   viCashmax = 0
    % our private data
 
    piAnimation = ANIM_NONE

@@ -48,7 +48,8 @@ classvars:
    viLevel = 25
    viDifficulty = 4
    viKarma = -10
-
+   viCashmin = 125
+   viCashmax = 300
    vrSound_hit = spiderbaby_sound_hit
    vrSound_miss = spiderbaby_sound_miss
    vrSound_aware = spiderbaby_sound_aware

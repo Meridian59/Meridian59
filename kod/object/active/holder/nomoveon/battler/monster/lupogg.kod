@@ -50,7 +50,8 @@ classvars:
    viDifficulty = 9
    viKarma = 75
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
-
+   viCashmin = 525
+   viCashmax = 1300
    vrSound_hit = lupogg_sound_hit
    vrSound_miss = lupogg_sound_miss
    vrSound_aware = lupogg_sound_aware

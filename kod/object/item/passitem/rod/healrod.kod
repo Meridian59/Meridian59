@@ -1,0 +1,62 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HealWand is Rod
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   healWand_name_rsc = "rod of healing"
+   healWand_icon_rsc = healwand.bgf
+   healWand_desc_rsc = "This rod is almost comically decorated by obviously fake gems.   "
+       "Still, the rod hums nearly inaudibly, and when you put your hand on it, it is "
+       "warm to the touch."
+   healWand_success_rsc = "The rod pulses once in your hand, restoring ~B~g%d~n health."
+
+classvars:
+
+   vrName = healWand_name_rsc
+   vrIcon = healWand_icon_rsc
+
+   viBulk = 20
+   viWeight = 25
+   viValue_average = 200
+   viInventory_group = 2
+   
+   use_success_msg = healWand_success_rsc
+
+properties:
+   
+   vrDesc = healWand_desc_rsc
+
+   piHeal_min = 4
+   piHeal_max = 8
+
+messages:
+
+   CastSpell()
+   "Heals the owner."
+   {
+      local amount, amount_healed;
+      
+      amount = Random(piHeal_min, piHeal_max);
+      
+      amount_healed = Send(poOwner,@GainHealthNormal,#amount=amount);
+      Send(poOwner,@MsgSendUser,#message_rsc=healWand_success_rsc,#parm1=amount_healed);
+      Send(Send(poOwner,@GetOwner),@SomethingWaveRoom,#what=poOwner,#wave_rsc=use_success_wav);
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,41 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ArmorOfGortRod is SpellRod
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ArmorOfGortRod_name_rsc = "rod of armor of Gort"
+   ArmorOfGortRod_icon_rsc = wand1.bgf
+
+classvars:
+
+   vrName = ArmorOfGortRod_name_rsc
+   vrIcon = ArmorOfGortRod_icon_rsc
+
+   viGround_group = 2
+   viInventory_group = 1
+
+   viStartMaxHits = 20
+   viConsumesHits = 20
+
+properties:
+
+   piSpellNum = SID_ARMOR_OF_GORT
+   piSpellpower = 60
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

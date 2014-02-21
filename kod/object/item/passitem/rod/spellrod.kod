@@ -1,0 +1,53 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SpellRod is Rod
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SpellWand_name_rsc = "spell rod"
+   SpellWand_icon_rsc = wand1.bgf
+   SpellWand_desc_rsc = "Magical energy crackles about this slender rod. It contains a personal enchantment spell, but "
+                        "you sense that this kind of wand can only be charged by the energy of slain monsters."
+
+classvars:
+
+   vrName = SpellWand_name_rsc
+   vrIcon = SpellWand_icon_rsc
+
+properties:
+
+   piSpellNum = SID_ARMOR_OF_GORT
+   piSpellpower = 60
+
+messages:
+
+   CastSpell()
+   {
+      local oSpell;
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=piSpellNum);
+      Send(oSpell,@CastSpell,#who=poOwner,#lTargets=[poOwner],#iSpellPower=piSpellpower,#bItemCast=TRUE);
+
+      propagate;
+   }
+
+   FullyRecharge()
+   {
+      % Can only be charged by kills.
+      return FALSE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

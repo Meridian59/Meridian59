@@ -768,9 +768,6 @@ properties:
    %  Intended for use to curb overagressive players or to give a boost to
    %  nicer players. Named something unusual to deter experimentation.
    piFlags3 = 0
-   
-   % store minions
-   plControlledMinions = $
 
    % player starts unguilded--doesn't do much yet
    poGuild = $
@@ -1941,12 +1938,6 @@ messages:
          AND Send(oGame,@IsAdvertised,#who=self)
       {
          Send(self,@MsgSendUser,#message_rsc=player_assgame_soon);
-      }
-
-      oCaramo = Send(SYS,@GetCaramo);
-      if oCaramo <> $
-      {
-         Send(oCaramo,@UserLogon,#who=self);
       }
       
       if Send(self,@GetGuild) <> $

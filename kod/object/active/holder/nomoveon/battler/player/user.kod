@@ -4593,7 +4593,7 @@ messages:
 						{   
 								if Send(oActive,@GetTarget) <> oTarget
 								{		
-										send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
+										send(oActive,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
 										Send(oActive, @TargetSwitch, #what=oTarget, #iHatred=100);
 										Send(oActive, @EnterStateChase, #target=oTarget, #actnow=TRUE);
 								}

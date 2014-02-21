@@ -16,7 +16,7 @@ BOFS = heal.bof atakspel.bof rescue.bof earthqua.bof \
        holywp.bof manabomb.bof unholywp.bof \
        purify.bof nodebrst.bof \
        illform.bof identify.bof reveal.bof shroud.bof engrave.bof \
-       cursewp.bof anon.bof boon.bof jala.bof \
+       cursewp.bof anon.bof boon.bof \
        dispillu.bof summrefl.bof apparitn.bof creasphm.bof forget.bof \
        seduce.bof morph.bof portlife.bof artifice.bof \
        forsight.bof bait.bof persench.bof vertigo.bof \

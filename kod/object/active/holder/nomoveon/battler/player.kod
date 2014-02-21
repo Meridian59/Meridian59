@@ -767,6 +767,7 @@ properties:
    
    % store minions
    plControlledMinions = $
+   ptMinionControlCheck = $
    
 
    % list of spells we know, in the form of a 3-part compound
@@ -12928,7 +12929,11 @@ messages:
       return;
    }
    NewControlledMinion(minion = $)
-   {	   
+   {
+	  if ptMinionControlCheck = $
+	  {
+	    CreateTimer(self,@MinionControlCheck,2000);
+	  }
       plControlledMinions = cons(minion,plControlledMinions);
       return;
    }
@@ -12940,6 +12945,32 @@ messages:
    GetControlledMinions()
    {	   
       return plControlledMinions;
+   }
+   MinionControlCheck()
+   {
+	   local i;
+	   if length(plControlledMinions) > 0
+	   {			
+		   for i in plControlledMinions
+		   {
+		      if i = $
+			  {				
+			     Send(self,@RemoveControlledMinion,#minion=i);
+				 continue;
+			  }
+			  if Send(i,@GetTarget) = $
+			  {	 
+				 send(i,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);			     				 
+			  }
+		   }
+		   CreateTimer(self,@MinionControlCheck,2000);
+	   }
+	   else
+	   {		  
+		   DeleteTimer(ptMinionControlCheck);
+		   ptMinionControlCheck = $;
+	   }
+	   return;
    }
 
 end

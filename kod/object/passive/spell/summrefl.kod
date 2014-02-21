@@ -119,6 +119,8 @@ messages:
       send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
 
       send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
+	  send(who,@NewControlledMinion,#minion=oReflection);
+	  send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
 
       propagate;
    }

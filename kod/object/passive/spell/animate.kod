@@ -27,8 +27,8 @@ resources:
    Animate_bad_target = "You can't cast animate on %s%s!"
    Animate_human_cast_rsc ="%s's corpse pulls itself up off the ground."
    Animate_human_failed_rsc ="%s's corpse remains inanimate on the ground."
-   Animate_mob_failed_rsc = "The %s's dead remains still lay lifeless and inanimate."
-   Animate_mob_cast_rsc = "The %s's dead remains come alive and rise up from the ground."
+   Animate_mob_failed_rsc = "The %s's remains still lay lifeless and inanimate."
+   Animate_mob_cast_rsc = "The %s's remains come alive and rise up from the ground."
    Animate_failed_rsc = "The remains are unable to be animated."
    
 

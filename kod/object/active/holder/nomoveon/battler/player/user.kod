@@ -4580,10 +4580,51 @@ messages:
 
       return;
    }
-
+ % Can the user have controllable units
+   CanUserHaveMinions(who = $)
+	{        
+	   if isClass(who,&user)
+	   {                        
+	      if Send(who,@GetSpellAbility,#spell_num=SID_ANIMATE) > 0
+	      {                                
+		     return TRUE;
+	      }
+	   }
+	   return FALSE;
+   }
+  CommandMinionAttack(oMaster = $, oTarget = $)
+   {
+		local oRoom,oActive;
+		oRoom = Send(oMaster,@GetOwner);				
+	   if send(self,@AllowPlayerAttack,#victim=oTarget)
+	   {
+		   for oActive in Send(self,@GetControlledMinions)
+		   {   
+				if isClass(oActive,&Monster)
+				{                                					
+						if Send(oActive,@GetMaster) = self
+						{   
+								if Send(oActive,@GetTarget) <> oTarget
+								{		
+										send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
+										Send(oActive, @TargetSwitch, #what=oTarget, #iHatred=100);
+										Send(oActive, @EnterStateChase, #target=oTarget, #actnow=TRUE);
+								}
+						}
+				}
+		   }
+	   }				
+        return;                
+                
+   }		
    UserAttack(type = STROKE_NORMAL,what = $)
    {
       local i, use_weapon, stroke_id, stroke_obj, is_spell;
+	  % Command minions to aid in combat
+	  if length(Send(self,@GetControlledMinions)) > 0
+      {
+         Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);                        
+      }      
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -4679,6 +4720,14 @@ messages:
    UserCast(oSpell = $, lTargets = $)
    {
       local i, bFound, iSpell, iSpellNum, iSpellPower, lFinalTargets;
+	  % Command minions to aid in combat
+	  if NOT isClass(oSpell,&PersonalEnchantment) 
+	  {
+	     if length(Send(self,@GetControlledMinions)) > 0
+         {
+            Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=first(lTargets));                        
+         }
+	  }
       
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.

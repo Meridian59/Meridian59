@@ -176,6 +176,9 @@ properties:
 
    % If enabled, logoff penalties do not rise exponentially, and instead remain flat
    pbFlatPenalties = TRUE
+   
+   % Revenant speed setting
+   piRevSpeed = 18
 
    % Alternate Justicar system - buying a pardon with an indulgence
    % is now possible for a flat fee (initially 1 million).
@@ -442,7 +445,12 @@ messages:
       return piResistRingLoseDurability;
    }
 
-   GetPardonIndulgenceCost()
+   GetRevenantSpeed()
+   {
+      return piRevSpeed;
+   }
+
+GetPardonIndulgenceCost()
    {
       return piPardonIndulgenceCost;
    }

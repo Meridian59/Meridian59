@@ -3909,6 +3909,11 @@ messages:
             }
          }
       }
+      
+      if IsClass(oRoom,&GuildHall)
+      {
+         return TRUE;
+      }
 
       % Truce itself returns TRUE, not counting as an attack.
       % RadiusTotems send their inherent spell as a spell_obj for AllowPlayerAttack.
@@ -5178,6 +5183,7 @@ messages:
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
+            AND NOT IsClass(poOwner,&GuildHall)
          {
             %Attacked an innocent!
 

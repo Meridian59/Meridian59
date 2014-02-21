@@ -26,8 +26,7 @@ resources:
    guildlever_desc_rsc = \
       "Flipping this lever raises and lowers the defenses of a guild hall.  "
       "If this switch is flipped, and not flipped back in 10 minutes, the "
-      "guild hall is declared conquered.  NOTE: Flipping the switch is "
-      "considered an outlaw action, and must be done with your safety OFF."
+      "guild hall is declared conquered."
       "\n\n%s"
 
    guildlever_not_in_range = \

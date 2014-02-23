@@ -183,12 +183,18 @@ resources:
    player_cancel_rescue = \
       "~IYour aggression halts your attempt to escape from the "
       "current situation."
+
    player_cancel_rescue_phase = \
       "~IThe protective magics that might have rescued you instead "
       "snap and fade as you phase out of existence."
    player_cancel_rescue_newowner = \
       "~IYour change of location disrupts Shal'ille's attempt to whisk "
       "you to safety."
+
+   player_temp_safe = \
+      "~I~BYou feel your guardian angel is near to you."
+   player_temp_safe_end = \
+      "~I~BYou feel your guardian angel has departed once more."
 
    player_improved = "~I~BYou have improved in the art of %s."
    player_improved_wav_rsc = imp.wav
@@ -1029,6 +1035,9 @@ properties:
 
    piLastDeathTime = 0
 
+   % Temp safe timer for giving players a period of safety after a death
+   ptTempSafe = $
+   
    % This keeps the duration of our Second Wind skill's "downtime"
    ptSecondWind = $
 
@@ -1133,6 +1142,12 @@ messages:
          ptSecondWind = $;
          Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,
                #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
+
+      if ptTempSafe <> $
+      {
+         DeleteTimer(ptTempSafe);
+         ptTempSafe = $;
       }
 
       if ptCrystalizeManaSurgeTimer <> $
@@ -2088,6 +2103,12 @@ messages:
          Send(poGuild,@SendUserMOTD,#who=self);
       }
 
+      if ptTempSafe <> $
+      {
+         Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=TRUE);
+         Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
+      }
+
       if piPoisonStrength > 0
       {
          ptPoison = CreateTimer(self,@PoisonTimer,10000);
@@ -2595,6 +2616,7 @@ messages:
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_ENABLE,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_LOCK,#value=FALSE);
       Send(self,@SetPlayerFlag,#flag=PFLAG_INTRIGUING,#value=FALSE);
+      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=FALSE);
 
       Send(SYS,@SystemRemoveFromChampionLists,#oldchamp=self);
 
@@ -4018,6 +4040,21 @@ messages:
 
             return FALSE;
          }
+      }
+
+      % Check for temporary safety flag.
+      if IsClass(victim,&Player)
+         AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE)
+            OR Send(victim,@CheckPlayerFlag,#flag=PFLAG_TEMPSAFE))
+      {
+         if report
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_guardian_angel,
+                  #parm1=Send(victim,@GetDef),
+                  #parm2=Send(victim,@GetName));
+         }
+
+         return FALSE;
       }
 
       % Can always attack mortal event characters.
@@ -9147,6 +9184,17 @@ messages:
                Send(self,@GainBaseMaxHealth,#amount=-1);
                bLostHealth = TRUE;
             }
+
+            % Under 100HP and killed by a player? No PvP for 2 hours.
+            if bLostHealth=TRUE
+               AND piBase_max_health<=99
+               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+               AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+               AND Send(self,@FindUsing,#class=&SoldierShield) = $
+               AND ptTempSafe = $
+            {
+               Send(self,@StartTempSafe);
+            }
          }
       }
       else
@@ -12105,6 +12153,28 @@ messages:
       Send(self,@SetPlayerFlag,#flag=PFLAG_PKILL_LOCK,#value=FALSE);
 
       return Send(SYS,@GetSuccessRsc);
+   }
+
+   StartTempSafe()
+   {
+      if ptTempSafe <> $
+      {
+         DeleteTimer(ptTempSafe);
+      }
+      ptTempSafe = CreateTimer(self,@EndTempSafe,(3600*1000));
+      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=TRUE);
+      Send(self,@MsgSendUser,#message_rsc=player_temp_safe);
+
+      return;
+   }
+
+   EndTempSafe()
+   {
+      Send(self,@SetPlayerFlag,#flag=PFLAG_TEMPSAFE,#value=FALSE);
+      Send(self,@MsgSendUser,#message_rsc=player_temp_safe_end);
+      ptTempSafe = $;
+
+      return;
    }
 
    ResetFaction(faction = FACTION_NEUTRAL)

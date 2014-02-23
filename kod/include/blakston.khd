@@ -2173,7 +2173,7 @@
 
    % First set of flags (in piFlags)
    % A mask of flags that are unaffected by ResetPlayerFlagList
-   PFLAG_MASK              = 0x423D7E
+   PFLAG_MASK              = 0x463D7E
 
    PFLAG_INVISIBLE         = 0x000001
    PFLAG_MURDERER          = 0x000002
@@ -2194,7 +2194,7 @@
    PFLAG_NO_MAGIC          = 0x008000
    PFLAG_NO_MOVE           = 0x010000
    PFLAG_LOG               = 0x020000
-
+   PFLAG_TEMPSAFE          = 0x040000
    PFLAG_ANONYMOUS         = 0x080000
    PFLAG_FORGOTTEN         = 0x100000
    PFLAG_MORPHED           = 0x200000

@@ -639,6 +639,7 @@ messages:
          OR what = poOriginal
          OR (IsClass(poOriginal,&Monster)
              AND IsClass(what,GetClass(poOriginal)))
+         OR IsClass(what,&Revenant)
       {
          return -100;
       }

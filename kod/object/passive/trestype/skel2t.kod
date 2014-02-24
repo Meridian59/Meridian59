@@ -31,8 +31,7 @@ messages:
       plTreasure = [ [ &MetalShield, 9 ],
                      [ &NeruditeArrow, 45 ],
                      [ &InkyCap, 19 ],
-                     [ &Key, 1],
-                     [ &Knightshield, 2 ],
+                     [ &Knightshield, 3 ],
                      [ &Scimitar, 23 ],
                      [ &DiscordScroll, 1 ]
                    ];

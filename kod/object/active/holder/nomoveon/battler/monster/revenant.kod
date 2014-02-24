@@ -24,7 +24,7 @@
 %       Difficulty = maxhealth/12 (bounded at 4 and 9)
 %    Standard Revenant difficulty:
 %       Level = 150% of maxhealth
-%       Difficulty = maxhealth/10 (bounded at 4 and 10)
+%       Difficulty = maxhealth/10 (bounded at 4 and 9)
 
 
 Revenant is Monster
@@ -115,7 +115,7 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ 55, -ATCK_SPELL_ALL ],
+      plResistances = [ [ 25, -ATCK_SPELL_ALL ],
                         [ 10, ATCK_WEAP_MAGIC ],
                         [ 25, ATCK_WEAP_PIERCE] ];
       propagate;

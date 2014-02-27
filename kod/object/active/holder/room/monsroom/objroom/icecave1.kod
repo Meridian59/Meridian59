@@ -20,7 +20,7 @@ constants:
    YETI_ROW = 21
    YETI_COL = 12
 
-   HOUR_MILLI = 600000  % 10 minutes
+   RESPAWN_TIMER = 180000  % 3 minutes
    YETI_DOOR_TIME = 10000
    MANA_DOOR_TIME = 2000
 
@@ -127,7 +127,7 @@ messages:
               #height=380,#speed=0);
       }
       
-      ptYeti_gen = CreateTimer(self,@YetiGenTimer,1*HOUR_MILLI);     
+      ptYeti_gen = CreateTimer(self,@YetiGenTimer,1*RESPAWN_TIMER);     
  
       return;
    }

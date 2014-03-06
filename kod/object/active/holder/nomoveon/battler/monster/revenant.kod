@@ -116,7 +116,7 @@ messages:
    Constructed()
    {
       plResistances = [ [ 25, -ATCK_SPELL_ALL ],
-                        [ 10, ATCK_WEAP_MAGIC ],
+                        [ 15, ATCK_WEAP_MAGIC ],
                         [ 25, ATCK_WEAP_PIERCE] ];
       propagate;
    }

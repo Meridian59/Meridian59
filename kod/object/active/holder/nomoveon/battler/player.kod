@@ -1534,7 +1534,7 @@ messages:
          if Send(self,@CheckPlayerFlag,#flag=PFLAG_HAUNTED)
          {
             Create(&Revenant,#target=self,#location=poOwner,
-                   #level=(((piBase_Max_health*150)/100)+(5*piKill_Count_decay)),
+                   #level=bound((((piBase_Max_health*150)/100)+(5*piKill_Count_decay)),95,215),
                    #diff=bound(piBase_Max_health/10,4,9),
                    #karmic=-piKarma/100);
          }
@@ -5223,7 +5223,7 @@ messages:
                      Send(self,@MsgSendUser,#message_rsc=player_haunted_on,
                           #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName,#Cap=TRUE));
                      Create(&Revenant,#target=self,#location=poOwner,
-                            #level=(((piBase_Max_health*110)/100)+(7*piKill_Count_decay)),
+                            #level=bound((((piBase_Max_health*110)/100)+(7*piKill_Count_decay)),95,180),
                             #diff=bound(piBase_Max_health/12,4,9),#karmic=-piKarma/100);
                   }
                }
@@ -5367,7 +5367,7 @@ messages:
          return 0;
       }
 
-      oChance = 40;
+      oChance = 30;
       oGuild = Send(target,@GetGuild);
       
       if poGuild <> $ AND oGuild <> $ 
@@ -5430,14 +5430,14 @@ messages:
       oChance = oChance + bound(20*piHealth/piBase_Max_health,0,20);
 
       % Bind the number to a reasonable amount, then add in the penalty for being a repeat killer.
-      oChance = (bound(oChance,40,100) + (5*piKill_count_decay));
+      oChance = (bound(oChance,20,80) + (5*piKill_count_decay));
 
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_MARTYRS_BATTLEGROUND);
       if Send(poOwner,@IsEnchanted,#what=oSpell)
       {
          oChance = oChance + (oChance * Send(poOwner,@GetEnchantmentState,#what=oSpell) / 100);
       }
-      oChance = bound(oChance,40,100);
+      oChance = bound(oChance,40,95);
       return oChance;
    }
 

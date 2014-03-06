@@ -3283,7 +3283,7 @@ messages:
    {
       if aspell & ATCK_SPELL_QUAKE
       {
-         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=27);
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=65);
       }
       if aspell & ATCK_SPELL_HOLY
       {
@@ -3291,11 +3291,11 @@ messages:
       }
       if aspell & ATCK_SPELL_UNHOLY
       {
-         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=56);
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=112);
       }
       if aspell & ATCK_SPELL_ACID
       {
-         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=79);
+         Send(self,@EffectSendUserDurationAndXlat,#effect=EFFECT_FLASHXLAT,#duration=duration,#xlat=86);
       }
       if aspell & ATCK_SPELL_COLD
       {

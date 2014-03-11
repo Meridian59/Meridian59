@@ -3364,6 +3364,7 @@ messages:
          {
             plDefense_modifiers = DelListElem(plDefense_modifiers,i);
             bFound = TRUE;
+			return;
          }
       }
 

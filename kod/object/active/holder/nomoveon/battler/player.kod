@@ -1240,6 +1240,9 @@ messages:
       {
          Send(poOwner,@SomethingChanged,#what=self);
       }
+      
+      Post(self,@DrawOffense);
+      Post(self,@DrawDefense);
 	  
       return;
    }

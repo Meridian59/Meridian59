@@ -3317,6 +3317,7 @@ messages:
    "Adds <what> to plAttack_modifiers, which can modify attack strength and damage."
    {
       plAttack_modifiers = Cons(what,plAttack_modifiers);
+      Post(self,@DrawOffense);
       
       return;
    }
@@ -3331,6 +3332,7 @@ messages:
          if i = what
          {
             plAttack_modifiers = DelListElem(plAttack_modifiers,i);
+            Post(self,@DrawOffense);
             
             return;
          }
@@ -3348,6 +3350,8 @@ messages:
    "and damage."
    {
       plDefense_modifiers = Cons(what,plDefense_modifiers);
+      Post(self,@DrawDefense);
+      Post(self,@DrawArmor);
       
       return;
    }
@@ -3363,6 +3367,8 @@ messages:
          if i = what
          {
             plDefense_modifiers = DelListElem(plDefense_modifiers,i);
+            Post(self,@DrawDefense);
+            Post(self,@DrawArmor);
             bFound = TRUE;
          }
       }
@@ -8114,6 +8120,8 @@ messages:
                piHealth = piMax_Health;
                Send(self,@DrawHealth);
                Send(self,@EatSomething,#nutrition=200);
+               Post(self,@DrawOffense);
+               Post(self,@DrawDefense);
 			   
 			   % report to shrunken head
 			   shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
@@ -10263,6 +10271,7 @@ messages:
       }
 
       Send(self,@DrawAim);
+      Post(self,@DrawOffense);
       
       return piAimMod - iOrigAim;
    }
@@ -10301,6 +10310,7 @@ messages:
       }
 
       Send(self,@DrawAgility);
+      Post(self,@DrawDefense);
       
       return piAgilityMod - iOrigAgility;
    }
@@ -11742,6 +11752,7 @@ messages:
               #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
                                      #index=QST_ID_PRINCESS_SERVICE),QT_MAX_NUM_ACTIVE)) );
          Send(oQuestEngine,@ScheduleQuest,#index = QST_ID_PRINCESS_SERVICE, #override=TRUE);
+         Post(self,@DrawDefense);
       }
       
       if piFaction = FACTION_DUKE
@@ -11758,6 +11769,7 @@ messages:
                #new_max = (1+Nth(Send(oQuestEngine,@GetQuestTemplate,
                                       #index=QST_ID_REBEL_SERVICE),QT_MAX_NUM_ACTIVE)) );
          Send(oQuestEngine,@ScheduleQuest,#index = QST_ID_REBEL_SERVICE, #override=TRUE);
+         Post(self,@DrawOffense);
       }
       
       piFactionTimeUpdated = GetTime();
@@ -11817,6 +11829,7 @@ messages:
          {
             Debug("ResignFaction miscounted number of faction members!");
          }
+         Post(self,@DrawDefense);
       }
       
       if piFaction = FACTION_DUKE
@@ -11850,6 +11863,7 @@ messages:
          {
             Debug("ResignFaction miscounted number of faction members!");
          }
+         Post(self,@DrawOffense);
       }
       
       Send(self,@ResetFaction,#faction=FACTION_NEUTRAL);
@@ -13238,5 +13252,25 @@ messages:
 	   return;
    }
 
+   SumDamageReduction()
+   {
+      local iArmor, d;
+      iArmor = 0;
+      
+      for d in plDefense_modifiers
+      {
+         if IsClass(d,&DefenseModifier)
+         {
+            iArmor = iArmor + Send(d,@GetDamageReduction);
+         }
+         
+         if IsClass(d,&ArmorOfGort)
+         {
+            iArmor = iArmor + (Send(self,@GetEnchantedState,#what=d) / 25);
+         }
+      }
+      
+      return iArmor;
+   }
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

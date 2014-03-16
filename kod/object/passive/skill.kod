@@ -362,7 +362,9 @@ messages:
       if iRandom < increase_chance
       {         
          Send(who,@ChangeSkillAbility,#skill_num=viskill_Num,#amount=1,#report=TRUE);
-         
+         Post(who,@DrawOffense);
+         Post(who,@DrawDefense);
+
          return TRUE;       
       }
       

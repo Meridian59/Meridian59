@@ -271,6 +271,11 @@ messages:
    {
       local i;
 
+      If IsClass(self,&User)
+      {
+         Post(self,@DrawResistance,#type=what);
+      }
+            
       for i in plResistances
       {
          if Nth(i,2) = what
@@ -1043,7 +1048,26 @@ messages:
    {
       return;
    }
-
+   
+   GetResistances()
+   {
+      return plResistances;
+   }
+   
+   GetResistanceValueByType(type=$)
+   {
+      local oResist;
+      
+      for oResist in plResistances
+      {
+         if Nth(oResist,2) = type
+         {
+            return Nth(oResist,1);
+         }
+      }
+      
+      return 0;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

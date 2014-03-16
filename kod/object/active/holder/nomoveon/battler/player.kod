@@ -1159,6 +1159,19 @@ messages:
          Send(poOwner,@SomethingChanged,#what=self);
       }
       
+      if flag=PFLAG_MORPHED
+      {
+         Post(self,@DrawOffense);
+      }
+      
+      if flag=PFLAG_NO_MOVE
+         OR flag=PFLAG_NO_FIGHT
+         OR flag=PFLAG_NO_MAGIC
+         OR flag=PFLAG_MORPHED
+      {
+         Post(self,@DrawDefense);
+      }
+
       return;
    }
 

@@ -6598,6 +6598,11 @@ messages:
          SendPacket(poSession);
       }
       
+      if IsClass(what,&Weapon)
+      {
+         Post(self,@DrawOffense);
+      }
+      
       return;
    }
 
@@ -6607,6 +6612,11 @@ messages:
       {
          AddPacket(1,BP_UNUSE,4,what);
          SendPacket(poSession);
+      }
+
+      if IsClass(what,&Weapon)
+      {
+         Post(self,@DrawOffense);
       }
       
       return;

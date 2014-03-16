@@ -243,7 +243,8 @@ messages:
 
       % Put spell maintenance info in caster's enchantment list.
       Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
-           #state=[iDrain,lEnchanted,iPower,iRange]);      
+           #state=[iDrain,lEnchanted,iPower,iRange],
+           #addicon=FALSE);
 
       propagate;
    }
@@ -389,12 +390,12 @@ messages:
       }
 
       if IsClass(who,&User)
-         AND iDrain > 1000
+         AND iDrain >= (viDrainTime / viManaDrain)
       {
          if Send(who,@GetMana) >= 1
          {
             Send(who,@LoseMana,#amount=1);
-            iDrain = iDrain - 1000;
+            iDrain = iDrain - (viDrainTime / viManaDrain);
          }
          else
          {
@@ -403,7 +404,7 @@ messages:
       }
 
       Send(who,@StartEnchantment,#what=self,#time=RADIUS_CHECK_TIME,
-          #state=[iDrain + (((viManaDrain*1000 / viDrainTime)*1000) / (1000 / RADIUS_CHECK_TIME)),lEnchanted,iPower,iRange],#Report=FALSE);
+          #state=[iDrain + RADIUS_CHECK_TIME,lEnchanted,iPower,iRange],#addicon=FALSE);
 
       return;
    }

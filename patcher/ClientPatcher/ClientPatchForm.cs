@@ -119,6 +119,11 @@ namespace ClientPatcher
         private void ScanClient()
         {
             string fullpath;
+            Directory.CreateDirectory(ClientFolder + "\\resource\\");
+            Directory.CreateDirectory(ClientFolder + "\\download\\");
+            Directory.CreateDirectory(ClientFolder + "\\help\\");
+            Directory.CreateDirectory(ClientFolder + "\\mail\\");
+            Directory.CreateDirectory(ClientFolder + "\\ads\\");
             lblStatus.Text = "Scanning existing content....";
             lblStatus.Update();
             pbProgress.Maximum = PatchFiles.Count;

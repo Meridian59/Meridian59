@@ -42,6 +42,7 @@ namespace PatchListGenerator
             ScanExtensions.Add(".wav");
             ScanExtensions.Add(".mp3");
             ScanExtensions.Add(".ttf");
+            ScanExtensions.Add(".bsf");
         }
 
         public void ScanSource()

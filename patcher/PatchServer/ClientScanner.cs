@@ -13,15 +13,27 @@ namespace PatchListGenerator
         private List<string> ScanFolder { get; set; }
         private List<string> ScanExtensions { get; set; }
         public List<ManagedFile> Files { get; set; }
+        public string BasePath { get; set; }
         
         public ClientScanner()
         {
             ScanFolder = new List<string>();
-            ScanExtensions = new List<string>();
-            Files = new List<ManagedFile>();
-
             ScanFolder.Add("C:\\Meridian59-master\\run\\localclient\\");
             ScanFolder.Add("C:\\Meridian59-master\\run\\localclient\\resource");
+            AddExensions();
+        }
+
+        public ClientScanner(string basepath)
+        {
+            ScanFolder = new List<string>();
+            ScanFolder.Add(basepath);
+            ScanFolder.Add(basepath + "\\resource");
+            AddExensions();
+        }
+
+        private void AddExensions()
+        {
+            ScanExtensions = new List<string>();
             ScanExtensions.Add(".roo");
             ScanExtensions.Add(".dll");
             ScanExtensions.Add(".rsb");
@@ -29,10 +41,12 @@ namespace PatchListGenerator
             ScanExtensions.Add(".bgf");
             ScanExtensions.Add(".wav");
             ScanExtensions.Add(".mp3");
+            ScanExtensions.Add(".ttf");
         }
 
         public void ScanSource()
         {
+            Files = new List<ManagedFile>();
             foreach (string folder in ScanFolder) //
             {
                 if (!System.IO.Directory.Exists(folder))
@@ -47,7 +61,6 @@ namespace PatchListGenerator
                     string ext = fileName.Substring(fileName.Length - 4);
                     if (ScanExtensions.Contains(ext))
                     {
-                        // do something with fileName
                         ManagedFile file;
                         file = new ManagedFile(fileName);
                         file.ParseFilePath();

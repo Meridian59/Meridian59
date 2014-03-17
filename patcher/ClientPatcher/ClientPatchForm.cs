@@ -8,7 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Net;
 using Newtonsoft.Json;
-using PatchServer;
+using PatchListGenerator;
 using System.IO;
 using System.Diagnostics;
 

@@ -26,13 +26,12 @@ namespace ClientPatcher
         private string PatchInfoURL { get; set; } //URL with JSON Patch information
         private string ClientFolder { get; set; } //Folder to save files in
         private string PatchBaseURL { get; set; } //URL to download files from
-        private string PatchJason { get; set; } //Probably doesnt need to be global, used to store the JSON downloaded before converting to a list.
+        private string PatchJason   { get; set; } //Probably doesnt need to be global, used to store the JSON downloaded before converting to a list.
 
         ChangeType changetype = ChangeType.NONE;
         
         private long PatchTotalSize = 0;
         
-
         private List<ManagedFile> PatchFiles; //Loaded from the web server at PatchInfoURL
         private List<ManagedFile> LocalFiles; //Loaded with files that do NOT match
 
@@ -193,6 +192,15 @@ namespace ClientPatcher
                 PatchBaseURL = selected.PatchBaseURL;
                 lblStatus.Text = String.Format("Server {0} selected. Client located at: {1}", selected.ServerName, selected.ClientFolder);
                 btnPlay.Enabled = false;
+                if (groupProfileSettings.Enabled == true)
+                {
+                    groupProfileSettings.Enabled = false;
+                    txtClientFolder.Text = "";
+                    txtPatchBaseURL.Text = "";
+                    txtPatchInfoURL.Text = "";
+                    txtServerName.Text = "";
+                    cbDefaultServer.Checked = false;
+                }
             }
         }
 
@@ -282,6 +290,24 @@ namespace ClientPatcher
             changetype = ChangeType.NONE;
             SaveSettings();
             LoadSettings();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.ShowDialog(this);
+            txtClientFolder.Text = fbd.SelectedPath;
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                int selected = Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
+                Servers.RemoveAt(selected);
+                SaveSettings();
+                LoadSettings();
+            }
         }
     }
 }

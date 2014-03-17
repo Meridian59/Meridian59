@@ -18,9 +18,9 @@ namespace ClientPatcher
         public PatcherSettings()
         {
             ServerName = "103";
-            PatchInfoURL = "http://localhost/103patchinfo.txt";
-            ClientFolder = "C:\\Users\\dstone\\Downloads\\meridian_103";
-            PatchBaseURL = "http://localhost/103clientpatch";
+            PatchInfoURL = "http://build.openmeridian.org/103/patchinfo.txt";
+            ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+            PatchBaseURL = "http://build.openmeridian.org/103/clientpatch";
             Default = true;
         }
 
@@ -30,18 +30,18 @@ namespace ClientPatcher
             {
                 case 104:
                     ServerName = "104";
-                    PatchInfoURL = "http://localhost/104patchinfo.txt";
-                    ClientFolder = "C:\\Users\\dstone\\Downloads\\meridian_104";
-                    PatchBaseURL = "http://localhost/104clientpatch";
+                    PatchInfoURL = "http://build.openmeridian.org/104/patchinfo.txt";
+                    ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+                    PatchBaseURL = "http://build.openmeridian.org/104/clientpatch";
                     Default = false;
                     break;
                 
                 case 103:
                 default:
                     ServerName = "103";
-                    PatchInfoURL = "http://localhost/103patchinfo.txt";
-                    ClientFolder = "C:\\Users\\dstone\\Downloads\\meridian_103";
-                    PatchBaseURL = "http://localhost/103clientpatch";
+                    PatchInfoURL = "http://build.openmeridian.org/103/patchinfo.txt";
+                    ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+                    PatchBaseURL = "http://build.openmeridian.org/103/clientpatch";
                     Default = true;
                     break;
             }

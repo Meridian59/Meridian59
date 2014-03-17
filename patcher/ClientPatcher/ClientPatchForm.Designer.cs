@@ -39,6 +39,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -58,7 +59,7 @@
             // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(15, 165);
+            this.pbProgress.Location = new System.Drawing.Point(15, 186);
             this.pbProgress.Name = "pbProgress";
             this.pbProgress.Size = new System.Drawing.Size(279, 36);
             this.pbProgress.Step = 1;
@@ -66,7 +67,7 @@
             // 
             // btnPlay
             // 
-            this.btnPlay.Location = new System.Drawing.Point(15, 246);
+            this.btnPlay.Location = new System.Drawing.Point(12, 277);
             this.btnPlay.Name = "btnPlay";
             this.btnPlay.Size = new System.Drawing.Size(279, 46);
             this.btnPlay.TabIndex = 1;
@@ -77,7 +78,7 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(12, 305);
+            this.lblStatus.Location = new System.Drawing.Point(12, 340);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(37, 13);
             this.lblStatus.TabIndex = 2;
@@ -113,7 +114,7 @@
             // 
             // btnPatch
             // 
-            this.btnPatch.Location = new System.Drawing.Point(15, 113);
+            this.btnPatch.Location = new System.Drawing.Point(15, 134);
             this.btnPatch.Name = "btnPatch";
             this.btnPatch.Size = new System.Drawing.Size(279, 46);
             this.btnPatch.TabIndex = 7;
@@ -125,7 +126,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(10, 81);
+            this.label3.Location = new System.Drawing.Point(10, 102);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(242, 29);
             this.label3.TabIndex = 8;
@@ -135,7 +136,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(10, 214);
+            this.label4.Location = new System.Drawing.Point(10, 235);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(159, 29);
             this.label4.TabIndex = 9;
@@ -149,13 +150,14 @@
             this.groupBox1.Controls.Add(this.btnAdd);
             this.groupBox1.Location = new System.Drawing.Point(308, 9);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(188, 321);
+            this.groupBox1.Size = new System.Drawing.Size(194, 321);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Options";
             // 
             // groupProfileSettings
             // 
+            this.groupProfileSettings.Controls.Add(this.button1);
             this.groupProfileSettings.Controls.Add(this.btnSave);
             this.groupProfileSettings.Controls.Add(this.label8);
             this.groupProfileSettings.Controls.Add(this.label7);
@@ -169,16 +171,26 @@
             this.groupProfileSettings.Enabled = false;
             this.groupProfileSettings.Location = new System.Drawing.Point(7, 109);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(175, 200);
+            this.groupProfileSettings.Size = new System.Drawing.Size(181, 200);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(120, 110);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(56, 20);
+            this.button1.TabIndex = 22;
+            this.button1.Text = "Browse";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(121, 175);
+            this.btnSave.Location = new System.Drawing.Point(120, 173);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(48, 23);
+            this.btnSave.Size = new System.Drawing.Size(56, 19);
             this.btnSave.TabIndex = 21;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -276,6 +288,7 @@
             this.btnRemove.TabIndex = 1;
             this.btnRemove.Text = "Remove Profile";
             this.btnRemove.UseVisualStyleBackColor = true;
+            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
             // 
             // btnAdd
             // 
@@ -339,6 +352,7 @@
         private System.Windows.Forms.TextBox txtPatchInfoURL;
         private System.Windows.Forms.TextBox txtServerName;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button button1;
     }
 }
 

@@ -16,20 +16,34 @@ namespace ClientPatcher
 {
     public partial class ClientPatchForm : Form
     {
-        private string PatchInfoURL;
-        private string ClientFolder;
-        private string PatchBaseURL;
-        private string PatchJason = "";
+        private string PatchInfoURL { get; set; }
+        private string ClientFolder { get; set; }
+        private string PatchBaseURL { get; set; }
+        private string PatchJason { get; set; }
         
         private long PatchTotalSize = 0;
         
         private List<ManagedFile> PatchFiles;
         private List<ManagedFile> LocalFiles;
 
-        private void DownloadJson()
+        private List<PatcherSettings> Servers;
+
+        private int DownloadJson()
         {
             WebClient wc = new WebClient();
-            PatchJason = wc.DownloadString(PatchInfoURL);
+            try
+            {
+                PatchJason = wc.DownloadString(PatchInfoURL);
+                PatchFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(PatchJason);
+                return 1;
+            }
+            catch (WebException e)
+            {
+                Console.WriteLine("WebException Handler: {0}", e.ToString());
+                lblStatus.Text = "Unable to download PatchInfo from: " + PatchInfoURL;
+                return 0;
+            }
+
         }
 
         public ClientPatchForm()
@@ -39,38 +53,48 @@ namespace ClientPatcher
 
         public void LoadSettings()
         {
-            PatcherSettings ps;
             string path = Directory.GetCurrentDirectory();
             if (File.Exists(path + "\\settings.txt"))
             {
                 StreamReader file = File.OpenText(path + "\\settings.txt");
                 JsonSerializer js = new JsonSerializer();
-                ps = JsonConvert.DeserializeObject<PatcherSettings>(file.ReadToEnd());
+                //ps = JsonConvert.DeserializeObject<PatcherSettings>(file.ReadToEnd());
+                Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd());
+                foreach (PatcherSettings settings in Servers)
+                {
+                    ddlServer.Items.Add(settings.ServerName);
+                }
             }
             else
             {
-                ps = new PatcherSettings();
+                Servers = new List<PatcherSettings>();
+                Servers.Add(new PatcherSettings(103));
+                ddlServer.Items.Add(Servers[0].ServerName);
+                Servers.Add(new PatcherSettings(104));
+                ddlServer.Items.Add(Servers[1].ServerName);
                 using (StreamWriter sw = new StreamWriter(path + "\\settings.txt"))
                 {
-                    sw.Write(ps.ToJson());
+                    sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented));
                 }
             }
-            PatchInfoURL = ps.PatchInfoURL;
-            ClientFolder = ps.ClientFolder;
-            PatchBaseURL = ps.PatchBaseURL;
+            PatcherSettings Default = Servers.Find(x => x.Default == true);
+            int index = Servers.FindIndex(x => x.Default == true);
+            if (Default != null)
+            {
+                PatchInfoURL = Default.PatchInfoURL;
+                ClientFolder = Default.ClientFolder;
+                PatchBaseURL = Default.PatchBaseURL;
+                ddlServer.SelectedIndex = index;
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            PatchJason = "";
             LocalFiles = new List<ManagedFile>();
-            timer1.Start();
             btnPlay.Enabled = false;
 
             LoadSettings();
-            
-            lblStatus.Text = "Downloading Patch Information....";
-            DownloadJson();
-            PatchFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(PatchJason);
             
         }
 
@@ -95,7 +119,6 @@ namespace ClientPatcher
                 lblStatus.Text = "Scanning existing content...." + PatchFile.filename;
                 lblStatus.Update();
             }
-            DownloadFiles();
         }
 
         private void DownloadFiles()
@@ -120,12 +143,6 @@ namespace ClientPatcher
             btnPlay.Enabled = true;
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            timer1.Enabled = false;
-            ScanClient();
-        }
-
         private void btnPlay_Click(object sender, EventArgs e)
         {
             ProcessStartInfo meridian = new ProcessStartInfo();
@@ -135,5 +152,34 @@ namespace ClientPatcher
             Application.Exit();
         }
 
+        private void btnRetry_Click(object sender, EventArgs e)
+        {
+            btnRetry.Visible = false;
+            DownloadJson();
+        }
+
+        private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            //lblStatus.Text = ddlServer.SelectedItem.ToString();
+            PatcherSettings selected = Servers.Find(x => x.ServerName == ddlServer.SelectedItem.ToString());
+            if (selected != null)
+            {
+                PatchInfoURL = selected.PatchInfoURL;
+                ClientFolder = selected.ClientFolder;
+                PatchBaseURL = selected.PatchBaseURL;
+                lblStatus.Text = String.Format("Server {0} selected. Client located at: {1}", selected.ServerName, selected.ClientFolder);
+                btnPlay.Enabled = false;
+            }
+        }
+
+        private void btnPatch_Click(object sender, EventArgs e)
+        {
+            lblStatus.Text = "Downloading Patch Information....";
+            if (DownloadJson() == 1)
+            {
+                ScanClient();
+                DownloadFiles();
+            }
+        }
     }
 }

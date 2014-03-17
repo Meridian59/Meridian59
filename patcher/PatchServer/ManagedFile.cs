@@ -6,7 +6,7 @@ using System.IO;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
 
-namespace PatchServer
+namespace PatchListGenerator
 {
 
     public class ManagedFile

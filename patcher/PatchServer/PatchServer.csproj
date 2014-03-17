@@ -8,7 +8,7 @@
     <ProjectGuid>{2C9756F2-CA3D-443B-8EAB-B0CB006A1900}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>PatchServer</RootNamespace>
+    <RootNamespace>PatchListGenerator</RootNamespace>
     <AssemblyName>PatchServer</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

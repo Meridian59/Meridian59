@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 
-namespace PatchServer
+namespace PatchListGenerator
 {
-    class PatchMain
+    class PatchListGenerator
     {
         static string JsonOutputPath = "C:\\wamp\\www\\patchinfo.txt";
         

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace ClientPatcher
 {
-    class PatcherSettings
+    public class PatcherSettings
     {
         public string ServerName { get; set; }
         public string PatchInfoURL { get; set; }
@@ -18,9 +18,9 @@ namespace ClientPatcher
         public PatcherSettings()
         {
             ServerName = "103";
-            PatchInfoURL = "http://localhost/103/patchinfo.txt";
+            PatchInfoURL = "http://localhost/103patchinfo.txt";
             ClientFolder = "C:\\Users\\dstone\\Downloads\\meridian_103";
-            PatchBaseURL = "http://localhost/103/clientpatch";
+            PatchBaseURL = "http://localhost/103clientpatch";
             Default = true;
         }
 

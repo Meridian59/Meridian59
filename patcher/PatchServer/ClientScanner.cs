@@ -59,7 +59,7 @@ namespace PatchListGenerator
                 string[] fileEntries = Directory.GetFiles(folder);
                 foreach (string fileName in fileEntries)
                 {
-                    string ext = fileName.Substring(fileName.Length - 4);
+                    string ext = fileName.Substring(fileName.Length - 4).ToLower();
                     if (ScanExtensions.Contains(ext))
                     {
                         ManagedFile file;

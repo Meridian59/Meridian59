@@ -56,7 +56,7 @@ static int _nVerbAliases = 0;
 static int _nAllocated = 0;
 #define CHUNKSIZE 10
 
-static char* _szDefaultVerbAliases =
+static char _szDefaultVerbAliases[] =
    "chuckle=emote chuckles.\0"
    "giggle=emote giggles.\0"
    "hail=tellguild Hail Guildmembers!\0"

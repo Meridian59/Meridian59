@@ -94,12 +94,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientPatcher.cs" />
     <Compile Include="ClientPatchForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ClientPatchForm.Designer.cs">
       <DependentUpon>ClientPatchForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ClientProfileManager.cs" />
     <Compile Include="PatcherSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

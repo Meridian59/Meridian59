@@ -39,7 +39,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -157,7 +157,7 @@
             // 
             // groupProfileSettings
             // 
-            this.groupProfileSettings.Controls.Add(this.button1);
+            this.groupProfileSettings.Controls.Add(this.btnBrowse);
             this.groupProfileSettings.Controls.Add(this.btnSave);
             this.groupProfileSettings.Controls.Add(this.label8);
             this.groupProfileSettings.Controls.Add(this.label7);
@@ -176,15 +176,15 @@
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
             // 
-            // button1
+            // btnBrowse
             // 
-            this.button1.Location = new System.Drawing.Point(120, 110);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(56, 20);
-            this.button1.TabIndex = 22;
-            this.button1.Text = "Browse";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnBrowse.Location = new System.Drawing.Point(120, 110);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(56, 20);
+            this.btnBrowse.TabIndex = 22;
+            this.btnBrowse.Text = "Browse";
+            this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // btnSave
             // 
@@ -352,7 +352,7 @@
         private System.Windows.Forms.TextBox txtPatchInfoURL;
         private System.Windows.Forms.TextBox txtServerName;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnBrowse;
     }
 }
 

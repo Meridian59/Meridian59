@@ -2,17 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using Newtonsoft.Json;
+using PatchListGenerator;
+using System.IO;
+using System.Diagnostics;
 
 namespace ClientPatcher
 {
-    class ClientProfileManager
+    class SettingsManager
     {
         private string SettingsPath; //Path to JSON file settings.txt
-        private List<PatcherSettings> Servers; //Loaded from settings.txt, or generated on first run and then saved.
+        public List<PatcherSettings> Servers { get; set; } //Loaded from settings.txt, or generated on first run and then saved.
+
+        public SettingsManager()
+        {
+            SettingsPath = Directory.GetCurrentDirectory() + "\\settings.txt";
+        }
 
         public void LoadSettings()
         {
-            SettingsPath = Directory.GetCurrentDirectory() + "\\settings.txt";
             if (File.Exists(SettingsPath))
             {
                 StreamReader file = File.OpenText(SettingsPath);
@@ -28,15 +37,9 @@ namespace ClientPatcher
                 Servers.Add(new PatcherSettings(104));
                 SaveSettings();
             }
-            PatcherSettings DefaultProfile = Servers.Find(x => x.Default == true);
-            int index = Servers.FindIndex(x => x.Default == true);
-            if (DefaultProfile != null)
-            {
-                CurrentProfile = DefaultProfile;
-            }
         }
 
-        private void SaveSettings()
+        public void SaveSettings()
         {
             using (StreamWriter sw = new StreamWriter(SettingsPath))
             {
@@ -63,6 +66,16 @@ namespace ClientPatcher
             Servers.Add(newprofile);
             SaveSettings();
             LoadSettings();
+        }
+
+        public PatcherSettings FindByName(string name)
+        {
+            return Servers.Find(x => x.ServerName == name);
+        }
+
+        public PatcherSettings GetDefault()
+        {
+            return Servers.Find(x => x.Default == true);
         }
 
     }

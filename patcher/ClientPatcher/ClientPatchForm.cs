@@ -23,165 +23,36 @@ namespace ClientPatcher
 
     public partial class ClientPatchForm : Form
     {
-        private string PatchInfoURL { get; set; } //URL with JSON Patch information
-        private string ClientFolder { get; set; } //Folder to save files in
-        private string PatchBaseURL { get; set; } //URL to download files from
-        private string PatchJason   { get; set; } //Probably doesnt need to be global, used to store the JSON downloaded before converting to a list.
+
+        SettingsManager Settings;
+        ClientPatcher Patcher;
 
         ChangeType changetype = ChangeType.NONE;
-        
-        private long PatchTotalSize = 0;
-        
-        private List<ManagedFile> PatchFiles; //Loaded from the web server at PatchInfoURL
-        private List<ManagedFile> LocalFiles; //Loaded with files that do NOT match
 
-        private string SettingsPath; //Path to JSON file settings.txt
-        private List<PatcherSettings> Servers; //Loaded from settings.txt, or generated on first run and then saved.
-
-        private int DownloadJson()
-        {
-            WebClient wc = new WebClient();
-            try
-            {
-                PatchJason = wc.DownloadString(PatchInfoURL);
-                PatchFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(PatchJason);
-                return 1;
-            }
-            catch (WebException e)
-            {
-                Console.WriteLine("WebException Handler: {0}", e.ToString());
-                lblStatus.Text = "Unable to download PatchInfo from: " + PatchInfoURL;
-                return 0;
-            }
-
-        }
 
         public ClientPatchForm()
         {
             InitializeComponent();
         }
 
-        public void LoadSettings()
-        {
-            ddlServer.Items.Clear();
-            SettingsPath = Directory.GetCurrentDirectory() + "\\settings.txt";
-            if (File.Exists(SettingsPath))
-            {
-                StreamReader file = File.OpenText(SettingsPath);
-                JsonSerializer js = new JsonSerializer();
-                //ps = JsonConvert.DeserializeObject<PatcherSettings>(file.ReadToEnd());
-                Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd());
-                file.Close();
-                foreach (PatcherSettings settings in Servers)
-                {
-                    ddlServer.Items.Add(settings.ServerName);
-                }
-            }
-            else
-            {
-                Servers = new List<PatcherSettings>();
-                Servers.Add(new PatcherSettings(103));
-                ddlServer.Items.Add(Servers[0].ServerName);
-                Servers.Add(new PatcherSettings(104));
-                ddlServer.Items.Add(Servers[1].ServerName);
-                SaveSettings();
-            }
-            PatcherSettings Default = Servers.Find(x => x.Default == true);
-            int index = Servers.FindIndex(x => x.Default == true);
-            if (Default != null)
-            {
-                PatchInfoURL = Default.PatchInfoURL;
-                ClientFolder = Default.ClientFolder;
-                PatchBaseURL = Default.PatchBaseURL;
-                ddlServer.SelectedIndex = index;
-                lblStatus.Text = String.Format("Server {0} selected. Client located at: {1}", Default.ServerName, Default.ClientFolder);
-            }
-        }
-
-        private void SaveSettings()
-        {
-            using (StreamWriter sw = new StreamWriter(SettingsPath))
-            {
-                sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented));
-            }
-        }
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            PatchJason = "";
-            LocalFiles = new List<ManagedFile>();
             btnPlay.Enabled = false;
 
-            LoadSettings();
-            
-        }
+            Settings = new SettingsManager();
+            Settings.LoadSettings();
 
-        private void ScanClient()
-        {
-            string fullpath;
-            Directory.CreateDirectory(ClientFolder + "\\resource\\");
-            Directory.CreateDirectory(ClientFolder + "\\download\\");
-            Directory.CreateDirectory(ClientFolder + "\\help\\");
-            Directory.CreateDirectory(ClientFolder + "\\mail\\");
-            Directory.CreateDirectory(ClientFolder + "\\ads\\");
-            lblStatus.Text = "Scanning existing content....";
-            lblStatus.Update();
-            pbProgress.Maximum = PatchFiles.Count;
-            foreach (ManagedFile PatchFile in PatchFiles)
-            {
-                fullpath = ClientFolder + PatchFile.basepath + PatchFile.filename; 
-                ManagedFile LocalFile = new ManagedFile(fullpath);
-                LocalFile.ComputeHash();
-                if (PatchFile.myHash != LocalFile.myHash)
-                {
-                    LocalFiles.Add(LocalFile);
-                    LocalFile.Length = PatchFile.Length;
-                    PatchTotalSize += PatchFile.Length;
-                }
-                pbProgress.PerformStep();
-                lblStatus.Text = "Scanning existing content...." + PatchFile.filename;
-                lblStatus.Update();
-            }
-        }
-
-        private void DownloadFiles()
-        {
-            WebClient client = new WebClient();
-
-            pbProgress.Value = 0;
-            pbProgress.Maximum = LocalFiles.Count;
-            pbProgress.Update();
-            lblStatus.Text = "Downloading Content....";
-            lblStatus.Update();
-
-            foreach (ManagedFile File in LocalFiles)
-            {
-                lblStatus.Text = "Downloading Content...." + File.filename + "(" + (File.Length/1024) + "KB)" ;
-                lblStatus.Update();
-                this.Update();
-                string temp = File.basepath.Replace("\\", "/");
-                try
-                {
-                    client.DownloadFile(PatchBaseURL + temp + File.filename, ClientFolder + File.basepath + File.filename);
-                }
-                catch (WebException e)
-                {
-                    Console.WriteLine("WebException Handler: {0}", e.ToString());
-                    lblStatus.Text = "Unable to download file from: " + PatchBaseURL + temp + File.filename;
-                    return;
-                }
-                pbProgress.PerformStep();
-            }
-            lblStatus.Text = "Patching Complete!";
-            lblStatus.Update();
-            btnPlay.Enabled = true;
+            Patcher = new ClientPatcher(Settings.GetDefault());
+            Patcher.FileScanned += new ScanFileEventHandler(Patcher_FileScanned);
+            Patcher.StartedDownload += new StartDownloadEventHandler(Patcher_StartedDownload);
+            RefreshDDL();
         }
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
             ProcessStartInfo meridian = new ProcessStartInfo();
-            meridian.FileName = ClientFolder + "\\meridian.exe";
-            meridian.WorkingDirectory = ClientFolder + "\\";
+            meridian.FileName = Patcher.CurrentProfile.ClientFolder + "\\meridian.exe";
+            meridian.WorkingDirectory = Patcher.CurrentProfile.ClientFolder + "\\";
             Process.Start(meridian);
             Application.Exit();
         }
@@ -189,12 +60,10 @@ namespace ClientPatcher
         private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
         {
             //lblStatus.Text = ddlServer.SelectedItem.ToString();
-            PatcherSettings selected = Servers.Find(x => x.ServerName == ddlServer.SelectedItem.ToString());
+            PatcherSettings selected = Settings.FindByName(ddlServer.SelectedItem.ToString());
             if (selected != null)
             {
-                PatchInfoURL = selected.PatchInfoURL;
-                ClientFolder = selected.ClientFolder;
-                PatchBaseURL = selected.PatchBaseURL;
+                Patcher.CurrentProfile = selected;
                 lblStatus.Text = String.Format("Server {0} selected. Client located at: {1}", selected.ServerName, selected.ClientFolder);
                 btnPlay.Enabled = false;
                 if (groupProfileSettings.Enabled == true)
@@ -212,17 +81,22 @@ namespace ClientPatcher
         private void btnPatch_Click(object sender, EventArgs e)
         {
             lblStatus.Text = "Downloading Patch Information....";
-            if (DownloadJson() == 1)
+            if (Patcher.DownloadJson() == 1)
             {
-                ScanClient();
-                if (LocalFiles.Count > 0)
-                    DownloadFiles();
-                else
+                pbProgress.Value = 0;
+                pbProgress.Maximum = Patcher.PatchFiles.Count;
+                Patcher.ScanClient();
+                if (Patcher.LocalFiles.Count > 0)
                 {
-                    lblStatus.Text = "Patching Complete!";
-                    lblStatus.Update();
-                    btnPlay.Enabled = true;
+                    pbProgress.Value = 0;
+                    pbProgress.Maximum = Patcher.LocalFiles.Count;
+                    Patcher.DownloadFiles();
                 }
+                pbProgress.Value = pbProgress.Maximum;
+                pbProgress.Update();
+                lblStatus.Text = "Patching Complete!";
+                lblStatus.Update();
+                btnPlay.Enabled = true;
             }
         }
 
@@ -235,12 +109,12 @@ namespace ClientPatcher
         private void btnStartModify_Click(object sender, EventArgs e)
         {
             groupProfileSettings.Enabled = true;
-            int selected = Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
-            txtClientFolder.Text = Servers[selected].ClientFolder;
-            txtPatchBaseURL.Text = Servers[selected].PatchBaseURL;
-            txtPatchInfoURL.Text = Servers[selected].PatchInfoURL;
-            txtServerName.Text = Servers[selected].ServerName;
-            cbDefaultServer.Checked = Servers[selected].Default;
+            PatcherSettings ps = Settings.FindByName(ddlServer.SelectedItem.ToString());
+            txtClientFolder.Text = ps.ClientFolder;
+            txtPatchBaseURL.Text = ps.PatchBaseURL;
+            txtPatchInfoURL.Text = ps.PatchInfoURL;
+            txtServerName.Text = ps.ServerName;
+            cbDefaultServer.Checked = ps.Default;
             changetype = ChangeType.MOD_PROFILE;
         }
 
@@ -249,7 +123,7 @@ namespace ClientPatcher
             switch (changetype)
             {
                 case ChangeType.ADD_PROFILE:
-                    AddProfile();
+                    Settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked);
                     groupProfileSettings.Enabled = false;
                     break;
                 case ChangeType.MOD_PROFILE:
@@ -261,58 +135,59 @@ namespace ClientPatcher
             }
         }
 
-        private void AddProfile()
+        private void btnRemove_Click(object sender, EventArgs e)
         {
-            PatcherSettings ps = new PatcherSettings();
-            if (txtClientFolder.Text == "" |
-                txtPatchBaseURL.Text == "" |
-                txtPatchInfoURL.Text == "" |
-                txtServerName.Text == "")
+            if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                lblStatus.Text = "Please fill out the fields before Saving";
-                return;
+                int selected = Settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
+                Settings.Servers.RemoveAt(selected);
+                Settings.SaveSettings();
+                Settings.LoadSettings();
             }
-            ps.ClientFolder = txtClientFolder.Text;
-            ps.PatchBaseURL = txtPatchBaseURL.Text;
-            ps.PatchInfoURL = txtPatchInfoURL.Text;
-            ps.ServerName = txtServerName.Text;
-            ps.Default = cbDefaultServer.Checked;
-
-            Servers.Add(ps);
-            changetype = ChangeType.NONE;
-            SaveSettings();
-            LoadSettings();
         }
 
-        private void ModProfile()
-        {
-            int selected = Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
-            Servers[selected].ClientFolder = txtClientFolder.Text;
-            Servers[selected].PatchBaseURL = txtPatchBaseURL.Text;
-            Servers[selected].PatchInfoURL = txtPatchInfoURL.Text;
-            Servers[selected].ServerName = txtServerName.Text;
-            Servers[selected].Default = cbDefaultServer.Checked;
-            changetype = ChangeType.NONE;
-            SaveSettings();
-            LoadSettings();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void btnBrowse_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.ShowDialog(this);
             txtClientFolder.Text = fbd.SelectedPath;
         }
 
-        private void btnRemove_Click(object sender, EventArgs e)
+        private void ModProfile()
         {
-            if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            int selected = Settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
+            Settings.Servers[selected].ClientFolder = txtClientFolder.Text;
+            Settings.Servers[selected].PatchBaseURL = txtPatchBaseURL.Text;
+            Settings.Servers[selected].PatchInfoURL = txtPatchInfoURL.Text;
+            Settings.Servers[selected].ServerName = txtServerName.Text;
+            Settings.Servers[selected].Default = cbDefaultServer.Checked;
+            changetype = ChangeType.NONE;
+            Settings.SaveSettings();
+            Settings.LoadSettings();
+        }
+
+        private void RefreshDDL()
+        {
+            foreach (PatcherSettings profile in Settings.Servers)
             {
-                int selected = Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
-                Servers.RemoveAt(selected);
-                SaveSettings();
-                LoadSettings();
+                ddlServer.Items.Add(profile.ServerName);
+                if (profile.Default)
+                    ddlServer.SelectedItem = profile.ServerName;
             }
+        }
+
+        private void Patcher_FileScanned(object sender, ScanEventArgs e)
+        {
+            pbProgress.PerformStep();
+            lblStatus.Text = String.Format("Scanning Files.... {0}",e.Filename);
+            lblStatus.Update();
+        }
+
+        private void Patcher_StartedDownload(object sender, StartDownloadEventArgs e)
+        {
+            pbProgress.PerformStep();
+            lblStatus.Text = String.Format("Downloading File..... {0} ({1})", e.Filename, e.Filesize.ToString());
+            lblStatus.Update();
         }
     }
 }

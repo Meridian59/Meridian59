@@ -101,7 +101,7 @@
     <Compile Include="ClientPatchForm.Designer.cs">
       <DependentUpon>ClientPatchForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="ClientProfileManager.cs" />
+    <Compile Include="SettingsManager.cs" />
     <Compile Include="PatcherSettings.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

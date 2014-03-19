@@ -14,9 +14,6 @@ constants:
 
    include blakston.khd
 
-   % The number to divide by when we are over our softcap of 2 * Requisite Stat.
-   SOFTCAP_PENALTY = 5
-
 resources:
 
    skill_name_rsc = "skill"
@@ -420,7 +417,7 @@ messages:
       % Are we above the spells requisite stat?  Apply the "soft cap".
       if iability > ((2*iRequisiteStat)-1)
       {
-         final = final / SOFTCAP_PENALTY;
+         final = final / bound(Send(Send(SYS,@GetSettings),@GetSkillSoftcapPenalty),1,$);
       }
 
       final = bound(final,1,$);

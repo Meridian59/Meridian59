@@ -17,9 +17,6 @@ constants:
 
    SPELL_MURMUR_SQUARED = 64
 
-   % The number to divide by when over our softcap of 2 * Requisite Stat.
-   SOFTCAP_PENALTY = 4
-
    % How many castings of the same level of spell count toward a 1%
    %  bonus to improve the spell?
    CASTS_PER_PERCENT_BONUS = 7
@@ -1743,7 +1740,7 @@ messages:
       % Are we above the spells requisite stat?  Apply the "soft cap".
       if iability > ((2*requisitestat)-1)
       {
-         final = final / SOFTCAP_PENALTY;
+         final = final / bound(Send(Send(SYS,@GetSettings),@GetSpellSoftcapPenalty),1,$);
       }     
 
       final = bound(final,1,$);

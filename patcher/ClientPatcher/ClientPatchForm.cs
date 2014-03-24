@@ -45,6 +45,7 @@ namespace ClientPatcher
             Patcher = new ClientPatcher(Settings.GetDefault());
             Patcher.FileScanned += new ScanFileEventHandler(Patcher_FileScanned);
             Patcher.StartedDownload += new StartDownloadEventHandler(Patcher_StartedDownload);
+            Patcher.ProgressedDownload += new ProgressDownloadEventHandler(Patcher_ProgressedDownload);
             RefreshDDL();
         }
 
@@ -64,7 +65,7 @@ namespace ClientPatcher
             if (selected != null)
             {
                 Patcher.CurrentProfile = selected;
-                lblStatus.Text = String.Format("Server {0} selected. Client located at: {1}", selected.ServerName, selected.ClientFolder);
+                txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", selected.ServerName, selected.ClientFolder);
                 btnPlay.Enabled = false;
                 if (groupProfileSettings.Enabled == true)
                 {
@@ -80,7 +81,7 @@ namespace ClientPatcher
 
         private void btnPatch_Click(object sender, EventArgs e)
         {
-            lblStatus.Text = "Downloading Patch Information....";
+            txtLog.AppendText("Downloading Patch Information....\r\n");
             if (Patcher.DownloadJson() == 1)
             {
                 pbProgress.Value = 0;
@@ -91,11 +92,12 @@ namespace ClientPatcher
                     pbProgress.Value = 0;
                     pbProgress.Maximum = Patcher.LocalFiles.Count;
                     Patcher.DownloadFiles();
+                    //Patcher.DownloadFilesAsync();
                 }
                 pbProgress.Value = pbProgress.Maximum;
                 pbProgress.Update();
-                lblStatus.Text = "Patching Complete!";
-                lblStatus.Update();
+                txtLog.AppendText("Patching Complete!\r\n");
+                txtLog.Update();
                 btnPlay.Enabled = true;
             }
         }
@@ -179,15 +181,28 @@ namespace ClientPatcher
         private void Patcher_FileScanned(object sender, ScanEventArgs e)
         {
             pbProgress.PerformStep();
-            lblStatus.Text = String.Format("Scanning Files.... {0}",e.Filename);
-            lblStatus.Update();
+            txtLog.AppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
+            this.Update();
         }
 
         private void Patcher_StartedDownload(object sender, StartDownloadEventArgs e)
         {
             pbProgress.PerformStep();
-            lblStatus.Text = String.Format("Downloading File..... {0} ({1})", e.Filename, e.Filesize.ToString());
-            lblStatus.Update();
+            txtLog.AppendText(String.Format("Downloading File..... {0} ({1})\r\n", e.Filename, e.Filesize.ToString()));
+            txtLog.Update();
+        }
+
+        private void Patcher_ProgressedDownload(object sender, DownloadProgressChangedEventArgs e)
+        {
+            pbFileProgress.Maximum = 100;
+            pbFileProgress.Step = 1;
+            pbFileProgress.Value = e.ProgressPercentage;
+            pbFileProgress.Update();
+        }
+
+        private void btnOptions_Click(object sender, EventArgs e)
+        {
+            gbOptions.Visible = !gbOptions.Visible;
         }
     }
 }

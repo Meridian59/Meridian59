@@ -19,7 +19,8 @@ namespace ClientPatcher
         {
             ServerName = "103";
             PatchInfoURL = "http://build.openmeridian.org/103/patchinfo.txt";
-            ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+            ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
+            ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
             PatchBaseURL = "http://build.openmeridian.org/103/clientpatch";
             Default = true;
         }
@@ -31,7 +32,8 @@ namespace ClientPatcher
                 case 104:
                     ServerName = "104";
                     PatchInfoURL = "http://build.openmeridian.org/104/patchinfo.txt";
-                    ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+                    ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
+                    ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
                     PatchBaseURL = "http://build.openmeridian.org/104/clientpatch";
                     Default = false;
                     break;
@@ -40,7 +42,8 @@ namespace ClientPatcher
                 default:
                     ServerName = "103";
                     PatchInfoURL = "http://build.openmeridian.org/103/patchinfo.txt";
-                    ClientFolder = "C:\\Program Files\\Open Meridian\\Meridian 103";
+                    ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
+                    ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
                     PatchBaseURL = "http://build.openmeridian.org/103/clientpatch";
                     Default = true;
                     break;

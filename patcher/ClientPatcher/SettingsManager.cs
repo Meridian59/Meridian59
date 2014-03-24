@@ -7,46 +7,54 @@ using Newtonsoft.Json;
 using PatchListGenerator;
 using System.IO;
 using System.Diagnostics;
+using System.Security.Permissions;
+using System.Security.AccessControl;
 
 namespace ClientPatcher
 {
     class SettingsManager
     {
         private string SettingsPath; //Path to JSON file settings.txt
+        private string SettingsFile;
+
         public List<PatcherSettings> Servers { get; set; } //Loaded from settings.txt, or generated on first run and then saved.
 
         public SettingsManager()
         {
-            SettingsPath = Directory.GetCurrentDirectory() + "\\settings.txt";
+            SettingsPath = "%PROGRAMFILES%\\Open Meridian";
+            SettingsFile = "\\settings.txt";
+            SettingsPath = Environment.ExpandEnvironmentVariables(SettingsPath);
         }
 
         public void LoadSettings()
         {
             if (File.Exists(SettingsPath))
             {
-                StreamReader file = File.OpenText(SettingsPath);
-                JsonSerializer js = new JsonSerializer();
-                //ps = JsonConvert.DeserializeObject<PatcherSettings>(file.ReadToEnd());
-                Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd());
-                file.Close();
+                StreamReader file = File.OpenText(SettingsPath+SettingsFile); //Open the file
+
+                JsonSerializer js = new JsonSerializer(); //Object we use to convert txt
+                Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd()); //convert
+                file.Close(); //close
             }
             else
             {
                 Servers = new List<PatcherSettings>();
-                Servers.Add(new PatcherSettings(103));
+                Servers.Add(new PatcherSettings(103)); //default entries, with "templates" defined in the class
                 Servers.Add(new PatcherSettings(104));
+                GrantAccess(SettingsPath);
                 SaveSettings();
             }
         }
 
         public void SaveSettings()
         {
-            using (StreamWriter sw = new StreamWriter(SettingsPath))
+            using (StreamWriter sw = new StreamWriter(SettingsPath + SettingsFile)) //open file
             {
-                sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented));
+                sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented)); //write shit
             }
         }
 
+        //used when adding from form
         public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault)
         {
             PatcherSettings ps = new PatcherSettings();
@@ -76,6 +84,17 @@ namespace ClientPatcher
         public PatcherSettings GetDefault()
         {
             return Servers.Find(x => x.Default == true);
+        }
+
+        private bool GrantAccess(string fullPath)
+        {
+            DirectorySecurity dSecurity = new DirectorySecurity();
+            dSecurity.AddAccessRule(new FileSystemAccessRule("Users", FileSystemRights.Modify | FileSystemRights.Synchronize,
+                                                                      InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                                                                      PropagationFlags.None, AccessControlType.Allow));
+            dSecurity.SetAccessRuleProtection(false, true);
+            Directory.CreateDirectory(SettingsPath, dSecurity);
+            return true;
         }
 
     }

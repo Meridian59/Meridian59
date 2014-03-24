@@ -30,14 +30,12 @@
         {
             this.pbProgress = new System.Windows.Forms.ProgressBar();
             this.btnPlay = new System.Windows.Forms.Button();
-            this.lblStatus = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.ddlServer = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.btnPatch = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gbOptions = new System.Windows.Forms.GroupBox();
             this.groupProfileSettings = new System.Windows.Forms.GroupBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
@@ -53,36 +51,30 @@
             this.btnStartModify = new System.Windows.Forms.Button();
             this.btnRemove = new System.Windows.Forms.Button();
             this.btnAdd = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
+            this.txtLog = new System.Windows.Forms.TextBox();
+            this.pbFileProgress = new System.Windows.Forms.ProgressBar();
+            this.btnOptions = new System.Windows.Forms.Button();
+            this.gbOptions.SuspendLayout();
             this.groupProfileSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(15, 186);
+            this.pbProgress.Location = new System.Drawing.Point(7, 356);
             this.pbProgress.Name = "pbProgress";
-            this.pbProgress.Size = new System.Drawing.Size(279, 36);
+            this.pbProgress.Size = new System.Drawing.Size(706, 32);
             this.pbProgress.Step = 1;
             this.pbProgress.TabIndex = 0;
             // 
             // btnPlay
             // 
-            this.btnPlay.Location = new System.Drawing.Point(12, 277);
+            this.btnPlay.Location = new System.Drawing.Point(727, 339);
             this.btnPlay.Name = "btnPlay";
-            this.btnPlay.Size = new System.Drawing.Size(279, 46);
+            this.btnPlay.Size = new System.Drawing.Size(95, 70);
             this.btnPlay.TabIndex = 1;
             this.btnPlay.Text = "Play!";
             this.btnPlay.UseVisualStyleBackColor = true;
             this.btnPlay.Click += new System.EventHandler(this.btnPlay_Click);
-            // 
-            // lblStatus
-            // 
-            this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(12, 340);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(37, 13);
-            this.lblStatus.TabIndex = 2;
-            this.lblStatus.Text = "Status";
             // 
             // label1
             // 
@@ -98,7 +90,7 @@
             this.ddlServer.FormattingEnabled = true;
             this.ddlServer.Location = new System.Drawing.Point(15, 57);
             this.ddlServer.Name = "ddlServer";
-            this.ddlServer.Size = new System.Drawing.Size(276, 21);
+            this.ddlServer.Size = new System.Drawing.Size(277, 21);
             this.ddlServer.TabIndex = 4;
             this.ddlServer.SelectionChangeCommitted += new System.EventHandler(this.ddlServer_SelectionChangeCommitted);
             // 
@@ -108,9 +100,9 @@
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.Location = new System.Drawing.Point(10, 9);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(281, 29);
+            this.label2.Size = new System.Drawing.Size(192, 29);
             this.label2.TabIndex = 6;
-            this.label2.Text = "Step 1: Select a Server";
+            this.label2.Text = "Select a Profile";
             // 
             // btnPatch
             // 
@@ -118,7 +110,7 @@
             this.btnPatch.Name = "btnPatch";
             this.btnPatch.Size = new System.Drawing.Size(279, 46);
             this.btnPatch.TabIndex = 7;
-            this.btnPatch.Text = "Patch";
+            this.btnPatch.Text = "Update/Install";
             this.btnPatch.UseVisualStyleBackColor = true;
             this.btnPatch.Click += new System.EventHandler(this.btnPatch_Click);
             // 
@@ -128,32 +120,23 @@
             this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label3.Location = new System.Drawing.Point(10, 102);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(242, 29);
+            this.label3.Size = new System.Drawing.Size(174, 29);
             this.label3.TabIndex = 8;
-            this.label3.Text = "Step 2: Patch Client";
+            this.label3.Text = "Update/Install";
             // 
-            // label4
+            // gbOptions
             // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(10, 235);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(159, 29);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "Step 3: Play!";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.groupProfileSettings);
-            this.groupBox1.Controls.Add(this.btnStartModify);
-            this.groupBox1.Controls.Add(this.btnRemove);
-            this.groupBox1.Controls.Add(this.btnAdd);
-            this.groupBox1.Location = new System.Drawing.Point(308, 9);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(194, 321);
-            this.groupBox1.TabIndex = 10;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Options";
+            this.gbOptions.Controls.Add(this.groupProfileSettings);
+            this.gbOptions.Controls.Add(this.btnStartModify);
+            this.gbOptions.Controls.Add(this.btnRemove);
+            this.gbOptions.Controls.Add(this.btnAdd);
+            this.gbOptions.Location = new System.Drawing.Point(300, 12);
+            this.gbOptions.Name = "gbOptions";
+            this.gbOptions.Size = new System.Drawing.Size(522, 321);
+            this.gbOptions.TabIndex = 10;
+            this.gbOptions.TabStop = false;
+            this.gbOptions.Text = "Options";
+            this.gbOptions.Visible = false;
             // 
             // groupProfileSettings
             // 
@@ -171,28 +154,28 @@
             this.groupProfileSettings.Enabled = false;
             this.groupProfileSettings.Location = new System.Drawing.Point(7, 109);
             this.groupProfileSettings.Name = "groupProfileSettings";
-            this.groupProfileSettings.Size = new System.Drawing.Size(181, 200);
+            this.groupProfileSettings.Size = new System.Drawing.Size(509, 200);
             this.groupProfileSettings.TabIndex = 3;
             this.groupProfileSettings.TabStop = false;
             this.groupProfileSettings.Text = "Profile Settings";
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(120, 110);
+            this.btnBrowse.Location = new System.Drawing.Point(406, 110);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(56, 20);
+            this.btnBrowse.Size = new System.Drawing.Size(97, 20);
             this.btnBrowse.TabIndex = 22;
-            this.btnBrowse.Text = "Browse";
+            this.btnBrowse.Text = "Browse for Folder";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(120, 173);
+            this.btnSave.Location = new System.Drawing.Point(120, 175);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(56, 19);
+            this.btnSave.Size = new System.Drawing.Size(91, 19);
             this.btnSave.TabIndex = 21;
-            this.btnSave.Text = "Save";
+            this.btnSave.Text = "Save Profile";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -246,28 +229,28 @@
             // 
             this.txtPatchBaseURL.Location = new System.Drawing.Point(6, 149);
             this.txtPatchBaseURL.Name = "txtPatchBaseURL";
-            this.txtPatchBaseURL.Size = new System.Drawing.Size(108, 20);
+            this.txtPatchBaseURL.Size = new System.Drawing.Size(400, 20);
             this.txtPatchBaseURL.TabIndex = 15;
             // 
             // txtClientFolder
             // 
             this.txtClientFolder.Location = new System.Drawing.Point(6, 110);
             this.txtClientFolder.Name = "txtClientFolder";
-            this.txtClientFolder.Size = new System.Drawing.Size(108, 20);
+            this.txtClientFolder.Size = new System.Drawing.Size(400, 20);
             this.txtClientFolder.TabIndex = 14;
             // 
             // txtPatchInfoURL
             // 
             this.txtPatchInfoURL.Location = new System.Drawing.Point(6, 71);
             this.txtPatchInfoURL.Name = "txtPatchInfoURL";
-            this.txtPatchInfoURL.Size = new System.Drawing.Size(108, 20);
+            this.txtPatchInfoURL.Size = new System.Drawing.Size(400, 20);
             this.txtPatchInfoURL.TabIndex = 13;
             // 
             // txtServerName
             // 
             this.txtServerName.Location = new System.Drawing.Point(6, 32);
             this.txtServerName.Name = "txtServerName";
-            this.txtServerName.Size = new System.Drawing.Size(108, 20);
+            this.txtServerName.Size = new System.Drawing.Size(400, 20);
             this.txtServerName.TabIndex = 12;
             // 
             // btnStartModify
@@ -300,25 +283,54 @@
             this.btnAdd.UseVisualStyleBackColor = true;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
+            // txtLog
+            // 
+            this.txtLog.Location = new System.Drawing.Point(298, 13);
+            this.txtLog.Multiline = true;
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ReadOnly = true;
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtLog.Size = new System.Drawing.Size(524, 320);
+            this.txtLog.TabIndex = 11;
+            // 
+            // pbFileProgress
+            // 
+            this.pbFileProgress.Location = new System.Drawing.Point(7, 339);
+            this.pbFileProgress.Name = "pbFileProgress";
+            this.pbFileProgress.Size = new System.Drawing.Size(706, 32);
+            this.pbFileProgress.TabIndex = 12;
+            this.pbFileProgress.Visible = false;
+            // 
+            // btnOptions
+            // 
+            this.btnOptions.Location = new System.Drawing.Point(7, 309);
+            this.btnOptions.Name = "btnOptions";
+            this.btnOptions.Size = new System.Drawing.Size(51, 23);
+            this.btnOptions.TabIndex = 13;
+            this.btnOptions.Text = "Options";
+            this.btnOptions.UseVisualStyleBackColor = true;
+            this.btnOptions.Click += new System.EventHandler(this.btnOptions_Click);
+            // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(506, 374);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.label4);
+            this.ClientSize = new System.Drawing.Size(834, 417);
+            this.Controls.Add(this.btnOptions);
+            this.Controls.Add(this.pbFileProgress);
+            this.Controls.Add(this.gbOptions);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.btnPatch);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.ddlServer);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.btnPlay);
             this.Controls.Add(this.pbProgress);
+            this.Controls.Add(this.txtLog);
             this.Name = "ClientPatchForm";
             this.Text = "OpenMeridian Client Patcher";
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.groupBox1.ResumeLayout(false);
+            this.gbOptions.ResumeLayout(false);
             this.groupProfileSettings.ResumeLayout(false);
             this.groupProfileSettings.PerformLayout();
             this.ResumeLayout(false);
@@ -330,14 +342,12 @@
 
         private System.Windows.Forms.ProgressBar pbProgress;
         private System.Windows.Forms.Button btnPlay;
-        private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox ddlServer;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnPatch;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbOptions;
         private System.Windows.Forms.Button btnRemove;
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Button btnStartModify;
@@ -353,6 +363,9 @@
         private System.Windows.Forms.TextBox txtServerName;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.TextBox txtLog;
+        private System.Windows.Forms.ProgressBar pbFileProgress;
+        private System.Windows.Forms.Button btnOptions;
     }
 }
 

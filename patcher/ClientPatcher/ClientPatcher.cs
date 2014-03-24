@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using PatchListGenerator;
 using System.IO;
 using System.Diagnostics;
+using System.Security.Permissions;
+using System.Security.AccessControl;
 
 namespace ClientPatcher
 {
@@ -15,7 +17,7 @@ namespace ClientPatcher
     //Event when we Start a Download, used to notify UI.
     public delegate void StartDownloadEventHandler(object sender, StartDownloadEventArgs e);
     //Event when we Make progress in a Download, used to notify UI.
-    public delegate void ProgressDownloadEventHandler(object sender, ProgressDownloadEventArgs e);
+    public delegate void ProgressDownloadEventHandler(object sender, DownloadProgressChangedEventArgs e);
     //Event when we Complete a Download, used to notify UI.
     public delegate void EndDownloadEventHandler(object sender, EndDownloadEventArgs e);
 
@@ -48,7 +50,7 @@ namespace ClientPatcher
 
         //Event when we Make progress in a Download, used to notify UI.
         public event ProgressDownloadEventHandler ProgressedDownload;
-        protected virtual void OnProgressedDownload(ProgressDownloadEventArgs e)
+        protected virtual void OnProgressedDownload(DownloadProgressChangedEventArgs e)
         {
             if (ProgressedDownload != null)
                 ProgressedDownload(this, e);
@@ -89,14 +91,47 @@ namespace ClientPatcher
             }
         }
 
-        public void ScanClient()
+        private bool IsNewClient()
         {
-            string fullpath;
+            return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.ini");
+        }
+
+        private void CreateFolderStructure()
+        {
+            Directory.CreateDirectory(CurrentProfile.ClientFolder);
             Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\resource\\");
             Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\download\\");
             Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\help\\");
             Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\mail\\");
             Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\ads\\");
+        }
+
+        private void CreateDefaultINI()
+        {
+            const string DefaultINI = @"[Comm]
+ServerNumber=103
+[Miscellaneous]
+UserName=username
+Download=10016";
+            using (StreamWriter sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
+            {
+                sw.Write(DefaultINI);
+            }
+        }
+
+        private void CreateNewClient()
+        {
+            CreateFolderStructure();
+            CreateDefaultINI();
+        }
+
+        public void ScanClient()
+        {
+            string fullpath;
+            if (IsNewClient())
+            {
+                CreateNewClient();
+            }
 
             foreach (ManagedFile PatchFile in PatchFiles)
             {
@@ -125,7 +160,6 @@ namespace ClientPatcher
                     StartedDownload(this, new StartDownloadEventArgs(File.filename, File.Length));
                     //TODO: replace with Async downloader, send download progress report to UI
                     client.DownloadFile(CurrentProfile.PatchBaseURL + temp + File.filename, CurrentProfile.ClientFolder + File.basepath + File.filename);
-                    
                 }
                 catch (WebException e)
                 {
@@ -133,6 +167,35 @@ namespace ClientPatcher
                     return;
                 }
             }
+        }
+
+        public void DownloadFilesAsync()
+        {
+            WebClient client = new WebClient();
+            foreach (ManagedFile File in LocalFiles)
+            {
+                string temp = File.basepath.Replace("\\", "/");
+                try
+                {
+                    StartedDownload(this, new StartDownloadEventArgs(File.filename, File.Length));
+                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
+                    client.DownloadFileAsync(new Uri(CurrentProfile.PatchBaseURL + temp + File.filename), CurrentProfile.ClientFolder + File.basepath + File.filename);
+                }
+                catch (WebException e)
+                {
+                    Console.WriteLine(String.Format("Exception: {0}", e.ToString()));
+                }
+            }
+        }
+
+        private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            OnProgressedDownload(e);
+        }
+
+        private void client_DownloadFileCompleted(object sender, DownloadDataCompletedEventArgs e)
+        {
+
         }
 
     }
@@ -179,10 +242,6 @@ namespace ClientPatcher
             this.filename = filename;
             this.filesize = filesize;
         }
-    }
-
-    public class ProgressDownloadEventArgs : EventArgs
-    {
     }
 
     public class EndDownloadEventArgs : EventArgs

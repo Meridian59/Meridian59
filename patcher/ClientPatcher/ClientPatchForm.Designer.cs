@@ -62,7 +62,7 @@
             // 
             // pbProgress
             // 
-            this.pbProgress.Location = new System.Drawing.Point(7, 356);
+            this.pbProgress.Location = new System.Drawing.Point(7, 373);
             this.pbProgress.Name = "pbProgress";
             this.pbProgress.Size = new System.Drawing.Size(706, 32);
             this.pbProgress.Step = 1;

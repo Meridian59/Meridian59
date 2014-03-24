@@ -26,7 +26,6 @@ namespace ClientPatcher
 
         SettingsManager Settings;
         ClientPatcher Patcher;
-
         ChangeType changetype = ChangeType.NONE;
 
 
@@ -45,6 +44,8 @@ namespace ClientPatcher
             Patcher.FileScanned += new ScanFileEventHandler(Patcher_FileScanned);
             Patcher.StartedDownload += new StartDownloadEventHandler(Patcher_StartedDownload);
             Patcher.ProgressedDownload += new ProgressDownloadEventHandler(Patcher_ProgressedDownload);
+            Patcher.EndedDownload += new EndDownloadEventHandler(Patcher_EndedDownload);
+
             RefreshDDL();
         }
 
@@ -142,13 +143,16 @@ namespace ClientPatcher
         {
             pbProgressPerformStep();
             txtLogAppendText(String.Format("Downloading File..... {0} ({1})\r\n", e.Filename, e.Filesize.ToString()));
+            pbFileProgress.Maximum = 100;
+            pbFileProgressSetValueStep(0);
         }
         private void Patcher_ProgressedDownload(object sender, DownloadProgressChangedEventArgs e)
         {
-            pbFileProgress.Maximum = 100;
-            pbFileProgress.Step = 1;
-            pbFileProgress.Value = e.ProgressPercentage;
-            pbFileProgress.Update();
+            pbFileProgressSetValueStep(e.ProgressPercentage);
+        }
+        private void Patcher_EndedDownload(object sender, AsyncCompletedEventArgs e)
+        {
+            pbFileProgressSetValueStep(100);
         }
 
         private void ModProfile()
@@ -181,7 +185,6 @@ namespace ClientPatcher
             {
                 pbProgress.Value = 0;
                 pbProgress.Maximum = Patcher.PatchFiles.Count;
-                //Patcher.ScanClient();
                 bgScanWorker.RunWorkerAsync(Patcher);
             }
             else
@@ -193,9 +196,8 @@ namespace ClientPatcher
             {
                 pbProgress.Value = 0;
                 pbProgress.Maximum = Patcher.LocalFiles.Count;
+                pbFileProgress.Visible = true;
                 bgDownloadWorker.RunWorkerAsync(Patcher);
-                //Patcher.DownloadFiles();
-                //Patcher.DownloadFilesAsync();
             }
             else
                 PostDownload();
@@ -203,6 +205,8 @@ namespace ClientPatcher
         private void PostDownload()
         {
             pbProgress.Value = pbProgress.Maximum;
+            pbFileProgress.Visible = true;
+            pbFileProgress.Value = pbFileProgress.Maximum;
             txtLog.AppendText("Patching Complete!\r\n");
             btnPlay.Enabled = true;
         }
@@ -219,9 +223,20 @@ namespace ClientPatcher
             PostScan();
         }
         #endregion
-
+        #region bgDownloadWorker
+        private void bgDownloadWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            ClientPatcher myPatcher = (ClientPatcher)e.Argument;
+            //myPatcher.DownloadFiles();
+            myPatcher.DownloadFilesAsync();
+        }
+        private void bgDownloadWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            PostDownload();
+        }
+        #endregion
         #region ThreadSafe Control Updates
-        //Used to update progress bar
+        //Used to update main progress bar, one step
         delegate void ProgressPerformStepCallback();
         private void pbProgressPerformStep()
         {
@@ -233,6 +248,20 @@ namespace ClientPatcher
             else
             {
                 this.pbProgress.PerformStep();
+            }
+        }
+        //Used to update per-file progress bar, set to value
+        delegate void FileProgressSetValueCallback(int value);
+        private void pbFileProgressSetValueStep(int value)
+        {
+            if (this.pbFileProgress.InvokeRequired)
+            {
+                FileProgressSetValueCallback d = new FileProgressSetValueCallback(pbFileProgressSetValueStep);
+                this.Invoke(d, new object[] { value });
+            }
+            else
+            {
+                this.pbFileProgress.Value = value;
             }
         }
         //Used to add stuff to the Log
@@ -251,17 +280,7 @@ namespace ClientPatcher
         }
         #endregion
 
-        #region bgDownloadWorker
-        private void bgDownloadWorker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            ClientPatcher myPatcher = (ClientPatcher)e.Argument;
-            myPatcher.DownloadFiles();
-        }
-        private void bgDownloadWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            PostDownload();
-        }
-        #endregion
+        
 
 
     }

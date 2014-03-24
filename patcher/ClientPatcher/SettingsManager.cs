@@ -45,7 +45,6 @@ namespace ClientPatcher
                 SaveSettings();
             }
         }
-
         public void SaveSettings()
         {
             using (StreamWriter sw = new StreamWriter(SettingsPath + SettingsFile)) //open file
@@ -53,7 +52,6 @@ namespace ClientPatcher
                 sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented)); //write shit
             }
         }
-
         //used when adding from form
         public void AddProfile(string clientfolder, string patchbaseurl, string patchinfourl, string servername, bool isdefault)
         {
@@ -68,24 +66,20 @@ namespace ClientPatcher
             SaveSettings();
             LoadSettings();
         }
-
         public void AddProfile(PatcherSettings newprofile)
         {
             Servers.Add(newprofile);
             SaveSettings();
             LoadSettings();
         }
-
         public PatcherSettings FindByName(string name)
         {
             return Servers.Find(x => x.ServerName == name);
         }
-
         public PatcherSettings GetDefault()
         {
             return Servers.Find(x => x.Default == true);
         }
-
         private bool GrantAccess(string fullPath)
         {
             DirectorySecurity dSecurity = new DirectorySecurity();

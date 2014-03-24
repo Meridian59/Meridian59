@@ -50,7 +50,7 @@ classvars:
 properties:
 
    piResistanceType = 0
-   piResistanceChange = 50
+   piResistanceChange = 20
 
 messages:
 

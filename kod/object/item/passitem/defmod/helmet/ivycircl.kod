@@ -65,8 +65,7 @@ messages:
    GetResistanceModifiers()
    {
       return [ [-ATCK_SPELL_FIRE,-10],
-               [-ATCK_SPELL_SHOCK,20],
-               [-ATCK_SPELL_UNHOLY,20]
+               [-ATCK_SPELL_UNHOLY,-20]
              ];
    }
 

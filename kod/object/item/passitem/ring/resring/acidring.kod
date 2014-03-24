@@ -41,7 +41,7 @@ classvars:
 properties:
 
    piResistanceType = -ATCK_SPELL_ACID
-   piResistanceChange = 50
+   piResistanceChange = 20
 
 messages:
 

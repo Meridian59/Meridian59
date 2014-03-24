@@ -61,7 +61,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Solagh,1],plReagents);
       plReagents = Cons([&FairyWing,1],plReagents);
 
       return;
@@ -69,8 +68,8 @@ messages:
 
    GetResistanceStrength(iSpellpower = 0)
    {
-      %% strength varies from 15 to 65
-      return iSpellPower/2 + 15;
+      %% strength varies from 9 to 20
+      return iSpellPower/9 + 9;
    }
 
    GetDuration(iSpellPower = 0)
@@ -80,10 +79,9 @@ messages:
       iDuration = iDuration * 1000;	  %% translate to milliseconds
       return iDuration;
    }
-
-   OfferToNewCharacters()
+      
+   CanBeRemovedByPlayer()
    {
-      % It's an island spell with island reagents.  Denied.
       return FALSE;
    }
 

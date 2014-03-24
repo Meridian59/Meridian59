@@ -34,6 +34,9 @@ messages:
 
    CanPayCosts(who = $, lTargets = $)
    {
+      
+      lTargets = [who];
+         
       if (vrAlreadyEnchanted = $) or (vrEnchantment_On = $) or (vrEnchantment_Off = $) or (vrSuccess = $)
       {
          DEBUG("Haven't set messages for this spell!  Aborting cast.");
@@ -92,6 +95,11 @@ messages:
       return;
    }
 
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+   
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

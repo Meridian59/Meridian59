@@ -112,7 +112,8 @@ namespace ClientPatcher
 ServerNumber=103
 [Miscellaneous]
 UserName=username
-Download=10016";
+Download=10016
+";
             using (StreamWriter sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
             {
                 sw.Write(DefaultINI);

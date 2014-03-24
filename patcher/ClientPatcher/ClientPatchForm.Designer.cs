@@ -54,6 +54,8 @@
             this.txtLog = new System.Windows.Forms.TextBox();
             this.pbFileProgress = new System.Windows.Forms.ProgressBar();
             this.btnOptions = new System.Windows.Forms.Button();
+            this.bgScanWorker = new System.ComponentModel.BackgroundWorker();
+            this.bgDownloadWorker = new System.ComponentModel.BackgroundWorker();
             this.gbOptions.SuspendLayout();
             this.groupProfileSettings.SuspendLayout();
             this.SuspendLayout();
@@ -311,6 +313,16 @@
             this.btnOptions.UseVisualStyleBackColor = true;
             this.btnOptions.Click += new System.EventHandler(this.btnOptions_Click);
             // 
+            // bgScanWorker
+            // 
+            this.bgScanWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgScanWorker_DoWork);
+            this.bgScanWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgScanWorker_RunWorkerCompleted);
+            // 
+            // bgDownloadWorker
+            // 
+            this.bgDownloadWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgDownloadWorker_DoWork);
+            this.bgDownloadWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgDownloadWorker_RunWorkerCompleted);
+            // 
             // ClientPatchForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -366,6 +378,8 @@
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.ProgressBar pbFileProgress;
         private System.Windows.Forms.Button btnOptions;
+        private System.ComponentModel.BackgroundWorker bgScanWorker;
+        private System.ComponentModel.BackgroundWorker bgDownloadWorker;
     }
 }
 

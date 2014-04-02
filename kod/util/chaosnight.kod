@@ -53,6 +53,7 @@ properties:
    plChaosNightLoot = $
    ptChaosNightLootTimer = $
    piChaosNightLootTimerIntervalMs = 3 * 60 * 1000
+   pbGiveReagents = FALSE
 
 messages:
 
@@ -201,8 +202,13 @@ messages:
                  #parm1=Send(oGift,@GetIndef),#parm2=Send(oGift,@GetName));
           }
         }
-
-        Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
+		
+        % Reagent handouts turned off by default as reagent cost is now
+        % disabled during frenzies (see StartChaosNight in room.kod)
+        if pbGiveReagents
+        {        
+           Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
+        }
       }
 
       return Send(SYS, @GetSuccessRsc);

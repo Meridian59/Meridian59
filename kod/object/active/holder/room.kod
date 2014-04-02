@@ -276,7 +276,7 @@ properties:
    plBuilderGroup = $
 
    % Flag for reagent use. If set to true, no reagent use in room
-   pbNoreagents = FALSE
+   pbNoReagents = FALSE
    
 messages:
 

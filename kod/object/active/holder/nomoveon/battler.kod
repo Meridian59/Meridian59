@@ -930,13 +930,17 @@ messages:
                rWeaponName = battler_attack;
             }
          }
+
+
+         if IsClass(what,&Player) AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         {
+            rColor = battler_plain_text;
+         }
          else
          {
-            if IsClass(what,&Player)
-            {
-               rColor = battler_plain_text;
-            }
+            rColor = battler_blue_text;
          }
+
          
          if damage = $
          {
@@ -955,6 +959,15 @@ messages:
 
       if IsClass(what,&Player)
       {
+         if IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         {
+            rColor = battler_plain_text;
+         }
+         else
+         {
+            rColor = battler_blue_text;
+         }
+      
          if damage = $
          {   
             Send(what,@MsgSendUser,#message_rsc=battler_defender_slay,
@@ -980,15 +993,16 @@ messages:
    {
       local rColor;
 
-      rColor = battler_blue_text;
-
       % This is kinda kludgy, should call messages in subclasses instead.
       if IsClass(self,&Player)
       {
-         if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
-            AND IsClass(what,&Player)
+         if IsClass(what,&Player) AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
          {
             rColor = battler_plain_text;
+         }
+         else
+         {
+            rColor = battler_blue_text;
          }
 
          Send(self,@MsgSendUser,#message_rsc=battler_attacker_miss,
@@ -1003,6 +1017,15 @@ messages:
 
       if IsClass(what,&Player)
       {
+         if IsClass(self,&Player) AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED) 
+         {
+            rColor = battler_plain_text;
+         }
+         else
+         {
+            rColor = battler_blue_text;
+         }
+      
          Send(what,@MsgSendUser,#message_rsc=battler_defender_miss,
               #parm1=rColor,
               #parm2=Send(self,@GetCapDef),

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 
@@ -50,7 +48,7 @@ namespace PatchListGenerator
             Files = new List<ManagedFile>();
             foreach (string folder in ScanFolder) //
             {
-                if (!System.IO.Directory.Exists(folder))
+                if (!Directory.Exists(folder))
                 {
                     //Folder doesn't exist =(
                     throw new Exception();

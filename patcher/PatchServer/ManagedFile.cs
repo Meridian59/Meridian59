@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 using System.Security.Cryptography;
 using Newtonsoft.Json;
@@ -12,15 +9,15 @@ namespace PatchListGenerator
     public class ManagedFile
     {
         [JsonIgnore]
-        public string path; //C:\whatever\
+        public string Path; //C:\whatever\
         [JsonIgnore]
-        public string filepath;
+        public string Filepath;
         [JsonIgnore]
-        public bool download = false;
+        public bool Download = false;
 
-        public string basepath = "\\";
-        public string filename { get; set; } //whatever.roo
-        public string myHash { get; set; } //what is the hash of this file
+        public string Basepath = "\\";
+        public string Filename { get; set; } //whatever.roo
+        public string MyHash { get; set; } //what is the hash of this file
         public long Length = 0;
 
         public ManagedFile()
@@ -29,28 +26,28 @@ namespace PatchListGenerator
 
         public ManagedFile(string filepath)
         {
-            this.filepath = filepath;
+            Filepath = filepath;
             ParseFilePath();
         }
 
         public void ParseFilePath()
         {
-            path = Path.GetDirectoryName(filepath);
-            filename = Path.GetFileName(filepath);
-            if (filepath.Contains("resource"))
-                basepath = "\\resource\\";
+            Path = System.IO.Path.GetDirectoryName(Filepath);
+            Filename = System.IO.Path.GetFileName(Filepath);
+            if (Filepath.Contains("resource"))
+                Basepath = "\\resource\\";
         }
 
         public void ComputeHash()
         {
             MD5 md5 = MD5.Create();
-            if (!File.Exists(filepath))
+            if (!File.Exists(Filepath))
             {
-                myHash = "";
+                MyHash = "";
                 return;
             }
-            FileStream stream = File.OpenRead(filepath);
-            myHash = ByteArrayToString(md5.ComputeHash(stream));
+            FileStream stream = File.OpenRead(Filepath);
+            MyHash = ByteArrayToString(md5.ComputeHash(stream));
         }
 
         private string ByteArrayToString(byte[] bytearray)
@@ -61,7 +58,7 @@ namespace PatchListGenerator
 
         public override string ToString()
         {
-            return String.Format("File: {0,20} Hash: {1} Size: {2}", filename, myHash, Length);
+            return String.Format("File: {0,20} Hash: {1} Size: {2}", Filename, MyHash, Length);
         }
 
         public string ToJson()
@@ -71,7 +68,7 @@ namespace PatchListGenerator
 
         public void FillLength()
         {
-            FileInfo file = new FileInfo(filepath);
+            FileInfo file = new FileInfo(Filepath);
             Length = file.Length;
         }
     }

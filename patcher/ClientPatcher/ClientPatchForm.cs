@@ -1,32 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Net;
-using Newtonsoft.Json;
-using PatchListGenerator;
-using System.IO;
 using System.Diagnostics;
 
 namespace ClientPatcher
 {
     enum ChangeType
     {
-        NONE = 0,
-        ADD_PROFILE = 1,
-        MOD_PROFILE = 2
+        None = 0,
+        AddProfile = 1,
+        ModProfile = 2
     }
 
     public partial class ClientPatchForm : Form
     {
 
-        SettingsManager Settings;
-        ClientPatcher Patcher;
-        ChangeType changetype = ChangeType.NONE;
+        SettingsManager _settings;
+        ClientPatcher _patcher;
+        ChangeType _changetype = ChangeType.None;
 
 
         public ClientPatchForm()
@@ -37,45 +30,43 @@ namespace ClientPatcher
         {
             btnPlay.Enabled = false;
 
-            Settings = new SettingsManager();
-            Settings.LoadSettings();
+            _settings = new SettingsManager();
+            _settings.LoadSettings();
 
-            Patcher = new ClientPatcher(Settings.GetDefault());
-            Patcher.FileScanned += new ScanFileEventHandler(Patcher_FileScanned);
-            Patcher.StartedDownload += new StartDownloadEventHandler(Patcher_StartedDownload);
-            Patcher.ProgressedDownload += new ProgressDownloadEventHandler(Patcher_ProgressedDownload);
-            Patcher.EndedDownload += new EndDownloadEventHandler(Patcher_EndedDownload);
+            _patcher = new ClientPatcher(_settings.GetDefault());
+            _patcher.FileScanned += Patcher_FileScanned;
+            _patcher.StartedDownload += Patcher_StartedDownload;
+            _patcher.ProgressedDownload += Patcher_ProgressedDownload;
+            _patcher.EndedDownload += Patcher_EndedDownload;
 
-            RefreshDDL();
+            RefreshDdl();
         }
 
         private void btnPlay_Click(object sender, EventArgs e)
         {
             ProcessStartInfo meridian = new ProcessStartInfo();
-            meridian.FileName = Patcher.CurrentProfile.ClientFolder + "\\meridian.exe";
-            meridian.WorkingDirectory = Patcher.CurrentProfile.ClientFolder + "\\";
+            meridian.FileName = _patcher.CurrentProfile.ClientFolder + "\\meridian.exe";
+            meridian.WorkingDirectory = _patcher.CurrentProfile.ClientFolder + "\\";
             Process.Start(meridian);
             Application.Exit();
         }
         private void ddlServer_SelectionChangeCommitted(object sender, EventArgs e)
         {
             //lblStatus.Text = ddlServer.SelectedItem.ToString();
-            PatcherSettings selected = Settings.FindByName(ddlServer.SelectedItem.ToString());
-            if (selected != null)
-            {
-                Patcher.CurrentProfile = selected;
-                txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", selected.ServerName, selected.ClientFolder);
-                btnPlay.Enabled = false;
-                if (groupProfileSettings.Enabled == true)
-                {
-                    groupProfileSettings.Enabled = false;
-                    txtClientFolder.Text = "";
-                    txtPatchBaseURL.Text = "";
-                    txtPatchInfoURL.Text = "";
-                    txtServerName.Text = "";
-                    cbDefaultServer.Checked = false;
-                }
-            }
+            PatcherSettings selected = _settings.FindByName(ddlServer.SelectedItem.ToString());
+
+            if (selected == null) return;
+            _patcher.CurrentProfile = selected;
+            txtLog.Text += String.Format("Server {0} selected. Client located at: {1}\r\n", selected.ServerName, selected.ClientFolder);
+            btnPlay.Enabled = false;
+
+            if (groupProfileSettings.Enabled != true) return;
+            groupProfileSettings.Enabled = false;
+            txtClientFolder.Text = "";
+            txtPatchBaseURL.Text = "";
+            txtPatchInfoURL.Text = "";
+            txtServerName.Text = "";
+            cbDefaultServer.Checked = false;
         }
         private void btnPatch_Click(object sender, EventArgs e)
         {
@@ -84,32 +75,30 @@ namespace ClientPatcher
         private void btnAdd_Click(object sender, EventArgs e)
         {
             groupProfileSettings.Enabled = true;
-            changetype = ChangeType.ADD_PROFILE;
+            _changetype = ChangeType.AddProfile;
         }
         private void btnStartModify_Click(object sender, EventArgs e)
         {
             groupProfileSettings.Enabled = true;
-            PatcherSettings ps = Settings.FindByName(ddlServer.SelectedItem.ToString());
+            PatcherSettings ps = _settings.FindByName(ddlServer.SelectedItem.ToString());
             txtClientFolder.Text = ps.ClientFolder;
-            txtPatchBaseURL.Text = ps.PatchBaseURL;
-            txtPatchInfoURL.Text = ps.PatchInfoURL;
+            txtPatchBaseURL.Text = ps.PatchBaseUrl;
+            txtPatchInfoURL.Text = ps.PatchInfoUrl;
             txtServerName.Text = ps.ServerName;
             cbDefaultServer.Checked = ps.Default;
-            changetype = ChangeType.MOD_PROFILE;
+            _changetype = ChangeType.ModProfile;
         }
         private void btnSave_Click(object sender, EventArgs e)
         {
-            switch (changetype)
+            switch (_changetype)
             {
-                case ChangeType.ADD_PROFILE:
-                    Settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked);
+                case ChangeType.AddProfile:
+                    _settings.AddProfile(txtClientFolder.Text, txtPatchBaseURL.Text, txtPatchInfoURL.Text, txtServerName.Text, cbDefaultServer.Checked);
                     groupProfileSettings.Enabled = false;
                     break;
-                case ChangeType.MOD_PROFILE:
+                case ChangeType.ModProfile:
                     ModProfile();
                     groupProfileSettings.Enabled = false;
-                    break;
-                default:
                     break;
             }
         }
@@ -117,10 +106,10 @@ namespace ClientPatcher
         {
             if (MessageBox.Show("Are you sure you want to delete this Profile?", "Delete Profile?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                int selected = Settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
-                Settings.Servers.RemoveAt(selected);
-                Settings.SaveSettings();
-                Settings.LoadSettings();
+                int selected = _settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
+                _settings.Servers.RemoveAt(selected);
+                _settings.SaveSettings();
+                _settings.LoadSettings();
             }
         }
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -136,40 +125,40 @@ namespace ClientPatcher
 
         private void Patcher_FileScanned(object sender, ScanEventArgs e)
         {
-            pbProgressPerformStep();
-            txtLogAppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
+            PbProgressPerformStep();
+            TxtLogAppendText(String.Format("Scanning Files.... {0}\r\n", e.Filename));
         }
         private void Patcher_StartedDownload(object sender, StartDownloadEventArgs e)
         {
-            pbProgressPerformStep();
-            txtLogAppendText(String.Format("Downloading File..... {0} ({1})\r\n", e.Filename, e.Filesize.ToString()));
+            PbProgressPerformStep();
+            TxtLogAppendText(String.Format("Downloading File..... {0} ({1})\r\n", e.Filename, e.Filesize.ToString(CultureInfo.InvariantCulture)));
             pbFileProgress.Maximum = 100;
-            pbFileProgressSetValueStep(0);
+            PbFileProgressSetValueStep(0);
         }
         private void Patcher_ProgressedDownload(object sender, DownloadProgressChangedEventArgs e)
         {
-            pbFileProgressSetValueStep(e.ProgressPercentage);
+            PbFileProgressSetValueStep(e.ProgressPercentage);
         }
         private void Patcher_EndedDownload(object sender, AsyncCompletedEventArgs e)
         {
-            pbFileProgressSetValueStep(100);
+            PbFileProgressSetValueStep(100);
         }
 
         private void ModProfile()
         {
-            int selected = Settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
-            Settings.Servers[selected].ClientFolder = txtClientFolder.Text;
-            Settings.Servers[selected].PatchBaseURL = txtPatchBaseURL.Text;
-            Settings.Servers[selected].PatchInfoURL = txtPatchInfoURL.Text;
-            Settings.Servers[selected].ServerName = txtServerName.Text;
-            Settings.Servers[selected].Default = cbDefaultServer.Checked;
-            changetype = ChangeType.NONE;
-            Settings.SaveSettings();
-            Settings.LoadSettings();
+            int selected = _settings.Servers.FindIndex(x => x.ServerName == ddlServer.SelectedItem.ToString());
+            _settings.Servers[selected].ClientFolder = txtClientFolder.Text;
+            _settings.Servers[selected].PatchBaseUrl = txtPatchBaseURL.Text;
+            _settings.Servers[selected].PatchInfoUrl = txtPatchInfoURL.Text;
+            _settings.Servers[selected].ServerName = txtServerName.Text;
+            _settings.Servers[selected].Default = cbDefaultServer.Checked;
+            _changetype = ChangeType.None;
+            _settings.SaveSettings();
+            _settings.LoadSettings();
         }
-        private void RefreshDDL()
+        private void RefreshDdl()
         {
-            foreach (PatcherSettings profile in Settings.Servers)
+            foreach (PatcherSettings profile in _settings.Servers)
             {
                 ddlServer.Items.Add(profile.ServerName);
                 if (profile.Default)
@@ -181,23 +170,23 @@ namespace ClientPatcher
             btnPatch.Enabled = false;
             ddlServer.Enabled = false;
             txtLog.AppendText("Downloading Patch Information....\r\n");
-            if (Patcher.DownloadJson() == 1)
+            if (_patcher.DownloadJson() == 1)
             {
                 pbProgress.Value = 0;
-                pbProgress.Maximum = Patcher.PatchFiles.Count;
-                bgScanWorker.RunWorkerAsync(Patcher);
+                pbProgress.Maximum = _patcher.PatchFiles.Count;
+                bgScanWorker.RunWorkerAsync(_patcher);
             }
             else
                 txtLog.AppendText("ERROR: Unable to download Patch Information!\r\n");
         }
         private void PostScan()
         {
-            if (Patcher.LocalFiles.Count > 0)
+            if (_patcher.LocalFiles.Count > 0)
             {
                 pbProgress.Value = 0;
-                pbProgress.Maximum = Patcher.LocalFiles.Count;
+                pbProgress.Maximum = _patcher.LocalFiles.Count;
                 pbFileProgress.Visible = true;
-                bgDownloadWorker.RunWorkerAsync(Patcher);
+                bgDownloadWorker.RunWorkerAsync(_patcher);
             }
             else
                 PostDownload();
@@ -238,44 +227,44 @@ namespace ClientPatcher
         #region ThreadSafe Control Updates
         //Used to update main progress bar, one step
         delegate void ProgressPerformStepCallback();
-        private void pbProgressPerformStep()
+        private void PbProgressPerformStep()
         {
-            if (this.pbProgress.InvokeRequired)
+            if (pbProgress.InvokeRequired)
             {
-                ProgressPerformStepCallback d = new ProgressPerformStepCallback(pbProgressPerformStep);
-                this.Invoke(d);
+                ProgressPerformStepCallback d = PbProgressPerformStep;
+                Invoke(d);
             }
             else
             {
-                this.pbProgress.PerformStep();
+                pbProgress.PerformStep();
             }
         }
         //Used to update per-file progress bar, set to value
         delegate void FileProgressSetValueCallback(int value);
-        private void pbFileProgressSetValueStep(int value)
+        private void PbFileProgressSetValueStep(int value)
         {
-            if (this.pbFileProgress.InvokeRequired)
+            if (pbFileProgress.InvokeRequired)
             {
-                FileProgressSetValueCallback d = new FileProgressSetValueCallback(pbFileProgressSetValueStep);
-                this.Invoke(d, new object[] { value });
+                FileProgressSetValueCallback d = PbFileProgressSetValueStep;
+                Invoke(d, new object[] { value });
             }
             else
             {
-                this.pbFileProgress.Value = value;
+                pbFileProgress.Value = value;
             }
         }
         //Used to add stuff to the Log
-        delegate void txtLogAppendTextCalback(string text);
-        private void txtLogAppendText(string text)
+        delegate void TxtLogAppendTextCalback(string text);
+        private void TxtLogAppendText(string text)
         {
-            if (this.txtLog.InvokeRequired)
+            if (txtLog.InvokeRequired)
             {
-                txtLogAppendTextCalback d = new txtLogAppendTextCalback(txtLogAppendText);
-                this.Invoke(d, new object[] { text });
+                TxtLogAppendTextCalback d = TxtLogAppendText;
+                Invoke(d, new object[] { text });
             }
             else
             {
-                this.txtLog.AppendText(text);
+                txtLog.AppendText(text);
             }
         }
         #endregion

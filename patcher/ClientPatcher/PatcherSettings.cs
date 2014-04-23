@@ -1,27 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Newtonsoft.Json;
-using System.IO;
 
 namespace ClientPatcher
 {
     public class PatcherSettings
     {
         public string ServerName { get; set; }
-        public string PatchInfoURL { get; set; }
+        public string PatchInfoUrl { get; set; }
         public string ClientFolder { get; set; }
-        public string PatchBaseURL { get; set; }
+        public string PatchBaseUrl { get; set; }
         public bool Default { get; set; }
 
         public PatcherSettings()
         {
             ServerName = "103";
-            PatchInfoURL = "http://build.openmeridian.org/103/patchinfo.txt";
+            PatchInfoUrl = "http://build.openmeridian.org/103/patchinfo.txt";
             ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
             ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
-            PatchBaseURL = "http://build.openmeridian.org/103/clientpatch";
+            PatchBaseUrl = "http://build.openmeridian.org/103/clientpatch";
             Default = true;
         }
 
@@ -31,20 +27,20 @@ namespace ClientPatcher
             {
                 case 104:
                     ServerName = "104";
-                    PatchInfoURL = "http://build.openmeridian.org/104/patchinfo.txt";
+                    PatchInfoUrl = "http://build.openmeridian.org/104/patchinfo.txt";
                     ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
                     ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
-                    PatchBaseURL = "http://build.openmeridian.org/104/clientpatch";
+                    PatchBaseUrl = "http://build.openmeridian.org/104/clientpatch";
                     Default = false;
                     break;
                 
                 case 103:
                 default:
                     ServerName = "103";
-                    PatchInfoURL = "http://build.openmeridian.org/103/patchinfo.txt";
+                    PatchInfoUrl = "http://build.openmeridian.org/103/patchinfo.txt";
                     ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
                     ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
-                    PatchBaseURL = "http://build.openmeridian.org/103/clientpatch";
+                    PatchBaseUrl = "http://build.openmeridian.org/103/clientpatch";
                     Default = true;
                     break;
             }
@@ -53,18 +49,18 @@ namespace ClientPatcher
         public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl)
         {
             ServerName = servername;
-            PatchInfoURL = patchinfourl;
+            PatchInfoUrl = patchinfourl;
             ClientFolder = clientfolder;
-            PatchBaseURL = patchbaseurl;
+            PatchBaseUrl = patchbaseurl;
             Default = false;
         }
 
         public PatcherSettings(string servername, string patchinfourl, string clientfolder, string patchbaseurl, bool defaultserver)
         {
             ServerName = servername;
-            PatchInfoURL = patchinfourl;
+            PatchInfoUrl = patchinfourl;
             ClientFolder = clientfolder;
-            PatchBaseURL = patchbaseurl;
+            PatchBaseUrl = patchbaseurl;
             Default = defaultserver;
         }
 

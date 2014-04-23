@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Net;
 using Newtonsoft.Json;
 using PatchListGenerator;
 using System.IO;
-using System.Diagnostics;
-using System.Security.Permissions;
-using System.Security.AccessControl;
 using System.ComponentModel;
 using System.Threading;
 
@@ -24,7 +19,7 @@ namespace ClientPatcher
         {
             get
             {
-                return this.filename;
+                return filename;
             }
         }
 
@@ -42,7 +37,7 @@ namespace ClientPatcher
         {
             get
             {
-                return this.filesize;
+                return filesize;
             }
         }
 
@@ -51,7 +46,7 @@ namespace ClientPatcher
         {
             get
             {
-                return this.filename;
+                return filename;
             }
         }
 
@@ -70,17 +65,17 @@ namespace ClientPatcher
 
     class ClientPatcher
     {
-        private string PatchInfoJason = "";
+        private string _patchInfoJason = "";
 
         public List<ManagedFile> PatchFiles; //Loaded from the web server at PatchInfoURL
         public List<ManagedFile> LocalFiles; //Loaded with files that do NOT match
         public WebClient myWebClient;
 
-        bool ContinueAsync = false;
+        bool _continueAsync;
 
         public PatcherSettings CurrentProfile { get; set; }
 
-        private long PatchTotalSize = 0;
+        private long _patchTotalSize;
 
         #region Events
         //Event when we Scan a File, used to notify UI.
@@ -129,8 +124,8 @@ namespace ClientPatcher
             WebClient wc = new WebClient();
             try
             {
-                PatchInfoJason = wc.DownloadString(CurrentProfile.PatchInfoURL);
-                PatchFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(PatchInfoJason);
+                _patchInfoJason = wc.DownloadString(CurrentProfile.PatchInfoUrl);
+                PatchFiles = JsonConvert.DeserializeObject<List<ManagedFile>>(_patchInfoJason);
                 return 1;
             }
             catch (WebException e)
@@ -152,9 +147,9 @@ namespace ClientPatcher
             Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\mail\\");
             Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\ads\\");
         }
-        private void CreateDefaultINI()
+        private void CreateDefaultIni()
         {
-            const string DefaultINI = @"[Comm]
+            const string defaultIni = @"[Comm]
 ServerNumber=103
 [Miscellaneous]
 UserName=username
@@ -162,13 +157,13 @@ Download=10016
 ";
             using (StreamWriter sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
             {
-                sw.Write(DefaultINI);
+                sw.Write(defaultIni);
             }
         }
         private void CreateNewClient()
         {
             CreateFolderStructure();
-            CreateDefaultINI();
+            CreateDefaultIni();
         }
         public void ScanClient()
         {
@@ -178,29 +173,29 @@ Download=10016
                 CreateNewClient();
             }
 
-            foreach (ManagedFile PatchFile in PatchFiles)
+            foreach (ManagedFile patchFile in PatchFiles)
             {
-                fullpath = CurrentProfile.ClientFolder + PatchFile.basepath + PatchFile.filename;
-                FileScanned(this, new ScanEventArgs(PatchFile.filename)); //Tells the form to update the progress bar
-                ManagedFile LocalFile = new ManagedFile(fullpath);
-                LocalFile.ComputeHash();
-                if (PatchFile.myHash != LocalFile.myHash)
+                fullpath = CurrentProfile.ClientFolder + patchFile.Basepath + patchFile.Filename;
+                FileScanned(this, new ScanEventArgs(patchFile.Filename)); //Tells the form to update the progress bar
+                ManagedFile localFile = new ManagedFile(fullpath);
+                localFile.ComputeHash();
+                if (patchFile.MyHash != localFile.MyHash)
                 {
-                    LocalFiles.Add(LocalFile);
-                    LocalFile.Length = PatchFile.Length;
-                    PatchTotalSize += PatchFile.Length;
+                    LocalFiles.Add(localFile);
+                    localFile.Length = patchFile.Length;
+                    _patchTotalSize += patchFile.Length;
                 }
             }
         }
         public void DownloadFiles()
         {
-            foreach (ManagedFile File in LocalFiles)
+            foreach (ManagedFile file in LocalFiles)
             {
-                string temp = File.basepath.Replace("\\", "/");
+                string temp = file.Basepath.Replace("\\", "/");
                 try
                 {
-                    StartedDownload(this, new StartDownloadEventArgs(File.filename, File.Length));
-                    myWebClient.DownloadFile(CurrentProfile.PatchBaseURL + temp + File.filename, CurrentProfile.ClientFolder + File.basepath + File.filename);
+                    StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+                    myWebClient.DownloadFile(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
                 }
                 catch (WebException e)
                 {
@@ -211,40 +206,40 @@ Download=10016
         }
         public void DownloadFilesAsync()
         {
-            foreach (ManagedFile File in LocalFiles)
+            foreach (ManagedFile file in LocalFiles)
             {
-                string temp = File.basepath.Replace("\\", "/");
-                StartedDownload(this, new StartDownloadEventArgs(File.filename, File.Length));
-                DownloadFileAsync(CurrentProfile.PatchBaseURL + temp + File.filename, CurrentProfile.ClientFolder + File.basepath + File.filename);
-                while (!ContinueAsync)
+                string temp = file.Basepath.Replace("\\", "/");
+                StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
+                DownloadFileAsync(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                while (!_continueAsync)
                 {
                     //Wait for the previous file to finish
                     Thread.Sleep(10);
                 }
             }
         }
-        public void DownloadFileAsync(string URL, string path)
+        public void DownloadFileAsync(string url, string path)
         {
             using (WebClient client = new WebClient())
             {
                 try
                 {
-                    client.DownloadProgressChanged += new DownloadProgressChangedEventHandler(client_DownloadProgressChanged);
-                    client.DownloadFileCompleted += new AsyncCompletedEventHandler(client_DownloadFileCompleted);
-                    client.DownloadFileAsync(new Uri(URL), path);
+                    client.DownloadProgressChanged += client_DownloadProgressChanged;
+                    client.DownloadFileCompleted += client_DownloadFileCompleted;
+                    client.DownloadFileAsync(new Uri(url), path);
                 }
                 catch (WebException e)
                 {
                     Console.WriteLine(String.Format("Exception: {0}", e.ToString()));
                 }
-                ContinueAsync = false;
+                _continueAsync = false;
             }
         }
 
         private void client_DownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
             OnEndDownload(e);
-            ContinueAsync = true;
+            _continueAsync = true;
         }
         private void client_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {

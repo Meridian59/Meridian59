@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 using Newtonsoft.Json;
-using PatchListGenerator;
 using System.IO;
-using System.Diagnostics;
-using System.Security.Permissions;
 using System.Security.AccessControl;
 
 namespace ClientPatcher
@@ -41,7 +35,7 @@ namespace ClientPatcher
                 Servers = new List<PatcherSettings>();
                 Servers.Add(new PatcherSettings(103)); //default entries, with "templates" defined in the class
                 Servers.Add(new PatcherSettings(104));
-                GrantAccess(SettingsPath);
+                GrantAccess();
                 SaveSettings();
             }
         }
@@ -57,8 +51,8 @@ namespace ClientPatcher
         {
             PatcherSettings ps = new PatcherSettings();
             ps.ClientFolder = clientfolder;
-            ps.PatchBaseURL = patchbaseurl;
-            ps.PatchInfoURL = patchinfourl;
+            ps.PatchBaseUrl = patchbaseurl;
+            ps.PatchInfoUrl = patchinfourl;
             ps.ServerName = servername;
             ps.Default = isdefault;
 
@@ -78,9 +72,9 @@ namespace ClientPatcher
         }
         public PatcherSettings GetDefault()
         {
-            return Servers.Find(x => x.Default == true);
+            return Servers.Find(x => x.Default);
         }
-        private bool GrantAccess(string fullPath)
+        private void GrantAccess()
         {
             DirectorySecurity dSecurity = new DirectorySecurity();
             dSecurity.AddAccessRule(new FileSystemAccessRule("Users", FileSystemRights.Modify | FileSystemRights.Synchronize,
@@ -88,7 +82,7 @@ namespace ClientPatcher
                                                                       PropagationFlags.None, AccessControlType.Allow));
             dSecurity.SetAccessRuleProtection(false, true);
             Directory.CreateDirectory(SettingsPath, dSecurity);
-            return true;
+            return;
         }
 
     }

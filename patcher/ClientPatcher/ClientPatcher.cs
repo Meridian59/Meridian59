@@ -69,7 +69,7 @@ namespace ClientPatcher
 
         public List<ManagedFile> PatchFiles; //Loaded from the web server at PatchInfoURL
         public List<ManagedFile> LocalFiles; //Loaded with files that do NOT match
-        public WebClient myWebClient;
+        public WebClient MyWebClient;
 
         bool _continueAsync;
 
@@ -111,12 +111,12 @@ namespace ClientPatcher
         public ClientPatcher()
         {
             LocalFiles = new List<ManagedFile>();
-            myWebClient = new WebClient();
+            MyWebClient = new WebClient();
         }
         public ClientPatcher(PatcherSettings settings)
         {
             LocalFiles = new List<ManagedFile>();
-            myWebClient = new WebClient();
+            MyWebClient = new WebClient();
             CurrentProfile = settings;
         }
         public int DownloadJson()
@@ -195,7 +195,7 @@ Download=10016
                 try
                 {
                     StartedDownload(this, new StartDownloadEventArgs(file.Filename, file.Length));
-                    myWebClient.DownloadFile(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
+                    MyWebClient.DownloadFile(CurrentProfile.PatchBaseUrl + temp + file.Filename, CurrentProfile.ClientFolder + file.Basepath + file.Filename);
                 }
                 catch (WebException e)
                 {

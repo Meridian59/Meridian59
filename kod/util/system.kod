@@ -984,9 +984,42 @@ messages:
 
       return FALSE;
    }
+   
+   VerifyUsersLoggedOn()
+   {
+      local oCheck, oDoubleCheck, iThisPlayerCount;
+      
+      for oCheck in plUsers_logged_on
+      {
+         iThisPlayerCount = 0;
+         for oDoubleCheck in plUsers_logged_on
+         {
+            if oCheck = oDoubleCheck
+            {
+               iThisPlayerCount = iThisPlayerCount + 1;
+            }
+            if iThisPlayerCount > 1
+            {
+               plUsers_logged_on = DelListElem(plUsers_logged_on, oDoubleCheck);
+            }
+         }
+      }
+      
+      return;
+   }
 
    SystemUserLogon(what = $)
    {
+      local oDoubleCheck;
+      
+      for oDoubleCheck in plUsers_logged_on
+      {
+         if oDoubleCheck = what
+         {
+            plUsers_logged_on = DelListElem(plUsers_logged_on, oDoubleCheck);
+         }
+      }
+   
       plUsers_logged_on = Cons(what,plUsers_logged_on);
 
       if poChaosNight <> $
@@ -1023,9 +1056,15 @@ messages:
 
    SystemUserLogoff(what = $)
    {
-      local i, j, oNew_room;
-
-      plUsers_logged_on = DelListElem(plUsers_logged_on,what);
+      local i, j, oNew_room, oDoubleCheck;
+      
+      for oDoubleCheck in plUsers_logged_on
+      {
+         if oDoubleCheck = what
+         {
+            plUsers_logged_on = DelListElem(plUsers_logged_on, oDoubleCheck);
+         }
+      }
 
       % Remember: plReflections format is:
       % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
@@ -1148,7 +1187,7 @@ messages:
       }
 
       Send(self,@NewGameHour);
-
+      
       return;
    }
 
@@ -1191,6 +1230,8 @@ messages:
       Send(&SoldierShield,@NewDay);
 
       Send(Send(self,@FindSpellByNum,#num=SID_NODEBURST),@NewDay);
+
+      Send(self,@VerifyUsersLoggedOn);
 
       return;
    }

@@ -326,6 +326,11 @@ messages:
 
       return lIngredients;
    }
+   
+   TranceBlocksSay()
+   {
+      return TRUE;
+   }
 
    SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
    "Check if string is a potion spell.  If it is make it the target."

@@ -3872,7 +3872,7 @@ messages:
 
    UserSay(type = $,string = $)
    {      
-      local i, oSpell, lEnchantData;
+      local i, oSpell, lEnchantData, bTranceBlocksSay;
         
       % A room can completely block a piece of communication if it chooses.
       % An excellent example is Out Of Grace, which blocks all tells to 
@@ -3944,6 +3944,8 @@ messages:
             % See if the trance spell does anything special 
             %  with says.  Note that the 'say' will still go off.
 
+            bTranceBlocksSay = FALSE;
+            
             for i in plEnchantments
             {
                if IsClass(nth(i,2),&Trance)
@@ -3952,6 +3954,16 @@ messages:
                   oSpell = first(lEnchantData);
                   Post(oSpell,@SomethingSaidDuringTrance,
                        #who=self,#string=string,#lTargets=Nth(lEnchantData,3));
+                  
+                  if Send(oSpell,@TranceBlocksSay)
+                  {
+                     bTranceBlocksSay = TRUE;
+                  }
+               }
+               
+               if bTranceBlocksSay
+               {
+                  return;
                }
             }
          }

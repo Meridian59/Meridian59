@@ -208,6 +208,11 @@ messages:
 
       return;
    }
+   
+   TranceBlocksSay()
+   {
+      return TRUE;
+   }
 
    SomethingSaidDuringTrance(who=$,string=$)
    {

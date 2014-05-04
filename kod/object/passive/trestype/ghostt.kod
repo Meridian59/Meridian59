@@ -41,7 +41,6 @@ messages:
                      [ &DiscipleRobe, 4],
                      [ &FineLute, 5],
 					 [ &Key, 9 ],
-                     [ &FireWand, 14],
                      [ &HoldWand, 2],
                      [ &TruceScroll, 1]
                    ];

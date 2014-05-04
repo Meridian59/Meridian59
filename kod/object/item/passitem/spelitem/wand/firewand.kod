@@ -1,0 +1,16 @@
+FireWand is Wand
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+properties:
+
+
+messages:
+
+end

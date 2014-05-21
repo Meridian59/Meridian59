@@ -65,7 +65,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Herbs,2],plReagents);
       plReagents = Cons([&EntrootBerry,1],plReagents);
 
       return;
@@ -73,8 +72,8 @@ messages:
 
    GetResistanceStrength(iSpellpower = 0)
    {
-      %% strength varies from 15 to 65
-      return iSpellPower/2 + 15;
+      %% strength varies from 5 to 25
+      return (iSpellPower+1)/5 + 5;
    }
 
    GetDuration(iSpellPower = 0)

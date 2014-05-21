@@ -61,7 +61,6 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Mushroom,3],plReagents);
       plReagents = Cons([&RedMushroom,1],plReagents);
 
       return;
@@ -69,8 +68,8 @@ messages:
 
    GetResistanceStrength(iSpellpower = 0)
    {
-      %% strength varies from 15 to 65
-      return iSpellPower/2 + 25;
+      %% strength varies from 5 to 25
+      return (iSpellPower+1)/5 + 5;
    }
 
    GetDuration(iSpellPower = 0)

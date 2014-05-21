@@ -613,9 +613,11 @@ messages:
    CanPayReagents(who = $, lTargets = $, iSpellPower = 0)
    {
       local lReagent, cReagentClass, iNumNeeded, bFound, lItems, lLists,
-            oUserObject, iNum, oOwner, oSpell, oRing;
-
+            oUserObject, iNum, oOwner, oSpell, oRing, oRoom;
+      
+      oRoom = Send(who,@GetOwner);
       if Send(who,@PlayerIsImmortal)
+         OR Send(oRoom,@NoReagents)
       {
          return TRUE;
       }
@@ -1251,8 +1253,9 @@ messages:
    "half the exertion, and no reagents."
    {
       local num, iAbility, lReagent, cReagentClass, iLists, lItems,
-            iNumNeeded, oUserObject;
+            iNumNeeded, oUserObject, oRoom;
       
+      oRoom = Send(who,@GetOwner);	  
       if NOT IsClass(who,&Player)
       {
          return TRUE;
@@ -1275,54 +1278,57 @@ messages:
          % Spell casting requires exertion (which is in 10^-4 units)
          Send(who,@AddExertion,#amount=10000*viSpellExertion);
 
-         % Use up reagents
-         for lReagent in plReagents
+         % Use up reagents, provided reagent use is turned on
+         if NOT Send(oRoom, @NoReagents)
          {
-            cReagentClass = First(lReagent);
-            iNumNeeded = Nth(lReagent, 2);
-            iLists = 1;
-            while iLists <= 2 
+            for lReagent in plReagents
             {
-               if iLists = 1
+               cReagentClass = First(lReagent);
+               iNumNeeded = Nth(lReagent, 2);
+               iLists = 1;
+               while iLists <= 2 
                {
-                  lItems = Send(who,@GetHolderActive);
-               }
-               else
-               {
-                  lItems = Send(who,@GetHolderPassive);
-               }
-
-               % Since spell is cast, we can be cavalier about deleting things
-               for oUserObject in lItems
-               {
-                  if IsClass(oUserObject,cReagentClass)
+                  if iLists = 1
                   {
-                     if IsClass(oUserObject,&NumberItem)
-                     {
-                        Send(oUserObject,@SubtractNumber,#number=iNumNeeded);
-                        iNumNeeded = 0;
+                     lItems = Send(who,@GetHolderActive);
+                  }
+                  else
+                  {
+                     lItems = Send(who,@GetHolderPassive);
+                  }
 
-                        break;
-                     }
-                     else 
+                  % Since spell is cast, we can be cavalier about deleting things
+                  for oUserObject in lItems
+                  {
+                     if IsClass(oUserObject,cReagentClass)
                      {
-                        Send(oUserObject,@Delete);
-                        iNumNeeded = iNumNeeded - 1;
-
-                        if iNumNeeded = 0
+                        if IsClass(oUserObject,&NumberItem)
                         {
+                           Send(oUserObject,@SubtractNumber,#number=iNumNeeded);
+                           iNumNeeded = 0;
+
                            break;
                         }
+                        else 
+                        {
+                           Send(oUserObject,@Delete);
+                           iNumNeeded = iNumNeeded - 1;
+
+                           if iNumNeeded = 0
+                           {
+                           break;
+                           }
+                        }
                      }
+                  }   
+                  if iNumNeeded = 0 
+                  {
+                     % Found all we need.
+                     break;   
                   }
-               }   
-               if iNumNeeded = 0 
-               {
-                  % Found all we need.
-                  break;   
-               }
             
                iLists = iLists + 1;
+               }
             }
          }
       }

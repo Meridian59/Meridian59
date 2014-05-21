@@ -53,6 +53,7 @@ properties:
    plChaosNightLoot = $
    ptChaosNightLootTimer = $
    piChaosNightLootTimerIntervalMs = 3 * 60 * 1000
+   pbGiveReagents = FALSE
 
 messages:
 
@@ -65,6 +66,9 @@ messages:
 
       for i in Send(SYS, @GetRooms)
       {
+         % Sets all rooms to no reagent use.
+         Send(i,@TurnReagentsOff);
+		 
          % Make all rooms except for inns kill zones (anyone can die).
          % Also, change the background graphic.
          if NOT Send(i,@CheckRoomFlag,#flag=ROOM_HOMETOWN)
@@ -104,6 +108,9 @@ messages:
       %  redraw the correct background.
       for i in Send(SYS, @GetRooms)
       {
+         % Sets all rooms to use reagents.
+         Send(i,@TurnReagentsOn);
+		 
          if not Send(i,@CheckRoomFlag,#flag=ROOM_HOMETOWN)
          {
             Send(i,@EndChaosNight);
@@ -201,8 +208,13 @@ messages:
                  #parm1=Send(oGift,@GetIndef),#parm2=Send(oGift,@GetName));
           }
         }
-
-        Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
+		
+        % Reagent handouts turned off by default as reagent cost is now
+        % disabled during frenzies via room flag pbNoReagents.
+        if pbGiveReagents
+        {        
+           Send(oPlayer,@AddReagentsForSpells,#iNumCasts=iNumCasts);
+        }
       }
 
       return Send(SYS, @GetSuccessRsc);

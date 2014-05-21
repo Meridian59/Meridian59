@@ -116,7 +116,8 @@ properties:
 
    pbLocked = FALSE
    pbRealdeath = FALSE
-
+   pbNoReagents = TRUE
+   
 messages:
 
 
@@ -603,7 +604,7 @@ messages:
       Send(self,@SomeoneSaid,#string=TosArena_start_tournament,#type=SAY_MESSAGE,#what=self);
       Send(self,@TeleportToBooth,#who=marshal);
       Send(self,@SomethingWaveRoom,#wave_rsc=TosArena_Fanfare_Sound);
-
+      pbNoReagents = FALSE;
       return;
    }
 
@@ -611,7 +612,7 @@ messages:
    {
       Send(self,@someonesaid,#string=TosArena_end_tournament,#type=SAY_MESSAGE,#what=self);
       Send(self,@SomethingWaveRoom,#wave_rsc=TosArena_Fanfare_Sound);
-      
+      pbNoReagents = TRUE;     
       return;
    }
 

@@ -193,6 +193,11 @@ messages:
    {
       return viLayer;
    }
+   
+   GetDamageReduction()
+   {
+      return piDamage_reduce;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

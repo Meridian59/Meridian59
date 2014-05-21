@@ -133,7 +133,45 @@ resources:
    user_stat_mysticism = "Mysticism"
    user_stat_aim = "Aim"
    user_stat_karma = "Karma"
+   user_stat_capacity = "Weight Carried"
+   user_stat_offense = "Offense"
+   user_stat_defense = "Defense"
+   user_stat_armor = "Armor"
    user_stat_hpgainchance = istreng.bgf
+   user_resist_magic = "Magic Resist"
+   user_resist_fire = "Fire Resist"
+   user_resist_shock = "Shock Resist"
+   user_resist_cold = "Cold Resist"
+   user_resist_holy = "Holy Resist"
+   user_resist_unholy = "Unholy Resist"
+   user_resist_acid = "Acid Resist"
+   user_resist_quake = "Quake Resist"
+   user_resist_nerudite = "Nerudite"
+   user_resist_silver = "Silver"
+   user_resist_unarmed = "Unarmed"
+   user_resist_punch = "Punch"
+   user_resist_kick = "Kick"
+   user_resist_hunt = "Hunt Sword"
+   user_resist_claw = "Claw"
+   user_resist_bite = "Bite"
+   user_resist_sting = "Sting"
+   user_resist_ichor = "Ichor"
+   user_resist_weapons = "Weapon Resist"
+   user_resist_weapon_nonmagic = "Mundane"
+   user_resist_weapon_magic = "Enchanted"
+   user_resist_hit = "Hit"
+   user_resist_bludgeon = "Bludgeon Resist"
+   user_resist_pierce = "Pierce Resist"
+   user_resist_thrust = "Thrust Resist"
+   user_resist_slash = "Slash Resist"
+   user_resist_whip = "Whip"
+   
+   user_shal_power = "Shal'ille"
+   user_qor_power = "Qor"
+   user_faren_power = "Faren"
+   user_kraanan_power = "Kraanan"
+   user_riija_power = "Riija"
+   user_jala_power = "Jala"
 
    user_stat_health = heal.bgf
    user_stat_mana = ankh.bgf
@@ -2309,6 +2347,7 @@ messages:
       {
          Send(what,@SendInventoryAnimation);
          Send(what,@SendInventoryOverlays);
+         Post(self,@DrawCapacity);
       }
       
       if show_type = SHOW_NORMAL
@@ -2539,7 +2578,7 @@ messages:
 
       if group = 2
       {
-         AddPacket(1,BP_STAT_GROUP, 1,group, 1,7);
+         AddPacket(1,BP_STAT_GROUP, 1,group, 1,24);
 
          Send(self,@SendStatMight);
          Send(self,@SendStatIntellect);
@@ -2548,6 +2587,11 @@ messages:
          Send(self,@SendStatMysticism);
          Send(self,@SendStatAim);
          Send(self,@SendStatKarma);
+         Send(self,@SendStatCapacity);
+         Send(self,@SendStatOffense);
+         Send(self,@SendStatDefense);
+         Send(self,@SendStatArmor);
+         Send(self,@SendStatResistances);
 
          SendPacket(poSession);
          
@@ -5977,6 +6021,8 @@ messages:
 
       }
       
+      Post(self,@DrawCapacity);
+      
       propagate;
    }
 
@@ -5987,6 +6033,8 @@ messages:
          AddPacket(1,BP_INVENTORY_REMOVE,4,what);
          SendPacket(poSession);
       }
+
+      Post(self,@DrawCapacity);
       
       propagate;
    }
@@ -6557,6 +6605,11 @@ messages:
          SendPacket(poSession);
       }
       
+      if IsClass(what,&Weapon)
+      {
+         Post(self,@DrawOffense);
+      }
+      
       return;
    }
 
@@ -6566,6 +6619,11 @@ messages:
       {
          AddPacket(1,BP_UNUSE,4,what);
          SendPacket(poSession);
+      }
+
+      if IsClass(what,&Weapon)
+      {
+         Post(self,@DrawOffense);
       }
       
       return;
@@ -6788,6 +6846,204 @@ messages:
       
       AddPacket(1,7, 4,user_stat_karma, 1,STAT_VALUE, 1,STAT_INTEGER,
                 4,iKarma_Send, 4,-100, 4,100, 4,iKarma_Send);
+
+      return;
+   }
+   
+   DrawCapacity()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT,1,2);
+         Send(self,@SendStatCapacity);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+   
+   SendStatCapacity()
+   {
+      local iCapacity_send, iMaxCapacity_send;
+      
+      iCapacity_send = Send(self,@GetWeightHold);
+      iMaxCapacity_send = Send(self,@GetWeightMax);
+      
+      AddPacket(1,8, 4,user_stat_capacity, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,iCapacity_send, 4,0, 4,iMaxCapacity_send, 4,iCapacity_send);
+
+      return;
+   }
+   
+   DrawOffense()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT,1,2);
+         Send(self,@SendStatOffense);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+   
+   SendStatOffense()
+   {
+      local iOffense_send;
+      
+      iOffense_send = Send(self,@GetOffense);
+      
+      AddPacket(1,9, 4,user_stat_offense, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,iOffense_send, 4,0, 4,1000, 4,iOffense_send);
+
+      return;
+   }
+   
+   DrawDefense()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT,1,2);
+         Send(self,@SendStatDefense);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+   
+   SendStatDefense()
+   {
+      local iDefense_send;
+      
+      iDefense_send = Send(self,@GetDefense);
+      
+      AddPacket(1,10, 4,user_stat_defense, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,iDefense_send, 4,0, 4,1000, 4,iDefense_send);
+
+      return;
+   }
+   
+   DrawArmor()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT,1,2);
+         Send(self,@SendStatArmor);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+   
+   SendStatArmor()
+   {
+      local iArmor_send;
+      
+      iArmor_send = Send(self,@SumDamageReduction);
+      
+      AddPacket(1,11, 4,user_stat_armor, 1,STAT_VALUE, 1,STAT_INTEGER,
+                4,iArmor_send, 4,0, 4,15, 4,iArmor_send);
+
+      return;
+   }
+   
+   DrawResistances()
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT,1,2);
+         Send(self,@SendStatResistances);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+   
+   SendStatResistances()
+   {
+      AddPacket(1,12, 4,user_resist_weapons, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_ALL), 4,-30, 4,100, 4,0);
+      AddPacket(1,13, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_THRUST), 4,-30, 4,100, 4,0);
+      AddPacket(1,14, 4,user_resist_bludgeon, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_BLUDGEON), 4,-30, 4,100, 4,0);
+      AddPacket(1,15, 4,user_resist_slash, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_SLASH), 4,-30, 4,100, 4,0);
+      AddPacket(1,16, 4,user_resist_pierce, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_PIERCE), 4,-30, 4,100, 4,0);
+      AddPacket(1,17, 4,user_resist_magic, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ALL), 4,-30, 4,100, 4,0);
+      AddPacket(1,18, 4,user_resist_fire, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_FIRE), 4,-30, 4,100, 4,0);
+      AddPacket(1,19, 4,user_resist_shock, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_SHOCK), 4,-30, 4,100, 4,0);
+      AddPacket(1,20, 4,user_resist_cold, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_COLD), 4,-30, 4,100, 4,0);
+      AddPacket(1,21, 4,user_resist_acid, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ACID), 4,-30, 4,100, 4,0);
+      AddPacket(1,22, 4,user_resist_holy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_HOLY), 4,-30, 4,100, 4,0);
+      AddPacket(1,23, 4,user_resist_unholy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_UNHOLY), 4,-30, 4,100, 4,0);
+      AddPacket(1,24, 4,user_resist_quake, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_QUAKE), 4,-30, 4,100, 4,0);
+
+      return;
+   }
+   
+   DrawResistance(type=ATCK_WEAP_ALL)
+   {
+      if pbLogged_on
+      {
+         AddPacket(1,BP_STAT,1,2);
+         Send(self,@SendStatResistance,#type=type);
+         SendPacket(poSession);
+      }
+
+      return;
+   }
+   
+   SendStatResistance(type=ATCK_WEAP_ALL)
+   {
+      if type = ATCK_WEAP_ALL
+      {
+         AddPacket(1,12, 4,user_resist_weapons, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_ALL), 4,-30, 4,100, 4,0);
+      }
+      if type = ATCK_WEAP_THRUST
+      {
+         AddPacket(1,13, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_THRUST), 4,-30, 4,100, 4,0);
+      }
+      if type = ATCK_WEAP_BLUDGEON
+      {
+         AddPacket(1,14, 4,user_resist_bludgeon, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_BLUDGEON), 4,-30, 4,100, 4,0);
+      }
+      if type = ATCK_WEAP_SLASH
+      {
+         AddPacket(1,15, 4,user_resist_slash, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_SLASH), 4,-30, 4,100, 4,0);
+      }
+      if type = ATCK_WEAP_PIERCE
+      {
+         AddPacket(1,16, 4,user_resist_pierce, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_PIERCE), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_ALL
+      {
+         AddPacket(1,17, 4,user_resist_magic, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ALL), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_FIRE
+      {
+         AddPacket(1,18, 4,user_resist_fire, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_FIRE), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_SHOCK
+      {
+         AddPacket(1,19, 4,user_resist_shock, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_SHOCK), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_COLD
+      {
+         AddPacket(1,20, 4,user_resist_cold, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_COLD), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_ACID
+      {
+         AddPacket(1,21, 4,user_resist_acid, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ACID), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_HOLY
+      {
+         AddPacket(1,22, 4,user_resist_holy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_HOLY), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_UNHOLY
+      {
+         AddPacket(1,23, 4,user_resist_unholy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_UNHOLY), 4,-30, 4,100, 4,0);
+      }
+      if type = -ATCK_SPELL_QUAKE
+      {
+         AddPacket(1,24, 4,user_resist_quake, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_QUAKE), 4,-30, 4,100, 4,0);
+      }
 
       return;
    }

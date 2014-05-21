@@ -462,6 +462,8 @@ messages:
                if Send(i,@PlayerisIntriguing)
                {
                   Post(i,@MsgSendUser,#message_rsc=faction_power_shift);
+                  Post(i,@DrawOffense);
+                  Post(i,@DrawDefense);
                   post(i,@wavesenduser,#wave_rsc=faction_shift_wav);
                }
             }

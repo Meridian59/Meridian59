@@ -58,7 +58,9 @@ classvars:
    viMana = 20
 
    viSpellExertion = 30
-   viChance_To_Increase = 25
+   
+   % This spell is very slow and difficult to work, so it should improve well.
+   viChance_To_Increase = 60
 
    vrSucceed_wav = Surge_sound
    viFlash = FLASH_GOOD

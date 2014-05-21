@@ -28,7 +28,7 @@ namespace ClientPatcher
                 case 104:
                     ServerName = "104";
                     PatchInfoUrl = "http://build.openmeridian.org/104/patchinfo.txt";
-                    ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
+                    ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 104";
                     ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
                     PatchBaseUrl = "http://build.openmeridian.org/104/clientpatch";
                     Default = false;

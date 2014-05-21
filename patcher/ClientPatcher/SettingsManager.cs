@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Principal;
 using Newtonsoft.Json;
 using System.IO;
 using System.Security.AccessControl;
@@ -77,12 +78,11 @@ namespace ClientPatcher
         private void GrantAccess()
         {
             DirectorySecurity dSecurity = new DirectorySecurity();
-            dSecurity.AddAccessRule(new FileSystemAccessRule("Users", FileSystemRights.Modify | FileSystemRights.Synchronize,
+            dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.Modify | FileSystemRights.Synchronize,
                                                                       InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
                                                                       PropagationFlags.None, AccessControlType.Allow));
             dSecurity.SetAccessRuleProtection(false, true);
             Directory.CreateDirectory(SettingsPath, dSecurity);
-            return;
         }
 
     }

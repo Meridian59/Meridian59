@@ -3386,6 +3386,7 @@ messages:
             Post(self,@DrawDefense);
             Post(self,@DrawArmor);
             bFound = TRUE;
+            return;
          }
       }
 

@@ -30,16 +30,15 @@ messages:
    constructed()
    {
       plTreasure = [ [ &InkyCap, 19],
-                     [ &PurpleMushroom, 12 ],
+                     [ &PurpleMushroom, 14 ],
                      [ &Sapphire, 12 ],
                      [ &Diamond, 9 ],
                      [ &Ruby, 7 ],
                      [ &BlueDragonScale, 17],
                      [ &DarkAngelFeather, 15],
                      [ &HoldWand, 1],
-                     [ &MysticSword, 1 ],
-                     [ &PlateArmor, 1 ],
-                     [ &Key, 6 ]
+                     [ &MysticSword, 3 ],
+                     [ &PlateArmor, 3 ]
                    ];
 
       propagate;

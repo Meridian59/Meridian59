@@ -32,12 +32,13 @@ messages:
       plTreasure = [ [ &PurpleMushroom, 36],
                      [ &Sapphire, 28],
                      [ &Emerald, 26], 
-                     [ &ShadowAmulet, 5],
+                     [ &ShadowAmulet, 4],
                      [ &BlueMushroom, 1 ],
                      [ &GoldShield, 1 ],
                      [ &ChainArmor, 1 ],
                      [ &Axe, 1],
-                     [ &Hammer, 1]
+                     [ &Hammer, 1],
+                     [ &Key, 1]
                    ];
       propagate;
    }

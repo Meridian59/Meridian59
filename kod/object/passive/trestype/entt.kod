@@ -31,8 +31,9 @@ messages:
    {
       plTreasure = [ [ &Entrootberry, 55],
                      [ &Snack, 5 ],
-                     [ &PurpleMushroom, 38 ],
-                     [ &Lightningwand,2]
+                     [ &PurpleMushroom, 37 ],
+                     [ &Lightningwand,2],
+                     [ &Key, 1]
                    ];
 
       propagate;

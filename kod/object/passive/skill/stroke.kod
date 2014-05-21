@@ -334,7 +334,7 @@ messages:
    DamageFactors(damage=0, who=$, weapon_used = $)
    "Different skills/strokes are affected by strength differently."
    {
-      local iDamage, might;
+      local iDamage, stat;
 
       iDamage = damage;
       % KLUDGEISH: this information should probably be in player.
@@ -348,9 +348,9 @@ messages:
          iDamage = iDamage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING))*viMaxProficiencyDamage/100;
       }
       
-      % Get might damage bonus.
-      might = send(who,@GetMight);
-      iDamage = ((100+bound(might-25,0,40))*iDamage)/100;
+      % Get stat damage bonus.
+      stat = send(who,@GetRequisiteStat);
+      iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
 
       return iDamage;
    }

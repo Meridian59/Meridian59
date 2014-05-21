@@ -165,7 +165,7 @@ messages:
    DamageFactors(damage=0, who=$, weapon_used = $)
    "Different skills/strokes are affected by strength differently."
    {
-      local iDamage, iAim;
+      local iDamage, stat;
 
       iDamage = damage;
       % Get weapon proficiency bonuses.
@@ -175,8 +175,8 @@ messages:
       }
       
       % Get Aim damage bonus.
-      iAim = send(who,@GetAim);
-      iDamage = ((100+bound(iAim-25,0,40))*iDamage)/100;
+      stat = send(who,@GetRequisiteStat);
+      iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
 
       return iDamage;
    }

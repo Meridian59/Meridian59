@@ -38,8 +38,8 @@ messages:
       oWarpTime = Send(SYS,@FindSpellByNum,#num=SID_WARPTIME);
       if Send(Send(who,@GetOwner),@IsEnchanted,#what=oWarpTime)
       {
-         time = Send(oWarpTime,@GetStretchedTime,#oldtime=time,
-                     #oRoom=Send(who,@GetOwner));
+         %time = Send(oWarpTime,@GetStretchedTime,#oldtime=time,
+         %            #oRoom=Send(who,@GetOwner));
       }
       
       Send(who,@StartEnchantment,#what=self,#time=time,#addicon=FALSE,

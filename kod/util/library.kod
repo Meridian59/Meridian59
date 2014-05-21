@@ -3276,7 +3276,7 @@ messages:
    {
       plQuestRewards = $;
       plQuestRewards = [
-        &InkyCap, &FireWand, &HealWand, &VampireWand, &Key,
+        &InkyCap, &HealWand, &VampireWand, &Key,
         &BerserkerRing, &FireRing, &RingInvisibility, &Circlet,
         &MysticSword, &PlateArmor, &KnightShield, &DarkAngelFeather,
         &BlueDragonScale, &Gauntlet, &StaffOfJolting, &EntrootBerry ];

@@ -186,8 +186,6 @@ messages:
 
 	iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );	  	  	  
 	  
-	% Add this creature to your minion list
-	Send(who,@NewControlledMinion,#minion=oRisen);
 	
 	Send(oRisen,@ResetBehaviorFlags);	
   

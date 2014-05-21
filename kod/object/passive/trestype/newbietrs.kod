@@ -45,7 +45,6 @@ messages:
                      [ &LightScroll , 3 ],
                      [ &LightningWand , 3 ],
                      [ &HealWand , 2 ],
-                     [ &FireWand , 1 ],
                      [ &JewelofFroz , 1 ],
                      [ &BerserkerRing, 1 ] ];
 

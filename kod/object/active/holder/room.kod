@@ -3204,7 +3204,6 @@ messages:
       Send(self,@TrySetRoomFlag,#flag=ROOM_GUILD_PK_ONLY,#value=FALSE);
       Send(self,@TrySetRoomFlag,#flag=ROOM_NO_PK,#value=FALSE);
       Send(self,@TrySetRoomFlag,#flag=ROOM_NO_MAGIC,#value=FALSE);
-      pbNoReagents = TRUE;
 	  
       % change the background graphic
       prBackground = background_chaos_night;
@@ -3229,7 +3228,6 @@ messages:
       Send(self,@SetRoomFlagToDefault,#flag=ROOM_GUILD_PK_ONLY,#value=FALSE);
       Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_PK,#value=FALSE);
       Send(self,@SetRoomFlagToDefault,#flag=ROOM_NO_MAGIC,#value=FALSE);
-      pbNoReagents = FALSE;
 	  
       % Restore the old background.
       Send(self,@RecalcLightAndWeather);
@@ -4122,6 +4120,18 @@ messages:
    {
       return pbNoReagents;
    }
+
+   TurnReagentsOff()
+   {
+      pbNoReagents=TRUE;
+      return;
+   }
    
+   TurnReagentsOn()
+   {
+      pbNoReagents=FALSE;
+      return;
+   }
+      
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

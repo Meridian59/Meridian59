@@ -23,10 +23,11 @@ resources:
    kocatan_no_weapons = \
       "It is forbidden to carry into the jungle any weapons other than those "
       "that are necessary to ensure the safety of the traveller."
-   kocatan_no_armor = "You may only carry one suit of armor into the jungle!"
-   kocatan_no_helm = "You may only take one helmet with you out there."
-   kocatan_no_gauntlets = "Only one set of gauntlets permitted."
-   kocatan_no_shields = "You may only take one shield with you into the outland."
+   kocatan_no_armor = "You may only carry two suits of armor into the jungle!"
+   kocatan_no_helm = "You may only take two helmets with you out there."
+   kocatan_no_gauntlets = "Only two sets of gauntlets permitted."
+   kocatan_no_shields = \
+      "You may only take two shields plus a soldier shield with you into the outland."
 
 messages:
 
@@ -54,7 +55,7 @@ messages:
             iGauntlet = iGauntlet + 1;
          }
 
-         if IsClass(i,&Shield) AND NOT IsClass(i,&Torch)
+         if IsClass(i,&Shield) AND NOT IsClass(i,&Torch) AND NOT IsClass(i,&SoldierShield)
          {
             iShield = iShield + 1;
          }
@@ -64,7 +65,8 @@ messages:
             iArmor = iArmor + 1;
          }
 
-         if IsClass(i,&Helmet) AND NOT (IsClass(i,&Circlet) OR IsClass(i,&IvyCirclet))
+         if IsClass(i,&Helmet) AND NOT (IsClass(i,&Circlet) OR IsClass(i,&IvyCirclet)
+		       OR IsClass(i,&FaceMask))
          {
             iHelmet = iHelmet + 1;
          }
@@ -80,8 +82,8 @@ messages:
          }
       }
       
-      if (iWeapon < 3) AND (iArmor < 2)
-         AND (iShield < 2) AND (iHelmet < 2) AND (iGauntlet < 2)
+      if (iWeapon < 5) AND (iArmor < 3)
+         AND (iShield < 3) AND (iHelmet < 3) AND (iGauntlet < 3)
          AND (NOT bAlcohol) AND (NOT bNerudite)
       {      
          send(self,@say,#message_rsc = kocatan_may_pass);
@@ -110,35 +112,35 @@ messages:
          return FALSE;
       }
       
-      if iWeapon > 2
+      if iWeapon > 4
       {
          send(self,@Say,#message_rsc=kocatan_no_weapons);
          
          return FALSE;
       }
       
-      if iArmor > 1
+      if iArmor > 2
       {
          send(self,@Say,#message_rsc=kocatan_no_armor);
          
          return FALSE;
       }
       
-      if iHelmet > 1
+      if iHelmet > 2
       {
          send(self,@Say,#message_rsc=kocatan_no_helm);
          
          return FALSE;
       }
       
-      if iGauntlet > 1
+      if iGauntlet > 2
       {
          send(self,@Say,#message_rsc=kocatan_no_gauntlets);
          
          return FALSE;
       }
       
-      if iShield > 1
+      if iShield > 2
       {
          send(self,@Say,#message_rsc=kocatan_no_shields);
          

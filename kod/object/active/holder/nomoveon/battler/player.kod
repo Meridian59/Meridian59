@@ -3762,7 +3762,7 @@ messages:
       % Make sure room allows the attack. Check if room has special combat affects.
       if actual = TRUE
          AND NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=victim,
-                  #use_weapon=use_weapon,#stroke_obj=stroke_obj,#actual=actual)
+                  #use_weapon=use_weapon,#stroke_obj=stroke_obj,#report=report,#actual=actual)
       {
          return FALSE;
       }

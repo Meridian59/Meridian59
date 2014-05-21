@@ -1568,7 +1568,7 @@ messages:
             Send(poOwner,@ResetPlayerLegs,#alldone=FALSE);
          }
          
-         Send(poOwner,@RefreshPlayerVisualGear);
+         Post(poOwner,@RefreshPlayerVisualGear);
          
          oRoom = Send(poOwner,@GetOwner);
          if oRoom <> $

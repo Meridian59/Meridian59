@@ -23,7 +23,7 @@ namespace ClientPatcher
 
         public void LoadSettings()
         {
-            if (File.Exists(SettingsPath))
+            if (File.Exists(SettingsPath + SettingsFile))
             {
                 StreamReader file = File.OpenText(SettingsPath+SettingsFile); //Open the file
 

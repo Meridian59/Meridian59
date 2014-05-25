@@ -115,7 +115,7 @@ messages:
 
    DoRescue(who = $)
    {
-      local i, oCurrentRoom, oTargetRoom, oGuild;
+      local i, each_obj, oCurrentRoom, oTargetRoom, oGuild;
 
       send(who,@MsgSendUser,#message_rsc=Rescue_Success);
 

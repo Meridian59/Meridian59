@@ -82,7 +82,6 @@ namespace ClientPatcher
                                                                       PropagationFlags.None, AccessControlType.Allow));
             dSecurity.SetAccessRuleProtection(false, true);
             Directory.CreateDirectory(SettingsPath, dSecurity);
-            return;
         }
 
     }

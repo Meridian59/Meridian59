@@ -334,7 +334,7 @@ messages:
    DamageFactors(damage=0, who=$, weapon_used = $)
    "Different skills/strokes are affected by strength differently."
    {
-      local iDamage, stat;
+      local iDamage, stat, weapProf;
 
       iDamage = damage;
       % KLUDGEISH: this information should probably be in player.
@@ -342,16 +342,18 @@ messages:
       if weapon_used <> $
       {
          iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
+      
+	     % Stat damage bonus. Ask the weapon for its proficiency number and convert to skill prof.
+         weapProf = Send(SYS,@FindSkillByNum,#num=Send(weapon_used,@GetProfNumber));
+         % Use GetRequisiteStat in the weapon proficiency to query the player for the appropriate stat value.
+         stat = send(weapProf,@GetRequisiteStat,#who=who);
+         iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
       }
       else
       {
          iDamage = iDamage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING))*viMaxProficiencyDamage/100;
       }
       
-      % Get stat damage bonus.
-      stat = send(who,@GetRequisiteStat);
-      iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
-
       return iDamage;
    }
 

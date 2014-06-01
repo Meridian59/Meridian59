@@ -175,7 +175,7 @@ messages:
       }
       
       % Get Aim damage bonus.
-      stat = send(who,@GetRequisiteStat);
+      stat = send(self,@GetRequisiteStat,#who=who);
       iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
 
       return iDamage;

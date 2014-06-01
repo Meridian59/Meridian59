@@ -10,6 +10,12 @@ classvars:
 
 properties:
 
+poOwner = $
+piHits_init = $
+piHits = $
+plItem_attributes = $
+piItem_flags = $
+
 
 messages:
 

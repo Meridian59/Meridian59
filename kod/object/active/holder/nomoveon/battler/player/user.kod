@@ -6867,8 +6867,17 @@ messages:
       local iCapacity_send, iMaxCapacity_send;
       
       iCapacity_send = Send(self,@GetWeightHold);
-      iMaxCapacity_send = Send(self,@GetWeightMax);
       
+      % GetWeightMax returns NIL in dm.kod, 3100 is capacity at 70 might
+      if IsClass(self,&DM)
+      {
+         iMaxCapacity_send = 3100;
+      }
+      else
+      {
+         iMaxCapacity_send = Send(self,@GetWeightMax);
+      }
+	  
       AddPacket(1,8, 4,user_stat_capacity, 1,STAT_VALUE, 1,STAT_INTEGER,
                 4,iCapacity_send, 4,0, 4,iMaxCapacity_send, 4,iCapacity_send);
 

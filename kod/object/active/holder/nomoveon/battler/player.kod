@@ -12834,6 +12834,7 @@ messages:
 
       % Reset our attack timer, a traditional use of this function when attack
       %  time was a timestamp instead of a timer.
+	  %
       if ptAttackTimer <> $
       {
          DeleteTimer(ptAttackTimer);
@@ -12846,6 +12847,7 @@ messages:
       piGuildRejoinTimestamp = time;
       piLast_restart_time = time;
       piTimeLastStomachUpdate = time;
+	  piTimeAttackedPlayer = time;
 
       return;
    }
@@ -13290,5 +13292,6 @@ messages:
       
       return iArmor;
    }
+  
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

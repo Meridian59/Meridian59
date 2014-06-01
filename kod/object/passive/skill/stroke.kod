@@ -343,7 +343,7 @@ messages:
       {
          iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
       
-	     % Stat damage bonus. Ask the weapon for its proficiency number and convert to skill prof.
+         % Stat damage bonus. Ask the weapon for its proficiency number and convert to skill prof.
          weapProf = Send(SYS,@FindSkillByNum,#num=Send(weapon_used,@GetProfNumber));
          % Use GetRequisiteStat in the weapon proficiency to query the player for the appropriate stat value.
          stat = send(weapProf,@GetRequisiteStat,#who=who);

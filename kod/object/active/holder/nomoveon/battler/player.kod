@@ -11581,16 +11581,28 @@ messages:
       
       return;
    }
-      
+
    FactionServiceTimer(renew=TRUE)
    {
-      local iHistory;
-      
+      % Attempts to delete any existing timer, then passes to FactionServiceRenew
+      % which creates a new timer if conditions are met.
+
       if ptFactionTimer <> $
       {
          DeleteTimer(ptFactionTimer);
          ptFactionTimer = $;
       }
+      
+      Send(Self,@FactionServiceRenew,#renew=renew);
+      return;
+   }
+
+   FactionServiceRenew(renew=TRUE)
+   {
+      % This function now handles renewal of ptFactionTimer and should only be accessed
+      % from FactionServiceTimer() after the $ check.
+ 
+      local iHistory;
       
       if piFaction = FACTION_NEUTRAL
       {
@@ -11645,12 +11657,12 @@ messages:
       if renew AND Send(SYS,@GetParliament) <> $
          AND (NOT Send(Send(SYS,@GetParliament),@IsShutdown))
       {
-         ptFactionTimer = CreateTimer(self,@FactionServiceTimer,FACTION_UPDATE_TIME);
+         ptFactionTimer = CreateTimer(self,@FactionServiceRenew,FACTION_UPDATE_TIME);
       }
       
       return;
    }
-
+   
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {

@@ -323,15 +323,6 @@ messages:
 
       if iDistanceSquared <= (iLongRange * iLongRange)
       {
-         if IsClass(what,&User)
-         {
-            % This resets the move counter, since we had additional (legal) 
-            %  moves request from this object.
-            % We have to reset the moves counter, because it seems wall elements
-            %  generate more requests than they handle.
-            Send(what,@AdjustMoveCounter,#bReset=TRUE);
-         }
-
          if (iLongRange = piRange
              OR iDistanceSquared <= (piRange * piRange))
             AND Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)

@@ -68,13 +68,6 @@ messages:
       iRow = Send(self,@GetRow);
       iCol = Send(self,@GetCol);
 
-      if IsClass(what,&User)
-      {
-         % This decrements the move counter by 1, since we had an additional (legal) 
-         %  move request from this object.
-         Send(what,@AdjustMoveCounter,#bReset=TRUE);
-      }
-
       if new_row = iRow AND new_col = iCol
       {
          if what = self

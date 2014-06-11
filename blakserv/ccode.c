@@ -1907,6 +1907,27 @@ int C_GetTime(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_GetTickCount(int object_id,local_var_type *local_vars,
+                   int num_normal_parms,parm_node normal_parm_array[],
+                   int num_name_parms,parm_node name_parm_array[])
+{
+    val_type ret_val;
+
+    ret_val.v.tag = TAG_INT;
+
+    /* We must subtract a number from the system time due to size
+       limitations within the blakod. Blakod uses 32 bit values,
+       -4 bits for type and -1 bit for sign. This leaves us with
+       27 bits for value, This only allows us to have 134M or so
+       as a positive value. Current system time is a bit larger
+       than that. So, we subtract off time to compensate.
+    */
+
+    ret_val.v.data = GetTickCount(); // W32API 10ms-16ms precision call
+
+    return ret_val.int_val;
+}
+
 int C_Random(int object_id,local_var_type *local_vars,
 			 int num_normal_parms,parm_node normal_parm_array[],
 			 int num_name_parms,parm_node name_parm_array[])

@@ -12270,7 +12270,8 @@ messages:
    {
       return Send(self,@IsUsingA,#class=&NecromancerAmulet);
    }
-
+   
+   % This fixes timer discrepancies caused by timer offset issue in ccode.c
    UpdateTimeValues()
    "Sets all time variables to the current time.  Useful for when changing "
    "server time."
@@ -12291,6 +12292,7 @@ messages:
       piGuildRejoinTimestamp = time;
       piLast_restart_time = time;
       piTimeLastStomachUpdate = time;
+      piTimeAttackedPlayer = time;
 
       return;
    }

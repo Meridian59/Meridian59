@@ -8465,16 +8465,16 @@ messages:
       if Send(SYS,@GetChaosNight)
       {
          % It's a frenzy!  Give us a leg up.
-         piHealth = piMax_Health / 2;
-         piMana = piMax_Mana / 2;
-         piVigor = 100;
+         piHealth = 4*(piMax_Health/5);
+         piMana = 4*(piMax_Mana/5);
+         piVigor = 200;
       }
       else
       {
          % We're not in a frenzy.  Give us the bare minimums.
          piMana = 1;
          piHealth = 1;
-         piVigor = bound(piVigor/4,0,50);   
+         piVigor = bound(piVigor/4,15,50);   
       }
       
       Send(self,@NewHealth);

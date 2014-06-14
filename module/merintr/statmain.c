@@ -234,7 +234,7 @@ void StatsMainMove(void)
 	 case 0: ti.lpszText = (LPSTR) IDS_HEALTH; break;
 	 case 1: ti.lpszText = (LPSTR) IDS_MANA;   break;
 	 case 2: ti.lpszText = (LPSTR) IDS_VIGOR;  break;
-     case 3: ti.lpszText = (LPSTR) IDS_TOUGHER; break;
+	 case 3: ti.lpszText = (LPSTR) IDS_TOUGHER; break;
 	 default:
 	    debug(("StatsMainMove got unknown stat number %d\n", count));
 	    ti.lpszText = 0;

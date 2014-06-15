@@ -17,8 +17,8 @@ constants:
 
    YETI_DOOR = 1
    MANA_DOOR = 2
-   YETI_ROW = 21
-   YETI_COL = 12
+%  YETI_ROW = 21
+%  YETI_COL = 12
 
    RESPAWN_TIMER = 180000  % 3 minutes
    YETI_DOOR_TIME = 10000
@@ -121,7 +121,7 @@ messages:
 
       if NOT bFound AND pbGenerateMonsters
       {
-         Send(self,@NewHold,#what=Create(&yeti),#new_row=YETI_ROW,#new_col=YETI_COL,
+         Send(self,@NewHold,#what=Create(&yeti),#new_row=random(20,27),#new_col=random(14,16),
               #new_angle=ANGLE_SOUTH_EAST);
          send(self,@SetSector,#sector=MANA_DOOR,#animation=ANIMATE_CEILING_LIFT,
               #height=380,#speed=0);

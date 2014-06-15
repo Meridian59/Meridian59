@@ -714,6 +714,7 @@ resources:
    player_logged_off_wav_rsc = player_logout2.wav
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
+   second_wind_finished = "You feel more relaxed as your second wind dissipates."
    
    player_monster_attack_string = "monster attack"
    player_no_weapon_string = "no weapon"
@@ -1053,6 +1054,8 @@ messages:
       {
          DeleteTimer(ptSecondWind);
          ptSecondWind = $;
+         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+                 #type=ENCHANTMENT_PLAYER);
       }
       
       if ptCrystalizeManaSurgeTimer <> $
@@ -1329,6 +1332,9 @@ messages:
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
       Send(self,@SetVigorRestThreshold,#amount=iAmount);
       Send(self,@NewVigor);
+      Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
+      Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+                 #type=ENCHANTMENT_PLAYER);
       
       return;
    }
@@ -10683,6 +10689,9 @@ messages:
       {
          DeleteTimer(ptSecondWind);
          ptSecondWind = $;
+         Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
+         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+                 #type=ENCHANTMENT_PLAYER);
       }
 
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);

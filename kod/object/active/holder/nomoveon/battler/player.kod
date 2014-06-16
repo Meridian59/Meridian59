@@ -1935,6 +1935,14 @@ messages:
       % Restart Health and Mana timers
       Send(self,@NewHealth);
       Send(self,@NewMana);
+ 
+      % Add second wind icon if timer still active
+      if ptSecondWind <> $
+      {
+      Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
+            #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
+      
       
       Send(self,@SendUserAllWindowOverlays);
 

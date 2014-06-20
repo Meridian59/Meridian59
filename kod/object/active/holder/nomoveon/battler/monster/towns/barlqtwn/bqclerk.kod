@@ -178,7 +178,7 @@ messages:
        
 	     return true;      
       }
-      send(oMoney,@SubtractNumber,#number=amount);
+      send(oMoney,@SubtractNumber,#number=Send(Send(SYS,@GetSettings),@GetPardonIndulgenceCost));
       send(self,@PerformIndulgencePardonMurderer,#who=who);
       post(poOwner,@SomeoneSaid,#what=self,#string=indulgence_success,#type=SAY_RESOURCE);
       return true;

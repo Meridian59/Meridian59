@@ -1642,7 +1642,8 @@ messages:
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
-         if StringEqual(psHonor,player_newbie_honor_string)
+         if psHonor <> $
+            AND StringEqual(psHonor,player_newbie_honor_string)
          {
             Send(self,@SetHonorString);
          }

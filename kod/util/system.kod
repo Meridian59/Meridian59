@@ -1238,8 +1238,14 @@ messages:
 
    NewYear()
    {
+      local i;
       Send(self,@NewYearClean);
       piYear = piYear + 1;
+	  
+	  for i in plUsers
+         {
+            Send(i,@GetAge);
+         }
 
       return;
    }

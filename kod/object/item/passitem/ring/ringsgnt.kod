@@ -28,13 +28,13 @@ classvars:
    vrIcon = ringsignet_icon_rsc
    vrRealDesc = ringsignet_desc_rsc
 
-   viHits_init_min = 30
-   viHits_init_max = 70
+   viHits_init_min = 80
+   viHits_init_max = 100
 
    viBulk = 2
    viWeight = 2
    
-   viValue_average = 150
+   viValue_average = 800
 
 properties:
 

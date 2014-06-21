@@ -8983,6 +8983,22 @@ messages:
       return;
    }
 
+   VerifyOverlays()
+   "Removes overlays of any overlaid item whose owner is not the player."
+   {
+      local i;
+      
+      for i in plOverlays
+      {
+         if Send(i,@GetOwner) <> self
+         {
+            Send(self,@RemoveOverlay,#what=i);
+         }
+      }
+      
+      return;
+   }
+   
    SetOverlay(what = $)
    "Adds <what> to plOverlays, and tells everyone we changed."
    {

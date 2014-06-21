@@ -163,6 +163,12 @@ messages:
       return damage;
    }
 
+   SetResistanceChange(amount = 20)
+   {
+      piResistanceChange = amount;
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

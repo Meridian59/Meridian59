@@ -1882,7 +1882,7 @@ messages:
       AddPacket(1,BP_USERCOMMAND,1,UC_GUILDINFO);
       AddPacket(6,Send(poGuild,@GetName));
       lHall = Send(poGuild,@GetGuildHall);
-      if lHall <> $
+      if lHall <> $ AND Send(poGuild,@GetRank,#who=self) = RANK_MASTER
       {
          AddPacket(1,1);
          AddPacket(6,Send(poGuild,@GetPassword));

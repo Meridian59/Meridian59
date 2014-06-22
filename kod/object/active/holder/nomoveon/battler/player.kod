@@ -2977,8 +2977,26 @@ messages:
 
       for i in plEnchantments
       {
-         Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
+         if NOT IsClass(Nth(i,2),&RadiusEnchantment)
+         {
+            Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
+         }
       }
+      
+      return;
+   }
+   
+   RemoveAllRadiusEnchantments(report=TRUE)
+   "Remove all current radius enchantments."
+   {
+      local i;
+      
+      for i in plRadiusEnchantments
+      {
+         Send(self,@RemoveRadiusEnchantment,#what=Nth(i,1),#iPower=Nth(i,2),#caster=Nth(i,3),#report=report);
+      }
+      
+      plRadiusEnchantments = $;
       
       return;
    }

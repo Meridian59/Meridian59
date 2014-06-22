@@ -657,7 +657,7 @@ messages:
       Send(self,@RecreateMoneyTemplates);
       Send(self,@RecreateChests);
       Send(self,@RecreateLore);
-      Send(self, @UpdateHallOfHeroes);
+      Send(self,@UpdateHallOfHeroes);
 
       poTotem = Create(&Totem);
       poTotemOne = Create(&TotemOne);
@@ -689,7 +689,7 @@ messages:
       }
 
       Send(self,@RecalcLightAndWeather);
-
+      Send(self,@ReturnShrineAllegiance);
       Send(self,@RecreateStatistics);  % Must create after anything you want to measure
 
       piRecreate_state = RECREATE_NOT;
@@ -2805,7 +2805,7 @@ messages:
 
    RecomputeShrineTotals()
    {
-      local i, n, allegiance, power, count, power_count;
+      local i, allegiance, power, count;
 
       if plShrine_Powers = $
       {
@@ -2823,20 +2823,6 @@ messages:
          }
       }
       
-      if plShrine_Allegiances <> $
-      {
-         power_count = 1;
-         for n in plShrines
-         {
-            if Nth(plShrine_Allegiances,power_count) <> 0
-            {
-               Send(n,@SetAllegiance,#allegiance=Nth(plShrine_Allegiances,power_count));
-               power_count = power_count + 1;
-            }
-         }
-         plShrine_Allegiances = $;
-      }
-
       for i in plShrines
       {
          allegiance = Send(i,@GetAllegiance);
@@ -2851,6 +2837,26 @@ messages:
       return;
    }
 
+   ReturnShrineAllegiance()
+   {
+      % Returns proper shrine allegiance at RecreateAll phase 5
+	  
+      local i, n;
+      if plShrine_Allegiances <> $
+      {
+         n = 5;
+         
+         for i in plShrines
+         {
+            Send(i,@SetAllegiance,#allegiance=(Nth(plShrine_Allegiances,n)));
+            n = n - 1;
+         }
+      }
+      plShrine_Allegiances = $;
+      
+      return;
+   }
+   
    GetShrineBonus(school=$)
    {
       if school = $ OR school <> bound(school,SS_SHALILLE,SS_JALA)

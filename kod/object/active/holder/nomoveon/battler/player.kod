@@ -11809,6 +11809,9 @@ messages:
 
    ResignLoyaltyFailed()
    {
+      % Don't boot the player unless they've been factioned longer
+      % than 5400 seconds (90 minutes)	  
+
       if piFactionServiceUpdate < 5400
       {  
          return;

@@ -11807,6 +11807,18 @@ messages:
       return TRUE;
    }
 
+   ResignLoyaltyFailed()
+   {
+      if piFactionServiceUpdate < 5400
+      {  
+         return;
+      }
+
+      Send(self,@ResignFaction);
+      
+      return;
+   }
+
    ResignFaction()
    {
       local numMembers, oQuestEngine, oQuest, oFlagPole;

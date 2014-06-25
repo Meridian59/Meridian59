@@ -7598,14 +7598,6 @@ messages:
          iFineCol = Send(what,@GetFineCol);
       }
 
-      % Security check:
-      % Regular players cannot be teleported to new region with this function
-      if NOT IsClass(self,&DM)
-         AND (Send(poOwner,@GetRegion) <> Send(oNew_room,@GetRegion))
-      {
-         return FALSE;
-      }
-
       if iRow = $ OR iCol = $
       {
          Debug("Got bad row or column for object",what);

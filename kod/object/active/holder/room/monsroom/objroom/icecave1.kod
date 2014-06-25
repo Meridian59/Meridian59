@@ -110,6 +110,7 @@ messages:
 
       ptYeti_gen = $;
       bFound = FALSE;
+
       for i in plActive
       {
          each_obj = Send(self,@HolderExtractObject,#data=i);
@@ -119,7 +120,9 @@ messages:
          }
       }
 
-      if NOT bFound AND pbGenerateMonsters
+      if plActive <> $
+         AND bFound=FALSE
+         AND pbGenerateMonsters
       {
          Send(self,@NewHold,#what=Create(&yeti),#new_row=random(20,27),#new_col=random(14,16),
               #new_angle=ANGLE_SOUTH_EAST);

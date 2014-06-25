@@ -155,14 +155,6 @@ messages:
          return FALSE;
       }
 
-      if send(who,@CheckPlayerFlag,#flag=PFLAG_MURDERER) 
-      { % won't sell to a murderer 
-         if report
-         { 
-            Post(poOwner,@SomeoneSaid,#what=self,#type=SAY_RESOURCE, #string=RebelLiege_no_murderer);
-         }
-         return FALSE;
-      }
       return TRUE;
    }
 

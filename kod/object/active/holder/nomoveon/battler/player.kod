@@ -4495,13 +4495,15 @@ messages:
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
       {
          lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
-         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,
+                        #hit_roll=iOffense, #lRadiusState=lRadiusState);
       }
       
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Mirth)
       {
          lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
-         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,
+                        #hit_roll=iOffense,#lRadiusState=lRadiusState);
       }
 
       iOffense = iOffense + Send(Send(SYS,@GetParliament),

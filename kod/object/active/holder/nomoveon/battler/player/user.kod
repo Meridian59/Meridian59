@@ -568,7 +568,11 @@ messages:
          AND action <= UA_WRY
       {
          piAction = action;
-         Send(poOwner,@SomethingDidAction,#what=self,#action=action);
+         
+         if poOwner <> $
+         {
+		    Send(poOwner,@SomethingDidAction,#what=self,#action=action);
+         }
       }
 
       return;

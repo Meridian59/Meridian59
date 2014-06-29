@@ -5056,7 +5056,10 @@ messages:
             Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol);
             
-            iNumberOfItemsDropped = iNumberOfItemsDropped + 1;
+            if NOT IsClass(oTreasure,&Money)
+            {
+               iNumberOfItemsDropped = iNumberOfItemsDropped + 1;
+            }
 
             if IsClass(oTreasure,&NumberItem)
                AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)

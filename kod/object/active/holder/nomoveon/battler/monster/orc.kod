@@ -53,7 +53,7 @@ classvars:
    viKarma = -40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_MOVE_FLEE_FRIGHTENERS | AI_FIGHT_SWITCHALOT
    viCashmin = 225
-   viCashmax = 675
+   viCashmax = 575
 
    viWimpy = 10
 

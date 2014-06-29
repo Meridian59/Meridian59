@@ -80,6 +80,9 @@ classvars:
    vrSound_miss = Xeochicatl_sound_attack
    vrSound_aware = Xeochicatl_sound_aware
    vrSound_death = Xeochicatl_sound_death
+   
+   viCashMin = 0
+   viCashMax = 0
 
 properties:
 

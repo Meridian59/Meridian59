@@ -56,8 +56,8 @@ classvars:
    viDifficulty = 3
    viKarma = -10
    viDefault_behavior = AI_FIGHT_KARMA_AGGRESSIVE
-   viCashmin = 175
-   viCashmax = 420
+   viCashmin = 75
+   viCashmax = 220
    viTrailLength = 2
    vbTrailLarge = FALSE
 

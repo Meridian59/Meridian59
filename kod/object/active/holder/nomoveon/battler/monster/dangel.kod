@@ -267,7 +267,10 @@ messages:
 
    SummonDeleted(what=$)
    {
-      plSummoned = DelListElem(plSummoned,what);
+      if plSummoned <> $
+      {
+         plSummoned = DelListElem(plSummoned,what);
+      }
 
       return;
    }

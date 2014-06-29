@@ -640,6 +640,7 @@ messages:
          OR (IsClass(poOriginal,&Monster)
              AND IsClass(what,GetClass(poOriginal)))
          OR IsClass(what,&Revenant)
+         OR IsClass(what,&EvilTwin)
       {
          return -100;
       }
@@ -652,5 +653,10 @@ messages:
       return poOriginal;
    }
 
+   CanEvilTwin()
+   {
+      return FALSE;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

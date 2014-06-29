@@ -431,10 +431,10 @@ messages:
    {
       local oHold, lActive, iRandom, iDistance, iBestDistance, i, each_obj;
 
-      % Only one in three people are considered eligable 
+      % Only one in three people are considered eligible 
       % targets.  The closest is targeted.  Held people
       % aren't considered - he deals with his current 
-      % target first.  Only people in veiw are considered.
+      % target first.  Only people in view are considered.
 
       oHold = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
       lActive = Send(poOwner,@getholderactive);
@@ -540,6 +540,11 @@ messages:
       propagate;
    }
 
+   CanEvilTwin()
+   {
+      return FALSE;
+   }
+   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

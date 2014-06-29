@@ -150,7 +150,8 @@ messages:
             if iRandom < 30
             {
                % Summoning an Evil Twin
-               return Send(self,@SummonAngelReflection,#target=poTarget);
+               oSpell = SID_EVIL_TWIN;
+               lTargets = [poTarget];
             }
             else
             {
@@ -244,11 +245,6 @@ messages:
       {
          oTwin = Create(&Reflection,#iSpellpower=100,#oMaster=self);  
       }
-      else
-      {
-         oTwin = Create(&EvilTwin,#iSpellpower=100,#oMaster=self,
-                        #oTarget=target);
-      }
 
       iRow = Send(target,@GetRow);
       iCol = Send(target,@GetCol);
@@ -265,7 +261,7 @@ messages:
       Send(oRoom,@NewHold,#what=oTwin,#new_row=iRow,#new_col=iCol);
       Send(SYS,@AddReflection,#who=target,#oReflection=oTwin);
       plSummoned = cons(oTwin,plSummoned);
-   
+
       return TRUE;
    }
 

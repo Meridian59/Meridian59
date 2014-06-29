@@ -1203,7 +1203,9 @@ messages:
       return FALSE;
    }
 
-   ResetPlayerFlagList()
+   % Added a nodraw paramater to this function to deal with buggy Jala implementation
+   % Can remove this and 3 instances of it used in player.kod when Jala fixed   
+   ResetPlayerFlagList(nodraw=FALSE)
    {
       local i;
 	  
@@ -1241,9 +1243,12 @@ messages:
          Send(poOwner,@SomethingChanged,#what=self);
       }
       
-      Post(self,@DrawOffense);
-      Post(self,@DrawDefense);
-	  
+      if nodraw=FALSE
+      {
+         Post(self,@DrawOffense);
+         Post(self,@DrawDefense);
+      }
+
       return;
    }
    
@@ -2818,7 +2823,22 @@ messages:
 
             % TODO: i no longer exists at this point?  EndEnchantment removing it?
             plEnchantments = DelListElem(plEnchantments,i);
-            Send(self,@ResetPlayerFlagList,#who=self);
+
+            if IsClass(Nth(i,2),&Mirth)
+               OR IsClass(Nth(i,2),&Melancholy)
+            {
+               Send(self,@ResetPlayerFlagList,#nodraw=TRUE,#who=self);
+            }
+            else
+            {
+               Send(self,@ResetPlayerFlagList,#who=self);
+            }
+
+            if poOwner <> $
+            {
+               Send(poOwner,@SomethingChanged,#what=self);
+            }
+
             if poOwner <> $
             {
                Send(poOwner,@SomethingChanged,#what=self);
@@ -2892,8 +2912,18 @@ messages:
          lNew_enchantment = [oTimer, what, state];
       }
 
-      plEnchantments = Cons(lNew_enchantment,plEnchantments);
-      Send(self,@ResetPlayerFlagList,#who=self);
+      plEnchantments = Cons(lNew_enchantment,plEnchantments);      
+
+      if IsClass(what,&Mirth)
+         OR IsClass(what,&Melancholy)
+      {
+         Send(self,@ResetPlayerFlagList,#nodraw=TRUE,#who=self);
+      }
+      else
+      {
+         Send(self,@ResetPlayerFlagList,#who=self);
+      }
+
       if addicon
       {
          Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_PLAYER);
@@ -3149,7 +3179,16 @@ messages:
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),#type=ENCHANTMENT_PLAYER);
 
             plEnchantments = DelListElem(plEnchantments,i); 
-            Send(self,@ResetPlayerFlagList,#who=self);
+
+            if IsClass(what,&Mirth)
+               OR IsClass(what,&Melancholy)
+            {
+               Send(self,@ResetPlayerFlagList,#nodraw=TRUE,#who=self);
+            }
+            else
+            {
+               Send(self,@ResetPlayerFlagList,#who=self);
+            }
          }
       }
       
@@ -4490,20 +4529,20 @@ messages:
       {
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                          #hit_roll=iOffense,#stroke_obj=stroke_obj);
-      }
-      
-      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
-      {
-         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
-         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,
-                        #hit_roll=iOffense, #lRadiusState=lRadiusState);
-      }
-      
+      }      
+
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Mirth)
       {
          lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
          iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,
                         #hit_roll=iOffense,#lRadiusState=lRadiusState);
+      }
+
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,
+                        #hit_roll=iOffense, #lRadiusState=lRadiusState);
       }
 
       iOffense = iOffense + Send(Send(SYS,@GetParliament),

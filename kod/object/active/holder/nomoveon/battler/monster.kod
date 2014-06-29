@@ -195,7 +195,9 @@ resources:
    monster_default_attack = "attack"
    
    autolooted_all = "You loot the corpse clean, and find %d shillings."
+   autolooted_all_no_money = "You loot the corpse clean."
    autolooted_some = "You loot some of the items from your fallen kill, and find %d shillings."
+   autolooted_some_no_money = "You loot some of the items from your fallen enemy."
    autolooted_only_money = "You find nothing easily lootable on your slain enemy other than %d shillings."
    autolooted_none = "You find nothing easily lootable on your slain enemy."
      
@@ -5110,15 +5112,15 @@ messages:
             }
             
             if iNumberOfItemsLooted = 0
-               AND iRandomCashAmount <= 0
             {
-               Send(who,@MsgSendUser,#message_rsc=autoloot_got_nothing_because_full);
-            }
-            
-            if iNumberOfItemsLooted = 0
-               AND iRandomCashAmount > 0
-            {
-               Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full,#parm1=Send(oMoney,@GetNumber));
+               if iRandomCashAmount > 0
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full,#parm1=Send(oMoney,@GetNumber));
+               }
+               else
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_nothing_because_full);
+               }
             }
             return;
          }
@@ -5126,13 +5128,27 @@ messages:
          if iNumberOfItemsLooted = iNumberOfItemsDropped
             AND iNumberOfItemsLooted > 0
          {
-            Send(who,@MsgSendUser,#message_rsc=autolooted_all,#parm1=Send(oMoney,@GetNumber));
+            if iRandomCashAmount > 0
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_all,#parm1=Send(oMoney,@GetNumber));
+            }
+            else
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
+            }
          }
          
          if iNumberOfItemsLooted > 0
             AND iNumberOfItemsLooted < iNumberOfItemsDropped
          {
-            Send(who,@MsgSendUser,#message_rsc=autolooted_some,#parm1=Send(oMoney,@GetNumber));
+            if iRandomCashAmount > 0
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_some,#parm1=Send(oMoney,@GetNumber));
+            }
+            else
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_some_no_money);
+            }
          }
          
          if iNumberOfItemsLooted = 0

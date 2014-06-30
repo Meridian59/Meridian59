@@ -1901,7 +1901,7 @@ messages:
             Send(what,@GainMana,#amount=iAmount);
          }
 
-         Send(what,@AddExertion,#settothreshold=TRUE);
+         Send(what,@AddExertion,#amount=-2000000);
       }
       else
       {

@@ -20,8 +20,7 @@ resources:
    truce_icon_rsc = itruce.bgf
    truce_desc_rsc = \
       "The spirit of Shal'ille descends upon the area and calms the minds of all present, "
-      "preventing combat for several minutes. Requires emerald and yrxl sap to cast.  "
-      "Requires emerald and yrxl sap to cast."
+      "preventing combat for several minutes. Requires an emerald and a vial of yrxl sap to cast."
 
    truce_unnecessary = "Combat with monsters is already impossible here."
 
@@ -64,7 +63,7 @@ classvars:
    viBaseRange = 10
 
    % in seconds, since it works off GetTime()
-   viPostCast_time = 3
+   viPostCast_time = 1
    
    viAffectsGuildmates = TRUE
    viAffectsEnemies = TRUE

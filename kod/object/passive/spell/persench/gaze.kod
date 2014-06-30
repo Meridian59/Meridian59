@@ -90,47 +90,49 @@ messages:
       return iSpellPower;
    }
 
-   ModifyDefensePower(who = $, what = $,defense_power = $)
+   ModifyDefensePower(who=$,what=$,defense_power=$)
    {
       local iSpellpower, oSpell, iDuration, oWeapon;
-   
-      oSpell = send(SYS,@FindSpellByNum,#num=SID_HOLD);
-      iSpellpower = send(who,@GetEnchantedState,#what=self);
-      iDuration = iSpellpower * random(20,25);
-      iDuration = bound(iDuration,500,2500);
 
-      % TODO: Make chance to paralyze based on if caster is facing opponent?
+      if what <> $
+      {
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+         iSpellpower = Send(who,@GetEnchantedState,#what=self);
+         iDuration = iSpellpower * random(20,25);
+         iDuration = bound(iDuration,500,2500);
 
-      if IsClass(what,&Revenant)
-      {
-         Send(who,@MsgSendUser,#message_rsc=paralyze_no_soul, 
-              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-      }
-      else
-      {
-         if IsClass(what,&Player)
+         % TODO: Make chance to paralyze based on if caster is facing opponent?
+
+         if IsClass(what,&Revenant)
          {
-            oWeapon = send(what,@GetWeapon);
-
-            % Ranged weapons don't always trigger the effect.
-            if IsClass(oWeapon,&RangedWeapon)
-               AND random(1,100) < 50
+            Send(who,@MsgSendUser,#message_rsc=paralyze_no_soul, 
+                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+         }
+         else
+         {
+            if IsClass(what,&Player)
             {
-               % No effect.
-               return defense_power;
+               oWeapon = Send(what,@GetWeapon);
+
+               % Ranged weapons don't always trigger the effect.
+               if IsClass(oWeapon,&RangedWeapon)
+                  AND random(1,100) < 50
+               {
+                 % No effect.
+                 return defense_power;
+              }
+
+               Send(what,@MsgSendUser,#message_rsc=paralyze_target_on,
+                    #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
             }
 
-            Send(what,@MsgSendUser,#message_rsc=paralyze_target_on,
-                 #parm1=send(who,@GetDef),#parm2=send(who,@GetName));
+            Send(who,@MsgSendUser,#message_rsc=paralyze_caster,
+                 #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+
+            Send(oSpell,@DoHold,#what=who,#oTarget=what,#iDuration=iDuration);
          }
-
-         Send(who,@MsgSendUser,#message_rsc=paralyze_caster,
-              #parm1=send(what,@GetCapDef),#parm2=send(what,@GetName));
-
-         Send(oSpell,@DoHold,#what=who,#oTarget=what,#iDuration=iDuration,
-              #iSpellpower=iSpellpower);
       }
-
+  
       return defense_power;
    }
 

@@ -15,8 +15,8 @@ ItemAttBonded is ItemAttribute
 % 
 %  Form is: 
 %
-%   	[IA_BONDED, oPlayer]
-%	
+%   [IA_BONDED, oPlayer]
+%
 %  oPlayer::the player to which this item is bonded.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +53,7 @@ messages:
    ItemCanIdentify()
    {
       return FALSE;
-   }	
+   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -65,16 +65,16 @@ messages:
    AddToItem(oItem=$,oPlayer=$,identified=false)   
    {
       local lData, iValue;
-	  
+
       lData = $;
 
-      lData = cons(oPlayer,lData);
-      
-      iValue = send(self,@SetCompound,#oItem=oItem,#iPower=0);
-      lData = cons(iValue,lData);
-	  
-      send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
-      return;  	  
+      lData = Cons(oPlayer,lData);
+
+      iValue = Send(self,@SetCompound,#oItem=oItem,#iPower=0);
+      lData = Cons(iValue,lData);
+
+      Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+      return;
    }
 
    RemoveFromItem(oItem=$)
@@ -82,16 +82,17 @@ messages:
    "removing things should call."
    {
       local lData;
-      lData = send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_num);
+      lData = Send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_num);
       if lData <> $
       {
-         send(nth(lData,2),@ClearBondedItem);
+         Send(Nth(lData,2),@ClearBondedItem);
       }
-      send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
+      Send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
+      
       return;
    }   
 
-   AddEffects(oItem = $, lData = $, oPlayer = $)
+   AddEffects(oItem=$,lData=$,oPlayer=$)
    "AddEffects, in general, does anything that is triggered upon creation, "
    "including changing the stats of the Item's wielder/wearer, or changing "
    "some part of the item's stats.\n"   
@@ -104,7 +105,7 @@ messages:
    "This simply undoes whatever AddEffects does."
    {
       % remove IA_APPEND_DESCRIPTION label if there are no more quest attributes?
-      %     for now, leave it on.
+      % for now, leave it on.
       return;
    }
 
@@ -145,7 +146,7 @@ messages:
    ItemBuildDescName(oItem=$)
    {
       %Addpacket(4,vrName);
-      Addpacket(4,send(oItem,@getname));
+      Addpacket(4,Send(oItem,@GetName));
       return;
    }
    

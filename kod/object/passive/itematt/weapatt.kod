@@ -85,7 +85,7 @@ messages:
    {
       local iRoll_number, iRand, iNumber, iSum, jIndex, iCount;
 
-      if oItem = $ or not isClass(oItem,&weapon)
+      if oItem = $ or not IsClass(oItem,&weapon)
       {
          Debug("Called InitialWeaponPower with bad oItem!");
       }
@@ -113,12 +113,12 @@ messages:
 
       iRoll_number = 1;
       
-      if isClass(oItem,&Axe) OR isClass(oItem,&Hammer)
+      if IsClass(oItem,&Axe) OR IsClass(oItem,&Hammer)
       {
          iRoll_number = 2;
       }
 
-      if isClass(oItem,&Mace) OR isClass(oItem,&Shortsword)
+      if IsClass(oItem,&Mace) OR IsClass(oItem,&Shortsword)
       {
          iRoll_number = 3;
       }
@@ -126,10 +126,10 @@ messages:
       iNumber = 0;
       while (iRoll_number > 0)
       {
-         iRand = random(1,100);
+         iRand = Random(1,100);
          if iRand > iNumber 
          {
-		    iNumber = iRand;
+            iNumber = iRand;
          }
          iRoll_number = iRoll_number - 1;
       }
@@ -158,7 +158,7 @@ messages:
          iSum = iSum + jIndex;
       }
       
-      debug("Shouldn't have gotten here!");
+      Debug("Shouldn't have gotten here!");
       return 0;             %% if we somehow get here, return a wimp value.
    }
 
@@ -182,7 +182,7 @@ messages:
       if iPower = 8  { return 2; }      
       if iPower = 9  { return 3; }      
 
-      debug("invalid power data!");
+      Debug("invalid power data!");
       return 0;
    }
 
@@ -206,7 +206,7 @@ messages:
       if iPower = 8  { return 100; }      
       if iPower = 9  { return 0; }      
 
-      debug("invalid power data!");
+      Debug("invalid power data!");
       return 0;
    }
 

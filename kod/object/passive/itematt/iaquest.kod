@@ -96,10 +96,10 @@ messages:
      
       lData = $;
 
-      lData = cons(oQuestnode,lData);
+      lData = Cons(oQuestnode,lData);
       
       iValue = Send(self,@SetCompound,#oItem=oItem,#iPower=0);
-      lData = cons(iValue,lData);
+      lData = Cons(iValue,lData);
      
       if identified
       {
@@ -158,7 +158,7 @@ messages:
       return FALSE;
    }
 
-   AddEffects(oItem = $, lData = $, oPlayer = $)
+   AddEffects(oItem=$,lData=$,oPlayer=$)
    "AddEffects, in general, does anything that is triggered upon creation, "
    "including changing the stats of the Item's wielder/wearer, or changing "
    "some part of the item's stats.\n"   
@@ -173,11 +173,11 @@ messages:
          AppendTempString(ItemAttQuestCargo_desc_rsc);
          SetString(sAppendedDesc,GetTempString());
          StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_sourceNPC,
-                          Send(Send(nth(lData,2),@GetSourceNPC),@GetName));
+                          Send(Send(Nth(lData,2),@GetSourceNPC),@GetName));
          StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_player,
                           Send(oPlayer,@GetName));
          StringSubstitute(sAppendedDesc,ItemAttQuestCargo_sub_destNPC,
-                          Send(Send(nth(lData,2),@GetDestNPC),@GetName));
+                          Send(Send(Nth(lData,2),@GetDestNPC),@GetName));
 
          % add attribute with sAppendedDesc
          Send(Send(SYS,@FindItemAttByNum,#num=IA_APPEND_DESCRIPTION),

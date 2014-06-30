@@ -77,7 +77,7 @@ messages:
 
       if iFakeData = $
       {
-         iData = send(oItem,@GetAttackSpell);
+         iData = Send(oItem,@GetAttackSpell);
       }
       else
       {
@@ -121,14 +121,14 @@ messages:
       % If not faked, then add maker information if available.
       if iFakeData = $
       {
-         lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+         lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
 
          if length(lData) <> 5
          {
             return;
          }
 
-         sMakerInfo = nth(lData,5);
+         sMakerInfo = Nth(lData,5);
 
          %%Then we add information about the maker to the desc.
          if sMakerInfo <> $
@@ -149,7 +149,7 @@ messages:
 
       if who = $ OR string= $ OR oWeapon = $
       {
-         DEBUG("BAD data sent to DMCreateItemAtt!");
+         Debug("BAD data sent to DMCreateItemAtt!");
 
          return FALSE;
       }
@@ -189,9 +189,9 @@ messages:
          return FALSE;
       }
       
-      if send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oWeapon)
+      if Send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oWeapon)
       {
-         send(self,@AddToItem,#oItem=oWeapon, #state1=iSpellType,
+         Send(self,@AddToItem,#oItem=oWeapon, #state1=iSpellType,
               #random_gen=TRUE);
               
          return TRUE;
@@ -200,7 +200,7 @@ messages:
       return FALSE;
    }
    
-   AddSelfToRandomItem(oItem = $, who=$)
+   AddSelfToRandomItem(oItem=$,who=$)
    {
       local iSpellType, iRand;
 
@@ -215,12 +215,12 @@ messages:
       if random(1,100) > 40
       {
          % If player is good, give 'em a holy blade.  If not, unholy will be fine.
-         if send(who,@GetKarma) > 0
+         if Send(who,@GetKarma) > 0
          {
             iSpellType = ATCK_SPELL_HOLY;
          }
 
-         if send(who,@GetKarma) < 0
+         if Send(who,@GetKarma) < 0
          {
             iSpellType = ATCK_SPELL_UNHOLY;
          }
@@ -228,7 +228,7 @@ messages:
 
       if iSpellType = 0
       {
-         iRand = random(1,6);
+         iRand = Random(1,6);
       
          if iRand = 1
          {
@@ -261,9 +261,9 @@ messages:
          }
       }
 
-      if send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oItem)
+      if Send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oItem)
       {
-         send(self,@AddToItem,#oItem=oItem,#state1=iSpellType,
+         Send(self,@AddToItem,#oItem=oItem,#state1=iSpellType,
               #timer_duration=random(3600000,86400000),#random_gen=TRUE);
       }
       
@@ -273,7 +273,7 @@ messages:
    ReqAddToItem(oItem=$)
    "You currently cannot have two different spelltypes on a weapon at the same time."
    {
-      if send(oItem,@GetAttackSpell) > 0
+      if Send(oItem,@GetAttackSpell) > 0
       {
          return FALSE;
       }
@@ -284,7 +284,12 @@ messages:
    SetPrimaryState(state1=$)
    "State1 contains the attack spell type being added to the weapon."
    {
-      if state1 = $ { DEBUG("SetPrimaryState called with nil state!"); return FALSE; }
+      if state1 = $
+      {
+         Debug("SetPrimaryState called with nil state!");
+
+         return FALSE;
+      }
    
       return state1;
    }
@@ -302,69 +307,72 @@ messages:
    {
       % Timer is gone, now remove reference.
       SetNth(lData,2,$);   
-      send(self,@RemoveFromItem,#oItem=oItem,#lData=lData);
+      Send(self,@RemoveFromItem,#oItem=oItem,#lData=lData);
 
       return;
    }
 
-   AddEffects(oItem = $, lData = $)
+   AddEffects(oItem=$,lData=$)
    {
       local iSpellType;
 
       if oItem = $ OR lData = $
       {
-         DEBUG("AddEffects failed!");
+         Debug("AddEffects failed!");
 
          return FALSE;
       }
 
-      if send(self,@HasTimer,#lData=lData)
+      if Send(self,@HasTimer,#lData=lData)
       {
-         iSpellType = nth(lData,3);
+         iSpellType = Nth(lData,3);
       }
       else
       {
-         iSpellType = nth(lData,2);
+         iSpellType = Nth(lData,2);
       }
 
-      if send(oItem,@CheckSpellFlag,#flag=iSpellType)
+      if Send(oItem,@CheckSpellFlag,#flag=iSpellType)
       {
-         DEBUG("This shouldn't have happened!  Adding effect already here!");
+         Debug("This shouldn't have happened!  Adding effect already here!");
 
          return FALSE;
       }
 
-      send(oItem,@SetSpellFlag,#flag=iSpellType,#value=TRUE);
+      Send(oItem,@SetSpellFlag,#flag=iSpellType,#value=TRUE);
       
       return;
    }
 
-   RemoveEffects(oItem = $,lData = $)
+   RemoveEffects(oItem=$,lData=$)
    {
       local iSpellType, oPlayer;
       
       if oItem = $ OR lData = $
       {
-         DEBUG("RemoveEffects failed!"); return FALSE;
+         Debug("RemoveEffects failed!");
+
+         return FALSE;
       }
 
-      iSpellType = nth(lData,3);
+      iSpellType = Nth(lData,3);
 
-      if NOT send(oItem,@CheckSpellFlag,#flag=iSpellType)
+      if NOT Send(oItem,@CheckSpellFlag,#flag=iSpellType)
       {
-         DEBUG("This shouldn't have happened!  Removing effect not here!");
+         Debug("This shouldn't have happened!  Removing effect not here!");
          
          return;
       }
       
-      oPlayer = send(oItem,@getOwner);
-      if oPlayer <> $ AND isClass(oPlayer,&user)
+      oPlayer = Send(oItem,@GetOwner);
+      if oPlayer <> $
+         AND IsClass(oPlayer,&User)
       {
-         send(oPlayer,@MsgSendUser,#message_rsc=iaspelltype_gone,
-              #parm1=send(oItem,@GetName));
+         Send(oPlayer,@MsgSendUser,#message_rsc=iaspelltype_gone,
+              #parm1=Send(oItem,@GetName));
       }
       
-      send(oItem,@SetSpellFlag,#flag=iSpellType,#value=FALSE);
+      Send(oItem,@SetSpellFlag,#flag=iSpellType,#value=FALSE);
 
       return;
    }
@@ -429,15 +437,15 @@ messages:
 
       if iFakeData = $
       { 
-         lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+         lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
       
-         if send(self,@HasTimer,#lData=lData)
+         if Send(self,@HasTimer,#lData=lData)
          {
-            iData = nth(lData,3);
+            iData = Nth(lData,3);
          }
          else
          {
-            iData = nth(lData,2);
+            iData = Nth(lData,2);
          }
       }
       else
@@ -476,7 +484,7 @@ messages:
       }
       
       AddPacket(4,rName);
-      Addpacket(4,send(oItem,@GetName));
+      Addpacket(4,Send(oItem,@GetName));
       
       return;
    }

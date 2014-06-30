@@ -27,7 +27,7 @@ constants:
 
 resources:
 
-   weapattpurger_desc = "  The sign of Psychochild is engraved on the weapon."      
+   weapattpurger_desc = " The sign of Psychochild is engraved on the weapon."      
    purger_fail_use = "You are not yet ready to use %s%s."
    purger_worked_user = "Your weapon tears at the magic surrounding %s%s."
    purger_worked_target = "%s%s's weapon tears at the magic surrounding you!"
@@ -56,11 +56,11 @@ messages:
    ItemReqUse(oItem=$,oPlayer=$)
    {
       % this person needs 50% in the weapon's proficiency to use
-      if send(oItem,@GetProf,#who=oPlayer) < 50      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50      
       {
-         send(oPlayer,@MsgSendUser,#message_rsc=purger_fail_use,
-              #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
-              
+         Send(oPlayer,@MsgSendUser,#message_rsc=purger_fail_use,
+              #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
+
          return FALSE;      
       }
       
@@ -70,35 +70,34 @@ messages:
   
    %%% Effect Functions
       
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
-   "Wielder has a 1% chance of blinding target with any hit."
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
+   "Wielder has a 1% chance of purging target with any hit."
    {
       local oSpell;
 
-      if random(1,100) < piEffect_percent
+      if Random(1,100) < piEffect_percent
       {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_PURGE);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_PURGE);
          
          %% Gotta have something to try to remove....
          if Send(target,@IsEnchanted)
          {
-            % Try to purge off random(25,75)% of the enchantments.
-            if send(oSpell,@DoPurge,#who=target,#iChance=random(25,75))
+            % Try to purge off Random(25,75)% of the enchantments.
+            if Send(oSpell,@DoPurge,#who=target,#iChance=Random(25,75))
             {
                % Only tell our victim if they lost enchantments.
-               send(target,@MsgSendUser,#message_rsc=purger_worked_target,
-                    #parm1=send(wielder,@GetCapDef),#parm2=send(wielder,@GetName));
+               Send(target,@MsgSendUser,#message_rsc=purger_worked_target,
+                    #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName));
             }
 
             % Tell the wielder every time we fired so they think it's cool.
-            send(wielder,@MsgSendUser,#message_rsc=purger_worked_user,
-                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+            Send(wielder,@MsgSendUser,#message_rsc=purger_worked_user,
+                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
       }
 
       return damage;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

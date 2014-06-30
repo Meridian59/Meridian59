@@ -13,15 +13,15 @@ ItemAttShroud is ItemAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  This item may not be the target of most spells, including
-%	swap, shatter, brittle, enchant.  Can be mended, since that's
+%  swap, shatter, brittle, enchant.  Can be mended, since that's
 %  annoying to not be able to mend.
 % 
 %  Form is: 
 %
-%   	[IA_SHROUD, tTimer]
-%	
-%	Where tTimer = the time left before this enchantment departs.
-%		If tTimer does not exist, the weapon is permanently enchanted.
+%      [IA_SHROUD, tTimer]
+%   
+%   Where tTimer = the time left before this enchantment departs.
+%   If tTimer does not exist, the weapon is permanently enchanted.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -49,84 +49,90 @@ properties:
   
 messages:
 
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	%%
-	%%  Effect Routines
-	%%
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%
+   %%  Effect Routines
+   %%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-	ItemCanMend()
-	{
-		return TRUE;
-	}
+   ItemCanMend()
+   {
+      return TRUE;
+   }
 
-	ItemCanWeaken()
-	{
-		return FALSE;
-	}
+   ItemCanWeaken()
+   {
+      return FALSE;
+   }
 
-	ItemCanEnchant()
-	{
-		return FALSE;
-	}
+   ItemCanEnchant()
+   {
+      return FALSE;
+   }
 
-	ItemCanSwap()
-	{
-		return FALSE;
-	}
+   ItemCanSwap()
+   {
+      return FALSE;
+   }
 
-	ItemCanShatter()
-	{
-		return FALSE;
-	}
+   ItemCanShatter()
+   {
+      return FALSE;
+   }
 
-	ItemCanIdentify()
-	{
-		return FALSE;
-	}
+   ItemCanIdentify()
+   {
+      return FALSE;
+   }
   
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	%%
-	%%	Maintenance Routines
-	%%
-	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	
-	HasTimer(lData=$)
-	"This must return true for any attribute that has a timer!"
-	"Theoretically, some atts could have or not have a timer, "
-	"depending on certain factors, so lData is the ItemAtt structure,"
-	"which can be examined for length to see if the timer exists."
-	{
-		return TRUE;
-	}
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %%
+   %%   Maintenance Routines
+   %%
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   HasTimer(lData=$)
+   "This must return true for any attribute that has a timer!"
+   "Theoretically, some atts could have or not have a timer, "
+   "depending on certain factors, so lData is the ItemAtt structure,"
+   "which can be examined for length to see if the timer exists."
+   {
+      return TRUE;
+   }
 
-	TimerExpired(oItem=$,lData=$)
-	{
-		local oPlayer;
+   TimerExpired(oItem=$,lData=$)
+   {
+      local oPlayer;
 
-		SetNth(lData,2,$);   %% timer is gone, now remove reference
-		
-		oPlayer = send(oItem,@getOwner);
-		if oPlayer <> $ AND isClass(oPlayer,&user)
-		{
-			send(oPlayer,@msgsenduser,#message_rsc = iashroud_gone,
-				#parm1=send(oItem,@getname));
-		}
-		
-		send(self,@RemoveFromItem,#oItem=oItem, #lData = lData);
+      SetNth(lData,2,$);   %% timer is gone, now remove reference
+      
+      oPlayer = Send(oItem,@getOwner);
+        if oPlayer <> $
+         AND isClass(oPlayer,&user)
+      {
+         Send(oPlayer,@MsgSendUser,#message_rsc=iashroud_gone,
+            #parm1=Send(oItem,@getname));
+      }
+      
+      Send(self,@RemoveFromItem,#oItem=oItem, #lData = lData);
 
-		return;
-	}
+      return;
+   }
 
-   AddSelfToRandomItem(oItem = $)
+   AddSelfToRandomItem(oItem=$)
    {
       local iSpellType, iRand;
 
-      if oItem = $ { DEBUG("BAD BAD BAD"); return FALSE; }
-
-      if send(self,@ReqAddToItem,#oItem=oItem)
+      if oItem = $
       {
-         send(self,@AddToItem,#oItem=oItem, 
+         Debug("Shroud called on $ item");
+
+         return FALSE;
+      }
+
+      if Send(self,@ReqAddToItem,#oItem=oItem)
+      {
+         Send(self,@AddToItem,#oItem=oItem, 
               #timer_duration = random(3600000,86400000));
       }
       

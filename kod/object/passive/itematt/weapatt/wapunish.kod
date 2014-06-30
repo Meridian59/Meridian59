@@ -20,7 +20,7 @@ WeapAttPunisher is WeaponAttribute
 %  Form is: 
 %
 %       [ WA_PUNISHER ]
-%	
+%   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
@@ -120,8 +120,8 @@ messages:
 
       %% no special effects for monsters
       if target <> $
-	  {
-	     if IsClass(target,&Monster)
+      {
+         if IsClass(target,&Monster)
          {
             return hitroll;
          }
@@ -138,8 +138,8 @@ messages:
             return (hitroll + iPower);
          }
       }
-	  
-	  % Return normal hitroll
+     
+      % Return normal hitroll
       return hitroll;
    }
 
@@ -166,12 +166,12 @@ messages:
          OR send(oPlayer,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
          OR bUsingAmulet
       {
-	      Send(oPlayer, @MsgSendUser, #message_rsc = punisher_fail_use,
-	           #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
+         Send(oPlayer, @MsgSendUser, #message_rsc = punisher_fail_use,
+              #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
 
          if Send(oPlayer, @AssessDamage, #what=self,#damage=Random(3,7),
                  #report=False) = $
-	      {
+         {
             % we killed someone off... heh heh heh
             Send(Send(oPlayer,@GetOwner),@SomethingKilled,#what=self,#victim=oPlayer);
             Send(oPlayer,@Killed,#what=oItem);

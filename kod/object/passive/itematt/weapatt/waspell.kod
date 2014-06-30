@@ -26,7 +26,7 @@ constants:
 
 resources:
 
-   WeapAttSpellCaster_desc = "  Mystical energy flits about this weapon."      
+   WeapAttSpellCaster_desc = " Mystical energy flits about this weapon."      
    WeapAttSpellCaster_dm = "spellcaster"
 
 classvars:
@@ -66,17 +66,18 @@ Constructor()
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a chance of affecting the target with the given spell."
    {
       local oSpell;
       
-      if (random(1,100) <= ((100-nth(lData,3))/10)) and send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+      if (Random(1,100) <= ((100-Nth(lData,3))/10))
+         AND Send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         oSpell = nth(lData,2);
-         if send(oSpell,@CanPayCosts,#who=self,#ltargets=[target],#ispellpower=nth(lData,3))
+         oSpell = Nth(lData,2);
+         if Send(oSpell,@CanPayCosts,#who=self,#ltargets=[target],#ispellpower=Nth(lData,3))
          {
-            send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=nth(lData,3),#bItemCast=TRUE);
+            Send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=Nth(lData,3),#bItemCast=TRUE);
          }
       }
       
@@ -96,12 +97,12 @@ Constructor()
 
       if who = $ OR string= $ OR oWeapon = $
       {
-         DEBUG("BAD data sent to DMCreateItemAtt!");
+         Debug("BAD data sent to DMCreateItemAtt!");
 
          return FALSE;
       }
 
-      if not stringContain(string,WeapAttSpellCaster_dm)
+      if NOT StringContain(string,WeapAttSpellCaster_dm)
       {
          return FALSE;
       }
@@ -109,7 +110,7 @@ Constructor()
       iSpell = 0;
       for i in plSpells
       {
-         if stringContain(string,send(send(SYS,@FindSpellByNum,#num=first(i)),@GetName))
+         if stringContain(string,Send(Send(SYS,@FindSpellByNum,#num=first(i)),@GetName))
          {
             iSpell = first(i);
          }
@@ -120,17 +121,17 @@ Constructor()
          return FALSE;
       }
       
-      if send(self,@ReqAddToItem,#state1=iSpell,#oItem=oWeapon)
+      if Send(self,@ReqAddToItem,#state1=iSpell,#oItem=oWeapon)
       {
-         debug("Adding to item");
+         Debug("Adding to item");
          
-         send(self,@AddToItem,#oItem=oWeapon, #spellNum = iSpell,
+         Send(self,@AddToItem,#oItem=oWeapon, #spellNum = iSpell,
               #random_gen=TRUE);
               
          return TRUE;
       }
       
-      debug("Failed to add");
+      Debug("Failed to add");
       
       return FALSE;
    }
@@ -142,42 +143,41 @@ Constructor()
       lData = $;
 
       %spellpower
-      lData = cons(random(30,60),lData);
+      lData = Cons(Random(30,60),lData);
 
       %spell
       if spellNum = $
       {
-         iValue = random(1,100);
+         iValue = Random(1,100);
          spellNum = first(first(plSpells));
          
          for i in plSpells
          {
-            if iValue <= nth(i,2)
+            if iValue <= Nth(i,2)
             {
-               spellNum = nth(i,1);
+               spellNum = Nth(i,1);
             }
             else
             {
-               iValue = iValue - nth(i,2);
+               iValue = iValue - Nth(i,2);
             }
          }
       }
       
-      lData = cons(send(SYS,@FindSpellByNum, #num=spellNum),lData);
+      lData = Cons(Send(SYS,@FindSpellByNum,#num=spellNum),lData);
       
-      iValue = send(self,@SetCompound,#oItem=oItem,#iPower=0);
-      lData = cons(iValue,lData);
+      iValue = Send(self,@SetCompound,#oItem=oItem,#iPower=0);
+      lData = Cons(iValue,lData);
           
       if identified
       {
-         send(self,@AddEffects,#oItem=oItem,#lData=lData,#oPlayer=oPlayer);
+         Send(self,@AddEffects,#oItem=oItem,#lData=lData,#oPlayer=oPlayer);
       }
 
       
-      send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+      Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
       return;            
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

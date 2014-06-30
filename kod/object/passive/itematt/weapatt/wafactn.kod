@@ -32,11 +32,11 @@ constants:
 
 resources:
 
-   weapatt_faction_princess = "  The princess' sigil is embossed on the weapon, promising "
+   weapatt_faction_princess = " The princess' sigil is embossed on the weapon, promising "
    weapatt_faction_princess2 = " advantage in the defense of her honor."
-   weapatt_faction_duke = "  The duke's family crest is embossed on the weapon, offering "
+   weapatt_faction_duke = " The duke's family crest is embossed on the weapon, offering "
    weapatt_faction_duke2 = " advantage in his quest for the throne."
-   weapatt_faction_rebel = "  The rebel army flag is embossed on the weapon, giving "
+   weapatt_faction_rebel = " The rebel army flag is embossed on the weapon, giving "
    weapatt_faction_rebel2 = " advantage for the rebellion."
 
    weapatt_faction_duke_name = "%s of the duke"
@@ -73,28 +73,28 @@ messages:
    {      
       if who = $ OR string = $ OR oWeapon = $
       {
-         DEBUG("BAD data sent to DMCreateItemAtt!");
+         Debug("BAD data sent to DMCreateItemAtt!");
 
          return FALSE;
       }
      
-      if stringContain(string,iafaction_duke_dm)
+      if StringContain(string,iafaction_duke_dm)
       {  
-         send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_DUKE);
+         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_DUKE);
 
          return TRUE;
       }
       
-      if stringContain(string,iafaction_princess_dm)
+      if StringContain(string,iafaction_princess_dm)
       {  
-         send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_PRINCESS);
+         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_PRINCESS);
 
          return TRUE;
       }
 
-      if stringContain(string,iafaction_rebel_dm)
+      if StringContain(string,iafaction_rebel_dm)
       {  
-         send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_REBEL);
+         Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_REBEL);
 
          return TRUE;
       }
@@ -103,19 +103,24 @@ messages:
 
    }
    
-   AddSelfToRandomItem(oItem = $, who=$, iFact = FACTION_NEUTRAL)
+   AddSelfToRandomItem(oItem=$,who=$,iFact=FACTION_NEUTRAL)
    {
-      if oItem = $ or who = $  { DEBUG("BAD BAD BAD"); return FALSE; }
+      if oItem = $ or who = $
+      {
+         Debug("BAD BAD BAD");
+
+         return FALSE;
+      }
 
       % Okay, this function has to choose a faction.  Preferably, it
       %  will choose a faction that the player is already allied with.
 
       if iFact = FACTION_NEUTRAL
       {
-         if random(1,100) < 70
+         if Random(1,100) < 70
          {
-            % Vhoose the faction that the player is allied with
-            iFact = send(who,@GetFaction);
+            % Choose the faction that the player is allied with
+            iFact = Send(who,@GetFaction);
          }	             
       
          if iFact = FACTION_NEUTRAL	
@@ -123,13 +128,13 @@ messages:
             % Choose a random faction, because either the weapatt 
             %  failed the random check, or the player isn't allied with either.
 
-            iFact = random(FACTION_NEUTRAL+1, FACTION_MAX);         
+            iFact = Random(FACTION_NEUTRAL+1, FACTION_MAX);         
          }
       }
       
-      if send(self,@ReqAddToItem,#state1=iFact,#oItem=oItem)
+      if Send(self,@ReqAddToItem,#state1=iFact,#oItem=oItem)
       {
-         send(self,@AddToItem,#oItem=oItem,#state1=iFact);
+         Send(self,@AddToItem,#oItem=oItem,#state1=iFact);
       }
 
       return;
@@ -145,7 +150,7 @@ messages:
    {
       if state1 <= FACTION_NEUTRAL or state1 > FACTION_MAX
       { 
-         debug("Illegal faction chosen.  No attribute added.");
+         Debug("Illegal faction chosen.  No attribute added.");
 
          return FALSE; 
       }
@@ -158,7 +163,7 @@ messages:
    {
       if state1 = $
       {
-         DEBUG("SetPrimaryState called with nil state!");
+         Debug("SetPrimaryState called with nil state!");
 
          return FALSE;
       }
@@ -170,12 +175,12 @@ messages:
    {
       if oItem = $
       {
-         DEBUG("This shouldn't have happened!");
+         Debug("This shouldn't have happened!");
 
          return;
       }
 
-      return send(self,@InitialWeaponPower,#oItem=oItem);
+      return Send(self,@InitialWeaponPower,#oItem=oItem);
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -184,7 +189,7 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   ModifyDamage(damage = 0, target = $, wielder = $, lData = $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "If wielder is in the faction that matches the state of the weapon, "
    "and opponent is in a different faction (but not unfactioned), then "
    "do the damage bonus."
@@ -193,19 +198,20 @@ messages:
 
       if lData = $
       {
-         debug("This should definitely not happen! Weapon needs faction defined!");
+         Debug("This should definitely not happen! Weapon needs faction defined!");
 
          return damage;
       }
           
-      iTargetFaction = send(target,@GetFaction);
-      iWielderFaction = send(wielder,@GetFaction);
-      iWeaponFaction = nth(lData,3);
+      iTargetFaction = Send(target,@GetFaction);
+      iWielderFaction = Send(wielder,@GetFaction);
+      iWeaponFaction = Nth(lData,3);
           
-      if iWeaponFaction = iWielderFaction AND iWielderFaction <> iTargetFaction
+      if iWeaponFaction = iWielderFaction
+         AND iWielderFaction <> iTargetFaction
       { 
-         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-         iPower = send(self,@DecipherDamageFromPower,#iPower=iPower);
+         iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+         iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
          % Only half bonuses against unfactioned targets.
          if iTargetfaction = FACTION_NEUTRAL
@@ -219,7 +225,7 @@ messages:
       return damage;
    }
 
-   ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData = $)
+   ModifyHitRoll(hitroll=0,target=$,wielder=$,lData=$)
    "If wielder is in the faction that matches the state of the weapon, "
    "and opponent is in a different faction (but not unfactioned), then "
    "do the damage bonus."
@@ -228,19 +234,20 @@ messages:
 
       if lData = $
       {
-         debug("This should definitely not happen! Weapon needs faction defined!");
+         Debug("This should definitely not happen! Weapon needs faction defined!");
 
          return hitroll;
       }
 	          
-      iTargetFaction = send(target,@GetFaction);
-      iWielderFaction = send(wielder,@GetFaction);
-      iWeaponFaction = nth(lData,3);
+      iTargetFaction = Send(target,@GetFaction);
+      iWielderFaction = Send(wielder,@GetFaction);
+      iWeaponFaction = Nth(lData,3);
 	          
-      if iWeaponFaction = iWielderFaction AND iWielderfaction <> iTargetFaction
+      if iWeaponFaction = iWielderFaction
+         AND iWielderfaction <> iTargetFaction
       { 
-         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-         iPower = send(self,@DecipherHitRollFromPower,#iPower=iPower);
+         iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+         iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
          % Only half bonuses against unfactioned targets.
          if iTargetFaction = FACTION_NEUTRAL
@@ -260,7 +267,7 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   AppendDesc(oItem =$,lData = $,iFakeData=0,iFakePower=0)
+   AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
       local iData, iPower;
 		
@@ -269,7 +276,7 @@ messages:
       {
          if iFakeData = 0
          {
-            debug("Got no data at all!  Bad.");
+            Debug("Got no data at all!  Bad.");
 
             return;
          }
@@ -281,13 +288,13 @@ messages:
       {
          if iFakeData <> 0
          {
-            debug("Got both real data and fake data!  Shouldn't!");
+            Debug("Got both real data and fake data!  Shouldn't!");
 
             return;
          }
          
-         iData = nth(lData,3);
-         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+         iData = Nth(lData,3);
+         iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       }	
 
       if iData = FACTION_DUKE
@@ -307,7 +314,7 @@ messages:
          }
       }
       
-      AppendTempString(send(self,@GetPowerDesc,#iPower=iPower));
+      AppendTempString(Send(self,@GetPowerDesc,#iPower=iPower));
 
       if iData = FACTION_DUKE
       {
@@ -337,7 +344,7 @@ messages:
 
    FakeAttData()
    {
-      return random(FACTION_DUKE,FACTION_MAX);
+      return Random(FACTION_DUKE,FACTION_MAX);
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -352,8 +359,8 @@ messages:
       
       if iFakeData = $
       { 
-         lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
-         iData = nth(lData,3);
+         lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+         iData = Nth(lData,3);
       }
       else
       {
@@ -377,7 +384,7 @@ messages:
          }
       }
 
-      Addpacket(4,send(oItem,@GetName));
+      Addpacket(4,Send(oItem,@GetName));
       
       return;
    }

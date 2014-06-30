@@ -93,34 +93,31 @@ messages:
    {
       local oWeapon, iAmount, iHits;
 
-      iAmount = send(obj,@GetNumber);
-
-      if not send(obj,@IsBeverage)
+      if IsClass(obj,&Food)
+         AND Send(obj,@IsBeverage)
       {
-         propagate;
-      }
-
-      send(self,@SayToOne,#target=who,#message_rsc=CnSer_Alcohol_taken);
-
-      Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);
+         iAmount = send(obj,@GetNumber);	  
+         Send(self,@SayToOne,#target=who,#message_rsc=CnSer_Alcohol_taken);
+         Send(who,@RemoveNumberItemFromPossession,#ToBeRemoved=obj);		 
              
-      while (iAmount > 0)
-      {
-         iHits = random(1,10);
-         oWeapon = Create(&LongSword);
-         Send(oWeapon,@SetHits,#number=iHits);
-         
-         if send(who,@ReqNewHold,#what=oWeapon)
+         while (iAmount > 0)
          {
-            Send(who,@NewHold,#what=oWeapon);
+            iHits = random(1,10);
+            oWeapon = Create(&LongSword);
+            Send(oWeapon,@SetHits,#number=iHits);
+         
+            if send(who,@ReqNewHold,#what=oWeapon)
+            {
+               Send(who,@NewHold,#what=oWeapon);
+            }
+
+            iAmount = iAmount - 1;
          }
-
-         Send(obj,@Delete);
-
-         iAmount = iAmount - 1;
+		 
+         return;
       }
       
-      return;
+      propagate;
    }
 
 end

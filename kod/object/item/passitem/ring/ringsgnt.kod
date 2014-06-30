@@ -28,13 +28,13 @@ classvars:
    vrIcon = ringsignet_icon_rsc
    vrRealDesc = ringsignet_desc_rsc
 
-   viHits_init_min = 30
-   viHits_init_max = 70
+   viHits_init_min = 80
+   viHits_init_max = 100
 
    viBulk = 2
    viWeight = 2
    
-   viValue_average = 150
+   viValue_average = 1000
 
 properties:
 
@@ -93,12 +93,12 @@ messages:
    {
       local iValue, oMoney;
 
-      % PAYOFF: newbie=10*value, oldbie=value
+      % PAYOFF: newbie=5*value, oldbie=value
       iValue = Send(self,@GetValue);
 
       if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
-         iValue = iValue * 10;
+         iValue = iValue * 5;
       }
 
       oMoney = Send(who,@GetMoneyObject);

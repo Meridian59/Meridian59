@@ -22,6 +22,12 @@ constants:
    %  learn to qualify for a new spell.
    MONSTER_LEARN_GRADIENT = 15
 
+   % Values returned by UserGet
+   AUTOLOOT_GOT_ITEM = 1
+   AUTOLOOT_OUT_OF_RANGE = 2
+   AUTOLOOT_GOT_PARTIAL_STACK = 3
+   AUTOLOOT_CANNOT_GET = 4
+
 resources:
 
    monster_percent_q = "%q"
@@ -188,12 +194,18 @@ resources:
 
    monster_default_attack = "attack"
    
-   autolooted_all = "You loot the corpse clean."
-   autolooted_some = "You loot some of the items from your fallen kill."
+   autolooted_all = "You loot the corpse clean, and find %d shillings."
+   autolooted_all_no_money = "You loot the corpse clean."
+   autolooted_some = "You loot some of the items from your fallen kill, and find %d shillings."
+   autolooted_some_no_money = "You loot some of the items from your fallen enemy."
+   autolooted_only_money = "You find nothing easily lootable on your slain enemy other than %d shillings."
    autolooted_none = "You find nothing easily lootable on your slain enemy."
-   
-   extra_gold = "You have found some extra gold!"
-   
+     
+   autoloot_too_far_away = "You're too far away to loot your fallen enemy!"
+   autoloot_got_some_but_full_now = "You pick up some of your slain enemy's loot, but find yourself too encumbered to get it all."
+   autoloot_got_nothing_because_full= "You can't carry any more, so you loot nothing from your fallen enemy."
+   autoloot_got_only_shillings_because_full = "You can't carry any more, so you loot nothing from your fallen enemy, but you do find %d shillings."
+
 classvars:
 
    vrKocName = monster_koc_name
@@ -3120,7 +3132,6 @@ messages:
               #killing_player=what,#corpse=oBody );
          
          Send(self,@CreateTreasure,#who=what,#corpse=oBody);
-         Send(self,@CreateCash,#who=what,#corpse=oBody);
          
 		 % Delete here so we don't accidentally "kill" then delete system
          %  template monsters.
@@ -4938,7 +4949,8 @@ messages:
    CreateTreasure(who=$,corpse=$)
    {
       local i, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
-            lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted;
+            lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted, iRandomCashAmount, oMoney,
+            iGetResult, bCapacityFailure, bRangeFailure;
 
       % Apparitions, etc, provide no treasure
       if pbIllusion
@@ -5023,9 +5035,20 @@ messages:
       {
          lTreasureItems = cons(i,lTreasureItems);
       }
+
+      % Add money to the treasure
+      iRandomCashAmount = Random(viCashMin,viCashMax);
+      if iRandomCashAmount > 0
+      {
+         oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount);
+         Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+         lTreasureItems = cons(oMoney,lTreasureItems);
+      }
       
       iNumberOfItemsDropped = 0;
       iNumberOfItemsLooted = 0;
+      bCapacityFailure = FALSE;
+      bRangeFailure = FALSE;
       
       % Now drop all the treasure.
       for oTreasure in lTreasureItems
@@ -5038,16 +5061,39 @@ messages:
             Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,
                  #new_col=piCol);
             
-            iNumberOfItemsDropped = iNumberOfItemsDropped + 1;
+            if NOT IsClass(oTreasure,&Money)
+            {
+               iNumberOfItemsDropped = iNumberOfItemsDropped + 1;
+            }
 
             if IsClass(oTreasure,&NumberItem)
                AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
                AND Send(oTreasure,@GetPos) <> $
                AND IsClass(who,&User)
                AND Send(who,@IsAutolooting)
+               AND (IsClass(oTreasure,&Money)
+                       OR (NOT bRangeFailure
+                           AND NOT bCapacityFailure))
             {
-               iNumberOfItemsLooted = iNumberOfItemsLooted + 1;
-               Send(who,@UserGet,#what=oTreasure);
+               iGetResult = Send(who,@UserGet,#what=oTreasure,#report=FALSE);
+               
+               If NOT IsClass(oTreasure,&Money)
+                  AND (iGetResult = AUTOLOOT_GOT_ITEM
+                         OR iGetResult = AUTOLOOT_GOT_PARTIAL_STACK)
+               {
+                  iNumberOfItemsLooted = iNumberOfItemsLooted + 1;
+               }
+               
+               if iGetResult = AUTOLOOT_OUT_OF_RANGE
+               {
+                  bRangeFailure = TRUE;
+               }
+               
+               if iGetResult = AUTOLOOT_GOT_PARTIAL_STACK
+                  OR iGetResult = AUTOLOOT_CANNOT_GET
+               {
+                  bCapacityFailure = TRUE;
+               }
             }
          }
          else
@@ -5060,18 +5106,67 @@ messages:
          AND IsClass(who,&User)
          AND Send(who,@IsAutolooting)
       {
-         if iNumberOfItemsLooted = iNumberOfItemsDropped
+         if bRangeFailure
          {
-            Send(who,@MsgSendUser,#message_rsc=autolooted_all);
+            Send(who,@MsgSendUser,#message_rsc=autoloot_too_far_away);
+            return;
+         }
+         
+         if bCapacityFailure
+         {
+            if iNumberOfItemsLooted > 0
+            {
+               Send(who,@MsgSendUser,#message_rsc=autoloot_got_some_but_full_now);
+            }
+            
+            if iNumberOfItemsLooted = 0
+            {
+               if iRandomCashAmount > 0
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_only_shillings_because_full,#parm1=Send(oMoney,@GetNumber));
+               }
+               else
+               {
+                  Send(who,@MsgSendUser,#message_rsc=autoloot_got_nothing_because_full);
+               }
+            }
+            return;
+         }
+         
+         if iNumberOfItemsLooted = iNumberOfItemsDropped
+            AND iNumberOfItemsLooted > 0
+         {
+            if iRandomCashAmount > 0
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_all,#parm1=Send(oMoney,@GetNumber));
+            }
+            else
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_all_no_money);
+            }
          }
          
          if iNumberOfItemsLooted > 0
             AND iNumberOfItemsLooted < iNumberOfItemsDropped
          {
-            Send(who,@MsgSendUser,#message_rsc=autolooted_some);
+            if iRandomCashAmount > 0
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_some,#parm1=Send(oMoney,@GetNumber));
+            }
+            else
+            {
+               Send(who,@MsgSendUser,#message_rsc=autolooted_some_no_money);
+            }
          }
          
          if iNumberOfItemsLooted = 0
+            AND iRandomCashAmount > 0
+         {
+            Send(who,@MsgSendUser,#message_rsc=autolooted_only_money,#parm1=Send(oMoney,@GetNumber));
+         }
+         
+         if iNumberOfItemsLooted = 0
+            AND iRandomCashAmount <= 0
          {
             Send(who,@MsgSendUser,#message_rsc=autolooted_none);
          }
@@ -5833,78 +5928,6 @@ messages:
    {
       return;
    }
-   
-   CreateCash(who=$,corpse=$)
-  {
-      local oTreasure, iNumber, idrop;
-
-     idrop = Random(1,100);
-
-       
-	 if idrop > 55 
-    { 
-	  oTreasure = Create(&Money,#corpse=corpse);
-      iNumber = Random(viCashmin,viCashmax);
-      Send(oTreasure,@AddNumber,#number=iNumber);
-	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTreasure,@GetNumber));
-      
-      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-      {
-         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
-		 
-		 
-		 if IsClass(oTreasure,&NumberItem)
-               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
-               AND Send(oTreasure,@GetPos) <> $
-               AND IsClass(who,&User)
-               AND Send(who,@IsAutolooting)
-            {
-               Send(who,@UserGet,#what=oTreasure);
-            }
-      }
-    } 
-    else
-  {	 
-	  if idrop > 85 
-    { 
-	  oTreasure = Create(&Money,#corpse=corpse);
-      iNumber = Random(viCashmin,viCashmax);
-      Send(oTreasure,@AddNumber,#number=iNumber*2);
-	  Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oTreasure,@GetNumber));
-      
-      if Send(poOwner,@ReqNewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-         AND Send(poOwner,@ReqSomethingMoved,#what=oTreasure,#new_row=piRow,#new_col=piCol)
-      {
-         Send(poOwner,@NewHold,#what=oTreasure,#new_row=piRow,#new_col=piCol);
-		 
-		 
-		 if IsClass(oTreasure,&NumberItem)
-               AND Send(SYS,@UtilGetRoom,#what=oTreasure) = Send(who,@GetOwner)
-               AND Send(oTreasure,@GetPos) <> $
-               AND IsClass(who,&User)
-               AND Send(who,@IsAutolooting)
-            {
-               
-			   Send(who,@UserGet,#what=oTreasure);
-            }
-      } 
-	   
-    }
-  	
-    
-	  
-   }
-      if idrop > 85
-         AND IsClass(who,&User)
-         AND Send(who,@IsAutolooting)
-	  {
-	  Send(who,@MsgSendUser,#message_rsc=extra_gold);
-	  }
-	  
-	  return;
-  }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

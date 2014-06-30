@@ -70,8 +70,8 @@ classvars:
    viDefault_behavior = AI_FIGHT_AGGRESSIVE |  AI_FIGHT_WIZARD_KILLER | AI_FIGHT_HYPERAGGRESSIVE
    viAttributes = MOB_SPASM
    viGender = GENDER_MALE   
-   viCashmin = 200
-   viCashmax = 800
+   viCashmin = 20000
+   viCashmax = 50000
    vrSound_hit = lupoggking_sound_hit
    vrSound_miss = lupoggking_sound_miss
    vrSound_aware = lupoggking_sound_aware

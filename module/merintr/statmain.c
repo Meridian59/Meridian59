@@ -56,9 +56,9 @@ void StatsMainReceive(list_type stats)
    count = 0;
 
    // Create graph controls for integer stats
-   height = STAT_ICON_SIZE + STATS_MAIN_SPACING;	 
+   height = STAT_ICON_HEIGHT + STATS_MAIN_SPACING;	 
    //y = ENCHANT_SIZE + 2 * ENCHANT_BORDER - 1 + EDGETREAT_HEIGHT;
-   y = ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (STAT_ICON_SIZE * 3)) / 2);
+   y = ENCHANT_BORDER + EDGETREAT_HEIGHT + ((USERAREA_HEIGHT - (STAT_ICON_HEIGHT * 3)) / 2);
    for (l = stats; l != NULL; l = l->next)
    {
       Statistic *s = (Statistic *) (l->data);
@@ -158,7 +158,7 @@ void StatsMainRedraw(void)
    obj = ObjectGetBlank();
 
    a.x    = stat_x;
-   a.cx   = STAT_ICON_SIZE;
+   a.cx   = STAT_ICON_HEIGHT;
 
    for (l = main_stats; l != NULL; l = l->next)
    {
@@ -190,7 +190,7 @@ void StatsMainRedraw(void)
 void StatsMainResize(int xsize, int ysize, AREA *view)
 {
    stat_x = view->x + view->cx + LEFT_BORDER + USERAREA_WIDTH + RIGHT_BORDER + MAPTREAT_WIDTH;
-   stat_bar_x = stat_x + STAT_ICON_SIZE + RIGHT_BORDER;
+   stat_bar_x = stat_x + STAT_ICON_WIDTH + RIGHT_BORDER;
    stat_width = xsize - stat_bar_x - RIGHT_BORDER - EDGETREAT_WIDTH - MAPTREAT_WIDTH - 4;
    StatsMainMove();
 }
@@ -226,14 +226,15 @@ void StatsMainMove(void)
       if (cinfo->hToolTips != NULL)
       {
 	 ti.rect.left   = stat_x;
-	 ti.rect.right  = ti.rect.left + STAT_ICON_SIZE;
+	 ti.rect.right  = ti.rect.left + STAT_ICON_WIDTH;
 	 ti.rect.top    = s->y;
-	 ti.rect.bottom = ti.rect.top + STAT_ICON_SIZE;
+	 ti.rect.bottom = ti.rect.top + STAT_ICON_HEIGHT;
 	 switch (count)
 	 {
 	 case 0: ti.lpszText = (LPSTR) IDS_HEALTH; break;
 	 case 1: ti.lpszText = (LPSTR) IDS_MANA;   break;
 	 case 2: ti.lpszText = (LPSTR) IDS_VIGOR;  break;
+	 case 3: ti.lpszText = (LPSTR) IDS_TOUGHER; break;
 	 default:
 	    debug(("StatsMainMove got unknown stat number %d\n", count));
 	    ti.lpszText = 0;

@@ -106,6 +106,7 @@
 #define IDS_AHEADER1                    95
 #define IDS_MENU_GROUP                  96
 #define IDS_MENU_ALIAS                  97
+#define IDS_TOUGHER                     98
 #define IDD_ALIAS                       102
 #define IDD_STATS                       103
 #define IDD_GUILDCONFIG                 104

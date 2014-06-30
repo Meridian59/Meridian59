@@ -137,7 +137,7 @@ resources:
    user_stat_offense = "Offense"
    user_stat_defense = "Defense"
    user_stat_armor = "Armor"
-   user_stat_hpgainchance = istreng.bgf
+   user_stat_hpgainchance = exp.bgf
    user_resist_magic = "Magic Resist"
    user_resist_fire = "Fire Resist"
    user_resist_shock = "Shock Resist"

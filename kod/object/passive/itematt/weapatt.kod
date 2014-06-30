@@ -81,12 +81,14 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   InitialWeaponPower(oItem = $)
+   InitialWeaponPower(oItem=$)
    {
       local iRoll_number, iRand, iNumber, iSum, jIndex, iCount;
 
       if oItem = $ or not isClass(oItem,&weapon)
-      { DEBUG("Called InitialWeaponPower with bad oItem!"); }
+      {
+         Debug("Called InitialWeaponPower with bad oItem!");
+      }
 
       % This determines how good certain weapon attributes are.
       % For example, both guildhall and factions swords can have
@@ -125,7 +127,10 @@ messages:
       while (iRoll_number > 0)
       {
          iRand = random(1,100);
-         if iRand > iNumber { iNumber = iRand; }
+         if iRand > iNumber 
+         {
+		    iNumber = iRand;
+         }
          iRoll_number = iRoll_number - 1;
       }
       
@@ -143,7 +148,11 @@ messages:
       
       while (iCount < 10)
       {         
-         if iNumber < iSum  { return iCount; }
+         if iNumber < iSum
+         {
+            return iCount;
+         }
+
          iCount = iCount + 1;
          jIndex = jIndex - 2;
          iSum = iSum + jIndex;
@@ -155,7 +164,12 @@ messages:
 
    DecipherDamageFromPower(iPower=-1)
    {      
-      if iPower = -1 { Debug("Invalid Data, must pass a power to this"); return; }
+      if iPower = -1 
+      {
+         Debug("Invalid Data, must pass a power to this");
+
+         return;
+      }
 
       if iPower = 0  { return 0; }      
       if iPower = 1  { return 1; }      
@@ -174,7 +188,12 @@ messages:
 
    DecipherHitRollFromPower(iPower=-1)
    {      
-      if iPower = -1 { Debug("Invalid Data, must pass a power to this"); return; }
+      if iPower = -1 
+      {
+         Debug("Invalid Data, must pass a power to this");
+
+         return;
+      }
 
       if iPower = 0  { return 50; }      
       if iPower = 1  { return 0; }      
@@ -191,7 +210,7 @@ messages:
       return 0;
    }
 
-   GetPowerDesc(iPower = $)
+   GetPowerDesc(iPower=$)
    {
       if iPower = 0 { return weapatt_slight; }
       if iPower = 1 { return weapatt_small; }
@@ -204,19 +223,19 @@ messages:
       if iPower = 8 { return weapatt_enormous; }
       if iPower = 9 { return weapatt_crushing; }
 
-      debug("invalid power data!");
+      Debug("invalid power data!");
       return;
    }
 
    %%% Effect Functions
    
-   ModifyDamage(damage = 0, target = $, wielder = $)
+   ModifyDamage(damage=0,target=$,wielder=$)
    "Item Attributes, in general, should only + or - damage."
    {
       return damage;
    }
 
-   ModifyHitRoll(hitroll = 0, target = $, wielder = $)
+   ModifyHitRoll(hitroll=0,target=$,wielder=$)
    "Item Attributes, in general, should only + or - damage."
    {
       return hitroll;
@@ -225,7 +244,7 @@ messages:
    
    %%% Infrastructure (Adding and removing a ItemAtt from an item.)
 
-   AppendDesc(oItem =$,lData=$, iFakeData = 0, iFakePower=0)
+   AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
       local iPower;
       if vrDesc2 <> $
@@ -238,10 +257,10 @@ messages:
          }
          else
          {
-            iPower=send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+            iPower=Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
          }
 
-         AppendTempString(send(self,@GetPowerDesc,#iPower = iPower));
+         AppendTempString(Send(self,@GetPowerDesc,#iPower = iPower));
          AppendTempString(vrDesc2);
          
          return;
@@ -250,9 +269,9 @@ messages:
       propagate;
    }
 
-   ReqAddToItem(oItem = $)
+   ReqAddToItem(oItem=$)
    {
-      if isClass(oItem,&Weapon)
+      if IsClass(oItem,&Weapon)
       {
          return TRUE;
       }

@@ -29,7 +29,7 @@ constants:
 
 resources:
 
-   weapattpunisher_desc = "  The emblem of a fist holding an ankh rests in the pommel of this weapon, promising "
+   weapattpunisher_desc = " The emblem of a fist holding an ankh rests in the pommel of this weapon, promising "
    weapattpunisher_desc2 = " advantage in the fight for justice."
    punisher_fail_use = "As you grab the hilt of %s%s, you scream out in pain and let go!"
    weapattpunisher_name = "%s of the just"
@@ -60,7 +60,12 @@ messages:
 
    InitialPower(oItem=$)
    {
-      if oItem = $ { DEBUG("This shouldn't have happened!"); return; }
+      if oItem = $ 
+      {
+         Debug("This shouldn't have happened!");
+
+         return;
+      }
 
       return send(self,@InitialWeaponPower,#oItem=oItem);
    }
@@ -77,58 +82,65 @@ messages:
       local iNum, iPower;
           
       %% here, iNum = power itself
-      iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-      iPower = send(self,@DecipherDamageFromPower,#iPower=iPower);
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+      iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
-      %% no special effects for monsters
-      if isClass(target,&monster)
+      if target <> $
       {
-         return Damage;
+         %% No special effects for monsters
+         if IsClass(target,&Monster)
+         {
+            return Damage;
+         }
+
+         % Double standard effect on murderers.
+         if Send(target,@CheckPlayerFlag,#flag = PFLAG_MURDERER)
+         {
+            return (damage + ((iPower*3)/2));
+         }
+
+         % One and one half effect on outlaws.
+         if send(target,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
+         {
+            return (damage + iPower);
+         }
       }
 
-      % Double standard effect on murderers.
-      if send(target,@CheckPlayerFlag,#flag = PFLAG_MURDERER)
-      {
-         return (damage + ((iPower*3)/2));
-      }
-
-      % One and one half effect on outlaws.
-      if send(target,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
-      {
-         return (damage + iPower);
-      }
-
-      return (damage - iPower);    %% player is fighting a white named target.
+      return damage;    %% No extra damage against monsters.
    }
 
-   ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
+   ModifyHitRoll(hitroll=0,target=$,wielder=$,lData= $)
    "Wielder gets a hit bonus based on whether or not the target is a murderer or outlaw."
    {
       local iNum, iPower;
           
       %% here, iNum = power itself
-      iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-      iPower = send(self,@DecipherHitRollFromPower,#iPower=iPower);
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+      iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
       %% no special effects for monsters
-      if isClass(target,&monster)
-      {
-         return hitroll;
-      }
+      if target <> $
+	  {
+	     if IsClass(target,&Monster)
+         {
+            return hitroll;
+         }
 
-      % Double standard effect on murderers.
-      if send(target,@CheckPlayerFlag,#flag = PFLAG_MURDERER)
-      {
-         return (hitroll + ((iPower*3)/2));
-      }
+         % Double standard effect on murderers.
+         if Send(target,@CheckPlayerFlag,#flag = PFLAG_MURDERER)
+         {
+            return (hitroll + ((iPower*3)/2));
+         }
 
-      % One and one half effect on outlaws.
-      if send(target,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
-      {
-         return (hitroll + iPower);
+         % One and one half effect on outlaws.
+         if Send(target,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
+         {
+            return (hitroll + iPower);
+         }
       }
-
-      return (hitroll - iPower);    %% player is fighting a white named target.
+	  
+	  % Return normal hitroll
+      return hitroll;
    }
 
    ItemReqUse(oItem=$,oPlayer=$)
@@ -137,7 +149,7 @@ messages:
    {
       local lUsing, bUsingAmulet, oUsedItem;
       
-      lUsing = send(oPlayer,@GetPlayerUsing);
+      lUsing = Send(oPlayer,@GetPlayerUsing);
       bUsingAmulet = FALSE;
       
       for oUsedItem in lUsing
@@ -150,12 +162,12 @@ messages:
          }
       }
       
-      if send(oPlayer,@checkplayerflag,#flag = PFLAG_MURDERER)
-         OR send(oPlayer,@checkplayerflag,#flag = PFLAG_OUTLAW)
+      if Send(oPlayer,@CheckPlayerFlag,#flag = PFLAG_MURDERER)
+         OR send(oPlayer,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
          OR bUsingAmulet
       {
-	      send(oPlayer, @MsgSendUser, #message_rsc = punisher_fail_use,
-	           #parm1=send(oItem,@getdef),#parm2=send(oItem,@GetName));
+	      Send(oPlayer, @MsgSendUser, #message_rsc = punisher_fail_use,
+	           #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
 
          if Send(oPlayer, @AssessDamage, #what=self,#damage=Random(3,7),
                  #report=False) = $

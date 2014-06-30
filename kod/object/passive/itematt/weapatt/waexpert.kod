@@ -24,7 +24,7 @@ constants:
 resources:
 
    weapattexpert_desc = \
-      "  Colhorr's signature is engraved on the handle of this weapon.  This "
+      " Colhorr's signature is engraved on the handle of this weapon. This "
       "weapon looks to provide "
    weapattexpert_desc2 = " advantage - in the right hands."
    weapattexpert_name = "%s of the master"

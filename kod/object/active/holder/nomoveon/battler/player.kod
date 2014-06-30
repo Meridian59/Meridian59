@@ -5010,16 +5010,17 @@ messages:
          }
       }
 
-      Send(self,@LoseHealth,#amount=damage);
-	  
-	  oWeapon = Send(what,@GetWeapon);
+      Send(self,@LoseHealth,#amount=damage);	  
 	     
 	  if IsClass(what,&Monster)
+         OR IsClass(what,&Necklace)
+         OR IsClass(what,&WeapAttPunisher)		 
 	  {
 	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
 	  }
 	  else
 	  {
+         oWeapon = Send(what,@GetWeapon);
 	     if oWeapon <> $
 	     {
             RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
@@ -9071,6 +9072,22 @@ messages:
       return;
    }
 
+   VerifyOverlays()
+   "Removes overlays of any overlaid item whose owner is not the player."
+   {
+      local i;
+      
+      for i in plOverlays
+      {
+         if Send(i,@GetOwner) <> self
+         {
+            Send(self,@RemoveOverlay,#what=i);
+         }
+      }
+      
+      return;
+   }
+   
    SetOverlay(what = $)
    "Adds <what> to plOverlays, and tells everyone we changed."
    {
@@ -11674,16 +11691,28 @@ messages:
       
       return;
    }
-      
+
    FactionServiceTimer(renew=TRUE)
    {
-      local iHistory;
-      
+      % Attempts to delete any existing timer, then passes to FactionServiceRenew
+      % which creates a new timer if conditions are met.
+
       if ptFactionTimer <> $
       {
          DeleteTimer(ptFactionTimer);
          ptFactionTimer = $;
       }
+      
+      Send(Self,@FactionServiceRenew,#renew=renew);
+      return;
+   }
+
+   FactionServiceRenew(renew=TRUE)
+   {
+      % This function now handles renewal of ptFactionTimer and should only be accessed
+      % from FactionServiceTimer() after the $ check.
+ 
+      local iHistory;
       
       if piFaction = FACTION_NEUTRAL
       {
@@ -11738,12 +11767,12 @@ messages:
       if renew AND Send(SYS,@GetParliament) <> $
          AND (NOT Send(Send(SYS,@GetParliament),@IsShutdown))
       {
-         ptFactionTimer = CreateTimer(self,@FactionServiceTimer,FACTION_UPDATE_TIME);
+         ptFactionTimer = CreateTimer(self,@FactionServiceRenew,FACTION_UPDATE_TIME);
       }
       
       return;
    }
-
+   
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {

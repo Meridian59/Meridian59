@@ -28,7 +28,17 @@ properties:
 messages:
 
    GetNewsPermission(what = $)
-   {
+   { 
+      local oCaramo;
+
+      oCaramo = Send(SYS,@GetCaramo);
+
+      if what=oCaramo
+         OR IsClass(what,&DM)
+      {	 
+         return NEWS_PERMISSION_READ_WRITE;
+      }
+      
       return NEWS_PERMISSION_READ;
    }
 

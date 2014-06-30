@@ -3352,11 +3352,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ qoroffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 30 )    % 30 seconds
    {
       send( self, @SetQuestNodeAssignHint, #index = 65, #new_hint = qoroffering_assign_3 );
@@ -3370,11 +3367,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ qoroffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 30 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 66, #new_hint = qoroffering_assign_4 );
@@ -3389,11 +3383,8 @@ RecreateQuestNodes()
          #cargolist = [ qoroffering_trigger_3 ],
          #prizelist = [ [ QN_PRIZETYPE_ITEMCLASS, &OfferingQor, 1 ],
                         [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 60 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 67, #new_hint = qoroffering_assign_4 );
@@ -3430,11 +3421,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ shalilleoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 30 )    % 30 seconds
    {
       send( self, @SetQuestNodeAssignHint, #index = 70, #new_hint = shalilleoffering_assign_3 );
@@ -3448,11 +3436,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ shalilleoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 30 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 71, #new_hint = shalilleoffering_assign_4 );
@@ -3467,11 +3452,8 @@ RecreateQuestNodes()
          #cargolist = [ shalilleoffering_trigger_3 ],
          #prizelist = [ [ QN_PRIZETYPE_ITEMCLASS, &OfferingShalille, 1 ],
                         [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 60 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 72, #new_hint = shalilleoffering_assign_4 );
@@ -3508,11 +3490,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ farenoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 30 )    % 30 seconds
    {
       send( self, @SetQuestNodeAssignHint, #index = 75, #new_hint = farenoffering_assign_3 );
@@ -3526,11 +3505,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ farenoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 30 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 76, #new_hint = farenoffering_assign_4 );
@@ -3545,11 +3521,8 @@ RecreateQuestNodes()
          #cargolist = [ farenoffering_trigger_3 ],
          #prizelist = [ [ QN_PRIZETYPE_ITEMCLASS, &OfferingFaren, 1 ],
                         [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_MYSTICISM , -5, 2 ] ],
          #timelimit = 60 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 77, #new_hint = farenoffering_assign_4 );
@@ -3586,11 +3559,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ kraananoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -5, 2 ] ],
          #timelimit = 30 )    % 30 seconds
    {
       send( self, @SetQuestNodeAssignHint, #index = 80, #new_hint = kraananoffering_assign_3 );
@@ -3604,11 +3574,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ kraananoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -5, 2 ] ],
          #timelimit = 30 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 81, #new_hint = kraananoffering_assign_4 );
@@ -3623,11 +3590,8 @@ RecreateQuestNodes()
          #cargolist = [ kraananoffering_trigger_3 ],
          #prizelist = [ [ QN_PRIZETYPE_ITEMCLASS, &OfferingKraanan, 1 ],
                         [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -4, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -1, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -1, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_AGILITY , -5, 2 ] ],
          #timelimit = 66 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 82, #new_hint = kraananoffering_assign_4 );
@@ -3664,11 +3628,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ riijaoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , 3, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -2, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, 2, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -2, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -5, 2 ] ],
          #timelimit = 30 )    % 30 seconds
    {
       send( self, @SetQuestNodeAssignHint, #index = 85, #new_hint = riijaoffering_assign_3 );
@@ -3682,11 +3643,8 @@ RecreateQuestNodes()
    if send( self, @AddQuestNodeTemplate, #questnode_type = QN_TYPE_MESSAGE, #NPC_modifier = QN_NPCMOD_SAME,
          #cargolist = [ riijaoffering_trigger_3 ],
          #prizelist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , 3, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -2, 7 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, 2, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -1, 7 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -5, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -5, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -2, 7 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -5, 2 ] ],
          #timelimit = 30 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 86, #new_hint = riijaoffering_assign_4 );
@@ -3701,11 +3659,8 @@ RecreateQuestNodes()
          #cargolist = [ riijaoffering_trigger_3 ],
          #prizelist = [ [ QN_PRIZETYPE_ITEMCLASS, &OfferingRiija, 1 ],
                         [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , 25, 1 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -24, 4 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, 35, 1 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -34, 4 ] ],
-         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -6, 2 ],
-                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -6, 2 ] ],
+                        [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -24, 4 ] ],
+         #penaltylist = [ [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_INTELLECT , -6, 2 ] ],
          #timelimit = 60 )    % 1 minute
    {
       send( self, @SetQuestNodeAssignHint, #index = 87, #new_hint = riijaoffering_assign_4 );
@@ -4867,7 +4822,7 @@ RecreateQuestNodes()
                         [ QN_PRIZETYPE_ITEMCLASS, &NeruditeArrow, 30 ],
                         [ QN_PRIZETYPE_ITEMCLASS, &SilverArrow, 30 ],
                         [ QN_PRIZETYPE_ITEMCLASS, &NodeBurstPotion, 1 ] ] ],
-         #penaltylist = [ [ QN_PRIZETYPE_OUTLAW ], [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -20, 7] ],
+         #penaltylist = [ [ QN_PRIZETYPE_OUTLAW ] ],
          #timelimit = 2 * 3600 )    % 2 hours
    {
       lNPCs = $;
@@ -5082,7 +5037,7 @@ RecreateQuestNodes()
                         [ QN_PRIZETYPE_ITEMCLASS, &ResistMagicPotion, 1 ],
                         [ QN_PRIZETYPE_ITEMCLASS, &ResistPoisonPotion, 1 ],
                         [ QN_PRIZETYPE_ITEMCLASS, &ResistShockPotion, 1 ] ] ],
-         #penaltylist = [ [ QN_PRIZETYPE_OUTLAW ], [QN_PRIZETYPE_BOON, QN_PRIZE_BOON_VIGOR, -20, 7] ],
+         #penaltylist = [ [ QN_PRIZETYPE_OUTLAW ] ],
          #timelimit = 4 * 3600 )    % 4 hours
    {
       lNPCs = $;

@@ -3051,19 +3051,22 @@ messages:
       {
          if First(i) <> $
          {
-            iTime = GetTimeRemaining(First(i));
-            DeleteTimer(First(i));
-
-            % If it's a negative enchantment, add a bit to the time in
-            %  order to prevent people from just "flashing" on and off
-            %  to wait out an enchantment and be relatively unhittable.
-            if Send(Nth(i,2),@IsHarmful)
+            if IsClass(Nth(i,2),&Boon)=FALSE
             {
-               % Time is measured in milliseconds, 3000 = 3 seconds.
-               iTime = iTime + 3000;
-            }
+			   iTime = GetTimeRemaining(First(i));
+               DeleteTimer(First(i));
 
-            SetNth(i,1,iTime);
+               % If it's a negative enchantment, add a bit to the time in
+               %  order to prevent people from just "flashing" on and off
+               %  to wait out an enchantment and be relatively unhittable.
+               if Send(Nth(i,2),@IsHarmful)
+               {
+                  % Time is measured in milliseconds, 3000 = 3 seconds.
+                  iTime = iTime + 3000;
+               }
+
+               SetNth(i,1,iTime);
+            }
          }
       }
 
@@ -3077,30 +3080,33 @@ messages:
 
       for i in plEnchantments
       {
-         state = $;
-         if length(i) > 2
+         if IsClass(Nth(i,2),&Boon)=FALSE
          {
-            state = Nth(i,3);
-         }
+            state = $;
+            if length(i) > 2
+            {
+               state = Nth(i,3);
+            }
 
-         iTime = first(i);
+            iTime = first(i);
          
-         if iTime = $ OR iTime < 1
-         {
-            Debug("Trying to make a negative timer!",
-                  Send(Nth(i,2),@GetTrueName));
-         }
+            if iTime = $ OR iTime < 1
+            {
+               Debug("Trying to make a negative timer!",
+                     Send(Nth(i,2),@GetTrueName));
+            }
 
-         if Send(Nth(i,2),@IsPeriodic,#state=state,#who=self)
-         {
-            SetNth(i,1,CreateTimer(self,@PeriodicEnchantmentTimer,iTime));
-         }
-         else
-         {
-            SetNth(i,1,CreateTimer(self,@EnchantmentTimer,iTime));
-         }
+            if Send(Nth(i,2),@IsPeriodic,#state=state,#who=self)
+            {
+               SetNth(i,1,CreateTimer(self,@PeriodicEnchantmentTimer,iTime));
+            }
+            else
+            {
+               SetNth(i,1,CreateTimer(self,@EnchantmentTimer,iTime));
+            }
           
-         Send(Nth(i,2),@RestartEnchantmentEffect,#who=self,#state=state);
+            Send(Nth(i,2),@RestartEnchantmentEffect,#who=self,#state=state);
+         }
       }
       
       Send(self,@ResetPlayerFlagList,#who=self);

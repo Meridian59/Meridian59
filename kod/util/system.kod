@@ -4969,7 +4969,7 @@ messages:
       plItemTemplates = cons(create(&PracticeBow),plItemTemplates);
       plItemTemplates = cons(create(&NeruditeBow),plItemTemplates);
       plItemTemplates = cons(create(&GoldSword),plItemTemplates);
-
+      plItemTemplates = cons(create(&TestSword),plItemTemplates);      
       plItemTemplates = cons(create(&MagicBow),plItemTemplates);
 
       plItemTemplates = cons(create(&ForgetPotionFaren),plItemTemplates);
@@ -5083,7 +5083,7 @@ messages:
       plItemTemplates = cons(create(&MummyMask),plItemTemplates);
       plItemTemplates = cons(create(&FeyMask),plItemTemplates);
       plItemTemplates = cons(create(&ShrunkenHeadMask),plItemTemplates);
-
+      plItemTemplates = cons(create(&CowMask),plItemTemplates);
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
 
       return;

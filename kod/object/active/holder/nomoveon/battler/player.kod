@@ -914,6 +914,9 @@ properties:
    % The user's string description, typed when created (and editable in game).
    psPlayerDescription = $
 
+   % Keeps track of whether a player has an evil twin following him.
+   pbHasEvilTwin = FALSE
+
    % Draw effects flags
    piDrawFX = 0
 
@@ -3835,9 +3838,14 @@ messages:
             
             % Check status and safety against the owner of the reflection.
             if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=Send(victim,@GetCaster))
-               OR NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),#report=report)
             {
-               return FALSE;
+               if NOT IsClass(oRoom,&GuildHall)
+               {
+                  if NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),#report=report)
+                  {
+                     return FALSE;
+                  }
+               }
             }
          }
             
@@ -10795,6 +10803,8 @@ messages:
       % Reset death costs to 0.
       piDeathCost = 0;
 
+      pbHasEvilTwin = FALSE;
+
       return Send(SYS,@GetSuccessRsc);
    }
 
@@ -13237,10 +13247,15 @@ messages:
    }
 
    RemoveControlledMinion(minion = $)
-   {	  
-      plControlledMinions = DelListElem(plControlledMinions,minion);	
-      return;	   
+   {  
+      if plControlledMinions <> $
+      {
+         plControlledMinions = DelListElem(plControlledMinions,minion);	
+      }
+
+      return;		 
    }
+   
    GetControlledMinions()
    {	   
       return plControlledMinions;
@@ -13292,6 +13307,30 @@ messages:
       
       return iArmor;
    }
-  
+
+   CanEvilTwin()
+   {
+      return TRUE;
+   }
+
+   AddEvilTwin()
+   {
+      pbHasEvilTwin = TRUE;
+
+      return;
+   }
+
+   RemoveEvilTwin()
+   {
+      pbHasEvilTwin = FALSE;
+
+      return;
+   }
+
+   HasEvilTwin()
+   {
+      return pbHasEvilTwin;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

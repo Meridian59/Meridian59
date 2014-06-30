@@ -111,7 +111,12 @@ messages:
       poArrow = Create(&Arrow);
       post(self,@TargetSwitch,#what=oTarget,#iHatred=1000);
       post(self,@EnterStateChase);
-      
+
+      if IsClass(poOriginal,&Player)
+      {
+         Send(poOriginal,@AddEvilTwin);
+      }
+	  
       propagate;
    }
 
@@ -129,6 +134,11 @@ messages:
          }
       }
 
+      if IsClass(poOriginal,&Player)
+      {
+         Send(poOriginal,@RemoveEvilTwin);
+      }
+	  
       if (poOwner <> $)
          AND (IsClass(poOriginal,&Monster)
               OR send(poOriginal,@isLoggedOn))
@@ -295,10 +305,10 @@ messages:
    GetObjectFlags()
    {
       local iFlags;
-      
+
       iFlags = send(poOriginal,@GetObjectFlags);
       if (iFlags & USER_YES) {  iFlags = (iFlags | FALSEPLAYER_YES);  }
-      
+
       return iFlags;
    }
 
@@ -589,5 +599,10 @@ messages:
       return poCaster;
    }
 
+   CanEvilTwin()
+   {
+      return FALSE;
+   }
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

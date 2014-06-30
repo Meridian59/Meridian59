@@ -1072,7 +1072,12 @@ messages:
 
       % Carry out attack
       Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-      Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+
+      % Sanity check, in rare occurrences mob dies before this can execute 
+      if poBrain <> $
+      {
+         Send(poBrain,@PostAttackTimer,#mob=self,#state=piState);
+      }
 
       return;
    }
@@ -5233,6 +5238,12 @@ messages:
       return pbIllusion;
    }  
 
+   % TRUE if mob can have evil twin cast on it
+   CanEvilTwin()
+   {
+      return TRUE;
+   }
+   
    CanPlayerAdvanceOnMe()
    {
       return (NOT Send(self,@IsIllusion));

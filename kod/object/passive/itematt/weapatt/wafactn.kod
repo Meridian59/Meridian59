@@ -202,8 +202,12 @@ messages:
 
          return damage;
       }
-          
-      iTargetFaction = Send(target,@GetFaction);
+
+      if target <> $
+      {
+         iTargetFaction = Send(target,@GetFaction);
+      }
+
       iWielderFaction = Send(wielder,@GetFaction);
       iWeaponFaction = Nth(lData,3);
           
@@ -221,7 +225,7 @@ messages:
 
          return (damage + iPower); 
       }
-      
+
       return damage;
    }
 
@@ -238,11 +242,15 @@ messages:
 
          return hitroll;
       }
-	          
-      iTargetFaction = Send(target,@GetFaction);
+
+      if target <> $
+      {
+         iTargetFaction = Send(target,@GetFaction);
+      }
+
       iWielderFaction = Send(wielder,@GetFaction);
       iWeaponFaction = Nth(lData,3);
-	          
+
       if iWeaponFaction = iWielderFaction
          AND iWielderfaction <> iTargetFaction
       { 
@@ -254,10 +262,10 @@ messages:
          {
             iPower = iPower / 2;
          }
-            
+
          return (hitroll + iPower); 
       }
-      
+
       return hitroll;
    }
 
@@ -270,7 +278,7 @@ messages:
    AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
       local iData, iPower;
-		
+
       iData = 0;
       if lData = $ 
       {
@@ -280,7 +288,7 @@ messages:
 
             return;
          }
-         
+
          iData = iFakeData;
          iPower = iFakePower;
       }
@@ -292,10 +300,10 @@ messages:
 
             return;
          }
-         
+
          iData = Nth(lData,3);
          iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
-      }	
+      }
 
       if iData = FACTION_DUKE
       {
@@ -313,7 +321,7 @@ messages:
             AppendTempString(weapatt_faction_rebel);
          }
       }
-      
+
       AppendTempString(Send(self,@GetPowerDesc,#iPower=iPower));
 
       if iData = FACTION_DUKE
@@ -352,11 +360,11 @@ messages:
 %%  Name Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    ItemBuildDescName(oItem=$,iFakeData=$)
    {
       local lData, iData;
-      
+
       if iFakeData = $
       { 
          lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
@@ -385,10 +393,9 @@ messages:
       }
 
       Addpacket(4,Send(oItem,@GetName));
-      
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

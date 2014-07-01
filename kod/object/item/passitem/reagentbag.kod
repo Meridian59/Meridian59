@@ -1,0 +1,215 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ReagentBag is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   reagentbag_name_rsc = "reagent bag"
+   reagentbag_icon_rsc = package.bgf
+
+   reagentbag_desc_rsc = "This lumpy bag is magical in nature, and able to hold large amounts of objects that themselves have inherent power."
+
+   stash_in_bag = "You stash %d %s in your reagent bag."
+   get_from_bag = "You get %d %s from your reagent bag."
+
+classvars:
+
+   vrName = reagentbag_name_rsc
+   vrIcon = reagentbag_icon_rsc
+   vrDesc = reagentbag_desc_rsc
+
+   viBulk_hold_max = 12000
+   viWeight_hold_max = $
+
+   viObject_flags = CONTAINER_YES
+
+properties:
+
+   plReagents = $
+
+messages:
+
+   Constructor(owner = $)
+   {
+      if owner <> $
+         AND IsClass(owner,&Player)
+         AND Send(owner,@GetReagentBag) = $
+      {
+         Send(owner,@NewHold,#what=self);
+      }
+      else
+      {
+         Post(self,@Delete);
+      }
+
+      propagate;
+   }
+
+   Delete()
+   {
+      local i;
+
+      for i in plReagents
+      {
+         Send(i,@Delete);
+      }
+      
+      propagate;
+   }
+   
+   GetReagentBagContents()
+   {
+      return plReagents;
+   }
+
+   HolderExtractObject(data = $)
+   {
+      return data;
+   }
+
+   IsHolding(what = $)
+   {
+      local i,each_obj;
+
+      for i in plReagents
+      {
+         if what = i
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
+   }
+
+   GetBulk()
+   {
+      local i, iSum;
+
+      iSum = 0;
+      
+      for i in plReagents
+      {
+         iSum = iSum + Send(i,@GetBulk);
+      }
+      
+      return iSum;
+   }
+
+   GetWeight()
+   {
+      local i, iSum;
+
+      iSum = 0;
+      
+      for i in plReagents
+      {
+         iSum = iSum + Send(i,@GetWeight);
+      }
+      
+      return iSum;
+   }
+
+   ReqNewOwner(what = $)
+   {
+      return FALSE;
+   }
+
+   ReqTaker(what=$,taker=$)
+   {
+      if taker <> Send(self,@GetOwner)
+      {
+         return FALSE;
+      }
+
+      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=get_from_bag,#parm1=Send(what,@GetNumber),#parm2=Send(what,@GetName));
+
+      return TRUE;
+   }
+
+   ReqNewHold(what = $, who = $)
+   {
+      if who <> Send(self,@GetOwner)
+      {
+         return FALSE;
+      }
+
+      if NOT IsClass(what,&NumberItem)
+         OR IsClass(what,&Food)
+         OR IsClass(what,&Ammo)
+         OR IsClass(what,&Money)
+      {
+         return FALSE;
+      }
+
+      return;
+   }
+
+   NewHold(what = $)
+   {
+      local i;
+
+      Send(Send(self,@GetOwner),@MsgSendUser,#message_rsc=stash_in_bag,#parm1=Send(what,@GetNumber),#parm2=Send(what,@GetName));
+
+      if IsClass(what,&NumberItem)
+      {
+         for i in plReagents
+         {
+            if i <> what
+            {
+               if GetClass(what) = GetClass(i)
+               {
+                  % should only be one of these, so can quit loop if found
+                  Send(i,@AddNumber,#number=Send(what,@GetNumber));
+                  Send(what,@Delete);
+                  return;
+               }
+            }
+         }
+      }
+
+      Send(what,@NewOwner,#what=self);
+      plReagents = Cons(what,plReagents);
+      
+      return;
+   }
+
+   ReqLeaveHold(what = $)
+   {
+      return TRUE;
+   }
+
+   LeaveHold(what = $)
+   {
+      local i;
+      
+      for i in plReagents
+      {
+         if i = what
+         {
+            plReagents = DelListElem(plReagents,i);
+         }
+      }
+
+      return;
+   }
+   
+   ChangeBulkAndWeight()
+   {
+      return;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -37,7 +37,9 @@ classvars:
 
    viValue_average = 1
 
+   viUse_type = ITEM_CANT_USE
    viItem_type = ITEMTYPE_MONEY
+   viObject_flags = GETTABLE_YES
 
    viGround_group = 2
    viInventory_group = 1

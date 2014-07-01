@@ -627,7 +627,7 @@ messages:
 
          bFound = FALSE;
 
-         lLists = [Send(who, @GetHolderActive), Send(who,@GetHolderPassive)];
+         lLists = [Send(who, @GetHolderActive), Send(who,@GetHolderPassive), Send(who,@GetReagentBagContents)];
          for lItems in lLists
          {
             % Count # of reagent that user has; complain if not enough
@@ -1283,15 +1283,21 @@ messages:
                cReagentClass = First(lReagent);
                iNumNeeded = Nth(lReagent, 2);
                iLists = 1;
-               while iLists <= 2 
+               while iLists <= 3
                {
                   if iLists = 1
                   {
                      lItems = Send(who,@GetHolderActive);
                   }
-                  else
+
+                  if iLists = 2
                   {
                      lItems = Send(who,@GetHolderPassive);
+                  }
+                  
+                  if iLists = 3
+                  {
+                     lItems = Send(who,@GetReagentBagContents);
                   }
 
                   % Since spell is cast, we can be cavalier about deleting things

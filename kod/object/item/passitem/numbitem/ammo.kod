@@ -32,7 +32,9 @@ classvars:
    viUse_amount = 1
 
    viItem_type = ITEMTYPE_AMMO
-   viAmmo_type = AMMO_ARROW     
+   viAmmo_type = AMMO_ARROW
+
+   viObject_flags = GETTABLE_YES
 
    viGround_group = 2
    viInventory_group = 1   

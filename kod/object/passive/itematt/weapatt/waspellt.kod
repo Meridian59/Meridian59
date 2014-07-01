@@ -40,12 +40,12 @@ resources:
    
    iaSpelltype_gone = "Your %s suddenly seems a little more... ordinary."
 
-   iaSpelltype_holy = "The weapon glows with a pure, white light."
-   iaSpelltype_unholy = "The weapon seems to reek of malevolence."
-   iaSpelltype_fire = "The weapon is hot to the touch."
-   iaSpelltype_cold = "It is icy cold to the touch."
-   iaSpelltype_shock = "Nearly invisible currents run the length of the blade."
-   iaSpelltype_acid = "A thin coating of acid covers the length of the blade."
+   iaSpelltype_holy = " The weapon glows with a pure, white light."
+   iaSpelltype_unholy = " The weapon seems to reek of malevolence."
+   iaSpelltype_fire = " The weapon is hot to the touch."
+   iaSpelltype_cold = " It is icy cold to the touch."
+   iaSpelltype_shock = " Nearly invisible currents run the length of the blade."
+   iaSpelltype_acid = " A thin coating of acid covers the length of the blade."
 
    iaSpelltype_name_holy = "holy %s"
    iaSpelltype_name_unholy = "unholy %s"
@@ -191,8 +191,9 @@ messages:
       
       if Send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oWeapon)
       {
-         Send(self,@AddToItem,#oItem=oWeapon, #state1=iSpellType,
-              #random_gen=TRUE);
+         % Makes a blade with a timer, as perma-enchants don't seem to create
+         Send(self,@AddToItem,#oItem=oWeapon,#state1=iSpellType,
+              #timer_duration=random(3600000,86400000),#random_gen=TRUE);
               
          return TRUE;
       }

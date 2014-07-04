@@ -420,12 +420,6 @@ messages:
       {
          iDamage = iDamage + WEAPON_NERUDITE_DAMAGE;
       }
-      
-      if IsClass(poOwner,&User)
-      {
-         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
-         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
-      }
 
       return iDamage + piDamageBonus;
    }

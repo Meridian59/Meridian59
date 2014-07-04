@@ -96,23 +96,23 @@ messages:
       return random(60000,60000+(iSpellPower*1000));
    }
 
-   StartSpecialEffect(who=$,iPower=0,caster=$)
+   StartSpecialEffect(what=$,iPower=0,source=$)
    {
-      If IsClass(who,&User)
+      If IsClass(what,&User)
          AND iPower <> 0
       {
-         Send(who,@AddAim,#points=-(iPower/3));
+         Send(what,@AddAim,#points=-(iPower/3));
       }
 
       return;
    }
    
-   EndSpecialEffect(who=$,iPower=0,caster=$)
+   EndSpecialEffect(what=$,iPower=0,source=$)
    {
-      If IsClass(who,&User)
+      If IsClass(what,&User)
          AND iPower <> 0
       {
-         Send(who,@AddAim,#points=(iPower/3));
+         Send(what,@AddAim,#points=(iPower/3));
       }
       return;
    }

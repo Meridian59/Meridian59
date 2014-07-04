@@ -21,7 +21,7 @@ resources:
 classvars:
 
    viSchool = SS_JALA
-   viNeedInstrument = TRUE
+   viNeedInstrument = FALSE
 
    vrSucceed_wav = Jala_sound
 

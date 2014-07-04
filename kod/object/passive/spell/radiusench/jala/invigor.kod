@@ -55,6 +55,8 @@ classvars:
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
    viBaseRange = 12
    
+   viPeriodicEffect = TRUE
+   
    viSpellExertion = 10      
    viChance_To_Increase = 20
 
@@ -75,14 +77,30 @@ messages:
       return;
    }
 
-   AdjustVigorTime(time=0, lRadiusState=0)
-   "Reduces time passed in so that vigor regens faster.  Returns reduced time."
+   CalculatePeriodicEffectTime(iPower=0)
    {
-      local iTime;
+      return 100000 / (iPower+1);
+   }
 
-      iTime = (time * (200-Nth(lRadiusState,2))) / 200;
-
-      return iTime;
+   PeriodicEffect(lEnchanted=$,iPower=0,iRange=0,source=$)
+   {
+      local oUser, lState;
+      
+      for oUser in lEnchanted
+      {
+         if IsClass(oUser,&User)
+         {
+            lState = Send(oUser,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Invigorate);
+            
+            if Nth(lState,3) = source
+               AND Nth(lState,2) = iPower
+            {
+               Send(oUser,@RestAddExertion,#amount=-1000);
+            }
+         }
+      }
+      
+      return;
    }
 
 

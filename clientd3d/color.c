@@ -56,6 +56,7 @@ static char colorinfo[][15] = {
 	{ "255,255,255"},   /* COLOR_BAR4 */
 	{ "192,192,192"},   /* COLOR_INVNUMFGD */
 	{ "0,0,0"},         /* COLOR_INVNUMBGD */
+	{ "0,154,39"}       /* COLOR_ITEM_MAGIC_FG */
 };
 
 static char color_section[] = "Colors";  /* Section for colors in INI file */
@@ -404,19 +405,32 @@ HBRUSH DialogCtlColor(HWND hwnd, HDC hdc, HWND hwndChild, int type)
 *    (Inventory has different colors than popup dialog lists)
 *    Doesn't return color itself so that caller can use id to call GetBrush.
 */
-WORD GetItemListColor(HWND hwnd, int type)
+WORD GetItemListColor(HWND hwnd, int type, int flags)
 {
-	switch(type)
-	{
-	case UNSEL_FGD:
-		return COLOR_LISTFGD;
-	case UNSEL_BGD:
-		return COLOR_LISTBGD;
-	case SEL_FGD:
-		return COLOR_LISTSELFGD;
-	case SEL_BGD:
-		return COLOR_LISTSELBGD;
+	debug(("type is #%u\n",type));
+   debug(("flags is #%u\n",flags));
+   if ((flags != NULL) || (GetItemFlags(flags) == (OF_ITEM_MAGIC | OF_GETTABLE)))
+		{debug(("got inside the magic item statement\n"));
+		return COLOR_ITEM_MAGIC_FG;}
+	else
+   {
+		switch(type)
+		{
+		case UNSEL_FGD:
+		debug(("unselected foreground\n"));
+			return COLOR_LISTFGD;
+		case UNSEL_BGD:
+			debug(("unselected background\n"));
+			return COLOR_LISTBGD;
+		case SEL_FGD:
+			debug(("selected foreground\n"));
+			return COLOR_LISTSELFGD;
+		case SEL_BGD:
+			debug(("selected background\n"));
+			return COLOR_LISTSELBGD;
+		}
 	}
+   debug(("returning 0"));
 	return 0;
 }
 

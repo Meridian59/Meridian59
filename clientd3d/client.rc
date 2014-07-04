@@ -795,6 +795,7 @@ BEGIN
             BEGIN
                 MENUITEM "&Normal items",               ID_COLOR_LIST
                 MENUITEM "&Selected items",             ID_COLOR_LISTSEL
+                MENUITEM "&Magic items",                ID_COLOR_MAGIC
             END
             POPUP "Bar graphs"
             BEGIN

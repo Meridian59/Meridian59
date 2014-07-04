@@ -175,7 +175,7 @@ messages:
       AppendTempString(Send(self,@GetName));
       AppendTempString(".");
 
-      return;
+      propagate;
    }
 
    GetValue()

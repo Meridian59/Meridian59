@@ -117,6 +117,18 @@ messages:
    {
       RETURN &CloakPotion;
    }
+  
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will keep you hidden from enemy scrying ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString("\% of the time.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

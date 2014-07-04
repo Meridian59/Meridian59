@@ -51,6 +51,8 @@ classvars:
    viBaseXLAT = XLAT_TO_GREEN
 
 properties:
+   
+   piAttack_Type = ATCK_WEAP_NERUDITE+ATCK_WEAP_PIERCE
 
 messages:
 

@@ -5928,6 +5928,11 @@ messages:
    {
       return;
    }
+   
+   GetBaseResistances()
+   {
+      return plResistances;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

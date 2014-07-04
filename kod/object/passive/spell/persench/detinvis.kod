@@ -96,5 +96,17 @@ messages:
       RETURN &DetectInvisibilityPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment allows you to see invisible enemies for ");
+      AppendTempString(2400 * (100+Send(who,@GetEnchantedState,#what=self)));
+      AppendTempString(" milliseconds.");
+      
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

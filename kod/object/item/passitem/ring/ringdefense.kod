@@ -83,6 +83,12 @@ messages:
    {
       return damage;
    }
+  
+   GetDefenseBonus()
+   {
+      return viDefense_bonus;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

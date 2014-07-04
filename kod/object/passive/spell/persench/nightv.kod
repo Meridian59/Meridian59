@@ -93,6 +93,18 @@ messages:
       return &NightVisionPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString(" visual light.");
+      
+      return;
+   }
+
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

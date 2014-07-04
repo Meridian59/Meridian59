@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GemAcidResistance is GemResistance
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   gem_acid_resist_name_rsc = "verdant crystal"
+   gem_acid_resist_icon_rsc = emerald.bgf
+   gem_acid_resist_desc_rsc = \
+	"This exotic shard of gemstone seems oddly chalky."
+	
+classvars:
+   
+   vrName = gem_acid_resist_name_rsc
+   vrIcon = gem_acid_resist_icon_rsc
+   vrDesc = gem_acid_resist_desc_rsc
+
+   viValue_average = 25000
+   viWeight = 0
+   viBulk = 0
+
+properties:
+
+   piResistStrength = 1
+   piResistType = -ATCK_SPELL_ACID
+   
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

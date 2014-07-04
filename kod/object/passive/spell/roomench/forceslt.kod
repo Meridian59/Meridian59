@@ -164,6 +164,24 @@ messages:
       return iDuration;
    }
 
+   EffectDesc(who=$)
+   {
+      local i, iState;
+
+      AppendTempString("\n\n");
+      AppendTempString("The ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment currently adds ");
+      
+      iState = Send(Send(who,@GetOwner),@GetEnchantedState,#what=self);
+      
+      AppendTempString(iState + 50);
+      AppendTempString(" offense to the attacks of good players and ");
+      AppendTempString(iState / 10);
+      AppendTempString(" spellpower to all Shal'ille spells cast in the area.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

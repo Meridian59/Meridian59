@@ -111,7 +111,20 @@ messages:
    {
       return damage + Random(0,send(who,@GetEnchantedState,#what=self)/33);
    }
-
+  
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString(" offense and 0-");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self)/33);
+      AppendTempString(" attack damage.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

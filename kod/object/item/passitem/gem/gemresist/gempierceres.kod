@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GemPierceResistance is GemResistance
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   gem_pierce_resist_name_rsc = "cobalt disc"
+   gem_pierce_resist_icon_rsc = sapphire.bgf
+   gem_pierce_resist_desc_rsc = \
+	"Worn perfectly smooth by eons of celestial tumbling, this shard of gemstone feels eerily slippery to the touch."
+	
+classvars:
+   
+   vrName = gem_pierce_resist_name_rsc
+   vrIcon = gem_pierce_resist_icon_rsc
+   vrDesc = gem_pierce_resist_desc_rsc
+
+   viValue_average = 25000
+   viWeight = 0
+   viBulk = 0
+
+properties:
+
+   piResistStrength = 1
+   piResistType = ATCK_WEAP_PIERCE
+   
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

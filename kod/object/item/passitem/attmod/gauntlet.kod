@@ -313,6 +313,20 @@ messages:
       return TRUE; 
    }
 
+   GetHitBonus()
+   {
+      return piAttack_bonus;
+   }
+   
+   GetDefenseBonus()
+   {
+      return piDefense_bonus;
+   }
+   
+   GetMeleeDamageBonus()
+   {
+      return piDamage_bonus;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

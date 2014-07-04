@@ -91,5 +91,17 @@ messages:
       RETURN &HastePotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment reduces your exertion costs by ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString("\%.");
+      
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

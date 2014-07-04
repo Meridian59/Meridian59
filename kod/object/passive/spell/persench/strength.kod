@@ -95,5 +95,17 @@ messages:
       RETURN &StrengthPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString(" Might.");
+      
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

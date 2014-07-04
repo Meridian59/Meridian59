@@ -39,6 +39,9 @@ classvars:
 
    viBulk = 4
    viWeight = 4
+   
+   viMinDamage = 2
+   viMaxDamage = 6
 
 properties:
 
@@ -46,12 +49,6 @@ properties:
    piAttack_spell = ATCK_SPELL_FIRE
 
 messages:
-
-   GetDamage()
-   {
-      return Random(2,6);
-   }
-
 
    SendProjectileAnimation()
    {

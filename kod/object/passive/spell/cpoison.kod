@@ -84,9 +84,12 @@ messages:
       oPoison = Send(SYS,@FindSpellByNum,#num=SID_POISON);
       if not Send(target,@IsEnchanted,#what=oPoison) 
       {
-	      Send(who, @MsgSendUser, #message_rsc=curepoison_unnecessary,
-           #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName)); 
-	      return False;
+         if IsClass(who,&User)
+         {
+            Send(who, @MsgSendUser, #message_rsc=curepoison_unnecessary,
+                      #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+         }
+         return False;
       }
 
       propagate;   % Check other things higher up
@@ -97,13 +100,18 @@ messages:
       local oTarget, oPoison, lPoisonEnchantment, iRandom, iLossRate, iLossRateAfter, iDuration;
       
       oTarget = First(lTargets);
+
+      %% make sure target is indeed poisoned
+      oPoison = Send(SYS,@FindSpellByNum,#num=SID_POISON);
+      if not Send(oTarget,@IsEnchanted,#what=oPoison) 
+      {
+         return;
+      }
       
       Send(oTarget,@MsgSendUser,#message_rsc=curepoison_on);
       Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
 	        #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
 	        #parm3=Send(oTarget,@GetName));
-	        
-      oPoison = Send(SYS,@FindSpellByNum,#num=SID_POISON);
 
       % Take the first item, could return a list of poison enchantments.
       % Format of individual enchantment info: [ timer, spell object, state ]

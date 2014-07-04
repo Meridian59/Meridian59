@@ -123,6 +123,12 @@ messages:
       % Most sicknesses can be purged or purified.
       return TRUE;
    }
+  
+   ModifyResistance(resistance_list=$)
+   {
+      return resistance_list;
+   }
+
 
 
 end

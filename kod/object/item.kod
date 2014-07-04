@@ -49,6 +49,8 @@ resources:
    item_condition_med = " has a few unsightly rips."
    item_condition_poor = " is in tatters, and barely holding together."
    item_condition_broken = " is covered in filth and ripped beyond use."
+   
+   special_properties_header = "\n\nThis item has the following properties:\n\n"
 
 classvars:
    
@@ -143,7 +145,7 @@ messages:
       % This is special 'status' stuff, like the number of 
       %  number items you have left, or the condition of your 
       %  weapon.
-      local rItem_condition, iHit_percent;
+      local rItem_condition, iHit_percent, i, bFoundProperties;
 
       if vbShow_Condition
          AND piHits_init > 0
@@ -195,9 +197,352 @@ messages:
          AppendTempString(vrPoss_Article);
          AppendTempString(Send(self,@GetName));
          AppendTempString(rItem_condition);
+         AppendTempString(" \(");
+         AppendTempString(piHits);
+         AppendTempString("/");
+         AppendTempString(piHits_init);
+         AppendTempString("\)");
+      }
+
+      for i in plObject_attributes
+      {
+         Send(i,@AttributeDesc);
+      }
+      
+      % Describe special properties
+      bFoundProperties = FALSE;
+      if Send(self,@GetRange) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetRange));
+         AppendTempString(" range");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetHitBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetHitBonus));
+         AppendTempString(" offense rating bonus");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetDamageReduction) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetDamageReduction));
+         AppendTempString(" armor");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetDefenseBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetDefenseBonus));
+         AppendTempString(" defense rating");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMeleeDamageBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMeleeDamageBonus));
+         AppendTempString(" melee damage bonus");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinDamage) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinDamage));
+         If Send(self,@GetMaxDamage) <> Send(self,@GetMinDamage)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxDamage));
+         }
+         AppendTempString(" base damage");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinDamageWithOwnerStats) <> 0
+         AND Send(self,@GetMinDamageWithOwnerStats) <> Send(self,@GetMinDamage)
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinDamageWithOwnerStats));
+         If Send(self,@GetMaxDamageWithOwnerStats) <> Send(self,@GetMinDamageWithOwnerStats)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxDamageWithOwnerStats));
+         }
+         AppendTempString(" damage in owner's hands");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinSpecialDamage) <> 0
+         AND Send(self,@GetMinSpecialDamage) <> Send(self,@GetMinDamage)
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinSpecialDamage));
+         If Send(self,@GetMaxSpecialDamage) <> Send(self,@GetMinSpecialDamage)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxSpecialDamage));
+         }
+         AppendTempString(" conditional base damage");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinSpecialDamageWithOwnerStats) <> 0
+         AND Send(self,@GetMinSpecialDamageWithOwnerStats) <> Send(self,@GetMinSpecialDamage)
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinSpecialDamageWithOwnerStats));
+         If Send(self,@GetMaxSpecialDamageWithOwnerStats) <> Send(self,@GetMinSpecialDamageWithOwnerStats)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxSpecialDamageWithOwnerStats));
+         }
+         AppendTempString(" conditional damage in owner's hands");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetDamageBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetDamageBonus));
+         AppendTempString(" damage bonus");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      If Send(self,@GetCurrentResistances) <> $
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+         
+         for i in Send(self,@GetCurrentResistances)
+         {
+            AppendTempString(Nth(i,2));
+            AppendTempString("\% ");
+            AppendTempString(Send(SYS,@GetResistanceName,#type=Nth(i,1)));
+            AppendTempString("\n");
+         }
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetAttackType) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+         
+         for i in Send(SYS,@GetAttackTypeList)
+         {
+            if (Send(self,@GetAttackType) & i)
+            {
+               AppendTempString("Deals ");
+               AppendTempString(Send(SYS,@GetAttackDamageTypeName,#type=i));
+               AppendTempString(" damage");
+               AppendTempString("\n");
+            }
+         }
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetAttackSpell) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+         
+         for i in Send(SYS,@GetSpellTypeList)
+         {
+            if (Send(self,@GetAttackSpell) & i)
+            {
+               AppendTempString("Deals ");
+               AppendTempString(Send(SYS,@GetSpellDamageTypeName,#type=i));
+               AppendTempString(" damage");
+               AppendTempString("\n");
+            }
+         }
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetAttributes) <> $
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         for i in Send(self,@GetAttributes)
+         {
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PARALYZER  
+            {
+               AppendTempString("15\% chance to cast Hold on hit");
+               AppendTempString("\n");
+            }
+         }
+         bFoundProperties = TRUE;
       }
 
       return;
+   }
+     
+   GetMinDamageWithOwnerStats()
+   {
+      return 0;
+   }
+
+   GetMaxDamageWithOwnerStats()
+   {
+      return 0;
+   }
+   
+   GetMinSpecialDamageWithOwnerStats()
+   {
+      return 0;
+   }
+   
+   GetMaxSpecialDamageWithOwnerStats()
+   {
+      return 0;
+   }
+   
+   GetAttackType()
+   {
+      return 0;
+   }
+   
+   GetAttackSpell()
+   {
+      return 0;
+   }
+   
+   GetMinDamage()
+   {
+      return 0;
+   }
+   
+   GetMaxDamage()
+   {
+      return 0;
+   }
+   
+   % Some weapons and spells have special conditions, like nerudite arrows that can shatter
+   GetMinSpecialDamage()
+   {
+      return 0;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      return 0;
+   }
+   
+   GetRange()
+   {
+      return 0;
+   }
+   
+   GetHitBonus()
+   {
+      return 0;
+   }
+   
+   GetDefenseBonus()
+   {
+      return 0;
+   }
+   
+   GetMeleeDamageBonus()
+   {
+      return 0;
+   }
+   
+   GetDamageBonus()
+   {
+      return 0;
+   }
+   
+   GetDamageReduction()
+   {
+      return 0;
+   }
+   
+   GetAttributes()
+   {
+      return plItem_Attributes;
+   }
+
+   GetResistanceModifiers()
+   {
+      return $;
    }
    
    DoBaseDesc()
@@ -1699,6 +2044,34 @@ messages:
          return TRUE;
       }
       return FALSE;
+   }
+  
+   GetCurrentResistances()
+   {
+      local lCurrentResistances, oObjectAttribute;
+      
+      lCurrentResistances = Send(self,@GetResistanceModifiers);
+      
+      for oObjectAttribute in plObject_attributes
+      {
+         lCurrentResistances = Send(oObjectAttribute,@ModifyResistance,#resistance_list=lCurrentResistances);
+      }
+      
+      return lCurrentResistances;
+   }
+
+   ModifyResistance(resistance_list=$)
+   {
+      local oResist, lCurrentResistances;
+      
+      lCurrentResistances = Send(self,@GetCurrentResistances);
+      
+      for oResist in lCurrentResistances
+      {
+         resistance_list = Send(SYS,@AddResistance,#what=Nth(oResist,1),#value=Nth(oResist,2),#resistance_list=resistance_list);
+      }
+      
+      return resistance_list;
    }
 
 end

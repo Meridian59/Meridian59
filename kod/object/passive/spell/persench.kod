@@ -30,6 +30,8 @@ resources:
    PersonalEnchantment_bad_target = "You cannot enchant %s%s."
 
    PersonalEnchantment_bad_location = "You cannot cast enchantments upon others here."
+  
+   spell_blank_template = "%q"
 
 classvars:
 
@@ -202,6 +204,8 @@ messages:
       {
           Send(who,@MsgSendUser,#message_rsc=vrEnchantment_Off);
       }
+
+      Post(who,@DrawResistances);
       
       return;
    }
@@ -250,6 +254,38 @@ messages:
       return defense_power;
    }
 
+   EffectDesc(who=$)
+   {
+      return;
+   }
+
+   CreateDesc(who=$)
+   {
+      ClearTempString();
+      AppendTempString("SCHOOL : ");
+      AppendTempString(Send(self,@GetSchoolStr));
+      AppendTempString("          LEVEL : ");
+      AppendTempString(Send(self,@GetLevel));
+      AppendTempString("\n\n");
+      AppendTempString(vrDesc);
+      
+      if who <> $
+         AND IsClass(who,&User)
+         AND Send(who,@IsEnchanted,#what=self)
+      {
+         Send(self,@EffectDesc,#who=who);
+      }
+      
+      return;
+   }
+   
+   ShowDesc(bShowAll = FALSE,who=$)
+   {
+      Send(self,@CreateDesc,#who=who);      
+      AddPacket(4,spell_blank_template,4,GetTempString());
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

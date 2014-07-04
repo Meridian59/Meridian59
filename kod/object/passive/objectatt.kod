@@ -1,0 +1,139 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ObjectAttribute is PassiveObject
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  Object Attributes
+%
+%  Object attributes are a new modern system for special modifications.
+%     These attributes are themselves objects, and are attached to their host
+%     object in a list, plObject_attributes. It's up to the object to call them.
+%
+%  Unlike item attributes, these are not limited solely to items, but will
+%     probably be mostly item-focused. Examples of other uses could be as 
+%     modifications to monsters, players, or even rooms.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+constants:
+
+   include blakston.khd   
+
+resources:
+
+   object_attribute_desc_default = "  This object appears to be special in some way."
+   object_attribute_name_default = "special %s"
+
+classvars:
+
+   viIndefinite = ARTICLE_NONE
+   viDefinite = ARTICLE_NONE
+
+   vrDesc = object_attribute_desc_default
+   vrName = object_attribute_name_default
+
+properties:
+
+   poHostObject = $
+   piValue_modifier = 100   %% modify the object's price by 100%
+
+messages:
+  
+   Constructor(host_object=$)
+   {
+      if host_object = $
+         OR NOT Send(self,@ReqAddToObject,#host_object=host_object)
+      {
+         Post(self,@Delete);
+      }
+      else
+      {
+         Send(self,@AddToObject,#host_object=host_object);
+         Send(SYS,@AddObjectAttributeToMasterList,#attribute=self);
+      }
+      propagate;
+   }
+   
+   GetHostObject()
+   {
+      return poHostObject;
+   }
+
+   ReqAddToObject(host_object=$)
+   {
+      return 1;
+   }
+
+   AddToObject(host_object=$)
+   {
+      if host_object <> $
+      {
+         if Send(host_object,@AddObjectAttribute,#attribute=self)
+         {
+            poHostObject = host_object;
+         }
+      }
+      return;
+   }
+   
+   RemoveFromObject(host_object=$)
+   {
+      if host_object <> $
+      {
+         if Send(host_object,@RemoveObjectAttribute,#attribute=self)
+         {
+            poHostObject = $;
+         }
+      }
+      return;
+   }
+   
+   Delete()
+   {
+      if poHostObject <> $
+      {
+         Send(self,@RemoveFromObject,#host_object=poHostObject);
+      }
+      Send(SYS,@RemoveObjectAttributeFromMasterList,#attribute=self);
+      propagate;
+   }
+   
+   ModifyDamage(damage=$)
+   {
+      return damage;
+   }
+   
+   ModifyHitRoll(hit_roll=$)
+   {
+      return hit_roll;
+   }
+   
+   ModifyDefenseDamage(damage=$)
+   {
+      return damage;
+   }
+   
+   ModifyDefensePower(defense_power=$)
+   {
+      return defense_power;
+   }
+   
+   ModifyResistance(resistance_list=$)
+   {
+      return resistance_list;
+   }
+   
+   AppendDesc()
+   {
+      return;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -26,7 +26,7 @@ constants:
 
 resources:
 
-   weapattbonker_desc = "  Mocker's signature flamboyantly emblazons the pommel."      
+   weapattbonker_desc = " Mocker's signature flamboyantly emblazons the pommel."      
    bonker_dm = "bonker"
 
 classvars:
@@ -53,15 +53,16 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of blinding target with any hit."
    {
       local oSpell;
       if random(1,100) <= piEffect_percent
       {
-	 oSpell = send(SYS,@FindSpellByNum,#num=SID_BONK);
-	 send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=50);
+	      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BONK);
+         Send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=50);
       }
+
       return Damage;
    }
 

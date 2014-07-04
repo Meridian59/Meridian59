@@ -28,7 +28,7 @@ constants:
 resources:
 
    weapattParalyzer_desc = \
-      "  A glow that can only be described as Zjiriaesqe surrounds the weapon."      
+      " A glow that can only be described as Zjiriaesqe surrounds the weapon."      
    Paralyzer_dm = "Paralyzer"
    paralyzer_fail_use = "You are not ready to use %s%s."
    holder_worked = "%s%s seems rooted to the very ground!"
@@ -54,21 +54,21 @@ messages:
   
    %%% Effect Functions
       
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a chance of paralyzing target with any hit."
    {
       local oSpell;
 
-      if random(1,100) <= piEffect_percent
+      if Random(1,100) <= piEffect_percent
       {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_HOLD);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
 	 
          %% no duplicates
-         if not Send(target,@IsEnchanted,#what=oSpell)
+         if NOT Send(target,@IsEnchanted,#what=oSpell)
          {	          
-            send(oSpell,@CastSpell,#who=self,#ltargets=[target],#ispellpower=99);
-            send(wielder,@MsgSendUser,#message_rsc=holder_worked,
-                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName));
+            Send(oSpell,@CastSpell,#who=self,#ltargets=[target],#ispellpower=99);
+            Send(wielder,@MsgSendUser,#message_rsc=holder_worked,
+                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
       }
 
@@ -78,17 +78,16 @@ messages:
    ItemReqUse(oItem=$,oPlayer=$)
    {
       % A person needs 50% in the weapon's proficiency to use
-      if send(oItem,@GetProf,#who=oPlayer) < 50      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50      
       {
-         send(oPlayer, @MsgSendUser, #message_rsc = paralyzer_fail_use,
-            #parm1=send(oItem,@getdef),#parm2=send(oItem,@GetName));
+         Send(oPlayer,@MsgSendUser,#message_rsc=paralyzer_fail_use,
+            #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
 
          return FALSE;      
       }
 
       return TRUE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

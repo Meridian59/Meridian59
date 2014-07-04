@@ -16,8 +16,8 @@ ItemAttEngraved is ItemAttribute
 % 
 %  Form is: 
 %
-%   	[IA_ENGRAVED, sMessage_string]
-%	
+%      [IA_ENGRAVED, sMessage_string]
+%   
 %  sMessage_string::the message that is engraved on the item.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,9 +47,9 @@ messages:
    {
       local lData, oRoom;
       
-      lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+      lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
       AppendTempString(ItemAtt_Engraved_desc_1);
-      AppendTempString(nth(lData,3));	
+      AppendTempString(Nth(lData,3));
       AppendTempString(ItemAtt_Engraved_desc_2);
         
       return;
@@ -60,7 +60,12 @@ messages:
    {
       local sString;
 
-      if state1 = $ { DEBUG("SetPrimaryState called with nil state!"); return FALSE; }
+      if state1 = $
+      {
+         Debug("SetPrimaryState called with nil state!");
+
+         return FALSE;
+      }
 
       %% state1 is a temporary string.  Create a new perm string, or recycle
       %% an existing one.
@@ -83,13 +88,13 @@ messages:
    RemoveFromItem(oItem=$)
    {
       local lData, sString, i, bFound;
-		
-      lData = send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_Num);
-      sString = nth(lData,3);
+
+      lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
+      sString = Nth(lData,3);
 
       if sString <> $
       {
-         plDiscarded_Strings = cons(sString,plDiscarded_Strings);
+         plDiscarded_Strings = Cons(sString,plDiscarded_Strings);
       }
       
       propagate;

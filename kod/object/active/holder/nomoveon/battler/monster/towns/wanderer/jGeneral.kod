@@ -144,14 +144,6 @@ messages:
 	 return FALSE;
       }
 
-      if send(who,@checkplayerflag,#flag=PFLAG_MURDERER) 
-      { % won't sell to a murderer 
-	 if report
-	 { 
-	    post(self,@saytoone,#target=who,#message_rsc=JealousGeneral_no_murderer,
-	       #parm1=send(who,@GetLordLady)); }
-   	    return FALSE;
-	 }
       return TRUE;
    }
 

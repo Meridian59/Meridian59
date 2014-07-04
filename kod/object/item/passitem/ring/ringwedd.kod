@@ -97,14 +97,12 @@ messages:
             }
          }
       }
-      Send(what,@AddDefenseModifier,#what=self);
       
       propagate;
    }
 
    NewUnused(what = $)
    {
-      Send(what,@RemoveDefenseModifier,#what=self);
       propagate;
    }
    
@@ -150,7 +148,7 @@ messages:
    {
       return damage;
    }
-
+   
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

@@ -54,16 +54,16 @@ messages:
    %% A player can only pick up an item from a monster he has 
    %% recently killed himself, or that has sat around for a bit.
 
-   CanGetAffectedItem(lData = $, who = $, oItem = $)
+   CanGetAffectedItem(lData=$,who=$,oItem=$)
    {
       local oCorpse;
      
-      oCorpse = nth(lData,3);
+      oCorpse = Nth(lData,3);
      
       % If the corpse object is pointing at who, then 'who' can pick up this item.
       if NOT send(oCorpse,@CanGetMe,#what=who)
       {
-         send(who,@MsgSendUser,#message_rsc=corpsepointer_no_loot,
+         Send(who,@MsgSendUser,#message_rsc=corpsepointer_no_loot,
               #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName),
               #parm3=send(oCorpse,@GetCorpseName));
 
@@ -85,7 +85,7 @@ messages:
    {
       if state1 = $
       {
-         debug("SetPrimaryState called with nil state!");
+         Debug("SetPrimaryState called with nil state!");
 
          return FALSE;
       }

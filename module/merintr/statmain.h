@@ -14,7 +14,8 @@
 
 #define MIN_VIGOR 10   // Minimum value of vigor needed to run
 
-#define STAT_ICON_SIZE 15    // Width and height of stat icons
+#define STAT_ICON_HEIGHT 15  // Height of stat icons
+#define STAT_ICON_WIDTH 17   // Width of stat icons
 #define STATS_MAIN_SPACING 1 // Space between adjacent stats
 
 void StatsMainReceive(list_type stats);

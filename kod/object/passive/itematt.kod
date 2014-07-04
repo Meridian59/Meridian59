@@ -130,8 +130,8 @@ messages:
          random_x = random_x - nth(i,2);
          if random_x < 1         %% we have a winner!
          {  
-            oItem = create(first(i));
-            send(self,@AddSelfToRandomItem,#oItem=oItem,#who=who);
+            oItem = Create(First(i));
+            Send(self,@AddSelfToRandomItem,#oItem=oItem,#who=who);
             
             break;
          }
@@ -143,7 +143,11 @@ messages:
    DMCreateItemAtt(who=$,string=$,oWeapon=$)
    {      
       if who = $ or string= $ or oWeapon = $
-      {  DEBUG("BAD data sent to DMCreateItemAtt!"); return FALSE;  }
+      {
+         Debug("BAD data sent to DMCreateItemAtt!");
+
+         return FALSE;
+      }
 
       %% some itematts are for internal use only, such as corpsepointer.
       %% So we only give 'creation' triggers to those that do exist.
@@ -157,22 +161,22 @@ messages:
       %%% Okay, they've chosen our itematt.  Most of the time, let's
       %%% just apply ourselves using the 'random' thing we use to make treasure.
       
-      send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who);
+      Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who);
       
       return TRUE;
 
    }
 
-   AddSelfToRandomItem(oItem = $,who= $)
+   AddSelfToRandomItem(oItem=$,who=$)
    {
       if oItem = $
       {
          return FALSE;
       }
       
-      if send(self,@ReqAddToItem,#oItem=oItem)
+      if Send(self,@ReqAddToItem,#oItem=oItem)
       {
-         send(self,@AddToItem,#oItem=oItem); 
+         Send(self,@AddToItem,#oItem=oItem); 
       }
       
       return;
@@ -264,9 +268,14 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   ReqAddToItem(oItem = $)
+   ReqAddToItem(oItem=$)
    {
-      if oItem = $ { DEBUG("Can't add with insufficient data!"); return FALSE; }
+      if oItem = $
+      {
+         Debug("Can't add with insufficient data!");
+
+         return FALSE;
+      }
       
       if isClass(oItem,&Item)
       {
@@ -281,7 +290,7 @@ messages:
       local lData, iValue;
 
       %% may not duplicate ItemAtts.
-      if send(oItem,@HasAttribute,#ItemAtt = viItem_Att_num)
+      if Send(oItem,@HasAttribute,#ItemAtt = viItem_Att_num)
       {
          return;
       }   
@@ -290,7 +299,7 @@ messages:
       
       %% build the node from rear to front, 3rd state to first
       %% state3 is TRUE for itematts which are created by a player cast spell.
-      iValue = send(self,@SetTertiaryState,#state3=state3);
+      iValue = Send(self,@SetTertiaryState,#state3=state3);
       if iValue <> $
       {
          lData = cons(iValue,lData);
@@ -317,8 +326,8 @@ messages:
       iValue = send(self,@SetCompound,#random_gen=random_gen,#oItem=oItem,#iPower=iPower);
       lData = cons(iValue,lData);
           
-      send(self,@AddEffects,#oItem=oItem,#lData=lData,#state1=state1);              
-      send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
+      Send(self,@AddEffects,#oItem=oItem,#lData=lData,#state1=state1);              
+      Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
       
       return;            
    }
@@ -329,14 +338,14 @@ messages:
    {
       local iValue, lData;
 
-      lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
-      send(self,@RemoveEffects,#oItem=oItem,#lData=lData);              
-      send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
+      lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
+      Send(self,@RemoveEffects,#oItem=oItem,#lData=lData);              
+      Send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
       
       return;
    }   
 
-   AddEffects(oItem = $, lData = $)
+   AddEffects(oItem=$,lData=$)
    "AddEffects, in general, does anything that is triggered upon creation, "
    "including changing the stats of the Item's wielder/wearer, or changing "
    "some part of the item's stats.\n"   
@@ -345,7 +354,7 @@ messages:
       return;
    }
 
-   RemoveEffects(oItem = $, lData = $)
+   RemoveEffects(oItem=$,lData=$)
    "This simply undoes whatever AddEffects does."
    {
       return;
@@ -364,13 +373,13 @@ messages:
       iCompound = 0;
       %% ones digit = bitflag.  For now, just 0 if unidentified,
       %% 1 if identified.
-      bIdent = send(self,@InitiallyIdentified,#random_Gen=random_gen);
+      bIdent = Send(self,@InitiallyIdentified,#random_Gen=random_gen);
       iCompound = iCompound + bIdent;
       
       if iPower = $
       {
          %% tens digit = power.  Number from 1 to 10?
-         iPower = send(self,@InitialPower,#oItem=oItem);
+         iPower = Send(self,@InitialPower,#oItem=oItem);
       }
       iCompound = iCompound + (10 * iPower);
 
@@ -414,12 +423,12 @@ messages:
 
    TimerExpired()
    {
-      DEBUG("TimerExpired() called, but itematt has no function defined!");
+      Debug("TimerExpired() called, but itematt has no function defined!");
       
       return;
    }
 
-   HasTimer(lData = $)
+   HasTimer(lData=$)
    "This must return true for any attribute that has a timer!"
    "Theoretically, some atts could have or not have a timer, "
    "depending on certain factors, so lData is the ItemAtt structure,"
@@ -428,7 +437,7 @@ messages:
       return FALSE;   %% most attributes don't have timers.
    }
 
-   CanGetAffectedItem(lData = $, Who = $)
+   CanGetAffectedItem(lData=$,who=$)
    {
       return TRUE;            
    }
@@ -437,7 +446,13 @@ messages:
    {
       local iPower;
 
-      if iCompound = 0 { Debug("BAD!  No compound value!"); return 0; }
+      if iCompound = 0
+      {
+         Debug("BAD!  No compound value!");
+
+         return 0;
+      }
+
       %% power is the tens column.
 
       iPower = iCompound/10;
@@ -534,11 +549,16 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   AdjustPrice(value = -1,iCompound=0)
+   AdjustPrice(value=-1,iCompound=0)
    {
       local iPower, iPower_mod;
 
-      if value = -1 { DEBUG("This was called without a value! Impossible!"); return 0; }
+      if value = -1
+      {
+         Debug("This was called without a value! Impossible!");
+
+         return 0;
+      }
 
       %% Basic rule of thumb: an Item Att can increase the price of an item by
       %% 150%, 200%, or 250%.  Choose these values so that all items tend to 
@@ -556,7 +576,7 @@ messages:
       %% don't make these too high.  Multiple item atts can knock an item value
       %% sky high.
 
-      iPower = send(self,@TranslatePowerFromCompound,#iCompound=iCompound);
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=iCompound);
       iPower_mod = piValue_power_modifier * iPower;
 
       return (value * (piValue_Modifier+iPower_mod)/100);        

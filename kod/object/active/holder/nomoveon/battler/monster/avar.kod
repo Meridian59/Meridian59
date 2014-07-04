@@ -70,7 +70,7 @@ classvars:
    viDifficulty = 7
    viKarma = 40
    viWimpy = 8
-   viCashmin = 600
+   viCashmin = -1800
    viCashmax = 1800
    vrSound_hit = avar_sound_hit
    vrSound_miss = avar_sound_miss

@@ -986,6 +986,7 @@ BEGIN
     IDS_HEALTH              "Health"
     IDS_MANA                "Mana"
     IDS_VIGOR               "Vigor"
+    IDS_TOUGHER             "Tougher Chance"
     IDS_TBSMILE             "Smile"
     IDS_TBFROWN             "Frown"
 END

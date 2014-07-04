@@ -40,13 +40,15 @@ messages:
 
    SetPrimaryState(state1=$)
    {
-      if state1 = $ {
-         debug("IA_SELL_INFO added with no speech!");
+      if state1 = $
+      {
+         Debug("IA_SELL_INFO added with no speech!");
       }
+
       return state1;
    }
 
-   AppendDesc(oItem =$)
+   AppendDesc(oItem=$)
    "No description"
    {
       return;

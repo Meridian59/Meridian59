@@ -55,19 +55,19 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of twisting target with any hit."
    {
       local oRoom;
 
-      if random(1,100) <= piEffect_percent
+      if Random(1,100) <= piEffect_percent
       {
-         oRoom = send(target,@GetOwner);
-	 if oRoom <> $
-	 {
-	    send(oRoom,@SomethingTurned,#what=target,#new_angle=random(0,MAX_ANGLE-1));
-	    send(target,@MsgSendUser,#message_rsc=weapatt_twister_victim_effect);
-	 }
+         oRoom = Send(target,@GetOwner);
+	      if oRoom <> $
+	      {
+	         Send(oRoom,@SomethingTurned,#what=target,#new_angle=random(0,MAX_ANGLE-1));
+	         Send(target,@MsgSendUser,#message_rsc=weapatt_twister_victim_effect);
+	      }
       }
 
       return damage;

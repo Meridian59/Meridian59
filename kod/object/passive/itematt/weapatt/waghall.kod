@@ -31,7 +31,7 @@ constants:
 
 resources:
 
-   weapattguildhalldesc= "  The crest of "
+   weapattguildhalldesc= " The crest of "
    weapattguildhalldesc2 = " is inscribed on the hilt of the weapon, suggesting "
    weapattguildhalldesc3 = " bonus in the defense of that hall."
    weapattdefender_name = "%s of the defender"
@@ -61,13 +61,13 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   AddSelfToRandomItem(oItem = $, who=$)
+   AddSelfToRandomItem(oItem=$,who=$)
    {
       local iHall, oGuild, oHall;
 
       if oItem = $ or who = $
       {
-         DEBUG("BAD BAD BAD");
+         Debug("BAD BAD BAD");
 
          return FALSE;
       }
@@ -77,15 +77,15 @@ messages:
       %% it will choose a hall at random.
 
       iHall = 0;
-      if random(1,100) > 50
+      if Random(1,100) > 50
       {
          %% see if the player belongs to a guild.
-         oGuild = send(who,@GetGuild);
+         oGuild = Send(who,@GetGuild);
 	
          %% see if that guild has a hall already
          if oGuild <> $
          {
-            iHall = send(oGuild,@GetGuildHallNum);
+            iHall = Send(oGuild,@GetGuildHallNum);
          }			
       }
       
@@ -93,21 +93,21 @@ messages:
       {
          %% choose a random guild hall
 			
-         iHall = random(RID_GUILDH_MIN,RID_GUILDH_MAX);
+         iHall = Random(RID_GUILDH_MIN,RID_GUILDH_MAX);
       }
 
       %% Okay, it's crazy, but someone could screw up and leave space
       %% in the RIDlist.  So for as long as oHall = $, get a new iHall.
-      oHall = send(SYS,@FindRoomByNum,#num=iHall);
+      oHall = Send(SYS,@FindRoomByNum,#num=iHall);
       while oHall = $
       {
-         iHall = random(RID_GUILDH_MIN,RID_GUILDH_MAX);
-         oHall = send(SYS,@FindRoomByNum,#num=iHall);
+         iHall = Random(RID_GUILDH_MIN,RID_GUILDH_MAX);
+         oHall = Send(SYS,@FindRoomByNum,#num=iHall);
       }
 
-      if send(self,@ReqAddToItem,#state1=iHall,#oItem=oItem)
+      if Send(self,@ReqAddToItem,#state1=iHall,#oItem=oItem)
       {
-         send(self,@AddToItem,#oItem=oItem,#state1=iHall);
+         Send(self,@AddToItem,#oItem=oItem,#state1=iHall);
       }
       
       return;
@@ -117,7 +117,7 @@ messages:
    {
       if state1 < RID_GUILDH_MIN or state1 > RID_GUILDH_MAX
       { 
-         debug("Illegal guild hall chosen.  No attribute added.");
+         Debug("Illegal guild hall chosen.  No attribute added.");
 
          return FALSE; 
       }
@@ -131,7 +131,7 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "If wielder is in his own guild hall, which is also the chosen guild hall "
    "of the weapon, then wielder gets +power bonus."
    {
@@ -139,23 +139,23 @@ messages:
       
       if lData = $
       {
-         debug("This should definitely not happen! Weapon needs guild hall defined!");
+         Debug("This should definitely not happen! Weapon needs guild hall defined!");
 
          return;
       }
 
-      oGuild = send(wielder,@GetGuild);
-      oRoom = send(SYS,@FindRoomByNum,#num=nth(lData,3));
+      oGuild = Send(wielder,@GetGuild);
+      oRoom = Send(SYS,@FindRoomByNum,#num=Nth(lData,3));
 
       % Does this person's guild own the guild hall?
       if oGuild <> $
-         AND send(oRoom,@GetGuildOwner) = oGuild
+         AND Send(oRoom,@GetGuildOwner) = oGuild
       {
-         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-         iPower = send(self,@DecipherDamageFromPower,#iPower=iPower);
+         iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+         iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
          % Only give half bonus if we're not actively defending a guild hall.
-         if send(wielder,@GetOwner) <> oRoom
+         if Send(wielder,@GetOwner) <> oRoom
          {
             iPower = iPower/2;
          }
@@ -166,7 +166,7 @@ messages:
       return damage;
    }
 
-   ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
+   ModifyHitRoll(hitroll=0,target=$,wielder=$,lData= $)
    "If wielder is in his own guild hall, which is also the chosen guild hall "
    "of the weapon, then wielder gets +power bonus."
    {
@@ -174,23 +174,23 @@ messages:
 
       if lData = $
       {
-         debug("This should definitely not happen! Weapon needs guild hall defined!");
+         Debug("This should definitely not happen! Weapon needs guild hall defined!");
 
          return;
       }
 
-      oGuild = send(wielder,@GetGuild);
-      oRoom = send(SYS,@FindRoomByNum,#num=nth(lData,3));
+      oGuild = Send(wielder,@GetGuild);
+      oRoom = Send(SYS,@FindRoomByNum,#num=Nth(lData,3));
 
       % Does this person's guild own the guild hall?
       if oGuild <> $
-         AND send(oRoom,@GetGuildOwner) = oGuild
+         AND Send(oRoom,@GetGuildOwner) = oGuild
       {
-         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-         iPower = send(self,@DecipherHitRollFromPower,#iPower=iPower);
+         iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+         iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
          % Only give half bonus if we're not actively defending a guild hall.
-         if send(wielder,@GetOwner) <> oRoom
+         if Send(wielder,@GetOwner) <> oRoom
          {
             iPower = iPower/2;
          }
@@ -211,12 +211,12 @@ messages:
    {
       if oItem = $
       {
-         DEBUG("This shouldn't have happened!");
+         Debug("This shouldn't have happened!");
 
          return;
       }
 
-      return send(self,@InitialWeaponPower,#oItem=oItem);
+      return Send(self,@InitialWeaponPower,#oItem=oItem);
    }
 
    SetPrimaryState(state1=$)
@@ -224,7 +224,7 @@ messages:
    {
       if state1 = $
       {
-         DEBUG("SetPrimaryState called with nil state!");
+         Debug("SetPrimaryState called with nil state!");
 
          return FALSE;
       }
@@ -238,7 +238,7 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   AppendDesc(oItem =$,lData=$, iFakeData = 0, iFakePower=0)
+   AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
       local iData, oRoom, iPower;
     
@@ -247,7 +247,7 @@ messages:
       {
          if iFakeData = 0
          {
-            debug("Got no data at all!  Bad.");
+            Debug("Got no data at all!  Bad.");
 
             return;
          }
@@ -259,23 +259,23 @@ messages:
       {
          if iFakeData <> 0
          {
-            debug("Got both real data and fake data!  Shouldn't!");
+            Debug("Got both real data and fake data!  Shouldn't!");
 
             return;
          }
          
-         iData = nth(lData,3);
-         iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
+         iData = Nth(lData,3);
+         iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       }
 		
-      appendTempString(weapattguildhalldesc);
+      AppendTempString(weapattguildhalldesc);
         
-      oRoom = send(SYS,@FindRoomByNum,#num=iData);
-      appendTempString(send(oRoom,@GetName));
-      appendTempString(weapattguildhalldesc2);
+      oRoom = Send(SYS,@FindRoomByNum,#num=iData);
+      AppendTempString(Send(oRoom,@GetName));
+      AppendTempString(weapattguildhalldesc2);
       
-      AppendTempSTring(send(self,@GetPowerDesc,#iPower=iPower));
-      appendTempString(weapattguildhalldesc3);
+      AppendTempSTring(Send(self,@GetPowerDesc,#iPower=iPower));
+      AppendTempString(weapattguildhalldesc3);
          
       return;
    }
@@ -293,8 +293,8 @@ messages:
       iRoom_num = $;
       while iRoom_num = $
       {
-         iRoom_num = random(RID_GUILDH_MIN,RID_GUILDH_MAX);
-         if send(SYS,@FindRoomByNum,#num=iRoom_num) = $
+         iRoom_num = Random(RID_GUILDH_MIN,RID_GUILDH_MAX);
+         if Send(SYS,@FindRoomByNum,#num=iRoom_num) = $
          {
             iRoom_num = $;
          } 			

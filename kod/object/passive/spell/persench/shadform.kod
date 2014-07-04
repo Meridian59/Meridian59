@@ -72,14 +72,17 @@ messages:
       }
 
       % check for lighting effect already applied
-      iDrawfX = Send(oTarget,@GetPlayerDrawFX);
-
-      if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
-         OR (iDrawFX & DRAWFX_SECONDTRANS) = DRAWFX_SECONDTRANS
+      if oTarget <> who
       {
-	      Send(who,@MsgSendUser,#message_rsc=shadowform_already_affected);
+         iDrawfX = Send(oTarget,@GetPlayerDrawFX);
 
-	      return FALSE;
+         if (iDrawFX & DRAWFX_BLACK) = DRAWFX_BLACK
+            OR (iDrawFX & DRAWFX_SECONDTRANS) = DRAWFX_SECONDTRANS
+         {
+             Send(who,@MsgSendUser,#message_rsc=shadowform_already_affected);
+
+             return FALSE;
+         }
       }
 
       propagate;
@@ -132,10 +135,13 @@ messages:
 
       iLight = send(send(who,@GetOwner),@GetRoomLight);
 
-      % A player attacker's light determines how well they can see the enchanted, too.
-      if isClass(what,&Player)
+      if what <> $
       {
-         iLight =  iLight + send(what,@GetPlayerLightLevel);
+         % A player attacker's light determines how well they can see the enchanted, too.
+         if isClass(what,&Player)
+         {
+            iLight =  iLight + send(what,@GetPlayerLightLevel);
+         }
       }
 
       % Give bonuses if we're in a darker room.

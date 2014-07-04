@@ -38,7 +38,7 @@ constants:
 
 resources:
  
-   itematt_misdirection_desc = "  An illusion has been cast on this item, hiding it's true abilities."
+   itematt_misdirection_desc = " An illusion has been cast on this item, hiding it's true abilities."
    iaMisdirection_gone = "The illusion around your %s fades, and you can see it for what it truly is."
    
 classvars:
@@ -57,9 +57,9 @@ messages:
 
    Constructor()
    {
-      %% post this so it's done after all of the 
+      %% Post this so it's done after all of the 
       %% item atts have been constructed by recreate.      
-      post(self,@BuildFakeAttChoicesList);
+      Post(self,@BuildFakeAttChoicesList);
       
       return;
    }
@@ -68,8 +68,9 @@ messages:
    {
       local iRand;
 
-      iRand = random(1,length(plFake_Att_Choices));
-      return nth(plFake_Att_Choices,iRand);
+      iRand = Random(1,length(plFake_Att_Choices));
+
+      return Nth(plFake_Att_Choices,iRand);
    }
 
    BuildFakeAttChoicesList()
@@ -77,11 +78,11 @@ messages:
       local i;
 
       plFake_Att_Choices = $;
-      for i in send(SYS,@GetItemAttributes)
+      for i in Send(SYS,@GetItemAttributes)
       {
-         if send(i,@CanBeSpoofed)
+         if Send(i,@CanBeSpoofed)
          {
-            plFake_Att_Choices = cons(send(i,@GetItemAttNumber),plFake_Att_Choices);
+            plFake_Att_Choices = cons(Send(i,@GetItemAttNumber),plFake_Att_Choices);
          }
       }
       
@@ -92,48 +93,51 @@ messages:
    {
       local oItemAtt, iFakeAttNum, iFakeData;
       
-      iFakeAttNum = nth(lData,3);
-      oItemAtt = send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
+      iFakeAttNum = Nth(lData,3);
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
 
       iFakeData = $;
       if length(lData) > 3
       {
-         iFakeData = nth(lData,4);
+         iFakeData = Nth(lData,4);
       }
 
-      send(oItemAtt,@AppendDesc,#oItem=oItem,#iFakeData=iFakeData,
-           #iFakePower=send(self,@TranslatePowerFromCompound,#iCompound=first(lData)));
+      Send(oItemAtt,@AppendDesc,#oItem=oItem,#iFakeData=iFakeData,
+           #iFakePower=Send(self,@TranslatePowerFromCompound,#iCompound=first(lData)));
            
       return;
    }
       
-   AddMisdirectionToItem(iFakeAttNum = $, timer_duration = $, oItem = $)
+   AddMisdirectionToItem(iFakeAttNum=$,timer_duration=$,oItem=$)
    {
       local oItemAtt, iFakeAttData;
       
       if oItem = $ or timer_duration = $
       {
-         DEBUG("Never should have happened!");
+         Debug("Never should have happened!");
          
          return;
       }
 
-      if iFakeAttNum = $  { iFakeAttNum = send(self,@GetFakeAttNum,#oItem=oItem); }
-      
-      oItemAtt = send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
-      if not send(oItemAtt,@CanBeSpoofed)
+      if iFakeAttNum = $
       {
-         DEBUG("Spoofing unspoofable attribute!  Impossible!");
+         iFakeAttNum = Send(self,@GetFakeAttNum,#oItem=oItem);
+      }
+      
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
+      if not Send(oItemAtt,@CanBeSpoofed)
+      {
+         Debug("Spoofing unspoofable attribute!  Impossible!");
          
          return;
       }
       
-      %% this returns $ if something does not need data.
-      iFakeAttData = send(oItemAtt,@FakeAttData);
+      %% This returns $ if something does not need data.
+      iFakeAttData = Send(oItemAtt,@FakeAttData);
       
-      if send(self,@ReqAddToItem,#oItem=oItem)
+      if Send(self,@ReqAddToItem,#oItem=oItem)
       {
-         send(self,@AddToItem,#oItem=oItem,#state1=iFakeAttNum,
+         Send(self,@AddToItem,#oItem=oItem,#state1=iFakeAttNum,
               #state2=iFakeAttData,#timer_duration=timer_duration);
       }
 
@@ -143,7 +147,12 @@ messages:
    SetPrimaryState(state1=$)
    "This points to the itematt that the item is pretending to have."
    {
-       if state1 = $ { DEBUG("SetPrimaryState called with nil state!"); return FALSE; }
+      if state1 = $
+      {
+         Debug("SetPrimaryState called with nil state!");
+
+         return FALSE;
+      }
 
        return state1;
    }
@@ -177,14 +186,15 @@ messages:
 
       SetNth(lData,2,$);   %% timer is gone, now remove reference
       
-      oPlayer = send(oItem,@GetOwner);
-      if oPlayer <> $ and isClass(oPlayer,&User)
+      oPlayer = Send(oItem,@GetOwner);
+      if oPlayer <> $
+         AND IsClass(oPlayer,&User)
       {
-         send(oPlayer,@MsgSendUser,#message_rsc=iamisdirection_gone,
+         Send(oPlayer,@MsgSendUser,#message_rsc=iamisdirection_gone,
               #parm1=send(oItem,@GetName));
       }
 
-      send(self,@RemoveFromItem,#oItem=oItem,#lData=lData);
+      Send(self,@RemoveFromItem,#oItem=oItem,#lData=lData);
 
       return;
    }
@@ -195,14 +205,14 @@ messages:
    {  
       local lData, iData, iFakeData, oItemAtt;
       
-      lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+      lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
       
-      iData = nth(lData,2);    %% this is the IA_ of the faked attribute
-      iFakeData = nth(lData,3);  %% this is excess data that might be needed
+      iData = Nth(lData,2);    %% this is the IA_ of the faked attribute
+      iFakeData = Nth(lData,3);  %% this is excess data that might be needed
                                  %% example: see weapattfaction
       
-      oItemAtt = send(SYS,@FindItemAttByNum,#num=iData);   
-      send(oItemAtt,@ItemBuildDescName,#oItem=oItem,#iFakeData=iFakeData);
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iData);   
+      Send(oItemAtt,@ItemBuildDescName,#oItem=oItem,#iFakeData=iFakeData);
       
       return;
    }

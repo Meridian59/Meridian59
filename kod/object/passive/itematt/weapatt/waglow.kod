@@ -26,7 +26,7 @@ constants:
 
 resources:
 
-   weapattglowing_desc = "  It glows softly like a torch."
+   weapattglowing_desc = " It glows softly like a torch."
    weapattglowing_name = "glowing %s"
 
    waglowing_gone = "Your %s stops glowing."
@@ -52,9 +52,10 @@ messages:
 
    DMCreateItemAtt(who=$,string=$,oWeapon=$)
    {      
-      if who = $ OR string= $ OR oWeapon = $
+      if who = $ OR string = $ OR oWeapon = $
       {
-         DEBUG("BAD data sent to DMCreateItemAtt!");
+         Debug("BAD data sent to DMCreateItemAtt!");
+
          return FALSE;
       }
 
@@ -102,7 +103,7 @@ messages:
       return;
    }
 
-   AddSelfToRandomItem(oItem = $)
+   AddSelfToRandomItem(oItem=$)
    {
       local iGlowLevel;
 
@@ -143,7 +144,7 @@ messages:
       return;
    }
 
-   RemoveFromItem(oItem=$, lData=$)
+   RemoveFromItem(oItem=$,lData=$)
    {
       local oPlayer, oRoom;
 
@@ -165,7 +166,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

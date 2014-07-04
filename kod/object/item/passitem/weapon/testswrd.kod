@@ -1,0 +1,165 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TestSword is Weapon
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   testsword_name_rsc = "test sword"
+   testsword_icon_rsc = huntswrd.bgf
+
+   testsword_desc_rsc = \
+      "You're not sure how much damage you could actually do with this thing.\n\n"
+      "Use ChangeWeaponSkill to change the weapon to use another skill. "
+      "SKID_PROFICIENCY_SWORD is fencing (default), change to either AXE, HAMMER, "
+      "MACE, SHORT_SWORD or SCIMITAR as required.\n\nUse SetWeaponDamageType(what=$) "
+      "to change the weapon's damage type to that of the desired weapon, by "
+      "sending the following numbers:\n"
+      "Hammer and mace (bludgeon): 1\n"
+      "Sword (covers long and short; thrust): 2\n"
+      "Scimitar, axe or riija sword (slash): 3\n"
+      "Nerudite (thrust and nerudite dmg): 4\n"
+      "Mystic (thrust and magic dmg): 5\n"
+      "Other options can be edited in the object properties."
+
+   testsword_window_overlay_rsc = povhunts.bgf
+   testsword_player_overlay = huntswov.bgf
+
+classvars:
+   vrName = testsword_name_rsc
+   vrIcon = testsword_icon_rsc
+   vrDesc = testsword_desc_rsc
+
+   % viWeaponType and viWeaponQuality still check hit roll in weapon.kod, everything else is overrided here.
+   viWeaponType = WEAPON_TYPE_THRUST
+   viWeaponQuality = WEAPON_QUALITY_NORMAL
+
+
+   viValue_average = 800
+   viWeight = 80
+   viBulk = 60
+
+   vrWeapon_window_overlay = testsword_window_overlay_rsc
+   vrWeapon_overlay = testsword_player_overlay
+
+   viGround_group = 1
+   viInventory_group = 3
+   viBroken_group = 2
+
+properties:
+
+   piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST
+   piBaseDamage = 10
+   piRange = 4
+   piDisarmBonus = 0
+   piSpellModifier = 0
+   viProficiency_Needed = SKID_PROFICIENCY_SWORD
+   
+   messages:
+
+   GetBaseDamage(who=$,target=$)
+   {
+      return piBaseDamage;
+   }
+
+   GetDamage(target=$)
+   {
+      local iDamage, i, oWeapAtt;
+
+      % First, get base damage.
+      iDamage = send(self,@GetBaseDamage,#who=poOwner,#target=target);
+
+      % Then check weapon attributes
+      %  Weapon Attributes in general should only + or - damage - no multipliers!
+      for i in plItem_Attributes
+      {
+         oWeapAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
+         if isClass(oWeapAtt,&WeaponAttribute)
+         {
+            iDamage = send(oWeapAtt,@ModifyDamage,#damage=iDamage,#wielder=poOwner,
+                           #target=target,#lData=i);
+         }
+      }
+
+      iDamage = iDamage + piDamageBonus;
+
+      % send(send(poOwner,@getOwner),@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+      %      #string=weapon_do_damage,#parm1=iDamage,#parm2=baseDamage);
+
+      return iDamage;
+   }
+
+   GetRange()
+   {
+      return piRange;
+   }
+   
+   GetDisarmBonus()
+   {
+      return piDisarmBonus;
+   }
+
+   GetBaseSpellModifier()
+   {
+      return piSpellModifier;
+   }
+   
+   GetWeaponSkill()
+   {
+      return viProficiency_Needed;
+   }
+   
+   ChangeWeaponSkill(what=SKID_PROFICIENCY_SWORD)
+   {
+      % Defaults to fencing
+      
+      viProficiency_Needed = what;
+	  return viProficiency_Needed;
+   }
+
+   SetWeaponDamageType(what=$)
+   {
+      % Sets the test weapon's damage type to that of the requested weapon.
+
+      if what=1
+      {
+         piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_BLUDGEON;
+      }
+
+      if what=2
+      {
+         piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_THRUST;
+      }
+
+      if what=3
+      {
+         piAttack_type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_SLASH;	  
+      }
+
+      if what=4
+      {
+         piAttack_type = ATCK_WEAP_THRUST+ATCK_WEAP_NERUDITE;
+      }
+
+      if what=5
+      {
+         piAttack_type = ATCK_WEAP_MAGIC+ATCK_WEAP_THRUST;
+      }
+	  
+      return piAttack_type;
+   }
+	  
+	  
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

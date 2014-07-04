@@ -17,7 +17,7 @@ WeapAttVamper is WeaponAttribute
 %  Form is: 
 %
 %       [ WA_Vamper]
-%	
+%   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
@@ -57,39 +57,44 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of blinding target with any hit."
    {
       local oSpell;
-      if random(1,100) <= piEffect_percent
+      if Random(1,100) <= piEffect_percent
       {
-	 send(wielder,@GainHealth,#amount = bound(damage,0,8));
-    	 send(wielder, @MsgSendUser, #message_rsc = vamper_worked,
-	    #parm1=send(target,@getcapdef),#parm2=send(target,@GetName),
-	    #parm3=send(target,@GetHisHer));
-    	 send(target, @MsgSendUser, #message_rsc = vamper_worked_target,
-	    #parm1=send(wielder,@getcapdef),#parm2=send(wielder,@GetName),
-	    #parm3=send(wielder,@GetHisHer));
+         Send(wielder,@GainHealth,#amount=Bound(damage,0,8));
+         Send(wielder,@MsgSendUser,#message_rsc=vamper_worked,
+            #parm1=send(target,@GetCapDef),#parm2=Send(target,@GetName),
+            #parm3=send(target,@GetHisHer));
+         Send(target,@MsgSendUser,#message_rsc=vamper_worked_target,
+            #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName),
+            #parm3=Send(wielder,@GetHisHer));
 
 
       }
+
       return Damage;
    }
 
 
    ItemReqUse(oItem=$,oPlayer=$)
-  {
-      if send(oPlayer,@GetKarma) > -30
+   {
+      if Send(oPlayer,@GetKarma) > -30
       {
-	 send(oPlayer, @MsgSendUser, #message_rsc = Vamper_fail_use_karma);
-	 return FALSE;	    
+         Send(oPlayer,@MsgSendUser,#message_rsc=Vamper_fail_use_karma);
+
+         return FALSE;       
       }
-      if send(oItem,@GetProf,#who=oPlayer) < 50      
+      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50      
       {
-	 send(oPlayer, @MsgSendUser, #message_rsc = Vamper_fail_use,
-	    #parm1=send(oItem,@getdef),#parm2=send(oItem,@GetName));
-	 return FALSE;      %% this person needs 50% in the weapon's proficiency to use
+         Send(oPlayer, @MsgSendUser, #message_rsc = Vamper_fail_use,
+            #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
+
+         return FALSE;  %% this person needs 50% in the weapon's proficiency to use
       }
+
       return TRUE;
    }
 

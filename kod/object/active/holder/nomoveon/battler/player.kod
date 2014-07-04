@@ -714,6 +714,7 @@ resources:
    player_logged_off_wav_rsc = player_logout2.wav
    
    death_rift_stayed_too_long = "Having lingered too long while still alive, you find yourself ejected back into reality!"
+   second_wind_finished = "You feel more relaxed as your second wind dissipates."
    
    player_monster_attack_string = "monster attack"
    player_no_weapon_string = "no weapon"
@@ -914,6 +915,9 @@ properties:
    % The user's string description, typed when created (and editable in game).
    psPlayerDescription = $
 
+   % Keeps track of whether a player has an evil twin following him.
+   pbHasEvilTwin = FALSE
+
    % Draw effects flags
    piDrawFX = 0
 
@@ -1053,6 +1057,8 @@ messages:
       {
          DeleteTimer(ptSecondWind);
          ptSecondWind = $;
+         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+                 #type=ENCHANTMENT_PLAYER);
       }
       
       if ptCrystalizeManaSurgeTimer <> $
@@ -1203,7 +1209,9 @@ messages:
       return FALSE;
    }
 
-   ResetPlayerFlagList()
+   % Added a nodraw paramater to this function to deal with buggy Jala implementation
+   % Can remove this and 3 instances of it used in player.kod when Jala fixed   
+   ResetPlayerFlagList(nodraw=FALSE)
    {
       local i;
 	  
@@ -1241,9 +1249,12 @@ messages:
          Send(poOwner,@SomethingChanged,#what=self);
       }
       
-      Post(self,@DrawOffense);
-      Post(self,@DrawDefense);
-	  
+      if nodraw=FALSE
+      {
+         Post(self,@DrawOffense);
+         Post(self,@DrawDefense);
+      }
+
       return;
    }
    
@@ -1329,6 +1340,9 @@ messages:
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
       Send(self,@SetVigorRestThreshold,#amount=iAmount);
       Send(self,@NewVigor);
+      Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
+      Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+                 #type=ENCHANTMENT_PLAYER);
       
       return;
    }
@@ -1642,7 +1656,8 @@ messages:
          AND NOT (piFlags & PFLAG_TUTORIAL)
       {
          Send(self,@SetPlayerFlag,#flag=PFLAG_TUTORIAL,#value=TRUE);
-         if StringEqual(psHonor,player_newbie_honor_string)
+         if psHonor <> $
+            AND StringEqual(psHonor,player_newbie_honor_string)
          {
             Send(self,@SetHonorString);
          }
@@ -1929,6 +1944,14 @@ messages:
       % Restart Health and Mana timers
       Send(self,@NewHealth);
       Send(self,@NewMana);
+ 
+      % Add second wind icon if timer still active
+      if ptSecondWind <> $
+      {
+      Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
+            #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
+      
       
       Send(self,@SendUserAllWindowOverlays);
 
@@ -2818,7 +2841,22 @@ messages:
 
             % TODO: i no longer exists at this point?  EndEnchantment removing it?
             plEnchantments = DelListElem(plEnchantments,i);
-            Send(self,@ResetPlayerFlagList,#who=self);
+
+            if IsClass(Nth(i,2),&Mirth)
+               OR IsClass(Nth(i,2),&Melancholy)
+            {
+               Send(self,@ResetPlayerFlagList,#nodraw=TRUE,#who=self);
+            }
+            else
+            {
+               Send(self,@ResetPlayerFlagList,#who=self);
+            }
+
+            if poOwner <> $
+            {
+               Send(poOwner,@SomethingChanged,#what=self);
+            }
+
             if poOwner <> $
             {
                Send(poOwner,@SomethingChanged,#what=self);
@@ -2892,8 +2930,18 @@ messages:
          lNew_enchantment = [oTimer, what, state];
       }
 
-      plEnchantments = Cons(lNew_enchantment,plEnchantments);
-      Send(self,@ResetPlayerFlagList,#who=self);
+      plEnchantments = Cons(lNew_enchantment,plEnchantments);      
+
+      if IsClass(what,&Mirth)
+         OR IsClass(what,&Melancholy)
+      {
+         Send(self,@ResetPlayerFlagList,#nodraw=TRUE,#who=self);
+      }
+      else
+      {
+         Send(self,@ResetPlayerFlagList,#who=self);
+      }
+
       if addicon
       {
          Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_PLAYER);
@@ -2977,8 +3025,26 @@ messages:
 
       for i in plEnchantments
       {
-         Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
+         if NOT IsClass(Nth(i,2),&RadiusEnchantment)
+         {
+            Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
+         }
       }
+      
+      return;
+   }
+   
+   RemoveAllRadiusEnchantments(report=TRUE)
+   "Remove all current radius enchantments."
+   {
+      local i;
+      
+      for i in plRadiusEnchantments
+      {
+         Send(self,@RemoveRadiusEnchantment,#what=Nth(i,1),#iPower=Nth(i,2),#caster=Nth(i,3),#report=report);
+      }
+      
+      plRadiusEnchantments = $;
       
       return;
    }
@@ -3018,19 +3084,22 @@ messages:
       {
          if First(i) <> $
          {
-            iTime = GetTimeRemaining(First(i));
-            DeleteTimer(First(i));
-
-            % If it's a negative enchantment, add a bit to the time in
-            %  order to prevent people from just "flashing" on and off
-            %  to wait out an enchantment and be relatively unhittable.
-            if Send(Nth(i,2),@IsHarmful)
+            if IsClass(Nth(i,2),&Boon)=FALSE
             {
-               % Time is measured in milliseconds, 3000 = 3 seconds.
-               iTime = iTime + 3000;
-            }
+			   iTime = GetTimeRemaining(First(i));
+               DeleteTimer(First(i));
 
-            SetNth(i,1,iTime);
+               % If it's a negative enchantment, add a bit to the time in
+               %  order to prevent people from just "flashing" on and off
+               %  to wait out an enchantment and be relatively unhittable.
+               if Send(Nth(i,2),@IsHarmful)
+               {
+                  % Time is measured in milliseconds, 3000 = 3 seconds.
+                  iTime = iTime + 3000;
+               }
+
+               SetNth(i,1,iTime);
+            }
          }
       }
 
@@ -3044,30 +3113,33 @@ messages:
 
       for i in plEnchantments
       {
-         state = $;
-         if length(i) > 2
+         if IsClass(Nth(i,2),&Boon)=FALSE
          {
-            state = Nth(i,3);
-         }
+            state = $;
+            if length(i) > 2
+            {
+               state = Nth(i,3);
+            }
 
-         iTime = first(i);
+            iTime = first(i);
          
-         if iTime = $ OR iTime < 1
-         {
-            Debug("Trying to make a negative timer!",
-                  Send(Nth(i,2),@GetTrueName));
-         }
+            if iTime = $ OR iTime < 1
+            {
+               Debug("Trying to make a negative timer!",
+                     Send(Nth(i,2),@GetTrueName));
+            }
 
-         if Send(Nth(i,2),@IsPeriodic,#state=state,#who=self)
-         {
-            SetNth(i,1,CreateTimer(self,@PeriodicEnchantmentTimer,iTime));
-         }
-         else
-         {
-            SetNth(i,1,CreateTimer(self,@EnchantmentTimer,iTime));
-         }
+            if Send(Nth(i,2),@IsPeriodic,#state=state,#who=self)
+            {
+               SetNth(i,1,CreateTimer(self,@PeriodicEnchantmentTimer,iTime));
+            }
+            else
+            {
+               SetNth(i,1,CreateTimer(self,@EnchantmentTimer,iTime));
+            }
           
-         Send(Nth(i,2),@RestartEnchantmentEffect,#who=self,#state=state);
+            Send(Nth(i,2),@RestartEnchantmentEffect,#who=self,#state=state);
+         }
       }
       
       Send(self,@ResetPlayerFlagList,#who=self);
@@ -3149,7 +3221,16 @@ messages:
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),#type=ENCHANTMENT_PLAYER);
 
             plEnchantments = DelListElem(plEnchantments,i); 
-            Send(self,@ResetPlayerFlagList,#who=self);
+
+            if IsClass(what,&Mirth)
+               OR IsClass(what,&Melancholy)
+            {
+               Send(self,@ResetPlayerFlagList,#nodraw=TRUE,#who=self);
+            }
+            else
+            {
+               Send(self,@ResetPlayerFlagList,#who=self);
+            }
          }
       }
       
@@ -3835,9 +3916,14 @@ messages:
             
             % Check status and safety against the owner of the reflection.
             if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=Send(victim,@GetCaster))
-               OR NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),#report=report)
             {
-               return FALSE;
+               if NOT IsClass(oRoom,&GuildHall)
+               {
+                  if NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),#report=report)
+                  {
+                     return FALSE;
+                  }
+               }
             }
          }
             
@@ -4490,18 +4576,20 @@ messages:
       {
          iOffense = Send(i,@ModifyHitRoll,#who=self,#what=what,
                          #hit_roll=iOffense,#stroke_obj=stroke_obj);
-      }
-      
-      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
-      {
-         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
-         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
-      }
-      
+      }      
+
       if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Mirth)
       {
          lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Mirth);
-         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,#hit_roll=iOffense);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,
+                        #hit_roll=iOffense,#lRadiusState=lRadiusState);
+      }
+
+      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Melancholy)
+      {
+         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Melancholy);
+         iOffense = Send(Nth(lRadiusState,1),@ModifyHitRoll,#who=self,#what=what,
+                        #hit_roll=iOffense, #lRadiusState=lRadiusState);
       }
 
       iOffense = iOffense + Send(Send(SYS,@GetParliament),
@@ -4922,16 +5010,17 @@ messages:
          }
       }
 
-      Send(self,@LoseHealth,#amount=damage);
-	  
-	  oWeapon = Send(what,@GetWeapon);
+      Send(self,@LoseHealth,#amount=damage);	  
 	     
 	  if IsClass(what,&Monster)
+         OR IsClass(what,&Necklace)
+         OR IsClass(what,&WeapAttPunisher)		 
 	  {
 	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
 	  }
 	  else
 	  {
+         oWeapon = Send(what,@GetWeapon);
 	     if oWeapon <> $
 	     {
             RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
@@ -8465,16 +8554,16 @@ messages:
       if Send(SYS,@GetChaosNight)
       {
          % It's a frenzy!  Give us a leg up.
-         piHealth = piMax_Health / 2;
-         piMana = piMax_Mana / 2;
-         piVigor = 100;
+         piHealth = 4*(piMax_Health/5);
+         piMana = 4*(piMax_Mana/5);
+         piVigor = 200;
       }
       else
       {
          % We're not in a frenzy.  Give us the bare minimums.
          piMana = 1;
          piHealth = 1;
-         piVigor = bound(piVigor/4,0,50);   
+         piVigor = bound(piVigor/4,15,50);   
       }
       
       Send(self,@NewHealth);
@@ -8983,6 +9072,22 @@ messages:
       return;
    }
 
+   VerifyOverlays()
+   "Removes overlays of any overlaid item whose owner is not the player."
+   {
+      local i;
+      
+      for i in plOverlays
+      {
+         if Send(i,@GetOwner) <> self
+         {
+            Send(self,@RemoveOverlay,#what=i);
+         }
+      }
+      
+      return;
+   }
+   
    SetOverlay(what = $)
    "Adds <what> to plOverlays, and tells everyone we changed."
    {
@@ -10683,6 +10788,9 @@ messages:
       {
          DeleteTimer(ptSecondWind);
          ptSecondWind = $;
+         Send(self,@MsgSendUser,#message_rsc=second_wind_finished);
+         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSkillByNum,#num=SKID_SECOND_WIND),
+                 #type=ENCHANTMENT_PLAYER);
       }
 
       iAmount = 80 + ((Send(self,@GetSkillAbility,#Skill_num=SKID_SECOND_WIND) + 1) / 5);
@@ -10794,6 +10902,8 @@ messages:
 
       % Reset death costs to 0.
       piDeathCost = 0;
+
+      pbHasEvilTwin = FALSE;
 
       return Send(SYS,@GetSuccessRsc);
    }
@@ -11581,16 +11691,28 @@ messages:
       
       return;
    }
-      
+
    FactionServiceTimer(renew=TRUE)
    {
-      local iHistory;
-      
+      % Attempts to delete any existing timer, then passes to FactionServiceRenew
+      % which creates a new timer if conditions are met.
+
       if ptFactionTimer <> $
       {
          DeleteTimer(ptFactionTimer);
          ptFactionTimer = $;
       }
+      
+      Send(Self,@FactionServiceRenew,#renew=renew);
+      return;
+   }
+
+   FactionServiceRenew(renew=TRUE)
+   {
+      % This function now handles renewal of ptFactionTimer and should only be accessed
+      % from FactionServiceTimer() after the $ check.
+ 
+      local iHistory;
       
       if piFaction = FACTION_NEUTRAL
       {
@@ -11645,12 +11767,12 @@ messages:
       if renew AND Send(SYS,@GetParliament) <> $
          AND (NOT Send(Send(SYS,@GetParliament),@IsShutdown))
       {
-         ptFactionTimer = CreateTimer(self,@FactionServiceTimer,FACTION_UPDATE_TIME);
+         ptFactionTimer = CreateTimer(self,@FactionServiceRenew,FACTION_UPDATE_TIME);
       }
       
       return;
    }
-
+   
    PlayerIsIntriguing()
    "Evaluates player and sets the PFLAG_INTRIGUING"
    {
@@ -11805,6 +11927,21 @@ messages:
            #parm1=Send(factliege,@GetDef),#parm2=Send(factliege,@GetName));
            
       return TRUE;
+   }
+
+   ResignLoyaltyFailed()
+   {
+      % Don't boot the player unless they've been factioned longer
+      % than 5400 seconds (90 minutes)	  
+
+      if piFactionServiceUpdate < 5400
+      {  
+         return;
+      }
+
+      Send(self,@ResignFaction);
+      
+      return;
    }
 
    ResignFaction()
@@ -13237,10 +13374,15 @@ messages:
    }
 
    RemoveControlledMinion(minion = $)
-   {	  
-      plControlledMinions = DelListElem(plControlledMinions,minion);	
-      return;	   
+   {  
+      if plControlledMinions <> $
+      {
+         plControlledMinions = DelListElem(plControlledMinions,minion);	
+      }
+
+      return;		 
    }
+   
    GetControlledMinions()
    {	   
       return plControlledMinions;
@@ -13292,6 +13434,30 @@ messages:
       
       return iArmor;
    }
-  
+
+   CanEvilTwin()
+   {
+      return TRUE;
+   }
+
+   AddEvilTwin()
+   {
+      pbHasEvilTwin = TRUE;
+
+      return;
+   }
+
+   RemoveEvilTwin()
+   {
+      pbHasEvilTwin = FALSE;
+
+      return;
+   }
+
+   HasEvilTwin()
+   {
+      return pbHasEvilTwin;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

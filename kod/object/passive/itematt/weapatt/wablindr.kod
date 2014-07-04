@@ -27,7 +27,7 @@ constants:
 
 resources:
 
-   weapattblinder_desc = "  Q's insignia is emblazoned on the metal of the weapon."      
+   weapattblinder_desc = " Q's insignia is emblazoned on the metal of the weapon."      
    blinder_fail_use = "You are not yet ready to use %s%s."
    blinder_worked = "%s%s stumbles away, screaming and clutching %s eyes!"
    blinder_dm = "blinder"
@@ -53,10 +53,10 @@ messages:
    ItemReqUse(oItem=$,oPlayer=$)
    {
       %% this person needs 50% in the weapon's proficiency to use
-      if send(oItem,@GetProf,#who=oPlayer) < 50      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50      
       {
-         send(oPlayer, @MsgSendUser, #message_rsc = blinder_fail_use,
-              #parm1=send(oItem,@getdef),#parm2=send(oItem,@GetName));
+         Send(oPlayer,@MsgSendUser,#message_rsc=blinder_fail_use,
+              #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
               
          return FALSE;      
       }
@@ -71,21 +71,21 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of blinding target with any hit."
    {
       local oSpell;
-      if random(1,100) < piEffect_percent
+      if Random(1,100) < piEffect_percent
       {
-         oSpell = send(SYS,@FindSpellByNum,#num=SID_blind);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_blind);
          
          %% no duplicates
-         if not Send(target,@IsEnchanted,#what=oSpell)
+         if NOT Send(target,@IsEnchanted,#what=oSpell)
          {	          
-            send(oSpell,@CastSpell,#who=self,#ltargets=[target],#iSpellPower=50);
-            send(wielder, @MsgSendUser, #message_rsc = blinder_worked,
-                 #parm1=send(target,@GetCapDef),#parm2=send(target,@GetName),
-                 #parm3=send(target,@GetHisher));
+            Send(oSpell,@CastSpell,#who=self,#ltargets=[target],#iSpellPower=50);
+            Send(wielder,@MsgSendUser,#message_rsc=blinder_worked,
+                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName),
+                 #parm3=Send(target,@GetHisher));
          }
       }
 

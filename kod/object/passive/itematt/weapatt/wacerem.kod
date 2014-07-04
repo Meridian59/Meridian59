@@ -27,7 +27,7 @@ constants:
    include blakston.khd   
 
 resources:
-   weapattcerem_desc = "  Beautiful and ornate, this weapon is obviously "
+   weapattcerem_desc = " Beautiful and ornate, this weapon is obviously "
       "unsuitable for blood combat, though it might provide "
    weapattcerem_desc2 = " edge in games and tourneys."   
    weapatt_ceremonial_name = "ceremonial %s"
@@ -59,9 +59,14 @@ messages:
 
    InitialPower(oItem=$)
    {
-      if oItem = $ { DEBUG("This shouldn't have happened!"); return; }
+      if oItem = $
+      {
+         Debug("This shouldn't have happened!");
+         
+         return;
+      }
 
-      return send(self,@InitialWeaponPower,#oItem=oItem);
+      return Send(self,@InitialWeaponPower,#oItem=oItem);
    }
   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,32 +75,32 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData=$)
+   ModifyHitRoll(hitroll=0,target=$,wielder=$,lData=$)
    "Give a +power bonus in the arena, but -power everywhere else."
    {
       local oRoom, iPower;
 
-      iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-      iPower = send(self,@DecipherHitRollFromPower,#iPower=iPower);
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+      iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
-      oRoom = send(wielder,@getowner);
-      if send(oRoom,@checkroomflag,#flag=ROOM_SAFE_DEATH)
+      oRoom = Send(wielder,@GetOwner);
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
       {  
       	 return (hitroll + iPower);  
       }
       return (hitroll - iPower);
    }
 
-   ModifyDamage(damage = 0, target = $, wielder = $, lData=$)
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Give a +power bonus in the arena, but -power everywhere else."
    {
       local oRoom, iPower;
       
-      iPower = send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
-      iPower = send(self,@DecipherDamageFromPower,#iPower=iPower);
+      iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
+      iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
-      oRoom = send(wielder,@getowner);
-      if send(oRoom,@checkroomflag,#flag=ROOM_SAFE_DEATH)
+      oRoom = Send(wielder,@GetOwner);
+      if Send(oRoom,@checkroomflag,#flag=ROOM_SAFE_DEATH)
       {  
       	 return (damage + iPower);  
       }

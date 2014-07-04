@@ -75,24 +75,30 @@ messages:
    {
       local sString;
 		
-      if state1 = $ { DEBUG("SetPrimaryState called with nil state!"); return FALSE; }
+      if state1 = $
+      {
+         Debug("SetPrimaryState called with nil state!");
+
+         return FALSE;
+      }
 
       %% state1 is a temporary string.  Create a new perm string, or recycle
       %% an existing one.
 
       if plDiscarded_Strings = $
       {
-	 Debug("Making New String");
-	 sString = CreateString();
-	 SetString(sString,state1);
+         Debug("Making New String");
+         sString = CreateString();
+         SetString(sString,state1);
       }
       else
       {
-	 Debug("Recycling an existing string");
-	 sString = First(plDiscarded_Strings);
-	 plDiscarded_Strings = DelListElem(plDiscarded_Strings,sString);
-	 SetString(sString,state1);
+         Debug("Recycling an existing string");
+         sString = First(plDiscarded_Strings);
+         plDiscarded_Strings = DelListElem(plDiscarded_Strings,sString);
+         SetString(sString,state1);
       }
+
       return sString;
    }
 
@@ -100,10 +106,11 @@ messages:
    {
       local lData, sString, i, bFound;
 		
-      lData = send(oItem,@GetAttributeData,#ItemAtt = viItem_Att_Num);
-      sString = nth(lData,2);
+      lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
+      sString = Nth(lData,2);
 
-      plDiscarded_Strings = cons(sString,plDiscarded_Strings);
+      plDiscarded_Strings = Cons(sString,plDiscarded_Strings);
+
       propagate;
    }
    
@@ -122,19 +129,18 @@ messages:
    {  
       local lData, sName;
       
-      lData = send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
+      lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
       
-      sName = nth(lData,2);	 %% a string with the faked name
+      sName = Nth(lData,2);   %% a string with the faked name
             
-      addpacket(4,sName);
+      Addpacket(4,sName);
       return;
    }
 
-    GetNamePriority()
+   GetNamePriority()
    {
       return 12;
    }		
-	     
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

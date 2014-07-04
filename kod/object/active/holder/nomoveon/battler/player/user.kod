@@ -137,7 +137,7 @@ resources:
    user_stat_offense = "Offense"
    user_stat_defense = "Defense"
    user_stat_armor = "Armor"
-   user_stat_hpgainchance = istreng.bgf
+   user_stat_hpgainchance = exp.bgf
    user_resist_magic = "Magic Resist"
    user_resist_fire = "Fire Resist"
    user_resist_shock = "Shock Resist"
@@ -568,7 +568,11 @@ messages:
          AND action <= UA_WRY
       {
          piAction = action;
-         Send(poOwner,@SomethingDidAction,#what=self,#action=action);
+         
+         if poOwner <> $
+         {
+		    Send(poOwner,@SomethingDidAction,#what=self,#action=action);
+         }
       }
 
       return;
@@ -1882,7 +1886,7 @@ messages:
       AddPacket(1,BP_USERCOMMAND,1,UC_GUILDINFO);
       AddPacket(6,Send(poGuild,@GetName));
       lHall = Send(poGuild,@GetGuildHall);
-      if lHall <> $
+      if lHall <> $ AND Send(poGuild,@GetRank,#who=self) = RANK_MASTER
       {
          AddPacket(1,1);
          AddPacket(6,Send(poGuild,@GetPassword));
@@ -3142,9 +3146,11 @@ messages:
                type1 = STANDARD_RESOURCE,type2 = STANDARD_RESOURCE,
                type3 = STANDARD_RESOURCE,type4 = STANDARD_RESOURCE,
                type5 = STANDARD_RESOURCE,type6 = STANDARD_RESOURCE,
-               type7 = STANDARD_RESOURCE,type8 = STANDARD_RESOURCE)
+               type7 = STANDARD_RESOURCE,type8 = STANDARD_RESOURCE,
+               report = TRUE)
    {
       if pbLogged_on
+         AND report
       {
          AddPacket(1,BP_MESSAGE,4,message_rsc);
          
@@ -3533,7 +3539,7 @@ messages:
       return;
    }
 
-   UserGet(what = $)
+   UserGet(what = $, report = TRUE)
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
             iCan_hold, oSplit, oCorpse;
@@ -3550,28 +3556,28 @@ messages:
       % Make sure we're not trying to get something we've already got!
       if oOldOwner = self
       {
-         return;
+         return 0;
       }
 
       % Make sure object still exists, etc, so we don't cause errors
       if Send(SYS,@UtilGetRoom,#what=what) <> poOwner
          OR IsClass(Send(what,@GetOwner),&User)
       {
-         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
+         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,#report=report,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
          Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
-         return;
+         return 0;
       }	  
 	  
       lItem_pos = Send(what,@GetPos);
       if lItem_pos = $
       {
-         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,
+         Send(self,@MsgSendUser,#message_rsc=user_err_get_unk,#report=report,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
          Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
-         return;
+         return 0;
       }
 
       iRow = First(lItem_pos);
@@ -3591,37 +3597,37 @@ messages:
 
       if (iRow_dist + iCol_dist) > 7 
       {
-         Send(self,@MsgSendUser,#message_rsc=user_err_get_dist,
+         Send(self,@MsgSendUser,#message_rsc=user_err_get_dist,#report=report,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
          Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
 
-         return;
+         return 2;
       }
         
       % This includes the corpse pointer, which prevents people
       %  from looting each other's kills.
       if NOT Send(what,@ReqNewOwnerAttributes,#who=self)
       {
-         return FALSE;
+         return 0;
       }
 
       if oOldOwner <> $
          AND NOT Send(oOldOwner,@ReqTaker,#what=what,#taker=self)
       {
-         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
          Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
-         return;
+         return 0;
       }
 
       if NOT Send(what,@ReqNewOwner,#what=self)
       {
-         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
          Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
               
-         return;
+         return 0;
       }
         
       if NOT Send(self,@ReqNewHold,#what=what) 
@@ -3634,31 +3640,31 @@ messages:
                oSplit = Send(what,@Split,#number=iCan_hold);
                if Send(what,@ReqNewOwner,#what=oSplit)
                {
-                  Send(self,@MsgSendUser,#message_rsc=user_got_some,
+                  Send(self,@MsgSendUser,#message_rsc=user_got_some,#report=report,
                        #parm1=Send(what,@GetName));
                   Send(self,@NewHold,#what=oSplit);
                   
-                  return;
+                  return 3;
                }
                else
                {
                   Send(what,@AddNumber,#number=iCan_hold);
-                  Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+                  Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
                        #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                   Send(self, @WaveSendUser, #what=self, 
                        #wave_rsc = user_cant_pickup_item_wav_rsc);
                        
-                  return;
+                  return 4;
                }
             }
             else
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
                     
-               return;
+               return 4;
             }
          }
          else
@@ -3666,13 +3672,13 @@ messages:
             %  KLUDGE!!  -Asif
             if not IsClass(what,&HunterSword)
             {
-               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,
+               Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
                Send(self, @WaveSendUser, #what=self, 
                     #wave_rsc = user_cant_pickup_item_wav_rsc);
             }
             
-            return;                      
+            return 4;                      
          }        
       }	  
 	  		 
@@ -3684,7 +3690,7 @@ messages:
 
       Send(self,@NewHold,#what=what);
       
-      return;
+      return 1;
    }
 
    UserBlockedSend(what = $)
@@ -7596,14 +7602,6 @@ messages:
          iCol = Send(what,@GetCol);
          iFineRow = Send(what,@GetFineRow);
          iFineCol = Send(what,@GetFineCol);
-      }
-
-      % Security check:
-      % Regular players cannot be teleported to new region with this function
-      if NOT IsClass(self,&DM)
-         AND (Send(poOwner,@GetRegion) <> Send(oNew_room,@GetRegion))
-      {
-         return FALSE;
       }
 
       if iRow = $ OR iCol = $

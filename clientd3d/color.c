@@ -409,7 +409,7 @@ WORD GetItemListColor(HWND hwnd, int type, int flags)
 {
 	debug(("type is #%u\n",type));
    debug(("flags is #%u\n",flags));
-   if ((flags != NULL) || (GetItemFlags(flags) == (OF_ITEM_MAGIC | OF_GETTABLE)))
+   if ((flags != NULL) && (GetItemFlags(flags) == (OF_ITEM_MAGIC | OF_GETTABLE)))
 		{debug(("got inside the magic item statement\n"));
 		return COLOR_ITEM_MAGIC_FG;}
 	else

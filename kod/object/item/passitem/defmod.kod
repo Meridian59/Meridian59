@@ -71,14 +71,20 @@ messages:
 
    NewUsed(what = $)
    {
-      Send(what,@AddDefenseModifier,#what=self);
+      If NOT IsClass(self,&Torch)
+      {
+         Send(what,@AddDefenseModifier,#what=self);
+      }
 
       propagate;
    }
 
    NewUnused(what = $)
    {
-      Send(what,@RemoveDefenseModifier,#what=self);
+      If NOT IsClass(self,&Torch)
+      {
+         Send(what,@RemoveDefenseModifier,#what=self);
+      }
 
       propagate;
    }

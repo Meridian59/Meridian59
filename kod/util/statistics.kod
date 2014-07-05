@@ -145,6 +145,7 @@ messages:
       local iNum, lItem;
 
       if (oSpell <> $)
+         and NOT IsClass(oSpell,&Phase)
       {
          iNum = Send(oSpell, @GetSpellNum);
          for lItem in plSpell_cast_counts

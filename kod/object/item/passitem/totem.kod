@@ -47,10 +47,9 @@ classvars:
    viBulk = 100
    viWeight = 100
 
-   viObject_flags = GETTABLE_YES | LOOK_NO
-
 properties:
-   
+
+   viObject_flags = GETTABLE_YES | LOOK_NO
 
 messages:
 

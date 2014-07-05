@@ -159,10 +159,7 @@ messages:
             {
                bExhaustedMultiple = 3;
             }
-         }
 
-         if IsClass(oBattler,&Battler)
-         {
             if Send(oBattler,@AssessDamage,#what=source,#report=FALSE,#damage=(((iPower+1)/25)*bExhaustedMultiple),#atype=ATCK_WEAP_SLASH) = $
             {
                If IsClass(source,&Battler)

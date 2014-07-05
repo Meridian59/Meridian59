@@ -177,6 +177,8 @@ resources:
 
    player_cancel_rescue = \
       "~IYour aggression halts your attempt to escape from the current situation."
+   player_cancel_rescue_phase = \
+      "~IThe protective magics that might have rescued you instead snap and fade as you phase out of existence."
 
    player_improved = "~I~BYou have improved in the art of %s."
    player_improved_wav_rsc = imp.wav
@@ -13407,6 +13409,14 @@ messages:
       if ptPhaseTimer = $
       {
          ptPhaseTimer = CreateTimer(self,@PhaseTimerEnd,piRemainingPhaseTime);
+
+         % Stop any rescue attempts if the user phases out.
+         if ptRescue <> $
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_cancel_rescue_phase);
+            DeleteTimer(ptRescue);
+            ptRescue = $;
+         }
       }
       
       if ptPhaseVisualEffectTimer = $

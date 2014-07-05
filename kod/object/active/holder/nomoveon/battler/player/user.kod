@@ -3527,6 +3527,15 @@ messages:
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
             iCan_hold, oSplit, oCorpse;
 
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
+              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+              
+         return 0;
+      }
+
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
       if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  

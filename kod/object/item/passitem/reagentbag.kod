@@ -17,7 +17,7 @@ constants:
 resources:
 
    reagentbag_name_rsc = "reagent bag"
-   reagentbag_icon_rsc = package.bgf
+   reagentbag_icon_rsc = baghold.bgf
 
    reagentbag_desc_rsc = "This lumpy bag is magical in nature, and able to hold large amounts of objects that themselves have inherent power."
 
@@ -65,7 +65,7 @@ messages:
       {
          Send(i,@Delete);
       }
-      
+
       propagate;
    }
    
@@ -104,7 +104,7 @@ messages:
       {
          iSum = iSum + Send(i,@GetBulk);
       }
-      
+
       return iSum;
    }
 
@@ -113,12 +113,12 @@ messages:
       local i, iSum;
 
       iSum = 0;
-      
+
       for i in plReagents
       {
          iSum = iSum + Send(i,@GetWeight);
       }
-      
+
       return iSum;
    }
 
@@ -210,6 +210,20 @@ messages:
    {
       return;
    }
-   
+
+   SendAnimation()
+   {
+      if poOwner <> $ AND IsClass(poOwner,&Room)
+      {
+         AddPacket(1,ANIMATE_NONE, 2,2);
+      }
+      else
+      {
+         AddPacket(1,ANIMATE_NONE, 2,1);
+      }
+
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

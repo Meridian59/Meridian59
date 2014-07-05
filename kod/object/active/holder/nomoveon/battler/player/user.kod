@@ -4923,6 +4923,11 @@ messages:
    UserOffer(what = $,item_list = $,number_list = $)
    {
       local i, lObjects, lNumbers, oOffer_num;
+      
+      if Send(self,@IsPhasedOut)
+      {
+         return FALSE;
+      }
 
       % Must be holding things you're offering, and have no dupes.
       lObjects = $;

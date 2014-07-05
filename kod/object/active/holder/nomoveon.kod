@@ -129,6 +129,7 @@ messages:
          Send(self,@ShowAddEnchantment,#what=what,#type=2);
          
          If source = self
+            AND NOT Send(what,@GetOldAreaEnchStyle)
          {
             Send(self,@ShowAddEnchantment,#what=what,#type=1);
          }
@@ -153,6 +154,7 @@ messages:
                Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=2);
 
                If source = self
+                  AND NOT Send(what,@GetOldAreaEnchStyle)
                {
                   Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=1);
                }

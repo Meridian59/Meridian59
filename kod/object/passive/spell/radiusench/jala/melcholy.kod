@@ -103,6 +103,11 @@ messages:
 
    ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
+      if what = $
+      {
+         return hit_roll;
+      }
+
       % Only affect the good ones...
       if Send(what,@GetKarma,#detect=TRUE) > 0
       {
@@ -115,6 +120,11 @@ messages:
    
    ModifyDamage(who = $,what = $,damage = $)
    {
+      if what = $
+      {
+         return damage;
+      }
+
       % Only affect the good ones...
       if Send(what,@GetKarma,#detect=TRUE) > 0
       {

@@ -414,6 +414,12 @@ messages:
    
    TargetIsValid(target=$,source=$)
    {
+      if NOT (IsClass(target,&NoMoveOn)
+              OR IsClass(target,&Item))
+      {
+         return FALSE;
+      }
+
       if viAffectsCasterOnly
       {
          if target=source

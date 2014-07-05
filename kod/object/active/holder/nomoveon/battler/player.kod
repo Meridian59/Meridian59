@@ -6497,11 +6497,6 @@ messages:
    {
       local iManaLost;
 
-      if Send(self,@IsPhasedOut)
-      {
-         return 0;
-      }
-
       piMana = piMana - amount;
       if piMana < 0
       {

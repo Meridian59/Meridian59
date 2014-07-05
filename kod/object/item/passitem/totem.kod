@@ -64,7 +64,6 @@ messages:
          iRow = Send(what,@GetRow);
          iCol = Send(what,@GetCol);
 
-         Debug("attempted to drop");
          Send(oRoom,@NewHold,#what=self,#new_col=iCol,#New_row=iRow);
        }
 

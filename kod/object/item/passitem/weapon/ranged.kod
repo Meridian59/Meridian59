@@ -545,6 +545,11 @@ messages:
       return iDamage;
    }
    
+   GetBaseSpellModifier()
+   {
+      return viSpell_modifier;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

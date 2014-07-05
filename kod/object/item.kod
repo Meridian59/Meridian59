@@ -150,7 +150,8 @@ messages:
       % This is special 'status' stuff, like the number of 
       %  number items you have left, or the condition of your 
       %  weapon.
-      local rItem_condition, iHit_percent, i, bFoundProperties;
+      local rItem_condition, iHit_percent, i, bFoundProperties, oSpell, iHigh_level, n,
+                             iFarenPower, iRiijaPower, iKraananPower, iJalaPower, iShalPower, iQorPower, iInstrumentPower;
 
       if vbShow_Condition
          AND piHits_init > 0
@@ -377,6 +378,95 @@ messages:
          AppendTempString("\n");
 
          bFoundProperties = TRUE;
+      }
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHT);
+      iFarenPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLINK);
+      iRiijaPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLESS);
+      iKraananPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_MIRTH);
+      iJalaPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SEANCE);
+      iShalPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DARKNESS);
+      iQorPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+
+      iInstrumentPower = 0;
+      If IsClass(self,&Instrument)
+      {
+         iInstrumentPower = Send(self,@GetInstrumentLevel);
+      }
+
+      if iFarenPower <> 0
+         OR iRiijaPower <> 0
+         OR iKraananPower <> 0
+         OR iJalaPower <> 0
+         OR iShalPower <> 0
+         OR iQorPower <> 0
+         OR iInstrumentPower <> 0
+      {
+         if iFarenPower = iRiijaPower
+            AND iRiijaPower = iKraananPower
+            AND iKraananPower = iJalaPower
+            AND iJalaPower = iShalPower
+            AND iShalPower = iQorPower
+         {
+            if NOT bFoundProperties
+            {
+               AppendTempString(special_properties_header);
+               bFoundProperties = TRUE;
+            }
+         
+            AppendTempString(iFarenPower);
+            AppendTempString(" general spellpower\n");
+         }
+         else
+         {
+            if NOT bFoundProperties
+            {
+               AppendTempString(special_properties_header);
+               bFoundProperties = TRUE;
+            }
+
+            if iFarenPower <> 0
+            {
+               AppendTempString(iFarenPower);
+               AppendTempString(" Faren spellpower\n");
+            }
+            if iRiijaPower <> 0
+            {
+               AppendTempString(iRiijaPower);
+               AppendTempString(" Riija spellpower\n");
+            }
+            if iKraananPower <> 0
+            {
+               AppendTempString(iKraananPower);
+               AppendTempString(" Kraanan spellpower\n");
+            }
+            if iJalaPower <> 0
+            {
+               AppendTempString(iJalaPower);
+               AppendTempString(" Jala spellpower\n");
+            }
+            if iShalPower <> 0
+            {
+               AppendTempString(iShalPower);
+               AppendTempString(" Shal'ille spellpower\n");
+            }
+            if iQorPower <> 0
+            {
+               AppendTempString(iQorPower);
+               AppendTempString(" Qor spellpower\n");
+            }
+
+            if iInstrumentPower <> 0
+            {
+               AppendTempString(iInstrumentPower);
+               AppendTempString(" Jala instrument power\n");
+            }
+         }
       }
       
       If Send(self,@GetCurrentResistances) <> $

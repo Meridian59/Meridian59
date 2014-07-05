@@ -67,6 +67,7 @@ BEGIN
             BEGIN
                 MENUITEM "Getragene Gegenstände",       3042
                 MENUITEM "Ausgewählte Gegenstände",     3027
+                MENUITEM "Magische Gegenstände",        3513
             END
             POPUP "Fensterbalken"
             BEGIN

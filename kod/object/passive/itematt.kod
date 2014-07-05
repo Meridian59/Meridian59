@@ -132,7 +132,9 @@ messages:
          {  
             oItem = Create(First(i));
             Send(self,@AddSelfToRandomItem,#oItem=oItem,#who=who);
-            
+
+            % Use GetName to check for item enchantment for item text coloring
+            Send(oItem,@GetName);
             break;
          }
       }

@@ -152,6 +152,7 @@ properties:
    piHitBonus = 0
 
    piUsed = UNUSED
+   viObject_flags = GETTABLE_YES
 
 messages:
 
@@ -552,7 +553,7 @@ messages:
    "(see ReqWeaponAttack above).  This is just to catch anything that "
    "slips thru the cracks.  See ranged.kod for what this does."
    {
-      debug("A non-ranged weapon called @ReqUseAmmo!");
+      Debug("A non-ranged weapon called @ReqUseAmmo!");
       
       return TRUE;
    }
@@ -880,7 +881,7 @@ messages:
                          #num=send(self,@GetNumFromCompound,#compound=first(i)));
          if oItemAtt = $
          {
-            DEBUG("Illegal ItemAtt in list!");
+            Debug("Illegal ItemAtt in list!");
 
             continue;
          }
@@ -919,7 +920,7 @@ messages:
                          #num=send(self,@GetNumFromCompound,#compound=first(i)));
          if oItemAtt = $
          {
-            DEBUG("Illegal ItemAtt in list!");
+            Debug("Illegal ItemAtt in list!");
 
             continue;
          }
@@ -936,6 +937,22 @@ messages:
    ReqRepair()
    {
       return TRUE;
+   }
+
+   %%% Object flags
+   
+   GetName()
+   {
+      if plItem_attributes <> $
+      {
+         viObject_flags = viObject_flags | ITEM_MAGIC_YES;
+      }
+      else
+      {
+         viObject_flags = viObject_flags & ~ITEM_MAGIC_YES;
+      }
+
+      propagate;
    }
 
 end

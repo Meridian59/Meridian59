@@ -147,8 +147,7 @@ messages:
                  #fine_row=(Send(poGhostedPlayer,@GetFineRow)+2),
                  #fine_col=(Send(poGhostedPlayer,@GetFineCol)+2),
                  #new_angle=Send(poGhostedPlayer,@GetAngle));
-            ptPenaltyTimer = CreateTimer(self,@PenaltyTrigger,
-                                         (iPenaltyTime*1000));
+            ptPenaltyTimer = CreateTimer(self,@PenaltyTrigger,iPenaltyTime);
          }
       }
 
@@ -804,6 +803,7 @@ messages:
 
       if what = poGhostedPlayer
       {
+         Send(poGhostedPlayer,@SetPhaseTimeEqualTo,#amount=GetTimeRemaining(ptPenaltyTimer));
          Send(self,@Delete);
       }
 

@@ -165,6 +165,12 @@ messages:
    {
       if IsClass(who,&Player)
       {
+         % Don't override phasing hold
+         if NOT Send(who,@IsPhasedOut)
+         {
+            Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
+         }
+
          Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
          if state
          {

@@ -122,6 +122,8 @@ messages:
 
       % Check for range
       if IsClass(what,&Battler)
+         AND NOT (IsClass(what,&Player)
+                  AND Send(what,@IsPhasedOut))
          AND send(self,@InRange,#what=what,#iRow=iRow,#iCol=iCol)
       {
          send(self,@CheckForEffect,#what=what,#new_row=iRow,#new_col=iCol,#bMovement=TRUE);
@@ -180,7 +182,11 @@ messages:
          {
             % We've been "affected" for this cycle.  This prevents super-spam.
             plAffected = cons(what,plAffected);
-            send(what,@MsgSendUser,#message_rsc=vrUnaffectedMessage);
+            
+            If NOT Send(what,@IsPhasedOut)
+            {
+               Send(what,@MsgSendUser,#message_rsc=vrUnaffectedMessage);
+            }
 
             return FALSE;
          }
@@ -221,6 +227,8 @@ messages:
          {
             oObject = send(poOwner,@HolderExtractobject,#data=i);
             if IsClass(oObject,&Battler)
+               AND NOT (IsClass(oObject,&Player)
+                        AND Send(oObject,@IsPhasedOut))
                AND send(self,@InRange,#what=oObject,#iRow=send(oObject,@GetRow),#iCol=send(oObject,@GetCol))
             {
                send(self,@CheckForEffect,#what=oObject);

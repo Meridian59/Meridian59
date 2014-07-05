@@ -593,6 +593,12 @@ messages:
          return FALSE;
       }
 
+      if IsClass(victim,&Player)
+         AND Send(victim,@IsPhasedOut)
+      {
+         return FALSE;
+      }
+
       if pbImmortal OR Send(self,@IsEventCharacter)
       {
          return TRUE;

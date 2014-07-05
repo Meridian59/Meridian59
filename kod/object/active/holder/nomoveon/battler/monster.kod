@@ -1435,6 +1435,12 @@ messages:
       {
          return FALSE;
       }
+      
+      If IsClass(what,&User)
+         AND Send(what,@IsPhasedOut)
+      {
+         return FALSE;
+      }
 
       % Make sure room allows the attack.
       if NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=what,

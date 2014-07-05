@@ -138,6 +138,8 @@ resources:
 
    Spell_too_few_hp_rsc = "You are not powerful enough to cast this spell."
 
+   cannot_cast_on_phased_out = "You can't cast anything on %s while %s is phased out of existence!"
+
 classvars:
 
    vrName = spell_name_rsc
@@ -693,6 +695,16 @@ messages:
    {
       local iLists, oUserObject, iNum, i, oOwner, oVictim, oRoom, iRand,
             oSpell;
+
+      if lTargets <> $
+         AND Length(lTargets) = 1
+         AND IsClass(First(lTargets),&Player)
+         AND Send(First(lTargets),@IsPhasedOut)
+      {
+         Send(who,@MsgSendUser,#message_rsc=cannot_cast_on_phased_out,
+                               #parm1=Send(First(lTargets),@GetName),#parm2=Send(First(lTargets),@GetHimHer));
+         return FALSE;
+      }
       
       if NOT IsClass(who,&Player)
       {

@@ -1,0 +1,572 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Phase is UtilitySpell
+
+constants:
+   include blakston.khd
+   
+   % 112 to 121, growing in brightness
+   PHASE_OUT_XLAT = 116
+
+resources:
+
+   Phase_name_rsc = "phase"
+   Phase_icon_rsc = iboonint.bgf
+   Phase_desc_rsc = \
+     "By phasing partially out of existence, one may become "
+     "temporarily immune to danger... but, adventurers be warned: "
+     "staying out of phase too long will result in physical and mental damage, "
+     "as well as potential loss of carried items. Time spent phased out is "
+     "cumulative until you reach a safe place in which to recover."
+
+   Phase_no_danger = "The protective magics here prevent phasing out."
+   
+   Phase_penned = "Your tenuous grip on reality snaps, and you are thrust violently along the magical currents until you find "
+                  "a safe place to re-enter the world!"
+   Phase_penned_others = "%s's grip on reality snaps, hurling %s violently away on magical currents!"
+   Phase_penned_others_item = "The violent currents seemed to have torn %s%s from %s's inventory."
+   
+   Phase_penned_wav_rsc = logoffghost_poof.wav
+   
+   Phase_lost_one_item = "You lost %s skill points, %s spell points, and %s%s."
+   Phase_lost_two_items = "You lost %s skill points, %s spell points, %s%s, and %s%s."
+   
+   Phase_phased_out_high_health = "%s phases out while completely unharmed."
+   Phase_phased_out_medium_health = "Sensing the battle turning unfavorably, %s phases out."
+   Phase_phased_out_low_health = "Moments before death, %s phases out!"
+   Phase_phased_out_one_health = "%s phases out a split second before death!"
+   
+   Phase_caster_out = "You phase out of existence, confident that you can hold onto reality for another %d seconds."
+   Phase_caster_in = "Only %d seconds away from losing your grip on reality, you phase back into existence."
+   
+   Phase_in = "%s phases back into existence!"
+
+   penalties_inflicted_one_item = "The torturous experience has cost you one item, %d spell points, and %d skill points."
+   penalties_inflicted_plural = "The torturous experience has cost you %d items, %d spell points, and %d skill points."
+   
+   no_phasing_in_safe_place_msg = "This place of safety is anchored and calm, and you cannot phase out here."
+   
+   phase_time_low = "You feel your hold slipping..."
+   phase_time_gone = "You're losing your grip on reality!"
+
+classvars:
+
+   vrName = Phase_name_rsc
+   vrIcon = Phase_icon_rsc
+   vrDesc = Phase_desc_rsc
+
+   viCast_time = 0
+   viPostCast_time = 0
+
+   viSpell_num = SID_PHASE
+   viSpell_level = 1
+   viSchool = SS_RIIJA
+   viMana = 0
+   viSpellExertion = 0
+   viChance_To_Increase = 5
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+   
+   CanPayCosts(who = $)
+   {
+      if who <> $
+         AND Send(who,@GetOwner) <> $
+         AND Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      {
+         Send(who,@MsgSendUser,#message_rsc=no_phasing_in_safe_place_msg);
+         return FALSE;
+      }
+
+      return TRUE;
+   }
+   
+   AdjustVisualEffectBasedOnTimeRemaining(who = $)
+   {
+      local iTimeLeft, iBrightnessLevel;
+      
+      iTimeLeft = Send(who,@GetRemainingPhaseTime) / 1000;
+      iBrightnessLevel = 0;
+      
+      if iTimeLeft < 60
+      {
+         iBrightnessLevel = 1;
+      }
+      if iTimeLeft < 45
+      {
+         iBrightnessLevel = 2;
+      }
+      if iTimeLeft < 35
+      {
+         iBrightnessLevel = 3;
+      }
+      if iTimeLeft < 25
+      {
+         iBrightnessLevel = 4;
+      }
+      if iTimeLeft < 10
+      {
+         iBrightnessLevel = 5;
+      }
+      
+      if iBrightnessLevel = 4
+      {
+         Send(who,@MsgSendUser,#message_rsc=phase_time_low);
+      }
+      if iBrightnessLevel = 5
+      {
+         Send(who,@MsgSendUser,#message_rsc=phase_time_gone);
+      }
+
+      Send(who,@EffectSendUserXlat,#xlat=(PHASE_OUT_XLAT + iBrightnessLevel));
+
+      return;
+   }
+
+   CastSpell(who = $, lTargets = $)
+   {
+   
+      if Send(who,@IsPhasedOut)
+      {
+         Send(self,@NotifyRoomPhaseIn,#who=who);
+         Send(who,@RemoveEnchantment,#what=self);
+      }
+      else
+      {
+         Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who);
+         Send(who,@BreakTrance,#event=EVENT_STEER);
+         Send(who,@FreezeAllEnchantments);
+         Post(who,@StartEnchantment,#what=self);
+         Post(who,@StartPhaseTimer);
+         Post(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+         Post(self,@NotifyRoomPhaseOut,#who=who);
+      }
+
+      propagate;
+   }
+   
+   NotifyRoomPhaseOut(who=$)
+   {
+      local oRoom, i, each_obj;
+      if who <> $
+      {
+         oRoom = Send(who,@GetOwner);
+         for i in Send(oRoom,@GetPlActive)
+         {
+            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+            {
+               if each_obj = who
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_caster_out,#parm1=(Send(each_obj,@GetRemainingPhaseTime)/1000));
+               }
+               else
+               {
+                  if Send(who,@GetHealth) = 1
+                  {
+                     Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_one_health,#parm1=Send(who,@GetName));
+                     continue;
+                  }
+                  if Send(who,@GetHealth) < Send(who,@GetMaxHealth) / 3
+                  {
+                     Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_low_health,#parm1=Send(who,@GetName));
+                     continue;
+                  }
+                  if Send(who,@GetHealth) = Send(who,@GetMaxHealth)
+                  {
+                     Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_high_health,#parm1=Send(who,@GetName));
+                     continue;
+                  }
+                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_phased_out_medium_health,#parm1=Send(who,@GetName));
+               }
+            }
+         }
+      }
+      return;
+   }
+
+   NotifyRoomPhaseIn(who=$)
+   {
+      local oRoom, i, each_obj;
+      if who <> $
+      {
+         oRoom = Send(who,@GetOwner);
+         for i in Send(oRoom,@GetPlActive)
+         {
+            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+            {
+               if each_obj = who
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_caster_in,#parm1=(Send(each_obj,@GetRemainingPhaseTime)/1000));
+               }
+               else
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_in,#parm1=Send(who,@GetName));
+               }
+            }
+         }
+      }
+      return;
+   }
+
+   RestartEnchantmentEffect(who = $, state = $)
+   {
+      Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+      
+      return;
+   } 
+   
+   SetSpellPlayerFlag(who = $)
+   {
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MOVE,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
+      Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
+      
+      Send(who,@SetPlayerDrawFX,#drawfx=DRAWFX_DITHERINVIS);
+      
+      return;
+   }
+   
+   EndEnchantment(who = $,report = TRUE,state=$)
+   {
+      Send(who,@EffectSendUserXlat,#xlat=0);
+      Send(who,@FreezePhaseTimer);
+
+      % Don't override Hold
+      If NOT Send(who,@IsEnchanted,#byClass=&Hold)
+         AND NOT Send(who,@IsEnchanted,#byClass=&DMHold)
+      {
+         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
+      }
+      Send(who,@ReactivateAllEnchantments);
+
+      return;
+   }
+
+   NotifyRoomPenalty(who=$)
+   {
+      local oRoom, i, each_obj;
+      if who <> $
+      {
+         oRoom = Send(who,@GetOwner);
+         for i in Send(oRoom,@GetPlActive)
+         {
+            each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+            if IsClass(each_obj,&User)
+            {
+               if each_obj = who
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_penned);
+               }
+               else
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=Phase_penned_others,#parm1=Send(who,@GetName),#parm2=Send(who,@GetHimHer));
+               }
+            }
+         }
+
+         if Send(who,@GetOwner) <> $ 
+         {
+            Send(Send(who,@GetOwner),@SomethingWaveRoom,#what=who,#wave_rsc=Phase_penned_wav_rsc);
+         }
+      }
+      return;
+   }
+
+   InflictFlatPenalties(who=$)
+   {
+      local i, bLooped, LossCounter, BaseLossAmount, iHealth,
+            LossAmount, iNumItemsInventory, numItemsLost, iLoops,
+            iStart, lSpells, iSpellAbility, iAbilityNum, numSpellPointsLost,
+            lSkills, iSkillAbility, numSkillPointsLost, poGhostedPlayer;
+
+      if who = $
+      {
+         return;
+      }
+      else
+      {
+         poGhostedPlayer = who;
+      }
+
+      if IsClass(poGhostedPlayer,&Player)
+            AND (NOT Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+                 OR Send(poGhostedPlayer,@PlayerIsImmortal))
+      {
+         Send(poGhostedPlayer,@ResetLogoffPenaltyTime);
+         return;
+      }  
+
+      numItemsLost = 0;
+      numSpellPointsLost = 0;
+      numSkillPointsLost = 0;
+
+      % drop items
+      numItemsLost = Send(poGhostedPlayer,@GetNumItemsInInventory);
+
+      if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+      {
+         LossCounter = 2;
+      }
+      else
+      {
+         LossCounter = 1;
+      }
+
+      iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+      if LossCounter > iNumItemsInventory
+      {
+         % just drop everything
+         i = 1;
+         while i <= iNumItemsInventory
+         {
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#phase_drop=TRUE)
+            {
+               % Don't need to increment unless the item stayed in the
+               %  inventory.
+               i = i + 1;
+            }
+         }
+      }
+      else
+      {
+         while LossCounter > 0 AND iNumItemsInventory > 0
+         {
+            % try to drop a Random item
+            iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+            i = Random(1,iNumItemsInventory);
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#phase_drop=TRUE)
+            {
+               % If the Random drop fails, scan through and drop the first one
+               %  we can.
+               i = 1;
+               while i <= iNumItemsInventory
+                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,#phase_drop=TRUE)
+               {
+                  i = i + 1;
+               }
+
+               % If we got all the way through the inventory without dropping
+               %  anything, bail.
+               if i > Send(poGhostedPlayer,@GetNumItemsInInventory)
+               {
+                  LossCounter = 1;
+               }
+            }
+
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Correct the number of items lost by subtracting out the items left in
+      %  inventory.  (Is this right?)
+      iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
+      numItemsLost = numItemsLost - iNumItemsInventory;
+
+      % Lose spell ability
+      lSpells = Send(poGhostedPlayer,@GetSpellList);
+      if lSpells <> $
+      {
+         LossCounter = 2;
+
+         if Send(poGhostedPlayer,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         {
+            BaseLossAmount = -2;
+         }
+         else
+         {
+            BaseLossAmount = -1;
+         }
+
+         % Loop through once to reduce LossCounter below Length(lSpells), and
+         %  keep iterations down for large penalties
+         if (LossCounter > Length(lSpells))
+         {
+            i = 0;
+            % iLoops = number of complete loops we're collapsing to one
+            iLoops = LossCounter / Length(lSpells);
+            while i < Length(lSpells)
+            {
+               i = i + 1;
+               iSpellAbility = Send(poGhostedPlayer,@DecodeSpellAbility,
+                                    #compound=Nth(lSpells,i));
+               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
+               iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
+                                  #compound=Nth(lSpells,i));
+               Send(poGhostedPlayer,@ChangeSpellAbility,
+                    #spell_num=iAbilityNum,#amount=LossAmount);
+               numSpellPointsLost = (numSpellPointsLost - LossAmount);
+            }
+         }
+
+         iLoops = 0;
+         LossCounter = LossCounter - (numSpellPointsLost/BaseLossAmount);
+         while (LossCounter > 0) and (iLoops < 200)
+         {
+            iLoops = iLoops + 1;
+            % This tells us if we've looped back to one yet.
+            bLooped = FALSE;
+            % Try to lower a Random spell.
+            i = Random(1,Length(lSpells));
+
+            iStart = i;
+            % If the Random lower fails, scan through and lower the first one
+            %  we can.
+            while (i <> iStart OR NOT bLooped)
+                  AND (Send(poGhostedPlayer,@DecodeSpellAbility,
+                            #compound=Nth(lSpells,i)) < 6)
+            {
+               i = i + 1;
+               if i > Length(lSpells) AND NOT bLooped
+               {
+                  % We get one free reset (since we started in the middle
+                  %  somewhere)
+                  i = 1;
+                  bLooped = TRUE;
+               }
+            }
+
+            % If we got all the way through the spell list without lowering
+            %  anything, bail.
+            if i = iStart AND bLooped
+            {
+               LossCounter = 0;
+
+               break;
+            }
+
+            iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
+                               #compound=Nth(lSpells,i));
+            Send(poGhostedPlayer,@ChangeSpellAbility,
+                 #spell_num=iAbilityNum,#amount=BaseLossAmount);
+            numSpellPointsLost = numSpellPointsLost - BaseLossAmount;
+            LossCounter = LossCounter - 1;
+         }
+      }
+
+      % Lose skill ability.
+      lSkills = Send(poGhostedPlayer,@GetSkillList);
+      if (lSkills <> $)
+      {
+         LossCounter = 2;
+
+         % Loop through once to reduce LossCounter below Length(lSkills),
+         %  and keep iterations down for large penalties
+         if LossCounter > Length(lSkills)
+         {
+            i = 0;
+            % Number of complete loops we're collapsing to one.
+            iLoops = LossCounter/Length(lSkills);
+            while i < Length(lSkills)
+            {
+               i = i + 1;
+               iSkillAbility = Send(poGhostedPlayer,@DecodeSkillAbility,
+                                    #compound=Nth(lSkills,i));
+               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
+               iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
+                                  #compound=Nth(lSkills,i));
+               Send(poGhostedPlayer,@ChangeSkillAbility,
+                    #skill_num=iAbilityNum,#amount=LossAmount);
+               numSkillPointsLost = numSkillPointsLost - LossAmount;
+            }
+         }
+
+         iLoops = 0;
+         LossCounter = LossCounter - (numSkillPointsLost/BaseLossAmount);
+         while LossCounter > 0 AND iLoops < 100
+         {
+            iLoops = iLoops + 1;
+            % This tells us if we've looped back to one yet.
+            bLooped = FALSE;
+            % Try to lower a Random skill.
+            i = Random(1,Length(lSkills));
+            iStart = i;
+
+            % If the random lower fails, scan through and lower the first one
+            %  we can.
+            while (i <> iStart OR NOT bLooped)
+                  AND (Send(poGhostedPlayer,@DecodeSkillAbility,
+                            #compound=Nth(lSkills,i)) < 6)
+            {
+               i = i + 1;
+               if i > Length(lSkills) AND NOT bLooped
+               {
+                  % We get one free reset since we started in the middle
+                  %  somewhere
+                  i = 1;
+                  bLooped = TRUE;
+               }
+            }
+            % If we got all the way through the skill list without lowering
+            %  anything, bail.
+            if i = iStart AND bLooped
+            {
+               LossCounter = 0;
+
+               break;
+            }
+
+            iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
+                               #compound=Nth(lSkills,i));
+            Send(poGhostedPlayer,@ChangeSkillAbility,
+                 #skill_num=iAbilityNum,#amount=BaseLossAmount);
+            numSkillPointsLost = numSkillPointsLost - BaseLossAmount;
+            LossCounter = LossCounter - 1;
+         }
+      }
+      
+      if numItemsLost = 1
+      {
+         Send(poGhostedPlayer,@MsgSendUser,#message_rsc=penalties_inflicted_one_item,
+                                           #parm1=numSpellPointsLost,
+                                           #parm2=numSkillPointsLost);
+      }
+      else
+      {
+         Send(poGhostedPlayer,@MsgSendUser,#message_rsc=penalties_inflicted_plural,
+                                           #parm1=numItemsLost,
+                                           #parm2=numSpellPointsLost,
+                                           #parm3=numSkillPointsLost);
+      }
+
+      % Reset the time to avoid any funny business like potential double
+      %  penalties.
+      Send(poGhostedPlayer,@ResetLogoffPenaltyTime);
+
+      return;
+   }
+   
+   SuccessChance()
+   {
+      return TRUE;
+   }
+
+   CanBeRemovedByPlayer()
+   {
+      return FALSE;
+   }
+ 
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

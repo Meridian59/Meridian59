@@ -731,6 +731,13 @@ resources:
    
    Jig_cannot_attack = "It wouldn't feel right to attack the %s while you two are dancing so well together!"
    
+   phased_out_cant_use = "You try to use your item, but your phased hands pass right through it."
+   cannot_attack_phased_self_rsc = "You can't attack anyone while phased out."
+   cannot_attack_phased_player_rsc = "Your strike would just go right through someone who is phased out."
+   phase_fatigue_cleared = "This area of peace lifts your phase fatigue."
+   phased_player_description = "This is the ghosted body of %q, whose consciousness has travelled to "
+                               "another plane of existence."
+   
 classvars:
 
    viHand_space = 2
@@ -1004,6 +1011,11 @@ properties:
 
    % Players will naturally fall out of groups if they aren't getting kills
    ptLeaveBuilderGroupTimer = $
+  
+   % Time remaining phased out
+   ptPhaseTimer = $
+   ptPhaseVisualEffectTimer = $
+   piRemainingPhaseTime = 60000 * 8
 
 messages:
 
@@ -1545,6 +1557,8 @@ messages:
 
    NewOwner(what = $)
    {
+      local iBasePhaseTime;
+
       Send(self,@ResetGainFlags);
       
       % Are we moving somewhere "safe" or in a frenzy??
@@ -1571,6 +1585,16 @@ messages:
       if (piFlags2 & PFLAG2_HUNTED)
       {
          Send(self,@InformHunters);
+      }
+
+      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      {
+         iBasePhaseTime = Send(self,@GetBasePhaseTime);
+         if piRemainingPhaseTime <> iBasePhaseTime
+         {
+            Send(self,@MsgSendUser,#message_rsc=phase_fatigue_cleared);
+            Send(self,@RefreshPhaseTimeToBase);
+         }
       }
 
       return;
@@ -2500,6 +2524,7 @@ messages:
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
       
       return;
    }
@@ -3111,6 +3136,12 @@ messages:
 
       for i in plEnchantments
       {
+         % Phase reactivates enchantments while it is still in plEnchantments
+         if IsClass(Nth(i,2),&Phase)
+         {
+            continue;
+         }
+
          if IsClass(Nth(i,2),&Boon)=FALSE
          {
             state = $;
@@ -3201,6 +3232,7 @@ messages:
          if Nth(i,2) = what
          {
             if Send(self,@IsLoggedOn)
+               OR IsClass(what,&Phase)
             {
                % TODO: First(i) isn't always a timer?
                if First(i) <> $
@@ -3461,6 +3493,12 @@ messages:
    TryUseItem(what = $)
    {
       local i,iSpace,iUse_type;
+      
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=phased_out_cant_use);
+         return FALSE;
+      }
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
@@ -3779,6 +3817,18 @@ messages:
          AND NOT Send(victim,@PlayerIsImmortal)
       {
          return TRUE;
+      }
+      
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=cannot_attack_phased_self_rsc);
+         return FALSE;
+      }
+      
+      if IsClass(victim,&Player)
+         AND Send(victim,@IsPhasedOut)
+      {
+         return FALSE;
       }
 
       if IsClass(victim,&Monster)
@@ -5995,6 +6045,11 @@ messages:
    "decay = TRUE if you lose a HP over time because you are boosted over max "
    "by some sort of vamp effect.  If this is true, you shouldn't break a trance."
    {
+      if Send(self,@IsPhasedOut)
+      {
+         return;
+      }
+
       if piFlags & PFLAG_TRANCE AND NOT decay
       {
          Send(self,@BreakTrance,#event=EVENT_DAMAGE);
@@ -6010,6 +6065,11 @@ messages:
    GainHealth(amount = $)
    "Some attempt here to quell the vamp touch bugs"
    {
+      if Send(self,@IsPhasedOut)
+      {
+         return;
+      }
+
       if (2*piMax_health) < (piHealth+amount)
       {
          Send(self,@MsgSendUser,#message_rsc=player_health_gain_maxed);
@@ -6029,6 +6089,11 @@ messages:
    "Don't add beyond piMax_health"
    {
       local oldhealth;
+      
+      if Send(self,@IsPhasedOut)
+      {
+         return 0;
+      }
 
       oldhealth = piHealth;
       
@@ -6432,6 +6497,11 @@ messages:
    {
       local iManaLost;
 
+      if Send(self,@IsPhasedOut)
+      {
+         return 0;
+      }
+
       piMana = piMana - amount;
       if piMana < 0
       {
@@ -6446,6 +6516,11 @@ messages:
    GainMana(amount=0, bCapped=FALSE)
    {
       local iManaGained;
+  
+      if Send(self,@IsPhasedOut)
+      {
+         return 0;
+      }
    
       iManaGained = amount;
       piMana = piMana + amount;
@@ -13330,6 +13405,131 @@ messages:
    HasEvilTwin()
    {
       return pbHasEvilTwin;
+   }
+
+   IsPhasedOut()
+   {
+      return Send(self,@IsEnchanted,#byClass=&Phase);
+   }
+   
+   StartPhaseTimer()
+   {
+      if ptPhaseTimer = $
+      {
+         ptPhaseTimer = CreateTimer(self,@PhaseTimerEnd,piRemainingPhaseTime);
+      }
+      
+      if ptPhaseVisualEffectTimer = $
+      {
+         ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
+      }
+      
+      return;
+   }
+   
+   PhaseVisualEffectTimer(timer = $)
+   {
+      ptPhaseVisualEffectTimer = $;
+      Send(self,@PhaseVisualEffect);
+
+      return;
+   }
+   
+   PhaseVisualEffect()
+   {
+      if ptPhaseVisualEffectTimer <> $
+      {
+         DeleteTimer(ptPhaseVisualEffectTimer);
+         ptPhaseVisualEffectTimer = $;
+      }
+      
+      Send(Send(SYS,@FindSpellByNum,#num=SID_PHASE),@AdjustVisualEffectBasedOnTimeRemaining,#who=self);
+      
+      if ptPhaseVisualEffectTimer = $
+         AND Send(self,@IsPhasedOut)
+      {
+         ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
+      }
+      
+      return;
+   }
+
+   FreezePhaseTimer()
+   {
+      if ptPhaseTimer <> $
+      {
+         piRemainingPhaseTime = GetTimeRemaining(ptPhaseTimer);
+         DeleteTimer(ptPhaseTimer);
+         ptPhaseTimer = $;
+         
+         if ptPhaseVisualEffectTimer <> $
+         {
+            DeleteTimer(ptPhaseVisualEffectTimer);
+            ptPhaseVisualEffectTimer = $;
+         }
+      }
+
+      return;
+   }
+
+   PhaseTimerEnd()
+   {
+      local oPhase;
+
+      ptPhaseTimer = $;
+         
+      if ptPhaseVisualEffectTimer <> $
+      {
+         DeleteTimer(ptPhaseVisualEffectTimer);
+         ptPhaseVisualEffectTimer = $;
+      }
+      
+      oPhase = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
+      Send(self,@RemoveEnchantment,#what=oPhase);
+      Send(oPhase,@NotifyRoomPenalty,#who=self);
+      Send(oPhase,@InflictFlatPenalties,#who=self);
+      
+      Post(self,@AdminGoToLastSafeRoom);
+
+      Send(self,@RefreshPhaseTimeToBase);
+ 
+      return;
+   }
+
+   GetRemainingPhaseTime()
+   {
+      if ptPhaseTimer <> $
+      {
+         return GetTimeRemaining(ptPhaseTimer);
+      }
+      return piRemainingPhaseTime;
+   }
+   
+   GetBasePhaseTime()
+   {
+      if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      {
+         return Send(Send(SYS,@GetSettings),@GetOutlawMurdererLogoffPenaltyGhostTime);
+      }
+
+      return Send(Send(SYS,@GetSettings),@GetLogoffPenaltyGhostTime);
+   }
+
+   RefreshPhaseTimeToBase()
+   {
+      if piRemainingPhaseTime <> Send(self,@GetBasePhaseTime)
+      {
+         piRemainingPhaseTime = Send(self,@GetBasePhaseTime);
+      }
+      return;
+   }
+
+   SetPhaseTimeEqualTo(amount=60000)
+   "Used by logoff ghosts to sync up penalty times."
+   {
+      piRemainingPhaseTime = amount;
+      return;
    }
 
 end

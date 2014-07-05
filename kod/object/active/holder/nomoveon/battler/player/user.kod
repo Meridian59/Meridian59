@@ -335,6 +335,8 @@ resources:
    autoloot_on_msg = "You decide to pick up treasure as it drops."
    autoloot_off_msg = "You stop picking up treasure as it drops."
 
+   phased_out_cant_drop = "You can't drop items while phased out of existence."
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -367,8 +369,6 @@ properties:
    piLastLoginTime = 0
    % counts total time logged in
    piTimeLoggedIn = 0
-   % What time do we hit the player with unsafe logoff penalties?
-   piLogoffPenaltyTime = 0
 
    psURL = $
 
@@ -716,36 +716,12 @@ messages:
                   AND Send(poOwner,@CanEnter,#who=self)
                   AND NOT Send(poOwner,@InFoyer,#who=self))
       {
-         theTime = GetTime();
-         
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-            OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-         {
-            iPenaltyTime = Send(Send(SYS,@GetSettings), @GetOutlawMurdererLogoffPenaltyGhostTime);
-         }
-         else
-         {
-            iPenaltyTime = Send(SYS,@GetLogoffPenaltyGhostTime);
-         }
-
-         % If we've already passed our penalty time OR we have been on for
-         %  1/5 the penalty time, then set the logoff penalty time to 90-110%
-         %  of the logoff penalty time.
-         if piLogoffPenaltyTime < theTime
-            OR (theTime - piLastLoginTime) > (iPenaltyTime / 5)
-         {
-            piLogoffPenaltyTime = ((iPenaltyTime * Random(90,110)) / 100);
-            piLogoffPenaltyTime = piLogoffPenaltyTime + theTime;
-                                             
-         }
-         
-         Create(&LogoffGhost,#GhostedPlayer=self,
-                #iPenaltyTime=(piLogoffPenaltyTime-theTime));
+         Create(&LogoffGhost,#GhostedPlayer=self,#iPenaltyTime=Send(self,@GetRemainingPhaseTime));
       }
       else
       {
          % Reset our logoff penalty time since we're logging safely.
-         piLogoffPenaltyTime = 0;
+         Send(self,@RefreshPhaseTimeToBase);
          
          % If enabled and and a player logs off in a safe zone he will lose half his mana and all buffs
          if Send(Send(SYS, @GetSettings), @LogSafePenaltyEnable)
@@ -777,6 +753,13 @@ messages:
          Post(self,@AdminGoToSafety);
       }
       poOwner = $;
+
+      % Check for phase out
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@FreezePhaseTimer);
+         Send(self,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_PHASE),#report=FALSE);
+      }
 
       % Have to put here so room enchantments are removed first.
       Send(self,@FreezeAllEnchantments);
@@ -838,7 +821,7 @@ messages:
 
    ResetLogoffPenaltyTime()
    {
-      piLogoffPenaltyTime = 0;
+      Send(self,@RefreshPhaseTimeToBase);
       
       return;
    }
@@ -3719,6 +3702,12 @@ messages:
          return;
       }
 
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=phased_out_cant_drop);
+         return FALSE;
+      }
+
       if IsClass(what,&NumberItem)
       {
          if number <= 0
@@ -4779,6 +4768,7 @@ messages:
       }
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
+         AND NOT IsClass(oSpell,&Phase)
       {  
          Send(self,@MsgSendUser,#message_rsc=user_no_cast);
          
@@ -7835,6 +7825,12 @@ messages:
          iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
       }
       
+      if Send(self,@IsPhasedOut)
+      {
+         iFlags = iFlags | LOOK_NO;
+         iFlags = (iFlags & ~MOVEON_NO & ~BATTLER_YES & ~OFFER_YES & ~USER_YES);
+      }
+      
       % Angeled characters cannot block other players
       if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
@@ -8182,7 +8178,7 @@ messages:
       piLastMoveUpdateTime = GetTickCount();
 
       % Eliminate logoff penalty time.  Just easier this way.
-      piLogoffPenaltyTime = 0;
+      Send(self,@RefreshPhaseTimeToBase);
       
       propagate;
    }

@@ -82,22 +82,22 @@ messages:
 
          return FALSE;
       }
-      
+
       if NOT IsClass(oTarget,&Battler)
          OR Send(oTarget,@IsIllusion)
-		 OR (IsClass(oTarget,&Monster)
+         OR (IsClass(oTarget,&Monster)
                AND Send(oTarget,@CanEvilTwin)=FALSE)
       {
          % Lich, lupogg king, evil twins, reflections and revenants 
          % all not valid targets
-		 
+
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
               #parm1=Send(oTarget,@GetDef),
               #parm2=Send(oTarget,@GetName));
          return FALSE;
-      }		 
+      }
 
-      
+
       if IsClass(oTarget,&Player)
       {
          if Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
@@ -146,7 +146,7 @@ messages:
       oTarget = First(lTargets);
       
       if IsClass(oTarget,&Player)
-      {	  
+      {
          oTwin = Create(&EvilTwin,#iSpellpower=iSpellpower,#oMaster=who,
                      #oTarget=oTarget);
       }
@@ -157,7 +157,7 @@ messages:
          Send(oTwin,@SetIllusion,#value=TRUE);
          Send(oTwin,@SetSummoned,#value=TRUE);
       }
-	  
+
       oRoom = Send(who,@GetOwner);
 
       iRow = Send(oTarget,@GetRow);
@@ -169,7 +169,7 @@ messages:
       {
          Send(oTwin,@SetOriginal,#who=oTarget);
       }
-	  
+
       Send(oRoom,@NewHold,#what=oTwin,#new_row=iRow,#new_col=iCol,
            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
@@ -184,7 +184,7 @@ messages:
          Send(oTwin,@TargetSwitch,#what=oTarget,#iHatred=1000);
          Send(oTwin,@EnterStateAttack);
          i = Send(oTwin,@ReturnMaxHitPoints);
-         j = i/(100/((1+iSpellPower)/20));
+         j = i/(100/((21+iSpellPower)/20));
          j = bound(j,1,25);
          Send(oTwin,@SetMaxHitPoints,#amount=j);
       }

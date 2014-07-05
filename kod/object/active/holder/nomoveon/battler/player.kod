@@ -1425,7 +1425,7 @@ messages:
       local iAmount;
 
       % If we cannot gain vigor (probably due to Second Wind), return out if trying to take away exertion
-      if (ptSecondWind <> $) AND (amount < 0)
+      if ((ptSecondWind <> $) AND (amount < 0)) OR Send(self,@IsPhasedOut)
       {
          return;
       }
@@ -6065,19 +6065,17 @@ messages:
    GainHealth(amount = $)
    "Some attempt here to quell the vamp touch bugs"
    {
-      if Send(self,@IsPhasedOut)
+      if NOT Send(self,@IsPhasedOut)
       {
-         return;
-      }
-
-      if (2*piMax_health) < (piHealth+amount)
-      {
-         Send(self,@MsgSendUser,#message_rsc=player_health_gain_maxed);
-         piHealth = 2 * piMax_health;
-      }
-      else
-      {
-         piHealth = piHealth + amount;
+         if (2*piMax_health) < (piHealth+amount)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_health_gain_maxed);
+            piHealth = 2 * piMax_health;
+         }
+         else
+         {
+            piHealth = piHealth + amount;
+         }
       }
 
       Send(self,@NewHealth);
@@ -6089,11 +6087,6 @@ messages:
    "Don't add beyond piMax_health"
    {
       local oldhealth;
-      
-      if Send(self,@IsPhasedOut)
-      {
-         return 0;
-      }
 
       oldhealth = piHealth;
       
@@ -6107,10 +6100,13 @@ messages:
          return 0;
       }
 
-      pihealth = piHealth + amount;
-      if piHealth > piMax_health
+      if NOT Send(self,@IsPhasedOut)
       {
-         piHealth = piMax_health;
+         pihealth = piHealth + amount;
+         if piHealth > piMax_health
+         {
+            piHealth = piMax_health;
+         }
       }
 
       Send(self,@NewHealth);
@@ -6511,19 +6507,18 @@ messages:
    GainMana(amount=0, bCapped=FALSE)
    {
       local iManaGained;
-  
-      if Send(self,@IsPhasedOut)
-      {
-         return 0;
-      }
-   
-      iManaGained = amount;
-      piMana = piMana + amount;
 
-      if bCapped AND piMana > piMax_Mana
+      iManaGained = amount;
+      
+      if NOT Send(self,@IsPhasedOut)
       {
-         iManaGained = amount - (piMana - piMax_Mana);
-         piMana = piMax_Mana;
+         piMana = piMana + amount;
+
+         if bCapped AND piMana > piMax_Mana
+         {
+            iManaGained = amount - (piMana - piMax_Mana);
+            piMana = piMax_Mana;
+         }
       }
       
       Send(self,@NewMana);

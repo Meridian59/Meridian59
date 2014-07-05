@@ -6757,7 +6757,7 @@ messages:
        if oTotem <> $
           AND IsClass(oTotem,&RadiusEnchantmentTotem)
           AND plSpellTotems <> $
-          AND FindListElem(plSpellTotems,oTotem) = 0
+          AND FindListElem(plSpellTotems,oTotem) <> 0
        {
           plSpellTotems = DelListElem(plSpellTotems,oTotem);
        }

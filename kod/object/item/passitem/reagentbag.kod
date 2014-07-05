@@ -225,5 +225,36 @@ messages:
       return;
    }
 
+   CanBeGivenToNPC()
+   {
+      return FALSE;
+   }
+
+   CanSwap()
+   {
+      return FALSE;
+   }
+
+   CanShatter()
+   {
+      return FALSE;
+   }
+
+   ReqDMDelete()
+   "Keys are not deleted with the DM clear inventory command."
+   {
+      return FALSE;
+   }
+   
+   CanBeStoredInVault()   
+   {
+      return FALSE;
+   }
+
+   DropOnDeath()
+   {
+      return FALSE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

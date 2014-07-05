@@ -228,15 +228,18 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMinDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinDamage);
+                  break;
+               }
             }
          }
       }
@@ -257,15 +260,19 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMaxDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxDamage);
+                  break;
+               }
             }
          }
       }
@@ -286,15 +293,19 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMinDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinDamage);
+                  break;
+               }
             }
          }
       }
@@ -325,15 +336,19 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMaxDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxDamage);
+                  break;
+               }
             }
          }
       }
@@ -364,15 +379,19 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMinSpecialDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinSpecialDamage);
+                  break;
+               }
             }
          }
       }
@@ -409,15 +428,19 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMaxSpecialDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxSpecialDamage);
+                  break;
+               }
             }
          }
       }
@@ -455,15 +478,19 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMinSpecialDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinSpecialDamage);
+                  break;
+               }
             }
          }
       }
@@ -490,15 +517,19 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetMaxSpecialDamage);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxSpecialDamage);
+                  break;
+               }
             }
          }
       }

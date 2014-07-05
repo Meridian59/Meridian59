@@ -419,6 +419,12 @@ messages:
       {
          return FALSE;
       }
+      
+      If IsClass(target,&Player)
+         AND Send(target,@IsPhasedOut)
+      {
+         return FALSE;
+      }
 
       if viAffectsCasterOnly
       {

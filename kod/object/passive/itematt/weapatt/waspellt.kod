@@ -188,7 +188,7 @@ messages:
       {
          return FALSE;
       }
-      Debug("Attempted to make a spell blade");
+
       if Send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oWeapon)
       {
          Send(self,@AddToItem,#oItem=oWeapon,#state1=iSpellType,

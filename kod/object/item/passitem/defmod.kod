@@ -39,8 +39,6 @@ properties:
    piDefense_bonus = 0              %% piDefense_bonus adds to player's defense. Ranges from 1 to 50
    piDamage_reduce = 0              %% piDamage_reduce is the maximum amount of damage that will be reduced.
 
-   viObject_flags = GETTABLE_YES
-
 messages:
 
    ReqUseSomething(what = $)
@@ -199,22 +197,6 @@ messages:
    GetDamageReduction()
    {
       return piDamage_reduce;
-   }
-
-   %%% Object flags
-
-   GetName()
-   {
-      if plItem_attributes <> $
-      {
-         viObject_flags = viObject_flags | ITEM_MAGIC_YES;
-      }
-      else
-      {
-         viObject_flags = viObject_flags & ~ITEM_MAGIC_YES;
-      }
-
-      propagate;
    }
 
 end

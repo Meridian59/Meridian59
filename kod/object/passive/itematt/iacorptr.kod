@@ -12,63 +12,65 @@ ItemAttCorpsePointer is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  The job of corpsepointer is simply to point at the monster that 
-%    formerly 'carried' the loot, allowing whoever killed the monster
-%    to get first crack at the loot.  
-% 
-%  Form is: 
+%   The job of corpsepointer is simply to point at the monster that 
+%   formerly 'carried' the loot, allowing whoever killed the monster
+%   to get first crack at the loot.  
+%
+%   Form is:
 %
 %      [IA_CORPSEPOINTER, $, oCorpse]
-%   
-%       oCorpse :: the corpse that the pointer is remembering
 %
-%  A final word: this pointer will stick around for only 20 seconds
-%     after a kill, then it will delete itself, removing it from the
-%     item's plItem_attribute's list.
+%      oCorpse :: the corpse that the pointer is remembering
+%
+%   A final word: this pointer will stick around for only 20 seconds
+%   after a kill, then it will delete itself, removing it from the
+%   item's plItem_attribute's list.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
  
-   corpsepointer_no_loot = "You reach for %s%s, but you can't get past %s picking over the loot of the kill."
-   
+   corpsepointer_no_loot = \
+      "You reach for %s%s, but you can't get past %s picking over "
+      "the loot of the kill."
+
 classvars:
 
    viItem_Att_Num = IA_CORPSEPOINTER
    vrDesc = resource_blank
 
 properties:
-  
+
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    %% A player can only pick up an item from a monster he has 
    %% recently killed himself, or that has sat around for a bit.
 
    CanGetAffectedItem(lData=$,who=$,oItem=$)
    {
       local oCorpse;
-     
+
       oCorpse = Nth(lData,3);
-     
+
       % If the corpse object is pointing at who, then 'who' can pick up this item.
       if NOT send(oCorpse,@CanGetMe,#what=who)
       {
          Send(who,@MsgSendUser,#message_rsc=corpsepointer_no_loot,
-              #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName),
-              #parm3=send(oCorpse,@GetCorpseName));
+               #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName),
+               #parm3=send(oCorpse,@GetCorpseName));
 
          return FALSE;
-      }   
+      }
 
       return TRUE;
    }
@@ -121,7 +123,6 @@ messages:
    {
       return -1;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

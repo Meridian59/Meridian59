@@ -16,14 +16,14 @@ WeapAttSpellType is WeaponAttribute
 %       attack type that corresponds with it.  It also has a timer,
 %       which, when it expires, flips the Attack type back.
 % 
-%  Form is: 
+%  Form is:
 %
 %      [WA_ATTACKSPELLTYPE, timer, spell_attack_type ]
-%   
+%
 %       timer::the length of time, from 1 to 25 realtime hours,
-%         that the enchantment lasts (depending on spell factors).
+%       that the enchantment lasts (depending on spell factors).
 %       spell_attack_type : as defined in blakston.khd.
-%          examples: ATCK_SPELL_FIRE, ATCK_SPELL_UNHOLY, ATCK_SPELL_ACID
+%       examples: ATCK_SPELL_FIRE, ATCK_SPELL_UNHOLY, ATCK_SPELL_ACID
 %
 %  Note that if a weapon ends up permanently holy or unholy, then this
 %       attribute is no longer necessary, since the attack values flags
@@ -37,15 +37,15 @@ constants:
    include blakston.khd
 
 resources:
-   
+
    iaSpelltype_gone = "Your %s suddenly seems a little more... ordinary."
 
-   iaSpelltype_holy = "The weapon glows with a pure, white light."
-   iaSpelltype_unholy = "The weapon seems to reek of malevolence."
-   iaSpelltype_fire = "The weapon is hot to the touch."
-   iaSpelltype_cold = "It is icy cold to the touch."
-   iaSpelltype_shock = "Nearly invisible currents run the length of the blade."
-   iaSpelltype_acid = "A thin coating of acid covers the length of the blade."
+   iaSpelltype_holy = " The weapon glows with a pure, white light."
+   iaSpelltype_unholy = " The weapon seems to reek of malevolence."
+   iaSpelltype_fire = " The weapon is hot to the touch."
+   iaSpelltype_cold = " It is icy cold to the touch."
+   iaSpelltype_shock = " Nearly invisible currents run the length of the blade."
+   iaSpelltype_acid = " A thin coating of acid covers the length of the blade."
 
    iaSpelltype_name_holy = "holy %s"
    iaSpelltype_name_unholy = "unholy %s"
@@ -66,7 +66,7 @@ classvars:
    viItem_Att_Num = WA_ATTACKSPELLTYPE
 
 properties:
-  
+
 messages:
 
    %%% Description functions
@@ -83,39 +83,39 @@ messages:
       {
          iData = iFakeData;
       }
-      
+
       rName = $;
 
       if iData & ATCK_SPELL_HOLY
       {
          rName = iaSpelltype_holy;
       }
-      
+
       if iData & ATCK_SPELL_UNHOLY
       {
          rName = iaSpellType_unholy;
       }
-      
+
       if iData & ATCK_SPELL_FIRE
       {
          rName = iaSpellType_fire;
       }
-      
+
       if iData & ATCK_SPELL_COLD
       {
          rName = iaSpellType_cold;
       }
-      
+
       if iData & ATCK_SPELL_SHOCK
       {
          rName = iaSpellType_shock;
       }
-      
+
       if iData & ATCK_SPELL_ACID
       {
          rName = iaSpellType_acid;
       }
-         
+
       AppendTempString(rName);
 
       % If not faked, then add maker information if available.
@@ -136,7 +136,7 @@ messages:
             AppendTempString(sMakerInfo);
          }
       }
-      
+
       return;
    }
 
@@ -153,33 +153,33 @@ messages:
 
          return FALSE;
       }
-     
+
       if stringContain(string,iaspelltype_fire_DM)
       {
          iSpelltype = ATCK_SPELL_FIRE;
       }
 
-      if stringContain(string,iaspelltype_cold_DM)      
+      if stringContain(string,iaspelltype_cold_DM)
       {
          iSpelltype = ATCK_SPELL_COLD;
       }
 
-      if stringContain(string,iaspelltype_holy_DM)      
+      if stringContain(string,iaspelltype_holy_DM)
       {
          iSpelltype = ATCK_SPELL_HOLY;
       }
       
-      if stringContain(string,iaspelltype_unholy_DM)      
+      if stringContain(string,iaspelltype_unholy_DM)
       {
          iSpelltype = ATCK_SPELL_UNHOLY;
       }
 
-      if stringContain(string,iaspelltype_acid_DM)      
+      if stringContain(string,iaspelltype_acid_DM)
       {
          iSpelltype = ATCK_SPELL_ACID;
       }
 
-      if stringContain(string,iaspelltype_shock_DM)      
+      if stringContain(string,iaspelltype_shock_DM)
       {
          iSpelltype = ATCK_SPELL_SHOCK;
       }
@@ -188,18 +188,18 @@ messages:
       {
          return FALSE;
       }
-      
+      Debug("Attempted to make a spell blade");
       if Send(self,@ReqAddToItem,#state1=iSpellType,#oItem=oWeapon)
       {
-         Send(self,@AddToItem,#oItem=oWeapon, #state1=iSpellType,
-              #random_gen=TRUE);
-              
+         Send(self,@AddToItem,#oItem=oWeapon,#state1=iSpellType,
+              #timer_duration=random(3600000,86400000),#random_gen=TRUE);
+
          return TRUE;
       }
-      
+
       return FALSE;
    }
-   
+
    AddSelfToRandomItem(oItem=$,who=$)
    {
       local iSpellType, iRand;
@@ -229,32 +229,32 @@ messages:
       if iSpellType = 0
       {
          iRand = Random(1,6);
-      
+
          if iRand = 1
          {
             iSpellType = ATCK_SPELL_FIRE;
          }
-         
+
          if iRand = 2
          {
             iSpellType = ATCK_SPELL_SHOCK;
          }
-         
+
          if iRand = 3
          {
             iSpellType = ATCK_SPELL_COLD;
          }
-         
+
          if iRand = 4
          {
             iSpellType = ATCK_SPELL_HOLY;
          }
-         
+
          if iRand = 5
          {
             iSpellType = ATCK_SPELL_UNHOLY;
          }
-         
+
          if iRand = 6
          {
             iSpellType = ATCK_SPELL_ACID;
@@ -266,7 +266,7 @@ messages:
          Send(self,@AddToItem,#oItem=oItem,#state1=iSpellType,
               #timer_duration=random(3600000,86400000),#random_gen=TRUE);
       }
-      
+
       return;
    }
 
@@ -290,7 +290,7 @@ messages:
 
          return FALSE;
       }
-   
+
       return state1;
    }
 
@@ -340,14 +340,14 @@ messages:
       }
 
       Send(oItem,@SetSpellFlag,#flag=iSpellType,#value=TRUE);
-      
+
       return;
    }
 
    RemoveEffects(oItem=$,lData=$)
    {
       local iSpellType, oPlayer;
-      
+
       if oItem = $ OR lData = $
       {
          Debug("RemoveEffects failed!");
@@ -360,18 +360,18 @@ messages:
       if NOT Send(oItem,@CheckSpellFlag,#flag=iSpellType)
       {
          Debug("This shouldn't have happened!  Removing effect not here!");
-         
+
          return;
       }
-      
+
       oPlayer = Send(oItem,@GetOwner);
       if oPlayer <> $
          AND IsClass(oPlayer,&User)
       {
          Send(oPlayer,@MsgSendUser,#message_rsc=iaspelltype_gone,
-              #parm1=Send(oItem,@GetName));
+               #parm1=Send(oItem,@GetName));
       }
-      
+
       Send(oItem,@SetSpellFlag,#flag=iSpellType,#value=FALSE);
 
       return;
@@ -383,11 +383,11 @@ messages:
       {
          return FALSE;
       }
-      
-      return TRUE;
-   }   
 
-   
+      return TRUE;
+   }
+
+
    %%% Artifice Spell Functions
 
    FakeAttData()
@@ -400,43 +400,43 @@ messages:
       {
          iSpellType = ATCK_SPELL_FIRE;
       }
-      
+
       if iRand = 2
       {
          iSpellType = ATCK_SPELL_SHOCK;
       }
-      
+
       if iRand = 3
       {
          iSpellType = ATCK_SPELL_COLD;
       }
-      
+
       if iRand = 4
       {
          iSpellType = ATCK_SPELL_HOLY;
       }
-      
+
       if iRand = 5
       {
          iSpellType = ATCK_SPELL_UNHOLY;
       }
-      
+
       if iRand = 6
       {
          iSpellType = ATCK_SPELL_ACID;
       }
-      
+
       return iSpellType;
    }
 
    %%% Name Functions
 
    ItemBuildDescName(oItem=$,iFakeData=$)
-   {  
+   {
       local lData, iData, rName, sMakerInfo;
 
       if iFakeData = $
-      { 
+      {
          lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
       
          if Send(self,@HasTimer,#lData=lData)
@@ -457,38 +457,42 @@ messages:
       {
          rName = iaSpelltype_name_holy;
       }
-      
+
       if iData & ATCK_SPELL_UNHOLY
       {
          rName = iaSpelltype_name_unholy;
       }
-      
+
       if iData & ATCK_SPELL_FIRE
       {
          rName = iaSpelltype_name_fire;
       }
-      
+
       if iData & ATCK_SPELL_COLD
       {
          rName = iaSpelltype_name_cold;
       }
-      
+
       if iData & ATCK_SPELL_SHOCK
       {
          rName = iaSpelltype_name_shock;
       }
-      
+
       if iData & ATCK_SPELL_ACID
       {
          rName = iaSpelltype_name_acid;
       }
-      
+
       AddPacket(4,rName);
       Addpacket(4,Send(oItem,@GetName));
       
       return;
    }
 
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

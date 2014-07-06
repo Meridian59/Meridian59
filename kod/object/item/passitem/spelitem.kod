@@ -53,7 +53,6 @@ classvars:
 
    viUse_type = ITEM_SINGLE_USE
 
-   viObject_flags = APPLY_YES | GETTABLE_YES
    vrIcon = Spellitem_icon_rsc
    vrDesc = Spellitem_desc_rsc
 
@@ -75,7 +74,8 @@ classvars:
 properties:
 
    vrName = Spellitem_name_rsc
-
+   viObject_flags = APPLY_YES | GETTABLE_YES
+   
    % Used by the item creation spells when making a spell item at a set power.
    piSpellPower = $   
    pbBad = FALSE

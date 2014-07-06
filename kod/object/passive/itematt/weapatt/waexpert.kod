@@ -10,13 +10,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 WeapAttExpert is WeaponAttribute
 
-%  This weapon is more potent in the hands of an expert than in the
-%    hands of a novice.  It determines 'expert' by the proficiency 
-%    of the weapon
+%   This weapon is more potent in the hands of an expert than in the
+%   hands of a novice.  It determines 'expert' by the proficiency 
+%   of the weapon
 %
-%  Form is: 
-%       [ WA_EXPERT ]
-
+%   Form is:
+%      [ WA_EXPERT ]
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 constants:
 
    include blakston.khd   
@@ -62,14 +63,14 @@ messages:
 
       return Send(self,@InitialWeaponPower,#oItem=oItem);
    }
-  
+
    %%  Effect Functions
-      
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder gets a damage bonus, equal to (proficiency/4) - 2."
    {
       local oWeapon, iProf, iPower;
-          
+
       oWeapon = Send(wielder,@LookUpPlayerWeapon);
       iProf = Send(oWeapon,@GetProf,#who=wielder);
 
@@ -77,7 +78,7 @@ messages:
       iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
       if iPower = 0 
-      { 
+      {
          % If no proficiency, then give a penalty to damage.
          if iProf = 0
          {
@@ -87,28 +88,28 @@ messages:
          % Otherwise, no change in damage.
          return damage;
       }
-      
-      Damage = damage - iPower;      
+
+      Damage = damage - iPower;
 
       % Results in proficiency percent of 2 * damage bonus
       iProf = Bound(((iProf*(2*iPower))/100),1,$);
       damage = damage + iProf;
-                       
+
       return damage;
    }
 
-   ModifyHitRoll(hitroll = 0, target = $, wielder = $, lData= $)
+   ModifyHitRoll(hitroll=0,target=$,wielder=$,lData=$)
    "Wielder gets a bonus, equal to (proficiency/4) - 2."
    {
       local oWeapon, iProf, iPower;
-          
+
       oWeapon = Send(wielder,@LookUpPlayerWeapon);
       iProf = Send(oWeapon,@GetProf,#who=wielder);
 
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
-      if iPower = 0 
+      if iPower = 0
       {
          % If no proficiency, then give a penalty to-hit.
          if iProf = 0
@@ -117,9 +118,9 @@ messages:
          }
 
          % Otherwise, no change in to-hit.
-         return hitroll;      
+         return hitroll;
       }
-      
+
       hitroll = hitroll - iPower;
 
       % Results in proficiency percent of 2 * to-hit bonus
@@ -129,6 +130,10 @@ messages:
       return hitroll;
    }
 
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -14,7 +14,7 @@ WeapAttBonker is WeaponAttribute
 %
 %  This weapon just bonks the opponent.  It's nothing more than silly.
 %
-%  Form is: 
+%  Form is:
 %
 %       [ WA_BONK ]
 %	
@@ -22,7 +22,7 @@ WeapAttBonker is WeaponAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -40,30 +40,36 @@ classvars:
    vrDM_trigger = bonker_dm
 
 properties:
-  
+
    piValue_modifier = 150   %% modify the object's price by 100%
    piValue_power_modifier = 10
    piEffect_Percent = 8
 
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
+
    ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of blinding target with any hit."
    {
       local oSpell;
+
       if random(1,100) <= piEffect_percent
       {
-	      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BONK);
-         Send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=50);
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_BONK);
+         Send(oSpell,@CastSpell,#who=wielder,#lTargets=[target],#iSpellPower=50);
       }
 
       return Damage;
+   }
+
+   IsMagicalEffect()
+   {
+      return TRUE;
    }
 
 end

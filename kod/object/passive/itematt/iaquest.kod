@@ -13,19 +13,19 @@ ItemAttQuestCargo is ItemAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %  This item is the object of a quest.
-% 
-%  Form is: 
+%
+%   Form is:
 %
 %      [IA_QUEST_CARGO, oQuestNode]
-%   
-%  oQuestNode::the questnode of which this item is an object.
+%
+%      oQuestNode::the questnode of which this item is an object.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -44,7 +44,7 @@ classvars:
 properties:
 
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
@@ -52,14 +52,14 @@ messages:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    InitiallyIdentified(random_gen=FALSE)
-   {            
+   {
       return TRUE;
-   }   
+   }
 
    ItemCanIdentify()
    {
       return FALSE;
-   }   
+   }
 
    % Make sure you can't affect the item negatively.
 
@@ -90,25 +90,25 @@ messages:
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   AddToItem(oItem=$,oQuestnode=$,oPlayer=$,identified=false)   
+   AddToItem(oItem=$,oQuestnode=$,oPlayer=$,identified=false)
    {
       local lData, iValue;
-     
+
       lData = $;
 
       lData = Cons(oQuestnode,lData);
-      
+
       iValue = Send(self,@SetCompound,#oItem=oItem,#iPower=0);
       lData = Cons(iValue,lData);
-     
+
       if identified
       {
          Send(self,@AddEffects,#oItem=oItem,#lData=lData,#oPlayer=oPlayer);
       }
-      
+
       Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
 
-      return;       
+      return;
    }
 
    RemoveFromItem(oItem=$,oQuestNode=$)
@@ -117,8 +117,8 @@ messages:
    {
       local i,lData;
 
-      % If oQuestNode = $, this means not called from quest, 
-      %  so notify relevant quests of attribute removal...
+      % If oQuestNode = $, this means not called from quest,
+      % so notify relevant quests of attribute removal...
       if oQuestNode = $
       {
          % Since we can have more than one, we should change this to a while loop
@@ -227,7 +227,6 @@ messages:
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

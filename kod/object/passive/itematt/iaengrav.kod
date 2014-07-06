@@ -12,19 +12,19 @@ ItemAttEngraved is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item has a string engraved onto it with the engrave skill.
-% 
-%  Form is: 
+%   This item has a string engraved onto it with the engrave skill.
+%
+%   Form is:
 %
 %      [IA_ENGRAVED, sMessage_string]
-%   
-%  sMessage_string::the message that is engraved on the item.
+%
+%   sMessage_string::the message that is engraved on the item.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -33,25 +33,25 @@ resources:
 
 classvars:
 
-   viItem_Att_Num = IA_ENGRAVED   
+   viItem_Att_Num = IA_ENGRAVED
 
    viDifficulty = 2
 
 properties:
-  
-  plDiscarded_Strings = $
+
+   plDiscarded_Strings = $
 
 messages:
 
    AppendDesc(oItem =$)
    {
       local lData, oRoom;
-      
+
       lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
       AppendTempString(ItemAtt_Engraved_desc_1);
       AppendTempString(Nth(lData,3));
       AppendTempString(ItemAtt_Engraved_desc_2);
-        
+
       return;
    }
 
@@ -81,7 +81,7 @@ messages:
          plDiscarded_Strings = DelListElem(plDiscarded_Strings,sString);
          SetString(sString,state1);
       }
-      
+
       return sString;
    }
 
@@ -96,10 +96,10 @@ messages:
       {
          plDiscarded_Strings = Cons(sString,plDiscarded_Strings);
       }
-      
+
       propagate;
    }
-   
+
    CanBeSpoofed()
    {
       return FALSE;
@@ -111,9 +111,9 @@ messages:
    }
 
    InitiallyIdentified(random_gen=FALSE)
-   {            
+   {
       return TRUE;
-   }   
+   }
 
    AddToTreasureTable()
    {
@@ -125,7 +125,7 @@ messages:
    {
       % plItems_to_attribute should never be used by this itematt
       plItems_to_Attribute = $;
-      
+
       return;
    }
 

@@ -14,19 +14,19 @@ WeapAttSpellCaster is WeaponAttribute
 %
 %  This weapon enacts a particular spell effect on its target.
 %
-%  Form is: 
+%  Form is:
 %
-%       [ WA_SPELLCASTER, Spell, spellpower ]
-%	
+%      [ WA_SPELLCASTER, Spell, spellpower ]
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
-   WeapAttSpellCaster_desc = " Mystical energy flits about this weapon."      
+   WeapAttSpellCaster_desc = " Mystical energy flits about this weapon."
    WeapAttSpellCaster_dm = "spellcaster"
 
 classvars:
@@ -40,7 +40,7 @@ classvars:
    vrDM_trigger = WeapAttSpellCaster_dm
 
 properties:
-  
+
    piValue_modifier = 150   %% modify the object's price by 100%
    piValue_power_modifier = 10
 
@@ -65,12 +65,12 @@ Constructor()
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
+
    ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a chance of affecting the target with the given spell."
    {
       local oSpell;
-      
+
       if (Random(1,100) <= ((100-Nth(lData,3))/10))
          AND Send(wielder,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
@@ -80,7 +80,7 @@ Constructor()
             Send(oSpell,@CastSpell,#who=wielder,#ltargets=[target],#ispellpower=Nth(lData,3),#bItemCast=TRUE);
          }
       }
-      
+
       return Damage;
    }
 
@@ -106,40 +106,40 @@ Constructor()
       {
          return FALSE;
       }
-      
+
       iSpell = 0;
       for i in plSpells
       {
-         if stringContain(string,Send(Send(SYS,@FindSpellByNum,#num=first(i)),@GetName))
+         if StringContain(string,Send(Send(SYS,@FindSpellByNum,#num=first(i)),@GetName))
          {
             iSpell = first(i);
          }
       }
-      
+
       if iSpell = 0
       {
          return FALSE;
       }
-      
+
       if Send(self,@ReqAddToItem,#state1=iSpell,#oItem=oWeapon)
       {
          Debug("Adding to item");
-         
+
          Send(self,@AddToItem,#oItem=oWeapon, #spellNum = iSpell,
               #random_gen=TRUE);
-              
+
          return TRUE;
       }
-      
+
       Debug("Failed to add");
-      
+
       return FALSE;
    }
 
-   AddToItem(oItem=$,spellNum=$,oPlayer=$,identified=false)   
+   AddToItem(oItem=$,spellNum=$,oPlayer=$,identified=false)
    {
       local lData, iValue, i;
-          
+
       lData = $;
 
       %spellpower
@@ -150,7 +150,7 @@ Constructor()
       {
          iValue = Random(1,100);
          spellNum = first(first(plSpells));
-         
+
          for i in plSpells
          {
             if iValue <= Nth(i,2)
@@ -163,20 +163,24 @@ Constructor()
             }
          }
       }
-      
+
       lData = Cons(Send(SYS,@FindSpellByNum,#num=spellNum),lData);
-      
+
       iValue = Send(self,@SetCompound,#oItem=oItem,#iPower=0);
       lData = Cons(iValue,lData);
-          
+
       if identified
       {
          Send(self,@AddEffects,#oItem=oItem,#lData=lData,#oPlayer=oPlayer);
       }
 
-      
       Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
-      return;            
+      return;
+   }
+
+   IsMagicalEffect()
+   {
+      return TRUE;
    }
 
 end

@@ -12,31 +12,31 @@ ItemAttRenamed is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item has a string engraved onto it with the engrave skill.
-% 
-%  Form is: 
+%   This item has a string engraved onto it with the engrave skill.
 %
-%   	[IA_RENAMED, sNew_name]
-%	
-%  sNew_name::the name of the item.
+%   Form is:
+%
+%     [IA_RENAMED, sNew_name]
+%
+%      sNew_name::the name of the item.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
-resources:    
+resources:
 
 classvars:
 
    viItem_Att_Num = IA_RENAMED
-   
+
    viDifficulty = 2
 
 properties:
-  
-  plDiscarded_Strings = $
+
+   plDiscarded_Strings = $
 
 messages:
 
@@ -56,11 +56,11 @@ messages:
    InitiallyIdentified()
    {
       return TRUE;
-   }   
+   }
 
 
    GetAttributeDesc(oItem =$)
-   {              
+   {
       return;
    }
 
@@ -74,7 +74,7 @@ messages:
    "State1 contains the attack spell type being added to the weapon."
    {
       local sString;
-		
+
       if state1 = $
       {
          Debug("SetPrimaryState called with nil state!");
@@ -105,7 +105,7 @@ messages:
    RemoveFromItem(oItem=$)
    {
       local lData, sString, i, bFound;
-		
+
       lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
       sString = Nth(lData,2);
 
@@ -113,7 +113,7 @@ messages:
 
       propagate;
    }
-   
+
    CanBeSpoofed()
    {
       return FALSE;
@@ -126,21 +126,22 @@ messages:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    ItemBuildDescName(oItem=$)
-   {  
+   {
       local lData, sName;
-      
+
       lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
-      
+
       sName = Nth(lData,2);   %% a string with the faked name
-            
+
       Addpacket(4,sName);
+
       return;
    }
 
    GetNamePriority()
    {
       return 12;
-   }		
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

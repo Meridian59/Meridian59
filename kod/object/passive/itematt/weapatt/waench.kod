@@ -12,29 +12,29 @@ WeapAttEnchanted is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This weapon attribute merely flags the weapon as having the 'magic'
-%      flag flipped - some monsters are susceptible to magic attacks.
-% 
-%  Form is: 
+%   This weapon attribute merely flags the weapon as having the 'magic'
+%   flag flipped - some monsters are susceptible to magic attacks.
+%
+%   Form is:
 %
 %      [WA_ENCHANTED, timer ]
-%   
-%       timer::the length of time, from 1 to 25 realtime hours,
-%         that the enchantment lasts (depending on spell factors).
 %
-%  Note that if a weapon ends up permanently holy or unholy, then this
-%       attribute is no longer necessary, since the attack values flags
-%       in weapon stores this information.  This information is only
-%       stored here so that eventually, it may be forgotten.
+%      timer::the length of time, from 1 to 25 realtime hours,
+%      that the enchantment lasts (depending on spell factors).
+%
+%   Note that if a weapon ends up permanently holy or unholy, then this
+%   attribute is no longer necessary, since the attack values flags
+%   in weapon stores this information.  This information is only
+%   stored here so that eventually, it may be forgotten.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
-   
+
    waEnchant_gone = "Your %s suddenly seems a little more... ordinary."
    waEnchanted = " This weapon has been dedicated to Kraanan's glory."
    waEnchanted_name = "enchanted %s"
@@ -49,7 +49,7 @@ classvars:
    vrDM_trigger = "enchanted"
 
 properties:
-  
+
 messages:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,7 +57,7 @@ messages:
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    AddSelfToRandomItem(oItem=$,who=$)
    {
       local iSpellType, iRand;
@@ -72,7 +72,7 @@ messages:
       if Send(self,@ReqAddToItem,#oItem=oItem)
       {
          Send(self,@AddToItem,#oItem=oItem,
-            #timer_duration = random(3600000,86400000),#random_gen=TRUE);
+               #timer_duration = random(3600000,86400000),#random_gen=TRUE);
       }
       return;
    }
@@ -113,11 +113,12 @@ messages:
       if oItem = $ or lData = $
       {
          Debug("AddEffects failed!");
+
          return FALSE;
       }
 
       if Send(oItem,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
-      { 
+      {
          Debug("This shouldn't have happened!  Adding effect already here!");
 
          return;
@@ -132,7 +133,7 @@ messages:
    RemoveEffects(oItem=$,lData=$)
    {
       local iSpellType, oPlayer;
-   
+
       if oItem = $ or lData = $
       {
 %        Debug("RemoveEffects failed!");
@@ -146,14 +147,14 @@ messages:
 
          return;
       }
-      
+
       oPlayer = Send(oItem,@GetOwner);
       if oPlayer <> $ and IsClass(oPlayer,&user)
       {
          Send(oPlayer,@MsgSendUser,#message_rsc=waenchant_gone,
-            #parm1=Send(oItem,@GetName));
+               #parm1=Send(oItem,@GetName));
       }
-      
+
       Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_MAGIC,#value=False);
       Send(oItem,@SetTypeFlag,#flag=ATCK_WEAP_NONMAGIC,#value=True);
 
@@ -170,7 +171,7 @@ messages:
    InitiallyIdentified()
    {
       return TRUE;
-   }   
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -12,31 +12,34 @@ WeapAttFactionDefender is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This Weapon Attribute offers a +POWER bonus if you are allied with 
-%       whoever is allied with the weapon, and are fighting any other faction.
-%       It offers no bonus to the unfactioned, or if you attack the unfactioned.
+%   This Weapon Attribute offers a +POWER bonus if you are allied with 
+%   whoever is allied with the weapon, and are fighting any other faction.
+%   It offers no bonus to the unfactioned, or if you attack the unfactioned.
 %
 %  Form is:
 %
-%       [ WA_FACTION, $, faction_number ]
-%	
+%      [ WA_FACTION, $, faction_number ]
+%
 %       faction_number:: the faction that the weapon identifies, as found in
-%               blakston.khd.  Examples: FACTION_DUKE, FACTION_PRINCESS,
-%               and FACTION_NEUTRAL for those who are unaligned.
+%       blakston.khd.  Examples: FACTION_DUKE, FACTION_PRINCESS,
+%       and FACTION_NEUTRAL for those who are unaligned.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
-   weapatt_faction_princess = " The princess' sigil is embossed on the weapon, promising "
+   weapatt_faction_princess = \
+      " The princess' sigil is embossed on the weapon, promising "
    weapatt_faction_princess2 = " advantage in the defense of her honor."
-   weapatt_faction_duke = " The duke's family crest is embossed on the weapon, offering "
+   weapatt_faction_duke = \
+      " The duke's family crest is embossed on the weapon, offering "
    weapatt_faction_duke2 = " advantage in his quest for the throne."
-   weapatt_faction_rebel = " The rebel army flag is embossed on the weapon, giving "
+   weapatt_faction_rebel = \
+      " The rebel army flag is embossed on the weapon, giving "
    weapatt_faction_rebel2 = " advantage for the rebellion."
 
    weapatt_faction_duke_name = "%s of the duke"
@@ -60,9 +63,9 @@ properties:
 
    piValue_modifier = 150   %% modify the object's price by 150%
    piValue_power_modifier = 10
-  
+
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Treasure Functions
@@ -70,39 +73,39 @@ messages:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    DMCreateItemAtt(who=$,string=$,oWeapon=$)
-   {      
+   {
       if who = $ OR string = $ OR oWeapon = $
       {
          Debug("BAD data sent to DMCreateItemAtt!");
 
          return FALSE;
       }
-     
+
       if StringContain(string,iafaction_duke_dm)
-      {  
+      {
          Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_DUKE);
 
          return TRUE;
       }
-      
+
       if StringContain(string,iafaction_princess_dm)
-      {  
+      {
          Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_PRINCESS);
 
          return TRUE;
       }
 
       if StringContain(string,iafaction_rebel_dm)
-      {  
+      {
          Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who,#iFact=FACTION_REBEL);
 
          return TRUE;
       }
-      
+
       return FALSE;
 
    }
-   
+
    AddSelfToRandomItem(oItem=$,who=$,iFact=FACTION_NEUTRAL)
    {
       if oItem = $ or who = $
@@ -121,17 +124,17 @@ messages:
          {
             % Choose the faction that the player is allied with
             iFact = Send(who,@GetFaction);
-         }	             
-      
+         }
+
          if iFact = FACTION_NEUTRAL	
-         {            
+         {
             % Choose a random faction, because either the weapatt 
             %  failed the random check, or the player isn't allied with either.
 
             iFact = Random(FACTION_NEUTRAL+1, FACTION_MAX);         
          }
       }
-      
+
       if Send(self,@ReqAddToItem,#state1=iFact,#oItem=oItem)
       {
          Send(self,@AddToItem,#oItem=oItem,#state1=iFact);
@@ -145,11 +148,11 @@ messages:
 %%  Initialization Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    ReqAddToItem(state1=$)
    {
       if state1 <= FACTION_NEUTRAL or state1 > FACTION_MAX
-      { 
+      {
          Debug("Illegal faction chosen.  No attribute added.");
 
          return FALSE; 
@@ -170,7 +173,7 @@ messages:
 
       return state1;
    }
-   
+
    InitialPower(oItem=$)
    {
       if oItem = $
@@ -202,14 +205,18 @@ messages:
 
          return damage;
       }
-          
-      iTargetFaction = Send(target,@GetFaction);
+
+      if target <> $
+      {
+         iTargetFaction = Send(target,@GetFaction);
+      }
+
       iWielderFaction = Send(wielder,@GetFaction);
       iWeaponFaction = Nth(lData,3);
-          
+
       if iWeaponFaction = iWielderFaction
          AND iWielderFaction <> iTargetFaction
-      { 
+      {
          iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
          iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
@@ -221,7 +228,7 @@ messages:
 
          return (damage + iPower); 
       }
-      
+
       return damage;
    }
 
@@ -238,14 +245,18 @@ messages:
 
          return hitroll;
       }
-	          
-      iTargetFaction = Send(target,@GetFaction);
+
+      if target <> $
+      {
+         iTargetFaction = Send(target,@GetFaction);
+      }
+
       iWielderFaction = Send(wielder,@GetFaction);
       iWeaponFaction = Nth(lData,3);
-	          
+
       if iWeaponFaction = iWielderFaction
          AND iWielderfaction <> iTargetFaction
-      { 
+      {
          iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
          iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
@@ -254,10 +265,10 @@ messages:
          {
             iPower = iPower / 2;
          }
-            
+
          return (hitroll + iPower); 
       }
-      
+
       return hitroll;
    }
 
@@ -270,7 +281,7 @@ messages:
    AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
       local iData, iPower;
-		
+
       iData = 0;
       if lData = $ 
       {
@@ -280,7 +291,7 @@ messages:
 
             return;
          }
-         
+
          iData = iFakeData;
          iPower = iFakePower;
       }
@@ -292,10 +303,10 @@ messages:
 
             return;
          }
-         
+
          iData = Nth(lData,3);
          iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
-      }	
+      }
 
       if iData = FACTION_DUKE
       {
@@ -313,7 +324,7 @@ messages:
             AppendTempString(weapatt_faction_rebel);
          }
       }
-      
+
       AppendTempString(Send(self,@GetPowerDesc,#iPower=iPower));
 
       if iData = FACTION_DUKE
@@ -352,13 +363,13 @@ messages:
 %%  Name Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    ItemBuildDescName(oItem=$,iFakeData=$)
    {
       local lData, iData;
-      
+
       if iFakeData = $
-      { 
+      {
          lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
          iData = Nth(lData,3);
       }
@@ -385,10 +396,14 @@ messages:
       }
 
       Addpacket(4,Send(oItem,@GetName));
-      
+
       return;
    }
 
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

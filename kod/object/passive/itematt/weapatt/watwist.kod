@@ -12,17 +12,17 @@ WeapAttTwister is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This weapon sometimes twists the opponent randomly.
+%   This weapon sometimes twists the opponent randomly.
 %
-%  Form is: 
+%   Form is:
 %
-%       [ WA_TWISTER ]
-%	
+%      [ WA_TWISTER ]
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -42,19 +42,19 @@ classvars:
    vrDM_trigger = twister_dm
 
 properties:
-  
+
    piValue_modifier = 150
    piValue_power_modifier = 10
    piEffect_Percent = 8
 
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
+
    ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of twisting target with any hit."
    {
@@ -63,14 +63,20 @@ messages:
       if Random(1,100) <= piEffect_percent
       {
          oRoom = Send(target,@GetOwner);
-	      if oRoom <> $
-	      {
-	         Send(oRoom,@SomethingTurned,#what=target,#new_angle=random(0,MAX_ANGLE-1));
-	         Send(target,@MsgSendUser,#message_rsc=weapatt_twister_victim_effect);
-	      }
+
+         if oRoom <> $
+         {
+            Send(oRoom,@SomethingTurned,#what=target,#new_angle=random(0,MAX_ANGLE-1));
+            Send(target,@MsgSendUser,#message_rsc=weapatt_twister_victim_effect);
+         }
       }
 
       return damage;
+   }
+
+   IsMagicalEffect()
+   {
+      return TRUE;
    }
 
 end

@@ -12,35 +12,37 @@ ItemAttMisdirection is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item, when viewed, has the description of another item.  It also
-%     hides any true powers that the item has.
+%   This item, when viewed, has the description of another item.  It also
+%   hides any true powers that the item has.
 %
-%  If an identify or reveal spell is cast on the item, then the truth 
-%     about the item is shown, in the form of the misdirection_desc.
-% 
-%  Form is: 
+%   If an identify or reveal spell is cast on the item, then the truth 
+%   about the item is shown, in the form of the misdirection_desc.
+%
+%   Form is:
 %
 %      [IA_MISDIRECTION, tTimer, iFakeItemAttNum, iFakeItemAttData]
 %
-%  tTimer :: timer counting down until illusion vanishes on it's own.
-%  iFakeItemAttNum :: the IA_ that the item pretends to have, as listed in
-%     blakston.khd.
-%  iFakeItemAttData :: data needed by the fake itematt to complete it,
-%     such as the name of the guild hall it's supposedly defending, or
-%     'the princess' sword/the dukes' sword
-%   
+%      tTimer :: timer counting down until illusion vanishes on it's own.
+%      iFakeItemAttNum :: the IA_ that the item pretends to have, as listed in
+%      blakston.khd.
+%      iFakeItemAttData :: data needed by the fake itematt to complete it,
+%      such as the name of the guild hall it's supposedly defending, or
+%      'the princess' sword/the dukes' sword
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
    include protocol.khd
 
 resources:
  
-   itematt_misdirection_desc = " An illusion has been cast on this item, hiding it's true abilities."
-   iaMisdirection_gone = "The illusion around your %s fades, and you can see it for what it truly is."
-   
+   itematt_misdirection_desc = \
+      " An illusion has been cast on this item, hiding it's true abilities."
+   iaMisdirection_gone = \
+      "The illusion around your %s fades, and you can see it for what it truly is."
+
 classvars:
 
    viItem_Att_Num = IA_MISDIRECTION
@@ -49,7 +51,7 @@ classvars:
    viDifficulty = 5
 
 properties:
-  
+
   plDiscarded_Strings = $
   plFake_Att_Choices = $
 
@@ -57,10 +59,10 @@ messages:
 
    Constructor()
    {
-      %% Post this so it's done after all of the 
-      %% item atts have been constructed by recreate.      
+      %% Post this so it's done after all of the
+      %% item atts have been constructed by recreate.
       Post(self,@BuildFakeAttChoicesList);
-      
+
       return;
    }
 
@@ -82,17 +84,17 @@ messages:
       {
          if Send(i,@CanBeSpoofed)
          {
-            plFake_Att_Choices = cons(Send(i,@GetItemAttNumber),plFake_Att_Choices);
+            plFake_Att_Choices = Cons(Send(i,@GetItemAttNumber),plFake_Att_Choices);
          }
       }
-      
+
       return;
    }
-   
+
    AppendMisdirectedDesc(oItem=$,lData=$)
    {
       local oItemAtt, iFakeAttNum, iFakeData;
-      
+
       iFakeAttNum = Nth(lData,3);
       oItemAtt = Send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
 
@@ -103,19 +105,19 @@ messages:
       }
 
       Send(oItemAtt,@AppendDesc,#oItem=oItem,#iFakeData=iFakeData,
-           #iFakePower=Send(self,@TranslatePowerFromCompound,#iCompound=first(lData)));
-           
+            #iFakePower=Send(self,@TranslatePowerFromCompound,#iCompound=first(lData)));
+
       return;
    }
-      
+
    AddMisdirectionToItem(iFakeAttNum=$,timer_duration=$,oItem=$)
    {
       local oItemAtt, iFakeAttData;
-      
+
       if oItem = $ or timer_duration = $
       {
          Debug("Never should have happened!");
-         
+
          return;
       }
 
@@ -123,22 +125,22 @@ messages:
       {
          iFakeAttNum = Send(self,@GetFakeAttNum,#oItem=oItem);
       }
-      
+
       oItemAtt = Send(SYS,@FindItemAttByNum,#num=iFakeAttNum);
       if not Send(oItemAtt,@CanBeSpoofed)
       {
          Debug("Spoofing unspoofable attribute!  Impossible!");
-         
+
          return;
       }
-      
+
       %% This returns $ if something does not need data.
       iFakeAttData = Send(oItemAtt,@FakeAttData);
-      
+
       if Send(self,@ReqAddToItem,#oItem=oItem)
       {
          Send(self,@AddToItem,#oItem=oItem,#state1=iFakeAttNum,
-              #state2=iFakeAttData,#timer_duration=timer_duration);
+               #state2=iFakeAttData,#timer_duration=timer_duration);
       }
 
       return;
@@ -202,18 +204,18 @@ messages:
    %  Name Functions
 
    ItemBuildDescName(oItem=$)
-   {  
+   {
       local lData, iData, iFakeData, oItemAtt;
-      
+
       lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_num);
-      
-      iData = Nth(lData,2);    %% this is the IA_ of the faked attribute
+
+      iData = Nth(lData,2);      %% this is the IA_ of the faked attribute
       iFakeData = Nth(lData,3);  %% this is excess data that might be needed
                                  %% example: see weapattfaction
-      
-      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iData);   
+
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=iData);
       Send(oItemAtt,@ItemBuildDescName,#oItem=oItem,#iFakeData=iFakeData);
-      
+
       return;
    }
 
@@ -221,7 +223,6 @@ messages:
    {
       return 12;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

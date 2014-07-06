@@ -10,20 +10,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 ItemAttribute is PassiveObject
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%  Item Attributes, added 5 March 97 by Damion Schubert
+%   Item Attributes, added 5 March 97 by Damion Schubert
 %
-%  A list of item attributes is stored in system.kod, which are referenced
-%     by an constant with the IA_ preface (as defined in blakston.khd).  
-%     An ItemAtt's object number should never be stored as a property 
-%     anywhere but system.kod
+%   A list of item attributes is stored in system.kod, which are referenced
+%   by an constant with the IA_ preface (as defined in blakston.khd).  
+%   An ItemAtt's object number should never be stored as a property 
+%   anywhere but system.kod
 %
-%  See item.kod for notes on implementation and structure used for ItemAtts
-%     on a per item basis.
+%   See item.kod for notes on implementation and structure used for ItemAtts
+%   on a per item basis.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -44,7 +44,7 @@ classvars:
          %% this determines the types of monsters you'll have to 
          %% kill to find this item.  It also helps determine name 
          %% priority.
-   
+
    vrDM_Trigger = $
    vbAppears_in_Happyland = TRUE
 
@@ -55,11 +55,12 @@ properties:
    piValue_power_modifier = 0
 
 messages:
-  
+
    Constructor()
    {
-      send(self,@SetItemsToAttribute);
-      send(self,@AddToTreasureTable);
+      Send(self,@SetItemsToAttribute);
+      Send(self,@AddToTreasureTable);
+
       return;
    }
 
@@ -73,7 +74,8 @@ messages:
          }
          else
          {  
-            send(self,@delete);
+            Send(self,@delete);
+
             return FALSE;
          }
       }
@@ -98,13 +100,12 @@ messages:
                [ &Hammer, 8],
                [ &ChainArmor, 6],
                [ &Axe, 6],
-               [ &Longsword, 4],                                                                        
+               [ &Longsword, 4],
                [ &ScaleArmor, 3],
-               [ &KnightShield, 2],                                             
+               [ &KnightShield, 2],
                [ &Scimitar, 1],
                [ &PlateArmor, 1]
              ];
-                        
 
       return;
    }
@@ -118,8 +119,8 @@ messages:
       {
          index = index + nth(i,2);
       }
-      
-      jindex = send(who,@GetBaseMaxhealth)/10;
+
+      jindex = Send(who,@GetBaseMaxhealth)/10;
       if index < jindex+1  { index = jindex + 1; }
 
       random_x = random(jindex + 1,index);
@@ -129,21 +130,19 @@ messages:
       {
          random_x = random_x - nth(i,2);
          if random_x < 1         %% we have a winner!
-         {  
+         {
             oItem = Create(First(i));
             Send(self,@AddSelfToRandomItem,#oItem=oItem,#who=who);
 
-            % Use GetName to check for item enchantment for item text coloring
-            Send(oItem,@GetName);
             break;
          }
       }
-      
+
       return oItem;
    }
 
    DMCreateItemAtt(who=$,string=$,oWeapon=$)
-   {      
+   {
       if who = $ or string= $ or oWeapon = $
       {
          Debug("BAD data sent to DMCreateItemAtt!");
@@ -162,11 +161,10 @@ messages:
 
       %%% Okay, they've chosen our itematt.  Most of the time, let's
       %%% just apply ourselves using the 'random' thing we use to make treasure.
-      
-      Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who);
-      
-      return TRUE;
 
+      Send(self,@AddSelfToRandomItem,#oItem=oWeapon,#who=who);
+
+      return TRUE;
    }
 
    AddSelfToRandomItem(oItem=$,who=$)
@@ -180,17 +178,16 @@ messages:
       {
          Send(self,@AddToItem,#oItem=oItem); 
       }
-      
+
       return;
    }
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    ItemDropOnDeath()
    {
       return TRUE;   %% transcendant items return false.
@@ -283,11 +280,11 @@ messages:
       {
          return TRUE;
       }
-      
+
       return FALSE;
    }
 
-   AddToItem(oItem=$,state1=$,state2=$,state3=$,timer_duration=$,random_gen=TRUE,iPower=$)   
+   AddToItem(oItem=$,state1=$,state2=$,state3=$,timer_duration=$,random_gen=TRUE,iPower=$)
    {
       local lData, iValue;
 
@@ -295,57 +292,69 @@ messages:
       if Send(oItem,@HasAttribute,#ItemAtt = viItem_Att_num)
       {
          return;
-      }   
-          
+      }
+
       lData = $;
-      
+
       %% build the node from rear to front, 3rd state to first
       %% state3 is TRUE for itematts which are created by a player cast spell.
       iValue = Send(self,@SetTertiaryState,#state3=state3);
       if iValue <> $
       {
-         lData = cons(iValue,lData);
+         lData = Cons(iValue,lData);
       }
 
-      iValue = send(self,@SetSecondaryState,#state2=state2);
+      iValue = Send(self,@SetSecondaryState,#state2=state2);
       if (iValue <> $) OR (lData <> $)
       {
-         lData = cons(iValue,lData);
-      }
-                    
-      iValue = send(self,@SetPrimaryState,#state1=state1);
-      if (iValue <> $) OR (lData <> $)
-      {
-         lData = cons(iValue,lData);
+         lData = Cons(iValue,lData);
       }
 
-      iValue = send(oItem,@SetTimer,#timer_duration=timer_duration);          
+      iValue = Send(self,@SetPrimaryState,#state1=state1);
       if (iValue <> $) OR (lData <> $)
       {
-         lData = cons(iValue,lData);
+         lData = Cons(iValue,lData);
       }
 
-      iValue = send(self,@SetCompound,#random_gen=random_gen,#oItem=oItem,#iPower=iPower);
-      lData = cons(iValue,lData);
-          
-      Send(self,@AddEffects,#oItem=oItem,#lData=lData,#state1=state1);              
+      iValue = Send(oItem,@SetTimer,#timer_duration=timer_duration);
+      if (iValue <> $) OR (lData <> $)
+      {
+         lData = Cons(iValue,lData);
+      }
+
+      iValue = Send(self,@SetCompound,#random_gen=random_gen,#oItem=oItem,#iPower=iPower);
+      lData = Cons(iValue,lData);
+
+      Send(self,@AddEffects,#oItem=oItem,#lData=lData,#state1=state1);
       Send(oItem,@AddAttributeSpecifics,#lItemAtt=lData);
-      
-      return;            
+
+      %% Add magic item flag for item attributes that add an effect
+      if Send(self,@IsMagicalEffect)
+         {
+            Send(oItem,@AddMagicFlag);
+         }
+      return;
    }
 
    RemoveFromItem(oItem=$)
-   "This must be called.  In fact, this is what all attribute "
+   "This must be called. In fact, this is what all attribute "
    "removing things should call."
    {
       local iValue, lData;
 
       lData = Send(oItem,@GetAttributeData,#ItemAtt=viItem_Att_Num);
-      Send(self,@RemoveEffects,#oItem=oItem,#lData=lData);              
+
+      Send(self,@RemoveEffects,#oItem=oItem,#lData=lData);
       Send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
-      
+
+      %% Remove magic item flag for item attributes that add an effect
+      if Send(self,@IsMagicalEffect)
+      {
+         Post(oItem,@RemoveMagicFlag);
+      }
+
       return;
-   }   
+   }
 
    AddEffects(oItem=$,lData=$)
    "AddEffects, in general, does anything that is triggered upon creation, "
@@ -362,7 +371,7 @@ messages:
       return;
    }
 
-   SetCompound(random_gen=TRUE,oItem = $,iPower=$)
+   SetCompound(random_gen=TRUE,oItem=$,iPower=$)
    "The compound is a three part variable.  The first variable "
    "is a bitflag, which currently contains 1 option (whether or "
    "not the attribute has been ID'd yet).  The second bit is the "
@@ -377,19 +386,21 @@ messages:
       %% 1 if identified.
       bIdent = Send(self,@InitiallyIdentified,#random_Gen=random_gen);
       iCompound = iCompound + bIdent;
-      
+
       if iPower = $
       {
          %% tens digit = power.  Number from 1 to 10?
          iPower = Send(self,@InitialPower,#oItem=oItem);
       }
+
       iCompound = iCompound + (10 * iPower);
 
       %% hundreds, thousands digit = ID constant
       %% starting in WA_ or IA_
       iCompound = iCompound + (100 * viItem_Att_num);
+
       return iCompound;
-   }  
+   }
 
    InitiallyIdentified(random_Gen=TRUE)
    {
@@ -426,7 +437,7 @@ messages:
    TimerExpired()
    {
       Debug("TimerExpired() called, but itematt has no function defined!");
-      
+
       return;
    }
 
@@ -441,7 +452,7 @@ messages:
 
    CanGetAffectedItem(lData=$,who=$)
    {
-      return TRUE;            
+      return TRUE;
    }
 
    TranslatePowerFromCompound(iCompound=0)
@@ -459,7 +470,7 @@ messages:
 
       iPower = iCompound/10;
       iPower = iPower mod 10;
-            
+
       return iPower;
    }
 
@@ -468,8 +479,8 @@ messages:
 %%  Maintenance Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
-   GetItemAttNumber()   
+
+   GetItemAttNumber()
    {
       return viItem_Att_num;
    }
@@ -477,6 +488,7 @@ messages:
    Delete()
    {
       Send(SYS,@DeleteItemAttribute,#oItemAtt=self);
+
       propagate;
    }
 
@@ -503,6 +515,7 @@ messages:
       {
          AppendTempString(sMakerInfo);
       }
+
       return;
    }
 
@@ -517,21 +530,21 @@ messages:
       %% for most Item Atts, take the difficulty value, and add
       %% an 50% chance at the base level, and a 10% before and after.
    
-      send(SYS,@AddToItemAttTreasureTable,#diff=viDifficulty,
-         #percent = 50,#iItemAtt = viItem_Att_Num);
+      Send(SYS,@AddToItemAttTreasureTable,#diff=viDifficulty,
+            #percent = 50,#iItemAtt = viItem_Att_Num);
 
       if viDifficulty < 10
       {
-         send(SYS,@AddToItemAttTreasureTable,#diff=viDifficulty+1,
-              #percent=10,#iItemAtt=viItem_Att_Num);
+         Send(SYS,@AddToItemAttTreasureTable,#diff=viDifficulty+1,
+               #percent=10,#iItemAtt=viItem_Att_Num);
       }
       
       if viDifficulty > 1
       {
-         send(SYS,@AddToItemAttTreasureTable,#diff=viDifficulty-1,
-              #percent=10,#iItemAtt=viItem_Att_Num);
+         Send(SYS,@AddToItemAttTreasureTable,#diff=viDifficulty-1,
+               #percent=10,#iItemAtt=viItem_Att_Num);
       }
-      
+
       return;
    }
 
@@ -589,22 +602,27 @@ messages:
 %%  Name Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    GetNamePriority()
    {
       %% Most items will have their rank order determined by their difficulty.
       %%   Exceptions are cursed weapons.
-      return viDifficulty;    
+
+      return viDifficulty;
    }
 
    ItemBuildDescName(oItem=$)
    {
-      Addpacket(4,vrName);
-      Addpacket(4,send(oItem,@GetName));
-      
+      AddPacket(4,vrName);
+      AddPacket(4,Send(oItem,@GetName));
+
       return;
    }
-   
+
+   IsMagicalEffect()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

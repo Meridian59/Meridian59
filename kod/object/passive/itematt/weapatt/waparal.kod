@@ -12,13 +12,13 @@ WeapAttParalyzer is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This weapon has a chance to blind the opponent every time it does
-%     damage.
+%   This weapon has a chance to blind the opponent every time it does
+%   damage.
 %
-%  Form is: 
+%   Form is:
 %
-%       [ WA_Paralyzer]
-%	
+%      [ WA_Paralyzer]
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
@@ -28,7 +28,7 @@ constants:
 resources:
 
    weapattParalyzer_desc = \
-      " A glow that can only be described as Zjiriaesqe surrounds the weapon."      
+      " A glow that can only be described as Zjiriaesqe surrounds the weapon."
    Paralyzer_dm = "Paralyzer"
    paralyzer_fail_use = "You are not ready to use %s%s."
    holder_worked = "%s%s seems rooted to the very ground!"
@@ -44,16 +44,16 @@ classvars:
    vrDM_trigger = Paralyzer_dm
 
 properties:
-  
+
    % modify the object's price by 100%
    piValue_modifier = 200
    piValue_power_modifier = 10
    piEffect_percent = 15
 
 messages:
-  
+
    %%% Effect Functions
-      
+
    ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a chance of paralyzing target with any hit."
    {
@@ -62,13 +62,13 @@ messages:
       if Random(1,100) <= piEffect_percent
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
-	 
+
          %% no duplicates
          if NOT Send(target,@IsEnchanted,#what=oSpell)
-         {	          
+         {
             Send(oSpell,@CastSpell,#who=self,#ltargets=[target],#ispellpower=99);
             Send(wielder,@MsgSendUser,#message_rsc=holder_worked,
-                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+                  #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
       }
 
@@ -78,14 +78,19 @@ messages:
    ItemReqUse(oItem=$,oPlayer=$)
    {
       % A person needs 50% in the weapon's proficiency to use
-      if Send(oItem,@GetProf,#who=oPlayer) < 50      
+      if Send(oItem,@GetProf,#who=oPlayer) < 50
       {
          Send(oPlayer,@MsgSendUser,#message_rsc=paralyzer_fail_use,
             #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
 
-         return FALSE;      
+         return FALSE;
       }
 
+      return TRUE;
+   }
+
+   IsMagicalEffect()
+   {
       return TRUE;
    }
 

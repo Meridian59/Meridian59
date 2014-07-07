@@ -81,10 +81,14 @@ messages:
 
          return False;
       }
-      
-      if Send(oWeapon,@CheckSpellFlag,#flag=ATCK_SPELL_UNHOLY)
+
+      if Send(oWeapon,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC) <> 0
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED) = $
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE) = $
       {
-         Send(who,@MsgSendUser,#message_rsc=unholyweapon_already_done);
+         Debug("failed in loop");
+         Send(who,@MsgSendUser,#message_rsc=unholyweapon_fails,
+               #parm1=Send(oWeapon,@GetName));
 
          return False;
       }
@@ -94,7 +98,7 @@ messages:
 
    CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
-      local oWeapon, oWeapAtt, iDuration;
+      local iCurrentSpell, oWeapon, oWeapAtt, iDuration, oEnchantedWeapAtt, iEnchanted;
 
       oWeapon = First(lTargets);
 
@@ -117,16 +121,32 @@ messages:
 
       if NOT Send(self,@IsTargetInRange,#who=who,#target=oWeapon)
       {
-         Send(who, @MsgSendUser,#message_rsc=spell_out_of_range, 
+         Send(who, @MsgSendUser,#message_rsc=spell_out_of_range,
                #parm1=Send(oWeapon,@GetCapDef),#parm2=Send(oWeapon,@GetName));
 
          return False;
       }
 
       oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ATTACKSPELLTYPE);
+      oEnchantedWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ENCHANTED);
 
-      Send(oWeapAtt,@AddToItem,#oItem=oWeapon, #random_Gen=FALSE,#state1=ATCK_SPELL_UNHOLY, 
-            #timer_duration = Send(self,@GetDuration,#iSpellPower=iSpellPower),#state3=Send(self,@GetMakerInfo,#who=who));
+      % Remove any existing enchants before we go on.
+      iCurrentSpell = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE);
+      iEnchanted = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED);
+
+      if iCurrentSpell <> $
+      {
+         Send(oWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
+
+      if iEnchanted <> $
+      {
+         Send(oEnchantedWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
+
+      Send(oWeapAtt,@AddToItem,#oItem=oWeapon,#random_Gen=FALSE,
+            #timer_duration=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+            #state1=ATCK_SPELL_UNHOLY,#state3=Send(self,@GetMakerInfo,#who=who));
 
       Send(who,@MsgSendUser,#message_rsc=unholyweapon_cast_rsc,
             #parm1=Send(oWeapon,@GetName));

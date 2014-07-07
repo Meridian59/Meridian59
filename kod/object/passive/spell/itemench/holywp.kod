@@ -82,9 +82,12 @@ messages:
          return False;
       }
 
-      if Send(oWeapon,@CheckSpellFlag,#flag=ATCK_SPELL_HOLY)
+      if Send(oWeapon,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC) <> 0
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED) = $
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE) = $
       {
-         Send(who,@MsgSendUser,#message_rsc=holyweapon_already_done);
+         Send(who,@MsgSendUser,#message_rsc=holyweapon_fails,
+               #parm1=Send(oWeapon,@GetName));
 
          return False;
       }
@@ -94,7 +97,7 @@ messages:
 
    CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
-      local oWeapon, oWeapAtt, iDuration;
+      local iCurrentSpell, oWeapon, oWeapAtt, iDuration, oEnchantedWeapAtt, iEnchanted;
 
       oWeapon = First(lTargets);
 
@@ -124,6 +127,21 @@ messages:
       }
 
       oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ATTACKSPELLTYPE);
+      oEnchantedWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ENCHANTED);
+
+      % Remove any existing enchants before we go on.
+      iCurrentSpell = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE);
+      iEnchanted = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED);
+
+      if iCurrentSpell <> $
+      {
+         Send(oWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
+
+      if iEnchanted <> $
+      {
+         Send(oEnchantedWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
 
       Send(oWeapAtt,@AddToItem,#oItem=oWeapon,#random_gen=FALSE,
             #state1=ATCK_SPELL_HOLY,#timer_duration=Send(self,@GetDuration,#iSpellPower=iSpellPower),

@@ -54,7 +54,7 @@ messages:
       return;
    }
 
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local oTarget;
 
@@ -75,7 +75,7 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who=$,lTargets=$)
    {
       local oTarget;
 

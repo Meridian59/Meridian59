@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-GlowWeapon is Spell
+GlowWeapon is ItemEnchantment
 
 constants:
    include blakston.khd
@@ -78,11 +78,6 @@ messages:
 
       oTarget = First(lTargets);
 
-      if oTarget = $
-      {
-         return FALSE;
-      }
-
       if NOT IsClass(oTarget,&Weapon)
       {
          if IsClass(oTarget,&User)
@@ -118,21 +113,6 @@ messages:
 
             return FALSE;
          }
-      }
-
-      % Do not allow people to recast to a lower power level
-      %  This is to allow people to cast spell multiple times to get the
-      %  "best" results without the spell being overly 'bot-able.
-
-      piLightLevel = Send(self,@GetLightLevel,#iSpellPower=iSpellPower);
-      iCurrentGlow = Send(oTarget,@GetAttributeData,#ItemAtt=WA_GLOWING);
-
-      if iCurrentGlow <> $
-         AND Nth(iCurrentGlow,3) >= piLightLevel
-      {
-         Send(who,@MsgSendUser,#message_rsc=GlowWeapon_already_stronger);
-
-         return FALSE;
       }
 
       propagate;

@@ -33,11 +33,11 @@ classvars:
    viBulk_hold_max = 12000
    viWeight_hold_max = $
 
-   viObject_flags = CONTAINER_YES
-
 properties:
 
    plReagents = $
+
+   viObject_flags = CONTAINER_YES
 
 messages:
 

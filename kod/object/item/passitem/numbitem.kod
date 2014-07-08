@@ -39,12 +39,12 @@ classvars:
    viUse_type = ITEM_SINGLE_USE
    viIndefinite_plural = ARTICLE_SOME
    viItem_type = ITEMTYPE_REAGENT
-   
-   viObject_flags = APPLY_YES | GETTABLE_YES
 
 properties:
 
    piNumber = 1
+   
+   viObject_flags = APPLY_YES
 
 messages:
 

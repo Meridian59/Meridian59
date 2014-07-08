@@ -30,12 +30,12 @@ classvars:
 
    viUse_type = ITEM_SINGLE_USE
    viItem_type = ITEMTYPE_GEM
-
-   viObject_flags = APPLY_YES | GETTABLE_YES
    
 properties:
 
    poSocketedObject = $
+
+   viObject_flags = APPLY_YES
 
 messages:
    

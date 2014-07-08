@@ -39,12 +39,13 @@ classvars:
 
    viUse_type = ITEM_CANT_USE
    viItem_type = ITEMTYPE_MONEY
-   viObject_flags = GETTABLE_YES
 
    viGround_group = 2
    viInventory_group = 1
 
 properties:
+   
+   viObject_flags = 0
 
 messages:
 

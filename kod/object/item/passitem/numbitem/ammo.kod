@@ -34,8 +34,6 @@ classvars:
    viItem_type = ITEMTYPE_AMMO
    viAmmo_type = AMMO_ARROW
 
-   viObject_flags = GETTABLE_YES
-
    viGround_group = 2
    viInventory_group = 1   
 
@@ -44,6 +42,8 @@ properties:
    piNumber = 20
    piAttack_type = ATCK_WEAP_PIERCE
    piAttack_spell = 0
+   
+   viObject_flags = 0
 
 messages:
 

@@ -66,25 +66,25 @@ messages:
    {
       local oWeapon, oLikelyAmmo, oAmmo, cAmmoType, iAmmoValue, i;
 
-      oWeapon = send(who,@LookupPlayerWeapon);
+      oWeapon = Send(who,@LookupPlayerWeapon);
       if oWeapon = $
       {
-         if report { send(who,@MsgSendUser,#message_rsc=fire_need_weapon); }
+         if report { Send(who,@MsgSendUser,#message_rsc=fire_need_weapon); }
          return $;
       }
       if not IsClass(oWeapon,&RangedWeapon)
       {
-         if report { send(who,@MsgSendUser,#message_rsc=fire_only_missile_weapon); }
+         if report { Send(who,@MsgSendUser,#message_rsc=fire_only_missile_weapon); }
          return $;
       }
 
-      cAmmoType = send(oWeapon,@GetAmmoType);
+      cAmmoType = Send(oWeapon,@GetAmmoType);
 
       oLikelyAmmo = $;
 
-      for i in send(who,@GetPlayerUsing)
+      for i in Send(who,@GetPlayerUsing)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
          {
             oLikelyAmmo = i;
          }
@@ -97,26 +97,26 @@ messages:
          %% if the player doesn't have any arrows available and equipped,
          %% auto-equip the cheapest ones.
 
-         for i in send(who,@GetHolderPassive)
+         for i in Send(who,@GetHolderPassive)
          {
-            if (send(i,@GetItemUseType) = ITEM_USE_QUIVER)
-	            and (send(i,@GetAmmoType) = cAmmoType)
-               and ((send(i,@GetValue)/send(i,@GetNumber)) < iAmmoValue)
+            if (Send(i,@GetItemUseType) = ITEM_USE_QUIVER)
+               AND (Send(i,@GetAmmoType) = cAmmoType)
+               AND ((Send(i,@GetValue)/Send(i,@GetNumber)) < iAmmoValue)
             {
                oLikelyAmmo = i;
-               iAmmoValue = send(i,@GetValue)/send(i,@GetNumber);
+               iAmmoValue = Send(i,@GetValue)/Send(i,@GetNumber);
             }
          }
          % Use the ammo!
          if oLikelyAmmo <> $
          {
-            send(who,@TryUseItem,#what=oLikelyAmmo);
+            Send(who,@TryUseItem,#what=oLikelyAmmo);
          }
       }
 
-      if report and (oLikelyAmmo = $)
+      if report AND (oLikelyAmmo = $)
       {
-         send(who,@MsgSendUser,#message_rsc=fire_no_ammo);
+         Send(who,@MsgSendUser,#message_rsc=fire_no_ammo);
       }
 
       return oLikelyAmmo;
@@ -126,7 +126,7 @@ messages:
    {
       local oAmmo;
 
-      oAmmo = send(self,@FindLikelyAmmo,#who=who,#report=TRUE);
+      oAmmo = Send(self,@FindLikelyAmmo,#who=who,#report=TRUE);
       if oAmmo <> $
       {
          return TRUE;
@@ -137,32 +137,35 @@ messages:
 
    GetRequisiteStat(who=$)
    {
-      return send(who,@getaim);
+      return Send(who,@GetAim);
    }
 
    PayCosts(who=$)
    {
       local oAmmo;
 
-      oAmmo = send(self,@FindLikelyAmmo,#who=who);
+      oAmmo = Send(self,@FindLikelyAmmo,#who=who);
       if oAmmo = $
       {
-         send(who,@MsgSendUser,#message_rsc=fire_no_ammo);
+         Send(who,@MsgSendUser,#message_rsc=fire_no_ammo);
          return;
       }
 
-      send(who,@MsgSendUser,#message_rsc=fire_new_ammo,
-        #parm1=send(oAmmo,@GetName));
+      Send(who,@MsgSendUser,#message_rsc=fire_new_ammo,
+        #parm1=Send(oAmmo,@GetName));
 
-      send(send(who,@GetOwner),@SomethingShot,#who=who,
-        #target=send(who,@GetKillTarget), #projectile=oAmmo);
+      Send(Send(who,@GetOwner),@SomethingShot,#who=who,
+        #target=Send(who,@GetKillTarget), #projectile=oAmmo);
 
-      send(oAmmo,@SubtractNumber,#number=1);
+      if Send(oRoom,@NoReagents)=FALSE
+      {
+         Send(oAmmo,@SubtractNumber,#number=1);
+      }
 
       propagate;
    }
 
-   DamageFactors(damage=0, who=$, weapon_used = $)
+   DamageFactors(damage=0,who=$,weapon_used=$)
    "Different skills/strokes are affected by strength differently."
    {
       local iDamage, stat;
@@ -173,9 +176,9 @@ messages:
       {
          iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
       }
-      
+
       % Get Aim damage bonus.
-      stat = send(self,@GetRequisiteStat,#who=who);
+      stat = Send(self,@GetRequisiteStat,#who=who);
       iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
 
       return iDamage;
@@ -185,7 +188,6 @@ messages:
    {
       return TRUE;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

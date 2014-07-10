@@ -1727,6 +1727,14 @@ messages:
          
          if Send(oItemAtt,@IsMagicalEffect)
          {
+            viObject_flags = viObject_flags | ITEM_MAGIC_YES;
+            
+            if poOwner <> $
+               AND IsClass(poOwner,&Player)
+            {
+               Send(poOwner,@SomethingChanged,#what=self);
+            }
+
             return;
          }
       }

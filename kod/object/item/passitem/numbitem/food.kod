@@ -33,8 +33,6 @@ classvars:
    vrEat_wav = food_eat_wav
 
 properties:
-   
-   viObject_flags = 0
 
 messages:
 

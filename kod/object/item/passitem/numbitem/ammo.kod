@@ -42,8 +42,6 @@ properties:
    piNumber = 20
    piAttack_type = ATCK_WEAP_PIERCE
    piAttack_spell = 0
-   
-   viObject_flags = 0
 
 messages:
 

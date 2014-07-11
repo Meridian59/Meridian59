@@ -44,8 +44,6 @@ classvars:
    viInventory_group = 1
 
 properties:
-   
-   viObject_flags = 0
 
 messages:
 

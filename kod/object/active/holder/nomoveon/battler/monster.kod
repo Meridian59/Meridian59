@@ -351,7 +351,7 @@ properties:
    piMinDamage = $
    piMaxDamage = $
    
-   piArmor = $
+   piArmor = 0
 
 messages:
 

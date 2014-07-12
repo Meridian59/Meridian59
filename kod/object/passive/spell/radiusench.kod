@@ -414,6 +414,12 @@ messages:
    
    TargetIsValid(target=$,source=$)
    {
+      if target = $
+         OR source = $
+      {
+         return FALSE;
+      }
+
       if NOT (IsClass(target,&NoMoveOn)
               OR IsClass(target,&Item))
       {

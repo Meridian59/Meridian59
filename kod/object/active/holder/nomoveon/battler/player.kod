@@ -6918,6 +6918,13 @@ messages:
          return 0;
       }
 
+      % Death link prevents karma changes
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEATH_LINK);
+      if Send(poOwner,@IsEnchanted,#what=oSpell)
+      {
+         return 0;
+      }
+
       % A kill is merely an act, like all other acts, with the
       %  strongest swing factor possible.  The karma of a kill
       %  is equal to the negative karma of the person who died -

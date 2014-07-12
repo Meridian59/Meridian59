@@ -22,8 +22,9 @@ resources:
    deathlink_icon_rsc = ideathli.bgf
    deathlink_desc_rsc = \
       "This dark spell feeds off the souls of any poor creature that should "
-      "happen to fall in your vicinity.  "
-      "Requires shaman blood and polished seraphym to cast."
+      "happen to fall in your vicinity.  Deaths occurring under this spell "
+      "are merely transfers of energy - good or evil means nothing.  "
+      "Requires a vial of shaman blood and a single polished seraphym to cast."
    
    deathlink_already_enchanted = "Someone has already linked themselves to this room."
 
@@ -50,7 +51,7 @@ classvars:
    vrSucceed_wav = deathlink_sound
 
 properties:
-  
+
 messages:
 
    ResetReagents()
@@ -62,26 +63,26 @@ messages:
       return;
    }
 
-   DoubleCheckAfterTrance(who = $, lTargets = $)
+   DoubleCheckAfterTrance(who=$,lTargets=$)
    {
       local oRoom;
 
       oRoom = Send(who,@GetOwner);
-    
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MAGIC)       
+
+      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_MAGIC)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
 
          return FALSE;
       }
-      
+
       if (send(oRoom,@IsEnchanted,#what=self))
       {
          Send(who,@MsgSendUser,#message_rsc=spell_already_in_effect,#parm1=vrName);
 
          return FALSE;
       }
-      
+
       propagate;
    }
 
@@ -90,7 +91,7 @@ messages:
       return 0;
    }
 
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
       local oRoom;
 
@@ -100,7 +101,7 @@ messages:
       if Send(oRoom,@IsEnchanted,#what=self)
       {
          Send(who,@MsgSendUser,#message_rsc=deathlink_already_enchanted);
-         
+
          return FALSE;
       }
 
@@ -110,12 +111,12 @@ messages:
    GiveKilledBenefits(caster=$,victim=$)
    {
       local iAmountHPInc, iAmountManaInc;
-   
+
       if Caster = $ OR Victim = $
       {
          return;
       }
-   
+
       iAmountHPInc = Random(1,5);
       iAmountManaInc = Random(1,5);
       if isClass(Victim,&player)
@@ -123,10 +124,10 @@ messages:
          iAmountHPInc = iAmountHPInc * 4;
          iAmountManaInc = iAmountManaInc * 4;
       }
-      
-      send(Caster,@GainHealthNormal,#Amount=iAmountHPInc);   
+
+      send(Caster,@GainHealthNormal,#Amount=iAmountHPInc);
       send(Caster,@GainMana,#Amount=iAmountManaInc);
-      
+
       return;
    }
 
@@ -134,7 +135,7 @@ messages:
    {
       local oRoom, duration;
 
-      duration = (70 + iSpellpower + Random(1,30)) * 1000;
+      duration = (70 + (iSpellpower*5)) * 1000;
 
       oRoom = Send(who,@GetOwner);
 
@@ -148,52 +149,52 @@ messages:
       propagate;
    }
 
-   StartEnchantmentNewOccupant(who = $)
+   StartEnchantmentNewOccupant(who=$)
    "Called on new occupants of the enchanted room."
    {
       Send(who,@MsgSendUser,#message_rsc=deathlink_on_new_entrant);
       Send(self,@StartEnchantment,#who=who);
-      
+
       return;
    }
 
-   StartEnchantment(who = $)
+   StartEnchantment(who=$)
    "Starts enchantment effect on one player"
    {
       Send(who,@AddAttackModifier,#what=self);
-      
+
       return;
    }
 
-   EndSpell(where = $, state = $)
+   EndSpell(where=$,state=$)
    "Called when spell expires."
    {
       Send(where,@SomeoneSaid,#type=SAY_MESSAGE,#string=deathlink_off,
-           #what=self);
+            #what=self);
       Send(where,@UnenchantAllOccupants,#what=self,#state=state);
-      
+
       return;
    }
 
-   EndRoomEnchantment(who = $, state = $)
+   EndRoomEnchantment(who=$,state=$)
    "Remove enchantment effects on this occupant"
    {
       Send(who,@RemoveAttackModifier,#what=self);
+
       return;
    }
 
    % Stuff we handle to be an attack modifier.
 
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   ModifyHitRoll(who=$,what=$,hit_roll=$)
    {
       return hit_roll;
    }
-   
-   ModifyDamage(who = $,what = $,damage = $)
+
+   ModifyDamage(who=$,what=$,damage=$)
    {
       return damage;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

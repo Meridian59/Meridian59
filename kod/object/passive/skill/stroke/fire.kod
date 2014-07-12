@@ -142,8 +142,9 @@ messages:
 
    PayCosts(who=$)
    {
-      local oAmmo;
+      local oAmmo, oRoom;
 
+      oRoom = Send(who,@GetOwner);
       oAmmo = Send(self,@FindLikelyAmmo,#who=who);
       if oAmmo = $
       {

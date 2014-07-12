@@ -6,7 +6,7 @@
 
 DEPEND = ..\roomench.bof
 BOFS = shalbane.bof qorbane.bof martyrs.bof \
-       darkness.bof dethlink.bof \
+       darkness.bof \
        heat.bof killing.bof light.bof \
        silence.bof forceslt.bof
 

@@ -1,0 +1,146 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%S%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DeathLink is PersonalEnchantment
+
+% Death Link now prevents the caster from gaining or losing karma from kills.
+% This is handled in CalculateKarmaChangeFromKill in player.kod, which is
+% normally called by KilledSomething, also in player.kod. Vigor boost is
+% handled in SomethingKilled in player.kod which calls GiveKilledBenefits here.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   deathlink_name_rsc = "death link"
+   deathlink_icon_rsc = ideathli.bgf
+   deathlink_desc_rsc = \
+      "This dark spell feeds off the souls of any poor creature that should "
+      "happen to fall in your vicinity.  Any lives you take are merely "
+      "transfers of energy - good and evil mean nothing.  "
+      "Requires a vial of shaman blood and a single polished seraphym to cast."
+   
+   deathlink_already_enchanted_rsc = \
+      "You are already linked with death."
+
+   deathlink_on_rsc = "You prepare to feed on darkness itself."
+   deathlink_off_rsc = "Your link to death dissipates."
+   deathlink_feed_rsc = "You feed on the life force of the fallen."
+
+   deathlink_sound = qdeathlk.wav
+
+classvars:
+
+   vrName = deathlink_name_rsc
+   vrIcon = deathlink_icon_rsc
+   vrDesc = deathlink_desc_rsc
+
+   vrAlreadyEnchanted = deathlink_already_enchanted_rsc
+   vrEnchantment_On = deathlink_on_rsc
+   vrEnchantment_Off = deathlink_off_rsc
+
+   viSpell_num = SID_DEATH_LINK
+   viMana = 20
+   viSchool = SS_QOR
+   viSpell_level = 5
+   viSpellExertion = 10
+
+   viChance_To_Increase = 20
+   vrSucceed_wav = deathlink_sound
+   viFlash = FLASH_GOOD_SELF
+
+   vbCanCastOnOthers = FALSE
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&ShamanBlood,1],plReagents);
+      plReagents = Cons([&PolishedSeraphym,1],plReagents);
+
+      return;
+   }
+
+   CastSpell(who=$,iSpellPower=0,lTargets=$)
+   {
+      % If it's only self cast, spoof self as target for following code
+      if NOT vbCanCastonOthers
+      {
+         lTargets = Cons(who,lTargets);
+      }
+
+      Send(First(lTargets),@AddAttackModifier,#what=self);
+
+      propagate;
+   }
+
+   GiveKilledBenefits(caster=$,victim=$)
+   {
+      local iAmountVigInc;
+
+      if caster = $ OR victim = $
+      {
+         return;
+      }
+
+      if IsClass(victim,&Player)
+      {
+         % Currently player kills give same bonus as monster kills
+         iAmountVigInc = ((Send(victim,@GetLevel))/20)*10000;
+      }
+      else
+      {
+         % Victim is a monster
+         iAmountVigInc = ((Send(victim,@GetLevel))/20)*10000;
+      }
+
+      Send(caster,@AddExertion,#Amount=-iAmountVigInc);
+      Send(caster,@MsgSendUser,#message_rsc=deathlink_feed_rsc);
+
+      return;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % Base duration is 100-595 seconds.
+      iDuration = (100 + (iSpellPower*5)) * 1000;
+
+      return iDuration;
+   }
+
+   EndEnchantment(who=$,state=$)
+   "Called when spell expires."
+   {
+      Send(who,@RemoveAttackModifier,#what=self);
+
+      propagate;
+   }
+
+   % Stuff we handle to be an attack modifier.
+
+   ModifyHitRoll(who=$,what=$,hit_roll=$)
+   {
+      return hit_roll;
+   }
+
+   ModifyDamage(who=$,what=$,damage=$)
+   {
+      return damage;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

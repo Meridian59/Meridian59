@@ -710,18 +710,8 @@ messages:
       return;
    }
 
-   SomethingKilled(what = $,victim = $)
+   SomethingKilled(what=$,victim=$)
    {
-      local oSpell, oCaster;
-
-      oSpell = Send(SYS,@FindSpellByNum,#Num=SID_DEATHLINK);
-
-      if Send(self,@IsEnchanted,#what=oSpell)
-      {
-         oCaster = Send(self,@GetEnchantmentState,#what=oSpell);
-         Send(oSpell,@GiveKilledBenefits,#Caster=oCaster,#Victim=victim);
-      }
-      
       Send(self,@SetGroupTime,#victim=victim);
 
       propagate;

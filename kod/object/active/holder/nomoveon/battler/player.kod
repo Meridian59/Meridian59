@@ -6894,7 +6894,7 @@ messages:
 
    CalculateKarmaChangeFromKill( karma_killer = 0, karma_victim = 0, bIsMob = FALSE )
    {
-      local iChange, iSwing, oRoom;
+      local iChange, iSwing, oRoom, oSpell;
 
       % No karma changes from killing players during Frenzies.
       % Also, no Karma change from event monsters: Xeos and admin-spawned.

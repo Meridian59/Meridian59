@@ -76,7 +76,7 @@ messages:
          return FALSE;
       }
 
-      if (send(oRoom,@IsEnchanted,#what=self))
+      if (Send(oRoom,@IsEnchanted,#what=self))
       {
          Send(who,@MsgSendUser,#message_rsc=spell_already_in_effect,#parm1=vrName);
 
@@ -125,13 +125,13 @@ messages:
          iAmountManaInc = iAmountManaInc * 4;
       }
 
-      send(Caster,@GainHealthNormal,#Amount=iAmountHPInc);
-      send(Caster,@GainMana,#Amount=iAmountManaInc);
+      Send(Caster,@GainHealthNormal,#Amount=iAmountHPInc);
+      Send(Caster,@GainMana,#Amount=iAmountManaInc);
 
       return;
    }
 
-   CastSpell(who = $, iSpellPower=20)
+   CastSpell(who=$,iSpellPower=20)
    {
       local oRoom, duration;
 
@@ -141,7 +141,7 @@ messages:
 
       % global effects of the enchantment
       Send(oRoom,@SomeoneSaid,#type=SAY_MESSAGE,#string=deathlink_on,
-           #what=self,#parm1=send(who,@GetCapDef),#parm2=send(who,@GetName));
+           #what=self,#parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
 
       Send(oRoom,@RoomStartEnchantment,#what=self,#time=duration,#state=who);
       Send(oRoom,@EnchantAllOccupants,#what=self);

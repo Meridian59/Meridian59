@@ -90,16 +90,19 @@ messages:
       }
 
       iAttackType = 0;
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if send(i,@GetAmmoType) = ammotype
-            { 
-               iAttackType = send(i,@GetAttackType);
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if send(i,@GetAmmoType) = ammotype
+               { 
+                 iAttackType = send(i,@GetAttackType);
                
-               break;
+                  break;
+               }
             }
          }
       }
@@ -121,15 +124,18 @@ messages:
       iAttackType = 0;
       ammotype = send(self,@GetAmmoType);
 
-      for i in send(poOwner,@GetPlayerUsing)
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
-            { 
-               iAttackType = send(i,@GetAttackSpell);
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               { 
+                  iAttackType = send(i,@GetAttackSpell);
                
-               break;
+                  break;
+               }
             }
          }
       }
@@ -183,15 +189,18 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetDamage,#who=who,#target=target);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetDamage,#who=who,#target=target);
+                  break;
+               }
             }
          }
       }

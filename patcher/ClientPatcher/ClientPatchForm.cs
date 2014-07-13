@@ -178,7 +178,10 @@ namespace ClientPatcher
                 bgScanWorker.RunWorkerAsync(_patcher);
             }
             else
-                txtLog.AppendText("ERROR: Unable to download Patch Information!\r\n");
+            {
+                txtLog.AppendText("ERROR: Unable to download Patch Information! Please try again later or raise an issue at openmeridian.org/forums/\r\n");
+                btnPatch.Enabled = true;
+            }
         }
         private void PostScan()
         {

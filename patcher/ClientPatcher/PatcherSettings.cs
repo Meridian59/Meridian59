@@ -14,10 +14,10 @@ namespace ClientPatcher
         public PatcherSettings()
         {
             ServerName = "103";
-            PatchInfoUrl = "http://build.openmeridian.org/103/patchinfo.txt";
+            PatchInfoUrl = "http://ww1.openmeridian.org/103/patchinfo.txt";
             ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
             ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
-            PatchBaseUrl = "http://build.openmeridian.org/103/clientpatch";
+            PatchBaseUrl = "http://ww1.openmeridian.org/103/clientpatch";
             Default = true;
         }
 
@@ -27,20 +27,20 @@ namespace ClientPatcher
             {
                 case 104:
                     ServerName = "104";
-                    PatchInfoUrl = "http://build.openmeridian.org/104/patchinfo.txt";
+                    PatchInfoUrl = "http://ww1.openmeridian.org/104/patchinfo.txt";
                     ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 104";
                     ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
-                    PatchBaseUrl = "http://build.openmeridian.org/104/clientpatch";
+                    PatchBaseUrl = "http://ww1.openmeridian.org/104/clientpatch";
                     Default = false;
                     break;
                 
                 case 103:
                 default:
                     ServerName = "103";
-                    PatchInfoUrl = "http://build.openmeridian.org/103/patchinfo.txt";
+                    PatchInfoUrl = "http://ww1.openmeridian.org/103/patchinfo.txt";
                     ClientFolder = "%PROGRAMFILES%\\Open Meridian\\Meridian 103";
                     ClientFolder = Environment.ExpandEnvironmentVariables(ClientFolder);
-                    PatchBaseUrl = "http://build.openmeridian.org/103/clientpatch";
+                    PatchBaseUrl = "http://ww1.openmeridian.org/103/clientpatch";
                     Default = true;
                     break;
             }

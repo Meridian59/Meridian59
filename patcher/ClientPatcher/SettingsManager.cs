@@ -30,6 +30,12 @@ namespace ClientPatcher
                 JsonSerializer js = new JsonSerializer(); //Object we use to convert txt
                 Servers = JsonConvert.DeserializeObject<List<PatcherSettings>>(file.ReadToEnd()); //convert
                 file.Close(); //close
+
+                foreach (PatcherSettings patcherSettings in Servers)
+                {
+                    patcherSettings.PatchBaseUrl = patcherSettings.PatchBaseUrl.Replace("build", "ww1");
+                    patcherSettings.PatchInfoUrl = patcherSettings.PatchInfoUrl.Replace("build", "ww1");
+                }
             }
             else
             {

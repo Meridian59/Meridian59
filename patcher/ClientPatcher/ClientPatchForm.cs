@@ -32,6 +32,7 @@ namespace ClientPatcher
 
             _settings = new SettingsManager();
             _settings.LoadSettings();
+            _settings.SaveSettings();
 
             _patcher = new ClientPatcher(_settings.GetDefault());
             _patcher.FileScanned += Patcher_FileScanned;

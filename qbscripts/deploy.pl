@@ -1,20 +1,29 @@
 use Getopt::Long;
 use Net::Telnet ();
 use Net::FTP;
+use Switch;
 
 my @changelists;
 my $build;
 my $clientMinVersion;
 my $shutdowndelay = 10;
+my $server = 104;
 
 GetOptions ("change=s" => \@changelists,
             "build=s" => \$build,
-			"clientMinVersion=s" => \$clientMinVersion);
+			"clientMinVersion=s" => \$clientMinVersion,
+			"server=s" => $server);
 
 my $host = "10.0.50.220";
 my $port = 9992;
 
-print "Connecting to server 104\n";
+switch ($server)
+{
+	case 103 { }
+	case 104 { $host = "10.0.50.220"; $port = 9992;  }
+}
+
+print "Connecting to $server 104\n";
 $t = new Net::Telnet (Timeout => 10);
 $t->port($port);
 $t->open($host);
@@ -34,5 +43,5 @@ $ftp->login("buildserver",'betafreak!@#')
 
 $ftp->binary;
 $ftp->put("C:/packages/server-$build.zip")
-  or die "get failed ", $ftp->message;
+  or die "put failed ", $ftp->message;
 $ftp->quit;

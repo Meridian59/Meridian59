@@ -88,7 +88,7 @@ messages:
 
    GiveKilledBenefits(caster=$,victim=$)
    {
-      local iAmountVigInc;
+      local iAmountHpInc, iAmountManaInc;
 
       if caster = $ OR victim = $
       {
@@ -98,15 +98,25 @@ messages:
       if IsClass(victim,&Player)
       {
          % Currently player kills give same bonus as monster kills
-         iAmountVigInc = ((Send(victim,@GetLevel))/20)*10000;
+         iAmountHpInc = ((Send(victim,@GetLevel))/20)*3;
+         iAmountManaInc = ((Send(victim,@GetLevel))/20)*3;
       }
       else
       {
          % Victim is a monster
-         iAmountVigInc = ((Send(victim,@GetLevel))/20)*10000;
+         iAmountHpInc = ((Send(victim,@GetLevel))/20);
+         iAmountManaInc = ((Send(victim,@GetLevel))/20);
       }
 
-      Send(caster,@AddExertion,#Amount=-iAmountVigInc);
+      Send(caster,@GainHealthNormal,#Amount=iAmountHpInc);
+      Send(caster,@GainMana,#Amount=iAmountManaInc);
+      
+      % Don't let caster go over max mana
+      if Send(caster,@GetMana) > Send(caster,@GetMaxMana)
+      {
+         Send(caster,@LoseMana,#amount=(Send(caster,@GetMana)-Send(caster,@GetMaxMana)));
+      }
+      
       Send(caster,@MsgSendUser,#message_rsc=deathlink_feed_rsc);
 
       return;

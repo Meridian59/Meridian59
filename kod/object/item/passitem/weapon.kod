@@ -1135,6 +1135,32 @@ messages:
    {
       return TRUE;
    }
+   
+   ValidateNumberOfWeaponAttributes(num = 1)
+   "Deletes any items with more major weapon attributes than num. Default 1."
+   {
+      local oAttribute, iMajorAttributeCount;
+      
+      iMajorAttributeCount = 0;
+      
+      for oAttribute in Send(self,@GetAttributes)
+      {
+         If IsClass(oAttribute,&WeapAttParalyzer)
+           OR IsClass(oAttribute,&WeapAttPurger)
+           OR IsClass(oAttribute,&WeapAttVamper)
+           OR IsClass(oAttribute,&WeapAttBlinder)
+         {
+            iMajorAttributeCount = iMajorAttributeCount + 1;
+         }
+      }
+      
+      if iMajorAttributeCount > num
+      {
+         Post(self,@Delete);
+      }
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

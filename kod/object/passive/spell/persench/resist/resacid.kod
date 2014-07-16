@@ -21,7 +21,7 @@ resources:
    ResistAcid_desc_rsc = \
       "Coats your body in a magical goo which "
       "absorbs damage from acid attacks for several minutes.  "
-      "Requires herbs and entroot berries."
+      "Requires one entroot berry to cast."
 
    ResistAcid_intro = "Shal'ille Lv. 2: Coats your body in a magical goo which "
       "absorbs damage from acid attacks."

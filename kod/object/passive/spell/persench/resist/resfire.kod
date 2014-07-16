@@ -21,7 +21,7 @@ resources:
    resistfire_desc_rsc = \
       "Infuses your body with cool magical energy which "
       "reduces damage from fire attacks for several minutes.  "
-      "Requires mushrooms and red mushrooms."
+      "Requires one red mushroom."
    
    resistfire_already_enchanted = "You are already resisting fire."
    resistfire_success = "You bathe %s%s in magical protection from fire."

@@ -20,7 +20,7 @@ resources:
    resistgood_icon_rsc = iresgood.bgf
    resistgood_desc_rsc = \
       "Summons the vile force of Qor to protect the user from holy damage.  "
-      "Requires solagh and fairy wings to cast."
+      "Requires a single fairy wing to cast."
 
    resistgood_spell_intro = "Qor Level 1: Protects you from damage from holy sources."
 

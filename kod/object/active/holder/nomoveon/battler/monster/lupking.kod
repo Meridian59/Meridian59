@@ -468,7 +468,7 @@ messages:
 
    Killed(what=$)
    {
-      local oSpell, oRoom, NumAttackers, i;
+      local oSpell, oRoom, NumAttackers, i, lFinalTargets;
 
       NumAttackers = length(plAttackers);
  
@@ -495,9 +495,10 @@ messages:
          }
 
       }
-   
+
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_EARTHQUAKE);
-      post(oSpell,@DoEarthQuake,#where=poOwner,#severity=2);
+      lFinalTargets = Send(oSpell,@GetTargets,#who=poOwner);
+      Post(oSpell,@CastSpell,#who=poOwner,#iSpellPower=40,#lTargets=lFinalTargets);
 
       propagate;
    }
@@ -544,7 +545,6 @@ messages:
    {
       return FALSE;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

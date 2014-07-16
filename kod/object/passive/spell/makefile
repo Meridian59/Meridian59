@@ -5,7 +5,7 @@
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\spell.bof
-BOFS = heal.bof atakspel.bof rescue.bof earthqua.bof \
+BOFS = heal.bof atakspel.bof rescue.bof \
        dmspell.bof winds.bof remcurse.bof blink.bof \
        cdisease.bof cpoison.bof discord.bof hospice.bof \
        majheal.bof dishonor.bof \

@@ -168,14 +168,13 @@ messages:
       if IsClass(oTarget,&Player)
       {
          Send(oTwin,@SetOriginal,#who=oTarget);
+         Send(SYS,@AddReflection,#who=oTarget,#oReflection=oTwin);
       }
 
       Send(oRoom,@NewHold,#what=oTwin,#new_row=iRow,#new_col=iCol,
            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
       Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_cast_rsc);
-
-      Send(SYS,@AddReflection,#who=oTarget,#oReflection=oTwin);
 
       if oTarget <> $
          AND IsClass(oTarget,&Monster)

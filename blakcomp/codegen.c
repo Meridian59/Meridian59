@@ -396,7 +396,7 @@ void codegen_exit_loop(void)
 
    /* Backpatch break statements to jump to end of loop */
    for (p = current_loop->break_list; p != NULL; p = p->next)
-      BackpatchGoto(outfile,  (int) p->data, FileCurPos(outfile));
+      BackpatchGoto(outfile, *((int *)(&p->data)), FileCurPos(outfile));
 
    /* Remove current list from loop "stack" */
    loop_stack = list_delete_first(loop_stack);
@@ -557,7 +557,7 @@ int codegen_for(for_stmt_type s, int numlocals)
 
    /* Backpatch continue statements in loop body */
    for (p = current_loop->for_continue_list; p != NULL; p = p->next)
-      BackpatchGoto(outfile,  (int) p->data, FileCurPos(outfile));
+      BackpatchGoto(outfile, *((int *)(&p->data)), FileCurPos(outfile));
 
    /**** Statement #4:    temp = Rest(temp) ****/
    /* Can reuse most of statement #3 above */

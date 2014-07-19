@@ -18,10 +18,6 @@
 #include <unistd.h>
 #define stricmp strcasecmp
 #define O_BINARY 0
-
-// These don't show up even when unistd.h is included for some reason
-extern int isatty(int);
-extern int access (const char *__name, int __type);
 #endif
 
 #include <stdio.h>

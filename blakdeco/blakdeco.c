@@ -9,8 +9,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <windows.h>
+#include <string.h>
 
 #include "bkod.h"
 
@@ -18,7 +17,7 @@
 #define MAX_HANDLERS 500
 
 /* function prototypes */
-BOOL memmap_file(char *s);
+bool open_file(char *s);
 void release_file();
 unsigned char get_byte();
 unsigned int get_int();
@@ -40,17 +39,13 @@ char *str_constant(int num);
 int  find_linenum(int offset);
 
 /* global variables */
-HANDLE fh;                      /* handle to the open file */
-int file_size;                  /* length of th file */
-HANDLE mapfh;                   /* handle to the file mapping */
-char *file_mem;                 /* ptr to the memory mapped file */
-int index;                      /* current location in file */
+FILE *fh;                      /* handle to the open file */
 int dump_hex = 0;               /* dump the raw hex */
 int inst_start;                 /* start of current instruction for dump_xxx to use */
 
 unsigned int debug_offset;      /* start of debugging info in file */
 
-static BYTE bof_magic[] = { 0x42, 0x4F, 0x46, 0xFF };
+static unsigned char bof_magic[] = { 0x42, 0x4F, 0x46, 0xFF };
 
 int main(int argc,char *argv[])
 {
@@ -60,93 +55,63 @@ int main(int argc,char *argv[])
       exit(1);
    }
    
-   if (memmap_file(argv[1]))
+   if (open_file(argv[1]))
    {
       dump_bof();
       release_file();
    }
 }
 
-BOOL memmap_file(char *s)
+bool open_file(char *s)
 {
-   fh = CreateFile(s,GENERIC_READ,FILE_SHARE_READ,NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL);
-   if (fh == INVALID_HANDLE_VALUE)
+   fh = fopen(s, "rb");
+   if (fh == NULL)
    {
       fprintf(stderr,"Can't open file %s\n",s);
-      return FALSE;
+      return false;
    }
 
-   file_size = GetFileSize(fh,NULL);
-   
-   mapfh = CreateFileMapping(fh,NULL,PAGE_READONLY,0,file_size,NULL);
-   if (mapfh == NULL)
-   {
-      fprintf(stderr,"Can't create a file mapping\n");
-      CloseHandle(fh);
-      return FALSE;
-   }
-
-   file_mem = (char *) MapViewOfFile(mapfh,FILE_MAP_READ,0,0,0);
-   if (file_mem == NULL)
-   {
-      fprintf(stderr,"Can't map a view of file\n");
-      CloseHandle(mapfh);
-      CloseHandle(fh);
-      return FALSE;
-   }
-   return TRUE;
+   return true;
 }
 
 void release_file()
 {
-   UnmapViewOfFile(file_mem);
-   CloseHandle(mapfh);
-   CloseHandle(fh);
+   fclose(fh);
 }  
 
 unsigned char get_byte()
 {
-   if (index >= file_size)
+   unsigned char data;
+   if (fread(&data, 1, 1, fh) != 1)
    {
       fprintf(stderr,"Read past end of file.  Die.\n");
       release_file();
       exit(1);
    }
 
-   return file_mem[index++];
+   return data;
 }
 
 unsigned int get_int()
 {
-   if (index+3 >= file_size)
+   unsigned int data;
+   if (fread(&data, 1, 4, fh) != 4)
    {
-      fprintf(stderr,"Read past end of file on int read.  Die.\n");
+      fprintf(stderr,"Read past end of file.  Die.\n");
       release_file();
       exit(1);
    }
 
-   index += 4;
-   return *((unsigned int *)(file_mem + index-4));
+   return data;
 }
 
 void get_string(char *str, int max_chars)
 {
-   int i;
-
-   for (i=0; i < max_chars; i++)
+   for (int i=0; i < max_chars; i++)
    {
-      if (index > file_size)
-      {
-	 fprintf(stderr,"Read past end of file on string read.  Die.\n");
-	 release_file();
-	 exit(1);
-      }
-
-      /* Copy byte of string and look for null termination */
-      str[i] = *(file_mem + index);
-      index++;
+      str[i] = get_byte();
       if (str[i] == 0)
-	 return;
+         return;
    }
 }
 
@@ -165,25 +130,21 @@ void dump_bof()
 
    char *default_str, str[500];
 
-   index = 0;
-
    for (i=0; i < 4; i++)
    {
-      BYTE b = get_byte();
+      unsigned char b = get_byte();
       if (b != bof_magic[i])
-	 printf("Bad magic number--this is not a BOF file\n");
+         printf("Bad magic number--this is not a BOF file\n");
    }
 
    printf(".bof version: %i\n",get_int());
 
    fname_offset = get_int();
-   if (fname_offset >= (unsigned int) file_size)
-   {
-      fprintf(stderr,"Read past end of file on kod filename.  Die.\n");
-      release_file();
-      exit(1);
-   }
-   printf("Source file = %s\n", file_mem + fname_offset);
+   int filepos = ftell(fh);
+   fseek(fh, fname_offset, SEEK_SET);
+   get_string(str, sizeof(str));
+   printf("Source file = %s\n", str);
+   fseek(fh, filepos, SEEK_SET);
 
    strtable_offset = get_int();
    printf("String table at offset %08X\n", strtable_offset);
@@ -192,10 +153,10 @@ void dump_bof()
    if (debug_offset == 0)
       printf("No line number debugging information\n");
    else printf("Debugging information at offset %08X\n", debug_offset);
-
+   
    num_classes = get_int();
    printf("Classes: %i\n",num_classes);
-
+   
    if (num_classes > MAX_CLASSES-1)
    {
       printf("Can only handle %i classes\n",MAX_CLASSES-1);
@@ -208,7 +169,7 @@ void dump_bof()
       printf("class id %i at offset %08X\n",classes_id[i],classes[i]);
    }
    classes[i] = -1;
-  
+   
    for (c=0;c<num_classes;c++)
    {
       printf("Class id %i:\n",classes_id[c]);
@@ -225,11 +186,11 @@ void dump_bof()
       printf("Classvar default values: %i\n",cvar_defaults);
       for (i=0;i<cvar_defaults;i++)
       {
-	 cvar_num = get_int();
-	 default_str = strdup(str_constant(get_int()));
-	 printf("  classvar %2i init value: %s\n",cvar_num,default_str);
+         cvar_num = get_int();
+         default_str = strdup(str_constant(get_int()));
+         printf("  classvar %2i init value: %s\n",cvar_num,default_str);
       }
-
+      
       num_properties = get_int();
       printf("Properties: %i\n",num_properties);
       
@@ -237,31 +198,31 @@ void dump_bof()
       printf("Property default values: %i\n",prop_defaults);
       for (i=0;i<prop_defaults;i++)
       {
-	 prop_num = get_int();
-	 default_str = strdup(str_constant(get_int()));
-	 printf("  property %2i init value: %s\n",prop_num,default_str);
+         prop_num = get_int();
+         default_str = strdup(str_constant(get_int()));
+         printf("  property %2i init value: %s\n",prop_num,default_str);
       }
       
       num_messages = get_int();
       printf("Message handlers: %i\n",num_messages);
       if (num_messages > MAX_HANDLERS-1)
       {
-	 printf("Can only handle %i handlers\n",MAX_HANDLERS-1);
-	 num_messages = MAX_HANDLERS-1;
+         printf("Can only handle %i handlers\n",MAX_HANDLERS-1);
+         num_messages = MAX_HANDLERS-1;
       }
-
+      
       for (i=0;i<num_messages;i++)
       {
-	 int id, comment;
-	 
-	 id = get_int();
-	 handler[i] = get_int();
-	 comment = get_int();
-	 
-	 printf(" message %5i at offset %08X\n",id,handler[i]);
-	 if (comment != -1)
-	    printf("  Comment string #%5i\n", comment);
-
+         int id, comment;
+         
+         id = get_int();
+         handler[i] = get_int();
+         comment = get_int();
+         
+         printf(" message %5i at offset %08X\n",id,handler[i]);
+         if (comment != -1)
+            printf("  Comment string #%5i\n", comment);
+         
       }
       handler[i] = -1;
       
@@ -270,31 +231,30 @@ void dump_bof()
       {
          unsigned char locals,num_parms;
          int parm_id,parm_default;
-	 
-	 locals = get_byte();
-	 num_parms = get_byte();
-	 
-	 printf("\nMessage handler, %i local vars\n",locals);
-	 
-	 for (j=0;j<(unsigned int) num_parms;j++)
-	 {
-	    parm_id = get_int();
-	    parm_default = get_int();
-	    default_str = strdup(str_constant(parm_default));
-	    printf("  parm id %i = %s\n",parm_id,default_str);
-	 }
-	 
-   
-	 // printf("at ofs %08X, next handler %08X, next class %08X\n",
-    // index,handler[i+1],classes[c+1]); 
-	 while ((unsigned int) index <  handler[i+1] &&
-           (unsigned int) index < classes[c+1] &&
-           index < file_size)
-	 {
-	    dump_bkod();
-	    if (index == strtable_offset)
-	       break;
-	 }
+         
+         locals = get_byte();
+         num_parms = get_byte();
+         
+         printf("\nMessage handler, %i local vars\n",locals);
+         
+         for (j=0;j<(unsigned int) num_parms;j++)
+         {
+            parm_id = get_int();
+            parm_default = get_int();
+            default_str = strdup(str_constant(parm_default));
+            printf("  parm id %i = %s\n",parm_id,default_str);
+         }
+         
+
+         int index = ftell(fh);
+         while ((unsigned int) index <  handler[i+1] &&
+                (unsigned int) index < classes[c+1])
+         {
+            dump_bkod();
+            index = ftell(fh);
+            if (index == strtable_offset)
+               break;
+         }
       }
       printf("--------------------------------------------\n");
       num_strings = get_int();
@@ -320,11 +280,9 @@ void dump_bkod()
    char opcode_char;
    static int last_line = 0;
 
-//   printf("at %08X\n",index);
-   
-   inst_start = index;
+   inst_start = ftell(fh);
 
-   line = find_linenum(index);
+   line = find_linenum(inst_start);
    if (line != last_line)
    {
       printf("*** Line %d\n", line);
@@ -350,9 +308,11 @@ void dump_bkod()
 
    if (dump_hex)
    {
+      int num_bytes = ftell(fh) - inst_start;
+      fseek(fh, inst_start, SEEK_SET);
       printf("BKOD raw: ");
-      for (i=0;i<index-inst_start;i++)
-	 print_hex_byte(file_mem[inst_start+i]);
+      for (i=0;i< num_bytes;i++)
+         print_hex_byte(get_byte());
       printf("\n");
    }
    printf("@%08X: ",inst_start);
@@ -669,22 +629,20 @@ void dump_debug_line(opcode_type opcode,char *text)
 
 int find_linenum(int offset)
 {
-   char *pos;
    int line_num, line_offset;
 
-   pos = file_mem + debug_offset + 4;  // +4 to skip # of debug entries
+   int filepos = ftell(fh);
+   fseek(fh, debug_offset + 4, SEEK_SET);  // +4 to skip # of debug entries
 
    while (1)
    {
-      if ((pos - file_mem) + 7 >= file_size)
-      {
-	 printf("Read past end of file looking for debug position %d", offset);
-	 exit(1);
-      }
-      memcpy(&line_offset, pos, 4);
-      memcpy(&line_num, pos + 4, 4);
-      pos += 8;
+      line_offset = get_int();
+      line_num = get_int();
+
       if (offset <= line_offset)
-	 return line_num;
+      {
+         fseek(fh, filepos, SEEK_SET);
+         return line_num;
+      }
    }
 }

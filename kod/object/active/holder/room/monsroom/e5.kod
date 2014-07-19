@@ -22,7 +22,7 @@ constants:
    FFF = 11
    G = 12
 
-   AA = 7 
+   AA = 7
    BB = 8
    CC = 9
    DD = 10
@@ -94,10 +94,10 @@ messages:
       plRowNums = [G,FFF,EEE,D,C,B,A];
       plColNums = [GG,FF,EE,DD,CC,BB,AA];
       poSnitch = create(&LadyPheonix);
-      send(self,@NewHold,#what=poSnitch,#new_row=9,#new_col=3,#fine_col=16);
+      Send(self,@NewHold,#what=poSnitch,#new_row=9,#new_col=3,#fine_col=16);
       poShrine = create(&shrine,#shrine_num=SHRINE_FOREST);
-      send(self,@newhold,#what=poShrine,#new_row=9,#new_col=16,#fine_col=16);
-      send(self,@InitPuzzle);
+      Send(self,@newhold,#what=poShrine,#new_row=9,#new_col=16,#fine_col=16);
+      Send(self,@InitPuzzle);
       propagate;
    }
 
@@ -111,9 +111,9 @@ messages:
          for iCount2 in plRowNums
          {
             oFog = create(&ShrineFog);
-            send(self,@NewHold,#what=oFog,#new_row=iCount2,#new_col=iCount);
+            Send(self,@NewHold,#what=oFog,#new_row=iCount2,#new_col=iCount);
          }
-      }      
+      }
 
       propagate;
    }
@@ -125,13 +125,13 @@ messages:
       plEdge_Exits = Cons([LEAVE_WEST, RID_E6, 7, 59, ROTATE_NONE], plEdge_exits);
 
       propagate;
-   } 
+   }
 
    NewHold(what=$)
    {
-      if isClass(what,&Item)
+      if IsClass(what,&Item)
       {
-         post(self,@PostShrineCheckItem,#what=what);  
+         Post(self,@PostShrineCheckItem,#what=what);  
          %%Have to post this to handle numberitems and SYS can't handle posts.
       }
       propagate;
@@ -139,7 +139,7 @@ messages:
 
    PostShrineCheckItem(what=$)
    {
-      send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
+      Send(SYS,@ShrineCheckItem,#ShrineObj=poShrine,#what=what,#Radius=1);
       return;
    }
 
@@ -151,14 +151,14 @@ messages:
 
       local iRandRow;
 
-      %debug("Init puzzle");
+      %Debug("Init puzzle");
 
       poRunner = $;
       pbInMaze = FALSE;
       piPenatration = 0;
-      piNorthEndRow = $;    
-      piSouthEndRow = $;                   
-      piDirection = $;      
+      piNorthEndRow = $;
+      piSouthEndRow = $;
+      piDirection = $;
       if ptCheckAllPositionsTimer <> $
       {
          DeleteTimer(ptCheckAllPositionsTimer);
@@ -167,10 +167,10 @@ messages:
 
       iRandRow = Random(A,G);
 
-      piNorthEndRow = iRandRow;    
+      piNorthEndRow = iRandRow;
       piSouthEndRow = iRandRow;
       piNextSafeRow = iRandRow;
-      send(poSnitch,@StartRow,#row=iRandRow);   
+      Send(poSnitch,@StartRow,#row=iRandRow);
 
       return;
    }
@@ -181,23 +181,22 @@ messages:
    {
       if (poRunner <> $) and (poRunner <> who)
       {
-         if send(poRunner,@IsLoggedon) AND (send(poRunner,@GetOwner) = self)
+         if Send(poRunner,@IsLoggedon) AND (Send(poRunner,@GetOwner) = self)
          {
-            send(who,@MsgSendUser,#message_rsc=e5_second_runner);
+            Send(who,@MsgSendUser,#message_rsc=e5_second_runner);
             return FALSE;
          }
-         else 
+         else
          {
-            send(self,@InitPuzzle);
-            send(self,@SetRunner,#who=who);
+            Send(self,@InitPuzzle);
+            Send(self,@SetRunner,#who=who);
             return TRUE;
          }
       }
       else
       {
-
-         send(self,@SetRunner,#who=who);
-         return TRUE;               
+         Send(self,@SetRunner,#who=who);
+         return TRUE;
       }
       return FALSE;
    }
@@ -206,36 +205,36 @@ messages:
    {
       poRunner=who;
       piDirection=$;
-      if send(who,@GetCol) < AA
+      if Send(who,@GetCol) < AA
       {piDirection=EAST;}
-      if send(who,@GetCol) < GG
+      if Send(who,@GetCol) < GG
       {piDirection = WEST;}
       if piDirection = $
       %%who is in the maze
       {
          %Debug("Calling PP #1");
-         send(self,@PunishPlayer,#who=poRunner);
+         Send(self,@PunishPlayer,#who=poRunner);
       }
       ptCheckAllPositionsTimer = CreateTimer(self,@CheckAllPositionsTimer,(2 * 1000));
       return;
    }
 
    SomethingMoved(what = $,new_row = $, new_col = $)
-   %%Catches player moves and tests them.  (Must post to get proper position info later on.) 
+   %%Catches player moves and tests them.  (Must post to get proper position info later on.)
    {
-      if isClass(what,&User)
+      if IsClass(what,&User)
       {
          %Debug("Something moved.  iRow and iCol = ", new_row, new_col);
-         post(self,@CheckPlayerPosition,#who=what,#iRow=new_row,#iCol=new_col);
+         Post(self,@CheckPlayerPosition,#who=what,#iRow=new_row,#iCol=new_col);
       }
       propagate;
    }
 
    ReqSomethingMoved(what = $,new_row = $, new_col = $)
    {
-      if isClass(what,&monster)
+      if IsClass(what,&monster)
       {
-         if new_col < AA 
+         if new_col < AA
          {
             return FALSE;
          }
@@ -247,7 +246,7 @@ messages:
    {
       ptCheckAllPositionsTimer = $;
       ptCheckAllPositionsTimer = CreateTimer(self,@CheckAllPositionsTimer,(2 * 1000));
-      send(self,@CheckAllPositions);
+      Send(self,@CheckAllPositions);
       return;
    }
 
@@ -260,13 +259,13 @@ messages:
 
       for iCntr in plActive
       {
-         oWho = first(iCntr);
-         if isClass(oWho,&User)
+         oWho = First(iCntr);
+         if IsClass(oWho,&User)
          {
-            iCol = send(oWho,@GetCol);
-            iRow = send(oWho,@GetRow);
-            %debug("CheckAllPositions. iRow and iCol = ", iRow, iCol);
-            send(self,@CheckPlayerPosition,#who=oWho,#iCol=iCol,#iRow=iRow);
+            iCol = Send(oWho,@GetCol);
+            iRow = Send(oWho,@GetRow);
+            %Debug("CheckAllPositions. iRow and iCol = ", iRow, iCol);
+            Send(self,@CheckPlayerPosition,#who=oWho,#iCol=iCol,#iRow=iRow);
          }
       }
       return;
@@ -274,24 +273,24 @@ messages:
 
    CheckPlayerPosition(who=$,iRow=$,iCol=$)
    %%Checks who's position.  Punishes who if they are in a bad spot.  Calls RunnerAdvanced(), and RunnerExits() when appropriate.
-   {   
+   {
       if who = poRunner
       {
          if pbInMaze
          {
             if (iCol > GG) OR (iCol < AA)
-            {  
+            {
                %Debug("piPenatration = ", piPenatration); 
                if piPenatration = GG or piPenatration = AA
                {
                   Send(self,@RunnerExits);
-                  return; 
+                  return;
                }
                else
-               %%Can't leave nice except from GG or AA so . ..
+               %%Can't leave nice except from GG or AA so...
                {
                   %Debug("Calling PP #6");
-                  send(self,@punishplayer,#who=who);
+                  Send(self,@punishplayer,#who=who);
                   return;
                }
             }
@@ -308,7 +307,7 @@ messages:
                %%Left safe area
                {
                   %Debug("Calling PP #7");
-                  send(self,@PunishPlayer,#who=who);  
+                  Send(self,@PunishPlayer,#who=who);
                   return;
                }
             }
@@ -318,15 +317,15 @@ messages:
                if (iCol = (piPenatration + piDirection)) AND  iRow = piNextSafeRow
                %%Hit the right spot.
                {
-                  %debug("runneradvanced 4");
-                  send(self,@RunnerAdvanced);
+                  %Debug("runneradvanced 4");
+                  Send(self,@RunnerAdvanced);
                   return;
                }
                else
                %%Missed it.
                {
                   %Debug("Calling PP #8");
-                  send(self,@PunishPlayer,#who=who);
+                  Send(self,@PunishPlayer,#who=who);
                   return;
                }
             }
@@ -336,19 +335,19 @@ messages:
          {
             if (iCol > AA) AND (iCol < GG)
             %%Went too far.
-            {  
+            {
                %Debug("Calling PP #9"); 
-               send(self,@PunishPlayer,#who=who); 
+               Send(self,@PunishPlayer,#who=who); 
             }
 
-            if (iCol = AA) 
+            if (iCol = AA)
             %%Enter maze for first time.
             {
                piDirection = EAST;
                pbInMaze = TRUE;
                piPenatration = AA - 1; 
-               %debug("runneradvanced 5"); 
-               send(self,@RunnerAdvanced);
+               %Debug("runneradvanced 5"); 
+               Send(self,@RunnerAdvanced);
                return;
             }
             if (iCol = GG)
@@ -357,23 +356,23 @@ messages:
                piDirection = WEST;
                pbInMaze = TRUE;
                piPenatration = GG + 1;
-               %debug("runneradvanced 6");
-               send(self,@RunnerAdvanced);
+               %Debug("runneradvanced 6");
+               Send(self,@RunnerAdvanced);
                return;
-            } 
-         }         
+            }
+         }
       }
       else
       %%Not the runner, so we can't go in the maze at all.
       {
          if (iCol >= AA) AND (iCol <= GG)
-         { 
-            %Debug("Calling PP #10"); 
-            send(self,@PunishPlayer,#who=who); 
+         {
+            %Debug("Calling PP #10");
+            Send(self,@PunishPlayer,#who=who);
          }
       }
       return;
-   }   
+   }
 
    RunnerAdvanced()
    %%Runner moved from one row to the next, reset safety properties.
@@ -382,7 +381,7 @@ messages:
 
       local iCurrentRow,iNextSafeRow;
 
-      %debug("runneradvanced");
+      %Debug("runneradvanced");
 
       iNextSafeRow = Random(A,G);  %%The row number of the next safe spot.  Different from piNextSafeRow.
       iCurrentRow = piNextSafeRow;
@@ -391,18 +390,18 @@ messages:
 
       %%Check for screw ups
       
-      if piPenatration <> send(poRunner,@GetCol)
+      if piPenatration <> Send(poRunner,@GetCol)
       %%Something screwed up.  If this never turns up in test, remove it.
-      {  
-         %debug("piPenatration <> Runner's col where piPenatration and runner's col are ", pipenatration, Send(poRunner,@GetCol));
-         %send(self,@PunishPlayer,#who=poRunner);
+      {
+         %Debug("piPenatration <> Runner's col where piPenatration and runner's col are ", pipenatration, Send(poRunner,@GetCol));
+         %Send(self,@PunishPlayer,#who=poRunner);
          %return;
       }
-      if piNextSafeRow <> send(poRunner,@GetRow)
+      if piNextSafeRow <> Send(poRunner,@GetRow)
       %%Something screwed up.  If this never turns up in test, remove it.
-      {  
-         %debug("piNextSafeRow <> Runner's row where piNextSafeRow and runner's row are ", piNextSafeRow, Send(poRunner,@GetRow));
-         %send(self,@PunishPlayer,#who=poRunner);
+      {
+         %Debug("piNextSafeRow <> Runner's row where piNextSafeRow and runner's row are ", piNextSafeRow, Send(poRunner,@GetRow));
+         %Send(self,@PunishPlayer,#who=poRunner);
          %return;
       }
 
@@ -410,7 +409,7 @@ messages:
       %%Made it to the last row.
       {
          piNorthEndRow = iCurrentRow;
-         piSouthEndRow = iCurrentRow;   
+         piSouthEndRow = iCurrentRow;
       }
 
       %%Got good data, Use current row possition as one or both end points.  iNextSafeRow is the next safe row.
@@ -419,7 +418,7 @@ messages:
       %%Then it is both endpoints
       {
          piNorthEndRow = iCurrentRow;
-         piSouthEndRow = iCurrentRow;         
+         piSouthEndRow = iCurrentRow;
       }
       else
       {
@@ -435,8 +434,8 @@ messages:
             piNorthEndRow = iNextSafeRow;
          }
       }
-      %debug("Told snitch runnerrow and saferow ", iCurrentRow,iNextSafeRow); 
-      send(poSnitch,@NewSafeSpot,#RunnerRow=iCurrentRow,#SafeRow=iNextSafeRow);
+      %Debug("Told snitch runnerrow and saferow ", iCurrentRow,iNextSafeRow);
+      Send(poSnitch,@NewSafeSpot,#RunnerRow=iCurrentRow,#SafeRow=iNextSafeRow);
       piNextSafeRow = iNextSafeRow;
 
       return;
@@ -445,8 +444,8 @@ messages:
    RunnerExits()
    %%Called whenever the runner leaves the puzzle.  resets puzzle.
    {
-      send(self,@InitPuzzle);
-      return;   
+      Send(self,@InitPuzzle);
+      return;
    }
 
    PunishPlayer(who=$)
@@ -454,21 +453,22 @@ messages:
       local iDamage;
 
       if who = $
-      { debug("PunishPlayer called with no who"); Return; }
-      if NOT isClass(who,&dm)
+      { Debug("PunishPlayer called with no who"); Return; }
+      if NOT IsClass(who,&DM)
       {
-         iDamage = send(who,@GetBaseMaxHealth) / 3;
-         if Send(who,@AssessDamage,#damage=iDamage,
+         iDamage = Send(who,@GetBaseMaxHealth) / 3;
+         if Send(who,@AssessDamage,#damage=iDamage,#what=self,
             #aspell=ATCK_SPELL_ACID,#report = FALSE, #report_resistance = FALSE) = $
          {
-            send(who,@killed);
-            send(self,@InitPuzzle);
+            Send(who,@killed);
+            Send(self,@InitPuzzle);
             Post(who,@MsgSendUser,#message_rsc=e5_death);
             return;
          }
       }
+
       Send(SYS,@UtilGoNearSquare,#what=who, #where=self, #new_row=9,#new_col=3);
-      send(self,@InitPuzzle);
+      Send(self,@InitPuzzle);
 
       return;
    }
@@ -478,19 +478,19 @@ messages:
       if who = poRunner
       {
          Send(SYS,@UtilGoNearSquare,#what=poRunner, #where=RID_E5,
-		      #new_row=9,#new_col=3,#max_distance=0,#do_move=False);
-         send(self,@InitPuzzle);
+               #new_row=9,#new_col=3,#max_distance=0,#do_move=False);
+         Send(self,@InitPuzzle);
          %%message from ladyP
       }
       if (poRunner <> $)
       {
-         if send(poRunner,@IsLoggedon) AND (send(poRunner,@GetOwner) = self)
+         if Send(poRunner,@IsLoggedon) AND (Send(poRunner,@GetOwner) = self)
          {
             propagate;
          }
-         else 
+         else
          {
-            send(self,@InitPuzzle);
+            Send(self,@InitPuzzle);
          }
       }
       propagate;
@@ -498,7 +498,7 @@ messages:
 
    SomeoneSaidRoom(what=$,string=$,type=$)
    {
-      post(poSnitch,@SomeoneSaidLadyP,#what=what,#string=string,#type=type);
+      Post(poSnitch,@SomeoneSaidLadyP,#what=what,#string=string,#type=type);
       propagate;
    }
 

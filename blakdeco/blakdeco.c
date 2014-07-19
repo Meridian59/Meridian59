@@ -29,11 +29,11 @@ void dump_goto(opcode_type opcode,char *text);
 void dump_call(opcode_type opcode,char *text);
 void dump_return(opcode_type return_op,char *text);
 void dump_debug_line(opcode_type opcode,char *text);
-char * name_unary_operation(int unary_op);
-char * name_binary_operation(int binary_op);
-char * name_var_type(int parm_type);
-char * name_goto_cond(int cond);
-char * name_function(int fnum);
+const char * name_unary_operation(int unary_op);
+const char * name_binary_operation(int binary_op);
+const char * name_var_type(int parm_type);
+const char * name_goto_cond(int cond);
+const char * name_function(int fnum);
 void print_hex_byte(unsigned char ch);
 char *str_constant(int num);
 int  find_linenum(int offset);
@@ -330,7 +330,7 @@ void dump_unary_assign(opcode_type opcode,char *text)
 
    dest = get_int();
    source = get_int();
-   source_str = _strdup(str_constant(source));
+   source_str = strdup(str_constant(source));
    sprintf(text,"%s %i = %s %s %s",name_var_type(opcode.dest),dest,
 	   name_unary_operation(info),name_var_type(opcode.source1),
 	   source_str);
@@ -345,8 +345,8 @@ void dump_binary_assign(opcode_type opcode,char *text)
    dest = get_int();
    source1 = get_int();
    source2 = get_int();
-   source1_str = _strdup(str_constant(source1));
-   source2_str = _strdup(str_constant(source2));
+   source1_str = strdup(str_constant(source1));
+   source2_str = strdup(str_constant(source2));
    sprintf(text,"%s %i = %s %s %s %s %s",name_var_type(opcode.dest),dest,
 	   name_var_type(opcode.source1),source1_str,name_binary_operation(info),
 	   name_var_type(opcode.source2),source2_str);
@@ -409,7 +409,7 @@ void dump_call(opcode_type opcode,char *text)
       parm_type = get_byte();
       parm_value = get_int();
       if (i != 0)
-	 strcat(text,", ");
+         strcat(text,", ");
       strcat(text,name_var_type(parm_type));
       strcat(text," ");
       strcat(text,str_constant(parm_value));
@@ -424,9 +424,10 @@ void dump_call(opcode_type opcode,char *text)
       parm_type = get_byte();
       parm_value = get_int();
       if (i != 0)
-	 strcat(text,", ");
+         strcat(text,", ");
       strcat(text,"Parm id ");
-      strcat(text,itoa(name_id,tempbuf,10));
+      sprintf(tempbuf, "%d", name_id);
+      strcat(text, tempbuf);
       strcat(text," ");
       strcat(text,name_var_type(parm_type));
       strcat(text," ");
@@ -455,7 +456,7 @@ void dump_return(opcode_type return_op,char *text)
    }
 }
 
-char * name_unary_operation(int unary_op)
+const char * name_unary_operation(int unary_op)
 {
    switch (unary_op)
    {
@@ -467,7 +468,7 @@ char * name_unary_operation(int unary_op)
    }
 }
 
-char * name_binary_operation(int binary_op)
+const char * name_binary_operation(int binary_op)
 {
    switch (binary_op)
    {
@@ -490,7 +491,7 @@ char * name_binary_operation(int binary_op)
    }
 }
 
-char * name_var_type(int parm_type)
+const char * name_var_type(int parm_type)
 {
    switch (parm_type)
    {
@@ -502,7 +503,7 @@ char * name_var_type(int parm_type)
    }
 }
 
-char * name_goto_cond(int cond)
+const char * name_goto_cond(int cond)
 {
    switch (cond)
    {
@@ -512,7 +513,7 @@ char * name_goto_cond(int cond)
    }
 }
 
-char * name_function(int fnum)
+const char * name_function(int fnum)
 {
    static char s[20];
 

@@ -250,6 +250,8 @@ typedef struct {
 
 
 /*************************** Function prototypes *************************/
+extern int yylex (void);
+
 /* utility functions in main.c */
 void yyerror(const char *s);
 char *assemble_string(char *str);

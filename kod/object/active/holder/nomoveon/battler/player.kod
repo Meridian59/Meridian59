@@ -4172,7 +4172,7 @@ messages:
       if what = $
          OR piFaction = FACTION_NEUTRAL
          OR what = self
-         OR Send(poOwner,@IsArena)
+         OR (poOwner <> $ AND Send(poOwner,@IsArena))
          OR Send(SYS,@GetChaosNight)
       {
          return TRUE;

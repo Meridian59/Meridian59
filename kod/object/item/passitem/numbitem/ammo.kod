@@ -43,6 +43,8 @@ properties:
    piAttack_type = ATCK_WEAP_PIERCE
    piAttack_spell = 0
 
+   viObject_flags = GETTABLE_YES
+
 messages:
 
    ReqUseSomething(what = $)

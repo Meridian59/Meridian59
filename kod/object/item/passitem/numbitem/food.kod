@@ -34,6 +34,8 @@ classvars:
 
 properties:
 
+   viObject_flags = GETTABLE_YES
+
 messages:
 
    GetFilling()

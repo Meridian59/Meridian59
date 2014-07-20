@@ -1156,6 +1156,7 @@ messages:
       
       if iMajorAttributeCount > num
       {
+         Debug("Weapon deleted");
          Post(self,@Delete);
       }
       

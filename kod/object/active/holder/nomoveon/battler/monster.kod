@@ -350,6 +350,8 @@ properties:
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
+	
+	plSpellList = $
 
 messages:
 
@@ -551,7 +553,7 @@ messages:
          deleteTimer(ptUnturn);
          ptUnturn = $;
       }
-      
+		
       propagate;
    }
 
@@ -4948,7 +4950,7 @@ messages:
 
    CreateTreasure(who=$,corpse=$)
    {
-      local i, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
+      local i, j, oReagent, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
             lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted, iRandomCashAmount, oMoney,
             iGetResult, bCapacityFailure, bRangeFailure;
 
@@ -5043,6 +5045,16 @@ messages:
          oMoney = Create(&Money,#corpse=corpse,#number=iRandomCashAmount);
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          lTreasureItems = cons(oMoney,lTreasureItems);
+      }
+		
+      % Add one set of spell reagents to the treasure for each type of spell that was cast on the monster
+		for i in plSpellList
+		{
+			for j in send(i,@GetReagents)
+			{
+				oReagent = Create(First(j),#corpse=corpse,#number=Nth(j,2));
+				lTreasureItems = Cons(oReagent,lTreasureItems);
+			}
       }
       
       iNumberOfItemsDropped = 0;
@@ -5921,6 +5933,23 @@ messages:
       
       return;
    }
+	
+	AddToSpellList(spellobject=$)
+	{
+		local i;
+		
+		for i in plSpellList
+		{
+			if i = spellobject
+			{
+				return;
+			}
+		}
+		
+		plSpellList = Cons(spellobject,plSpellList);
+		
+		return;
+	}
 
    % Gets the projectile icon of the monster.  If monster doesn't use
    %  projectiles, return nil

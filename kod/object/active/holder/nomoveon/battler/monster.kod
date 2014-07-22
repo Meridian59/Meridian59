@@ -350,8 +350,8 @@ properties:
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
-	
-	plSpellList = $
+
+   plSpellList = $
 
 messages:
 
@@ -5048,13 +5048,13 @@ messages:
       }
 
       % Add one set of spell reagents to the treasure for each type of spell that was cast on the monster.
-		for i in plSpellList
-		{
-			for j in send(i,@GetReagents)
-			{
-				oReagent = Create(First(j),#corpse=corpse,#number=Nth(j,2));
-				lTreasureItems = Cons(oReagent,lTreasureItems);
-			}
+      for i in plSpellList
+      {
+         for j in send(i,@GetReagents)
+         {
+            oReagent = Create(First(j),#corpse=corpse,#number=Nth(j,2));
+            lTreasureItems = Cons(oReagent,lTreasureItems);
+         }
       }
 
       iNumberOfItemsDropped = 0;
@@ -5927,29 +5927,29 @@ messages:
          if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
-			Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          }
       }
       
       return;
    }
 
-	AddToSpellList(spellobject=$)
-	{
-		local i;
+   AddToSpellList(spellobject=$)
+   {
+      local i;
 
-		for i in plSpellList
-		{
-			if i = spellobject
-			{
-				return;
-			}
-		}
+      for i in plSpellList
+      {
+         if i = spellobject
+         {
+            return;
+         }
+      }
 
-		plSpellList = Cons(spellobject,plSpellList);
+      plSpellList = Cons(spellobject,plSpellList);
 
-		return;
-	}
+      return;
+   }
 
    % Gets the projectile icon of the monster.  If monster doesn't use
    %  projectiles, return nil

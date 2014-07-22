@@ -180,12 +180,6 @@ messages:
 
       % DON'T PROPAGATE!  This way, events will be handled in the proper
       %  order.
-		
-		% If the spell was cast on a monster, let the monster keep track of that for loot.
-		if IsClass(oTarget,&Monster)
-		{
-			Send(oTarget,@AddToSpellList,#spellobject=self);
-		}
 
       return;
    }

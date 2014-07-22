@@ -346,12 +346,12 @@ properties:
 
    piSweepCounter = 0
 
+   plSpellList = $
+
    piOffense = $
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
-
-   plSpellList = $
 
 messages:
 

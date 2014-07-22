@@ -490,13 +490,13 @@ messages:
    "End of monster. Clean up any quests it might have spawned."
    {
       local i, j;
-	   % Minion Management - upon dieing they should leave your control list        
-		if Send(self,@GetMaster) <> $
-		{
-			if isClass(Send(self,@GetMaster),&User)
-			{
-				Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
-			}
+      % Minion Management - upon dieing they should leave your control list        
+      if Send(self,@GetMaster) <> $
+      {
+         if isClass(Send(self,@GetMaster),&User)
+         {
+            Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
+         }
          }
       
       % Under rare conditions delete is called twice in succession
@@ -553,7 +553,7 @@ messages:
          deleteTimer(ptUnturn);
          ptUnturn = $;
       }
-		
+
       propagate;
    }
 
@@ -3135,7 +3135,7 @@ messages:
          
          Send(self,@CreateTreasure,#who=what,#corpse=oBody);
          
-		 % Delete here so we don't accidentally "kill" then delete system
+      % Delete here so we don't accidentally "kill" then delete system
          %  template monsters.
          Send(self,@Delete);
       }
@@ -3216,10 +3216,10 @@ messages:
       for i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
-		 if IsClass(i,&Money)
-		 {
-		    Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
-		 }
+         if IsClass(i,&Money)
+         {
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
+         }
       }
 
       % take stuff the user put there
@@ -3772,12 +3772,12 @@ messages:
                iAmount = First(lNumbers);
 
                % Make sure requested number of items is within the limits
-			   
-			   if (iAmount = $)
-			   {
-			      iAmount = 1;
-			   }
-			   
+
+               if (iAmount = $)
+               {
+                  iAmount = 1;
+               }
+
                if (iAmount < MIN_BUY_AMOUNT)
                {
                   iAmount = MIN_BUY_AMOUNT;

@@ -49,7 +49,7 @@ messages:
    "Lossrate is in units of 10^-4 health points per second."
    "Duration is in milliseconds."
    {
-      local oSpell;
+      local i, oSpell;
 
       if not isClass(who,&Player)
       {
@@ -59,6 +59,15 @@ messages:
       oSpell = send(SYS,@Findspellbynum,#num=SID_RESIST_POISON);
       if send(who,@isenchanted,#what=oSpell)
       {
+         % Give players a decent chance to improve the spell!
+         for i in Send(who,@GetPassiveImprovementList)
+         {
+            if First(i) = oSpell
+            {
+               Post(First(i),@ImproveAbility,#who=who);
+            }
+         }
+
          if (Random(1,100) < send(who,@GetEnchantedState,#what=oSpell))
          { 
             send(who,@MsgSendUser,#message_rsc=poison_kraanan);

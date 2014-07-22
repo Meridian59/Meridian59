@@ -54,6 +54,10 @@ classvars:
    vbCanCastonMonsters = FALSE 
 
    viPersonal_ench = TRUE
+   
+   viDefensive = FALSE
+   viOffensive = FALSE
+   viResistanceType = 0
 
 properties:
 
@@ -151,8 +155,10 @@ messages:
    CastSpell(who = $,iSpellPower=0,lTargets=$)
    {
 
-      local oTarget;
-      
+      local oTarget, lType;
+
+      lType = [self,viDefensive,viOffensive,viResistanceType];
+
       if lTargets <> $
       {
          oTarget=first(lTargets);      
@@ -184,7 +190,7 @@ messages:
       Send(oTarget,@StartEnchantment,#what=self,
            #state=send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,#target=oTarget),
            #time=send(self,@GetDuration,#iSpellPower=iSpellPower),
-           #lastcall=send(self,@GetLastCall),#addicon=send(self,@GetAddicon));
+           #lastcall=send(self,@GetLastCall),#addicon=send(self,@GetAddicon),#who=who,#ltype=lType);
            
       % GetStateValue is sometimes (eg used for pre-enchantment behaviors, who is the caster, target is the target (sometimes the same as who).
 

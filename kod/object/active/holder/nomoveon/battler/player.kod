@@ -13507,6 +13507,11 @@ messages:
       return iArmor;
    }
 
+   GetPassiveImprovementList()
+   {
+      return plPassiveImprovement;
+   }
+
    CanEvilTwin()
    {
       return TRUE;
@@ -13530,11 +13535,7 @@ messages:
    {
       return pbHasEvilTwin;
    }
-   
-   GetPassiveImprovementList()
-   {
-      return plPassiveImprovement;
-   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

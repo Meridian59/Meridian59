@@ -130,8 +130,6 @@ resources:
       "before you can fully utter them."
    spell_display_spellpower = \
       "Spellpower for ~k~B%s~n is ~k~B%i~n."
-   spell_display_duration = \
-      "Duration of ~k~B%s~n is ~k~B%i~n milliseconds."
    los_bad_display = \
       "You don't have line of sight with ~k~B%s~n."
 

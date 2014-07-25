@@ -4552,8 +4552,8 @@ messages:
          if oWeapon <> $
          {
             % Get weapon's numbers.
-            iStroke = Send(oWeapon,@GetStroke,#who=self)+1;
-            iProficiency = Send(oWeapon,@GetProf,#who=self)+1;
+            iStroke = Send(oWeapon,@GetStroke,#who=self);
+            iProficiency = Send(oWeapon,@GetProf,#who=self);
          }
          else
          {
@@ -4563,7 +4563,7 @@ messages:
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = (iStroke*2) + (iProficiency*2) + (iAim*8) + (400 * piBase_Max_Health)/(100 + Send(self,@GetStamina));
+         iOffense = (iStroke*2) + (iProficiency*2) + (iAim*8) + (200 * piBase_Max_Health)/(100 + Send(self,@GetStamina));
 
          if oWeapon <> $
          {
@@ -4631,12 +4631,12 @@ messages:
          iBlock = 0;
 
          % Ask the weapon, it might give a bonus to parrying.
-         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj)+1;
+         iParry = Send(self,@GetParryAbility,#stroke_obj=stroke_obj);
          
          % Ask the shield, it might give a bonus to block.
-         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj)+1;
+         iBlock = Send(self,@GetBlockAbility,#stroke_obj=stroke_obj);
          
-         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj)+1;
+         iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
          iDefense = iParry + iBlock + (iDodge*2) + (iAgility*8) + (200 * piBase_Max_Health)/(100 + Send(self,@GetStamina));
@@ -7649,7 +7649,7 @@ messages:
       {
          if Send(self,@DecodeSkillNum,#compound=i) = Skill_num
          {
-            return Send(self,@DecodeSkillAbility,#compound=i);
+            return Send(self,@DecodeSkillAbility,#compound=i)+1;
          }
       }
       

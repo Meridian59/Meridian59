@@ -381,15 +381,8 @@ messages:
             Send(self,@IsOkayAttackTime);
          }
       }
-      else
-      {
-         if iChanceToHit > 1000
-         {
-            return iChanceToHit;
-         }
-      }
       
-      return 1000;
+      return iChanceToHit;
    }
    
    GetLevel()

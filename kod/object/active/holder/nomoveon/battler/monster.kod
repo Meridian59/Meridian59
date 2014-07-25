@@ -1088,11 +1088,11 @@ messages:
 
       % Carry out attack
       iFactor = Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-      if iFactor
+      if iFactor > 1000
       {
          piSpeedFactor = iFactor;
       }
-
+      
       % Sanity check, in rare occurrences mob dies before this can execute 
       if poBrain <> $
       {

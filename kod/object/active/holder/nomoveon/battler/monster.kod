@@ -1035,6 +1035,8 @@ messages:
    AttackTimer(timer = $)
    "We were bashing on something before, and now its time to hit it again."
    {
+      local iFactor;
+      
       Send(self,@ClearBehavior,#timer=timer);
 
       % sanity checks
@@ -1085,7 +1087,11 @@ messages:
       }
 
       % Carry out attack
-      piSpeedFactor = Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+      iFactor = Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+      if iFactor
+      {
+         piSpeedFactor = iFactor;
+      }
 
       % Sanity check, in rare occurrences mob dies before this can execute 
       if poBrain <> $

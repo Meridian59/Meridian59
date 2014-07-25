@@ -1001,16 +1001,16 @@ properties:
    % Is the player currently using a Death Rift spell?
    pbDeath_rift = FALSE
    ptDeathRiftTimer = $
-   
+
+   % This list keeps track of selfcast buffs for passive improvement.
+   plPassiveImprovement = $
+
    % Crystalize Mana Surge data
    ptCrystalizeManaSurgeTimer = $
    piCrystalizeManaSurging = FALSE
 
    % Players will naturally fall out of groups if they aren't getting kills
    ptLeaveBuilderGroupTimer = $
-
-   % This list keeps track of selfcast buffs for passive improvement.
-   plPassiveImprovement = $
 
 messages:
 

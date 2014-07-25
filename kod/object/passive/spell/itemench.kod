@@ -48,5 +48,10 @@ messages:
       return iDuration;
    }
 
+   SpellBannedInArena()
+   {
+      return TRUE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

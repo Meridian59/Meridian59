@@ -3313,6 +3313,12 @@ messages:
       return removedSomething;
    }
 
+   % Returns the list of currently active, self-cast buffs, that the player is eligible to improve in passively.
+   GetPassiveImprovementList()
+   {
+      return plPassiveImprovement;
+   }
+
    SendEnchantmentIcons()
    "Users do this after GC to redisplay their enchantments"
    {
@@ -13505,11 +13511,6 @@ messages:
       }
       
       return iArmor;
-   }
-
-   GetPassiveImprovementList()
-   {
-      return plPassiveImprovement;
    }
 
    CanEvilTwin()

@@ -319,6 +319,8 @@ properties:
    % Timer to expire turning.
    ptUnturn = $            
    piHatred = 0
+   % If a monster outclasses it's enemy, it may attack again more quickly.
+   piSpeedFactor = 1000
 
    % Supports enchantments with monsters as targets
    plEnchantments = $
@@ -785,7 +787,7 @@ messages:
       }
       else
       {
-         ptBehavior = CreateTimer(self,@AttackTimer,Send(self,@GetAttackTime));
+         ptBehavior = CreateTimer(self,@AttackTimer,Send(self,@GetAttackTime)*1000/piSpeedFactor);
       }
 
       return;
@@ -1083,7 +1085,7 @@ messages:
       }
 
       % Carry out attack
-      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+      piSpeedFactor = Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
 
       % Sanity check, in rare occurrences mob dies before this can execute 
       if poBrain <> $
@@ -1480,7 +1482,7 @@ messages:
          iAttack = iAttack * 3 / 4;
       }
       
-      return Bound(iAttack,1,1500);
+      return Bound(iAttack,1,2000);
    }
 
    GetDefense(what = $, stroke_obj=$)
@@ -1498,7 +1500,7 @@ messages:
          iDefense = piDefense;
       }
      
-      return Bound(iDefense,1,1500);
+      return Bound(iDefense,1,2000);
    }
 
    % The next message deals with the three defense skills.  These messages

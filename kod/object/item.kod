@@ -530,20 +530,75 @@ messages:
       
       if Send(self,@GetAttributes) <> $
       {
-         if NOT bFoundProperties
-         {
-            AppendTempString(special_properties_header);
-         }
-
          for i in Send(self,@GetAttributes)
          {
             if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PARALYZER  
             {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
                AppendTempString("15\% chance to cast Hold on hit");
                AppendTempString("\n");
             }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BLINDER  
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("15\% chance to cast Blind on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BONKER  
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("8\% chance to cast Bonk on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PURGER  
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("15\% chance to cast Purge on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_TWISTER  
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("8\% chance to disorient victim on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_Vamper  
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("10\% chance to gain up to 8 health on hit");
+               AppendTempString("\n");
+            }
          }
-         bFoundProperties = TRUE;
       }
 
       return;

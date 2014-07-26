@@ -12183,6 +12183,8 @@ messages:
          return FALSE;
       }
       
+      Send(self,@BreakTrance,#event=EVENT_REQNEWOWNER);
+      
       return TRUE;
    }
 

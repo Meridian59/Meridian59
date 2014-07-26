@@ -598,7 +598,8 @@ messages:
 
       % Only cancel Persist spells if they are offensive & caster is entering a non-combat room
       if viCasterPersist
-         AND event = EVENT_NEWOWNER
+         AND (event = EVENT_NEWOWNER
+             OR event = EVENT_REQNEWOWNER)
       {
          if oRoom <> $
             AND NOT (viAffectsEnemies
@@ -655,8 +656,8 @@ messages:
                      {
                         if NOT piOldAreaEnchStyle
                         {
-                           Send(oUser,@ClearFlickerFlag);
-                           Send(oUser,@RecalcFlickerFlag);
+                           Post(oUser,@ClearFlickerFlag);
+                           Post(oUser,@RecalcFlickerFlag);
                         }
                      }
                      else

@@ -2259,6 +2259,8 @@
    EVENT_REST = 8
    % Player was disrupted by something external trying to disrupt.
    EVENT_DISRUPT = 9
+   % Player is moving to a new room but has not yet
+   EVENT_REQNEWOWNER = 10
 
    %%% Hot spot definitions
 

@@ -321,6 +321,9 @@ properties:
    piHatred = 0
    % If a monster outclasses it's enemy, it may attack again more quickly.
    piSpeedFactor = 1000
+   % Emulates agility and aim for monsters based on difficulty.
+   piAgility = 25
+   piAim = 25
 
    % Supports enchantments with monsters as targets
    plEnchantments = $
@@ -358,6 +361,8 @@ messages:
    Constructor()
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
+      local iStatPoints, iMin, iMax;
+
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints));
       piHit_points = piMax_hit_points;
 
@@ -394,6 +399,29 @@ messages:
       Send(self,@ResetBehaviorFlags);
 
       piMood = 0;
+
+      iStatPoints = (viDifficulty + 1) * 10;
+      
+      if iStatPoints - 1 > 50
+      {
+         iMax = 50;
+      }
+      else
+      {
+         iMax = iStatpoints - 1;
+      }
+      
+      if iStatPoints - 50 < 1
+      {
+         iMin = 1;
+      }
+      else
+      {
+         iMin = iStatpoints - 50;
+      }
+
+      piAgility = random(iMin,iMax);
+      piAim = iStatPoints - piAgility;
 
       propagate;
    }
@@ -1470,13 +1498,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "This returns the battler's ability to-hit.  Ranges from 1 to 1500."
+   "This returns the battler's ability to-hit.  Ranges from 1 to 2000."
    {
       local iAttack;
 
       if piOffense = $
       {
-         iAttack = (3*viLevel) + (60*viDifficulty);
+         iAttack = 4*viLevel + 8*piAim;
       }
       else
       {
@@ -1487,25 +1515,25 @@ messages:
       {
          iAttack = iAttack * 3 / 4;
       }
-      
+
       return Bound(iAttack,1,2000);
    }
 
    GetDefense(what = $, stroke_obj=$)
    "This returns the battler's ability to avoid being hit.  Ranges from "
-   "1 to 1500."
+   "1 to 2000."
    {
       local iDefense;
 
       if piDefense = $
       {
-         iDefense = (3*viLevel) + (60*viDifficulty);
+         iDefense = 4*viLevel + 8*piAgility;
       }
       else
       {
          iDefense = piDefense;
       }
-     
+
       return Bound(iDefense,1,2000);
    }
 

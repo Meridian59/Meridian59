@@ -532,7 +532,8 @@ messages:
       {
          for i in Send(self,@GetAttributes)
          {
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PARALYZER  
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PARALYZER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i)) 
             {
                if NOT bFoundProperties
                {
@@ -544,6 +545,7 @@ messages:
                AppendTempString("\n");
             }
             if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BLINDER  
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
             {
                if NOT bFoundProperties
                {
@@ -554,7 +556,8 @@ messages:
                AppendTempString("15\% chance to cast Blind on hit");
                AppendTempString("\n");
             }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BONKER  
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BONKER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
             {
                if NOT bFoundProperties
                {
@@ -565,7 +568,8 @@ messages:
                AppendTempString("8\% chance to cast Bonk on hit");
                AppendTempString("\n");
             }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PURGER  
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PURGER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
             {
                if NOT bFoundProperties
                {
@@ -576,7 +580,8 @@ messages:
                AppendTempString("15\% chance to cast Purge on hit");
                AppendTempString("\n");
             }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_TWISTER  
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_TWISTER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
             {
                if NOT bFoundProperties
                {
@@ -587,7 +592,8 @@ messages:
                AppendTempString("8\% chance to disorient victim on hit");
                AppendTempString("\n");
             }
-            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_Vamper  
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_Vamper
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
             {
                if NOT bFoundProperties
                {

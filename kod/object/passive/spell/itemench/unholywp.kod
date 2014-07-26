@@ -86,7 +86,6 @@ messages:
          AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED) = $
          AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE) = $
       {
-         Debug("failed in loop");
          Send(who,@MsgSendUser,#message_rsc=unholyweapon_fails,
                #parm1=Send(oWeapon,@GetName));
 

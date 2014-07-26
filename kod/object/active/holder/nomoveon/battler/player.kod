@@ -8305,7 +8305,7 @@ messages:
    Killed(what = $)
    {
       local lItems,i, amount, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
-            oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom;
+            oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom, lInventoryContents, lReagentBagContents;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
       %  is called from LeaveHold() in the Underworld.  This is to allow time
@@ -8464,8 +8464,18 @@ messages:
          {
             oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
          }
+         
+         lReagentBagContents = Send(self,@GetReagentBagContents);
+         if lReagentBagContents <> $
+         {
+            lInventoryContents = [plActive,plPassive,lReagentBagContents];
+         }
+         else
+         {
+            lInventoryContents = [plActive,plPassive];
+         }
 
-         for lItems in [plActive,plPassive]
+         for lItems in lInventoryContents
          {
             for i in lItems
             {

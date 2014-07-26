@@ -11,13 +11,14 @@
 DMRescue is DMSpell
 
 constants:
+
    include blakston.khd
 
 resources:
 
    dmrescue_name_rsc = "deliverance"
    dmrescue_icon_rsc = light.bgf
-   
+
 classvars:
 
    vrName = dmrescue_name_rsc
@@ -34,7 +35,7 @@ messages:
       return 1;
    }
 
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who=$,lTargets=$)
    {
       local i, j, oRoom, sHonor;
 
@@ -44,17 +45,18 @@ messages:
 
          if isClass(i,&LogoffGhost)
          {
-            i = send(i,@GetGhostedPlayer);
+            i = Send(i,@GetGhostedPlayer);
             Send(i,@AdminGoToSafety);
-            oRoom = send(SYS,@FindRoomByNum,#num=send(i,@GetSaveRoom));
-            send(SYS,@UtilGoToSquare,#what=j,#where=oRoom,
-                 #row=send(i,@GetSaveRow),#col=send(i,@GetSaveCol));
+            oRoom = Send(SYS,@FindRoomByNum,#num=Send(i,@GetSaveRoom));
+            Send(SYS,@UtilGoToSquare,#what=j,#where=oRoom,
+                 #row=Send(i,@GetSaveRow),#col=Send(i,@GetSaveCol));
 
-            sHonor = send(i,@GetHonorString);
-            if StringContain(sHonor,damn_last_annoyed)
+            sHonor = Send(i,@GetHonorString);
+            if sHonor <> $
+               AND StringContain(sHonor,damn_last_annoyed)
             {
                ClearTempString();
-               send(i,@SetHonorString,#string=GetTempString());
+               Send(i,@SetHonorString,#string=GetTempString());
             }
 
             continue;
@@ -64,11 +66,12 @@ messages:
          {
             Send(i,@AdminGoToSafety);
 
-            sHonor = send(i,@GetHonorString);
-            if StringContain(sHonor,damn_last_annoyed)
+            sHonor = Send(i,@GetHonorString);
+            if sHonor <> $
+               AND StringContain(sHonor,damn_last_annoyed)
             {
                ClearTempString();
-               send(i,@SetHonorString,#string=GetTempString());
+               Send(i,@SetHonorString,#string=GetTempString());
             }
 
             continue;

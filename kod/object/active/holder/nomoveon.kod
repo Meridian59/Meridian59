@@ -140,9 +140,8 @@ messages:
 
    RemoveRadiusEnchantment(what=$,iPower=0,source=$)
    {
-      local i, bFound;
+      local i;
 
-      bFound = FALSE ;
       for i in plRadiusEnchantments
       {
          if Nth(i,1) = what
@@ -161,14 +160,7 @@ messages:
             }
          
             plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
-            bFound = TRUE;
          }
-      }
-
-      if NOT bFound
-      {
-         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
-               plRadiusEnchantments);
       }
 
       return;

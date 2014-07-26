@@ -894,7 +894,7 @@ messages:
       return TRUE; 
    }
 
-   ValidateNumberOfWeaponAttributes(num = 1)
+   ValidateWeaponAttributes(num = 1)
    "Deletes any items with more major weapon attributes than num. Default 1."
    {
       local iNum;

@@ -894,6 +894,47 @@ messages:
       return TRUE; 
    }
 
+   ValidateNumberOfWeaponAttributes(num = 1)
+   "Deletes any items with more major weapon attributes than num. Default 1."
+   {
+      local iNum;
+
+      iNum = 0;
+
+      if plItem_attributes = $
+      {
+         return;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_BLINDER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_PARALYZER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_VAMPER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_PURGER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if iNum > num
+      {
+         Post(self,@Delete);
+         Debug("Multiple attribute weapon deleted.");
+      }
+
+      return;
+   }
+
    CanEnchant(oSpell = $)
    "Weapons CAN usually be dedicated to Qor, Kraanan or Shal'ille.  "
    "Exception:  weapons that are already enchanted may not be, "

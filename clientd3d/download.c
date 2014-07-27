@@ -733,7 +733,6 @@ void DownloadExit(void)
 void DownloadNewClient(char *hostname, char *filename)
 {
   SHELLEXECUTEINFO shExecInfo;
-  char update_program_path[MAX_PATH];
 
   if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
   {

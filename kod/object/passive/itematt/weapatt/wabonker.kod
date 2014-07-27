@@ -61,7 +61,7 @@ messages:
       if random(1,100) <= piEffect_percent
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_BONK);
-         Send(oSpell,@CastSpell,#who=wielder,#lTargets=[target],#iSpellPower=50);
+         Send(oSpell,@CastSpell,#who=wielder,#lTargets=[target],#iSpellPower=50,#bItemCast=TRUE);
       }
 
       return Damage;

@@ -44,8 +44,6 @@ classvars:
    viMana = 0
    viSpellExertion = 0
 
-   viChance_To_Increase = 0
-
    viFlash = FLASH_GOOD
 
 properties:
@@ -95,9 +93,15 @@ messages:
 
    SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
    {
-      local i, bFound, oSpell, sSpell, iPercent, iChance, iGain, iNum, iPoints;
+      local i, bFound, oSpell, sSpell, oSkill, sSkill, iPercent, iChance, iGain, iNum, iPoints;
 
       send(who,@BreakTrance,#event=EVENT_STEER);  %% don't print fizzle message
+
+      if StringContain(string,Meditate_name_rsc)
+      { 
+         send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+         return;
+      }
 
       bFound = FALSE;
       
@@ -120,7 +124,13 @@ messages:
                send(who,@MsgSendUser,#message_rsc=Meditate_maxed_skill,#parm1=sSpell); 
                return;
             }
-            
+
+            if iChance = 0
+            { 
+               send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+               return;
+            }
+
             if iPoints < 300/iChance
             {
                send(who,@MsgSendUser,#message_rsc=Meditate_not_enough_points,#parm1=sSpell); 
@@ -137,6 +147,50 @@ messages:
                send(who,@AddTrainingPoints,#points=(-iGain*300/iChance));
                send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,#parm1=sSpell,#parm2=iGain);
                Send(who,@ChangeSpellAbility,#spell_num=iNum,#amount=iGain,#report=FALSE);
+               if iGain*300/iChance > random(0,99)
+               {
+                  Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,#report=TRUE);
+               }
+            }
+
+            break;
+         }
+      }
+
+      for i in send(who,@GetSkillList)
+      {
+         iNum = Send(who,@DecodeSkillNum,#compound=i);
+         oSkill = Send(sys,@FindSkillByNum,#num=iNum);
+         sSkill = Send(oSkill,@GetName);
+
+         if StringContain(string,sSkill)
+         {
+            bFound = TRUE;
+            iPercent = Send(oSkill,@GetAbility,#who=who);
+            iChance = Send(oSkill,@GetChanceToIncrease);
+            
+            if iPercent = 99
+            {
+               send(who,@MsgSendUser,#message_rsc=Meditate_maxed_skill,#parm1=sSkill); 
+               return;
+            }
+            
+            if iPoints < 300/iChance
+            {
+               send(who,@MsgSendUser,#message_rsc=Meditate_not_enough_points,#parm1=sSkill); 
+               return;
+            }
+            else
+            {
+               iGain = iPoints*iChance/300;
+               if iGain > 99 - iPercent
+               {
+                  iGain = 99 - iPercent;
+               }
+               
+               send(who,@AddTrainingPoints,#points=(-iGain*300/iChance));
+               send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,#parm1=sSkill,#parm2=iGain);
+               Send(who,@ChangeSkillAbility,#Skill_num=iNum,#amount=iGain,#report=FALSE);
                if iGain*300/iChance > random(0,99)
                {
                   Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,#report=TRUE);

@@ -45,6 +45,12 @@ properties:
 
 messages:
 
+   % This is called by meditate. Return something reasonable.
+   GetChanceToIncrease()
+   {
+      return 5;
+   }
+
    CanPayCosts(who=$,oTarget=$)
    {
       % No parrying if you aren't moving.

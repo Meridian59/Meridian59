@@ -60,6 +60,12 @@ messages:
       return Send(who,@GetAgility);
    }
 
+   % This is called by meditate. Return something reasonable.
+   GetChanceToIncrease()
+   {
+      return 3;
+   }
+
    PayCosts(who=$,modifier=0)
    "Some skills may require certain stats to be depleted."
    "return TRUE if they were successfully depleted."

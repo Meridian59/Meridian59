@@ -80,7 +80,13 @@ properties:
 
    pbAccessible = TRUE
 
-messages:      
+messages:
+
+   % This is called by meditate. Return something reasonable.
+   GetChanceToIncrease()
+   {
+      return 3;
+   }
 
    SpellMurmurMessage(caster=$, target=$, hearer=$)
    {

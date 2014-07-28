@@ -62,6 +62,12 @@ messages:
       return Send(who,@GetStamina);
    }
 
+   % This is called by meditate. Return something reasonable.
+   GetChanceToIncrease()
+   {
+      return 5;
+   }
+
    SkillFailed(who=$)
    {
       % Override base class behavior to do nothing.  Base class sends a

@@ -72,7 +72,7 @@ properties:
    % 10 minutes for worst case, 2.3 mins for best case.
    viMultiCast_Spellpower = 6000
 
-messages:      
+messages:    
 
    ResetReagents()
    {

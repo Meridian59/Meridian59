@@ -183,6 +183,12 @@ messages:
       return bound(random(iRequisiteStat/2,iRequisiteStat)/2,1,25);
    }
 
+   % This is called by meditate. Return something reasonable.
+   GetChanceToIncrease()
+   {
+      return 10;
+   }
+
    CanPayCosts(who=$,oTarget=$)
    "If a skill requires a special cost or requirement of some sort, that"
    "cost goes here.  Example: picking locks may require thieves tools."

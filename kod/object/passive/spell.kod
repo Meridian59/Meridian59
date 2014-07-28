@@ -1685,6 +1685,11 @@ messages:
       
       return FALSE;
    }
+   
+   GetChanceToIncrease()
+   {
+      return viChance_To_Increase;
+   }
 
    GetInitialChance(who=$)
    {

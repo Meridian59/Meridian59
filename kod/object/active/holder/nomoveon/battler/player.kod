@@ -200,6 +200,9 @@ resources:
    player_wanted_now = "You are now wanted for the murder of %s%s."
    player_haunted_on = "%s%s's violent death summons forth a revenant."
    player_haunted_off = "The revenant is satisfied."
+   
+   player_training_inform =  "You now have ~B%i~B training points!"
+   player_reached_maxtraining = "You now have ~B1000~B training points and can not advance any further!  Meditate to use them!"
 
    player_health_gain_maxed = "Your health cannot increase any further."
    
@@ -760,6 +763,10 @@ properties:
    % This is used to determine raises in hit points only.
    poKill_target = $
    piGain_chance = 0
+   
+   % This keeps track of training points that players accumulate when killing mobs.
+   piTraining_points = 0
+   piInform = TRUE
 
    % Flags for various character attributes.
    piFlags = 0
@@ -2504,6 +2511,7 @@ messages:
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_MEDITATE,#initial=TRUE,#iability=1);
       
       return;
    }
@@ -8201,6 +8209,28 @@ messages:
          gain = gain * gainmult;
 		 
          piGain_chance = piGain_chance + gain;
+         
+         if gain > 0
+         {
+            piTraining_points = piTraining_points + 1;
+         }
+
+         if piTraining_points > 999
+         {
+            if piInform
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining);
+               piInform = FALSE;
+            }
+            piTraining_points = 1000;
+         }
+         else
+         {
+            if piTraining_points mod 100 = 0 AND piInform
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_training_inform,#parm1=piTraining_points);
+            }
+         }
 
          if roll
          {
@@ -8288,6 +8318,23 @@ messages:
    GetGainChance()
    {
       return piGain_chance;
+   }
+
+   GetTrainingPoints()
+   {
+      return piTraining_points;
+   }
+
+   AddTrainingPoints(points=0)
+   {
+      piTraining_points = piTraining_points + points;
+
+      if piTraining_points < 1000
+      {
+         piInform = TRUE;
+      }
+
+      return;
    }
 
    GetHighMark()

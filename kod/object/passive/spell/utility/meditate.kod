@@ -1,0 +1,172 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Meditate is Spell
+
+constants:
+
+   include blakston.khd
+
+   TRANCE_TIME = 20000
+
+resources:
+
+   Meditate_name_rsc = "meditate"
+   Meditate_icon_rsc = imanafoc.bgf
+   Meditate_desc_rsc = \
+      "Allows you to channel your experience in meditation in order to open your mind and improve your abilities.  "
+      "To do so, speak the name of the ability you wish to improve while in trance.  This will use up accumulated training points."
+
+   Meditate_begin_trance = "You begin your meditation and let your mind wander.  Which ability will you focus your meditation on?"
+   Meditate_cast_success = "You begin to meditate on the art of %s and come to a deeper understanding of its intricacies.  "
+                           "You have improved your ability by ~B%i~B points."
+   Meditate_cast_failure = "You can't seem to properly focus your mind.  Confused and disappointed, you wake from your trance."
+   Meditate_not_enough_points = "You begin to meditate on the art of %s, but seem to lack the inspiration to advance in your studies."
+   Meditate_maxed_skill = "You begin to meditate on the art of %s, but cannot possibly progress any further in its mastery."
+   Meditate_cast_finished = "You wake from your trance and feel your mental energies refreshed!"
+
+classvars:
+
+   vrName = Meditate_name_rsc
+   vrIcon = Meditate_icon_rsc
+   vrDesc = Meditate_desc_rsc
+
+   viSpell_num = SID_MEDITATE
+   viSchool = SS_FAREN
+   viSpell_level = 1
+   viMana = 0
+   viSpellExertion = 0
+
+   viChance_To_Increase = 0
+
+   viFlash = FLASH_GOOD
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+
+      return;
+   }
+   
+   SuccessChance(who=$)
+   "Starter spell will always work."
+   {
+      return TRUE;
+   }
+   
+   ImproveAbility()
+   "We only improve if we have exchanged training points."
+   {
+      return FALSE;
+   }
+
+   GetTranceTime(iSpellpower=0,who=$)
+   {
+      % Since this spell uses the trance, don't scale it down depending on iSpellpower
+      return viCast_time;
+   }
+
+   BeginCastingTrance(who=$,lTargets=$,iSpellpower=$)
+   {
+      local oTrance;
+
+      %%Get rid of the regular casting trance, we need a special one put on below.
+      send(who,@BreakTrance,#event=EVENT_STEER);  
+
+      oTrance = send(SYS,@FindSpellByNum,#num=SID_TRANCE);
+      
+      send(who,@MsgSendUser,#message_rsc=Meditate_begin_trance);
+
+      send(oTrance,@BeginCastingTrance,#what=self,#who=who,#lTargets=$,#time=TRANCE_TIME);
+
+      propagate;
+   }
+
+   SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
+   {
+      local i, bFound, oSpell, sSpell, iPercent, iChance, iGain, iNum, iPoints;
+
+      send(who,@BreakTrance,#event=EVENT_STEER);  %% don't print fizzle message
+
+      bFound = FALSE;
+      
+      iPoints = send(who,@GetTrainingPoints);
+
+      for i in send(who,@GetSpellList)
+      {
+         iNum = Send(who,@DecodeSpellNum,#compound=i);
+         oSpell = Send(sys,@FindSpellByNum,#num=iNum);
+         sSpell = Send(oSpell,@GetName);
+
+         if StringContain(string,sSpell)
+         {
+            bFound = TRUE;
+            iPercent = Send(oSpell,@GetAbility,#who=who);
+            iChance = Send(oSpell,@GetChanceToIncrease);
+            
+            if iPercent = 99
+            {
+               send(who,@MsgSendUser,#message_rsc=Meditate_maxed_skill,#parm1=sSpell); 
+               return;
+            }
+            
+            if iPoints < 300/iChance
+            {
+               send(who,@MsgSendUser,#message_rsc=Meditate_not_enough_points,#parm1=sSpell); 
+               return;
+            }
+            else
+            {
+               iGain = iPoints*iChance/300;
+               if iGain > 99 - iPercent
+               {
+                  iGain = 99 - iPercent;
+               }
+               
+               send(who,@AddTrainingPoints,#points=(-iGain*300/iChance));
+               send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,#parm1=sSpell,#parm2=iGain);
+               Send(who,@ChangeSpellAbility,#spell_num=iNum,#amount=iGain,#report=FALSE);
+               if iGain*300/iChance > random(0,99)
+               {
+                  Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,#report=TRUE);
+               }
+            }
+
+            break;
+         }
+      }
+
+      if NOT bFound
+      { 
+         send(who,@MsgSendUser,#message_rsc=Meditate_cast_failure);
+      }
+
+      return;
+   } 
+
+   DoubleCheckAfterTrance(who=$,lTargets=$)
+   {
+      local iMana, iPercent;
+
+      iMana = Send(who,@GetMaxMana);
+      iPercent = Send(self,@GetAbility,#who=who);
+      
+      send(who,@GainMana,#amount=iMana*iPercent/100,#bCapped=TRUE);
+      send(who,@MsgSendUser,#message_rsc=Meditate_cast_finished);   
+             
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

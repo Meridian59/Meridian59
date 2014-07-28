@@ -44,7 +44,7 @@ classvars:
    viSchool = SKS_FENCING
 
    viSkill_num = SKID_PUNCH
-   viskillExertion = 5
+   viSkillExertion = 3
    vbCheck_exertion = FALSE
 
    viChance_to_increase = 60
@@ -54,8 +54,8 @@ classvars:
 
    viSkill_Num = SKID_PUNCH
 
-   viMin_Damage = 1         % Damage_min here replaces a weapon    
-   viMax_Damage = 5         % Damage_max replaces the weapon's stats.
+   viMin_Damage = 2         % Damage_min here replaces a weapon    
+   viMax_Damage = 6         % Damage_max replaces the weapon's stats.
 
    VbAutomatic = FALSE  %  If this is set to TRUE, then the effects of this
                         %  skill happen automatically, and are not accessible

@@ -46,6 +46,7 @@ classvars:
    viMana = 1
    viSpellExertion = 30
    viChance_to_increase = 100
+   viMeditate_ratio = 100
 
    viCast_time = 3000
 
@@ -56,12 +57,6 @@ properties:
    plRecentCasters = $
 
 messages:
-
-   % This is called by meditate. Return something reasonable.
-   GetChanceToIncrease()
-   {
-      return 3;
-   }
 
    ResetReagents()
    {

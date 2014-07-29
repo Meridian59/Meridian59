@@ -34,18 +34,13 @@ classvars:
    viSkill_num = SKID_PROFICIENCY_BOW
    viSkill_level = 5
    viChance_to_increase = 15
+   viMeditate_ratio = 50
 
 properties:
 
    plPrerequisites = $
 
 messages:
-
-   % This is called by meditate. Return something reasonable.
-   GetChanceToIncrease()
-   {
-      return 5;
-   }
 
    GetRequisiteStat(who=$)
    {

@@ -45,6 +45,7 @@ classvars:
    viSkill_Num = SKID_FIRE
    viSkill_level = 4
    viChance_to_increase = 50
+   viMeditate_ratio = 50
 
    viSkillExertion = 2
    vbCheck_exertion = FALSE
@@ -58,12 +59,6 @@ properties:
    piChanceToIncrease = 100
 
 messages:
-
-   % This is called by meditate. Return something reasonable.
-   GetChanceToIncrease()
-   {
-      return 5;
-   }
 
    % General combat messages:
 

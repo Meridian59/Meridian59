@@ -33,6 +33,7 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_level = 4
    viChance_to_Increase = 20
+   viMeditate_ratio = 50
 
    viSkillExertion = 0
    vbCheck_exertion = FALSE
@@ -44,12 +45,6 @@ properties:
    plPrerequisites = $
 
 messages:
-
-   % This is called by meditate. Return something reasonable.
-   GetChanceToIncrease()
-   {
-      return 5;
-   }
 
    CanPayCosts(who=$,oTarget=$)
    {

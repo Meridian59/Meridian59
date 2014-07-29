@@ -87,7 +87,7 @@ resources:
 
    spell_fail_wav = spelfail.wav
 
-   spell_desc_rsc = "SCHOOL : %s          LEVEL : %i \n\n%s %s%s"
+   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%i%s%s%s"
    spell_school_riija = "Riija"
    spell_school_shalille = "Shal'ille"
    spell_school_qor = "Qor"
@@ -129,6 +129,9 @@ resources:
       "~g~BAn unseen force rips the words of the spell from your throat "
       "before you can fully utter them."
 
+   Spell_meditate_ratio_one_rsc = "\n\nIt will cost you "
+   Spell_meditate_ratio_two_rsc = " training points to improve in this spell."
+
    Spell_made_rsc = "  Enchanted by "
    Spell_novice_rsc = ", Novice "
    Spell_apprentice_rsc = ", Apprentice "
@@ -159,6 +162,10 @@ classvars:
    viMana = 1
 
    viChance_To_Increase = 20
+
+   % This is NOT the same as the chance to increase. This determines how many training points a player needs to spend per improvement.
+   % So it's not x improvements in 100 casts, but 1 improvement per X points.
+   viMeditate_ratio = 100
 
    viShow_enchantment_icon = ENCHANTMENT_SHOW_ALL
 
@@ -221,6 +228,7 @@ properties:
    % Must have this many HP to cast the spell.  Provides a way
    % to nerf spells that are being abused by under 30 HP mules.
    piMinHitPoints = 0
+   piMeditate_ratio = 100
 
 messages:      
 
@@ -228,6 +236,7 @@ messages:
    {
       Send(self,@ResetReagents);
       Send(self,@ResetPrereqs);
+      piMeditate_ratio = viMeditate_ratio;
 
       propagate;
    }
@@ -310,9 +319,9 @@ messages:
          }
 
          rExtra = Send(self,@GetExtraDesc);
-
-         AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,
-                   4,rOutlaw, 4,rExtra);
+         
+         AddPacket(4,spell_desc_rsc,4,rSchool,4,viSpell_Level,4,vrDesc,4,rOutlaw);
+         AddPacket(4,Spell_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Spell_meditate_ratio_two_rsc,4,rExtra);
                    
          return;
       }
@@ -1685,10 +1694,26 @@ messages:
       
       return FALSE;
    }
-   
-   GetChanceToIncrease()
+
+   GetMeditateRatio()
    {
-      return viChance_To_Increase;
+      return piMeditate_ratio;
+   }
+
+   SetMeditateRatio(points=0)
+   {
+      if points > 0
+      {
+         piMeditate_ratio = points;
+      }
+
+      return;
+   }
+
+   ResetMeditateRatio()
+   {
+      piMeditate_ratio = viMeditate_ratio;
+      return;
    }
 
    GetInitialChance(who=$)

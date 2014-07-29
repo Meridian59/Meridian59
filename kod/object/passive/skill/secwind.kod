@@ -44,6 +44,7 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_Level = 4
    viChance_to_Increase = 50
+   viMeditate_ratio = 50
 
    viSkillExertion = 0
    vbCheck_exertion = FALSE
@@ -60,12 +61,6 @@ messages:
    "Varies from skill to skill and spell to spell."
    {
       return Send(who,@GetStamina);
-   }
-
-   % This is called by meditate. Return something reasonable.
-   GetChanceToIncrease()
-   {
-      return 5;
    }
 
    SkillFailed(who=$)

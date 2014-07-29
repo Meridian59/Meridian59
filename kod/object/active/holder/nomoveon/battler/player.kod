@@ -203,6 +203,8 @@ resources:
    
    player_training_inform =  "You now have ~B%i~B training points!"
    player_reached_maxtraining = "You now have ~B1000~B training points and can not advance any further!  Meditate to use them!"
+   player_logon_bonus =  "You have received your daily training bonus of ~B%i~B points!  Come back tomorrow for more!"
+   player_nologon_bonus =  "Welcome back!  Log in again tomorrow to receive some bonus training points!"
 
    player_health_gain_maxed = "Your health cannot increase any further."
    
@@ -768,6 +770,11 @@ properties:
    piTraining_points = 0
    piInform = TRUE
 
+   % This is the amount of training points people receive for logging on daily.
+   piLogon_bonus = 0
+   piLogon_timestamp = 0
+   piReward_timestamp = 0
+
    % Flags for various character attributes.
    piFlags = 0
    piFlags2 = 0
@@ -1022,6 +1029,7 @@ messages:
    {
       % Let the poor bastards eat something.
       piTimeLastStomachUpdate = GetTime();
+      piReward_timestamp = GetTime();
       
       propagate;
    }
@@ -1936,7 +1944,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oSnoop, oRoom;
+      local i, oGame, oSnoop, oRoom, iBonus;
       
       for i in plPassive
       {
@@ -2030,12 +2038,48 @@ messages:
               #wave_rsc=player_logged_on_wav_rsc);
       }
 
+      % Reset the training points bonus if people haven't logged in for a while.
+      if GetTime() - piLogon_timestamp > 28*60*60
+      {
+         piLogon_bonus = 0;
+      }
+
+      % Reward people for logging on by granting them some free training points!
+      if GetTime() - piReward_timestamp > 20*60*60
+      {
+         if piTraining_points = 1000
+         {
+            return;
+         }
+
+         if piLogon_bonus = 0
+         {
+            if piReward_timestamp <> 0
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_nologon_bonus);
+            }
+            
+            piLogon_bonus = 25;
+         }
+         else
+         {
+            iBonus = piLogon_bonus * (GetTime() - piReward_timestamp) / (24*60*60);
+            Send(self,@MsgSendUser,#message_rsc=player_logon_bonus,#parm1=iBonus);
+            Send(self,@AddTrainingPoints,#points=iBonus);
+            piLogon_bonus = bound(piLogon_bonus*2,25,200);
+         }
+         
+         piReward_timestamp = GetTime();
+      }
+
       return;
    }
 
    UserLogoffHook()
    {
       local i, oSnoop, oRoom;
+
+      piLogon_timestamp = GetTime();
    
       oSnoop = Send(SYS,@GetInvestigator);
       if oSnoop <> $
@@ -8348,6 +8392,26 @@ messages:
 
       Post(self,@DrawTraining);
 
+      return;
+   }
+
+   GetLogOnBonus()
+   {
+      return piLogon_bonus;
+   }
+
+   SetLogOnBonus(points=0)
+   {
+      piLogon_bonus = points;
+
+      return;
+   }
+
+   ResetLogOnBonus(points=0)
+   {
+      piLogon_bonus = 0;
+      piReward_timestamp = GetTime();
+      
       return;
    }
 

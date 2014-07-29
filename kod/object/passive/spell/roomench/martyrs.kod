@@ -51,6 +51,7 @@ classvars:
    viSpell_level = 3
    
    viChance_To_Increase = 15
+   viMeditate_ratio = 20
    vrSucceed_wav = martrysbg_sound
 
    vbCastable_in_HappyLand = FALSE

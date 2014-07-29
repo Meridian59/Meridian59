@@ -57,6 +57,7 @@ classvars:
    
    viSpellExertion = 10      
    viChance_To_Increase = 20
+   viMeditate_ratio = 10
 
    viAffectsEveryone = TRUE
 

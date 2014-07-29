@@ -44,6 +44,7 @@ classvars:
    viSchool = SS_FAREN
    viSpell_level = 5
    viMana = 12
+   viMeditate_ratio = 50
 
    viOutlaw = TRUE
    viHarmful = TRUE

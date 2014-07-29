@@ -61,6 +61,7 @@ classvars:
 
    viSchool = SS_JALA
    viSpell_level = 2
+   viMeditate_ratio = 10
 
    viAffectsEveryone = TRUE
 

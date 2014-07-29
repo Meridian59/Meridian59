@@ -52,6 +52,7 @@ classvars:
    viSpell_level = 5
    viMana = 12
    viSpellExertion = 8
+   viMeditate_ratio = 75
 
    vrSucceed_wav = invisibility_sound
 

@@ -62,6 +62,7 @@ classvars:
    viSpellExertion = 4
    viCast_time = 0
    viChance_to_increase = 10
+   viMeditate_ratio = 20
 
    viFlash = FLASH_BAD
 

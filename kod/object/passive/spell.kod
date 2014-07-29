@@ -87,7 +87,8 @@ resources:
 
    spell_fail_wav = spelfail.wav
 
-   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%i%s%s%s"
+   spell_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s"
+   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%s%i%s"
    spell_school_riija = "Riija"
    spell_school_shalille = "Shal'ille"
    spell_school_qor = "Qor"
@@ -319,10 +320,17 @@ messages:
          }
 
          rExtra = Send(self,@GetExtraDesc);
-         
-         AddPacket(4,spell_desc_rsc,4,rSchool,4,viSpell_Level,4,vrDesc,4,rOutlaw);
-         AddPacket(4,Spell_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Spell_meditate_ratio_two_rsc,4,rExtra);
-                   
+
+         if piMeditate_ratio = 0
+         {
+            AddPacket(4,spell_desc_no_train_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra);
+         }
+         else
+         {
+            AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra);
+            AddPacket(4,Spell_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Spell_meditate_ratio_two_rsc);
+         }
+
          return;
       }
       

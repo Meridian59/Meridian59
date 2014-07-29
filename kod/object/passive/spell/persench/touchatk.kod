@@ -65,6 +65,7 @@ classvars:
    viSpellExertion = 2
 
    viChance_To_Increase = 10
+   viMeditate_ratio = 20
 
    % Touch spells typically do good damage but are unaffected by typical weapon
    %  bonuses. These base damages will have proficiency added to them,

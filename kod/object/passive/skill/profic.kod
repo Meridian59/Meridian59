@@ -31,6 +31,8 @@ classvars:
 
    viSchool = SKS_FENCING
    viSkill_num = 0
+   
+   viMeditate_ratio = 30
 
    vbAutomatic = TRUE    % does not show up in pull-down menu
 

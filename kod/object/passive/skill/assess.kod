@@ -44,6 +44,7 @@ classvars:
    vischool = SKS_BRAWLING
 
    viSkill_level = 50
+   viMeditate_ratio = 0
 
 properties:
 

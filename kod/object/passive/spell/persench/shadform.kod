@@ -46,6 +46,7 @@ classvars:
 
    vrSucceed_wav = shadowform_wave_rsc
    viChance_To_Increase = 30
+   viMeditate_ratio = 20
    viFlash = FLASH_GOOD_SELF
 
 properties:

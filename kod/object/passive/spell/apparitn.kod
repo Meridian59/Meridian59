@@ -52,6 +52,7 @@ classvars:
    viSpellExertion = 20
    viCast_time = 4000
    viChance_To_Increase = 25
+   viMeditate_ratio = 30
    vrSucceed_wav = summonapparition_sound
 
    viHarmful = TRUE

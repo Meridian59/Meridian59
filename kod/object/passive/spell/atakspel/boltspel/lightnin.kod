@@ -39,6 +39,7 @@ classvars:
    viSchool = SS_FAREN
 
    viSpell_level = 5
+   viMeditate_ratio = 50
 
    vrSucceed_wav = lightning_sound
 

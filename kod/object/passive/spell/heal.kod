@@ -45,6 +45,7 @@ classvars:
    viMana = 3
 
    viCast_time = 600
+   viMeditate_ratio = 10
 
    viFlash = FLASH_GOOD
 

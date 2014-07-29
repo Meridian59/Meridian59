@@ -44,6 +44,7 @@ classvars:
 
    viCast_time = 3000
    viChance_To_Increase = 15
+   viMeditate_ratio = 20
 
 
 properties:

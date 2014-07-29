@@ -53,6 +53,7 @@ classvars:
    viSpellExertion = 25
    viCast_time = 30000   
    viChance_To_Increase = 20
+   viMeditate_ratio = 50
 
 properties:
 

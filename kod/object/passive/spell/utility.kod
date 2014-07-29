@@ -18,6 +18,8 @@ resources:
 
 classvars:
 
+   viMeditate_ratio = 0
+
 properties:
 
 messages:

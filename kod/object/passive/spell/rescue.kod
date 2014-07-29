@@ -43,6 +43,7 @@ classvars:
 
    vrSucceed_wav = rescue_sound
    viChance_To_Increase = 10
+   viMeditate_ratio = 30
 
    viFlash = FLASH_GOOD
 

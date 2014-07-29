@@ -51,6 +51,7 @@ classvars:
    viSpellExertion = 5
    viCast_time = 5000
    viChance_To_Increase = 40
+   viMeditate_ratio = 30
    
    vrSucceed_wav = QorBane_sound
    viOutlaw = False

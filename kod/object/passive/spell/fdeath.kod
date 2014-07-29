@@ -41,6 +41,7 @@ classvars:
    viSpell_num = SID_FEIGN_DEATH
    viSpellExertion = 10
    viChance_To_Increase = 40
+   viMeditate_ratio = 20
 
    viSchool = SS_RIIJA
    viSpell_level = 1

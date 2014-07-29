@@ -34,6 +34,7 @@ classvars:
    viSkill_num = SKID_BRAWLING
    viSkill_level = 2
    viChance_to_increase = 25
+   viMeditate_ratio = 50
 
 properties:
 

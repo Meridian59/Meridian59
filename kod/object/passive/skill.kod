@@ -30,6 +30,7 @@ resources:
    skill_sound_fail = spelfail.wav
 
    skill_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%i%s"
+   skill_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s"
    skill_school_fencing = "Weaponcraft"
    skill_school_brawling = "Brawling"
    skill_school_thievery = "Thievery"
@@ -130,9 +131,16 @@ messages:
       {
          rSchool = skill_school_thievery;
       }
-
-      AddPacket(4,skill_desc_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
-      AddPacket(4,Skill_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Skill_meditate_ratio_two_rsc);
+      
+      if piMeditate_ratio = 0
+      {
+         AddPacket(4,skill_desc_no_train_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
+      }
+      else
+      {
+         AddPacket(4,skill_desc_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
+         AddPacket(4,Skill_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Skill_meditate_ratio_two_rsc);
+      }
 
       return;
    }

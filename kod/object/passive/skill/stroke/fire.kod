@@ -45,7 +45,7 @@ classvars:
    viSkill_Num = SKID_FIRE
    viSkill_level = 4
    viChance_to_increase = 50
-   viMeditate_ratio = 50
+   viMeditate_ratio = 30
 
    viSkillExertion = 2
    vbCheck_exertion = FALSE

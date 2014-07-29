@@ -59,6 +59,7 @@ classvars:
 
    viIndefinite = ARTICLE_AN
    viChance_To_Increase = 35
+   viMeditate_ratio = 30
    viBaseRange = 3
    viCast_Time = 2000
 

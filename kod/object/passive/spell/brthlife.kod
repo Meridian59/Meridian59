@@ -51,6 +51,7 @@ classvars:
    viMana = 3
    viSpellExertion = 2
    viChance_To_Increase = 20
+   viMeditate_ratio = 10
   
    viFlash = FLASH_GOOD
 

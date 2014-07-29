@@ -39,6 +39,7 @@ classvars:
    viMana = 15
    viSpellExertion = 5
    viCast_time = 5000
+   viMeditate_ratio = 30
 
    vrSucceed_wav = createspiritualhammer_sound
 

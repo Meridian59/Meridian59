@@ -36,6 +36,7 @@ classvars:
    viSchool = SKS_FENCING
    viSkill_Level = 2
    viChance_to_Increase = 20
+   viMeditate_ratio = 30
 
    viSkillExertion = 0
    vbCheck_exertion = FALSE

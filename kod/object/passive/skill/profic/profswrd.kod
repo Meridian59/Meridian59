@@ -30,6 +30,7 @@ classvars:
    viSkill_num = SKID_PROFICIENCY_SWORD
    viSkill_level = 3
    viChance_to_increase = 30
+   viMeditate_ratio = 30
 
 properties:
 

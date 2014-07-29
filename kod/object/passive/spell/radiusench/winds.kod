@@ -67,6 +67,7 @@ classvars:
    viSpell_level = 3
    viSchool = SS_FAREN
    viChance_To_Increase = 35
+   viMeditate_ratio = 30
    viBaseRange = 6
 
    vrSucceed_wav = winds_sound

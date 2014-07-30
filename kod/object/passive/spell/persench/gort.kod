@@ -55,6 +55,8 @@ classvars:
    viMeditate_ratio = 75
    viFlash = FLASH_GOOD_SELF
 
+   viDefensive = TRUE
+
 properties:    
 
 messages:
@@ -126,7 +128,19 @@ messages:
 
       propagate;
    }
+
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds 1-");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self)/25);
+      AppendTempString(" armor or reduces non-magical damage to 15, partially magical damage to 20, and fully magical damage to 25. ");
+      AppendTempString(" Only the better of these two effects applies. Armor of Gort modifies damage received before any other armor or spells.");
       
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

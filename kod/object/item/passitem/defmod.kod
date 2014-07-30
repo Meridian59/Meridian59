@@ -71,42 +71,22 @@ messages:
 
    NewUsed(what = $)
    {
-      Send(what,@AddDefenseModifier,#what=self);
-      send(self,@AddResistances);
+      If NOT IsClass(self,&Torch)
+      {
+         Send(what,@AddDefenseModifier,#what=self);
+      }
 
       propagate;
    }
 
    NewUnused(what = $)
    {
-      Send(what,@RemoveDefenseModifier,#what=self);
-      send(self,@RemoveResistances);
+      If NOT IsClass(self,&Torch)
+      {
+         Send(what,@RemoveDefenseModifier,#what=self);
+      }
 
       propagate;
-   }
-
-   AddResistances()
-   {
-      local i;
-      
-      for i in send(self,@GetResistanceModifiers)
-      {
-         Send(poOwner,@AddResistance,#what=nth(i,1),#value=nth(i,2));
-      }
-      
-      return;
-   }
-
-   RemoveResistances()
-   {
-      local i;
-      
-      for i in send(self,@GetResistanceModifiers)
-      {
-         Send(poOwner,@RemoveResistance,#what=nth(i,1),#value=nth(i,2));
-      }
-      
-      return;
    }
 
    GetResistanceModifiers()
@@ -123,7 +103,12 @@ messages:
    ModifyDefenseDamage(who = $,what = $,damage = $,atype = 0,aspell = 0)
    "Increase or decrease damage done to defender."
    {
-      local iDamageReduce;
+      local iDamageReduce, oAttribute;
+
+      for oAttribute in plObject_attributes
+      {
+         damage = Send(oAttribute,@ModifyDefenseDamage,#who=who,#what=what,#damage=damage,#atype=atype,#aspell=aspell);
+      }
 
       iDamageReduce = 0;
       if piDamage_reduce <> 0
@@ -198,6 +183,12 @@ messages:
    {
       return piDamage_reduce;
    }
+  
+   GetDefenseBonus()
+   {
+      return piDefense_bonus;
+   }
+   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

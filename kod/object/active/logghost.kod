@@ -129,6 +129,7 @@ properties:
    prItemsLost = $
    prSpellPointsLost = $
    prSkillPointsLost = $
+   piSoldierShieldOverlay = $
 
 messages:
 
@@ -147,8 +148,7 @@ messages:
                  #fine_row=(Send(poGhostedPlayer,@GetFineRow)+2),
                  #fine_col=(Send(poGhostedPlayer,@GetFineCol)+2),
                  #new_angle=Send(poGhostedPlayer,@GetAngle));
-            ptPenaltyTimer = CreateTimer(self,@PenaltyTrigger,
-                                         (iPenaltyTime*1000));
+            ptPenaltyTimer = CreateTimer(self,@PenaltyTrigger,iPenaltyTime);
          }
       }
 
@@ -804,6 +804,7 @@ messages:
 
       if what = poGhostedPlayer
       {
+         Send(poGhostedPlayer,@SetPhaseTimeEqualTo,#amount=GetTimeRemaining(ptPenaltyTimer));
          Send(self,@Delete);
       }
 
@@ -820,7 +821,15 @@ messages:
 
       if prShield <> $
       {
-         piShield_frame = 2;
+         if piSoldierShieldOverlay = HS_SHIELD_BACK
+         {
+            piShield_frame = 1;
+         }
+         else
+         {
+            piShield_frame = 2;
+         }
+
          piLeft_frame = 7;
          piOverlays = piOverlays + 1;
       }
@@ -891,6 +900,11 @@ messages:
       prShield = Send(poGhostedPlayer,@GetShieldRsc);
       piShield_translation = Send(poGhostedPlayer,@GetShieldTranslation);
       oWeapon = Send(poGhostedPlayer,@LookUpPlayerWeapon);
+      
+      if Send(poGhostedPlayer,@FindUsing,#class=&SoldierShield) <> $
+      {
+         piSoldierShieldOverlay = Send(poGhostedPlayer,@GetShieldOverlayHotspot);
+      }
 
       piWeapon_translation = 0;
       prBowTop = $;
@@ -986,7 +1000,15 @@ messages:
 
       if prShield <> $
       {
-         AddPacket(4,prShield,1,HS_LEFT_WEAPON);
+         if piSoldierShieldOverlay <> $
+         {
+            AddPacket(4,prShield,1,piSoldierShieldOverlay);
+         }
+         else
+         {
+            AddPacket(4,prShield,1,HS_LEFT_WEAPON);
+         }
+
          if piShield_translation <> 0
          {
             AddPacket(1,ANIMATE_TRANSLATION, 1,piShield_translation);

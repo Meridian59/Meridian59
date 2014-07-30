@@ -18,7 +18,7 @@ resources:
    summonEvilTwin_cast_rsc = \
       "An evil twin mysteriously appears beside your target."
    summonEvilTwin_failed_rsc = \
-      "There is already an evil twin lurking in this room."
+      "There is no room for an evil twin here."
    summonEvilTwin_bad_target = "You can't cast evil twin on %s%s."
    summonEvilTwin_no_self = \
       "You decide you really don't want to summon your evil against yourself."
@@ -83,22 +83,22 @@ messages:
 
          return FALSE;
       }
-      
+
       if NOT IsClass(oTarget,&Battler)
          OR Send(oTarget,@IsIllusion)
-		 OR (IsClass(oTarget,&Monster)
+         OR (IsClass(oTarget,&Monster)
                AND Send(oTarget,@CanEvilTwin)=FALSE)
       {
          % Lich, lupogg king, evil twins, reflections and revenants 
          % all not valid targets
-		 
+
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
               #parm1=Send(oTarget,@GetDef),
               #parm2=Send(oTarget,@GetName));
          return FALSE;
-      }		 
+      }
 
-      
+
       if IsClass(oTarget,&Player)
       {
          if Send(oTarget,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
@@ -129,8 +129,6 @@ messages:
       oRoom = Send(SYS,@UtilGetRoom,#what=who);
 
       if Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
-         OR Send(oRoom,@CountHoldingSummoned) > 
-            Send(Send(SYS,@GetSettings), @GetPlayerSummonedObjectLimit)
       {
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_failed_rsc);
          
@@ -147,7 +145,7 @@ messages:
       oTarget = First(lTargets);
       
       if IsClass(oTarget,&Player)
-      {	  
+      {
          oTwin = Create(&EvilTwin,#iSpellpower=iSpellpower,#oMaster=who,
                      #oTarget=oTarget);
       }
@@ -158,7 +156,7 @@ messages:
          Send(oTwin,@SetIllusion,#value=TRUE);
          Send(oTwin,@SetSummoned,#value=TRUE);
       }
-	  
+
       oRoom = Send(who,@GetOwner);
 
       iRow = Send(oTarget,@GetRow);
@@ -169,14 +167,13 @@ messages:
       if IsClass(oTarget,&Player)
       {
          Send(oTwin,@SetOriginal,#who=oTarget);
+         Send(SYS,@AddReflection,#who=oTarget,#oReflection=oTwin);
       }
-	  
+
       Send(oRoom,@NewHold,#what=oTwin,#new_row=iRow,#new_col=iCol,
            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
       Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_cast_rsc);
-
-      Send(SYS,@AddReflection,#who=oTarget,#oReflection=oTwin);
 
       if oTarget <> $
          AND IsClass(oTarget,&Monster)
@@ -185,7 +182,7 @@ messages:
          Send(oTwin,@TargetSwitch,#what=oTarget,#iHatred=1000);
          Send(oTwin,@EnterStateAttack);
          i = Send(oTwin,@ReturnMaxHitPoints);
-         j = i/(100/((1+iSpellPower)/20));
+         j = i/(100/((21+iSpellPower)/20));
          j = bound(j,1,25);
          Send(oTwin,@SetMaxHitPoints,#amount=j);
       }

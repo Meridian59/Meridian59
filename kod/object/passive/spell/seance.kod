@@ -93,7 +93,7 @@ messages:
 
    CastSpell(who = $, lTargets = $, iSpellPower=0)
    {
-      local oKiller,iValue,lRoomlist,oSpell,oRoom,oLocation,rLocationName;
+      local i, oKiller,iValue,lRoomlist,oSpell,oRoom,oLocation,rLocationName;
 
       oKiller = send(SYS,@GetLastMurderer);
       iValue = send(self,@GetSeanceStrength,#iSpellpower=iSpellPower,#who=who);
@@ -111,6 +111,18 @@ messages:
       else
       {
          oSpell = send(SYS,@FindSpellByNum,#Num=SID_CLOAK);
+         
+         if (send(oKiller,@IsEnchanted,#what=oSpell))
+         {
+            % Give players a decent chance to improve the spell!
+            for i in Send(oKiller,@GetPassiveImprovementList)
+            {
+               if First(i) = oSpell AND random(1,2) = 2
+               {
+                  Post(First(i),@ImproveAbility,#who=oKiller);
+               }
+            }
+         }
 
          % Will mislead caster with random room if caster fails seance or target passes cloak.
          if (Random(1,100) > iValue)

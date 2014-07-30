@@ -127,6 +127,22 @@ messages:
       return random(iDuration/2,iDuration);
    }
 
+   EffectDesc(who=$)
+   {
+      local i, iState;
+
+      AppendTempString("\n\n");
+      AppendTempString("The ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment currently subtracts ");
+      
+      iState = Send(Send(who,@GetOwner),@GetEnchantedState,#what=self);
+      
+      AppendTempString(-1 * iState);
+      AppendTempString(" light level from the area.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

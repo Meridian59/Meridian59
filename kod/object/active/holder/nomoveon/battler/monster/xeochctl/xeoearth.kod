@@ -54,10 +54,10 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ 70, ATCK_WEAP_NERUDITE ],
-                        [-10, ATCK_WEAP_MAGIC ],
-                        [-10, -ATCK_SPELL_SHOCK ],
-                        [110, -ATCK_SPELL_QUAKE ]
+      plResistances = [ [ATCK_WEAP_NERUDITE, 70 ],
+                        [ATCK_WEAP_MAGIC, -10 ],
+                        [-ATCK_SPELL_SHOCK, -10 ],
+                        [-ATCK_SPELL_QUAKE, 110 ]
                       ];
                         
       piColor_Translation = send(SYS,@EncodeTwoColorXLAT,#color1=XLAT_TO_SKIN4);

@@ -22,8 +22,8 @@ resources:
    frozjewel_icon_rsc = frozjewl.bgf
    frozjewel_desc_rsc = \
       "This gem was created by the great alchemist, Froz, in a secret process "
-      "known only to him.  Rumor has it that it is a conduit for mystical "
-      "aggression, using raw mana to boost elemental touch spells.  "
+      "known only to him. Rumor has it that it is a conduit for mystical "
+      "aggression, using raw mana to boost elemental touch spells. "
       "Your hand tingles when you hold it."
 
    frozjewel_desc_broken_rsc = "The jewel seems ordinary and dull."
@@ -54,7 +54,7 @@ properties:
 
 messages:
 
-   ModifyHitRoll(who = $, what = $, hit_roll = $, stroke_obj = $)
+   ModifyHitRoll(who=$,what=$,hit_roll=$,stroke_obj=$)
    {
       piHits = piHits - 1;
       if piHits <= 0
@@ -67,7 +67,8 @@ messages:
          return hit_roll;
       }
 
-      if IsClass(stroke_obj,&Spell)
+      if stroke_obj <> $
+         AND IsClass(stroke_obj,&Spell)
       {
          Send(self,@DoFlash);
       
@@ -79,14 +80,14 @@ messages:
       return hit_roll + 50;
    }
    
-   ModifyDamage(who = $, what = $, damage = $, stroke_obj=$)
+   ModifyDamage(who=$,what=$,damage=$,stroke_obj=$)
    {
       local i, iMana;
       
       if IsClass(stroke_obj,&Spell)
       {
          iMana = 0;
-         for i in send(who,@GetPlayerUsing)
+         for i in Send(who,@GetPlayerUsing)
          {
             if IsClass(i,&JewelOfFroz)
             {
@@ -110,7 +111,7 @@ messages:
       return damage;
    }
    
-   GetHealthBonus(who = $)
+   GetHealthBonus(who=$)
    {
       local hp;
 

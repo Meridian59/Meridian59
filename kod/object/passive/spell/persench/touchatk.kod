@@ -251,10 +251,34 @@ messages:
       return TRUE;
    }
 
+   FindMinDamage(who=$)
+   {
+      local damage, iAbility;
+
+      damage = viMin_Damage;
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+      damage = (damage * (iAbility+1)) / 100;
+      damage = Send(self,@DamageFactors,#damage=damage,#who=who);
+      
+      return bound(damage,1,$);
+   }
+   
+   FindMaxDamage(who=$)
+   {
+      local damage, iAbility;
+
+      damage = viMax_Damage;
+      iAbility = Send(who,@GetSpellAbility,#spell_num=viSpell_num);
+      damage = (damage * (iAbility+1)) / 100;
+      damage = Send(self,@DamageFactors,#damage=damage,#who=who);
+      
+      return bound(damage,1,$);
+   }
+
    FindDamage(weapon_used=$,who=$,victim=$)
    "Damage for attack spells is determined largely by expertise in the spell."
    {
-      local spell_ability, damage, iAbility;
+      local damage, iAbility;
 
       % base weapon damage
       damage = random(viMin_Damage,viMax_damage);
@@ -420,6 +444,22 @@ messages:
    "Allow mages to switch elements despite antagonistic conditions."
    {
       return TRUE;
+   }
+
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will deal ");
+      AppendTempString(Send(self,@FindMinDamage,#who=who));
+      AppendTempString("-");
+      AppendTempString(Send(self,@FindMaxDamage,#who=who));
+      AppendTempString(" base ");
+      AppendTempString(Send(SYS,@GetSpellDamageTypeName,#type=(viSpellType & ~ATCK_SPELL_ALL)));
+      AppendTempString(" damage.");
+      
+      return;
    }
 
 end

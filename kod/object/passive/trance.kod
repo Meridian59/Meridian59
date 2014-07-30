@@ -133,6 +133,11 @@ messages:
       return FALSE;
    }
 
+   ModifyResistance(resistance_list=$)
+   {
+      return resistance_list;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

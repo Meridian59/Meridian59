@@ -112,7 +112,7 @@ messages:
             return FALSE;
          }
          
-         iModifier = iAbil - 100;
+         iModifier = iAbil;
       }
       else
       {

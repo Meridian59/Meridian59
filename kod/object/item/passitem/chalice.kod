@@ -38,8 +38,6 @@ classvars:
 
    viUse_type = ITEM_SINGLE_USE
 
-   viObject_flags = GETTABLE_YES
-
    viBulk = 20
    viWeight = 20
 

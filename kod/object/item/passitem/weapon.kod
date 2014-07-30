@@ -35,8 +35,8 @@ constants:
    WEAPON_DAMAGE_MID_MIN  = 4
    WEAPON_DAMAGE_MID_MAX  = 8
 
-   WEAPON_DAMAGE_HIGH_MIN = 5
-   WEAPON_DAMAGE_HIGH_MAX = 11
+   WEAPON_DAMAGE_HIGH_MIN = 7
+   WEAPON_DAMAGE_HIGH_MAX = 13
 
    % Disarm bonus
    WEAPON_DISARM_LOW  = -5
@@ -177,6 +177,45 @@ messages:
       propagate;
    }
 
+   AppendDesc()
+   {
+      local i, target_type;
+
+      if plObject_attributes <> $
+      {
+         for i in plObject_attributes
+         {
+            if IsClass(i,&WeaponSpellProc)
+            {
+               AppendTempString("\n\n");
+               AppendTempString("Upon a successful strike, the runes engraved on this "); 
+               AppendTempString(Send(self,@GetName));
+               AppendTempString(" will cast ");
+               AppendTempString(Send(Send(i,@GetSpell),@GetName));
+               AppendTempString(" ");
+            
+               target_type = Send(i,@GetType);
+               if target_type = 1
+               {
+                  AppendTempString("on you ");
+               }
+               if target_type = 2
+               {
+                  AppendTempString("on the enemy ");
+               }
+            
+               AppendTempString("with ");
+               AppendTempString(Send(i,@GetSpellPower));
+               AppendTempString(" spellpower ");
+               AppendTempString(Send(i,@GetProcChance));
+               AppendTempString("\% of the time.");
+            }
+         }
+      }
+
+      propagate;
+   }
+
    %%% Hard Stats Functions
    %%% (Range, hit chance, damage, etc)
 
@@ -264,6 +303,49 @@ messages:
       return iBaseHit;
    }
 
+   GetHitBonus()
+   {
+      local iBaseHit, oWeapAtt, i, iWeapHit;
+
+      iBaseHit = 0;
+
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iBaseHit = iBaseHit + WEAPON_HITMOD_MID;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iBaseHit = iBaseHit + WEAPON_HITMOD_HIGH;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iBaseHit = iBaseHit + WEAPON_HITMOD_LOW;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iBaseHit = iBaseHit + WEAPON_LOW_QUALITY_HITMOD;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iBaseHit = iBaseHit + WEAPON_HIGH_QUALITY_HITMOD;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iBaseHit = iBaseHit + WEAPON_NERUDITE_HITMOD;
+      }
+
+      iBaseHit = iBaseHit + piHitBonus;
+
+      return iBaseHit;
+   }
+
    GetBaseDamage(who=$,target=$)
    {
       local iDamage;
@@ -300,6 +382,122 @@ messages:
          iDamage = iDamage + WEAPON_NERUDITE_DAMAGE;
       }
 
+      return iDamage;
+   }
+  
+   GetMinDamage()
+   {
+      local iDamage, oSkill;
+      
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iDamage = WEAPON_DAMAGE_MID_MIN;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iDamage = WEAPON_DAMAGE_LOW_MIN;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iDamage = WEAPON_DAMAGE_HIGH_MIN;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iDamage = iDamage + WEAPON_LOW_QUALITY_DAMAGE;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iDamage = iDamage + WEAPON_HIGH_QUALITY_DAMAGE;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iDamage = iDamage + WEAPON_NERUDITE_DAMAGE;
+      }
+
+      return iDamage + piDamageBonus;
+   }
+
+   GetMaxDamage()
+   {
+      local iDamage, oSkill;
+      
+      % Weapon type
+      if viWeaponType = WEAPON_TYPE_BLUDGEON
+      {
+         iDamage = WEAPON_DAMAGE_MID_MAX;
+      }
+
+      if viWeaponType = WEAPON_TYPE_THRUST
+      {
+         iDamage = WEAPON_DAMAGE_LOW_MAX;
+      }
+
+      if viWeaponType = WEAPON_TYPE_SLASH
+      {
+         iDamage = WEAPON_DAMAGE_HIGH_MAX;
+      }
+
+      % Weapon quality modifiers
+      if viWeaponQuality = WEAPON_QUALITY_LOW
+      {
+         iDamage = iDamage + WEAPON_LOW_QUALITY_DAMAGE;
+      }
+
+      if viWeaponQuality = WEAPON_QUALITY_HIGH
+      {
+         iDamage = iDamage + WEAPON_HIGH_QUALITY_DAMAGE;
+      }
+
+      if viWeaponQuality = WEAPON_NERUDITE
+      {
+         iDamage = iDamage + WEAPON_NERUDITE_DAMAGE;
+      }
+
+      return iDamage + piDamageBonus;
+   }
+   
+   GetMinDamageWithOwnerStats()
+   {
+      local iDamage, oSkill;
+
+      iDamage = Send(self,@GetMinDamage);
+
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+      
+      return iDamage;
+   }
+   
+   GetMaxDamageWithOwnerStats()
+   {
+      local iDamage, oSkill;
+      
+      iDamage = Send(self,@GetMaxDamage);
+      
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+      
       return iDamage;
    }
 
@@ -552,7 +750,7 @@ messages:
    "(see ReqWeaponAttack above).  This is just to catch anything that "
    "slips thru the cracks.  See ranged.kod for what this does."
    {
-      debug("A non-ranged weapon called @ReqUseAmmo!");
+      Debug("A non-ranged weapon called @ReqUseAmmo!");
       
       return TRUE;
    }
@@ -880,7 +1078,7 @@ messages:
                          #num=send(self,@GetNumFromCompound,#compound=first(i)));
          if oItemAtt = $
          {
-            DEBUG("Illegal ItemAtt in list!");
+            Debug("Illegal ItemAtt in list!");
 
             continue;
          }
@@ -892,6 +1090,47 @@ messages:
       }
 
       return TRUE; 
+   }
+
+   ValidateWeaponAttributes(num = 1)
+   "Deletes any items with more major weapon attributes than num. Default 1."
+   {
+      local iNum;
+
+      iNum = 0;
+
+      if plItem_attributes = $
+      {
+         return;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_BLINDER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_PARALYZER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_VAMPER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if Send(self,@HasAttribute,#itematt=WA_PURGER)
+      {
+         iNum = iNum + 1;
+      }
+
+      if iNum > num
+      {
+         Post(self,@Delete);
+         Debug("Multiple attribute weapon deleted.");
+      }
+
+      return;
    }
 
    CanEnchant(oSpell = $)
@@ -909,7 +1148,7 @@ messages:
          if iSpell = SID_HOLY_WEAPON or iSpell = SID_UNHOLY_WEAPON 
             OR iSpell = SID_ENCHANT_WEAPON
          {
-            return FALSE;
+            return TRUE;
          }
       }   
 
@@ -919,7 +1158,7 @@ messages:
                          #num=send(self,@GetNumFromCompound,#compound=first(i)));
          if oItemAtt = $
          {
-            DEBUG("Illegal ItemAtt in list!");
+            Debug("Illegal ItemAtt in list!");
 
             continue;
          }

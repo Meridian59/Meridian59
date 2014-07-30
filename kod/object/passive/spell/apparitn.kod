@@ -47,10 +47,10 @@ classvars:
    viSpell_num = SID_APPARITION
    viSchool = SS_RIIJA
    viSpell_level = 4
-   viMana = 30
+   viMana = 14
 
-   viSpellExertion = 20
-   viCast_time = 4000
+   viSpellExertion = 12
+   viCast_time = 2000
    viChance_To_Increase = 25
    viMeditate_ratio = 30
    vrSucceed_wav = summonapparition_sound
@@ -68,7 +68,7 @@ messages:
    {
       plReagents = $;
       plReagents = Cons([&WebMoss,1],plReagents);
-      plReagents = Cons([&RainbowFern,2],plReagents);
+      plReagents = Cons([&RainbowFern,1],plReagents);
 
       return;
    }
@@ -78,11 +78,11 @@ messages:
       return 1;
    }
 
-   CanPayCosts(who = $, ltargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
       local oRoom, oTarget;
-      
-      if ltargets  = $
+
+      if lTargets  = $
       {
          % For some reason, the client is Sending a null list if you
          %  target a number item with a spell.  for now, assume it's bad.
@@ -96,40 +96,40 @@ messages:
          OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_GUILD_PK_ONLY)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
-         
+
          return FALSE;
       }
 
       if Send(oRoom,@CountHoldingHowMany,#class=&monster) > 15
          OR Send(oRoom,@CountHoldingSummoned)
-            > Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit)
+            > Send(Send(SYS,@GetSettings),@GetPlayerSummonedObjectLimit)
       {
          Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_rsc);
 
          return FALSE;
       }
-      
-      oTarget = First(ltargets);
 
-      if NOT IsClass(oTarget,&battler)
+      oTarget = First(lTargets);
+
+      if NOT IsClass(oTarget,&Battler)
       {
          Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_inanimate,
               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
-              
+
          return FALSE;
       }
-      
+
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellpower = $)
+   CastSpell(who=$,lTargets=$,iSpellpower=$)
    {
       local oApparition, oRoom, iRow, iCol, iFine_Row, iFine_Col,
             lMonsList, i;
 
       oRoom = Send(who,@GetOwner);
 
-      if not isclass(oRoom,&MonsterRoom)
+      if not IsClass(oRoom,&MonsterRoom)
       {
          oApparition = Send(self,@CreateRandomMonster,#spellpower=iSpellpower);
       }
@@ -142,7 +142,7 @@ messages:
                                #spellpower=iSpellpower);
          }
          else
-         {           
+         {
             i = Random(1,Length(lMonsList));
             oApparition = Create(Nth(Nth(lMonsList,i),1));
          }
@@ -150,13 +150,13 @@ messages:
 
       Send(oApparition,@SetIllusion,#value=TRUE);
       Send(oApparition,@SetSummoned,#value=TRUE);
-      
+
       iRow = Send(Nth(lTargets,1),@GetRow);
       iCol = Send(Nth(lTargets,1),@GetCol);
       iFine_Row = Send(Nth(lTargets,1),@GetFineRow);
       iFine_Col = Send(Nth(lTargets,1),@GetFineCol);
 
-      Send(oRoom,@newhold,#what=oApparition,#new_row=iRow,#new_col=iCol,
+      Send(oRoom,@NewHold,#what=oApparition,#new_row=iRow,#new_col=iCol,
            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
       Send(oApparition,@TargetSwitch,#what=First(lTargets),#iHatred=1000);
@@ -167,7 +167,7 @@ messages:
            #parm2=Send(oApparition,@GetName),
            #parm3=Send(Nth(lTargets,1),@GetIndef),
            #parm4=Send(Nth(lTargets,1),@GetName));
-      
+
       i = Send(oApparition,@ReturnMaxHitPoints);
       i = i / APPARITION_FRACTION;
 
@@ -188,17 +188,17 @@ messages:
          {
             return Create(&Scorpion);
          }
-         
+
          if i < 15
          {
             return Create(&Spider);
          }
-         
+
          if i < 35
          {
             return Create(&SpiderBaby);
          }
-         
+
          return Create(&GiantRat);
       }
 
@@ -208,17 +208,17 @@ messages:
          {
             return Create(&RedAnt);
          }
-         
+
          if i < 15
          {
             return Create(&Slime);
          }
-         
+
          if i < 35
          {
             return Create(&SpiderBaby);
          }
-         
+
          return Create(&Centipede);
       }
 
@@ -228,23 +228,22 @@ messages:
          {
             return Create(&Troll);
          }
-         
+
          if i < 15
          {
             return Create(&FungusBeast);
          }
-         
+
          if i < 35
          {
             return Create(&RedAnt);
          }
-         
+
          return Create(&Slime);
       }
-   
+
       return Create(&GiantRat);
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,0 +1,254 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Earthquake is AttackSpell
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   earthquake_name_rsc = "earthquake"
+   earthquake_icon_rsc = irthquak.bgf
+   earthquake_desc_rsc = \
+      "Moves the earth violently causing damage to all beings in the room.  "
+      "The more experienced the caster, the better damage is directed "
+      "to the target and away from the caster.  "
+      "Requires red mushrooms and purple mushrooms to cast."
+
+   earthquake_first_rsc = \
+      "You raise your arms to the sky and invoke the fury of Faren!"
+   earthquake_third_rsc = \
+      "%s%s raises %s arms to the sky and invokes the fury of Faren!"
+
+   earthquake_killed_someone = \
+      "The tremors knock %s%s to the ground - %s doesn't get up!"     
+   earthquake_killed_self = \
+      "You stumble as the tremors knock you to the ground, and everything "
+      "goes black..."
+
+   earthquake_cast_rsc = \
+      "The earth convulses beneath your feet, tossing you around like a rag "
+      "doll."
+   earthquake_hit_rsc = \
+      "%s%s lets out a cry of pain and surprise as the earth convulses "
+      "beneath %s feet."
+
+   earthquake_sound = fquake.wav
+
+classvars:
+
+   vrName = earthquake_name_rsc
+   vrDesc = earthquake_desc_rsc
+   vrIcon = earthquake_icon_rsc
+
+   vrKilled_Someone = earthquake_killed_someone
+   vrKilled_Self = earthquake_killed_self
+   vrCast = earthquake_cast_rsc
+   vrHit = earthquake_hit_rsc
+
+   viSpell_num = SID_EARTHQUAKE
+   viSchool = SS_FAREN
+   viSpell_level = 5
+   viMana = 12
+
+   viCast_time = 5000
+   viChance_to_increase = 10
+   viMeditate_ratio = 75
+
+   viAttack_spell = ATCK_SPELL_ALL | ATCK_SPELL_QUAKE
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   % Damage is 100% within this distance
+   viMax_damage_distance = 8
+
+   % Damage is 0 outside this distance 
+   viZero_damage_distance = 20
+
+   vbIsAreaEffect = TRUE
+   vbSelfHarming = TRUE
+
+properties:
+
+   piDamageMin = 17
+   piDamageMax = 25
+
+   piManaFocusBonus = 0
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RedMushroom,2],plReagents);
+      plReagents = Cons([&PurpleMushroom,2],plReagents);
+
+      return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   GetTargets(who=$,lTargets=$)
+   "This returns a list of valid targets in the room."
+   {
+      local oRoom, i, each_obj, lFinalTargets;
+
+      lFinalTargets = $;
+
+      if IsClass(who,&Room)
+      {
+         oRoom = who;
+      }
+      else
+      {
+         oRoom = Send(who,@GetOwner);
+      }
+
+      for i in Send(oRoom,@GetHolderActive)
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+
+         % We do the guildhall check here now, not added to lFinalTargets
+         % if they're not in the same zone as the caster.
+         if IsClass(each_obj,&Battler)
+            AND NOT (IsClass(oRoom,&GuildHall)
+               AND Send(oRoom,@InFoyer,#who=each_obj)
+                  <> Send(oRoom,@InFoyer,#who=who))
+         {
+            lFinalTargets = Cons(each_obj,lFinalTargets);
+         }
+      }
+
+      return lFinalTargets;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE)
+   {
+      local iDamage, oRoom;
+
+      % First off, get the room this was cast in. If a room cast this, set
+      % that room to oRoom.
+      if who <> $
+      {
+         if IsClass(who,&Room)
+         {
+            oRoom = who;
+         }
+         else
+         {
+            oRoom = Send(who,@GetOwner);
+         }
+      }
+      else
+      {
+         return;
+      }
+
+   % Call DoEarthQuake to handle special messages
+   Send(self,@DoEarthQuake,#who=who,#lTargets=lTargets,#oRoom=oRoom);
+
+      propagate;
+   }
+
+   DoEarthQuake(who=$,lTargets=$,oRoom=$)
+   {
+      local i, lActive, each_obj;
+
+      lActive = Send(oRoom,@GetHolderActive);
+
+      % Do the rumble effect, with a chance to disrupt casting. :)
+      % Post it so that it won't affect this casting.
+      Post(oRoom,@Rumble,#duration=3000,#disruption=100);
+
+      % Send a message to all in room of spellcasters actions
+      for i in lActive
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         
+         if IsClass(each_obj,&Player)
+            AND who <> $
+         {
+            if each_obj = who
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=earthquake_first_rsc);
+            }
+            else
+            {
+               if who <> oRoom
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=earthquake_third_rsc,
+                     #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+                     #parm3=Send(who,@GetHisHer));
+               }
+            }
+         }
+      }
+
+      % Everybody in the room hears the earthquake sound.
+      Send(oRoom,@SomethingWaveRoom,#wave_rsc=earthquake_sound);
+
+      return;
+   }
+
+   ComputeDamage(who=$,target=$,iDamage=$)
+   "Return the damage to be applied to the given target, taking into account "
+   "distance."
+   {
+      local iPercent, iDistance_squared, iMax_distance_squared,
+         iZero_distance_squared;
+
+      if IsClass(who,&Room)
+      {
+         return 100;
+      }
+      
+      % Do full damage within viMax_damage_distance, zero damage outside
+      % viZero_damage_distance, and an amount that falls off with distance
+      % between the two.
+      iPercent = 100;
+
+      if who <> $
+      {
+         iDistance_squared = Send(who,@SquaredDistanceTo,#what=target);
+      }
+      else
+      {
+         % Full damage for earthquakes without a caster
+         iDistance_squared = 0;
+      }
+
+      iMax_distance_squared = viMax_damage_distance * viMax_damage_distance;
+      iZero_distance_squared = viZero_damage_distance * viZero_damage_distance;
+      if iDistance_squared > iMax_distance_squared
+      {
+         if iDistance_squared > iZero_distance_squared
+         {
+            iPercent = 0;
+         }
+         else
+         {
+         iPercent = 100 * (iZero_distance_squared - iDistance_squared) /
+                              (iZero_Distance_squared - iMax_distance_squared);
+         }
+      }
+      %Debug("percent = ", iPercent, " and iDamage is ", iDamage);
+      iDamage = (iDamage*iPercent)/100;
+      %Debug("damage after % is ",iDamage);
+      return iDamage;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

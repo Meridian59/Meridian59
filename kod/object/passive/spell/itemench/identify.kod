@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Identify is Spell 
+Identify is ItemEnchantment
 
 constants:
 
@@ -43,61 +43,51 @@ classvars:
    viChance_To_Increase = 15
 
 properties:
-  
+
 messages:
 
    ResetReagents()
    {
       plReagents = $;
       plReagents = Cons([&Emerald,3],plReagents);
-      
+
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      % Tell client how many targets this spell needs
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local oTarget;
 
       oTarget = First(lTargets);
 
       % Check that target is a weapon or armor
-      if NOT (IsClass(oTarget,&Item) AND send(oTarget,@CanIdentify))
+      if NOT (IsClass(oTarget,&Item) AND Send(oTarget,@CanIdentify))
       {
          if NOT bItemCast
          {
-            send(who,@MsgSendUser,#message_rsc=identify_cant,
-                 #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+            Send(who,@MsgSendUser,#message_rsc=identify_cant,
+                  #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
          }
-         
+
          return FALSE;
       }
 
       propagate;
    }
 
-   IsTargetInRange(who = $,target = $)
-   {
-      return (who = Send(target, @GetOwner)) OR (send(who,@GetOwner) = send(target,@GetOwner));  
-   }
-
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who=$,lTargets=$)
    {
       local oTarget;
-      
+
       oTarget = First(lTargets);
+
       Send(who,@MsgSendUser,#message_rsc=identify_working, 
-           #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
       Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

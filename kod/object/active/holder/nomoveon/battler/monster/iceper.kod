@@ -70,7 +70,7 @@ messages:
 
    Constructed()
    {
-   plResistances = [ [ -99, -ATCK_SPELL_FIRE ],[ 99, -ATCK_SPELL_COLD ]];
+   plResistances = [ [-ATCK_SPELL_FIRE, -99 ],[ -ATCK_SPELL_COLD, 99 ]];
    propagate;
    }
 

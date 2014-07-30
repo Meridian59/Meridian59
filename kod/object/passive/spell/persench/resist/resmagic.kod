@@ -20,7 +20,7 @@ resources:
    resistmagic_icon_rsc = iresmagc.bgf
    resistmagic_desc_rsc = \
       "The war god fortifies you against magic attacks.  "
-      "Requires blue dragon scale to cast."
+      "Requires a blue dragon scale to cast."
    
    resistmagic_already_enchanted = "You are already resisting magic."
    resistmagic_success = "Kraanan fortifies %s%s against magic attacks."

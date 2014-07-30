@@ -345,34 +345,47 @@ void DrawOwnerListItem(const DRAWITEMSTRUCT *lpdis, Bool selected, Bool combo)
    SetBkMode(lpdis->hDC, OPAQUE);
    obj = (object_node*)lpdis->itemData;
 
-   hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD)));
+   hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, (selected? SEL_BGD : UNSEL_BGD), NULL));
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-      hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD));
+      hColorBg = GetBrush(GetItemListColor(lpdis->hwndItem, UNSEL_BGD, NULL));
 
    FillRect(lpdis->hDC, &lpdis->rcItem, hColorBg);
-
    SetBkMode(lpdis->hDC, TRANSPARENT);
-   crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD)));
+
+   /* Send object flags for objects with icons in lists for coloring magic weapons.
+      Character select screen causes a client crash because the character name is
+      obj; this statement causes NULL to be sent in that case */
+   if (style & (OD_DRAWOBJ | OD_DRAWICON))
+   {
+      crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), obj->flags));
+   }
+   else
+   {
+      crColorText = GetColor(GetItemListColor(lpdis->hwndItem, (selected? SEL_FGD : UNSEL_FGD), NULL));
+   }
+   
    if ((style & OD_ONLYSEL) && (style & (OD_DRAWOBJ | OD_DRAWICON)))
-	crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD));
+   crColorText = GetColor(GetItemListColor(lpdis->hwndItem, UNSEL_FGD, obj->flags));
+
+
    if (lpdis->itemState & ODS_DISABLED)
-	crColorText = GetSysColor(COLOR_GRAYTEXT);
+   crColorText = GetSysColor(COLOR_GRAYTEXT);
 
    if (style & OD_DRAWOBJ)
    {
-	/* Draw small version of object's icon, centered vertically */
-	y = (lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2)
-		- LIST_OBJECT_HEIGHT / 2;
+   /* Draw small version of object's icon, centered vertically */
+   y = (lpdis->rcItem.top + (lpdis->rcItem.bottom - lpdis->rcItem.top) / 2)
+      - LIST_OBJECT_HEIGHT / 2;
    
-	area.x  = LIST_OBJECT_LEFT_BORDER;
-	area.y  = y;
-	area.cx = LIST_OBJECT_WIDTH;
-	area.cy = LIST_OBJECT_HEIGHT;
+   area.x  = LIST_OBJECT_LEFT_BORDER;
+   area.y  = y;
+   area.cx = LIST_OBJECT_WIDTH;
+   area.cy = LIST_OBJECT_HEIGHT;
 
-	if (!(style & OD_ONLYSEL) || selected)
-	{
-		DrawStretchedObjectDefault(lpdis->hDC, obj, &area, hColorBg);
-	}
+   if (!(style & OD_ONLYSEL) || selected)
+   {
+      DrawStretchedObjectDefault(lpdis->hDC, obj, &area, hColorBg);
+   }
    }
 
 	if (style & OD_DRAWICON)

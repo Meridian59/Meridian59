@@ -136,6 +136,17 @@ messages:
       return &DenialPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment allows you to deny reality for ");
+      AppendTempString(random(10000,20000) + (Send(who,@GetEnchantedState,#what=self) * 1000));
+      AppendTempString(" milliseconds.");
+      
+      return;
+   }
 
 end
 

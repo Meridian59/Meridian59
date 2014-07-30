@@ -110,20 +110,28 @@ messages:
    TryDeflect(caster = $, victim = $, oSpell = $)
    "Returns TRUE if the spell is deflected."
    {
-      local chance;
+      local i, chance;
 
       if Send(oSpell,@IsHarmful)
          AND Send(oSpell,@GetNumSpellTargets) = 1
          AND IsClass(oSpell,&AttackSpell)
       {
+         % Give players a decent chance to improve the spell!
+         for i in Send(victim,@GetPassiveImprovementList)
+         {
+            if First(i) = self AND random(1,3) = 3
+            {
+               Post(First(i),@ImproveAbility,#who=victim);
+            }
+         }
+      
          chance = Send(victim,@GetEnchantedState,#what=self);
          if Random(0,100) < chance
          {
             Send(self,@SendMessageTryDeflectSuccess,#victim=victim,#caster=caster);
-
             return TRUE;
          }
-         
+
          Send(self,@SendMessageTryDeflectFailure,#victim=victim,#caster=caster);
       }
 
@@ -153,6 +161,17 @@ messages:
       return &DeflectPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will reflect enemy splash and bolt spells ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString("\% of the time.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

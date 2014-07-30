@@ -22,28 +22,30 @@ ItemAttDurable is ItemAttribute
 %  item).   Note that this value is not stored, because this value
 %  is completely unimportant after the value of max_hit_points 
 %  changes.
-% 
-%  Form is: 
+%
+%  Form is:
 %
 %      [IA_DURABLE]
-%   
+%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
- 
+
    itematt_durable_name = "well-crafted %s"
    durable_dm = "durable"
    itematt_durable_desc_1 = " The craftsmanship of this "
-   itematt_durable_desc_2 = " is admirable, obviously the result of hundreds of hours of work by expert hands."
+   itematt_durable_desc_2 = \
+      " is admirable, obviously the result of hundreds of hours "
+      "of work by expert hands."
 
 classvars:
 
-   viItem_Att_Num = IA_DURABLE   
+   viItem_Att_Num = IA_DURABLE
    vrName = itematt_durable_name
 
    viDefault_bonus = 300    %%% 300 percent bonus to enchanted item.
@@ -60,7 +62,7 @@ messages:
    AddEffects(oItem=$,state1=$)
    {
       local iHits;
-   
+
       if state1=$
       {
          state1 = viDefault_Bonus;
@@ -73,16 +75,21 @@ messages:
 
       return;
    }
-  
+
    AppendDesc(oItem =$)
    {
       local lData, oRoom;
 
       AppendTempString(itematt_durable_desc_1);
-      AppendTempString(Send(oItem,@GetName));      
+      AppendTempString(Send(oItem,@GetName));
       AppendTempString(itematt_durable_desc_2);
 
       return;
+   }
+
+   IsMagicalEffect()
+   {
+      return TRUE;
    }
 
 end

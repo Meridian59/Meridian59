@@ -41,6 +41,12 @@ classvars:
    viBulk = 4
    viWeight = 5
 
+   viMinDamage = 2
+   viMaxDamage = 6
+   
+   viMinShatterDamage = 3
+   viMaxShatterDamage = 8
+
 properties:
 
    piNumber = 5
@@ -58,10 +64,10 @@ messages:
             send(target,@MsgSendUser,#message_rsc=nerudite_arrow_explodes);
          }
 
-         return random(3,8);
+         return random(viMinShatterDamage,viMaxShatterDamage);
       }
 
-      return random(2,6);
+      propagate;
    }
 
    SendProjectileAnimation()
@@ -81,6 +87,15 @@ messages:
       return arrow_icon_rsc;
    }
 
+   GetMinSpecialDamage()
+   {
+      return viMinShatterDamage;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      return viMaxShatterDamage;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Reveal is Spell 
+Reveal is ItemEnchantment
 
 constants:
 
@@ -24,7 +24,8 @@ resources:
       "Requires ten emeralds to cast."
 
    reveal_cant = "You can't seem to focus on %s%s."
-   reveal_working = "You concentrate on %s%s, and gradually its secrets become plain for all to see!"
+   reveal_working = \
+      "You concentrate on %s%s, and gradually its secrets become plain for all to see!"
    reveal_strip_misdir = "Your magics strip the illusions from %s%s!"
    reveal_sound = sreveal.wav
 
@@ -45,8 +46,8 @@ classvars:
    vrSucceed_wav = reveal_sound
 
 properties:
-  
-  piAdvance = 0
+
+   piAdvance = 0
 
 messages:
 
@@ -54,93 +55,87 @@ messages:
    {
       plReagents = $;
       plReagents = Cons([&Emerald,10],plReagents);
-      
-      return;
-   }
 
-   GetNumSpellTargets()
-   {
-      % Tell client how many targets this spell needs
-      return 1;
+      return;
    }
 
    GetTranceTime(iSpellpower=0,who=$)
    {
-      if who <> $ and isClass(who,&DM)
+      if who <> $ and IsClass(who,&DM)
       {
          return 10;
       }
-      
+
       propagate;
    }
 
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
       local oTarget;
 
       oTarget = First(lTargets);
 
       % Check that target is a weapon or armor
-      if (not isClass(oTarget,&item)) or not send(oTarget,@CanIdentify)
+      if (NOT IsClass(oTarget,&Item))
+         OR NOT Send(oTarget,@CanIdentify)
       {
-         send(who,@msgsenduser,#message_rsc=reveal_cant,
-              #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
-                
+         Send(who,@msgsenduser,#message_rsc=reveal_cant,
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
          return FALSE;
       }
 
       propagate;
-   }
-
-   IsTargetInRange(who = $,target = $)
-   {
-      return (who = Send(target, @GetOwner)) OR (send(who,@GetOwner) = send(target,@GetOwner));  
    }
 
    ImproveAbility()
    {
-      if not piAdvance 
+      if NOT piAdvance 
       {
          return FALSE;
       }
-      
+
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local oTarget, lData, iPower, oItemAtt;
-      
+
       oTarget = First( lTargets );
-      Send(who, @MsgSendUser, #message_rsc=reveal_working, 
-           #parm1 = send(oTarget,@getdef),#parm2=send(oTarget,@getname));
-      
+
+      Send(who,@MsgSendUser,#message_rsc=reveal_working, 
+            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
       %% if piAdvance = FALSE, no hope of advancement.
       %% This way, you can't advance if you cast spell
       %% on something with no hope of revealing anything.
-      piAdvance = send(oTarget,@RevealHiddenAttributes);
-      
+      piAdvance = Send(oTarget,@RevealHiddenAttributes);
+
       % Show newly revealed color
       if piAdvance
-      {      
+      {
          Send(oTarget,@RevealHiddenColor);
          Send(Send(oTarget,@GetOwner),@SomethingChanged,#what=oTarget);
       }
+
       Send(who,@SendLook,#what=oTarget,#bShow_All=TRUE);
 
-      lData= send(oTarget,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);
-      if (lData <> $)      
+      lData= Send(oTarget,@GetAttributeData,#ItemAtt=IA_MISDIRECTION);
+
+      if (lData <> $)
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
-         iPower = send(oItemAtt,@TranslatePowerFromCompound,#iCompound=first(lData));
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+         iPower = Send(oItemAtt,@TranslatePowerFromCompound,#iCompound=First(lData));
+
          if (iPower*2) < iSpellpower
-         {       
-            send(oTarget,@RemoveAttribute,#ItemAtt=IA_MISDIRECTION);
-            Send(who,@MsgSendUser,#message_rsc=reveal_strip_misdir, 
-                 #parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@GetName));
+         {
+            Send(oTarget,@RemoveAttribute,#ItemAtt=IA_MISDIRECTION);
+            Send(who,@MsgSendUser,#message_rsc=reveal_strip_misdir,
+                  #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
          }
       }
-      
+
       propagate;
    }
 

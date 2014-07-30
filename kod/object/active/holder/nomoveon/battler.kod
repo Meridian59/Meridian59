@@ -16,7 +16,7 @@ constants:
 
    % What's the percent chance to hit if offense and defense are equal?
    % The higher this number is, the easier it is to hit in combat.
-   EQUAL_CHANCE_HIT = 55      
+   EQUAL_CHANCE_HIT = 500      
                               
    % Raise or lower this number to raise or lower the chance the 'avoids 
    %  your attack' message comes up.
@@ -185,19 +185,68 @@ messages:
    {
       return FALSE;
    }
+
+   GetBaseResistances()
+   "Many mobs have base resistances, but players do not. Monster.kod overwrites this."
+   {
+      return $;
+   }
    
+   GetCurrentResistances()
+   "Object attributes, such as spells and items, can change resistances temporarily."
+   {
+      local oObjectAttribute, plCurrentResistances, oEquipment, oEnchantment;
+      
+      plCurrentResistances = Send(SYS,@ListCopy,#source=Send(self,@GetBaseResistances));
+      
+      for oObjectAttribute in plObject_attributes
+      {
+         plCurrentResistances = Send(oObjectAttribute,@ModifyResistance,#resistance_list=plCurrentResistances);
+      }
+      
+      for oEquipment in Send(self,@GetEquippedItems)
+      {
+         plCurrentResistances = Send(oEquipment,@ModifyResistance,#resistance_list=plCurrentResistances);
+      }
+      
+      If IsClass(self,&User)
+      {
+         for oEnchantment in Send(self,@GetEnchantmentList)
+         {
+            if Length(oEnchantment) > 2
+            {
+               plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances,#iState=Nth(oEnchantment,3));
+            }
+            else
+            {
+               plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances);
+            }
+         }
+      }
+      
+      return plCurrentResistances;
+   }
+
+   GetEquippedItems()
+   "Support for items equipped by players, but also some monsters, such as troops."
+   {
+      return $;
+   }
+ 
    ResistanceCheck(atype = 0, aspell = 0)
    "Given bitvectors of attack type and spell, find the resistance modifier "
    "which applies. Largest resistance plus worst weakness gives the modifier."
    {
-      local j, iResType, iMaxRes, iMinRes, iResistance;
+      local j, iResType, iMaxRes, iMinRes, iResistance, resistance_list;
 
       iMaxRes = NO_RESISTANCE;
       iMinRes = NO_RESISTANCE;
+      
+      resistance_list = Send(self,@GetCurrentResistances);
 
-      for j in plResistances
+      for j in resistance_list
       {
-         iResType = Nth(j,2);
+         iResType = Nth(j,1);
          if iResType > 0   
          {
             % It's a resistance to weapon type
@@ -205,7 +254,7 @@ messages:
             if (atype & iResType) <> 0
                OR (atype <> 0 AND iResType = ATCK_WEAP_ALL)
             {
-               iResistance = Nth(j,1);
+               iResistance = Nth(j,2);
                
                if iResistance > iMaxRes
                {
@@ -226,7 +275,7 @@ messages:
             if (aspell & iResType) <> 0
                OR (aspell <> 0 AND iResType = ATCK_SPELL_ALL)
             {
-               iResistance = Nth(j,1);
+               iResistance = Nth(j,2);
                
                if iResistance > iMaxRes
                {
@@ -265,58 +314,6 @@ messages:
       return iDamage;
    }
 
-   AddResistance(what = $, value = NO_RESISTANCE)
-   "Adds a resistance of type (what) and value (value).  "
-   "If a resistance already exists, the new value will be added to the old."
-   {
-      local i;
-
-      If IsClass(self,&User)
-      {
-         Post(self,@DrawResistance,#type=what);
-      }
-            
-      for i in plResistances
-      {
-         if Nth(i,2) = what
-         {
-            SetNth(i,1,value + Nth(i,1));
-            if Nth(i,1) = NO_RESISTANCE
-            {
-               plResistances = DelListElem(plResistances,i);
-            }
-
-            return;
-         }
-      } 
-
-      plResistances = Cons([value,what],plResistances);
-
-      return;
-   }
-
-   RemoveAllResistances()
-   "This clears the resistance list... for if someone's char is really messed "
-   "up."
-   {
-      local i;
-
-      for i in plResistances
-      {
-         Send(self,@RemoveResistance,#what=Nth(i,2),#value=Nth(i,1));
-      }
-
-      return TRUE;
-   }
-
-   RemoveResistance(what = $, value = 0)
-   "Removes a resistance of type (what) and value (value)"
-   {
-      Send(self,@AddResistance,#what=what,#value=-value);
-
-      return TRUE;
-   }
-
    %%% Combat functionality.
 
    % This does one attack by the battler.
@@ -336,8 +333,8 @@ messages:
                       * EQUAL_CHANCE_HIT)
                      / Send(what,@GetDefense,#what=self,
                             #stroke_obj=stroke_obj);
-      iChanceToHit = bound(iChanceToHit,10,95);
-      if iChanceToHit >= random(1,100)
+      iChanceToHit = bound(iChanceToHit,125,2000);
+      if iChanceToHit >= random(1,1000)
       {
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
@@ -368,8 +365,21 @@ messages:
          Send(poOwner,@SomethingAttacked,#what=self,#victim=what,
               #use_weapon=oWeapon);
       }
-         
-      return TRUE;
+
+      % Finally, check if we get to do our next attack sooner because of our high chance to hit.
+      if IsClass(self,&Player)
+      {
+         if iChanceToHit > 1000
+         {
+            Send(self,@IsOkayAttackTime,#time=1000000/iChanceToHit);
+         }
+         else
+         {
+            Send(self,@IsOkayAttackTime);
+         }
+      }
+      
+      return iChanceToHit;
    }
    
    GetLevel()
@@ -946,19 +956,21 @@ messages:
             rColor = battler_blue_text;
          }
 
-         
-         if damage = $
+         if what <> self
          {
-            Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
-              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
-         }
-         else
-         {
-            Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-              #parm6=damage,#parm7=rColor);
+            if damage = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
+               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+               #parm6=damage,#parm7=rColor);
+            }
          }
       }
 
@@ -1074,18 +1086,18 @@ messages:
    
    GetResistances()
    {
-      return plResistances;
+      return Send(self,@GetCurrentResistances);
    }
    
    GetResistanceValueByType(type=$)
    {
       local oResist;
       
-      for oResist in plResistances
+      for oResist in Send(self,@GetCurrentResistances)
       {
-         if Nth(oResist,2) = type
+         if Nth(oResist,1) = type
          {
-            return Nth(oResist,1);
+            return Nth(oResist,2);
          }
       }
       

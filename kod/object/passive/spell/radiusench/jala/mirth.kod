@@ -80,38 +80,41 @@ messages:
       return;
    }
 
-   StartSpecialEffect(who=$,iPower=0,caster=$)
+   StartSpecialEffect(what=$,iPower=0,source=$)
    {
-      Send(who,@SetAction,#action=UA_HAPPY);
+      if IsClass(what,&User)
+      {
+         Send(what,@SetAction,#action=UA_HAPPY);
+      }
+
       propagate;
    }
    
-   EndSpecialEffect(who=$,iPower=0,caster=$)
+   EndSpecialEffect(what=$,iPower=0,source=$)
    {
-      if Send(who,@GetAction) = UA_HAPPY
+      if IsClass(what,&User)
+         AND Send(what,@GetAction) = UA_HAPPY
       {
-         Send(who,@SetAction,#action=UA_NORMAL);
+         Send(what,@SetAction,#action=UA_NORMAL);
       }
+      
       propagate;
    }
 
    % Stuff we handle to be an attack modifier.
 
-   ModifyHitRoll(who=$,what=$,hit_roll=0,lRadiusState=0)
+   ModifyHitRoll(who = $,what = $,hit_roll = $)
    {
-      local addChance;
-      
-      if what <> $
+      if what = $
       {
-         addChance = 0;
-		 
-         % Only affect the evil ones...
-         if Send(what,@GetKarma,#detect=TRUE) < 0
-         {
-            % Add 1-100 chance to hit (offense), based on spellpower
-            addChance = Nth(lRadiusState,2)+1;
-            hit_roll = hit_roll + addChance;
-         }
+         return hit_roll;
+      }
+
+      % Only affect the evil ones...
+      if Send(what,@GetKarma,#detect=TRUE) < 0
+      {
+         % Give a small bonus
+         return hit_roll + 100;
       }
 
       return hit_roll;
@@ -119,18 +122,21 @@ messages:
    
    ModifyDamage(who = $,what = $,damage = $)
    {
-      if what <> $
+      if what = $
       {
-         % Only affect the evil ones...
-         if Send(what,@GetKarma,#detect=TRUE) < 0
-         {
-            % Roughly equal to Killing Fields
-            return damage + Random(1,5);
-         }
+         return damage;
       }
-	  
+
+      % Only affect the evil ones...
+      if Send(what,@GetKarma,#detect=TRUE) < 0
+      {
+         % Roughly equal to Killing Fields
+         return damage + Random(1,5);
+      }
+
       return damage;
    }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

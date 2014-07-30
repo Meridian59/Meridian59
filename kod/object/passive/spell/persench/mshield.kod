@@ -52,6 +52,8 @@ classvars:
 
    viFlash = FLASH_GOOD_SELF
 
+   viDefensive = TRUE
+
 properties:
 
 messages:
@@ -122,6 +124,17 @@ messages:
       return;
    }
 
-   
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(50 + (2 * Send(who,@GetEnchantedState,#what=self)));
+      AppendTempString(" defense.");
+      
+      return;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

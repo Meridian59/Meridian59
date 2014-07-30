@@ -1,0 +1,59 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ItemEnchantment is Spell
+
+% Spells that take items as targets fall under this category, unless they require
+% the infrastructure from another class such as RadiusEnchantment or MultiCastSpell.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   viMeditate_ratio = 25
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      % Tell client how many targets this spell needs
+      return 1;
+   }
+
+   IsTargetInRange(who=$,target=$)
+   {
+      return who = Send(target,@GetOwner) 
+         OR Send(who,@getOwner) = Send(target,@GetOwner);  
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % 1 - 37 hours.
+      iDuration = Random(1,4) + (iSpellPower/3);
+      iDuration = iDuration * 1000 * 60 * 60;
+      
+      return iDuration;
+   }
+
+   SpellBannedInArena()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

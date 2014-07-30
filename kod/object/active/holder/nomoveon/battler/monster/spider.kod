@@ -65,9 +65,9 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ 50, -ATCK_SPELL_ALL ],
-                        [ 50, ATCK_WEAP_MAGIC ],
-                        [-15, ATCK_WEAP_NONMAGIC ] ];
+      plResistances = [ [-ATCK_SPELL_ALL, 50 ],
+                        [ATCK_WEAP_MAGIC, 50 ],
+                        [ATCK_WEAP_NONMAGIC, -15 ] ];
       propagate;
    }
 

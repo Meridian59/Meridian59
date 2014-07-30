@@ -143,6 +143,12 @@ messages:
 
       Send(self,@DoSideEffect,#who=who,#victim=oTarget,#damage=iDamage);
 
+      % If the spell was cast on a monster, let the monster keep track of that for loot.
+      if IsClass(oTarget,&Monster) AND NOT bItemCast
+      {
+         Send(oTarget,@AddToSpellList,#spellobject=self);
+      }
+
       if not bItemCast
       {
          Send(self,@ImproveAbility,#who=who,#target=oTarget);

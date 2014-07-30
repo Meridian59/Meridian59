@@ -69,7 +69,7 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ -20, -ATCK_WEAP_ALL] ];
+      plResistances = [ [-ATCK_WEAP_ALL, -20] ];
 
       propagate;
    }

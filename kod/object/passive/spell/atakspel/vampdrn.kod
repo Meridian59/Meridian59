@@ -50,7 +50,7 @@ classvars:
    % In seconds, since it works off GetTime().
    viPostCast_time = 2
    
-   viChance_To_Increase = 5
+   viChance_To_Increase = 10
 
 properties:
 

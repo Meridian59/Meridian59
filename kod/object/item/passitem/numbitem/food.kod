@@ -25,9 +25,7 @@ resources:
 
 classvars:
 
-   viUse_type = ITEM_SINGLE_USE
    viItem_type = ITEMTYPE_FOOD | ITEMTYPE_SUNDRY
-
 
    viFilling = 50
    viNutrition = 10
@@ -35,6 +33,8 @@ classvars:
    vrEat_wav = food_eat_wav
 
 properties:
+
+   viObject_flags = GETTABLE_YES
 
 messages:
 

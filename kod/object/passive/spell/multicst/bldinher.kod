@@ -94,6 +94,16 @@ messages:
    {
       local oCaster, iRandom, ItemAtt;
 
+      % Can't have any other enchantments.
+      if Send(first(lTargets),@HasAnyAttribute)
+      {
+         for oCaster in lCasters
+         {
+            Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_bad_target2);
+         }
+         return;
+      }
+
       for oCaster in lCasters
       {
          Send(oCaster,@MsgSendUser,#message_rsc=BloodInheritance_succeeded,

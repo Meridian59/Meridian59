@@ -30,6 +30,8 @@ resources:
    PersonalEnchantment_bad_target = "You cannot enchant %s%s."
 
    PersonalEnchantment_bad_location = "You cannot cast enchantments upon others here."
+  
+   spell_blank_template = "%q"
 
 classvars:
 
@@ -54,6 +56,10 @@ classvars:
    vbCanCastonMonsters = FALSE 
 
    viPersonal_ench = TRUE
+   
+   viDefensive = FALSE
+   viOffensive = FALSE
+   viResistanceType = 0
 
 properties:
 
@@ -151,8 +157,10 @@ messages:
    CastSpell(who = $,iSpellPower=0,lTargets=$)
    {
 
-      local oTarget;
-      
+      local oTarget, lType;
+
+      lType = [self,viDefensive,viOffensive,viResistanceType];
+
       if lTargets <> $
       {
          oTarget=first(lTargets);      
@@ -184,7 +192,7 @@ messages:
       Send(oTarget,@StartEnchantment,#what=self,
            #state=send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,#target=oTarget),
            #time=send(self,@GetDuration,#iSpellPower=iSpellPower),
-           #lastcall=send(self,@GetLastCall),#addicon=send(self,@GetAddicon));
+           #lastcall=send(self,@GetLastCall),#addicon=send(self,@GetAddicon),#who=who,#ltype=lType);
            
       % GetStateValue is sometimes (eg used for pre-enchantment behaviors, who is the caster, target is the target (sometimes the same as who).
 
@@ -202,6 +210,8 @@ messages:
       {
           Send(who,@MsgSendUser,#message_rsc=vrEnchantment_Off);
       }
+
+      Post(who,@DrawResistances);
       
       return;
    }
@@ -250,6 +260,38 @@ messages:
       return defense_power;
    }
 
+   EffectDesc(who=$)
+   {
+      return;
+   }
+
+   CreateDesc(who=$)
+   {
+      ClearTempString();
+      AppendTempString("SCHOOL : ");
+      AppendTempString(Send(self,@GetSchoolStr));
+      AppendTempString("          LEVEL : ");
+      AppendTempString(Send(self,@GetLevel));
+      AppendTempString("\n\n");
+      AppendTempString(vrDesc);
+      
+      if who <> $
+         AND IsClass(who,&User)
+         AND Send(who,@IsEnchanted,#what=self)
+      {
+         Send(self,@EffectDesc,#who=who);
+      }
+      
+      return;
+   }
+   
+   ShowDesc(bShowAll = FALSE,who=$)
+   {
+      Send(self,@CreateDesc,#who=who);      
+      AddPacket(4,spell_blank_template,4,GetTempString());
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

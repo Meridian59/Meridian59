@@ -1,0 +1,157 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+HolyWeapon is ItemEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   holyweapon_cast_rsc = "Your %s is now dedicated to Shal'ille."
+   holyweapon_no_can = "You cannot dedicate %s%s to Shal'ille."
+   holyweapon_fails = "The %s is strangely unaffected by the spell."
+   holyweapon_already_done = \
+      "This weapon is already dedicated to Shal'ille."
+
+   holyweapon_name_rsc = "holy weapon"
+   holyweapon_icon_rsc = iholywpn.bgf
+   holyweapon_desc_rsc = \
+      "Dedicates your weapon to Shal'ille, enhancing its "
+      "effectiveness against the unholy.  "
+      "Requires two fairy wings and an orc tooth to cast."
+
+   holyweapon_spell_intro = \
+      "Shal'ille Lv. 2: Dedicates your weapon to Shal'ille, enhancing its effectiveness against the unholy."
+
+   holyweapon_label_rsc = "sanctifier."
+
+classvars:
+
+   vrName = holyweapon_name_rsc
+   vrIcon = holyweapon_icon_rsc
+   vrDesc = holyweapon_desc_rsc
+
+   vrEnchantment_type = holyweapon_label_rsc
+
+   viSpell_num = SID_HOLY_WEAPON
+   viSchool = SS_SHALILLE
+
+   vrSpell_intro = holyweapon_spell_intro
+
+   viSpell_level = 2
+   viMana = 17
+   viSpellExertion = 20
+   viCast_time = 15000
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % Separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&FairyWing,2],plReagents);
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0)
+   {
+      local oWeapon;
+
+      oWeapon = First(lTargets);
+
+      if oWeapon = $
+         OR NOT IsClass(oWeapon,&Weapon)
+      {
+         Send(who,@MsgSendUser,#message_rsc=holyweapon_no_can,
+               #parm1=Send(oWeapon,@GetDef),#parm2=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      if Send(oWeapon,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC) <> 0
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED) = $
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE) = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=holyweapon_fails,
+               #parm1=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   {
+      local iCurrentSpell, oWeapon, oWeapAtt, iDuration, oEnchantedWeapAtt, iEnchanted;
+
+      oWeapon = First(lTargets);
+
+      if oWeapon = $
+         OR NOT IsClass(oWeapon,&Weapon)
+      {
+         Send(who,@MsgSendUser,#message_rsc=holyweapon_no_can,
+               #parm1=Send(oWeapon,@GetDef),#parm2=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      if NOT Send(oWeapon,@CanEnchant,#oSpell=self)
+      {
+        Send(who,@MsgSendUser,#message_rsc=spell_resists,
+               #parm1=Send(oWeapon,@GetCapDef),#parm2=Send(oWeapon,@GetName));
+
+         return;
+      }
+
+      if NOT Send(self,@IsTargetInRange,#who=who,#target=oWeapon)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_out_of_range,
+               #parm1=Send(oWeapon,@GetCapDef),#parm2=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ATTACKSPELLTYPE);
+      oEnchantedWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ENCHANTED);
+
+      % Remove any existing enchants before we go on.
+      iCurrentSpell = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE);
+      iEnchanted = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED);
+
+      if iCurrentSpell <> $
+      {
+         Send(oWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
+
+      if iEnchanted <> $
+      {
+         Send(oEnchantedWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
+
+      Send(oWeapAtt,@AddToItem,#oItem=oWeapon,#random_gen=FALSE,
+            #state1=ATCK_SPELL_HOLY,#timer_duration=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+            #state3=Send(self,@GetMakerInfo,#who=who));
+
+      Send(who,@MsgSendUser,#message_rsc=holyweapon_cast_rsc,
+             #parm1=Send(oWeapon,@GetName));
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -101,9 +101,18 @@ messages:
    DoFreeAction(oHoldCaster=$, oTarget=$, iDuration=0)
    "Calculates adjustment if hold duration.  Returns $ if resisted completely."
    {
-      local iNewDuration, oFreeActionStrength;
+      local i, iNewDuration, oFreeActionStrength;
 
       oFreeActionStrength = Send(oTarget,@GetEnchantedState,#what=self);
+
+      % Give players a decent chance to improve the spell!
+      for i in Send(oTarget,@GetPassiveImprovementList)
+      {
+         if First(i) = self AND random(1,3) = 3
+         {
+            Post(First(i),@ImproveAbility,#who=oTarget);
+         }
+      }
 
       % Check if they repel hold outright 1 - 15% chance.
       if Random(0,100) <= ((oFreeActionStrength * SPELL_RESIST_PERCENT) / 100)
@@ -113,7 +122,7 @@ messages:
          {
             Send(oHoldCaster,@MsgSendUser,#message_rsc=FreeAction_evade_caster);
          }
-         
+
          return $;
       }
 
@@ -139,6 +148,19 @@ messages:
       return &FreeActionPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will completely resist an attempt to paralyze you ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self) * SPELL_RESIST_PERCENT / 100);
+      AppendTempString("\% of the time. Successful attempts to paralyze you will be reduced by ");
+      AppendTempString(100 * Send(who,@GetEnchantedState,#what=self) / 150);
+      AppendTempString("\%.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

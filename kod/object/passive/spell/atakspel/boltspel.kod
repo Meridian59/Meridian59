@@ -45,16 +45,20 @@ properties:
 
 messages:
 
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who=$,lTargets=$)
    {
-      local oOwner;
-   
-      % Show bolt flying through the air
-      oOwner = Send(who,@GetOwner);
-      Send(oOwner,@SomethingShot,#who=who,#target=First(lTargets), 
-           #projectile=self,#flags=viProjectileFlag);
+      local oOwner, i;
 
-	   propagate;
+      oOwner = Send(who,@GetOwner);
+
+      % Show bolt flying through the air.
+      for i in lTargets
+      {
+         Send(oOwner,@SomethingShot,#who=who,#target=i,#projectile=self,
+               #flags=viProjectileFlag);
+      }
+
+      propagate;
    }
 
    % Return the icon used to display a spell shooting through the air.
@@ -75,7 +79,7 @@ messages:
       AddPacket(1,ANIMATE_NONE, 2,1);
 
       return;
-   }      
+   }
 
    GetProjectileLightFlags()
    {
@@ -91,7 +95,6 @@ messages:
    {
       return viProjectileLightColor;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

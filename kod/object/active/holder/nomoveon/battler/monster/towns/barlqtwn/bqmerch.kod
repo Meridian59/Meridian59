@@ -124,7 +124,8 @@ messages:
    SetForSale()
    {
       plFor_sale = [ [ Create(&Diamond,#number=1),
-                       Create(&Torch),                       
+                       Create(&Torch),
+                       Create(&GemRemove),                       
                        Create(&Sapphire,#number=1),
                        Create(&Emerald,#number=1) ],
                    $,$];

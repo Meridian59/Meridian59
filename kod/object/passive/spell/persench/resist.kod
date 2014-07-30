@@ -53,22 +53,20 @@ messages:
       local iValue;
       
       iValue = send(self,@GetResistanceStrength,#iSpellPower=iSpellPower);
-      send(self,@AddResistances,#who=target,#value=iValue);
       
       return iValue;
-   }
-
-   AddResistances(who=$,value=$)
-   {
-      Send(who,@AddResistance,#what=viResistanceType,#value=value);
-      
-      return;
    }
 
    GetResistanceStrength(iSpellpower = 0)
    {
       %% strength varies from 1 to 50
       return iSpellPower/2 + 1;
+   }
+
+   ModifyResistance(resistance_list=$,iState=0)
+   {
+      resistance_list = Send(SYS,@AddResistance,#what=viResistanceType,#value=iState,#resistance_list=resistance_list);
+      return resistance_list;
    }
 
    GetDuration(iSpellPower = 0)
@@ -84,21 +82,27 @@ messages:
    EndEnchantment(who = $, report = TRUE, state = -1)
    {
       if state = -1  { DEBUG("Bad data!"); state = 0; }
-      Send(self,@RemoveResistances,#who=who,#value=state);
 
       propagate;
-   }
-
-   RemoveResistances(who=$,value=$)
-   {
-      Send(who,@RemoveResistance,#what=viResistanceType,#value=value);
-      
-      return;
    }
 
    GetNumSpellTargets()
    {
       return 0;
+   }
+  
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString("\% ");
+      AppendTempString(Send(SYS,@GetResistanceName,#type=viResistanceType));
+      AppendTempString(".");
+      
+      return;
    }
    
 end

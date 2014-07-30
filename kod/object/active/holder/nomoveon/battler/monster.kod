@@ -319,6 +319,11 @@ properties:
    % Timer to expire turning.
    ptUnturn = $            
    piHatred = 0
+   % If a monster outclasses it's enemy, it may attack again more quickly.
+   piSpeedFactor = 1000
+   % Emulates agility and aim for monsters based on difficulty.
+   piAgility = 25
+   piAim = 25
 
    % Supports enchantments with monsters as targets
    plEnchantments = $
@@ -346,16 +351,22 @@ properties:
 
    piSweepCounter = 0
 
+   plSpellList = $
+
    piOffense = $
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
+   
+   piArmor = 0
 
 messages:
 
    Constructor()
    "Simple enough, we create a monster. If they are questworthy, we note it."
    {
+      local iStatPoints, iMin, iMax;
+
       piMax_Hit_points = Send(Self,@Fuzzy,#num=Send(self,@GetMaxHitPoints));
       piHit_points = piMax_hit_points;
 
@@ -392,6 +403,29 @@ messages:
       Send(self,@ResetBehaviorFlags);
 
       piMood = 0;
+
+      iStatPoints = (viDifficulty + 1) * 10;
+      
+      if iStatPoints - 1 > 50
+      {
+         iMax = 50;
+      }
+      else
+      {
+         iMax = iStatpoints - 1;
+      }
+      
+      if iStatPoints - 50 < 1
+      {
+         iMin = 1;
+      }
+      else
+      {
+         iMin = iStatpoints - 50;
+      }
+
+      piAgility = random(iMin,iMax);
+      piAim = iStatPoints - piAgility;
 
       propagate;
    }
@@ -488,14 +522,14 @@ messages:
    "End of monster. Clean up any quests it might have spawned."
    {
       local i, j;
-	   % Minion Management - upon dieing they should leave your control list        
-		if Send(self,@GetMaster) <> $
-		{
-			if isClass(Send(self,@GetMaster),&User)
-			{
-				Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
-			}
+      % Minion Management - upon dieing they should leave your control list        
+      if Send(self,@GetMaster) <> $
+      {
+         if isClass(Send(self,@GetMaster),&User)
+         {
+            Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
          }
+      }
       
       % Under rare conditions delete is called twice in succession
       if poBrain <> $
@@ -551,7 +585,7 @@ messages:
          deleteTimer(ptUnturn);
          ptUnturn = $;
       }
-      
+
       propagate;
    }
 
@@ -658,6 +692,13 @@ messages:
       {
          Send(self,@RemoveEnchantment,#what=Nth(i,2));
       }
+      
+      for i in plRadiusEnchantments
+      {
+         Send(self,@RemoveRadiusEnchantment,#what=Nth(i,1),#iPower=Nth(i,2),#caster=Nth(i,3));
+      }
+      
+      plRadiusEnchantments = $;
 
       return;
    }
@@ -785,7 +826,7 @@ messages:
       }
       else
       {
-         ptBehavior = CreateTimer(self,@AttackTimer,Send(self,@GetAttackTime));
+         ptBehavior = CreateTimer(self,@AttackTimer,Send(self,@GetAttackTime)*1000/piSpeedFactor);
       }
 
       return;
@@ -1033,6 +1074,8 @@ messages:
    AttackTimer(timer = $)
    "We were bashing on something before, and now its time to hit it again."
    {
+      local iFactor;
+      
       Send(self,@ClearBehavior,#timer=timer);
 
       % sanity checks
@@ -1083,8 +1126,12 @@ messages:
       }
 
       % Carry out attack
-      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-
+      iFactor = Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
+      if iFactor > 1000
+      {
+         piSpeedFactor = iFactor;
+      }
+      
       % Sanity check, in rare occurrences mob dies before this can execute 
       if poBrain <> $
       {
@@ -1435,6 +1482,12 @@ messages:
       {
          return FALSE;
       }
+      
+      If IsClass(what,&User)
+         AND Send(what,@IsPhasedOut)
+      {
+         return FALSE;
+      }
 
       % Make sure room allows the attack.
       if NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=what,
@@ -1462,13 +1515,13 @@ messages:
    }
 
    GetOffense(what = $, stroke_obj=$)
-   "This returns the battler's ability to-hit.  Ranges from 1 to 1500."
+   "This returns the battler's ability to-hit.  Ranges from 1 to 2000."
    {
       local iAttack;
 
       if piOffense = $
       {
-         iAttack = (3*viLevel) + (60*viDifficulty);
+         iAttack = 4*viLevel + 8*piAim;
       }
       else
       {
@@ -1479,26 +1532,26 @@ messages:
       {
          iAttack = iAttack * 3 / 4;
       }
-      
-      return Bound(iAttack,1,1500);
+
+      return Bound(iAttack,1,2000);
    }
 
    GetDefense(what = $, stroke_obj=$)
    "This returns the battler's ability to avoid being hit.  Ranges from "
-   "1 to 1500."
+   "1 to 2000."
    {
       local iDefense;
 
       if piDefense = $
       {
-         iDefense = (3*viLevel) + (60*viDifficulty);
+         iDefense = 4*viLevel + 8*piAgility;
       }
       else
       {
          iDefense = piDefense;
       }
-     
-      return Bound(iDefense,1,1500);
+
+      return Bound(iDefense,1,2000);
    }
 
    % The next message deals with the three defense skills.  These messages
@@ -1575,8 +1628,10 @@ messages:
 
       if NOT absolute
       {
+         iDamage = Send(self,@ArmorCheck,#what=what,#bonus=bonus,#atype=atype,#aspell=aspell,#damage=damage);
+         
          iResist = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
-         iDamage = Send(self,@GetDamageFromResistance,#what=damage,
+         iDamage = Send(self,@GetDamageFromResistance,#what=iDamage,
                         #value=iResist);
       }
       else
@@ -1639,6 +1694,42 @@ messages:
       }
       
       return iDamage;
+   }
+   
+   ArmorCheck(what=$,damage=0,atype=0,aspell=0,bonus=0)
+   "Allows monsters to have armor not related to specific equipped items. Based on piArmor."
+   {
+      local iDamageReduce, oAttribute;
+
+      for oAttribute in plObject_attributes
+      {
+         damage = Send(oAttribute,@ModifyDefenseDamage,#who=self,#what=what,#damage=damage,#atype=atype,#aspell=aspell);
+      }
+
+      iDamageReduce = 0;
+      if piArmor <> 0
+      {
+         iDamageReduce = random(piArmor/3,piArmor);
+         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+      }
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Only 2/3 of the damage reduction if we're doing both weapon
+            % and spell damage types.
+            iDamageReduce = iDamageReduce * 2 / 3;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iDamageReduce = 0;
+         }
+      }
+      
+      return damage - iDamageReduce;
    }
 
    AssessHit(what = $, stroke_obj = $, damage = $)
@@ -3133,7 +3224,7 @@ messages:
          
          Send(self,@CreateTreasure,#who=what,#corpse=oBody);
          
-		 % Delete here so we don't accidentally "kill" then delete system
+      % Delete here so we don't accidentally "kill" then delete system
          %  template monsters.
          Send(self,@Delete);
       }
@@ -3214,10 +3305,10 @@ messages:
       for i in plOffer_items
       {
          Send(oHolder,@NewHold,#what=i);
-		 if IsClass(i,&Money)
-		 {
-		    Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
-		 }
+         if IsClass(i,&Money)
+         {
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(i,@GetNumber));
+         }
       }
 
       % take stuff the user put there
@@ -3770,12 +3861,12 @@ messages:
                iAmount = First(lNumbers);
 
                % Make sure requested number of items is within the limits
-			   
-			   if (iAmount = $)
-			   {
-			      iAmount = 1;
-			   }
-			   
+
+               if (iAmount = $)
+               {
+                  iAmount = 1;
+               }
+
                if (iAmount < MIN_BUY_AMOUNT)
                {
                   iAmount = MIN_BUY_AMOUNT;
@@ -4948,7 +5039,7 @@ messages:
 
    CreateTreasure(who=$,corpse=$)
    {
-      local i, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
+      local i, j, oReagent, iNumberItems, oTreasure, oTreasure_type, tokengen, iSafetyCntr,
             lTreasureItems, iNumberOfItemsDropped, iNumberOfItemsLooted, iRandomCashAmount, oMoney,
             iGetResult, bCapacityFailure, bRangeFailure;
 
@@ -5044,7 +5135,17 @@ messages:
          Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          lTreasureItems = cons(oMoney,lTreasureItems);
       }
-      
+
+      % Add one set of spell reagents to the treasure for each type of spell that was cast on the monster.
+      for i in plSpellList
+      {
+         for j in send(i,@GetReagents)
+         {
+            oReagent = Create(First(j),#corpse=corpse,#number=Nth(j,2));
+            lTreasureItems = Cons(oReagent,lTreasureItems);
+         }
+      }
+
       iNumberOfItemsDropped = 0;
       iNumberOfItemsLooted = 0;
       bCapacityFailure = FALSE;
@@ -5915,10 +6016,27 @@ messages:
          if Send(who,@ReqNewHold,#what=oMoney)
          {
             Send(who,@NewHold,#what=oMoney);
-			Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
+            Send(Send(SYS,@GetStatistics),@MoneyCreated,#amount=Send(oMoney,@GetNumber));
          }
       }
       
+      return;
+   }
+
+   AddToSpellList(spellobject=$)
+   {
+      local i;
+
+      for i in plSpellList
+      {
+         if i = spellobject
+         {
+            return;
+         }
+      }
+
+      plSpellList = Cons(spellobject,plSpellList);
+
       return;
    }
 
@@ -5927,6 +6045,11 @@ messages:
    GetProjectileIcon()
    {
       return;
+   }
+   
+   GetBaseResistances()
+   {
+      return plResistances;
    }
 
 end

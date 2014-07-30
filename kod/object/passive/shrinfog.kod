@@ -18,7 +18,7 @@ resources:
 
    shrinefog_name_rsc = "acidic fog"
    shrinefog_icon_rsc = poisoncl.bgf
-   shrinefog_desc_rsc = "A thick cloud of deadly looking vapor spews from the vent. The air is filled with the stench of sulfer and acid."
+   shrinefog_desc_rsc = "A thick cloud of deadly looking vapor spews from the vent. The air is filled with the stench of sulfur and acid."
 
 classvars:
 
@@ -42,7 +42,6 @@ messages:
       AddPacket(1, ANIMATE_CYCLE, 4, random(280,300), 2, 1, 2, 5);
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

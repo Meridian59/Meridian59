@@ -54,7 +54,7 @@ classvars:
 
 properties:
    
-   piAttack_Type = ATCK_WEAP_PIERCE
+   piAttack_Type = ATCK_WEAP_NONMAGIC+ATCK_WEAP_PIERCE
 
 messages:
 
@@ -90,16 +90,19 @@ messages:
       }
 
       iAttackType = 0;
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if send(i,@GetAmmoType) = ammotype
-            { 
-               iAttackType = send(i,@GetAttackType);
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if send(i,@GetAmmoType) = ammotype
+               { 
+                 iAttackType = send(i,@GetAttackType);
                
-               break;
+                  break;
+               }
             }
          }
       }
@@ -121,15 +124,18 @@ messages:
       iAttackType = 0;
       ammotype = send(self,@GetAmmoType);
 
-      for i in send(poOwner,@GetPlayerUsing)
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
-            { 
-               iAttackType = send(i,@GetAttackSpell);
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               { 
+                  iAttackType = send(i,@GetAttackSpell);
                
-               break;
+                  break;
+               }
             }
          }
       }
@@ -183,15 +189,18 @@ messages:
 
       iDamage = 0;
 
-      ammotype = send(self,@GetAmmoType);
-      for i in send(poOwner,@GetPlayerUsing)
+      if IsClass(poOwner,&User)
       {
-         if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
          {
-            if (send(i,@GetAmmoType) = ammotype)
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
             {
-               iDamage = send(i,@GetDamage,#who=who,#target=target);
-               break;
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetDamage,#who=who,#target=target);
+                  break;
+               }
             }
          }
       }
@@ -211,7 +220,345 @@ messages:
    {
       return ranged_ammo_name;      
    }
+     
+   GetHitBonus()
+   {
+      return viHit_roll_modifier + piHitBonus;
+   }
    
+   GetMinDamage()
+   {
+      local iDamage, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinDamage);
+                  break;
+               }
+            }
+         }
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+
+      return iDamage;
+   }
+   
+   GetMaxDamage()
+   {
+      local iDamage, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxDamage);
+                  break;
+               }
+            }
+         }
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+
+      return iDamage;
+   }
+   
+   GetMinDamageWithOwnerStats()
+   {
+      local iDamage, ammotype, i, oSkill;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinDamage);
+                  break;
+               }
+            }
+         }
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+      
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+
+      return iDamage;
+   }
+
+   GetMaxDamageWithOwnerStats()
+   {
+      local iDamage, ammotype, i, oSkill;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxDamage);
+                  break;
+               }
+            }
+         }
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+      
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+
+      return iDamage;
+   }
+   
+   GetMinSpecialDamageWithOwnerStats()
+   {
+      local iDamage, ammotype, i, oSkill;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinSpecialDamage);
+                  break;
+               }
+            }
+         }
+      }
+      
+      % No special ammo properties
+      if iDamage = 0
+      {
+         return 0;
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+      
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+
+      return iDamage;
+   }
+   
+   GetMaxSpecialDamageWithOwnerStats()
+   {
+      local iDamage, ammotype, i, oSkill;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxSpecialDamage);
+                  break;
+               }
+            }
+         }
+      }
+      
+      % No special ammo properties
+      if iDamage = 0
+      {
+         return 0;
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+      
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+
+      return iDamage;
+   }
+   
+   % Some weapons and spells have special conditions, like nerudite arrows that can shatter
+   GetMinSpecialDamage()
+   {
+      local iDamage, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMinSpecialDamage);
+                  break;
+               }
+            }
+         }
+      }
+      
+      % No special ammo properties
+      if iDamage = 0
+      {
+         return 0;
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+
+      return iDamage;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      local iDamage, ammotype, i;
+
+      if poOwner = $
+      {
+         return 0;
+      }
+
+      iDamage = 0;
+
+
+      if IsClass(poOwner,&User)
+      {
+         ammotype = send(self,@GetAmmoType);
+         for i in send(poOwner,@GetPlayerUsing)
+         {
+            if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+            {
+               if (send(i,@GetAmmoType) = ammotype)
+               {
+                  iDamage = send(i,@GetMaxSpecialDamage);
+                  break;
+               }
+            }
+         }
+      }
+      
+      % No special ammo properties
+      if iDamage = 0
+      {
+         return 0;
+      }
+
+      iDamage = iDamage + viWeaponDamage;
+
+      return iDamage;
+   }
+   
+   GetBaseSpellModifier()
+   {
+      return viSpell_modifier;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

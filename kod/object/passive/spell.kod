@@ -129,6 +129,10 @@ resources:
    spell_disabled = \
       "~g~BAn unseen force rips the words of the spell from your throat "
       "before you can fully utter them."
+   spell_display_spellpower = \
+      "Spellpower for ~k~B%s~n is ~k~B%i~n."
+   los_bad_display = \
+      "You don't have line of sight with ~k~B%s~n."
 
    Spell_meditate_ratio_one_rsc = "\n\nIt will cost you "
    Spell_meditate_ratio_two_rsc = " training points to improve in this spell."
@@ -141,6 +145,8 @@ resources:
    spell_Enchantment_type_default_rsc = "enchanter."
 
    Spell_too_few_hp_rsc = "You are not powerful enough to cast this spell."
+
+   cannot_cast_on_phased_out = "You can't cast anything on %s while %s is phased out of existence!"
 
 classvars:
 
@@ -208,6 +214,10 @@ classvars:
    vrEnchantment_type = spell_Enchantment_type_default_rsc
 
    vrToo_few_hp = spell_too_few_hp_rsc
+
+   viDefensive = FALSE
+   viOffensive = FALSE
+   viResistanceType = 0
 
 properties:
 
@@ -644,7 +654,7 @@ messages:
 
          bFound = FALSE;
 
-         lLists = [Send(who, @GetHolderActive), Send(who,@GetHolderPassive)];
+         lLists = [Send(who, @GetHolderActive), Send(who,@GetHolderPassive), Send(who,@GetReagentBagContents)];
          for lItems in lLists
          {
             % Count # of reagent that user has; complain if not enough
@@ -710,6 +720,16 @@ messages:
    {
       local iLists, oUserObject, iNum, i, oOwner, oVictim, oRoom, iRand,
             oSpell;
+
+      if lTargets <> $
+         AND Length(lTargets) = 1
+         AND IsClass(First(lTargets),&Player)
+         AND Send(First(lTargets),@IsPhasedOut)
+      {
+         Send(who,@MsgSendUser,#message_rsc=cannot_cast_on_phased_out,
+                               #parm1=Send(First(lTargets),@GetName),#parm2=Send(First(lTargets),@GetHimHer));
+         return FALSE;
+      }
       
       if NOT IsClass(who,&Player)
       {
@@ -1227,6 +1247,11 @@ messages:
                       #obj2=first(lTargets))
          AND NOT(IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
       {
+         if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+         {
+            Send(who,@MsgSendUser,#message_rsc=los_bad_display,
+                  #parm1=Send(self,@GetName));
+         }
          oTarget = first(lTargets);
          
          iDistance = Send(who,@SquaredDistanceTo,#what=oTarget);
@@ -1300,15 +1325,21 @@ messages:
                cReagentClass = First(lReagent);
                iNumNeeded = Nth(lReagent, 2);
                iLists = 1;
-               while iLists <= 2 
+               while iLists <= 3
                {
                   if iLists = 1
                   {
                      lItems = Send(who,@GetHolderActive);
                   }
-                  else
+
+                  if iLists = 2
                   {
                      lItems = Send(who,@GetHolderPassive);
+                  }
+                  
+                  if iLists = 3
+                  {
+                     lItems = Send(who,@GetReagentBagContents);
                   }
 
                   % Since spell is cast, we can be cavalier about deleting things
@@ -1392,14 +1423,33 @@ messages:
                {
                   Send(oTarget,@BadSpellFlashEffect);
                }
+               
+               if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+                  AND oTarget <> who
+               {
+                  Send(oTarget,@MsgSendUser,#message_rsc=spell_display_spellpower,
+                     #parm1=Send(self,@GetName),#parm2=iSpellPower);
+               }
             }
          }
+      }
+
+      if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_display_spellpower,
+               #parm1=Send(self,@GetName),#parm2=iSpellPower);
       }
 
       % Define what is the target for the next few checks.
       if lTargets <> $
       {
          oTarget = First(lTargets);
+
+         % If the spell was cast on a monster, let the monster keep track of that for loot.
+         if IsClass(oTarget,&Monster) AND NOT bItemCast
+         {
+            Send(oTarget,@AddToSpellList,#spellobject=self);
+         }
       }
       else
       {
@@ -1491,7 +1541,7 @@ messages:
             }
          }
       }
-
+		
       % Count that this spell was cast successfully
       Send(Send(SYS, @GetStatistics), @SpellCast, #oSpell = self, #who = who);
       return;
@@ -2478,7 +2528,18 @@ messages:
 
       return 1;
    }
+   
+   TranceBlocksSay()
+   "Returns TRUE only if the spell purposely blocks spoken messages during its own trance."
+   {
+      return FALSE;
+   }
 
+   ModifyResistance(resistance_list=$)
+   {
+      % Spells can overwrite this to change resistances temporarily.
+      return resistance_list;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

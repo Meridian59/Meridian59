@@ -58,9 +58,8 @@
    CONTAINER_YES     = 0x00000020
    LOOK_YES          = 0
    LOOK_NO           = 0x00000040
-
-   % unused       = 0x00000080
-
+   ITEM_MAGIC_YES    = 0x00000080
+   ITEM_MAGIC_NO     = 0
    INVISIBLE_YES     = 0x00000100
    INVISIBLE_NO      = 0
    OFFER_YES         = 0x00000200
@@ -2002,6 +2001,7 @@
    SID_LOADOUT = 183
    SID_CONVEYANCE = 184
    SID_DEATH_RIFT = 185
+   SID_PHASE = 186
 
    SID_MEDITATE = 187
 
@@ -2260,6 +2260,8 @@
    EVENT_REST = 8
    % Player was disrupted by something external trying to disrupt.
    EVENT_DISRUPT = 9
+   % Player is moving to a new room but has not yet
+   EVENT_REQNEWOWNER = 10
 
    %%% Hot spot definitions
 

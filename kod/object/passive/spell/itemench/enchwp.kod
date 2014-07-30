@@ -1,0 +1,157 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+EnchantWeapon is ItemEnchantment
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   enchantedweapon_cast_rsc = "Your %s is now dedicated to Kraanan."
+   enchantweapon_no_can = "You may not enchant %s%s."
+   enchantweapon_fails = "The %s is strangely unaffected by the spell."
+   enchantweapon_already_done = \
+      "This weapon is already dedicated to Kraanan."
+
+   enchantweapon_name_rsc = "enchant weapon"
+   enchantweapon_icon_rsc = ienchant.bgf
+   enchantweapon_desc_rsc = \
+      "Dedicates your weapon to Kraanan.  "
+      "Requires two elderberries, an orc tooth, and time."
+
+   enchantweapon_resists = "%s%s resists your attempts to enchant it."
+   enchantweapon_spell_intro = \
+      "Kraanan Lv. 2: Graces your weapon with a touch of magic, improving its damage."
+
+   enchantweapon_label_rsc = "blood-letter."
+
+classvars:
+
+   vrName = enchantweapon_name_rsc
+   vrIcon = enchantweapon_icon_rsc
+   vrDesc = enchantweapon_desc_rsc
+
+   vrEnchantment_type = enchantweapon_label_rsc
+
+   vrSpell_intro = enchantweapon_spell_intro
+
+   viSpell_num = SID_ENCHANT_WEAPON
+   viSchool = SS_KRAANAN
+
+   viSpell_level = 2
+   viMana = 17
+
+   viCast_time = 15000
+   viSpellExertion = 20
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      % Separate message so can change, then set from admin mode
+
+      plReagents = $;
+      plReagents = Cons([&Elderberry,2],plReagents);
+      plReagents = Cons([&orctooth,1],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0)
+   {
+      local oWeapon;
+
+      oWeapon = First(lTargets);
+
+      if oWeapon = $
+         OR NOT IsClass(oWeapon,&Weapon)
+      {
+         Send(who,@MsgSendUser,#message_rsc=enchantweapon_no_can,
+               #parm1=Send(oWeapon,@GetDef),#parm2=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      if Send(oWeapon,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC) <> 0
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED) = $
+         AND Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE) = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=enchantweapon_already_done,
+               #parm1=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      propagate;   % Check other things higher up
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   {
+      local iCurrentSpell, oWeapon, oWeapAtt, iDuration, iSpellDamageType, oSpellWeapAtt;
+
+      oWeapon = First(lTargets);
+
+      if oWeapon = $
+         OR NOT IsClass(oWeapon,&Weapon)
+      {
+         Send(who,@MsgSendUser,#message_rsc=enchantweapon_no_can,
+               #parm1=Send(oWeapon,@GetDef),#parm2=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      if NOT Send(oWeapon,@CanEnchant,#oSpell = self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_resists, 
+               #parm1=Send(oWeapon,@GetCapDef),#parm2=Send(oWeapon,@GetName));
+          return;
+      }
+
+      if NOT Send(self,@IsTargetInRange,#who=who,#target=oWeapon)
+      {
+         Send(who, @MsgSendUser,#message_rsc=spell_out_of_range,
+               #parm1=Send(oWeapon,@GetCapDef),#parm2=Send(oWeapon,@GetName));
+
+         return False;
+      }
+
+      oWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ENCHANTED);
+      oSpellWeapAtt = Send(SYS,@FindItemAttByNum,#num=WA_ATTACKSPELLTYPE);
+
+      % Remove any existing enchants before we go on.
+      iCurrentSpell = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ENCHANTED);
+      iSpellDamageType = Send(oWeapon,@GetAttributeData,#ItemAtt=WA_ATTACKSPELLTYPE);
+
+      if iCurrentSpell <> $
+      {
+         Send(oWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
+
+      if iSpellDamageType <> $
+      {
+         Send(oSpellWeapAtt,@RemoveFromItem,#oItem=oWeapon);
+      }
+
+      Send(oWeapAtt,@AddToItem,#oItem=oWeapon,#random_gen=FALSE,
+            #timer_duration =Send(self,@GetDuration,#iSpellPower=iSpellPower),
+            #state3=Send(self,@GetMakerInfo,#who=who));
+
+      Send(who,@MsgSendUser,#message_rsc=enchantedweapon_cast_rsc,
+            #parm1=Send(oWeapon,@GetName));
+
+      propagate;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

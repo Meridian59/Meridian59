@@ -11,19 +11,19 @@
 ItemAttNewDescription is ItemAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item has a new nonstandard description.
-% 
-%  Form is: 
+%   This item has a new nonstandard description.
 %
-%   	[IA_NEW_DESCRIPTION, sDesc_string]
-%	
-%  sDesc_string::the new description for the item.
+%   Form is: 
+%
+%      [IA_NEW_DESCRIPTION, sDesc_string]
+%
+%      sDesc_string::the new description for the item.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -44,7 +44,7 @@ messages:
    ItemCanIdentify()
    {
       return FALSE;
-   }	
+   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -91,12 +91,12 @@ messages:
 %%  Name Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    ItemBuildDescName(oItem=$)
    {
-      Addpacket(4,send(oItem,@getname));
+      Addpacket(4,send(oItem,@GetName));
       return;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

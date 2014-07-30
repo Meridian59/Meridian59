@@ -60,6 +60,8 @@ classvars:
 
    vbCanCastonOthers = FALSE
 
+   viDefensive = TRUE
+
 properties:
 
 
@@ -116,12 +118,13 @@ messages:
                oWeapon = Send(what,@GetWeapon);
 
                % Ranged weapons don't always trigger the effect.
-               if IsClass(oWeapon,&RangedWeapon)
+               if oWeapon <> $
+                  AND IsClass(oWeapon,&RangedWeapon)
                   AND random(1,100) < 50
                {
-                 % No effect.
-                 return defense_power;
-              }
+                  % No effect.
+                  return defense_power;
+               }
 
                Send(what,@MsgSendUser,#message_rsc=paralyze_target_on,
                     #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
@@ -144,6 +147,19 @@ messages:
       propagate;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will paralyze opponents that attack you for ");
+      AppendTempString(Bound(Send(who,@GetEnchantedState,#what=self) * 20,500,2500));
+      AppendTempString("-");
+      AppendTempString(Bound(Send(who,@GetEnchantedState,#what=self) * 25,500,2500));
+      AppendTempString(" milliseconds. Opponents attacking at range have a 50\% chance to avoid your paralyzing gaze.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

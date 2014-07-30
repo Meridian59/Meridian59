@@ -12,14 +12,14 @@ WeapAttGuildHallDefender is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This Weapon Attribute offers a +2 damage bonus if you attack with it
-%       in your guild hall, and it is also the guild hall of the weapon.
-%       The weapon's guild hall is shown in the description of the weapon.
+%   This Weapon Attribute offers a +2 damage bonus if you attack with it
+%   in your guild hall, and it is also the guild hall of the weapon.
+%   The weapon's guild hall is shown in the description of the weapon.
 %
-%  Form is: 
+%   Form is:
 %
-%       [ WA_GUILD_HALL_DEFENDER, $, RID_GUILDHALL ]
-%	
+%      [ WA_GUILD_HALL_DEFENDER, $, RID_GUILDHALL ]
+%
 %       rid_guildhall:: the room id of the guild hall that 'owns' the weapon,
 %               as found in blakston.khd.  Example, RID_GUILDH4 = Wryn's Keep
 %
@@ -27,12 +27,13 @@ WeapAttGuildHallDefender is WeaponAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
    weapattguildhalldesc= " The crest of "
-   weapattguildhalldesc2 = " is inscribed on the hilt of the weapon, suggesting "
+   weapattguildhalldesc2 = \
+      " is inscribed on the hilt of the weapon, suggesting "
    weapattguildhalldesc3 = " bonus in the defense of that hall."
    weapattdefender_name = "%s of the defender"
 
@@ -52,15 +53,15 @@ properties:
 
    piValue_modifier = 200   %% modify the object's price by 100%
    piValue_power_modifier = 5
-  
+
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Treasure Gen Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    AddSelfToRandomItem(oItem=$,who=$)
    {
       local iHall, oGuild, oHall;
@@ -81,18 +82,18 @@ messages:
       {
          %% see if the player belongs to a guild.
          oGuild = Send(who,@GetGuild);
-	
+
          %% see if that guild has a hall already
          if oGuild <> $
          {
             iHall = Send(oGuild,@GetGuildHallNum);
-         }			
+         }
       }
       
       if iHall = $ or (iHall < RID_GUILDH_MIN or iHall > RID_GUILDH_MAX)
       {
          %% choose a random guild hall
-			
+
          iHall = Random(RID_GUILDH_MIN,RID_GUILDH_MAX);
       }
 
@@ -109,14 +110,14 @@ messages:
       {
          Send(self,@AddToItem,#oItem=oItem,#state1=iHall);
       }
-      
+
       return;
    }
 
    ReqAddToItem(state1=$)
    {
       if state1 < RID_GUILDH_MIN or state1 > RID_GUILDH_MAX
-      { 
+      {
          Debug("Illegal guild hall chosen.  No attribute added.");
 
          return FALSE; 
@@ -124,7 +125,7 @@ messages:
 
       propagate;
    }
-   
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
@@ -136,7 +137,7 @@ messages:
    "of the weapon, then wielder gets +power bonus."
    {
       local oGuild, oRoom, iPower;
-      
+
       if lData = $
       {
          Debug("This should definitely not happen! Weapon needs guild hall defined!");
@@ -162,7 +163,7 @@ messages:
 
          return (damage + iPower);  
       }
-      
+
       return damage;
    }
 
@@ -197,7 +198,7 @@ messages:
 
          return (hitroll + iPower);  
       }
-      
+
       return hitroll;
    }
 
@@ -237,11 +238,11 @@ messages:
 %%  Description Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
+
    AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
    {
       local iData, oRoom, iPower;
-    
+
       iData = 0;
       if lData = $ 
       {
@@ -251,7 +252,7 @@ messages:
 
             return;
          }
-         
+
          iData = iFakeData;
          iPower = iFakePower;
       }
@@ -263,20 +264,20 @@ messages:
 
             return;
          }
-         
+
          iData = Nth(lData,3);
          iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       }
-		
+
       AppendTempString(weapattguildhalldesc);
-        
+
       oRoom = Send(SYS,@FindRoomByNum,#num=iData);
       AppendTempString(Send(oRoom,@GetName));
       AppendTempString(weapattguildhalldesc2);
-      
+
       AppendTempSTring(Send(self,@GetPowerDesc,#iPower=iPower));
       AppendTempString(weapattguildhalldesc3);
-         
+
       return;
    }
 
@@ -297,12 +298,16 @@ messages:
          if Send(SYS,@FindRoomByNum,#num=iRoom_num) = $
          {
             iRoom_num = $;
-         } 			
+         }
       }
-      
+
       return iRoom_num;
    }
 
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

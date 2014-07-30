@@ -25,9 +25,6 @@ properties:
    plActive = $
    plPassive = $
 
-   piBulk_hold = 0			% how much bulk we're holding
-   piWeight_hold = 0			% how much weight we're holding
-
 messages:
 
    Delete()
@@ -230,17 +227,55 @@ messages:
 
    GetBulkHold()
    {
-      return piBulk_hold;
+      local i, each_obj, iSum;
+
+      iSum = 0;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         iSum = iSum + Send(each_obj,@GetBulk);
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         iSum = iSum + Send(each_obj,@GetBulk);
+      }
+
+      return iSum;
    }
 
    GetWeightHold()
    {
-      return piWeight_hold;
+      local i, each_obj, iSum;
+
+      iSum = 0;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         iSum = iSum + Send(each_obj,@GetWeight);
+      }
+
+      for i in plPassive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         iSum = iSum + Send(each_obj,@GetWeight);
+      }
+
+      return iSum;
    }
 
    ReqNewHold(what = $)
    {
       local i,each_obj;
+
+      if Send(what,@GetOwner) <> $
+         AND IsClass(Send(what,@GetOwner),&ReagentBag)
+      {
+         return TRUE;
+      }
 
       if NOT Send(what,@ReqNewOwner,#what=self)
          OR NOT send(self,@CanHoldWeightAndBulk,#weight=send(what,@GetWeight),
@@ -265,14 +300,14 @@ messages:
    "Returns whether the holder can accept the additional weight and bulk specified."
    {
       if Send(self,@GetWeightMax) <> $
-         AND (((piWeight_hold + weight) > send(self,@GetWeightMax))
+         AND (((Send(self,@GetWeightHold) + weight) > send(self,@GetWeightMax))
 				  AND weight <> 0)
       {
          return FALSE;
       }
 
       if Send(self,@GetBulkMax) <> $
-         AND (((piBulk_hold + bulk) > send(self,@GetBulkMax)
+         AND (((Send(self,@GetBulkHold) + bulk) > send(self,@GetBulkMax)
               AND bulk <> 0))
       {
          return FALSE;
@@ -284,7 +319,7 @@ messages:
    GetNumberCanHold(what = $)
    {
       local iBulk_can_hold, iWeight_can_hold, iUnit_bulk, iUnit_weight;
-
+      
       if NOT IsClass(what,&NumberItem)
          OR send(self,@GetBulkMax) = $
          OR send(self,@GetWeightMax) = $
@@ -292,8 +327,8 @@ messages:
          return $;
       }
       return Send(what,@GetNumberCanHold,
-                  #weight=send(self,@GetWeightMax)-piWeight_hold,
-                  #bulk=send(self,@GetBulkMax)-piBulk_hold);
+                  #weight=send(self,@GetWeightMax)-Send(self,@GetWeightHold),
+                  #bulk=send(self,@GetBulkMax)-Send(self,@GetBulkHold));
    }
 
    NewHold(what = $)
@@ -327,9 +362,6 @@ messages:
    
    NewHoldObject(what = $)
    {
-      piBulk_hold = piBulk_hold + Send(what,@GetBulk);
-      piWeight_hold = piWeight_hold + Send(what,@GetWeight);
-
       Send(self,@HolderAddNode,#node=what);
       
       return;
@@ -339,8 +371,6 @@ messages:
    "Called by something we contain when it changes bulk or weight.  "
    "Mostly number items when their number changes."
    {
-      piBulk_hold = piBulk_hold + bulk_change;
-      piWeight_hold = piWeight_hold + weight_change;
 
       return;
    }
@@ -370,9 +400,6 @@ messages:
    {
       local i,each_obj, iRow, iCol;
       iRow = 0; iCol = 0;
-
-      piBulk_hold = piBulk_hold - Send(what,@GetBulk);
-      piWeight_hold = piWeight_hold - Send(what,@GetWeight);
 
       for i in plActive
       {

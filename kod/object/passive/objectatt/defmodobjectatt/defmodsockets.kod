@@ -1,0 +1,262 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DefModSockets is DefModObjectAttribute 
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   not_while_equipped = "You can't attach the %s while you're wearing the %s."
+   not_enough_sockets = "The %s does not have enough open sockets to attach the %s."
+   gem_attach_successful = "You carefully attach the %s to the %s."
+   remove_no_gems = "The %s has no gems to remove!"
+   gem_remove_successful = "You cautiously pry each gem out of the %s."
+
+classvars:
+
+properties:
+
+   piSockets = 1
+   plSocketed = $
+
+messages:
+   
+   Constructor(num_sockets = 1)
+   {
+      piSockets = num_sockets;
+      propagate;
+   }
+   
+   GetSockets()
+   {
+      return piSockets;
+   }
+   
+   GetNumberOfOpenSockets()
+   {
+      if plSocketed = $
+      {
+         return piSockets;
+      }
+      return piSockets - Length(plSocketed);
+   }
+   
+   GetSocketed()
+   {
+      return plSocketed;
+   }
+   
+   AttachGem(who=$, oGem=$)
+   {
+      local oUsing, oOwner;
+      
+      if oGem <> $
+         AND Send(oGem,@ReqAttach,#socketed_object=self)
+      {
+         oOwner = Send(poHostObject,@GetOwner);
+         if oOwner <> $
+            AND IsClass(oOwner,&Player)
+         {
+            for oUsing in Send(oOwner,@GetPlayerUsing)
+            {
+               if poHostObject = oUsing
+               {
+                  Send(oOwner,@MsgSendUser,#message_rsc=not_while_equipped,
+                                        #parm1=Send(oGem,@GetName),
+                                        #parm2=Send(poHostObject,@GetName));
+                  return false;
+               }
+            }
+         }
+         
+         if plSocketed <> $
+            AND Length(plSocketed) >= piSockets
+         {
+            if who <> $
+               AND IsClass(who,&User)
+            {
+               Send(who,@MsgSendUser,#message_rsc=not_enough_sockets,
+                                     #parm1=Send(poHostObject,@GetName),
+                                     #parm2=Send(oGem,@GetName));
+            }
+            return false;
+         }
+         
+         if who <> $
+            AND IsClass(who,&User)
+         {
+            Send(who,@MsgSendUser,#message_rsc=gem_attach_successful,
+                                  #parm1=Send(oGem,@GetName),
+                                  #parm2=Send(poHostObject,@GetName));
+         }
+         
+         Send(oGem,@NewOwner,#what=$);
+         Send(oGem,@SetSocketedObject,#socketed_object=self);
+         plSocketed = Cons(oGem, plSocketed);
+      }
+      
+      return;
+   }
+   
+   RemoveGems(who=$)
+   {
+      local oGem;
+      
+      if who <> $
+      {
+         if plSocketed <> $
+         {
+            for oGem in plSocketed
+            {
+               Send(who,@NewHold,#what=oGem);
+               Send(oGem,@SetSocketedObject);
+               plSocketed = DelListElem(plSocketed,oGem);
+            }
+            if who <> $
+               AND IsClass(who,&User)
+            {
+               Send(who,@MsgSendUser,#message_rsc=gem_remove_successful,
+                                     #parm1=Send(poHostObject,@GetName));
+            }
+         }
+         else
+         {
+            if who <> $
+               AND IsClass(who,&User)
+            {
+               Send(who,@MsgSendUser,#message_rsc=remove_no_gems,
+                                     #parm1=Send(poHostObject,@GetName));
+            }
+         }
+      }
+
+      return;
+   }
+   
+   DeleteGemFromSockets(oGem=$)
+   {
+      local i;
+      
+      for i in plSocketed
+      {
+         if oGem = i
+         {
+            Send(i,@SetSocketedObject);
+            plSocketed = DelListElem(plSocketed,i);
+         }
+      }
+      
+      return;
+   }
+   
+   Delete()
+   {
+      local i;
+      
+      for i in plSocketed
+      {
+         Send(i,@Delete);
+      }
+      plSocketed = $;
+      
+      propagate;
+   }
+   
+   AttributeDesc()
+   {
+      local oGem;
+      
+      AppendTempString("\n\n");
+      AppendTempString("This ");
+      AppendTempString(Send(poHostObject,@GetName));
+      AppendTempString(" has ");
+      Send(SYS,@AppendCardinalToTempString,#number=piSockets);
+      
+      if piSockets = 1
+      {
+         AppendTempString(" socket. ");
+      }
+      else
+      {
+         AppendTempString(" sockets. ");
+      }
+      
+      for oGem in plSocketed
+      {
+         Send(oGem,@AttributeDesc);
+      }
+
+      return;
+   }
+
+   ModifyDamage(damage=$)
+   {
+      local i;
+      
+      for i in plSocketed
+      {
+         damage = Send(i,@ModifyDamage,#damage=damage);
+      }
+
+      return damage;
+   }
+   
+   ModifyHitRoll(hit_roll=$)
+   {
+      local i;
+      
+      for i in plSocketed
+      {
+         hit_roll = Send(i,@ModifyHitRoll,#hit_roll=hit_roll);
+      }
+
+      return hit_roll;
+   }
+   
+   ModifyDefenseDamage(damage=$)
+   {
+      local i;
+      
+      for i in plSocketed
+      {
+         damage = Send(i,@ModifyDefenseDamage,#damage=damage);
+      }
+
+      return damage;
+   }
+   
+   ModifyDefensePower(defense_power=$)
+   {
+      local i;
+      
+      for i in plSocketed
+      {
+         defense_power = Send(i,@ModifyDefensePower,#defense_power=defense_power);
+      }
+
+      return defense_power;
+   }
+   
+   ModifyResistance(resistance_list=$)
+   {
+      local i;
+      
+      for i in plSocketed
+      {
+         resistance_list = Send(i,@ModifyResistance,#resistance_list=resistance_list);
+      }
+
+      return resistance_list;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

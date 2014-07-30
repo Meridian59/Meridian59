@@ -60,6 +60,11 @@ messages:
    {
       return 0;
    }
+   
+   TranceBlocksSay()
+   {
+      return TRUE;
+   }
         
    SomethingSaidDuringTrance(who=$,string=$)
    {

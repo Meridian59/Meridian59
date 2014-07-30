@@ -58,6 +58,8 @@ classvars:
 
    vbCanCastOnOthers = FALSE
 
+   viDefensive = TRUE
+
 properties:
 
 messages:
@@ -140,6 +142,17 @@ messages:
       return TRUE;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(25 + Send(who,@GetEnchantedState,#what=self));
+      AppendTempString(" defense.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

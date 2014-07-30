@@ -47,26 +47,88 @@ classvars:
    viBulk = 100
    viWeight = 100
 
-   viObject_flags = GETTABLE_YES | LOOK_NO
-
 properties:
-   
+
+   viObject_flags = GETTABLE_YES | LOOK_NO
 
 messages:
 
    DropSelf(what=$)
    {
       local oRoom, iRow, iCol;
-   
-      oRoom = send(what,@GetOwner);
-      iRow = send(what,@GetRow);
-      iCol = send(what,@GetCol);
 
-      send(oRoom,@NewHold,#what=self,#new_col=iCol,#New_row=iRow);
+      if IsClass(poOwner,&Player)
+      {
+         oRoom = Send(what,@GetOwner);
+         iRow = Send(what,@GetRow);
+         iCol = Send(what,@GetCol);
+
+         Send(oRoom,@NewHold,#what=self,#new_col=iCol,#New_row=iRow);
+       }
+
+      return;
+   }
+
+   UserLogoff()
+   {
+      if IsClass(poOwner,&DM)
+      {
+         propagate;
+      }
+
+      Send(poOwner,@MsgSendUser,#message_rsc=totem_drops,
+           #parm1=Send(self,@GetCapDef),#parm2=vrName);
+
+      Send(self,@DropSelf,#what=poOwner);
 
       propagate;
    }
 
+   ReqUse()
+   {
+      return TRUE;
+   }
+
+   NewOwner(what=$)
+   {
+      if what <> $
+         AND IsClass(what,&Player)
+         AND NOT IsClass(what,&DM)
+      {
+         Send(what,@FreeHands);
+         Post(what,@TryUseItem,#what=self);
+      }
+
+      propagate;
+   }
+
+   ReqUseSomething(what=$)
+   {
+      if IsClass(what,&Weapon)
+         OR IsClass(what,&Bow)
+         OR IsClass(what,&Lute)
+         OR IsClass(what,&Token)
+         OR IsClass(what,&Totem)
+         {
+            return FALSE;
+         }
+
+      propagate;
+   }
+
+   NewUnused(what=$,death=FALSE)
+   "Called when the token is dropped or unused (same thing). The special"
+   "where flag is needed to handle guild hall enterings."
+   {
+      if NOT IsClass(poOwner,&DM)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=totem_unuse_rsc,
+            #parm1=Send(self,@GetDef),#parm2=vrName);      
+         Post(self,@DropSelf,#what=poOwner);
+      }
+
+      propagate;
+   }
 
    % these 5 called by player, for window overlays
    % Totem subclasses--do NOT set a window overlay unless you either
@@ -122,114 +184,21 @@ messages:
 %     return;
 %  }
 
-   UserLogoff()
-   {
-      if IsClass(poOwner,&DM)
-      {
-         propagate;
-      }
-
-      send(poOwner,@MsgSendUser,#message_rsc=totem_drops,
-           #parm1=send(self,@GetCapDef),#parm2=vrName);
-      Send(poOwner,@TryUnuseItem,#what=self);
-
-      propagate;
-   }
-
-   DestroyDisposable()
-   {
-      return FALSE;
-   }
-
-   NewOwner(what = $)
-   {
-      if what = $
-      {
-         propagate;
-      }
-
-      if IsClass(what,&User)
-      {
-         Post(self,@TryingToUse,#what=what);
-      } 
-
-      propagate;
-   }
-
-   TryingToUse(what = $)
-   {
-      local i,Temp;
-
-      Temp = FALSE;
-
-      Send(what,@TryUseItem,#what=self);
-
-      for i in Send(what,@GetPlayerUsing) 
-      { 
-         if i=self
-         {
-            return;
-         } 
-      }
-
-      Send(what,@MsgSendUser,#message_rsc=totem_cantuse_rsc,
-           #parm1=send(self,@getdef),#parm2=vrName);
-      Post(Send(what,@GetOwner),@NewHold,#what=self,
-           #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
-
-      return;
-   }
-
-   NewUnused(what = $,where=$, death=FALSE)
-   "Called when the token is dropped or unused (same thing). The special"
-   "where flag is needed to handle guild hall enterings."
-   {
-      local oldOwner,oldrow,oldcol,oldroom;
-
-      send(poOwner,@MsgSendUser,#message_rsc=totem_unuse_rsc,
-           #parm1=send(self,@GetDef),#parm2=vrName);
-
-      if where <> $
-      {
-        Post(where,@NewHold,#what=self,#new_row=Send(poOwner,@GetRow),
-             #new_col=Send(poOwner,@GetCol));
-      }
-      else
-      {
-         oldOwner = poOwner;
-         oldRoom = send(poOwner,@getowner);
-         oldCol = send(poOwner,@getcol);
-         oldRow = send(poOwner,@getrow);
-         Post(self,@CheckForDrop,#owned=oldOwner,#oldroom=oldroom,
-              #oldrow=oldrow,#oldcol=oldcol);
-      }
-      
-      propagate;
-   }
-
-   % Strange parameter naming here is to work around an apparent
-   % blakcomp bug 10/2010.  "error: Parameter oldroom appears twice"
-   CheckForDrop(owned=$, old_room = $, old_row = 20, old_col = 20)
-   {
-      if send(poOwner,@GetOwner) = $ AND old_room <> $
-      {
-         Send(old_room,@NewHold,#what=self,#new_row=old_row,#new_col=old_col);
-      }
-      else
-      {
-         Send(Send(poOwner,@GetOwner),@NewHold,#what=self,
-              #new_row=Send(poOwner,@GetRow),#new_col=Send(poOwner,@GetCol));
-      }
-
-      return;
-   }
-
    % Don't want these to be in vaults.
    CanBeStoredInVault()
    {
       return FALSE;
    }
 
+   DefendingHit(who=$,what=$)
+   {
+      return;
+   }
+
+   DestroyDisposable()
+   {
+      return FALSE;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

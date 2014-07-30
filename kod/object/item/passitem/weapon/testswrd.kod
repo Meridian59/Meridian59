@@ -66,7 +66,7 @@ properties:
    piSpellModifier = 0
    viProficiency_Needed = SKID_PROFICIENCY_SWORD
    
-   messages:
+messages:
 
    GetBaseDamage(who=$,target=$)
    {
@@ -157,6 +157,59 @@ properties:
          piAttack_type = ATCK_WEAP_MAGIC+ATCK_WEAP_THRUST;
       }
 	  
+      return piAttack_type;
+   }
+  
+   GetMinDamage()
+   {
+      return Send(self,@GetDamage);
+   }
+
+   GetMaxDamage()
+   {
+      return Send(self,@GetDamage);
+   }
+   
+   GetMinDamageWithOwnerStats()
+   {
+      local iDamage, oSkill;
+
+      iDamage = Send(self,@GetMinDamage);
+
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+      
+      return iDamage;
+   }
+   
+   GetMaxDamageWithOwnerStats()
+   {
+      local iDamage, oSkill;
+      
+      iDamage = Send(self,@GetMaxDamage);
+      
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+      
+      return iDamage;
+   }
+   
+   GetAttackType()
+   {
       return piAttack_type;
    }
 	  

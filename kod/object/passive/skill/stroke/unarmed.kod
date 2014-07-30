@@ -98,7 +98,7 @@ messages:
    {
       local damage, might;
 
-      damage = random(1,4);
+      damage = random(viMin_Damage, viMax_Damage);
 
       % Take various damage factors into consideration.
       damage = send(self,@DamageFactors,#damage=damage,#who=who,#weapon_used=$);

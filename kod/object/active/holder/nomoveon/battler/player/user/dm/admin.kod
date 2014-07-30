@@ -110,6 +110,12 @@ messages:
 
    AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
    {
+      if IsClass(victim,&Player)
+         AND Send(victim,@IsPhasedOut)
+      {
+         return FALSE;
+      }
+
       if Send(self,@PlayerIsImmortal)
       {
          return TRUE;

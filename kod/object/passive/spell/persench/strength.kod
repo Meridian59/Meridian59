@@ -51,6 +51,8 @@ classvars:
    viFlash = FLASH_GOOD_SELF
    vbCanCastonOthers = TRUE
 
+   viOffensive = TRUE
+
 properties:  
 
 messages:
@@ -94,6 +96,18 @@ messages:
    GetPotionClass()
    {
       RETURN &StrengthPotion;
+   }
+
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString(" Might.");
+      
+      return;
    }
 
 end

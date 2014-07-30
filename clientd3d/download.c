@@ -33,7 +33,7 @@ static char format[256];
 
 extern int  connection;        /* Type of connection (serial, etc.) */
 
-static char update_program[]  = "club.exe";  // Program to run to update the client executable
+static char update_program[]  = "http://openmeridian.org/patcher";  // Program to run to update the client executable
 static char update_filename[] = "blakston.arq"; // Name to call updated archive
 
 #define PING_DELAY 30000       // # of milliseconds between pings to server
@@ -728,70 +728,32 @@ void DownloadExit(void)
 
 /*****************************************************************************/
 /*
- * DownloadNewClient:  Spawn external program to get new client executable.
- *   Arguments are passed as command line paramenters to external program.
+ * DownloadNewClient:  Send user to OpenMeridian.org webpage to download patcher
  */
 void DownloadNewClient(char *hostname, char *filename)
 {
   SHELLEXECUTEINFO shExecInfo;
-  char command_line[MAX_CMDLINE];
-  char exe_name[MAX_PATH];
-  char client_directory[MAX_PATH];
-  char update_program_path[MAX_PATH];
-  char *ptr;
-  SystemInfo sysinfo;
-  
+
   if (AreYouSure(hInst, hMain, YES_BUTTON, IDS_NEEDNEWVERSION))
   {
-    // Make download dir if not already there
-    DownloadCheckDirs(hMain);
-    
-    // Destination directory is wherever client executable is running.
-    // Because of UAC, this is likely not the current working directory.
-    GetModuleFileName(NULL, exe_name, MAX_PATH);
-    strcpy(client_directory, exe_name);
-    ptr = strrchr(client_directory, '\\');
-    if (ptr != NULL)
-      *ptr = 0;
-
-    // Due to UAC (and arguably a bad design decision), the club binary is
-    // in Program Files by default, where we can't necessarily update it.
-    // We can, however, update anything in the current directory (usually
-    // in the user's private directory).  So we first look for club.exe there,
-    // and only fall back to the one in Program files if it's not there.
-    sprintf(update_program_path, "%s\\%s", run_dir, update_program);
-    if (!FileExists(update_program_path))
-       sprintf(update_program_path, "%s\\%s", client_directory, update_program);
-    
-    sprintf(command_line, "\"%s\" UPDATE \"%s\" \"%s\" \"%s\\%s\" \"%s\"", 
-            exe_name, hostname, filename, download_dir, update_filename,
-            client_directory);
-    
-    // Using full pathname of client can overrun 128 character DOS command line limit
-    GetSystemStats(&sysinfo);
-    if (strlen(command_line) >= 127 && 
-        (sysinfo.platform == VER_PLATFORM_WIN32_WINDOWS))
-    {
-      ClientError(hInst, hMain, IDS_LONGCMDLINE, command_line);	 
-    }
-    
+    // No longer use club.exe to update the Meridian executable, instead
+    // we send the user to a web page to download the new patcher.
 
     shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
     shExecInfo.fMask = 0;
     shExecInfo.hwnd = NULL;
-    shExecInfo.lpVerb = "runas";
-    shExecInfo.lpFile = update_program_path;
-    shExecInfo.lpParameters = command_line;
-    // Run in parent of resource directory; club will take care of copying
-    // exes to Program Files if necessary.
+    shExecInfo.lpVerb = TEXT("open");
+    shExecInfo.lpFile = TEXT(update_program);
+    shExecInfo.lpParameters = NULL;
+
     shExecInfo.lpDirectory = NULL;
-    shExecInfo.nShow = SW_NORMAL;
+    shExecInfo.nShow = SW_SHOW;
     shExecInfo.hInstApp = NULL;
-    
+
     if (!ShellExecuteEx(&shExecInfo))
       ClientError(hInst, hMain, IDS_CANTUPDATE, update_program);
   }
-  
+
   // Quit client
   PostMessage(hMain, WM_DESTROY, 0, 0);
 }

@@ -32,16 +32,21 @@ classvars:
    viUse_amount = 1
 
    viItem_type = ITEMTYPE_AMMO
-   viAmmo_type = AMMO_ARROW     
+   viAmmo_type = AMMO_ARROW
 
    viGround_group = 2
    viInventory_group = 1   
+
+   viMinDamage = 1
+   viMaxDamage = 5
 
 properties:
 
    piNumber = 20
    piAttack_type = ATCK_WEAP_PIERCE
    piAttack_spell = 0
+
+   viObject_flags = GETTABLE_YES
 
 messages:
 
@@ -87,12 +92,32 @@ messages:
 
    GetDamage()
    {
-      return Random(1,5);
+      return Random(viMinDamage,viMaxDamage);
    }
 
    GetAmmoType()
    {
       return viAmmo_type;
+   }
+
+   GetMinDamage()
+   {
+      return viMinDamage;
+   }
+   
+   GetMaxDamage()
+   {
+      return viMaxDamage;
+   }
+   
+   GetMinSpecialDamage()
+   {
+      return 0;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      return 0;
    }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

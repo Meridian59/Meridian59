@@ -1,0 +1,42 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+GemColdResistance is GemResistance
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   gem_cold_resist_name_rsc = "sapphire teardrop"
+   gem_cold_resist_icon_rsc = sapphire.bgf
+   gem_cold_resist_desc_rsc = \
+	"This shard of gemstone mysteriously retains some of the celestial chill from its former home in the skies."
+	
+classvars:
+   
+   vrName = gem_cold_resist_name_rsc
+   vrIcon = gem_cold_resist_icon_rsc
+   vrDesc = gem_cold_resist_desc_rsc
+
+   viValue_average = 25000
+   viWeight = 0
+   viBulk = 0
+
+properties:
+
+   piResistStrength = 1
+   piResistType = -ATCK_SPELL_COLD
+   
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

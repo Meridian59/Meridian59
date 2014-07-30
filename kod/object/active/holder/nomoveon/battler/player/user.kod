@@ -336,6 +336,8 @@ resources:
    autoloot_on_msg = "You decide to pick up treasure as it drops."
    autoloot_off_msg = "You stop picking up treasure as it drops."
 
+   phased_out_cant_drop = "You can't drop items while phased out of existence."
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -368,8 +370,6 @@ properties:
    piLastLoginTime = 0
    % counts total time logged in
    piTimeLoggedIn = 0
-   % What time do we hit the player with unsafe logoff penalties?
-   piLogoffPenaltyTime = 0
 
    psURL = $
 
@@ -717,36 +717,12 @@ messages:
                   AND Send(poOwner,@CanEnter,#who=self)
                   AND NOT Send(poOwner,@InFoyer,#who=self))
       {
-         theTime = GetTime();
-         
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
-            OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-         {
-            iPenaltyTime = Send(Send(SYS,@GetSettings), @GetOutlawMurdererLogoffPenaltyGhostTime);
-         }
-         else
-         {
-            iPenaltyTime = Send(SYS,@GetLogoffPenaltyGhostTime);
-         }
-
-         % If we've already passed our penalty time OR we have been on for
-         %  1/5 the penalty time, then set the logoff penalty time to 90-110%
-         %  of the logoff penalty time.
-         if piLogoffPenaltyTime < theTime
-            OR (theTime - piLastLoginTime) > (iPenaltyTime / 5)
-         {
-            piLogoffPenaltyTime = ((iPenaltyTime * Random(90,110)) / 100);
-            piLogoffPenaltyTime = piLogoffPenaltyTime + theTime;
-                                             
-         }
-         
-         Create(&LogoffGhost,#GhostedPlayer=self,
-                #iPenaltyTime=(piLogoffPenaltyTime-theTime));
+         Create(&LogoffGhost,#GhostedPlayer=self,#iPenaltyTime=Send(self,@GetRemainingPhaseTime));
       }
       else
       {
          % Reset our logoff penalty time since we're logging safely.
-         piLogoffPenaltyTime = 0;
+         Send(self,@RefreshPhaseTimeToBase);
          
          % If enabled and and a player logs off in a safe zone he will lose half his mana and all buffs
          if Send(Send(SYS, @GetSettings), @LogSafePenaltyEnable)
@@ -778,6 +754,13 @@ messages:
          Post(self,@AdminGoToSafety);
       }
       poOwner = $;
+
+      % Check for phase out
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@FreezePhaseTimer);
+         Send(self,@RemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_PHASE),#report=FALSE);
+      }
 
       % Have to put here so room enchantments are removed first.
       Send(self,@FreezeAllEnchantments);
@@ -839,7 +822,7 @@ messages:
 
    ResetLogoffPenaltyTime()
    {
-      piLogoffPenaltyTime = 0;
+      Send(self,@RefreshPhaseTimeToBase);
       
       return;
    }
@@ -1365,7 +1348,7 @@ messages:
       {
          if Nth(client_msg,2) <> ENCHANTMENT_PLAYER
          {
-            Debug(self,"user got BP_SEND_ENCHANTMENTS with bad type",
+            Debug(self," user ",Send(self,@GetName),"got BP_SEND_ENCHANTMENTS with bad type",
                   Nth(client_msg,2));
             
             return;
@@ -3544,7 +3527,16 @@ messages:
    UserGet(what = $, report = TRUE)
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, oSplit, oCorpse;
+            iCan_hold, oSplit, oCorpse, bFromReagentBag;
+
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=user_disallow_get,#report=report,
+              #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+         Send(self, @WaveSendUser, #what=self, #wave_rsc = user_cant_pickup_item_wav_rsc);
+              
+         return 0;
+      }
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -3559,6 +3551,16 @@ messages:
       if oOldOwner = self
       {
          return 0;
+      }
+      
+      if oOldOwner <> $
+         AND IsClass(oOldOwner,&ReagentBag)
+      {
+         bFromReagentBag = TRUE;
+      }
+      else
+      {
+         bFromReagentBag = FALSE;
       }
 
       % Make sure object still exists, etc, so we don't cause errors
@@ -3644,7 +3646,7 @@ messages:
                {
                   Send(self,@MsgSendUser,#message_rsc=user_got_some,#report=report,
                        #parm1=Send(what,@GetName));
-                  Send(self,@NewHold,#what=oSplit);
+                  Send(self,@NewHold,#what=oSplit,#bFromReagentBag=bFromReagentBag);
                   
                   return 3;
                }
@@ -3688,9 +3690,9 @@ messages:
 	  if isClass(what, &ShrunkenHead)
 	  {
 		 send(what,@PickedUp,#by=self);
-	  }	  		
+	  }
 
-      Send(self,@NewHold,#what=what);
+      Send(self,@NewHold,#what=what,#bFromReagentBag=bFromReagentBag);
       
       return 1;
    }
@@ -3719,6 +3721,12 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=user_err_drop);
 
          return;
+      }
+
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=phased_out_cant_drop);
+         return FALSE;
       }
 
       if IsClass(what,&NumberItem)
@@ -3795,6 +3803,7 @@ messages:
       }
 
       if NOT IsClass(where,&Holder)
+         AND NOT IsClass(where,&ReagentBag)
       {
          Send(self,@MsgSendUser,#message_rsc=user_err_put,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
@@ -3874,6 +3883,7 @@ messages:
       local i,iObjs,oThing,rName,rIcon,lHolding1,lHolding2;
 
       if NOT IsClass(what,&Holder)
+         AND NOT IsClass(what,&ReagentBag)
          OR (IsClass(what,&Player)
              AND NOT (what = self OR IsClass(self,&Admin)))
       {
@@ -3897,8 +3907,16 @@ messages:
       }
       else
       {
-         lHolding1 = Send(what,@GetHolderActive);
-         lHolding2 = Send(what,@GetHolderPassive);
+         if IsClass(what,&ReagentBag)
+         {
+            lHolding1 = Send(what,@GetReagentBagContents);
+            lHolding2 = $;
+         }
+         else
+         {
+            lHolding1 = Send(what,@GetHolderActive);
+            lHolding2 = Send(what,@GetHolderPassive);
+         }
       }
 
       iObjs = Length(lHolding1) + Length(lHolding2);
@@ -3924,7 +3942,7 @@ messages:
 
    UserSay(type = $,string = $)
    {      
-      local i, oSpell, lEnchantData;
+      local i, oSpell, lEnchantData, bTranceBlocksSay;
         
       % A room can completely block a piece of communication if it chooses.
       % An excellent example is Out Of Grace, which blocks all tells to 
@@ -3996,6 +4014,8 @@ messages:
             % See if the trance spell does anything special 
             %  with says.  Note that the 'say' will still go off.
 
+            bTranceBlocksSay = FALSE;
+            
             for i in plEnchantments
             {
                if IsClass(nth(i,2),&Trance)
@@ -4004,6 +4024,16 @@ messages:
                   oSpell = first(lEnchantData);
                   Post(oSpell,@SomethingSaidDuringTrance,
                        #who=self,#string=string,#lTargets=Nth(lEnchantData,3));
+                  
+                  if Send(oSpell,@TranceBlocksSay)
+                  {
+                     bTranceBlocksSay = TRUE;
+                  }
+               }
+               
+               if bTranceBlocksSay
+               {
+                  return;
                }
             }
          }
@@ -4184,6 +4214,13 @@ messages:
 
       if pbLogged_on
       {
+         if IsClass(what,&ReagentBag)
+            AND Send(what,@GetReagentBagContents) <> $
+         {
+            Send(self,@UserObjectContents,#what=what);
+            return;
+         }
+
          AddPacket(1,BP_LOOK);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_LOOK,
               #bShow_All=bShow_All);
@@ -4781,6 +4818,7 @@ messages:
       }
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
+         AND NOT IsClass(oSpell,&Phase)
       {  
          Send(self,@MsgSendUser,#message_rsc=user_no_cast);
          
@@ -4926,6 +4964,11 @@ messages:
    UserOffer(what = $,item_list = $,number_list = $)
    {
       local i, lObjects, lNumbers, oOffer_num;
+      
+      if Send(self,@IsPhasedOut)
+      {
+         return FALSE;
+      }
 
       % Must be holding things you're offering, and have no dupes.
       lObjects = $;
@@ -6007,12 +6050,23 @@ messages:
       return;
    }
 
-   NewHold(what = $)
+   NewHold(what = $, bFromReagentBag = FALSE)
    {
       if what = $
       {
          Debug(self,"got newhold of $");
 
+         return;
+      }
+
+      if IsClass(what,&NumberItem)
+         AND NOT IsClass(what,&Food)
+         AND NOT IsClass(what,&Ammo)
+         AND NOT IsClass(what,&Money)
+         AND NOT bFromReagentBag
+         AND Send(self,@GetReagentBag) <> $
+      {
+         Post(Send(self,@GetReagentBag),@NewHold,#what=what,#where=Send(self,@GetReagentBag));
          return;
       }
 
@@ -6984,103 +7038,232 @@ messages:
 
       return;
    }
+
+   SendStatResistances()
+   {
+      local i, lCurrentResistances, bWeaponAll,bWeaponThrust,bWeaponBludgeon,bWeaponSlash,bWeaponPierce,
+                                    bSpellAll,bSpellFire,bSpellShock,bSpellCold,bSpellAcid,bSpellHoly,bSpellUnholy,bSpellQuake;
+      
+      lCurrentResistances = Send(self,@GetCurrentResistances);
+      
+      bWeaponAll = FALSE;
+      bWeaponThrust = FALSE;
+      bWeaponBludgeon = FALSE;
+      bWeaponSlash = FALSE;
+      bWeaponPierce = FALSE;
+      bSpellAll = FALSE;
+      bSpellFire = FALSE;
+      bSpellShock = FALSE;
+      bSpellCold = FALSE;
+      bSpellAcid = FALSE;
+      bSpellHoly = FALSE;
+      bSpellUnholy = FALSE;
+      bSpellQuake = FALSE;
+      
+      for i in lCurrentResistances
+      {
+         if Nth(i,1) = ATCK_WEAP_ALL
+         {
+            AddPacket(1,12, 4,user_resist_weapons, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bWeaponAll = TRUE;
+         }
+         if Nth(i,1) = ATCK_WEAP_THRUST
+         {
+            AddPacket(1,13, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bWeaponThrust = TRUE;
+         }
+         if Nth(i,1) = ATCK_WEAP_BLUDGEON
+         {
+            AddPacket(1,14, 4,user_resist_bludgeon, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bWeaponBludgeon = TRUE;
+         }
+         if Nth(i,1) = ATCK_WEAP_SLASH
+         {
+            AddPacket(1,15, 4,user_resist_slash, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bWeaponSlash = TRUE;
+         }
+         if Nth(i,1) = ATCK_WEAP_PIERCE
+         {
+            AddPacket(1,16, 4,user_resist_pierce, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bWeaponPierce = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_ALL
+         {
+            AddPacket(1,17, 4,user_resist_magic, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellAll = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_FIRE
+         {
+            AddPacket(1,18, 4,user_resist_fire, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellFire = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_SHOCK
+         {
+            AddPacket(1,19, 4,user_resist_shock, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellShock = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_COLD
+         {
+            AddPacket(1,20, 4,user_resist_cold, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellCold = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_ACID
+         {
+            AddPacket(1,21, 4,user_resist_acid, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellAcid = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_HOLY
+         {
+            AddPacket(1,22, 4,user_resist_holy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellHoly = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_UNHOLY
+         {
+            AddPacket(1,23, 4,user_resist_unholy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellUnholy = TRUE;
+         }
+         if Nth(i,1) = -ATCK_SPELL_QUAKE
+         {
+            AddPacket(1,24, 4,user_resist_quake, 1,STAT_VALUE, 1,STAT_INTEGER,4,Nth(i,2), 4,-30, 4,100, 4,0);
+            bSpellQuake = TRUE;
+         }
+      }
+      
+      if NOT bWeaponAll
+      {
+         AddPacket(1,12, 4,user_resist_weapons, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bWeaponThrust
+      {
+         AddPacket(1,13, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bWeaponBludgeon
+      {
+         AddPacket(1,14, 4,user_resist_bludgeon, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bWeaponSlash
+      {
+         AddPacket(1,15, 4,user_resist_slash, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bWeaponPierce
+      {
+         AddPacket(1,16, 4,user_resist_pierce, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellAll
+      {
+         AddPacket(1,17, 4,user_resist_magic, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellFire
+      {
+         AddPacket(1,18, 4,user_resist_fire, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellShock
+      {
+         AddPacket(1,19, 4,user_resist_shock, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellCold
+      {
+         AddPacket(1,20, 4,user_resist_cold, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellAcid
+      {
+         AddPacket(1,21, 4,user_resist_acid, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellHoly
+      {
+         AddPacket(1,22, 4,user_resist_holy, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellUnholy
+      {
+         AddPacket(1,23, 4,user_resist_unholy, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+      if NOT bSpellQuake
+      {
+         AddPacket(1,24, 4,user_resist_quake, 1,STAT_VALUE, 1,STAT_INTEGER,4,0, 4,-30, 4,100, 4,0);
+      }
+
+      return;
+   }
    
    DrawResistances()
    {
+      local oResist, lCurrentResistances;
+      
+      lCurrentResistances = Send(self,@GetCurrentResistances);
+      
+      for oResist in lCurrentResistances
+      {
+         Send(self,@DrawResistance,#type=Nth(oResist,1),#value=Nth(oResist,2));
+      }
+
+      return;
+   }
+   
+   DrawResistance(type=ATCK_WEAP_ALL,value=0)
+   {
       if pbLogged_on
       {
          AddPacket(1,BP_STAT,1,2);
-         Send(self,@SendStatResistances);
+         Send(self,@SendStatResistance,#type=type,#value=value);
          SendPacket(poSession);
       }
 
       return;
    }
    
-   SendStatResistances()
-   {
-      AddPacket(1,13, 4,user_resist_weapons, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_ALL), 4,-30, 4,100, 4,0);
-      AddPacket(1,14, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_THRUST), 4,-30, 4,100, 4,0);
-      AddPacket(1,15, 4,user_resist_bludgeon, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_BLUDGEON), 4,-30, 4,100, 4,0);
-      AddPacket(1,16, 4,user_resist_slash, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_SLASH), 4,-30, 4,100, 4,0);
-      AddPacket(1,17, 4,user_resist_pierce, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_PIERCE), 4,-30, 4,100, 4,0);
-      AddPacket(1,18, 4,user_resist_magic, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ALL), 4,-30, 4,100, 4,0);
-      AddPacket(1,19, 4,user_resist_fire, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_FIRE), 4,-30, 4,100, 4,0);
-      AddPacket(1,20, 4,user_resist_shock, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_SHOCK), 4,-30, 4,100, 4,0);
-      AddPacket(1,21, 4,user_resist_cold, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_COLD), 4,-30, 4,100, 4,0);
-      AddPacket(1,22, 4,user_resist_acid, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ACID), 4,-30, 4,100, 4,0);
-      AddPacket(1,23, 4,user_resist_holy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_HOLY), 4,-30, 4,100, 4,0);
-      AddPacket(1,24, 4,user_resist_unholy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_UNHOLY), 4,-30, 4,100, 4,0);
-      AddPacket(1,25, 4,user_resist_quake, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_QUAKE), 4,-30, 4,100, 4,0);
-
-      return;
-   }
-   
-   DrawResistance(type=ATCK_WEAP_ALL)
-   {
-      if pbLogged_on
-      {
-         AddPacket(1,BP_STAT,1,2);
-         Send(self,@SendStatResistance,#type=type);
-         SendPacket(poSession);
-      }
-
-      return;
-   }
-   
-   SendStatResistance(type=ATCK_WEAP_ALL)
+   SendStatResistance(type=ATCK_WEAP_ALL, value=0)
    {
       if type = ATCK_WEAP_ALL
       {
-         AddPacket(1,13, 4,user_resist_weapons, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_ALL), 4,-30, 4,100, 4,0);
+         AddPacket(1,13, 4,user_resist_weapons, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = ATCK_WEAP_THRUST
       {
-         AddPacket(1,14, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_THRUST), 4,-30, 4,100, 4,0);
+         AddPacket(1,14, 4,user_resist_thrust, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = ATCK_WEAP_BLUDGEON
       {
-         AddPacket(1,15, 4,user_resist_bludgeon, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_BLUDGEON), 4,-30, 4,100, 4,0);
+         AddPacket(1,15, 4,user_resist_bludgeon, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = ATCK_WEAP_SLASH
       {
-         AddPacket(1,16, 4,user_resist_slash, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_SLASH), 4,-30, 4,100, 4,0);
+         AddPacket(1,16, 4,user_resist_slash, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = ATCK_WEAP_PIERCE
       {
-         AddPacket(1,17, 4,user_resist_pierce, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=ATCK_WEAP_PIERCE), 4,-30, 4,100, 4,0);
+         AddPacket(1,17, 4,user_resist_pierce, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_ALL
       {
-         AddPacket(1,18, 4,user_resist_magic, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ALL), 4,-30, 4,100, 4,0);
+         AddPacket(1,18, 4,user_resist_magic, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_FIRE
       {
-         AddPacket(1,19, 4,user_resist_fire, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_FIRE), 4,-30, 4,100, 4,0);
+         AddPacket(1,19, 4,user_resist_fire, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_SHOCK
       {
-         AddPacket(1,20, 4,user_resist_shock, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_SHOCK), 4,-30, 4,100, 4,0);
+         AddPacket(1,20, 4,user_resist_shock, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_COLD
       {
-         AddPacket(1,21, 4,user_resist_cold, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_COLD), 4,-30, 4,100, 4,0);
+         AddPacket(1,21, 4,user_resist_cold, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_ACID
       {
-         AddPacket(1,22, 4,user_resist_acid, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_ACID), 4,-30, 4,100, 4,0);
+         AddPacket(1,22, 4,user_resist_acid, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_HOLY
       {
-         AddPacket(1,23, 4,user_resist_holy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_HOLY), 4,-30, 4,100, 4,0);
+         AddPacket(1,23, 4,user_resist_holy, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_UNHOLY
       {
-         AddPacket(1,24, 4,user_resist_unholy, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_UNHOLY), 4,-30, 4,100, 4,0);
+         AddPacket(1,24, 4,user_resist_unholy, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
       if type = -ATCK_SPELL_QUAKE
       {
-         AddPacket(1,25, 4,user_resist_quake, 1,STAT_VALUE, 1,STAT_INTEGER,4,Send(self,@GetResistanceValueByType,#type=-ATCK_SPELL_QUAKE), 4,-30, 4,100, 4,0);
+         AddPacket(1,25, 4,user_resist_quake, 1,STAT_VALUE, 1,STAT_INTEGER,4,value, 4,-30, 4,100, 4,0);
       }
 
       return;
@@ -7729,6 +7912,12 @@ messages:
          iFlags = (iFlags & ~USER_YES & ~OFFER_YES);
       }
       
+      if Send(self,@IsPhasedOut)
+      {
+         iFlags = iFlags | LOOK_NO;
+         iFlags = (iFlags & ~MOVEON_NO & ~BATTLER_YES & ~OFFER_YES & ~USER_YES);
+      }
+      
       % Angeled characters cannot block other players
       if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
       {
@@ -8076,7 +8265,7 @@ messages:
       piLastMoveUpdateTime = GetTickCount();
 
       % Eliminate logoff penalty time.  Just easier this way.
-      piLogoffPenaltyTime = 0;
+      Send(self,@RefreshPhaseTimeToBase);
       
       propagate;
    }

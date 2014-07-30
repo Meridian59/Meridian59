@@ -12745,7 +12745,22 @@ messages:
       
       return $;
    }
-   
+
+   GetShieldOverlayHotspot()
+   {
+      local i;
+      
+      for i in plOverlays
+      {
+         if IsClass(i,&Shield)
+         {
+            return Send(i,@GetOverlayHotspot);
+         }
+      }
+
+      return $;
+   }
+
    GetShieldTranslation()
    {  
       local i;

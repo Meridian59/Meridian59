@@ -26,7 +26,7 @@ constants:
    COLOR_YELLOW = 3
 
 resources:
- 
+
    Statue_name_rsc = "statue"
    Statue_desc_rsc = "This is a statue of %q, a great adventurer."
 
@@ -42,7 +42,7 @@ resources:
 
    statue_default_sword = swordov.bgf
    statue_default_shield = rshield.bgf
-   
+
 classvars:
 
 properties:
@@ -68,7 +68,7 @@ properties:
    prWeapon = statue_default_sword
    prShield = statue_default_shield
    prBowTop = $
-   
+
    piIcon_frame = 1
    piLegs_frame = 1
    piLeft_frame = 1
@@ -95,13 +95,13 @@ messages:
 
    ShowDesc()
    {
-      Addpacket(4,vrDesc);
+      AddPacket(4,vrDesc);
       AddPacket(STRING_RESOURCE,Send(poOriginal,@GetTrueName));
 
       return;
    }
 
-   ConstructorSpecial(desc=$, name=$, gender=$, color = 0)
+   ConstructorSpecial(desc=$,name=$,gender=$,color=0)
    {
       local iRand, i, original, tries, lUsers, oUser;
       
@@ -111,44 +111,44 @@ messages:
       }
 
       piColor = color;
-      i = send(SYS,@FindUserByString,#string=name);
+      i = Send(SYS,@FindUserByString,#string=name);
       if i <> $
       {
          %% see if someone with this name exists in the database
          original = i;
-         send(self,@SetStatue,#Original=original);
+         Send(self,@SetStatue,#Original=original);
       }
       else
       {
-         %% no one with this name exists in the database.  Let's grab someone 
+         %% no one with this name exists in the database.  Let's grab someone
          %% of the same gender at random
 
          tries = 0;
-         lUsers = send(SYS,@GetUsers);
+         lUsers = Send(SYS,@GetUsers);
          while tries < 10
          {
             if length(lUsers) >= 1
             {
                iRand = random(1,length(lUsers));
                oUser = nth(lUsers,iRand);
-               if (send(oUser,@getGender) = gender) and not (IsClass(oUser,&DM) and Send(oUser,@IsMorphed))
-               {	    	       
-         	      send(self,@SetStatue,#original=oUser,#name=name);
+               if (Send(oUser,@getGender) = gender) and not (IsClass(oUser,&DM) and Send(oUser,@IsMorphed))
+               {
+                  Send(self,@SetStatue,#original=oUser,#name=name);
 
                   break;
                }
             }
 
             tries = tries + 1;
-         }	 
+         }
 
          %% Last ditch, use defaults.  May be necessary for some statues.
          if poOriginal = $
          {
-            send(self,@SetStatue,#original=first(lUsers),#name=name);
+            Send(self,@SetStatue,#original=First(lUsers),#name=name);
          }
       }
-            
+
       % Now set correct information.
       if name <> $
       {
@@ -160,7 +160,7 @@ messages:
          vrDesc = desc;
       }
 
-      return;      
+      return;
    }
 
    Constructor(original = $, default = FALSE,desc = $,special=FALSE, specialname = $, specialgender = GENDER_MALE)
@@ -169,7 +169,7 @@ messages:
       
       if special
       {
-         send(self,@ConstructorSpecial,#desc=desc,#name=specialname,#gender=specialgender,#color = special);
+         Send(self,@ConstructorSpecial,#desc=desc,#name=specialname,#gender=specialgender,#color = special);
 
          propagate;
       }
@@ -178,15 +178,15 @@ messages:
       
       if default
       {
-         if send(SYS,@GetUsers) <> $
+         if Send(SYS,@GetUsers) <> $
          {
-            original = first(send(SYS,@GetUsers));
+            original = First(Send(SYS,@GetUsers));
          }
       }
 
       if original <> $
       {
-         send(self,@SetStatue,#Original=original);
+         Send(self,@SetStatue,#Original=original);
          vrName = Statue_name_rsc;
          piGender = Send(original,@GetGender);
       }
@@ -204,11 +204,11 @@ messages:
    ResetFrames()
    {
       if piPose = POSE_PUNCH
-      {	 
+      {
          piIcon_frame = 4;
          piLeft_frame = 6;
          piRight_frame = 14;
-         piLegs_frame = 6; 
+         piLegs_frame = 6;
          piOverlays = 8;
          if prShield <> $
          {
@@ -222,8 +222,8 @@ messages:
          piIcon_frame = 1;
          piLeft_frame = 8;
          piRight_frame = 11;
-         piLegs_frame = 1; 
-         piOverlays = 8;         
+         piLegs_frame = 1;
+         piOverlays = 8;
       }
 
       if piPose = POSE_NONE
@@ -231,12 +231,20 @@ messages:
          piIcon_frame = 1;
          piLeft_frame = 1;
          piRight_frame = 1;
-         piLegs_frame = 1; 
-         piOverlays = 8;         
+         piLegs_frame = 1;
+         piOverlays = 8;
 
          if prShield <> $
          {
-            piShield_frame = 2;
+            if piShield_hotspot = HS_SHIELD_BACK
+            {
+               piShield_frame = 1;
+            }
+            else
+            {
+               piShield_frame = 2;
+            }
+
             piLeft_frame = 7;
             piOverlays = piOverlays + 1;
          }
@@ -262,14 +270,14 @@ messages:
       {
          if prWeapon = $
          {
-            send(self,@ResetPose,#pose=POSE_PUNCH);
+            Send(self,@ResetPose,#pose=POSE_PUNCH);
 
             return;
          }
 
          if prBowTop <> $
          {
-            send(self,@ResetPose,#pose=POSE_BOW_ATTACK);
+            Send(self,@ResetPose,#pose=POSE_BOW_ATTACK);
 
             return;
          }
@@ -277,8 +285,8 @@ messages:
          piIcon_frame = 3;
          piLeft_frame = 5;
          piRight_frame = 5;
-         piLegs_frame = 6; 
-         piOverlays = 9;         
+         piLegs_frame = 6;
+         piOverlays = 9;
 
          if prShield <> $
          {
@@ -293,7 +301,7 @@ messages:
       {
          if prBowTop = $
          {
-            send(self,@ResetPose,#pose=POSE_CAST);
+            Send(self,@ResetPose,#pose=POSE_CAST);
 
             return;
          }
@@ -301,13 +309,20 @@ messages:
          piIcon_frame = 5;
          piLeft_frame = 9;
          piRight_frame = 16;
-         piLegs_frame = 7; 
-         piOverlays = 10;         
+         piLegs_frame = 7;
+         piOverlays = 10;
          piWeapon_frame = 1;
 
          if prShield <> $
          {
-            piShield_frame = 2;
+            if piShield_hotspot = HS_SHIELD_BACK
+            {
+               piShield_frame = 5;
+            }
+            else
+            {
+               piShield_frame = 2;
+            }
             piOverlays = piOverlays + 1;
          }
       }
@@ -318,23 +333,23 @@ messages:
    ResetPose(pose=0)
    {
       piPose = pose;
-      send(self,@ResetFrames);
+      Send(self,@ResetFrames);
 
       if poOriginal = $
       {
          return;
       }
 
-      piIcon_translation = send(poOriginal,@GetBodyTranslation);         
-      piLegs_translation = send(poOriginal,@GetLegsTranslation);         
-      piArms_translation = send(poOriginal,@GetArmsTranslation);         
-      piHair_translation = send(poOriginal,@getHairColor);
-      piSkin_Translation = send(poOriginal,@GetSkinColor);      
+      piIcon_translation = Send(poOriginal,@GetBodyTranslation);
+      piLegs_translation = Send(poOriginal,@GetLegsTranslation);
+      piArms_translation = Send(poOriginal,@GetArmsTranslation);
+      piHair_translation = Send(poOriginal,@getHairColor);
+      piSkin_Translation = Send(poOriginal,@GetSkinColor);
 
-      piExpression = send(poOriginal,@GetExpression);         
+      piExpression = Send(poOriginal,@GetExpression);
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
 
       return;
@@ -427,8 +442,8 @@ messages:
    }
 
    SetStatue(original = $)
-   {      
-      local oWeapon, oShield;
+   {
+      local oWeapon;
 
       if original = $ OR NOT IsClass(original,&User)
       {
@@ -439,43 +454,42 @@ messages:
       piPose = random(1,4);
       vrName = Statue_name_rsc;
 
-      vrIcon = send(poOriginal,@GetIcon,#trueicon=TRUE);
-      prLeft_arm = send(poOriginal,@GetLeftArmRsc);
-      prRight_arm = send(poOriginal,@GetRightArmRsc);
-      prLegs = send(poOriginal,@GetLegsRsc);
+      vrIcon = Send(poOriginal,@GetIcon,#trueicon=TRUE);
+      prLeft_arm = Send(poOriginal,@GetLeftArmRsc);
+      prRight_arm = Send(poOriginal,@GetRightArmRsc);
+      prLegs = Send(poOriginal,@GetLegsRsc);
 
-      prHead = send(poOriginal,@GetHeadRsc);      
-      prEyes = send(poOriginal,@GetEyesRsc);
-      prMouth = send(poOriginal,@GetMouthRsc);
-      prNose = send(poOriginal,@GetNoseRsc);
-      prToupee = send(poOriginal,@GetHairRsc);
-      send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
+      prHead = Send(poOriginal,@GetHeadRsc);
+      prEyes = Send(poOriginal,@GetEyesRsc);
+      prMouth = Send(poOriginal,@GetMouthRsc);
+      prNose = Send(poOriginal,@GetNoseRsc);
+      prToupee = Send(poOriginal,@GetHairRsc);
+      Send(self,@ValidateGraphics,#gender=Send(poOriginal,@GetGender));
 
-      oWeapon = send(poOriginal,@LookUpPlayerWeapon);
+      oWeapon = Send(poOriginal,@LookUpPlayerWeapon);
 
-      prShield = send(poOriginal,@GetShieldRsc);
+      prShield = Send(poOriginal,@GetShieldRsc);
       if prShield <> $
       {
-         oShield = Send(poOriginal, @LookupPlayerShield);
-         piShield_hotspot = Send(oShield, @GetOverlayHotspot);
+         piShield_hotspot = Send(poOriginal,@GetShieldOverlayHotspot);
       }
 
-      prBowTop = $; 
-      if oWeapon <> $ AND isClass(oWeapon,&RangedWeapon)
+      prBowTop = $;
+      if oWeapon <> $ AND IsClass(oWeapon,&RangedWeapon)
       {
-         prBowTop = send(oWeapon,@GetSecondOverlay);
+         prBowTop = Send(oWeapon,@GetSecondOverlay);
       }
 
       if oWeapon <> $
-      {  
-         prWeapon = send(oWeapon,@GetOverlay);  
+      {
+         prWeapon = Send(oWeapon,@GetOverlay);
       }
       else
       {
          prWeapon = $;
       }
-      
-      send(self,@ResetPose,#pose=piPose);
+
+      Send(self,@ResetPose,#pose=piPose);
 
       return;
    }
@@ -496,22 +510,22 @@ messages:
    {
       local i,iOverlays,hotspot,iLeft_group,iRight_group,iSkin_xlat, iArms_xlat;
 
-      % Send overlay bitmap info to user.  
+      % Send overlay bitmap info to user.
 
-      % Player has 8 standard overlays: right arm, left arm, legs, head, eyes, 
+      % Player has 8 standard overlays: right arm, left arm, legs, head, eyes,
       % mouth, nose, hair
-      
+
       %% number of overlays
       AddPacket(1, piOverlays);
 
-      %% left hand      
+      %% left hand
       AddPacket(4,prLeft_arm,1,HS_LEFT_HAND);
       if piArms_translation <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piArms_translation);
-      }      
+      }
 
-      AddPacket(1,ANIMATE_NONE,2,piLeft_frame);  
+      AddPacket(1,ANIMATE_NONE,2,piLeft_frame);
 
       %% right hand
       AddPacket(4,prRight_arm,1,HS_RIGHT_HAND);
@@ -520,16 +534,16 @@ messages:
          AddPacket(1,ANIMATE_TRANSLATION,1,piArms_translation);
       }
 
-      AddPacket(1,ANIMATE_NONE,2,piRight_frame);  
+      AddPacket(1,ANIMATE_NONE,2,piRight_frame);
 
       %% legs
       AddPacket(4,prLegs,1,HS_LEGS);
       if piLegs_translation <> 0
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piLegs_translation);
-      }      
+      }
 
-      AddPacket(1,ANIMATE_NONE,2,piLegs_frame);  
+      AddPacket(1,ANIMATE_NONE,2,piLegs_frame);
 
       %% face
       iSkin_xlat = piSkin_translation;
@@ -547,9 +561,9 @@ messages:
          if piShield_translation <> 0
          {
             AddPacket(1,ANIMATE_TRANSLATION,1,piShield_translation);
-         }      
+         }
 
-         AddPacket(1,ANIMATE_NONE,2,piShield_frame);  
+         AddPacket(1,ANIMATE_NONE,2,piShield_frame);
       }
 
       if prWeapon <> $ AND (piPose <> POSE_CAST AND piPose <> POSE_PUNCH)
@@ -561,17 +575,17 @@ messages:
             if piWeapon_translation <> 0
             {
                AddPacket(1,ANIMATE_TRANSLATION,1,piWeapon_translation);
-            }      
+            }
 
-            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);  
+            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);
             AddPacket(4,prBowTop,1,HS_TOP_BOW);
 
             if piWeapon_translation <> 0
             {
-	            AddPacket(1,ANIMATE_TRANSLATION,1,piWeapon_translation);
-            }      
+               AddPacket(1,ANIMATE_TRANSLATION,1,piWeapon_translation);
+            }
 
-            AddPacket(1,ANIMATE_NONE,2,PiWeapon_frame);              
+            AddPacket(1,ANIMATE_NONE,2,PiWeapon_frame);
          }
          else
          {
@@ -589,8 +603,8 @@ messages:
             {
                AddPacket(1,ANIMATE_TRANSLATION,1,piWeapon_translation);
             }
-      
-            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);  
+
+            AddPacket(1,ANIMATE_NONE,2,piWeapon_frame);
          }
       }
 

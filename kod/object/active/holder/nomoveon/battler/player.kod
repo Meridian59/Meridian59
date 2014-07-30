@@ -6969,7 +6969,7 @@ messages:
 
    CalculateKarmaChangeFromKill( karma_killer = 0, karma_victim = 0, bIsMob = FALSE )
    {
-      local iChange, iSwing, oRoom;
+      local iChange, iSwing, oRoom, oSpellDeathLink;
 
       % No karma changes from killing players during Frenzies.
       % Also, no Karma change from event monsters: Xeos and admin-spawned.
@@ -6989,6 +6989,13 @@ messages:
 
       % No karma changes from killing neutral monsters.
       if bIsMob AND karma_victim = NEUTRAL
+      {
+         return 0;
+      }
+
+      % Death link prevents karma changes
+      oSpellDeathLink = Send(SYS,@FindSpellByNum,#num=SID_DEATH_LINK);
+      if Send(self,@IsEnchanted,#what=oSpellDeathLink)
       {
          return 0;
       }
@@ -8075,11 +8082,19 @@ messages:
 
    SomethingKilled(what=$,victim=$,use_weapon=$)
    {
-      local i, bGained, bGainedCharge;
+      local i, bGained, bGainedCharge, oSpellDeathLink;
 
       if NOT IsClass(victim,&Battler)
       {
          propagate;
+      }
+
+      % If we have death link up, give a vigor boost
+      oSpellDeathLink = Send(SYS,@FindSpellByNum,#Num=SID_DEATH_LINK);
+
+      if Send(self,@IsEnchanted,#what=oSpellDeathLink)
+      {
+         Send(oSpellDeathLink,@GiveKilledBenefits,#Caster=self,#Victim=victim);
       }
 
       % Let our recharging rods know we killed something.

@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
 resources:
-  
+
    OrcPitBossBody_name_rsc = "body of the orc pit boss"
    OrcPitBossBody_live_name = "orc pit boss"
    OrcPitBossBody_icon_rsc = OrcPitbX.bgf
@@ -60,7 +60,7 @@ classvars:
 
    vrMonster_healing = OrcPitBossBody_monster_healing
 
-properties:  
+properties:
 
 messages:
 
@@ -68,12 +68,12 @@ messages:
    {
       local oHead;
 
-      if poOwner <>$
+      if poOwner <> $
       {
          oHead = Create(&OrcPitBossHead,#corpse=corpse);
          Send(poOwner,@NewHold,#what=oHead,
-              #new_row=send(self,@GetRow),#new_col=send(self,@getCol),
-	           #fine_row=send(self,@GetFineRow),#fine_col=send(self,@GetFineCol));
+               #new_row=Send(self,@GetRow),#new_col=Send(self,@GetCol),
+               #fine_row=Send(self,@GetFineRow),#fine_col=Send(self,@GetFineCol));
       }
 
       propagate;
@@ -81,7 +81,7 @@ messages:
 
    GetMaxHitPoints()
    {
-      return 100;      
+      return 100;
    }
 
    SendAnimation()
@@ -99,6 +99,11 @@ messages:
    CanEvilTwin()
    {
       return FALSE;
+   }
+
+   CanGetMe()
+   {
+      return TRUE;
    }
 
 end

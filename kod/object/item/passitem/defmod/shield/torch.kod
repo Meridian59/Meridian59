@@ -65,11 +65,11 @@ properties:
 
 messages:
 
-   NewUsed(what = $)
+   NewUsed(what=$)
    {
       if ptBurn <> $
       {
-         DEBUG("Torch",self,"got used when already has timer");
+         Debug("Torch",self,"got used when already has timer");
          DeleteTimer(ptBurn);
       }
 
@@ -87,15 +87,11 @@ messages:
       propagate;
    }
 
-   NewUnused(what = $)
+   NewUnused(what=$)
    {
       local oUsing,i;
 
-      if ptBurn = $
-      {
-         DEBUG("Torch",self,"got unused when has no timer");
-      }
-      else
+      if ptBurn <> $
       {
          DeleteTimer(ptBurn);
          ptBurn = $;
@@ -116,7 +112,7 @@ messages:
          if piHits = 0
          {
             Send(poOwner,@MsgSendUser,#message_rsc=torch_dead_rsc);
-            post(self,@Delete);
+            Post(self,@Delete);
          }
       }
       
@@ -143,8 +139,8 @@ messages:
       if piHits = 0
       {
          Send(poOwner,@MsgSendUser,#message_rsc=torch_dead_rsc);
-         send(self,@NewUnused,#what=poOwner);
-         post(self,@Delete);
+         Send(self,@NewUnused,#what=poOwner);
+         Post(self,@Delete);
 
          return;
       }
@@ -162,7 +158,7 @@ messages:
    }
 
    % Torches don't allow you to use block.
-   GetBlockAbility(who = $)
+   GetBlockAbility(who=$)
    {
       return 0;
    }
@@ -172,7 +168,7 @@ messages:
       return HS_LEFT_WEAPON;
    }
 
-   SendOverlayInformation(iAnimation = $)
+   SendOverlayInformation(iAnimation=$)
    {
       AddPacket(4,vrShield_Overlay);
       AddPacket(1,HS_LEFT_WEAPON);
@@ -279,7 +275,7 @@ messages:
    % Gives a bonus to Faren spells since it's firey!
    GetBaseSpellModifier(oSpell=$)
    {
-      if oSpell <> $ AND send(oSpell,@GetSchool) = SS_FAREN
+      if oSpell <> $ AND Send(oSpell,@GetSchool) = SS_FAREN
       {
          return 10;
       }

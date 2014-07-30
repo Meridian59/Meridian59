@@ -1969,15 +1969,7 @@ messages:
       % Restart Health and Mana timers
       Send(self,@NewHealth);
       Send(self,@NewMana);
- 
-      % Add second wind icon if timer still active
-      if ptSecondWind <> $
-      {
-      Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
-            #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
-      }
-      
-      
+
       Send(self,@SendUserAllWindowOverlays);
 
       if Send(SYS,@GetParliament)<>$
@@ -3364,7 +3356,13 @@ messages:
             Send(self,@ShowAddEnchantment,#what=each_obj,#type=ENCHANTMENT_PLAYER);
          }
       }
-      
+
+      if ptSecondWind <> $
+      {
+         Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
+            #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
+
       return;
    }
 
@@ -4152,7 +4150,7 @@ messages:
       if what = $
          OR piFaction = FACTION_NEUTRAL
          OR what = self
-         OR Send(poOwner,@IsArena)
+         OR (poOwner <> $ AND Send(poOwner,@IsArena))
          OR Send(SYS,@GetChaosNight)
       {
          return TRUE;
@@ -5006,25 +5004,24 @@ messages:
          }
       }
 
-      Send(self,@LoseHealth,#amount=damage);	  
-	     
-	  if IsClass(what,&Monster)
-         OR IsClass(what,&Necklace)
-         OR IsClass(what,&WeapAttPunisher)		 
-	  {
-	     RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
-	  }
-	  else
-	  {
+      Send(self,@LoseHealth,#amount=damage);
+
+      if IsClass(what,&Monster)
+      {
+         RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_monster_attack_string);
+      }
+
+      if IsClass(what,&Player)
+      {
          oWeapon = Send(what,@GetWeapon);
-	     if oWeapon <> $
-	     {
+         if oWeapon <> $
+         {
             RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,Send(Send(what,@GetWeapon),@GetTrueName));
-	     }
-	     else
-	     {
+         }
+         else
+         {
             RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),Send(what,@GetTrueName),aspell,atype,damage,origdamage,player_no_weapon_string);
-	     }
+         }
       }
 
       if piHealth <= 0

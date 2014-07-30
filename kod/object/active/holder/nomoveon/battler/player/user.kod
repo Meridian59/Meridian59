@@ -1347,7 +1347,7 @@ messages:
       {
          if Nth(client_msg,2) <> ENCHANTMENT_PLAYER
          {
-            Debug(self,"user got BP_SEND_ENCHANTMENTS with bad type",
+            Debug(self," user ",Send(self,@GetName),"got BP_SEND_ENCHANTMENTS with bad type",
                   Nth(client_msg,2));
             
             return;

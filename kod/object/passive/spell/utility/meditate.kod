@@ -143,10 +143,10 @@ messages:
                {
                   iGain = 99 - iPercent;
                }
-               
-               send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
+
                send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,#parm1=sSpell,#parm2=iGain);
                Send(who,@ChangeSpellAbility,#spell_num=iNum,#amount=iGain,#report=FALSE);
+               send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
                if iGain*iRatio > random(0,99)
                {
                   Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,#report=TRUE);
@@ -187,10 +187,10 @@ messages:
                {
                   iGain = 99 - iPercent;
                }
-               
-               send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
+
                send(who,@MsgSendUser,#message_rsc=Meditate_cast_success,#parm1=sSkill,#parm2=iGain);
                Send(who,@ChangeSkillAbility,#Skill_num=iNum,#amount=iGain,#report=FALSE);
+               send(who,@AddTrainingPoints,#points=(-iGain*iRatio));
                if iGain*iRatio > random(0,99)
                {
                   Send(who,@ChangeSpellAbility, #spell_num=vispell_Num,#amount=1,#report=TRUE);

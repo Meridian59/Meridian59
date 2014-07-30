@@ -205,6 +205,8 @@ resources:
    
    player_training_inform =  "You now have ~B%i~B training points!"
    player_reached_maxtraining = "You now have ~B1000~B training points and can not advance any further!  Meditate to use them!"
+   player_gained_training = "You have gained ~B%i~B training points!"
+   player_spent_training = "You have spent ~B%i~B training points!"
    player_logon_bonus =  "You have received your daily training bonus of ~B%i~B points!  Come back tomorrow for more!"
    player_nologon_bonus =  "Welcome back!  Log in again tomorrow to receive some bonus training points!"
 
@@ -4981,7 +4983,7 @@ messages:
          % Allow protective spells a chance to improve when they take effect!
          for i in plPassiveImprovement
          {
-            if (aspell & Nth(i,4)) AND random(1,10) = 10
+            if (aspell & -Nth(i,4)) AND random(1,10) = 10
             {
                Send(First(i),@ImproveAbility,#who=self,#target=what);
             }
@@ -8408,14 +8410,26 @@ messages:
       return piTraining_points;
    }
 
-   AddTrainingPoints(points=0)
+   AddTrainingPoints(points=0,report=TRUE)
    {
       if points = 0
       {
          return;
       }
-   
-      piTraining_points = bound(piTraining_points + points,0,1000);
+
+      points = bound(points,$,1000 - piTraining_points);
+
+      if report AND points > 0
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_gained_training,#parm1=points);
+      }
+
+      if report AND points < 0
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_spent_training,#parm1=-points);
+      }
+
+      piTraining_points = piTraining_points + points;
 
       if piTraining_points < 1000
       {

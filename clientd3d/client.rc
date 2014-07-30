@@ -67,6 +67,7 @@ BEGIN
             BEGIN
                 MENUITEM "Getragene Gegenstände",       3042
                 MENUITEM "Ausgewählte Gegenstände",     3027
+                MENUITEM "Magische Gegenstände",        3513
             END
             POPUP "Fensterbalken"
             BEGIN
@@ -795,6 +796,7 @@ BEGIN
             BEGIN
                 MENUITEM "&Normal items",               ID_COLOR_LIST
                 MENUITEM "&Selected items",             ID_COLOR_LISTSEL
+                MENUITEM "&Magic items",                ID_COLOR_MAGIC
             END
             POPUP "Bar graphs"
             BEGIN

@@ -11,20 +11,19 @@
 ItemAttBonded is ItemAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item is bonded to a player.
-% 
-%  Form is: 
+%   This item is bonded to a player.
 %
-%   [IA_BONDED, oPlayer]
+%   Form is:
 %
-%  oPlayer::the player to which this item is bonded.
+%      [IA_BONDED, oPlayer]
+%
+%      oPlayer::the player to which this item is bonded.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -38,7 +37,7 @@ classvars:
 properties:
 
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
@@ -46,9 +45,9 @@ messages:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
    InitiallyIdentified(random_gen=FALSE)
-   {            
+   {
       return TRUE;
-   }   
+   }
 
    ItemCanIdentify()
    {
@@ -88,9 +87,9 @@ messages:
          Send(Nth(lData,2),@ClearBondedItem);
       }
       Send(oItem,@RemoveAttributeSpecifics,#oItemAtt=self,#ItemAtt=viItem_Att_num);
-      
+
       return;
-   }   
+   }
 
    AddEffects(oItem=$,lData=$,oPlayer=$)
    "AddEffects, in general, does anything that is triggered upon creation, "
@@ -149,6 +148,11 @@ messages:
       Addpacket(4,Send(oItem,@GetName));
       return;
    }
-   
+
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

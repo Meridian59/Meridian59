@@ -11,12 +11,12 @@
 ItemAttAppendDescription is ItemAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item has extra text appended to its standard description.
-% 
-%  Form is: 
+%   This item has extra text appended to its standard description.
 %
-%   	[IA_APPEND_DESCRIPTION, sDesc_string]
-%	
+%   Form is:
+%
+%      [IA_APPEND_DESCRIPTION, sDesc_string]
+%
 %  sDesc_string::the extra description to be appended to the item's
 %                 normal description.
 %
@@ -24,7 +24,7 @@ ItemAttAppendDescription is ItemAttribute
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -36,17 +36,17 @@ classvars:
 properties:
 
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    ItemCanIdentify()
    {
       return FALSE;
-   }	
+   }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
@@ -74,7 +74,8 @@ messages:
 
    AppendDesc(oItem=$)
    {
-      AppendTempString(Nth(Send(oItem,@GetAttributeData,#ItemAtt=IA_APPEND_DESCRIPTION),3));
+      AppendTempString(Nth(Send(oItem,@GetAttributeData,
+            #ItemAtt=IA_APPEND_DESCRIPTION),3));
       return;
    }
 
@@ -93,6 +94,6 @@ messages:
    {
       return FALSE;
    }
-  
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

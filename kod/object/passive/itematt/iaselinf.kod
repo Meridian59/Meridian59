@@ -12,13 +12,13 @@ ItemAttSellInfo is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item has a special message which shopkeepers will say when it is sold.
-% 
-%  Form is: 
+%   This item has a special message which shopkeepers will say when it is sold.
 %
-%   	[IA_SELL_INFO, sMessage_string]
-%	
-%  sMessage_string::the message that a mob says when s/he sells this to a player.
+%  Form is:
+%
+%     [IA_SELL_INFO, sMessage_string]
+%
+%   sMessage_string::the message that a mob says when s/he sells this to a player.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -27,7 +27,7 @@ constants:
    include blakston.khd   
 
 resources:
-    
+
 
 classvars:
 
@@ -35,7 +35,7 @@ classvars:
 
 properties:
 
-  
+
 messages:
 
    SetPrimaryState(state1=$)
@@ -58,7 +58,7 @@ messages:
    {
       return FALSE;
    }
-   
+
    CanBeSpoofed()
    {
       return FALSE;
@@ -70,9 +70,9 @@ messages:
    }
 
    InitiallyIdentified(random_gen=FALSE)
-   {            
+   {
       return TRUE;
-   }   
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

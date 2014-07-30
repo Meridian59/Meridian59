@@ -12,20 +12,20 @@ ItemAttTranscendant is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item will remain in your inventory, even if you die.
-% 
-%  Form is: 
+%   This item will remain in your inventory, even if you die.
 %
-%   	[IA_TRANSCENDANT]
-%	
+%   Form is:
+%
+%      [IA_TRANSCENDANT]
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
- 
+
    itematttranscendant_desc = " It glows with a soft, white light."
    itematttranscendant_name = "transcendant %s"
 
@@ -36,7 +36,7 @@ classvars:
    viItem_Att_Num = IA_TRANSCENDANT
    vrDesc = itematttranscendant_desc
    vrName = itematttranscendant_name
-   
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Value Functions
@@ -51,13 +51,18 @@ properties:
 
    piValue_modifier = 150
    piValue_power_modifier = 0
-  
+
 messages:
 
    ItemDropOnDeath()
    {
-      return FALSE; 
+      return FALSE;
    }
- 
-end  
+
+   IsMagicalEffect()
+   {
+      return TRUE;
+   }
+
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

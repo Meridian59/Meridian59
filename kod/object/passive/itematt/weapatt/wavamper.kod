@@ -12,12 +12,12 @@ WeapAttVamper is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This weapon steals life away from the target, bit by bit.
+%   This weapon steals life away from the target, bit by bit.
 %
-%  Form is: 
+%   Form is:
 %
-%       [ WA_Vamper]
-%   
+%      [ WA_Vamper]
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
@@ -26,12 +26,15 @@ constants:
 
 resources:
 
-   weapattVamper_desc = "  An unholy glow seems to suck all life from the air around the weapon."      
+   weapattVamper_desc = \
+      "  An unholy glow seems to suck all life from the air around the weapon."
    Vamper_dm = "Vamper"
    Vamper_fail_use = "You are not ready to use %s%s."
-   Vamper_fail_use_karma = "You are not unholy enough to wield this despotic thing."
+   Vamper_fail_use_karma = \
+      "You are not unholy enough to wield this despotic thing."
    vamper_worked = "%s%s shudders as %s life is sucked away!"
-   vamper_worked_target = "%s%s seems enervated as the metal of %s weapon touches your flesh!"
+   vamper_worked_target = \
+      "%s%s seems enervated as the metal of %s weapon touches your flesh!"
 
 classvars:
 
@@ -44,19 +47,19 @@ classvars:
    vrDM_trigger = Vamper_dm
 
 properties:
-  
+
    piValue_modifier = 200   %% modify the object's price by 100%
    piValue_power_modifier = 10
    piEffect_percent = 10
 
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
+
    ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of blinding target with any hit."
    {
@@ -65,13 +68,11 @@ messages:
       {
          Send(wielder,@GainHealth,#amount=Bound(damage,0,8));
          Send(wielder,@MsgSendUser,#message_rsc=vamper_worked,
-            #parm1=send(target,@GetCapDef),#parm2=Send(target,@GetName),
-            #parm3=send(target,@GetHisHer));
+               #parm1=send(target,@GetCapDef),#parm2=Send(target,@GetName),
+               #parm3=send(target,@GetHisHer));
          Send(target,@MsgSendUser,#message_rsc=vamper_worked_target,
-            #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName),
-            #parm3=Send(wielder,@GetHisHer));
-
-
+               #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName),
+               #parm3=Send(wielder,@GetHisHer));
       }
 
       return Damage;
@@ -84,17 +85,22 @@ messages:
       {
          Send(oPlayer,@MsgSendUser,#message_rsc=Vamper_fail_use_karma);
 
-         return FALSE;       
+         return FALSE;
       }
-      
+
       if Send(oItem,@GetProf,#who=oPlayer) < 50      
       {
          Send(oPlayer, @MsgSendUser, #message_rsc = Vamper_fail_use,
-            #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
+               #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
 
-         return FALSE;  %% this person needs 50% in the weapon's proficiency to use
+         return FALSE;  %% This person needs 50% in the weapon's proficiency to use
       }
 
+      return TRUE;
+   }
+
+   IsMagicalEffect()
+   {
       return TRUE;
    }
 

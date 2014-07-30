@@ -13,25 +13,25 @@ WeaponAttribute is ItemAttribute
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  Weapon Attributes, added 5 March 97 by Damion Schubert
 %
-%  The difference between a weapon attribute and an item attribute is simply
-%     that these are affects that only affect weapons, and attempting to bind
-%     them to a non-weapon will fail.  Examples include:
-%       * Changing the attack type
-%       * Poisoned weapons
-%       * Splintering Weapons
-%  Note also that many Weapon Attributes affect hit percentages and damage
-%     amounts.  This, in fact, is a common usage of Weapon Attributes.  However,
-%     this is more rare for item attributes.  If an item modifies damage or
-%     hit percentage, that item needs to be added to the player's AttMod list.
-%     Weapons do not.
+%   The difference between a weapon attribute and an item attribute is simply
+%   that these are affects that only affect weapons, and attempting to bind
+%   them to a non-weapon will fail.  Examples include:
+%      * Changing the attack type
+%      * Poisoned weapons
+%      * Splintering Weapons
+%   Note also that many Weapon Attributes affect hit percentages and damage
+%   amounts.  This, in fact, is a common usage of Weapon Attributes.  However,
+%   this is more rare for item attributes.  If an item modifies damage or
+%   hit percentage, that item needs to be added to the player's AttMod list.
+%   Weapons do not.
 %
-%  See item.kod for notes on implementation and structure used for ItemAtts
-%     on a per item basis.
+%   See item.kod for notes on implementation and structure used for ItemAtts
+%   on a per item basis.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -45,16 +45,16 @@ resources:
    weapatt_severe = "a severe"
    weapatt_enormous = "an enormous"
    weapatt_crushing = "a crushing"
-      
+
 classvars:
 
    vrDesc2 = $
    viDamage_bonus = 0
 
 properties:
-  
+
 messages:
-     
+
    SetItemsToAttribute()
    {
       % This is used by the weapon attribute when trestype decides
@@ -126,14 +126,14 @@ messages:
       iNumber = 0;
       while (iRoll_number > 0)
       {
-         iRand = Random(1,100);
-         if iRand > iNumber 
+         iRand = Random(1,99);
+         if iRand > iNumber
          {
             iNumber = iRand;
          }
          iRoll_number = iRoll_number - 1;
       }
-      
+
       % this should give us the highest value of 1,2, or 3 rolls.
       % now find the power given by this value.
 
@@ -144,10 +144,11 @@ messages:
       iSum = jIndex;
 
       % Count is the final bonus for the weapon, 0-9
-      iCount = 0;  
-      
+      iCount = 0;
+
+
       while (iCount < 10)
-      {         
+      {
          if iNumber < iSum
          {
             return iCount;
@@ -157,13 +158,14 @@ messages:
          jIndex = jIndex - 2;
          iSum = iSum + jIndex;
       }
-      
+
       Debug("Shouldn't have gotten here!");
+
       return 0;             %% if we somehow get here, return a wimp value.
    }
 
    DecipherDamageFromPower(iPower=-1)
-   {      
+   {
       if iPower = -1 
       {
          Debug("Invalid Data, must pass a power to this");
@@ -171,18 +173,19 @@ messages:
          return;
       }
 
-      if iPower = 0  { return 0; }      
-      if iPower = 1  { return 1; }      
-      if iPower = 2  { return 0; }      
-      if iPower = 3  { return 1; }      
-      if iPower = 4  { return 2; }      
-      if iPower = 5  { return 1; }      
-      if iPower = 6  { return 2; }      
-      if iPower = 7  { return 0; }      
-      if iPower = 8  { return 2; }      
-      if iPower = 9  { return 3; }      
+      if iPower = 0  { return 0; }
+      if iPower = 1  { return 1; }
+      if iPower = 2  { return 0; }
+      if iPower = 3  { return 1; }
+      if iPower = 4  { return 2; }
+      if iPower = 5  { return 1; }
+      if iPower = 6  { return 2; }
+      if iPower = 7  { return 0; }
+      if iPower = 8  { return 2; }
+      if iPower = 9  { return 3; }
 
       Debug("invalid power data!");
+
       return 0;
    }
 
@@ -195,18 +198,19 @@ messages:
          return;
       }
 
-      if iPower = 0  { return 50; }      
-      if iPower = 1  { return 0; }      
-      if iPower = 2  { return 100; }      
-      if iPower = 3  { return 50; }      
-      if iPower = 4  { return 0; }      
-      if iPower = 5  { return 100; }      
-      if iPower = 6  { return 50; }      
-      if iPower = 7  { return 150; }      
-      if iPower = 8  { return 100; }      
-      if iPower = 9  { return 0; }      
+      if iPower = 0  { return 50; }
+      if iPower = 1  { return 0; }
+      if iPower = 2  { return 100; }
+      if iPower = 3  { return 50; }
+      if iPower = 4  { return 0; }
+      if iPower = 5  { return 100; }
+      if iPower = 6  { return 50; }
+      if iPower = 7  { return 150; }
+      if iPower = 8  { return 100; }
+      if iPower = 9  { return 0; }
 
       Debug("invalid power data!");
+
       return 0;
    }
 
@@ -240,8 +244,7 @@ messages:
    {
       return hitroll;
    }
-   
-   
+
    %%% Infrastructure (Adding and removing a ItemAtt from an item.)
 
    AppendDesc(oItem=$,lData=$,iFakeData=0,iFakePower=0)
@@ -250,7 +253,7 @@ messages:
       if vrDesc2 <> $
       {
          AppendTempString(vrDesc);
-      
+
          if lData = $
          {
             iPower = iFakePower;
@@ -262,10 +265,10 @@ messages:
 
          AppendTempString(Send(self,@GetPowerDesc,#iPower = iPower));
          AppendTempString(vrDesc2);
-         
+
          return;
       }
-      
+
       propagate;
    }
 
@@ -278,6 +281,6 @@ messages:
 
       return FALSE;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -15,19 +15,19 @@ WeapAttPurger is WeaponAttribute
 %  This weapon has a chance to purge positive enchantments from the 
 %     opponent every time it does damage.
 %
-%  Form is: 
+%   Form is:
 %
-%       [ WA_PURGER]
-%	
+%      [ WA_PURGER]
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
-   weapattpurger_desc = " The sign of Psychochild is engraved on the weapon."      
+   weapattpurger_desc = " The sign of Psychochild is engraved on the weapon."
    purger_fail_use = "You are not yet ready to use %s%s."
    purger_worked_user = "Your weapon tears at the magic surrounding %s%s."
    purger_worked_target = "%s%s's weapon tears at the magic surrounding you!"
@@ -46,7 +46,7 @@ classvars:
    vbAppears_in_Happyland = FALSE
 
 properties:
-  
+
    piValue_modifier = 200   %% modify the object's price by 100%
    piValue_power_modifier = 10
    piEffect_percent = 15
@@ -61,15 +61,14 @@ messages:
          Send(oPlayer,@MsgSendUser,#message_rsc=purger_fail_use,
               #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
 
-         return FALSE;      
+         return FALSE;
       }
-      
+
       return TRUE;
    }
 
-  
    %%% Effect Functions
-      
+
    ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder has a 1% chance of purging target with any hit."
    {
@@ -87,16 +86,21 @@ messages:
             {
                % Only tell our victim if they lost enchantments.
                Send(target,@MsgSendUser,#message_rsc=purger_worked_target,
-                    #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName));
+                     #parm1=Send(wielder,@GetCapDef),#parm2=Send(wielder,@GetName));
             }
 
             % Tell the wielder every time we fired so they think it's cool.
             Send(wielder,@MsgSendUser,#message_rsc=purger_worked_user,
-                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+                  #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
       }
 
       return damage;
+   }
+
+   IsMagicalEffect()
+   {
+      return TRUE;
    }
 
 end

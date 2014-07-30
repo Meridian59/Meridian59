@@ -12,15 +12,15 @@ WeapAttPunisher is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This weapon has a 2x bonus against murderers, 1.5x bonus against outlaws,
-%    and a -1x bonus against all other players.
-%  Also, outlaws and murderers may not wield this weapon.  They get wounded
-%    if they try.
+%   This weapon has a 2x bonus against murderers, 1.5x bonus against outlaws,
+%   and a -1x bonus against all other players.
+%   Also, outlaws and murderers may not wield this weapon.  They get wounded
+%   if they try.
 %
-%  Form is: 
+%   Form is:
 %
-%       [ WA_PUNISHER ]
-%   
+%      [ WA_PUNISHER ]
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
@@ -29,9 +29,12 @@ constants:
 
 resources:
 
-   weapattpunisher_desc = " The emblem of a fist holding an ankh rests in the pommel of this weapon, promising "
+   weapattpunisher_desc = \
+      " The emblem of a fist holding an ankh rests in the pommel of "
+      "this weapon, promising "
    weapattpunisher_desc2 = " advantage in the fight for justice."
-   punisher_fail_use = "As you grab the hilt of %s%s, you scream out in pain and let go!"
+   punisher_fail_use = \
+      "As you grab the hilt of %s%s, you scream out in pain and let go!"
    weapattpunisher_name = "%s of the just"
 
    punisher_dm = "punisher"
@@ -49,7 +52,7 @@ classvars:
    vbAppears_in_Happyland = FALSE
 
 properties:
-  
+
 messages:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,18 +72,18 @@ messages:
 
       return send(self,@InitialWeaponPower,#oItem=oItem);
    }
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-      
-   ModifyDamage(damage = 0, target = $, wielder = $, lData= $)
+
+   ModifyDamage(damage=0,target=$,wielder=$,lData=$)
    "Wielder gets a damage bonus, equal to (proficiency/4) - 2."
    {
       local iNum, iPower;
-          
+
       %% here, iNum = power itself
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
       iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
@@ -113,7 +116,7 @@ messages:
    "Wielder gets a hit bonus based on whether or not the target is a murderer or outlaw."
    {
       local iNum, iPower;
-          
+
       %% here, iNum = power itself
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=first(lData));
       iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
@@ -138,7 +141,7 @@ messages:
             return (hitroll + iPower);
          }
       }
-     
+
       % Return normal hitroll
       return hitroll;
    }
@@ -148,20 +151,20 @@ messages:
    "if they even try."
    {
       local lUsing, bUsingAmulet, oUsedItem;
-      
+
       lUsing = Send(oPlayer,@GetPlayerUsing);
       bUsingAmulet = FALSE;
-      
+
       for oUsedItem in lUsing
       {
          if IsClass(oUsedItem,&NecromancerAmulet)
          {
             bUsingAmulet = TRUE;
-            
+
             break;
          }
       }
-      
+
       if Send(oPlayer,@CheckPlayerFlag,#flag = PFLAG_MURDERER)
          OR send(oPlayer,@CheckPlayerFlag,#flag = PFLAG_OUTLAW)
          OR bUsingAmulet
@@ -170,7 +173,7 @@ messages:
               #parm1=send(oItem,@GetDef),#parm2=send(oItem,@GetName));
 
          if Send(oPlayer, @AssessDamage, #what=self,#damage=Random(3,7),
-                 #report=False) = $
+                  #report=False) = $
          {
             % we killed someone off... heh heh heh
             Send(Send(oPlayer,@GetOwner),@SomethingKilled,#what=self,#victim=oPlayer);
@@ -179,9 +182,14 @@ messages:
          }
 
          %% this person is a murderer and may not wield it.
-         return FALSE;      
+         return FALSE;
       }
-      
+
+      return TRUE;
+   }
+
+   IsMagicalEffect()
+   {
       return TRUE;
    }
 

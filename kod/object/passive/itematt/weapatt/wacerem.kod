@@ -12,14 +12,14 @@ WeapAttCeremonial is WeaponAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This Weapon Attribute offers a +Power bonus in the arena, but a -Power
-%       damage penalty anywhere else.  Power is determined using standard
-%	WeapAtt powers table.
+%   This Weapon Attribute offers a +Power bonus in the arena, but a -Power
+%   damage penalty anywhere else.  Power is determined using standard
+%   WeapAtt powers table.
 %
-%  Form is: 
+%  Form is:
 %
 %       [ WA_CEREMONIAL ]
-%	
+%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 constants:
@@ -29,7 +29,7 @@ constants:
 resources:
    weapattcerem_desc = " Beautiful and ornate, this weapon is obviously "
       "unsuitable for blood combat, though it might provide "
-   weapattcerem_desc2 = " edge in games and tourneys."   
+   weapattcerem_desc2 = " edge in games and tourneys."
    weapatt_ceremonial_name = "ceremonial %s"
 
    ceremonial_dm = "ceremonial"
@@ -40,7 +40,7 @@ classvars:
    vrDesc2 = weapattcerem_desc2
    viItem_Att_Num = WA_CEREMONIAL
    viDamage_bonus = 2
-   
+
    viDifficulty = 5
    vrDM_Trigger = ceremonial_dm
 
@@ -48,7 +48,7 @@ properties:
 
    piValue_modifier = 150   %% modify the object's price by 100%
    piValue_power_modifier = 5
-  
+
 messages:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -62,19 +62,19 @@ messages:
       if oItem = $
       {
          Debug("This shouldn't have happened!");
-         
+
          return;
       }
 
       return Send(self,@InitialWeaponPower,#oItem=oItem);
    }
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    ModifyHitRoll(hitroll=0,target=$,wielder=$,lData=$)
    "Give a +power bonus in the arena, but -power everywhere else."
    {
@@ -84,10 +84,12 @@ messages:
       iPower = Send(self,@DecipherHitRollFromPower,#iPower=iPower);
 
       oRoom = Send(wielder,@GetOwner);
+
       if Send(oRoom,@CheckRoomFlag,#flag=ROOM_SAFE_DEATH)
-      {  
-      	 return (hitroll + iPower);  
+      {
+         return (hitroll + iPower);  
       }
+
       return (hitroll - iPower);
    }
 
@@ -95,16 +97,23 @@ messages:
    "Give a +power bonus in the arena, but -power everywhere else."
    {
       local oRoom, iPower;
-      
+
       iPower = Send(self,@TranslatePowerFromCompound,#iCompound=First(lData));
       iPower = Send(self,@DecipherDamageFromPower,#iPower=iPower);
 
       oRoom = Send(wielder,@GetOwner);
+
       if Send(oRoom,@checkroomflag,#flag=ROOM_SAFE_DEATH)
-      {  
-      	 return (damage + iPower);  
+      {
+         return (damage + iPower);
       }
+
       return (damage - iPower);
+   }
+
+   IsMagicalEffect()
+   {
+      return TRUE;
    }
 
 end

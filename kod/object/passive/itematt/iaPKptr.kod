@@ -12,18 +12,18 @@ ItemAttPKPointer is ItemAttribute
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  This item prevents anyone from picking up loot after a player kill,
-%     unless they are also killable.  
-% 
-%  Form is: 
+%   This item prevents anyone from picking up loot after a player kill,
+%   unless they are also killable.  
 %
-%   	[IA_PKPOINTER, tTimer]
-%	
-%       tTimer :: When this expires, the attribute goes away.
+%   Form is:
 %
-%  A final word: this pointer will stick around for only 10 minutes
-%     after a kill, then it will delete itself, removing it from the
-%     item's plItem_attribute's list.
+%      [IA_PKPOINTER, tTimer]
+%
+%      tTimer :: When this expires, the attribute goes away.
+%
+%   A final word: this pointer will stick around for only 10 minutes
+%   after a kill, then it will delete itself, removing it from the
+%   item's plItem_attribute's list.
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -33,32 +33,34 @@ constants:
 
 resources:
  
-   PKpointer_no_loot = "You reach for %s%s, but you are mystically barred from grasping it."   
-   PKPointer_no_offer_accept = "%s tries to offer you %s%s, but you are mystically barred from grasping it."   
+   PKpointer_no_loot = \
+      "You reach for %s%s, but you are mystically barred from grasping it."
+   PKPointer_no_offer_accept = \
+      "%s tries to offer you %s%s, but you are mystically barred from grasping it."
    PKpointer_no_offer = "%s is unable to take %s%s off your hands."
-   
+
 classvars:
 
    viItem_Att_Num = IA_PKPOINTER
    vrDesc = resource_blank
 
 properties:
-  
+
 messages:
-  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 %%  Effect Functions
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
+
    % A player can only pick up an item from a player if he is also killable.
 
    CanGetAffectedItem(lData=$,Who=$,oItem=$,type=0)
    {
       local oCorpse;
-	   
-      %% is this the player that died?  He can always get his own stuff.
+
+      %% Is this the player that died?  He can always get his own stuff.
       if who = Nth(lData,3)
          OR NOT IsClass(who,&Player)
       {
@@ -77,11 +79,11 @@ messages:
          else
          {
             Send(who,@MsgSendUser,#message_rsc=PKpointer_no_offer_accept,
-                 #parm1=Send(Send(oItem,@GetOwner),@GetName),
-                 #parm2=Send(oItem,@GetDef),#parm3=Send(oItem,@GetName));
+                  #parm1=Send(Send(oItem,@GetOwner),@GetName),
+                  #parm2=Send(oItem,@GetDef),#parm3=Send(oItem,@GetName));
             Send(Send(oItem,@GetOwner),@MsgSendUser,#message_rsc=PKPointer_no_offer,
-                 #parm1=Send(who,@GetName),
-                 #parm2=Send(oItem,@GetDef),#parm3=Send(oItem,@GetName));
+                  #parm1=Send(who,@GetName),
+                  #parm2=Send(oItem,@GetDef),#parm3=Send(oItem,@GetName));
 
             return FALSE;
          }
@@ -128,7 +130,7 @@ messages:
    InitiallyIdentified()
    {
       return TRUE;
-   }   
+   }
 
    CanBeSpoofed()
    {
@@ -150,7 +152,7 @@ messages:
          return FALSE;
       }
 
-      return state1;		
+      return state1;
    }
 
 end

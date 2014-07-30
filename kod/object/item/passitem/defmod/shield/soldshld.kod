@@ -460,6 +460,7 @@ messages:
          AND Send(what,@GetLayer) > Send(self,@GetLayer))
          OR IsClass(what,&Bow)
          OR IsClass(what,&Lute)
+         OR IsClass(what,&Totem)
       {
          Send(self,@SlingOnBack,#report=FALSE);
          return TRUE;

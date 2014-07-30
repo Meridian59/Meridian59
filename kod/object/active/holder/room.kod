@@ -1804,10 +1804,6 @@ messages:
    {
       local iTimeLeft, i, each_obj;
 
-      % weight here just to be like normal holder
-      piBulk_hold = piBulk_hold + Send(what,@GetBulk);
-      piWeight_hold = piWeight_hold + Send(what,@GetWeight);
-
       % The object still thinks it's with it's old owner.  If it's an item from
       %   a player, then make sure the items don't disappear immediately.
       if IsClass(what,&Item)

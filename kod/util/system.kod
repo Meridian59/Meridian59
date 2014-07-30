@@ -5130,6 +5130,18 @@ messages:
       plItemTemplates = cons(create(&CowMask),plItemTemplates);
       plItemTemplates = cons(create(&ManaCrystal),plItemTemplates);
 
+      plItemTemplates = cons(create(&GemColdResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemFireResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemShockResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemAcidResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemSlashResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemThrustResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemBludgeonResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemPierceResistance),plItemTemplates);
+      plItemTemplates = cons(create(&GemRemove),plItemTemplates);
+      
+      plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
+      
       return;
    }
 

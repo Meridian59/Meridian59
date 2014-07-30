@@ -3525,7 +3525,7 @@ messages:
    UserGet(what = $, report = TRUE)
    {
       local oOldOwner, i, lItem_pos, iRow, iCol, iRow_dist, iCol_dist,
-            iCan_hold, oSplit, oCorpse;
+            iCan_hold, oSplit, oCorpse, bFromReagentBag;
 
       if Send(self,@IsPhasedOut)
       {
@@ -3549,6 +3549,16 @@ messages:
       if oOldOwner = self
       {
          return 0;
+      }
+      
+      if oOldOwner <> $
+         AND IsClass(oOldOwner,&ReagentBag)
+      {
+         bFromReagentBag = TRUE;
+      }
+      else
+      {
+         bFromReagentBag = FALSE;
       }
 
       % Make sure object still exists, etc, so we don't cause errors
@@ -3634,7 +3644,7 @@ messages:
                {
                   Send(self,@MsgSendUser,#message_rsc=user_got_some,#report=report,
                        #parm1=Send(what,@GetName));
-                  Send(self,@NewHold,#what=oSplit);
+                  Send(self,@NewHold,#what=oSplit,#bFromReagentBag=bFromReagentBag);
                   
                   return 3;
                }
@@ -3678,9 +3688,9 @@ messages:
 	  if isClass(what, &ShrunkenHead)
 	  {
 		 send(what,@PickedUp,#by=self);
-	  }	  		
+	  }
 
-      Send(self,@NewHold,#what=what);
+      Send(self,@NewHold,#what=what,#bFromReagentBag=bFromReagentBag);
       
       return 1;
    }
@@ -3791,6 +3801,7 @@ messages:
       }
 
       if NOT IsClass(where,&Holder)
+         AND NOT IsClass(where,&ReagentBag)
       {
          Send(self,@MsgSendUser,#message_rsc=user_err_put,
               #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName),
@@ -3870,6 +3881,7 @@ messages:
       local i,iObjs,oThing,rName,rIcon,lHolding1,lHolding2;
 
       if NOT IsClass(what,&Holder)
+         AND NOT IsClass(what,&ReagentBag)
          OR (IsClass(what,&Player)
              AND NOT (what = self OR IsClass(self,&Admin)))
       {
@@ -3893,8 +3905,16 @@ messages:
       }
       else
       {
-         lHolding1 = Send(what,@GetHolderActive);
-         lHolding2 = Send(what,@GetHolderPassive);
+         if IsClass(what,&ReagentBag)
+         {
+            lHolding1 = Send(what,@GetReagentBagContents);
+            lHolding2 = $;
+         }
+         else
+         {
+            lHolding1 = Send(what,@GetHolderActive);
+            lHolding2 = Send(what,@GetHolderPassive);
+         }
       }
 
       iObjs = Length(lHolding1) + Length(lHolding2);
@@ -4180,6 +4200,13 @@ messages:
 
       if pbLogged_on
       {
+         if IsClass(what,&ReagentBag)
+            AND Send(what,@GetReagentBagContents) <> $
+         {
+            Send(self,@UserObjectContents,#what=what);
+            return;
+         }
+
          AddPacket(1,BP_LOOK);
          Send(self,@ToCliObject,#what=what,#show_type=SHOW_LOOK,
               #bShow_All=bShow_All);
@@ -6009,12 +6036,23 @@ messages:
       return;
    }
 
-   NewHold(what = $)
+   NewHold(what = $, bFromReagentBag = FALSE)
    {
       if what = $
       {
          Debug(self,"got newhold of $");
 
+         return;
+      }
+
+      if IsClass(what,&NumberItem)
+         AND NOT IsClass(what,&Food)
+         AND NOT IsClass(what,&Ammo)
+         AND NOT IsClass(what,&Money)
+         AND NOT bFromReagentBag
+         AND Send(self,@GetReagentBag) <> $
+      {
+         Post(Send(self,@GetReagentBag),@NewHold,#what=what,#where=Send(self,@GetReagentBag));
          return;
       }
 

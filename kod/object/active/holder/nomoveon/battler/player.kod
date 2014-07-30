@@ -8345,7 +8345,7 @@ messages:
    Killed(what = $)
    {
       local lItems,i, amount, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
-            oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom;
+            oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom, lInventoryContents, lReagentBagContents;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
       %  is called from LeaveHold() in the Underworld.  This is to allow time
@@ -8504,8 +8504,18 @@ messages:
          {
             oItemAtt = Send(sys,@FindItemAttByNum,#num=IA_PKPOINTER);
          }
+         
+         lReagentBagContents = Send(self,@GetReagentBagContents);
+         if lReagentBagContents <> $
+         {
+            lInventoryContents = [plActive,plPassive,lReagentBagContents];
+         }
+         else
+         {
+            lInventoryContents = [plActive,plPassive];
+         }
 
-         for lItems in [plActive,plPassive]
+         for lItems in lInventoryContents
          {
             for i in lItems
             {
@@ -10714,23 +10724,6 @@ messages:
 
    RecalcBulkAndWeight()
    {
-      local i;
-
-      piBulk_hold = 0;
-      piWeight_hold = 0;
-
-      for i in plPassive
-      {
-         piBulk_hold = piBulk_hold + Send(i,@GetBulk);
-         piWeight_hold = piWeight_hold + Send(i,@GetWeight);
-      }
-
-      for i in plActive
-      {
-         piBulk_hold = piBulk_hold + Send(i,@GetBulk);
-         piWeight_hold = piWeight_hold + Send(i,@GetWeight);
-      }
-
       return;
    }
 
@@ -13517,6 +13510,36 @@ messages:
    HasEvilTwin()
    {
       return pbHasEvilTwin;
+   }
+   
+   GetReagentBag()
+   {
+      local i;
+      
+      for i in plPassive
+      {
+         if IsClass(i,&ReagentBag)
+         {
+            return i;
+         }
+      }
+
+      return $;
+   }
+   
+   GetReagentBagContents()
+   {
+      local i;
+      
+      for i in plPassive
+      {
+         if IsClass(i,&ReagentBag)
+         {
+            return Send(i,@GetReagentBagContents);
+         }
+      }
+      
+      return $;
    }
 
    IsPhasedOut()

@@ -1001,7 +1001,10 @@ properties:
    % Is the player currently using a Death Rift spell?
    pbDeath_rift = FALSE
    ptDeathRiftTimer = $
-   
+
+   % This list keeps track of selfcast buffs for passive improvement.
+   plPassiveImprovement = $
+
    % Crystalize Mana Surge data
    ptCrystalizeManaSurgeTimer = $
    piCrystalizeManaSurging = FALSE
@@ -2821,7 +2824,7 @@ messages:
 
    EnchantmentTimer(timer = $)
    {
-      local i,oEnchanter;
+      local i, j, oEnchanter;
  
       for i in plEnchantments
       {
@@ -2841,6 +2844,15 @@ messages:
 
             % TODO: i no longer exists at this point?  EndEnchantment removing it?
             plEnchantments = DelListElem(plEnchantments,i);
+            
+            % Also remove from passive improvement list.
+            for j in plPassiveImprovement
+            {
+               if First(j) = Nth(i,2)
+               {
+                  plPassiveImprovement = DelListElem(plPassiveImprovement,j);
+               }
+            }
 
             if IsClass(Nth(i,2),&Mirth)
                OR IsClass(Nth(i,2),&Melancholy)
@@ -2899,7 +2911,7 @@ messages:
       return;
    }
 
-   StartEnchantment(what = $,time = $,state = $,lastcall=TRUE,addicon=TRUE)
+   StartEnchantment(what=$,who=$,time=$,state = $,lastcall=TRUE,addicon=TRUE,ltype=$)
    "Adds <what> to our enchantments, and creates a timer that will cause it "
    "to end."
    {
@@ -2931,6 +2943,13 @@ messages:
       }
 
       plEnchantments = Cons(lNew_enchantment,plEnchantments);      
+
+      % If we are also the source of the enchantment, add the enchantment to our passive improvement list.
+      % ltype has the form [oSpell,Defensive,Offensive,Resistance]
+      if who = self
+      {
+         plPassiveImprovement = Cons(ltype,plPassiveImprovement);
+      }
 
       if IsClass(what,&Mirth)
          OR IsClass(what,&Melancholy)
@@ -3019,7 +3038,7 @@ messages:
    }
 
    RemoveAllEnchantments(report=TRUE)
-   "Remove all current enchantments."
+   "Remove all current enchantments and reset the passive improvement list."
    {
       local i;
 
@@ -3030,7 +3049,9 @@ messages:
             Send(self,@RemoveEnchantment,#what=Nth(i,2),#report=report);
          }
       }
-      
+
+      plPassiveImprovement = $;
+
       return;
    }
    
@@ -3050,7 +3071,7 @@ messages:
    }
 
    RemoveAllPersonalEnchantments(report=TRUE,override=FALSE)
-   "Remove all current *personal* enchantments."
+   "Remove all current *personal* enchantments and reset the passive improvement list."
    {
       local i, oSpell, removedSomething;
 
@@ -3072,6 +3093,8 @@ messages:
       Send(self,@ResetPlayerFlagList);
       Send(self,@ResetPlayerDrawfx,#SendSomethingChanged=TRUE);
       
+      plPassiveImprovement = $;
+      
       return removedSomething;
    }
 
@@ -3086,7 +3109,7 @@ messages:
          {
             if IsClass(Nth(i,2),&Boon)=FALSE
             {
-			   iTime = GetTimeRemaining(First(i));
+               iTime = GetTimeRemaining(First(i));
                DeleteTimer(First(i));
 
                % If it's a negative enchantment, add a bit to the time in
@@ -3220,7 +3243,7 @@ messages:
        
             Send(self,@ShowRemoveEnchantment,#what=Nth(i,2),#type=ENCHANTMENT_PLAYER);
 
-            plEnchantments = DelListElem(plEnchantments,i); 
+            plEnchantments = DelListElem(plEnchantments,i);
 
             if IsClass(what,&Mirth)
                OR IsClass(what,&Melancholy)
@@ -3233,7 +3256,16 @@ messages:
             }
          }
       }
-      
+
+      % Also remove from passive improvement list.
+      for i in plPassiveImprovement
+      {
+         if First(i) = what
+         {
+            plPassiveImprovement = DelListElem(plPassiveImprovement,i);
+         }
+      }
+
       return;
    }
 
@@ -3268,8 +3300,23 @@ messages:
             Send(self,@ResetPlayerFlagList,#who=self);
          }
       }
-      
+
+      % Also remove from passive improvement list.
+      for i in plPassiveImprovement
+      {
+         if IsClass(First(i),class)
+         {
+            plPassiveImprovement = DelListElem(plPassiveImprovement,i);
+         }
+      }
+
       return removedSomething;
+   }
+
+   % Returns the list of currently active, self-cast buffs, that the player is eligible to improve in passively.
+   GetPassiveImprovementList()
+   {
+      return plPassiveImprovement;
    }
 
    SendEnchantmentIcons()
@@ -4259,7 +4306,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local iRange, lWindsState, lSandstormState;
+      local i, iRange, lWindsState, lSandstormState;
 
       % Can't target self.
       if what = self
@@ -4413,6 +4460,15 @@ messages:
       {
          % We got another swing in, so increment that.
          Send(self,@SwingWeapon,#times=1);
+      }
+
+      % Give offensive buffs a small chance to improve each swing!
+      for i in plPassiveImprovement
+      {
+         if Nth(i,3) AND random(1,50) = 50
+         {
+            Send(First(i),@ImproveAbility,#who=self,#target=what);
+         }
       }
 
       propagate;
@@ -4896,7 +4952,7 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
+      local i, j, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
 			
 	  origdamage = damage;
 	  
@@ -4940,6 +4996,15 @@ messages:
          }
          
          damage = Send(self,@GetDamageFromResistance,#what=damage,#value=iResistance);
+
+         % Allow protective spells a chance to improve when they take effect!
+         for i in plPassiveImprovement
+         {
+            if (aspell & Nth(i,4)) AND random(1,10) = 10
+            {
+               Send(First(i),@ImproveAbility,#who=self,#target=what);
+            }
+         }
 
          % Add attmods AFTER resistance/suscep mods.    
          damage = damage + bonus;               
@@ -8084,7 +8149,7 @@ messages:
    "their maxhealth to gain a HP.  This number is reduced by the player's"
    "stamina, all the way down to half for those with high staminas."
    {
-      local highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon, shrunken, lBuilderGroup;
+      local i, highmark, rand, dodgeskill, oSkill, monster_level, gain, gainmult, roll, iNumber, oWeapon, shrunken, lBuilderGroup;
             
       gain = 0;
       roll = FALSE;
@@ -8113,6 +8178,19 @@ messages:
          AND poKill_target = what)
          OR group_member_kill
       {
+         % Allow players to improve defensive spells!
+         if killing_blow 
+            AND (Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE) OR Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED))
+         {
+            for i in plPassiveImprovement
+            {
+               if Nth(i,2) and random(1,5) = 5
+               {
+                  Send(First(i),@ImproveAbility,#who=self,#target=what);
+               }
+            }
+         }
+
          if monster_level > piBase_Max_health
          {
             if killing_blow AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)

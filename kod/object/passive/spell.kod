@@ -201,6 +201,10 @@ classvars:
 
    vrToo_few_hp = spell_too_few_hp_rsc
 
+   viDefensive = FALSE
+   viOffensive = FALSE
+   viResistanceType = 0
+
 properties:
 
    % Format of reagents:  Each element of plReagents is a list, describing a

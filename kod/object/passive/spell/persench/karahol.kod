@@ -61,7 +61,9 @@ classvars:
    viFlash = FLASH_GOOD
 
    % Cannot enchant others because of drawback.
-   vbCanCastOnOthers = FALSE  
+   vbCanCastOnOthers = FALSE
+
+   viOffensive = TRUE
 
 properties:
    

@@ -59,6 +59,8 @@ classvars:
 
    vbCanCastonOthers = FALSE
 
+   viDefensive = TRUE
+
 properties:
 
 

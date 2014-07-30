@@ -51,6 +51,8 @@ classvars:
 
    viFlash = FLASH_GOOD_SELF
 
+   viDefensive = TRUE
+
 properties:
 
 messages:

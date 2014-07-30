@@ -48,6 +48,8 @@ classvars:
    viChance_To_Increase = 30
    viFlash = FLASH_GOOD_SELF
 
+   viDefensive = TRUE
+
 properties:
 
 messages:

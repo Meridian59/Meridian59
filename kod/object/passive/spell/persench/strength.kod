@@ -50,6 +50,8 @@ classvars:
    viFlash = FLASH_GOOD_SELF
    vbCanCastonOthers = TRUE
 
+   viOffensive = TRUE
+
 properties:  
 
 messages:

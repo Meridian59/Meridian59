@@ -57,6 +57,8 @@ classvars:
 
    vbCanCastOnOthers = FALSE
 
+   viDefensive = TRUE
+
 properties:
 
 messages:

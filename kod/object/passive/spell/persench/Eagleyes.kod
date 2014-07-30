@@ -117,9 +117,18 @@ messages:
    "Calculates adjustment of blinding spell duration.  Returns $ if resisted "
    "completely.  iFactor is the factor by which we want to increase the effect."
    {
-      local iNewDuration, iChance, oEagleEyesStrength;
+      local i, iNewDuration, iChance, oEagleEyesStrength;
 
       oEagleEyesStrength = Send(oTarget,@GetEnchantedState,#what=self);
+
+      % Give players a decent chance to improve the spell!
+      for i in Send(oTarget,@GetPassiveImprovementList)
+      {
+         if First(i) = self AND random(1,3) = 3
+         {
+            Post(First(i),@ImproveAbility,#who=oTarget);
+         }
+      }
 
       % Check if they repel the blinding spell outright 1-10% base chance,
       %  modified by factor.
@@ -131,7 +140,7 @@ messages:
          {
             Send(oCaster,@MsgSendUser,#message_rsc=EagleEyes_evade_caster);
          }
-         
+
          return $;
       }
 

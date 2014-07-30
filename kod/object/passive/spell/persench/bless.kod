@@ -57,6 +57,8 @@ classvars:
    viChance_To_Increase = 25
 
    viFlash = FLASH_GOOD_SELF
+   
+   viOffensive = TRUE
 
 properties:
    

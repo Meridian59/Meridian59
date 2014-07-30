@@ -96,6 +96,9 @@ properties:
    % Time in seconds that outlaw / murderer ghosts will last before taking a penalty
    piOutlawMurdererLogoffPenaltyGhostTime = 180
 
+   % If true, spellpower and duration are displayed for all spells cast.
+   pbDisplaySpellData = FALSE
+   
    %
    % Guild hall settings
    %
@@ -329,6 +332,11 @@ messages:
    RescueBaseDelaySec()
    {
       return piRescueBaseDelaySec;
+   }
+
+   DisplaySpellData()
+   {
+      return pbDisplaySpellData;
    }
 
    %

@@ -21,8 +21,17 @@ resources:
    attack_spell_hit_rsc = "You hit %s%s."
    attack_spell_no_self_rsc = "You can't cast %s on yourself."
    attack_spell_out_of_range = "%s%s is too far away to hit with %s."
+   attack_spell_killed_self = "You killed yourself."
+   attack_spell_killed_someone = "You killed %s%s%s."
+   attack_spell_cast_rsc = "You cast the spell."
 
 classvars:
+
+   vrKilled_Someone = attack_spell_killed_someone
+   vrKilled_Self = attack_spell_killed_self
+   vrCast = attack_spell_cast_rsc
+   vrHit = attack_spell_hit_rsc
+
 
    viAttack_type = 0
    viAttack_spell = ATCK_SPELL_ALL
@@ -35,6 +44,8 @@ classvars:
    viChance_To_Increase = 10
 
    vbIsRangedAttack = FALSE
+   vbIsAreaEffect = FALSE
+   vbSelfHarming = FALSE
 
 properties:
 
@@ -49,9 +60,24 @@ properties:
 
 messages:
 
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i, iTotalRange;
+
+      % Propagate area effect spells to Spell, if valid targets. CanPayCosts
+      % in AttackSpell handles single target attacks, Spell handles multiples.
+      if vbIsAreaEffect
+      {
+         if lTargets = $
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_no_targets,
+                  #parm1=Send(self,@GetName));
+
+            return FALSE;
+         }
+
+         propagate;
+      }
 
       % Can cast spell if the 1 target item is a battler
       if Length(lTargets) <> 1
@@ -69,16 +95,16 @@ messages:
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
          Send(who,@MsgSendUser,#message_rsc=attack_spell_no_self_rsc,#parm1=vrName);
-         
+
          return FALSE;
       }
 
-      if not IsClass(target,&Battler)
+      if NOT IsClass(target,&Battler)
       {
          Send(who,@WaveSendUser,#wave_rsc=spell_fail_wav);
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
-              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
-              
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+               #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+
          return FALSE;
       }
 
@@ -113,29 +139,30 @@ messages:
       return 1;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0, bItemCast = FALSE)
+   CastSpell(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE)
    {
-      local iDamage, iManaFocus, oRoom, oTarget;
+      local i, iDamage, iManaFocus, iTemp, oRoom;
 
-      oTarget = First(lTargets);
+      iTemp = $;
 
-      oRoom = Send(who,@GetOwner);
-      Send(oRoom,@SomethingWaveRoom,#what=who,#wave_rsc=Send(self,@GetSpellSound));
-      Send(oRoom,@SpellCast,#who=who,#oSpell=self,#lItems=lTargets);
+      % Rooms can cast earthquake, so check if we have a room for 'who'
+      if IsClass(who,&Room)
+      {
+         oRoom = who;
+      }
+      else
+      {
+         oRoom = Send(who,@GetOwner);
+      }
 
       iDamage = Random(piDamageMin, piDamageMax);
 
       if IsClass(who,&Player)
       {
-         Send(who,@SetKillTarget,#target=oTarget);
          Send(who,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
 
          if NOT bItemCast
          {
-            % Do the sound, and the third person animation.
-            piCast_successes = piCast_successes + 1 ;
-            Send(who,@DoCast);      %% window overlay
-
             % Myst and Int boost base damage
             iDamage = Send(self,@DamageFactors,#damage=iDamage,#who=who);
 
@@ -155,36 +182,92 @@ messages:
             }
          }
       }
-     
-      % After figuring damage, do an AssessDamage.  This will handle the necessary
-      %  attack messages.
-      iDamage = Send(oTarget,@AssessDamage,#what=who,#damage=iDamage,
-                     #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
-                     #absolute=pbAbsolute);
 
-      Send(who,@AssessHit,#what=oTarget,#damage=iDamage,#use_weapon=self);
-
-      if iDamage = $
+      % A spell (eg. earthquake) might harm the caster also. If so, use this function.
+      if vbSelfHarming
+         AND IsClass(who,&Player)
       {
-         Send(who,@KilledSomething,#what=oTarget,#use_weapon=self);
-      } 
-
-      Send(oRoom,@SomethingAttacked,#what=who,#victim=oTarget,#use_weapon=self);
-
-      Send(self,@DoSideEffect,#who=who,#victim=oTarget,#damage=iDamage);
-
-      if not bItemCast
-      {
-         Send(self,@ImproveAbility,#who=who,#target=oTarget);
+         Send(Self,@HurtCaster,#who=who,#iDamage=iDamage);
       }
 
-      % DON'T PROPAGATE!  This way, events will be handled in the proper
-      %  order.
+      % After figuring damage, do an AssessDamage.  This will handle the necessary
+      %  attack messages.
+      for i in lTargets
+      {
+         if IsClass(who,&Player)
+         {
+            Send(who,@SetKillTarget,#target=i);
+         }
 
-      return;
+         % Earthquake needs to deal damage based on range from caster. Any
+         % spell that needs to modify damage in some way and/or add extra
+         % battle messages can add the class here. iTemp holds the calculated
+         % damage while iDamage gets modified, then returns the original value
+         % to iDamage at the beginning of each loop.
+         if iTemp <> $
+         {
+            iDamage = iTemp;
+         }
+
+         if IsClass(self,&Earthquake)
+         {
+            iTemp = iDamage;
+            iDamage = Send(self,@ComputeDamage,
+                        #who=who,#target=i,#iDamage=iDamage);
+            if iDamage = 0
+            {
+               % To prevent spam, we don't consider 0 damage earthquake hits.
+               continue;
+            }
+            iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,#atype=viAttack_type,
+                           #aspell=Send(self,@GetAttackSpell),#absolute=pbAbsolute);
+            if iDamage = $
+            {
+               if IsClass(who,&Room)
+               {
+                  Send(who,@SomethingKilled,#what=who,#victim=i);
+                  Send(i,@Killed,#what=who);
+               }
+               else
+               {
+                  Send(who,@MsgSendUser,#message_rsc=vrKilled_Someone,#parm1=Send(i,@GetDef),
+                        #parm2=Send(i,@GetName),#parm3=Send(i,@GetHeShe));
+               }
+
+               Send(i,@MsgSendUser,#message_rsc=vrKilled_Self);
+            }
+            else
+            {
+               Send(i,@MsgSendUser,#message_rsc=vrCast);
+            }
+         }
+         else
+         {
+            iDamage = Send(i,@AssessDamage,#what=who,#damage=iDamage,
+                        #atype=viAttack_type,#aspell=Send(self,@GetAttackSpell),
+                        #absolute=pbAbsolute);
+         }
+
+         if IsClass(who,&Battler)
+         {
+            Send(who,@AssessHit,#what=i,#damage=iDamage,#use_weapon=self);
+
+            if iDamage = $
+            {
+               Send(who,@KilledSomething,#what=i,#use_weapon=self);
+            }
+         }
+
+         Send(oRoom,@SomethingAttacked,#what=who,#victim=i,#use_weapon=self);
+
+         Send(self,@DoSideEffect,#who=who,#victim=i,#damage=iDamage);
+      }
+
+      % This used to not propagate, but as of July 2014 it does. No bugs yet noted.
+      propagate;
    }
 
-   DamageFactors(damage = 0, who = $)
+   DamageFactors(damage=0,who=$)
    {
       local iDamage, iMysticism, iIntellect;
 
@@ -219,12 +302,37 @@ messages:
       return;
    }
 
+   HurtCaster(who=$,iDamage=$)
+   {
+      if IsClass(who,&Player)
+      {
+         % Apply the spell damage to the caster. Kill them if necessary.
+         if Send(who,@AssessDamage,#what=who,#damage=iDamage,#atype=0,
+                 #aspell=viAttack_spell,#report=TRUE) = $
+         {
+            Post(who,@MsgSendUser,#message_rsc=vrKilled_Self);
+            Post(who,@KilledSomething,#what=who,#use_weapon=self);
+         }
+         else
+         {
+            Send(who,@MsgSendUser,#message_rsc=vrCast);
+            Send(who,@AssessHit,#what=who,#damage=iDamage,#use_weapon=self);
+         }
+      }
+
+      return;
+   }
+
+   ComputeDamage(who=$,target=$,iDamage=$)
+   {
+      return;
+   }
+
    % This is for the attack message infrastructure.
    GetAttackName()
    {
       return vrName;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

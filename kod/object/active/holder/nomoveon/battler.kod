@@ -959,19 +959,21 @@ messages:
             rColor = battler_blue_text;
          }
 
-         
-         if damage = $
+         if what <> self
          {
-            Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
-              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
-         }
-         else
-         {
-            Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
-              #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
-              #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
-              #parm6=damage,#parm7=rColor);
+            if damage = $
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_slay,
+               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName));
+            }
+            else
+            {
+               Send(self,@MsgSendUser,#message_rsc=battler_attacker_hit,
+               #parm1=rColor,#parm2=rWeaponName,#parm3=rDamageDesc,
+               #parm4=Send(what,@GetDef),#parm5=Send(what,@GetName),
+               #parm6=damage,#parm7=rColor);
+            }
          }
       }
 

@@ -128,6 +128,10 @@ resources:
    spell_disabled = \
       "~g~BAn unseen force rips the words of the spell from your throat "
       "before you can fully utter them."
+   spell_display_spellpower = \
+      "Spellpower for ~k~B%s~n is ~k~B%i~n."
+   los_bad_display = \
+      "You don't have line of sight with ~k~B%s~n."
 
    Spell_made_rsc = "  Enchanted by "
    Spell_novice_rsc = ", Novice "
@@ -1214,6 +1218,11 @@ messages:
                       #obj2=first(lTargets))
          AND NOT(IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
       {
+         if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+         {
+            Send(who,@MsgSendUser,#message_rsc=los_bad_display,
+                  #parm1=Send(self,@GetName));
+         }
          oTarget = first(lTargets);
          
          iDistance = Send(who,@SquaredDistanceTo,#what=oTarget);
@@ -1379,8 +1388,21 @@ messages:
                {
                   Send(oTarget,@BadSpellFlashEffect);
                }
+               
+               if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+                  AND oTarget <> who
+               {
+                  Send(oTarget,@MsgSendUser,#message_rsc=spell_display_spellpower,
+                     #parm1=Send(self,@GetName),#parm2=iSpellPower);
+               }
             }
          }
+      }
+
+      if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_display_spellpower,
+               #parm1=Send(self,@GetName),#parm2=iSpellPower);
       }
 
       % Define what is the target for the next few checks.

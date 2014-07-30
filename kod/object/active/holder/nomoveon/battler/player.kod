@@ -8407,7 +8407,7 @@ messages:
       return;
    }
 
-   ResetLogOnBonus(points=0)
+   ResetLogOnBonus()
    {
       piLogon_bonus = 0;
       piReward_timestamp = GetTime();

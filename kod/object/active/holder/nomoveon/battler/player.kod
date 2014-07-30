@@ -5000,7 +5000,7 @@ messages:
          % Allow protective spells a chance to improve when they take effect!
          for i in plPassiveImprovement
          {
-            if (aspell & -Nth(i,4)) AND random(1,10) = 10
+            if (aspell & Nth(i,4)) AND random(1,10) = 10
             {
                Send(First(i),@ImproveAbility,#who=self,#target=what);
             }

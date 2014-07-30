@@ -8417,7 +8417,7 @@ messages:
          return;
       }
 
-      points = bound(points,$,1000 - piTraining_points);
+      points = bound(points,-piTraining_points,1000 - piTraining_points);
 
       if report AND points > 0
       {

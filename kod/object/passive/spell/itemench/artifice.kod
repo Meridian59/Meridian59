@@ -1,0 +1,137 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Artifice is ItemEnchantment
+
+%% Puts a fake itematt on an item.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   artifice_cast_rsc = "The shape of %s%s begins to shift."
+   
+   artifice_fails = "%s%s is strangely unaffected by the spell."
+   
+   artifice_name_rsc = "artifice"
+   artifice_icon_rsc = iartific.bgf
+   artifice_desc_rsc = \
+      "Briefly enchants an item with random powers. "
+      "Unsuspecting buyers may overvalue the item.  "
+      "Requires two firesand and an uncut seraphym."
+
+   artifice_sound = rartific.wav
+   
+classvars:
+
+   vrName = artifice_name_rsc
+   vrIcon = artifice_icon_rsc
+   vrDesc = artifice_desc_rsc
+   vrSucceed_wav = artifice_sound
+
+   viSpell_num = SID_ARTIFICE
+   viSchool = SS_RIIJA
+
+   viSpell_level = 5
+   viMana = 10
+   viSpellExertion = 10
+   viCast_time = 4000
+
+properties:
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&FireSand,2],plReagents);
+      plReagents = Cons([&UncutSeraphym,1],plReagents);
+
+      return;
+   }
+
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0)
+   {
+      local oWeapon;
+
+      oWeapon = First(lTargets);
+
+      % Check that target is enchantable, and is a weapon
+      if oWeapon = $
+      OR NOT IsClass(oWeapon,&Weapon)
+      {
+         Send(who,@MsgSendUser,#message_rsc=artifice_fails,
+               #parm1=Send(oWeapon,@GetCapDef),#parm2=Send(oWeapon,@GetName));
+
+         return FALSE;
+      }
+
+      propagate;   % Check other things higher up
+   }
+
+   IsTargetInRange(who=$,target=$)
+   {
+      if who = Send(target,@GetOwner)
+         OR Send(who,@GetOwner) = Send(target,@GetOwner)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   {
+      local oItem, oItemAtt;
+
+      oItem = First(lTargets);
+
+      if Send(oItem,@HasAttribute,#ItemAtt = IA_MISDIRECTION)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_resists,
+               #parm1=Send(oItem,@GetCapDef),#parm2=Send(oItem,@GetName));
+
+         return;
+      }
+
+      if NOT Send(oItem,@CanEnchant,#oSpell=self)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_resists,
+               #parm1=Send(oItem,@GetCapDef),#parm2=Send(oItem,@GetName));
+
+         return;
+      }
+
+      oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_MISDIRECTION);
+
+      % Don't set parameter iFakeAttNum, let it choose a "fake" itematt on its own.
+      Send(oItemAtt,@AddMisdirectionToItem,
+            #oItem=oItem,#timer_duration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
+
+      Send(who,@MsgSendUser,#message_rsc=artifice_cast_rsc,
+            #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
+
+      propagate;
+   }
+
+   GetDuration(iSpellpower=0)
+   {
+      local iDuration;
+
+      % 1-5 minutes, this spell isn't much use so why punish builders further
+      iDuration = 60000 + ((iSpellPower/2)*5000);
+
+      return iDuration;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

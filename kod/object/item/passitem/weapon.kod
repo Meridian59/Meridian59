@@ -909,7 +909,7 @@ messages:
          if iSpell = SID_HOLY_WEAPON or iSpell = SID_UNHOLY_WEAPON 
             OR iSpell = SID_ENCHANT_WEAPON
          {
-            return FALSE;
+            return TRUE;
          }
       }   
 

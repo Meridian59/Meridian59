@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Mend is Spell 
+Mend is ItemEnchantment
 
 constants:
 
@@ -21,7 +21,7 @@ resources:
    mend_desc_rsc = \
       "Erases the wear of battle from a piece of equipment, restoring it to "
       "near new condition.  "
-      "Requires orc teeth and sapphire to cast."
+      "Requires an orc tooth and a sapphire to cast."
 
    mend_not_weaponry = "You try to focus on %s%s, but nothing happens!"
    mend_beyond_hope = "%s%s is beyond salvage."
@@ -58,32 +58,26 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      % Tell client how many targets this spell needs.
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
       local oTarget, iHits, iMaxHits;
 
       oTarget = First(lTargets);
 
       % Check that target is an item that can be mended.
-      if NOT (isClass(oTarget,&Item) AND send(oTarget,@CanMend))
+      if NOT (IsClass(oTarget,&Item) AND Send(oTarget,@CanMend))
       {
          Send(who,@MsgSendUser,#message_rsc=mend_not_weaponry,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
          return FALSE;
       }
 
       % Kludgey, yes, but spell wouldn't recognize ReqRepair in the Torch class.
-      if isClass(oTarget,&Torch)
+      if IsClass(oTarget,&Torch)
       {
          Send(who,@MsgSendUser,#message_rsc=mend_not_weaponry,
-              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
          return FALSE;
       }
@@ -94,8 +88,8 @@ messages:
       % Is the item broken?
       if iHits = 0
       {
-         Send(who,@MsgSendUser,#message_rsc=mend_beyond_hope, 
-              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+         Send(who,@MsgSendUser,#message_rsc=mend_beyond_hope,
+               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 
          return FALSE;
       }
@@ -103,8 +97,8 @@ messages:
       % Is the item already at perfect condition?
       if iHits = iMaxHits AND iHits > 0
       {
-         Send(who,@MsgSendUser,#message_rsc=mend_full_healed, 
-              #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+         Send(who,@MsgSendUser,#message_rsc=mend_full_healed,
+               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 
          return FALSE;
       }
@@ -112,13 +106,7 @@ messages:
       propagate;
    }
 
-   IsTargetInRange(who = $,target = $)
-   {
-      return who = Send(target, @GetOwner) 
-             OR Send(who,@GetOwner) = Send(target,@GetOwner);  
-   }
-
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local oTarget, iAmount, iMultiplier;
 
@@ -139,14 +127,13 @@ messages:
 
       iAmount = (iAmount*iMultiplier)/100;
 
-      Send(oTarget,@SetMaxHits,#number=iAmount);      
+      Send(oTarget,@SetMaxHits,#number=iAmount);
       Send(oTarget,@SetHits,#number=iAmount);
-      Send(who,@MsgSendUser,#message_rsc=mend_working, 
-           #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+      Send(who,@MsgSendUser,#message_rsc=mend_working,
+              #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

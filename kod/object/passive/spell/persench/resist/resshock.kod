@@ -24,8 +24,8 @@ resources:
    resistshock_icon_rsc = iresshok.bgf
    resistshock_desc_rsc = \
       "The grizzled nature god gives the target some relief from shock attacks.  "
-      "Requires mushrooms and blue mushrooms to cast."
-   
+      "Requires one blue mushroom to cast."
+
    resistshock_already_enchanted = "You are already resisting shocks."
    resistshock_success = "Faren fortifies %s%s against shock attacks."
    resistshock_on = "Faren fortifies you against shock attacks."

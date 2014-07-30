@@ -21,8 +21,8 @@ resources:
    resistcold_desc_rsc = \
       "Infuses the target with the magical fire of Faren, "
       "reducing damage from cold attacks for several minutes.  "
-      "Requires mushrooms and red mushrooms to cast."
-   
+      "Requires one red mushroom to cast."
+
    resistcold_already_enchanted = "You are already resistant to cold."
 
    resistcold_on = "The magical fire of Faren enters your body."

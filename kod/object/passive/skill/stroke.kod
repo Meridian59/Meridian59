@@ -334,25 +334,30 @@ messages:
    DamageFactors(damage=0, who=$, weapon_used = $)
    "Different skills/strokes are affected by strength differently."
    {
-      local iDamage, stat, weapProf;
+      local iDamage, stat, weapProf, profAbility, bonusPercentage;
 
       iDamage = damage;
-      % KLUDGEISH: this information should probably be in player.
-      % Get weapon proficiency bonuses.
       if weapon_used <> $
       {
-         iDamage = iDamage + (Send(weapon_used,@GetProf,#who=who)+1)*viMaxProficiencyDamage/100;
-      
-         % Stat damage bonus. Ask the weapon for its proficiency number and convert to skill prof.
          weapProf = Send(SYS,@FindSkillByNum,#num=Send(weapon_used,@GetProfNumber));
-         % Use GetRequisiteStat in the weapon proficiency to query the player for the appropriate stat value.
-         stat = send(weapProf,@GetRequisiteStat,#who=who);
-         iDamage = ((100+bound(stat-25,0,40))*iDamage)/100;
+         profAbility = Send(weapon_used,@GetProf,#who=who)+1;
       }
       else
       {
-         iDamage = iDamage + (send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING))*viMaxProficiencyDamage/100;
+         weapProf = Send(SYS,@FindSkillByNum,#num=SKID_BRAWLING);
+         profAbility = send(who,@GetSkillAbility,#skill_num=SKID_BRAWLING)+1;
       }
+
+      % Add a portion of the proficiency damage based on skill level.
+      iDamage = iDamage + profAbility * viMaxProficiencyDamage / 100;
+      
+      % Get the relevant amount of primary stat for our proficiency. This will be our base bonus percentage.
+      stat = send(weapProf,@GetRequisiteStat,#who=who) - 25;
+      
+      % Scale down the bonus damage percentage if the user is not fully proficient in the weapon.
+      bonusPercentage = 100 + bound(stat * profAbility / 100, 0, 40);
+
+      iDamage = iDamage * bonusPercentage / 100;
       
       return iDamage;
    }

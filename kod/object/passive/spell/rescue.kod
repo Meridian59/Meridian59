@@ -28,6 +28,8 @@ resources:
    Rescue_Already_Cast = "You are already being rescued."
    Rescue_Token_Cancel = "You cannot rescue while holding a token."
    
+   Rescue_depart_to_destination = "%s vanishes in a burst of protective light!"
+   
    rescue_sound = srescue.wav
 
 classvars:
@@ -113,7 +115,7 @@ messages:
 
    DoRescue(who = $)
    {
-      local i, oCurrentRoom, oTargetRoom, oGuild;
+      local i, each_obj, oCurrentRoom, oTargetRoom, oGuild;
 
       send(who,@MsgSendUser,#message_rsc=Rescue_Success);
 
@@ -162,6 +164,15 @@ messages:
 
       % Default: Go to our home room.
       post(who,@AdminGoToSafety);
+            
+      for i in Send(Send(who,@GetOwner),@GetHolderActive)
+      {
+         each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
+         if IsClass(each_obj,&User)
+         {
+            Send(each_obj,@MsgSendUser,#message_rsc=Rescue_depart_to_destination,#parm1=Send(who,@GetName));
+         }
+      }
 
       return;
    }

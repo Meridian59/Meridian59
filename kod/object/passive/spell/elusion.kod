@@ -32,6 +32,8 @@ resources:
    Elusion_fail = "That is not a valid destination."
    Elusion_cant_cast_here = \
        "You may only elude from a place you can elude to."
+       
+   Elusion_depart_to_destination = "%s vanishes in an instant, leaving behind a fading shimmer of warped space."
 
    Elusion_and = "and "
 
@@ -134,10 +136,15 @@ messages:
 
       propagate;
    }
+   
+   TranceBlocksSay()
+   {
+      return TRUE;
+   }
 
    SomethingSaidDuringTrance(who=$,string=$,lTargets = $)
    {
-      local lAllTargets, oGuildHall, sRoomName, bFound, oRoom;
+      local lAllTargets, oGuildHall, sRoomName, bFound, oRoom, i, each_obj;
 
       % Check if string is a location.  If it is, and the caster has sufficent spellpower make 
       %   it the target.  Get percent in the target spell.  If not there or fail check bail and print failure.
@@ -168,6 +175,15 @@ messages:
          {
             bFound = TRUE;
             post(oRoom,@Teleport,#what=who);
+            
+            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            {
+               each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
+               if IsClass(each_obj,&User)
+               {
+                  Send(each_obj,@MsgSendUser,#message_rsc=Elusion_depart_to_destination,#parm1=Send(who,@GetName));
+               }
+            }
             
             break;
          }

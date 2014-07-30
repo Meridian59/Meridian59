@@ -2490,6 +2490,12 @@ messages:
 
       return 1;
    }
+   
+   TranceBlocksSay()
+   "Returns TRUE only if the spell purposely blocks spoken messages during its own trance."
+   {
+      return FALSE;
+   }
 
    ModifyResistance(resistance_list=$)
    {

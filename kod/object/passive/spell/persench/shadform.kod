@@ -154,6 +154,28 @@ messages:
       return defense_power + iShadowBonus;
    }
 
+   EffectDesc(who=$)
+   {
+      local iShadowBonusMonster, iShadowBonusPlayer, iLight;
+      
+      iLight = send(send(who,@GetOwner),@GetRoomLight);
+      iShadowBonusMonster = 30 + (LIGHT_NICE - iLight);
+      iShadowBonusMonster = bound(iShadowBonusMonster,10,150);
+      
+      iShadowBonusPlayer = 30 + (LIGHT_NICE - (iLight + 5));
+      iShadowBonusPlayer = bound(iShadowBonusPlayer,10,150);
+      
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(iShadowBonusMonster);
+      AppendTempString(" defense against monsters here. Against a player of average light level, it will add ");
+      AppendTempString(iShadowBonusPlayer);
+      AppendTempString(" defense.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

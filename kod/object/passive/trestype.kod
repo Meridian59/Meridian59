@@ -318,6 +318,75 @@ messages:
       debug("Create treasure didn't get an object");
       return $;
    }
+
+   GenerateSockets(oDefenseModifier=$)
+   "Here we attempt to create a DefModSockets object attribute for appropriate armors."
+   {
+      local iRandom, iNumSockets, iDifficultyBonus;
+      
+      % Nerudite armor can't have sockets. It's anti-magic!
+      If IsClass(oDefenseModifier,&NeruditeArmor)
+      {
+         return;
+      }
+      
+      % Orc shields always have 1 socket - but only if they're dropped by a monster.
+      % Most orc shields come from the Orc Pit Boss's treasure chamber - those won't have sockets.
+      If IsClass(oDefenseModifier,&OrcShield)
+      {
+         Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=1);
+         return;
+      }
+      
+      % Knight's shields have a 10% chance for 1 socket.
+      If IsClass(oDefenseModifier,&KnightShield)
+      {
+         iRandom = Random(1,1000);
+         if iRandom > 900
+         {
+            Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=1);
+         }
+         return;
+      }
+      
+      % Helms have a 5% chance for 1 socket.
+      if IsClass(oDefenseModifier,&SimpleHelm)
+      {
+         iRandom = Random(1,1000);
+         if iRandom > 950
+         {
+            Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=1);
+         }
+         return;
+      }
+      
+      if IsClass(oDefenseModifier,&Armor)
+      {
+         % Mob difficulty makes a huge difference for armor max sockets
+         iDifficultyBonus = (piDiff_seed - 5) * 10;
+      
+         iRandom = Random(1,1000);
+         if (iRandom + iDifficultyBonus) >= 1000
+         {
+            iNumSockets = 4;
+         }
+         if (iRandom + iDifficultyBonus) < 1000
+         {
+            iNumSockets = 3;
+         }
+         if (iRandom + iDifficultyBonus) < 950
+         {
+            iNumSockets = 2;
+         }
+         if (iRandom + iDifficultyBonus) < 666
+         {
+            iNumSockets = 1;
+         }
+         Create(&DefModSockets,#host_object=oDefenseModifier,#num_sockets=iNumSockets);
+         return;
+      }
+      return;
+   }
    
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

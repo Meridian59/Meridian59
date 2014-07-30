@@ -134,6 +134,21 @@ messages:
       RETURN &KaraholsCursePotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment adds ");
+      AppendTempString(100 + (Send(who,@GetEnchantedState,#what=self) * 2));
+      AppendTempString(" offense and 1-");
+      AppendTempString(1 + (Send(who,@GetEnchantedState,#what=self)/20));
+      AppendTempString(" attack damage. When it expires, it will paralyze you for ");
+      AppendTempString(((40+(Send(who,@GetEnchantedState,#what=self)/2)) * 1000)/6);
+      AppendTempString(" milliseconds.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

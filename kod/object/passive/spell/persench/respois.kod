@@ -94,6 +94,17 @@ messages:
       RETURN &ResistPoisonPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will protect you from poisoning attempts ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString("\% of the time.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

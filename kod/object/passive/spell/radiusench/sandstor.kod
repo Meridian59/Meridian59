@@ -43,7 +43,7 @@ resources:
    sandstorm_hurts_you = "You are becoming exhausted from the buffeting winds of sand."
    sandstorm_miss_rsc = "The powerful sandstorm snatches your shot away."
    
-   Sandstorm_cast = "Swirling dust begins to needle into your skin, making it very difficult to breathe."
+   Sandstorm_cast = "You call upon the rage of Faren to bear utter tempest across the area!"
    Sandstorm_starts = "%s calls upon the rage of Faren to bear utter tempest across the area!"
    Sandstorm_ends = "The air clears."
    Sandstorm_caster_ends = "The air clears."
@@ -74,6 +74,7 @@ classvars:
    viMana = 14
    viChance_To_Increase = 35
    viBaseRange = 10
+   viPeriodicEffect = TRUE
 
    vrSucceed_wav = sandstorm_sound
 
@@ -101,26 +102,77 @@ messages:
       return Bound(80000+(iSpellPower*1000),80000,180000);
    }
 
-   StartSpecialEffect(who=$,iPower=0,caster=$)
+   StartSpecialEffect(what=$,iPower=0,source=$)
    {
-      If IsClass(who,&User)
+      If IsClass(what,&User)
          AND iPower <> 0
       {
-         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_SAND);
-         Send(who,@AddAim,#points=-(iPower/4));
+         Send(what,@EffectSendUser,#what=self,#effect=EFFECT_SAND);
+         Send(what,@AddAim,#points=-(iPower/4));
       }
 
       return;
    }
    
-   EndSpecialEffect(who=$,iPower=0,caster=$)
+   EndSpecialEffect(what=$,iPower=0,source=$)
    {
-      If IsClass(who,&User)
+      If IsClass(what,&User)
          AND iPower <> 0
       {
-         Send(who,@EffectSendUser,#what=self,#effect=EFFECT_CLEARSAND);
-         Send(who,@AddAim,#points=(iPower/4));
+         Send(what,@EffectSendUser,#what=self,#effect=EFFECT_CLEARSAND);
+         Send(what,@AddAim,#points=(iPower/4));
       }
+      return;
+   }
+
+   CalculatePeriodicEffectTime()
+   {
+      return 3000;
+   }
+   
+   PeriodicEffect(lEnchanted=$,iPower=0,iRange=0,source=$)
+   {
+      local oBattler, bExhaustedMultiple;
+      
+      % Sandstorm applies 1-4 slashing damage from the source of the spell.
+      % It also drains 1-4 vigor. Both values are based on spellpower, and are not random.
+      % Special behavior: Sandstorm ceases to drain vigor below 10 vigor.
+      % Instead, it deals triple damage, because the victim is exhausted.
+
+      bExhaustedMultiple = 1;
+      
+      for oBattler in lEnchanted
+      {
+         if IsClass(Send(oBattler,@GetOwner),&GuildHall)
+            AND NOT Send(Send(oBattler,@GetOwner),@InFoyer,#who=oBattler)
+         {
+            continue;
+         }
+         
+         if IsClass(oBattler,&User)
+         {
+            if Send(oBattler,@GetVigor) > 9
+            {
+               Send(oBattler,@AddExertion,#amount=((iPower+1)/25)*10000);
+            }
+            else
+            {
+               bExhaustedMultiple = 3;
+            }
+
+            if Send(oBattler,@AssessDamage,#what=source,#report=FALSE,#damage=(((iPower+1)/25)*bExhaustedMultiple),#atype=ATCK_WEAP_SLASH) = $
+            {
+               If IsClass(source,&Battler)
+               {
+                  Send(source,@KilledSomething,#what=oBattler);
+               }
+               Send(oBattler,@Killed,#what=source);
+            }
+         }
+         
+         bExhaustedMultiple = 1;
+      }
+      
       return;
    }
 
@@ -145,4 +197,3 @@ messages:
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

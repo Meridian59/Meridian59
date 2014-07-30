@@ -90,11 +90,11 @@ properties:
    % Rescue always takes at least this long to cast
    piRescueBaseDelaySec = 15
 
-   % Time in seconds that ghosts will last before taking a penalty
-   piLogoffPenaltyGhostTime = 480
+   % Time in milliseconds that ghosts will last before taking a penalty
+   piLogoffPenaltyGhostTime = 480 * 1000
 
-   % Time in seconds that outlaw / murderer ghosts will last before taking a penalty
-   piOutlawMurdererLogoffPenaltyGhostTime = 180
+   % Time in milliseconds that outlaw / murderer ghosts will last before taking a penalty
+   piOutlawMurdererLogoffPenaltyGhostTime = 180 * 1000
 
    % If true, spellpower and duration are displayed for all spells cast.
    pbDisplaySpellData = FALSE

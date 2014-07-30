@@ -1,0 +1,130 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Gem is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   gem_name_rsc = "mystical gem"
+   gem_icon_rsc = emerald.bgf
+   gem_desc = "This strange gem seems to gravitate powerfully towards your armor."
+   
+   gem_attach_no_sockets = "The %s has no sockets for attaching a gem!"
+
+classvars:
+
+   vrName = gem_name_rsc
+   vrIcon = gem_icon_rsc
+   vrDesc = gem_desc
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_GEM
+   
+properties:
+
+   poSocketedObject = $
+
+   viObject_flags = APPLY_YES
+
+messages:
+   
+   ReqNewApply(what = $,apply_on = $)
+   {
+      if Send(self,@ReqAttach)
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+   
+   ReqAttach(socketed_object = $)
+   {
+      if poSocketedObject <> $
+      {
+         return false;
+      }
+      
+      return true;
+   }
+   
+   NewApplied(what = $,apply_on = $)
+   {
+      local oObjectAtt;
+      
+      for oObjectAtt in Send(apply_on,@GetObjectAttributes)
+      {
+         if IsClass(oObjectAtt,&DefModSockets)
+         {
+            Send(oObjectAtt,@AttachGem,#who=what,#oGem=self);
+            return;
+         }
+      }
+      
+      Send(what,@MsgSendUser,#message_rsc=gem_attach_no_sockets,#parm1=Send(apply_on,@GetName));
+      
+      return;
+   }
+   
+   SetSocketedObject(socketed_object = $)
+   {
+      poSocketedObject = socketed_object;
+      return;
+   }
+   
+   AttributeDesc()
+   {
+      AppendTempString("An attached ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" adds a strange mystical effect. ");
+      
+      return;
+   }
+   
+   ModifyDamage(damage=$)
+   {
+      return damage;
+   }
+   
+   ModifyHitRoll(hit_roll=$)
+   {
+      return hit_roll;
+   }
+   
+   ModifyDefenseDamage(damage=$)
+   {
+      return damage;
+   }
+   
+   ModifyDefensePower(defense_power=$)
+   {
+      return defense_power;
+   }
+   
+   ModifyResistance(resistance_list=$)
+   {
+      return resistance_list;
+   }
+
+   Delete()
+   {
+      if poSocketedObject <> $
+      {
+         Send(poSocketedObject,@DeleteGemFromSockets,#oGem=self);
+      }
+      propagate;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

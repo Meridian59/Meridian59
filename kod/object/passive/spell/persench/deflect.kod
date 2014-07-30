@@ -160,6 +160,17 @@ messages:
       return &DeflectPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will reflect enemy splash and bolt spells ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self));
+      AppendTempString("\% of the time.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

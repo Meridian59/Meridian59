@@ -19,6 +19,12 @@ typedef struct {
    Bool   aggressive;     // True when people allowed to kill others (safety off)
 } PInfo;
 
+typedef struct {
+   object_node obj;
+   BYTE        num_targets;
+   BYTE        school;
+} spelltemp;     /* A magical spell--must have obj struct to use in owner drawn list box */
+
 void InterfaceInit(void);
 void InterfaceExit(void);
 
@@ -31,6 +37,7 @@ void InterfaceColorChanged(WORD color_id, COLORREF color);
 void InterfaceResetData(void);
 Bool InterfaceTab(int control, Bool forward);
 Bool InterfaceAction(int action, void *action_data);
+Bool CheckForAlwaysActiveSpells(spelltemp *sp);
 void InterfaceNewRoom(void);
 void InterfaceConfigChanged(void);
 void InterfaceUserChanged(void);

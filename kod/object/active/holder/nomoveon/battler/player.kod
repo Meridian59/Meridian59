@@ -177,6 +177,8 @@ resources:
 
    player_cancel_rescue = \
       "~IYour aggression halts your attempt to escape from the current situation."
+   player_cancel_rescue_phase = \
+      "~IThe protective magics that might have rescued you instead snap and fade as you phase out of existence."
 
    player_improved = "~I~BYou have improved in the art of %s."
    player_improved_wav_rsc = imp.wav
@@ -731,6 +733,13 @@ resources:
    
    Jig_cannot_attack = "It wouldn't feel right to attack the %s while you two are dancing so well together!"
    
+   phased_out_cant_use = "You try to use your item, but your phased hands pass right through it."
+   cannot_attack_phased_self_rsc = "You can't attack anyone while phased out."
+   cannot_attack_phased_player_rsc = "Your strike would just go right through someone who is phased out."
+   phase_fatigue_cleared = "This area of peace lifts your phase fatigue."
+   phased_player_description = "This is the ghosted body of %q, whose consciousness has travelled to "
+                               "another plane of existence."
+   
 classvars:
 
    viHand_space = 2
@@ -894,10 +903,6 @@ properties:
    % List of enchantments.
    % Each element is [ timer, object of spell, [optional state] ].
    plEnchantments = $
-   
-   % List of enchantments applied by radius spells.
-   % Each element is [song object, spellpower, caster]
-   plRadiusEnchantments = $
 
    % Attack modifiers to attack roll & damage (includes items & spells)
    plAttack_modifiers = $
@@ -1011,6 +1016,11 @@ properties:
 
    % Players will naturally fall out of groups if they aren't getting kills
    ptLeaveBuilderGroupTimer = $
+  
+   % Time remaining phased out
+   ptPhaseTimer = $
+   ptPhaseVisualEffectTimer = $
+   piRemainingPhaseTime = 60000 * 8
 
 messages:
 
@@ -1420,7 +1430,7 @@ messages:
       local iAmount;
 
       % If we cannot gain vigor (probably due to Second Wind), return out if trying to take away exertion
-      if (ptSecondWind <> $) AND (amount < 0)
+      if ((ptSecondWind <> $) AND (amount < 0)) OR Send(self,@IsPhasedOut)
       {
          return;
       }
@@ -1552,6 +1562,8 @@ messages:
 
    NewOwner(what = $)
    {
+      local iBasePhaseTime;
+
       Send(self,@ResetGainFlags);
       
       % Are we moving somewhere "safe" or in a frenzy??
@@ -1578,6 +1590,16 @@ messages:
       if (piFlags2 & PFLAG2_HUNTED)
       {
          Send(self,@InformHunters);
+      }
+
+      if Send(poOwner,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      {
+         iBasePhaseTime = Send(self,@GetBasePhaseTime);
+         if piRemainingPhaseTime <> iBasePhaseTime
+         {
+            Send(self,@MsgSendUser,#message_rsc=phase_fatigue_cleared);
+            Send(self,@RefreshPhaseTimeToBase);
+         }
       }
 
       return;
@@ -2507,6 +2529,7 @@ messages:
    {
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
       
       return;
    }
@@ -2966,6 +2989,8 @@ messages:
          Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_PLAYER);
       }
 
+      Post(self,@DrawResistances);
+
       return;
    }
 
@@ -3136,6 +3161,12 @@ messages:
 
       for i in plEnchantments
       {
+         % Phase reactivates enchantments while it is still in plEnchantments
+         if IsClass(Nth(i,2),&Phase)
+         {
+            continue;
+         }
+
          if IsClass(Nth(i,2),&Boon)=FALSE
          {
             state = $;
@@ -3226,6 +3257,7 @@ messages:
          if Nth(i,2) = what
          {
             if Send(self,@IsLoggedOn)
+               OR IsClass(what,&Phase)
             {
                % TODO: First(i) isn't always a timer?
                if First(i) <> $
@@ -3334,127 +3366,6 @@ messages:
       }
       
       return;
-   }
-
-   AddRadiusEnchantment(what=$,iPower=0,caster=$)
-   "Adds what and power to plRadiusEnchantments, which carry out spell effects."
-   {
-      plRadiusEnchantments = Cons([what,iPower,caster],plRadiusEnchantments);
-      Send(self,@ShowAddEnchantment,#what=what,#type=ENCHANTMENT_ROOM);
-      
-      return;
-   }
-
-   RemoveRadiusEnchantment(what=$,iPower=0,caster=$)
-   "Removes <what> from plRadiusEnchantments."
-   {
-      local i, bFound;
-
-      bFound = FALSE ;
-      for i in plRadiusEnchantments
-      {
-         if Nth(i,1) = what
-            AND Nth(i,2) = iPower
-            AND Nth(i,3) = caster
-         {
-            Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=ENCHANTMENT_ROOM);
-            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
-            bFound = TRUE;
-         }
-      }
-
-      if NOT bFound
-      {
-         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
-               plRadiusEnchantments);
-      }
-
-      return;
-   }
-   
-   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
-   "Returns whether or not currently enchanted by <what> radius enchantment."
-   {
-      local i;
-      
-      if plRadiusEnchantments = $
-      {
-         return FALSE;
-      }
-
-      if what = $
-      {
-         for i in plRadiusEnchantments
-         {
-            if IsClass(Nth(i,1),byClass)
-            {
-               if caster = $
-               {
-                  return TRUE;
-               }
-               else
-               {
-                  if Nth(i,3) = caster
-                  {
-                     return TRUE;
-                  }
-               }
-            }
-         }
-      }
-      else
-      {
-         for i in plRadiusEnchantments
-         {
-            if Nth(i,1) = what
-            {
-               if caster = $
-               {
-                  return TRUE;
-               }
-               else
-               {
-                  if Nth(i,3) = caster
-                  {
-                     return TRUE;
-                  }
-               }
-            }
-         }      
-      }
-      
-      return FALSE;
-   }
-   
-   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
-   {
-      local i, oHighest;
-   
-      oHighest = $;
-   
-      for i in plRadiusEnchantments
-      {
-         if IsClass(Nth(i,1), byClass)
-         {
-            if oHighest = $
-            {
-               oHighest = i;
-            }
-            else
-            {
-               if Nth(i,2) > Nth(oHighest,2)
-               {
-                  oHighest = i;
-               }
-            }
-         }
-      }
-      return oHighest;
-   }
-   
-   GetRadiusEnchantments()
-   {
-      return plRadiusEnchantments;
    }
 
    AddAttackModifier(what = $)
@@ -3631,6 +3542,12 @@ messages:
    TryUseItem(what = $)
    {
       local i,iSpace,iUse_type;
+      
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=phased_out_cant_use);
+         return FALSE;
+      }
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_MORPHED)
       {
@@ -3754,6 +3671,7 @@ messages:
       }
       
       Send(self,@ResetPlayerFlagList);
+      Post(self,@DrawResistances);
       
       return TRUE;
    }
@@ -3810,6 +3728,7 @@ messages:
                Send(what,@NewUnused,#what=self);
             }
 
+            Post(self,@DrawResistances);
             return TRUE;
          }
       }
@@ -3947,6 +3866,18 @@ messages:
          AND NOT Send(victim,@PlayerIsImmortal)
       {
          return TRUE;
+      }
+      
+      if Send(self,@IsPhasedOut)
+      {
+         Send(self,@MsgSendUser,#message_rsc=cannot_attack_phased_self_rsc);
+         return FALSE;
+      }
+      
+      if IsClass(victim,&Player)
+         AND Send(victim,@IsPhasedOut)
+      {
+         return FALSE;
       }
 
       if IsClass(victim,&Monster)
@@ -5971,6 +5902,11 @@ messages:
    {
       return plUsing;
    }
+   
+   GetEquippedItems()
+   {
+      return Send(self,@GetPlayerUsing);
+   }
 
    IsUsingA(class=$)
    {
@@ -6117,13 +6053,6 @@ messages:
 
       iTime = iTime - Send(Send(SYS,@GetParliament),@GetFactionRegenBonus,
                            #who=self,#hpregen=TRUE);
-      
-      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Restorate)
-      {
-         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Restorate);
-         iTime = Send(Nth(lRadiusState,1),@AdjustHealthTime,#time=iTime,#lRadiusState=lRadiusState);
-         return bound(iTime,500,60000);
-      }
 
       return bound(iTime,1000,60000);
    }
@@ -6147,13 +6076,6 @@ messages:
                               #who=self,#hpregen=FALSE);
 
          iTime = bound(iTime,1000,60000);
-
-         if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Rejuvenate)
-         {
-            lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Rejuvenate);
-            iTime = Send(Nth(lRadiusState,1),@AdjustManaTime,#time=iTime,#lRadiusState=lRadiusState);
-            iTime = bound(iTime,500,60000);
-         }
 
          % Mana Focus will adjust mana regen time based on its spellpower.
          oSpell = Send(SYS,@FindSpellByNum,#Num=SID_MANA_FOCUS);
@@ -6200,6 +6122,11 @@ messages:
    "decay = TRUE if you lose a HP over time because you are boosted over max "
    "by some sort of vamp effect.  If this is true, you shouldn't break a trance."
    {
+      if Send(self,@IsPhasedOut)
+      {
+         return;
+      }
+
       if piFlags & PFLAG_TRANCE AND NOT decay
       {
          Send(self,@BreakTrance,#event=EVENT_DAMAGE);
@@ -6215,14 +6142,17 @@ messages:
    GainHealth(amount = $)
    "Some attempt here to quell the vamp touch bugs"
    {
-      if (2*piMax_health) < (piHealth+amount)
+      if NOT Send(self,@IsPhasedOut)
       {
-         Send(self,@MsgSendUser,#message_rsc=player_health_gain_maxed);
-         piHealth = 2 * piMax_health;
-      }
-      else
-      {
-         piHealth = piHealth + amount;
+         if (2*piMax_health) < (piHealth+amount)
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_health_gain_maxed);
+            piHealth = 2 * piMax_health;
+         }
+         else
+         {
+            piHealth = piHealth + amount;
+         }
       }
 
       Send(self,@NewHealth);
@@ -6247,10 +6177,13 @@ messages:
          return 0;
       }
 
-      pihealth = piHealth + amount;
-      if piHealth > piMax_health
+      if NOT Send(self,@IsPhasedOut)
       {
-         piHealth = piMax_health;
+         pihealth = piHealth + amount;
+         if piHealth > piMax_health
+         {
+            piHealth = piMax_health;
+         }
       }
 
       Send(self,@NewHealth);
@@ -6651,14 +6584,18 @@ messages:
    GainMana(amount=0, bCapped=FALSE)
    {
       local iManaGained;
-   
-      iManaGained = amount;
-      piMana = piMana + amount;
 
-      if bCapped AND piMana > piMax_Mana
+      iManaGained = amount;
+      
+      if NOT Send(self,@IsPhasedOut)
       {
-         iManaGained = amount - (piMana - piMax_Mana);
-         piMana = piMax_Mana;
+         piMana = piMana + amount;
+
+         if bCapped AND piMana > piMax_Mana
+         {
+            iManaGained = amount - (piMana - piMax_Mana);
+            piMana = piMax_Mana;
+         }
       }
       
       Send(self,@NewMana);
@@ -10591,12 +10528,6 @@ messages:
       local iTime, lRadiusState;
 
       iTime = 1000 + (30* (51-Send(self,@getStamina))); 
-
-      if Send(self,@IsAffectedByRadiusEnchantment,#byClass=&Invigorate)
-      {
-         lRadiusState = Send(self,@GetMostPowerfulRadiusEnchantmentState,#byClass=&Invigorate);
-         iTime = Send(Nth(lRadiusState,1),@AdjustVigorTime,#time=iTime,#lRadiusState=lRadiusState);
-      }
       
       return iTime;
    }
@@ -10748,6 +10679,14 @@ messages:
 
             Send(oEnch,@BreakTrance,#who=self,#state=state,#event=event,#what=what);
             bFound = TRUE;
+         }
+      }
+      
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,3) = self
+         {
+            Send(Nth(i,1),@BreakTrance,#who=Nth(i,3),#event=event);
          }
       }
 
@@ -12347,6 +12286,8 @@ messages:
          return FALSE;
       }
       
+      Send(self,@BreakTrance,#event=EVENT_REQNEWOWNER);
+      
       return TRUE;
    }
 
@@ -13130,6 +13071,7 @@ messages:
             for oLightObject in plRadiusEnchantments
             {
                if Nth(oLightObject,3) = self
+                  AND NOT Send(Nth(oLightObject,1),@GetOldAreaEnchStyle)
                {
                   if (piDrawFX & FLICKERING_YES)
                   {
@@ -13575,6 +13517,139 @@ messages:
    HasEvilTwin()
    {
       return pbHasEvilTwin;
+   }
+
+   IsPhasedOut()
+   {
+      return Send(self,@IsEnchanted,#byClass=&Phase);
+   }
+   
+   StartPhaseTimer()
+   {
+      if ptPhaseTimer = $
+      {
+         ptPhaseTimer = CreateTimer(self,@PhaseTimerEnd,piRemainingPhaseTime);
+
+         % Stop any rescue attempts if the user phases out.
+         if ptRescue <> $
+         {
+            Send(self,@MsgSendUser,#message_rsc=player_cancel_rescue_phase);
+            DeleteTimer(ptRescue);
+            ptRescue = $;
+         }
+      }
+      
+      if ptPhaseVisualEffectTimer = $
+      {
+         ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
+      }
+      
+      return;
+   }
+   
+   PhaseVisualEffectTimer(timer = $)
+   {
+      ptPhaseVisualEffectTimer = $;
+      Send(self,@PhaseVisualEffect);
+
+      return;
+   }
+   
+   PhaseVisualEffect()
+   {
+      if ptPhaseVisualEffectTimer <> $
+      {
+         DeleteTimer(ptPhaseVisualEffectTimer);
+         ptPhaseVisualEffectTimer = $;
+      }
+      
+      Send(Send(SYS,@FindSpellByNum,#num=SID_PHASE),@AdjustVisualEffectBasedOnTimeRemaining,#who=self);
+      
+      if ptPhaseVisualEffectTimer = $
+         AND Send(self,@IsPhasedOut)
+      {
+         ptPhaseVisualEffectTimer = CreateTimer(self,@PhaseVisualEffectTimer,2000);
+      }
+      
+      return;
+   }
+
+   FreezePhaseTimer()
+   {
+      if ptPhaseTimer <> $
+      {
+         piRemainingPhaseTime = GetTimeRemaining(ptPhaseTimer);
+         DeleteTimer(ptPhaseTimer);
+         ptPhaseTimer = $;
+         
+         if ptPhaseVisualEffectTimer <> $
+         {
+            DeleteTimer(ptPhaseVisualEffectTimer);
+            ptPhaseVisualEffectTimer = $;
+         }
+      }
+
+      return;
+   }
+
+   PhaseTimerEnd()
+   {
+      local oPhase;
+
+      ptPhaseTimer = $;
+         
+      if ptPhaseVisualEffectTimer <> $
+      {
+         DeleteTimer(ptPhaseVisualEffectTimer);
+         ptPhaseVisualEffectTimer = $;
+      }
+      
+      oPhase = Send(SYS,@FindSpellByNum,#num=SID_PHASE);
+      Send(self,@RemoveEnchantment,#what=oPhase);
+      Send(oPhase,@NotifyRoomPenalty,#who=self);
+      Send(oPhase,@InflictFlatPenalties,#who=self);
+      
+      Post(self,@AdminGoToLastSafeRoom);
+
+      Send(self,@RefreshPhaseTimeToBase);
+ 
+      return;
+   }
+
+   GetRemainingPhaseTime()
+   {
+      if ptPhaseTimer <> $
+      {
+         return GetTimeRemaining(ptPhaseTimer);
+      }
+      return piRemainingPhaseTime;
+   }
+   
+   GetBasePhaseTime()
+   {
+      if Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
+         OR Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+      {
+         return Send(Send(SYS,@GetSettings),@GetOutlawMurdererLogoffPenaltyGhostTime);
+      }
+
+      return Send(Send(SYS,@GetSettings),@GetLogoffPenaltyGhostTime);
+   }
+
+   RefreshPhaseTimeToBase()
+   {
+      if piRemainingPhaseTime <> Send(self,@GetBasePhaseTime)
+      {
+         piRemainingPhaseTime = Send(self,@GetBasePhaseTime);
+      }
+      return;
+   }
+
+   SetPhaseTimeEqualTo(amount=60000)
+   "Used by logoff ghosts to sync up penalty times."
+   {
+      piRemainingPhaseTime = amount;
+      return;
    }
 
 end

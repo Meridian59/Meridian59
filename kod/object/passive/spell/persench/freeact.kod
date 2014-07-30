@@ -147,6 +147,19 @@ messages:
       return &FreeActionPotion;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will completely resist an attempt to paralyze you ");
+      AppendTempString(Send(who,@GetEnchantedState,#what=self) * SPELL_RESIST_PERCENT / 100);
+      AppendTempString("\% of the time. Successful attempts to paralyze you will be reduced by ");
+      AppendTempString(100 * Send(who,@GetEnchantedState,#what=self) / 150);
+      AppendTempString("\%.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

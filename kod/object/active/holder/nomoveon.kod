@@ -26,6 +26,11 @@ properties:
    piFine_row = 0
    piFine_col = 0
 
+   % List of enchantments applied by radius spells.
+   % Each element is [song object, spellpower, caster]
+   % Support for players, monsters, and items
+   plRadiusEnchantments = $
+
 messages:
 
    NewOwner(what = $)
@@ -103,16 +108,178 @@ messages:
       return;
    }
 
+   AddRadiusEnchantment(what=$,iPower=0,source=$)
+   {
+      local i;
+      
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = source
+         {
+            return;
+         }
+      }
+
+      plRadiusEnchantments = Cons([what,iPower,source],plRadiusEnchantments);
+      
+      If IsClass(self,&User)
+      {
+         Send(self,@ShowAddEnchantment,#what=what,#type=2);
+         
+         If source = self
+            AND NOT Send(what,@GetOldAreaEnchStyle)
+         {
+            Send(self,@ShowAddEnchantment,#what=what,#type=1);
+         }
+      }
+      
+      return;
+   }
+
+   RemoveRadiusEnchantment(what=$,iPower=0,source=$)
+   {
+      local i;
+
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = source
+         {
+            If IsClass(self,&User)
+            {
+               Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=2);
+
+               If source = self
+                  AND NOT Send(what,@GetOldAreaEnchStyle)
+               {
+                  Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=1);
+               }
+            }
+         
+            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
+         }
+      }
+
+      return;
+   }
+   
+   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
+   "Returns whether or not currently enchanted by <what> radius enchantment."
+   {
+      local i;
+      
+      if plRadiusEnchantments = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plRadiusEnchantments
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         for i in plRadiusEnchantments
+         {
+            if Nth(i,1) = what
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+   
+   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+   {
+      local i, oHighest;
+   
+      oHighest = $;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(Nth(i,1), byClass)
+         {
+            if oHighest = $
+            {
+               oHighest = i;
+            }
+            else
+            {
+               if Nth(i,2) > Nth(oHighest,2)
+               {
+                  oHighest = i;
+               }
+            }
+         }
+      }
+      return oHighest;
+   }
+   
+   GetRadiusEnchantments()
+   {
+      return plRadiusEnchantments;
+   }
+   
+   IsInSameRoom(what = $)
+   {
+      if Send(self,@GetOwner) <> $
+         AND IsClass(Send(self,@GetOwner),&Room)
+         AND Send(what,@GetOwner) <> $
+         AND IsClass(Send(what,@GetOwner),&Room)
+         AND Send(self,@GetOwner) = Send(what,@GetOwner)
+      {
+         return 1;
+      }
+         
+      return 0;
+   }
+
    SquaredDistanceTo(what = $)
-   "Computes squared distance to <what>.  Assumes they are in same room!"
+   "Computes squared distance to <what>. Returns $ for any object that is not within a room."
    {
       local iRow, iCol;
+      
+      If NOT Send(self,@IsInSameRoom,#what=what)
+      {
+         return $;
+      }
 
       iRow = Send(what,@GetRow);
       iCol = Send(what,@GetCol);
 
       % Sanity checking
-      if iRow = $ OR iCol = $
+      if iRow = $ OR iCol = $ OR Send(self,@GetRow) = $ OR Send(self,@GetCol) = $
       {
          return $;
       }
@@ -125,12 +292,11 @@ messages:
    {
       local iRow_diff, iCol_diff;
 
-      iRow_diff = piRow - row;
-      iCol_diff = piCol - col;
+      iRow_diff = Send(self,@GetRow) - row;
+      iCol_diff = Send(self,@GetCol) - col;
 
       return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

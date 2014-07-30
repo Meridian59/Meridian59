@@ -145,6 +145,19 @@ messages:
       propagate;
    }
 
+   EffectDesc(who=$)
+   {
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will paralyze opponents that attack you for ");
+      AppendTempString(Bound(Send(who,@GetEnchantedState,#what=self) * 20,500,2500));
+      AppendTempString("-");
+      AppendTempString(Bound(Send(who,@GetEnchantedState,#what=self) * 25,500,2500));
+      AppendTempString(" milliseconds. Opponents attacking at range have a 50\% chance to avoid your paralyzing gaze.");
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

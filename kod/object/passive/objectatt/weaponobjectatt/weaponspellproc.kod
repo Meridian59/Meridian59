@@ -1,0 +1,263 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+WeaponSpellProc is WeaponObjectAttribute 
+
+constants:
+
+   include blakston.khd
+   
+   SELF_CAST_TYPE = 1
+   DEFENDER_CAST_TYPE = 2
+   NO_TARGET_CAST_TYPE = 3
+
+resources:
+
+   weapon_proc = "The %s worn by %s gives off a magical flare, casting %s on %s!"
+   weapon_proc_you = "Your %s gives off a magical flare, casting %s on you!"
+   weapon_proc_them = "Your %s gives off a magical flare, casting %s on %s!"
+   weapon_proc_nobody = "Your %s gives off a magical flare, casting %s!"
+   weapon_proc_no_target = "The %s worn by %s gives off a magical flare, casting %s!"
+
+classvars:
+
+properties:
+  
+   poSpell = $
+   piType = SELF_CAST_TYPE
+   piSpellPower = 70
+   piProcChance = 15
+
+messages:
+   
+   Constructor(host_object=$,set_spell=$,set_type=1,set_spellpower=1,set_proc_chance=0)
+   {
+      local iRandomSpell;
+
+      if set_spell <> $
+      {
+         poSpell = set_spell;
+         piType = set_type;
+         piSpellPower = set_spellpower;
+         piProcChance = set_proc_chance;
+         propagate;
+      }
+      
+      iRandomSpell = Random(1,100);
+      
+      if host_object <> $
+         AND IsClass(host_object,&Weapon)
+      {
+         if iRandomSpell < 10
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 20
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_BLIND);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 30
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_PURGE);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 40
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_DAZZLE);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 50
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_VAMPIRIC_DRAIN);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 60
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_SHOCKING_FURY);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 70
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_EXPLOSIVE_FROST);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 80
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_ILLUSIONARY_WOUNDS);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 90
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_BLAST_OF_FIRE);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell < 100
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_SPLASH_OF_ACID);
+            piType = 2;
+            piSpellPower = Random(1,99);
+            piProcChance = Random(5,15);
+            propagate;
+         }
+         if iRandomSpell = 100
+         {
+            poSpell = Send(SYS,@FindSpellByNum,#num=SID_SLITHERBOLT);
+            piType = 2;
+            piSpellPower = 99;
+            piProcChance = 100;
+            propagate;
+         }
+      }
+         
+      propagate;
+   }
+   
+   GetSpell()
+   {
+      return poSpell;
+   }
+   
+   GetType()
+   {
+      return piType;
+   }
+   
+   GetSpellpower()
+   {
+      return piSpellPower;
+   }
+   
+   GetProcChance()
+   {
+      return piProcChance;
+   }
+   
+   ModifyDamage(damage = $,who = $,what = $)
+   {
+      local i, each_obj;
+
+      if poSpell <> $
+         AND Random(1,100) <= piProcChance
+      {
+         if piType = SELF_CAST_TYPE
+            AND who <> $
+            AND NOT Send(who,@IsEnchanted,#what=poSpell)
+         {
+            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            {
+               each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
+               If IsClass(each_obj,&Player)
+                  AND each_obj <> who
+               {
+                  Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc,
+                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
+                                             #parm2=Send(who,@GetName),
+                                             #parm3=Send(poSpell,@GetName),
+                                             #parm4=Send(who,@GetHimHer));
+               }
+               if IsClass(each_obj,&Player)
+                  AND each_obj = who
+               {
+                  Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc_you,
+                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
+                                             #parm2=Send(poSpell,@GetName));
+               }
+            }
+            Post(poSpell,@CastSpell,#who=who,#ltargets=[who],#iSpellPower=piSpellPower,#bItemCast=TRUE);
+         }
+         
+         % IsEnchanted check skipped so that the proc can replace enemy buffs with weaker versions.
+         % For example, a Qor player may wish to proc a weaker Eagle Eyes on an enemy that they are hitting.
+         if piType = DEFENDER_CAST_TYPE
+            AND what <> $
+         {
+            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            {
+               each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
+               If IsClass(each_obj,&Player)
+                  AND each_obj <> who
+               {
+                  Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc,
+                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
+                                             #parm2=Send(who,@GetName),
+                                             #parm3=Send(poSpell,@GetName),
+                                             #parm4=Send(what,@GetName));
+               }
+               if IsClass(each_obj,&Player)
+                  AND each_obj = who
+               {
+                  Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc_them,
+                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
+                                             #parm2=Send(poSpell,@GetName),
+                                             #parm3=Send(what,@GetName));
+               }
+            }
+            Post(poSpell,@CastSpell,#who=who,#ltargets=[what],#iSpellPower=piSpellPower,#bItemCast=TRUE);
+         }
+         
+         if piType = NO_TARGET_CAST_TYPE
+            AND who <> $
+         {
+            for i in Send(Send(who,@GetOwner),@GetHolderActive)
+            {
+               each_obj = Send(Send(who,@GetOwner),@HolderExtractObject,#data=i);
+               If IsClass(each_obj,&Player)
+                  AND each_obj <> who
+               {
+                  Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc,
+                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
+                                             #parm2=Send(who,@GetName),
+                                             #parm3=Send(poSpell,@GetName));
+               }
+               if IsClass(each_obj,&Player)
+                  AND each_obj = who
+               {
+                  Post(each_obj,@MsgSendUser,#message_rsc=weapon_proc_nobody,
+                                             #parm1=Send(Send(self,@GetHostObject),@GetName),
+                                             #parm2=Send(poSpell,@GetName));
+               }
+            }
+            Post(poSpell,@CastSpell,#who=who,#ltargets=Send(poSpell,@GetTargets,#who=who),#iSpellPower=piSpellPower,#bItemCast=TRUE);
+         }
+      }
+      return damage;
+   }
+   
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

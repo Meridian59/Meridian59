@@ -357,6 +357,8 @@ properties:
    piDefense = $
    piMinDamage = $
    piMaxDamage = $
+   
+   piArmor = 0
 
 messages:
 
@@ -690,6 +692,13 @@ messages:
       {
          Send(self,@RemoveEnchantment,#what=Nth(i,2));
       }
+      
+      for i in plRadiusEnchantments
+      {
+         Send(self,@RemoveRadiusEnchantment,#what=Nth(i,1),#iPower=Nth(i,2),#caster=Nth(i,3));
+      }
+      
+      plRadiusEnchantments = $;
 
       return;
    }
@@ -1473,6 +1482,12 @@ messages:
       {
          return FALSE;
       }
+      
+      If IsClass(what,&User)
+         AND Send(what,@IsPhasedOut)
+      {
+         return FALSE;
+      }
 
       % Make sure room allows the attack.
       if NOT Send(poOwner,@ReqSomethingAttack,#what=self,#victim=what,
@@ -1613,8 +1628,10 @@ messages:
 
       if NOT absolute
       {
+         iDamage = Send(self,@ArmorCheck,#what=what,#bonus=bonus,#atype=atype,#aspell=aspell,#damage=damage);
+         
          iResist = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
-         iDamage = Send(self,@GetDamageFromResistance,#what=damage,
+         iDamage = Send(self,@GetDamageFromResistance,#what=iDamage,
                         #value=iResist);
       }
       else
@@ -1677,6 +1694,42 @@ messages:
       }
       
       return iDamage;
+   }
+   
+   ArmorCheck(what=$,damage=0,atype=0,aspell=0,bonus=0)
+   "Allows monsters to have armor not related to specific equipped items. Based on piArmor."
+   {
+      local iDamageReduce, oAttribute;
+
+      for oAttribute in plObject_attributes
+      {
+         damage = Send(oAttribute,@ModifyDefenseDamage,#who=self,#what=what,#damage=damage,#atype=atype,#aspell=aspell);
+      }
+
+      iDamageReduce = 0;
+      if piArmor <> 0
+      {
+         iDamageReduce = random(piArmor/3,piArmor);
+         iDamageReduce = bound(iDamageReduce,0,(damage-1));
+      }
+
+      if aspell <> 0
+      {
+         % Reduce damage if part of the damage is spell
+         if atype <> 0
+         {
+            % Only 2/3 of the damage reduction if we're doing both weapon
+            % and spell damage types.
+            iDamageReduce = iDamageReduce * 2 / 3;
+         }
+         else
+         {
+            % If we're doing pure spell damage, we get no reduction.
+            iDamageReduce = 0;
+         }
+      }
+      
+      return damage - iDamageReduce;
    }
 
    AssessHit(what = $, stroke_obj = $, damage = $)
@@ -5992,6 +6045,11 @@ messages:
    GetProjectileIcon()
    {
       return;
+   }
+   
+   GetBaseResistances()
+   {
+      return plResistances;
    }
 
 end

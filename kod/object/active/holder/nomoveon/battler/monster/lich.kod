@@ -145,18 +145,18 @@ messages:
       pimax_Hit_Points = pimax_hit_Points * 2;
       piHit_Points = pimax_hit_points;
 
-      plResistances = [ [ 60, -ATCK_SPELL_ALL],
-                        [ 60,  ATCK_WEAP_ALL],
-                        [-20,  ATCK_WEAP_NERUDITE ],
-                        [-20,  ATCK_WEAP_BLUDGEON ],
-                        [-60,  ATCK_WEAP_SILVER ],
-                        [ 90, -ATCK_SPELL_COLD],
-                        [ 90, -ATCK_SPELL_UNHOLY ],
-                        [ 30, -ATCK_SPELL_ACID ],
-                        [-20, -ATCK_SPELL_SHOCK],
-                        [-20, -ATCK_SPELL_FIRE ],
-                        [-40, -ATCK_SPELL_HOLY ],
-                        [-90, -ATCK_SPELL_HUNTERSWORD ]
+      plResistances = [ [-ATCK_SPELL_ALL, 60],
+                        [ATCK_WEAP_ALL, 60],
+                        [ATCK_WEAP_NERUDITE, -20 ],
+                        [ATCK_WEAP_BLUDGEON, -20 ],
+                        [ATCK_WEAP_SILVER, -60 ],
+                        [-ATCK_SPELL_COLD, 90],
+                        [-ATCK_SPELL_UNHOLY, 90 ],
+                        [-ATCK_SPELL_ACID, 30 ],
+                        [-ATCK_SPELL_SHOCK, -20],
+                        [-ATCK_SPELL_FIRE, -20 ],
+                        [-ATCK_SPELL_HOLY, -40 ],
+                        [-ATCK_SPELL_HUNTERSWORD, -90 ]
                       ];
                         
       if oNecromancerGuild <> $

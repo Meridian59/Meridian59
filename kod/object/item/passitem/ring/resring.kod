@@ -64,7 +64,7 @@ messages:
          AppendTempString(resistring_chargesleftb_rsc);
       }
       
-      return;
+      propagate;
    }
 
    NewUsed(what = $)
@@ -79,7 +79,6 @@ messages:
 
       Send(poOwner, @MsgSendUser, #message_rsc=vrUseMessage);
       
-      Send(self,@AddResistances);
       Send(what,@AddDefenseModifier,#what=self);
 
       propagate;
@@ -87,34 +86,9 @@ messages:
 
    NewUnused(what = $)
    {
-      send(self,@RemoveResistances);
       Send(what,@RemoveDefenseModifier,#what=self);
       
       propagate;
-   }
-      
-   AddResistances()
-   {
-      local i;
-      
-      for i in send(self,@GetResistanceModifiers)
-      {
-         Send(poOwner,@AddResistance,#what=nth(i,1),#value=nth(i,2));
-      }
-      
-      return;
-   }
-
-   RemoveResistances()
-   {
-      local i;
-      
-      for i in send(self,@GetResistanceModifiers)
-      {
-         Send(poOwner,@RemoveResistance,#what=nth(i,1),#value=nth(i,2));
-      }
-      
-      return;
    }
 
    GetResistanceModifiers()

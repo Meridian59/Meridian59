@@ -49,6 +49,8 @@ resources:
    item_condition_med = " has a few unsightly rips."
    item_condition_poor = " is in tatters, and barely holding together."
    item_condition_broken = " is covered in filth and ripped beyond use."
+   
+   special_properties_header = "\n\nThis item has the following properties:\n\n"
 
 classvars:
    
@@ -106,6 +108,11 @@ properties:
 
    piItem_flags = 0
 
+   % List of enchantments applied by radius spells.
+   % Each element is [song object, spellpower, caster]
+   % Support for players, monsters, and items
+   plRadiusEnchantments = $
+
 messages:
 
    Constructor(corpse=$)
@@ -142,7 +149,8 @@ messages:
       % This is special 'status' stuff, like the number of 
       %  number items you have left, or the condition of your 
       %  weapon.
-      local rItem_condition, iHit_percent;
+      local rItem_condition, iHit_percent, i, bFoundProperties, oSpell, iHigh_level, n,
+                             iFarenPower, iRiijaPower, iKraananPower, iJalaPower, iShalPower, iQorPower, iInstrumentPower;
 
       if vbShow_Condition
          AND piHits_init > 0
@@ -194,9 +202,502 @@ messages:
          AppendTempString(vrPoss_Article);
          AppendTempString(Send(self,@GetName));
          AppendTempString(rItem_condition);
+         AppendTempString(" \(");
+         AppendTempString(piHits);
+         AppendTempString("/");
+         AppendTempString(piHits_init);
+         AppendTempString("\)");
+      }
+
+      for i in plObject_attributes
+      {
+         Send(i,@AttributeDesc);
+      }
+      
+      % Describe special properties
+      bFoundProperties = FALSE;
+      if Send(self,@GetRange) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetRange));
+         AppendTempString(" range");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetHitBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetHitBonus));
+         AppendTempString(" offense rating bonus");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetDamageReduction) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetDamageReduction));
+         AppendTempString(" armor");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetDefenseBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetDefenseBonus));
+         AppendTempString(" defense rating");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMeleeDamageBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMeleeDamageBonus));
+         AppendTempString(" melee damage bonus");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinDamage) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinDamage));
+         If Send(self,@GetMaxDamage) <> Send(self,@GetMinDamage)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxDamage));
+         }
+         AppendTempString(" base damage");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinDamageWithOwnerStats) <> 0
+         AND Send(self,@GetMinDamageWithOwnerStats) <> Send(self,@GetMinDamage)
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinDamageWithOwnerStats));
+         If Send(self,@GetMaxDamageWithOwnerStats) <> Send(self,@GetMinDamageWithOwnerStats)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxDamageWithOwnerStats));
+         }
+         AppendTempString(" damage in owner's hands");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinSpecialDamage) <> 0
+         AND Send(self,@GetMinSpecialDamage) <> Send(self,@GetMinDamage)
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinSpecialDamage));
+         If Send(self,@GetMaxSpecialDamage) <> Send(self,@GetMinSpecialDamage)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxSpecialDamage));
+         }
+         AppendTempString(" conditional base damage");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetMinSpecialDamageWithOwnerStats) <> 0
+         AND Send(self,@GetMinSpecialDamageWithOwnerStats) <> Send(self,@GetMinSpecialDamage)
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetMinSpecialDamageWithOwnerStats));
+         If Send(self,@GetMaxSpecialDamageWithOwnerStats) <> Send(self,@GetMinSpecialDamageWithOwnerStats)
+         {
+            AppendTempString("-");
+            AppendTempString(Send(self,@GetMaxSpecialDamageWithOwnerStats));
+         }
+         AppendTempString(" conditional damage in owner's hands");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetDamageBonus) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+
+         AppendTempString(Send(self,@GetDamageBonus));
+         AppendTempString(" damage bonus");
+         AppendTempString("\n");
+
+         bFoundProperties = TRUE;
+      }
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_LIGHT);
+      iFarenPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLINK);
+      iRiijaPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_BLESS);
+      iKraananPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_MIRTH);
+      iJalaPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_SEANCE);
+      iShalPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DARKNESS);
+      iQorPower = Send(self,@GetSpellModifier,#oSpell=oSpell);
+
+      iInstrumentPower = 0;
+      If IsClass(self,&Instrument)
+      {
+         iInstrumentPower = Send(self,@GetInstrumentLevel);
+      }
+
+      if iFarenPower <> 0
+         OR iRiijaPower <> 0
+         OR iKraananPower <> 0
+         OR iJalaPower <> 0
+         OR iShalPower <> 0
+         OR iQorPower <> 0
+         OR iInstrumentPower <> 0
+      {
+         if iFarenPower = iRiijaPower
+            AND iRiijaPower = iKraananPower
+            AND iKraananPower = iJalaPower
+            AND iJalaPower = iShalPower
+            AND iShalPower = iQorPower
+         {
+            if NOT bFoundProperties
+            {
+               AppendTempString(special_properties_header);
+               bFoundProperties = TRUE;
+            }
+         
+            AppendTempString(iFarenPower);
+            AppendTempString(" general spellpower\n");
+         }
+         else
+         {
+            if NOT bFoundProperties
+            {
+               AppendTempString(special_properties_header);
+               bFoundProperties = TRUE;
+            }
+
+            if iFarenPower <> 0
+            {
+               AppendTempString(iFarenPower);
+               AppendTempString(" Faren spellpower\n");
+            }
+            if iRiijaPower <> 0
+            {
+               AppendTempString(iRiijaPower);
+               AppendTempString(" Riija spellpower\n");
+            }
+            if iKraananPower <> 0
+            {
+               AppendTempString(iKraananPower);
+               AppendTempString(" Kraanan spellpower\n");
+            }
+            if iJalaPower <> 0
+            {
+               AppendTempString(iJalaPower);
+               AppendTempString(" Jala spellpower\n");
+            }
+            if iShalPower <> 0
+            {
+               AppendTempString(iShalPower);
+               AppendTempString(" Shal'ille spellpower\n");
+            }
+            if iQorPower <> 0
+            {
+               AppendTempString(iQorPower);
+               AppendTempString(" Qor spellpower\n");
+            }
+
+            if iInstrumentPower <> 0
+            {
+               AppendTempString(iInstrumentPower);
+               AppendTempString(" Jala instrument power\n");
+            }
+         }
+      }
+      
+      If Send(self,@GetCurrentResistances) <> $
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+         
+         for i in Send(self,@GetCurrentResistances)
+         {
+            AppendTempString(Nth(i,2));
+            AppendTempString("\% ");
+            AppendTempString(Send(SYS,@GetResistanceName,#type=Nth(i,1)));
+            AppendTempString("\n");
+         }
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetAttackType) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+         
+         for i in Send(SYS,@GetAttackTypeList)
+         {
+            if (Send(self,@GetAttackType) & i)
+            {
+               AppendTempString("Deals ");
+               AppendTempString(Send(SYS,@GetAttackDamageTypeName,#type=i));
+               AppendTempString(" damage");
+               AppendTempString("\n");
+            }
+         }
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetAttackSpell) <> 0
+      {
+         if NOT bFoundProperties
+         {
+            AppendTempString(special_properties_header);
+         }
+         
+         for i in Send(SYS,@GetSpellTypeList)
+         {
+            if (Send(self,@GetAttackSpell) & i)
+            {
+               AppendTempString("Deals ");
+               AppendTempString(Send(SYS,@GetSpellDamageTypeName,#type=i));
+               AppendTempString(" damage");
+               AppendTempString("\n");
+            }
+         }
+
+         bFoundProperties = TRUE;
+      }
+      
+      if Send(self,@GetAttributes) <> $
+      {
+         for i in Send(self,@GetAttributes)
+         {
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PARALYZER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i)) 
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("15\% chance to cast Hold on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BLINDER  
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("15\% chance to cast Blind on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_BONKER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("8\% chance to cast Bonk on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_PURGER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("15\% chance to cast Purge on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_TWISTER
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("8\% chance to disorient victim on hit");
+               AppendTempString("\n");
+            }
+            if Send(self,@GetNumFromCompound,#compound=First(i)) = WA_Vamper
+               AND Send(self,@GetIDStatusFromCompound,#compound=First(i))
+            {
+               if NOT bFoundProperties
+               {
+                  AppendTempString(special_properties_header);
+                  bFoundProperties = TRUE;
+               }
+
+               AppendTempString("10\% chance to gain up to 8 health on hit");
+               AppendTempString("\n");
+            }
+         }
       }
 
       return;
+   }
+     
+   GetMinDamageWithOwnerStats()
+   {
+      return 0;
+   }
+
+   GetMaxDamageWithOwnerStats()
+   {
+      return 0;
+   }
+   
+   GetMinSpecialDamageWithOwnerStats()
+   {
+      return 0;
+   }
+   
+   GetMaxSpecialDamageWithOwnerStats()
+   {
+      return 0;
+   }
+   
+   GetAttackType()
+   {
+      return 0;
+   }
+   
+   GetAttackSpell()
+   {
+      return 0;
+   }
+   
+   GetMinDamage()
+   {
+      return 0;
+   }
+   
+   GetMaxDamage()
+   {
+      return 0;
+   }
+   
+   % Some weapons and spells have special conditions, like nerudite arrows that can shatter
+   GetMinSpecialDamage()
+   {
+      return 0;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      return 0;
+   }
+   
+   GetRange()
+   {
+      return 0;
+   }
+   
+   GetHitBonus()
+   {
+      return 0;
+   }
+   
+   GetDefenseBonus()
+   {
+      return 0;
+   }
+   
+   GetMeleeDamageBonus()
+   {
+      return 0;
+   }
+   
+   GetDamageBonus()
+   {
+      return 0;
+   }
+   
+   GetDamageReduction()
+   {
+      return 0;
+   }
+   
+   GetAttributes()
+   {
+      return plItem_Attributes;
+   }
+
+   GetResistanceModifiers()
+   {
+      return $;
    }
    
    DoBaseDesc()
@@ -1699,6 +2200,231 @@ messages:
       }
       return FALSE;
    }
+  
+   GetCurrentResistances()
+   {
+      local lCurrentResistances, oObjectAttribute;
+      
+      lCurrentResistances = Send(self,@GetResistanceModifiers);
+      
+      for oObjectAttribute in plObject_attributes
+      {
+         lCurrentResistances = Send(oObjectAttribute,@ModifyResistance,#resistance_list=lCurrentResistances);
+      }
+      
+      return lCurrentResistances;
+   }
+
+   ModifyResistance(resistance_list=$)
+   {
+      local oResist, lCurrentResistances;
+      
+      lCurrentResistances = Send(self,@GetCurrentResistances);
+      
+      for oResist in lCurrentResistances
+      {
+         resistance_list = Send(SYS,@AddResistance,#what=Nth(oResist,1),#value=Nth(oResist,2),#resistance_list=resistance_list);
+      }
+      
+      return resistance_list;
+   }
+
+   AddRadiusEnchantment(what=$,iPower=0,source=$)
+   {
+      local i;
+      
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = source
+         {
+            return;
+         }
+      }
+
+      plRadiusEnchantments = Cons([what,iPower,source],plRadiusEnchantments);
+      
+      If IsClass(self,&User)
+      {
+         Send(self,@ShowAddEnchantment,#what=what,#type=2);
+         
+         If source = self
+         {
+            Send(self,@ShowAddEnchantment,#what=what,#type=1);
+         }
+      }
+      
+      return;
+   }
+
+   RemoveRadiusEnchantment(what=$,iPower=0,source=$)
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = source
+         {
+            If IsClass(self,&User)
+            {
+               Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=2);
+
+               If source = self
+               {
+                  Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=1);
+               }
+            }
+         
+            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
+            bFound = TRUE;
+         }
+      }
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
+               plRadiusEnchantments);
+      }
+
+      return;
+   }
+   
+   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
+   "Returns whether or not currently enchanted by <what> radius enchantment."
+   {
+      local i;
+      
+      if plRadiusEnchantments = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plRadiusEnchantments
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         for i in plRadiusEnchantments
+         {
+            if Nth(i,1) = what
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+   
+   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+   {
+      local i, oHighest;
+   
+      oHighest = $;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(Nth(i,1), byClass)
+         {
+            if oHighest = $
+            {
+               oHighest = i;
+            }
+            else
+            {
+               if Nth(i,2) > Nth(oHighest,2)
+               {
+                  oHighest = i;
+               }
+            }
+         }
+      }
+      return oHighest;
+   }
+   
+   GetRadiusEnchantments()
+   {
+      return plRadiusEnchantments;
+   }
+   
+   IsInSameRoom(what = $)
+   {
+      if Send(self,@GetOwner) <> $
+         AND IsClass(Send(self,@GetOwner),&Room)
+         AND Send(what,@GetOwner) <> $
+         AND IsClass(Send(what,@GetOwner),&Room)
+         AND Send(self,@GetOwner) = Send(what,@GetOwner)
+      {
+         return 1;
+      }
+         
+      return 0;
+   }
+
+   SquaredDistanceTo(what = $)
+   "Computes squared distance to <what>. Returns $ for any object that is not within a room."
+   {
+      local iRow, iCol;
+      
+      If NOT Send(self,@IsInSameRoom,#what=what)
+      {
+         return $;
+      }
+
+      iRow = Send(what,@GetRow);
+      iCol = Send(what,@GetCol);
+
+      % Sanity checking
+      if iRow = $ OR iCol = $ OR Send(self,@GetRow) = $ OR Send(self,@GetCol) = $
+      {
+         return $;
+      }
+
+      return send(self,@SquaredDistanceToLocation,#row=iRow,#col=iCol);
+   }
+
+   SquaredDistanceToLocation(row = $, col = $)
+   "Computes squared distance to (row,col)"
+   {
+      local iRow_diff, iCol_diff;
+
+      iRow_diff = Send(self,@GetRow) - row;
+      iCol_diff = Send(self,@GetCol) - col;
+
+      return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
+   }
+
 
    AddMagicFlag()
    {

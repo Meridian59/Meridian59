@@ -94,13 +94,13 @@ messages:
       pimax_Hit_Points = pimax_hit_Points * 3;
       piHit_Points = pimax_hit_points;
 
-      plResistances = [ [ 40, ATCK_WEAP_ALL ],
-                        [ 90, ATCK_WEAP_PIERCE ],
-                        [ 90, -ATCK_SPELL_COLD ],
-                        [ 90, -ATCK_SPELL_SHOCK],
-                        [-20, -ATCK_SPELL_ACID ],
-                        [-20, -ATCK_SPELL_FIRE ],
-                        [-40, ATCK_WEAP_NERUDITE ]
+      plResistances = [ [ATCK_WEAP_ALL, 40 ],
+                        [ATCK_WEAP_PIERCE, 90 ],
+                        [-ATCK_SPELL_COLD, 90 ],
+                        [-ATCK_SPELL_SHOCK, 90],
+                        [-ATCK_SPELL_ACID, -20 ],
+                        [-ATCK_SPELL_FIRE, -20 ],
+                        [ATCK_WEAP_NERUDITE, -40 ]
                       ];
       propagate;
    }

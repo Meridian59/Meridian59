@@ -153,6 +153,18 @@ messages:
       return damage + Random(2,5);
    }
 
+   EffectDesc(who=$)
+   {
+      local i, iState;
+
+      AppendTempString("\n\n");
+      AppendTempString("The ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment currently adds 2-5 damage to all attacks in the area.");
+      
+      return;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

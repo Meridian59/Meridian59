@@ -73,8 +73,8 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ 50, -ATCK_SPELL_UNHOLY ],
-                        [-25, -ATCK_SPELL_HOLY ] ];
+      plResistances = [ [-ATCK_SPELL_UNHOLY, 50 ],
+                        [-ATCK_SPELL_HOLY, -25 ] ];
       propagate;
    }
 

@@ -43,6 +43,12 @@ classvars:
    viBulk = 4
    viWeight = 5
 
+   viMinDamage = 2
+   viMaxDamage = 6
+   
+   viMinUndeadDamage = 5
+   viMaxUndeadDamage = 10
+
 properties:
 
    piNumber = 10
@@ -59,10 +65,10 @@ messages:
             send(target,@MsgSendUser,#message_rsc=silver_arrow_burns_you);
          }
 
-         return random(5,10);
+         return random(viMinUndeadDamage,viMaxUndeadDamage);
       }
 
-      return random(2,6);
+      propagate;
    }
 
    SendProjectileAnimation()
@@ -80,6 +86,16 @@ messages:
    GetProjectileIcon()
    {
       return arrow_icon_rsc;
+   }
+
+   GetMinSpecialDamage()
+   {
+      return viMinUndeadDamage;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      return viMaxUndeadDamage;
    }
 
 

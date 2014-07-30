@@ -185,6 +185,8 @@ messages:
       if (IsClass(what,&Player))
          AND (Send(what,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT))
          OR pbDisabled
+         OR (IsClass(apply_on,&Player)
+             AND Send(apply_on,@IsPhasedOut))
       {
          return FALSE;
       }

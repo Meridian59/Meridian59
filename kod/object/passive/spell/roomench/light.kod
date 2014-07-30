@@ -128,6 +128,23 @@ messages:
       return;
    }
 
+   EffectDesc(who=$)
+   {
+      local i, iState;
+
+      AppendTempString("\n\n");
+      AppendTempString("The ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment currently adds ");
+      
+      iState = Send(Send(who,@GetOwner),@GetEnchantedState,#what=self);
+      
+      AppendTempString(iState);
+      AppendTempString(" light level to the area.");
+      
+      return;
+   }
+
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

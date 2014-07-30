@@ -75,15 +75,23 @@ messages:
       return;
    }
 
-   StartSpecialEffect(who=$,iPower=0,caster=$)
+   StartSpecialEffect(what=$,iPower=0,source=$)
    {
-      Send(who,@DoDance);
+      if IsClass(what,&User)
+      {
+         Send(what,@DoDance);
+      }
+      
       propagate;
    }
    
-   EndSpecialEffect(who=$,iPower=0,caster=$)
+   EndSpecialEffect(what=$,iPower=0,source=$)
    {
-      Send(who,@StopDancing);
+      if IsClass(what,&User)
+      {
+         Send(what,@StopDancing);
+      }
+      
       propagate;
    }
 

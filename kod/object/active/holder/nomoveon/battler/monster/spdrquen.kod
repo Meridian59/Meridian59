@@ -71,11 +71,11 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ 85, -ATCK_SPELL_ALL],
-                        [ 85, ATCK_WEAP_MAGIC],
-                        [ 85, ATCK_WEAP_BLUDGEON],
-                        [-50, -ATCK_SPELL_ACID],
-                        [-20, ATCK_WEAP_THRUST]
+      plResistances = [ [-ATCK_SPELL_ALL, 85],
+                        [ATCK_WEAP_MAGIC, 85],
+                        [ATCK_WEAP_BLUDGEON, 85],
+                        [-ATCK_SPELL_ACID, -50],
+                        [ATCK_WEAP_THRUST, -20]
                       ];
 
       propagate;

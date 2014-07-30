@@ -21,6 +21,8 @@ resources:
    RoomEnchantment_desc_rsc = \
       "An enchantment which is attached to a room."
 
+   room_blank_template = "%q"
+
 classvars:
 
    vrName = RoomEnchantment_name_rsc
@@ -57,6 +59,38 @@ messages:
       propagate;
    }
 
+   EffectDesc(who=$)
+   {
+      return;
+   }
+
+   CreateDesc(who=$)
+   {
+      ClearTempString();
+      AppendTempString("SCHOOL : ");
+      AppendTempString(Send(self,@GetSchoolStr));
+      AppendTempString("          LEVEL : ");
+      AppendTempString(Send(self,@GetLevel));
+      AppendTempString("\n\n");
+      AppendTempString(vrDesc);
+      
+      if who <> $
+         AND IsClass(who,&User)
+         AND Send(Send(who,@GetOwner),@IsEnchanted,#what=self)
+      {
+         Send(self,@EffectDesc,#who=who);
+      }
+      
+      return;
+   }
+   
+   ShowDesc(bShowAll = FALSE,who=$)
+   {
+      Send(self,@CreateDesc,#who=who);      
+      AddPacket(4,room_blank_template,4,GetTempString());
+
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

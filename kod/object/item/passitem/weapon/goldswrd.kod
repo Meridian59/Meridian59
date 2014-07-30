@@ -71,6 +71,64 @@ messages:
 
       return iDamage;
    }
+   
+   GetMinDamage()
+   {
+      return viMin_damage + piDamageBonus;
+   }
+   
+   GetMaxDamage()
+   {
+      return viMax_damage + piDamageBonus;
+   }
+   
+   GetMinSpecialDamage()
+   {
+      return viMin_damage + 7 + piDamageBonus;
+   }
+   
+   GetMaxSpecialDamage()
+   {
+      return viMax_damage + 7 + piDamageBonus;
+   }
+  
+   GetMinSpecialDamageWithOwnerStats()
+   {
+      local iDamage, oSkill;
+      
+      iDamage = Send(self,@GetMinSpecialDamage);
+      
+      if IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+      
+      return iDamage;
+   }
+   
+   GetMaxSpecialDamageWithOwnerStats()
+   {
+      local iDamage, oSkill;
+      
+      iDamage = Send(self,@GetMaxSpecialDamage);
+      
+      If IsClass(poOwner,&User)
+      {
+         oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
+         iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
+      }
+      else
+      {
+         return 0;
+      }
+      
+      return iDamage;
+   }
 
 
 end

@@ -117,15 +117,7 @@ messages:
          if iSpellPower = $
             OR Random(1,100) < iSpellPower
          {
-            if IsClass(Nth(i,3),&RadiusEnchantmentTotem)
-            {
-               Send(Nth(i,3),@Delete);
-            }
-            else
-            {
-               lState = Send(Nth(i,3),@GetEnchantedState,#what=Nth(i,1));
-               Send(Nth(i,1),@BreakTrance,#who=Nth(i,3),#state=lState,#event=EVENT_STEER);
-            }
+            Send(Nth(i,1),@CancelRadiusEnchantment,#source=Nth(i,3),#event=EVENT_STEER);
          }
       }
       

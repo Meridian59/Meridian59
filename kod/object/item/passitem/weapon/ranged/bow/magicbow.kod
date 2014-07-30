@@ -37,6 +37,8 @@ properties:
 
    % What's the basic color of the wood?
    viBaseXLAT = XLAT_TO_SKIN4
+  
+   piAttack_Type = ATCK_WEAP_MAGIC+ATCK_WEAP_PIERCE
 
 messages:
 

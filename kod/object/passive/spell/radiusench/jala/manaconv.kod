@@ -20,7 +20,7 @@ resources:
    ManaConvergence_icon_rsc = imanacon.bgf
    ManaConvergence_desc_rsc = \
       "The words of this song form an enchantment which increases the effectiveness "
-      "of all spells cast.  Requires one perfect polished seraphym."
+      "of magical attack spells.  Requires one perfect polished seraphym."
 
    ManaConvergence_song = jala5.mp3
 
@@ -63,8 +63,6 @@ classvars:
 properties:
 
    prMusic = ManaConvergence_song
-
-   piOldAreaEnchStyle = TRUE
       
 messages:
 
@@ -78,18 +76,13 @@ messages:
 
    ModifySpellPower(who=$,oSpell=$,state=$,iSpellPower=0)
    {
-      if IsClass(oSpell,&AntiMagicAura)
+      if state <> $
+         AND IsClass(oSpell,&AttackSpell)
       {
-         return iSpellPower;
-      }
-      
-      if state = $
-      {
-         return iSpellPower;
+         return iSpellPower + Nth(state,2);
       }
 
-      % Add Mana Convergence's power to spells
-      return iSpellPower + Nth(state,2);
+      return iSpellPower;
    }
 
 

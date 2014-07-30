@@ -324,7 +324,13 @@ Bool InterfaceAction(int action, void *action_data)
       return False;
 
    case A_CASTSPELL:  // action_data is pointer to spell
-      if (GetPlayer()->viewID && (GetPlayer()->viewID != GetPlayer()->id))
+      if (CheckForAlwaysActiveSpells((spelltemp *) action_data))
+      {
+         SpellCast((spell *) action_data);
+         return False;
+      }
+
+       if (GetPlayer()->viewID && (GetPlayer()->viewID != GetPlayer()->id))
       {
 	 if (!(GetPlayer()->viewFlags & REMOTE_VIEW_CAST))
 	 {
@@ -382,6 +388,20 @@ Bool InterfaceAction(int action, void *action_data)
 
    return True;
 }
+
+Bool CheckForAlwaysActiveSpells(spelltemp *sp)
+{
+   char *name;
+   name = LookupNameRsc(sp->obj.name_res);
+
+   if (stricmp(name, "phase") == 0)
+   {
+      return True;
+   }
+
+   return False;
+}
+
 /****************************************************************************/
 /*
  * InterfaceUserChanged:  Player object changed; update safety flag and redraw player.

@@ -30,15 +30,18 @@ properties:
 
    piSpellpower = $
    ptExpirationTimer = $
-   
-   plEnchantments = $     %% The spell info we are using
 
    piRow = 0
    piCol = 0
 
+   % List of enchantments applied by radius spells.
+   % Each element is [song object, spellpower, caster]
+   % Support for players, monsters, and items
+   plRadiusEnchantments = $
+
 messages:
 
-   Constructor(totem_spell=$,totem_caster=$,totem_power=0)
+   Constructor(totem_spell=$,totem_caster=$,totem_power=0,totem_range=0)
    {
       local oRoom, iTime;
       
@@ -65,7 +68,7 @@ messages:
 
       Send(oRoom,@NewHold,#what=self,#new_row=piRow,#new_col=piCol);
 
-      Send(poSpell,@CastSpell,#who=self,#iSpellPower=piSpellpower);
+      Send(poSpell,@InitiateNewRadiusEnchantment,#source=self,#iSpellPower=piSpellpower,#iRange=totem_range);
 
       iTime = Send(poSpell,@GetDuration,#iSpellPower=piSpellpower);
       if iTime <> $
@@ -96,15 +99,14 @@ messages:
          ptExpirationTimer = $;
       }
 
-      for i in plEnchantments
+      for i in plRadiusEnchantments
       {
-         Send(Nth(i,2),@BreakTrance,#who=self,#state=Nth(i,3),#event=EVENT_STEER);
-         DeleteTimer(Nth(i,1));
+         Send(Nth(i,1),@BreakTrance,#who=self,#event=EVENT_STEER);
       }
 
       poCaster = $;
       poSpell = $;
-      plEnchantments = $;
+      plRadiusEnchantments = $;
 
       Send(SYS,@DeleteSpellTotemFromMasterList,#oTotem=self);
 
@@ -191,98 +193,6 @@ messages:
       % These naturally time out. They are never actively deleted.
       return;
    }
-   
-   StartEnchantment(what = $,time = $,state = $,lastcall=TRUE,addicon=TRUE)
-   "Adds <what> to our enchantments, and creates a timer that will cause it "
-   "to end."
-   {
-      local oTimer, lNew_enchantment;
-
-      if time = $ OR time = SPELL_INDEFINITE_DURATION 
-      {
-         oTimer = $;
-      }
-      else 
-      {
-         if lastcall
-         {
-            oTimer = CreateTimer(self,@EnchantmentTimer,time);
-         }
-         else
-         {
-            oTimer = CreateTimer(self,@PeriodicEnchantmentTimer,time);
-         }
-      }
-
-      if state = $
-      {
-         lNew_enchantment = [oTimer, what];
-      }
-      else
-      {
-         lNew_enchantment = [oTimer, what, state];
-      }
-
-      plEnchantments = Cons(lNew_enchantment,plEnchantments);
-
-      return;
-   }
-
-   EnchantmentTimer(timer = $)
-   {
-      local i,oEnchanter;
- 
-      for i in plEnchantments
-      {
-         if First(i) = timer
-         {
-            if Length(i) >= 3
-            {
-               Send(Nth(i,2),@EndEnchantment,#who=self,#state=Nth(i,3));
-            }
-            else
-            {
-               Send(Nth(i,2),@EndEnchantment,#who=self);
-            }
-            
-            plEnchantments = DelListElem(plEnchantments,i);
-
-            return;
-         }
-      }
-
-      Debug("Enchantment timer went off with no enchantment",timer);
-
-      return;
-   }
-
-   PeriodicEnchantmentTimer(timer = $)
-   {
-      local i ;
- 
-      for i in plEnchantments
-      {
-         if First(i) = timer
-         {
-            plEnchantments = DelListElem(plEnchantments,i);
-            
-            if Length(i) >= 3
-            {
-               Send(Nth(i,2),@StartPeriodicEnchantment,#who=self,#state=Nth(i,3));
-            }
-            else
-            {
-               Send(Nth(i,2),@StartPeriodicEnchantment,#who=self,#state=$);
-            }
-
-            return;
-         }
-      }
-
-      Debug("Enchantment timer went off with no enchantment",timer);
-
-      return;
-   }
 
    GetEnchantedState(what = $)
    "If enchanted by <what>, returns the state data (which MUST exist, or it's an error.  "
@@ -290,27 +200,195 @@ messages:
    {
       local i;
 
-      for i in plEnchantments
+      for i in plRadiusEnchantments
       {
-         if Nth(i,2) = what
+         if Nth(i,1) = what
          {
-            return Nth(i,3);
+            return Nth(i,2);
          }
       }
       
       return $;
    }
+
+   AddRadiusEnchantment(what=$,iPower=0,source=$)
+   {
+      local i;
+      
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = source
+         {
+            return;
+         }
+      }
+
+      plRadiusEnchantments = Cons([what,iPower,source],plRadiusEnchantments);
+      
+      If IsClass(self,&User)
+      {
+         Send(self,@ShowAddEnchantment,#what=what,#type=2);
+         
+         If source = self
+         {
+            Send(self,@ShowAddEnchantment,#what=what,#type=1);
+         }
+      }
+      
+      return;
+   }
+
+   RemoveRadiusEnchantment(what=$,iPower=0,source=$)
+   {
+      local i, bFound;
+
+      bFound = FALSE ;
+      for i in plRadiusEnchantments
+      {
+         if Nth(i,1) = what
+            AND Nth(i,2) = iPower
+            AND Nth(i,3) = source
+         {
+            If IsClass(self,&User)
+            {
+               Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=2);
+
+               If source = self
+               {
+                  Send(self,@ShowRemoveEnchantment,#what=Nth(i,1),#type=1);
+               }
+            }
+         
+            plRadiusEnchantments = DelListElem(plRadiusEnchantments,i);
+            bFound = TRUE;
+         }
+      }
+
+      if NOT bFound
+      {
+         Debug(self,"Tried to remove radius enchantment ",what," but not in list",
+               plRadiusEnchantments);
+      }
+
+      return;
+   }
    
+   IsAffectedByRadiusEnchantment(what=$,caster=$,byClass=&RadiusEnchantment)
+   "Returns whether or not currently enchanted by <what> radius enchantment."
+   {
+      local i;
+      
+      if plRadiusEnchantments = $
+      {
+         return FALSE;
+      }
+
+      if what = $
+      {
+         for i in plRadiusEnchantments
+         {
+            if IsClass(Nth(i,1),byClass)
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }
+      }
+      else
+      {
+         for i in plRadiusEnchantments
+         {
+            if Nth(i,1) = what
+            {
+               if caster = $
+               {
+                  return TRUE;
+               }
+               else
+               {
+                  if Nth(i,3) = caster
+                  {
+                     return TRUE;
+                  }
+               }
+            }
+         }      
+      }
+      
+      return FALSE;
+   }
+   
+   GetMostPowerfulRadiusEnchantmentState(byClass=&RadiusEnchantment)
+   {
+      local i, oHighest;
+   
+      oHighest = $;
+   
+      for i in plRadiusEnchantments
+      {
+         if IsClass(Nth(i,1), byClass)
+         {
+            if oHighest = $
+            {
+               oHighest = i;
+            }
+            else
+            {
+               if Nth(i,2) > Nth(oHighest,2)
+               {
+                  oHighest = i;
+               }
+            }
+         }
+      }
+      return oHighest;
+   }
+   
+   GetRadiusEnchantments()
+   {
+      return plRadiusEnchantments;
+   }
+   
+   IsInSameRoom(what = $)
+   {
+      if Send(self,@GetOwner) <> $
+         AND IsClass(Send(self,@GetOwner),&Room)
+         AND Send(what,@GetOwner) <> $
+         AND IsClass(Send(what,@GetOwner),&Room)
+         AND Send(self,@GetOwner) = Send(what,@GetOwner)
+      {
+         return 1;
+      }
+         
+      return 0;
+   }
+
    SquaredDistanceTo(what = $)
-   "Computes squared distance to <what>.  Assumes they are in same room!"
+   "Computes squared distance to <what>. Returns $ for any object that is not within a room."
    {
       local iRow, iCol;
+      
+      If NOT Send(self,@IsInSameRoom,#what=what)
+      {
+         return $;
+      }
 
       iRow = Send(what,@GetRow);
       iCol = Send(what,@GetCol);
 
       % Sanity checking
-      if iRow = $ OR iCol = $
+      if iRow = $ OR iCol = $ OR Send(self,@GetRow) = $ OR Send(self,@GetCol) = $
       {
          return $;
       }
@@ -323,8 +401,8 @@ messages:
    {
       local iRow_diff, iCol_diff;
 
-      iRow_diff = piRow - row;
-      iCol_diff = piCol - col;
+      iRow_diff = Send(self,@GetRow) - row;
+      iCol_diff = Send(self,@GetCol) - col;
 
       return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
    }

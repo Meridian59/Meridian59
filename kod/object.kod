@@ -81,6 +81,8 @@ classvars:
 properties:
 
    poOwner = $
+   
+   plObject_attributes = $
 
 messages:
 
@@ -101,10 +103,17 @@ messages:
 
    Delete()
    {
+      local i;
+
       if poOwner <> $
       {
          Send(poOwner,@LeaveHold,#what=self);
          poOwner = $;
+      }
+      
+      for i in plObject_attributes
+      {
+         Send(i,@Delete);
       }
 
       return;
@@ -908,6 +917,35 @@ messages:
       return FALSE;
    }
 
+   AddObjectAttribute(attribute=$)
+   {
+      if attribute <> $
+         AND (plObject_attributes = $
+         OR FindListElem(plObject_attributes, attribute) = 0)
+      {
+         plObject_attributes = Cons(attribute,plObject_attributes);
+         return 1;
+      }
+      
+      return 0;
+   }
+
+   RemoveObjectAttribute(attribute=$)
+   {
+      if attribute <> $
+         AND plObject_attributes <> $
+         AND FindListElem(plObject_attributes, attribute) <> 0
+      {
+         plObject_attributes = DelListElem(plObject_attributes,attribute);
+         return 1;
+      }
+      return 0;
+   }
+   
+   GetObjectAttributes()
+   {
+      return plObject_attributes;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

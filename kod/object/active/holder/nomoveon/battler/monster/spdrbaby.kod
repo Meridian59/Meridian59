@@ -63,7 +63,7 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ -15, ATCK_WEAP_BLUDGEON] ];
+      plResistances = [ [ATCK_WEAP_BLUDGEON, -15] ];
       propagate;
    }
 

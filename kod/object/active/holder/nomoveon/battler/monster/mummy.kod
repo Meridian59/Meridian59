@@ -68,10 +68,10 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ 20, -ATCK_SPELL_UNHOLY],
-                        [ -20, -ATCK_SPELL_HOLY],
-                        [ -60, -ATCK_SPELL_FIRE],
-                        [-20, ATCK_WEAP_ALL ] ];
+      plResistances = [ [-ATCK_SPELL_UNHOLY, 20],
+                        [-ATCK_SPELL_HOLY, -20],
+                        [-ATCK_SPELL_FIRE, -60],
+                        [ATCK_WEAP_ALL, -20 ] ];
       propagate;
    }
 

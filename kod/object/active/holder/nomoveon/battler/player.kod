@@ -4270,8 +4270,8 @@ messages:
       }
 
       % Check attack time.
-      % IsOkayAttackTime defaults to 1 second
-      if NOT Send(self,@IsOkayAttackTime) 
+      % We don't start a timer here, just check if we are eligible. The timer will be set later.
+      if NOT Send(self,@CheckAttackTimer) 
       {
          return FALSE;
       }  
@@ -4563,7 +4563,7 @@ messages:
          }
 
          iAim = Send(self,@GetAim);
-         iOffense = (iStroke*3) + (iProficiency*2) + (iAim*4) + (piBase_Max_Health*3/2);
+         iOffense = (iStroke*2) + (iProficiency*2) + (iAim*8) + (200 * piBase_Max_Health)/(100 + Send(self,@GetStamina));
 
          if oWeapon <> $
          {
@@ -4609,7 +4609,7 @@ messages:
       % The universal modifier.
       iOffense = iOffense + ((iOffense * piFlags3) / 100);
 
-      return bound(iOffense,1,1000);
+      return bound(iOffense,1,2000);
    }
 
    % This returns the battler's ability to avoid being hit.  Ranges from 1 to 1000.
@@ -4639,7 +4639,7 @@ messages:
          iDodge = Send(self,@GetDodgeAbility,#stroke_obj=stroke_obj);
 
          iAgility = Send(self,@GetAgility);
-         iDefense = (iParry*2) + (iBlock) + (iDodge*3) + (iAgility*4) + (piBase_Max_Health*3/2);
+         iDefense = iParry + iBlock + (iDodge*2) + (iAgility*8) + (200 * piBase_Max_Health)/(100 + Send(self,@GetStamina));
       }
 
       for i in plDefense_modifiers
@@ -4657,7 +4657,7 @@ messages:
       % The universal modifier.
       iDefense = iDefense + ((iDefense * piFlags3) / 100);
 
-      return bound(iDefense,1,1000);
+      return bound(iDefense,1,2000);
    }
 
    % The next three messages deal with the three defense skills.  These messages return the relative values of the three
@@ -5735,6 +5735,16 @@ messages:
       }
 
       return;
+   }
+   
+   CheckAttackTimer()
+   {
+      if ptAttackTimer <> $
+      {
+         return FALSE;
+      }
+
+      return TRUE;
    }
 
    IsOkayAttackTime(time = 1000, seconds = $)
@@ -7639,7 +7649,7 @@ messages:
       {
          if Send(self,@DecodeSkillNum,#compound=i) = Skill_num
          {
-            return Send(self,@DecodeSkillAbility,#compound=i);
+            return Send(self,@DecodeSkillAbility,#compound=i)+1;
          }
       }
       

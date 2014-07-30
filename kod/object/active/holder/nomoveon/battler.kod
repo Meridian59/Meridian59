@@ -16,7 +16,7 @@ constants:
 
    % What's the percent chance to hit if offense and defense are equal?
    % The higher this number is, the easier it is to hit in combat.
-   EQUAL_CHANCE_HIT = 55      
+   EQUAL_CHANCE_HIT = 500      
                               
    % Raise or lower this number to raise or lower the chance the 'avoids 
    %  your attack' message comes up.
@@ -336,8 +336,8 @@ messages:
                       * EQUAL_CHANCE_HIT)
                      / Send(what,@GetDefense,#what=self,
                             #stroke_obj=stroke_obj);
-      iChanceToHit = bound(iChanceToHit,10,95);
-      if iChanceToHit >= random(1,100)
+      iChanceToHit = bound(iChanceToHit,125,2000);
+      if iChanceToHit >= random(1,1000)
       {
          % We hit!
          iDamage = Send(what,@AssessDamage,#what=self,
@@ -368,8 +368,21 @@ messages:
          Send(poOwner,@SomethingAttacked,#what=self,#victim=what,
               #use_weapon=oWeapon);
       }
-         
-      return TRUE;
+
+      % Finally, check if we get to do our next attack sooner because of our high chance to hit.
+      if IsClass(self,&Player)
+      {
+         if iChanceToHit > 1000
+         {
+            Send(self,@IsOkayAttackTime,#time=1000000/iChanceToHit);
+         }
+         else
+         {
+            Send(self,@IsOkayAttackTime);
+         }
+      }
+      
+      return iChanceToHit;
    }
    
    GetLevel()

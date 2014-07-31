@@ -382,7 +382,6 @@ properties:
 
    piLastPacketTime = 0
    piPacketsPerSecond = 0
-   ptAttackMessageTimer = $
 
    % The ms tick we received last position update from user
    piLastMoveUpdateTime = 0
@@ -424,12 +423,6 @@ messages:
    Delete()
    {
       Send(SYS,@SystemUserDelete,#what=self);
-      
-      if ptAttackMessageTimer <> $
-      {
-         DeleteTimer(ptAttackMessageTimer);
-         ptAttackMessageTimer = $;
-      }
 
       propagate;
    }
@@ -905,13 +898,6 @@ messages:
       return;
    }
 
-   AttackMessageTimer()
-   {
-      ptAttackMessageTimer = $;
-      
-      return;
-   }
-
    ReceiveClient(client_msg = $,number_stuff = $,type = $)
    "Sent by the server when the client has a message.  The client_msg "
    "is the permanent list created by AllocateCommCli in the server, "
@@ -923,25 +909,6 @@ messages:
             sStr_said, sStr_mailed, lDest_mail, iAttack_type, iGroup, lItems,
             lUsers, oApply_on, iNid, sTitle, iAngle, sBody, iNum, iSpeed,
             lTargets;
-
-      liClient_cmd = First(client_msg);
-
-      if liClient_cmd = BP_REQ_ATTACK
-      {
-         if NOT Send(self,@CheckAttackTimer) OR ptAttackMessageTimer <> $
-         {
-            return;
-         }
-         
-         iAttack_type = Nth(client_msg,2);
-         oWhat = Nth(client_msg,3);
-         if NOT Send(self,@UserAttack,#type=iAttack_type,#what=oWhat)
-         {
-            ptAttackMessageTimer = CreateTimer(self,@AttackMessageTimer,250);
-         }
-         
-         return;
-      }
 
       % This checks to see if the user is trying to Send too many packets
       %  per second.  If they are, then we mark them as a spammer and
@@ -957,7 +924,7 @@ messages:
          if piPacketsPerSecond > INCOMING_PACKET_THROTTLE
             AND NOT Send(self,@PlayerIsImmortal)
          {
-			% Don't go on if marked as spammer
+            % Don't go on if marked as spammer
             return;
          }
       }
@@ -970,6 +937,8 @@ messages:
          return;
       }
 
+      liClient_cmd = First(client_msg);
+      
       % NOTE: Should arrange in decreasing order of frequency
 
       if liClient_cmd = BP_REQ_MOVE
@@ -1136,7 +1105,16 @@ messages:
 
          return;
       }
-
+      
+      if liClient_cmd = BP_REQ_ATTACK
+      {
+         iAttack_type = Nth(client_msg,2);
+         oWhat = Nth(client_msg,3);
+         Send(self,@UserAttack,#type=iAttack_type,#what=oWhat);
+         
+         return;
+      }
+      
       if liClient_cmd = BP_SEND_STATS
       {
          iGroup = Nth(client_msg,2);
@@ -8307,12 +8285,6 @@ messages:
 
       % Eliminate logoff penalty time.  Just easier this way.
       Send(self,@RefreshPhaseTimeToBase);
-
-      if ptAttackMessageTimer <> $
-      {
-         DeleteTimer(ptAttackMessageTimer);
-         ptAttackMessageTimer = $;
-      }
 
       propagate;
    }

@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define ATTACK_DELAY 500  // Minimum number of milliseconds between user attacks
+#define ATTACK_DELAY 1000  // Minimum number of milliseconds between user attacks
 
 extern player_info player;
 extern room_type current_room;
@@ -90,14 +90,16 @@ void UserAttackClosest(int action)
       return;
    last_attack_time = now;
 
-   //	If user has a selected target, use it as the target of this attack.
-   if (idTarget != INVALID_ID)
-   {
-      RequestAttack(ATTACK_NORMAL, idTarget);
-
-      return;
-   }
-
+	//	If user has selected target, and target is seen, use it as the target of this attack.
+	if (idTarget != INVALID_ID)
+	{
+		if (FindVisibleObjectById(idTarget))
+			RequestAttack(ATTACK_NORMAL, idTarget);
+		else
+			GameMessage(GetString(hInst, IDS_TARGETNOTVISIBLEFORATTACK));
+		return;
+	}
+	
    object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 
 			      CLOSE_DISTANCE, OF_ATTACKABLE, 0);
    if (object_list == NULL)

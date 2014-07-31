@@ -4299,6 +4299,12 @@ messages:
          return FALSE;
       }
 
+      % Check attack time.
+      if NOT Send(self,@IsOkayAttackTime)
+      {
+         return FALSE;
+      }
+
       % Is it in the same room?
       if poOwner <> Send(what,@GetOwner) 
       {
@@ -4451,7 +4457,7 @@ messages:
    }
 
    % Determines if target is within attacking range, and within sight.
-   %  iRange=$ means there's no range check.
+   % iRange=$ means there's no range check.
    TargetWithinSightAndRange(oTarget=$,iRange=$,use_weapon=$,stroke_obj=$)
    {
       local iSquareRange, iDist, oTargetOwner, oFinalTarget, iAngle, iRow, iCol,
@@ -4469,7 +4475,7 @@ messages:
       oFinalTarget = oTarget;
 
       % Strange case of us targetting something that someone else is holding.
-      %  This cannot be owned by us, since we already checked that.
+      % This cannot be owned by us, since we already checked that.
       if oTargetOwner <> $
          AND IsClass(oTargetOwner,&Battler)
       {
@@ -4477,7 +4483,7 @@ messages:
          oTargetOwner = Send(oFinalTarget,@GetOwner);
       }
 
-      iDist = Send(self,@SquaredFineDistanceTo,#what=oFinalTarget);
+      iDist = Send(self,@SquaredDistanceTo,#what=oFinalTarget);
 
       % If we don't share the same owner, then we're not in range.
       if poOwner <> oTargetOwner
@@ -4488,7 +4494,7 @@ messages:
       % See if target is within range, if we provided a range.
       if iRange <> $
       {
-         iSquareRange = iRange*64;
+         iSquareRange = iRange;
          iSquareRange = iSquareRange * iSquareRange;
 
          if iDist > iSquareRange
@@ -4501,32 +4507,32 @@ messages:
       }
 
       % See if target is in a reasonable viewing area.
-      %  Only applies to weapon strokes and single-target spells.
+      % Only applies to weapon strokes and single-target spells.
       if IsClass(oFinalTarget,&Battler)
          AND stroke_obj <> $
          AND (IsClass(stroke_obj,&Stroke)
               OR (IsClass(stroke_obj,&Spell) AND Send(stroke_obj,@GetNumSpellTargets) = 1))
       {
          iAngle = Send(self,@GetAngle);
-         iRow = Send(self,@GetRow)*64+Send(self,@GetFineRow);
-         iCol = Send(self,@GetCol)*64+Send(self,@GetFineCol);
-         iTargetRow = Send(oTarget,@GetRow)*64+Send(oTarget,@GetFineRow);
-         iTargetCol = Send(oTarget,@GetCol)*64+Send(oTarget,@GetFineCol);
+         iRow = Send(self,@GetRow);
+         iCol = Send(self,@GetCol);
+         iTargetRow = Send(oTarget,@GetRow);
+         iTargetCol = Send(oTarget,@GetCol);
 
          % What this does:
          % Basically, it finds your direction and makes sure you aren't trying to target
-         %  something behind you.  "Behind you" is defined as behind the line defined
-         %  by the cardinal directions that are the closest to being perpendicular to the
-         %  player's direction vector.  For example, if you're facing mostly east, then
-         %  the cardinal direction direction line runs north/south; in essense, anything
-         %  that is further west than you is "behind" you.  The more interesting cases
-         %  are when the player is facing one of the corner directions.  We calculate
-         %  the equation of the line using the point-slope formula and determine which
-         %  side of the line the target is.
-         %    Equation of the SW-NE line: iTargetRow - iRow = iCol - iTargetRow
-         %    Equation of the SE-NW line: iTargetRow - iRow = iTargetCol - iCol
+         % something behind you. "Behind you" is defined as behind the line defined
+         % by the cardinal directions that are the closest to being perpendicular to the
+         % player's direction vector. For example, if you're facing mostly east, then
+         % the cardinal direction direction line runs north/south; in essense, anything
+         % that is further west than you is "behind" you. The more interesting cases
+         % are when the player is facing one of the corner directions. We calculate
+         % the equation of the line using the point-slope formula and determine which
+         % side of the line the target is.
+         % Equation of the SW-NE line: iTargetRow - iRow = iCol - iTargetRow
+         % Equation of the SE-NW line: iTargetRow - iRow = iTargetCol - iCol
          if iDist > 1
-            AND (   ((iAngle > ANGLE_ENE OR iAngle <= ANGLE_ESE)
+            AND ( ((iAngle > ANGLE_ENE OR iAngle <= ANGLE_ESE)
                     AND iTargetCol < iCol)
                  OR (iAngle > ANGLE_ESE AND iAngle <= ANGLE_SSE
                     AND (iTargetRow - iRow) < (iCol - iTargetCol))

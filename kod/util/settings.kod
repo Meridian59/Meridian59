@@ -193,6 +193,9 @@ properties:
    % The divisor for all spell post-softcap imp rates.
    piSpellSoftcapPenalty = 4
 
+   % Turns damage scaling for chance to hit greater than 100 percent on or off
+   piDamageScaling = FALSE
+
 messages:
 
    Constructor(server_num = $)
@@ -478,7 +481,12 @@ GetPardonIndulgenceCost()
    {
       return piSpellSoftcapPenalty;
    }
-   
+
+   GetDamageScaling()
+   {
+      return piDamageScaling;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

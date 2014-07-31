@@ -319,8 +319,6 @@ properties:
    % Timer to expire turning.
    ptUnturn = $            
    piHatred = 0
-   % If a monster outclasses it's enemy, it may attack again more quickly.
-   piSpeedFactor = 1000
    % Emulates agility and aim for monsters based on difficulty.
    piAgility = 25
    piAim = 25
@@ -826,7 +824,7 @@ messages:
       }
       else
       {
-         ptBehavior = CreateTimer(self,@AttackTimer,Send(self,@GetAttackTime)*1000/piSpeedFactor);
+         ptBehavior = CreateTimer(self,@AttackTimer,Send(self,@GetAttackTime));
       }
 
       return;
@@ -1074,8 +1072,6 @@ messages:
    AttackTimer(timer = $)
    "We were bashing on something before, and now its time to hit it again."
    {
-      local iFactor;
-      
       Send(self,@ClearBehavior,#timer=timer);
 
       % sanity checks
@@ -1126,11 +1122,7 @@ messages:
       }
 
       % Carry out attack
-      iFactor = Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
-      if iFactor > 1000
-      {
-         piSpeedFactor = iFactor;
-      }
+      Send(self,@TryAttack,#what=poTarget,#stroke_obj=self);
       
       % Sanity check, in rare occurrences mob dies before this can execute 
       if poBrain <> $

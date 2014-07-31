@@ -342,7 +342,7 @@ messages:
          i = 1;
          while i <= iNumItemsInventory
          {
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#phase_drop=TRUE)
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=poGhostedPlayer)
             {
                % Don't need to increment unless the item stayed in the
                %  inventory.
@@ -357,13 +357,13 @@ messages:
             % try to drop a Random item
             iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
             i = Random(1,iNumItemsInventory);
-            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#phase_drop=TRUE)
+            if NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=poGhostedPlayer)
             {
                % If the Random drop fails, scan through and drop the first one
                %  we can.
                i = 1;
                while i <= iNumItemsInventory
-                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,#phase_drop=TRUE)
+                     AND NOT Send(poGhostedPlayer,@DropItem,#index=i,#targetGhost=poGhostedPlayer)
                {
                   i = i + 1;
                }

@@ -109,7 +109,7 @@ enum { A_NOACTION = 0,
 
 // True iff action should cause auto-repeat
 #define RepeatAction(a) (IsMoveAction(a) || IsTurnAction(a) || IsCursorAction(a) || \
-			 IsViewAction(a) || IsMapMoveAction(a) || IsAttackAction(a))
+			 IsViewAction(a) || IsMapMoveAction(a))
 
 #ifdef __cplusplus
 extern "C" {

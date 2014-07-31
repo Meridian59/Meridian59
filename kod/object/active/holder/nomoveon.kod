@@ -287,28 +287,6 @@ messages:
       return send(self,@SquaredDistanceToLocation,#row=iRow,#col=iCol);
    }
 
-   SquaredFineDistanceTo(what = $)
-   "Computes squared fine distance to <what>. Returns $ for any object that is not within a room."
-   {
-      local iFineRow, iFineCol;
-      
-      If NOT Send(self,@IsInSameRoom,#what=what)
-      {
-         return $;
-      }
-
-      iFineRow = Send(what,@GetRow)*64+Send(what,@GetFineRow);
-      iFineCol = Send(what,@GetCol)*64+Send(what,@GetFineCol);
-
-      % Sanity checking
-      if iFineRow = $ OR iFineCol = $ OR Send(self,@GetRow) = $ OR Send(self,@GetCol) = $
-      {
-         return $;
-      }
-
-      return send(self,@SquaredFineDistanceToLocation,#finerow=iFineRow,#finecol=iFineCol);
-   }
-
    SquaredDistanceToLocation(row = $, col = $)
    "Computes squared distance to (row,col)"
    {
@@ -318,17 +296,6 @@ messages:
       iCol_diff = Send(self,@GetCol) - col;
 
       return  (iRow_diff * iRow_diff + iCol_diff * iCol_diff);
-   }
-
-   SquaredFineDistanceToLocation(finerow = $, finecol = $)
-   "Computes squared distance to (finerow,finecol)"
-   {
-      local iFineRow_diff, iFineCol_diff;
-
-      iFineRow_diff = Send(self,@GetRow)*64+Send(self,@GetFineRow) - finerow;
-      iFineCol_diff = Send(self,@GetCol)*64+Send(self,@GetFineCol) - finecol;
-
-      return  (iFineRow_diff * iFineRow_diff + iFineCol_diff * iFineCol_diff);
    }
 
 end

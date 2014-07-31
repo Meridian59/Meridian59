@@ -30,6 +30,7 @@ classvars:
    vrIcon = reagentbag_icon_rsc
    vrDesc = reagentbag_desc_rsc
 
+   viValue_average = 500
    viBulk_hold_max = 12000
    viWeight_hold_max = $
 
@@ -37,7 +38,7 @@ properties:
 
    plReagents = $
 
-   viObject_flags = CONTAINER_YES
+   viObject_flags = CONTAINER_YES | GETTABLE_YES
 
 messages:
 
@@ -48,10 +49,6 @@ messages:
          AND Send(owner,@GetReagentBag) = $
       {
          Send(owner,@NewHold,#what=self);
-      }
-      else
-      {
-         Post(self,@Delete);
       }
 
       propagate;
@@ -120,11 +117,6 @@ messages:
       }
 
       return iSum;
-   }
-
-   ReqNewOwner(what = $)
-   {
-      return FALSE;
    }
 
    ReqTaker(what=$,taker=$)

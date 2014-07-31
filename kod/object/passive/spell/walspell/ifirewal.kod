@@ -41,6 +41,7 @@ classvars:
    viSpell_level = 3
    viMana = 15
    viSpellExertion = 10
+   viMeditate_ratio = 30
 
    viCast_time = 1000
    vrSucceed_wav = IllusionaryFireWall_sound

@@ -47,6 +47,7 @@ classvars:
 
    viSpellExertion = 5
    viCast_time = 1000
+   viMeditate_ratio = 20
 
    vbCanCastOnOthers = FALSE
 

@@ -42,6 +42,7 @@ classvars:
    viSpell_level = 3
 
    viChance_To_Increase = 40
+   viMeditate_ratio = 20
 
    viFlash = FLASH_GOOD
 

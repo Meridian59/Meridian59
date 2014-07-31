@@ -43,6 +43,7 @@ classvars:
 
    viCast_time = 2000
    viChance_To_Increase = 15
+   viMeditate_ratio = 20
 
    vrSucceed_wav = Bait_sound
 

@@ -43,6 +43,8 @@ classvars:
    viMana = 8
    viSpellExertion = 4
 
+   viMeditate_ratio = 50
+
    viHarmful = TRUE
    viOutlaw = TRUE
    viNoNewbieOffense = TRUE

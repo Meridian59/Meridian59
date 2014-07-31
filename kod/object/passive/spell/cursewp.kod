@@ -39,6 +39,8 @@ classvars:
 
    viSpell_num = SID_CURSE_WEAPON
    viSchool = SS_QOR
+   
+   viMeditate_ratio = 30
 
    viSpell_level =4
    viMana = 25

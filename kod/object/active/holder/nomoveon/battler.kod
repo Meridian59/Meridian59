@@ -320,7 +320,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iDamage, oWeapon;
+      local iChanceToHit, iDamage, iPreliminary, oWeapon;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -337,11 +337,16 @@ messages:
       if iChanceToHit >= random(1,1000)
       {
          % We hit!
-         iDamage = Send(what,@AssessDamage,#what=self,
-                        #damage=Send(self,@GetDamage,#what=what,
-                                     #stroke_obj=stroke_obj),
-                        #atype=Send(self,@GetDamageType),
-                        #aspell=Send(self,@GetSpellType));
+         iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj);
+         
+         % Scale damage with chance to hit beyond 100 percent.
+         if iChanceToHit > 1000 AND Send(Send(SYS,@GetSettings),@GetDamageScaling)
+         {
+            iPreliminary = iPreliminary * iChanceToHit / 1000;
+         }
+         
+         iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,
+            #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $
@@ -366,20 +371,7 @@ messages:
               #use_weapon=oWeapon);
       }
 
-      % Finally, check if we get to do our next attack sooner because of our high chance to hit.
-      if IsClass(self,&Player)
-      {
-         if iChanceToHit > 1000
-         {
-            Send(self,@IsOkayAttackTime,#time=1000000/iChanceToHit);
-         }
-         else
-         {
-            Send(self,@IsOkayAttackTime);
-         }
-      }
-      
-      return iChanceToHit;
+      return TRUE;
    }
    
    GetLevel()

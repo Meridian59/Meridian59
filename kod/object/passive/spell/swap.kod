@@ -45,6 +45,7 @@ classvars:
    viMana = 9
 
    viChance_To_Increase = 10
+   viMeditate_ratio = 50
 
    viOutlaw = TRUE
    viHarmful = TRUE

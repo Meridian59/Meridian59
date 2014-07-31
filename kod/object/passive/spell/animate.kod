@@ -48,6 +48,7 @@ classvars:
    viSpellExertion = 10
    viCast_time = 20000
    viChance_To_Increase = 75
+   viMeditate_ratio = 30
 
    vrSucceed_wav = Animate_sound
 

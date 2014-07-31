@@ -46,6 +46,7 @@ classvars:
    vrSucceed_wav = forcesoflight_sound
 
    viChance_To_Increase = 40
+   viMeditate_ratio = 30
 
 properties:
 

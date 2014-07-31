@@ -60,6 +60,7 @@ classvars:
    viSpellExertion = 10
    viSpell_level = 4
    viChance_To_Increase = 15
+   viMeditate_ratio = 30
    viBaseRange = 10
 
    % in seconds, since it works off GetTime()

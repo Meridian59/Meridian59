@@ -59,6 +59,7 @@ classvars:
    viDrainTime = 5000   % Drain some mana every viDrainTime milliseconds
 
    viSpell_Exertion = 6
+   viMeditate_ratio = 30
 
    viAffectsGuildmates = TRUE
    viAffectsEnemies = TRUE

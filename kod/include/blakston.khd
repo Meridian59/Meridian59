@@ -2003,6 +2003,8 @@
    SID_DEATH_RIFT = 185
    SID_PHASE = 186
 
+   SID_MEDITATE = 187
+
    % Depreciated spell IDs
    SID_LIGHTNING = 1                   % use SID_LIGHTNING_BOLT
    SID_HEAL = 2                        % use SID_MINOR_HEAL

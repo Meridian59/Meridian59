@@ -29,10 +29,14 @@ resources:
    
    skill_sound_fail = spelfail.wav
 
-   skill_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s"
+   skill_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%i%s"
+   skill_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s"
    skill_school_fencing = "Weaponcraft"
    skill_school_brawling = "Brawling"
    skill_school_thievery = "Thievery"
+
+   Skill_meditate_ratio_one_rsc = "\n\nIt will cost you "
+   Skill_meditate_ratio_two_rsc = " training points to improve in this skill."
 
 classvars:
 
@@ -52,7 +56,10 @@ classvars:
    viSkill_level = 1
 
    % Initial chance to increase, modified by Intellect.   
-   viChance_to_Increase = 25    
+   viChance_to_Increase = 25
+   % This is NOT the same as the chance to increase. This determines how many training points a player needs to spend per improvement.
+   % So it's not x improvements in 100 attempts, but 1 improvement per X points.
+   viMeditate_ratio = 100
 
    viskillExertion = 2
    vbCheck_Exertion = TRUE
@@ -72,8 +79,16 @@ classvars:
 properties:
 
    plPrerequisites = $
+   piMeditate_ratio = 100
 
 messages:
+
+   Constructed()
+   {
+      piMeditate_ratio = viMeditate_ratio;
+
+      propagate;
+   }
 
    Delete()
    {
@@ -116,8 +131,16 @@ messages:
       {
          rSchool = skill_school_thievery;
       }
-
-      AddPacket(4,skill_desc_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
+      
+      if piMeditate_ratio = 0
+      {
+         AddPacket(4,skill_desc_no_train_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
+      }
+      else
+      {
+         AddPacket(4,skill_desc_rsc,4,rSchool,4,viSkill_Level,4,vrDesc);
+         AddPacket(4,Skill_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Skill_meditate_ratio_two_rsc);
+      }
 
       return;
    }
@@ -181,6 +204,27 @@ messages:
       iRequisiteStat = Send(self,@GetRequisiteStat,#who=who);
 
       return bound(random(iRequisiteStat/2,iRequisiteStat)/2,1,25);
+   }
+
+   GetMeditateRatio()
+   {
+      return piMeditate_ratio;
+   }
+
+   SetMeditateRatio(points=0)
+   {
+      if points > 0
+      {
+         piMeditate_ratio = points;
+      }
+
+      return;
+   }
+
+   ResetMeditateRatio()
+   {
+      piMeditate_ratio = viMeditate_ratio;
+      return;
    }
 
    CanPayCosts(who=$,oTarget=$)

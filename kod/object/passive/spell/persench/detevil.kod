@@ -51,6 +51,7 @@ classvars:
 
    viCast_time = 3000
    viChance_To_Increase = 15
+   viMeditate_ratio = 10
 
    vrSpell_intro = DetectEvil_spell_intro
 

@@ -202,6 +202,13 @@ resources:
    player_wanted_now = "You are now wanted for the murder of %s%s."
    player_haunted_on = "%s%s's violent death summons forth a revenant."
    player_haunted_off = "The revenant is satisfied."
+   
+   player_training_inform =  "You now have ~B%i~B training points!"
+   player_reached_maxtraining = "You now have ~B1000~B training points and can not advance any further!  Meditate to use them!"
+   player_gained_training = "You have gained ~B%i~B training points!"
+   player_spent_training = "You have spent ~B%i~B training points!"
+   player_logon_bonus =  "You have received your daily training bonus of ~B%i~B points!  Come back tomorrow for more!"
+   player_nologon_bonus =  "Welcome back!  Log in again tomorrow to receive some bonus training points!"
 
    player_health_gain_maxed = "Your health cannot increase any further."
    
@@ -769,6 +776,15 @@ properties:
    % This is used to determine raises in hit points only.
    poKill_target = $
    piGain_chance = 0
+   
+   % This keeps track of training points that players accumulate when killing mobs.
+   piTraining_points = 0
+   piInform = TRUE
+
+   % This is the amount of training points people receive for logging on daily.
+   piLogon_bonus = 0
+   piLogon_timestamp = 0
+   piReward_timestamp = 0
 
    % Flags for various character attributes.
    piFlags = 0
@@ -1028,6 +1044,7 @@ messages:
    {
       % Let the poor bastards eat something.
       piTimeLastStomachUpdate = GetTime();
+      piReward_timestamp = GetTime();
       
       propagate;
    }
@@ -1954,7 +1971,7 @@ messages:
 
    UserLogonHook()
    {
-      local i, oGame, oSnoop, oRoom;
+      local i, oGame, oSnoop, oRoom, iBonus;
       
       for i in plPassive
       {
@@ -2040,12 +2057,48 @@ messages:
               #wave_rsc=player_logged_on_wav_rsc);
       }
 
+      % Reset the training points bonus if people haven't logged in for a while.
+      if GetTime() - piLogon_timestamp > 28*60*60
+      {
+         piLogon_bonus = 0;
+      }
+
+      % Reward people for logging on by granting them some free training points!
+      if GetTime() - piReward_timestamp > 20*60*60
+      {
+         if piTraining_points = 1000
+         {
+            return;
+         }
+
+         if piLogon_bonus = 0
+         {
+            if piReward_timestamp <> 0
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_nologon_bonus);
+            }
+            
+            piLogon_bonus = 25;
+         }
+         else
+         {
+            iBonus = piLogon_bonus * (GetTime() - piReward_timestamp) / (24*60*60);
+            Send(self,@MsgSendUser,#message_rsc=player_logon_bonus,#parm1=iBonus);
+            Send(self,@AddTrainingPoints,#points=iBonus);
+            piLogon_bonus = bound(piLogon_bonus*2,25,200);
+         }
+         
+         piReward_timestamp = GetTime();
+      }
+
       return;
    }
 
    UserLogoffHook()
    {
       local i, oSnoop, oRoom;
+
+      piLogon_timestamp = GetTime();
    
       oSnoop = Send(SYS,@GetInvestigator);
       if oSnoop <> $
@@ -2522,6 +2575,7 @@ messages:
       Send(self,@AddSpell,#num=SID_BLINK,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_CONVEYANCE,#initial=TRUE);
       Send(self,@AddSpell,#num=SID_PHASE,#initial=TRUE);
+      Send(self,@AddSpell,#num=SID_MEDITATE,#initial=TRUE,#iability=1);
       
       return;
    }
@@ -4246,11 +4300,10 @@ messages:
       }
 
       % Check attack time.
-      % We don't start a timer here, just check if we are eligible. The timer will be set later.
-      if NOT Send(self,@CheckAttackTimer) 
+      if NOT Send(self,@IsOkayAttackTime)
       {
          return FALSE;
-      }  
+      }
 
       % Is it in the same room?
       if poOwner <> Send(what,@GetOwner) 
@@ -4404,7 +4457,7 @@ messages:
    }
 
    % Determines if target is within attacking range, and within sight.
-   %  iRange=$ means there's no range check.
+   % iRange=$ means there's no range check.
    TargetWithinSightAndRange(oTarget=$,iRange=$,use_weapon=$,stroke_obj=$)
    {
       local iSquareRange, iDist, oTargetOwner, oFinalTarget, iAngle, iRow, iCol,
@@ -4422,7 +4475,7 @@ messages:
       oFinalTarget = oTarget;
 
       % Strange case of us targetting something that someone else is holding.
-      %  This cannot be owned by us, since we already checked that.
+      % This cannot be owned by us, since we already checked that.
       if oTargetOwner <> $
          AND IsClass(oTargetOwner,&Battler)
       {
@@ -4454,7 +4507,7 @@ messages:
       }
 
       % See if target is in a reasonable viewing area.
-      %  Only applies to weapon strokes and single-target spells.
+      % Only applies to weapon strokes and single-target spells.
       if IsClass(oFinalTarget,&Battler)
          AND stroke_obj <> $
          AND (IsClass(stroke_obj,&Stroke)
@@ -4468,18 +4521,18 @@ messages:
 
          % What this does:
          % Basically, it finds your direction and makes sure you aren't trying to target
-         %  something behind you.  "Behind you" is defined as behind the line defined
-         %  by the cardinal directions that are the closest to being perpendicular to the
-         %  player's direction vector.  For example, if you're facing mostly east, then
-         %  the cardinal direction direction line runs north/south; in essense, anything
-         %  that is further west than you is "behind" you.  The more interesting cases
-         %  are when the player is facing one of the corner directions.  We calculate
-         %  the equation of the line using the point-slope formula and determine which
-         %  side of the line the target is.
-         %    Equation of the SW-NE line: iTargetRow - iRow = iCol - iTargetRow
-         %    Equation of the SE-NW line: iTargetRow - iRow = iTargetCol - iCol
+         % something behind you. "Behind you" is defined as behind the line defined
+         % by the cardinal directions that are the closest to being perpendicular to the
+         % player's direction vector. For example, if you're facing mostly east, then
+         % the cardinal direction direction line runs north/south; in essense, anything
+         % that is further west than you is "behind" you. The more interesting cases
+         % are when the player is facing one of the corner directions. We calculate
+         % the equation of the line using the point-slope formula and determine which
+         % side of the line the target is.
+         % Equation of the SW-NE line: iTargetRow - iRow = iCol - iTargetRow
+         % Equation of the SE-NW line: iTargetRow - iRow = iTargetCol - iCol
          if iDist > 1
-            AND (   ((iAngle > ANGLE_ENE OR iAngle <= ANGLE_ESE)
+            AND ( ((iAngle > ANGLE_ENE OR iAngle <= ANGLE_ESE)
                     AND iTargetCol < iCol)
                  OR (iAngle > ANGLE_ESE AND iAngle <= ANGLE_SSE
                     AND (iTargetRow - iRow) < (iCol - iTargetCol))
@@ -4929,7 +4982,7 @@ messages:
          % Allow protective spells a chance to improve when they take effect!
          for i in plPassiveImprovement
          {
-            if (aspell & Nth(i,4)) AND random(1,10) = 10
+            if (aspell & -Nth(i,4)) AND random(1,10) = 10
             {
                Send(First(i),@ImproveAbility,#who=self,#target=what);
             }
@@ -8238,6 +8291,30 @@ messages:
          gain = gain * gainmult;
 		 
          piGain_chance = piGain_chance + gain;
+         
+         if gain > 0
+         {
+            piTraining_points = piTraining_points + 1;
+         }
+
+         if piTraining_points > 999
+         {
+            if piInform
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining);
+               piInform = FALSE;
+            }
+            piTraining_points = 1000;
+         }
+         else
+         {
+            if piTraining_points mod 100 = 0 AND piInform
+            {
+               Send(self,@MsgSendUser,#message_rsc=player_training_inform,#parm1=piTraining_points);
+            }
+         }
+         
+         Post(self,@DrawTraining);
 
          if roll
          {
@@ -8325,6 +8402,67 @@ messages:
    GetGainChance()
    {
       return piGain_chance;
+   }
+
+   GetTrainingPoints()
+   {
+      return piTraining_points;
+   }
+
+   AddTrainingPoints(points=0,report=TRUE)
+   {
+      if points = 0
+      {
+         return;
+      }
+
+      points = bound(points,-piTraining_points,1000 - piTraining_points);
+
+      if report AND points > 0
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_gained_training,#parm1=points);
+      }
+
+      if report AND points < 0
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_spent_training,#parm1=-points);
+      }
+
+      piTraining_points = piTraining_points + points;
+
+      if piTraining_points < 1000
+      {
+         piInform = TRUE;
+      }
+      else
+      {
+         Send(self,@MsgSendUser,#message_rsc=player_reached_maxtraining);
+         piInform = FALSE;
+      }
+
+      Post(self,@DrawTraining);
+
+      return;
+   }
+
+   GetLogOnBonus()
+   {
+      return piLogon_bonus;
+   }
+
+   SetLogOnBonus(points=0)
+   {
+      piLogon_bonus = points;
+
+      return;
+   }
+
+   ResetLogOnBonus()
+   {
+      piLogon_bonus = 0;
+      piReward_timestamp = GetTime();
+      
+      return;
    }
 
    GetHighMark()
@@ -10978,6 +11116,11 @@ messages:
          nObj = Send(SYS,@FindSpellByNum,#num=nSID);
          
          if nObj = $
+         {
+            continue;
+         }
+         
+         if IsClass(nObj,&UtilitySpell)
          {
             continue;
          }

@@ -68,6 +68,7 @@ classvars:
    vrSucceed_wav = AntiMagicAura_sound
 
    viChance_To_Increase = 10
+   viMeditate_ratio = 75
 
    viAffectsGuildmates = TRUE
    viAffectsEnemies = TRUE

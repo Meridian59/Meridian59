@@ -43,6 +43,7 @@ classvars:
    viMana = 30
    viCast_time = 10000
    viChance_To_Increase = 25
+   viMeditate_ratio = 100
 
    vrSucceed_wav = portaloflife_sound
 

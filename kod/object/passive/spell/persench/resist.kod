@@ -22,6 +22,7 @@ classvars:
    viFlash = FLASH_GOOD_SELF
 
    viResistanceType = -ATCK_SPELL_ALL
+   viMeditate_ratio = 20
 
    vrAlreadyEnchanted = $
    vrEnchantment_On = $

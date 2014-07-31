@@ -42,6 +42,7 @@ classvars:
    viHarmful = TRUE
    viOutlaw = TRUE
    viChance_To_Increase = 10
+   viMeditate_ratio = 30
 
    vbIsRangedAttack = FALSE
    vbIsAreaEffect = FALSE

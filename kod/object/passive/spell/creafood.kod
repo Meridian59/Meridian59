@@ -43,6 +43,7 @@ classvars:
    viSpellExertion = 0
    viCast_time = 500
    viChance_To_Increase = 15
+   viMeditate_ratio = 10
 
    vrSucceed_wav = createfood_sound
 

@@ -48,6 +48,7 @@ classvars:
    viHarmful = TRUE
    viNoNewbieOffense = TRUE
    viChance_to_increase = 15
+   viMeditate_ratio = 30
 
    vrSucceed_wav = Vertigo_sound
 

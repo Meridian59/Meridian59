@@ -40,6 +40,7 @@ classvars:
    viMana = 10
    viSpell_level = 3
    viChance_To_Increase = 15
+   viMeditate_ratio = 30
 
    viCast_time = 600
 

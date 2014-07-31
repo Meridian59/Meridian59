@@ -40,6 +40,7 @@ classvars:
    viMana = 20
    viSchool = SS_SHALILLE
    viSpell_level = 5
+   viMeditate_ratio = 50
 
    viFlash = FLASH_GOOD
    

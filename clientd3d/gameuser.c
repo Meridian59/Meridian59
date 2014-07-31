@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define ATTACK_DELAY 500  // Minimum number of milliseconds between user attacks
+#define ATTACK_DELAY 1000  // Minimum number of milliseconds between user attacks
 
 extern player_info player;
 extern room_type current_room;

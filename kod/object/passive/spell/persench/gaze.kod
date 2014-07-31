@@ -44,6 +44,7 @@ classvars:
    viSpell_level = 6
 
    viChance_To_Increase = 10
+   viMeditate_ratio = 75
 
    vrName = paralyze_name_rsc
    vrIcon = paralyze_icon_rsc

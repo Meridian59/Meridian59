@@ -36,6 +36,7 @@ classvars:
    viSkill_Num = SKID_SLASH
    viSkill_level = 1
    viChance_to_increase = 20
+   viMeditate_ratio = 30
 
    viskillExertion = 2
    vbCheck_exertion = FALSE

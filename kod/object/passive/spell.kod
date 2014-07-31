@@ -87,7 +87,8 @@ resources:
 
    spell_fail_wav = spelfail.wav
 
-   spell_desc_rsc = "SCHOOL : %s          LEVEL : %i \n\n%s %s%s"
+   spell_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%q"
+   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%q%s%i%s"
    spell_school_riija = "Riija"
    spell_school_shalille = "Shal'ille"
    spell_school_qor = "Qor"
@@ -133,6 +134,9 @@ resources:
    los_bad_display = \
       "You don't have line of sight with ~k~B%s~n."
 
+   Spell_meditate_ratio_one_rsc = "\n\nIt will cost you "
+   Spell_meditate_ratio_two_rsc = " training points to improve in this spell."
+
    Spell_made_rsc = "  Enchanted by "
    Spell_novice_rsc = ", Novice "
    Spell_apprentice_rsc = ", Apprentice "
@@ -165,6 +169,10 @@ classvars:
    viMana = 1
 
    viChance_To_Increase = 20
+
+   % This is NOT the same as the chance to increase. This determines how many training points a player needs to spend per improvement.
+   % So it's not x improvements in 100 casts, but 1 improvement per X points.
+   viMeditate_ratio = 100
 
    viShow_enchantment_icon = ENCHANTMENT_SHOW_ALL
 
@@ -231,6 +239,7 @@ properties:
    % Must have this many HP to cast the spell.  Provides a way
    % to nerf spells that are being abused by under 30 HP mules.
    piMinHitPoints = 0
+   piMeditate_ratio = 100
 
 messages:      
 
@@ -238,6 +247,7 @@ messages:
    {
       Send(self,@ResetReagents);
       Send(self,@ResetPrereqs);
+      piMeditate_ratio = viMeditate_ratio;
 
       propagate;
    }
@@ -305,9 +315,9 @@ messages:
       return rSchool;
    }
 
-   ShowDesc()
+   ShowDesc(who=$)
    {
-      local rSchool, rOutlaw, rExtra;
+      local rSchool, rOutlaw, rExtra, rStats;
 
       if viSchool <> SS_DM_COMMAND
       {
@@ -320,10 +330,25 @@ messages:
          }
 
          rExtra = Send(self,@GetExtraDesc);
+         
+         rStats = Send(self,@GetStatsDesc,#who=who);
+         
+         if rStats = $
+         {
+            rStats = CreateString();
+            SetString(rStats,spell_nothing);
+         }
 
-         AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,
-                   4,rOutlaw, 4,rExtra);
-                   
+         if piMeditate_ratio = 0
+         {
+            AddPacket(4,spell_desc_no_train_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra,4,rStats);
+         }
+         else
+         {
+            AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra,4,rStats);
+            AddPacket(4,Spell_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Spell_meditate_ratio_two_rsc);
+         }
+
          return;
       }
       
@@ -333,6 +358,14 @@ messages:
    GetExtraDesc()
    {
       return spell_nothing;
+   }
+   
+   GetStatsDesc()
+   {
+      local sString;
+      sString = CreateString();
+      SetString(sString,spell_nothing);
+      return sString;
    }
 
    Delete()
@@ -1734,6 +1767,27 @@ messages:
       }
       
       return FALSE;
+   }
+
+   GetMeditateRatio()
+   {
+      return piMeditate_ratio;
+   }
+
+   SetMeditateRatio(points=0)
+   {
+      if points > 0
+      {
+         piMeditate_ratio = points;
+      }
+
+      return;
+   }
+
+   ResetMeditateRatio()
+   {
+      piMeditate_ratio = viMeditate_ratio;
+      return;
    }
 
    GetInitialChance(who=$)

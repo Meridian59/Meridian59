@@ -49,6 +49,7 @@ classvars:
    viHarmful = TRUE
    viOutlaw = TRUE
    viNoNewbieOffense = TRUE
+   viMeditate_ratio = 30
 
    vrSucceed_wav = manabomb_sound
    

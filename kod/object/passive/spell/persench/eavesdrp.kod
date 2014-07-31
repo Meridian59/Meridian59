@@ -50,6 +50,7 @@ classvars:
    viManaDrain = 1       % Drain is amount used every so often
    
    viChance_To_Increase = 20
+   viMeditate_ratio = 20
    vrSucceed_wav = Eavesdrop_sound
 
    vbCanCastOnOthers = FALSE

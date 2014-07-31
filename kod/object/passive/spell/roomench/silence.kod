@@ -50,6 +50,7 @@ classvars:
    viDrainTime = 1000    % Drain some mana every viDrainTime milliseconds
    
    viChance_To_Increase = 10
+   viMeditate_ratio = 50
 
    viOutlaw = TRUE
    viHarmful = TRUE

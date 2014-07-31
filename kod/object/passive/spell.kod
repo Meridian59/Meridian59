@@ -87,8 +87,8 @@ resources:
 
    spell_fail_wav = spelfail.wav
 
-   spell_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s"
-   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%s%i%s"
+   spell_desc_no_train_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%q"
+   spell_desc_rsc = "SCHOOL : %s         LEVEL : %i \n\n%s%s%s%q%s%i%s"
    spell_school_riija = "Riija"
    spell_school_shalille = "Shal'ille"
    spell_school_qor = "Qor"
@@ -315,9 +315,9 @@ messages:
       return rSchool;
    }
 
-   ShowDesc()
+   ShowDesc(who=$)
    {
-      local rSchool, rOutlaw, rExtra;
+      local rSchool, rOutlaw, rExtra, rStats;
 
       if viSchool <> SS_DM_COMMAND
       {
@@ -330,14 +330,22 @@ messages:
          }
 
          rExtra = Send(self,@GetExtraDesc);
+         
+         rStats = Send(self,@GetStatsDesc,#who=who);
+         
+         if rStats = $
+         {
+            rStats = CreateString();
+            SetString(rStats,spell_nothing);
+         }
 
          if piMeditate_ratio = 0
          {
-            AddPacket(4,spell_desc_no_train_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra);
+            AddPacket(4,spell_desc_no_train_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra,4,rStats);
          }
          else
          {
-            AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra);
+            AddPacket(4,spell_desc_rsc, 4,rSchool, 4,viSpell_Level, 4,vrDesc,4,rOutlaw, 4,rExtra,4,rStats);
             AddPacket(4,Spell_meditate_ratio_one_rsc,4,piMeditate_ratio,4,Spell_meditate_ratio_two_rsc);
          }
 
@@ -350,6 +358,14 @@ messages:
    GetExtraDesc()
    {
       return spell_nothing;
+   }
+   
+   GetStatsDesc()
+   {
+      local sString;
+      sString = CreateString();
+      SetString(sString,spell_nothing);
+      return sString;
    }
 
    Delete()

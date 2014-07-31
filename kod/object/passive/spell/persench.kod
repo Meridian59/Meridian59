@@ -265,32 +265,25 @@ messages:
       return;
    }
 
-   CreateDesc(who=$)
+   CreateStatsDesc(who=$)
    {
       ClearTempString();
-      AppendTempString("SCHOOL : ");
-      AppendTempString(Send(self,@GetSchoolStr));
-      AppendTempString("          LEVEL : ");
-      AppendTempString(Send(self,@GetLevel));
-      AppendTempString("\n\n");
-      AppendTempString(vrDesc);
-      
+
       if who <> $
          AND IsClass(who,&User)
          AND Send(who,@IsEnchanted,#what=self)
       {
          Send(self,@EffectDesc,#who=who);
       }
-      
+
       return;
    }
    
-   ShowDesc(bShowAll = FALSE,who=$)
+   GetStatsDesc(who=$)
    {
-      Send(self,@CreateDesc,#who=who);      
-      AddPacket(4,spell_blank_template,4,GetTempString());
+      Send(self,@CreateStatsDesc,#who=who);      
 
-      return;
+      return GetTempString();
    }
 
 end

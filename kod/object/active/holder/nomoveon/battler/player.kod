@@ -4477,7 +4477,7 @@ messages:
          oTargetOwner = Send(oFinalTarget,@GetOwner);
       }
 
-      iDist = Send(self,@SquaredDistanceTo,#what=oFinalTarget);
+      iDist = Send(self,@SquaredFineDistanceTo,#what=oFinalTarget);
 
       % If we don't share the same owner, then we're not in range.
       if poOwner <> oTargetOwner
@@ -4488,7 +4488,7 @@ messages:
       % See if target is within range, if we provided a range.
       if iRange <> $
       {
-         iSquareRange = iRange;
+         iSquareRange = iRange*64;
          iSquareRange = iSquareRange * iSquareRange;
 
          if iDist > iSquareRange
@@ -4508,10 +4508,10 @@ messages:
               OR (IsClass(stroke_obj,&Spell) AND Send(stroke_obj,@GetNumSpellTargets) = 1))
       {
          iAngle = Send(self,@GetAngle);
-         iRow = Send(self,@GetRow);
-         iCol = Send(self,@GetCol);
-         iTargetRow = Send(oTarget,@GetRow);
-         iTargetCol = Send(oTarget,@GetCol);
+         iRow = Send(self,@GetRow)*64+Send(self,@GetFineRow);
+         iCol = Send(self,@GetCol)*64+Send(self,@GetFineCol);
+         iTargetRow = Send(oTarget,@GetRow)*64+Send(oTarget,@GetFineRow);
+         iTargetCol = Send(oTarget,@GetCol)*64+Send(oTarget,@GetFineCol);
 
          % What this does:
          % Basically, it finds your direction and makes sure you aren't trying to target

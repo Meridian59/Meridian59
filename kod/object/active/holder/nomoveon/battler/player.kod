@@ -11114,6 +11114,11 @@ messages:
             continue;
          }
          
+         if IsClass(nObj,&UtilitySpell)
+         {
+            continue;
+         }
+         
          % Is this in the same school?
          if (Send(nObj,@GetSchool) = school)
             and (Send(nobj,@GetLevel)) = level

@@ -90,16 +90,14 @@ void UserAttackClosest(int action)
       return;
    last_attack_time = now;
 
-	//	If user has selected target, and target is seen, use it as the target of this attack.
-	if (idTarget != INVALID_ID)
-	{
-		if (FindVisibleObjectById(idTarget))
-			RequestAttack(ATTACK_NORMAL, idTarget);
-		else
-			GameMessage(GetString(hInst, IDS_TARGETNOTVISIBLEFORATTACK));
-		return;
-	}
-	
+   //	If user has a selected target, use it as the target of this attack.
+   if (idTarget != INVALID_ID)
+   {
+      RequestAttack(ATTACK_NORMAL, idTarget);
+
+      return;
+   }
+
    object_list = GetObjects3D(NO_COORD_CHECK, NO_COORD_CHECK, 
 			      CLOSE_DISTANCE, OF_ATTACKABLE, 0);
    if (object_list == NULL)

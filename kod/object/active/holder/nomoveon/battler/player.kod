@@ -4299,13 +4299,6 @@ messages:
          return FALSE;
       }
 
-      % Check attack time.
-      % We don't start a timer here, just check if we are eligible. The timer will be set later.
-      if NOT Send(self,@CheckAttackTimer) 
-      {
-         return FALSE;
-      }  
-
       % Is it in the same room?
       if poOwner <> Send(what,@GetOwner) 
       {

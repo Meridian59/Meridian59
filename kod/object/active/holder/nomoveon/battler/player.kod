@@ -1038,6 +1038,9 @@ properties:
    ptPhaseVisualEffectTimer = $
    piRemainingPhaseTime = 60000 * 8
 
+   % Put new reagents in your bag
+   pbReagentBagAuto = TRUE
+
 messages:
 
    Constructor()
@@ -13812,6 +13815,17 @@ messages:
    "Used by logoff ghosts to sync up penalty times."
    {
       piRemainingPhaseTime = amount;
+      return;
+   }
+   
+   GetReagentBagAuto()
+   {
+      return pbReagentBagAuto;
+   }
+   
+   SetReagentBagAuto(value=TRUE)
+   {
+      pbReagentBagAuto = value;
       return;
    }
 

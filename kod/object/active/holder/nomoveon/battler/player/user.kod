@@ -337,6 +337,9 @@ resources:
    autoloot_off_msg = "You stop picking up treasure as it drops."
 
    phased_out_cant_drop = "You can't drop items while phased out of existence."
+                               
+   reagentbag_auto_on = "You start putting new reagents in your bag."
+   reagentbag_auto_off = "You stop putting new reagents in your bag."
 
 classvars:
 
@@ -3979,6 +3982,22 @@ messages:
             Send(self,@MsgSendUser,#message_rsc=autoloot_off_msg);
             return;
          }
+         
+         If StringContain(String,"reagentbag on")
+            AND NOT Send(self,@GetReagentBagAuto)
+         {
+            Send(self,@SetReagentBagAuto,#value=TRUE);
+            Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_on);
+            return;
+         }
+
+         If StringContain(String,"reagentbag off")
+            AND Send(self,@GetReagentBagAuto)
+         {
+            Send(self,@SetReagentBagAuto,#value=FALSE);
+            Send(self,@MsgSendUser,#message_rsc=reagentbag_auto_off);
+            return;
+         }
       }
 
       if NOT Send(poOwner,@RoomReqCommunication,#type=type,#string=string,
@@ -6072,6 +6091,7 @@ messages:
          AND NOT IsClass(what,&Money)
          AND NOT bFromReagentBag
          AND Send(self,@GetReagentBag) <> $
+         AND Send(self,@GetReagentBagAuto)
       {
          Post(Send(self,@GetReagentBag),@NewHold,#what=what,#where=Send(self,@GetReagentBag));
          return;

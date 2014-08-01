@@ -52,7 +52,7 @@ classvars:
    vrKarmaDesc = Potion_has_karma_requirement
 
    viBulk = 20
-   viWeight = 17
+   viWeight = 20
    viValue_average = 60
 
    viFilling = 10
@@ -77,6 +77,9 @@ properties:
 
    piMinSpellPower = 20
    piMaxSpellPower = 60
+
+   % No more potion expiration
+   piGoBadTime = -1
 
 messages:
 
@@ -153,6 +156,31 @@ messages:
    {
       % Overriding because the superclass gives a "broken" message.  Oops.
       return;
+   }
+
+   AppendDesc()
+   {
+      if piSpellPower <> $
+         AND piHits <> 0
+      {
+         AppendTempString("\n\nThis potion contains ");
+         AppendTempString(piHits);
+         
+         if piHits > 1
+         {
+            AppendTempString(" draughts");
+         }
+         else
+         {
+            AppendTempString(" draught");
+         }
+         
+         AppendTempString(". The liquid within averages ");
+         AppendTempString(piSpellPower);
+         AppendTempString(" power.");
+      }
+
+      propagate;
    }
 
 

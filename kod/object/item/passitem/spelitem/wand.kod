@@ -82,6 +82,31 @@ messages:
       return;
    }
 
+   AppendDesc()
+   {
+      if piSpellPower <> $
+         AND piHits <> 0
+      {
+         AppendTempString("\n\nThis wand coruscates with the energies of ");
+         AppendTempString(piHits);
+         
+         if piHits > 1
+         {
+            AppendTempString(" charges");
+         }
+         else
+         {
+            AppendTempString(" charge");
+         }
+
+         AppendTempString(". The magical force within averages ");
+         AppendTempString(piSpellPower);
+         AppendTempString(" power.");
+      }
+
+      propagate;
+   }
+
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

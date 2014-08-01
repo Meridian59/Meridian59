@@ -332,6 +332,9 @@ resources:
    
    guild_motd_command = "set motd "
    guild_clear_motd_command = "clear motd"
+   
+   autocombine_on_msg = "You decide to combine spell items as you get them."
+   autocombine_off_msg = "You decide to stop combining spell items as you get them."
 
    autoloot_on_msg = "You decide to pick up treasure as it drops."
    autoloot_off_msg = "You stop picking up treasure as it drops."
@@ -395,6 +398,7 @@ properties:
    
    piCheaterLogs = 0
 
+   pbAutoCombine = TRUE
    pbAutoloot = TRUE
 
 messages:
@@ -3964,6 +3968,22 @@ messages:
       
       if type = SAY_NORMAL
       {
+         If StringContain(String,"autocombine on")
+            AND NOT Send(self,@IsAutoCombining)
+         {
+            Send(self,@SetAutoCombine,#value=TRUE);
+            Send(self,@MsgSendUser,#message_rsc=autocombine_on_msg);
+            return;
+         }
+
+         If StringContain(String,"autocombine off")
+            AND Send(self,@IsAutoCombining)
+         {
+            Send(self,@SetAutoCombine,#value=FALSE);
+            Send(self,@MsgSendUser,#message_rsc=autocombine_off_msg);
+            return;
+         }
+
          If StringContain(String,"autoloot on")
             AND NOT Send(self,@IsAutolooting)
          {
@@ -6059,6 +6079,8 @@ messages:
 
    NewHold(what = $, bFromReagentBag = FALSE)
    {
+      local i;
+
       if what = $
       {
          Debug(self,"got newhold of $");
@@ -6075,6 +6097,19 @@ messages:
       {
          Post(Send(self,@GetReagentBag),@NewHold,#what=what,#where=Send(self,@GetReagentBag));
          return;
+      }
+      
+      If IsClass(what,&SpellItem)
+      {
+         for i in plPassive
+         {
+            if GetClass(i) = GetClass(what)
+               AND i <> what
+            {
+               Post(i,@CombineSpellItems,#sacrificed_item=what);
+               break;
+            }
+         }
       }
 
       propagate;
@@ -8506,6 +8541,17 @@ messages:
    IsAutolooting()
    {
       return pbAutoloot;
+   }
+
+   IsAutoCombining()
+   {
+      return pbAutoCombine;
+   }
+   
+   SetAutoCombine(value=TRUE)
+   {
+      pbAutoCombine = value;
+      return;
    }
 
 end

@@ -44,7 +44,7 @@ classvars:
    vrBroken = Scroll_Broken
 
    viValue_average = 120
-   viWeight = 3
+   viWeight = 5
    viBulk = 5
 
    viGround_group = 2
@@ -81,6 +81,31 @@ messages:
       }
 
       return;
+   }
+
+   AppendDesc()
+   {
+      if piSpellPower <> $
+         AND piHits <> 0
+      {
+         AppendTempString("\n\nThis parchment encodes ");
+         AppendTempString(piHits);
+         
+         if piHits > 1
+         {
+            AppendTempString(" mystic incantations");
+         }
+         else
+         {
+            AppendTempString(" mystic incantation");
+         }
+         
+         AppendTempString(". The runic script averages ");
+         AppendTempString(piSpellPower);
+         AppendTempString(" power.");
+      }
+
+      propagate;
    }
 
 

@@ -38,6 +38,8 @@ resources:
    SpellItem_apprentice_rsc = ", Apprentice"
    SpellItem_journeyman_rsc = ", Journeyman"
    SpellItem_master_rsc = ", Master"
+   
+   combine_spell_item_rsc = "You combine the %s with your current stock, for a total of %d uses with %d power."
 
 classvars:
 
@@ -57,8 +59,8 @@ classvars:
    vrDesc = Spellitem_desc_rsc
 
    viValue_average = 120
-   viWeight = 3
-   viBulk = 5
+   viWeight = 2
+   viBulk = 2
 
    vbFailSafe = FALSE
 
@@ -433,6 +435,65 @@ messages:
       propagate;
    }
 
+   GetBulk()
+   {
+      return viBulk * piHits;
+   }
+
+   GetWeight()
+   {
+      return viWeight * piHits;
+   }
+   
+   GetValue()
+   {
+      return viValue_average * piHits;
+   }
+   
+   GetSpellPower()
+   {
+      return piSpellPower;
+   }
+
+   CombineSpellItems(sacrificed_item=$)
+   {
+      local iSacrificeHits, iSacrificeSpellPower;
+
+      if sacrificed_item = $
+      {
+         return;
+      }
+      
+      iSacrificeHits = Send(sacrificed_item,@GetHits);
+      if iSacrificeHits = $
+         OR iSacrificeHits < 1
+      {
+         return;
+      }
+      
+      iSacrificeSpellPower = Send(sacrificed_item,@GetSpellPower);
+      if iSacrificeSpellPower = $
+         OR iSacrificeSpellPower < 1
+      {
+         iSacrificeSpellPower = Random(piMinSpellPower,piMaxSpellPower);
+      }
+      if piSpellPower = $
+         OR piSpellPower < 1
+      {
+         piSpellPower = Random(piMinSpellPower,piMaxSpellPower);
+      }
+      
+      piSpellPower = ((piSpellPower * piHits) + (iSacrificeSpellPower * iSacrificeHits)) / (piHits + iSacrificeHits);
+      piHits = piHits + iSacrificeHits;     
+
+      If IsClass(poOwner,&User)
+      {
+         Send(poOwner,@MsgSendUser,#message_rsc=combine_spell_item_rsc,#parm1=Send(sacrificed_item,@GetName),#parm2=piHits,#parm3=piSpellPower);
+      }
+      Send(sacrificed_item,@Delete);
+      
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

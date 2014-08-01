@@ -6100,6 +6100,7 @@ messages:
       }
       
       If IsClass(what,&SpellItem)
+         AND Send(self,@IsAutoCombining)
       {
          for i in plPassive
          {

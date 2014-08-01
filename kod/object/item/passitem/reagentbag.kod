@@ -177,10 +177,23 @@ messages:
       
       return;
    }
-
-   ReqLeaveHold(what = $)
+   
+   ReqNewOwner(what=$)
    {
-      return TRUE;
+      if what <> $
+         AND IsClass(what,&Player)
+         AND Send(what,@GetReagentBag) <> $
+      {
+         return FALSE;
+      }
+      
+      if what <> $
+         AND NOT IsClass(what,&Player)
+      {
+         return FALSE;
+      }
+
+      propagate;
    }
 
    LeaveHold(what = $)

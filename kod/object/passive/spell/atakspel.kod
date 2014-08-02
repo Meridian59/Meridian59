@@ -119,7 +119,8 @@ messages:
             iTotalRange = iTotalRange + RANGE_MOVEMENT_BONUS;
          }
 
-         if Send(who,@SquaredDistanceTo,#what=target) > (iTotalRange * iTotalRange)
+         if Send(target,@GetOwner) <> $
+            AND Send(who,@SquaredDistanceTo,#what=target) > (iTotalRange * iTotalRange)
          {
             if NOT bItemCast
             {

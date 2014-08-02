@@ -41,7 +41,7 @@ classvars:
    viSpell_level = 3
    viMana = 10
    viSpellExertion = 10
-   viCast_time = 8000
+   viCast_time = 6000
 
    viChance_To_Increase = 25
 
@@ -79,7 +79,7 @@ messages:
 
    CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
-      local oItem, oItemAtt;
+      local iCurrentSpell, oItem, oItemAtt;
 
       oItem = First(lTargets);
 
@@ -92,6 +92,12 @@ messages:
       }
 
       oItemAtt = Send(SYS,@FindItemAttByNum,#num=IA_SHROUD);
+      iCurrentSpell = Send(oItem,@GetAttributeData,#ItemAtt=IA_SHROUD);
+
+      if iCurrentSpell <> $
+      {
+         Send(oItemAtt,@RemoveFromItem,#oItem=oItem);
+      }
 
       Send(oItemAtt,@AddToItem,#oItem=oItem,
             #timer_duration = Send(self,@GetDuration,#iSpellPower=iSpellPower),

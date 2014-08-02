@@ -68,7 +68,7 @@ messages:
 
    ItemCanEnchant()
    {
-      return FALSE;
+      return TRUE;
    }
 
    ItemCanSwap()
@@ -109,13 +109,13 @@ messages:
 
       oPlayer = Send(oItem,@getOwner);
         if oPlayer <> $
-         AND isClass(oPlayer,&user)
+         AND IsClass(oPlayer,&User)
       {
          Send(oPlayer,@MsgSendUser,#message_rsc=iashroud_gone,
                #parm1=Send(oItem,@GetName));
       }
 
-      Send(self,@RemoveFromItem,#oItem=oItem, #lData = lData);
+      Send(self,@RemoveFromItem,#oItem=oItem,#lData=lData);
 
       return;
    }
@@ -133,7 +133,7 @@ messages:
 
       if Send(self,@ReqAddToItem,#oItem=oItem)
       {
-         Send(self,@AddToItem,#oItem=oItem, 
+         Send(self,@AddToItem,#oItem=oItem,
                #timer_duration = random(3600000,86400000));
       }
 

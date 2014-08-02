@@ -594,7 +594,7 @@ messages:
       for i in plActive
       {     
          each_obj = Send(self,@HolderExtractObject,#data=i);
-         if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj)
+         if Send(self,@SayRangeCheck,#talker=what,#hearer=each_obj,#type=type)
          {
             Send(each_obj,@SomeoneSaid,#what=what,#type=type,#string=string,
                  #parm1=parm1,#parm2=parm2,#parm3=parm3,#parm4=parm4,
@@ -605,13 +605,14 @@ messages:
       return;
    }
 
-   SayRangeCheck(talker=$,hearer=$)
+   SayRangeCheck(talker=$,hearer=$,type=$)
    {
-      % shouldn't really happen
+      % Shouldn't really happen
       if talker = $ OR hearer = $
       {
          return FALSE;
-      }    
+      }
+
 
       % if we have user->monster or monster->user and the monster is
       % not range-unlimited, and they are too far apart, return FALSE.
@@ -623,7 +624,8 @@ messages:
           OR (isClass(hearer,&User)
               AND isClass(talker,&Monster)
               AND (NOT Send(talker,@IsFullTalk))) )
-         AND Send(talker,@SquaredDistanceTo,#what=hearer) > SAY_RADIUS
+         AND (type <> SAY_YELL
+            AND Send(talker,@SquaredDistanceTo,#what=hearer) > SAY_RADIUS)
       {
          return FALSE;
       }

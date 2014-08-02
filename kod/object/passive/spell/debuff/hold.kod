@@ -8,11 +8,11 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Hold is Spell
+Hold is Debuff
 
 constants:
 
-   include blakston.khd   
+   include blakston.khd
 
 resources:
 
@@ -21,8 +21,8 @@ resources:
    hold_desc_rsc = \
       "Surrounds the target with magical energy, causing "
       "paralysis for several seconds.  "
-      "Requires purple mushrooms to cast."
-   
+      "Requires two purple mushrooms to cast."
+
    hold_already_enchanted = "%s%s is already held."
    hold_caster = "%s%s is now held in place by a magical force."
    hold_on = "A magical tingling pulses through your body.  You are unable to move."
@@ -65,12 +65,7 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i;
       
@@ -81,15 +76,15 @@ messages:
       }
 
       target = First(lTargets);
-      if NOT IsClass(target, &Battler) OR IsClass(target,&Revenant)
+      if NOT IsClass(target,&Battler) OR IsClass(target,&Revenant)
       {
          if not bItemCast
          {
-            Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
                  #parm1=vrName,#parm2=Send(target,@GetDef),
                  #parm3=Send(target,@GetName));
          }
-         
+
          return FALSE;
       }
 
@@ -99,11 +94,11 @@ messages:
          {
             Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
          }
-         
+
          return FALSE;
       }
 
-      % check for enchantment already applied
+      % Check for enchantment already applied
       if Send(target,@IsEnchanted,#what=self)
       {
          if IsClass(target,&Battler) AND NOT bItemCast
@@ -114,11 +109,11 @@ messages:
          
          return FALSE;
       }
-    
+
       propagate;   % Check other things higher up
    }
 
-   CastSpell(who=$, lTargets=$, iSpellpower=0)
+   CastSpell(who=$,lTargets=$,iSpellpower=0)
    {
       local oTarget,oSpell,iDuration;
 
@@ -135,6 +130,7 @@ messages:
          if iDuration = $
          {
             % Resisted completely
+
             propagate;
          }
       }
@@ -145,7 +141,7 @@ messages:
 
       if IsClass(oTarget,&Player)
       {
-         Send(oTarget,@MsgSendUser,#message_rsc=hold_on);    
+         Send(oTarget,@MsgSendUser,#message_rsc=hold_on);
 
          % Do not paralyze DMs.
          if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
@@ -153,16 +149,16 @@ messages:
             Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
          }
       }
-      else  
+      else
       {
          % class is &Monster
          Send(oTarget,@ResetBehaviorFlags);
       }
-      
+
       propagate;
    }
 
-   EndEnchantment(who = $,report = TRUE,state=$)
+   EndEnchantment(who=$,report=TRUE,state=$)
    {
       if IsClass(who,&Player)
       {
@@ -181,10 +177,10 @@ messages:
       else  % class is &Monster
       {
          % This has to be done AFTER the enchantment is gone from the
-         %  monster's ench list - Post it
-         Post(who,@ResetBehaviorFlags);   
+         % monster's ench list - Post it
+         Post(who,@ResetBehaviorFlags);
       }
-     
+
       return;
    }
 
@@ -193,13 +189,13 @@ messages:
       return;
    }
 
-   RestartEnchantmentEffect(who = $, state = $)
+   RestartEnchantmentEffect(who=$,state=$)
    {
       Send(who,@MsgSendUser,#message_rsc=hold_on);
       Send(who,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
       
       return;
-   } 
+   }
 
    GetDuration(iSpellPower = 0)
    {
@@ -211,18 +207,18 @@ messages:
       return random(iDuration/2,iDuration);
    }
 
-   DoHold(what = $, otarget = $, iDurationSecs = $, iDuration = $, report=TRUE,
-          bAllowFreeAction=TRUE)   
+   DoHold(what=$,oTarget=$,iDurationSecs=$,iDuration=$,report=TRUE,
+          bAllowFreeAction=TRUE)
    "Holds target for durationsecs seconds."
    {
       local i, oSpell, iTotalDuration;
-            
-      if otarget = $
+
+      if oTarget = $
       {
          return FALSE;
       }
 
-      % check for enchantment already applied
+      % Check for enchantment already applied
       if Send(otarget,@IsEnchanted,#what=self)
       {
          return FALSE;
@@ -249,7 +245,7 @@ messages:
       if bAllowFreeAction
       {
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_FREE_ACTION);
-         if Send(otarget,@IsEnchanted,#what=oSpell)
+         if Send(oTarget,@IsEnchanted,#what=oSpell)
          {
             iTotalDuration = Send(oSpell,@DoFreeAction,#oHoldCaster=what,
                                   #oTarget=oTarget,#iDuration=iTotalDuration);
@@ -258,7 +254,7 @@ messages:
                % Resisted completely
                return FALSE;
             }
-         
+
             iTotalDuration = bound(iTotalDuration,500,10000);
          }
       }
@@ -270,9 +266,9 @@ messages:
       {
          if report
          {
-            Send(oTarget,@MsgSendUser,#message_rsc=hold_on); 
+            Send(oTarget,@MsgSendUser,#message_rsc=hold_on);
          }
-         
+
          % Do not paralyze DMs.
          if NOT (IsClass(oTarget,&DM) AND Send(oTarget,@PlayerIsImmortal))
          {
@@ -283,19 +279,19 @@ messages:
       {
          Send(oTarget,@ResetBehaviorFlags);
       }
-      
+
       return;
    }
 
-   ModifyMonsterBehavior(mob = $)
+   ModifyMonsterBehavior(mob=$)
    {
       Send(mob,@SetBehaviorFlag,#flag=AI_NOMOVE,#value=TRUE);
       Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
-      
-      return;      
+
+      return;
    }
 
-   SetSpellPlayerFlag(who = $)
+   SetSpellPlayerFlag(who=$)
    {
       if NOT (IsClass(who,&DM) AND Send(who,@PlayerIsImmortal))
       {
@@ -303,10 +299,9 @@ messages:
          Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
          Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
       }
-      
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

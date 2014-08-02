@@ -2084,7 +2084,7 @@ messages:
          {
             iBonus = piLogon_bonus * (GetTime() - piReward_timestamp) / (24*60*60);
             Send(self,@MsgSendUser,#message_rsc=player_logon_bonus,#parm1=iBonus);
-            Send(self,@AddTrainingPoints,#points=iBonus);
+            Send(self,@AddTrainingPoints,#points=iBonus,#report=FALSE);
             piLogon_bonus = bound(piLogon_bonus*2,25,200);
          }
          
@@ -4931,7 +4931,7 @@ messages:
    }
 
    % Handles damage done to player
-   AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0,
+   AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0, scalefactor = 1000,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
@@ -4989,7 +4989,9 @@ messages:
          }
 
          % Add attmods AFTER resistance/suscep mods.    
-         damage = damage + bonus;               
+         damage = damage + bonus;
+
+         damage = damage * scalefactor / 1000;
       }
       
       iDuration = 800;

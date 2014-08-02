@@ -1602,7 +1602,7 @@ messages:
       return viAttack_spell;
    }
 
-   AssessDamage(what = $,damage = $,atype = 0, aspell = 0, bonus = 0,
+   AssessDamage(what = $,damage = $,atype = 0, aspell = 0, bonus = 0, scalefactor = 1000,
                 absolute = FALSE)
    "This is called when something causes damage to us.  "
    "Applies damage to the battler, calculating appropriate resistances."
@@ -1621,17 +1621,15 @@ messages:
       if NOT absolute
       {
          iDamage = Send(self,@ArmorCheck,#what=what,#bonus=bonus,#atype=atype,#aspell=aspell,#damage=damage);
-         
          iResist = Send(self,@ResistanceCheck,#atype=atype,#aspell=aspell);
-         iDamage = Send(self,@GetDamageFromResistance,#what=iDamage,
-                        #value=iResist);
+         iDamage = Send(self,@GetDamageFromResistance,#what=iDamage,#value=iResist);
+         iDamage = iDamage + bonus;
+         iDamage = iDamage * scalefactor / 1000;
       }
       else
       {
          iDamage = damage;
       }
-      
-      iDamage = iDamage + bonus;
 
       % Set a predamage mark... we'll compare to it to see if threshold crossed.
       iPercentClass = piHit_points*5/piMax_hit_points;

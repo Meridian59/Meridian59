@@ -320,7 +320,7 @@ messages:
    % For a monster, the stroke_obj is itself.
    TryAttack(what = $,stroke_obj=$)
    {
-      local iChanceToHit, iDamage, iPreliminary, oWeapon;
+      local iChanceToHit, iDamage, iScalefactor, oWeapon;
 
       oWeapon = Send(self,@GetWeapon);
 
@@ -337,16 +337,19 @@ messages:
       if iChanceToHit >= random(1,1000)
       {
          % We hit!
-         iPreliminary = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj);
+         iDamage = Send(self,@GetDamage,#what=what,#stroke_obj=stroke_obj);
+         iScalefactor = 1000;
          
          % Scale damage with chance to hit beyond 100 percent.
          if iChanceToHit > 1000 AND Send(Send(SYS,@GetSettings),@GetDamageScaling)
          {
-            iPreliminary = iPreliminary * iChanceToHit / 1000;
+            iScalefactor = iChanceToHit;
          }
-         
-         iDamage = Send(what,@AssessDamage,#what=self,#damage=iPreliminary,
-            #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType));
+
+         iDamage = Send(what,@AssessDamage,#what=self,#damage=iDamage,
+            #atype=Send(self,@GetDamageType),#aspell=Send(self,@GetSpellType),
+            #scalefactor=iScalefactor);
+
          Send(self,@AssessHit,#what=what,#stroke_obj=stroke_obj,
               #damage=iDamage);
          if iDamage = $

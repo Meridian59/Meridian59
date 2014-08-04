@@ -8315,7 +8315,9 @@ messages:
          }
          else
          {
-            if piTraining_points mod 100 = 0 AND piInform
+            if piTraining_points mod 100 = 0
+               AND piTraining_points <> 0
+               AND piInform
             {
                Send(self,@MsgSendUser,#message_rsc=player_training_inform,#parm1=piTraining_points);
             }

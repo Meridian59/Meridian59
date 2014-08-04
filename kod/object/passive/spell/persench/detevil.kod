@@ -114,19 +114,7 @@ messages:
 
    GetPotionClass()
    {
-      RETURN &DetectEvilPotion;
-   }
-
-   EffectDesc(who=$)
-   {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment allows you to see those who serve evil for ");
-      AppendTempString(2400 * (100+Send(who,@GetEnchantedState,#what=self)));
-      AppendTempString(" milliseconds.");
-
-      return;
+      return &DetectEvilPotion;
    }
 
 end

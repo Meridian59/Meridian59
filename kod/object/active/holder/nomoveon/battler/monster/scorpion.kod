@@ -50,7 +50,7 @@ classvars:
    viKarma = 20
    viWimpy = 40
    viCashmin = 275
-   viCashmax = 750
+   viCashmax = 650
    vrSound_hit = scorpion_sound_hit
    vrSound_miss = scorpion_sound_miss
    vrSound_aware = scorpion_sound_aware

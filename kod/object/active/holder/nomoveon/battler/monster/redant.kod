@@ -50,7 +50,7 @@ classvars:
    viKarma = -40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_WIZARD_KILLER
    viCashmin = 225
-   viCashmax = 675
+   viCashmax = 600
    vrSound_hit = redant_sound_hit
    vrSound_miss = redant_sound_miss
    vrSound_aware = redant_sound_aware

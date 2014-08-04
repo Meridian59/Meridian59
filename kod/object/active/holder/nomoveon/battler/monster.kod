@@ -1901,7 +1901,7 @@ messages:
    AssessDamage(what=$,damage=$,atype=0,aspell=0,bonus=0,scalefactor=1000,
       absolute=FALSE,precision=FALSE)
    {
-      local iDamage,iResist,iPercentClass,i,each_obj;
+      local iDamage, iResist, iPercentClass, i, each_obj, oRod, bAttackerEmpowered;
 
       if NOT precision
       {
@@ -1917,6 +1917,26 @@ messages:
 
       % Attacks against a minion master will cause minions to defend the master
       Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+
+      % Increase initial damage by 35 percent if attacker damage rod is active
+      bAttackerEmpowered = FALSE;
+      if what <> $
+         AND IsClass(what,&Player)
+      {
+         for oRod in Send(what,@GetHolderPassive)
+         {
+            if IsClass(oRod,&DamageRod)
+               AND Send(oRod,@IsActive)
+            {
+               bAttackerEmpowered = TRUE;
+            }
+         }
+      }
+      
+      if bAttackerEmpowered
+      {
+         damage = damage * 135 / 100;
+      }
 
       % check for any applicable resistances.
 

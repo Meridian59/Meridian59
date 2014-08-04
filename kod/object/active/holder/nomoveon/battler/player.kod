@@ -5269,7 +5269,8 @@ messages:
       precision=FALSE)
    {
       local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
-            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken;
+            iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,
+            bAttackerEmpowered, bShielded, oRod;
 
       if NOT precision
       {
@@ -5407,8 +5408,6 @@ messages:
          }
       }
 
-      Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
-
       if IsClass(what,&Monster)
       {
          RecordStat(STAT_ASSESS_DAM,Send(self,@GetTrueName),
@@ -5432,6 +5431,51 @@ messages:
                player_no_weapon_string);
          }
       }
+
+      % Increase final damage by 35 percent if attacker damage rod is active
+      bAttackerEmpowered = FALSE;
+      if what <> $
+         AND IsClass(what,&Player)
+      {
+         for oRod in Send(what,@GetHolderPassive)
+         {
+            if IsClass(oRod,&DamageRod)
+               AND Send(oRod,@IsActive)
+            {
+               bAttackerEmpowered = TRUE;
+            }
+         }
+      }
+      
+      if bAttackerEmpowered
+      {
+         damage = damage * 135 / 100;
+      }
+
+      % Look for active shield rods in inventory, reduce final damage to 1 if any active
+      bShielded = FALSE;
+      for oRod in Send(self,@GetHolderPassive)
+      {
+         if IsClass(oRod,&ShieldRod)
+            AND Send(oRod,@IsActive)
+         {
+            bShielded = TRUE;
+         }
+      }
+
+      if bShielded
+      {
+         if precision
+         {
+            damage = 100;
+         }
+         else
+         {
+            damage = 1;
+         }
+      }
+
+      Send(self,@LoseHealth,#amount=damage,#precision=TRUE);
 
       if piHealth <= 0
       {

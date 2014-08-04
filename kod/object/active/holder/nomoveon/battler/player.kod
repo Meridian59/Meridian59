@@ -8264,7 +8264,7 @@ messages:
          }
          else
          {
-            % Give solo pkill-enabled builders a little bonus.
+            % Give solo pkill-enabled builders a little bonus, for appropriate monsters.
             % This will roughly equal building with one other player in the room.
             % Bonus requires that the player is fighting normally (no firewalls / distance killing)
             lBuilderGroup = Send(Send(self,@GetOwner),@GetBuilderGroup);
@@ -8272,6 +8272,7 @@ messages:
                AND Length(lBuilderGroup) = 1
                AND NOT group_member_kill
                AND killing_blow
+               AND (monster_level + 5) > piBase_Max_health
                AND Send(self,@CheckPlayerFlag,#flag=PFLAG_TOOK_DAMAGE)
             {
                gain = gain + 1;
@@ -8279,7 +8280,7 @@ messages:
          }
 
          % If they're cheesing the situation by fighting wussy monsters in an altered form,
-         %  penalize the gain amount.
+         % penalize the gain amount.
          if piMax_health > piBase_Max_health * 2
             AND monster_level < piMax_health
          {
@@ -8287,16 +8288,22 @@ messages:
             roll = FALSE;
          }
 
-         gainmult = bound(Send(Send(SYS, @GetSettings), @GetHPGainMultiplier),1,500);
+         gainmult = Bound(Send(Send(SYS,@GetSettings),@GetHPGainMultiplier),1,500);
          gain = gain * gainmult;
-		 
+
          piGain_chance = piGain_chance + gain;
-         
+
+         % Here, we work out if the player deserves a training point.
+         % They qualify if they got at least one gain point from the monster,
+         % and also got the killing blow (no double points from single mobs).
          if gain > 0
+            AND killing_blow
          {
             piTraining_points = piTraining_points + 1;
          }
 
+         % Let the player know how many training points they have, if they
+         % either reached the max, or a multiple of 100.
          if piTraining_points > 999
          {
             if piInform
@@ -8313,15 +8320,16 @@ messages:
                Send(self,@MsgSendUser,#message_rsc=player_training_inform,#parm1=piTraining_points);
             }
          }
-         
+
+         % Draw the training points bar.
          Post(self,@DrawTraining);
 
          if roll
          {
             highmark = Send(self,@GetHighMark);
-            rand = random(1,highmark);
+            rand = Random(1,highmark);
             iNumber = Send(self,@GetGainChance) + bound((monster_level-piBase_Max_health)/5,0,10);
-                  
+
             if rand < iNumber
                AND piBase_Max_health < (101 + Send(self,@GetStamina))
             {
@@ -8342,23 +8350,23 @@ messages:
                Send(self,@EatSomething,#nutrition=200);
                Post(self,@DrawOffense);
                Post(self,@DrawDefense);
-			   
-			   % report to shrunken head
-			   shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
-			   if shrunken <> $
-			   {
-				  send(shrunken,@Tougher,#hp=pibase_max_health);
-			   }		 	
-			   
+
+               % report to shrunken head
+               shrunken = Send(self,@FindHolding,#class=&ShrunkenHead);
+               if shrunken <> $
+               {
+                  Send(shrunken,@Tougher,#hp=pibase_max_health);
+               }
+
                piGain_chance = -(piBase_Max_health/2);
                
                if piBase_max_health > 30
                {
-			      %stam = 50
-				  %pigain = pigain - ((50-50)/2) =  pigain - 0
-				  %stam = 25 
-				  %pigain = pigain - ((50-25)/2) = pigain - 12.5
-				  % so, after 30 hps, any stamina less thatn 50 penalizes you by about 0.5 piGain points
+                 %stam = 50
+                 %pigain = pigain - ((50-50)/2) =  pigain - 0
+                 %stam = 25 
+                 %pigain = pigain - ((50-25)/2) = pigain - 12.5
+                 % so, after 30 hps, any stamina less thatn 50 penalizes you by about 0.5 piGain points
                   piGain_chance = piGain_chance - ((50-Send(self,@GetStamina))/2);
                }
 
@@ -8366,7 +8374,7 @@ messages:
             }
          }
       }
-      
+
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_DODGED)
          AND NOT group_member_kill
       {

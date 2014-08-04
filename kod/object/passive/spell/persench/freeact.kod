@@ -25,7 +25,7 @@ resources:
    FreeAction_desc_rsc = \
       "Kraanan's love of battle helps repel magic which might hinder "
       "your movements, and thus the liberal dispensation of lusty blows.  "
-      "Requires red mushrooms and purple mushrooms to cast."
+      "Requires one red mushroom and one purple mushroom to cast."
    
    FreeAction_on_rsc = \
       "You feel a rush of energy and fluid motion throughout your body."
@@ -82,23 +82,23 @@ messages:
    {
       local iFactor;
 
-      iFactor = bound(iSpellPower/2+5,10,50);      
+      iFactor = bound(iSpellPower/2+5,10,50);
 
       return iFactor;
    }
-  
+
    GetDuration(iSpellpower=0)
    {
       local iDuration;
 
       % 3 - 8 minutes max, converted to ms.
-      iDuration = 180 + (3 * iSpellPower);   
+      iDuration = 180 + (3 * iSpellPower);
       iDuration = iDuration * 1000;
-      
+
       return iDuration;
    }
 
-   DoFreeAction(oHoldCaster=$, oTarget=$, iDuration=0)
+   DoFreeAction(oHoldCaster=$,oTarget=$,iDuration=0)
    "Calculates adjustment if hold duration.  Returns $ if resisted completely."
    {
       local i, iNewDuration, oFreeActionStrength;
@@ -128,7 +128,7 @@ messages:
 
       iNewDuration = iDuration - (iDuration * oFreeActionStrength)/150;
       Post(oTarget,@MsgSendUser,#message_rsc=FreeAction_resist);
-      
+
       if IsClass(oHoldCaster,&Player)
       {
          Post(oHoldCaster,@MsgSendUser,#message_rsc=FreeAction_resist_caster);
@@ -159,7 +159,7 @@ messages:
       AppendTempString(100 * Send(who,@GetEnchantedState,#what=self) / 150);
       AppendTempString("\%.");
       
-      return;
+      propagate;
    }
 
 end

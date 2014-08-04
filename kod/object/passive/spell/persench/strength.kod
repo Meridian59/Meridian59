@@ -16,18 +16,26 @@ constants:
 
 resources:
 
-   superstrength_on_rsc = "Your blood tingles with the force of Kraanan.  You are ready for battle!"
-   superstrength_off_rsc  = "The superhuman strength of Kraanan departs your body, leaving you a mortal once more."
-   superstrength_already_enchanted_rsc = "You already have superior strength."
-   superstrength_success_rsc = "%s%s reels under the impact of Kraanan's power."
+   superstrength_on_rsc = \
+      "Your blood tingles with the force of Kraanan.  You are ready for "
+      "battle!"
+   superstrength_off_rsc  = \
+      "The superhuman strength of Kraanan departs your body, leaving you a "
+      "mortal once more."
+   superstrength_already_enchanted_rsc = \
+      "You already have superior strength."
+   superstrength_success_rsc = \
+      "%s%s reels under the impact of Kraanan's power."
 
    superstrength_name_rsc = "super strength"
    superstrength_icon_rsc = istreng.bgf
    superstrength_desc_rsc = \
       "Infuses your body with superhuman strength.  "
-      "Requires mushrooms and orc teeth to cast."
+      "Requires two mushrooms and an orc tooth to cast."
 
-   superstrength_spell_intro = "Kraanan Lv. 2: Infuses your body with superhuman strength in preparation for battle."
+   superstrength_spell_intro = \
+      "Kraanan Lv. 2: Infuses your body with superhuman strength in "
+      "preparation for battle."
 
 classvars:
    viPersonal_ench = True
@@ -53,7 +61,7 @@ classvars:
 
    viOffensive = TRUE
 
-properties:  
+properties:
 
 messages:
 
@@ -67,35 +75,35 @@ messages:
    }
 
 
-   GetStateValue(who = $, iSpellPower = 0, Target = $)
+   GetStateValue(who=$,iSpellPower=0,Target=$)
    {
       local iMightChange;
       iMightChange = iSpellPower/5+1;
 
-      send(Target,@AddMight,#points=iMightChange);
+      Send(Target,@AddMight,#points=iMightChange);
 
       return iMightChange;
    }
 
-   GetDuration(iSpellPower = 0)
+   GetDuration(iSpellPower=0)
    {
       local iDuration;
       iDuration = 300 + (iSpellpower * 6);
       iDuration = iDuration * 1000;
-      
+
       return iDuration;
    }
 
-   EndEnchantment( who = $, state = 0, report = TRUE )
+   EndEnchantment(who=$,state=0,report=TRUE)
    {
-      send(who,@AddMight,#points=-state);
-     
+      Send(who,@AddMight,#points=-state);
+
       propagate;
    }
 
    GetPotionClass()
    {
-      RETURN &StrengthPotion;
+      return &StrengthPotion;
    }
 
    EffectDesc(who=$)
@@ -106,8 +114,8 @@ messages:
       AppendTempString(" enchantment adds ");
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
       AppendTempString(" Might.");
-      
-      return;
+
+      propagate;
    }
 
 end

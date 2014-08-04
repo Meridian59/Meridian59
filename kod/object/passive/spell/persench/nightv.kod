@@ -20,7 +20,7 @@ resources:
    nightvision_icon_rsc = nitvsico.bgf
    nightvision_desc_rsc = \
       "Magically enhances the vision of the target.  "
-	   "Requires elderberry to cast."
+      "Requires three elderberries to cast."
    
    nightvision_already_enchanted_rsc = "You already have night vision."
 
@@ -46,7 +46,7 @@ classvars:
 
    viChance_To_Increase = 35
    viMeditate_ratio = 10
-   
+
    viFlash = FLASH_GOOD_SELF
 
 properties:
@@ -61,31 +61,31 @@ messages:
       return;
    }
 
-   GetStateValue(who = $, iSpellPower = 0,target=$)
+   GetStateValue(who=$,iSpellPower=0,target=$)
    {
       local iState;
 
       iState = iSpellPower + 50;
       Send(target,@GainLight,#amount=iState);
-      
+
       return iState;
    }
-   
-   GetDuration(iSpellpower = 0)
+
+   GetDuration(iSpellpower=0)
    {
       local iDuration;
-      
+
       iDuration = 1500 + 10 * iSpellPower;
       iDuration = iDuration * 1000;
-      
+
       return iDuration;
    }
 
 
-   EndEnchantment(who = $, report = TRUE, state = 0)
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
       Send(who,@LoseLight,#amount=state);
-      
+
       propagate;
    }
 
@@ -102,10 +102,9 @@ messages:
       AppendTempString(" enchantment adds ");
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
       AppendTempString(" visual light.");
-      
-      return;
+
+      propagate;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

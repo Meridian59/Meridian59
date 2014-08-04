@@ -22,13 +22,16 @@ resources:
    paralyze_icon_rsc = iparalyz.bgf
    paralyze_desc_rsc = \
       "Grants the caster the ability to paralyze any who meet his gaze.  "
-      "Requires yrxl sap and purple mushrooms to cast."
+      "Requires one yrxl sap and one purple mushroom to cast."
 
    paralyze_on_rsc = "Your eyes seem to swell and pulse with magical energy."
    paralyze_off_rsc = "Your eyes return to normal."
-   paralyze_already_enchanted_rsc = "Your already have the gaze of the basilisk."
+   paralyze_already_enchanted_rsc = \
+      "You already have the gaze of the basilisk."
    paralyze_caster = "%s%s meets your gaze and freezes in place."
-   paralyze_target_on = "As you meet %s%s's terrible gaze you feel your limbs stiffen and freeze."
+   paralyze_target_on = \
+      "As you meet %s%s's terrible gaze you feel your limbs stiffen "
+      "and freeze."
 
    paralyze_no_soul = "You can't detect a soul in %s%s to turn to stone!"
 
@@ -38,8 +41,8 @@ classvars:
 
    viSpell_num = SID_GAZE_OF_THE_BASILISK
    viSchool = SS_QOR
-   viMana = 15          
-   viCast_Time = 5000   
+   viMana = 15
+   viCast_Time = 5000
    viSpell_Exetion = 15
    viSpell_level = 6
 
@@ -55,7 +58,7 @@ classvars:
    vrEnchantment_Off = paralyze_Off_rsc
 
    vrSucceed_wav = paralyze_sound
-   
+
    viFlash = FLASH_BAD
 
    vbCanCastonOthers = FALSE
@@ -76,19 +79,19 @@ messages:
       return;
    }
 
-   GetDuration(iSpellPower = 0)
+   GetDuration(iSpellPower=0)
    {
       local iDuration;
 
       % Duration in seconds, from 1-33.
-      iDuration = bound(iSpellPower/3,1,33);
+      iDuration = Bound(iSpellPower/3,1,33);
       
       return iSpellpower * 1000;
    }
 
-   GetStateValue(who = $, iSpellPower = 0)      
-   {      
-      Send(who,@AddDefenseModifier,#what=self);      
+   GetStateValue(who=$,iSpellPower=0)
+   {
+      Send(who,@AddDefenseModifier,#what=self);
 
       return iSpellPower;
    }
@@ -109,7 +112,7 @@ messages:
          if IsClass(what,&Revenant)
          {
             Send(who,@MsgSendUser,#message_rsc=paralyze_no_soul, 
-                 #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
+                  #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
          }
          else
          {
@@ -127,20 +130,20 @@ messages:
                }
 
                Send(what,@MsgSendUser,#message_rsc=paralyze_target_on,
-                    #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
+                     #parm1=Send(who,@GetDef),#parm2=Send(who,@GetName));
             }
 
             Send(who,@MsgSendUser,#message_rsc=paralyze_caster,
-                 #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
+                  #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName));
 
             Send(oSpell,@DoHold,#what=who,#oTarget=what,#iDuration=iDuration);
          }
       }
-  
+
       return defense_power;
    }
 
-   EndEnchantment(who = $, report = TRUE, state = 0)
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
       Send(who,@RemoveDefenseModifier,#what=self);
 
@@ -157,8 +160,8 @@ messages:
       AppendTempString("-");
       AppendTempString(Bound(Send(who,@GetEnchantedState,#what=self) * 25,500,2500));
       AppendTempString(" milliseconds. Opponents attacking at range have a 50\% chance to avoid your paralyzing gaze.");
-      
-      return;
+
+      propagate;
    }
 
 end

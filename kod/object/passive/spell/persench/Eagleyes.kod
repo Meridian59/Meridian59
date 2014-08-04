@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
    % What percent of spellpower should we take in order to give the player a chance
-   %  to completely resist a blinding spell?
+   % to completely resist a blinding spell?
    SPELL_RESIST_PERCENT = 5
 
 resources:
@@ -24,18 +24,22 @@ resources:
    EagleEyes_icon_rsc = ieagleye.bgf
    EagleEyes_desc_rsc = \
       "Bestows a supernatural acuity of vision on the caster, protecting "
-      "against spells that attack sight and improving accuracy at long range.  "
-      "Requires mushrooms and purple mushrooms."
+      "against spells that attack sight and improving accuracy at long "
+      "range.  Requires three mushrooms and one purple mushroom."
    
-   EagleEyes_on_rsc = "Your eyes burn and the world leaps into surreal clarity."
+   EagleEyes_on_rsc = \
+      "Your eyes burn and the world leaps into surreal clarity."
    EagleEyes_off_rsc = "The world seems somehow less distinct and vivid."
    EagleEyes_already_enchanted_rsc = "You already have Eagle Eyes."
    EagleEyes_Success_rsc = "You grant %s%s preternatural sight."
 
-   EagleEyes_resist = "Krannan's magic fights to penetrate the veil of darkness."
+   EagleEyes_resist = \
+      "Krannan's magic fights to penetrate the veil of darkness."
    EagleEyes_evade = "The magic of Krannan preserves your sight."
-   EagleEyes_resist_caster = "You sense a force resisting your blinding spell."
-   EagleEyes_evade_caster = "The magic of Krannan preserves the sight of your target."
+   EagleEyes_resist_caster = \
+      "You sense a force resisting your blinding spell."
+   EagleEyes_evade_caster = \
+      "The magic of Krannan preserves the sight of your target."
 
    EagleEyes_sound = keagleye.wav
 
@@ -69,30 +73,30 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = cons([&Mushroom,3],plReagents);
-      plReagents = cons([&PurpleMushroom,1],plReagents);
+      plReagents = Cons([&Mushroom,3],plReagents);
+      plReagents = Cons([&PurpleMushroom,1],plReagents);
 
       return;
    }
 
-   GetStateValue(who=$,iSpellpower=$,target = $)
+   GetStateValue(who=$,iSpellpower=$,target=$)
    {
       local iFactor;
-      
+
       Send(target,@AddAttackModifier,#what=self);
-      iFactor = bound(iSpellPower+1,10,100);
-      
+      iFactor = Bound(iSpellPower+1,10,100);
+
       return iFactor;
-   }  
+   }
 
    EndEnchantment(who=$,report=TRUE,state=$)
    {
       Send(who,@RemoveAttackModifier,#what=self);
-      
+
       propagate;
    }
 
-   GetDuration(iSpellpower = 0)
+   GetDuration(iSpellpower=0)
    {
       local iDuration;
 
@@ -100,9 +104,9 @@ messages:
       iDuration = 120 + (4 * iSpellPower);
       % Convert to ms.
       iDuration = iDuration * 1000;
-      
+
       return iDuration;
-   }   
+   }
 
    OfferToNewCharacters()
    {
@@ -114,7 +118,7 @@ messages:
       return &EagleEyesPotion;
    }
 
-   DoEagleEyes(oCaster=$, oTarget=$, iDuration=0, iFactor=1)
+   DoEagleEyes(oCaster=$,oTarget=$,iDuration=0,iFactor=1)
    "Calculates adjustment of blinding spell duration.  Returns $ if resisted "
    "completely.  iFactor is the factor by which we want to increase the effect."
    {
@@ -132,7 +136,7 @@ messages:
       }
 
       % Check if they repel the blinding spell outright 1-10% base chance,
-      %  modified by factor.
+      % modified by factor.
       iChance = (oEagleEyesStrength * (SPELL_RESIST_PERCENT * iFactor)) / 100;
       if Random(0,100) <= iChance
       {
@@ -159,7 +163,7 @@ messages:
 
    %%% Attack Modifier stuff
 
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   ModifyHitRoll(who=$,what=$,hit_roll=$)
    {
       local iFactor, oWeapon;
 
@@ -175,7 +179,7 @@ messages:
       return hit_roll;
    }
 
-   ModifyDamage(who = $,what = $,damage = $)
+   ModifyDamage(who=$,what=$,damage=$)
    {
       local iFactor, oWeapon;
 
@@ -199,8 +203,8 @@ messages:
       AppendTempString(" enchantment adds ");
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
       AppendTempString(" offense and 1 damage to your ranged attacks.");
-      
-      return;
+
+      propagate;
    }
 
 end

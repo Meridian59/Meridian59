@@ -20,14 +20,20 @@ resources:
    Haste_icon_rsc = ihaste.bgf
    Haste_desc_rsc = \
       "Reduces the fatigue of running at full clip.  "
-      "Requires edible mushrooms to cast."
+      "Requires five edible mushrooms to cast."
    
-   Haste_on_rsc = "Your blood begins to tingle, cleansing your leg muscles of fatigue with every heartbeat."
-   Haste_off_rsc = "Your feel the tide of energy in your blood recede, and running seems suddenly more taxing."
-   Haste_already_enchanted_rsc = "You're already resistant to running fatigue."
+   Haste_on_rsc = \
+      "Your blood begins to tingle, cleansing your leg muscles of fatigue "
+      "with every heartbeat."
+   Haste_off_rsc = \
+      "Your feel the tide of energy in your blood recede, and running seems "
+      "suddenly more taxing."
+   Haste_already_enchanted_rsc = \
+      "You're already resistant to running fatigue."
    Haste_success_rsc = "%s%s is charged with your magical energy."
 
-   Haste_spell_intro = "Kraanan Lv. 2: Allows you to use less stamina as you run."
+   Haste_spell_intro = \
+      "Kraanan Lv. 2: Allows you to use less stamina as you run."
 
    Haste_sound = khaste.wav
 
@@ -75,21 +81,23 @@ messages:
    SetSpellPlayerFlag(who=$)
    {
       Send(who,@SetPlayerFlag,#flag=PFLAG2_HASTED,#flagset=2,#value=True);
+
       return;
    }
-   
-   GetDuration(iSpellpower = 0)
+
+   GetDuration(iSpellpower=0)
    {
       local iDuration;
+
       iDuration = 5 + ((15 * iSpellPower) / 100);   % 5 - 20 minutes,
       iDuration = iDuration * 1000 * 60;   % Convert to milliseconds
-      
+
       return iDuration;
    }
 
    GetPotionClass()
    {
-      RETURN &HastePotion;
+      return &HastePotion;
    }
 
    EffectDesc(who=$)
@@ -101,7 +109,7 @@ messages:
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
       AppendTempString("\%.");
       
-      return;
+      propagate;
    }
 
 end

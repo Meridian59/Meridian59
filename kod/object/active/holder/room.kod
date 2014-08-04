@@ -1233,6 +1233,20 @@ messages:
    {
       local oWatcher;
 
+      if what <> $
+         AND IsClass(what,&Player)
+         AND Send(what,@IsPhasedOut)
+      {
+         return FALSE;
+      }
+      
+      if victim <> $
+         AND IsClass(victim,&Player)
+         AND Send(victim,@IsPhasedOut)
+      {
+         return FALSE;
+      }
+      
       % Arena checks.
       if Send(self,@IsArena)
       {

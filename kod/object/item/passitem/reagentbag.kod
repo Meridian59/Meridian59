@@ -196,6 +196,11 @@ messages:
       propagate;
    }
 
+   ReqLeaveHold(what = $)
+   {
+      return TRUE;
+   }
+
    LeaveHold(what = $)
    {
       local i;

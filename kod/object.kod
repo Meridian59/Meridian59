@@ -672,6 +672,11 @@ messages:
       return;
    }
 
+   SomethingShotRadius(who=$,projectile=$,flags=0,range=$,lighting=0,number=$)
+   {
+      return;
+   }
+
    SomethingDidAction(what = $, action = $)
    {
       return;

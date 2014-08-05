@@ -43,6 +43,9 @@ properties:
    % Maximum amount of bonus damage mana focus gives us for casting this spell.
    piManaFocusBonus = 10
 
+   % Number of projectiles to shoot, default 8.
+   piNumber = 8
+
 messages:
 
    CastSpell(who=$,lTargets=$)
@@ -61,7 +64,7 @@ messages:
          if isClass(each_obj,&Player)
          {
             Send(oOwner,@SomethingShotRadius,#who=who,#projectile=self,
-               #flags=viProjectileFlag,#range=piRange);
+               #flags=viProjectileFlag,#range=piRange,#number=piNumber);
          }
       }
 

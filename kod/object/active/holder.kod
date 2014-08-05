@@ -822,6 +822,20 @@ messages:
       return;
    }
 
+   SomethingShotRadius(who=$,projectile=$,flags=0,range=$,lighting=0,number=$)
+   {
+      local i,each_obj;
+
+      for i in plActive
+      {
+         each_obj = Send(self,@HolderExtractObject,#data=i);
+         Send(each_obj,@SomethingShotRadius,#who=who,#number=number,
+              #projectile=projectile,#flags=flags,#range=range,#lighting=lighting);
+      }
+
+      return;
+   }
+
    SomethingDidAction(what = $, action = $)
    {
       local i,each_obj;

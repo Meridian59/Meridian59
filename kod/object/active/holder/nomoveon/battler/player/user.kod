@@ -6608,6 +6608,59 @@ messages:
       propagate;
    }
 
+   SomethingShotRadius(who=$,projectile=$,flags=PROJ_FLAG_NONE,
+                 iLightIntensity=0,iLightColor=0,range=$,number=$)
+   {
+      local iCount, iValue, iAngle;
+
+      iCount=0;
+      iAngle=0;
+
+      while iCount < number
+      {
+         AddPacket(1,BP_RADIUS_SHOOT,4,Send(projectile,@GetProjectileIcon));
+         Send(projectile,@SendProjectileAnimation);
+
+         % Send shooter.
+         AddPacket(4,who, 1,Send(projectile,@GetProjectileSpeed),
+                   2,(flags & 0x000F), 1,range, 4,iAngle);
+
+         if (flags & PROJ_FLAG_LIGHT_SOURCE)
+         {
+            % Lighting flags
+            iValue = Send(projectile,@GetProjectileLightFlags);
+            % Double-check for sanity
+            if iValue <> LIGHT_FLAG_NONE
+            {
+               % Make sure projectiles are on and have the dynamic flag set.
+               iValue = iValue | LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC;
+               % Flags, Intensity, color
+               AddPacket(2,iValue,
+                         1,Send(projectile,@GetProjectileLightIntensity),
+                         2,Send(projectile,@GetProjectileLightColor));
+            }
+            else
+            {
+               % No lighting info
+               AddPacket(2,0);
+            }
+         }
+         else
+         {
+            % No lighting info
+            AddPacket(2,0);
+         }
+
+         SendPacket(poSession);
+         iCount = iCount + 1;
+
+         % Increment iAngle by 360 degrees/number of projectiles needed.
+         iAngle = iAngle + (360/number);
+      }
+
+      propagate;
+   }
+
    SomethingDidAction(what = $, action = $)
    {
       % Someone changed facial expression--Send changed bitmap

@@ -1410,7 +1410,6 @@ Bool HandleRadiusShoot(char *ptr, long len)
 {
    Projectile *p = (Projectile *) ZeroSafeMalloc(sizeof(Projectile));
    BYTE speed, range;
-   INT i;
    char *start = ptr;
    ID source;
    WORD flags;

@@ -165,7 +165,7 @@ void RadiusProjectileAdd(Projectile *p, ID source_obj, BYTE speed, WORD flags, W
 
    debug(("Adding new projectile\n"));
 
-   // Set source and destination coordinates based on object locations
+   // Set source coordinates based on object location
    s = GetRoomObjectById(source_obj);
 
    p->motion.source_x = s->motion.x;
@@ -178,7 +178,7 @@ void RadiusProjectileAdd(Projectile *p, ID source_obj, BYTE speed, WORD flags, W
       p->motion.source_z += s->obj.boundingHeight / (FINENESS * 2);
 #endif
 
-   /* We're launching 8 projectiles in a circle, so we need to determine
+   /* We're launching projectiles in a circle, so we need to determine
       which angle we need to shoot this projectile, and the destination*/
 
    radangle = (initangle*3.14159)/180.0;
@@ -200,7 +200,7 @@ void RadiusProjectileAdd(Projectile *p, ID source_obj, BYTE speed, WORD flags, W
 
    if (speed == 0 || (dx == 0 && dy == 0 && dz == 0))
       p->motion.increment = 1.0;
-   else 
+   else
    {
       distance = GetLongSqrt(dx * dx + dy * dy + dz * dz) / FINENESS;
       p->motion.increment = ((float) speed) / 1000.0 / distance;

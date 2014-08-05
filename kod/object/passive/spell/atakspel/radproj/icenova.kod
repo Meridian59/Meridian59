@@ -33,9 +33,11 @@ resources:
    icenova_killed_someone = \
       "The ice shards fatally wound %s%s."
    icenova_cast_rsc = \
-      "You let out a cry of pain as ice shards pierce your skin, causing ~r~B%i~n damage."
+      "You let out a cry of pain as ice shards pierce your skin, "
+      "causing ~r~B%i~n damage."
    icenova_hit_rsc = \
-      "%s%s lets out a cry of pain as ice shards pierce %s skin for ~k~B%i~n damage."
+      "%s%s lets out a cry of pain as ice shards pierce %s skin "
+      "for ~k~B%i~n damage."
 
    icenova_sound = fshatter.wav
 
@@ -73,10 +75,12 @@ properties:
 
    % Damage radius for ice nova
    piRange = 6
-   piSpeed = 2
+   piSpeed = 9
 
-   piDamageMin = 6
-   piDamageMax = 12
+   piDamageMin = 14
+   piDamageMax = 23
+
+   piNumber = 12
 
 messages:
 
@@ -91,7 +95,7 @@ messages:
 
    GetProjectileSpeed()
    {
-      % Normally 11, slower for testing
+      % Normally 9, slower for testing
       return piSpeed;
    }
 

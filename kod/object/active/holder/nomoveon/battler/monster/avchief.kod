@@ -84,7 +84,7 @@ classvars:
    viDifficulty = 9
    viKarma = 80
    viCashmin = 650
-   viCashmax = 1950
+   viCashmax = 2000
 
    vrSound_hit = avarchief_sound_hit
    vrSound_miss = avarchief_sound_miss

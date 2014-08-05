@@ -174,8 +174,8 @@ classvars:
    viShieldShape = SHIELDSHAPE_SLASH
    viInsignia = $
    
-   viCashMin = 500
-   viCashMax = 1000
+   viCashMin = 200
+   viCashMax = 600
 
 properties:
 

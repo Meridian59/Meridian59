@@ -57,7 +57,7 @@ classvars:
    viDefault_behavior = AI_MOVE_REGROUP | AI_FIGHT_AGGRESSIVE
    viWimpy = 30
    viCashmin = 375
-   viCashmax = 825
+   viCashmax = 950
    vrSound_hit = DeathSpider_sound_hit
    vrSound_miss = DeathSpider_sound_miss
    vrSound_aware = DeathSpider_sound_aware

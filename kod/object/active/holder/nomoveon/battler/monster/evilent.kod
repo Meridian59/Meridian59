@@ -55,7 +55,7 @@ classvars:
    viDifficulty = 4
    viKarma = -40
    viCashmin = 125
-   viCashmax = 825
+   viCashmax = 500
    vrSound_hit = EvilEnt_sound_hit
    vrSound_miss = EvilEnt_sound_miss
    vrSound_aware = EvilEnt_sound_aware

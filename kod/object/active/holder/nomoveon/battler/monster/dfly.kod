@@ -70,8 +70,8 @@ classvars:
    viDifficulty = 6
    viKarma = 40
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
-   viCashmin = -20000
-   viCashmax = 4000
+   viCashmin = -10000
+   viCashmax = 1000
    viWimpy = 5
 
    vrSound_hit = DragonFly_sound_hit

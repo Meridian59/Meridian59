@@ -28,10 +28,10 @@ resources:
    Shadowbeast_name_rsc = "shadowbeast"
    Shadowbeast_icon_rsc = shadow.bgf
    Shadowbeast_desc_rsc = \
-   "A magical abomination that hybrids the jungle kriipa with some quasi-substantial "
-	"entity from the nether world.  Residual Qor magic seems to make the air "
-	"darker when this foul beast is near.  Although they mainly prey on cave "
-	"orcs, the shadowbeast have been known to kill humans on occasion."
+      "A magical abomination that hybrids the jungle kriipa with some quasi-substantial "
+      "entity from the nether world.  Residual Qor magic seems to make the air "
+      "darker when this foul beast is near.  Although they mainly prey on cave "
+      "orcs, the shadowbeast have been known to kill humans on occasion."
 
    Shadowbeast_dead_icon_rsc = shadowX.bgf
    Shadowbeast_dead_name_rsc = "slain shadowbeast"
@@ -50,7 +50,7 @@ classvars:
    vrDead_name = Shadowbeast_dead_name_rsc
  
    viTreasure_type = TID_SHADOWBEAST
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
 
    viSpeed = SPEED_AVERAGE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE
@@ -71,7 +71,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   piDrawfx = DRAWFX_TRANSLUCENT_50   
+   piDrawfx = DRAWFX_TRANSLUCENT_50
 
 messages:
 

@@ -40,10 +40,10 @@ resources:
    Kriipa_icon_rsc = kriipa.bgf
    Kriipa_desc_rsc = \
       "This spindly-legged creature scuttles along the jungle canopy in search "
-	   "of unsuspecting prey, which includes just about everything that moves. "
-   	"Island travelers are warned to keep careful watch above, for the deadly "
-	   "grinning lizards have been known to decapitate a grown man in a single "
-   	"blow with their dagger sharp claws."
+      "of unsuspecting prey, which includes just about everything that moves. "
+      "Island travellers are warned to keep careful watch above, for the deadly "
+      "grinning lizards have been known to decapitate a grown man in a single "
+      "blow with their dagger-sharp claws."
 
    Kriipa_dead_icon_rsc = kriipaX.bgf
    Kriipa_dead_name_rsc = "slain Kriipa"
@@ -64,7 +64,7 @@ classvars:
    vrDead_name = Kriipa_dead_name_rsc
  
    viTreasure_type = TID_KRIIPA
-   viAttack_types = ATCK_WEAP_SLASH
+   viAttack_type = ATCK_WEAP_SLASH
 
    viSpeed = SPEED_FAST
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_HYPERAGGRESSIVE

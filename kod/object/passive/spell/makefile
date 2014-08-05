@@ -15,6 +15,6 @@ BOFS = heal.bof atakspel.bof rescue.bof dmspell.bof winds.bof remcurse.bof\
        holysymb.bof finlrite.bof fdeath.bof multicst.bof summtwin.bof\
        brthlife.bof seance.bof sweep.bof mysttch.bof relay.bof distill.bof\
        elusion.bof walspell.bof deathrift.bof utility.bof crysmana.bof\
-       itemench.bof cursewp.bof
+       itemench.bof cursewp.bof purge.bof
 
 !include $(KODDIR)\kod.mak

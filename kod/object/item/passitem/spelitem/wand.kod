@@ -50,6 +50,8 @@ properties:
    vrName = Wand_name_rsc
    vrDesc = Wand_desc_rsc
 
+   viObject_flags = APPLY_YES | GETTABLE_YES
+
    % Set to negative so it doesn't expire naturally.
    piGoBadTime = -1
 
@@ -78,6 +80,31 @@ messages:
            #parm2=send(first(ltargets),@GetName));
 
       return;
+   }
+
+   AppendDesc()
+   {
+      if piSpellPower <> $
+         AND piHits <> 0
+      {
+         AppendTempString("\n\nThis wand coruscates with the energies of ");
+         AppendTempString(piHits);
+         
+         if piHits > 1
+         {
+            AppendTempString(" charges");
+         }
+         else
+         {
+            AppendTempString(" charge");
+         }
+
+         AppendTempString(". The magical force within averages ");
+         AppendTempString(piSpellPower);
+         AppendTempString(" power.");
+      }
+
+      propagate;
    }
 
 

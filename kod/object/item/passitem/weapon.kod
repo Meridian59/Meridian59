@@ -13,7 +13,7 @@ Weapon is PassiveItem
 constants:
 
    include blakston.khd
-   
+
    USED = 1
    UNUSED = 2
    ATTACKING = 3
@@ -193,7 +193,7 @@ messages:
                AppendTempString(" will cast ");
                AppendTempString(Send(Send(i,@GetSpell),@GetName));
                AppendTempString(" ");
-            
+
                target_type = Send(i,@GetType);
                if target_type = 1
                {
@@ -203,7 +203,7 @@ messages:
                {
                   AppendTempString("on the enemy ");
                }
-            
+
                AppendTempString("with ");
                AppendTempString(Send(i,@GetSpellPower));
                AppendTempString(" spellpower ");
@@ -287,17 +287,17 @@ messages:
 
       for i in plItem_Attributes
       {
-         oWeapAtt = send(SYS,@FindItemAttByNum, #num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if isClass(oWeapAtt,&WeaponAttribute)
+         oWeapAtt = Send(SYS,@FindItemAttByNum,#num=Send(self,@GetNumFromCompound,#compound=First(i)));
+         if IsClass(oWeapAtt,&WeaponAttribute)
          {
-            iBaseHit = send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
-                            #target=target,#lData=i);
+            iBaseHit = Send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
+                              #target=target,#lData=i);
          }
-      }     
+      }
 
       iBaseHit = iBaseHit + piHitBonus;
 
-      % send(send(poOwner,@getOwner),@someonesaid,#what=self,#type=SAY_RESOURCE,
+      % Send(Send(poOwner,@getOwner),@someonesaid,#what=self,#type=SAY_RESOURCE,
       %    #string=weapon_to_hit,#parm1=hit_roll,#parm2=iBaseHit,#parm3=iWeapHit);
 
       return iBaseHit;
@@ -349,7 +349,7 @@ messages:
    GetBaseDamage(who=$,target=$)
    {
       local iDamage;
-      
+
       % Weapon type
       if viWeaponType = WEAPON_TYPE_BLUDGEON
       {
@@ -388,7 +388,7 @@ messages:
    GetMinDamage()
    {
       local iDamage, oSkill;
-      
+
       % Weapon type
       if viWeaponType = WEAPON_TYPE_BLUDGEON
       {
@@ -462,14 +462,15 @@ messages:
 
       return iDamage + piDamageBonus;
    }
-   
+
    GetMinDamageWithOwnerStats()
    {
       local iDamage, oSkill;
 
       iDamage = Send(self,@GetMinDamage);
 
-      If IsClass(poOwner,&User)
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
          iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
@@ -478,17 +479,18 @@ messages:
       {
          return 0;
       }
-      
+
       return iDamage;
    }
-   
+
    GetMaxDamageWithOwnerStats()
    {
       local iDamage, oSkill;
-      
+
       iDamage = Send(self,@GetMaxDamage);
-      
-      If IsClass(poOwner,&User)
+
+      if poOwner <> $
+         AND IsClass(poOwner,&User)
       {
          oSkill = Send(SYS,@FindSkillByNum,#num=Send(self,@GetDefaultStrokeNumber));
          iDamage = Send(oSkill,@DamageFactors,#damage=iDamage,#who=poOwner,#weapon_used=self);
@@ -497,7 +499,7 @@ messages:
       {
          return 0;
       }
-      
+
       return iDamage;
    }
 
@@ -506,23 +508,23 @@ messages:
       local iDamage, i, oWeapAtt;
 
       % First, get base damage.
-      iDamage = send(self,@GetBaseDamage,#who=poOwner,#target=target);
+      iDamage = Send(self,@GetBaseDamage,#who=poOwner,#target=target);
 
       % Then check weapon attributes
       %  Weapon Attributes in general should only + or - damage - no multipliers!
       for i in plItem_Attributes
       {
-         oWeapAtt = send(SYS,@FindItemAttByNum,#num=send(self,@GetNumFromCompound,#compound=first(i)));
-         if isClass(oWeapAtt,&WeaponAttribute)
+         oWeapAtt = Send(SYS,@FindItemAttByNum,#num=Send(self,@GetNumFromCompound,#compound=First(i)));
+         if IsClass(oWeapAtt,&WeaponAttribute)
          {
-            iDamage = send(oWeapAtt,@ModifyDamage,#damage=iDamage,#wielder=poOwner,
+            iDamage = Send(oWeapAtt,@ModifyDamage,#damage=iDamage,#wielder=poOwner,
                            #target=target,#lData=i);
          }
       }
 
       iDamage = iDamage + piDamageBonus;
 
-      % send(send(poOwner,@getOwner),@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
+      % Send(Send(poOwner,@getOwner),@SomeoneSaid,#what=self,#type=SAY_RESOURCE,
       %      #string=weapon_do_damage,#parm1=iDamage,#parm2=baseDamage);
 
       return iDamage;
@@ -531,7 +533,7 @@ messages:
    GetRange()
    {
       local iRange;
-      
+
       % Weapon type
       if viWeaponType = WEAPON_TYPE_BLUDGEON
       {
@@ -565,13 +567,13 @@ messages:
       }
 
       return iRange;
-   }   
+   }
 
    GetDisarmBonus()
    "Weapon's bonus to disarm attempts, roughly in percent"
    {
       local iDisarm;
-      
+
       % Weapon type
       if viWeaponType = WEAPON_TYPE_BLUDGEON
       {
@@ -646,13 +648,13 @@ messages:
       return iModifier;
    }
 
-   %%%  Advancement functions (strokes and proficiencies)  
+   %%%  Advancement functions (strokes and proficiencies)
 
    GetProf(who=$)
    {
-      send(who,@FlipSkillAtrophyFlag,#SKID=viProficiency_needed);
-      
-      return send(who,@GetSkillAbility,#skill_num=viProficiency_needed);
+      Send(who,@FlipSkillAtrophyFlag,#SKID=viProficiency_needed);
+
+      return Send(who,@GetSkillAbility,#skill_num=viProficiency_needed);
    }
 
    GetProfNumber()
@@ -662,9 +664,9 @@ messages:
 
    GetStroke(who=$)
    {
-      send(who,@FlipSkillAtrophyFlag,#SKID=Send(self,@GetDefaultStrokeNumber));
-      
-      return send(who,@GetSkillAbility,#skill_num=Send(self,@GetDefaultStrokeNumber));
+      Send(who,@FlipSkillAtrophyFlag,#SKID=Send(self,@GetDefaultStrokeNumber));
+
+      return Send(who,@GetSkillAbility,#skill_num=Send(self,@GetDefaultStrokeNumber));
    }
 
    GetDefaultStrokeNumber()
@@ -673,10 +675,10 @@ messages:
    }
 
    ImproveProficiency(who=$,target=$,bonus=0)
-   {      
-      send(send(SYS,@findSkillbynum,#num=viProficiency_needed),@ImproveAbility,
-           #who=who,#target=target,#bonus=bonus);
-             
+   {
+      Send(Send(SYS,@findSkillbynum,#num=viProficiency_needed),@ImproveAbility,
+            #who=who,#target=target,#bonus=bonus);
+
       return;
    }
 
@@ -684,9 +686,9 @@ messages:
    % TODO: Define standard bonuses for various weapon types.
    GetParryAbility(who=$)
    {
-      return send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
+      return Send(who,@GetSkillAbility,#skill_num=SKID_PARRY);
    }
-      
+
    % What is the weapon's name for use in the attack messages?
    GetAttackName()
    {
@@ -695,7 +697,7 @@ messages:
 
    %%%  Infrastructure
 
-   ReqUseSomething(what = $)
+   ReqUseSomething(what=$)
    {
       if IsClass(what,&Weapon)
          OR IsClass(what,&Lute)
@@ -709,49 +711,49 @@ messages:
             return FALSE;
          }
       }
-      
+
       propagate;
    }
-   
+
    WeaponHitTarget()
    {
       % 75% chance to be damaged, currently.
-      if random(1,100) < WEAPON_TAKE_DAMAGE_PCT   
+      if random(1,100) < WEAPON_TAKE_DAMAGE_PCT
       {
          piHits = piHits - 1;
       }
 
       if piHits <= 0
       {
-         send(self,@WeaponBroke);
+         Send(self,@WeaponBroke);
       }
-      
+
       return;
    }
 
-   ReqWeaponAttack(what = $)
+   ReqWeaponAttack(what=$)
    {
       if piHits <= 0
       {
          Send(poOwner,@MsgSendUser,#message_rsc=weapon_already_broken,
-              #parm1=Send(self,@GetCapDef),#parm2=vrName);
+               #parm1=Send(self,@GetCapDef),#parm2=vrName);
          Send(poOwner,@TryUnuseItem,#what=self);
-         
+
          return FALSE;
       }
 
       Send(self,@WeaponAttack,#what=what);
-      
+
       return TRUE;
    }
 
-   ReqUseAmmo(ammotype = $)
+   ReqUseAmmo(ammotype=$)
    "At this point, a non-ranged weapon SHOULD never make it this far "
    "(see ReqWeaponAttack above).  This is just to catch anything that "
    "slips thru the cracks.  See ranged.kod for what this does."
    {
       Debug("A non-ranged weapon called @ReqUseAmmo!");
-      
+
       return TRUE;
    }
 
@@ -763,20 +765,20 @@ messages:
       % This also lets cursed items finally remove themselves from us.
       for i in plItem_Attributes
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,
-                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
-         send(oItemAtt,@RemoveFromItem,#oItem=self);
+         oItemAtt = Send(SYS,@FindItemAttByNum,
+                         #num=Send(self,@GetNumFromCompound,#compound=First(i)));
+         Send(oItemAtt,@RemoveFromItem,#oItem=self);
       }
 
       Send(poOwner,@SomethingChanged,#what=self);
       Send(poOwner,@MsgSendUser,#message_rsc=vrWeaponBroke,
-           #parm1=Send(self,@GetCapDef),#parm2=vrName);
+            #parm1=Send(self,@GetCapDef),#parm2=vrName);
       Send(poOwner,@TryUnuseItem,#what=self);
 
       return;
    }
 
-   WeaponAttack(what = $)
+   WeaponAttack(what=$)
    "Called by ReqWeaponAttack when the weapon is actually used in an attack."
    {
       piUsed = ATTACKING;
@@ -785,12 +787,12 @@ messages:
       {
          Send(poOwner,@ChangeWindowOverlay,#what=self);
       }
-      
+
       if vrWeapon_overlay <> $
       {
          Send(poOwner,@DoAttackSwing);
       }
-      
+
       piUsed = USED;
 
       return;
@@ -802,21 +804,21 @@ messages:
 
       % This alerts Item attributes when item is used.
       % Currently special checks for "glowing" weapon attribute.
-      if send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      if Send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
-         send(oItemAtt,@ItemUsed,#oItem=self,#oPlayer=poOwner);
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         Send(oItemAtt,@ItemUsed,#oItem=self,#oPlayer=poOwner);
       }
 
       piUsed = USED;
 
-      % do first person overlay if we have one
+      % Do first person overlay if we have one
       if vrWeapon_window_overlay <> $
       {
          Send(poOwner,@SetWindowOverlay,#what=self);
       }
 
-      % do third person overlay if we have one
+      % Do third person overlay if we have one
       if vrWeapon_overlay <> $
       {
          Send(poOwner,@SetOverlay,#what=self);
@@ -831,10 +833,10 @@ messages:
 
       % This alerts Item attributes when item is used.
       % Currently special checks for "glowing" weapon attribute.
-      if send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
+      if Send(self,@HasAttribute,#ItemAtt=WA_GLOWING)
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
-         send(oItemAtt,@ItemUnused,#oItem=self,#oPlayer=poOwner);
+         oItemAtt = Send(SYS,@FindItemAttByNum,#num=WA_GLOWING);
+         Send(oItemAtt,@ItemUnused,#oItem=self,#oPlayer=poOwner);
       }
 
       piUsed = UNUSED;
@@ -852,9 +854,7 @@ messages:
       propagate;
    }
 
-
    %%% Attack Type Functions (Enchanted weapons, Qor weapons, burning blades, etc.)
-   
 
    GetAttackSpell()
    {
@@ -870,36 +870,36 @@ messages:
    {
       if value
       {
-         piAttack_type = piAttack_type | flag ;
+         piAttack_type = piAttack_type | flag;
       }
       else
       {
-         piAttack_type = piAttack_type & ~flag ;
+         piAttack_type = piAttack_type & ~flag;
       }
-      
+
       return;
    }
 
    CheckTypeFlag(flag=0)
    {
-      return (piAttack_type & flag) ;
+      return (piAttack_type & flag);
    }
 
    SetSpellFlag(flag=0, value=FALSE)
    {
       if value
       {
-         piAttack_spell = piAttack_spell | flag ;
+         piAttack_spell = piAttack_spell | flag;
       }
       else
       {
-         piAttack_spell = piAttack_spell & ~flag ;
+         piAttack_spell = piAttack_spell & ~flag;
       }
-      
+
       return;
    }
 
-   CheckSpellFlag(flag = 0)
+   CheckSpellFlag(flag=0)
    {
       return (piAttack_spell & flag);
    }
@@ -939,9 +939,9 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
       }
-      
+
       if piUsed = ATTACKING
-      { 
+      {
          AddPacket(1,ANIMATE_ONCE, 4,150, 2,vrWeapon_window_attack_start,
                    2,vrWeapon_window_attack_end, 2,vrWeapon_window_hold);
       }
@@ -949,33 +949,33 @@ messages:
       {
          AddPacket(1,ANIMATE_NONE, 2,vrWeapon_window_hold);
       }
-      
-      return;      
+
+      return;
    }
 
    SendWindowOverlayOverlays()
    {
       % no overlays
-      AddPacket(1,0); 
+      AddPacket(1,0);
 
-      return; 
+      return;
    }
 
    % These 3 called by player, for normal 3rd-person overlays on user.
-   %  weapon subclasses--do NOT set a window overlay unless you either
-   %  set vrWeapon_overlay correctly or override all these message handlers
+   % weapon subclasses--do NOT set a window overlay unless you either
+   % set vrWeapon_overlay correctly or override all these message handlers
 
-   GetOverlay(animation = $)
+   GetOverlay(animation=$)
    {
       return vrWeapon_overlay;
    }
-   
-   GetOverlayHotspot(animation = $)
+
+   GetOverlayHotspot(animation=$)
    {
       return HS_RIGHT_WEAPON;
    }
 
-   SendOverlayAnimation(iAnimation = $)
+   SendOverlayAnimation(iAnimation=$)
    {
       local iFlags;
 
@@ -984,25 +984,25 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,iFlags);
       }
-      
+
       if iAnimation = PANM_WEAPON_ATTACK 
       {
          AddPacket(1,ANIMATE_ONCE, 4,300, 2,1, 2,3, 2,4);
       }
       else
-      { 
+      {
          AddPacket(1,ANIMATE_NONE, 2,4);
       }
-      
+
       return;
    }
 
-   SendOverlayInformation(ianimation = $)
+   SendOverlayInformation(ianimation=$)
    {
       AddPacket(4,Send(self,@GetOverlay));
       AddPacket(1,Send(self,@GetOverlayHotspot));
       Send(self,@SendOverlayAnimation,#iAnimation=iAnimation);
-      
+
       return;
    }
 
@@ -1022,7 +1022,7 @@ messages:
       }
 
       AddPacket(1,ANIMATE_NONE, 2,viBroken_group);
-      
+
       return;
    }
 
@@ -1041,7 +1041,7 @@ messages:
       }
 
       AddPacket(1,ANIMATE_NONE,2,viBroken_group);
-      
+
       return;
    }
 
@@ -1069,27 +1069,27 @@ messages:
 
    CanMend()
    "Weapons are mendable, usually."
-   { 
+   {
       local i, oItemAtt;
-      
+
       for i in plItem_Attributes
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,
-                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         oItemAtt = Send(SYS,@FindItemAttByNum,
+                         #num=Send(self,@GetNumFromCompound,#compound=First(i)));
          if oItemAtt = $
          {
             Debug("Illegal ItemAtt in list!");
 
             continue;
          }
-    
-         if NOT send(oItemAtt,@ItemCanMend,#oItem=self)
+
+         if NOT Send(oItemAtt,@ItemCanMend,#oItem=self)
          {
             return FALSE;
          }
       }
 
-      return TRUE; 
+      return TRUE;
    }
 
    ValidateWeaponAttributes(num = 1)
@@ -1141,21 +1141,21 @@ messages:
    {
       local i, oItemAtt, iSpell;
 
-      if piAttack_spell <> 0      
-         OR send(self,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
-      { 
-         iSpell = send(oSpell,@GetSpellNum);
-         if iSpell = SID_HOLY_WEAPON or iSpell = SID_UNHOLY_WEAPON 
+      if piAttack_spell <> 0
+         OR Send(self,@CheckTypeFlag,#flag=ATCK_WEAP_MAGIC)
+      {
+         iSpell = Send(oSpell,@GetSpellNum);
+         if iSpell = SID_HOLY_WEAPON or iSpell = SID_UNHOLY_WEAPON
             OR iSpell = SID_ENCHANT_WEAPON
          {
             return TRUE;
          }
-      }   
+      }
 
       for i in plItem_Attributes
       {
-         oItemAtt = send(SYS,@FindItemAttByNum,
-                         #num=send(self,@GetNumFromCompound,#compound=first(i)));
+         oItemAtt = Send(SYS,@FindItemAttByNum,
+                         #num=Send(self,@GetNumFromCompound,#compound=First(i)));
          if oItemAtt = $
          {
             Debug("Illegal ItemAtt in list!");
@@ -1163,7 +1163,7 @@ messages:
             continue;
          }
 
-         if NOT send(oItemAtt,@ItemCanEnchant,#oItem=self)
+         if NOT Send(oItemAtt,@ItemCanEnchant,#oItem=self)
          {
             return FALSE;
          }

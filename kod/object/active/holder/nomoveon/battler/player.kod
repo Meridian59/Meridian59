@@ -4098,7 +4098,7 @@ messages:
          OR (Send(victim,@FindUsing,#class=&Token) <> $)
       {
          % Unless they're factioned.
-         if NOT Send(self,@CheckFactionAttack,#what=victim)
+         if NOT Send(self,@CheckFactionAttack,#what=victim,#report=report)
          {
             return FALSE;
          }
@@ -4178,7 +4178,7 @@ messages:
 
       % Check for faction loss.  Handles appropriate conditions.
       if actual = TRUE
-         AND NOT Send(self,@CheckFactionAttack,#what=victim)
+         AND NOT Send(self,@CheckFactionAttack,#what=victim,#report=report)
       {
          return FALSE;
       }

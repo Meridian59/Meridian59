@@ -21,7 +21,7 @@ resources:
    magicshield_desc_rsc = \
       "Summons a shield of powerful magical energy that will "
       "deflect some of the blows aimed at you for several minutes.  "
-      "Requires mushrooms and red mushrooms to cast."
+      "Requires two mushrooms and one red mushroom to cast."
    
    magicshield_already_enchanted_rsc = "You already have magic shield."
    magicshield_on_rsc = \
@@ -66,11 +66,11 @@ messages:
 
       return;
    }
-	 
-   CastSpell(who = $,lTargets = $)
+
+   CastSpell(who=$,lTargets=$)
    {
       Send(first(lTargets),@AddDefenseModifier,#what=self);
-      
+
       propagate;
    }
 
@@ -78,7 +78,7 @@ messages:
    {
       local iDuration;
 
-      iDuration = 1 + ((iSpellPower + 5)/10); 
+      iDuration = 1 + ((iSpellPower + 5)/10);
 
       % Convert to ms.
       iDuration = iDuration * 60 * 1000;
@@ -91,35 +91,35 @@ messages:
       return iSpellpower;
    }
 
-   EndEnchantment(who = $, report = TRUE, state = 0)
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
-      send(who,@RemoveDefenseModifier,#what=self);
-      
+      Send(who,@RemoveDefenseModifier,#what=self);
+
       propagate;
    }
 
    GetPotionClass()
    {
-      RETURN &MagicShieldPotion;
+      return &MagicShieldPotion;
    }
 
    % Stuff we handle to be a defense modifier.
 
-   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   ModifyDefensePower(who=$,what=$,defense_power=0)
    {
       local iSpellpower;
 
-      iSpellpower = send(who,@GetEnchantedState,#what=self);
-      
+      iSpellpower = Send(who,@GetEnchantedState,#what=self);
+
       return (defense_power + 50 + (2 * iSpellpower));
    }
 
-   ModifyDefenseDamage(who = $,what = $,damage = $)
+   ModifyDefenseDamage(who=$,what=$,damage=$)
    {
       return damage;
    }
 
-   DefendingHit(who = $,what = $)
+   DefendingHit(who=$,what=$)
    {
       return;
    }
@@ -132,8 +132,8 @@ messages:
       AppendTempString(" enchantment adds ");
       AppendTempString(50 + (2 * Send(who,@GetEnchantedState,#what=self)));
       AppendTempString(" defense.");
-      
-      return;
+
+      propagate;
    }
 
 end

@@ -33,14 +33,14 @@ properties:
 
 messages:
 
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
-      
+
       lTargets = [who];
-         
-      if (vrAlreadyEnchanted = $) or (vrEnchantment_On = $) or (vrEnchantment_Off = $) or (vrSuccess = $)
+
+      if (vrAlreadyEnchanted = $) OR (vrEnchantment_On = $) OR (vrEnchantment_Off = $) OR (vrSuccess = $)
       {
-         DEBUG("Haven't set messages for this spell!  Aborting cast.");
+         Debug("Haven't set messages for this spell!  Aborting cast.");
          
          return FALSE;
       }
@@ -48,40 +48,45 @@ messages:
       propagate;
    }
 
-   GetStateValue(who = $, iSpellPower = 0, target = $)
+   GetStateValue(who=$,iSpellPower=0,target=$)
    {
       local iValue;
-      
-      iValue = send(self,@GetResistanceStrength,#iSpellPower=iSpellPower);
-      
+
+      iValue = Send(self,@GetResistanceStrength,#iSpellPower=iSpellPower);
+
       return iValue;
    }
 
-   GetResistanceStrength(iSpellpower = 0)
+   GetResistanceStrength(iSpellpower=0)
    {
-      %% strength varies from 1 to 50
+      %% Strength varies from 1 to 50
       return iSpellPower/2 + 1;
    }
 
    ModifyResistance(resistance_list=$,iState=0)
    {
-      resistance_list = Send(SYS,@AddResistance,#what=viResistanceType,#value=iState,#resistance_list=resistance_list);
+      resistance_list = Send(SYS,@AddResistance,#what=viResistanceType,
+                              #value=iState,#resistance_list=resistance_list);
       return resistance_list;
    }
 
-   GetDuration(iSpellPower = 0)
+   GetDuration(iSpellPower=0)
    {
-      local iDuration;	   %%% 5 to 10 minutes
-      
+      local iDuration;      %%% 5 to 10 minutes
+
       iDuration = 300 + iSpellPower * 3;
-      iDuration = iDuration * 1000;	  %% translate to milliseconds
-      
+      iDuration = iDuration * 1000;      %% translate to milliseconds
+
       return iDuration;
    }
 
-   EndEnchantment(who = $, report = TRUE, state = -1)
+   EndEnchantment(who=$,report=TRUE,state=-1)
    {
-      if state = -1  { DEBUG("Bad data!"); state = 0; }
+      if state = -1
+      {
+         Debug("Bad data!");
+         state = 0;
+      }
 
       propagate;
    }
@@ -90,7 +95,7 @@ messages:
    {
       return 0;
    }
-  
+
    EffectDesc(who=$)
    {
       AppendTempString("\n\n");
@@ -101,10 +106,9 @@ messages:
       AppendTempString("\% ");
       AppendTempString(Send(SYS,@GetResistanceName,#type=viResistanceType));
       AppendTempString(".");
-      
-      return;
-   }
-   
-end
 
+      propagate;
+   }
+
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

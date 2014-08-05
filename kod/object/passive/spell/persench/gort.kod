@@ -21,15 +21,18 @@ resources:
    ArmorOfGort_desc_rsc = \
       "Surrounds the caster with a powerful field which deflects "
       "damage from extreme blows.  "
-      "Requires blue dragon scale to cast."
+      "Requires two blue dragon scales to cast."
    
    ArmorOfGort_already_enchanted_rsc = "You already have the Armor of Gort."
 
-   ArmorOfGort_on_rsc = "Your skin feels taut as the Armor of Gort forms around you."
+   ArmorOfGort_on_rsc = \
+      "Your skin feels taut as the Armor of Gort forms around you."
    ArmorOfGort_off_rsc = "Your Armor of Gort dissipates."
-   ArmorOfGort_success_rsc = "%s%s's skin tightens as the Armor of Gort forms."
+   ArmorOfGort_success_rsc = \
+      "%s%s's skin tightens as the Armor of Gort forms."
 
-   ArmorOfGort_spell_intro = "Kraanan Level 5: Magical armor that protects the caster."
+   ArmorOfGort_spell_intro = \
+      "Kraanan Level 5: Magical armor that protects the caster."
 
 classvars:
 
@@ -57,7 +60,7 @@ classvars:
 
    viDefensive = TRUE
 
-properties:    
+properties:
 
 messages:
 
@@ -69,25 +72,25 @@ messages:
       return;
    }
 
-   GetDuration(iSpellPower = 0)
+   GetDuration(iSpellPower=0)
    {
-      local iDuration; 
+      local iDuration;
 
       iDuration = iSpellPower/8 + 1;
-      % Convert to minutes
+      % Convert to milliseconds
       iDuration = iDuration * 60 * 1000;
-      
+
       return iDuration;
    }
 
-   GetStateValue(who = $, iSpellPower = 0, Target = $)      
+   GetStateValue(who=$,iSpellPower=0,Target=$)
    {
       Send(Target,@AddDefenseModifier,#what=self);
-       
+
       return iSpellPower;
    }
 
-   PriorityModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
+   PriorityModifyDefenseDamage(who=$,what=$,damage=$,atype=0,aspell =0)
    {
       local iSpellPower, iAbsorbed, iMax;
 
@@ -114,15 +117,15 @@ messages:
          }
       }
 
-      return bound(damage-iAbsorbed,1,iMax);
+      return Bound(damage-iAbsorbed,1,iMax);
    }
 
-   ModifyDefenseDamage(who = $, what = $, damage = $, atype = 0, aspell = 0)
+   ModifyDefenseDamage(who=$,what=$,damage=$,atype=0,aspell=0)
    {
       return damage;
    }
 
-   EndEnchantment(who = $, report = TRUE, state = 0)
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
       Send(who,@RemoveDefenseModifier,#what=self);
 
@@ -138,8 +141,8 @@ messages:
       AppendTempString(Send(who,@GetEnchantedState,#what=self)/25);
       AppendTempString(" armor or reduces non-magical damage to 15, partially magical damage to 20, and fully magical damage to 25. ");
       AppendTempString(" Only the better of these two effects applies. Armor of Gort modifies damage received before any other armor or spells.");
-      
-      return;
+
+      propagate;
    }
 
 end

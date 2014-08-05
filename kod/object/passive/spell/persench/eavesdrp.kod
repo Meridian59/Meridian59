@@ -19,12 +19,13 @@ resources:
    Eavesdrop_name_rsc = "eavesdrop"
    Eavesdrop_icon_rsc = ieavesdr.bgf
    Eavesdrop_desc_rsc = \
-      "Riija grants the ability to hear distant conversations, allowing you to spy on others.  "
-      "Requires dragonfly eyes."
+      "Riija grants the ability to hear distant conversations, allowing you "
+      "to spy on others.  Requires two dragonfly eyes."
    
    Eavesdrop_on_rsc = "The sounds of a nearby room fill your mind."
    Eavesdrop_off_rsc = "The distant sounds become impossible to hear."
-   Eavesdrop_already_enchanted_rsc = "You are already listening to another room."
+   Eavesdrop_already_enchanted_rsc = \
+      "You are already listening to another room."
    Eavesdrop_no_rooms = "There seem to be no nearby rooms you can listen to."
    Eavesdrop_Success_rsc = "You grant %s%s the ability to eavesdrop."
 
@@ -67,12 +68,12 @@ messages:
       return;
    }
 
-   CanPayCosts(who = $, lTargets = $, iSpellPower = 0)
+   CanPayCosts(who=$,lTargets=$,iSpellPower=0)
    {
       local lRooms;
 
       lRooms = send(self,@GetYellList,#who=who);
-      
+
       if Length(lRooms) = 0
       {
          Send(who,@MsgSendUser,#message_rsc=Eavesdrop_no_rooms);
@@ -83,62 +84,63 @@ messages:
       propagate;
    }
 
-   StartPeriodicEnchantment( who = $, state = $ )
+   StartPeriodicEnchantment(who=$,state=$)
    {
       % If caster runs out of mana or loses trance, spell ends.
-      if send(who,@GetMana) < viManaDrain * 2
+      if Send(who,@GetMana) < viManaDrain * 2
       {
          Send(who,@StartEnchantment,#what=self,#time=nth(state,1),
-              #state=state,#addicon=False,#lastcall=True);
+               #state=state,#addicon=False,#lastcall=True);
       }
       else
-      {      
+      {
          Send(who,@StartEnchantment,#what=self,#time=nth(state,1),
-              #state=state,#addicon=False,#lastcall=False);
+               #state=state,#addicon=False,#lastcall=False);
       }
-      
+
       Send(who,@LoseMana,#amount=viManaDrain);
-      
+
       return;
    }
    
-   EndEnchantment(who=$, state=0)
+   EndEnchantment(who=$,state=0)
    {
-      Send(nth(state,2),@Delete);
-      
+      Send(Nth(state,2),@Delete);
+
       propagate;
    }
 
-   BreakTrance( who = $, state = $, event = $, what = $ )
+   BreakTrance(who=$,state=$,event=$,what=$)
    {
       if event = EVENT_CAST AND what = self
       {
          propagate;
       }
-      
-      Send(nth(state,2),@Delete);
+
+      Send(Nth(state,2),@Delete);
       Send(who,@RemoveEnchantment,#what=self,#state=state);
-      
+
       propagate;
    }
 
    SetSpellPlayerFlag(who=$,state=$)
    {
       Send(who,@SetTranceFlag);
-      
+
       return;
    }
 
    GetDuration(iSpellPower=0)
    {
       local iPower;
-      
+
       iPower = (iSpellPower / 10) * 100;
-      
+
       return 500 + iPower;
    }
 
-   % State value is: list containing the drain time as the first element, and the listener object as the second element.
+   % State value is: list containing the drain time as the first element,
+   % and the listener object as the second element.
    %   IE [ drain time (in ms), listener object ]
 
    GetStateValue(iSpellPower=$,who=$)
@@ -146,7 +148,7 @@ messages:
    {
       local oRoom, lRooms, ilength, iRow, iCol, iDrainTime, oListener;
 
-      lRooms = send(self,@GetYellList,#who=who);
+      lRooms = Send(self,@GetYellList,#who=who);
 
       iLength = Length(lRooms);
       if iLength = 0
@@ -162,9 +164,9 @@ messages:
       iCol = Send(oRoom,@GetTeleportCol);
 
       oListener = Create(&Listener,#Enchanted=who,#iSpellpower=iSpellpower);
-      Send(oRoom,@NewHold,#what=oListener, #new_row=iRow,#new_col=iCol);
+      Send(oRoom,@NewHold,#what=oListener,#new_row=iRow,#new_col=iCol);
    
-      return [send(self,@GetDuration,#iSpellpower=iSpellpower),oListener];
+      return [Send(self,@GetDuration,#iSpellpower=iSpellpower),oListener];
    }
 
    OfferToNewCharacters()
@@ -177,18 +179,18 @@ messages:
    {
       return FALSE;
    }
-   
+
    GetYellList(who=$)
    "Returns a list of rooms in the yell zone of who's current location."
    {
       local oRoom, lRooms;
-   
+
       %% Get yell list from current room and select a room to eavesdrop.
       oRoom = Send(who,@GetOwner);
       lRooms = Send(oRoom,@GetYellZone);
       
       %% Eliminate the room we're in, unless there is no yell list.
-      if FindListElem(lRooms,Send(oRoom,@GetRoomNum))  
+      if FindListElem(lRooms,Send(oRoom,@GetRoomNum))
       {
          if lRooms = $ OR length(lRooms) < 2
          {

@@ -23,14 +23,18 @@ resources:
 
    PersonalEnchantment_already_enchanted_rsc = "You are already enchanted."
    PersonalEnchantment_On_rsc = "Your body tingles with magical energy."
-   PersonalEnchantment_Off_rsc = "You feel your magical field crackle and dissipate."
+   PersonalEnchantment_Off_rsc = \
+      "You feel your magical field crackle and dissipate."
    PersonalEnchantment_Success_rsc = "You enchant %s%s."
-   PersonalEnchantment_Target_Already_Enchanted_rsc = "%s%s tried to cast %s%s on you."
-   PersonalEnchantment_Other_Already_Enchanted_rsc = "%s%s is already affected by that magic."
+   PersonalEnchantment_Target_Already_Enchanted_rsc = \
+      "%s%s tried to cast %s%s on you."
+   PersonalEnchantment_Other_Already_Enchanted_rsc = \
+      "%s%s is already affected by that magic."
    PersonalEnchantment_bad_target = "You cannot enchant %s%s."
 
-   PersonalEnchantment_bad_location = "You cannot cast enchantments upon others here."
-  
+   PersonalEnchantment_bad_location = \
+      "You cannot cast enchantments upon others here."
+
    spell_blank_template = "%q"
 
 classvars:
@@ -45,7 +49,8 @@ classvars:
    vrEnchantment_Off = PersonalEnchantment_Off_rsc
    vrSuccess = PersonalEnchantment_Success_rsc
 
-   % These messages don't need to be overwritten.  But I put them here to leave the option open.
+   % These messages don't need to be overwritten.
+   % But I put them here to leave the option open.
    vrOtherAlreadyEnchanted = PersonalEnchantment_Other_Already_Enchanted_rsc
    vrTargetAlreadyEnchanted = PersonalEnchantment_Target_Already_Enchanted_rsc
 
@@ -56,7 +61,7 @@ classvars:
    vbCanCastonMonsters = FALSE 
 
    viPersonal_ench = TRUE
-   
+
    viDefensive = FALSE
    viOffensive = FALSE
    viResistanceType = 0
@@ -75,76 +80,76 @@ messages:
       {
          return 0;
       }
-      
+
       return;
    }
 
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
-      local otarget, i;
+      local oTarget, i;
 
       if lTargets = $
       {
          lTargets = [who];
       }
-   
+
       if Length(lTargets) <> 1
       {
          return FALSE;
       }
 
-      otarget = First(lTargets);
+      oTarget = First(lTargets);
 
-      % Targetable enchantment, not from a potion.  If we want to have wand effects
-      %  for these spells we will need to split bItemcast to differentiate between
-      %  wands and potions.
+      % Targetable enchantment, not from a potion.  If we want to have wand
+      % effects for these spells we will need to split bItemcast to
+      % differentiate between wands and potions.
       if vbCanCastOnOthers
       {
          if NOT bItemCast
-            AND NOT IsClass(otarget, &User)
-            AND NOT (vbCanCastOnMonsters AND IsClass(otarget,&monster))
+            AND NOT IsClass(oTarget,&User)
+            AND NOT (vbCanCastOnMonsters AND IsClass(oTarget,&Monster))
          {
             Send(who,@MsgSendUser,#message_rsc=PersonalEnchantment_bad_target,
                  #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
-                 
+
             return FALSE;
          }
 
          % Cannot cast buffs on others in any permanently safe rooms.
          if who <> oTarget
-            AND (send(send(who,@GetOwner),@GetPermanentFlags) & ROOM_NO_COMBAT)
+            AND (Send(Send(who,@GetOwner),@GetPermanentFlags) & ROOM_NO_COMBAT)
          {
             Send(who,@MsgSendUser,#message_rsc=PersonalEnchantment_bad_location);
-            
+
             return FALSE;
          }
       }
 
-      % check for enchantment already applied
-      if Send(otarget,@IsEnchanted,#what=self)
+      % Check for enchantment already applied
+      if Send(oTarget,@IsEnchanted,#what=self)
       {
          % Can you override an existing enchantment on yourself?
          if who = oTarget AND
-            Send(Send(SYS, @GetSettings), @CanRecastSelfEnchantment)
+            Send(Send(SYS,@GetSettings),@CanRecastSelfEnchantment)
          {
             propagate;
-         } 
+         }
 
          if NOT bItemCast
          {
             % Casting on self.
             if who = otarget
-            {   
+            {
                Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted);
             }
             else
             {
                % Casting on someone else.
                Send(who,@MsgSendUser,#message_rsc=vrOtherAlreadyEnchanted,
-               #parm1=send(oTarget,@GetCapDef),#parm2=send(oTarget,@GetName));
+               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
                Send(oTarget,@MsgSendUser,#Message_rsc=vrTargetAlreadyEnchanted,
-               #parm1=send(who,@GetCapDef),#parm2=send(who,@GetName),
-               #Parm3=send(self,@GetCapDef),#Parm4=send(self,@GetName));
+               #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName),
+               #Parm3=Send(self,@GetCapDef),#Parm4=Send(self,@GetName));
             }
          }
          
@@ -154,7 +159,7 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $,iSpellPower=0,lTargets=$)
+   CastSpell(who=$,iSpellPower=0,lTargets=$)
    {
 
       local oTarget, lType;
@@ -163,7 +168,7 @@ messages:
 
       if lTargets <> $
       {
-         oTarget=first(lTargets);      
+         oTarget=First(lTargets);
       }
       else
       {
@@ -172,7 +177,7 @@ messages:
 
       % Double check if our target is still logged on.
       If IsClass(oTarget,&Player)
-         AND NOT send(oTarget,@IsLoggedOn)
+         AND NOT Send(oTarget,@IsLoggedOn)
       {
          Send(who,@MsgSendUser,#message_rsc=PersonalEnchantment_bad_target,
               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
@@ -184,27 +189,29 @@ messages:
       if Send(otarget,@IsEnchanted,#what=self) AND
          Send(Send(SYS, @GetSettings), @CanRecastSelfEnchantment)
       {
-         Send(oTarget, @RemoveEnchantment, #what = self, #report = FALSE);
-      } 
-   
+         Send(oTarget,@RemoveEnchantment,#what=self,#report=FALSE);
+      }
+
       Send(oTarget,@MsgSendUser,#message_rsc=vrEnchantment_On);
- 
+
       Send(oTarget,@StartEnchantment,#what=self,
-           #state=send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,#target=oTarget),
-           #time=send(self,@GetDuration,#iSpellPower=iSpellPower),
-           #lastcall=send(self,@GetLastCall),#addicon=send(self,@GetAddicon),#who=who,#ltype=lType);
-           
-      % GetStateValue is sometimes (eg used for pre-enchantment behaviors, who is the caster, target is the target (sometimes the same as who).
+            #state=Send(self,@GetStateValue,#iSpellpower=iSpellpower,#who=who,
+            #target=oTarget),#time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+            #lastcall=Send(self,@GetLastCall),#addicon=Send(self,@GetAddicon),#who=who,#ltype=lType);
+
+      % GetStateValue is sometimes (eg used for pre-enchantment behaviors,
+      % who is the caster, target is the target (sometimes the same as who).
 
       if oTarget <> who
       {
-         Send(who,@MsgSendUser,#message_rsc=vrSuccess,#parm1=send(otarget,@GetCapDef),#parm2=send(otarget,@Getname));
+         Send(who,@MsgSendUser,#message_rsc=vrSuccess,
+               #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
       }
 
       propagate;
    }
- 
-   EndEnchantment(who = $, report = TRUE, state = 0)
+
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
       if report
       {
@@ -212,7 +219,7 @@ messages:
       }
 
       Post(who,@DrawResistances);
-      
+
       return;
    }
 
@@ -235,12 +242,12 @@ messages:
 
    %%% Defense and attack modifier stuff.
 
-   ModifyDamage(damage = $)
+   ModifyDamage(damage=$)
    {
       return damage;
    }
 
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   ModifyHitRoll(who=$,what=$,hit_roll=$)
    {
       return hit_roll;
    }
@@ -250,18 +257,55 @@ messages:
       return;
    }
 
-   ModifyDefenseDamage(damage = $)
+   ModifyDefenseDamage(damage=$)
    {
       return damage;
    }
 
-   ModifyDefensePower(who = $, what = $,defense_power = $)
+   ModifyDefensePower(who=$,what=$,defense_power=$)
    {
       return defense_power;
    }
 
    EffectDesc(who=$)
    {
+      local i, iDuration, iMinutes, iSeconds, oSpell, oList;
+
+      oSpell = GetClass(self);
+      oList = Send(who,@GetEnchantmentList);
+      
+      for i in oList
+      {
+         if Nth(i,2) = self
+         {
+            iDuration = GetTimeRemaining(Nth(i,1));
+         }
+      }
+
+      iDuration = iDuration / 1000;
+      iMinutes = iDuration / 60;
+      iSeconds = iDuration MOD 60;
+
+      AppendTempString("\n\n");
+      AppendTempString("Your current ");
+      AppendTempString(Send(self,@GetName));
+      AppendTempString(" enchantment will last for ");
+      if iMinutes > 0
+      {
+         AppendTempString(iMinutes);
+         if iMinutes = 1
+         {
+            AppendTempString(" minute and ");
+         }
+         else
+         {
+            AppendTempString(" minutes and ");
+         }
+      }
+
+      AppendTempString(iSeconds);
+      AppendTempString(" seconds.");
+
       return;
    }
 
@@ -278,10 +322,10 @@ messages:
 
       return;
    }
-   
+
    GetStatsDesc(who=$)
    {
-      Send(self,@CreateStatsDesc,#who=who);      
+      Send(self,@CreateStatsDesc,#who=who);
 
       return GetTempString();
    }

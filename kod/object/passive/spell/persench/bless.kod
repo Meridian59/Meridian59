@@ -21,7 +21,7 @@ resources:
    bless_desc_rsc = \
       "Invokes Kraanan's blessing, increasing the accuracy "
       "and damage of attacks.  "
-      "Requires mushrooms and sapphires to cast."
+      "Requires two mushrooms and two sapphires to cast."
    
    bless_already_enchanted_rsc = "You are already blessed."
    bless_on_rsc = "Kraanan fills you with the spirit of battle."
@@ -58,11 +58,11 @@ classvars:
    viMeditate_ratio = 20
 
    viFlash = FLASH_GOOD_SELF
-   
+
    viOffensive = TRUE
 
 properties:
-   
+
 messages:
 
    ResetReagents()
@@ -74,9 +74,9 @@ messages:
       return;
    }
 
-   CastSpell(who = $,iSpellPower= 0,ltargets=$)
+   CastSpell(who=$,iSpellPower=0,lTargets=$)
    {
-      Send(First(lTargets),@AddAttackModifier,#what=self);       
+      Send(First(lTargets),@AddAttackModifier,#what=self);
 
       propagate;
    }
@@ -96,25 +96,25 @@ messages:
       return iDuration;
    }
 
-   EndEnchantment(who=$, report=TRUE, state=0)
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
       Send(who,@RemoveAttackModifier,#what=self);
-      
+
       propagate;
    }
 
-   % stuff we handle to be an attack modifier
+   % Stuff we handle to be an attack modifier
 
-   ModifyHitRoll(who = $,what = $,hit_roll = $)
+   ModifyHitRoll(who=$,what=$,hit_roll=$)
    {
       return hit_roll + Send(who,@GetEnchantedState,#what=self);
    }
    
-   ModifyDamage(who = $,what = $,damage = $)
+   ModifyDamage(who=$,what=$,damage=$)
    {
       return damage + Random(0,send(who,@GetEnchantedState,#what=self)/33);
    }
-  
+
    EffectDesc(who=$)
    {
       AppendTempString("\n\n");
@@ -125,8 +125,8 @@ messages:
       AppendTempString(" offense and 0-");
       AppendTempString(Send(who,@GetEnchantedState,#what=self)/33);
       AppendTempString(" attack damage.");
-      
-      return;
+
+      propagate;
    }
 
 end

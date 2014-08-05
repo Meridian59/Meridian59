@@ -17,14 +17,16 @@ constants:
 resources:
 
    shadowform_name_rsc = "shadow form"
-   shadowform_icon_rsc = ishadfrm.bgf   
+   shadowform_icon_rsc = ishadfrm.bgf
    shadowform_desc_rsc = \
      "Transforms the target into a silhouette of their former self, "
-	  "perfect for skulking in darker locales and making them more difficult to hit.  "
-	  "Requires a handful of rainbow fern."
+     "perfect for skulking in darker locales and making them more difficult "
+     "to hit.  Requires three rainbow ferns to cast."
 
-   shadowform_already_enchanted = "You already have shadow form."
-   shadowform_already_affected = "The shadows refuse to hide what you wish."
+   shadowform_already_enchanted = \
+      "You already have shadow form."
+   shadowform_already_affected = \
+      "The shadows refuse to hide what you wish."
 
    shadowform_on = "You melt into your shadow."
    shadowform_off = "You fade back to your own colors."
@@ -58,12 +60,12 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&RainbowFern,3],plReagents);      
+      plReagents = Cons([&RainbowFern,3],plReagents);
 
       return;
    }
 
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
       local oTarget, iDrawFX;
 
@@ -74,7 +76,7 @@ messages:
          return FALSE;
       }
 
-      % check for lighting effect already applied
+      % Check for lighting effect already applied
       if oTarget <> who
       {
          iDrawfX = Send(oTarget,@GetPlayerDrawFX);
@@ -91,10 +93,10 @@ messages:
       propagate;
    }
 
-   GetDuration(who = $,iSpellPower = 0)
+   GetDuration(who=$,iSpellPower=0)
    {
       local iTime;
-      
+
       iTime = 60000 + (iSpellPower * 3000);
 
       return iTime;
@@ -103,54 +105,55 @@ messages:
    SetSpellPlayerFlag(who=$)
    {
       Send(who,@SetPlayerDrawFX,#drawfx=DRAWFX_BLACK,#SendSomethingChanged=TRUE);
-      
-      return;  
-   }
 
-   EndEnchantment(who = $, report = TRUE)
-   {
-      Send(who,@ResetPlayerDrawfx);
-      send(who,@RemoveDefenseModifier,#what=self);
-      
-      if report
-      {
-	      Send(who,@MsgSendUser,#message_rsc=shadowform_off);
-      }
-     
       return;
    }
 
-   GetStateValue(who = $, iSpellPower = 0,target=$)      
-   {      
-      Send(target,@AddDefenseModifier,#what=self);       
+   EndEnchantment(who=$,report=TRUE)
+   {
+      Send(who,@ResetPlayerDrawfx);
+      Send(who,@RemoveDefenseModifier,#what=self);
+
+      if report
+      {
+         Send(who,@MsgSendUser,#message_rsc=shadowform_off);
+      }
+
+      return;
+   }
+
+   GetStateValue(who=$,iSpellPower=0,target=$)
+   {
+      Send(target,@AddDefenseModifier,#what=self);
 
       return iSpellPower;
    }
 
    GetPotionClass()
    {
-      RETURN &ShadowFormPotion;
+      return &ShadowFormPotion;
    }
 
-   ModifyDefensePower(who = $, what = $,defense_power = $)
+   ModifyDefensePower(who=$,what=$,defense_power=$)
    {
       local iLight,iShadowbonus;
 
-      iLight = send(send(who,@GetOwner),@GetRoomLight);
+      iLight = Send(send(who,@GetOwner),@GetRoomLight);
 
       if what <> $
       {
-         % A player attacker's light determines how well they can see the enchanted, too.
-         if isClass(what,&Player)
+         % A player attacker's light determines how well they can see the
+         % enchanted, too.
+         if IsClass(what,&Player)
          {
-            iLight =  iLight + send(what,@GetPlayerLightLevel);
+            iLight =  iLight + Send(what,@GetPlayerLightLevel);
          }
       }
 
       % Give bonuses if we're in a darker room.
       iShadowBonus = 30 + (LIGHT_NICE - iLight);
 
-      iShadowBonus = bound(iShadowBonus,10,150); 
+      iShadowBonus = Bound(iShadowBonus,10,150);
 
       return defense_power + iShadowBonus;
    }
@@ -158,14 +161,14 @@ messages:
    EffectDesc(who=$)
    {
       local iShadowBonusMonster, iShadowBonusPlayer, iLight;
-      
+
       iLight = send(send(who,@GetOwner),@GetRoomLight);
       iShadowBonusMonster = 30 + (LIGHT_NICE - iLight);
       iShadowBonusMonster = bound(iShadowBonusMonster,10,150);
-      
+
       iShadowBonusPlayer = 30 + (LIGHT_NICE - (iLight + 5));
       iShadowBonusPlayer = bound(iShadowBonusPlayer,10,150);
-      
+
       AppendTempString("\n\n");
       AppendTempString("Your current ");
       AppendTempString(Send(self,@GetName));
@@ -174,8 +177,8 @@ messages:
       AppendTempString(" defense against monsters here. Against a player of average light level, it will add ");
       AppendTempString(iShadowBonusPlayer);
       AppendTempString(" defense.");
-      
-      return;
+
+      propagate;
    }
 
 end

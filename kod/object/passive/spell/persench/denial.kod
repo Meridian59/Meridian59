@@ -20,11 +20,13 @@ resources:
    denial_desc_rsc = \
       "Causes the caster to unrealize their wounds, but beware when "
       "you realize its a hoax, because the wounds are still just as deep!  "
-      "Requires a firesand and solagh to cast."
+      "Requires two firesand and a vial of solagh to cast."
 
    denial_on_rsc = "Your wounds suspiciously disappear."
-   denial_failed_rsc = "Hmmm, you can't seem to convince yourself of perfect health."
-   denial_already_enchanted_rsc = "You can't fool yourself twice about something like this, at "
+   denial_failed_rsc = \
+      "Hmmm, you can't seem to convince yourself of perfect health."
+   denial_already_enchanted_rsc = \
+      "You can't fool yourself twice about something like this, at "
       "least not at the same time."
 
    denial_off_rsc = "Ouch - you are reminded of your previous weariness."
@@ -58,22 +60,22 @@ properties:
 
 messages:
 
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
-      % if they are already boosted above max health, then return FALSE
-      if send(who,@GetHealth) >= send(who,@GetMaxHealth) 
+      % If they are already boosted above max health, then return FALSE
+      if Send(who,@GetHealth) >= Send(who,@GetMaxHealth)
       {
          if NOT bItemCast
          {
-	         send(who,@MsgSendUser,#message_rsc=denial_failed_rsc);
+            Send(who,@MsgSendUser,#message_rsc=denial_failed_rsc);
          }
-	      
-	      return FALSE;
+
+         return FALSE;
       }
 
       propagate;
    }
-   
+
    ResetReagents()
    {
       plReagents = $;
@@ -83,71 +85,60 @@ messages:
       return;
    }
 
-   GetDuration(iSpellPower = 0)
+   GetDuration(iSpellPower=0)
    {
       local iDuration;
 
       % 10 - 20 plus 1 second per spellpower
-      iDuration = random(10000,20000) + (iSpellPower * 1000);
-      iDuration=bound(iDuration,20000,120000);
-      
-      return iDuration;      
+      iDuration = Random(10000,20000) + (iSpellPower * 1000);
+      iDuration=Bound(iDuration,20000,120000);
+
+      return iDuration;
    }
 
 
-   GetStateValue(who = $, Target = $, iSpellPower = 1)
+   GetStateValue(who=$,Target=$,iSpellPower=1)
    {
       local iHPGain, iSpellpowerBonus;
-      
-      iHPGain = send(who,@GetMaxHealth) - send(who,@GetHealth);
 
-      iSpellpowerBonus = (iSpellpower + 1) / 5;  %0 - 20, this is the percent of damage you don't get back when the enchantment fails.
-      iHPGain = send(who,@GainHealthNormal,#amount=iHPGain);
+      iHPGain = Send(who,@GetMaxHealth) - Send(who,@GetHealth);
+
+      % 0 - 20, this is the percent of damage you don't
+      % get back when the enchantment fails.
+      iSpellpowerBonus = (iSpellpower + 1) / 5;
+      iHPGain = Send(who,@GainHealthNormal,#amount=iHPGain);
 
       return iHPGain - (iSpellpowerBonus * iHPGain)/ 100 ;
    }
 
 
-   EndEnchantment(who = $, state=$, report = TRUE)
-   {      
-      post(self,@EndEnchantmentEffects,#who=who,#state=state);
-      
+   EndEnchantment(who=$,state=$,report=TRUE)
+   {
+      Post(self,@EndEnchantmentEffects,#who=who,#state=state);
+
       propagate;
    }
 
-   EndEnchantmentEffects(who=$, state=$)
+   EndEnchantmentEffects(who=$,state=$)
    {
       if state
       {
          Send(who,@LoseHealth,#amount=state);
-      
-         if send(who,@GetHealth) < 1
-	      {
+
+         if Send(who,@GetHealth) < 1
+         {
             % Don't die: too harsh; makes spell unusable.
-            send(who,@GainHealthNormal,#amount=1);
-	      }
+            Send(who,@GainHealthNormal,#amount=1);
+         }
       }
-      
+
       return;
-   } 
+   }
 
    GetPotionClass()
    {
       return &DenialPotion;
    }
 
-   EffectDesc(who=$)
-   {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment allows you to deny reality for ");
-      AppendTempString(random(10000,20000) + (Send(who,@GetEnchantedState,#what=self) * 1000));
-      AppendTempString(" milliseconds.");
-      
-      return;
-   }
-
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

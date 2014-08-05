@@ -19,10 +19,12 @@ resources:
    DetectInvisible_name_rsc = "detect invisible"
    DetectInvisible_icon_rsc = idetinvi.bgf
    DetectInvisible_desc_rsc = \
-   "Allows you to see those whom others cannot.  Requires solagh."
+      "Allows you to see those whom others cannot.  "
+      "Requires two vials of solagh."
    DetectInvisible_on_rsc = "You can feel your eyes tingle."
    DetectInvisible_off_rsc = "Your eyesight returns to its former mundanity."
-   DetectInvisible_already_enchanted_rsc = "You can already see the invisible."
+   DetectInvisible_already_enchanted_rsc = \
+      "You can already see the invisible."
    DetectInvisible_Success_rsc = "%s%s eyes pulse briefly."
 
 classvars:
@@ -58,43 +60,48 @@ messages:
       return;
    }
 
-   CastSpell(who = $,iSpellPower=0)
+   CastSpell(who=$,iSpellPower=0)
    {
-      %% post this so it's after the flag being applied.
-      post(who,@ToCliRoomContents);
-      
+      %% Post this so it's after the flag being applied.
+      Post(who,@ToCliRoomContents);
+
       propagate;
    }
 
    SetSpellPlayerFlag(who=$)
    {
       Send(who,@SetPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2,#value=True);
-      
+
       return;
    }
-   
-   GetDuration(iSpellpower = 0)
+
+   GetDuration(iSpellpower=0)
    {
       local iDuration;
       iDuration = 2400 * (100 + iSpellPower);   % 4 - 8 minutes max,
-      
+
       return iDuration;
    }
-   
-   EndEnchantment(who = $, report = TRUE, state = 0)
+
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
-      if send(who,@IsLoggedOn)
+      if Send(who,@IsLoggedOn)
       {
-	      %% must post this so it's after the flag being removed.
-	      post(who,@ToCliRoomContents);
+         %% Must post this so it's after the flag being removed.
+         Post(who,@ToCliRoomContents);
       }
-     
+
       propagate;
    }
 
    GetPotionClass()
    {
-      RETURN &DetectInvisibilityPotion;
+      return &DetectInvisibilityPotion;
+   }
+
+   EffectDesc()
+   {
+      propagate;
    }
 
 end

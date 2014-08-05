@@ -19,10 +19,11 @@ resources:
    Cloak_name_rsc = "cloak"
    Cloak_icon_rsc = icloak.bgf
    Cloak_desc_rsc = \
-   "Qor shrouds your astral body in shifting shadows, allowing you to elude magical tracking.  "
-   "Requires entroot berries to cast."
-   
-   Cloak_on_rsc = "It feels as though your very spirit has become somehow indistinct."
+      "Qor shrouds your astral body in shifting shadows, allowing you to "
+      "elude magical tracking. .Requires two entroot berries to cast."
+
+   Cloak_on_rsc = \
+      "It feels as though your very spirit has become somehow indistinct."
    Cloak_off_rsc = "You feel more conspicuous."
    Cloak_already_enchanted_rsc = "You are already cloaked."
    Cloak_Succeed_rsc = "You wrap a magical cloak around %s%s."
@@ -66,7 +67,7 @@ messages:
    {
       local iFactor;
 
-      iFactor = bound(iSpellPower/2 + 5,10,50);
+      iFactor = Bound(iSpellPower/2 + 5,10,50);
 
       return iFactor;
    }
@@ -76,47 +77,43 @@ messages:
       local lRoomList,oRoom,i;
 
       lRoomlist = Send(SYS,@GetRooms);
-      oRoom = send(SYS,@Findroombynum,#num=RID_GODROOM);
+      oRoom = Send(SYS,@FindRoomByNum,#num=RID_GODROOM);
       i = 1;
 
-      while (send(oRoom,@SeanceCheck) = FALSE) AND (i < 20)
+      while (Send(oRoom,@SeanceCheck) = FALSE) AND (i < 20)
       {
          oRoom = Nth(lRoomlist,Random(1,Length(lRoomlist)));
          if oRoom = $ OR i = $
          {
-            oRoom = send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
+            oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
             break;
          }
          i = i + 1;
       }
-      
+
       if i = 20
       {
-         oRoom = send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
+         oRoom = Send(SYS,@FindRoomByNum,#num=RID_TOS_INN);
       }
 
       return oRoom;
-
    }
 
-  
-   GetDuration(iSpellpower = 0)
+   GetDuration(iSpellpower=0)
    {
       local iDuration;
       iDuration = (116 + 4*iSpellPower) * 1000;    %%% 2-8.5 minutes
       return iDuration;
    }
-   
 
    OfferToNewCharacters()
    {
-      %% 
       return FALSE;
    }
 
    GetPotionClass()
    {
-      RETURN &CloakPotion;
+      return &CloakPotion;
    }
   
    EffectDesc(who=$)
@@ -127,8 +124,8 @@ messages:
       AppendTempString(" enchantment will keep you hidden from enemy scrying ");
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
       AppendTempString("\% of the time.");
-      
-      return;
+
+      propagate;
    }
 
 end

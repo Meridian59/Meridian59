@@ -20,13 +20,16 @@ resources:
    ResistPoison_icon_rsc = irespois.bgf
    ResistPoison_desc_rsc = \
       "Stabilizes your immune system, protecting you from some poisons.  "
-      "Requires herbs and red mushrooms."
+      "Requires two herbs and a red mushroom."
    
-   ResistPoison_on_rsc = "Your body tingles for a moment, and you feel a little "
-                         "strange."
-   ResistPoison_off_rsc = "Your strange feeling of tolerance subsides."
-   ResistPoison_already_enchanted_rsc = "You're already resistant to poisons."
-   ResistPoison_success_rsc = "Your magic increases %s%s's resistance to poison."
+   ResistPoison_on_rsc = \
+      "Your body tingles for a moment, and you feel a little strange."
+   ResistPoison_off_rsc = \
+      "Your strange feeling of tolerance subsides."
+   ResistPoison_already_enchanted_rsc = \
+      "You're already resistant to poisons."
+   ResistPoison_success_rsc = \
+      "Your magic increases %s%s's resistance to poison."
 
    resistpoison_sound = kresistp.wav
 
@@ -65,14 +68,14 @@ messages:
 
    GetStateValue(iSpellPower=$)
    {
-      local ifactor;    
+      local iFactor;
 
       iFactor = bound(iSpellPower,10,99);
 
       return iFactor;
    }
-  
-   GetDuration(iSpellPower = 0)
+
+   GetDuration(iSpellPower=0)
    {
       local iDuration;
 
@@ -81,7 +84,7 @@ messages:
       % Convert to ms.
       iDuration = iDuration * 1000;
 
-      return iDuration;     
+      return iDuration;
    }
 
    OfferToNewCharacters()
@@ -92,7 +95,7 @@ messages:
 
    GetPotionClass()
    {
-      RETURN &ResistPoisonPotion;
+      return &ResistPoisonPotion;
    }
 
    EffectDesc(who=$)
@@ -103,8 +106,8 @@ messages:
       AppendTempString(" enchantment will protect you from poisoning attempts ");
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
       AppendTempString("\% of the time.");
-      
-      return;
+
+      propagate;
    }
 
 end

@@ -458,8 +458,8 @@ messages:
       AppendTempString(" base ");
       AppendTempString(Send(SYS,@GetSpellDamageTypeName,#type=(viSpellType & ~ATCK_SPELL_ALL)));
       AppendTempString(" damage.");
-      
-      return;
+
+      propagate;
    }
 
 end

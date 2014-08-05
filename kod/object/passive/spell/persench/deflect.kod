@@ -19,11 +19,11 @@ resources:
    Deflect_name_rsc = "deflect"
    Deflect_icon_rsc = imirror.bgf
    Deflect_desc_rsc = \
-      "Calls upon Kraanan's will to form a protective barrier around the target "
-      "which protects them from direct damaging attack magics, but not from "
-      "other magics, such as enchantments.  "
-      "Requires solagh and kriipa claws to cast."
-   
+      "Calls upon Kraanan's will to form a protective barrier around the "
+      "target which protects them from direct damaging attack magics, but "
+      "not from other magics, such as enchantments.  "
+      "Requires a vial of solagh and one kriipa claw to cast."
+
    Deflect_already_enchanted_rsc = "You are already enchanted by deflect."
 
    Deflect_on_rsc = "A magical barrier surrounds you."
@@ -76,7 +76,7 @@ classvars:
    vrSucceed_wav = Deflect_sound
 
 properties:
-   
+
 messages:
 
    ResetReagents()
@@ -88,13 +88,13 @@ messages:
       return;
    }
 
-   GetStateValue(who = $,iSpellPower= 0,Target=$)
+   GetStateValue(who=$,iSpellPower=0,Target=$)
    {
       local iReflectOdds;
 
       iReflectOdds = iSpellPower * 3 / 4;
 
-      return bound(iReflectOdds,10,75);
+      return Bound(iReflectOdds,10,75);
    }
 
    GetDuration(iSpellPower=0)
@@ -107,7 +107,7 @@ messages:
       return iDuration;
    }
 
-   TryDeflect(caster = $, victim = $, oSpell = $)
+   TryDeflect(caster=$,victim=$,oSpell=$)
    "Returns TRUE if the spell is deflected."
    {
       local i, chance;
@@ -119,12 +119,12 @@ messages:
          % Give players a decent chance to improve the spell!
          for i in Send(victim,@GetPassiveImprovementList)
          {
-            if First(i) = self AND random(1,3) = 3
+            if First(i) = self AND Random(1,3) = 3
             {
                Post(First(i),@ImproveAbility,#who=victim);
             }
          }
-      
+
          chance = Send(victim,@GetEnchantedState,#what=self);
          if Random(0,100) < chance
          {
@@ -170,7 +170,7 @@ messages:
       AppendTempString(Send(who,@GetEnchantedState,#what=self));
       AppendTempString("\% of the time.");
       
-      return;
+      propagate;
    }
 
 end

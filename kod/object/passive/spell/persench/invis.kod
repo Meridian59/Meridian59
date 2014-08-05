@@ -21,7 +21,7 @@ resources:
    invisibility_desc_rsc = \
      "Qor cloaks your body with a shimmering field leaving you "
      "invisible for a brief period.  "
-     "Requires dark angel feathers to cast."
+     "Requires one dark angel feather to cast."
    
    invisibility_already_enchanted_rsc = "You are already invisible."
 
@@ -30,7 +30,6 @@ resources:
       "The shimmering field around you dissolves, leaving you "
       "visible once more."
    invisibility_success_rsc = "%s%s disappears from view."
-      
 
    invisibility_sound = qinvis.wav
 
@@ -72,7 +71,7 @@ messages:
       return;
    }
 
-   CastSpell(who = $,iSpellPower=0, lTargets = $)
+   CastSpell(who=$,iSpellPower=0,lTargets=$)
    {
       % If it's only self cast, spoof self as target for following code
       if NOT vbCanCastonOthers
@@ -80,9 +79,9 @@ messages:
          lTargets = Cons(who, lTargets);
       }
 
-      Send(first(lTargets),@ResetPlayerFlagList);
-      Send(first(lTargets),@AddDefenseModifier,#what=self);
-      
+      Send(First(lTargets),@ResetPlayerFlagList);
+      Send(First(lTargets),@AddDefenseModifier,#what=self);
+
       propagate;
    }
 
@@ -109,30 +108,30 @@ messages:
       return iSpellpower;
    }
 
-   EndEnchantment(who = $, report = TRUE, state = 0)
+   EndEnchantment(who=$,report=TRUE,state=0)
    {
-      send(who,@RemoveDefenseModifier,#what=self);
-      
+      Send(who,@RemoveDefenseModifier,#what=self);
+
       propagate;
    }
 
    % Stuff we handle to be a defense modifier.
 
-   ModifyDefensePower(who = $,what = $,defense_power = 0)
+   ModifyDefensePower(who=$,what=$,defense_power=0)
    {
       local iSpellpower;
 
-      iSpellpower = send(who,@GetEnchantedState,#what=self);
-      
+      iSpellpower = Send(who,@GetEnchantedState,#what=self);
+
       return (defense_power + 25 + iSpellpower);
    }
 
-   ModifyDefenseDamage(who = $,what = $,damage = $)
+   ModifyDefenseDamage(who=$,what=$,damage=$)
    {
       return damage;
    }
 
-   DefendingHit(who = $,what = $)
+   DefendingHit(who=$,what=$)
    {
       return;
    }
@@ -150,8 +149,8 @@ messages:
       AppendTempString(" enchantment adds ");
       AppendTempString(25 + Send(who,@GetEnchantedState,#what=self));
       AppendTempString(" defense.");
-      
-      return;
+
+      propagate;
    }
 
 end

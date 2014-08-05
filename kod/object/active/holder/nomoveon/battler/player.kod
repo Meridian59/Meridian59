@@ -3857,6 +3857,12 @@ messages:
       {
          oRoom = Send(victim,@GetOwner);
       }
+      
+      % No attacking logged out players under any circumstances
+      if Send(victim,@GetOwner) = $
+      {
+         return FALSE;
+      }
 
       % Make sure room allows the attack. Check if room has special combat affects.
       if actual = TRUE

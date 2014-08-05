@@ -411,6 +411,7 @@ messages:
             AND iKraananPower = iJalaPower
             AND iJalaPower = iShalPower
             AND iShalPower = iQorPower
+            AND iFarenPower <> 0
          {
             if NOT bFoundProperties
             {

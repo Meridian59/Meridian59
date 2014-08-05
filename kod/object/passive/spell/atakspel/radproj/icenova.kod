@@ -1,0 +1,201 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+IceNova is RadiusProjectile
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   icenova_name_rsc = "ice nova"
+   icenova_icon_rsc = iicenova.bgf
+   icenova_projectile_rsc = icebolt.bgf
+   icenova_desc_rsc = \
+      "Call upon the magic of Faren and propel forth a blast of ice, "
+      "chilling and blistering the skin of those around you.  "
+      "Requires red and blue mushrooms to cast."
+
+   icenova_first_rsc = \
+      "You channel the power of Faren and unleash a flurry of ice shards!"
+   icenova_third_rsc = \
+      "%s%s channels the power of Faren and unleashes a flurry of ice shards!"
+
+   % These aren't in use at the moment.
+   icenova_killed_someone = \
+      "The ice shards fatally wound %s%s."
+   icenova_cast_rsc = \
+      "You let out a cry of pain as ice shards pierce your skin, causing ~r~B%i~n damage."
+   icenova_hit_rsc = \
+      "%s%s lets out a cry of pain as ice shards pierce %s skin for ~k~B%i~n damage."
+
+   icenova_sound = fshatter.wav
+
+classvars:
+
+   vrName = icenova_name_rsc
+   vrDesc = icenova_desc_rsc
+   vrIcon = icenova_icon_rsc
+
+   viSpell_num = SID_ICE_NOVA
+   viSchool = SS_FAREN
+   viSpell_level = 5
+   viMana = 15
+
+   viChance_to_increase = 15
+   viMeditate_ratio = 75
+   vrSucceed_wav = icenova_sound
+
+   viAttack_spell = ATCK_SPELL_ALL+ATCK_SPELL_COLD
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
+
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 125
+   % Color is lightning.
+   viProjectileLightColor = LIGHT_DBLUE
+
+   vrProjectile_icon = icenova_projectile_rsc
+   vbIsAreaEffect = TRUE
+
+properties:
+
+   % Damage radius for ice nova
+   piRange = 6
+   piSpeed = 2
+
+   piDamageMin = 6
+   piDamageMax = 12
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&RedMushroom,1],plReagents);
+      plReagents = Cons([&BlueMushroom,2],plReagents);
+
+      return;
+   }
+
+   GetProjectileSpeed()
+   {
+      % Normally 11, slower for testing
+      return piSpeed;
+   }
+
+   GetProjectileRange()
+   {
+      return piRange;
+   }
+
+   SendProjectileAnimation()
+   {
+      AddPacket(1, ANIMATE_CYCLE, 4, 40, 2, 2, 2, 2);   % 40ms between animations
+      return;
+   }
+
+   GetProjectileIcon()
+   {
+      return vrProjectile_icon;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   GetTargets(who=$,lTargets=$)
+   "This returns a list of valid targets in range."
+   {
+      local lFinalTargets, oRoom, i, each_obj, iRange_squared,
+      iRowDiff, iColDiff, iRowCenter, iColCenter, lActive;
+
+      lFinalTargets = $;
+
+      iRange_squared = piRange * piRange;
+      iRowCenter = Send(who,@GetRow);
+      iColCenter = Send(who,@GetCol);
+      oRoom = Send(who,@GetOwner);
+      lActive = Send(oRoom,@GetplActive);
+
+      for i in lActive
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+         if each_obj <> who
+            AND IsClass(each_obj, &Battler)
+         {
+            iRowDiff = iRowCenter - Send(each_obj,@GetRow);
+            iColDiff = iColCenter - Send(each_obj,@GetCol);
+            if (iRowDiff*iRowDiff + iColDiff*iColDiff) < iRange_squared
+               AND NOT (IsClass(oRoom,&GuildHall)
+                     AND Send(oRoom,@InFoyer,#who=each_obj)
+                        <> Send(oRoom,@InFoyer,#who=who))
+            {
+               lFinalTargets = Cons(each_obj,lFinalTargets);
+            }
+         }
+      }
+
+      return lFinalTargets;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0,bItemCast=FALSE)
+   {
+      % This is an area damage spell, so add room messages
+      % showing the spell being cast.
+      Send(self,@DoIceNova,#who=who,#bItemCast=bItemCast);
+
+      propagate;
+   }
+
+   DoIceNova(who=$,bItemCast=FALSE)
+   {
+      local i, oRoom, lActive, each_obj;
+
+      if who <> $
+      {
+         oRoom = Send(who,@GetOwner);
+      }
+      else
+      {
+         return;
+      }
+
+      lActive = Send(oRoom,@GetHolderActive);
+
+      % Send a message to all in room of spellcasters actions
+      for i in lActive
+      {
+         each_obj = Send(oRoom,@HolderExtractObject,#data=i);
+
+         if isClass(each_obj,&Player)
+         {
+            if each_obj = who
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=icenova_first_rsc);
+            }
+            else
+            {
+               Send(each_obj,@MsgSendUser,#message_rsc=icenova_third_rsc,
+                     #parm1=Send(who,@GetCapDef),#parm2=Send(who,@GetName));
+            }
+         }
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

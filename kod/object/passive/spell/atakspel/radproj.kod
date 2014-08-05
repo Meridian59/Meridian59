@@ -1,0 +1,107 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+RadiusProjectile is AttackSpell
+
+% A projectile that is sent out in a radius, instead of at a target. The spell
+% itself hits all valid targets in the radius.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+   vrRadius_Icon = $
+   vrProjectile_icon = $
+   vbIsRangedAttack = TRUE
+
+   viProjectileFlag = PROJ_FLAG_LIGHT_SOURCE
+
+   % Projectile lighting information.
+   viProjectileLightFlags = LIGHT_FLAG_ON | LIGHT_FLAG_DYNAMIC
+   % Medium light range, out of 255.
+   viProjectileLightIntensity = 100
+   % Default color is lightning.
+   viProjectileLightColor = LIGHT_LIGHTNING
+
+   viChance_To_Increase = 7
+
+properties:
+
+   piRange = $
+
+   % Maximum amount of bonus damage mana focus gives us for casting this spell.
+   piManaFocusBonus = 10
+
+messages:
+
+   CastSpell(who=$,lTargets=$)
+   {
+      local oOwner, i, lActive, each_obj;
+
+      oOwner = Send(who,@GetOwner);
+
+      % Show bolt flying through the air.
+      lActive = Send(oOwner,@GetHolderActive);
+
+      for i in lActive
+      {
+         each_obj = Send(oOwner,@HolderExtractObject,#data=i);
+
+         if isClass(each_obj,&Player)
+         {
+            Send(oOwner,@SomethingShotRadius,#who=who,#projectile=self,
+               #flags=viProjectileFlag,#range=piRange);
+         }
+      }
+
+      propagate;
+   }
+
+   % Return the icon used to display a spell shooting through the air.
+   GetProjectileIcon()
+   {
+      return vrProjectile_icon;
+   }
+
+   % Return the speed at which a particular spell should appear to shoot through the air.
+   GetProjectileSpeed()
+   {
+      return 5;
+   }
+
+   SendProjectileAnimation()
+   {
+      % Send animation info to user.  Default is no animation, display with group 1
+      AddPacket(1,ANIMATE_NONE, 2,1);
+
+      return;
+   }
+
+   GetProjectileLightFlags()
+   {
+      return viProjectileLightFlags;
+   }
+
+   GetProjectileLightIntensity()
+   {
+      return viProjectileLightIntensity;
+   }
+
+   GetProjectileLightColor()
+   {
+      return viProjectileLightColor;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

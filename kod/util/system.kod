@@ -688,7 +688,6 @@ messages:
       piRecreate_State = RECREATE_PHASE_FIVE;
 
       Send(self,@RecreateLearnAdvice);
-      Send(self,@RecomputeShrineTotals);
       Send(self,@RecreateMonsterTemplates);
       Send(self,@RecreateItemTemplates);
       Send(self,@RecreateMoneyTemplates);
@@ -2883,12 +2882,12 @@ messages:
    ReturnShrineAllegiance()
    {
       % Returns proper shrine allegiance at RecreateAll phase 5
-	  
+
       local i, n;
       if plShrine_Allegiances <> $
       {
          n = 5;
-         
+
          for i in plShrines
          {
             Send(i,@SetAllegiance,#allegiance=(Nth(plShrine_Allegiances,n)));
@@ -2896,10 +2895,13 @@ messages:
          }
       }
       plShrine_Allegiances = $;
-      
+
+      % We have to recalculate the allegiance if we want the power to register
+      Send(self,@RecomputeShrineTotals);
+
       return;
    }
-   
+
    GetShrineBonus(school=$)
    {
       if school = $ OR school <> bound(school,SS_SHALILLE,SS_JALA)

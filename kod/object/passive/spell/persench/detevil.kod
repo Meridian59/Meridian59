@@ -19,18 +19,20 @@ resources:
    DetectEvil_name_rsc = "detect evil"
    DetectEvil_icon_rsc = iDetEvil.bgf
    DetectEvil_desc_rsc = \
-      "Allows you to see the vile defilers of her name.  Reveals all evil people and "
-      "monsters that are more foul than you are pure.  "
+      "Allows you to see the vile defilers of her name.  Reveals all evil "
+      "people and monsters that are more foul than you are pure.  "
       "Requires a fairy wing to cast."
    
-   DetectEvil_on_rsc = "You feel more attuned to the darkness of the hearts around you."
+   DetectEvil_on_rsc = \
+      "You feel more attuned to the darkness of the hearts around you."
    DetectEvil_off_rsc = "Your eyesight returns to its former mundanity."
    DetectEvil_already_enchanted_rsc = "You can already see the vile."
    DetectEvil_Success_rsc = "You grant %s%s the ability to sense evil."
 
    DetectEvil_sound = sdevil.wav
 
-   DetectEvil_spell_intro = "Shal'ille Lv. 1: Allows you to detect evil people and monsters."
+   DetectEvil_spell_intro = \
+      "Shal'ille Lv. 1: Allows you to detect evil people and monsters."
 
 classvars:
 
@@ -69,7 +71,7 @@ messages:
       return;
    }
 
-   CastSpell(who = $,iSpellPower=0)
+   CastSpell(who=$,iSpellPower=0)
    {
       % Post this so it's after the flag being applied.
       Post(who,@ToCliRoomContents);
@@ -84,47 +86,35 @@ messages:
       return;
    }
 
-   GetStateValue(iSpellpower = $)
+   GetStateValue(iSpellpower=$)
    {
-      return $;
+      return iSpellPower;
    }
-   
-   GetDuration(iSpellpower = 0)
+
+   GetDuration(iSpellpower=0)
    {
       local iDuration;
 
       % 4 - 8 minutes max,
-      iDuration = 2400 * (100 + iSpellPower);   
+      iDuration = 2400 * (100 + iSpellPower);
 
       return iDuration;
    }
-   
-   EndEnchantment(who = $, report = TRUE, state = 0)
-   {  
-      if send(who,@IsLoggedOn)
+
+   EndEnchantment(who=$,report=TRUE,state=0)
+   {
+      if Send(who,@IsLoggedOn)
       {
          % Must post this so it's after the flag being removed.
          Post(who,@ToCliRoomContents);
       }
-     
+
       propagate;
    }
 
    GetPotionClass()
    {
-      RETURN &DetectEvilPotion;
-   }
-
-   EffectDesc(who=$)
-   {
-      AppendTempString("\n\n");
-      AppendTempString("Your current ");
-      AppendTempString(Send(self,@GetName));
-      AppendTempString(" enchantment allows you to see those who serve evil for ");
-      AppendTempString(2400 * (100+Send(who,@GetEnchantedState,#what=self)));
-      AppendTempString(" milliseconds.");
-      
-      return;
+      return &DetectEvilPotion;
    }
 
 end

@@ -1369,34 +1369,41 @@ messages:
 
       iSpell = Send(oSpell,@GetSpellNum);
       if iSpell = SID_HOLY_WEAPON
-         OR iSpell = SID_UNHOLY_WEAPON 
+         OR iSpell = SID_UNHOLY_WEAPON
          OR iSpell = SID_ENCHANT_WEAPON
          OR iSpell = SID_CURSE_WEAPON
       {
          return FALSE;
       }
-      
-      for i in plItem_Attributes
+
+      if iSpell = SID_SHROUD
+      AND (IsClass(self,&Weapon)
+         OR IsClass(self,&DefenseModifier))
       {
-         iNum = Send(self,@GetNumFromCompound,#compound=First(i));
-         oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
-                         
-         if oItemAtt = $
+         for i in plItem_Attributes
          {
-            Debug("Illegal ItemAtt in list!");
+            iNum = Send(self,@GetNumFromCompound,#compound=First(i));
+            oItemAtt = Send(SYS,@FindItemAttByNum,#num=iNum);
+                            
+            if oItemAtt = $
+            {
+               Debug("Illegal ItemAtt in list!");
+               
+               continue;
+            }
             
-            continue;
+            if NOT Send(oItemAtt,@ItemCanEnchant,#oItem=self)
+            {
+               return FALSE;
+            }
          }
-         
-         if NOT Send(oItemAtt,@ItemCanEnchant,#oItem=self)
-         {
-            return FALSE;
-         }
+
+         return TRUE;
       }
-      
-      return TRUE;
+
+      return FALSE;
    }
-   
+
    DropOnDeath()
    "Most items are dropped on death.  But, assassin's blades and a few other "
    "things are not."

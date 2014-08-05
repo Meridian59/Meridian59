@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Blind is Spell
+Blind is Debuff
 
 constants:
 
@@ -21,8 +21,8 @@ resources:
    blind_desc_rsc = \
       "The magical force of Qor burns the target's eyes, "
       "taking away all sight for a brief period.  "
-      "Requires entroot berries and purple mushrooms to cast."
-   
+      "Requires two entroot berries and a purple mushroom to cast."
+
    blind_caster = "%s%s is now blind."
    blind_already_enchanted = "%s%s is already blind."
 
@@ -79,15 +79,10 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
@@ -112,26 +107,26 @@ messages:
          {
             Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
          }
-         
+
          return FALSE;
       }
 
-      % check for enchantment already applied
+      % Check for enchantment already applied
       if Send(target,@IsEnchanted,#what=self)
       {
          if NOT bItemCast
          {
             Send(who,@MsgSendUser,#message_rsc=blind_already_enchanted,
-	              #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+                  #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
          }
-         
+
          return FALSE;
       }
 
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local oTarget;
 
@@ -174,7 +169,7 @@ messages:
             Send(oTarget,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_ON);
          }
       }
-      else  
+      else
       {
          % class is Monster
          Post(oTarget,@ResetBehaviorFlags);
@@ -195,8 +190,8 @@ messages:
 
       return random(iDuration/2,iDuration);
    }
-   
-   EndEnchantment(who = $, report = TRUE)
+
+   EndEnchantment(who=$,report=TRUE)
    {
       if IsClass(who,&Player)
       {
@@ -205,15 +200,15 @@ messages:
          {
             Send(who,@MsgSendUser,#message_rsc=blind_off);
          }
-      } 
-      else  
+      }
+      else
       {
          % Class is monster.
          % This has to be done AFTER the enchantment is gone from the
          %  monster's ench list - post it.
-         Post(who,@ResetBehaviorFlags);   
+         Post(who,@ResetBehaviorFlags);
       }
-     
+
       return;
    }
 
@@ -225,19 +220,18 @@ messages:
    RestartEnchantmentEffect(who=$,state=$)
    {
       Send(who,@MsgSendUser,#message_rsc=blind_on);
-      Send(who,@EffectSendUser, #what=self, #effect=EFFECT_BLIND_ON);
-      
+      Send(who,@EffectSendUser,#what=self,#effect=EFFECT_BLIND_ON);
+
       return;
    }
 
-   ModifyMonsterBehavior(mob = $)
+   ModifyMonsterBehavior(mob=$)
    {
       Send(mob,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=TRUE);
       Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
-      
-      return;      
-   }
 
+      return;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

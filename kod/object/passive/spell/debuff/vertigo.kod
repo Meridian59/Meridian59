@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Vertigo is Spell
+Vertigo is Debuff
 
 constants:
 
@@ -19,14 +19,16 @@ resources:
    Vertigo_name_rsc = "vertigo"
    Vertigo_icon_rsc = ivertigo.bgf
    Vertigo_desc_rsc = \
-      "This spell causes the victim to become so ill that they can hardly stand, much less fight. "
-      "Requires dragonfly eyes and solagh."
-   
+      "This spell causes the victim to become so ill that they can hardly "
+      "stand, much less fight. "
+      "Requires two dragonfly eyes and a vial of solagh to cast."
+
    Vertigo_caster = "%s%s looks strangely dazed... and confused."
    Vertigo_already_enchanted = "%s%s already appears to be freaking."
 
-   Vertigo_on = "Your stomach leaps into your throat and feel as though"
-      " someone hit you on the head with a very large hammer."
+   Vertigo_on = \
+      "Your stomach leaps into your throat and feel as though "
+      "someone hit you on the head with a very large hammer."
    Vertigo_off = "You recover from that terrible feeling."
 
    Vertigo_sound = rvertigo.wav
@@ -53,7 +55,7 @@ classvars:
    vrSucceed_wav = Vertigo_sound
 
 properties:
-   
+
 messages:
 
    ResetReagents()
@@ -65,15 +67,10 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
       local target, i;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
@@ -84,8 +81,8 @@ messages:
 
       if NOT IsClass(target,&Battler) OR IsClass(target,&Revenant)
       {
-         Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
-              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         Send(who,@MsgSendUser,#message_rsc=spell_bad_target,#parm1=vrName,
+               #parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
 
          return FALSE;
       }
@@ -97,49 +94,49 @@ messages:
          return FALSE;
       }
 
-      % check for enchantment already applied
-      if (IsClass(target,&Player)
-          AND Send(target,@IsEnchanted,#what=self))
-         OR (IsClass(target,&Monster)
-             AND send(target,@IsEnchanted,#what=send(SYS,@FindSpellBynum,#num=SID_PALSY)))
+      % Check for enchantment already applied
+      if Send(target,@IsEnchanted,#what=self)
       {
          Send(who,@MsgSendUser,#message_rsc=Vertigo_already_enchanted,
               #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
-    
+
          return FALSE;
       }
 
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
-      local oTarget,iAmount,iDuration,iAgil,iStr,iAim,oPalsy;
+      local oTarget,iAmount,iDuration,iAgil,iStr,iAim;
 
       oTarget = First(lTargets);
-      iDuration = send(self,@GetDuration,#iSpellPower=iSpellPower);
-      iAmount = send(self,@GetAmount,#iSpellPower=iSpellPower);
-      oPalsy = send(SYS,@FindSpellBynum,#num=SID_PALSY);
-      
+      iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower);
+      iAmount = Send(self,@GetAmount,#iSpellPower=iSpellPower);
+
       Send(who,@MsgSendUser,#message_rsc=Vertigo_caster,
            #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
 
-      % spell effects
+      % Spell effects
       if IsClass(oTarget,&Player)
       {
          Send(oTarget,@MsgSendUser,#message_rsc=Vertigo_on);
          Send(oTarget,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=iDuration);
-         iAgil = send(oTarget,@AddAgility,#points=-iAmount);
-         iStr = send(oTarget,@AddMight,#points=-iAmount);
-         iAim = send(oTarget,@AddAim,#points=-iAmount);
+
+         iAgil = Send(oTarget,@AddAgility,#points=-iAmount);
+         iStr = Send(oTarget,@AddMight,#points=-iAmount);
+         iAim = Send(oTarget,@AddAim,#points=-iAmount);
+
          Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,#state=[-iAgil,-iStr,-iAim]);
       }
       else
       {
-         Send(oPalsy,@MakeSick,#who=oTarget,#iAmount=(iSpellPower/3+1),
-              #iDuration=send(self,@GetDuration,#iSpellPower=iSpellPower));
+         iAgil = Send(oTarget,@AddMonsterAgility,#points=-iAmount);
+         iAim = Send(oTarget,@AddMonsterAim,#points=-iAmount);
+
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,#state=[-iAgil,-iAim]);
       }
-    
+
       propagate;
    }
 
@@ -147,7 +144,9 @@ messages:
    {
       local iAmount;
 
-      iAmount = 15+(ispellpower/10);
+      % Stats are reduced between 15-24
+      iAmount = 15+(iSpellPower/10);
+
       return iAmount;
    }
 
@@ -155,38 +154,53 @@ messages:
    {
       local iDuration;
 
+      % Duration is 50-100% of 2.5 sec to 14.75 sec
       iDuration = (10 + iSpellPower/2)*250;
 
-      return random(iDuration/2,iDuration);
+      return Random(iDuration/2,iDuration);
    }
-   
-   EndEnchantment(who = $, state=$, report = TRUE)
+
+   EndEnchantment(who=$,state=$,report=TRUE)
    {
       if report
       {
          Send(who,@MsgSendUser,#message_rsc=Vertigo_off);
       }
 
-      send(who,@AddAgility,#points=nth(state,1));
-      send(who,@AddMight,#points=nth(state,2));
-      send(who,@AddAim,#points=nth(state,3));
-     
-      return;
-   }
+      if IsClass(who,&Player)
+      {
+         Send(who,@AddAgility,#points=Nth(state,1));
+         Send(who,@AddMight,#points=Nth(state,2));
+         Send(who,@AddAim,#points=Nth(state,3));
+      }
+      else
+      {
+         Send(who,@AddMonsterAgility,#points=Nth(state,1));
+         Send(who,@AddMonsterAim,#points=Nth(state,2));
+      }
 
-   SendEffectData()
-   {
       return;
    }
 
    RestartEnchantmentEffect(who=$,state=$)
    {
+      local i, iDuration, oList;
+
+      oList = Send(who,@GetEnchantmentList);
+
+      for i in oList
+      {
+         if Nth(i,2) = self
+         {
+            iDuration = GetTimeRemaining(Nth(i,1));
+         }
+      }
+
       Send(who,@MsgSendUser,#message_rsc=Vertigo_on);
-      Send(who,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=15000);
+      Send(who,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=iDuration);
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

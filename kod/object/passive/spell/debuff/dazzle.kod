@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Dazzle is Spell
+Dazzle is Debuff
 
 constants:
 
@@ -20,7 +20,7 @@ resources:
    Dazzle_icon_rsc = idazzle.bgf
    Dazzle_desc_rsc = \
       "Dazzles the target with the blinding light of Shal'ille's goodness.  "
-      "Requires emeralds and purple mushrooms."
+      "Requires an emerald and a purple mushroom to cast."
    
    Dazzle_caster = "%s%s is now dazzled."
    Dazzle_already_enchanted = "%s%s is already dazzled."
@@ -52,7 +52,7 @@ classvars:
    vrSucceed_wav = Dazzle_sound
 
 properties:
-   
+
 messages:
 
    ResetReagents()
@@ -64,15 +64,10 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
@@ -103,7 +98,7 @@ messages:
          return FALSE;
       }
 
-      % check for enchantment already applied
+      % Check for enchantment already applied
       if Send(target,@IsEnchanted,#what=self)
       {
          if not bItemCast
@@ -118,16 +113,16 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local oTarget, iDuration;
 
       oTarget = First(lTargets);
       iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower,
-                       #caster=who,#target=otarget);
+                        #caster=who,#target=oTarget);
 
       Send(self,@DoDazzle,#what=who,#oTarget=oTarget,#iDurationSecs=iDuration);
-      
+
       propagate;
    }
 
@@ -136,12 +131,12 @@ messages:
       local oSpell, iDuration;
 
       iDuration = iDurationSecs;
-     
+
       oSpell = Send(SYS,@FindSpellByNum,#NUM=SID_EAGLE_EYES);
       if Send(oTarget,@IsEnchanted,#what=oSpell)
       {
          iDuration = Send(oSpell,@DoEagleEyes,#oCaster=what,#oTarget=oTarget,
-                          #iDuration=iDuration,#iFactor=2);
+                           #iDuration=iDuration,#iFactor=2);
          if iDuration = $
          {
             % Resisted completely.
@@ -166,7 +161,7 @@ messages:
       }
 
       Send(what,@MsgSendUser,#message_rsc=Dazzle_caster,
-           #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+            #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
       Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
 
       return;
@@ -194,8 +189,8 @@ messages:
 
       return iDuration;
    }
-   
-   EndEnchantment(who = $, report = TRUE)
+
+   EndEnchantment(who=$,report=TRUE)
    {
       if IsClass(who,&Player)
       {
@@ -206,20 +201,20 @@ messages:
 
          Send(who,@EffectSendUserDuration,#effect=EFFECT_PAIN,#duration=8000);
          Send(who,@EffectSendUserXLat,#xlat=0);
-      } 
-      else  
+      }
+      else
       {
          % Class is monster
          % Post this so it's done AFTER the enchantment is gone from the
          %  monster's ench list
          Post(who,@ResetBehaviorFlags);
       }
-     
+
       return;
    }
 
-   SetSpellPlayerFlag(who = $)
-   {      
+   SetSpellPlayerFlag(who=$)
+   {
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_FIGHT,#value=TRUE);
       Send(who,@SetPlayerFlag,#flag=PFLAG_NO_MAGIC,#value=TRUE);
 
@@ -238,14 +233,13 @@ messages:
       return;
    }
 
-   ModifyMonsterBehavior(mob = $)
+   ModifyMonsterBehavior(mob=$)
    {
       Send(mob,@SetBehaviorFlag,#flag=AI_MOVE_RANDOM,#value=TRUE);
       Send(mob,@SetBehaviorFlag,#flag=AI_NOFIGHT,#value=TRUE);
 
-      return;      
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

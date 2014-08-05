@@ -7,20 +7,21 @@
 % Meridian is a registered trademark.
 
 % IMPORTANT NOTE: If you change the spell purge you might destroy the LogSafePenaltyEnable-function
+% as this function calls DoPurge here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Purge is Spell
+Purge is Debuff
 
 constants:
 
    include blakston.khd
 
    % At least how many enchantments should there be on a player to check
-   %  for auto-remove?
+   % for auto-remove?
    MIN_ENCHANTMENTS_FOR_AUTOREMOVE = 2
 
    % What's the minimum chance to remove spells we want before checking
-   %  for auto-remove?
+   % for auto-remove?
    MIN_CHANCE_FOR_AUTOREMOVE = 60
 
 resources:
@@ -29,7 +30,7 @@ resources:
    Purge_icon_rsc = ipurge.bgf
    Purge_desc_rsc = \
       "Strips helpful personal enchantments off of the target. "
-      "Requires emeralds and purple mushrooms to cast."
+      "Requires five emeralds and two purple mushrooms to cast."
    
    Purge_on = \
       "A bright, holy light is trying to burn away your beneficial "
@@ -56,7 +57,7 @@ classvars:
    viOutlaw = TRUE
    viNoNewbieOffense = TRUE
 
-   viFlash = FLASH_BAD   
+   viFlash = FLASH_BAD
 
 properties:
 
@@ -71,20 +72,15 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i, lEnchantment, bHasEnchantment, oSpell;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
          return FALSE;
-      }  
+      }
 
       target = First(lTargets);
 
@@ -92,11 +88,11 @@ messages:
       {
          if not bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
                  #parm1=vrName,#parm2=Send(target,@GetDef),
                  #parm3=Send(target,@GetName));
          }
-         
+
          return FALSE;
       }
 
@@ -114,7 +110,7 @@ messages:
                AND NOT Send(oSpell,@IsHarmful)
             {
                bHasEnchantment = TRUE;
-               
+
                break;
             }
          }
@@ -123,18 +119,18 @@ messages:
       if NOT bHasEnchantment
       {
          Send(who,@MsgSendUser,#message_rsc=Purge_not_enchanted, 
-              #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
-              
+               #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
+
          return FALSE;
       }
 
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local oTarget, lInfo, oSpell, lList, lEnchantmentList;
-      
+
       oTarget = First(lTargets);
       if oTarget <> who
       {
@@ -142,16 +138,16 @@ messages:
               #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
               #parm3=Send(oTarget,@GetName));
       }
-      
+
       Send(oTarget,@MsgSendUser,#message_rsc=Purge_on);
 
-      % keep tabs on guides/bards, but not admins.
+      % Keep tabs on guides/bards, but not admins.
       if IsClass(who, &DM)
       {
          if GetClass(who) = &DM
             AND who <> oTarget
          {
-            debug(Send(who,@GetTrueName)," cast Purge on ",Send(oTarget,@GetName));
+            Debug(Send(who,@GetTrueName)," cast Purge on ",Send(oTarget,@GetName));
          }
 
          if Send(who,@PlayerIsImmortal)
@@ -167,8 +163,8 @@ messages:
    }
 
    % Override this to allow for non-outlaw self-casting of spell on Sacred
-   %  Haven.
-   GetAttackTargets(who=$, lTargets=$, report=TRUE)
+   % Haven.
+   GetAttackTargets(who=$,lTargets=$,report=TRUE)
    "Returns a list of targets the caster can attack."
    {
       % If we're on Sacred Haven and we target ourselves, go for it.
@@ -181,7 +177,7 @@ messages:
       propagate;
    }
 
-   DoPurge(who=$, iChance=$)
+   DoPurge(who=$,iChance=$)
    "Remove positive enchantments on who with a given chance to remove each one."
    {
       local iNumEnchantments, lEnchantments, iModifiedChance, oEnchantment,
@@ -198,7 +194,7 @@ messages:
       if iChance = $
       {
          Send(who,@RemoveAllPersonalEnchantments);
-         
+
          return TRUE;
       }
 
@@ -217,12 +213,12 @@ messages:
             lEnchantments = cons(oSpell,lEnchantments);
          }
       }
-      
+
       iNumEnchantments = length(lEnchantments);
 
       % Anti-clumpy code: If there is at least two enchantments on a player
-      %  and the chance to dispell is greater than 60%, then auto-remove one
-      %  enchantment.
+      % and the chance to dispell is greater than 60%, then auto-remove one
+      % enchantment.
       if iNumEnchantments >= MIN_ENCHANTMENTS_FOR_AUTOREMOVE
          AND iChance >= MIN_CHANCE_FOR_AUTOREMOVE
       {
@@ -243,10 +239,9 @@ messages:
             bRemovedSomething = TRUE;
          }
       }
-      
+
       return bRemovedSomething;
    }
-   
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

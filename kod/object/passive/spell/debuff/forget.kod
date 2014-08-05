@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-ForgetSpell is Spell
+ForgetSpell is Debuff
 
 constants:
 
@@ -23,19 +23,24 @@ resources:
    forgetspell_icon_rsc = iforget.bgf
    forgetspell_desc_rsc = \
       "Causes the victim to forget his or her own abilities.  "
-      "Requires firesand and uncut seraphym to cast."
+      "Requires two firesand and two uncut seraphym to cast."
 
-   forgetspell_already_enchanted = "You can't seem to make %s%s any more forgetful."
+   forgetspell_already_enchanted = \
+      "You can't seem to make %s%s any more forgetful."
 
    forgetspell_on = "The art of %s slips from your mind."
-   forgetspell_off = "You suddenly recall what it was that you had forgotten."
-   forgetspell_caster = "You glare at %s%s and they appear momentarily confused."
-   forgetspell_cast_self = "It occurs to you that casting forget on yourself may cause you to "
-                         "forget forgetting what you had forgotten, and thus you might forget "
-                         "not forgetting all you had forgotten when the forget spell leaves you, "
-                         "and so you forget about it."
+   forgetspell_off = \
+      "You suddenly recall what it was that you had forgotten."
+   forgetspell_caster = \
+      "You glare at %s%s and they appear momentarily confused."
+   forgetspell_cast_self = \
+      "It occurs to you that casting forget on yourself may cause you to "
+       "forget forgetting what you had forgotten, and thus you might forget "
+       "not forgetting all you had forgotten when the forget spell leaves "
+       "you, and so you forget about it."
 
-   forgetspell_caster_failed = "%s%s is too stupid to make any stupider!"
+   forgetspell_caster_failed = \
+      "%s%s is too stupid to make any stupider!"
 
    forgetspell_sound = rforget.wav
 
@@ -61,26 +66,21 @@ classvars:
    viHarmful = TRUE
 
    vbCastable_in_HappyLand = FALSE
-   
+
 properties:
 
 messages:
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
    ResetReagents()
-   {      
+   {
       plReagents = $;
       plReagents = Cons([&FireSand,2],plReagents);
       plReagents = Cons([&UncutSeraphym,2],plReagents);
-      
+
       return;
    }
 
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
 
       if who = first(lTargets)
@@ -89,16 +89,16 @@ messages:
          {
             Send(who,@MsgSendUser,#message_rsc=forgetspell_cast_self);
          }
-         
+
          return FALSE;
       }
 
-      if not isclass(First(lTargets),&Player)
+      if not IsClass(First(lTargets),&Player)
       {
          return FALSE;
       }
- 
-      % check for enchantment already applied
+
+      % Check for enchantment already applied
       if Send(First(lTargets),@CheckPlayerFlag,#Flag=PFLAG_FORGOTTEN)
       {
          if not bItemCast
@@ -106,22 +106,22 @@ messages:
             Send(who,@MsgSendUser,#message_rsc=forgetspell_already_enchanted,
                  #parm1=Send(First(lTargets),@GetIndef),#parm2=Send(First(lTargets),@GetName));
          }
-         
+
          return FALSE;
       }
 
       propagate;
    }
 
-   CastSpell(who = $, lTargets=$, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local iPowerLeft,iTime,i,lSkills,lSpells,oTarget,lState,
             iCompound,iAbilityNum,oAbility,iSkillLength,iSpellLength;
 
       lState = $;
       oTarget = Nth(lTargets,1);
-      lSkills = send(oTarget,@GetSkillList);
-      lSpells = send(oTarget,@GetSpellList);
+      lSkills = Send(oTarget,@GetSkillList);
+      lSpells = Send(oTarget,@GetSpellList);
       iPowerLeft = iSpellPower;
 
       iTime = FORGET_BASE_TIME;
@@ -134,18 +134,18 @@ messages:
       if iSkillLength = 0 and iSpellLength = 0
       {
          Send(who,@MsgSendUser,#message_rsc=forgetspell_caster_failed,
-              #parm1 = send(oTarget,@GetCapDef),
-              #parm2 = send(oTarget,@GetName,#cap=TRUE));
+               #parm1=Send(oTarget,@GetCapDef),
+               #parm2=Send(oTarget,@GetName,#cap=TRUE));
 
-         propagate;      
+         propagate;
       }
-      
+
       % There is no protection to keep from forgetting the same spell
-      %   twice, this isn't a problem, and can make the spell more dynamic
-      %   in that there is a failure clause, in that a player won't lose as
-      %   many spells/skills.  It also protects players who don't have many
-      %   skills from losing all that thay do have
-       
+      % twice, this isn't a problem, and can make the spell more dynamic
+      % in that there is a failure clause, in that a player won't lose as
+      % many spells/skills.  It also protects players who don't have many
+      % skills from losing all that they do have
+
       while iPowerLeft > 0
       {
          oAbility = $;
@@ -169,37 +169,37 @@ messages:
          if i = 1 AND iSpellLength > 0
          {
             i = Random(1,iSpellLength);
-            icompound = Nth(lSpells,i);
-            iAbilityNum = send(oTarget,@DecodeSpellNum,#compound=iCompound);
-            oAbility = send(SYS,@findspellbynum,#num=iAbilityNum);
+            iCompound = Nth(lSpells,i);
+            iAbilityNum = Send(oTarget,@DecodeSpellNum,#compound=iCompound);
+            oAbility = Send(SYS,@findspellbynum,#num=iAbilityNum);
          }
          else 
          {
             if iSkillLength > 0
             {
                i = Random(1,iSkillLength);
-               icompound = Nth(lSkills,i);
-               iAbilityNum = send(oTarget,@DecodeSkillNum,#compound=iCompound);
-               oAbility = send(SYS,@findskillbynum,#num=iAbilityNum);
+               iCompound = Nth(lSkills,i);
+               iAbilityNum = Send(oTarget,@DecodeSkillNum,#compound=iCompound);
+               oAbility = Send(SYS,@FindSkillByNum,#num=iAbilityNum);
             }
          }
-         
-         lState = cons(oAbility,lState);
+
+         lState = Cons(oAbility,lState);
          iPowerLeft = iPowerLeft - 24;
       }
-      
-      
+
       for i in lState
       {
          if i <> $
          {
-            Send(oTarget,@MsgSendUser,#message_rsc=forgetspell_on,#parm1=send(i,@Getname));
+            Send(oTarget,@MsgSendUser,#message_rsc=forgetspell_on,
+                  #parm1=Send(i,@GetName));
          }
       }
 
       Send(who,@MsgSendUser,#message_rsc=forgetspell_caster,
-           #parm1 = send(oTarget,@GetIndef),
-           #parm2 = send(oTarget,@GetName));
+            #parm1 = Send(oTarget,@GetIndef),
+            #parm2 = Send(oTarget,@GetName));
 
       Send(oTarget,@StartEnchantment,#what=self,#time=iTime,#state=lState);
 
@@ -207,20 +207,20 @@ messages:
    }
 
 
-   EndEnchantment(who = $, report = TRUE)
+   EndEnchantment(who=$,report=TRUE)
    {
       if report
       {
          Send(who,@MsgSendUser,#message_rsc=forgetspell_off);
       }
-      
+
       return;
    }
 
    SetSpellPlayerFlag(who = $)
    {
       Send(who,@SetPlayerFlag,#flag=PFLAG_FORGOTTEN,#value=TRUE);
-      
+
       return;
    }
 

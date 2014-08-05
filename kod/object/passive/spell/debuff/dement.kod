@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Dement is Spell
+Dement is Debuff
 
 constants:
 
@@ -21,12 +21,11 @@ resources:
    dement_desc_rsc = \
       "Sends the mind of the target reeling with dark, bewildering "
       "thoughts, making spell casting more difficult for several minutes.  "
-      "Requires solagh and uncut seraphym to cast."
+      "Requires two vials of solagh and an uncut seraphym to cast."
 
    dement_sound = rdement.wav
    dement_cast_rsc = "You sense an unsavory presence."
    dement_already_enchanted = "That poor soul is already demented."
-
 
 classvars:
 
@@ -55,8 +54,6 @@ messages:
 
    ResetReagents()
    {
-      % separate message so can change, then set from admin mode
-
       plReagents = $;
       plReagents = Cons([&Solagh,2],plReagents);
       plReagents = Cons([&UncutSeraphym,1],plReagents);
@@ -64,15 +61,10 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i,oDementia;
-      
+
       if Length(lTargets) <> 1
       {
          return FALSE;
@@ -83,9 +75,9 @@ messages:
       {
          if NOT bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
-              #parm1=vrName,#parm2=Send(target,@GetDef),
-              #parm3=Send(target,@GetName));
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
+                  #parm1=vrName,#parm2=Send(target,@GetDef),
+                  #parm3=Send(target,@GetName));
          }
 
          return FALSE;
@@ -102,7 +94,7 @@ messages:
          return FALSE;
       }
 
-      % check for enchantment already applied
+      % Check for enchantment already applied
       oDementia = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
       if Send(target,@IsEnchanted,#what=oDementia)
       {
@@ -113,22 +105,23 @@ messages:
 
          return FALSE;
       }
-	 
+
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower=0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local iMight_change, oTarget, oDementia;
 
       oTarget = First(lTargets);
       oDementia = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
-      send(who,@MsgSendUser,#message_rsc=dement_cast_rsc);
+      Send(who,@MsgSendUser,#message_rsc=dement_cast_rsc);
+      
       if IsClass(oTarget,&Player)
       {
-         send(oTarget,@MsgSendUser,#message_rsc=dement_cast_rsc);
+         Send(oTarget,@MsgSendUser,#message_rsc=dement_cast_rsc);
       }
-      
+
       Send(oDementia,@MakeSick,#who=oTarget,#iAmount=(iSpellPower/3+1),
            #iDuration=send(self,@GetDuration,#iSpellPower=iSpellPower));
 
@@ -142,11 +135,9 @@ messages:
       % 1-3 minutes
       iDuration = (300 + 16*iSpellPower) * 100;
 
-      return random(iDuration/2,iDuration);
+      return Random(iDuration/2,iDuration);
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 

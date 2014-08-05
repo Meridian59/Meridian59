@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-MarkOfDishonor is Spell
+MarkOfDishonor is Debuff
 
 constants:
 
@@ -22,10 +22,10 @@ resources:
    MarkOfDishonor_name_rsc = "mark of dishonor"
    MarkOfDishonor_icon_rsc = imarkdis.bgf
    MarkOfDishonor_desc_rsc = \
-      "Allows caster to cast Shal'ille's displeasure upon a target.  Will prevent "
-      "target's life force from exceeding the body's maximum.  For evil targets, "
-      "Shal'ille will cause a loss of vigor.  "
-      "Requires emeralds to cast."
+      "Allows caster to cast Shal'ille's displeasure upon a target.  Will "
+      "prevent target's life force from exceeding the body's maximum.  For "
+      "evil targets, Shal'ille will cause a loss of vigor.  "
+      "Requires an emerald to cast."
 
    MarkOfDishonor_sound = smarkdis.wav
 
@@ -41,6 +41,7 @@ resources:
 
 
 classvars:
+
    vrName = MarkOfDishonor_name_rsc
    vrIcon = MarkOfDishonor_icon_rsc
    vrDesc = MarkOfDishonor_desc_rsc
@@ -55,14 +56,14 @@ classvars:
    viNoNewbieOffense = TRUE
    viChance_To_Increase = 30
    viMeditate_ratio = 30
-   
+
    viFlash = FLASH_BAD
 
    vrSucceed_wav = MarkOfDishonor_sound
    vbCastable_in_HappyLand = FALSE
 
 properties:
-   
+
 messages:
 
    ResetReagents()
@@ -73,15 +74,10 @@ messages:
       return;
    }
 
-   GetNumSpellTargets()
-   {
-      return 1;
-   }
-
-   CanPayCosts(who = $, lTargets = $, bItemCast = FALSE)
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i;
-      
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
@@ -106,7 +102,7 @@ messages:
       {
          if NOT bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_bad_target, 
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
                  #parm1=vrName,#parm2=Send(target,@GetDef),
                  #parm3=Send(target,@GetName));
          }
@@ -114,7 +110,7 @@ messages:
          return FALSE;
       }
 
-      % check for enchantment already applied
+      % Check for enchantment already applied
       if Send(target,@IsEnchanted,#what=self)
       {
          if NOT bItemCast
@@ -129,45 +125,46 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
       local oTarget, iKarma, iVigorRestThreshold, iVigorRestThresholdChange;
 
       oTarget = First(lTargets);
+
       if IsClass(oTarget,&Player)
       {
-        iKarma = Send(oTarget,@GetKarma);
+         iKarma = Send(oTarget,@GetKarma);
 
-        % Shal'ille only takes vigor from evil people.
-        if iKarma < 0
-        {
-          iVigorRestThreshold = Send(oTarget,@GetVigorRestThreshold);
-          iVigorRestThresholdChange = iKarma * ( iVigorRestThreshold -
-                                      DISHONOR_LOWEST_VIGOR_REST_THRESHOLD )
+         % Shal'ille only takes vigor from evil people.
+         if iKarma < 0
+         {
+            iVigorRestThreshold = Send(oTarget,@GetVigorRestThreshold);
+            iVigorRestThresholdChange = iKarma * (iVigorRestThreshold -
+                                      DISHONOR_LOWEST_VIGOR_REST_THRESHOLD)
                                       / MAX_EVIL;
 
-          % Make sure we aren't going to lower target's VigorRestThreshold
-          %  below 10, otherwise we could end up increasing the player's
-          %  VigorRestThreshold (see player.kod for reason why)
-          if (iVigorRestThreshold - iVigorRestThresholdChange) < 10
-          {
-              iVigorRestThresholdChange = iVigorRestThreshold - 10;
-          }
+            % Make sure we aren't going to lower target's VigorRestThreshold
+            % below 10, otherwise we could end up increasing the player's
+            % VigorRestThreshold (see player.kod for reason why)
+            if (iVigorRestThreshold - iVigorRestThresholdChange) < 10
+            {
+               iVigorRestThresholdChange = iVigorRestThreshold - 10;
+            }
 
-          Send(oTarget,@AddExertion,#amount=200000);
-          Send(oTarget,@SetVigorRestThreshold,
-                #amount=iVigorRestThreshold-iVigorRestThresholdChange);
-        }
+            Send(oTarget,@AddExertion,#amount=200000);
+            Send(oTarget,@SetVigorRestThreshold,
+                  #amount=iVigorRestThreshold-iVigorRestThresholdChange);
+         }
 
-        Send(oTarget,@StartEnchantment,#what=self,
-            #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
-            #state=iVigorRestThresholdChange);
-        Send(oTarget,@MsgSendUser,#message_rsc=MarkOfDishonor_start);
-        Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
-            #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+         Send(oTarget,@StartEnchantment,#what=self,
+               #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+               #state=iVigorRestThresholdChange);
+         Send(oTarget,@MsgSendUser,#message_rsc=MarkOfDishonor_start);
+         Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
-        % Make sure hps aren't over maximum.  Post this so enchantment is finished.
-        post(oTarget,@NewHealth);
+         % Make sure hps aren't over maximum.  Post this so enchantment is finished.
+         Post(oTarget,@NewHealth);
       }
       else
       {
@@ -175,10 +172,11 @@ messages:
             % them on wait-state waiting to aggro again
             Send(oTarget,@EnterStateWait);
             Send(oTarget,@StartEnchantment,#what=self,
-                #time=Send(self,@GetDuration));
+                  #time=Send(self,@GetDuration));
             Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
-                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+                  #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
       }
+
       propagate;
    }
 
@@ -192,9 +190,10 @@ messages:
       return iDuration;
    }
 
-   EndEnchantment(who = $, state = 0, report = TRUE)
+   EndEnchantment(who=$,state=0,report=TRUE)
    {
       local iVigorRestThreshold;
+
       % If we end enchantment on a player reset VigorRestThreshold
       if isClass(who,&Player)
       {
@@ -206,10 +205,9 @@ messages:
           Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_stop);
         }
       }
+
       return;
    }
 
-
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-

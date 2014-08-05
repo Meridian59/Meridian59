@@ -1,0 +1,61 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Debuff is Spell
+
+% Spells that target another player, and have some negative effect but do not
+% directly do damage go here.
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   Debuff_name_rsc = "debuff"
+   Debuff_icon_rsc = iheat.bgf
+   Debuff_desc_rsc = \
+      "An enchantment which is cast on another player."
+
+   Debuff_already_enchanted_rsc = "You are already enchanted."
+   Debuff_On_rsc = "Your body tingles with magical energy."
+   Debuff_Off_rsc = "You feel your magical field crackle and dissipate."
+   Debuff_Success_rsc = "You enchant %s%s."
+   Debuff_Target_Already_Enchanted_rsc = "%s%s tried to cast %s%s on you."
+   Debuff_Other_Already_Enchanted_rsc = "%s%s is already affected by that magic."
+   Debuff_bad_target = "You cannot enchant %s%s."
+
+   Debuff_bad_location = "You cannot cast enchantments upon others here."
+
+classvars:
+
+   vrName = Debuff_name_rsc
+   vrIcon = Debuff_icon_rsc
+   vrDesc = Debuff_desc_rsc
+
+   % Overwrite these in subclasses to give specific messages.
+   vrAlreadyEnchanted = Debuff_already_enchanted_rsc
+   vrEnchantment_On = Debuff_On_rsc
+   vrEnchantment_Off = Debuff_Off_rsc
+   vrSuccess = Debuff_Success_rsc
+
+   viDebuff = TRUE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

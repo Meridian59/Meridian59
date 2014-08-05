@@ -53,6 +53,8 @@ resources:
    penalties_inflicted_plural = "The torturous experience has cost you %d items, %d spell points, and %d skill points."
    
    no_phasing_in_safe_place_msg = "This place of safety is anchored and calm, and you cannot phase out here."
+   no_phasing_in_guildhall_msg = "The magical defenses here keep you grounded in reality."
+   no_phasing_in_arena_msg = "The unique combat magics in play here prevent you from phasing out."
    
    phase_time_low = "You feel your hold slipping..."
    phase_time_gone = "You're losing your grip on reality!"
@@ -91,11 +93,27 @@ messages:
    
    CanPayCosts(who = $)
    {
-      if who <> $
-         AND Send(who,@GetOwner) <> $
-         AND Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
+      if who = $
+         OR Send(who,@GetOwner) = $
+      {
+         return FALSE;
+      }
+
+      if Send(Send(who,@GetOwner),@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_in_safe_place_msg);
+         return FALSE;
+      }
+
+      if IsClass(Send(who,@GetOwner),&GuildHall)
+      {
+         Send(who,@MsgSendUser,#message_rsc=no_phasing_in_guildhall_msg);
+         return FALSE;
+      }
+
+      if Send(Send(who,@GetOwner),@IsArena)
+      {
+         Send(who,@MsgSendUser,#message_rsc=no_phasing_in_arena_msg);
          return FALSE;
       }
 
@@ -156,6 +174,7 @@ messages:
       {
          Send(self,@AdjustVisualEffectBasedOnTimeRemaining,#who=who);
          Send(who,@BreakTrance,#event=EVENT_STEER);
+         Send(SYS,@DeletePlayerReflections,#who=who);
          Send(who,@FreezeAllEnchantments);
          Post(who,@StartEnchantment,#what=self);
          Post(who,@StartPhaseTimer);

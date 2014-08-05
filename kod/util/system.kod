@@ -1122,6 +1122,31 @@ messages:
 
       return;
    }
+   
+   DeletePlayerReflections(who = $)
+   {
+      local i, j;
+
+      % Remember: plReflections format is:
+      % [[player,[ref1,ref2]],[player2,[ref1,ref2]],...]
+
+      for i in plReflections
+      {
+         if first(i) = who
+         {
+            for j in Nth(i,2)
+            {
+               Send(j,@Delete);
+            }
+
+            plReflections = DelListElem(plReflections,i);
+
+            break;
+         }
+      }
+      
+      return;
+   }
 
    AddReflection(who = $, oreflection = $)
    {

@@ -10530,6 +10530,11 @@ messages:
       {
          return;
       }
+      
+      if Send(self,@IsPhasedOut)
+      {
+         return;
+      }
 
       if NOT Send(poOwner,@SafePlayerAttack) OR Send(poOwner,@IsValidTarget,#who=self)
       {

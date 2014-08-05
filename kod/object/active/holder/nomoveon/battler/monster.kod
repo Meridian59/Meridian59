@@ -1286,7 +1286,29 @@ messages:
 
    GetBehavior()
    {
-      return piBehavior;          
+      return piBehavior;
+   }
+
+   AddMonsterAim(points=0)
+   {
+      local iOrigAim;
+
+      iOrigAim = piAim;
+      piAim = piAim + points;
+      piAim = Bound(piAim,1,50);
+
+      return piAim - iOrigAim;
+   }
+
+   AddMonsterAgility(points=0)
+   {
+      local iOrigAgil;
+
+      iOrigAgil = piAgility;
+      piAgility = piAgility + points;
+      piAgility = Bound(piAgility,1,50);
+
+      return piAgility - iOrigAgil;
    }
 
    StartPalsy()

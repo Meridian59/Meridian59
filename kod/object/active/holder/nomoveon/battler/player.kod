@@ -7710,7 +7710,7 @@ messages:
       {
          if Send(self,@DecodeSkillNum,#compound=i) = Skill_num
          {
-            return Send(self,@DecodeSkillAbility,#compound=i)+1;
+            return Send(self,@DecodeSkillAbility,#compound=i);
          }
       }
       

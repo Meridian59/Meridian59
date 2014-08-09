@@ -78,7 +78,7 @@ messages:
 
       oTarget = First(lTargets);
 
-      Send(self,@DoSpell,#what=who,#oTarget=oTarget,
+      Send(self,@DoSpell,#what=who,#oTarget=oTarget,#iSpellPower=iSpellPower,
            #iDuration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
 
       propagate;

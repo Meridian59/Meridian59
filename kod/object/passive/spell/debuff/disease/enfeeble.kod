@@ -1,0 +1,137 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Enfeeble is Disease
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   enfeeble_cast_rsc = "You sense an unsavory presence."
+   enfeeble_already_enchanted = "That poor soul is already enfeebled."
+   palsy_start = "Your muscles turn to water."
+   palsy_stop  = "You feel your old strength coming back."
+
+   enfeeble_name_rsc = "enfeeble"
+   enfeeble_icon_rsc = ienfeebl.bgf
+   enfeeble_desc_rsc = \
+      "Drains physical strength from the target.  "
+      "The effect lasts a few minutes.  "
+      "Requires a single orc tooth to cast."
+
+   enfeeble_sound = qenfeebl.wav
+
+classvars:
+
+   vrName = enfeeble_name_rsc
+   vrIcon = enfeeble_icon_rsc
+   vrDesc = enfeeble_desc_rsc
+
+   vrAlreadyEnchanted = enfeeble_already_enchanted
+   vrEnchantment_On = palsy_start
+   vrEnchantment_Off = palsy_stop
+   vrSuccess = enfeeble_cast_rsc
+
+   viSpell_num = SID_ENFEEBLE
+   viSchool = SS_QOR
+   viSpell_level = 3
+   viMana = 5
+   viSpell_Exertion = 4
+
+   viFlash = FLASH_BAD
+
+   vrSucceed_wav = enfeeble_sound
+   viChance_To_Increase = 30
+   viMeditate_ratio = 30
+
+   vbDisease = TRUE
+
+properties:
+
+   poStrength_spell = $
+
+   piBaseDuration = 60000
+   piSpellPowerModifier = 1212
+   piDeviation = 10
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&OrcTooth,1],plReagents);
+
+      return;
+   }
+
+   DoSpell(what=$,oTarget=$,iDuration=$,iSpellPower=$,report=TRUE)
+   {
+      local iMightChange;
+
+      if iDuration = $
+      {
+         iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower);
+      }
+
+      iMightChange = Send(self,@GetAmount,#iSpellPower=iSpellPower);
+
+      if poStrength_spell = $
+      {
+         poStrength_spell = Send(SYS,@FindSpellByNum,#num=SID_SUPERSTRENGTH);
+      }
+
+      %%% All super strength spells are now dispelled before palsy begins!
+      Send(oTarget,@RemoveEnchantment,#what=poStrength_spell);
+
+      if IsClass(oTarget,&Player)
+      {
+         iMightChange = Send(oTarget,@AddMight,#points=-iMightChange);
+
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,
+               #state=[-iMightChange]);
+
+         if report
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=palsy_start);
+         }
+      }
+      else
+      {
+         %%% class is &Monster
+         Send(oTarget,@StartPalsy);
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
+      }
+
+      propagate;
+   }
+
+   EndEnchantment(who=$,state=0,report=TRUE)
+   {
+      if IsClass(who,&Player)
+      {
+         Send(who,@AddMight,#points=First(state));
+         if report
+         {
+            Send(who,@MsgSendUser,#message_rsc=palsy_stop);
+         }
+      }
+      else
+      {
+         %%% class is &Monster
+         Send(who,@EndPalsy);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

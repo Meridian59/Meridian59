@@ -26,7 +26,7 @@ resources:
       "The sight alone of this abomination of nature is often enough to "
       "paralyze a human.  You shudder to think what dark ritual brought "
       "this creature into being."
-      
+
    DaemonSkeleton_head = skelhed4.bgf
    DaemonSkeleton_dead_icon_rsc = skelX.bgf
    DaemonSkeleton_dead_name_rsc = "pile of bones"
@@ -63,7 +63,7 @@ classvars:
 properties:
 
    piAnimation = ANIM_NONE
-   
+
 messages:
 
    SetResistances()
@@ -80,28 +80,27 @@ messages:
 
       return;
    }
-   
+
      HitSideEffect(what = $)
    {
       local oSpell;
-      
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_PALSY);
-      if NOT Send(what,@IsEnchanted,#what=oSpell) 
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_ENFEEBLE);
+      if NOT Send(what,@IsEnchanted,#what=oSpell)
          AND Random(1,PALSY_CHANCE) = 1
       {
-         Send(oSpell,@MakeSick,#who=what);
+         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
       }
-      
-      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENT);
       if NOT Send(what,@IsEnchanted,#what=oSpell) 
          AND Random(1,DEMENTIA_CHANCE) = 1
       {
-         Send(oSpell,@MakeSick,#who=what);
+         Send(oSpell,@DoSpell,#what=self,#oTarget=what,#iSpellPower=50);
       }
 
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

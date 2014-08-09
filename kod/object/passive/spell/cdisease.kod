@@ -24,8 +24,8 @@ resources:
    curedisease_name_rsc = "cure disease"
    curedisease_icon_rsc = icuredis.bgf
    curedisease_desc_rsc = \
-     "Pure, healing energy purges disease from the target.  "
-	  "Requires herbs and elderberries to cast."
+      "Pure, healing energy purges disease from the target.  "
+      "Requires two herbs and two elderberries to cast."
    
    curedisease_on = "The power of Shal'ille burns the disease from your body."
    curedisease_abates = "You feel the disease grow weaker."
@@ -53,7 +53,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Herbs,3],plReagents);
+      plReagents = Cons([&Herbs,2],plReagents);
       plReagents = Cons([&ElderBerry,2],plReagents);
 
       return;
@@ -64,7 +64,7 @@ messages:
       return 1;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellpower = 0)
+   CastSpell(who=$,lTargets=$,iSpellpower=0)
    {
       local oTarget, oDisease, iRandom, iOrigStatLoss, iNewStatLoss, lState;
 
@@ -73,8 +73,9 @@ messages:
 
       Send(oTarget,@MsgSendUser,#message_rsc=curedisease_on);
       Send(who,@MsgSendUser,#message_rsc=spell_cast_on_target,
-         #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),#parm3=Send(oTarget,@GetName));
-     
+            #parm1=Send(self,@GetName),#parm2=Send(oTarget,@GetDef),
+            #parm3=Send(oTarget,@GetName));
+
       if iRandom < iSpellpower
       {
          Send(oTarget,@RemoveEnchantmentClass,#class=&Disease);
@@ -84,66 +85,68 @@ messages:
          % Reduce the amount you affect the player by.  Restore what you reduce, and store
          %  the new value in the disease state.
 
-         oDisease = send(SYS,@FindSpellByNum,#num=SID_PALSY);
+         oDisease = Send(SYS,@FindSpellByNum,#num=SID_ENFEEBLE);
       
-         if send(oTarget,@IsEnchanted,#what=oDisease)
+         if Send(oTarget,@IsEnchanted,#what=oDisease)
          {
-            lState = send(otarget,@GetEnchantedState,#what=oDisease);
+            lState = Send(oTarget,@GetEnchantedState,#what=oDisease);
             iOrigStatLoss = Nth(lState,1);
             iNewStatLoss = iOrigStatLoss - ((iOrigStatLoss*iSpellpower)/100);
 
             if iNewStatLoss > MAX_PENALTY_TO_ELIMINATE
             {
-               send(oTarget,@MsgSendUser,#message_rsc=curedisease_abates);
-               send(oTarget,@AddMight,#points=(iOrigStatLoss-iNewStatLoss));
+               Send(oTarget,@MsgSendUser,#message_rsc=curedisease_abates);
+               Send(oTarget,@AddMight,#points=(iOrigStatLoss-iNewStatLoss));
                SetNth(lState,1,iNewStatLoss);
             }
             else
             {
-               send(oTarget,@RemoveEnchantment,#what=oDisease,#Report=TRUE);
+               Send(oTarget,@RemoveEnchantment,#what=oDisease,#Report=TRUE);
             }
          }
 
-         oDisease = send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
-      
-         if send(oTarget,@IsEnchanted,#what=oDisease)
+         oDisease = Send(SYS,@FindSpellByNum,#num=SID_DEMENT);
+
+         if Send(oTarget,@IsEnchanted,#what=oDisease)
          {
-            lState = send(otarget,@GetEnchantedState,#what=oDisease);
+            lState = Send(otarget,@GetEnchantedState,#what=oDisease);
             iOrigStatLoss = Nth(lState,1);
             iNewStatLoss = iOrigStatLoss - ((iOrigStatLoss*iSpellpower)/100);
 
             if iNewStatLoss > MAX_PENALTY_TO_ELIMINATE
             {
-               send(oTarget,@MsgSendUser,#message_rsc=curedisease_abates);
-               send(oTarget,@AddIntellect,#points=(iOrigStatLoss-iNewStatLoss));
+               Send(oTarget,@MsgSendUser,#message_rsc=curedisease_abates);
+               Send(oTarget,@AddIntellect,#points=(iOrigStatLoss-iNewStatLoss));
                SetNth(lState,1,iNewStatLoss);
             }
             else
             {
-               send(oTarget,@RemoveEnchantment,#what=oDisease,#Report=TRUE);
+               Send(oTarget,@RemoveEnchantment,#what=oDisease,#Report=TRUE);
             }
          }
       }
+
       propagate;
    }
 
-
-   CanPayCosts(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
-      local target, i;
-      
+      local i, target;
+
       % Can cast spell if the 1 target item is a user
       if Length(lTargets) <> 1
       {
-         return False;
+         return FALSE;
       }
 
       target = First(lTargets);
-      if not IsClass(target, &User) or not send(target,@IsEnchanted,#byClass=&Disease)
+      if not IsClass(target, &User) or not Send(target,@IsEnchanted,#byClass=&Disease)
       {
-         Send(who, @MsgSendUser, #message_rsc=spell_bad_target, 
-              #parm1=vrName,#parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
-         return False;
+         Send(who, @MsgSendUser, #message_rsc=spell_bad_target,
+               #parm1=vrName,#parm2=Send(target,@GetDef),
+               #parm3=Send(target,@GetName));
+
+         return FALSE;
       }
 
       propagate;   % Check other things higher up
@@ -151,9 +154,8 @@ messages:
 
    GetPotionClass()
    {
-      RETURN &CureDiseasePotion;
+      return &CureDiseasePotion;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -8,21 +8,17 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Disease is Sickness
+Deleted is Object
 
 constants:
 
    include blakston.khd
-
-resources:
 
 classvars:
 
 properties:
 
 messages:
-
-% This is an empty class, but it's needed so that Diseases are separated out from under sicknesses.
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

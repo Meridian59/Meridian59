@@ -2,11 +2,9 @@
 # Makefile for compiling the Blakod
 #
 
-TOPDIR=..\..
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\object.bof
-BOFS = active.bof deleted.bof passive.bof item.bof
+DEPEND = ..\deleted.bof
+BOFS = palsy.bof dementia.bof firewand.bof SpecialWand.bof
 
 !include $(KODDIR)\kod.mak
-

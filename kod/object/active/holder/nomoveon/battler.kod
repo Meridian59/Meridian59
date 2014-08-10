@@ -388,6 +388,31 @@ messages:
       return plEnchantments;
    }
 
+   GetCastPower(what=$)
+   "This is used by purge to get the spellpower the personal enchantment was "
+   "cast at. Put in Battler instead of Player as we may use this for monster "
+   "buffs one day."
+   {
+      local i, iCastPower;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            if Length(i) > 3
+            {
+               iCastPower = Nth(i,4);
+            }
+            else
+            {
+               iCastPower = Nth(i,3);
+            }
+         }
+      }
+
+      return iCastPower;
+   }
+
    %%% Combat functionality.
 
    % This does one attack by the battler.

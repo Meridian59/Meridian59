@@ -5273,10 +5273,19 @@ messages:
    KilledSomething(what = $,use_weapon = $,stroke_obj = $)
    "Called when the player killed something."
    {
-      local i, oSoldierShield, monstkarma, iChance, oEnemyGuild, shrunken;
+      local bReflection, i, oSoldierShield, monstkarma, iChance, oEnemyGuild, shrunken;
 
       % If we killed someone or something, we did damage.
       Send(self,@SetPlayerFlag,#flag=PFLAG_DID_DAMAGE,#value=TRUE);
+
+         % Stop reflections ruining our karma, they are kind of bloodthirsty
+         % and tend to kill indiscriminately (especially mobs)
+         bReflection = FALSE;
+         if use_weapon <> $
+            AND IsClass(use_weapon,&Reflection)
+         {
+            bReflection = TRUE;
+         }
 
       % Send text message - a stroke may want to provide it's own.
       if NOT Send(what,@SayDyingWords,#what=self)
@@ -5296,17 +5305,17 @@ messages:
             {
                Send(self,@MsgSendUser,#message_rsc=player_killed_something,
                     #parm1=Send(what,@GetDef),#parm2=Send(what,@GetName));
-            }          
+            }
          }
       }
-      
+
       if IsClass(what,&Monster)
          AND (use_weapon = $
               OR NOT IsClass(use_weapon,&ActiveWallElement))
       {
          Send(self,@JoinBuilderGroup);
       }
-      
+
       Send(poOwner,@SomethingKilled,#what=self,#victim=what);
 
       % Let our shield know we killed something.
@@ -5320,7 +5329,7 @@ messages:
          AND what <> self
       {
          Send(Send(SYS, @GetStatistics), @PlayerKillsCounter);
-         
+
          if Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
             OR Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
          {
@@ -5329,12 +5338,15 @@ messages:
          else
          {
             piKill_count = piKill_count + 1;
-            piKill_count_decay = piKill_count_decay + 1;              
+            piKill_count_decay = piKill_count_decay + 1;
          }
-         
-         Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
-              #karma_killer=Send(self,@GetKarma),#karma_victim=Send(what,@GetKarma)));
-         
+
+         if NOT bReflection
+         {
+            Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
+                  #karma_killer=Send(self,@GetKarma),#karma_victim=Send(what,@GetKarma)));
+         }
+
          if NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
             AND NOT Send(what,@CheckPlayerFlag,#flag=PFLAG_ANONYMOUS)
@@ -5379,7 +5391,7 @@ messages:
                      Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=FALSE);
                      Send(self,@EvaluatePKStatus,#dbug=TRUE);
                   }
-   
+
                   % Does the lucky murderer win a Revenant?
                   % If it was an easy fight, lets haunt em more often than if
                   % it was competitive (or the victim at least had a shot)
@@ -5401,7 +5413,8 @@ messages:
       }
 
       if IsClass(what,&Monster)
-      {         
+         AND NOT bReflection
+      {
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
               #bIsMob=TRUE);

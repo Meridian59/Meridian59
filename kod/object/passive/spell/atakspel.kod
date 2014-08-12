@@ -109,6 +109,16 @@ messages:
          return FALSE;
       }
 
+      % If the target died or switched rooms while the spell is being cast
+      % then it fails.
+      if Send(target,@GetOwner) <> $
+         AND Send(target,@GetOwner) <> Send(who,@GetOwner)
+      {
+         Send(who,@MsgSendUser,#message_rsc=attack_spell_out_of_range,
+                    #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName),
+                    #parm3=vrName);
+      }
+
       if piRange <> $
       {
          iTotalRange = piRange;
@@ -124,7 +134,7 @@ messages:
          {
             if NOT bItemCast
             {
-               Send(who,@MsgSendUser,#message_rsc=attack_spell_out_of_range, 
+               Send(who,@MsgSendUser,#message_rsc=attack_spell_out_of_range,
                     #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName),
                     #parm3=vrName);
             }

@@ -802,7 +802,9 @@ properties:
    % store minions
    plControlledMinions = $
    ptMinionControlCheck = $
-   
+
+   % Evil twin object
+   poEvilTwin = $
 
    % list of spells we know, in the form of a 3-part compound
    plSpells = $
@@ -935,9 +937,6 @@ properties:
 
    % The user's string description, typed when created (and editable in game).
    psPlayerDescription = $
-
-   % Keeps track of whether a player has an evil twin following him.
-   pbHasEvilTwin = FALSE
 
    % Draw effects flags
    piDrawFX = 0
@@ -11112,7 +11111,7 @@ messages:
       % Reset death costs to 0.
       piDeathCost = 0;
 
-      pbHasEvilTwin = FALSE;
+      poEvilTwin = $;
 
       return Send(SYS,@GetSuccessRsc);
    }

@@ -13,7 +13,7 @@ resources:
       "Summons the darker side of an adventurer to attack them.  Note that "
       "you are responsible for any of your evil twins' actions, and that they "
       "are notoriously hard to control.  "
-      "Requires solagh and web moss to cast."
+      "Requires two vials of solagh and two web moss to cast."
 
    summonEvilTwin_cast_rsc = \
       "An evil twin mysteriously appears beside your target."
@@ -58,8 +58,8 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Solagh,3], plReagents);
-      plReagents = Cons([&WebMoss,3], plReagents);
+      plReagents = Cons([&Solagh,2], plReagents);
+      plReagents = Cons([&WebMoss,2], plReagents);
 
       return;
    }
@@ -77,7 +77,7 @@ messages:
       oTarget = First(lTargets);
 
       % Only cast on non-self battlers.
-      if who = oTarget 
+      if who = oTarget
       {
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_no_self);
 
@@ -98,6 +98,14 @@ messages:
          return FALSE;
       }
 
+      % Check for evil twin already following target.
+      if Send(oTarget,@HasEvilTwin)
+      {
+         Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_only_one,
+              #parm1=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
 
       if IsClass(oTarget,&Player)
       {
@@ -106,14 +114,6 @@ messages:
             % Morph protects against evil twin
             Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_bad_target,
                  #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
-
-            return FALSE;
-         }
-
-         if Send(oTarget,@HasEvilTwin)
-         {
-            Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_only_one,
-                 #parm1=Send(oTarget,@GetName));
 
             return FALSE;
          }
@@ -131,14 +131,14 @@ messages:
       if Send(oRoom,@CountHoldingHowMany,#class=&Monster) > 25
       {
          Send(who,@MsgSendUser,#message_rsc=summonEvilTwin_failed_rsc);
-         
+
          return FALSE;
       }
 
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   CastSpell(who=$,lTargets=$,iSpellPower=1)
    {
       local i, j, oTwin, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget;
 
@@ -155,7 +155,10 @@ messages:
          oTwin = Create((GetClass(oTarget)));
          Send(oTwin,@SetIllusion,#value=TRUE);
          Send(oTwin,@SetSummoned,#value=TRUE);
+         Send(oTwin,@EvilTwinOrignial,#what=oTarget);
       }
+
+      Send(oTarget,@AddEvilTwin,#what=oTwin);
 
       oRoom = Send(who,@GetOwner);
 
@@ -167,7 +170,6 @@ messages:
       if IsClass(oTarget,&Player)
       {
          Send(oTwin,@SetOriginal,#who=oTarget);
-         Send(SYS,@AddReflection,#who=oTarget,#oReflection=oTwin);
       }
 
       Send(oRoom,@NewHold,#what=oTwin,#new_row=iRow,#new_col=iCol,
@@ -178,7 +180,6 @@ messages:
       if oTarget <> $
          AND IsClass(oTarget,&Monster)
       {
-         Send(oTwin,@EnterStateMove);
          Send(oTwin,@TargetSwitch,#what=oTarget,#iHatred=1000);
          Send(oTwin,@EnterStateAttack);
          i = Send(oTwin,@ReturnMaxHitPoints);

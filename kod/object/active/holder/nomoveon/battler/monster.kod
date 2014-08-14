@@ -330,18 +330,22 @@ properties:
    piDrawfx = 0
 
    % A list of quest nodes for which this monster is the destination NPC
-   plActiveQuestNodes = $   
+   plActiveQuestNodes = $
    pbIllusion = FALSE
    vbSummoned = FALSE
 
+   % Evil twin object
+   poEvilTwin = $
+   poEvilTwinOriginal = $
+
    % Should this monster stick around through a call to DestroyDisposable()?
-   pbDontDispose = FALSE  
+   pbDontDispose = FALSE
 
    piMood = 0
 
    % list of keyed speechlib items [class, key] triggered since last
    %  RandomTimer firing
-   plSpamList = $    
+   plSpamList = $
 
    piColor_Translation = 0
 
@@ -520,7 +524,7 @@ messages:
    "End of monster. Clean up any quests it might have spawned."
    {
       local i, j;
-      % Minion Management - upon dieing they should leave your control list        
+      % Minion Management - upon dying they should leave your control list
       if Send(self,@GetMaster) <> $
       {
          if isClass(Send(self,@GetMaster),&User)
@@ -528,7 +532,17 @@ messages:
             Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
          }
       }
-      
+
+      if poEvilTwinOriginal <> $
+      {
+         Send(poEvilTwinOriginal,@RemoveEvilTwin);
+      }
+
+      if poEvilTwin <> $
+      {
+         Post(poEvilTwin,@Delete);
+      }
+
       % Under rare conditions delete is called twice in succession
       if poBrain <> $
       {
@@ -5451,7 +5465,14 @@ messages:
    {
       return TRUE;
    }
-   
+
+   EvilTwinOrignial(what=$)
+   {
+      poEvilTwinOriginal = what;
+
+      return;
+   }
+
    CanPlayerAdvanceOnMe()
    {
       return (NOT Send(self,@IsIllusion));

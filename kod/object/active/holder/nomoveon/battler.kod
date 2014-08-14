@@ -144,6 +144,9 @@ classvars:
 
 properties:
 
+   % Evil twin object
+   poEvilTwin = $
+
    % list of resistances, Each element is [value, type].
    plResistances = $
 
@@ -1097,6 +1100,40 @@ messages:
       }
       
       return 0;
+   }
+
+   AddEvilTwin(what=$)
+   {
+      if poEvilTwin=$
+      {
+         poEvilTwin=what;
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   RemoveEvilTwin()
+   {
+      if poEvilTwin <> $
+      {
+         poEvilTwin = $;
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   HasEvilTwin()
+   {
+      if poEvilTwin <> $
+      {
+         return TRUE;
+      }
+
+      return FALSE;
    }
 
 end

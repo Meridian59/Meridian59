@@ -18,13 +18,17 @@ resources:
    summonreflection_cast_rsc = "A mirror image of yourself appears."
    summonreflection_name_rsc = "reflection"
    summonreflection_icon_rsc = ireflect.bgf
-   summonreflection_desc_rsc = "Summons a creature which mirrors your own appearance.  Note that you are responsible for "
-      "any of your reflections actions, and that they are notoriously hard to control.  Requires firesand, rainbow ferns, "
-      "and uncut seraphym to cast."
+   summonreflection_desc_rsc = \
+      "Summons a creature which mirrors your own appearance.  Note that you "
+      "are responsible for any of your reflections actions, and that they are "
+      "notoriously hard to control.  Requires two firesand and two uncut "
+      "seraphym to cast."
 
-   summonreflection_failed_rsc = "There is too much summoning magic focused here to summon a reflection."
+   summonreflection_failed_rsc = \
+      "There is too much summoning magic focused here to summon a reflection."
    
-   summonreflection_limit_rsc = "You are already maintaining the maximum number of reflections."
+   summonreflection_limit_rsc = \
+      "You are already maintaining the maximum number of reflections."
 
    reflection_cannot_cast_here = \
       "You are not allowed to create a reflection here."
@@ -56,80 +60,88 @@ messages:
    {
       plReagents = $;
       plReagents = Cons([&Firesand,2], plReagents);
-      plReagents = Cons([&RainbowFern,2],plReagents);
       plReagents = Cons([&UncutSeraphym,2],plReagents);
 
       return;
    }
 
-   CanPayCosts(who = $)
+   CanPayCosts(who=$)
    {
       local oRoom;
-      
-      oRoom = send(who,@GetOwner);
 
-      if not send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
-      {
-         send(who,@MsgSendUser,#message_rsc=spell_guardian);
-         
-         return FALSE;
-      }
-      
-      if NOT Send(oRoom,@AllowGuildAttack,#what=who)
-      {
-         Send(who,@MsgSendUser,#message_rsc=reflection_cannot_cast_here);
+      oRoom = Send(who,@GetOwner);
 
-         return FALSE;
+      if IsClass(who,&Player)
+      {
+         if NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_guardian);
+
+            return FALSE;
+         }
+
+         if NOT Send(oRoom,@AllowGuildAttack,#what=who)
+         {
+            Send(who,@MsgSendUser,#message_rsc=reflection_cannot_cast_here);
+
+            return FALSE;
+         }
       }
-     
+
       % limit reflections
-      if send(self,@CountPlayerReflections,#who=who) >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit)
-         AND NOT send(who,@PlayerIsImmortal)
+      if Send(self,@CountPlayerReflections,#who=who) >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit)
+         AND NOT (IsClass(who,&DM)
+                    AND Send(who,@PlayerIsImmortal))
       {
-         send(who,@MsgSendUser,#message_rsc=summonreflection_limit_rsc);
-         
+         if IsClass(who,&Player)
+         {
+            Send(who,@MsgSendUser,#message_rsc=summonreflection_limit_rsc);
+         }
+
          return FALSE;
       }
 
       propagate;
    }
-
 
    GetNumSpellTargets()
    {
       return 0;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   CastSpell(who=$,lTargets=$,iSpellPower=1)
    {
       local oReflection, oRoom, iRow, iCol, iFine_Row, iFine_Col;
 
       oReflection = Create(&Reflection,#iSpellpower=iSpellpower,#oMaster=who);
-      oRoom = send(who,@GetOwner);
+      oRoom = Send(who,@GetOwner);
 
-      iRow = send(who,@GetRow);
-      iCol = send(who,@GetCol);
-      iFine_Row = send(who,@GetFineRow);
-      iFine_Col = send(who,@GetFineCol);
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
+      iFine_Row = Send(who,@GetFineRow);
+      iFine_Col = Send(who,@GetFineCol);
 
-      send(oReflection,@SetOriginal,#who=who);
+      Send(oReflection,@SetOriginal,#who=who);
 
-      send(oRoom,@NewHold,#what=oReflection,#new_row=iRow,#new_col=iCol,
-           #fine_row=iFine_Row,#fine_col=iFine_Col);
+      Send(oRoom,@NewHold,#what=oReflection,#new_row=iRow,#new_col=iCol,
+            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
-      send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
+      if IsClass(who,&Player)
+      {
+         Send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
+      }
 
-      send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
-	  send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+      Send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
+      Send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
 
       propagate;
    }
-   
-   CountPlayerReflections(who = $)
+
+   CountPlayerReflections(who=$)
    "Count number of reflections being maintained by the caster."
    {
       local i;
-      
+
       for i in Send(SYS,@GetReflectionsList)
       {
          if first(i) = who
@@ -137,10 +149,9 @@ messages:
             return length(Nth(i,2));
          }
       }
-      
+
       return 0;
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

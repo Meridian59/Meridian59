@@ -13671,25 +13671,6 @@ messages:
       return TRUE;
    }
 
-   AddEvilTwin()
-   {
-      pbHasEvilTwin = TRUE;
-
-      return;
-   }
-
-   RemoveEvilTwin()
-   {
-      pbHasEvilTwin = FALSE;
-
-      return;
-   }
-
-   HasEvilTwin()
-   {
-      return pbHasEvilTwin;
-   }
-   
    GetReagentBag()
    {
       local i;

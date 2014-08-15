@@ -154,7 +154,6 @@ messages:
          % Should be a monster. Make a low HP copy of it.
          oTwin = Create((GetClass(oTarget)));
          Send(oTwin,@SetIllusion,#value=TRUE);
-         Send(oTwin,@SetSummoned,#value=TRUE);
          Send(oTwin,@EvilTwinOrignial,#what=oTarget);
       }
 
@@ -180,8 +179,8 @@ messages:
       if oTarget <> $
          AND IsClass(oTarget,&Monster)
       {
-         Send(oTwin,@TargetSwitch,#what=oTarget,#iHatred=1000);
-         Send(oTwin,@EnterStateAttack);
+         Post(oTwin,@TargetSwitch,#what=oTarget,#iHatred=1000);
+         Post(oTwin,@EnterStateChase);
          i = Send(oTwin,@ReturnMaxHitPoints);
          j = i/(100/((21+iSpellPower)/20));
          j = bound(j,1,25);

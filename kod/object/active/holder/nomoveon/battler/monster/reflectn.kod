@@ -81,8 +81,6 @@ properties:
    piSpellpower = 1
    poArrow = $
 
-   vbSummoned = TRUE
-
    ptSomethingChanged = $
 
 messages:
@@ -196,7 +194,7 @@ messages:
       propagate;
    }
 
-   SomethingKilled(what = $,victim = $,use_weapon = $)
+   SomethingKilled(what=$,victim=$,use_weapon=$)
    "Someone just died, perhaps we need to clear our target."
    {
       if victim = poOriginal

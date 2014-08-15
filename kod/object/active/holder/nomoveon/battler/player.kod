@@ -8512,7 +8512,7 @@ messages:
 
    Killed(what = $)
    {
-      local lItems,i, amount, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
+      local lItems,i, j, amount, oBody, oSoldierShield, bNo_drop_death, oItemAtt,
             oRoom, iRow, iCol, iFine_Row, iFine_Col, iAngle, oItem, iRoom, lInventoryContents, lReagentBagContents;
 
       % Skill, spell and hp penalties are handled by ApplyDeathPenalties, which
@@ -8535,6 +8535,16 @@ messages:
          Debug("Averted double-death of",vrName);
 
          return;
+      }
+
+      % If we have Apparitions attacking us, delete them.
+      if plApparitionList <> $
+      {
+         for j in plApparitionList
+         {
+            Send(j,@Delete);
+         }
+         plApparitionList = $;
       }
 
       % Stop any rescue attempts that were going on.

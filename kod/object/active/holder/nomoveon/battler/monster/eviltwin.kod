@@ -44,11 +44,11 @@ classvars:
 
    viTreasure_type = TID_NONE
 
-   viSpeed = SPEED_AVERAGE
+   viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 1
-   viDifficulty = 9
+   viDifficulty = 8
    viKarma = 0
    viCashmin = 0
    viCashmax = 0
@@ -72,8 +72,6 @@ properties:
 
    piSpellpower = 1
    poArrow = $
-
-   vbSummoned = TRUE
 
 messages:
 
@@ -128,7 +126,7 @@ messages:
 
       if (poOwner <> $)
          AND (IsClass(poOriginal,&Monster)
-              OR Send(poOriginal,@isLoggedOn))
+              OR Send(poOriginal,@IsLoggedOn))
       {
          Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=EvilTwin_delete,
               #parm1=Send(self,@GetDef,#cap=TRUE),#parm2=Send(self,@GetName,#cap=FALSE));
@@ -157,18 +155,10 @@ messages:
 
    SomethingKilled(what=$,victim=$)
    {
-      % Remove our enchantment if the original died.
+      % Delete the evil twin if the original dies.
       if victim = poOriginal
       {
-         if poCaster <> $
-            AND IsClass(poCaster,&Player)
-         {
-            Send(poCaster,@RemoveEnchantmentClass,#class=&SummonEvilTwin);
-         }
-         else
-         {
-            Post(self,@Delete);
-         }
+         Post(self,@Delete);
       }
       
       return ;
@@ -239,7 +229,7 @@ messages:
       if IsClass(poOriginal,&Player)
          AND NOT Send(poOriginal,@IsLoggedOn)
       {
-         Send(self,@Delete);
+         Post(self,@Delete);
       }
 
       if what = poOriginal
@@ -298,7 +288,6 @@ messages:
 
       return iFlags;
    }
-
 
    GetAttackRange()
    {
@@ -554,7 +543,6 @@ messages:
 
        return;
    }
-
 
    GetIllusionForm()
    {

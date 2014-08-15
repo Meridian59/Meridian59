@@ -144,11 +144,19 @@ classvars:
 
 properties:
 
-   % Evil twin object
-   poEvilTwin = $
-
    % list of resistances, Each element is [value, type].
    plResistances = $
+
+   % List of enchantments.
+   % Each element is [ timer, object of spell, [optional state] ].
+   plEnchantments = $
+
+   % Evil twin object
+   poEvilTwin = $
+   
+   % Apparition list and target
+   plApparitionList = $
+   poApparitionOriginal = $
 
 messages:
 
@@ -216,7 +224,7 @@ messages:
       {
          for oEnchantment in Send(self,@GetEnchantmentList)
          {
-            if Length(oEnchantment) > 2
+            if Length(oEnchantment) > 3
             {
                plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances,#iState=Nth(oEnchantment,3));
             }
@@ -315,6 +323,101 @@ messages:
       }
 
       return iDamage;
+   }
+
+   %%% Spell enchantment functions.
+
+   IsEnchanted(what=$,byClass=&Spell)
+   "Returns whether or not currently enchanted by <what>."
+   {
+      local i;
+
+      if what = $
+      {
+         for i in plEnchantments
+         {
+            if IsClass(Nth(i,2),byClass)
+            {
+               return TRUE;
+            }
+         }
+      }
+      else
+      {
+         for i in plEnchantments
+         {
+            if Nth(i,2) = what
+            {
+               return TRUE;
+            }
+         }
+      }
+
+      return FALSE;
+   }
+
+   GetEnchantedState(what=$)
+   "If enchanted by <what>, returns the state data (which MUST exist, or it's an error.  "
+   "In other words, the caller must know that <what> adds state data).  Returns $ otherwise."
+   {
+      local i;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            return Nth(i,3);
+         }
+      }
+
+      return $;
+   }
+
+   GetEnchantmentsByClass(enchClass=&Spell)
+   "returns a subset of plEnchantments whose elements are of the given class"
+   {
+      local i, returnList;
+      returnList = $;
+
+      for i in plEnchantments
+      {
+         if IsClass(Nth(i,2),enchClass)
+         {
+            returnList = Cons(i,returnList);
+         }
+      }
+
+      return returnList;
+   }
+
+   GetEnchantmentList()
+   {
+      return plEnchantments;
+   }
+
+   GetCastPower(what=$)
+   "This is used by purge to get the spellpower the personal enchantment was "
+   "cast at. Put in Battler instead of Player as we may use this for monster "
+   "buffs one day."
+   {
+      local i, iCastPower;
+
+      for i in plEnchantments
+      {
+         if Nth(i,2) = what
+         {
+            if Length(i) > 3
+            {
+               iCastPower = Nth(i,4);
+            }
+            else
+            {
+               iCastPower = Nth(i,3);
+            }
+         }
+      }
+
+      return iCastPower;
    }
 
    %%% Combat functionality.
@@ -1102,6 +1205,8 @@ messages:
       return 0;
    }
 
+   % This section deals with illusions cast by/on the battler
+
    AddEvilTwin(what=$)
    {
       if poEvilTwin=$
@@ -1134,6 +1239,43 @@ messages:
       }
 
       return FALSE;
+   }
+
+   % If Apparition is cast on the monster, this list keeps track of it.
+   AddApparition(what=$)
+   {
+      plApparitionList = Cons(what,plApparitionList);
+
+      return;
+   }
+
+   % If this monster is an Apparition, this keeps track of the original target.
+   AddApparitionOriginal(what=$)
+   {
+      poApparitionOriginal = what;
+
+      return;
+   }
+
+   % If an Apparition targeting this monster is deleted, remove it from list.
+   RemoveApparition(what=$)
+   {
+      local i;
+
+      for i in plApparitionList
+      {
+         if i = what
+         {
+            plApparitionList = DelListElem(plApparitionList,i);
+         }
+      }
+
+      if Length(plApparitionList) = 0
+         {
+            plApparitionList = $;
+         }
+
+      return;
    }
 
 end

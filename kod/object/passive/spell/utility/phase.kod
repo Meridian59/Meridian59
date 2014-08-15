@@ -77,6 +77,8 @@ classvars:
 
 properties:
 
+   piPhaseDelay = 1500
+
 messages:
 
    ResetReagents()
@@ -114,6 +116,11 @@ messages:
       if Send(Send(who,@GetOwner),@IsArena)
       {
          Send(who,@MsgSendUser,#message_rsc=no_phasing_in_arena_msg);
+         return FALSE;
+      }
+      
+      if NOT Send(who,@CanPhaseAgain,#time=piPhaseDelay)
+      {
          return FALSE;
       }
 

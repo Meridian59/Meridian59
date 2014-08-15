@@ -1037,6 +1037,7 @@ properties:
    ptPhaseTimer = $
    ptPhaseVisualEffectTimer = $
    piRemainingPhaseTime = 60000 * 8
+   ptCanPhaseTimer = $
 
    % Put new reagents in your bag
    pbReagentBagAuto = TRUE
@@ -13840,7 +13841,29 @@ messages:
       piRemainingPhaseTime = amount;
       return;
    }
-   
+
+   CanPhaseAgain(time=$)
+   {
+      if ptCanPhaseTimer <> $
+      {
+         return FALSE;
+      }
+
+      if time > 0
+      {
+         ptCanPhaseTimer = CreateTimer(self,@CanPhaseTimer,time);
+      }
+
+      return TRUE;
+   }
+
+   CanPhaseTimer()
+   {
+      ptCanPhaseTimer = $;
+
+      return;
+   }
+
    GetReagentBagAuto()
    {
       return pbReagentBagAuto;

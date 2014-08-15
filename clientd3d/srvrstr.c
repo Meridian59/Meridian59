@@ -11,7 +11,7 @@
 
 #include "client.h"
 
-#define MAXQPARAMS 10  /* Maximum # of %q parameters in a server message when fully expanded */
+#define MAXQPARAMS 25  /* Maximum # of %q parameters in a server message when fully expanded */
 
 /************************************************************************/
 /*
@@ -261,11 +261,23 @@ typedef struct {
 } FormatCode;
 
 static FormatCode code_table[] = {
-{ 'r', CODE_COLOR, PALETTERGB(128,   0,   0) },
-{ 'g', CODE_COLOR, PALETTERGB(  0, 100,   0) },
-{ 'b', CODE_COLOR, PALETTERGB(  0,   0, 255) },
-{ 'k', CODE_COLOR, PALETTERGB(  0,   0,   0) },
-{ 'w', CODE_COLOR, PALETTERGB(255, 255, 255) },
+{ 'r', CODE_COLOR, PALETTERGB(128,   0,   0) }, // Dark red
+{ 'f', CODE_COLOR, PALETTERGB(200,   0,   0) }, // Bright red
+{ 'g', CODE_COLOR, PALETTERGB(  0, 100,   0) }, // Dark green
+{ 'l', CODE_COLOR, PALETTERGB(  0, 255,   0) }, // Light green
+{ 'b', CODE_COLOR, PALETTERGB(  0,   0, 255) }, // Dark blue
+{ 'k', CODE_COLOR, PALETTERGB(  0,   0,   0) }, // Black
+{ 'w', CODE_COLOR, PALETTERGB(255, 255, 255) }, // White
+{ 'y', CODE_COLOR, PALETTERGB(230, 230,  25) }, // Yellow
+{ 'p', CODE_COLOR, PALETTERGB(178,  40, 213) }, // Pink
+{ 'o', CODE_COLOR, PALETTERGB(245, 120,  10) }, // Orange
+{ 'a', CODE_COLOR, PALETTERGB( 25, 124,  93) }, // Aquamarine
+{ 'c', CODE_COLOR, PALETTERGB( 46, 234, 241) }, // Cyan
+{ 'q', CODE_COLOR, PALETTERGB(143,  38, 170) }, // Purple
+{ 't', CODE_COLOR, PALETTERGB( 11,  59, 112) }, // Teal
+{ 's', CODE_COLOR, PALETTERGB( 85,  87,  83) }, // Dark grey
+{ 'v', CODE_COLOR, PALETTERGB(128,   0, 128) }, // Violet
+{ 'm', CODE_COLOR, PALETTERGB(255,   0, 255) }, // Magenta
 { 'B', CODE_STYLE, STYLE_BOLD },
 { 'I', CODE_STYLE, STYLE_ITALIC },
 { 'U', CODE_STYLE, STYLE_UNDERLINE },

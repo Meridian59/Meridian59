@@ -409,6 +409,7 @@ properties:
    pbAutoloot = TRUE
 
    piLogonDelay = 1500
+   ptLogonDelayTimer = $
 
 messages:
 

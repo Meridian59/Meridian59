@@ -344,6 +344,10 @@ resources:
    reagentbag_auto_on = "You start putting new reagents in your bag."
    reagentbag_auto_off = "You stop putting new reagents in your bag."
 
+   user_logon_delay = \
+      "You are frozen for a moment with the shock of stepping back into "
+      "the world!"
+
 classvars:
 
    viIndefinite = ARTICLE_NONE

@@ -16,8 +16,9 @@ constants:
 resources:
 
    createweapon_cast_rsc = "%s%s appears."
-   createweapon_inv_full_rsc = "%s%s appears in the air before you, "
-   "but before you can drop something and grab it, it vanishes."
+   createweapon_inv_full_rsc = \
+      "%s%s appears in the air before you but since you are unable "
+      "to carry it, it falls on the floor with a loud clang."
    createweapon_name_rsc = "create weapon"
    createweapon_icon_rsc = icremace.bgf
    createweapon_desc_rsc = \

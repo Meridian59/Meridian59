@@ -128,6 +128,8 @@ enum
 #define SPROCKET_FILE "sprocket.dll"
 
 #include <my_global.h>
+#undef min
+#undef max
 #include <mysql.h>
 
 #ifdef BLAK_PLATFORM_WINDOWS

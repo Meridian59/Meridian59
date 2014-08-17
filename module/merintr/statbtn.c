@@ -418,6 +418,10 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 	if (group == GROUP_NONE)
 		return;
 
+		// record which stat are we currently using (stats/skills/spells or inventory)
+	SetCurrentGroupStub(group);
+	//debug(("Player selecting group -> %d\n", group, GetCurrentGroupStub())); 		
+
 	if (group != StatsGetCurrentGroup())
 	{
 		//	ajw Changes to make Inventory act somewhat like one of the stats groups.
@@ -425,7 +429,6 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 		{
 			//	Inventory must be going away.
 			ShowInventory( False );
-//			StatsShowGroup( True );
 		}
 		if( group == STATS_INVENTORY )
 		{

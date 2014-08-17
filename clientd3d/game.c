@@ -21,7 +21,10 @@ BOOL dataValid = FALSE;
  * info message for a given player.
  */
 static Bool first_entry;
-static BOOL frameDrawn = FALSE;           
+static BOOL frameDrawn = FALSE;      
+
+// currently selected group tab/window (invent,spells,skills||stats)
+BYTE group = -1;     
 
 void SetGameDataValid(BOOL flag)
 {
@@ -690,4 +693,14 @@ int ComputeObjectDistance(room_contents_node *r1, room_contents_node *r2)
 player_info *GetPlayerInfo(void)
 {
    return &player;
+}
+
+void SetCurrentGroup(BYTE newGroup) 
+{
+	group = newGroup;
+}
+
+BYTE GetCurrentGroup() 
+{
+	return group;
 }

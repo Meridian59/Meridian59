@@ -112,4 +112,8 @@ DWORD GetOverrideRoomDepth(int level);
 
 M59EXPORT player_info *GetPlayerInfo(void);
 
+// currently selected stat button (inventory,stats,spells,skils...)
+M59EXPORT void SetCurrentGroup(BYTE newGroup);
+M59EXPORT BYTE GetCurrentGroup();
+
 #endif _GAME_H

@@ -220,7 +220,7 @@ messages:
       {
          for oEnchantment in Send(self,@GetEnchantmentList)
          {
-            if Length(oEnchantment) > 3
+            if Length(oEnchantment) > 2
             {
                plCurrentResistances = Send(Nth(oEnchantment,2),@ModifyResistance,#resistance_list=plCurrentResistances,#iState=Nth(oEnchantment,3));
             }

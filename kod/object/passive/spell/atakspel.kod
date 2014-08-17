@@ -117,6 +117,8 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=attack_spell_out_of_range,
                     #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName),
                     #parm3=vrName);
+
+         return FALSE;
       }
 
       if piRange <> $

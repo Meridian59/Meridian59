@@ -1785,3 +1785,18 @@ player_info *GetPlayer(void)
 {
    return GetPlayerInfo();
 }
+
+// si: currently selected stat (inventory/spells/skills/stats...) defined within Game.h/.c
+extern void SetCurrentGroup(BYTE newGroup);
+
+void SetCurrentGroupStub(BYTE newGroup) 
+{
+	SetCurrentGroup(newGroup);	
+}
+
+extern BYTE GetCurrentGroup();
+
+BYTE GetCurrentGroupStub()
+{
+   return GetCurrentGroup();
+}

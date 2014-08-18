@@ -424,7 +424,7 @@ messages:
          bWasBad = (Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
                     OR Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
 
-         if NOT Send(poCaster,@AllowPlayerAttack,#victim=what)
+         if NOT Send(poCaster,@AllowPlayerAttack,#victim=what,#report=FALSE)
          {
             return FALSE;
          }

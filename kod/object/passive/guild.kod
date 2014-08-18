@@ -2263,11 +2263,32 @@ messages:
      return FALSE;
    }
 
-   RemoveDeclaredAlly(otherguild = $)
+   RemoveDeclaredAlly(otherguild=$)
    "Removes the guild in question from the ally list.  Tells the other guild "
    "to end it's alliance with you."
    {
       local i, j;
+
+      for i in plAllies
+      {
+         if i = otherguild
+         {
+            plAllies = DelListElem(plAllies, i);
+            for j in plMembers
+            {
+               Send(First(j),@MsgSendUser,
+                    #message_rsc=guild_end_alliance,
+                    #parm1=Send(otherguild,@GetDef),
+                    #parm2=Send(otherguild,@GetName),
+                    #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
+
+               % Reset friend/foe colors
+               Send(First(j),@ToCliRoomContents);
+            }
+
+            Post(otherguild,@RemoveDeclaredAlly,#otherguild=self);
+         }
+      }
 
       for i in plAlliesOf
       {
@@ -2283,17 +2304,14 @@ messages:
                     #parm3=Send(self,@GetDef),#parm4=Send(self,@GetName));
 
                % Reset friend/foe colors
-               Send(First(i),@ToCliRoomContents);
+               Send(First(j),@ToCliRoomContents);
             }
-            
-            Send(otherguild,@RemoveDeclaredAlly,#otherguild=self);
-            
+
             return TRUE;
          }
       }
-      
       DEBUG("tried to end an alliance that didn't exist!");
-      
+
       return FALSE;
    }
 

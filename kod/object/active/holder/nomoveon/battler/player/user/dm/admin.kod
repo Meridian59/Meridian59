@@ -103,8 +103,6 @@ messages:
          Send(self,@MsgSendUser,#message_rsc=admin_morphed);
       }
 
-      Send(self,@SuspectRollcall);
-
       propagate;
    }
 

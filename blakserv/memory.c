@@ -315,6 +315,8 @@ void FreeMemoryX(int malloc_id,void **ptr,int size)
 
 void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)
 {
+	void* new_mem;
+
 	if (InMainLoop())
 	{
 		/*dprintf("R0x%08x %i %i %i\n",ptr,malloc_id,old_size,new_size); */
@@ -325,9 +327,17 @@ void * ResizeMemory(int malloc_id,void *ptr,int old_size,int new_size)
 		memory_stat.allocated[malloc_id] += new_size-old_size;
 
 #ifndef NMEMDEBUG
-	return ReallocCHK(malloc_id,ptr,new_size,old_size);
+	new_mem = ReallocCHK(malloc_id,ptr,new_size,old_size);
 #else
-	return realloc(ptr,new_size);
+	new_mem = realloc(ptr,new_size);
 #endif
+
+	if (new_mem == NULL)
+	{		
+		eprintf("ResizeMemory couldn't reallocate from %i to %i bytes (id %i)\n",old_size,new_size,malloc_id);
+		FatalError("Memory reallocation failure");
+	}
+
+	return new_mem;
 }
 

@@ -49,13 +49,8 @@ typedef struct {
 #define RequestGame(time, catch, hostname) \
   ToServer(AP_REQ_GAME, NULL, time, catch, hostname)
 
-#ifdef ADMIN_BUILD
 #define RequestAdmin()               ToServer(AP_REQ_ADMIN, NULL)
 #define RequestAdminNote(str)        ToServer(AP_ADMINNOTE, NULL, str)
-#else
-#define RequestAdmin()
-#define RequestAdminNote(str)
-#endif
 
 #define RequestResources()           ToServer(AP_GETRESOURCE, NULL)
 #define RequestAllFiles()            ToServer(AP_GETALL, NULL)

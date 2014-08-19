@@ -108,7 +108,7 @@ messages:
       propagate;
    }
 
-   AllowPlayerAttack(victim=$, stroke_obj=$, use_weapon=$, report=TRUE)
+   AllowPlayerAttack(victim=$,stroke_obj=$,use_weapon=$,report=TRUE)
    {
       if IsClass(victim,&Player)
          AND Send(victim,@IsPhasedOut)
@@ -141,7 +141,7 @@ messages:
       return FALSE;
    }
 
-   UserSay(string = $,type = $)
+   UserSay(string=$,type=$)
    {
       local oWeapon, i, lObjects, oObject, rRoom, iRow, iCol, iFineRow, iFineCol;
 
@@ -149,16 +149,19 @@ messages:
          AND (StringContain(string,admin_create_itematt_command)
               OR StringContain(string,"create itematt"))
       {
+         % Log the DM command in god.txt, and print it to the debug log.
+         GodLog(string);
+
          %% Only works on weapons for now.
          oWeapon = Send(self,@LookupPlayerWeapon);
-         
-         if oWeapon= $
-         {   
-            Send(self,@MsgSendUser,#message_rsc=admin_need_weapon);   
 
-            return;  
+         if oWeapon= $
+         {
+            Send(self,@MsgSendUser,#message_rsc=admin_need_weapon);
+
+            return;
          }
-	 
+
          for i in Send(SYS,@GetItemAtts)
          {
             if Send(i,@DMCreateItemAtt,#who=self,#string=string,
@@ -175,8 +178,7 @@ messages:
                return;
             }
          }
-         
-         Send(self,@MsgSendUser,#message_rsc=admin_cant_create_itematt);   
+         Send(self,@MsgSendUser,#message_rsc=admin_cant_create_itematt);
 
          return;
       }
@@ -225,9 +227,9 @@ messages:
       {
          if NOT (piFlags & PFLAG_ANONYMOUS)
          {
-            Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);            
+            Send(self,@SetPlayerFlag,#flag=PFLAG_ANONYMOUS,#value=TRUE);
             piDMFlags = piDMFlags | DMFLAG_ANONYMOUS;
-            
+
             Send(self,@MsgSendUser,#message_rsc=admin_anonymous);
             Send(self,@MsgSendUser,#message_rsc=admin_anonymous_hint);
          }
@@ -247,8 +249,7 @@ messages:
                     #parm1=Send(self,@GetTrueName));
             }
          }
-
-         Send(self,@ResetPlayerFlagList); 
+         Send(self,@ResetPlayerFlagList);
 
          return;
       }
@@ -416,60 +417,7 @@ messages:
          OR StringEqual(string,"logoffghost temp off")
       {
          Send(self,@MsgSendUser,#message_rsc=admin_logoffghost_temp_off);
-         Send(SYS,@TempDisableLogoffPenalties);         
-
-         return;
-      }
-
-      % Snooping commands.  Better left alone.
-
-      if StringEqual(string,"investigator")
-      {
-         Send(self,@BecomeInvestigator);
-
-         return;
-      }
-
-      if StringEqual(string,"end investigation")
-      {
-         if Send(SYS,@GetInvestigator) <> self
-         {
-            propagate;
-         }
-
-         Send(SYS,@ClearSuspects);
-         Send(SYS,@SetInvestigator,#who=$);
-
-         return;
-      }
-
-      if StringContain(string,"snoop")
-      {
-         if Send(SYS,@GetInvestigator) <> self
-         {
-            propagate;
-         }
-
-         StringSubstitute(string,"snoop "," ");
-         i = Send(SYS,@FindUserByString,#string=string);
-         if i <> $
-         {
-            Send(SYS,@AddSuspect,#who=i);
-         }
-
-         Send(self,@SuspectRollcall);
-
-         return;
-      }
-
-      if StringEqual(string,"list suspects")
-      {
-         if Send(SYS,@GetInvestigator) <> self
-         {
-            propagate;
-         }
-
-         Send(self,@SuspectRollcall);
+         Send(SYS,@TempDisableLogoffPenalties);
 
          return;
       }
@@ -479,7 +427,7 @@ messages:
 
    %%% Room tours
 
-   StartTour(delay = 2000)
+   StartTour(delay=2000)
    {
       local i;
 
@@ -517,7 +465,7 @@ messages:
       return;
    }
 
-   SomeoneLogon(what=$, bTrue=TRUE)
+   SomeoneLogon(what=$,bTrue=TRUE)
    "We aren't tricked by admins only going hidden."
    {
       if NOT bTrue
@@ -528,7 +476,7 @@ messages:
       propagate;
    }
 
-   SomeoneLogoff(what=$, bTrue=TRUE)
+   SomeoneLogoff(what=$,bTrue=TRUE)
    "Don't be tricked by admins only going hidden."
    {
       if NOT bTrue
@@ -537,99 +485,6 @@ messages:
       }
 
       propagate;
-   }
-
-   %%% Investigator stuff
-
-   BecomeInvestigator()
-   {
-      local r;
-
-      r = Send(SYS,@SetInvestigator,#who=self);
-
-      ClearTempString();
-      AppendTempString("~B~g[~rWARNING:~n ");
-      AppendTempString("Anything seen in ~B~g[ ]~n should ~BNEVER~n be ");
-      AppendTempString("mentioned, or hinted, to anyone. Do not prosecute ");
-      AppendTempString("on any secrets until you also have publicly ");
-      AppendTempString("available evidence. If any rumor got to any ");
-      AppendTempString("customer, these tools would become useless ");
-      AppendTempString("overnight.~B~g]");
-      Send(self,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-           #parm1=GetTempString(),#type1=0);
-      clearTempString();
-
-      Send(self,@SuspectRollcall);
-
-      return r;
-   }
-
-   InvestigateDeath(killer=$,victim=$,cheap=FALSE)
-   {
-      if Send(SYS,@GetInvestigator) = self and
-         not Send(SYS,@GetChaosNight)
-      {
-         clearTempString();
-         AppendTempString("~B~g[~n");
-         AppendTempString(Send(killer,@GetTrueName));
-         AppendTempString(" killed ");
-         AppendTempString(Send(victim,@GetTrueName));
-         AppendTempString(" in ");
-         AppendTempString(Send(Send(killer,@GetOwner),@GetName));
-         if cheap
-         {
-            AppendTempString(" (victim had no penalty)");
-         }
-
-         AppendTempString("~B~g]");
-
-         Send(self,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-              #parm1=getTempString(),#type1=0);
-      }
-
-      return;
-   }
-
-   SuspectRollcall()
-   {
-      local i, plSuspects;
-
-      if Send(SYS,@GetInvestigator) = self
-      {
-         % (example) [Suspects: Greenwich, Daisy, May Hem]
-         % The suspects that are logged in are named in red,
-         %  others in black.
-
-         clearTempString();
-         AppendTempString("~B~g[~nSuspects: ");
-         plSuspects = Send(SYS,@GetSuspects);
-
-         for i in plSuspects
-         {
-            if i <> first(plSuspects)
-            {
-               AppendTempString("~n, ");
-            }
-
-            if Send(i,@IsLoggedOn)
-            {
-               AppendTempString("~r");
-            }
-            else
-            {
-               AppendTempString("~k");
-            }
-
-            AppendTempString(Send(i,@GetTrueName));
-         }
-
-         AppendTempString("~B~g]");
-
-         Send(self,@MsgSendUser,#message_rsc=Send(SYS,@GetPercentQRsc),
-              #parm1=getTempString(),#type1=0);
-      }
-
-      return;
    }
 
    UserLogoffHook()
@@ -649,7 +504,6 @@ messages:
    {
       return admin_icon_priestess;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

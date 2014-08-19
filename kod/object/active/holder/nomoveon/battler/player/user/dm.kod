@@ -615,9 +615,11 @@ messages:
       {
          propagate;
       }
-
       % These checks seem to do double-duty, but this is so other countries can 
       %  localize the words yet English speaking admins can still use the system.
+
+      % Log the DM command in god.txt, and print it to the debug log.
+      GodLog(string);
 
       if StringEqual(string,dm_help_command)
       {

@@ -139,17 +139,22 @@ int C_GodLog(int object_id,
 			 parm_node name_parm_array[])
 {
 	char buf[2000];
-	val_type parameter1;
+	int len_buf;
 	kod_statistics *kstat;
 	class_node *c;
 	kstat = GetKodStats();
 	c = GetClassByID(kstat->interpreting_class);
 
-	parameter1 = RetrieveValue(object_id,local_vars,normal_parm_array[1].type,
-			normal_parm_array[1].value);
+	sprintf(buf,"Object %i (CLASS %s) Reports: "
+		,object_id,c->fname);
 
-	sprintf(buf,"Object %i (CLASS %s) Reports: %s\n"
-		,object_id,c->fname,GetClassDebugStr(c,parameter1.v.data));
+	string_node *snod;
+
+	snod = GetTempString();
+	len_buf = strlen(buf);
+	memcpy(buf + len_buf,snod->data,snod->len_data);
+	*(buf + len_buf + snod->len_data) = 0;
+
 	gprintf(buf);
 	return NIL;
 }

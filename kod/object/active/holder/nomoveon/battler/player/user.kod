@@ -344,6 +344,9 @@ resources:
    reagentbag_auto_on = "You start putting new reagents in your bag."
    reagentbag_auto_off = "You stop putting new reagents in your bag."
 
+   user_logon_delay = \
+      "You take a moment to recollect your senses."
+
 classvars:
 
    viIndefinite = ARTICLE_NONE
@@ -403,6 +406,9 @@ properties:
 
    pbAutoCombine = TRUE
    pbAutoloot = TRUE
+
+   piLogonDelay = 1500
+   ptLogonDelayTimer = $
 
 messages:
 
@@ -637,7 +643,7 @@ messages:
 
    UserLogon(session_id = $)
    {
-      local i;
+      local i, oSpell;
       
       poSession = session_id;
       pbLogged_on = TRUE;
@@ -698,6 +704,25 @@ messages:
 
       Send(self,@ToCliSpellSchools);
       Send(self,@UserLogonHook);
+
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+      if NOT Send(self,@IsEnchanted,#what=oSpell)
+         AND NOT Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFELOGOFF)
+         AND NOT (IsClass(self,&DM) AND Send(self,@PlayerIsImmortal))
+         AND ptLogonDelayTimer = $
+      {
+         Send(self,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
+         Send(self,@SysMsgSendUser,#message_rsc=user_logon_delay);
+         ptLogonDelayTimer = CreateTimer(self,@LogonHoldOff,piLogonDelay);
+      }
+
+      return;
+   }
+
+   LogonHoldOff()
+   {
+      Send(self,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_OFF);
+      ptLogonDelayTimer = $;
 
       return;
    }

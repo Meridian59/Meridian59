@@ -47,10 +47,9 @@ classvars:
    viSpell_num = SID_APPARITION
    viSchool = SS_RIIJA
    viSpell_level = 4
-   viMana = 14
+   viMana = 15
 
    viSpellExertion = 12
-   viCast_time = 2000
    viChance_To_Increase = 25
    viMeditate_ratio = 30
    vrSucceed_wav = summonapparition_sound
@@ -91,18 +90,14 @@ messages:
 
       oRoom = Send(who,@GetOwner);
 
-      if Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_COMBAT)
-         OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_NO_PK)
-         OR Send(oRoom,@CheckRoomFlag,#flag=ROOM_GUILD_PK_ONLY)
+      if NOT Send(oRoom,@AllowGuildAttack,#what=who)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_bad_location,#parm1=vrName);
 
          return FALSE;
       }
 
-      if Send(oRoom,@CountHoldingHowMany,#class=&monster) > 15
-         OR Send(oRoom,@CountHoldingSummoned)
-            > Send(Send(SYS,@GetSettings),@GetPlayerSummonedObjectLimit)
+      if Send(oRoom,@CountHoldingHowMany,#class=&monster) > 25
       {
          Send(who,@MsgSendUser,#message_rsc=summonapparition_failed_rsc);
 
@@ -125,11 +120,20 @@ messages:
    CastSpell(who=$,lTargets=$,iSpellpower=$)
    {
       local oApparition, oRoom, iRow, iCol, iFine_Row, iFine_Col,
-            lMonsList, i;
+            lMonsList, i, oTarget;
+
+      if lTargets = $
+      {
+         Send(who,@MsgSendUser,#message_rsc=apparition_fizzle);
+
+         return;
+      }
+
+      oTarget = First(lTargets);
 
       oRoom = Send(who,@GetOwner);
 
-      if not IsClass(oRoom,&MonsterRoom)
+      if NOT IsClass(oRoom,&MonsterRoom)
       {
          oApparition = Send(self,@CreateRandomMonster,#spellpower=iSpellpower);
       }
@@ -148,25 +152,28 @@ messages:
          }
       }
 
-      Send(oApparition,@SetIllusion,#value=TRUE);
-      Send(oApparition,@SetSummoned,#value=TRUE);
+      % These two functions allow monsters to keep track of Apparitions.
+      Send(oTarget,@AddApparition,#what=oApparition);
+      Send(oApparition,@AddApparitionOriginal,#what=oTarget);
 
-      iRow = Send(Nth(lTargets,1),@GetRow);
-      iCol = Send(Nth(lTargets,1),@GetCol);
-      iFine_Row = Send(Nth(lTargets,1),@GetFineRow);
-      iFine_Col = Send(Nth(lTargets,1),@GetFineCol);
+      Send(oApparition,@SetIllusion,#value=TRUE);
+
+      iRow = Send(oTarget,@GetRow);
+      iCol = Send(oTarget,@GetCol);
+      iFine_Row = Send(oTarget,@GetFineRow);
+      iFine_Col = Send(oTarget,@GetFineCol);
 
       Send(oRoom,@NewHold,#what=oApparition,#new_row=iRow,#new_col=iCol,
            #fine_row=iFine_Row,#fine_col=iFine_Col);
 
-      Send(oApparition,@TargetSwitch,#what=First(lTargets),#iHatred=1000);
+      Send(oApparition,@TargetSwitch,#what=oTarget,#iHatred=1000);
       Send(oApparition,@EnterStateAttack);
 
       Send(who,@MsgSendUser,#message_rsc=summonapparition_cast_rsc,
            #parm1=Send(oApparition,@GetIndef),
            #parm2=Send(oApparition,@GetName),
-           #parm3=Send(Nth(lTargets,1),@GetIndef),
-           #parm4=Send(Nth(lTargets,1),@GetName));
+           #parm3=Send(oTarget,@GetIndef),
+           #parm4=Send(oTarget,@GetName));
 
       i = Send(oApparition,@ReturnMaxHitPoints);
       i = i / APPARITION_FRACTION;
@@ -176,7 +183,7 @@ messages:
       propagate;
    }
 
-   CreateRandomMonster(spellpower = $)
+   CreateRandomMonster(spellpower=$)
    {
       local i;
 

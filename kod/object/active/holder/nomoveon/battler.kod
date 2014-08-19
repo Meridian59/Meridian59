@@ -144,6 +144,13 @@ classvars:
 
 properties:
 
+   % Evil twin object
+   poEvilTwin = $
+
+   % Apparition list and target
+   plApparitionList = $
+   poApparitionOriginal = $
+
    % list of resistances, Each element is [value, type].
    plResistances = $
 
@@ -1097,6 +1104,79 @@ messages:
       }
       
       return 0;
+   }
+
+   % This section deals with illusions cast by/on the battler
+
+   AddEvilTwin(what=$)
+   {
+      if poEvilTwin=$
+      {
+         poEvilTwin=what;
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   RemoveEvilTwin()
+   {
+      if poEvilTwin <> $
+      {
+         poEvilTwin = $;
+
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   HasEvilTwin()
+   {
+      if poEvilTwin <> $
+      {
+         return TRUE;
+      }
+
+      return FALSE;
+   }
+
+   % If Apparition is cast on the monster, this list keeps track of it.
+   AddApparition(what=$)
+   {
+      plApparitionList = Cons(what,plApparitionList);
+
+      return;
+   }
+
+   % If this monster is an Apparition, this keeps track of the original target.
+   AddApparitionOriginal(what=$)
+   {
+      poApparitionOriginal = what;
+
+      return;
+   }
+
+   % If an Apparition targeting this monster is deleted, remove it from list.
+   RemoveApparition(what=$)
+   {
+      local i;
+
+      for i in plApparitionList
+      {
+         if i = what
+         {
+            plApparitionList = DelListElem(plApparitionList,i);
+         }
+      }
+
+      if Length(plApparitionList) = 0
+         {
+            plApparitionList = $;
+         }
+
+      return;
    }
 
 end

@@ -330,22 +330,24 @@ properties:
    piDrawfx = 0
 
    % A list of quest nodes for which this monster is the destination NPC
-   plActiveQuestNodes = $   
+   plActiveQuestNodes = $
    pbIllusion = FALSE
    vbSummoned = FALSE
 
+   % Evil twin objects
+   poEvilTwin = $
+   poEvilTwinOriginal = $
+
    % Should this monster stick around through a call to DestroyDisposable()?
-   pbDontDispose = FALSE  
+   pbDontDispose = FALSE
 
    piMood = 0
 
    % list of keyed speechlib items [class, key] triggered since last
    %  RandomTimer firing
-   plSpamList = $    
+   plSpamList = $
 
    piColor_Translation = 0
-
-   piWalkingEffort = 0
 
    piSweepCounter = 0
 
@@ -519,16 +521,43 @@ messages:
    Delete()
    "End of monster. Clean up any quests it might have spawned."
    {
-      local i, j;
-      % Minion Management - upon dieing they should leave your control list        
+      local i, j, k;
+      % Minion Management - upon dying they should leave your control list
       if Send(self,@GetMaster) <> $
       {
-         if isClass(Send(self,@GetMaster),&User)
+         if IsClass(Send(self,@GetMaster),&User)
          {
             Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
          }
       }
-      
+
+      % If this monster is an 'Evil Twin', tell the original it was deleted.
+      if poEvilTwinOriginal <> $
+      {
+         Send(poEvilTwinOriginal,@RemoveEvilTwin);
+      }
+
+      % If this monster has an Evil Twin, delete it too.
+      if poEvilTwin <> $
+      {
+         Post(poEvilTwin,@Delete);
+      }
+
+      % If this monster has Apparitions attacking it, delete them.
+      if plApparitionList <> $
+      {
+         for k in plApparitionList
+         {
+            Send(k,@Delete);
+         }
+         plApparitionList = $;
+      }
+
+      % If this monster is an Apparition, tell the original it was deleted.
+      if poApparitionOriginal <> $
+      {
+         Send(poApparitionOriginal,@RemoveApparition,#what=self);
+      }
       % Under rare conditions delete is called twice in succession
       if poBrain <> $
       {
@@ -881,8 +910,6 @@ messages:
    "here, we have already handled the case that the user was plunked down"
    "near a non-fighting and agressive mob. So, lets just start our timers."
    {
-      piWalkingEffort = 0;
-
       if piState & STATE_LIMBO
       {
          Send(self,@StartBasicTimers);
@@ -902,7 +929,7 @@ messages:
       local i;
 
       Send(self,@ClearBasicTimers);
-      piWalkingEffort = 0;
+
       if Send(self,@MobIsCondSeller)
       {
          for i in Nth(plFor_sale,4)
@@ -937,9 +964,6 @@ messages:
    "appropriateIf were already fighting this person, this doesnt interrupt "
    "our plans."
    {
-      % Getting hit revitalizes my will to walk.
-      piWalkingEffort = 0;
-
       Send(poBrain,@SomethingAttacked,#mob=self,#state=piState,
            #what=what,#victim=victim,#use_weapon=use_weapon);
 
@@ -1419,23 +1443,7 @@ messages:
             iNew_col = iNew_col - 1;
          }
       }
- 
-      % Walking takes a will.  If I'm weak, my will is outweighed by effort.
-      %  (This is protection from spamming the client with a lot of overactive
-      %  walkers.)
-      % Unlike MoveTowards and MoveAway, we also recharge our will to walk here.
-      %  This should give nice erratic pause-walk-pause-walk behavior.
-      piWalkingEffort = piWalkingEffort + 1;
-      if piWalkingEffort > (2 * piHit_points)
-      {
-         if random(1,4) = 1
-         {
-            piWalkingEffort = 0;
-         }
 
-         return;
-      }
-   
       if Send(self,@ReqMonsterMove,#new_row=iNew_row,#new_col=iNew_col)
       {
          Send(self,@MonsterOrient,#new_row=iNew_row,#new_col=iNew_col);
@@ -1446,7 +1454,7 @@ messages:
             Send(poOwner,@SomethingMoved,#what=self,
                  #new_row=iNew_row,#new_col=iNew_col,
                  #speed=(0x80|viSpeed),#non_monsters_only=TRUE);
-         }         
+         }
       }
 
       return;
@@ -1456,8 +1464,8 @@ messages:
    {
       local iRange;
 
-      if poMaster = $  
-      {  
+      if poMaster = $
+      {
          Debug("MovetoMaster Called with nil master!",Send(self,@GetName));
 
          return FALSE;
@@ -2049,55 +2057,37 @@ messages:
    {
       if oTarget = $ 
       { 
-         Debug("Bad info passed to MoveTowards!");          
+         Debug("Bad info passed to MoveTowards!");
          return FALSE; 
       }
 
       if poOwner <> Send(oTarget,@GetOwner)
       { 
          return FALSE; 
-      }
-
-      % Walking takes a will.  If I'm weak, my will is outweighed by effort.
-      %  (This is protection from spamming the client with a lot of overactive
-      %  walkers.)
-      piWalkingEffort = piWalkingEffort + 1;
-      if piWalkingEffort > (2 * piHit_points)
-      {
-         return FALSE;
       }
 
       return Send(self,@MoveInDirection,#row_diff=Send(oTarget,@GetRow)-piRow,
                   #col_diff=Send(oTarget,@GetCol)-piCol,
                   #face_target=face_target,#face_away=face_away,
-                  #to_master=to_master);       
+                  #to_master=to_master);
    }
 
    MoveAway(oTarget = $, face_target=FALSE, face_away=FALSE)
    {
-      if oTarget = $ 
-      { 
-         Debug("Bad info passed to MoveAway!");          
-         return FALSE; 
+      if oTarget = $
+      {
+         Debug("Bad info passed to MoveAway!");
+         return FALSE;
       }
 
       if poOwner <> Send(oTarget,@GetOwner)
       {
-            return FALSE; 
-      }
-
-      % Walking takes a will.  If I'm weak, my will is outweighed by effort.
-      %  (This is protection from spamming the client with a lot of overactive
-      %  walkers.)
-      piWalkingEffort = piWalkingEffort + 1;
-      if piWalkingEffort > (2 * piHit_points)
-      {
-         return FALSE;
+            return FALSE;
       }
 
       return Send(self,@MoveInDirection,#row_diff=-(Send(oTarget,@GetRow)-piRow),
                   #col_diff=-(Send(oTarget,@GetCol)-piCol),
-                  #face_target=face_target,#face_away=face_away);       
+                  #face_target=face_target,#face_away=face_away);
    }
 
    MoveInDirection(row_diff = $,col_diff = $, face_target = FALSE,
@@ -3147,9 +3137,6 @@ messages:
    MonsterAttack(what = $)
    "Called by monster attacking code right before taking a swing at <what>."
    {
-      % Attacking someone else revitalizes my will to walk.
-      piWalkingEffort = 0;
-
       return;
    }
 
@@ -5451,7 +5438,15 @@ messages:
    {
       return TRUE;
    }
-   
+
+   % If this monster is an Evil Twin, this keeps track of the original target.
+   EvilTwinOrignial(what=$)
+   {
+      poEvilTwinOriginal = what;
+
+      return;
+   }
+
    CanPlayerAdvanceOnMe()
    {
       return (NOT Send(self,@IsIllusion));

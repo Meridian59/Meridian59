@@ -15,7 +15,6 @@ constants:
    include blakston.khd
 
 resources:
- 
 
    EvilTwin_name_rsc = "evil twin"
 
@@ -45,11 +44,11 @@ classvars:
 
    viTreasure_type = TID_NONE
 
-   viSpeed = SPEED_AVERAGE
+   viSpeed = SPEED_FAST
    viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 1
-   viDifficulty = 9
+   viDifficulty = 8
    viKarma = 0
    viCashmin = 0
    viCashmax = 0
@@ -74,16 +73,14 @@ properties:
    piSpellpower = 1
    poArrow = $
 
-   vbSummoned = TRUE
-
 messages:
 
-   Constructor(iSpellPower=1, oMaster = $, oTarget = $)
+   Constructor(iSpellPower=1,oMaster=$,oTarget=$)
    {
       local i, each_obj, oRoom;
-      
-      oRoom = send(oTarget,@GetOwner);
-      
+
+      oRoom = Send(oTarget,@GetOwner);
+
       if oMaster <> $
       {
          poCaster = oMaster;
@@ -93,12 +90,12 @@ messages:
       {
          poOriginal = oTarget;
          poTarget = oTarget;
-         for i in send(oRoom,@GetHolderActive)
+         for i in Send(oRoom,@GetHolderActive)
          {
             each_obj = Send(oRoom,@HolderExtractObject,#data=i);
 
             if (IsClass(each_obj,&Reflection) OR IsClass(each_obj,&EvilTwin))
-               AND send(each_obj,@GetIllusionForm) = oTarget
+               AND Send(each_obj,@GetIllusionForm) = oTarget
                AND random(1,2) = 1
                AND each_obj <> self
             {
@@ -106,47 +103,35 @@ messages:
             }
          }
       }
-      
+
       piSpellpower = iSpellpower;
       poArrow = Create(&Arrow);
-      post(self,@TargetSwitch,#what=oTarget,#iHatred=1000);
-      post(self,@EnterStateChase);
+      Post(self,@TargetSwitch,#what=oTarget,#iHatred=1000);
+      Post(self,@EnterStateChase);
 
       if IsClass(poOriginal,&Player)
       {
          Send(poOriginal,@AddEvilTwin);
       }
-	  
+
       propagate;
    }
 
    Delete(bMonsterReport=TRUE)
    {
-      send(SYS,@RemoveReflection,#oReflection=self);
-
-      % Let the caster take care of the appropriate bookkeeping
-      if poCaster <> $
-      {
-         if IsClass(poCaster,&Monster)
-            AND bMonsterReport
-         {
-            send(poCaster,@SummonDeleted,#what=self);
-         }
-      }
-
-      if IsClass(poOriginal,&Player)
+      if poOriginal <> $
       {
          Send(poOriginal,@RemoveEvilTwin);
       }
-	  
+
       if (poOwner <> $)
          AND (IsClass(poOriginal,&Monster)
-              OR send(poOriginal,@isLoggedOn))
+              OR Send(poOriginal,@IsLoggedOn))
       {
          Send(poOwner,@SomeoneSaid,#type=SAY_MESSAGE,#string=EvilTwin_delete,
-              #parm1=send(self,@GetDef,#cap=TRUE),#parm2=send(self,@Getname,#cap=FALSE));
+              #parm1=Send(self,@GetDef,#cap=TRUE),#parm2=Send(self,@GetName,#cap=FALSE));
       }
-      
+
       poOriginal = $;
       poCaster = $;
       poArrow = $;
@@ -154,87 +139,79 @@ messages:
       propagate;
    }
 
-   KilledSomething(what=$, use_weapon=$)
+   KilledSomething(what=$,use_weapon=$)
    {
       if IsClass(poCaster,&Player)
-         AND (NOT send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+         AND (NOT Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
          AND IsClass(what,&Player)
       {
          Send(poCaster,@MsgSendUser,#message_rsc=EvilTwin_trouble);
       }
-      
-      post(self,@Delete);
-      
-      return send(poCaster,@KilledSomething,#what=what,#use_weapon=use_weapon);
+
+      Post(self,@Delete);
+
+      return Send(poCaster,@KilledSomething,#what=what,#use_weapon=use_weapon);
    }
 
-   SomethingKilled(what = $,victim = $)
+   SomethingKilled(what=$,victim=$)
    {
-      % Remove our enchantment if the original died.
+      % Delete the evil twin if the original dies.
       if victim = poOriginal
       {
-         if poCaster <> $
-            AND IsClass(poCaster,&Player)
-         {
-            send(poCaster,@RemoveEnchantmentClass,#class=&SummonEvilTwin);
-         }
-         else
-         {
-            post(self,@Delete);
-         }
+         Post(self,@Delete);
       }
       
-      return ; 
+      return ;
    }
-   
+
    GetApparentName()
    {
-      return send(poOriginal,@GetApparentName);
+      return Send(poOriginal,@GetApparentName);
    }
 
    GetName(cap=FALSE)
    {
-      return send(poOriginal,@GetName,#cap=cap);
+      return Send(poOriginal,@GetName,#cap=cap);
    }
    
    GetDef(cap=FALSE)
    {
-      return send(poOriginal,@GetDef,#cap=cap);
+      return Send(poOriginal,@GetDef,#cap=cap);
    }
 
    GetIndef(cap=FALSE)
    {
-      return send(poOriginal,@GetIndef,#cap=cap);
+      return Send(poOriginal,@GetIndef,#cap=cap);
    }
 
    GetHisHer(cap=FALSE)
    {
-      return send(poOriginal,@GetHisHer,#cap=cap);
+      return Send(poOriginal,@GetHisHer,#cap=cap);
    }
 
    GetHeShe(cap=FALSE)
    {
-      return send(poOriginal,@GetHeShe,#cap=cap);
+      return Send(poOriginal,@GetHeShe,#cap=cap);
    }
 
    GetLordLady(cap=FALSE)
    {
-      return send(poOriginal,@GetLordLady,#cap=cap);
+      return Send(poOriginal,@GetLordLady,#cap=cap);
    }
 
    GetHisHers(cap=FALSE)
    {
-      return send(poOriginal,@GetHisHers,#cap=cap);
+      return Send(poOriginal,@GetHisHers,#cap=cap);
    }
 
    GetHimHer(cap=FALSE)
    {
-      return send(poOriginal,@GetHimHer,#cap=cap);
+      return Send(poOriginal,@GetHimHer,#cap=cap);
    }
 
    ReqSomethingEntered(what=$)
    {
-      if NOT send(poOriginal,@IsLoggedOn)
+      if NOT Send(poOriginal,@IsLoggedOn)
       {
          Send(self,@Delete);
       }
@@ -245,31 +222,31 @@ messages:
    SomethingLeft(what=$)
    {
       if poOriginal = $
-	   {
-	      Send(self,@Delete);
+      {
+         Send(self,@Delete);
       }
 
       if IsClass(poOriginal,&Player)
-         AND NOT send(poOriginal,@IsLoggedOn)
-	   {
-	      Send(self,@Delete);
+         AND NOT Send(poOriginal,@IsLoggedOn)
+      {
+         Post(self,@Delete);
       }
 
       if what = poOriginal
       {
          % If target leaves room, hunt them down.
-         if IsClass(send(poOriginal,@GetOwner),&UnderWorld)
+         if IsClass(Send(poOriginal,@GetOwner),&UnderWorld)
          {
-            post(self,@Delete);
+            Post(self,@Delete);
 
             propagate;
          }
          else
          {
-            post(self,@GotoOriginal);
+            Post(self,@GotoOriginal);
          }
       }
-      
+
       propagate;
    }
 
@@ -277,28 +254,28 @@ messages:
    {
       if poOriginal = $
       {
-         post(self,@Delete);
+         Post(self,@Delete);
 
          return;
       }
-   
-      send(send(poOriginal,@GetOwner),@NewHold,#what=self,
-           #new_row = send(poOriginal,@getRow),#new_col = send(poOriginal,@getcol),
-           #new_angle = send(poOriginal,@GetAngle));
-      post(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
-      post(self,@EnterStateChase);
-      
+
+      Send(Send(poOriginal,@GetOwner),@NewHold,#what=self,
+           #new_row = Send(poOriginal,@GetRow),#new_col = Send(poOriginal,@GetCol),
+           #new_angle = Send(poOriginal,@GetAngle));
+      Post(self,@TargetSwitch,#what=poOriginal,#iHatred=1000);
+      Post(self,@EnterStateChase);
+
       return;
 
    }
 
    GetOriginalInfo()
    {
-      vrIcon = send(poOriginal,@GetPlayerIcon);
-      vrName = send(poOriginal,@GetTrueName);
-      piGender = send(poOriginal,@GetGender);
-      piDrawfx = send(poOriginal,@GetPlayerDrawfx);
-      
+      vrIcon = Send(poOriginal,@GetPlayerIcon);
+      vrName = Send(poOriginal,@GetTrueName);
+      piGender = Send(poOriginal,@GetGender);
+      piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
+
       return;
    }
 
@@ -306,23 +283,22 @@ messages:
    {
       local iFlags;
 
-      iFlags = send(poOriginal,@GetObjectFlags);
+      iFlags = Send(poOriginal,@GetObjectFlags);
       if (iFlags & USER_YES) {  iFlags = (iFlags | FALSEPLAYER_YES);  }
 
       return iFlags;
    }
 
-
    GetAttackRange()
    {
       local iWeapon;
-      
-      iWeapon = send(poOriginal,@LookupPlayerWeapon);
+
+      iWeapon = Send(poOriginal,@LookupPlayerWeapon);
       if iWeapon <> $
-      {  
-         return send(iWeapon,@GetRange);  
+      {
+         return Send(iWeapon,@GetRange);
       }
-      
+
       return 1;
    }
 
@@ -338,7 +314,7 @@ messages:
       return Send(poOriginal,@GetDefense,#what=what,#stroke_obj=stroke_obj);
    }
 
-   GetDamage(what = $, stroke_obj=$)
+   GetDamage(what=$,stroke_obj=$)
    {
       local oStroke;
 
@@ -347,7 +323,7 @@ messages:
       {
          oStroke = $;
       }
-      
+
       return Send(poOriginal,@GetDamage,#what=what,#stroke_obj=oStroke);
    }
 
@@ -355,9 +331,9 @@ messages:
    {
       if detect
       {
-         return send(poOriginal,@GetKarma);
+         return Send(poOriginal,@GetKarma);
       }
-      
+
       propagate;
    }
 
@@ -369,51 +345,51 @@ messages:
          {
             Send(self,@DoWave);
          }
-         
+
          if Send(what,@GetAnimation) = PANM_POINT
          {
             Send(self,@DoPoint);
          }
-         
+
          if Send(what,@GetAnimation) = PANM_DANCE
          {
             Send(self,@DoDance);
          }
-         
-         piDrawfx = send(poOriginal,@GetPlayerDrawfx);
+
+         piDrawfx = Send(poOriginal,@GetPlayerDrawfx);
       }
-      
+
       propagate;
    }
 
    DoWave()
    "Causes the EvilTwin to wave."
    {
-      send(self,@GetOriginalInfo);
+      Send(self,@GetOriginalInfo);
       piAnimation = PANM_WAVE;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = PANM_NONE;
-      
+
       return;
    }
 
    DoPoint()
    {
-      send(self,@GetOriginalInfo);
+      Send(self,@GetOriginalInfo);
       piAnimation = PANM_POINT;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = PANM_NONE;
-      
+
       return;
    }
 
    DoDance()
    {
-      send(self,@GetOriginalInfo);
+      Send(self,@GetOriginalInfo);
       piAnimation = PANM_DANCE;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = PANM_NONE;
-      
+
       return;
     }
 
@@ -421,11 +397,11 @@ messages:
    {
       if who = $
       {
-         post(self,@Delete);
+         Post(self,@Delete);
 
          return;
       }
-      
+
       poOriginal = who;
       Send(self,@GetOriginalInfo);
 
@@ -434,9 +410,9 @@ messages:
 
    GetIcon()
    {
-      return send(poOriginal,@GetIcon);
+      return Send(poOriginal,@GetIcon);
    }
-   
+
    TryAttack(what=$,stroke_obj=$)
    {
       local bWasBad;
@@ -445,18 +421,18 @@ messages:
          AND NOT Send(poOwner,@IsArena)
       {
          %Is the caster bad to start with?
-         bWasBad = (send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                    OR send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
-   
-         if NOT send(poCaster,@AllowPlayerAttack,#victim=what)
+         bWasBad = (Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+                    OR Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER));
+
+         if NOT Send(poCaster,@AllowPlayerAttack,#victim=what,#report=FALSE)
          {
             return FALSE;
          }
 
          % If they weren't bad and become bad, let them know.
          if NOT bWasBad
-            AND (send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
-                 OR send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
+            AND (Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
+                 OR Send(poCaster,@CheckPlayerFlag,#flag=PFLAG_MURDERER))
          {
             Send(poCaster,@MsgSendUser,#message_rsc=EvilTwin_trouble);
          }
@@ -468,12 +444,13 @@ messages:
    MonsterAttack(what=$)
    {
       % Do the animation!
-      send(self,@DoAttack);
+      Send(self,@DoAttack);
 
       return;
    }
 
-   % The next three messages deal with the three defense skills.  These messages return the relative values of the three
+   % The next three messages deal with the three defense skills.
+   % These messages return the relative values of the three
    % skills.  Used in player for defense, used in battler for defense messages.
    GetParryAbility(stroke_obj=$)
    {
@@ -494,7 +471,7 @@ messages:
    {
       local Weapon, ammotype, i;
       
-      Weapon = send(poOriginal,@LookupPlayerWeapon);
+      Weapon = Send(poOriginal,@LookupPlayerWeapon);
       ammotype = poArrow;
       Send(self,@GetOriginalInfo);
 
@@ -504,15 +481,15 @@ messages:
          {
             piAnimation = PANM_BOW_FIRE;
 
-            for i in send(poOriginal,@GetPlayerUsing)
+            for i in Send(poOriginal,@GetPlayerUsing)
             {
-               if send(i,@GetItemUseType) = ITEM_USE_QUIVER
+               if Send(i,@GetItemUseType) = ITEM_USE_QUIVER
                {
                   AmmoType = i;
                }
             }
-            
-            send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = AmmoType);
+
+            Send(poOwner,@SomethingShot,#who=self,#target=poTarget,#projectile = AmmoType);
          }
          else
          {
@@ -523,17 +500,17 @@ messages:
       {
          piAnimation = PANM_FIST_ATTACK;
       }
-      
+
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = PANM_NONE;
-      
+
       return;
    }
-   
+
    ShowDesc()
    {
-      send(poOriginal,@ShowDesc);
-      
+      Send(poOriginal,@ShowDesc);
+
       return;
    }
 
@@ -542,55 +519,54 @@ messages:
       % Make it look like EvilTwin is walking
 
       Send(poOriginal,@SendMoveAnimation);
-      
+
       return;
    }
 
    SendMoveOverlays()
    {
-      send(poOriginal,@SendMoveOverlays);
-      
+      Send(poOriginal,@SendMoveOverlays);
+
       return;
    }
 
    SendAnimation()
    {
-       send(poOriginal,@SendAnimation,#iAnimation=piAnimation);
-       
+       Send(poOriginal,@SendAnimation,#iAnimation=piAnimation);
+
        return;
    }
 
    SendOverlays()
    {
        Send(poOriginal,@SendOverlays,#iAnimation=piAnimation);
-       
+
        return;
    }
-
 
    GetIllusionForm()
    {
       return poOriginal;
-   }  
+   }
 
-   TryLook(what = $)
+   TryLook(what=$)
    {
       if poOriginal = $
       {
-         post(self,@Delete);
+         Post(self,@Delete);
 
          return;
       }
-   
+
       if IsClass(poOriginal,&Player)
-         AND send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
+         AND Send(poOriginal,@CheckPlayerFlag,#flag=PFLAG_INVISIBLE)
          AND what <> poOriginal
       {
          return;
       }
-      
+
       Send(what,@SendLookPlayer,#what=poOriginal);
-      
+
       return;
    }
 
@@ -603,6 +579,6 @@ messages:
    {
       return FALSE;
    }
-   
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

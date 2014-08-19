@@ -323,8 +323,6 @@ properties:
    piAgility = 25
    piAim = 25
 
-   % Supports enchantments with monsters as targets
-   plEnchantments = $
    piEnch_flags = 0
 
    piDrawfx = 0
@@ -640,7 +638,7 @@ messages:
    EnchantmentTimer(timer = $)
    {
       local i;
- 
+
       for i in plEnchantments
       {
          if First(i) = timer
@@ -694,22 +692,6 @@ messages:
       return;
    }
 
-   IsEnchanted(what = $)
-   "Returns whether or not currently enchanted by <what>."
-   {
-      local i;
-
-      for i in plEnchantments
-      {
-         if Nth(i,2) = what
-         {
-            return TRUE;
-         }
-      }
-
-      return FALSE;
-   }
-
    RemoveAllEnchantments()
    "Remove all current enchantments."
    {
@@ -729,7 +711,7 @@ messages:
 
       return;
    }
-      
+
    RemoveEnchantment(what = $)
    "If have a current enchantment set by <what>, end it."
    {

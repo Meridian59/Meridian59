@@ -290,7 +290,7 @@ messages:
          oWeapAtt = Send(SYS,@FindItemAttByNum,#num=Send(self,@GetNumFromCompound,#compound=First(i)));
          if IsClass(oWeapAtt,&WeaponAttribute)
          {
-            iBaseHit = Send(oWeapAtt,@ModifyHitRoll,#hitroll=hit_roll,#wielder=poOwner,
+            iBaseHit = Send(oWeapAtt,@ModifyHitRoll,#hitroll=iBaseHit,#wielder=poOwner,
                               #target=target,#lData=i);
          }
       }

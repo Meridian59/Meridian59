@@ -54,6 +54,7 @@ BLAKLIBDIR = $(TOPDIR)\lib
 BLAKINCLUDEDIR = $(TOPDIR)\include
 BLAKSERVRUNDIR = $(TOPDIR)\run\server
 CLIENTRUNDIR = $(TOPDIR)\run\localclient
+MYSQLINCLUDEDIR = $(TOPDIR)\include\mysql
 
 KODDIR = $(TOPDIR)\kod
 KODINCLUDEDIR = $(KODDIR)\include
@@ -129,4 +130,4 @@ MAKEBGF = $(BLAKBINDIR)\makebgf
 # environment variables for compiler
 
 LIB = $(LIB);$(BLAKLIBDIR);C:\dx81sdk\DXF\DXSDK\lib
-INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);C:\dx81sdk\DXF\DXSDK\include
+INCLUDE = $(INCLUDE);$(BLAKINCLUDEDIR);$(MYSQLINCLUDEDIR);C:\dx81sdk\DXF\DXSDK\include

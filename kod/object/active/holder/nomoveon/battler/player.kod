@@ -8584,11 +8584,6 @@ messages:
          }       
       }
 
-      if Send(SYS,@GetInvestigator)
-      {
-         Post(Send(SYS,@GetInvestigator),@InvestigateDeath,#killer=what,#victim=self,#cheap=bNo_drop_death);
-      }
-
       % Create the corpse.
       oBody = Send(self,@CreateCorpse);
       Send(oRoom,@NewHold,#what=oBody,#new_row=iRow,#new_col=iCol,#fine_row=16,#fine_col=16, #new_angle=iAngle);

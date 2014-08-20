@@ -3028,8 +3028,29 @@ messages:
          }
       }
 	  
+	  % 5.3 Manual move checks in some rooms
+	  if Send(poOwner,@GetRoomNum) = RID_CAVE2
+	  {
+		if NOT Send(poOwner,@IsMoveOK,
+					#old_row=iRow,#old_col=iCol,#old_fine_row=iFineRow,#old_fine_col=iFineCol,
+					#new_row=new_row,#new_col=new_col,#new_fine_row=fine_row,#new_fine_col=fine_col)
+		{
+			% log
+			Debug("ALERT!",Send(self,@GetTrueName),self,"tried to move through closed cave entrance.");
+		
+			% reset position
+			Send(SYS,@UtilGoNearSquare,#what=self,#where=poOwner,
+				 #new_row=iRow,
+				 #new_col=iCol,
+				 #fine_row=iFineRow,
+				 #fine_col=iFineCol,
+				 #new_angle=iAngle);
+				 
+			return;
+		}
+	  }
+	  
       % 6. Drain vigor once per 1000 ms.
-
       if iDeltaVigor >= 1000
       {
          % Reduce speed value to old value, 5/6ths current value, then

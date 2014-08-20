@@ -98,7 +98,7 @@ messages:
       send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=24,#speed=0);
    
       ptIllusionResetTimer = createtimer(self,@ReplaceIllusions,30000);  % 3o seconds
-      
+
       return;   
    }
 
@@ -116,7 +116,7 @@ messages:
       send(self,@SetSector,#sector=3,#animation=ANIMATE_FLOOR_LIFT,#height=48,#speed=0);
       send(self,@SetSector,#sector=4,#animation=ANIMATE_FLOOR_LIFT,#height=40,#speed=0);
       send(self,@SetSector,#sector=5,#animation=ANIMATE_FLOOR_LIFT,#height=32,#speed=0);
-   
+
       return;   
    }
 
@@ -150,6 +150,21 @@ messages:
       return TRUE;
    }
 
+   IsMoveOK(who = $, old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1, 
+			new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1)
+   {     
+	  % If entrance is not dispelled, prevent moves which cross its line from east to west
+	  % Note: 10,63 is the entrance wall
+      if ptIllusionResetTimer = $
+	    AND (old_col > 10 OR (old_col = 10 AND old_fine_col > 62)) 
+		AND (new_col < 10 OR (new_col = 10 AND new_fine_col <= 62))
+      {	  	  	    
+	    return FALSE;
+	  }
+	  
+	  return TRUE;
+   }
+   
    Delete()
    {
       if ptIllusionResetTimer <> $

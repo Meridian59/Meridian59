@@ -13,7 +13,7 @@
 #ifndef _OBJECT_H
 #define _OBJECT_H
 
-#define INIT_OBJECTS 100000
+#define INIT_OBJECTS 1000000
 
 typedef struct
 {

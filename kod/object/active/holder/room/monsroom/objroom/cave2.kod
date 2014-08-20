@@ -152,17 +152,67 @@ messages:
 
    IsMoveOK(old_row = 1, old_col = 1, old_fine_row = 1, old_fine_col = 1, 
 			new_row = 1, new_col = 1, new_fine_row = 1, new_fine_col = 1)
-   {     
-	  % If entrance is not dispelled, prevent moves which cross its line from east to west
-	  % Note: 10,63 is the entrance wall
-      if ptIllusionResetTimer = $
-	    AND (old_col > 10 OR (old_col = 10 AND old_fine_col > 62)) 
-		AND (new_col < 10 OR (new_col = 10 AND new_fine_col <= 62))
-      {	  	  	    
-	    return FALSE;
-	  }
+   {    
+      % This is a hardcoded movement check, which
+	  % verifies the movement against 3 lines to
+	  % make sure no one passes through them
+	  % while the cave entrance is not dispelled
+	  %
+	  % line1 (vertical)   (x=10 / xfine=62) 
+	  % line2 (vertical)   (x=14 / xfine=21)
+	  % line3 (horizontal) (y=17 / yfine=18)
+	  %
+	  %         | line2 (vertic.)
+	  %         |
+	  %    _____| line3 (horizont.)
+	  %   |
+	  %   |
+	  % < Entrance <
+	  %   |
+	  %   | line1 (vertic)
 	  
-	  return TRUE;
+      local isOldEastOfLine1, isOldEastOfLine2, isOldSouthOfLine3;
+	  	  
+      % Basic requirement Entrance must not be dispelled
+      if ptIllusionResetTimer = $
+      {	     
+        % if we are south of line3
+        if (old_row > 17 OR (old_row = 17 AND old_fine_row > 18))
+        {
+          % if we are east of line1
+          if (old_col > 10 OR (old_col = 10 AND old_fine_col > 62))
+          {
+            % don't allow crossing line1 from east to west
+            if (new_col < 10 OR (new_col = 10 AND new_fine_col <= 62))				
+            {
+              return FALSE;
+            }
+
+            % if we are west of line2
+            if (old_col < 14 OR (old_col = 14 AND old_fine_col <= 21))
+            {
+              % don't allow crossing line3 from south to north
+              if (new_row < 17 OR (new_row = 17 AND new_fine_row <= 18))
+              {
+                return FALSE;
+              }
+            }
+          }
+        }
+
+        % if we are north of line3 (or on line3)
+        else
+        {
+          % don't allow crossing line2 from east to west
+          if (old_col > 14 OR (old_col = 14 AND old_fine_col > 21)) AND 
+             (new_col < 14 OR (new_col = 14 AND new_fine_col <= 21))
+          {
+            return FALSE;
+          }
+        }	  
+      }
+
+      return TRUE;
    }
    
    Delete()

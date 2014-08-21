@@ -2577,7 +2577,7 @@ messages:
 
    ToCliStats(group = $)
    {
-      local i,oSpell,oSkill,iCount;
+      local i,oSpell,oSkill,iCount,lCurrentResistances;
 
       if not pbLogged_on
       {
@@ -2614,10 +2614,11 @@ messages:
          Send(self,@SendStatArmor);
          
          i = 1;
+         lCurrentResistances = Send(self,@GetCurrentResistances);
          
          while i < 14
          {
-            Send(self,@SendStatResistances,#num=i);
+            Send(self,@SendStatResistances,#num=i,#lCurrentResistances=lCurrentResistances);
             i = i + 1;
          }
 
@@ -7127,12 +7128,10 @@ messages:
       return;
    }
 
-   SendStatResistances(num=0)
+   SendStatResistances(num=1,lCurrentResistances=$)
    {
-      local i, lCurrentResistances, bWeaponAll,bWeaponThrust,bWeaponBludgeon,bWeaponSlash,bWeaponPierce,
+      local i, bWeaponAll,bWeaponThrust,bWeaponBludgeon,bWeaponSlash,bWeaponPierce,
                                     bSpellAll,bSpellFire,bSpellShock,bSpellCold,bSpellAcid,bSpellHoly,bSpellUnholy,bSpellQuake;
-      
-      lCurrentResistances = Send(self,@GetCurrentResistances);
       
       bWeaponAll = FALSE;
       bWeaponThrust = FALSE;
@@ -7349,16 +7348,18 @@ messages:
    
    DrawResistances()
    {
-      local i;
+      local i, lCurrentResistances;
       
       i = 1;
+      
+      lCurrentResistances = Send(self,@GetCurrentResistances);
       
       if pbLogged_on
       {
          while i < 14
          {
             AddPacket(1,BP_STAT,1,2);
-            Send(self,@SendStatResistances,#num=i);
+            Send(self,@SendStatResistances,#num=i,#lCurrentResistances=lCurrentResistances);
             SendPacket(poSession);
             i = i + 1;
          }

@@ -1194,51 +1194,68 @@ messages:
          
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_BUY
       {
-         Send(self,@UserBuy,#what=Nth(client_msg,2));
-         
+         oWhat = Nth(client_msg,2);
+         if IsClass(oWhat,&Monster)
+         {
+            Send(self,@UserBuy,#what=oWhat);
+         }
+
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_BUY_ITEMS
       {
          oWhat = Nth(client_msg,2);
-         lItems = Nth(client_msg,3);
-         Send(self,@UserBuyItems,#what=oWhat,#item_list=lItems,
-              #number_list=number_stuff);
-         
+         if IsClass(oWhat,&Monster)
+         {
+            lItems = Nth(client_msg,3);
+            Send(self,@UserBuyItems,#what=oWhat,#item_list=lItems,
+               #number_list=number_stuff);
+         }
+
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_WITHDRAWAL
       {
-         Send(self,@UserWithdrawal,#what=Nth(client_msg,2));
-         
+         oWhat = Nth(client_msg,2);
+         if IsClass(oWhat,&Monster)
+         {
+            Send(self,@UserWithdrawal,#what=oWhat);
+         }
+
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_WITHDRAWAL_ITEMS
       {
          oWhat = Nth(client_msg,2);
-         lItems = Nth(client_msg,3);
-         Send(self,@UserWithdrawalItems,#what=oWhat,#item_list=lItems,
-              #number_list=number_stuff);
-         
+         if IsClass(oWhat,&Monster)
+         {
+            lItems = Nth(client_msg,3);
+            Send(self,@UserWithdrawalItems,#what=oWhat,#item_list=lItems,
+               #number_list=number_stuff);
+         }
+
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_DEPOSIT
       {
          oWhat = Nth(client_msg,2);
-         lItems = Nth(client_msg,3);
-         Send(self,@UserDeposit,#what=oWhat,#item_list=lItems,
-              #number_list=number_stuff);
-         
+         if IsClass(oWhat,&Monster)
+         {
+            lItems = Nth(client_msg,3);
+            Send(self,@UserDeposit,#what=oWhat,#item_list=lItems,
+               #number_list=number_stuff);
+         }
+
          return;
       }
-      
+
       if liClient_cmd = BP_REQ_APPLY
       {
          oWhat = Nth(client_msg,2);

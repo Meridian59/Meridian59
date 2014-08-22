@@ -22,15 +22,18 @@ resources:
    HolySymbol_name_rsc = "holy symbol"
    HolySymbol_icon_rsc = iholysym.bgf
    HolySymbol_desc_rsc = \
-      "This spell involves weaving your hands in a holy tracery which frightens nearby unholy beings.  "
-      "Requires elderberries to be crushed onto the skin of your hands to ritually cleanse them."
-   
-   HolySymbol_success = "Your hands weave through the air in a delicate tracery, speaking through motion "
-      "the purity of Shal'ille, a ward against the unholy."
+      "This spell involves weaving your hands in a holy tracery which "
+      "frightens nearby unholy beings.  Requires two elderberries to be "
+      "crushed onto the skin of your hands to ritually cleanse them."
+
+   HolySymbol_success = \
+      "Your hands weave through the air in a delicate tracery, speaking "
+      "through motion the purity of Shal'ille, a ward against the unholy."
 
    HolySymbol_sound = sholysym.wav
 
-   holysymbol_intro = "Shal'ille Lv. 1: Weaves a holy symbol in the air which repels any nearby undead."
+   holysymbol_intro = \
+      "Shal'ille Lv. 1: Weaves a holy symbol in the air which repels any nearby undead."
 
 classvars:
 
@@ -59,7 +62,7 @@ messages:
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&Elderberry,3],plReagents);
+      plReagents = Cons([&Elderberry,2],plReagents);
 
       return;
    }
@@ -68,50 +71,51 @@ messages:
    {
       return 0;
    }
-	 
-   CastSpell(who = $,iSpellPower=0)
+
+   CastSpell(who=$,iSpellPower=0)
    {
       local oRoom, oObject, oMonster, iChance, iRoll;
-      
-      Send(who,@MsgSendUser,#message_rsc=HolySymbol_success);
-      oRoom = send(who,@GetOwner);
 
-      for oObject in send(oRoom,@GetHolderActive) 
+      Send(who,@MsgSendUser,#message_rsc=HolySymbol_success);
+      oRoom = Send(who,@GetOwner);
+
+      for oObject in Send(oRoom,@GetHolderActive)
       {
          oMonster = Send(oRoom,@HolderExtractObject,#data=oObject);
-      
-         if isClass(oMonster,&Monster)
-            AND NOT (send(oMonster,@GetBehavior) & AI_NPC)
-            AND (send(oMonster,@IsUndead))
+
+         if IsClass(oMonster,&Monster)
+            AND NOT (Send(oMonster,@GetBehavior) & AI_NPC)
+            AND (Send(oMonster,@IsUndead))
          {
-            % Use the "detect" option for the monster's karma incase we're trying to turn an event monster.
-            iChance = (iSpellPower*3/4) + (send(who,@GetBaseMaxHealth) - send(oMonster,@GetLevel)/2)
-                                        + (send(who,@GetKarma) - send(oMonster,@GetKarma,#detect=TRUE));
-                                        
-            if send(oMonster, @GetTarget) <> $
+            % Use the "detect" option for the monster's karma in case we're trying to turn an event monster.
+            iChance = (iSpellPower*3/4) + (Send(who,@GetBaseMaxHealth) - Send(oMonster,@GetLevel)/2)
+                                        + (Send(who,@GetKarma) + Send(oMonster,@GetKarma,#detect=TRUE));
+
+            if Send(oMonster, @GetTarget) <> $
             {
                % harder if monster already has a target
                iChance = (iChance - 5);
             }
-            
-            iChance = bound(iChance,2,98);
-            iRoll = random(1,100);
-            if iRoll < iChance 
+
+            iChance = Bound(iChance,2,98);
+            iRoll = Random(1,100);
+
+            if iRoll < iChance
             {
                % they're scared and will now run away
-               send(oMonster,@TurnedBy,#who=who);
-               send(oMonster,@TargetSwitch,#what=who,#iHatred=send(who,@GetKarma));
+               Send(oMonster,@TurnedBy,#who=who);
+               Send(oMonster,@TargetSwitch,#what=who,#iHatred=Send(who,@GetKarma));
             }
-            
-            if iRoll > (iChance + HATE_MARGIN) 
+
+            if iRoll > (iChance + HATE_MARGIN)
             {
                % oops!  since you failed, now they really hate you!
-               send(first(oMonster),@TargetSwitch,#what=who,#iHatred=send(who,@GetKarma));
-               send(first(oMonster),@EnterStateChase,#target=who,#actnow=TRUE);
+               Send(oMonster,@TargetSwitch,#what=who,#iHatred=Send(who,@GetKarma));
+               Send(oMonster,@EnterStateChase,#target=who,#actnow=TRUE);
             }
          }
       }
-      
+
       propagate;
    }
 

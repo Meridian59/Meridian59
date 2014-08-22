@@ -345,7 +345,7 @@ void MySQLCreateSchema()
 void MySQLRecordStatTotalMoney(int total_money)
 {
 	MySQLCheckConnection(false);
-	if (!connected | !enabled)
+	if (!connected || !enabled)
 		return;
 
 	char buf[200];
@@ -365,7 +365,7 @@ void MySQLRecordStatTotalMoney(int total_money)
 void MySQLRecordStatMoneyCreated(int money_created)
 {
 	MySQLCheckConnection(false);
-	if (!connected | !enabled)
+	if (!connected || !enabled)
 		return;
 
 	char buf[200];
@@ -383,7 +383,7 @@ void MySQLRecordStatMoneyCreated(int money_created)
 void MySQLRecordPlayerLogin(session_node *s)
 {
 	MySQLCheckConnection(false);
-	if (!connected | !enabled)
+	if (!connected || !enabled)
 		return;
 
 	//Log of characters, accounts, ips
@@ -410,7 +410,7 @@ void MySQLRecordPlayerLogin(session_node *s)
 void MySQLRecordPlayerAssessDamage(int res_who_damaged, int res_who_attacker, int aspell, int atype, int damage_applied, int damage_original, int res_weapon)
 {
 	MySQLCheckConnection(false);
-	if (!connected | !enabled)
+	if (!connected || !enabled)
 		return;
 
 	char buf[1200];

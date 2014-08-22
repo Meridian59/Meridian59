@@ -1,0 +1,9 @@
+perl dialogconvert.pl ren.tab
+perl dialogconvert.pl npc1.tab
+perl dialogconvert.pl stage1.tab
+perl dialogconvert.pl stage2.tab
+perl dialogconvert.pl councilor.tab
+perl dialogconvert.pl izzio.tab
+perl dialogconvert.pl konima.tab
+perl dialogconvert.pl murder.tab
+perl dialogconvert.pl npc.tab

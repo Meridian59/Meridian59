@@ -6037,9 +6037,8 @@ messages:
       }
 
       iDisableDuration = (Send(Send(self,@GetSettings),@GetLogoffPenaltyGhostTime)*150)/100;
-      iDisableDuration = iDisableDuration * 1000;   % convert to ms
 
-      ptLogoffPenaltyTempDisable = createTimer(self,@LogoffPenaltyTempDisableTrigger,iDisableDuration);
+      ptLogoffPenaltyTempDisable = CreateTimer(self,@LogoffPenaltyTempDisableTrigger,iDisableDuration);
 
       return;
    }

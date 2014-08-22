@@ -67,7 +67,7 @@ properties:
    % Are there node attacks?
    pbAttackEnabled = FALSE
    % Base number of Meridian days to use when figuring frequency of attacks.
-   piAttackFrequency = 36
+   piAttackFrequency = 24
    % The number of Xeochicatl spawned during an attack.
    piAttackIntensity = 8
    % Number of minutes the whole attack lasts.
@@ -75,11 +75,11 @@ properties:
    piAttackDuration = 60
 
    % Number of Meridian days a node loss lasts.
-   piLossDuration = 12
+   piLossDuration = 4
    % Base percent chance to actually be severed from the node.
-   piSeveredChance = 5
+   piSeveredChance = 2
    % Number of users that must be on before a node attack goes on.
-   piNumberOnForAttack = 20
+   piNumberOnForAttack = 40
 
    % NOTE: See specific notes in Recreate() for more information.
    % The current node being attacked.

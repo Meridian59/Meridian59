@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Xeochicatl is Monster 
+Xeochicatl is Monster
 
 constants:
 
@@ -20,7 +20,7 @@ constants:
    MAGIC_RESIST = 30
 
    % Cast spell animation.
-   ANIM_CAST = 2     
+   ANIM_CAST = 2
 
    FRAME_STAND = 1
    FRAME_FLY = 2
@@ -66,7 +66,7 @@ classvars:
    vrIcon = Xeochicatl_icon_rsc
    vrDead_icon = Xeochicatl_dead_icon_rsc
    vrDead_name = Xeochicatl_dead_name_rsc
-   
+
    viTreasure_type = TID_NONE
    viDefault_behavior = AI_FIGHT_AGGRESSIVE | AI_FIGHT_SWITCHALOT \
                         | AI_MOVE_REGROUP | AI_MOVE_WALKTHROUGH_WALLS
@@ -90,15 +90,15 @@ properties:
    piMana = 20
 
    % is this Xeochicatl part of a node attack?
-   pbNodeAttack = FALSE  
+   pbNodeAttack = FALSE
 
    piColor_Translation = 0
 
    % percent of victim's max mana it will try to drain.
-   piDrainAmount = 5    
+   piDrainAmount = 5
    % What do we drop on death?  Silly default item here.
-   pcTreasureItem = &CheapOreChunk  
-  
+   pcTreasureItem = &CheapOreChunk
+
 messages:
 
    Constructor(InAttack=FALSE)
@@ -110,11 +110,11 @@ messages:
       propagate;
    }
 
-   MonsterAttack(what = $)
+   MonsterAttack(what=$)
    {
       local iAmount;
-   
-      piAnimation = ANIM_ATTACK;      
+
+      piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
 
@@ -127,7 +127,7 @@ messages:
             {
                iAmount = Send(what,@GetMaxMana);
                iAmount = ((iAmount * piDrainAmount)/100) + 1;
-               iAmount = bound(iAmount,0,Send(what,@GetMana));
+               iAmount = Bound(iAmount,0,Send(what,@GetMana));
 
                Send(what,@LoseMana,#amount=iAmount);
                piMana = piMana + iAmount;
@@ -139,7 +139,7 @@ messages:
             Send(self,@MonsterCastSpell);
          }
       }
-      
+
       return;
    }
 
@@ -149,7 +149,7 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
       }
-      
+
       AddPacket(1,ANIMATE_NONE,2,FRAME_FLY);
 
       return;
@@ -161,7 +161,7 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION, 1,piColor_Translation);
       }
-      
+
       if piAnimation = ANIM_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE, 4,150, 2,FRAME_ATTACK_START,
@@ -169,7 +169,7 @@ messages:
                    
          return;
       }
-      
+
       if piAnimation = ANIM_CAST
       {
          AddPacket(1,ANIMATE_ONCE, 4,150, 2,FRAME_CAST_START,
@@ -180,18 +180,18 @@ messages:
 
       % if no body animation
       AddPacket(1,ANIMATE_NONE, 2,FRAME_FLY);
-      
+
       return;
    }
 
    EndAttack()
    {
       pbNodeAttack = FALSE;
-      
+
       return;
    }
 
-   IsAlly(target = $)
+   IsAlly(target=$)
    {
       if IsClass(target,&Xeochicatl)
       {
@@ -211,6 +211,18 @@ messages:
 
       % Create heartstone for it to drop when it dies.
       Send(self,@NewHold,#what=create(pcTreasureItem));
+
+      propagate;
+   }
+
+   % If we delete a xeo accidentally during a node attack
+   % we need to make sure the attack records it as dying
+   Delete()
+   {
+      if pbNodeAttack
+      {
+         Post(Send(SYS,@GetNodeAttack),@XeoKilled);
+      }
 
       propagate;
    }
@@ -249,8 +261,8 @@ messages:
 
       piAnimation = ANIM_CAST;
       Send(poOwner,@SomethingChanged,#what=self);
-      piAnimation = ANIM_NONE;             
- 
+      piAnimation = ANIM_NONE;
+
       oSpell = Send(SYS,@FindSpellByNum,#num=iSpell);
 
       if (Send(oSpell,@GetNumSpellTargets) > 0
@@ -285,7 +297,7 @@ messages:
       {
          return FALSE;
       }
-      
+
       return TRUE;
    }
 
@@ -317,7 +329,7 @@ messages:
       {
          return FALSE;
       }
- 
+
       if Send(oSpell,@IsHarmful)
       {
          iResistChance = MAGIC_RESIST;
@@ -335,10 +347,9 @@ messages:
             return TRUE;
          }
       }
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

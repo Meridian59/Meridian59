@@ -42,7 +42,7 @@ namespace PatchListGenerator
                 }
             }
 
-            if ((_clientPath == null) | (_jsonOutputPath == null))
+            if ((_clientPath == null) || (_jsonOutputPath == null))
             {
                 Console.WriteLine("Missing Parameter");
                 Console.WriteLine("--client=[path] - Base folder to scan for patch info");

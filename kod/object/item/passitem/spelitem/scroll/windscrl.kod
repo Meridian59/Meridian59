@@ -17,7 +17,7 @@ constants:
 resources:
 
    WindScroll_label_name_rsc = "scroll of winds"
-   WindScroll_icon_rsc = scr07.bgf
+   WindScroll_icon_rsc = scr08.bgf
    WindScroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical writing in a spidery hand."
 

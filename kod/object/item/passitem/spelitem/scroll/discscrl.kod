@@ -17,7 +17,7 @@ constants:
 resources:
 
    DiscordScroll_label_name_rsc = "scroll of discord"
-   DiscordScroll_icon_rsc = scr07.bgf
+   DiscordScroll_icon_rsc = scr05.bgf
    DiscordScroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical writing in a spidery hand."
 

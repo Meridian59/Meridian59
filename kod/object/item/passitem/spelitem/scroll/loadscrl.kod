@@ -17,7 +17,7 @@ constants:
 resources:
 
    LoadoutScroll_label_name_rsc = "scroll of loadout"
-   LoadoutScroll_icon_rsc = scr07.bgf
+   LoadoutScroll_icon_rsc = scr03.bgf
    LoadoutScroll_desc_rsc = \
       "This scroll will activate your link with your guildhall chests, "
       "magically acquiring gear according to your preferences registered "

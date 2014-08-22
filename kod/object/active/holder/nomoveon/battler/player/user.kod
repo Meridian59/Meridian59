@@ -6160,7 +6160,7 @@ messages:
       return;
    }
 
-   NewHold(what = $, bFromReagentBag = FALSE)
+   NewHold(what = $, bFromReagentBag = FALSE, check_combine = TRUE)
    {
       local i, oLastSpellItem;
 
@@ -6185,6 +6185,7 @@ messages:
       
       If IsClass(what,&SpellItem)
          AND Send(self,@IsAutoCombining)
+         AND check_combine
       {
          oLastSpellItem = $;
 

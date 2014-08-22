@@ -17,7 +17,7 @@ constants:
 resources:
 
    DarknessScroll_label_name_rsc = "scroll of darkness"
-   DarknessScroll_icon_rsc = scr07.bgf
+   DarknessScroll_icon_rsc = scr06.bgf
    DarknessScroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical writing in a spidery hand."
 

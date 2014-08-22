@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-EarthquakeScroll is Scroll
+MelancholyScroll is Scroll
 
 constants:
 
@@ -16,24 +16,30 @@ constants:
 
 resources:
 
-   EarthquakeScroll_label_name_rsc = "scroll of earthquake"
-   EarthquakeScroll_icon_rsc = scr08.bgf
-   EarthquakeScroll_desc_rsc = \
+   MelancholyScroll_label_name_rsc = "scroll of Melancholy"
+   MelancholyScroll_icon_rsc = scr10.bgf
+   MelancholyScroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical writing in a spidery hand."
 
 classvars:
 
-   vrLabelName = EarthquakeScroll_label_name_rsc
-   vrIcon = EarthquakeScroll_icon_rsc
-   viSpellEffect = SID_EARTHQUAKE
-   viColor = XLAT_TO_ORANGE
+   vrLabelName = MelancholyScroll_label_name_rsc
+   vrIcon = MelancholyScroll_icon_rsc
+   viSpellEffect = SID_MELANCHOLY
+   viColor = XLAT_TO_BLUE
 
 properties:
 
-   vrDesc = EarthquakeScroll_desc_rsc
-   pbDisabled = TRUE
+   vrDesc = MelancholyScroll_desc_rsc
 
 messages:
+
+   Constructed()
+   {
+      piItem_flags = 151;
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

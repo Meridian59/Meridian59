@@ -697,10 +697,10 @@ player_info *GetPlayerInfo(void)
 
 void SetCurrentGroup(BYTE newGroup) 
 {
-	group = newGroup;
+   group = newGroup;
 }
 
 BYTE GetCurrentGroup() 
 {
-	return group;
+   return group;
 }

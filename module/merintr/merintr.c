@@ -1791,12 +1791,12 @@ extern void SetCurrentGroup(BYTE newGroup);
 
 void SetCurrentGroupStub(BYTE newGroup) 
 {
-	SetCurrentGroup(newGroup);	
+   SetCurrentGroup(newGroup);	
 }
 
 extern BYTE GetCurrentGroup();
 
 BYTE GetCurrentGroupStub()
 {
-	return GetCurrentGroup();
+   return GetCurrentGroup();
 }

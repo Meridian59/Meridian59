@@ -411,49 +411,49 @@ Bool StatButtonDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)
  */
 void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 {
-	int group;
-	list_type stat_list;
+   int group;
+   list_type stat_list;
 
-	group = StatsFindGroupByHwnd(hwndCtl) + 1;  // Skip main stat group
-	if (group == GROUP_NONE)
-		return;
+   group = StatsFindGroupByHwnd(hwndCtl) + 1;  // Skip main stat group
+   if (group == GROUP_NONE)
+      return;
 
-	// record which stat are we currently using (stats/skills/spells or inventory)
-	SetCurrentGroupStub(group);
-	debug(("Player selecting group -> %d\n", group, GetCurrentGroupStub())); 		
+   // record which stat are we currently using (stats/skills/spells or inventory)
+   SetCurrentGroupStub(group);
+   debug(("Player selecting group -> %d\n", group, GetCurrentGroupStub())); 		
 
-	if (group != StatsGetCurrentGroup())
-	{
-		//	ajw Changes to make Inventory act somewhat like one of the stats groups.
-		if( StatsGetCurrentGroup() == STATS_INVENTORY )
-		{
-			//	Inventory must be going away.
-			ShowInventory( False );
-		}
-		if( group == STATS_INVENTORY )
-		{
-			//	The hacks continue... Force previously toggled non-inventory button to repaint and show new unpressed state.
-			InvalidateRect( buttons[ StatsGetCurrentGroup()-2 ].hwnd, NULL, FALSE );
+   if (group != StatsGetCurrentGroup())
+   {
+      //	ajw Changes to make Inventory act somewhat like one of the stats groups.
+      if( StatsGetCurrentGroup() == STATS_INVENTORY )
+      {
+         //	Inventory must be going away.
+         ShowInventory( False );
+      }
+      if( group == STATS_INVENTORY )
+      {
+         //	The hacks continue... Force previously toggled non-inventory button to repaint and show new unpressed state.
+         InvalidateRect( buttons[ StatsGetCurrentGroup()-2 ].hwnd, NULL, FALSE );
 
-			StatsShowGroup( False );
-			ShowInventory( True );
-			DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
-		}
-		else
-		{
-			// Check stat cache; if group not present, ask server
-			if (StatCacheGetEntry(group, &stat_list) == True)
-				DisplayStatGroup((BYTE) group, stat_list);
-			else
-			{
-				debug(("Requesting group %d\n", group));
-				RequestStats(group);
-			}
-		}
-	}
-	if( StatsGetCurrentGroup() == STATS_INVENTORY )
-		InventorySetFocus( True );		//	Force focus to leave stats group window after button within it was pushed.
-	//	[ xxx Still broken - click on Inv when it is already selected, but drag off of button and release. ]
+         StatsShowGroup( False );
+         ShowInventory( True );
+         DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
+      }
+      else
+      {
+         // Check stat cache; if group not present, ask server
+         if (StatCacheGetEntry(group, &stat_list) == True)
+            DisplayStatGroup((BYTE) group, stat_list);
+         else
+         {
+            debug(("Requesting group %d\n", group));
+            RequestStats(group);
+         }
+      }
+   }
+   if( StatsGetCurrentGroup() == STATS_INVENTORY )
+      InventorySetFocus( True );		//	Force focus to leave stats group window after button within it was pushed.
+   //	[ xxx Still broken - click on Inv when it is already selected, but drag off of button and release. ]
 }
 
 /************************************************************************/

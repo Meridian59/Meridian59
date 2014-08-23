@@ -1798,5 +1798,5 @@ extern BYTE GetCurrentGroup();
 
 BYTE GetCurrentGroupStub()
 {
-   return GetCurrentGroup();
+	return GetCurrentGroup();
 }

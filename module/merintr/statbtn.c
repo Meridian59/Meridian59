@@ -418,9 +418,9 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 	if (group == GROUP_NONE)
 		return;
 
-		// record which stat are we currently using (stats/skills/spells or inventory)
+	// record which stat are we currently using (stats/skills/spells or inventory)
 	SetCurrentGroupStub(group);
-	//debug(("Player selecting group -> %d\n", group, GetCurrentGroupStub())); 		
+	debug(("Player selecting group -> %d\n", group, GetCurrentGroupStub())); 		
 
 	if (group != StatsGetCurrentGroup())
 	{

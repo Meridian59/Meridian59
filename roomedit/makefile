@@ -3,7 +3,7 @@
 #
 # Borland C++ tools
 #
-COMPILERDIR = d:\bc45
+COMPILERDIR = c:\bc45
 TOPDIR=..
 
 COMPILERFLAGS = -v -vi -H -H=obj\WINDEU.CSM -N -a2 -Od -y -W -I$(COMPILERDIR)\include;include;res;$(TOPDIR)\include -D_OWLPCH
@@ -79,7 +79,7 @@ LIBS = \
 	owlwf.lib \
 	import32.lib \
 	cw32.lib \
-	$(TOPDIR)\lib\wrap.lib
+	$(TOPDIR)\lib\zdll_omf.lib
 
 windeu32.exe : makedirs $(OBJS) OBJ\windeapp.res
   $(LINK) /v $(IDE_LFLAGS32) @<<

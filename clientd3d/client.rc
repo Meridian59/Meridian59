@@ -770,6 +770,7 @@ BEGIN
         MENUITEM "&Preferences",                ID_GAME_SETTINGS
         MENUITEM "Configuration",               ID_CONFIGMENU
         MENUITEM "Change pass&word",            ID_GAME_PASSWORD, GRAYED
+        MENUITEM "Logout timer",                ID_OPTIONS_TIMEOUT
         MENUITEM SEPARATOR
         MENUITEM "Print &Map",                  ID_GAME_PRINTMAP
         MENUITEM SEPARATOR
@@ -1083,7 +1084,7 @@ FONT 8, "MS Sans Serif"
 BEGIN
     CONTROL         "&Enable logout timer",IDC_TIMEOUTENABLE,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,47,13,74,10
     LTEXT           "Disconnect &after",IDC_STATIC,8,37,46,8
-    EDITTEXT        IDC_TIMEOUTMINUTES,59,35,21,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_TIMEOUTMINUTES,47,35,33,14,ES_AUTOHSCROLL
     LTEXT           "minutes idle time",IDC_STATIC,87,37,55,8
     DEFPUSHBUTTON   "OK",IDOK,21,61,45,14,WS_GROUP
     PUSHBUTTON      "Cancel",IDCANCEL,82,61,45,14,WS_GROUP
@@ -1338,6 +1339,14 @@ BEGIN
         RIGHTMARGIN, 245
         TOPMARGIN, 4
         BOTTOMMARGIN, 149
+    END
+
+    IDD_TIMEOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 4
+        RIGHTMARGIN, 145
+        TOPMARGIN, 4
+        BOTTOMMARGIN, 77
     END
 
     IDD_MSGBOX, DIALOG

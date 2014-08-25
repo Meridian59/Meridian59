@@ -49,10 +49,9 @@ namespace ClientPatcher
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                
-                throw new System.InvalidOperationException("Unable to download settings from server.");
+                throw new InvalidOperationException("Unable to download settings from server." + e);
             }
             
         }
@@ -94,10 +93,10 @@ namespace ClientPatcher
                     sw.Write(JsonConvert.SerializeObject(Servers, Formatting.Indented)); //write shit
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 
-                throw new Exception("Unable to SaveSettings()");
+                throw new Exception("Unable to SaveSettings()" + e);
             }
             
         }
@@ -144,10 +143,10 @@ namespace ClientPatcher
                 dSecurity.SetAccessRuleProtection(false, true);
                 Directory.CreateDirectory(SettingsPath, dSecurity);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 
-                throw new Exception("Unable to GrantAccess()");
+                throw new Exception("Unable to GrantAccess()" + e);
             }
             
         }

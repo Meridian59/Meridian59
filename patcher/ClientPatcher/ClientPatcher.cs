@@ -134,37 +134,61 @@ namespace ClientPatcher
                 return 0;
             }
         }
+
         private bool IsNewClient()
         {
             return !File.Exists(CurrentProfile.ClientFolder + "\\meridian.ini");
         }
+
         private void CreateFolderStructure()
         {
-            Directory.CreateDirectory(CurrentProfile.ClientFolder);
-            Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\resource\\");
-            Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\download\\");
-            Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\help\\");
-            Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\mail\\");
-            Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\ads\\");
+            try
+            {
+                Directory.CreateDirectory(CurrentProfile.ClientFolder);
+                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\resource\\");
+                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\download\\");
+                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\help\\");
+                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\mail\\");
+                Directory.CreateDirectory(CurrentProfile.ClientFolder + "\\ads\\");
+            }
+            catch (Exception e)
+            {
+                
+                throw new IOException("Unable to CreateFolderStructure()" + e);
+            }
+            
         }
+
         private void CreateDefaultIni()
         {
-            const string defaultIni = @"[Comm]
+            try
+            {
+                const string defaultIni = @"[Comm]
 ServerNumber=103
 [Miscellaneous]
 UserName=username
 Download=10016
 ";
-            using (StreamWriter sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
-            {
-                sw.Write(defaultIni);
+                using (StreamWriter sw = new StreamWriter(CurrentProfile.ClientFolder + "\\meridian.ini"))
+                {
+                    sw.Write(defaultIni);
+                }
             }
+            catch (Exception e)
+            {
+
+                throw new IOException("Unable to CreateDefaultIni()" + e);
+            }
+            
         }
+
         private void CreateNewClient()
         {
             CreateFolderStructure();
             CreateDefaultIni();
+            //TODO: Replace this with code to download an initial .zip of the client.
         }
+
         public void ScanClient()
         {
             string fullpath;

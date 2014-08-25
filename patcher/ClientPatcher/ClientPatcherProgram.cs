@@ -36,8 +36,12 @@ namespace ClientPatcher
         private static bool IsAdministrator()
         {
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            WindowsPrincipal principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            if (identity != null)
+            {
+                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                return principal.IsInRole(WindowsBuiltInRole.Administrator);
+            }
+            return false;
         }
 
 

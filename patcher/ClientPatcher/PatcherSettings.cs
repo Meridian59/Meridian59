@@ -5,12 +5,13 @@ namespace ClientPatcher
 {
     public class PatcherSettings
     {
-        public string ServerName { get; set; }
-        public string PatchInfoUrl { get; set; }
-        public string ClientFolder { get; set; }
-        public string PatchBaseUrl { get; set; }
-        public string Guid { get; set; } //Will be used to get updated settings from server
-        public bool Default { get; set; }
+        public string ServerName { get; set; }     //What do we call this profile?
+        public string PatchInfoUrl { get; set; }   //Where is the file containing md5 hashes to compare?
+        public string ClientFolder { get; set; }   //Where is the local copy of the client?
+        public string PatchBaseUrl { get; set; }   //Where to download individual files?
+        public string Guid { get; set; }           //Will be used to get updated settings from server
+        public string FullInstallUrl { get; set; } //Path to a .zip file of the full client to download for first run
+        public bool Default { get; set; }          //Is this profile the default-selected at start up?
 
         public PatcherSettings()
         {

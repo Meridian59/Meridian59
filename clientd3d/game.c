@@ -21,7 +21,7 @@ BOOL dataValid = FALSE;
  * info message for a given player.
  */
 static Bool first_entry;
-static BOOL frameDrawn = FALSE;      
+static BOOL frameDrawn = FALSE;           
 
 // currently selected group tab/window (invent,spells,skills||stats)
 BYTE group = -1;     
@@ -695,12 +695,12 @@ player_info *GetPlayerInfo(void)
    return &player;
 }
 
-void SetCurrentGroup(BYTE newGroup) 
+void SetCurrentGroup(BYTE newGroup)
 {
    group = newGroup;
 }
 
-BYTE GetCurrentGroup() 
+BYTE GetCurrentGroup()
 {
    return group;
 }

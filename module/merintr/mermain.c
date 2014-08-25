@@ -129,11 +129,11 @@ void InterfaceResizeModule(int xsize, int ysize, AREA *view)
  */
 void InterfaceRedrawModule(HDC hdc)
 {
-   UserAreaRedraw();
-   InterfaceDrawElements(hdc);
-   StatsDrawBorder();
-   StatsMainRedraw();
-   StatsDraw();
+	UserAreaRedraw();
+  InterfaceDrawElements(hdc);
+  StatsDrawBorder();
+  StatsMainRedraw();
+  StatsDraw();
    if( StatsGetCurrentGroup() == STATS_INVENTORY )
    {
       InvalidateRect( GetHwndInv(), NULL, FALSE );
@@ -150,8 +150,8 @@ void InterfaceRedrawModule(HDC hdc)
          StatsShowGroup( False );
          ShowInventory( True );
          DisplayInventoryAsStatGroup( GetCurrentGroupStub() );
-      } 
-      else 
+      }
+      else
       {
          list_type stat_list;
          // show stats/skills or spells
@@ -164,9 +164,9 @@ void InterfaceRedrawModule(HDC hdc)
          {
             debug(("Resetting selected group to %d\n", GetCurrentGroupStub()));
             RequestStats(GetCurrentGroupStub());
-         }		
+         }
       }
-   }  
+   }
 }
 /****************************************************************************/
 Bool InterfaceDrawItem(HWND hwnd, const DRAWITEMSTRUCT *lpdis)

@@ -164,7 +164,7 @@ BOOL CALLBACK PickCharDialogProc(HWND hDlg, UINT message, UINT wParam, LONG lPar
       // Display advertisements
       for (i=0; i < info->num_ads; i++)
       {
-	char filename[MAX_PATH + FILENAME_MAX];
+	 char filename[MAX_PATH + FILENAME_MAX];
 	 sprintf(filename, "%s\\%s", ad_directory, info->ads[i].filename);
 	 Animate_Open(GetDlgItem(hDlg, animation_controls[i]), filename);
       }

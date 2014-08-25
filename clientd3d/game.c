@@ -24,7 +24,8 @@ static Bool first_entry;
 static BOOL frameDrawn = FALSE;           
 
 // currently selected group tab/window (invent,spells,skills||stats)
-BYTE group = -1;     
+// 5 == STATS_INVENTORY 
+BYTE group = 5;     
 
 void SetGameDataValid(BOOL flag)
 {

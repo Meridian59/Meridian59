@@ -7,7 +7,7 @@ using System.IO;
 
 namespace ClientPatcher
 {
-    static class Program
+    static class ClientPatcherProgram
     {
         [STAThread]
         static void Main()

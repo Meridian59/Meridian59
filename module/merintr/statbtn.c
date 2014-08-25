@@ -436,7 +436,7 @@ void StatButtonCommand(HWND hwnd, int id, HWND hwndCtl, UINT codeNotify)
 			//	The hacks continue... Force previously toggled non-inventory button to repaint and show new unpressed state.
 			InvalidateRect( buttons[ StatsGetCurrentGroup()-2 ].hwnd, NULL, FALSE );
 
-			 StatsShowGroup( False );
+			StatsShowGroup( False );
 			ShowInventory( True );
 			DisplayInventoryAsStatGroup( (BYTE)STATS_INVENTORY );
 		}

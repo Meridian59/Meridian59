@@ -66,7 +66,7 @@ classvars:
    viTreasure_type = TID_DARK_ANGEL
    viCashmin = 0
    viCashmax = 0
-   viSpeed = SPEED_VERY_FAST
+   viSpeed = SPEED_FASTER
    viAttack_type = ATCK_WEAP_MAGIC
    viAttack_spell = ATCK_SPELL_FIRE
    viLevel = 200
@@ -74,7 +74,7 @@ classvars:
    viKarma = -100
    viDefault_behavior = AI_FIGHT_NEWBIESAFE | AI_FIGHT_AGGRESSIVE \
                         | AI_FIGHT_SWITCHALOT | AI_MOVE_REGROUP \
-                        | AI_MOVE_OPTIMAL_RANGE
+                        | AI_MOVE_OPTIMAL_RANGE | AI_FIGHT_THROUGH_WALLS
 
    vrSound_miss = DarkAngel_sound_attack
    vrSound_aware = DarkAngel_sound_aware

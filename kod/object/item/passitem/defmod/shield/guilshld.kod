@@ -110,7 +110,7 @@ classvars:
 
    % Being custom and made from ore, it's heavier than your average shield.
    viValue_average = 400
-   viWeight = 200  
+   viWeight = 200
    viBulk = 150
 
    viDefense_base = 20
@@ -137,27 +137,27 @@ messages:
    Constructor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT,guildMember=$)
    {
       local oGuild;
-      
+
       if guildMember <> $
       {
-         oGuild = send(guildMember,@GetGuild);
-         color1 = send(oGuild,@GetPrimaryGuildColor);
-         color2 = send(oGuild,@GetSecondaryGuildColor);
-         shape  = send(oGuild,@GetShieldShape);
+         oGuild = Send(guildMember,@GetGuild);
+         color1 = Send(oGuild,@GetPrimaryGuildColor);
+         color2 = Send(oGuild,@GetSecondaryGuildColor);
+         shape  = Send(oGuild,@GetShieldShape);
       }
-      
-      send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
-      
+
+      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
+
       propagate;
    }
 
    IsShieldColored()
    {
       local XLAT;
-      XLAT = send(self,@GetPaletteTranslation);
+      XLAT = Send(self,@GetPaletteTranslation);
 
-      if (send(SYS,@DecodePrimaryColor,#xlat=XLAT) = XLAT_TO_GRAY)
-         AND (send(SYS,@DecodeSecondaryColor,#xlat=XLAT) = XLAT_TO_GRAY)
+      if (Send(SYS,@DecodePrimaryColor,#xlat=XLAT) = XLAT_TO_GRAY)
+         AND (Send(SYS,@DecodeSecondaryColor,#xlat=XLAT) = XLAT_TO_GRAY)
       {
          return FALSE;
       }
@@ -165,7 +165,7 @@ messages:
       return TRUE;
    }
 
-   AppendColor(color = 0)
+   AppendColor(color=0)
    {
       if color = XLAT_TO_RED { AppendTempString(guildshield_red); return; }
       if color = XLAT_TO_SKIN1 { AppendTempString(guildshield_skin1); return; }
@@ -195,9 +195,9 @@ messages:
       AppendTempString(guildshield_heraldry_prefix);
 
       % color 1
-      x = send(self,@GetPaletteTranslation);
-      a = send(SYS,@DecodePrimaryColor,#xlat=x);
-      send(self,@AppendColor,#color=a);
+      x = Send(self,@GetPaletteTranslation);
+      a = Send(SYS,@DecodePrimaryColor,#xlat=x);
+      Send(self,@AppendColor,#color=a);
 
       % shape
       if piShield_shape = SHIELDSHAPE_SLASH { AppendTempString(guildshield_slash); }
@@ -206,17 +206,17 @@ messages:
       if piShield_shape = SHIELDSHAPE_CHECKER { AppendTempString(guildshield_checker); }
 
       % color 2
-      b = send(SYS,@DecodeSecondaryColor,#xlat=x);
-      send(self,@AppendColor,#color=b);
+      b = Send(SYS,@DecodeSecondaryColor,#xlat=x);
+      Send(self,@AppendColor,#color=b);
 
       % guild, if known
-      x = send(SYS,@FindGuildByShield,#color1=a,#color2=b,#shape=piShield_shape);
+      x = Send(SYS,@FindGuildByShield,#color1=a,#color2=b,#shape=piShield_shape);
       if (x <> $) and isClass(x,&Guild)
       {
-         if not send(x, @IsSecret)
+         if not Send(x, @IsSecret)
          {
             AppendTempString(guildshield_heraldry_known);
-            AppendTempString(send(x, @GetName));
+            AppendTempString(Send(x, @GetName));
          }
       }
       AppendTempString(guildshield_heraldry_postfix);
@@ -246,13 +246,13 @@ messages:
       shape = random(SHIELDSHAPE_SLASH, SHIELDSHAPE_CHECKER);
       insignia = random(INSIG_RIIJA, INSIG_NONE);
 
-      send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
-      send(self,@ChangeGuildInsignia,#insignia=insignia);
+      Send(self,@ChangeGuildShieldColor,#color1=color1,#color2=color2,#shape=shape,#override=TRUE);
+      Send(self,@ChangeGuildInsignia,#insignia=insignia);
 
       return;
    }
 
-   ChangeGuildInsignia(insignia = 0)
+   ChangeGuildInsignia(insignia=0)
    {
       prShield_emblem_held = $;
       prShield_emblem_drop = $;
@@ -262,55 +262,55 @@ messages:
          prShield_emblem_held = guildshield_riija_over;
          prShield_emblem_drop = guildshield_riija;
       }
-      
+
       if insignia = INSIG_QOR
       {
          prShield_emblem_held = guildshield_qor_over;
          prShield_emblem_drop = guildshield_qor;
       }
-      
+
       if insignia = INSIG_KRAANAN
       {
          prShield_emblem_held = guildshield_kraanan_over;
          prShield_emblem_drop = guildshield_kraanan;
       }
-      
+
       if insignia = INSIG_FAREN
       {
          prShield_emblem_held = guildshield_faren_over;
          prShield_emblem_drop = guildshield_faren;
       }
-      
+
       if insignia = INSIG_JALA
       {
          prShield_emblem_held = guildshield_jala_over;
          prShield_emblem_drop = guildshield_jala;
       }
-      
+
       if insignia = INSIG_PRINCESS
       {
          prShield_emblem_held = guildshield_princess_over;
          prShield_emblem_drop = guildshield_princess;
       }
-      
+
       if insignia = INSIG_DUKE
       {
          prShield_emblem_held = guildshield_duke_over;
          prShield_emblem_drop = guildshield_duke;
       }
-      
+
       if insignia = INSIG_SHALILLE
       {
          prShield_emblem_held = guildshield_shalille_over;
          prShield_emblem_drop = guildshield_shalille;
       }
-      
+
       if insignia = INSIG_REBEL
       {
          prShield_emblem_held = guildshield_rebel_over;
          prShield_emblem_drop = guildshield_rebel;
       }
- 
+
       piInsigniaType = insignia;
 
       if poOwner <> $
@@ -318,16 +318,16 @@ messages:
          post(poOwner,@SomethingChanged,#what=self);
       }
 
-      return;   
+      return;
    }
 
-   ChangeGuildShieldColor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT, override = FALSE)
+   ChangeGuildShieldColor(color1=XLAT_TO_GRAY,color2=XLAT_TO_GRAY,shape=SHIELDSHAPE_DEFAULT,override=FALSE)
    {
       local XLAT;
       
       %% override means do it no matter what.  good for testing
 
-      if NOT override AND send(self,@IsShieldColored)
+      if NOT override AND Send(self,@IsShieldColored)
       {
          return FALSE;
       }
@@ -338,67 +338,67 @@ messages:
          {
             color1 = XLAT_TO_GREEN;
          }
-         
+
          if color2 = XLAT_TO_DGREEN
          {
             color2 = XLAT_TO_GREEN;
          }
-         
+
          if color1 = XLAT_TO_BLACK
          {
             color1 = XLAT_TO_GRAY;
          }
-         
+
          if color2 = XLAT_TO_BLACK
          {
             color2 = XLAT_TO_GRAY;
          }
       }
-      
+
       if (color1 < XLAT_LOW_VALUE) OR (color1 > XLAT_HIGH_VALUE)
          OR (color2 < XLAT_LOW_VALUE) OR (color2 > XLAT_HIGH_VALUE)
       {
          return FALSE;
       }
 
-      XLAT = send(SYS,@EncodeTwoColorXLAT,#color1=color1,#color2=color2);
-      send(self,@SetPaletteTranslation,#translation=XLAT);
+      XLAT = Send(SYS,@EncodeTwoColorXLAT,#color1=color1,#color2=color2);
+      Send(self,@SetPaletteTranslation,#translation=XLAT);
       piShield_shape = shape;
 
       if piShield_shape = SHIELDSHAPE_SLASH
-      {  
+      {
          vrIcon = guildshield_base_sash; 
-         vrShield_overlay = guildshield_base_sash; 
+         vrShield_overlay = guildshield_base_sash;
          vrShield_window_overlay = guildshield_pov_sash;
       }
-      
+
       if piShield_shape = SHIELDSHAPE_HALF
-      {  
+      {
          vrIcon = guildshield_base_halvesv; 
-         vrShield_overlay = guildshield_base_halvesv; 
+         vrShield_overlay = guildshield_base_halvesv;
          vrShield_window_overlay = guildshield_pov_halvesv;
       }
-      
+
       if piShield_shape = SHIELDSHAPE_HORIZ
-      {  
+      {
          vrIcon = guildshield_base_stripeh; 
-         vrShield_overlay = guildshield_base_stripeh;       
+         vrShield_overlay = guildshield_base_stripeh;
          vrShield_window_overlay = guildshield_pov_stripeh;
       }
-      
+
       if piShield_shape = SHIELDSHAPE_CHECKER
-      {  
+      {
          vrIcon = guildshield_base_checker; 
-         vrShield_overlay = guildshield_base_checker;        
+         vrShield_overlay = guildshield_base_checker;
          vrShield_window_overlay = guildshield_pov_checker;
       }
 
       %% redraw it if necessary
       if poOwner <> $
       {
-         send(poOwner,@SomethingChanged,#what=self);
+         Send(poOwner,@SomethingChanged,#what=self);
       }
-      
+
       return;
    }
 
@@ -408,7 +408,7 @@ messages:
       {
          return 2;
       }
-      
+
       return 1;
    }
 
@@ -422,11 +422,11 @@ messages:
       return HS_LEFT_WEAPON;
    }
 
-   SendOverlayInformation(iAnimation = $)
+   SendOverlayInformation(iAnimation=$)
    {
       AddPacket(4,vrShield_Overlay);
       AddPacket(1,HS_LEFT_WEAPON);
-      Send(self,@SendHeldAnimation,#iAnimation=iAnimation);       
+      Send(self,@SendHeldAnimation,#iAnimation=iAnimation);
 
       if prShield_emblem_held <> $
       {
@@ -434,7 +434,7 @@ messages:
          AddPacket(1,HS_LEFT_WEAPON);
          AddPacket(1,ANIMATE_NONE,2,1);
       }
-      
+
       return;
    }
 
@@ -442,7 +442,7 @@ messages:
    {
       local XLAT;
 
-      XLAT = send(self,@GetPaletteTranslation);
+      XLAT = Send(self,@GetPaletteTranslation);
       AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
       AddPacket(1,ANIMATE_NONE,2,2);
 
@@ -453,7 +453,7 @@ messages:
    {
       local XLAT;
 
-      XLAT = send(self,@GetPaletteTranslation);
+      XLAT = Send(self,@GetPaletteTranslation);
       AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
 
       if piHits > 0
@@ -472,43 +472,43 @@ messages:
    {
       local XLAT;
 
-      XLAT = send(self,@GetPaletteTranslation);
+      XLAT = Send(self,@GetPaletteTranslation);
       AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
 
       if piUsed = DEFENDING
-      { 
+      {
          AddPacket(1,ANIMATE_ONCE,4,1000,2,2,2,2,2,1);
-         
+
          return;
       }
-      
+
       AddPacket(1,ANIMATE_NONE,2,1);
-      
-      return;      
+
+      return;
    }
 
    SendOverlays()
    {
       if prShield_emblem_held <> $
-      {      
-         AddPacket(1,1);   
+      {
+         AddPacket(1,1);
          AddPacket(4,prShield_emblem_drop,1,1,1,ANIMATE_NONE,2,2);
       }
       else
       {
-         AddPacket(1,0);   
+         AddPacket(1,0);
       }
       
-      return;   
+      return;
    }
 
    SendLookAnimation()
    {
       local XLAT;
 
-      XLAT = send(self,@GetPaletteTranslation);
+      XLAT = Send(self,@GetPaletteTranslation);
       AddPacket(1,ANIMATE_TRANSLATION,1,XLAT);
-     
+
       if piHits > 0
       {
          AddPacket(1,ANIMATE_NONE,2,viInventory_group);
@@ -524,29 +524,29 @@ messages:
    SendLookOverlays()
    {
       if prShield_emblem_held <> $
-      {      
-         AddPacket(1,1);   
+      {
+         AddPacket(1,1);
          AddPacket(4,prShield_emblem_drop,1,1,1,ANIMATE_NONE,2,1);
       }
       else
       {
-         AddPacket(1,0);   
+         AddPacket(1,0);
       }
       
-      return;   
+      return;
    }
 
    SendInventoryAnimation()
    {
       Send(self,@SendLookAnimation);
-      
+
       return;
    }
 
    SendInventoryOverlays()
    {
       Send(self,@SendLookOverlays);
-      
+
       return;
    }
 
@@ -564,7 +564,7 @@ messages:
          return 0;
       }
 
-      iSchool = send(oSpell,@GetSchool);
+      iSchool = Send(oSpell,@GetSchool);
       
       % Give a bonus to certain spells if the shield has the proper insignia
       if (piInsigniaType = INSIG_FAREN AND iSchool = SS_FAREN)
@@ -572,6 +572,7 @@ messages:
          OR (piInsigniaType = INSIG_QOR AND iSchool = SS_QOR)
          OR (piInsigniaType = INSIG_SHALILLE AND iSchool = SS_SHALILLE)
          OR (piInsigniaType = INSIG_RIIJA AND iSchool = SS_RIIJA)
+         OR (piInsigniaType = INSIG_JALA AND iSchool = SS_JALA)
       {
          return 10;
       }
@@ -586,7 +587,6 @@ messages:
 
       return 0;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -26,7 +26,7 @@ resources:
    poison_desc = \
    "Like fire under your skin, the poison burns with dangerous "
    "strength, slowly sapping away at your strength, your health, "
-   "and your will to live."
+   "and your will to live.  "
 
    poison_sound = poisoned.wav
 
@@ -36,6 +36,26 @@ classvars:
    viShow_enchantment_icon = 0x02
    vrName = poison_name
    vrDesc = poison_desc
+
+   vrEnchantment_On = poison_start
+   vrEnchantment_Off = poison_stop
+
+   viSpell_num = SID_POISON
+   viSchool = SS_QOR
+   viSpell_level = 1
+   viMana = 10
+   viSpell_Exertion = 4
+
+   viFlash = FLASH_BAD
+
+   vrSucceed_wav = poison_sound
+
+   viMeditate_ratio = 0
+
+   vbDisease = TRUE
+
+   % Players can't actually cast poison directly
+   viOutlaw = FALSE
 
 properties:
 

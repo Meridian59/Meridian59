@@ -64,7 +64,7 @@ classvars:
    viLight_Penalty = 30
    viCashmin = 250
    viCashmax = 750
-   
+
    vrSound_hit = duskrat_sound_hit
    vrSound_miss = duskrat_sound_miss
    vrSound_aware = duskrat_sound_aware
@@ -79,15 +79,15 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [-ATCK_SPELL_FIRE, -30 ], 
-                        [ATCK_WEAP_BLUDGEON, 10 ] ,
+      plResistances = [ [-ATCK_SPELL_FIRE, -30 ],
+                        [ATCK_WEAP_BLUDGEON, 10 ],
                         [ATCK_WEAP_SLASH, 20 ]
                       ];
 
       propagate;
    }
 
-   MonsterAttack(what = $)
+   MonsterAttack(what=$)
    {
       Send(self,@DoSlash);
 
@@ -128,8 +128,8 @@ messages:
 
       propagate;
    }
- 
-   NewOwner(what = $)
+
+   NewOwner(what=$)
    "Make room darker when present, about 2X darker than a ShadowBeast"
    {
       %New room
@@ -137,17 +137,17 @@ messages:
       {
          Send(what,@AddBaseLight,#amount=-viLight_Penalty);
       }
-      
+
       %Old room
       if poOwner <> $
       {
          Send(poOwner,@AddBaseLight,#amount=viLight_Penalty);
       }
-      
+
       propagate;
    }
 
-   HitSideEffect( what = $ )
+   HitSideEffect(what=$)
    {
       local oSpell;
 
@@ -156,19 +156,23 @@ messages:
          oSpell = Send(SYS,@FindSpellByNum,#num=SID_POISON);
          Send(oSpell,@MakePoisoned,#who=what,
               #lossrate=POISON_LOSSRATE,#duration=POISON_DURATION);
-         Send(what,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=10000);
-         Send(what,@MsgSendUser,#message_rsc=duskrat_poisoned_add_rsc);
+
+         if IsClass(what,&Player)
+         {
+            Send(what,@EffectSendUserDuration,#effect=EFFECT_WAVER,#duration=10000);
+            Send(what,@MsgSendUser,#message_rsc=duskrat_poisoned_add_rsc);
+         }
       }
 
       return;
    }
 
-   IsAlly(target = $)
+   IsAlly(target=$)
    {
       % Qor Characters?
       return FALSE;
    }
-   
+
    Killed()
    {
       % old room
@@ -176,7 +180,7 @@ messages:
       {
          Send(poOwner,@AddBaseLight,#amount=viLight_Penalty);
       }
-      
+
       propagate;
    }
 
@@ -186,10 +190,9 @@ messages:
       {
          Send(poOwner,@AddBaseLight,#amount=viLight_Penalty);
       }
-      
+
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

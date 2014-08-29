@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Poison is Sickness
+Poison is Disease
 
 constants:
 
@@ -93,6 +93,25 @@ messages:
       
       return;
    }
-   
+
+   IsPersonalEnchantment()
+   {
+      % Purify will get rid of sickness.
+      return TRUE;
+   }
+
+   IsHarmful()
+   {
+      % Purge won't get rid of sickness
+      return TRUE;
+   }
+
+   CanBeRemovedByPlayer()
+   "Returns if a spell can be removed by normal Purge/Purify"
+   {
+      % Most sicknesses can be purged or purified.
+      return TRUE;
+   }
+
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

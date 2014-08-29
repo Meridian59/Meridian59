@@ -266,7 +266,8 @@ messages:
 
    RecalculateActiveEnchantments()
    {
-      local i, source, iDrain, iPeriodic, lEnchanted, iPower, iRange, iDuration, iDistance, oObject, oRoom, oActive, oPassive;
+      local i, source, iDrain, iPeriodic, lEnchanted, iPower, iRange, iDuration,
+      iDistance, oObject, oRoom, oActive, oPassive, oCrystalizeMana, iCrystalizeManaAbility;
 
       if ptRecalculationTimer <> $
       {
@@ -374,8 +375,23 @@ messages:
             }
             else
             {
-               Post(self,@CancelRadiusEnchantment,#source=source);
-               continue;
+               iCrystalizeManaAbility = Send(source,@GetSpellAbility,#spell_num=SID_CRYSTALIZE_MANA);
+               if iCrystalizeManaAbility > 0
+                  AND NOT Send(source,@IsCrystalizeManaSurging)
+               {
+                  oCrystalizeMana = Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA);
+                  Send(oCrystalizeMana,@DoManaSurge,#who=source,#triggered=TRUE);
+                  if Send(source,@GetMana) >= 1
+                  {
+                     Send(source,@LoseMana,#amount=1);
+                     iDrain = iDrain - (viDrainTime / viManaDrain);
+                  }
+               }
+               else
+               {
+                  Post(self,@CancelRadiusEnchantment,#source=source);
+                  continue;
+               }
             }
          }
 

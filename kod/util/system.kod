@@ -2987,11 +2987,9 @@ messages:
       Send(self,@CreateOneSpellIfNew,#num=SID_MEND,#class=&Mend);
       Send(self,@CreateOneSpellIfNew,#num=SID_EARTHQUAKE,#class=&Earthquake);
       Send(self,@CreateOneSpellIfNew,#num=SID_POISON,#class=&Poison);
-      Send(self,@CreateOneSpellIfNew,#num=SID_PALSY,#class=&Palsy);
-      Send(self,@CreateOneSpellIfNew,#num=SID_DEMENTIA,#class=&Dementia);
       Send(self,@CreateOneSpellIfNew,#num=SID_SUPER_STRENGTH,#class=&SuperStrength);
       Send(self,@CreateOneSpellIfNew,#num=SID_ARTIFICE,#class=&Artifice);
-   
+
       Send(self,@CreateOneSpellIfNew,#num=SID_TOUCH_OF_FLAME,#class=&TouchofFlame);
       Send(self,@CreateOneSpellIfNew,#num=SID_ZAP,#class=&Zap);
       Send(self,@CreateOneSpellIfNew,#num=SID_VAMPIRIC_DRAIN,#class=&VampiricDrain);

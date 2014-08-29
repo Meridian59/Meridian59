@@ -21,7 +21,8 @@ resources:
    poison_icon = iposoned.bgf
    poison_name = "poison"
 
-   poison_kraanan = "~IKraanan's magic fortifies you against the accursed venom!"
+   poison_kraanan = \
+      "~IKraanan's magic fortifies you against the accursed venom!"
    poison_desc = \
    "Like fire under your skin, the poison burns with dangerous "
    "strength, slowly sapping away at your strength, your health, "
@@ -45,7 +46,7 @@ messages:
       return SID_POISON;
    }
 
-   MakePoisoned( who = $, lossrate = 0, duration = 0 )
+   MakePoisoned(who=$,lossrate=0,duration=0)
    "Lossrate is in units of 10^-4 health points per second."
    "Duration is in milliseconds."
    {
@@ -56,8 +57,8 @@ messages:
          return;
       }
 
-      oSpell = send(SYS,@Findspellbynum,#num=SID_RESIST_POISON);
-      if send(who,@isenchanted,#what=oSpell)
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_RESIST_POISON);
+      if Send(who,@IsEnchanted,#what=oSpell)
       {
          % Give players a decent chance to improve the spell!
          for i in Send(who,@GetPassiveImprovementList)
@@ -68,29 +69,29 @@ messages:
             }
          }
 
-         if (Random(1,100) < send(who,@GetEnchantedState,#what=oSpell))
-         { 
-            send(who,@MsgSendUser,#message_rsc=poison_kraanan);
-            return; 
+         if (Random(1,100) < Send(who,@GetEnchantedState,#what=oSpell))
+         {
+            Send(who,@MsgSendUser,#message_rsc=poison_kraanan);
+            return;
          }
       }
 
-      send(who,@AddPoison,#strength=lossrate);
-      send(who,@StartEnchantment,#what=self,#time=duration,#state=lossrate);
-      send(who,@MsgSendUser,#message_rsc=poison_start);
+      Send(who,@AddPoison,#strength=lossrate);
+      Send(who,@StartEnchantment,#what=self,#time=duration,#state=lossrate);
+      Send(who,@MsgSendUser,#message_rsc=poison_start);
       Send(who,@WaveSendUser,#wave_rsc=poison_sound);
-      
+
       return;
    }
 
-   EndEnchantment( who = $, state = 0, report = TRUE )
+   EndEnchantment(who=$,state=0,report=TRUE)
    {
-      send(who,@RemovePoison,#strength=state);
+      Send(who,@RemovePoison,#strength=state);
       if report
       {
-         send(who,@MsgSendUser,#message_rsc=poison_stop);
+         Send(who,@MsgSendUser,#message_rsc=poison_stop);
       }
-      
+
       return;
    }
 

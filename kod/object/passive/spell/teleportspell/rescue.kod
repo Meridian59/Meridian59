@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Rescue is Spell
+Rescue is TeleportationSpell
 
 constants:
 
@@ -176,11 +176,6 @@ messages:
       }
 
       return;
-   }
-
-   SpellBannedInArena()
-   {
-      return TRUE;
    }
 
    GetPotionClass()

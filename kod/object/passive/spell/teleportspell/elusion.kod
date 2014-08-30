@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Elusion is TeleportSpell
+Elusion is TeleportationSpell
 
 constants:
 
@@ -283,12 +283,6 @@ messages:
              
       return;
    }
-
-   SpellBannedInArena()
-   {
-      return TRUE;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

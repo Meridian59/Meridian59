@@ -54,7 +54,7 @@ classvars:
    viAttack_type = ATCK_WEAP_SLASH
    viAttributes = 0
    viLevel = 45
-   viDifficulty = 3
+   viDifficulty = 4
    viKarma = 0
    viCashmin = 0
    viCashmax = 0

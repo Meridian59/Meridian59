@@ -1139,8 +1139,6 @@ messages:
                Send(j,@Delete);
             }
 
-            plReflections = DelListElem(plReflections,i);
-
             break;
          }
       }

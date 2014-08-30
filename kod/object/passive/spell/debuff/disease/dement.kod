@@ -1,0 +1,125 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Dement is Disease
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   dement_name_rsc = "dement"
+   dement_icon_rsc = idement.bgf
+   dement_desc_rsc = \
+      "Sends the mind of the target reeling with dark, bewildering "
+      "thoughts, making spell casting more difficult for several minutes.  "
+      "Requires two vials of solagh and an uncut seraphym to cast."
+
+   dement_sound = rdement.wav
+
+   dement_cast_rsc = "You sense an unsavory presence."
+   dement_already_enchanted = "That poor soul is already demented."
+   dementia_start = "Somehow you feel less sharp than you used to be."
+   dementia_stop  = "The fullness of your mental capacities returns to bear."
+
+   classvars:
+
+   vrName = dement_name_rsc
+   vrIcon = dement_icon_rsc
+   vrDesc = dement_desc_rsc
+
+   vrAlreadyEnchanted = dement_already_enchanted
+   vrEnchantment_On = dementia_start
+   vrEnchantment_Off = dementia_stop
+   vrSuccess = dement_cast_rsc
+
+   viSpell_num = SID_DEMENT
+   viSchool = SS_RIIJA
+   viSpell_level = 4
+   viMana = 6
+   viChance_To_Increase = 30
+   viMeditate_ratio = 30
+
+   vrSucceed_wav = dement_sound
+
+   viFlash = FLASH_BAD
+
+   vbDisease = TRUE
+
+properties:
+
+   piBaseDuration = 60000
+   piSpellPowerModifier = 1212
+   piDeviation = 10
+
+messages:
+
+   ResetReagents()
+   {
+      plReagents = $;
+      plReagents = Cons([&Solagh,2],plReagents);
+      plReagents = Cons([&UncutSeraphym,1],plReagents);
+
+      return;
+   }
+
+   DoSpell(what=$,oTarget=$,iDuration=$,iSpellPower=$,report=TRUE)
+   {
+      local iIntellectChange;
+
+      iIntellectChange = Send(self,@GetAmount,#iSpellPower=iSpellPower);
+
+      if iDuration = $
+      {
+         iDuration = Send(self,@GetDuration,#iSpellPower=iSpellPower);
+      }
+
+      if IsClass(oTarget,&Player)
+      {
+         iIntellectChange = Send(oTarget,@AddIntellect,#points=-iIntellectChange);
+
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,
+               #state=[-iIntellectChange]);
+         
+         if report
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=dementia_start);
+         }
+      }
+      else %%% class is monster
+      {
+         Send(oTarget,@StartDementia);
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
+      }
+
+      propagate;
+   }
+
+   EndEnchantment(who=$,state=0,report=TRUE)
+   {
+      if IsClass(who,&Player)
+      {
+         Send(who,@AddIntellect,#points=First(state));
+         if report
+         {
+            Send(who,@MsgSendUser,#message_rsc=dementia_stop);
+         }
+      }
+      else  %%% class is monster
+      {
+         Send(who,@EndDementia);
+      }
+
+      return;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

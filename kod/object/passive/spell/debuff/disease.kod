@@ -1,0 +1,73 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Disease is Debuff
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+classvars:
+
+properties:
+
+   piBaseDuration = 60000
+   piSpellPowerModifier = 1212
+   piDeviation = 10
+
+   messages:
+
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   {
+      local oTarget;
+
+      oTarget = First(lTargets);
+
+      Send(who,@MsgSendUser,#message_rsc=vrSuccess);
+
+      if IsClass(oTarget,&Player)
+      {
+         Send(oTarget,@MsgSendUser,#message_rsc=vrSuccess);
+      }
+
+      Send(self,@DoSpell,#what=who,#oTarget=oTarget,#iSpellPower=iSpellPower,
+           #iDuration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
+
+      propagate;
+   }
+
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % Duration calculation now uses class properties, modifiable in game
+      % By default, base duration 60 sec, total time 60-180 sec using 1212x
+      % spellpower multiplier, with the final duration 90-100% max
+
+      iDuration = (piBaseDuration + (iSpellPower+1)*piSpellPowerModifier);
+      iDuration = Random(iDuration*(100-piDeviation)/100,iDuration);
+
+      return iDuration;
+   }
+
+   GetAmount(iSpellPower=0)
+   {
+      local iAmount;
+
+      % Stats are reduced between 1-34
+      iAmount = iSpellPower/3+1;
+
+      return iAmount;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

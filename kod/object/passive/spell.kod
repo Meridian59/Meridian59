@@ -2353,7 +2353,7 @@ messages:
       iSpellPower = iSpellPower + Send(SYS,@GetBonusSpellpower,#school=viSchool);
 
       % Affected by the Dement spell?
-      oModifierSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENTIA);
+      oModifierSpell = Send(SYS,@FindSpellByNum,#num=SID_DEMENT);
       if Send(who,@IsEnchanted,#what=oModifierSpell)
       {
          iAbilityLoss = first(Send(who,@GetEnchantedState,#what=oModifierSpell));

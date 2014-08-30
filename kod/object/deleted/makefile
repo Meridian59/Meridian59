@@ -4,7 +4,7 @@
 
 !include $(TOPDIR)\common.mak
 
-DEPEND = ..\sickness.bof
-BOFS = poison.bof disease.bof
+DEPEND = ..\deleted.bof
+BOFS = palsy.bof dementia.bof firewand.bof SpecialWand.bof sickness.bof
 
 !include $(KODDIR)\kod.mak

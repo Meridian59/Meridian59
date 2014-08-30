@@ -19,34 +19,39 @@ constants:
 
 resources:
 
-   Debuff_name_rsc = "debuff"
-   Debuff_icon_rsc = iheat.bgf
-   Debuff_desc_rsc = \
+   debuff_name_rsc = "debuff"
+   debuff_icon_rsc = iheat.bgf
+   debuff_desc_rsc = \
       "An enchantment which is cast on another player."
 
-   Debuff_already_enchanted_rsc = "You are already enchanted."
-   Debuff_On_rsc = "Your body tingles with magical energy."
-   Debuff_Off_rsc = "You feel your magical field crackle and dissipate."
-   Debuff_Success_rsc = "You enchant %s%s."
-   Debuff_Target_Already_Enchanted_rsc = "%s%s tried to cast %s%s on you."
-   Debuff_Other_Already_Enchanted_rsc = "%s%s is already affected by that magic."
-   Debuff_bad_target = "You cannot enchant %s%s."
+   debuff_already_enchanted_rsc = "You are already enchanted."
+   debuff_On_rsc = "Your body tingles with magical energy."
+   debuff_Off_rsc = "You feel your magical field crackle and dissipate."
+   debuff_Success_rsc = "You enchant %s%s."
+   debuff_Target_Already_Enchanted_rsc = "%s%s tried to cast %s%s on you."
+   debuff_Other_Already_Enchanted_rsc = "%s%s is already affected by that magic."
+   debuff_bad_target = "You cannot enchant %s%s."
 
-   Debuff_bad_location = "You cannot cast enchantments upon others here."
+   debuff_bad_location = "You cannot cast enchantments upon others here."
+   debuff_display_duration = \
+      "Duration of ~k~B%s~n is ~k~B%i~n milliseconds."
 
 classvars:
 
-   vrName = Debuff_name_rsc
-   vrIcon = Debuff_icon_rsc
-   vrDesc = Debuff_desc_rsc
+   vrName = debuff_name_rsc
+   vrIcon = debuff_icon_rsc
+   vrDesc = debuff_desc_rsc
 
    % Overwrite these in subclasses to give specific messages.
-   vrAlreadyEnchanted = Debuff_already_enchanted_rsc
-   vrEnchantment_On = Debuff_On_rsc
-   vrEnchantment_Off = Debuff_Off_rsc
-   vrSuccess = Debuff_Success_rsc
+   vrAlreadyEnchanted = debuff_already_enchanted_rsc
+   vrEnchantment_On = debuff_On_rsc
+   vrEnchantment_Off = debuff_Off_rsc
+   vrSuccess = debuff_Success_rsc
 
    viDebuff = TRUE
+   viOutlaw = TRUE
+   viHarmful = TRUE
+   viNoNewbieOffense = TRUE
 
 properties:
 
@@ -55,6 +60,88 @@ messages:
    GetNumSpellTargets()
    {
       return 1;
+   }
+
+   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
+   {
+      local target, i;
+
+      if Length(lTargets) <> 1
+      {
+         return FALSE;
+      }
+
+      target = First(lTargets);
+      if (NOT IsClass(target,&Battler)) OR IsClass(target,&Revenant)
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,#parm1=vrName,
+                 #parm2=Send(target,@GetDef),#parm3=Send(target,@GetName));
+         }
+
+         return FALSE;
+      }
+
+      if target = who
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+         }
+
+         return FALSE;
+      }
+
+      % Check for enchantment already applied
+      if Send(target,@IsEnchanted,#what=self)
+      {
+         if NOT bItemCast
+         {
+            Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
+                  #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+         }
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   DoSpell(what=$,oTarget=$)
+   {
+      local i, iDuration, oList;
+
+      if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+      {
+         oList = Send(oTarget,@GetEnchantmentList);
+
+         for i in oList
+         {
+            if Nth(i,2) = self
+            {
+               iDuration = GetTimeRemaining(Nth(i,1));
+            }
+         }
+
+         Send(what,@MsgSendUser,#message_rsc=debuff_display_duration,
+               #parm1=Send(self,@GetName),#parm2=iDuration);
+
+         if oTarget <> $
+            AND oTarget <> what
+            AND IsClass(oTarget,&Player)
+         {
+            Send(oTarget,@MsgSendUser,#message_rsc=debuff_display_duration,
+               #parm1=Send(self,@GetName),#parm2=iDuration);
+         }
+      }
+
+      return;
+   }
+
+   SendEffectData()
+   {
+      return;
    }
 
 end

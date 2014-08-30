@@ -6,7 +6,7 @@ TOPDIR=..\..
 !include $(TOPDIR)\common.mak
 
 DEPEND = ..\object.bof
-BOFS = active.bof passive.bof item.bof
+BOFS = active.bof deleted.bof passive.bof item.bof
 
 !include $(KODDIR)\kod.mak
 

@@ -6589,7 +6589,7 @@ messages:
       return iManaLost;
    }
 
-   GainMana(amount=0, bCapped=FALSE)
+   GainMana(amount=0, bCapped=FALSE, bRespectMax=FALSE)
    {
       local iManaGained;
 
@@ -6597,6 +6597,12 @@ messages:
       
       if NOT Send(self,@IsPhasedOut)
       {
+         if bRespectMax
+            AND piMana + amount > piMax_mana
+         {
+            return 0;
+         }
+
          piMana = piMana + amount;
 
          if bCapped AND piMana > piMax_Mana

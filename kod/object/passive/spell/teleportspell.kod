@@ -1,0 +1,70 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TeleportationSpell is Spell
+
+% All teleportation spells are cast, then fire after a certain amount of time.
+% Changing rooms, logging off, or attacking all break a teleporation in progress.
+% In addition, players cannot teleport for a short time after engaging in combat.
+% Hometown Recall returns you to your old location so that you can continue building.
+
+constants:
+
+   include blakston.khd
+
+   TRANCE_TIME = 30000
+
+resources:
+
+   TeleportationSpell_name_rsc = "teleportation spell"
+   TeleportationSpell_icon_rsc = ielusion.bgf
+   TeleportationSpell_desc_rsc = \
+   "Moves a player from one place to another."
+
+   Teleport_Default_Start = "You begin teleporting."
+   Teleport_Default_Already_Cast = "You are already teleporting."
+   Teleport_Token_Cancel = "You cannot teleport while holding a token."
+   Teleport_Attacked_Recently = \
+      "Your heart is still racing from your recent combat, making it "
+      "impossible to focus enough to teleport."
+   Teleport_Generic_Fail = \
+      "Something about this area prevents all forms of teleportation magics..."
+   Teleport_Fail_Enemies_Nearby = \
+      "The delicate threads of your teleportation magics unravel due to the "
+      "presence of nearby enemies!"
+
+classvars:
+
+   vrName = TeleportationSpell_name_rsc
+   vrIcon = TeleportationSpell_icon_rsc
+   vrDesc = TeleportationSpell_desc_rsc
+   Teleport_Start_Rsc = Teleport_Default_Start
+   Teleport_Already_Cast_Rsc = Teleport_Default_Already_Cast
+
+   vbIsCombatRestricted = TRUE
+   vbInstantInSafeZones = TRUE
+   vbRestrictedInSomeAreas = TRUE
+
+properties:
+
+messages:
+
+   GetNumSpellTargets()
+   {
+      return 0;
+   }
+
+   SpellBannedInArena()
+   {
+      return TRUE;
+   }
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

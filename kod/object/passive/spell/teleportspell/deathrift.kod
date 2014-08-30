@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DeathRift is Spell
+DeathRift is TeleportationSpell
 
 constants:
 
@@ -172,12 +172,6 @@ messages:
    {
       return true;
    }
-
-   SpellBannedInArena()
-   {
-      return true;
-   }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

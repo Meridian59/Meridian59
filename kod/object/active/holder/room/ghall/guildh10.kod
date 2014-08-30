@@ -85,305 +85,349 @@ messages:
    Constructor()
    {
       plGuild_doors = [[17,11]];
+
       propagate;
    }
 
-    CreateStandardObjects()
-    {
-       Send(self,@NewHold,#what=Create(&Chest),
-           #new_row=15,#new_col=4,#fine_row=32,#fine_col=0,
-           #new_angle=ANGLE_EAST);
+   CreateStandardObjects()
+   {
+      Send(self,@NewHold,#what=Create(&Chest),
+            #new_row=15,#new_col=4,#fine_row=32,#fine_col=0,
+            #new_angle=ANGLE_EAST);
 
-       Send(self,@NewHold,#what=Create(&Table),
-           #new_row=12,#new_col=15,#fine_row=0,#fine_col=32);
-       Send(self,@NewHold,#what=Create(&Table),
-           #new_row=12,#new_col=17,#fine_row=0,#fine_col=0);
-       Send(self,@NewHold,#what=Create(&Table),
-           #new_row=13,#new_col=17,#fine_row=32,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Table),
+            #new_row=12,#new_col=15,#fine_row=0,#fine_col=32);
+      Send(self,@NewHold,#what=Create(&Table),
+            #new_row=12,#new_col=17,#fine_row=0,#fine_col=0);
+      Send(self,@NewHold,#what=Create(&Table),
+            #new_row=13,#new_col=17,#fine_row=32,#fine_col=0);
 
-       propagate;
-     }
+      propagate;
+   }
 
    CreateStandardExits()
    {
       plExits = $;
 
-  %% TO TOWN
+      %% TO TOWN
       plExits = Cons([ 20, 11, RID_JASPER, 30, 61, ROTATE_NONE ],plExits);
 
       propagate;
    }
 
+   InFoyer(who=$)
+   {
+      local iRow, iCol;
 
-     InFoyer(who=$)
-     {
-       local iRow, iCol;
+      if Send(who,@GetOwner) <> self
+      {
+         return FALSE;
+      }
 
-       iRow = send(who,@getrow);
-       iCol = send(who,@getcol);
+      iRow = Send(who,@GetRow);
+      iCol = Send(who,@GetCol);
 
-       if iRow > 16 or iCol < 4 or iCol > 18
+      if iRow > 16 or iCol < 4 or iCol > 18
+      {
+         return TRUE;
+      }
+      if iRow = 3 or iRow = 4
+      {
+         if iCol < 8 or iCol > 14
          {
             return TRUE;
          }
-       if iRow = 3 or iRow = 4
+         if iCol = 8 and Send(who,@GetFineCol) < 48
          {
-            if iCol < 8 or iCol > 14
-              {
-                 return TRUE;
-              }
-            if iCol = 8 and send(who,@getfinecol) < 48
-              {
-                  return TRUE;
-              }
-            if iCol = 14 and send(who,@getfinecol) > 16
-              {
-                  return TRUE;
-              }
+            return TRUE;
          }
-       return FALSE;
-     }
-
-     OpenSecretDoor()
-     {
-       if ptSecretDoor = $
+         if iCol = 14 and Send(who,@GetFineCol) > 16
          {
-           Send(self,@SomethingWaveRoom,#wave_rsc=guildhall10_sound);
-           send(self,@setsector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                          #height = 80,#speed=50);
-           send(self,@setsector,#sector=SECRET_WALL,#animation=ANIMATE_CEILING_LIFT,
-                          #height = 80,#speed=50);
-           send(self,@OpenSecretDoorSound);
-           ptSecretDoor = createtimer(self,@closesecretdoor,SECRET_DELAY);
+            return TRUE;
          }
-       return;
       }
 
-      CloseSecretDoor()
+      return FALSE;
+   }
+
+   OpenSecretDoor()
+   {
+      if ptSecretDoor = $
       {
-         ptSecretDoor = $;
-         send(self,@setsector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                  #height = 0,#speed=50);
-         send(self,@setsector,#sector=SECRET_WALL,#animation=ANIMATE_CEILING_LIFT,
-                  #height = 32,#speed=50);
-         send(self,@CloseSecretDoorSound);
-         return;
+         Send(self,@SomethingWaveRoom,#wave_rsc=guildhall10_sound);
+         Send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=80,#speed=50);
+         Send(self,@SetSector,#sector=SECRET_WALL,#animation=ANIMATE_CEILING_LIFT,
+               #height=80,#speed=50);
+         Send(self,@OpenSecretDoorSound);
+         ptSecretDoor = CreateTimer(self,@closesecretdoor,SECRET_DELAY);
       }
 
-      SomethingTryGo(row=$, col=$, what=$)
+      return;
+   }
+
+   CloseSecretDoor()
+   {
+      ptSecretDoor = $;
+      Send(self,@SetSector,#sector=SECRET_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      Send(self,@SetSector,#sector=SECRET_WALL,#animation=ANIMATE_CEILING_LIFT,
+            #height=32,#speed=50);
+      Send(self,@CloseSecretDoorSound);
+
+      return;
+   }
+
+   SomethingTryGo(row=$,col=$,what=$)
+   {
+      if (row = 7 OR row = 8)
+         AND (col = 11)
+         AND ptNorthDoor = $
       {
-         if (row = 7 or row = 8) and (col = 11) and ptNorthDoor = $
-           {
-              send(self,@setsector,#sector=NORTH_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                 #height = 72,#speed=50);
-              ptNorthDoor = createtimer(self,@CloseNorthDoor,DOOR_DELAY);
-              return TRUE;
-           }
+         Send(self,@SetSector,#sector=NORTH_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=72,#speed=50);
+         ptNorthDoor = CreateTimer(self,@CloseNorthDoor,DOOR_DELAY);
 
-         if (row = 9 or row = 10) and (col = 13 or col = 14 or col = 15) and ptEastDoor = $
-           {
-              send(self,@setsector,#sector=EAST_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                 #height = 72,#speed=50);
-              ptEastDoor = createtimer(self,@CloseEastDoor,DOOR_DELAY);
-              return TRUE;
-           }
+         return TRUE;
+      }
 
-         if (row = 9) and (col = 7 or col = 8 or col = 9) and ptWestDoor = $
-           {
-              send(self,@setsector,#sector=WEST_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                 #height = 72,#speed=50);
-              ptWestDoor = createtimer(self,@CloseWestDoor,DOOR_DELAY);
-              return TRUE;
-           }
-         if row = 16 and col = 11
+      if (row = 9 OR row = 10)
+         AND (col = 13 OR col = 14 OR col = 15)
+         AND ptEastDoor = $
+      {
+         Send(self,@SetSector,#sector=EAST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=72,#speed=50);
+         ptEastDoor = CreateTimer(self,@CloseEastDoor,DOOR_DELAY);
+
+         return TRUE;
+      }
+
+      if (row = 9)
+         AND (col = 7 OR col = 8 OR col = 9)
+         AND ptWestDoor = $
+      {
+         Send(self,@SetSector,#sector=WEST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=72,#speed=50);
+         ptWestDoor = CreateTimer(self,@CloseWestDoor,DOOR_DELAY);
+
+        return TRUE;
+      }
+
+      if row = 16
+         AND col = 11
+      {
+         if Send(self,@ReqLegalEntry,#who=what)
          {
-	    if send(self,@ReqLegalEntry,#who = what)
-	    {
-	       send(self,@openentrancedoor);
-	       return TRUE;
-	    }
+            Send(self,@OpenEntranceDoor);
+
+            return TRUE;
          }
-         if (row = 12 or row = 13) and (col = 13 or col = 14 or col = 15) and ptBarDoor = $
-           {
-              send(self,@setsector,#sector=BAR_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                 #height = 72,#speed=50);
-              ptBarDoor = createtimer(self,@CloseBarDoor,DOOR_DELAY);
-              return TRUE;
-           }
-         if (row = 12 or row = 13) and (col = 7 or col = 8 or col = 9) and ptNewsDoor = $
-           {
-              send(self,@setsector,#sector=NEWS_DOOR,#animation=ANIMATE_CEILING_LIFT,
-                 #height = 72,#speed=50);
-              ptNewsDoor = createtimer(self,@CloseNewsDoor,DOOR_DELAY);
-              return TRUE;
-           }
-         propagate;
       }
 
-      OpenEntranceDoor()
+      if (row = 12 OR row = 13)
+         AND (col = 13 OR col = 14 OR col = 15)
+         AND ptBarDoor = $
       {
-       if ptEntranceDoor = $
-         {
-           send(self,@TimeStampDoor);
-	   send(self,@setsector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
-              #height = 72,#speed=50);
-           send(self,@OpenEntranceDoorSound);
-           ptEntranceDoor = createtimer(self,@CloseEntranceDoor,DOOR_DELAY);
-         }
-        return;
+         Send(self,@SetSector,#sector=BAR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height = 72,#speed=50);
+         ptBarDoor = CreateTimer(self,@CloseBarDoor,DOOR_DELAY);
+
+         return TRUE;
       }
 
-      CloseEntranceDoor()
+      if (row = 12 OR row = 13)
+         AND (col = 7 OR col = 8 OR col = 9)
+         AND ptNewsDoor = $
       {
-         ptEntranceDoor = $;
-         send(self,@setsector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
-             #height = 0,#speed=50);
-         send(self,@CloseEntranceDoorSound);
-         return;
+         Send(self,@SetSector,#sector=NEWS_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height = 72,#speed=50);
+         ptNewsDoor = CreateTimer(self,@CloseNewsDoor,DOOR_DELAY);
+
+         return TRUE;
       }
 
-      CloseNorthDoor()
+      propagate;
+   }
+
+   OpenEntranceDoor()
+   {
+      if ptEntranceDoor = $
       {
-         send(self,@setsector,#sector=NORTH_DOOR,#animation=ANIMATE_CEILING_LIFT,
-             #height = 0,#speed=50);
-         ptNorthDoor = $;
-         return;
+         Send(self,@TimeStampDoor);
+         Send(self,@SetSector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
+               #height=72,#speed=50);
+         Send(self,@OpenEntranceDoorSound);
+         ptEntranceDoor = CreateTimer(self,@CloseEntranceDoor,DOOR_DELAY);
       }
 
-      CloseEastDoor()
-      {
-         send(self,@setsector,#sector=EAST_DOOR,#animation=ANIMATE_CEILING_LIFT,
-             #height = 0,#speed=50);
-         ptEastDoor = $;
-         return;
-      }
+      return;
+   }
 
-      CloseWestDoor()
-      {
-         send(self,@setsector,#sector=WEST_DOOR,#animation=ANIMATE_CEILING_LIFT,
-             #height = 0,#speed=50);
-         ptWestDoor = $;
-         return;
-      }
+   CloseEntranceDoor()
+   {
+      ptEntranceDoor = $;
+      Send(self,@SetSector,#sector=ENTRANCE_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      Send(self,@CloseEntranceDoorSound);
 
-      CloseBarDoor()
-      {
-         send(self,@setsector,#sector=BAR_DOOR,#animation=ANIMATE_CEILING_LIFT,
-             #height = 0,#speed=50);
-         ptBarDoor = $;
-         return;
-      }
+      return;
+   }
 
-      CloseNewsDoor()
-      {
-         send(self,@setsector,#sector=NEWS_DOOR,#animation=ANIMATE_CEILING_LIFT,
-             #height = 0,#speed=50);
-         ptNewsDoor = $;
-         return;
-      }
+   CloseNorthDoor()
+   {
+      Send(self,@SetSector,#sector=NORTH_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      ptNorthDoor = $;
+
+      return;
+   }
+
+   CloseEastDoor()
+   {
+      Send(self,@SetSector,#sector=EAST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      ptEastDoor = $;
+
+      return;
+   }
+
+   CloseWestDoor()
+   {
+      Send(self,@SetSector,#sector=WEST_DOOR,#animation=ANIMATE_CEILING_LIFT,
+          #height=0,#speed=50);
+      ptWestDoor = $;
+
+      return;
+   }
+
+   CloseBarDoor()
+   {
+      Send(self,@SetSector,#sector=BAR_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      ptBarDoor = $;
+
+      return;
+   }
+
+   CloseNewsDoor()
+   {
+      Send(self,@SetSector,#sector=NEWS_DOOR,#animation=ANIMATE_CEILING_LIFT,
+            #height=0,#speed=50);
+      ptNewsDoor = $;
+
+      return;
+   }
 
    RaiseMaze()
    {
-     Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-     send(self,@setsector,#sector=MAZE_FLOOR,#animation=ANIMATE_FLOOR_LIFT,
-              #height = 48,#speed=16);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=MAZE_FLOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=48,#speed=16);
 
      return;
    }
 
    LowerMaze()
    {
-     Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
-     send(self,@setsector,#sector=MAZE_FLOOR,#animation=ANIMATE_FLOOR_LIFT,
-              #height = 0,#speed=16);
+      Send(self,@SomethingWaveRoom,#wave_rsc=guildhall2_sound);
+      Send(self,@SetSector,#sector=MAZE_FLOOR,#animation=ANIMATE_FLOOR_LIFT,
+            #height=0,#speed=16);
 
      return;
    }
 
    DefensesDown()
    {
-     send(self,@LowerMaze);
-     propagate;
+      Send(self,@LowerMaze);
+
+      propagate;
    }
 
    DefensesUp()
    {
-     send(self,@RaiseMaze);
-     propagate;
+      Send(self,@RaiseMaze);
+
+      propagate;
    }
 
    ClaimGuildHall()
    {
-      send(self,@RaiseMaze);
+      Send(self,@RaiseMaze);
+
       propagate;
    }
 
    ResetGuildHall()
    {
-      send(self,@RaiseMaze);
+      Send(self,@RaiseMaze);
+
       propagate;
    }
 
    ConquerTimer()
    {
-      send(self,@RaiseMaze);
+      Send(self,@RaiseMaze);
+
       propagate;
    }
 
-      Delete()
-      "Be sure all door timers are deleted."
+   Delete()
+   "Be sure all door timers are deleted."
+   {
+      if ptNorthDoor <> $
       {
-         if ptNorthDoor <> $
-           {
-              deletetimer(ptNorthDoor);
-              ptNorthDoor = $;
-           }
-         if ptEastDoor <> $
-           {
-              deletetimer(ptEastDoor);
-              ptEastDoor = $;
-           }
-         if ptWestDoor <> $
-           {
-              deletetimer(ptWestDoor);
-              ptWestDoor = $;
-           }
-         if ptEntranceDoor <> $
-           {
-              deletetimer(ptEntranceDoor);
-              ptEntranceDoor = $;
-           }
-         if ptSecretDoor <> $
-           {
-              deletetimer(ptSecretDoor);
-              ptSecretDoor = $;
-           }
-         if ptBarDoor <> $
-           {
-              deletetimer(ptBarDoor);
-              ptBarDoor = $;
-           }
-         if ptNewsDoor <> $
-           {
-              deletetimer(ptNewsDoor);
-              ptNewsDoor = $;
-           }
-         propagate;
+         DeleteTimer(ptNorthDoor);
+         ptNorthDoor = $;
       }
+      if ptEastDoor <> $
+      {
+         DeleteTimer(ptEastDoor);
+         ptEastDoor = $;
+      }
+      if ptWestDoor <> $
+      {
+         DeleteTimer(ptWestDoor);
+         ptWestDoor = $;
+      }
+      if ptEntranceDoor <> $
+      {
+         DeleteTimer(ptEntranceDoor);
+         ptEntranceDoor = $;
+      }
+      if ptSecretDoor <> $
+      {
+         DeleteTimer(ptSecretDoor);
+         ptSecretDoor = $;
+      }
+      if ptBarDoor <> $
+      {
+         DeleteTimer(ptBarDoor);
+         ptBarDoor = $;
+      }
+      if ptNewsDoor <> $
+      {
+         DeleteTimer(ptNewsDoor);
+         ptNewsDoor = $;
+        }
+
+      propagate;
+   }
 
    CreateHotPlates()
    {
       local lHotPlates, i, oPlate;
+
       lHotPlates = [[ 16, 11, 1 ],[16,10,2],[15,10,2],[ 15, 11, 2 ],[15,12,2],[16,12,2]];
 
       for i in lHotPlates
       {
-	  oPlate = Create(&Hotplate,#hpid=nth(i,3));
-	  send(self,@newhold,#what=oPlate,#new_row = nth(i,1),#new_col = nth(i,2));
+         oPlate = Create(&Hotplate,#hpid=Nth(i,3));
+         Send(self,@NewHold,#what=oPlate,#new_row = Nth(i,1),
+               #new_col = Nth(i,2));
       }
+
       return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

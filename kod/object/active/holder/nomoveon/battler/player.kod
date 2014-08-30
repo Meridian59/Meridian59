@@ -1094,6 +1094,8 @@ messages:
       {
          DeleteTimer(ptCrystalizeManaSurgeTimer);
          ptCrystalizeManaSurgeTimer = $;
+         Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA),
+               #type=ENCHANTMENT_PLAYER);
          piCrystalizeManaSurging = FALSE;
       }
 
@@ -3345,6 +3347,11 @@ messages:
       {
          Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSkillByNum,
             #num=SKID_SECOND_WIND),#type=ENCHANTMENT_PLAYER);
+      }
+      if ptCrystalizeManaSurgeTimer <> $
+      {
+         Send(self,@ShowAddEnchantment,#what=Send(SYS,@FindSpellByNum,
+            #num=SID_CRYSTALIZE_MANA),#type=ENCHANTMENT_PLAYER);
       }
 
       return;
@@ -13504,6 +13511,8 @@ messages:
          ptCrystalizeManaSurgeTimer = $;
       }
 
+      Send(self,@ShowRemoveEnchantment,#what=Send(SYS,@FindSpellByNum,#num=SID_CRYSTALIZE_MANA),
+            #type=ENCHANTMENT_PLAYER);
       piCrystalizeManaSurging = FALSE;
       Send(self,@ComputeMaxMana);
 

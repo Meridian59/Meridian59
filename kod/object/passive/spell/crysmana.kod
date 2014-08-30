@@ -13,6 +13,7 @@ CrystalizeMana is Spell
 constants:
 
    include blakston.khd
+   include protocol.khd
 
    MAX_SURGE_MANA = 250
 
@@ -37,9 +38,11 @@ resources:
    CrystalizeMana_already_surging = \
       "Your spirit is too weak to summon another surge of energy at this time."
    CrystalizeMana_cast = \
-      "You magically crush two gems, and use their crystalline vibrational energies to tap into deeper forces."
+      "You magically crush two gems, and use their crystalline vibrational "
+      "energies to tap into deeper forces."
    CrystalizeMana_triggered = \
-      "With your spiritual energy depleted and your soul quiet, you find yourself able to hear a vast and distant song..."
+      "With your spiritual energy depleted and your soul quiet, you find "
+      "yourself able to hear a vast and distant song..."
    CrystalizeMana_surge = \
       "Incredible energies roar through you!"
       
@@ -69,7 +72,7 @@ classvars:
 properties:
 
    prMusic = CrystalizeMana_song
-      
+
 messages:
 
    ResetReagents()
@@ -86,7 +89,7 @@ messages:
       return 0;
    }
 
-   CanPayCosts(who = $)
+   CanPayCosts(who=$)
    {
       if who = $
          OR NOT IsClass(who,&User)
@@ -94,7 +97,7 @@ messages:
          return FALSE;
       }
 
-      If Send(who,@IsCrystalizeManaSurging)
+      if Send(who,@IsCrystalizeManaSurging)
       {
          Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_already_surging);
          return FALSE;
@@ -102,8 +105,8 @@ messages:
 
       propagate;
    }
-   
-   CastSpell(who = $)
+
+   CastSpell(who=$)
    {
       if who = $
          OR NOT IsClass(who,&User)
@@ -126,9 +129,9 @@ messages:
       {
          return;
       }
-      
+
       iMaxMana = Send(who,@GetMaxMana);
-      
+
       % Remove the benefit of any worn circlet.
       oCirclet = Send(who,@FindUsing,#class=&Circlet);
       if oCirclet <> $
@@ -145,37 +148,38 @@ messages:
      
       Send(who,@GainMana,#amount=iManaSurge);
       Send(who,@StartCrystalizeManaSurge,#surge_time=Send(self,@GetWaitTime,#who=who));
-      
+
       if triggered
       {
          Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_triggered);
          Send(who,@WaveSendUser,#wave_rsc=Surge_sound);
-         
+
          % Chance to improve upon triggered activation
          Send(self,@ImproveAbility,#who=who);
       }
-      
+
       Send(who,@MsgSendUser,#message_rsc=CrystalizeMana_surge);
+      Send(who,@ShowAddEnchantment,#what=self,#type=ENCHANTMENT_PLAYER);
       
       return;
    }
-   
+
    GetManaBonus(spell_ability=0)
    "Mastery of crystalline energy can provide up to 20 maximum mana."
    {
       return bound((spell_ability+1)/5,0,20);
    }
-   
+
    GetWaitTime(who=$)
    {
       local iWaitTime, iIntellect;
-      
+
       if who = $
          OR NOT IsClass(who,&User)
       {
          return 0;
       }
-      
+
       iIntellect = Send(self,@GetRequisiteStat,#who=who);
       
       % 6.6 minutes to 3.3 minutes based on spell ability

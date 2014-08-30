@@ -186,12 +186,6 @@ messages:
       {
          return FALSE;
       }
-      
-      if what <> $
-         AND NOT IsClass(what,&Player)
-      {
-         return FALSE;
-      }
 
       propagate;
    }

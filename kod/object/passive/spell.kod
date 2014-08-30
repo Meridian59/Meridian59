@@ -1401,6 +1401,23 @@ messages:
    {
       local oTarget, oRoom;
 
+      if IsClass(who,&DM)
+      {
+         ClearTempString();
+         AppendTempString("DM ");
+         AppendTempString(Send(who,@GetTrueName));
+         AppendTempString(" cast the spell ");
+         AppendTempString(Send(self,@GetName));
+         
+         if lTargets <> $
+         {
+            AppendTempString(" on target ");
+            AppendTempString(Send(First(lTargets),@GetTrueName));
+         }
+
+         GodLog();
+      }
+
       if NOT bItemCast
       {         
          piAverage_spellpower = ((piAverage_spellpower * piCast_successes)
@@ -1440,7 +1457,8 @@ messages:
                   Send(oTarget,@BadSpellFlashEffect);
                }
                
-               if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+               if (Send(Send(SYS,@GetSettings),@DisplaySpellData)
+                     OR IsClass(oTarget,&DM))
                   AND oTarget <> who
                {
                   Send(oTarget,@MsgSendUser,#message_rsc=spell_display_spellpower,
@@ -1451,6 +1469,7 @@ messages:
       }
 
       if Send(Send(SYS,@GetSettings),@DisplaySpellData)
+         OR IsClass(who,&DM)
       {
          Send(who,@MsgSendUser,#message_rsc=spell_display_spellpower,
                #parm1=Send(self,@GetName),#parm2=iSpellPower);

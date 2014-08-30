@@ -8,7 +8,7 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-EarthquakeScroll is Scroll
+MirthScroll is Scroll
 
 constants:
 
@@ -16,24 +16,30 @@ constants:
 
 resources:
 
-   EarthquakeScroll_label_name_rsc = "scroll of earthquake"
-   EarthquakeScroll_icon_rsc = scr08.bgf
-   EarthquakeScroll_desc_rsc = \
+   MirthScroll_label_name_rsc = "scroll of Mirth"
+   MirthScroll_icon_rsc = scr10.bgf
+   MirthScroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical writing in a spidery hand."
 
 classvars:
 
-   vrLabelName = EarthquakeScroll_label_name_rsc
-   vrIcon = EarthquakeScroll_icon_rsc
-   viSpellEffect = SID_EARTHQUAKE
-   viColor = XLAT_TO_ORANGE
+   vrLabelName = MirthScroll_label_name_rsc
+   vrIcon = MirthScroll_icon_rsc
+   viSpellEffect = SID_MIRTH
+   viColor = XLAT_TO_GREEN
 
 properties:
 
-   vrDesc = EarthquakeScroll_desc_rsc
-   pbDisabled = TRUE
+   vrDesc = MirthScroll_desc_rsc
 
 messages:
+
+   Constructed()
+   {
+      piItem_flags = 151;
+
+      propagate;
+   }
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

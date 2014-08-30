@@ -452,6 +452,11 @@ messages:
    
    GetSpellPower()
    {
+      if piSpellPower = $
+      {
+         return Random(piMinSpellPower,piMaxSpellPower);
+      }
+      
       return piSpellPower;
    }
 

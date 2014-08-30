@@ -17,7 +17,7 @@ constants:
 resources:
 
    MartyrScroll_label_name_rsc = "scroll of Martyrs Battleground"
-   MartyrScroll_icon_rsc = scr07.bgf
+   MartyrScroll_icon_rsc = scr05.bgf
    MartyrScroll_desc_rsc = \
       "This scroll is covered with indecipherable mystical writing in a spidery hand."
 

@@ -6160,9 +6160,9 @@ messages:
       return;
    }
 
-   NewHold(what = $, bFromReagentBag = FALSE)
+   NewHold(what = $, bFromReagentBag = FALSE, check_combine = TRUE)
    {
-      local i;
+      local i, oLastSpellItem;
 
       if what = $
       {
@@ -6185,15 +6185,22 @@ messages:
       
       If IsClass(what,&SpellItem)
          AND Send(self,@IsAutoCombining)
+         AND check_combine
       {
+         oLastSpellItem = $;
+
          for i in plPassive
          {
             if GetClass(i) = GetClass(what)
                AND i <> what
             {
-               Post(i,@CombineSpellItems,#sacrificed_item=what);
-               break;
+               oLastSpellItem = i;
             }
+         }
+
+         if oLastSpellItem <> $
+         {
+            Post(oLastSpellItem,@CombineSpellItems,#sacrificed_item=what);
          }
       }
 

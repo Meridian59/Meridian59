@@ -17,7 +17,7 @@ constants:
 resources:
 
    SetScroll_label_name_rsc = "scroll of set"
-   SetScroll_icon_rsc = scr07.bgf
+   SetScroll_icon_rsc = scr03.bgf
    SetScroll_desc_rsc = \
       "This scroll will register your inventory preferences with Frular's office, "
       "allowing you to use scrolls of loadout to re-equip yourself from your "

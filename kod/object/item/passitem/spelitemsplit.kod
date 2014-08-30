@@ -1,0 +1,115 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+SpellItemSplitter is PassiveItem
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   SpellItemSplitter_name_rsc = "spell item splitter"
+   SpellItemSplitter_icon_rsc = potion01.bgf
+   SpellItemSplitter_desc_rsc = \
+      "This is a spell item splitter."
+   
+   splitter_cant_use_on = "You can't acquire any charges from %s%s."
+   default_split_spell_item_rsc = "You combine half of the %s into your splitter, creating an item that has %d charges that average %d spellpower."
+   cant_split = "There's not enough to split!"
+
+classvars:
+
+   vrName = SpellItemSplitter_name_rsc
+   vrIcon = SpellItemSplitter_icon_rsc
+   vrDesc = SpellItemSplitter_desc_rsc
+
+   vsSplitMessage = default_split_spell_item_rsc
+
+   viBulk = 25
+   viWeight = 20
+   viValue_average = 60
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_POTION | ITEMTYPE_SUNDRY
+
+   vcSplitClass = &Potion
+
+properties:
+
+   viObject_flags = APPLY_YES | GETTABLE_YES
+
+messages:
+
+   ReqNewApply(what = $,apply_on = $)
+   {
+      if IsClass(apply_on,vcSplitClass)
+      {
+         return TRUE;
+      }
+
+      Send(what,@MsgSendUser,#message_rsc=splitter_cant_use_on, 
+           #parm1=Send(apply_on,@GetIndef),#parm2=Send(apply_on,@GetName));
+
+      return FALSE;
+   }
+
+   NewApplied(what = $,apply_on = $)
+   {
+      If IsClass(apply_on,vcSplitClass)
+      {
+         Send(self,@SplitSpellItem,#what=what,#sacrificed_item=apply_on);
+      }
+
+      return;
+   }
+
+   SplitSpellItem(what=$, sacrificed_item=$)
+   {
+      local cSacrificeClass, iSacrificeHits, iSacrificeSpellPower, oNewItem, iNewHits;
+
+      if sacrificed_item = $
+         OR what = $
+      {
+         return;
+      }
+      
+      iSacrificeHits = Send(sacrificed_item,@GetHits);
+      if iSacrificeHits = $
+         OR iSacrificeHits < 2
+      {
+         Send(what,@MsgSendUser,#message_rsc=cant_split);
+         return;
+      }
+      
+      iNewHits = (iSacrificeHits / 2);
+      Send(sacrificed_item,@SetHits,#number=(iSacrificeHits-iNewHits));
+
+      iSacrificeSpellPower = Send(sacrificed_item,@GetSpellPower);
+      
+      cSacrificeClass = GetClass(sacrificed_item);
+      
+      oNewItem = Create(cSacrificeClass,#iSpellpower=iSacrificeSpellPower);
+      Send(oNewItem,@SetHits,#number=iNewHits);
+      Send(what,@NewHold,#what=oNewItem,#check_combine=FALSE); 
+
+      If IsClass(what,&User)
+      {
+         Send(what,@MsgSendUser,#message_rsc=vsSplitMessage,#parm1=Send(sacrificed_item,@GetName),#parm2=iNewHits,#parm3=iSacrificeSpellPower);
+      }
+      
+      Send(self,@Delete);
+      
+      return;
+   }
+
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

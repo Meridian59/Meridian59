@@ -5139,6 +5139,8 @@ messages:
       plItemTemplates = cons(create(&WindScroll),plItemTemplates);
       plItemTemplates = cons(create(&SetScroll),plItemTemplates);
       plItemTemplates = cons(create(&LoadoutScroll),plItemTemplates);
+      plItemTemplates = cons(create(&MirthScroll),plItemTemplates);
+      plItemTemplates = cons(create(&MelancholyScroll),plItemTemplates);
 
       plItemTemplates = cons(create(&SpecialGift),plItemTemplates);
       plItemTemplates = cons(create(&SkullMask),plItemTemplates);
@@ -5167,6 +5169,9 @@ messages:
       plItemTemplates = cons(create(&GemRemove),plItemTemplates);
       
       plItemTemplates = cons(create(&ReagentBag),plItemTemplates);
+      plItemTemplates = cons(create(&PotionSplitter),plItemTemplates);
+      plItemTemplates = cons(create(&WandSplitter),plItemTemplates);
+      plItemTemplates = cons(create(&ScrollSplitter),plItemTemplates);
       
       return;
    }

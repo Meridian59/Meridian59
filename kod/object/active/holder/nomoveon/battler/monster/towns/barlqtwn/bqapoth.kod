@@ -134,7 +134,12 @@ messages:
                        Create(&Mushroom,#number=5),
                        Create(&Elderberry,#number=5),
                        Create(&RedMushroom,#number=4),
-                       Create(&Flask) ],
+                       Create(&Flask),
+                       Create(&MirthScroll,#labelled=TRUE),
+                       Create(&MelancholyScroll,#labelled=TRUE),
+                       Create(&PotionSplitter,#labelled=TRUE),
+                       Create(&WandSplitter,#labelled=TRUE),
+                       Create(&ScrollSplitter,#labelled=TRUE) ],
                      $,
                      [ SID_HEAT, SID_FADE ],
                      $];

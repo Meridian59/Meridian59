@@ -1,0 +1,53 @@
+% Meridian 59, Copyright 1994-2012 Andrew Kirmse and Chris Kirmse.
+% All rights reserved.
+%
+% This software is distributed under a license that is described in
+% the LICENSE file that accompanies it.
+%
+% Meridian is a registered trademark.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ScrollSplitter is SpellItemSplitter
+
+constants:
+
+   include blakston.khd
+
+resources:
+
+   ScrollSplitter_name_rsc = "blank scroll"
+   ScrollSplitter_icon_rsc = scr01.bgf
+   ScrollSplitter_desc_rsc = \
+      "This blank scroll appears somehow hungry for magical runes."
+      
+   scroll_split_spell_item_rsc = "Words flow from the %s, transferring runes. Your blank scroll gains %d recitations of %d spellpower."
+
+classvars:
+
+   vrName = ScrollSplitter_name_rsc
+   vrIcon = ScrollSplitter_icon_rsc
+   vrDesc = ScrollSplitter_desc_rsc
+   
+   vsSplitMessage = scroll_split_spell_item_rsc
+
+   viBulk = 5
+   viWeight = 5
+   viValue_average = 120
+
+   viUse_type = ITEM_SINGLE_USE
+   viItem_type = ITEMTYPE_SCROLL
+
+   viGround_group = 2
+   viInventory_group = 1
+   
+   vcSplitClass = &Scroll
+
+properties:
+
+   viObject_flags = APPLY_YES | GETTABLE_YES
+
+messages:
+
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

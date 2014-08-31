@@ -58,7 +58,7 @@ messages:
 
    CanGetAffectedItem(lData=$,Who=$,oItem=$,type=0)
    {
-      local oCorpse;
+      local oCorpse, oRoom;
 
       %% Is this the player that died?  He can always get his own stuff.
       if who = Nth(lData,3)
@@ -87,6 +87,15 @@ messages:
 
             return FALSE;
          }
+      }
+
+      oRoom = Send(who,@GetOwner);
+      if NOT Send(oRoom,@AllowGuildAttack,#what=who,#report=FALSE)
+      {
+         Send(who,@MsgSendUser,#message_rsc=PKpointer_no_loot,
+               #parm1=Send(oItem,@GetDef),#parm2=Send(oItem,@GetName));
+
+         return FALSE;
       }
 
       return TRUE;

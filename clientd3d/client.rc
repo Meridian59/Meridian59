@@ -41,6 +41,7 @@ BEGIN
         MENUITEM "&Voreinstellungen",           3060
         MENUITEM "Konfiguration",               186
         MENUITEM "Pass&wort ändern",            3506
+        MENUITEM "Logout timer",                3052
         MENUITEM SEPARATOR
         MENUITEM "&Drucke Karte",               3507
         MENUITEM SEPARATOR

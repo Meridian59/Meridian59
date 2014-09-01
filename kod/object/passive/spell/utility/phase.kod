@@ -407,7 +407,7 @@ messages:
       }
 
       % Correct the number of items lost by subtracting out the items left in
-      %  inventory.  (Is this right?)
+      %  inventory.  (Is this right? Yes.)
       iNumItemsInventory = Send(poGhostedPlayer,@GetNumItemsInInventory);
       numItemsLost = numItemsLost - iNumItemsInventory;
 
@@ -424,27 +424,6 @@ messages:
          else
          {
             BaseLossAmount = -1;
-         }
-
-         % Loop through once to reduce LossCounter below Length(lSpells), and
-         %  keep iterations down for large penalties
-         if (LossCounter > Length(lSpells))
-         {
-            i = 0;
-            % iLoops = number of complete loops we're collapsing to one
-            iLoops = LossCounter / Length(lSpells);
-            while i < Length(lSpells)
-            {
-               i = i + 1;
-               iSpellAbility = Send(poGhostedPlayer,@DecodeSpellAbility,
-                                    #compound=Nth(lSpells,i));
-               LossAmount = Bound(BaseLossAmount*iLoops,$,-(iSpellAbility-5));
-               iAbilityNum = Send(poGhostedPlayer,@DecodeSpellNum,
-                                  #compound=Nth(lSpells,i));
-               Send(poGhostedPlayer,@ChangeSpellAbility,
-                    #spell_num=iAbilityNum,#amount=LossAmount);
-               numSpellPointsLost = (numSpellPointsLost - LossAmount);
-            }
          }
 
          iLoops = 0;
@@ -497,27 +476,6 @@ messages:
       if (lSkills <> $)
       {
          LossCounter = 2;
-
-         % Loop through once to reduce LossCounter below Length(lSkills),
-         %  and keep iterations down for large penalties
-         if LossCounter > Length(lSkills)
-         {
-            i = 0;
-            % Number of complete loops we're collapsing to one.
-            iLoops = LossCounter/Length(lSkills);
-            while i < Length(lSkills)
-            {
-               i = i + 1;
-               iSkillAbility = Send(poGhostedPlayer,@DecodeSkillAbility,
-                                    #compound=Nth(lSkills,i));
-               LossAmount = bound((BaseLossAmount*iLoops),$,-(iSkillAbility-5));
-               iAbilityNum = Send(poGhostedPlayer,@DecodeSkillNum,
-                                  #compound=Nth(lSkills,i));
-               Send(poGhostedPlayer,@ChangeSkillAbility,
-                    #skill_num=iAbilityNum,#amount=LossAmount);
-               numSkillPointsLost = numSkillPointsLost - LossAmount;
-            }
-         }
 
          iLoops = 0;
          LossCounter = LossCounter - (numSkillPointsLost/BaseLossAmount);

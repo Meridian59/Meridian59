@@ -74,6 +74,7 @@ messages:
 
       target = First(lTargets);
       if (NOT IsClass(target,&Battler)) OR IsClass(target,&Revenant)
+         OR (IsClass(self,&Seduce) AND NOT IsClass(target,&Monster))
       {
          if NOT bItemCast
          {
@@ -99,6 +100,12 @@ messages:
       {
          if NOT bItemCast
          {
+            if IsClass(self,&Seduce)
+               AND NOT (Send(target,@GetEnchantedState,#what=self) = who)
+            {
+               propagate;
+            }
+
             if IsClass(self,&ForgetSpell)
             {
                Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,

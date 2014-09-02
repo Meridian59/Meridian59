@@ -46,16 +46,18 @@ classvars:
    vrIcon = MarkOfDishonor_icon_rsc
    vrDesc = MarkOfDishonor_desc_rsc
 
+   vrAlreadyEnchanted = MarkOfDishonor_already_enchanted
+   vrEnchantment_On = MarkOfDishonor_start
+   vrEnchantment_Off = MarkOfDishonor_stop
+   vrSuccess = MarkOfDishonor_success
+   vrNoSelfTarget = MarkOfDishonor_no_self
+
    viSchool = SS_SHALILLE
    viSpell_num = SID_MARK_OF_DISHONOR
    viSpell_level = 4
    viMana = 12
-
-   viOutlaw = TRUE
-   viHarmful = TRUE
-   viNoNewbieOffense = TRUE
-   viChance_To_Increase = 30
-   viMeditate_ratio = 30
+   viChance_To_Increase = 25
+   viMeditate_ratio = 40
 
    viFlash = FLASH_BAD
 
@@ -63,6 +65,10 @@ classvars:
    vbCastable_in_HappyLand = FALSE
 
 properties:
+
+   piBaseDuration = 120000
+   piSpellPowerModifier = 1800
+   piDeviation = 10
 
 messages:
 
@@ -74,62 +80,22 @@ messages:
       return;
    }
 
-   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
-      local target, i;
+      local oTarget;
 
-      % Can cast spell if the 1 target item is a user
-      if Length(lTargets) <> 1
-      {
-         return FALSE;
-      }
+      oTarget = First(lTargets);
 
-      target = First(lTargets);
-
-      if target = who
-      {
-         % No casting on self.
-         if NOT bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_no_self);
-         }
-
-         return FALSE;
-      }
-
-      if NOT IsClass(target,&Player)
-         AND NOT IsClass(target,&Monster)
-      {
-         if NOT bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=spell_bad_target,
-                 #parm1=vrName,#parm2=Send(target,@GetDef),
-                 #parm3=Send(target,@GetName));
-         }
-
-         return FALSE;
-      }
-
-      % Check for enchantment already applied
-      if Send(target,@IsEnchanted,#what=self)
-      {
-         if NOT bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_already_enchanted,
-                 #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
-         }
-
-         return FALSE;
-      }
+      % Spell effects
+      Send(self,@DoSpell,#what=who,#oTarget=oTarget,#iSpellPower=iSpellPower,
+           #iDuration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
 
       propagate;
    }
 
-   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   DoSpell(what=$,oTarget=$,iDuration=0,iSpellPower=0)
    {
-      local oTarget, iKarma, iVigorRestThreshold, iVigorRestThresholdChange;
-
-      oTarget = First(lTargets);
+      local iKarma, iVigorRestThreshold, iVigorRestThresholdChange;
 
       if IsClass(oTarget,&Player)
       {
@@ -156,11 +122,10 @@ messages:
                   #amount=iVigorRestThreshold-iVigorRestThresholdChange);
          }
 
-         Send(oTarget,@StartEnchantment,#what=self,
-               #time=Send(self,@GetDuration,#iSpellPower=iSpellPower),
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,
                #state=iVigorRestThresholdChange);
          Send(oTarget,@MsgSendUser,#message_rsc=MarkOfDishonor_start);
-         Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
+         Send(what,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
                #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
 
          % Make sure hps aren't over maximum.  Post this so enchantment is finished.
@@ -170,10 +135,11 @@ messages:
       {
             % EnterStateWait will make the monster stop aggro players and put
             % them on wait-state waiting to aggro again
-            Send(oTarget,@EnterStateWait);
-            Send(oTarget,@StartEnchantment,#what=self,
-                  #time=Send(self,@GetDuration));
-            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
+            % Duration against monsters is 1/6 that against players
+            iDuration = iDuration/6;
+            Send(oTarget,@EnterStateWait,#delay=iDuration);
+            Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
+            Send(what,@MsgSendUser,#message_rsc=MarkOfDishonor_success,
                   #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
       }
 
@@ -184,8 +150,12 @@ messages:
    {
       local iDuration;
 
-      % Duration is 2-10 minutes, depending on spell power.
-      iDuration = (120 + (iSpellPower * 4)) * 1000;
+      % Duration calculation now uses class properties, modifiable in game
+      % By default, base duration 2 min, total time 2-5 min using 1800x
+      % spellpower multiplier, with the final duration 90-100% max
+
+      iDuration = (piBaseDuration + (iSpellPower+1)*piSpellPowerModifier);
+      iDuration = Random(iDuration*(100-piDeviation)/100,iDuration);
 
       return iDuration;
    }
@@ -194,16 +164,16 @@ messages:
    {
       local iVigorRestThreshold;
 
-      % If we end enchantment on a player reset VigorRestThreshold
+      % If we end enchantment on a player, reset VigorRestThreshold
       if isClass(who,&Player)
       {
-        iVigorRestThreshold = Send(who,@GetVigorRestThreshold);
-        Send(who,@SetVigorRestThreshold,#amount=iVigorRestThreshold+state);
+         iVigorRestThreshold = Send(who,@GetVigorRestThreshold);
+         Send(who,@SetVigorRestThreshold,#amount=iVigorRestThreshold+state);
 
-        if report
-        {
-          Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_stop);
-        }
+         if report
+         {
+            Send(who,@MsgSendUser,#message_rsc=MarkOfDishonor_stop);
+         }
       }
 
       return;

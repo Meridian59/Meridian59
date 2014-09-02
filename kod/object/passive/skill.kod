@@ -231,9 +231,10 @@ messages:
    "If a skill requires a special cost or requirement of some sort, that"
    "cost goes here.  Example: picking locks may require thieves tools."
    {
-      local oOwner, i;
+      local oOwner, i, oSpell;
 
-      if Send(who,@HasForgetEnchantment,#what=self)
+      oSpell = Send(SYS,@FindSpellByNum,#num=SID_FORGET);
+      if Send(oSpell,@HasForgetEnchantment,#who=who,#what=self)
       {
          return FALSE;
       }

@@ -95,7 +95,7 @@ messages:
          AND (Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
               OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
-         Send(who,@MsgSendUser,#message=Shatterlock_safety);
+         Send(who,@MsgSendUser,#message_rsc=Shatterlock_safety);
 
          return FALSE;
       }

@@ -10,7 +10,7 @@
 % as this function calls DoPurge here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Purge is Debuff
+Purge is Spell
 
 constants:
 

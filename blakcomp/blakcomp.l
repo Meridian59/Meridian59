@@ -174,7 +174,7 @@ void action_error(const char *fmt, ...)
    if (!strcmp(yytext, "\n"))
       errline--;
 
-   printf("%s(%d): error: ", current_fname, errline);  
+   fprintf(stderr, "%s(%d): error: ", current_fname, errline);  
 
    va_start(marker, fmt);
    vprintf(fmt, marker);

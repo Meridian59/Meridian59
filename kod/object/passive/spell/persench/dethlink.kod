@@ -110,14 +110,8 @@ messages:
       }
 
       Send(caster,@GainHealthNormal,#Amount=iAmountHpInc);
-      Send(caster,@GainMana,#Amount=iAmountManaInc);
-      
-      % Don't let caster go over max mana
-      if Send(caster,@GetMana) > Send(caster,@GetMaxMana)
-      {
-         Send(caster,@LoseMana,#amount=(Send(caster,@GetMana)-Send(caster,@GetMaxMana)));
-      }
-      
+      Send(caster,@GainMana,#Amount=iAmountManaInc,#bRespectMax=TRUE);
+
       Send(caster,@MsgSendUser,#message_rsc=deathlink_feed_rsc);
 
       return;

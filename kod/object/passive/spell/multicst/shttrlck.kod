@@ -43,7 +43,7 @@ resources:
       "You have a strange feeling that your guild hall's defenses are being "
       "tampered with."
 
-   ShatterLock_sound = kraanan.wav  
+   ShatterLock_sound = kraanan.wav
 
 classvars:
 
@@ -52,7 +52,7 @@ classvars:
    vrDesc = ShatterLock_desc_rsc
 
    vrSucceed_wav = ShatterLock_sound
-                                 
+
    viMana = 50         % Mana is amount used upon inititiation
 
    viSpell_num = SID_SHATTERLOCK
@@ -77,7 +77,7 @@ properties:
    piBaseCastTime = 900             % 15 minutes (in seconds) minimum casting time.
    piGuildWarnTime = 180            % warn once (per caster) every 3 minutes on average
 
-messages:      
+messages:
 
    ResetReagents()
    {
@@ -93,7 +93,7 @@ messages:
 
       if IsClass(who,&Player)
          AND (Send(who,@CheckPlayerFlag,#flag=PFLAG_SAFETY)
-              OR NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
+              OR NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE))
       {
          Send(who,@MsgSendUser,#message=Shatterlock_safety);
 
@@ -136,7 +136,7 @@ messages:
             }
          }
 
-         iMembers = length(lMembers); 
+         iMembers = length(lMembers);
 
          % If the guild has very few people on, apply a penalty.
          %  Otherwise, scale the time based on the number of people online.
@@ -157,15 +157,15 @@ messages:
          iReqSpellPower = iReqSpellPower * 15;
       }
 
-      return iReqSpellPower; 
+      return iReqSpellPower;
    }
 
-   PrismCast(spellpower = 0, lCasters=$, oPrism=$)
+   PrismCast(spellpower=0,lCasters=$,oPrism=$)
    {
       local oRoom, i;
 
       oRoom = Send(oPrism,@GetOwner);
-      if isclass(oRoom,&GuildHall)
+      if IsClass(oRoom,&GuildHall)
       {
          if Send(oRoom,@InFoyer,#who=oPrism)
          {
@@ -181,19 +181,19 @@ messages:
       return;
    }
 
-   StartPeriodicEnchantment(who = $, state = $ )
+   StartPeriodicEnchantment(who=$,state=$)
    {
       local oGuild,lMembers,i;
 
       % Every 3 minutes on average, tell a guild member that something's up.
-      if random(1,piGuildWarnTime) > 1
+      if Random(1,piGuildWarnTime) > 1
       {
          propagate;
       }
 
       if NOT IsClass(first(state),&Prism)
       {
-         DEBUG("StartPeriodicEnchantment called with bad state (no prism)");
+         Debug("StartPeriodicEnchantment called with bad state (no prism)");
 
          return;
       }
@@ -206,7 +206,7 @@ messages:
 
          for i in lMembers
          {
-            if (random(1,length(lMembers))=1) AND Send(First(i),@IsLoggedOn)
+            if (Random(1,Length(lMembers))=1) AND Send(First(i),@IsLoggedOn)
             {
                Send(First(i),@MsgSendUser,#message_rsc=shatterlock_guildwarning);
             }
@@ -225,7 +225,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

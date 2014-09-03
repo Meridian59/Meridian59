@@ -72,6 +72,11 @@ messages:
       return;
    }
 
+   GetNumSpellTargets()
+   {
+      return 1;
+   }
+
    CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
       local target, i, lEnchantment, bHasEnchantment, oSpell;

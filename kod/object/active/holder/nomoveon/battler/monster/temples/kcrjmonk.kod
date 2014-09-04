@@ -17,22 +17,28 @@ resources:
 
    RiijaMonk_name_rsc = "Monk of Riija"
    RiijaMonk_icon_rsc = kcrjmonk.bgf
-   RiijaMonk_desc_rsc = "Floating several feet above the ground, this enigma of a "
-      "being watches you.  When it speaks, the monk's voice crackles like century "
-      "old parchment. You have a very uneasy feeling that all is not as it seems. "
+   RiijaMonk_desc_rsc = \
+      "Floating several feet above the ground, this enigma of a being watches "
+      "you.  When it speaks, the monk's voice crackles like century old "
+      "parchment. You have a very uneasy feeling that all is not as it seems. "
 
    RiijaMonk_name_rsc2 = "spooky little girl"
    RiijaMonk_icon_rsc2 = kcrjgirl.bgf
-   RiijaMonk_desc_rsc2 = "With a sickly sweet child's voice and an unwholesome look of innocence, the priestess "
-      "of Riija welcomes you to her inner sanctum of unreality."
+   RiijaMonk_desc_rsc2 = \
+      "With a sickly sweet child's voice and an unwholesome look of innocence, "
+      "the priestess of Riija welcomes you to her inner sanctum of unreality."
 
    riijamonk_teach = "Through ~I~rRiija's madness, ~byou can learn "
    riijamonk_notworthy = "~II see ~gno evidence that ~byou~g are ready to ~rlearn."
-   riijamonk_worthy = "~IAre you prepared for ~I~B~renlightenment?"
+   riijamonk_worthy = "~IAre you ~rprepared for ~I~B~fenlightenment?"
+   riijamonk_nobait = \
+      "~lPerhaps if ~I`myou were ~Imore adept at ~cattracting "
+      "~fmonsters `I`tyou would be ~y~I~Bable ~Bto learn ~p~ISeduce."
 
    riijamonk_dispel = "~B~rNever do that again!"
    riijamonk_respel = "Yrxlfle'man ~I~gGrn'Solagh ~rYippie ~bYup-Yup..."
-   riijamonk_unwanted_give = "~k%s%s tells you, \"~BFool,~I I do not need anything from ~n~r~Byou~n~k\""
+   riijamonk_unwanted_give = \
+      "~k%s%s tells you, \"~BFool,~I I do not need anything from ~n~r~Byou~n~k\""
 
 
 classvars:
@@ -63,6 +69,7 @@ properties:
    piDrawfx = BOUNCE_YES
 
    ptGoIllusioned = $
+   ptWorthyTimer = $
 
 messages:
 
@@ -76,7 +83,7 @@ messages:
    {
       if ptGoIllusioned <> $
       {
-         deletetimer(ptGoIllusioned);
+         DeleteTimer(ptGoIllusioned);
          ptGoIllusioned = $;
       }
 
@@ -118,11 +125,12 @@ messages:
       if pbIllusioned
       {
          AddPacket(4,vrDesc);
+
          return;
       }
-      
+
       AddPacket(4,vrDesc2);
-      
+
       return;
    }
 
@@ -134,19 +142,19 @@ messages:
       }
 
       Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_dispel,
-           #type=SAY_RESOURCE);
+            #type=SAY_RESOURCE);
 
       pbIllusioned = FALSE;
       piDrawfx = DRAWFX_NO;
-      send(poOwner,@Somethingchanged,#what=self);
-      
+      Send(poOwner,@SomethingChanged,#what=self);
+
       if ptGoIllusioned <> $
       {
-         deleteTimer(ptGoIllusioned);
+         DeleteTimer(ptGoIllusioned);
          ptGoIllusioned = $;
       }
-      
-      ptGoIllusioned=createtimer(self,@ReplaceIllusions,18000);  % 3o seconds
+
+      ptGoIllusioned=CreateTimer(self,@ReplaceIllusions,18000);
 
       return;
    }
@@ -161,54 +169,99 @@ messages:
       }
 
       Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_respel,
-           #type=SAY_RESOURCE);
+            #type=SAY_RESOURCE);
 
       pbIllusioned = TRUE;
       piDrawfx = BOUNCE_YES;
-      send(poOwner,@Somethingchanged,#what=self);
-      
+      Send(poOwner,@SomethingChanged,#what=self);
+
       return;
    }
 
    SetForSale()
    {
       plFor_sale = [$,$,
-                    [ SID_ANONYMITY, SID_APPARITION, SID_ARTIFICE,
+                    [ SID_ANONYMITY, SID_APPARITION, SID_ARTIFICE, SID_SEDUCE,
                       SID_FORGET, SID_MORPH, SID_REFLECTION, SID_ILLUSIONARY_FORM,
                       SID_FORESIGHT, SID_VERTIGO, SID_DENIAL, SID_ILLUSIONARY_WOUNDS,
-                      SID_FLASH, SID_SHADOW_FORM, SID_ILLUSIONARY_FIREWALL, SID_BAIT, 
+                      SID_FLASH, SID_SHADOW_FORM, SID_ILLUSIONARY_FIREWALL, SID_BAIT,
                       SID_FEIGN_DEATH, SID_ELUSION, SID_EVIL_TWIN ]];
       return;
    }
-   
-   CanAddSpell(who=$,num=$,report=FALSE)
+
+   CanAddSpell(who=$,num=$,report=TRUE)
    {
-      local bWorthy, i;
+      local bWorthy, i, iAbility;
       bWorthy = FALSE;
 
-      for i in send(who,@GetPlayerUsing)
+      for i in Send(who,@GetPlayerUsing)
       {
-         if isClass(i,&RiijaSword) and send(i,@GetQuester) = who
-         {  bWorthy = TRUE;  }
-      }      
+         if IsClass(i,&RiijaSword) AND Send(i,@GetQuester) = who
+         {
+            bWorthy = TRUE;
+         }
+      }
 
       if report
+         AND ptWorthyTimer = $
       {
          if not bWorthy
          {
             Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_notworthy,
-                 #type=SAY_RESOURCE);
+                  #type=SAY_RESOURCE);
          }
          else
          {
             Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_worthy,
-                 #type=SAY_RESOURCE);
-         }      
+                  #type=SAY_RESOURCE);
+         }
+         ptWorthyTimer = CreateTimer(self,@EndWorthyTimer,1000);
       }
-      
+
       if NOT bWorthy
       {
          return FALSE;
+      }
+
+      if num = SID_SEDUCE
+      {
+         iAbility = Send(who,@GetSpellAbility,#spell_num=SID_BAIT);
+         if iAbility < 89
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_nobait,
+                  #type=SAY_RESOURCE);
+
+            return FALSE;
+         }
+      }
+
+      propagate;
+   }
+
+   EndWorthyTimer(timer=$)
+   {
+      if ptWorthyTimer <> $
+      {
+         ptWorthyTimer = $;
+      }
+
+      return;
+   }
+
+   CanDoTeach(who=$,sid=0)
+   {
+      local iAbility;
+
+      if sid = SID_SEDUCE
+      {
+         iAbility = Send(who,@GetSpellAbility,#spell_num=SID_BAIT);
+         if iAbility < 89
+         {
+            Post(poOwner,@SomeoneSaid,#what=self,#string=riijamonk_nobait,
+                  #type=SAY_RESOURCE);
+
+            return FALSE;
+         }
       }
 
       propagate;
@@ -220,7 +273,4 @@ messages:
    }
 
 end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-

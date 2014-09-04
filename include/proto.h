@@ -371,7 +371,7 @@ enum {
 
 #define OF_FLICKERING    0x00020000    // For players or objects if holding a flickering light.
 #define OF_FLASHING      0x00040000    // For players or objects if flashing with light.
-#define OF_BOUNCING	     0x00060000    // If both flags on then object is bouncing
+#define OF_BOUNCING      0x00060000    // If both flags on then object is bouncing
 #define OF_PHASING       0x00080000    // For players or objects if phasing translucent/solid.
 
 #define OF_FALSEPLAYER   0x00000800    // Overlaps with OF_ACTIVATABLE.
@@ -400,8 +400,10 @@ enum {
 #define PF_SUPER         0x00014000    // Set if object is a "super DM"
 #define PF_EVENTCHAR     0x0001C000    // Set if object is an event character
 
+#define OF_MINION_SELF   0x01000000    // Set if a monster is our minion
 #define OF_ENEMY         0x02000000    // Enemy player
 #define OF_FRIEND        0x04000000    // Friendly player
+#define OF_MINION_OTHER  0x05000000    // Set if monster is other's minion
 #define OF_GUILDMATE     0x08000000    // Guildmate player
 
 #define GetPlayerFlags(flags)   ((flags) & OF_PLAYER_MASK)

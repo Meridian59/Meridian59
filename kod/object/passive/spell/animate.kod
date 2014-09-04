@@ -23,14 +23,15 @@ resources:
    Animate_desc_rsc = \
       "Animates a corpse, that it may do your bidding.  "
       "Requires the blood of a shaman to cast."
-   
+
    Animate_bad_target = "You can't cast animate on %s%s!"
    Animate_human_cast_rsc ="%s's corpse pulls itself up off the ground."
    Animate_human_failed_rsc ="%s's corpse remains inanimate on the ground."
    Animate_mob_failed_rsc = "The %s's remains still lay lifeless and inanimate."
    Animate_mob_cast_rsc = "The %s's remains come alive and rise up from the ground."
    Animate_failed_rsc = "The remains are unable to be animated."
-   
+   Animate_too_many_rsc = "You are unable to control another minion."
+   Animate_failed_full_rsc = "There are too many monsters here to raise another."
 
    Animate_sound = qanimate.wav
 
@@ -65,54 +66,43 @@ messages:
       return;
    }
 
-   CanPayCosts(who = $,lTargets=$)
-   {
-      local oRoom, oTarget;
-
-      oRoom = send(who,@GetOwner);
-      oTarget = First(lTargets);
-
-      if not isclass(oTarget,&DeadBody)
-      {
-         send(who,@MsgSendUser,#message_rsc=Animate_bad_target,#parm1=send(oTarget,@GetDef),#parm2=send(oTarget,@Getname));
-
-         return FALSE;
-      }
-
-      if send(send(first(lTargets),@GetOwner),@SafePlayerAttack)
-      {
-         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc);
-
-         return FALSE;
-      }
-
-      if (send(oRoom,@CountHoldingHowMany,#class=&monster) > 25)
-         or (send(oRoom,@CountHoldingSummoned) > 
-             Send(Send(SYS, @GetSettings), @GetPlayerSummonedObjectLimit))
-      {
-         send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc);
-
-         return FALSE;
-      }
-
-      propagate;
-   }
-
    GetNumSpellTargets()
    {
       return 1;
    }
 
-   DoubleCheckAfterTrance(who = $, lTargets = $)
+   CanPayCosts(who=$,lTargets=$)
    {
       local oRoom, oTarget;
 
-      oRoom = send(who,@GetOwner);
-      oTarget = first(lTargets);
-      if oRoom <> send(oTarget,@GetOwner)
+      oRoom = Send(who,@GetOwner);
+      oTarget = First(lTargets);
+
+      if NOT IsClass(oTarget,&DeadBody)
       {
-         send(who, @MsgSendUser, #message_rsc=spell_trance_break,#parm1=vrName);
-         send(who, @WaveSendUser, #wave_rsc=spell_trance_break_sound);
+         Send(who,@MsgSendUser,#message_rsc=Animate_bad_target,
+               #parm1=Send(oTarget,@GetDef),#parm2=Send(oTarget,@GetName));
+
+         return FALSE;
+      }
+
+      if Send(Send(First(lTargets),@GetOwner),@SafePlayerAttack)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Animate_failed_rsc);
+
+         return FALSE;
+      }
+
+      if (Send(oRoom,@CountHoldingHowMany,#class=&monster) > 25)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Animate_failed_full_rsc);
+
+         return FALSE;
+      }
+      
+      if Send(who,@CheckPlayerMinionCount) >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Animate_too_many_rsc);
 
          return FALSE;
       }
@@ -120,29 +110,47 @@ messages:
       propagate;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 1)
+   DoubleCheckAfterTrance(who=$,lTargets=$)
    {
-      local oRisen, oRoom, iRow, iCol, iFine_Row, iFine_Col, oTarget, iLevel, iNum, iDurationSecs;
+      local oRoom, oTarget;
 
-      oRoom = send(who,@GetOwner);
-      oTarget = first(lTargets);
-
-      if oRoom <> send(oTarget,@GetOwner)
+      oRoom = Send(who,@GetOwner);
+      oTarget = First(lTargets);
+      if oRoom <> Send(oTarget,@GetOwner)
       {
-         send(who,@MsgSendUser,#message_rsc=spell_trance_break,#parm1=vrName);
-         send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
+         Send(who,@MsgSendUser,#message_rsc=spell_trance_break,#parm1=vrName);
+         Send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
+
+         return FALSE;
+      }
+
+      propagate;
+   }
+
+   CastSpell(who=$,lTargets=$,iSpellPower=1)
+   {
+      local oRisen, oRoom, iRow, iCol, iFine_Row, iFine_Col,
+            oTarget, iLevel, iNum, iDurationSecs;
+
+      oRoom = Send(who,@GetOwner);
+      oTarget = First(lTargets);
+
+      if oRoom <> Send(oTarget,@GetOwner)
+      {
+         Send(who,@MsgSendUser,#message_rsc=spell_trance_break,#parm1=vrName);
+         Send(who,@WaveSendUser,#wave_rsc=spell_trance_break_sound);
 
          return;
       }
 
-      iRow = send(oTarget,@GetRow);
-      iCol = send(oTarget,@GetCol);
-      iFine_Row = send(oTarget,@GetFineRow);
-      iFine_Col = send(oTarget,@GetFineCol);
+      iRow = Send(oTarget,@GetRow);
+      iCol = Send(oTarget,@GetCol);
+      iFine_Row = Send(oTarget,@GetFineRow);
+      iFine_Col = Send(oTarget,@GetFineCol);
       iLevel = iSpellPower;
       iNum = Random(iSpellPower/3,iSpellPower);
-      
-      if iNum < 20 
+
+      if iNum < 20
       {
          oRisen = Create(&Mummy);
          Send(oRisen,@SetIllusion,#value=TRUE);
@@ -185,39 +193,50 @@ messages:
          }
       }
 
-	iDurationSecs = ( ((iSpellPower/2) + random(25,50)) * MAX_RISEN_CONTROL_SECS/100 );	  	  	  
-	  
-	
-	Send(oRisen,@ResetBehaviorFlags);	
-  
-	Send(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
-	Send(oRisen,@SetSummoned,#value=TRUE);
-	Send(self,@ModifyMonsterBehavior,#mob=oRisen);
+      iDurationSecs = ( ((iSpellPower/2) + Random(25,50))
+                           * MAX_RISEN_CONTROL_SECS/100 );
 
-	Send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,#fine_row=iFine_Row,#fine_col=iFine_Col);		
-	if Send(oTarget,@WasPlayer)
-	{
-	   Send(who,@MsgSendUser,#message_rsc=Animate_human_cast_rsc,#parm1=send(oTarget,@GetCorpseName));      
-	}
-	else
-	{	   
-	   send(who,@MsgSendUser,#message_rsc=Animate_mob_cast_rsc,#parm1=send(oTarget,@GetName));
-	}
-	
-	post(oTarget,@Delete);
-	propagate;
+      % Add this creature to your minion list
+      Send(who,@NewControlledMinion,#minion=oRisen);
+
+      % Set initial minion behavior
+      Send(oRisen,@ResetBehaviorFlags);
+      Send(oRisen,@SetSummoned,#value=TRUE);
+      Send(self,@ModifyMonsterBehavior,#mob=oRisen);
+
+      % Post this due to it needing to be done after the minion is placed.
+      Post(oRisen,@SetMaster,#oMaster=who,#DurationSecs=iDurationSecs);
+
+      % Place the minion
+      Send(oRoom,@NewHold,#what=oRisen,#new_row=iRow,#new_col=iCol,
+            #fine_row=iFine_Row,#fine_col=iFine_Col);
+
+      if Send(oTarget,@WasPlayer)
+      {
+         Send(who,@MsgSendUser,#message_rsc=Animate_human_cast_rsc,
+               #parm1=Send(oTarget,@GetCorpseName));
+      }
+      else
+      {
+         Send(who,@MsgSendUser,#message_rsc=Animate_mob_cast_rsc,
+               #parm1=Send(oTarget,@GetName));
+      }
+
+      % Delete the corpse
+      Post(oTarget,@Delete);
+
+      propagate;
    }
 
-   ModifyMonsterBehavior(mob = $)
-   {  
-      send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
-      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
-      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
-      send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
+   ModifyMonsterBehavior(mob=$)
+   {
+      Send(mob,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_AGGRESSIVE,#value=FALSE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_NEWBIESAFE);
+      Send(mob,@SetBehaviorFlag,#flag=AI_FIGHT_MONSTERS);
 
-      return;      
+      return;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

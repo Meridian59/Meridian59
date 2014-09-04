@@ -89,7 +89,8 @@ messages:
       }
 
       % limit reflections
-      if Send(self,@CountPlayerReflections,#who=who) >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit)
+      if ((Send(self,@CountPlayerReflections,#who=who) >= Send(Send(SYS,@GetSettings),@GetPlayerReflectionLimit))
+         OR Send(who,@CheckPlayerMinionCount) >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit))
          AND NOT (IsClass(who,&DM)
                     AND Send(who,@PlayerIsImmortal))
       {
@@ -131,7 +132,8 @@ messages:
          Send(who,@MsgSendUser,#message_rsc=summonreflection_cast_rsc);
       }
 
-      Send(SYS,@AddReflection,#who=who,#oreflection=oReflection);
+      Send(SYS,@AddReflection,#who=who,#oReflection=oReflection);
+      Send(who,@NewControlledMinion,#minion=oReflection);
       Send(oReflection,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);
 
       propagate;

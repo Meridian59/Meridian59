@@ -33,6 +33,7 @@ resources:
    seduce_target_off = "You are no longer seduced."
    seduce_cast_self = "You cannot seduce yourself!"
    seduce_stolen = "%s%s has seduced your %s!"
+   seduce_too_many = "You are unable to control another minion."
 
    seduce_sound = qseduce.wav
 
@@ -78,9 +79,10 @@ messages:
 
    CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
    {
-      local oMaster;
+      local oMaster, oTarget;
 
-      oMaster = Send(First(lTargets),@GetMaster);
+      oTarget = First(lTargets);
+      oMaster = Send(oTarget,@GetMaster);
 
       % We check here if we're charming a minion of another player
       % which is an aggressive act.
@@ -88,10 +90,25 @@ messages:
       if oMaster <> $
       {
          if NOT Send(who,@CheckStatusAndSafety,#victim=oMaster,
-                  #report=TRUE,#minion=TRUE)
+                     #report=TRUE,#minion=TRUE)
          {
             return FALSE;
          }
+
+         if oMaster = who
+         {
+            Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
+                  #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
+            return FALSE;
+         }
+      }
+
+      if Send(who,@CheckPlayerMinionCount) >= Send(Send(SYS,@GetSettings),@GetPlayerMinionLimit)
+      {
+         Send(who,@MsgSendUser,#message_rsc=seduce_too_many);
+
+         return FALSE;
       }
 
       propagate;
@@ -137,18 +154,22 @@ messages:
 
          % Do the work on the monster. If we seduced this from another
          % player, let them know. We checked for ourselves being the
-         % master in CanPayCosts (debuff.kod).
+         % master in CanPayCosts
          oMaster = Send(oTarget,@GetMaster);
          if oMaster <> $
          {
             Send(oMaster,@MsgSendUser,#message_rsc=seduce_stolen,
                #parm1=Send(what,@GetCapDef),#parm2=Send(what,@GetName),
                #parm3=Send(oTarget,@GetName));
+            % Since we don't necessarily want it going after the old master,
+            % use RemoveEnchantment instead of EndEnchantment
+            Send(oMaster,@RemoveControlledMinion,#what=self);
             Send(oTarget,@RemoveEnchantment,#what=self);
          }
 
          Post(oTarget,@StartEnchantment,#what=self,#time=iDuration,#state=what);
          Post(oTarget,@SetMaster,#oMaster=what);
+         Send(what,@NewControlledMinion,#minion=oTarget);
          Post(oTarget,@ResetBehaviorFlags);
       }
       else

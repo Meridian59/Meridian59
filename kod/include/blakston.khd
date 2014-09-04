@@ -116,6 +116,8 @@
    PLAYER_EVENT      = 0x1C000
 
    % What is the target, according to the viewer?  Used for special flagging.
+   MINION_SELF          = 0x01000000
+   MINION_OTHER         = 0x05000000
    PLAYER_IS_ENEMY      = 0x02000000
    PLAYER_IS_FRIEND     = 0x04000000
    PLAYER_IS_GUILDMATE  = 0x08000000

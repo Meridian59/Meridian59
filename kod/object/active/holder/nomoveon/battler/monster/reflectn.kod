@@ -124,7 +124,7 @@ messages:
    {
       return Send(poOriginal,@GetName,#cap=cap);
    }
-   
+
    GetDef(cap=FALSE)
    {
       return Send(poOriginal,@GetDef,#cap=cap);
@@ -422,11 +422,11 @@ messages:
    {
       if who = $
       {
-         debug("Reflection called with invalid $ SetOriginal");
+         Debug("Reflection called with invalid $ SetOriginal");
       }
       poOriginal = who;
-      piMax_Hit_Points = piSpellpower / 5;
-      piMax_hit_points = bound(piMax_hit_points,1,$);
+      piMax_Hit_Points = piSpellpower / 3;
+      piMax_hit_points = Bound(piMax_hit_points,15,40);
       piHit_Points = piMax_Hit_Points;
 
       Send(self,@GetOriginalInfo);
@@ -442,6 +442,11 @@ messages:
    TryAttack(what=$, stroke_obj=$)
    {
       local bWasBad;
+
+      if what = poMaster
+      {
+         return FALSE;
+      }
 
       if IsClass(poOriginal,&Player)
       {

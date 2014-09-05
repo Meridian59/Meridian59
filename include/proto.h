@@ -400,11 +400,11 @@ enum {
 #define PF_SUPER         0x00014000    // Set if object is a "super DM"
 #define PF_EVENTCHAR     0x0001C000    // Set if object is an event character
 
-#define OF_MINION_SELF   0x01000000    // Set if a monster is our minion
 #define OF_ENEMY         0x02000000    // Enemy player
 #define OF_FRIEND        0x04000000    // Friendly player
-#define OF_MINION_OTHER  0x05000000    // Set if monster is other's minion
 #define OF_GUILDMATE     0x08000000    // Guildmate player
+#define OF_MINION_SELF   0x00001000    // Set if a monster is our minion
+#define OF_MINION_OTHER  0x00002000    // Set if monster is other's minion
 
 #define GetPlayerFlags(flags)   ((flags) & OF_PLAYER_MASK)
 #define GetDrawingEffect(flags) ((flags) & OF_EFFECT_MASK)

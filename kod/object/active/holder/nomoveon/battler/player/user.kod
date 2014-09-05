@@ -2364,7 +2364,7 @@ messages:
                OR IsClass(what,&EvilTwin))
             AND Send(what,@GetMaster) <> $
          {
-            if Send(what,@GetMaster) = self
+            if (Send(what,@GetMaster) = self)
             {
                iFlags = (iFlags | MINION_SELF);
             }

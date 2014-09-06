@@ -24,15 +24,16 @@ resources:
    NarthylWorm_name_rsc = "narthyl worm"
    NarthylWorm_icon_rsc = darkbeas.bgf
    NarthylWorm_desc_rsc = \
-   "In spite of its otherworldy hideousness, the narthyl worm's lithe movements are "
-   "intensely hypnotic.  Every nerve in your body is screaming danger, ringing dully "
-   "through the trance-like state that seems to be descending over your mind."
+      "In spite of its otherworldly hideousness, the narthyl worm's lithe "
+      "movements are intensely hypnotic.  Every nerve in your body is "
+      "screaming danger, ringing dully through the trance-like state that "
+      "seems to be descending over your mind."
 
    NarthylWorm_dead_icon_rsc = dkbx.bgf
    NarthylWorm_dead_name_rsc = "dead narthyl worm"
 
    NarthylWorm_sound_miss = wrm_atk.wav
-   NarthylWorm_sound_death = wrm_dth.wav
+   NarthylWorm_sound_death = wrm_die.wav
    NarthylWorm_sound_aware = wrm_awr.wav
 
    NarthylWorm_sound_flap1 = wrm_flp1.wav
@@ -80,10 +81,10 @@ messages:
       propagate;
    }
 
-   MonsterAttack(what = $)
+   MonsterAttack(what=$)
    {
       Send(self,@DoSlash);
-      
+
       return;
    }
 
@@ -93,7 +94,7 @@ messages:
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
       ptRestartAnimation = createTimer(self,@RestartAnimation,SEC_PER_FRAME*5);
-      
+
       return;
    }
 
@@ -109,10 +110,10 @@ messages:
    {
       if ptRestartAnimation <> $
       {
-         deleteTimer(ptRestartAnimation);
+         DeleteTimer(ptRestartAnimation);
          ptRestartAnimation = $;
       }
-      
+
       propagate;
    }
 
@@ -122,7 +123,7 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
       }
-      
+
       AddPacket(1,ANIMATE_CYCLE,4,SEC_PER_FRAME,2,1,2,4);
 
       return;
@@ -134,7 +135,7 @@ messages:
       {
          AddPacket(1,ANIMATE_TRANSLATION,1,piColor_Translation);
       }
-      
+
       if piAnimation = ANIM_ATTACK
       {
          AddPacket(1,ANIMATE_ONCE,4,SEC_PER_FRAME,2,5,2,8,2,1);
@@ -143,20 +144,19 @@ messages:
       {
          AddPacket(1,ANIMATE_CYCLE,4,SEC_PER_FRAME,2,1,2,4); % that's the standing one.
       }
-      
+
       return;
    }
 
-   HitSideEffect(what = $)
+   HitSideEffect(what=$)
    {
       if IsClass(what,&Player)
       {
-         send(what,@AddExertion,#amount=(random(EXERTION_DAMAGE_MIN,EXERTION_DAMAGE_MAX)*10000));
+         Send(what,@AddExertion,#amount=(Random(EXERTION_DAMAGE_MIN,EXERTION_DAMAGE_MAX)*10000));
       }
 
       return;
    }
-   
-end
 
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

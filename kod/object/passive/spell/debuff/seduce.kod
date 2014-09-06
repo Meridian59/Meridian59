@@ -140,13 +140,15 @@ messages:
       iRoll = (iRoll + Send(what,@GetIntellect));     % 0-50
       iRoll = (iRoll + iSpellPower/2);                % 0-50
 
-      % Put an upper bound on our roll of caster HP*2, so we don't have lower
+      % Put an upper bound on our roll of caster HP+5, so we don't have lower
       % HP casters running around with a thrasher or similar.
-      iRoll = Bound(iRoll,0,(Send(what,@GetBaseMaxHealth)));
+      iRoll = Bound(iRoll,0,(Send(what,@GetBaseMaxHealth)+5));
 
       % If our roll number is larger than the target's max hitpoints,
       % we can charm it.
       if iRoll > Send(oTarget,@GetMaxHitPoints)
+         OR (IsClass(what,&DM)
+            AND Send(what,@PlayerIsImmortal))
       {
          % Tell the caster the spell is happening on a monster.
          Send(what,@MsgSendUser,#message_rsc=vrSuccess,
@@ -163,7 +165,10 @@ messages:
                #parm3=Send(oTarget,@GetName));
             % Since we don't necessarily want it going after the old master,
             % use RemoveEnchantment instead of EndEnchantment
-            Send(oMaster,@RemoveControlledMinion,#what=oTarget);
+            if IsClass(oMaster,&Player)
+            {
+               Send(oMaster,@RemoveControlledMinion,#what=oTarget);
+            }
             Send(oTarget,@RemoveEnchantment,#what=self);
          }
 

@@ -42,11 +42,11 @@ classvars:
    viMana = 15
    viSpellExertion = 10
    viMeditate_ratio = 50
-   
-   viCast_time = 1000
+
    vrSucceed_wav = RingOfFlames_sound
 
    viHarmful = TRUE
+   viOutlaw = TRUE
 
    % We technically have 12 elements, but that would never let us cast this while
    %  another wall spell is active.  A little cheat here, only count 9 elements.
@@ -72,45 +72,47 @@ messages:
       return 1;
    }
 
-   CastSpell(who = $, lTargets = $, iSpellPower = 0)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
-     local oTarget;
-	  
-	  if lTargets = $
-	  {
-	     Debug("Ring of Flames cast will nil target list");
-	     return;
-	  }
-	  
-	  oTarget = First(lTargets);
-	  
-	  if oTarget = $
-	  {
-	     Debug("Ring of Flames cast will nil target");
-	     return;
-	  }
-	  
+      local oTarget;
+
+      if lTargets = $
+      {
+         Debug("Ring of Flames cast will nil target list");
+
+         return;
+      }
+
+      oTarget = First(lTargets);
+
+      if oTarget = $
+      {
+         Debug("Ring of Flames cast will nil target");
+
+         return;
+      }
+
       Send(oTarget,@MsgSendUser,#message_rsc=RingOfFlames_target,
-		    #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
-	  
+            #parm1=Send(oTarget,@GetCapDef),#parm2=Send(oTarget,@GetName));
+
       Send(who,@MsgSendUser,#message_rsc=RingOfFlames_caster);
 
       propagate;
    }
 
-   PlaceWallElements(who = $, lTargets = $, iSpellPower = 0)
+   PlaceWallElements(who=$,lTargets=$,iSpellPower=0)
    {
       local oRoom, iRow, iCol, iFine_Row, iFine_Col, iXStep, iYStep,
             iAngle, iMaxDamage, iDuration, iHalfrow, iHalfCol, iHalfFine_Row,
             iHalfFine_Col, oElement, oTarget;
-			
-	  oTarget = First(lTargets);
+
+      oTarget = First(lTargets);
 
       iAngle = Send(oTarget,@GetAngle);
       iMaxDamage = iSpellPower / 5;
-      iMaxDamage = bound(iMaxDamage,1,20);
+      iMaxDamage = Bound(iMaxDamage,1,20);
       iDuration = (iSpellPower * 2) + 30;
-      iDuration = bound(iDuration,30,180);
+      iDuration = Bound(iDuration,30,180);
 
       oRoom = Send(oTarget,@GetOwner);
 
@@ -182,7 +184,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

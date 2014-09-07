@@ -84,10 +84,6 @@ properties:
    ptDoor2ResetTimer = $
    piDoor3Position = DOOR_DOWN
 
-   % Overridden from superclass value of 5 minutes.  This helps keep the
-   %  area clean of items which might crash people out.
-   piDispose_delay = 3 * 60 * 1000     % three minutes (in ms)
-
 messages:
 
    Constructor()
@@ -99,7 +95,7 @@ messages:
 
       propagate;
    }
-   
+
    SetupBossTemplates()
    {
       plBossTemplate = [ [&OrcPitBoss, 24, 41] ];
@@ -111,7 +107,7 @@ messages:
                                  [&MysticSword, 16, 42, 0, 0] ,
                                  [&OfferingShalille, 15, 41, 32, 32]
                                ];
-      
+
       return;
    }
 
@@ -121,8 +117,8 @@ messages:
 
       lBraziers = [ [25, 40, 48, 8], [25, 42, 48, 56] ];
 
-      send(self,@CreateObjFromList,#lObjlist=lBraziers,#oObjectClassName=&OrcTorch);
-      
+      Send(self,@CreateObjFromList,#lObjlist=lBraziers,#oObjectClassName=&OrcTorch);
+
       return;
    }
 
@@ -147,15 +143,15 @@ messages:
       local i;
 
       % just killed the orc pit boss (opening door, creating treasure...)
-      
+
       % raise the gate
       Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
-      send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
            #height=H_DOOR3a_UP,#speed=DOOR_UP_SPEED);
-      send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
            #height=H_DOOR3b_UP,#speed=DOOR_UP_SPEED);
       piDoor3Position = DOOR_UP;
-      
+
       propagate;
    }
 %
@@ -173,21 +169,21 @@ messages:
       local i;
 
       % close the boss door instantaneously
-      send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_DOOR3a,#animation=ANIMATE_CEILING_LIFT,
            #height=H_DOOR3a_DOWN,#speed=0);
-      send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
+      Send(self,@SetSector,#sector=SECTOR_DOOR3b,#animation=ANIMATE_CEILING_LIFT,
            #height=H_DOOR3b_DOWN,#speed=0);
       piDoor3Position = DOOR_DOWN;
 
       % Delete any boss bodies that may be lying around...
       for i in plActive
       {
-         if isClass(first(i),&OrcPitBossBody)
+         if isClass(First(i),&OrcPitBossBody)
          {
-            send(first(i),@Delete);
+            Send(First(i),@Delete);
          }
       }
-      
+
       propagate;
    }
 %
@@ -200,37 +196,36 @@ messages:
 % normal moving doors %
 %%%%%%%%%%%%%%%%%%%%%%%
 %
-   SomethingTryGo(what = $,row = $,col = $)
+   SomethingTryGo(what=$,row=$,col=$)
    {
-     
       if ((row = 56 OR row = 57) AND (col = 14 OR col = 15))
          AND piDoor1Position = DOOR_DOWN
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
-         send(self,@SetSector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR1a_UP,#speed=DOOR_UP_SPEED);
-         send(self,@SetSector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR1b_UP,#speed=DOOR_UP_SPEED);
          piDoor1Position = DOOR_UP;
          ptDoor1ResetTimer = CreateTimer(self,@DoorResetTrigger1,DOOR_RESET_TIME);
 
          return TRUE;
       }
-      
+
       if ((row = 63 OR row = 64) AND (col = 55 OR col = 56))
           AND piDoor2Position = DOOR_DOWN
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_sound); 
-         send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR2a_UP,#speed=DOOR_UP_SPEED);
-         send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR2b_UP,#speed=DOOR_UP_SPEED);
          piDoor2Position = DOOR_UP;
          ptDoor2ResetTimer = CreateTimer(self,@DoorResetTrigger2,DOOR_RESET_TIME);
 
          return TRUE;
       }
-      
+
       propagate;
    }
 
@@ -241,9 +236,9 @@ messages:
       if piDoor1Position = DOOR_UP
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound); 
-         send(self,@setsector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR1a,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR1a_DOWN,#speed=DOOR_DOWN_SPEED);
-         send(self,@setsector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR1b,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR1b_DOWN,#speed=DOOR_DOWN_SPEED);
          piDoor1Position = DOOR_DOWN;
       }
@@ -258,9 +253,9 @@ messages:
       if piDoor2Position = DOOR_UP
       {
          Send(self,@SomethingWaveRoom,#wave_rsc=Orcpit1_door_down_sound); 
-         send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR2a,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR2a_DOWN,#speed=DOOR_DOWN_SPEED);
-         send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
+         Send(self,@SetSector,#sector=SECTOR_DOOR2b,#animation=ANIMATE_CEILING_LIFT,
               #height=H_DOOR2b_DOWN,#speed=DOOR_DOWN_SPEED);
          piDoor2Position = DOOR_DOWN;
       }
@@ -275,9 +270,9 @@ messages:
    NewHold(what = $)
    "Prevents anyone from logging on into a special zone"
    {
-      if isClass(what,&User) AND (send(what,@GetOwner) = $)
+      if IsClass(what,&User) AND (Send(what,@GetOwner) = $)
       {
-         post(self,@Teleport,#what=what);
+         Post(self,@Teleport,#what=what);
       }
 
       propagate;
@@ -299,7 +294,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

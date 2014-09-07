@@ -15,7 +15,7 @@ constants:
    include blakston.khd
 
    % Delay before ghost pops again automatically.  About two minutes (in seconds).
-   GHOST_CYCLE = 120 
+   GHOST_CYCLE = 120
 
 resources:
 
@@ -27,7 +27,7 @@ resources:
    throne2_ghost_spawn = \
       "~kA raspy voice moans, \"~r~IWitness my revenge, tresspasser!~I~k\""
    ghost_spawn_wav_rsc = ghost_respawn.wav
-   
+
    no_walls_here = "Dark magics interfere with the casting of your wall spell."
 
 classvars:
@@ -49,9 +49,6 @@ properties:
 
    piOutside_factor = OUTDOORS_NONE
 
-   % two minutes (in ms)
-   piDispose_delay = 2 * 60 * 1000
-
    ptGhost = $
 
 messages:
@@ -65,8 +62,8 @@ messages:
 
       propagate;
    }
-   
-   ReqSpellCast(who = $, oSpell = $, lItems = $)
+
+   ReqSpellCast(who=$,oSpell=$,lItems=$)
    {
       if IsClass(who, &User)
       {
@@ -99,7 +96,7 @@ messages:
 
       propagate;
    }
-   
+
    GhostTimer()
    {
       ptGhost = $;
@@ -127,8 +124,8 @@ messages:
          {
             return FALSE;
          }
-      }       
-		
+      }
+
       oGhost = Create(&Ghost);
       Send(self,@NewHold,#what=oGhost,#new_row=2,#new_col=5,#new_angle=ANGLE_SOUTH);
 
@@ -147,7 +144,7 @@ messages:
    {
       % throne
       Send(self,@NewHold,#what=Create(&Throne),
-	   #new_row=1,#new_col=5,#new_angle=ANGLE_SOUTH);
+      #new_row=1,#new_col=5,#new_angle=ANGLE_SOUTH);
 
       % left row of pillars 
       Send(self,@NewHold,#what=Create(&Pillar),#new_row=16,#new_col=3,#fine_col=56);
@@ -190,7 +187,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

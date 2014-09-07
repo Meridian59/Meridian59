@@ -40,9 +40,6 @@ properties:
 
    piOutside_factor = OUTDOORS_NONE
 
-   % two minutes (in ms)
-   piDispose_delay = 2 * 60 * 1000
-
 messages:
 
    Constructed()
@@ -51,6 +48,7 @@ messages:
 
       plGenerators = [ [5, 3], [9, 2], [13, 3],
                        [5, 9], [9, 10], [13, 9]];
+
       propagate;
    }
 

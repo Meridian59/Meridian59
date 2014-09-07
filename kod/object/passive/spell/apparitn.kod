@@ -141,6 +141,7 @@ messages:
       {
          lMonsList = Send(oRoom,@GetMonsterList);
          if Length(lMonsList) = 0
+            OR Random(1,100) > iSpellPower
          {
             oApparition = Send(self,@CreateRandomMonster,
                                #spellpower=iSpellpower);

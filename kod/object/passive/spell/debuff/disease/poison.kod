@@ -59,6 +59,8 @@ classvars:
 
 properties:
 
+   pbAccessible = FALSE
+
 messages:
 
    GetSpellNum()

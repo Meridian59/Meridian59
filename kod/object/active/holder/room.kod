@@ -1565,7 +1565,7 @@ messages:
 
          iLen = Length(plPassive);
 
-         if iLen > 12
+         if iLen > 15
          {
             for i in plPassive
             {

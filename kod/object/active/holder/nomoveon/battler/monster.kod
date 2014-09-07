@@ -525,7 +525,7 @@ messages:
       {
          if IsClass(Send(self,@GetMaster),&User)
          {
-            Send(Send(self,@GetMaster),@RemoveControlledMinion,#minion=self);
+            Send(Send(self,@GetMaster),@RemoveControlledMinion,#what=self);
          }
       }
 
@@ -1857,39 +1857,26 @@ messages:
       return;
    }
 
-   CanReach( what = $ )
+   CanReach(what=$)
    {
       local iRange;
-      
+
       if poOwner <> Send(what,@GetOwner)
-      { return FALSE; }
-
-      % if neither the player or the monster has moved lately,
-      % we don't have to check this stuff again.
-      if what = poTarget
       {
-         if (piState & VSTATE_VALID_ATTACK)
-         {
-            return TRUE;
-         }
-
-         if (piState & VSTATE_INVALID_ATTACK)
-         {
-            return FALSE;
-         }
+         return FALSE;
       }
-      
-      % Check range first, for speed
+
+      % Check range first
       iRange = Send(self,@GetAttackRange);
       if Send(self,@SquaredDistanceTo,#what=what) > (iRange*iRange)
-      {                  
+      {
          if what = poTarget
          {
             piState = (piState | VSTATE_INVALID_ATTACK);
          }
 
-         return FALSE; 
-      }  
+         return FALSE;
+      }
 
       % Some monsters (revenants) don't care about walls.
       if (piBehavior & AI_FIGHT_THROUGH_WALLS)
@@ -1899,9 +1886,9 @@ messages:
             piState = (piState | VSTATE_VALID_ATTACK);
          }
 
-         return TRUE; 
+         return TRUE;
       }
-          
+
       %% Okay, now then, check for walls.
       if Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
       { 
@@ -1910,9 +1897,9 @@ messages:
             piState = (piState | VSTATE_VALID_ATTACK);
          }
 
-         return TRUE; 
+         return TRUE;
       }
-      
+
       if what = poTarget
       {
          piState = (piState | VSTATE_INVALID_ATTACK);
@@ -5679,12 +5666,16 @@ messages:
             }
 
             % After the honeymoon is over, go after the master!
-            poTarget = poMaster;   
+            poTarget = poMaster;
             if IsClass(poTarget,&user)
             {
                Send(poTarget,@AddToMonsterChasers,#level=Send(self,@GetLevel));
             }
-
+            if poOwner <> $
+            {
+               Post(poOwner,@SomethingChanged,#what=self);
+            }
+            Send(poMaster,@RemoveControlledMinion,#what=self);
             poMaster = $;
             Send(self,@SetSummoned,#value=FALSE);
             Send(self,@EnterStateChase);
@@ -5695,7 +5686,10 @@ messages:
          poMaster = oMaster;
          Send(self,@SetSummoned,#value=TRUE);
          Send(self,@EnterStateWait);
-
+         if poOwner <> $
+         {
+            Post(poOwner,@SomethingChanged,#what=self);
+         }
          if NOT Send(SYS,@IsPKAllowed) AND poTarget <> $
          {
             % Forget our target

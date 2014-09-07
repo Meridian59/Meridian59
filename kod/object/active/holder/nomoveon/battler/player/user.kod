@@ -2271,7 +2271,7 @@ messages:
       return Send(SYS,@GetSuccessRsc);
    }
 
-   ToCliObject(what = $, show_type = SHOW_NORMAL, bShow_all = FALSE)
+   ToCliObject(what=$,show_type=SHOW_NORMAL,bShow_all=FALSE)
    "show_type is used to get the look or inventory animation and overlays "
    "instead of the normal animation and overlays."
    {
@@ -2282,16 +2282,16 @@ messages:
       if IsClass(what,&NumberItem)
       {
          AddPacket(NUMBER_OBJECT,what, 4,Send(what,@GetNumber));
-      }        
+      }
       else
       {
          AddPacket(4, what);
       }
 
       AddPacket(4,Send(what,@GetIcon));
-      
+
       % Used for the reveal spell.  Do we show the true name, or the apparent
-      %  name?
+      % name?
       if bShow_All
       {
          AddPacket(4,Send(what,@GetTrueName));
@@ -2302,37 +2302,37 @@ messages:
       }
 
       iFlags = Send(what,@GetObjectFlags);
-      
-      if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2)            
+
+      if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_INVIS,#flagset=2)
          AND (iFlags & DRAWFX_MASK) = DRAWFX_INVISIBLE
-      {  
+      {
          iFlags = (iFlags & (~DRAWFX_MASK));
-         iFlags = (iFlags & (~OF_FLICKERING)); 
-         iFlags = (iFlags | OF_FLASHING); 
+         iFlags = (iFlags & (~OF_FLICKERING));
+         iFlags = (iFlags | OF_FLASHING);
       }
 
       if IsClass(what,&Battler)
       {
          iEnemyKarma = Send(what,@GetKarma,#detect=TRUE);
          iSelfKarma = Send(self,@GetKarma);
-      
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_EVIL,#flagset=2)            
+
+         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_EVIL,#flagset=2)
             AND iSelfKarma > 0
             AND iEnemyKarma < -10
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND abs(iEnemyKarma) > iSelfKarma))
          {
-            iFlags = (iFlags & (~OF_FLICKERING)); 
+            iFlags = (iFlags & (~OF_FLICKERING));
             iFlags = (iFlags | OF_FLASHING);
          }
 
-         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_GOOD,#flagset=2)            
+         if Send(self,@CheckPlayerFlag,#flag=PFLAG2_DETECT_GOOD,#flagset=2)
             AND iSelfKarma < 0
             AND iEnemyKarma > 10
             AND (IsClass(what,&Player)
                  OR (IsClass(what,&Monster) AND iEnemyKarma > abs(iSelfKarma)))
-         {         
-            iFlags = (iFlags & (~OF_FLICKERING)); 
+         {
+            iFlags = (iFlags & (~OF_FLICKERING));
             iFlags = (iFlags | OF_FLASHING);
          }
 
@@ -2364,7 +2364,7 @@ messages:
                   }
                }
             }
-            
+
             If what <> self
                AND NOT IsClass(self,&DM)
                AND Send(self,@AllowPlayerAttack,#victim=what,#report=FALSE,#actual=FALSE)
@@ -2372,8 +2372,23 @@ messages:
                iFlags = (iFlags | PLAYER_IS_ENEMY);
             }
          }
+
+         if IsClass(what,&Monster)
+            AND NOT (IsClass(what,&Reflection)
+               OR IsClass(what,&EvilTwin))
+            AND Send(what,@GetMaster) <> $
+         {
+            if (Send(what,@GetMaster) = self)
+            {
+               iFlags = (iFlags | MINION_SELF);
+            }
+            else
+            {
+               iFlags = (iFlags | MINION_OTHER);
+            }
+         }
       }
-      
+
       oRoom = Send(self,@GetOwner);
       if oRoom <> $
       {
@@ -2393,14 +2408,14 @@ messages:
          Send(what,@SendLookAnimation);
          Send(what,@SendLookOverlays);
       }
-      
+
       if show_type = SHOW_INVENTORY
       {
          Send(what,@SendInventoryAnimation);
          Send(what,@SendInventoryOverlays);
          Post(self,@DrawCapacity);
       }
-      
+
       if show_type = SHOW_NORMAL
       {
          Send(what,@SendAnimation);
@@ -4780,51 +4795,46 @@ messages:
 
       return;
    }
- % Can the user have controllable units
+
+   % Can the user have controllable units
    CanUserHaveMinions(who = $)
-	{        
-	   if isClass(who,&user)
-	   {                        
-	      if Send(who,@GetSpellAbility,#spell_num=SID_ANIMATE) > 0
-	      {                                
-		     return TRUE;
-	      }
-	   }
-	   return FALSE;
-   }
-  CommandMinionAttack(oMaster = $, oTarget = $)
    {
-		local oRoom,oActive;
-		oRoom = Send(oMaster,@GetOwner);				
-	   if send(self,@AllowPlayerAttack,#victim=oTarget)
-	   {
-		   for oActive in Send(self,@GetControlledMinions)
-		   {   
-				if isClass(oActive,&Monster)
-				{                                					
-						if Send(oActive,@GetMaster) = self
-						{   
-								if Send(oActive,@GetTarget) <> oTarget
-								{		
-										send(oActive,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
-										Send(oActive, @TargetSwitch, #what=oTarget, #iHatred=100);
-										Send(oActive, @EnterStateChase, #target=oTarget, #actnow=TRUE);
-								}
-						}
-				}
-		   }
-	   }				
-        return;                
-                
-   }		
-   UserAttack(type = STROKE_NORMAL,what = $)
+      return TRUE;
+   }
+
+  CommandMinionAttack(oMaster=$,oTarget=$)
+   {
+      local oRoom,oActive;
+
+      oRoom = Send(oMaster,@GetOwner);
+      if Send(self,@AllowPlayerAttack,#victim=oTarget)
+      {
+         for oActive in Send(self,@GetControlledMinions)
+         {
+            if IsClass(oActive,&Monster)
+            {
+               if Send(oActive,@GetMaster) = self
+               {
+                  if Send(oActive,@GetTarget) <> oTarget
+                  {
+                     Send(oActive,@SetBehaviorFlag,
+                           #flag=AI_MOVE_FOLLOW_MASTER,#value=FALSE);
+                     Send(oActive,@TargetSwitch,#what=oTarget,
+                           #iHatred=100);
+                     Send(oActive,@EnterStateChase,#target=oTarget,
+                           #actnow=TRUE);
+                  }
+               }
+            }
+         }
+      }
+
+      return;
+   }
+
+   UserAttack(type=STROKE_NORMAL,what=$)
    {
       local i, use_weapon, stroke_id, stroke_obj, is_spell;
-	  % Command minions to aid in combat
-	  if length(Send(self,@GetControlledMinions)) > 0
-      {
-         Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);                        
-      }      
 
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
@@ -4832,17 +4842,17 @@ messages:
       {
          Send(self,@NotifyMonstersOfPresence);
       }
-      
+
       if piFlags & PFLAG_TRANCE
       {
          Send(self,@BreakTrance,#event=EVENT_ATTACK);
       }
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_FIGHT)
-      {  
+      {
          Send(self,@MsgSendUser,#message_rsc=user_no_fight);
-         
-         return FALSE;  
+
+         return FALSE;
       }
 
       % Get use_weapon
@@ -4868,7 +4878,7 @@ messages:
 
          return FALSE;
       }
-     
+
       % except for punch and slash, a player cannot use an attack type he
       % doesn't have.  This in to prevent hacking.
       if stroke_id <> SKID_PUNCH
@@ -4884,7 +4894,7 @@ messages:
             return FALSE;
          }
       }
-      
+
       % Get what's possible
       if NOT IsClass(what,&Battler)
       {
@@ -4917,21 +4927,22 @@ messages:
                   #stroke_obj=stroke_obj);
    }
 
-   UserCast(oSpell = $, lTargets = $)
+   UserCast(oSpell=$,lTargets=$)
    {
       local i, bFound, iSpell, iSpellNum, iSpellPower, lFinalTargets;
-	  % Command minions to aid in combat
-	  if NOT isClass(oSpell,&PersonalEnchantment) 
-	  {
-	     if length(Send(self,@GetControlledMinions)) > 0
+
+      % Command minions to aid in combat
+      if IsClass(oSpell,&AttackSpell)
+      {
+         if length(Send(self,@GetControlledMinions)) > 0
          {
-            Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=first(lTargets));                        
+            Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=First(lTargets));
          }
-	  }
-      
+      }
+
       % User took an action!  Wake any AIs in the room to the user's presence!
       % bitflag check instead of function for speed.
-      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)  
+      if NOT (piFlags & PFLAG_MOVED_SINCE_ENTRY)
       {
          Send(self,@NotifyMonstersOfPresence);
       }   
@@ -4943,10 +4954,10 @@ messages:
 
       if Send(self,@CheckPlayerFlag,#flag=PFLAG_NO_MAGIC)
          AND NOT IsClass(oSpell,&Phase)
-      {  
+      {
          Send(self,@MsgSendUser,#message_rsc=user_no_cast);
-         
-         return;  
+
+         return;
       }
 
       iSpellNum = Send(oSpell,@GetSpellNum);
@@ -4962,12 +4973,12 @@ messages:
             break;
          }
       }
-      
+
       if not bFound
       {
          % We don't know the spell.  Bail out.
          return;
-      }           
+      }
 
       % Do we need a specific set of targets?
       lFinalTargets = Send(oSpell,@GetTargets,#who=self,#lTargets=lTargets);
@@ -4976,7 +4987,7 @@ messages:
                   #lItems=lFinalTargets)
       {
          % A spell cannot be cast in this room.
-         return;        
+         return;
       }
 
       % Get the spell power
@@ -4996,7 +5007,7 @@ messages:
          Send(oSpell,@BeginCastingTrance,#who=self,#lTargets=lFinalTargets,
               #iSpellPower=iSpellPower);
       }
-      
+
       return;
    }
 

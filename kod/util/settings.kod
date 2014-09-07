@@ -165,6 +165,9 @@ properties:
    % Number of reflections allowed per caster.
    piPlayerReflectionLimit = 2
 
+   % Number of minions allowed per caster.
+   piPlayerMinionLimit = 4
+
    % Minimum swings needed for a chance to improve a weaponcraft skill.
    piWeaponcraftImprovementMinimumSwings = 50
    
@@ -443,6 +446,11 @@ messages:
    GetPlayerReflectionLimit()
    {
       return piPlayerReflectionLimit;
+   }
+
+   GetPlayerMinionLimit()
+   {
+      return piPlayerMinionLimit;
    }
 
    GetSwingsPerImproveCheck()

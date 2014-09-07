@@ -4232,7 +4232,7 @@ messages:
 
    TryAttack(what = $,use_weapon = $,stroke_obj=$)
    {
-      local i, iRange, lWindsState, lSandstormState;
+      local i, iRange, lWindsState, lSandstormState, oMinion;
 
       % Can't target self.
       if what = self
@@ -4258,6 +4258,18 @@ messages:
       if send(self,@FindHolding,#class=&Token) <> $
       {
          return FALSE;
+      }
+
+      % If we have minions, see if they can attack too
+      if length(plControlledMinions) > 0
+      {
+         for oMinion in plControlledMinions
+         {
+            if what <> oMinion
+            {
+               Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+            }
+         }
       }
 
       % Can pay costs?  Only check for skills, spells have already been cast.
@@ -4877,20 +4889,21 @@ messages:
    AssessDamage(what = $,damage = $, atype = 0, aspell = 0, stroke_obj = $,bonus = 0, scalefactor = 1000,
               report = True, report_resistance = TRUE, absolute = FALSE)
    {
-      local i, j, iResistance, oSoldierShield, gainchance, color_rsc, iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
-			
-	  origdamage = damage;
-	  
+      local i, j, iResistance, oSoldierShield, gainchance, color_rsc,
+      iDuration, oSpell, oGort,iLimit, origdamage, oWeapon, shrunken,oMinion;
+
+      origdamage = damage;
       color_rsc = player_hit_color_none;
-	  
-	  % Attacks against a minion master will cause minions to defend the master
+
+      % Attacks against a minion master will cause minions to defend the master
       if length(plControlledMinions) > 0
-	  {	    
-	     for oMinion in plControlledMinions
-		 {
-		    Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
-		 }
-	  }
+      {
+         for oMinion in plControlledMinions
+         {
+            Send(self,@CommandMinionAttack,#oMaster=self,#oTarget=what);
+         }
+      }
+
       if what <> $ AND IsClass(what,&monster)
       {
          color_rsc = player_hit_color_blue;
@@ -5276,6 +5289,7 @@ messages:
          }
 
          if NOT bReflection
+            AND NOT Send(what,@IsIllusion)
          {
             Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
                   #karma_killer=Send(self,@GetKarma),#karma_victim=Send(what,@GetKarma)));
@@ -5348,6 +5362,7 @@ messages:
 
       if IsClass(what,&Monster)
          AND NOT bReflection
+         AND NOT Send(what,@IsIllusion)
       {
          Send(self,@AddKarma,#amount=Send(self,@CalculateKarmaChangeFromKill,
               #karma_victim=Send(what,@GetKarma),#karma_killer=Send(self,@GetKarma)),
@@ -13552,45 +13567,83 @@ messages:
       return;
    }
 
-   RemoveControlledMinion(minion = $)
-   {  
-      if plControlledMinions <> $
+    NewControlledMinion(minion=$)
+   {
+      if ptMinionControlCheck = $
       {
-         plControlledMinions = DelListElem(plControlledMinions,minion);	
+         CreateTimer(self,@MinionControlCheck,2000);
       }
 
-      return;		 
+      plControlledMinions = Cons(minion,plControlledMinions);
+
+      return;
    }
-   
+
+   RemoveControlledMinion(what=$)
+   {
+      if plControlledMinions <> $
+      {
+         plControlledMinions = DelListElem(plControlledMinions,what);
+      }
+
+      return;
+   }
+
    GetControlledMinions()
-   {	   
+   {
       return plControlledMinions;
    }
+
+   CheckPlayerMinionCount()
+   {
+      local i,iMinionCount;
+
+      iMinionCount = 0;
+
+      for i in plControlledMinions
+      {
+         if NOT IsClass(i,&Reflection)
+         {
+            iMinionCount = iMinionCount + 1;
+         }
+      }
+
+      return iMinionCount;
+   }
+
    MinionControlCheck()
    {
-	   local i;
-	   if length(plControlledMinions) > 0
-	   {			
-		   for i in plControlledMinions
-		   {
-		      if i = $
-			  {				
-			     Send(self,@RemoveControlledMinion,#minion=i);
-				 continue;
-			  }
-			  if Send(i,@GetTarget) = $
-			  {	 
-				 send(i,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,#value=TRUE);			     				 
-			  }
-		   }
-		   CreateTimer(self,@MinionControlCheck,2000);
-	   }
-	   else
-	   {		  
-		   DeleteTimer(ptMinionControlCheck);
-		   ptMinionControlCheck = $;
-	   }
-	   return;
+      local i;
+
+      if Length(plControlledMinions) > 0
+      {
+         for i in plControlledMinions
+         {
+            if Send(i,@GetMaster) <> self
+            {
+               Send(self,@RemoveControlledMinion,#what=i);
+
+               continue;
+            }
+
+            if Send(i,@GetTarget) = $
+            {
+               Send(i,@SetBehaviorFlag,#flag=AI_MOVE_FOLLOW_MASTER,
+                     #value=TRUE);
+            }
+         }
+         CreateTimer(self,@MinionControlCheck,2000);
+      }
+      else
+      {
+         if ptMinionControlCheck <> $
+         {
+            DeleteTimer(ptMinionControlCheck);
+         }
+         ptMinionControlCheck = $;
+      }
+
+      return;
    }
 
    SumDamageReduction()

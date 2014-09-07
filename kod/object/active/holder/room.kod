@@ -207,8 +207,8 @@ properties:
    % Background bitmap for room
    prBackground = $
 
-   % Default length: five minutes (in ms)
-   piDispose_delay = 180000
+   % Default length: 2.5 minutes (in ms)
+   piDispose_delay = 150000
    ptDispose = $
 
    % Exits list: each member is a list of row in this room, col in this room
@@ -1527,8 +1527,10 @@ messages:
 
    DisposeTimer()
    {
-      local iTime, iLen, i, oEachObj, count, delete_index;
+      local iTime, iLen, i, oEachObj, count, delete_index,
+            iLengthDispose, lDisposeItems, j;
 
+      lDisposeItems = $;
       ptDispose = $;
       iTime = piDispose_delay + Random(-5000,5000);
       ptDispose = CreateTimer(self,@DisposeTimer,iTime);
@@ -1556,21 +1558,39 @@ messages:
       }
       else
       {
-         % Someone's in the room.  If there are more than 5 things in the room,
-         %  delete the 20% that are the oldest.  Note:  this may be screwed up
-         %  by permanent, non-deleting objects like trees and braziers.
+         % If we have more than 15 passive object in room, try to dispose some.
+         % This number is large to reduce the amount of times this is run
+         % unnecessarily in rooms with lots of passive objects present, or
+         % a small amount of items that don't really need disposing.
 
          iLen = Length(plPassive);
-         if iLen > 5
+
+         if iLen > 15
          {
-            delete_index = 4*iLen/5;
-            count = 0;
             for i in plPassive
             {
-               count = count + 1;
-               if count > delete_index
+               % If the passive object is actually an item, add it to dispose list
+               if IsClass(First(i),&Item)
                {
-                  Send(First(i),@DestroyDisposable);
+                  lDisposeItems = Cons(First(i),lDisposeItems);
+               }
+            }
+
+            iLengthDispose = Length(lDisposeItems);
+
+            % If we have more than 5 items on the ground, dispose 20%
+            if iLengthDispose > 5
+            {
+               delete_index = 4*iLengthDispose/5;
+               count = 0;
+
+               for j in lDisposeItems
+               {
+                  count = count + 1;
+                  if count > delete_index
+                  {
+                     Send(j,@DestroyDisposable);
+                  }
                }
             }
          }

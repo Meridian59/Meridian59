@@ -1087,7 +1087,9 @@ messages:
       local i,iGen_items,oTreasure,oTreasure_type;
 
       % Soldiers have a small chance to drop a rose as treasure.
-      if pbIsSoldier AND random(0,100) = 59
+      if pbIsSoldier
+         AND Random(0,100) = 59
+         AND NOT pbIllusion
       {
          oTreasure = Create(&Rose,#corpse=corpse);
 

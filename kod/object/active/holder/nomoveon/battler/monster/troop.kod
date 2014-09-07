@@ -1044,7 +1044,9 @@ messages:
       {
          % Only a percentage chance to drop each item.  Too much stuff otherwise.
          % Don't drop the shield!  It's a quest/special item!
-         if (random(1,100) <= EQUIPMENT_DROP_PERCENT) AND (NOT IsClass(oUsedItem,vcShieldClass))
+         if (Random(1,100) <= EQUIPMENT_DROP_PERCENT)
+            AND (NOT IsClass(oUsedItem,vcShieldClass))
+            AND NOT pbIllusion
          {
             if (oItemAtt <> $) AND send(oItemAtt,@ReqAddToItem,#oItem=oUsedItem)
             {
@@ -1059,7 +1061,7 @@ messages:
             send(oUsedItem,@Delete);
          }
       }
-      
+
       plUsing = $;
 
       % Don't propagate.  We do everything here.

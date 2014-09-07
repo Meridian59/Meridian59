@@ -20,10 +20,10 @@ resources:
    lupogg_name_rsc = "lupogg"
    lupogg_icon_rsc = lupogg.bgf
    lupogg_desc_rsc = \
-      "This underwater denizen, although hideous and brutish, is rumored to be  "
+      "This underwater denizen, although hideous and brutish, is rumored to be "
       "peaceful in nature, but there is no evidence of that now.  The "
       "lupoggs seem upset that their territory has been trespassed upon, and "
-      "seem eager to challenge any they can find."   
+      "seem eager to challenge any they can find."
 
    lupogg_dead_icon_rsc = lupoggX.bgf
    lupogg_dead_name_rsc = "dead lupogg"
@@ -44,7 +44,7 @@ classvars:
 
    viTreasure_type = TID_VERY_TOUGH
    viAttack_type = ATCK_WEAP_BITE
-   viSpeed = 2
+   viSpeed = 4
    viAttributes = 0
    viLevel = 105
    viDifficulty = 9
@@ -65,23 +65,27 @@ messages:
 
    Constructed()
    {
-      plResistances = [ [ATCK_WEAP_ALL, 70],
-                        [-ATCK_SPELL_COLD, 90],
+      plResistances = [ [-ATCK_SPELL_COLD, 90],
                         [-ATCK_SPELL_SHOCK, 90],
-                        [-ATCK_SPELL_ACID, -20 ],
-                        [-ATCK_SPELL_FIRE, -10 ],
-                        [ATCK_WEAP_SLASH, -10 ],
-                        [ATCK_WEAP_NERUDITE, -25 ] ];
+                        [-ATCK_SPELL_ACID, 10 ],
+                        [-ATCK_SPELL_FIRE, 10 ],
+                        [ATCK_WEAP_SLASH, 55 ],
+                        [ATCK_WEAP_NERUDITE, 25 ],
+                        [ATCK_WEAP_PIERCE, 70 ],
+                        [ATCK_WEAP_THRUST, 70 ],
+                        [ATCK_WEAP_BLUDGEON, 30 ]];
+
       propagate;
    }
 
-   CalculateDamage(what = $,hit_roll = $)
+   % Pretty sure this isn't even called anywhere
+   CalculateDamage(what=$,hit_roll=$)
    "We hit <what> with a roll of <hit_roll>, and now need to calculate"
    "how much damage we caused."
    {
       local damage;
 
-      damage = send(self,@Fuzzy,#num=viLevel/Random(8,11));
+      damage = Send(self,@Fuzzy,#num=viLevel/Random(8,11));
 
       if piEnch_flags & ENCH_PALSY
       {
@@ -96,12 +100,12 @@ messages:
       return 2;
    }
 
-   MonsterAttack(what = $)
+   MonsterAttack(what=$)
    {
       piAnimation = ANIM_ATTACK;
       Send(poOwner,@SomethingChanged,#what=self);
       piAnimation = ANIM_NONE;
-      
+
       return;
    }
 
@@ -130,7 +134,6 @@ messages:
 
       propagate;
    }
-
 
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

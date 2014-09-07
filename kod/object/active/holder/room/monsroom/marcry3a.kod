@@ -262,6 +262,42 @@ messages:
 
    SomethingKilled(what=$,victim=$)
    {
+      local i,oWhat;
+
+      if IsClass(what,&Monster)
+      {
+         if Send(what,@GetMaster) <> $
+         {
+            % The killer is a minion
+            what = Send(what,@GetMaster);
+         }
+         else
+         {
+            % Killer is an apparition or evil twin... so we need to find 
+            % a user in the correct trap.
+            for i in plActive
+            {
+               if IsClass(First(i),&User)
+               {
+                  oWhat = First(i);
+
+                  if ((Send(self,@InTrapAreaThree,#what=oWhat)) 
+                        AND (Send(self,@CountTrap,#trap=3,#what=COUNTTRAP_THRASHER) = 1))
+                     OR ((Send(self,@InTrapAreaTwo,#what=oWhat)) 
+                        AND (Send(self,@CountTrap,#trap=2,#what=COUNTTRAP_THRASHER) = 1))
+                     OR ((Send(self,@InTrapAreaOne,#what=oWhat)) 
+                        AND (Send(self,@CountTrap,#trap=1,#what=COUNTTRAP_THRASHER) = 1))
+                     {
+                     % Looks like we found our user.
+                     what = oWhat;
+
+                     break;
+                  }
+               }
+            }
+         }
+      }
+
       if IsClass(victim,&Thrasher)
       {
          if IsClass(what,&User) AND Send(self,@InTrapAreaOne,#what=what)
@@ -568,6 +604,7 @@ messages:
          if what = COUNTTRAP_THRASHER
          {   
             if IsClass(each_obj,&Thrasher)
+               AND NOT Send(each_obj,@IsIllusion)
             {
                lTrapList = cons(each_obj,lTrapList);
 
@@ -646,7 +683,7 @@ messages:
             }
          }
       }
-       
+
       return length(lFinalTrapList);
    }
 

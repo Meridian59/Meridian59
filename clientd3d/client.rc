@@ -736,7 +736,9 @@ BEGIN
     161                     "Datenaustausch zwischen Computern braucht immer eine gewisse Zeit. Dieser Zeitraum wird als Lag bezeichnet. Deine Verbindungsqualität hängt von verschiedenen Faktoren ab und kann sich jederzeit ändern."
     162                     "~r< Der Textfilter wurde aktiviert >"
     163                     "Die Nachricht wurde gefiltert.\n\nSie enthät Wörter, die im Textfilter eingegeben wurden. Bitte überprüfe Deine Nachricht."
-    164                     "http://meridian59.com/"
+    164                     "http://openmeridian.org/"
+    189                     "http://openmeridian.org/forums"
+    190                     "http://wiki.openmeridian.org/index.php/Main_Page"
 END
 
 STRINGTABLE 

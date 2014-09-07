@@ -169,13 +169,13 @@ messages:
       return;
    }
 
-   CastSpell(who = $, lTargets = $)
+   CastSpell(who=$,lTargets=$)
    {
-   
       if Send(who,@IsPhasedOut)
       {
          Send(self,@NotifyRoomPhaseIn,#who=who);
          Send(who,@RemoveEnchantment,#what=self);
+         Send(who,@LogonDelay);
       }
       else
       {

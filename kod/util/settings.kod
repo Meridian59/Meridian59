@@ -179,7 +179,10 @@ properties:
 
    % If enabled, logoff penalties do not rise exponentially, and instead remain flat
    pbFlatPenalties = TRUE
-   
+
+   % Length of hold effect players experience when logging or phasing in
+   piLogonDelay = 2500
+
    % Revenant speed setting
    piRevSpeed = 18
 
@@ -446,17 +449,22 @@ messages:
    {
       return piWeaponcraftImprovementMinimumSwings;
    }
-   
+
    GetFlatPenaltiesEnable()
    {
       return pbFlatPenalties;
    }
-   
+
+   GetLogonDelay()
+   {
+      return piLogonDelay;
+   }
+
    GetOutlawMurdererLogoffPenaltyGhostTime()
    {
       return piOutlawMurdererLogoffPenaltyGhostTime;
    }
-   
+
    GetResistRingLoseDurability()
    {
       return piResistRingLoseDurability;

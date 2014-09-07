@@ -407,7 +407,6 @@ properties:
    pbAutoCombine = TRUE
    pbAutoloot = TRUE
 
-   piLogonDelay = 1500
    ptLogonDelayTimer = $
 
 messages:
@@ -643,7 +642,7 @@ messages:
 
    UserLogon(session_id = $)
    {
-      local i, oSpell;
+      local i;
       
       poSession = session_id;
       pbLogged_on = TRUE;
@@ -705,15 +704,30 @@ messages:
       Send(self,@ToCliSpellSchools);
       Send(self,@UserLogonHook);
 
+      % Give user the logon delay
+      Send(self,@LogonDelay);
+
+      return;
+   }
+
+   LogonDelay()
+   {
+      local iLogonDelay, oSpell;
+
       oSpell = Send(SYS,@FindSpellByNum,#num=SID_HOLD);
+
       if NOT Send(self,@IsEnchanted,#what=oSpell)
          AND NOT Send(poOwner,@CheckDefaultRoomFlag,#flag=ROOM_SAFELOGOFF)
          AND NOT (IsClass(self,&DM) AND Send(self,@PlayerIsImmortal))
-         AND ptLogonDelayTimer = $
       {
+         if ptLogonDelayTimer <> $
+         {
+            DeleteTimer(ptLogonDelayTimer);
+         }
          Send(self,@EffectSendUser,#what=self,#effect=EFFECT_PARALYZE_ON);
          Send(self,@SysMsgSendUser,#message_rsc=user_logon_delay);
-         ptLogonDelayTimer = CreateTimer(self,@LogonHoldOff,piLogonDelay);
+         iLogonDelay = Send(Send(SYS,@GetSettings),@GetLogonDelay);
+         ptLogonDelayTimer = CreateTimer(self,@LogonHoldOff,iLogonDelay);
       }
 
       return;

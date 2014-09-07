@@ -1556,21 +1556,24 @@ messages:
             if iType = QN_TYPE_MONSTER
             {
                piStatus = QN_STATUS_IN_PROGRESS;
-
+               Send(poMonster,@Delete);
+               poMonster = $;
                return TRUE;
             }
 
             if iType <> QN_TYPE_MONSTER_ITEMCLASS
             {
                Debug("Questnode of non-monster type processed monster death.");
-
+               Send(poMonster,@Delete);
+               poMonster = $;
                return TRUE;
             }
 
             if pCargo = $
             {
                Debug("Questnode expected item to place after monster death.");
-
+               Send(poMonster,@Delete);
+               poMonster = $;
                return TRUE;
             }
 
@@ -1585,7 +1588,8 @@ messages:
             {
                Send(oRoom,@NewHold,#what=pCargo,#new_row=iRow,#new_col=iCol);
                piStatus = QN_STATUS_IN_PROGRESS;
-
+               Send(poMonster,@Delete);
+               poMonster = $;
                return TRUE;
             }
             else   

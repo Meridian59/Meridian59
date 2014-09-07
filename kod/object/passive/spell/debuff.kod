@@ -47,6 +47,7 @@ classvars:
    vrEnchantment_On = debuff_On_rsc
    vrEnchantment_Off = debuff_Off_rsc
    vrSuccess = debuff_Success_rsc
+   vrNoSelfTarget = spell_no_self_target
 
    viDebuff = TRUE
    viOutlaw = TRUE
@@ -73,6 +74,7 @@ messages:
 
       target = First(lTargets);
       if (NOT IsClass(target,&Battler)) OR IsClass(target,&Revenant)
+         OR (IsClass(self,&Seduce) AND NOT IsClass(target,&Monster))
       {
          if NOT bItemCast
          {
@@ -87,7 +89,7 @@ messages:
       {
          if NOT bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=spell_no_self_target,#parm1=vrName);
+            Send(who,@MsgSendUser,#message_rsc=vrNoSelfTarget,#parm1=vrName);
          }
 
          return FALSE;
@@ -98,8 +100,22 @@ messages:
       {
          if NOT bItemCast
          {
-            Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
-                  #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+            if IsClass(self,&Seduce)
+               AND NOT (Send(target,@GetEnchantedState,#what=self) = who)
+            {
+               propagate;
+            }
+
+            if IsClass(self,&ForgetSpell)
+            {
+               Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
+                     #parm1=Send(target,@GetDef),#parm2=Send(target,@GetName));
+            }
+            else
+            {
+               Send(who,@MsgSendUser,#message_rsc=vrAlreadyEnchanted,
+                     #parm1=Send(target,@GetCapDef),#parm2=Send(target,@GetName));
+            }
          }
 
          return FALSE;

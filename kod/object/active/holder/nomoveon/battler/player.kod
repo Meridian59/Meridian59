@@ -7576,68 +7576,38 @@ messages:
       }
 
      Debug("Trying to delete a spell not on spell list",self,num);
-     
+
      return FALSE;
    }
-   
+
    WasSpellUsed(compound=0)
    {
       if compound > 0
       {
          return TRUE;
       }
-      
-      return FALSE;
-   } 
-   
-   % In case player has been enchanted with the forget spell, this checks
-   % to see if they have forgotten the skill/spell (what)
-   HasForgetEnchantment(what = $)
-   {
-      local oSpell, lState, iStateMember;
 
-      lState = $;
-
-      if NOT piFlags & PFLAG_FORGOTTEN
-      {
-         return FALSE;
-      }
-
-      oSpell = Send(SYS,@FindSpellbyNum,#num=SID_FORGET);
-      lState = Send(self,@GetEnchantedState,#what=oSpell);
-      if lState = $
-      {
-         return FALSE;
-      }
-   
-      for iStateMember in lState
-      {
-         if iStateMember = what
-         {
-            return TRUE;
-         }
-      }
-      
       return FALSE;
    }
+
 
    FlipSpellAtrophyFlag(SID=0)
    "This spell was used recently, meaning it will NOT atrophy."
    {
       local i, elemnum, spellnum;
-      
+
       elemnum = 0;
       for i in plSpells
-      {       
-         elemnum = elemnum + 1;      
+      {
+         elemnum = elemnum + 1;
          if Send(self,@DecodeSpellNum,#compound=i) = SID
          {
             SetNth(plspells,elemnum,abs(i));
-            
+
             break;
          }
       }
-      
+
       return;
    }
 

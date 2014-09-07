@@ -783,7 +783,8 @@ messages:
             return FALSE;
          }
       
-         if Send(who,@HasForgetEnchantment,#what = self)
+         oSpell = Send(SYS,@FindSpellByNum,#num=SID_FORGET);
+         if Send(oSpell,@HasForgetEnchantment,#who=who,#what=self)
          {
             iRand = Nth(
             [spell_forgot1,

@@ -14,16 +14,13 @@ constants:
 
    include blakston.khd
 
-   FORGET_BASE_TIME = 60000
-   FORGET_PER_SPELLPOWER = 787
-
 resources:
 
    forgetspell_name_rsc = "forget"
    forgetspell_icon_rsc = iforget.bgf
    forgetspell_desc_rsc = \
       "Causes the victim to forget his or her own abilities.  "
-      "Requires two firesand and two uncut seraphym to cast."
+      "Requires one firesand and two uncut seraphym to cast."
 
    forgetspell_already_enchanted = \
       "You can't seem to make %s%s any more forgetful."
@@ -51,89 +48,81 @@ classvars:
    vrIcon = forgetspell_icon_rsc
    vrDesc = forgetspell_desc_rsc
 
+   vrAlreadyEnchanted = forgetspell_already_enchanted
+   vrEnchantment_On = forgetspell_on
+   vrEnchantment_Off = forgetspell_off
+   vrSuccess = forgetspell_caster
+   vrNoSelfTarget = forgetspell_cast_self
+
    viSpell_num = SID_FORGET
    viSpell_level = 2
    viSchool = SS_RIIJA
    viMana = 20
    viSpellExertion = 10
    viCast_time = 0
-   viChance_to_increase = 25
-   viMeditate_ratio = 30
-
-   viFlash = FLASH_BAD
-
-   viOutlaw = TRUE
-   viHarmful = TRUE
-
-   vbCastable_in_HappyLand = FALSE
+   viChance_to_increase = 20
+   viMeditate_ratio = 40
 
 properties:
+
+   piBaseDuration = 30000
+   piSpellPowerModifier = 300
+   piDeviation = 10
 
 messages:
 
    ResetReagents()
    {
       plReagents = $;
-      plReagents = Cons([&FireSand,2],plReagents);
+      plReagents = Cons([&FireSand,1],plReagents);
       plReagents = Cons([&UncutSeraphym,2],plReagents);
 
       return;
    }
 
-   CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)
+   CastSpell(who=$,lTargets=$,iSpellPower=0)
    {
+      local oTarget;
 
-      if who = first(lTargets)
-      {
-         if not bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=forgetspell_cast_self);
-         }
+      oTarget = First(lTargets);
 
-         return FALSE;
-      }
-
-      if not IsClass(First(lTargets),&Player)
-      {
-         return FALSE;
-      }
-
-      % Check for enchantment already applied
-      if Send(First(lTargets),@CheckPlayerFlag,#Flag=PFLAG_FORGOTTEN)
-      {
-         if not bItemCast
-         {
-            Send(who,@MsgSendUser,#message_rsc=forgetspell_already_enchanted,
-                 #parm1=Send(First(lTargets),@GetIndef),#parm2=Send(First(lTargets),@GetName));
-         }
-
-         return FALSE;
-      }
+      % Spell effects
+      Send(self,@DoSpell,#what=who,#oTarget=oTarget,#iSpellPower=iSpellPower,
+           #iDuration=Send(self,@GetDuration,#iSpellPower=iSpellPower));
 
       propagate;
    }
 
-   CastSpell(who=$,lTargets=$,iSpellPower=0)
+   DoSpell(what=$,oTarget=$,iDuration=0,iSpellPower=0)
    {
-      local iPowerLeft,iTime,i,lSkills,lSpells,oTarget,lState,
+      local iPowerLeft,i,lSkills,lSpells,lState,
             iCompound,iAbilityNum,oAbility,iSkillLength,iSpellLength;
 
+      if IsClass(oTarget,&Monster)
+      {
+         % Lasts quarter duration on mobs, 7.5-15 seconds. 
+         % Makes them enter the waiting state, 'forgetting' the target.
+         iDuration = iDuration/4;
+         Send(oTarget,@EnterStateWait,#delay=iDuration);
+         Send(oTarget,@StartEnchantment,#what=self,#time=iDuration);
+         Send(what,@MsgSendUser,#message_rsc=forgetspell_caster,
+               #parm1=Send(oTarget,@GetDef),
+               #parm2=Send(oTarget,@GetName));
+
+         propagate;
+      }
+
       lState = $;
-      oTarget = Nth(lTargets,1);
       lSkills = Send(oTarget,@GetSkillList);
       lSpells = Send(oTarget,@GetSpellList);
       iPowerLeft = iSpellPower;
-
-      iTime = FORGET_BASE_TIME;
-      iTime = iTime + (FORGET_PER_SPELLPOWER * iSpellPower);
-      iTime = iTime + Random(-60000,60000);
 
       iSkillLength = Length(lSkills);
       iSpellLength = Length(lSpells);
 
       if iSkillLength = 0 and iSpellLength = 0
       {
-         Send(who,@MsgSendUser,#message_rsc=forgetspell_caster_failed,
+         Send(what,@MsgSendUser,#message_rsc=forgetspell_caster_failed,
                #parm1=Send(oTarget,@GetCapDef),
                #parm2=Send(oTarget,@GetName,#cap=TRUE));
 
@@ -171,9 +160,9 @@ messages:
             i = Random(1,iSpellLength);
             iCompound = Nth(lSpells,i);
             iAbilityNum = Send(oTarget,@DecodeSpellNum,#compound=iCompound);
-            oAbility = Send(SYS,@findspellbynum,#num=iAbilityNum);
+            oAbility = Send(SYS,@FindSpellByNum,#num=iAbilityNum);
          }
-         else 
+         else
          {
             if iSkillLength > 0
             {
@@ -197,15 +186,28 @@ messages:
          }
       }
 
-      Send(who,@MsgSendUser,#message_rsc=forgetspell_caster,
-            #parm1 = Send(oTarget,@GetIndef),
-            #parm2 = Send(oTarget,@GetName));
+      Send(what,@MsgSendUser,#message_rsc=forgetspell_caster,
+            #parm1=Send(oTarget,@GetIndef),
+            #parm2=Send(oTarget,@GetName));
 
-      Send(oTarget,@StartEnchantment,#what=self,#time=iTime,#state=lState);
+      Send(oTarget,@StartEnchantment,#what=self,#time=iDuration,#state=lState);
 
       propagate;
    }
 
+   GetDuration(iSpellPower=0)
+   {
+      local iDuration;
+
+      % Duration calculation now uses class properties, modifiable in game
+      % By default, base duration 30000ms, total time 30-60 sec using 300x
+      % spellpower multiplier, with the final duration 90-100% max
+
+      iDuration = (piBaseDuration + (iSpellPower+1)*piSpellPowerModifier);
+      iDuration = Random(iDuration*(100-piDeviation)/100,iDuration);
+
+      return iDuration;
+   }
 
    EndEnchantment(who=$,report=TRUE)
    {
@@ -217,9 +219,12 @@ messages:
       return;
    }
 
-   SetSpellPlayerFlag(who = $)
+   SetSpellPlayerFlag(who=$)
    {
-      Send(who,@SetPlayerFlag,#flag=PFLAG_FORGOTTEN,#value=TRUE);
+      if IsClass(who,&Player)
+      {
+         Send(who,@SetPlayerFlag,#flag=PFLAG_FORGOTTEN,#value=TRUE);
+      }
 
       return;
    }
@@ -227,6 +232,37 @@ messages:
    IsIllusion()
    {
       return TRUE;
+   }
+
+   HasForgetEnchantment(who=$,what=$)
+   "Determines if the target has the forget enchantment, and if so, checks "
+   "if they have forgotten 'what'"
+   {
+      local  lState, iStateMember;
+
+      lState = $;
+
+      if IsClass(who,&Player)
+         AND NOT Send(who,@CheckPlayerFlag,#flag=PFLAG_FORGOTTEN)
+      {
+         return FALSE;
+      }
+
+      lState = Send(who,@GetEnchantedState,#what=self);
+      if lState = $
+      {
+         return FALSE;
+      }
+
+      for iStateMember in lState
+      {
+         if iStateMember = what
+         {
+            return TRUE;
+         }
+      }
+
+      return FALSE;
    }
 
 end

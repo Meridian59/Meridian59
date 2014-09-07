@@ -100,8 +100,6 @@ void GraphicsAreaDestroy(void)
 void GraphicsToggleMap(void)
 {
    map = !map;
-   if (map)
-      SetUserTargetID(INVALID_ID);
 
    RedrawAll();
 }

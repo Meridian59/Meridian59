@@ -5671,7 +5671,10 @@ messages:
             {
                Send(poTarget,@AddToMonsterChasers,#level=Send(self,@GetLevel));
             }
-            Post(poOwner,@SomethingChanged,#what=self);
+            if poOwner <> $
+            {
+               Post(poOwner,@SomethingChanged,#what=self);
+            }
             Send(poMaster,@RemoveControlledMinion,#what=self);
             poMaster = $;
             Send(self,@SetSummoned,#value=FALSE);
@@ -5683,7 +5686,10 @@ messages:
          poMaster = oMaster;
          Send(self,@SetSummoned,#value=TRUE);
          Send(self,@EnterStateWait);
-         Post(poOwner,@SomethingChanged,#what=self);
+         if poOwner <> $
+         {
+            Post(poOwner,@SomethingChanged,#what=self);
+         }
          if NOT Send(SYS,@IsPKAllowed) AND poTarget <> $
          {
             % Forget our target

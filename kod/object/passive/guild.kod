@@ -701,26 +701,9 @@ messages:
 
       if piMature > 0
       {
-         for i in plMembers
+         if Length(plMembers) >= 3
          {
-            if Send(First(i),@IsLoggedOn)
-            {
-               if piMature <> 1
-	            {
-	               piMature = piMature - 1;
-	            }
-	            else
-	            {
-	               %% if they're about to become mature, then
-	               %% don't let them if they have fewer than 3 members.
-	               if length(plMembers) >= 3
-	               {
-                     piMature = piMature - 1;
-	               }
-	            }
-
-               break;
-            }
+            piMature = piMature - 1;
          }
          
          if piMature = 0
@@ -728,22 +711,22 @@ messages:
             bPKserver = Send(SYS,@IsPKAllowed);
             for i in plMembers
             {
-	                 if bPKserver
-	                 {
-	                    Send(First(i),@ReceiveNestedMail,#from=guild_frular,
-		                      #dest_list=[First(i)],
-		                      #nest_list=[4,guild_mature_mail,
-		                                  4,Send(self,@GetCapDef),
-                                        4,Send(self,@GetName),
-                                        4,prApprentice_male]);
-	                 }
-	                 else
-	                 {
-                       Send(First(i),@ReceiveNestedMail,#from=guild_frular,
-                            #dest_list=[First(i)],
-                            #nest_list=[4,guild_mature_happyland_mail,
-                                        4,Send(self,@GetCapDef),
-                                        4,Send(self,@GetName)]);
+               if bPKserver
+               {
+                  Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                        #dest_list=[First(i)],
+                        #nest_list=[4,guild_mature_mail,
+                                    4,Send(self,@GetCapDef),
+                                    4,Send(self,@GetName),
+                                    4,prApprentice_male]);
+               }
+               else
+               {
+                  Send(First(i),@ReceiveNestedMail,#from=guild_frular,
+                        #dest_list=[First(i)],
+                        #nest_list=[4,guild_mature_happyland_mail,
+                                    4,Send(self,@GetCapDef),
+                                    4,Send(self,@GetName)]);
                }
             }
          }

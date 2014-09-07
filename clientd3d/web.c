@@ -30,7 +30,7 @@ Bool WebFindDefaultBrowser(void)
   
   key_name = GetString(hInst, IDS_HTTPKEY);
 
-  retval = RegOpenKeyEx(HKEY_LOCAL_MACHINE, key_name, 0, KEY_READ, &hKey);
+  retval = RegOpenKeyEx(HKEY_CURRENT_USER, key_name, 0, KEY_READ, &hKey);
   if (retval != ERROR_SUCCESS)
     {
       debug(("error opening registry key for default browser\n"));
@@ -66,21 +66,19 @@ Bool WebFindDefaultBrowser(void)
  */
 void WebLaunchBrowser(char *url)
 {
-   STARTUPINFO si;
-   PROCESS_INFORMATION pi;
-   char command_line[MAX_CMDLINE];
+   SHELLEXECUTEINFO shExecInfo;
 
-   sprintf(command_line, "%s %s", config.browser, url);
+   shExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+   shExecInfo.fMask = 0;
+   shExecInfo.hwnd = NULL;
+   shExecInfo.lpVerb = TEXT("open");
+   shExecInfo.lpFile = TEXT(url);
+   shExecInfo.lpParameters = NULL;
 
-   memset(&si, sizeof(si), 0);
-   si.cb = sizeof(si);
-   GetStartupInfo(&si); /* shouldn't need to do this.  very weird */
+   shExecInfo.lpDirectory = NULL;
+   shExecInfo.nShow = SW_SHOW;
+   shExecInfo.hInstApp = NULL;
 
-   if (!CreateProcess(NULL, command_line,
-		      NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
-     {
-       debug(("Failed running browser, command line = %s\n", command_line));
-
-       ClientError(hInst, hMain, IDS_NOBROWSER, config.browser);
-     }
+   if (!ShellExecuteEx(&shExecInfo))
+     ClientError(hInst, hMain, IDS_NOBROWSER, config.browser);
 }

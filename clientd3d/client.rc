@@ -110,6 +110,9 @@ BEGIN
     POPUP "&Hilfe"
     BEGIN
         MENUITEM "&Inhalte",                    3036
+        MENUITEM "&Forum",                      3514
+        MENUITEM "Homepage",                    3516
+        MENUITEM "Wiki",                        3515
         MENUITEM SEPARATOR
         MENUITEM "&Über Meridian 59",           3037
     END
@@ -840,6 +843,9 @@ BEGIN
     POPUP "&Help"
     BEGIN
         MENUITEM "&Contents",                   ID_HELP_CONTENTS
+        MENUITEM "&Forum",                      ID_FORUM
+        MENUITEM "Homepage",                    ID_HOMEPAGE
+        MENUITEM "Wiki",                        ID_WIKI
         MENUITEM SEPARATOR
         MENUITEM "&About Meridian 59",          ID_HELP_ABOUT
     END
@@ -1606,6 +1612,8 @@ BEGIN
     IDS_ACTIVATE            "Activate"
     IDS_HTTPKEY             "Software\\Classes\\http\\shell\\open\\command"
     IDS_HELPFILE            "http://meridian59.com/M59-Help-01.shtml"
+    IDS_FORUMURL            "http://openmeridian.org/forums"
+    IDS_WIKIURL             "http://wiki.openmeridian.org/index.php/Main_Page"
     IDS_BADCOMMAND          "What?  (Press F1 or '?' for help.)"
     IDS_DECOMPRESSING       "Decompressing..."
     IDS_APPNAME             "Meridian 59"

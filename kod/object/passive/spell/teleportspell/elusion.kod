@@ -61,7 +61,7 @@ classvars:
 properties:
 
    % If true, can cast elusion from any room.  Otherwise it's limited.
-   pbCanCastFromAnywhere = FALSE
+   pbCanCastFromAnywhere = TRUE
 
 messages:
 

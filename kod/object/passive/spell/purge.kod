@@ -10,7 +10,7 @@
 % as this function calls DoPurge here
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Purge is Debuff
+Purge is Spell
 
 constants:
 
@@ -70,6 +70,11 @@ messages:
       plReagents = Cons([&PurpleMushroom,2],plReagents);
 
       return;
+   }
+
+   GetNumSpellTargets()
+   {
+      return 1;
    }
 
    CanPayCosts(who=$,lTargets=$,bItemCast=FALSE)

@@ -183,8 +183,12 @@ resources:
    player_improved = "~I~BYou have improved in the art of %s."
    player_improved_wav_rsc = imp.wav
    player_aggressor = "Shal'ille frowns upon your unprovoked attack."
+   player_aggressor_minion = \
+      "Shal'ille frowns upon your unprovoked attack on %s%s's minion."
    player_safety_caught = \
       "Hey!  You almost hit %s%s!  Good thing your safety was on!"
+   player_safety_caught_minion = \
+      "Hey!  You almost hit %s%s's minion! Good thing your safety was on!"
 
    player_safe_server = \
       "You are not allowed to attack other players in this world."
@@ -214,6 +218,9 @@ resources:
    
    player_cant_hit_newbie = \
       "You are not yet experienced enough to fight other players."
+   player_cant_hit_newbie_minion = \
+      "This creature is the servant of another player - you are not yet "
+      "experienced enough to fight it."
    player_guardian_angel = \
       "A guardian angel whispers to you, \"You may not attack %s%s.\""
    player_kill_zone = \
@@ -3879,27 +3886,41 @@ messages:
       {
          if IsClass(victim,&Reflection)
             OR IsClass(victim,&EvilTwin)
+            OR Send(victim,@GetMaster) <> $
          {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_PKILL_ENABLE)
             {
-               Send(self,@MsgSendUser,#message_rsc=player_cant_hit_newbie);
-         
+               Send(self,@MsgSendUser,#message_rsc=player_cant_hit_newbie_minion);
+
                return FALSE;
             }
-            
+
             % Check status and safety against the owner of the reflection.
-            if NOT Send(oRoom,@ReqSomethingAttack,#what=self,#victim=Send(victim,@GetCaster))
+            if IsClass(victim,&Reflection)
+               OR IsClass(victim,&EvilTwin)
             {
                if NOT IsClass(oRoom,&GuildHall)
                {
-                  if NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),#report=report)
+                  if NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetCaster),
+                  #report=report,#minion=TRUE)
+                  {
+                     return FALSE;
+                  }
+               }
+            }
+            else
+            {
+               if NOT IsClass(oRoom,&GuildHall)
+               {
+                  if NOT Send(self,@CheckStatusAndSafety,#victim=Send(victim,@GetMaster),
+                  #report=report,#minion=TRUE)
                   {
                      return FALSE;
                   }
                }
             }
          }
-            
+
          % No attacking pets on Sacred Haven
          if NOT Send(SYS,@IsPKAllowed)
             AND Send(victim,@GetMaster) <> $ 
@@ -4029,7 +4050,7 @@ messages:
       return TRUE;
    }
    
-   CheckStatusAndSafety(victim=$,report=TRUE,actual=TRUE)
+   CheckStatusAndSafety(victim=$,report=TRUE,actual=TRUE,minion=FALSE)
    "PFLAG_SAFETY prevents accidental attacks. You can always successfully "
    "hit a murderer or outlaw, though."     
    {
@@ -4097,22 +4118,38 @@ messages:
                }
                else
                {
-                  Send(self,@MsgSendUser,#message_rsc=player_safety_caught,
-                       #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+                  if minion
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=player_safety_caught_minion,
+                           #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+                  }
+                  else
+                  {
+                     Send(self,@MsgSendUser,#message_rsc=player_safety_caught,
+                           #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+                  }
                }
             }
-            
+
             return FALSE;
          }
          else
-         {         
+         {
             if NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_MURDERER)
                AND NOT Send(self,@CheckPlayerFlag,#flag=PFLAG_OUTLAW)
                AND actual = TRUE
             {
                % attacking someone who is without fault is cause to
                % gain the outlaw flag.
-               Send(self,@MsgSendUser,#message_rsc=player_aggressor);
+               if minion
+               {
+                  Send(self,@MsgSendUser,#message_rsc=player_aggressor_minion,
+                        #parm1=Send(victim,@GetDef),#parm2=Send(victim,@GetName));
+               }
+               else
+               {
+                  Send(self,@MsgSendUser,#message_rsc=player_aggressor);
+               }
                Send(self,@SetPlayerFlag,#flag=PFLAG_OUTLAW,#value=TRUE);
                Send(self,@EvaluatePKStatus,#dbug=TRUE);
             }
@@ -4131,7 +4168,7 @@ messages:
       {
          piTimeAttackedPlayer = GetTime();
       }
-      
+
       return TRUE;
    }
 

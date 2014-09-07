@@ -2072,7 +2072,7 @@ messages:
             return;
          }
 
-         if piLogon_bonus = 0
+         if piLogon_bonus <> 200
          {
             if piReward_timestamp <> 0
             {

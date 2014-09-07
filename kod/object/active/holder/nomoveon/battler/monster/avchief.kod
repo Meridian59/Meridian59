@@ -356,6 +356,12 @@ messages:
    {
       local oTreasure, iNumber;
 
+      % Apparitions, etc, provide no treasure
+      if pbIllusion
+      {
+         return;
+      }
+
       oTreasure = Create(&NeruditeArrow,#corpse=corpse);
       iNumber = Random(25,45);
       Send(oTreasure,@AddNumber,#number=iNumber);

@@ -1706,6 +1706,10 @@ messages:
       plIndefDescs = $;
       plDefDescs = $;
       pCargo = $;
+      if poMonster <> $
+      {
+         Send(poMonster,@Delete);
+      }
       poMonster = $;
       poQuestActivated = $;
       piStatus = QN_STATUS_UNINITIALIZED;

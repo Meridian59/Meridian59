@@ -2466,6 +2466,9 @@ messages:
          Post(self,@MsgSendUser,#message_rsc=player_newbie_commands);
       }
 
+      % Update stomach so it starts ticking down properly
+      Send(self,@UpdateStomach);
+
       % Give them a new start on life, so that their newbie friends can buff and heal them.
       piTimeAttackedPlayer = 0;
       

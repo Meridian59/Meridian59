@@ -1857,7 +1857,7 @@ messages:
       return;
    }
 
-   CanReach(what=$)
+   CanReach( what = $ )
    {
       local iRange;
 
@@ -1866,7 +1866,21 @@ messages:
          return FALSE;
       }
 
-      % Check range first
+      % if neither the player or the monster has moved lately,
+      % we don't have to check this stuff again.
+      if what = poTarget
+      {
+         if (piState & VSTATE_VALID_ATTACK)
+         {
+            return TRUE;
+         }
+
+         if (piState & VSTATE_INVALID_ATTACK)
+         {
+            return FALSE;
+         }
+      }
+      % Check range first, for speed
       iRange = Send(self,@GetAttackRange);
       if Send(self,@SquaredDistanceTo,#what=what) > (iRange*iRange)
       {
@@ -1876,7 +1890,7 @@ messages:
          }
 
          return FALSE;
-      }
+      } 
 
       % Some monsters (revenants) don't care about walls.
       if (piBehavior & AI_FIGHT_THROUGH_WALLS)
@@ -1891,7 +1905,7 @@ messages:
 
       %% Okay, now then, check for walls.
       if Send(poOwner,@LineOfSight,#obj1=self,#obj2=what)
-      { 
+      {
          if what = poTarget
          {
             piState = (piState | VSTATE_VALID_ATTACK);
@@ -1899,7 +1913,6 @@ messages:
 
          return TRUE;
       }
-
       if what = poTarget
       {
          piState = (piState | VSTATE_INVALID_ATTACK);

@@ -3113,6 +3113,14 @@ messages:
    {
       local i, iTime;
 
+      if Send(self,@IsPhasedOut)
+      {
+         % Rare case where a user can log off while phased, eg. system restart
+         % Phase already froze the enchantments, so we don't need to do it again
+
+         return;
+      }
+
       for i in plEnchantments
       {
          if First(i) <> $
@@ -3131,6 +3139,17 @@ messages:
                   iTime = iTime + 3000;
                }
 
+               if iTime = $
+               {
+                  % Give them a 20 second timer, and log this for debugging purposes
+                  Debug("Player ",Send(self,@GetTrueName), "ended up with a $ timer for ",
+                     Send(Nth(i,2),@GetTrueName));
+                  if NOT Send(Nth(i,2),@IsHarmful)
+                  {
+                     iTime = 20000;
+                  }
+               }
+
                SetNth(i,1,iTime);
             }
          }
@@ -3143,6 +3162,14 @@ messages:
    "Called when a player logs on."
    {
       local i, tTimer, iTime, state;
+
+      if Send(self,@IsPhasedOut)
+      {
+         % Rare case where a user can log off while phased, eg. system restart
+         % Phase will reactivate the enchantments
+
+         return;
+      }
 
       for i in plEnchantments
       {
@@ -3160,12 +3187,21 @@ messages:
                state = Nth(i,3);
             }
 
-            iTime = first(i);
-         
+            iTime = First(i);
+
             if iTime = $ OR iTime < 1
             {
-               Debug("Trying to make a negative timer!",
-                     Send(Nth(i,2),@GetTrueName));
+               % Give them a short timer, and log this for debugging purposes
+               Debug("Trying to make a negative timer!",Send(Nth(i,2),@GetTrueName),
+                  " on player ",Send(self,@GetTrueName));
+               if Send(Nth(i,2),@IsHarmful)
+               {
+                  iTime = 5000;
+               }
+               else
+               {
+                  iTime = 20000;
+               }
             }
 
             if Send(Nth(i,2),@IsPeriodic,#state=state,#who=self)

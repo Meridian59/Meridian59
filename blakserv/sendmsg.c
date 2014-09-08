@@ -138,7 +138,7 @@ void InitBkodInterpret(void)
 	ccall_table[CREATETIMER] = C_CreateTimer;
 	ccall_table[DELETETIMER] = C_DeleteTimer;
 	ccall_table[GETTIMEREMAINING] = C_GetTimeRemaining;
-	
+	ccall_table[ISTIMER] = C_IsTimer;
 	ccall_table[CREATEROOMDATA] = C_LoadRoom;
 	ccall_table[ROOMDATA] = C_RoomData;
 	ccall_table[CANMOVEINROOM] = C_CanMoveInRoom;

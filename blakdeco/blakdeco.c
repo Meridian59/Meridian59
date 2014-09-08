@@ -578,6 +578,7 @@ char * name_function(int fnum)
 
    case CREATETIMER : return "CreateTimer";
    case DELETETIMER : return "DeleteTimer";
+   case ISTIMER : return "IsTimer";
 
    case CREATEROOMDATA : return "LoadRoom";
    case ROOMDATA : return "RoomData";

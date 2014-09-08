@@ -1436,6 +1436,32 @@ int C_GetTimeRemaining(int object_id,local_var_type *local_vars,
 	return ret_val.int_val;
 }
 
+int C_IsTimer(int object_id,local_var_type *local_vars,
+			 int num_normal_parms,parm_node normal_parm_array[],
+			 int num_name_parms,parm_node name_parm_array[])
+{
+	val_type var_check,ret_val;
+	
+	var_check = RetrieveValue(object_id,local_vars,normal_parm_array[0].type,
+			     normal_parm_array[0].value);
+	
+	ret_val.v.tag = TAG_INT;
+	
+	if (var_check.v.tag == TAG_NIL)
+	{
+		ret_val.v.data = False;
+		bprintf("C_IsTimer called with NIL timer by object %i",object_id);
+		return ret_val.int_val;
+	}
+	
+	if (var_check.v.tag == TAG_TIMER || var_check.v.tag == TAG_NIL)
+		ret_val.v.data = True;
+	else
+		ret_val.v.data = False;
+	
+	return ret_val.int_val;
+}
+
 int C_LoadRoom(int object_id,local_var_type *local_vars,
 			   int num_normal_parms,parm_node normal_parm_array[],
 			   int num_name_parms,parm_node name_parm_array[])

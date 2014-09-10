@@ -2304,6 +2304,7 @@ Recreate()
    for i in Send(Send(SYS,@GetParliament),@GetFactionList) {
       if nth(i,1) = FACTION_PRINCESS {
          send(self,@SetQuestMaxActive,#index = QST_ID_PRINCESS_SERVICE, #new_max = (1+length(nth(i,2))) );
+         Debug("Number of Cess members is ",length(nth(i,2)));
       }
       if nth(i,1) = FACTION_DUKE {
          send(self,@SetQuestMaxActive,#index = QST_ID_DUKE_SERVICE, #new_max = (1+length(nth(i,2))) );

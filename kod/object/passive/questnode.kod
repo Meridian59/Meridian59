@@ -1493,7 +1493,7 @@ messages:
                               QN_PRIZE_BOON_AGILITY,
                               QN_PRIZE_BOON_MYSTICISM,
                               QN_PRIZE_BOON_STRENGTH ],random(1,6));
-            iAmount = 1;
+            iAmount = -3;
             iDays = 2;
             Send(self,@AwardPrizeOrPenalty,#recipients=recipients,
                   #prize=[QN_PRIZETYPE_BOON,iPrizeBoon,iAmount,iDays]);

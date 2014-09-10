@@ -5950,15 +5950,24 @@ messages:
       % Schedule faction loyalty quests up to max
       i = 0;
       iMax = Nth( Send(self,@GetQuestTemplate,#index=QST_ID_PRINCESS_SERVICE), QT_MAX_NUM_ACTIVE );
-      while i < iMax {
+      while i < iMax
+      {
          i = i + 1;
          Send(self,@ScheduleQuest,#index = QST_ID_PRINCESS_SERVICE, #override=TRUE);
       }
       i = 0;
       iMax = Nth( Send(self,@GetQuestTemplate,#index=QST_ID_DUKE_SERVICE), QT_MAX_NUM_ACTIVE );
-      while i < iMax {
+      while i < iMax
+      {
          i = i + 1;
          Send(self,@ScheduleQuest,#index = QST_ID_DUKE_SERVICE, #override=TRUE);
+      }
+      i = 0;
+      iMax = Nth( Send(self,@GetQuestTemplate,#index=QST_ID_REBEL_SERVICE), QT_MAX_NUM_ACTIVE );
+      while i < iMax
+      {
+         i = i + 1;
+         Send(self,@ScheduleQuest,#index = QST_ID_REBEL_SERVICE, #override=TRUE);
       }
 
       return;
